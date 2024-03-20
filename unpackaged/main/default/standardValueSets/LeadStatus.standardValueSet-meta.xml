@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<StandardValueSet xmlns="http://soap.sforce.com/2006/04/metadata">
+    <sorted>false</sorted>
+    <standardValue>
+        <fullName>New</fullName>
+        <default>true</default>
+        <label>New</label>
+        <converted>false</converted>
+    </standardValue>
+    <standardValue>
+        <fullName>Contacted</fullName>
+        <default>false</default>
+        <label>Contacted</label>
+        <converted>false</converted>
+    </standardValue>
+    <standardValue>
+        <fullName>Qualified</fullName>
+        <default>false</default>
+        <label>Qualified</label>
+        <converted>false</converted>
+    </standardValue>
+    <standardValue>
+        <fullName>Potential Feeder Group</fullName>
+        <default>false</default>
+        <label>Potential Feeder Group</label>
+        <converted>false</converted>
+    </standardValue>
+    <standardValue>
+        <fullName>Future Outreach</fullName>
+        <default>false</default>
+        <label>Future Outreach</label>
+        <converted>false</converted>
+    </standardValue>
+    <standardValue>
+        <fullName>Unqualified</fullName>
+        <default>false</default>
+        <label>Unqualified</label>
+        <converted>false</converted>
+    </standardValue>
+    <standardValue>
+        <fullName>Converted</fullName>
+        <default>false</default>
+        <label>Converted</label>
+        <converted>true</converted>
+    </standardValue>
+    <standardValue>
+        <fullName>Feeder Group - Qualified</fullName>
+        <default>false</default>
+        <label>Feeder Group - Qualified</label>
+        <converted>false</converted>
+    </standardValue>
+    <standardValue>
+        <fullName>Feeder Group - Unqualified</fullName>
+        <default>false</default>
+        <label>Feeder Group - Unqualified</label>
+        <converted>false</converted>
+    </standardValue>
+    <standardValue>
+        <fullName>Active Feeder Group</fullName>
+        <default>false</default>
+        <label>Active Feeder Group</label>
+        <converted>true</converted>
+    </standardValue>
+</StandardValueSet>

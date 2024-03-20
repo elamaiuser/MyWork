@@ -1,0 +1,13 @@
+<template>
+    <div if:false={isLoaded}>
+        <lightning-spinner alternative-text="Loading" size="small" variant="brand"></lightning-spinner>
+    </div>
+    <lightning-card if:true={hasImage}>
+        <img src={image}/>
+    </lightning-card>
+    <lightning-card if:false={hasImage}>
+        <div class="slds-align_absolute-center">
+            {message}
+        </div>
+    </lightning-card>
+</template>

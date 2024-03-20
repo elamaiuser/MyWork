@@ -1,0 +1,201 @@
+<template>
+    <div class={customClass.modal}>
+        <lightning-spinner if:true={showSpinner} class="spins" size="medium"></lightning-spinner>
+        <div class="slds-align-content-center slds-col width-450">
+            <div class="slds-clearfix slds-page-header slds-page-header_record-home fixed-position "
+                style="margin-bottom: var(--lwc-cardSpacingMargin);">
+                <div class="slds-page-header__row slds-grid_vertical-align-center">
+                    <div class="slds-page-header__col-title">
+                        <div class="slds-media">
+                            <div class="slds-media__figure">
+                                <lightning-icon icon-name="standard:metrics" size="medium"></lightning-icon>
+                            </div>
+                            <div class="slds-media__body">
+                                <div class="slds-page-header__name">
+                                    <div class="slds-page-header__name-title">
+                                        <h1>
+                                            <span class="slds-page-header__title slds-truncate">Confirm</span>
+                                        </h1>
+                                    </div>
+                                </div>
+                                <p class="slds-page-header__name-meta">{stepHeader}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="slds-no-flex">
+                        <div class="slds-grid">
+                            <div class="slds-no-flex">
+                                <ul class="slds-button-group-row">
+                                    <li class="slds-button-group-item">
+                                        <button onclick={handlePrev}
+                                            class="slds-button slds-button_neutral">Previous</button>
+                                    </li>
+                                    <li class="slds-button-group-item">
+                                        <button class="slds-button slds-button_brand" disabled={preventSubmit}
+                                            onclick={handleConfirm}>Confirm</button>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="slds-tabs_card slds-scrollable--y height-custom">
+                <lightning-progress-indicator current-step={step} type="base" variant="base">
+                    <lightning-progress-step for:each={listStep} for:item="step" key={step.value} label={step.label}
+                        value={step.value}></lightning-progress-step>
+                </lightning-progress-indicator>
+                <div>
+                    <div class="slds-m-top_medium" if:true={errorMessages.length}>
+                        <c-slwc-page-errors title="Contentions" validities={errorMessages}></c-slwc-page-errors>
+                    </div>
+
+                    <ul class="slds-m-top--large slds-grid_pull-padded slds-p-horizontal_small">
+                        <li for:each={recordSelected} for:item="record" key={record.key}>
+                            <article if:true={record.isJobAllocation}
+                                class="slds-p-around--small slds-hint-parent slds-border--bottom slds-border--top">
+                                <div class="slds-media__body">
+                                    <div class="slds-grid slds-grid_align-spread slds-has-flexi-truncate">
+                                        <h3 class="slds-tile__title slds-truncate">
+                                            <a href={record.recordUrl}>{record.job.resourceRole}</a>
+                                        </h3>
+                                    </div>
+                                    <div class="slds-tile__detail">
+                                        <dl class="slds-list_horizontal slds-wrap">
+                                            <dt class="slds-item_label slds-text-color_weak slds-truncate">
+                                                Trading Type:</dt>
+                                            <dd class="slds-item_detail slds-truncate">
+                                                {record.tradingType}</dd>
+                                            <dt class="slds-item_label slds-text-color_weak slds-truncate">
+                                                Drive:</dt>
+                                            <dd class="slds-item_detail slds-truncate">
+                                                {record.driveName}</dd>
+                                            <dt class="slds-item_label slds-text-color_weak slds-truncate">
+                                                Drive Shift:</dt>
+                                            <dd class="slds-item_detail slds-truncate">
+                                                {record.driveShiftName}</dd>
+                                            <dt class="slds-item_label slds-text-color_weak slds-truncate">
+                                                Shift Date:</dt>
+                                            <dd class="slds-item_detail slds-truncate">
+                                                <lightning-formatted-date-time value={record.start} year="numeric"
+                                                    day="2-digit" month="short" time-zone={timezoneSidId}>
+                                                </lightning-formatted-date-time>
+                                            </dd>
+                                            <dt class="slds-item_label slds-text-color_weak slds-truncate">
+                                                Shift Time:</dt>
+                                            <dd class="slds-item_detail slds-truncate">
+                                                <lightning-formatted-date-time value={record.start} hour="numeric"
+                                                    minute="2-digit" time-zone={timezoneSidId}>
+                                                </lightning-formatted-date-time> -
+                                                <lightning-formatted-date-time value={record.end} hour="numeric"
+                                                    minute="2-digit" time-zone={timezoneSidId}>
+                                                </lightning-formatted-date-time>
+                                            </dd>
+                                            <dt class="slds-item_label slds-text-color_weak slds-truncate">
+                                                Staff:</dt>
+                                            <dd class="slds-item_detail slds-truncate">
+                                                {record.resource.name}
+                                            </dd>
+                                        </dl>
+                                    </div>
+                                </div>
+                            </article>
+
+                            <article if:true={record.isGroupActivity}
+                                class="slds-p-around--small slds-hint-parent slds-border--bottom slds-border--top">
+                                <div class="slds-media__body">
+                                    <div class="slds-grid slds-grid_align-spread slds-has-flexi-truncate">
+                                        <h3 class="slds-tile__title slds-truncate">
+                                            <a href={record.recordUrl}
+                                                if:true={record.activity.activityTitle}>{record.activity.activityTitle}</a>
+                                            <a href={record.recordUrl}
+                                                if:false={record.activity.activityTitle}>{record.activity.name}</a>
+                                        </h3>
+                                    </div>
+                                    <div class="slds-tile__detail">
+                                        <dl class="slds-list_horizontal slds-wrap">
+                                            <dt class="slds-item_label slds-text-color_weak slds-truncate">
+                                                Trading Type:</dt>
+                                            <dd class="slds-item_detail slds-truncate">
+                                                {record.tradingType}</dd>
+                                            <dt class="slds-item_label slds-text-color_weak slds-truncate">
+                                                Type:</dt>
+                                            <dd class="slds-item_detail slds-truncate">
+                                                {record.activity.eventType}
+                                            </dd>
+                                            <dt class="slds-item_label slds-text-color_weak slds-truncate">
+                                                Sub-type:</dt>
+                                            <dd class="slds-item_detail slds-truncate">
+                                                {record.activity.subtype}
+                                            </dd>
+                                            <dt class="slds-item_label slds-text-color_weak slds-truncate">
+                                                Start:</dt>
+                                            <dd class="slds-item_detail slds-truncate">
+                                                <lightning-formatted-date-time value={record.activity.start}
+                                                    year="numeric" day="2-digit" month="short"
+                                                    time-zone={timezoneSidId}>
+                                                </lightning-formatted-date-time>
+                                                &nbsp;
+                                                <lightning-formatted-date-time value={record.activity.start}
+                                                    hour="numeric" minute="2-digit" time-zone={timezoneSidId}>
+                                                </lightning-formatted-date-time>
+                                            </dd>
+                                            <dt class="slds-item_label slds-text-color_weak slds-truncate">
+                                                End:</dt>
+                                            <dd class="slds-item_detail slds-truncate">
+                                                <lightning-formatted-date-time value={record.activity.finish}
+                                                    year="numeric" day="2-digit" month="short"
+                                                    time-zone={timezoneSidId}>
+                                                </lightning-formatted-date-time>
+                                                &nbsp;
+                                                <lightning-formatted-date-time value={record.activity.finish}
+                                                    hour="numeric" minute="2-digit" time-zone={timezoneSidId}>
+                                                </lightning-formatted-date-time>
+                                            </dd>
+                                            <dt class="slds-item_label slds-text-color_weak slds-truncate">
+                                                Staff:</dt>
+                                            <dd class="slds-item_detail slds-truncate">
+                                                {record.resource.name}
+                                            </dd>
+                                        </dl>
+                                    </div>
+                                </div>
+                            </article>
+                            <div if:true={record.isFirst} class="slds-align--absolute-center slds-m-vertical--xx-small">
+                                <lightning-icon icon-name="action:sort" size="xx-small"></lightning-icon>
+                            </div>
+                        </li>
+                    </ul>
+                    <div class="slds-m-vertical--small" if:true={canConfirmTrade}>
+                        <div class="slds-p-vertical--x-small">
+                            <c-slwc-picklist name="contactMethod" label="Contact Method"
+                                unique-key={model.contactMethod} object-api-name="sked_Drive_Shift_Trade__c"
+                                selected-value={model.contactMethod} pick-listfield-api-name="sked_Contact_Method__c"
+                                required onpicklistchange={handleOnChangeModel}>
+                            </c-slwc-picklist>
+                        </div>
+                        <div class="slds-p-vertical--x-small">
+                            <lightning-input type="text" name="reasonForTrade" value={model.reasonForTrade}
+                                label="Reason For Trade" required onchange={handleOnChangeModel}>
+                            </lightning-input>
+                        </div>
+                        <div class="slds-p-vertical--x-small">
+                            <lightning-textarea value={model.tradeRequesterNotes} label="Trade Requester Notes"
+                                name="tradeRequesterNotes" onchange={handleOnChangeModel}></lightning-textarea>
+                        </div>
+                        
+                        <template if:false={preventSubmit}>
+                            <div class="slds-p-vertical--x-small" if:true={errorMessages.length}>
+                                <lightning-input type="checkbox" name="contentionAcknowledge"
+                                    label="By submitting this trade request, you acknowledge the above contentions" required
+                                    value={model.contentionAcknowledge} checked={model.contentionAcknowledge} onchange={handleOnChangeModel}>
+                                </lightning-input>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>

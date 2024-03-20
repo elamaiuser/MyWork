@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Queue xmlns="http://soap.sforce.com/2006/04/metadata">
+    <doesSendEmailToMembers>false</doesSendEmailToMembers>
+    <name>Eau Claire WI: DMDCR</name>
+    <queueMembers>
+        <users>
+            <user>bethany.pederson@redcross.org</user>
+            <user>doug.winter@redcross.org.biomed</user>
+            <user>michelle.goodwill@redcross.org.biomed</user>
+            <user>roxanne.berra@redcross.org</user>
+            <user>shannon.metcalf@redcross.org</user>
+            <user>tiffany.schulte@redcross.org</user>
+            <user>tracy.nelson@redcross.org</user>
+        </users>
+    </queueMembers>
+    <queueSobject>
+        <sobjectType>Task</sobjectType>
+    </queueSobject>
+    <queueSobject>
+        <sobjectType>sked_Drive_Change_Request__c</sobjectType>
+    </queueSobject>
+</Queue>

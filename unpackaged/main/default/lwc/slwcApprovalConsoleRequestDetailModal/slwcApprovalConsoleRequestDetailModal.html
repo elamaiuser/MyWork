@@ -1,0 +1,30 @@
+<template>
+    <section role="dialog" tabindex="-1" class={customClass.modalClass}>
+        <div class="slds-modal__container" style="transform: initial;">
+            <header class={customClass.headerClass}>
+                <lightning-button-icon onclick={handleCancel} class="slds-button slds-button_icon slds-modal__close" size="large"
+                    icon-name="utility:close" variant="bare-inverse" title="Close"></lightning-button-icon>
+
+                <h2 class="slds-modal__title slds-hyphenate">{title}</h2>
+            </header>
+            <div class="slds-modal__content slds-is-relative slds-p-around_medium">
+                <lightning-spinner if:true={showSpinner} class="spins" size="medium"></lightning-spinner>
+                <div class="slds-grid" if:true={isOpen} style="height: 100%;">
+                    <div class="slds-shrink-none slds-p-right_medium slds-scrollable_y" style="width: 18rem">
+                        <h3 class="slds-section-title--divider">Details</h3>
+                        <div class="slds-p-horizontal_small">
+                            <slot name="details"></slot>
+                        </div>
+                    </div>
+                    <div class="slds-grow slds-scrollable_y">
+                        <slot name="approvalHistoryConsole"></slot>
+                    </div>
+                </div>               
+            </div>
+            <footer class={customClass.footerClass}>
+                <button class="slds-button slds-button_neutral" onclick={handleCancel}>Close</button>
+            </footer>
+        </div>
+    </section>
+    <div class={customClass.backdropClass}></div>
+</template>

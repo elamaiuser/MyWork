@@ -1,0 +1,75 @@
+<template>
+    <c-slwc-calendar-legend
+        if:false={hideLegend}
+        metadata={metadata}
+        config-data={configData}
+    >
+    </c-slwc-calendar-legend>
+    
+    <div class="slds-p-around_small">
+        <table class="hco-rac-data-content-table hco-calendar-table">
+            <thead>
+                <tr>
+                    <template for:each={weekDays} for:item="weekday">
+                        <td key={weekday}>{weekday}</td>
+                    </template>
+                </tr>
+            </thead>
+            <tbody>
+                <template for:each={calendarWeeks} for:item="week">
+                    <tr key={week.key}>
+                        <template for:each={week.days} for:item="day">
+                            <td 
+                                key={day.dateIso}
+                                class={day.class}>
+                                <!-- day info -->
+                                <div class="slds-grid slds-grid_align-spread slds-p-around_xxx-small">
+                                    <div class="day-info">
+                                        <span class="slds-m-right_xx-small" if:true={day.isFirstDayOfMonth}>
+                                            <lightning-formatted-date-time value={day.date} month="short">
+                                            </lightning-formatted-date-time>
+                                        </span>
+                                        <lightning-formatted-date-time value={day.date} day="numeric">
+                                        </lightning-formatted-date-time>
+                                    </div>
+                                </div>
+                                
+                                <!-- events -->
+                                <div>
+                                    <template for:each={day.allEvents} for:item="record">
+                                        <c-slwc-calendar-month-card 
+                                            key={record.id}
+                                            record={record} 
+                                            settings={settings}
+                                            metadata={metadata}
+                                            config-data={configData}
+                                        >
+                                        </c-slwc-calendar-month-card>
+                                    </template>
+                                </div>
+            
+                                <!-- buttons -->
+                                <div class="slds-grid slds-grid_align-spread hco-rac-buttons-container slds-p-horizontal_xx-small">
+                                    <div>
+                                        <button
+                                            if:true={day.canAddEvent}
+                                            data-id={day.dateIso}
+                                            onclick={handleAddEvent}
+                                            class="slds-button slds-button_icon hco-rac-add-event-button">
+                                            <lightning-icon icon-name="utility:add" size="xx-small"></lightning-icon>
+                                        </button>
+                                    </div>
+                                    <!-- <div>
+                                        <button class="slds-button hco-rac-more-event-button">
+                                            5 more...
+                                        </button>
+                                    </div> -->
+                                </div>
+                            </td>
+                        </template>
+                    </tr>
+                </template>
+            </tbody>
+        </table>
+    </div>
+</template>

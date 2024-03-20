@@ -1,0 +1,179 @@
+.appointment-slots {
+  display: grid;
+  grid-template: '. .';
+  -webkit-column-gap: 0.5rem;
+     -moz-column-gap: 0.5rem;
+          column-gap: 0.5rem;
+  row-gap: 0.5rem;
+}
+
+.appointment-slots li {
+  position: relative;
+}
+
+.appointment-slots li.selected .slot {
+  border-color: #1d92d2;
+  box-shadow: 0 0 10px #1d92d2;
+}
+
+.appointment-slots li.locked .slot .slot-actions .action.edit-icon, .appointment-slots li.locked .slot .slot-actions .action.delete-icon {
+  color: #e0e5ee;
+  pointer-events: none;
+  cursor: default;
+}
+
+.appointment-slots .slot {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  border-radius: .25rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.appointment-slots .slot .slot-label {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -webkit-flex-direction: column;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-pack: space-evenly;
+  -webkit-justify-content: space-evenly;
+      -ms-flex-pack: space-evenly;
+          justify-content: space-evenly;
+  padding: 0.25rem 0.75rem;
+  width: 100%;
+  border-left: 0.25rem solid #99a0b2;
+  text-align: left;
+}
+
+.appointment-slots .slot .slot-label .time-label {
+  font-size: 0.925rem;
+  color: #16325c;
+}
+
+.appointment-slots .slot .slot-actions {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -webkit-flex-direction: column;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  border-left: 1px solid #d8dde6;
+}
+
+.appointment-slots .slot .slot-actions .action {
+  cursor: pointer;
+  padding: 0.125rem;
+  border-radius: 0;
+  opacity: 0.6;
+}
+
+.appointment-slots .slot .slot-actions .action + .action {
+  margin-top: 0.125rem;
+  border-top: 1px solid #d8dde6;
+}
+
+.appointment-slots .slot .slot-actions .action.lock-icon {
+  color: #99a0b2;
+}
+
+.appointment-slots .slot .slot-actions .action.unlock-icon {
+  color: #1d92d2;
+  opacity: 1;
+}
+
+.appointment-slots .slot .slot-actions .action.edit-icon {
+  color: #1d92d2;
+}
+
+.appointment-slots .slot .slot-actions .action.delete-icon {
+  color: #d23331;
+}
+
+.appointment-slots .slot .slot-actions .action:hover {
+  background: #f4f6f9;
+  opacity: 1;
+  -webkit-transition: opacity 0.1s linear;
+  transition: opacity 0.1s linear;
+}
+
+.appointment-slots .slot.available-block {
+  border: 1px solid #d8dde6;
+  min-height: 4rem;
+}
+
+.appointment-slots.whole-blood .slot.available-block .slot-label {
+  border-color: #1d92d2;
+  background: #1d92d21a;
+}
+
+.appointment-slots.power-red .slot.available-block .slot-label {
+  border-color: #d23331;
+  background: #d233311a;
+}
+
+.appointment-slots.platelet .slot.available-block .slot-label {
+  border-color: #f1872d;
+  background: #f1872d1a;
+}
+
+.appointment-slots.plasma .slot.available-block .slot-label {
+  border-color: #59b66e;
+  background: #59b66e1a;
+}
+
+.side-bar {
+  background: #fff;
+  width: 22rem;
+  padding-left: 1.25rem;
+}
+
+.side-bar .appointment-details-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+.slds-card {
+  background: #fff !important;
+  border: 1px solid #d8dde6 !important;
+  border-radius: .25rem !important;
+  box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.1) !important;
+}
+
+.slds-card .slds-card__header {
+  padding: .75rem 1rem 0 !important;
+}
+
+.slds-card .slds-card__header .slds-card__header-title {
+  font-size: 1rem !important;
+  line-height: 1.25 !important;
+}
+
+.slds-card .slds-card__body--inner, .slds-card .slds-card__body_inner {
+  padding: 0 1rem !important;
+}
+
+.slds-card .slds-card__footer {
+  padding: .75rem 1rem !important;
+}
+
+.slot-recurrence-dates {
+  position: absolute;
+  right: 1.5rem;
+  top: 0.25rem;
+  color: gray;
+  display: flex;
+  align-items: center;
+  font-size: 0.75rem;
+}

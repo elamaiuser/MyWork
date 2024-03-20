@@ -1,0 +1,18 @@
+<template>
+    <lightning-card style="width:100%">
+        <template if:true={buttonEnabled}>
+            <lightning-button-group slot="actions">
+                <lightning-button label="New" onclick={handleNew}></lightning-button>
+            </lightning-button-group>
+        </template>
+        <c-slwc-custom-table
+            key-field="key"
+            record={driveShiftTags}
+            columns={columns}
+            resize-column-disabled
+            hide-checkbox-column
+            onrowaction={handleRowActions}
+            style="border: 1px solid #ecebea; width:100%; display: flex;">
+        </c-slwc-custom-table>
+    </lightning-card>
+</template>

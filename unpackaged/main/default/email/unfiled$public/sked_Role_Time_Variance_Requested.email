@@ -1,0 +1,10 @@
+A new Role Time Variance request has been created and requires approval. 
+
+Details:
+RTV Name: {!sked_Site_Feedback__c.Name}
+Drive Name: {!sked_Site_Feedback__c.sked_Drive_Name__c}
+Drive Date: {!sked_Site_Feedback__c.sked_Drive_Date_Text__c}
+Drive Site: {!sked_Site_Feedback__c.sked_Site_Name__c}
+
+To manage this approval request, please open the following link:
+{!ApprovalRequest.Internal_URL}

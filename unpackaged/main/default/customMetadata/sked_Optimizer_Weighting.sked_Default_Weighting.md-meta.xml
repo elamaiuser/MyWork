@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomMetadata xmlns="http://soap.sforce.com/2006/04/metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <label>Default Weighting</label>
+    <protected>false</protected>
+    <values>
+        <field>sked_Setting__c</field>
+        <value xsi:type="xsd:string">Default</value>
+    </values>
+    <values>
+        <field>sked_Value__c</field>
+        <value xsi:nil="true" />
+    </values>
+    <values>
+        <field>sked_Weighting__c</field>
+        <value xsi:type="xsd:string">{
+		&quot;unassigned&quot;: &quot;9000hard&quot;,
+		&quot;requirements&quot;: &quot;2700hard&quot;,
+		&quot;concurrent&quot;: &quot;1000000hard&quot;,
+		&quot;locked&quot;: &quot;1000000hard&quot;,
+		&quot;blacklist&quot;: &quot;1000000hard&quot;,
+		&quot;availability&quot;: &quot;10000hard&quot;,
+		&quot;skills&quot;: &quot;10000hard&quot;,
+		&quot;minRest&quot;: &quot;100000hard&quot;,
+		&quot;maxHours&quot;: &quot;100000hard&quot;,
+		&quot;softSkillsLevel&quot;: &quot;10soft&quot;,
+		&quot;distanceAL&quot;: &quot;10soft&quot;,
+		&quot;pref&quot;: &quot;10soft&quot;,
+		&quot;efficiency&quot;: &quot;1soft&quot;,
+		&quot;maxWorkingDays&quot;: &quot;1hard&quot;,
+		&quot;sameDay&quot;: &quot;1hard&quot;,
+		&quot;maxConsecutive&quot;: &quot;1hard&quot;,
+		&quot;working&quot;: &quot;1hard&quot;,
+		&quot;sameDayMinRest&quot;: &quot;1hard&quot;,
+		&quot;minHours&quot;: &quot;1hard&quot;,
+		&quot;minShift&quot;: &quot;1hard&quot;,
+		&quot;maxShift&quot;: &quot;1hard&quot;,
+		&quot;shiftStart&quot;: &quot;1hard&quot;,
+		&quot;latestShiftStart&quot;: &quot;1hard&quot;,
+		&quot;shiftEnd&quot;: &quot;1hard&quot;,
+		&quot;dayOfWeek&quot;: &quot;1hard&quot;,
+		&quot;criticalSkills&quot;: &quot;1hard&quot;,
+		&quot;costs&quot;: &quot;1soft&quot;,
+		&quot;wages&quot;: &quot;1soft&quot;,
+		&quot;priority&quot;: &quot;1soft&quot;,
+		&quot;softSkills&quot;: &quot;1soft&quot;
+}</value>
+    </values>
+</CustomMetadata>

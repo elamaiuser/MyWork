@@ -1,0 +1,65 @@
+<template>
+    <div class="slds-grid">
+        <div class="slds-col">
+            <c-slwc-drive-scheduling-filters
+                mode="callOutsFilters"
+                onsearch={handleSearch}
+            ></c-slwc-drive-scheduling-filters>
+        </div>
+        <div class="slds-col slds-scrollable_y slds-p-left_medium">
+            <div class="slds-grid slds-grid_vertical-align-end slds-p-top_small">
+                <div class="slds-no-flex slds-col_bump-left slds-p-right_small" style="width: 300px;">
+                    <c-slwc-new-collection-operation-multi-picklist
+                        division-single-select
+                        date-range={collectionOperationDateRange}
+                        default-values={filters.collectionOperationValues}
+                        onchange={handleCollectionOperationChanged}>
+                    </c-slwc-new-collection-operation-multi-picklist>
+                </div>
+                <div class="slds-p-right_small">
+                    <c-slwc-week-date-picker
+                        includes-additional-days={includesAdditionalDays}
+                        first-day={collectionOperationFirstDay}
+                        unique-key="callOutsSchedulingConsole"
+                        onweekdatechange={handleOnChange}
+                        default-start-date={filters.startDate}
+                        default-end-date={filters.endDate}>
+                    </c-slwc-week-date-picker>
+                </div>
+            </div>
+            <div class="slds-grow slds-scrollable_y slds-p-top_medium" style="height: 65vh; width: calc(100vw - 5rem);">
+                <lightning-tabset active-tab-value={currentTab}>
+                    <lightning-tab label="Drive" value={TABS.DRIVE} onactive={handleChangeTab}>
+                        <c-slwc-custom-datatable 
+                            key-field="id"
+                            data={records}
+                            columns={columns}
+                            wrap-text-max-lines="3"
+                            hide-checkbox-column
+                            sorted-by={sortOption.fieldName}
+                            sorted-direction={sortOption.sortDirection}
+                            enable-infinite-loading={enableInfiniteLoading}
+                            onsort={handleSortChanged}
+                            onloadmore={handleLoadMoreData}>
+                        </c-slwc-custom-datatable>
+                    </lightning-tab>
+                    <lightning-tab label="Activity" value={TABS.ACTIVITY} onactive={handleChangeTab}>
+                        <c-slwc-custom-datatable 
+                            key-field="id"
+                            data={records}
+                            columns={columns}
+                            wrap-text-max-lines="3"
+                            hide-checkbox-column
+                            sorted-by={sortOption.fieldName}
+                            sorted-direction={sortOption.sortDirection}
+                            enable-infinite-loading={enableInfiniteLoading}
+                            onsort={handleSortChanged}
+                            onloadmore={handleLoadMoreData}>
+                        </c-slwc-custom-datatable>
+                    </lightning-tab>
+                </lightning-tabset>
+            </div>
+        </div>
+        <lightning-spinner if:true={showSpinner} class="spins" size="medium"></lightning-spinner>
+    </div>
+</template>

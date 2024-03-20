@@ -1,0 +1,17 @@
+.contention-indicator {
+    width: 0.625rem;
+    height: 0.625rem;
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 0.25rem;
+    border: 1px solid #fff;
+    background: #d23331;
+}
+
+.contention-indicator.passed {
+    background: #59b66e;
+}
+
+.white-space-pre-line {
+    white-space: pre-line;
+}

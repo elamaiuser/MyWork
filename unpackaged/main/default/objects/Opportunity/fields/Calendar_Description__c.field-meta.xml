@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Calendar_Description__c</fullName>
+    <externalId>false</externalId>
+    <label>Calendar Description</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Summer Holidays</fullName>
+                <default>false</default>
+                <label>Summer Holidays</label>
+            </value>
+            <value>
+                <fullName>Independence Day</fullName>
+                <default>false</default>
+                <label>Independence Day</label>
+            </value>
+            <value>
+                <fullName>Eves</fullName>
+                <default>false</default>
+                <label>Eves</label>
+            </value>
+            <value>
+                <fullName>Nov Hol</fullName>
+                <default>false</default>
+                <label>Nov Hol</label>
+            </value>
+            <value>
+                <fullName>Dec Hol</fullName>
+                <default>false</default>
+                <label>Dec Hol</label>
+            </value>
+            <value>
+                <fullName>Jan Hol</fullName>
+                <default>false</default>
+                <label>Jan Hol</label>
+            </value>
+            <value>
+                <fullName>Baseline</fullName>
+                <default>false</default>
+                <label>Baseline</label>
+            </value>
+            <value>
+                <fullName>Special Event</fullName>
+                <default>false</default>
+                <label>Special Event</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

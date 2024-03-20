@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Is_Covering_Recruiter__c</fullName>
+    <defaultValue>false</defaultValue>
+    <description>Indicate if the Team Member was a Covering Recruiter</description>
+    <externalId>false</externalId>
+    <inlineHelpText>Indicate if the Team Member was a Covering Recruiter</inlineHelpText>
+    <label>Is Covering Recruiter</label>
+    <trackTrending>false</trackTrending>
+    <type>Checkbox</type>
+</CustomField>

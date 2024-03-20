@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+        <label><!-- Route Approval Request To --></label>
+        <name>sked_Route_Approval_Request_To__c</name>
+        <picklistValues>
+            <masterLabel>Route to CO Team Supervisor</masterLabel>
+            <translation><!-- Route to CO Team Supervisor --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Route to DRD Manager</masterLabel>
+            <translation><!-- Route to DRD Manager --></translation>
+        </picklistValues>
+    </CustomFieldTranslation>

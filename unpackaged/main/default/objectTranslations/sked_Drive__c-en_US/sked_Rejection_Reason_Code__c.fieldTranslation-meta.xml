@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+        <label><!-- Rejection Reason Code --></label>
+        <name>sked_Rejection_Reason_Code__c</name>
+        <picklistValues>
+            <masterLabel>Critical role unavailable</masterLabel>
+            <translation><!-- Critical role unavailable --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Insufficient staffing</masterLabel>
+            <translation><!-- Insufficient staffing --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>No vehicles</masterLabel>
+            <translation><!-- No vehicles --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Overtime</masterLabel>
+            <translation><!-- Overtime --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Turnaround time</masterLabel>
+            <translation><!-- Turnaround time --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Union requirements conflict</masterLabel>
+            <translation><!-- Union requirements conflict --></translation>
+        </picklistValues>
+    </CustomFieldTranslation>

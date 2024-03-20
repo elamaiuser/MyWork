@@ -1,0 +1,13 @@
+Hello, {!Lead.FirstName} - 
+
+I would like to thank you again for expressing interest in hosting a blood drive with the American Red Cross.  Based on our conversation and reviewing the information you submitted about your organization, {!Lead.Company}, I believe our SleevesUp virtual blood drive program may be a great way you can get involved in our lifesaving mission!  
+  
+Many interested groups may not be able to host an onsite blood drive due to space limitations, access to a large enough donor base, or a variety of other reasons. A SleevesUp virtual blood drive allows those who feel passionate about blood donation the opportunity to recruit blood donors virtually by encouraging colleagues, friends and family members to give blood at any available site. The result is still the same life-saving impact – with each recruited donor helping save up to 3 lives!  Learn more and start a virtual blood drive in as little as 5 minutes at: sleevesup.redcrossblood.org.  
+
+If you want information about other ways to get involved with the American Red Cross, please let me know. 
+
+Kind regards, 
+
+{!Lead.OwnerFullName}
+{!Lead.OwnerEmail}
+{!Lead.OwnerPhone}

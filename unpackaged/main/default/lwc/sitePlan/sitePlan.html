@@ -1,0 +1,18 @@
+<template>
+    <lightning-card variant="Narrow" icon-name="standard:opportunity" title="Templates for the Site">
+        <template if:true ={isNullTemplates}>
+            <lightning-datatable
+                key-field='id'
+                data={opps}
+                onrowselection={handleRowSelection}
+                columns={columns}
+                max-row-selection=1>
+        </lightning-datatable>
+        </template>
+        <template if:false ={isNullTemplates}>
+            <p>No Template is Available for this Site!!</p>
+        </template>
+        
+    </lightning-card>
+    
+</template>

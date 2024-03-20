@@ -1,0 +1,58 @@
+<template>
+    <c-slwc-click-outside func={closePanel}>
+        <nav class={customClass.panel}>
+            <div class="toggle-button" onclick={togglePanel}>
+                <lightning-button-icon class="arrow-icon" icon-name="utility:chevronleft" size="large" if:true={isOpen} variant="bare" tooltip="Collapse"></lightning-button-icon>
+                <lightning-button-icon class="arrow-icon" icon-name="utility:chevronright" size="large" if:false={isOpen} variant="bare" tooltip="Expand"></lightning-button-icon>
+            </div>
+
+            <div class="slds-nav-vertical__section">
+                <h2 class="slds-nav-vertical__title slds-p-horizontal_small">Filters</h2>
+                <ul>
+                    <li class="slds-p-right_small slds-p-left_xx-small">
+                        <div class="slds-form-element slds-form-element_stacked">
+                            <c-slwc-multi-picklist
+                                name="statuses"
+                                label="Status"
+                                selected-by-default={selectedAllByDefault}
+                                object-api-name="sked__Availability__c" 
+                                field-api-name="sked_Custom_Status__c"
+                                onpicklistchange={handleOnChange}
+                                default-values={filters.statuses}
+                                excluded-values={filters.excludedStatuses}>
+                            </c-slwc-multi-picklist>
+                        </div>
+                        <div class="slds-form-element slds-form-element_stacked">
+                            <c-slwc-multi-picklist
+                                name="callOutTypes"
+                                label="Call Out Type"
+                                selected-by-default={selectedAllByDefault}
+                                object-api-name="sked__Job_Allocation__c" 
+                                field-api-name="sked_Call_Out_Type__c"
+                                onpicklistchange={handleOnChange}
+                                default-values={filters.callOutTypes}>
+                            </c-slwc-multi-picklist>
+                        </div>
+                        <div class="slds-form-element slds-form-element_stacked">
+                            <c-slwc-multi-picklist
+                                name="callOutReasonCodes"
+                                label="Call Out Reason Codes"
+                                selected-by-default={selectedAllByDefault}
+                                object-api-name="sked__Job_Allocation__c"
+                                field-api-name="sked_Call_Out_Reason_Code__c"
+                                dependent-field-api-name="sked_Call_Out_Type__c"
+                                onpicklistchange={handleOnChange}
+                                default-values={filters.callOutReasonCodes}
+                                controlling-field-values={filters.callOutTypes}>
+                            </c-slwc-multi-picklist>
+                        </div>
+
+                        <div class="slds-form-element slds-form-element_stacked slds-m-top_medium slds-text-align_right">
+                            <lightning-button label="Save" title="Save" variant="brand" onclick={handleSearch}></lightning-button>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+    </c-slwc-click-outside>
+</template>

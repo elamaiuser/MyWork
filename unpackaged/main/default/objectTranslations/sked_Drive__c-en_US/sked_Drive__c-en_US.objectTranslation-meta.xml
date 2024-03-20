@@ -1,0 +1,303 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObjectTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+    <caseValues>
+        <plural>false</plural>
+        <value>Drives on Calendar</value>
+    </caseValues>
+    <caseValues>
+        <plural>true</plural>
+        <value>Drives on Calendar</value>
+    </caseValues>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <layouts>
+        <layout>Drive Layout</layout>
+        <sections>
+            <label><!-- Contact Information --></label>
+            <section>Contact Information</section>
+        </sections>
+        <sections>
+            <label><!-- Custom Links --></label>
+            <section>Custom Links</section>
+        </sections>
+        <sections>
+            <label><!-- Donors Information --></label>
+            <section>Donors Information</section>
+        </sections>
+        <sections>
+            <label><!-- Drive Header --></label>
+            <section>Drive Header</section>
+        </sections>
+        <sections>
+            <label><!-- Drive Summary --></label>
+            <section>Drive Summary</section>
+        </sections>
+        <sections>
+            <label><!-- Marketing Publicity --></label>
+            <section>Marketing Publicity</section>
+        </sections>
+        <sections>
+            <label><!-- Site Information --></label>
+            <section>Site Information</section>
+        </sections>
+    </layouts>
+    <layouts>
+        <layout>Drive Layout PC</layout>
+        <sections>
+            <label><!-- Contact Information --></label>
+            <section>Contact Information</section>
+        </sections>
+        <sections>
+            <label><!-- Custom Links --></label>
+            <section>Custom Links</section>
+        </sections>
+        <sections>
+            <label><!-- Donors Information --></label>
+            <section>Donors Information</section>
+        </sections>
+        <sections>
+            <label><!-- Drive Header --></label>
+            <section>Drive Header</section>
+        </sections>
+        <sections>
+            <label><!-- Drive Summary --></label>
+            <section>Drive Summary</section>
+        </sections>
+        <sections>
+            <label><!-- Marketing Publicity --></label>
+            <section>Marketing Publicity</section>
+        </sections>
+        <sections>
+            <label><!-- Site Information --></label>
+            <section>Site Information</section>
+        </sections>
+    </layouts>
+    <quickActions>
+        <label><!-- Edit Drive --></label>
+        <name>sked_Edit_Drive</name>
+    </quickActions>
+    <quickActions>
+        <label><!-- Generate Operation Records --></label>
+        <name>sked_Generate_Operation_Records</name>
+    </quickActions>
+    <quickActions>
+        <label><!-- Update Purple Top Drive --></label>
+        <name>sked_Update_Purple_Top_Drive</name>
+    </quickActions>
+    <startsWith>Consonant</startsWith>
+    <validationRules>
+        <errorMessage><!-- A cancelled drive cannot be moved back to another drive status. --></errorMessage>
+        <name>Cancelled_Drive_Cannot_Move_Back</name>
+    </validationRules>
+    <validationRules>
+        <errorMessage><!-- Drive Date change interferes with Taxonomy effective dates. Please cancel and rebook. Any scheduled donors should be managed through the Notifying Donors of Drive Change policy. --></errorMessage>
+        <name>Cannot_change_Drive_Date_across_Taxonomy</name>
+    </validationRules>
+    <validationRules>
+        <errorMessage><!-- Drive Date cannot be changed on a completed/cancelled Drive. --></errorMessage>
+        <name>Cannot_change_Drive_Date_can_com_status</name>
+    </validationRules>
+    <validationRules>
+        <errorMessage><!-- Drive date change is no longer permitted as this drive is already confirmed --></errorMessage>
+        <name>Cannot_change_Drive_Date_confirm_status</name>
+    </validationRules>
+    <validationRules>
+        <errorMessage><!-- The drive status cannot be set to &apos;Complete&apos; because the drive date is greater than today. --></errorMessage>
+        <name>Drive_Dt_Greater_Than_Today_Cannot_Compl</name>
+    </validationRules>
+    <validationRules>
+        <errorMessage><!-- A Drive cannot be moved back to it&apos;s prior Drive Status. --></errorMessage>
+        <name>Drive_Status_Cannot_Move_Back</name>
+    </validationRules>
+    <validationRules>
+        <errorMessage><!-- A non-zero value is required for Projected Registered Donors as this drive&apos;s operation type is &quot;Non Integrated WB&quot; --></errorMessage>
+        <name>Proj_Reg_Donor_Req_For_Non_Intg_WB_FS</name>
+    </validationRules>
+    <validationRules>
+        <errorMessage><!-- 2RBC Projected Procedures has to be not null --></errorMessage>
+        <name>Required_Not_Null_Value_X2RBC_Procedure</name>
+    </validationRules>
+    <validationRules>
+        <errorMessage><!-- Ut Oh, we have hit a snag. An Active BPL is required to move this drive to Confirmed status --></errorMessage>
+        <name>Restrict_DriveConfirm_Without_Active_BPL</name>
+    </validationRules>
+    <validationRules>
+        <errorMessage><!-- Please populate Account Internal Name before moving this mobile drive to &apos;Confirmed&apos; Status --></errorMessage>
+        <name>Restrict_DriveConfirm_wo_AccInternalName</name>
+    </validationRules>
+    <validationRules>
+        <errorMessage><!-- Drive is NOT able to project Double Red Procedures because either the Account does not accept automation or the Site isn&apos;t suitable for automation. --></errorMessage>
+        <name>Restrict_XRBC_Update_AccSite_Designation</name>
+    </validationRules>
+    <validationRules>
+        <errorMessage><!-- Drive End Time must be after the Drive Start Time --></errorMessage>
+        <name>Start_Time_Must_be_Before_End_Time</name>
+    </validationRules>
+    <validationRules>
+        <errorMessage><!-- WB Projected procedures is required, if drive is in Tentative or Confirmed status --></errorMessage>
+        <name>WB_Proj_Req_Tentative_Confirmed_Drive</name>
+    </validationRules>
+</CustomObjectTranslation>

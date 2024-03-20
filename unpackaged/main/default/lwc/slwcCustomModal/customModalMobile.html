@@ -1,0 +1,25 @@
+<template>
+    <div class="container-custom-modal">
+        <header class="modal-custom__header">
+            <div class="slds-grid slds-grid_align-spread slds-gutters slds-m-top--small">
+                <div class="slds-col">
+                    <lightning-button style="font-weight: 100;" variant="base" label={cancelBtnLabel} title={cancelBtnLabel} onclick={closeModal} class="slds-m-right_xx-small"></lightning-button>
+                </div>
+                <div class="slds-col slds-align--absolute-center">
+                    <div class="slds-truncate">
+                        {header}
+                    </div>
+                </div>
+                <div class="slds-col">
+                    <lightning-button variant="base" class="slds-m-top_small slds-text-title_bold" onclick={handleSave} type="submit" name="update" disabled={disabledSave} label={saveBtnLabel}></lightning-button>
+                </div>
+                </div>
+            
+        </header>
+        <div class="slds-border--top content-custom-modal">
+            <div class="slds-modal__content slds-p-around_medium" style="overflow: scroll;height: calc(100vh - 70px);">
+                <slot name="content"></slot>
+            </div>
+        </div>
+    </div>
+</template>

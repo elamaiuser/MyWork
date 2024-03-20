@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Restrict_XRBC_Update_AccSite_Designation</fullName>
+    <active>true</active>
+    <description>Restrict 2RBC Projected Procedures being updated to &gt;0 if associated site isn&#39;t suitable for automation/account doesn&#39;t accept automation</description>
+    <errorConditionFormula>AND(
+NOT(ISNEW()),
+
+sked_Drive_Date__c &gt;= TODAY(),
+
+NOT(ISBLANK(sked_2RBC_Projected_Procedures__c)),
+
+ISCHANGED(sked_2RBC_Projected_Procedures__c),
+
+sked_2RBC_Projected_Procedures__c &gt; 0,
+
+OR(
+And(
+sked_Opportunity__r.Accepts_Automation__c = &quot;No&quot;,
+sked_Opportunity__r.Automation_Suitability__c !=&quot;Suitable&quot;
+),
+And(
+sked_Opportunity__r.Accepts_Automation__c = &quot;No&quot;,
+sked_Opportunity__r.Automation_Suitability__c =&quot;Suitable&quot;
+),
+And(
+sked_Opportunity__r.Accepts_Automation__c = &quot;Yes&quot;,
+sked_Opportunity__r.Automation_Suitability__c !=&quot;Suitable&quot;
+),
+And(
+sked_Opportunity__r.Accepts_Automation__c = Null,
+sked_Opportunity__r.Automation_Suitability__c = Null
+),
+And(
+sked_Opportunity__r.Accepts_Automation__c = Null,
+sked_Opportunity__r.Automation_Suitability__c !=&quot;Suitable&quot;
+)
+)
+)</errorConditionFormula>
+    <errorMessage>Drive is NOT able to project Double Red Procedures because either the Account does not accept automation or the Site isn&#39;t suitable for automation.</errorMessage>
+</ValidationRule>

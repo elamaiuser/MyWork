@@ -1,0 +1,45 @@
+<div style="font-family:Verdana, Helvetica, sans-serif; font-size:10;">
+<p>A new lead has been assigned to your territory:</p>
+
+<h3>Lead Information</h3>
+
+<b>Lead Type: </b>{!Lead.LeadSource}<br/>
+<b>Name: </b>{!Lead.Name}<br/>
+<b>Title: </b>{!Lead.Title}<br/>
+<b>Organization Name: </b>{!Lead.Company}<br/> 
+<b>Email: </b>{!Lead.Email}<br/>
+<b>Phone: </b>{!Lead.Phone}<br/>
+<b>Phone Type: </b>{!Lead.Phone_Type__c}<br/>
+<b>Referrer: </b>{!Lead.Referrer__c} <br/>
+<b>Source: </b>{!Lead.LeadSource}<br/>
+
+<br/>
+<h3>Location / Region Information</h3>
+<b>City: </b>{!Lead.City}<br/>
+<b>State: </b>{!Lead.StateCode}<br/>
+<b>Zip code: </b>{!Lead.PostalCode} <br/>
+<b>AM Portfolio: </b>{!Lead.Lead_AM_Porfolio__c} <br/>
+<b>Collection Operation: </b>{!Lead.Lead_Collection_Operation__c}<br/>
+<b> ARC Region: </b>{!Lead.Lead_Region_Name__c}<br/>
+
+<br/>
+
+<h3>Company / Organization Information:</h3>
+<b>Company Type: </b>{!Lead.Company_Type__c}<br/>
+<b>Sub-Type: </b>{!Lead.Company_Sub_Type__c}<br/>
+<b>Type (if Other): </b>{!Lead.Company_Type_Other__c}<br/>
+<b>Organization/Company Size: </b>{!Lead.Company_Size__c}<br/>
+<b>Age Group (LSL Only): </b>{!Lead.Age_Group__c}<br/>
+<b>Student Type (LSL Only): </b>{!Lead.Student_Type__c}<br/>
+
+
+<br/>
+<h3>Lead Scoring</h3>
+<b>Score (0=poor, 100=great): </b>{!Lead.leadScoring__Lead_Score__c}<br/>
+<b>Has hosted before? </b>{!Lead.Hosted_Before__c}<br/>
+<b>Has other Red Cross relationships: </b>{!Lead.Other_Redcross_Relationships__c}<br/>
+<b>Has personal story? </b>{!Lead.Has_Personal_Story__c}<br/>
+<b>Personal Story: </b>{!Lead.Personal_Story__c}<br/> 
+<b>Comments provided: </b>{!Lead.Comments__c}<br/>
+
+</div>

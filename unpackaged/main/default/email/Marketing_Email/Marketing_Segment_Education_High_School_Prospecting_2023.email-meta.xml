@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<EmailTemplate xmlns="http://soap.sforce.com/2006/04/metadata">
+    <available>true</available>
+    <description>Prospecting email for high schools</description>
+    <encodingKey>ISO-8859-1</encodingKey>
+    <letterhead>ARC_Logo_Test</letterhead>
+    <name>Marketing Segment_Education_High School_Prospecting</name>
+    <style>formalLetter</style>
+    <subject>Partner with the Red Cross to help save lives!</subject>
+    <textOnly>Dear [Insert Name],
+
+I’m writing to invite your school to partner with the American Red Cross through our high school blood program. Your decision to host a Red Cross blood drive teaches your students the important role that blood donations play in ensuring a ready blood supply, which is critical to the treatment of cancer patients, accident victims and unforeseen trauma situations.   
+
+Benefits of a Red Cross High School Blood Program partnership: 
+•	A meaningful opportunity for your students to help save lives. 
+•	Educational presentation, curriculum or classroom activities for a student learn-in-action experience.  
+•	Leadership opportunities for students to take action by volunteering on a blood drive committee or giving blood at your blood drive. 
+•	Your school will be recognized for helping save lives, with the opportunity to earn a scholarship for your school to award to a student recipient! 
+
+I hope you will partner with the Red Cross for a lifesaving blood drive program which can help you accomplish this mission and bring students, faculty and the community together to help change someone’s life with every single donation you collect. 
+
+Contact me today and let’s save lives together. 
+
+Sincerely, 
+[Insert Name]
+
+P.S. Do you have friends or family who are involved in leading student organizations around your community that might be interested in a youth blood program? If so, please forward this email to encourage others to get involved!</textOnly>
+    <type>html</type>
+    <uiType>Aloha</uiType>
+</EmailTemplate>

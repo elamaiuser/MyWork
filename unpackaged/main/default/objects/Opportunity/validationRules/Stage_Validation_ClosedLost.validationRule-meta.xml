@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Stage_Validation_ClosedLost</fullName>
+    <active>false</active>
+    <description>Closed Lost Opty&#39;s can be cloned, but cannot be re opened</description>
+    <errorConditionFormula>(ISPICKVAL(StageName, &quot;Discovery&quot;) ||
+ISPICKVAL(StageName, &quot;Solicitation&quot;) ||
+ISPICKVAL(StageName, &quot;Committed&quot;) 
+) &amp;&amp; (
+ISPICKVAL(PRIORVALUE(StageName), &quot;Withdrawn&quot;) ||
+ISPICKVAL(PRIORVALUE(StageName), &quot;Excluded&quot;) || 
+ISPICKVAL(PRIORVALUE(StageName), &quot;Cancelled&quot;) ||
+ISPICKVAL(PRIORVALUE(StageName), &quot;Closed&quot;)
+)</errorConditionFormula>
+    <errorDisplayField>StageName</errorDisplayField>
+    <errorMessage>A Blood Drive Opportunity that is closed Lost/Won, cannot be re-opened</errorMessage>
+</ValidationRule>

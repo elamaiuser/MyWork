@@ -1,0 +1,17 @@
+<apex:page standardController="Account">
+    <!-- Created by Joe Simpson - 2/8/21 -->
+<!-- This will provide an error message when trying to create a new account from the account tab --> 
+ <!--  <h1>You may only create Mobile Accounts via the lead process and Fixed Site Accounts from the home page.</h1><br/><br/>
+  Please create all new Mobile Accounts from the lead process and Fixed Site Accounts from the home page.
+</apex:page> -->
+
+<style>
+    .red
+    {
+        color:red;
+    }
+  </style> 
+  <br /> 
+  <br />
+  <apex:pageMessage severity="error" escape="false" strength="3" title="<h1 class=red> Create Mobile Accounts from lead conversion and Fixed Site Accounts from the home page.: </h1><br />" summary="Please create all new Mobile Accounts from the lead process and Fixed Site Accounts from the home page." />
+</apex:page>

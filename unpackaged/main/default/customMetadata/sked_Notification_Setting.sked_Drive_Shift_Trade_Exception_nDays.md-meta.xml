@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomMetadata xmlns="http://soap.sforce.com/2006/04/metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <label>Drive Shift Trade Exception 3Days</label>
+    <protected>false</protected>
+    <values>
+        <field>sked_Active__c</field>
+        <value xsi:type="xsd:boolean">false</value>
+    </values>
+    <values>
+        <field>sked_Content_Renderer__c</field>
+        <value xsi:type="xsd:string">driveShiftTradeExceptionRender</value>
+    </values>
+    <values>
+        <field>sked_Custom_Filter__c</field>
+        <value xsi:nil="true" />
+    </values>
+    <values>
+        <field>sked_Custom_Target_Destination__c</field>
+        <value xsi:nil="true" />
+    </values>
+    <values>
+        <field>sked_Destination_Field__c</field>
+        <value xsi:type="xsd:string">sked_Drive__r.sked_Collection_Operation__r.sked_Primary_Scheduler__c</value>
+    </values>
+    <values>
+        <field>sked_Email_From_Address_Field__c</field>
+        <value xsi:nil="true" />
+    </values>
+    <values>
+        <field>sked_Email_Target_Field__c</field>
+        <value xsi:nil="true" />
+    </values>
+    <values>
+        <field>sked_Filter__c</field>
+        <value xsi:type="xsd:string">skedHC__Job_Allocation__r.sked_Drive_Shift_Trade__c != NULL AND skedHC__Job__r.sked_Drive__r.sked_Drive_Date__c &gt; TOMORROW AND skedHC__Job__r.sked_Drive__r.sked_Drive_Date__c &lt;= NEXT_N_DAYS:3 AND (sked_Exception_Code__c = &#39;TURNAROUND_TIME_VIOLATION&#39; OR skedHC__Availability__c != NULL OR skedHC__Job_Allocation__c != NULL OR skedHC__Activity__c != NULL)</value>
+    </values>
+    <values>
+        <field>sked_Notification_Target_Field__c</field>
+        <value xsi:type="xsd:string">sked_Drive__c</value>
+    </values>
+    <values>
+        <field>sked_Notification_Type__c</field>
+        <value xsi:type="xsd:string">salesforcepush</value>
+    </values>
+    <values>
+        <field>sked_Oneoff_Protocol_Field__c</field>
+        <value xsi:nil="true" />
+    </values>
+    <values>
+        <field>sked_Sending_From_Email_Address__c</field>
+        <value xsi:nil="true" />
+    </values>
+    <values>
+        <field>sked_Subject__c</field>
+        <value xsi:type="xsd:string">Drive Shift Trade Exception</value>
+    </values>
+    <values>
+        <field>sked_Target_Field_Value__c</field>
+        <value xsi:nil="true" />
+    </values>
+    <values>
+        <field>sked_Target_Field__c</field>
+        <value xsi:nil="true" />
+    </values>
+    <values>
+        <field>sked_Target_SObject__c</field>
+        <value xsi:type="xsd:string">skedHC__Exception__c</value>
+    </values>
+    <values>
+        <field>sked_Template__c</field>
+        <value xsi:nil="true" />
+    </values>
+    <values>
+        <field>sked_Trigger__c</field>
+        <value xsi:type="xsd:string">Insert</value>
+    </values>
+</CustomMetadata>

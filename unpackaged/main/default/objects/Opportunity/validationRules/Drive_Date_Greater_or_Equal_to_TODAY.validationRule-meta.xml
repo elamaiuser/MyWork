@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Drive_Date_Greater_or_Equal_to_TODAY</fullName>
+    <active>true</active>
+    <description>Prevents users other than System Admins from creating an Opportunity with a Potential Drive Date (Drive_Date__c) before TODAY</description>
+    <errorConditionFormula>ISCHANGED(Drive_Date__c) &amp;&amp; Drive_Date__c  &lt; TODAY()  &amp;&amp; Is_Template__c = false &amp;&amp;
+$Profile.Name != &#39;System Administrator&#39;</errorConditionFormula>
+    <errorDisplayField>Drive_Date__c</errorDisplayField>
+    <errorMessage>Drives may not be scheduled for dates prior to today&#39;s date.</errorMessage>
+</ValidationRule>

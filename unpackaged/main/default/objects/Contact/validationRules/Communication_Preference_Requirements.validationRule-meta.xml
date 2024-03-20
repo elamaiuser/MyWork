@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Communication_Preference_Requirements</fullName>
+    <active>true</active>
+    <description>Communication Preferences multi-picklist field: If Email is selected, Email field must be populated. If Phone is selected, one of the 3 phone fields must be populated. If Text is selected, the Mobile Phone field must be populated.</description>
+    <errorConditionFormula>(
+INCLUDES( Communication_Preference__c , &quot;Email&quot;) &amp;&amp;  ISBLANK( Email )  || 
+INCLUDES( Communication_Preference__c , &quot;Text&quot;) &amp;&amp;  ISBLANK( MobilePhone )  || 
+(INCLUDES( Communication_Preference__c , &quot;Phone&quot;) &amp;&amp;  (ISBLANK( MobilePhone )) &amp;&amp;  (ISBLANK( OtherPhone )) &amp;&amp;  (ISBLANK( HomePhone )))
+) &amp;&amp;
+$Profile.Name != &#39;System Administrator&#39;</errorConditionFormula>
+    <errorDisplayField>Communication_Preference__c</errorDisplayField>
+    <errorMessage>Email field must be populated if &quot;Email&quot; is selected. One of the phone fields must be populated if &quot;Phone&quot; is selected. The Mobile Phone field must be populated if &quot;Text&quot; is selected.</errorMessage>
+</ValidationRule>

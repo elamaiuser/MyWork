@@ -1,0 +1,43 @@
+<template>
+
+    <div class="slds-grid">
+        <div class="slds-col">
+            <c-slwc-drive-scheduling-filters
+                mode={filtersMode}
+                onsearch={handleSearch}
+            >
+            </c-slwc-drive-scheduling-filters>
+        </div>
+        <div class="slds-col slds-scrollable_y slds-p-left_small">
+            <div class="slds-grid">
+                <div class="slds-no-flex slds-col_bump-left slds-p-right_small" style="width: 300px;">
+                    <c-slwc-new-collection-operation-multi-picklist
+                        division-single-select
+                        date-range={collectionOperationDateRange}
+                        default-values={filters.collectionOperationValues}
+                        onchange={handleCollectionOperationChanged}>
+                    </c-slwc-new-collection-operation-multi-picklist>
+                </div>
+
+                <div class="slds-p-right_small">
+                    <c-slwc-month-picker 
+                        unique-key="driveSchedulingConsole" 
+                        label="Selected Month"
+                        onmonthchange={handleOnMonthChanged}
+                        default-value={filters.selectedMonth}>
+                    </c-slwc-month-picker>
+                </div>
+            </div>
+            <div class="slds-grow">
+                <c-slwc-drive-calendar
+                    display-mode={displayMode}
+                    filters={filters}
+                    is-readonly={isReadonly}
+                    onselectdate={handleSelectDate}
+                    onselectweek={handleSelectWeek}>
+                </c-slwc-drive-calendar>
+            </div>
+        </div>
+    </div>
+    
+</template>

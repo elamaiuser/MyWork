@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+        <label><!-- Linked Drive Type --></label>
+        <name>sked_Linked_Drive_Type__c</name>
+    </CustomFieldTranslation>

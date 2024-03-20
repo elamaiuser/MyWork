@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Targeted_Date_Greater_or_Equal_to_TODAY</fullName>
+    <active>false</active>
+    <description>Prevents users from creating an Opportunity with a Potential Targeted Ask Date before TODAY</description>
+    <errorConditionFormula>ISCHANGED(Targeted_Ask_Date__c) &amp;&amp;
+Targeted_Ask_Date__c &lt; TODAY() &amp;&amp;
+RecordType.Name = &quot;Mobile Opp&quot; &amp;&amp;
+Is_Template__c != True</errorConditionFormula>
+    <errorDisplayField>Targeted_Ask_Date__c</errorDisplayField>
+    <errorMessage>Targeted Ask Date cannot be before today</errorMessage>
+</ValidationRule>

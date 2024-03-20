@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Workflow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fieldUpdates>
+        <fullName>Update_Lead_Queue_to_Market_Manager</fullName>
+        <description>Changes the owner of the Lead to the Market Manager Queue when the status of the lead is changed to &quot;Potential Feeder Group&quot;</description>
+        <field>OwnerId</field>
+        <lookupValue>Market_Manager_Lead_Queue</lookupValue>
+        <lookupValueType>Queue</lookupValueType>
+        <name>Update Lead Queue to Market Manager</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>LookupValue</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Update_Lead_Record_Type_Market_Manager</fullName>
+        <description>Updates Lead Record Type to Market Manager Record Type</description>
+        <field>RecordTypeId</field>
+        <lookupValue>Market_Manager</lookupValue>
+        <lookupValueType>RecordType</lookupValueType>
+        <name>Update Lead Record Type Market Manager</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>LookupValue</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <rules>
+        <fullName>Update Lead to Market Manager</fullName>
+        <actions>
+            <name>Update_Lead_Queue_to_Market_Manager</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <actions>
+            <name>Update_Lead_Record_Type_Market_Manager</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <criteriaItems>
+            <field>Lead.Status</field>
+            <operation>equals</operation>
+            <value>Potential Feeder Group</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Lead.RecordTypeId</field>
+            <operation>equals</operation>
+            <value>Lead,LSL</value>
+        </criteriaItems>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+</Workflow>

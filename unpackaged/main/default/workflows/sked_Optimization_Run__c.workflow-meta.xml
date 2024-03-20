@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Workflow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fieldUpdates>
+        <fullName>sked_Optimization_Run_Description</fullName>
+        <field>sked_Message__c</field>
+        <formula>sked_Message__c &amp; &#39; -- &#39; &amp; &#39;Timeout&#39;</formula>
+        <name>Optimization Run Description</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>sked_Optimization_Run_Error</fullName>
+        <field>sked_Status__c</field>
+        <literalValue>Error</literalValue>
+        <name>Optimization Run Error</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <rules>
+        <fullName>Optimization Run Timeout</fullName>
+        <active>true</active>
+        <criteriaItems>
+            <field>sked_Optimization_Run__c.sked_Status__c</field>
+            <operation>equals</operation>
+            <value>In Progress</value>
+        </criteriaItems>
+        <description>Handle timeout for Optimization that run too long</description>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+        <workflowTimeTriggers>
+            <actions>
+                <name>sked_Optimization_Run_Description</name>
+                <type>FieldUpdate</type>
+            </actions>
+            <actions>
+                <name>sked_Optimization_Run_Error</name>
+                <type>FieldUpdate</type>
+            </actions>
+            <offsetFromField>sked_Optimization_Run__c.sked_Timeout_At__c</offsetFromField>
+            <timeLength>0</timeLength>
+            <workflowTimeTriggerUnit>Hours</workflowTimeTriggerUnit>
+        </workflowTimeTriggers>
+    </rules>
+</Workflow>

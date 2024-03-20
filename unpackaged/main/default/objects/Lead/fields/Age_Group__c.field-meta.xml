@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Age_Group__c</fullName>
+    <externalId>false</externalId>
+    <label>Age Group</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <type>Picklist</type>
+    <valueSet>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>16 - 18</fullName>
+                <default>false</default>
+                <label>16 - 18</label>
+            </value>
+            <value>
+                <fullName>19 - 21</fullName>
+                <default>false</default>
+                <label>19 - 21</label>
+            </value>
+            <value>
+                <fullName>21+</fullName>
+                <default>false</default>
+                <label>21+</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

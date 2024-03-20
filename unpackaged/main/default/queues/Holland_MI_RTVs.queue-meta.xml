@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Queue xmlns="http://soap.sforce.com/2006/04/metadata">
+    <doesSendEmailToMembers>false</doesSendEmailToMembers>
+    <name>Holland MI: RTVs</name>
+    <queueMembers>
+        <users>
+            <user>amanda.carr@redcross.org</user>
+            <user>brandy.hunt@redcross.org</user>
+            <user>chelsea.palazzolo@redcross.org</user>
+            <user>dennis.sandoval@redcross.org.biomed</user>
+            <user>jennifer.killewald@redcross.org</user>
+            <user>kelly.weber@redcross.org.biomed</user>
+            <user>melanie.bemiss@redcross.org</user>
+            <user>melanie.richards@redcross.org</user>
+            <user>rachel.wilkinson@redcross.org.biomed</user>
+            <user>serena.bricker@redcross.org</user>
+            <user>stephanie.wright@redcross.org</user>
+            <user>trisha.smith@redcross.org</user>
+        </users>
+    </queueMembers>
+    <queueSobject>
+        <sobjectType>sked__Location__c</sobjectType>
+    </queueSobject>
+</Queue>

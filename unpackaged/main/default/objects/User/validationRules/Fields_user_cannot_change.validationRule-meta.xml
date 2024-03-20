@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Fields_user_cannot_change</fullName>
+    <active>true</active>
+    <description>List of fields that user cannot change, only sysadmin should be able to change these.</description>
+    <errorConditionFormula>AND(
+$Profile.Name != &#39;System Administrator&#39;,
+ISCHANGED(TimeZoneSidKey)
+
+)</errorConditionFormula>
+    <errorMessage>If you need to any change on Time Zone fields, please contact system admin.</errorMessage>
+</ValidationRule>

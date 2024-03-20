@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>CollectionOperantionRequired</fullName>
+    <active>true</active>
+    <errorConditionFormula>ISPICKVAL( sked_Type__c , &#39;Collection Operation&#39; ) &amp;&amp;  ISNULL( sked_Collection_Operation__c )</errorConditionFormula>
+    <errorMessage>Collection Operation is required.</errorMessage>
+</ValidationRule>

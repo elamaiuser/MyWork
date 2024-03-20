@@ -1,0 +1,22 @@
+.slds-progress-bar_container {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 90004;
+    background: var(--slds-c-backdrop-color-background,var(--sds-c-backdrop-color-background,var(--slds-g-color-neutral-10-opacity-50,rgba(8,7,7,.6))));
+    visibility: visible;
+    opacity: 1;
+    transition: opacity .2s ease, visibility 0s;
+    transition-delay: 0s, .3s;
+}
+
+.slds-progress-bar_wrapper {
+    width: 24rem;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    background-color: #fff;
+    transform: translate(-50%, -50%);
+}

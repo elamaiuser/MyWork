@@ -1,0 +1,98 @@
+<template>
+    <template if:true={displaySlotsData.length}>
+        <div class="slds-grid">
+            <div class="slds-grow">
+                <div class="slds-grid slds-wrap slds-grid_pull-padded">
+                    <template if:false={masterData.fieldReadonlyMap.driveShiftSlots}>
+                        <div if:true={isMobile} class="slds-grid">
+                            <div class="slds-col slds-p-around_small">
+                                <lightning-button label="Reset Appointments" variant="neutral" icon-name="utility:refresh" icon-position="left" onclick={resetAppointments}></lightning-button>
+                                <lightning-button label="Re-generate Appointments" variant="neutral" icon-name="utility:refresh" icon-position="left" onclick={regenerateAppointments}></lightning-button>
+                            </div>
+                        </div>
+                    </template>
+                    <template for:each={displaySlotsData} for:item="data" if:true={data.show}>
+                        <div class="slds-col slds-medium-size_1-of-2 slds-large-size_1-of-2 slds-size_1-of-1 slds-p-horizontal_small slds-p-bottom_small" key={data.label}>
+                            <article class="slds-card">
+                                <div class="slds-card__header slds-grid">
+                                    <header class="slds-media slds-media_center slds-has-flexi-truncate">
+                                        <div class="slds-media__body">
+                                            <h2 class="slds-card__header-title">
+                                                <a href="javascript:void(0);" class="slds-card__header-link slds-truncate" title={data.label}>
+                                                    <span>{data.label}</span>
+                                                </a>
+                                            </h2>
+                                        </div>
+                                        <template if:false={masterData.fieldReadonlyMap.driveShiftSlots}>
+                                            <div class="slds-no-flex" if:true={isCreateable}>
+                                                <button class="slds-button slds-button_neutral" data-value={data.slotType} onclick={addAppointment}>New Appointment</button>
+                                            </div>
+                                        </template>
+                                    </header>
+                                </div>
+                                <div class="slds-card__body slds-card__body_inner">
+                                    <div class="slds-scrollable_y" style="height: 30rem; padding: 2px">
+                                        <ul class={data.class}>
+                                            <template for:each={data.slots} for:item="slot">
+                                                <li key={slot.key} class={slot.class}>
+                                                    <div if:true={slot.startTime} class="slds-grid slds-grid_align-spread slot available-block">
+                                                        <div class="slot-label">
+                                                            <div class="slds-text-title slds-p-right_large" if:true={slot.label}>
+                                                                {slot.label}
+                                                            </div>
+                                                            <div class="slds-text-title time-label">
+                                                                <c-slwc-time-input-with-timezone 
+                                                                read-only
+                                                                input-date={drive.driveDate}
+                                                                timezone={masterData.timezoneSidId}>
+                                                                    <lightning-formatted-date-time slot="input" value={slot.startTime} time-zone={masterData.timezoneSidId} hour="2-digit" minute="2-digit">
+                                                                    </lightning-formatted-date-time>
+                                                                </c-slwc-time-input-with-timezone>
+                                                            </div>
+                                                        </div>
+
+                                                        <template if:true={slot.recurrenceDates}>
+                                                            <div class="slot-recurrence-dates" if:true={slot.recurrenceDates.length}>
+                                                                <span>+{slot.recurrenceDates.length}</span>
+                                                            </div>
+                                                        </template>
+                                                        
+                                                        <template if:false={masterData.fieldReadonlyMap.driveShiftSlots}>
+                                                            <div class="slot-actions">
+                                                                <lightning-icon if:true={slot.locked} class="action slds-current-color unlock-icon" icon-name="utility:unlock" size="xx-small" data-value={slot.key} onclick={lockAppointment}></lightning-icon>
+                                                                <lightning-icon if:false={slot.locked} class="action slds-current-color lock-icon" icon-name="utility:lock" size="xx-small" data-value={slot.key} onclick={lockAppointment}></lightning-icon>
+                                                                <lightning-icon if:true={isUpdateable} class="action slds-current-color edit-icon" icon-name="utility:edit" size="xx-small" data-value={slot.key} onclick={editAppointment}></lightning-icon>
+                                                                <lightning-icon if:true={isDeletable} class="action slds-current-color delete-icon" icon-name="utility:delete" size="xx-small" data-value={slot.key} onclick={deleteAppointment}></lightning-icon>
+                                                            </div>
+                                                        </template>
+                                                    </div>
+                                                </li>
+                                            </template>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <footer class="slds-card__footer slds-text-align_left slds-text-color_weak">
+                                    <div class="slds-m-right_medium slds-float_left">Default: {data.defaultSlots}.</div>
+                                    <div class="slds-m-right_medium">Slots Above Default: {data.slotsAboveDefault}.</div>
+                                </footer>
+                            </article>
+                        </div>
+                    </template>
+                </div>
+            </div>
+            <template if:false={masterData.fieldReadonlyMap.driveShiftSlots}>
+                <div if:false={isMobile} class="side-bar slds-no-flex">
+                    <h3 class="slds-section-title--divider">Actions</h3>
+                    <div class="slds-grid">
+                        <div class="slds-col slds-p-vertical_small">
+                            <lightning-button label="Reset" variant="neutral" icon-name="utility:refresh" icon-position="left" onclick={resetAppointments}></lightning-button>
+                            <lightning-button class="slds-m-left_x-small" label="Re-generate" variant="neutral" icon-name="utility:refresh" icon-position="left" onclick={regenerateAppointments}></lightning-button>
+                        </div>
+                    </div>
+                    
+                    <c-slwc-appointment-modal compact-view drive={drive} master-data={masterData}></c-slwc-appointment-modal>
+                </div>
+            </template>
+        </div>
+    </template>
+</template>

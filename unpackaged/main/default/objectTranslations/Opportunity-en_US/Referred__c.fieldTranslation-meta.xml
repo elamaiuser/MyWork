@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+        <help><!-- Please select who referred you to this Opportunity/Lead? --></help>
+        <label><!-- Referred? --></label>
+        <name>Referred__c</name>
+        <picklistValues>
+            <masterLabel>BLOOD</masterLabel>
+            <translation><!-- BLOOD --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>BOARD</masterLabel>
+            <translation><!-- BOARD --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Development</masterLabel>
+            <translation><!-- Development --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Human Services</masterLabel>
+            <translation><!-- Human Services --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Other</masterLabel>
+            <translation><!-- Other --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>PHSS</masterLabel>
+            <translation><!-- PHSS --></translation>
+        </picklistValues>
+    </CustomFieldTranslation>

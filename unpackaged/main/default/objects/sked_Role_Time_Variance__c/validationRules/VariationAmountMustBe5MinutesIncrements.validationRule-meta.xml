@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>VariationAmountMustBe5MinutesIncrements</fullName>
+    <active>true</active>
+    <errorConditionFormula>MOD( sked_Variation_Amount__c ,5) != 0</errorConditionFormula>
+    <errorMessage>Variation Amounts must be in 5 minutes increments.</errorMessage>
+</ValidationRule>

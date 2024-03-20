@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CompactLayout xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Focus_Field</fullName>
+    <fields>Subject</fields>
+    <fields>WhatId</fields>
+    <fields>OwnerId</fields>
+    <fields>ActivityDate</fields>
+    <fields>Status</fields>
+    <label>Focus Field</label>
+</CompactLayout>

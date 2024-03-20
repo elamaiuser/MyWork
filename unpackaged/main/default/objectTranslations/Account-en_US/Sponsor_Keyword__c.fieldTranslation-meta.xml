@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+        <help><!-- Keywords are: maximum 50 characters; part of the URL link; used to search for drives on RCB.org.; not required to be unique; not case sensitive; not numbers; not ‘and’, ‘or’, ‘left’, ‘right’ as standalone words; not special characters (, ), *, ?, %,!, ‘,” --></help>
+        <label><!-- Sponsor Keyword --></label>
+        <name>Sponsor_Keyword__c</name>
+    </CustomFieldTranslation>

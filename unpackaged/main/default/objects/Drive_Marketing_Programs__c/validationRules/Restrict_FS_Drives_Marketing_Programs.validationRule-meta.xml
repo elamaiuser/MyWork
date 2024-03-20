@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Restrict_FS_Drives_Marketing_Programs</fullName>
+    <active>true</active>
+    <description>Fixed Site Drives should not be assigned Marketing Programs. This rule prevents a user from changing a Drive Marketing Program assigned to a Mobile Drive  to a FS Drivet.</description>
+    <errorConditionFormula>Blood_Drive_Opportunity__r.RecordType.Name = &quot;Fixed Site&quot;</errorConditionFormula>
+    <errorMessage>Marketing Programs may only be assigned to Mobile Drives.</errorMessage>
+</ValidationRule>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Next_Scheduled_Drive__c</fullName>
+    <description>Number of days until the next drive on the production calendar in the Discovery, Solicited, Committed or Closed opportunity stage.</description>
+    <externalId>false</externalId>
+    <label>Next Scheduled Drive</label>
+    <summarizedField>Opportunity.Drive_Date__c</summarizedField>
+    <summaryFilterItems>
+        <field>Opportunity.Drive_Status__c</field>
+        <operation>equals</operation>
+        <value>System Generated, Tentative, Confirmed</value>
+    </summaryFilterItems>
+    <summaryForeignKey>Opportunity.AccountId</summaryForeignKey>
+    <summaryOperation>min</summaryOperation>
+    <trackHistory>false</trackHistory>
+    <type>Summary</type>
+</CustomField>

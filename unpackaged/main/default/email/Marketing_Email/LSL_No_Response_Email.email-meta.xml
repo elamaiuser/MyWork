@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<EmailTemplate xmlns="http://soap.sforce.com/2006/04/metadata">
+    <available>true</available>
+    <description>Email follow up for an LSL Lead who is not responding</description>
+    <encodingKey>ISO-8859-1</encodingKey>
+    <letterhead>ARC_Logo_Test</letterhead>
+    <name>Marketing Segment_Education_LSL_Booking No Response_2023</name>
+    <style>freeForm</style>
+    <subject>Following Up</subject>
+    <textOnly>Hello [NAME],
+
+It has been some time since I have heard from you regarding hosting a blood drive through the American Red Cross Leaders Save Lives program.  I wanted to follow up to see if you are still interested in this leadership and scholarship opportunity for students. 
+
+While I hope you have not reconsidered joining our network of lifesaving partners, I do understand that things can get busy and now may not be the best time to connect. If you could kindly reply to this email and let me know if you are still interested in hosting a blood drive, I will be happy to reach out to you again at a future time.  
+
+If you would like to chat please feel free to give me call, anytime --- my number is below. 
+
+Kind regards, 
+[NAME]</textOnly>
+    <type>html</type>
+    <uiType>Aloha</uiType>
+</EmailTemplate>

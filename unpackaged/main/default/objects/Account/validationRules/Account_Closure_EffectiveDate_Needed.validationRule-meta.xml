@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Account_Closure_EffectiveDate_Needed</fullName>
+    <active>true</active>
+    <description>If the &quot;Status&quot; field picklist value is &quot;Closed,&quot; the &quot;Effective Date&quot; field must be populated.</description>
+    <errorConditionFormula>IF(RecordType.DeveloperName==&#39;Fixed_Site_Account&#39;, 
+ISPICKVAL(Account_Status__c, &quot;Closed&quot;)&amp;&amp; 
+ISBLANK(Defunct_Effective_Date__c), 
+false)</errorConditionFormula>
+    <errorDisplayField>Defunct_Effective_Date__c</errorDisplayField>
+    <errorMessage>If the Account Status is &quot;Closed,&quot; you must provide a effective closure date</errorMessage>
+</ValidationRule>

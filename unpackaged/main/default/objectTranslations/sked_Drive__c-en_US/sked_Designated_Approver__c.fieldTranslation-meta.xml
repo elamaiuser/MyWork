@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+        <label><!-- Designated Approver --></label>
+        <name>sked_Designated_Approver__c</name>
+        <relationshipLabel><!-- Drives on Calendar (Designated Approver) --></relationshipLabel>
+    </CustomFieldTranslation>

@@ -1,0 +1,82 @@
+<template>
+    <div class={customClass.modal}>
+        <lightning-spinner if:true={showSpinner} class="spins" size="medium"></lightning-spinner>
+        <div class="slds-align-content-center slds-col width-450">
+            <div class="slds-clearfix slds-page-header slds-page-header_record-home fixed-position " style="margin-bottom: var(--lwc-cardSpacingMargin);">
+                <div class="slds-page-header__row slds-grid_vertical-align-center">
+                    <div class="slds-page-header__col-title">
+                        <div class="slds-media">
+                            <div class="slds-media__figure">
+                                <lightning-icon icon-name="standard:metrics" size="medium"></lightning-icon>
+                            </div>
+                            <div class="slds-media__body">
+                                <div class="slds-page-header__name">
+                                    <div class="slds-page-header__name-title">
+                                        <h1>
+                                            <span class="slds-page-header__title slds-truncate">{stepLabel}</span>
+                                        </h1>
+                                    </div>
+                                </div>
+                                <p class="slds-page-header__name-meta">{stepHeader}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="slds-no-flex">
+                        <div class="slds-grid">
+                            <div class="slds-no-flex">
+                                <ul class="slds-button-group-row">
+                                    <li if:true={showPrevious} class="slds-button-group-item">
+                                        <button onclick={handlePrev}
+                                            class="slds-button slds-button_neutral">Previous</button>
+                                    </li>
+                                    <li if:false={showPrevious} class="slds-button-group-item">
+                                        <button onclick={handleClose}
+                                            class="slds-button slds-button_neutral">Cancel</button>
+                                    </li>
+                                    <li class="slds-button-group-item">
+                                        <button disabled={disabledNext} class="slds-button slds-button_brand"
+                                            onclick={handleNext}>Next</button>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="slds-tabs_card slds-scrollable--y height-custom">
+                <lightning-progress-indicator current-step={step} type="base" variant="base">
+                    <lightning-progress-step for:each={listStep} for:item="step" key={step.value} label={step.label} value={step.value}></lightning-progress-step>
+                </lightning-progress-indicator>
+                <div class="slds-m-top--large slds-align--absolute-center slds-grid position-relative">
+                    <div class="slds-grid slds-grid_vertical width-100 height-100">
+                        <div
+                            class="slds-p-around_small slds-shrink-none slds-border--bottom slds-border--left slds-border--right slds-border--top">
+                            <template if:true={isStep1}>
+                                <lightning-radio-group 
+                                    name="type"
+                                    label="Which record type do you want to trade?"
+                                    options={typeOptions}
+                                    value={model.requestingStaffTradingType}
+                                    required
+                                    type="radio"
+                                    onchange={handleTypeChanged}></lightning-radio-group>
+                            </template>
+
+                            <template if:true={isStep4}>
+                                <lightning-radio-group 
+                                    name="type"
+                                    label="Which record type do you want to trade?"
+                                    options={typeOptions}
+                                    value={model.tradingStaffTradingType}
+                                    required
+                                    type="radio"
+                                    onchange={handleTypeChanged}></lightning-radio-group>
+                            </template>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>

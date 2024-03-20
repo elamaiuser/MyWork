@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Proj_Reg_Donor_Req_For_Non_Intg_WB_FS</fullName>
+    <active>true</active>
+    <description>Projected Registered Donors is required for Fixed Site Drives having Operation Type as &quot;Non Integrated WB&quot;</description>
+    <errorConditionFormula>AND(
+ISPICKVAL(sked_Type_of_Drive__c, &quot;Fixed Site&quot;),
+OR(sked_Projected_Registered_Donors__c == 0, ISBLANK(sked_Projected_Registered_Donors__c)),
+sked_Operation_Type__c == &quot;Non Integrated WB&quot;)</errorConditionFormula>
+    <errorMessage>A non-zero value is required for Projected Registered Donors as this drive&#39;s operation type is &quot;Non Integrated WB&quot;</errorMessage>
+</ValidationRule>

@@ -1,0 +1,42 @@
+<template>
+
+    <div class="slds-form-element">
+        <label if:true={showLabel} class="slds-form-element__label">{label}</label>
+        <c-slwc-click-outside func={closeDropdown}>
+            <div class="slds-form-element__control">
+                <div class="slds-button-group">
+                    <div class="slds-combobox_container">
+                        <div class="slds-combobox slds-dropdown-trigger slds-dropdown-trigger_click" role="combobox">
+                            <div class="slds-combobox__form-element slds-input-has-icon slds-input-has-icon_right" role="none">
+                                <input type="text" class="slds-input slds-combobox__input slds-combobox__input-value" role="textbox" placeholder="Select a date range" readonly 
+                                    value={dateRangeLabel} onclick={togglePicker}/>
+                                <lightning-icon icon-name="utility:event" size="x-small" class="slds-icon_container slds-icon-utility-down slds-input__icon slds-input__icon_right"></lightning-icon>
+                            </div>
+                            <div class="slds-datepicker slds-dropdown slds-dropdown_right" role="dialog">
+                                <div class="slds-datepicker__filter">
+                                    <div class="slds-grid slds-p-horizontal_small">
+                                        <lightning-input type="date" name="startDate" label="Start Date" value={tempDateRange.startDate} onchange={handletempDateRangeChange} autocomplete="off" required>
+                                        </lightning-input>
+                                    </div>
+                                    <div class="slds-grid slds-p-horizontal_small slds-m-top_x-small">
+                                        <lightning-input type="date" name="endDate" label="End Date" value={tempDateRange.endDate} onchange={handletempDateRangeChange} autocomplete="off" required>
+                                        </lightning-input>   
+                                    </div>
+                                </div>
+                                <div class="slds-grid slds-grid_align-end slds-m-top_xxx-small slds-p-horizontal_medium slds-p-vertical_xx-small">
+                                    <button class="slds-button slds-m-left_small" onclick={applyDateRange} disabled={disableApply}>
+                                        <lightning-icon class="slds-button__icon slds-current-color slds-button__icon_left"
+                                            icon-name="utility:check" size="xx-small"></lightning-icon>
+                                        Done
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+        </c-slwc-click-outside>
+    </div>
+    
+</template>

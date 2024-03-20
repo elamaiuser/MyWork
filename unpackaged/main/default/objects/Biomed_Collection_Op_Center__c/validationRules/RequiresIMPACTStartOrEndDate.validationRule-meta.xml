@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>RequiresIMPACTStartOrEndDate</fullName>
+    <active>true</active>
+    <errorConditionFormula>sked_IMPACT__c == TRUE &amp;&amp; ISNULL(sked_IMPACT_Start_Date__c) &amp;&amp; ISNULL(sked_IMPACT_End_Date__c)</errorConditionFormula>
+    <errorMessage>IMPACT Start Date or End Date needs to set if IMPACT is set.</errorMessage>
+</ValidationRule>

@@ -1,0 +1,26 @@
+<template>
+    <div for:each={buildListRender} for:item="item" key={item.key} class="slds-border--bottom slds-border--top">
+        <dl class="slds-border--bottom slds-list_stacked slds-p-around--x-small" for:each={item.value} for:item="itemSub" key={itemSub.key}>
+            <dt class="slds-item_label slds-text-color_weak slds-truncate slds-text-title_caps" >{itemSub.label}</dt>
+            <dd if:true={itemSub.isText} class="slds-item_detail slds-truncate">{itemSub.value}</dd>
+            <template if:true={itemSub.isDrivebag}>
+                <dd  class="slds-item_detail slds-truncate" for:each={itemSub.value} for:item="bag" key={bag.key}>{bag.bagType} ({bag.quantity})</dd>
+            </template>
+            <div if:true={itemSub.isAction} class="slds-grid slds-grid--align-end slds-m-around--xx-small">
+                <lightning-button-group>
+                    <template for:each={itemSub.typeAttributes.rowActions} for:item="itemAction" >
+                        <lightning-button 
+                            variant={itemAction.variant} 
+                            icon-name={itemAction.icon} 
+                            key={itemAction.name} 
+                            data-value={itemSub.value}
+                            label={itemAction.label} 
+                            name={itemAction.name} 
+                            onclick={itemSub.typeAttributes.clickAction} >
+                        </lightning-button>
+                    </template>
+                </lightning-button-group>
+              </div>
+        </dl>
+    </div>
+</template>

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomMetadata xmlns="http://soap.sforce.com/2006/04/metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <label>Get Time Off Report</label>
+    <protected>false</protected>
+    <values>
+        <field>sked_Active__c</field>
+        <value xsi:type="xsd:boolean">true</value>
+    </values>
+    <values>
+        <field>sked_Endpoint__c</field>
+        <value xsi:type="xsd:string">https://wd2-impl-services1.workday.com/ccx/service/customreport2/americanredcross1/Skedulo+ISU/Web_Services_-_EE_Time_Off_Report_Skedulo</value>
+    </values>
+    <values>
+        <field>sked_Namespace__c</field>
+        <value xsi:type="xsd:string">urn:com.workday.report/Web_Services_-_EE_Time_Off_Report_Skedulo</value>
+    </values>
+    <values>
+        <field>sked_Template__c</field>
+        <value xsi:type="xsd:string">&lt;?xml version =&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
+&lt;env:Envelope xmlns:env=&quot;http://schemas.xmlsoap.org/soap/envelope/&quot;
+xmlns:wd=&quot;urn:com.workday.report/Web Services - Web Services - EE Time Off Report_Skedulo&quot;
+xmlns:wsse=&quot;http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd&quot;&gt;
+&lt;env:Header /&gt;
+&lt;env:Body&gt;
+&lt;wd:Execute_Report&gt;
+&lt;wd:Report_Parameters&gt;
+&lt;wd:Worker wd:Descriptor=&quot;Staff&quot;&gt;
+&lt;wd:ID wd:type=&quot;Employee_ID&quot;&gt;%EMPLOYEE_ID%&lt;/wd:ID&gt;
+&lt;/wd:Worker&gt;
+&lt;wd:begin_date&gt;%START_DATE%&lt;/wd:begin_date&gt;
+&lt;wd:end_date&gt;%END_DATE%&lt;/wd:end_date&gt;
+&lt;/wd:Report_Parameters&gt;
+&lt;/wd:Execute_Report&gt;
+&lt;/env:Body&gt;
+&lt;/env:Envelope&gt;</value>
+    </values>
+</CustomMetadata>

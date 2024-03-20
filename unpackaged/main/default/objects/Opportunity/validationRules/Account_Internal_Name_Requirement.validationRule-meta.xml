@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Account_Internal_Name_Requirement</fullName>
+    <active>true</active>
+    <description>The Account Internal Name field must be populated in order to move the Opp to &quot;Closed&quot;</description>
+    <errorConditionFormula>NOT(ISNEW()) &amp;&amp;
+Account.Internal_Name__c = null &amp;&amp;
+RecordType.Name = &quot;Mobile Opp&quot; &amp;&amp;
+ISPICKVAL(StageName, &quot;Closed&quot;)</errorConditionFormula>
+    <errorDisplayField>StageName</errorDisplayField>
+    <errorMessage>Since this is a mobile opportunity, you may not move it to the &quot;Closed&quot; Stage without the Account Internal Name field field populated.</errorMessage>
+</ValidationRule>

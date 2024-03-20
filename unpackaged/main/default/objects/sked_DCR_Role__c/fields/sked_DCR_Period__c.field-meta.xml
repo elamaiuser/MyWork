@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>sked_DCR_Period__c</fullName>
+    <externalId>false</externalId>
+    <label>DCR Period</label>
+    <referenceTo>sked_DCR_Period__c</referenceTo>
+    <relationshipLabel>DCR Roles</relationshipLabel>
+    <relationshipName>sked_DCR_Roles</relationshipName>
+    <relationshipOrder>0</relationshipOrder>
+    <reparentableMasterDetail>false</reparentableMasterDetail>
+    <trackTrending>false</trackTrending>
+    <type>MasterDetail</type>
+    <writeRequiresMasterRead>false</writeRequiresMasterRead>
+</CustomField>

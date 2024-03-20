@@ -1,0 +1,1331 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<RecordType xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Biomed_Recruitment</fullName>
+    <active>true</active>
+    <businessProcess>Biomed Recruitment Lead Process</businessProcess>
+    <description>Default record type for manually created leads.</description>
+    <label>Biomed Recruitment</label>
+    <picklistValues>
+        <picklist>Account_Type__c</picklist>
+        <values>
+            <fullName>Amusement %2F Recreational</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Business</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Civic %2F Community</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Education</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Government</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Health</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Media</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Military</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Religious</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Age_Group__c</picklist>
+        <values>
+            <fullName>16 - 18</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>19 - 21</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>21%2B</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Blood_Drive_Source__c</picklist>
+        <values>
+            <fullName>BSFApplication</fullName>
+            <default>true</default>
+        </values>
+        <values>
+            <fullName>BSFStandard</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Campaign_member_status__c</picklist>
+        <values>
+            <fullName>Responded</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Sent</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Company_Size__c</picklist>
+        <values>
+            <fullName>1001 - 1500</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>1501 - more</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>201 - 500</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>501 - 1000</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Less than 200</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Company_Sub_Type__c</picklist>
+        <values>
+            <fullName>Alumni Greek System</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Assisted Living%2FLong-Term Care</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Civic Group %28i%2Ee - Elks Lodge%2C Rotary Club%2C Chamber of Commerce%29</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Community College</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Corporation</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Elementary School</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Government Agency</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Health and Safety %28Fire%2C Police %26 EMS%29</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>High School</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Hospital Group</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Local Community %28i%2Ee%2E - Boys and Girl Scout%2C Local Township%2C Fraternal Order of Police%2C etc%2E%29</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Local business</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Manufacturing</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Medical Clinic%2FOffice</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Middle School</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Military Installation %28Army%2CMarines%2C Navy%2C Air Force%2C Reserve%2C National Guard%29</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>NGO %28Non-Governmental Organization%29</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Other</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Pre-School%2FDaycare</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Print Media</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Private School %28K-12%29</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Radio</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Retail</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Television</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Traditional College%2FUniversity</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>University Greek System</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Urgent Care</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Company_Type__c</picklist>
+        <values>
+            <fullName>Business</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Church%2FFaith-Based Group</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Civic%2FCommunity</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Education</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Healthcare</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Media Outlet</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Military%2FGovernment%2FNGO</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Other</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Current_Blood_Donor__c</picklist>
+        <values>
+            <fullName>No</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Yes</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Has_Personal_Story__c</picklist>
+        <values>
+            <fullName>No</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Yes</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Hosted_Before__c</picklist>
+        <values>
+            <fullName>No</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Not Sure</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Yes</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Industry</picklist>
+        <values>
+            <fullName>Agriculture</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Apparel</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Banking</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Biotechnology</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Chemicals</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Communications</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Construction</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Consulting</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Education</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Electronics</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Energy</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Engineering</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Entertainment</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Environmental</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Finance</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Food %26 Beverage</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Government</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Healthcare</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Hospitality</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Insurance</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Machinery</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Manufacturing</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Media</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Not For Profit</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Other</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Recreation</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Retail</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Shipping</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Technology</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Telecommunications</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Transportation</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Utilities</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Industry_Code__c</picklist>
+        <values>
+            <fullName>AME</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Administration %2F District Office</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Advertising %2F Marketing</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Agriculture</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Air Force</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Air Force Reserve</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Air Guard</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Airline %2F Airport</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Ambulance %2F EMS</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>American Legion</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Amish</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Apartments</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Army</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Army National Guard</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Army Reserve</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Baptist</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Brethren</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Buddhist</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Business Membership Organization</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Call Center</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Care Facilities</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Casino</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Catholic</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Chaldean</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Christian</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Church of Christ</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Church of God</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>City %2F Town</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Civitan</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Clinic</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Coast Guard</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Coast Guard Reserve</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>College %2F University</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Communications</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Community %2F Junior College</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Congregational</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Construction</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Coptic</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Correctional Facility</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>County</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Defensores de la Fe</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Disciples of Christ</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Doctor%27s Office</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Eagles</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Elementary School</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Elks</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Episcopal</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Evangelical</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Fair %28State%2C County%29</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Federal</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Financial Institutions</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Fire %2F Law Enforcement</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>General Community</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>General Services</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Greek Orthodox</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Health Club</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>High School</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Hindu</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Hospital</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Hotel %2F Resort</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Insurance</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Jewish</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Kiwanis</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Knights of Columbus</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Laboratory</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Latter Day Saints</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Law Firm</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Lions</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Lutheran</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Manufacturing</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Marine Corps</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Marine Corps Reserve</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Masons</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Mennonite</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Methodist</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Middle School</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Mission Board</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Moose Lodge</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Museums</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Muslim</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Navy</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Navy Reserve</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Nazarene</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Non-Denominational</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Not For Profit</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Online %2F Digital</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Organized Labor</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Other</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Other Fraternal Organization</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Pentecostal</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Presbyterian</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Print</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Professional Membership Organization</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Radio</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Real Estate</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Red Cross Chapter</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Regional Govt</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Reservation%2C Native American</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Restaurant</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Retail %2F Sales %2F Service</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Rotary</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Ruritan</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Scouts</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Senior Center</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Seventh Day Adventist</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Shopping Center %2F Mall</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Sports Club</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Sports Team</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>State</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Technology</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Television</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Transportation</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Unitarian</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Utility Company</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Veterans</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Vocational%2FTrade School</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Warehouse</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Wesleyan</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Youth Service</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>LeadSource</picklist>
+        <values>
+            <fullName>General Referral</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Humanitarian Referral</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Inbound Inquiry</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>National Partnership%2FNational Accounts</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Prospect List</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Redcross Staff</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Lead_Rating__c</picklist>
+        <values>
+            <fullName>1</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>2</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>3</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>4</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>5</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Lost_Reason__c</picklist>
+        <values>
+            <fullName>Already an existing sponsor%2Fexisting sponsor inquiry</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Duplicate Lead Entry</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Inadequate Contact Information%2FNo Response</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Insufficient Donor Base</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Lost to Competition</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Other</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Resource Issues</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Sponsor Lost Interest</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Unsuitable Site Location</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Name</picklist>
+        <values>
+            <fullName>1st Lt%2E</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>1st Sgt%2E</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>2nd Lt%2E</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Admiral</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Bishop</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Brig%2E Gen%2E</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Brother</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Capt%2E</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Chaplain</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Chief</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Cmdr%2E</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Col%2E</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>CpI%2E</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Deacon</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Dr%2E</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Dra%2E</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Ens%2E</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Father</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Gen%2E</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>HM1</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Hna%2E</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Hon%2E</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Lance CpI%2E</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Lt%2E</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Lt%2E Cmdr%2E</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Lt%2E Col%2E</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Lt%2E CpI%2E</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Lt%2E Gen%2E</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Lt%2E Sgt%2E Maj</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Maj%2E</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Maj%2E Gen%2E</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Master Sgt%2E</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Minister</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Miss</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Monsignor</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Mr%2E</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Mrs%2E</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Ms%2E</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Padre</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Parroco</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Pastor</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Pastora</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Petty Officer</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Prof%2E</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Rabbi</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Rear Adm%2E</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Rev%2E</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Rev%2E Dr%2E</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Rev%2E Father</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Rvdo%2E</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>SFC</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>SMSgt</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Sgt%2E</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Sgt%2E Maj%2E</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Sister</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Sr%2E</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Sra%2E</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Srta%2E</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Staff Sgt%2E</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Tech Sgt%2E</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Other_Redcross_Relationships__c</picklist>
+        <values>
+            <fullName>Blood Donor</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Disaster Services</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Financial Donor</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Health and Safety</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>No Other Relationship</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Service to Armed Forces</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Volunteer Services</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Phone_Type__c</picklist>
+        <values>
+            <fullName>Home Phone</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Mobile Phone</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Work Phone</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Rating</picklist>
+        <values>
+            <fullName>Cold</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Hot</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Warm</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Referrer__c</picklist>
+        <values>
+            <fullName>Marketing Campaign</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>National Partnership%2FNational Account</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Other</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Referral</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Social Media</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Website</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Student_Type__c</picklist>
+        <values>
+            <fullName>College</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>High School</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+</RecordType>

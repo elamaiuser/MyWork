@@ -1,0 +1,176 @@
+<template>
+    <div class="slds-grid slds-wrap slds-p-right_small">
+        <div class="slds-col slds-size_3-of-12 slds-p-left_small">
+            <template if:false={masterData.isReadonly}>
+                <div class="slds-form-element">
+                    <span class="slds-form-element__label">Total Vehicle Requested</span>
+                    <div class="slds-form-element__control">
+                        <div class="slds-form-element__static slds-truncate">{drive.totalVehicleRequested}</div>
+                    </div>
+                </div>
+            </template>
+            <template if:true={masterData.isReadonly}>
+                <div class="slds-form-element slds-form-element_readonly">
+                    <span class="slds-form-element__label">Total Vehicle Requested</span>
+                    <div class="slds-form-element__control">
+                        <div class="slds-form-element__static slds-truncate">{drive.totalVehicleRequested}</div>
+                    </div>
+                </div>
+            </template>
+        </div>
+        <div class="slds-col slds-size_3-of-12 slds-p-left_small">
+            <template if:false={masterData.isReadonly}>
+                <div class="slds-form-element">
+                    <span class="slds-form-element__label">Total Equipment Requested</span>
+                    <div class="slds-form-element__control">
+                        <div class="slds-form-element__static slds-truncate">{drive.totalEquipmentRequested}</div>
+                    </div>
+                </div>
+            </template>
+            <template if:true={masterData.isReadonly}>
+                <div class="slds-form-element slds-form-element_readonly">
+                    <span class="slds-form-element__label">Total Equipment Requested</span>
+                    <div class="slds-form-element__control">
+                        <div class="slds-form-element__static slds-truncate">{drive.totalEquipmentRequested}</div>
+                    </div>
+                </div>
+            </template>
+        </div>
+    </div>
+    <div class="slds-grid slds-wrap slds-p-right_small">
+        <div class="slds-col slds-size_3-of-12 slds-p-left_small">
+            <template if:false={masterData.isReadonly}>
+                <div class="slds-form-element">
+                    <span class="slds-form-element__label">Vehicle Allocated</span>
+                    <div class="slds-form-element__control">
+                        <div class="slds-form-element__static slds-truncate">{drive.vehiclesAllocated}</div>
+                    </div>
+                </div>
+            </template>
+            <template if:true={masterData.isReadonly}>
+                <div class="slds-form-element slds-form-element_readonly">
+                    <span class="slds-form-element__label">Vehicle Allocated</span>
+                    <div class="slds-form-element__control">
+                        <div class="slds-form-element__static slds-truncate">{drive.vehiclesAllocated}</div>
+                    </div>
+                </div>
+            </template>
+        </div>
+        <div class="slds-col slds-size_3-of-12 slds-p-left_small">
+            <template if:false={masterData.isReadonly}>
+                <div class="slds-form-element">
+                    <span class="slds-form-element__label">Equipment Allocated</span>
+                    <div class="slds-form-element__control">
+                        <div class="slds-form-element__static slds-truncate">{drive.equipmentAllocated}</div>
+                    </div>
+                </div>
+            </template>
+            <template if:true={masterData.isReadonly}>
+                <div class="slds-form-element slds-form-element_readonly">
+                    <span class="slds-form-element__label">Equipment Allocated</span>
+                    <div class="slds-form-element__control">
+                        <div class="slds-form-element__static slds-truncate">{drive.equipmentAllocated}</div>
+                    </div>
+                </div>
+            </template>
+        </div>
+    </div>
+
+    <div class="slds-grid slds-wrap slds-p-right_small">
+        <div class="slds-col slds-size_3-of-12 slds-p-left_small">
+            <template if:false={masterData.isReadonly}>
+                <div class="slds-form-element">
+                    <span class="slds-form-element__label"># of Allocated Buses</span>
+                    <div class="slds-form-element__control">
+                        <div class="slds-form-element__static slds-truncate">{drive.noOfAllocatedBuses}</div>
+                    </div>
+                </div>
+            </template>
+            <template if:true={masterData.isReadonly}>
+                <div class="slds-form-element slds-form-element_readonly">
+                    <span class="slds-form-element__label"># of Allocated Buses</span>
+                    <div class="slds-form-element__control">
+                        <div class="slds-form-element__static slds-truncate">{drive.noOfAllocatedBuses}</div>
+                    </div>
+                </div>
+            </template>
+        </div>
+    </div>
+
+    <div class="slds-grid slds-wrap slds-p-right_small">
+        <div class="slds-col slds-size_3-of-12 slds-p-left_small">
+            <template if:false={masterData.isReadonly}>
+                <div class="slds-form-element">
+                    <span class="slds-form-element__label">Vehicle Capacity</span>
+                    <div class="slds-form-element__control">
+                        <div class="slds-form-element__static slds-truncate">{drive.vehicleCapacity}</div>
+                    </div>
+                </div>
+            </template>
+            <template if:true={masterData.isReadonly}>
+                <div class="slds-form-element slds-form-element_readonly">
+                    <span class="slds-form-element__label">Vehicle Capacity</span>
+                    <div class="slds-form-element__control">
+                        <div class="slds-form-element__static slds-truncate">{drive.vehicleCapacity}</div>
+                    </div>
+                </div>
+            </template>
+        </div>
+    </div>
+    
+    <div class="slds-grid slds-wrap slds-p-right_small">
+        <div class="slds-col slds-size_3-of-12 slds-p-left_small">
+            <template if:false={masterData.isReadonly}>
+                <div class="slds-form-element">
+                    <span class="slds-form-element__label">Vehicle Types</span>
+                    <div class="slds-form-element__control">
+                        <div class="slds-form-element__static slds-truncate">{drive.vehicleTypes}</div>
+                    </div>
+                </div>
+            </template>
+            <template if:true={masterData.isReadonly}>
+                <div class="slds-form-element slds-form-element_readonly">
+                    <span class="slds-form-element__label">Vehicle Types</span>
+                    <div class="slds-form-element__control">
+                        <div class="slds-form-element__static slds-truncate">{drive.vehicleTypes}</div>
+                    </div>
+                </div>
+            </template>
+        </div>
+    </div>
+
+    <div class="slds-grid slds-wrap slds-p-right_small">
+        <div class="slds-col slds-size_3-of-12 slds-p-left_small">
+            <template if:false={masterData.isReadonly}>
+                <div class="slds-form-element">
+                    <span class="slds-form-element__label">Use Chaser Vehicle</span>
+                    <div class="slds-form-element__control">
+                        <div class="slds-form-element__static slds-truncate">
+                            <template if:true={drive.useChaserVehicle}>
+                                <lightning-icon icon-name="utility:check" size="x-small"></lightning-icon>
+                            </template>
+                            <template if:false={drive.useChaserVehicle}>
+                                <lightning-icon icon-name="utility:steps" size="x-small"></lightning-icon>
+                            </template>
+                        </div>
+                    </div>
+                </div>
+            </template>
+            <template if:true={masterData.isReadonly}>
+                <div class="slds-form-element slds-form-element_readonly">
+                    <span class="slds-form-element__label">Use Chaser Vehicle</span>
+                    <div class="slds-form-element__control">
+                        <div class="slds-form-element__static slds-truncate">
+                            <template if:true={drive.useChaserVehicle}>
+                                <lightning-icon icon-name="utility:check" size="x-small"></lightning-icon>
+                            </template>
+                            <template if:false={drive.useChaserVehicle}>
+                                <lightning-icon icon-name="utility:steps" size="x-small"></lightning-icon>
+                            </template>
+                        </div>
+                    </div>
+                </div>
+            </template>
+        </div>
+    </div>
+</template>

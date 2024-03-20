@@ -1,0 +1,95 @@
+<template>
+    <lightning-card>
+        <div style="padding-left: 15px;">
+            <div style="padding-left: 30px;">
+                <div style="padding-left: 45px;">
+                    <div style="padding-left: 45px;">
+                        <div>
+                            <template if:true={iserrormsg}>
+                                <div> <p style="color: red;
+                                                font-weight: 600;
+                                                font-size: 1.2em;"> {errorMessageText} 
+                                        </p> 
+                                </div>
+                            </template>
+                        </div>
+                        
+                            <div style="padding: 10px;">
+                                <div>
+                                    <div>
+                                        <lightning-layout vertical-align="start">
+                            
+                                            <lightning-layout-item padding="around-small">
+                                                <span> <p style="padding-left: 5px;"> User </p></span>
+                                                <c-inactive-user-look-up
+                                                iconname="standard:user" 
+                                                object-name={TargetObjectName}
+                                                searchfield="Name"
+                                                onselectedrec={choosenrecord}>
+                                                </c-inactive-user-look-up>                        
+                                            </lightning-layout-item>
+
+                                            <lightning-layout-item padding="around-small">
+                                                <div class="header-column">
+                                                    <lightning-input type="date" name="startdate" class="portfoliostartdate" label="Start Date" 
+                                                                        value={startDate}
+                                                                        required="true" onchange={startDateChangeHandler}></lightning-input>  
+                                                </div>                                
+                                            </lightning-layout-item>
+
+                                            <lightning-layout-item padding="around-small">
+                                                <div class="header-column">
+                                                    <lightning-input type="date" name="enddate" class="portfolioenddate" label="End Date" 
+                                                                        required="true"
+                                                                        value={endDate}  onchange={endDateChangeHandler} ></lightning-input>  
+                                                </div>
+                                            </lightning-layout-item>    
+                                            <lightning-layout-item padding="around-small">
+                                                <div style="margin-top:15px;">
+                                                    <div style="margin-top:15px;">
+                                                        <div style="padding-top:7px;">
+
+                                                                        <lightning-button   variant="brand" label="Save and Return" 
+                                                                        title="Primary action" 
+                                                                        onclick={saveAndRedirect} 
+                                                                        class="slds-m-left_x-small"></lightning-button>
+
+                                                
+                                                        </div>
+                                                    </div>                                                   
+                                                </div>
+                                            </lightning-layout-item> 
+                                            <lightning-layout-item padding="around-small">
+                                                <div style="margin-top:15px;">
+                                                    <div style="margin-top:15px;">
+                                                        <div style="padding-top:7px;">
+                                                            <lightning-button variant="brand" label="Back" title="backportfolio" onclick={onbackclick} class="slds-m-left_x-small"></lightning-button>
+                                                        </div>
+                                                    </div>
+                                                    
+                                                </div>
+                                            </lightning-layout-item>   
+                                        </lightning-layout>
+                                    </div>
+                                </div>           
+                            </div>
+
+                            <div style="padding-left: 50px;padding-right: 50px;">
+                                <lightning-card>
+                                    <div>
+                                        <p style="font-size: 15px;color: black;font-weight: 400;"> Selected Portfolios are: </p>
+                                        <template for:each={portfolioNames} for:item="portfolioName">
+                                            <li key={portfolioName}>
+                                                <span  style="font-size: 15px;color: blue;"> {portfolioName} </span>
+                                            </li>
+                                        </template>
+                                    </div>                   
+                                </lightning-card>
+                            </div>
+
+                    </div>  
+                </div>
+             </div>
+        </div>
+    </lightning-card>   
+</template>

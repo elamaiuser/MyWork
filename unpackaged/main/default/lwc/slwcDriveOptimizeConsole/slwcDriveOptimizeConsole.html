@@ -1,0 +1,26 @@
+<template>
+
+    <div class="slds-tabs_default">
+        <ul class="slds-tabs_default__nav slds-theme_shade" role="tablist">
+            <li class={customClass.driveListTab} role="presentation" data-value={TABS.DRIVE_LIST} onclick={handleTabChange}>
+                <a class="slds-tabs_default__link" role="tab">Confirmed Drives</a>
+            </li>
+            <li class={customClass.optimizationRunListTab} role="presentation" data-value={TABS.OPTIMIZATION_RUN_LIST} onclick={handleTabChange}>
+                <a class="slds-tabs_default__link" role="tab">Optimization Runs</a>
+            </li>
+            <!-- <li class={customClass.settingsTab} role="presentation"  data-value={TABS.SETTINGS} onclick={handleTabChange}>
+                <a class="slds-tabs_default__link" role="tab">Optimization Settings</a>
+            </li> -->
+        </ul>
+        <div if:true={showOptimizationRunListTab} class="slds-tabs_default__content">
+            <c-slwc-optimization-history></c-slwc-optimization-history>
+        </div>
+        <div if:true={showDriveListTab} class="slds-tabs_default__content">
+            <c-slwc-drive-optimize-drive-list></c-slwc-drive-optimize-drive-list>
+        </div>
+        <!-- <div if:true={showSettingsTab} class="slds-tabs_default__content">
+            <c-slwc-drive-optimize-settings></c-slwc-drive-optimize-settings>
+        </div> -->
+    </div>
+    
+</template>

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>sked_Initiated_By__c</fullName>
+    <externalId>false</externalId>
+    <label>Initiated By</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <controllingField>sked_Type_of_Drive__c</controllingField>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>ARC Initiated-Mobile</fullName>
+                <default>false</default>
+                <label>ARC Initiated-Mobile</label>
+            </value>
+            <value>
+                <fullName>Sponsor Initiated-Mobile</fullName>
+                <default>false</default>
+                <label>Sponsor Initiated-Mobile</label>
+            </value>
+            <value>
+                <fullName>ARC Initiated-Fixed</fullName>
+                <default>false</default>
+                <label>ARC Initiated-Fixed</label>
+            </value>
+            <value>
+                <fullName>Sponsor Initiated-Fixed</fullName>
+                <default>false</default>
+                <label>Sponsor Initiated-Fixed</label>
+            </value>
+        </valueSetDefinition>
+        <valueSettings>
+            <controllingFieldValue>Fixed Site</controllingFieldValue>
+            <valueName>ARC Initiated-Fixed</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Fixed Site</controllingFieldValue>
+            <valueName>Sponsor Initiated-Fixed</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Mobile</controllingFieldValue>
+            <valueName>ARC Initiated-Mobile</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Mobile</controllingFieldValue>
+            <valueName>Sponsor Initiated-Mobile</valueName>
+        </valueSettings>
+    </valueSet>
+</CustomField>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<EmailTemplate xmlns="http://soap.sforce.com/2006/04/metadata">
+    <available>true</available>
+    <description>Week Two Prospecting Email in Six Week Cycle</description>
+    <encodingKey>ISO-8859-1</encodingKey>
+    <letterhead>ARC_Generic_Logo1</letterhead>
+    <name>WK2 - The need for blood products (5 million reasons a year)</name>
+    <style>formalLetter</style>
+    <subject>More than 5 Million Reasons</subject>
+    <type>html</type>
+    <uiType>Aloha</uiType>
+</EmailTemplate>

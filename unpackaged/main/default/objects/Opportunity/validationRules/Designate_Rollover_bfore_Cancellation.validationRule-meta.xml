@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Designate_Rollover_bfore_Cancellation</fullName>
+    <active>false</active>
+    <description>User can designate Always roll flag/ do not roll flag only if drive is not cancelled</description>
+    <errorConditionFormula>ISPICKVAL(StageName, &#39;Cancelled&#39;)  &amp;&amp;  ( Account.Always_Roll__c = true ||  Account.Do_Not_Roll__c = true )</errorConditionFormula>
+    <errorDisplayField>Number_of_2RBC_Assets__c</errorDisplayField>
+    <errorMessage>Always Roll or Do not roll cannot be checked if drive is cancelled</errorMessage>
+</ValidationRule>

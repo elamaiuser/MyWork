@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>sked_Premiums_Op_Pay__c</fullName>
+    <externalId>false</externalId>
+    <label>Premiums/Op Pay</label>
+    <required>false</required>
+    <trackHistory>true</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>MultiselectPicklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>2RBC</fullName>
+                <default>false</default>
+                <label>2RBC</label>
+            </value>
+            <value>
+                <fullName>Charge</fullName>
+                <default>false</default>
+                <label>Charge</label>
+            </value>
+            <value>
+                <fullName>Driver</fullName>
+                <default>false</default>
+                <label>Driver</label>
+            </value>
+            <value>
+                <fullName>OJI</fullName>
+                <default>false</default>
+                <label>OJI</label>
+            </value>
+            <value>
+                <fullName>Translator</fullName>
+                <default>false</default>
+                <label>Translator</label>
+            </value>
+            <value>
+                <fullName>Late End</fullName>
+                <default>false</default>
+                <label>Late End</label>
+            </value>
+            <value>
+                <fullName>2RBC Sign-off</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>2RBC Sign-off</label>
+            </value>
+            <value>
+                <fullName>Apheresis Charge</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Apheresis Charge</label>
+            </value>
+            <value>
+                <fullName>Charge - 2RBC</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Charge - 2RBC</label>
+            </value>
+            <value>
+                <fullName>Charge - Special Collections</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Charge - Special Collections</label>
+            </value>
+            <value>
+                <fullName>Charge Mentor</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Charge Mentor</label>
+            </value>
+            <value>
+                <fullName>Competent Driver</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Competent Driver</label>
+            </value>
+            <value>
+                <fullName>DRC</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>DRC</label>
+            </value>
+            <value>
+                <fullName>Drive Lead</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Drive Lead</label>
+            </value>
+            <value>
+                <fullName>Driver - DOT</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Driver - DOT</label>
+            </value>
+            <value>
+                <fullName>Driver CDL A</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Driver CDL A</label>
+            </value>
+            <value>
+                <fullName>Driver CDL B</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Driver CDL B</label>
+            </value>
+            <value>
+                <fullName>Licensed Nurse</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Licensed Nurse</label>
+            </value>
+            <value>
+                <fullName>On Call Stand by (Daily)</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>On Call Stand by (Daily)</label>
+            </value>
+            <value>
+                <fullName>Special Collections Charge</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Special Collections Charge</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+    <visibleLines>4</visibleLines>
+</CustomField>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>sked_Travel_Time_Included__c</fullName>
+    <externalId>false</externalId>
+    <label>Travel Time Included</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Drivers Only</fullName>
+                <default>false</default>
+                <label>Drivers Only</label>
+            </value>
+            <value>
+                <fullName>All Roles</fullName>
+                <default>false</default>
+                <label>All Roles</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

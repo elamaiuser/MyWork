@@ -1,0 +1,17 @@
+.slds-list_horizontal .slds-item_label {
+    width: 50%;
+}
+.slds-list_horizontal .slds-item_detail {
+    width: 50%;
+}
+.slds-popover {
+  cursor: default;
+  color: initial;
+}
+
+.slds-popover_tooltip.slds-popover_panel.slds-nubbin_top-left:after, 
+.slds-popover_tooltip.slds-popover_panel.slds-nubbin_top-left:before, 
+.slds-popover_tooltip.slds-popover_panel.slds-nubbin_top-right:after, 
+.slds-popover_tooltip.slds-popover_panel.slds-nubbin_top-right:before {
+  background: #16325c;
+}

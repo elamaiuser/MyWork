@@ -1,0 +1,82 @@
+<template>
+    <section role="dialog" tabindex="-1" class={customClass.modalClass} style={customStyle.modalStyle}>>
+        <div class="slds-modal__container" style="width: 32rem;" if:true={isOpen}>
+            
+            <header class={customClass.headerClass}>
+                <lightning-button-icon onclick={handleCancel} class="slds-button slds-button_icon slds-modal__close"
+                    size="large" icon-name="utility:close" variant="bare-inverse" title="Close"></lightning-button-icon>
+
+                <h2 class="slds-modal__title slds-hyphenate">Confirm Dispatch</h2>
+            </header>
+            <div class="slds-modal__content full-height__modal-content slds-grid slds-grid_vertical slds-is-relative">
+                <lightning-spinner if:true={showSpinner} class="spins" size="medium"></lightning-spinner>
+
+                <div class="slds-p-horizontal_medium slds-p-vertical_small slds-shrink-none">
+                    <p>
+                        The following Staff on Drives have already been notified of their schedules.<br/>Do you want to resend the notifications?
+                    </p>
+                </div>
+
+                <div class="slds-p-horizontal_medium slds-p-vertical_small slds-scrollable_y slds-grow">
+                    <div class="job-allocation-table">
+                        <div class="header">
+                            <div class="row">
+                                <div class="col-resource-role">Role</div>
+                                <div class="col-resource-name">Resource</div>
+                            </div>
+                        </div>
+
+                        <div class="body">
+                            <template for:each={groupedDrives} for:item="drive">
+                                <div key={drive.name}>
+                                    <div class="row sub-header">{drive.name}</div>
+                                    <template for:each={drive.resourceRoles} for:item="resourceRole">
+                                        <div class="row" key={resourceRole.name}>
+                                            <div class="col-resource-role">{resourceRole.name}</div>
+                                            <div class="col-resource-name">
+                                                <template for:each={resourceRole.jobAllocations} for:item="jobAllocation">
+                                                    <div
+                                                        key={jobAllocation.id}
+                                                        class="slds-m-right_xx-small slds-m-bottom_xxx-small slds-m-top_xxx-small">
+
+                                                        <c-slwc-popover
+                                                            container=".slds-modal__container"
+                                                            position="bottom|right" theme="tooltip">
+                                                            <div slot="reference">
+                                                                <lightning-avatar class="reference" size="small"
+                                                                    fallback-icon-name="standard:user"
+                                                                    src={jobAllocation.resource.photoUrl}>
+                                                                </lightning-avatar> 
+                                                            </div>
+                                                            <div slot="content">
+                                                                {jobAllocation.resource.name}
+                                                            </div>
+                                                        </c-slwc-popover>
+                                                    </div>
+                                                </template>
+                                            </div>
+                                        </div>
+                                    </template>
+                                </div>
+                                
+                            </template>
+                        </div>
+                    </div>  
+                </div>
+
+            </div>
+            <footer class={customClass.footerClass}>
+                <button class="slds-button slds-button_neutral" data-value="false" disabled={showSpinner} onclick={handleConfirm}>No</button>
+                <button class="slds-button slds-button_brand" data-value="true" disabled={showSpinner} onclick={handleConfirm}>Yes</button>
+            </footer>
+        </div>
+    </section>
+
+    <lightning-spinner if:true={showCheckingSpinner} class="spins" size="medium"></lightning-spinner>
+    <div class={customClass.backdropClass} style={customStyle.backdropStyle}></div>
+
+    <c-slwc-progress-bar
+        progress-bar-data={progressBarData}
+        is-open={progressBarData.isOpen}
+    ></c-slwc-progress-bar>
+</template>

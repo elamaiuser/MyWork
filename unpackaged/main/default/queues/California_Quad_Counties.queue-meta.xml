@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Queue xmlns="http://soap.sforce.com/2006/04/metadata">
+    <doesSendEmailToMembers>true</doesSendEmailToMembers>
+    <name>California Quad Counties Lead Queue</name>
+    <queueMembers>
+        <users>
+            <user>alice.lan@redcross.org.biomed</user>
+            <user>becky.cogley@redcross.org.biomed</user>
+            <user>rebecca.firey@redcross.org.biomed</user>
+            <user>breanne.battezzato@redcross.org.biomed</user>
+            <user>jacob.reines@redcross.org.biomed</user>
+            <user>rhonda.harnetiaux@redcross.org.biomed</user>
+            <user>robert.bahler@redcross.org.biomed</user>
+            <user>tram.banks@redcross.org.biomed</user>
+            <user>vanessa.vanmil@redcross.org.biomed</user>
+        </users>
+    </queueMembers>
+    <queueSobject>
+        <sobjectType>Lead</sobjectType>
+    </queueSobject>
+</Queue>

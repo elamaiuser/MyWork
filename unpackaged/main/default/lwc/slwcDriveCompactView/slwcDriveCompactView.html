@@ -1,0 +1,77 @@
+<template>
+    <div class="slds-p-horizontal_small" style="margin-bottom: var(--lwc-cardSpacingMargin);">
+        <div class="slds-page-header__row slds-page-header__row_gutters">
+            <div class="slds-page-header__col-details">
+                <ul class="slds-page-header__detail-row" style="margin-top: 0">
+                    <template if:false={isFixedSiteDrive}>
+                        <li class="slds-page-header__detail-block">
+                            <div class="slds-text-title slds-truncate" title="Proj Reg Donors">Proj Reg Donors</div>
+                            <div class="slds-truncate">{drive.projectedRegisteredDonors}</div>
+                            <!-- <lightning-input type="number" name="projectedRegisteredDonors" label="Projected Registered Donors" variant="label-hidden" value={drive.projectedRegisteredDonors} readonly>
+                            </lightning-input>   -->
+                        </li>
+                    </template>
+                    <template if:true={isFixedSiteDrive}>
+                        <li class="slds-page-header__detail-block">
+                            <div class="slds-text-title slds-truncate" title="Procedure Capacity">Procedure Capacity</div>
+                            <div class="slds-truncate">{drive.procedureCapacity}</div>
+                        </li>
+                    </template>
+                    <template if:false={isFixedSiteDrive}>
+                        <li class="slds-page-header__detail-block">
+                            <div class="slds-text-title slds-truncate" title="Planned Staff Capacity">Planned Staff Capacity</div>
+                            <div class="slds-truncate">{driveStaffCapacity}</div>
+                            <!-- <lightning-input type="number" name="staffCapacity" label="Planned Staff Capacity" variant="label-hidden" value={drive.staffCapacity} onchange={handleOnChange} readonly>
+                            </lightning-input>   -->
+                        </li>
+                    </template>
+
+                    <li class="slds-page-header__detail-block" if:true={show2RBCField}>
+                        <div class="slds-text-title slds-truncate" title="Double Reds">Double Reds Proc</div>
+                        <div class="slds-truncate">{drive.x2rbcProjectedProcedures}</div>
+                        <!-- <lightning-input type="number" name="x2rbcProjectedProcedures" label="Double Reds" variant="label-hidden" value={drive.x2rbcProjectedProcedures} onchange={handleOnChange} readonly>
+                        </lightning-input>   -->
+                    </li>
+                    <li class="slds-page-header__detail-block" if:true={showWBField}>
+                        <div class="slds-text-title slds-truncate" title="Whole Blood">Whole Blood Proc</div>
+                        <div class="slds-truncate">{drive.wbProjectedProcedures}</div>
+                        <!-- <lightning-input type="number" name="wbProjectedProcedures" label="Whole Blood" variant="label-hidden" value={drive.wbProjectedProcedures} onchange={handleOnChange} readonly>
+                        </lightning-input>   -->
+                    </li>
+                    <li class="slds-page-header__detail-block" if:true={showPlasmaField}>
+                        <div class="slds-text-title slds-truncate" title="Plasma">Plasma Proc</div>
+                        <div class="slds-truncate">{drive.plasmaProjectedProcedures}</div>
+                    </li>
+                    <li class="slds-page-header__detail-block" if:true={showPlateletField}>
+                        <div class="slds-text-title slds-truncate" title="Whole Blood">Platelet Proc</div>
+                        <div class="slds-truncate">{drive.plateletProjectedProcedures}</div>
+                    </li>
+                    <li class="slds-page-header__detail-block">
+                        <div class="slds-text-title slds-truncate" title="Total Proc Proj">Total Proc Proj</div>
+                        <div class="slds-truncate">{drive.totalProceduresProjected}</div>
+                        <!-- <lightning-input type="number" name="totalProceduresProjected" label="Total Proc Proj" variant="label-hidden" value={drive.totalProceduresProjected} readonly>
+                        </lightning-input>   -->
+                    </li>
+                    <li class="slds-page-header__detail-block">
+                        <div class="slds-text-title slds-truncate" title="Total Proc Proj">Total Prod Proj</div>
+                        <div class="slds-truncate">{drive.totalProductsProjected}</div>
+                        <!-- <lightning-input type="number" name="totalProductsProjected" label="Total Product Yield" variant="label-hidden" value={drive.totalProductsProjected} readonly>
+                        </lightning-input>   -->
+                    </li>
+                    <li class="slds-page-header__detail-block">
+                        <div class="slds-text-title slds-truncate" title="Total Appointment Slots">Total Appointment Slots</div>
+                        <div class="slds-truncate">{drive.totalSlots}</div>
+                        <!-- <lightning-input type="number" name="totalSlots" label="Total Appointment Slots" variant="label-hidden" value={drive.totalSlots} readonly>
+                        </lightning-input> -->
+                    </li>
+                    <li class="slds-page-header__detail-block">
+                        <div class="slds-text-title slds-truncate" title="Cancellation Reason">Cancellation Reason</div>
+                        <div class="slds-truncate">
+                            {drive.cancellationReason}
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</template>

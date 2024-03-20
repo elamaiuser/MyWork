@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Rejection_Reason_is_Blank</fullName>
+    <active>true</active>
+    <description>There should be a reason if any marketing exception is rejected</description>
+    <errorConditionFormula>ISCHANGED( Approved__c )  &amp;&amp;  ISPICKVAL(Approved__c, &#39;No&#39;)  &amp;&amp; 
+ISBLANK( Reason_for_Rejection__c )</errorConditionFormula>
+    <errorDisplayField>Reason_for_Rejection__c</errorDisplayField>
+    <errorMessage>There should be a reason if any marketing exception is rejected by DM</errorMessage>
+</ValidationRule>

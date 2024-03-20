@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObjectTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+    <caseValues>
+        <plural>false</plural>
+        <value>Operation Record Staff</value>
+    </caseValues>
+    <caseValues>
+        <plural>true</plural>
+        <value>Operation Record Staff</value>
+    </caseValues>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <layouts>
+        <layout>Operation Record Staff Layout</layout>
+        <sections>
+            <label><!-- Custom Links --></label>
+            <section>Custom Links</section>
+        </sections>
+    </layouts>
+    <startsWith>Consonant</startsWith>
+    <validationRules>
+        <errorMessage><!-- Early Departure / Late Arrival Reasons is required. --></errorMessage>
+        <name>RequiresEarlyDepartureLateArrivalReasons</name>
+    </validationRules>
+</CustomObjectTranslation>

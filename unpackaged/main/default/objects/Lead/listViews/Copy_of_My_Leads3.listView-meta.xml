@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Copy_of_My_Leads3</fullName>
+    <columns>FULL_NAME</columns>
+    <columns>LEAD.COMPANY</columns>
+    <columns>LEAD.PHONE</columns>
+    <columns>LEAD.EMAIL</columns>
+    <columns>LEAD.STATUS</columns>
+    <columns>Lost_Reason__c</columns>
+    <columns>LEAD.LEAD_SOURCE</columns>
+    <columns>Campaign_Subject__c</columns>
+    <columns>Rating_Visual__c</columns>
+    <columns>Territory_Name__c</columns>
+    <columns>LEAD.CREATED_DATE</columns>
+    <filterScope>Mine</filterScope>
+    <filters>
+        <field>LEAD.STATUS</field>
+        <operation>equals</operation>
+        <value>Unqualified,Feeder Group - Unqualified</value>
+    </filters>
+    <label>*My Leads_Unqualified</label>
+</ListView>

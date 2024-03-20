@@ -1,0 +1,56 @@
+<template>
+    <template if:true={isOpen}>
+        <section role="dialog" tabindex="-1" class="slds-modal slds-fade-in-open" style="z-index:9999">
+        <div class="slds-modal__container">
+            <header class="slds-modal__header">
+                <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close" onclick={closeModal}>
+                    <lightning-icon icon-name="utility:close" alternative-text="close" variant="inverse" size="small" ></lightning-icon>
+                </button>
+                
+                <h2 class="slds-text-heading_medium slds-hyphenate">Call Out</h2>
+            </header>
+
+            <div class="slds-modal__content slds-p-around_medium full-height__modal-content" style="position: relative;">
+                <div>Are you sure you want to call out this job?</div>
+                <div class="slds-m-top_small" style="overflow: initial;">
+                    <div class="slds-form-element">
+                        <c-slwc-picklist
+                            name="callOutType"
+                            label="If Yes, please select the Call Out Type"
+                            object-api-name="sked__Job_Allocation__c" 
+                            selected-value={model.callOutType}  
+                            pick-listfield-api-name="sked_Call_Out_Type__c"
+                            required
+                            onpicklistchange={handleOnChange}>
+                        </c-slwc-picklist>
+                    </div>
+
+                    <div class="slds-m-top_x-small slds-form-element">
+                        <c-slwc-dependent-picklist
+                            name="callOutReason"
+                            label="Call Out Reason"
+                            object-api-name="sked__Job_Allocation__c"
+                            disabled={callOutReasonDisabled}
+                            selected-value={model.callOutReason}  
+                            field-api-name="sked_Call_Out_Reason_Code__c"
+                            dependent-field-api-name="sked_Call_Out_Type__c"
+                            controlling-field-values={callOutReasonControllingFieldValues}
+                            required
+                            onpicklistchange={handleOnChange}>
+                        </c-slwc-dependent-picklist>
+                    </div>
+
+                    <lightning-textarea class="slds-m-top_x-small" value={model.callOutNotes} label="Call Out Notes" name="callOutNotes"  onchange={handleOnChange}></lightning-textarea>
+                </div>
+            </div>
+
+            <footer class="slds-modal__footer">
+                <lightning-button label="Cancel" title="Cancel" onclick={closeModal} class="slds-m-right_xx-small"></lightning-button>
+                <lightning-button class="slds-m-top_small" onclick={handleSave} variant="brand" type="submit" name="update" label="Save"></lightning-button>
+            </footer>
+        </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open" style="z-index:9998"></div>
+
+    </template>
+</template>

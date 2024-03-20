@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ContentAsset xmlns="http://soap.sforce.com/2006/04/metadata">
+    <isVisibleByExternalUsers>true</isVisibleByExternalUsers>
+    <language>en_US</language>
+    <masterLabel>X20240101_to_20240131_SuperBowl</masterLabel>
+    <versions>
+        <version>
+            <number>1</number>
+            <pathOnClient>2024-01-01 to 2024-01-31  SuperBowl.png</pathOnClient>
+        </version>
+    </versions>
+</ContentAsset>

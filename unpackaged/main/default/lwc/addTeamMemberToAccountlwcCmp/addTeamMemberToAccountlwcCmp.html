@@ -1,0 +1,144 @@
+<template>
+    
+   <lightning-card>
+
+        <div>
+            <template if:true={isPageLoading}>
+                <div style="
+                            position: relative;
+                            display: inline-block;
+                            width: 80px;
+                            height: 80px;">
+                    <lightning-spinner alternative-text="Loading" size="large"></lightning-spinner>
+                </div>
+            </template>
+        </div>
+
+        <div style="padding-left: 50px;padding-right: 50px;">
+            <lightning-card>
+                <div>
+                    <p style="font-size: 15px;color: black;font-weight: 400;"> Selected Accounts are: </p>
+                    <template for:each={accountnames} for:item="acc">
+                        <li key={acc}>
+                            <span  style="font-size: 15px;color: blue;"> {acc} </span>
+                        </li>
+                    </template>
+                </div>
+
+            </lightning-card>
+        </div>
+
+
+
+    <div>
+        <div>
+            <template if:true={iserrormsg}>
+                <p style="font-weight: 700;color: red;"> {errorMessageText} </p>
+            </template>
+        </div>
+    </div>
+
+
+    <lightning-card>       
+        <div style="padding: 20px;">
+          
+            <div style="display: grid; padding: 15px;"> 
+                <div style="display: inline-flex;">
+                    <div class="slds-size--1-of-8 slds-p-around--small" style="padding-top: 16px;">
+                        <span> <p style="padding-left: 5px;"> User </p></span>
+                        <c-generic-custom-lookup
+                        iconname="standard:user" 
+                        object-name={TargetObjectName}
+                        searchfield="Name"
+                        onselectedrec={choosenrecord}>
+                        </c-generic-custom-lookup>
+
+                    </div>
+                    <div class="slds-size--1-of-8 slds-p-around--small" style="padding-top: 12px;">
+                        
+                        <lightning-input type="date" name="startdate" class="accteamstartdate" label="Start Date" 
+                                            value={Start_Date}
+                                            required="true"
+                                            onchange={ondatechangehandle}></lightning-input>
+                    </div>
+                    <div class="slds-size--1-of-7 slds-p-around--small" style="padding-top: 12px;">
+                        
+                        <lightning-input type="date" name="enddate" class="accteamenddate" label="End Date" 
+                                                    value={end_date}
+                                                    onchange={ondatechangehandle}
+                                                    required="true"></lightning-input>
+                    </div>
+                    <div class="slds-size--1-of-8  slds-p-around--small">
+                        <lightning-combobox
+                        name="teamrole"
+                        label="Team Roles"
+                        value={teamrolevalues}
+                        placeholder=""
+                        options={teamroleOptions}
+                        onchange={teamRoleChangeHandler} >
+                        </lightning-combobox>
+                    </div>
+                    <div class="slds-size--1-of-8 slds-p-around--small">
+                        <lightning-combobox
+                        name="accountaccess"
+                        label="Account Access"
+                        value={accountaccess}
+                        placeholder=""
+                        options={accountaccessOptions}
+                        onchange={accountChangeHandler} >
+                        </lightning-combobox>
+                    </div>
+                    <div class="slds-size--1-of-8 slds-p-around--small">
+                        <lightning-combobox
+                        name="caseaccess"
+                        label="Case Access"
+                        value={caseaccess}
+                        placeholder=""
+                        options={otheraccessOptions}
+                        onchange={caseChangeHandler} >
+                        </lightning-combobox>
+                    </div>
+                    <div class="slds-size--1-of-8 slds-p-around--small">
+                        <lightning-combobox
+                        name="opportunityaccess"
+                        label="Blood Drive Access"
+                        value={opportunityaccess}
+                        placeholder=""
+                        options={otheraccessOptions}
+                        onchange={opportunityChangeHandler} >
+                        </lightning-combobox>
+                    </div>
+                    <div class="slds-size--1-of-8 slds-p-around--small">
+                        <lightning-combobox
+                        name="CoverageReason"
+                        label="Coverage Reason"
+                        value={CoverageReason}
+                        placeholder=""
+                        options={coveragereasonoptions}
+                        onchange={coverageChangeHandler} >
+                        </lightning-combobox>
+                    </div>   
+                </div>
+            </div>
+
+            <div>
+                <div style="padding: 15px;">
+                    <div style="padding: 5px;">
+                        <lightning-button   variant="brand" label="Save and Return" 
+                        title="Primary action" 
+                        onclick={saveAndRedirect} 
+                        class="slds-m-left_x-small"></lightning-button>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+       
+    </lightning-card>
+
+</lightning-card>
+
+
+    
+</template>

@@ -1,0 +1,20 @@
+<template>
+
+    <fieldset class={cssClass}>
+        <legend class="slds-form-element__legend slds-form-element__label"><abbr if:true={required} title="required" class="slds-required">*</abbr>{label}</legend>
+        <div class="slds-form-element__control">
+            <div class="slds-checkbox_button-group">
+                <template for:each={options} for:item="option">
+                    <span key={option.value} class="slds-button slds-checkbox_button">
+                        <input type="checkbox" id={option.value} value={option.value} name={option.value} onchange={handleOnchange} />
+                        <label class="slds-checkbox_button__label" for={option.value}>
+                            <span class="slds-checkbox_faux">{option.label}</span>
+                        </label>
+                    </span>
+                </template>
+            </div>
+            <div if:true={hasError} class="slds-form-element__help">{errorMessage}</div>
+        </div>
+    </fieldset>
+
+</template>

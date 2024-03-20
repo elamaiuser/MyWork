@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<EmailTemplate xmlns="http://soap.sforce.com/2006/04/metadata">
+    <available>true</available>
+    <description>BPL Booking/Prospecting ask - Heroes Saving Lives</description>
+    <encodingKey>ISO-8859-1</encodingKey>
+    <letterhead>ARC_Logo_Test</letterhead>
+    <name>Marketing Segment_Military_HSL_Booking</name>
+    <style>formalLetter</style>
+    <subject>You&#39;re Invited - Join Us. Save Lives. Be Proud.</subject>
+    <textOnly>Hi [Insert Name],
+
+I’d like to invite you to host a Heroes Saving Lives blood drive – a partnership opportunity with fellow military, veteran and service groups across the country. Our nation’s heroes and our everyday community heroes – our blood donors, joining together in the mission to help save lives.
+
+Your support as a blood program partner is needed! Every day there are more than 12,000 blood donations needed for patients. The blood you collect can help save lives down the street or across the country – Red Cross blood products are distributed to 2,500 hospitals and transfusion centers across the country, including patients at many U.S. Department of Veterans Affairs medical centers.
+
+Your support as a partner will not go unnoticed. Your efforts will directly impact the blood supply and you’ll receive a certificate of appreciation as a Heroes Saving Lives participant.
+
+I look forward to sharing all the details with you about the Heroes Saving Lives opportunity. When is the best time we can connect?
+
+Thank you,
+
+[Insert Name]</textOnly>
+    <type>html</type>
+    <uiType>Aloha</uiType>
+</EmailTemplate>

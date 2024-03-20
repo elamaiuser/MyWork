@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Drive_Designations__c</fullName>
+    <description>Filed to capture the value for Drive Designation</description>
+    <externalId>false</externalId>
+    <label>Drive Designations</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>MultiselectPicklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Donors without Drive Bookings</fullName>
+                <default>false</default>
+                <label>Donors without Drive Bookings</label>
+            </value>
+            <value>
+                <fullName>Gray Skies</fullName>
+                <default>false</default>
+                <label>Gray Skies</label>
+            </value>
+            <value>
+                <fullName>COVID 19</fullName>
+                <default>false</default>
+                <label>COVID 19</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+    <visibleLines>4</visibleLines>
+</CustomField>

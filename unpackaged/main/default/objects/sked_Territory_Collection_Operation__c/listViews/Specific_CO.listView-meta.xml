@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Specific_CO</fullName>
+    <columns>NAME</columns>
+    <columns>sked_Territory__c</columns>
+    <columns>sked_Collection_Operation__c</columns>
+    <columns>sked_Start_Date__c</columns>
+    <columns>sked_End_Date__c</columns>
+    <columns>CREATED_DATE</columns>
+    <columns>UPDATEDBY_USER</columns>
+    <columns>LAST_UPDATE</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>sked_Collection_Operation__c</field>
+        <operation>equals</operation>
+        <value>Las Vegas NV</value>
+    </filters>
+    <label>Specific CO</label>
+</ListView>

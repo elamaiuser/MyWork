@@ -1,0 +1,88 @@
+<apex:page controller="DriveWorksheetReportController" sidebar="false" showHeader="false" lightningStylesheets="true" id="page" docType="html-5.0">
+    <apex:form id="form"> 
+        <h2> Search Panel </h2> 
+        <apex:pageBlock id="pgBlck"> 
+            <table>
+                <tr>
+                    <td style="padding-bottom: 10px; width: 50%;">Collection Operation &nbsp; &nbsp; &nbsp; &nbsp; <apex:selectList value="{!searchCollOp}" multiselect="false" size="1">
+                        <apex:selectOptions value="{!CollectionOperationlist}"></apex:selectOptions> 
+                    </apex:selectList> 
+                </td>
+                </tr>
+                <tr>
+                    <td style="padding-bottom: 10px; width: 50%;"> Region: &nbsp; &nbsp; &nbsp; &nbsp; <apex:selectList value="{!searchRegion}" multiselect="false" size="1">
+                        <apex:selectOptions value="{!Regionlist}"></apex:selectOptions>
+                    </apex:selectList> 
+                </td>
+                </tr>
+                <tr>
+                    <td style="padding-bottom: 10px; width: 50%;">  Start Date &nbsp; &nbsp; &nbsp; &nbsp; <apex:input type="date" value="{!searchStartDate}" id="start" label="Input"/> </td>
+                    <td style="padding-bottom: 10px; width: 50%;"> End Date &nbsp; &nbsp; &nbsp; &nbsp; <apex:input type="date" value="{!searchEndDate}" id="end" label="Input"/> </td>
+                </tr>
+                <tr>
+                    <td style="padding-bottom: 10px; width: 50%;"> Type: &nbsp; &nbsp; &nbsp; &nbsp; <apex:selectList value="{!searchType}" multiselect="false" size="1">
+                            <apex:selectOption itemValue="Both" itemLabel="Both"/>
+                            <apex:selectOption itemValue="Fixed Site" itemLabel="Fixed"/>
+                            <apex:selectOption itemValue="Mobile" itemLabel="Mobile"/>
+                        </apex:selectList> 
+                    </td>
+                </tr>
+            </table>
+            <br/>
+            <apex:commandButton value="Search" action="{!search}" status="loadingStatus" 
+                                reRender="pgBl,showmsg"/> 
+            <apex:commandButton action="{!ExportToPdf}" value="Export to Pdf" id="ExportToPdf"/> 
+        </apex:pageBlock>
+        
+        <apex:actionStatus id="loadingStatus">
+            <apex:facet name="start">
+                <apex:outputPanel >
+                    <Center> <img src="/img/loading32.gif" width="50" height="50" /> </Center> 
+                    <Center><apex:outputLabel value="Loading...."/>   </Center>
+                </apex:outputPanel>                     
+            </apex:facet>
+        </apex:actionStatus> 
+        <apex:pageMessages id="showmsg"></apex:pageMessages>
+        <apex:pageBlock id="pgBl">
+            <apex:pageBlockSection rendered="{!If(ReportDataWrapperList!=null,true,false)}" id="pgBlkTbl">
+                <apex:outputPanel layout="block" style="overflow:auto;width:200%;height:50%" >
+                    <apex:pageBlockTable value="{!ReportDataWrapperList}" width="100%" var="record" id="Opptable">
+                        <apex:column >
+                            <apex:facet name="header">
+                                <apex:inputCheckbox onclick="selectAllCheckboxes(this,'chkbox')"/>
+                            </apex:facet>
+                            <apex:inputCheckbox value="{!record.isSelected}" id="chkbox"/>
+                        </apex:column>
+                        <apex:column value="{!record.drv.sked_Account__c}" />
+                        <apex:column headerValue="Drive Name" value="{!record.drv.Name}" />                         
+                        <apex:column headerValue="Drive Date" value="{!record.drv.sked_Drive_Date__c}" /> 
+                        <apex:column headerValue="Type" value="{!record.drv.sked_Type_of_Drive__c}" /> 
+                        <apex:column headerValue="Collection Operation" value="{!record.drv.sked_Drive_Site__r.sked_Collection_Operation__r.Name}" />
+                        <apex:column headerValue="Region" value="{!record.drv.sked_Drive_Site__r.sked__Region__r.Name}" />                         
+                    </apex:pageBlockTable>
+                </apex:outputPanel>
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+    </apex:form>
+    <script>    
+    function clearValue()
+    {        
+        document.getElementById('{!$Component.page:form:pgBlck:ac}').value = '';
+        document.getElementById('{!$Component.page:form:pgBlck:port}').value = '';
+        document.getElementById('{!$Component.page:form:pgBlck:team}').value = '';
+        document.getElementById('{!$Component.page:form:pgBlck:start}').value = '';
+        document.getElementById('{!$Component.page:form:pgBlck:end}').value = '';
+        
+        return false;
+    }
+    function selectAllCheckboxes(obj,receivedInputID){
+        var inputCheckBox = document.getElementsByTagName("input"); 
+        console.log('len ' + inputCheckBox.length);
+        for(var i=0; i<inputCheckBox.length; i++){          
+            if(inputCheckBox[i].id.indexOf(receivedInputID)!=-1){                                     
+                inputCheckBox[i].checked = obj.checked;
+            }
+        }
+    }
+    </script>
+</apex:page>

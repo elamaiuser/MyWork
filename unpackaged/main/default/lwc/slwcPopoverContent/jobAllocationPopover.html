@@ -1,0 +1,183 @@
+<template>
+    <div class="job-allocation-resource-card-popover">
+        <div class="hco-resource-info">
+            <div class="slds-media direction-ltr">
+                <div class="slds-media__figure">
+                    <lightning-avatar fallback-icon-name={popoverData.icon} src={popoverData.resource.photoUrl}>
+                    </lightning-avatar>
+                </div>
+                <div class="slds-media__body">
+                    <h5 class="slds-page-header__subtitle slds-truncate slds-align-middle">
+                        <strong class="color-text-link-hover">
+                            <c-slwc-resource-name resource={popoverData.resource}></c-slwc-resource-name>
+                        </strong>
+                    </h5>
+                    <div class="slds-page-header__subtitle slds-text-body_small direction-ltr">
+                        <p if:true={popoverData.additionalRolesString}
+                        class="slds-text-color_weak slds-text-body_small hco-resource-region-info color-default-text" style="white-space: normal;">
+                        {popoverData.additionalRolesString}</p>
+                        <p if:true={popoverData.resource.category}
+                        class="slds-text-color_weak slds-text-body_small hco-resource-region-info color-default-text">
+                        {popoverData.resource.category}</p>
+                        <p if:true={popoverData.resource.collectionOperationName}
+                            class="slds-text-color_weak slds-text-body_small hco-resource-category-info slds-truncate slds-text-color_inverse-weak">
+                            <lightning-icon class="slds-current-color slds-m-right--xx-small" icon-name="utility:checkin"
+                                size="xx-small">
+                            </lightning-icon>{popoverData.resource.collectionOperationName}
+                        </p>
+                        <p if:true={popoverData.resource.primaryPhone}
+                            class="slds-text-color_weak slds-text-body_small hco-resource-category-info slds-truncate slds-text-color_inverse-weak">
+                            <lightning-icon class="slds-current-color slds-m-right--xx-small" icon-name="utility:call"
+                                size="xx-small">
+                            </lightning-icon>{popoverData.resource.primaryPhone}
+                        </p>
+                        <p if:true={popoverData.resource.email}
+                            class="slds-text-color_weak slds-text-body_small hco-resource-email-info slds-text-color_inverse-weak" style="word-break: break-all; white-space: normal;">
+                            <lightning-icon class="slds-current-color slds-m-right--xx-small" icon-name="utility:email"
+                                size="xx-small">
+                            </lightning-icon>{popoverData.resource.email}
+                        </p>
+                        <p
+                            class="slds-text-color_weak slds-text-body_small hco-resource-email-info slds-text-color_inverse-weak" style="word-break: break-all; white-space: normal;">
+                            <lightning-icon class="slds-current-color slds-m-right--xx-small" icon-name="utility:clock"
+                                size="xx-small">
+                            </lightning-icon>
+                            <lightning-formatted-date-time value={jobAllocationStartWithTravelTime} hour="2-digit"
+                                minute="2-digit" hour12="true" time-zone={timezone}>
+                            </lightning-formatted-date-time>
+                            <span class="slds-p-horizontal_xx-small">-</span>
+                            <lightning-formatted-date-time value={jobAllocationEndWithTravelTime} hour="2-digit"
+                                minute="2-digit" hour12="true" time-zone={timezone}>
+                            </lightning-formatted-date-time>
+                        </p>
+                    </div>
+                </div>
+
+                <strong if:true={popoverData.locked}>Locked</strong>
+            </div>
+
+            <div class="slds-media__body direction-ltr">
+                <div class="slds-m-top--small slds-border_top"
+                    style="min-width: 128px;">
+                    <div for:each={popoverData.resource.resourceTagsDisplay} for:item="resourceTag" key={resourceTag.keyRender} class="slds-text-body_small slds-grid_vertical-align-center slds-has-flexi-truncate" style="white-space: normal;">
+                        <p class="slds-has-flexi-truncate color-default-text slds-m-vertical_xx-small" >
+                             {resourceTag.value} {resourceTag.key}(s)
+                        </p>
+                        <div class="slds-text-body_small slds-grid_vertical-align-center slds-has-flexi-truncate slds-m-vertical_xx-small">
+                            <span for:each={resourceTag.details} for:item="tag" key={tag.key} class="slds-text-color_inverse-weak slds-has-flexi-truncate" >
+                                <lightning-icon class="slds-m-horizontal_x-small" icon-name="standard:quotes" size="x-small"></lightning-icon>
+                                 {tag.value}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="slds-border_top slds-m-top_x-small direction-ltr" if:true={popoverData.exceptionLog.length}>
+                <div for:each={popoverData.exceptionLog} for:item="exception" key={exception.exception}
+                    class="slds-text-body_small slds-grid_vertical-align-center slds-has-flexi-truncate">
+                    <p class="color-default-text slds-m-vertical_xx-small color-error" style="white-space: normal;">
+                        {exception.exception}
+                    </p>
+                </div>
+            </div>
+
+            <div class="slds-m-top_x-small trade-shift-section" if:true={popoverData.hasDriveShiftTrade}>
+                <div class="header">
+                    <div>Traded Shift</div>
+                    <div class={popoverData.driveShiftTrade.status}>{popoverData.driveShiftTrade.status}</div>
+                </div>
+                <dl class="slds-dl_horizontal content">
+                    <dt class="slds-dl_horizontal__label slds-text-color_weak slds-m-bottom_xx-small">Drive Shift:</dt>
+                    <dd class="slds-dl_horizontal__detail  slds-m-bottom_xx-small">
+                        <a if:false={popoverData.isRequestingStaff} href={popoverData.tradingDriveShiftUrl} target="_blank">
+                            {popoverData.driveShiftTrade.tradingStaffDriveShiftName}
+                        </a>
+                        <a if:true={popoverData.isRequestingStaff} href={popoverData.requestingDriveShiftUrl} target="_blank">
+                            {popoverData.driveShiftTrade.requestingStaffDriveShiftName}
+                        </a>
+                    </dd>
+                    <dt class="slds-dl_horizontal__label slds-text-color_weak slds-m-bottom_xx-small">Drive:</dt>
+                    <dd class="slds-dl_horizontal__detail  slds-m-bottom_xx-small">
+                        <span if:false={popoverData.isRequestingStaff}>{popoverData.driveShiftTrade.tradingStaffDriveName} - {popoverData.driveShiftTrade.tradingStaffDriveUfid}</span>
+                        <span if:true={popoverData.isRequestingStaff}>{popoverData.driveShiftTrade.requestingStaffDriveName} - {popoverData.driveShiftTrade.requestingStaffDriveUfid}</span>
+                    </dd>
+                    <dt class="slds-dl_horizontal__label slds-text-color_weak slds-m-bottom_xx-small">Requesting Staff:</dt>
+                    <dd class="slds-dl_horizontal__detail  slds-m-bottom_xx-small">
+                        <a href={popoverData.requestingStaffUrl} target="_blank">{popoverData.driveShiftTrade.requestingStaffName}</a>
+                    </dd>
+                    <dt class="slds-dl_horizontal__label slds-text-color_weak slds-m-bottom_xx-small">Trading Staff:</dt>
+                    <dd class="slds-dl_horizontal__detail  slds-m-bottom_xx-small">
+                        <a href={popoverData.tradingStaffUrl} target="_blank">{popoverData.driveShiftTrade.tradingStaffName}</a>
+                    </dd>
+                    <dt class="slds-dl_horizontal__label slds-text-color_weak slds-m-bottom_xx-small">Trade Initiated Date:</dt>
+                    <dd class="slds-dl_horizontal__detail  slds-m-bottom_xx-small">
+                        <lightning-formatted-date-time value={popoverData.driveShiftTrade.createdDate} year="numeric" month="numeric" day="numeric" hour="numeric"
+                                                                minute="2-digit" time-zone={popoverData.timezoneSidId}></lightning-formatted-date-time>
+                    </dd>
+                    <dt class="slds-dl_horizontal__label slds-text-color_weak slds-m-bottom_xx-small">APS Notes:</dt>
+                    <div class="white-space_prewrap">{popoverData.driveShiftTrade.apsNotes}</div>
+                </dl>
+            </div>
+        </div>
+
+        <template if:false={readOnly}>
+            <footer class="slds-popover__footer slds-text-align_right">
+                <div class="slds-grid slds-wrap slds-grid--align-spread direction-rtl">
+                    <template if:false={popoverData.locked}>
+                        <span if:true={isPerson}>
+                            <button class="slds-button direction-ltr"
+                                data-action="unallocate"
+                                onclick={handleAddRolePopoverAction}>
+                                <lightning-icon icon-name="utility:add" class="slds-current-color" size="xx-small"></lightning-icon>&nbsp;Add Role
+                            </button>
+                        </span>
+                        <template if:true={isPerson}>
+                            <span>
+                                <button class="slds-button direction-ltr"
+                                    data-action="edit"
+                                    onclick={handleJobAllocationPopoverAction}>
+                                    <lightning-icon icon-name="utility:edit" class="slds-current-color" size="xx-small"></lightning-icon>&nbsp;Edit Times
+                                </button>
+                            </span>
+                        </template>
+                    </template>
+                    <span if:true={popoverData.locked}>
+                        <button class="slds-button direction-ltr"
+                            data-action="lock"
+                            onclick={handleJobAllocationPopoverAction}>
+                            <lightning-icon icon-name="utility:unlock" class="slds-current-color" size="xx-small"></lightning-icon>&nbsp;Unlock
+                        </button>
+                    </span>
+                    <span if:false={popoverData.locked}>
+                        <button class="slds-button direction-ltr"
+                            data-action="lock"
+                            onclick={handleJobAllocationPopoverAction}>
+                            <lightning-icon icon-name="utility:lock" class="slds-current-color" size="xx-small"></lightning-icon>&nbsp;Lock
+                        </button>
+                    </span>
+                    <template if:false={popoverData.locked}>
+                        <span class="btn-delete">
+                            <button class="slds-button direction-ltr"
+                                data-action="unallocate"
+                                onclick={handleJobAllocationPopoverAction}>
+                                <lightning-icon icon-name="utility:delete" class="slds-current-color" size="xx-small"></lightning-icon>&nbsp;Unallocate
+                            </button>
+                        </span>
+                        <template if:false={disabledCallOut}>
+                            <template if:true={isPerson}>
+                                <span if:true={isShowCallOut} class="btn-delete">
+                                    <button class="slds-button direction-ltr"
+                                        data-action="callOut"
+                                        onclick={handleJobAllocationPopoverAction}>
+                                        <lightning-icon icon-name="utility:outbound_call" class="slds-current-color" size="xx-small"></lightning-icon>&nbsp;Call Out
+                                    </button>
+                                </span>
+                            </template>
+                        </template>
+                    </template>
+                </div>
+            </footer>
+        </template>
+    </div>
+</template>

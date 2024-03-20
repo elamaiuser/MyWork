@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<EmailTemplate xmlns="http://soap.sforce.com/2006/04/metadata">
+    <available>false</available>
+    <description>Emergency Blood Shortage - We need your help!</description>
+    <encodingKey>ISO-8859-1</encodingKey>
+    <letterhead>ARC_Logo_Test</letterhead>
+    <name>Seasonal_Winter_Appeal_Emergency Blood Shortage_Jan 8, 2024</name>
+    <style>formalLetter</style>
+    <subject>Emergency Blood Shortage - We need your help!</subject>
+    <textOnly>{!Contact.FirstName}
+
+
+
+The American Red Cross is experiencing an emergency blood shortage as the nation faces the lowest number of people giving blood in 20 years. The blood collected at your upcoming blood blood is important to help alleviate the shortage and ensure lifesaving medical procedures are not delayed.
+
+
+Take these steps today to ensure success at your upcoming blood drive:
+
+Donate blood. If eligible, donate at your upcoming blood drive.
+Fill your drive schedule – schedule appointments for all your donors.
+Maximize the collection of type O. Use the Blood Drive Management Portal to filter your type O donors, connect personally to show them the special impact they have in saving more patient lives and offer them priority appointments.
+Spread the word. Ask donors, volunteers, friends and colleagues to share information from the Partner Online Guides in their social media networks about your blood drive and the national blood shortage. Every touchpoint helps.
+Utilize all these tools to ease your work: Blood Drive Management Portal, RapidPass® and Blood Program Leader Alert.
+
+
+As a special thank-you for helping address the emergency blood shortage, the Red Cross and the National Football League (NFL) are partnering to offer those who come to give blood in January a chance to win a trip for two to Super Bowl LVIII in Las Vegas.
+
+
+Donors who come to give blood Jan. 1-31, 2024, will be automatically entered to win a trip for two to Super Bowl LVIII in Las Vegas.^ The winner and their guest will get to enjoy Super Bowl LVIII in Las Vegas, access to day-of in-stadium pre-game activities, tickets to the official Super Bowl Experience, round-trip airfare to Las Vegas, three-night hotel accommodations (Feb. 9-12, 2024), plus a $1,000 gift card for expenses.
+
+
+If you have any questions or if there’s additional information I can provide to you, please do not hesitate to contact me. I am here to help.
+
+
+Sincerely,
+
+
+{!Contact.OwnerFullName}
+
+
+^Void where prohibited. Void in Puerto Rico, any U.S. territories and outside the United States and where prohibited by law. Open to legal residents of U.S. states and DC, age 18+ (19+ in NE and AL; 21+ in MS) at entry. Begins 12:00 a.m. ET on 01/01/24; ends 11:59 p.m. ET on 01/31/24. NO PURCHASE OR DONATION NECESSARY. To enter either present to donate blood at an American Red Cross blood donation facility or send an email to customercare@redcross.org and include the Giveaway name, “American Red Cross Super Bowl LVIII Giveaway.” There is a limit of five (5) total Entries permitted per Entrant, regardless of method of Entry, during the Giveaway Period. One (1) prize will be awarded to one (1) winner. Winner will receive one (1) trip for two (2) to attend Super Bowl LVIII in Las Vegas. Total ARV of all prizes: $9,500. Odds of winning depend on number of entries received. Full rules click here. Sponsor: American Red Cross. The prize shall not be sold on any internet site and any ticket that has been re-sold via the internet will be nullified. The National Football League’s licensed marks (“NFL”; “National Football League” and the NFL Shield design, “Super Bowl” and the Super Bowl LVIII name) on any giveaway related materials have been reviewed by NFL and are used with permission. The NFL Entities have not offered or sponsored this giveaway in any way.</textOnly>
+    <type>html</type>
+    <uiType>Aloha</uiType>
+</EmailTemplate>

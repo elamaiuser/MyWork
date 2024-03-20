@@ -1,0 +1,14 @@
+.slds-list_horizontal .slds-item_label {
+    width: 70%;
+}
+.slds-list_horizontal .slds-item_detail {
+    width: 30%;
+}
+.slds-popover__body-list {
+    border-top: none;
+    padding: 0.5rem;
+}
+.slds-section-title--divider {
+    font-size: 0.625rem;
+    padding: 0.375rem 0.5rem;
+}

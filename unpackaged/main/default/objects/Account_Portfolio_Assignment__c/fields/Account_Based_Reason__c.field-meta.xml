@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Account_Based_Reason__c</fullName>
+    <externalId>false</externalId>
+    <label>Account Based Reason</label>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>MultiselectPicklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Hospital Partner</fullName>
+                <default>false</default>
+                <label>Hospital Partner</label>
+            </value>
+            <value>
+                <fullName>Education Segment</fullName>
+                <default>false</default>
+                <label>Education Segment</label>
+            </value>
+            <value>
+                <fullName>Military Segment</fullName>
+                <default>false</default>
+                <label>Military Segment</label>
+            </value>
+            <value>
+                <fullName>Corporate Partner</fullName>
+                <default>false</default>
+                <label>Corporate Partner</label>
+            </value>
+            <value>
+                <fullName>Segmented Portfolio</fullName>
+                <default>false</default>
+                <label>Segmented Portfolio</label>
+            </value>
+            <value>
+                <fullName>Diversity Strategy</fullName>
+                <default>false</default>
+                <label>Diversity Strategy</label>
+            </value>
+            <value>
+                <fullName>Growth Strategy</fullName>
+                <default>false</default>
+                <label>Growth Strategy</label>
+            </value>
+            <value>
+                <fullName>Special Event</fullName>
+                <default>false</default>
+                <label>Special Event</label>
+            </value>
+            <value>
+                <fullName>BPL Request (rare)</fullName>
+                <default>false</default>
+                <label>BPL Request (rare)</label>
+            </value>
+            <value>
+                <fullName>Geographic Anomaly (very rare)</fullName>
+                <default>false</default>
+                <label>Geographic Anomaly (very rare)</label>
+            </value>
+            <value>
+                <fullName>&#39;Hospital Partner</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>&#39;Hospital Partner</label>
+            </value>
+            <value>
+                <fullName>Hospital PartnerHospital Partner</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Hospital PartnerHospital Partner</label>
+            </value>
+            <value>
+                <fullName>Military Segment&#39;</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Military Segment&#39;</label>
+            </value>
+            <value>
+                <fullName>nullHospital Partner</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>nullHospital Partner</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+    <visibleLines>4</visibleLines>
+</CustomField>

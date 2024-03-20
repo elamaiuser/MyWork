@@ -1,0 +1,167 @@
+<template>
+    <template if:true={showListViewPage}>
+        <div class={customClass.modal}>
+            <lightning-spinner if:true={showSpinner} class="spins" size="medium"></lightning-spinner>
+            <div class="slds-align-content-center slds-col width-450">
+                <div class="slds-clearfix slds-page-header slds-page-header_record-home fixed-position " style="margin-bottom: var(--lwc-cardSpacingMargin);">
+                    <div class="slds-page-header__row slds-grid_vertical-align-center">
+                        <div class="slds-page-header__col-title">
+                            <div class="slds-media">
+                                <div class="slds-media__figure">
+                                    <lightning-icon icon-name="standard:metrics" size="medium"></lightning-icon>
+                                </div>
+                                <div class="slds-media__body">
+                                    <div class="slds-page-header__name">
+                                        <div class="slds-page-header__name-title">
+                                            <h1>
+                                                <span class="slds-page-header__title slds-truncate">Shift Trade Requests</span>
+                                            </h1>
+                                        </div>
+                                    </div>
+                                    <p class="slds-page-header__name-meta">Shift Trade Submission
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="slds-no-flex">
+                            <div class="slds-grid">
+                                <div class="slds-no-flex">
+                                    <ul class="slds-button-group-row">
+                                        <li class="slds-button-group-item">
+                                            <button class="slds-button slds-button_brand"
+                                                onclick={handleNewDriveShiftTrade}>New Request</button>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="slds-tabs_card slds-scrollable--y height-custom slds-grid slds-grid_vertical">
+                    <div class="slds-m-top--large slds-grow slds-grid position-relative slds-scrollable_y">
+                        <div class="slds-grid slds-grid_vertical width-100 height-100">
+                            <div
+                                class="slds-grid slds-grid_vertical slds-p-horizontal_small slds-p-top_small slds-shrink-none slds-border--bottom slds-border--left slds-border--right slds-border--top width-100 height-100">
+                                <div class="slds-p-right_small slds-align--absolute-center slds-no-flex">
+                                    <c-slwc-week-date-picker first-day={collectionOperationFirstDay}
+                                        unique-key="optimizationHistory" onweekdatechange={handleOnChangeFilter}
+                                        default-start-date={filters.startDate} default-end-date={filters.endDate}>
+                                    </c-slwc-week-date-picker>
+                                </div>
+                                <article class="slds-card slds-grow slds-scrollable_y">
+                                    <div class="slds-card__body slds-card__body_inner">
+                                        <ul if:true={filteredDriveShiftTrades.length}
+                                            class="slds-grid_pull-padded slds-p-horizontal_small slds-scrollable--y">
+                                            <li for:each={filteredDriveShiftTrades}
+                                                for:item="record" key={record.key} data-id={record.id}>
+                                                <article
+                                                    class="slds-p-around--small slds-hint-parent slds-border--bottom slds-border--top">
+                                                    <div class="slds-media__body">
+                                                        <div
+                                                            class="slds-grid slds-grid_align-spread slds-has-flexi-truncate">
+                                                            <h3 class="slds-tile__title slds-truncate">
+                                                                <c-slwc-lightning-formatted-url
+                                                                    record={record}
+                                                                ></c-slwc-lightning-formatted-url>
+                                                            </h3>
+                                                        </div>
+                                                        <div class="slds-tile__detail">
+                                                            <dl class="slds-list_horizontal slds-wrap">
+                                                                <dt class="slds-item_label slds-text-color_weak slds-truncate">
+                                                                    Submission Date:</dt>
+                                                                <dd class="slds-item_detail">
+                                                                    <lightning-formatted-date-time value={record.createdDate} year="numeric" month="numeric" day="numeric" hour="numeric"
+                                                                    minute="2-digit" time-zone={timezoneSidId}></lightning-formatted-date-time>
+                                                                </dd>
+                                                                <dt class="slds-item_label slds-text-color_weak slds-truncate">
+                                                                    Approval Status:</dt>
+                                                                <dd class="slds-item_detail">
+                                                                    {record.status}</dd>
+                                                            </dl>
+
+                                                            <div class="title">Requesting Staff</div>
+
+                                                            <dl class="slds-list_horizontal slds-wrap">
+                                                                <dt class="slds-item_label slds-text-color_weak slds-truncate">
+                                                                    Staff:</dt>
+                                                                <dd class="slds-item_detail">
+                                                                    {record.requestingStaffName}</dd>
+                                                                <dt class="slds-item_label slds-text-color_weak slds-truncate">
+                                                                    Trading Type:</dt>
+                                                                <dd class="slds-item_detail">
+                                                                    {record.requestingStaffTradingType}</dd>
+                                                                <dt class="slds-item_label slds-text-color_weak slds-truncate">
+                                                                    Record:</dt>
+                                                                <dd class="slds-item_detail">
+                                                                    {record.requestingStaffRecordName}</dd>
+                                                            </dl>
+
+                                                            <div class="title">Trading Staff</div>
+                                                            
+                                                            <dl class="slds-list_horizontal slds-wrap">
+                                                                <dt class="slds-item_label slds-text-color_weak slds-truncate">
+                                                                    Staff:</dt>
+                                                                <dd class="slds-item_detail">
+                                                                    {record.tradingStaffName}</dd>
+                                                                <dt class="slds-item_label slds-text-color_weak slds-truncate">
+                                                                    Trading Type:</dt>
+                                                                <dd class="slds-item_detail">
+                                                                    {record.tradingStaffTradingType}</dd>
+                                                                <dt class="slds-item_label slds-text-color_weak slds-truncate">
+                                                                    Record:</dt>
+                                                                <dd class="slds-item_detail">
+                                                                    {record.tradingStaffRecordName}</dd>
+                                                            </dl>
+                                                        </div>
+                                                    </div>
+                                                    <div class="slds-grid slds-grid_align-end slds-grid_vertical-align-center slds-m-top_x-small"> 
+                                                        <template if:true={record.canAcknowledge}>
+                                                            <button class="slds-button slds-button_brand"
+                                                                data-id={record.id}
+                                                                onclick={handleAcknowledgeButton}>Acknowledge</button>
+                                                        </template>
+                                                        
+                                                        <template if:true={record.canCancel}>
+                                                            <button class="slds-button slds-button_destructive"
+                                                                data-id={record.id}
+                                                                onclick={handleCancelButton}>Cancel</button>
+                                                        </template>
+                                                    </div>
+                                                </article>
+                                            </li>
+                                        </ul>
+                                        <div if:false={filteredDriveShiftTrades.length}
+                                            class="slds-align--absolute-center slds-p-around--large slds-text-heading--small">
+                                            No request found
+                                        </div>
+                                    </div>
+                                </article>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <template if:true={showNewRequestPage}>
+        <c-slwc-drive-shift-trade
+            user-resource={userResource}
+            full-screen={fullScreen}
+            onclose={closeDriveShiftTradeModal}
+        ></c-slwc-drive-shift-trade>
+    </template>
+
+    <c-slwc-confirm-modal
+        is-open={confirmModalData.isOpen}
+        mode={confirmModalData.mode}
+        title={confirmModalData.title}
+        message={confirmModalData.message}
+        handle-on-close={confirmModalData.onClose}
+        confirm-btn-label={confirmModalData.confirmBtnLabel}
+        cancel-btn-label={confirmModalData.cancelBtnLabel}
+        size='x-small'>
+    </c-slwc-confirm-modal>
+</template>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Tentative_Drives</fullName>
+    <columns>NAME</columns>
+    <columns>CREATEDBY_USER</columns>
+    <columns>sked_Account__c</columns>
+    <columns>sked_Account_Type__c</columns>
+    <columns>sked_Status__c</columns>
+    <columns>sked_Drive_Productivity_Banding__c</columns>
+    <columns>sked_Drive_Date__c</columns>
+    <columns>sked_Start_Time__c</columns>
+    <columns>sked_End_Time__c</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>sked_Status__c</field>
+        <operation>equals</operation>
+        <value>Tentative</value>
+    </filters>
+    <filters>
+        <field>sked_Drive_Productivity_Banding__c</field>
+        <operation>notEqual</operation>
+        <value>red</value>
+    </filters>
+    <label>Tentative Drives</label>
+</ListView>

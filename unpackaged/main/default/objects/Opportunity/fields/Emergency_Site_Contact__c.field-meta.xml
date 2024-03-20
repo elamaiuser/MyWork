@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Emergency_Site_Contact__c</fullName>
+    <externalId>false</externalId>
+    <formula>HYPERLINK(
+  &quot;/&quot; &amp;  Drive_Site__r.sked_Emergency_Contact__r.Id , 
+  Drive_Site__r.sked_Emergency_Contact__r.FirstName + &quot; &quot; +  Drive_Site__r.sked_Emergency_Contact__r.LastName,
+  &quot;_self&quot;
+)</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <label>Emergency Site Contact</label>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

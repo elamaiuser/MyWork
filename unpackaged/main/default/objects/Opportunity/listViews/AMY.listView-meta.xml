@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>AMY</fullName>
+    <columns>Account_Manager__c</columns>
+    <columns>Collection_Operation__c</columns>
+    <columns>Drive_Date__c</columns>
+    <columns>OPPORTUNITY.NAME</columns>
+    <columns>Source__c</columns>
+    <columns>Calendar_Build_Status__c</columns>
+    <columns>CORE.USERS.LAST_NAME</columns>
+    <columns>ACCOUNT.NAME</columns>
+    <columns>OPPORTUNITY.STAGE_NAME</columns>
+    <columns>Rollover_Consideration__c</columns>
+    <columns>ARC_Region__c</columns>
+    <columns>DriveStatus__c</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>Drive_Date__c</field>
+        <operation>greaterThan</operation>
+        <value>12/30/2024</value>
+    </filters>
+    <filters>
+        <field>Source__c</field>
+        <operation>equals</operation>
+        <value>Calendar Build</value>
+    </filters>
+    <filters>
+        <field>Drive_Status__c</field>
+        <operation>contains</operation>
+        <value>Draft,System Generated,Hold,Pending Action,Tentative</value>
+    </filters>
+    <filters>
+        <field>ARC_Region__c</field>
+        <operation>equals</operation>
+        <value>Wisconsin</value>
+    </filters>
+    <label>Calendar Build Past 9/1/2024</label>
+</ListView>

@@ -1,0 +1,65 @@
+<template>
+    <template if:true={showSpinner}>
+        <lightning-spinner class="spins" size="medium"></lightning-spinner>
+    </template>
+
+    <article class="slds-card slds-card_boundary sked-lac-page">
+        <div class="slds-grid slds-page-header">
+            <header class="slds-media slds-media--center slds-has-flexi-truncate">
+                <div class="slds-media__figure slds-m-right_small slds-avatar slds-avatar_small">
+                    <lightning-icon icon-name="standard:event" size="small"></lightning-icon>
+                </div>
+                <div class="slds-media__body">
+                    <div class="slds-page-header__name">
+                        <div class="slds-page-header__name-title">
+                            <h2 class="slds-card__header-title">
+                                <span class="slds-page-header__title slds-truncate" title="Site Availability">Site Availability</span>
+                            </h2>
+                        </div>
+                    </div>
+                </div>
+            </header>
+            <div class="slds-no-flex">
+                <div class="slds-grid">
+                    <div class="slds-col slds-p-right_x-small">
+                        <c-slwc-week-date-picker 
+                            variant="label-hidden"
+                            onweekdatechange={handleOnChange}
+                            default-start-date={queryModel.startDate}
+                            default-end-date={queryModel.endDate}>
+                        </c-slwc-week-date-picker>
+                    </div>
+                    <div class="slds-col slds-p-right_x-small">
+                        <lightning-button-icon tooltip="Refresh" onclick={refresh} icon-name="utility:refresh"></lightning-button-icon>
+                    </div>
+                    <div class="slds-col">
+                        <lightning-button-icon tooltip="Create Availability" variant="brand" onclick={createAvailability} icon-name="utility:add"></lightning-button-icon>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div>
+            <div class="slds-p-around_medium slds-align_absolute-center">
+                <template if:false={hasResult}>
+                    <template if:false={isValidQueryModel}>
+                        <lightning-icon icon-name="utility:warning" size="x-small" alternative-text="Warning!" title="Warning" class="slds-p-right_xxx-small"></lightning-icon>
+                        <span>Select a date.</span>
+                    </template>
+                </template>
+                <template if:true={hasResult}>
+                  <c-slwc-calendar
+                    style="width: 100%"
+                    settings={calendarSettings}
+                    metadata={calendarMetadata}
+                    config-data={calendarConfigData}
+                    calendar-data={calendarData}
+                    calendar-date-range={calendarDateRange}>
+                  </c-slwc-calendar>
+                </template>
+            </div>
+        </div>
+    </article>
+
+    <c-slwc-location-availability-modal location-id={recordId}></c-slwc-location-availability-modal>
+
+</template>

@@ -1,0 +1,19 @@
+.test {
+  display: block;
+}
+
+.size55rem {
+  font-size: 0.55rem;
+}
+
+.color-default-text {
+  color: #16325c;
+}
+
+.bg-green {
+  background-color: #59b66e;
+}
+
+.color-text-link-hover {
+  color: #1d92d2;
+}

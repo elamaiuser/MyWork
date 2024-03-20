@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<BusinessProcess xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Market Manager Process</fullName>
+    <description>used for the Market Manager flow</description>
+    <isActive>true</isActive>
+    <values>
+        <fullName>Active Feeder Group</fullName>
+        <default>false</default>
+    </values>
+    <values>
+        <fullName>Feeder Group - Qualified</fullName>
+        <default>false</default>
+    </values>
+    <values>
+        <fullName>Feeder Group - Unqualified</fullName>
+        <default>false</default>
+    </values>
+    <values>
+        <fullName>Future Outreach</fullName>
+        <default>false</default>
+    </values>
+    <values>
+        <fullName>Potential Feeder Group</fullName>
+        <default>true</default>
+    </values>
+</BusinessProcess>

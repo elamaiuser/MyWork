@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Queue xmlns="http://soap.sforce.com/2006/04/metadata">
+    <doesSendEmailToMembers>false</doesSendEmailToMembers>
+    <name>Richland WA: DMDCR</name>
+    <queueMembers>
+        <users>
+            <user>heath.palen-mcbee@redcross.org.biomed</user>
+            <user>kim.buckner@redcross.org.biomed</user>
+            <user>tim.lippert@redcross.org.biomed</user>
+        </users>
+    </queueMembers>
+    <queueSobject>
+        <sobjectType>Task</sobjectType>
+    </queueSobject>
+    <queueSobject>
+        <sobjectType>sked_Drive_Change_Request__c</sobjectType>
+    </queueSobject>
+</Queue>

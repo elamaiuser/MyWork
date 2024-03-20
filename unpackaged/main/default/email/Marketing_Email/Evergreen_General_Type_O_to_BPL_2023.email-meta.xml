@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<EmailTemplate xmlns="http://soap.sforce.com/2006/04/metadata">
+    <available>true</available>
+    <description>Email to BPLs about Type O</description>
+    <encodingKey>ISO-8859-1</encodingKey>
+    <letterhead>ARC_Logo_Test</letterhead>
+    <name>Evergreen_General_Type O Information to BPL_2023</name>
+    <style>formalLetter</style>
+    <subject>Upcoming Blood Drive Information - Blood Type O</subject>
+    <textOnly>Dear [Insert Name],
+I would like to share some information with you about type O blood and the impact your upcoming blood drive can make. While all blood types are needed; blood types O negative and O positive must be collected at a higher rate to keep up with hospital demand. In emergency situations when there’s no time to determine a patient’s blood type, doctors reach for type O blood. These critical blood types are always in high demand but often in low supply. It’s important for you to know that the recruitment actions you take as a blood program leader can directly impact our ability to respond to hospital demand.
+
+Next Steps, immediately review the attached items:
+
+Info piece - what you should know before your drive and easy ways to increase your impact.
+Donor email - a template you can customize and use to recruit eligible type O blood donors.
+
+Additional tips for success:
+
+Before the blood drive, make a personal call to type O donors, reminding them why their appointment is needed and thank them for scheduling an appointment to give blood.
+If a Power Red device is assigned to the blood drive, ensure the type O donor is educated on the process and, if eligible, is encouraged to donate Power Red.
+
+Thank you again for your commitment as a blood program leader. I am confident that with some additional efforts, you will increase your type O donors. If you have any questions, please do not hesitate to reach out – I’m always here to help!
+All the best,
+[Insert Name]</textOnly>
+    <type>html</type>
+    <uiType>Aloha</uiType>
+</EmailTemplate>

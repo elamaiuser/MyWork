@@ -1,0 +1,86 @@
+<template>
+    <div class="slds-is-relative">
+        <template if:true={showSpinner}>
+            <lightning-spinner class="spins" size="medium"></lightning-spinner>
+        </template>
+    
+        <article class="slds-card slds-card_boundary approval-history-page">
+            <div class="slds-grid slds-page-header">
+                <header class="slds-media slds-media--center slds-has-flexi-truncate">
+                    <div class="slds-media__figure slds-m-right_small slds-avatar slds-avatar_small">
+                        <lightning-icon icon-name="custom:custom9" size="small"></lightning-icon>
+                    </div>
+                    <div class="slds-media__body">
+                        <div class="slds-page-header__name">
+                            <div class="slds-page-header__name-title">
+                                <h2 class="slds-card__header-title">
+                                    <span class="slds-truncate">{pageHeader}</span>
+                                </h2>
+                            </div>
+                        </div>
+                    </div>
+                </header>
+                <div class="slds-no-flex">
+                    <div class="slds-grid">
+                    </div>
+                </div>
+            </div>
+            <div>
+                <div if:false={operationRecords.length} class="slds-align_absolute-center slds-p-around_large">
+                    <lightning-icon icon-name="utility:warning" size="x-small" alternative-text="Warning!" title="Warning"></lightning-icon>
+                    <span class="slds-m-left--small">There are no records in this list.</span>
+                </div>
+    
+                <div class="wrapper">
+                    <template for:each={operationRecords} for:item="item">
+                        <div key={item.id} class="slds-card__body slds-wrap slds-grid">
+                            <div class="slds-size_1-of-1">
+                                <div
+                                    class="slds-var-p-horizontal_medium slds-var-p-vertical_xx-small slds-tile slds-media slds-hint-parent">
+                                    <div class="slds-media__body">
+                                        <div class="slds-grid slds-grid_align-spread slds-has-flexi-truncate">
+                                            <h3 class="slds-tile__title slds-truncate">
+                                                <a href={item.recordPageUrl} target="_blank">{item.name}</a>
+                                            </h3>
+                                        </div>
+                                        <div class="slds-tile__detail">
+                                            <dl class="slds-list_horizontal slds-wrap">
+                                                <dt class="slds-item_label slds-text-color_weak slds-truncate">Status:</dt>
+                                                <dd class="slds-item_detail slds-truncate">
+                                                    {item.status}
+                                                </dd>
+                                            </dl>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <lightning-button-menu alternative-text="Show menu" icon-size="x-small" menu-alignment="right">
+                                            <lightning-menu-item value="view" label="View" data-value={item.id} data-action="edit" onclick={handleWidgetActions}></lightning-menu-item>
+                                            <lightning-menu-item value="delete" label="Delete" data-value={item.id} data-action="delete" onclick={handleWidgetActions}></lightning-menu-item>
+                                        </lightning-button-menu>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+            </div>
+        </article>
+    </div>
+ 
+    <c-slwc-operation-record
+        job={operationRecordModalData.job}
+        job-allocation={operationRecordModalData.jobAllocation}
+        is-open={operationRecordModalData.isOpen}
+        onclose={handleCloseOperationRecordModal}
+    ></c-slwc-operation-record>
+
+    <c-slwc-confirm-modal
+        is-open={confirmModalData.isOpen}
+        title={confirmModalData.title}
+        message={confirmModalData.message}
+        handle-on-close={confirmModalData.onClose}
+        confirm-btn-label={confirmModalData.confirmBtnLabel}
+        cancel-btn-label={confirmModalData.cancelBtnLabel}
+        size='x-small'>
+    </c-slwc-confirm-modal>
+</template>

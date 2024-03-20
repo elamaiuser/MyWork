@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Approved_Rejected_Date__c</fullName>
+    <description>If DM approved/Reject any request the this field will auto populate by the approved/rejected date</description>
+    <externalId>false</externalId>
+    <label>Approved/Rejected Date</label>
+    <required>false</required>
+    <type>DateTime</type>
+</CustomField>

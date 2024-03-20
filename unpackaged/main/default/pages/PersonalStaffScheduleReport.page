@@ -1,0 +1,231 @@
+<!--*
+    * @description: This visualforce page is rendered as PDF to generate a detail report on Staffing Scheduling.
+    **   Modification Log  ****
+    *  Date					Developer Name			Comments
+    * ***************************************************************************************************************************************************************************
+    * 07/06/2023			Barnojit Sharma			Populated Timezone field for both Activity and Job allocation in PDF (Logic for HRP-10247)
+	* 11/17/2023			Kishore Das				Logic for HRP-11350(Collections staff PTO not displayed on Personal Staff Schedule Lightning report)
+    **************************************************************************************************************************************************************************************************-->
+<apex:page controller="PersonalStaffScheduleReportController"  showHeader="false" sidebar="false"  standardStylesheets="false" renderAs="pdf"
+           applyBodyTag="false" applyHtmlTag="false"> 
+    
+    <html>
+        <head>
+            <style type="text/css">
+                @page {
+                @bottom-right {
+                text-align: right;
+                width: 400px;
+                content: "Page " counter(page) " of " counter(pages);
+                }
+                }
+                td {
+                font-size:12px; 
+                padding-bottom: 10px;
+                padding-top: 10px;
+                text-align: left;
+                width: 15%;
+                }
+                th {
+                font-size:14px;
+                word-break: break-all;
+                width: 15%;
+                text-align: left;
+                column-gap: 0px;
+                border-top: 1px solid black;
+                border-bottom: 1px solid black;
+                }
+            </style>
+            <body>
+                <h2 style="text-align: center; padding-bottom:0px !important;padding-top:0px !important">
+                    Personal Staffing Schedule - Detail
+                </h2>
+                <table style="width:100%; text-align: center;">
+                    <tr>
+                        <td style="text-align:right;padding-bottom:0px !important;padding-top:0px !important">From
+                            <apex:outputText value="{0, date,  MM/dd/yyyy}">
+                                <apex:param value="{!Today()}"/> 
+                            </apex:outputText> to 
+                            <apex:outputText value="{0, date,  MM/dd/yyyy}">
+                                <apex:param value="{!Today() + staffScheduleEndDate}"/> 
+                            </apex:outputText>
+                        </td>
+                        <td style="text-align:left;padding-bottom:0px !important;padding-top:0px !important"> &nbsp;&nbsp;Region: ALL</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align:right;padding-bottom:0px;padding-top:0px !important">Coll. Operation: ALL</td>
+                        <td style="text-align:left;padding-bottom:0px !important;padding-top:0px !important">&nbsp;&nbsp;Staff Person: Multiple Staff Members</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align:right;padding-bottom:0px !important;padding-top:0px !important">Org. Subcenter: ALL</td>
+                        <td style="text-align:left;padding-bottom:0px !important;padding-top:0px !important"> &nbsp;&nbsp;Team: ALL</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align:right;padding-bottom:0px !important;padding-top:0px !important">Org. Center: ALL</td>
+                    </tr>
+                </table>
+                
+                <h3 style="padding-bottom:0px !important;padding-top:0px !important">
+                    {!$User.FirstName} {!$User.LastName}
+                </h3>
+                <table>
+                    <apex:repeat value="{!staffScheduleList}" var="staffSch">
+                        <b>Scheduled Time Off :</b> <hr/>
+                        <div style="font-size:12px;">
+                        <apex:repeat value="{!staffSch.availabilityList}" var="avail">
+                            1 Day &nbsp; &nbsp;
+                            <apex:outputText value="{0, date,  MM/dd/yyyy}">
+                                <apex:param value="{!avail.sked_Start_Date__c}"/> </apex:outputText>  to
+                            <apex:outputText value="{0, date,  MM/dd/yyyy}"> <apex:param value="{!avail.sked_Finish_Date__c}"/></apex:outputText>
+                            &nbsp;- {!avail.sked__Type__c}<br/> <!--Logic for HRP-11350-->
+                        </apex:repeat> 
+                        </div>
+                        <hr/>
+                        
+                        <apex:repeat value="{!staffSch.sObjectWapr}" var="actR">
+                            <apex:outputPanel rendered="{!IF(actR.isActivityResource,true,false)}">
+                                <h4 style="padding-bottom:0px !important;padding-top:0px !important">
+                                    <apex:outputText value="{0,date,EEEEEE, MMMMMMMM dd, yyyy}"><apex:param value="{!actR.ActivityResource.act.sked__Activity__r.sked_Start_Date__c}"/>
+                                    </apex:outputText>
+                                </h4>
+                                <tr>
+                                    <th style="padding-bottom:0px !important;padding-top:0px !important"><b>Event Date</b></th>
+                                    <th style="padding-bottom:0px !important;padding-top:0px !important"><b>Event Name </b></th>
+                                    <th style="padding-bottom:0px !important;padding-top:0px !important"><b>Event Hours</b></th>
+                                    <th style="padding-bottom:0px !important;padding-top:0px !important"><b>Event Arrive</b> </th>
+                                    <th style="padding-bottom:0px !important;padding-top:0px !important"><b>Hours</b></th>
+                                    <th style="padding-bottom:0px !important;padding-top:0px !important"><b>Lunch Hours</b></th>
+                                    <th style="padding-bottom:0px !important;padding-top:0px !important"><b>Total Hrs</b></th>
+                                </tr>
+                                <tr>
+                                    <td style="padding-bottom:0px !important;padding-top:0px !important"><apex:outputText value="{0, date,  MM/dd/yyyy}">
+                                        <apex:param value="{!actR.ActivityResource.act.sked__Activity__r.sked_Start_Date__c}"/> </apex:outputText></td>
+                                    <td style="padding-bottom:0px !important;padding-top:0px !important">{!actR.ActivityResource.act.sked__Activity__r.sked__Type__c}</td>
+                                    <td style="padding-bottom:0px !important;padding-top:0px !important">
+                                            <apex:outputPanel rendered="{!IF(AND(actR.ActivityResource.formattedStartTime!=null,actR.ActivityResource.formattedEndTime!=null),true,false)}">
+                                                {!actR.ActivityResource.formattedStartTime} - {!actR.ActivityResource.formattedEndTime}
+                                            </apex:outputPanel>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="padding-bottom:0px !important;padding-top:0px !important"></td>
+                                    <td colspan="6" style="padding-bottom:0px !important;padding-top:0px !important">{!actR.ActivityResource.act.sked__Activity__r.sked_Subtype__c}</td>
+                                </tr>
+                                
+                                <tr>
+                                    <td style="padding-bottom:0px !important;padding-top:0px !important"></td>
+                                    <td style="padding-bottom:0px !important;padding-top:0px !important"></td>
+                                    <td style="padding-bottom:0px !important;padding-top:0px !important"></td>
+                                    <td style="padding-bottom:0px !important;padding-top:0px !important">{!actR.ActivityResource.formattedStartTime}</td>
+                                    <td style="padding-bottom:0px !important;padding-top:0px !important">{!actR.ActivityResource.formattedStartTime} - {!actR.ActivityResource.formattedEndTime}</td>
+                                    <td style="padding-bottom:0px !important;padding-top:0px !important">None</td>
+                                    <td style="padding-bottom:0px !important;padding-top:0px !important">{!actR.ActivityResource.timeDifference}</td>
+                                </tr> 
+                                <tr>
+                                    <td style="padding-bottom:0px !important;padding-top:0px !important"><b>Staffing Role</b></td>
+                                    <td colspan="6" style="padding-bottom:0px !important;padding-top:0px !important">Not Applicable</td>
+                                </tr>
+                                <tr>
+                                    <td style="padding-bottom:0px !important;padding-top:0px !important"><b>Location:</b></td>
+                                    <td colspan="6" style="padding-bottom:0px !important;padding-top:0px !important">{!actR.ActivityResource.act.sked__Activity__r.sked__Location__r.Name}</td>
+                                </tr>
+                                <!-- HRP-10247 changes Starts -->
+                                <tr>
+                                    <td style="padding-bottom:0px !important;padding-top:0px !important"><b>Timezone:</b></td>
+                                    <td colspan="6" style="padding-bottom:0px !important;padding-top:0px !important">{!actR.ActivityResource.act.sked__Activity__r.sked__Timezone__c}</td>
+                                </tr>
+                                <!-- HRP-10247 changes Ends -->
+                                <tr>
+                                    <td style="padding-bottom:0px !important;padding-top:0px !important"><b>Address:</b></td>
+                                    <td colspan="6" style="padding-bottom:0px !important;padding-top:0px !important">{!actR.ActivityResource.act.sked__Activity__r.sked__Address__c}</td>
+                                </tr>
+                                <tr>
+                                    <td style="padding-bottom:0px !important;padding-top:0px !important"><b>Direction:</b></td>
+                                    <td colspan="6" style="padding-bottom:0px !important;padding-top:0px !important">Go to site as directed</td>
+                                </tr>
+                                <tr>
+                                    <td style="padding-bottom:0px !important;padding-top:0px !important"><b>Event/Scheduling Notes:</b></td>
+                                    <td colspan="6" style="padding-bottom:0px !important;padding-top:0px !important">{!actR.ActivityResource.act.sked__Activity__r.sked__Notes__c}</td>
+                                </tr>
+                            </apex:outputPanel>
+                            <apex:outputPanel rendered="{!IF(actR.isJobAllocation,true,false)}">
+                                <h4>
+                                    <apex:outputText value="{0,date,EEEEEE, MMMMMMMM dd, yyyy}"><apex:param value="{!actR.JobAllocation.allocat.sked_Start_Date__c}"/>
+                                    </apex:outputText>
+                                </h4>
+                                <tr>
+                                    <th style="padding-bottom:0px !important;padding-top:0px !important"><b>Drive Date</b></th>
+                                    <th style="padding-bottom:0px !important;padding-top:0px !important"><b>Drive Hours</b></th>
+                                    <th style="padding-bottom:0px !important;padding-top:0px !important"><b>Drive Arrive</b></th>
+                                    <th style="padding-bottom:0px !important;padding-top:0px !important"><b>Work Hours</b></th>
+                                    <th style="padding-bottom:0px !important;padding-top:0px !important"><b>Lunch Hours</b></th>
+                                    <th style="padding-bottom:0px !important;padding-top:0px !important"><b>Total Hrs</b></th>
+                                </tr>
+                                <tr>
+                                    <td style="padding-bottom:0px !important;padding-top:0px !important"><apex:outputText value="{0, date,  MM/dd/yyyy}">
+                                        <apex:param value="{!actR.JobAllocation.allocat.sked__Job__r.sked_Drive__r.sked_Drive_Date__c}"/> </apex:outputText></td>
+                                    <td style="padding-bottom:0px !important;padding-top:0px !important" colspan="5"> <apex:outputPanel rendered="{!IF(AND(actR.JobAllocation.formattedShiftSTime!=null,actR.JobAllocation.formattedShiftETime!=null),true,false)}">
+                                        {!actR.JobAllocation.formattedShiftSTime} - {!actR.JobAllocation.formattedShiftETime}
+                                    </apex:outputPanel></td>
+                                </tr>
+                                
+                                <tr>
+                                    <td style="padding-bottom:0px !important;padding-top:0px !important"></td>
+                                    <td style="padding-bottom:0px !important;padding-top:0px !important">{!actR.JobAllocation.allocat.sked__Job__r.sked_Drive_Shift__r.Name}</td>
+                                    <td style="padding-bottom:0px !important;padding-top:0px !important">{!actR.JobAllocation.formattedStartTime}</td> 
+                                        <td style="padding-bottom:0px !important;padding-top:0px !important">
+                                            <apex:outputPanel rendered="{!IF(AND(actR.JobAllocation.formattedStartTime!=null,actR.JobAllocation.formattedEndTime!=null),true,false)}">
+                                                {!actR.JobAllocation.formattedStartTime} - {!actR.JobAllocation.formattedEndTime}
+                                            </apex:outputPanel>
+                                        </td>
+                                        <td style="padding-bottom:0px !important;padding-top:0px !important">
+                                            <apex:outputPanel rendered="{!IF(AND(actR.JobAllocation.formattedShiftLunchSTime!=null,actR.JobAllocation.formattedShiftLunchETime!=null),true,false)}">
+                                            {!actR.JobAllocation.formattedShiftLunchSTime} - {!actR.JobAllocation.formattedShiftLunchETime}
+                                            </apex:outputPanel>
+                                        </td>
+                                    <td style="padding-bottom:0px !important;padding-top:0px !important">{!actR.JobAllocation.timeDifference}</td>
+                                </tr>
+                                
+                                <tr>
+                                    <td style="padding-bottom:0px !important;padding-top:0px !important"><b>Staffing Role</b></td>
+                                    <td style="padding-bottom:0px !important;padding-top:0px !important" colspan="5">{!actR.JobAllocation.allocat.sked__Job__r.sked__Type__c}</td>
+                                </tr>
+                                <tr>
+                                    <td style="padding-bottom:0px !important;padding-top:0px !important"></td>
+                                    <td style="padding-bottom:0px !important;padding-top:0px !important" colspan="5">{!actR.JobAllocation.allocat.sked__Job__r.sked_Dual_Role__c}</td>
+                                </tr>
+                                <tr>
+                                    <td style="padding-bottom:0px !important;padding-top:0px !important"></td>
+                                    <td style="padding-bottom:0px !important;padding-top:0px !important" colspan="5">{!actR.JobAllocation.allocat.sked_Additional_Roles__c}</td>
+                                </tr>
+                                <tr>
+                                    <td style="padding-bottom:0px !important;padding-top:0px !important"><b>Location:</b></td>
+                                    <td colspan="5" style="padding-bottom:0px !important;padding-top:0px !important">{!actR.JobAllocation.allocat.sked__Job__r.sked_Drive__r.sked_Drive_Site__r.Name}</td>
+                                </tr>
+                                <!-- HRP-10247 changes Starts -->
+                                <tr>
+                                    <td style="padding-bottom:0px !important;padding-top:0px !important"><b>Timezone:</b></td>
+                                    <td colspan="5" style="padding-bottom:0px !important;padding-top:0px !important">{!actR.JobAllocation.allocat.sked_Job_Timezone__c}</td>
+                                </tr>
+                                <!-- HRP-10247 changes Ends -->
+                                <tr>
+                                    <td style="padding-bottom:0px !important;padding-top:0px !important"><b>Address:</b></td> 
+                                    <td style="padding-bottom:0px !important;padding-top:0px !important" colspan="5">{!actR.JobAllocation.allocat.sked__Job__r.sked_Drive__r.sked_Drive_Site__r.sked__Address__c}</td>
+                                </tr>
+                                <tr>
+                                    <td style="padding-bottom:0px !important;padding-top:0px !important"><b>Direction:</b></td>
+                                    <td colspan="5" style="padding-bottom:0px !important;padding-top:0px !important">{!actR.JobAllocation.allocat.sked__Job__r.sked_Drive__r.sked_Drive_Site__r.sked_Directions_From_CollectionOperation__c}</td>
+                                </tr>
+                                <tr>
+                                    <td style="padding-bottom:0px !important;padding-top:0px !important"><b>Drive / Scheduling Notes:</b></td>
+                                    <td colspan="5" style="padding-bottom:0px !important;padding-top:0px !important">{!actR.JobAllocation.allocat.sked__Job__r.sked_Drive__r.sked_Operation_Notes__c}</td>
+                                </tr>
+                            </apex:outputPanel>
+                        </apex:repeat>
+                    </apex:repeat>
+                </table>
+                <hr/>
+            </body>
+        </head>
+    </html>
+</apex:page>

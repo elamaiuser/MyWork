@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Related_Record_Link__c</fullName>
+    <description>This will contain the link to the related Record.Created to use it on Home page on My Assigned Tasks or My Delegated tasks widget</description>
+    <externalId>false</externalId>
+    <formula>HYPERLINK(LEFT($Api.Partner_Server_URL_260, FIND( &#39;/services&#39;, $Api.Partner_Server_URL_260))+&#39;/&#39;+ WhatId,Related_Record_Name__c,&quot;_self&quot; )</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <label>Related Record Link</label>
+    <required>false</required>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>sked_Cancellation_Reason__c</fullName>
+    <externalId>false</externalId>
+    <label>Cancellation Reason</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <controllingField>Initiated_By__c</controllingField>
+        <valueSetDefinition>
+            <sorted>true</sorted>
+            <value>
+                <fullName>Account Plan Sponsor Declined</fullName>
+                <default>false</default>
+                <label>Account Plan Sponsor Declined</label>
+            </value>
+            <value>
+                <fullName>ARC Management</fullName>
+                <default>false</default>
+                <label>ARC Management</label>
+            </value>
+            <value>
+                <fullName>ARC Staff Strike</fullName>
+                <default>false</default>
+                <label>ARC Staff Strike</label>
+            </value>
+            <value>
+                <fullName>Budgeted FTE Reduction</fullName>
+                <default>false</default>
+                <label>Budgeted FTE Reduction</label>
+            </value>
+            <value>
+                <fullName>Competition</fullName>
+                <default>false</default>
+                <label>Competition</label>
+            </value>
+            <value>
+                <fullName>COVID</fullName>
+                <default>false</default>
+                <label>COVID</label>
+            </value>
+            <value>
+                <fullName>Donor Base Illness</fullName>
+                <default>false</default>
+                <label>Donor Base Illness</label>
+            </value>
+            <value>
+                <fullName>Equipment Issues</fullName>
+                <default>false</default>
+                <label>Equipment Issues</label>
+            </value>
+            <value>
+                <fullName>Geo Alignment</fullName>
+                <default>false</default>
+                <label>Geo Alignment</label>
+            </value>
+            <value>
+                <fullName>Lost Room/Site Issues</fullName>
+                <default>false</default>
+                <label>Lost Room/Site Issues</label>
+            </value>
+            <value>
+                <fullName>Low Prod/High CPUC</fullName>
+                <default>false</default>
+                <label>Low Prod/High CPUC</label>
+            </value>
+            <value>
+                <fullName>Man-made Disaster</fullName>
+                <default>false</default>
+                <label>Man-made Disaster</label>
+            </value>
+            <value>
+                <fullName>No Response</fullName>
+                <default>false</default>
+                <label>No Response</label>
+            </value>
+            <value>
+                <fullName>Overbooked Day</fullName>
+                <default>false</default>
+                <label>Overbooked Day</label>
+            </value>
+            <value>
+                <fullName>Region Consolidation</fullName>
+                <default>false</default>
+                <label>Region Consolidation</label>
+            </value>
+            <value>
+                <fullName>Sponsor Conflict</fullName>
+                <default>false</default>
+                <label>Sponsor Conflict</label>
+            </value>
+            <value>
+                <fullName>Staff Call-Out</fullName>
+                <default>false</default>
+                <label>Staff Call-Out</label>
+            </value>
+            <value>
+                <fullName>Staff Shortage</fullName>
+                <default>false</default>
+                <label>Staff Shortage</label>
+            </value>
+            <value>
+                <fullName>System Need</fullName>
+                <default>false</default>
+                <label>System Need</label>
+            </value>
+            <value>
+                <fullName>Time elapsed</fullName>
+                <default>false</default>
+                <label>Time elapsed</label>
+            </value>
+            <value>
+                <fullName>Vehicle Issue</fullName>
+                <default>false</default>
+                <label>Vehicle Issue</label>
+            </value>
+            <value>
+                <fullName>Weather/Natural Disaster</fullName>
+                <default>false</default>
+                <label>Weather/Natural Disaster</label>
+            </value>
+        </valueSetDefinition>
+        <valueSettings>
+            <controllingFieldValue>ARC_Initiated_Mobile</controllingFieldValue>
+            <controllingFieldValue>ARC Initiated-Fixed</controllingFieldValue>
+            <valueName>ARC Management</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>ARC_Initiated_Mobile</controllingFieldValue>
+            <controllingFieldValue>ARC Initiated-Fixed</controllingFieldValue>
+            <valueName>ARC Staff Strike</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>ARC_Initiated_Mobile</controllingFieldValue>
+            <controllingFieldValue>ARC Initiated-Fixed</controllingFieldValue>
+            <valueName>Budgeted FTE Reduction</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>ARC_Initiated_Mobile</controllingFieldValue>
+            <controllingFieldValue>Sponsor_Initiated_Mobile</controllingFieldValue>
+            <controllingFieldValue>Sponsor Initiated-Fixed</controllingFieldValue>
+            <controllingFieldValue>ARC Initiated-Fixed</controllingFieldValue>
+            <valueName>COVID</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>ARC_Initiated_Mobile</controllingFieldValue>
+            <controllingFieldValue>ARC Initiated-Fixed</controllingFieldValue>
+            <valueName>Equipment Issues</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>ARC_Initiated_Mobile</controllingFieldValue>
+            <valueName>Low Prod/High CPUC</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>ARC_Initiated_Mobile</controllingFieldValue>
+            <controllingFieldValue>Sponsor_Initiated_Mobile</controllingFieldValue>
+            <controllingFieldValue>Sponsor Initiated-Fixed</controllingFieldValue>
+            <controllingFieldValue>ARC Initiated-Fixed</controllingFieldValue>
+            <valueName>Man-made Disaster</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>ARC_Initiated_Mobile</controllingFieldValue>
+            <controllingFieldValue>ARC Initiated-Fixed</controllingFieldValue>
+            <valueName>Overbooked Day</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>ARC_Initiated_Mobile</controllingFieldValue>
+            <controllingFieldValue>ARC Initiated-Fixed</controllingFieldValue>
+            <valueName>Region Consolidation</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>ARC_Initiated_Mobile</controllingFieldValue>
+            <controllingFieldValue>ARC Initiated-Fixed</controllingFieldValue>
+            <valueName>Staff Call-Out</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>ARC_Initiated_Mobile</controllingFieldValue>
+            <controllingFieldValue>ARC Initiated-Fixed</controllingFieldValue>
+            <valueName>Staff Shortage</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>ARC_Initiated_Mobile</controllingFieldValue>
+            <controllingFieldValue>ARC Initiated-Fixed</controllingFieldValue>
+            <valueName>System Need</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>ARC_Initiated_Mobile</controllingFieldValue>
+            <valueName>Time elapsed</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>ARC_Initiated_Mobile</controllingFieldValue>
+            <valueName>Vehicle Issue</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>ARC_Initiated_Mobile</controllingFieldValue>
+            <controllingFieldValue>Sponsor_Initiated_Mobile</controllingFieldValue>
+            <controllingFieldValue>Sponsor Initiated-Fixed</controllingFieldValue>
+            <controllingFieldValue>ARC Initiated-Fixed</controllingFieldValue>
+            <valueName>Weather/Natural Disaster</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Sponsor_Initiated_Mobile</controllingFieldValue>
+            <valueName>Account Plan Sponsor Declined</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Sponsor_Initiated_Mobile</controllingFieldValue>
+            <valueName>Competition</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Sponsor_Initiated_Mobile</controllingFieldValue>
+            <valueName>Donor Base Illness</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Sponsor_Initiated_Mobile</controllingFieldValue>
+            <controllingFieldValue>Sponsor Initiated-Fixed</controllingFieldValue>
+            <valueName>Lost Room/Site Issues</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Sponsor_Initiated_Mobile</controllingFieldValue>
+            <valueName>Sponsor Conflict</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>ARC Initiated-Fixed</controllingFieldValue>
+            <valueName>Geo Alignment</valueName>
+        </valueSettings>
+    </valueSet>
+</CustomField>

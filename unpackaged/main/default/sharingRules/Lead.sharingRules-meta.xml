@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SharingRules xmlns="http://soap.sforce.com/2006/04/metadata">
+    <sharingOwnerRules>
+        <fullName>All_Biomed_Lead_Access</fullName>
+        <accessLevel>Edit</accessLevel>
+        <description>this rule will allow Read Write access to all Leads for Biomedical Users</description>
+        <label>All Biomed Lead Access</label>
+        <sharedTo>
+            <group>All_Biomed_Sales_Users</group>
+        </sharedTo>
+        <sharedFrom>
+            <group>All_Biomed_Sales_Users</group>
+        </sharedFrom>
+    </sharingOwnerRules>
+</SharingRules>

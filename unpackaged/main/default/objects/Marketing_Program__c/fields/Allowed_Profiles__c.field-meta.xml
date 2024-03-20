@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Allowed_Profiles__c</fullName>
+    <description>Profiles Allowed to add this marketing program to Drive or Account</description>
+    <externalId>false</externalId>
+    <label>Allowed Profiles</label>
+    <required>false</required>
+    <trackHistory>true</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>MultiselectPicklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Sponsor Marketing</fullName>
+                <default>false</default>
+                <label>Sponsor Marketing</label>
+            </value>
+            <value>
+                <fullName>Global Admin</fullName>
+                <default>false</default>
+                <label>Global Admin</label>
+            </value>
+            <value>
+                <fullName>DRD Profile</fullName>
+                <default>false</default>
+                <label>DRD Profile</label>
+            </value>
+            <value>
+                <fullName>APS Admin</fullName>
+                <default>false</default>
+                <label>APS Admin</label>
+            </value>
+            <value>
+                <fullName>APS Management</fullName>
+                <default>false</default>
+                <label>APS Management</label>
+            </value>
+            <value>
+                <fullName>APS Scheduler</fullName>
+                <default>false</default>
+                <label>APS Scheduler</label>
+            </value>
+            <value>
+                <fullName>Biomed Read Only</fullName>
+                <default>false</default>
+                <label>Biomed Read Only</label>
+            </value>
+            <value>
+                <fullName>Recruitment Admin</fullName>
+                <default>false</default>
+                <label>Recruitment Admin</label>
+            </value>
+            <value>
+                <fullName>Collections</fullName>
+                <default>false</default>
+                <label>Collections</label>
+            </value>
+            <value>
+                <fullName>Collection Management</fullName>
+                <default>false</default>
+                <label>Collection Management</label>
+            </value>
+            <value>
+                <fullName>Analytics</fullName>
+                <default>false</default>
+                <label>Analytics</label>
+            </value>
+            <value>
+                <fullName>Customer Care</fullName>
+                <default>false</default>
+                <label>Customer Care</label>
+            </value>
+            <value>
+                <fullName>Schedule Viewers</fullName>
+                <default>false</default>
+                <label>Schedule Viewers</label>
+            </value>
+            <value>
+                <fullName>APS Planner</fullName>
+                <default>false</default>
+                <label>APS Planner</label>
+            </value>
+            <value>
+                <fullName>Manufacturing</fullName>
+                <default>false</default>
+                <label>Manufacturing</label>
+            </value>
+            <value>
+                <fullName>Telecruiter</fullName>
+                <default>false</default>
+                <label>Telecruiter</label>
+            </value>
+            <value>
+                <fullName>System Administrator</fullName>
+                <default>false</default>
+                <label>System Administrator</label>
+            </value>
+            <value>
+                <fullName>DRD Manager</fullName>
+                <default>false</default>
+                <label>DRD Manager</label>
+            </value>
+            <value>
+                <fullName>AM Profile</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>AM Profile</label>
+            </value>
+            <value>
+                <fullName>BPM Profile</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>BPM Profile</label>
+            </value>
+            <value>
+                <fullName>DM Profile</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>DM Profile</label>
+            </value>
+            <value>
+                <fullName>Skedulo</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Skedulo</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+    <visibleLines>10</visibleLines>
+</CustomField>

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<EmailTemplate xmlns="http://soap.sforce.com/2006/04/metadata">
+    <available>true</available>
+    <description>Booking Ask Amazon $20 Promo AM to Active BPL</description>
+    <encodingKey>ISO-8859-1</encodingKey>
+    <letterhead>ARC_Logo_Test</letterhead>
+    <name>Marketing Segment_SCI_BookingAskActiveBPL_$20Amazon_2023</name>
+    <style>formalLetter</style>
+    <subject>Amazon Promotion Supporting Sickle Cell Initiative - Thank You for Your Partnership!</subject>
+    <textOnly>Dear [Partner],
+I am pleased to announce that our Sickle Cell Initiative Amazon promotion is still active and will run through June 30, 2024. This promotion is part of our ongoing commitment to support the sickle cell community and raise awareness about this important cause.
+
+Your commitment to hosting sickle cell blood drives has been instrumental in helping us reach our goals, and we look forward to working with you to host more blood drives in the future.
+
+Together, we can make a difference in the lives of those affected by sickle cell disease. Thank you very much for your partnership and support.
+
+&lt;&lt;PROMOTION&gt;&gt; As a special thank you, every time you host a Red Cross blood drive between July 1, 2023 and June 30, 2024 the donors that come to give blood, will receive a $20 Amazon.com Gift Card* by email, all courtesy of our partners at Amazon.**
+
+Let’s schedule your lifesaving blood drive, contact me today.
+
+
+Sincerely,
+
+&lt;AM Name&gt;
+
+
+*Restrictions apply, see amazon.com/gc-legal
+
+
+**Presenting donors who receive this offer and present to donate during the applicable promotional time frame are eligible to receive the above described e-gift card(s). This offer is non-transferable and not redeemable for cash. Limit one (1) per presenting donor unless otherwise indicated. [If a presenting donor qualifies for multiple offers, the donor will receive all offers unless otherwise indicated.] Instructions on how to redeem your gift card will be emailed to the address listed in the presenting donor’s American Red Cross donor profile approximately thirty (30) days after attempted donation(s). All gift cards are subject to individual merchant terms and conditions, and all trademarks are property of their respective owners. Merchants and offers are subject to change.  No substitutions by presenting donors. American Red Cross is not responsible for lost, damaged, corrupted or stolen gift cards and may replace any such cards at its sole discretion. Any questions or problems in connection with redeeming gift cards must be directed to the merchant.
+*Restrictions apply, see amazon.com/gc-legal</textOnly>
+    <type>html</type>
+    <uiType>Aloha</uiType>
+</EmailTemplate>

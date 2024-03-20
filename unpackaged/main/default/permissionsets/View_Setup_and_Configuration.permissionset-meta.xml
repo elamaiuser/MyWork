@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PermissionSet xmlns="http://soap.sforce.com/2006/04/metadata">
+    <description>Allows assigned users visibility into Setup. Delegated Admins must have it assigned to login as other users. View Setup and Configuration is a System Permission checkbox in this permission set. Only permission granted with this permission set.</description>
+    <hasActivationRequired>false</hasActivationRequired>
+    <label>View Setup and Configuration</label>
+    <userPermissions>
+        <enabled>true</enabled>
+        <name>ViewRoles</name>
+    </userPermissions>
+    <userPermissions>
+        <enabled>true</enabled>
+        <name>ViewSetup</name>
+    </userPermissions>
+</PermissionSet>

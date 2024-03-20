@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Queue xmlns="http://soap.sforce.com/2006/04/metadata">
+    <doesSendEmailToMembers>false</doesSendEmailToMembers>
+    <name>Paducah KY: DSTs</name>
+    <queueMembers>
+        <users>
+            <user>aisha.grant@redcross.org</user>
+            <user>chuck.hrestak@redcross.org</user>
+            <user>greg.theoharatos@redcross.org</user>
+            <user>nancy.firth@redcross.org</user>
+            <user>serena.bricker@redcross.org</user>
+            <user>tara.dickert@redcross.org</user>
+            <user>todd.morgan@redcross.org.biomed</user>
+        </users>
+    </queueMembers>
+    <queueSobject>
+        <sobjectType>sked_Drive_Shift_Trade__c</sobjectType>
+    </queueSobject>
+</Queue>

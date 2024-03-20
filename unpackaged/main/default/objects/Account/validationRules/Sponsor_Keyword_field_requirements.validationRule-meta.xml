@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Sponsor_Keyword_field_requirements</fullName>
+    <active>true</active>
+    <description>This rule will fire if user enters a special character (*&amp;?%). A validation rule on the Drive Field on the Blood Drive Opportunity object mimics this one.</description>
+    <errorConditionFormula>NOT(ISBLANK( Sponsor_Keyword__c))&amp;&amp;
+NOT( REGEX( Sponsor_Keyword__c , &quot;[a-zA-Z0-9 ]+&quot;))</errorConditionFormula>
+    <errorDisplayField>Sponsor_Keyword__c</errorDisplayField>
+    <errorMessage>Keywords are recommended to be 50 letters or less. 
+Keywords should begin by being letter based. They may have numbers after words; i.e. Bulldog2018, not 2018Bulldog
+Keywords should not allow special characters (*&amp;?%)</errorMessage>
+</ValidationRule>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+        <label><!-- Lost Reason --></label>
+        <name>Lost_Reason__c</name>
+        <picklistValues>
+            <masterLabel>BPL Loss</masterLabel>
+            <translation><!-- BPL Loss --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Lost to Competition</masterLabel>
+            <translation><!-- Lost to Competition --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Market Optimization</masterLabel>
+            <translation><!-- Market Optimization --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Other</masterLabel>
+            <translation><!-- Other --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Red Cross Decision (Do Not Run)</masterLabel>
+            <translation><!-- Red Cross Decision (Do Not Run) --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Sponsor Decision</masterLabel>
+            <translation><!-- Sponsor Decision --></translation>
+        </picklistValues>
+    </CustomFieldTranslation>

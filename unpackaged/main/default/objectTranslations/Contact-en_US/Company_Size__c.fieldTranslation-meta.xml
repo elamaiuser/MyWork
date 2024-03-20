@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+        <help><!-- Company Size, maps from lead object --></help>
+        <label><!-- Company Size --></label>
+        <name>Company_Size__c</name>
+    </CustomFieldTranslation>

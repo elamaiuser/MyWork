@@ -1,0 +1,88 @@
+<template>
+    <section role="dialog" tabindex="-1" class={customClass.modalClass}>
+        <div class="slds-modal__container" style="min-width: 32rem; width: 32rem;">
+            <header class={customClass.headerClass}>
+                <lightning-button-icon onclick={handleCancel} class="slds-button slds-button_icon slds-modal__close" size="large"
+                    icon-name="utility:close" variant="bare-inverse" title="Close"></lightning-button-icon>
+
+                <h2 class="slds-modal__title slds-hyphenate">{title}</h2>
+            </header>
+            <div class="slds-modal__content slds-is-relative slds-p-around_medium" style="min-height: 8rem;">
+                <template if:true={showSpinner}>
+                    <lightning-spinner class="spins" size="medium"></lightning-spinner>
+                </template>
+
+                    <div 
+                        for:each={transformedAdditionalFields} for:item="fieldSetting"
+                        key={fieldSetting.field}
+                        class="slds-m-bottom_x-small">
+                        <c-slwc-picklist
+                            if:true={fieldSetting.showPicklist}
+                            name={fieldSetting.field}
+                            label={fieldSetting.label}
+                            required={fieldSetting.required}
+                            dirty={dirty}
+                            object-api-name={fieldSetting.objectApiName}
+                            selected-value={fieldSetting.defaultValue}
+                            pick-listfield-api-name={fieldSetting.picklistFieldApiName}
+                            onpicklistchange={handleOnChange}>
+                        </c-slwc-picklist>
+
+                        <lightning-input 
+                            if:true={fieldSetting.showText}
+                            type={fieldSetting.type}
+                            name={fieldSetting.field}
+                            label={fieldSetting.label}
+                            readonly={fieldSetting.readonly}
+                            required={fieldSetting.required}
+                            max-length={fieldSetting.maxLength}
+                            value={fieldSetting.defaultValue}
+                            onchange={handleOnChange}
+                        ></lightning-input>
+
+                        <lightning-input 
+                            if:true={fieldSetting.showDate}
+                            type="date"
+                            name={fieldSetting.field}
+                            label={fieldSetting.label}
+                            required={fieldSetting.required}
+                            value={fieldSetting.defaultValue}
+                            onchange={handleOnChange}
+                        ></lightning-input>
+
+                        <c-slwc-lookup
+                            if:true={fieldSetting.showLookup}
+                            icon-name={fieldSetting.iconName}
+                            object-name={fieldSetting.objectName}
+                            name={fieldSetting.field}
+                            label={fieldSetting.label}
+                            is-required={fieldSetting.required}
+                            placeholder={fieldSetting.placeholder}
+                            selection={fieldSetting.defaultValue}
+                            onselectionchange={handleOnChange}>
+                        </c-slwc-lookup>
+                    </div>
+
+                <div class="slds-form" if:false={hideComments}>
+                    <div class="slds-form-element">
+                        <div class="slds-form-element__label">
+                            Comments
+                        </div>
+                        <div class="slds-form-element__control">
+                            <textarea maxlength="255"
+                                name="comments"
+                                rows="9"
+                                onchange={handleOnChange}
+                                class="slds-textarea">{model.comments}</textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <footer class={customClass.footerClass}>
+                <button class="slds-button slds-button_neutral" onclick={handleCancel}>Cancel</button>
+                <button class="slds-button slds-button_brand" onclick={handleConfirm} disabled={confirmBtnDisabled}>{confirmBtnLabel}</button>
+            </footer>
+        </div>
+    </section>
+    <div class={customClass.backdropClass}></div>
+</template>

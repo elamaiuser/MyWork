@@ -1,0 +1,79 @@
+<template>
+    <div class="rac-setting flex-display setting-panel">
+        <lightning-spinner if:true={showSpinner} class="spins" size="medium"></lightning-spinner>
+
+        <div class="setting-panel_header">
+            <div class="slds-media">
+                <div class="slds-media__figure">
+                    <span class="slds-icon_container slds-icon-utility-settings setup-icon">
+                        <lightning-icon icon-name="utility:clock" variant="inverse" size="small"></lightning-icon>
+                    </span>
+                </div>
+                <div class="slds-media__body">
+                    <h1 class="slds-page-header__title slds-truncate slds-align-middle">Administration</h1>
+                    <p class="slds-page-header__subtitle slds-text-body_small slds-line-height_reset">Manage Schedules</p>
+                </div>
+            </div>
+            <div>
+                <lightning-button variant="border-filled" icon-name="utility:refresh" label="Refresh" onclick={handleRefreshBtn}></lightning-button>
+            </div>
+        </div>
+        <div class="setting-panel_content-container">
+            <div class="setting-panel_content">
+                <div class="slds-p-around_medium slds-form">
+                    <div class="setting-table__empty-message slds-m-horizontal_small slds-m-top_large" if:true={showEmptyMessage}>
+                        <span class="slds-icon_container slds-m-right_x-small">
+                            <lightning-icon icon-name="utility:warning" class="slds-current-color" size="x-small"></lightning-icon>
+                        </span>
+                        <span>No schedules...</span>
+                    </div>
+
+                    <div class="grid">
+                        <div key={item.id} for:each={scheduleList} for:item="item">
+                            <article class="slds-card">
+                                <div class="slds-card__header slds-grid">
+                                    <header class="slds-media slds-media_center slds-has-flexi-truncate">
+                                        <div class="slds-media__figure">
+                                            <lightning-icon icon-name="utility:clock" size="small"></lightning-icon>
+
+                                            <!-- <span class="slds-icon_container slds-icon-standard-account" title="account">
+                                                <svg class="slds-icon slds-icon_small" aria-hidden="true">
+                                                    <use xlink:href="/assets/icons/standard-sprite/svg/symbols.svg#account"></use>
+                                                </svg>
+                                                <span class="slds-assistive-text">account</span>
+                                            </span> -->
+                                        </div>
+                                        <div class="slds-media__body">
+                                            <h2 class="slds-card__header-title">
+                                                <span>{item.label}</span>
+                                            </h2>
+                                        </div>
+                                    </header>
+                                </div>
+                                <div class="slds-card__body slds-card__body_inner">
+                                    <dl class="slds-dl_horizontal slds-text-color_weak">
+                                        <dt class="slds-dl_horizontal__label">Start Time:</dt>
+                                        <dd class="slds-dl_horizontal__detail">
+                                            <lightning-formatted-date-time value={item.startTime} year="numeric" month="numeric" day="numeric" hour="numeric"
+                                                minute="2-digit" time-zone={timezoneSidId}></lightning-formatted-date-time>
+                                        </dd>
+                                        <dt class="slds-dl_horizontal__label">Next Fire Time:</dt>
+                                        <dd class="slds-dl_horizontal__detail">
+                                            <lightning-formatted-date-time value={item.nextFireTime} year="numeric" month="numeric" day="numeric" hour="numeric"
+                                            minute="2-digit" time-zone={timezoneSidId}></lightning-formatted-date-time>
+                                        </dd>
+                                    </dl>
+                                </div>
+                                <footer class="slds-card__footer slds-grid slds-grid_align-end">
+                                    <template if:false={isReadonly}>
+                                        <lightning-button variant="brand" label="Execute" class="slds-m-left_x-small" data-id={item.id} onclick={handleExecuteBtn} disabled={item.disableExecuteBtn}></lightning-button>
+                                    </template>
+                                </footer>
+                            </article>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>

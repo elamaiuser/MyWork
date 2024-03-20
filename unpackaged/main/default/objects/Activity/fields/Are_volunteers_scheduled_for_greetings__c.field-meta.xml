@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Are_volunteers_scheduled_for_greetings__c</fullName>
+    <defaultValue>false</defaultValue>
+    <externalId>false</externalId>
+    <inlineHelpText>Are volunteers scheduled for the greeting/registration and canteen?  Is there unloading and loading help?  Review with Sponsor any volunteers, and their names, that will be provided by the American Red Cross.</inlineHelpText>
+    <label>Are volunteers scheduled for greetings?</label>
+    <type>Checkbox</type>
+</CustomField>

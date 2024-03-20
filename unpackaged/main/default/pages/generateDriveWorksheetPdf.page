@@ -1,0 +1,365 @@
+<!--***   Modification Log  ****
+ *  Date					Developer Name			Comments
+ * ***************************************************************************************************************************************************************************
+ * 05/25/2023			Barnojit Sharma			Add Site Smoking Policy field in Drive Worksheet (HRP-10052)
+ * 10/26/2023			Barnojit Sharma			Add Military Fields & Additional Drive Logistics to the Drive Worksheet (HRP-9954)
+ **************************************************************************************************************************************************************************************************-->
+<apex:page controller="GenerateDriveWorksheetPdfController" action="{!doRedirectToSearch}" renderAs="pdf" showHeader="false" sidebar="false" standardStylesheets="false" applyHtmlTag="false" applyBodyTag="false">
+    <!-- HRP-9963 changes Starts -->
+    <apex:variable value="{!0}" var="count"/>
+    <apex:repeat value="{!shiftDataWrap}" var="shiftObj" id="theRepeat">
+        <apex:variable value="{!count+1}" var="count"/>
+        <!-- HRP-9963 changes Ends -->
+        <html>
+            <head>
+                <style type="text/CSS">
+                    @page {
+                        @bottom-right {
+                            content: "Page " counter(page) " of " counter(pages);
+                        }
+                    }
+                    td {
+                        font-size:12px; 
+                        padding-bottom: 0px;
+                        padding-top: 0px;                       
+                    }
+                    th {
+                        font-size:14px;
+                        padding-bottom: 0px;
+                        padding-top: 0px;
+                    }
+                </style>
+            </head>
+            <body>
+                <!-- HRP-9963 changes Starts -->
+                <!-- Description: Add page break between two Drive Worksheet ; Date: 27/04/2023 -->
+                <div style="{!IF(shiftDataWrap.size == count, '','page-break-after:always;')}">
+                <!-- HRP-9963 changes Ends -->
+                    <table style="width:100%;">
+                        <td style="width:50%;">
+                            <b style="font-size: 25px;">Drive Worksheet</b>
+                        </td>
+                        <td style="width:50%;" align="right">
+                            <b style="font-size: 15px;">{!shiftObj.driveName}</b>
+                        </td>
+                    </table>
+                    <div style="width:100%; background:#D3D3D3;font-size: 15px;font-weight: bold;">Operation Information</div>
+                    <table style="width:100%;">
+                        <tr> 
+                            <th style=" width: 10%;font-weight: bold;"> Account Name: </th>
+                            <th style=" width: 10%;"> {!shiftObj.oppInfo.accountName} </th>
+                            <td style=" width: 8%;font-weight: bold;"> Drive Date: </td>
+                            <td style=" width: 11%;"> {!shiftObj.oppInfo.driveDate}</td>
+                            <td style=" width: 8%;font-weight: bold;"> 2RBC Eligibility:   </td>
+                            <td style=" width: 10%;"> {!shiftObj.oppInfo.twoRBCEligibility} </td>
+                            <td style=" width: 8%;font-weight: bold;"> WB Eligibility:   </td>
+                            <td style=" width: 10%;"> {!shiftObj.oppInfo.wBEligibility} </td>
+                        </tr>
+                        <tr> 
+                            <td style=" width: 10%;font-weight: bold;"> Account Manager: </td>
+                            <td style=" width: 10%;">{!shiftObj.oppInfo.accountManager}  </td>
+                            <td style=" width: 8%;font-weight: bold;"> Phone: </td>
+                            <td style=" width: 11%;"> {!shiftObj.oppInfo.phone}</td>
+                            <td style=" width: 8%;font-weight: bold;"> Draw Start:   </td>
+                            <td style=" width: 10%;"> {!shiftObj.oppInfo.drawStart} </td>
+                            <td style=" width: 8%;font-weight: bold;"> Draw End:   </td>
+                            <td style=" width: 10%;"> {!shiftObj.oppInfo.drawEnd} </td>
+                        </tr>
+                        <tr> 
+                            <td style=" width: 10%;font-weight: bold;"> Shift:   </td>
+                            <td style=" width: 10%;"> {!shiftObj.oppInfo.report} </td>
+                            <td style=" width: 8%;font-weight: bold;"> Open To Public:   </td>
+                            <td style=" width: 11%;"> {!shiftObj.oppInfo.opentoPublic} </td>
+                            <td style=" width: 8%;font-weight: bold;"> Setup: </td>
+                            <td style=" width: 10%;">{!shiftObj.oppInfo.setup}  </td>
+                            <td style=" width: 8%;font-weight: bold;"> Breakdown: </td>
+                            <td style=" width: 10%;"> {!shiftObj.oppInfo.breakDown}</td>
+                        </tr>
+                        <tr> 
+                            <td style=" width: 10%;font-weight: bold;"> Volunteers Requested Account: </td>
+                            <td style=" width: 10%;">{!shiftObj.oppInfo.volunteersReqAccount}  </td>
+                            <td style=" width: 8%;font-weight: bold;"> Volunteers Requested Center: </td>
+                            <td style=" width: 11%;"> {!shiftObj.oppInfo.volunteersReqCenter}</td>
+                            <td style=" width: 8%;font-weight: bold;"> Minutes:   </td>
+                            <td style=" width: 10%;"> {!shiftObj.oppInfo.minutes} </td>
+                            <td style=" width: 8%;font-weight: bold;" valign="top"> Vehicle(s):   </td>
+                            <td style=" width: 10%;"> {!shiftObj.oppInfo.vehicle} </td>
+                        </tr>
+                        <tr> 
+                            <td style=" width: 10%;font-weight: bold;"> Drive Id: </td>
+                            <td style=" width: 10%;">{!shiftObj.oppInfo.driveId}  </td>
+                            <td style=" width: 8%;font-weight: bold;"> Account Id: </td>
+                            <td style=" width: 11%;"> {!shiftObj.oppInfo.accId}</td>
+                            <td style=" width: 8%;font-weight: bold;"> Site Id:   </td>
+                            <td style=" width: 10%;"> {!shiftObj.oppInfo.siteId} </td>
+                            <td style=" width: 8%;font-weight: bold;"> Wireless Policy:   </td>
+                            <td style=" width: 10%;"> {!shiftObj.oppInfo.wirelessPolicy} </td>
+                        </tr>
+                    </table>
+                    <hr size="10px" color="black"/>
+                    
+                    <table allign="left" style="border-collapse: collapse;width:100%;border-radius:50px;padding-left: 5%;">
+                        <tr >
+                            <th style="border: 1px solid black; width: 10%;text-align: center;"> Procedure Type </th>
+                            <td style="border: 1px solid black; width: 10%;text-align: center;font-weight: bold;"> Proc Proj </td>
+                            <td style="border: 1px solid black; width: 10%;text-align: center;font-weight: bold;"> Prod Proj </td>
+                            <td style="padding-left: 10px; width: 8%;font-weight: bold;"> Presenting Donor Capacity </td>
+                            <td style=" width: 10%;"> {!shiftObj.shiftInfo.presentingDonorCapacity} </td>
+                        </tr>
+                        <tr>
+                            <td style="border: 1px solid black; width: 20%;text-align: center;"> {!shiftObj.shiftInfo.typeRBC} </td>
+                            <td style="border: 1px solid black; width: 15%;text-align: center;"> {!shiftObj.shiftInfo.procedureRBC} </td>
+                            <td style="border: 1px solid black; width: 15%;text-align: center;"> {!shiftObj.shiftInfo.productRBC} </td>
+                            <td style="padding-left: 10px; width: 30%;font-weight: bold;"> Staff Requested  </td>
+                            <td style=" width: 20%;"> {!shiftObj.shiftInfo.staffReq} </td>
+                        </tr>
+                        <tr>
+                            <td style="border: 1px solid black; width: 20%;text-align: center;"> {!shiftObj.shiftInfo.typeWB} </td>
+                            <td style="border: 1px solid black; width: 15%;text-align: center;"> {!shiftObj.shiftInfo.procedureWB} </td>
+                            <td style="border: 1px solid black; width: 15%;text-align: center;"> {!shiftObj.shiftInfo.productWB} </td>
+                            <td style="padding-left: 10px; width: 30%;font-weight: bold;"> Auto Machine Quantity </td>
+                            <td style=" width: 20%;"> {!shiftObj.shiftInfo.autoMac} </td>
+                        </tr>
+                        <tr>
+                            <td style="border: 1px solid black; width: 20%;text-align: center;"> Shift Total </td>
+                            <td style="border: 1px solid black; width: 15%;text-align: center;"> {!shiftObj.shiftInfo.totalProcedure} </td>
+                            <td style="border: 1px solid black; width: 15%;text-align: center;"> {!shiftObj.shiftInfo.totalProduct} </td>
+                            <td style="padding-left: 10px; width: 30%;font-weight: bold;"> Lunch Break Reduction </td>
+                            <td style=" width: 20%;"> {!shiftObj.shiftInfo.lunchBreakRed} </td>
+                        </tr>
+                    </table>
+                    <br />
+                    <div style="width:100%; background:#D3D3D3;font-size: 15px;font-weight: bold;">Drive Job</div>
+                    
+                    <table style="width:100%;">
+                        <tr>
+                            <th style=" width: 5%;border-bottom: 1px solid black;"> No. </th>
+                            <th style=" width: 10%;border-bottom: 1px solid black;">Job Type</th>
+                            <th style=" width: 15%;border-bottom: 1px solid black;">Pickup Time</th>
+                            <th style=" width: 30%;border-bottom: 1px solid black;">Bag Details</th>
+                            <th style=" width: 15%;border-bottom: 1px solid black;">Delivery Id</th>
+                            <th style=" width: 25%;border-bottom: 1px solid black;">Drive Comments</th>
+                        </tr>
+                        <apex:repeat value="{!shiftObj.jobInfoList}" var="jobInfo" > 
+                        <tr>
+                            <td style=" width: 5%;border-bottom: 1px solid black;">{!jobInfo.num}</td>
+                            <td style=" width: 10%;border-bottom: 1px solid black;">{!jobInfo.jobType}</td>
+                            <td style=" width: 15%;border-bottom: 1px solid black;">{!jobInfo.pickupTime}</td>
+                            <td style=" width: 30%;border-bottom: 1px solid black;">{!jobInfo.bagDetails}</td>
+                            <td style=" width: 15%;border-bottom: 1px solid black;">{!jobInfo.deliveryID}</td>
+                            <td style=" width: 25%;border-bottom: 1px solid black;">{!jobInfo.driveComments}</td>
+                        </tr>
+                        </apex:repeat>
+                    </table>
+                    <br />
+                    <div style="width:100%; background:#D3D3D3;font-size: 15px;font-weight: bold;">Site/Account Information</div>
+                    
+                    <table>
+                        <tr>
+                            <td style=" width: 20%;font-weight: bold;"> Site/Building Name:</td>
+                            <td style=" width: 29%;"> {!shiftObj.siteInfo.siteBuilding} </td>
+                            <td style=" width: 2%;"> </td>
+                            <td style=" width: 20%;font-weight: bold;"> Primary Chair:</td>
+                            <td style=" width: 29%;" colspan="2"> {!shiftObj.siteInfo.priChair} </td>
+                        </tr>  
+                        <tr>
+                            <td style=" width: 20%;font-weight: bold;"> Room Name: </td>
+                            <td style=" width: 29%;"> {!shiftObj.siteInfo.room} </td>
+                            <td style=" width: 2%;"> </td>
+                            <td style=" width: 20%;font-weight: bold;"> Phone: </td>
+                            <td style=" width: 29%;" colspan="2"> {!shiftObj.siteInfo.phone} </td>
+                        </tr>
+                        <tr>
+                            <td style=" width: 20%;font-weight: bold;"> Floor: </td>
+                            <td style=" width: 29%;"> {!shiftObj.siteInfo.floor} </td>
+                            <td style=" width: 2%;"> </td>
+                            <td style=" width: 20%;font-weight: bold;"> Mobile: </td>
+                            <td style=" width: 29%;" colspan="2"> {!shiftObj.siteInfo.mobile} </td>
+                        </tr>
+                        <tr>
+                            <td style=" width: 20%;font-weight: bold;" valign="top"> Site Address: </td>
+                            <td style=" width: 29%;"> {!shiftObj.siteInfo.siteAddress} </td>
+                            <td style=" width: 2%;"> </td>
+                            <td style=" width: 20%;font-weight: bold;"> Inside Stairs </td>
+                            <td style=" width: 29%;font-weight: bold;" colspan="2"> Outside Stairs </td>
+                        </tr>
+                        <tr>
+                            <td style=" width: 20%;font-weight: bold;"> Site Phone: </td>
+                            <td style=" width: 29%;"> {!shiftObj.siteInfo.sitePhone} </td>
+                            <td style=" width: 2%;"> </td>
+                            <td style=" width: 20%;"> {!shiftObj.siteInfo.insideStairs} </td>
+                            <td style=" width: 29%;" colspan="2"> {!shiftObj.siteInfo.outsideStairs} </td>
+                        </tr>
+                        <tr>
+                            <td style=" width: 20%;font-weight: bold;"> Whom To Meet: </td>
+                            <td style=" width: 29%;"> {!shiftObj.siteInfo.meetWith} </td>
+                            <td style=" width: 2%;"> </td>
+                            <td style=" width: 20%;"> </td>
+                            <td style=" width: 29%;" colspan="2"> </td>
+                        </tr>
+                        <tr>
+                            <td style=" width: 20%;font-weight: bold;"> Site Contact: </td>
+                            <td style=" width: 29%;"> {!shiftObj.siteInfo.siteContact} </td>
+                            <td style=" width: 2%;"> </td>
+                            <td style=" width: 20%;font-weight: bold;"> Air Condition? </td>
+                            <td style=" width: 15%;font-weight: bold;"> Heated? </td>
+                            <td style=" width: 14%;font-weight: bold;"> Elevator? </td>
+                        </tr>
+                        <tr>
+                            <td style=" width: 20%;font-weight: bold;"> Chapter: </td>
+                            <td style=" width: 29%;"> {!shiftObj.siteInfo.chapter} </td>
+                            <td style=" width: 2%;"> </td>
+                            <td style=" width: 20%;"> {!shiftObj.siteInfo.airCondition} </td>
+                            <td style=" width: 15%;"> {!shiftObj.siteInfo.heated} </td>
+                            <td style=" width: 14%;"> {!shiftObj.siteInfo.elevator} </td>
+                        </tr>
+                        <tr>
+                            <td style=" width: 100%;" colspan="6">&nbsp;</td>
+                        </tr>
+                        <tr>
+                            <td style=" width: 20%;font-weight: bold;" valign="top"> Directions: </td>
+                            <td style=" width: 80%;" colspan="5"> {!shiftObj.siteInfo.directions} </td>
+                        </tr>
+                    </table>
+                    <br />
+                    <div style="width:100%; background:#D3D3D3;font-size: 15px;font-weight: bold;">Additional Site Information</div>
+                    
+                    <table style="width:100%;">
+                        <tr> 
+                            <td style=" width: 15%;font-weight: bold;"> Escort Required: </td>
+                            <td style=" width: 15%;"> {!shiftObj.siteInfo.escortRequired} </td>
+                            <td style=" width: 15%;font-weight: bold;"> No Cell Phones: </td>
+                            <td style=" width: 15%;"> {!shiftObj.siteInfo.noCellPhones}</td>
+                            <td style=" width: 15%;font-weight: bold;"> Equipment X Ray: </td>
+                            <td style=" width: 15%;"> {!shiftObj.siteInfo.equipmentXRay} </td>
+                        </tr>
+                        <tr> 
+                            <td style=" width: 15%;font-weight: bold;"> Escort Name: </td>
+                            <td style=" width: 15%;"> {!shiftObj.siteInfo.escortName} </td>
+                            <td style=" width: 15%;font-weight: bold;"> On-Site Food Requirements: </td>
+                            <td style=" width: 15%;"> {!shiftObj.siteInfo.onSiteFoodReq}</td>
+                            <td style=" width: 15%;font-weight: bold;"> Canteen Requirement (Chosen): </td>
+                            <td style=" width: 15%;"> {!shiftObj.siteInfo.canteenReq} </td>
+                        </tr>
+                        <tr> 
+                            <td style=" width: 15%;font-weight: bold;"> Sponsor Security Form Required: </td>
+                            <td style=" width: 15%;"> {!shiftObj.siteInfo.sponsorSecReq} </td>
+                            <td style=" width: 15%;font-weight: bold;"> Safety Emergency Action Plan: </td>
+                            <td style=" width: 15%;"> {!shiftObj.siteInfo.safetyEmgActPlan}</td>
+                            <td style=" width: 15%;font-weight: bold;"> Security Information Needed: </td>
+                            <td style=" width: 15%;"> {!shiftObj.siteInfo.securityInfNeeded} </td>
+                        </tr>
+                        <tr> 
+                            <td style=" width: 15%;font-weight: bold;"> Staff List Needed: </td>
+                            <td style=" width: 15%;"> {!shiftObj.siteInfo.staffListNeeded} </td>
+                            <td style=" width: 15%;font-weight: bold;"> Restroom Location: </td>
+                            <td style=" width: 15%;"> {!shiftObj.siteInfo.restroomLocation}</td>
+                            <td style=" width: 15%;font-weight: bold;"> Floor Covering Requirements: </td>
+                            <td style=" width: 15%;"> {!shiftObj.siteInfo.floorCoveringReq} </td>
+                        </tr>
+                        <tr> 
+                            <td style=" width: 15%;font-weight: bold;"> Security Directions: </td>
+                            <td style=" width: 15%;"> {!shiftObj.siteInfo.securityDir} </td>
+                            <td style=" width: 15%;font-weight: bold;"> Arc Vehicle Parking Direction: </td>
+                            <td style=" width: 15%;"> {!shiftObj.siteInfo.arcVehParkingDir}</td>
+                            <td style=" width: 15%;font-weight: bold;"> Staff Personal Parking Directions: </td>
+                            <td style=" width: 15%;"> {!shiftObj.siteInfo.staffPerParkingDir} </td>
+                        </tr>
+                        <tr> 
+                            <td style=" width: 15%;font-weight: bold;"> Pay for Parking Details: </td>
+                            <td style=" width: 15%;"> {!shiftObj.siteInfo.payforParking} </td>
+                            <td style=" width: 15%;font-weight: bold;"> Unloading Conditions: </td>
+                            <td style=" width: 15%;"> {!shiftObj.siteInfo.unloadingCond}</td>
+                            <td style=" width: 15%;font-weight: bold;"> Unloading Direction Details: </td>
+                            <td style=" width: 15%;"> {!shiftObj.siteInfo.unloadingDir} </td>
+                        </tr>
+                        <!-- HRP-10052 changes Starts -->
+                        <tr> 
+                            <td colspan="2"></td>
+                            <td style=" width: 15%;font-weight: bold;"> Site Smoking Policy: </td>
+                            <td style=" width: 15%;"> {!shiftObj.siteInfo.siteSmkPolicy} </td>
+                            <td colspan="2"></td>
+                        </tr>
+                        <!-- HRP-10052 changes Ends -->
+                    </table>
+                    <br />
+                    <div style="width:100%; background:#D3D3D3;font-size: 15px;font-weight: bold;"> Operational Notes </div>
+                    <table style="width:100%;">
+                        <tr>
+                            <th><u>Notes</u></th>
+                        </tr>
+                        <tr>
+                            <td>{!shiftObj.notes.opNotes}</td>
+                        </tr>
+                    </table>
+                    <!-- HRP-9954 changes Starts -->
+                    <table style="width:100%;">
+                        <tr> 
+                            <td style=" width: 30%;font-weight: bold;"> Military Medical Authority Name: </td>
+                            <td style=" width: 20%;"> {!shiftObj.oppInfo.militaryAuName} </td>
+                            <td style=" width: 30%;font-weight: bold;"> Military Medical Authority Number: </td>
+                            <td style=" width: 20%;"> {!shiftObj.oppInfo.militaryAuNo} </td>
+                        </tr>
+                        <tr> 
+                            <td style=" width: 30%;font-weight: bold;"> Additional Drive Logistics: </td>
+                            <td style=" width: 20%;"> {!shiftObj.oppInfo.AddiLogistics} </td>
+                            <td style=" width: 30%;font-weight: bold;"> Additional Drive Logistics Other: </td>
+                            <td style=" width: 20%;"> {!shiftObj.oppInfo.AddiLogisticsOther} </td>
+                        </tr>
+                    </table>
+                    <!-- HRP-9954 changes Ends -->
+                    <br />
+                    <div style="width:100%; background:#D3D3D3;font-size: 15px;font-weight: bold;"> Employee Table </div>
+                    
+                    <table style="width:100%;">
+                        <tr>
+                            <th style=" width: 5%;border-bottom: 1px solid black;"> No. </th>
+                            <th style=" width: 20%;border-bottom: 1px solid black;">Employee Name</th>
+                            <th style=" width: 10%;border-bottom: 1px solid black;">Role</th>
+                            <th style=" width: 10%;border-bottom: 1px solid black;">eBDR ID</th>
+                            <th style=" width: 8%;border-bottom: 1px solid black;">Lead</th>
+                            <th style=" width: 8%;border-bottom: 1px solid black;">Leave</th>
+                            <th style=" width: 8%;border-bottom: 1px solid black;">Setup</th>
+                            <th style=" width: 15%;border-bottom: 1px solid black;">Break Down</th>
+                            <th style=" width: 8%;border-bottom: 1px solid black;">Return</th>
+                            <th style=" width: 8%;border-bottom: 1px solid black;">Wrapup</th>
+                        </tr>
+                        <apex:repeat value="{!shiftObj.empInfoList}" var="empInfo" >
+                        <tr>
+                            <td style=" width: 5%;border-bottom: 1px solid black;">{!empInfo.num}</td>
+                            <td style=" width: 20%;border-bottom: 1px solid black;">{!empInfo.employeeName}</td>
+                            <td style=" width: 10%;border-bottom: 1px solid black;">{!empInfo.role}</td>
+                            <td style=" width: 10%;border-bottom: 1px solid black;">{!empInfo.eBDRID}</td>
+                            <td style=" width: 8%;border-bottom: 1px solid black;">{!empInfo.lead}</td>
+                            <td style=" width: 8%;border-bottom: 1px solid black;">{!empInfo.leave}</td>
+                            <td style=" width: 8%;border-bottom: 1px solid black;">{!empInfo.setup}</td>
+                            <td style=" width: 15%;border-bottom: 1px solid black;">{!empInfo.breakDown}</td>
+                            <td style=" width: 8%;border-bottom: 1px solid black;">{!empInfo.returnTime}</td>
+                            <td style=" width: 8%;border-bottom: 1px solid black;">{!empInfo.wrapup}</td>
+                        </tr>
+                        </apex:repeat>
+                    </table>
+                    <br />
+                    <div style="width:100%; background:#D3D3D3;font-size: 15px;font-weight: bold;"> Future Drive </div>
+                    
+                    <table style="width:100%;">
+                        <tr>
+                            <th style=" width: 5%; border-bottom: 1px solid black;"> No. </th>
+                            <th style=" width: 45%; border-bottom: 1px solid black;">Drive Name</th>
+                            <th style=" width: 40%; border-bottom: 1px solid black;">Account</th>
+                            <th style=" width: 10%; border-bottom: 1px solid black;">Drive date</th>
+                        </tr>
+                        <apex:repeat value="{!shiftObj.fdriveInfoList}" var="fdriveInfo" >
+                        <tr>
+                            <td style=" width: 5%; border-bottom: 1px solid black;">{!fdriveInfo.num}</td>
+                            <td style=" width: 45%; border-bottom: 1px solid black;">{!fdriveInfo.driveName}</td>
+                            <td style=" width: 40%; border-bottom: 1px solid black;">{!fdriveInfo.driveAccount}</td>
+                            <td style=" width: 10%; border-bottom: 1px solid black;">{!fdriveInfo.driveDate}</td>
+                        </tr>
+                        </apex:repeat>
+                    </table>
+                </div>
+            </body>
+        </html>
+    </apex:repeat>
+</apex:page>

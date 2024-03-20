@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Queue xmlns="http://soap.sforce.com/2006/04/metadata">
+    <doesSendEmailToMembers>false</doesSendEmailToMembers>
+    <name>Norfolk VA: RTVs</name>
+    <queueMembers>
+        <users>
+            <user>amy.wess@redcross.org</user>
+            <user>andrea.kreuzer@redcross.org</user>
+            <user>austin.rehfield@redcross.org</user>
+            <user>brandy.houghton@redcross.org</user>
+            <user>christine.charnego@redcross.org</user>
+            <user>chris.adams@redcross.org</user>
+            <user>connie.hogan@redcross.org</user>
+            <user>dominique.choice@redcross.org</user>
+            <user>eric.thomas@redcross.org</user>
+            <user>jaquelin.listecki@redcross.org</user>
+            <user>kim.abubakar@redcross.org</user>
+            <user>kristina.barnes@redcross.org</user>
+            <user>lee.stephens@redcross.org</user>
+            <user>leigh.bouch@redcross.org</user>
+            <user>lori.rozecki@redcross.org.biomed</user>
+            <user>melanie.mitchell2@redcross.org</user>
+            <user>michelle.fingerhoot@redcross.org</user>
+            <user>gena.rager@redcross.org</user>
+            <user>roger.gardner@redcross.org</user>
+            <user>ronette.terry@redcross.org</user>
+            <user>stephanie.judge@redcross.org</user>
+            <user>tania.slight@redcross.org</user>
+            <user>tara.dickert@redcross.org</user>
+            <user>theresa.walker@redcross.org</user>
+            <user>walter.smith3@redcross.org</user>
+        </users>
+    </queueMembers>
+    <queueSobject>
+        <sobjectType>sked__Location__c</sobjectType>
+    </queueSobject>
+</Queue>

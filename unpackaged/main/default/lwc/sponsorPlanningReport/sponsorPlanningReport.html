@@ -1,0 +1,48 @@
+<template>
+    <lightning-card>
+        <div class="slds-p-horizontal_medium" style="font-size: 16px;"><b>Search Panel</b></div>
+        <div class="slds-grid slds-gutters slds-p-horizontal_medium slds-p-top_medium">
+            <div class="slds-col slds-size_1-of-5">
+                <label>Portfolio</label>
+                <c-custom-lookup obj-name="BSF_Portfolio__c" search-placeholder="Search Portfolios" icon-name="standard:brand" onlookupselected={handleSelectionPortfolio}> </c-custom-lookup>
+            </div>
+            <div class="slds-col slds-size_1-of-5 slds-p-horizontal_medium">
+                <label>Drive Team Members</label>
+                <c-custom-lookup obj-name="User" search-placeholder="Search Drive Team Members" icon-name="standard:user" onlookupselected={handleSelectionDriveTeamMember}> </c-custom-lookup>
+            </div>
+        </div>
+        <div class="slds-grid slds-gutters slds-p-horizontal_medium slds-p-top_medium">
+            <div class="slds-col slds-size_1-of-5">
+                <lightning-input type="date" label="Start Date" data-id="startDate" value={wrapper.startDate} onchange={handleChange}></lightning-input>
+            </div>
+            <div class="slds-col slds-size_1-of-5">
+                <lightning-input type="date" label="End Date" data-id="endDate" value={wrapper.endDate} onchange={handleChange}></lightning-input>
+            </div>
+        </div>
+        <div class="slds-grid slds-gutters slds-p-horizontal_medium slds-p-top_medium">
+            <div class="slds-col slds-size_1-of-5">
+                <lightning-input type="text" label="Account" data-id="account" value={wrapper.account} onchange={handleChange}></lightning-input>
+            </div>
+            <div class="slds-col slds-size_1-of-5 slds-p-top_medium">
+                <lightning-input type="checkbox" label="With Notes?" data-id="withNotes" checked={wrapper.withNotes} onchange={handleChange}></lightning-input>
+            </div>
+        </div>
+        <div class="slds-grid slds-gutters slds-p-horizontal_medium slds-p-top_medium">
+            <lightning-button variant="brand" label="Search" title="Search" name="search" onclick={handleClick} class="slds-m-left_x-small"></lightning-button>
+            <lightning-button variant="brand" label="Export to Pdf" title="Export to Pdf" name="export" onclick={handleClick} class="slds-m-left_x-small"></lightning-button>
+            <lightning-button variant="brand" label="Clear All" title="Clear All" name="clear" onclick={handleClick} class="slds-m-left_x-small"></lightning-button>
+        </div>
+    </lightning-card>
+    <template if:true={hasRecords}>
+        <lightning-card>
+            <div style="height: 1000px;">
+                <lightning-datatable
+                        key-field="Id"
+                        data={data}
+                        columns={columns}
+                        onrowselection={getSelectedIds}>
+                </lightning-datatable>
+            </div>
+        </lightning-card>
+    </template>
+</template>

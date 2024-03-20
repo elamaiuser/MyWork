@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+        <label><!-- Drive Owner --></label>
+        <name>sked_Drive_Owner__c</name>
+        <relationshipLabel><!-- Drives on Calendar (Drive Owner) --></relationshipLabel>
+    </CustomFieldTranslation>

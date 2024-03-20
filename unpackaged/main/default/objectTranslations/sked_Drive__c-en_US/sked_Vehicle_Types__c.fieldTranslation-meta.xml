@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+        <label><!-- Vehicle Types --></label>
+        <name>sked_Vehicle_Types__c</name>
+        <picklistValues>
+            <masterLabel>Bus</masterLabel>
+            <translation><!-- Bus --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Cargo Van</masterLabel>
+            <translation><!-- Cargo Van --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>ProMaster</masterLabel>
+            <translation><!-- ProMaster --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Trailer</masterLabel>
+            <translation><!-- Trailer --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Truck</masterLabel>
+            <translation><!-- Truck --></translation>
+        </picklistValues>
+    </CustomFieldTranslation>

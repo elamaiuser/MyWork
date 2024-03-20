@@ -1,0 +1,146 @@
+.slds-lookup__menu {
+  box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.16);
+  transition: visibility .15s, opacity .15s linear;
+  -webkit-transition: visibility .15s, opacity .15s linear;
+  visibility: hidden;
+  display: block;
+  opacity: 0;
+  z-index: 90003;
+}
+
+.slds-lookup__menu.slds-dropdown {
+  min-width: 16rem;
+}
+
+.width-100 {
+  width: 100%;
+}
+
+.sked-pagin-group {
+  width: 100%;
+}
+
+.sked-pagin-group select,
+.sked-pagin-group input {
+  border-radius: 0;
+  border-left: none;
+  border-right: none;
+}
+
+.sked-pagin-group button {
+  background: #fff;
+}
+
+.bco-select .button-group {
+  background: #fff;
+  border-radius: .25rem;
+}
+
+.bco-select .button-group .calendar-date-picker {
+  width: 9rem;
+}
+
+.bco-select .button-group input {
+  border-right: solid 1px #d8dde6;
+  border-top-right-radius: .25rem;
+  border-bottom-right-radius: .25rem;
+}
+
+.bco-select__filter-manager-trigger.slds-is-selected {
+  background-color: #0070d2 !important;
+  border-color: #0070d2;
+}
+
+.bco-select__filter-manager-trigger.slds-is-selected .slds-button__icon {
+  color: #fff;
+}
+
+.filter-filters__popover {
+  position: fixed;
+  width: 22rem;
+  margin-top: 1rem;
+  z-index: 9001;
+  opacity: 0;
+  visibility: hidden;
+}
+
+.filter-filters__popover.slds-fade-in-open {
+  opacity: 1;
+  visibility: visible;
+}
+
+.filter-filters__popover .slds-modal__close  {
+  top: -2.25rem;
+  position: absolute;
+}
+
+.slds-nubbin_top-left:before {
+  left: 16.8rem;
+}
+
+.slds-nubbin_top-left:after {
+  content: unset;
+}
+
+.slds-dropdown.bco-select__menu-container {
+  max-width: -webkit-max-content;
+  max-width: -moz-max-content;
+  max-width: max-content;
+  position: fixed;
+  width: -webkit-fit-content;
+  width: -moz-fit-content;
+  width: fit-content;
+  margin: 0;
+  -webkit-transform: translateX(0);
+      -ms-transform: translateX(0);
+          transform: translateX(0);
+}
+
+.slds-dropdown.bco-select__menu-container.slds-fade-in-open {
+  opacity: 1;
+  visibility: visible;
+}
+
+.slds-dropdown.bco-select__menu-container button {
+  box-shadow: none !important;
+}
+
+.slds-dropdown.bco-select__menu-container .bco-select__menu .menu-item__header {
+  padding: .25rem;
+  cursor: pointer;
+  -webkit-user-select: none;
+  /* Safari */
+  -moz-user-select: none;
+  /* Old versions of Firefox */
+  -ms-user-select: none;
+  /* Internet Explorer/Edge */
+  user-select: none;
+}
+
+.slds-dropdown.bco-select__menu-container .bco-select__menu .menu-item__child {
+  padding-left: .75rem;
+}
+
+.slds-dropdown.bco-select__menu-container .bco-select__menu .slds-icon_selected {
+  color: #0070d2;
+}
+
+.slds-dropdown.bco-select__menu-container .menu-item__expand-button {
+  border: solid 1px #d8dde6;
+  padding: .125rem;
+  border-radius: .125rem;
+  margin-top: -.25rem;
+}
+
+.slds-dropdown.bco-select__menu-container .bco-select-picklist {
+  margin-top: -.5rem;
+  border-top-left-radius: .25rem;
+  border-top-right-radius: .25rem;
+  min-width: 20rem;
+}
+
+.slds-dropdown.bco-select__menu-container .bco-select-picklist .bco-select-picklist__footer {
+  margin-bottom: -.5rem;
+  border-bottom-left-radius: .25rem;
+  border-bottom-right-radius: .25rem;
+}

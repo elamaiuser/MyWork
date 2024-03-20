@@ -1,0 +1,50 @@
+<template>
+    
+    <header class="slds-modal__header">
+            <h2 class="slds-text-heading_medium slds-hyphenate">Clone Draft Drive</h2>
+        </header>
+        <div class="slds-modal__content slds-p-around_medium full-height__modal-content" style="position: relative;">
+            <div class="slds-spinner_container" if:true={showSpinner}>
+                <div role="status" class="slds-spinner slds-spinner_medium">
+                    <span class="slds-assistive-text">Loading</span>
+                    <div class="slds-spinner__dot-a"></div>
+                    <div class="slds-spinner__dot-b"></div>
+                </div>
+            </div>
+            <lightning-layout>
+                <lightning-layout-item flexibility="auto" padding="around-small">
+                    <h2>The items checked below will be cloned to the new Draft Drive in additional to the fields on the Draft Drive itself.</h2>
+                </lightning-layout-item>
+            </lightning-layout>
+            <div class="slds-p-bottom_medium">
+                <div class="slds-grid slds-wrap slds-p-right_small">
+                    <div class="slds-col slds-size_1-of-2 slds-p-left_small">
+                        <lightning-input disabled label="New Draft Drive Stage" name="status" type="text" value={stage}></lightning-input>
+                    </div>
+                    <div class="slds-col slds-size_1-of-2 slds-p-left_small">
+                        <lightning-input label="New Drive Date" name="driveDate" type="date" min={today} value={driveDate} onchange={handleDriveDateChanged} autocomplete="off"></lightning-input>
+                    </div>
+                </div>
+            </div>
+            <lightning-layout>
+                <lightning-layout-item flexibility="auto" padding="around-small">
+                    <h2 style="color:#2e72c7; font-weight: bold;">Options</h2>
+                </lightning-layout-item>
+            </lightning-layout>
+            <lightning-layout>
+                <lightning-layout-item flexibility="auto" padding="around-small">
+                    <lightning-input 
+                        label="Clone all Drive Records."
+                        name="cloneDrives"
+                        type="checkbox"
+                        class="cloneDrives"
+                        checked=cloneDrives
+                        onclick={handleOptionClicked}></lightning-input>
+                </lightning-layout-item>
+            </lightning-layout>
+        </div>
+        <footer class="slds-modal__footer">
+            <lightning-button label="Cancel" variant="neutral" onclick={btnCancelClicked}></lightning-button>&nbsp;&nbsp;&nbsp;&nbsp;
+            <lightning-button label="Clone" variant="brand" onclick={btnCloneClicked}></lightning-button>
+        </footer>
+</template>

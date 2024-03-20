@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Philadelphia_PA_South_DMDCR_Task</fullName>
+    <filterScope>Queue</filterScope>
+    <label>SEPA Philly PA South: DMDCR</label>
+    <queue>SEPA_Philly_PA_South_DMDCR</queue>
+    <sharedTo>
+        <allInternalUsers></allInternalUsers>
+    </sharedTo>
+</ListView>

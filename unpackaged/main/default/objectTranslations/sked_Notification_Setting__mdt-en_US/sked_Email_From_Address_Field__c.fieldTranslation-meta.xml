@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+        <label><!-- Email From Address Field --></label>
+        <name>sked_Email_From_Address_Field__c</name>
+    </CustomFieldTranslation>

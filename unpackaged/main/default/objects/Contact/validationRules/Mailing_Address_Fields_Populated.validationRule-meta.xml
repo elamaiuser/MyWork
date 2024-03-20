@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Mailing_Address_Fields_Populated</fullName>
+    <active>false</active>
+    <description>All mailing address fields must be populated except for System Admins</description>
+    <errorConditionFormula>ISBLANK(TEXT( MailingCountryCode  ))  || 
+ISBLANK(TEXT( MailingStateCode   ))  || 
+ISBLANK( MailingStreet   ) || 
+ISBLANK( MailingPostalCode   )  || 
+ISBLANK( MailingCity  )</errorConditionFormula>
+    <errorMessage>All Mailing Fields must be populated.</errorMessage>
+</ValidationRule>

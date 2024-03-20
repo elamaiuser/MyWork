@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Queue xmlns="http://soap.sforce.com/2006/04/metadata">
+    <doesSendEmailToMembers>true</doesSendEmailToMembers>
+    <name>Eastern North Carolina Lead Queue</name>
+    <queueMembers>
+        <users>
+            <user>allen.mason@redcross.org</user>
+            <user>garrett.reid@redcross.org.biomed</user>
+            <user>kathy.gordon@redcross.org.biomed</user>
+            <user>kathy.harper@redcross.org.biomed</user>
+            <user>mallory.barnett@redcross.org.biomed</user>
+            <user>miranda.harrison@redcross.org.biomed</user>
+            <user>tara.tucker@redcross.org.biomed</user>
+        </users>
+    </queueMembers>
+    <queueSobject>
+        <sobjectType>Lead</sobjectType>
+    </queueSobject>
+</Queue>

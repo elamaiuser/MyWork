@@ -1,0 +1,68 @@
+<template>
+    <template if:true={showModal}>
+        <section role="dialog" tabindex="-1"
+                aria-labelledby="modal-heading-01"
+                aria-modal="true"
+                aria-describedby="modal-content-id-1"
+                class="slds-modal slds-fade-in-open slds-modal_large">
+            <div class="slds-modal__container">
+                <header class="slds-modal__header">
+                    <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close" onclick={handleCloseModal}>
+                        <lightning-icon icon-name="utility:close" alternative-text="close" variant="inverse" size="small" ></lightning-icon>
+                    </button>
+                    
+                    <h2 class="slds-text-heading_medium slds-hyphenate">{title}</h2>
+                </header>
+
+                <div class="slds-theme_default">
+                    <div class="slds-modal__content full-height__modal-content" style="overflow: initial; position:relative;">
+                        <div class="slds-spinner_container" if:true={showSpinner}>
+                            <div role="status" class="slds-spinner slds-spinner_medium">
+                                <span class="slds-assistive-text">Loading</span>
+                                <div class="slds-spinner__dot-a"></div>
+                                <div class="slds-spinner__dot-b"></div>
+                            </div>
+                        </div>
+                        <div class="slds-p-horizontal_medium slds-p-top_small slds-grid slds-border_bottom">
+                            <template for:each={productivityStatusGroups} for:item="group">
+                                <div key={group.productivityStatus} class={group.class} data-value={group.productivityStatus} onclick={handleFilterDrives}>
+                                    <div>{group.productivityStatus}</div>
+                                    <div class={group.countClass}>{group.totalDrives}</div>
+                                </div> 
+                            </template>
+                        </div>
+                        <div class="slds-scrollable" style="max-height: 60vh;">
+                            <c-slwc-custom-datatable 
+                                key-field="id"
+                                data={filteredList}
+                                columns={columns}
+                                wrap-text-max-lines="3">
+                            </c-slwc-custom-datatable>
+                        </div>
+                        <div class="slds-shrink-none slds-grow-none slds-p-horizontal_small slds-p-vertical_small slds-border_top modal-content__footer">
+                            <div class="slds-grid slds-grid_align-spread slds-grid_vertical-align-center"> 
+                                <div class="slds-text-color_weak ng-binding">Total drives: {totalDrives} </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <footer class="slds-modal__footer light-background">
+                    <ul class="slds-button-group-row">
+                        <li class="slds-button-group-item">
+                            <button onclick={handleCloseModal} class="slds-button slds-button_neutral">Close</button>
+                        </li>
+                    </ul>
+                </footer>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+    </template>
+
+    <c-slwc-linked-drive-modal
+        drive={linkedDriveModalData.drive}
+        is-open={linkedDriveModalData.shown}
+        onclose={closeLinkedDriveModal}
+    >
+    </c-slwc-linked-drive-modal>
+</template>

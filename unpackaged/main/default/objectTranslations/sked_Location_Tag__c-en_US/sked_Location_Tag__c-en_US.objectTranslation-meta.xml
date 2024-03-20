@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObjectTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+    <caseValues>
+        <plural>false</plural>
+        <value>Location Tag</value>
+    </caseValues>
+    <caseValues>
+        <plural>true</plural>
+        <value>Location Tags</value>
+    </caseValues>
+    
+    
+    
+    
+    
+    
+    <startsWith>Consonant</startsWith>
+    <validationRules>
+        <errorMessage><!-- A Location tag must have minimum quantity if it&apos;s marked as not &apos;required&apos; --></errorMessage>
+        <name>Quantity_mutex_not_required</name>
+    </validationRules>
+    <validationRules>
+        <errorMessage><!-- A Location tag cannot have minimum quantity if it&apos;s marked &apos;required&apos; --></errorMessage>
+        <name>Quantity_mutex_required</name>
+    </validationRules>
+</CustomObjectTranslation>

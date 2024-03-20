@@ -1,0 +1,67 @@
+<template>
+    <section role="dialog" tabindex="-1" class={customClass.modalClass} style={customStyle.modalStyle}>
+        <div class="slds-modal__container" style={customStyle.modalContainer} if:true={isOpen}>
+            <header class={customClass.headerClass}>
+                <lightning-button-icon onclick={handleCancel} class="slds-button slds-button_icon slds-modal__close"
+                    size="large" icon-name="utility:close" variant="bare-inverse" title="Close"></lightning-button-icon>
+
+                <h2 class="slds-modal__title slds-hyphenate">Cancel Drive(s)</h2>
+            </header>
+            <div class="slds-modal__content slds-is-relative" style="overflow: initial;">
+                <lightning-spinner if:true={showSpinner} class="spins" size="medium"></lightning-spinner>
+
+                <div class="slds-p-horizontal_medium slds-p-vertical_small">
+                    <p>
+                        {cancelConfirmText}
+                    </p>
+
+                    <div class="slds-form_compound slds-m-top_small">
+                        <div class="slds-form-element__row">
+                            <c-slwc-dependent-picklist
+                                class="slds-grow"
+                                name="initiatedBy"
+                                label="Initiated By"
+                                object-api-name="sked_Drive__c"
+                                required
+                                selected-value={initiatedBy}  
+                                field-api-name="sked_Initiated_By__c"
+                                dependent-field-api-name="sked_Type_of_Drive__c"
+                                controlling-field-values={initiatedByControllingFieldValues}
+                                onpicklistchange={handleInitiatedByChanged}>
+                            </c-slwc-dependent-picklist>
+                        </div>
+
+                        <div class="slds-form-element__row">
+                            <c-slwc-dependent-picklist
+                                class="slds-grow"
+                                name="cancellationReason"
+                                label="Cancellation Reason"
+                                object-api-name="sked_Drive__c"
+                                required
+                                selected-value={cancellationReason}  
+                                field-api-name="sked_Cancellation_Reason__c"
+                                dependent-field-api-name="sked_Initiated_By__c"
+                                controlling-field-values={cancellationReasonControllingFieldValues}
+                                onpicklistchange={handleCancellationReasonChanged}>
+                            </c-slwc-dependent-picklist>
+                        </div>
+
+                        <div class="slds-m-top_x-small">
+                            <c-slwc-advanced-lookup
+                                lookup-label="Replacement Drive"
+                                class="slds-grow"
+                                object-api-name="sked_Drive__c"
+                                default-filters={driveReplacementDefaultFilters}
+                            ></c-slwc-advanced-lookup>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <footer class={customClass.footerClass}>
+                <button class="slds-button slds-button_neutral" onclick={handleCancel}>No</button>
+                <button class="slds-button slds-button_brand" disabled={btnConfirmDisabled} onclick={handleConfirm}>Yes</button>
+            </footer>
+        </div>
+    </section>
+    <div class={customClass.backdropClass} style={customStyle.backdropStyle}></div>
+</template>

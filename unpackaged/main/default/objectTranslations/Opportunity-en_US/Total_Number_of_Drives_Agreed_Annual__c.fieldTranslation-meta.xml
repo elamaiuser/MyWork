@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+        <help><!-- How many drive per year has been agreed upon? --></help>
+        <label><!-- Total Number of Drives Agreed (Annual) --></label>
+        <name>Total_Number_of_Drives_Agreed_Annual__c</name>
+    </CustomFieldTranslation>

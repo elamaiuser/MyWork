@@ -1,0 +1,112 @@
+<template>
+    <div style="height: 100%">
+        <lightning-spinner if:true={showSpinner} class="spins" size="medium"></lightning-spinner>
+
+        <article class="slds-card slds-card_boundary plan-drive-page slds-grid slds-grid_vertical" style="height: 100%">
+            <div class="slds-page-header slds-shrink-none">
+                <div class="slds-page-header__row slds-grid_vertical-align-center">
+                    <div class="slds-page-header__col-title">
+                        <div class="slds-media">
+                            <div class="slds-media__figure">
+                                <lightning-icon icon-name="standard:settings"></lightning-icon>
+                            </div>
+                            <div class="slds-media__body">
+                                <p class="slds-page-header__name-meta">DCR Configuration</p>
+                                <div class="slds-page-header__name">
+                                    <div class="slds-page-header__name-title">
+                                        <h1>
+                                            <span class="slds-page-header__title slds-truncate">Drive</span>
+                                        </h1>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="slds-no-flex slds-grid slds-grid_vertical-align-end">
+                        <div class="slds-col">
+                            <lightning-button class="slds-m-right_x-small" label="Refresh" variant="border-filled"
+                                onclick={handleRefresh} icon-name="utility:refresh"></lightning-button>
+                            <lightning-button label="Save" variant="brand" onclick={handleSave}></lightning-button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="slds-grid slds-p-around_medium slds-scrollable_y">
+                <div class="grid" if:true={initialized}>
+                    <table>
+                        <tr class="grid_header">
+                            <th class="cell frozen" rowspan="2">
+                                <!-- <span style="writing-mode: vertical-rl;">DP Updated</span> -->
+                            </th>
+                            <th class="cell frozen" rowspan="2">
+                                Scenario drive is confirmed
+                            </th>
+                            <template for:each={dcrGridHeader} for:item="item">
+                                <th key={item.period.id} class="cell slds-text-align_center" style={item.period.customStyle.backgroundColor} colspan={item.roles.length}>
+                                    {item.period.name}
+                                </th>
+                            </template>
+                        </tr>
+    
+                        <tr class="grid_header">
+                            <template for:each={dcrGridHeader} for:item="item">
+                                <template for:each={item.roles} for:item="role">
+                                    <th key={role.id} class="cell slds-text-align_center" style={item.period.customStyle.backgroundColor}>
+                                        {role.role}
+                                    </th>
+                                </template>
+                            </template>
+                        </tr>
+                        <template for:each={dcrGridData} for:item="row">
+                            <tr key={row.field.id} class="grid_row">
+                                <td class="cell frozen">
+                                    <div class="slds-icon_container lock-icon" if:false={row.field.editable}>
+                                        <lightning-icon icon-name="utility:lock" class="slds-current-color" alternative-text="lock" size="xx-small" ></lightning-icon>
+                                    </div>
+
+                                    <lightning-input 
+                                        if:true={row.field.editable}
+                                        type="checkbox" 
+                                        label="label" 
+                                        data-id={row.field.id}
+                                        variant="label-hidden" 
+                                        name="dpUpdated"
+                                        checked={row.field.dpUpdated}
+                                        onchange={handleFieldChanged}>
+                                    </lightning-input>
+                                </td>
+                                <td class="cell frozen">
+                                    {row.field.fieldLabel}
+                                </td>
+    
+                                <template for:each={row.dcrRoleFields} for:item="cell">
+                                    <td key={cell.roleField.id} class="cell" style={cell.period.customStyle.backgroundColor}  data-id={cell.roleField.id} onmouseover={handleMouseOverCell}>
+                                        <div style={cell.roleField.customStyle.textColor}>
+                                            <div class="text-placeholder slds-text-align_center" if:false={cell.roleField.hovered}>
+                                                {cell.roleField.action}
+                                            </div>
+                                            <c-slwc-select
+                                                if:true={cell.roleField.hovered}
+                                                data-id={cell.roleField.id}
+                                                name="action"
+                                                label="Action"
+                                                classes="transparent"
+                                                selected-value={cell.roleField.action}
+                                                options={actionOptions}
+                                                variant="label-hidden"
+                                                read-only={cell.disabled}
+                                                required
+                                                onchange={handleRoleFieldChanged} ></c-slwc-select>
+                                        </div>
+                                    </td>
+                                </template>
+                            </tr>
+                        </template>
+                    </table>
+                </div>
+            </div>
+        </article>
+    </div>
+</template>

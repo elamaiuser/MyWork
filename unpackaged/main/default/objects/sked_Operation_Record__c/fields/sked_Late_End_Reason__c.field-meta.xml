@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>sked_Late_End_Reason__c</fullName>
+    <externalId>false</externalId>
+    <label>Late End Reason</label>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Over-presentation at end of drive</fullName>
+                <default>false</default>
+                <label>Over-presentation at end of drive</label>
+            </value>
+            <value>
+                <fullName>Over-presentation throughout</fullName>
+                <default>false</default>
+                <label>Over-presentation throughout</label>
+            </value>
+            <value>
+                <fullName>Prolonged donor processing time</fullName>
+                <default>false</default>
+                <label>Prolonged donor processing time</label>
+            </value>
+            <value>
+                <fullName>End of drive donor reaction</fullName>
+                <default>false</default>
+                <label>End of drive donor reaction</label>
+            </value>
+            <value>
+                <fullName>Registration remained open past scheduled drive</fullName>
+                <default>false</default>
+                <label>Registration remained open past scheduled drive</label>
+            </value>
+            <value>
+                <fullName>Equipment issues</fullName>
+                <default>false</default>
+                <label>Equipment issues</label>
+            </value>
+            <value>
+                <fullName>Uncontrollable event</fullName>
+                <default>false</default>
+                <label>Uncontrollable event</label>
+            </value>
+            <value>
+                <fullName>Staff call out</fullName>
+                <default>false</default>
+                <label>Staff call out</label>
+            </value>
+            <value>
+                <fullName>Multi-shift Drive</fullName>
+                <default>false</default>
+                <label>Multi-shift Drive</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Parent_Template_Id_Check</fullName>
+    <active>true</active>
+    <description>for mobile opportunity, if Drive site is selected then Parent Template Id must not blank</description>
+    <errorConditionFormula>AND(  ISCHANGED(Drive_Site__c), Drive_Site__c &lt;&gt; null,   Is_Template__c  = false, Parent_Template_Id__c = null, RecordType.DeveloperName = &#39;Mobile_Opp&#39; )</errorConditionFormula>
+    <errorMessage>Parent Template Id must be selected if Drive Site is selected</errorMessage>
+</ValidationRule>

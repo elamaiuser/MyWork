@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>sked_Location__c</fullName>
+    <externalId>false</externalId>
+    <label>Location</label>
+    <referenceTo>sked__Location__c</referenceTo>
+    <relationshipLabel>Location Availabilities</relationshipLabel>
+    <relationshipName>sked_Location_Availabilities</relationshipName>
+    <relationshipOrder>0</relationshipOrder>
+    <reparentableMasterDetail>false</reparentableMasterDetail>
+    <trackTrending>false</trackTrending>
+    <type>MasterDetail</type>
+    <writeRequiresMasterRead>false</writeRequiresMasterRead>
+</CustomField>

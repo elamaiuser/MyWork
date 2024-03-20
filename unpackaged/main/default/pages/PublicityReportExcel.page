@@ -1,0 +1,95 @@
+<!--*
+    * @description: This visualforce page is used to generate an excel copy of publicity order report
+    **   Modification Log  ****
+    *  Date					Developer Name			Comments
+    * ***********************************************************************************************************************************************************
+    *11/10/23				Kishore Das				Logic for HRP-11520(Special Characters in Publicity Order Report)
+    *************************************************************************************************************************************************************-->
+<apex:page controller="PublicityReportController" contentType="application/vnd.ms-excel; charset=utf-8#PublicityReport.xls" cache="true">
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/><!----Logic for HRP-11520-->
+    <table>
+    <thead>
+        <tr>
+            <th style="text-align:center;">Order Number</th>
+            <th style="text-align:center;">Order Number</th>
+            <th style="text-align:center;">Account Name</th>
+            <th style="text-align:center;">Drive Site Name</th>
+            <th style="text-align:center;">Drive Site Address</th> 
+            <th style="text-align:center;">Drive Site City</th>
+            <th style="text-align:center;">Drive Site State</th>
+            <th style="text-align:center;">Drive Site Zip</th>
+            <th style="text-align:center;">Direct To Donors</th>
+            <th style="text-align:center;">Drive Date(s)</th> 
+            <th style="text-align:center;">Start Time</th>
+            <th style="text-align:center;">End Time</th>
+            <th style="text-align:center;">Account Manager</th>
+            <th style="text-align:center;">Publicity Materials Recipient Name</th>
+            <th style="text-align:center;">Publicity Recipient Mailing Street</th>
+            <th style="text-align:center;">Publicity Recipient Mailing City</th>
+            <th style="text-align:center;">Publicity Recipient Mailing State</th>
+            <th style="text-align:center;">Publicity Recipient Mailing ZipCode</th>
+            <th style="text-align:center;">Publicity Recipient Mailing Phone</th>
+            <th style="text-align:center;">Publicity Recipient Mailing Email</th>
+            <th style="text-align:center;">Total Products Projected</th>
+            <th style="text-align:center;">Publicity comments</th>
+            <th style="text-align:center;">Opportunity Promotion Name</th>
+            <th style="text-align:center;">Drive Keyword</th>
+            <th style="text-align:center;">Total Products Projected</th>
+            <th style="text-align:center;">Budget</th>
+            <th style="text-align:center;">Quantity</th>
+            <th style="text-align:center;">Item ID</th>
+            <th style="text-align:center;">Product Name</th>
+            <th style="text-align:center;">Material Recipient</th>
+            <th style="text-align:center;">Drive Start Time Offset</th>
+            <th style="text-align:center;">End Time Offset</th>
+            
+            <!-- HRP 10307(1st Change) Starts --> 
+            <th style="text-align:center;">Publish to Call Center</th>
+            <th style="text-align:center;">Web Scheduling Enabled</th>
+            <!-- HRP 10307(1st Change) Ends --> 
+        </tr>
+    </thead>
+    <tbody>
+        <apex:repeat value="{!ReportQueryWrapperList}" var="record" id="theRepeat">
+            <tr>
+                <td style="text-align:left;">{!record.oitemWrap.order.OrderNumber}</td>
+                <td style="text-align:left;">{!record.oitemWrap.order.OrderNumber}</td>
+                <td style="text-align:left;">{!record.oppWrap.Account.Name}</td>
+                <td style="text-align:left;">{!record.oppWrap.Drive_Site_Name__c}</td>
+                <td style="text-align:left;">{!record.oppWrap.Drive_Site__r.sked_Address_1__c}</td>
+                <td style="text-align:left;">{!record.oppWrap.Drive_Site__r.sked_City__c}</td>
+                <td style="text-align:left;">{!record.oppWrap.Drive_Site__r.sked_State__c}</td>
+                <td style="text-align:left;">{!record.oppWrap.Drive_Site__r.sked_Zip_Code__c}</td>
+                <td style="text-align:left;">{!record.oppWrap.Direct_Donors_To__c}</td>
+                <td style="text-align:left;">{!record.driveDate}</td>
+                <td style="text-align:left;">{!record.startTime}</td>
+                <td style="text-align:left;">{!record.endTime}</td>
+                <td style="text-align:left;">{!record.oppWrap.Account_Manager__r.Name}</td>
+                <td style="text-align:left;">{!record.ocrWrap.contact.Name}</td>
+                <td style="text-align:left;">{!record.ocrWrap.contact.OtherStreet}</td>
+                <td style="text-align:left;">{!record.ocrWrap.contact.OtherCity}</td>
+                <td style="text-align:left;">{!record.ocrWrap.contact.OtherState}</td>
+                <td style="text-align:left;">{!record.ocrWrap.contact.OtherPostalCode}</td>
+                <td style="text-align:left;">{!record.ocrWrap.contact.Primary_Phone_Number_New__c}</td>
+                <td style="text-align:left;">{!record.ocrWrap.contact.Email}</td>
+                <td style="text-align:left;">{!record.oppWrap.Total_Products_Projected__c}</td>
+                <td style="text-align:left;">{!record.oitemWrap.order.Comments__c}</td>
+                <td style="text-align:left;">{!record.optyproWrap.Promotion__r.Name}</td>
+                <td style="text-align:left;">{!record.oppWrap.Drive_Keyword__c}</td>
+                <td style="text-align:left;">{!record.oppWrap.Total_Products_Projected__c}</td>
+                <td style="text-align:left;">{!record.oitemWrap.order.BudgetCurrency__c}</td>
+                <td style="text-align:left;">{!record.oitemWrap.Quantity}</td>
+                <td style="text-align:left;">{!record.itemIdWrapExcel}</td> <!--HRP - 10307-->
+                <td style="text-align:left;">{!record.oitemWrap.Product2.Name}</td>
+                <td style="text-align:left;">{!record.oitemWrap.Material_Recipient__c}</td>
+                <td style="text-align:left;">{!record.oppWrap.Collections_Zip_Code__r.Collection_Operation__r.sked_Start_Time_Offset__c}</td>
+                <td style="text-align:left;">{!record.oppWrap.Collections_Zip_Code__r.Collection_Operation__r.sked_End_Time_Offset__c}</td>
+                <!-- HRP 10307(2nd Change) Starts --> 
+                <td style="text-align:left;">{!record.publishToCallcentre}</td>
+                <td style="text-align:left;">{!record.webSchedulingEnabled}</td>
+                <!-- HRP 10307(2nd Change) Ends --> 
+            </tr>
+        </apex:repeat>
+    </tbody>
+</table>
+</apex:page>

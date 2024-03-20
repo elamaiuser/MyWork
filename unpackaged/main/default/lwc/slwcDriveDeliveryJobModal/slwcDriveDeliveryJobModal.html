@@ -1,0 +1,169 @@
+<template>
+    <template if:true={showModal}>
+        <c-slwc-confirm-modal
+            is-open={isDeleteForm}
+            if:true={isDeleteForm}
+            title="Deleted Drive Delivery Job"
+            message="Are you sure you want to delete this Drive Delivery Job?"
+            handle-on-close={handleDelete}
+            confirm-btn-label="Yes"
+            size='x-small'>
+        </c-slwc-confirm-modal>
+        <c-slwc-custom-modal  if:false={isDeleteForm}
+            onclosecustommodal={closeModal} 
+            header={modalHeader}
+            cancel-btn-label="Cancel"
+            save-btn-label = "Save"
+            onsavecustommodal={handleSave}
+            overflow-initial>
+            <div slot="content">
+                    <div >
+                        <div class="slds-grid slds-wrap slds-grow slds-grid_pull-padded-medium">
+                            <div class="slds-medium-size_1-of-2 slds-large-size_1-of-2 slds-size_1-of-1 slds-p-horizontal--small">
+                                <c-slwc-picklist
+                                        class="slds-grow"
+                                        name="type"
+                                        label="Type"
+                                        dirty={dirty}
+                                        object-api-name="sked_Drive_Delivery_Job__c"
+                                        required
+                                        selected-value={driveDeliveryJobs.type}  
+                                        pick-listfield-api-name="sked_Type__c"
+                                        onpicklistchange={handleOnChange}>
+                                    </c-slwc-picklist>
+                            </div>
+                        </div>
+                        <div class="slds-grid slds-wrap slds-grow slds-grid_pull-padded-medium slds-m-top--xx-small">
+                            <div class="slds-medium-size_1-of-2 slds-large-size_1-of-2 slds-size_1-of-1 slds-p-horizontal--small">
+                                <lightning-input type="text" name="vehicle" value={driveDeliveryJobs.vehicle} label="Vehicle"  onchange={handleOnChange} max-length="80">
+                                </lightning-input>
+                            </div>
+                            <div class="slds-medium-size_1-of-2 slds-large-size_1-of-2 slds-size_1-of-1 slds-p-horizontal--small">
+                                <lightning-input type="text" name="deliveryId" label="Pick Up Assignment" value={driveDeliveryJobs.deliveryId} onchange={handleOnChange} max-length="80">
+                                </lightning-input>
+                            </div>
+                        </div>
+                        <div class="slds-grid slds-wrap slds-grow slds-grid_pull-padded-medium slds-m-top--xx-small">
+                            <div class="slds-size_1-of-1 slds-p-horizontal--small">
+                                <lightning-textarea name="comments" label="Comments" value={driveDeliveryJobs.comments} onchange={handleOnChange}></lightning-textarea>
+                            </div>
+                        </div>
+                        
+                        <div if:true={showTimeSection}>
+                            <div class="slds-grid slds-wrap slds-grow slds-grid_pull-padded-medium slds-m-top--xx-small">
+                                <div class="slds-medium-size_1-of-2 slds-large-size_1-of-2 slds-size_1-of-2 slds-p-horizontal--small">
+                                    <div class="slds-form-element__label slds-no-flex" title="Start">Start</div>
+                                    <c-slwc-time-input-with-timezone 
+                                        no-label
+                                        input-date={driveDeliveryJobs.start}
+                                        timezone={drive.driveSite.timezoneSidId}>
+                                        <lightning-input name="start" label="Start"
+                                            slot="input"
+                                            variant="label-hidden"
+                                            type="datetime" 
+                                            timezone={drive.driveSite.timezoneSidId} 
+                                            value={driveDeliveryJobs.start} 
+                                            onchange={handleOnChange}>
+                                        </lightning-input>
+                                    </c-slwc-time-input-with-timezone>
+                                </div>
+                                <div class="slds-medium-size_1-of-2 slds-large-size_1-of-2 slds-size_1-of-2 slds-p-horizontal--small">
+                                    <div class="slds-form-element__label slds-no-flex" title="End">End</div>
+                                    <c-slwc-time-input-with-timezone 
+                                        no-label
+                                        input-date={driveDeliveryJobs.end}
+                                        timezone={drive.driveSite.timezoneSidId}>
+                                        <lightning-input name="end" label="End"
+                                            slot="input"
+                                            variant="label-hidden"
+                                            type="datetime" 
+                                            timezone={drive.driveSite.timezoneSidId} 
+                                            value={driveDeliveryJobs.end} 
+                                            onchange={handleOnChange}>
+                                        </lightning-input>
+                                    </c-slwc-time-input-with-timezone>
+                                </div> 
+                            </div> 
+                            <div class="slds-grid slds-wrap slds-grow slds-grid_pull-padded-medium slds-m-top--xx-small">
+                                <div class="slds-medium-size_1-of-2 slds-large-size_1-of-2 slds-size_1-of-2 slds-p-horizontal--small">
+                                    <div class="slds-form-element__label slds-no-flex" title="Pick Up"><abbr if:true={isPickUpRequired} title="required" class="slds-required">*</abbr>Pick Up</div>
+                                    <c-slwc-time-input-with-timezone 
+                                        no-label
+                                        input-date={driveDeliveryJobs.pickUp}
+                                        timezone={drive.driveSite.timezoneSidId}>
+                                        <lightning-input name="pickUp" label="Pick Up"
+                                            slot="input"
+                                            variant="label-hidden"
+                                            type="datetime" 
+                                            timezone={drive.driveSite.timezoneSidId} 
+                                            value={driveDeliveryJobs.pickUp} 
+                                            required={isPickUpRequired}
+                                            onchange={handleOnChange}>
+                                        </lightning-input>
+                                    </c-slwc-time-input-with-timezone>
+                                </div>
+                                <div class="slds-medium-size_1-of-2 slds-large-size_1-of-2 slds-size_1-of-2 slds-p-horizontal--small">
+                                    <div class="slds-form-element__label slds-no-flex" title="Arrive">Arrive</div>
+                                    <c-slwc-time-input-with-timezone 
+                                        no-label
+                                        input-date={driveDeliveryJobs.arrive}
+                                        timezone={drive.driveSite.timezoneSidId}>
+                                        <lightning-input name="arrive" label="Arrive"
+                                            slot="input"
+                                            variant="label-hidden"
+                                            type="datetime" 
+                                            timezone={drive.driveSite.timezoneSidId} 
+                                            value={driveDeliveryJobs.arrive} 
+                                            onchange={handleOnChange}>
+                                        </lightning-input>
+                                    </c-slwc-time-input-with-timezone>
+                                </div> 
+                            </div>
+                        </div> 
+                       <table class="slds-table slds-max-medium-table_stacked slds-table_bordered slds-table_col-bordered slds-m-top--medium" if:true={showBagSection}>
+                            <thead>
+                                <tr>
+                                    <th>Bag</th>
+                                    <th>Quantity</th>
+                                    <th></th>
+                                </tr>
+                           </thead>
+                           <tbody>
+                                <tr if:true={driveDeliveryJobs.driveBags} for:each={driveDeliveryJobs.driveBags} for:item="cell" key={cell.key}>
+                                    <td>{cell.bagType}</td>
+                                    <td>{cell.quantity}</td>
+                                    <td>
+                                        <lightning-button variant="base" data-key={cell.key} label="Delete" onclick={handleDeleteBag} icon-name="utility:delete" class="slds-m-left_x-small">
+                                        </lightning-button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <c-slwc-custom-picklist
+                                            class="slds-grow"
+                                            name="bagType"
+                                            label=" "
+                                            variant="label-hidden"
+                                            object-api-name="sked_Drive_Bag__c"
+                                            selected-value={bagType}  
+                                            pick-listfield-api-name="sked_Bag_Type__c"
+                                            oncustompicklistchange={handleOnChangeBag}>
+                                        </c-slwc-custom-picklist>
+                                    </td>
+                                    <td>
+                                        <lightning-input variant="label-hidden" type="number" name="quantity" label=" " value={quantity} onchange={handleOnChangeBag} max-length="80">
+                                        </lightning-input>
+                                    </td>
+                                    <td class="slds-align-bottom">
+                                        <lightning-button variant="base" if:true={showButtonAdd} label="Add" onclick={handleAdd} icon-name="utility:add" class="slds-m-left_x-small"></lightning-button>
+                                        <lightning-button variant="base" if:false={showButtonAdd} label="Add" disabled icon-name="utility:add" class="slds-m-left_x-small"></lightning-button>
+                                    </td>
+                                </tr>  
+                            </tbody>             
+                       </table>
+                       <div for:each={messages} for:item="item" key={item} class="slds-text-color_error slds-m-vertical--small">{item}</div>
+                    </div>
+            </div>
+        </c-slwc-custom-modal>
+    </template>
+</template>

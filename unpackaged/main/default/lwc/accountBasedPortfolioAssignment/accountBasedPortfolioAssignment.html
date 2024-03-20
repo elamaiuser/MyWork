@@ -1,0 +1,131 @@
+<template>
+    <lightning-card>
+        <div style="padding-left: 15px;">
+            <div style="padding-left: 30px;">
+                <div style="padding-left: 45px;">
+                    <div style="padding-left: 45px;">
+                        <template if:false={iserrormsg}>
+                            <div style="padding-left: 11px;padding-bottom: 11px;">
+                                <div> 
+                                    <p style="font-size: 15px;font-weight: 600;"> Non Geographic Portfolio assignment </p>
+                                </div>
+                            </div>
+
+                            <div class="spinner">
+                                <template if:true={isLoading}>
+                                    <lightning-spinner alternative-text="Loading" variant="brand" size="large">
+                                    </lightning-spinner>
+                                </template>
+                            </div>
+                            
+                            <lightning-layout vertical-align="start">
+                                <lightning-layout-item padding="around-small">                            
+
+                                    <div class="header-column">
+                                        <lightning-combobox
+                                            name="portfolioTypes"
+                                            label="Portfolio Types"
+                                            value={portfolioType}
+                                            placeholder=""
+                                            options={portfolioTypeoptions}
+                                            onchange={portfolioTypeChange}
+                                            required="true"></lightning-combobox>
+
+                                        <lightning-combobox
+                                            name="accportfolio"
+                                            label="Non Geographic Portfolio"
+                                            value={accportfoliovalue}
+                                            placeholder=""
+                                            options={portfoliooptions}
+                                            onchange={portfolioChange}
+                                            required="true"></lightning-combobox>
+                            
+                                    </div>  
+                            
+                                    <div class="header-column">
+                                        <lightning-input type="date" name="startdate" class="portfoliostartdate" label="Start Date" 
+                                                            value={accountPortfolioWrapperobj.Start_Date}
+                                                            onchange={StartDateChange}
+                                                            required="true"></lightning-input>  
+                                    </div>
+                            
+                                    <div class="header-column">
+                                        <lightning-input type="date" name="enddate" class="portfolioenddate" label="End Date" 
+                                                            required="true"
+                                                            value={accountPortfolioWrapperobj.End_Date}></lightning-input>  
+                                    </div>
+
+                                    <div>
+                                        
+                                        <!--lightning-combobox
+                                            name="AccountBasedReason"
+                                            label="Account Based Reason"
+                                            value={selectedReasons}
+                                            placeholder=""
+                                            options={AccountBasedReasons}
+                                            onchange={AccountBasedReasonChange}
+                                            required="true"
+                                            multi-select></lightning-combobox-->
+                                        <!--template if:true={industryPicklist.data}>
+                                            
+                                            <lightning-dual-listbox name="AccountBasedReason"
+                                           label="Account Based Reason"
+                                           source-label="Available"
+                                           selected-label="Selected"
+                                           onchange={AccountBasedReasonChange}
+                                           options={industryPicklist.data.values}
+                                           required="true"></lightning-dual-listbox>
+                                           
+                                        </template-->
+                                     </div>
+                                    
+                                                                            
+                                </lightning-layout-item>
+                                                                    
+                                    
+                                
+                                                                    
+                                                                    
+                                                                    
+                                                                                                    
+                            </lightning-layout>  
+                            <div>
+                            <template if:true={acccountBasedReasonPicklist.data}>
+                                            
+                                            <lightning-dual-listbox name="AccountBasedReason"
+                                           label="Account Based Reason"
+                                           source-label="Available"
+                                           selected-label="Selected"
+                                           onchange={AccountBasedReasonChange}
+                                           options={acccountBasedReasonPicklist.data.values}
+                                           required="true"
+                                           size="3"></lightning-dual-listbox>
+                                           
+                                        </template>
+                                </div>  
+                                <br></br>                
+                            <div>
+                                <div style="display: flex;">
+                                    <div style="padding-left: 5px;">
+                                        <lightning-button variant="brand" label="Save" title="saveportfolio" onclick={onsaveclick} class="slds-m-left_x-small"></lightning-button>
+                                    </div>
+
+                                    <div style="padding-left: 5px;">
+                                        <lightning-button variant="brand" label="Cancel" title="cancelassignment" onclick={oncancelclick} class="slds-m-left_x-small"></lightning-button>
+                                    </div>
+
+                                </div>
+                            </div> 
+                        </template>
+                        <template if:true={iserrormsg}>
+                            <div style="padding: 70px;"> <p style="font-weight: 700;color: red;"> {errorMessageText} </p></div>
+                        </template>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </lightning-card>
+    
+</template>

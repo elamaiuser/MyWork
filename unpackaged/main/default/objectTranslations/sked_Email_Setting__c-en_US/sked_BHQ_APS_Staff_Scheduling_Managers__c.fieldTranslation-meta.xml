@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+        <label><!-- BHQ – APS Staff Scheduling Managers --></label>
+        <name>sked_BHQ_APS_Staff_Scheduling_Managers__c</name>
+    </CustomFieldTranslation>

@@ -1,0 +1,147 @@
+<template>
+  <section
+    role="dialog"
+    tabindex="-1"
+    class={customClass.modalClass}
+    style="z-index: 9003"
+  >    
+    <div class="slds-modal__container" style="width: 32rem">
+      <header class={customClass.headerClass}>
+        <lightning-button-icon
+          onclick={handleCancel}
+          class="slds-button slds-button_icon slds-modal__close"
+          size="large"
+          icon-name="utility:close"
+          variant="bare-inverse"
+          title="Close"
+        ></lightning-button-icon>
+
+        <h2 class="slds-modal__title slds-hyphenate">{modalHeader}</h2>
+      </header>
+      <div class="slds-modal__content" style="overflow: initial;">
+        <div class="slds-is-relative">
+          <div
+            class="slds-theme_shade slds-p-horizontal_medium slds-p-vertical_small slds-border_bottom"
+          >
+            <div class="slds-media slds-media_center">
+              <div class="slds-media__figure">
+                <lightning-icon
+                  icon-name="standard:note"
+                  size="small"
+                ></lightning-icon>
+              </div>
+              <div class="slds-media__body">
+                <h1 class="slds-text-heading_small">Information</h1>
+              </div>
+            </div>
+          </div>
+
+          <c-slwc-page-errors validities={errorMessages}></c-slwc-page-errors>
+
+          <div class="slds-p-around_medium">
+            <div
+              class="slds-form-element__row slds-grid slds-grid_pull-padded-small"
+            >
+              <div class="slds-size_1-of-2 slds-p-horizontal_small">
+                <c-slwc-lookup
+                  is-required
+                  object-name="Biomed_Collection_Op_Center__c"
+                  icon-name="standard:location"
+                  display-field="name"
+                  label="Collection Operation"
+                  name="collectionOperation"
+                  placeholder="Search Collection Operation"
+                  is-readonly={isCollectionOperationFieldReadonly}
+                  selection={model.collectionOperation}
+                  onselectionchange={handleOnChange}
+                >
+                </c-slwc-lookup>
+              </div>
+              <div class="slds-size_1-of-2 slds-p-horizontal_small">
+                <c-slwc-multi-picklist
+                  required
+                  name="driveTypes"
+                  label="Drive Types"
+                  selected-by-default
+                  is-readonly={isDriveTypesFieldReadonly}
+                  object-api-name="sked_Drive__c"
+                  field-api-name="sked_Type_of_Drive__c"
+                  default-values={model.driveTypes}
+                  onpicklistchange={handleOnChange}
+                >
+                </c-slwc-multi-picklist>
+              </div>
+            </div>
+
+            <div class="slds-form-element__row slds-m-top_x-small slds-grid slds-grid_pull-padded-small">
+              <div class="slds-size_1-of-2 slds-p-horizontal_small">
+                <lightning-input
+                  name="dateOfConstraint"
+                  type="date"
+                  label="Date of Constraint"
+                  value={model.dateOfConstraint}
+                  read-only={isDateOfConstraintFieldReadonly}
+                  timezone={timezoneSidId}
+                  onchange={handleOnChange}
+                  required
+                  autocomplete="off"
+                ></lightning-input>
+              </div>
+
+              <div class={customClass.totalStaffConstraintsClass}>
+                <lightning-input
+                  name="totalStaffConstraints"
+                  type="number"
+                  autocomplete="off"
+                  label="Total Staff Constraints"
+                  value={model.totalStaffConstraints}
+                  onchange={handleOnChange}
+                  min="1"
+                  required
+                >
+                </lightning-input>
+                <template if:true={totalStaffConstraintWarningMessages.length}>
+                  <c-slwc-popover container=".slds-modal__container" position="right" trigger="hover" width="24rem">
+                    <lightning-icon slot="reference" icon-name="utility:warning" class={customClass.warningIconClass} size="x-small"></lightning-icon>
+                    <div slot="content">
+                      <ul class={customClass.totalStaffConstraintWarningMessagesClass}>
+                        <template for:each={totalStaffConstraintWarningMessages} for:item="warningMessage">
+                          <li key={warningMessage}>{warningMessage}</li>
+                        </template>
+                      </ul>
+                    </div>
+                  </c-slwc-popover>
+                </template>
+              </div>
+            </div>
+
+            <div class="slds-m-top_medium" if:true={showTotalRequestedStaff}>
+              Number of requested staff: <span>{totalStaffRequested}</span>
+            </div>
+            <div class="slds-m-top_medium" if:true={showFixedSiteMobileRequestedStaff}>
+              <div>
+                Number of requested staff (Fixed Site): <span>{totalFixedSiteStaffRequested}</span>
+              </div>
+              <div class="slds-p-top_x-small">
+                Number of requested staff (Mobile): <span>{totalMobileStaffRequested}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <footer class={customClass.footerClass}>
+        <button class="slds-button slds-button_neutral" onclick={handleCancel}>
+          Close
+        </button>
+        <button
+          class="slds-button slds-button_brand"
+          onclick={handleSave}
+          disabled={saveBtnDisabled}
+        >
+          Save
+        </button>
+      </footer>
+    </div>
+  </section>
+  <div class={customClass.backdropClass} style="z-index: 9002"></div>
+</template>

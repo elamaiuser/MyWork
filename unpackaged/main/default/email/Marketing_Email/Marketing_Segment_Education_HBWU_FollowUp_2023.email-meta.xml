@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<EmailTemplate xmlns="http://soap.sforce.com/2006/04/metadata">
+    <available>true</available>
+    <description>Follow Up Email for Hope Begins with You</description>
+    <encodingKey>ISO-8859-1</encodingKey>
+    <letterhead>ARC_Logo_Test</letterhead>
+    <name>Marketing Segment_Education_HBWU_FollowUp</name>
+    <style>formalLetter</style>
+    <subject>Thank You For Your Partnership Interest!</subject>
+    <textOnly>Dear [Insert Name] ,
+
+Thank you for your interest in partnering with the American Red Cross. We hope you will find that our programs for schools offer a meaningful and rewarding way for your students to engage with the Red Cross and give back to their community. By partnering with us, your students can make the difference young people often strive to make.
+
+Hope begins with you. It begins with your school’s decision to support the Red Cross and patients in need. It begins with a student’s decision to support blood donation in your school or in the community. Thank you for your interest in helping save lives.
+
+I will call you in a few days and look forward to speaking with you. Your impact in the community and within your school can be powerful, visible and most importantly, lifesaving.
+
+Sincerely, 
+
+[Insert Name]</textOnly>
+    <type>html</type>
+    <uiType>Aloha</uiType>
+</EmailTemplate>

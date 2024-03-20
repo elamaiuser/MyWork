@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>is_Shift_Start_or_End_Different__c</fullName>
+    <description>Checks whether shift start/end timings and drive start/end timings are different</description>
+    <externalId>false</externalId>
+    <formula>AND(sked_Drive_Date__c &gt;= TODAY(), NOT(ISPICKVAL(sked_Status__c , &#39;Cancel&#39;)),
+OR ((sked_Start_Time__c != Min_Shift_Draw_Start__c) , ( sked_End_Time__c != Max_Shift_Draw_End__c )))</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <label>is Shift Start or End Different</label>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Checkbox</type>
+</CustomField>

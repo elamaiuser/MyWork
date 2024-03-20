@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Primary_Phone_Email_ServiceDate_Required</fullName>
+    <active>true</active>
+    <description>Users should not be able to enter new contact without entering primary phone. original Service date is defaulted.</description>
+    <errorConditionFormula>AND(OR(ISPICKVAL( Primary_Phone__c , &quot;&quot; ),ISBLANK( Original_Service_Date__c )),ISBLANK( Migration_ID__c  ))</errorConditionFormula>
+    <errorMessage>Please populate Phone Type. Phone type is mandatory to converting a Lead</errorMessage>
+</ValidationRule>

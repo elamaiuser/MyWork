@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Queue xmlns="http://soap.sforce.com/2006/04/metadata">
+    <doesSendEmailToMembers>false</doesSendEmailToMembers>
+    <name>Nashville TN West: DMDCR</name>
+    <queueMembers>
+        <users>
+            <user>clif.redish@redcross.org</user>
+            <user>robert.wagner@redcross.org</user>
+            <user>ronald.simmons@redcross.org</user>
+        </users>
+    </queueMembers>
+    <queueSobject>
+        <sobjectType>Task</sobjectType>
+    </queueSobject>
+    <queueSobject>
+        <sobjectType>sked_Drive_Change_Request__c</sobjectType>
+    </queueSobject>
+</Queue>

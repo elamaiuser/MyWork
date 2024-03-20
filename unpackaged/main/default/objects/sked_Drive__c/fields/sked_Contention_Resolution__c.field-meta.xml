@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>sked_Contention_Resolution__c</fullName>
+    <externalId>false</externalId>
+    <label>Contention Resolution</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>MultiselectPicklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Elect to overbook staff</fullName>
+                <default>false</default>
+                <label>Elect to overbook staff</label>
+            </value>
+            <value>
+                <fullName>Elect to overbook drives</fullName>
+                <default>false</default>
+                <label>Elect to overbook drives</label>
+            </value>
+            <value>
+                <fullName>Elect to overbook 2RBC</fullName>
+                <default>false</default>
+                <label>Elect to overbook 2RBC</label>
+            </value>
+            <value>
+                <fullName>Elect to overbook CDL</fullName>
+                <default>false</default>
+                <label>Elect to overbook CDL</label>
+            </value>
+            <value>
+                <fullName>Elect to overbook DOT</fullName>
+                <default>false</default>
+                <label>Elect to overbook DOT</label>
+            </value>
+            <value>
+                <fullName>Elect to run drive outside of Operational Hours</fullName>
+                <default>false</default>
+                <label>Elect to run drive outside of Operational Hours</label>
+            </value>
+            <value>
+                <fullName>Elect to use a vehicle with insufficient capacity</fullName>
+                <default>false</default>
+                <label>Elect to use a vehicle with insufficient capacity</label>
+            </value>
+            <value>
+                <fullName>Use rental vehicles</fullName>
+                <default>false</default>
+                <label>Use rental vehicles</label>
+            </value>
+            <value>
+                <fullName>Elect to approve the drive that is submitted within 42 days</fullName>
+                <default>false</default>
+                <label>Elect to approve the drive that is submitted within 42 days</label>
+            </value>
+            <value>
+                <fullName>Elect to approve the drive that is confirmed within 42 days</fullName>
+                <default>false</default>
+                <label>Elect to approve the drive that is confirmed within 42 days</label>
+            </value>
+            <value>
+                <fullName>Elect to acknowledge the drive that is part of Linked Drive</fullName>
+                <default>false</default>
+                <label>Elect to acknowledge the drive that is part of Linked Drive</label>
+            </value>
+            <value>
+                <fullName>Elect to acknowledge the drive that is multi shift drive</fullName>
+                <default>false</default>
+                <label>Elect to acknowledge the drive that is multi shift drive</label>
+            </value>
+            <value>
+                <fullName>Elect to acknowledge dual role removal</fullName>
+                <default>false</default>
+                <label>Elect to acknowledge dual role removal</label>
+            </value>
+            <value>
+                <fullName>Accept New Staffing Complement</fullName>
+                <default>false</default>
+                <label>Accept New Staffing Complement</label>
+            </value>
+            <value>
+                <fullName>Keep Current Staffing Complement</fullName>
+                <default>false</default>
+                <label>Keep Current Staffing Complement</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+    <visibleLines>4</visibleLines>
+</CustomField>

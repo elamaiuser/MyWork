@@ -1,0 +1,3 @@
+<aura:component implements="force:appHostable,force:hasRecordId,flexipage:availableForAllPageTypes">
+    <c:slwcDriveManagement displayMode="opportunityDriveShifts" recordId="{!v.recordId}" />
+</aura:component>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>AKK_Test_List</fullName>
+    <columns>sked_Number_of_2RBC_Assets__c</columns>
+    <columns>sked_Projected_Registered_Donors__c</columns>
+    <columns>sked_Staff_Allocated__c</columns>
+    <columns>NAME</columns>
+    <columns>sked_Account__c</columns>
+    <columns>sked_Drive_Date__c</columns>
+    <columns>sked_Status__c</columns>
+    <columns>sked_Biomed_Collection_Op_Name__c</columns>
+    <columns>Site_Building_Name__c</columns>
+    <columns>CREATED_DATE</columns>
+    <columns>sked_WB_Projected_Procedures__c</columns>
+    <columns>sked_2RBC_Projected_Procedures__c</columns>
+    <columns>sked_Total_Procedures_Projected__c</columns>
+    <columns>sked_Total_Products_Projected__c</columns>
+    <columns>sked_Collection_Operation__c</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>sked_Type_of_Drive__c</field>
+        <operation>equals</operation>
+        <value>Mobile</value>
+    </filters>
+    <filters>
+        <field>sked_2RBC_Projected_Procedures__c</field>
+        <operation>equals</operation>
+    </filters>
+    <label>DRC Evaluation</label>
+</ListView>

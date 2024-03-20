@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>System_Gen_Start_Date__c</fullName>
+    <description>Specify the date range for resource allocation job to execute for.</description>
+    <externalId>false</externalId>
+    <fieldManageability>DeveloperControlled</fieldManageability>
+    <inlineHelpText>Specify the date range for resource allocation job to execute for.</inlineHelpText>
+    <label>System Gen Start Date</label>
+    <required>false</required>
+    <type>Date</type>
+</CustomField>

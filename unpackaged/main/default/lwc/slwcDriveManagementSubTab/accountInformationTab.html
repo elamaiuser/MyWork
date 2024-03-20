@@ -1,0 +1,89 @@
+<template>
+    <div class="slds-grid slds-wrap slds-p-right_small">
+        <div class="slds-col slds-size_3-of-12 slds-p-left_small">
+            <template if:false={masterData.isReadonly}>
+                <div class="slds-form-element">
+                    <span class="slds-form-element__label">Account Name</span>
+                    <div class="slds-form-element__control">
+                        <div class="slds-form-element__static slds-truncate">
+                            {accountName}
+                        </div>
+                    </div>
+                </div>
+            </template>
+            <template if:true={masterData.isReadonly}>
+                <div class="slds-form-element slds-form-element_readonly">
+                    <span class="slds-form-element__label">Account Name</span>
+                    <div class="slds-form-element__control">
+                        <div class="slds-form-element__static slds-truncate">
+                            {accountName}
+                        </div>
+                    </div>
+                </div>
+            </template>
+        </div>
+        <div class="slds-col slds-size_3-of-12 slds-p-left_small">
+            <template if:false={masterData.isReadonly}>
+                <div class="slds-form-element">
+                    <span class="slds-form-element__label">Type of Drive</span>
+                    <div class="slds-form-element__control">
+                        <div class="slds-form-element__static slds-truncate">
+                            {drive.typeOfDrive}
+                        </div>
+                    </div>
+                </div>
+            </template>
+            <template if:true={masterData.isReadonly}>
+                <div class="slds-form-element slds-form-element_readonly">
+                    <span class="slds-form-element__label">Type of Drive</span>
+                    <div class="slds-form-element__control">
+                        <div class="slds-form-element__static slds-truncate">
+                            {drive.typeOfDrive}
+                        </div>
+                    </div>
+                </div>
+            </template>
+        </div>
+    </div>
+
+    <template if:true={isMobileDrive}>
+        <div class="slds-grid slds-wrap slds-p-right_small">
+            <div class="slds-col slds-size_3-of-12 slds-p-left_small">
+                <template if:false={masterData.isReadonly}>
+                    <div class="slds-form-element">
+                        <span class="slds-form-element__label">Account Type</span>
+                        <div class="slds-form-element__control">
+                            <div class="slds-form-element__static slds-truncate">{drive.accountType}</div>
+                        </div>
+                    </div>
+                </template>
+                <template if:true={masterData.isReadonly}>
+                    <div class="slds-form-element slds-form-element_readonly">
+                        <span class="slds-form-element__label">Account Type</span>
+                        <div class="slds-form-element__control">
+                            <div class="slds-form-element__static slds-truncate">{drive.accountType}</div>
+                        </div>
+                    </div>
+                </template>
+            </div>
+            <div class="slds-col slds-size_3-of-12 slds-p-left_small">
+                <template if:false={masterData.isReadonly}>
+                    <div class="slds-form-element">
+                        <span class="slds-form-element__label"># Days Until Next Drive</span>
+                        <div class="slds-form-element__control">
+                            <div class="slds-form-element__static slds-truncate">{drive.noOfDaysToNextDrive}</div>
+                        </div>
+                    </div>
+                </template>
+                <template if:true={masterData.isReadonly}>
+                    <div class="slds-form-element slds-form-element_readonly">
+                        <span class="slds-form-element__label"># Days Until Next Drive</span>
+                        <div class="slds-form-element__control">
+                            <div class="slds-form-element__static slds-truncate">{drive.noOfDaysToNextDrive}</div>
+                        </div>
+                    </div>
+                </template>
+            </div>
+        </div>
+    </template>
+</template>

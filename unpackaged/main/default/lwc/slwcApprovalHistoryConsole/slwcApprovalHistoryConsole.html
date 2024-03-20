@@ -1,0 +1,83 @@
+<template>
+    <template if:true={showSpinner}>
+        <lightning-spinner class="spins" size="medium"></lightning-spinner>
+    </template>
+
+    <article class="slds-card slds-card_boundary approval-history-page">
+        <div class="slds-grid slds-page-header">
+            <header class="slds-media slds-media--center slds-has-flexi-truncate">
+                <div class="slds-media__figure slds-m-right_small slds-avatar slds-avatar_small">
+                    <lightning-icon icon-name="standard:approval" size="small"></lightning-icon>
+                </div>
+                <div class="slds-media__body">
+                    <div class="slds-page-header__name">
+                        <div class="slds-page-header__name-title">
+                            <h2 class="slds-card__header-title">
+                                <span class="slds-page-header__title slds-truncate">{pageTitle}</span>
+                            </h2>
+                        </div>
+                    </div>
+                </div>
+            </header>
+            <div class="slds-no-flex">
+                <div class="slds-grid">
+                    <div class="slds-col slds-p-right_small" if:true={record}>
+                        <label class="slds-form-element__label slds-m-bottom_none slds-p-top_none">
+                            Designated Approver
+                        </label>
+                        <div class="slds-form-element__control">
+                            <div class="slds-grid">
+                                <div class="slds-grow flex-wrap-ie11">
+                                    <div class="slds-grid">
+                                        <span if:true={record.designatedApproverName}>{record.designatedApproverName}</span>
+                                        <span if:false={record.designatedApproverName}>None</span>
+                                        <template if:true={canApproveReject}>
+                                            <span if:true={showAssignToMeBtn} class="slds-text-link slds-text-link_reset slds-m-left_x-small" onclick={handleAssignToMe}>Assign to me</span>
+                                            <span if:true={showUnassignbtn} class="slds-text-link slds-text-link_reset slds-m-left_x-small" onclick={handleUnassign}>Unassign</span>
+                                        </template>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="slds-col">
+                        <lightning-button-icon tooltip="Refresh" variant="border-filled" onclick={refreshData} icon-name="utility:refresh"></lightning-button-icon>
+                    </div>
+                    <div if:true={canApproveReject} class="slds-col slds-p-left_x-small">
+                        <lightning-button-group>
+                            <lightning-button label={approveActionLabel} onclick={handleApprove}></lightning-button>
+                            <lightning-button label={rejectActionLabel} onclick={handleReject}></lightning-button>
+                        </lightning-button-group>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div>
+            <c-slwc-custom-datatable
+                key-field="id"
+                resize-column-disabled
+                show-row-number-column
+                hide-checkbox-column
+                sorted-by={sortOption.fieldName}
+                sorted-direction={sortOption.sortDirection}
+                onsort={handleSortChanged}
+                data={data}
+                columns={columns}
+                wrap-text-max-lines="20">
+            </c-slwc-custom-datatable>
+        </div>
+    </article>
+
+    <c-slwc-approval-action-modal
+        record-id={recordId}
+        is-open={approvalActionModalData.isOpen}
+        action={approvalActionModalData.action}
+        action-label={approvalActionModalData.actionLabel}
+        object-label={objectLabel}
+        additional-fields={actionModalAdditionalFields}
+        hide-comments={hideComments}
+        onclose={handleApprovalActionModalClosed}
+        hook-before-submit-approve-reject={hookBeforeSubmitApproveReject}
+    >   
+    </c-slwc-approval-action-modal>
+</template>

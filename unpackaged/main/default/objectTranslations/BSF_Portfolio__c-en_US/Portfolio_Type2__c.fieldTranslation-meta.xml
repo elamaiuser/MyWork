@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+        <label><!-- Portfolio Type (Not in use) --></label>
+        <name>Portfolio_Type2__c</name>
+        <picklistValues>
+            <masterLabel>Account Manager</masterLabel>
+            <translation><!-- Account Manager --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Account Portfolio</masterLabel>
+            <translation><!-- Account Portfolio --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Account Specialist</masterLabel>
+            <translation><!-- Account Specialist --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Area Booking Manager</masterLabel>
+            <translation><!-- Area Booking Manager --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Collection Operation</masterLabel>
+            <translation><!-- Collection Operation --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>DISTRICT</masterLabel>
+            <translation><!-- DISTRICT --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>DSVP</masterLabel>
+            <translation><!-- DSVP --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>District Manager</masterLabel>
+            <translation><!-- District Manager --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Fixed Site</masterLabel>
+            <translation><!-- Fixed Site --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>National Account Manager</masterLabel>
+            <translation><!-- National Account Manager --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Power Booker</masterLabel>
+            <translation><!-- Power Booker --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>RDSE</masterLabel>
+            <translation><!-- RDSE --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Relationship Manager</masterLabel>
+            <translation><!-- Relationship Manager --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Sickle Cell Account Manager</masterLabel>
+            <translation><!-- Sickle Cell Account Manager --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Supervisor</masterLabel>
+            <translation><!-- Supervisor --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Temporary Account Manager</masterLabel>
+            <translation><!-- Temporary Account Manager --></translation>
+        </picklistValues>
+    </CustomFieldTranslation>

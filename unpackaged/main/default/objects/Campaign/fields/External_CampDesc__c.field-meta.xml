@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>External_CampDesc__c</fullName>
+    <caseSensitive>false</caseSensitive>
+    <description>The Adobe generated campaign description (used for campaign matching automation in the lead forms).</description>
+    <externalId>false</externalId>
+    <inlineHelpText>Campaign template name</inlineHelpText>
+    <label>Campaign Description</label>
+    <length>100</length>
+    <required>false</required>
+    <type>Text</type>
+    <unique>true</unique>
+</CustomField>

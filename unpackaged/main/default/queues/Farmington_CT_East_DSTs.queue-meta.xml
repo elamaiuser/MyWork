@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Queue xmlns="http://soap.sforce.com/2006/04/metadata">
+    <doesSendEmailToMembers>false</doesSendEmailToMembers>
+    <name>Farmington CT East: DSTs</name>
+    <queueMembers>
+        <users>
+            <user>donna.krueger@redcross.org</user>
+            <user>eleanor.biondo@redcross.org</user>
+            <user>jacqueline.samson@redcross.org</user>
+            <user>nancy.russ@redcross.org</user>
+            <user>stacy.cullen@redcross.org</user>
+            <user>stephanie.adamowicz@redcross.org</user>
+            <user>steve.levinson@redcross.org</user>
+        </users>
+    </queueMembers>
+    <queueSobject>
+        <sobjectType>sked_Drive_Shift_Trade__c</sobjectType>
+    </queueSobject>
+</Queue>

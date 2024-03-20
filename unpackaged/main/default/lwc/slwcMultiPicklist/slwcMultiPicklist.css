@@ -1,0 +1,7 @@
+.multipicklist .errors {
+    display: none;
+}
+
+.multipicklist .errors.slds-has-error {
+    display: block;
+}

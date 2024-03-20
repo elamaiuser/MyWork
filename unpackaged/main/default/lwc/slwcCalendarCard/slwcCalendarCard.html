@@ -1,0 +1,35 @@
+<template>
+  <div
+    style={customStyle.eventContainerWrapper} 
+    if:true={isDataValid}>
+    <div
+      style={customStyle.eventContainer}
+      class={customClass.eventContainer}
+    >
+      <div
+        style={customStyle.eventBox}
+        class={customClass.eventBox}
+      >
+        <template for:each={cardInfos} for:item="info" if:false={hideInfos}>
+          <div 
+            key={info.key} 
+            title={info.value}>
+            <span
+              class={info.class}
+            >{info.value}</span>
+          </div>
+        </template>
+
+        <div class="event-indicator-container pac">
+          <div class="event-indicator event-info" data-dragging-ignored="true" if:false={isReadonly}>
+            <c-slwc-popover container="html" position="right" trigger="click" width="24rem">
+              <lightning-icon slot="reference" variant="inverse" icon-name="utility:info" size="xx-small"></lightning-icon>
+              <c-slwc-popover-content name="calendarCardPopover" popover-data={popoverInfo} slot="content">
+              </c-slwc-popover-content>
+            </c-slwc-popover>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>

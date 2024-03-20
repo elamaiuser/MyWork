@@ -1,0 +1,162 @@
+<template>
+    <div class="slds-grid">
+        <div class="slds-col">
+            <c-slwc-drive-scheduling-filters mode="groupActivityTrade" onsearch={handleSearch}>
+            </c-slwc-drive-scheduling-filters>
+        </div>
+        <div class="slds-grow slds-p-left_medium">
+            <template if:true={showSpinner}>
+                <lightning-spinner class="spins" size="medium"></lightning-spinner>
+            </template>
+            <div class="slds-scrollable" style="height: 60vh; width: calc(100vw - 5rem);">
+                <c-slwc-custom-datatable key-field="id" data={records} columns={columns} wrap-text-max-lines="3"
+                    hide-checkbox-column sorted-by={sortOption.fieldName} sorted-direction={sortOption.sortDirection}
+                    enable-infinite-loading={enableInfiniteLoading} onsort={handleSortChanged}
+                    onloadmore={handleLoadMoreData}>
+                </c-slwc-custom-datatable>
+            </div>
+        </div>
+    </div>
+
+    <c-slwc-approval-console-request-detail-modal record-id={requestDetailModalData.recordId}
+        is-open={requestDetailModalData.isOpen} object-label="Activity Trade"
+        onclose={handleCloseRequestDetailModal}>
+        <div class="slds-grow" slot="details" if:true={requestDetailModalData.record}>
+            <div class="slds-form-element slds-form-element_readonly">
+                <span class="slds-form-element__label">Name</span>
+                <div class="slds-form-element__control">
+                    <div class="slds-form-element__static slds-truncate">{requestDetailModalData.record.name}</div>
+                </div>
+            </div>
+            <div class="slds-form-element slds-form-element_readonly">
+                <span class="slds-form-element__label">Status</span>
+                <div class="slds-form-element__control">
+                    <div class="slds-form-element__static slds-truncate">{requestDetailModalData.record.status}</div>
+                </div>
+            </div>
+            <div class="slds-form-element slds-form-element_readonly">
+                <span class="slds-form-element__label">Requesting Staff</span>
+                <div class="slds-form-element__control">
+                    <div class="slds-form-element__static slds-truncate">
+                        {requestDetailModalData.record.requestingStaffName}</div>
+                </div>
+            </div>
+            <div class="slds-form-element slds-form-element_readonly">
+                <span class="slds-form-element__label">Requesting Activity</span>
+                <div class="slds-form-element__control">
+                    <div class="slds-form-element__static slds-truncate"
+                        if:true={requestDetailModalData.record.requestingStaffNCE.activityTitle}>
+                        <c-slwc-lightning-formatted-url
+                            record={requestDetailModalData.record.requestingStaffNCE}
+                            label-field="activityTitle"
+                        ></c-slwc-lightning-formatted-url>
+                    </div>
+                    <div class="slds-form-element__static slds-truncate"
+                        if:false={requestDetailModalData.record.requestingStaffNCE.activityTitle}>
+                        <c-slwc-lightning-formatted-url
+                            record={requestDetailModalData.record.requestingStaffNCE}
+                        ></c-slwc-lightning-formatted-url>
+                    </div>
+                </div>
+            </div>
+            <div class="slds-form-element slds-form-element_readonly">
+                <span class="slds-form-element__label">Requesting Activity Start</span>
+                <div class="slds-form-element__control">
+                    <div class="slds-form-element__static slds-truncate">
+                        <lightning-formatted-date-time value={requestDetailModalData.record.requestingStaffNCE.start}
+                            year="numeric" month="numeric" day="numeric" hour="numeric" minute="2-digit"
+                            time-zone={timezoneSidId}></lightning-formatted-date-time>
+                    </div>
+                </div>
+            </div>
+            <div class="slds-form-element slds-form-element_readonly">
+                <span class="slds-form-element__label">Requesting Activity End</span>
+                <div class="slds-form-element__control">
+                    <div class="slds-form-element__static slds-truncate">
+                        <lightning-formatted-date-time value={requestDetailModalData.record.requestingStaffNCE.finish}
+                            year="numeric" month="numeric" day="numeric" hour="numeric" minute="2-digit"
+                            time-zone={timezoneSidId}></lightning-formatted-date-time>
+                    </div>
+                </div>
+            </div>
+            <div class="slds-form-element slds-form-element_readonly">
+                <span class="slds-form-element__label">Trading Staff</span>
+                <div class="slds-form-element__control">
+                    <div class="slds-form-element__static slds-truncate">
+                        {requestDetailModalData.record.tradingStaffName}</div>
+                </div>
+            </div>
+            <div class="slds-form-element slds-form-element_readonly">
+                <span class="slds-form-element__label">Trading Activity</span>
+                <div class="slds-form-element__control">
+                    <div class="slds-form-element__static slds-truncate"
+                        if:true={requestDetailModalData.record.tradingStaffNCE.activityTitle}>
+                        <c-slwc-lightning-formatted-url
+                            record={requestDetailModalData.record.tradingStaffNCE}
+                            label-field="activityTitle"
+                        ></c-slwc-lightning-formatted-url>
+                    </div>
+                    <div class="slds-form-element__static slds-truncate"
+                        if:false={requestDetailModalData.record.tradingStaffNCE.activityTitle}>
+                        <c-slwc-lightning-formatted-url
+                            record={requestDetailModalData.record.tradingStaffNCE}
+                        ></c-slwc-lightning-formatted-url>
+                    </div>
+                </div>
+            </div>
+            <div class="slds-form-element slds-form-element_readonly">
+                <span class="slds-form-element__label">Trading Activity Start</span>
+                <div class="slds-form-element__control">
+                    <div class="slds-form-element__static slds-truncate">
+                        <lightning-formatted-date-time value={requestDetailModalData.record.tradingStaffNCE.start}
+                            year="numeric" month="numeric" day="numeric" hour="numeric" minute="2-digit"
+                            time-zone={timezoneSidId}></lightning-formatted-date-time>
+                    </div>
+                </div>
+            </div>
+            <div class="slds-form-element slds-form-element_readonly">
+                <span class="slds-form-element__label">Trading Activity End</span>
+                <div class="slds-form-element__control">
+                    <div class="slds-form-element__static slds-truncate">
+                        <lightning-formatted-date-time value={requestDetailModalData.record.tradingStaffNCE.finish}
+                            year="numeric" month="numeric" day="numeric" hour="numeric" minute="2-digit"
+                            time-zone={timezoneSidId}></lightning-formatted-date-time>
+                    </div>
+                </div>
+            </div>
+            <div class="slds-form-element slds-form-element_readonly">
+                <span class="slds-form-element__label">Reason For Trade</span>
+                <div class="slds-form-element__control">
+                    <div class="slds-form-element__static slds-truncate">{requestDetailModalData.record.reasonForTrade}
+                    </div>
+                </div>
+            </div>
+            <div class="slds-form-element slds-form-element_readonly">
+                <span class="slds-form-element__label">APS Notes</span>
+                <div class="slds-form-element__control">
+                    <div class="slds-form-element__static slds-truncate">{requestDetailModalData.record.apsNotes}</div>
+                </div>
+            </div>
+            <div class="slds-form-element slds-form-element_readonly">
+                <span class="slds-form-element__label">Submitted By</span>
+                <div class="slds-form-element__control">
+                    <div class="slds-form-element__static slds-truncate">{requestDetailModalData.record.createdBy.name}
+                    </div>
+                </div>
+            </div>
+            <div class="slds-form-element slds-form-element_readonly">
+                <span class="slds-form-element__label">Submission Date</span>
+                <div class="slds-form-element__control">
+                    <div class="slds-form-element__static slds-truncate">
+                        <lightning-formatted-date-time value={requestDetailModalData.record.createdDate} year="numeric"
+                            month="numeric" day="numeric" hour="numeric" minute="2-digit" time-zone={timezoneSidId}>
+                        </lightning-formatted-date-time>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <c-slwc-drive-shift-trade-approval slot="approvalHistoryConsole" record-id={requestDetailModalData.recordId}>
+        </c-slwc-drive-shift-trade-approval>
+    </c-slwc-approval-console-request-detail-modal>
+
+</template>

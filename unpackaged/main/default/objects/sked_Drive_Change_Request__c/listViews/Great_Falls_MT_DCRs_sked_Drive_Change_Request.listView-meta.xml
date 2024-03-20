@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Great_Falls_MT_DCRs_sked_Drive_Change_Request</fullName>
+    <filterScope>Queue</filterScope>
+    <label>Great Falls MT: DCRs</label>
+    <queue>Great_Falls_MT_DCRs</queue>
+    <sharedTo>
+        <allInternalUsers></allInternalUsers>
+    </sharedTo>
+</ListView>

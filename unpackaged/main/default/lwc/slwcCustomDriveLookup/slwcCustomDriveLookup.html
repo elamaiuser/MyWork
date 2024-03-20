@@ -1,0 +1,61 @@
+<template>
+    <label class="slds-form-element__label">{label}</label>
+    <div class="slds-scrollable_y">
+        <div class="slds-grid">
+            <div class="slds-size_2-of-12 slds-p-horizontal_small">
+                <lightning-input type="text" max-length="255" name="ufid" label="UFID"
+                    onchange={handleFilterChanged}
+                    value={filters.ufid}></lightning-input>
+            </div>
+            
+            <div class="slds-size_2-of-12 slds-p-horizontal_small">
+                <c-slwc-multi-picklist
+                    name="driveTypes"
+                    label="Drive Types"
+                    object-api-name="sked_Drive__c"
+                    field-api-name="sked_Type_of_Drive__c"
+                    onpicklistchange={handleFilterChanged}
+                    default-values={filters.driveTypes}>
+                </c-slwc-multi-picklist>     
+            </div>
+
+            <div class=" slds-size_2-of-12 slds-p-horizontal_small">
+                <c-slwc-multi-picklist
+                    name="driveStatuses"
+                    label="Drive Statuses"
+                    object-api-name="sked_Drive__c"
+                    field-api-name="sked_Status__c"
+                    onpicklistchange={handleFilterChanged}
+                    default-values={filters.driveStatuses}>
+                </c-slwc-multi-picklist>   
+            </div>
+
+            <div class="slds-col_bump-left slds-p-right_small">
+                <c-slwc-week-date-picker
+                    first-day="0"
+                    unique-key="siteFeedbackDetail"
+                    onweekdatechange={handleFilterChanged}
+                    default-start-date={filters.startDate}
+                    default-end-date={filters.endDate}>
+                </c-slwc-week-date-picker>
+            </div>
+        </div>
+        <div class="slds-grow slds-m-top_small">
+            <div class="slds-scrollable_y" style="height: 45vh;">
+                <c-slwc-custom-datatable 
+                    key-field="id"
+                    data={drives}
+                    columns={DRIVE_TABLE_COLUMNS}
+                    onrowselection={handleRowSelection}
+                    max-row-selection="1"
+                    wrap-text-max-lines="3">
+                </c-slwc-custom-datatable>
+            </div>
+            <div class="slds-shrink-none slds-grow-none slds-p-horizontal_small slds-p-top_small slds-border_top modal-content__footer">
+                <div class="slds-grid slds-grid_align-spread slds-grid_vertical-align-center"> 
+                    <div class="slds-text-color_weak ng-binding">Total drives: {drives.length} </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>

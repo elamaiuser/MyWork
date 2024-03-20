@@ -1,0 +1,19 @@
+<template>
+    <div class="slds-grid slds-grid_align-end slds-grid_vertical-align-start hco-rac-legends slds-p-vertical_medium">
+        <template for:each={objectTypes} for:item="objectType">
+            <div key={objectType.key} class="legend-item legend-activity slds-m-left_small">
+                <div class="slds-text-title_caps slds-m-bottom_xxx-small">{objectType.label}</div>
+                <ul class="slds-grid slds-wrap">
+                    <template for:each={objectType.eventTypes} for:item="eventType">
+                        <li key={eventType.key} class="slds-grid slds-grid_vertical-align-center slds-m-right_medium">
+                            <div class="slds-m-right_x-small">
+                                <span class="event-type-indicator" style={eventType.style}></span>
+                            </div>
+                            <div class="slds-truncate">{eventType.label}</div>
+                        </li>
+                    </template>
+                </ul>
+            </div>
+        </template>
+    </div>
+</template>

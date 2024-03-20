@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+        <label><!-- Contact Hours Preference --></label>
+        <name>Contact_Hours_Preference__c</name>
+        <picklistValues>
+            <masterLabel>Afternoon (12 PM - 5 PM)</masterLabel>
+            <translation><!-- Afternoon (12 PM - 5 PM) --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Evening ( 5PM - 10 PM)</masterLabel>
+            <translation><!-- Evening ( 5PM - 10 PM) --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Morning (8 AM - 11:59 AM)</masterLabel>
+            <translation><!-- Morning (8 AM - 11:59 AM) --></translation>
+        </picklistValues>
+    </CustomFieldTranslation>

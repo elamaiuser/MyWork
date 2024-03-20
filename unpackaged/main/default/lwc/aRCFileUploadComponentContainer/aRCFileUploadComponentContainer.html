@@ -1,0 +1,34 @@
+<template>
+
+
+
+    <template if:true={recordId}>
+        <template if:true={hideDefaultRow}>
+            <c-a-r-c-file-upload-component record-id={recordId} 
+                display-delete-icon={displaydeleteIconFirstrow}
+                default-row={defaultRow}
+                onaddrowsclick={populateIteratorArray}
+                onrowstodelete={deleteRows}
+                display-add-icon={disableDefaultAddbutton}></c-a-r-c-file-upload-component>
+        </template>
+
+
+        <template for:each={iteratorObjectArray} for:item="cmpinstance">
+            
+            <div key={cmpinstance.instanceid}>
+                <c-a-r-c-file-upload-component 
+                        record-id={recordId} 
+                        display-delete-icon={displaydeleteIconOtherrows}
+                        default-row={defaultRowOthers}
+                        cmp-instance-id={cmpinstance.instanceid}
+                        onaddrowsclick={populateIteratorArray}
+                        onrowstodelete={deleteRows}
+                        display-add-icon={cmpinstance.isDisabled}></c-a-r-c-file-upload-component>
+            </div>
+        </template>
+
+        
+    </template>
+    
+    
+</template>

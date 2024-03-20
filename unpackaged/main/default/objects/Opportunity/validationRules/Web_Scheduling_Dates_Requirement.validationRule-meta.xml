@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Web_Scheduling_Dates_Requirement</fullName>
+    <active>false</active>
+    <description>If Online Scheduling Enabled value is &quot;Yes,&quot;  Web Schedule Start Date,Start Time,End Date,End Time fields must be populated.</description>
+    <errorConditionFormula>ISPICKVAL(Online_Scheduling_Enabled__c, &quot;Yes&quot;) &amp;&amp; 
+Is_Template__c != True &amp;&amp;
+(
+ISBLANK(Web_Schedule_EndDate__c)  || 
+ISBLANK(Web_Schedule_End_Time__c) ||
+ISBLANK(Web_Schedule_StartDate__c) ||
+ISBLANK(Web_Schedule_Start_Time__c) 
+)</errorConditionFormula>
+    <errorMessage>This blood drive is enabled for online scheduling. Please enter a Web Schedule Start Date,Start Time,End Date,End Time</errorMessage>
+</ValidationRule>

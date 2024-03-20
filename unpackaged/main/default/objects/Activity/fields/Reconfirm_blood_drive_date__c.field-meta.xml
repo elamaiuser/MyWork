@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Reconfirm_blood_drive_date__c</fullName>
+    <defaultValue>false</defaultValue>
+    <externalId>false</externalId>
+    <inlineHelpText>Reconfirm blood drive date, hours and site/room.Ensure that the room is reserved for two hours prior to drive start time and two hours after the drive end time. Provide the staff’s arrival time. (Hemasphere Sponsor Planning Reportand the Site Survey Appcan provide information from Hemasphere concerning the drive)</inlineHelpText>
+    <label>Reconfirm blood drive date</label>
+    <type>Checkbox</type>
+</CustomField>

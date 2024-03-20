@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<EmailTemplate xmlns="http://soap.sforce.com/2006/04/metadata">
+    <available>true</available>
+    <description>A post-drive thank you email to BPLs with drive results.</description>
+    <encodingKey>ISO-8859-1</encodingKey>
+    <letterhead>ARC_Logo_Test</letterhead>
+    <name>Evergreen_General_Thank You Post Drive Results_2024</name>
+    <style>formalLetter</style>
+    <subject>Results for your recent blood drive!</subject>
+    <textOnly>Dear [BPL Name],
+
+Thank you for coordinating the [Date] blood drive.  We were very pleased with the drive overall, and the willingness of the donors to share this life saving gift.
+
+The efforts of [Account Name] have always been greatly appreciated and their support of the community blood program will go a long way toward replenishing blood supplies and ultimately saving lives.
+
+In addition, we very much appreciate your efforts during this crucial time. You may be interested to know that [#] donors registered, [#] donors were deferred and [#] units were collected!  We also registered [#] first time donors!
+
+Again, thank you for your contribution and ongoing support of this important community program. I look forward to working with you again on an upcoming blood drive.
+
+Sincerely,
+[Account Representative Name]
+[Contact Information]</textOnly>
+    <type>html</type>
+    <uiType>Aloha</uiType>
+</EmailTemplate>

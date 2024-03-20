@@ -1,0 +1,75 @@
+.slds-staffing-constrain-mass-update__container {
+  height: 100%;
+}
+
+.slds-staffing-constrain-mass-update__container .slds-staffing-constrain-mass-update__grid {
+  font-size: 0.75rem;
+  height: 100%;
+}
+
+.slds-staffing-constrain-mass-update__container .slds-staffing-constrain-mass-update__grid > div {
+  height: 100%;
+}
+
+.slds-staffing-constrain-mass-update__container .slds-staffing-constrain-mass-update__grid table, .slds-staffing-constrain-mass-update__container .slds-staffing-constrain-mass-update__grid th, .slds-staffing-constrain-mass-update__container .slds-staffing-constrain-mass-update__grid tr, .slds-staffing-constrain-mass-update__container .slds-staffing-constrain-mass-update__grid td {
+  border-collapse: collapse;
+  border: 1px solid #d8dde6;
+}
+
+.slds-staffing-constrain-mass-update__container .slds-staffing-constrain-mass-update__grid table {
+  border-spacing: 0;
+  min-width: 100%;
+  table-layout: fixed;
+}
+
+.slds-staffing-constrain-mass-update__container .slds-staffing-constrain-mass-update__grid table td {
+  text-align: center;
+  cursor: pointer;
+  background-color: #f4f6f9;
+  height: 2.25rem;
+}
+
+.slds-staffing-constrain-mass-update__container .slds-staffing-constrain-mass-update__grid table td .slds-staffing-constrain-mass-update__grid-left-row {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.slds-staffing-constrain-mass-update__container .slds-staffing-constrain-mass-update__grid table td .slds-staffing-constrain-mass-update__grid-left-row > div {
+  height: 2.25rem;
+}
+
+.slds-staffing-constrain-mass-update__container .slds-staffing-constrain-mass-update__grid table td.slds-staffing-constrain-mass-update__cell--active {
+  background-color: #3c97dd;
+  color: #fff;
+}
+
+.slds-staffing-constrain-mass-update__container .slds-staffing-constrain-mass-update__grid table td.slds-staffing-constrain-mass-update__cell--warning {
+  background-color: #FFB75D;
+  color: #fff;
+}
+
+.slds-staffing-constrain-mass-update__container .slds-staffing-constrain-mass-update__grid table td.slds-staffing-constrain-mass-update__cell--header {
+  background-color: transparent;
+}
+
+.slds-staffing-constrain-mass-update__container .slds-staffing-constrain-mass-update__grid table td lightning-button-menu {
+  display: none;
+}
+
+.slds-staffing-constrain-mass-update__container .slds-staffing-constrain-mass-update__grid table td.slds-staffing-constrain-mass-update__cell:hover lightning-button-menu {
+  display: block;
+}
+
+.slds-staffing-constrain-mass-update__container .slds-staffing-constrain-mass-update__grid table td lightning-button-menu.slds-is-open {
+  display: block;
+}
+
+.slds-staffing-constrain-mass-update__container .slds-staffing-constrain-mass-update__grid table th {
+  font-weight: 400;
+}
+
+.slds-staffing-constrain-mass-update__container .slds-staffing-constrain-mass-update__grid table th.slds-staffing-constrain-mass-update__grid-left-header {
+  background: #f4f6f9;
+  border: 1px solid #d8dde6;
+  border-right: 0;
+}

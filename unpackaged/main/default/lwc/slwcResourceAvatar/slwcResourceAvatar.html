@@ -1,0 +1,21 @@
+<template>
+    <template if:true={resource}>
+        <c-slwc-popover
+            container="html"
+            position="bottom"
+            theme="tooltip"
+            trigger="hover">
+            <div class="container"
+                slot="reference">
+                <lightning-avatar
+                    size="small"
+                    fallback-icon-name={resourceIcon}
+                    src={resource.photoUrl}>
+                </lightning-avatar>
+            </div>
+            <div slot="content">
+                {resource.name}
+            </div>
+        </c-slwc-popover>  
+    </template>
+</template>

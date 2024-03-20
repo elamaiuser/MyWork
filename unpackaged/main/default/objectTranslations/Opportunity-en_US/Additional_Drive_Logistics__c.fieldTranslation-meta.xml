@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+        <label><!-- Additional Drive Logistics --></label>
+        <name>Additional_Drive_Logistics__c</name>
+        <picklistValues>
+            <masterLabel>ARC provided additional lighting</masterLabel>
+            <translation><!-- ARC provided additional lighting --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>ARC provides floor tarp</masterLabel>
+            <translation><!-- ARC provides floor tarp --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>ARC provides tables/chairs</masterLabel>
+            <translation><!-- ARC provides tables/chairs --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>ARC resets tables/chairs (post drive)</masterLabel>
+            <translation><!-- ARC resets tables/chairs (post drive) --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>ARC set-up tables and chairs (drive set up)</masterLabel>
+            <translation><!-- ARC set-up tables and chairs (drive set up) --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Clean Up-ARC takes all trash (this is in addition to the standard bio material)</masterLabel>
+            <translation><!-- Clean Up-ARC takes all trash (this is in addition to the standard bio material) --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Other</masterLabel>
+            <translation><!-- Other --></translation>
+        </picklistValues>
+    </CustomFieldTranslation>

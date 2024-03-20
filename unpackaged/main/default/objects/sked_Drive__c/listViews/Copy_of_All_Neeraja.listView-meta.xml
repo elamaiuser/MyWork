@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Copy_of_All_Neeraja</fullName>
+    <columns>NAME</columns>
+    <columns>sked_Opportunity__c</columns>
+    <columns>sked_Drive_Date__c</columns>
+    <columns>sked_Drive_Productivity_Banding__c</columns>
+    <columns>sked_Status__c</columns>
+    <columns>sked_Total_Procedures_Projected__c</columns>
+    <columns>sked_Total_Products_Projected__c</columns>
+    <columns>sked_Platelet_Projected_Procedures__c</columns>
+    <columns>sked_Plasma_Projected_Procedures__c</columns>
+    <columns>sked_Number_of_2RBC_Assets__c</columns>
+    <columns>CREATED_DATE</columns>
+    <columns>sked_Productivity_Metric__c</columns>
+    <columns>sked_Type_of_Drive__c</columns>
+    <filterScope>Everything</filterScope>
+    <label>Copy of All - Neeraja</label>
+</ListView>

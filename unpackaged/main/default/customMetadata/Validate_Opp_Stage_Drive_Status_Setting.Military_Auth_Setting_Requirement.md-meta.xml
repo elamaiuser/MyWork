@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomMetadata xmlns="http://soap.sforce.com/2006/04/metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <label>Military Auth Setting Requirement</label>
+    <protected>false</protected>
+    <values>
+        <field>Error_Msg_on_DOC__c</field>
+        <value xsi:type="xsd:string">This drive may only be moved to the Tentative or Confirmed Status if Military Authority Name and Military Authority Phone field of Account is not empty or Accept Blank Military Authority Name/Phone checkbox in related opportunity is True.</value>
+    </values>
+    <values>
+        <field>Error_Msg_on_Opportunity__c</field>
+        <value xsi:type="xsd:string">A Blood Drive Opportunity may only be moved to the Committed or Closed Stage if Military Authority Name and Military Authority Phone field of Account is not empty or Accept Blank Military Authority Name/Phone is True.</value>
+    </values>
+</CustomMetadata>

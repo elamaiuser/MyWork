@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Queue xmlns="http://soap.sforce.com/2006/04/metadata">
+    <doesSendEmailToMembers>false</doesSendEmailToMembers>
+    <name>Norwich CT: DMPA</name>
+    <queueMembers>
+        <users>
+            <user>kimberly.moreland@redcross.org</user>
+            <user>lynne.phillips@redcross.org.biomed</user>
+            <user>patricia.sablitz@redcross.org</user>
+        </users>
+    </queueMembers>
+    <queueSobject>
+        <sobjectType>sked_Drive__c</sobjectType>
+    </queueSobject>
+</Queue>

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>sked_Missing_Equipment_Supply_Reason__c</fullName>
+    <externalId>false</externalId>
+    <label>Missing/broken Equipment/Supply Reason</label>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Document missing equipment/supply</fullName>
+                <default>false</default>
+                <label>Document missing equipment/supply</label>
+            </value>
+            <value>
+                <fullName>Missing eBDR equipment</fullName>
+                <default>false</default>
+                <label>Missing eBDR equipment</label>
+            </value>
+            <value>
+                <fullName>Missing equipment (ex: Hemocues, scales)</fullName>
+                <default>false</default>
+                <label>Missing equipment (ex: Hemocues, scales)</label>
+            </value>
+            <value>
+                <fullName>Missing supplies (ex: blood bags, tubes)</fullName>
+                <default>false</default>
+                <label>Missing supplies (ex: blood bags, tubes)</label>
+            </value>
+            <value>
+                <fullName>Missing supplies-Kitting (ex: tubes, arm prep)</fullName>
+                <default>false</default>
+                <label>Missing supplies-Kitting (ex: tubes, arm prep)</label>
+            </value>
+            <value>
+                <fullName>Missing equipment</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Missing equipment</label>
+            </value>
+            <value>
+                <fullName>Missing supplies</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Missing supplies</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<EmailTemplate xmlns="http://soap.sforce.com/2006/04/metadata">
+    <available>true</available>
+    <description>Prospecting Email for High School Scholarship Program</description>
+    <encodingKey>ISO-8859-1</encodingKey>
+    <letterhead>ARC_Logo_Test</letterhead>
+    <name>Marketing Segment_Education_HSSP_Prospecting</name>
+    <style>formalLetter</style>
+    <subject>Partner with the Red Cross to help save lives!</subject>
+    <textOnly>Hello [Insert Name],
+
+The American Red Cross is proud to offer learning-in-action opportunities for your high school students that will develop and recognize their leadership and humanitarian spirit. Our programs help fulfill the needs of educational institutions to be part of the community fabric by raising future leaders and giving back. We are pleased to offer your school with a unique program that will help save lives and support your students achieve higher education. 
+
+The High School Scholarship Program is available to high schools that host at least one Red Cross blood drive during the year. In return, the Red Cross will provide a scholarship to your school based on the total number of blood units collected. The more pints of blood your school collects, the more scholarship money your school is eligible to receive. Representatives from your school will select the scholarship recipient(s) based on Red Cross recommended criteria. 
+
+High schools that partner with the Red Cross through this scholarship program receive the satisfaction of knowing that they have helped deliver lifesaving services and blood products to patients in need and can recognize the student leaders who help save lives. Your partnership will help build a stronger community for many years to come.
+
+I would like to share and discuss the opportunity for your school to participate in this scholarship program. I would need 15 minutes of your time and am happy to meet at a time that is convenient for you, including before or after school. If you have any questions, please feel free to contact me.
+
+Kind regards,
+[Insert Name]</textOnly>
+    <type>html</type>
+    <uiType>Aloha</uiType>
+</EmailTemplate>

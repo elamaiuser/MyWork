@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Company_Size__c</fullName>
+    <description>Changed the label per business request but not the API name since code is tied to it.</description>
+    <externalId>false</externalId>
+    <label>Company Size</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Less than 200</fullName>
+                <default>false</default>
+                <label>Less than 200</label>
+            </value>
+            <value>
+                <fullName>201 - 500</fullName>
+                <default>false</default>
+                <label>201 - 500</label>
+            </value>
+            <value>
+                <fullName>501 - 1000</fullName>
+                <default>false</default>
+                <label>501 - 1000</label>
+            </value>
+            <value>
+                <fullName>1001 - 1500</fullName>
+                <default>false</default>
+                <label>1001 - 1500</label>
+            </value>
+            <value>
+                <fullName>1501 - more</fullName>
+                <default>false</default>
+                <label>1501 - more</label>
+            </value>
+            <value>
+                <fullName>100 - 500</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>100 - 500</label>
+            </value>
+            <value>
+                <fullName>1000 - 5000</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>1000 - 5000</label>
+            </value>
+            <value>
+                <fullName>500 - 1000</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>500 - 1000</label>
+            </value>
+            <value>
+                <fullName>Less than 100</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Less than 100</label>
+            </value>
+            <value>
+                <fullName>More than 5000</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>More than 5000</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

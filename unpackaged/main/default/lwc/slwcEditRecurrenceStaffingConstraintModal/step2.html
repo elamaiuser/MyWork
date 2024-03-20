@@ -1,0 +1,174 @@
+<template>
+    <section role="dialog" tabindex="-1" class={customClass.modalClass} style="z-index: 9003;">
+        <div class="slds-modal__container" style="min-width: 77rem;">
+            <header class={customClass.headerClass}>
+                <lightning-button-icon onclick={handleCancel} class="slds-button slds-button_icon slds-modal__close" size="large"
+                    icon-name="utility:close" variant="bare-inverse" title="Close"></lightning-button-icon>
+
+                <h2 class="slds-modal__title slds-hyphenate">{modalHeader}</h2>
+            </header>
+            <div class="slds-modal__content slds-p-around_medium full-height__modal-content">
+                <div class="slds-is-relative">
+                    <template if:true={showSpinner}>
+                        <lightning-spinner class="spins" size="medium"></lightning-spinner>
+                    </template>
+                    
+                    <div class="slds-grid slds-grid_align-spread">
+                       
+                        <div class="slds-col slds-col_bump-left slds-grid">
+                            <div class="slds-form-element slds-m-right_small">
+                                <label class="slds-form-element__label">Show records with issue(s)</label>
+                                <lightning-input onchange={handleStep2FiltersOnChange} name="showOnlyErrorRecords" variant="label-hidden"
+                                    type="toggle" label="Show records with issue(s)" checked={model.STEP2.filters.showOnlyErrorRecords}>
+                                </lightning-input>
+                            </div>
+
+                            <c-slwc-multi-picklist
+                                class="slds-m-right_small"
+                                name="driveTypes"
+                                label="Drive Types"
+                                selected-by-default
+                                object-api-name="sked_Drive__c"
+                                field-api-name="sked_Type_of_Drive__c"
+                                default-values={model.STEP2.filters.driveTypes}
+                                onpicklistchange={handleStep2FiltersOnChange}
+                                >
+                            </c-slwc-multi-picklist>
+                            
+                            <c-slwc-multi-picklist
+                                class="slds-m-right_small"
+                                name="daysOfWeek"
+                                label="Days of Week"
+                                pick-list-values={daysOfWeekOptions}
+                                selected-by-default
+                                default-values={model.STEP2.filters.daysOfWeek}
+                                onpicklistchange={handleStep2FiltersOnChange}
+                            ></c-slwc-multi-picklist>
+                            
+                            <c-slwc-date-range-picker
+                                label="Date Range"
+                                name="dateRange"
+                                ondaterangechange={handleStep2FiltersOnChange}
+                                default-start-date={model.STEP2.filters.startDate}
+                                default-end-date={model.STEP2.filters.endDate}>
+                            </c-slwc-date-range-picker>
+
+                            <div class="slds-form-element">
+                                <span class="slds-form-element__label">&nbsp;</span>
+                                <div class="slds-form-element__control">
+                                    <lightning-button class="slds-m-left_small slds-p-top_large" variant="neutral" label="Reset Filter" onclick={handleStep2ResetFilters}></lightning-button>
+                                    <!-- <lightning-button class="slds-m-left_small slds-p-top_large" variant="brand" label="Validate" onclick={handleStep2ValidateRecords}></lightning-button> -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <table class="slds-m-top_medium slds-table slds-table_bordered staffing-constraints__table slds-no-row-hover">
+                        <thead>
+                            <tr class="slds-line-height_reset slds-text-title_caps">
+                                <th class="slds-cell-wrap event-type__col">
+                                    Date Of Constraint
+                                </th>
+                                <th class="slds-cell-wrap event-type__col">
+                                    Drive Type
+                                </th>
+                                <th class="slds-cell-wrap event-type__col">
+                                    Total Staff Constraints
+                                </th>
+                                <th class="slds-cell-wrap event-type__col">
+                                    # Requested Staff
+                                </th>
+                                <th class="slds-cell-wrap error_message__col">
+                                    Issues
+                                </th>
+                                <th class="slds-cell-wrap action__col">
+                                    <button class="slds-button slds-text-color_error"
+                                        onclick={handleStep2DeleteAllRecord}>
+                                        <lightning-icon icon-name="utility:delete" class="slds-current-color" variant="" size="x-small"></lightning-icon>
+                                    </button>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="slds-cell-wrap event-type__col"></td>
+                                <td class="slds-cell-wrap event-type__col"></td>
+                                <td class="slds-cell-wrap event-type__col">
+                                    <lightning-input
+                                        name="totalStaffConstraints"
+                                        type="number"
+                                        autocomplete="off"
+                                        label="Total Staff Constraints"
+                                        value={model.STEP2.masterRow.totalStaffConstraints}
+                                        onchange={handleMasterRowModelChange}
+                                        variant="label-hidden"
+                                    >
+                                    </lightning-input>
+                                </td>
+                                <td class="slds-cell-wrap error_message__col"></td>
+                                <td class="slds-cell-wrap event-action__col"></td>
+                            </tr>
+                            <tr
+                                for:each={model.STEP2.filteredRecords} 
+                                for:item="item"
+                                key={item.key}>
+                                <td class="slds-cell-wrap event-type__col">
+                                    <lightning-formatted-date-time value={item.dateOfConstraint} year="numeric" month="numeric" day="numeric" time-zone="GMT"></lightning-formatted-date-time>
+                                </td>
+
+                                <td class="slds-cell-wrap event-type__col">
+                                    {item.driveType}
+                                </td>
+                                <td class="slds-cell-wrap event-type__col">
+                                    <lightning-input
+                                        name="totalStaffConstraints"
+                                        type="number"
+                                        autocomplete="off"
+                                        label="Total Staff Constraints"
+                                        value={item.totalStaffConstraints}
+                                        onchange={handleStep2ModelChange}
+                                        variant="label-hidden"
+                                        data-key={item.key}
+                                        required
+                                    >
+                                    </lightning-input>
+                                </td>
+                                <td class="slds-cell-wrap event-type__col">
+                                    {item.validations.noOfRequestedStaff}
+                                </td>
+
+                                <td class="slds-cell-wrap error_message__col">
+                                    <ul class="slds-list_dotted" style="margin-left: 0.75rem;">
+                                        <li class={customClass.warningMessageClass} if:true={item.validations.requestedStaffExceeded}>
+                                            Total staff constraints is less than total staff requested for the drive
+                                        </li>
+                                    </ul>
+                                </td>
+
+                                <td class="slds-cell-wrap action__col">
+                                    <button class="slds-button slds-text-color_error"
+                                        data-key={item.key}
+                                        onclick={handleStep2DeleteRecord}>
+                                        <lightning-icon icon-name="utility:delete" class="slds-current-color" variant="" size="x-small"></lightning-icon>
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <footer class={customClass.footerClass}>
+                <div class="slds-grid slds-grid_align-spread">
+                    <div class="slds-grid slds-text-color_weak slds-grid_vertical-align-center">
+                        Showing {model.STEP2.filteredRecords.length} of {model.STEP2.records.length} staffing constraint records
+                    </div>
+                    <div>
+                        <button class="slds-button slds-button_neutral" onclick={handlePrev}>Back</button>
+                        <button class="slds-button slds-button_brand" onclick={handleSave} disabled={saveBtnDisabled}>Save</button>
+                    </div>
+                </div>
+            </footer>
+        </div>
+    </section>
+    <div class={customClass.backdropClass} style="z-index: 9002;"></div>
+</template>

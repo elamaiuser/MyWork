@@ -1,0 +1,85 @@
+<template>
+    
+   
+
+    <lightning-card>
+       
+      
+
+        <div style="padding: 20px;">
+            <div style="display: grid; padding: 15px;"> 
+                <div style="display: inline-flex;">
+                    <div class="slds-size--1-of-7 slds-p-around--small" style="padding-top: 16px;">
+                        <span> <p style="padding-left: 5px;"> User </p></span>
+                        <c-generic-custom-lookup
+                        iconname="standard:user" 
+                        object-name={TargetObjectName}
+                        searchfield="Name"
+                        onselectedrec={choosenrecord}>
+                        </c-generic-custom-lookup>
+
+                    </div>
+                    <div class="slds-size--1-of-7  slds-p-around--small">
+                        <lightning-combobox
+                        name="teamrole"
+                        label="Team Roles"
+                        value={teamrolevalues}
+                        placeholder=""
+                        options={teamroleOptions}
+                        onchange={teamRoleChangeHandler} >
+                        </lightning-combobox>
+                    </div>
+                    <!--div class="slds-size--1-of-7 slds-p-around--small">
+                        <lightning-combobox
+                        name="accountaccess"
+                        label="Account Access"
+                        value={accountaccess}
+                        placeholder=""
+                        options={accountaccessOptions}
+                        onchange={accountChangeHandler} >
+                        </lightning-combobox>
+                    </div-->
+                    <!--div class="slds-size--1-of-7 slds-p-around--small">
+                        <lightning-combobox
+                        name="caseaccess"
+                        label="Case Access"
+                        value={caseaccess}
+                        placeholder=""
+                        options={otheraccessOptions}
+                        onchange={caseChangeHandler} >
+                        </lightning-combobox>
+                    </div-->
+                    <div class="slds-size--1-of-7 slds-p-around--small">
+                        <lightning-combobox
+                        name="opportunityaccess"
+                        label="Blood Drive Access"
+                        value={opportunityaccess}
+                        placeholder=""
+                        options={otheraccessOptions}
+                        onchange={opportunityChangeHandler} >
+                        </lightning-combobox>
+                    </div>
+                </div>
+            </div>
+
+            <div>
+                <div style="padding: 15px;">
+                    <div style="padding: 5px;">
+                        <lightning-button   variant="brand" label="Save and Return" 
+                        title="Primary action" 
+                        onclick={saveAndRedirect} 
+                        class="slds-m-left_x-small"></lightning-button>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+       
+    </lightning-card>
+
+    
+
+
+    
+</template>

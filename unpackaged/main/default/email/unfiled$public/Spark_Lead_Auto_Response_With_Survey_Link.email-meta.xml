@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<EmailTemplate xmlns="http://soap.sforce.com/2006/04/metadata">
+    <available>true</available>
+    <description>Generic response sent to leads, includes link to Site Survey</description>
+    <encodingKey>ISO-8859-1</encodingKey>
+    <name>Lead Auto Response w/ Survey Link</name>
+    <style>freeForm</style>
+    <subject>Red Cross Blood Site Survey for {!Lead.Name}</subject>
+    <textOnly>Dear {!Lead.FirstName} {!Lead.LastName},
+
+Thank you for your interest in hosting a blood drive. Please fill out the following survey to complete your application.
+
+https://biomedical--dev--c.cs61.visual.force.com/apex/SiteSurvey?Id={!Lead.Id}</textOnly>
+    <type>custom</type>
+    <uiType>Aloha</uiType>
+</EmailTemplate>

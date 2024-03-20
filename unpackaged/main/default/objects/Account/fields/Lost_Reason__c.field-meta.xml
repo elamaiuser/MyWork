@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Lost_Reason__c</fullName>
+    <description>Dependent field of &quot;Account Status&quot; when Lost is chosen as the picklist value. Require a value to be selected if &quot;Lost&quot; is selected.</description>
+    <externalId>false</externalId>
+    <label>Lost Reason</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Lost to Competition</fullName>
+                <default>false</default>
+                <label>Lost to Competition</label>
+            </value>
+            <value>
+                <fullName>Red Cross Decision (Do Not Run)</fullName>
+                <default>false</default>
+                <label>Red Cross Decision (Do Not Run)</label>
+            </value>
+            <value>
+                <fullName>Sponsor Decision</fullName>
+                <default>false</default>
+                <label>Sponsor Decision</label>
+            </value>
+            <value>
+                <fullName>BPL Loss</fullName>
+                <default>false</default>
+                <label>BPL Loss</label>
+            </value>
+            <value>
+                <fullName>Market Optimization</fullName>
+                <default>false</default>
+                <label>Market Optimization</label>
+            </value>
+            <value>
+                <fullName>Other</fullName>
+                <default>false</default>
+                <label>Other</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

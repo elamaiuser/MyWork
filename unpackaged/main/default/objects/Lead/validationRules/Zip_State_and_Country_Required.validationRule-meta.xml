@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Zip_State_and_Country_Required</fullName>
+    <active>true</active>
+    <description>Require all users to enter a Zip Code, State and Country value when creating a new lead</description>
+    <errorConditionFormula>RecordType.Name = &quot;Biomed Recruitment&quot; &amp;&amp;
+(
+ISBLANK(PostalCode)  || 
+ISBLANK(TEXT(StateCode))  || 
+ISBLANK(TEXT(CountryCode))
+)</errorConditionFormula>
+    <errorMessage>The State, Zip Code and Country fields are required to be populated.</errorMessage>
+</ValidationRule>

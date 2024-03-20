@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<EmailTemplate xmlns="http://soap.sforce.com/2006/04/metadata">
+    <available>true</available>
+    <encodingKey>ISO-8859-1</encodingKey>
+    <name>Spark - Lead Assignment Sample</name>
+    <style>freeForm</style>
+    <subject>New Lead: {!Lead.LeadSource}, {!Lead.Name} in {!Lead.City}, {!Lead.State}</subject>
+    <textOnly>A new lead has been assigned to your territory:
+
+Lead Information Lead Type: {!Lead.LeadSource}
+Name: {!Lead.Name}
+Title: {!Lead.Title}
+Organization Name: {!Lead.Company}
+Email: {!Lead.Email}
+Phone: {!Lead.Phone}
+Phone Type: {!Lead.Phone_Type__c}
+Referrer: {!Lead.Referrer__c}
+Source: {!Lead.LeadSource}
+
+Location / Region Information City: {!Lead.City}
+State: {!Lead.StateCode}
+Zip code: {!Lead.PostalCode}
+AM Portfolio: {!Lead.Lead_AM_Porfolio__c}
+Collection Operation: {!Lead.Lead_Collection_Operation__c}
+ARC Region: {!Lead.Lead_Region_Name__c}
+
+
+Company / Organization Information: Company Type: {!Lead.Company_Type__c}
+Sub-Type: {!Lead.Company_Sub_Type__c}
+Type (if Other): {!Lead.Company_Type_Other__c}
+Organization/Company Size: {!Lead.Company_Size__c}
+Age Group (LSL Only): {!Lead.Age_Group__c}
+Student Type (LSL Only): {!Lead.Student_Type__c}
+
+Lead Scoring Score (0=poor, 100=great): {!Lead.leadScoring__Lead_Score__c}
+Has hosted before? {!Lead.Hosted_Before__c}
+Has other Red Cross relationships: {!Lead.Other_Redcross_Relationships__c}
+Has personal story? {!Lead.Has_Personal_Story__c}
+Personal Story: {!Lead.Personal_Story__c}
+Comments provided: {!Lead.Comments__c}</textOnly>
+    <type>custom</type>
+    <uiType>Aloha</uiType>
+</EmailTemplate>

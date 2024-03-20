@@ -1,0 +1,481 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+        <label><!-- Industry Code --></label>
+        <name>Industry_Code__c</name>
+        <picklistValues>
+            <masterLabel>AME</masterLabel>
+            <translation><!-- AME --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Administration / District Office</masterLabel>
+            <translation><!-- Administration / District Office --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Advertising / Marketing</masterLabel>
+            <translation><!-- Advertising / Marketing --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Agriculture</masterLabel>
+            <translation><!-- Agriculture --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Air Force</masterLabel>
+            <translation><!-- Air Force --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Air Force Reserve</masterLabel>
+            <translation><!-- Air Force Reserve --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Air Guard</masterLabel>
+            <translation><!-- Air Guard --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Airline / Airport</masterLabel>
+            <translation><!-- Airline / Airport --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Ambulance / EMS</masterLabel>
+            <translation><!-- Ambulance / EMS --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>American Legion</masterLabel>
+            <translation><!-- American Legion --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Amish</masterLabel>
+            <translation><!-- Amish --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Apartments</masterLabel>
+            <translation><!-- Apartments --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Army</masterLabel>
+            <translation><!-- Army --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Army National Guard</masterLabel>
+            <translation><!-- Army National Guard --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Army Reserve</masterLabel>
+            <translation><!-- Army Reserve --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Baptist</masterLabel>
+            <translation><!-- Baptist --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Brethren</masterLabel>
+            <translation><!-- Brethren --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Buddhist</masterLabel>
+            <translation><!-- Buddhist --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Business Membership Organization</masterLabel>
+            <translation><!-- Business Membership Organization --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Call Center</masterLabel>
+            <translation><!-- Call Center --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Care Facilities</masterLabel>
+            <translation><!-- Care Facilities --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Casino</masterLabel>
+            <translation><!-- Casino --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Catholic</masterLabel>
+            <translation><!-- Catholic --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Chaldean</masterLabel>
+            <translation><!-- Chaldean --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Christian</masterLabel>
+            <translation><!-- Christian --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Church of Christ</masterLabel>
+            <translation><!-- Church of Christ --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Church of God</masterLabel>
+            <translation><!-- Church of God --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>City / Town</masterLabel>
+            <translation><!-- City / Town --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Civitan</masterLabel>
+            <translation><!-- Civitan --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Clinic</masterLabel>
+            <translation><!-- Clinic --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Coast Guard</masterLabel>
+            <translation><!-- Coast Guard --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Coast Guard Reserve</masterLabel>
+            <translation><!-- Coast Guard Reserve --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>College / University</masterLabel>
+            <translation><!-- College / University --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Communications</masterLabel>
+            <translation><!-- Communications --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Community / Junior College</masterLabel>
+            <translation><!-- Community / Junior College --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Congregational</masterLabel>
+            <translation><!-- Congregational --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Construction</masterLabel>
+            <translation><!-- Construction --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Coptic</masterLabel>
+            <translation><!-- Coptic --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Correctional Facility</masterLabel>
+            <translation><!-- Correctional Facility --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>County</masterLabel>
+            <translation><!-- County --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Defensores de la Fe</masterLabel>
+            <translation><!-- Defensores de la Fe --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Disciples of Christ</masterLabel>
+            <translation><!-- Disciples of Christ --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Doctor&#39;s Office</masterLabel>
+            <translation><!-- Doctor&apos;s Office --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Eagles</masterLabel>
+            <translation><!-- Eagles --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Elementary School</masterLabel>
+            <translation><!-- Elementary School --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Elks</masterLabel>
+            <translation><!-- Elks --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Episcopal</masterLabel>
+            <translation><!-- Episcopal --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Evangelical</masterLabel>
+            <translation><!-- Evangelical --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Fair (State, County)</masterLabel>
+            <translation><!-- Fair (State, County) --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Federal</masterLabel>
+            <translation><!-- Federal --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Financial Institutions</masterLabel>
+            <translation><!-- Financial Institutions --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Fire / Law Enforcement</masterLabel>
+            <translation><!-- Fire / Law Enforcement --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>General Community</masterLabel>
+            <translation><!-- General Community --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>General Services</masterLabel>
+            <translation><!-- General Services --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Greek Orthodox</masterLabel>
+            <translation><!-- Greek Orthodox --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Health Club</masterLabel>
+            <translation><!-- Health Club --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>High School</masterLabel>
+            <translation><!-- High School --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Hindu</masterLabel>
+            <translation><!-- Hindu --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Hospital</masterLabel>
+            <translation><!-- Hospital --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Hotel / Resort</masterLabel>
+            <translation><!-- Hotel / Resort --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Insurance</masterLabel>
+            <translation><!-- Insurance --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Jewish</masterLabel>
+            <translation><!-- Jewish --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Kiwanis</masterLabel>
+            <translation><!-- Kiwanis --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Knights of Columbus</masterLabel>
+            <translation><!-- Knights of Columbus --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Laboratory</masterLabel>
+            <translation><!-- Laboratory --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Latter Day Saints</masterLabel>
+            <translation><!-- Latter Day Saints --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Law Firm</masterLabel>
+            <translation><!-- Law Firm --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Lions</masterLabel>
+            <translation><!-- Lions --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Lutheran</masterLabel>
+            <translation><!-- Lutheran --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Manufacturing</masterLabel>
+            <translation><!-- Manufacturing --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Marine Corps</masterLabel>
+            <translation><!-- Marine Corps --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Marine Corps Reserve</masterLabel>
+            <translation><!-- Marine Corps Reserve --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Masons</masterLabel>
+            <translation><!-- Masons --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Mennonite</masterLabel>
+            <translation><!-- Mennonite --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Methodist</masterLabel>
+            <translation><!-- Methodist --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Middle School</masterLabel>
+            <translation><!-- Middle School --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Mission Board</masterLabel>
+            <translation><!-- Mission Board --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Moose Lodge</masterLabel>
+            <translation><!-- Moose Lodge --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Museums</masterLabel>
+            <translation><!-- Museums --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Muslim</masterLabel>
+            <translation><!-- Muslim --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Navy</masterLabel>
+            <translation><!-- Navy --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Navy Reserve</masterLabel>
+            <translation><!-- Navy Reserve --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Nazarene</masterLabel>
+            <translation><!-- Nazarene --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Non-Denominational</masterLabel>
+            <translation><!-- Non-Denominational --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Not For Profit</masterLabel>
+            <translation><!-- Not For Profit --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Online / Digital</masterLabel>
+            <translation><!-- Online / Digital --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Organized Labor</masterLabel>
+            <translation><!-- Organized Labor --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Other</masterLabel>
+            <translation><!-- Other --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Other Fraternal Organization</masterLabel>
+            <translation><!-- Other Fraternal Organization --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Pentecostal</masterLabel>
+            <translation><!-- Pentecostal --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Presbyterian</masterLabel>
+            <translation><!-- Presbyterian --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Print</masterLabel>
+            <translation><!-- Print --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Professional Membership Organization</masterLabel>
+            <translation><!-- Professional Membership Organization --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Radio</masterLabel>
+            <translation><!-- Radio --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Real Estate</masterLabel>
+            <translation><!-- Real Estate --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Red Cross Chapter</masterLabel>
+            <translation><!-- Red Cross Chapter --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Regional Govt</masterLabel>
+            <translation><!-- Regional Govt --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Reservation, Native American</masterLabel>
+            <translation><!-- Reservation, Native American --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Restaurant</masterLabel>
+            <translation><!-- Restaurant --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Retail / Sales / Service</masterLabel>
+            <translation><!-- Retail / Sales / Service --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Rotary</masterLabel>
+            <translation><!-- Rotary --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Ruritan</masterLabel>
+            <translation><!-- Ruritan --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Scouts</masterLabel>
+            <translation><!-- Scouts --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Senior Center</masterLabel>
+            <translation><!-- Senior Center --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Seventh Day Adventist</masterLabel>
+            <translation><!-- Seventh Day Adventist --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Shopping Center / Mall</masterLabel>
+            <translation><!-- Shopping Center / Mall --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Sports Club</masterLabel>
+            <translation><!-- Sports Club --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Sports Team</masterLabel>
+            <translation><!-- Sports Team --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>State</masterLabel>
+            <translation><!-- State --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Technology</masterLabel>
+            <translation><!-- Technology --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Television</masterLabel>
+            <translation><!-- Television --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Transportation</masterLabel>
+            <translation><!-- Transportation --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Unitarian</masterLabel>
+            <translation><!-- Unitarian --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Utility Company</masterLabel>
+            <translation><!-- Utility Company --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Veterans</masterLabel>
+            <translation><!-- Veterans --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Vocational/Trade School</masterLabel>
+            <translation><!-- Vocational/Trade School --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Warehouse</masterLabel>
+            <translation><!-- Warehouse --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Wesleyan</masterLabel>
+            <translation><!-- Wesleyan --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Youth Service</masterLabel>
+            <translation><!-- Youth Service --></translation>
+        </picklistValues>
+    </CustomFieldTranslation>

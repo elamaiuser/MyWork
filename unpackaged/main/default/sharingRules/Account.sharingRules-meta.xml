@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SharingRules xmlns="http://soap.sforce.com/2006/04/metadata">
+    <sharingOwnerRules>
+        <fullName>All_Biomed_Account_Access</fullName>
+        <accessLevel>Edit</accessLevel>
+        <accountSettings>
+            <caseAccessLevel>Read</caseAccessLevel>
+            <contactAccessLevel>Edit</contactAccessLevel>
+            <opportunityAccessLevel>Read</opportunityAccessLevel>
+        </accountSettings>
+        <description>This will allow all Biomed Sponsor users to share Accounts with other Biomed Sponsor users</description>
+        <label>All Biomed Account Access</label>
+        <sharedTo>
+            <group>All_Biomed_Sales_Users</group>
+        </sharedTo>
+        <sharedFrom>
+            <group>All_Biomed_Sales_Users</group>
+        </sharedFrom>
+    </sharingOwnerRules>
+</SharingRules>

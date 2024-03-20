@@ -1,0 +1,7 @@
+<aura:component implements="force:hasRecordId,force:lightningQuickActionWithoutHeader">
+    <aura:attribute name="recordId" type="String"/>
+    
+    
+     
+    <c:applyToEnMassContainer recordId="{!v.recordId}" onclosequickaction="{!c.closequickaction}"/>
+</aura:component>

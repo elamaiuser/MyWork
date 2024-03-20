@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObjectTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+    <caseValues>
+        <plural>false</plural>
+        <value>Role Time Detail</value>
+    </caseValues>
+    <caseValues>
+        <plural>true</plural>
+        <value>Role Time Details</value>
+    </caseValues>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <layouts>
+        <layout>Role Time Detail Layout</layout>
+        <sections>
+            <label><!-- Custom Links --></label>
+            <section>Custom Links</section>
+        </sections>
+    </layouts>
+    <startsWith>Consonant</startsWith>
+    <validationRules>
+        <errorMessage><!-- Collection Operation is required. --></errorMessage>
+        <name>CollectionOperantionRequired</name>
+    </validationRules>
+    <validationRules>
+        <errorMessage><!-- Collection Operation must be blank --></errorMessage>
+        <name>CollectionOperationMustBeBlank</name>
+    </validationRules>
+    <validationRules>
+        <errorMessage><!-- Collection Operation is required. --></errorMessage>
+        <name>CollectionOperationRequired</name>
+    </validationRules>
+</CustomObjectTranslation>

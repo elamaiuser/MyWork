@@ -1,0 +1,7 @@
+<apex:component >
+    <div class="alert alert-danger" role="alert">
+        <p class="mb-0">
+            Unfortunately, the zip code you entered is not a zip code serviced by an American Red Cross Blood Services Region -- but you can still help! For more information on other potential blood services programs in your area, visit <a href="http://www.aabb.org" target="_blank">www.aabb.org</a> or <a href="http://www.americasblood.org" target="_blank">www.americasblood.org</a>.  Also, please consider supporting other programs at the Red Cross, visit <a href="http://www.redcross.org" target="_blank">redcross.org</a> for more information.
+        </p>
+    </div>
+</apex:component>

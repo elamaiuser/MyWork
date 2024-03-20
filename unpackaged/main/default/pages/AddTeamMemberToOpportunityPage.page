@@ -1,0 +1,37 @@
+<apex:page standardController="Opportunity" extensions="AddTeamMemberToOpportunityExtension" recordSetVar="opp" sidebar="false" showHeader="false" standardStylesheets="false">
+
+    <div id="opportunity_lookup"></div>
+    <apex:includeScript value="/lightning/lightning.out.js" />
+    <script>
+            
+            var visualForceFunction = function(event)
+            {
+                //let url = "/lightning/o/Account/list?filterName=00Bo0000002SroBEAS";
+                let url = "/lightning/o/Opportunity/list?filterName="+ '{!unassignedviewId}';
+                window.location.href = url;
+                //var myEventData1 = event.getParam("lookupVal");
+                //var label = event.getParam("lookupLabel");
+                //console.log('response data = ' + myEventData1 + ' : ' + label);
+            };
+ 
+            // and...
+            $Lightning.use("c:AddTeamMemberAuraApp", function()
+            {
+                $Lightning.createComponent
+                (
+                    "c:AddTeamMemberToOpportunityAuraCmp",
+                    {
+                         "opportunityids": '{!concatenatedOppIds}'
+                        
+                        
+                    },
+                    "opportunity_lookup",
+                    function()
+                    {
+                        $A.eventService.addHandler({ "event": "c:RedirectAccountListViewEvent", "handler" : visualForceFunction});
+                    }
+                );
+            });
+        </script>
+
+</apex:page>

@@ -1,0 +1,24 @@
+.slds-card {
+  background: #fff !important;
+  border: 1px solid #d8dde6 !important;
+  border-radius: .25rem !important;
+  box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.1) !important;
+}
+
+.slds-card .slds-card__header {
+  padding: .75rem 1rem 0 !important;
+}
+
+.slds-card .slds-card__header .slds-card__header-title {
+  font-size: 1rem !important;
+  line-height: 1.25 !important;
+}
+
+.slds-card .slds-card__body--inner,
+.slds-card .slds-card__body_inner {
+  padding: 0 1rem !important;
+}
+
+.slds-card .slds-card__footer {
+  padding: .75rem 1rem !important;
+}

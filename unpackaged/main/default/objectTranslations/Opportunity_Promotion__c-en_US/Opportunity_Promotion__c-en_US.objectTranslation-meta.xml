@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObjectTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+    <caseValues>
+        <plural>false</plural>
+        <value>Opportunity Promotion</value>
+    </caseValues>
+    <caseValues>
+        <plural>true</plural>
+        <value>Opportunity Promotions</value>
+    </caseValues>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <layouts>
+        <layout>Opportunity Promotion Layout</layout>
+        <sections>
+            <label><!-- Custom Links --></label>
+            <section>Custom Links</section>
+        </sections>
+    </layouts>
+    <startsWith>Consonant</startsWith>
+    <validationRules>
+        <errorMessage><!-- Can not select promotion which End Date is less than Opportunity Drive Date. --></errorMessage>
+        <name>ValidateOppDriveDateWithPromoEndDate</name>
+    </validationRules>
+    <validationRules>
+        <errorMessage><!-- Blood Drive date is not within the effective dates of the Promotion availability. --></errorMessage>
+        <name>ValidateOppEndDtWithPromoEndDt</name>
+    </validationRules>
+    <validationRules>
+        <errorMessage><!-- If the Delivery ID is &quot;Other&quot;. you must fill up the Description. --></errorMessage>
+        <name>ValidationInDeliveryID</name>
+    </validationRules>
+</CustomObjectTranslation>

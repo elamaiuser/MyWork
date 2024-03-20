@@ -1,0 +1,13 @@
+Hello, {!Lead.FirstName} - 
+
+It has been some time since I have heard from you regarding hosting a blood drive with the American Red Cross.  I wanted to follow up to see if you are still interested. 
+
+While I hope you have not reconsidered joining our network of lifesaving partners, I do understand that things can get busy and now may not be the best time to connect. If you could kindly reply to this email and let me know if you still interested in hosting a blood drive, I will be happy to reach out to you again at a future time.  
+
+If you would like to chat please feel free to give me call, anytime --- my number is below. 
+
+Kind regards, 
+
+{!Lead.OwnerFullName}
+{!Lead.OwnerEmail}
+{!Lead.OwnerPhone}

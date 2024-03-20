@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<EmailTemplate xmlns="http://soap.sforce.com/2006/04/metadata">
+    <available>true</available>
+    <description>BPL Booking/Prospecting ask - Battle of the Badges - Community Segment</description>
+    <encodingKey>ISO-8859-1</encodingKey>
+    <letterhead>ARC_Logo_Test</letterhead>
+    <name>Marketing Segment_Community_Battle_Booking</name>
+    <style>formalLetter</style>
+    <subject>Respond to the Call. We need your help.</subject>
+    <textOnly>Dear [Insert Name]:
+
+I would like to invite you to join your fellow firefighters, police officers and other emergency personnel by hosting a Battle of the Badges blood drive [on or during the week of DATE(s)].
+
+Battle of the Badges builds camaraderie among local first responders though a friendly competition to see who can collect the most units of blood. It’s a great way for friends, family, and emergency personnel come to together to donate blood and help save lives with the Red Cross.
+
+Every two seconds someone in U.S. needs blood. Blood donations can make a positive, life changing difference for someone in need. That is why your help is needed more than ever!
+
+Supporting the Red Cross is another great way to touch lives in the communities you serve every day. Please take the lifesaving challenge and call me at your earliest convenience to schedule your blood drive.
+
+Thank you,
+
+[Insert Name]</textOnly>
+    <type>html</type>
+    <uiType>Aloha</uiType>
+</EmailTemplate>

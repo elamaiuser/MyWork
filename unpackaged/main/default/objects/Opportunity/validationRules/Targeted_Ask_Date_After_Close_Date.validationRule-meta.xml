@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Targeted_Ask_Date_After_Close_Date</fullName>
+    <active>false</active>
+    <description>Prevents a user from entering a Targeted Ask Date that is after the Close Date.</description>
+    <errorConditionFormula>(
+Targeted_Ask_Date__c &gt; CloseDate &amp;&amp;
+NOT(ISBLANK(Targeted_Ask_Date__c)) &amp;&amp;
+CloseDate != Date(1900,1,1) &amp;&amp;
+Bypass_Validation_Rule__c == FALSE &amp;&amp;
+RecordType.Name = &quot;Mobile Opp&quot; &amp;&amp;
+Is_Template__c != True &amp;&amp;
+TEXT(StageName) != &#39;Closed&#39;
+) &amp;&amp;
+(
+ISCHANGED(Targeted_Ask_Date__c) ||
+ISCHANGED(CloseDate)
+)</errorConditionFormula>
+    <errorDisplayField>Targeted_Ask_Date__c</errorDisplayField>
+    <errorMessage>Targeted Ask Date cannot be after the Close Date.</errorMessage>
+</ValidationRule>

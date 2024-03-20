@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Lewiston_ID_DSTs_sked_Drive_Shift_Trade</fullName>
+    <filterScope>Queue</filterScope>
+    <label>Lewiston ID: DSTs</label>
+    <queue>Lewiston_ID_DSTs</queue>
+    <sharedTo>
+        <allInternalUsers></allInternalUsers>
+    </sharedTo>
+</ListView>

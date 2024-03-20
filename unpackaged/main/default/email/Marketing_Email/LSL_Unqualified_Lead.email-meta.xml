@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<EmailTemplate xmlns="http://soap.sforce.com/2006/04/metadata">
+    <available>true</available>
+    <description>Email follow up for an LSL Unqualified Lead</description>
+    <encodingKey>ISO-8859-1</encodingKey>
+    <letterhead>ARC_Logo_Test</letterhead>
+    <name>Marketing Segment_Education_LSL_Unqualified Lead SleevesUp_2023</name>
+    <style>freeForm</style>
+    <subject>Next steps...</subject>
+    <textOnly>Hello [NAME]
+
+I would like to thank you again for expressing interest in hosting a Leaders Save Lives blood drive with the American Red Cross.  Based on our conversation and reviewing the information you submitted, I believe our SleevesUp virtual blood drive program may be a great way you can get involved in our lifesaving mission!  
+  
+Many interested groups may not be able to host an onsite blood drive due to space limitations, access to a large enough donor base, or a variety of other reasons. A SleevesUp virtual blood drive allows those who feel passionate about blood donation the opportunity to recruit blood donors virtually by encouraging colleagues, friends and family members to give blood at any available site. The result is still the same lifesaving impact – with each recruited donor helping save up to 3 lives!  Learn more and start a virtual blood drive in as little as 5 minutes at: sleevesup.redcrossblood.org.  
+
+If you want information about other ways to get involved with the American Red Cross, please let me know.
+
+
+Kind regards, 
+[NAME]</textOnly>
+    <type>html</type>
+    <uiType>Aloha</uiType>
+</EmailTemplate>

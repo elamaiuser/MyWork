@@ -1,0 +1,158 @@
+<template>
+    <div class="slds-grid">
+        <div class="slds-col">
+            <c-slwc-drive-scheduling-filters
+                mode="pendingDriveChangeRequest"
+                onsearch={handleSearch}
+            >
+            </c-slwc-drive-scheduling-filters>
+        </div>
+        <div class="slds-col slds-scrollable_y slds-p-left_medium slds-is-relative" style="min-height: 400px; width:100%;">
+            <div class="slds-grid slds-grid_vertical-align-end slds-p-top_small">
+                <div class="slds-col_bump-left slds-p-right_small">
+                    <lightning-button-group>
+                        <lightning-button label="Cancel all selected Pending Requests" onclick={handleCancelSelectedButton}></lightning-button>
+                        <lightning-button label="Run all selected Pending Requests" onclick={handleRunSelectedButton}></lightning-button>
+                    </lightning-button-group>
+                </div>
+
+                <div class="slds-p-right_small">
+                    <c-slwc-date-range-picker
+                        ondaterangechange={handleOnChange}
+                        default-start-date={filters.startDate}
+                        default-end-date={filters.endDate}>
+                    </c-slwc-date-range-picker>
+                </div>
+                <div class="slds-no-flex slds-p-right_small" style="width: 300px;">
+                    <c-slwc-new-collection-operation-multi-picklist
+                        division-single-select
+                        dropdown-position="right"
+                        date-range={collectionOperationDateRange}
+                        default-values={filters.collectionOperationValues}
+                        onchange={handleCollectionOperationChanged}>
+                    </c-slwc-new-collection-operation-multi-picklist>
+                </div>
+            </div>
+
+            <div class="slds-grow slds-p-around_small">
+                <template if:true={showSpinner}>
+                    <lightning-spinner class="spins" size="medium"></lightning-spinner>
+                </template>
+                
+                <div class="slds-scrollable" style="height: 60vh; width: calc(100vw - 5rem);">
+                    <c-slwc-custom-datatable 
+                        key-field="id"
+                        data={records}
+                        columns={columns}
+                        wrap-text-max-lines="3"
+                        selected-rows={selectedRecordIds}
+                        onrowselection={handleRowSelection}
+                        sorted-by={sortOption.fieldName}
+                        sorted-direction={sortOption.sortDirection}
+                        enable-infinite-loading={enableInfiniteLoading}
+                        onsort={handleSortChanged}
+                        onloadmore={handleLoadMoreData}>
+                    </c-slwc-custom-datatable>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <template if:true={runAllModalData.isOpen}>
+        <section role="dialog" tabindex="-1" class="slds-modal slds-fade-in-open" if:true={runAllModalData.isOpen}>
+            <div class="slds-modal__container" style="transform: initial; min-width: 56rem; width: 56rem;">
+                <header class="slds-modal__header">
+                    <lightning-button-icon onclick={closeRunAllModal} class="slds-button slds-button_icon slds-modal__close" size="large"
+                        icon-name="utility:close" variant="bare-inverse" title="Close"></lightning-button-icon>
+    
+                    <h2 class="slds-modal__title slds-hyphenate">Drive Generator</h2>
+                </header>
+                <div class="slds-modal__content">
+                    <div class="slds-is-relative">
+                        <div class="slds-p-around_medium">
+                            <div>
+                                <strong>Total records:</strong> {runAllModalData.records.length}
+                            </div>
+                            <div class="slds-m-top_xx-small">
+                                <strong>Total processed records:</strong> {runAllModalData.processedRecords.length}
+                            </div>
+                            <template if:true={runAllModalData.currentRecord}>
+                                <div class="slds-m-top_xx-small"><strong>Processing:</strong></div>
+                                <div>
+                                    <dl class="slds-dl_horizontal content">
+                                        <dt class="slds-dl_horizontal__label slds-text-color_weak slds-m-bottom_xx-small">Name:</dt>
+                                        <dd class="slds-dl_horizontal__detail  slds-m-bottom_xx-small">
+                                            <c-slwc-lightning-formatted-url
+                                                record={runAllModalData.currentRecord}
+                                            ></c-slwc-lightning-formatted-url>
+                                        </dd>
+                                        <dt class="slds-dl_horizontal__label slds-text-color_weak slds-m-bottom_xx-small">Drive Name:</dt>
+                                        <dd class="slds-dl_horizontal__detail  slds-m-bottom_xx-small">
+                                            <c-slwc-lightning-formatted-url
+                                                record={runAllModalData.currentRecord}
+                                                label-field="driveName"
+                                                id-field="driveId"
+                                            ></c-slwc-lightning-formatted-url>
+                                        </dd>
+                                        <dt class="slds-dl_horizontal__label slds-text-color_weak slds-m-bottom_xx-small">Drive Date:</dt>
+                                        <dd class="slds-dl_horizontal__detail  slds-m-bottom_xx-small">
+                                            <lightning-formatted-date-time value={runAllModalData.currentRecord.driveDate} year="numeric" month="numeric" day="numeric" time-zone='GMT'></lightning-formatted-date-time>
+                                        </dd>
+                                    </dl>
+                                </div>
+                            </template>
+                        </div>
+                        <div if:true={runAllModalData.finishedAll}>
+                            <c-slwc-custom-datatable 
+                                key-field="id"  
+                                data={runAllModalData.processedRecords}
+                                columns={RUN_ALL_RESULT_TABLE_COLUMNS}
+                                hide-checkbox-column
+                                wrap-text-max-lines="5">
+                            </c-slwc-custom-datatable>
+                        </div>
+                        <div if:true={runAllModalData.currentRecordId}>
+                            <c-slwc-generate-drive-modal
+                                no-action
+                                embeded-mode
+                                record-id={runAllModalData.currentRecordId}
+                                mode="listenOpportunityChanged"
+                                hook-after-finished={afterFinishGenerateDriveModalHook}
+                            ></c-slwc-generate-drive-modal>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open" if:true={runAllModalData.isOpen}></div>
+    </template>
+    
+    <template if:false={runAllModalData.isOpen}>
+        <section role="dialog" tabindex="-1" class="slds-modal slds-fade-in-open" if:true={generateDriveModalData.isOpen}>
+            <div class="slds-modal__container" style="transform: initial; min-width: 40rem; width: 40rem;">
+                <c-slwc-generate-drive-modal
+                    no-action
+                    record-id={generateDriveModalData.recordId}
+                    mode="listenOpportunityChanged"
+                    onclosemodal={closeGenerateDriveModal}
+                ></c-slwc-generate-drive-modal>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open" if:true={generateDriveModalData.isOpen}></div>
+    </template>
+
+    <c-slwc-confirm-modal
+        is-open={confirmModalData.isOpen}
+        title={confirmModalData.title}
+        message={confirmModalData.message}
+        handle-on-close={confirmModalData.onClose}
+        confirm-btn-label={confirmModalData.confirmBtnLabel}
+        cancel-btn-label={confirmModalData.cancelBtnLabel}
+        size='x-small'>
+    </c-slwc-confirm-modal>
+
+    <c-slwc-progress-bar
+        progress-bar-data={progressBarData}
+        is-open={progressBarData.isOpen}
+    ></c-slwc-progress-bar>
+</template>

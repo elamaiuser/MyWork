@@ -1,0 +1,5 @@
+.side-bar {
+    height: 100%;
+    width:300px;
+    border-right: var(--lwc-borderWidthThin,1px) solid var(--lwc-colorBorder,rgb(221, 219, 218));
+}

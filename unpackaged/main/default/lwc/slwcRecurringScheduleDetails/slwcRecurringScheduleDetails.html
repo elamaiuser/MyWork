@@ -1,0 +1,43 @@
+<template>
+
+    <div class="slds-grid slds-gutters slds-p-bottom_medium">
+        <div class="slds-col slds-size_1-of-1">
+            <lightning-input name="isRecurring" type="checkbox" label="Is Recurring?" checked={model.isRecurring} onchange={handleOnChange}></lightning-input>
+        </div>
+    </div>
+    <template if:true={model.isRecurring}>
+        <div class="slds-grid slds-gutters slds-p-bottom_medium">
+            <div class="slds-col slds-size_1-of-2">
+                <lightning-input name="fromDate" type="date" label="From Date" onchange={handleOnChange} autocomplete="off" required></lightning-input>
+            </div>
+            <div class="slds-col slds-size_1-of-2">
+                <lightning-input name="toDate" type="date" label="To Date" onchange={handleOnChange} autocomplete="off" required></lightning-input>
+            </div>
+        </div>
+        <div class="slds-grid slds-gutters slds-p-bottom_medium">
+            <div class="slds-col slds-size_1-of-2">
+                <lightning-combobox name="pattern" label="Pattern" options={patterns} value={model.pattern} onchange={handleOnChange}></lightning-combobox>
+            </div>
+        </div>
+        <template if:true={isWeekly}>
+            <div class="slds-grid slds-gutters slds-p-bottom_medium">
+                <div class="slds-col slds-size_1-of-2">
+                    <c-slwc-checkbox-group label="On" name="week1" options={weekdays} oncheckboxeschanged={handleOnChange} required error-message={patternErrorMessage}></c-slwc-checkbox-group>
+                </div>
+            </div>
+        </template>
+        <template if:false={isWeekly}>
+            <div class="slds-grid slds-gutters slds-p-bottom_medium">
+                <div class="slds-col slds-size_1-of-2">
+                    <c-slwc-checkbox-group label="Week 1" name="week1" options={weekdays} oncheckboxeschanged={handleOnChange} required error-message={patternErrorMessage}></c-slwc-checkbox-group>
+                </div>
+            </div>
+            <div class="slds-grid slds-gutters slds-p-bottom_medium">
+                <div class="slds-col slds-size_1-of-2">
+                    <c-slwc-checkbox-group label="Week 2" name="week2" options={weekdays} oncheckboxeschanged={handleOnChange} required></c-slwc-checkbox-group>
+                </div>
+            </div>
+        </template>
+    </template>
+    
+</template>

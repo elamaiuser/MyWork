@@ -1,0 +1,18 @@
+<template>
+    <lightning-quick-action-panel header="Generate PDF">
+        <div class="slds-is-relative">
+            <div if:true={showSpinner} class="slds-grow slds-grid slds-grid_vertical slds-align_absolute-center">
+                <div class="slds-is-relative" style="height: 4rem; width: 4rem;">
+                    <lightning-spinner class="spins" size="medium"></lightning-spinner>
+                </div>
+                Generating...
+            </div> 
+            
+            <lightning-button if:true={newAttachment} variant="neutral" label="View PDF" onclick={viewPdf}></lightning-button>
+        </div>
+
+        <div slot="footer">
+            <lightning-button variant="neutral" label="Close" onclick={handleClose}></lightning-button>
+        </div>
+    </lightning-quick-action-panel>
+</template>

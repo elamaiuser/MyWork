@@ -1,0 +1,50 @@
+<template>
+    <div class="slds-grid ac-page">
+        <div class="setting-items-panel slds-p-vertical_medium">
+            <div class="slds-tree_container tree-container slds-grid slds-grid_vertical" >
+                <div class="tree-filter-container slds-p-horizontal_small slds-p-bottom_x-small">
+                    <div class="tree-filter">
+                        <div class="slds-form-element">
+                            <div class="slds-form-element__control slds-input-has-icon slds-input-has-icon_left">
+                                <lightning-icon  class="slds-icon slds-input__icon slds-input__icon_left slds-icon-text-default" icon-name="utility:search" size="x-small"></lightning-icon>
+                                <input 
+                                    type="text" 
+                                    id="input-quick-find" 
+                                    class="slds-input" placeholder="Quick Find"/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="slds-scrollable_y">
+                    <ul class="slds-tree"
+                        for:each={menus} for:item="menu" key={menu.id}>
+                        <li
+                            class="section-header setting-item">
+                            <a tabindex="-1" class="slds-text-title_caps">
+                                {menu.label}
+                            </a>
+                        </li>
+                        <li 
+                            for:each={menu.items} for:item="subMenu" key={subMenu.id}
+                            class="setting-item">
+                            <div class="slds-tree__item">
+                                <a 
+                                    class={subMenu.class}
+                                    data-value={subMenu.id}
+                                    onclick={selectMenu}>
+                                    {subMenu.label}
+                                </a>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="setting-panel">
+            <c-slwc-admin-console-event-type-settings is-readonly={isReadonly} if:true={showEventTypeSettingsPanel}></c-slwc-admin-console-event-type-settings>
+            <c-slwc-admin-console-exception-settings is-readonly={isReadonly} if:true={showExceptionSettingsPanel}></c-slwc-admin-console-exception-settings>
+            <c-slwc-admin-console-manage-schedule is-readonly={isReadonly} if:true={showManageSchedulePanel}></c-slwc-admin-console-manage-schedule>
+        </div>
+    </div>
+</template>

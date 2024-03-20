@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+        <label><!-- Can Edit Drive During Active DCR --></label>
+        <name>sked_Can_Edit_Drive_During_Active_DCR__c</name>
+    </CustomFieldTranslation>

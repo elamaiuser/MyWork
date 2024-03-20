@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>BDM_Assigned__c</fullName>
+    <defaultValue>false</defaultValue>
+    <description>Indicates if a BDM was assigned as the owner of this lead when it was created. Hidden for use by Assignment Rule logic only and set by apex code.</description>
+    <externalId>false</externalId>
+    <label>BDM Assigned</label>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <type>Checkbox</type>
+</CustomField>

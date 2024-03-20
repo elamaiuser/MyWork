@@ -1,0 +1,52 @@
+<template>
+    
+    <div>
+        <div>
+            <div>
+                <div>
+
+                    <div style="padding: 10px;">                    
+                        <c-applied-field-selection onselectionfields={handlefieldselection}></c-applied-field-selection>
+                    </div>
+
+                    
+                    <!--div style="padding: 10px;">
+                        <c-date-range-box isdisabled={isdatedisabled} onenableothersection={handledisableselection}></c-date-range-box>
+                    </div>
+                    
+                    <div style="padding: 10px;">
+                        <div style="display:flex;">
+                            <div>
+                                <c-site-filter-box isdisabled={isdisabled}></c-site-filter-box>
+                            </div>
+                            <div>                                
+                                <c-account-type-filter-box isdisabled={isdisabled}></c-account-type-filter-box>
+                            </div>
+                        </div>
+                    </div-->
+
+                    <div style="margin-top: 20px;">
+                        <c-filtered-drive-table record-id={recordId} fields={fieldsopted} onclosequickaction={oncancelclick}></c-filtered-drive-table>
+                    </div>
+
+
+                    
+
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+
+
+
+
+
+
+
+
+
+
+    
+</template>

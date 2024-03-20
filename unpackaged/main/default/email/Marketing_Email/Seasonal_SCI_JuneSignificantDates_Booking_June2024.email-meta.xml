@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<EmailTemplate xmlns="http://soap.sforce.com/2006/04/metadata">
+    <available>true</available>
+    <description>Booking Ask for SCI Recruitment to Prospect BPL for June Significant Dates</description>
+    <encodingKey>ISO-8859-1</encodingKey>
+    <letterhead>ARC_Logo_Test</letterhead>
+    <name>Seasonal_SCI_JuneSignificantDates_Booking_June2024</name>
+    <style>formalLetter</style>
+    <subject>This June, Support Sickle Cell Patients in the Summer Heat!</subject>
+    <textOnly>Hi &lt;Name&gt;
+
+Did you know? One in three African American blood donors are a match for people with sickle cell disease.
+
+Blood donations are essential during summer to help sickle cell patients. The American Red Cross relies on Black community leaders like you to fulfill our mission of providing compatible blood to patients fighting sickle cell disease.
+
+I wanted to reach out to you, as one of those leaders, to invite you to join our lifesaving efforts. My name is &lt;Name&gt; and I am an American Red Cross &lt;Account Manager, Sickle Cell Account Manager, Area Booking Manager&gt;.
+
+Hosting a summer blood drive ensures an adequate supply of blood products to support patients through the season.  Blood donations from individuals who are Black are especially valuable, as they uniquely support those with sickle cell disease.  During the summer months when blood donations tend to drop, sickle cell patients are still relying on blood donors to donate blood.
+
+June offers a special time of recognition, with Dr. Charles R. Drew’s birthday on June 3 and World Sickle Cell Awareness Day and Juneteenth on June 19. It’s the perfect time to highlight Black communities coming together — and what better way to celebrate community than by hosting a blood drive to support those in the community battling ailments such as sickle cell disease?
+
+We would love to partner with you. Will you consider hosting a Red Cross blood drive this summer?
+
+Let’s find time to talk. Would &lt;Day of Week&gt; of this week work, or would next week be better?
+
+Sincerely,
+&lt;AM/SAM/ABM Name&gt;</textOnly>
+    <type>html</type>
+    <uiType>Aloha</uiType>
+</EmailTemplate>

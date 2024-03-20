@@ -1,0 +1,33 @@
+.drag-zone {
+  position: relative;
+  height: 100%;
+}
+
+.drag-zone .columns {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1;
+  pointer-events: none;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+}
+
+.drag-zone .columns > li {
+  height: 100%;
+  position: relative;
+}
+
+.drag-zone .columns > li .timeslot {
+  position: absolute;
+  left: 1px;
+  right: 1px;
+  border: 1px solid #1d92d2;
+  background: #1d92d2;
+  opacity: 0.7;
+  z-index: 1;
+}

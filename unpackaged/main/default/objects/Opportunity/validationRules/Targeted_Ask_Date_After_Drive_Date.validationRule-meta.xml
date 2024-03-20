@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Targeted_Ask_Date_After_Drive_Date</fullName>
+    <active>false</active>
+    <description>Prevents a user from entering a Targeted Ask Date that is after the Drive Date.</description>
+    <errorConditionFormula>(
+  Targeted_Ask_Date__c &gt; Drive_Date__c &amp;&amp;
+  NOT(ISBLANK(Targeted_Ask_Date__c)) &amp;&amp;
+  RecordType.Name = &quot;Mobile Opp&quot;&amp;&amp;
+  Bypass_Validation_Rule__c == FALSE &amp;&amp;
+  Is_Template__c != True
+)&amp;&amp;
+(
+ISCHANGED(Targeted_Ask_Date__c) ||
+ISCHANGED(Drive_Date__c)
+)</errorConditionFormula>
+    <errorDisplayField>Targeted_Ask_Date__c</errorDisplayField>
+    <errorMessage>Targeted Ask Date cannot be after the Drive Date.</errorMessage>
+</ValidationRule>

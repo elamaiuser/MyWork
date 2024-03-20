@@ -1,0 +1,109 @@
+<template>
+    <div class="slds-grid">
+        <c-slwc-lookup 
+            class="slds-grow"
+            object-name="sked_Drive__c"
+            icon-name="custom:custom63" 
+            display-field="name" 
+            label={lookupLabel} 
+            name="drive" 
+            placeholder="Search Drive"
+            selection={selectedValue}
+            is-readonly
+            onselectionchange={handleDriveSelected}>
+        </c-slwc-lookup>
+        <div class="slds-form-element">
+            <label class="slds-form-element__label">&nbsp;</label>
+            <div class="slds-form-element__control">
+                <lightning-button label="Locate Drive" title="Locate Drive" onclick={openModal} class="slds-m-left_x-small"></lightning-button>
+            </div>
+        </div>
+    </div>
+
+    <template if:true={showModal}>
+        <section aria-modal="true" role="dialog" tabindex="-1" class="slds-modal slds-fade-in-open slds-modal_medium" style="z-index: 9006">
+            <div class="slds-modal__container">
+                <header class="slds-modal__header">
+                    <lightning-button-icon onclick={closeModal} class="slds-button slds-button_icon slds-modal__close" size="large"
+                    icon-name="utility:close" variant="bare-inverse" title="Close"></lightning-button-icon>
+
+                    <h1 id="modal-heading-01" class="slds-modal__title slds-hyphenate">Drive Locator</h1>
+                </header>
+                <div class="slds-modal__content full-height__modal-content" style="position: relative; overflow: initial;">
+                    <div class="slds-spinner_container" if:true={showSpinner}>
+                        <div role="status" class="slds-spinner slds-spinner_medium">
+                            <span class="slds-assistive-text">Loading</span>
+                            <div class="slds-spinner__dot-a"></div>
+                            <div class="slds-spinner__dot-b"></div>
+                        </div>
+                    </div>
+                    <label class="slds-form-element__label">{label}</label>
+                    <div class="slds-scrollable_y">
+                        <div class="slds-grid">
+                            <div class="slds-size_2-of-12 slds-p-horizontal_small">
+                                <lightning-input type="text" max-length="255" name="ufid" label="UFID"
+                                    onchange={handleFilterChanged}
+                                    value={filters.ufid}></lightning-input>
+                            </div>
+                            
+                            <div class="slds-size_2-of-12 slds-p-horizontal_small">
+                                <c-slwc-multi-picklist
+                                    name="driveTypes"
+                                    label="Drive Types"
+                                    object-api-name="sked_Drive__c"
+                                    field-api-name="sked_Type_of_Drive__c"
+                                    onpicklistchange={handleFilterChanged}
+                                    default-values={filters.driveTypes}>
+                                </c-slwc-multi-picklist>     
+                            </div>
+
+                            <div class=" slds-size_2-of-12 slds-p-horizontal_small">
+                                <c-slwc-multi-picklist
+                                    name="driveStatuses"
+                                    label="Drive Statuses"
+                                    object-api-name="sked_Drive__c"
+                                    field-api-name="sked_Status__c"
+                                    onpicklistchange={handleFilterChanged}
+                                    default-values={filters.driveStatuses}>
+                                </c-slwc-multi-picklist>   
+                            </div>
+
+                            <div class="slds-col_bump-left slds-p-right_small">
+                                <c-slwc-week-date-picker
+                                    first-day="0"
+                                    unique-key="siteFeedbackDetail"
+                                    onweekdatechange={handleFilterChanged}
+                                    default-start-date={filters.startDate}
+                                    default-end-date={filters.endDate}>
+                                </c-slwc-week-date-picker>
+                            </div>
+                        </div>
+                        <div class="slds-grow slds-m-top_small">
+                            <div class="slds-scrollable_y" style="height: 45vh;">
+                                <c-slwc-custom-datatable 
+                                    key-field="id"
+                                    data={results}
+                                    columns={tableColumns}
+                                    onrowselection={handleRowSelection}
+                                    max-row-selection="1"
+                                    wrap-text-max-lines="3">
+                                </c-slwc-custom-datatable>
+                            </div>
+                            <div class="slds-shrink-none slds-grow-none slds-p-around_small slds-border_top modal-content__footer">
+                                <div class="slds-grid slds-grid_align-spread slds-grid_vertical-align-center"> 
+                                    <div class="slds-text-color_weak ng-binding">Total Drives: {results.length} </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <footer class="slds-modal__footer light-background">
+                    <lightning-button label="Cancel" title="Cancel" onclick={closeModal} class="slds-m-right_xx-small"></lightning-button>
+                    <lightning-button variant="brand" label="Save" title="Save" onclick={saveClose} class="slds-m-right_xx-small"></lightning-button>
+                </footer>
+            </div>
+        </section>
+
+        <div class='slds-backdrop slds-backdrop_open' style="z-index: 9005"></div>
+    </template>
+</template>

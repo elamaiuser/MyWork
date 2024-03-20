@@ -1,0 +1,342 @@
+import { LightningElement, track, api } from 'lwc';
+import * as slwcUtils from 'c/slwcUtils';
+import driveSchedulingFiltersTemplate from './driveSchedulingFilters.html';
+import productGoalCalendarFiltersTemplate from './productGoalCalendarFilters.html';
+import driveExceptionLogFiltersTemplate from './driveExceptionLogFilters.html';
+import resourceExceptionLogFiltersTemplate from './resourceExceptionLogFilters.html';
+import driveShiftTradeFiltersTemplate from './driveShiftTradeFilters.html';
+import siteFeedbackFiltersTemplate from './siteFeedbackFilters.html';
+import driveChangeRequestFiltersTemplate from './driveChangeRequestFilters.html';
+import pendingDriveChangeRequestFiltersTemplate from './pendingDriveChangeRequestFilters.html';
+import pendingActionDriveFiltersTemplate from './pendingActionDriveFilters.html';
+import callOutsFiltersTemplate from './callOutsFilters.html';
+import { accountService, bsfPortfolioQueryModel, bsfPortfolioService } from 'c/dataService';
+import { PENDING_ACTION, PROCEDURE_TYPE, DRIVE_REQUEST_CHANGE_STATUS, DRIVE_APPROVAL_STATUS, OPPORTUNITY_STAGE, DRIVE_CHANGE_REQUEST_TYPE, DRIVE_CONTENTION} from 'c/slwcConstants';
+
+const MODE = {
+  PRODUCT_GOAL_CALENDAR: {
+    id: 'productGoalCalendar',
+    template: productGoalCalendarFiltersTemplate,
+    defaultModel: {
+      driveTypes: ['Fixed Site', 'Mobile'],
+      driveStatuses: ['System Generated', 'Hold', 'Tentative', 'Confirmed', 'Complete'],
+      accountTypes: ['Amusement / Recreational', 'Business', 'Civic / Community', 'Education', 'Government', 'Health', 'Media', 'Military', 'Religious'],
+      accountIndustryCodes: [],
+      stages: [OPPORTUNITY_STAGE.DISCOVERY, OPPORTUNITY_STAGE.SOLICITATION, OPPORTUNITY_STAGE.COMMITTED, OPPORTUNITY_STAGE.CLOSED],
+      procedureTypes: [PROCEDURE_TYPE.WB, PROCEDURE_TYPE._2RBC],
+      markets: [],
+      showOnlyLinkedEvents: false
+    }
+  },
+  DRIVE_SCHEDULING: {
+    id: 'driveScheduling',
+    template: driveSchedulingFiltersTemplate,
+    defaultModel: {
+      driveTypes: ['Fixed Site', 'Mobile'],
+      driveStatuses: ['System Generated', 'Hold', 'Tentative', 'Confirmed', 'Complete'],
+      accountTypes: ['Amusement / Recreational', 'Business', 'Civic / Community', 'Education', 'Government', 'Health', 'Media', 'Military', 'Religious'],
+      accountIndustryCodes: [],
+      stages: [OPPORTUNITY_STAGE.DISCOVERY, OPPORTUNITY_STAGE.SOLICITATION, OPPORTUNITY_STAGE.COMMITTED, OPPORTUNITY_STAGE.CLOSED],
+      procedureTypes: [PROCEDURE_TYPE.WB, PROCEDURE_TYPE._2RBC],
+      markets: [],
+      showOnlyLinkedEvents: false,
+      accountManagerPortfolios: [],
+      districtManagerPortfolios: [],
+    }
+  }, 
+  DRIVE_EXCEPTION_LOG: {
+    id: 'driveExceptionLog',
+    template: driveExceptionLogFiltersTemplate,
+    defaultModel: {
+      priorities: ["High", "Medium", "Low"],
+      statuses: ["Open"],
+      searchText: "",
+      searchField: "sked_Drive__r.Name",
+      exceptionCodes: [
+        "CDL_DOT_HOURS_VIOLATION",
+        "DRIVE_COLLECTION_OPERATION_CHANGED",
+        "EQUIPMENT_REDUCED",
+        "MINIMUM_QUANTITY_NOT_MET",
+        "MAXIMUM_TRAVEL_TIME_VIOLATION",
+        "MISSING_REQUIRED_TAG",
+        "EXPIRED_REQUIRED_TAG",
+        "RESOURCE_ACCOUNT_DECLINED",
+        "RESOURCE_DATA_CHANGED",
+        "RESOURCE_IS_INACTIVE",
+        "RESOURCE_OUT_OF_CO",
+        "RESOURCE_NOT_AVAILABLE_FOR_CO",
+        "RESOURCE_PENDING_TERMINATION",
+        "RESOURCE_ROLE_STATUS_CHANGED",
+        "RESOURCE_SITE_DECLINED",
+        "RESOURCE_TIME_CONFLICT",
+        "ROLE_TIME_DETAIL_CHANGED",
+        "ROLE_TIME_VARIANCE_CHANGED",
+        "STAFFING_CONSTRAINT_CHANGED",
+        "TURNAROUND_TIME_VIOLATION",
+        "MAXIMUM_WEEKLY_HOURS_VIOLATION",
+        "RESOURCE_ROLE_RESTRICTED"
+      ],
+      excludedValues: ['RESOURCE_DUPLICATE_SENIORITY_RANKING']
+    },
+  },
+  RESOURCE_EXCEPTION_LOG: {
+    id: 'resourceExceptionLog',
+    template: resourceExceptionLogFiltersTemplate,
+    defaultModel: {
+      priorities: ["High", "Medium", "Low"],
+      statuses: ["Open"]
+    }
+  },
+  SITE_FEEDBACK: {
+    id: 'siteFeedback',
+    template: siteFeedbackFiltersTemplate,
+    defaultModel: {
+      statuses: ['Submitted', 'Waiting for DM Approval', 'Waiting for CO Supervisor Approval'],
+      submissionStartDate: null,
+      submissionEndDate: null,
+    }
+  },
+  DRIVE_SHIFT_TRADE: {
+    id: 'driveShiftTrade',
+    template: driveShiftTradeFiltersTemplate,
+    defaultModel: {
+      // driveStartDate: null,
+      // driveEndDate: null,
+      // driveTypes: ['Fixed Site', 'Mobile'],
+      statuses: ['Submitted', 'Pending Approval'],
+      submissionStartDate: null,
+      submissionEndDate: null,
+      excludedStatuses: ['Waiting for Trading Staff Acknowledge', 'Cancelled']
+    }
+  },
+  DRIVE_CHANGE_REQUEST: {
+    id: 'driveChangeRequest',
+    template: driveChangeRequestFiltersTemplate,
+    defaultModel: {
+      driveStartDate: null,
+      driveEndDate: null,
+      submissionStartDate: null,
+      submissionEndDate: null,
+      driveTypes: ['Fixed Site', 'Mobile'],
+      driveContentions: [
+        DRIVE_CONTENTION.DRIVE_LIMIT,
+        DRIVE_CONTENTION.x2RBC_LIMIT,
+        DRIVE_CONTENTION.DOT_LIMIT,
+        DRIVE_CONTENTION.CDL_LIMIT,
+        DRIVE_CONTENTION.OUT_OF_OPERATIONAL_HOURS,
+        DRIVE_CONTENTION.LACKING_VEHICLE,
+        DRIVE_CONTENTION.LACKING_EQUIPMENT,
+        DRIVE_CONTENTION.INSUFFICIENT_RESOURCES,
+        DRIVE_CONTENTION.WITHIN_42_DAYS,
+        DRIVE_CONTENTION.CONFIRM_WITHIN_42_DAYS,
+        DRIVE_CONTENTION.PART_OF_LINKED_DRIVE,
+        DRIVE_CONTENTION.MULTI_SHIFT_DRIVE,
+        DRIVE_CONTENTION.DUAL_ROLE_REMOVAL,
+        DRIVE_CONTENTION.STAFFING_COMPLEMENT_CHANGED,
+      ],
+      statuses: [
+        DRIVE_REQUEST_CHANGE_STATUS.SUBMITTED, 
+        DRIVE_REQUEST_CHANGE_STATUS.WAITING_FOR_DM_APPROVAL, 
+        DRIVE_REQUEST_CHANGE_STATUS.WAITING_FOR_APS_APPROVAL, 
+        DRIVE_REQUEST_CHANGE_STATUS.WAITING_FOR_DRD_FEEDBACK 
+      ],
+      excludedStatuses: [DRIVE_REQUEST_CHANGE_STATUS.PENDING]
+    }
+  },
+  PENDING_DRIVE_CHANGE_REQUEST: {
+    id: 'pendingDriveChangeRequest',
+    template: pendingDriveChangeRequestFiltersTemplate,
+    defaultModel: {
+      driveStartDate: null,
+      driveEndDate: null,
+      submissionStartDate: null,
+      submissionEndDate: null,
+      driveTypes: ['Fixed Site', 'Mobile'],
+      driveContentions: ['Insufficient Resources', 'Exceed Operation Drive Limit', 'Out of Operational Hours', 'Low Drive Productivity', 'Lacking of vehicles', 'Lacking of equipment', 'Within 42 days'],
+      types: [DRIVE_CHANGE_REQUEST_TYPE.COLLECTION_OPERATION_CHANGE],
+      // excludedTypes: [DRIVE_CHANGE_REQUEST_TYPE.USER_CHANGE]
+    }
+  },
+  PENDING_ACTION_DRIVE_REQUEST: {
+    id: 'pendingActionDrive',
+    template: pendingActionDriveFiltersTemplate,
+    defaultModel: {
+      driveStartDate: null,
+      driveEndDate: null,
+      driveTypes: ['Fixed Site', 'Mobile'],
+      pendingActions: [PENDING_ACTION.DRIVE_SUBMISSION, PENDING_ACTION.CANCEL_IN_PROCESS],
+      approvalStatuses: [
+        DRIVE_APPROVAL_STATUS.SUBMITTED, 
+        DRIVE_APPROVAL_STATUS.WAITING_FOR_APS_APPROVAL, 
+        DRIVE_APPROVAL_STATUS.WAITING_FOR_DM_APPROVAL,
+        DRIVE_APPROVAL_STATUS.WAITING_FOR_DRD_FEEDBACK
+      ],
+      excludedPendingActions: [PENDING_ACTION.DRIVE_CHANGE_REQUEST]
+    }
+  },
+  CALL_OUTS: {
+    id: 'callOutsFilters',
+    template: callOutsFiltersTemplate,
+    defaultModel: {
+      statuses: ['Approved', 'Cancelled'],
+      callOutTypes: ['Call Out', 'Late Arrival'],
+      callOutReasonCodes: [],
+      excludedStatuses: ['Pending', 'Waitlist', 'Declined', 'Expired']
+    }
+  }
+}
+export default class SlwcDriveSchedulingFilters extends LightningElement {
+  @api mode = null;
+
+  @track initialized = false;
+  @track filters = {};
+  @track selectedAllByDefault = false;
+  @track isOpen = false;
+  
+  @track searchFields = [
+    { label: 'Drive Name', value: 'sked_Drive__r.Name' },
+    { label: 'Drive ID', value: 'sked_Drive__r.sked_UFID__c' }
+  ];
+
+  get modeSettings() {
+    return Object.values(MODE).find(mode => mode.id === this.mode);
+  }
+  
+  get filterName() {
+    let modeName = this.modeSettings ? this.modeSettings.id : '';
+    if(modeName === 'productGoalCalendar') {
+      modeName = 'driveScheduling';
+    }
+    
+    return 'schedulingConsoleFilters:' + modeName;
+  }
+
+  get customClass() {
+    return {
+      panel: slwcUtils.classNames('drive-calendar-side-bar', {
+        'is-open': this.isOpen
+      })
+    }
+  }
+
+  get callOutReasonControllingFieldValues() {
+
+    return this.filters && this.filters.callOutType ? [this.filters.callOutType] : [];
+  }
+
+  get callOutReasonDisabled() {
+    return !this.filters || !this.filters.callOutType;
+  }
+
+  render() {
+    return this.modeSettings.template;
+  }
+
+  connectedCallback() {
+    //init settings
+    if (!this.initialized) {
+      this.filters = {
+        ...(this.modeSettings || {}).defaultModel
+      }
+
+      let lastSearchQuery = this.getLastQuery();
+      if (lastSearchQuery) {
+        this.filters = {
+          ...this.filters,
+          ...lastSearchQuery
+        };
+      }
+      else {
+        this.selectedAllByDefault = true;
+      }
+    }
+  }
+
+  renderedCallback() {
+    if(!this.initialized) {
+      this.initialized = true;
+      this.handleSearch(null, true);
+    }
+  }
+
+  handleOnChange(event) {
+    if(['accountManagerPortfolios', 'districtManagerPortfolios', 'markets'].includes(event.target.name)) {
+      this.filters[event.target.name] = event.detail.selection || [];
+    }
+    else {
+      this.filters[event.target.name] = slwcUtils.getValueFromEvent(event);
+    }
+  }
+
+  handleSearch(event, firstCall) {
+    if(!firstCall) {
+      this.setLastQuery();
+    }
+
+    const selectionChangeEvent = new CustomEvent('search', {
+      detail: {
+        filters: this.filters
+      }
+    });
+    this.dispatchEvent(selectionChangeEvent);
+  }
+
+  handleSearchMarket(event) {
+    let svc = new accountService();
+
+    return svc.searchMarket({
+      queryText: event.searchTerm
+    })
+    .then(result => {
+      return (result || []).map(item => {
+        return {
+          id: item.Market__c,
+          name: item.Market__c
+        }
+      })
+    })
+  }
+
+  handleSearchBsfPortfolioOnDrive(event) {
+    const queryModel = new bsfPortfolioQueryModel();
+    queryModel.queryText = event.searchTerm;
+    queryModel.limit = 5;
+    queryModel.searchColumns = [event.searchField];
+    queryModel.orderBy = 'name';
+    queryModel.orderAscending = 'asc';
+
+    const svc = new bsfPortfolioService();
+    return svc.query(queryModel)
+    .then(result => {
+      return (result || []).map(({id, name, accountBasedPortfolio, territoryPortfolio, startDate, endDate}) => {
+        return {
+          id,
+          name,
+          description: [
+            accountBasedPortfolio ? 'Account Based Portfolio' : null,
+            territoryPortfolio ? 'Territory Portfolio' : null,
+            startDate ? 'Start Date: ' + startDate : null,
+            endDate ? 'End Date: ' + endDate : null
+          ].filter(info => info).join(' - ')
+        }
+      })
+    })
+  }
+
+  togglePanel() {
+    this.isOpen = !this.isOpen;
+  }
+  
+  closePanel = () => {
+    // this.isOpen = false;
+  }
+
+  setLastQuery() {
+    slwcUtils.setLastQuery(this.filterName, this.filters);
+  }
+
+  getLastQuery() {
+    let tabQuery = slwcUtils.getLastQuery(this.filterName);
+    return tabQuery;
+  }
+}

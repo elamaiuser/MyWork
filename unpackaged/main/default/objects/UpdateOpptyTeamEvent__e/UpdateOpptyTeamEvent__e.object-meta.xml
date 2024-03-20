@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <deploymentStatus>Deployed</deploymentStatus>
+    <description>This Event We are using while adding New AccountTeamMember to Add assocaite OpptyTeamMember In &quot;AccountTeamMemberService&quot; Apex class</description>
+    <eventType>HighVolume</eventType>
+    <label>UpdateOpptyTeamEvent</label>
+    <pluralLabel>UpdateOpptyTeamEvents</pluralLabel>
+    <publishBehavior>PublishAfterCommit</publishBehavior>
+</CustomObject>

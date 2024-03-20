@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Task_Source__c</fullName>
+    <externalId>false</externalId>
+    <formula>IF( Contains(WhatId,&#39;006&#39;),&#39;Blood Drive&#39;,IF(Contains(WhatId,&#39;001&#39;),&#39;Account&#39;,
+
+IF(Contains(WhatId,&#39;a1Z&#39;),&#39;Drive&#39;,IF(Contains(WhatId,&#39;003&#39;),&#39;Contact&#39;,&#39;N/A&#39;))
+
+) )</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <label>Task Source</label>
+    <required>false</required>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

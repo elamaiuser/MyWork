@@ -1,0 +1,101 @@
+<template>
+    <div class="rac-setting flex-display setting-panel">
+        <lightning-spinner if:true={showSpinner} class="spins" size="medium"></lightning-spinner>
+
+        <div class="setting-panel_header">
+            <div class="slds-media">
+                <div class="slds-media__figure">
+                    <span class="slds-icon_container slds-icon-utility-settings setup-icon">
+                        <lightning-icon icon-name="utility:settings" variant="inverse" size="small"></lightning-icon>
+                    </span>
+                </div>
+                <div class="slds-media__body">
+                    <h1 class="slds-page-header__title slds-truncate slds-align-middle">Administration</h1>
+                    <p class="slds-page-header__subtitle slds-text-body_small slds-line-height_reset">Exception Settings</p>
+                </div>
+            </div>
+            <div>
+                <lightning-button variant="border-filled" icon-name="utility:refresh" label="Refresh" onclick={refresh}></lightning-button>
+                <template if:false={isReadonly}>
+                    <lightning-button variant="brand" icon-name="utility:save" label="Save" class="slds-m-left_x-small" onclick={save}></lightning-button>
+                </template>
+            </div>
+        </div>
+        <div class="setting-panel_content-container">
+            <div class="setting-panel_content">
+                <div class="slds-p-around_medium slds-form ">
+                    <div class="slds-tabs_default">
+                        <div
+                            class="slds-tabs_default__content slds-show">
+                            <table class="slds-table slds-table_bordered exception-setting__table slds-no-row-hover">
+                                <thead>
+                                    <tr class="slds-line-height_reset slds-text-title_caps">
+                                        <th class="slds-cell-wrap exception-code__col">EXCEPTION CODE</th>
+                                        <th class="slds-cell-wrap priority__col">PRIORITY</th>
+                                        <th class="slds-cell-wrap exception__col">EXCEPTION</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr for:each={exceptionSettings} 
+                                        for:item="item"
+                                        class={item.id}
+                                        key={item.id}>
+                                        <td class="slds-cell-wrap exception-code__col">
+                                            <lightning-input 
+                                                type="text" max-length="255" name="exceptionCode" label="Exception Code" variant="label-hidden" class="exception-code"
+                                                data-item={item.id}
+                                                required
+                                                readonly
+                                                value={item.exceptionCode}>
+                                            </lightning-input>
+                                        </td>
+
+                                        <td class="slds-cell-wrap priority__col">
+                                            <template if:false={isReadonly}>
+                                                <c-slwc-picklist
+                                                    name="priority" label="Priority" variant="label-hidden" class="priority"
+                                                    data-item={item.id}
+                                                    required
+                                                    object-api-name="skedHC__Exception__c"
+                                                    pick-listfield-api-name="sked_Priority__c"
+                                                    onpicklistchange={handleOnChange}
+                                                    selected-value={item.priority}>
+                                                </c-slwc-picklist>
+                                            </template>
+                                            <template if:true={isReadonly}>
+                                                <lightning-input 
+                                                    type="text" max-length="255" name="priority" label="Priority" variant="label-hidden" class="priority"
+                                                    data-item={item.id}
+                                                    readonly
+                                                    value={item.priority}>
+                                                </lightning-input>
+                                            </template>
+                                        </td>
+
+                                        <td class="slds-cell-wrap exception__col">
+                                            <lightning-input 
+                                                type="text" max-length="255" name="exception" label="Exception" variant="label-hidden" class="exception"
+                                                data-item={item.id}
+                                                required
+                                                readonly={isReadonly}
+                                                onchange={handleOnChange}
+                                                value={item.exception}>
+                                            </lightning-input>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <!-- empty -->
+                            <div class="setting-table__empty-message slds-m-horizontal_small slds-m-top_large" if:true={showEmptyMessage}>
+                                <span class="slds-icon_container slds-m-right_x-small">
+                                    <lightning-icon icon-name="utility:warning" class="slds-current-color" size="x-small"></lightning-icon>
+                                </span>
+                                <span>No exception setting.</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<QuickAction xmlns="http://soap.sforce.com/2006/04/metadata">
+    <description>Used to change the Booking date fields in Affiliation object</description>
+    <flowDefinition>Affiliation_Date_change</flowDefinition>
+    <label>Change Booking Dates</label>
+    <optionsCreateFeedItem>false</optionsCreateFeedItem>
+    <type>Flow</type>
+</QuickAction>

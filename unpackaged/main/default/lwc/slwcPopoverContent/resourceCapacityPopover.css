@@ -1,0 +1,10 @@
+.slds-list_horizontal .slds-item_label {
+    width: 50%;
+}
+.slds-list_horizontal .slds-item_detail {
+    width: 50%;
+}
+.slds-popover__body-list {
+    border-top: none;
+    padding: 0.75rem;
+}

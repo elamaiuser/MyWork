@@ -1,0 +1,21 @@
+.drive-health.green {
+    color: green;
+}
+.drive-health.amber {
+    color: orange;
+}
+.drive-health.red {
+    color: red;
+}
+
+.slds-page-header__detail-block {
+    max-width:200px; 
+    padding: 0px;
+}
+
+.slds-page-header__detail-row { 
+    display: grid;
+    grid-template-columns: repeat(6, minmax(100px, 1fr));
+    grid-row-gap: 0.5rem;
+    grid-column-gap: 0.5rem;
+}

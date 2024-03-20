@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Queue xmlns="http://soap.sforce.com/2006/04/metadata">
+    <doesSendEmailToMembers>false</doesSendEmailToMembers>
+    <name>Green Bay WI: DSTs</name>
+    <queueMembers>
+        <users>
+            <user>jason.blackwell@redcross.org</user>
+            <user>jessica.gilges@redcross.org</user>
+            <user>serena.bricker@redcross.org</user>
+        </users>
+    </queueMembers>
+    <queueSobject>
+        <sobjectType>sked_Drive_Shift_Trade__c</sobjectType>
+    </queueSobject>
+</Queue>

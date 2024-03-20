@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Fixed_Site</fullName>
+    <columns>NAME</columns>
+    <columns>sked_2RBC_Hourly_Capacity__c</columns>
+    <columns>sked_Plasma_Hourly_Capacity__c</columns>
+    <columns>sked_Platelet_Hourly_Capacity__c</columns>
+    <columns>sked_WB_Hourly_Capacity__c</columns>
+    <columns>sked_NR_Volunteer_Fixed_Site_Band_Lower__c</columns>
+    <columns>sked_NR_Volunteer_Fixed_Site_Band_Upper__c</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>RECORDTYPE</field>
+        <operation>equals</operation>
+        <value>sked_Staffing_Decision_Matrix__c.sked_Fixed_Site</value>
+    </filters>
+    <label>Fixed Site</label>
+    <language>en_US</language>
+</ListView>

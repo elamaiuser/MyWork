@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>IsValid__c</fullName>
+    <defaultValue>false</defaultValue>
+    <description>used to define the valid type of files with respect to object</description>
+    <externalId>false</externalId>
+    <fieldManageability>DeveloperControlled</fieldManageability>
+    <label>IsValid</label>
+    <type>Checkbox</type>
+</CustomField>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<EmailTemplate xmlns="http://soap.sforce.com/2006/04/metadata">
+    <available>true</available>
+    <description>Request to graduating LSL BPL to identify legacy BPL to continue program</description>
+    <encodingKey>ISO-8859-1</encodingKey>
+    <letterhead>ARC_Logo_Test</letterhead>
+    <name>Marketing Segment_Education_LSL_Legacy Booking</name>
+    <style>formalLetter</style>
+    <subject>Continuing Your Blood Drive Legacy</subject>
+    <textOnly>Hi [Insert Name] ,
+
+Thank you again for all that you did to support the Red Cross hospital patients by hosting a blood drive.  Your blood drive helped make a lasting difference for hospital patients and their loved ones. I hope you will continue to be involved in our lifesaving mission as you move forward in your life.
+
+Now that your blood drive is complete, the last step is to find a student who will take over your Red Cross leadership position.  Transitioning your Blood Program Leader role means that patients will receive ongoing support and local blood needs can be met during critical collection periods.  It will also help ensure your blood drive moves forward and grows year after year, even after you graduate, becoming part of your school&#39;s legacy.
+
+I&#39;d like for you to think of an outstanding student leader to take over your blood drive.  Now is the best time to find a new student to take over while the blood drive is fresh on everyone&#39;s mind.
+
+Once you find a student who is interested, please pass along their contact information to me so that I can introduce myself.  Thank you for your help with this important last step.  Let me know if you have any questions and I look forward to hearing back from you.
+
+Thanks again,
+[Insert Name]</textOnly>
+    <type>html</type>
+    <uiType>Aloha</uiType>
+</EmailTemplate>

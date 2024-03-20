@@ -1,0 +1,147 @@
+<template>
+    <div class="slds-grid slds-wrap slds-p-right_small">
+        <div class="slds-col slds-medium-size_3-of-12 slds-large-size_3-of-12 slds-size_1-of-1 slds-p-left_small">
+            <template if:false={masterData.isReadonly}>
+                <div class="slds-form-element">
+                    <span class="slds-form-element__label">Drive Dispatched</span>
+                    <div class="slds-form-element__control">
+                        <div class="slds-form-element__static slds-truncate">
+                            <template if:true={drive.driveDispatched}>
+                                <lightning-icon icon-name="utility:check" size="x-small"></lightning-icon>
+                            </template>
+                            <template if:false={drive.driveDispatched}>
+                                <lightning-icon icon-name="utility:steps" size="x-small"></lightning-icon>
+                            </template>
+                        </div>
+                    </div>
+                </div>
+            </template>
+            <template if:true={masterData.isReadonly}>
+                <div class="slds-form-element slds-form-element_readonly">
+                    <span class="slds-form-element__label">Drive Dispatched</span>
+                    <div class="slds-form-element__control">
+                        <div class="slds-form-element__static slds-truncate">
+                            <template if:true={drive.driveDispatched}>
+                                <lightning-icon icon-name="utility:check" size="x-small"></lightning-icon>
+                            </template>
+                            <template if:false={drive.driveDispatched}>
+                                <lightning-icon icon-name="utility:steps" size="x-small"></lightning-icon>
+                            </template>
+                        </div>
+                    </div>
+                </div>
+            </template>
+        </div>
+        <div class="slds-col slds-medium-size_3-of-12 slds-large-size_3-of-12 slds-size_1-of-1 slds-p-left_small">
+            <template if:false={masterData.isReadonly}>
+                <div class="slds-form-element">
+                    <span class="slds-form-element__label">Optimization Status</span>
+                    <div class="slds-form-element__control">
+                        <div class="slds-form-element__static slds-truncate">{drive.optimizationStatus}</div>
+                    </div>
+                </div>
+            </template>
+            <template if:true={masterData.isReadonly}>
+                <div class="slds-form-element slds-form-element_readonly">
+                    <span class="slds-form-element__label">Optimization Status</span>
+                    <div class="slds-form-element__control">
+                        <div class="slds-form-element__static slds-truncate">{drive.optimizationStatus}</div>
+                    </div>
+                </div>
+            </template>
+        </div>
+    </div>
+    <div class="slds-grid slds-wrap slds-p-right_small">
+        <div class="slds-col slds-medium-size_3-of-12 slds-large-size_3-of-12 slds-size_1-of-1 slds-p-left_small">
+            <template if:false={masterData.isReadonly}>
+                <div class="slds-form-element">
+                    <span class="slds-form-element__label">When Dispatched</span>
+                    <div class="slds-form-element__control">
+                        <div class="slds-form-element__static slds-truncate">
+                            <c-slwc-time-input-with-timezone 
+                                read-only
+                                input-date={drive.dispatchedAt}
+                                timezone={masterData.timezoneSidId}>
+                                <lightning-formatted-date-time 
+                                    slot="input"
+                                    value={drive.dispatchedAt} year="numeric" month="numeric" day="numeric" hour="numeric"
+                                    minute="2-digit" time-zone={masterData.timezoneSidId}></lightning-formatted-date-time>
+                            </c-slwc-time-input-with-timezone>
+                        </div>
+                    </div>
+                </div>
+            </template>
+            <template if:true={masterData.isReadonly}>
+                <div class="slds-form-element slds-form-element_readonly">
+                    <span class="slds-form-element__label">When Dispatched</span>
+                    <div class="slds-form-element__control">
+                        <div class="slds-form-element__static slds-truncate">
+                            <c-slwc-time-input-with-timezone
+                                if:true={drive.dispatchedAt}
+                                read-only
+                                input-date={drive.dispatchedAt}
+                                timezone={masterData.timezoneSidId}>
+                                <lightning-formatted-date-time 
+                                    slot="input"
+                                    value={drive.dispatchedAt} year="numeric" month="numeric" day="numeric" hour="numeric"
+                                    minute="2-digit" time-zone={masterData.timezoneSidId}></lightning-formatted-date-time>
+                            </c-slwc-time-input-with-timezone>
+                        </div>
+                    </div>
+                </div>
+            </template>
+        </div>
+        <div class="slds-col slds-medium-size_3-of-12 slds-large-size_3-of-12 slds-size_1-of-1 slds-p-left_small">
+            <template if:false={masterData.isReadonly}>
+                <div class="slds-form-element">
+                    <span class="slds-form-element__label">Has Exception?</span>
+                    <div class="slds-form-element__control">
+                        <div class="slds-form-element__static slds-truncate">
+                            <template if:true={drive.hasException}>
+                                <lightning-icon icon-name="utility:check" size="x-small"></lightning-icon>
+                            </template>
+                            <template if:false={drive.hasException}>
+                                <lightning-icon icon-name="utility:steps" size="x-small"></lightning-icon>
+                            </template>
+                        </div>
+                    </div>
+                </div>
+            </template>
+            <template if:true={masterData.isReadonly}>
+                <div class="slds-form-element slds-form-element_readonly">
+                    <span class="slds-form-element__label">Has Exception?</span>
+                    <div class="slds-form-element__control">
+                        <div class="slds-form-element__static slds-truncate">
+                            <template if:true={drive.hasException}>
+                                <lightning-icon icon-name="utility:check" size="x-small"></lightning-icon>
+                            </template>
+                            <template if:false={drive.hasException}>
+                                <lightning-icon icon-name="utility:steps" size="x-small"></lightning-icon>
+                            </template>
+                        </div>
+                    </div>
+                </div>
+            </template>
+        </div>
+    </div>
+    <div class="slds-grid slds-wrap slds-p-right_small">
+        <div class="slds-col slds-medium-size_3-of-12 slds-large-size_3-of-12 slds-size_1-of-1 slds-p-left_small">
+            <template if:false={masterData.isReadonly}>
+                <div class="slds-form-element">
+                    <span class="slds-form-element__label">Who Dispatched</span>
+                    <div class="slds-form-element__control">
+                        <div class="slds-form-element__static slds-truncate">{drive.dispatchedByName}</div>
+                    </div>
+                </div>
+            </template>
+            <template if:true={masterData.isReadonly}>
+                <div class="slds-form-element slds-form-element_readonly">
+                    <span class="slds-form-element__label">Who Dispatched</span>
+                    <div class="slds-form-element__control">
+                        <div class="slds-form-element__static slds-truncate">{drive.dispatchedByName}</div>
+                    </div>
+                </div>
+            </template>
+        </div>
+    </div>
+</template>

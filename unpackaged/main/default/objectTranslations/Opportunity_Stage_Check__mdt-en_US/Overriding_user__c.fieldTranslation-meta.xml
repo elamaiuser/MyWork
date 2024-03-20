@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+        <help><!-- User names that can override stage validation rules in CSV format --></help>
+        <label><!-- Overriding user --></label>
+        <name>Overriding_user__c</name>
+    </CustomFieldTranslation>

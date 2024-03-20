@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<StandardValueSet xmlns="http://soap.sforce.com/2006/04/metadata">
+    <sorted>false</sorted>
+    <standardValue>
+        <fullName>Amusement / Recreational</fullName>
+        <default>false</default>
+        <label>Amusement / Recreational</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Business</fullName>
+        <default>false</default>
+        <label>Business</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Civic / Community</fullName>
+        <default>false</default>
+        <label>Civic / Community</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Education</fullName>
+        <default>false</default>
+        <label>Education</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Government</fullName>
+        <default>false</default>
+        <label>Government</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Health</fullName>
+        <default>false</default>
+        <label>Health</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Media</fullName>
+        <default>false</default>
+        <label>Media</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Military</fullName>
+        <default>false</default>
+        <label>Military</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Religious</fullName>
+        <default>false</default>
+        <label>Religious</label>
+    </standardValue>
+</StandardValueSet>

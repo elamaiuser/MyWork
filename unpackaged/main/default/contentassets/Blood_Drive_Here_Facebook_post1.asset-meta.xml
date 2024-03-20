@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ContentAsset xmlns="http://soap.sforce.com/2006/04/metadata">
+    <isVisibleByExternalUsers>true</isVisibleByExternalUsers>
+    <language>en_US</language>
+    <masterLabel>Blood_Drive_Here_Facebook_post1</masterLabel>
+    <versions>
+        <version>
+            <number>1</number>
+            <pathOnClient>Blood Drive Here - Facebook post.jpg</pathOnClient>
+        </version>
+    </versions>
+</ContentAsset>

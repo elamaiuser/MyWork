@@ -1,0 +1,20 @@
+<apex:page showHeader="false" >
+    <body>
+        Redirecting...
+    </body>
+    <script>
+        function isMobile(){
+            if(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)){
+                return true
+            }
+            else{
+                return false
+            }
+        }
+        if(isMobile()) {
+            window.location.href = 'skedulox://customform/skedPTORequestSubmission'
+        } else {
+            window.location.href = '{!$Setup.sked_Admin_Setting__c.sked_My_Availability_Console_URL__c}?availabilityId={!$CurrentPage.parameters.availabilityId}&startDate={!$CurrentPage.parameters.startDate}';
+        }
+    </script>
+</apex:page>

@@ -1,0 +1,26 @@
+<template>
+    <template if:true={showModal}>
+        <section role="dialog" tabindex="-1" class="slds-modal slds-fade-in-open slds-modal_medium">
+            <div class="slds-modal__container">
+                <header class="slds-modal__header">
+                    <h2 class="slds-text-heading_medium slds-hyphenate">Processing {action}</h2>
+                </header>
+                <div class="slds-theme_default">
+                    <div class="slds-modal__content full-height__modal-content slds-p-around_medium" style="overflow: initial; position:relative;">
+                        <div class="slds-progress-bar slds-progress-bar_circular" role="progressbar">
+                            <span class="slds-progress-bar__value" style={progressBarStyle}>
+                                <span class="slds-assistive-text">Progress: {progress}%</span>
+                            </span>
+                        </div>
+                        <div class="slds-p-vertical_small slds-text-body_small">Progress: <lightning-formatted-number value={progress} maximum-fraction-digits="0"></lightning-formatted-number>%</div>
+                    </div>
+                </div>
+                <footer class="slds-modal__footer">
+                    <lightning-button label="Close" title="Close" disabled={inProgress} onclick={handleCloseModal} class="slds-m-right_xx-small"></lightning-button>
+                    <lightning-button class="slds-m-top_small" disabled={inProgress} onclick={handleViewResults} variant="brand" label="View Results"></lightning-button>
+                </footer>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+    </template>
+</template>

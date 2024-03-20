@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>AcceptblankMilitaryAuthNamePhone__c</fullName>
+    <defaultValue>false</defaultValue>
+    <description>If this checkbox is uncheked, fire validation rule Stage_Validation_Commited_Closed</description>
+    <externalId>false</externalId>
+    <label>Accept Blank Military Auth Name/Phone</label>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Checkbox</type>
+</CustomField>

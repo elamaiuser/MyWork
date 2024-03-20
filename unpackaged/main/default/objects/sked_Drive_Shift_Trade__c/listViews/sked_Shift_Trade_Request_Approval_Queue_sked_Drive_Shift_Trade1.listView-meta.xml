@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>sked_Shift_Trade_Request_Approval_Queue_sked_Drive_Shift_Trade1</fullName>
+    <filterScope>Queue</filterScope>
+    <label>Shift Trade Request Approval Queue</label>
+    <queue>sked_Shift_Trade_Request_Approval_Queue</queue>
+    <sharedTo>
+        <allInternalUsers></allInternalUsers>
+    </sharedTo>
+</ListView>

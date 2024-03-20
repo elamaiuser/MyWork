@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>National_Name_Initial_Review_Date__c</fullName>
+    <description>when National name status becomes Second Review Pending, this field is populated</description>
+    <externalId>false</externalId>
+    <label>National Name Initial Review Date</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <type>Date</type>
+</CustomField>

@@ -1,0 +1,20 @@
+<template> 
+    <div style="background-color: white;padding: 10px;">        
+        <lightning-input type="date" name="startdate" label="Start Date" placeholder="Enter Start Date"></lightning-input>
+        <lightning-input type="date" name="lastdate" label="End Date" placeholder="Enter End Date"></lightning-input>
+    
+    <lightning-combobox
+        name="PatternDays"
+        value={value}
+        label = "Recurrence Pattern"
+        options={options}
+        onchange={handleChange}
+    ></lightning-combobox>
+
+    <lightning-checkbox-group name="Days"
+                              label="Days"
+                              options={checkboxoptions}
+                              value=""
+                              onchange={handlecheckboxChange}></lightning-checkbox-group>
+</div>
+</template>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Blood_Drive_Opportunity__c</fullName>
+    <description>Blood drive opportunity</description>
+    <externalId>false</externalId>
+    <inlineHelpText>Blood drive opportunity</inlineHelpText>
+    <label>Blood Drive Opportunity</label>
+    <referenceTo>Opportunity</referenceTo>
+    <relationshipLabel>Opportunity Promotions</relationshipLabel>
+    <relationshipName>Opportunity_Promotions</relationshipName>
+    <relationshipOrder>0</relationshipOrder>
+    <reparentableMasterDetail>true</reparentableMasterDetail>
+    <trackTrending>false</trackTrending>
+    <type>MasterDetail</type>
+    <writeRequiresMasterRead>false</writeRequiresMasterRead>
+</CustomField>

@@ -1,0 +1,242 @@
+<template>
+    <div class="slds-is-relative">
+        <template if:true={showSpinner}>
+            <lightning-spinner class="spins" size="medium"></lightning-spinner>
+        </template>
+
+        <article class="slds-card slds-card_boundary approval-history-page">
+            <div class="slds-grid slds-page-header">
+                <header class="slds-media slds-media--center slds-has-flexi-truncate">
+                    <div class="slds-media__figure slds-m-right_small slds-avatar slds-avatar_small">
+                        <lightning-icon icon-name="custom:custom2" size="small"></lightning-icon>
+                    </div>
+                    <div class="slds-media__body">
+                        <div class="slds-page-header__name">
+                            <div class="slds-page-header__name-title">
+                                <h2 class="slds-card__header-title">
+                                    <span class="slds-page-header__title slds-truncate">Hold Drives Summary</span>
+                                </h2>
+                            </div>
+                        </div>
+                    </div>
+                </header>
+                <div class="slds-no-flex">
+                    <div class="slds-grid">
+                        <div class="slds-col">
+                            <lightning-button-icon tooltip="Refresh" variant="border-filled" onclick={handleRefreshHoldDrivesSummaryBtn} icon-name="utility:refresh"></lightning-button-icon>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <table class="slds-table slds-table_cell-buffer slds-table_bordered hold-drives-summary-table"
+                    aria-label="Example default base table of Opportunities">
+                    <thead>
+                        <tr class="slds-line-height_reset">
+                            <th class="" scope="col" style="width: 25%">
+                                <div class="slds-truncate" title="Number of Drives">Number of Drives</div>
+                            </th>
+                            <th class="" scope="col" style="width: 25%">
+                                <div class="slds-truncate" title="Total Number of Staff Requested">Total Number of Staff Requested</div>
+                            </th>
+                            <th class="" scope="col" style="width: 25%">
+                                <div class="slds-truncate" title="total Number of Machines">Total Number of Machines</div>
+                            </th>
+                            <th class="" scope="col" style="width: 25%">
+                                <div class="slds-truncate" title="Total Number of Vehicles">Total Number of Vehicles</div>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="slds-hint-parent">
+                            <td>
+                                <p class="white-space-pre-line">
+                                    {holdDrivesSummaryData.totalHoldDrives}
+                                </p>
+                            </td>
+                            <td>
+                                <p class="white-space-pre-line">
+                                    {holdDrivesSummaryData.totalStaff}
+                                </p>
+                            </td>
+                            <td>
+                                <p class="white-space-pre-line">
+                                    {holdDrivesSummaryData.totalEquipment}
+                                </p>
+                            </td>
+                            <td>
+                                <p class="white-space-pre-line">
+                                    {holdDrivesSummaryData.totalVehicles}
+                                </p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </article>
+
+        <article class="slds-card slds-card_boundary approval-history-page">
+            <div class="slds-grid slds-page-header">
+                <header class="slds-media slds-media--center slds-has-flexi-truncate">
+                    <div class="slds-media__figure slds-m-right_small slds-avatar slds-avatar_small">
+                        <lightning-icon icon-name="custom:custom2" size="small"></lightning-icon>
+                    </div>
+                    <div class="slds-media__body">
+                        <div class="slds-page-header__name">
+                            <div class="slds-page-header__name-title">
+                                <h2 class="slds-card__header-title">
+                                    <span class="slds-page-header__title slds-truncate">Contentions</span>
+                                </h2>
+                            </div>
+                        </div>
+                    </div>
+                </header>
+                <div class="slds-no-flex">
+                    <div class="slds-grid">
+                        <div class="slds-col">
+                            <lightning-button-group>
+                                <template if:true={showOpenDriveSchedulingBtn}>
+                                    <lightning-button label="Open Drive Scheduling" onclick={handleOpenDriveSchedulingBtn}></lightning-button>
+                                </template>
+                                <template if:false={isReadonly}>
+                                    <lightning-button label="Validate" onclick={handleValidateBtn}></lightning-button>
+                                </template>
+                            </lightning-button-group>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <div class="slds-notify slds-notify_alert slds-alert_warning" role="alert" if:true={showVehicleAndDriverMismatchedWarning}>
+                    <h2>
+                        <lightning-icon class="slds-m-right_x-small slds-current-color" icon-name="utility:warning" size="x-small"></lightning-icon>
+                        Number of vehicles is greater than number of drivers.
+                    </h2>
+                </div> 
+                <table class="slds-table slds-table_cell-buffer slds-table_bordered contention-table"
+                    aria-label="Example default base table of Opportunities">
+                    <thead>
+                        <tr class="slds-line-height_reset">
+                            <th class="" scope="col" style="width: 20%">
+                                <div class="slds-truncate" title="Contention">Contention</div>
+                            </th>
+                            <th class="" scope="col" style="width: 18%">
+                                <div class="slds-truncate" title="Requested">Requested</div>
+                            </th>
+                            <th class="" scope="col" style="width: 18%">
+                                <div class="slds-truncate" title="Current Drive Values">Current Drive Values</div>
+                            </th>
+                            <th class="" scope="col" style="width: 18%">
+                                <div class="slds-truncate" title="Calendar Overview">Calendar Overview</div>
+                            </th>
+                            <template if:false={isReadonly}>
+                                <th class="" scope="col" style="width: 26%">
+                                    <div class="slds-truncate" title="Actions">Actions</div>
+                                </th>
+                            </template>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <template for:each={driveContentionsGroup1} for:item="item">
+                            <tr class="slds-hint-parent" key={item.contention}>
+                                <th>
+                                    <span class="slds-truncate">
+                                        <span class="contention-indicator" if:false={item.passed}></span>
+                                        <span class="contention-indicator passed" if:true={item.passed}></span>
+                                        {item.contention}
+                                    </span>
+                                </th>
+                                <td>
+                                    <p class="white-space-pre-line">
+                                        {item.requested}
+                                    </p>
+                                </td>
+                                <td>
+                                    <p class="white-space-pre-line">
+                                        {item.current}
+                                    </p>
+                                </td>
+                                <td>
+                                    <p class="white-space-pre-line">
+                                        {item.calendarOverview}
+                                    </p>
+                                </td>
+                                <template if:false={isReadonly}>
+                                    <td>
+                                        <div class="slds-form-element__control white-space-pre-line">
+                                            <template for:each={item.actions} for:item="action">
+                                                <template if:true={action.isLink}>
+                                                    <span key={action.label} class="slds-text-link slds-text-link_reset" onclick={action.onclick}>{action.label}</span>
+                                                </template>
+                                                <template if:false={action.isLink}>
+                                                    <lightning-input key={action.label} type="checkbox" data-contention={item.contention} name={action.label} label={action.label}
+                                                        value={action.value} checked={action.value} disabled={action.disabled} onchange={handleActionStaffingComplementChanged}></lightning-input>
+                                                </template>
+                                            </template>
+                                        </div>
+                                    </td>
+                                </template>
+                            </tr>
+                        </template>
+                        <tr if:true={driveContentionsGroup1.length} class="slds-hint-parent">
+                            <td colspan="5" class="slds-theme_shade">&nbsp;</td>
+                        </tr>
+                        <template for:each={driveContentionsGroup2} for:item="item">
+                            <tr class="slds-hint-parent" key={item.contention}>
+                                <th>
+                                    <span class="slds-truncate">
+                                        <span class="contention-indicator" if:false={item.passed}></span>
+                                        <span class="contention-indicator passed" if:true={item.passed}></span>
+                                        {item.contention}
+                                    </span>
+                                </th>
+                                <td>
+                                    <p class="white-space-pre-line">
+                                        {item.requested}
+                                    </p>
+                                </td>
+                                <td>
+                                    <p class="white-space-pre-line">
+                                        {item.current}
+                                    </p>
+                                </td>
+                                <td>
+                                    <p class="white-space-pre-line">
+                                        {item.calendarOverview}
+                                    </p>
+                                </td>
+                                <template if:false={isReadonly}>
+                                    <td>
+                                        <div class="slds-form-element__control white-space-pre-line">
+                                            <template for:each={item.actions} for:item="action">
+                                                <template if:true={action.isLink}>
+                                                    <span key={action.label} class="slds-text-link slds-text-link_reset" onclick={action.onclick}>{action.label}</span>
+                                                </template>
+                                                <template if:false={action.isLink}>
+                                                    <lightning-input key={action.label} type="checkbox" data-contention={item.contention} name={action.label} label={action.label}
+                                                        value={action.value} checked={action.value} onchange={handleActionChanged}></lightning-input>
+                                                </template>
+                                            </template>
+                                        </div>
+                                    </td>
+                                </template>
+                            </tr>
+                        </template>
+                    </tbody>
+                </table>
+            </div>
+        </article>
+    </div>
+    <c-slwc-drive-staffing-details
+        mode={driveStaffingDetailsData.mode}
+        disable-transfer
+        disable-create-job
+        disable-edit-job
+        allocate-assets-only
+        record-id={driveStaffingDetailsData.recordId}
+        drive={driveStaffingDetailsData.drive}
+        is-open={driveStaffingDetailsData.shown}
+        onsave={saveDriveStaffingDetails}
+        onclose={closeDriveStaffingDetails}>
+    </c-slwc-drive-staffing-details>
+</template>

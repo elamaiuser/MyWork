@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>CannotMoveBackOnStagesThatAreCompleted</fullName>
+    <active>false</active>
+    <errorConditionFormula>((ISPICKVAL(StageName, &quot;Solicitation&quot;) &amp;&amp;
+(
+ISPICKVAL(PRIORVALUE(StageName), &quot;Committed&quot;)  || 
+ISPICKVAL(PRIORVALUE(StageName), &quot;Withdrawn&quot;)  || 
+ISPICKVAL(PRIORVALUE(StageName), &quot;Excluded&quot;) || 
+ISPICKVAL(PRIORVALUE(StageName), &quot;Closed&quot;) ||
+ISPICKVAL(PRIORVALUE(StageName), &quot;Cancelled&quot;)
+)) ||
+
+(ISPICKVAL(StageName, &quot;Committed&quot;) &amp;&amp;
+(
+ISPICKVAL(PRIORVALUE(StageName), &quot;Withdrawn&quot;)  || 
+ISPICKVAL(PRIORVALUE(StageName), &quot;Excluded&quot;) || 
+ISPICKVAL(PRIORVALUE(StageName), &quot;Closed&quot;) ||
+ISPICKVAL(PRIORVALUE(StageName), &quot;Cancelled&quot;)
+)) ||
+
+(ISPICKVAL(StageName, &quot;Discovery&quot;) &amp;&amp;
+(
+ISPICKVAL(PRIORVALUE(StageName), &quot;Solicitation&quot;)  || 
+ISPICKVAL(PRIORVALUE(StageName), &quot;Committed&quot;)  || 
+ISPICKVAL(PRIORVALUE(StageName), &quot;Withdrawn&quot;)  || 
+ISPICKVAL(PRIORVALUE(StageName), &quot;Excluded&quot;) || 
+ISPICKVAL(PRIORVALUE(StageName), &quot;Closed&quot;) ||
+ISPICKVAL(PRIORVALUE(StageName), &quot;Cancelled&quot;)
+)) ||
+
+(ISPICKVAL(StageName, &quot;Closed&quot;) &amp;&amp;
+(
+ISPICKVAL(PRIORVALUE(StageName), &quot;Cancelled&quot;) 
+)))</errorConditionFormula>
+    <errorDisplayField>StageName</errorDisplayField>
+    <errorMessage>A Blood Drive Opportunity cannot move back once it has moved to the next Stage in the Lifecycle</errorMessage>
+</ValidationRule>

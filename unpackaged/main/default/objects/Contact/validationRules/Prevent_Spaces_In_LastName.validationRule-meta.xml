@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Prevent_Spaces_In_LastName</fullName>
+    <active>true</active>
+    <description>Last name cannot contain any spaces.</description>
+    <errorConditionFormula>AND(
+    CONTAINS(LastName, &quot; &quot;),
+    OR(
+       ISNEW(),
+       ISCHANGED(LastName)
+    )
+)</errorConditionFormula>
+    <errorMessage>Last name cannot contain any spaces.</errorMessage>
+</ValidationRule>

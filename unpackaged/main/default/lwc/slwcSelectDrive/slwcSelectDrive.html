@@ -1,0 +1,65 @@
+<template>
+    <div class="slds-form-element">
+		<label class="slds-form-element__label">{label}</label>
+		<c-slwc-click-outside func={closeDropdown}>
+			<div class="slds-form-element__control">
+				<div class="slds-combobox_container">
+					<div class="slds-combobox slds-dropdown-trigger slds-dropdown-trigger_click slds-is-open" aria-expanded="true" aria-haspopup="listbox" role="combobox">
+						<div class="slds-combobox__form-element slds-input-has-icon slds-input-has-icon_right" role="none">
+							<input type="text" class="slds-input slds-combobox__input slds-combobox__input-value" role="textbox" placeholder="Select an Option" readonly 
+								value={selectionLabel} onclick={toggleOptions}/>
+							<lightning-icon icon-name="utility:down" size="x-small" class="slds-icon_container slds-icon-utility-down slds-input__icon slds-input__icon_right"></lightning-icon>
+						</div>
+						<div if:true={showOptions} class="slds-dropdown slds-dropdown_left" style="width: max-content; visibility: visible; opacity: 1; padding: .5rem 0;">
+							<div style="margin-top: -.5rem;border-top-left-radius: .25rem;border-top-right-radius: .25rem">
+								<div class="slds-m-bottom_x-small slds-has-divider_bottom slds-theme_shade ">
+									<div class="slds-grid">
+										<div class="slds-input-has-icon slds-input-has-icon_left sked-input-has-clear-button slds-grow">
+											<lightning-icon class="slds-input__icon slds-icon-text-default" icon-name="utility:search"
+												size="x-small"></lightning-icon>
+											<lightning-input type="text" onchange={handleSearch} value={filters.searchString} max-length="255" label="Quick Search" variant="label-hidden" placeholder="Quick Search" class="search-textbox"></lightning-input>
+										</div>
+									</div>
+								</div>
+								<ul class="slds-picklist slds-dropdown__list slds-dropdown_length-5">
+									<template for:each={filteredPicklistValues} for:item="pickListValue">
+										<li key={pickListValue.value} role="presentation" class="slds-listbox__item" data-item={pickListValue.value} onclick={handleSelected}>
+											<div id={pickListValue.value} class="slds-media slds-listbox__option slds-listbox__option_plain slds-media_small slds-is-selected" role="option" style="padding: .5rem">
+												<span class="slds-media__figure slds-listbox__option-icon">
+													<lightning-icon if:true={pickListValue.selected} icon-name="utility:check" size="x-small" class="slds-button__icon slds-current-color"></lightning-icon>
+												</span>
+												<span class="slds-media__body"> {pickListValue.label}</span>
+                                            </div>
+                                            <div id={pickListValue.type} class="slds-media slds-listbox__option slds-listbox__option_plain slds-media_small slds-is-selected slds-border--bottom" role="option" style="padding: .5rem">
+                                                <span class="slds-media__figure slds-listbox__option-icon">
+												</span>
+                                                <span class="slds-media__body slds-text-color_inverse-weak">
+                                                    <lightning-formatted-date-time
+                                                        time-zone={pickListValue.timezoneSidId}
+                                                        value={pickListValue.driveDate}>
+                                                    </lightning-formatted-date-time>/
+                                                    <lightning-formatted-date-time value={pickListValue.start} hour="2-digit"
+                                                        minute="2-digit" hour12="true" time-zone={pickListValue.timezoneSidId}>
+                                                    </lightning-formatted-date-time>- 
+                                                    <lightning-formatted-date-time value={pickListValue.end} hour="2-digit"
+                                                        minute="2-digit" hour12="true" time-zone={pickListValue.timezoneSidId}>
+                                                    </lightning-formatted-date-time><br>
+                                                    {pickListValue.type}
+                                                </span>
+											</div>
+										</li>
+									</template>
+								</ul>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</c-slwc-click-outside>
+	</div>
+	<template if:true={showPills}>
+		<template for:each={selectedValues} for:item="item">
+			<lightning-pill key={item.value} label={item.label} data-item={item.value} onclick={handleRemove}></lightning-pill>
+		</template>
+	</template>
+</template>

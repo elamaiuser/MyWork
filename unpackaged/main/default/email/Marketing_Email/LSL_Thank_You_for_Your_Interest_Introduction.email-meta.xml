@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<EmailTemplate xmlns="http://soap.sforce.com/2006/04/metadata">
+    <available>true</available>
+    <description>A Thank you for your interest email to LSL Leads</description>
+    <encodingKey>ISO-8859-1</encodingKey>
+    <letterhead>ARC_Logo_Test</letterhead>
+    <name>Marketing Segment_Education_LSL_General Lead Introduction_2023</name>
+    <style>freeForm</style>
+    <subject>Follow up! re: Leaders Save Lives Blood Drive Interest</subject>
+    <textOnly>Hello [NAME],
+
+I’d like to take a quick moment to introduce myself and thank you for expressing interest in hosting a blood drive through the American Red Cross Leaders Save Lives program. I am the Business Development Manager for your local area and I am looking forward to getting to know more about you and your interest in hosting a blood drive. The Leaders Save Lives program is a great opportunity for students and I look forward to telling you more about it.
+
+I would like to set up some time to quickly chat with you.  Is there a time that works best for you?
+
+Kind regards, 
+[NAME]</textOnly>
+    <type>html</type>
+    <uiType>Aloha</uiType>
+</EmailTemplate>

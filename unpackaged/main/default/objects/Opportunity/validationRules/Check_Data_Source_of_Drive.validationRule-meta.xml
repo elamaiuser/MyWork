@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Check_Data_Source_of_Drive</fullName>
+    <active>false</active>
+    <description>If data_source__c is set to BSFStandard, fire validation</description>
+    <errorConditionFormula>$Label.IsMigrationEnable =  &#39;False&#39; &amp;&amp; ISPICKVAL(Data_Source__c  , &#39;BSFStandard&#39;)</errorConditionFormula>
+    <errorMessage>Blood Drive Opportunity creation is not allowed from this New link</errorMessage>
+</ValidationRule>

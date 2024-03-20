@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Report xmlns="http://soap.sforce.com/2006/04/metadata">
+    <columns>
+        <field>sked_Role_Time_Variance__c$Name</field>
+    </columns>
+    <columns>
+        <field>sked_Role_Time_Variance__c$sked_Note__c</field>
+    </columns>
+    <description>Delta Drive Service Agreement</description>
+    <format>Tabular</format>
+    <name>Delta Drive Service Agreement</name>
+    <params>
+        <name>co</name>
+        <value>1</value>
+    </params>
+    <reportType>Role_Time_Exception__c</reportType>
+    <scope>organization</scope>
+    <showDetails>true</showDetails>
+    <showGrandTotal>true</showGrandTotal>
+    <showSubTotals>true</showSubTotals>
+    <timeFrameFilter>
+        <dateColumn>sked_Role_Time_Variance__c$CreatedDate</dateColumn>
+        <interval>INTERVAL_CUSTOM</interval>
+    </timeFrameFilter>
+</Report>

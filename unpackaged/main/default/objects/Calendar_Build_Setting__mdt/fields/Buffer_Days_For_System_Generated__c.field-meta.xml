@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Buffer_Days_For_System_Generated__c</fullName>
+    <defaultValue>8</defaultValue>
+    <description>Number of days after end of month to run the resource allocation job for draft drives in the previous month.</description>
+    <externalId>false</externalId>
+    <fieldManageability>DeveloperControlled</fieldManageability>
+    <inlineHelpText>Number of days after end of month to run the resource allocation job for draft drives in the previous month.</inlineHelpText>
+    <label>Buffer Days For System Generated</label>
+    <precision>18</precision>
+    <required>false</required>
+    <scale>0</scale>
+    <type>Number</type>
+    <unique>false</unique>
+</CustomField>

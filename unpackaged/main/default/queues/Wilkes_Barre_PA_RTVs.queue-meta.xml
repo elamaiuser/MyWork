@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Queue xmlns="http://soap.sforce.com/2006/04/metadata">
+    <doesSendEmailToMembers>false</doesSendEmailToMembers>
+    <name>Wilkes Barre PA: RTVs</name>
+    <queueMembers>
+        <users>
+            <user>autumn.moore@redcross.org</user>
+            <user>carissa.keselyak@redcross.org</user>
+            <user>craig.lampertsoto@redcross.org</user>
+            <user>gabe.encarnacion@redcross.org</user>
+            <user>karen.sutton@redcross.org</user>
+            <user>lena.wassel@redcross.org</user>
+            <user>lori.wolfe@redcross.org</user>
+            <user>michelle.fingerhoot@redcross.org</user>
+            <user>tiffany.brown@redcross.org.biomed</user>
+            <user>veronica.torres@redcross.org</user>
+        </users>
+    </queueMembers>
+    <queueSobject>
+        <sobjectType>sked__Location__c</sobjectType>
+    </queueSobject>
+</Queue>

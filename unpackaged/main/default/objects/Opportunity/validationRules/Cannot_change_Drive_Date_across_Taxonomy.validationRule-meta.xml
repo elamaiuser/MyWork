@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Cannot_change_Drive_Date_across_Taxonomy</fullName>
+    <active>true</active>
+    <description>A Drive Date change cannot change to cross a Taxonomy effective date.</description>
+    <errorConditionFormula>Is_Template__c = FALSE &amp;&amp;
+NOT( ISNEW() ) &amp;&amp;
+ISCHANGED( Drive_Date__c ) &amp;&amp;
+NOT( ISBLANK( PRIORVALUE( Drive_Date__c ) ) ) &amp;&amp;
+(
+    ISBLANK( Drive_Date__c ) ||
+    ( 
+        PRIORVALUE( Drive_Date__c ) &lt; DATEVALUE(&quot;2024-01-22&quot;) &amp;&amp;
+        Drive_Date__c &gt;= DATEVALUE(&quot;2024-01-22&quot;)
+    ) ||
+    ( 
+        PRIORVALUE( Drive_Date__c ) &gt;= DATEVALUE(&quot;2024-01-22&quot;) &amp;&amp;
+        Drive_Date__c &lt; DATEVALUE(&quot;2024-01-22&quot;)
+    )
+)</errorConditionFormula>
+    <errorDisplayField>Drive_Date__c</errorDisplayField>
+    <errorMessage>Drive Date change interferes with Taxonomy effective dates. Please cancel and rebook. Any scheduled donors should be managed through the Notifying Donors of Drive Change policy.</errorMessage>
+</ValidationRule>

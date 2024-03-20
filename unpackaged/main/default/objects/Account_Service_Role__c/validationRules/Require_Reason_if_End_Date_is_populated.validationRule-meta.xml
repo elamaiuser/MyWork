@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Require_Reason_if_End_Date_is_populated</fullName>
+    <active>true</active>
+    <errorConditionFormula>NOT(ISNULL(End_Date__c) )  &amp;&amp;   ISPICKVAL(Account_Service_End_Reason__c, &quot;&quot;)</errorConditionFormula>
+    <errorMessage>In order to enter an End Date, please select a Account Service End Reason.</errorMessage>
+</ValidationRule>

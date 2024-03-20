@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<StandardValueSet xmlns="http://soap.sforce.com/2006/04/metadata">
+    <sorted>false</sorted>
+    <standardValue>
+        <fullName>General Referral</fullName>
+        <default>false</default>
+        <label>General Referral</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Humanitarian Referral</fullName>
+        <default>false</default>
+        <label>Humanitarian Referral</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Inbound Inquiry</fullName>
+        <default>false</default>
+        <label>Inbound Inquiry</label>
+    </standardValue>
+    <standardValue>
+        <fullName>National Partnership/National Accounts</fullName>
+        <default>false</default>
+        <label>National Partnership/National Accounts</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Prospect List</fullName>
+        <default>false</default>
+        <label>Prospect List</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Redcross.org</fullName>
+        <default>false</default>
+        <label>Redcross.org</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Redcrossblood.org</fullName>
+        <default>false</default>
+        <label>Redcrossblood.org</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Redcross Staff</fullName>
+        <default>false</default>
+        <label>Redcross Staff</label>
+    </standardValue>
+</StandardValueSet>

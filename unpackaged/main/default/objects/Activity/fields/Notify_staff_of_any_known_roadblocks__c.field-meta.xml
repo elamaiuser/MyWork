@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Notify_staff_of_any_known_roadblocks__c</fullName>
+    <defaultValue>false</defaultValue>
+    <externalId>false</externalId>
+    <inlineHelpText>Is there any construction or changes to the blood drive location that could delay our staff’s arrival or ability to set up on time? Notify staff of any known road condition or roadblocks and provide an alternative route, if necessary.</inlineHelpText>
+    <label>Notify staff of any known roadblocks</label>
+    <type>Checkbox</type>
+</CustomField>

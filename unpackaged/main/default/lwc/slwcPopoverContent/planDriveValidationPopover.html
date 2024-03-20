@@ -1,0 +1,43 @@
+<template>
+    <div class="drive-date-validate-popover">
+        <div class={popoverData.class} style={popoverData.slotStyle}>
+            <div class="bar" style={popoverData.barStyle}></div>
+            
+            <div class="info">
+                <div class="date-slot">
+                    <div class="date-slot_icon" style={popoverData.driveLimitIconStyle}>
+                        <lightning-icon icon-name="utility:campaign" variant="inverse" size="xx-small"></lightning-icon>
+                    </div>
+                    <div class="date-slot_info">
+                        {popoverData.driveCount}
+                    </div>
+                    <div class="date-slot_info">
+                        {popoverData.driveLimit}
+                    </div>
+                </div>
+                <div class="date-slot">
+                    <div class="date-slot_icon" style={popoverData.resourceIconStyle}>
+                        <lightning-icon icon-name="utility:user" variant="inverse" size="xx-small"></lightning-icon>
+                    </div>
+                    <div class="date-slot_info">
+                        {popoverData.requiredResources}
+                    </div>
+                    <div class="date-slot_info">
+                        {popoverData.availableResources}
+                    </div>
+                </div>
+                <div class="date-slot">
+                    <div class="date-slot_icon" style={popoverData.vehicleIconStyle}>
+                        <lightning-icon icon-name="utility:travel_and_places" variant="inverse" size="xx-small"></lightning-icon>
+                    </div>
+                    <div class="date-slot_info">
+                        {popoverData.requiredVehicles}
+                    </div>
+                    <div class="date-slot_info">
+                        {popoverData.availableVehicles}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>

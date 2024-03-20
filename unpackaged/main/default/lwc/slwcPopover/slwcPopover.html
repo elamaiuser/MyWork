@@ -1,0 +1,22 @@
+<template>
+    <c-slwc-click-outside func={handleHidePopover}>
+        <slot name="reference"></slot>
+
+        <template if:true={showPopover}>
+            <section class={popoverClass} style={popoverStyle} role="dialog">
+                <button if:true={showCloseButton}
+                    class="slds-button slds-button_icon slds-button_icon slds-button_icon-small slds-float_right slds-popover__close"
+                    title="Close" onclick={handleHidePopover}>
+                    <lightning-icon icon-name="utility:close" size="x-small"></lightning-icon>
+                    <span class="slds-assistive-text">Close dialog</span>
+                </button>
+                <div class="slds-popover__body">
+                    <div class="slds-p-around_x-small">
+                        <slot name="content"></slot>
+                    </div>
+                </div>
+            </section>
+        </template>
+    </c-slwc-click-outside>
+
+</template>

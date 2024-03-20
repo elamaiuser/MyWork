@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>sked_Travel_Time_CO_To_Site__c</fullName>
+    <deleteConstraint>SetNull</deleteConstraint>
+    <description>Used to access [Co to site] travel time data.</description>
+    <externalId>false</externalId>
+    <label>Travel Time CO To Site</label>
+    <referenceTo>sked_Travel_Time_Index_Item__c</referenceTo>
+    <relationshipLabel>Drives on Calendar (CO To Site)</relationshipLabel>
+    <relationshipName>sked_Drives_Co_To_Site</relationshipName>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Lookup</type>
+</CustomField>

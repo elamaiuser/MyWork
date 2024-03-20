@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Copy_of_Site_Change_Truck_to_Bus_2</fullName>
+    <columns>sked_Drive_Date__c</columns>
+    <columns>sked_Status__c</columns>
+    <columns>NAME</columns>
+    <columns>sked_Drive_Site__c</columns>
+    <columns>sked_Vehicle_Types__c</columns>
+    <columns>sked_Vehicles_Allocated__c</columns>
+    <columns>sked_MigrationID__c</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>sked_Drive_Date__c</field>
+        <operation>greaterOrEqual</operation>
+        <value>TODAY</value>
+    </filters>
+    <filters>
+        <field>sked_Type_of_Drive__c</field>
+        <operation>equals</operation>
+        <value>Mobile</value>
+    </filters>
+    <filters>
+        <field>sked_Status__c</field>
+        <operation>notEqual</operation>
+        <value>Draft,Complete,Cancel</value>
+    </filters>
+    <filters>
+        <field>sked_Vehicle_Types__c</field>
+        <operation>equals</operation>
+    </filters>
+    <filters>
+        <field>NAME</field>
+        <operation>notContain</operation>
+        <value>Donor Center,TBD</value>
+    </filters>
+    <label>Drives Missing Vehicles</label>
+</ListView>

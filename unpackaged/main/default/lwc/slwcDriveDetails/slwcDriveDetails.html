@@ -1,0 +1,302 @@
+<template>
+    <template if:true={showSpinner}>
+        <lightning-spinner class="spins" size="medium"></lightning-spinner>
+    </template>
+
+    <div id="main" class="main">
+        <c-slwc-page-errors validities={drive.tabDetailsValidities}></c-slwc-page-errors>
+        <div class="slds-p-bottom_medium">
+            <h3 class="slds-section-title--divider">Drive Summary</h3>
+            <div class="slds-grid slds-wrap slds-p-right_small">
+                <div class="slds-col slds-medium-size_6-of-12 slds-size_1-of-1 slds-p-left_small">
+                    <template if:false={masterData.isReadonly}>
+                        <lightning-input type="text" name="name" label="Drive Name" value={drive.name} onchange={handleOnChange} max-length="80" required>
+                        </lightning-input>
+                    </template>
+                    <template if:true={masterData.isReadonly}>
+                        <div class="slds-form-element slds-form-element_readonly">
+                            <span class="slds-form-element__label">Drive Name</span>
+                            <div class="slds-form-element__control">
+                                <div class="slds-form-element__static slds-truncate">{drive.name}</div>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+            </div>
+            <div class="slds-grid slds-wrap slds-p-right_small">
+                <div class="slds-col slds-medium-size_3-of-12 slds-size_1-of-1 slds-p-left_small">
+                    <template if:false={masterData.fieldReadonlyMap.driveDate}>
+                        <lightning-input type="date" name="driveDate" label="Drive Date" value={drive.driveDate} onchange={handleOnChange} autocomplete="off" required>
+                        </lightning-input>
+                    </template>
+                    <template if:true={masterData.fieldReadonlyMap.driveDate}>
+                        <div class="slds-form-element slds-form-element_readonly">
+                            <span class="slds-form-element__label">Drive Date</span>
+                            <div class="slds-form-element__control">
+                                <div class="slds-form-element__static slds-truncate">
+                                    <lightning-formatted-date-time value={drive.driveDate}></lightning-formatted-date-time>
+                                </div>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+                
+                <div class="slds-col slds-medium-size_3-of-12 slds-size_1-of-1 slds-p-left_small">
+                    <template if:false={masterData.fieldReadonlyMap.driveSite}>
+                        <c-slwc-lookup
+                            icon-name="standard:account"
+                            name="driveSite"
+                            label="Drive Site"
+                            is-required
+                            selection={drive.driveSite}
+                            display-field="name" 
+                            is-custom-search 
+                            custom-search-func={handleSearchSites}
+                            before-remove-site-func={handleBeforeRemoveSite}
+                            onselectionchange={handleSelectSite}>
+                        </c-slwc-lookup>                        
+                    </template>
+                    <template if:true={masterData.fieldReadonlyMap.driveSite}>
+                        <div class="slds-form-element slds-form-element_readonly">
+                            <span class="slds-form-element__label">Drive Site</span>
+                            <div class="slds-form-element__control">
+                                <div class="slds-form-element__static slds-truncate">
+                                    {drive.driveSite.name}
+                                </div>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+
+                <div class="slds-col slds-medium-size_3-of-12 slds-size_1-of-1 slds-p-left_small">
+                    <template if:false={masterData.fieldReadonlyMap.startTime}>
+                        <c-slwc-time-input-with-timezone 
+                            input-date={drive.driveDate}
+                            timezone={masterData.timezoneSidId}>
+                            <lightning-input 
+                                slot="input"
+                                class="inputStartTime" type="time" name="startTime" 
+                                label="Start Time" value={drive.startTime} onchange={handleOnChange}
+                                required>
+                            </lightning-input>
+                        </c-slwc-time-input-with-timezone>
+                    </template>
+                    <template if:true={masterData.fieldReadonlyMap.startTime}>
+                        <div class="slds-form-element slds-form-element_readonly">
+                            <span class="slds-form-element__label">Start Time</span>
+                            <div class="slds-form-element__control">
+                                <div class="slds-form-element__static slds-truncate">
+                                    <c-slwc-time-input-with-timezone 
+                                        read-only
+                                        input-date={drive.driveDate}
+                                        timezone={masterData.timezoneSidId}>
+                                        <lightning-formatted-time slot="input" value={drive.startTime}></lightning-formatted-time>
+                                    </c-slwc-time-input-with-timezone>
+                                </div>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+                <div class="slds-col slds-medium-size_3-of-12 slds-size_1-of-1 slds-p-left_small">
+                    <template if:false={masterData.fieldReadonlyMap.endTime}>
+                        <c-slwc-time-input-with-timezone 
+                            input-date={drive.driveDate}
+                            timezone={masterData.timezoneSidId}>
+                            <lightning-input 
+                                slot="input"
+                                class="inputEndTime" type="time" name="endTime" 
+                                label="End Time" value={drive.endTime} onchange={handleOnChange}
+                                required>
+                            </lightning-input>
+                        </c-slwc-time-input-with-timezone>
+                    </template>
+                    <template if:true={masterData.fieldReadonlyMap.endTime}>
+                        <div class="slds-form-element slds-form-element_readonly">
+                            <span class="slds-form-element__label">End Time</span>
+                            <div class="slds-form-element__control">
+                                <div class="slds-form-element__static slds-truncate">
+                                    <c-slwc-time-input-with-timezone 
+                                        read-only
+                                        input-date={drive.driveDate}
+                                        timezone={masterData.timezoneSidId}>
+                                        <lightning-formatted-time slot="input" value={drive.endTime}></lightning-formatted-time>
+                                    </c-slwc-time-input-with-timezone>
+                                </div>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+
+                <template if:false={isFixedSiteDrive}>
+                    <div class="slds-col slds-medium-size_3-of-12 slds-size_1-of-1 slds-p-left_small">
+                        <template if:false={masterData.fieldReadonlyMap.projectedRegisteredDonors}>
+                            <lightning-input 
+                                type="number" autocomplete="off" 
+                                name="projectedRegisteredDonors" 
+                                label="Projected Registered Donors" 
+                                value={drive.projectedRegisteredDonors} 
+                                onchange={handleOnChange} 
+                                readonly={isFixedSiteDrive}
+                                required>
+                            </lightning-input>
+                        </template>
+                        <template if:true={masterData.fieldReadonlyMap.projectedRegisteredDonors}>
+                            <div class="slds-form-element slds-form-element_readonly">
+                                <span class="slds-form-element__label">Projected Registered Donors</span>
+                                <div class="slds-form-element__control">
+                                    <div class="slds-form-element__static slds-truncate">{drive.projectedRegisteredDonors}</div>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                </template>
+
+                <div class="slds-col slds-medium-size_3-of-12 slds-size_1-of-1 slds-p-left_small">
+                    <template if:false={masterData.isReadonly}>
+                        <lightning-input type="text" name="maximumLunchBreakDuration" label="Maximum Lunch Break Duration" value={drive.maximumLunchBreakDuration} readonly>
+                        </lightning-input>
+                    </template>
+                    <template if:true={masterData.isReadonly}>
+                        <div class="slds-form-element slds-form-element_readonly">
+                            <span class="slds-form-element__label">Maximum Lunch Break Duration</span>
+                            <div class="slds-form-element__control">
+                                <div class="slds-form-element__static slds-truncate">{drive.maximumLunchBreakDuration}</div>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+                
+                <div class="slds-col slds-medium-size_3-of-12 slds-size_1-of-1 slds-p-left_small">
+                    <template if:false={masterData.isReadonly}>
+                        <lightning-input type="text" name="noOfScheduledAppointments" label="# of Scheduled Appointments" value={drive.noOfScheduledAppointments} readonly>
+                        </lightning-input>
+                    </template>
+                    <template if:true={masterData.isReadonly}>
+                        <div class="slds-form-element slds-form-element_readonly">
+                            <span class="slds-form-element__label"># of Scheduled Appointments</span>
+                            <div class="slds-form-element__control">
+                                <div class="slds-form-element__static slds-truncate">{drive.noOfScheduledAppointments}</div>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+
+                <div class="slds-col slds-medium-size_3-of-12 slds-size_1-of-1 slds-p-left_small">
+                    <template if:false={masterData.fieldReadonlyMap.driveShifts}>
+                        <c-slwc-picklist
+                            class="slds-grow"
+                            name="travelTimeIncluded"
+                            label="Travel Time Included"
+                            object-api-name="sked_Drive__c"
+                            required
+                            selected-value={drive.travelTimeIncluded}  
+                            pick-listfield-api-name="sked_Travel_Time_Included__c"
+                            onpicklistchange={handleOnChange}>
+                        </c-slwc-picklist>
+                    </template>
+                    <template if:true={masterData.fieldReadonlyMap.driveShifts}>
+                        <div class="slds-form-element slds-form-element_readonly">
+                            <span class="slds-form-element__label">Travel Time Included</span>
+                            <div class="slds-form-element__control">
+                                <div class="slds-form-element__static slds-truncate">{drive.travelTimeIncluded}</div>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+
+                <div class="slds-col slds-size_1-of-1 slds-p-left_small">
+                    <template if:false={masterData.fieldReadonlyMap.operationNotes}>
+                        <lightning-textarea
+                            name="operationNotes" 
+                            label="Operational Notes" 
+                            value={drive.operationNotes} 
+                            onchange={handleOnChange} 
+                        ></lightning-textarea>
+                    </template>
+                    <template if:true={masterData.fieldReadonlyMap.operationNotes}>
+                        <div class="slds-form-element slds-form-element_readonly">
+                            <span class="slds-form-element__label">Operational Notes</span>
+                            <div class="slds-form-element__control">
+                                <div class="slds-form-element__static slds-truncate">{drive.operationNotes}</div>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+            </div>
+        </div>
+        
+        <div class="slds-p-bottom_medium">
+            <h3 class="slds-section-title--divider">Site Information</h3>
+            <div class="slds-grid slds-wrap slds-p-right_small">
+                <div class="slds-col slds-medium-size_3-of-12 slds-size_1-of-1 slds-p-left_small">
+                    <template if:false={masterData.isReadonly}>
+                        <lightning-input type="text" label="Site" value={drive.driveSite.name} readonly>
+                        </lightning-input>
+                    </template>
+                    <template if:true={masterData.isReadonly}>
+                        <div class="slds-form-element slds-form-element_readonly">
+                            <span class="slds-form-element__label">Site</span>
+                            <div class="slds-form-element__control">
+                                <div class="slds-form-element__static slds-truncate">{drive.driveSite.name}</div>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+                <div class="slds-col slds-medium-size_3-of-12 slds-size_1-of-1 slds-p-left_small">
+                    <template if:false={masterData.isReadonly}>
+                        <lightning-input type="date" label="Date Site Verification Completed" value={drive.driveSite.dateSiteInspectionCompleted} readonly>
+                        </lightning-input>
+                    </template>
+                    <template if:true={masterData.isReadonly}>
+                        <div class="slds-form-element slds-form-element_readonly">
+                            <span class="slds-form-element__label">Date Site Verification Completed</span>
+                            <div class="slds-form-element__control">
+                                <div class="slds-form-element__static slds-truncate">
+                                    <lightning-formatted-date-time value={drive.driveSite.dateSiteInspectionCompleted}></lightning-formatted-date-time>
+                                </div>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+                <div class="slds-col slds-medium-size_3-of-12 slds-size_1-of-1 slds-p-left_small">
+                    <template if:false={masterData.isReadonly}>
+                        <lightning-input type="text" label="Site Verification Completed By" value={siteInspectionCompletedByName} readonly>
+                        </lightning-input>
+                    </template>
+                    <template if:true={masterData.isReadonly}>
+                        <div class="slds-form-element slds-form-element_readonly">
+                            <span class="slds-form-element__label">Site Verification Completed By</span>
+                            <div class="slds-form-element__control">
+                                <div class="slds-form-element__static slds-truncate">{siteInspectionCompletedByName}</div>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+                <div class="slds-col slds-medium-size_3-of-12 slds-size_1-of-1 slds-p-left_small">
+                    <template if:false={masterData.isReadonly}>
+                        <lightning-input type="text" label="Physical Location Type" value={drive.driveSite.physicalLocationType} readonly>
+                        </lightning-input>
+                    </template>
+                    <template if:true={masterData.isReadonly}>
+                        <div class="slds-form-element slds-form-element_readonly">
+                            <span class="slds-form-element__label">Physical Location Type</span>
+                            <div class="slds-form-element__control">
+                                <div class="slds-form-element__static slds-truncate">{drive.driveSite.physicalLocationType}</div>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <c-slwc-confirm-modal
+        is-open={confirmModalData.isOpen}
+        title={confirmModalData.title}
+        message={confirmModalData.message}
+        handle-on-close={confirmModalData.onClose}
+        confirm-btn-label={confirmModalData.confirmBtnLabel}
+        cancel-btn-label={confirmModalData.cancelBtnLabel}
+        size='x-small'>
+    </c-slwc-confirm-modal>
+</template>

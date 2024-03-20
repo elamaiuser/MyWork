@@ -1,0 +1,20 @@
+<template>
+    <div>
+        <template if:true={typeAttributes.showAPTQuantity}>
+            <div>
+                APT: {typeAttributes.aptQuantity}
+            </div>
+            <div>
+                VP/HH: {typeAttributes.vphhQuantity}
+            </div>
+            <div>
+                Total: {typeAttributes.quantity}
+            </div>
+        </template>
+        <template if:false={typeAttributes.showAPTQuantity}>
+            <div>
+                {typeAttributes.quantity}
+            </div>
+        </template>
+    </div>
+</template>

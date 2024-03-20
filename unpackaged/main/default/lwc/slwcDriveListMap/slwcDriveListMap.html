@@ -1,0 +1,130 @@
+<template>
+
+    <div class="slds-grid">
+        <div class="slds-col">
+            <c-slwc-drive-scheduling-filters
+                mode="driveScheduling"
+                onsearch={handleSearch}
+            >
+            </c-slwc-drive-scheduling-filters>
+        </div>
+        <div class="slds-col slds-scrollable_y slds-p-left_medium slds-is-relative" style="min-height: 400px; width:100%;">
+            <div class="slds-grid">
+                <div class="slds-no-flex slds-col_bump-left slds-p-right_small" style="width: 300px;">
+                    <c-slwc-new-collection-operation-multi-picklist
+                        division-single-select
+                        date-range={collectionOperationDateRange}
+                        default-values={filters.collectionOperationValues}
+                        onchange={handleCollectionOperationChanged}>
+                    </c-slwc-new-collection-operation-multi-picklist>
+                </div>
+
+                <div class="slds-p-right_small">
+                    <c-slwc-week-date-picker
+                        includes-additional-days={includesAdditionalDays}
+                        first-day={collectionOperationFirstDay}
+                        unique-key="driveOptimizer"
+                        onweekdatechange={handleOnChange}
+                        default-start-date={filters.startDate}
+                        default-end-date={filters.endDate}>
+                    </c-slwc-week-date-picker>
+                </div>
+            </div>
+
+            <div class="slds-p-around_small slds-is-relative">
+                <template if:true={showSpinner}>
+                    <lightning-spinner class="spins" size="medium"></lightning-spinner>
+                </template>
+
+                <template if:false={hasRecords}>
+                    <div class="slds-align_absolute-center slds-p-around_large" style="height: 60vh;">
+                        <lightning-icon icon-name="utility:warning" size="x-small" alternative-text="Warning!" title="Warning"></lightning-icon>
+                        <span class="slds-m-left--small">No Drives found.</span>
+                    </div>
+                </template>
+
+                <template if:true={hasRecords}>
+                    <div class="slds-grid" style="height: 60vh;">
+                        <div class="slds-scrollable_y slds-grow">
+                            <lightning-map
+                                style="height: 100%; overflow: hidden;"
+                                map-markers={mapMarkers}
+                                list-view="hidden"
+                                markers-title="Sites"
+                                selected-marker-value={selectedDriveSite}
+                                onmarkerselect={handleMarkerSelect}
+                            ></lightning-map>
+                        </div>
+                        <div class="slds-scrollable_y drive-list-section slds-grid slds-grid_vertical" if:true={showSelectedSiteDriveList}>
+                            <div class="slds-grid slds-page-header slds-page-header_joined slds-page-header_bleed slds-shrink-none test-headerRegion slds-is-relative">
+                                <div class="slds-media slds-media--center slds-has-flexi-truncate">
+                                    <div class="slds-col slds-has-flexi-truncate firstHeaderRow">
+                                        <div class="slds-media slds-no-space slds-grow">
+                                            <lightning-icon icon-name="custom:custom26" class="slds-m-right_small" variant="inverse" size="small" ></lightning-icon>
+                    
+                                            <div class="slds-media__body slds-align-middle">
+                                                <h2 class="slds-card__header-title">
+                                                    <span class="slds-card__header-link baseCard__header-title-container">
+                                                        <span class="slds-truncate slds-m-right--xx-small">{selectedDriveSite.name}</span>
+                                                    </span>
+                                                </h2>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <ul class="list-item slds-scrollable_y slds-grow">
+                                <template for:each={selectedSiteDriveList} for:item="drive">
+                                    <li key={drive.id} class="item" data-value={drive.id}>
+                                        <c-slwc-drive-name drive={drive}></c-slwc-drive-name>
+                                        <dl class="slds-dl_horizontal slds-text-color_weak slds-text-body_small">
+                                            <dt class="slds-dl_horizontal__label">Drive Date:</dt>
+                                            <dd class="slds-dl_horizontal__detail">
+                                                <lightning-formatted-date-time value={drive.driveDate} year="numeric" month="short" day="2-digit" time-zone="UTC"></lightning-formatted-date-time>
+                                            </dd>
+                                            <dt class="slds-dl_horizontal__label">Event Type:</dt>
+                                            <dd class="slds-dl_horizontal__detail">{drive.typeOfDrive}</dd>
+                                            <dt class="slds-dl_horizontal__label">Vehicle Types:</dt>
+                                            <dd class="slds-dl_horizontal__detail">{drive.vehicleTypes}</dd>
+                                            <dt class="slds-dl_horizontal__label">Min Start Shift:</dt>
+                                            <dd class="slds-dl_horizontal__detail">
+                                                <lightning-formatted-date-time value={drive.minShiftStart} hour="2-digit"
+                                                minute="2-digit" time-zone={timezoneSidId}></lightning-formatted-date-time>
+                                            </dd>
+                                            <dt class="slds-dl_horizontal__label">Max End Shift:</dt>
+                                            <dd class="slds-dl_horizontal__detail">
+                                                <lightning-formatted-date-time value={drive.maxShiftEnd} hour="2-digit"
+                                                minute="2-digit" time-zone={timezoneSidId}></lightning-formatted-date-time>
+                                            </dd>
+                                            <dt class="slds-dl_horizontal__label">Staff Requested:</dt>
+                                            <dd class="slds-dl_horizontal__detail">{drive.totalStaffRequested}</dd>
+                                            <dt class="slds-dl_horizontal__label">Staff Scheduled:</dt>
+                                            <dd class="slds-dl_horizontal__detail">{drive.staffAllocated}</dd>
+                                        </dl>
+                                        <div class="actions">
+                                            <lightning-button data-id={drive.id} label="View Details" variant="brand-outline" onclick={handleViewDetails}></lightning-button>
+                                        </div>
+                                    </li>
+                                </template>
+                            </ul>
+                            <div class="drive-list-section_footer">
+                                <div class="slds-grid slds-grid_align-spread slds-grid_vertical-align-center"> 
+                                    <div class="slds-text-color_weak ng-binding">Total drives: {selectedSiteDriveList.length} </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </template>
+            </div>
+        </div>
+    </div>
+    
+    <c-slwc-drive-staffing-details
+        scheduling-console-territory-keys={territoryKeys}
+        optimization-queue={optimizationQueue}
+        is-open={driveSideMenuData.shown}
+        record-id={driveSideMenuData.recordId}
+        onclose={closeDriveSideMenu}
+        onsave={saveDriveSideMenu}
+    ></c-slwc-drive-staffing-details>
+</template>

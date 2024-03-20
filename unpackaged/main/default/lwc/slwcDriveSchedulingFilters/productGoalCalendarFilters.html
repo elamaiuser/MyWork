@@ -1,0 +1,115 @@
+<template>
+    <c-slwc-click-outside func={closePanel}>
+        <nav class={customClass.panel}>
+            <div class="toggle-button" onclick={togglePanel}>
+                <lightning-button-icon class="arrow-icon" icon-name="utility:chevronleft" size="large" if:true={isOpen} variant="bare" tooltip="Collapse"></lightning-button-icon>
+                <lightning-button-icon class="arrow-icon" icon-name="utility:chevronright" size="large" if:false={isOpen} variant="bare" tooltip="Expand"></lightning-button-icon>
+            </div>
+
+            <div class="slds-nav-vertical__section">
+                <h2 class="slds-nav-vertical__title slds-p-horizontal_small">Product Goal Filters</h2>
+                <ul>
+                    <li class="slds-p-right_small slds-p-left_xx-small">
+                        <div class="slds-form-element slds-form-element_stacked">
+                            <c-slwc-multi-picklist
+                                name="procedureTypes"
+                                label="Procedure Types"
+                                selected-by-default={selectedAllByDefault}
+                                object-api-name="sked_Product_Goal__c"
+                                field-api-name="sked_Procedure_Type__c"
+                                onpicklistchange={handleOnChange}
+                                default-values={filters.procedureTypes}>
+                            </c-slwc-multi-picklist>
+                        </div>
+                    </li>
+                </ul>
+                <h2 class="slds-nav-vertical__title slds-p-horizontal_small">Drive Filters</h2>
+                <ul>
+                    <li class="slds-p-right_small slds-p-left_xx-small">
+                        <div class="slds-form-element slds-form-element_stacked">
+                            <c-slwc-multi-picklist
+                                name="driveTypes"
+                                label="Drive Types"
+                                selected-by-default={selectedAllByDefault}
+                                object-api-name="sked_Drive__c"
+                                field-api-name="sked_Type_of_Drive__c"
+                                onpicklistchange={handleOnChange}
+                                default-values={filters.driveTypes}>
+                            </c-slwc-multi-picklist>
+                        </div>
+                        <div class="slds-form-element slds-form-element_stacked">
+                            <c-slwc-multi-picklist
+                                name="stages"
+                                label="Stage"
+                                selected-by-default={selectedAllByDefault}
+                                object-api-name="Opportunity"
+                                field-api-name="StageName"
+                                onpicklistchange={handleOnChange}
+                                default-values={filters.stages}>
+                            </c-slwc-multi-picklist>
+                        </div>
+                        <div class="slds-form-element slds-form-element_stacked">
+                            <c-slwc-multi-picklist
+                                name="driveStatuses"
+                                label="Drive Status"
+                                selected-by-default={selectedAllByDefault}
+                                object-api-name="sked_Drive__c"
+                                field-api-name="sked_Status__c"
+                                onpicklistchange={handleOnChange}
+                                default-values={filters.driveStatuses}>
+                            </c-slwc-multi-picklist>
+                        </div>
+                        <div class="slds-form-element slds-form-element_stacked">
+                            <c-slwc-multi-lookup
+                                icon-name="standard:resource_skill"
+                                label="Markets"
+                                name="markets"
+                                selection={filters.markets}
+                                onselectionchange={handleOnChange}
+                                is-custom-search
+                                custom-search-func={handleSearchMarket}
+                                placeholder="Search Market">
+                            </c-slwc-multi-lookup>
+                        </div>
+                        <div class="slds-form-element slds-form-element_stacked">
+                            <c-slwc-multi-picklist
+                                unique-key="driveCalendar:accountType" 
+                                name="accountTypes"
+                                label="Account Types"
+                                selected-by-default={selectedAllByDefault}
+                                object-api-name="Account"
+                                field-api-name="Type"
+                                onpicklistchange={handleOnChange}
+                                default-values={filters.accountTypes}>
+                            </c-slwc-multi-picklist>
+                        </div>
+                        <div class="slds-form-element slds-form-element_stacked">
+                            <c-slwc-multi-picklist
+                                unique-key="driveCalendar:accountIndustryCode" 
+                                name="accountIndustryCodes"
+                                label="Account Industry Codes"
+                                selected-by-default={selectedAllByDefault}
+                                object-api-name="Account"
+                                field-api-name="Industry_Code__c"
+                                dependent-field-api-name="Type"
+                                onpicklistchange={handleOnChange}
+                                default-values={filters.accountIndustryCodes}
+                                controlling-field-values={filters.accountTypes}>
+                            </c-slwc-multi-picklist>
+                        </div>
+                        <div class="slds-form-element slds-form-element_stacked">
+                            <label class="slds-form-element__label">Show Only Linked Events</label>
+                            <lightning-input onchange={handleOnChange} name="showOnlyLinkedEvents" variant="label-hidden"
+                                type="toggle" label="Show Only Linked Events" checked={filters.showOnlyLinkedEvents}>
+                            </lightning-input>
+                        </div>
+                        
+                        <div class="slds-form-element slds-form-element_stacked slds-m-top_medium slds-text-align_right">
+                            <lightning-button label="Save" title="Save" variant="brand" onclick={handleSearch}></lightning-button>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+    </c-slwc-click-outside>
+</template>

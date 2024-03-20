@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GlobalValueSet xmlns="http://soap.sforce.com/2006/04/metadata">
+    <customValue>
+        <fullName>WB</fullName>
+        <default>false</default>
+        <label>WB</label>
+    </customValue>
+    <customValue>
+        <fullName>2RBC</fullName>
+        <default>false</default>
+        <label>2RBC</label>
+    </customValue>
+    <customValue>
+        <fullName>Platelet</fullName>
+        <default>false</default>
+        <label>Platelet</label>
+    </customValue>
+    <customValue>
+        <fullName>Plasma</fullName>
+        <default>false</default>
+        <label>Plasma</label>
+    </customValue>
+    <masterLabel>Fixed Site Procedure Type</masterLabel>
+    <sorted>false</sorted>
+</GlobalValueSet>

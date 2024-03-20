@@ -1,0 +1,14 @@
+.THIS .input-group .lightningInput {
+    display: inline-block;
+    margin-right: 10px;
+}
+
+.THIS .linkedDriveClass{
+    
+
+}
+
+
+.THIS .linkedRecordClass:hover {
+  background-color: yellow;
+}

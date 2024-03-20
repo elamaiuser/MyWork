@@ -1,0 +1,73 @@
+<template>
+
+    <template if:true={showModal}>
+        <div role="dialog" tabindex="-1" class="slds-modal slds-fade-in-open slds-modal-undefined slds-show">
+            <section aria-modal="true" role="dialog" tabindex="-1" class="slds-modal slds-fade-in-open">
+                <div class="slds-modal__container">
+                    <header class="slds-modal__header slds-modal__header--empty">
+                        <button class="slds-button slds-modal__close slds-button_icon-inverse" title="Close" onclick={closeModal}>
+                            <lightning-icon icon-name="utility:close" size="x-small" variant="inverse"></lightning-icon>
+                            <span class="slds-assistive-text">Close</span>
+                        </button>
+                    </header>
+                    <div class="slds-modal__content full-height__modal-content" style="position: relative; overflow: initial;">
+                        <div class="slds-spinner_container" if:true={showSpinner}>
+                            <div role="status" class="slds-spinner slds-spinner_medium">
+                                <span class="slds-assistive-text">Loading</span>
+                                <div class="slds-spinner__dot-a"></div>
+                                <div class="slds-spinner__dot-b"></div>
+                            </div>
+                        </div>
+                        <div class="slds-p-horizontal_medium">
+                            <h2 class="slds-p-top--large slds-p-horizontal--medium slds-p-bottom--medium slds-text-heading--medium" style="text-align: center; border-bottom: 1px solid var(--lwc-colorBorder,rgb(221, 219, 218));">
+                                {modalHeader}
+                            </h2>
+                            <c-slwc-page-errors validities={model.validities}></c-slwc-page-errors>
+
+                            <template if:true={isDeleteForm}>
+                                <div class="slds-p-around_medium slds-text-align_center">Are you sure you want to delete this Location Availability?</div>
+                            </template>
+
+                            <template if:false={isDeleteForm}>
+                                <div class="slds-section slds-is-open" style="margin-top:0;">
+                                    <h3 class="slds-section-title--divider">Details</h3>
+                                    <div class="slds-section__content section__content">
+                                        <div class="slds-form form-horizontal slds-is-editing slds-p-horizontal_medium">
+                                            <div class="slds-grid slds-gutters slds-p-bottom_small">
+                                                <div class="slds-col slds-size_1-of-1">
+                                                    <lightning-textarea name="notes" label="Notes" variant="label-inline" value={model.notes} onchange={handleOnChange}></lightning-textarea>
+                                                </div>
+                                            </div>
+                                            <div class="slds-grid slds-gutters slds-p-bottom_small">
+                                                <div class="slds-col slds-size_1-of-1">
+                                                    <lightning-input name="start" type="datetime" label="Start" variant="label-inline" value={model.start} timezone={timezoneSidId} onchange={handleOnChange} required autocomplete="off"></lightning-input>
+                                                </div>
+                                            </div>
+                                            <div class="slds-grid slds-gutters slds-p-bottom_small">
+                                                <div class="slds-col slds-size_1-of-1">
+                                                    <lightning-input name="finish" type="datetime" label="End" variant="label-inline" value={model.finish} timezone={timezoneSidId} onchange={handleOnChange} required autocomplete="off"></lightning-input>
+                                                </div>
+                                            </div>
+                                            <div class="slds-grid slds-gutters slds-p-bottom_small">
+                                                <div class="slds-col slds-size_1-of-1">
+                                                    <lightning-input name="isAvailable" type="checkbox" label="Is Available?" variant="label-inline" checked={model.isAvailable} onchange={handleOnChange}></lightning-input>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+                    <footer class="slds-modal__footer light-background">
+                        <lightning-button label="Cancel" title="Cancel" onclick={closeModal} class="slds-m-right_xx-small"></lightning-button>
+                        <lightning-button class="slds-m-top_small" if:false={isDeleteForm} onclick={handleSave} variant="brand" type="submit" name="update" label="Save"></lightning-button>
+                        <lightning-button class="slds-m-top_small" if:true={isDeleteForm} onclick={handleDelete} variant="brand" type="submit" name="delete" label="Delete"></lightning-button>
+                    </footer>
+                </div>
+            </section>
+        </div>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+    </template>
+    
+</template>

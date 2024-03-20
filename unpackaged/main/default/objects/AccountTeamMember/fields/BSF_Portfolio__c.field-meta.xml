@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>BSF_Portfolio__c</fullName>
+    <deleteConstraint>SetNull</deleteConstraint>
+    <description>Field is added to capture the Portfolio related to the Current Team Member</description>
+    <externalId>false</externalId>
+    <label>BSF Portfolio</label>
+    <referenceTo>BSF_Portfolio__c</referenceTo>
+    <relationshipLabel>Account Team</relationshipLabel>
+    <relationshipName>Account_Team</relationshipName>
+    <required>false</required>
+    <type>Lookup</type>
+</CustomField>

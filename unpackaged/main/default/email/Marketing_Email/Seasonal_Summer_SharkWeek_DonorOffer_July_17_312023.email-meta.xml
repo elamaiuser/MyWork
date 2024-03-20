@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<EmailTemplate xmlns="http://soap.sforce.com/2006/04/metadata">
+    <available>false</available>
+    <description>Email to promote July 2023 Shark Week Tshirt and MEG 2 Giveaway Donor Offer</description>
+    <encodingKey>ISO-8859-1</encodingKey>
+    <letterhead>ARC_Logo_Test</letterhead>
+    <name>Seasonal_Summer_SharkWeek_DonorOffer_July 17-312023</name>
+    <style>formalLetter</style>
+    <subject>MEGA Prizes for Donors at Your Upcoming Blood Drive!</subject>
+    <textOnly>Hello {!Contact.FirstName},
+
+Your blood drive is coming up, and every donation is vital because hospital patients are counting on lifesaving blood products from your drive. We are grateful for your kindness and commitment to helping those in need.
+
+
+Along with Warner Bros. Discovery, we’re diving into the 35th anniversary of Shark Week and the theatrical release of Meg 2: The Trench and invite you and your donors to dive in to help save lives.
+
+
+We’ve got a MEGA prizes for donors to sink their teeth into! When donors come to give July 12-Aug. 12, they’ll be automatically entered for a chance to win a three-night New York getaway for two with a private shark dive adventure at Long Island Aquarium!^^ PLUS, when they come give July 17-31 they’ll receive an exclusive Shark Week T-shirt, while supplies last!^
+
+
+Don’t be cold-blooded: Fill your blood drive schedule today.
+
+
+As you continue the work to make your drive a success – remember to use these tips:
+
+* Fill your schedule. Use these tools to recruit blood donors and schedule them using the Blood Drive Management Portal.
+
+* Encourage donors to schedule a donation for a friend. Each additional donor scheduled means more lives saved!
+
+
+If you have any questions, please do not hesitate to reach out – I’m always here to help!
+
+IMPORTANT: Donors MUST have a valid email address on file to receive their reward.
+
+
+All the best,
+
+{!Contact.OwnerFullName}
+
+
+P.S. Each Red Cross blood drive and donation center follows a high standard of safety and infection control to protect our partners, donors and staff.
+
+
+^Offer applicable to presenting donors only during the following dates: 07/17/2023-07/31/2023 and while supplies last. Offer subject to availability of donation opportunities in presenting donor’s area. No substitutions and not transferable by presenting donor. Not redeemable for cash.
+
+
+^^Void where prohibited. Void in Puerto Rico, any U.S. territories and outside the United States and where prohibited by law. Open to legal residents of U.S. states and DC, age 18+ (19+ in NE and AL; 21+ in MS) at entry. Begins 12:00 a.m. ET on 07/12/23; ends 11:59 p.m. ET on 08/12/23. NO PURCHASE OR DONATION NECESSARY. To enter either present to donate blood at an American Red Cross blood donation facility or send an email to customercare@redcross.org and include the Giveaway name, &quot;American Red Cross 2023 Meg 2: The Trench Giveaway.&quot; There is a limit of five (5) total Entries permitted per Entrant, regardless of method of Entry, during the Giveaway Period. One (1) prize will be awarded to one (1) winner. Winner will receive one (1) double occupancy hotel room for three (3) nights, round-trip airfare (unless local) for two (2) to New York with one (1) day entry to the Long Island Aquarium for two (2) and private shark dive adventure. Total ARV of all prize elements: $9,000. Odds of winning depend on number of entries received. Full rules click here. Sponsor: American Red Cross. © Meg 2: The Trench 2023 Warner Bros. Ent. All Rights Reserved.</textOnly>
+    <type>html</type>
+    <uiType>Aloha</uiType>
+</EmailTemplate>

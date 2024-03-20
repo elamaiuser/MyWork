@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Roseburg_OR_DCRs_sked_Drive_Change_Request</fullName>
+    <filterScope>Queue</filterScope>
+    <label>Roseburg OR: DCRs</label>
+    <queue>Roseburg_OR_DCRs</queue>
+    <sharedTo>
+        <allInternalUsers></allInternalUsers>
+    </sharedTo>
+</ListView>

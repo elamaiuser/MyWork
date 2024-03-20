@@ -1,0 +1,20 @@
+<template>
+
+    <div class="slds-tabs_default">
+        <ul class="slds-tabs_default__nav slds-theme_shade" role="tablist">
+            <li class={customClass.driveExceptionTab} role="presentation" data-value={TABS.DRIVE_EXCEPTION} onclick={handleTabChange}>
+                <a class="slds-tabs_default__link" role="tab">Drive Exception</a>
+            </li>
+            <li class={customClass.resourceExceptionTab} role="presentation" data-value={TABS.RESOURCE_EXCEPTION} onclick={handleTabChange}>
+                <a class="slds-tabs_default__link" role="tab">Resource Exception</a>
+            </li>
+        </ul>
+        <div if:true={showDriveExceptionTab} class="slds-tabs_default__content" style="padding-top: 0">
+            <c-slwc-exception-list exception-type="drive"></c-slwc-exception-list>
+        </div>
+        <div if:true={showResourceExceptionTab} class="slds-tabs_default__content" style="padding-top: 0">
+            <c-slwc-exception-list exception-type="resource"></c-slwc-exception-list>
+        </div>
+    </div>
+    
+</template>

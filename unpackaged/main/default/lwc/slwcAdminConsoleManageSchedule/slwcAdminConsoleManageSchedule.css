@@ -1,0 +1,163 @@
+.flex-display {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -webkit-flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  height: 100%;
+}
+
+.tree-container {
+  height: 100%;
+}
+
+.slds-has-block-links_space a {
+  display: inline-block;
+}
+
+.setting-panel .setting-panel_header {
+  padding: 1rem;
+  background-color: #f4f6f9;
+  -webkit-box-flex: 0;
+  -webkit-flex: 0 1 auto;
+  -ms-flex: 0 1 auto;
+  flex: 0 1 auto;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+  -ms-flex-align: center;
+  align-items: center;
+}
+
+.setting-panel .setting-panel_header .slds-media {
+  -webkit-box-flex: 1;
+  -webkit-flex: 1 0 auto;
+  -ms-flex: 1 0 auto;
+  flex: 1 0 auto;
+}
+
+.setting-panel .setting-panel_header .setup-icon {
+  background: #9faab5;
+  padding: 7px;
+  color: white;
+}
+
+.setting-panel .setting-panel_header .slds-page-header__title {
+  font-size: 0.75rem;
+  line-height: 1;
+  text-transform: uppercase;
+  color: #54698d;
+}
+
+.setting-panel .setting-panel_header .slds-page-header__subtitle {
+  color: #16325c;
+  font-weight: 300;
+  font-size: 1.25rem;
+  line-height: 1.25;
+  margin-top: 3px;
+}
+
+.setting-panel .setting-panel_content-container {
+  margin: 0 1rem 1rem;
+  -webkit-box-flex: 1;
+  -webkit-flex: 1 1 auto;
+  -ms-flex: 1 1 auto;
+  flex: 1 1 auto;
+  position: relative;
+}
+
+.setting-panel .setting-panel_content-container .setting-panel_content {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  top: 0;
+  background-color: #fdfdfd;
+  border: 1px #e0e5ee solid;
+  border-radius: 0.25rem;
+  overflow: auto;
+}
+
+.setting-panel
+  .setting-panel_content-container
+  .setting-panel_content
+  .setting-row {
+  padding: 0.75rem 0;
+  border-bottom: 1px solid #d8dde6;
+}
+
+.setting-panel
+  .setting-panel_content-container
+  .setting-panel_content
+  .setting-row:nth-child(even) {
+  background: rgba(240, 248, 252, 0.4);
+}
+
+.exception-setting__table {
+  width: 100%;
+  table-layout: fixed;
+}
+
+.exception-setting__table tr th {
+  font-size: 0.675rem;
+  font-weight: normal;
+  background: #fff;
+}
+
+.exception-setting__table tr td {
+  font-size: 0.75rem;
+}
+
+.exception-setting__table .exception-code__col {
+  width: 2rem;
+}
+
+.exception-setting__table .priority__col {
+  width: 1.25rem;
+}
+
+.exception-setting__table .exception__col {
+  width: 2.5rem;
+}
+
+.setting-table__empty-message {
+  color: #767676;
+  text-align: center;
+}
+
+.setting-table__empty-message svg {
+  fill: #767676;
+  margin-bottom: 0.25rem;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(25rem, 1fr));
+  -webkit-column-gap: 1rem;
+  -moz-column-gap: 1rem;
+  column-gap: 1rem;
+  row-gap: 1rem;
+}
+
+@media (max-width: 1440px) {
+  .grid {
+    grid-template-columns: repeat(2, minmax(25rem, 1fr));
+  }
+}
+
+.slds-dl_horizontal__label {
+  width: 40%;
+  margin-top: 0.375rem;
+}
+
+.slds-dl_horizontal__detail {
+  width: 60%;
+  margin-top: 0.375rem;
+}

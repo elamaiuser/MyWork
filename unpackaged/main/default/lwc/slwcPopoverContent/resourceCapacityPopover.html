@@ -1,0 +1,23 @@
+<template>
+    <dl class="slds-popover__body-list">
+        <dt class="slds-m-bottom_small">
+            <div class="slds-media slds-media_center">
+                <div class="slds-media__figure">
+                    <span class="slds-icon_container slds-icon-standard-opportunity">
+                        <lightning-icon icon-name="standard:resource_capacity" size="small"></lightning-icon>
+                        <span class="slds-assistive-text">Resource Capacity</span>
+                    </span>
+                </div>
+                <div class="slds-media__body"><p class="slds-text-heading_small slds-hyphenate">Resource Capacity</p></div>
+            </div>
+        </dt>
+        <dd class="slds-m-top_x-small">
+            <dl class="slds-list_horizontal slds-wrap slds-text-body_small">
+                <template for:each={popoverData.capacityItems} for:item="item">
+                    <dt key={item.resourceRole} class="slds-item_label slds-text-color_weak slds-truncate" title={item.resourceRole}>{item.resourceRole}</dt>
+                    <dd key={item.resourceRole} class="slds-item_detail slds-text-color_weak slds-truncate">{item.available}/{item.require}</dd>
+                </template>
+            </dl>
+        </dd>
+    </dl>
+</template>

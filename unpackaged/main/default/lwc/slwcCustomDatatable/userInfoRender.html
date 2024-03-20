@@ -1,0 +1,14 @@
+<template>
+
+    <div class="slds-media slds-media_center slds-p-horizontal_x-small">
+        <template if:true={typeAttributes.showPhoto}>
+            <div class="slds-media__figure">
+                <lightning-avatar size="x-small" fallback-icon-name="standard:user" src={value.photoUrl}></lightning-avatar>
+            </div>
+        </template>
+        <div class="slds-media__body">
+          <p>{value.name}</p>
+        </div>
+      </div>
+
+</template>

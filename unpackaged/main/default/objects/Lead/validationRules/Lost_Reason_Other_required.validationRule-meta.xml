@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Lost_Reason_Other_required</fullName>
+    <active>true</active>
+    <description>If &quot;Other&quot; was selected for Lost Reason, require the Lost Reason Other field to be filled out.</description>
+    <errorConditionFormula>AND( 
+ ISPICKVAL( Lost_Reason__c , &quot;Other&quot; ),
+ ISBLANK(  Lost_Reason_Other__c )
+)</errorConditionFormula>
+    <errorDisplayField>Lost_Reason_Other__c</errorDisplayField>
+    <errorMessage>Please provide a reason in the Lost Reason Other field when selecting &quot;Other&quot; as the Lost Reason.</errorMessage>
+</ValidationRule>

@@ -1,0 +1,13 @@
+<aura:component implements="force:hasRecordId,force:lightningQuickActionWithoutHeader" controller="AccountBasedPortfolioClass">
+	<!--aura:handler name="init" value="{!this}" action="{!c.doOnload}"></aura:handler-->
+    <aura:attribute name="recordId" type="String"/>
+    <aura:attribute name="accobject" type="Account"/>
+    <aura:attribute name="AccountFound" type="Boolean" default="false"/>
+    
+    <aura:handler name="init" value="{!this}" action="{!c.doOnload}"/>
+    
+    <aura:if isTrue="{!v.AccountFound}">
+        <c:accountBasedPortfolioAssignment accrecordid="{!v.recordId}" accrecord="{!v.accobject}" onclosequickaction="{!c.closequickaction}"/>
+    </aura:if>
+    
+</aura:component>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Biomed_Market_Manager_Territory__c</fullName>
+    <deleteConstraint>SetNull</deleteConstraint>
+    <externalId>false</externalId>
+    <label>Biomed Market Manager Territory</label>
+    <referenceTo>Biomed_Market_Manager_Territory__c</referenceTo>
+    <relationshipLabel>Collections Zip Codes</relationshipLabel>
+    <relationshipName>Collections_Zip_Codes</relationshipName>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Lookup</type>
+</CustomField>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+        <label><!-- Variance Applies to --></label>
+        <name>sked_Variance_Applies_To__c</name>
+        <picklistValues>
+            <masterLabel>Breakdown Time</masterLabel>
+            <translation><!-- Breakdown Time --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Lead Time</masterLabel>
+            <translation><!-- Lead Time --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Setup Time</masterLabel>
+            <translation><!-- Setup Time --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Travel Time</masterLabel>
+            <translation><!-- Travel Time --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Wrap-up Time</masterLabel>
+            <translation><!-- Wrap-up Time --></translation>
+        </picklistValues>
+    </CustomFieldTranslation>

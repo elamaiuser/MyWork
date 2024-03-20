@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>sked_Reason_Approval_Required__c</fullName>
+    <externalId>false</externalId>
+    <label>Reason Approval Required</label>
+    <required>false</required>
+    <trackHistory>true</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>MultiselectPicklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Shift Trade doesn&#39;t meet cutoff requirements</fullName>
+                <default>false</default>
+                <label>Shift Trade doesn&#39;t meet cutoff requirements</label>
+            </value>
+            <value>
+                <fullName>Requesting User exceeds Max Hours per week</fullName>
+                <default>false</default>
+                <label>Requesting User exceeds Max Hours per week</label>
+            </value>
+            <value>
+                <fullName>Requesting User unqualified</fullName>
+                <default>false</default>
+                <label>Requesting User unqualified</label>
+            </value>
+            <value>
+                <fullName>Requesting User has a TAT Contention</fullName>
+                <default>false</default>
+                <label>Requesting User has a TAT Contention</label>
+            </value>
+            <value>
+                <fullName>Requesting User Drive is part of Linked Drive</fullName>
+                <default>false</default>
+                <label>Requesting User Drive is part of Linked Drive</label>
+            </value>
+            <value>
+                <fullName>Trading User exceeds Max Hours per week</fullName>
+                <default>false</default>
+                <label>Trading User exceeds Max Hours per week</label>
+            </value>
+            <value>
+                <fullName>Trading User unqualified</fullName>
+                <default>false</default>
+                <label>Trading User unqualified</label>
+            </value>
+            <value>
+                <fullName>Trading User has a TAT Contention</fullName>
+                <default>false</default>
+                <label>Trading User has a TAT Contention</label>
+            </value>
+            <value>
+                <fullName>Trading User Drive is part of Linked Drive</fullName>
+                <default>false</default>
+                <label>Trading User Drive is part of Linked Drive</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+    <visibleLines>4</visibleLines>
+</CustomField>

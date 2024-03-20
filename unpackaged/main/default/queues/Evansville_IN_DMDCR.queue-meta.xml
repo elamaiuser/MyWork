@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Queue xmlns="http://soap.sforce.com/2006/04/metadata">
+    <doesSendEmailToMembers>false</doesSendEmailToMembers>
+    <name>Evansville IN: DMDCR</name>
+    <queueMembers>
+        <users>
+            <user>ashley.hughes@redcross.org</user>
+            <user>cyndi.dahl@redcross.org.biomed</user>
+            <user>donna.watkins2@redcross.org</user>
+            <user>eric.holden@redcross.org.biomed</user>
+            <user>rebekah.byron@redcross.org</user>
+            <user>terri.shinn@redcross.org</user>
+            <user>tony.baker@redcross.org</user>
+        </users>
+    </queueMembers>
+    <queueSobject>
+        <sobjectType>Task</sobjectType>
+    </queueSobject>
+    <queueSobject>
+        <sobjectType>sked_Drive_Change_Request__c</sobjectType>
+    </queueSobject>
+</Queue>

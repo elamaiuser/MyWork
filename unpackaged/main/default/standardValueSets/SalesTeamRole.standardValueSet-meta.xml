@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<StandardValueSet xmlns="http://soap.sforce.com/2006/04/metadata">
+    <sorted>false</sorted>
+    <standardValue>
+        <fullName>Account Manager</fullName>
+        <default>false</default>
+        <label>Account Manager</label>
+    </standardValue>
+    <standardValue>
+        <fullName>District Manager</fullName>
+        <default>false</default>
+        <label>District Manager</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Area Booking Manager</fullName>
+        <default>false</default>
+        <label>Area Booking Manager</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Account Specialist</fullName>
+        <default>false</default>
+        <label>Account Specialist</label>
+    </standardValue>
+    <standardValue>
+        <fullName>National Account Manager</fullName>
+        <default>false</default>
+        <label>National Account Manager</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Sickle Cell Account Manager</fullName>
+        <default>false</default>
+        <label>Sickle Cell Account Manager</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Market Manager</fullName>
+        <default>false</default>
+        <label>Market Manager</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Donor Recruitment Associate</fullName>
+        <default>false</default>
+        <label>Donor Recruitment Associate</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Power Booker</fullName>
+        <default>false</default>
+        <label>Power Booker</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Temporary Account Manager</fullName>
+        <default>false</default>
+        <label>Temporary Account Manager</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Relationship Manager</fullName>
+        <default>false</default>
+        <label>Relationship Manager</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Supervisor</fullName>
+        <default>false</default>
+        <label>Supervisor</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Booking Support</fullName>
+        <default>false</default>
+        <label>Booking Support</label>
+    </standardValue>
+</StandardValueSet>

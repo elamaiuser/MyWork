@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>SupportedFileFormat__c</fullName>
+    <description>used to define supported file uploading formats</description>
+    <externalId>false</externalId>
+    <fieldManageability>DeveloperControlled</fieldManageability>
+    <label>SupportedFileFormat</label>
+    <required>false</required>
+    <type>TextArea</type>
+</CustomField>

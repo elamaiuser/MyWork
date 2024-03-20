@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>sked_IMPACT__c</fullName>
+    <externalId>false</externalId>
+    <formula>(sked_Collection_Operation__r.sked_IMPACT_Start_Date__c != NULL || sked_Collection_Operation__r.sked_IMPACT_End_Date__c != NULL)
+&amp;&amp; ((sked_Collection_Operation__r.sked_IMPACT_Start_Date__c == NULL || sked_Collection_Operation__r.sked_IMPACT_Start_Date__c &lt;= sked_Drive_Date__c)
+&amp;&amp; (sked_Collection_Operation__r.sked_IMPACT_End_Date__c == NULL || sked_Collection_Operation__r.sked_IMPACT_End_Date__c &gt;= sked_Drive_Date__c))</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <label>IMPACT</label>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Checkbox</type>
+</CustomField>

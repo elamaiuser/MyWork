@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Queue xmlns="http://soap.sforce.com/2006/04/metadata">
+    <doesSendEmailToMembers>false</doesSendEmailToMembers>
+    <name>NJ Philly PA North: DSTs</name>
+    <queueMembers>
+        <users>
+            <user>andrea.daly@redcross.org</user>
+            <user>domenick.fonio@redcross.org</user>
+            <user>gabe.encarnacion@redcross.org</user>
+            <user>jakara.silerhillery@redcross.org</user>
+            <user>joseph.dechristoforo@redcross.org</user>
+            <user>lena.wassel@redcross.org</user>
+            <user>serena.bricker@redcross.org</user>
+        </users>
+    </queueMembers>
+    <queueSobject>
+        <sobjectType>sked_Drive_Shift_Trade__c</sobjectType>
+    </queueSobject>
+</Queue>

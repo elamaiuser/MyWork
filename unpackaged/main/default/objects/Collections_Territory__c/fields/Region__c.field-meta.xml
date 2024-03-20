@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Region__c</fullName>
+    <deleteConstraint>Restrict</deleteConstraint>
+    <description>Updated field label for Oct 2019 geographic realignment</description>
+    <externalId>false</externalId>
+    <label>Donor Services Region</label>
+    <referenceTo>Collections_Region__c</referenceTo>
+    <relationshipLabel>Collections Zip Codes (Region)</relationshipLabel>
+    <relationshipName>Collections_Territories</relationshipName>
+    <required>false</required>
+    <trackHistory>true</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Lookup</type>
+</CustomField>

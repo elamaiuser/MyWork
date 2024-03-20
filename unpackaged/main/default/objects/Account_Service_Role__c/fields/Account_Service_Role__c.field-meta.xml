@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Account_Service_Role__c</fullName>
+    <externalId>false</externalId>
+    <label>Role</label>
+    <required>false</required>
+    <trackHistory>true</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Account Contact</fullName>
+                <default>false</default>
+                <label>Account Contact</label>
+            </value>
+            <value>
+                <fullName>Blood Program Leader</fullName>
+                <default>false</default>
+                <label>Blood Program Leader</label>
+            </value>
+            <value>
+                <fullName>Executive Account Leader</fullName>
+                <default>false</default>
+                <label>Executive Account Leader</label>
+            </value>
+            <value>
+                <fullName>Stewardship Communication</fullName>
+                <default>false</default>
+                <label>Stewardship Communication</label>
+            </value>
+            <value>
+                <fullName>Call List Recipient</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Call List Recipient</label>
+            </value>
+            <value>
+                <fullName>Primary Contact</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Primary Contact</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

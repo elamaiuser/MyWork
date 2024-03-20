@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Split_Reason__c</fullName>
+    <description>Opportunity Split Reason for the business to identify someone was added to the split</description>
+    <externalId>false</externalId>
+    <label>Split Reason</label>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Coverage Vacancy</fullName>
+                <default>false</default>
+                <label>Coverage Vacancy</label>
+            </value>
+            <value>
+                <fullName>Coverage Leave of Absence</fullName>
+                <default>false</default>
+                <label>Coverage Leave of Absence</label>
+            </value>
+            <value>
+                <fullName>DRA</fullName>
+                <default>false</default>
+                <label>DRA</label>
+            </value>
+            <value>
+                <fullName>Sickle Cell Development Donation</fullName>
+                <default>false</default>
+                <label>Sickle Cell Development Donation</label>
+            </value>
+            <value>
+                <fullName>RSMO Donations</fullName>
+                <default>false</default>
+                <label>RSMO Donations</label>
+            </value>
+            <value>
+                <fullName>Split Credit</fullName>
+                <default>false</default>
+                <label>Split Credit</label>
+            </value>
+            <value>
+                <fullName>Power Booker</fullName>
+                <default>false</default>
+                <label>Power Booker</label>
+            </value>
+            <value>
+                <fullName>Coverage – Vacancy</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Coverage – Vacancy</label>
+            </value>
+            <value>
+                <fullName>Coverage – leave**</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Coverage – leave**</label>
+            </value>
+            <value>
+                <fullName>DRA**</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>DRA**</label>
+            </value>
+            <value>
+                <fullName>Fixed RSMO Donations**</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Fixed RSMO Donations**</label>
+            </value>
+            <value>
+                <fullName>Leave of Absence (LOA)</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Leave of Absence (LOA)</label>
+            </value>
+            <value>
+                <fullName>Sickle Cell Development Growth</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Sickle Cell Development Growth</label>
+            </value>
+            <value>
+                <fullName>Split Credit**</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Split Credit**</label>
+            </value>
+            <value>
+                <fullName>Vacant Territory</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Vacant Territory</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

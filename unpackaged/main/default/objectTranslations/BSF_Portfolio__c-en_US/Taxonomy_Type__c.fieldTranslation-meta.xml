@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+        <label><!-- Taxonomy Type --></label>
+        <name>Taxonomy_Type__c</name>
+        <picklistValues>
+            <masterLabel>Account Specialist</masterLabel>
+            <translation><!-- Account Specialist --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Bio Account Portfolio</masterLabel>
+            <translation><!-- Bio Account Portfolio --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Bio Booking Support</masterLabel>
+            <translation><!-- Bio Booking Support --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Bio Collection BSF</masterLabel>
+            <translation><!-- Bio Collection BSF --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Bio Fixed Sites</masterLabel>
+            <translation><!-- Bio Fixed Sites --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Bio Recruitment CD</masterLabel>
+            <translation><!-- Bio Recruitment CD --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Bio Recruitment Supervisor</masterLabel>
+            <translation><!-- Bio Recruitment Supervisor --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Bio Relationship Manager Portfolio</masterLabel>
+            <translation><!-- Bio Relationship Manager Portfolio --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Bio Sickle Cell Portfolio</masterLabel>
+            <translation><!-- Bio Sickle Cell Portfolio --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>National Account Manager Portfolio</masterLabel>
+            <translation><!-- National Account Manager Portfolio --></translation>
+        </picklistValues>
+    </CustomFieldTranslation>

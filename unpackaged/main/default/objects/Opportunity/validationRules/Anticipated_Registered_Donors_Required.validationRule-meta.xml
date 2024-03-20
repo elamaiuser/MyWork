@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Anticipated_Registered_Donors_Required</fullName>
+    <active>true</active>
+    <description>Anticipated Registered Donors is required for Fixed Sites whose Operation Type is &quot;Non Integrated WB&quot;</description>
+    <errorConditionFormula>AND(
+Is_Template__c != True,
+Account.RecordType.Name = &quot;Fixed Site Account&quot;,
+OR(Anticipated_Registered_Donors__c == 0, ISBLANK(Anticipated_Registered_Donors__c)), 
+ISPICKVAL(Drive_Site__r.Operation_Type__c, &quot;Non Integrated WB&quot;))</errorConditionFormula>
+    <errorDisplayField>Anticipated_Registered_Donors__c</errorDisplayField>
+    <errorMessage>A non-zero value is required for Anticipated Registered Donors because the Site&#39;s Operation Type is &quot;Non Integrated WB&quot;</errorMessage>
+</ValidationRule>

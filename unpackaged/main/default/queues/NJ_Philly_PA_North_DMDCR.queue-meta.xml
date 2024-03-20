@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Queue xmlns="http://soap.sforce.com/2006/04/metadata">
+    <doesSendEmailToMembers>false</doesSendEmailToMembers>
+    <name>NJ Philly PA North: DMDCR</name>
+    <queueMembers>
+        <users>
+            <user>amy.brauner@redcross.org.biomed</user>
+            <user>annette.tucci-jenkins@redcross.org</user>
+            <user>emily.ho@redcross.org</user>
+            <user>janine.hanosek@redcross.org</user>
+        </users>
+    </queueMembers>
+    <queueSobject>
+        <sobjectType>Task</sobjectType>
+    </queueSobject>
+    <queueSobject>
+        <sobjectType>sked_Drive_Change_Request__c</sobjectType>
+    </queueSobject>
+</Queue>

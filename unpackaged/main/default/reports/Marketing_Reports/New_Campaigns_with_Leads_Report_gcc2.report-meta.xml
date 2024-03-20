@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Report xmlns="http://soap.sforce.com/2006/04/metadata">
+    <buckets>
+        <bucketType>number</bucketType>
+        <developerName>BucketField_11789547</developerName>
+        <masterLabel>Lead Age Buckets</masterLabel>
+        <nullTreatment>z</nullTreatment>
+        <sourceColumnName>Lead.Lead_Age__c</sourceColumnName>
+        <useOther>false</useOther>
+        <values>
+            <sourceValues>
+                <to>7</to>
+            </sourceValues>
+            <value>Lead Age &lt;=7 Days</value>
+        </values>
+        <values>
+            <sourceValues>
+                <from>7</from>
+                <to>14</to>
+            </sourceValues>
+            <value>Lead Age 7-14 Days</value>
+        </values>
+        <values>
+            <sourceValues>
+                <from>14</from>
+                <to>21</to>
+            </sourceValues>
+            <value>Lead Age 14 - 21 Days</value>
+        </values>
+        <values>
+            <sourceValues>
+                <from>21</from>
+            </sourceValues>
+            <value>Lead Age Greater than 21 Days</value>
+        </values>
+    </buckets>
+    <buckets>
+        <bucketType>number</bucketType>
+        <developerName>BucketField_99861710</developerName>
+        <masterLabel>Lead Age Group</masterLabel>
+        <nullTreatment>z</nullTreatment>
+        <sourceColumnName>Lead.Lead_Age__c</sourceColumnName>
+        <useOther>false</useOther>
+        <values>
+            <sourceValues>
+                <to>6</to>
+            </sourceValues>
+            <value>Less than 7 days old</value>
+        </values>
+        <values>
+            <sourceValues>
+                <from>6</from>
+                <to>13</to>
+            </sourceValues>
+            <value>7-13 days old</value>
+        </values>
+        <values>
+            <sourceValues>
+                <from>13</from>
+                <to>21</to>
+            </sourceValues>
+            <value>14-21 days old</value>
+        </values>
+        <values>
+            <sourceValues>
+                <from>21</from>
+            </sourceValues>
+            <value>Greater than 21 days old</value>
+        </values>
+    </buckets>
+    <columns>
+        <field>CAMPAIGN_NAME</field>
+    </columns>
+    <columns>
+        <field>LEAD_CREATED_DATE</field>
+    </columns>
+    <columns>
+        <aggregateTypes>Sum</aggregateTypes>
+        <field>Lead.Lead_Age__c</field>
+    </columns>
+    <columns>
+        <field>BucketField_99861710</field>
+    </columns>
+    <columns>
+        <field>LEAD_STATUS</field>
+    </columns>
+    <columns>
+        <field>Lead.Chapter__c</field>
+    </columns>
+    <columns>
+        <field>Lead.Blood_Region__c</field>
+    </columns>
+    <columns>
+        <field>Lead.Territory_Name__c</field>
+    </columns>
+    <columns>
+        <field>FIRST_NAME</field>
+    </columns>
+    <columns>
+        <field>LAST_NAME</field>
+    </columns>
+    <columns>
+        <field>COMPANY</field>
+    </columns>
+    <columns>
+        <field>LEAD_OWNER</field>
+    </columns>
+    <columns>
+        <field>STREET_LINE1</field>
+    </columns>
+    <columns>
+        <field>CITY</field>
+    </columns>
+    <columns>
+        <field>STATE_CODE</field>
+    </columns>
+    <columns>
+        <field>ZIP</field>
+    </columns>
+    <columns>
+        <field>Lead.Comments__c</field>
+    </columns>
+    <format>Tabular</format>
+    <name>Campaign Lead Report</name>
+    <params>
+        <name>scopeid</name>
+        <value></value>
+    </params>
+    <params>
+        <name>co</name>
+        <value>1</value>
+    </params>
+    <reportType>CampaignLead</reportType>
+    <scope>orgAll</scope>
+    <showDetails>true</showDetails>
+    <showGrandTotal>true</showGrandTotal>
+    <showSubTotals>true</showSubTotals>
+</Report>

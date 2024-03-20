@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+        <label><!-- Primary Contact --></label>
+        <name>sked_Primary_Contact__c</name>
+        <relationshipLabel><!-- Drives on Calendar (Primary Contact) --></relationshipLabel>
+    </CustomFieldTranslation>

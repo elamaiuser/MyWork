@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>54.0</apiVersion>
+    <description>create Account+contact+role+start date+end date to identify duplicates in matching rules</description>
+    <formulas>
+        <description>Account+contact+role+start date</description>
+        <name>PopulateUniqueFieldsCombination</name>
+        <dataType>String</dataType>
+        <expression>{!$Record.Account__r.Id}+&#39;_&#39;+{!$Record.Contact__r.id}+&#39;_&#39;+TEXT({!$Record.Account_Service_Role__c})+&#39;_&#39;+TEXT({!$Record.Start_Date__c})+&#39;_&#39;+TEXT({!$Record.End_Date__c})</expression>
+    </formulas>
+    <interviewLabel>Update Account Service Role unique fields combination {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>Update Account Service Role unique fields combination</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <recordUpdates>
+        <name>update_start_date_as_text_field</name>
+        <label>update start date as text field</label>
+        <locationX>176</locationX>
+        <locationY>311</locationY>
+        <inputAssignments>
+            <field>Unique_Fields_Combination__c</field>
+            <value>
+                <elementReference>PopulateUniqueFieldsCombination</elementReference>
+            </value>
+        </inputAssignments>
+        <inputReference>$Record</inputReference>
+    </recordUpdates>
+    <start>
+        <locationX>50</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>update_start_date_as_text_field</targetReference>
+        </connector>
+        <object>Account_Service_Role__c</object>
+        <recordTriggerType>CreateAndUpdate</recordTriggerType>
+        <triggerType>RecordBeforeSave</triggerType>
+    </start>
+    <status>Active</status>
+</Flow>

@@ -1,0 +1,44 @@
+.hco-rac-event-block {
+  max-width: 100%;
+  padding: .125rem .375rem;
+  margin-bottom: .125rem;
+  font-size: .7rem;
+  cursor: pointer;
+  position: relative;
+}
+
+.hco-rac-event-block:hover {
+  background: #f3f2f2;
+}
+
+.hco-rac-event-block .event-type-indicator {
+  display: block;
+  width: .5rem;
+  height: .5rem;
+  border-radius: 50%;
+  margin-bottom: 1px;
+}
+
+.hco-rac-event-block .template-entry-indicator {
+  margin-top: -.0625rem;
+  margin-left: -.0625rem;
+}
+
+.hco-rac-event-block .approval-required__indicator {
+  display: block;
+  width: .625rem;
+  height: .625rem;
+  border-radius: 50%;
+  /* margin-bottom: 1px; */
+  background: #d23331;
+  color: white;
+  text-align: center;
+  line-height: 1;
+  padding: .0625rem;
+  font-size: .375rem;
+  margin-top: -.1875rem;
+}
+
+.hco-rac-event-block.template-entry-block.is-hovered {
+  background: #faffbd;
+}

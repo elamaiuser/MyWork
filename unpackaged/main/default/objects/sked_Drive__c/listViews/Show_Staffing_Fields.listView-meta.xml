@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Show_Staffing_Fields</fullName>
+    <columns>sked_Collection_Operation__c</columns>
+    <columns>NAME</columns>
+    <columns>sked_Drive_Date__c</columns>
+    <columns>sked_Total_Staff_Requested__c</columns>
+    <columns>sked_Staff_Allocated__c</columns>
+    <columns>sked_Staff_Delta__c</columns>
+    <columns>sked_APT_Required__c</columns>
+    <columns>sked_Total_Procedures_Projected__c</columns>
+    <columns>sked_Projected_Registered_Donors__c</columns>
+    <columns>sked_Staff_Capacity__c</columns>
+    <columns>sked_Drive_Shift_Count__c</columns>
+    <columns>sked_Min_Shift_Start__c</columns>
+    <columns>sked_Max_Shift_End__c</columns>
+    <columns>sked_Status__c</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>sked_Status__c</field>
+        <operation>equals</operation>
+        <value>Confirmed</value>
+    </filters>
+    <label>Staff/Shift Evaluation</label>
+</ListView>

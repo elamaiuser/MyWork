@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Prevent_Collections_Users_Edit_Access</fullName>
+    <active>true</active>
+    <description>Collections and DRD User should not be able to Edit a Collection Operation.</description>
+    <errorConditionFormula>AND(
+OR(
+$Profile.Name = &quot;Collections&quot;,
+$Profile.Name = &quot;Collection Management&quot;,
+$Profile.Name = &quot;DRD Manager&quot;,
+$Profile.Name = &quot;DRD Profile&quot;
+),
+NOT(ISNEW())
+)</errorConditionFormula>
+    <errorMessage>Collections and DRD users do not have edit access.</errorMessage>
+</ValidationRule>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Cannot_change_Drive_Date_confirm_status</fullName>
+    <active>true</active>
+    <description>User can not change drive date when opportunity status is confirmed and stage is closed.</description>
+    <errorConditionFormula>ISCHANGED( Drive_Date__c ) &amp;&amp;
+DriveStatus__c = &quot;Confirmed&quot;</errorConditionFormula>
+    <errorDisplayField>Drive_Date__c</errorDisplayField>
+    <errorMessage>This drive is in Confirmed Drive Status, a date change is no longer permitted. You must cancel and add a new opportunity.</errorMessage>
+</ValidationRule>

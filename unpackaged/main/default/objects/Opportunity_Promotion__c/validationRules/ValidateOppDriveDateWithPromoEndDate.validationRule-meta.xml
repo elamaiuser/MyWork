@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>ValidateOppDriveDateWithPromoEndDate</fullName>
+    <active>true</active>
+    <description>Promotion End Date should be greater than Opportunity Drive Date</description>
+    <errorConditionFormula>Promotion_End_Date__c  &lt;  Blood_Drive_Opportunity__r.Drive_Date__c</errorConditionFormula>
+    <errorDisplayField>Promotion__c</errorDisplayField>
+    <errorMessage>Can not select promotion which End Date is less than Opportunity Drive Date.</errorMessage>
+</ValidationRule>

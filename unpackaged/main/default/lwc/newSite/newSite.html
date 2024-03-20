@@ -1,0 +1,314 @@
+<template>
+    <template if:true={isModalOpen}>
+        <!-- Modal/Popup Box LWC starts here -->
+        <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true"
+            aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open slds-modal_medium">
+            <div class="slds-modal__container">
+                <!-- Modal/Popup Box LWC header here -->
+                <header class="slds-modal__header">
+                    <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse"
+                        title="Close" onclick={closeModal}>
+                        <lightning-icon icon-name="utility:close" alternative-text="close" variant="inverse"
+                            size="small"></lightning-icon>
+                        <span class="slds-assistive-text">Close</span>
+                    </button>
+                    <h2 id="modal-heading-02" class="slds-text-heading_medium slds-hyphenate">New Location Account</h2>
+                </header>
+                <!-- Modal/Popup Box LWC body starts here -->
+                <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                    <lightning-record-edit-form object-api-name="sked__Location__c" record-id={recordId} record-type-id={recordTypeId} onsubmit={handleSubmit}  onerror={handleError} onsuccess={handleSucess}>
+                        <lightning-messages> </lightning-messages>
+                        <div class="slds-grid slds-gutters slds-wrap">      
+                            <template if:true={isFixed}>
+                                <div class="slds-col slds-size_1-of-2">
+                                    <lightning-input-field field-name="sked_Site_Building_Name__c"> </lightning-input-field>
+                                </div>
+                                <div class="slds-col slds-size_1-of-2">
+                                    <lightning-input-field field-name="sked_Physical_Location_Type__c"> </lightning-input-field>
+                                </div>
+                                <div class="slds-col slds-size_1-of-2">
+                                    <lightning-input-field field-name="sked_Room_Name__c"> </lightning-input-field>
+                                </div>
+                                <div class="slds-col slds-size_1-of-2">
+                                    <lightning-input-field field-name="sked_Fixed_Site_Appointment_Pattern__c"> </lightning-input-field>
+                                </div>
+                                <div class="slds-col slds-size_1-of-2">
+                                    <lightning-input-field field-name="sked_Max_Auto_Machines__c"> </lightning-input-field>
+                                </div>
+                                <div class="slds-col slds-size_1-of-2">
+                                    <lightning-input-field field-name="sked_Maximum_Beds__c"> </lightning-input-field>
+                                </div>
+                                <div class="slds-col slds-size_1-of-2">
+                                    <lightning-input-field field-name="sked_Maximum_Booths__c"> </lightning-input-field>
+                                </div>
+                                <div class="slds-col slds-size_1-of-2">
+                                    <lightning-input-field required={isFixed} field-name="Operation_Type__c"> </lightning-input-field>
+                                </div>
+                            </template>
+
+                            <template if:true={isMobile}>
+                                <div class="slds-col slds-size_1-of-2 slds-text-heading_small  slds-m-bottom_medium"><b> General </b></div>
+                                <div class="slds-col slds-size_1-of-2"></div>
+                                <div class="slds-col slds-size_1-of-2">
+                                    <lightning-input-field field-name="sked_Site_Building_Name__c"> </lightning-input-field>
+                                </div>
+                                <div class="slds-col slds-size_1-of-2">
+                                    <lightning-input-field required={isMobile} field-name="sked_Floor_Description__c"> </lightning-input-field>
+                                </div>
+                                <div class="slds-col slds-size_1-of-2">
+                                    <lightning-input-field field-name="sked_Physical_Location_Type__c"> </lightning-input-field>
+                                </div>
+                                <div class="slds-col slds-size_1-of-2">
+                                    <lightning-input-field field-name="sked_Room_Name__c"> </lightning-input-field>
+                                </div>
+                                <div class="slds-col slds-size_1-of-2">
+                                    <lightning-input-field field-name="sked_Site_Main_Phone__c"> </lightning-input-field>
+                                </div>
+                                <div class="slds-col slds-size_1-of-2">
+                                    <lightning-input-field field-name="sked_911_Unavailable__c"> </lightning-input-field>
+                                </div>
+                                <div class="slds-col slds-size_1-of-2">
+                                    <lightning-input-field required={isMobile} field-name="sked_Site_Contact__c"> </lightning-input-field>
+                                </div>
+                                <div class="slds-col slds-size_1-of-2">
+                                    <lightning-input-field field-name="sked_Site_Contact_Email__c"> </lightning-input-field>
+                                </div>
+                                <div class="slds-col slds-size_1-of-2">
+                                    <lightning-input-field field-name="sked_Site_Contact_Phone__c"> </lightning-input-field>
+                                </div>
+                                <div class="slds-col slds-size_1-of-2"></div>
+                                <div class="slds-col slds-size_1-of-2 slds-text-heading_small slds-m-top_medium slds-m-bottom_medium"><b> Site Availability </b></div>
+                                <div class="slds-col slds-size_1-of-2"></div>
+                                <div class="slds-col slds-size_1-of-2">
+                                    <lightning-input-field field-name="sked_Days_of_Week_Preferred__c"> </lightning-input-field>
+                                </div>
+                                <div class="slds-col slds-size_1-of-2">
+                                    <lightning-input-field field-name="sked_Days_of_Week_Declined__c"> </lightning-input-field>
+                                </div>
+                                <div class="slds-col slds-size_1-of-2 slds-text-heading_small slds-m-top_medium slds-m-bottom_medium"><b> Site Characteristics </b></div>
+                                <div class="slds-col slds-size_1-of-2"></div>
+                                <div class="slds-col slds-size_1-of-2">
+                                    <lightning-input-field field-name="sked_Room_Size__c"> </lightning-input-field>
+                                </div>
+                                <div class="slds-col slds-size_1-of-2"></div>
+                                <div class="slds-col slds-size_1-of-2">
+                                    <lightning-input-field required={isMobile} field-name="sked_Automation_Suitability__c"> </lightning-input-field>
+                                </div>
+                                <div class="slds-col slds-size_1-of-2">
+                                    <lightning-input-field field-name="sked_Outside_stairs__c"> </lightning-input-field>
+                                </div>
+                                <div class="slds-col slds-size_1-of-2">
+                                    <lightning-input-field field-name="sked_Wireless_Policy__c"> </lightning-input-field>
+                                </div>
+                                <div class="slds-col slds-size_1-of-2">
+                                    <lightning-input-field field-name="sked_Inside_stairs__c"> </lightning-input-field>
+                                </div>
+                                <div class="slds-col slds-size_1-of-2">
+                                    <lightning-input-field field-name="sked_Maximum_Booths__c"> </lightning-input-field>
+                                </div>
+                                <div class="slds-col slds-size_1-of-2"></div>
+                                <div class="slds-col slds-size_1-of-2">
+                                    <lightning-input-field field-name="sked_Maximum_Beds__c"> </lightning-input-field>
+                                </div>
+                                <div class="slds-col slds-size_1-of-2">
+                                    <lightning-input-field field-name="sked_Elevator_Type__c"> </lightning-input-field>
+                                </div>
+                                <div class="slds-col slds-size_1-of-2">
+                                    <lightning-input-field field-name="sked_Max_Auto_Machines__c"> </lightning-input-field>
+                                </div>
+                                <div class="slds-col slds-size_1-of-2">
+                                    <lightning-input-field field-name="sked_Elevator_Open__c"> </lightning-input-field>
+                                </div>
+                                <div class="slds-col slds-size_1-of-2">
+                                    <lightning-input-field field-name="sked_110_outlets__c"> </lightning-input-field>
+                                </div>
+                                <div class="slds-col slds-size_1-of-2">
+                                    <lightning-input-field field-name="sked_Elevator_Close__c"> </lightning-input-field>
+                                </div>
+                                <div class="slds-col slds-size_1-of-2">
+                                    <lightning-input-field field-name="sked_220_outlets__c"> </lightning-input-field>
+                                </div>
+                                <div class="slds-col slds-size_1-of-2">
+                                    <lightning-input-field field-name="sked_Floor_Covering_Requirement__c" value="Plastic floor covering provided by ARC"> </lightning-input-field>
+                                </div>
+                                <div class="slds-col slds-size_1-of-2">
+                                    <lightning-input-field field-name="sked_Restroom_Location__c"> </lightning-input-field>
+                                </div>
+                                <div class="slds-col slds-size_1-of-2">
+                                    <lightning-input-field field-name="sked_Air_conditioned__c"> </lightning-input-field>
+                                </div>
+                                <div class="slds-col slds-size_1-of-2">
+                                    <lightning-input-field field-name="sked_Break_location__c"> </lightning-input-field>
+                                </div>
+                                <div class="slds-col slds-size_1-of-2">
+                                    <lightning-input-field field-name="sked_Heat__c"> </lightning-input-field>
+                                </div>
+                                <div class="slds-col slds-size_1-of-2">
+                                    <lightning-input-field field-name="sked_On_Site_Food_Conditions__c"> </lightning-input-field>
+                                </div>
+                                <div class="slds-col slds-size_1-of-2"></div>
+                                <div class="slds-col slds-size_1-of-2">
+                                    <lightning-input-field field-name="sked_Canteen_Requirements__c"> </lightning-input-field>
+                                </div>
+                                <div class="slds-col slds-size_1-of-2"></div>
+                                <div class="slds-col slds-size_1-of-2 slds-text-heading_small slds-m-top_medium slds-m-bottom_medium"><b> Directions </b></div>
+                                <div class="slds-col slds-size_1-of-2"></div>
+                                <div class="slds-col slds-size_1-of-2">
+                                    <lightning-input-field required={isMobile} field-name="sked_Directions_From_CollectionOperation__c"> </lightning-input-field>
+                                </div>
+                                <div class="slds-col slds-size_1-of-2"></div>
+                                <div class="slds-col slds-size_1-of-2 slds-text-heading_small slds-m-top_medium slds-m-bottom_medium"><b> Parking and Unloading </b></div>
+                                <div class="slds-col slds-size_1-of-2"></div>
+                                <div class="slds-col slds-size_1-of-2">
+                                    <lightning-input-field field-name="sked_ARC_Vehicle_Parking_Directions__c"> </lightning-input-field>
+                                </div>
+                                <div class="slds-col slds-size_1-of-2">
+                                    <lightning-input-field field-name="sked_Unloading_Conditions__c"> </lightning-input-field>
+                                </div>
+                                <div class="slds-col slds-size_1-of-2">
+                                    <lightning-input-field field-name="sked_Staff_Personal_Parking_Directions__c"> </lightning-input-field>
+                                </div>
+                                <div class="slds-col slds-size_1-of-2">
+                                    <lightning-input-field field-name="sked_Unloading_Directions_Details__c"> </lightning-input-field>
+                                </div>
+                                <div class="slds-col slds-size_1-of-2">
+                                    <lightning-input-field field-name="sked_Pay_for_Parking__c"> </lightning-input-field>
+                                </div>
+                                <div class="slds-col slds-size_1-of-2"></div>
+                                <div class="slds-col slds-size_1-of-2">
+                                    <lightning-input-field field-name="sked_Pay_for_Parking_Details__c"> </lightning-input-field>
+                                </div>
+                                <div class="slds-col slds-size_1-of-2"></div>
+                                <div class="slds-col slds-size_1-of-2 slds-text-heading_small slds-m-top_medium slds-m-bottom_medium"><b> Security </b></div>
+                                <div class="slds-col slds-size_1-of-2"></div>
+                                <div class="slds-col slds-size_1-of-2">
+                                    <lightning-input-field field-name="sked_Security_Information_Needed__c"> </lightning-input-field>
+                                </div>
+                                <div class="slds-col slds-size_1-of-2">
+                                    <lightning-input-field field-name="sked_Escort_Required__c"> </lightning-input-field>
+                                </div>
+                                <div class="slds-col slds-size_1-of-2">
+                                    <lightning-input-field field-name="sked_Staff_List__c"> </lightning-input-field>
+                                </div>
+                                <div class="slds-col slds-size_1-of-2">
+                                    <lightning-input-field field-name="sked_Equipment_X_Ray_Required__c"> </lightning-input-field>
+                                </div>
+                                <div class="slds-col slds-size_1-of-2">
+                                    <lightning-input-field field-name="Sponsor_Security_Form_Required__c"> </lightning-input-field>
+                                </div>
+                                <div class="slds-col slds-size_1-of-2">
+                                    <lightning-input-field field-name="sked_No_Cell_Phones__c"> </lightning-input-field>
+                                </div>
+                                <div class="slds-col slds-size_1-of-2">
+                                    <lightning-input-field field-name="sked_Pre_Drive_Security_Due_Date__c"> </lightning-input-field>
+                                </div>
+                                <div class="slds-col slds-size_1-of-2">
+                                    <lightning-input-field field-name="sked_Security_Directions__c"> </lightning-input-field>
+                                </div>
+                                <div class="slds-col slds-size_1-of-2"></div>
+                                <div class="slds-col slds-size_1-of-2">
+                                    <lightning-input-field field-name="sked_Safety_Emergency_Action_Plan__c"> </lightning-input-field>
+                                </div>
+                                <div class="slds-col slds-size_1-of-2 slds-text-heading_small slds-m-top_medium slds-m-bottom_medium"><b> Site Verification </b></div>
+                                <div class="slds-col slds-size_1-of-2"></div>
+                                <!-- <div class="slds-col slds-size_1-of-2">
+                                    <lightning-input-field field-name="sked_Date_Site_Inspection_Completed__c"> </lightning-input-field>
+                                </div>
+                                <div class="slds-col slds-size_1-of-2">
+                                    <lightning-input-field field-name="sked_Site_Inspection_Completed_By__c"> </lightning-input-field>
+                                </div>
+                                <div class="slds-col slds-size_1-of-2">
+                                    <lightning-input-field field-name="sked_Site_Inspection_Comments__c"> </lightning-input-field>
+                                </div> -->
+                                <div class="slds-col slds-size_1-of-2">
+                                    <lightning-input-field field-name="Emergency_Contact__c"> </lightning-input-field>
+                                </div>
+                                <div class="slds-col slds-size_1-of-2">
+                                    <lightning-input-field field-name="sked_On_Site_Food_Canteen_Other__c"> </lightning-input-field>
+                                </div>
+                                <div class="slds-col slds-size_1-of-2">
+                                    <lightning-input-field field-name="sked_Site_Open__c"> </lightning-input-field>
+                                </div>
+                                <div class="slds-col slds-size_1-of-2">
+                                    <lightning-input-field field-name="sked_Site_Room_Phone__c"> </lightning-input-field>
+                                </div>
+                                <div class="slds-col slds-size_1-of-2">
+                                    <lightning-input-field field-name="sked_Site_Close__c"> </lightning-input-field>
+                                </div>
+                            </template>
+                            <!--<div class="slds-col slds-size_1-of-2">
+                                <lightning-input-field field-name="sked_Address_1__c"> </lightning-input-field>
+                            </div>
+                            <div class="slds-col slds-size_1-of-2">
+                                <lightning-input-field field-name="sked_Address_2__c"> </lightning-input-field>
+                            </div>
+                            <div class="slds-col slds-size_1-of-2">
+                                <lightning-input-field field-name="sked_City__c"> </lightning-input-field>
+                            </div>
+                            <div class="slds-col slds-size_1-of-2">
+                                <lightning-input-field field-name="sked_County__c"> </lightning-input-field>
+                            </div>
+                            <div class="slds-col slds-size_1-of-2">
+                                <lightning-input-field field-name="sked_State__c"> </lightning-input-field>
+                            </div>
+                            <div class="slds-col slds-size_1-of-2">
+                                <lightning-input-field field-name="sked_Zip_Code__c"> </lightning-input-field>
+                            </div>-->
+                        </div>
+                        <div class="slds-align_absolute-center slds-m-top_medium"> 
+                            <div class="">
+                                <lightning-button
+                                    label="Cancel"
+                                    onclick={closeModal}
+                                ></lightning-button>
+                            </div>
+                            <div class="slds-p-left_x-small">
+                                <lightning-button 
+                                    label=" Save " 
+                                    variant="brand"
+                                    type="submit"
+                                    disabled={disableButton}
+                                ></lightning-button>
+                            </div>
+                        </div>
+                    </lightning-record-edit-form>
+                    <!--<template if:true={isAlertOpen}>
+                        <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-02" aria-modal="true"
+                            aria-describedby="modal-content-id-2" class="slds-modal slds-fade-in-open ">
+                            <div class="slds-modal__container">
+                                <header class="slds-modal__header">
+                                    <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse"
+                                        title="Close" onclick={closeAlert}>
+                                        <lightning-icon icon-name="utility:close" alternative-text="close" variant="inverse"
+                                            size="small"></lightning-icon>
+                                        <span class="slds-assistive-text">Close</span>
+                                    </button>
+                                    <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Confirm?</h2>
+                                </header>
+                                <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-2">
+                                    <template for:each={collectionOperList} for:item="row" for:index="index">
+                                        <div key={row.inputZipcode}>
+                                        <p style="color:blue ;" >ZipCode : {row.inputZipcode}</p>
+                                        <p style="color:blue ;">Address : {row.address}</p>
+                                        <p style="color:blue ;">Collection Operation : {row.collectionOprName}</p>
+                                    </div>
+                                    </template>
+                                </div>
+                            <footer class="slds-modal__footer">
+                                <button class="slds-button slds-button_brand" onclick={closeAlert}>Cancel</button>
+                                <button class="slds-button slds-button_brand" onclick={confirm}>OK</button>
+                            </footer>
+                            </div>
+                        </section>
+                        <div class="slds-backdrop slds-backdrop_open"></div>
+                    </template>-->
+                </div>
+                <!-- Modal/Popup Box LWC footer starts here -->
+                <footer class="slds-modal__footer">
+                </footer>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+    </template>
+   
+</template>

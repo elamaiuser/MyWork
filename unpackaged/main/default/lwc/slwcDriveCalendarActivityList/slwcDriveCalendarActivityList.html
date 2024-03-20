@@ -1,0 +1,19 @@
+<template>
+    <template if:true={showSpinner}>
+        <lightning-spinner class="spins" size="medium"></lightning-spinner>
+    </template>
+    <div class="slds-scrollable_y" style="height: 45vh;">
+        <c-slwc-custom-datatable 
+            key-field="id"
+            data={activityList}
+            hide-checkbox-column
+            columns={columns}
+            wrap-text-max-lines="3">
+        </c-slwc-custom-datatable>
+    </div>
+    <div class="slds-shrink-none slds-grow-none slds-p-horizontal_small slds-p-vertical_small slds-border_top modal-content__footer">
+        <div class="slds-grid slds-grid_align-spread slds-grid_vertical-align-center"> 
+            <div class="slds-text-color_weak ng-binding">Total Activities: {totalActivities} </div>
+        </div>
+    </div>    
+</template>

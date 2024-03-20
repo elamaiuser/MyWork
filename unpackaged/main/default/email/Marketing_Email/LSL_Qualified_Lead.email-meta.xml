@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<EmailTemplate xmlns="http://soap.sforce.com/2006/04/metadata">
+    <available>true</available>
+    <description>Email follow up for an LSL Qualified Lead</description>
+    <encodingKey>ISO-8859-1</encodingKey>
+    <letterhead>ARC_Logo_Test</letterhead>
+    <name>Marketing Segment_Education_LSL_Qualified Lead Introduction_2023</name>
+    <style>freeForm</style>
+    <subject>Next steps re: Leaders Save Lives Program</subject>
+    <textOnly>Hello [NAME],
+
+I hope all is well with you. 
+
+I would like to thank you for expressing interest in hosting a blood drive through the American Red Cross Leaders Save Lives program. I have gone over the information you submitted and I would like to meet with you to learn more about you and show you how we can work together to help patients in our community by ensuring there is always blood available when they need it. Leaders Save Lives is a great opportunity for students and I look forward to telling you more about this program. 
+
+It takes a special person to be a Red Cross blood drive partner. It takes dedication, passion and the ability to organize and motivate others effectively. But, you won’t be alone. I will assist you in every way possible to help ensure you have the tools and information you need to make the partnership a success. 
+
+Let’s schedule some time to chat about next steps.  Is there a time that works best for you? 
+
+Kind regards, 
+[NAME]</textOnly>
+    <type>html</type>
+    <uiType>Aloha</uiType>
+</EmailTemplate>

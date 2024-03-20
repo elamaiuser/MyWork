@@ -1,0 +1,24 @@
+.drive-status-path {
+    display: grid;
+    background: #fff;
+    width: 100%;
+    padding: 0.5rem;
+
+    position: relative;
+}
+
+.drive-status-path .slds-path .slds-is-incomplete.slds-is-disabled {
+    opacity: 0.4;
+}
+
+.drive-status-path .slds-path .slds-is-disabled .slds-path__link,
+.drive-status-path .slds-path .slds-is-disabled::before,
+.drive-status-path .slds-path .slds-is-disabled::after{
+    cursor: default;
+}
+
+.drive-status-path .slds-path .slds-is-incomplete.slds-is-disabled .slds-path__link,
+.drive-status-path .slds-path .slds-is-incomplete.slds-is-disabled::before,
+.drive-status-path .slds-path .slds-is-incomplete.slds-is-disabled::after{
+    cursor: not-allowed;
+}

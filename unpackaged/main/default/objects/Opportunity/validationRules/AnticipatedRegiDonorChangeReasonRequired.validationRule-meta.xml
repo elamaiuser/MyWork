@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>AnticipatedRegiDonorChangeReasonRequired</fullName>
+    <active>true</active>
+    <description>If opportunity.Anticipated Registered Donors is updated then Anticipated Registered Donors Change Reason is required</description>
+    <errorConditionFormula>AND(
+Is_Template__c != True,
+ISCHANGED(Anticipated_Registered_Donors__c), OR(NOT(ISCHANGED(AnticipatedRegisterDonorChangeReason__c)), ISBLANK(AnticipatedRegisterDonorChangeReason__c)))</errorConditionFormula>
+    <errorDisplayField>AnticipatedRegisterDonorChangeReason__c</errorDisplayField>
+    <errorMessage>Anticipated Registered Donors Change Reason is required while updating Anticipated Registered Donors</errorMessage>
+</ValidationRule>

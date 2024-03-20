@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<EmailTemplate xmlns="http://soap.sforce.com/2006/04/metadata">
+    <available>true</available>
+    <description>Prospecting email for Community Club Program</description>
+    <encodingKey>ISO-8859-1</encodingKey>
+    <letterhead>ARC_Logo_Test</letterhead>
+    <name>Marketing Segment_Education_ComClub_Prospecting</name>
+    <style>formalLetter</style>
+    <subject>Your Club Can Earn Funds and Help Save Lives!</subject>
+    <textOnly>Dear [Insert Name] ,
+
+
+Community groups, clubs and schools can help save lives by hosting blood drive with the American Red Cross. For patients who need donated blood to survive, this commitment to step up gives them a chance at more time with those who love them. Through our Club Program, the Red Cross can offer an even more rewarding hosting experience for you and your organization.
+
+Here’s how the Community Club Program works:
+
+Host a blood drive and collect 30 or more pints of blood.*
+Your club will be credited $10 for each pint collected at your blood drive!
+Funds are forwarded directly to the third-party vendor of your choice** to purchase supplies, equipment or any item(s) that benefit your organization.
+
+If your club needs new uniforms, supplies, equipment, etc., for example, your American Red Cross blood drive can help you fund them!
+
+Support your club and help save lives! To schedule a blood drive, please contact me!
+
+
+Sincerely,
+
+[Insert Name]
+
+*May not be combined with the American Red Cross High School Scholarship Program or Leaders Save Lives Program. **Nontransferable and not redeemable for cash. Funds will not be paid directly to the community club or school. Fulfillment information will be provided upon completion of your successful blood drive. Funds will be made payable to a third-party vendor. The American Red Cross reserves the right to decline payment to a vendor, in which case a new vendor must be selected by the community club. Other rules and restrictions may apply.</textOnly>
+    <type>html</type>
+    <uiType>Aloha</uiType>
+</EmailTemplate>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Roseburg_OR_DSTs_sked_Drive_Shift_Trade</fullName>
+    <filterScope>Queue</filterScope>
+    <label>Roseburg OR: DSTs</label>
+    <queue>Roseburg_OR_DSTs</queue>
+    <sharedTo>
+        <allInternalUsers></allInternalUsers>
+    </sharedTo>
+</ListView>

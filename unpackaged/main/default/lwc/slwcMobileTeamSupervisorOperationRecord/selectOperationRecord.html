@@ -1,0 +1,58 @@
+<template>
+
+    <section role="dialog" tabindex="-1" class="slds-modal slds-fade-in-open">
+        <lightning-spinner if:true={showSpinner} class="spins" size="medium"></lightning-spinner>
+
+        <div class="slds-modal__container">
+            <header class="slds-modal__header">
+                <div style="width: 3rem">
+                    <lightning-button-icon icon-name="utility:chevronleft" variant="bare-inverse" alternative-text="Back" title="Back" size="large" onclick={handleBack}></lightning-button-icon>
+                </div>
+                
+                <h2 class="slds-text-heading_medium slds-hyphenate">Select Operation Record</h2>
+
+                <div style="width: 3rem">
+                </div>
+            </header>
+            <div class="slds-modal__content slds-is-relative">
+                <template if:false={showSpinner}>
+                    <div if:false={operationRecords.length}
+                        class="slds-text-align--center slds-m-around--medium slds-text-color_inverse-weak slds-text-heading--small">
+                        NO RECORD
+                    </div>
+                </template>
+                
+                <div class="slds-m-around_small"
+                    for:each={operationRecords} for:item="item" key={item.key}>
+                    <div class="slds-border--bottom slds-grid slds-grid--align-spread slds-p-around--xx-small slds-grid_vertical-align-center">
+                        <div class="slds-text-heading--small">{item.name}</div>
+                        <div>
+                            <strong>{item.driveShiftName}</strong>
+                            <lightning-button-icon onclick={handleEditOperationRecord} data-key={item.key}
+                                class="slds-m-left_x-small" variant="border-filled" icon-name="action:edit"
+                                alternative-text="Edit" title="Edit"></lightning-button-icon>
+                        </div>
+                    </div>
+                    <div class="slds-grid slds-grid--align-spread slds-p-around--xx-small">
+                        <div>Drive Name</div>
+                        <div>{item.driveName}</div>
+                    </div>
+                    <div class="slds-grid slds-grid--align-spread slds-p-around--xx-small">
+                        <div>Drive UFID</div>
+                        <div>{item.driveUfid}</div>
+                    </div>
+                    <div class="slds-grid slds-grid--align-spread slds-p-around--xx-small">
+                        <div>Drive Date</div>
+                        <div><lightning-formatted-date-time value={item.driveDate}
+                            time-zone="GMT">
+                        </lightning-formatted-date-time></div>
+                    </div>
+                    <div class="slds-grid slds-grid--align-spread slds-p-around--xx-small">
+                        <div>Drive Type</div>
+                        <div>{item.driveType}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</template>

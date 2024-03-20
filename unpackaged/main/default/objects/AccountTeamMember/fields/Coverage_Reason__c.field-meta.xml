@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Coverage_Reason__c</fullName>
+    <description>Field to capture the vacancy reason on Account Team Member level.</description>
+    <externalId>false</externalId>
+    <label>Coverage Reason</label>
+    <required>false</required>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Leave of Absence (LOA)</fullName>
+                <default>false</default>
+                <label>Leave of Absence (LOA)</label>
+            </value>
+            <value>
+                <fullName>Vacant Territory</fullName>
+                <default>false</default>
+                <label>Vacant Territory</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

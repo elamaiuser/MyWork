@@ -1,0 +1,292 @@
+<template>
+  <div class={customClass.containerClass}>
+    <template if:true={showSpinner}>
+      <lightning-spinner class="spins" size="medium"></lightning-spinner>
+    </template>
+
+    <div class="slds-grid slds-grid_vertical" style="height: 100%">
+      <div
+        class="slds-clearfix slds-page-header slds-page-header_record-home fixed-position"
+        style="margin-bottom: var(--lwc-cardSpacingMargin)"
+      >
+        <div class="slds-page-header__row slds-grid_vertical-align-center">
+          <div class="slds-page-header__col-title">
+            <div class="slds-media">
+              <div class="slds-media__figure">
+                <lightning-icon
+                  icon-name="standard:metrics"
+                  size="medium"
+                ></lightning-icon>
+              </div>
+              <div class="slds-media__body">
+                <div class="slds-page-header__name">
+                  <div class="slds-page-header__name-title">
+                    <h1>
+                      <span>Staffing Constraint</span>
+                      <span class="slds-page-header__title slds-truncate"
+                        >Staffing Constraint Mass Update</span
+                      >
+                    </h1>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="slds-tabs_card slds-grid slds-grid_vertical" style="flex: 1">
+        <div class="slds-grid slds-gutters_direct-x-small">
+          <c-slwc-multi-picklist
+            required
+            class="slds-col_bump-left slds-m-right_small"
+            name="driveTypes"
+            label="Drive Types"
+            selected-by-default
+            object-api-name="sked_Drive__c"
+            field-api-name="sked_Type_of_Drive__c"
+            default-values={filters.driveTypes}
+            onpicklistchange={handleDriveTypesChanged}
+            >
+          </c-slwc-multi-picklist>
+        
+          <div
+            class="slds-no-flex slds-m-right_small"
+            style="width: 300px"
+          >
+            <c-slwc-new-collection-operation-multi-picklist
+              division-single-select
+              region-single-select
+              date-range={collectionOperationDateRange}
+              default-values={filters.collectionOperationValues}
+              onchange={handleCollectionOperationChanged}
+            >
+            </c-slwc-new-collection-operation-multi-picklist>
+          </div>
+
+          <c-slwc-week-date-picker
+            week-length="2"
+            first-day={collectionOperationFirstDay}
+            unique-key="staffingConstrainMassUpdate"
+            default-start-date={filters.startDate}
+            default-end-date={filters.endDate}
+            class="slds-m-right_small"
+            onweekdatechange={handleOnWeekDateChange}
+          >
+          </c-slwc-week-date-picker>
+
+          <lightning-button-icon
+            icon-name="utility:refresh"
+            alternative-text="Refresh"
+            title="Refresh"
+            class="slds-align-bottom slds-m-right_small"
+            onclick={fetchStafingConstrainData}
+          ></lightning-button-icon>
+
+          <lightning-button-menu
+            alternative-text="Manage Staffing Constraint"
+            menu-alignment="right"
+            icon-name="utility:add"
+            class="slds-align-bottom slds-m-right_small"
+          >
+            <lightning-menu-item
+              value="create-individual"
+              label="Create Individual"
+              onclick={handleCreateStaffingConstraint}
+            ></lightning-menu-item>
+            <lightning-menu-item
+              value="create-recurrence"
+              label="Create Recurrence"
+              onclick={handleCreateRecurrenceStaffingConstraints}
+            ></lightning-menu-item>
+            <lightning-menu-divider></lightning-menu-divider>
+            <lightning-menu-item
+              value="cancel"
+              label="Cancel"
+            ></lightning-menu-item>
+          </lightning-button-menu>
+        </div>
+
+        <div
+          class="slds-m-top_x-large slds-staffing-constrain-mass-update__grid"
+        >
+          <div class="slds-scrollable_x">
+            <table if:true={isTableVisible}>
+              <thead>
+                <tr>
+                  <th
+                    colspan="3"
+                    class="slds-staffing-constrain-mass-update__grid-left-header"
+                  ></th>
+                  <th
+                    for:each={daysBetweenDateRange}
+                    for:item="day"
+                    key={day.dateIso}
+                    class="slds-p-around_x-small"
+                  >
+                    <div class="slds-text-title_caps slds-text-align_center">
+                      {day.day}
+                    </div>
+                    <div
+                      class="slds-text-align_center slds-text-color_inverse-weak slds-m-top_xxx-small"
+                    >
+                      {day.label}
+                    </div>
+                  </th>
+                </tr>
+              </thead>
+
+              <tbody>
+                <tr for:each={gridData} for:item="row" key={row.key}>
+                  <td
+                    colspan="3"
+                    class="slds-staffing-constrain-mass-update__cell--header"
+                  >
+                    <div
+                      class="slds-staffing-constrain-mass-update__grid-left-row slds-text-align_left"
+                    >
+                      <div class="slds-p-around_x-small slds-truncate">
+                        {row.name}
+                      </div>
+                      <div
+                        class="slds-p-around_x-small slds-border_left slds-truncate"
+                      >
+                        {row.driveType}
+                      </div>
+                    </div>
+                  </td>
+                  <template for:each={row.rowData} for:item="cellData">
+                    <td
+                      key={cellData.key}
+                      if:true={cellData.data}
+                      class={cellData.classNames}
+                    >
+                      <div
+                        class="slds-grid slds-grid_align-center slds-grid_vertical-align-center"
+                      >
+                        <div>
+                          <span>{cellData.data.requestedStaff}</span>
+                           / 
+                          <span>{cellData.data.totalStaffConstraints}</span>
+                        </div>
+                        <div class="slds-is-absolute slds-p-top_large">
+                          <lightning-button-menu
+                            alternative-text="Show menu"
+                            icon-size="x-small"
+                            menu-alignment="right"
+                            variant="bare-inverse"
+                          >
+                            <lightning-menu-item
+                              value="edit-individual"
+                              label="Edit Individual"
+                              data-date-of-constraint={cellData.dateIso}
+                              data-collection-operation-id={row.collectionOperationId}
+                              data-drive-type={row.driveType}
+                              onclick={handleEditStaffingConstraint}
+                            ></lightning-menu-item>
+                            <lightning-menu-item
+                              value="edit-recurrence"
+                              label="Edit Recurrence"
+                              data-key={cellData.data.key}
+                              data-date-of-constraint={cellData.dateIso}
+                              data-collection-operation-id={row.collectionOperationId}
+                              onclick={handleEditRecurrenceStaffingConstraints}
+                            ></lightning-menu-item>
+                            <lightning-menu-item
+                              value="delete"
+                              label="Delete"
+                              data-date-of-constraint={cellData.dateIso}
+                              data-collection-operation-id={row.collectionOperationId}
+                              data-drive-type={row.driveType}
+                              onclick={handleDeleteStaffingConstraint}
+                            ></lightning-menu-item>
+                            <lightning-menu-divider></lightning-menu-divider>
+                            <lightning-menu-item
+                              value="cancel"
+                              label="Cancel"
+                            ></lightning-menu-item>
+                          </lightning-button-menu>
+                        </div>
+                      </div>
+                    </td>
+
+                    <td
+                      key={cellData.key}
+                      if:false={cellData.data}
+                      class={cellData.classNames}
+                    >
+                      <div
+                        class="slds-grid slds-grid_align-center slds-grid_vertical-align-center"
+                      >
+                        <div class="slds-is-absolute">
+                          <lightning-button-menu
+                            alternative-text="Show menu"
+                            icon-size="x-small"
+                            menu-alignment="right"
+                            icon-name="utility:add"
+                          >
+                            <lightning-menu-item
+                              value="create-individual"
+                              label="Create Individual"
+                              data-date-of-constraint={cellData.dateIso}
+                              data-collection-operation-id={row.collectionOperationId}
+                              data-drive-type={row.driveType}
+                              onclick={handleCreateStaffingConstraint}
+                            ></lightning-menu-item>
+                            <lightning-menu-divider></lightning-menu-divider>
+                            <lightning-menu-item
+                              value="cancel"
+                              label="Cancel"
+                            ></lightning-menu-item>
+                          </lightning-button-menu>
+                        </div>
+                      </div>
+                    </td>
+                  </template>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <c-slwc-add-recurrence-staffing-constraint-modal
+    if:true={addRecurrenceStaffingConstraintModalData.isOpen}
+    is-open={addRecurrenceStaffingConstraintModalData.isOpen}
+    onclose={closeAddRecurrenceStaffingConstraintModal}
+  >
+  </c-slwc-add-recurrence-staffing-constraint-modal>
+
+  <c-slwc-edit-recurrence-staffing-constraint-modal
+    default-collection-operation-id={editRecurrenceStaffingConstraintModalData.collectionOperationId}
+    default-date-range={editRecurrenceStaffingConstraintModalData.dateRange}
+    if:true={editRecurrenceStaffingConstraintModalData.isOpen}
+    is-open={editRecurrenceStaffingConstraintModalData.isOpen}
+    onclose={closeEditRecurrenceStaffingConstraintModal}
+  >
+  </c-slwc-edit-recurrence-staffing-constraint-modal>
+
+  <c-slwc-add-staffing-constraint-modal
+    if:true={staffingConstraintModalData.isOpen}
+    is-open={staffingConstraintModalData.isOpen}
+    onclose={closeStaffingConstraintModal}
+    staffing-constraint={staffingConstraintModalData.staffingConstraint}
+    is-create-individually={staffingConstraintModalData.isCreateIndividually}
+  >
+  </c-slwc-add-staffing-constraint-modal>
+
+  <c-slwc-confirm-modal
+    if:true={confirmModalData.isOpen}
+    is-open={confirmModalData.isOpen}
+    title={confirmModalData.title}
+    message={confirmModalData.message}
+    handle-on-close={confirmModalData.onClose}
+    confirm-btn-label={confirmModalData.confirmBtnLabel}
+    cancel-btn-label={confirmModalData.cancelBtnLabel}
+    layer-index="2"
+    size="x-small"
+  >
+  </c-slwc-confirm-modal>
+</template>

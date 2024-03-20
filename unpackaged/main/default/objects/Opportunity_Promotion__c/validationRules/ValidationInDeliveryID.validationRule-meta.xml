@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>ValidationInDeliveryID</fullName>
+    <active>true</active>
+    <errorConditionFormula>ISPICKVAL(Delivery_ID__c,&quot;Other&quot;) &amp;&amp; ISBLANK(Description__c)</errorConditionFormula>
+    <errorMessage>If the Delivery ID is &quot;Other&quot;. you must fill up the Description.</errorMessage>
+</ValidationRule>

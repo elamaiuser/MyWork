@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Drive_Date_Day__c</fullName>
+    <description>Field to Hold the Drive Date&#39;s Day of Week</description>
+    <externalId>false</externalId>
+    <label>Drive Date Day</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>SUN</fullName>
+                <default>false</default>
+                <label>SUN</label>
+            </value>
+            <value>
+                <fullName>MON</fullName>
+                <default>false</default>
+                <label>MON</label>
+            </value>
+            <value>
+                <fullName>TUE</fullName>
+                <default>false</default>
+                <label>TUE</label>
+            </value>
+            <value>
+                <fullName>WED</fullName>
+                <default>false</default>
+                <label>WED</label>
+            </value>
+            <value>
+                <fullName>THU</fullName>
+                <default>false</default>
+                <label>THU</label>
+            </value>
+            <value>
+                <fullName>FRI</fullName>
+                <default>false</default>
+                <label>FRI</label>
+            </value>
+            <value>
+                <fullName>SAT</fullName>
+                <default>false</default>
+                <label>SAT</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

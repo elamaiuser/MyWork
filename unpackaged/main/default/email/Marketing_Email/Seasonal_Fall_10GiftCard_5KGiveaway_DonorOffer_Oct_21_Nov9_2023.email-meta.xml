@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<EmailTemplate xmlns="http://soap.sforce.com/2006/04/metadata">
+    <available>false</available>
+    <description>Exciting Offer - Donors can get lunch on us!</description>
+    <encodingKey>ISO-8859-1</encodingKey>
+    <letterhead>ARC_Logo_Test</letterhead>
+    <name>Seasonal_Fall_$10GiftCard+5KGiveaway_DonorOffer_Oct 21-Nov9,2023</name>
+    <style>formalLetter</style>
+    <subject>Exciting Offer for Donors!</subject>
+    <textOnly>[NAME]
+
+Right now, the Red Cross has an immediate need for blood. Thank you for working hard to organize your upcoming blood drive. Your blood drive plays an important role during this time to ensure there are no delays in medical treatment for patients in need.
+
+When donors come to give blood Oct. 21 thru Nov. 9 they’ll get a $10 gift card* by email. Plus, they’ll be automatically be entered to win a $5,000 gift card.^^ There will be one winner a week!
+
+As you continue the work to make your drive a success – remember to use these tips:
+
+Fill your schedule. Use these tools to recruit blood donors and schedule them using the Blood Drive Management Portal.
+Encourage donors to schedule a donation for a friend. Each additional donor scheduled means more lives saved!
+
+If you have any questions, please do not hesitate to reach out – I’m always here to help!
+
+IMPORTANT: Donors MUST have a valid email address on file to receive their reward.
+
+
+
+All the best,
+[NAME]
+
+
+*Presenting donors who receive this offer and present to donate during the applicable promotional time frame are eligible to receive the above described e-gift card(s). This offer is non-transferable and not redeemable for cash. Limit one (1) per presenting donor unless otherwise indicated. If a presenting donor qualifies for multiple offers, the donor will only receive the higher offer unless otherwise indicated. Instructions on how to redeem the gift card will be emailed to the address listed on the presenting donor’s American Red Cross donor profile approximately thirty (30 days after attempted donation(s). All gift cards are subject to individual merchant terms and conditions, and all trademarks are property of their respective owners. Merchants and offers are subject to change. No substitutions by presenting donors. American Red Cross is not responsible for lost, damaged, corrupted or stolen gift cards and may replace any such cards at its sole discretion. Any questions or problems in connection with redeeming gift cards must be directed to the merchant.
+
+
+^^Void where prohibited. Void in Puerto Rico, any U.S. territories and outside the United States and where prohibited by law. Open to legal residents of U.S. states and DC, age 18+ (19+ in NE and AL; 21+ in MS) at entry. The Giveaway Period begins 12:00 a.m. ET on 10/21/23; ends 11:59 p.m. ET on 11/09/23 and includes three (3) separate Entry Periods as follows: 10/21/2023-10/27/2023 (drawing date on or about 11/2/2023; 10/28/2023 to 11/3/2023 (drawing date on or about 11/9/2023; and 11/4/2023 to 11/9/2023 (drawing date on or about 11/16/2023). NO PURCHASE OR DONATION NECESSARY. To enter either present to donate blood at an American Red Cross blood donation facility or send an email to customercare@redcross.org and include the Giveaway name, &quot;American Red Cross 2023 $5K a Week.&quot; There is a limit of three (3) total Entries permitted per Entrant, regardless of method of Entry, during the Giveaway Period. Three (3) prizes will be awarded during the Giveaway Period, with one awarded each Entry Period. Winners will receive one (1) $5,000 Visa® Prepaid gift card. Total ARV of all prizes: $15,000. Odds of winning depend on number of entries received. click here. Sponsor: American Red Cross.</textOnly>
+    <type>html</type>
+    <uiType>Aloha</uiType>
+</EmailTemplate>

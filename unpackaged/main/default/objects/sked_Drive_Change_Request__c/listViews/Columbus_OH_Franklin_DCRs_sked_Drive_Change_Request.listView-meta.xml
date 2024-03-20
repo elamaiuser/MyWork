@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Columbus_OH_Franklin_DCRs_sked_Drive_Change_Request</fullName>
+    <filterScope>Queue</filterScope>
+    <label>Columbus OH Franklin: DCRs</label>
+    <queue>Columbus_OH_Franklin_DCRs</queue>
+    <sharedTo>
+        <allInternalUsers></allInternalUsers>
+    </sharedTo>
+</ListView>

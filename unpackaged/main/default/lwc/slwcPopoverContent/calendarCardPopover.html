@@ -1,0 +1,48 @@
+<template>
+  <div class="calendar-card-popover">
+    <header class="slds-popover__header">
+      <div class="slds-media slds-media_center slds-has-flexi-truncate ">
+        <div class="slds-media__figure">
+          <span class="slds-icon_container">
+            <lightning-icon icon-name={popoverData.iconName}></lightning-icon>
+          </span>
+        </div>
+        <div class="slds-media__body">
+          <template for:each={popoverData.headerInfos} for:item="info" for:index="index">
+            <h2 key={info.key} if:false={index} class="slds-text-heading_small slds-text-color_weak">{info.value}</h2>
+            <div key={info.key} if:true={index} class="slds-text-color_inverse-weak slds-line-height_reset">
+              {info.value}
+            </div>
+          </template>
+
+          <!-- <h2 class="slds-text-heading_small slds-text-color_weak">{{$ctrl.infoPopoverData.item.name}}</h2>
+          <div class="slds-text-color_inverse-weak slds-line-height_reset"
+            ng-if="$ctrl.infoPopoverData.item.objectType === OBJECT_TYPE.ACTIVITY">
+            {{$ctrl.infoPopoverData.item.eventType.name}}</div> -->
+        </div>
+      </div>
+    </header>
+    <div class="slds-popover__body slds-text-body_small">
+      <dl class="slds-dl_horizontal">
+        <template for:each={popoverData.bodyInfos} for:item="info">
+          <dt key={info.key} class="slds-dl_horizontal__label ">{info.label}:</dt>
+          <dd key={info.key} class="slds-dl_horizontal__detail">{info.value}</dd>
+        </template>
+      </dl>
+    </div>
+    <footer class="slds-popover__footer slds-text-align_right"
+      if:true={popoverData.actions.length}>
+      <div class="slds-grid slds-wrap slds-grid_align-end">
+        <template for:each={popoverData.actions} for:item="action">
+          <span key={action.key} class={action.className}>
+            <button class="slds-button"
+              data-action={action.label}
+              onclick={handleCalendarCardAction}>
+              <lightning-icon icon-name={action.iconName} class="slds-current-color" variant={action.className} size="xx-small"></lightning-icon>&nbsp;{action.label}
+            </button>
+          </span>
+        </template>
+      </div>
+    </footer>
+  </div>
+</template>

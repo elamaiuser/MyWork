@@ -1,0 +1,20 @@
+<template>
+    <div if:true={showBanner} class="slds-notify slds-notify_alert slds-alert_warning" style="text-align: center;font-size: 15px" role="alert">
+         <span class="slds-assistive-text">warning</span>
+         <span class="slds-icon_container slds-icon-utility-warning slds-m-right_x-small" title="An Account Portfolio Process is in progress. Please wait!">
+           <svg class="slds-icon" style="size: 15px" aria-hidden="true">
+             <use xlink:href="/apexpages/slds/latest/assets/icons/utility-sprite/svg/symbols.svg#warning"></use>
+           </svg>
+         </span>
+         <h2>&nbsp; An Account Portfolio Process is in progress. Please wait!
+         </h2>
+         <div class="slds-notify__close">
+           <button class="slds-button slds-button_icon slds-button_icon-small" title="Close">
+             <svg class="slds-button__icon" aria-hidden="true">
+               <use xlink:href="/assets/icons/utility-sprite/svg/symbols.svg#close"></use>
+             </svg>
+             <span class="slds-assistive-text">Close</span>
+           </button>
+         </div>
+       </div>
+ </template>

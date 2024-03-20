@@ -1,0 +1,37 @@
+<template>
+
+    <div>
+        <div>
+            <div>
+                <lightning-dual-listbox name="languages"
+                            label="Select Drive Fields"
+                            source-label="Available"
+                            selected-label="Selected"
+                            field-level-help="Select Fields"
+                            options={fieldsapinames}
+                            value={allfieldsapinames}
+                            onchange={handleChange}></lightning-dual-listbox>
+
+            </div>
+            <div>
+                <div>
+                    <div style="margin-top: 10px;float: right;">
+                        <template if:true={doselect}>
+                            <lightning-button variant="brand" label="Select All" title="SelectAll fields" onclick={selectallnow} 
+                            class="slds-m-left_x-small"></lightning-button>
+                        </template>
+                        <template if:true={dodeselect}>
+                            <lightning-button variant="brand" label="Remove All" title="DeSelectAll" onclick={deselectallnow} 
+                            class="slds-m-left_x-small"></lightning-button>
+                        </template>
+                        
+                    </div>
+
+                </div>
+                
+            </div>
+        </div>
+    </div>
+
+    
+</template>

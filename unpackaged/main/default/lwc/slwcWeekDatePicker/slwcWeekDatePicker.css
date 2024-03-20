@@ -1,0 +1,9 @@
+.slds-datepicker td.slds-is-selected-multi+.slds-is-selected-multi>.slds-day:before {
+    transform: translateX(-0.5rem) !important;
+}
+.slds-day_adjacent-month {
+    color: #706e6b;
+}
+.slds-is-selected.slds-is-additional .slds-day {
+    background: #59b66e;
+}

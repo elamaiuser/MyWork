@@ -1,0 +1,90 @@
+<template>
+    <template if:true={showSpinner}>
+        <lightning-spinner class="spins" size="medium"></lightning-spinner>
+    </template>
+    <div class="slds-p-top_small slds-grid slds-grid_vertical-align-center slds-border_bottom">
+        <div class="slds-grow slds-grid slds-wrap">
+            <template for:each={driveStatusGroups} for:item="group">
+                <div key={group.status} class={group.class} data-value={group.status} onclick={handleFilterDrives}>
+                    <div>{group.name}</div>
+                    <div class={group.countClass}>{group.totalDrives}</div>
+                </div> 
+            </template>
+            <div class="slds-grid slds-grid_vertical-align-center slds-p-bottom_x-small slds-p-left_x-small">
+                <lightning-button-icon tooltip="Refresh" icon-name="utility:refresh" onclick={handleRefresh}></lightning-button-icon>
+            </div>
+        </div>
+        <div if:false={hideCheckboxColumn} class="slds-shrink-none slds-col_bump-left slds-p-horizontal_small">
+            <lightning-button-group>
+                <lightning-button if:true={showConfirmBtn} label="Confirm" onclick={handleConfirmBtnOld} disabled={confirmBtnDisabled}></lightning-button>
+                <!-- <lightning-button if:true={showConfirmBtn} label="Confirm & Assign Vehicles" onclick={handleConfirmBtn} disabled={confirmBtnDisabled}></lightning-button> -->
+                <lightning-button if:true={showCompleteBtn} label="Complete" onclick={handleCompleteBtn} disabled={completeBtnDisabled}></lightning-button>
+                <lightning-button if:true={showRemoveHoldBtn} label="Remove Hold" onclick={handleRemoveHoldBtn} disabled={removeHoldBtnDisabled}></lightning-button>
+                <lightning-button if:true={showCancelBtn} label="Cancel" onclick={handleCancelBtn} disabled={cancelBtnDisabled}></lightning-button>
+            </lightning-button-group>
+        </div>
+    </div>
+    <div class="slds-scrollable_y" style="height: 45vh;">
+        <c-slwc-custom-datatable 
+            key-field="id"
+            data={filteredList}
+            columns={columns}
+            onrowselection={handleRowSelection}
+            onrowaction={handleRowAction}
+            hide-checkbox-column={hideCheckboxColumn}
+            wrap-text-max-lines="3">
+        </c-slwc-custom-datatable>
+    </div>
+    <div class="slds-shrink-none slds-grow-none slds-p-horizontal_small slds-p-vertical_small slds-border_top modal-content__footer">
+        <div class="slds-grid slds-grid_align-spread slds-grid_vertical-align-center"> 
+            <div class="slds-text-color_weak ng-binding">Total drives: {totalDrives} </div>
+        </div>
+    </div>
+
+    <c-slwc-cancel-drive-modal
+        drives={cancelDriveModalData.drives}
+        disable-drive-replacement
+        is-open={cancelDriveModalData.shown}
+        onclose={closeCancelDriveModal}
+    ></c-slwc-cancel-drive-modal>
+    <c-slwc-drive-staffing-details
+        scheduling-console-territory-keys={filters.territoryKeys}
+        optimization-queue={optimizationQueue}
+        is-open={driveSideMenuData.shown}
+        record-id={driveSideMenuData.recordId}
+        read-only={isReadonly}
+        onclose={closeDriveSideMenu}
+        onsave={saveDriveSideMenu}
+        allocate-assets-only={isAllocateAssetsOnly}
+    >
+    </c-slwc-drive-staffing-details>
+    <c-slwc-linked-drive-modal
+        drive={linkedDriveModalData.drive}
+        read-only={isReadonly}
+        is-open={linkedDriveModalData.shown}
+        onclose={closeLinkedDriveModal}
+    >
+    </c-slwc-linked-drive-modal>
+    <c-slwc-confirm-impacted-drives-modal
+        impacted-drives={confirmImpactedDrivesModalData.impactedDrives}
+        is-open={confirmImpactedDrivesModalData.shown}
+        onclose={closeConfirmImpactedDrivesModal}
+        onsave={handleSaveConfirmImpactedDrivesModal}
+    >
+    </c-slwc-confirm-impacted-drives-modal>
+    <c-slwc-confirm-drives-result-modal
+        confirm-drives-result={confirmDrivesResultModalData.confirmDrivesResult}
+        is-open={confirmDrivesResultModalData.shown}
+        onclose={closeConfirmDrivesResultModal}
+    >
+    </c-slwc-confirm-drives-result-modal>
+    <c-slwc-confirm-modal
+        is-open={confirmModalData.isOpen}
+        title={confirmModalData.title}
+        message={confirmModalData.message}
+        handle-on-close={confirmModalData.onClose}
+        confirm-btn-label={confirmModalData.confirmBtnLabel}
+        cancel-btn-label={confirmModalData.cancelBtnLabel}
+        size='x-small'>
+    </c-slwc-confirm-modal>
+</template>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Drive_Site_Required_Check</fullName>
+    <active>true</active>
+    <description>If Drive SIte is selected then  Site TBD should be unchecked</description>
+    <errorConditionFormula>OR( 
+
+AND(  Drive_Site__c &lt;&gt; null,  Site_TBD__c = true, RecordType.DeveloperName = &#39;Mobile_Opp&#39;) ,  
+
+AND( Drive_Site__c = null,   ISCHANGED(Site_TBD__c), Site_TBD__c = false, RecordType.DeveloperName = &#39;Mobile_Opp&#39;) 
+
+
+
+)</errorConditionFormula>
+    <errorMessage>Please select either Drive Site or Site TBD</errorMessage>
+</ValidationRule>

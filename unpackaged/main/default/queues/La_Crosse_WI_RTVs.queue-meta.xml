@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Queue xmlns="http://soap.sforce.com/2006/04/metadata">
+    <doesSendEmailToMembers>false</doesSendEmailToMembers>
+    <name>La Crosse WI: RTVs</name>
+    <queueMembers>
+        <users>
+            <user>amy.hechimovich@redcross.org</user>
+            <user>jason.blackwell@redcross.org</user>
+            <user>jenelle.blavat@redcross.org</user>
+            <user>jessica.gilges@redcross.org</user>
+            <user>michelle.goodwill@redcross.org.biomed</user>
+            <user>roxanne.berra@redcross.org</user>
+            <user>serena.bricker@redcross.org</user>
+            <user>shannon.metcalf@redcross.org</user>
+            <user>shannon.montgomery@redcross.org.biomed</user>
+        </users>
+    </queueMembers>
+    <queueSobject>
+        <sobjectType>sked__Location__c</sobjectType>
+    </queueSobject>
+</Queue>

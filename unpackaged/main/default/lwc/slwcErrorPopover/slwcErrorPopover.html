@@ -1,0 +1,23 @@
+<template>
+    <template if:true={showPopover}>
+        <section class="slds-popover slds-popover_error slds-nubbin_right-top" role="dialog" style="position: absolute; right: 88px; top: 0px; z-index:99;">
+            <lightning-button-icon onclick={closePopover} class="slds-button slds-button_icon slds-button_icon-small slds-float_right slds-popover__close slds-button_icon-inverse slds-m-top_x-small" size="large"
+                    icon-name="utility:close" variant="bare-inverse" title="Close"></lightning-button-icon>
+            <header class="slds-popover__header">
+                <div class="slds-media slds-media_center slds-has-flexi-truncate ">
+                <div class="slds-media__figure">
+                    <span class="slds-icon_container slds-icon-utility-error">
+                        <lightning-icon icon-name="utility:error" variant="inverse" size="small"></lightning-icon>
+                    </span>
+                </div>
+                <div class="slds-media__body">
+                    <h2 class="slds-truncate slds-text-heading_medium" title="We hit a snag.">We hit a snag.</h2>
+                </div>
+                </div>
+            </header>
+            <div class="slds-popover__body">
+                <div style="display:block;">Review the errors on this page.</div>
+            </div>
+        </section>
+    </template>
+</template>

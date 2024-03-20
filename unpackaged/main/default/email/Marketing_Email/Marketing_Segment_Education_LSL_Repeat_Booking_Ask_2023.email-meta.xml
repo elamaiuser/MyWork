@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<EmailTemplate xmlns="http://soap.sforce.com/2006/04/metadata">
+    <available>true</available>
+    <description>Booking Ask email for past LSL sponsors asking for repeat LSL booking</description>
+    <encodingKey>ISO-8859-1</encodingKey>
+    <letterhead>ARC_Logo_Test</letterhead>
+    <name>Marketing Segment_Education_LSL_Repeat Booking Ask</name>
+    <style>formalLetter</style>
+    <subject>Your Next Leaders Save Lives Blood Drive</subject>
+    <textOnly>Hello [Insert Name],
+
+Thank you for your hard work and participation in the Leaders Save Lives program.  You did a great job and we appreciate the time and energy you spent recruiting donors for your blood drive.  Your work as a Blood Program Leader helped to provide blood products, making a lasting impact for hospital patients and their loved ones.  We can&#39;t thank you enough!
+
+We need your support again by hosting another Leaders Save Lives blood drive to ensure blood products are available for patients in need.  Can we count on you again to help patients who rely on lifesaving blood donations?
+
+Your next Leaders Save Lives blood drive could make a difference for hospital patients and we hope we can count on your again. Please contact me with any questions or to schedule your next Leaders Save Lives blood drive!
+
+P.S. No longer a student or unable to host another drive?  You can make a difference by identifying a high school or college student to carry on the blood drive program.  Please forward this message and encourage them to host a leaders save lives blood drive.
+
+Kind regards,
+[Insert Name]</textOnly>
+    <type>html</type>
+    <uiType>Aloha</uiType>
+</EmailTemplate>

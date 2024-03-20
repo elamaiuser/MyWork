@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+        <label><!-- Travel Time Item Ids --></label>
+        <name>sked_Travel_Time_Item_Ids__c</name>
+    </CustomFieldTranslation>

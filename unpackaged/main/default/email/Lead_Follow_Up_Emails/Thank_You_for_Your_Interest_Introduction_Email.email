@@ -1,0 +1,11 @@
+Hello, {!Lead.FirstName} - 
+
+I’d like to take a quick moment to introduce myself and thank you for expressing interest in hosting a blood drive with the American Red Cross. I am the Business Development Manager for your local area and I am looking forward to getting to know more about you and your organization, {!Lead.Company}, to determine the best partnership opportunity available for your group. 
+
+I would like to set up some time to quickly chat with you.  Is there a time that works best for you?
+
+Kind regards, 
+
+{!Lead.OwnerFullName}
+{!Lead.OwnerPhone}
+{!Lead.OwnerEmail}

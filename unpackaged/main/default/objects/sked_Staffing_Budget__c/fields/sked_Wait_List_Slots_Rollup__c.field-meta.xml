@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>sked_Wait_List_Slots_Rollup__c</fullName>
+    <externalId>false</externalId>
+    <label>Wait List Slots Rollup</label>
+    <summaryFilterItems>
+        <field>sked_Staffing_Budget_Availability__c.sked_Availability_Status__c</field>
+        <operation>equals</operation>
+        <value>Waitlist</value>
+    </summaryFilterItems>
+    <summaryForeignKey>sked_Staffing_Budget_Availability__c.sked_Staffing_Budget__c</summaryForeignKey>
+    <summaryOperation>count</summaryOperation>
+    <trackTrending>false</trackTrending>
+    <type>Summary</type>
+</CustomField>

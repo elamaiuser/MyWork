@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+        <label><!-- Referrer --></label>
+        <name>Referrer__c</name>
+        <picklistValues>
+            <masterLabel>Family/Friend Referral</masterLabel>
+            <translation><!-- Family/Friend Referral --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>General Referral</masterLabel>
+            <translation><!-- General Referral --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Marketing Campaign</masterLabel>
+            <translation><!-- Marketing Campaign --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>My School</masterLabel>
+            <translation><!-- My School --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Other</masterLabel>
+            <translation><!-- Other --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Red Cross Account Manager/Representative</masterLabel>
+            <translation><!-- Red Cross Account Manager/Representative --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Referral</masterLabel>
+            <translation><!-- Referral --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Social Media</masterLabel>
+            <translation><!-- Social Media --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Social Media Outlet (Facebook, Twitter, LinkedIn)</masterLabel>
+            <translation><!-- Social Media Outlet (Facebook, Twitter, LinkedIn) --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Website</masterLabel>
+            <translation><!-- Website --></translation>
+        </picklistValues>
+    </CustomFieldTranslation>

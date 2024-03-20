@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Calendar_Build_Draft_Review</fullName>
+    <columns>sked_Drive_Date__c</columns>
+    <columns>NAME</columns>
+    <columns>sked_Opportunity__c</columns>
+    <columns>sked_Rank__c</columns>
+    <columns>sked_Drive_Productivity_Planned__c</columns>
+    <columns>sked_Projected_Registered_Donors__c</columns>
+    <columns>sked_Total_Procedures_Projected__c</columns>
+    <columns>sked_Total_Staff_Requested__c</columns>
+    <columns>sked_Total_Vehicle_Requested__c</columns>
+    <columns>sked_Total_Equipment_Requested__c</columns>
+    <columns>sked_Max_Shift_End__c</columns>
+    <columns>sked_Min_Shift_Start__c</columns>
+    <columns>sked_Drive_Shift_Count__c</columns>
+    <columns>sked_Collection_Operation__c</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>sked_Drive_Date__c</field>
+        <operation>greaterOrEqual</operation>
+    </filters>
+    <filters>
+        <field>sked_Type_of_Drive__c</field>
+        <operation>equals</operation>
+        <value>Mobile</value>
+    </filters>
+    <filters>
+        <field>sked_Drive_Date__c</field>
+        <operation>lessThan</operation>
+    </filters>
+    <filters>
+        <field>sked_District__c</field>
+        <operation>equals</operation>
+    </filters>
+    <label>Calendar Build_Draft Review</label>
+</ListView>

@@ -1,0 +1,55 @@
+.slds-modal.compact-view {
+  position: relative;
+  z-index: 1 !important;
+}
+
+.slds-modal.compact-view .slds-modal__container {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+.slds-modal.compact-view .slds-modal__header {
+  padding: 0;
+  border: 0;
+  text-align: left;
+}
+
+.slds-modal.compact-view .slds-modal__close {
+  display: none;
+}
+
+.slds-modal.compact-view .slds-modal__title {
+  font-size: .75rem;
+  line-height: 1.25;
+  color: #3e3e3c;
+  text-transform: uppercase;
+  letter-spacing: .0625rem;
+  padding: .5rem 1rem;
+  background: #f3f2f2;
+  font-weight: initial;
+}
+
+.slds-modal.compact-view .slds-modal__content {
+  padding-left: 0;
+  padding-right: 0;
+  padding-top: 0;
+  overflow: visible;
+  box-shadow: none;
+}
+
+.slds-modal.compact-view .slds-modal__footer {
+  background: #fff;
+  border: 0;
+  box-shadow: none;
+  margin: 0;
+  padding: 0;
+}
+
+.slds-modal.compact-view + .slds-backdrop {
+  display: none;
+}
+
+.overflow-initial {
+  overflow: initial;
+}

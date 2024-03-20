@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<EmailTemplate xmlns="http://soap.sforce.com/2006/04/metadata">
+    <available>true</available>
+    <description>Prospecting email for Humankind blood drive program - Changed version</description>
+    <encodingKey>ISO-8859-1</encodingKey>
+    <letterhead>ARC_Logo_Test</letterhead>
+    <name>Marketing Segment_Education_Humankind_Prospect_2023_BD</name>
+    <style>formalLetter</style>
+    <subject>Partner with the Red Cross to help save lives!</subject>
+    <textOnly>Hi {!Contact.FirstName},
+
+ 
+
+I’m writing to invite you to partner with the American Red Cross through our Humankind campaign. Humankind is a nationwide movement that’s touching college campuses across the U.S. and highlights the legacies students create as blood donors. Students are being called on to leave their mark on humankind by hosting blood drives and giving blood.
+
+ 
+
+Will you join the Humankind movement by hosting a blood drive program on your campus? Hosting blood drives is a valuable leadership experience and an opportunity for you to partner with one of the world’s largest humanitarian organizations and most recognized brands in the world. You can use this experience to enhance your education and your resume. Most importantly, you will directly impact hospital patients who are relying on donors to give blood.
+
+
+
+Partnering with the Red Cross for a lifesaving blood drive program can help bring students, faculty and the community together to help change someone’s life with every single donation you collect.
+
+ 
+
+I hope you’ll join us and make your mark on humankind. Contact me and let’s save lives together.
+ 
+
+Sincerely, 
+
+{!User.Name}
+
+{!User.Email}
+
+ 
+
+P.S. Are you involved in other student organizations that might be interested? If so, please forward this email or Tweet this message and encourage others to get involved!</textOnly>
+    <type>html</type>
+    <uiType>Aloha</uiType>
+</EmailTemplate>

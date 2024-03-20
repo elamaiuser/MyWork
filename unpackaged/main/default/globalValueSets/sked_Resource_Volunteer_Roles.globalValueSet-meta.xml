@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GlobalValueSet xmlns="http://soap.sforce.com/2006/04/metadata">
+    <customValue>
+        <fullName>Donor Ambassador</fullName>
+        <default>false</default>
+        <label>Donor Ambassador</label>
+    </customValue>
+    <customValue>
+        <fullName>Lead Donor Ambassador</fullName>
+        <default>false</default>
+        <label>Lead Donor Ambassador</label>
+    </customValue>
+    <customValue>
+        <fullName>Regulated - Medical Screener</fullName>
+        <default>false</default>
+        <label>Regulated - Medical Screener</label>
+    </customValue>
+    <customValue>
+        <fullName>Regulated - RNOR</fullName>
+        <default>false</default>
+        <label>Regulated - RNOR</label>
+    </customValue>
+    <customValue>
+        <fullName>Translator</fullName>
+        <default>false</default>
+        <label>Translator</label>
+    </customValue>
+    <masterLabel>Resource Volunteer Roles</masterLabel>
+    <sorted>false</sorted>
+</GlobalValueSet>

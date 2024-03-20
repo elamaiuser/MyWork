@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+        <label><!-- Drive Designations --></label>
+        <name>Drive_Designations__c</name>
+        <picklistValues>
+            <masterLabel>COVID 19</masterLabel>
+            <translation><!-- COVID 19 --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Donors without Drive Bookings</masterLabel>
+            <translation><!-- Donors without Drive Bookings --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Gray Skies</masterLabel>
+            <translation><!-- Gray Skies --></translation>
+        </picklistValues>
+    </CustomFieldTranslation>

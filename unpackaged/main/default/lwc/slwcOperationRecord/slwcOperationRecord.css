@@ -1,0 +1,51 @@
+.operation-staff-list .item{
+    font-size: 0.875rem;
+}
+
+.card {
+    border-left: 0.25rem solid transparent;
+    padding-left: 0.5rem;
+}
+
+.card.has-error {
+    border-color:#d23331;
+}
+
+.ready-submit {
+    display: flex;
+    justify-content: center;
+    padding: .5rem;
+    background: #59b66e;
+    color: #fff;
+}
+
+.error {
+    display: flex;
+    justify-content: center;
+    padding: .5rem;
+    background: #d23331;
+    color: #fff;
+}
+
+
+.full-screen .slds-modal__container { 
+    margin: 0 auto;
+    width: 100%;
+    max-width: 40rem;
+    min-width: auto;
+    padding: 0;
+}
+
+.full-screen .slds-modal__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #007ee6;
+    color: #fff;
+    border-radius: 0;
+}
+
+.full-screen .slds-modal__content {
+    height: 100%;
+    border-radius: 0;
+}

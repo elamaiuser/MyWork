@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>sked_Type__c</fullName>
+    <externalId>false</externalId>
+    <label>Type</label>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>2RBC</fullName>
+                <default>false</default>
+                <label>2RBC</label>
+            </value>
+            <value>
+                <fullName>2RBC Sign-off</fullName>
+                <default>false</default>
+                <label>2RBC Sign-off</label>
+            </value>
+            <value>
+                <fullName>Apheresis</fullName>
+                <default>false</default>
+                <label>Apheresis</label>
+            </value>
+            <value>
+                <fullName>Apheresis Charge</fullName>
+                <default>false</default>
+                <label>Apheresis Charge</label>
+            </value>
+            <value>
+                <fullName>Charge</fullName>
+                <default>false</default>
+                <label>Charge</label>
+            </value>
+            <value>
+                <fullName>Charge Mentor</fullName>
+                <default>false</default>
+                <label>Charge Mentor</label>
+            </value>
+            <value>
+                <fullName>Competent Driver</fullName>
+                <default>false</default>
+                <label>Competent Driver</label>
+            </value>
+            <value>
+                <fullName>Drive Lead</fullName>
+                <default>false</default>
+                <label>Drive Lead</label>
+            </value>
+            <value>
+                <fullName>Driver</fullName>
+                <default>false</default>
+                <label>Driver</label>
+            </value>
+            <value>
+                <fullName>Driver CDL A</fullName>
+                <default>false</default>
+                <label>Driver CDL A</label>
+            </value>
+            <value>
+                <fullName>Driver CDL B</fullName>
+                <default>false</default>
+                <label>Driver CDL B</label>
+            </value>
+            <value>
+                <fullName>Driver - DOT</fullName>
+                <default>false</default>
+                <label>Driver - DOT</label>
+            </value>
+            <value>
+                <fullName>Driver Prestaff</fullName>
+                <default>false</default>
+                <label>Driver Prestaff</label>
+            </value>
+            <value>
+                <fullName>Driver Support</fullName>
+                <default>false</default>
+                <label>Driver Support</label>
+            </value>
+            <value>
+                <fullName>Driver Tech Trainee</fullName>
+                <default>false</default>
+                <label>Driver Tech Trainee</label>
+            </value>
+            <value>
+                <fullName>Float</fullName>
+                <default>false</default>
+                <label>Float</label>
+            </value>
+            <value>
+                <fullName>HH</fullName>
+                <default>false</default>
+                <label>HH</label>
+            </value>
+            <value>
+                <fullName>Lead Donor Ambassador</fullName>
+                <default>false</default>
+                <label>Lead Donor Ambassador</label>
+            </value>
+            <value>
+                <fullName>Licensed Nurse</fullName>
+                <default>false</default>
+                <label>Licensed Nurse</label>
+            </value>
+            <value>
+                <fullName>Limited HH</fullName>
+                <default>false</default>
+                <label>Limited HH</label>
+            </value>
+            <value>
+                <fullName>Limited Ship</fullName>
+                <default>false</default>
+                <label>Limited Ship</label>
+            </value>
+            <value>
+                <fullName>NCE Staff</fullName>
+                <default>false</default>
+                <label>NCE Staff</label>
+            </value>
+            <value>
+                <fullName>OJI</fullName>
+                <default>false</default>
+                <label>OJI</label>
+            </value>
+            <value>
+                <fullName>Pickup Driver</fullName>
+                <default>false</default>
+                <label>Pickup Driver</label>
+            </value>
+            <value>
+                <fullName>Plasma</fullName>
+                <default>false</default>
+                <label>Plasma</label>
+            </value>
+            <value>
+                <fullName>Post Collections</fullName>
+                <default>false</default>
+                <label>Post Collections</label>
+            </value>
+            <value>
+                <fullName>Special Collections</fullName>
+                <default>false</default>
+                <label>Special Collections</label>
+            </value>
+            <value>
+                <fullName>Special Collections Charge</fullName>
+                <default>false</default>
+                <label>Special Collections Charge</label>
+            </value>
+            <value>
+                <fullName>Staff Shuttle</fullName>
+                <default>false</default>
+                <label>Staff Shuttle</label>
+            </value>
+            <value>
+                <fullName>Team Supervisor</fullName>
+                <default>false</default>
+                <label>Team Supervisor</label>
+            </value>
+            <value>
+                <fullName>Trainee</fullName>
+                <default>false</default>
+                <label>Trainee</label>
+            </value>
+            <value>
+                <fullName>Translator</fullName>
+                <default>false</default>
+                <label>Translator</label>
+            </value>
+            <value>
+                <fullName>TRN HH</fullName>
+                <default>false</default>
+                <label>TRN HH</label>
+            </value>
+            <value>
+                <fullName>TRN VP</fullName>
+                <default>false</default>
+                <label>TRN VP</label>
+            </value>
+            <value>
+                <fullName>VOL Licensed Nurse</fullName>
+                <default>false</default>
+                <label>VOL Licensed Nurse</label>
+            </value>
+            <value>
+                <fullName>VOL Limited HH</fullName>
+                <default>false</default>
+                <label>VOL Limited HH</label>
+            </value>
+            <value>
+                <fullName>Volunteer Donor Ambassador</fullName>
+                <default>false</default>
+                <label>Volunteer Donor Ambassador</label>
+            </value>
+            <value>
+                <fullName>VP</fullName>
+                <default>false</default>
+                <label>VP</label>
+            </value>
+            <value>
+                <fullName>VP/HH</fullName>
+                <default>false</default>
+                <label>VP/HH</label>
+            </value>
+            <value>
+                <fullName>Work Restriction</fullName>
+                <default>false</default>
+                <label>Work Restriction</label>
+            </value>
+            <value>
+                <fullName>Vehicle</fullName>
+                <default>false</default>
+                <label>Vehicle</label>
+            </value>
+            <value>
+                <fullName>Equipment</fullName>
+                <default>false</default>
+                <label>Equipment</label>
+            </value>
+            <value>
+                <fullName>2RBC Asset</fullName>
+                <default>false</default>
+                <label>2RBC Asset</label>
+            </value>
+            <value>
+                <fullName>APH Asset</fullName>
+                <default>false</default>
+                <label>APH Asset</label>
+            </value>
+            <value>
+                <fullName>Plasma Asset</fullName>
+                <default>false</default>
+                <label>Plasma Asset</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

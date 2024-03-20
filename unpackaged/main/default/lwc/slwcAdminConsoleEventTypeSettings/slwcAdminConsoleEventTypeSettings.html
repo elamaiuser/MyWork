@@ -1,0 +1,233 @@
+<template>
+    <div class="rac-setting flex-display setting-panel">
+        <lightning-spinner if:true={showSpinner} class="spins" size="medium"></lightning-spinner>
+
+        <div class="setting-panel_header">
+            <div class="slds-media">
+                <div class="slds-media__figure">
+                    <span class="slds-icon_container slds-icon-utility-settings setup-icon">
+                        <lightning-icon icon-name="utility:settings" variant="inverse" size="small"></lightning-icon>
+                    </span>
+                </div>
+                <div class="slds-media__body">
+                    <h1 class="slds-page-header__title slds-truncate slds-align-middle">Administration</h1>
+                    <p class="slds-page-header__subtitle slds-text-body_small slds-line-height_reset">Event Type Settings</p>
+                </div>
+            </div>
+            <div>
+                <lightning-button variant="border-filled" icon-name="utility:refresh" label="Refresh" onclick={refresh}></lightning-button>
+                <template if:false={isReadonly}>
+                    <lightning-button variant="brand" icon-name="utility:save" label="Save" class="slds-m-left_x-small" onclick={save}></lightning-button>
+                </template>
+            </div>
+        </div>
+        <div class="setting-panel_content-container">
+            <div class="setting-panel_content">
+                <div class="slds-p-around_medium slds-form ">
+                    <div class="slds-tabs_default">
+                        <ul class="slds-tabs_default__nav">
+                            <li 
+                                for:each={tabs} for:item="tab" 
+                                key={tab.id}
+                                class={tab.class}
+                            >
+                                <a class="slds-tabs_default__link slds-grid slds-grid_vertical-align-center" data-value={tab.id} onclick={selectTab}>
+                                    <span>{tab.label}</span>
+
+                                    <span if:true={tab.hasError} class="slds-text-color_error slds-m-left_x-small">
+                                        <lightning-icon icon-name="utility:warning" class="slds-current-color" size="x-small"></lightning-icon>
+                                    </span>
+                                </a>
+                            </li>
+                        </ul>
+                        <div
+                            class="slds-tabs_default__content slds-show">
+                            <table class="slds-table slds-table_bordered event-type-setting__table slds-no-row-hover">
+                                <thead>
+                                    <tr class="slds-line-height_reset slds-text-title_caps">
+                                        <th class={column.class}
+                                            key={column.id}
+                                            for:each={columns} for:item="column">
+                                            {column.label}
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr
+                                        for:each={filteredEventTypeSettings} 
+                                        for:item="item"
+                                        class={item.id}
+                                        key={item.id}>
+                                        <td class="slds-cell-wrap event-type__col">
+                                            <lightning-input type="text" max-length="255" name="item" label="item" class="item"
+                                                data-item={item.id}
+                                                data-object-type={item.category}
+                                                required
+                                                readonly
+                                                onchange={handleOnChange}
+                                                variant="label-hidden" value={item.item}></lightning-input>
+                                        </td>
+
+                                        <td class="slds-cell-wrap short-name__col">
+                                            <lightning-input type="text" max-length="255" name="shortName" label="shortName" class="shortName"
+                                                data-item={item.id}
+                                                data-object-type={item.category}
+                                                readonly={isReadonly}
+                                                onchange={handleOnChange}
+                                                variant="label-hidden" value={item.shortName}>
+                                            </lightning-input>
+                                        </td>
+
+                                        <td class="slds-cell-wrap avail-start__col">
+                                            <template if:false={isReadonly}>
+                                                <lightning-input type="time" name="availableStart" label="availableStart" class="availableStart" variant="label-hidden"
+                                                    value={item.availableStart}
+                                                    data-item={item.id}
+                                                    data-object-type={item.category}    
+                                                    onchange={handleOnChange}>
+                                                </lightning-input>
+                                            </template>
+                                            <template if:true={isReadonly}>
+                                                <lightning-formatted-time value={item.availableStart}></lightning-formatted-time>
+                                            </template>
+                                        </td>
+
+                                        <td class="slds-cell-wrap avail-end__col">
+                                            <template if:false={isReadonly}>
+                                                <lightning-input type="time" name="availableEnd" label="availableEnd" class="availableEnd" variant="label-hidden"
+                                                    value={item.availableEnd}
+                                                    data-item={item.id}
+                                                    data-object-type={item.category}    
+                                                    onchange={handleOnChange}>
+                                                </lightning-input>
+                                            </template>
+                                            <template if:true={isReadonly}>
+                                                <lightning-formatted-time value={item.availableEnd}></lightning-formatted-time>
+                                            </template>
+                                        </td>
+
+                                        <td class="slds-cell-wrap background-color__col">
+                                            <lightning-input type="color" name="backgroundColor" label="backgroundColor" class="backgroundColor"
+                                                data-item={item.id}
+                                                data-object-type={item.category}
+                                                required
+                                                disabled={isReadonly}
+                                                onchange={handleOnChange}
+                                                variant="label-hidden" value={item.backgroundColor}>
+                                            </lightning-input>
+                                        </td>
+                                        
+                                        <td class="slds-cell-wrap color__col">
+                                            <lightning-input type="color" name="color" label="color" class="color"
+                                                data-item={item.id}
+                                                data-object-type={item.category}
+                                                required
+                                                disabled={isReadonly}  
+                                                onchange={handleOnChange}
+                                                variant="label-hidden" value={item.color}>
+                                            </lightning-input>
+                                        </td>
+
+                                        <td class="slds-cell-wrap step__col">
+                                            <lightning-input type="number" name="step" label="step" class="step"
+                                                data-item={item.id}
+                                                data-object-type={item.category}
+                                                readonly={isReadonly}
+                                                onchange={handleOnChange}
+                                                variant="label-hidden" value={item.step}>
+                                            </lightning-input>
+                                        </td>
+
+                                        <td class="slds-cell-wrap is-available__col">
+                                            <template if:false={isReadonly}>
+                                                <lightning-input type="toggle" name="isAvailable" label="isAvailable" class="isAvailable"
+                                                    data-item={item.id}
+                                                    data-object-type={item.category}    
+                                                    onchange={handleOnChange}
+                                                    message-toggle-active="" message-toggle-inactive="" variant="label-hidden" checked={item.isAvailable}>
+                                                </lightning-input>
+                                            </template>
+                                            <template if:true={isReadonly}>
+                                                <template if:true={item.isAvailable}>
+                                                    <lightning-icon icon-name="utility:check" size="x-small"></lightning-icon>
+                                                </template>
+                                                <template if:false={item.isAvailable}>
+                                                    <lightning-icon icon-name="utility:steps" size="x-small"></lightning-icon>
+                                                </template>
+                                            </template>
+                                        </td>
+
+                                        <td class="slds-cell-wrap show-legend__col">
+                                            <template if:false={isReadonly}>
+                                                <lightning-input type="toggle" name="showLegend" label="showLegend" class="showLegend"
+                                                    data-item={item.id}
+                                                    data-object-type={item.category}    
+                                                    onchange={handleOnChange}
+                                                    message-toggle-active="" message-toggle-inactive="" variant="label-hidden" checked={item.showLegend}>
+                                                </lightning-input>
+                                            </template>
+                                            <template if:true={isReadonly}>
+                                                <template if:true={item.showLegend}>
+                                                    <lightning-icon icon-name="utility:check" size="x-small"></lightning-icon>
+                                                </template>
+                                                <template if:false={item.showLegend}>
+                                                    <lightning-icon icon-name="utility:steps" size="x-small"></lightning-icon>
+                                                </template>
+                                            </template>
+                                        </td>
+
+                                        <td class="slds-cell-wrap can-be-pre-dated__col">
+                                            <template if:false={isReadonly}>
+                                                <lightning-input type="toggle" name="canBePreDated" label="canBePreDated" class="canBePreDated"
+                                                    data-item={item.id}
+                                                    data-object-type={item.category}    
+                                                    onchange={handleOnChange}
+                                                    message-toggle-active="" message-toggle-inactive="" variant="label-hidden" checked={item.canBePreDated}>
+                                                </lightning-input>
+                                            </template>
+                                            <template if:true={isReadonly}>
+                                                <template if:true={item.canBePreDated}>
+                                                    <lightning-icon icon-name="utility:check" size="x-small"></lightning-icon>
+                                                </template>
+                                                <template if:false={item.canBePreDated}>
+                                                    <lightning-icon icon-name="utility:steps" size="x-small"></lightning-icon>
+                                                </template>
+                                            </template>
+                                        </td>
+                                        
+                                        <td class="slds-cell-wrap is-active__col">
+                                            <template if:false={isReadonly}>
+                                                <lightning-input type="toggle" name="isActive" label="isActive" class="isActive"
+                                                    data-item={item.id}
+                                                    data-object-type={item.category}    
+                                                    onchange={handleOnChange}
+                                                    message-toggle-active="" message-toggle-inactive="" variant="label-hidden" checked={item.isActive}>
+                                                </lightning-input>
+                                            </template>
+                                            <template if:true={isReadonly}>
+                                                <template if:true={item.isActive}>
+                                                    <lightning-icon icon-name="utility:check" size="x-small"></lightning-icon>
+                                                </template>
+                                                <template if:false={item.isActive}>
+                                                    <lightning-icon icon-name="utility:steps" size="x-small"></lightning-icon>
+                                                </template>
+                                            </template>
+                                        </td>
+
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <!-- empty -->
+                            <div class="setting-table__empty-message slds-m-horizontal_small slds-m-top_large" if:true={showEmptyMessage}>
+                                <span class="slds-icon_container slds-m-right_x-small">
+                                    <lightning-icon icon-name="utility:warning" class="slds-current-color" size="x-small"></lightning-icon>
+                                </span>
+                                <span>No event type setting</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>

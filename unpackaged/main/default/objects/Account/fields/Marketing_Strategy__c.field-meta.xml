@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Marketing_Strategy__c</fullName>
+    <externalId>false</externalId>
+    <label>Marketing Strategy</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>true</trackHistory>
+    <type>MultiselectPicklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Diversity African American</fullName>
+                <default>false</default>
+                <label>Diversity - African American</label>
+            </value>
+            <value>
+                <fullName>Diversity - Asian</fullName>
+                <default>false</default>
+                <label>Diversity - Asian</label>
+            </value>
+            <value>
+                <fullName>Diversity - Hispanic</fullName>
+                <default>false</default>
+                <label>Diversity - Hispanic</label>
+            </value>
+            <value>
+                <fullName>RSMO</fullName>
+                <default>false</default>
+                <label>RSMO</label>
+            </value>
+            <value>
+                <fullName>RSMO - Monthly</fullName>
+                <default>false</default>
+                <label>RSMO - Monthly</label>
+            </value>
+            <value>
+                <fullName>Amish Drive</fullName>
+                <default>false</default>
+                <label>Amish Drive</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+    <visibleLines>5</visibleLines>
+</CustomField>

@@ -1,0 +1,11 @@
+Hello, {!Contact.FirstName}
+
+Thank you for contacting the American Red Cross and for your interest in sponsoring a blood drive.  The Red Cross is always welcoming new sponsors, and your efforts will ensure that we have an adequate supply of blood for both emergency and non-emergency situations. 
+
+At your convenience, I would like to speak with you regarding how to set up a blood drive and answer any questions you have.  I have also attached some information for your review.  Please let me know when would be a good time to talk. 
+
+I truly appreciate your willingness to help and support the American Red Cross Blood Program, and look forward to speaking with you soon!
+
+Sincerely, 
+{!Lead.OwnerFullName}
+{!Lead.OwnerEmail}

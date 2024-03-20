@@ -1,0 +1,29 @@
+<template>
+    <section role="dialog" tabindex="-1" class={customClass.modalClass} style="z-index: 9003;">
+        <div class="slds-modal__container" style="min-width: 77rem;">
+            <header class={customClass.headerClass}>
+                <lightning-button-icon onclick={handleCancel} class="slds-button slds-button_icon slds-modal__close" size="large"
+                    icon-name="utility:close" variant="bare-inverse" title="Close"></lightning-button-icon>
+
+                <h2 class="slds-modal__title slds-hyphenate">{modalHeader}</h2>
+            </header>
+            <div class="slds-modal__content slds-p-around_medium">
+                <div class="slds-is-relative">
+                    <template if:true={showSpinner}>
+                        <lightning-spinner class="spins" size="medium"></lightning-spinner>
+                    </template>
+                    
+                    <c-slwc-recurrence-dates-picker
+                        default-selected-days={model.STEP2.selectedDays}
+                        onchange={handleStep2ModelOnChange}>
+                    </c-slwc-recurrence-dates-picker>
+                </div>
+            </div>
+            <footer class={customClass.footerClass}>
+                <button class="slds-button slds-button_neutral" onclick={handlePrev}>Back</button>
+                <button class="slds-button slds-button_brand" onclick={handleNext}>Next</button>
+            </footer>
+        </div>
+    </section>
+    <div class={customClass.backdropClass} style="z-index: 9002;"></div>
+</template>

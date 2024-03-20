@@ -1,0 +1,15 @@
+<template>
+    <template if:true={showModal}>
+        <section role="dialog" tabindex="-1" aria-modal="true" class="slds-modal slds-fade-in-open">
+            <div class="slds-modal__container" style="transform: initial">
+                <c-slwc-generate-drive-modal
+                    record-id={driveChangeRequest.Id}
+                    mode="listenOpportunityChanged"
+                    onclosemodal={handleCloseModal}
+                ></c-slwc-generate-drive-modal>
+            </div>
+        </section>
+
+        <div class="slds-backdrop slds-backdrop_open"></div>
+    </template>
+</template>

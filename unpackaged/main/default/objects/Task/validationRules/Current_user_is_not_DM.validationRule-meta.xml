@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Current_user_is_not_DM</fullName>
+    <active>false</active>
+    <description>If current user is not DM then he/she do not have privilege to approve/reject any request.</description>
+    <errorConditionFormula>ISCHANGED( Approved__c )  &amp;&amp; ( $User.Id !=  OwnerId )</errorConditionFormula>
+    <errorMessage>Only DM can approve/reject marketing exception</errorMessage>
+</ValidationRule>

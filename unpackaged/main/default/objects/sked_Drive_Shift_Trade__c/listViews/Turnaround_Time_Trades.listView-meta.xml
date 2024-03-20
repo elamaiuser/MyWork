@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Turnaround_Time_Trades</fullName>
+    <columns>NAME</columns>
+    <columns>sked_Collection_Operation__c</columns>
+    <columns>sked_GuaranteedMinHrsForfeited_Requester__c</columns>
+    <columns>sked_GuaranteedMinHrsForfeited_Trading__c</columns>
+    <columns>sked_Requesting_Staff__c</columns>
+    <columns>sked_Requesting_Staff_Drive__c</columns>
+    <columns>sked_Requesting_Staff_Drive_Date__c</columns>
+    <columns>sked_Requesting_Staff_Drive_Name__c</columns>
+    <columns>sked_Status__c</columns>
+    <columns>sked_TAT_Time_Traded_Into_Requester__c</columns>
+    <columns>sked_TAT_Time_Traded_Into_Trading__c</columns>
+    <columns>sked_Trading_Staff__c</columns>
+    <columns>sked_Trading_Staff_Drive__c</columns>
+    <columns>sked_Trading_Staff_Drive_Date__c</columns>
+    <columns>sked_Trading_Staff_Drive_Name__c</columns>
+    <filterScope>Everything</filterScope>
+    <label>Timekeeper Trade Evaluation</label>
+</ListView>

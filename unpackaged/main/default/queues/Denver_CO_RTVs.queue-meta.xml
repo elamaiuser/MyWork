@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Queue xmlns="http://soap.sforce.com/2006/04/metadata">
+    <doesSendEmailToMembers>false</doesSendEmailToMembers>
+    <name>Denver CO: RTVs</name>
+    <queueMembers>
+        <users>
+            <user>blaine.devesty@redcross.org.biomed</user>
+            <user>carlaine.ostrander@redcross.org</user>
+            <user>ryan.gunderson@redcross.org</user>
+            <user>sarah.dixon2@redcross.org</user>
+            <user>shaunte.allred@redcross.org</user>
+            <user>shawn.yanito@redcross.org</user>
+        </users>
+    </queueMembers>
+    <queueSobject>
+        <sobjectType>sked__Location__c</sobjectType>
+    </queueSobject>
+</Queue>

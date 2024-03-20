@@ -1,0 +1,152 @@
+import { LightningElement, track, api, wire } from 'lwc';
+import { CurrentPageReference } from 'lightning/navigation';
+import { fireEvent, registerListener, unregisterAllListeners } from 'c/pubsub';
+import * as slwcUtils from 'c/slwcUtils';
+import { DRIVE_DELIVERY_JOBS_TYPE } from 'c/slwcConstants';
+import { uniqueId,remove,isNull, cloneDeep } from 'c/lodash';
+
+export default class SlwcDriveDeliveryJobModal extends LightningElement {
+    @api drive;
+
+    @track driveDeliveryJobs = {
+        driveBags: []
+    };
+    @track messages = []
+    @track showModal = false;
+    @track action;
+    @track modalHeader;
+    @track bagType;
+    @track quantity;
+    @track dirty = false;
+    @track isDeleteForm;
+    @track actionOptions = [];
+    @wire(CurrentPageReference) pageRef;
+
+    connectedCallback() {
+        registerListener('showDriveDeliveryJobModal', this.handleShowDriveDeliveryJobModal, this);
+    }
+
+    disconnectedCallback() {
+        unregisterAllListeners(this);
+    }
+    get showButtonAdd(){
+        return this.bagType && this.quantity
+    }
+    get isMobile(){
+        // return true
+        return slwcUtils.isMobile()
+    }
+    get showBagSection() {
+        return this.driveDeliveryJobs.type == DRIVE_DELIVERY_JOBS_TYPE.BAG;
+    }
+    get showTimeSection() {
+        return this.driveDeliveryJobs.type != DRIVE_DELIVERY_JOBS_TYPE.BAG;
+    }
+    get isPickUpRequired() {
+        return this.driveDeliveryJobs.type == DRIVE_DELIVERY_JOBS_TYPE.VOL_PICK_UP;
+    }
+    /** Custom functions **/
+    closeModal() {
+        fireEvent(this.pageRef, 'closeDriveDeliveryJobModal');
+        this.showModal = false;
+    }
+    validate(){
+        this.messages = []
+        const isAllInputValid = [...this.template.querySelectorAll('lightning-input'), ...this.template.querySelectorAll('lightning-combobox')]
+            .reduce((validSoFar, inputCmp) => {
+                inputCmp.reportValidity();
+                return validSoFar && inputCmp.checkValidity();
+            }, true);
+        this.dirty = true;
+        if(this.driveDeliveryJobs.type == DRIVE_DELIVERY_JOBS_TYPE.BAG && (!this.driveDeliveryJobs.driveBags || this.driveDeliveryJobs.driveBags && this.driveDeliveryJobs.driveBags.length == 0)){
+            this.messages.push("Please add bags");
+        }
+        if(this.driveDeliveryJobs.start && this.driveDeliveryJobs.end && this.driveDeliveryJobs.start >= this.driveDeliveryJobs.end){
+            this.messages.push("End should be greater than Start");
+        }
+        if(this.driveDeliveryJobs.pickUp && this.driveDeliveryJobs.arrive && this.driveDeliveryJobs.pickUp >= this.driveDeliveryJobs.arrive){
+            this.messages.push("Arrive should be greater than Pick Up");
+        }
+        return !isAllInputValid || this.messages.length;
+    }
+    handleDelete = (confirm) => {
+        if(confirm) {
+            let eventValues = {action: this.action, driveDeliveryJobs: this.driveDeliveryJobs};
+            fireEvent(this.pageRef, 'deleteDriveDeliveryJob', eventValues);
+        }
+        this.closeModal();
+    }
+
+    handleOnChange(event) {
+        let targetName = event.target.name;
+        let targetValue = slwcUtils.getValueFromEvent(event);
+        this.driveDeliveryJobs[targetName] = targetValue
+        console.log("this.driveDeliveryJobs", this.driveDeliveryJobs);
+    }
+    handleOnChangeBag(event) {
+        let targetName = event.target.name;
+        let targetValue = slwcUtils.getValueFromEvent(event);
+        this[targetName] = targetValue
+        console.log("this.driveDeliveryJobs", this.driveDeliveryJobs);
+    }
+    handleAdd() {
+        if(this.bagType && this.quantity){
+            const newBag = {
+                bagType: this.bagType,
+                quantity: this.quantity,
+                key: uniqueId("bag_")
+            }
+            if(this.driveDeliveryJobs["driveBags"]){
+                this.driveDeliveryJobs["driveBags"].push(newBag)
+            } else {
+                this.driveDeliveryJobs["driveBags"] = [newBag]
+            }
+            
+            this.quantity = null;
+            this.bagType = null;
+        }
+    }
+    handleDeleteBag(event){
+        const {key} = event.currentTarget.dataset;
+        remove(this.driveDeliveryJobs["driveBags"], item => item.key == key)
+    }
+    handleShowDriveDeliveryJobModal(detail) {
+        this.action = detail.action;
+        switch(this.action) {
+            case "create":
+                this.modalHeader = "New Drive Delivery Job";
+                this.driveDeliveryJobs = {key: Math.random().toString(36).substring(2, 15)};
+                this.isDeleteForm = false;
+                break;
+            case "edit":
+                this.modalHeader = "Update Drive Delivery Job";
+                this.driveDeliveryJobs = cloneDeep(detail.driveDeliveryJobs);
+                this.isDeleteForm = false;
+                break;
+            case "delete":
+                this.modalHeader = "Delete Drive Delivery Job";
+                this.driveDeliveryJobs = cloneDeep(detail.driveDeliveryJobs);
+                this.isDeleteForm = true;
+                break;
+        }
+        this.messages = [];
+        this.showModal = true;
+    }
+
+    handleSave() {
+        const hasError = this.validate()
+        if(hasError){
+            return
+        }
+        let eventValues = {action: this.action, driveDeliveryJobs: this.driveDeliveryJobs};
+        fireEvent(this.pageRef, 'saveDriveDeliveryJob', eventValues);
+        this.closeModal();
+    }
+    
+    handleSelectContact(event) {
+        if (event.detail && event.detail.selection) {
+            this.driveDeliveryJobs.contact = event.detail.selection;
+            this.driveDeliveryJobs.contactId = event.detail.selection.id;
+        }
+    }
+}

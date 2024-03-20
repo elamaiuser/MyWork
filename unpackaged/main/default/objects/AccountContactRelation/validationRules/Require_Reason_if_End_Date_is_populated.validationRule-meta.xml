@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Require_Reason_if_End_Date_is_populated</fullName>
+    <active>true</active>
+    <errorConditionFormula>NOT(ISNULL( EndDate) )  &amp;&amp;   ISPICKVAL(Reason__c, &quot;&quot;)</errorConditionFormula>
+    <errorDisplayField>Reason__c</errorDisplayField>
+    <errorMessage>Must select a reason when an End Date is entered.</errorMessage>
+</ValidationRule>

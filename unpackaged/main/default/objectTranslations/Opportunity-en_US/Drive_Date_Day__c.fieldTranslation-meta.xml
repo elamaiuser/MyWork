@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+        <label><!-- Drive Date Day --></label>
+        <name>Drive_Date_Day__c</name>
+        <picklistValues>
+            <masterLabel>FRI</masterLabel>
+            <translation><!-- FRI --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>MON</masterLabel>
+            <translation><!-- MON --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>SAT</masterLabel>
+            <translation><!-- SAT --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>SUN</masterLabel>
+            <translation><!-- SUN --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>THU</masterLabel>
+            <translation><!-- THU --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>TUE</masterLabel>
+            <translation><!-- TUE --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>WED</masterLabel>
+            <translation><!-- WED --></translation>
+        </picklistValues>
+    </CustomFieldTranslation>

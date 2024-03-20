@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<EmailTemplate xmlns="http://soap.sforce.com/2006/04/metadata">
+    <available>true</available>
+    <description>Thank you to BPLs during National Volunteer Month (April)</description>
+    <encodingKey>ISO-8859-1</encodingKey>
+    <letterhead>ARC_Logo_Test</letterhead>
+    <name>Evergreen_General_April Volunteer Month Thank You to BPL</name>
+    <style>formalLetter</style>
+    <subject>Happy National Volunteer Month - Thank YOU!!</subject>
+    <textOnly>Dear [Insert Name],
+
+April is National Volunteer Month – Thank you for all you do!
+
+Volunteers are the heart of the American Red Cross, and Blood Program Leaders like YOU are the lifeline to patients in need. Without your help, we could not fulfill our lifesaving mission.
+
+I would like to personally thank you for stepping up to help collect and donate lifesaving blood. By opening your doors, you provide a place for donors in your community to roll up their sleeve to give. This National Volunteer Month, we are especially grateful to our Blood Program Leaders for committing to host drives that help the critical need we anticipate in summer months.
+
+On behalf of those we serve, thank you once again for your tremendous efforts. I look forward to continuing to work with you, helping save lives of those in need.
+
+Sincerely,
+[Insert Name]</textOnly>
+    <type>html</type>
+    <uiType>Aloha</uiType>
+</EmailTemplate>

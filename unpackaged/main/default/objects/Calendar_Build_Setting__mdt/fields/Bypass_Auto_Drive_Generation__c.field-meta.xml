@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Bypass_Auto_Drive_Generation__c</fullName>
+    <defaultValue>false</defaultValue>
+    <description>If selected, the drive generation job won&#39;t run after an opportunity has been cloned.</description>
+    <externalId>false</externalId>
+    <fieldManageability>DeveloperControlled</fieldManageability>
+    <label>Bypass Auto Drive Generation</label>
+    <type>Checkbox</type>
+</CustomField>

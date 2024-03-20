@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Military_Authority_Name_Requirement</fullName>
+    <active>true</active>
+    <description>If the Account Type (Type) field is &quot;Military,&quot; the Military Authority Name field must be populated in order to move the Opportunity to &quot;Closed&quot; stage.</description>
+    <errorConditionFormula>NOT( ISNEW() ) &amp;&amp;
+
+ISPICKVAL(Type, &quot;Military&quot;) &amp;&amp;
+
+ISBLANK(Military_Authority_Name__c) &amp;&amp;  ISCHANGED(Military_Authority_Name__c) &amp;&amp;
+
+NOT(ISBLANK(Next_Closed_Drive__c))</errorConditionFormula>
+    <errorDisplayField>Military_Authority_Name__c</errorDisplayField>
+    <errorMessage>Since this Military Account has an existing Blood Drive Opportunity in the &quot;Closed&quot; Stage, the Military Authority Name field must be populated</errorMessage>
+</ValidationRule>

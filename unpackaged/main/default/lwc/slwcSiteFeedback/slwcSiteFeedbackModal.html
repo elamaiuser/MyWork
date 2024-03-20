@@ -1,0 +1,129 @@
+<template>
+    <template if:true={isOpen}>
+        <section role="dialog" tabindex="-1" class="slds-modal slds-fade-in-open" style="z-index:9999">
+            <lightning-spinner if:true={showSpinner} class="spins" size="medium"></lightning-spinner>
+            <div class="slds-modal__container">
+                <header class="slds-modal__header">
+                    <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse"
+                        title="Close" onclick={closeModal}>
+                        <lightning-icon icon-name="utility:close" alternative-text="close" variant="inverse"
+                            size="small"></lightning-icon>
+                    </button>
+
+                    <h2 class="slds-text-heading_medium slds-hyphenate">Role Time Variance Feedback</h2>
+                </header>
+                <div class="slds-modal__content">
+                    <lightning-tabset>
+                        <lightning-tab label="Feedback">
+                            <div if:true={siteFeedbackList.length} class=" slds-p-vertical_xx-small" style="margin-top: -0.75rem; margin-bottom: -0.75rem">
+                                <div style="background: #fff;" class="slds-m-around_small"
+                                    for:each={siteFeedbackList} for:item="item" key={item.key}>
+                                    <div class="slds-border--bottom slds-grid slds-grid--align-spread slds-p-around--xx-small slds-grid_vertical-align-center">
+                                        <div class="slds-text-heading--small">{item.varianceType}</div>
+                                        <div>
+                                            <strong if:true={item.name}>{item.name}</strong>
+                                            <strong if:false={item.name}>New Record</strong>
+                                            <lightning-button-icon if:false={item.isReadonly} onclick={handleEditSiteFeedback} data-key={item.key}
+                                                class="slds-m-left_xx-small" variant="border-filled" icon-name="action:edit"
+                                                alternative-text="Edit" title="Edit"></lightning-button-icon>
+                                            <lightning-button-icon if:true={item.isReadonly} onclick={handleEditSiteFeedback} data-key={item.key}
+                                                class="slds-m-left_xx-small" variant="border-filled" icon-name="action:preview"
+                                                alternative-text="View" title="View"></lightning-button-icon>
+                                            <lightning-button-icon onclick={handleDeleteSiteFeedback} data-id={item.id}
+                                                class="slds-m-left_xx-small" variant="border-filled" icon-name="action:delete"
+                                                disabled={item.isDeleteDisabled}
+                                                alternative-text="Delete" title="Edit"></lightning-button-icon>
+                                        </div>
+                                    </div>
+                                    <div class="slds-grid slds-grid--align-spread slds-p-around--xx-small">
+                                        <div>Buffer Type</div>
+                                        <div>{item.bufferType}</div>
+                                    </div>
+                                    <div class="slds-grid slds-grid--align-spread slds-p-around--xx-small">
+                                        <div>Amount (minutes)</div>
+                                        <div>{item.amount}</div>
+                                    </div>
+                                    <div class="slds-grid slds-grid--align-spread slds-p-around--xx-small">
+                                        <div>Status</div>
+                                        <div>{item.status}</div>
+                                    </div>
+
+                                </div>
+                            </div>
+                            
+                            <div if:false={siteFeedbackList.length}
+                                class="slds-text-align--center slds-m-around--medium slds-text-color_inverse-weak slds-text-heading--small">
+                                NO RECORD
+                            </div>
+                        </lightning-tab>
+                        <lightning-tab label="Role Time Variance">
+                            <div if:true={roleTimeVarianceList.length} class=" slds-p-vertical_xx-small" style="margin-top: -0.75rem; margin-bottom: -0.75rem">
+                                <div style="background: #fff;" class="slds-m-around_small"
+                                    for:each={roleTimeVarianceList} for:item="item" key={item.key}>
+                                    <div class="slds-border--bottom slds-grid slds-grid--align-spread slds-p-around--xx-small slds-grid_vertical-align-center">
+                                        <div class="slds-text-heading--small">{item.varianceType}</div>
+                                        <div>
+                                            <strong>{item.name}</strong>
+                                        </div>
+                                    </div>
+                                    <div class="slds-grid slds-grid--align-spread slds-p-around--xx-small">
+                                        <div>Buffer Type</div>
+                                        <div>{item.bufferType}</div>
+                                    </div>
+                                    <div class="slds-grid slds-grid--align-spread slds-p-around--xx-small">
+                                        <div>Amount (minutes)</div>
+                                        <div>{item.varianceAmount}</div>
+                                    </div>
+                                    <div class="slds-grid slds-grid--align-spread slds-p-around--xx-small">
+                                        <div>Resource Role Group</div>
+                                        <div>{item.resourceRoleGroup}</div>
+                                    </div>
+                                    <div class="slds-grid slds-grid--align-spread slds-p-around--xx-small">
+                                        <div>Variance Applies to</div>
+                                        <div>{item.varianceAppliesTo}</div>
+                                    </div>
+                                    <div class="slds-grid slds-grid--align-spread slds-p-around--xx-small">
+                                        <div>Effective Start Date</div>
+                                        <div>
+                                            <lightning-formatted-date-time value={item.effectiveStartDate} year="numeric" month="numeric" day="numeric" time-zone='GMT'></lightning-formatted-date-time>
+                                        </div>
+                                    </div>
+                                    <div class="slds-grid slds-grid--align-spread slds-p-around--xx-small">
+                                        <div>Effective End Date</div>
+                                        <div>
+                                            <lightning-formatted-date-time value={item.effectiveEndDate} year="numeric" month="numeric" day="numeric" time-zone='GMT'></lightning-formatted-date-time>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div if:false={roleTimeVarianceList.length}
+                                class="slds-text-align--center slds-m-around--medium slds-text-color_inverse-weak slds-text-heading--small">
+                                NO RECORD
+                            </div>
+                        </lightning-tab>
+                    </lightning-tabset>
+                </div>
+                <footer class="slds-modal__footer slds-grid slds-grid--align-spread">
+                    <lightning-button label="Create Feedback" onclick={createSiteFeedback}
+                        class="slds-m-right_xx-small"></lightning-button>
+                    <div>
+                        <lightning-button label="Cancel" title="Cancel" onclick={closeModal}
+                            class="slds-m-right_xx-small">
+                        </lightning-button>
+                        <lightning-button class="slds-m-top_small" onclick={handleSave} variant="brand" type="submit"
+                            name="update" label="Save"></lightning-button>
+                    </div>
+                </footer>
+            </div>
+        </section>
+        <c-slwc-site-feedback-detail
+            record={siteFeedbackDetailModalData.record} 
+            site={site} 
+            job={job}
+            is-open={siteFeedbackDetailModalData.isOpen}
+            onsave={handleSaveSiteModal}
+            onclose={handleCloseSiteModal}>
+        </c-slwc-site-feedback-detail>
+        <div class="slds-backdrop slds-backdrop_open" style="z-index:9998"></div>
+    </template>
+</template>

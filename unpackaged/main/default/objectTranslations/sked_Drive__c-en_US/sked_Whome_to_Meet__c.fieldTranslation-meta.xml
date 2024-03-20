@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+        <label><!-- Whome to Meet --></label>
+        <name>sked_Whome_to_Meet__c</name>
+        <relationshipLabel><!-- Drives on Calendar (Whome to Meet) --></relationshipLabel>
+    </CustomFieldTranslation>

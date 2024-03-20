@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>WBProcedureProjectedChangeReasonRequired</fullName>
+    <active>true</active>
+    <description>If opportunity.Whole Blood Procedures Projected is updated then &quot;Whole Blood Procedures Projected_Change_Reason&quot; is required</description>
+    <errorConditionFormula>AND(
+Is_Template__c != True,
+ISCHANGED(WB_Projected_Procedures__c),OR(NOT(ISCHANGED(WholeBloodProcedureProjectedChangeReason__c)), ISBLANK(WholeBloodProcedureProjectedChangeReason__c)))</errorConditionFormula>
+    <errorDisplayField>WholeBloodProcedureProjectedChangeReason__c</errorDisplayField>
+    <errorMessage>Whole Blood Procedures Projected Change Reason is required while updating Whole Blood Procedures Projected</errorMessage>
+</ValidationRule>

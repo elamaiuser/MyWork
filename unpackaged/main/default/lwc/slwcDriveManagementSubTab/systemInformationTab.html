@@ -1,0 +1,406 @@
+<template>
+    <div class="slds-grid slds-wrap slds-p-right_small">
+        <div class="slds-col slds-size_6-of-12 slds-p-left_small">
+            <template if:false={masterData.isReadonly}>
+                <div class="slds-form-element">
+                    <span class="slds-form-element__label">Opportunity</span>
+                    <div class="slds-form-element__control">
+                        <div class="slds-form-element__static">
+                            <c-slwc-lightning-formatted-url
+                                record={drive.opportunity}
+                            ></c-slwc-lightning-formatted-url>
+                        </div>
+                    </div>
+                </div>
+            </template>
+            <template if:true={masterData.isReadonly}>
+                <div class="slds-form-element slds-form-element_readonly">
+                    <span class="slds-form-element__label">Opportunity</span>
+                    <div class="slds-form-element__control">
+                        <div class="slds-form-element__static">
+                             <c-slwc-lightning-formatted-url
+                                record={drive.opportunity}
+                            ></c-slwc-lightning-formatted-url>
+                        </div>
+                    </div>
+                </div>
+            </template>
+        </div>
+    </div>
+
+    <div class="slds-grid slds-wrap slds-p-right_small">
+        <div class="slds-col slds-size_3-of-12 slds-p-left_small">
+            <template if:false={masterData.isReadonly}>
+                <div class="slds-form-element">
+                    <span class="slds-form-element__label">Account Manager Portfolio</span>
+                    <div class="slds-form-element__control">
+                        <div class="slds-form-element__static slds-truncate">
+                            <c-slwc-lightning-formatted-url
+                                record={drive.accountManagerPortfolio}
+                            ></c-slwc-lightning-formatted-url>
+                        </div>
+                    </div>
+                </div>
+            </template>
+            <template if:true={masterData.isReadonly}>
+                <div class="slds-form-element slds-form-element_readonly">
+                    <span class="slds-form-element__label">Account Manager Portfolio</span>
+                    <div class="slds-form-element__control">
+                        <div class="slds-form-element__static slds-truncate">
+                            <c-slwc-lightning-formatted-url
+                                record={drive.accountManagerPortfolio}
+                            ></c-slwc-lightning-formatted-url>
+                        </div>
+                    </div>
+                </div>
+            </template>
+        </div>
+
+        <div class="slds-col slds-size_3-of-12 slds-p-left_small">
+            <template if:false={masterData.isReadonly}>
+                <div class="slds-form-element">
+                    <span class="slds-form-element__label">District Manager Portfolio</span>
+                    <div class="slds-form-element__control">
+                        <div class="slds-form-element__static slds-truncate">
+                            <c-slwc-lightning-formatted-url
+                                record={drive.districtManagerPortfolio}
+                            ></c-slwc-lightning-formatted-url>
+                        </div>
+                    </div>
+                </div>
+            </template>
+            <template if:true={masterData.isReadonly}>
+                <div class="slds-form-element slds-form-element_readonly">
+                    <span class="slds-form-element__label">District Manager Portfolio</span>
+                    <div class="slds-form-element__control">
+                        <div class="slds-form-element__static slds-truncate">
+                            <c-slwc-lightning-formatted-url
+                                record={drive.districtManagerPortfolio}
+                            ></c-slwc-lightning-formatted-url>
+                        </div>
+                    </div>
+                </div>
+            </template>
+        </div>
+    </div>
+
+    <div class="slds-grid slds-wrap slds-p-right_small">
+        <div class="slds-col slds-size_3-of-12 slds-p-left_small">
+            <template if:false={masterData.isReadonly}>
+                <div class="slds-form-element">
+                    <span class="slds-form-element__label">Hold Status Expiration</span>
+                    <div class="slds-form-element__control">
+                        <div class="slds-form-element__static slds-truncate">
+                            <lightning-formatted-date-time value={drive.holdStatusExpiresOn}
+                                year="numeric" month="numeric" day="numeric" hour="numeric" minute="2-digit"
+                                time-zone={timezoneSidId}></lightning-formatted-date-time>
+                        </div>
+                    </div>
+                </div>
+            </template>
+            <template if:true={masterData.isReadonly}>
+                <div class="slds-form-element slds-form-element_readonly">
+                    <span class="slds-form-element__label">Hold Status Expiration</span>
+                    <div class="slds-form-element__control">
+                        <div class="slds-form-element__static slds-truncate">
+                            <lightning-formatted-date-time value={drive.holdStatusExpiresOn}
+                                year="numeric" month="numeric" day="numeric" hour="numeric" minute="2-digit"
+                                time-zone={timezoneSidId}></lightning-formatted-date-time>
+                        </div>
+                    </div>
+                </div>
+            </template>
+        </div>
+
+        <div class="slds-col slds-size_3-of-12 slds-p-left_small">
+            <template if:false={masterData.isReadonly}>
+                <div class="slds-form-element">
+                    <span class="slds-form-element__label">Timezone</span>
+                    <div class="slds-form-element__control">
+                        <div class="slds-form-element__static slds-truncate">
+                            {drive.timezone}
+                        </div>
+                    </div>
+                </div>
+            </template>
+            <template if:true={masterData.isReadonly}>
+                <div class="slds-form-element slds-form-element_readonly">
+                    <span class="slds-form-element__label">Timezone</span>
+                    <div class="slds-form-element__control">
+                        <div class="slds-form-element__static slds-truncate">
+                            {drive.timezone}
+                        </div>
+                    </div>
+                </div>
+            </template>
+        </div>
+    </div>
+
+    <div class="slds-grid slds-wrap slds-p-right_small">
+        <div class="slds-col slds-size_3-of-12 slds-p-left_small">
+            <template if:false={masterData.isReadonly}>
+                <div class="slds-form-element">
+                    <span class="slds-form-element__label">Is Surrogate</span>
+                    <div class="slds-form-element__control">
+                        <div class="slds-form-element__static slds-truncate">
+                            <template if:true={drive.isSurrogate}>
+                                <lightning-icon icon-name="utility:check" size="x-small"></lightning-icon>
+                            </template>
+                            <template if:false={drive.isSurrogate}>
+                                <lightning-icon icon-name="utility:steps" size="x-small"></lightning-icon>
+                            </template>
+                        </div>                    
+                    </div>
+                </div>
+            </template>
+            <template if:true={masterData.isReadonly}>
+                <div class="slds-form-element slds-form-element_readonly">
+                    <span class="slds-form-element__label">Is Surrogate</span>
+                    <div class="slds-form-element__control">
+                        <div class="slds-form-element__static slds-truncate">
+                            <template if:true={drive.isSurrogate}>
+                                <lightning-icon icon-name="utility:check" size="x-small"></lightning-icon>
+                            </template>
+                            <template if:false={drive.isSurrogate}>
+                                <lightning-icon icon-name="utility:steps" size="x-small"></lightning-icon>
+                            </template>
+                        </div>                    
+                    </div>
+                </div>
+            </template>
+        </div>
+        <div class="slds-col slds-size_3-of-12 slds-p-left_small">
+            <template if:false={masterData.isReadonly}>
+                <div class="slds-form-element">
+                    <span class="slds-form-element__label">Surrogate Drive For</span>
+                    <div class="slds-form-element__control">
+                        <div class="slds-form-element__static slds-truncate">
+                            <c-slwc-lightning-formatted-url
+                                record={drive}
+                                id-field="surrogateDriveForId"
+                                label-field="surrogateDriveForName"
+                            ></c-slwc-lightning-formatted-url>
+                        </div>
+                    </div>
+                </div>
+            </template>
+            <template if:true={masterData.isReadonly}>
+                <div class="slds-form-element slds-form-element_readonly">
+                    <span class="slds-form-element__label">Surrogate Drive For</span>
+                    <div class="slds-form-element__control">
+                        <div class="slds-form-element__static slds-truncate">
+                            <c-slwc-lightning-formatted-url
+                                record={drive}
+                                id-field="surrogateDriveForId"
+                                label-field="surrogateDriveForName"
+                            ></c-slwc-lightning-formatted-url>
+                        </div>
+                    </div>
+                </div>
+            </template>
+        </div>
+    </div>
+
+    <div class="slds-grid slds-wrap slds-p-right_small">
+        <div class="slds-col slds-size_3-of-12 slds-p-left_small">
+            <template if:false={masterData.isReadonly}>
+                <div class="slds-form-element">
+                    <span class="slds-form-element__label">Is New Drive Confirmation</span>
+                    <div class="slds-form-element__control">
+                        <div class="slds-form-element__static slds-truncate">
+                            <template if:true={drive.isNewDriveConfirmation}>
+                                <lightning-icon icon-name="utility:check" size="x-small"></lightning-icon>
+                            </template>
+                            <template if:false={drive.isNewDriveConfirmation}>
+                                <lightning-icon icon-name="utility:steps" size="x-small"></lightning-icon>
+                            </template>
+                        </div>                    
+                    </div>
+                </div>
+            </template>
+            <template if:true={masterData.isReadonly}>
+                <div class="slds-form-element slds-form-element_readonly">
+                    <span class="slds-form-element__label">Is New Drive Confirmation</span>
+                    <div class="slds-form-element__control">
+                        <div class="slds-form-element__static slds-truncate">
+                            <template if:true={drive.isNewDriveConfirmation}>
+                                <lightning-icon icon-name="utility:check" size="x-small"></lightning-icon>
+                            </template>
+                            <template if:false={drive.isNewDriveConfirmation}>
+                                <lightning-icon icon-name="utility:steps" size="x-small"></lightning-icon>
+                            </template>
+                        </div>                    
+                    </div>
+                </div>
+            </template>
+        </div>
+        <div class="slds-col slds-size_3-of-12 slds-p-left_small">
+            <template if:false={masterData.isReadonly}>
+                <div class="slds-form-element">
+                    <span class="slds-form-element__label">Owner</span>
+                    <div class="slds-form-element__control">
+                        <div class="slds-form-element__static slds-truncate">
+                            <c-slwc-lightning-formatted-url
+                                record={drive}
+                                id-field="ownerId"
+                                label-field="ownerName"
+                            ></c-slwc-lightning-formatted-url>
+                        </div>
+                    </div>
+                </div>
+            </template>
+            <template if:true={masterData.isReadonly}>
+                <div class="slds-form-element slds-form-element_readonly">
+                    <span class="slds-form-element__label">Owner</span>
+                    <div class="slds-form-element__control">
+                        <div class="slds-form-element__static slds-truncate">
+                            <c-slwc-lightning-formatted-url
+                                record={drive}
+                                id-field="ownerId"
+                                label-field="ownerName"
+                            ></c-slwc-lightning-formatted-url>
+                        </div>
+                    </div>
+                </div>
+            </template>
+        </div>
+    </div>
+
+    <div class="slds-grid slds-wrap slds-p-right_small">
+        <div class="slds-col slds-size_6-of-12 slds-p-left_small">
+            <template if:false={masterData.isReadonly}>
+                <div class="slds-form-element">
+                    <span class="slds-form-element__label">Migration ID</span>
+                    <div class="slds-form-element__control">
+                        <div class="slds-form-element__static slds-truncate">
+                            {drive.migrationId}
+                        </div>
+                    </div>
+                </div>
+            </template>
+            <template if:true={masterData.isReadonly}>
+                <div class="slds-form-element slds-form-element_readonly">
+                    <span class="slds-form-element__label">Migration ID</span>
+                    <div class="slds-form-element__control">
+                        <div class="slds-form-element__static slds-truncate">
+                            {drive.migrationId}
+                        </div>
+                    </div>
+                </div>
+            </template>
+        </div>
+    </div>
+
+    <div class="slds-grid slds-wrap slds-p-right_small">
+        <div class="slds-col slds-size_3-of-12 slds-p-left_small">
+            <template if:false={masterData.isReadonly}>
+                <div class="slds-form-element">
+                    <span class="slds-form-element__label">Created By</span>
+                    <div class="slds-form-element__control">
+                        <div class="slds-form-element__static slds-truncate">
+                            <c-slwc-lightning-formatted-url
+                                record={drive.createdBy}
+                            ></c-slwc-lightning-formatted-url>
+                        </div>
+                    </div>
+                </div>
+            </template>
+            <template if:true={masterData.isReadonly}>
+                <div class="slds-form-element slds-form-element_readonly">
+                    <span class="slds-form-element__label">Created By</span>
+                    <div class="slds-form-element__control">
+                        <div class="slds-form-element__static slds-truncate">
+                            <c-slwc-lightning-formatted-url
+                                record={drive.createdBy}
+                            ></c-slwc-lightning-formatted-url>
+                        </div>
+                    </div>
+                </div>
+            </template>
+        </div>
+
+        <div class="slds-col slds-size_3-of-12 slds-p-left_small">
+            <template if:false={masterData.isReadonly}>
+                <div class="slds-form-element">
+                    <span class="slds-form-element__label">Created Date</span>
+                    <div class="slds-form-element__control">
+                        <div class="slds-form-element__static slds-truncate">
+                            <lightning-formatted-date-time value={drive.createdDate}
+                                year="numeric" month="numeric" day="numeric" hour="numeric" minute="2-digit"
+                                time-zone={timezoneSidId}></lightning-formatted-date-time>
+                        </div>
+                    </div>
+                </div>
+            </template>
+            <template if:true={masterData.isReadonly}>
+                <div class="slds-form-element slds-form-element_readonly">
+                    <span class="slds-form-element__label">Created Date</span>
+                    <div class="slds-form-element__control">
+                        <div class="slds-form-element__static slds-truncate">
+                            <lightning-formatted-date-time value={drive.createdDate}
+                                year="numeric" month="numeric" day="numeric" hour="numeric" minute="2-digit"
+                                time-zone={timezoneSidId}></lightning-formatted-date-time>
+                        </div>
+                    </div>
+                </div>
+            </template>
+        </div>
+    </div>
+
+    <div class="slds-grid slds-wrap slds-p-right_small">
+        <div class="slds-col slds-size_3-of-12 slds-p-left_small">
+            <template if:false={masterData.isReadonly}>
+                <div class="slds-form-element">
+                    <span class="slds-form-element__label">Last Modified By</span>
+                    <div class="slds-form-element__control">
+                        <div class="slds-form-element__static slds-truncate">
+                            <c-slwc-lightning-formatted-url
+                                record={drive.lastModifiedBy}
+                            ></c-slwc-lightning-formatted-url>
+                        </div>
+                    </div>
+                </div>
+            </template>
+            <template if:true={masterData.isReadonly}>
+                <div class="slds-form-element slds-form-element_readonly">
+                    <span class="slds-form-element__label">Last Modified By</span>
+                    <div class="slds-form-element__control">
+                        <div class="slds-form-element__static slds-truncate">
+                            <c-slwc-lightning-formatted-url
+                                record={drive.lastModifiedBy}
+                            ></c-slwc-lightning-formatted-url>
+                        </div>
+                    </div>
+                </div>
+            </template>
+        </div>
+
+        <div class="slds-col slds-size_3-of-12 slds-p-left_small">
+            <template if:false={masterData.isReadonly}>
+                <div class="slds-form-element">
+                    <span class="slds-form-element__label">Last Modified Date</span>
+                    <div class="slds-form-element__control">
+                        <div class="slds-form-element__static slds-truncate">
+                            <lightning-formatted-date-time value={drive.lastModifiedDate}
+                                year="numeric" month="numeric" day="numeric" hour="numeric" minute="2-digit"
+                                time-zone={timezoneSidId}></lightning-formatted-date-time>
+                        </div>
+                    </div>
+                </div>
+            </template>
+            <template if:true={masterData.isReadonly}>
+                <div class="slds-form-element slds-form-element_readonly">
+                    <span class="slds-form-element__label">Last Modified Date</span>
+                    <div class="slds-form-element__control">
+                        <div class="slds-form-element__static slds-truncate">
+                            <lightning-formatted-date-time value={drive.lastModifiedDate}
+                                year="numeric" month="numeric" day="numeric" hour="numeric" minute="2-digit"
+                                time-zone={timezoneSidId}></lightning-formatted-date-time>
+                        </div>
+                    </div>
+                </div>
+            </template>
+        </div>
+    </div>
+    
+</template>

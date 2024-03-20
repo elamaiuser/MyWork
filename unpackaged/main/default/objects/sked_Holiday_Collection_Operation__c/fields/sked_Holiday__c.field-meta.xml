@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>sked_Holiday__c</fullName>
+    <externalId>false</externalId>
+    <label>Holiday</label>
+    <referenceTo>sked__Holiday__c</referenceTo>
+    <relationshipLabel>Holiday Collection Operations</relationshipLabel>
+    <relationshipName>sked_Holiday_Collection_Operations</relationshipName>
+    <relationshipOrder>0</relationshipOrder>
+    <reparentableMasterDetail>false</reparentableMasterDetail>
+    <trackTrending>false</trackTrending>
+    <type>MasterDetail</type>
+    <writeRequiresMasterRead>false</writeRequiresMasterRead>
+</CustomField>

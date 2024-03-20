@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>External_DID__c</fullName>
+    <caseSensitive>false</caseSensitive>
+    <description>Adobe generated &quot;did&quot; code. Used for campaign matching automation on the Lead forms.</description>
+    <externalId>true</externalId>
+    <inlineHelpText>This is a mandatory parameter. This parameter is what establishes the linkage in to the Adobe Campaign. Program Managers will need to provide this value.</inlineHelpText>
+    <label>Delivery Internal Name</label>
+    <length>50</length>
+    <required>false</required>
+    <type>Text</type>
+    <unique>true</unique>
+</CustomField>

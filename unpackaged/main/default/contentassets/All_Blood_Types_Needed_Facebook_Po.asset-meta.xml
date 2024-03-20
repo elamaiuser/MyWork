@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ContentAsset xmlns="http://soap.sforce.com/2006/04/metadata">
+    <isVisibleByExternalUsers>true</isVisibleByExternalUsers>
+    <language>en_US</language>
+    <masterLabel>All_Blood_Types_Needed_Facebook_Po</masterLabel>
+    <versions>
+        <version>
+            <number>1</number>
+            <pathOnClient>All Blood Types Needed - Facebook Post.jpg</pathOnClient>
+        </version>
+    </versions>
+</ContentAsset>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Queue xmlns="http://soap.sforce.com/2006/04/metadata">
+    <doesSendEmailToMembers>true</doesSendEmailToMembers>
+    <name>Michigan Lead Queue</name>
+    <queueMembers>
+        <users>
+            <user>cheryl.champine@redcross.org.biomed</user>
+            <user>deandra.smith@redcross.org</user>
+            <user>dennis.sandoval@redcross.org.biomed</user>
+            <user>jacqueline.tullio@redcross.org</user>
+            <user>james.lanning@redcross.org.biomed</user>
+            <user>jennifer.killewald@redcross.org</user>
+            <user>kelly.weber@redcross.org.biomed</user>
+            <user>rachel.wilkinson@redcross.org.biomed</user>
+        </users>
+    </queueMembers>
+    <queueSobject>
+        <sobjectType>Lead</sobjectType>
+    </queueSobject>
+</Queue>

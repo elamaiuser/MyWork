@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>My_Opportunities_Cancelled</fullName>
+    <columns>Drive_Date__c</columns>
+    <columns>OPPORTUNITY.NAME</columns>
+    <columns>ACCOUNT.NAME</columns>
+    <columns>OPPORTUNITY.STAGE_NAME</columns>
+    <columns>DriveStatus__c</columns>
+    <columns>Anticipated_Registered_Donors__c</columns>
+    <filterScope>Mine</filterScope>
+    <filters>
+        <field>Is_Template__c</field>
+        <operation>equals</operation>
+        <value>0</value>
+    </filters>
+    <filters>
+        <field>DriveStatus__c</field>
+        <operation>equals</operation>
+        <value>Cancel</value>
+    </filters>
+    <label>My Opportunities_Cancelled</label>
+</ListView>

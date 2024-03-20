@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomMetadata xmlns="http://soap.sforce.com/2006/04/metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <label>PTO Approved Notification2</label>
+    <protected>false</protected>
+    <values>
+        <field>sked_Active__c</field>
+        <value xsi:type="xsd:boolean">false</value>
+    </values>
+    <values>
+        <field>sked_Content_Renderer__c</field>
+        <value xsi:nil="true" />
+    </values>
+    <values>
+        <field>sked_Custom_Filter__c</field>
+        <value xsi:type="xsd:string">sked__Is_Available__c = FALSE</value>
+    </values>
+    <values>
+        <field>sked_Custom_Target_Destination__c</field>
+        <value xsi:nil="true" />
+    </values>
+    <values>
+        <field>sked_Destination_Field__c</field>
+        <value xsi:type="xsd:string">sked__Resource__r.sked__Email__c</value>
+    </values>
+    <values>
+        <field>sked_Email_From_Address_Field__c</field>
+        <value xsi:nil="true" />
+    </values>
+    <values>
+        <field>sked_Email_Target_Field__c</field>
+        <value xsi:type="xsd:string">sked__Resource__r.sked__User__c</value>
+    </values>
+    <values>
+        <field>sked_Filter__c</field>
+        <value xsi:type="xsd:string">sked__Is_Available__c = FALSE AND sked__Type__c != &#39;Call Out&#39;</value>
+    </values>
+    <values>
+        <field>sked_Notification_Target_Field__c</field>
+        <value xsi:type="xsd:string">sked__Resource__r.sked__User__c</value>
+    </values>
+    <values>
+        <field>sked_Notification_Type__c</field>
+        <value xsi:type="xsd:string">email</value>
+    </values>
+    <values>
+        <field>sked_Oneoff_Protocol_Field__c</field>
+        <value xsi:nil="true" />
+    </values>
+    <values>
+        <field>sked_Sending_From_Email_Address__c</field>
+        <value xsi:nil="true" />
+    </values>
+    <values>
+        <field>sked_Subject__c</field>
+        <value xsi:type="xsd:string">Your Time Off Request has been approved.</value>
+    </values>
+    <values>
+        <field>sked_Target_Field_Value__c</field>
+        <value xsi:type="xsd:string">Approved</value>
+    </values>
+    <values>
+        <field>sked_Target_Field__c</field>
+        <value xsi:type="xsd:string">sked__Status__c</value>
+    </values>
+    <values>
+        <field>sked_Target_SObject__c</field>
+        <value xsi:type="xsd:string">sked__Availability__c</value>
+    </values>
+    <values>
+        <field>sked_Template__c</field>
+        <value xsi:type="xsd:string">Please be informed that your Time Off Request &lt;a style=&quot;text-align: center; text-decoration: none; display: inline-block; margin: 4px 2px; cursor: pointer;&quot; href=&quot;!$sked_Skedulo_Email_Handler$?availabilityId={{Id}}&amp;action=View&amp;startDate={{sked_Date_ISO_Format__c}}&quot;&gt;{{Name}}&lt;/a&gt; has been approved.</value>
+    </values>
+    <values>
+        <field>sked_Trigger__c</field>
+        <value xsi:type="xsd:string">Insert</value>
+    </values>
+</CustomMetadata>

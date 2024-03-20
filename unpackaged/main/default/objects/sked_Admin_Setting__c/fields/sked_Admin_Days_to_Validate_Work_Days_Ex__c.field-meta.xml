@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>sked_Admin_Days_to_Validate_Work_Days_Ex__c</fullName>
+    <externalId>false</externalId>
+    <label>Admin Days to Validate Work Days Ex</label>
+    <precision>14</precision>
+    <required>false</required>
+    <scale>0</scale>
+    <trackTrending>false</trackTrending>
+    <type>Number</type>
+    <unique>false</unique>
+</CustomField>

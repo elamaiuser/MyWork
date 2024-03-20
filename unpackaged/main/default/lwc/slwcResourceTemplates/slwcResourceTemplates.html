@@ -1,0 +1,37 @@
+<template>
+    <lightning-card  title="Availability Templates">
+        <p class="slds-p-horizontal_small">
+            <template for:each={availabilityTemplates} for:item="availabilityTemplate">
+                <lightning-layout key={availabilityTemplate.id}>
+                    <lightning-layout-item padding="around-small">
+                        <div class="slds-media">
+                            <div class="slds-media__figure">
+                                <lightning-icon class="standard-icon" icon-name="standard:event" variant="info" size="medium"></lightning-icon>
+                            </div>
+                            <div class="slds-media__body">
+                                <div class="slds-page-header__name">
+                                <div class="slds-page-header__name-title">
+                                    <h1>
+                                        <span class="slds-page-header__title slds-truncate" title={availabilityTemplate.name}>{availabilityTemplate.name}</span>
+                                    </h1>
+                                </div>
+                                </div>
+                                <p class="slds-page-header__name-meta">{availabilityTemplate.start} • {availabilityTemplate.finish}</p>
+                            </div>
+                        </div>
+                    </lightning-layout-item>
+                </lightning-layout>
+                <lightning-layout key={availabilityTemplate.id}>
+                    <lightning-layout-item padding="around-small">
+                        <lightning-datatable
+                            key-field="id"
+                            data={availabilityTemplate.entries}
+                            columns={template_entry_columns}
+                            hide-checkbox-column="true">
+                        </lightning-datatable>
+                    </lightning-layout-item>
+                </lightning-layout>
+            </template>
+        </p>
+    </lightning-card>
+</template>

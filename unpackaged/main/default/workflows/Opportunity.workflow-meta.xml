@@ -1,0 +1,553 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Workflow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <alerts>
+        <fullName>email_trig</fullName>
+        <description>email trig</description>
+        <protected>false</protected>
+        <recipients>
+            <recipient>anil.kallu@redcross.org.biomed</recipient>
+            <type>user</type>
+        </recipients>
+        <recipients>
+            <recipient>kishore.das@redcross.org</recipient>
+            <type>user</type>
+        </recipients>
+        <senderType>CurrentUser</senderType>
+        <template>unfiled$public/ContactFollowUpSAMPLE</template>
+    </alerts>
+    <fieldUpdates>
+        <fullName>EndTimeFieldUpdate</fullName>
+        <field>End_Time__c</field>
+        <formula>TIMEVALUE(
+LEFT(  ENDTIMEFORMULA__c  , 2) +
+&quot;:&quot; +
+RIGHT(ENDTIMEFORMULA__c  , 2) +
+&quot;:00.000&quot; )</formula>
+        <name>EndTimeFieldUpdate</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Online_Scheduling_Enabled_Default</fullName>
+        <description>Default value of Online Scheduling Enabled to YES.</description>
+        <field>Online_Scheduling_Enabled__c</field>
+        <literalValue>Yes</literalValue>
+        <name>Online Scheduling Enabled Default</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Populate_Double_Reds_to_Zero</fullName>
+        <description>Populate value of Double Reds to &quot;0&quot; if Null</description>
+        <field>X2RBC_Projected_Procedures__c</field>
+        <formula>0</formula>
+        <name>Populate Double Reds to Zero</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Set_Total_Oppty_Qty</fullName>
+        <description>Updates the Quantity field to the value of the # of Whole Blood procedures plus the Double Red procedures doubled. This is because WB procedures generate 1 unit, and 2RBC procedures generate 2 units.</description>
+        <field>TotalOpportunityQuantity</field>
+        <formula>X2RBC_Projected_Procedures__c * 2 + WB_Projected_Procedures__c</formula>
+        <name>Set Total Oppty Qty</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>StartTimeFieldUpdate</fullName>
+        <field>Start_Time__c</field>
+        <formula>TIMEVALUE(
+LEFT(   STARTTIMEFORMULA__c  , 2) +
+&quot;:&quot; +
+RIGHT(STARTTIMEFORMULA__c  , 2) +
+&quot;:00.000&quot; )</formula>
+        <name>StartTimeFieldUpdate</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Update_Direct_Donors_To</fullName>
+        <description>Populate field with the Room Name field from the selected Site record</description>
+        <field>Direct_Donors_To__c</field>
+        <formula>Drive_Site__r.sked_Room_Name__c</formula>
+        <name>Update Direct Donors To</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Update_Drive_Name_Field</fullName>
+        <description>Update hidden Drive Name field to account and site</description>
+        <field>Drive_Name__c</field>
+        <formula>LEFT((Account.Internal_Name__c + &quot; - &quot; + Drive_Site__r.Name +&quot; - &quot; +Additional_Description__c),255)</formula>
+        <name>Update Drive Name Field</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Update_Enable_APH_Web_Scheduling</fullName>
+        <field>Enable_APH_Web_Scheduling__c</field>
+        <literalValue>1</literalValue>
+        <name>Update Enable APH Web Scheduling</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Update_Enable_APH_Web_Scheduling_uncheck</fullName>
+        <field>Enable_APH_Web_Scheduling__c</field>
+        <literalValue>0</literalValue>
+        <name>Update Enable APH Web Scheduling uncheck</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Update_Flow_End_Time_Label_Text</fullName>
+        <description>Update Flow End Time Label Text when flow end time is present</description>
+        <field>Flow_End_Time_Label_Text__c</field>
+        <formula>CASE(Text(Flow_End_Time_Field__c), 
+&quot;0000&quot;,&quot;12:00 AM&quot;,
+&quot;0015&quot;,&quot;12:15 AM&quot;,
+&quot;0030&quot;,&quot;12:30 AM&quot;,
+&quot;0045&quot;,&quot;12:45 AM&quot;,
+&quot;0100&quot;,&quot;1:00 AM&quot;,
+&quot;0115&quot;,&quot;1:15 AM&quot;,
+&quot;0130&quot;,&quot;1:30 AM&quot;,
+&quot;0145&quot;,&quot;1:45 AM&quot;,
+&quot;0200&quot;,&quot;2:00 AM&quot;,
+&quot;0215&quot;,&quot;2:15 AM&quot;,
+&quot;0230&quot;,&quot;2:30 AM&quot;,
+&quot;0245&quot;,&quot;2:45 AM&quot;,
+&quot;0300&quot;,&quot;3:00 AM&quot;,
+&quot;0315&quot;,&quot;3:15 AM&quot;,
+&quot;0330&quot;,&quot;3:30 AM&quot;,
+&quot;0345&quot;,&quot;3:45 AM&quot;,
+&quot;0400&quot;,&quot;4:00 AM&quot;,
+&quot;0415&quot;,&quot;4:15 AM&quot;,
+&quot;0430&quot;,&quot;4:30 AM&quot;,
+&quot;0445&quot;,&quot;4:45 AM&quot;,
+&quot;0500&quot;,&quot;5:00 AM&quot;,
+&quot;0515&quot;,&quot;5:15 AM&quot;,
+&quot;0530&quot;,&quot;5:30 AM&quot;,
+&quot;0545&quot;,&quot;5:45 AM&quot;,
+&quot;0600&quot;,&quot;6:00 AM&quot;,
+&quot;0615&quot;,&quot;6:15 AM&quot;,
+&quot;0630&quot;,&quot;6:30 AM&quot;,
+&quot;0645&quot;,&quot;6:45 AM&quot;,
+&quot;0700&quot;,&quot;7:00 AM&quot;,
+&quot;0715&quot;,&quot;7:15 AM&quot;,
+&quot;0730&quot;,&quot;7:30 AM&quot;,
+&quot;0745&quot;,&quot;7:45 AM&quot;,
+&quot;0800&quot;,&quot;8:00 AM&quot;,
+&quot;0815&quot;,&quot;8:15 AM&quot;,
+&quot;0830&quot;,&quot;8:30 AM&quot;,
+&quot;0845&quot;,&quot;8:45 AM&quot;,
+&quot;0900&quot;,&quot;9:00 AM&quot;,
+&quot;0915&quot;,&quot;9:15 AM&quot;,
+&quot;0930&quot;,&quot;9:30 AM&quot;,
+&quot;0945&quot;,&quot;9:45 AM&quot;,
+&quot;1000&quot;,&quot;10:00 AM&quot;,
+&quot;1015&quot;,&quot;10:15 AM&quot;,
+&quot;1030&quot;,&quot;10:30 AM&quot;,
+&quot;1045&quot;,&quot;10:45 AM&quot;,
+&quot;1100&quot;,&quot;11:00 AM&quot;,
+&quot;1115&quot;,&quot;11:15 AM&quot;,
+&quot;1130&quot;,&quot;11:30 AM&quot;,
+&quot;1145&quot;,&quot;11:45 AM&quot;,
+&quot;1200&quot;,&quot;12:00 PM&quot;,
+&quot;1215&quot;,&quot;12:15 PM&quot;,
+&quot;1230&quot;,&quot;12:30 PM&quot;,
+&quot;1245&quot;,&quot;12:45 PM&quot;,
+&quot;1300&quot;,&quot;1:00 PM&quot;,
+&quot;1315&quot;,&quot;1:15 PM&quot;,
+&quot;1330&quot;,&quot;1:30 PM&quot;,
+&quot;1345&quot;,&quot;1:45 PM&quot;,
+&quot;1400&quot;,&quot;2:00 PM&quot;,
+&quot;1415&quot;,&quot;2:15 PM&quot;,
+&quot;1430&quot;,&quot;2:30 PM&quot;,
+&quot;1445&quot;,&quot;2:45 PM&quot;,
+&quot;1500&quot;,&quot;3:00 PM&quot;,
+&quot;1515&quot;,&quot;3:15 PM&quot;,
+&quot;1530&quot;,&quot;3:30 PM&quot;,
+&quot;1545&quot;,&quot;3:45 PM&quot;,
+&quot;1600&quot;,&quot;4:00 PM&quot;,
+&quot;1615&quot;,&quot;4:15 PM&quot;,
+&quot;1630&quot;,&quot;4:30 PM&quot;,
+&quot;1645&quot;,&quot;4:45 PM&quot;,
+&quot;1700&quot;,&quot;5:00 PM&quot;,
+&quot;1715&quot;,&quot;5:15 PM&quot;,
+&quot;1730&quot;,&quot;5:30 PM&quot;,
+&quot;1745&quot;,&quot;5:45 PM&quot;,
+&quot;1800&quot;,&quot;6:00 PM&quot;,
+&quot;1815&quot;,&quot;6:15 PM&quot;,
+&quot;1830&quot;,&quot;6:30 PM&quot;,
+&quot;1845&quot;,&quot;6:45 PM&quot;,
+&quot;1900&quot;,&quot;7:00 PM&quot;,
+&quot;1915&quot;,&quot;7:15 PM&quot;,
+&quot;1930&quot;,&quot;7:30 PM&quot;,
+&quot;1945&quot;,&quot;7:45 PM&quot;,
+&quot;2000&quot;,&quot;8:00 PM&quot;,
+&quot;2015&quot;,&quot;8:15 PM&quot;,
+&quot;2030&quot;,&quot;8:30 PM&quot;,
+&quot;2045&quot;,&quot;8:45 PM&quot;,
+&quot;2100&quot;,&quot;9:00 PM&quot;,
+&quot;2115&quot;,&quot;9:15 PM&quot;,
+&quot;2130&quot;,&quot;9:30 PM&quot;,
+&quot;2145&quot;,&quot;9:45 PM&quot;,
+&quot;2200&quot;,&quot;10:00 PM&quot;,
+&quot;2215&quot;,&quot;10:15 PM&quot;,
+&quot;2230&quot;,&quot;10:30 PM&quot;,
+&quot;2245&quot;,&quot;10:45 PM&quot;,
+&quot;2300&quot;,&quot;11:00 PM&quot;,
+&quot;2315&quot;,&quot;11:15 PM&quot;,
+&quot;2330&quot;,&quot;11:30 PM&quot;,
+&quot;2345&quot;,&quot;11:45 PM&quot;,
+&quot;12:00 AM&quot;)</formula>
+        <name>Update Flow End Time Label Text</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Update_Flow_Start_Time_Label_Text</fullName>
+        <description>Update Flow Start Time Label Text with label value of flow start time</description>
+        <field>Flow_Start_Time_Label_Text__c</field>
+        <formula>CASE(Text(Flow_Start_Time_Field__c), 
+&quot;0000&quot;,&quot;12:00 AM&quot;,
+&quot;0015&quot;,&quot;12:15 AM&quot;,
+&quot;0030&quot;,&quot;12:30 AM&quot;,
+&quot;0045&quot;,&quot;12:45 AM&quot;,
+&quot;0100&quot;,&quot;1:00 AM&quot;,
+&quot;0115&quot;,&quot;1:15 AM&quot;,
+&quot;0130&quot;,&quot;1:30 AM&quot;,
+&quot;0145&quot;,&quot;1:45 AM&quot;,
+&quot;0200&quot;,&quot;2:00 AM&quot;,
+&quot;0215&quot;,&quot;2:15 AM&quot;,
+&quot;0230&quot;,&quot;2:30 AM&quot;,
+&quot;0245&quot;,&quot;2:45 AM&quot;,
+&quot;0300&quot;,&quot;3:00 AM&quot;,
+&quot;0315&quot;,&quot;3:15 AM&quot;,
+&quot;0330&quot;,&quot;3:30 AM&quot;,
+&quot;0345&quot;,&quot;3:45 AM&quot;,
+&quot;0400&quot;,&quot;4:00 AM&quot;,
+&quot;0415&quot;,&quot;4:15 AM&quot;,
+&quot;0430&quot;,&quot;4:30 AM&quot;,
+&quot;0445&quot;,&quot;4:45 AM&quot;,
+&quot;0500&quot;,&quot;5:00 AM&quot;,
+&quot;0515&quot;,&quot;5:15 AM&quot;,
+&quot;0530&quot;,&quot;5:30 AM&quot;,
+&quot;0545&quot;,&quot;5:45 AM&quot;,
+&quot;0600&quot;,&quot;6:00 AM&quot;,
+&quot;0615&quot;,&quot;6:15 AM&quot;,
+&quot;0630&quot;,&quot;6:30 AM&quot;,
+&quot;0645&quot;,&quot;6:45 AM&quot;,
+&quot;0700&quot;,&quot;7:00 AM&quot;,
+&quot;0715&quot;,&quot;7:15 AM&quot;,
+&quot;0730&quot;,&quot;7:30 AM&quot;,
+&quot;0745&quot;,&quot;7:45 AM&quot;,
+&quot;0800&quot;,&quot;8:00 AM&quot;,
+&quot;0815&quot;,&quot;8:15 AM&quot;,
+&quot;0830&quot;,&quot;8:30 AM&quot;,
+&quot;0845&quot;,&quot;8:45 AM&quot;,
+&quot;0900&quot;,&quot;9:00 AM&quot;,
+&quot;0915&quot;,&quot;9:15 AM&quot;,
+&quot;0930&quot;,&quot;9:30 AM&quot;,
+&quot;0945&quot;,&quot;9:45 AM&quot;,
+&quot;1000&quot;,&quot;10:00 AM&quot;,
+&quot;1015&quot;,&quot;10:15 AM&quot;,
+&quot;1030&quot;,&quot;10:30 AM&quot;,
+&quot;1045&quot;,&quot;10:45 AM&quot;,
+&quot;1100&quot;,&quot;11:00 AM&quot;,
+&quot;1115&quot;,&quot;11:15 AM&quot;,
+&quot;1130&quot;,&quot;11:30 AM&quot;,
+&quot;1145&quot;,&quot;11:45 AM&quot;,
+&quot;1200&quot;,&quot;12:00 PM&quot;,
+&quot;1215&quot;,&quot;12:15 PM&quot;,
+&quot;1230&quot;,&quot;12:30 PM&quot;,
+&quot;1245&quot;,&quot;12:45 PM&quot;,
+&quot;1300&quot;,&quot;1:00 PM&quot;,
+&quot;1315&quot;,&quot;1:15 PM&quot;,
+&quot;1330&quot;,&quot;1:30 PM&quot;,
+&quot;1345&quot;,&quot;1:45 PM&quot;,
+&quot;1400&quot;,&quot;2:00 PM&quot;,
+&quot;1415&quot;,&quot;2:15 PM&quot;,
+&quot;1430&quot;,&quot;2:30 PM&quot;,
+&quot;1445&quot;,&quot;2:45 PM&quot;,
+&quot;1500&quot;,&quot;3:00 PM&quot;,
+&quot;1515&quot;,&quot;3:15 PM&quot;,
+&quot;1530&quot;,&quot;3:30 PM&quot;,
+&quot;1545&quot;,&quot;3:45 PM&quot;,
+&quot;1600&quot;,&quot;4:00 PM&quot;,
+&quot;1615&quot;,&quot;4:15 PM&quot;,
+&quot;1630&quot;,&quot;4:30 PM&quot;,
+&quot;1645&quot;,&quot;4:45 PM&quot;,
+&quot;1700&quot;,&quot;5:00 PM&quot;,
+&quot;1715&quot;,&quot;5:15 PM&quot;,
+&quot;1730&quot;,&quot;5:30 PM&quot;,
+&quot;1745&quot;,&quot;5:45 PM&quot;,
+&quot;1800&quot;,&quot;6:00 PM&quot;,
+&quot;1815&quot;,&quot;6:15 PM&quot;,
+&quot;1830&quot;,&quot;6:30 PM&quot;,
+&quot;1845&quot;,&quot;6:45 PM&quot;,
+&quot;1900&quot;,&quot;7:00 PM&quot;,
+&quot;1915&quot;,&quot;7:15 PM&quot;,
+&quot;1930&quot;,&quot;7:30 PM&quot;,
+&quot;1945&quot;,&quot;7:45 PM&quot;,
+&quot;2000&quot;,&quot;8:00 PM&quot;,
+&quot;2015&quot;,&quot;8:15 PM&quot;,
+&quot;2030&quot;,&quot;8:30 PM&quot;,
+&quot;2045&quot;,&quot;8:45 PM&quot;,
+&quot;2100&quot;,&quot;9:00 PM&quot;,
+&quot;2115&quot;,&quot;9:15 PM&quot;,
+&quot;2130&quot;,&quot;9:30 PM&quot;,
+&quot;2145&quot;,&quot;9:45 PM&quot;,
+&quot;2200&quot;,&quot;10:00 PM&quot;,
+&quot;2215&quot;,&quot;10:15 PM&quot;,
+&quot;2230&quot;,&quot;10:30 PM&quot;,
+&quot;2245&quot;,&quot;10:45 PM&quot;,
+&quot;2300&quot;,&quot;11:00 PM&quot;,
+&quot;2315&quot;,&quot;11:15 PM&quot;,
+&quot;2330&quot;,&quot;11:30 PM&quot;,
+&quot;2345&quot;,&quot;11:45 PM&quot;,
+&quot;12:00 AM&quot;)</formula>
+        <name>Update Flow Start Time Label Text</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Update_Opp_Name</fullName>
+        <description>Update Opportunity Name for Template</description>
+        <field>Name</field>
+        <formula>LEFT((Account.Internal_Name__c + &quot; - &quot; + Drive_Site__r.Name +&quot; - &quot; +Additional_Description__c),120)</formula>
+        <name>Update Opp Name</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Update_Opportunity_Name</fullName>
+        <field>Name</field>
+        <formula>LEFT((Account.Internal_Name__c + &quot;, &quot; + Drive_Site__r.sked_Site_Building_Name__c),120)</formula>
+        <name>Update Opportunity Name</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Update_Opportunity_Name_with_TBD</fullName>
+        <description>If no Site is selected on the Opportunity, updates the Opportunity Name to Internal Name, TBD</description>
+        <field>Name</field>
+        <formula>Account.Internal_Name__c  + &quot;, TBD&quot;</formula>
+        <name>Update Opportunity Name with TBD</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>update_owner</fullName>
+        <field>OwnerId</field>
+        <name>update owner</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>LookupValue</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>update_stage</fullName>
+        <field>StageName</field>
+        <literalValue>Withdrawn</literalValue>
+        <name>update stage</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <rules>
+        <fullName>Double Reds is Null</fullName>
+        <actions>
+            <name>Populate_Double_Reds_to_Zero</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>false</active>
+        <criteriaItems>
+            <field>Account.Accepts_Automation2__c</field>
+            <operation>equals</operation>
+            <value>No</value>
+        </criteriaItems>
+        <description>If blood drive will not be conducting 2RBC procedures, auto-populate the Double Reds field with &quot;0.&quot;</description>
+        <triggerType>onCreateOnly</triggerType>
+    </rules>
+    <rules>
+        <fullName>Online Scheduling Enabled Default</fullName>
+        <actions>
+            <name>Online_Scheduling_Enabled_Default</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>false</active>
+        <criteriaItems>
+            <field>Opportunity.Online_Scheduling_Enabled__c</field>
+            <operation>equals</operation>
+        </criteriaItems>
+        <description>If Online Scheduling Enabled field is left blank when user creates the Opportunity, it should default to Yes.</description>
+        <triggerType>onCreateOnly</triggerType>
+    </rules>
+    <rules>
+        <fullName>Set Total Units to Total Opp Qty</fullName>
+        <actions>
+            <name>Set_Total_Oppty_Qty</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>false</active>
+        <description>When the Total Projected Procedures field is updated to a value which does not equal to Quantity field value, this rule triggers the associated field update to fire. This rule will only apply until the Drive is changed to a status of &quot;Closed.&quot;</description>
+        <formula>(ISPICKVAL(StageName,&quot;Draft&quot;)  ||  ISPICKVAL(StageName,&quot;Planning&quot;)  ||  ISPICKVAL(StageName,&quot;Initiate Commitment&quot;)  ||  ISPICKVAL(StageName,&quot;Committed&quot;)  ||  ISPICKVAL(StageName,&quot;Pending Logistics&quot;) )   &amp;&amp;   Total_Projected_Procedures__c &lt;&gt; TotalOpportunityQuantity</formula>
+        <triggerType>onAllChanges</triggerType>
+    </rules>
+    <rules>
+        <fullName>Update Drive Name Field</fullName>
+        <actions>
+            <name>Update_Drive_Name_Field</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <actions>
+            <name>Update_Opp_Name</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>false</active>
+        <description>Populate Drive Name field with Account and Site Name</description>
+        <formula>(ISCHANGED(Name) || ISNEW())   &amp;&amp; (Is_Template__c == true)</formula>
+        <triggerType>onAllChanges</triggerType>
+    </rules>
+    <rules>
+        <fullName>Update EnableAPHWebScheduling to Check</fullName>
+        <actions>
+            <name>Update_Enable_APH_Web_Scheduling</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>false</active>
+        <criteriaItems>
+            <field>Opportunity.Web_Scheduling_Enabled__c</field>
+            <operation>equals</operation>
+            <value>True</value>
+        </criteriaItems>
+        <description>Update when EnableWebScheduling is checked</description>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>Update EnableAPHWebScheduling to Uncheck</fullName>
+        <actions>
+            <name>Update_Enable_APH_Web_Scheduling_uncheck</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>false</active>
+        <criteriaItems>
+            <field>Opportunity.Web_Scheduling_Enabled__c</field>
+            <operation>equals</operation>
+            <value>False</value>
+        </criteriaItems>
+        <description>Update when EnableWebScheduling is unchecked</description>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>Update Opportunity Name with No Site</fullName>
+        <actions>
+            <name>Update_Opportunity_Name_with_TBD</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>false</active>
+        <description>Populate Drive Name field with Account and &quot;TBD&quot; if there is no site selected on the opportunity.</description>
+        <formula>ISBLANK( Drive_Site__c ) &amp;&amp;  (Is_Template__c == false)</formula>
+        <triggerType>onAllChanges</triggerType>
+    </rules>
+    <rules>
+        <fullName>Update Opportunity Name with Site Building</fullName>
+        <actions>
+            <name>Update_Opportunity_Name</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>false</active>
+        <description>Populate Drive Name field with Account and Site/Building Name from the Site if a Site is selected.</description>
+        <formula>NOT(ISBLANK(Drive_Site__c)  &amp;&amp;  (Is_Template__c == false) )&amp;&amp; (ISCHANGED( Name ) ||  ISCHANGED( Drive_Site__c )  ||  ISNEW())</formula>
+        <triggerType>onAllChanges</triggerType>
+    </rules>
+    <rules>
+        <fullName>Update Start%2FEndTime and Direct Donors To</fullName>
+        <actions>
+            <name>EndTimeFieldUpdate</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <actions>
+            <name>StartTimeFieldUpdate</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <actions>
+            <name>Update_Direct_Donors_To</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>false</active>
+        <criteriaItems>
+            <field>Opportunity.Flow_Start_Time_Field__c</field>
+            <operation>notEqual</operation>
+        </criteriaItems>
+        <description>Updates &quot;Start Time&quot; and &quot;End Time&quot; time format fields with value from the Flow_Start_Time__c and Flow_End_Time__c picklist fields populated from the Create New Drive Flow upon Opportunity creation. Also populate the Direct Donors To field with Site Room</description>
+        <triggerType>onCreateOnly</triggerType>
+    </rules>
+    <rules>
+        <fullName>When Flow End Time is Present</fullName>
+        <actions>
+            <name>EndTimeFieldUpdate</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <actions>
+            <name>Update_Flow_End_Time_Label_Text</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>false</active>
+        <criteriaItems>
+            <field>Opportunity.Flow_End_Time_Field__c</field>
+            <operation>notEqual</operation>
+        </criteriaItems>
+        <description>When Flow End Time is Present update flow end time label and End Time (Time) Field.</description>
+        <triggerType>onAllChanges</triggerType>
+    </rules>
+    <rules>
+        <fullName>When Flow Start Time is Present</fullName>
+        <actions>
+            <name>StartTimeFieldUpdate</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <actions>
+            <name>Update_Flow_Start_Time_Label_Text</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>false</active>
+        <criteriaItems>
+            <field>Opportunity.Flow_Start_Time_Field__c</field>
+            <operation>notEqual</operation>
+        </criteriaItems>
+        <description>When Flow Start Time is Present, update its label in the custom field flow start time label and Start Time (Time Field).</description>
+        <triggerType>onAllChanges</triggerType>
+    </rules>
+</Workflow>

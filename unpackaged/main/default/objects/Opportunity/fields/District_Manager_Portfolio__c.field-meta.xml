@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>District_Manager_Portfolio__c</fullName>
+    <deleteConstraint>SetNull</deleteConstraint>
+    <externalId>false</externalId>
+    <label>District Manager Portfolio</label>
+    <referenceTo>BSF_Portfolio__c</referenceTo>
+    <relationshipLabel>Blood Drive Opportunities (District Manager Portfolio)</relationshipLabel>
+    <relationshipName>Blood_Drive_Opportunities1</relationshipName>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Lookup</type>
+</CustomField>

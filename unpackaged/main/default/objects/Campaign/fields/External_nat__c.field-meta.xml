@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>External_nat__c</fullName>
+    <description>Adobe &quot;Nature of Delivery&quot; tracking for Lead forms.</description>
+    <externalId>false</externalId>
+    <label>Nature/Objective of Delivery</label>
+    <length>50</length>
+    <required>false</required>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

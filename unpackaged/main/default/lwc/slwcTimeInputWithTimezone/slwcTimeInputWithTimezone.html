@@ -1,0 +1,11 @@
+<template>
+    <div class={customClass.wrapper}>
+        <div class="input">
+            <slot name="input"></slot>
+        </div>
+        <div class="slds-form-element timezone-wrapper">
+            <div class="slds-form-element__label">&nbsp;</div>
+            <div class="slds-form-element__control timezone">{timezoneAbbr}</div>
+        </div>
+    </div>
+</template>

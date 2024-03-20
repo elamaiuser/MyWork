@@ -1,0 +1,218 @@
+<template>
+
+    <div class="slds-p-around_small slds-is-relative">
+        <lightning-spinner if:true={showSpinner} class="spins" size="medium"></lightning-spinner>
+
+        <table class="hco-rac-data-content-table hco-calendar-table">
+            <thead>
+                <tr>
+                    <template for:each={weekDays} for:item="weekday">
+                        <td key={weekday}>{weekday}</td>
+                    </template>
+                </tr>
+            </thead>
+            <tbody>
+                <template for:each={calendarWeeks} for:item="week">
+                    <tr key={week.key}>
+                        <template for:each={week.days} for:item="day">
+                            <template if:true={day.isWeekSummary}>
+                                <td key={day.key} data-value={week.startDateIso} onclick={handleSelectWeek}>
+                                    <!-- day info -->
+                                    <div class="slds-grid slds-grid_align-end slds-p-around_xxx-small">
+                                        <div class="day-info" data-value={day.dateIso} >
+                                            &nbsp;
+                                        </div>
+                                    </div>
+                                    <template if:true={day.slot}>
+                                        <div class="date-slot slds-grid slds-wrap slds-grid_align-spread">
+                                            <div class="day-of-slot slds-col slds-size_1-of-3 slds-text-align_center day-of-slot__black"> 
+                                                <lightning-formatted-number value={day.slot.totalProductBooked}></lightning-formatted-number>
+                                            </div>
+                                            <div class="day-of-slot slds-col slds-size_1-of-3 slds-text-align_center day-of-slot__black">
+                                                <lightning-formatted-number value={day.slot.totalProductGoal}></lightning-formatted-number>
+                                            </div>
+                                            <div class={day.slot.productGoalIndicatorClass}>
+                                                <lightning-formatted-number value={day.slot.percentOfGoal} format-style="percent"></lightning-formatted-number>
+                                            </div>
+                                        </div>
+                                    </template>
+                                </td>
+                            </template>
+                            <template if:false={day.isWeekSummary}>
+                                <td key={day.dateIso} class={day.class} data-value={day.dateIso} onclick={handleSelectDate}>
+                                    <!-- day info -->
+                                    <div class="slds-grid slds-grid_align-end slds-p-around_xxx-small">
+                                        <div class="icons">
+                                            <div class="slds-grid">
+                                                <template if:true={day.slot}>
+                                                    <lightning-helptext if:true={day.slot.hasActivities} icon-name="action:new_event" content="Group Activity indicator" class="icon"></lightning-helptext>
+                                                </template>
+                                                <lightning-helptext if:true={day.holidays} icon-name="action:goal" content={day.holidays} class="icon"></lightning-helptext>
+                                                <lightning-helptext if:true={day.calendarMessages} icon-name="action:announcement" content={day.calendarMessages} class="icon"></lightning-helptext>
+                                            </div>
+                                        </div>
+                                        <div class="day-info" data-value={day.dateIso} >
+                                            <span class="slds-m-right_xx-small" if:true={day.isFirstDayOfMonth}>
+                                                <lightning-formatted-date-time value={day.date} month="short">
+                                                </lightning-formatted-date-time>
+                                            </span>
+                                            <lightning-formatted-date-time value={day.date} day="numeric">
+                                            </lightning-formatted-date-time>
+                                        </div>
+                                    </div>
+
+                                    <template if:true={day.slot}>
+                                        <div class="date-slot slds-grid slds-wrap slds-grid_align-spread">
+                                            <div class="day-of-slot slds-col slds-size_1-of-3 slds-text-align_center day-of-slot__black"> 
+                                                <lightning-formatted-number value={day.slot.noOfProductBooked}></lightning-formatted-number>
+                                            </div>
+                                            <div class="day-of-slot slds-col slds-size_1-of-3 slds-text-align_center day-of-slot__black">
+                                                <lightning-formatted-number value={day.slot.noOfProductGoal}></lightning-formatted-number>
+                                            </div>
+                                            <div class={day.slot.productGoalIndicatorClass}>
+                                                <lightning-formatted-number value={day.slot.percentOfGoal} format-style="percent" maximum-fraction-digits="0"></lightning-formatted-number>
+                                            </div>
+                                        </div>
+                                        <div class={customClass.staffingDetails}>
+                                            <div class={day.slot.staffIndicatorClass}> 
+                                                <lightning-icon icon-name="utility:user" variant="inverse" size="x-small"></lightning-icon>
+                                                <lightning-icon if:true={day.slot.decreaseIndicator} icon-name="utility:down" variant="inverse" size="x-small" onclick={handleAcknowledgeDecrease} data-staffing-constraint={day.slot.staffingConstraintId}></lightning-icon>
+                                            </div>
+                                            <div class="slds-col slds-size_1-of-3 slds-text-align_center details">
+                                                <div class="staff-info" if:true={showFixedSiteStaffingDetails}>
+                                                    <div>
+                                                        <div>F</div>
+                                                        <lightning-formatted-number value={day.slot.noOfFixedSiteStaffRequested}></lightning-formatted-number>
+                                                    </div>
+                                                </div>
+                                                <div class="staff-info" if:true={showMobileStaffingDetails}>
+                                                    <div>
+                                                        <div>M</div>
+                                                        <lightning-formatted-number value={day.slot.noOfMobileStaffRequested}></lightning-formatted-number>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="slds-col slds-size_1-of-3 slds-text-align_center details">
+                                                <div class="staff-info" if:true={showFixedSiteStaffingDetails}>
+                                                    <div>
+                                                        <div>F</div>
+                                                        <lightning-formatted-number value={day.slot.noOfFixedSiteStaffRemaining}></lightning-formatted-number>
+                                                    </div>
+                                                </div>
+                                                <div class="staff-info" if:true={showMobileStaffingDetails}>
+                                                    <div>
+                                                        <div>M</div>
+                                                        <lightning-formatted-number value={day.slot.noOfMobileStaffRemaining}></lightning-formatted-number>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="date-slot slds-grid slds-wrap slds-grid_align-spread slds-m-top_xx-small">
+                                            <span class={day.slot.x2RBCIndicatorClass}>2RBC</span>
+                                            <div class="slds-col slds-size_1-of-3 slds-text-align_center">
+                                                <lightning-formatted-number value={day.slot.noOf2RBCRequested}></lightning-formatted-number>
+                                            </div>
+                                            <div class="slds-col slds-size_1-of-3 slds-text-align_center">
+                                                <lightning-formatted-number if:false={day.slot.isNoOf2RBCRemainingInfinity} value={day.slot.noOf2RBCRemaining}></lightning-formatted-number>
+                                                <span if:true={day.slot.isNoOf2RBCRemainingInfinity}>{day.slot.noOf2RBCRemaining}</span>
+                                            </div>
+                                        </div>
+                                        <div class="date-slot slds-grid slds-wrap slds-grid_align-spread">
+                                            <span class={day.slot.DOTIndicatorClass}>DOT</span>
+                                            <div class="slds-col slds-size_1-of-3 slds-text-align_center">
+                                                <lightning-formatted-number value={day.slot.noOfDOTRequested}></lightning-formatted-number>
+                                            </div>
+                                            <div class="slds-col slds-size_1-of-3 slds-text-align_center">
+                                                <lightning-formatted-number if:false={day.slot.isNoOfDOTRemainingInfinity} value={day.slot.noOfDOTRemaining}></lightning-formatted-number>
+                                                <span if:true={day.slot.isNoOfDOTRemainingInfinity}>{day.slot.noOfDOTRemaining}</span>
+                                            </div>
+                                        </div>
+                                        <div class="date-slot slds-grid slds-wrap slds-grid_align-spread">
+                                            <span class={day.slot.CDLIndicatorClass}>CDL</span>
+                                            <div class="slds-col slds-size_1-of-3 slds-text-align_center">
+                                                <lightning-formatted-number value={day.slot.noOfCDLRequested}></lightning-formatted-number>
+                                            </div>
+                                            <div class="slds-col slds-size_1-of-3 slds-text-align_center">
+                                                <lightning-formatted-number if:false={day.slot.isNoOfCDLRemainingInfinity} value={day.slot.noOfCDLRemaining}></lightning-formatted-number>
+                                                <span if:true={day.slot.isNoOfCDLRemainingInfinity}>{day.slot.noOfCDLRemaining}</span>
+                                            </div>
+                                        </div>
+                                        <div class="date-slot slds-grid slds-wrap slds-grid_align-spread slds-m-top_xx-small">
+                                            <div class={day.slot.vehicleIndicatorClass}> 
+                                                <lightning-icon icon-name="utility:travel_and_places" variant="inverse" size="x-small"></lightning-icon>
+                                            </div>
+                                            <div class="slds-col slds-size_1-of-3 slds-text-align_center">
+                                                <lightning-formatted-number value={day.slot.noOfVehicleRequested}></lightning-formatted-number>
+                                            </div>
+                                            <div class="slds-col slds-size_1-of-3 slds-text-align_center">
+                                                <lightning-formatted-number value={day.slot.noOfVehicleRemaining}></lightning-formatted-number>
+                                            </div>
+                                        </div>
+                                        <div class="date-slot slds-grid slds-wrap slds-grid_align-spread">
+                                            <div class={day.slot.busIndicatorClass}> 
+                                                <svg style="height: 1.75rem; width: 1.75rem; fill: #fff" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><g><path d="M38.7 72h-4.1c-.7 0-1.4.4-1.7 1l-1.4 2.4c-.8 1.4-.5 3.2.8 4.1.5.4 1.1.5 1.7.5 1 0 2-.5 2.6-1.5l3-5c.4-.7-.1-1.5-.9-1.5zM67.1 73c-.399-.6-1-1-1.699-1H61.3c-.8 0-1.3.8-.899 1.5l3 5C64 79.5 65 80 66 80c.6 0 1.2-.2 1.7-.5 1.3-.9 1.6-2.8.8-4.1L67.1 73zM67 20H33c-3.3 0-6 2.7-6 6v34c0 3.3 2.7 6 6 6h34c3.3 0 6-2.7 6-6V26c0-3.3-2.7-6-6-6zM36 62c-1.7 0-3-1.3-3-3s1.3-3 3-3 3 1.3 3 3-1.3 3-3 3zm28 0c-1.7 0-3-1.3-3-3s1.3-3 3-3 3 1.3 3 3-1.3 3-3 3zm3-12c0 1.1-.9 2-2 2H35c-1.1 0-2-.9-2-2V30c0-1.1.9-2 2-2h30c1.1 0 2 .9 2 2v20z"></path></g></svg>
+                                            </div>
+                                            <div class="slds-col slds-size_1-of-3 slds-text-align_center">
+                                                <lightning-formatted-number value={day.slot.noOfBusRequested}></lightning-formatted-number>
+                                            </div>
+                                            <div class="slds-col slds-size_1-of-3 slds-text-align_center">
+                                                <lightning-formatted-number value={day.slot.noOfBusRemaining}></lightning-formatted-number>
+                                            </div>
+                                        </div>
+                                        <div class="date-slot slds-grid slds-wrap slds-grid_align-spread">
+                                            <div class={day.slot.equipmentIndicatorClass}> 
+                                                <lightning-icon icon-name="utility:settings" variant="inverse" size="x-small"></lightning-icon>
+                                            </div>
+                                            <div class="slds-col slds-size_1-of-3 slds-text-align_center">
+                                                <lightning-formatted-number value={day.slot.noOfEquipmentRequested}></lightning-formatted-number>
+                                            </div>
+                                            <div class="slds-col slds-size_1-of-3 slds-text-align_center">
+                                                <lightning-formatted-number value={day.slot.noOfEquipmentRemaining}></lightning-formatted-number>
+                                            </div>
+                                        </div>
+                                    </template>
+                                </td>
+                            </template>
+                        </template>
+                    </tr>
+                </template>
+                <tr>
+                    <td colspan="7"></td>
+                    <td>
+                        <div class="slds-grid slds-grid_align-end slds-p-around_xxx-small">
+                            <div class="day-info">
+                                &nbsp;
+                            </div>
+                        </div>
+                        <template if:true={monthSummary}>
+                            <div class="date-slot slds-grid slds-wrap slds-grid_align-spread">
+                                <div class="day-of-slot slds-col slds-size_1-of-3 slds-text-align_center day-of-slot__black"> 
+                                    <lightning-formatted-number value={monthSummary.totalProductBooked}></lightning-formatted-number>
+                                </div>
+                                <div class="day-of-slot slds-col slds-size_1-of-3 slds-text-align_center day-of-slot__black">
+                                    <lightning-formatted-number value={monthSummary.totalProductGoal}></lightning-formatted-number>
+                                </div>
+                                <div class={monthSummary.productGoalIndicatorClass}>
+                                    <lightning-formatted-number value={monthSummary.percentOfGoal} format-style="percent"></lightning-formatted-number>
+                                </div>
+                            </div>
+                        </template>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <c-slwc-confirm-modal
+        is-open={confirmModalData.isOpen}
+        title={confirmModalData.title}
+        message={confirmModalData.message}
+        handle-on-close={confirmModalData.onClose}
+        confirm-btn-label={confirmModalData.confirmBtnLabel}
+        cancel-btn-label={confirmModalData.cancelBtnLabel}
+        size='x-small'>
+    </c-slwc-confirm-modal>
+
+    <c-slwc-drive-calendar-day-modal is-readonly={isReadonly}></c-slwc-drive-calendar-day-modal>
+
+</template>

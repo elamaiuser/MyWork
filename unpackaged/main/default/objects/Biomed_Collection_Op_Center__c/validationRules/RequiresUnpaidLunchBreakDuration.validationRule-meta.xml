@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>RequiresUnpaidLunchBreakDuration</fullName>
+    <active>true</active>
+    <errorConditionFormula>sked_Lunch_Break_Before_Draw_Hours__c == TRUE
+&amp;&amp; ISBLANK(sked_Unpaid_Lunch_Break_Duration__c)</errorConditionFormula>
+    <errorMessage>Unpaid Lunch Break Duration is required if Lunch Break Before Draw Hours is set.</errorMessage>
+</ValidationRule>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CompactLayout xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>AcctCntRelation</fullName>
+    <fields>ContactId</fields>
+    <fields>StartDate</fields>
+    <fields>EndDate</fields>
+    <fields>IsActive</fields>
+    <fields>Reason__c</fields>
+    <label>AcctCntRelation</label>
+</CompactLayout>

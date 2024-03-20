@@ -1,0 +1,19 @@
+<template>
+    <section role="dialog" tabindex="-1" class={customClass.modalClass} style={customStyle.modalStyle}>
+        <div class="slds-modal__container" style={customStyle.modalContainerStyle}>
+            <header class={customClass.headerClass}>
+                <lightning-button-icon if:true={showCloseIcon} onclick={handleCancel} class="slds-button slds-button_icon slds-modal__close" size="large" icon-name="utility:close" variant="bare-inverse" title="Close"></lightning-button-icon>
+
+                <h2 class="slds-modal__title slds-hyphenate">{title}</h2>
+            </header>
+            <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                <p><lightning-formatted-rich-text value={message}></lightning-formatted-rich-text></p>
+            </div>
+            <footer class={customClass.footerClass} if:true={showFooter}>
+                <button class="slds-button slds-button_neutral" if:true={showCancelBtn} onclick={handleCancel} >{cancelBtnLbl}</button>
+                <button class="slds-button slds-button_brand" if:true={showConfimnBtn} onclick={handleConfirm} >{confirmBtnLbl}</button>
+            </footer>
+        </div>
+    </section>
+    <div class={customClass.backdropClass} style={customStyle.backdropStyle}></div>
+</template>

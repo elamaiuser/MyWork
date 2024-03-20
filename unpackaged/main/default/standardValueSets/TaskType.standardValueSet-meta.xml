@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<StandardValueSet xmlns="http://soap.sforce.com/2006/04/metadata">
+    <sorted>false</sorted>
+    <standardValue>
+        <fullName>Call</fullName>
+        <default>false</default>
+        <label>Call</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Meeting</fullName>
+        <default>false</default>
+        <label>Meeting</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Other</fullName>
+        <default>false</default>
+        <label>Other</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Book Drive</fullName>
+        <default>false</default>
+        <label>Book Drive</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Sponsor Planning Meeting</fullName>
+        <default>false</default>
+        <label>Sponsor Planning Meeting</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Clone Blood Drive</fullName>
+        <default>false</default>
+        <label>Clone Blood Drive</label>
+    </standardValue>
+</StandardValueSet>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>sked_BHQ_Collections_Planning_Scheduling__c</fullName>
+    <externalId>false</externalId>
+    <label>BHQ Collections Planning &amp; Scheduling</label>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>Email</type>
+    <unique>false</unique>
+</CustomField>

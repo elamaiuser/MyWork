@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+        <label><!-- Pending Action (Drives) --></label>
+        <name>sked_Pending_Action__c</name>
+    </CustomFieldTranslation>

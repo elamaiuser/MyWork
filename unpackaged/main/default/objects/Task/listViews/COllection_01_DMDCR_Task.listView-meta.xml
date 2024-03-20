@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>COllection_01_DMDCR_Task</fullName>
+    <filterScope>Queue</filterScope>
+    <label>COllection_01: DMDCR</label>
+    <queue>COllection_01_DMDCR</queue>
+    <sharedTo>
+        <allInternalUsers></allInternalUsers>
+    </sharedTo>
+</ListView>

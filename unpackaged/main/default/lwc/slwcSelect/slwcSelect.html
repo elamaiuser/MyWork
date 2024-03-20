@@ -1,0 +1,20 @@
+<template>
+    <div class="slds-form-element">
+        <label class="slds-form-element__label" if:true={showLabel}><abbr if:true={required} title="required" class="slds-required">*</abbr>{label}</label>
+        <div class="slds-form-element__control">
+            <div class={customClass.selectContainer}>
+                <select class="slds-select" name={name} id={id} disabled={readOnly} onchange={handleOnChange}>
+                    <option value="" if:false={required}>--None--</option>
+
+                    <template for:each={options} for:item="option">
+                        <option key={option.value} value={option.value}>{option.label}</option>
+                    </template>
+                  
+                </select>
+            </div>
+            <div class="errors">
+                <div data-help-text="true" aria-live="assertive" class="required-error slds-form-element__help">Complete this field.</div>
+            </div>
+        </div>
+    </div>
+</template>

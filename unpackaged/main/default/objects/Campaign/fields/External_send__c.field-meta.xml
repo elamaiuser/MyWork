@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>External_send__c</fullName>
+    <description>External sender alias from Adobe campaign. Used for campaign tracking in Lead forms.</description>
+    <externalId>false</externalId>
+    <label>From Alias</label>
+    <length>100</length>
+    <required>false</required>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

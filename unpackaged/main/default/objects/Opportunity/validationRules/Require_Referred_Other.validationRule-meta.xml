@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Require_Referred_Other</fullName>
+    <active>true</active>
+    <description>Require user to enter value in Referred Other field if Referred other is selected as an option.</description>
+    <errorConditionFormula>AND(ISPICKVAL(Referred__c  , &quot;Other&quot;) ,
+ ISBLANK( Referred_Other__c ) 
+)</errorConditionFormula>
+    <errorDisplayField>Referred_Other__c</errorDisplayField>
+    <errorMessage>Please articulate who referred you to this Opportunity/Lead?</errorMessage>
+</ValidationRule>

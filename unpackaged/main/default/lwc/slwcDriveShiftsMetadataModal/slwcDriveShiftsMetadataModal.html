@@ -1,0 +1,224 @@
+<template>
+    <template if:true={isOpen}>
+        <section role="dialog" tabindex="-1" class="slds-modal slds-modal_small slds-fade-in-open" style="z-index:9999">
+        <div class="slds-modal__container">
+            <header class="slds-modal__header">
+                <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close" onclick={closeModal}>
+                    <lightning-icon icon-name="utility:close" alternative-text="close" variant="inverse" size="small" ></lightning-icon>
+                </button>
+                
+                <h2 class="slds-text-heading_medium slds-hyphenate">Drive Shift Configuration</h2>
+            </header>
+
+            <div class="slds-modal__content slds-p-around_medium full-height__modal-content" style="position: relative; overflow: initial;">
+                
+                <c-slwc-page-errors validities={errorMessages}></c-slwc-page-errors>
+
+                <div class="slds-grid">
+                    <div class="slds-size_1-of-4 slds-p-horizontal_x-small">
+                        <c-slwc-select
+                            name="numberOfDriveShifts"
+                            label="Number of Shifts"
+                            selected-value={model.numberOfDriveShifts}
+                            options={numberOfShiftsOptions}
+                            required
+                            onchange={handleOnChange}></c-slwc-select>
+                    </div>
+                    <div if:true={showProjectedRegisterdDonors} class="slds-size_1-of-4 slds-p-horizontal_x-small">
+                        <lightning-input 
+                            type="number" autocomplete="off" 
+                            name="projectedRegisteredDonors" 
+                            label="Projected Registered Donors" 
+                            value={model.projectedRegisteredDonors} 
+                            onchange={handleOnChange} 
+                            required>
+                        </lightning-input>
+                    </div>
+                </div>
+                <div class="slds-grid slds-grid slds-p-horizontal_small slds-m-top_small">
+                    <strong>Total Procedure Projection</strong>
+                </div>
+                <div class="slds-grid">
+                    <div class="slds-size_1-of-4 slds-p-horizontal_x-small" if:true={show2RBCField}>
+                        <lightning-input 
+                            type="number" autocomplete="off" 
+                            name="x2rbcProjectedProcedures" 
+                            label="Double Reds Proc" 
+                            value={model.x2rbcProjectedProcedures} 
+                            onchange={handleOnChange} 
+                            required>
+                        </lightning-input>
+                    </div>
+
+                    <div class="slds-size_1-of-4 slds-p-horizontal_x-small" if:true={showWBField}>
+                        <lightning-input 
+                            type="number" autocomplete="off" 
+                            name="wbProjectedProcedures" 
+                            label="Whole Blood Proc" 
+                            value={model.wbProjectedProcedures} 
+                            onchange={handleOnChange} 
+                            required>
+                        </lightning-input>
+                    </div>
+
+                    <div class="slds-size_1-of-4 slds-p-horizontal_x-small" if:true={showPlasmaField}>
+                        <lightning-input 
+                            type="number" autocomplete="off" 
+                            name="plasmaProjectedProcedures" 
+                            label="Plasma Proc" 
+                            value={model.plasmaProjectedProcedures} 
+                            onchange={handleOnChange} 
+                            required>
+                        </lightning-input>
+                    </div>
+
+                    <div class="slds-size_1-of-4 slds-p-horizontal_x-small" if:true={showPlateletField}>
+                        <lightning-input 
+                            type="number" autocomplete="off" 
+                            name="plateletProjectedProcedures" 
+                            label="Platelet Proc" 
+                            value={model.plateletProjectedProcedures} 
+                            onchange={handleOnChange} 
+                            required>
+                        </lightning-input>
+                    </div>
+
+                </div>
+
+                <div class="slds-grid slds-wrap slds-grid_pull-padded-x-small" style="align-items: stretch;">
+                    <template for:each={model.driveShifts} for:item="driveShift">
+                        <div class="slds-p-horizontal_x-small slds-m-top_small slds-size_1-of-2" key={driveShift.key}>
+                            <div class="slds-box slds-box_small" style="height: 100%;">
+                                <strong>{driveShift.label}</strong>
+                                <div class="slds-grid slds-grid_pull-padded-x-small slds-m-bottom_x-small">
+                                    <div class="slds-size_1-of-2 slds-p-horizontal_x-small">
+                                        <c-slwc-time-input-with-timezone 
+                                            input-date={drive.driveDate}
+                                            timezone={masterData.timezoneSidId}>
+                                            <lightning-input 
+                                                slot="input"
+                                                type="time" name="startTime" label="Start Time"
+                                                value={driveShift.startTime}
+                                                data-value={driveShift.key}
+                                                required
+                                                onchange={handleOnShiftChange}>
+                                            </lightning-input>
+                                        </c-slwc-time-input-with-timezone>
+                                    </div>
+                                    <div class="slds-size_1-of-2 slds-p-horizontal_x-small">
+                                        <c-slwc-time-input-with-timezone 
+                                            input-date={drive.driveDate}
+                                            timezone={masterData.timezoneSidId}>
+                                            <lightning-input 
+                                                slot="input"
+                                                type="time" name="endTime" label="End Time"
+                                                value={driveShift.endTime}
+                                                data-value={driveShift.key}
+                                                required
+                                                onchange={handleOnShiftChange}>
+                                            </lightning-input>
+                                        </c-slwc-time-input-with-timezone>
+                                    </div>
+                                </div>
+                                <div class="slds-grid slds-grid_pull-padded-x-small slds-m-bottom_x-small slds-wrap" if:true={showProjectedRegisterdDonors}>
+                                    <div class="slds-size_1-of-2 slds-p-horizontal_x-small">
+                                        <lightning-input 
+                                            type="number" autocomplete="off" 
+                                            name="donorsScheduled" 
+                                            label="Projected Registered Donors" 
+                                            value={driveShift.donorsScheduled}
+                                            data-value={driveShift.key}
+                                            required
+                                            onchange={handleOnShiftChange}>
+                                        </lightning-input>
+                                    </div>
+                                </div>
+                                <div class="slds-grid slds-grid_pull-padded-x-small slds-m-bottom_x-small slds-wrap">
+                                    <div class="slds-size_1-of-2 slds-p-horizontal_x-small" if:true={show2RBCField}>
+                                        <lightning-input 
+                                            type="number" autocomplete="off" 
+                                            name="x2rbcProjectedProcedures" 
+                                            label="Double Reds Proc" 
+                                            value={driveShift.x2rbcProjectedProcedures}
+                                            readonly>
+                                        </lightning-input>
+                                    </div>
+                
+                                    <div class="slds-size_1-of-2 slds-p-horizontal_x-small" if:true={showWBField}>
+                                        <lightning-input 
+                                            type="number" autocomplete="off" 
+                                            name="wbProjectedProcedures" 
+                                            label="Whole Blood Proc" 
+                                            value={driveShift.wbProjectedProcedures} 
+                                            data-value={driveShift.key}
+                                            onchange={handleOnShiftChange} 
+                                            required>
+                                        </lightning-input>
+                                    </div>
+
+                                    <div class="slds-size_1-of-2 slds-p-horizontal_x-small" if:true={showPlasmaField}>
+                                        <lightning-input 
+                                            type="number" autocomplete="off" 
+                                            name="plasmaProjectedProcedures" 
+                                            label="Plasma Proc"  
+                                            value={driveShift.plasmaProjectedProcedures} 
+                                            data-value={driveShift.key}
+                                            onchange={handleOnShiftChange} 
+                                            required>
+                                        </lightning-input>
+                                    </div>
+
+                                    <div class="slds-size_1-of-2 slds-p-horizontal_x-small" if:true={showPlateletField}>
+                                        <lightning-input 
+                                            type="number" autocomplete="off" 
+                                            name="plateletProjectedProcedures" 
+                                            label="Platelet Proc" 
+                                            value={driveShift.plateletProjectedProcedures} 
+                                            data-value={driveShift.key}
+                                            onchange={handleOnShiftChange} 
+                                            required>
+                                        </lightning-input>
+                                    </div>
+
+                                </div>
+                                <template if:true={canGenerateRounds}>
+                                    <div class="slds-grid slds-grid_pull-padded-x-small slds-m-bottom_x-small">
+                                        <div class="slds-size_1-of-2 slds-p-horizontal_x-small">
+                                            <c-slwc-select
+                                                name="numberOfRounds"
+                                                label="Number of Platelet Rounds"
+                                                data-value={driveShift.key}
+                                                selected-value={driveShift.numberOfRounds}
+                                                options={driveShift.numberOfRoundsOptions}
+                                                required
+                                                onchange={handleOnShiftChange}></c-slwc-select>
+                                        </div>
+                                    </div>
+                                    <div class="slds-grid slds-m-top_xx-small slds-grid_pull-padded-x-small" key={round.key} for:each={driveShift.rounds} for:item="round">
+                                        <div class="slds-p-horizontal_x-small">{round.label}</div>
+                                        <div class="slds-p-horizontal_x-small">
+                                            <lightning-formatted-date-time value={round.start} hour="2-digit"
+                                                minute="2-digit" time-zone={masterData.timezoneSidId}></lightning-formatted-date-time>
+                                        </div>
+                                        <div class="slds-p-horizontal_x-small">
+                                            <lightning-formatted-date-time value={round.end} hour="2-digit"
+                                                minute="2-digit" time-zone={masterData.timezoneSidId}></lightning-formatted-date-time>
+                                        </div>
+                                    </div>
+                                </template>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+            </div>
+
+            <footer class="slds-modal__footer">
+                <lightning-button label="Cancel" title="Cancel" onclick={closeModal} class="slds-m-right_xx-small"></lightning-button>
+                <lightning-button class="slds-m-top_small" onclick={handleSave} variant="brand" type="submit" name="update" label="Save"></lightning-button>
+            </footer>
+        </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open" style="z-index:9998"></div>
+
+    </template>
+</template>

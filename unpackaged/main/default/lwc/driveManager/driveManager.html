@@ -1,0 +1,34 @@
+<template>
+    <template if:true={showDrive}>
+    <lightning-card title={driveName} icon-name="action:new_event" style="margin-bottom: 20px;">
+        <lightning-button label="View Detail" slot="actions" onclick={showOpportunity}></lightning-button>
+        <template if:true={showCalendarDriveButton}>
+            <lightning-button label="View Drive" slot="actions" onclick={showCalendaredDrive}></lightning-button>
+        </template>
+        <div style="margin-left: 20px; margin:20px">
+        <lightning-progress-indicator type="path" variant="base" current-step={stageName} >
+            <template for:each={steps} for:item="step">
+                <lightning-progress-step key={step.value} label={step.label} value={step.value}></lightning-progress-step>
+            </template>
+        </lightning-progress-indicator>
+        </div>
+        <lightning-record-form 
+              record-id={driveId}
+              object-api-name="Opportunity"
+              layout-type="Full"
+              columns="2"
+              mode="view">
+        </lightning-record-form>
+    </lightning-card>
+    </template>
+    <template if:false={showDrive}>
+        <lightning-card title={driveName} icon-name="action:new_event" style="margin-bottom: 20px;">
+            <div style="margin-left:75%;"><b>Select a drive from the lists on the right >>></b></div>
+        </lightning-card>
+    </template>
+    <template if:true={showSpinner}>
+        <lightning-spinner
+            alternative-text='Loading Drive'>
+        </lightning-spinner>
+    </template>    
+</template>

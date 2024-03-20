@@ -1,0 +1,202 @@
+<template>
+    <lightning-spinner if:true={showSpinner} class="spins" size="medium"></lightning-spinner>
+
+    <article class="slds-card slds-card_boundary linked-drives-page">
+        <div class="slds-page-header">
+            <div class={classHeader}>
+                <div class="slds-page-header__col-title">
+                    <div class="slds-media">
+                        <div class="slds-media__figure">
+                            <div class="linked-drive-icon-wrapper">
+                                <div>
+                                    <span class="slds-icon_container slds-icon-standard-approval">
+                                        <svg class="slds-icon slds-icon_medium" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" id="maintenance_work_rule"><path d="M79.67 49.23l-10-10a1.36 1.36 0 00-1.86 0l-1.86 1.87a1.34 1.34 0 000 1.86L69 46a.89.89 0 01-.09 1.27.87.87 0 01-.53.22H41l16.33-16.25a.89.89 0 011.27.09.87.87 0 01.22.53v4.46a1.18 1.18 0 001.1 1.24h2.71a1.17 1.17 0 001.24-1.09V22a1.17 1.17 0 00-1.1-1.24H48.53a1.36 1.36 0 00-1.24 1.37v2.49a1.18 1.18 0 001.12 1.24H53a.88.88 0 01.86.9.89.89 0 01-.24.58l-20.1 20.03H21.24A1.28 1.28 0 0020 48.69v2.64a1.46 1.46 0 001.36 1.37h12.41l20 20a.9.9 0 01-.1 1.27.85.85 0 01-.52.21h-4.5a1.17 1.17 0 00-1.24 1.1.33.33 0 000 .14v2.49a1.45 1.45 0 001.24 1.37H62.8a1.18 1.18 0 001.2-1.12V63.74a1.18 1.18 0 00-1.12-1.24h-2.7a1.17 1.17 0 00-1.24 1.09v4.61a.88.88 0 01-.89.87.9.9 0 01-.6-.25L41.08 52.7H68.5a.89.89 0 01.62 1.48l-3.22 3.1a1.35 1.35 0 000 1.87L67.76 61a1.34 1.34 0 001.86 0l10-9.92a1.36 1.36 0 00.05-1.85z"></path></svg>
+                                    </span>
+                                </div>
+                                <div class="linked-drive-type-text Multi Day" if:true={isMultiDayLink}></div>
+                                <div class="linked-drive-type-text Single Day" if:false={isMultiDayLink}></div>
+                            </div>
+                            
+                            <!-- <lightning-icon icon-name="standard:event"></lightning-icon> -->
+                        </div>
+                        <div class="slds-media__body">
+                            <p class="slds-page-header__name-meta">{pageSubHeader}</p>
+                            <div class="slds-page-header__name">
+                                <div class="slds-page-header__name-title">
+                                    <h1>
+                                        <span class="slds-page-header__title">{pageHeader}</span>
+                                    </h1>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="slds-no-flex slds-grid slds-grid_vertical-align-end">
+                    <div class="slds-col slds-grid">
+                        <template if:true={readOnly}>
+                            <lightning-button class="slds-m-left_x-small" variant="neutral" onclick={handleRefresh} label="Refresh"></lightning-button>
+                        </template>
+                        <template if:false={readOnly}>
+                            <c-slwc-picklist
+                                class="slds-grow slds-m-right_small"
+                                style="margin-top:-0.25rem; min-width: 15rem"
+                                name="linkedDriveType"
+                                label="Type"
+                                object-api-name="sked_Linked_Drives__c"
+                                required
+                                disabled={isEditMode}
+                                variant="label-inline"
+                                selected-value={linkedDrive.linkedDriveType}  
+                                pick-listfield-api-name="sked_Linked_Drive_Type__c"
+                                onpicklistchange={handleOnChange}>
+                            </c-slwc-picklist>
+                            <lightning-button class="slds-m-right_small" onclick={handleShowStaffingDetailsModal} variant="brand" if:true={showStaffingDetailsButton} label="Linked Drive Staffing"></lightning-button>
+                            <lightning-button class="slds-m-right_small" onclick={handleCreateActivity} variant="success" if:true={showCreateActivityButton} label="Create Activity"></lightning-button>
+                            <lightning-button variant="neutral" onclick={handleRefresh} label="Refresh"></lightning-button>
+                            <lightning-button class="slds-m-left_x-small" onclick={handleDeleteLinkedDrives} variant="destructive" if:true={showDeleteLinkButton} label="Delete Link"></lightning-button>
+                            <lightning-button class="slds-m-left_x-small" onclick={handleUpdateLinkedDrives} variant="brand" if:false={showDriveNotLinkedWarning} label="Update Linked Drives"></lightning-button>
+                            <lightning-button class="slds-m-left_x-small" onclick={handleCreateLinkedDrives} variant="brand" if:true={showDriveNotLinkedWarning} label="Create Link"></lightning-button>                        
+                        </template>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div if:true={showDriveNotLinkedWarning} class="slds-notify slds-notify_alert" role="alert">
+            <h2>This Drive has not been linked yet.</h2>
+        </div>
+
+        <lightning-tabset active-tab-value={currentTab}>
+           <lightning-tab label="Linked Drives" value={TABS.DRIVE} onactive={handleChangeTab}>
+               <template if:true={showLinkedDrivesTab}>
+                    <template if:true={isLinkedDriveValid}>
+                        <div class="slds-grow slds-p-around_small">
+                            <div class="slds-path">
+                                <div class="slds-grid slds-path__track">
+                                    <div class="slds-grid slds-path__scroller-container">
+                                        <div class="slds-path__scroller">
+                                            <div class="slds-path__scroller_inner">
+                                                <ul class="slds-path__nav" role="listbox" aria-orientation="horizontal">
+                                                    <template for:each={linkedDriveNodes} for:item="linkedDriveNode">
+                                                        <li key={linkedDriveNode.key} class={linkedDriveNode.class} role="presentation">
+                                                            <template if:true={linkedDriveNode.isLinked}>
+                                                                <c-slwc-popover  container="html" position="bottom" trigger="click" width="24rem">
+                                                                    <a slot="reference" class="slds-path__link" role="option"
+                                                                        tabindex="-1">
+                                                                        <span class="slds-path__title" style="transform: rotateX(0)">
+                                                                            <lightning-formatted-date-time value={linkedDriveNode.drive.driveDate}
+                                                                                time-zone="GMT">
+                                                                            </lightning-formatted-date-time>
+
+                                                                            <template if:false={isMultiDayLink}>
+                                                                                <lightning-formatted-time class="slds-m-left_x-small" value={linkedDriveNode.drive.startTime}></lightning-formatted-time>
+                                                                            </template>
+                                                                        </span>
+                                                                    </a>
+                                                                    <c-slwc-popover-content 
+                                                                        name="linkedDrivePopover" 
+                                                                        popover-data={linkedDriveNode} 
+                                                                        slot="content"
+                                                                        onaction={handleLinkedDrivePopoverAction}>
+                                                                    </c-slwc-popover-content>
+                                                                </c-slwc-popover>
+                                                            </template>
+                                                            <template if:false={linkedDriveNode.isLinked}>
+                                                                <a slot="reference" class="slds-path__link" role="option"
+                                                                tabindex="-1">
+                                                                    <span class="slds-path__title">Drive #{linkedDriveNode.index}</span>
+                                                                </a>
+                                                            </template>
+                                                        </li>
+                                                    </template>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                
+                        <template if:false={readOnly}>
+                            <div>
+                                <div class="slds-p-around_small slds-grid slds-grid_align-spread slds-grid_vertical-align-center">
+                                    <h3 class="slds-section-title">
+                                        <span>{possibleDrivesTableHeader}</span>
+                                    </h3>
+                                    <lightning-button if:true={selectedLinkDriveNode} onclick={cancelEditLinkedDriveNode} variant="neutral" label="Cancel Update Linked Drive">
+                                    </lightning-button>
+                                </div>
+                                <div class="slds-scrollable_y" style="height: 45vh;">
+                                    <c-slwc-custom-datatable 
+                                        key-field="id"
+                                        data={possibleDrives}
+                                        columns={DRIVE_TABLE_COLUMNS}
+                                        hide-checkbox-column
+                                        wrap-text-max-lines="3">
+                                    </c-slwc-custom-datatable>
+                                </div>
+                                <div class="slds-shrink-none slds-grow-none slds-p-horizontal_small slds-p-vertical_small slds-border_top modal-content__footer">
+                                    <div class="slds-grid slds-grid_align-spread slds-grid_vertical-align-center"> 
+                                        <div class="slds-text-color_weak ng-binding">Total records: {possibleDrives.length} </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </template>
+                    </template>
+                    <template if:false={isLinkedDriveValid}>
+                        <div class="slds-p-around_small">
+                            Please select Linked Drive Type.
+                        </div>
+                    </template>
+               </template>
+            </lightning-tab>
+            <lightning-tab label="Linked Activities" value={TABS.ACTIVITY} onactive={handleChangeTab}>
+                <div if:true={showLinkedActivitiesTab}>
+                    <div class="slds-scrollable_y" style="height: 45vh;">
+                        <c-slwc-custom-datatable 
+                            key-field="id"
+                            data={linkedActivities}
+                            columns={ACTIVITY_TABLE_COLUMNS}
+                            hide-checkbox-column
+                            wrap-text-max-lines="3">
+                        </c-slwc-custom-datatable>
+                    </div>
+                    <div class="slds-shrink-none slds-grow-none slds-p-horizontal_small slds-p-vertical_small slds-border_top modal-content__footer">
+                        <div class="slds-grid slds-grid_align-spread slds-grid_vertical-align-center"> 
+                            <div class="slds-text-color_weak ng-binding">Total records: {linkedActivities.length} </div>
+                        </div>
+                    </div>
+                </div>
+            </lightning-tab>
+        </lightning-tabset>
+        
+    </article>
+
+    <c-slwc-confirm-modal
+        if:true={confirmModalData.isOpen}
+        is-open={confirmModalData.isOpen}
+        title={confirmModalData.title}
+        message={confirmModalData.message}
+        handle-on-close={confirmModalData.onClose}
+        confirm-btn-label={confirmModalData.confirmBtnLabel}
+        cancel-btn-label={confirmModalData.cancelBtnLabel}
+        width="40rem"
+        layer-index="2">
+    </c-slwc-confirm-modal>
+
+    <c-slwc-activity-modal
+        activity={activityModalData.activity}
+        drive={activityModalData.drive}
+        is-open={activityModalData.isOpen}
+        onclose={closeActivityModal}
+    >
+    </c-slwc-activity-modal>
+
+    <c-slwc-linked-drive-staffing-details
+        is-open={linkedDriveStaffingDetailsModalData.isOpen}
+        record-id={linkedDriveStaffingDetailsModalData.recordId}
+        onclose={closeLinkedDriveStaffingDetailsModal}
+        onsave={saveLinkedDriveStaffingDetailsModal}>
+    </c-slwc-linked-drive-staffing-details>
+</template>

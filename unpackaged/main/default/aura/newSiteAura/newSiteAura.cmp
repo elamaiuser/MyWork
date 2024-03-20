@@ -1,0 +1,29 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,lightning:actionOverride,flexipage:availableForRecordHome,force:lightningQuickAction"
+                access="global">
+    <aura:attribute name="create" type="Boolean" default="true" />
+    <aura:attribute name="addAddress" type="Boolean" default="false" />
+    <aura:attribute name="recordId" type="String"/>
+    <aura:if isTrue="{!v.create}">
+        <c:newSite onsave="{!c.getSiteRecordId}"/>
+    </aura:if> 
+    <aura:if isTrue="{!v.addAddress}">
+        <section role="dialog" tabindex="-1" aria-modal="true" aria-labelledby="modal-heading-01" class="slds-modal slds-fade-in-open">
+            <div class="slds-modal__container">
+                <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" onclick="{!c.handleClose}">
+              <lightning:icon iconName="utility:close" alternativeText="Connected" variant="inverse"/>
+                </button>
+              <div class="slds-modal__header">
+                <h1 id="modal-heading-01" class="slds-modal__title slds-hyphenate">Add Address</h1>
+              </div>
+              <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1" style="height:150px;">
+                <!--<c:skedLocationAddress recordId="{!v.recordId}"></c:skedLocationAddress>-->
+                <c:slwcLocationAddress recordId="{!v.recordId}" redirect="true" refresh="false"></c:slwcLocationAddress>
+              </div>
+              <div class="slds-modal__footer">
+                <button class="slds-button slds-button_neutral" aria-label="Cancel and close"  onclick="{!c.handleClose}">Cancel</button>
+              </div>
+            </div>
+          </section>
+          <div class="slds-backdrop slds-backdrop_open" role="presentation"></div>
+    </aura:if>
+</aura:component>

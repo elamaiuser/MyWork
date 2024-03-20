@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PermissionSet xmlns="http://soap.sforce.com/2006/04/metadata">
+    <customPermissions>
+        <enabled>true</enabled>
+        <name>Account_Merge_Custom_Permission</name>
+    </customPermissions>
+    <description>This will be assigned to the users who can merge the accounts</description>
+    <hasActivationRequired>false</hasActivationRequired>
+    <label>Account Merge Permission Set</label>
+    <license>Salesforce</license>
+</PermissionSet>

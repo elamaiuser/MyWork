@@ -1,0 +1,131 @@
+<template>
+    <div class="spinner">
+        <template if:true={isLoading}>
+            <lightning-spinner alternative-text="Loading" variant="brand" size="large">
+            </lightning-spinner>
+        </template>
+    </div>
+    
+    <div style="margin-top: 20px;padding-top: 10px;">
+        <div style="padding: 10px;margin-top: 20px;">
+            <div class="slds-table--header-fixed_container" style="height:auto;overflow-x: scroll;">
+                <div style="height:100%;"> <!-- class="slds-scrollable_y" -->
+                        <table class="slds-table slds-table_bordered slds-table--header-fixed">
+                            <thead>
+                                <tr class="slds-text-title_caps">
+                                    <th scope="col">
+                                        <div class="slds-truncate slds-cell-fixed" title="Select All"> All 
+                                            <lightning-input type="checkbox" label="" name="selectchkbox"
+                                            onchange={handleAllCheckBoxChange}></lightning-input>
+
+                                        </div>
+                                        
+                                    </th>
+                                    
+                                    <th scope="col">
+                                        <div class="slds-truncate slds-cell-fixed" title="Drive Name">Drive Name</div>
+                                    </th>
+
+                                    <!--th scope="col">
+                                        <div class="slds-truncate slds-cell-fixed" title="Drive Stage">Stage </div>
+                                    </th-->
+
+                                    <!--th scope="col">
+                                        <div class="slds-truncate slds-cell-fixed" title="Drive Status">Status </div>
+                                    </th-->
+                                    
+                                    <th scope="col">
+                                        <div class="slds-truncate slds-cell-fixed" title="Drive Date">Drive Date</div>
+                                    </th>
+
+                                    <th scope="col">
+                                        <div class="slds-truncate slds-cell-fixed" title="Drive Site">Drive Site</div>
+                                    </th>
+                                   
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!--tr>
+                                    <td data-label="Close Date">
+                                        <div class="slds-truncate">  
+                                            <lightning-input type="checkbox" label="" name="selectchkbox"
+                                                onchange={handleAllCheckBoxChange}></lightning-input>
+                                        </div>
+                                    </td>
+                                                                                         
+            
+                                </tr-->
+
+                                <template for:each={futureDrives} for:item="driveitem">
+                                    <tr key={driveitem}>                                        
+                                        <th scope="row" data-label="Opportunity Name">
+                                            <div class="slds-truncate">  
+                                                <lightning-input type="checkbox" label="" name={driveitem.driveid} 
+                                                    value={driveitem.isselected}
+                                                    checked={driveitem.isselected}
+                                                    onchange={handleCheckBoxChange} ></lightning-input>
+                                            </div>
+                                        </th>
+                                        <th scope="row" data-label="Opportunity Name">
+                                            <div class="slds-truncate" title={driveitem.drivenanme}> 
+                                                <a href="javascript:void(0)" data-recordid={driveitem.driveid}  onclick={opendetailpage}>
+                                                    {driveitem.drivenanme}
+                                                </a>
+                                                
+                                            </div>
+                                        </th>
+
+                                        <!--th scope="row" data-label="Drive Stage">
+                                            <div class="slds-truncate" title={driveitem.drivestage}> 
+                                                {driveitem.drivestage}                                                
+                                            </div>
+                                        </th-->
+
+                                        <!--th scope="row" data-label="Drive Status">
+                                            <div class="slds-truncate" title={driveitem.drivestatus}> 
+                                                {driveitem.drivestatus}                                                
+                                            </div>
+                                        </th-->
+                                        
+                                        <th scope="row" data-label="Drive Date">
+                                            <div class="slds-truncate" title={driveitem.drivedate}> 
+                                                {driveitem.drivedate}
+                                                
+                                            </div>
+                                        </th>
+
+                                        <th scope="row" data-label="Drive Site">
+                                            <div class="slds-truncate" title={driveitem.drivesite}> 
+                                                {driveitem.drivesite}                                                
+                                            </div>
+                                        </th>
+                
+                                    </tr>
+                                </template>
+
+
+
+                            </tbody>
+                        </table>
+                </div>
+            </div>
+        </div>
+
+        <div>
+            <div style="display:flex;">
+                <div class="slds-truncate" title="drivetype">
+                    <lightning-button variant="brand" label="Cancel" title="cancelassignment" onclick={oncancelclick} class="slds-m-left_x-small"></lightning-button>
+                </div>
+                
+                <div class="slds-truncate" title="drivetype"> 
+                    <lightning-button variant="brand" label="Apply" title="apply button" onclick={applynow} 
+                    class="slds-m-left_x-small"></lightning-button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+
+</template>

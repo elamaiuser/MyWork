@@ -1,0 +1,11 @@
+<template>
+    <c-slwc-custom-table
+        key-field="key"
+        record={transformedJobs}
+        columns={columns}
+        resize-column-disabled
+        hide-checkbox-column="false"
+        onrowaction={handleRowActions}
+        style="border: 1px solid #ecebea; width:100%; display: flex;">
+    </c-slwc-custom-table>
+</template>

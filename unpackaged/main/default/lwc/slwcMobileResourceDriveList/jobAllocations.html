@@ -1,0 +1,69 @@
+<template>
+
+    <section role="dialog" tabindex="-1" class="slds-modal slds-fade-in-open">
+        <lightning-spinner if:true={showSpinner} class="spins" size="medium"></lightning-spinner>
+
+        <div class="slds-modal__container">
+            <header class="slds-modal__header">
+                <div style="width: 3rem">
+                    <lightning-button-icon icon-name="utility:chevronleft" variant="bare-inverse" alternative-text="Back" title="Back" size="large" onclick={handleBack}></lightning-button-icon>
+                </div>
+                
+                <h2 class="slds-text-heading_medium slds-hyphenate">Job Allocations</h2>
+
+                <div style="width: 3rem">
+                </div>
+            </header>
+            <div class="slds-modal__content slds-is-relative">
+                <template if:false={showSpinner}>
+                    <div if:false={jobAllocations.length}
+                        class="slds-text-align--center slds-m-around--medium slds-text-color_inverse-weak slds-text-heading--small">
+                        NO RECORD
+                    </div>
+                </template>
+                
+                <div class="slds-m-around_small"
+                    for:each={jobAllocations} for:item="item" key={item.key}>
+                    <div class="slds-border--bottom slds-grid slds-grid--align-spread slds-p-around--xx-small slds-grid_vertical-align-center">
+                        <div class="slds-text-heading--small">{item.job.resourceRole}</div>
+                        <div class="slds-no-flex">
+                            <strong>{item.status}</strong>
+                        </div>
+                    </div>
+                    <div class="slds-grid slds-grid--align-spread slds-p-around--xx-small" if:true={item.additionalRoles}>
+                        <div>Additional Roles</div>
+                        <div>{item.additionalRoles}</div>
+                    </div>
+                    <div class="slds-grid slds-grid--align-spread slds-p-around--xx-small">
+                        <div>Resource Name</div>
+                        <div>{item.resource.name}</div>
+                    </div>
+                    <div class="slds-grid slds-grid--align-spread slds-p-around--xx-small">
+                        <div>Start</div>
+                        <div><lightning-formatted-date-time value={item.start}
+                            year="numeric" month="numeric" day="numeric" hour="numeric" minute="2-digit"
+                            time-zone={timezoneSidId}></lightning-formatted-date-time></div>
+                    </div>
+                    <div class="slds-grid slds-grid--align-spread slds-p-around--xx-small">
+                        <div>End</div>
+                        <div><lightning-formatted-date-time value={item.end}
+                            year="numeric" month="numeric" day="numeric" hour="numeric" minute="2-digit"
+                            time-zone={timezoneSidId}></lightning-formatted-date-time></div>
+                    </div>
+                    <div class="slds-grid slds-grid--align-spread slds-p-around--xx-small">
+                        <div>Drive Name</div>
+                        <div class="slds-p-left_small slds-text-align_right">{item.driveName}</div>
+                    </div>
+                    <div class="slds-grid slds-grid--align-spread slds-p-around--xx-small">
+                        <div>Drive UFID</div>
+                        <div>{item.driveUfid}</div>
+                    </div>
+                    <div class="slds-grid slds-grid--align-spread slds-p-around--xx-small">
+                        <div>Collection Operation</div>
+                        <div>{item.collectionOperationName}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</template>

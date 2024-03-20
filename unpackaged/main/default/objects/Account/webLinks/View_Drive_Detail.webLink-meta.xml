@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<WebLink xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>View_Drive_Detail</fullName>
+    <availability>online</availability>
+    <description>View Drive Detail</description>
+    <displayType>button</displayType>
+    <encodingKey>UTF-8</encodingKey>
+    <hasMenubar>false</hasMenubar>
+    <hasScrollbars>true</hasScrollbars>
+    <hasToolbar>false</hasToolbar>
+    <height>600</height>
+    <isResizable>true</isResizable>
+    <linkType>url</linkType>
+    <masterLabel>View Drive Detail</masterLabel>
+    <openType>newWindow</openType>
+    <position>none</position>
+    <protected>false</protected>
+    <showsLocation>false</showsLocation>
+    <showsStatus>false</showsStatus>
+    <url>https://app.powerbi.com/groups/me/apps/1bf85886-e730-4e80-9ea2-4330448f7aa5/reports/3b86e87c-ef7c-4fdd-8f8a-5e629cd46fdf/ReportSection1e6fdcc6cb66d5be6de8?filter=Sponsor_x0020_Alt_x0020_IDs%2FSFBD_x0020_Sponsor_x0020_UFID%20eq%20%27{!Account.UFID__c}%27</url>
+</WebLink>

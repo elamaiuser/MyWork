@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>ContactId</fullName>
+    <lookupFilter>
+        <active>true</active>
+        <errorMessage>You can&#39;t add inactive contact</errorMessage>
+        <filterItems>
+            <field>Contact.Active__c</field>
+            <operation>equals</operation>
+            <value>True</value>
+        </filterItems>
+        <isOptional>false</isOptional>
+    </lookupFilter>
+    <type>Lookup</type>
+</CustomField>

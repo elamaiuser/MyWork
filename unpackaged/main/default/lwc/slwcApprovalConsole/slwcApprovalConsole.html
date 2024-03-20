@@ -1,0 +1,38 @@
+<template>
+
+    <div class="slds-tabs_default">
+        <ul class="slds-tabs_default__nav slds-theme_shade" role="tablist">
+            <li if:true={tabVisibilityMap.siteFeedback} class={customClass.siteFeedbackTab} role="presentation" data-value={TABS.SITE_FEEDBACK} onclick={handleTabChange}>
+                <a class="slds-tabs_default__link" role="tab">Role Time Variance Feedback</a>
+            </li>
+            <li if:true={tabVisibilityMap.driveShiftTrade} class={customClass.driveShiftTradeTab} role="presentation" data-value={TABS.DRIVE_SHIFT_TRADE} onclick={handleTabChange}>
+                <a class="slds-tabs_default__link" role="tab">Shift Trades</a>
+            </li>
+            <li if:true={tabVisibilityMap.pendingActionDrive} class={customClass.pendingActionDriveTab} role="presentation" data-value={TABS.PENDING_ACTION_DRIVE} onclick={handleTabChange}>
+                <a class="slds-tabs_default__link" role="tab">Pending Action Drives</a>
+            </li>
+            <li if:true={tabVisibilityMap.driveChangeRequest} class={customClass.driveChangeRequestTab} role="presentation" data-value={TABS.DRIVE_CHANGE_REQUEST} onclick={handleTabChange}>
+                <a class="slds-tabs_default__link" role="tab">Drive Change Requests</a>
+            </li>
+            <li if:true={tabVisibilityMap.pendingDriveChangeRequest} class={customClass.pendingDriveChangeRequestTab} role="presentation" data-value={TABS.PENDING_DRIVE_CHANGE_REQUEST} onclick={handleTabChange}>
+                <a class="slds-tabs_default__link" role="tab">Pending Drive Change Requests</a>
+            </li>
+        </ul>
+        <div if:true={showSiteFeedbackTab} class="slds-tabs_default__content" style="padding-top: 0">
+            <c-slwc-approval-console-site-feedback-list></c-slwc-approval-console-site-feedback-list>
+        </div>
+        <div if:true={showDriveShiftTradeTab} class="slds-tabs_default__content" style="padding-top: 0">
+            <c-slwc-approval-console-drive-shift-trade-list></c-slwc-approval-console-drive-shift-trade-list>
+        </div>
+        <div if:true={showPendingActionDriveTab} class="slds-tabs_default__content" style="padding-top: 0">
+            <c-slwc-approval-console-pending-action-drive-list></c-slwc-approval-console-pending-action-drive-list>
+        </div>
+        <div if:true={showDriveChangeRequestTab} class="slds-tabs_default__content" style="padding-top: 0">
+            <c-slwc-approval-console-drive-change-request-list></c-slwc-approval-console-drive-change-request-list>
+        </div>
+        <div if:true={showPendingDriveChangeRequestTab} class="slds-tabs_default__content" style="padding-top: 0">
+            <c-slwc-scheduling-console-pending-drive-change-requests></c-slwc-scheduling-console-pending-drive-change-requests>
+        </div>
+    </div>
+    
+</template>

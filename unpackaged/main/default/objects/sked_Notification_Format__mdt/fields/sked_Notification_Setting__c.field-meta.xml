@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>sked_Notification_Setting__c</fullName>
+    <externalId>false</externalId>
+    <fieldManageability>DeveloperControlled</fieldManageability>
+    <label>Skedulo Notification Setting</label>
+    <referenceTo>sked_Notification_Setting__mdt</referenceTo>
+    <relationshipLabel>Skedulo Notification Formats</relationshipLabel>
+    <relationshipName>sked_Notification_Formats</relationshipName>
+    <required>false</required>
+    <type>MetadataRelationship</type>
+    <unique>false</unique>
+</CustomField>

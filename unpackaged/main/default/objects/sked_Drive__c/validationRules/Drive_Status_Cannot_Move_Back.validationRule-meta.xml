@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Drive_Status_Cannot_Move_Back</fullName>
+    <active>true</active>
+    <description>A drive in below status should not be allowed to move back to prior drive status
+
+Draft
+System Generated
+Tentative
+Confirmed
+Closed</description>
+    <errorConditionFormula>NOT(ISNEW()) &amp;&amp;
+ISCHANGED(sked_Status__c) &amp;&amp;
+(
+     (ISPICKVAL(PRIORVALUE(sked_Status__c), &quot;Draft&quot;) &amp;&amp;
+        ( NOT(ISPICKVAL(sked_Status__c, &quot;System Generated&quot;)) &amp;&amp; NOT(ISPICKVAL(sked_Status__c, &quot;Tentative&quot;))
+         &amp;&amp; NOT(ISPICKVAL(sked_Status__c, &quot;Cancel&quot;)) &amp;&amp; NOT(ISPICKVAL(sked_Status__c, &quot;Hold&quot;))
+        ) 
+     )||
+    (ISPICKVAL(PRIORVALUE(sked_Status__c), &quot;Hold&quot;) &amp;&amp;
+       ( NOT(ISPICKVAL(sked_Status__c, &quot;Draft&quot;)) &amp;&amp; NOT(ISPICKVAL(sked_Status__c, &quot;Tentative&quot;))
+          &amp;&amp; NOT(ISPICKVAL(sked_Status__c, &quot;Cancel&quot;)) &amp;&amp; NOT(ISPICKVAL(sked_Status__c, &quot;Confirmed&quot;))
+       ) 
+     )|| 
+     (ISPICKVAL(PRIORVALUE(sked_Status__c), &quot;System Generated&quot;) &amp;&amp;
+       (NOT(ISPICKVAL(sked_Status__c, &quot;Tentative&quot;))
+          &amp;&amp; NOT(ISPICKVAL(sked_Status__c, &quot;Cancel&quot;)) &amp;&amp; NOT(ISPICKVAL(sked_Status__c, &quot;Confirmed&quot;))
+       ) 
+     )|| 
+     (ISPICKVAL(PRIORVALUE(sked_Status__c), &quot;Confirmed&quot;) &amp;&amp;
+       ( NOT(ISPICKVAL(sked_Status__c, &quot;Cancel&quot;)) &amp;&amp; NOT(ISPICKVAL(sked_Status__c, &quot;Complete&quot;)) &amp;&amp; NOT(ISPICKVAL(sked_Status__c, &quot;Confirmed&quot;))
+       ) 
+     )|| 
+     (ISPICKVAL(PRIORVALUE(sked_Status__c), &quot;Complete&quot;) &amp;&amp;
+       ( NOT(ISPICKVAL(sked_Status__c, &quot;Cancel&quot;))
+       ) 
+     )|| 
+     (ISPICKVAL(PRIORVALUE(sked_Status__c), &quot;Cancel&quot;) &amp;&amp;
+       ( NOT(ISPICKVAL(sked_Status__c, &quot;Cancel&quot;))
+       ) 
+     )|| 
+     (
+     (ISPICKVAL(PRIORVALUE(sked_Status__c), &quot;Tentative&quot;)  &amp;&amp; 
+      NOT(ISPICKVAL(sked_Status__c, &quot;Cancel&quot;)) &amp;&amp; NOT(ISPICKVAL(sked_Status__c, &quot;Confirmed&quot;))
+       ) 
+     )
+
+)
+&amp;&amp;
+$Profile.Name &lt;&gt; &#39;System Administrator&#39; &amp;&amp;
+$Profile.Name &lt;&gt; &#39;Global Admin&#39;</errorConditionFormula>
+    <errorMessage>A Drive cannot be moved back to it&#39;s prior Drive Status.</errorMessage>
+</ValidationRule>

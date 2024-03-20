@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>All</fullName>
+    <columns>NAME</columns>
+    <columns>sked_Location__c</columns>
+    <columns>sked_Resource_Role_Group__c</columns>
+    <columns>sked_Collection_Operation_Name__c</columns>
+    <columns>sked_Variance_Applies_to__c</columns>
+    <columns>sked_Buffer_Type__c</columns>
+    <columns>sked_Variation_Type__c</columns>
+    <columns>sked_Variation_Amount__c</columns>
+    <columns>sked_Effective_Start_Date__c</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>sked_Collection_Operation_Name__c</field>
+        <operation>equals</operation>
+        <value>Wichita KS</value>
+    </filters>
+    <label>All</label>
+</ListView>

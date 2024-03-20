@@ -1,0 +1,47 @@
+<template>
+    <div class="drive-status-path">
+        <template if:true={showSpinner}>
+            <lightning-spinner class="spins" size="medium"></lightning-spinner>
+        </template>
+        
+        <div class="slds-path">
+            <div class="slds-grid slds-path__track">
+                <div class="slds-grid slds-path__scroller-container">
+                    <div class="slds-path__scroller">
+                        <div class="slds-path__scroller_inner">
+                            <ul class="slds-path__nav" role="listbox" aria-orientation="horizontal">
+                                <template for:each={statuses} for:item="status">
+                                    <li key={status.value} class={status.class} role="presentation" data-value={status.value} onclick={handleStatusClick}>
+                                        <a class="slds-path__link" role="option"
+                                            tabindex="-1">
+                                            <span class="slds-path__stage">
+                                                <lightning-icon class="slds-current-color" icon-name="utility:check" size="x-small" ></lightning-icon>
+                                            </span>
+                                            <span class="slds-path__title">{status.label}</span>
+                                        </a>
+                                    </li>
+                                </template>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <c-slwc-confirm-modal
+        is-open={confirmModalData.isOpen}
+        title={confirmModalData.title}
+        message={confirmModalData.message}
+        handle-on-close={confirmModalData.onClose}
+        confirm-btn-label={confirmModalData.confirmBtnLabel}
+        cancel-btn-label={confirmModalData.cancelBtnLabel}
+        size='x-small'>
+    </c-slwc-confirm-modal>
+
+    <c-slwc-cancel-drive-modal
+        is-open={cancelDriveModalData.shown}
+        drives={cancelDriveModalData.drives}
+        onclose={closeCancelDriveModal}
+    ></c-slwc-cancel-drive-modal>
+</template>

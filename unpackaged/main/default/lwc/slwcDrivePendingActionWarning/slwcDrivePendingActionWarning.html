@@ -1,0 +1,31 @@
+<template>
+    <template if:true={showSpinner}>
+        <lightning-spinner class="spins" size="medium"></lightning-spinner>
+    </template>
+
+    <div if:true={warningText} class="slds-notify slds-notify_alert slds-alert_warning">
+        <h2>
+            <lightning-icon class="slds-m-right_x-small slds-current-color" icon-name="utility:warning" size="x-small"></lightning-icon>
+            <span>{warningText}</span>
+            <span if:true={showWithdrawApprovalRequestButton} class="slds-text-link slds-text-link_reset slds-m-left_x-small" onclick={withdrawApprovalRequest}>Withdraw Approval Request</span>
+            <span if:true={showDCRDetailsButton} class="slds-text-link slds-text-link_reset slds-m-left_x-small" onclick={showDCRDetailsModal}>View DCR Details</span>
+        </h2>
+    </div>
+
+    <c-slwc-drive-change-request-approval-modal
+        record-id={dcrApprovalModalData.recordId}
+        is-open={dcrApprovalModalData.isOpen}
+        onclose={handleCloseDCRDetailsModal}
+    >
+    </c-slwc-drive-change-request-approval-modal>
+
+    <c-slwc-confirm-modal
+        is-open={confirmModalData.isOpen}
+        title={confirmModalData.title}
+        message={confirmModalData.message}
+        handle-on-close={confirmModalData.onClose}
+        confirm-btn-label={confirmModalData.confirmBtnLabel}
+        cancel-btn-label={confirmModalData.cancelBtnLabel}
+        size='x-small'>
+    </c-slwc-confirm-modal>
+</template>

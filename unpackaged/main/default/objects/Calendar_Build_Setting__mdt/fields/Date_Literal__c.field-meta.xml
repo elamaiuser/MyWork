@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Date_Literal__c</fullName>
+    <description>Specify the number of days, weeks, months, quarters, etc. to look back for querying draft drives so they can be moved to system generated. A few examples:
+Last_N_Days:5</description>
+    <externalId>false</externalId>
+    <fieldManageability>DeveloperControlled</fieldManageability>
+    <inlineHelpText>Specify the number of days, weeks, months, quarters, etc. to look back for querying draft drives so they can be moved to system generated. A few examples:
+Last_N_Days:5</inlineHelpText>
+    <label>Date Literal</label>
+    <length>255</length>
+    <required>false</required>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

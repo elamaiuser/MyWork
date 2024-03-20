@@ -1,0 +1,176 @@
+<template>
+    <template if:true={showSpinner}>
+        <lightning-spinner class="spins" size="medium"></lightning-spinner>
+    </template>
+    <div class="slds-grid slds-wrap slds-col slds-size_1-of-1">
+        <div class="slds-col slds-size_1-of-1">
+            <template if:false={drive}>
+                <div if:true={showAlert} class="slds-align_absolute-center slds-p-around_large">
+                    <lightning-icon icon-name="utility:warning" size="x-small" alternative-text="Warning!" title="Warning"></lightning-icon>
+                    <span class="slds-m-left--small">Details within this tab will be visible only after the Drive has been Generated.</span>
+                </div>
+            </template>
+            <div id="main" class="main slds-tabs_default" if:true={drive}>
+                <div class="slds-p-bottom_medium">
+                    <h3 class="slds-section-title--divider">Drive Summary</h3>
+                    <div class="slds-grid slds-wrap slds-p-right_small">
+                        <div class="slds-col slds-medium-size_1-of-2 slds-large-size_3-of-12 slds-size_1-of-1 slds-p-left_small">
+                            <div class="slds-form-element slds-form-element_readonly">
+                                <span class="slds-form-element__label">Drive Date</span>
+                                <div class="slds-form-element__control">
+                                    <div class="slds-form-element__static slds-truncate">
+                                        <lightning-formatted-date-time value={drive.driveDate} time-zone={timezoneSidId}></lightning-formatted-date-time>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="slds-col slds-medium-size_1-of-2 slds-large-size_3-of-12 slds-size_1-of-1 slds-p-left_small">
+                            <div class="slds-form-element slds-form-element_readonly">
+                                <span class="slds-form-element__label">Start Time</span>
+                                <div class="slds-form-element__control">
+                                    <div class="slds-form-element__static slds-truncate">
+                                        <lightning-formatted-time value={drive.startTime}></lightning-formatted-time>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="slds-col slds-medium-size_1-of-2 slds-large-size_3-of-12 slds-size_1-of-1 slds-p-left_small">
+                            <div class="slds-form-element slds-form-element_readonly">
+                                <span class="slds-form-element__label">End Time</span>
+                                <div class="slds-form-element__control">
+                                    <div class="slds-form-element__static slds-truncate">
+                                        <lightning-formatted-time value={drive.endTime}></lightning-formatted-time>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="slds-col slds-medium-size_1-of-2 slds-large-size_3-of-12 slds-size_1-of-1 slds-p-left_small">
+                            <div class="slds-form-element slds-form-element_readonly">
+                                <span class="slds-form-element__label">Drive Status</span>
+                                <div class="slds-form-element__control">
+                                    <div class="slds-form-element__static slds-truncate">{drive.status}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="slds-grid slds-wrap slds-p-right_small">
+                        <div class="slds-col slds-medium-size_1-of-2 slds-large-size_3-of-12 slds-size_1-of-1 slds-p-left_small">
+                            <div class="slds-form-element slds-form-element_readonly">
+                                <span class="slds-form-element__label">Site</span>
+                                <div class="slds-form-element__control">
+                                    <div class="slds-form-element__static slds-truncate">{drive.driveSite.name}</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="slds-col slds-medium-size_1-of-2 slds-large-size_3-of-12 slds-size_1-of-1 slds-p-left_small">
+                            <div class="slds-form-element slds-form-element_readonly">
+                                <span class="slds-form-element__label">Address</span>
+                                <div class="slds-form-element__control">
+                                    <div class="slds-form-element__static slds-truncate">{drive.driveSite.address}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="slds-p-bottom_medium">
+                    <h3 class="slds-section-title--divider">Productivity</h3>
+                    <div class="slds-grid slds-wrap slds-p-right_small">
+                        <div class="slds-col slds-medium-size_1-of-2 slds-large-size_3-of-12 slds-size_1-of-1 slds-p-left_small">
+                            <div class="slds-form-element slds-form-element_readonly">
+                                <span class="slds-form-element__label">Projected Registered Donors</span>
+                                <div class="slds-form-element__control">
+                                    <div class="slds-form-element__static slds-truncate">{drive.projectedRegisteredDonors}</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="slds-col slds-medium-size_1-of-2 slds-large-size_3-of-12 slds-size_1-of-1 slds-p-left_small">
+                            <div class="slds-form-element slds-form-element_readonly">
+                                <span class="slds-form-element__label">Double Reds Proc</span>
+                                <div class="slds-form-element__control">
+                                    <div class="slds-form-element__static slds-truncate">{drive.x2rbcProjectedProcedures}</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="slds-col slds-medium-size_1-of-2 slds-large-size_3-of-12 slds-size_1-of-1 slds-p-left_small">
+                            <div class="slds-form-element slds-form-element_readonly">
+                                <span class="slds-form-element__label">Whole Blood Proc</span>
+                                <div class="slds-form-element__control">
+                                    <div class="slds-form-element__static slds-truncate">{drive.wbProjectedProcedures}</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="slds-col slds-medium-size_1-of-2 slds-large-size_3-of-12 slds-size_1-of-1 slds-p-left_small">
+                            <div class="slds-form-element slds-form-element_readonly">
+                                <span class="slds-form-element__label">Total Procedures Projected</span>
+                                <div class="slds-form-element__control">
+                                    <div class="slds-form-element__static slds-truncate">{drive.totalProceduresProjected}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="slds-grid slds-wrap slds-p-right_small">
+                        <div class="slds-col slds-medium-size_1-of-2 slds-large-size_3-of-12 slds-size_1-of-1 slds-p-left_small">
+                            <div class="slds-form-element slds-form-element_readonly">
+                                <span class="slds-form-element__label">Total Products Projected</span>
+                                <div class="slds-form-element__control">
+                                    <div class="slds-form-element__static slds-truncate">{drive.totalProductsProjected}</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="slds-col slds-medium-size_1-of-2 slds-large-size_3-of-12 slds-size_1-of-1 slds-p-left_small">
+                            <div class="slds-form-element slds-form-element_readonly">
+                                <span class="slds-form-element__label">Total Appointment Slots</span>
+                                <div class="slds-form-element__control">
+                                    <div class="slds-form-element__static slds-truncate">{drive.totalSlots}</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="slds-col slds-medium-size_1-of-2 slds-large-size_3-of-12 slds-size_1-of-1 slds-p-left_small">
+                            <div class="slds-form-element slds-form-element_readonly">
+                                <span class="slds-form-element__label">Drive Productivity</span>
+                                <div class="slds-form-element__control">
+                                    <div class="slds-form-element__static slds-truncate">
+                                        <lightning-formatted-number value={drive.totalSlots} maximum-fraction-digits="4"></lightning-formatted-number>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="slds-p-bottom_medium">
+                    <h3 class="slds-section-title--divider">Site Information</h3>
+                    <div class="slds-grid slds-wrap slds-p-right_small">
+                        <div class="slds-col slds-medium-size_1-of-2 slds-large-size_3-of-12 slds-size_1-of-1 slds-p-left_small">
+                            <div class="slds-form-element slds-form-element_readonly">
+                                <span class="slds-form-element__label">Date Site Verification Completed</span>
+                                <div class="slds-form-element__control">
+                                    <div class="slds-form-element__static slds-truncate">
+                                        <lightning-formatted-date-time value={drive.driveSite.dateSiteInspectionCompleted} time-zone={timezoneSidId}></lightning-formatted-date-time>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="slds-col slds-medium-size_1-of-2 slds-large-size_3-of-12 slds-size_1-of-1 slds-p-left_small">
+                            <div class="slds-form-element slds-form-element_readonly">
+                                <span class="slds-form-element__label">Site Verification Completed By</span>
+                                <div class="slds-form-element__control">
+                                    <div class="slds-form-element__static slds-truncate">{siteInspectionCompletedByName}</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="slds-col slds-medium-size_1-of-2 slds-large-size_3-of-12 slds-size_1-of-1 slds-p-left_small">
+                            <div class="slds-form-element slds-form-element_readonly">
+                                <span class="slds-form-element__label">Physical Location Type</span>
+                                <div class="slds-form-element__control">
+                                    <div class="slds-form-element__static slds-truncate">{drive.driveSite.physicalLocationType}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+</template>

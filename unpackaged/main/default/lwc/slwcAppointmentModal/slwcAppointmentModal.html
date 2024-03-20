@@ -1,0 +1,72 @@
+<template>
+    <c-slwc-custom-modal 
+        if:true={showModal} 
+        onclosecustommodal={cancelAppointmentForm} 
+        onsavecustommodal={saveAppointmentForm} 
+        cancel-btn-label="Cancel"
+        save-btn-label={saveButtonLabel}
+        compact-view
+        header={appointmentFormHeader}>
+        <div slot="content">
+            <div class="slds-is-relative slds-m-top_small">
+                <div class="slds-form_stacked">
+                    <template if:true={isDeleteMode}>
+                        <div class="slds-p-bottom_x-small slds-p-horizontal_xx-small">
+                            Are you sure you want to delete this appointment?
+                        </div>
+                    </template>
+                    <template if:false={isDeleteMode}>
+                        <lightning-input type="text" name="label"  label="Type" value={selectedSlot.slotType}
+                            readonly
+                            onchange={handleOnChange}>
+                        </lightning-input>
+
+                        <lightning-input type="text" name="label" max-length="255"  label="Appointment Label" value={selectedSlot.label}
+                            onchange={handleOnChange}>
+                        </lightning-input>
+                        
+                        <c-slwc-time-input-with-timezone 
+                            input-date={drive.driveDate}
+                            timezone={masterData.timezoneSidId}>
+                            <lightning-input 
+                                slot="input"
+                                type="time" name="_startTime" label="Start Time" value={selectedSlot._startTime} 
+                                required
+                                min={startTimeOptions.min}
+                                max={startTimeOptions.max}
+                                onchange={handleOnChange}>
+                            </lightning-input>
+                        </c-slwc-time-input-with-timezone>
+
+                        <lightning-input style="max-width: 7rem;" type="toggle" label="Locked?" name="locked" checked={selectedSlot.locked}
+                            onchange={handleOnChange}
+                            message-toggle-active="Locked"
+                            message-toggle-inactive="Unlocked"
+                        ></lightning-input>
+                    </template>
+
+                    <div class="slds-col" if:true={showApplyFutureDatesBtn}>
+                        <div class="slds-form-element">
+                            <div class="slds-form-element__label">
+                                <strong>Selected Recurrence Dates:</strong>
+                                <span class="slds-m-left_xx-small">{selectedSlot.recurrenceDates.length}</span>
+                                <span class="slds-text-link slds-text-link_reset slds-m-left_x-small" onclick={openRecurrenceDatesPickerModalData}>
+                                    Select Dates
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </c-slwc-custom-modal>
+
+    <c-slwc-recurrence-dates-picker-modal
+        drive-shift-slot={selectedSlot}
+        selected-days={recurrenceDatesPickerModalData.selectedDays}
+        is-open={recurrenceDatesPickerModalData.isOpen}
+        onclose={closeRecurrenceDatesPickerModalData}
+        onsave={saveRecurrenceDatesPickerModalData}>
+    </c-slwc-recurrence-dates-picker-modal>
+</template>

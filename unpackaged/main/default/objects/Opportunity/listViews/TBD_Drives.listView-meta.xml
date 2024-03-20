@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>TBD_Drives</fullName>
+    <columns>Drive_Date__c</columns>
+    <columns>OPPORTUNITY.NAME</columns>
+    <columns>ACCOUNT.NAME</columns>
+    <columns>Account_Manager__c</columns>
+    <columns>District_Manager__c</columns>
+    <columns>Anticipated_Registered_Donors__c</columns>
+    <columns>WB_Projected_Procedures__c</columns>
+    <columns>X2RBC_Projected_Procedures__c</columns>
+    <columns>Parent_Template_Id__c</columns>
+    <columns>Calendar_Build_Status__c</columns>
+    <columns>Calendar_Build_Reasons_For_Unqualified__c</columns>
+    <columns>Rollover_Consideration__c</columns>
+    <columns>Calendar_Build_Parent_Opportunity__c</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>Type_of_Drive__c</field>
+        <operation>equals</operation>
+        <value>Mobile</value>
+    </filters>
+    <filters>
+        <field>OPPORTUNITY.NAME</field>
+        <operation>contains</operation>
+        <value>HBS</value>
+    </filters>
+    <filters>
+        <field>Drive_Date__c</field>
+        <operation>greaterOrEqual</operation>
+        <value>TODAY</value>
+    </filters>
+    <label>Audit_TBD Drives Future</label>
+</ListView>

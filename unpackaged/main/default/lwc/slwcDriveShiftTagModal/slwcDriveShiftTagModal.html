@@ -1,0 +1,32 @@
+<template>
+    <template if:true={showModal}>
+        <c-slwc-custom-modal
+            onclosecustommodal={closeModal} 
+            header={modalHeader}
+            cancel-btn-label="Cancel"
+            save-btn-label = "Save"
+            onsavecustommodal={handleSave}>
+            <div slot="content">
+                <div class="slds-grid slds-wrap slds-gutters">
+                    <div class="slds-col slds-medium-size_1-of-2 slds-large-size_1-of-2 slds-size_1-of-1 slds-m-bottom--small">
+                        <c-slwc-lookup
+                            icon-name="standard:resource_skill"
+                            object-name="sked__Tag__c"
+                            label="Tag"
+                            placeholder="Search Tag"
+                            selection={model.tag}
+                            is-custom-search
+                            is-required
+                            onselectionchange={handleSelectTag}
+                            custom-search-func={handleSearchTag}
+                        >
+                        </c-slwc-lookup>
+                    </div>
+                    <div class="slds-col slds-medium-size_1-of-2 slds-large-size_1-of-2 slds-size_1-of-1 slds-m-bottom--small">
+                        <lightning-input name="minimumQuantity" label="Minumum Quantity" type="number" value={model.minimumQuantity} onchange={handleOnChange} autocomplete="off" required min="1"></lightning-input>
+                    </div>
+                </div>
+            </div>
+        </c-slwc-custom-modal>
+    </template>
+</template>

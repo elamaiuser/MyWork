@@ -1,0 +1,6 @@
+<table border="0" cellpadding="5" width="550" cellspacing="5" height="400" >
+<tr valign="top" height="400" >
+<td tEditID="c1r1" style=" background-color:#FFFFFF; bEditID:r3st1; color:#000000; bLabel:main; font-size:12pt; font-family:arial;" aEditID="c1r1" locked="0" >
+<![CDATA[<div style="color: rgb(0, 0, 0); font-family: arial; font-size: 12pt;"><span style="font-family: Arial, Helvetica, sans-serif; font-size: 12px; background-color: rgb(255, 255, 255);">Dear&nbsp;</span><b style="font-family: Arial, Helvetica, sans-serif; font-size: 12px;">{!Lead.FirstName} {!Lead.LastName},</b></div><div style="color: rgb(0, 0, 0); font-family: arial; font-size: 12pt;"><b><br></b></div><div style="color: rgb(0, 0, 0); font-family: arial; font-size: 12pt;"><b>Thank you for your interest in hosting a blood drive. Please fill out the following survey to complete your application.</b></div><div style="color: rgb(0, 0, 0); font-family: arial; font-size: 12pt;"><br></div><div><font color="#0000ee" face="Arial, Helvetica, sans-serif"><span style="font-size: 12px;"><u>https://biomedical--dev--c.cs61.visual.force.com/apex/SiteSurvey?Id={!Lead.Id}</u></span></font></div>]]></td>
+</tr>
+</table>

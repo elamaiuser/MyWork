@@ -1,0 +1,66 @@
+<table border="0" cellpadding="5" width="600" cellspacing="5" height="400" >
+<tr valign="top" height="50" >
+<td tEditID="c1r1" style=" background-color:#FFFFFF; color:#000000; bEditID:r3st1; bLabel:main; font-size:12pt; font-family:arial;" aEditID="c1r1" locked="0" >
+<![CDATA[]]></td>
+</tr>
+<tr valign="top" height="300" >
+<td tEditID="c1r2" style=" background-color:#FFFFFF; color:#000000; bEditID:r3st1; bLabel:main; font-size:12pt; font-family:arial;" aEditID="c1r2" locked="0" >
+<![CDATA[<p class="MsoNormal" style="font-size: 12pt; font-family: arial; color: rgb(0, 0, 0);"><br></p>
+
+<p class="MsoNormal" style="font-size: 12pt; font-family: arial; color: rgb(0, 0, 0);"><span style="background-image: initial; background-position: initial; background-size: initial; background-repeat: initial; background-attachment: initial; background-origin: initial; background-clip: initial; background-color: rgb(255, 255, 255);">{!Contact.OwnerFullName}</span><o:p></o:p></p>
+
+<p class="MsoNormal" style="font-size: 12pt; font-family: arial; color: rgb(0, 0, 0);"><span style="font-size: 12pt;"><br></span></p><p class="MsoNormal" style="font-size: 12pt; font-family: arial; color: rgb(0, 0, 0);"><span style="font-size: 12pt;">Your blood drive
+is coming up, and every donation is vital because hospital patients are
+counting on lifesaving blood products from your drive. We are grateful for your
+kindness and commitment to helping those in need.</span></p><p class="MsoNormal" style="font-size: 12pt; font-family: arial; color: rgb(0, 0, 0);"><o:p></o:p></p>
+
+<p class="MsoNormal" style="font-size: 12pt; font-family: arial; color: rgb(0, 0, 0);"><b>&nbsp;</b></p>
+
+<p class="MsoNormal" style="color: rgb(0, 0, 0);"><font face="Arial, sans-serif" style=""><b><span style="color: rgb(36, 36, 36); background-color: rgb(255, 255, 255);">Donors will race to give blood Sept. 1-18 for a Red Cross T-shirt^ (ltd. qty), plus a coupon for a free haircut by email, thanks to Sport Clips Haircuts!^^ For details see&nbsp;</span><a href="https://rcblood.org/racetogive" data-cke-saved-href="https://rcblood.org/racetogive" data-interception="on" title="https://rcblood.org/racetogive" style="color: rgb(164, 38, 44); background-color: rgb(255, 255, 255);">rcblood.org/racetogive</a><span style="color: rgb(36, 36, 36); background-color: rgb(255, 255, 255);">.</span></b></font></p>
+
+<p class="MsoNormal" style="font-size: 12pt; font-family: arial; color: rgb(0, 0, 0);"><b>&nbsp;</b></p>
+
+<p class="MsoNormal" style="font-size: 12pt; font-family: arial; color: rgb(0, 0, 0);">Share this exciting offer to help fill your blood drive schedule today.<o:p></o:p></p>
+
+<p class="MsoNormal" style="font-size: 12pt; font-family: arial; color: rgb(0, 0, 0);"><b>&nbsp;</b></p>
+
+<p class="MsoNormal" style="font-size: 12pt; font-family: arial; color: rgb(0, 0, 0);"><b>As you
+continue the work to make your drive a success – remember to use these tips:</b></p><ul style="font-size: 12pt; font-family: arial; color: rgb(0, 0, 0); margin-top: 0in;" type="disc">
+ <li class="MsoNormal"><b>Fill your schedule</b>. Use these<a href="https://www.redcrossblood.org/hosting-a-blood-drive/manage-my-blood-drive/blood-drive-coordinator-toolkit/tips-tools-for-recruiting-donors/coordinator-toolkit---tips-and-tools.html">
+     tools</a> to recruit blood donors and schedule them using the <a href="https://www.redcrossblood.org/account-login.html">Blood Drive
+     Management Portal</a>. <o:p></o:p></li>
+ <li class="MsoNormal"><b>Encourage donors to schedule a donation for a friend</b>.
+     Each additional donor scheduled means more lives saved!</li></ul>
+
+<p class="MsoNormal" style="font-size: 12pt; font-family: arial; color: rgb(0, 0, 0);">If you have any questions, please do not hesitate to reach
+out – I’m always here to help!<o:p></o:p></p>
+
+<p class="MsoNormal" style="font-size: 12pt; font-family: arial; color: rgb(0, 0, 0);"><b><br></b></p><p class="MsoNormal" style="font-size: 12pt; font-family: arial; color: rgb(0, 0, 0);"><b>IMPORTANT: Donors
+MUST have a valid email address on file to receive their reward.&nbsp; </b><o:p></o:p></p>
+
+<p class="MsoNormal" style="font-size: 12pt; font-family: arial; color: rgb(0, 0, 0);"><o:p>&nbsp;</o:p></p>
+
+<p class="MsoNormal" style="font-size: 12pt; font-family: arial; color: rgb(0, 0, 0);">All the best,&nbsp;<o:p></o:p></p><p class="MsoNormal" style="font-size: 12pt; font-family: arial;"><font face="arial">{!Contact.OwnerFullName}</font></p><p class="MsoNormal" style="font-size: 12pt; font-family: arial; color: rgb(0, 0, 0);"><br></p>
+
+<p class="MsoNormal" style="font-size: 12pt; font-family: arial; color: rgb(0, 0, 0);"><b><span style="mso-bidi-font-family:Calibri;mso-bidi-theme-font:
+minor-latin">P.S. </span></b><span style="mso-bidi-font-family:Calibri;
+mso-bidi-theme-font:minor-latin">Each Red Cross blood drive and donation center
+follows a </span><a href="https://www.redcrossblood.org/donate-blood/dlp/share-your-health.html"><b><span style="mso-bidi-font-family:Calibri;mso-bidi-theme-font:minor-latin;color:red">high
+standard of safety</span></b></a><span style="mso-bidi-font-family:Calibri;
+mso-bidi-theme-font:minor-latin"> and infection control to protect our
+partners, donors and staff. </span><o:p></o:p></p>
+
+<p class="MsoNormal" style="font-size: 12pt; font-family: arial; color: rgb(0, 0, 0); margin-bottom: 0.25in; background: white;"><b><i><span style="font-size:9.0pt;font-family:&quot;Arial&quot;,sans-serif;mso-fareast-font-family:
+&quot;Times New Roman&quot;"><o:p>&nbsp;</o:p></span></i></b></p>
+
+<p class="MsoNormal" style="font-size: 12pt; font-family: arial; color: rgb(0, 0, 0);"><i><span style="font-size:9.0pt"><o:p>&nbsp;</o:p></span></i></p>
+
+<p style="color: rgb(36, 36, 36); font-size: 18px; line-height: 1.4em; -webkit-font-smoothing: antialiased; overflow-wrap: break-word; margin-right: 0px; margin-bottom: 1.4em; margin-left: 0px; font-family: &quot;Segoe UI&quot;, &quot;Segoe UI Web (West European)&quot;, &quot;Segoe UI&quot;, -apple-system, BlinkMacSystemFont, Roboto, &quot;Helvetica Neue&quot;, sans-serif; background-color: rgb(255, 255, 255);"><span class="fontSizeXSmall" style="font-size: 10px; line-height: 1.4;">^^ Offer applicable to presenting donors only during the following dates: Sept. 1-30, 2023, and only while supplies last. No substitutions and not transferable by presenting donor. Not redeemable for cash. Offer subject to availability of donation opportunities in presenting donor’s area. Instructions on how to receive the coupon for a free haircut from Sport Clips Haircuts will be sent to the email listed in the presenting donor’s American Red Cross donor profile approximately 10 days after attempted donation. Offer valid at participating Sport Clips locations through Nov. 30, 2023. Limit one (1) per presenting donor unless otherwise indicated. Recipient’s name must be visible if using a printed email. All coupons are subject to merchant terms and conditions, and all trademarks are property of their respective owners. American Red Cross is not responsible for lost, damaged, corrupted or stolen coupons and may replace any such coupons at its sole discretion. Any questions or problems in connection with redeeming the coupon must be directed to the merchant.</span></p><p style="color: rgb(36, 36, 36); font-size: 18px; line-height: 1.4em; -webkit-font-smoothing: antialiased; overflow-wrap: break-word; margin-right: 0px; margin-bottom: 1.4em; margin-left: 0px; font-family: &quot;Segoe UI&quot;, &quot;Segoe UI Web (West European)&quot;, &quot;Segoe UI&quot;, -apple-system, BlinkMacSystemFont, Roboto, &quot;Helvetica Neue&quot;, sans-serif; background-color: rgb(255, 255, 255);"><span class="fontSizeXSmall" style="font-size: 10px; line-height: 1.4;">^Offer applicable to presenting donors only during the following dates: 09/01/2023-09/18/2023 and while supplies last. Offer subject to availability of donation opportunities in presenting donor’s area. No substitutions and not transferable by presenting donor. Not redeemable for cash.</span></p>
+
+<p class="MsoNormal" style="font-size: 12pt; font-family: arial; color: rgb(0, 0, 0);"><o:p>&nbsp;</o:p></p>]]></td>
+</tr>
+<tr valign="top" height="50" >
+<td tEditID="c1r3" style=" background-color:#FFFFFF; color:#000000; bEditID:r3st1; bLabel:main; font-size:12pt; font-family:arial;" aEditID="c1r3" locked="0" >
+<![CDATA[]]></td>
+</tr>
+</table>

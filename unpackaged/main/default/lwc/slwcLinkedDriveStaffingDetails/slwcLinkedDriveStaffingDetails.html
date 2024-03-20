@@ -1,0 +1,887 @@
+<template>
+    <div class={customStyle.sideMenu}>
+        <lightning-spinner if:true={showSpinner} class="spins" size="medium"></lightning-spinner>
+
+        <!-- Column Main -->
+        <div class="drive-details-side-main-menu border-right-default">
+            <!-- header -->
+            <div class="drive-details-side-main-menu_header">
+                <div class="slds-p-vertical--small slds-grid slds-grid_align-spread">
+                    <div class="slds-col">
+                    </div>
+                    <div class="slds-col">
+                        <lightning-button variant="brand-outline" label="Close" class="slds-m-right--xx-small"
+                            onclick={handleClose}></lightning-button>
+                        <template if:false={readOnly}>
+                            <lightning-button variant="brand" label="Save" onclick={handleSave}></lightning-button>
+                        </template>
+                    </div>
+                </div>  
+                <h2 class="slds-m-top--x-small">{driveName}</h2>
+            </div>
+
+            <!-- drive shifts -->
+            <div class="drive-details-side-main-menu_body">
+                <template if:false={jobIdPin}>
+                    <template if:true={linkedDriveDetails}>
+                        <template for:each={linkedDriveDetails.driveWrapper.driveShifts} for:item="driveShift">
+                            <div key={driveShift.key} if:true={driveShift.isShown}>
+                                <div class="hco-job-list-header">
+                                    <div class="slds-grid slds-grid_vertical-align-center">
+                                        <div class="slds-no-flex">
+                                            <div class="color-text-link-hover"><strong>{driveShift.name}</strong></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="hco-drive-shift-tags-list" if:false={allocateAssetsOnly}>
+                                    <h3 class="slds-section-title--divider slds-grid slds-grid_align-spread slds-grid_vertical-align-center slds-p-horizontal_small">
+                                        <span>Drive Shift Minimum Certifications</span>
+                                        <template if:true={driveShift.driveShiftTagExceptions}>
+                                            <template if:true={driveShift.driveShiftTagExceptions.length}>
+                                                <span class="slds-text-color_error slds-m-right_x-small" onclick={toggleDriveShiftTagsSection} data-value={driveShift.key}>
+                                                    <lightning-icon class="slds-current-color" icon-name="utility:warning" size="x-small"></lightning-icon>
+                                                </span>
+                                            </template>
+                                        </template>
+                                        <span>
+                                            <lightning-button-icon if:false={driveShift.driveShftTagsSesctionExpanded} size="x-small" onclick={toggleDriveShiftTagsSection} data-value={driveShift.key}
+                                                icon-name="utility:down" variant="border-filled" tooltip="Expand">
+                                            </lightning-button-icon>
+                                            <lightning-button-icon if:true={driveShift.driveShftTagsSesctionExpanded} size="x-small" onclick={toggleDriveShiftTagsSection} data-value={driveShift.key}
+                                                icon-name="utility:up" variant="border-filled" tooltip="Collapse">
+                                            </lightning-button-icon>
+                                        </span>
+                                    </h3>
+                                    <template for:each={driveShift.childDriveShifts} for:item="childDriveShift" if:true={childDriveShift.driveShiftTags.length}>
+                                        <div key={childDriveShift.key} class="slds-grid slds-wrap slds-p-horizontal_small slds-p-top_small" if:true={driveShift.driveShftTagsSesctionExpanded}>
+                                            <div style="z-index: 2" class="slds-grow slds-section-title--divider slds-grid slds-grid_align-end slds-grid_vertical-align-center slds-p-horizontal_small">
+                                                <span class="slds-m-horizontal_xx-small">
+                                                    <lightning-formatted-time value={childDriveShift.startTime}></lightning-formatted-time>
+                                                </span>
+                                                -
+                                                <span class="slds-m-horizontal_xx-small">
+                                                    <lightning-formatted-time value={childDriveShift.endTime}></lightning-formatted-time>
+                                                </span>
+                                                <span class="slds-text-color_weak">/&nbsp;
+                                                <lightning-formatted-date-time time-zone={timezoneSidId}
+                                                    value={childDriveShift.driveDate}>
+                                                </lightning-formatted-date-time></span>
+
+                                                <template if:true={childDriveShift.driveShiftTagExceptions.length}>
+                                                    <c-slwc-popover
+                                                    container=".drive-details-side-menu"
+                                                    position="right" trigger="hover">
+                                                        <span slot="reference" class="slds-text-color_error slds-m-left_x-small">
+                                                            <lightning-icon class="slds-current-color" icon-name="utility:warning" size="x-small"></lightning-icon>
+                                                        </span>
+                                                        <c-slwc-popover-content
+                                                            name="driveShiftTagExceptionPopover"
+                                                            popover-data={childDriveShift.driveShiftTagExceptions} slot="content">
+                                                        </c-slwc-popover-content>
+                                                    </c-slwc-popover>
+                                                </template>
+                                            </div>
+
+                                            <c-slwc-shift-tags 
+                                                is-readonly
+                                                allocation-mode style="margin-top: -0.75rem; width: 100%" shift={childDriveShift} drive-shift-tags={childDriveShift.driveShiftTags}>
+                                            </c-slwc-shift-tags>
+                                        </div>
+                                    </template>
+                                   
+                                </div>
+                                <ul class="hco-job-list">
+                                    <template for:each={driveShift.jobs} for:item="job">
+                                        <li if:true={job.isShown}
+                                            ondragover={handleDragOver} ondragleave={handleDragLeave} ondrop={handleDrop}
+                                            ondragend={handleDragEnd} key={job.key} data-id={job.id} class={job.class}>
+                                            <div
+                                                class="slds-grid slds-grow slds-p-vertical_x-small slds-p-horizontal_small slds-truncate ">
+                                                <div class="slds-grow">
+                                                    <div class="slds-grid slds-grid_align-spread">
+                                                        <div class="slds-grow">
+                                                            <div class="slds-grid job-info slds-truncate">
+                                                                <span
+                                                                    class="slds-no-flex slds-m-right_x-small slds-text-color_inverse-weak">
+                                                                    <lightning-icon class="slds-current-color"
+                                                                        icon-name="utility:shift_ui" size="xx-small">
+                                                                    </lightning-icon>
+                                                                </span>
+                                                                <p>
+                                                                    <strong class="color-text-link-hover" if:true={job.resourceRole}>
+                                                                        {job.resourceRoleText}
+                                                                    </lightning-formatted-url></strong>
+                                                                    <strong class="color-text-link-hover"  if:true={job.assetType}>
+                                                                        {job.assetType}
+                                                                    </strong>
+                                                                </p>
+                                                            </div>
+    
+                                                            <div class="slds-grid job-info job-tags slds-truncate">
+                                                                <span
+                                                                    class="slds-no-flex slds-m-right_x-small slds-text-color_inverse-weak">
+                                                                    <lightning-icon class="slds-current-color"
+                                                                        icon-name="utility:quote" size="xx-small">
+                                                                    </lightning-icon>
+                                                                </span>
+    
+                                                                <p class="slds-text-color_weak" style="white-space: normal;">
+                                                                    {job.jobTagsStr}
+                                                                </p>
+                                                            </div>
+    
+                                                            <div class="slds-grid job-info slds-truncate">
+                                                                <span
+                                                                    class="slds-no-flex slds-m-right_x-small slds-text-color_inverse-weak">
+                                                                    <lightning-icon if:false={job.isVehicleJob} class="slds-current-color"
+                                                                        icon-name="utility:groups" size="xx-small">
+                                                                    </lightning-icon>
+                                                                    <lightning-icon if:true={job.isVehicleJob} class="slds-current-color"
+                                                                        icon-name="utility:resource_capacity" size="xx-small">
+                                                                    </lightning-icon>
+                                                                </span>
+                                                                <p if:false={job.isVehicleJob} class={job.classQuantity}>
+                                                                    <span class="">{job.jobAllocationCount}</span>
+                                                                    <span class="">/{job.quantity}</span>
+                                                                </p>
+                                                                <p if:true={job.isVehicleJob} class="slds-text-color_inverse-weak">
+                                                                    <span class="">{job.totalAllocatedVehiclesCapacity}</span>
+                                                                    <span class="">/{linkedDriveDetails.driveWrapper.projectedRegisteredDonors}</span>
+                                                                </p>
+                                                            </div>
+                                                            
+                                                            <div class="slds-grid job-info job-times slds-truncate"
+                                                                for:each={job.childJobs} for:item="childJob" key={childJob.key}>
+                                                                <span
+                                                                    class="slds-no-flex slds-m-right_x-small slds-text-color_inverse-weak">
+                                                                    <lightning-icon class="slds-current-color"
+                                                                        icon-name="utility:clock" size="xx-small">
+                                                                    </lightning-icon>
+                                                                </span>
+                                                                <p class="slds-text-color_inverse-weak">
+                                                                    <lightning-formatted-date-time class="slds-m-right_xx-small" value={childJob.start} year="numeric" month="numeric" day="numeric" time-zone={timezoneSidId}></lightning-formatted-date-time>
+                                                                    <lightning-formatted-date-time value={childJob.start}
+                                                                        hour="2-digit" minute="2-digit" hour12="true"
+                                                                        time-zone={timezoneSidId}>
+                                                                    </lightning-formatted-date-time>
+                                                                    <span> - </span>
+                                                                    <lightning-formatted-date-time value={childJob.finish}
+                                                                        hour="2-digit" minute="2-digit" hour12="true"
+                                                                        time-zone={timezoneSidId}>
+                                                                    </lightning-formatted-date-time>
+                                                                </p>
+                                                            </div>
+                                                        </div>
+    
+                                                        <div class="slds-shrink-none job-assigned-resources space-vertical">
+                                                            <ul class="slds-m-top_xx-small">
+                                                                <template if:true={job.jobAllocations}>
+                                                                    <template for:each={job.jobAllocations}
+                                                                        for:item="jobAllocation">
+                                                                        <li if:false={jobAllocation.isDeleted}
+                                                                            key={jobAllocation.key}
+                                                                            class="slds-col hco-job-container">
+    
+                                                                            <c-slwc-popover style="width: 100%"
+                                                                                container=".drive-details-side-menu"
+                                                                                position="left" trigger="click" size="medium">
+                                                                                <div slot="reference"
+                                                                                    class="slds-float--right container reference"
+                                                                                    style={jobAllocation.style}>
+                                                                                    <c-slwc-popover style="width: 100%"
+                                                                                        container=".drive-details-side-menu"
+                                                                                        position="bottom|right" theme="tooltip">
+                                                                                        <div slot="reference" class="cursor_pointer">
+                                                                                            <lightning-avatar
+                                                                                                style="pointer-events: none;"
+                                                                                                class="reference"
+                                                                                                size="small"
+                                                                                                fallback-icon-name={jobAllocation.icon}
+                                                                                                src={jobAllocation.resource.photoUrl}>
+                                                                                            </lightning-avatar>
+                                                                                        </div>
+                                                                                        <div slot="content">
+                                                                                            {jobAllocation.resource.name}
+                                                                                        </div>
+                                                                                    </c-slwc-popover>
+                                                                                </div>
+                                                                                <c-slwc-popover-content
+                                                                                    name="linkedDriveJobAllocationPopover"
+                                                                                    onaction={handleResourceAction}
+                                                                                    timezone={timezoneSidId}
+                                                                                    read-only={readOnly}
+                                                                                    popover-data={jobAllocation} slot="content">
+                                                                                </c-slwc-popover-content>
+                                                                            </c-slwc-popover>
+                                                                            <template if:true={jobAllocation.exceptionLog}>
+                                                                                <div class="indicator-overlay">
+                                                                                    <span class="indicator ja-indicator"
+                                                                                        if:true={jobAllocation.exceptionLog.length}></span>
+                                                                                    <span class="indicator shift-trade-indicator"
+                                                                                        if:true={jobAllocation.hasDriveShiftTrade}></span>
+                                                                                    <span class="indicator locked-indicator"
+                                                                                        if:true={jobAllocation.locked}>
+                                                                                        <lightning-icon
+                                                                                            class="slds-current-color"
+                                                                                            size="xx-small"
+                                                                                            icon-name="utility:lock">
+                                                                                        </lightning-icon>
+                                                                                    </span>
+                                                                                </div>
+                                                                            </template>
+                                                                        </li>
+                                                                    </template>
+                                                                </template>
+                                                                <li for:each={job.willAllocations} for:item="willAllocation"
+                                                                    key={willAllocation.key} class="slds-col hco-job-container">
+                                                                    <div class="job-resource-slot empty-slot"></div>
+                                                                </li>
+                                                            </ul>
+                                                            <template if:false={readOnly}>
+                                                                <div class="slds-m-top_xx-small">
+                                                                    <template if:false={job.isSubJob}>
+                                                                        <lightning-button-icon if:false={job.isPin} onclick={onClickPin}
+                                                                            data-id={job.id}
+                                                                            tooltip="Pin"
+                                                                            class="slds-current-color color-gray cursor_pointer slds-m-right--xx-small"
+                                                                            icon-name="utility:pin" size="small">
+                                                                        </lightning-button-icon>
+                                                                        <lightning-button-icon if:true={job.isPin}
+                                                                            onclick={onClickUnpin}
+                                                                            tooltip="Unpin"
+                                                                            class="slds-current-color color-text-link-hover cursor_pointer slds-m-right--xx-small"
+                                                                            icon-name="utility:pinned" size="small">
+                                                                        </lightning-button-icon>
+                                                                        <lightning-button-icon if:true={job.excludeFromOptimizer} onclick={onClickIncludeFromOptimizer}
+                                                                            data-id={job.id}
+                                                                            tooltip="Include in Optimizer"
+                                                                            class="slds-current-color color-gray cursor_pointer"
+                                                                            variant="brand"
+                                                                            icon-name="utility:unlock" size="small">
+                                                                        </lightning-button-icon>
+                                                                        <lightning-button-icon if:false={job.excludeFromOptimizer} onclick={onClickExcludeFromOptimizer}
+                                                                            data-id={job.id}
+                                                                            tooltip="Exclude from Optimizer"
+                                                                            class="slds-current-color color-text-link-hover cursor_pointer"
+                                                                            icon-name="utility:lock" size="small">
+                                                                        </lightning-button-icon>
+                                                                    </template>
+    
+                                                                    <template if:true={job.isSubJob}>
+                                                                        <lightning-button-icon if:false={job.isPin} onclick={onClickPin}
+                                                                            data-id={job.id}
+                                                                            tooltip="Pin"
+                                                                            class="slds-current-color color-gray cursor_pointer"
+                                                                            icon-name="utility:pin" size="small">
+                                                                        </lightning-button-icon>
+                                                                        <lightning-button-icon if:true={job.isPin}
+                                                                            onclick={onClickUnpin}
+                                                                            tooltip="Unpin"
+                                                                            class="slds-current-color color-text-link-hover cursor_pointer"
+                                                                            icon-name="utility:pinned" size="small">
+                                                                        </lightning-button-icon>
+                                                                    </template>
+                                                                </div>
+                                                            </template>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+    
+                                        </li>
+                                    </template>
+                                </ul>
+                            </div>
+                        </template>
+                    </template>
+                </template>
+                
+                <template if:true={jobIdPin}>
+                    <div class="hco-job-list-header">
+                        <div class="slds-grid slds-grid_vertical-align-center slds-grid--align-spread">
+                            <div class="slds-no-flex">
+                                <div class="color-text-link-hover"><strong>{pinnedJobWrapper.name}</strong></div>
+                            </div>
+                            <div>
+                                <span class="slds-text-link cursor_pointer slds-m-right_small" onclick={checkAvailabilitySelectedJobs}>Check Availability</span>
+                                <lightning-button-icon
+                                    onclick={onClickUnpin}
+                                    tooltip="Unpin"
+                                    variant="border-filled"
+                                    class="slds-current-color color-text-link-hover cursor_pointer"
+                                    icon-name="utility:pinned" size="small">
+                                </lightning-button-icon>
+                            </div>
+                            
+                        </div>
+                    </div>
+                    
+                    <ul class="hco-job-list">
+                        <template if:true={pinnedJobWrapper}>
+                            <template for:each={pinnedJobWrapper.childJobWrappers} for:item="jobWrapper">
+                                <li
+                                    ondragover={handleDragOver} ondragleave={handleDragLeave} ondrop={handleDrop}
+                                    ondragend={handleDragEnd} key={jobWrapper.job.key} data-id={jobWrapper.job.id} class={jobWrapper.job.class}>
+                                    <div
+                                        class="slds-grid slds-grow slds-p-vertical_x-small slds-p-horizontal_small slds-truncate ">
+                                        <div class="slds-grow">
+                                            <div class="slds-grid slds-grid_align-spread">
+                                                <div class="slds-grow">
+                                                    <div class="slds-grid job-info slds-truncate">
+                                                        <span
+                                                            class="slds-no-flex slds-m-right_x-small slds-text-color_inverse-weak">
+                                                            <lightning-icon class="slds-current-color"
+                                                                icon-name="utility:shift_ui" size="xx-small">
+                                                            </lightning-icon>
+                                                        </span>
+                                                        <p>
+                                                            <strong if:true={jobWrapper.job.resourceRole}>
+                                                                <template if:true={jobWrapper.job.jobUrl}>
+                                                                    <lightning-formatted-url value={jobWrapper.job.jobUrl} target="_blank" label={jobWrapper.job.resourceRoleText}></lightning-formatted-url>
+                                                                </template>
+                                                                <template if:false={jobWrapper.job.jobUrl}>{jobWrapper.job.resourceRoleText}</template>
+                                                            </lightning-formatted-url></strong>
+                                                            <strong if:true={jobWrapper.job.assetType}>
+                                                                <template if:true={jobWrapper.job.jobUrl}>
+                                                                    <lightning-formatted-url value={jobWrapper.job.jobUrl} target="_blank" label={jobWrapper.job.assetType}></lightning-formatted-url>
+                                                                </template>
+                                                                <template if:false={jobWrapper.job.jobUrl}>{jobWrapper.job.assetType}</template>
+                                                            </strong>
+                                                        </p>
+                                                    </div>
+    
+                                                    <div class="slds-grid job-info job-tags slds-truncate">
+                                                        <span
+                                                            class="slds-no-flex slds-m-right_x-small slds-text-color_inverse-weak">
+                                                            <lightning-icon class="slds-current-color"
+                                                                icon-name="utility:quote" size="xx-small">
+                                                            </lightning-icon>
+                                                        </span>
+    
+                                                        <p class="slds-text-color_weak" style="white-space: normal;">
+                                                            {jobWrapper.job.jobTagsStr}
+                                                        </p>
+                                                    </div>
+    
+                                                    <div class="slds-grid job-info slds-truncate">
+                                                        <span
+                                                            class="slds-no-flex slds-m-right_x-small slds-text-color_inverse-weak">
+                                                            <lightning-icon if:false={jobWrapper.job.isVehicleJob} class="slds-current-color"
+                                                                icon-name="utility:groups" size="xx-small">
+                                                            </lightning-icon>
+                                                            <lightning-icon if:true={jobWrapper.job.isVehicleJob} class="slds-current-color"
+                                                                icon-name="utility:resource_capacity" size="xx-small">
+                                                            </lightning-icon>
+                                                        </span>
+                                                        <p if:false={jobWrapper.job.isVehicleJob} class={jobWrapper.job.classQuantity}>
+                                                            <span class="">{jobWrapper.job.jobAllocationCount}</span>
+                                                            <span class="">/{jobWrapper.job.quantity}</span>
+                                                        </p>
+                                                        <p if:true={jobWrapper.job.isVehicleJob} class="slds-text-color_inverse-weak">
+                                                            <span class="">{jobWrapper.job.totalAllocatedVehiclesCapacity}</span>
+                                                            <span class="">/{jobWrapper.job.drive.projectedRegisteredDonors}</span>
+                                                        </p>
+                                                    </div>
+    
+                                                    <div class="slds-grid job-info job-times slds-truncate">
+                                                        <span
+                                                            class="slds-no-flex slds-m-right_x-small slds-text-color_inverse-weak">
+                                                            <lightning-icon class="slds-current-color"
+                                                                icon-name="utility:clock" size="xx-small">
+                                                            </lightning-icon>
+                                                        </span>
+                                                        <p class="slds-text-color_inverse-weak">
+                                                            <lightning-formatted-date-time class="slds-m-right_xx-small" value={jobWrapper.job.start} year="numeric" month="numeric" day="numeric" time-zone={timezoneSidId}></lightning-formatted-date-time>
+                                                            <lightning-formatted-date-time value={jobWrapper.job.start}
+                                                                hour="2-digit" minute="2-digit" hour12="true"
+                                                                time-zone={timezoneSidId}>
+                                                            </lightning-formatted-date-time>
+                                                            <span> - </span>
+                                                            <lightning-formatted-date-time value={jobWrapper.job.finish}
+                                                                hour="2-digit" minute="2-digit" hour12="true"
+                                                                time-zone={timezoneSidId}>
+                                                            </lightning-formatted-date-time>
+                                                        </p>
+                                                    </div>
+                                                </div>
+    
+                                                <div class="slds-shrink-none job-assigned-resources space-vertical">
+                                                    <ul class="slds-m-top_xx-small">
+                                                        <template if:true={jobWrapper.job.jobAllocations}>
+                                                            <template for:each={jobWrapper.job.jobAllocations}
+                                                                for:item="jobAllocation">
+                                                                <li if:false={jobAllocation.isDeleted}
+                                                                    key={jobAllocation.key}
+                                                                    class="slds-col hco-job-container">
+    
+                                                                    <c-slwc-popover style="width: 100%"
+                                                                        container=".drive-details-side-menu"
+                                                                        position="left" trigger="click" size="medium">
+                                                                        <div slot="reference"
+                                                                            class="slds-float--right container reference"
+                                                                            style={jobAllocation.style}>
+                                                                            <c-slwc-popover style="width: 100%"
+                                                                                container=".drive-details-side-menu"
+                                                                                position="bottom|right" theme="tooltip">
+                                                                                <div slot="reference" class="cursor_pointer">
+                                                                                    <lightning-avatar
+                                                                                        style="pointer-events: none;"
+                                                                                        class="reference"
+                                                                                        size="small"
+                                                                                        fallback-icon-name={jobAllocation.icon}
+                                                                                        src={jobAllocation.resource.photoUrl}>
+                                                                                    </lightning-avatar>
+                                                                                </div>
+                                                                                <div slot="content">
+                                                                                    {jobAllocation.resource.name}
+                                                                                </div>
+                                                                            </c-slwc-popover>
+                                                                        </div>
+                                                                        <c-slwc-popover-content
+                                                                            name="jobAllocationPopover"
+                                                                            onaction={handleResourceAction}
+                                                                            timezone={timezoneSidId}
+                                                                            read-only={readOnly}
+                                                                            disabled-call-out
+                                                                            popover-data={jobAllocation} slot="content">
+                                                                        </c-slwc-popover-content>
+                                                                    </c-slwc-popover>
+                                                                    <div class="indicator-overlay">
+                                                                        <span class="indicator ja-indicator"
+                                                                            if:true={jobAllocation.exceptionLog.length}></span>
+                                                                        <span class="indicator shift-trade-indicator"
+                                                                            if:true={jobAllocation.hasDriveShiftTrade}></span>
+                                                                        <span class="indicator locked-indicator"
+                                                                            if:true={jobAllocation.locked}>
+                                                                            <lightning-icon
+                                                                                class="slds-current-color"
+                                                                                size="xx-small"
+                                                                                icon-name="utility:lock">
+                                                                            </lightning-icon>
+                                                                        </span>
+                                                                    </div>
+                                                                </li>
+                                                            </template>
+                                                        </template>
+                                                        <li for:each={jobWrapper.job.willAllocations} for:item="willAllocation"
+                                                            key={willAllocation.key} class="slds-col hco-job-container">
+                                                            <div class="job-resource-slot empty-slot"></div>
+                                                        </li>
+                                                    </ul>
+                                                    
+                                                    <div class="slds-m-top_xx-small">
+                                                        <lightning-button-icon if:true={jobWrapper.job.excludeFromOptimizer} onclick={onClickIncludeFromOptimizer}
+                                                            data-id={jobWrapper.job.id}
+                                                            tooltip="Include in Optimizer"
+                                                            class="slds-current-color color-gray cursor_pointer"
+                                                            variant="brand"
+                                                            icon-name="utility:unlock" size="small">
+                                                        </lightning-button-icon>
+                                                        <lightning-button-icon if:false={jobWrapper.job.excludeFromOptimizer} onclick={onClickExcludeFromOptimizer}
+                                                            data-id={jobWrapper.job.id}
+                                                            tooltip="Exclude from Optimizer"
+                                                            class="slds-current-color color-text-link-hover cursor_pointer"
+                                                            icon-name="utility:lock" size="small">
+                                                        </lightning-button-icon>
+                                                    </div>
+                                                   
+                                                    <template if:true={jobWrapper.job.resourceRole}>
+                                                        <div class="slds-m-top_xx-small" style="margin-right: -0.25rem;">
+                                                            <lightning-input type="checkbox" name="checkbox" label="Select"
+                                                                variant="label-hidden"
+                                                                data-key={jobWrapper.key} value={jobWrapper.selected} checked={jobWrapper.selected} onchange={handleChildJobSelected}></lightning-input>
+                                                        </div>
+                                                    </template>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+                            </template>
+                        </template>
+                    </ul>
+                </template>
+            </div>
+
+            <!-- footer -->
+            <template if:false={readOnly}>
+                <div class="drive-details-side-main-menu_footer" if:false={allocateAssetsOnly}>
+                    <div class="slds-grid slds-grid_align-spread">
+                        <div></div>
+                        <div class="slds-col">
+                            <lightning-button variant="success" label="Save &amp; Dispatch" class="slds-m-right--xx-small"
+                                onclick={handleSaveAndDispatch}></lightning-button>
+                        </div>
+                    </div>
+                </div>
+            </template>
+        </div>
+        <div class="drive-details-side-sub-menu">
+            <div class="custom-tabs">
+                <div class="slds-grid custom-tab__header">
+                    <ul class="slds-tabs_default__nav" role="tablist">
+                        <!-- <li class={customStyle.detailsTabLink} data-value={TABS.DETAILS} onclick={changeTab}>
+                            <a class="slds-tabs_default__link">Details</a>
+                        </li> -->
+                        <template if:false={readOnly}>
+                            <li class={customStyle.staffingTabLink} data-value={TABS.STAFFING} onclick={changeTab}>
+                                <a class="slds-tabs_default__link">Staffing</a>
+                            </li>
+                        </template>
+                        <li class={customStyle.exceptionsTabLink} data-value={TABS.EXCEPTIONS} onclick={changeTab}>
+                            <a class="slds-tabs_default__link">Exceptions</a>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="custom-tabs__body">
+                    <!-- staffing content -->
+                    <div class={showStaffingTabClass}>
+                        <div
+                            class="slds-shrink-none slds-grow-none slds-p-horizontal_small slds-p-vertical_small slds-border_bottom">
+                            <div class="slds-input-has-icon sked-input-has-clear-button slds-grow">
+                                <c-slwc-filter-resource-multi-picklist 
+                                    mode={filterMode}
+                                    resource-tags-option={resourceTagsOption}
+                                    default-values={resourceFilters}
+                                    default-sort-values={resourceSort}
+                                    onchange={onFilterChanged}
+                                    onsortchange={onSortChanged}
+                                    variant="LINKED_DRIVE"
+                                >
+                                </c-slwc-filter-resource-multi-picklist>
+                            </div>
+                        </div>
+                        <div if:true={isJobPinned} class="slds-align--absolute-center slds-m-around--none">
+                            <lightning-radio-group class="slds-form-element  slds-m-around_small width-100"
+                                name="radioGroup" options={filterListOptions} value={radioPinValue}
+                                onchange={handleRadioListFilter} type="button"></lightning-radio-group>
+                        </div>
+                        <div if:false={isJobPinned} class="slds-align--absolute-center slds-m-around--none">
+                            <lightning-radio-group class="slds-form-element  slds-m-around_small width-100"
+                                name="radioGroup" options={typeOptions} value={radioTypeValue}
+                                onchange={handleRadioResourceListFilter} type="button"></lightning-radio-group>
+                        </div>
+
+                        <div class="slds-scrollable">
+                            <ul class="hco-resources-list">
+                                <li for:each={resourcesFilterList} for:item="resource" ondragend={handleDragEnd}
+                                    ondragstart={handleDragStart} draggable={resource.draggable} key={resource.key}
+                                    data-id={resource.id}
+                                    class="slds-p-horizontal_small slds-p-vertical_x-small hco-resource-item slds-border_bottom resource-drap"
+                                    style={resource.style}>
+                                    <div class="slds-grid slds-grow slds-grid_align-spread">
+                                        <div
+                                            class="slds-col slds-size_7-of-8 slds-media hco-resource-info slds-grid slds-has-flexi-truncate">
+                                            <div style="pointer-events: none;"
+                                                class="slds-media__figure slds-size_1-of-8 slds-has-flexi-truncate">
+                                                <lightning-avatar fallback-icon-name={resource.icon}
+                                                    src={resource.photoUrl}></lightning-avatar>
+                                            </div>
+                                            <div class="slds-media__body slds-size_7-of-8">
+                                                <div class="hco-resource-name slds-has-flexi-truncate">
+                                                    <strong><c-slwc-resource-name resource={resource}></c-slwc-resource-name></strong>
+                                                </div>
+                                                <div
+                                                    class="slds-text-color_weak slds-text-body_small hco-resource-category-info slds-has-flexi-truncate">
+                                                    {resource.categoryText}
+                                                </div>
+                                                <div
+                                                    if:true={resource.isVehicle}
+                                                    class="slds-text-color_weak slds-text-body_small hco-resource-category-info slds-has-flexi-truncate">
+                                                    Pres Donor Capacity: {resource.presDonorCapacity}
+                                                </div>
+                                                <div
+                                                    if:true={resource.isPerson}
+                                                    class="slds-text-color_weak slds-text-body_small hco-resource-category-info slds-has-flexi-truncate">
+                                                    Weekly Hours:
+                                                    <ul class="slds-list_dotted">
+                                                        <template for:each={resource.weeklyHoursArray} for:item="item">
+                                                            <li key={item.label}>
+                                                                {item.label}: {item.weeklyHours}
+                                                            </li>
+                                                        </template>
+                                                    </ul>
+                                                </div>
+                                                <div
+                                                    if:true={resource.terminationDate}
+                                                    class="slds-text-color_error slds-text-body_small hco-resource-category-info slds-has-flexi-truncate">
+                                                    Termination Date: <lightning-formatted-date-time value={resource.terminationDate} year="numeric" month="short" day="2-digit" time-zone="UTC"></lightning-formatted-date-time>
+                                                </div>
+                                                <div class="slds-grid slds-grid_align-spread">
+                                                    <!-- <div class="slds-col slds-size_5-of-8">
+                                                        <div for:each={resource.resourceTags} for:item="resourceTag"
+                                                            key={resourceTag.keyRender}
+                                                            class="slds-text-body_small slds-grid_vertical-align-center slds-has-flexi-truncate">
+                                                            <p
+                                                                class="slds-text-color_inverse-weak slds-has-flexi-truncate">
+                                                                { resourceTag.value} {resourceTag.key}(s)
+                                                            </p>
+                                                        </div>
+                                                    </div> -->
+                                                    <!-- <div class="slds-col slds-size_3-of-8">
+                                                        <div if:true={isJobPinned}>
+                                                            <div if:true={resource.travelDistanceFromText}
+                                                                class="slds-text-body_small slds-grid_vertical-align-center slds-has-flexi-truncate">
+                                                                <p
+                                                                    class="slds-text-color_inverse-weak slds-has-flexi-truncate">
+                                                                    <lightning-icon
+                                                                        class="slds-current-color slds-p-right--x-small"
+                                                                        size="xx-small"
+                                                                        icon-name="utility:travel_and_places">
+                                                                    </lightning-icon>
+                                                                    {resource.travelDistanceFromText}
+                                                                </p>
+                                                            </div>
+                                                            <div if:true={resource.travelTimeFromText}
+                                                                class="slds-text-body_small slds-grid_vertical-align-center slds-has-flexi-truncate">
+                                                                <p
+                                                                    class="slds-text-color_inverse-weak slds-has-flexi-truncate">
+                                                                    <lightning-icon
+                                                                        class="slds-current-color slds-p-right--x-small"
+                                                                        size="xx-small" icon-name="utility:clock">
+                                                                    </lightning-icon>
+                                                                    {resource.travelTimeFromText}
+                                                                </p>
+                                                            </div>
+                                                        </div>
+                                                    </div> -->
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="slds-col slds-size_1-of-8 space-vertical">
+                                            <div class="slds-float--right">
+                                                <c-slwc-popover style="width: 100%" container=".drive-details-side-menu"
+                                                position="right" trigger="hover" size="medium">
+                                                    <div slot="reference">
+                                                        <lightning-icon variant="container"
+                                                            class="slds-current-color icon-info" style="color: #1d92d2"
+                                                            size="x-small" icon-name="utility:info"></lightning-icon>
+                                                    </div>
+                                                    <c-slwc-popover-content name="resourceTagPopover"
+                                                        popover-data={resource} slot="content">
+                                                    </c-slwc-popover-content>
+                                                </c-slwc-popover>
+                                            </div>
+                                            
+                                            <div if:true={resource.hasLinkedDrive}>
+                                                <span class="slds-icon_container slds-icon-action-submit-for-approval slds-icon_container_circle" style="padding: 0;">
+                                                    <svg class="slds-icon slds-icon_small" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path d="M79.67 49.23l-10-10a1.36 1.36 0 00-1.86 0l-1.86 1.87a1.34 1.34 0 000 1.86L69 46a.89.89 0 01-.09 1.27.87.87 0 01-.53.22H41l16.33-16.25a.89.89 0 011.27.09.87.87 0 01.22.53v4.46a1.18 1.18 0 001.1 1.24h2.71a1.17 1.17 0 001.24-1.09V22a1.17 1.17 0 00-1.1-1.24H48.53a1.36 1.36 0 00-1.24 1.37v2.49a1.18 1.18 0 001.12 1.24H53a.88.88 0 01.86.9.89.89 0 01-.24.58l-20.1 20.03H21.24A1.28 1.28 0 0020 48.69v2.64a1.46 1.46 0 001.36 1.37h12.41l20 20a.9.9 0 01-.1 1.27.85.85 0 01-.52.21h-4.5a1.17 1.17 0 00-1.24 1.1.33.33 0 000 .14v2.49a1.45 1.45 0 001.24 1.37H62.8a1.18 1.18 0 001.2-1.12V63.74a1.18 1.18 0 00-1.12-1.24h-2.7a1.17 1.17 0 00-1.24 1.09v4.61a.88.88 0 01-.89.87.9.9 0 01-.6-.25L41.08 52.7H68.5a.89.89 0 01.62 1.48l-3.22 3.1a1.35 1.35 0 000 1.87L67.76 61a1.34 1.34 0 001.86 0l10-9.92a1.36 1.36 0 00.05-1.85z"></path></svg>
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="slds-grow">
+                                        <div if:true={resource.isCallOut}
+                                            class="slds-badge slds-theme_warning  color-white size65rem bg-red slds-m-top--small">
+                                            Call Out</div>
+                                        <div if:true={resource.isOnCall}
+                                            class="slds-badge slds-theme_warning  color-white size65rem bg-blue slds-m-top--small">
+                                            On Call</div>
+                                        <div if:true={resource.isVolunteer}
+                                            class="slds-badge slds-theme_warning  color-white size65rem bg-blue slds-m-top--small">
+                                            Volunteer</div>
+                                        <div if:true={resource.isAccountBlacklisted}
+                                            class="slds-badge slds-theme_warning  color-white size65rem bg-red slds-m-top--small">
+                                            Account Declined</div>
+                                        <div if:true={resource.isAccountWhitelisted}
+                                            class="slds-badge slds-theme_warning  color-white size65rem bg-green slds-m-top--small">
+                                            Account Preferred</div>
+                                        <div if:true={resource.isLocationBlacklisted}
+                                            class="slds-badge slds-theme_warning  color-white size65rem bg-red slds-m-top--small">
+                                            Location Declined</div>
+                                        <div if:true={resource.isLocationWhitelisted}
+                                            class="slds-badge slds-theme_warning  color-white size65rem bg-green slds-m-top--small">
+                                            Location Preferred</div>
+                                        <div if:true={resource.DOT}
+                                            class="slds-badge slds-theme_warning  color-white size65rem bg-blue slds-m-top--small">
+                                            DOT</div>
+                                        <div if:true={resource.CDL}
+                                            class="slds-badge slds-theme_warning  color-white size65rem slds-m-top--small">
+                                            CDL</div>
+                                    </div>
+
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- exceptions content -->
+                    <div class={showExceptionsTabClass}>
+                        <div class="slds-scrollable_y">
+                            <section>
+                                <div for:each={dataException} for:item="driveException" key={driveException.key}
+                                    for:index="indexDriveException">
+                                    <div class="drive-details-side-main-menu_body height-scroll-exception">
+                                        <ul class="drive-exception">
+                                            <template for:each={driveException.exceptions} for:item="exception"
+                                                for:index="indexDriveDetail">
+                                                <li key={exception.key}>
+                                                    <div
+                                                        class="slds-grid slds-grow slds-p-vertical_x-small slds-p-horizontal_small slds-truncate ">
+                                                        <div class="slds-grow slds-truncate">
+                                                            <div class="slds-grid slds-grid_align-spread">
+                                                                <div class="slds-grow">
+                                                                    <div class="slds-grid job-info slds-truncate">
+                                                                        <p class="color-error-force flex-display">
+                                                                            <span
+                                                                                class="color-error slds-truncate width200">{exception.exception}</span>
+                                                                        </p>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </li>
+                                            </template>
+                                        </ul>
+                                        <template for:each={driveException.driveShifts} for:item="driveShift"
+                                            for:index="indexDriveShift">
+                                            <div key={driveShift.key}>
+                                                <div class="hco-drive-shift-list-header">
+                                                    <div class="color-text-link-hover flex-display">
+                                                        <strong>{driveShift.driveShift}</strong>
+                                                    </div>
+                                                </div>
+                                                <ul class="hco-job-list">
+                                                    <template for:each={driveShift.jobs} for:item="job"
+                                                        for:index="indexException">
+                                                        <li key={job.key} class="slds-border--bottom">
+                                                            <div class="hco-job-exeption-list-header">
+                                                                <div class="color-gray flex-display">
+                                                                    {job.job}
+                                                                </div>
+                                                            </div>
+                                                            <ul class="hco-job-list">
+                                                                <template for:each={job.childJobs} for:item="childJob">
+                                                                    <div key={childJob.key} class="hco-job-exeption-list-sub-header">
+                                                                        <div class="color-gray flex-display">
+                                                                            <div class="slds-grid job-info job-times slds-truncate">
+                                                                                <span
+                                                                                    class="slds-no-flex slds-m-right_x-small slds-text-color_inverse-weak">
+                                                                                    <lightning-icon class="slds-current-color"
+                                                                                        icon-name="utility:clock" size="xx-small">
+                                                                                    </lightning-icon>
+                                                                                </span>
+                                                                                <p class="slds-text-color_inverse-weak">
+                                                                                    <lightning-formatted-date-time class="slds-m-right_xx-small" value={childJob.job.start} year="numeric" month="numeric" day="numeric" time-zone={timezoneSidId}></lightning-formatted-date-time>
+                                                                                    <lightning-formatted-date-time value={childJob.job.start}
+                                                                                        hour="2-digit" minute="2-digit" hour12="true"
+                                                                                        time-zone={timezoneSidId}>
+                                                                                    </lightning-formatted-date-time>
+                                                                                    <span> - </span>
+                                                                                    <lightning-formatted-date-time value={childJob.job.finish}
+                                                                                        hour="2-digit" minute="2-digit" hour12="true"
+                                                                                        time-zone={timezoneSidId}>
+                                                                                    </lightning-formatted-date-time>
+                                                                                </p>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <template for:each={childJob.exceptionLog}
+                                                                        for:item="exceptionSub"
+                                                                        for:index="indexExceptionSub">
+                                                                        <li if:false={exceptionSub.isDeleted} key={exceptionSub.key}
+                                                                            class="slds-border--bottom">
+                                                                            <div
+                                                                                class="slds-grid slds-grow slds-p-vertical_x-small slds-p-horizontal_small slds-truncate ">
+                                                                                <div class="slds-grow slds-truncate">
+                                                                                    <div
+                                                                                        class="slds-grid slds-grid_align-spread">
+                                                                                        <div class="slds-grow">
+                                                                                            <div
+                                                                                                class="slds-grid job-info" style="white-space: normal">
+                                                                                                <p
+                                                                                                    class="color-error-force flex-display">
+                                                                                                    <span
+                                                                                                        class="color-error">{exceptionSub.exception}</span>
+                                                                                                </p>
+                                                                                            </div>
+
+                                                                                        </div>
+                                                                                        <div
+                                                                                            class="slds-shrink-none exception-assigned-resources space-vertical">
+                                                                                            <c-slwc-popover
+                                                                                                container=".drive-details-side-menu"
+                                                                                                position="bottom|right"
+                                                                                                theme="tooltip"
+                                                                                                trigger="hover">
+                                                                                                <div class="container cursor-pointer"
+                                                                                                    slot="reference">
+                                                                                                    <lightning-avatar
+                                                                                                        style="pointer-events: none;"
+                                                                                                        size="small"
+                                                                                                        fallback-icon-name={exceptionSub.icon}
+                                                                                                        src={exceptionSub.resource.photoUrl}>
+                                                                                                    </lightning-avatar>
+                                                                                                </div>
+                                                                                                <div slot="content">
+                                                                                                    {exceptionSub.resource.name}
+                                                                                                </div>
+                                                                                            </c-slwc-popover>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </li>
+                                                                    </template>
+                                                                </template>
+                                                            </ul>
+                                                        </li>
+                                                    </template>
+                                                </ul>
+                                            </div>
+                                        </template>
+                                    </div>
+                                </div>
+                            </section>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <c-slwc-dispatch-drive-modal
+        drives={dispatchDriveModalData.drives} 
+        is-open={dispatchDriveModalData.isOpen}
+        onclose={hideDispatchDriveModal}>
+    </c-slwc-dispatch-drive-modal>
+
+    <c-slwc-call-out-modal
+        is-open={callOutModalData.isOpen}
+        onclose={handleCloseCallOutModal}
+        onsave={handleSaveCallOutModal}
+    ></c-slwc-call-out-modal>
+
+    <c-slwc-drive-shift-tag-modal></c-slwc-drive-shift-tag-modal>
+
+    <c-slwc-confirm-modal
+        if:true={confirmModalData.isOpen}
+        is-open={confirmModalData.isOpen}
+        title={confirmModalData.title}
+        message={confirmModalData.message}
+        handle-on-close={confirmModalData.onClose}
+        confirm-btn-label="Yes"
+        layer-index="999"
+        size='x-small'>
+    </c-slwc-confirm-modal>
+
+    <c-slwc-add-role-modal
+        job-allocation={addRoleModalData.jobAllocation}
+        resource={addRoleModalData.resource}
+        is-open={addRoleModalData.isOpen}
+        onclose={handleCloseAddRoleModal}
+        onsave={handleSaveAddRoleModal}
+    ></c-slwc-add-role-modal>
+
+    <c-slwc-job-allocation-modal
+        drive={jobAllocationModalData.drive}
+        job={jobAllocationModalData.job}
+        job-allocation={jobAllocationModalData.jobAllocation}
+        resource-role-groups={resourceRoleGroups}
+        is-open={jobAllocationModalData.isOpen}
+        onclose={handleCloseEditJobAllocationModal}
+        onsave={handleSaveEditJobAllocationModal}
+    ></c-slwc-job-allocation-modal>
+</template>

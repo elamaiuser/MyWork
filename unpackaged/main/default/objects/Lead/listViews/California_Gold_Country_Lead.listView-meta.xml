@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>California_Gold_Country_Lead</fullName>
+    <filterScope>Queue</filterScope>
+    <label>California Gold Country Lead Queue</label>
+    <queue>California_Gold_Country</queue>
+    <sharedTo>
+        <allInternalUsers></allInternalUsers>
+    </sharedTo>
+</ListView>

@@ -1,0 +1,3 @@
+<aura:component implements="force:appHostable,force:hasRecordId,flexipage:availableForAllPageTypes" access="global">
+	<c:slwcResourceTemplates recordId="{!v.recordId}" />
+</aura:component>

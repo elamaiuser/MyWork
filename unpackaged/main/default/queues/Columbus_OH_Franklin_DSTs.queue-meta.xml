@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Queue xmlns="http://soap.sforce.com/2006/04/metadata">
+    <doesSendEmailToMembers>false</doesSendEmailToMembers>
+    <name>Columbus OH Franklin: DSTs</name>
+    <queueMembers>
+        <users>
+            <user>andrea.kreuzer@redcross.org</user>
+            <user>bonnie.rivera@redcross.org</user>
+            <user>evette.macpherson@redcross.org</user>
+            <user>leigh.bouch@redcross.org</user>
+            <user>nancy.firth@redcross.org</user>
+            <user>serena.bricker@redcross.org</user>
+            <user>tara.dickert@redcross.org</user>
+        </users>
+    </queueMembers>
+    <queueSobject>
+        <sobjectType>sked_Drive_Shift_Trade__c</sobjectType>
+    </queueSobject>
+</Queue>

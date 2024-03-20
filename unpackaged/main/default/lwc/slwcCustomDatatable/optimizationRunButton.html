@@ -1,0 +1,21 @@
+<template>
+    <div class="slds-grid slds-grid--align-end slds-p-vertical_xx-small slds-p-horizontal--medium">
+        <lightning-button 
+            if:true={typeAttributes.canClose}
+            class="slds-m-right_medium"
+            variant="base" 
+            data-value={value} 
+            data-action="close"
+            label="Close" 
+            onclick={typeAttributes.clickAction} >
+        </lightning-button>
+
+        <lightning-button 
+            variant="base" 
+            data-value={value} 
+            data-action="view"
+            label="View Details" 
+            onclick={typeAttributes.clickAction} >
+        </lightning-button>
+      </div>
+</template>

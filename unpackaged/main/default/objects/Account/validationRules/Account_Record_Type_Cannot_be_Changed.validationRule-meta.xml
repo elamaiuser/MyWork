@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Account_Record_Type_Cannot_be_Changed</fullName>
+    <active>true</active>
+    <description>APS Profile cannot change Mobile Account record type to Fixed Site Account. AM, BPM, D2D, DM, Skedulo and Sponsor Marketing profiles cannot change Fixed Site Account record type to Mobile Account.</description>
+    <errorConditionFormula>ISCHANGED( RecordTypeId ) &amp;&amp;
+ $Profile.Name  &lt;&gt; &quot;System Administrator&quot;</errorConditionFormula>
+    <errorMessage>You do not have permission to change this Account&#39;s Record Type.</errorMessage>
+</ValidationRule>

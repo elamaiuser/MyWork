@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Web_Scheduling_End_Date_Offset__c</fullName>
+    <defaultValue>0</defaultValue>
+    <description>HRP-5002:Global Web Scheduling</description>
+    <externalId>false</externalId>
+    <fieldManageability>DeveloperControlled</fieldManageability>
+    <inlineHelpText>The Web Scheduling End Date Offset fields will be a numeric value (positive or negative)</inlineHelpText>
+    <label>Web Scheduling End Date Offset</label>
+    <precision>18</precision>
+    <required>true</required>
+    <scale>0</scale>
+    <type>Number</type>
+    <unique>false</unique>
+</CustomField>

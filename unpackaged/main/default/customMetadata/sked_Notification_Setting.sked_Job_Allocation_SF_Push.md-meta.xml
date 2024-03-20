@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomMetadata xmlns="http://soap.sforce.com/2006/04/metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <label>Job Allocation SF Push</label>
+    <protected>false</protected>
+    <values>
+        <field>sked_Active__c</field>
+        <value xsi:type="xsd:boolean">false</value>
+    </values>
+    <values>
+        <field>sked_Content_Renderer__c</field>
+        <value xsi:nil="true"/>
+    </values>
+    <values>
+        <field>sked_Custom_Filter__c</field>
+        <value xsi:nil="true"/>
+    </values>
+    <values>
+        <field>sked_Custom_Target_Destination__c</field>
+        <value xsi:nil="true"/>
+    </values>
+    <values>
+        <field>sked_Destination_Field__c</field>
+        <value xsi:type="xsd:string">sked__Resource__r.sked__User__c</value>
+    </values>
+    <values>
+        <field>sked_Email_From_Address_Field__c</field>
+        <value xsi:nil="true"/>
+    </values>
+    <values>
+        <field>sked_Email_Target_Field__c</field>
+        <value xsi:nil="true"/>
+    </values>
+    <values>
+        <field>sked_Filter__c</field>
+        <value xsi:nil="true"/>
+    </values>
+    <values>
+        <field>sked_Notification_Target_Field__c</field>
+        <value xsi:type="xsd:string">sked__Resource__r.sked__User__c</value>
+    </values>
+    <values>
+        <field>sked_Notification_Type__c</field>
+        <value xsi:type="xsd:string">salesforcepush</value>
+    </values>
+    <values>
+        <field>sked_Oneoff_Protocol_Field__c</field>
+        <value xsi:nil="true"/>
+    </values>
+    <values>
+        <field>sked_Sending_From_Email_Address__c</field>
+        <value xsi:nil="true"/>
+    </values>
+    <values>
+        <field>sked_Subject__c</field>
+        <value xsi:type="xsd:string">Resource Allocation</value>
+    </values>
+    <values>
+        <field>sked_Target_Field_Value__c</field>
+        <value xsi:type="xsd:string">Dispatched</value>
+    </values>
+    <values>
+        <field>sked_Target_Field__c</field>
+        <value xsi:type="xsd:string">sked__Status__c</value>
+    </values>
+    <values>
+        <field>sked_Target_SObject__c</field>
+        <value xsi:type="xsd:string">sked__Job_Allocation__c</value>
+    </values>
+    <values>
+        <field>sked_Template__c</field>
+        <value xsi:type="xsd:string">Hi {{sked__resource__r.name}}
+
+You have been allocated to {{sked__job__r.sked_drive__r.name}}.
+
+Drive Date: {{sked__job__r.sked_drive__r.sked_drive_date_text__c}}
+Shift Hours: {{sked_start_time__c}} - {{sked_set_end_time__c}}
+Roles Assignment: {{sked_roles_assignment_str__c}}</value>
+    </values>
+    <values>
+        <field>sked_Trigger__c</field>
+        <value xsi:type="xsd:string">Custom</value>
+    </values>
+</CustomMetadata>

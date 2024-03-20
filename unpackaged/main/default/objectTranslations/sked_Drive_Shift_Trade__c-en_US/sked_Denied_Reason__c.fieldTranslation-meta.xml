@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+        <label><!-- Denied Reason --></label>
+        <name>sked_Denied_Reason__c</name>
+        <picklistValues>
+            <masterLabel>Denied (cancelled)</masterLabel>
+            <translation><!-- Denied (cancelled) --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Denied (cutoff days)</masterLabel>
+            <translation><!-- Denied (cutoff days) --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Denied (duplicate)</masterLabel>
+            <translation><!-- Denied (duplicate) --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Denied (hours)</masterLabel>
+            <translation><!-- Denied (hours) --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Denied (role)</masterLabel>
+            <translation><!-- Denied (role) --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Denied (travel distance)</masterLabel>
+            <translation><!-- Denied (travel distance) --></translation>
+        </picklistValues>
+    </CustomFieldTranslation>

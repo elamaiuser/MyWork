@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomMetadata xmlns="http://soap.sforce.com/2006/04/metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <label>Active_Setting</label>
+    <protected>false</protected>
+    <values>
+        <field>Drive_Generator_To_Use__c</field>
+        <value xsi:type="xsd:string">Exavalu</value>
+    </values>
+</CustomMetadata>

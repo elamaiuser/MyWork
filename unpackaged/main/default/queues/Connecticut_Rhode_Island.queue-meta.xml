@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Queue xmlns="http://soap.sforce.com/2006/04/metadata">
+    <doesSendEmailToMembers>true</doesSendEmailToMembers>
+    <name>Connecticut Rhode Island Lead Queue</name>
+    <queueMembers>
+        <users>
+            <user>claudette.plasczynski@redcross.org.biomed</user>
+            <user>dan.craig2@redcross.org.biomed</user>
+            <user>jamison.caldas@redcross.org</user>
+            <user>patricia.sablitz@redcross.org</user>
+        </users>
+    </queueMembers>
+    <queueSobject>
+        <sobjectType>Lead</sobjectType>
+    </queueSobject>
+</Queue>

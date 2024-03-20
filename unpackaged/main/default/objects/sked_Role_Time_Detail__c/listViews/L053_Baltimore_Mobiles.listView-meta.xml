@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>L053_Baltimore_Mobiles</fullName>
+    <columns>NAME</columns>
+    <columns>sked_Collection_Operation__c</columns>
+    <columns>sked_Effective_Start_Date__c</columns>
+    <columns>sked_Effective_End_Date__c</columns>
+    <columns>sked_Resource_Role_Group__c</columns>
+    <columns>sked_Lead_Time__c</columns>
+    <columns>sked_Setup_Time__c</columns>
+    <columns>sked_Breakdown_Time__c</columns>
+    <columns>sked_Wrap_up_Time__c</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>sked_Collection_Operation__c</field>
+        <operation>equals</operation>
+        <value>L053 Baltimore Mobiles</value>
+    </filters>
+    <label>L053 Baltimore Mobiles</label>
+    <language>en_US</language>
+</ListView>

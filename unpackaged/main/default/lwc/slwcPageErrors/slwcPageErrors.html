@@ -1,0 +1,16 @@
+<template>
+    <template if:true={showErrors}>
+        <div class="pageLevelErrors" tabindex="-1">
+            <div class="desktop forcePageError">
+                <div class="genericNotification">
+                    <span class="genericError uiOutputText">{title}</span>
+                </div>
+                <ul class="errorsList">
+                    <template for:each={validities} for:item="item">
+                        <li key={item.message}>{item.message}</li>
+                    </template>
+                </ul>
+            </div>
+        </div>
+    </template>
+</template>

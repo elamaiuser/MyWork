@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<RecordType xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Blood_Region</fullName>
+    <active>true</active>
+    <label>Blood Region</label>
+    <picklistValues>
+        <picklist>Division_Code__c</picklist>
+        <values>
+            <fullName>BD31</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>BD32</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>BD33</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>BD34</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>BD35</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>BD36</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>CP</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>NCA</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Type__c</picklist>
+        <values>
+            <fullName>Blood Region</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Chapter</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+</RecordType>

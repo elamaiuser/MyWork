@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>First_Name_is_Required</fullName>
+    <active>true</active>
+    <description>Last Name field is required by default, but First Name is not. This rule will prevent users from saving the new lead record without a value in the First Name field.</description>
+    <errorConditionFormula>RecordType.Name = &quot;Biomed Recruitment&quot; &amp;&amp;
+ISBLANK(FirstName)</errorConditionFormula>
+    <errorDisplayField>FirstName</errorDisplayField>
+    <errorMessage>The lead&#39;s first name is required.</errorMessage>
+</ValidationRule>

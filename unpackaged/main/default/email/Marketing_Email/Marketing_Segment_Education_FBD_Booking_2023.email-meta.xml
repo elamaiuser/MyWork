@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<EmailTemplate xmlns="http://soap.sforce.com/2006/04/metadata">
+    <available>true</available>
+    <description>Principal Booking/Prospecting ask - Future Blood Donor (K-8) - Education Segment</description>
+    <encodingKey>ISO-8859-1</encodingKey>
+    <letterhead>ARC_Logo_Test</letterhead>
+    <name>Marketing Segment_Education_FBD_Booking</name>
+    <style>formalLetter</style>
+    <subject>Develop Future Leaders</subject>
+    <textOnly>Dear [Insert Principal Name],
+
+I’m writing to invite [School Name] to partner with the American Red Cross through our Future Blood Donor program. This educational program is comprised of two elements. The first element is a 10-minute educational presentation that teaches students about the function of blood in their body and the lifesaving blood donation process. The second element is a blood drive held outside of school hours and supported by a parent volunteer group or PTO. Through this program, your students will have the opportunity to take action and show leadership by recruiting adults to donate blood and be recognized for their efforts.
+
+I noticed on your website that [School Name/School District]’s mission is to [insert school’s mission statement or value-added statement]. Our Future Blood Donor program can help you accomplish this mission while engaging students, parents and members of your community.
+
+I will be in your area on [date] and [date] and would like to share and discuss the opportunity for your school to participate in this educational blood program. I would need 15 minutes of your time and am happy to meet at a time that is convenient for you, including before or after school. If you have any questions, please feel free to contact me.
+
+Kind Regards,
+
+[Email Signature Here]</textOnly>
+    <type>html</type>
+    <uiType>Aloha</uiType>
+</EmailTemplate>

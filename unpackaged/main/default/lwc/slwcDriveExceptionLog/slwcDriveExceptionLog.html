@@ -1,0 +1,50 @@
+<template>
+    <template if:true={showSpinner}>
+        <lightning-spinner class="spins" size="medium"></lightning-spinner>
+    </template>
+
+    <article class="slds-card slds-card_boundary">
+        <div class="slds-grid slds-page-header">
+            <header class="slds-media slds-media--center slds-has-flexi-truncate">
+                <div class="slds-media__figure slds-m-right_small slds-avatar slds-avatar_small">
+                    <lightning-icon icon-name="standard:contact_list" size="small"></lightning-icon>
+                </div>
+                <div class="slds-media__body">
+                    <div class="slds-page-header__name">
+                        <div class="slds-page-header__name-title">
+                            <h2 class="slds-card__header-title">
+                                <span class="slds-truncate">Exception Log</span>
+                            </h2>
+                        </div>
+                    </div>
+                </div>
+            </header>
+            <div class="slds-no-flex" if:false={isReadonly}>
+                <div class="slds-grid">
+                    <div class="slds-col">
+                        <lightning-button label={btnCloseExceptionLabel} variant="brand" onclick={handleCloseException} disabled={btnCloseExceptionDisabled}></lightning-button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div>
+            <template if:false={hasException}>
+                <div class="slds-align_absolute-center slds-p-around_large">
+                    <lightning-icon icon-name="utility:warning" size="x-small" alternative-text="Warning!" title="Warning" class="slds-m-right_xx-small"></lightning-icon>
+                    <span>No exception.</span>
+                </div>
+            </template>
+            <template if:true={hasException}>
+                <lightning-datatable 
+                    key-field="id"
+                    data={exceptionLog}
+                    columns={columns}
+                    hide-checkbox-column={isReadonly}
+                    onrowselection={handleRowSelection}
+                    wrap-text-max-lines="3">
+                </lightning-datatable>
+            </template>
+        </div>
+    </article>
+
+</template>

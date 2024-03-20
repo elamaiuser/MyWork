@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Report xmlns="http://soap.sforce.com/2006/04/metadata">
+    <columns>
+        <field>BSF_Portfolio__c$Name</field>
+    </columns>
+    <columns>
+        <field>BSF_Portfolio__c$Portfolio_Type__c</field>
+    </columns>
+    <columns>
+        <field>BSF_Portfolio__c$Parent_Portfolio__c</field>
+    </columns>
+    <columns>
+        <field>BSF_Portfolio__c.PortfolioAssignments__r$Start_Date__c</field>
+    </columns>
+    <columns>
+        <field>BSF_Portfolio__c.PortfolioAssignments__r$Assignment_Type__c</field>
+    </columns>
+    <columns>
+        <field>BSF_Portfolio__c.PortfolioAssignments__r$End_Date__c</field>
+    </columns>
+    <columns>
+        <field>BSF_Portfolio__c.PortfolioAssignments__r$User__c</field>
+    </columns>
+    <description>Portfolios without User Assignment</description>
+    <filter>
+        <criteriaItems>
+            <column>BSF_Portfolio__c.PortfolioAssignments__r$Assignment_Type__c</column>
+            <columnToColumn>false</columnToColumn>
+            <isUnlocked>true</isUnlocked>
+            <operator>equals</operator>
+            <value></value>
+        </criteriaItems>
+        <language>en_US</language>
+    </filter>
+    <format>Tabular</format>
+    <name>Portfolios without User Assignment</name>
+    <params>
+        <name>co</name>
+        <value>1</value>
+    </params>
+    <reportType>Portfolios_with_User_Assignments__c</reportType>
+    <scope>organization</scope>
+    <showDetails>true</showDetails>
+    <showGrandTotal>true</showGrandTotal>
+    <showSubTotals>true</showSubTotals>
+    <timeFrameFilter>
+        <dateColumn>BSF_Portfolio__c$CreatedDate</dateColumn>
+        <interval>INTERVAL_CUSTOM</interval>
+    </timeFrameFilter>
+</Report>

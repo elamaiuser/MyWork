@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+        <label><!-- Company Sub-Type --></label>
+        <name>Company_Sub_Type__c</name>
+        <picklistValues>
+            <masterLabel>Alumni Greek System</masterLabel>
+            <translation><!-- Alumni Greek System --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Assisted Living/Long-Term Care</masterLabel>
+            <translation><!-- Assisted Living/Long-Term Care --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Civic Group (i.e - Elks Lodge, Rotary Club, Chamber of Commerce)</masterLabel>
+            <translation><!-- Civic Group (i.e - Elks Lodge, Rotary Club, Chamber of Commerce) --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Community College</masterLabel>
+            <translation><!-- Community College --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Corporation</masterLabel>
+            <translation><!-- Corporation --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Elementary School</masterLabel>
+            <translation><!-- Elementary School --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Government Agency</masterLabel>
+            <translation><!-- Government Agency --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Health and Safety (Fire, Police &amp; EMS)</masterLabel>
+            <translation><!-- Health and Safety (Fire, Police &amp; EMS) --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>High School</masterLabel>
+            <translation><!-- High School --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Hospital Group</masterLabel>
+            <translation><!-- Hospital Group --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Local Community (i.e. - Boys and Girl Scout, Local Township, Fraternal Order of Police, etc.)</masterLabel>
+            <translation><!-- Local Community (i.e. - Boys and Girl Scout, Local Township, Fraternal Order of Police, etc.) --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Local business</masterLabel>
+            <translation><!-- Local business --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Manufacturing</masterLabel>
+            <translation><!-- Manufacturing --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Medical Clinic/Office</masterLabel>
+            <translation><!-- Medical Clinic/Office --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Middle School</masterLabel>
+            <translation><!-- Middle School --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Military Installation (Army,Marines, Navy, Air Force, Reserve, National Guard)</masterLabel>
+            <translation><!-- Military Installation (Army,Marines, Navy, Air Force, Reserve, National Guard) --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>NGO (Non-Governmental Organization)</masterLabel>
+            <translation><!-- NGO (Non-Governmental Organization) --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Other</masterLabel>
+            <translation><!-- Other --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Pre-School/Daycare</masterLabel>
+            <translation><!-- Pre-School/Daycare --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Print Media</masterLabel>
+            <translation><!-- Print Media --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Private School (K-12)</masterLabel>
+            <translation><!-- Private School (K-12) --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Radio</masterLabel>
+            <translation><!-- Radio --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Retail</masterLabel>
+            <translation><!-- Retail --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Television</masterLabel>
+            <translation><!-- Television --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Traditional College/University</masterLabel>
+            <translation><!-- Traditional College/University --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>University Greek System</masterLabel>
+            <translation><!-- University Greek System --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Urgent Care</masterLabel>
+            <translation><!-- Urgent Care --></translation>
+        </picklistValues>
+    </CustomFieldTranslation>

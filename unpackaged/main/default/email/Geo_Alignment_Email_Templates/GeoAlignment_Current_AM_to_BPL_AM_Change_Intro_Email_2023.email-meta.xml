@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<EmailTemplate xmlns="http://soap.sforce.com/2006/04/metadata">
+    <available>false</available>
+    <description>Geo Alignment Letter from AM to BPL, AM Change Intro Email</description>
+    <encodingKey>ISO-8859-1</encodingKey>
+    <letterhead>ARC_Logo_Test</letterhead>
+    <name>GeoAlignment_Current AM to BPL_AM Change Intro Email_2023</name>
+    <style>formalLetter</style>
+    <subject>Coming January: Exciting Changes</subject>
+    <textOnly>Dear [BPL Name],
+
+I wanted to give you a heads up on some exciting changes we are making in the new year to better align Red Cross operations. The changes will define a common set of geographic boundaries for both Biomedical and Humanitarian Services, further strengthening our organization and improving mission delivery.
+
+Background
+For decades, the American Red Cross Humanitarian Services lines of business (Disaster Cycle Services, Services to the Armed Forces, Training Services and International Services) have not been geographically aligned with Biomedical Services.
+
+•	Humanitarian Services completed their region transition to the new geographic boundaries in summer 2020. The final step in this process is for Biomedical Services to transition to the new, aligned regional, district and territory boundaries.
+
+•	Working together in aligned geographies, leadership across these lines of services will be more closely linked, allowing improved coordination, robust partnerships, integrated activities and shared resources to more effectively meet the needs of communities we serve.
+
+Impact
+In many cases, this transition will be largely invisible to our Blood Program Leaders. In others, they will see changes in Account Manager/Area Booking Manager [Remove if not applicable]. If this applies to you, rest assured because our team will follow up in the upcoming months. This geographical realignment will not change our mission, our commitment to you, or the day-to-day operations of recruiting blood donors and hosting drives. It is a way to enhance connections within our organization, our trusted partners and our donors.
+
+What’s Next
+This message is for awareness; there is nothing you need to do. You’re in good hands with &lt;Name&gt; and &lt;Name&gt; as your Area Booking Manager and Account Manager. We are so grateful for your support of our lifesaving mission!
+
+If you have any questions, please don’t hesitate to reach out.
+
+&lt;Current AM/ABM Signature&gt;
+
+Your American Red Cross Team
+
+Area Booking Manager	Account
+Manager	Account
+Specialist	District
+Manager
+&lt;name&gt;	&lt;name&gt;	&lt;name&gt;	&lt;name&gt;
+&lt;email&gt;	&lt;email&gt;	&lt;email&gt;	&lt;email&gt;
+&lt;phone&gt;	&lt;phone&gt;	&lt;phone&gt;	&lt;phone&gt;</textOnly>
+    <type>html</type>
+    <uiType>Aloha</uiType>
+</EmailTemplate>

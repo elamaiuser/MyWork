@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+        <label><!-- Direction --></label>
+        <name>sked_Direction__c</name>
+        <picklistValues>
+            <masterLabel>CO to Site</masterLabel>
+            <translation><!-- CO to Site --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Site to CO</masterLabel>
+            <translation><!-- Site to CO --></translation>
+        </picklistValues>
+    </CustomFieldTranslation>

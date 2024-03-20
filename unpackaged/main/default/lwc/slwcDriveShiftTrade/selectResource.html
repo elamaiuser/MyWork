@@ -1,0 +1,84 @@
+<template>
+    <div class={customClass.modal}>
+        <lightning-spinner if:true={showSpinner} class="spins" size="medium"></lightning-spinner>
+        <div class="slds-align-content-center slds-col width-450">
+            <div class="slds-clearfix slds-page-header slds-page-header_record-home fixed-position " style="margin-bottom: var(--lwc-cardSpacingMargin);">
+                <div class="slds-page-header__row slds-grid_vertical-align-center">
+                    <div class="slds-page-header__col-title">
+                        <div class="slds-media">
+                            <div class="slds-media__figure">
+                                <lightning-icon icon-name="standard:metrics" size="medium"></lightning-icon>
+                            </div>
+                            <div class="slds-media__body">
+                                <div class="slds-page-header__name">
+                                    <div class="slds-page-header__name-title">
+                                        <h1>
+                                            <span class="slds-page-header__title slds-truncate">Select Resource</span>
+                                        </h1>
+                                    </div>
+                                </div>
+                                <p class="slds-page-header__name-meta">{stepHeader}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="slds-no-flex">
+                        <div class="slds-grid">
+                            <div class="slds-no-flex">
+                                <ul class="slds-button-group-row">
+                                    <li class="slds-button-group-item">
+                                        <button onclick={handlePrev}
+                                            class="slds-button slds-button_neutral">Previous</button>
+                                    </li>
+                                    <li class="slds-button-group-item">
+                                        <button disabled={disabledNext} class="slds-button slds-button_brand"
+                                            onclick={handleNext}>Next</button>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="slds-tabs_card slds-scrollable--y height-custom slds-grid slds-grid_vertical">
+                <lightning-progress-indicator current-step={step} type="base" variant="base">
+                    <lightning-progress-step for:each={listStep} for:item="step" key={step.value} label={step.label} value={step.value}></lightning-progress-step>
+                </lightning-progress-indicator>
+                <div class="slds-m-top--large slds-grow slds-grid position-relative slds-scrollable_y">
+                    <div class="slds-border_right slds-border_left width-100 slds-grid slds-grid_vertical">
+                        <div class="slds-border--top slds-p-around_small slds-no-flex">
+                            <lightning-input type="search" name="searchText" value={filters.searchText}
+                                onchange={handleOnChangeFilter} max-length="255" label="Search Resources..."
+                                variant="label-hidden" placeholder="Search Resources...">
+                            </lightning-input>
+                        </div>
+                        <div class="slds-p-horizontal_small slds-scrollable_y slds-grow slds-border--bottom slds-scrollable--y">
+                            <table class="slds-table slds-table_bordered resources-table">
+                                <tbody>
+                                    <tr onclick={handleSelectResource} data-id={resource.id}
+                                        for:each={listResourcesFiltered} for:item="resource"
+                                        key={resource.key} style="cursor: pointer;">
+                                        <td class={resource.classes}>
+                                            <div class="slds-media hco-resource-info">
+                                                <div class="slds-media__figure resource-avatar">
+                                                    <lightning-avatar fallback-icon-name="standard:user"
+                                                        src={resource.photoUrl}></lightning-avatar>
+
+                                                </div>
+                                                <div class="slds-media__body">
+                                                    <p class="resource-name slds-truncate">{resource.name}</p>
+                                                    <p class="slds-text-color_weak slds-text-body_small slds-truncate">
+                                                        {resource.category}</p>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Danvers_MA_DCRs_sked_Drive_Change_Request</fullName>
+    <filterScope>Queue</filterScope>
+    <label>Dedham MA North: DCRs</label>
+    <queue>Dedham_MA_North_DCRs</queue>
+    <sharedTo>
+        <allInternalUsers></allInternalUsers>
+    </sharedTo>
+</ListView>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>After_Hours_Phone_Restrictions</fullName>
+    <active>true</active>
+    <description>If the role selected is &quot;After Hours Contact,&quot; the Contact must have an After Hours Phone Number populated .</description>
+    <errorConditionFormula>ISBLANK(TEXT(  Contact.After_Hours__c  )) &amp;&amp;  ISPICKVAL(Role, &quot;After Hours Contact&quot;)</errorConditionFormula>
+    <errorDisplayField>Role</errorDisplayField>
+    <errorMessage>The After Hours Contact must have an after hours phone number selected on their contact record.</errorMessage>
+</ValidationRule>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<EmailTemplate xmlns="http://soap.sforce.com/2006/04/metadata">
+    <available>true</available>
+    <description>BPL Thank you - Corporate Segment</description>
+    <encodingKey>ISO-8859-1</encodingKey>
+    <letterhead>ARC_Logo_Test</letterhead>
+    <name>Marketing Segment_Corporate_Thank you</name>
+    <style>formalLetter</style>
+    <subject>Thank you for your service and support of patients</subject>
+    <textOnly>Dear [Insert Name],
+
+Allow me to personally thank you for your service. Your blood drive collected [drive’s collected units] units, and that means more life, more love, more memories for the most vulnerable patients in our community—those suffering unexpected trauma and chronic illness every day. It was a pleasure to partner with you and your colleagues, and we’re so happy to have you in our American Red Cross family.
+
+Since donation is the only source of lifesaving blood for patients, and few organizations can provide the impact that [Company Name] can, we hope you’ll enjoy the pride of your efforts and join us again. The need for blood is ongoing and we can’t sustain patients in need without partners like you.
+
+To discuss [maximizing your upcoming drive] [building your annual blood program] [any feedback about your recent drive], please don’t hesitate to contact me. We honor your service and support of patients by always seeking ways to improve the experience and we value your feedback.
+
+Thank you again, and I look forward to hearing from you soon.
+
+Sincerely,
+
+[Insert Name]</textOnly>
+    <type>html</type>
+    <uiType>Aloha</uiType>
+</EmailTemplate>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CompactLayout xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Order_Compact_Layout</fullName>
+    <fields>Drive_Date__c</fields>
+    <fields>OpportunityId</fields>
+    <fields>TotalAmount</fields>
+    <fields>BudgetCurrency__c</fields>
+    <fields>Order_Due_Date__c</fields>
+    <fields>Publicity_Approved__c</fields>
+    <fields>Publicity_Submitted__c</fields>
+    <label>Order Compact Layout</label>
+</CompactLayout>

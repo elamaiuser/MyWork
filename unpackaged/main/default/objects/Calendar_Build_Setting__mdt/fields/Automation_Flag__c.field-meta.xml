@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Automation_Flag__c</fullName>
+    <defaultValue>false</defaultValue>
+    <description>If this is turned &#39;on&#39;, the system will determine if today&#39;s date is the last day of last month plus &quot;Buffer_Days_For_System_Generated__c&quot;.  If so, all the draft drives from last month will be processed for resource allocation. If this is turned &#39;off&#39;, resource allocation process will have to be handled manually via a button click.</description>
+    <externalId>false</externalId>
+    <fieldManageability>DeveloperControlled</fieldManageability>
+    <inlineHelpText>If this is turned &#39;on&#39;, the system will determine if today&#39;s date is the last day of last month plus &quot;Buffer_Days_For_System_Generated__c&quot;.  If so, all the draft drives from last month will be processed for resource allocation.</inlineHelpText>
+    <label>Automate System Generate Process</label>
+    <type>Checkbox</type>
+</CustomField>

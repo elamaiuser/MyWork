@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Queue xmlns="http://soap.sforce.com/2006/04/metadata">
+    <doesSendEmailToMembers>true</doesSendEmailToMembers>
+    <name>California Los Angeles Lead Queue</name>
+    <queueMembers>
+        <users>
+            <user>becky.cogley@redcross.org.biomed</user>
+            <user>carrie.laedlein@redcross.org</user>
+            <user>christine.fleming@redcross.org.biomed</user>
+            <user>gerard.marzilli@redcross.org.biomed</user>
+            <user>jay.winkenbach@redcross.org.biomed</user>
+            <user>lisa.borland@redcross.org.biomed</user>
+            <user>luis.ramirez@redcross.org.biomed</user>
+            <user>rachel.paul@redcross.org.biomed</user>
+        </users>
+    </queueMembers>
+    <queueSobject>
+        <sobjectType>Lead</sobjectType>
+    </queueSobject>
+</Queue>

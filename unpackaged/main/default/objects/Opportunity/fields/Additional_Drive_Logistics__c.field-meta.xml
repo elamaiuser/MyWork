@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Additional_Drive_Logistics__c</fullName>
+    <externalId>false</externalId>
+    <label>Additional Drive Logistics</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>MultiselectPicklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Clean Up-ARC takes all trash (this is in addition to the standard bio material)</fullName>
+                <default>false</default>
+                <label>Clean Up-ARC takes all trash (this is in addition to the standard bio material)</label>
+            </value>
+            <value>
+                <fullName>ARC provided additional lighting</fullName>
+                <default>false</default>
+                <label>ARC provided additional lighting</label>
+            </value>
+            <value>
+                <fullName>ARC provides tables/chairs</fullName>
+                <default>false</default>
+                <label>ARC provides tables/chairs</label>
+            </value>
+            <value>
+                <fullName>ARC set-up tables and chairs (drive set up)</fullName>
+                <default>false</default>
+                <label>ARC set-up tables and chairs (drive set up)</label>
+            </value>
+            <value>
+                <fullName>ARC resets tables/chairs (post drive)</fullName>
+                <default>false</default>
+                <label>ARC resets tables/chairs (post drive)</label>
+            </value>
+            <value>
+                <fullName>ARC provides floor tarp</fullName>
+                <default>false</default>
+                <label>ARC provides floor tarp</label>
+            </value>
+            <value>
+                <fullName>Other</fullName>
+                <default>false</default>
+                <label>Other</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+    <visibleLines>4</visibleLines>
+</CustomField>

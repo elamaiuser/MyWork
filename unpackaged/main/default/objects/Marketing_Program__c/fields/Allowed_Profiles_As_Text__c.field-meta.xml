@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Allowed_Profiles_As_Text__c</fullName>
+    <description>Converts Allowed Profiles MultiSelectPicklist to comma separated text</description>
+    <externalId>false</externalId>
+    <formula>IF( INCLUDES(Allowed_Profiles__c, &#39;AM Profile&#39;), &#39;AM Profile,&#39;, null) +   
+ IF( INCLUDES(Allowed_Profiles__c, &#39;BPM Profile&#39;), &#39;BPM Profile,&#39;, null) +   
+ IF( INCLUDES(Allowed_Profiles__c, &#39;DM Profile&#39;), &#39;DM Profile,&#39;, null) +   
+ IF( INCLUDES(Allowed_Profiles__c, &#39;Skedulo&#39;), &#39;Skedulo,&#39;, null) +   
+ IF( INCLUDES(Allowed_Profiles__c, &#39;System Administrator&#39;), &#39;System Administrator,&#39;, null) +
+ IF( INCLUDES(Allowed_Profiles__c, &#39;Sponsor Marketing&#39;), &#39;Sponsor Marketing,&#39;, null)+
+ IF( INCLUDES(Allowed_Profiles__c, &#39;Global Admin&#39;), &#39;Global Admin,&#39;, null) +
+ IF( INCLUDES(Allowed_Profiles__c, &#39;DRD Manager&#39;), &#39;DRD Manager,&#39;, null) +
+IF( INCLUDES(Allowed_Profiles__c, &#39;DRD Profile&#39;), &#39;DRD Profile,&#39;, null) +
+ IF( INCLUDES(Allowed_Profiles__c, &#39;APS Admin&#39;), &#39;APS Admin,&#39;, null) +
+ IF( INCLUDES(Allowed_Profiles__c, &#39;APS Management&#39;), &#39;APS Management,&#39;, null) +
+ IF( INCLUDES(Allowed_Profiles__c, &#39;APS Scheduler&#39;), &#39;APS Scheduler,&#39;, null) +
+ IF( INCLUDES(Allowed_Profiles__c, &#39;Biomed Read Only&#39;), &#39;Biomed Read Only,&#39;, null) +
+ IF( INCLUDES(Allowed_Profiles__c, &#39;Recruitment Admin&#39;), &#39;Recruitment Admin,&#39;, null) +
+ IF( INCLUDES(Allowed_Profiles__c, &#39;Collections&#39;), &#39;Collections,&#39;, null) +
+ IF( INCLUDES(Allowed_Profiles__c, &#39;Collection Management&#39;), &#39;Collection Management,&#39;, null) +
+ IF( INCLUDES(Allowed_Profiles__c, &#39;Analytics&#39;), &#39;Analytics,&#39;, null) +
+ IF( INCLUDES(Allowed_Profiles__c, &#39;Customer Care&#39;), &#39;Customer Care,&#39;, null) +
+ IF( INCLUDES(Allowed_Profiles__c, &#39;Schedule Viewers&#39;), &#39;Schedule Viewers,&#39;, null) +
+ IF( INCLUDES(Allowed_Profiles__c, &#39;APS Planner&#39;), &#39;APS Planner,&#39;, null)</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <label>Allowed Profiles As Text</label>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

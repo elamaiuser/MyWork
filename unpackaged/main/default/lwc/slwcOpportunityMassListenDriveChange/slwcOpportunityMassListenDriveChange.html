@@ -1,0 +1,9 @@
+<template>
+    <template if:true={showSpinner}>
+        <lightning-spinner class="spins" size="medium"></lightning-spinner>
+    </template>
+
+    <template if:true={initialized}>
+        <c-slwc-mass-listen-drive-change mode="opportunity" record-ids={opportunityIds}></c-slwc-mass-listen-drive-change>
+    </template>
+</template>

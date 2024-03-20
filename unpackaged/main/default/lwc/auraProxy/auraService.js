@@ -1,0 +1,131 @@
+import _getSObjectName from '@salesforce/apex/slwcDataService.getSObjectName';
+import _getCustomSettings from '@salesforce/apex/slwcDataService.getCustomSettings';
+import _executeQuery from '@salesforce/apex/slwcDataService.executeQuery';
+import _executeQueries from '@salesforce/apex/slwcDataService.executeQueries';
+import _dynamicDelete from '@salesforce/apex/slwcDataService.dynamicDelete';
+import _dynamicUpsert from '@salesforce/apex/slwcDataService.dynamicUpsert';
+import _getPicklistOptions from '@salesforce/apex/slwcDataService.getPicklistOptions';
+import _getMapDependentOptions from '@salesforce/apex/slwcDataService.getMapDependentOptions';
+
+import _getSkedRegionId from '@salesforce/apex/slwcCollectionOperationService.getSkedRegionId';
+
+import _getAddressPredictions from '@salesforce/apex/slwcSkedApiService.getAddressPredictions';
+import _getGeocode from '@salesforce/apex/slwcSkedApiService.getGeocode';
+import _getPlaceDetails from '@salesforce/apex/slwcSkedApiService.getPlaceDetails';
+import _calculateDistanceMatrix from '@salesforce/apex/slwcSkedApiService.calculateDistanceMatrix';
+
+import _getEventTypeSettings from '@salesforce/apex/slwcAdminConsoleController.getEventTypeSettings';
+
+import _approveReject from '@salesforce/apex/slwcApprovalService.approveReject';
+import _canApprove from '@salesforce/apex/slwcApprovalService.canApprove';
+import _getApprovalHistoryList from '@salesforce/apex/slwcApprovalService.getApprovalHistoryList';
+import _getCurrentApprovalData from '@salesforce/apex/slwcApprovalService.getCurrentApprovalData';
+import _saveDesignatedApprover from '@salesforce/apex/slwcApprovalService.saveDesignatedApprover';
+import _isPendingApproval from '@salesforce/apex/slwcApprovalService.isPendingApproval';
+import _withdraw from '@salesforce/apex/slwcApprovalService.withdraw';
+
+import _getAssetDataCompact from '@salesforce/apex/slwcAllocationService.getAssetDataCompact';
+import _getResourceData from '@salesforce/apex/slwcAllocationService.getResourceData';
+import _getLinkedDrivesResourceIds from '@salesforce/apex/slwcAllocationService.getLinkedDrivesResourceIds';
+
+import _getPatternResources  from '@salesforce/apex/skedLexResourceController.getPatternResources';
+import _getResourceTemplates  from '@salesforce/apex/skedLexResourceController.getResourceTemplates';
+import _saveCallOut  from '@salesforce/apex/slwcResourceService.saveCallOut';
+
+import _cloneOpportunity from '@salesforce/apex/slwcOpportunityService.cloneOpportunity';
+
+import _getLoginUser from '@salesforce/apex/slwcUserService.getLoginUser';
+
+import _dispatchDrives from '@salesforce/apex/slwcDriveService.dispatchDrives';
+import _captureDriveImpact from '@salesforce/apex/slwcDriveService.captureDriveImpact';
+import _searchDriveSite from '@salesforce/apex/slwcDriveService.searchDriveSite';
+import _getTerritoryKeys from '@salesforce/apex/slwcDriveService.getTerritoryKeys';
+import _validateDraftDrive from '@salesforce/apex/slwcDriveService.validateDraftDrive';
+
+import _initiateOptimizationRun from '@salesforce/apex/slwcOptimizationService.initiateOptimizationRun';
+import _getOptimizationRuns from '@salesforce/apex/slwcOptimizationService.getOptimizationRuns';
+
+import _generateOperationRecords from '@salesforce/apex/slwcOperationRecordService.generateOperationRecords';
+import _operationRecord_getResourceData from '@salesforce/apex/slwcOperationRecordService.getResourceData';
+import _populateExternalIds from '@salesforce/apex/slwcOperationRecordService.populateExternalIds';
+import _submitOperationRecord from '@salesforce/apex/slwcOperationRecordService.submitOperationRecord';
+
+import _getStandardAddress from '@salesforce/apex/slwcArcApiService.getStandardAddress';
+
+import _searchMarket from '@salesforce/apex/slwcAccountService.searchMarket';
+
+import _getScheduleList from '@salesforce/apex/slwcAdminConsoleController.getScheduleList';
+import _executeSchedule from '@salesforce/apex/slwcAdminConsoleController.executeSchedule';
+
+import _validateRequest from '@salesforce/apex/slwcDriveShiftTradeService.validateRequest';
+
+import _getTimezone from '@salesforce/apex/slwcSkedApiService.getTimezone';
+
+import { ErrorHandler } from './errorHandler';
+
+class auraService {
+  execute = (fn, params) => {
+    return fn(params)
+    .then(result => {
+      return result;
+    })
+    .catch(err => {
+      let errors = ErrorHandler.fromLWC(err);
+      if(errors.length > 0) {
+        throw errors[0]
+      }
+
+      throw ErrorHandler.DEFAULT_LWC_ERROR;
+    });
+  }
+
+  getSObjectName = (params) => this.execute(_getSObjectName, params);
+  getCustomSettings = (params) => this.execute(_getCustomSettings, params);
+  executeQuery = (params) => this.execute(_executeQuery, params);
+  executeQueries = (params) => this.execute(_executeQueries, params);
+  dynamicDelete = (params) => this.execute(_dynamicDelete, params);
+  dynamicUpsert = (params) => this.execute(_dynamicUpsert, params);
+  getPicklistOptions = (params) => this.execute(_getPicklistOptions, params);
+  getMapDependentOptions = (params) => this.execute(_getMapDependentOptions, params);
+  getSkedRegionId = (params) => this.execute(_getSkedRegionId, params);
+  getAddressPredictions = (params) => this.execute(_getAddressPredictions, params);
+  getGeocode = (params) => this.execute(_getGeocode, params);
+  getPlaceDetails = (params) => this.execute(_getPlaceDetails, params);
+  calculateDistanceMatrix = (params) => this.execute(_calculateDistanceMatrix, params);
+  getEventTypeSettings = (params) => this.execute(_getEventTypeSettings, params);
+  approveReject = (params) => this.execute(_approveReject, params);
+  canApprove = (params) => this.execute(_canApprove, params);
+  getApprovalHistoryList = (params) => this.execute(_getApprovalHistoryList, params);
+  getCurrentApprovalData = (params) => this.execute(_getCurrentApprovalData, params);
+  saveDesignatedApprover = (params) => this.execute(_saveDesignatedApprover, params);
+  isPendingApproval = (params) => this.execute(_isPendingApproval, params);
+  withdraw = (params) => this.execute(_withdraw, params);
+  getResourceData = (params) => this.execute(_getResourceData, params);
+  getAssetDataCompact = (params) => this.execute(_getAssetDataCompact, params);
+  getLinkedDrivesResourceIds = (params) => this.execute(_getLinkedDrivesResourceIds, params);
+  getPatternResources = (params) => this.execute(_getPatternResources, params);
+  getResourceTemplates = (params) => this.execute(_getResourceTemplates, params);
+  saveCallOut = (params) => this.execute(_saveCallOut, params);
+  cloneOpportunity = (params) => this.execute(_cloneOpportunity, params);
+  getLoginUser = (params) => this.execute(_getLoginUser, params);
+  dispatchDrives = (params) => this.execute(_dispatchDrives, params);
+  captureDriveImpact = (params) => this.execute(_captureDriveImpact, params);
+  searchDriveSite = (params) => this.execute(_searchDriveSite, params);
+  getTerritoryKeys = (params) => this.execute(_getTerritoryKeys, params);
+  validateDraftDrive = (params) => this.execute(_validateDraftDrive, params);
+  initiateOptimizationRun = (params) => this.execute(_initiateOptimizationRun, params);
+  getOptimizationRuns = (params) => this.execute(_getOptimizationRuns, params);
+  generateOperationRecords = (params) => this.execute(_generateOperationRecords, params);
+  operationRecord_getResourceData = (params) => this.execute(_operationRecord_getResourceData, params);
+  populateExternalIds = (params) => this.execute(_populateExternalIds, params);
+  submitOperationRecord = (params) => this.execute(_submitOperationRecord, params);
+  getStandardAddress = (params) => this.execute(_getStandardAddress, params);
+  searchMarket = (params) => this.execute(_searchMarket, params);
+  getScheduleList = (params) => this.execute(_getScheduleList, params);
+  executeSchedule = (params) => this.execute(_executeSchedule, params);
+  validateRequest = (params) => this.execute(_validateRequest, params);
+  getTimezone = (params) => this.execute(_getTimezone, params);
+}
+
+const auraServiceInstance = new auraService();
+export default auraServiceInstance;

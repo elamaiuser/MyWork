@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<EmailTemplate xmlns="http://soap.sforce.com/2006/04/metadata">
+    <available>true</available>
+    <description>Generic response sent to all new leads</description>
+    <encodingKey>ISO-8859-1</encodingKey>
+    <name>Lead Auto Response</name>
+    <style>freeForm</style>
+    <subject>Thank you for completing the Red Cross Blood Drive interest form!</subject>
+    <textOnly>Dear {!Lead.FirstName} {!Lead.LastName},
+
+Thank you for expressing interest in becoming an American Red Cross blood drive partner. A representative in your area will contact you soon regarding next steps. As this time, you may experience a delay in response time due to the resounding response we have received to our recent ask. We appreciate your patience!
+
+In the meantime, we invite you to visit RedCross.org to learn about even more ways you can get involved. We look forward to our potential partnership!
+
+Your American Red Cross</textOnly>
+    <type>custom</type>
+    <uiType>Aloha</uiType>
+</EmailTemplate>

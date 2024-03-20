@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+        <label><!-- Company Type --></label>
+        <name>Company_Type__c</name>
+        <picklistValues>
+            <masterLabel>Business</masterLabel>
+            <translation><!-- Business --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Church/Faith-Based Group</masterLabel>
+            <translation><!-- Church/Faith-Based Group --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Civic/Community</masterLabel>
+            <translation><!-- Civic/Community --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Education</masterLabel>
+            <translation><!-- Education --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Healthcare</masterLabel>
+            <translation><!-- Healthcare --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Media Outlet</masterLabel>
+            <translation><!-- Media Outlet --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Military/Government/NGO</masterLabel>
+            <translation><!-- Military/Government/NGO --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Other</masterLabel>
+            <translation><!-- Other --></translation>
+        </picklistValues>
+    </CustomFieldTranslation>

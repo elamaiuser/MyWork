@@ -1,0 +1,298 @@
+<template>
+
+    <template if:true={showSpinner}>
+        <lightning-spinner class="spins" size="medium"></lightning-spinner>
+    </template>
+    
+    <template if:false={driveHasGenerated}>
+        <div if:false={showSpinner} class="slds-align_absolute-center slds-p-around_large">
+            <lightning-icon icon-name="utility:warning" size="x-small" alternative-text="Warning!" title="Warning"></lightning-icon>
+            <span class="slds-m-left--small">Details within this tab will be visible only after the Drive has been Generated.</span>
+        </div>
+    </template>
+    
+    <template if:true={driveHasGenerated}>
+        <div class="slds-clearfix slds-page-header slds-page-header_record-home fixed-position">
+            <div class="slds-page-header__row">
+                <div class="slds-page-header__col-title slds-grid">
+                    <template if:true={showCloseButton}>
+                        <ul class="slds-button-group-list slds-m-right_small">
+                            <li><lightning-button label="Close" icon-name="utility:chevronleft" variant="brand-outline" onclick={btnCloseClicked}></lightning-button></li>
+                        </ul>
+                    </template>
+                </div>
+                <div class="slds-page-header__col-actions">
+                    <div class="slds-page-header__controls">
+                        <div class="slds-page-header__control">
+                            <c-slwc-error-popover></c-slwc-error-popover>
+                            <template if:true={showAllocateButton}>
+                                <lightning-button label="Drive Staffing" class="slds-p-right_small" variant="brand"
+                                    onclick={btnAllocateClicked}></lightning-button>
+                            </template>
+                            <template if:true={showCreateSurrogateDriveButton}>
+                                <lightning-button label="Create Surrogate Drive" variant="neutral" class="slds-p-right_small" 
+                                    onclick={btnCreateSurrogateDriveClicked}></lightning-button>
+                            </template>
+                            <template if:true={showRemoveHoldButton}>
+                                <lightning-button label="Remove Hold" class="slds-p-right_x-small" variant="brand" onclick={btnRemoveHoldClicked}></lightning-button>
+                            </template>
+                            <template if:true={showSaveButtons}>
+                                <template if:true={isFixedSiteDrive}>
+                                    <template if:true={showDCRWarning}>
+                                        <lightning-button label="Approve DCR" variant="brand" onclick={btnApproveDCRClicked}></lightning-button>
+                                    </template>
+                                    <template if:false={showDCRWarning}>
+                                        <lightning-button label="Save" variant="brand" onclick={btnSaveClicked}></lightning-button>
+                                    </template>
+                                </template>
+                                <template if:false={isFixedSiteDrive}>
+                                    <lightning-button if:true={showSaveDraftButton} label="Save Draft" class="slds-p-right_x-small" variant="brand" onclick={btnSaveDraftClicked}></lightning-button>
+                                    <lightning-button if:true={showHoldButton} label="Hold Drive" disabled={disabledHoldButton} class="slds-p-right_x-small" variant="brand" onclick={btnHoldClicked}></lightning-button>
+                                    <template if:true={showApproveDriveSubmissionBtn}>
+                                        <lightning-button if:true={showSubmitButton} label="Approve Drive Submission" variant="brand" onclick={btnApproveDriveSubmissionClicked}></lightning-button>
+                                    </template>
+                                    <template if:false={showApproveDriveSubmissionBtn}>
+                                        <lightning-button if:true={showSubmitButton} label="Submit" variant="success" onclick={btnSubmitClicked}></lightning-button>
+                                    </template>
+                                    <template if:true={showDCRWarning}>
+                                        <lightning-button if:true={showSaveButton} label="Approve DCR" variant="brand" onclick={btnApproveDCRClicked}></lightning-button>
+                                    </template>
+                                    <template if:false={showDCRWarning}>
+                                        <lightning-button if:true={showSaveButton} label="Save" variant="brand" onclick={btnSaveClicked}></lightning-button>
+                                    </template>
+                                </template>
+                            </template>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <template if:true={drive}>
+                <div class="slds-page-header__row slds-page-header__row_gutters">
+                    <div class="slds-page-header__col-details">
+                        <ul class="slds-page-header__detail-row">
+                            <li class="slds-page-header__detail-block">
+                                <div class="slds-text-title slds-truncate">Account Manager</div>
+                                <div if:true={drive.driveOwner} class="slds-truncate">{drive.driveOwner.name}</div>
+                            </li>
+                            <li class="slds-page-header__detail-block">
+                                <div class="slds-text-title slds-truncate">Account</div>
+                                <div if:true={drive.account} class="slds-truncate">
+                                    <a href={accountUrl} target="_blank">{drive.account.name}</a>
+                                </div>
+                            </li>
+                            <li class="slds-page-header__detail-block">
+                                <div class="slds-text-title slds-truncate">Day of Week</div>
+                                <div class="slds-truncate">
+                                    {driveDateOfWeek}
+                                </div>
+                            </li>
+                            <li class="slds-page-header__detail-block">
+                                <div class="slds-text-title slds-truncate">Drive Date</div>
+                                <div class="slds-truncate">
+                                    <lightning-formatted-date-time value={drive.driveDate}></lightning-formatted-date-time>
+                                </div>
+                            </li>
+                            <li class="slds-page-header__detail-block">
+                                <div class="slds-text-title slds-truncate">Start Time</div>
+                                <div class="slds-truncate"><lightning-formatted-time value={drive.startTime}></lightning-formatted-time></div>
+                            </li>
+                            <li class="slds-page-header__detail-block">
+                                <div class="slds-text-title slds-truncate" >End Time</div>
+                                <div class="slds-truncate"><lightning-formatted-time value={drive.endTime}></lightning-formatted-time></div>
+                            </li>
+                            <li class="slds-page-header__detail-block">
+                                <div class="slds-text-title slds-truncate">UFID</div>
+                                <div class="slds-truncate">{drive.ufid}</div>
+                            </li>
+                            <li class="slds-page-header__detail-block" style="max-width: initial; grid-column: span 2;">
+                                <div class="slds-text-title slds-truncate">Site Address</div>
+                                <div if:true={drive.driveSite} class="slds-truncate" title={drive.driveSite.address}>{drive.driveSite.address}</div>
+                            </li>
+                            <li class="slds-page-header__detail-block">
+                                <div class="slds-text-title slds-truncate">Accepts Automation</div>
+                                <div if:true={drive.account} class="slds-truncate">{drive.account.acceptsAutomation}</div>
+                            </li>
+                            <li class="slds-page-header__detail-block">
+                                <div class="slds-text-title slds-truncate">Max Auto Machines</div>
+                                <div if:true={drive.driveSite} class="slds-truncate">{drive.driveSite.maxAutoMachines}</div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </template>
+        </div>
+        
+        <template if:true={drive}>
+            <c-slwc-drive-compact-view drive-details={drive} master-data-details={masterData} ondrivedatachanged={onDriveDataChanged} style="display:block;"></c-slwc-drive-compact-view>
+        </template>
+    
+        <div class="slds-notify slds-notify_alert slds-alert_warning slds-m-top_large" role="alert" style="margin-bottom: var(--lwc-cardSpacingMargin);" if:true={showDCRWarning}>
+            <h2>
+                <lightning-icon class="slds-m-right_x-small slds-current-color" icon-name="utility:warning" size="x-small"></lightning-icon>
+                Drive Change Request has been applied to the Drive.
+            </h2>
+        </div> 
+
+        <div class="slds-notify slds-notify_alert slds-alert_warning slds-m-top_large" role="alert" style="margin-bottom: var(--lwc-cardSpacingMargin);" if:true={showNoTravelDataWarning}>
+            <h2>
+                <lightning-icon class="slds-m-right_x-small slds-current-color" icon-name="utility:warning" size="x-small"></lightning-icon>
+                No Travel Time Data.
+            </h2>
+        </div> 
+    
+        <div class="slds-grid slds-wrap slds-col slds-size_1-of-1" style="display:block; margin-bottom: var(--lwc-cardSpacingMargin); margin-top: 1rem;">
+            <div class="slds-col slds-size_1-of-1 slds-tabs_card">
+                <lightning-tabset ondrivedatachanged={onDriveDataChanged} active-tab-value={currentTab}>
+    
+                    <lightning-tab label="Drive Details" show-error-indicator={tabDetailsError} value={TABS.DRIVE_DETAILS} onactive={handleChangeTab}>
+                        <template if:true={showDriveDetailsTab}>
+                            <template if:true={drive}>
+                                <c-slwc-drive-details 
+                                    record-id={recordId}
+                                    drive={drive} 
+                                    master-data={masterData} 
+                                    show-errors={showErrors}
+                                ></c-slwc-drive-details>
+                            </template>
+                        </template>
+                    </lightning-tab>
+                    
+                    <lightning-tab label="Drive Shifts" show-error-indicator={tabShiftsError} value={TABS.DRIVE_SHIFTS} onactive={handleChangeTab}>
+                        <template if:true={showDriveShiftsTab}>
+                            <template if:true={drive}>
+                                <c-slwc-drive-shifts 
+                                    drive={drive} 
+                                    master-data={masterData} 
+                                    show-errors={showErrors} 
+                                    onresetappointments={handleResetAppointments}
+                                    onregenerateappointments={handleRegenerateAppointments}
+                                    onsaveappointment={handleSaveAppointment}
+                                    ondeleteappointment={handleDeleteAppointment}
+                                    onshowdriveshiftsmetadatamodal={showDriveShiftsMetadataModal}
+                                ></c-slwc-drive-shifts>
+                            </template>
+                        </template>
+                    </lightning-tab>
+
+                    <lightning-tab label="Scheduling Progress" value={TABS.SCHEDULING_PROGRESS} onactive={handleChangeTab}>
+                        <template if:true={showSchedulingProgressTab}>
+                            <template if:true={drive}>
+                                <c-slwc-drive-management-sub-tab name="schedulingProgress" drive={drive} master-data={masterData}></c-slwc-drive-management-sub-tab>
+                            </template>
+                        </template>
+                    </lightning-tab>
+
+                    <template if:true={isFixedSiteDrive}>
+                        <lightning-tab label="Fixed Site" value={TABS.FIXED_SITE} onactive={handleChangeTab}>
+                            <template if:true={showFixedSiteTab}>
+                                <template if:true={drive}>
+                                    <c-slwc-drive-management-sub-tab name="fixedSite" drive={drive} master-data={masterData}></c-slwc-drive-management-sub-tab>
+                                </template>
+                            </template>
+                        </lightning-tab>
+                    </template>
+    
+                    <template if:true={isWbFixedSiteDrive}>
+                        <lightning-tab label="Fixed Site (WB)" value={TABS.WB_FIXED_SITE} onactive={handleChangeTab}>
+                            <template if:true={showWbFixedSiteTab}>
+                                <template if:true={drive}>
+                                    <c-slwc-drive-management-sub-tab name="wbFixedSite" drive={drive} master-data={masterData}></c-slwc-drive-management-sub-tab>
+                                </template>
+                            </template>
+                        </lightning-tab>
+                    </template>
+    
+                    <template if:true={isMobileDrive}>
+                        <lightning-tab label="Assets (Mobile)" value={TABS.MOBILE} onactive={handleChangeTab}>
+                            <template if:true={showMobileTab}>
+                                <template if:true={drive}>
+                                    <c-slwc-drive-management-sub-tab name="mobile" drive={drive} master-data={masterData}></c-slwc-drive-management-sub-tab>
+                                </template>
+                            </template>
+                        </lightning-tab>
+                    </template>
+                  
+                    <lightning-tab label="Productivity" value={TABS.PRODUCTIVITY} onactive={handleChangeTab}>
+                        <template if:true={showProductivityTab}>
+                            <template if:true={drive}>
+                                <c-slwc-drive-management-sub-tab name="productivity" drive={drive} master-data={masterData}></c-slwc-drive-management-sub-tab>
+                            </template>
+                        </template>
+                    </lightning-tab>
+                   
+                    <lightning-tab label="Account Information" value={TABS.ACCOUNT_INFORMATION} onactive={handleChangeTab}>
+                        <template if:true={showAccountInformationTab}>
+                            <template if:true={drive}>
+                                <c-slwc-drive-management-sub-tab name="accountInformation" drive={drive} master-data={masterData}></c-slwc-drive-management-sub-tab>
+                            </template>
+                        </template>
+                    </lightning-tab>
+                    
+                    <lightning-tab label="System Information" value={TABS.SYSTEM_INFORMATION} onactive={handleChangeTab}>
+                        <template if:true={showSystemInformationTab}>
+                            <template if:true={drive}>
+                                <c-slwc-drive-management-sub-tab name="systemInformation" drive={drive} master-data={masterData}></c-slwc-drive-management-sub-tab>
+                            </template>
+                        </template>
+                    </lightning-tab>
+                    
+                    <template if:true={isMobileDrive}>
+                        <lightning-tab label="Linked Drives" value={TABS.MULTI_DAY_LINKED_DRIVES} onactive={handleChangeTab}>
+                            <template if:true={showMultiDayLinkedDrivesTab}>
+                                <template if:true={drive}>
+                                    <c-slwc-linked-drives 
+                                        drive={drive} 
+                                        read-only={masterData.fieldReadonlyMap.linkedDrives}
+                                    ></c-slwc-linked-drives>
+                                </template>
+                            </template>
+                        </lightning-tab>
+                    </template>
+                    
+                </lightning-tabset>
+            </div>
+        </div>
+    
+        <c-slwc-confirm-modal
+            is-open={confirmModalData.isOpen}
+            title={confirmModalData.title}
+            message={confirmModalData.message}
+            handle-on-close={confirmModalData.onClose}
+            confirm-btn-label={confirmModalData.confirmBtnLabel}
+            cancel-btn-label={confirmModalData.cancelBtnLabel}
+            size='x-small'>
+        </c-slwc-confirm-modal>
+    
+        <c-slwc-pending-action-drive-confirm-modal
+            drive-generator-instance={driveGeneratorInstance}
+            master-data={masterData}
+            is-open={pendingActionDriveConfirmModalData.isOpen}
+            onclose={hidePendingActionDriveConfirmModal}
+            onsave={savePendingActionDriveConfirmModal}>
+        </c-slwc-pending-action-drive-confirm-modal>
+    
+        <c-slwc-drive-staffing-details if:false={isMobile}
+            disable-transfer
+            read-only={masterData.fieldReadonlyMap.driveShifts}
+            is-open={driveSideMenuData.shown}
+            record-id={driveSideMenuData.recordId}
+            onclose={handleCloseDriveStaffingDetails}
+            onsave={handleSaveDriveStaffingDetails}
+            ondispatched={handleDispatchedDriveStaffingDetails}
+            allocate-assets-only={isAllocateAssetsOnly}>
+        </c-slwc-drive-staffing-details>
+    
+        <c-slwc-drive-shift-job-modal if:true={isMobile}></c-slwc-drive-shift-job-modal>
+        <c-slwc-drive-shift-tag-modal if:true={isMobile}></c-slwc-drive-shift-tag-modal>
+
+        <c-slwc-dual-role-assignment-modal></c-slwc-dual-role-assignment-modal>
+
+        <c-slwc-drive-shifts-metadata-modal
+            master-data={masterData}
+            drive={drive}
+            is-open={driveShiftsMetadataModalData.isOpen}
+            onsave={saveDriveShiftsMetadataModal}
+            onclose={hideDriveShiftsMetadataModal}>
+        </c-slwc-drive-shifts-metadata-modal>
+    </template>
+</template>

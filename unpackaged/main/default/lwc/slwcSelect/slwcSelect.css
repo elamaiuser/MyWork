@@ -1,0 +1,29 @@
+.slds-select_container.transparent .slds-select {
+  background: transparent;
+  border: 0;
+  outline: 0;
+  opacity: 1 !important;
+  box-shadow: none;
+  padding-right: 0.25rem;
+  padding-left: 0.25rem;
+  text-align: center;
+  text-align-last: center;
+  -moz-text-align-last: center;
+  cursor: pointer;
+}
+
+.slds-select_container.transparent .slds-select:disabled {
+  cursor: not-allowed;
+}
+
+.slds-select_container.transparent:before, .slds-select_container.transparent:after {
+  display: none;
+}
+
+.errors {
+  display: none;
+}
+
+.errors.slds-has-error {
+  display: block;
+}

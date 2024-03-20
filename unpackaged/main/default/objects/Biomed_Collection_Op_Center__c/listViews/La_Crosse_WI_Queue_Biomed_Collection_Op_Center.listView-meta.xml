@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>La_Crosse_WI_Queue_Biomed_Collection_Op_Center</fullName>
+    <filterScope>Queue</filterScope>
+    <label>La Crosse WI - Queue</label>
+    <queue>La_Crosse_WI_Queue</queue>
+    <sharedTo>
+        <allInternalUsers></allInternalUsers>
+    </sharedTo>
+</ListView>

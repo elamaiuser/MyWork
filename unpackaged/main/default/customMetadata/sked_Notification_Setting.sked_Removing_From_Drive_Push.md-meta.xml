@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomMetadata xmlns="http://soap.sforce.com/2006/04/metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <label>Removing From Drive OneOff</label>
+    <protected>false</protected>
+    <values>
+        <field>sked_Active__c</field>
+        <value xsi:type="xsd:boolean">true</value>
+    </values>
+    <values>
+        <field>sked_Content_Renderer__c</field>
+        <value xsi:nil="true" />
+    </values>
+    <values>
+        <field>sked_Custom_Filter__c</field>
+        <value xsi:nil="true" />
+    </values>
+    <values>
+        <field>sked_Custom_Target_Destination__c</field>
+        <value xsi:nil="true" />
+    </values>
+    <values>
+        <field>sked_Destination_Field__c</field>
+        <value xsi:type="xsd:string">sked__Resource__c</value>
+    </values>
+    <values>
+        <field>sked_Email_From_Address_Field__c</field>
+        <value xsi:nil="true" />
+    </values>
+    <values>
+        <field>sked_Email_Target_Field__c</field>
+        <value xsi:nil="true" />
+    </values>
+    <values>
+        <field>sked_Filter__c</field>
+        <value xsi:type="xsd:string">sked__Resource__r.sked__Resource_Type__c = &#39;Person&#39; AND sked__Time_Published__c != NULL</value>
+    </values>
+    <values>
+        <field>sked_Notification_Target_Field__c</field>
+        <value xsi:type="xsd:string">sked__Resource__r.sked__User__c</value>
+    </values>
+    <values>
+        <field>sked_Notification_Type__c</field>
+        <value xsi:type="xsd:string">oneoff</value>
+    </values>
+    <values>
+        <field>sked_Oneoff_Protocol_Field__c</field>
+        <value xsi:type="xsd:string">sked__Resource__r.sked__Notification_Type__c</value>
+    </values>
+    <values>
+        <field>sked_Sending_From_Email_Address__c</field>
+        <value xsi:nil="true" />
+    </values>
+    <values>
+        <field>sked_Subject__c</field>
+        <value xsi:type="xsd:string">Resource Unallocation</value>
+    </values>
+    <values>
+        <field>sked_Target_Field_Value__c</field>
+        <value xsi:type="xsd:string">Deleted</value>
+    </values>
+    <values>
+        <field>sked_Target_Field__c</field>
+        <value xsi:type="xsd:string">sked__Status__c</value>
+    </values>
+    <values>
+        <field>sked_Target_SObject__c</field>
+        <value xsi:type="xsd:string">sked__Job_Allocation__c</value>
+    </values>
+    <values>
+        <field>sked_Template__c</field>
+        <value xsi:type="xsd:string">Hi {{sked__Resource__r.Name}},
+
+You&#39;re unassigned from the event {{sked__Job__r.sked_Drive__r.Name}} on {{sked__Job__r.sked_Drive__r.sked_Drive_Date_Text__c}} with role {{sked__Job__r.sked_Resource_Role__c}}</value>
+    </values>
+    <values>
+        <field>sked_Trigger__c</field>
+        <value xsi:type="xsd:string">Update</value>
+    </values>
+</CustomMetadata>

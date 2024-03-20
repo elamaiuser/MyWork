@@ -1,0 +1,54 @@
+<template>
+    <template if:true={showModal}>
+        <section role="dialog" tabindex="-1"
+                aria-labelledby="modal-heading-01"
+                aria-modal="true"
+                aria-describedby="modal-content-id-1"
+                class="slds-modal slds-fade-in-open slds-modal_large">
+            <div class="slds-modal__container" style="transform: initial;">
+                <header class="slds-modal__header">
+                    <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close" onclick={handleCloseModal}>
+                        <lightning-icon icon-name="utility:close" alternative-text="close" variant="inverse" size="small" ></lightning-icon>
+                    </button>
+                    
+                    <h2 class="slds-text-heading_medium slds-hyphenate">{title}</h2>
+                </header>
+
+                <div class="slds-theme_default">
+                    <div class="slds-modal__content full-height__modal-content" style="overflow: initial; position:relative;">
+                        <lightning-tabset>
+                            <lightning-tab label="Drive List">
+                                <c-slwc-drive-calendar-drive-list
+                                    filters={driveCalendarDriveListFilters}
+                                    is-readonly={isReadonly}>
+                                </c-slwc-drive-calendar-drive-list>
+                            </lightning-tab>
+                            <lightning-tab label="Activity List">
+                                <c-slwc-drive-calendar-activity-list
+                                    filters={driveCalendarDriveListFilters}>
+                                </c-slwc-drive-calendar-activity-list>
+                            </lightning-tab>
+                            <template if:true={showNonIntegratedDrivesTab}>
+                                <lightning-tab label="Non Integrated Drives">
+                                    <c-slwc-drive-calendar-drive-list
+                                        filters={nonIntegratedDrivesTabFilters}
+                                        is-readonly={isReadonly}>
+                                    </c-slwc-drive-calendar-drive-list>
+                                </lightning-tab>
+                            </template>
+                        </lightning-tabset>
+                    </div>
+                </div>
+
+                <footer class="slds-modal__footer light-background">
+                    <ul class="slds-button-group-row">
+                        <li class="slds-button-group-item">
+                            <button onclick={handleCloseModal} class="slds-button slds-button_neutral">Close</button>
+                        </li>
+                    </ul>
+                </footer>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+    </template>
+</template>

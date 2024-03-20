@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CompactLayout xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>sked_Drive_Shift_Compact_Layout</fullName>
+    <fields>sked_Drive_Shift_Name__c</fields>
+    <fields>sked_Start__c</fields>
+    <fields>sked_Finish__c</fields>
+    <fields>sked_Staff_Setup__c</fields>
+    <label>Drive Shift Compact Layout</label>
+</CompactLayout>

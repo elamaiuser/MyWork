@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>provide_sponsor_the_name_of_collections__c</fullName>
+    <defaultValue>false</defaultValue>
+    <externalId>false</externalId>
+    <inlineHelpText>Provide the Sponsor the name of the Collections Supervisor or Charge/Lead who will be managing the blood drive.</inlineHelpText>
+    <label>provide sponsor the name of collections</label>
+    <type>Checkbox</type>
+</CustomField>

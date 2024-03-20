@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>opps_with_outside_site</fullName>
+    <columns>Day_of_Week__c</columns>
+    <columns>Drive_Date__c</columns>
+    <columns>OPPORTUNITY.NAME</columns>
+    <columns>ACCOUNT.NAME</columns>
+    <columns>OPPORTUNITY.STAGE_NAME</columns>
+    <columns>Anticipated_Registered_Donors__c</columns>
+    <columns>Account_Manager__c</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>Drive_Date__c</field>
+        <operation>greaterOrEqual</operation>
+        <value>TODAY</value>
+    </filters>
+    <filters>
+        <field>Drive_Status__c</field>
+        <operation>notEqual</operation>
+        <value>Complete,Cancel</value>
+    </filters>
+    <filters>
+        <field>OPPORTUNITY.RECORDTYPE</field>
+        <operation>equals</operation>
+        <value>Opportunity.Mobile_Opp</value>
+    </filters>
+    <filters>
+        <field>Physical_Location_type__c</field>
+        <operation>equals</operation>
+        <value>Inside</value>
+    </filters>
+    <filters>
+        <field>OPPORTUNITY.TYPE</field>
+        <operation>equals</operation>
+        <value>Outside,Inside/Outside</value>
+    </filters>
+    <label>opps with outside site</label>
+</ListView>

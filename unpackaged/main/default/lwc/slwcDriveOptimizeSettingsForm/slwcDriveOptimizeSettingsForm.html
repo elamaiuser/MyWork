@@ -1,0 +1,161 @@
+<template>
+    <div class="slds-grid">
+        <div class="slds-size_4-of-12 slds-p-horizontal_small">
+            <article class="slds-card">
+                <div class="slds-card__header slds-grid">
+                    <header class="slds-media slds-media_center slds-has-flexi-truncate">
+                        <div class="slds-media__body">
+                            <h2 class="slds-card__header-title">
+                                <a href="javascript:void(0);" class="slds-card__header-link slds-truncate">
+                                    <span>Scoring Factors</span>
+                                </a>
+                            </h2>
+                        </div>
+                        <div class="slds-no-flex">
+                            <lightning-button label="Reset" onclick={handleResetScoringFactors} variant="neutral"></lightning-button>
+                        </div>
+                    </header>
+                </div>
+                <div class="slds-card__body slds-card__body_inner">
+                    <template if:true={settings}>
+                        <div class="slds-m-bottom_small slds-grid slds-grid_vertical-align-center">
+                            <div class="slds-size_4-of-12">
+                                <label class="slds-form-element__label">Account Preferences</label>
+                            </div>
+                            <div class="slds-size_8-of-12">
+                                <lightning-combobox
+                                    name="accountPreferencesScore"
+                                    label="Hidden" 
+                                    variant="label-hidden"
+                                    value={settings.accountPreferencesScore}
+                                    placeholder="Select Score"
+                                    options={scoringFactors}
+                                    onchange={handleOnChange}>
+                                </lightning-combobox>
+                            </div>
+                        </div>
+                        <div class="slds-m-bottom_small slds-grid slds-grid_vertical-align-center">
+                            <div class="slds-size_4-of-12">
+                                <label class="slds-form-element__label">Site Preferences</label>
+                            </div>
+                            <div class="slds-size_8-of-12">
+                                <lightning-combobox
+                                    name="locationPreferencesScore"
+                                    label="Hidden" 
+                                    variant="label-hidden"
+                                    value={settings.locationPreferencesScore}
+                                    placeholder="Select Score"
+                                    options={scoringFactors}
+                                    onchange={handleOnChange}>
+                                </lightning-combobox>
+                            </div>
+                        </div>
+                        <div class="slds-m-bottom_small slds-grid slds-grid_vertical-align-center">
+                            <div class="slds-size_4-of-12">
+                                <label class="slds-form-element__label">Geographic Preferences</label>
+                            </div>
+                            <div class="slds-size_8-of-12">
+                                <lightning-combobox
+                                    name="geographicPreferencesScore"
+                                    label="Hidden" 
+                                    variant="label-hidden"
+                                    value={settings.geographicPreferencesScore}
+                                    placeholder="Select Score"
+                                    options={scoringFactors}
+                                    onchange={handleOnChange}>
+                                </lightning-combobox>
+                            </div>
+                        </div>
+                        <div class="slds-m-bottom_small slds-grid slds-grid_vertical-align-center">
+                            <div class="slds-size_4-of-12">
+                                <label class="slds-form-element__label">Hire Date</label>
+                            </div>
+                            <div class="slds-size_8-of-12">
+                                <lightning-combobox
+                                    name="seniorityRankScore"
+                                    label="Hidden" 
+                                    variant="label-hidden"
+                                    value={settings.seniorityRankScore}
+                                    placeholder="Select Score"
+                                    options={scoringFactors}
+                                    onchange={handleOnChange}>
+                                </lightning-combobox>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+            </article>
+        </div>
+
+        <div class="slds-size_4-of-12 slds-p-horizontal_small">
+            <article class="slds-card">
+                <div class="slds-card__header slds-grid">
+                    <header class="slds-media slds-media_center slds-has-flexi-truncate">
+                        <div class="slds-media__body">
+                            <h2 class="slds-card__header-title">
+                                <a href="javascript:void(0);" class="slds-card__header-link slds-truncate">
+                                    <span>Constraints</span>
+                                </a>
+                            </h2>
+                        </div>
+                        <div class="slds-no-flex">
+                            <lightning-button if:true={showSaveButton} label="Save" onclick={handleSave} variant="brand"></lightning-button>
+                        </div>
+                    </header>
+                </div>
+                <div class="slds-card__body slds-card__body_inner">
+                    <template if:true={settings}>
+                        <div class="slds-m-bottom_small slds-grid slds-grid_vertical-align-center">
+                            <div class="slds-size_4-of-12">
+                                <label class="slds-form-element__label">Account Restrictions</label>
+                            </div>
+                            <div class="slds-size_8-of-12">
+                                <lightning-input type="toggle" name="accountRestrictions" checked={settings.accountRestrictions} label="Hidden" variant="label-hidden" onchange={handleOnChange}></lightning-input>
+                            </div>
+                        </div>
+                        <div class="slds-m-bottom_small slds-grid slds-grid_vertical-align-center">
+                            <div class="slds-size_4-of-12">
+                                <label class="slds-form-element__label">Site Restrictions</label>
+                            </div>
+                            <div class="slds-size_8-of-12">
+                                <lightning-input type="toggle" name="locationRestrictions" checked={settings.locationRestrictions} label="Hidden" variant="label-hidden" onchange={handleOnChange}></lightning-input>
+                            </div>
+                        </div>
+                        <div class="slds-m-bottom_small slds-grid slds-grid_vertical-align-center">
+                            <div class="slds-size_4-of-12">
+                                <label class="slds-form-element__label">Maximum Weekly Hours</label>
+                            </div>
+                            <div class="slds-size_8-of-12">
+                                <lightning-input type="toggle" name="maximumWeeklyHours" checked={settings.maximumWeeklyHours} label="Hidden" variant="label-hidden" onchange={handleOnChange}></lightning-input>
+                            </div>
+                        </div>
+                        <div class="slds-m-bottom_small slds-grid slds-grid_vertical-align-center">
+                            <div class="slds-size_4-of-12">
+                                <label class="slds-form-element__label">PTO/Availability</label>
+                            </div>
+                            <div class="slds-size_8-of-12">
+                                <lightning-input type="toggle" name="ptoAvailability" checked={settings.ptoAvailability} label="Hidden" variant="label-hidden" onchange={handleOnChange}></lightning-input>
+                            </div>
+                        </div>
+                        <div class="slds-m-bottom_small slds-grid slds-grid_vertical-align-center">
+                            <div class="slds-size_4-of-12">
+                                <label class="slds-form-element__label">Role / Certification Match</label>
+                            </div>
+                            <div class="slds-size_8-of-12">
+                                <lightning-input type="toggle" name="roleCertificationMatch" checked={settings.roleCertificationMatch} label="Hidden" variant="label-hidden" onchange={handleOnChange}></lightning-input>
+                            </div>
+                        </div>
+                        <div class="slds-m-bottom_small slds-grid slds-grid_vertical-align-center">
+                            <div class="slds-size_4-of-12">
+                                <label class="slds-form-element__label">Role Priorities</label>
+                            </div>
+                            <div class="slds-size_8-of-12">
+                                <lightning-input type="toggle" name="rolePriorities" checked={settings.rolePriorities} label="Hidden" variant="label-hidden" onchange={handleOnChange}></lightning-input>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+            </article>
+        </div>
+    </div>
+</template>

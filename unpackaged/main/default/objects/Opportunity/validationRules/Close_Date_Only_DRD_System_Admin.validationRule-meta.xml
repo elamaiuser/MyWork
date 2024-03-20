@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Close_Date_Only_DRD_System_Admin</fullName>
+    <active>false</active>
+    <description>The close date field can only be edited by a DRD user or system admin.</description>
+    <errorConditionFormula>AND(
+ISCHANGED(CloseDate),
+ Bypass_Validation_Rule__c == FALSE,
+(AND($Profile.Name &lt;&gt; &quot;System Administrator&quot;, $Profile.Name &lt;&gt; &quot;DRD Profile&quot;, $Profile.Name &lt;&gt; &quot;DRD Manager&quot;, $Profile.Name &lt;&gt; &quot;APS Planner&quot;, $Profile.Name &lt;&gt; &quot;APS Scheduler&quot;, $Profile.Name &lt;&gt; &quot;Global Admin&quot;, $Profile.Name &lt;&gt; &quot;APS Admin&quot;, $Profile.Name &lt;&gt; &quot;Recruitment Admin&quot;)))</errorConditionFormula>
+    <errorMessage>Only a DRD user, APS Planner, APS Scheduler, Global Admin ,APS Admin, Recruitment Admin or System Administrator is able to update the Close Date.</errorMessage>
+</ValidationRule>

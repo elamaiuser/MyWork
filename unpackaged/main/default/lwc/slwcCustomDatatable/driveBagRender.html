@@ -1,0 +1,7 @@
+<template>
+    <div class="slds-p-horizontal_x-small" if:true={value}>
+        <div for:each={value} for:item="item" key={item.key}>
+            <div>{item.bagType} ({item.quantity})</div>
+          </div>
+      </div>
+</template>

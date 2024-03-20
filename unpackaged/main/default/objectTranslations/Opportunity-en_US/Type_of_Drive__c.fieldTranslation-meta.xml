@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+        <label><!-- Type of Drive --></label>
+        <name>Type_of_Drive__c</name>
+        <picklistValues>
+            <masterLabel>Fixed Site</masterLabel>
+            <translation><!-- Fixed Site --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Mobile</masterLabel>
+            <translation><!-- Mobile --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>RSMO</masterLabel>
+            <translation><!-- RSMO --></translation>
+        </picklistValues>
+    </CustomFieldTranslation>

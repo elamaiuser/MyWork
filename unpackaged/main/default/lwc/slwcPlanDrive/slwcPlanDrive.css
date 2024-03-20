@@ -1,0 +1,9 @@
+.plan-drive-page {
+  background: #fff;
+}
+
+.plan-drive-page .slds-page-header {
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+  border-bottom: 1px solid #d8dde6;
+}

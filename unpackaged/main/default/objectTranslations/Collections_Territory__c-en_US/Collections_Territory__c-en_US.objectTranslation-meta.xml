@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObjectTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+    <caseValues>
+        <plural>false</plural>
+        <value>Collections Zipcode</value>
+    </caseValues>
+    <caseValues>
+        <plural>true</plural>
+        <value>Collections Zipcodes</value>
+    </caseValues>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <layouts>
+        <layout>Collections Territory Layout</layout>
+        <sections>
+            <label><!-- Collection Operations Information --></label>
+            <section>Collection Operations Information</section>
+        </sections>
+        <sections>
+            <label><!-- Custom Links --></label>
+            <section>Custom Links</section>
+        </sections>
+        <sections>
+            <label><!-- Humanitarian Services Information --></label>
+            <section>Humanitarian Services Information</section>
+        </sections>
+        <sections>
+            <label><!-- Market Manager Information --></label>
+            <section>Market Manager Information</section>
+        </sections>
+    </layouts>
+    <layouts>
+        <layout>Collections Zip Code Layout</layout>
+        <sections>
+            <label><!-- Collection Operations Information --></label>
+            <section>Collection Operations Information</section>
+        </sections>
+        <sections>
+            <label><!-- Custom Links --></label>
+            <section>Custom Links</section>
+        </sections>
+        <sections>
+            <label><!-- Humanitarian Services Information --></label>
+            <section>Humanitarian Services Information</section>
+        </sections>
+        <sections>
+            <label><!-- Market Manager Information --></label>
+            <section>Market Manager Information</section>
+        </sections>
+    </layouts>
+    <startsWith>Consonant</startsWith>
+</CustomObjectTranslation>

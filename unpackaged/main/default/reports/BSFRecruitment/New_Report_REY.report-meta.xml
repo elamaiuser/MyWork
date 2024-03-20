@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Report xmlns="http://soap.sforce.com/2006/04/metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <block>
+        <blockInfo>
+            <blockId>B0</blockId>
+            <joinTable>Account</joinTable>
+        </blockInfo>
+        <columns>
+            <field>Account$Name</field>
+        </columns>
+        <columns>
+            <field>Account$Earliest_Drive_Date__c</field>
+        </columns>
+        <columns>
+            <field>Account$Account_Manager__c</field>
+        </columns>
+        <columns>
+            <field>Account$CreatedDate</field>
+        </columns>
+        <format>Summary</format>
+        <name>Account with drive with opportun block 1</name>
+        <params>
+            <name>co</name>
+            <value>1</value>
+        </params>
+        <reportType>Account_with_drive_with_opportunity__c</reportType>
+        <scope>organization</scope>
+        <showGrandTotal>true</showGrandTotal>
+        <showSubTotals>true</showSubTotals>
+        <timeFrameFilter>
+            <dateColumn>Account$CreatedDate</dateColumn>
+            <endDate>2023-03-09</endDate>
+            <interval>INTERVAL_CUSTOM</interval>
+            <startDate>2023-01-29</startDate>
+        </timeFrameFilter>
+    </block>
+    <blockInfo>
+        <blockId xsi:nil="true"/>
+        <joinTable>Account</joinTable>
+    </blockInfo>
+    <format>MultiBlock</format>
+    <groupingsDown>
+        <dateGranularity>Day</dateGranularity>
+        <field>Account$District_Manager__c</field>
+        <sortOrder>Asc</sortOrder>
+    </groupingsDown>
+    <name>New Account</name>
+    <params>
+        <name>lsk</name>
+        <value>1</value>
+    </params>
+    <reportType>Account_with_drive_with_opportunity__c</reportType>
+    <showDetails>true</showDetails>
+</Report>

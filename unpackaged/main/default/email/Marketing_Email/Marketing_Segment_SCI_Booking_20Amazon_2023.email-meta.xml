@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<EmailTemplate xmlns="http://soap.sforce.com/2006/04/metadata">
+    <available>true</available>
+    <description>Booking Ask Amazon $20 Promo AM to Prospect</description>
+    <encodingKey>ISO-8859-1</encodingKey>
+    <letterhead>ARC_Logo_Test</letterhead>
+    <name>Marketing Segment_SCI_BookingAskProspect_$20Amazon_2023</name>
+    <style>formalLetter</style>
+    <subject>Help Save Lives by Hosting a Sickle Cell Blood Drive - Receive a $20 Amazon eGift Card!</subject>
+    <textOnly>Dear [Prospective Host],
+
+Every year, thousands of people are affected by sickle cell disease, and many of them rely on blood transfusions to stay healthy. Did you know, 1 in 3 African American blood donors are a match for people with sickle cell disease?
+
+That&#39;s why we are reaching out to you to ask if you would consider hosting a blood drive in support of sickle cell patients. Your support would be greatly appreciated and could make a real difference in the lives of those affected by sickle cell disease.
+
+Answer the call to help ensure that there is an adequate supply of healthy blood available for those who need it most. Hosting a blood drive is easy, and we would be honored to partner with you for this important cause. We are more than happy to answer any questions you may have and provide you with all the support you need.
+
+
+&lt;&lt;PROMOTION&gt;&gt; As a special thank you, every time you host a Red Cross blood drive between July 1, 2023 and June 30, 2024 the donors that come to give blood, will receive a $20 Amazon.com Gift Card* by email, all courtesy of our partners at Amazon.**
+
+We thank you in advance and acknowledging the important role you play in helping us meet the needs of patients. We hope to hear from you soon to schedule your lifesaving blood drive.
+
+
+Sincerely,
+
+&lt;AM Name&gt;
+
+
+*Restrictions apply, see amazon.com/gc-legal
+
+**Presenting donors who receive this offer and present to donate during the applicable promotional time frame are eligible to receive the above described e-gift card(s). This offer is non-transferable and not redeemable for cash. Limit one (1) per presenting donor unless otherwise indicated. [If a presenting donor qualifies for multiple offers, the donor will receive all offers unless otherwise indicated.] Instructions on how to redeem your gift card will be emailed to the address listed in the presenting donor’s American Red Cross donor profile approximately thirty (30) days after attempted donation(s). All gift cards are subject to individual merchant terms and conditions, and all trademarks are property of their respective owners. Merchants and offers are subject to change.  No substitutions by presenting donors. American Red Cross is not responsible for lost, damaged, corrupted or stolen gift cards and may replace any such cards at its sole discretion. Any questions or problems in connection with redeeming gift cards must be directed to the merchant.
+
+
+*Restrictions apply, see amazon.com/gc-legal
+
+**Presenting donors who receive this offer and present to donate during the applicable promotional time frame are eligible to receive the above described e-gift card(s). This offer is non-transferable and not redeemable for cash. Limit one (1) per presenting donor unless otherwise indicated. [If a presenting donor qualifies for multiple offers, the donor will receive all offers unless otherwise indicated.] Instructions on how to redeem your gift card will be emailed to the address listed in the presenting donor’s American Red Cross donor profile approximately thirty (30) days after attempted donation(s). All gift cards are subject to individual merchant terms and conditions, and all trademarks are property of their respective owners. Merchants and offers are subject to change.  No substitutions by presenting donors. American Red Cross is not responsible for lost, damaged, corrupted or stolen gift cards and may replace any such cards at its sole discretion. Any questions or problems in connection with redeeming gift cards must be directed to the merchant.</textOnly>
+    <type>html</type>
+    <uiType>Aloha</uiType>
+</EmailTemplate>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Queue xmlns="http://soap.sforce.com/2006/04/metadata">
+    <doesSendEmailToMembers>false</doesSendEmailToMembers>
+    <name>Toledo OH: RTVs</name>
+    <queueMembers>
+        <users>
+            <user>andrea.kreuzer@redcross.org</user>
+            <user>bonnie.flenner@redcross.org</user>
+            <user>diana.reaves@redcross.org</user>
+            <user>leigh.bouch@redcross.org</user>
+            <user>linda.hartman@redcross.org</user>
+            <user>matthew.savich@redcross.org</user>
+            <user>nancy.firth@redcross.org</user>
+            <user>robin.snow@redcross.org</user>
+            <user>sabrina.spikes@redcross.org</user>
+            <user>serena.bricker@redcross.org</user>
+            <user>tara.dickert@redcross.org</user>
+        </users>
+    </queueMembers>
+    <queueSobject>
+        <sobjectType>sked__Location__c</sobjectType>
+    </queueSobject>
+</Queue>

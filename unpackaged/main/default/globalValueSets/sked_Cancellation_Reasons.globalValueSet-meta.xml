@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GlobalValueSet xmlns="http://soap.sforce.com/2006/04/metadata">
+    <customValue>
+        <fullName>Reason 1</fullName>
+        <default>false</default>
+        <label>Reason 1</label>
+    </customValue>
+    <masterLabel>Cancellation Reasons</masterLabel>
+    <sorted>false</sorted>
+</GlobalValueSet>

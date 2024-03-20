@@ -1,0 +1,9 @@
+<div style="font-family:Verdana, Helvetica, sans-serif; font-size:12;">
+Dear {!Lead.FirstName} {!Lead.LastName},
+<br/><br/>
+ Thank you for expressing interest in becoming an American Red Cross blood drive partner. A representative in your area will contact you soon regarding next steps. As this time, you may experience a delay in response time due to the resounding response we have received to our recent ask. We appreciate your patience!
+<br/><br/>
+In the meantime, we invite you to visit RedCross.org to learn about even more ways you can get involved. We look forward to our potential partnership! 
+<br/><br/>
+Your American Red Cross
+</div>

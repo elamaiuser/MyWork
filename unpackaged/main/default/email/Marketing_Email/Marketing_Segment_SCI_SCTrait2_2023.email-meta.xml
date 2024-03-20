@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<EmailTemplate xmlns="http://soap.sforce.com/2006/04/metadata">
+    <available>true</available>
+    <description>Sickle Cell Trait Screening BPL to Donor Option 2</description>
+    <encodingKey>ISO-8859-1</encodingKey>
+    <letterhead>ARC_Logo_Test</letterhead>
+    <name>Marketing Segment_SCI_SCTrait2_2023</name>
+    <style>formalLetter</style>
+    <subject>There’s Power in Giving! - Be a Part of Saving Lives!</subject>
+    <textOnly>Dear &lt;name&gt;,
+Our upcoming blood drive is &lt;date/time&gt; at &lt;location&gt; and we need you to be a part of this lifesaving event
+
+Did you know? In the U.S., it is estimated that approximately 100,000 people have sickle cell disease — most who are of African descent and will require regular blood transfusions to help manage their disease.
+
+I am so pleased to share that the Red Cross expanded its testing to include sickle cell trait screening on all donations from self-identified African American, Black, and multiracial donors. This screening will help the Red Cross identify compatible blood types more quickly to help sickle cell patients and provide an additional health insight for donors.
+
+Here’s how you can help:
+
+Sign up to donate at RedCrossClood.org using sponsor code &lt;code&gt;, or via the Red Cross Blood Donor App, or by replying to me.
+Complete your health questionnaire via RapidPass® and save time on the day of the blood drive.
+Review the Sickle Cell Trait Screening FAQs and visit RedCrossBlood.org/SCTrait to learn more.
+Spread the word and bring friends, family and colleagues to donate.
+
+Together, we can create a way of positive change and ensure that everyone in need, has access to a diverse and sufficient blood supply. If you have any questions, please contact me, a Red Cross representative at 1-800-RED CROSS, or visit RedCrossBlood.org.
+
+Sincerely,
+
+&lt;Name&gt;</textOnly>
+    <type>html</type>
+    <uiType>Aloha</uiType>
+</EmailTemplate>

@@ -1,0 +1,5 @@
+<aura:component implements="flexipage:availableForAllPageTypes,flexipage:availableForRecordHome" access="global" >
+	<div class="slds-align_absolute-center" style="width: 15%;height: 40%;">
+		<img src="{!$Resource.ShowingLogowhenPremierCurrent}" />
+    </div>
+</aura:component>

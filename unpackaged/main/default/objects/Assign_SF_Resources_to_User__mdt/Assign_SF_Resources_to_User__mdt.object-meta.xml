@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <description>Used to assign users to permission sets, public groups, and queues</description>
+    <label>Assign SF Resources to User</label>
+    <pluralLabel>Assign SF Resources to Users</pluralLabel>
+    <visibility>Public</visibility>
+</CustomObject>

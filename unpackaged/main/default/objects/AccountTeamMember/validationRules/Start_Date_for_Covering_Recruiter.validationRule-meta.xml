@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Start_Date_for_Covering_Recruiter</fullName>
+    <active>true</active>
+    <description>Start Date should not be blank if the team member is a Covering Recruiter(Is Covering Recruiter is checked)</description>
+    <errorConditionFormula>AND
+  ( Is_Covering_Recruiter__c,
+	   ISNULL( Start_Date__c )
+		)</errorConditionFormula>
+    <errorDisplayField>Start_Date__c</errorDisplayField>
+    <errorMessage>Start Date should not be blank if Team Member is a Covering Recruiter</errorMessage>
+</ValidationRule>

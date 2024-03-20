@@ -1,0 +1,58 @@
+<template>
+
+    <section role="dialog" tabindex="-1" class="slds-modal slds-fade-in-open">
+        <lightning-spinner if:true={showSpinner} class="spins" size="medium"></lightning-spinner>
+
+        <div class="slds-modal__container">
+            <header class="slds-modal__header">
+                <div style="width: 3rem"></div>
+
+                <h2 class="slds-text-heading_medium slds-hyphenate">Search Criteria</h2>
+
+                <div style="width: 3rem">
+                    <span class="slds-text-heading_small" onclick={handleNext}>Next</span>
+                </div>
+            </header>
+            <div class="slds-modal__content slds-is-relative slds-p-around_medium">
+                <div class="slds-form">
+                    <div class="slds-m-top_x-small">
+                        <lightning-input 
+                            type="date" 
+                            name="driveDate" 
+                            label="Drive Date" 
+                            value={filters.driveDate} 
+                            required
+                            onchange={handleFiltersChanged} 
+                            autocomplete="off">
+                        </lightning-input>
+                    </div>  
+
+                    <div class="slds-m-top_x-small">
+                        <c-slwc-multi-picklist
+                            name="driveTypes"
+                            label="Drive Types"
+                            selected-by-default
+                            object-api-name="sked_Drive__c"
+                            field-api-name="sked_Type_of_Drive__c"
+                            default-values={filters.driveTypes}
+                            onpicklistchange={handleFiltersChanged}>
+                        </c-slwc-multi-picklist>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <c-slwc-confirm-modal
+        is-open={confirmModalData.isOpen}
+        mode={confirmModalData.mode}
+        title={confirmModalData.title}
+        message={confirmModalData.message}
+        handle-on-close={confirmModalData.onClose}
+        confirm-btn-label={confirmModalData.confirmBtnLabel}
+        cancel-btn-label={confirmModalData.cancelBtnLabel}
+        layer-index="2"
+        size='x-small'>
+    </c-slwc-confirm-modal>
+
+</template>

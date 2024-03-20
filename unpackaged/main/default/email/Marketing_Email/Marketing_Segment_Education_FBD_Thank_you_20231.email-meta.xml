@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<EmailTemplate xmlns="http://soap.sforce.com/2006/04/metadata">
+    <available>true</available>
+    <description>Principal Thank you - Future Blood Donor (K-8), Education Segment</description>
+    <encodingKey>ISO-8859-1</encodingKey>
+    <letterhead>ARC_Logo_Test</letterhead>
+    <name>Marketing Segment_Education_FBD_Thank you</name>
+    <style>formalLetter</style>
+    <subject>Thanks to you and your students</subject>
+    <textOnly>Dear [Insert Name],
+
+Thank you so much for your partnership with the American Red Cross and for allowing your school to participate in the Future Blood Donor program. We appreciate your initiative in offering this learning and leadership opportunity to your students.
+
+Your blood drive held at [School/Organization Name] on [date] resulted in [number] units of blood. The efforts of you, your staff, students and their families have helped boost the community blood supply and ensure patients have the lifesaving blood on which they depend. On behalf of hospital patients and their families, we are thankful for your commitment to the Red Cross blood program.
+
+A special thanks goes out to your students, and the hard work they did to recruit their family and friends to participate by donating blood - they are the real leaders of the program. I would also like to recognize [blood program leader] for the outstanding work done behind the scenes. We couldn’t do this important work without volunteers like [blood program leader].
+
+Thank you again for your partnership and all that you do for your students. Your support does not go unnoticed and we hope to build on this partnership with you.
+
+Sincerely,
+
+[Insert Name]</textOnly>
+    <type>html</type>
+    <uiType>Aloha</uiType>
+</EmailTemplate>

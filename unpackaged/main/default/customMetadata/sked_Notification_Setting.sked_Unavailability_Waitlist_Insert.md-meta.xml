@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomMetadata xmlns="http://soap.sforce.com/2006/04/metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <label>Unavailability Waitlist Insert</label>
+    <protected>false</protected>
+    <values>
+        <field>sked_Active__c</field>
+        <value xsi:type="xsd:boolean">false</value>
+    </values>
+    <values>
+        <field>sked_Content_Renderer__c</field>
+        <value xsi:nil="true" />
+    </values>
+    <values>
+        <field>sked_Custom_Filter__c</field>
+        <value xsi:type="xsd:string">sked_Waitlist_Confirmed__c != TRUE</value>
+    </values>
+    <values>
+        <field>sked_Custom_Target_Destination__c</field>
+        <value xsi:nil="true" />
+    </values>
+    <values>
+        <field>sked_Destination_Field__c</field>
+        <value xsi:type="xsd:string">sked__Resource__r.sked__Email__c</value>
+    </values>
+    <values>
+        <field>sked_Email_From_Address_Field__c</field>
+        <value xsi:nil="true" />
+    </values>
+    <values>
+        <field>sked_Email_Target_Field__c</field>
+        <value xsi:nil="true" />
+    </values>
+    <values>
+        <field>sked_Filter__c</field>
+        <value xsi:type="xsd:string">sked_Waitlist_Confirmed__c != TRUE</value>
+    </values>
+    <values>
+        <field>sked_Notification_Target_Field__c</field>
+        <value xsi:nil="true" />
+    </values>
+    <values>
+        <field>sked_Notification_Type__c</field>
+        <value xsi:type="xsd:string">email</value>
+    </values>
+    <values>
+        <field>sked_Oneoff_Protocol_Field__c</field>
+        <value xsi:nil="true" />
+    </values>
+    <values>
+        <field>sked_Sending_From_Email_Address__c</field>
+        <value xsi:nil="true" />
+    </values>
+    <values>
+        <field>sked_Subject__c</field>
+        <value xsi:type="xsd:string">Unavailability Waitlist Notification</value>
+    </values>
+    <values>
+        <field>sked_Target_Field_Value__c</field>
+        <value xsi:type="xsd:string">Waitlist</value>
+    </values>
+    <values>
+        <field>sked_Target_Field__c</field>
+        <value xsi:type="xsd:string">sked_Custom_Status__c</value>
+    </values>
+    <values>
+        <field>sked_Target_SObject__c</field>
+        <value xsi:type="xsd:string">sked__Availability__c</value>
+    </values>
+    <values>
+        <field>sked_Template__c</field>
+        <value xsi:type="xsd:string">Hi {{sked__Resource__r.Name}}, &lt;br /&gt;
+
+Your unavailability on [[StartMMMM]] was submitted and it&#39;s on waitlist.
+Will you still want to keep it on waitlist or decline it?
+&lt;br /&gt;
+&lt;a style=&quot;background-color: #1c87c9; border: none; color: white; padding: 10px 17px; text-align: center; text-decoration: none; display: inline-block; font-size: 20px; margin: 4px 2px; cursor: pointer;&quot; href=&quot;!$sked_Skedulo_Email_Handler$?availabilityId={{Id}}&amp;action=Confirm&amp;token={{sked_Unique_Key__c}}&amp;startDate={{sked_Date_ISO_Format__c}}&quot;&gt;Confirm&lt;/a&gt;
+
+&lt;a style=&quot;background-color: #1c87c9; border: none; color: white; padding: 10px 17px; text-align: center; text-decoration: none; display: inline-block; font-size: 20px; margin: 4px 2px; cursor: pointer;&quot; href=&quot;!$sked_Skedulo_Email_Handler$?availabilityId={{Id}}&amp;action=Declined&amp;token={{sked_Unique_Key__c}}&amp;startDate={{sked_Date_ISO_Format__c}}&quot;&gt;Declined&lt;/a&gt;
+&lt;br /&gt;
+
+&lt;a style=&quot;background-color: #1c87c9; border: none; color: white; padding: 10px 17px; text-align: center; text-decoration: none; display: inline-block; font-size: 20px; margin: 4px 2px; cursor: pointer;&quot; href=&quot;!$sked_Skedulo_Email_Handler$?availabilityId={{Id}}&amp;action=View&amp;token={{sked_Unique_Key__c}}&amp;startDate={{sked_Date_ISO_Format__c}}&quot;&gt;View Detail&lt;/a&gt;
+&lt;br /&gt;
+
+Regards</value>
+    </values>
+    <values>
+        <field>sked_Trigger__c</field>
+        <value xsi:type="xsd:string">Insert</value>
+    </values>
+</CustomMetadata>

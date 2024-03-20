@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>sked_Is_Logistic_Different_Without_DCR</fullName>
+    <columns>NAME</columns>
+    <columns>sked_Drive_Date__c</columns>
+    <columns>sked_Status__c</columns>
+    <columns>sked_Start_Time__c</columns>
+    <columns>sked_End_Time__c</columns>
+    <columns>sked_Projected_Registered_Donors__c</columns>
+    <columns>sked_Total_Procedures_Projected__c</columns>
+    <columns>sked_Total_Products_Projected__c</columns>
+    <columns>sked_2RBC_Projected_Procedures__c</columns>
+    <columns>sked_WB_Projected_Procedures__c</columns>
+    <columns>sked_Platelet_Projected_Procedures__c</columns>
+    <columns>sked_Plasma_Projected_Procedures__c</columns>
+    <columns>sked_Opportunity__c</columns>
+    <columns>LAST_UPDATE</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>sked_Status__c</field>
+        <operation>notEqual</operation>
+        <value>Cancel</value>
+    </filters>
+    <filters>
+        <field>sked_Is_Logistic_Different__c</field>
+        <operation>equals</operation>
+        <value>1</value>
+    </filters>
+    <label>Is Logistic Different Without DCR</label>
+</ListView>

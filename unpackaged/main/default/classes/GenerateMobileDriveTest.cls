@@ -1,0 +1,215 @@
+/* This test class is coving the following two classes for drive generation
+ * CreateSkedDrive
+ * GenerateMobileDrive
+ * DriveGeneratorService
+ * */
+
+@isTest
+public class GenerateMobileDriveTest
+{
+    
+    @istest
+    public static void conditionForFixedSiteDriveTest()
+    {        
+        Map<string, sObject> mapTestData = GenerateDriveTestData.setupData();
+        Opportunity fixOpportunity = (Opportunity)mapTestData.get('fixedSiteOpportunity');
+        
+        Test.startTest();
+        
+        AccountTeamMemberHelper.skipAccountTrigger = true;
+        TriggerHandler.bypass('AccountTriggerHandler');
+        TriggerHandler.bypass('OpportunityTriggerHandler');
+        TriggerHandler.bypass('OpportunitySplitTriggerHandler');
+        
+        CreateSkedDrive.createDrives(new List<Opportunity>{fixOpportunity});
+                
+        List<sked_Drive__c> fixedSiteDriveCreated = [Select Id , sked_Opportunity__c from sked_Drive__c where sked_Opportunity__c =:fixOpportunity.Id];
+        Assert.areEqual(1, fixedSiteDriveCreated.size()); // NEW Assert Class
+        
+        Set<Id> docId = new Set<Id>();        
+        for(sked_Drive__c doc : fixedSiteDriveCreated)
+        {
+            docId.add(doc.Id);
+        } 
+        
+        List<sked_Drive_Shift__c> driveshiftList = [select Id , sked_Platelet_Rounds__c from sked_Drive_Shift__c where sked_Drive__c IN : docId];
+        Assert.areEqual(2, driveshiftList.size()); // NEW Assert Class
+        
+        AccountTeamMemberHelper.skipAccountTrigger = false;
+        Triggerhandler.clearAllBypasses();
+        
+        Test.stopTest();
+                
+    }  
+    
+   /* @istest
+    public static void conditionForLunchBreakAsTrueTest()
+    {        
+        Map<string, sObject> mapTestData = GenerateDriveTestData.testSetupForElseCondition();
+        Opportunity mobileOpportunity = (Opportunity)mapTestData.get('mobileOpportunity');
+        
+        MobileDriveGeneratorDMLService.driveGeneratorConfig config = new MobileDriveGeneratorDMLService.driveGeneratorConfig();
+        config.oppIds = new Set<Id>();
+        config.oppIds.add(mobileOpportunity.Id);
+        
+        Test.startTest();
+        AccountTeamMemberHelper.skipAccountTrigger = true;
+        TriggerHandler.bypass('AccountTriggerHandler');
+        TriggerHandler.bypass('OpportunityTriggerHandler');
+        TriggerHandler.bypass('OpportunitySplitTriggerHandler');
+        
+        GenerateMobileDrive.generateDrives(config);
+        
+        Triggerhandler.clearAllBypasses();
+        AccountTeamMemberHelper.skipAccountTrigger = false;
+        
+        Test.stopTest();
+        
+        List<sked_Drive__c> mobileDriveCreated = [Select Id , sked_Opportunity__c from sked_Drive__c where sked_Opportunity__c =:mobileOpportunity.Id];
+        
+        Assert.areEqual(1, mobileDriveCreated.size()); // NEW Assert Class
+    }*/
+
+   @istest
+    public static void conditionForErrorMessageFixedSiteDriveTest(){        
+        Map<string, sObject> mapTestData = GenerateDriveTestData.testSetupForErrorMessage();
+        Opportunity fixOpportunity = (Opportunity)mapTestData.get('fixedSiteOpportunity');
+        
+        Test.startTest();
+        skedHubBase.BypassInsertTriggers = true;
+        skedHubBase.BypassUpdateTriggers = true;
+        skedHubBase.BypassDeleteTriggers = true;
+        AccountTeamMemberHelper.skipAccountTrigger = true;
+        TriggerHandler.bypass('AccountTriggerHandler');
+        TriggerHandler.bypass('OpportunityTriggerHandler');
+        TriggerHandler.bypass('OpportunitySplitTriggerHandler');
+        
+        CreateSkedDrive.createDrives(new List<Opportunity>{fixOpportunity});
+        
+        Triggerhandler.clearAllBypasses();
+        AccountTeamMemberHelper.skipAccountTrigger = false;
+        
+        Test.stopTest();
+        
+        Integer noOffixedSiteDriveCreated = [Select count() from sked_Drive__c where sked_Opportunity__c =:fixOpportunity.Id];
+        Assert.areEqual(0, noOffixedSiteDriveCreated); // NEW Assert Class
+    }
+    
+    @istest
+    public static void conditionForMobileDriveTest(){        
+        Map<string, sObject> mapTestData = GenerateDriveTestData.testSetupForMobileDriveV2();
+        Opportunity mobileOpportunity = (Opportunity)mapTestData.get('mobileOpportunity');
+        
+        MobileDriveGeneratorDMLService.driveGeneratorConfig config = new MobileDriveGeneratorDMLService.driveGeneratorConfig();
+        config.oppIds = new Set<Id>();
+        config.oppIds.add(mobileOpportunity.Id);
+        
+        Test.startTest();
+        
+        AccountTeamMemberHelper.skipAccountTrigger = true;
+        TriggerHandler.bypass('AccountTriggerHandler');
+        TriggerHandler.bypass('OpportunityTriggerHandler');
+        TriggerHandler.bypass('OpportunitySplitTriggerHandler');
+        GenerateMobileDrive.generateDrives(config);
+        
+        Triggerhandler.clearAllBypasses();
+        AccountTeamMemberHelper.skipAccountTrigger = false;
+        
+        Test.stopTest();
+        
+        List<sked_Drive__c> mobileDriveCreated = [Select Id , sked_Opportunity__c from sked_Drive__c where sked_Opportunity__c IN :config.oppIds];
+       Assert.areEqual(1, mobileDriveCreated.size()); // NEW Assert Class
+        
+        Set<Id> docId = new Set<Id>();
+        
+        for(sked_Drive__c doc : mobileDriveCreated)
+        {
+            docId.add(doc.Id);
+        }
+        
+        List<sked_Drive_Shift__c> driveshiftList = [select Id , sked_Platelet_Rounds__c from sked_Drive_Shift__c where sked_Drive__c IN : docId];
+        Assert.areEqual(4, driveshiftList.size()); // NEW Assert Class
+        
+    }
+    
+    /*@istest
+    public static void conditionForErrorMessageMobileTest(){        
+        Map<string, sObject> mapTestData = GenerateDriveTestData.testSetupForErrorMsgMobileDrive();
+        Opportunity mobileOpportunity = (Opportunity)mapTestData.get('mobileOpportunity');
+        MobileDriveGeneratorDMLService.driveGeneratorConfig config = new MobileDriveGeneratorDMLService.driveGeneratorConfig();
+        config.oppIds = new Set<Id>();
+        config.oppIds.add(mobileOpportunity.Id);
+        
+        Test.startTest();
+        
+        AccountTeamMemberHelper.skipAccountTrigger = true;
+        TriggerHandler.bypass('AccountTriggerHandler');
+        TriggerHandler.bypass('OpportunityTriggerHandler');
+        TriggerHandler.bypass('OpportunitySplitTriggerHandler');
+        
+        GenerateMobileDrive.generateDrives(config);
+        
+        Triggerhandler.clearAllBypasses();
+        AccountTeamMemberHelper.skipAccountTrigger = false;
+        
+        Test.stopTest();
+        
+        Assert.isTrue(config!=null); // NEW Assert Class
+        
+    }*/
+    
+    @istest
+    public static void conditionForDriveGeneratorServiceTestForFixed()
+    {
+        skedHubBase.BypassInsertTriggers = true;
+        skedHubBase.BypassUpdateTriggers = true;
+        skedHubBase.BypassDeleteTriggers = true;
+        Map<string, sObject> mapTestData = GenerateDriveTestData.setupData();
+        Opportunity fixOpportunity = (Opportunity)mapTestData.get('fixedSiteOpportunity');
+        
+        Test.startTest();
+        
+        DriveGeneratorService.generateDrivesOnOppInsert(new List<Opportunity>{fixOpportunity});
+                
+        List<sked_Drive__c> fixedSiteDriveCreated = [Select Id , sked_Opportunity__c from sked_Drive__c where sked_Opportunity__c =:fixOpportunity.Id];
+        Set<Id> docId = new Set<Id>();
+        
+        for(sked_Drive__c doc : fixedSiteDriveCreated)
+        {
+            docId.add(doc.Id);
+        }
+        
+        Assert.areEqual(1, fixedSiteDriveCreated.size()); // NEW Assert Class
+        Test.stopTest();
+        
+    }
+    
+    @istest
+    public static void conditionForDriveGeneratorServiceTestForMobile()
+    {
+        Map<string, sObject> mapTestData = GenerateDriveTestData.testSetupForMobileDriveV2();
+        Opportunity mobileOpportunity = (Opportunity)mapTestData.get('mobileOpportunity');
+        
+        Test.startTest();
+        Triggerhandler.bypass('OpportunityTriggerHandler');
+        DriveGeneratorService.generateDrivesOnOppInsert(new List<Opportunity>{mobileOpportunity});
+        
+        Test.stopTest();
+        
+        List<sked_Drive__c> mobileDriveCreated = [Select Id , sked_Opportunity__c from sked_Drive__c where sked_Opportunity__c =:mobileOpportunity.Id];
+        Set<Id> docId = new Set<Id>();
+        
+        for(sked_Drive__c doc : mobileDriveCreated)
+        {
+            docId.add(doc.Id);
+        }
+        
+        Integer numberOfDriveShifts = [select count() from sked_Drive_Shift__c where sked_Drive__c IN :docId];
+        Triggerhandler.clearAllBypasses();
+        
+        Assert.areEqual(1, mobileDriveCreated.size()); // NEW Assert Class
+        Assert.areEqual(4, numberOfDriveShifts); // NEW Assert Class       
+        
+    }
+    
+}

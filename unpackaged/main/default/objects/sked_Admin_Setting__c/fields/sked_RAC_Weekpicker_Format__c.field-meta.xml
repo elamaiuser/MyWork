@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>sked_RAC_Weekpicker_Format__c</fullName>
+    <defaultValue>&#39;s[M d] - e[M d, yy]&#39;</defaultValue>
+    <externalId>false</externalId>
+    <label>RAC Weekpicker Format</label>
+    <length>255</length>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

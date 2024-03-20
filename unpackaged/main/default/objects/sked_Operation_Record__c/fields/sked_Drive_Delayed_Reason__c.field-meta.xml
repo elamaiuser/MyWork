@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>sked_Drive_Delayed_Reason__c</fullName>
+    <externalId>false</externalId>
+    <label>Drive Delayed Reason</label>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Extreme Weather: ex. 2 hour school delay</fullName>
+                <default>false</default>
+                <label>Extreme Weather: ex. 2 hour school delay</label>
+            </value>
+            <value>
+                <fullName>Sponsor Activities: Fire Drills, Lock Downs</fullName>
+                <default>false</default>
+                <label>Sponsor Activities: Fire Drills, Lock Downs</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

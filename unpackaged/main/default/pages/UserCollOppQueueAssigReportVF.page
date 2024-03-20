@@ -1,0 +1,112 @@
+<apex:page title="UserCollOpeartionQueueAssignmentReport" controller="UserCollOpQueAssngmentReportController" docType="html-5.0" sidebar="false" showHeader="false"
+           lightningStylesheets="true" id="page">
+    <apex:form id="form"> 
+        <!--<apex:actionFunction name="CallApexMethod" action="{!clear}" 
+                              reRender="pgBlkTbl" />-->
+        <h2> User Collection Operation and Queue Assignment Report </h2>
+        <apex:pageBlock title="Filters" id="pgBlck"> 
+         
+           <table>
+                <!--<tr>
+       				<td><h4 style="padding-bottom: 2px; "> Portfolio </h4> 
+                <apex:selectList id="selectedValue" size="1" label="selectList" value="{!searchPortfolio}">
+                <apex:selectOptions value="{!portfolioOptions}"></apex:selectOptions>
+                </apex:selectList>   </td>
+                
+                 </tr>--->
+                
+                <tr>
+                    <td style="padding-bottom: 5px;">User Name &nbsp;&nbsp;&nbsp;&nbsp; &nbsp; &nbsp;&nbsp; <apex:input type="text" value="{!searchUser}" id="user" label="Input" html-placeholder="search by user"/> </td>
+                    <td style="padding-bottom: 5px;">&nbsp; &nbsp;Collection Operation  &nbsp; &nbsp; &nbsp; &nbsp; <apex:input type="text" value="{!searchCollOpp}" id="collOp" label="Input" html-placeholder="search by Collection operation"/> </td>
+                </tr>
+            </table> 
+            
+            <br/>
+            
+            <apex:commandButton value="Search" action="{!search}" rendered="true"  />             
+            <apex:commandButton action="{!ExportToExcel}" value="Export to Excel" id="ExportToXL"/>
+            <!--<apex:commandButton action="{!ExportToCSV}" value="Export to CSV" id="ExportToCSV"/>-->
+            <apex:commandButton value="clear" action="{!clear}" 
+                              />
+              </apex:pageBlock>
+                  
+        <apex:pageblock id="table" rendered="{!errorPresent}">
+             <apex:outputText value="{!errorMsg}"  ></apex:outputText>
+            
+        </apex:pageblock>
+        
+        
+        <apex:pageBlock id="pgBlkTbl" rendered="{!UserCollOpQueWrapListPresent}" >
+             
+
+
+            <apex:pageBlockTable value="{!UserCollOpQueWrapList}" rendered="{!UserCollOpQueWrapListPresent}" var="record" id="UserTable" >
+                <apex:column >
+                    <apex:facet name="header">
+                        <apex:inputCheckbox onclick="selectAllCheckboxes(this,'chkbox')"/>
+                    </apex:facet>
+                    <apex:inputCheckbox value="{!record.isSelected}" id="chkbox"/>
+                </apex:column>
+                
+                <apex:column Headervalue="User Name" value="{!record.users.Name}">
+                </apex:column>
+                
+                
+                <apex:column headerValue="Profile Name" value="{!record.users.Profile.Name}" />
+                <apex:column style="text-align:center;" headerValue="No of Collection Operation" value="{!record.collOppSize}" />
+                <apex:column headerValue="Collection Operation Names" value="{!record.users.sked_Collection_Operations__c}" />
+                <apex:column style="text-align:center;" headerValue="No of Queues" value="{!record.queSize}" />
+                <apex:column headerValue="Queue Name" value="{!record.qName}" />
+                
+                <!--<apex:column headerValue="Queue Name" value="{!record.collOppSize}" />
+                <apex:column headerValue="Queue Name" value="{!record.collOppSize}" />-->
+                <!--<apex:column headerValue="Direct To Donors" value="{!record.opp.Direct_Donors_To__c}" />
+                <apex:column headerValue="Drive Date(s)" value="{!record.opp.Drive_Date__c}" />
+                <apex:column headerValue="Start Time" value="{!record.opp.Start_Time__c}" />
+                <apex:column headerValue="End Time" value="{!record.opp.End_Time__c}" />
+                <apex:column headerValue="Account Manager" value="{!record.opp.Account_Manager__c}" />
+                <apex:column headervalue="Publicity Materials Recipient Name" value="{!record.ocr.contact.Name}" />
+                <apex:column headervalue="Publicity Recipient Mailing Street" value="{!record.ocr.contact.OtherStreet}" />
+                <apex:column headervalue="Publicity Recipient Mailing City" value="{!record.ocr.contact.OtherCity}" />
+                <apex:column headervalue="Publicity Recipient Mailing State" value="{!record.ocr.contact.OtherState}" />
+                <apex:column headervalue="Publicity Recipient Mailing ZipCode" value="{!record.ocr.contact.OtherPostalCode}" />
+                <apex:column headervalue="Publicity Recipient Mailing Phone" value="{!record.ocr.contact.Primary_Phone_Number_New__c}" />
+                <apex:column headervalue="Publicity Recipient Mailing Email" value="{!record.ocr.contact.Email}" />
+                <apex:column headerValue="Total Products Projected" value="{!record.opp.Total_Products_Projected__c}" />
+                <apex:column headerValue="Publicity comments" >
+                <apex:outputLink target="_blank" value="/{!record.oitem.order.id}">{!record.oitem.order.Comments__c}</apex:outputLink>
+                </apex:column>
+                <apex:column headerValue="Opportunity Promotion Name" value="{!record.optypro.Promotion__r.Name}" />
+                <apex:column headerValue="Drive Keyword" value="{!record.opp.Drive_Keyword__c}" />
+                <apex:column headerValue="Total Products Projected" value="{!record.opp.Total_Products_Projected__c}" />
+                <apex:column headervalue="Budget" value="{!record.oitem.order.BudgetCurrency__c}" />
+                <apex:column headerValue="Quantity" value="{!record.oitem.Quantity}" />
+                <apex:column headervalue="Item ID" value="{!record.oitem.Product2.Product_Id__c}" />
+                <apex:column headervalue="Product Name" value="{!record.oitem.Product2.Name}" />
+                <apex:column Headervalue="Material Recipient" value="{!record.oitem.Material_Recipient__c}" />
+                <apex:column headerValue="Drive Start Time Offset" value="{!record.opp.Collections_Zip_Code__r.Collection_Operation__r.sked_Start_Time_Offset__c}" />
+                <apex:column headerValue="End Time Offset" value="{!record.opp.Collections_Zip_Code__r.Collection_Operation__r.sked_End_Time_Offset__c}" />
+                <!--HRP-8136 Changes ends here-->
+                <!--
+                <apex:column Headervalue="Order Number" value="/{!record.oitem.order.OrderNumber}">
+                </apex:column>
+                    <apex:column headerValue="Publicity Approved by" value="{!record.oitem.order.Publicity_Approved_By__c}" />
+               -->
+                
+                
+            </apex:pageBlockTable>
+    
+        </apex:pageBlock>
+    </apex:form>
+    <script>
+    function selectAllCheckboxes(obj,receivedInputID){
+        var inputCheckBox = document.getElementsByTagName("input"); 
+        console.log('len ' + inputCheckBox.length);
+        for(var i=0; i<inputCheckBox.length; i++){          
+            if(inputCheckBox[i].id.indexOf(receivedInputID)!=-1){                                     
+                inputCheckBox[i].checked = obj.checked;
+            }
+        }
+    }
+    </script>
+</apex:page>

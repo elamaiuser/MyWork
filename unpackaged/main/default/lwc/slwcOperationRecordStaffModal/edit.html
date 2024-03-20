@@ -1,0 +1,209 @@
+<template>
+    <template if:true={isOpen}>
+        <section role="dialog" if:true={isOpen} tabindex="-1" class="slds-modal slds-fade-in-open" style="z-index:10001">
+            <lightning-spinner if:true={showSpinner} class="spins" size="medium"></lightning-spinner>
+            <div class="slds-modal__container">
+                <header class="slds-modal__header">
+                    <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close"
+                        onclick={closeModal}>
+                        <lightning-icon icon-name="utility:close" alternative-text="close" variant="inverse" size="small">
+                        </lightning-icon>
+                    </button>
+
+                    <h2 class="slds-text-heading_medium slds-hyphenate" if:false={isReadonly}>Edit Operation Record Staff</h2>
+                    <h2 class="slds-text-heading_medium slds-hyphenate" if:true={isReadonly}>View Operation Record Staff</h2>
+                </header>
+                <div class="slds-modal__content slds-p-around_small">
+                    <c-slwc-page-errors validities={errorMessages}></c-slwc-page-errors>
+
+                    <div
+                        class="slds-m-horizontal--x-small slds-m-vertical--small slds-grid slds-grid_vertical-align-center slds-grid--align-spread">
+                        <label class="slds-form-element__label">Absent</label>
+                        <lightning-input variant="label-hidden" type="toggle" disabled={isReadonly} onchange={handleChange} name="absent"
+                            label="Absent" checked={model.absent}>
+                        </lightning-input>
+                    </div>
+                    <div class="slds-p-around_x-small">
+                        <lightning-input type="text" max-length="255" disabled label="Operation Staff Record Name"
+                            value={model.name}>
+                        </lightning-input>
+                    </div>
+                    <div class="slds-p-around_x-small">
+                        <lightning-input type="text" max-length="255" disabled label="Operation Name"
+                            value={model.operationRecordName}>
+                        </lightning-input>
+                    </div>
+                    <div class="slds-p-around_x-small">
+                        <lightning-input type="text" max-length="255" disabled label="Resource" value={model.resourceName}>
+                        </lightning-input>
+                    </div>
+                    <div class="slds-p-around_x-small">
+                        <lightning-input type="text" max-length="255" disabled label="eBDR ID" value={model.eBdrId}>
+                        </lightning-input>
+                    </div>
+                    <div class="slds-p-around_x-small" if:true={model.role}>
+                        <lightning-input type="text" max-length="255" disabled label="Role" value={model.role}>
+                        </lightning-input>
+                    </div>
+                    <div class="slds-p-around_x-small" if:true={model.dualRole}>
+                        <lightning-input type="text" max-length="255" disabled label="Role" value={model.dualRole}>
+                        </lightning-input>
+                    </div>
+                    <div class="slds-p-around_x-small">
+                        <lightning-input if:true={isAbsent} disabled type="text" onchange={handleChange}
+                            name="actualRoles" label="Actual Role(s)"
+                            value={model.actualRoles}>
+                        </lightning-input>
+                        <c-slwc-multi-picklist if:false={isAbsent}
+                            disabled={disabled} name="actualRoles" label="Actual Role(s)"
+                            object-api-name="sked_Operation_Record_Staff__c" field-api-name='sked_Actual_Roles__c'
+                            onpicklistchange={handleChange} default-values={model.actualRoles}>
+                        </c-slwc-multi-picklist>
+                    </div>
+                    <div class="slds-p-around_x-small slds-clearfix slds-float_left">
+                        <div class="slds-form-element__label slds-no-flex" title="Scheduled Shift Start">Scheduled Shift Start</div>
+                        <c-slwc-time-input-with-timezone 
+                            no-label
+                            input-date={model.scheduledShiftStart}
+                            timezone={model.timezoneSidId}>
+                            <lightning-input 
+                                slot="input"
+                                variant="label-hidden"
+                                type="datetime" label="Scheduled Shift Start"
+                                timezone={model.timezoneSidId}
+                                value={model.scheduledShiftStart} disabled>
+                            </lightning-input>
+                        </c-slwc-time-input-with-timezone>
+                    </div>
+                    <div class="slds-p-around_x-small slds-clearfix slds-float_left">
+                        <div class="slds-form-element__label slds-no-flex" title="Scheduled Shift End">Scheduled Shift End</div>
+                        <c-slwc-time-input-with-timezone 
+                            no-label
+                            input-date={model.scheduledShiftEnd}
+                            timezone={model.timezoneSidId}>
+                            <lightning-input 
+                                slot="input"
+                                variant="label-hidden"
+                                type="datetime" label="Scheduled Shift End"
+                                timezone={model.timezoneSidId}
+                                value={model.scheduledShiftEnd} disabled>
+                            </lightning-input>
+                        </c-slwc-time-input-with-timezone>
+                    </div>
+                    <div class="slds-p-around_x-small slds-clearfix slds-float_left">
+                        <div class="slds-grid slds-wrap">
+                            <div class="slds-col slds-medium-size_6-of-12 slds-size_1-of-1">
+                                <lightning-input 
+                                    type="date" 
+                                    name="actualShiftStartDate" 
+                                    label="Actual Shift Start Date" 
+                                    value={model.actualShiftStartDate} 
+                                    onchange={handleChange} 
+                                    autocomplete="off" 
+                                    required={isSubmit}
+                                    disabled={disabled}>
+                                </lightning-input>
+                            </div>
+                            <div class="slds-col slds-medium-size_6-of-12 slds-size_1-of-1 slds-p-left_x-small">
+                                <c-slwc-time-input-with-timezone 
+                                    input-date={model.actualShiftStartDate}
+                                    timezone={model.timezoneSidId}>
+                                    <lightning-input 
+                                        slot="input"
+                                        type="time" name="actualShiftStartTime" 
+                                        label="Actual Shift Start Time" value={model.actualShiftStartTime} 
+                                        onchange={handleChange}
+                                        required={isSubmit}
+                                        disabled={disabled}>
+                                    </lightning-input>
+                                </c-slwc-time-input-with-timezone>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="slds-p-around_x-small slds-clearfix slds-float_left">
+                        <div class="slds-grid slds-wrap">
+                            <div class="slds-col slds-medium-size_6-of-12 slds-size_1-of-1">
+                                <lightning-input 
+                                    type="date" 
+                                    name="actualShiftEndDate" 
+                                    label="Actual Shift End Date" 
+                                    value={model.actualShiftEndDate} 
+                                    onchange={handleChange} 
+                                    autocomplete="off" 
+                                    required={isSubmit}
+                                    disabled={disabled}>
+                                </lightning-input>
+                            </div>
+                            <div class="slds-col slds-medium-size_6-of-12 slds-size_1-of-1 slds-p-left_x-small">
+                                <c-slwc-time-input-with-timezone 
+                                    input-date={model.actualShiftEndTime}
+                                    timezone={model.timezoneSidId}>
+                                    <lightning-input 
+                                        slot="input"
+                                        type="time" name="actualShiftEndTime" 
+                                        label="Actual Shift End Time" value={model.actualShiftEndTime} 
+                                        onchange={handleChange}
+                                        required={isSubmit}
+                                        disabled={disabled}>
+                                    </lightning-input>
+                                </c-slwc-time-input-with-timezone>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="slds-p-around_x-small" style="clear: both;">
+                        <lightning-input if:true={isAbsent} disabled type="text" onchange={handleChange}
+                            name="earlyDepartureLateArrivalReasons" label="Early Departure / Late Arrival Reasons"
+                            value={model.earlyDepartureLateArrivalReasons}>
+                        </lightning-input>
+                        <c-slwc-picklist if:false={isAbsent} name="earlyDepartureLateArrivalReasons"
+                            disabled={disabled}
+                            label="Early Departure / Late Arrival Reasons" unique-key={} onchange={handleChange}
+                            object-api-name="sked_Operation_Record_Staff__c"
+                            selected-value={model.earlyDepartureLateArrivalReasons}
+                            required={isEarlyLate}
+                            pick-listfield-api-name="sked_EarlyDeparture_LateArrival_Reasons__c">
+                        </c-slwc-picklist>
+                    </div>
+                    <div
+                        class="slds-m-horizontal--x-small slds-m-vertical--small slds-grid slds-grid_vertical-align-center slds-grid--align-spread">
+                        <label class="slds-form-element__label">No Meal</label>
+                        <lightning-input onchange={handleChange} disabled={disabled} name="noMeal" variant="label-hidden"
+                            type="toggle" label="No Meal" checked={model.noMeal}>
+                        </lightning-input>
+                    </div>
+                    <div if:true={isAbsent} class="slds-m-horizontal--x-small slds-m-vertical--small slds-grid slds-grid_vertical-align-center slds-grid--align-spread">
+                        <label class="slds-form-element__label">Premiums/Op Pay</label>
+                        <lightning-input onchange={handleChange} disabled={disabled} name="premiumsOpPay"
+                            variant="label-hidden" type="toggle" label="Premiums/Op Pay">
+                        </lightning-input>
+                    </div>
+                    <div if:false={isAbsent} class="slds-p-around_x-small">
+                        <c-slwc-multi-picklist  
+                            disabled={disabled} name="premiumsOpPay" label="Premiums/Op Pay"
+                            object-api-name="sked_Operation_Record_Staff__c" field-api-name='sked_Premiums_Op_Pay__c'
+                            onpicklistchange={handleChange} default-values={model.premiumsOpPay}>
+                        </c-slwc-multi-picklist>
+                    </div>
+                    <div class="slds-p-around_x-small">
+                        <lightning-textarea onchange={handleChange} name="notesComments" label="Notes/Comments"
+                            value={model.notesComments}></lightning-textarea>
+                    </div>
+                    <div
+                        class="slds-m-horizontal--x-small slds-m-vertical--small slds-grid slds-grid_vertical-align-center slds-grid--align-spread">
+                        <label class="slds-form-element__label">Pool</label>
+                        <lightning-input onchange={handleChange} disabled={disabled} name="pool" variant="label-hidden"
+                            type="toggle" label="Pool" checked={model.pool}>
+                        </lightning-input>
+                    </div>
+                </div>
+                <footer class="slds-modal__footer">
+                    <lightning-button label="Cancel" title="Cancel" onclick={closeModal} class="slds-m-right_xx-small">
+                    </lightning-button>
+                    <lightning-button class="slds-m-top_small" if:false={isReadonly} onclick={handleSave} variant="brand" type="submit"
+                        name="update" label="Save"></lightning-button>
+                </footer>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open" style="z-index:10000"></div>
+    </template>
+</template>

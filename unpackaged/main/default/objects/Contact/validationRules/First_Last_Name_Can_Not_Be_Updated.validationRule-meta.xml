@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>First_Last_Name_Can_Not_Be_Updated</fullName>
+    <active>true</active>
+    <errorConditionFormula>AND(OR(ISCHANGED(LastName), ISCHANGED(FirstName)),NOT(Contact_Name_Change__c))</errorConditionFormula>
+    <errorMessage>You are attempting to change a current contact name.
+Name updates must be specific to this contact.
+
+If the Name change reflects a different contact, you must create a new contact.
+
+Please refer to the &quot;Change Contact Name&quot; button from Quick Action.</errorMessage>
+</ValidationRule>

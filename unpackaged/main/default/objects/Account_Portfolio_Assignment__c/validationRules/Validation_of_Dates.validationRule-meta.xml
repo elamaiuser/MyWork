@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Validation_of_Dates</fullName>
+    <active>true</active>
+    <description>The Account Portfolio Assignment dates must go along with
+1.End Date cannot be lesser than the Start date
+2.Start date cannot be updated to past dates</description>
+    <errorConditionFormula>End_Date__c  &lt;  Start_Date__c</errorConditionFormula>
+    <errorMessage>End date can&#39;t be lesser than the Start Date</errorMessage>
+</ValidationRule>

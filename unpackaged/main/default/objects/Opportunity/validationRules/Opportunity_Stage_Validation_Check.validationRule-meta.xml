@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Opportunity_Stage_Validation_Check</fullName>
+    <active>false</active>
+    <description>Only below stage transition is valid
+Discovery-&gt; Solicitation/Commited/Cancelled,
+Solicitation-&gt; Discovery/Commited/Cancelled,
+Commited-&gt; Closed/Cancelled,
+Closed -&gt; Cancelled,
+Cancelled = No Change Allowed in Stage</description>
+    <errorConditionFormula>NOT(ISNEW()) &amp;&amp;
+ISCHANGED(StageName) &amp;&amp;
+(
+     (ISPICKVAL(PRIORVALUE(StageName), &quot;Discovery&quot;) &amp;&amp;
+        ( NOT(ISPICKVAL(StageName, &quot;Solicitation&quot;)) &amp;&amp; NOT(ISPICKVAL(StageName, &quot;Commited&quot;))
+         &amp;&amp; NOT(ISPICKVAL(StageName, &quot;Cancelled&quot;))
+        ) 
+     )||
+    (ISPICKVAL(PRIORVALUE(StageName), &quot;Solicitation&quot;) &amp;&amp;
+       ( NOT(ISPICKVAL(StageName, &quot;Discovery&quot;)) &amp;&amp; NOT(ISPICKVAL(StageName, &quot;Commited&quot;))
+          &amp;&amp; NOT(ISPICKVAL(StageName, &quot;Cancelled&quot;))
+       ) 
+     )|| 
+     (ISPICKVAL(PRIORVALUE(StageName), &quot;Commited&quot;) &amp;&amp;
+       (NOT(ISPICKVAL(StageName, &quot;Closed&quot;))
+          &amp;&amp; NOT(ISPICKVAL(StageName, &quot;Cancelled&quot;))
+       ) 
+     )|| 
+     (ISPICKVAL(PRIORVALUE(StageName), &quot;Closed&quot;) &amp;&amp;
+       ( NOT(ISPICKVAL(StageName, &quot;Cancelled&quot;))
+       ) 
+     )|| 
+     (ISPICKVAL(PRIORVALUE(StageName), &quot;Cancelled&quot;) &amp;&amp;
+       ( NOT(ISPICKVAL(StageName, &quot;Cancelled&quot;))
+       ) 
+     )
+
+)
+&amp;&amp;
+$Profile.Name &lt;&gt; &#39;System Administrator&#39; &amp;&amp;
+$Profile.Name &lt;&gt; &#39;Global Admin&#39;</errorConditionFormula>
+    <errorMessage>Only below stage transition is valid
+Discovery-&gt; Solicitation/Commited/Cancelled,
+Solicitation-&gt; Discovery/Commited/Cancelled,
+Commited-&gt; Closed/Cancelled,
+Closed -&gt; Cancelled,
+Cancelled = No Change Allowed in Stage</errorMessage>
+</ValidationRule>

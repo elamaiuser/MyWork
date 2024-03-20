@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Queue xmlns="http://soap.sforce.com/2006/04/metadata">
+    <doesSendEmailToMembers>false</doesSendEmailToMembers>
+    <name>Hampton VA: DMPA</name>
+    <queueMembers>
+        <users>
+            <user>austin.rehfield@redcross.org</user>
+            <user>chris.adams@redcross.org</user>
+            <user>jaquelin.listecki@redcross.org</user>
+            <user>lori.rozecki@redcross.org.biomed</user>
+            <user>melanie.mitchell2@redcross.org</user>
+            <user>roger.gardner@redcross.org</user>
+        </users>
+    </queueMembers>
+    <queueSobject>
+        <sobjectType>sked_Drive__c</sobjectType>
+    </queueSobject>
+</Queue>

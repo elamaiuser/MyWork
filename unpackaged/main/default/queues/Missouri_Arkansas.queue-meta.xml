@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Queue xmlns="http://soap.sforce.com/2006/04/metadata">
+    <doesSendEmailToMembers>true</doesSendEmailToMembers>
+    <name>Missouri Arkansas Lead Queue</name>
+    <queueMembers>
+        <users>
+            <user>craig.jackson@redcross.org.biomed</user>
+            <user>jennifer.albers@redcross.org.biomed</user>
+            <user>jennifer.freeze@redcross.org.biomed</user>
+            <user>julie.pipes@redcross.org.biomed</user>
+            <user>mindy.hendrix@redcross.org.biomed</user>
+            <user>trina.manhardt@redcross.org.biomed</user>
+        </users>
+    </queueMembers>
+    <queueSobject>
+        <sobjectType>Lead</sobjectType>
+    </queueSobject>
+</Queue>

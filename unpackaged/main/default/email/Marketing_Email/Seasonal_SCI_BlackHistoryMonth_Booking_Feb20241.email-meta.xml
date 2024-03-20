@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<EmailTemplate xmlns="http://soap.sforce.com/2006/04/metadata">
+    <available>true</available>
+    <description>Booking Ask for SCI Recruitment to Prospect BPL for BHM</description>
+    <encodingKey>ISO-8859-1</encodingKey>
+    <letterhead>ARC_Logo_Test</letterhead>
+    <name>Seasonal_SCI_BlackHistoryMonth_Booking_Feb2024</name>
+    <style>formalLetter</style>
+    <subject>Black Excellence Is In Our Blood: Make hosting a blood drive a part of your legacy this February.</subject>
+    <textOnly>Hi &lt;Name&gt;
+
+My name is &lt;Name&gt; and I am an American Red Cross &lt;Account Manager, Sickle Cell Account Manager, Area Booking Manager&gt;.
+
+I hope this email finds you well.
+
+Black History Month is a time to celebrate the rich heritage and contributions of African Americans to our society, while also making a positive difference in our communities.  I invite you to partner with us in organizing a blood drive as a way to both celebrate legacies during Black History Month and save lives.
+
+Do you know Dr. Charles R. Drew? Dr. Charles R. Drew was an African American surgeon, educator and scientist who laid the groundwork for today’s modern blood donation program through his innovative work in blood banking. The Red Cross blood program started in 1940, under the leadership of Dr. Drew, who became the first medical director for the Red Cross in 1941.
+
+Many schools, churches, and organizations like yours will soon begin planning activities and community projects soon, so let’s begin conversations. Blood drives are a meaningful and impactful way your &lt;school/church/org&gt; can honor Black History Month in February, and we would love to work together in creating a lifesaving legacy to commemorate Black History Month and bring the community together.
+
+Let’s find time to talk so I can introduce myself and talk about hosting a Red Cross “Black Excellence Is In Our Blood, Blood Drive” in February with your organization.
+
+Sincerely,
+&lt;AM/SAM/ABM Name&gt;</textOnly>
+    <type>html</type>
+    <uiType>Aloha</uiType>
+</EmailTemplate>

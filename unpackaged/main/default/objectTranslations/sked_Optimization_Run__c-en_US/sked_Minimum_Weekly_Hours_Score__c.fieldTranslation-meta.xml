@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+        <label><!-- Minimum Weekly Hours Score --></label>
+        <name>sked_Minimum_Weekly_Hours_Score__c</name>
+    </CustomFieldTranslation>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Required_Not_Null_Value_X2RBC_Procedure</fullName>
+    <active>true</active>
+    <description>sked_2RBC_Projected_Procedures__c cannot be null for a future drive</description>
+    <errorConditionFormula>AND(
+ISNULL(sked_2RBC_Projected_Procedures__c),
+sked_Is_Surrogate__c != TRUE,
+sked_Drive_Date__c &gt;= today()
+)</errorConditionFormula>
+    <errorMessage>2RBC Projected Procedures has to be not null</errorMessage>
+</ValidationRule>

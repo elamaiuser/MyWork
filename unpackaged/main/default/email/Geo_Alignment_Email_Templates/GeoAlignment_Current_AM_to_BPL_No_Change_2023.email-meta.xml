@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<EmailTemplate xmlns="http://soap.sforce.com/2006/04/metadata">
+    <available>false</available>
+    <description>Geo Alignment Letter from AM to BPL, no change</description>
+    <encodingKey>ISO-8859-1</encodingKey>
+    <letterhead>ARC_Generic_Logo1</letterhead>
+    <name>GeoAlignment_Current AM to BPL_No Change_2023</name>
+    <style>formalLetter</style>
+    <subject>Coming January: For Your Awareness</subject>
+    <textOnly>Dear [BPL Name],
+
+ 
+
+I wanted to make you aware of some changes we are making in the new year to better align Red Cross operations. The changes will define a common set of geographic boundaries for both Biomedical and Humanitarian Services, further strengthening our organization and improving mission delivery.
+
+ 
+
+There will be no changes in our partnership, but we wanted to ensure you were updated. We are excited about how this geographical realignment will enhance connections within our organization, our trusted partners and our donors.
+
+ 
+
+If you have any questions, please don’t hesitate to reach out.
+
+ 
+
+We are so grateful for your support of our lifesaving mission!
+
+ 
+
+&lt;Current AM/ABM Signature&gt;</textOnly>
+    <type>html</type>
+    <uiType>Aloha</uiType>
+</EmailTemplate>

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Affiliation_Type__c</fullName>
+    <externalId>false</externalId>
+    <fieldManageability>DeveloperControlled</fieldManageability>
+    <label>Affiliation Type</label>
+    <required>false</required>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Drive_Designation</fullName>
+                <default>true</default>
+                <label>Drive_Designation</label>
+            </value>
+            <value>
+                <fullName>Marketing_Program</fullName>
+                <default>false</default>
+                <label>Marketing_Program</label>
+            </value>
+            <value>
+                <fullName>Marketing_Strategy</fullName>
+                <default>false</default>
+                <label>Marketing_Strategy</label>
+            </value>
+            <value>
+                <fullName>Organization_Partnership</fullName>
+                <default>false</default>
+                <label>Organization_Partnership</label>
+            </value>
+            <value>
+                <fullName>Sponsor_Recognition</fullName>
+                <default>false</default>
+                <label>Sponsor_Recognition</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

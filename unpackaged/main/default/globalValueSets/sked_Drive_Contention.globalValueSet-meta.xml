@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GlobalValueSet xmlns="http://soap.sforce.com/2006/04/metadata">
+    <customValue>
+        <fullName>Insufficient Resources</fullName>
+        <default>false</default>
+        <label>Insufficient Resources</label>
+    </customValue>
+    <customValue>
+        <fullName>Exceed Operation Drive Limit</fullName>
+        <default>false</default>
+        <label>Exceed Operation Drive Limit</label>
+    </customValue>
+    <customValue>
+        <fullName>Out of Operational Hours</fullName>
+        <default>false</default>
+        <label>Out of Operational Hours</label>
+    </customValue>
+    <customValue>
+        <fullName>Low Drive Productivity</fullName>
+        <default>false</default>
+        <label>Low Drive Productivity</label>
+    </customValue>
+    <customValue>
+        <fullName>Lacking of vehicles</fullName>
+        <default>false</default>
+        <label>Lacking of vehicles</label>
+    </customValue>
+    <customValue>
+        <fullName>Lacking of equipment</fullName>
+        <default>false</default>
+        <label>Lacking of equipment</label>
+    </customValue>
+    <customValue>
+        <fullName>Within 42 days</fullName>
+        <default>false</default>
+        <label>Within 42 days</label>
+    </customValue>
+    <customValue>
+        <fullName>Part of Linked Drive</fullName>
+        <default>false</default>
+        <label>Part of Linked Drive</label>
+    </customValue>
+    <customValue>
+        <fullName>Multi Shift Drive</fullName>
+        <default>false</default>
+        <label>Multi Shift Drive</label>
+    </customValue>
+    <customValue>
+        <fullName>Confirmed within 42 days</fullName>
+        <default>false</default>
+        <label>Confirmed within 42 days</label>
+    </customValue>
+    <customValue>
+        <fullName>Exceed 2RBC Operational Limit</fullName>
+        <default>false</default>
+        <label>Exceed 2RBC Operational Limit</label>
+    </customValue>
+    <customValue>
+        <fullName>Exceed CDL Operational Limit</fullName>
+        <default>false</default>
+        <label>Exceed CDL Operational Limit</label>
+    </customValue>
+    <customValue>
+        <fullName>Exceed DOT Operational Limit</fullName>
+        <default>false</default>
+        <label>Exceed DOT Operational Limit</label>
+    </customValue>
+    <customValue>
+        <fullName>Dual Role Removal</fullName>
+        <default>false</default>
+        <label>Dual Role Removal</label>
+    </customValue>
+    <customValue>
+        <fullName>Staffing Complement Changed</fullName>
+        <default>false</default>
+        <label>Staffing Complement Changed</label>
+    </customValue>
+    <customValue>
+        <fullName>Role Time Variant Changed</fullName>
+        <default>false</default>
+        <isActive>false</isActive>
+        <label>Role Time Variant Changed</label>
+    </customValue>
+    <customValue>
+        <fullName>Cancel In Process</fullName>
+        <default>false</default>
+        <isActive>false</isActive>
+        <label>Cancel In Process</label>
+    </customValue>
+    <masterLabel>Drive Contention</masterLabel>
+    <sorted>false</sorted>
+</GlobalValueSet>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<EmailTemplate xmlns="http://soap.sforce.com/2006/04/metadata">
+    <available>true</available>
+    <description>LSL lead auto-response.</description>
+    <encodingKey>ISO-8859-1</encodingKey>
+    <name>Lead Auto Response - LSL</name>
+    <style>freeForm</style>
+    <subject>Thank you for completing the Red Cross Leaders Save Lives blood drive interest form!</subject>
+    <textOnly>Thank you for expressing interest in becoming an American Red Cross Leaders Save Lives blood drive partner. A Red Cross representative in your area will contact you soon regarding next steps. At this time, you may experience a delay in response time because of the resounding response we have received to our recent ask. We appreciate your patience!
+
+In the meantime, we invite you to visit RedCross.org to learn about even more ways you can get involved. We look forward to our potential partnership!
+
+Your American Red Cross</textOnly>
+    <type>custom</type>
+    <uiType>Aloha</uiType>
+</EmailTemplate>

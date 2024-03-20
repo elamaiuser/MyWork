@@ -1,0 +1,34 @@
+<template>
+    <lightning-quick-action-panel header="Impacted Drives">
+        <div class="slds-is-relative">
+            <template if:true={showSpinner}>
+                <lightning-spinner class="spins" size="medium"></lightning-spinner>
+            </template>
+            
+            Drives are impacted by Fixed Site Procedure Projection changes:
+
+            <div class="slds-grow slds-p-top_medium">
+                <div class="slds-scrollable_y" style="min-height: 30vh; max-height: 32rem;">
+                    <c-slwc-custom-datatable 
+                        key-field="id"
+                        data={drives}
+                        columns={columns}
+                        selected-rows={selectedDriveIds}
+                        onrowselection={handleRowSelection}
+                        wrap-text-max-lines="3">
+                    </c-slwc-custom-datatable>
+                </div>
+            </div>
+        </div>
+
+        <div slot="footer">
+            <lightning-button variant="neutral" label="Cancel" onclick={handleCancel}></lightning-button>
+            <lightning-button variant="brand" label="Update Impacted Drives" class="slds-m-left_x-small" onclick={handleUpdateImpactedDrives} disabled={btnUpdateDisabled}></lightning-button>
+        </div>
+    </lightning-quick-action-panel>
+
+    <c-slwc-progress-bar
+        progress-bar-data={progressBarData}
+        is-open={progressBarData.isOpen}
+    ></c-slwc-progress-bar>
+</template>

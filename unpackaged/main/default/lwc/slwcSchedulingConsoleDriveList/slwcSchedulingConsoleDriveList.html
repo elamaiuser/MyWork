@@ -1,0 +1,53 @@
+<template>
+
+    <div class="slds-grid">
+        <div class="slds-col">
+            <c-slwc-drive-scheduling-filters
+                mode="driveScheduling"
+                onsearch={handleSearch}
+            >
+            </c-slwc-drive-scheduling-filters>
+        </div>
+        <div class="slds-col slds-scrollable_y slds-p-left_medium">
+            <div class="slds-grid">
+                <div class="slds-no-flex slds-col_bump-left slds-p-right_small" style="width: 300px;">
+                    <c-slwc-new-collection-operation-multi-picklist
+                        division-single-select
+                        date-range={collectionOperationDateRange}
+                        default-values={filters.collectionOperationValues}
+                        onchange={handleCollectionOperationChanged}>
+                    </c-slwc-new-collection-operation-multi-picklist>
+                </div>
+
+                <div class="slds-p-right_small">
+                    <c-slwc-week-date-picker
+                        includes-additional-days={includesAdditionalDays}
+                        first-day={collectionOperationFirstDay}
+                        unique-key="driveSchedulingConsole"
+                        onweekdatechange={handleOnChange}
+                        default-start-date={filters.startDate}
+                        default-end-date={filters.endDate}>
+                    </c-slwc-week-date-picker>
+                </div>
+            </div>
+            <div class="slds-grow">
+                <lightning-tabset>
+                    <lightning-tab label="Drive List">
+                        <c-slwc-drive-calendar-drive-list
+                            includes-additional-days={includesAdditionalDays}
+                            is-readonly={isReadonly}
+                            filters={driveListFilters}>
+                        </c-slwc-drive-calendar-drive-list>
+                    </lightning-tab>
+                    <lightning-tab label="Activity List">
+                        <c-slwc-drive-calendar-activity-list
+                            includes-additional-days={includesAdditionalDays}
+                            filters={filters}>
+                        </c-slwc-drive-calendar-activity-list>
+                    </lightning-tab>
+                </lightning-tabset>
+            </div>
+        </div>
+    </div>
+    
+</template>

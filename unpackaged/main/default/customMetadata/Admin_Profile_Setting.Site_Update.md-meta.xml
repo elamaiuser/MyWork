@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomMetadata xmlns="http://soap.sforce.com/2006/04/metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <label>Site Update</label>
+    <protected>false</protected>
+    <values>
+        <field>Change_Type__c</field>
+        <value xsi:type="xsd:string">Update</value>
+    </values>
+    <values>
+        <field>Error_Msg__c</field>
+        <value xsi:type="xsd:string">Physical Location Type may not be updated if completed or future drive is planned or associated template is active. Please proceed with new site creation if change is required.</value>
+    </values>
+    <values>
+        <field>Field_Name__c</field>
+        <value xsi:type="xsd:string">sked_Physical_Location_Type__c</value>
+    </values>
+    <values>
+        <field>Is_Checked__c</field>
+        <value xsi:type="xsd:boolean">true</value>
+    </values>
+    <values>
+        <field>Object_Name__c</field>
+        <value xsi:type="xsd:string">sked__Location__c</value>
+    </values>
+    <values>
+        <field>Profile_Name__c</field>
+        <value xsi:type="xsd:string">System Administrator,Global Admin</value>
+    </values>
+</CustomMetadata>

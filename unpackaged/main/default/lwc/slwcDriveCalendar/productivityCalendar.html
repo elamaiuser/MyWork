@@ -1,0 +1,158 @@
+<template>
+
+    <div class="slds-p-around_small slds-is-relative">
+        <lightning-spinner if:true={showSpinner} class="spins" size="medium"></lightning-spinner>
+
+        <table class="hco-rac-data-content-table hco-calendar-table">
+            <thead>
+                <tr>
+                    <template for:each={weekDays} for:item="weekday">
+                        <td key={weekday}>{weekday}</td>
+                    </template>
+                </tr>
+            </thead>
+            <tbody>
+                <template for:each={calendarWeeks} for:item="week">
+                    <tr key={week.key}>
+                        <template for:each={week.days} for:item="day">
+                            <template if:true={day.isWeekSummary}>
+                                <td key={day.key} data-value={week.startDateIso} onclick={handleSelectWeek}>
+                                    <!-- day info -->
+                                    <div class="slds-grid slds-grid_align-end slds-p-around_xxx-small">
+                                        <div class="day-info" data-value={day.dateIso} >
+                                            &nbsp;
+                                        </div>
+                                    </div>
+                                    <template if:true={day.slot}>
+                                        <div class="date-slot slds-grid slds-wrap slds-grid_align-spread">
+                                            <div class="slds-col slds-size_1-of-2 slds-text-align_center">Drive Count</div>
+                                            <div class="slds-col slds-size_1-of-2 slds-text-align_center">Average</div>
+                                        </div>
+                                        <div class="date-slot slds-grid slds-wrap slds-grid_align-spread">
+                                            <div class="day-of-slot slds-col slds-size_1-of-2 slds-text-align_center day-of-slot__green">{day.slot.noOfHighProductivityDrives}</div>
+                                            <div class="slds-col slds-size_1-of-2 slds-text-align_center">
+                                                <lightning-formatted-number value={day.slot.averageHighProductivityDrives} maximum-fraction-digits="4"></lightning-formatted-number>
+                                            </div>
+                                        </div>
+                                        <div class="date-slot slds-grid slds-wrap slds-grid_align-spread">
+                                            <div class="day-of-slot slds-col slds-size_1-of-2 slds-text-align_center day-of-slot__amber">{day.slot.noOfMidProductivityDrives}</div>
+                                            <div class="slds-col slds-size_1-of-2 slds-text-align_center">
+                                                <lightning-formatted-number value={day.slot.averageMidProductivityDrives} maximum-fraction-digits="4"></lightning-formatted-number>
+                                            </div>
+                                        </div>
+                                        <div class="date-slot slds-grid slds-wrap slds-grid_align-spread">
+                                            <div class="day-of-slot slds-col slds-size_1-of-2 slds-text-align_center day-of-slot__red">{day.slot.noOfLowProductivityDrives}</div>
+                                            <div class="slds-col slds-size_1-of-2 slds-text-align_center">
+                                                <lightning-formatted-number value={day.slot.averageLowProductivityDrives} maximum-fraction-digits="4"></lightning-formatted-number>
+                                            </div>
+                                        </div>
+                                        <div class="date-slot slds-grid slds-wrap slds-grid_align-spread">
+                                            <div class="slds-col slds-size_1-of-2 slds-text-align_center">{day.slot.totalDrives}</div>
+                                            <div class="slds-col slds-size_1-of-2 slds-text-align_center">
+                                                <lightning-formatted-number value={day.slot.totalDriveProductivity} maximum-fraction-digits="4"></lightning-formatted-number>
+                                            </div>
+                                        </div>
+                                    </template>
+                                </td>
+                            </template>
+                            <template if:false={day.isWeekSummary}>
+                                <td key={day.dateIso} class={day.class} data-value={day.dateIso} onclick={handleSelectDate}>
+                                    <!-- day info -->
+                                    <div class="slds-grid slds-grid_align-end slds-p-around_xxx-small">
+                                        <div class="icons">
+                                            <div class="slds-grid">
+                                                <lightning-helptext if:true={day.holidays} icon-name="action:goal" content={day.holidays} class="icon"></lightning-helptext>
+                                                <lightning-helptext if:true={day.calendarMessages} icon-name="action:announcement" content={day.calendarMessages} class="icon"></lightning-helptext>                                            </div>
+                                        </div>
+                                        <div class="day-info" data-value={day.dateIso}>
+                                            <span class="slds-m-right_xx-small" if:true={day.isFirstDayOfMonth}>
+                                                <lightning-formatted-date-time value={day.date} month="short">
+                                                </lightning-formatted-date-time>
+                                            </span>
+                                            <lightning-formatted-date-time value={day.date} day="numeric">
+                                            </lightning-formatted-date-time>
+                                        </div>
+                                    </div>
+
+                                    <template if:true={day.slot}>
+                                        <div class="date-slot slds-grid slds-wrap slds-grid_align-spread">
+                                            <div class="slds-col slds-size_1-of-2 slds-text-align_center">Drive Count</div>
+                                            <div class="slds-col slds-size_1-of-2 slds-text-align_center">Average</div>
+                                        </div>
+                                        <div class="date-slot slds-grid slds-wrap slds-grid_align-spread">
+                                            <div class="day-of-slot slds-col slds-size_1-of-2 slds-text-align_center day-of-slot__green">{day.slot.noOfHighProductivityDrives}</div>
+                                            <div class="slds-col slds-size_1-of-2 slds-text-align_center">
+                                                <lightning-formatted-number value={day.slot.averageHighProductivityDrives} maximum-fraction-digits="4"></lightning-formatted-number>
+                                            </div>
+                                        </div>
+                                        <div class="date-slot slds-grid slds-wrap slds-grid_align-spread">
+                                            <div class="day-of-slot slds-col slds-size_1-of-2 slds-text-align_center day-of-slot__amber">{day.slot.noOfMidProductivityDrives}</div>
+                                            <div class="slds-col slds-size_1-of-2 slds-text-align_center">
+                                                <lightning-formatted-number value={day.slot.averageMidProductivityDrives} maximum-fraction-digits="4"></lightning-formatted-number>
+                                            </div>
+                                        </div>
+                                        <div class="date-slot slds-grid slds-wrap slds-grid_align-spread">
+                                            <div class="day-of-slot slds-col slds-size_1-of-2 slds-text-align_center day-of-slot__red">{day.slot.noOfLowProductivityDrives}</div>
+                                            <div class="slds-col slds-size_1-of-2 slds-text-align_center">
+                                                <lightning-formatted-number value={day.slot.averageLowProductivityDrives} maximum-fraction-digits="4"></lightning-formatted-number>
+                                            </div>
+                                        </div>
+                                        <div class="date-slot slds-grid slds-wrap slds-grid_align-spread">
+                                            <div class="slds-col slds-size_1-of-2 slds-text-align_center">{day.slot.totalDrives}</div>
+                                            <div class="slds-col slds-size_1-of-2 slds-text-align_center">
+                                                <lightning-formatted-number value={day.slot.totalDriveProductivity} maximum-fraction-digits="4"></lightning-formatted-number>
+                                            </div>
+                                        </div>
+                                    </template>
+                                </td>
+                            </template>
+                        </template>
+                    </tr>
+                </template>
+                <tr>
+                    <td colspan="7"></td>
+                    <td>
+                        <div class="slds-grid slds-grid_align-end slds-p-around_xxx-small">
+                            <div class="day-info">
+                                &nbsp;
+                            </div>
+                        </div>
+                        <template if:true={monthSummary}>
+                            <div class="date-slot slds-grid slds-wrap slds-grid_align-spread">
+                                <div class="slds-col slds-size_1-of-2 slds-text-align_center">Drive Count</div>
+                                <div class="slds-col slds-size_1-of-2 slds-text-align_center">Average</div>
+                            </div>
+                            <div class="date-slot slds-grid slds-wrap slds-grid_align-spread">
+                                <div class="day-of-slot slds-col slds-size_1-of-2 slds-text-align_center day-of-slot__green">{monthSummary.noOfHighProductivityDrives}</div>
+                                <div class="slds-col slds-size_1-of-2 slds-text-align_center">
+                                    <lightning-formatted-number value={monthSummary.averageHighProductivityDrives} maximum-fraction-digits="4"></lightning-formatted-number>
+                                </div>
+                            </div>
+                            <div class="date-slot slds-grid slds-wrap slds-grid_align-spread">
+                                <div class="day-of-slot slds-col slds-size_1-of-2 slds-text-align_center day-of-slot__amber">{monthSummary.noOfMidProductivityDrives}</div>
+                                <div class="slds-col slds-size_1-of-2 slds-text-align_center">
+                                    <lightning-formatted-number value={monthSummary.averageMidProductivityDrives} maximum-fraction-digits="4"></lightning-formatted-number>
+                                </div>
+                            </div>
+                            <div class="date-slot slds-grid slds-wrap slds-grid_align-spread">
+                                <div class="day-of-slot slds-col slds-size_1-of-2 slds-text-align_center day-of-slot__red">{monthSummary.noOfLowProductivityDrives}</div>
+                                <div class="slds-col slds-size_1-of-2 slds-text-align_center">
+                                    <lightning-formatted-number value={monthSummary.averageLowProductivityDrives} maximum-fraction-digits="4"></lightning-formatted-number>
+                                </div>
+                            </div>
+                            <div class="date-slot slds-grid slds-wrap slds-grid_align-spread">
+                                <div class="slds-col slds-size_1-of-2 slds-text-align_center">{monthSummary.totalDrives}</div>
+                                <div class="slds-col slds-size_1-of-2 slds-text-align_center">
+                                    <lightning-formatted-number value={monthSummary.totalDriveProductivity} maximum-fraction-digits="4"></lightning-formatted-number>
+                                </div>
+                            </div>
+                        </template>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <c-slwc-drive-productivity-drive-list></c-slwc-drive-productivity-drive-list>
+
+</template>

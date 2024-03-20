@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+        <label><!-- Preferred Weeks --></label>
+        <name>sked_Preferred_Weeks__c</name>
+        <picklistValues>
+            <masterLabel>Week 1</masterLabel>
+            <translation><!-- Week 1 --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Week 2</masterLabel>
+            <translation><!-- Week 2 --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Week 3</masterLabel>
+            <translation><!-- Week 3 --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Week 4</masterLabel>
+            <translation><!-- Week 4 --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Week 5</masterLabel>
+            <translation><!-- Week 5 --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Week 6</masterLabel>
+            <translation><!-- Week 6 --></translation>
+        </picklistValues>
+    </CustomFieldTranslation>

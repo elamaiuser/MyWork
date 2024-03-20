@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Queue xmlns="http://soap.sforce.com/2006/04/metadata">
+    <doesSendEmailToMembers>false</doesSendEmailToMembers>
+    <name>Manchester NH: DSTs</name>
+    <queueMembers>
+        <users>
+            <user>julie.plourde@redcross.org</user>
+            <user>nancy.russ@redcross.org</user>
+            <user>renee.gelinas@redcross.org</user>
+            <user>stacy.cullen@redcross.org</user>
+            <user>steve.levinson@redcross.org</user>
+            <user>tim.brennan@redcross.org</user>
+        </users>
+    </queueMembers>
+    <queueSobject>
+        <sobjectType>sked_Drive_Shift_Trade__c</sobjectType>
+    </queueSobject>
+</Queue>

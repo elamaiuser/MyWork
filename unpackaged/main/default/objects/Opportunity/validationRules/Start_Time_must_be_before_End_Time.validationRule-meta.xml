@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Start_Time_must_be_before_End_Time</fullName>
+    <active>true</active>
+    <description>User should not be allowed to save a record if the End Time value is before the Start Time value.</description>
+    <errorConditionFormula>AND( 
+OR(
+   ISNEW(),
+    ISCHANGED(End_Time__c),
+    ISCHANGED(Start_Time__c) 
+  ), 
+ TIMEVALUE(End_Time__c)    &lt;=   TIMEVALUE(Start_Time__c)
+)</errorConditionFormula>
+    <errorDisplayField>End_Time__c</errorDisplayField>
+    <errorMessage>End Time cannot be prior to Start Time.</errorMessage>
+</ValidationRule>

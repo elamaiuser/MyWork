@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Accounts_APT</fullName>
+    <columns>ACCOUNT.NAME</columns>
+    <columns>ACCOUNT.TYPE</columns>
+    <columns>APT_Required__c</columns>
+    <columns>District_Manager__c</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>APT_Required__c</field>
+        <operation>equals</operation>
+        <value>1</value>
+    </filters>
+    <label>All Accounts_APT</label>
+</ListView>

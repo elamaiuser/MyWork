@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Work_Phone_Format_Restriction</fullName>
+    <active>false</active>
+    <description>Phone format must be xxx-xxx-xxxx. Note that Work Phone is the label for the Other Phone standard field.</description>
+    <errorConditionFormula>NOT(
+ OR(
+  LEN (OtherPhone) = 0,
+  REGEX(OtherPhone, &quot;[0-9]{3}-[0-9]{3}-[0-9]{4}&quot;)
+
+ )
+)</errorConditionFormula>
+    <errorDisplayField>OtherPhone</errorDisplayField>
+    <errorMessage>Please add a valid phone number in the following format: xxx-xxx-xxxx</errorMessage>
+</ValidationRule>

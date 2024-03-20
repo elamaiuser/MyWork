@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Test_Lori_DMDCR_sked_Drive_Change_Request</fullName>
+    <filterScope>Queue</filterScope>
+    <label>Test Lori: DMDCR</label>
+    <queue>Test_Lori_DMDCR</queue>
+    <sharedTo>
+        <allInternalUsers></allInternalUsers>
+    </sharedTo>
+</ListView>

@@ -1,0 +1,60 @@
+<template>
+    <div class="slds-is-relative">
+        <template if:true={showSpinner}>
+            <lightning-spinner class="spins" size="medium"></lightning-spinner>
+        </template>
+    
+        <article class="slds-card slds-card_boundary approval-history-page">
+            <div class="slds-grid slds-page-header">
+                <header class="slds-media slds-media--center slds-has-flexi-truncate">
+                    <div class="slds-media__figure slds-m-right_small slds-avatar slds-avatar_small">
+                        <lightning-icon icon-name="custom:custom50" size="small"></lightning-icon>
+                    </div>
+                    <div class="slds-media__body">
+                        <div class="slds-page-header__name">
+                            <div class="slds-page-header__name-title">
+                                <h2 class="slds-card__header-title">
+                                    <span class="slds-truncate">{pageHeader}</span>
+                                </h2>
+                            </div>
+                        </div>
+                    </div>
+                </header>
+                <div class="slds-no-flex">
+                    <div class="slds-grid">
+                    </div>
+                </div>
+            </div>
+            <div>
+                <template if:false={showSpinner}>
+                    <div if:false={driveExternalData.length} class="slds-align_absolute-center slds-p-around_large">
+                        <lightning-icon icon-name="utility:warning" size="x-small" alternative-text="Warning!" title="Warning"></lightning-icon>
+                        <span class="slds-m-left--small">There is no external data for this Drive.</span>
+                    </div>
+                </template>
+                
+                <div class="wrapper">
+                    <template for:each={driveExternalData} for:item="item">
+                        <div key={item.key} class="slds-card__body slds-wrap slds-grid">
+                            <div class="slds-size_1-of-1">
+                                <div
+                                    class="slds-var-p-horizontal_medium slds-var-p-vertical_xx-small slds-tile slds-media slds-hint-parent">
+                                    <div class="slds-media__body">
+                                        <div class="slds-tile__detail">
+                                            <dl class="slds-list_horizontal slds-wrap">
+                                                <dt class="slds-item_label slds-text-color_weak slds-truncate">{item.type} External Id:</dt>
+                                                <dd class="slds-item_detail slds-truncate">
+                                                    {item.externalId}
+                                                </dd>
+                                            </dl>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+            </div>
+        </article>
+    </div>
+</template>

@@ -1,0 +1,32 @@
+.container-custom-modal {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  -webkit-transform: translate3d(0, 0, 0);
+          transform: translate3d(0, 0, 0);
+  left: 0;
+  right: 0;
+  z-index: 3;
+}
+
+.header-custom-modal {
+  position: absolute;
+  top: 0;
+  height: 55px;
+  left: 0;
+  right: 0;
+}
+
+.content-custom-modal {
+  position: relative;
+}
+
+.modal-custom__header {
+  position: relative;
+  border-top-right-radius: .25rem;
+  border-top-left-radius: .25rem;
+  border-bottom: 1px solid #dddbda;
+  padding: 0.5rem;
+  text-align: center;
+  background: #fff;
+}

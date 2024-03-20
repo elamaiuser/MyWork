@@ -1,0 +1,100 @@
+<template>
+    <template if:true={isOpen}>
+        <section role="dialog" tabindex="-1" class="slds-modal slds-fade-in-open" style="z-index:9999">
+        <div class="slds-modal__container" style="max-width: 32rem;">
+            <header class="slds-modal__header">
+                <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close" onclick={closeModal}>
+                    <lightning-icon icon-name="utility:close" alternative-text="close" variant="inverse" size="small" ></lightning-icon>
+                </button>
+                
+                <h2 class="slds-text-heading_medium slds-hyphenate">Edit Times</h2>
+            </header>
+
+            <div class="slds-theme_default">
+                <div class="slds-modal__content slds-p-around_medium" style="overflow: initial;">
+                    <c-slwc-page-errors validities={errorMessages}></c-slwc-page-errors>
+
+                    <div class="slds-grid slds-grid_pull-padded-small">
+                        <div class="slds-size_1-of-2 slds-p-horizontal_small">
+                            <c-slwc-time-input-with-timezone 
+                                input-date={drive.driveDate}
+                                timezone={timezoneSidId}>
+                                <lightning-input
+                                    slot="input"
+                                    type="time"
+                                    name="jobStartTime"
+                                    label="Job Start Time"
+                                    value={jobStartTime}  
+                                    disabled>
+                                </lightning-input>
+                            </c-slwc-time-input-with-timezone>
+                        </div>
+                        <div class="slds-size_1-of-2 slds-p-horizontal_small">
+                            <c-slwc-time-input-with-timezone 
+                                input-date={drive.driveDate}
+                                timezone={timezoneSidId}>
+                                <lightning-input
+                                    slot="input"
+                                    type="time"
+                                    name="jobEndTime"
+                                    label="Job End Time"
+                                    value={jobEndTime}  
+                                    disabled>
+                                </lightning-input>
+                            </c-slwc-time-input-with-timezone>
+                        </div>
+                    </div>
+
+                    <div class="slds-m-top_x-small slds-grid slds-grid_pull-padded-small">
+                        <div class="slds-size_1-of-2 slds-p-horizontal_small">
+                            <c-slwc-time-input-with-timezone 
+                                input-date={drive.driveDate}
+                                timezone={timezoneSidId}>
+                                <lightning-input
+                                    slot="input"
+                                    type="time"
+                                    name="startTime"
+                                    label="Start Time"
+                                    value={startTimeWithTravelTime}  
+                                    disabled>
+                                </lightning-input>
+                            </c-slwc-time-input-with-timezone>
+                        </div>
+                        <div class="slds-size_1-of-2 slds-p-horizontal_small">
+                            <c-slwc-time-input-with-timezone 
+                                input-date={drive.driveDate}
+                                timezone={timezoneSidId}>
+                                <lightning-input
+                                    slot="input"
+                                    type="time"
+                                    name="endTime"
+                                    label="End Time"
+                                    value={endTimeWithTravelTime}  
+                                    disabled>
+                                </lightning-input>
+                            </c-slwc-time-input-with-timezone>
+                        </div>
+                    </div>
+                    <div class="slds-m-top_x-small slds-grid slds-grid_pull-padded-small">
+                        <div class="slds-size_1-of-2 slds-p-horizontal_small">
+                            <lightning-input type="number" name="travelTimeTo" label="Travel Time To" max="9999" min="-9999"
+                                             onchange={handleOnChange} value={model.travelTimeTo}></lightning-input>
+                        </div>
+                        <div class="slds-size_1-of-2 slds-p-horizontal_small">
+                            <lightning-input type="number" name="travelTimeBack" label="Travel Time Back" max="9999" min="-9999"
+                                             onchange={handleOnChange} value={model.travelTimeBack}></lightning-input>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <footer class="slds-modal__footer">
+                <lightning-button label="Cancel" title="Cancel" onclick={closeModal} class="slds-m-right_xx-small"></lightning-button>
+                <lightning-button class="slds-m-top_small" onclick={handleSave} variant="brand" type="submit" name="update" label="Save"></lightning-button>
+            </footer>
+        </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open" style="z-index:9998"></div>
+
+    </template>
+</template>

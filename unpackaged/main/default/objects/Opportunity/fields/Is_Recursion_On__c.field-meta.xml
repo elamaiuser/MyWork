@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Is_Recursion_On__c</fullName>
+    <defaultValue>false</defaultValue>
+    <description>Field is used for stopping recursive update on Opportunities when drive change requests are rejected.  This is not a required field and does not need to be considered for migration.</description>
+    <externalId>false</externalId>
+    <label>Is Recursion On</label>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Checkbox</type>
+</CustomField>

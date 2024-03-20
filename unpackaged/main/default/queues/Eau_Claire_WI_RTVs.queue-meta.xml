@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Queue xmlns="http://soap.sforce.com/2006/04/metadata">
+    <doesSendEmailToMembers>false</doesSendEmailToMembers>
+    <name>Eau Claire WI: RTVs</name>
+    <queueMembers>
+        <users>
+            <user>bethany.pederson@redcross.org</user>
+            <user>colleen.trejo@redcross.org</user>
+            <user>cristin.dorow@redcross.org</user>
+            <user>dale.andrews@redcross.org</user>
+            <user>doug.winter@redcross.org.biomed</user>
+            <user>emily.lemke@redcross.org</user>
+            <user>jason.blackwell@redcross.org</user>
+            <user>jennifer.fry@redcross.org</user>
+            <user>jessica.gilges@redcross.org</user>
+            <user>kristina.meyer@redcross.org</user>
+            <user>melissa.meyer@redcross.org</user>
+            <user>michelle.goodwill@redcross.org.biomed</user>
+            <user>nancy.firth@redcross.org</user>
+            <user>trish.geber@redcross.org</user>
+            <user>rachel.tadsen@redcross.org</user>
+            <user>roxanne.berra@redcross.org</user>
+            <user>sarah.stear@redcross.org</user>
+            <user>serena.bricker@redcross.org</user>
+            <user>shannon.metcalf@redcross.org</user>
+            <user>tiffany.schulte@redcross.org</user>
+            <user>tracy.nelson@redcross.org</user>
+        </users>
+    </queueMembers>
+    <queueSobject>
+        <sobjectType>sked__Location__c</sobjectType>
+    </queueSobject>
+</Queue>

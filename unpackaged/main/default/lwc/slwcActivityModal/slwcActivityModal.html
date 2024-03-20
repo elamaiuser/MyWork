@@ -1,0 +1,118 @@
+<template>
+    <section role="dialog" tabindex="-1" class={customClass.modalClass} style="z-index: 9003;">
+        <div class="slds-modal__container" style="width: 32rem;">
+            <header class={customClass.headerClass}>
+                <lightning-button-icon onclick={handleCancel} class="slds-button slds-button_icon slds-modal__close" size="large"
+                    icon-name="utility:close" variant="bare-inverse" title="Close"></lightning-button-icon>
+
+                <h2 class="slds-modal__title slds-hyphenate">{modalHeader}</h2>
+            </header>
+            <div class="slds-modal__content">
+                <div class="slds-is-relative">
+                    <template if:true={showSpinner}>
+                        <lightning-spinner class="spins" size="medium"></lightning-spinner>
+                    </template>
+    
+                    <c-slwc-page-errors validities={errorMessages}></c-slwc-page-errors>
+    
+                    <div class="slds-theme_shade slds-p-horizontal_medium slds-p-vertical_small slds-border_bottom">
+                        <div class="slds-media slds-media_center">
+                            <div class="slds-media__figure">
+                                <lightning-icon icon-name="standard:note" size="small" ></lightning-icon>
+                            </div>
+                            <div class="slds-media__body">
+                                <h1 class="slds-text-heading_small">Details</h1>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="slds-p-horizontal_medium slds-p-vertical_small">
+                        <div class="slds-form-element__row slds-grid slds-grid_pull-padded-small">
+                            <div class="slds-size_1-of-1 slds-p-horizontal_small">
+                                <lightning-input type="text" max-length="255" name="activityTitle" label="Activity Title"
+                                    required
+                                    onchange={handleOnChange}
+                                    value={model.activityTitle}></lightning-input>
+                            </div>
+                        </div>      
+
+                        <div class="slds-form-element__row slds-m-top_x-small slds-grid slds-grid_pull-padded-small">
+                            <div class="slds-size_1-of-2 slds-p-horizontal_small">
+                                <c-slwc-picklist
+                                    name="eventType"
+                                    label="Activity Type"
+                                    object-api-name="sked__Activity__c"
+                                    required
+                                    selected-value={model.eventType}  
+                                    pick-listfield-api-name="sked__Type__c"
+                                    onpicklistchange={handleOnChange}>
+                                </c-slwc-picklist>
+                            </div>
+                            
+                            <div class="slds-size_1-of-2 slds-p-horizontal_small">
+                                <c-slwc-dependent-picklist
+                                    name="subtype"
+                                    label="Sub Type"
+                                    object-api-name="sked__Activity__c"
+                                    required
+                                    disabled={subtypeDisabled}
+                                    selected-value={model.subtype}  
+                                    field-api-name="sked_Subtype__c"
+                                    dependent-field-api-name="sked__Type__c"
+                                    controlling-field-values={subtypeControllingFieldValues}
+                                    onpicklistchange={handleOnChange}>
+                                </c-slwc-dependent-picklist>
+                            </div>
+                        </div>
+    
+                        <div class="slds-form-element__row slds-m-top_x-small">
+                            <c-slwc-address-input 
+                                if:true={isOpen}
+                                label={addressInputLabel} 
+                                is-required
+                                onselectionchange={handleSelectAddress} 
+                                value={model.address}> 
+                            </c-slwc-address-input>
+                        </div>
+    
+                        <div class="slds-form-element__row slds-m-top_x-small">
+                            <lightning-textarea 
+                                name="notes"
+                                label="Notes"
+                                field-level-help={notesHelpText}
+                                required={notesRequired}
+                                onchange={handleOnChange}
+                                value={model.notes}>
+                            </lightning-textarea>
+                        </div>
+                    </div>
+    
+                    <div class="slds-theme_shade slds-p-horizontal_medium slds-p-vertical_small slds-border_bottom slds-border_top">
+                        <div class="slds-media slds-media_center">
+                            <div class="slds-media__figure">
+                                <lightning-icon icon-name="standard:event" size="small" ></lightning-icon>
+                            </div>
+                            <div class="slds-media__body">
+                                <h1 class="slds-text-heading_small">Schedule</h1>
+                            </div>
+                        </div>
+                    </div>
+    
+                    <div class="slds-p-horizontal_medium slds-p-vertical_small">
+                        <div class="slds-form-element__row">
+                            <lightning-input name="start" type="datetime" label="Start" value={model.start} timezone={timezoneSidId} onchange={handleOnChange} required autocomplete="off"></lightning-input>
+                        </div>
+                        <div class="slds-form-element__row">
+                            <lightning-input name="finish" type="datetime" label="End" value={model.finish} timezone={timezoneSidId} onchange={handleOnChange} required autocomplete="off"></lightning-input>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <footer class={customClass.footerClass}>
+                <button class="slds-button slds-button_neutral" onclick={handleCancel}>Close</button>
+                <button class="slds-button slds-button_brand" onclick={handleSave} disabled={saveBtnDisabled}>Save</button>
+            </footer>
+        </div>
+    </section>
+    <div class={customClass.backdropClass} style="z-index: 9002;"></div>
+</template>

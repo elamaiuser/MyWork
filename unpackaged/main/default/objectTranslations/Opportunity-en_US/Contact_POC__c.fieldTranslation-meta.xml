@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+        <help><!-- Main point of contact, customer, stake holder, etc --></help>
+        <label><!-- Contact (POC) --></label>
+        <name>Contact_POC__c</name>
+        <relationshipLabel><!-- Opportunities --></relationshipLabel>
+    </CustomFieldTranslation>

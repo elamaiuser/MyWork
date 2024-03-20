@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Number_of_Days__c</fullName>
+    <defaultValue>3</defaultValue>
+    <description>Used for capturing:
+1.  Number of days following completion of a drive used for retrieving drives to evaluate for Calendar Build.
+2.  Number of days to delay after end of the month before moving Calendar Build drives from &quot;Draft&quot; to &quot;System Generated&quot;</description>
+    <externalId>false</externalId>
+    <fieldManageability>DeveloperControlled</fieldManageability>
+    <label>Number of Days After Drive Completion</label>
+    <precision>18</precision>
+    <required>false</required>
+    <scale>0</scale>
+    <type>Number</type>
+    <unique>false</unique>
+</CustomField>

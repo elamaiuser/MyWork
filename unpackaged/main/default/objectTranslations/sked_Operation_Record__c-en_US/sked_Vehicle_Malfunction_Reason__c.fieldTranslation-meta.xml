@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+        <label><!-- Vehicle Malfunction Reason --></label>
+        <name>sked_Vehicle_Malfunction_Reason__c</name>
+        <picklistValues>
+            <masterLabel>Vehicle breakdown</masterLabel>
+            <translation><!-- Vehicle breakdown --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Vehicle issue (ex: expired registration)</masterLabel>
+            <translation><!-- Vehicle issue (ex: expired registration) --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Vehicle will not start</masterLabel>
+            <translation><!-- Vehicle will not start --></translation>
+        </picklistValues>
+    </CustomFieldTranslation>

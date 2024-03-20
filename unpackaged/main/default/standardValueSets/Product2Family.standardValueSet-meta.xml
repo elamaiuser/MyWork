@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<StandardValueSet xmlns="http://soap.sforce.com/2006/04/metadata">
+    <sorted>false</sorted>
+    <standardValue>
+        <fullName>Theme</fullName>
+        <default>false</default>
+        <label>Theme</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Education</fullName>
+        <default>false</default>
+        <label>Education</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Diversity</fullName>
+        <default>false</default>
+        <label>Diversity</label>
+    </standardValue>
+    <standardValue>
+        <fullName>General</fullName>
+        <default>false</default>
+        <label>General</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Facts &amp; Donor Education</fullName>
+        <default>false</default>
+        <label>Facts &amp; Donor Education</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Appointment Support</fullName>
+        <default>false</default>
+        <label>Appointment Support</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Power Red</fullName>
+        <default>false</default>
+        <label>Power Red</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Rapid Pass</fullName>
+        <default>false</default>
+        <label>Rapid Pass</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Volunteer</fullName>
+        <default>false</default>
+        <label>Volunteer</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Spanish Materials</fullName>
+        <default>false</default>
+        <label>Spanish Materials</label>
+    </standardValue>
+</StandardValueSet>

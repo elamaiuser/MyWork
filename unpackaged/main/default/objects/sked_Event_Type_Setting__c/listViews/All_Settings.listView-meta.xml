@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>All_Settings</fullName>
+    <columns>NAME</columns>
+    <columns>sked_Category__c</columns>
+    <columns>sked_Item__c</columns>
+    <columns>sked_Is_Available__c</columns>
+    <columns>sked_Available_Start__c</columns>
+    <columns>sked_Available_End__c</columns>
+    <columns>sked_Background_Color__c</columns>
+    <columns>sked_Color__c</columns>
+    <columns>sked_Can_Be_Pre_dated__c</columns>
+    <columns>sked_Short_Name__c</columns>
+    <columns>sked_Step__c</columns>
+    <columns>sked_Show_Legend__c</columns>
+    <columns>sked_Is_Active__c</columns>
+    <filterScope>Everything</filterScope>
+    <label>All Settings</label>
+</ListView>

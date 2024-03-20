@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GlobalValueSet xmlns="http://soap.sforce.com/2006/04/metadata">
+    <customValue>
+        <fullName>Fixed Site</fullName>
+        <default>false</default>
+        <label>Fixed Site</label>
+    </customValue>
+    <customValue>
+        <fullName>Mobile</fullName>
+        <default>false</default>
+        <label>Mobile</label>
+    </customValue>
+    <customValue>
+        <fullName>RSMO</fullName>
+        <default>false</default>
+        <isActive>false</isActive>
+        <label>RSMO</label>
+    </customValue>
+    <masterLabel>Drive Types</masterLabel>
+    <sorted>false</sorted>
+</GlobalValueSet>

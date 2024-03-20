@@ -1,0 +1,48 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,force:lightningQuickAction" access="global" >
+    <aura:registerEvent name="redirectAccountListevent" type="c:RedirectAccountListViewEvent"></aura:registerEvent>
+    <aura:attribute name="accountids" type="String"></aura:attribute>
+    <aura:attribute name="AccountIdArrays" type="String[]"></aura:attribute>
+    <aura:attribute name="accountidsplited" type="Boolean" default="false"/>
+    
+    <aura:handler name="init" value="{!this}" action="{!c.doOnload}"/>
+    
+    <aura:if isTrue="{!v.accountidsplited}"> 
+        <c:portfolioAssignmentlwc accrecords="{!v.AccountIdArrays}" onclosequickaction="{!c.saveRedirect}"/>
+    </aura:if>
+    
+    <!--div>
+        <div style="display:flex;">
+            <div style="display:flex;">
+                <div style="width:300px;">
+                    
+                </div>
+                <div style="width:300px;">
+                    
+                </div>
+            </div>
+            <div style="display:flex;">
+                <div style="width:300px;">
+                  
+                </div>
+                <div style="width:300px;">
+                  
+                    <div style="padding:5px;">
+                        <div style="display:flex;">
+                        	<div style="width:100px;">
+                                
+                            </div>
+                            <div style="width:100px;">
+                                <div style="padding-left: 25px;">
+                                    <lightning:button variant="brand" label="Back" title="Backaction" onclick="{! c.saveRedirect }" />
+                                </div>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div-->
+    
+    <!--c:PortfolioForEachAccount/-->
+</aura:component>

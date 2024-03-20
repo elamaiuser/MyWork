@@ -1,0 +1,48 @@
+<template>
+    <div class="slds-p-around_small slds-is-relative">
+        <lightning-spinner if:true={showSpinner} class="spins" size="medium"></lightning-spinner>
+
+        <div class="calendar-header">
+            {celendarHeader}
+        </div>
+        <table class="calendar-table">
+            <thead>
+                <tr>
+                    <template for:each={weekDays} for:item="weekday">
+                        <td key={weekday}>{weekday}</td>
+                    </template>
+                </tr>
+            </thead>
+            <tbody>
+                <template for:each={calendarWeeks} for:item="week">
+                    <tr key={week.key}>
+                        <template for:each={week.days} for:item="day">
+                            <td 
+                                key={day.dateIso}
+                                style={day.slotStyle}
+                                class={day.class}>
+                                <!-- day info -->
+                                <div class="slds-grid slds-grid_align-spread slds-p-around_xxx-small">
+                                    <div class="day-info" data-value={day.dateIso} onclick={handleSelectDate}>
+                                        <!-- <span class="slds-m-right_xx-small" if:true={day.isFirstDayOfMonth}>
+                                            <lightning-formatted-date-time value={day.date} month="short">
+                                            </lightning-formatted-date-time>
+                                        </span> -->
+                                        <lightning-formatted-date-time value={day.date} day="numeric">
+                                        </lightning-formatted-date-time>
+
+                                        <div class="dots">
+                                            <template for:each={day.dots} for:item="dot">
+                                                <span key={dot.key} class="dot" style={dot.style}></span>
+                                            </template>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                        </template>
+                    </tr>
+                </template>
+            </tbody>
+        </table>
+    </div>
+</template>

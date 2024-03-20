@@ -1,0 +1,74 @@
+<template>
+  <div class="optimization-summary-page">
+    <lightning-spinner if:true={showSpinner} class="spins" size="medium"></lightning-spinner>
+
+    <div class="slds-grid">
+      <div class="slds-col width-100 slds-scrollable_y">
+        <div class="slds-grid slds-grid_vertical-align-end">
+          <div class="slds-col slds-grid slds-grid_vertical-align-center">
+            <lightning-button icon-name="utility:chevronleft" onclick={handleClose} label="Back"></lightning-button>
+            <h2 class="slds-nav-vertical__title slds-m-left_small" style="padding: 0 0.25rem;">
+              {optimizationRun.name}
+            </h2>
+          </div>
+          <div class="slds-col_bump-left">
+            <lightning-button label="Dispatch All" variant="brand" onclick={showDispatchDriveModal} disabled={btnDispatchDisabled}></lightning-button>
+          </div>
+        </div>
+        <div class="slds-grow">
+          <template for:each={optimizationQueues} for:item="optimizationQueue">
+            <div class="slds-grid slds-grid slds-grid_vertical-align-center" key={optimizationQueue.id} >
+              <h2 class="slds-nav-vertical__title" style="padding: 0.75rem 0;">
+                {optimizationQueue.name}
+              </h2>
+
+              <div class="slds-col_bump-left">
+                <lightning-button-group>
+                  <lightning-button onclick={toggleCollapseAll} data-optimization-queue-id={optimizationQueue.id} label="Collapse All"></lightning-button>
+                  <lightning-button onclick={toggleExpandAll} data-optimization-queue-id={optimizationQueue.id} label="Expand All"></lightning-button>
+                </lightning-button-group>
+              </div>
+            </div>
+            
+            <template for:each={optimizationQueue.dataGrouped} for:item="item">
+              <div key={item.key} class={item.class}>
+                <h3 class="slds-section__title">
+                  <button aria-expanded="true" class="slds-button slds-section__title-action" data-optimization-queue-id={optimizationQueue.id} data-date-iso={item.dateIso} onclick={toggleExpand}>
+                    <lightning-icon class="slds-section__title-action-icon" icon-name="utility:switch" size="xx-small"></lightning-icon>
+                    <span class="slds-truncate slds-m-left_small slds-text-title_caps">
+                      <lightning-formatted-date-time value={item.dateIso} time-zone="UTC" day="numeric" year="numeric" month="long">
+                      </lightning-formatted-date-time>
+                    </span>
+                  </button>
+                </h3>
+                <div aria-hidden="false" if:true={item.hasData} class="slds-section__content">
+                  <lightning-tree-grid
+                    resize-column-disabled  
+                    hide-checkbox-column
+                    columns={item.columns} 
+                    data={item.data} 
+                    onrowaction={handleRowAction}
+                    key-field='name'>
+                  </lightning-tree-grid>
+                </div>
+              </div>
+            </template>
+          </template>
+        </div>
+      </div>
+    </div>
+
+    <c-slwc-dispatch-drive-modal
+        drives={dispatchDriveModalData.drives}
+        is-open={dispatchDriveModalData.isOpen}
+        onclose={hideDispatchDriveModal}
+    ></c-slwc-dispatch-drive-modal>
+    <c-slwc-drive-staffing-details
+      scheduling-console-territory-keys={schedulingConsoleTerritoryKeys}
+      is-open={driveSideMenuData.shown}
+      record-id={driveSideMenuData.recordId}
+      onclose={closeDriveSideMenu}
+      onsave={saveDriveSideMenu}
+    ></c-slwc-drive-staffing-details>
+  </div>
+</template>

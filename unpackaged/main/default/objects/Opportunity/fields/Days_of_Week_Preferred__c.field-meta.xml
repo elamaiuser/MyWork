@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Days_of_Week_Preferred__c</fullName>
+    <externalId>false</externalId>
+    <formula>SUBSTITUTE(
+
+    IF(INCLUDES( Account.Days_of_Week_Preferred__c , &quot;Monday&quot;),  &quot;Monday  &quot;,  NULL) +
+    IF(INCLUDES( Account.Days_of_Week_Preferred__c , &quot;Tuesday&quot;),  &quot;Tuesday   &quot;,  NULL) +
+    IF(INCLUDES( Account.Days_of_Week_Preferred__c , &quot;Wednesday&quot;),  &quot;Wednesday   &quot;,  NULL) +
+    IF(INCLUDES( Account.Days_of_Week_Preferred__c , &quot;Thursday&quot;),  &quot;Thursday  &quot;,  NULL) +
+    IF(INCLUDES( Account.Days_of_Week_Preferred__c , &quot;Friday&quot;),  &quot;Friday  &quot;,  NULL) +
+    IF(INCLUDES( Account.Days_of_Week_Preferred__c , &quot;Saturday&quot;),  &quot;Saturday  &quot;,  NULL) +
+    IF(INCLUDES( Account.Days_of_Week_Preferred__c , &quot;Sunday&quot;),  &quot;Sunday  &quot;,  NULL),
+   
+
+    &quot;;.&quot;,
+
+    NULL
+)</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <label>Days of Week Preferred</label>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

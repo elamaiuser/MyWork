@@ -1,0 +1,34 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction"
+                controller="ARCFileUploadController"
+                access="global" >
+	
+    <aura:attribute name="headerName" type="String"/>
+    <aura:attribute name="ColumnName" type="String"/>
+    <aura:attribute name="recordButton" type="String" default="Edit,Delete"/>
+    <aura:attribute name="iconName" type="String"/>    
+    <aura:attribute name="SOQLQuery" type="String"/>      
+    <aura:attribute name="hyperLinkColumn" type="String"/>
+    <aura:attribute name="dateFormatType" type="String"/>    
+    <aura:attribute name="genericrecordid" type="String[]"/>    
+    <aura:attribute name="recordId" type="String"/>
+    <aura:attribute name="displayRelatedList" type="Boolean" default="false"/>
+    <aura:attribute name="loggedinuserid" type="Boolean" default="false"/>
+    
+    <aura:handler value="{!this}" name="init" action="{!c.doOnload}"/>
+    <aura:method name="reInit" action="{!c.doOnload}" />
+	<aura:handler name="RefreshCustomComponent" event="c:RefreshCustomComponent" action="{!c.refreshCustomComp}"/>   
+
+    <aura:if isTrue="{!v.displayRelatedList}">
+     
+            <c:GenericRelatedList headerName="{!v.headerName}"
+                              ColumnName="{!v.ColumnName}"
+                              recordButton="{!v.recordButton}"
+                              iconName="{!v.iconName}"
+                              SOQLQuery="{!v.SOQLQuery}"
+                              hyperLinkColumn="{!v.hyperLinkColumn}"
+                              dateFormatType="{!v.dateFormatType}"
+                              recordId = "{!v.genericrecordid}"
+                              currentRecordId = "{!v.recordId}"/>
+    </aura:if>
+
+</aura:component>

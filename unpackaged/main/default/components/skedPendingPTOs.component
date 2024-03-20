@@ -1,0 +1,24 @@
+<apex:component access="global" controller="skedPendingPTOsController">
+    
+    <table cellpadding="5" style="border-collapse: collapse" width="800" border="1">
+    	<thead>
+        	<tr>
+                <td style="background-color: #D8D8D8; color: #190707" width="150"><b>Resource</b></td>
+                <td style="background-color: #D8D8D8; color: #190707" width="150"><b>Unavailability Type</b></td>
+                <td style="background-color: #D8D8D8; color: #190707" width="250"><b>Start</b></td>
+                <td style="background-color: #D8D8D8; color: #190707" width="250"><b>Finish</b></td>
+            </tr>
+        </thead>
+        <tbody>
+        	<apex:repeat value="{!Unavailabilities}" var="unavailability">
+                <tr>
+                	<td width="150">{!unavailability.Data.sked__Resource__r.Name}</td>
+                	<td width="150">{!unavailability.Data.sked__Type__c}</td>
+                	<td width="250">{!unavailability.StartStr}</td>
+                	<td width="250">{!unavailability.FinishStr}</td>
+                </tr>
+            </apex:repeat>
+        </tbody>
+    </table>
+    
+</apex:component>

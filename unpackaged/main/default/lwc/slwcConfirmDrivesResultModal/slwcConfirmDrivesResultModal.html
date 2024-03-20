@@ -1,0 +1,32 @@
+<template>
+    <section role="dialog" tabindex="-1" class={customClass.modalClass}>
+        <div class="slds-modal__container" style="max-width: 80rem;">
+            <header class={customClass.headerClass}>
+                <lightning-button-icon onclick={handleCancel} class="slds-button slds-button_icon slds-modal__close" size="large"
+                    icon-name="utility:close" variant="bare-inverse" title="Close"></lightning-button-icon>
+
+                <h2 class="slds-modal__title slds-hyphenate">Confirm Drives Result</h2>
+            </header>
+            <div class="slds-modal__content slds-is-relative">
+                <div class="slds-scrollable_y" style="height: 45vh;">
+                    <c-slwc-custom-datatable 
+                        key-field="id"
+                        data={tableData}
+                        columns={columns}
+                        hide-checkbox-column
+                        wrap-text-max-lines="3">
+                    </c-slwc-custom-datatable>
+                </div>
+                <div class="slds-shrink-none slds-grow-none slds-p-horizontal_small slds-p-vertical_small slds-border_top modal-content__footer">
+                    <div class="slds-grid slds-grid_align-spread slds-grid_vertical-align-center"> 
+                        <div class="slds-text-color_weak ng-binding">Total records: {totalRecords} </div>
+                    </div>
+                </div>
+            </div>
+            <footer class={customClass.footerClass}>
+                <button class="slds-button slds-button_neutral" onclick={handleCancel}>Close</button>
+            </footer>
+        </div>
+    </section>
+    <div class={customClass.backdropClass}></div>
+</template>

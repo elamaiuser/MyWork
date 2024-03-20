@@ -1,0 +1,27 @@
+<apex:page controller="UserCollOpQueAssngmentReportController" contentType="application/vnd.ms-excel#User Collection Operation and Queue assignment Report.xls" cache="true">
+<table>
+    <thead>
+        <tr>
+            <th style="text-align:center;">User Name</th>
+            <th style="text-align:center;">Profile Name</th>
+            <th style="text-align:center;">No of Collection Operation</th>
+            <th style="text-align:center;">Collection Operation Names</th>
+            <th style="text-align:center;">No of Queues</th> 
+            <th style="text-align:center;">Queue Name</th>
+         </tr>
+    </thead>
+    <tbody>
+        <apex:repeat value="{!UserCollOpQueQueryWrapList}" var="record" id="theRepeat">
+            <tr>
+                <td style="text-align:left;">{!record.selUser.Name}</td>
+                <td style="text-align:left;">{!record.selUser.Profile.Name}</td>
+                <td style="text-align:center;">{!record.selQollOppSize}</td>
+                <td style="text-align:left;">{!record.selUser.sked_Collection_Operations__c}</td>
+                <td style="text-align:center;">{!record.selQueSize}</td>
+                <td style="text-align:left;">{!record.selQName}</td>
+                
+            </tr>
+        </apex:repeat>
+    </tbody>
+</table>
+</apex:page>

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>sked_Notification_Type__c</fullName>
+    <externalId>false</externalId>
+    <fieldManageability>DeveloperControlled</fieldManageability>
+    <label>Notification Type</label>
+    <required>false</required>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>oneoff</fullName>
+                <default>true</default>
+                <label>oneoff</label>
+            </value>
+            <value>
+                <fullName>customsms</fullName>
+                <default>false</default>
+                <label>customsms</label>
+            </value>
+            <value>
+                <fullName>email</fullName>
+                <default>false</default>
+                <label>email</label>
+            </value>
+            <value>
+                <fullName>salesforcepush</fullName>
+                <default>false</default>
+                <label>salesforcepush</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

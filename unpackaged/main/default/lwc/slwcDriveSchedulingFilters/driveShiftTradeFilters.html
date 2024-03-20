@@ -1,0 +1,50 @@
+<template>
+    <c-slwc-click-outside func={closePanel}>
+        <nav class={customClass.panel}>
+            <div class="toggle-button" onclick={togglePanel}>
+                <lightning-button-icon class="arrow-icon" icon-name="utility:chevronleft" size="large" if:true={isOpen} variant="bare" tooltip="Collapse"></lightning-button-icon>
+                <lightning-button-icon class="arrow-icon" icon-name="utility:chevronright" size="large" if:false={isOpen} variant="bare" tooltip="Expand"></lightning-button-icon>
+            </div>
+
+            <div class="slds-nav-vertical__section">
+                <h2 class="slds-nav-vertical__title slds-p-horizontal_small">Filters</h2>
+                <ul>
+                    <li class="slds-p-right_small slds-p-left_xx-small">
+                        <!-- <div class="slds-form-element slds-form-element_stacked">
+                            <lightning-input label="Drive Start Date" name="driveStartDate" type="date" value={filters.driveStartDate} onchange={handleOnChange} autocomplete="off"></lightning-input>
+                        </div>
+                        <div class="slds-form-element slds-form-element_stacked">
+                            <lightning-input label="Drive End Date" name="driveEndDate" type="date" value={filters.driveEndDate} onchange={handleOnChange} autocomplete="off"></lightning-input>
+                        </div> -->
+                        <!-- <div class="slds-form-element slds-form-element_stacked">
+                            <c-slwc-multi-picklist
+                                name="driveTypes"
+                                label="Drive Types"
+                                selected-by-default={selectedAllByDefault}
+                                object-api-name="sked_Drive__c"
+                                field-api-name="sked_Type_of_Drive__c"
+                                onpicklistchange={handleOnChange}
+                                default-values={filters.driveTypes}>
+                            </c-slwc-multi-picklist>                   
+                        </div> -->
+                        <div class="slds-form-element slds-form-element_stacked">
+                            <c-slwc-multi-picklist
+                                name="statuses"
+                                label="Approval Statuses"
+                                selected-by-default={selectedAllByDefault}
+                                object-api-name="sked_Drive_Shift_Trade__c"
+                                field-api-name="sked_Status__c"
+                                onpicklistchange={handleOnChange}
+                                excluded-values={filters.excludedStatuses}
+                                default-values={filters.statuses}>
+                            </c-slwc-multi-picklist>
+                        </div>
+                        <div class="slds-form-element slds-form-element_stacked slds-m-top_medium slds-text-align_right">
+                            <lightning-button label="Save" title="Save" variant="brand" onclick={handleSearch}></lightning-button>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+    </c-slwc-click-outside>
+</template>

@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+        <label><!-- # of Devices with Issue (Connectivity) --></label>
+        <name>sked_Connectivity_No_of_Issue_Devices__c</name>
+    </CustomFieldTranslation>

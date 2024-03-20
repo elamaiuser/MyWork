@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Second_Review_Pending_Accounts</fullName>
+    <columns>ACCOUNT.NAME</columns>
+    <columns>ACCOUNT.TYPE</columns>
+    <columns>Account_Manager__c</columns>
+    <columns>District_Manager__c</columns>
+    <columns>National_Name__c</columns>
+    <columns>Initial_Reviewer__c</columns>
+    <columns>National_Name_Initial_Review_Date__c</columns>
+    <columns>National_Name_Second_Review_Date__c</columns>
+    <columns>National_Name_Status__c</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>National_Name_Status__c</field>
+        <operation>equals</operation>
+        <value>Second Review Pending</value>
+    </filters>
+    <label>National Name_Second Review Pending</label>
+    <sharedTo>
+        <group>APS_Users</group>
+    </sharedTo>
+</ListView>

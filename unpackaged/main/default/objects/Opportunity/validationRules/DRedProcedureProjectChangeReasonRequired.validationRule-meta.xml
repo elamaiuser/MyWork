@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>DRedProcedureProjectChangeReasonRequired</fullName>
+    <active>true</active>
+    <description>If Double Red Procedures Projected is updated then &quot;Double Red Procedures Projected Change Reason&quot; is required</description>
+    <errorConditionFormula>AND(
+Is_Template__c != True,
+ISCHANGED(X2RBC_Projected_Procedures__c),OR(NOT(ISCHANGED(DoubleRedProceduresProjectedChangeReason__c)), ISBLANK(DoubleRedProceduresProjectedChangeReason__c)))</errorConditionFormula>
+    <errorDisplayField>DoubleRedProceduresProjectedChangeReason__c</errorDisplayField>
+    <errorMessage>Double Red Procedures Projected Change Reason is required while updating Double Red Procedures Projected</errorMessage>
+</ValidationRule>

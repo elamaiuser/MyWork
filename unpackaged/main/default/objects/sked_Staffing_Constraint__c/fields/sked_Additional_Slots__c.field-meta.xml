@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>sked_Additional_Slots__c</fullName>
+    <externalId>false</externalId>
+    <label>Additional Slots</label>
+    <summaryFilterItems>
+        <field>sked_Staffing_Constraint_RO__c.sked_Add_To_Staffing_Constraint__c</field>
+        <operation>equals</operation>
+        <value>True</value>
+    </summaryFilterItems>
+    <summaryForeignKey>sked_Staffing_Constraint_RO__c.sked_Staffing_Constraint__c</summaryForeignKey>
+    <summaryOperation>count</summaryOperation>
+    <trackTrending>false</trackTrending>
+    <type>Summary</type>
+</CustomField>

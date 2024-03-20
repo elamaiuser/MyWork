@@ -1,0 +1,68 @@
+<template>
+    <template if:true={drive}>
+        <template if:true={showSpinner}>
+            <lightning-spinner class="spins" size="medium"></lightning-spinner>
+        </template>
+        
+        <div ondrivedatachanged={onDriveDataChanged}>
+            <c-slwc-drive-shifts 
+                drive={drive} 
+                master-data={masterData} 
+                show-errors={showErrors} 
+                onresetappointments={handleResetAppointments}
+                onregenerateappointments={handleRegenerateAppointments}
+                onsaveappointment={handleSaveAppointment}
+                ondeleteappointment={handleDeleteAppointment}
+                onshowdriveshiftsmetadatamodal={showDriveShiftsMetadataModal}
+            >
+            </c-slwc-drive-shifts>
+        </div>
+        <div class="slds-docked-form-footer">
+            <lightning-button label="Save" variant="Brand" disabled={showSpinner} onclick={btnSaveClicked}></lightning-button>
+        </div>
+    </template>
+
+    <template if:false={drive}>
+        <div if:true={isDriveNotScheduled} class="slds-align_absolute-center slds-p-around_large">
+            <lightning-icon icon-name="utility:warning" size="x-small" alternative-text="Warning!" title="Warning"></lightning-icon>
+            <span class="slds-m-left--small">Details within this tab will be visible only after the Drive has been Generated.</span>
+        </div>
+    </template>
+    
+    <c-slwc-pending-action-drive-confirm-modal
+        drive-generator-instance={driveGeneratorInstance}
+        master-data={masterData}
+        is-open={pendingActionDriveConfirmModalData.isOpen}
+        onclose={hidePendingActionDriveConfirmModal}
+        onsave={savePendingActionDriveConfirmModal}>
+    </c-slwc-pending-action-drive-confirm-modal>
+
+    <c-slwc-confirm-modal
+        is-open={confirmModalData.isOpen}
+        title={confirmModalData.title}
+        message={confirmModalData.message}
+        handle-on-close={confirmModalData.onClose}
+        confirm-btn-label="Yes"
+        cancel-btn-label="No"
+        size='x-small'>
+    </c-slwc-confirm-modal>
+    
+    <c-slwc-drive-staffing-details if:false={isMobile}
+        disable-transfer 
+        is-open={driveSideMenuData.shown}
+        record-id={driveSideMenuData.recordId}
+        onclose={handleCloseDriveStaffingDetails}
+        onsave={handleSaveDriveStaffingDetails}>
+    </c-slwc-drive-staffing-details>
+
+    <c-slwc-drive-shift-job-modal if:true={isMobile}></c-slwc-drive-shift-job-modal>
+    <c-slwc-drive-shift-tag-modal if:true={isMobile}></c-slwc-drive-shift-tag-modal>
+
+    <c-slwc-drive-shifts-metadata-modal
+        master-data={masterData}
+        drive={drive}
+        is-open={driveShiftsMetadataModalData.isOpen}
+        onsave={saveDriveShiftsMetadataModal}
+        onclose={hideDriveShiftsMetadataModal}>
+    </c-slwc-drive-shifts-metadata-modal>
+</template>

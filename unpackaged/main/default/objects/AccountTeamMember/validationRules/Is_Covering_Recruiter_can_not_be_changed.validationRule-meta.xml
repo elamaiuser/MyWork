@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Is_Covering_Recruiter_can_not_be_changed</fullName>
+    <active>false</active>
+    <description>Once one Team Member is assigned as Covering Recruiter, it can not be unchecked</description>
+    <errorConditionFormula>AND(
+				ISNEW() == FALSE, 
+				PRIORVALUE (Is_Covering_Recruiter__c), TRUE,
+    ISCHANGED(Is_Covering_Recruiter__c)
+)</errorConditionFormula>
+    <errorDisplayField>Is_Covering_Recruiter__c</errorDisplayField>
+    <errorMessage>Once a Team Member is added as a Covering Recruiter, can not be unchecked</errorMessage>
+</ValidationRule>

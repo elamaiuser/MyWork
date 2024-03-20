@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Queue xmlns="http://soap.sforce.com/2006/04/metadata">
+    <doesSendEmailToMembers>false</doesSendEmailToMembers>
+    <name>Las Vegas NV: DCRs</name>
+    <queueMembers>
+        <users>
+            <user>carlaine.ostrander@redcross.org</user>
+            <user>katina.jensen@redcross.org</user>
+            <user>noelle.nappi@redcross.org</user>
+        </users>
+    </queueMembers>
+    <queueSobject>
+        <sobjectType>sked_Drive_Change_Request__c</sobjectType>
+    </queueSobject>
+</Queue>

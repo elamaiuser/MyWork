@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Parkersburg_WV_DSTs_sked_Drive_Shift_Trade</fullName>
+    <filterScope>Queue</filterScope>
+    <label>Parkersburg WV: DSTs</label>
+    <queue>Parkersburg_WV_DSTs</queue>
+    <sharedTo>
+        <allInternalUsers></allInternalUsers>
+    </sharedTo>
+</ListView>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Completed_By__c</fullName>
+    <externalId>false</externalId>
+    <formula>if( ISNULL(CompletedDateTime) , &#39;&#39;, LastModifiedBy.FirstName + &#39; &#39; +  LastModifiedBy.LastName  )</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <label>Completed By</label>
+    <required>false</required>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

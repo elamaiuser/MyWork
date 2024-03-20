@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Restrict_DriveConfirm_Without_Active_BPL</fullName>
+    <active>true</active>
+    <description>Drive cannot be confirmed without an active BPL</description>
+    <errorConditionFormula>AND(
+ISPICKVAL(sked_Status__c, &quot;Confirmed&quot;),
+ISCHANGED(sked_Status__c),
+ISBLANK(sked_Account__r.Contact_BPL__c),
+ISPICKVAL(sked_Type_of_Drive__c, &quot;Mobile&quot;)
+)</errorConditionFormula>
+    <errorMessage>Ut Oh, we have hit a snag. An Active BPL is required to move this drive to Confirmed status</errorMessage>
+</ValidationRule>

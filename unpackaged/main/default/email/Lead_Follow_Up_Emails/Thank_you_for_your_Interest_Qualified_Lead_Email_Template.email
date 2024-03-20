@@ -1,0 +1,12 @@
+Hello, {!Lead.FirstName}
+
+I would like to thank you for expressing interest in hosting a blood drive with the American Red Cross.  I have gone over the information you submitted about your organization, {!Lead.Company}, and I would like to meet with you to learn more and show you how we can work together to help patients in our community by ensuring there is always blood available when they need it.    
+
+It takes a special person to be a Red Cross blood drive partner. It takes dedication, passion and the ability to organize and motivate others effectively. But, you won’t be alone. I will assist you in every way possible to help ensure you have the tools and information you need to make the partnership a success. 
+
+Let’s schedule some time to chat about next steps.  Is there a time that works best for you in the upcoming weeks? 
+
+Kind regards, 
+{!Lead.OwnerFullName}
+{!Lead.OwnerEmail}
+{!Lead.OwnerPhone}

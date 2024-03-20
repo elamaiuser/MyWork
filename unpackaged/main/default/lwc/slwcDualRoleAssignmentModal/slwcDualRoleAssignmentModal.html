@@ -1,0 +1,56 @@
+<template>
+    <section role="dialog" tabindex="-1" class={customClass.modalClass}>
+        <div class="slds-modal__container">
+            <header class={customClass.headerClass}>
+                <lightning-button-icon onclick={handleCancel} class="slds-button slds-button_icon slds-modal__close" size="large"
+                    icon-name="utility:close" variant="bare-inverse" title="Close"></lightning-button-icon>
+
+                <h2 class="slds-modal__title slds-hyphenate">Dual Role Assignment</h2>
+            </header>
+            <div class="slds-modal__content" style="overflow: initial;">
+                <div class="slds-is-relative">
+                    <template if:true={showSpinner}>
+                        <lightning-spinner class="spins" size="medium"></lightning-spinner>
+                    </template>
+                    
+                    <div class="slds-p-around_medium slds-p-bottom_none" if:true={errorMessages.length}>
+                        <c-slwc-page-errors validities={errorMessages}></c-slwc-page-errors>
+                    </div>
+    
+                    <div class="slds-p-horizontal_medium slds-p-vertical_small">
+                        <div class="slds-form-element__row slds-grid slds-grid_pull-padded-small">
+                            <div class="slds-size_1-of-1 slds-p-horizontal_small">
+                                <lightning-combobox
+                                    name="primaryRole"
+                                    label="Primary Role" 
+                                    value={model.primaryRole}
+                                    options={primaryRoleOptions}
+                                    required
+                                    onchange={handleOnChange}>
+                                </lightning-combobox>
+                            </div>
+                        </div>
+
+                        <div class="slds-form-element__row slds-m-top_x-small slds-grid slds-grid_pull-padded-small">
+                            <div class="slds-size_1-of-1 slds-p-horizontal_small">
+                                <lightning-combobox
+                                    name="secondaryRole"
+                                    label="Dual Role" 
+                                    value={model.secondaryRole}
+                                    options={secondaryRoleOptions}
+                                    required
+                                    onchange={handleOnChange}>
+                                </lightning-combobox>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <footer class={customClass.footerClass}>
+                <button class="slds-button slds-button_neutral" onclick={handleCancel}>Close</button>
+                <button class="slds-button slds-button_brand" onclick={handleSave}>Save</button>
+            </footer>
+        </div>
+    </section>
+    <div class={customClass.backdropClass}></div>
+</template>

@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+        <label><!-- Admin FS Donors Per Hour Capacity --></label>
+        <name>sked_Admin_FS_Donors_Per_Hour_Capacity__c</name>
+    </CustomFieldTranslation>

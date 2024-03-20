@@ -1,0 +1,215 @@
+<template>
+    <c-slwc-click-outside func={closeCollectionOperationPicklist}>
+        <div class="slds-form-element bco-select slds-lookup">
+            <label class="slds-form-element__label" if:true={showLabel}>
+                <abbr class="slds-required" title="required">* </abbr>Collection Operation
+            </label>
+    
+            <div class="slds-button-group slds-form-element__control button-group sked-pagin-group">
+                <button onclick={openTerritoriesPopover}
+                    disabled={inputDisabled}
+                    class="slds-button slds-button_icon slds-button_icon-border bco-select__territories-manager-trigger">
+                    <lightning-icon class="slds-button__icon slds-current-color" icon-name="utility:filterList"
+                        size="x-small"></lightning-icon>
+                    <span class="slds-assistive-text">Manage Territories</span>
+                </button>
+                <div
+                    class="slds-form-element slds-dropdown-trigger slds-dropdown-trigger_click sked-multi-picklist slds-grow"
+                    onclick={openCollectionOperationPicklist}>
+                    <div class="slds-form-element__control">
+                        <div class="slds-select_container">
+                            <input class="slds-lookup__search-input slds-select bco-select__picklist-trigger"
+                                value={selectionLabel}
+                                disabled={inputDisabled}
+                                readonly="readonly" name="collectionOp" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    
+        <section class={customClass.territoriesPopover} style={customStyle.territoriesPopover}>
+            <button class="slds-button slds-modal__close slds-button_icon-inverse" title="Close"
+                onclick={closeTerritoriesPopover}>
+                <lightning-icon class="slds-button__icon slds-button__icon_large" icon-name="utility:close"
+                    variant="inverse" size="small"></lightning-icon>
+                <span class="slds-assistive-text">Close</span>
+            </button>
+            <div class="slds-popover__header" style="padding: .75rem;">
+                <div class="slds-grid slds-grid_align-spread slds-grid_vertical-align-center">
+                    <div>
+                        <h2 class="slds-text-heading_medium slds-hyphenate">Territories Manager</h2>
+                    </div>
+                    <div class="slds-text-align_right">
+                        <button class="slds-button slds-button_icon-border action-button"
+                            onclick={refreshTerritoriesPopover}>
+                            <lightning-icon class="slds-button__icon" icon-name="utility:refresh" size="xx-small">
+                            </lightning-icon>
+                        </button>
+                        <button class="slds-button slds-button_icon-border slds-button_icon-brand action-button"
+                            onclick={applyTerritoriesPopover}>
+                            <lightning-icon class="slds-button__icon" icon-name="utility:check" variant="inverse"
+                                size="xx-small"></lightning-icon>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="slds-popover__body">
+                <div class="slds-popover__body-list slds-form_compound">
+                    <div class="slds-form-element__row">
+                        <c-slwc-multi-picklist
+                            class="slds-grow"
+                            name="division"
+                            label="Division"
+                            single-select={divisionSingleSelect}
+                            pick-list-values={clonedTerritoryPopverState.divisionOptions}
+                            default-values={clonedTerritoryPopverState.selectedDivisions}
+                            onpicklistchange={handleDivisionChanged}>
+                        </c-slwc-multi-picklist>
+                    </div>
+                    <div class="slds-form-element__row slds-m-top_x-small">
+                        <c-slwc-multi-picklist
+                            class="slds-grow"
+                            name="arcRegion"
+                            label="ARC Region"
+                            max-selections={regionMaxSelections}
+                            pick-list-values={clonedTerritoryPopverState.arcRegionOptions}
+                            default-values={clonedTerritoryPopverState.selectedARCRegions}
+                            onpicklistchange={handleARCRegionChanged}>
+                        </c-slwc-multi-picklist>
+                    </div>
+                    <div class="slds-form-element__row slds-m-top_x-small">
+                        <c-slwc-multi-picklist
+                            class="slds-grow"
+                            name="district"
+                            label="District"
+                            single-select={districtSingleSelect}
+                            pick-list-values={clonedTerritoryPopverState.districtOptions}
+                            default-values={clonedTerritoryPopverState.selectedDistricts}
+                            onpicklistchange={handleDistrictChanged}>
+                        </c-slwc-multi-picklist>
+                    </div>
+                </div>
+            </div>
+        </section>
+    
+        <div class={customClass.territoriesPopoverBackdrop}></div>
+    
+        <div class={customClass.collectionOperationPicklist} style={customStyle.collectionOperationPicklist}>
+            <div class="bco-select-picklist">
+                <div
+                    class="slds-p-horizontal_small slds-has-divider_bottom slds-m-bottom_xx-small slds-theme_shade slds-p-top_x-small slds-p-bottom_xxx-small">
+                    <div class="slds-grid">
+                        <div class="slds-input-has-icon slds-input-has-icon_left sked-input-has-clear-button slds-grow">
+                            <lightning-icon class="slds-input__icon slds-icon-text-default" icon-name="utility:search"
+                                size="x-small"></lightning-icon>
+                            <lightning-input type="text" onchange={handleSearch} value={clonedCollectionOperationPicklistState.filters.searchString} max-length="255" label="Quick Search" variant="label-hidden" placeholder="Quick Search" class="search-textbox"></lightning-input>
+                        </div>
+                    </div>
+                    <div class="slds-grid slds-grid_align-spread slds-m-top_xxx-small picklist-buttons">
+                        <div class="">
+                            <button if:false={collectionOperationSingleSelect} class="slds-button slds-m-right_x-small" onclick={toggleSelectAll}>
+                                <lightning-icon class="slds-button__icon slds-current-color slds-button__icon_left"
+                                    icon-name="utility:mark_all_as_read" size="xx-small"></lightning-icon>
+                                Select All
+                            </button>
+                            <button class="slds-button" onclick={toggleDeselectAll}>
+                                <lightning-icon class="slds-button__icon slds-current-color slds-button__icon_left"
+                                    icon-name="utility:close" size="xx-small"></lightning-icon>
+                                Clear
+                            </button>
+                        </div>
+                        <div>
+                            <button class="slds-button" onclick={applyCollectionOperation}>
+                                <lightning-icon class="slds-button__icon slds-current-color slds-button__icon_left"
+                                    icon-name="utility:check" size="xx-small"></lightning-icon>
+                                Done
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <ul class="slds-picklist slds-dropdown__list slds-dropdown_length-7 bco-select__menu">
+                    <template for:each={clonedCollectionOperationPicklistState.collectionOperationTreeData} for:item="division">
+                        <li key={division.item.value} if:true={division.shown} class="menu-item__header">
+                            <div class="slds-p-horizontal_small slds-p-vertical_xx-small" onclick={toggleCollapsed} data-item={division.item.value}> 
+                                <lightning-icon if:true={division.collapsed} class="slds-m-right_x-small slds-shrink-none menu-item__expand-button expand click-outside-ignored"
+                                    icon-name="utility:add" size="xx-small"></lightning-icon>
+                                <lightning-icon if:false={division.collapsed} class="slds-m-right_x-small slds-shrink-none menu-item__expand-button collapse click-outside-ignored"
+                                    icon-name="utility:dash" size="xx-small"></lightning-icon>  
+                                <span class="slds-truncate">
+                                    <strong>{division.item.label}</strong>
+                                </span> 
+                            </div>
+                            
+                            <ul class="slds-picklist slds-dropdown__list" if:false={division.collapsed}>
+                                <template for:each={division.childs} for:item="arcRegion">
+                                    <li key={arcRegion.item.value} if:true={arcRegion.shown} class="menu-item__header menu-item__child">
+                                        <div class="slds-p-horizontal_small slds-p-vertical_xx-small" style="text-wrap: nowrap;" onclick={toggleCollapsed} data-item={arcRegion.item.value}> 
+                                            <lightning-icon if:true={arcRegion.collapsed} class="slds-m-right_x-small slds-shrink-none menu-item__expand-button expand click-outside-ignored"
+                                                icon-name="utility:add" size="xx-small"></lightning-icon>
+                                            <lightning-icon if:false={arcRegion.collapsed} class="slds-m-right_x-small slds-shrink-none menu-item__expand-button collapse click-outside-ignored"
+                                                icon-name="utility:dash" size="xx-small"></lightning-icon>  
+                                            <span class="slds-truncate">
+                                                <strong>{arcRegion.item.label}</strong>
+                                                <span class="slds-m-left_xx-small" if:true={arcRegion.item.description}>({arcRegion.item.description})</span>
+                                            </span> 
+                                        </div>
+            
+                                        <ul class="slds-picklist slds-dropdown__list" if:false={arcRegion.collapsed}>
+                                            <template for:each={arcRegion.childs} for:item="district">
+                                                <li key={district.item.value} if:true={district.shown} class="menu-item__header menu-item__child">
+                                                    <div class="slds-p-horizontal_small slds-p-vertical_xx-small" style="text-wrap: nowrap;" onclick={toggleCollapsed} data-item={district.item.value}> 
+                                                        <lightning-icon if:true={district.collapsed} class="slds-m-right_x-small slds-shrink-none menu-item__expand-button expand click-outside-ignored"
+                                                            icon-name="utility:add" size="xx-small"></lightning-icon>
+                                                        <lightning-icon if:false={district.collapsed} class="slds-m-right_x-small slds-shrink-none menu-item__expand-button collapse click-outside-ignored"
+                                                            icon-name="utility:dash" size="xx-small"></lightning-icon>  
+                                                        <span class="slds-truncate">
+                                                            <strong>{district.item.label}</strong>
+                                                            <span class="slds-m-left_xx-small"  if:true={district.item.description}>({district.item.description})</span>
+                                                        </span> 
+                                                    </div>
+
+                                                    <ul class="slds-picklist slds-dropdown__list" if:false={district.collapsed}>
+                                                        <template for:each={district.childs} for:item="territoryCollectionOperation">
+                                                            <li key={territoryCollectionOperation.item.value} if:true={territoryCollectionOperation.shown} class="slds-is-selected col">
+                                                                <span class="slds-lookup__item-action slds-lookup__item-action_label" style="padding: .5rem .75rem"  data-item={territoryCollectionOperation.item.value} onclick={toggleSelected}>
+                                                                    <lightning-icon if:true={territoryCollectionOperation.selected} class="slds-icon slds-icon_selected slds-current-color slds-icon_x-small slds-icon-text-default slds-m-right_x-small slds-shrink-none click-outside-ignored"
+                                                                        icon-name="utility:check" size="x-small"></lightning-icon>
+                                                                    <span if:false={territoryCollectionOperation.selected} class="placeholder" style="width: 2rem;"></span>
+                                                                    <span class="slds-truncate">
+                                                                        <strong>{territoryCollectionOperation.item.collectionOperation.label}</strong>
+                                                                        <br>
+                                                                        <span style="font-size: 95%">{territoryCollectionOperation.item.description}</span>
+                                                                    </span>
+                                                                </span>
+                                                            </li>
+                                                        </template>
+                                                    </ul>
+                                                </li>
+                                            </template>
+                                        </ul>
+                                    </li>
+                                </template>
+                            </ul>
+                            
+                        </li>
+                    </template>
+                    
+                </ul>
+                <div
+                    class="slds-p-horizontal_small slds-has-divider_top slds-m-top_x-small slds-theme_shade slds-p-top_xx-small slds-p-bottom_xxx-small bco-select-picklist__footer">
+                    <button class="slds-button slds-m-right_small" onclick={expandAllCollectionOperation}>
+                        <lightning-icon class="slds-m-right_x-small slds-shrink-none menu-item__expand-button"
+                            icon-name="utility:add" size="xx-small"></lightning-icon>
+                        Expand All
+                    </button>
+                    <button class="slds-button" onclick={collapseAllCollectionOperation}>
+                        <lightning-icon class="slds-m-right_x-small slds-shrink-none menu-item__expand-button"
+                            icon-name="utility:dash" size="xx-small"></lightning-icon>
+                        Collapse All
+                    </button>
+                </div>
+            </div>
+        </div>
+    </c-slwc-click-outside>
+</template>

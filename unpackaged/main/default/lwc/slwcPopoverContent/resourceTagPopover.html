@@ -1,0 +1,56 @@
+<template>
+    <div class="calendar-card-popover">
+        <div class="hco-resource-info">
+            <div class="slds-media direction-ltr">
+                <div class="slds-media__figure">
+                    <lightning-avatar fallback-icon-name={popoverData.icon} src={popoverData.photoUrl}>
+                    </lightning-avatar>
+                </div>
+                <div class="slds-media__body">
+                    <h5 class="slds-page-header__subtitle slds-truncate slds-align-middle">
+                        <strong class="color-text-link-hover">{popoverData.name}</strong>
+                    </h5>
+                    <div class="slds-page-header__subtitle slds-text-body_small direction-ltr">
+                        <p if:true={popoverData.category}
+                        class="slds-text-color_weak slds-text-body_small hco-resource-region-info color-default-text">
+                        {popoverData.category}</p>
+                        <p if:true={popoverData.collectionOperationName}
+                            class="slds-text-color_weak slds-text-body_small hco-resource-category-info slds-truncate slds-text-color_inverse-weak">
+                            <lightning-icon class="slds-current-color slds-m-right--xx-small" icon-name="utility:checkin"
+                                size="xx-small">
+                            </lightning-icon>{popoverData.collectionOperationName}
+                        </p>
+                        <p if:true={popoverData.primaryPhone}
+                            class="slds-text-color_weak slds-text-body_small hco-resource-category-info slds-truncate slds-text-color_inverse-weak">
+                            <lightning-icon class="slds-current-color slds-m-right--xx-small" icon-name="utility:call"
+                                size="xx-small">
+                            </lightning-icon>{popoverData.primaryPhone}
+                        </p>
+                        <p if:true={popoverData.email}
+                            class="slds-text-color_weak slds-text-body_small hco-resource-category-info slds-truncate slds-text-color_inverse-weak" style="word-break: break-all; white-space: normal;">
+                            <lightning-icon class="slds-current-color slds-m-right--xx-small" icon-name="utility:email"
+                                size="xx-small">
+                            </lightning-icon>{popoverData.email}
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="slds-media__body">
+                    <div class="slds-m-top--small slds-border_top"
+                        style="min-width: 128px;">
+                        <div for:each={popoverData.resourceTagsDisplay} for:item="resourceTag" key={resourceTag.keyRender} class="slds-text-body_small slds-grid_vertical-align-center slds-has-flexi-truncate">
+                            <p class="slds-has-flexi-truncate color-default-text slds-m-vertical_xx-small" >
+                                 {resourceTag.value} {resourceTag.key}(s)
+                            </p>
+                            <div class="slds-text-body_small slds-grid_vertical-align-center slds-has-flexi-truncate slds-m-vertical_xx-small">
+                                <span for:each={resourceTag.details} for:item="tag" key={tag.key} class="slds-text-color_inverse-weak slds-has-flexi-truncate" >
+                                    <lightning-icon class="slds-m-horizontal_x-small" icon-name="standard:quotes" size="x-small"></lightning-icon>
+                                     {tag.value}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+            </div>
+        </div>
+    </div>
+</template>

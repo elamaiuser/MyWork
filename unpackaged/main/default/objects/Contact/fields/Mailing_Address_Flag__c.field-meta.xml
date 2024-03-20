@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Mailing_Address_Flag__c</fullName>
+    <defaultValue>false</defaultValue>
+    <description>This is a box that should be coupled next to the Address so that users can indicate that the  address is also the mailing address.</description>
+    <externalId>false</externalId>
+    <label>Mailing Address Flag</label>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <type>Checkbox</type>
+</CustomField>

@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<RecordType xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Organization_Partnership</fullName>
+    <active>true</active>
+    <label>Organization Partnership</label>
+    <picklistValues>
+        <picklist>Allowed_Profiles__c</picklist>
+        <values>
+            <fullName>APS Admin</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>APS Management</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>APS Planner</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>APS Scheduler</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Analytics</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Biomed Read Only</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Collection Management</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Collections</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Customer Care</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>DRD Manager</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>DRD Profile</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Global Admin</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Manufacturing</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Recruitment Admin</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Schedule Viewers</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Sponsor Marketing</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>System Administrator</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Telecruiter</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Drive_Type__c</picklist>
+        <values>
+            <fullName>Mobile</fullName>
+            <default>true</default>
+        </values>
+        <values>
+            <fullName>N%2FA</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Nationwide_Marketing_Program__c</picklist>
+        <values>
+            <fullName>No</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Yes</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Recruited_By__c</picklist>
+        <values>
+            <fullName>D2D Recruited</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>DRD Recruited</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Scope__c</picklist>
+        <values>
+            <fullName>Account</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Drive</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Template</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+</RecordType>

@@ -1,0 +1,38 @@
+<template>
+    <article if:false={showModalMobile} class="slds-card slds-card_boundary approval-history-page">
+        <div class="slds-grid slds-page-header">
+            <header class="slds-media slds-media--center slds-has-flexi-truncate">
+                <div class="slds-media__figure slds-m-right_small slds-avatar slds-avatar_small">
+                    <lightning-icon icon-name="standard:contact_list" size="small"></lightning-icon>
+                </div>
+                <div class="slds-media__body">
+                    <div class="slds-page-header__name">
+                        <div class="slds-page-header__name-title">
+                            <h2 class="slds-card__header-title">
+                                <span class="slds-truncate">{cardTitle}</span>
+                            </h2>
+                        </div>
+                    </div>
+                </div>
+            </header>
+            <div class="slds-no-flex">
+                <div class="slds-grid">
+                    <template if:false={masterData.fieldReadonlyMap.driveDeliveryJobs}>
+                        <lightning-button variant="base" if:true={isMobile} label="New" slot="actions" onclick={handleNewDriveDeliveryJob}>
+                        </lightning-button>
+                        <lightning-button if:false={isMobile} label="New" slot="actions" onclick={handleNewDriveDeliveryJob}>
+                        </lightning-button>
+                    </template>
+                </div>
+            </div>
+        </div>
+        <div>
+            <c-slwc-drive-delivery-job-table drive={drive} drive-delivery-jobs={drive.driveDeliveryJobs}
+                display-mode={displayMode}
+                is-readonly={masterData.fieldReadonlyMap.driveDeliveryJobs} style="width:100%">
+            </c-slwc-drive-delivery-job-table>
+        </div>
+    </article>
+    <div if:true={showModalMobile} style="height:100vh"></div>
+    <c-slwc-drive-delivery-job-modal drive={drive}></c-slwc-drive-delivery-job-modal>
+</template>

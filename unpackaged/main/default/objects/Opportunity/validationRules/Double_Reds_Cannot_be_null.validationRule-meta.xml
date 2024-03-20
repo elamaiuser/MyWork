@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Double_Reds_Cannot_be_null</fullName>
+    <active>true</active>
+    <description>Double_Reds_Cannot_be_null</description>
+    <errorConditionFormula>ISNULL(X2RBC_Projected_Procedures__c)</errorConditionFormula>
+    <errorMessage>Double red projected cannot be null</errorMessage>
+</ValidationRule>

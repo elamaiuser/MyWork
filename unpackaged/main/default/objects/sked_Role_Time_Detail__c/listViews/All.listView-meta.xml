@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>All</fullName>
+    <columns>sked_Days_of_Week__c</columns>
+    <columns>NAME</columns>
+    <columns>sked_Type__c</columns>
+    <columns>sked_Drive_Type__c</columns>
+    <columns>sked_Mobile_Type__c</columns>
+    <columns>sked_Collection_Operation__c</columns>
+    <columns>sked_Resource_Role_Group__c</columns>
+    <columns>sked_Lead_Time__c</columns>
+    <columns>sked_Setup_Time__c</columns>
+    <columns>sked_Breakdown_Time__c</columns>
+    <columns>sked_Wrap_up_Time__c</columns>
+    <columns>sked_Effective_Start_Date__c</columns>
+    <columns>sked_Effective_End_Date__c</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>sked_Collection_Operation__c</field>
+        <operation>contains</operation>
+        <value>manches</value>
+    </filters>
+    <filters>
+        <field>sked_Type__c</field>
+        <operation>equals</operation>
+        <value>Collection Operation</value>
+    </filters>
+    <label>All</label>
+</ListView>

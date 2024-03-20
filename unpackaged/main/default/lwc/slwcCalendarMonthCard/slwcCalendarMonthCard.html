@@ -1,0 +1,32 @@
+<template>
+    <c-slwc-popover if:true={isDataValid} container="html" position="right" trigger="click" width="24rem">
+        <div
+            slot="reference"
+            class="hco-rac-event-block event-block slds-truncate slds-grid_vertical-align-center"
+            style={customStyle.eventBlock}>
+            <div>
+                <div class="slds-truncate slds-grid">
+                    <div class="slds-no-flex slds-m-right_xx-small slds-p-top_xx-small">
+                        <span class="event-type-indicator" style={customStyle.eventTypeIndicator}></span>
+                    </div>
+                    <div class="slds-truncate slds-text-align_left">
+                        <template for:each={cardInfos} for:item="info">
+                            <div key={info.key} class={info.class}>
+                                {info.value}
+                            </div>
+                        </template>
+                        <!-- <div class="slds-truncate">
+                            <strong>7am - 7pm</strong> Hieu Do
+                        </div>
+                        <div class="slds-truncate">
+                            <strong>JOB-001</strong> Skilled Nursing
+                        </div> -->
+                    </div>
+                </div>
+            </div>
+        </div>
+        <c-slwc-popover-content name="calendarCardPopover" popover-data={popoverInfo} slot="content">
+        </c-slwc-popover-content>
+    </c-slwc-popover>
+
+</template>

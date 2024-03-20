@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Accept_56_Day_Rule_Violation__c</fullName>
+    <defaultValue>false</defaultValue>
+    <description>Used to indicate if a user has elected to create an opportunity even though it violates the 56 days rule</description>
+    <externalId>false</externalId>
+    <label>Accept 56 Day Rule Violation</label>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Checkbox</type>
+</CustomField>

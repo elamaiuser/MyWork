@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CompactLayout xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Collections_Zip_Code</fullName>
+    <fields>Zip__c</fields>
+    <fields>Donor_Services_Division__c</fields>
+    <fields>Region__c</fields>
+    <fields>District__c</fields>
+    <fields>DRD_Territory2__c</fields>
+    <fields>Collection_Operation__c</fields>
+    <fields>Service_Area__c</fields>
+    <label>Collection Zip Code</label>
+</CompactLayout>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>All</fullName>
+    <columns>NAME</columns>
+    <columns>Account__c</columns>
+    <columns>Affiliation_Name__c</columns>
+    <columns>Operation_Type__c</columns>
+    <columns>CREATED_DATE</columns>
+    <columns>Date_Assigned__c</columns>
+    <columns>Account_Affiliation_Name__c</columns>
+    <columns>Date_Removed__c</columns>
+    <columns>OBJECT_ID</columns>
+    <columns>End_Date__c</columns>
+    <columns>Start_Date__c</columns>
+    <columns>Removed_By__c</columns>
+    <columns>Assigned_By__c</columns>
+    <columns>Deleted_Date__c</columns>
+    <filterScope>Everything</filterScope>
+    <label>All</label>
+</ListView>

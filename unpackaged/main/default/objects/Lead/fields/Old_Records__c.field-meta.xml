@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Old_Records__c</fullName>
+    <externalId>false</externalId>
+    <formula>CreatedDate &lt; DATETIMEVALUE(&quot;2023-12-11 00:00:00&quot;)</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <label>Old Records</label>
+    <trackHistory>false</trackHistory>
+    <type>Checkbox</type>
+</CustomField>

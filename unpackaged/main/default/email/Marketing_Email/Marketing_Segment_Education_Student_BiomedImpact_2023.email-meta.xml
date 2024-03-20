@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<EmailTemplate xmlns="http://soap.sforce.com/2006/04/metadata">
+    <available>true</available>
+    <description>AM to BPL Describing Biomed Impact</description>
+    <encodingKey>ISO-8859-1</encodingKey>
+    <letterhead>ARC_Logo_Test</letterhead>
+    <name>Marketing Segment_Education_Student_BiomedImpact</name>
+    <style>formalLetter</style>
+    <subject>Student Guide to Share Biomedical Services Impact</subject>
+    <textOnly>Hi [Insert Name],
+
+The American Red Cross is grateful for the opportunity to partner with &lt;school name&gt; students, as they help carry out the Red Cross mission year after year. Their contributions are meaningful and valuable to college and job recruiters, as well. We’re happy to share a resource that provides your students with suggestions on how they can explain their lifesaving work on their resumes, college and job applications or anywhere else that supports their college and career search.
+
+Check out the High School &amp; College Student Guide for Sharing Your Biomedical Services Impact and encourage your students to use this great tool to highlight the value that they provide, not only by helping us fulfill our lifesaving mission and serve our communities, but also for themselves as they are building new skills, demonstrating ambition, and helping to fill in their resume. 
+
+You’ll find content within the guide for Red Cross volunteer roles including:
+
+Blood donors
+Blood Donor Ambassadors
+Blood Program Leaders
+American Red Cross scholarship recipients
+Other biomedical volunteer positions
+
+Thank you for supporting our lifesaving mission and helping raise up the next generation of humanitarians. We hope this guide will help students demonstrate the impact of their lifesaving achievements!
+
+Sincerely,
+[Insert Name]</textOnly>
+    <type>html</type>
+    <uiType>Aloha</uiType>
+</EmailTemplate>

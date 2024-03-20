@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>sked_Status__c</fullName>
+    <externalId>false</externalId>
+    <label>Status</label>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Not Submitted</fullName>
+                <default>true</default>
+                <label>Not Submitted</label>
+            </value>
+            <value>
+                <fullName>Submitted</fullName>
+                <default>false</default>
+                <label>Submitted</label>
+            </value>
+            <value>
+                <fullName>Waiting for DM Approval</fullName>
+                <default>false</default>
+                <label>Waiting for DM Approval</label>
+            </value>
+            <value>
+                <fullName>Waiting for CO Supervisor Approval</fullName>
+                <default>false</default>
+                <label>Waiting for CO Supervisor Approval</label>
+            </value>
+            <value>
+                <fullName>Approved</fullName>
+                <default>false</default>
+                <label>Approved</label>
+            </value>
+            <value>
+                <fullName>Rejected</fullName>
+                <default>false</default>
+                <label>Rejected</label>
+            </value>
+            <value>
+                <fullName>Waiting for AP&amp;S Approval</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Waiting for AP&amp;S Approval</label>
+            </value>
+            <value>
+                <fullName>Waiting for APS Approval</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Waiting for APS Approval</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

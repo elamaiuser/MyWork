@@ -1,0 +1,56 @@
+<template>
+
+    <div class="slds-form-element">
+        <label class="slds-form-element__label" if:true={showLabel}>{label}</label>
+        <c-slwc-click-outside func={closeDropdown}>
+            <div class="slds-form-element__control">
+                <div class="slds-button-group">
+                    <lightning-button-icon if:false={hideNavigateButtons} onclick={moveBack} icon-name="utility:chevronleft" class="left-arrow slds-m-right_xxx-small" size="medium" variant="border-filled"></lightning-button-icon>
+                    <div class="slds-combobox_container">
+                        <div class="slds-combobox slds-dropdown-trigger slds-dropdown-trigger_click" role="combobox">
+                            <div class="slds-combobox__form-element slds-input-has-icon slds-input-has-icon_right" role="none">
+                                <input type="text" class="slds-input slds-combobox__input slds-combobox__input-value" role="textbox" placeholder="Select a month" readonly 
+                                    value={month} onclick={toggleCalendar}/>
+                                <lightning-icon icon-name="utility:event" size="x-small" class="slds-icon_container slds-icon-utility-down slds-input__icon slds-input__icon_right"></lightning-icon>
+                            </div>
+                            <div class="slds-datepicker slds-dropdown slds-dropdown_left slds-p-horizontal_x-small" role="dialog">
+                                <div class="slds-datepicker__filter slds-grid">
+                                    <div class="slds-datepicker__filter_month slds-grid slds-grid_align-spread slds-grow">
+                                        <div class="slds-align-middle">
+                                            <button class="slds-button slds-button_icon slds-button_icon-container" title="Previous Year" onclick={previousYear}>
+                                                <lightning-icon icon-name="utility:left" size="x-small" alternative-text="Previous Year"></lightning-icon>
+                                            </button>
+                                        </div>
+                                        <h2 class="slds-align-middle" id="month">
+                                            Year {year}
+                                        </h2>
+                                        <div class="slds-align-middle">
+                                            <button class="slds-button slds-button_icon slds-button_icon-container" title="Next Year" onclick={nextYear}>
+                                                <lightning-icon icon-name="utility:right" size="x-small" alternative-text="Next Year"></lightning-icon>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <table class="slds-datepicker__month" role="grid">
+                                    <tbody>
+                                        <template for:each={quarters} for:item="quarter">
+                                            <tr key={quarter.id}>
+                                                <template for:each={quarter.months} for:item="month">
+                                                    <td key={month.formatted} data-date={month.formatted} onclick={setSelected} class={month.className} role="gridcell">
+                                                        <span class="slds-day">{month.text}</span>
+                                                    </td>
+                                                </template>
+                                            </tr>
+                                        </template>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <lightning-button-icon if:false={hideNavigateButtons} onclick={moveNext} icon-name="utility:chevronright" class="right-arrow slds-m-left_xxx-small" size="medium" variant="border-filled"></lightning-button-icon>
+                </div>
+            </div>
+        </c-slwc-click-outside>
+    </div>
+
+</template>

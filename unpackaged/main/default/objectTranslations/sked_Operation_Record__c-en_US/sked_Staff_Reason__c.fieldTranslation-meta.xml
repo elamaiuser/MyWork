@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+        <label><!-- Staff Reason --></label>
+        <name>sked_Staff_Reason__c</name>
+        <picklistValues>
+            <masterLabel>Arrived late (other)</masterLabel>
+            <translation><!-- Arrived late (other) --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Arrived late directions (directions)</masterLabel>
+            <translation><!-- Arrived late directions (directions) --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Arrived late traffic (accident, construction, etc)</masterLabel>
+            <translation><!-- Arrived late traffic (accident, construction, etc) --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Arrived late weather</masterLabel>
+            <translation><!-- Arrived late weather --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Staff call outs</masterLabel>
+            <translation><!-- Staff call outs --></translation>
+        </picklistValues>
+    </CustomFieldTranslation>

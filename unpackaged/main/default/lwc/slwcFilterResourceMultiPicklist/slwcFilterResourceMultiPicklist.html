@@ -1,0 +1,149 @@
+<template>
+    <c-slwc-click-outside func={closeFilterPopover}>
+        <div class="slds-form-element bco-select slds-lookup">
+            <div class="slds-button-group slds-form-element__control button-group sked-pagin-group">
+                <div class="slds-form-element width-100">
+                    <div class="slds-form-element__control">
+                        <div>
+                            <lightning-input type="search" onchange={handleSearchTextDebounce} value={clonedFilterPopverState.queryText}
+                                max-length="255" label="Filter by Resource Name" variant="label-hidden"
+                                placeholder="Filter by Name" class="search-textbox"></lightning-input>
+                        </div>
+                    </div>
+                </div>
+
+                <lightning-button-group class="slds-m-left_x-small">
+                    <lightning-button-icon onclick={openFilterPopover} variant={filterButtonVartiant} icon-name="utility:filterList" size="medium"></lightning-button-icon>
+                    <lightning-button-icon onclick={openSortPopover} variant={sortButtonVartiant} icon-name="utility:sort" size="medium"></lightning-button-icon>
+                </lightning-button-group>
+            </div>
+        </div>
+
+        <section class={customClass.filterPopover} style={customStyle.filterPopover}>
+            <button class="slds-button slds-modal__close slds-button_icon-inverse" title="Close"
+                onclick={closeFilterPopover}>
+                <lightning-icon class="slds-button__icon slds-button__icon_large" icon-name="utility:close"
+                    variant="inverse" size="small"></lightning-icon>
+                <span class="slds-assistive-text">Close</span>
+            </button>
+            <div class="slds-popover__header" style="padding: .75rem;">
+                <div class="slds-grid slds-grid_align-spread slds-grid_vertical-align-center">
+                    <div>
+                        <h2 class="slds-text-heading_medium slds-hyphenate">Resources Filter</h2>
+                    </div>
+                    <div class="slds-text-align_right">
+                        <button class="slds-button slds-button_icon-border slds-button_icon-brand action-button"
+                            onclick={applyFilter}>
+                            <lightning-icon class="slds-button__icon" icon-name="utility:check" variant="inverse"
+                                size="xx-small"></lightning-icon>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="slds-popover__body">
+                <div class="slds-popover__body-list slds-form_compound">
+                    <div class="slds-form-element__row">
+                        <c-slwc-multi-picklist
+                            class="slds-grow"
+                            name="resource"
+                            label="Resource Tag"
+                            pick-list-values={resourceTagsOption}
+                            default-values={clonedFilterPopverState.selectedResourcesTag}
+                            onpicklistchange={handleResourceTagChanged}>
+                        </c-slwc-multi-picklist>
+                    </div>
+                    <div class="slds-form-element__row slds-m-top_x-small">
+                        <c-slwc-multi-picklist
+                            class="slds-grow"
+                            name="role"
+                            label="Role"
+                            object-api-name="sked__Resource__c"
+                            field-api-name='sked_Roles__c'
+                            default-values={clonedFilterPopverState.selectedResourceRoles}
+                            onpicklistchange={handleResourceRolesChanged}>
+                        </c-slwc-multi-picklist>
+                    </div>  
+                    <div class="slds-form-element__row slds-m-top_x-small">
+                        <c-slwc-multi-picklist
+                            class="slds-grow"
+                            name="employmentType"
+                            label="Employment Type"
+                            object-api-name="sked__Resource__c"
+                            field-api-name='sked__Employment_Type__c'
+                            default-values={clonedFilterPopverState.selectedResourceEmploymentTypes}
+                            onpicklistchange={handleResourceEmploymentTypesChanged}>
+                        </c-slwc-multi-picklist>
+                    </div>
+                    <div class="slds-form-element__row slds-m-top_x-small">
+                        <c-slwc-slider
+                            label="Weekly Hours"
+                            min="0"
+                            max="100"
+                            start={clonedFilterPopverState.weeklyHoursRange.start}
+                            end={clonedFilterPopverState.weeklyHoursRange.end}
+                            step="1"
+                            onchange={handleWeeklyHoursRangeChanged}>
+                        </c-slwc-slider>
+                    </div>
+                    <div class="slds-form-element__row slds-m-top_x-small" if:true={showCallOutFilter}>
+                        <lightning-input type="checkbox" label="Show only Call Out" name="callOut" onchange={handleChange} checked={clonedFilterPopverState.callOut}></lightning-input>
+                    </div>
+                    <div class="slds-form-element__row slds-m-top_x-small">
+                        <lightning-input type="checkbox" label="Show only On Call" name="onCall" onchange={handleChange} checked={clonedFilterPopverState.onCall}></lightning-input>
+                    </div>
+                    <div if:true={showAssignedLinkedDrivesFilter} class="slds-form-element__row slds-m-top_x-small">
+                        <lightning-input type="checkbox" label="Show only Assigned to Linked Drives" name="assignedToLinkedDrives" onchange={handleChange} checked={clonedFilterPopverState.assignedToLinkedDrives}></lightning-input>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class={customClass.sortPopover} style={customStyle.sortPopover}>
+            <button class="slds-button slds-modal__close slds-button_icon-inverse" title="Close"
+                onclick={closeSortPopover}>
+                <lightning-icon class="slds-button__icon slds-button__icon_large" icon-name="utility:close"
+                    variant="inverse" size="small"></lightning-icon>
+                <span class="slds-assistive-text">Close</span>
+            </button>
+            <div class="slds-popover__header" style="padding: .75rem;">
+                <div class="slds-grid slds-grid_align-spread slds-grid_vertical-align-center">
+                    <div>
+                        <h2 class="slds-text-heading_medium slds-hyphenate">Resources Order</h2>
+                    </div>
+                    <div class="slds-text-align_right">
+                        <button class="slds-button slds-button_icon-border slds-button_icon-brand action-button"
+                            onclick={applySort}>
+                            <lightning-icon class="slds-button__icon" icon-name="utility:check" variant="inverse"
+                                size="xx-small"></lightning-icon>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="slds-popover__body">
+                <div class="slds-popover__body-list slds-form_compound">
+                    <div class="slds-form-element__row">
+                        <c-slwc-select
+                            class="slds-grow"
+                            name="sortBy"
+                            label="Order By"
+                            required
+                            selected-value={clonedSortPopverState.sortBy}
+                            options={sortByOptions}
+                            onchange={handleSortChange} ></c-slwc-select>
+                    </div>
+                    <div class="slds-form-element__row slds-m-top_x-small">
+                        <c-slwc-select
+                            class="slds-grow"
+                            name="sortDirection"
+                            label="Order Direection"
+                            required
+                            selected-value={clonedSortPopverState.sortDirection}
+                            options={sortDirectionOptions}
+                            onchange={handleSortChange} ></c-slwc-select>
+                    </div>  
+                </div>
+            </div>
+        </section>
+        <div class={customClass.filterPopoverBackdrop}></div>
+    </c-slwc-click-outside>
+</template>

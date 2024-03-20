@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+        <label><!-- Number of Plasma Assets --></label>
+        <name>sked_Number_of_Plasma_Assets__c</name>
+    </CustomFieldTranslation>

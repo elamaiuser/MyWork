@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+        <label><!-- Variance Type --></label>
+        <name>sked_Variance_Type__c</name>
+        <picklistValues>
+            <masterLabel>Elevator</masterLabel>
+            <translation><!-- Elevator --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Loading Dock</masterLabel>
+            <translation><!-- Loading Dock --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Parking Lot</masterLabel>
+            <translation><!-- Parking Lot --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Safety Video</masterLabel>
+            <translation><!-- Safety Video --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Vehicle Inspection</masterLabel>
+            <translation><!-- Vehicle Inspection --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Wireless</masterLabel>
+            <translation><!-- Wireless --></translation>
+        </picklistValues>
+    </CustomFieldTranslation>

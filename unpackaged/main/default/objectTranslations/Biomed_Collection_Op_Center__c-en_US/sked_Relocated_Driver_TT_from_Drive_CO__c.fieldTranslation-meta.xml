@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+        <label><!-- Relocated Driver TT from Drive CO --></label>
+        <name>sked_Relocated_Driver_TT_from_Drive_CO__c</name>
+    </CustomFieldTranslation>

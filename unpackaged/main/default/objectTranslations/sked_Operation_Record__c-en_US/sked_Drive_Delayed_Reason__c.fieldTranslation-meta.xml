@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+        <label><!-- Drive Delayed Reason --></label>
+        <name>sked_Drive_Delayed_Reason__c</name>
+        <picklistValues>
+            <masterLabel>Extreme Weather: ex. 2 hour school delay</masterLabel>
+            <translation><!-- Extreme Weather: ex. 2 hour school delay --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Sponsor Activities: Fire Drills, Lock Downs</masterLabel>
+            <translation><!-- Sponsor Activities: Fire Drills, Lock Downs --></translation>
+        </picklistValues>
+    </CustomFieldTranslation>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Do_Not_Contact_Requires_Reason</fullName>
+    <active>true</active>
+    <description>If a user selects the Do Not Contact checkbox, they are required to select a reason from the Do Not Call Reason dependent picklist.</description>
+    <errorConditionFormula>Do_Not_Contact__c   = TRUE &amp;&amp;
+ISBLANK(TEXT(Do_Not_Contact_Reason__c ))</errorConditionFormula>
+    <errorDisplayField>Do_Not_Contact_Reason__c</errorDisplayField>
+    <errorMessage>Must select a reason why the Contact was marked as Do Not Contact.</errorMessage>
+</ValidationRule>

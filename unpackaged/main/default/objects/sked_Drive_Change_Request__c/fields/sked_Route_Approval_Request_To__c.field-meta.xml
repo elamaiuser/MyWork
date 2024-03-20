@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>sked_Route_Approval_Request_To__c</fullName>
+    <externalId>false</externalId>
+    <label>Route Approval Request To</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Request DM evaluation</fullName>
+                <default>false</default>
+                <label>Request DM evaluation</label>
+            </value>
+            <value>
+                <fullName>Request APS exception</fullName>
+                <default>false</default>
+                <label>Request APS exception</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

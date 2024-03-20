@@ -1,0 +1,47 @@
+<aura:component controller="AccountService" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickActionWithoutHeader" access="global" >
+    
+    <aura:handler name="init" value="this" action="{!c.doInit}" />
+    <aura:attribute name="display" type="boolean" default="false" />
+    <aura:attribute name="accountName" type="String" default="" />
+    <aura:attribute name="closureReason" type="String" default="" />
+    <aura:attribute name="effDate" type="Date" default="" />
+    <aura:attribute name="isConfirmationRequired" type="boolean" default="false"/>
+    <aura:if isTrue="{!v.display}">
+        <div class="slds-p-around_medium">             
+            <lightning:input name="input5" disabled="true" value="{!v.accountName}" label="Name" />
+            <lightning:input name="input8" required="true" value="{! v.closureReason }" label="Closure Reason" messageWhenValueMissing="please enter closure reason"/>
+            <lightning:input type="date" required="true" name="input1" value="{! v.effDate }" label="Effective date" messageWhenValueMissing="please select Effective date" />
+            <lightning:button class="slds-m-top_medium cancelClass" type="submit" onclick="{!c.closeModal}" label="Cancel" />
+            <lightning:button class="slds-m-top_medium cancelClass" type="submit" name="Save" label="Save"  onclick="{!c.handleSave}" variant="brand"/>
+        </div>
+    </aura:if>
+    
+    <aura:if isTrue="{!v.isConfirmationRequired}">
+        
+        <div role="dialog" tabindex="-1" aria-labelledby="header43" aura:id="Modalbox" class="slds-modal">
+            <div style="margin-top: 180px;">
+                <!--<header class="slds-modal__header">
+                  <h2 id="modal-heading-01" class="slds-modal__title slds-hyphenate">There are drives scheduled after your effective date that will need to be cancelled.</h2>  
+                </header>-->
+                <!--Modal Body-->   
+                <div class="slds-modal__content slds-p-around--x-small slds-align_absolute-center slds-size_1-of-1 slds-is-relative" style="height: 280px;">
+                    <form class="slds-form--stacked">
+                        <p style="padding:20px">Would you like to Cancel drives scheduled after {!v.effDate}?</p> 
+                        <p style="padding:20px">Note: All site records for Fixed Sites will need to be placed in Inactive Status.</p>
+                    </form> 
+                </div>
+                <!--End of Modal Body--> 
+                
+                <!--Modal Footer-->
+                <div class="modal-footer slds-modal__footer slds-size_1-of-1">
+                    <lightning:button variant="Neutral" class="slds-button" label="No" onclick="{!c.closeModal}"/>
+                    <lightning:button variant="Brand" class="slds-button" label="Yes" onclick="{!c.handleCloseOpportunities}"/>
+                    
+                </div>
+            </div>
+            
+        </div>
+        <!--<div class="slds-backdrop " aura:id="Modalbackdrop"></div>-->
+        
+    </aura:if>
+</aura:component>

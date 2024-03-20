@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+        <label><!-- Affiliation Type --></label>
+        <name>Affiliation_Type__c</name>
+        <picklistValues>
+            <masterLabel>Drive_Designation</masterLabel>
+            <translation><!-- Drive_Designation --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Marketing_Program</masterLabel>
+            <translation><!-- Marketing_Program --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Marketing_Strategy</masterLabel>
+            <translation><!-- Marketing_Strategy --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Organization_Partnership</masterLabel>
+            <translation><!-- Organization_Partnership --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Sponsor_Recognition</masterLabel>
+            <translation><!-- Sponsor_Recognition --></translation>
+        </picklistValues>
+    </CustomFieldTranslation>

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Go_Live_Huddle_Bookings</fullName>
+    <columns>sked_Drive_Date__c</columns>
+    <columns>NAME</columns>
+    <columns>sked_Opportunity__c</columns>
+    <columns>sked_Drive_Site__c</columns>
+    <columns>sked_Stage__c</columns>
+    <columns>sked_Status__c</columns>
+    <columns>sked_Drive_Shift_Count__c</columns>
+    <columns>sked_Productivity_Metric__c</columns>
+    <columns>sked_Projected_Registered_Donors__c</columns>
+    <columns>sked_Total_Procedures_Projected__c</columns>
+    <columns>sked_Total_Products_Projected__c</columns>
+    <columns>CREATED_DATE</columns>
+    <columns>sked_Collection_Operation__c</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>sked_Drive_Date__c</field>
+        <operation>greaterOrEqual</operation>
+        <value>TODAY</value>
+    </filters>
+    <filters>
+        <field>sked_Type_of_Drive__c</field>
+        <operation>equals</operation>
+        <value>Mobile</value>
+    </filters>
+    <filters>
+        <field>CREATED_DATE</field>
+        <operation>greaterOrEqual</operation>
+        <value>1/16/2023 12:00 AM</value>
+    </filters>
+    <label>Go Live Huddle_Bookings</label>
+</ListView>

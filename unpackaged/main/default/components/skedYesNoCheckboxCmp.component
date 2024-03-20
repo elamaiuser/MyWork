@@ -1,0 +1,10 @@
+<apex:component access="global">
+    <apex:attribute name="value" type="Boolean" description="Boolean value"/>
+    
+    <apex:outputPanel layout="blank" rendered="{!!value}">
+        <span class="ft8"><span class="checkbox">&#9744;</span> </span>
+    </apex:outputPanel>
+    <apex:outputPanel layout="blank" rendered="{!value}">
+        <span class="ft8"><span class="checkbox">&#9745;</span> </span>
+    </apex:outputPanel>
+</apex:component>

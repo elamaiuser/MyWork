@@ -1,0 +1,7 @@
+<messaging:emailTemplate subject="Pending Unavailability Requests" recipientType="User" >
+<messaging:htmlEmailBody >
+    
+    <c:skedPendingPTOs ></c:skedPendingPTOs>
+    
+</messaging:htmlEmailBody>
+</messaging:emailTemplate>

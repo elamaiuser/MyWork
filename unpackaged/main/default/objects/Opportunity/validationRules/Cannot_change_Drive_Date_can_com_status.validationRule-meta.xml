@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Cannot_change_Drive_Date_can_com_status</fullName>
+    <active>true</active>
+    <errorConditionFormula>AND(
+    DriveStatus__c = &#39;Complete&#39;,
+    NOT($Profile.Name = &#39;System Administrator&#39;),
+    ISCHANGED(Drive_Date__c)
+)
+||
+AND(
+    DriveStatus__c = &#39;Cancel&#39;,
+    NOT($Profile.Name = &#39;System Administrator&#39;),
+    ISCHANGED(Drive_Date__c)
+)</errorConditionFormula>
+    <errorMessage>Drive Date cannot be changed on the Opportunity to a completed/cancelled Drive.</errorMessage>
+</ValidationRule>

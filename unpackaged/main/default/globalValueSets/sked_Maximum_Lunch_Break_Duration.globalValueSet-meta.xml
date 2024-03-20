@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GlobalValueSet xmlns="http://soap.sforce.com/2006/04/metadata">
+    <customValue>
+        <fullName>30</fullName>
+        <default>false</default>
+        <label>30</label>
+    </customValue>
+    <customValue>
+        <fullName>45</fullName>
+        <default>false</default>
+        <label>45</label>
+    </customValue>
+    <masterLabel>Maximum Lunch Break Duration</masterLabel>
+    <sorted>false</sorted>
+</GlobalValueSet>

@@ -1,0 +1,19 @@
+<template>
+    <div class="slds-grid slds-grid_pull-padded-small">
+        <div class="slds-spinner_container" if:true={showSpinner}>
+            <div role="status" class="slds-spinner slds-spinner_medium">
+                <span class="slds-assistive-text">Loading</span>
+                <div class="slds-spinner__dot-a"></div>
+                <div class="slds-spinner__dot-b"></div>
+            </div>
+        </div>
+
+        <c-slwc-drive-optimize-settings-form
+            class="slds-grow"
+            show-save-button
+            settings={collectionOperation}
+            onchange={handleOnChange}
+            onsave={handleSave}
+        ></c-slwc-drive-optimize-settings-form>
+    </div>
+</template>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Stage_Validation_Commited_Closed</fullName>
+    <active>true</active>
+    <description>If DRD user tries to save opportunity stage to Commited or Closed, where left blank on Account field Military Authority Phone and Military Authority Name</description>
+    <errorConditionFormula>(ISPICKVAL(StageName, &quot;Committed&quot;) || ISPICKVAL(StageName, &quot;Closed&quot;)) &amp;&amp;
+ISPICKVAL(Type_of_Drive__c , &quot;Mobile&quot;) &amp;&amp; 
+ISPICKVAL(Account.Type, &quot;Military&quot;) &amp;&amp; (
+NOT( AcceptblankMilitaryAuthNamePhone__c ) &amp;&amp; (
+Account.Military_Authority_Name__c = null || Account.Military_Authority_Phone__c = null ))</errorConditionFormula>
+    <errorDisplayField>StageName</errorDisplayField>
+    <errorMessage>A Blood Drive Opportunity may only be moved to the Committed or Closed Stage if Military Authority Name and Military Authority Phone field of Account is not empty or Accept Blank Military Authority Name/Phone is True.</errorMessage>
+</ValidationRule>

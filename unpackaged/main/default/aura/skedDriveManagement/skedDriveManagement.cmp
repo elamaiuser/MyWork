@@ -1,0 +1,9 @@
+<aura:component implements="lightning:isUrlAddressable,force:lightningQuickActionWithoutHeader,force:appHostable,flexipage:availableForAllPageTypes,force:hasRecordId" access="global">
+    <aura:html tag="style">
+        .dirtyStateModal button.slds-button_brand.saveBtn {
+            display: none;
+        }
+    </aura:html>
+    <lightning:unsavedChanges aura:id="unsavedChangesDialog" ondiscard="{!c.handleDiscardUnsavedChanges}"/>
+    <c:slwcDriveManagement recordId="{!v.recordId}" ondirtystatechanged="{!c.handleDriveDirtyStateChanged}"/>
+</aura:component>

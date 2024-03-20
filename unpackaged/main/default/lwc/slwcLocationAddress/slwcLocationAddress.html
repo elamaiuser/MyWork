@@ -1,0 +1,30 @@
+<template>
+    <template if:true={showSpinner}>
+        <lightning-spinner class="spins" size="medium"></lightning-spinner>
+    </template>
+
+    <div class="slds-tabs_scoped">
+        <ul class="slds-tabs_scoped__nav" role="tablist">
+            <li class="slds-tabs_scoped__item slds-is-active" title="Add Satellite Address" role="presentation">
+                <a class="slds-tabs_scoped__link">Add Site Address</a>
+            </li>
+        </ul>
+        <div class="slds-tabs_scoped__content slds-show" role="tabpanel">
+            <div class="slds-grid">
+                <div class="slds-col slds-p-right_x-small">
+                    <c-slwc-address-input
+                        onselectionchange={handleSelectAddress}>
+                    </c-slwc-address-input>
+
+                    <template for:each={errors} for:item="error">
+                        <label key={error} role="alert" class="slds-form-element__help form-error">{error}</label>
+                    </template>
+                </div>
+                <div class="slds-col_bump-left">
+                    <lightning-button variant="brand" label="Add" onclick={handleAddSiteAddress}></lightning-button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+</template>

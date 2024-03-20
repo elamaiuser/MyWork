@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>CloseDate_GreaterorEqual_to_TODAY</fullName>
+    <active>false</active>
+    <description>Prevents users from creating an Opportunity with a Potential Drive Date (CloseDate) before TODAY</description>
+    <errorConditionFormula>CloseDate  &lt; TODAY() &amp;&amp; 
+$Profile.Name != &#39;System Administrator&#39;</errorConditionFormula>
+    <errorDisplayField>CloseDate</errorDisplayField>
+    <errorMessage>Drives may not be scheduled for dates prior to today&#39;s date.</errorMessage>
+</ValidationRule>

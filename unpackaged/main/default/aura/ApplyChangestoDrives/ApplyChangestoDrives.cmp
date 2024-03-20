@@ -1,0 +1,12 @@
+<aura:component implements="force:hasRecordId,force:lightningQuickActionWithoutHeader">
+    <aura:attribute name="recordId" type="String"/>
+    <aura:html tag="style">     
+        .slds-modal__content{
+        overflow-y:hidden !important;
+        height:unset !important;
+        max-height:unset !important;
+        }
+    </aura:html>
+    
+    <c:filterDriveContainer recordId="{!v.recordId}" onclosequickaction="{!c.closequickaction}"/>
+</aura:component>

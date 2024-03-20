@@ -1,0 +1,32 @@
+<template>
+    <lightning-spinner if:true={showSpinner} class="spins" size="medium"></lightning-spinner>
+
+    <c-slwc-approval-history-console
+        record-id={recordId}
+        object-label="Drive Change Request"
+        onactiondone={handleActionDone}
+        approve-additional-fields={approveAdditionalFields}
+        hook-before-approve={beforeApproveHook}
+        hook-before-submit-approve-reject={beforeSubmitApproveRejectHook}
+    >
+    </c-slwc-approval-history-console>
+    
+    <div class="slds-m-top_medium" if:true={showResolveContentions}>
+        <c-slwc-resolve-drive-contentions
+            mode="driveChangeRequest"
+            is-readonly={resolveContentionsReadonly}
+            record-id={recordId}>
+        </c-slwc-resolve-drive-contentions>
+    </div>
+
+    <section role="dialog" style="z-index:9052" tabindex="-1" class="slds-modal slds-fade-in-open" if:true={generateDriveModalData.isOpen}>
+        <div class="slds-modal__container" style="transform: initial; min-width: 40rem; width: 40rem;">
+            <c-slwc-generate-drive-modal
+                record-id={generateDriveModalData.recordId}
+                mode="approveDCR"
+                onclosemodal={closeGenerateDriveModal}
+            ></c-slwc-generate-drive-modal>
+        </div>
+    </section>
+    <div style="z-index:9051" class="slds-backdrop slds-backdrop_open" if:true={generateDriveModalData.isOpen}></div>
+</template>

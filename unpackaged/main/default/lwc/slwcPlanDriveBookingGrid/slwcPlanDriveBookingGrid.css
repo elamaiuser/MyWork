@@ -1,0 +1,322 @@
+table.hco-rac-data-content-table {
+  width: 100%;
+  table-layout: fixed;
+  background: #fff;
+}
+
+table.hco-rac-data-content-table td {
+  border: solid 1px #d8dde6;
+  vertical-align: top;
+  position: relative;
+  padding-bottom: 1.75rem;
+  padding-top: .25rem;
+}
+
+table.hco-rac-data-content-table td:first-child {
+  border-left: none;
+}
+
+table.hco-rac-data-content-table td.out-of-month {
+  background: #f4f5f0;
+}
+
+table.hco-rac-data-content-table td.cal-past-day .slot,
+table.hco-rac-data-content-table td.cal-past-day .date-slot_icon,
+table.hco-rac-data-content-table td.cal-past-day .date-slot_badge,
+table.hco-rac-data-content-table td.cal-past-day .date-slot_info {
+  opacity: 0.6;
+}
+
+table.hco-rac-data-content-table td.weekend {
+  background: #f4f6f9;
+}
+
+table.hco-rac-data-content-table td.holiday {
+  background: #f4f6f9;
+}
+
+table.hco-rac-data-content-table.hco-calendar-table td:first-child {
+  border-left: solid 1px #d8dde6;
+}
+
+table.hco-rac-data-content-table.hco-calendar-table thead td {
+  padding: .5rem .25rem;
+  color: #767676;
+  text-align: left;
+}
+
+table.hco-rac-data-content-table.hco-calendar-table tbody td {
+  height: 11.5rem;
+  padding-top: 0;
+}
+
+table.hco-rac-data-content-table.hco-calendar-table tbody td.today .day-info {
+  background-color: #1589ee;
+  color: white;
+}
+
+table.hco-rac-data-content-table.hco-calendar-table tbody td .selected-slot {
+  position: absolute;
+  left: 0.725rem;
+  top: 0.25rem;
+  opacity: 0;
+  z-index: 2;
+  pointer-events: none;
+}
+
+table.hco-rac-data-content-table.hco-calendar-table tbody td .selected-slot .selected-icon {
+  background: #1d92d2;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+
+table.hco-rac-data-content-table.hco-calendar-table tbody td:not(.cal-out-of-month):hover .selected-slot {
+  opacity: 0.5;
+  pointer-events: auto;
+  -webkit-transition: opacity 0.05s linear;
+  transition: opacity 0.05s linear;
+  cursor: pointer;
+}
+
+table.hco-rac-data-content-table.hco-calendar-table tbody td:not(.cal-out-of-month):hover .selected-slot:hover {
+  opacity: 1;
+  -webkit-transition: opacity 0.1s linear;
+  transition: opacity 0.1s linear;
+}
+
+table.hco-rac-data-content-table.hco-calendar-table tbody .day-info {
+  padding: .25rem;
+  border-radius: .875rem;
+  min-width: 1.75rem;
+  text-align: center;
+  font-weight: bold;
+  z-index: 2;
+}
+
+table.hco-rac-data-content-table.hco-calendar-table tbody .slot {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  bottom: 0;
+  background: transparent;
+}
+
+table.hco-rac-data-content-table.hco-calendar-table tbody .slot .info {
+  padding-top: 1.75rem;
+  padding-left: 0.75rem;
+}
+
+table.hco-rac-data-content-table.hco-calendar-table tbody .slot .info .date-slot {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  padding-top: 0.125rem;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+
+table.hco-rac-data-content-table.hco-calendar-table tbody .slot .info .date-slot:first-of-type {
+  display: block;
+}
+
+table.hco-rac-data-content-table.hco-calendar-table tbody .slot .info .date-slot .popover-placeholder {
+  position: absolute;
+  left: 0.75rem;
+  top: 1.75rem;
+  bottom: 0.5rem;
+  width: 1.5rem;
+  cursor: pointer;
+  z-index: 99;
+}
+
+table.hco-rac-data-content-table.hco-calendar-table tbody .slot .info .date-slot_badge, table.hco-rac-data-content-table.hco-calendar-table tbody .slot .info .date-slot_icon {
+  background: #9faab5;
+  border-radius: 4px;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  cursor: pointer;
+}
+
+table.hco-rac-data-content-table.hco-calendar-table tbody .slot .info .date-slot_icon {
+  width: 1.375rem;
+  height: 1.375rem;
+}
+
+table.hco-rac-data-content-table.hco-calendar-table tbody .slot .info .date-slot_badge {
+  font-size: 0.55rem;
+  color: #fff;
+}
+
+table.hco-rac-data-content-table.hco-calendar-table tbody .slot .info .date-slot_info {
+  -webkit-box-flex: 1;
+  -webkit-flex: 1;
+      -ms-flex: 1;
+          flex: 1;
+  text-align: center;
+  color: #767676;
+  font-size: 0.75rem;
+}
+
+table.hco-rac-data-content-table.hco-calendar-table tbody .slot .info .date-slot_wrapper {
+  display: grid;
+  grid-template-columns: minmax(1.75rem, 25%) repeat(2, 1fr);
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+
+table.hco-rac-data-content-table.hco-calendar-table tbody .slot .info .date-slot + .date-slot {
+  margin-top: 0.125rem;
+  border-top: 1px dashed #cccccc;
+}
+
+table.hco-rac-data-content-table.hco-calendar-table tbody .slot .bar {
+  position: absolute;
+  left: 0.25rem;
+  top: 0.25rem;
+  bottom: 0.25rem;
+  width: 0.25rem;
+  background: #9faab5;
+  border-radius: 10px;
+}
+
+table.hco-rac-data-content-table.hco-calendar-table tbody .slot:not(.cal-out-of-month).selected ~ .selected-slot {
+  opacity: 1;
+  pointer-events: auto;
+  -webkit-transition: opacity 0.1s linear;
+  transition: opacity 0.1s linear;
+  cursor: pointer;
+}
+
+table.hco-rac-data-content-table.hco-calendar-table tbody .cal-out-of-month {
+  color: #9faab5;
+  background-color: #f4f6f9;
+}
+
+table.hco-rac-data-content-table.hco-calendar-table tbody .cal-out-of-month .selected-slot,
+table.hco-rac-data-content-table.hco-calendar-table tbody .cal-out-of-month .slot {
+  display: none !important;
+}
+
+table.hco-rac-data-content-table.hco-calendar-table.show-bus tbody td {
+  height: 11.5rem;
+}
+
+.hco-calendar-table-legend {
+  padding: 0 0.5rem;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.5rem;
+}
+
+.hco-calendar-table-legend .legend-item {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+
+.hco-calendar-table-legend .legend-item_badge-wrapper, .hco-calendar-table-legend .legend-item_info-wrapper {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -webkit-flex-direction: column;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  row-gap: 0.125rem;
+  -webkit-align-self: flex-end;
+      -ms-flex-item-align: end;
+          align-self: flex-end;
+}
+
+.hco-calendar-table-legend .legend-item_badge {
+  background: #9faab5;
+  border-radius: 4px;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  cursor: pointer;
+  color: #fff;
+  font-size: 0.55rem;
+}
+
+.hco-calendar-table-legend .legend-item_icon {
+  background: #9faab5;
+  border-radius: 4px;
+  width: 1.375rem;
+  height: 1.375rem;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+}
+
+.hco-calendar-table-legend .legend-item_info {
+  margin-left: 0.5rem;
+  color: #767676;
+  font-size: 0.75rem;
+}
+
+.hco-calendar-table-legend .legend-item_info--staff {
+  margin-left: 1rem;
+}
+
+.hco-calendar-table-legend .legend-item_info p {
+  line-height: 1;
+}
+
+.hco-calendar-table-legend .legend-item_info .sub-info {
+  font-size: 0.75rem;
+  color: #9faab5;
+}

@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Company_Type__c</fullName>
+    <externalId>false</externalId>
+    <label>Company Type</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Business</fullName>
+                <default>false</default>
+                <label>Business</label>
+            </value>
+            <value>
+                <fullName>Church/Faith-Based Group</fullName>
+                <default>false</default>
+                <label>Church/Faith-Based Group</label>
+            </value>
+            <value>
+                <fullName>Civic/Community</fullName>
+                <default>false</default>
+                <label>Civic/Community</label>
+            </value>
+            <value>
+                <fullName>Education</fullName>
+                <default>false</default>
+                <label>Education</label>
+            </value>
+            <value>
+                <fullName>Healthcare</fullName>
+                <default>false</default>
+                <label>Healthcare</label>
+            </value>
+            <value>
+                <fullName>Media Outlet</fullName>
+                <default>false</default>
+                <label>Media Outlet</label>
+            </value>
+            <value>
+                <fullName>Military/Government/NGO</fullName>
+                <default>false</default>
+                <label>Military/Government/NGO</label>
+            </value>
+            <value>
+                <fullName>Other</fullName>
+                <default>false</default>
+                <label>Other</label>
+            </value>
+            <value>
+                <fullName>Amusement/Recreational</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Amusement/Recreational</label>
+            </value>
+            <value>
+                <fullName>Corporate/Business/Retail Business/Manufacturing</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Corporate/Business/Retail Business/Manufacturing</label>
+            </value>
+            <value>
+                <fullName>Education, University Greek System</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Education, University Greek System</label>
+            </value>
+            <value>
+                <fullName>Government</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Government</label>
+            </value>
+            <value>
+                <fullName>Hospital, Medical, Health and Wellness</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Hospital, Medical, Health and Wellness</label>
+            </value>
+            <value>
+                <fullName>Media</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Media</label>
+            </value>
+            <value>
+                <fullName>Membership/Community Organization/Alumni Greek System</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Membership/Community Organization/Alumni Greek System</label>
+            </value>
+            <value>
+                <fullName>Military</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Military</label>
+            </value>
+            <value>
+                <fullName>Religious</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Religious</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>53.0</apiVersion>
+    <interviewLabel>Delete Paused Flows {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>Delete Paused Flows</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>FREE_FORM_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>Flow</processType>
+    <recordDeletes>
+        <name>Delete_Paused_Interviews</name>
+        <label>Delete Paused Interviews</label>
+        <locationX>195</locationX>
+        <locationY>215</locationY>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>InterviewLabel</field>
+            <operator>Contains</operator>
+            <value>
+                <stringValue>Create New Fixed Site Drive </stringValue>
+            </value>
+        </filters>
+        <object>FlowInterview</object>
+    </recordDeletes>
+    <start>
+        <locationX>50</locationX>
+        <locationY>50</locationY>
+        <connector>
+            <targetReference>Delete_Paused_Interviews</targetReference>
+        </connector>
+    </start>
+    <status>Active</status>
+</Flow>

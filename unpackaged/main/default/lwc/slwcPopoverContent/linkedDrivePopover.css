@@ -1,0 +1,46 @@
+.slds-popover__footer span .slds-button:not(:disabled) {
+    color: #0070d2;
+  }
+  
+  .slds-popover__footer span .slds-button:not(:disabled) .slds-icon {
+    fill: #0070d2;
+  }
+  
+  .slds-popover__footer span.btn-delete .slds-button:not(:disabled) {
+    color: #d23331;
+  }
+  
+  .slds-popover__footer span.btn-delete .slds-button:not(:disabled) .slds-icon {
+    fill: #d23331;
+  }
+  
+  .slds-popover__footer span + span {
+    margin-left: 0.5rem;
+  }
+  
+  .calendar-card-popover {
+    margin: -0.5rem;
+  }
+  
+  .calendar-card-popover .slds-popover__header,
+  .calendar-card-popover .slds-popover__body,
+  .calendar-card-popover .slds-popover__footer {
+    padding: .5rem .75rem;
+  }
+  
+  .calendar-card-popover .slds-popover__body {
+    max-height: 14rem;
+  }
+  
+  .calendar-card-popover .slds-popover__header {
+    background: #fff;
+    border-bottom: 1px solid #dddbda;
+  }
+  
+  .slds-dl_horizontal .slds-dl_horizontal__label {
+    width: 50%;
+  }
+  
+  .slds-dl_horizontal .slds-dl_horizontal__detail {
+    width: 50%;
+  }

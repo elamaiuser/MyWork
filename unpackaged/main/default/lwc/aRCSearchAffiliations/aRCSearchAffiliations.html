@@ -1,0 +1,31 @@
+<template>
+    <div style="display:flex;padding-bottom: 250px;">
+
+        
+        <div>
+            <lightning-combobox
+                            name="affiliationtypes"
+                            label="Affiliation Type"
+                            value={value}
+                            placeholder="Affilaition Types"
+                            options={typeoptions}
+                            onchange={handleChange}> 
+                            </lightning-combobox>
+        </div>
+        <div>
+            <div style="padding-top: 7%; padding-left: 10%;">
+
+                <input id="aflinput" name="input" list="valueList" placeholder={placeholder} 
+                       class="afloptioncls slds-input" type="text"
+                       onchange={handleAfflView} 
+                       style="width: 700px;max-width: 300px;"/>
+                <datalist id="valueList" class="" aria-required="true">
+                    <template for:each={affiliationvalues} for:item="item">
+                        <option key={item.value} value={item.label}> </option>
+                    </template>
+                </datalist>
+            </div>
+        </div>
+    </div>
+    
+</template>

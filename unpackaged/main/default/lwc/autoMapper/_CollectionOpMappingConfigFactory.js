@@ -1,0 +1,56 @@
+import { MAPPING_TYPE, fieldConfigModel, mappingConfigModel }  from './_base.js';
+
+export class CollectionOpMappingConfigFactory {
+  constructor() {}
+
+  process() {
+      let mappingConfig = new mappingConfigModel();
+      mappingConfig.sObjectName = 'Biomed_Collection_Op_Center__c';
+      mappingConfig.objectType = 'collectionOp';
+
+      mappingConfig.addFieldConfig('Id', 'id', MAPPING_TYPE.direct);
+      mappingConfig.addFieldConfig('Name', 'name', MAPPING_TYPE.direct);
+      mappingConfig.addFieldConfig('Staging_Location_Address__c', 'stagingLocationAddress', MAPPING_TYPE.direct);
+      mappingConfig.addFieldConfig('Staging_Location_Geolocation__Latitude__s', 'stagingLocationGeolocationLatitude', MAPPING_TYPE.direct);
+      mappingConfig.addFieldConfig('Staging_Location_Geolocation__Longitude__s', 'stagingLocationGeolocationLongitude', MAPPING_TYPE.direct);
+
+      mappingConfig.addFieldConfig('sked_Account_Preferences_Score__c', 'accountPreferencesScore', MAPPING_TYPE.direct);
+      mappingConfig.addFieldConfig('sked_Geographic_Preferences_Score__c', 'geographicPreferencesScore', MAPPING_TYPE.direct);
+      mappingConfig.addFieldConfig('sked_Location_Preferences_Score__c', 'locationPreferencesScore', MAPPING_TYPE.direct);
+      mappingConfig.addFieldConfig('sked_Seniority_Rank_Score__c', 'seniorityRankScore', MAPPING_TYPE.direct);
+
+      mappingConfig.addFieldConfig('sked_Account_Restrictions__c', 'accountRestrictions', MAPPING_TYPE.direct);
+      mappingConfig.addFieldConfig('sked_Location_Restrictions__c', 'locationRestrictions', MAPPING_TYPE.direct);
+      mappingConfig.addFieldConfig('sked_Maximum_Weekly_Hours__c', 'maximumWeeklyHours', MAPPING_TYPE.direct);
+      mappingConfig.addFieldConfig('sked_PTO_Availability__c', 'ptoAvailability', MAPPING_TYPE.direct);
+      mappingConfig.addFieldConfig('sked_Relocated_Driver_TT_from_Drive_CO__c', 'relocatedDriverTTFromDriveCO', MAPPING_TYPE.direct);
+      mappingConfig.addFieldConfig('sked_Role_Certification_Match__c', 'roleCertificationMatch', MAPPING_TYPE.direct);
+      mappingConfig.addFieldConfig('sked_Role_Priorities__c', 'rolePriorities', MAPPING_TYPE.direct);
+
+      mappingConfig.addFieldConfig('sked_Breakdown_Time_Threshold__c', 'breakdownTimeThreshold', MAPPING_TYPE.direct);
+      mappingConfig.addFieldConfig('sked_Lunch_Break__c', 'lunchBreak', MAPPING_TYPE.direct);
+      mappingConfig.addFieldConfig('sked_Lunch_Break_Before_Draw_Hours__c', 'lunchBreakBeforeDrawHours', MAPPING_TYPE.direct);
+      mappingConfig.addFieldConfig('sked_Lunch_Break_Duration_Fixed_Site__c', 'lunchBreakDurationFixedSite', MAPPING_TYPE.direct);
+      mappingConfig.addFieldConfig('sked_Lunch_Break_Duration_Mobile__c', 'lunchBreakDurationMobile', MAPPING_TYPE.direct);
+      mappingConfig.addFieldConfig('sked_Maximum_Drive_End_Time__c', 'maximumDriveEndTime', MAPPING_TYPE.time);
+      mappingConfig.addFieldConfig('sked_Maximum_Shift_Length_Threshold__c', 'maximumShiftLengthThreshold', MAPPING_TYPE.direct);
+      mappingConfig.addFieldConfig('sked_Minimum_Drive_Start_Time__c', 'minimumDriveStartTime', MAPPING_TYPE.time);
+      mappingConfig.addFieldConfig('sked_No_Travel_Time__c', 'noTravelTime', MAPPING_TYPE.direct);
+      mappingConfig.addFieldConfig('sked_Setup_Time_Threshold__c', 'setupTimeThreshold', MAPPING_TYPE.direct);
+      mappingConfig.addFieldConfig('sked_Skip_Last_Appointment_For__c', 'skipLastAppointmentFor', MAPPING_TYPE.direct);
+      mappingConfig.addFieldConfig('sked_Territory__c', 'territoryId', MAPPING_TYPE.direct);
+      mappingConfig.addFieldConfig('sked_Travel_Time_Included_Fixed_Site__c', 'travelTimeIncludedFixedSite', MAPPING_TYPE.direct);
+      mappingConfig.addFieldConfig('sked_Travel_Time_Included_Mobile__c', 'travelTimeIncludedMobile', MAPPING_TYPE.direct);
+      mappingConfig.addFieldConfig('sked_Territory__c', 'territoryId', MAPPING_TYPE.direct);
+      mappingConfig.addFieldConfig('sked_Unpaid_Lunch_Break_Duration__c', 'unpaidLunchBreakDuration', MAPPING_TYPE.direct);
+      mappingConfig.addFieldConfig('sked_IMPACT__c', 'IMPACT', MAPPING_TYPE.direct);
+      mappingConfig.addFieldConfig('sked_IMPACT_Start_Date__c', 'IMPACTStartDate', MAPPING_TYPE.direct);
+      mappingConfig.addFieldConfig('sked_IMPACT_End_Date__c', 'IMPACTEndDate', MAPPING_TYPE.direct);
+      mappingConfig.addFieldConfig('sked_Work_Week_First_Day__c', 'workWeekFirstDay', MAPPING_TYPE.direct);
+
+      mappingConfig.addFieldConfigWithRelatedList('sked_Regions__r', 'regions', 'sked__Region__c', 'sked_Biomed_Collection_Op_Center__c');
+      mappingConfig.addFieldConfigWithRelatedList('sked_Collection_Op_Staging_Locations__r', 'collectionOpStagingLocations', 'sked_Collection_Op_Staging_Location__c', 'sked_Collection_Operation__c');
+
+      return mappingConfig;
+  }
+};

@@ -1,0 +1,80 @@
+<template>
+
+    <div class="slds-grid slds-grid_vertical">
+        <div class="slds-col">
+            <div class="slds-clearfix slds-page-header slds-page-header_record-home fixed-position" style="margin-bottom: var(--lwc-cardSpacingMargin);">
+                <div class="slds-page-header__row slds-grid_vertical-align-center">
+                    <div class="slds-page-header__col-title">
+                        <div class="slds-media">
+                            <div class="slds-media__figure">
+                                <lightning-icon icon-name="standard:metrics" size="medium"></lightning-icon>
+                            </div>
+                            <div class="slds-media__body">
+                                <div class="slds-page-header__name">
+                                    <div class="slds-page-header__name-title">
+                                        <h1>
+                                            <span>Drives on Calendar</span>
+                                            <span class="slds-page-header__title slds-truncate">Scheduling Console</span>
+                                        </h1>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="slds-tabs_card" style="height:100%; margin-bottom: var(--lwc-cardSpacingMargin);">
+                <lightning-tabset active-tab-value={currentTab}>
+                    <template if:true={driveListTabEnabled}>
+                        <lightning-tab label="Drive List" value={TABS.DRIVE_LIST} onactive={handleChangeTab}>
+                            <c-slwc-scheduling-console-drive-list if:true={showDriveListTab} 
+                                is-readonly={driveCalendarReadonly}></c-slwc-scheduling-console-drive-list>
+                        </lightning-tab>
+                    </template>
+                    <template if:true={driveListMapTabEnabled}>
+                        <lightning-tab label="Drive Map" value={TABS.DRIVE_LIST_MAP} onactive={handleChangeTab}>
+                            <c-slwc-drive-list-map if:true={showDriveListMapTab}></c-slwc-drive-list-map>
+                        </lightning-tab>
+                    </template>
+                    <template if:true={driveCalendarTabEnabled}>
+                        <lightning-tab label="Drive Calendar" value={TABS.DRIVE_CALENDAR} onactive={handleChangeTab}>
+                            <c-slwc-drive-scheduling-console if:true={showDriveCalendarTab} 
+                                display-mode="productGoalCalendar"
+                                is-readonly={driveCalendarReadonly}>
+                            </c-slwc-drive-scheduling-console>
+                        </lightning-tab>
+                    </template>
+                    <template if:true={driveProductivityTabEnabled}>
+                        <lightning-tab label="Drive Productivity" value={TABS.DRIVE_PRODUCTIVITY} onactive={handleChangeTab}>
+                            <c-slwc-drive-scheduling-console if:true={showDriveProductivityTab} 
+                                display-mode="productivityCalendar">
+                            </c-slwc-drive-scheduling-console>
+                        </lightning-tab>
+                    </template>
+                    <template if:true={driveOptimizerTabEnabled}>
+                        <lightning-tab label="Schedule Optimizer" value={TABS.DRIVE_OPTIMIZER} onactive={handleChangeTab}>
+                            <c-slwc-drive-optimize-console if:true={showDriveOptimizerTab}></c-slwc-drive-optimize-console>
+                        </lightning-tab>
+                    </template>
+                    <template if:true={exceptionConsoleTabEnabled}>
+                        <lightning-tab label="Exception Console" value={TABS.EXCEPTION_CONSOLE} onactive={handleChangeTab}>
+                            <c-slwc-exception-console if:true={showExceptionConsoleTab}></c-slwc-exception-console>
+                        </lightning-tab>
+                    </template>
+                    <template if:true={approvalConsoleTabEnabled}>
+                        <lightning-tab label="Approval Console" value={TABS.APPROVAL_CONSOLE} onactive={handleChangeTab}>
+                            <c-slwc-approval-console if:true={showApprovalConsoleTab} login-user={currentUser}></c-slwc-approval-console>
+                        </lightning-tab>
+                    </template>
+                    <template if:true={callOutsTabEnabled}>
+                        <lightning-tab label="Call Outs" value={TABS.CALL_OUTS} onactive={handleChangeTab}>
+                            <c-slwc-call-outs-scheduling-console if:true={showCallOutsTab}></c-slwc-call-outs-scheduling-console>
+                        </lightning-tab>
+                    </template>
+                </lightning-tabset>
+            </div>
+        </div>
+    </div>
+
+</template>

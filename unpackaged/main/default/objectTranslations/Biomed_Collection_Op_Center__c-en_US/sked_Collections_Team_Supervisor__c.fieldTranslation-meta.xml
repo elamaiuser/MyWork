@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+        <label><!-- Collections Team Supervisor --></label>
+        <name>sked_Collections_Team_Supervisor__c</name>
+        <relationshipLabel><!-- Collection Operations (Collections Team Supervisor) --></relationshipLabel>
+    </CustomFieldTranslation>

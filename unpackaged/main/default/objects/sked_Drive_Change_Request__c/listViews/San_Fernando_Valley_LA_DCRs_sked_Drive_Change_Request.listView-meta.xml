@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>San_Fernando_Valley_LA_DCRs_sked_Drive_Change_Request</fullName>
+    <filterScope>Queue</filterScope>
+    <label>Burbank CA: DCRs</label>
+    <queue>Burbank_CA_DCRs</queue>
+    <sharedTo>
+        <allInternalUsers></allInternalUsers>
+    </sharedTo>
+</ListView>

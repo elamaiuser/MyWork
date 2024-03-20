@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Product_Validation</fullName>
+    <active>true</active>
+    <errorConditionFormula>AND((CONTAINS(&#39;APS Admin,APS Management,APS Planner,APS Scheduler, Collection Management,Collections,DRD Manager,DRD Profile,Marketing User,Schedule Viewers,Skedulo,Solution Manager,Standard Platform User,Standard User,Telecruiter&#39;,  $Profile.Name)), UnitPrice  &lt;&gt;  PricebookEntry.UnitPrice)</errorConditionFormula>
+    <errorMessage>You don&#39;t have the necessary access to edit the price</errorMessage>
+</ValidationRule>

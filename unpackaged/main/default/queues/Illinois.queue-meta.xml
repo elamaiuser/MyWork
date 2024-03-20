@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Queue xmlns="http://soap.sforce.com/2006/04/metadata">
+    <doesSendEmailToMembers>true</doesSendEmailToMembers>
+    <name>Illinois Lead Queue</name>
+    <queueMembers>
+        <users>
+            <user>angela.wetherell@redcross.org.biomed</user>
+            <user>ellen.emerick@redcross.org</user>
+            <user>emily.alanis2@redcross.org</user>
+            <user>jennifer.albers@redcross.org.biomed</user>
+            <user>kelli.tye-carpenter@redcross.org</user>
+            <user>sonja.juric@redcross.org.biomed</user>
+        </users>
+    </queueMembers>
+    <queueSobject>
+        <sobjectType>Lead</sobjectType>
+    </queueSobject>
+</Queue>

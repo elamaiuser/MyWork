@@ -1,0 +1,67 @@
+<template>
+    <dl class="slds-popover__body-list">
+        <dt class="slds-m-bottom_small">
+            <div class="slds-media slds-media_center">
+                <div class="slds-media__figure">
+                    <span class="slds-icon_container slds-icon-standard-opportunity">
+                        <lightning-icon icon-name="standard:event" size="small"></lightning-icon>
+                        <span class="slds-assistive-text">Details</span>
+                    </span>
+                </div>
+                <div class="slds-media__body">
+                    <p class="slds-text-heading_small slds-hyphenate">Details</p>
+                    <p class="slds-page-header__name-meta slds-text-color_inverse-weak">
+                        <lightning-formatted-date-time value={popoverData.dateIso} time-zone="UTC" day="numeric" year="numeric" month="long">
+                        </lightning-formatted-date-time>
+                    </p>
+                </div>
+            </div>
+        </dt>
+        <dd class="slds-m-top_x-small">
+            <dl class="slds-list_horizontal slds-wrap slds-text-body_small">
+                <dt class="slds-item_label slds-truncate">Est. # of Shifts</dt>
+                <dd class="slds-item_detail slds-text-color_weak slds-truncate">{popoverData.numberOfDriveShifts}</dd>
+            </dl>
+        </dd>
+
+        <div class="slds-section-title--divider slds-m-top_x-small">Mobile Drive Count By Status</div>
+        <dd class="slds-m-top_x-small">
+            <dl class="slds-list_horizontal slds-wrap slds-text-body_small">
+                <template for:each={popoverData.mobileDriveCountByStatusList} for:item="item">
+                    <dt key={item.status} class="slds-item_label slds-truncate">{item.status}</dt>
+                    <dd key={item.status} class="slds-item_detail slds-text-color_weak slds-truncate">{item.driveCount}</dd>
+                </template>
+            </dl>
+        </dd>
+
+        <div class="slds-section-title--divider slds-m-top_x-small">Staff Complement</div>
+        <dd class="slds-m-top_x-small">
+            <dl class="slds-list_horizontal slds-wrap slds-text-body_small">
+                <template for:each={popoverData.resourceComplements} for:item="item">
+                    <dt key={item.id} class="slds-item_label slds-truncate">{item.id}</dt>
+                    <dd key={item.id} class="slds-item_detail slds-text-color_weak slds-truncate">{item.value}</dd>
+                </template>
+            </dl>
+        </dd>
+
+        <div class="slds-section-title--divider slds-m-top_x-small">Vehicle Complement</div>
+        <dd class="slds-m-top_x-small">
+            <dl class="slds-list_horizontal slds-wrap slds-text-body_small">
+                <template for:each={popoverData.vehicleComplements} for:item="item">
+                    <dt key={item.id} class="slds-item_label slds-truncate">{item.id}</dt>
+                    <dd key={item.id} class="slds-item_detail slds-text-color_weak slds-truncate">{item.value}</dd>
+                </template>
+            </dl>
+        </dd>
+
+        <div class="slds-section-title--divider slds-m-top_x-small">Equipment Complement</div>
+        <dd class="slds-m-top_x-small">
+            <dl class="slds-list_horizontal slds-wrap slds-text-body_small">
+                <template for:each={popoverData.equipmentComplements} for:item="item">
+                    <dt key={item.id} class="slds-item_label slds-truncate">{item.id}</dt>
+                    <dd key={item.id} class="slds-item_detail slds-text-color_weak slds-truncate">{item.value}</dd>
+                </template>
+            </dl>
+        </dd>
+    </dl>
+</template>

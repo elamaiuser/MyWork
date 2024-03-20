@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+        <label><!-- Premiums/Op Pay --></label>
+        <name>sked_Premiums_Op_Pay__c</name>
+        <picklistValues>
+            <masterLabel>2RBC</masterLabel>
+            <translation><!-- 2RBC --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Charge</masterLabel>
+            <translation><!-- Charge --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Driver</masterLabel>
+            <translation><!-- Driver --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Late End</masterLabel>
+            <translation><!-- Late End --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>OJI</masterLabel>
+            <translation><!-- OJI --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Translator</masterLabel>
+            <translation><!-- Translator --></translation>
+        </picklistValues>
+    </CustomFieldTranslation>

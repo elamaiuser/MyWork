@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<StandardValueSet xmlns="http://soap.sforce.com/2006/04/metadata">
+    <sorted>true</sorted>
+    <standardValue>
+        <fullName>After Hours Contact</fullName>
+        <default>false</default>
+        <label>After Hours Contact</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Call List Recipient</fullName>
+        <default>false</default>
+        <label>Call List Recipient</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Confirmation Letter</fullName>
+        <default>false</default>
+        <label>Confirmation Letter</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Event Contact</fullName>
+        <default>false</default>
+        <label>Event Contact</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Online Appt Contact</fullName>
+        <default>false</default>
+        <label>Online Appt Contact</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Primary Contact</fullName>
+        <default>true</default>
+        <label>Primary Contact</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Print Appt Contact</fullName>
+        <default>false</default>
+        <label>Print Appt Contact</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Publicity Materials Recipient</fullName>
+        <default>false</default>
+        <label>Publicity Materials Recipient</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Secondary Contact</fullName>
+        <default>false</default>
+        <label>Secondary Contact</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Security List Recipient</fullName>
+        <default>false</default>
+        <label>Security List Recipient</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Sign-up Sheet Contact</fullName>
+        <default>false</default>
+        <label>Sign-up Sheet Contact</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Site Confirmation Recipient</fullName>
+        <default>false</default>
+        <label>Site Confirmation Recipient</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Thank You Letter</fullName>
+        <default>false</default>
+        <label>Thank You Letter</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Whom to Meet</fullName>
+        <default>false</default>
+        <label>Whom to Meet</label>
+    </standardValue>
+</StandardValueSet>

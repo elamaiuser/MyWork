@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObjectTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+    <caseValues>
+        <plural>false</plural>
+        <value>Collection Operation</value>
+    </caseValues>
+    <caseValues>
+        <plural>true</plural>
+        <value>Collection Operations</value>
+    </caseValues>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <layouts>
+        <layout>Biomed Collection Op (Center) Layout</layout>
+        <sections>
+            <label><!-- Approvers --></label>
+            <section>Approvers</section>
+        </sections>
+        <sections>
+            <label><!-- Custom Links --></label>
+            <section>Custom Links</section>
+        </sections>
+        <sections>
+            <label><!-- Drive Productivity Settings --></label>
+            <section>Drive Productivity Settings</section>
+        </sections>
+        <sections>
+            <label><!-- Drive Time Offset Settings --></label>
+            <section>Drive Time Offset Settings</section>
+        </sections>
+        <sections>
+            <label><!-- IMPACT --></label>
+            <section>IMPACT</section>
+        </sections>
+        <sections>
+            <label><!-- Lunch Break Setting --></label>
+            <section>Lunch Break Setting</section>
+        </sections>
+        <sections>
+            <label><!-- Multi-shift Setting --></label>
+            <section>Multi-shift Setting</section>
+        </sections>
+        <sections>
+            <label><!-- Operational Hours --></label>
+            <section>Operational Hours</section>
+        </sections>
+    </layouts>
+    <layouts>
+        <layout>Collection Operation Layout ReadOnly</layout>
+        <sections>
+            <label><!-- Approvers --></label>
+            <section>Approvers</section>
+        </sections>
+        <sections>
+            <label><!-- Custom Links --></label>
+            <section>Custom Links</section>
+        </sections>
+        <sections>
+            <label><!-- Drive Productivity Settings --></label>
+            <section>Drive Productivity Settings</section>
+        </sections>
+        <sections>
+            <label><!-- Drive Time Offset Settings --></label>
+            <section>Drive Time Offset Settings</section>
+        </sections>
+        <sections>
+            <label><!-- IMPACT --></label>
+            <section>IMPACT</section>
+        </sections>
+        <sections>
+            <label><!-- Lunch Break Setting --></label>
+            <section>Lunch Break Setting</section>
+        </sections>
+        <sections>
+            <label><!-- Multi-shift Setting --></label>
+            <section>Multi-shift Setting</section>
+        </sections>
+        <sections>
+            <label><!-- Operational Hours --></label>
+            <section>Operational Hours</section>
+        </sections>
+    </layouts>
+    <quickActions>
+        <label><!-- Update Web Scheduling --></label>
+        <name>Update_Web_Scheduling</name>
+    </quickActions>
+    <startsWith>Consonant</startsWith>
+    <validationRules>
+        <errorMessage><!-- Collections and DRD users do not have edit access. --></errorMessage>
+        <name>Prevent_Collections_Users_Edit_Access</name>
+    </validationRules>
+    <validationRules>
+        <errorMessage><!-- IMPACT Start Date or End Date needs to set if IMPACT is set. --></errorMessage>
+        <name>RequiresIMPACTStartOrEndDate</name>
+    </validationRules>
+    <validationRules>
+        <errorMessage><!-- Unpaid Lunch Break Duration is required if Lunch Break Before Draw Hours is set. --></errorMessage>
+        <name>RequiresUnpaidLunchBreakDuration</name>
+    </validationRules>
+</CustomObjectTranslation>

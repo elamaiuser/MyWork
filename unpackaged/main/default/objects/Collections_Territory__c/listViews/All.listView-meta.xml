@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>All</fullName>
+    <columns>NAME</columns>
+    <columns>Zip__c</columns>
+    <columns>sked_Start_Date__c</columns>
+    <columns>sked_End_Date__c</columns>
+    <columns>Collection_Operation__c</columns>
+    <columns>DRD_Territory2__c</columns>
+    <columns>District__c</columns>
+    <columns>Region__c</columns>
+    <columns>Service_Area__c</columns>
+    <columns>Time_Zone__c</columns>
+    <columns>OBJECT_ID</columns>
+    <columns>CREATED_DATE</columns>
+    <columns>CREATEDBY_USER</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>sked_Start_Date__c</field>
+        <operation>notEqual</operation>
+    </filters>
+    <filters>
+        <field>Zip__c</field>
+        <operation>equals</operation>
+        <value>34085</value>
+    </filters>
+    <label>All</label>
+</ListView>

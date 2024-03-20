@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Queue xmlns="http://soap.sforce.com/2006/04/metadata">
+    <doesSendEmailToMembers>false</doesSendEmailToMembers>
+    <name>Binghamton NY: RTVs</name>
+    <queueMembers>
+        <users>
+            <user>amber.young2@redcross.org.biomed</user>
+            <user>carla.audette@redcross.org</user>
+            <user>charlene.lewis@redcross.org</user>
+            <user>chrissy.wentworth@redcross.org</user>
+            <user>colleen.barnum@redcross.org</user>
+            <user>debraamillerdunn.dunn@redcross.org</user>
+            <user>jennifer.sinclair@redcross.org.biomed</user>
+            <user>jhonatan.cruz@redcross.org</user>
+            <user>kelly.kriger@redcross.org</user>
+            <user>michelle.knize@redcross.org</user>
+            <user>nancy.russ@redcross.org</user>
+            <user>tina.snyder@redcross.org</user>
+            <user>tracey.wood@redcross.org.biomed</user>
+        </users>
+    </queueMembers>
+    <queueSobject>
+        <sobjectType>sked__Location__c</sobjectType>
+    </queueSobject>
+</Queue>

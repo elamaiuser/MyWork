@@ -1,0 +1,185 @@
+table.hco-rac-data-content-table {
+  width: 100%;
+  table-layout: fixed;
+  background: #fff;
+}
+
+table.hco-rac-data-content-table td {
+  border: solid 1px #d8dde6;
+  vertical-align: top;
+  position: relative;
+  padding-bottom: 1.75rem;
+  padding-top: .25rem;
+}
+
+table.hco-rac-data-content-table td:hover .hco-rac-add-event-button {
+  display: inline-block;
+}
+
+table.hco-rac-data-content-table td[ng-click] {
+  cursor: pointer;
+}
+
+table.hco-rac-data-content-table td[ng-click]:hover:not(.past-day) {
+  background: #d8edff;
+}
+
+table.hco-rac-data-content-table td:first-child {
+  border-left: none;
+}
+
+table.hco-rac-data-content-table td.out-of-month {
+  background: #f4f5f0;
+}
+
+table.hco-rac-data-content-table td.past-day, table.hco-rac-data-content-table td.cal-past-day {
+  background: #f9f5f4;
+  cursor: default;
+}
+
+table.hco-rac-data-content-table td.weekend, table.hco-rac-data-content-table td.cal-weekend {
+  background: #f4f6f9;
+}
+
+table.hco-rac-data-content-table td.holiday {
+  background: #f4f6f9;
+}
+
+table.hco-rac-data-content-table td .job-block {
+  max-width: 100%;
+  margin: .125rem;
+  padding: .125rem 0;
+  font-size: .625rem;
+  text-align: center;
+  color: white;
+  background: #1d92d2;
+  border-radius: .25rem;
+  cursor: pointer;
+  position: relative;
+  /* &.is-queued {
+                &.copy-success {
+                    background: $color-background-success;
+                }
+                &.copy-error {
+                    background: $color-error;
+                }
+            } */
+}
+
+table.hco-rac-data-content-table td .job-block .copy-result-indicator {
+  width: .625rem;
+  height: .625rem;
+  display: block;
+  border: solid 1px white;
+  border-radius: 50%;
+  position: absolute;
+  top: -.25rem;
+  right: -.125rem;
+}
+
+table.hco-rac-data-content-table td .job-block .copy-result-indicator.copy-success {
+  background: #59b66e;
+}
+
+table.hco-rac-data-content-table td .job-block .copy-result-indicator.copy-error {
+  background: #d23331;
+}
+
+table.hco-rac-data-content-table td .job-block .location-confirmed-indicator {
+  width: .625rem;
+  height: .625rem;
+  display: block;
+  border: solid 1px white;
+  border-radius: 50%;
+  position: absolute;
+  top: -.25rem;
+  left: -.125rem;
+  background: #f1872d;
+}
+
+table.hco-rac-data-content-table td .job-block .job-conflict-indicator {
+  width: .625rem;
+  height: .625rem;
+  display: block;
+  border: solid 1px white;
+  border-radius: 50%;
+  position: absolute;
+  top: -.25rem;
+  right: -.125rem;
+  background: #d23331;
+}
+
+table.hco-rac-data-content-table .hco-rac-buttons-container {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 1.25rem;
+  margin-bottom: .25rem;
+}
+
+table.hco-rac-data-content-table .hco-rac-add-event-button {
+  margin-top: -.125rem;
+  display: none;
+}
+
+table.hco-rac-data-content-table .hco-rac-more-event-button {
+  padding: 0;
+  height: auto;
+  line-height: 1.5;
+  font-size: .625rem;
+  color: #767676;
+}
+
+table.hco-rac-data-content-table .nat-facility-row .job-block {
+  opacity: .5;
+}
+
+table.hco-rac-data-content-table.hco-calendar-table td:first-child {
+  border-left: solid 1px #d8dde6;
+}
+
+table.hco-rac-data-content-table.hco-calendar-table thead td {
+  padding: .5rem .25rem;
+  color: #767676;
+}
+
+table.hco-rac-data-content-table.hco-calendar-table tbody td {
+  height: 6rem;
+  padding-top: 0;
+}
+
+table.hco-rac-data-content-table.hco-calendar-table tbody td.today .day-info {
+  background-color: #1589ee;
+  color: white;
+}
+
+table.hco-rac-data-content-table.hco-calendar-table tbody td.cal-past-day .hco-rac-event-block {
+  opacity: .6;
+}
+
+table.hco-rac-data-content-table.hco-calendar-table tbody .day-info {
+  padding: .25rem;
+  cursor: pointer;
+  border-radius: .875rem;
+  min-width: 1.75rem;
+  text-align: center;
+}
+
+table.hco-rac-data-content-table.hco-calendar-table tbody .day-info:hover {
+  background-color: #f3f2f2;
+}
+
+table.hco-rac-data-content-table.hco-calendar-table tbody .cal-out-of-month {
+  color: #9faab5;
+}
+
+table.hco-rac-data-content-table.hco-calendar-table tbody .hco-rac-all-day-event-block.highlighted,
+table.hco-rac-data-content-table.hco-calendar-table tbody .hco-rac-event-block.event-block.highlighted {
+  outline: 0;
+  border-color: #d23331 !important;
+  box-shadow: 0 0 7px 1px #d23331;
+  -webkit-transition: box-shadow 0.1s linear, border-color 0.1s linear;
+  transition: box-shadow 0.1s linear, border-color 0.1s linear;
+  opacity: 1;
+}

@@ -1,0 +1,23 @@
+<template>
+    <header class="slds-modal__header">
+        <h2 class="slds-text-heading_medium slds-hyphenate">Generate Operations Record</h2>
+    </header>
+    <div class="slds-modal__content slds-p-around_medium full-height__modal-content" style="position: relative;">
+        <div class="slds-spinner_container" if:true={showSpinner}>
+            <div role="status" class="slds-spinner slds-spinner_medium">
+                <span class="slds-assistive-text">Loading</span>
+                <div class="slds-spinner__dot-a"></div>
+                <div class="slds-spinner__dot-b"></div>
+            </div>
+        </div>
+        <lightning-layout>
+            <lightning-layout-item flexibility="auto" padding="around-small">
+                <h2>Performing this action will provide early access to the Operations record, and will prevent further automated updates. Do you want to proceed?</h2>
+            </lightning-layout-item>
+        </lightning-layout>
+    </div>
+    <footer class="slds-modal__footer">
+        <lightning-button label="No" variant="neutral" onclick={btnNoClicked}></lightning-button>&nbsp;&nbsp;&nbsp;&nbsp;
+        <lightning-button label="Yes" variant="brand" onclick={btnYesClicked}></lightning-button>
+    </footer>
+</template>

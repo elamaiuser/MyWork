@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>sked_Address_Field__c</fullName>
+    <externalId>false</externalId>
+    <fieldManageability>DeveloperControlled</fieldManageability>
+    <inlineHelpText>Single Address Field: sked__Address__c
+Compound Field: {&quot;street&quot;:&quot;BillingStreet&quot;, &quot;city&quot;:&quot;BillingCity&quot;, &quot;state&quot;;&quot;BillingState&quot;, &quot;zip&quot;;&quot;BillingPostalCode&quot;, &quot;country&quot;;&quot;BillingCountry&quot;}</inlineHelpText>
+    <label>Address Field</label>
+    <length>255</length>
+    <required>false</required>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

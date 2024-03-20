@@ -1,0 +1,13 @@
+<template>
+    <template if:true={notEmpty}>
+        <c-slwc-custom-list-table
+                record={record}
+                columns={columns}
+                >
+        </c-slwc-custom-list-table>
+    </template>
+    <div class="slds-align--absolute-center" if:false={notEmpty}>
+        There are no records in this list.
+    </div>
+    
+</template>

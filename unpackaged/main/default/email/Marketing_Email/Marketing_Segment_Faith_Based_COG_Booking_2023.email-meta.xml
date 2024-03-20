@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<EmailTemplate xmlns="http://soap.sforce.com/2006/04/metadata">
+    <available>true</available>
+    <description>Faith-Based Booking Email Template</description>
+    <encodingKey>ISO-8859-1</encodingKey>
+    <letterhead>ARC_Logo_Test</letterhead>
+    <name>Marketing Segment_Faith-Based_COG_Booking_2023</name>
+    <style>freeForm</style>
+    <subject>Be part of a lifesaving cause</subject>
+    <textOnly>Dear {!Contact.Name}, {!Contact.Title}:
+As a leader in the community, you’ve no doubt witnessed the toll chronic illness or a tragic accident has on a person and those who love them. There’s no better demonstration of shared faith and unified action than helping to save the lives of those that are depending on our help. The American Red Cross needs your support as a blood program leader to help maintain an ample blood supply for patients in need. Will you join to us to help save lives?
+
+Communities like yours support each other with hope and comfort through all of life’s challenges.  I look forward to speaking with you about blood drive opportunities at your location. When is the best time we can connect? 
+
+Thank you,
+
+&lt;Email Signature Here&gt;</textOnly>
+    <type>html</type>
+    <uiType>Aloha</uiType>
+</EmailTemplate>

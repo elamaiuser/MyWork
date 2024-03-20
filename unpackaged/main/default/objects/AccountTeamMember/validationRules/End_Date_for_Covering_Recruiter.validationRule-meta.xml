@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>End_Date_for_Covering_Recruiter</fullName>
+    <active>true</active>
+    <description>End Date should bot be blank if the Team Member is a Covering Recruiter(Is Covering Recruiter is checked)</description>
+    <errorConditionFormula>AND
+  ( Is_Covering_Recruiter__c,
+	   ISNULL( End_Date__c )
+		)</errorConditionFormula>
+    <errorDisplayField>End_Date__c</errorDisplayField>
+    <errorMessage>End Date should not be blank if the Team Member is a Covering Recruiter</errorMessage>
+</ValidationRule>

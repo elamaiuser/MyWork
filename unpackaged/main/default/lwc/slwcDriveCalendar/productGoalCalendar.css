@@ -1,0 +1,336 @@
+table.hco-rac-data-content-table {
+  width: 100%;
+  table-layout: fixed;
+  background: #fff;
+}
+
+table.hco-rac-data-content-table td {
+  border: solid 1px #d8dde6;
+  vertical-align: top;
+  position: relative;
+  padding-bottom: 1rem;
+  padding-top: .25rem;
+  cursor: pointer;
+}
+
+table.hco-rac-data-content-table td:first-child {
+  border-left: none;
+}
+
+table.hco-rac-data-content-table td.out-of-month {
+  background: #f4f5f0;
+}
+
+table.hco-rac-data-content-table td.past-day {
+  background: #f9f5f4;
+  cursor: default;
+}
+
+table.hco-rac-data-content-table td.weekend {
+  background: #f4f6f9;
+}
+
+table.hco-rac-data-content-table td.holiday {
+  background: #f4f6f9;
+}
+
+table.hco-rac-data-content-table.hco-calendar-table td:first-child {
+  border-left: solid 1px #d8dde6;
+}
+
+table.hco-rac-data-content-table.hco-calendar-table thead td {
+  padding: .5rem .25rem;
+  color: #767676;
+  text-align: left;
+}
+
+table.hco-rac-data-content-table.hco-calendar-table tbody td {
+  height: 6rem;
+  padding-top: 0;
+}
+
+table.hco-rac-data-content-table.hco-calendar-table tbody td.today .day-info {
+  background-color: #1589ee;
+  color: white;
+}
+
+table.hco-rac-data-content-table.hco-calendar-table tbody .day-info {
+  padding: .25rem;
+  border-radius: .875rem;
+  min-width: 1.75rem;
+  text-align: center;
+  font-weight: bolder;
+}
+
+table.hco-rac-data-content-table.hco-calendar-table tbody .icons {
+  position: absolute;
+  left: 0.725rem;
+  top: 0.1rem;
+  z-index: 2;
+}
+
+table.hco-rac-data-content-table.hco-calendar-table tbody .icons .icon {
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+  -ms-flex-align: center;
+  align-items: center;
+}
+
+table.hco-rac-data-content-table.hco-calendar-table tbody .slot {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  bottom: 0;
+  background: transparent;
+}
+
+table.hco-rac-data-content-table.hco-calendar-table tbody .slot .info {
+  position: absolute;
+  top: 50%;
+  left: 1rem;
+  -webkit-transform: translateY(-50%);
+  -ms-transform: translateY(-50%);
+  transform: translateY(-50%);
+}
+
+table.hco-rac-data-content-table.hco-calendar-table tbody .slot .info .available {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+  -ms-flex-align: center;
+  align-items: center;
+  border-bottom: 1px dashed #cccccc;
+}
+
+table.hco-rac-data-content-table.hco-calendar-table tbody .slot .info .available > span:first-child {
+  color: #c1c1c1;
+  font-size: 0.625rem;
+  width: 2.25rem;
+}
+
+table.hco-rac-data-content-table.hco-calendar-table tbody .slot .info .available > span + span {
+  margin-left: 0.25rem;
+  font-size: 1rem !important;
+  font-weight: bold;
+  color: #54698d;
+  color: #59b66e;
+}
+
+table.hco-rac-data-content-table.hco-calendar-table tbody .slot .info .unavailable {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+  -ms-flex-align: center;
+  align-items: center;
+  border-bottom: 1px dashed #cccccc;
+}
+
+table.hco-rac-data-content-table.hco-calendar-table tbody .slot .info .unavailable > span:first-child {
+  color: #c1c1c1;
+  font-size: 0.625rem;
+  width: 2.25rem;
+}
+
+table.hco-rac-data-content-table.hco-calendar-table tbody .slot .info .unavailable > span + span {
+  margin-left: 0.25rem;
+  font-size: 1rem !important;
+  font-weight: bold;
+  color: #54698d;
+  color: #d23331;
+}
+
+table.hco-rac-data-content-table.hco-calendar-table tbody .slot .info .limit {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+  -ms-flex-align: center;
+  align-items: center;
+}
+
+table.hco-rac-data-content-table.hco-calendar-table tbody .slot .info .limit > span:first-child {
+  color: #c1c1c1;
+  font-size: 0.625rem;
+  width: 2.25rem;
+}
+
+table.hco-rac-data-content-table.hco-calendar-table tbody .slot .info .limit > span + span {
+  margin-left: 0.25rem;
+  font-size: 1rem !important;
+  font-weight: bold;
+  color: #54698d;
+}
+
+table.hco-rac-data-content-table.hco-calendar-table tbody .slot .bar {
+  position: absolute;
+  left: 0.25rem;
+  top: 0.25rem;
+  bottom: 0.25rem;
+  width: 0.25rem;
+  background: #9faab5;
+  border-radius: 10px;
+}
+
+table.hco-rac-data-content-table.hco-calendar-table tbody .slot .selected-slot {
+  position: absolute;
+  right: 0.5rem;
+  bottom: 0.5rem;
+  opacity: 0;
+  pointer-events: none;
+}
+
+table.hco-rac-data-content-table.hco-calendar-table tbody .slot .selected-slot .selected-icon {
+  background: #1d92d2;
+}
+
+table.hco-rac-data-content-table.hco-calendar-table tbody .slot:hover .selected-slot {
+  opacity: 1;
+  pointer-events: auto;
+  -webkit-transition: opacity 0.05s linear;
+  transition: opacity 0.05s linear;
+  cursor: pointer;
+}
+
+table.hco-rac-data-content-table.hco-calendar-table tbody .slot.selected .selected-slot {
+  opacity: 1;
+  pointer-events: auto;
+  -webkit-transition: opacity 0.05s linear;
+  transition: opacity 0.05s linear;
+  cursor: pointer;
+}
+
+table.hco-rac-data-content-table.hco-calendar-table tbody .cal-out-of-month {
+  color: #9faab5;
+  background-color: #f4f6f9;
+}
+
+table.hco-rac-data-content-table.hco-calendar-table tbody .cal-out-of-month .slot {
+  display: none;
+}
+
+table.hco-rac-data-content-table.hco-calendar-table tbody .date-slot .day-of-slot {
+  padding: 0 5px;
+  color: #fff;
+  height: 20px;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+}
+
+table.hco-rac-data-content-table.hco-calendar-table tbody .date-slot .day-of-slot span {
+  float: right;
+}
+
+table.hco-rac-data-content-table.hco-calendar-table tbody .date-slot.staffing-details.two-row .day-of-slot {
+  height: 36px;
+}
+
+table.hco-rac-data-content-table.hco-calendar-table tbody .date-slot.staffing-details .details .staff-info {
+  position: relative;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+}
+
+table.hco-rac-data-content-table.hco-calendar-table tbody .date-slot.staffing-details .details .staff-info > div {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  position: relative;
+}
+
+table.hco-rac-data-content-table.hco-calendar-table tbody .date-slot.staffing-details .details .staff-info > div > div {
+  position: absolute;
+  left: -0.25rem;
+  top: 0.075rem;
+  -webkit-transform: translateX(-100%);
+      -ms-transform: translateX(-100%);
+          transform: translateX(-100%);
+  color: #767676;
+  font-size: 0.75rem;
+}
+
+table.hco-rac-data-content-table.hco-calendar-table tbody .date-slot.staffing-details .details > div > span:first-child {
+  margin-right: 0.125rem;
+}
+
+table.hco-rac-data-content-table.hco-calendar-table tbody .date-slot .day-of-slot.day-of-slot__green {
+  background: #59b66e;
+}
+
+table.hco-rac-data-content-table.hco-calendar-table tbody .date-slot .day-of-slot.day-of-slot__amber {
+  background: #efac58;
+}
+
+table.hco-rac-data-content-table.hco-calendar-table tbody .date-slot .day-of-slot.day-of-slot__red {
+  background: #d23331;
+}
+
+table.hco-rac-data-content-table.hco-calendar-table tbody .date-slot .day-of-slot.day-of-slot__black {
+  background: black;
+}
+
+table.hco-rac-data-content-table.hco-calendar-table tbody .date-slot .date-slot-info {
+  font-size: 1.25rem;
+  line-height: 1.25;
+}
+
+table.hco-rac-data-content-table.hco-calendar-table tbody .date-slot .date-slot-info.slot__unassigned {
+  color: #99a0b2;
+}
+
+table.hco-rac-data-content-table.hco-calendar-table tbody .date-slot .date-slot-info.slot__mock {
+  color: #1d92d2;
+}
+
+table.hco-rac-data-content-table.hco-calendar-table tbody .date-slot .date-slot-info.slot__in-progress {
+  color: #f1872d;
+}
+
+table.hco-rac-data-content-table.hco-calendar-table tbody .date-slot .date-slot-info.slot__complete {
+  color: #59b66e;
+}
+
+table.hco-rac-data-content-table.hco-calendar-table tbody .date-slot .date-slot-info.slot__cancel {
+  color: #d23331;
+}
+
+table.hco-rac-data-content-table.hco-calendar-table tbody .date-slot .date-slot-info.col-center {
+  width: 100%;
+  text-align: center;
+  margin: .125rem;
+}

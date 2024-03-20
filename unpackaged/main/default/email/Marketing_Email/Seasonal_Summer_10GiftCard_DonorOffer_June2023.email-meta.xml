@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<EmailTemplate xmlns="http://soap.sforce.com/2006/04/metadata">
+    <available>false</available>
+    <description>Email to promote June 2023 Donor Offer</description>
+    <encodingKey>ISO-8859-1</encodingKey>
+    <letterhead>ARC_Logo_Test</letterhead>
+    <name>Seasonal_Summer_10GiftCard_DonorOffer_June2023</name>
+    <style>formalLetter</style>
+    <subject>Exciting News! Offer for Donors this June!</subject>
+    <textOnly>Hello {!Contact.FirstName},
+
+Your blood drive is coming up, and every donation is vital because hospital patients are counting on lifesaving blood products from your drive. We are grateful for your kindness and commitment to helping those in need.
+
+This June, to thank donors, all those who come to give blood June 1-30, 2023, will receive a $10 gift card by email to the merchant of their choice.*
+
+As you continue the work to make your drive a success – remember to use these tips:
+
+Fill your schedule. Use these tools to recruit blood donors and schedule them using the Blood Drive Management Portal.
+Encourage donors to schedule a donation for a friend. Each additional donor scheduled means more lives saved!
+
+If you have any questions, please do not hesitate to reach out – I’m always here to help!
+
+IMPORTANT: Donors MUST have a valid email address on file to receive their reward.
+
+All the best,
+
+{!Lead.OwnerFirstName}
+
+
+P.S. Each Red Cross blood drive and donation center follows a high standard of safety and infection control to protect our partners, donors and staff.
+
+*Presenting donors who receive this offer and present to donate during the applicable promotional time frame are eligible to receive the above described e-gift card(s). This offer is non-transferable and not redeemable for cash. Limit one (1) per presenting donor unless otherwise indicated. If a presenting donor qualifies for multiple offers, the donor will only receive the higher offer unless otherwise indicated. Instructions on how to redeem the gift card will be emailed to the address listed on the presenting donor’s American Red Cross donor profile approximately thirty (30) days after attempted donation(s). All gift cards are subject to individual merchant terms and conditions, and all trademarks are property of their respective owners. Merchants and offers are subject to change. No substitutions by presenting donors. American Red Cross is not responsible for lost, damaged, corrupted or stolen gift cards and may replace any such cards at its sole discretion. Any questions or problems in connection with redeeming gift cards must be directed to the merchant.</textOnly>
+    <type>html</type>
+    <uiType>Aloha</uiType>
+</EmailTemplate>

@@ -1,0 +1,31 @@
+<template>
+    <div class="slds-grid slds-grid--align-center slds-p-vertical_xx-small slds-p-horizontal--medium">
+        <template if:true={typeAttributes.isCurrentDrive}>
+            <lightning-button 
+                variant="success" 
+                disabled
+                label="Current Drive">
+            </lightning-button>
+        </template>
+
+        <template if:false={typeAttributes.isCurrentDrive}>
+            <lightning-button 
+                if:false={typeAttributes.isLinked}
+                variant="brand" 
+                data-value={value} 
+                label="Link Drive" 
+                data-action="link"
+                onclick={typeAttributes.clickAction} >
+            </lightning-button>
+
+            <lightning-button 
+                if:true={typeAttributes.isLinked}
+                variant="success" 
+                data-value={value} 
+                label="Linked"
+                data-action="unlink"
+                onclick={typeAttributes.clickAction} >
+            </lightning-button>
+        </template>
+      </div>
+</template>

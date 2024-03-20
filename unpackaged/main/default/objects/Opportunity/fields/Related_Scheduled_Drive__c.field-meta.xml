@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Related_Scheduled_Drive__c</fullName>
+    <deleteConstraint>SetNull</deleteConstraint>
+    <description>If a rollover Opportunity, this is a reference to the prior (year) Drive on Calendar</description>
+    <externalId>false</externalId>
+    <inlineHelpText>If a rollover Opportunity, this is a reference to the prior (year) Drive on Calendar</inlineHelpText>
+    <label>Related Scheduled Drive</label>
+    <referenceTo>sked_Drive__c</referenceTo>
+    <relationshipLabel>Draft Drives</relationshipLabel>
+    <relationshipName>Draft_Drives</relationshipName>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Lookup</type>
+</CustomField>

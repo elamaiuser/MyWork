@@ -1,0 +1,129 @@
+<template>
+    <template if:true={showModal}>
+        <c-slwc-custom-modal 
+            onclosecustommodal={closeModal} 
+            onsavecustommodal={handleSave}
+            cancel-btn-label="Cancel"
+            save-btn-label="Save"
+            disabled-save={disabledSave}
+            header={modalHeader}>
+            <div slot="content">
+                <div class="slds-is-relative">
+                    <template if:true={showSpinner}>
+                        <lightning-spinner class="spins" size="medium"></lightning-spinner>
+                    </template>
+
+                    <c-slwc-page-errors validities={errorMessages}></c-slwc-page-errors>
+
+                    <div class="slds-grid slds-wrap slds-gutters">
+                        <div if:true={isPersonResource} class="slds-col slds-medium-size_1-of-2 slds-large-size_1-of-2 slds-size_1-of-1 slds-m-bottom--small">
+                            <template if:true={isEditMode}>
+                                <lightning-input type="text" label="Resource Role" value={job.resourceRole} readonly></lightning-input>
+                            </template>
+
+                            <template if:false={isEditMode}>
+                                <c-slwc-picklist
+                                    required
+                                    name="resourceRole"
+                                    label="Resource Role"
+                                    unique-key={job.resourceRole} 
+                                    object-api-name="sked__Job__c" 
+                                    selected-value={job.resourceRole}  
+                                    pick-listfield-api-name="sked_Resource_Role__c"
+                                    onpicklistchange={handleResourceRoleChange}>
+                                </c-slwc-picklist>
+                            </template>
+                        </div>
+                        <div if:true={isPersonResource} class="slds-col slds-medium-size_1-of-2 slds-large-size_1-of-2 slds-size_1-of-1 slds-m-bottom--small">
+                            <template if:true={isEditMode}>
+                                <lightning-input type="text" label="Dual Role" value={job.dualRole} readonly></lightning-input>
+                            </template>
+                        </div>
+                        <div if:true={isVehicleResource} class="slds-col slds-medium-size_1-of-2 slds-large-size_1-of-2 slds-size_1-of-1 slds-m-bottom--small">
+                            <lightning-input label="Asset Type" value={job.assetType} readonly></lightning-input>
+                        </div>
+                        <div if:true={isVolunteerResource} class="slds-col slds-medium-size_1-of-2 slds-large-size_1-of-2 slds-size_1-of-1 slds-m-bottom--small">
+                            <c-slwc-picklist
+                                required
+                                name="volunteerRole"
+                                label="Volunteer Role"
+                                unique-key={job.volunteerRole} 
+                                object-api-name="sked__Job__c" 
+                                selected-value={job.volunteerRole}  
+                                pick-listfield-api-name="sked_Volunteer_Role__c"
+                                onpicklistchange={handleOnChange}>
+                            </c-slwc-picklist>
+                        </div>
+                        <div class="slds-col slds-medium-size_1-of-2 slds-large-size_1-of-2 slds-size_1-of-1 slds-m-bottom--small">
+                            <lightning-input name="quantity" label="Quantity" type="number" value={job.quantity} onchange={handleOnChange} readonly={quantityDisabled} autocomplete="off" required></lightning-input>
+                        </div>
+                    </div>
+                    <div class="slds-grid slds-wrap slds-gutters" if:true={showAptQuantityFields}>
+                        <div class="slds-col slds-medium-size_1-of-2 slds-large-size_1-of-2 slds-size_1-of-1 slds-m-bottom--small">
+                            <lightning-input name="vphhQuantity" label="VP/HH Quantity" type="number" value={job.vphhQuantity} onchange={handleOnChange} autocomplete="off" required></lightning-input>
+                        </div>
+                        <div class="slds-col slds-medium-size_1-of-2 slds-large-size_1-of-2 slds-size_1-of-1 slds-m-bottom--small">
+                            <lightning-input name="aptQuantity" label="APT Quantity" type="number" value={job.aptQuantity} onchange={handleOnChange} autocomplete="off" required></lightning-input>
+                        </div>
+                    </div>
+                    <div class="slds-grid slds-wrap slds-gutters" if:true={showTags}>
+                        <div class="slds-col slds-size_1-of-1 slds-m-bottom--small">
+                            <c-slwc-multi-lookup
+                                icon-name="standard:resource_skill"
+                                object-name="sked__Tag__c"
+                                label="Tags"
+                                selection={selectedTags}
+                                onselectionchange={handleSelectTag}
+                                is-custom-search
+                                custom-search-func={handleSearchTag}
+                                placeholder="Search Tag">
+                            </c-slwc-multi-lookup>
+                        </div>
+                    </div>
+                    <template if:true={isPersonResource}>
+                        <div class="slds-grid slds-wrap slds-gutters">
+                            <div if:true={enableAddress} class="slds-col slds-size_1-of-1 slds-m-bottom--small">
+                                <c-slwc-address-input label="Address" onselectionchange={handleSelectAddress} value={job.address}> 
+                                </c-slwc-address-input>
+                            </div>
+                        </div>
+                        <div class="slds-grid slds-wrap slds-gutters">
+                            <div class="slds-col slds-medium-size_1-of-2 slds-large-size_1-of-2 slds-size_1-of-1 slds-m-bottom--small">
+                                <lightning-input name="leadTime" label="Lead Time" type="number" value={job.leadTime} onchange={handleOnChange} autocomplete="off"></lightning-input>
+                            </div>
+                            <div class="slds-col slds-medium-size_1-of-2 slds-large-size_1-of-2 slds-size_1-of-1 slds-m-bottom--small">
+                                <lightning-input name="setupTime" label="Setup Time" type="number" value={job.setupTime} onchange={handleOnChange} autocomplete="off"></lightning-input>
+                            </div>
+                        </div>
+                        <div class="slds-grid slds-wrap slds-gutters">
+                            <div class="slds-col slds-medium-size_1-of-2 slds-large-size_1-of-2 slds-size_1-of-1 slds-m-bottom--small">
+                                <lightning-input name="breakdownTime" label="Breakdown Time" type="number" value={job.breakdownTime} onchange={handleOnChange} autocomplete="off"></lightning-input>
+                            </div>
+                            <div class="slds-col slds-medium-size_1-of-2 slds-large-size_1-of-2 slds-size_1-of-1 slds-m-bottom--small">
+                                <lightning-input name="wrapUpTime" label="Wrap-up Time" type="number" value={job.wrapUpTime} onchange={handleOnChange} autocomplete="off"></lightning-input>
+                            </div>
+                        </div>
+                        <div class="slds-grid slds-wrap slds-gutters">
+                            <div class="slds-col slds-medium-size_1-of-2 slds-large-size_1-of-2 slds-size_1-of-1 slds-m-bottom--small">
+                                <lightning-input name="siteLogisticsTo" label="Site Logistics To" type="number" value={job.siteLogisticsTo} onchange={handleOnChange} autocomplete="off"></lightning-input>
+                            </div>
+                            <div class="slds-col slds-medium-size_1-of-2 slds-large-size_1-of-2 slds-size_1-of-1 slds-m-bottom--small">
+                                <lightning-input name="siteLogisticsBack" label="Site Logistics Back" type="number" value={job.siteLogisticsBack} onchange={handleOnChange} autocomplete="off"></lightning-input>
+                            </div>
+                        </div>
+                    </template>
+                    <template if:true={isVolunteerResource}>
+                    <div class="slds-grid slds-wrap slds-gutters">
+                        <div class="slds-col slds-medium-size_1-of-2 slds-large-size_1-of-2 slds-size_1-of-1 slds-m-bottom--small">
+                            <lightning-input name="redcrossVolunteerQuantity" label="Redcross Volunteer Quantity" type="number" value={job.redcrossVolunteerQuantity} onchange={handleOnChange} autocomplete="off"></lightning-input>
+                        </div>
+                        <div class="slds-col slds-medium-size_1-of-2 slds-large-size_1-of-2 slds-size_1-of-1 slds-m-bottom--small">
+                            <lightning-input name="sponsorVolunteerQuantity" label="Sponsor Volunteer Quantity" type="number" value={job.sponsorVolunteerQuantity} onchange={handleOnChange} autocomplete="off"></lightning-input>
+                        </div>
+                    </div>
+                    </template>
+                </div>
+            </div>
+        </c-slwc-custom-modal>
+    </template>
+</template>

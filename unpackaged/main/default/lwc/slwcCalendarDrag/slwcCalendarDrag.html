@@ -1,0 +1,19 @@
+<template>
+    <div class="drag-zone">
+        <ul class="columns">
+            <template for:each={columns} for:item="column">
+                <li
+                    key={column.key}
+                    style={customStyle.dayColumn}>
+    
+                    <div 
+                        style={column.style} 
+                        class="timeslot">
+                    </div>
+                </li>
+            </template>
+        </ul>
+
+        <slot name="content"></slot>
+    </div>
+</template>

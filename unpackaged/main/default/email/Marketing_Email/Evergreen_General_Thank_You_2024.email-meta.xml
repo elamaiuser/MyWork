@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<EmailTemplate xmlns="http://soap.sforce.com/2006/04/metadata">
+    <available>true</available>
+    <description>A general thank you email to BPLs who hosted a drive.</description>
+    <encodingKey>ISO-8859-1</encodingKey>
+    <letterhead>ARC_Logo_Test</letterhead>
+    <name>Evergreen_General_Thank You_2024</name>
+    <style>formalLetter</style>
+    <subject>Thank you for your partnership!</subject>
+    <textOnly>Dear Valued Blood Program Leader,
+
+On behalf of the American Red Cross, we extend our heartfelt gratitude to you for your partnership. By hosting a blood drive, you’ve made a difference in the lives of patients with sickle cell disease, moms with complicated childbirths, people fighting cancer, accident or trauma victims, and more.
+
+Your role as a Blood Program Leader reflects a commitment to helping others and deep sense of community. You are leaving a legacy that directly contributes to the health and wellbeing of individuals in need.
+
+I look forward to partnering with you again on future blood drives. Thank you for your continued support of our lifesaving mission!
+
+Kind regards,
+[Account Representative Name]
+[Contact Information]</textOnly>
+    <type>html</type>
+    <uiType>Aloha</uiType>
+</EmailTemplate>

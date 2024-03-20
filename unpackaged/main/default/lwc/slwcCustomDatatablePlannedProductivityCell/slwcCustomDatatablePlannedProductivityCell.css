@@ -1,0 +1,25 @@
+.drive-health.green .value {
+    color: #379a4c;
+}
+.drive-health.amber .value {
+    color: #eeb105;
+}
+.drive-health.red .value {
+    color: #c22f24;
+}
+
+.banding {
+    font-size: 0.75rem;
+    border-radius: 2px;
+    padding: 0.1rem 1rem;
+    color: #fff;
+}
+.drive-health.green .banding {
+    background-color: #379a4c;
+}
+.drive-health.amber .banding {
+    background-color: #eeb105;
+}
+.drive-health.red .banding {
+    background-color: #c22f24;
+}

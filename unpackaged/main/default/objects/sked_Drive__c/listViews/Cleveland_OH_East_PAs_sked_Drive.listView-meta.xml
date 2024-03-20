@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Cleveland_OH_East_PAs_sked_Drive</fullName>
+    <columns>NAME</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>sked_Drive_Date__c</field>
+        <operation>equals</operation>
+        <value>1/5/2023</value>
+    </filters>
+    <filters>
+        <field>sked_Collection_Operation__c</field>
+        <operation>contains</operation>
+        <value>Columbus</value>
+    </filters>
+    <label>Cleveland OH East: PAs</label>
+    <sharedTo>
+        <allInternalUsers></allInternalUsers>
+    </sharedTo>
+</ListView>

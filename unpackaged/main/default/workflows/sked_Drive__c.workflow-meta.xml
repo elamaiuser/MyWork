@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Workflow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fieldUpdates>
+        <fullName>Update_to_Draft</fullName>
+        <field>sked_Status__c</field>
+        <literalValue>Draft</literalValue>
+        <name>Update to Draft</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>sked_AP_S_Approved</fullName>
+        <field>sked_Approval_Status__c</field>
+        <literalValue>Approved</literalValue>
+        <name>AP&amp;S Approved</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>sked_Clear_Hold_Date</fullName>
+        <description>Clears the hold expiry date once the hold has expired</description>
+        <field>sked_Hold_Status_expires_on__c</field>
+        <name>Clear Hold Date</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Null</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>sked_RTV_Drive_Approved</fullName>
+        <field>sked_RTV_Approval_Status__c</field>
+        <literalValue>Approved</literalValue>
+        <name>RTV Drive Approved</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>sked_RTV_Drive_CM_Approved</fullName>
+        <field>sked_RTV_Approval_Status__c</field>
+        <literalValue>CM Approved</literalValue>
+        <name>RTV Drive CM Approved</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>sked_RTV_Drive_DM_Approved</fullName>
+        <field>sked_RTV_Approval_Status__c</field>
+        <literalValue>DM Approved</literalValue>
+        <name>RTV Drive DM Approved</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>sked_RTV_Drive_Rejected</fullName>
+        <field>sked_RTV_Approval_Status__c</field>
+        <literalValue>Rejected</literalValue>
+        <name>RTV Drive Rejected</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>sked_Reject_Drive_Request</fullName>
+        <field>sked_Approval_Status__c</field>
+        <literalValue>Rejected</literalValue>
+        <name>Reject Drive Request</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>sked_Update_Drive_Status_to_Draft</fullName>
+        <field>sked_Status__c</field>
+        <literalValue>Draft</literalValue>
+        <name>Update Drive Status to Draft</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>sked_Update_Need_To_Notify</fullName>
+        <field>sked_Need_To_Notified__c</field>
+        <literalValue>1</literalValue>
+        <name>Update Need To Notify</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>sked_Waiting_for_APS_Approval</fullName>
+        <field>sked_Approval_Status__c</field>
+        <literalValue>Waiting for APS Approval</literalValue>
+        <name>Waiting for APS Approval</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <rules>
+        <fullName>Drive Hold Status Expires</fullName>
+        <active>true</active>
+        <criteriaItems>
+            <field>sked_Drive__c.sked_Status__c</field>
+            <operation>equals</operation>
+            <value>Hold</value>
+        </criteriaItems>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+        <workflowTimeTriggers>
+            <actions>
+                <name>sked_Clear_Hold_Date</name>
+                <type>FieldUpdate</type>
+            </actions>
+            <actions>
+                <name>sked_Update_Drive_Status_to_Draft</name>
+                <type>FieldUpdate</type>
+            </actions>
+            <offsetFromField>sked_Drive__c.sked_Hold_Status_expires_on__c</offsetFromField>
+            <timeLength>0</timeLength>
+            <workflowTimeTriggerUnit>Hours</workflowTimeTriggerUnit>
+        </workflowTimeTriggers>
+    </rules>
+    <rules>
+        <fullName>Drive Hold Status Expires Test</fullName>
+        <active>false</active>
+        <criteriaItems>
+            <field>sked_Drive__c.sked_Status__c</field>
+            <operation>equals</operation>
+            <value>Hold</value>
+        </criteriaItems>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+        <workflowTimeTriggers>
+            <actions>
+                <name>Update_to_Draft</name>
+                <type>FieldUpdate</type>
+            </actions>
+            <timeLength>1</timeLength>
+            <workflowTimeTriggerUnit>Hours</workflowTimeTriggerUnit>
+        </workflowTimeTriggers>
+    </rules>
+    <rules>
+        <fullName>Update Need To Notify</fullName>
+        <active>true</active>
+        <criteriaItems>
+            <field>sked_Drive__c.sked_Is_Notified__c</field>
+            <operation>equals</operation>
+            <value>False</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>sked_Drive__c.sked_Need_To_Notified__c</field>
+            <operation>equals</operation>
+            <value>False</value>
+        </criteriaItems>
+        <description>Update need to notify checkbox on Drive</description>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+        <workflowTimeTriggers>
+            <actions>
+                <name>sked_Update_Need_To_Notify</name>
+                <type>FieldUpdate</type>
+            </actions>
+            <offsetFromField>sked_Drive__c.sked_Notification_At__c</offsetFromField>
+            <timeLength>0</timeLength>
+            <workflowTimeTriggerUnit>Hours</workflowTimeTriggerUnit>
+        </workflowTimeTriggers>
+    </rules>
+</Workflow>

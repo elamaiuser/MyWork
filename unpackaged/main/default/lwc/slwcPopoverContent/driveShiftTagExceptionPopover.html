@@ -1,0 +1,12 @@
+<template>
+    <div class="drive-shift-tag-exception-popover direction-ltr">
+        <h3 class="slds-p-around_x-small">Drive Shift Tag Exceptions</h3>
+        <ul class="exception-list slds-has-dividers_bottom-space slds-text-color_error">
+            <template for:each={popoverData} for:item="exception">
+                <li class="slds-item" key={exception}>
+                    {exception}
+                </li>
+            </template>
+        </ul>
+    </div>
+</template>

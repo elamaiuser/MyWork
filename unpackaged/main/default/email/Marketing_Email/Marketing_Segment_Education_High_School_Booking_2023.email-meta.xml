@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<EmailTemplate xmlns="http://soap.sforce.com/2006/04/metadata">
+    <available>true</available>
+    <description>AM to Graduating HS Senior to continue partnership in college</description>
+    <encodingKey>ISO-8859-1</encodingKey>
+    <letterhead>ARC_Logo_Test</letterhead>
+    <name>Marketing Segment_Education_HighSchoolGrad_Booking</name>
+    <style>formalLetter</style>
+    <subject>Thank You and Congratulations!</subject>
+    <textOnly>Dear [Insert Name] ,
+
+As you get closer to graduation, I want to personally thank you for your contributions to your high school’s blood drive program. Your leadership helped save lives and inspired other students to support the Red Cross mission. I am so proud of you!
+
+There are many opportunities for you to continue your Red Cross journey after high school. You are a proven leader with a passion for helping others and we’d be honored if you would continue to support the Red Cross in the next chapter of your life.
+
+Here are ways you can take the next step with the Red Cross:
+
+•	Host blood drives on your college campus or in your community.
+•	Host Leaders Save Lives blood drives while school is out of session.
+•	Join or start a Red Cross Club.
+•	Donate blood on your college campus or in your community.
+•	Volunteer with us.
+•	Explore job opportunities at the Red Cross.
+
+Thank you again for your leadership and contributions to the Red Cross mission. I hope you will look back on this experience and be proud that you personally helped patients in need and continued the lifesaving tradition at your school. Please let me know if there’s anything I can do for you.
+
+Sincerely, 
+[Insert Name]</textOnly>
+    <type>html</type>
+    <uiType>Aloha</uiType>
+</EmailTemplate>

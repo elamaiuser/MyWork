@@ -1,0 +1,58 @@
+<template>
+    <div class="slds-grid">
+        <div class="slds-col">
+            <c-slwc-drive-scheduling-filters
+                mode="driveChangeRequest"
+                onsearch={handleSearch}
+            >
+            </c-slwc-drive-scheduling-filters>
+        </div>
+        <div class="slds-col slds-scrollable_y slds-p-left_medium slds-is-relative" style="min-height: 400px; width:100%;">
+            <div class="slds-grid slds-grid_vertical-align-end slds-p-top_small">
+                <div class="slds-col_bump-left slds-p-right_small">
+                    <c-slwc-date-range-picker
+                        ondaterangechange={handleOnChange}
+                        default-start-date={filters.startDate}
+                        default-end-date={filters.endDate}>
+                    </c-slwc-date-range-picker>
+                </div>
+                <div class="slds-no-flex slds-p-right_small" style="width: 300px;">
+                    <c-slwc-new-collection-operation-multi-picklist
+                        division-single-select
+                        dropdown-position="right"
+                        date-range={collectionOperationDateRange}
+                        default-values={filters.collectionOperationValues}
+                        onchange={handleCollectionOperationChanged}>
+                    </c-slwc-new-collection-operation-multi-picklist>
+                </div>
+            </div>
+
+            <div class="slds-grow slds-p-around_small">
+                <template if:true={showSpinner}>
+                    <lightning-spinner class="spins" size="medium"></lightning-spinner>
+                </template>
+                <div class="slds-scrollable" style="height: 60vh; width: calc(100vw - 5rem);">
+                    <c-slwc-custom-datatable 
+                        key-field="id"
+                        data={records}
+                        columns={columns}
+                        wrap-text-max-lines="3"
+                        hide-checkbox-column
+                        sorted-by={sortOption.fieldName}
+                        sorted-direction={sortOption.sortDirection}
+                        enable-infinite-loading={enableInfiniteLoading}
+                        onsort={handleSortChanged}
+                        onloadmore={handleLoadMoreData}>
+                    </c-slwc-custom-datatable>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <c-slwc-drive-change-request-approval-modal
+        record-id={requestDetailModalData.recordId}
+        is-open={requestDetailModalData.isOpen}
+        onclose={handleCloseRequestDetailModal}
+    >
+    </c-slwc-drive-change-request-approval-modal>
+</template>

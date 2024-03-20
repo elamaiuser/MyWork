@@ -1,0 +1,44 @@
+<apex:page controller="skedEmailHandlerController" sidebar="false" standardstylesheets="false" showheader="false" doctype="html-5.0">
+    <body>
+        <apex:pageBlock >
+            <apex:pageBlockSection columns="1">
+                <apex:pageBlockSectionItem >
+                    <span id="message"/>
+                </apex:pageBlockSectionItem>
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+    </body>
+    <script type="text/javascript">
+        let availabilityId = '{!$CurrentPage.parameters.availabilityId}';
+        let token = '{!$CurrentPage.parameters.token}';
+        let action = '{!$CurrentPage.parameters.action}';
+
+    	function isMobile(){
+            if(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)){
+                return true
+            }
+            else{
+                return false
+            }
+        }
+    
+        Visualforce.remoting.Manager.invokeAction(
+            '{!$RemoteAction.skedEmailHandlerController.confirmAvailability}',
+            availabilityId, action, token,
+            function(result, event) { 
+                if (result) {
+                    document.getElementById("message").innerHTML = 'Redirecting ...';
+                    if (isMobile()) {
+                        window.location.href = 'skedulox://customform/skedPTORequestSubmission'
+                    } else {
+                        window.location.href = '{!availabilityUrl}';
+                    }
+                }
+                else {
+                    document.getElementById("message").innerHTML = 'Invalid Request';
+                }
+            },
+            {escape: true}
+        );
+    </script> 
+</apex:page>

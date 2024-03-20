@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<EmailTemplate xmlns="http://soap.sforce.com/2006/04/metadata">
+    <available>true</available>
+    <description>General BPL Booking/Prospecting ask - Corporate Segment</description>
+    <encodingKey>ISO-8859-1</encodingKey>
+    <letterhead>ARC_Logo_Test</letterhead>
+    <name>Marketing Segment_Corporate_General_Booking</name>
+    <style>formalLetter</style>
+    <subject>Raise Your Community Impact</subject>
+    <textOnly>Dear [Insert Name],
+
+In order to meet a need of 12,000 blood donations per day to preserve life for new mothers, children battling cancer, and those suffering unexpected traumas, the American Red Cross needs partners like you to lead a blood program. Your colleagues, employees, and &lt;vendors/clients/customers&gt; can also be lifesavers—sustaining a healthy, ready blood supply for those in need. But the rewards of service go far beyond even the profound benefit to patients. Sharing in community service offers unique opportunities for [Company Name].
+
+· While your network is helping save lives, the Red Cross offers the opportunity to demonstrate a rewarding and visible contribution to the community through partnership with one of the most trusted and recognized brands.
+
+· Group volunteer opportunities promote teamwork, boost employee morale and provide productive social outlets.
+
+· A great way to find and cultivate new leaders within [Company Name] is through philanthropic endeavors. You’ll be surprised by the emergence of leaders you never knew you had!
+
+Every two seconds, someone needs blood donated. While that’s a daunting charge, you can make a big difference for those in need. For each blood donation your donors provide, more than one life can be saved! Let’s work together to build community, both at [Company Name] and in the far-reaching places your team’s unified effort can be felt. If you can sponsor a blood drive program, please contact me at your earliest convenience to schedule.
+
+Sincerely,
+
+[Insert Name]
+
+P.S. If you are unable to host an on-site blood drive, please visit RedCrossBlood.org/SleevesUp to host a virtual drive or refer another host today.</textOnly>
+    <type>html</type>
+    <uiType>Aloha</uiType>
+</EmailTemplate>

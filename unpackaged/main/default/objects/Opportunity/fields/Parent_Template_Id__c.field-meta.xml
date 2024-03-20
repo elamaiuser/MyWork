@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Parent_Template_Id__c</fullName>
+    <deleteConstraint>SetNull</deleteConstraint>
+    <externalId>false</externalId>
+    <label>Parent Template Id</label>
+    <lookupFilter>
+        <active>true</active>
+        <booleanFilter>1 AND 2 AND 6 AND (3 OR 4 OR 5)</booleanFilter>
+        <errorMessage>Only Templates related to the same Account are eligible and related site must be active</errorMessage>
+        <filterItems>
+            <field>Opportunity.AccountId</field>
+            <operation>equals</operation>
+            <valueField>$Source.AccountId</valueField>
+        </filterItems>
+        <filterItems>
+            <field>Opportunity.Is_Template__c</field>
+            <operation>equals</operation>
+            <value>True</value>
+        </filterItems>
+        <filterItems>
+            <field>Opportunity.Drive_Site__r.sked_End_Date__c</field>
+            <operation>greaterThan</operation>
+            <valueField>$Source.Drive_Date__c</valueField>
+        </filterItems>
+        <filterItems>
+            <field>$Source.StageName</field>
+            <operation>equals</operation>
+            <value>Cancelled</value>
+        </filterItems>
+        <filterItems>
+            <field>$Source.StageName</field>
+            <operation>equals</operation>
+            <value>Withdrawn</value>
+        </filterItems>
+        <filterItems>
+            <field>Opportunity.Template_Status__c</field>
+            <operation>equals</operation>
+            <value>Active</value>
+        </filterItems>
+        <infoMessage>Select the Template for this Opportunity. Only Templates related to the same Account are eligible to be selected.</infoMessage>
+        <isOptional>false</isOptional>
+    </lookupFilter>
+    <referenceTo>Opportunity</referenceTo>
+    <relationshipLabel>Opportunities</relationshipLabel>
+    <relationshipName>Opportunities</relationshipName>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>true</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Lookup</type>
+</CustomField>

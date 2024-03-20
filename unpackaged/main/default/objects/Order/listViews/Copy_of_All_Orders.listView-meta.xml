@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Copy_of_All_Orders</fullName>
+    <columns>ORDERS.ORDER_NUMBER</columns>
+    <columns>OPPORTUNITY.NAME</columns>
+    <columns>Drive_Date__c</columns>
+    <columns>Order_Due_Date__c</columns>
+    <columns>BudgetCurrency__c</columns>
+    <columns>ORDERS.TOTAL_AMOUNT</columns>
+    <columns>Publicity_Approved__c</columns>
+    <columns>Publicity_Submitted__c</columns>
+    <filterScope>Mine</filterScope>
+    <filters>
+        <field>Drive_Date__c</field>
+        <operation>greaterThan</operation>
+        <value>TODAY</value>
+    </filters>
+    <label>My Orders</label>
+</ListView>

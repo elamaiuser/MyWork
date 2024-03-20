@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Account_Restrictions_with_future_drives</fullName>
+    <active>true</active>
+    <description>If an Account has a drive in the Discovery, Solicited, Committed, or Closed stage, it cannot be changed to a Defunct or Lost Account Status.</description>
+    <errorConditionFormula>Scheduled_Drive_Max_Date__c &gt;= Defunct_Effective_Date__c &amp;&amp;
+(
+ISPICKVAL(PRIORVALUE(Account_Status__c),&quot;Active&quot;) ||
+ISPICKVAL(PRIORVALUE(Account_Status__c),&quot;Inactive&quot;) ||
+ISPICKVAL(PRIORVALUE(Account_Status__c),&quot;Lapsed&quot;)
+) &amp;&amp;
+(
+ISPICKVAL(Account_Status__c, &quot;Defunct&quot;) ||
+ISPICKVAL(Account_Status__c, &quot;Lost&quot;))</errorConditionFormula>
+    <errorDisplayField>Account_Status__c</errorDisplayField>
+    <errorMessage>Uh-oh! This Account has drives booked.</errorMessage>
+</ValidationRule>

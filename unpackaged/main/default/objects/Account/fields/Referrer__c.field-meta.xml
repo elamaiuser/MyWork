@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Referrer__c</fullName>
+    <externalId>false</externalId>
+    <label>Referrer</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <type>Picklist</type>
+    <valueSet>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Referral</fullName>
+                <default>false</default>
+                <label>Referral</label>
+            </value>
+            <value>
+                <fullName>Red Cross Account Manager/Representative</fullName>
+                <default>false</default>
+                <label>Red Cross Account Manager/Representative</label>
+            </value>
+            <value>
+                <fullName>Marketing Campaign</fullName>
+                <default>false</default>
+                <label>Marketing Campaign</label>
+            </value>
+            <value>
+                <fullName>Website</fullName>
+                <default>false</default>
+                <label>Website</label>
+            </value>
+            <value>
+                <fullName>Social Media</fullName>
+                <default>false</default>
+                <label>Social Media</label>
+            </value>
+            <value>
+                <fullName>Family/Friend Referral</fullName>
+                <default>false</default>
+                <label>Family/Friend Referral</label>
+            </value>
+            <value>
+                <fullName>My School</fullName>
+                <default>false</default>
+                <label>My School</label>
+            </value>
+            <value>
+                <fullName>Social Media Outlet (Facebook, Twitter, LinkedIn)</fullName>
+                <default>false</default>
+                <label>Social Media Outlet (Facebook, Twitter, LinkedIn)</label>
+            </value>
+            <value>
+                <fullName>General Referral</fullName>
+                <default>false</default>
+                <label>General Referral</label>
+            </value>
+            <value>
+                <fullName>Other</fullName>
+                <default>false</default>
+                <label>Other</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<EmailTemplate xmlns="http://soap.sforce.com/2006/04/metadata">
+    <available>true</available>
+    <description>Email to BPLs about NEW Blood Donor Rewards Program</description>
+    <encodingKey>ISO-8859-1</encodingKey>
+    <letterhead>ARC_Logo_Test</letterhead>
+    <name>Evergreen_General_Blood Donor Rewards Program Information to BPL_2024</name>
+    <style>formalLetter</style>
+    <subject>Exciting Announcement - NEW Donor Rewards Program</subject>
+    <textOnly>Dear [Insert Name],
+I have exciting news to share! The American Red Cross thinks an incredible gift deserves a gift in return. I am excited to announce the new Blood Donor Rewards program - made to celebrate your donors and the generous contributions they make to help patients in need.
+
+When donors come to donate at your next blood drive, they’ll earn points that can be redeemed for exclusive rewards. For each blood donation, they’ll earn at least 100 points, up to six times within a 365-day period. That&#39;s at least 600 points! 1  Donors can even earn more points by trying Power Reds, if available at your blood drive.
+
+Giving is Rewarding. Points can be redeemed for e-gift cards that can be redeemed at any time, or they can be saved for one Red Cross item to be redeemed when the store is open for a few weeks in January 2025.1
+
+Find out more! Visit RedCrossBlood.org/rewards
+
+Share this exciting opportunity with your donors or if you are a donor take advantage yourself!
+
+P.S. Have a drive coming up? Be sure to share this great new opportunity with friends, family and co-workers to help fill your blood drive schedule!
+
+All the best,
+[Insert Name]
+
+1 Terms and conditions apply. See RedCrossBlood.org/Rewards.</textOnly>
+    <type>html</type>
+    <uiType>Aloha</uiType>
+</EmailTemplate>

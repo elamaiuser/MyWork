@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Queue xmlns="http://soap.sforce.com/2006/04/metadata">
+    <doesSendEmailToMembers>false</doesSendEmailToMembers>
+    <name>Culver City CA: RTVs</name>
+    <queueMembers>
+        <users>
+            <user>dharma.nichols@redcross.org</user>
+            <user>jacquee.virgen@redcross.org</user>
+            <user>jayson.buckley@redcross.org</user>
+            <user>jessie.salmon@redcross.org</user>
+            <user>matthew.moon@redcross.org</user>
+            <user>ronan.portillo@redcross.org</user>
+            <user>terra.baggett@redcross.org</user>
+        </users>
+    </queueMembers>
+    <queueSobject>
+        <sobjectType>sked__Location__c</sobjectType>
+    </queueSobject>
+</Queue>

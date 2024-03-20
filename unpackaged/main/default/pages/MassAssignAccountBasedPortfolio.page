@@ -1,0 +1,52 @@
+<apex:page standardController="Account" extensions="MassAssignAccountBasedPortfolioClass" recordSetVar="acc" sidebar="false" showHeader="false" standardStylesheets="false">
+
+    
+    <apex:includeScript value="/lightning/lightning.out.js" />
+    
+    <apex:form >
+        <apex:pageblock >
+            <apex:pageMessages ></apex:pageMessages>
+        </apex:pageblock>
+        
+        
+        <div id="account_lookup"></div>
+        
+    
+        
+            <script>
+                    var visualForceFunction = function(event)
+                    {
+                        let url = "/lightning/o/Account/list";
+                        //let url = "/lightning/o/Account/list?filterName="+ '{!unassignedviewId}';
+                        window.location.href = url;
+                        //var myEventData1 = event.getParam("lookupVal");
+                        //var label = event.getParam("lookupLabel");
+                        //console.log('response data = ' + myEventData1 + ' : ' + label);
+                    };
+         
+                    if( '{!isError}' === 'false' ){
+                            // and...
+                            $Lightning.use("c:AddTeamMemberAuraApp", function()
+                            {
+                                $Lightning.createComponent
+                                (
+                                    "c:MassAssignAccountBasedPortfolioCmp",
+                                    {
+                                         "accountids": '{!concatenatedAccIds}'
+                                        
+                                        
+                                    },
+                                    "account_lookup",
+                                    function()
+                                    {
+                                        $A.eventService.addHandler({ "event": "c:RedirectAccountListViewEvent", "handler" : visualForceFunction});
+                                    }
+                                );
+                            });                        
+                    }
+
+                </script>        
+    </apex:form>
+
+
+</apex:page>

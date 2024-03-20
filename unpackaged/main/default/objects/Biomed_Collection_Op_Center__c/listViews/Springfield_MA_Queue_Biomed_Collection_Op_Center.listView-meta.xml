@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Springfield_MA_Queue_Biomed_Collection_Op_Center</fullName>
+    <filterScope>Queue</filterScope>
+    <label>Springfield MA - Queue</label>
+    <queue>Springfield_MA_Queue</queue>
+    <sharedTo>
+        <allInternalUsers></allInternalUsers>
+    </sharedTo>
+</ListView>

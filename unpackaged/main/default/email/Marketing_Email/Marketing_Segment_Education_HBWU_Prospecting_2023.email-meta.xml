@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<EmailTemplate xmlns="http://soap.sforce.com/2006/04/metadata">
+    <available>true</available>
+    <description>Prospecting Email for Hope Begins with You</description>
+    <encodingKey>ISO-8859-1</encodingKey>
+    <letterhead>ARC_Logo_Test</letterhead>
+    <name>Marketing Segment_Education_HBWU_Prospecting</name>
+    <style>formalLetter</style>
+    <subject>Partner with the Red Cross to help save lives!</subject>
+    <textOnly>Dear [Insert Name]
+
+The American Red Cross is proud to offer your students an opportunity to learn, take action, show leadership and receive recognition for their commitment in helping meet the blood needs of hospital patients in our community.
+
+The Red Cross has over 70 years of experience in collecting and distributing blood to millions of patients in over 2,600 hospitals nationwide. Approximately 36,000 units of red blood cells are needed every day in the U.S. and we could not do this lifesaving work without the support of our blood program partners. Approximately 20 percent of blood donations come from schools across the country. We hope you will join in!
+
+We know your school faces many competing priorities. That’s why we have designed our programs to be learning-in-action opportunities that will develop and recognize students’ leadership, planning skills and humanitarian spirit. In addition to the rewarding feeling of helping save lives, your students will receive a variety of opportunities to be recognized and earn rewards. 
+
+Hope begins with you. It begins with your school’s decision to support the Red Cross and patients in need.  It begins with a student’s decision to support blood donation in your school or in the community.
+
+Please contact me to learn about our programs for schools and explore the opportunities for a partnership with the American Red Cross.
+
+
+Sincerely, 
+[Insert Name]</textOnly>
+    <type>html</type>
+    <uiType>Aloha</uiType>
+</EmailTemplate>

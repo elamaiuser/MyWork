@@ -1,0 +1,36 @@
+import { MAPPING_TYPE, fieldConfigModel, mappingConfigModel }  from './_base.js';
+
+export class ExceptionMappingConfigFactory {
+  constructor() {}
+
+  process() {
+      let mappingConfig = new mappingConfigModel();
+      mappingConfig.sObjectName = 'skedHC__Exception__c';
+      mappingConfig.objectType = 'exception';
+
+      mappingConfig.addFieldConfig('Id', 'id', MAPPING_TYPE.direct);
+      mappingConfig.addFieldConfig('Name', 'name');
+      mappingConfig.addFieldConfig('skedHC__Activity__c', 'activityId');
+      mappingConfig.addFieldConfig('skedHC__Availability__c', 'availabilityId');
+      mappingConfig.addFieldConfig('skedHC__Exception__c', 'exception');
+      mappingConfig.addFieldConfig('skedHC__Job__c', 'jobId');
+      mappingConfig.addFieldConfig('skedHC__Job__r.Name', 'jobName');
+      mappingConfig.addFieldConfig('skedHC__Job__r.sked__Type__c', 'jobType');
+      mappingConfig.addFieldConfig('skedHC__Job_Allocation__c', 'jobAllocationId');
+      mappingConfig.addFieldConfig('skedHC__Resource__c', 'resourceId');
+      mappingConfig.addFieldConfig('skedHC__Resource__r.Name', 'resourceName');
+      mappingConfig.addFieldConfig('skedHC__Status__c', 'status');
+      mappingConfig.addFieldConfig('sked_Conflicted_Job__c', 'conflictedJobId');
+      mappingConfig.addFieldConfig('sked_Conflicted_Job_Allocation__c', 'conflictedJobAllocationId');
+      mappingConfig.addFieldConfig('sked_Drive__c', 'driveId');
+      mappingConfig.addFieldConfig('sked_Drive__r.sked_Drive_Date__c', 'driveDate');
+      mappingConfig.addFieldConfig('sked_Drive__r.sked_UFID__c', 'ufid');
+      mappingConfig.addFieldConfig('sked_Drive__r.Name', 'driveName');
+      mappingConfig.addFieldConfig('sked_Exception_Code__c', 'exceptionCode');
+      mappingConfig.addFieldConfig('sked_Priority__c', 'priority');
+
+      mappingConfig.addFieldConfig('skedHC__Job__r', 'job', MAPPING_TYPE.related, 'sked__Job__c');
+
+      return mappingConfig;
+  }
+}

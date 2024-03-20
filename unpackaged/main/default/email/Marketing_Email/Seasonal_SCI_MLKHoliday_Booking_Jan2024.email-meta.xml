@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<EmailTemplate xmlns="http://soap.sforce.com/2006/04/metadata">
+    <available>true</available>
+    <description>Booking Ask for SCI Recruitment to Active BPL for MLK</description>
+    <encodingKey>ISO-8859-1</encodingKey>
+    <letterhead>ARC_Logo_Test</letterhead>
+    <name>Seasonal_SCI_MLKHoliday_Booking_Jan2024</name>
+    <style>formalLetter</style>
+    <subject>MLK Day: A Day On, Not a Day Off Blood Drive</subject>
+    <textOnly>Hi &lt;Name&gt;
+As a Blood Program Leader in your community, I wanted to reach out to you today to invite you to host a Red Cross blood drive in January in honor of the upcoming Dr. Martin Luther King Jr. Holiday, on Monday, January 15, 2024.
+
+The holiday is not only a time for honoring Dr. King’s achievements but also for promoting community service and activism. Many schools, churches, and organizations like yours are already involved in activities and community projects during this time, and incorporating a blood drive is another awesome way to commemorate his legacy by bringing the community together in the spirit of compassion, diversity, and unity.
+
+The American Red Cross is also committed to compassion, diversity, and unity, and encourages eligible donors of all races and ethnicities to give blood to increase the diversity of the blood supply.
+
+Please let me know if you’re on board with hosting a Red Cross “MLK Day: A Day On, Not a Day Off Blood Drive” in January to help carry on the lifesaving legacy of Dr. Martin Luther King Jr.
+
+Sincerely,
+&lt;AM/SAM/ABM Name&gt;</textOnly>
+    <type>html</type>
+    <uiType>Aloha</uiType>
+</EmailTemplate>

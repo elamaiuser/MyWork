@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Restrict_Inactive_Contacts_Add</fullName>
+    <active>true</active>
+    <description>Users can&#39;t add inactive contacts</description>
+    <errorConditionFormula>NOT( Contact.Active__c = true)</errorConditionFormula>
+    <errorMessage>You can&#39;t add inactive contacts. Please choose one active contact and try again</errorMessage>
+</ValidationRule>

@@ -1,0 +1,150 @@
+<template>
+<div>
+    <lightning-spinner if:true={showSpinner} class="spins" size="medium"></lightning-spinner>
+
+    <article class="slds-card slds-card_boundary plan-drive-page">
+        <div class="slds-page-header">
+            <div class={classHeader}>
+                <div class="slds-page-header__col-title">
+                    <div class="slds-media">
+                        <div class="slds-media__figure">
+                            <!-- <div class="slds-icon_container">
+                                <svg width="32px" height="32px" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                                    <defs></defs>
+                                    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                                        <rect id="Rectangle-20" x="0" y="0" width="32" height="32" fill="transparent"></rect>
+                                        <g transform="translate(1.000000, 1.000000)" id="Rectangle-1-Copy" fill="#3c97dd">
+                                            <path d="M0,3.00001915 C0,1.34315432 1.35008905,0 3.01578348,0 L27.1418587,0 C28.80743,0 30.1576422,1.34303176 30.1576422,3.00001915 L30.1576422,26.9999808 C30.1576422,28.6568457 28.8075532,30 27.1418587,30 L3.01578348,30 C1.35021226,30 0,28.6569682 0,26.9999808 L0,3.00001915 L0,3.00001915 Z M20.9039742,5.24999988 C20.9039742,5.24999988 24.8817134,5.24999988 24.8817134,9.19415977 L14.5589787,9.19415989 C14.5589787,9.19415989 5.27758739,9.19415986 5.27758739,9.19415989 C5.27758739,9.19415991 5.27758739,5.25 9.25532654,5.25 C13.2330657,5.25 20.9039742,5.24999988 20.9039742,5.24999988 L20.9039742,5.24999988 Z M9.25839616,24.75 C9.25839616,24.75 5.27758739,24.75 5.27758739,20.8058401 L15.608288,20.80584 L24.8968418,20.80584 C24.8968418,20.80584 24.8968418,24.7499998 20.916033,24.7499998 C16.9352242,24.7499998 9.25839616,24.75 9.25839616,24.75 L9.25839616,24.75 Z M9.25839616,16.97208 C9.25839616,16.97208 5.27758739,16.97208 5.27758739,13.0279201 L15.608288,13.02792 L20.916033,13.02792 C24.8800548,13.02792 24.8800548,16.9720798 24.8800548,16.97208 C24.8800548,16.97208 20.916033,16.97208 20.916033,16.9720798 C20.916033,16.9720797 9.25839616,16.97208 9.25839616,16.97208 L9.25839616,16.97208 Z"></path>
+                                        </g>
+                                    </g>
+                                </svg>
+                            </div> -->
+                            <lightning-icon icon-name="standard:event"></lightning-icon>
+                        </div>
+                        <div class="slds-media__body">
+                            <p class="slds-page-header__name-meta">Drive Date Selection</p>
+                            <div class="slds-page-header__name">
+                                <div class="slds-page-header__name-title">
+                                    <h1>
+                                        <span class="slds-page-header__title slds-truncate">{celendarHeader}</span>
+                                    </h1>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div if:true={isMobile}>
+                    <div class="slds-grid  slds-grid_vertical-align-end">
+                        <div class="slds-col slds-size--5-of-6 slds-m-right_x-small">
+                            <c-slwc-month-picker 
+                                unique-key="planDrive" 
+                                label="Selected Month"
+                                onmonthchange={handleOnMonthChanged}
+                                default-value={filter.selectedMonth}>
+                            </c-slwc-month-picker>
+                        </div>
+                        <div class="slds-col slds-size--1-of-6">
+                            <lightning-button-icon tooltip="Refresh" variant="border-filled" onclick={forceRefresh} icon-name="utility:refresh"></lightning-button-icon>
+                        </div>
+                    </div>
+                </div>
+                <div if:false={isMobile} class="slds-no-flex slds-grid slds-grid_vertical-align-end">
+                    <div class="slds-form-element slds-m-right_x-small">
+                        <c-slwc-month-picker 
+                            unique-key="planDrive" 
+                            label="Selected Month"
+                            onmonthchange={handleOnMonthChanged}
+                            default-value={filter.selectedMonth}>
+                        </c-slwc-month-picker>
+                    </div>
+                    <div class="slds-col">
+                        <lightning-button-icon tooltip="Refresh" variant="border-filled" onclick={forceRefresh} icon-name="utility:refresh"></lightning-button-icon>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <template if:true={isMobile}>
+            <div class="slds-grid" if:true={initialized}>
+                <div class="slds-no-flex" >
+                    <c-slwc-plan-drive-calendar
+                        opportunity={opportunity}
+                        master-data={masterData}
+                        default-date={driveDate}
+                        onselectdate={handleSelectDate}
+                        selected-month={filter.selectedMonth}></c-slwc-plan-drive-calendar>
+                </div>
+            </div>
+        </template>
+        <template if:true={isDesktop}>
+            <div class="slds-grid" if:true={initialized}>
+                <div class="slds-grow">
+                    <c-slwc-plan-drive-booking-grid
+                        opportunity={opportunity}
+                        master-data={masterData}
+                        default-date={driveDate}
+                        onselectdate={handleSelectDate}
+                        selected-month={filter.selectedMonth}></c-slwc-plan-drive-booking-grid>
+                </div>
+                <div class="slds-no-flex" style="width: 20rem;">
+                    <c-slwc-plan-drive-calendar
+                        opportunity={opportunity}
+                        master-data={masterData}
+                        default-date={driveDate}
+                        onselectdate={handleSelectDate}
+                        selected-month={nextMonth}></c-slwc-plan-drive-calendar>
+                    
+                    <c-slwc-plan-drive-calendar
+                        opportunity={opportunity}
+                        master-data={masterData}
+                        default-date={driveDate}
+                        onselectdate={handleSelectDate}
+                        selected-month={next2Month}></c-slwc-plan-drive-calendar>
+                </div>
+            </div>
+        </template>
+        <template if:true={isTablet}>
+            <div if:true={initialized}>
+                <div class="slds-grow">
+                    <c-slwc-plan-drive-booking-grid
+                        opportunity={opportunity}
+                        master-data={masterData}
+                        default-date={driveDate}
+                        onselectdate={handleSelectDate}
+                        selected-month={filter.selectedMonth}></c-slwc-plan-drive-booking-grid>
+                </div>
+                <div class="slds-grid">
+                    <div class="slds-col slds-size--1-of-2 slds-align_absolute-center">
+                        <c-slwc-plan-drive-calendar
+                        opportunity={opportunity}
+                        master-data={masterData}
+                        default-date={driveDate}
+                        onselectdate={handleSelectDate}
+                        selected-month={nextMonth}></c-slwc-plan-drive-calendar>
+                    </div>
+                    <div class="slds-col slds-size--1-of-2 slds-align_absolute-center">
+                        <c-slwc-plan-drive-calendar
+                        opportunity={opportunity}
+                        master-data={masterData}
+                        default-date={driveDate}
+                        onselectdate={handleSelectDate}
+                        selected-month={next2Month}></c-slwc-plan-drive-calendar>
+                    </div>
+                </div>
+            </div>
+        </template>
+    </article>
+
+    <c-slwc-confirm-modal
+        is-open={confirmModalData.isOpen}
+        title={confirmModalData.title}
+        mode={confirmModalData.mode}
+        message={confirmModalData.message}
+        confirm-btn-label={confirmModalData.confirmBtnLabel}
+        cancel-btn-label={confirmModalData.cancelBtnLabel}
+        handle-on-close={confirmModalData.onClose}
+        size='x-small'
+    ></c-slwc-confirm-modal>
+</div>
+</template>

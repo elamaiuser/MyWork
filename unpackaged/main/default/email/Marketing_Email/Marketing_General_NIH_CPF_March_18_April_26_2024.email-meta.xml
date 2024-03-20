@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<EmailTemplate xmlns="http://soap.sforce.com/2006/04/metadata">
+    <available>false</available>
+    <description>Email to educate BPLs about the 2 new screening devices in trial locations for the Non-Invasive Hemoglobin – Consolidated Physical Findings project</description>
+    <encodingKey>ISO-8859-1</encodingKey>
+    <letterhead>ARC_Generic_Logo1</letterhead>
+    <name>Marketing_General_NIH-CPF__March 18-April 26_2024</name>
+    <style>formalLetter</style>
+    <subject>New Health Screening Devices</subject>
+    <textOnly>Dear &lt;BPL name&gt;,
+
+We are excited to announce that the American Red Cross will soon begin trialing in select areas two new FDA-approved health screening devices to improve the blood donation experience.
+
+What’s new?
+Measuring hemoglobin levels: This new device eliminates the fingerstick and instead utilizes an OrSense ring-shaped sensor that is fitted onto an individual’s finger to measure their hemoglobin levels. This method provides a quick measurement of the donor&#39;s blood components, while greatly improving the donor&#39;s comfort.
+
+Measuring temperature, blood pressure and pulse rate: This new device replaces traditional manual devices and instead utilizes an automated Masimo device to measure individuals’ temperature, blood pressure, and pulse rate.
+
+Preview the devices in action &lt; unlisted YouTube page link provided by 3/5/24&gt;
+
+What else should my donors know?
+· By transitioning to these devices, the Red Cross helps achieve its goal of reducing its impact on the environment by significantly reducing the use of disposable medical supplies.
+· Good blood circulation in the hands is important for the most accurate results--the Red Cross suggest donors try to keep their hands as warm as possible while waiting to give blood.
+
+If your donors have questions about their eligibility, please refer them to our Red Cross Donor and Client Support Center at 1-866-236-3276, option 1.
+
+Our top priority is the health of all our donors and recipients. We are so grateful for your continued support as a Blood Program Leader, and we look forward to trialing these new devices at one of your upcoming blood drives.
+
+Thank you for being a community leader and bringing people together to help save lives!
+
+Sincerely,
+
+&lt;Red Cross Representative&gt;
+
+Ps. While these devices may not appear at all drives, there is a chance they may be trialed during your operation.</textOnly>
+    <type>html</type>
+    <uiType>Aloha</uiType>
+</EmailTemplate>

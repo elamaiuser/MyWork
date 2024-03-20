@@ -1,0 +1,304 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<StandardValueSet xmlns="http://soap.sforce.com/2006/04/metadata">
+    <sorted>true</sorted>
+    <standardValue>
+        <fullName>1st Lt.</fullName>
+        <default>false</default>
+        <label>1st Lt.</label>
+    </standardValue>
+    <standardValue>
+        <fullName>1st Sgt.</fullName>
+        <default>false</default>
+        <label>1st Sgt.</label>
+    </standardValue>
+    <standardValue>
+        <fullName>2nd Lt.</fullName>
+        <default>false</default>
+        <label>2nd Lt.</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Admiral</fullName>
+        <default>false</default>
+        <label>Admiral</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Bishop</fullName>
+        <default>false</default>
+        <label>Bishop</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Brig. Gen.</fullName>
+        <default>false</default>
+        <label>Brig. Gen.</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Brother</fullName>
+        <default>false</default>
+        <label>Brother</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Capt.</fullName>
+        <default>false</default>
+        <label>Capt.</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Chaplain</fullName>
+        <default>false</default>
+        <label>Chaplain</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Chief</fullName>
+        <default>false</default>
+        <label>Chief</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Cmdr.</fullName>
+        <default>false</default>
+        <label>Cmdr.</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Col.</fullName>
+        <default>false</default>
+        <label>Col.</label>
+    </standardValue>
+    <standardValue>
+        <fullName>CpI.</fullName>
+        <default>false</default>
+        <label>CpI.</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Deacon</fullName>
+        <default>false</default>
+        <label>Deacon</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Dr.</fullName>
+        <default>false</default>
+        <label>Dr.</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Dra.</fullName>
+        <default>false</default>
+        <label>Dra.</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Ens.</fullName>
+        <default>false</default>
+        <label>Ens.</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Father</fullName>
+        <default>false</default>
+        <label>Father</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Gen.</fullName>
+        <default>false</default>
+        <label>Gen.</label>
+    </standardValue>
+    <standardValue>
+        <fullName>HM1</fullName>
+        <default>false</default>
+        <label>HM1</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Hna.</fullName>
+        <default>false</default>
+        <label>Hna.</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Hon.</fullName>
+        <default>false</default>
+        <label>Hon.</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Lance CpI.</fullName>
+        <default>false</default>
+        <label>Lance CpI.</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Lt.</fullName>
+        <default>false</default>
+        <label>Lt.</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Lt. Cmdr.</fullName>
+        <default>false</default>
+        <label>Lt. Cmdr.</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Lt. Col.</fullName>
+        <default>false</default>
+        <label>Lt. Col.</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Lt. CpI.</fullName>
+        <default>false</default>
+        <label>Lt. CpI.</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Lt. Gen.</fullName>
+        <default>false</default>
+        <label>Lt. Gen.</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Lt. Sgt. Maj</fullName>
+        <default>false</default>
+        <label>Lt. Sgt. Maj</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Maj.</fullName>
+        <default>false</default>
+        <label>Maj.</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Maj. Gen.</fullName>
+        <default>false</default>
+        <label>Maj. Gen.</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Master Sgt.</fullName>
+        <default>false</default>
+        <label>Master Sgt.</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Minister</fullName>
+        <default>false</default>
+        <label>Minister</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Miss</fullName>
+        <default>false</default>
+        <label>Miss</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Monsignor</fullName>
+        <default>false</default>
+        <label>Monsignor</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Mr.</fullName>
+        <default>false</default>
+        <label>Mr.</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Mrs.</fullName>
+        <default>false</default>
+        <label>Mrs.</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Ms.</fullName>
+        <default>false</default>
+        <label>Ms.</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Padre</fullName>
+        <default>false</default>
+        <label>Padre</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Parroco</fullName>
+        <default>false</default>
+        <label>Parroco</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Pastor</fullName>
+        <default>false</default>
+        <label>Pastor</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Pastora</fullName>
+        <default>false</default>
+        <label>Pastora</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Petty Officer</fullName>
+        <default>false</default>
+        <label>Petty Officer</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Prof.</fullName>
+        <default>false</default>
+        <label>Prof.</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Rabbi</fullName>
+        <default>false</default>
+        <label>Rabbi</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Rear Adm.</fullName>
+        <default>false</default>
+        <label>Rear Adm.</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Rev.</fullName>
+        <default>false</default>
+        <label>Rev.</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Rev. Dr.</fullName>
+        <default>false</default>
+        <label>Rev. Dr.</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Rev. Father</fullName>
+        <default>false</default>
+        <label>Rev. Father</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Rvdo.</fullName>
+        <default>false</default>
+        <label>Rvdo.</label>
+    </standardValue>
+    <standardValue>
+        <fullName>SFC</fullName>
+        <default>false</default>
+        <label>SFC</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Sgt.</fullName>
+        <default>false</default>
+        <label>Sgt.</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Sgt. Maj.</fullName>
+        <default>false</default>
+        <label>Sgt. Maj.</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Sister</fullName>
+        <default>false</default>
+        <label>Sister</label>
+    </standardValue>
+    <standardValue>
+        <fullName>SMSgt</fullName>
+        <default>false</default>
+        <label>SMSgt</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Sr.</fullName>
+        <default>false</default>
+        <label>Sr.</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Sra.</fullName>
+        <default>false</default>
+        <label>Sra.</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Srta.</fullName>
+        <default>false</default>
+        <label>Srta.</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Staff Sgt.</fullName>
+        <default>false</default>
+        <label>Staff Sgt.</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Tech Sgt.</fullName>
+        <default>false</default>
+        <label>Tech Sgt.</label>
+    </standardValue>
+</StandardValueSet>

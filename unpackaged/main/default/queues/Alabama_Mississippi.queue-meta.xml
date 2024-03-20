@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Queue xmlns="http://soap.sforce.com/2006/04/metadata">
+    <doesSendEmailToMembers>true</doesSendEmailToMembers>
+    <name>Alabama Mississippi Lead Queue</name>
+    <queueMembers>
+        <users>
+            <user>alisha.james@redcross.org.biomed</user>
+            <user>angela.jackson4@redcross.org.biomed</user>
+            <user>dane.usry@redcross.org.biomed</user>
+            <user>mario.sedlock@redcross.org.biomed</user>
+            <user>sean.armstrong@redcross.org.biomed</user>
+        </users>
+    </queueMembers>
+    <queueSobject>
+        <sobjectType>Lead</sobjectType>
+    </queueSobject>
+</Queue>

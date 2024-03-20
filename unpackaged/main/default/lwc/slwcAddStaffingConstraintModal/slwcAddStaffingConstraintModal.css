@@ -1,0 +1,15 @@
+.slds-add-staffing-constraint-modal {
+  line-height: normal;
+}
+.slds-add-staffing-constraint-modal .forcePageError .errorsList {
+  border-bottom: 0;
+}
+.slds-add-staffing-constraint-modal__total-staff-constraints {
+  position: relative;
+}
+.slds-add-staffing-constraint-modal__warning-icon {
+  --slds-c-icon-color-foreground-default:#f1872d;
+  position: absolute;
+  top: 1.7rem;
+  right: 1.2rem;
+}

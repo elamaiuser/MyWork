@@ -1,0 +1,7 @@
+<template>
+    <div class="slds-grid slds-wrap">
+        <template for:each={value} for:item="resource">
+            <c-slwc-resource-avatar class="slds-m-right_xx-small slds-m-bottom_xx-small" key={resource.id} resource={resource}></c-slwc-resource-avatar>
+        </template>
+    </div>
+</template>

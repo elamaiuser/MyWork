@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+        <label><!-- Setup/QC Issue Reason --></label>
+        <name>sked_Setup_QC_Issue_Reason__c</name>
+        <picklistValues>
+            <masterLabel>Additional setup time needed</masterLabel>
+            <translation><!-- Additional setup time needed --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Password problem</masterLabel>
+            <translation><!-- Password problem --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>QC Error/Fail</masterLabel>
+            <translation><!-- QC Error/Fail --></translation>
+        </picklistValues>
+    </CustomFieldTranslation>

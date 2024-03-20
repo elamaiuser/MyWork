@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Biomed_Region_Oct_2019__c</fullName>
+    <defaultValue>false</defaultValue>
+    <description>Checkbox to designate that region is a new collection region as of Oct 2019 when checked.</description>
+    <externalId>false</externalId>
+    <label>Biomed Region Oct 2019</label>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Checkbox</type>
+</CustomField>

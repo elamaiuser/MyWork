@@ -1,0 +1,1090 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Industry_Code__c</fullName>
+    <description>This field is exactly the same as the field of the same name on the Account object. When the lead is converted, this field will be mapped to that corresponding Account field. Only being utilized for Biomed Recruitment lead record type.</description>
+    <externalId>false</externalId>
+    <label>Industry Code</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <type>Picklist</type>
+    <valueSet>
+        <controllingField>Account_Type__c</controllingField>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Fair (State, County)</fullName>
+                <default>false</default>
+                <label>Fair (State, County)</label>
+            </value>
+            <value>
+                <fullName>Health Club</fullName>
+                <default>false</default>
+                <label>Health Club</label>
+            </value>
+            <value>
+                <fullName>Museums</fullName>
+                <default>false</default>
+                <label>Museums</label>
+            </value>
+            <value>
+                <fullName>Sports Club</fullName>
+                <default>false</default>
+                <label>Sports Club</label>
+            </value>
+            <value>
+                <fullName>Sports Team</fullName>
+                <default>false</default>
+                <label>Sports Team</label>
+            </value>
+            <value>
+                <fullName>Advertising / Marketing</fullName>
+                <default>false</default>
+                <label>Advertising / Marketing</label>
+            </value>
+            <value>
+                <fullName>Agriculture</fullName>
+                <default>false</default>
+                <label>Agriculture</label>
+            </value>
+            <value>
+                <fullName>Airline / Airport</fullName>
+                <default>false</default>
+                <label>Airline / Airport</label>
+            </value>
+            <value>
+                <fullName>Call Center</fullName>
+                <default>false</default>
+                <label>Call Center</label>
+            </value>
+            <value>
+                <fullName>Casino</fullName>
+                <default>false</default>
+                <label>Casino</label>
+            </value>
+            <value>
+                <fullName>Communications</fullName>
+                <default>false</default>
+                <label>Communications</label>
+            </value>
+            <value>
+                <fullName>Construction</fullName>
+                <default>false</default>
+                <label>Construction</label>
+            </value>
+            <value>
+                <fullName>Financial Institutions</fullName>
+                <default>false</default>
+                <label>Financial Institutions</label>
+            </value>
+            <value>
+                <fullName>General Services</fullName>
+                <default>false</default>
+                <label>General Services</label>
+            </value>
+            <value>
+                <fullName>Hotel / Resort</fullName>
+                <default>false</default>
+                <label>Hotel / Resort</label>
+            </value>
+            <value>
+                <fullName>Insurance</fullName>
+                <default>false</default>
+                <label>Insurance</label>
+            </value>
+            <value>
+                <fullName>Law Firm</fullName>
+                <default>false</default>
+                <label>Law Firm</label>
+            </value>
+            <value>
+                <fullName>Manufacturing</fullName>
+                <default>false</default>
+                <label>Manufacturing</label>
+            </value>
+            <value>
+                <fullName>Not For Profit</fullName>
+                <default>false</default>
+                <label>Not For Profit</label>
+            </value>
+            <value>
+                <fullName>Real Estate</fullName>
+                <default>false</default>
+                <label>Real Estate</label>
+            </value>
+            <value>
+                <fullName>Restaurant</fullName>
+                <default>false</default>
+                <label>Restaurant</label>
+            </value>
+            <value>
+                <fullName>Retail / Sales / Service</fullName>
+                <default>false</default>
+                <label>Retail / Sales / Service</label>
+            </value>
+            <value>
+                <fullName>Technology</fullName>
+                <default>false</default>
+                <label>Technology</label>
+            </value>
+            <value>
+                <fullName>Transportation</fullName>
+                <default>false</default>
+                <label>Transportation</label>
+            </value>
+            <value>
+                <fullName>Utility Company</fullName>
+                <default>false</default>
+                <label>Utility Company</label>
+            </value>
+            <value>
+                <fullName>Warehouse</fullName>
+                <default>false</default>
+                <label>Warehouse</label>
+            </value>
+            <value>
+                <fullName>American Legion</fullName>
+                <default>false</default>
+                <label>American Legion</label>
+            </value>
+            <value>
+                <fullName>Apartments</fullName>
+                <default>false</default>
+                <label>Apartments</label>
+            </value>
+            <value>
+                <fullName>Business Membership Organization</fullName>
+                <default>false</default>
+                <label>Business Membership Organization</label>
+            </value>
+            <value>
+                <fullName>Civitan</fullName>
+                <default>false</default>
+                <label>Civitan</label>
+            </value>
+            <value>
+                <fullName>Eagles</fullName>
+                <default>false</default>
+                <label>Eagles</label>
+            </value>
+            <value>
+                <fullName>Elks</fullName>
+                <default>false</default>
+                <label>Elks</label>
+            </value>
+            <value>
+                <fullName>General Community</fullName>
+                <default>false</default>
+                <label>General Community</label>
+            </value>
+            <value>
+                <fullName>Kiwanis</fullName>
+                <default>false</default>
+                <label>Kiwanis</label>
+            </value>
+            <value>
+                <fullName>Knights of Columbus</fullName>
+                <default>false</default>
+                <label>Knights of Columbus</label>
+            </value>
+            <value>
+                <fullName>Lions</fullName>
+                <default>false</default>
+                <label>Lions</label>
+            </value>
+            <value>
+                <fullName>Masons</fullName>
+                <default>false</default>
+                <label>Masons</label>
+            </value>
+            <value>
+                <fullName>Moose Lodge</fullName>
+                <default>false</default>
+                <label>Moose Lodge</label>
+            </value>
+            <value>
+                <fullName>Organized Labor</fullName>
+                <default>false</default>
+                <label>Organized Labor</label>
+            </value>
+            <value>
+                <fullName>Other Fraternal Organization</fullName>
+                <default>false</default>
+                <label>Other Fraternal Organization</label>
+            </value>
+            <value>
+                <fullName>Professional Membership Organization</fullName>
+                <default>false</default>
+                <label>Professional Membership Organization</label>
+            </value>
+            <value>
+                <fullName>Red Cross Chapter</fullName>
+                <default>false</default>
+                <label>Red Cross Chapter</label>
+            </value>
+            <value>
+                <fullName>Reservation, Native American</fullName>
+                <default>false</default>
+                <label>Reservation, Native American</label>
+            </value>
+            <value>
+                <fullName>Rotary</fullName>
+                <default>false</default>
+                <label>Rotary</label>
+            </value>
+            <value>
+                <fullName>Ruritan</fullName>
+                <default>false</default>
+                <label>Ruritan</label>
+            </value>
+            <value>
+                <fullName>Scouts</fullName>
+                <default>false</default>
+                <label>Scouts</label>
+            </value>
+            <value>
+                <fullName>Senior Center</fullName>
+                <default>false</default>
+                <label>Senior Center</label>
+            </value>
+            <value>
+                <fullName>Shopping Center / Mall</fullName>
+                <default>false</default>
+                <label>Shopping Center / Mall</label>
+            </value>
+            <value>
+                <fullName>Veterans</fullName>
+                <default>false</default>
+                <label>Veterans</label>
+            </value>
+            <value>
+                <fullName>Youth Service</fullName>
+                <default>false</default>
+                <label>Youth Service</label>
+            </value>
+            <value>
+                <fullName>Administration / District Office</fullName>
+                <default>false</default>
+                <label>Administration / District Office</label>
+            </value>
+            <value>
+                <fullName>College / University</fullName>
+                <default>false</default>
+                <label>College / University</label>
+            </value>
+            <value>
+                <fullName>Community / Junior College</fullName>
+                <default>false</default>
+                <label>Community / Junior College</label>
+            </value>
+            <value>
+                <fullName>Elementary School</fullName>
+                <default>false</default>
+                <label>Elementary School</label>
+            </value>
+            <value>
+                <fullName>High School</fullName>
+                <default>false</default>
+                <label>High School</label>
+            </value>
+            <value>
+                <fullName>Middle School</fullName>
+                <default>false</default>
+                <label>Middle School</label>
+            </value>
+            <value>
+                <fullName>Vocational/Trade School</fullName>
+                <default>false</default>
+                <label>Vocational/Trade School</label>
+            </value>
+            <value>
+                <fullName>City / Town</fullName>
+                <default>false</default>
+                <label>City / Town</label>
+            </value>
+            <value>
+                <fullName>Correctional Facility</fullName>
+                <default>false</default>
+                <label>Correctional Facility</label>
+            </value>
+            <value>
+                <fullName>County</fullName>
+                <default>false</default>
+                <label>County</label>
+            </value>
+            <value>
+                <fullName>Federal</fullName>
+                <default>false</default>
+                <label>Federal</label>
+            </value>
+            <value>
+                <fullName>Fire / Law Enforcement</fullName>
+                <default>false</default>
+                <label>Fire / Law Enforcement</label>
+            </value>
+            <value>
+                <fullName>Regional Govt</fullName>
+                <default>false</default>
+                <label>Regional Govt</label>
+            </value>
+            <value>
+                <fullName>State</fullName>
+                <default>false</default>
+                <label>State</label>
+            </value>
+            <value>
+                <fullName>Ambulance / EMS</fullName>
+                <default>false</default>
+                <label>Ambulance / EMS</label>
+            </value>
+            <value>
+                <fullName>Care Facilities</fullName>
+                <default>false</default>
+                <label>Care Facilities</label>
+            </value>
+            <value>
+                <fullName>Clinic</fullName>
+                <default>false</default>
+                <label>Clinic</label>
+            </value>
+            <value>
+                <fullName>Doctor&#39;s Office</fullName>
+                <default>false</default>
+                <label>Doctor&#39;s Office</label>
+            </value>
+            <value>
+                <fullName>Hospital</fullName>
+                <default>false</default>
+                <label>Hospital</label>
+            </value>
+            <value>
+                <fullName>Laboratory</fullName>
+                <default>false</default>
+                <label>Laboratory</label>
+            </value>
+            <value>
+                <fullName>Online / Digital</fullName>
+                <default>false</default>
+                <label>Online / Digital</label>
+            </value>
+            <value>
+                <fullName>Print</fullName>
+                <default>false</default>
+                <label>Print</label>
+            </value>
+            <value>
+                <fullName>Radio</fullName>
+                <default>false</default>
+                <label>Radio</label>
+            </value>
+            <value>
+                <fullName>Television</fullName>
+                <default>false</default>
+                <label>Television</label>
+            </value>
+            <value>
+                <fullName>Air Force</fullName>
+                <default>false</default>
+                <label>Air Force</label>
+            </value>
+            <value>
+                <fullName>Air Force Reserve</fullName>
+                <default>false</default>
+                <label>Air Force Reserve</label>
+            </value>
+            <value>
+                <fullName>Air Guard</fullName>
+                <default>false</default>
+                <label>Air Guard</label>
+            </value>
+            <value>
+                <fullName>Army</fullName>
+                <default>false</default>
+                <label>Army</label>
+            </value>
+            <value>
+                <fullName>Army National Guard</fullName>
+                <default>false</default>
+                <label>Army National Guard</label>
+            </value>
+            <value>
+                <fullName>Army Reserve</fullName>
+                <default>false</default>
+                <label>Army Reserve</label>
+            </value>
+            <value>
+                <fullName>Coast Guard</fullName>
+                <default>false</default>
+                <label>Coast Guard</label>
+            </value>
+            <value>
+                <fullName>Coast Guard Reserve</fullName>
+                <default>false</default>
+                <label>Coast Guard Reserve</label>
+            </value>
+            <value>
+                <fullName>Marine Corps</fullName>
+                <default>false</default>
+                <label>Marine Corps</label>
+            </value>
+            <value>
+                <fullName>Marine Corps Reserve</fullName>
+                <default>false</default>
+                <label>Marine Corps Reserve</label>
+            </value>
+            <value>
+                <fullName>Navy</fullName>
+                <default>false</default>
+                <label>Navy</label>
+            </value>
+            <value>
+                <fullName>Navy Reserve</fullName>
+                <default>false</default>
+                <label>Navy Reserve</label>
+            </value>
+            <value>
+                <fullName>AME</fullName>
+                <default>false</default>
+                <label>AME</label>
+            </value>
+            <value>
+                <fullName>Amish</fullName>
+                <default>false</default>
+                <label>Amish</label>
+            </value>
+            <value>
+                <fullName>Baptist</fullName>
+                <default>false</default>
+                <label>Baptist</label>
+            </value>
+            <value>
+                <fullName>Brethren</fullName>
+                <default>false</default>
+                <label>Brethren</label>
+            </value>
+            <value>
+                <fullName>Buddhist</fullName>
+                <default>false</default>
+                <label>Buddhist</label>
+            </value>
+            <value>
+                <fullName>Catholic</fullName>
+                <default>false</default>
+                <label>Catholic</label>
+            </value>
+            <value>
+                <fullName>Chaldean</fullName>
+                <default>false</default>
+                <label>Chaldean</label>
+            </value>
+            <value>
+                <fullName>Christian</fullName>
+                <default>false</default>
+                <label>Christian</label>
+            </value>
+            <value>
+                <fullName>Church of Christ</fullName>
+                <default>false</default>
+                <label>Church of Christ</label>
+            </value>
+            <value>
+                <fullName>Church of God</fullName>
+                <default>false</default>
+                <label>Church of God</label>
+            </value>
+            <value>
+                <fullName>Congregational</fullName>
+                <default>false</default>
+                <label>Congregational</label>
+            </value>
+            <value>
+                <fullName>Coptic</fullName>
+                <default>false</default>
+                <label>Coptic</label>
+            </value>
+            <value>
+                <fullName>Defensores de la Fe</fullName>
+                <default>false</default>
+                <label>Defensores de la Fe</label>
+            </value>
+            <value>
+                <fullName>Disciples of Christ</fullName>
+                <default>false</default>
+                <label>Disciples of Christ</label>
+            </value>
+            <value>
+                <fullName>Episcopal</fullName>
+                <default>false</default>
+                <label>Episcopal</label>
+            </value>
+            <value>
+                <fullName>Evangelical</fullName>
+                <default>false</default>
+                <label>Evangelical</label>
+            </value>
+            <value>
+                <fullName>Greek Orthodox</fullName>
+                <default>false</default>
+                <label>Greek Orthodox</label>
+            </value>
+            <value>
+                <fullName>Hindu</fullName>
+                <default>false</default>
+                <label>Hindu</label>
+            </value>
+            <value>
+                <fullName>Jewish</fullName>
+                <default>false</default>
+                <label>Jewish</label>
+            </value>
+            <value>
+                <fullName>Latter Day Saints</fullName>
+                <default>false</default>
+                <label>Latter Day Saints</label>
+            </value>
+            <value>
+                <fullName>Lutheran</fullName>
+                <default>false</default>
+                <label>Lutheran</label>
+            </value>
+            <value>
+                <fullName>Mennonite</fullName>
+                <default>false</default>
+                <label>Mennonite</label>
+            </value>
+            <value>
+                <fullName>Methodist</fullName>
+                <default>false</default>
+                <label>Methodist</label>
+            </value>
+            <value>
+                <fullName>Mission Board</fullName>
+                <default>false</default>
+                <label>Mission Board</label>
+            </value>
+            <value>
+                <fullName>Muslim</fullName>
+                <default>false</default>
+                <label>Muslim</label>
+            </value>
+            <value>
+                <fullName>Nazarene</fullName>
+                <default>false</default>
+                <label>Nazarene</label>
+            </value>
+            <value>
+                <fullName>Non-Denominational</fullName>
+                <default>false</default>
+                <label>Non-Denominational</label>
+            </value>
+            <value>
+                <fullName>Pentecostal</fullName>
+                <default>false</default>
+                <label>Pentecostal</label>
+            </value>
+            <value>
+                <fullName>Presbyterian</fullName>
+                <default>false</default>
+                <label>Presbyterian</label>
+            </value>
+            <value>
+                <fullName>Seventh Day Adventist</fullName>
+                <default>false</default>
+                <label>Seventh Day Adventist</label>
+            </value>
+            <value>
+                <fullName>Unitarian</fullName>
+                <default>false</default>
+                <label>Unitarian</label>
+            </value>
+            <value>
+                <fullName>Wesleyan</fullName>
+                <default>false</default>
+                <label>Wesleyan</label>
+            </value>
+            <value>
+                <fullName>Other</fullName>
+                <default>false</default>
+                <label>Other</label>
+            </value>
+        </valueSetDefinition>
+        <valueSettings>
+            <controllingFieldValue>Amusement / Recreational</controllingFieldValue>
+            <valueName>Fair (State, County)</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Amusement / Recreational</controllingFieldValue>
+            <valueName>Health Club</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Amusement / Recreational</controllingFieldValue>
+            <valueName>Museums</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Amusement / Recreational</controllingFieldValue>
+            <valueName>Sports Club</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Amusement / Recreational</controllingFieldValue>
+            <valueName>Sports Team</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Amusement / Recreational</controllingFieldValue>
+            <controllingFieldValue>Religious</controllingFieldValue>
+            <valueName>Other</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Business</controllingFieldValue>
+            <valueName>Advertising / Marketing</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Business</controllingFieldValue>
+            <valueName>Agriculture</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Business</controllingFieldValue>
+            <valueName>Airline / Airport</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Business</controllingFieldValue>
+            <valueName>Call Center</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Business</controllingFieldValue>
+            <valueName>Casino</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Business</controllingFieldValue>
+            <valueName>Communications</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Business</controllingFieldValue>
+            <valueName>Construction</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Business</controllingFieldValue>
+            <valueName>Financial Institutions</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Business</controllingFieldValue>
+            <valueName>General Services</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Business</controllingFieldValue>
+            <valueName>Hotel / Resort</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Business</controllingFieldValue>
+            <valueName>Insurance</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Business</controllingFieldValue>
+            <valueName>Law Firm</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Business</controllingFieldValue>
+            <valueName>Manufacturing</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Business</controllingFieldValue>
+            <valueName>Not For Profit</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Business</controllingFieldValue>
+            <valueName>Real Estate</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Business</controllingFieldValue>
+            <valueName>Restaurant</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Business</controllingFieldValue>
+            <valueName>Retail / Sales / Service</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Business</controllingFieldValue>
+            <valueName>Technology</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Business</controllingFieldValue>
+            <valueName>Transportation</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Business</controllingFieldValue>
+            <valueName>Utility Company</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Business</controllingFieldValue>
+            <valueName>Warehouse</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Civic / Community</controllingFieldValue>
+            <valueName>American Legion</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Civic / Community</controllingFieldValue>
+            <valueName>Apartments</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Civic / Community</controllingFieldValue>
+            <valueName>Business Membership Organization</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Civic / Community</controllingFieldValue>
+            <valueName>Civitan</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Civic / Community</controllingFieldValue>
+            <valueName>Eagles</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Civic / Community</controllingFieldValue>
+            <valueName>Elks</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Civic / Community</controllingFieldValue>
+            <valueName>General Community</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Civic / Community</controllingFieldValue>
+            <valueName>Kiwanis</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Civic / Community</controllingFieldValue>
+            <valueName>Knights of Columbus</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Civic / Community</controllingFieldValue>
+            <valueName>Lions</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Civic / Community</controllingFieldValue>
+            <valueName>Masons</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Civic / Community</controllingFieldValue>
+            <valueName>Moose Lodge</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Civic / Community</controllingFieldValue>
+            <valueName>Organized Labor</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Civic / Community</controllingFieldValue>
+            <valueName>Other Fraternal Organization</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Civic / Community</controllingFieldValue>
+            <valueName>Professional Membership Organization</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Civic / Community</controllingFieldValue>
+            <valueName>Red Cross Chapter</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Civic / Community</controllingFieldValue>
+            <valueName>Reservation, Native American</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Civic / Community</controllingFieldValue>
+            <valueName>Rotary</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Civic / Community</controllingFieldValue>
+            <valueName>Ruritan</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Civic / Community</controllingFieldValue>
+            <valueName>Scouts</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Civic / Community</controllingFieldValue>
+            <valueName>Senior Center</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Civic / Community</controllingFieldValue>
+            <valueName>Shopping Center / Mall</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Civic / Community</controllingFieldValue>
+            <valueName>Veterans</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Civic / Community</controllingFieldValue>
+            <valueName>Youth Service</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Education</controllingFieldValue>
+            <valueName>Administration / District Office</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Education</controllingFieldValue>
+            <valueName>College / University</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Education</controllingFieldValue>
+            <valueName>Community / Junior College</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Education</controllingFieldValue>
+            <valueName>Elementary School</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Education</controllingFieldValue>
+            <valueName>High School</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Education</controllingFieldValue>
+            <valueName>Middle School</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Education</controllingFieldValue>
+            <valueName>Vocational/Trade School</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Government</controllingFieldValue>
+            <valueName>City / Town</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Government</controllingFieldValue>
+            <valueName>Correctional Facility</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Government</controllingFieldValue>
+            <valueName>County</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Government</controllingFieldValue>
+            <valueName>Federal</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Government</controllingFieldValue>
+            <valueName>Fire / Law Enforcement</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Government</controllingFieldValue>
+            <valueName>Regional Govt</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Government</controllingFieldValue>
+            <valueName>State</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Health</controllingFieldValue>
+            <valueName>Ambulance / EMS</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Health</controllingFieldValue>
+            <valueName>Care Facilities</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Health</controllingFieldValue>
+            <valueName>Clinic</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Health</controllingFieldValue>
+            <valueName>Doctor&#39;s Office</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Health</controllingFieldValue>
+            <valueName>Hospital</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Health</controllingFieldValue>
+            <valueName>Laboratory</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Media</controllingFieldValue>
+            <valueName>Online / Digital</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Media</controllingFieldValue>
+            <valueName>Print</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Media</controllingFieldValue>
+            <valueName>Radio</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Media</controllingFieldValue>
+            <valueName>Television</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Military</controllingFieldValue>
+            <valueName>Air Force</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Military</controllingFieldValue>
+            <valueName>Air Force Reserve</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Military</controllingFieldValue>
+            <valueName>Air Guard</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Military</controllingFieldValue>
+            <valueName>Army</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Military</controllingFieldValue>
+            <valueName>Army National Guard</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Military</controllingFieldValue>
+            <valueName>Army Reserve</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Military</controllingFieldValue>
+            <valueName>Coast Guard</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Military</controllingFieldValue>
+            <valueName>Coast Guard Reserve</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Military</controllingFieldValue>
+            <valueName>Marine Corps</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Military</controllingFieldValue>
+            <valueName>Marine Corps Reserve</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Military</controllingFieldValue>
+            <valueName>Navy</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Military</controllingFieldValue>
+            <valueName>Navy Reserve</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Religious</controllingFieldValue>
+            <valueName>AME</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Religious</controllingFieldValue>
+            <valueName>Amish</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Religious</controllingFieldValue>
+            <valueName>Baptist</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Religious</controllingFieldValue>
+            <valueName>Brethren</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Religious</controllingFieldValue>
+            <valueName>Buddhist</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Religious</controllingFieldValue>
+            <valueName>Catholic</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Religious</controllingFieldValue>
+            <valueName>Chaldean</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Religious</controllingFieldValue>
+            <valueName>Christian</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Religious</controllingFieldValue>
+            <valueName>Church of Christ</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Religious</controllingFieldValue>
+            <valueName>Church of God</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Religious</controllingFieldValue>
+            <valueName>Congregational</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Religious</controllingFieldValue>
+            <valueName>Coptic</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Religious</controllingFieldValue>
+            <valueName>Defensores de la Fe</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Religious</controllingFieldValue>
+            <valueName>Disciples of Christ</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Religious</controllingFieldValue>
+            <valueName>Episcopal</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Religious</controllingFieldValue>
+            <valueName>Evangelical</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Religious</controllingFieldValue>
+            <valueName>Greek Orthodox</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Religious</controllingFieldValue>
+            <valueName>Hindu</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Religious</controllingFieldValue>
+            <valueName>Jewish</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Religious</controllingFieldValue>
+            <valueName>Latter Day Saints</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Religious</controllingFieldValue>
+            <valueName>Lutheran</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Religious</controllingFieldValue>
+            <valueName>Mennonite</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Religious</controllingFieldValue>
+            <valueName>Methodist</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Religious</controllingFieldValue>
+            <valueName>Mission Board</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Religious</controllingFieldValue>
+            <valueName>Muslim</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Religious</controllingFieldValue>
+            <valueName>Nazarene</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Religious</controllingFieldValue>
+            <valueName>Non-Denominational</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Religious</controllingFieldValue>
+            <valueName>Pentecostal</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Religious</controllingFieldValue>
+            <valueName>Presbyterian</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Religious</controllingFieldValue>
+            <valueName>Seventh Day Adventist</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Religious</controllingFieldValue>
+            <valueName>Unitarian</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Religious</controllingFieldValue>
+            <valueName>Wesleyan</valueName>
+        </valueSettings>
+    </valueSet>
+</CustomField>

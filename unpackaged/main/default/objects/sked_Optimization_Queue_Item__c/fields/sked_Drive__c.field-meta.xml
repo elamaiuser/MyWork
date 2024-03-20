@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>sked_Drive__c</fullName>
+    <externalId>false</externalId>
+    <label>Drive</label>
+    <referenceTo>sked_Drive__c</referenceTo>
+    <relationshipLabel>Optimization Queue Items</relationshipLabel>
+    <relationshipName>sked_Optimization_Queue_Items</relationshipName>
+    <relationshipOrder>1</relationshipOrder>
+    <reparentableMasterDetail>false</reparentableMasterDetail>
+    <trackTrending>false</trackTrending>
+    <type>MasterDetail</type>
+    <writeRequiresMasterRead>false</writeRequiresMasterRead>
+</CustomField>

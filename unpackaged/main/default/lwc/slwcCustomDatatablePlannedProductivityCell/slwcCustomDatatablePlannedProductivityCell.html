@@ -1,0 +1,10 @@
+<template>
+    <span class={classes}>
+        <template if:true={showBanding}>
+            <span class="banding">{banding}</span>
+        </template>
+        <template if:false={showBanding}>
+            <span class="value">{formattedValue}</span>
+        </template>
+    </span>
+</template>

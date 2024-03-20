@@ -1,0 +1,719 @@
+<apex:page controller="sponsorPlanningReportController" renderAs="pdf">
+<html>
+<body>
+    <table>
+        <apex:repeat value="{!ReportQueryWrapperList}" var="selectOpp" id="theRepeat">
+            <div id="div1" style="page-break-after: always;">
+                <h3>  Sponsor Planning Report </h3>
+                <p style="width:100%; background:black;color:white;font-size: 16px;padding-bottom:3px;padding-top:3px;padding-left:5px;"><b> Opportunity Information</b></p>
+                <tr> 
+                    <td style="padding-bottom: 10px; width: 8%;"> Account Name: </td>
+                    <td style="padding-bottom: 10px; width: 8%;"> {!selectOpp.oppWrap.Name} </td>
+                    <td style="padding-bottom: 10px; width: 8%;"> Opportunity Name:</td>
+                    <td style="padding-bottom: 10px; width: 8%;"> {!selectOpp.oppWrap.Drive_Name__c}</td>
+                </tr>
+                <tr>
+                    <td style="padding-bottom: 10px; width: 8%;">Premier Partner Affiliation:</td>  
+                    <!-- <td style="padding-bottom: 10px; width: 8%;"> <apex:repeat value="{!selectOpp.apiWrap}" var="selectOppDriveExternalId">
+                        {!selectOppDriveExternalId.ExternalId} /> &nbsp; </apex:repeat> </td> -->
+                    <td style="padding-bottom: 10px; width: 8%;"><apex:repeat value="{!selectOpp.accPremierAffiliationWrap}" var="selectOppDriveAff">
+                        {!selectOppDriveAff.Marketing_Program__r.Name} &nbsp; </apex:repeat></td> 
+                    <td style="padding-bottom: 10px; width: 8%;"> Additional Description:</td>
+                    <td style="padding-bottom: 10px; width: 8%;"> {!selectOpp.oppWrap.Parent_Template_Id__r.Additional_Description__c}</td>
+                </tr>
+                <tr>
+                    <td style="padding-bottom: 10px; width: 8%;">Primary Account Manager:</td>  
+                    <td style="padding-bottom: 10px; width: 8%;">{!selectOpp.primaryConListWrap.NameWrap}</td>
+                    <td style="padding-bottom: 10px; width: 8%;"> Drive Date:</td>
+                    <td style="padding-bottom: 10px; width: 8%;"> 
+                        <apex:outputText value="{0,date,MM/dd/yyyy}"> <apex:param value="{!selectOpp.oppWrap.Drive_Date__c}" /> </apex:outputText>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="padding-bottom: 10px; width: 8%;">Primary Account Manager Email:</td> 
+                    <td style="padding-bottom: 10px; width: 8%;">{!selectOpp.primaryConListWrap.EmailWrap}</td>
+                    <td style="padding-bottom: 10px; width: 8%;"> Start Time:</td>
+                    <td style="padding-bottom: 10px; width: 8%;">     
+                        <apex:outputText value="{!selectOpp.startTime}"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="padding-bottom: 10px; width: 8%;">Primary Account Manager Phone:</td> 
+                    <td style="padding-bottom: 10px; width: 8%;">{!selectOpp.primaryConListWrap.PhoneWrap}</td>
+                    <td style="padding-bottom: 10px; width: 8%;">  End Time:</td>
+                    <td style="padding-bottom: 10px; width: 8%;"> 
+                        <apex:outputText value="{!selectOpp.endTime}"/>
+                    </td>                       
+                </tr>
+                <tr>
+                    <td style="padding-bottom: 10px; width: 8%;">Primary Contact:</td>  
+                    <td style="padding-bottom: 10px; width: 8%;"><apex:repeat value="{!selectOpp.driveListWrap}" var="selectOppDrive">
+                        {!selectOppDrive.sked_Primary_Contact__r.Name} &nbsp; </apex:repeat><br/></td>
+                    <td style="padding-bottom: 10px; width: 8%;"> Drive Stage:</td>
+                    <td style="padding-bottom: 10px; width: 8%;"> <apex:repeat value="{!selectOpp.driveListWrap}" var="selectOppDrive">
+                        {!selectOppDrive.sked_Stage__c}&nbsp; </apex:repeat><br/> </td>
+                </tr>
+                <tr>
+                    <td style="padding-bottom: 10px; width: 8%;">Primary Contact Email:</td>  
+                    <td style="padding-bottom: 10px; width: 8%;"><apex:repeat value="{!selectOpp.driveListWrap}" var="selectOppDrive">
+                        {!selectOppDrive.sked_Primary_Contact__r.Email} &nbsp; </apex:repeat><br/></td>
+                    <td style="padding-bottom: 10px; width: 8%;">Drive Status:</td>  
+                    <td style="padding-bottom: 10px; width: 8%;">{!selectOpp.oppWrap.DriveStatus__c}</td>
+                </tr>
+                <tr>
+                    <td style="padding-bottom: 10px; width: 8%;">Primary Contact Phone:</td>  
+                    <td style="padding-bottom: 10px; width: 8%;"><apex:repeat value="{!selectOpp.driveListWrap}" var="selectOppDrive">
+                        {!selectOppDrive.sked_Primary_Contact__r.Primary_Phone_Number_New__c}  &nbsp; </apex:repeat><br/></td>
+                    <td style="padding-bottom: 10px; width: 8%;"> Drive Productivity: </td>
+                    <td style="padding-bottom: 10px; width: 8%;"><apex:repeat value="{!selectOpp.driveListWrap}" var="selectOppDrive">
+                        <apex:outputText value="{!ROUND(selectOppDrive.sked_Drive_Productivity_Planned__c, 2)}" />&nbsp;
+                        </apex:repeat><br/> </td>
+                </tr>
+                <tr>
+                    <td style="padding-bottom: 10px; width: 8%;"> After Hours Contact:</td>
+                    <td style="padding-bottom: 10px; width: 8%;"> <apex:repeat value="{!selectOpp.afterHoursWrap}" var="selectOppCon">
+                        {!selectOppCon.Contact.Name} &nbsp; </apex:repeat></td>
+                    <td style="padding-bottom: 10px; width: 8%;"> Whom to Meet (day of drive):</td>
+                    <td style="padding-bottom: 10px; width: 8%;"> <apex:repeat value="{!selectOpp.whoomToMeetWrap}" var="selectOppCon">
+                        {!selectOppCon.Contact.Name} &nbsp; </apex:repeat></td>
+                </tr>
+                <tr>
+                <td style="padding-bottom: 10px; width: 8%;">After Hours Contact Phone:</td>
+                <td style="padding-bottom: 10px; width: 8%;"><apex:repeat value="{!selectOpp.afterHoursWrap}" var="selectOppCon">
+                    {!selectOppCon.Contact.After_Hours_Number__c} &nbsp; </apex:repeat></td>
+                <td style="padding-bottom: 10px; width: 8%;"></td>  
+                <td style="padding-bottom: 10px; width: 8%;"> </td> 
+                </tr><br/>
+                <p style="width:100%; background:black;color:white;font-size: 16px;padding-bottom:3px;padding-top:3px;padding-left:5px;"><b>Contacts</b></p>
+                
+            <tr>
+                <td colspan="2">
+                    <p style="width:100%; background:#D3D3D3;font-size: 12px;padding-bottom:3px;padding-top:3px;padding-left:5px;"><b> Account</b></p>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <table>
+                        <tr>
+                            <td colspan="2" style="padding-bottom: 10px; width: 8%;"><b>Name</b></td>
+                            <td colspan="2" style="padding-bottom: 10px; width: 8%;"><b>Role</b></td>
+                        </tr>
+                        <apex:repeat value="{!selectOpp.driveRolesWrap}" var="selectOppAccCon">
+                            <tr>
+                                <td colspan="2"  style="padding-bottom: 10px; width: 8%;">
+                                    {!selectOppAccCon.Contact__r.Name}&nbsp; </td> 
+                                <td colspan="2"  style="padding-bottom: 10px; width: 8%;">
+                                    {!selectOppAccCon.Account_Service_Role__c} &nbsp;</td>
+                            </tr>
+                        </apex:repeat>     
+                        <tr style="display:{!IF(selectOpp.oppWrap.Account.Contact_BPL__c == null , 'None', '')}">
+                            <td colspan="2"  style="padding-bottom: 10px; width: 8%;">
+                                {!selectOpp.oppWrap.Account.Contact_BPL__r.Name}&nbsp; </td> 
+                            <td colspan="2"  style="padding-bottom: 10px; width: 8%;">Blood Program Leader &nbsp;</td>
+                        </tr>   
+                    </table>                       
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <p style="width:100%; background:#D3D3D3;font-size: 12px;padding-bottom:3px;padding-top:3px;padding-left:5px;"><b> Drive</b></p>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <table>
+                        <tr>
+                            <td colspan="2" style="padding-bottom: 10px; width: 8%;"><b>Name</b></td>
+                            <td colspan="2" style="padding-bottom: 10px; width: 8%;"><b>Role</b></td>
+                        </tr>
+                        <apex:repeat value="{!selectOpp.oppContactWrap}" var="selectOppCon">
+                            <tr>
+                                <td colspan="2" style="padding-bottom: 10px; width: 8%;">
+                                    {!selectOppCon.Contact.Name} &nbsp;</td>
+                                <td colspan="2" style="padding-bottom: 10px; width: 8%;">
+                                    {!selectOppCon.role} &nbsp;</td>                
+                            </tr>  
+                        </apex:repeat>                   
+                    </table>
+                </td></tr>
+                <br/><br/>
+                    <tr>
+                        <td style="padding-bottom: 10px; width: 8%;">Military Authority Name:</td>  
+                        <td style="padding-bottom: 10px; width: 8%;">{!selectOpp.oppWrap.Account.Military_Authority_Name__c}</td>  
+                        <td style="padding-bottom: 10px; width: 8%;"></td>  
+                        <td style="padding-bottom: 10px; width: 8%;"></td>  
+                    </tr>
+                <p style="width:100%; background:black;color:white;font-size: 16px;padding-bottom:3px;padding-top:3px;padding-left:5px;"><b>Shifts</b></p>
+                <apex:repeat value="{!selectOpp.shiftListWrap2}" var="shift">
+                <tr>
+                    <td style="padding-bottom: 10px; width: 8%;"> <b> Shifts:</b> </td>
+                    <td style="padding-bottom: 10px; width: 8%;"> <b> {!shift.name}</b> </td>
+                    <td style="padding-bottom: 10px; width: 8%;"></td>
+                    <td style="padding-bottom: 10px; width: 8%;"></td>
+                    <td style="padding-bottom: 10px; width: 8%;"></td>
+                </tr>
+                <table allign="left" style="border-collapse: collapse;width:100%;border-radius:50px;padding-left: 5%;">
+                <tr >
+                    <th style="border: 1px solid black;padding-bottom: 10px; width: 10%;text-align: center;"> Procedure Type </th>
+                    <td style="border: 1px solid black;padding-bottom: 10px; width: 10%;text-align: center;"> Proc Proj </td>
+                    <td style="border: 1px solid black;padding-bottom: 10px; width: 10%;text-align: center;"> Prod Proj </td>
+                    <td style="padding-left: 10px;padding-bottom: 10px; width: 8%;">  </td>
+                    <td style="padding-bottom: 10px; width: 10%;">  </td>
+                </tr>
+                <tr>
+                    <td style="border: 1px solid black;padding-bottom: 10px; width: 10%;text-align: center;"> 2RBC </td>
+                    <td style="border: 1px solid black;padding-bottom: 10px; width: 10%;text-align: center;"> {!shift.rbcProc} </td>
+                    <td style="border: 1px solid black;padding-bottom: 10px; width: 10%;text-align: center;"> {!shift.rbcProd} </td>
+                    <td style="padding-left: 10px;padding-bottom: 10px; width: 8%;">Shift Hour:</td>
+                    <td style="padding-bottom: 10px; width: 10%;">{!shift.shiftHour}</td>
+                </tr>
+                <tr>
+                    <td style="border: 1px solid black;padding-bottom: 10px; width: 10%;text-align: center;"> WB </td>
+                    <td style="border: 1px solid black;padding-bottom: 10px; width: 10%;text-align: center;"> {!shift.wbProc} </td>
+                    <td style="border: 1px solid black;padding-bottom: 10px; width: 10%;text-align: center;"> {!shift.wbProd} </td>
+                    <td style="padding-left: 10px;padding-bottom: 10px; width: 8%;">Lunch Break:</td>
+                    <td style="padding-bottom: 10px; width: 10%;">{!shift.lunchBreak}</td>
+                </tr>
+                <tr>
+                    <td style="border: 1px solid black;padding-bottom: 10px; width: 10%;text-align: center;"> Shift Total </td>
+                    <td style="border: 1px solid black;padding-bottom: 10px; width: 10%;text-align: center;"> {!shift.totalProc} </td>
+                    <td style="border: 1px solid black;padding-bottom: 10px; width: 10%;text-align: center;"> {!shift.totalProd} </td>
+                    <td style="padding-left: 10px;padding-bottom: 10px; width: 8%;"> </td>
+                    <td style="padding-bottom: 10px; width: 10%;"> </td>
+                </tr>
+                </table>
+                <br/>
+                </apex:repeat>
+                <tr>
+                    <td style="padding-bottom: 10px; width: 8%;"> <b>ARC Volunteer </b> </td>
+                    <td style="padding-bottom: 10px; width: 8%;"> {!selectOpp.redcrossVolunteerQ} </td>
+                    <td style="padding-bottom: 10px; width: 8%;"> <b> Sponsor Volunteer</b> </td>
+                    <td style="padding-bottom: 10px; width: 8%;">{!selectOpp.sponsorVolunteerQ} </td>
+                </tr><br/>
+                <p style="width:100%; background:black;color:white;font-size: 16px;padding-bottom:3px;padding-top:3px;padding-left:5px;"><b>Projections and Appointments</b></p>
+                <p style="width:100%; background:#D3D3D3;font-size: 12px;padding-bottom:3px;padding-top:3px;padding-left:5px;"><b>Projections</b></p>
+                <tr>
+                    <td style="padding-bottom: 10px; width: 8%;">Anticipated Registered Donors:</td>  
+                    <td style="padding-bottom: 10px; width: 8%;"> {!selectOpp.oppWrap.Anticipated_Registered_Donors__c}</td> 
+                    <td style="padding-bottom: 10px; width: 8%;"> Template Anticipated Registered Donors:</td>
+                    <td style="padding-bottom: 10px; width: 8%;">{!selectOpp.oppWrap.Anticipated_Registered_Donors_Template__c}</td>
+                </tr><tr>
+                <td style="padding-bottom: 10px; width: 8%;">WB Procedure Projection:</td>  
+                <td style="padding-bottom: 10px; width: 8%;">{!selectOpp.oppWrap.WB_Projected_Procedures__c} </td>
+                <td style="padding-bottom: 10px; width: 8%;">Presenting Donor Capacity:</td>  
+                <td style="padding-bottom: 10px; width: 8%;">
+                    {!selectOpp.maxDonorCapacity}</td> 
+                </tr><tr>
+                <td style="padding-bottom: 10px; width: 8%;">2RBC Procedure Projection:</td>  
+                <td style="padding-bottom: 10px; width: 8%;">{!selectOpp.oppWrap.X2RBC_Projected_Procedures__c}</td> 
+                <td style="padding-bottom: 10px; width: 8%;"> Template WB Procedure Projection:</td>
+                <td style="padding-bottom: 10px; width: 8%;">{!selectOpp.oppWrap.WholeBloodProceduresProjectedTemplate__c}</td>
+                </tr><tr>
+                <td style="padding-bottom: 10px; width: 8%;">Total Product Projection:</td>  
+                <td style="padding-bottom: 10px; width: 8%;">{!selectOpp.oppWrap.Total_Products_Projected__c}</td> 
+                <td style="padding-bottom: 10px; width: 8%;"> Template 2RBC Procedure Projection:</td>
+                <td style="padding-bottom: 10px; width: 8%;">{!selectOpp.oppWrap.Double_Red_Procedures_Projected_Template__c} </td>
+                </tr><tr>
+                <td style="padding-bottom: 10px; width: 8%;"></td>  
+                <td style="padding-bottom: 10px; width: 8%;"></td> 
+                <td style="padding-bottom: 10px; width: 8%;"> Template Product Projection:</td>
+                <td style="padding-bottom: 10px; width: 8%;">{!selectOpp.oppWrap.Total_Products_Projected_Template__c}</td>
+                </tr><tr>
+                <td style="padding-bottom: 10px; width: 8%;"></td>  
+                <td style="padding-bottom: 10px; width: 8%;"></td> 
+                <td style="padding-bottom: 10px; width: 8%;"> (Template) CDA O-:</td>
+                <td style="padding-bottom: 10px; width: 8%;">{!selectOpp.oppWrap.CDA_O_Negative__c}</td>
+                </tr><tr>
+                <td style="padding-bottom: 10px; width: 8%;"></td>  
+                <td style="padding-bottom: 10px; width: 8%;"> </td> 
+                <td style="padding-bottom: 10px; width: 8%;"> (Template) CDA O+: </td>
+                <td style="padding-bottom: 10px; width: 8%;">{!selectOpp.oppWrap.CDA_O_Positive__c} </td>
+                </tr><br/>   
+                <p style="width:100%; background:#D3D3D3;font-size: 12px;padding-bottom:3px;padding-top:3px;padding-left:5px;"><b> Appointments and Eligibility</b></p>
+                <tr>
+                    <td style="padding-bottom: 10px; width: 8%;">Current Drive WB Eligibility:</td>  
+                    <td style="padding-bottom: 10px; width: 8%;"> 
+                    <apex:outputText value="{0,date,MM/dd/yyyy}"> <apex:param value="{!selectOpp.wbEligibilityWrap}" /> </apex:outputText>
+                    </td>
+                    <!-- <td style="padding-bottom: 10px; width: 8%;">{!selectOpp.wbEligibilityWrap} </td>  -->
+                    <td style="padding-bottom: 10px; width: 8%;">  </td>
+                    <td style="padding-bottom: 10px; width: 8%;"> </td>
+                </tr><tr>
+                <td style="padding-bottom: 10px; width: 8%;">Current Drive PR Eligibility:</td>  
+                <td style="padding-bottom: 10px; width: 8%;"> 
+                <apex:outputText value="{0,date,MM/dd/yyyy}"> <apex:param value="{!selectOpp.prEligibilityWrap}" /> </apex:outputText>
+                </td>
+                <!-- <td style="padding-bottom: 10px; width: 8%;">{!selectOpp.prEligibilityWrap}</td>  -->
+                <td style="padding-bottom: 10px; width: 8%;"> </td>
+                <td style="padding-bottom: 10px; width: 8%;"> </td>
+                </tr><tr>
+                <td style="padding-bottom: 10px; width: 8%;">Total Slots:</td>  
+                <td style="padding-bottom: 10px; width: 8%;"> <apex:repeat value="{!selectOpp.driveListWrap}" var="selectOppDrive">
+                    {!selectOppDrive.sked_Total_Slots__c} &nbsp; </apex:repeat></td> 
+                <td style="padding-bottom: 10px; width: 8%;">  </td>
+                <td style="padding-bottom: 10px; width: 8%;"> </td>
+                </tr><tr>
+                <td style="padding-bottom: 10px; width: 8%;"># of Scheduled Appointments:</td>  
+                <td style="padding-bottom: 10px; width: 8%;"><apex:repeat value="{!selectOpp.driveListWrap}" var="selectOppDrive">
+                    {!selectOppDrive.sked_No_of_Scheduled_Appointments__c} &nbsp; </apex:repeat></td> 
+                <td style="padding-bottom: 10px; width: 8%;">  </td>
+                <td style="padding-bottom: 10px; width: 8%;"></td>
+                </tr><tr>
+                <td style="padding-bottom: 10px; width: 8%;">Web Scheduling Start Date:</td>  
+                <td style="padding-bottom: 10px; width: 8%;"><apex:outputText value="{0,date,MM/dd/yyyy}"> <apex:param value="{!selectOpp.oppWrap.Web_Schedule_StartDate__c}" /> </apex:outputText>  </td> 
+                <td style="padding-bottom: 10px; width: 8%;">  </td>
+                <td style="padding-bottom: 10px; width: 8%;"> </td>
+                </tr><tr>
+                <td style="padding-bottom: 10px; width: 8%;">Web Scheduling End Date:</td>  
+                <td style="padding-bottom: 10px; width: 8%;"><apex:outputText value="{0,date,MM/dd/yyyy}"> <apex:param value="{!selectOpp.oppWrap.Web_Schedule_EndDate__c }" /> </apex:outputText> </td> 
+                <td style="padding-bottom: 10px; width: 8%;">  </td>
+                <td style="padding-bottom: 10px; width: 8%;"></td>
+                </tr> <br/>
+                
+                <p style="width:100%; background:black;color:white;font-size: 16px;padding-bottom:3px;padding-top:3px;padding-left:5px;"><b>Site Information and Site Set Up</b></p>
+                <tr>
+                    <td colspan="2">
+                        <table>
+                            <tr>
+                                <td style="padding-bottom: 10px; width: 8%;">Location Name:</td>  
+                                <td style="padding-bottom: 10px; width: 8%;">{!selectOpp.oppWrap.Drive_Site__r.Name}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding-bottom: 10px; width: 8%;">Floor Description:</td>  
+                                <td style="padding-bottom: 10px; width: 8%;">{!selectOpp.oppWrap.Drive_Site__r.sked_Floor_Description__c} </td> 
+                            </tr>
+                            <tr>
+                                <td style="padding-bottom: 10px; width: 8%;">Room Name:</td>  
+                                <td style="padding-bottom: 10px; width: 8%;">{!selectOpp.oppWrap.Drive_Site__r.sked_Room_Name__c} </td> 
+                            </tr>
+                            <tr>
+                                <td style="padding-bottom: 10px; width: 8%;">Site Address:</td>  
+                                <td style="padding-bottom: 10px; width: 8%;">{!selectOpp.oppWrap.Drive_Site__r.sked__Address__c}</td> 
+                            </tr>
+                            <tr>
+                                <td style="padding-bottom: 10px; width: 8%;">Site Contact:</td>  
+                                <td style="padding-bottom: 10px; width: 8%;">{!selectOpp.oppWrap.Drive_Site__r.sked_Site_Contact__r.Name} </td> 
+                            </tr>
+                            <tr>
+                                <td style="padding-bottom: 10px; width: 8%;">Site Contact Email:</td>  
+                                <td style="padding-bottom: 10px; width: 8%;">{!selectOpp.oppWrap.Drive_Site__r.sked_Site_Contact_Email__c}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding-bottom: 10px; width: 8%;">Site Contact Phone:</td>  
+                                <td style="padding-bottom: 10px; width: 8%;">{!selectOpp.oppWrap.Drive_Site__r.sked_Site_Contact_Phone__c} </td> 
+                            </tr>
+                        </table>
+                    </td>
+                    <td colspan="2">
+                        <table>
+                            <tr>
+                                <td style="padding-bottom: 10px; width: 8%;"> Collection Operation:</td>
+                                <td style="padding-bottom: 10px; width: 8%;">{!selectOpp.oppWrap.Drive_Site__r.sked_Collection_Operation_Name__c} </td>
+                            </tr>
+                            <tr>
+                                <td style="padding-bottom: 10px; width: 8%;"> Site Wireless Policy:</td>
+                                <td style="padding-bottom: 10px; width: 8%;">{!selectOpp.oppWrap.Drive_Site__r.sked_Wireless_Policy__c} </td>
+                            </tr>
+                            <tr>
+                                <td style="padding-bottom: 10px; width: 8%;">Automation Suitability </td>
+                                <td style="padding-bottom: 10px; width: 8%;"> {!selectOpp.oppWrap.Drive_Site__r.sked_Automation_Suitability__c}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding-bottom: 10px; width: 8%;"></td>
+                                <td style="padding-bottom: 10px; width: 8%;"></td>
+                            </tr>
+                            <tr>
+                                <td style="padding-bottom: 10px; width: 8%;"></td>
+                                <td style="padding-bottom: 10px; width: 8%;"></td>
+                            </tr>
+                            <tr>
+                                <td style="padding-bottom: 10px; width: 8%;"></td>
+                                <td style="padding-bottom: 10px; width: 8%;"></td>
+                            </tr>
+                            <tr>
+                                <td style="padding-bottom: 10px; width: 8%;"></td>
+                                <td style="padding-bottom: 10px; width: 8%;"></td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <p style="width:100%; background:#D3D3D3;font-size: 12px;padding-bottom:3px;padding-top:3px;padding-left:5px;"><b> Directions</b></p>
+                    </td>
+                    <td colspan="2">
+                        <p style="width:100%; background:#D3D3D3;font-size: 12px;padding-bottom:3px;padding-top:3px;padding-left:5px;"><b> Security</b></p>
+                    </td>
+                </tr>
+                            <tr>
+                                <td style="padding-bottom: 10px; width: 8%;">Driving Direction from Collection Operation:</td>  
+                                <td style="padding-bottom: 10px; width: 8%;">{!selectOpp.oppWrap.Drive_Site__r.sked_Directions_From_CollectionOperation__c} </td> 
+                                <td style="padding-bottom: 10px; width: 8%;">   Escort Required: </td>
+                                <td style="padding-bottom: 10px; width: 8%;"> {!selectOpp.oppWrap.Drive_Site__r.sked_Escort_Required__c}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding-bottom: 10px; width: 8%;">ARC Vehicle Parking Directions:</td>  
+                                <td style="padding-bottom: 10px; width: 8%;">{!selectOpp.oppWrap.Drive_Site__r.sked_ARC_Vehicle_Parking_Directions__c}</td> 
+                                <td style="padding-bottom: 10px; width: 8%;"> Security Escort Name:</td>
+                                <td style="padding-bottom: 10px; width: 8%;"> {!selectOpp.oppWrap.Security_Escort_Name__c}</td> 
+                            </tr>
+                            <tr>
+                                <td style="padding-bottom: 10px; width: 8%;">Staff Personal Parking Directions:</td>  
+                                <td style="padding-bottom: 10px; width: 8%;">{!selectOpp.oppWrap.Drive_Site__r.sked_Staff_Personal_Parking_Directions__c} </td> 
+                                <td style="padding-bottom: 10px; width: 8%;"> Equipment X Ray Required:</td>
+                                <td style="padding-bottom: 10px; width: 8%;">{!selectOpp.oppWrap.Drive_Site__r.sked_Equipment_X_Ray_Required__c}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding-bottom: 10px; width: 8%;">Pay for Parking Details:</td>  
+                                <td style="padding-bottom: 10px; width: 8%;">{!selectOpp.oppWrap.Drive_Site__r.sked_Pay_for_Parking_Details__c} </td> 
+                                <td style="padding-bottom: 10px; width: 8%;">   No Cell Phones:</td>
+                                <td style="padding-bottom: 10px; width: 8%;">{!selectOpp.oppWrap.Drive_Site__r.sked_No_Cell_Phones__c} </td>
+                            </tr>
+                            <tr>
+                                <td style="padding-bottom: 10px; width: 8%;">Unloading Conditions:</td>  
+                                <td style="padding-bottom: 10px; width: 8%;"> {!selectOpp.oppWrap.Drive_Site__r.sked_Unloading_Conditions__c}</td> 
+                                <td style="padding-bottom: 10px; width: 8%;">   Sponsor Security Form Required(Chosen Value):</td>
+                                <td style="padding-bottom: 10px; width: 8%;"> {!selectOpp.oppWrap.Drive_Site__r.Sponsor_Security_Form_Required__c}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding-bottom: 10px; width: 8%;">Unloading Direction Details:</td>  
+                                <td style="padding-bottom: 10px; width: 8%;">{!selectOpp.oppWrap.Drive_Site__r.sked_Unloading_Directions_Details__c} </td>
+                                <td style="padding-bottom: 10px; width: 8%;"> Pre-Drive Security Due Date:</td>
+                                <td style="padding-bottom: 10px; width: 8%;">{!selectOpp.oppWrap.Drive_Site__r.sked_Pre_Drive_Security_Due_Date__c} </td> 
+                            </tr>
+                            <tr>
+                                <td style="padding-bottom: 10px; width: 8%;">Additional Drive Logistics:</td>  
+                                <td style="padding-bottom: 10px; width: 8%;">{!selectOpp.oppWrap.Additional_Drive_Logistics__c} </td> 
+                                <td style="padding-bottom: 10px; width: 8%;"> Security Information Needed:</td>
+                                <td style="padding-bottom: 10px; width: 8%;">{!selectOpp.oppWrap.Drive_Site__r.sked_Security_Information_Needed__c}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding-bottom: 10px; width: 8%;">Setup Time:</td>  
+                                <td style="padding-bottom: 10px; width: 8%;">
+                                    {!selectOpp.setupTimeWrap}</td>
+                                <td style="padding-bottom: 10px; width: 8%;"> Security Directions: </td>
+                                <td style="padding-bottom: 10px; width: 8%;">{!selectOpp.oppWrap.Drive_Site__r.sked_Security_Directions__c}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding-bottom: 10px; width: 8%;"></td>  
+                                <td style="padding-bottom: 10px; width: 8%;"></td> 
+                                <td style="padding-bottom: 10px; width: 8%;">Staff List:</td>
+                                <td style="padding-bottom: 10px; width: 8%;">{!selectOpp.oppWrap.Drive_Site__r.sked_Staff_List__c}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding-bottom: 10px; width: 8%;"></td>  
+                                <td style="padding-bottom: 10px; width: 8%;"></td> 
+                                <td style="padding-bottom: 10px; width: 8%;"> Emergency Action Plan: </td>
+                                <td style="padding-bottom: 10px; width: 8%;">{!selectOpp.oppWrap.Drive_Site__r.sked_Safety_Emergency_Action_Plan__c} </td> 
+                            </tr>
+                
+                <p style="width:100%; background:black;color:white;font-size: 16px;padding-bottom:3px;padding-top:3px;padding-left:5px;"><b>Certification</b></p>
+                <tr>
+                <td style="padding-bottom: 10px; width: 8%;"><b>Tag Type</b></td>
+                <td style="padding-bottom: 10px; width: 8%;"><b>Tag Name</b></td>
+                <td style="padding-bottom: 10px; width: 8%;"><b>Minimum Quantity</b></td>
+                </tr>
+                <apex:repeat value="{!selectOpp.accountTags}" var="accTag">
+                    <tr>
+                        <td style="padding-bottom: 10px; width: 8%;">Account</td>
+                        <td style="padding-bottom: 10px; width: 8%;">{!accTag.sked__Account__r.Name}</td>
+                        <td style="padding-bottom: 10px; width: 8%;">{!accTag.sked_Minimum_Quantity__c}</td>
+                    </tr>
+                </apex:repeat>
+                <apex:repeat value="{!selectOpp.siteTags}" var="siteTag">
+                    <tr>
+                        <td style="padding-bottom: 10px; width: 8%;">Site</td>
+                        <td style="padding-bottom: 10px; width: 8%;">{!siteTag.sked_Location__r.name}</td>
+                        <td style="padding-bottom: 10px; width: 8%;">{!siteTag.sked_Minimum_Quantity__c}</td>
+                    </tr>
+                </apex:repeat>
+                <br/>
+                
+                <p style="width:100%; background:black;color:white;font-size: 16px;padding-bottom:3px;padding-top:3px;padding-left:5px;"><b>Recruitment Plan</b></p>
+                <tr>
+                    <td style="padding-bottom: 10px; width: 8%;">Call List Recipient?:</td>  
+                    <td style="padding-bottom: 10px; width: 8%;">{!selectOpp.oppWrap.Call_List_Recipient_Exist__c} </td> 
+                    <td style="padding-bottom: 10px; width: 8%;">Publish to Call Center </td>
+                    <td style="padding-bottom: 10px; width: 8%;"> {!selectOpp.oppWrap.Publish_to_Call_Center__c}</td>
+                    
+                </tr><tr>
+                <td style="padding-bottom: 10px; width: 8%;">Drive Keyword:</td>  
+                <td style="padding-bottom: 10px; width: 8%;">{!selectOpp.oppWrap.Drive_Keyword__c} </td> 
+                <td style="padding-bottom: 10px; width: 8%;">Send Email </td>
+                <td style="padding-bottom: 10px; width: 8%;"> {!selectOpp.oppWrap.Send_Emails__c}</td>
+                
+                </tr><tr>
+                <td style="padding-bottom: 10px; width: 8%;">Online Donor Message:</td>  
+                <td style="padding-bottom: 10px; width: 8%;">{!selectOpp.oppWrap.Online_Donor_Message__c} </td> 
+                <td style="padding-bottom: 10px; width: 8%;"> Send Mailers:</td>
+                <td style="padding-bottom: 10px; width: 8%;"> {!selectOpp.oppWrap.Send_Mailers__c}</td>
+                
+                </tr><tr>
+                <td style="padding-bottom: 10px; width: 8%;">Direct Donors To: </td>  
+                <td style="padding-bottom: 10px; width: 8%;"> {!selectOpp.oppWrap.Direct_Donors_To__c}</td> 
+                <td style="padding-bottom: 10px; width: 8%;"> Online Scheduling Enabled:</td>
+                <td style="padding-bottom: 10px; width: 8%;"> {!selectOpp.oppWrap.Online_Scheduling_Enabled__c}</td>
+                </tr>
+                <p style="width:100%; background:#D3D3D3;font-size: 12px;padding-bottom:3px;padding-top:3px;padding-left:5px;"><b> Affiliations</b></p>             
+                <tr>
+                    <td colspan="4">
+                        <table style="border: 1px solid black;border-collapse: collapse;">
+                            <tr>
+                                <td colspan="2" style="padding-bottom: 10px; width: 8%;"><b>Account Affiliation(s) Name:</b></td>
+                            </tr>
+                            <apex:repeat value="{!selectOpp.accAffiliationWrap}" var="selectOppAff">
+                                <tr>
+                                    <td colspan="2" style="padding-bottom: 10px; width: 8%;">{!selectOppAff.Marketing_Program__r.Name} &nbsp;</td>
+                                </tr>
+                            </apex:repeat>
+                        </table>
+                    </td>
+                    <td colspan="4">
+                        <table style="border: 1px solid black;border-collapse: collapse;">
+                            <tr>
+                                <td colspan="2" style="padding-bottom: 10px; width: 8%;"><b>Drive Affiliation(s) Name :</b></td>
+                            </tr>
+                            <apex:repeat value="{!selectOpp.driveAffiliationWrap}" var="selectOppDriveAff">
+                                <tr>
+                                    <td colspan="2" style="padding-bottom: 10px; width: 8%;">{!selectOppDriveAff.Marketing_Program__r.Name}&nbsp;</td>
+                                </tr> 
+                            </apex:repeat>
+                        </table>
+                    </td>
+                </tr>
+                <p style="width:100%; background:#D3D3D3;font-size: 12px;padding-bottom:3px;padding-top:3px;padding-left:5px;"><b> Order</b></p>               
+                <tr>
+                    <td colspan="14">
+                        <apex:repeat value="{!selectOpp.orderListWrap}" var="selectOppOrd">
+                            <table style="border: 1px solid black;border-collapse: collapse;">
+                                <tr>
+                                    <td colspan="2" style="padding-bottom: 10px; width: 8%;"><b>Order Number</b></td>
+                                    <td colspan="2" style="padding-bottom: 10px; width: 8%;"><b>{!selectOppOrd.orderDetails.OrderNumber}</b></td>
+                                    <td colspan="2" style="padding-bottom: 10px; width: 8%;"></td>
+                                    <td colspan="2" style="padding-bottom: 10px; width: 8%;"> </td>
+                                    <td colspan="2" style="padding-bottom: 10px; width: 8%;"></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2" style="padding-bottom: 10px; width: 8%;">Local Recruitment Request</td>
+                                    <td colspan="2" style="padding-bottom: 10px; width: 8%;">{!selectOppOrd.orderDetails.Local_Recruitment_Request__c}</td>
+                                    <td colspan="2" style="padding-bottom: 10px; width: 8%;">Local Recruitment Request Need by Date  </td>
+                                    <td colspan="2" style="padding-bottom: 10px; width: 8%;"> <apex:outputText value="{0,date,MM/dd/yyyy}">
+                                        <apex:param value="{!selectOppOrd.orderDetails.Local_Recruitment_Request_Need_by_Date__c}" /> </apex:outputText></td>
+                                    <td colspan="2" style="padding-bottom: 10px; width: 8%;"></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2" style="padding-bottom: 10px; width: 8%;">Publicity Order Budget  </td>
+                                    <td colspan="2" style="padding-bottom: 10px; width: 8%;"><apex:outputText value="${0, number, ###,###,##0.00}">
+                                        <apex:param value="{!selectOppOrd.orderDetails.BudgetCurrency__c}" />
+                                        </apex:outputText></td>
+                                    <td colspan="2" style="padding-bottom: 10px; width: 8%;">Publicity Comments</td>
+                                    <td colspan="2" style="padding-bottom: 10px; width: 8%;">{!selectOppOrd.orderDetails.Comments__c}</td>
+                                    <td colspan="2" style="padding-bottom: 10px; width: 8%;"></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2" style="padding-bottom: 10px; width: 8%;"><b>Publicity Products</b></td>
+                                    <td colspan="2" style="padding-bottom: 10px; width: 8%;"><b>Publicity Quantity</b></td>
+                                    <td colspan="2" style="padding-bottom: 10px; width: 8%;"><b>Product Cost</b></td>
+                                </tr>
+                                <apex:repeat value="{!selectOppOrd.orderItemList}" var="selectorditem">
+                                    <tr>
+                                        <td colspan="2" style="padding-bottom: 10px; width: 8%;">{!selectorditem.Product2.Name}</td>
+                                        <td colspan="2" style="padding-bottom: 10px; width: 8%;">{!selectorditem.Quantity}</td>
+                                        <td colspan="2" style="padding-bottom: 10px; width: 8%;"><apex:outputText value="${0, number, ###,###,##0.00}">
+                                            <apex:param value="{!selectorditem.TotalPrice}" />
+                                        </apex:outputText></td>
+                                    </tr>
+                                </apex:repeat>
+                            </table>
+                            <br/>
+                        </apex:repeat>
+                    </td>
+                </tr>
+                <p style="width:100%; background:black;color:white;font-size: 16px;padding-bottom:3px;padding-top:3px;padding-left:5px;"><b>Upcoming Activity</b></p>               
+                <tr>
+                <td colspan="6">
+                    <table style="border: 1px solid black;border-collapse: collapse;">
+                        <tr>
+                            <td colspan="2" style="padding-bottom: 10px; width: 8%;"><b>Task (Opportunity)</b></td>
+                            <td colspan="2" style="padding-bottom: 10px; width: 8%;"><b>Status</b></td>
+                            <td colspan="2" style="padding-bottom: 10px; width: 8%;"><b>Due Date</b></td>
+                        </tr>
+                        <apex:repeat value="{!selectOpp.taskListWrap}" var="selectOppTask">
+                            <tr>
+                                <td colspan="2" style="padding-bottom: 10px; width: 8%;">{!selectOppTask.Subject}</td>
+                                <td colspan="2" style="padding-bottom: 10px; width: 8%;">{!selectOppTask.Status} </td>
+                                <td colspan="2" style="padding-bottom: 10px; width: 8%;"><apex:outputText value="{0,date,MM/dd/yyyy}">
+                                    <apex:param value="{!selectOppTask.ActivityDate}" /> </apex:outputText></td>
+                            </tr>
+                        </apex:repeat>
+                    </table>
+                </td>
+            </tr>
+                <p style="width:100%; background:black;color:white;font-size: 16px;padding-bottom:3px;padding-top:3px;padding-left:5px;"><b>Account Historical and Future Drives</b></p>
+                <p style="width:100%; background:#D3D3D3;font-size: 12px;padding-bottom:3px;padding-top:3px;padding-left:5px;"><b> Historical Drive Dates</b></p>
+                
+                <tr>
+                    <td colspan="14">
+                        <table style="border: 1px solid black;border-collapse: collapse;">
+                            <tr>
+                                <td colspan="2" style="padding-bottom: 10px; width: 8%;"><b>Drive Date</b></td>
+                                <td colspan="2" style="padding-bottom: 10px; width: 8%;"><b>Drive Name</b></td>
+                                <td colspan="2" style="padding-bottom: 10px; width: 8%;"><b>Additional Description</b></td>
+                                <td colspan="2" style="padding-bottom: 10px; width: 8%;"><b>Start Time</b></td>
+                                <td colspan="2" style="padding-bottom: 10px; width: 8%;"><b>End Time</b></td>
+                                <td colspan="2" style="padding-bottom: 10px; width: 8%;"><b>Drive Status</b></td>
+                                <td colspan="2" style="padding-bottom: 10px; width: 8%;"><b>Stage</b></td>
+                                <td colspan="2" style="padding-bottom: 10px; width: 8%;"><b>Primary Contact Name</b></td>
+                            </tr>
+                            <apex:repeat value="{!selectOpp.pastDriveListWrap}" var="selectOppPastDrive">
+                                <tr>
+                                    <td colspan="2" style="padding-bottom: 10px; width: 8%;">{!selectOppPastDrive.driveDate}</td>
+                                    <td colspan="2" style="padding-bottom: 10px; width: 8%;"> {!selectOppPastDrive.Name} </td>
+                                    <td colspan="2" style="padding-bottom: 10px; width: 8%;">{!selectOppPastDrive.addDescription}</td>
+                                    <td colspan="2" style="padding-bottom: 10px; width: 8%;">{!selectOppPastDrive.driveStartTime}</td>
+                                    <td colspan="2" style="padding-bottom: 10px; width: 8%;">{!selectOppPastDrive.driveEndTime}</td>
+                                    <td colspan="2" style="padding-bottom: 10px; width: 8%;">{!selectOppPastDrive.driveStatus}</td>
+                                    <td colspan="2" style="padding-bottom: 10px; width: 8%;">{!selectOppPastDrive.driveStage}</td>
+                                    <td colspan="2" style="padding-bottom: 10px; width: 8%;">{!selectOppPastDrive.primaryContact}</td>
+                                </tr>
+                            </apex:repeat>
+                        </table>
+                    </td>
+                </tr>            
+                <p style="width:100%; background:#D3D3D3;font-size: 12px;padding-bottom:3px;padding-top:3px;padding-left:5px;"><b>Future 12 months Drives</b></p>               
+                <tr>
+                    <td colspan="14">
+                        <table style="border: 1px solid black;border-collapse: collapse;">
+                            <tr>
+                                <td colspan="2" style="padding-bottom: 10px; width: 8%;"><b>Drive Date</b></td>
+                                <td colspan="2" style="padding-bottom: 10px; width: 8%;"><b>Drive Name</b></td>
+                                <td colspan="2" style="padding-bottom: 10px; width: 8%;"><b>Additional Description</b></td>
+                                <td colspan="2" style="padding-bottom: 10px; width: 8%;"><b>Start Time</b></td>
+                                <td colspan="2" style="padding-bottom: 10px; width: 8%;"><b>End Time</b></td>
+                                <td colspan="2" style="padding-bottom: 10px; width: 8%;"><b>Drive Status</b></td>
+                                <td colspan="2" style="padding-bottom: 10px; width: 8%;"><b>Stage</b></td>
+                                <td colspan="2" style="padding-bottom: 10px; width: 8%;"><b>Primary Contact Name</b></td>
+                            </tr>
+                            <apex:repeat value="{!selectOpp.futureDriveListWrap}" var="selectOppFutureDrive">
+                                <tr>
+                                    <td colspan="2" style="padding-bottom: 10px; width: 8%;">{!selectOppFutureDrive.driveDate}</td>
+                                    <td colspan="2" style="padding-bottom: 10px; width: 8%;"> {!selectOppFutureDrive.Name} </td>
+                                    <td colspan="2" style="padding-bottom: 10px; width: 8%;">{!selectOppFutureDrive.addDescription}</td>
+                                    <td colspan="2" style="padding-bottom: 10px; width: 8%;">{!selectOppFutureDrive.driveStartTime}</td>
+                                    <td colspan="2" style="padding-bottom: 10px; width: 8%;">{!selectOppFutureDrive.driveEndTime}</td>
+                                    <td colspan="2" style="padding-bottom: 10px; width: 8%;">{!selectOppFutureDrive.driveStatus}</td>
+                                    <td colspan="2" style="padding-bottom: 10px; width: 8%;">{!selectOppFutureDrive.driveStage}</td>
+                                    <td colspan="2" style="padding-bottom: 10px; width: 8%;">{!selectOppFutureDrive.primaryContact}</td>
+                                </tr>
+                            </apex:repeat>
+                        </table>
+                    </td>
+                </tr>
+        <apex:outputText rendered="{!If(isSelectedNote,true,false)}">   <br/>     
+        <p style="width:100%; background:black;color:white;font-size: 16px;padding-bottom:3px;padding-top:3px;padding-left:5px;"><b>Notes</b></p><br/> <br/>
+                Account Notes       <br/>
+                <apex:repeat value="{!selectOpp.accNoteWrap}" var="selectAccNote" >
+                    {!selectAccNote.Title}/> 
+                </apex:repeat>
+                Opporunity Notes    <br/>   
+                <apex:repeat value="{!selectOpp.oppNoteWrap}" var="selectOppNote" >
+                    {!selectOppNote.Title}/> 
+                </apex:repeat>
+                Site Notes  <br/>
+                <apex:repeat value="{!selectOpp.siteNoteWrap}" var="selectSiteNote" >
+                    {!selectSiteNote.Title}/> 
+                </apex:repeat>
+                
+                </apex:outputText> <br/>
+                <p style="width:100%; background:black;color:white;font-size: 16px;padding-bottom:3px;padding-top:3px;padding-left:5px;"><b>Additional Site Details</b></p>
+                
+                <tr>
+                    <td style="padding-bottom: 10px; width: 8%;"> Site Inspection Completed By:</td>  
+                    <td style="padding-bottom: 10px; width: 8%;">{!selectOpp.oppWrap.Drive_Site__r.sked_Site_Inspection_Completed_By__r.Name} </td> 
+                    <td style="padding-bottom: 10px; width: 8%;"> Emergency Contact: </td>
+                    <td style="padding-bottom: 10px; width: 8%;"> {!selectOpp.oppWrap.Drive_Site__r.sked_Emergency_Contact__r.Name}</td>
+                    
+                </tr>
+                
+                <tr>
+                    <td style="padding-bottom: 10px; width: 8%;">Site Inspection Completed:</td>  
+                    <td style="padding-bottom: 10px; width: 8%;">
+                        <apex:outputText value="{0,date,MM/dd/yyyy}"> <apex:param value="{!selectOpp.oppWrap.Drive_Site__r.sked_Date_Site_Inspection_Completed__c}" />
+                    </apex:outputText>
+                    </td> 
+                    <td style="padding-bottom: 10px; width: 8%;"> On Site/Canteen Requirments :</td>
+                    <td style="padding-bottom: 10px; width: 8%;"> {!selectOpp.oppWrap.Drive_Site__r.sked_On_Site_Food_Canteen_Requirements__c}</td>
+                    
+                </tr><tr>
+                <td style="padding-bottom: 10px; width: 8%;">Site Inspection Comments:</td>  
+                <td style="padding-bottom: 10px; width: 8%;">{!selectOpp.oppWrap.Drive_Site__r.sked_Site_Inspection_Comments__c}</td> 
+                <td style="padding-bottom: 10px; width: 8%;"> Site Main Phone :</td>
+                <td style="padding-bottom: 10px; width: 8%;"> {!selectOpp.oppWrap.Drive_Site__r.sked_Site_Main_Phone__c}</td>
+                
+                </tr><tr>
+                <td style="padding-bottom: 10px; width: 8%;"></td>  <td style="padding-bottom: 10px; width: 8%;"></td>
+                <td style="padding-bottom: 10px; width: 8%;">Canteen Requirements:</td>  
+                <td style="padding-bottom: 10px; width: 8%;">{!selectOpp.oppWrap.Drive_Site__r.sked_Canteen_Requirements__c} </td> 
+                </tr><tr>
+                
+                </tr><tr>
+                <td style="padding-bottom: 10px; width: 8%;">Room Size:</td>  
+                <td style="padding-bottom: 10px; width: 8%;">{!selectOpp.oppWrap.Drive_Site__r.sked_Room_Size__c} </td> 
+                <td style="padding-bottom: 10px; width: 8%;"> Elevator Type:</td>
+                <td style="padding-bottom: 10px; width: 8%;">{!selectOpp.oppWrap.Drive_Site__r.sked_Elevator_Type__c}</td>
+                
+                </tr><tr>
+                <td style="padding-bottom: 10px; width: 8%;">Maximum Beds:</td>  
+                <td style="padding-bottom: 10px; width: 8%;">{!selectOpp.oppWrap.Drive_Site__r.sked_Maximum_Beds__c}</td> 
+                <td style="padding-bottom: 10px; width: 8%;"> Elevator Open:</td>
+                <td style="padding-bottom: 10px; width: 8%;">{!selectOpp.elevatorOpenTime}</td>
+                
+                </tr><tr>
+                <td style="padding-bottom: 10px; width: 8%;">Automation Suitability:</td>  
+                <td style="padding-bottom: 10px; width: 8%;">{!selectOpp.oppWrap.Drive_Site__r.sked_Automation_Suitability__c}</td> 
+                <td style="padding-bottom: 10px; width: 8%;"> Elevator Closed:</td>
+                <td style="padding-bottom: 10px; width: 8%;">{!selectOpp.elevatorCloseTime}</td>
+                
+                </tr><tr>
+                <td style="padding-bottom: 10px; width: 8%;">Max Auto Machines:</td>  
+                <td style="padding-bottom: 10px; width: 8%;"> {!selectOpp.oppWrap.Drive_Site__r.sked_Max_Auto_Machines__c}</td> 
+                <td style="padding-bottom: 10px; width: 8%;"> Site Open:</td>
+                <td style="padding-bottom: 10px; width: 8%;"> {!selectOpp.siteOpenTime}</td>
+                </tr>
+                <tr>
+                    <td style="padding-bottom: 10px; width: 8%;">Maximimum Beds:</td>  
+                    <td style="padding-bottom: 10px; width: 8%;">{!selectOpp.oppWrap.Drive_Site__r.sked_Maximum_Beds__c}</td> 
+                    <td style="padding-bottom: 10px; width: 8%;"> Site Closed:</td>
+                    <td style="padding-bottom: 10px; width: 8%;"> {!selectOpp.siteCloseTime}</td>
+                </tr>
+                <tr>
+                    <td style="padding-bottom: 10px; width: 8%;">Outside Stairs:</td>  
+                    <td style="padding-bottom: 10px; width: 8%;">{!selectOpp.oppWrap.Drive_Site__r.sked_Outside_stairs__c}</td> 
+                    <td style="padding-bottom: 10px; width: 8%;"> Air Conditioned?: </td>
+                    <td style="padding-bottom: 10px; width: 8%;"> {!selectOpp.oppWrap.Drive_Site__r.sked_Air_conditioned__c}</td>
+                </tr>
+                <tr>
+                    <td style="padding-bottom: 10px; width: 8%;">Inside Stairs:</td>  
+                    <td style="padding-bottom: 10px; width: 8%;">{!selectOpp.oppWrap.Drive_Site__r.sked_Inside_stairs__c}</td> 
+                    <td style="padding-bottom: 10px; width: 8%;"> Heat?</td>
+                    <td style="padding-bottom: 10px; width: 8%;"> {!selectOpp.oppWrap.Drive_Site__r.sked_Heat__c}</td>
+                </tr>
+                <tr>
+                    <td style="padding-bottom: 10px; width: 8%;">110 Outlets:</td>  
+                    <td style="padding-bottom: 10px; width: 8%;">{!selectOpp.oppWrap.Drive_Site__r.sked_110_outlets__c}</td> 
+                    <td style="padding-bottom: 10px; width: 8%;"> Break location:</td>
+                    <td style="padding-bottom: 10px; width: 8%;">{!selectOpp.oppWrap.Drive_Site__r.sked_Break_location__c}</td>
+                </tr>
+                <tr>
+                    <td style="padding-bottom: 10px; width: 8%;">Floor Covering Requirment:</td>  
+                    <td style="padding-bottom: 10px; width: 8%;"> {!selectOpp.oppWrap.Drive_Site__r.sked_Floor_Covering_Requirement__c}</td> 
+                    <td style="padding-bottom: 10px; width: 8%;"> Restroom location:</td>
+                    <td style="padding-bottom: 10px; width: 8%;"> {!selectOpp.oppWrap.Drive_Site__r.sked_Restroom_Location__c}</td>
+                </tr>
+                --------------------x-----------------------------------------x----------------------------x------------------------------
+            </div>
+        </apex:repeat>
+    </table>  
+</body> 
+</html>    
+</apex:page>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>L054_Puerto_Rico_Mobiles_DMDCR_Task</fullName>
+    <filterScope>Queue</filterScope>
+    <label>L054 Puerto Rico Mobiles: DMDCR</label>
+    <queue>L054_Puerto_Rico_Mobiles_DMDCR</queue>
+    <sharedTo>
+        <allInternalUsers></allInternalUsers>
+    </sharedTo>
+</ListView>

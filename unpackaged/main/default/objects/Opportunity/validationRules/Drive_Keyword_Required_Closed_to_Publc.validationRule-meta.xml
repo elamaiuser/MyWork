@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Drive_Keyword_Required_Closed_to_Publc</fullName>
+    <active>true</active>
+    <description>If Open_to_Public__c field value is &quot;No,&quot; Drive_Keyword__c must have a value.</description>
+    <errorConditionFormula>AND(
+OR(
+ISCHANGED(Open_to_Public__c),
+ISCHANGED(Drive_Keyword__c),
+ISNEW()
+),
+ISPICKVAL(Open_to_Public__c, &quot;No&quot;),
+ISBLANK(Drive_Keyword__c)
+)</errorConditionFormula>
+    <errorDisplayField>Drive_Keyword__c</errorDisplayField>
+    <errorMessage>A Drive Keyword must be entered if a Drive is not open to the public.</errorMessage>
+</ValidationRule>

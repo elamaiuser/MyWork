@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+        <label><!-- Account Description --></label>
+        <name>Account_Description__c</name>
+        <picklistValues>
+            <masterLabel>Other</masterLabel>
+            <translation><!-- Other --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Potential Prime</masterLabel>
+            <translation><!-- Potential Prime --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Prime</masterLabel>
+            <translation><!-- Prime --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Suboptimal</masterLabel>
+            <translation><!-- Suboptimal --></translation>
+        </picklistValues>
+    </CustomFieldTranslation>

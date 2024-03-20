@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<EmailTemplate xmlns="http://soap.sforce.com/2006/04/metadata">
+    <available>true</available>
+    <description>BPL Thank you - Heroes Saving Lives - Community Segment</description>
+    <encodingKey>ISO-8859-1</encodingKey>
+    <letterhead>ARC_Logo_Test</letterhead>
+    <name>Marketing Segment_Military_HSL_Thank you</name>
+    <style>formalLetter</style>
+    <subject>Thank You</subject>
+    <textOnly>Dear [Insert Name],
+
+Thank you for being a part of the American Red Cross Heroes Saving Lives program.
+
+From its founding, the Red Cross has been dedicated to serving members of the military, veterans and their families, and that commitment never waivers. Together we share a mission of helping to save lives and we appreciate the opportunity to partner with [Company Name].
+
+You can take pride in knowing that your partnership with us makes a positive impact on your local community — and even those far away. Families and communities depend on the Red Cross in times of need; and we depend on the support of partners, like you, to help fulfill the mission of saving lives.
+
+Your Heroes Saving Lives blood drive took place on [date] and had a goal of [units], you collected a total of [XX] units, each of which can impact more than one life.
+
+We rely on blood drive partnerships throughout the year. Thank you for offering this opportunity to your group to help ensure a safe national blood supply. We appreciate you and hope we can partner again in the future.
+
+Sincerely,
+
+[Insert Name]</textOnly>
+    <type>html</type>
+    <uiType>Aloha</uiType>
+</EmailTemplate>

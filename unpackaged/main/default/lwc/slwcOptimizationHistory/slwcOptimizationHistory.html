@@ -1,0 +1,73 @@
+<template>
+    <div class="slds-grid">
+        <div class="slds-col slds-scrollable_y slds-is-relative" style="min-height: 400px; width:100%;">
+            <div class="slds-grid">
+                <div class="slds-col_bump-left slds-p-right_small">
+                    <div class="slds-grid">
+                        <div class="slds-grid slds-grid_vertical-align-end slds-m-right_medium">
+                            <lightning-button-icon tooltip="Refresh" icon-name="utility:refresh" onclick={handleRefresh}></lightning-button-icon>
+                        </div>
+                        <div class="slds-p-right_small" style="width: 300px;">
+                            <c-slwc-new-collection-operation-multi-picklist
+                                division-single-select
+                                date-range={collectionOperationDateRange}
+                                default-values={filters.collectionOperationValues}
+                                onchange={handleCollectionOperationChanged}>
+                            </c-slwc-new-collection-operation-multi-picklist>
+                        </div>
+                        <div class="slds-p-right_small">
+                            <c-slwc-week-date-picker 
+                                first-day={collectionOperationFirstDay}
+                                unique-key="optimizationHistory"
+                                onweekdatechange={handleOnChange}
+                                default-start-date={filters.startDate}
+                                default-end-date={filters.endDate}>
+                            </c-slwc-week-date-picker>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="slds-p-around_small slds-is-relative">
+                <template if:true={showSpinner}>
+                    <lightning-spinner class="spins" size="medium"></lightning-spinner>
+                </template>
+                
+                <div if:false={viewOptimizationRunDetails}>
+                    <c-slwc-custom-datatable 
+                        key-field="id"
+                        data={optimizationRuns}
+                        columns={columns}
+                        hide-checkbox-column
+                        wrap-text-max-lines="3"
+                    >
+                    </c-slwc-custom-datatable>
+
+                    <div class="slds-shrink-none slds-grow-none slds-p-horizontal_small slds-p-vertical_small slds-border_top modal-content__footer">
+                        <div class="slds-grid slds-grid_align-spread slds-grid_vertical-align-center"> 
+                            <div class="slds-text-color_weak">Total optimization runs: {optimizationRuns.length} </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div if:true={viewOptimizationRunDetails}>
+                    <c-slwc-optimization-summary
+                        scheduling-console-territory-keys={territoryKeys}
+                        optimization-run={selectedOptimizationRun}
+                        onclose={hideOptimizationRunDetails}
+                    >
+                    </c-slwc-optimization-summary>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <c-slwc-confirm-modal
+        is-open={confirmModalData.isOpen}
+        title={confirmModalData.title}
+        message={confirmModalData.message}
+        handle-on-close={confirmModalData.onClose}
+        confirm-btn-label={confirmModalData.confirmBtnLabel}
+        cancel-btn-label={confirmModalData.cancelBtnLabel}>
+    </c-slwc-confirm-modal>
+</template>

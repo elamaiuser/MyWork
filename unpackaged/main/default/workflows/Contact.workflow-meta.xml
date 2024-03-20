@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Workflow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fieldUpdates>
+        <fullName>Active_Inactive_is_false</fullName>
+        <field>Active__c</field>
+        <literalValue>0</literalValue>
+        <name>Active/Inactive	is false</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Update_Do_Not_Contact_Date_Field</fullName>
+        <description>When the &quot;Do Not Contact&quot; checkbox is checked, the &quot;Do Not Contact Date&quot; field populates with the day&#39;s date.</description>
+        <field>Do_Not_Contact_Date__c</field>
+        <formula>TODAY()</formula>
+        <name>Update Do Not Contact Date Field</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Update_Preferred_Phone_Number_Field</fullName>
+        <description>Populates the Preferred_Phone_Number__c field with the value of the phone selected as the primary phone.</description>
+        <field>Phone</field>
+        <formula>If(
+ISPICKVAL( Primary_Phone__c ,&quot;Home Phone&quot;),HomePhone,
+if(
+ISPICKVAL(Primary_Phone__c,&quot;Mobile Phone&quot;), MobilePhone,
+if(
+ISPICKVAL(Primary_Phone__c,&quot;Work Phone&quot;), OtherPhone,
+if(
+ISPICKVAL(Primary_Phone__c,&quot;&quot;), &quot;&quot;,
+
+NULL
+)
+)
+)
+)</formula>
+        <name>Update Preferred Phone Number Field</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Update_Secondary_City</fullName>
+        <field>OtherCity</field>
+        <formula>MailingCity</formula>
+        <name>Update Secondary City</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Update_Secondary_Country</fullName>
+        <field>OtherCountry</field>
+        <formula>MailingCountry</formula>
+        <name>Update Secondary Country</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Update_Secondary_State</fullName>
+        <field>OtherState</field>
+        <formula>MailingState</formula>
+        <name>Update Secondary State</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Update_Secondary_Street</fullName>
+        <field>OtherStreet</field>
+        <formula>MailingStreet</formula>
+        <name>Update Secondary Street</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Update_Secondary_Zip</fullName>
+        <field>OtherPostalCode</field>
+        <formula>MailingPostalCode</formula>
+        <name>Update Secondary Zip</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <rules>
+        <fullName>Do Not Contact Reasons Equals to Deceased</fullName>
+        <actions>
+            <name>Active_Inactive_is_false</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <criteriaItems>
+            <field>Contact.Do_Not_Contact_Reason__c</field>
+            <operation>equals</operation>
+            <value>Deceased</value>
+        </criteriaItems>
+        <triggerType>onAllChanges</triggerType>
+    </rules>
+    <rules>
+        <fullName>Do Not Contact is Selected</fullName>
+        <actions>
+            <name>Update_Do_Not_Contact_Date_Field</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <criteriaItems>
+            <field>Contact.Do_Not_Contact__c</field>
+            <operation>equals</operation>
+            <value>True</value>
+        </criteriaItems>
+        <description>If user checks the &quot;Do Not Contact&quot; checkbox on the Contact, the &quot;Do Not Contact Date&quot; field should auto-populate with that day&#39;s date.</description>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>Mailing Address Flag Checked Populated Secondary Address</fullName>
+        <actions>
+            <name>Update_Secondary_City</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <actions>
+            <name>Update_Secondary_Country</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <actions>
+            <name>Update_Secondary_State</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <actions>
+            <name>Update_Secondary_Street</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <actions>
+            <name>Update_Secondary_Zip</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <criteriaItems>
+            <field>Contact.Mailing_Address_Flag__c</field>
+            <operation>equals</operation>
+            <value>True</value>
+        </criteriaItems>
+        <description>If the Mailing Address Flag checkbox is checked, all fields on the Secondary Address should populate with the Mailing Address field values</description>
+        <triggerType>onAllChanges</triggerType>
+    </rules>
+    <rules>
+        <fullName>Update Preferred Phone Number Field</fullName>
+        <actions>
+            <name>Update_Preferred_Phone_Number_Field</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <description>Populates the Preferred_Phone_Number__c field with the value of the phone selected as the primary phone.</description>
+        <formula>ISCHANGED( Primary_Phone__c)</formula>
+        <triggerType>onAllChanges</triggerType>
+    </rules>
+</Workflow>

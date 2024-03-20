@@ -1,0 +1,52 @@
+<template>
+    <div class="slds-is-relative">
+        <template if:true={showSpinner}>
+            <lightning-spinner class="spins" size="medium"></lightning-spinner>
+        </template>
+    
+        <article class="slds-card slds-card_boundary approval-history-page">
+            <div class="slds-grid slds-page-header">
+                <header class="slds-media slds-media--center slds-has-flexi-truncate">
+                    <div class="slds-media__figure slds-m-right_small slds-avatar slds-avatar_small">
+                        <lightning-icon icon-name="custom:custom50" size="small"></lightning-icon>
+                    </div>
+                    <div class="slds-media__body">
+                        <div class="slds-page-header__name">
+                            <div class="slds-page-header__name-title">
+                                <h2 class="slds-card__header-title">
+                                    <span class="slds-truncate">{pageHeader}</span>
+                                </h2>
+                            </div>
+                        </div>
+                    </div>
+                </header>
+                <div class="slds-no-flex">
+                    <div class="slds-grid">
+                    </div>
+                </div>
+            </div>
+            <div>
+                <template if:false={showSpinner}>
+                    <div if:false={haveReplacementDrive} class="slds-align_absolute-center slds-p-around_large">
+                        <lightning-icon icon-name="utility:warning" size="x-small" alternative-text="Warning!" title="Warning"></lightning-icon>
+                        <span class="slds-m-left--small">There is no replacement drive for this Drive.</span>
+                    </div>
+                </template>
+                <article if:true={haveReplacementDrive} class="slds-card">
+                    <div class="slds-card__header slds-grid">
+                        <header class="slds-media slds-media_center slds-has-flexi-truncate">
+                            <div class="slds-media__body">
+                                <h2 class="slds-card__header-title">
+                                    <c-slwc-lightning-formatted-url record={replacementDrive}></c-slwc-lightning-formatted-url>
+                                </h2>
+                            </div>
+                        </header>
+                    </div>
+                    <div class="slds-card__body slds-card__body_inner">
+                        Drive Date: <lightning-formatted-date-time value={replacementDrive.driveDate}></lightning-formatted-date-time>
+                    </div>
+                </article>
+            </div>
+        </article>
+    </div>
+</template>

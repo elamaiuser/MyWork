@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LightningComponentBundle xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>52.0</apiVersion>
+    <isExposed>true</isExposed>
+    <targets>
+        <target>lightning__AppPage</target>
+        <target>lightning__RecordPage</target>
+        <target>lightning__HomePage</target>
+        <target>lightning__FlowScreen</target>
+    </targets>
+  <targetConfigs>
+         <targetConfig targets="lightning__FlowScreen">
+            <property name="isTemplate" label="is Template" type="Boolean"/>
+            <property name="currentrecordid" label="Current Record Id" type="String"/>
+            <property name="sobjectrecordid" label="Record Id" type="String"/>
+            <property name="affiliationid" label="Affilaition Record Id" type="String"/> 
+            <property name="accountpostalcode" label="Billing Postal Code" type="String"/>  
+            <property name="recruitedby" label="Recruited By" type="String"/>          
+         </targetConfig>
+  </targetConfigs>
+
+
+</LightningComponentBundle>

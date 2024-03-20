@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Lead_Owners_cannot_be_Future_Outreach</fullName>
+    <active>true</active>
+    <description>The &quot;Future Outreach&quot; queue is no longer available to assign as the Lead Owner.</description>
+    <errorConditionFormula>AND(
+   OR(ISCHANGED(OwnerId),
+      ISNEW()
+   ), 
+   LEFT(OwnerId,3)=&#39;00G&#39;, 
+   Owner:Queue.QueueName = &#39;Future Outreach&#39;
+)</errorConditionFormula>
+    <errorDisplayField>OwnerId</errorDisplayField>
+    <errorMessage>User should not be assign &quot;Future Outreach&quot; as owner.</errorMessage>
+</ValidationRule>

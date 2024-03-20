@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Queue xmlns="http://soap.sforce.com/2006/04/metadata">
+    <doesSendEmailToMembers>false</doesSendEmailToMembers>
+    <name>NJ Philly PA North: DCRs</name>
+    <queueMembers>
+        <users>
+            <user>gabe.encarnacion@redcross.org</user>
+            <user>jacquelyn.collins@redcross.org</user>
+            <user>jarrett.mccullough@redcross.org</user>
+            <user>jason.gunsenhouser@redcross.org</user>
+            <user>kathryn.coombs@redcross.org</user>
+            <user>lena.wassel@redcross.org</user>
+            <user>lisa.kennedy@redcross.org</user>
+            <user>serena.bricker@redcross.org</user>
+            <user>vanessa.hess@redcross.org</user>
+        </users>
+    </queueMembers>
+    <queueSobject>
+        <sobjectType>sked_Drive_Change_Request__c</sobjectType>
+    </queueSobject>
+</Queue>

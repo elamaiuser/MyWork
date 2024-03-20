@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+        <label><!-- Route Approval Request To --></label>
+        <name>sked_Route_Approval_Request_To__c</name>
+        <picklistValues>
+            <masterLabel>Request APS exception</masterLabel>
+            <translation><!-- Request APS exception --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Request DM evaluation</masterLabel>
+            <translation><!-- Request DM evaluation --></translation>
+        </picklistValues>
+    </CustomFieldTranslation>

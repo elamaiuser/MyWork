@@ -1,0 +1,266 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GlobalValueSet xmlns="http://soap.sforce.com/2006/04/metadata">
+    <customValue>
+        <fullName>2RBC</fullName>
+        <default>false</default>
+        <label>2RBC</label>
+    </customValue>
+    <customValue>
+        <fullName>2RBC Sign-off</fullName>
+        <default>false</default>
+        <label>2RBC Sign-off</label>
+    </customValue>
+    <customValue>
+        <fullName>Apheresis</fullName>
+        <default>false</default>
+        <label>Apheresis</label>
+    </customValue>
+    <customValue>
+        <fullName>Apheresis Charge</fullName>
+        <default>false</default>
+        <label>Apheresis Charge</label>
+    </customValue>
+    <customValue>
+        <fullName>Charge</fullName>
+        <default>false</default>
+        <label>Charge</label>
+    </customValue>
+    <customValue>
+        <fullName>Charge - 2RBC</fullName>
+        <default>false</default>
+        <label>Charge - 2RBC</label>
+    </customValue>
+    <customValue>
+        <fullName>Charge Mentor</fullName>
+        <default>false</default>
+        <label>Charge Mentor</label>
+    </customValue>
+    <customValue>
+        <fullName>Charge - Special Collections</fullName>
+        <default>false</default>
+        <label>Charge - Special Collections</label>
+    </customValue>
+    <customValue>
+        <fullName>Competent Driver</fullName>
+        <default>false</default>
+        <label>Competent Driver</label>
+    </customValue>
+    <customValue>
+        <fullName>Drive Lead</fullName>
+        <default>false</default>
+        <label>Drive Lead</label>
+    </customValue>
+    <customValue>
+        <fullName>Driver</fullName>
+        <default>false</default>
+        <label>Driver</label>
+    </customValue>
+    <customValue>
+        <fullName>Driver CDL A</fullName>
+        <default>false</default>
+        <label>Driver CDL A</label>
+    </customValue>
+    <customValue>
+        <fullName>Driver CDL B</fullName>
+        <default>false</default>
+        <label>Driver CDL B</label>
+    </customValue>
+    <customValue>
+        <fullName>Driver - DOT</fullName>
+        <default>false</default>
+        <label>Driver - DOT</label>
+    </customValue>
+    <customValue>
+        <fullName>Driver Prestaff</fullName>
+        <default>false</default>
+        <label>Driver Prestaff</label>
+    </customValue>
+    <customValue>
+        <fullName>Driver Support</fullName>
+        <default>false</default>
+        <label>Driver Support</label>
+    </customValue>
+    <customValue>
+        <fullName>Driver Tech Trainee</fullName>
+        <default>false</default>
+        <label>Driver Tech Trainee</label>
+    </customValue>
+    <customValue>
+        <fullName>Float</fullName>
+        <default>false</default>
+        <label>Float</label>
+    </customValue>
+    <customValue>
+        <fullName>FS Supplies</fullName>
+        <default>false</default>
+        <label>FS Supplies</label>
+    </customValue>
+    <customValue>
+        <fullName>HH</fullName>
+        <default>false</default>
+        <label>HH</label>
+    </customValue>
+    <customValue>
+        <fullName>Lead Donor Ambassador</fullName>
+        <default>false</default>
+        <label>Lead Donor Ambassador</label>
+    </customValue>
+    <customValue>
+        <fullName>Licensed Nurse</fullName>
+        <default>false</default>
+        <label>Licensed Nurse</label>
+    </customValue>
+    <customValue>
+        <fullName>Limited HH</fullName>
+        <default>false</default>
+        <label>Limited HH</label>
+    </customValue>
+    <customValue>
+        <fullName>Limited Ship</fullName>
+        <default>false</default>
+        <label>Limited Ship</label>
+    </customValue>
+    <customValue>
+        <fullName>NCE Staff</fullName>
+        <default>false</default>
+        <label>NCE Staff</label>
+    </customValue>
+    <customValue>
+        <fullName>OJI</fullName>
+        <default>false</default>
+        <label>OJI</label>
+    </customValue>
+    <customValue>
+        <fullName>Pickup Driver</fullName>
+        <default>false</default>
+        <label>Pickup Driver</label>
+    </customValue>
+    <customValue>
+        <fullName>Plasma</fullName>
+        <default>false</default>
+        <label>Plasma</label>
+    </customValue>
+    <customValue>
+        <fullName>Post Collections</fullName>
+        <default>false</default>
+        <label>Post Collections</label>
+    </customValue>
+    <customValue>
+        <fullName>Regulated - Medical Screeners</fullName>
+        <default>false</default>
+        <label>Regulated - Medical Screeners</label>
+    </customValue>
+    <customValue>
+        <fullName>Regulated - RNOR</fullName>
+        <default>false</default>
+        <label>Regulated - RNOR</label>
+    </customValue>
+    <customValue>
+        <fullName>Special Collections</fullName>
+        <default>false</default>
+        <label>Special Collections</label>
+    </customValue>
+    <customValue>
+        <fullName>Special Collections Charge</fullName>
+        <default>false</default>
+        <label>Special Collections Charge</label>
+    </customValue>
+    <customValue>
+        <fullName>Staff Shuttle</fullName>
+        <default>false</default>
+        <label>Staff Shuttle</label>
+    </customValue>
+    <customValue>
+        <fullName>Team Supervisor</fullName>
+        <default>false</default>
+        <label>Team Supervisor</label>
+    </customValue>
+    <customValue>
+        <fullName>Trainee</fullName>
+        <default>false</default>
+        <label>Trainee</label>
+    </customValue>
+    <customValue>
+        <fullName>Translator</fullName>
+        <default>false</default>
+        <label>Translator</label>
+    </customValue>
+    <customValue>
+        <fullName>TRN HH</fullName>
+        <default>false</default>
+        <label>TRN HH</label>
+    </customValue>
+    <customValue>
+        <fullName>TRN VP</fullName>
+        <default>false</default>
+        <label>TRN VP</label>
+    </customValue>
+    <customValue>
+        <fullName>VOL Licensed Nurse</fullName>
+        <default>false</default>
+        <label>VOL Licensed Nurse</label>
+    </customValue>
+    <customValue>
+        <fullName>VOL Limited HH</fullName>
+        <default>false</default>
+        <label>VOL Limited HH</label>
+    </customValue>
+    <customValue>
+        <fullName>Volunteer Donor Ambassador</fullName>
+        <default>false</default>
+        <label>Volunteer Donor Ambassador</label>
+    </customValue>
+    <customValue>
+        <fullName>VP</fullName>
+        <default>false</default>
+        <label>VP</label>
+    </customValue>
+    <customValue>
+        <fullName>VP/HH</fullName>
+        <default>false</default>
+        <label>VP/HH</label>
+    </customValue>
+    <customValue>
+        <fullName>Work Restriction</fullName>
+        <default>false</default>
+        <label>Work Restriction</label>
+    </customValue>
+    <customValue>
+        <fullName>Redcross Translator</fullName>
+        <default>false</default>
+        <isActive>false</isActive>
+        <label>Redcross Translator</label>
+    </customValue>
+    <customValue>
+        <fullName>Redcross Lead Donor Ambassador</fullName>
+        <default>false</default>
+        <isActive>false</isActive>
+        <label>Redcross Lead Donor Ambassador</label>
+    </customValue>
+    <customValue>
+        <fullName>Sponsor Lead Donor Ambassador</fullName>
+        <default>false</default>
+        <isActive>false</isActive>
+        <label>Sponsor Lead Donor Ambassador</label>
+    </customValue>
+    <customValue>
+        <fullName>Sponsor Translator</fullName>
+        <default>false</default>
+        <isActive>false</isActive>
+        <label>Sponsor Translator</label>
+    </customValue>
+    <customValue>
+        <fullName>Sponsor Volunteer Donor Ambassador</fullName>
+        <default>false</default>
+        <isActive>false</isActive>
+        <label>Sponsor Volunteer Donor Ambassador</label>
+    </customValue>
+    <customValue>
+        <fullName>Redcross Volunteer Donor Ambassador</fullName>
+        <default>false</default>
+        <isActive>false</isActive>
+        <label>Redcross Volunteer Donor Ambassador</label>
+    </customValue>
+    <masterLabel>Resource Roles</masterLabel>
+    <sorted>true</sorted>
+</GlobalValueSet>

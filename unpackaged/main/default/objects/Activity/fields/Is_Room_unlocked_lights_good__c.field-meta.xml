@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Is_Room_unlocked_lights_good__c</fullName>
+    <defaultValue>false</defaultValue>
+    <externalId>false</externalId>
+    <inlineHelpText>Who will meet our staff to ensure room is unlocked, lights and room temperature are good and the room has been cleared apart from the number of tables and chairs needed for the blood drive? Ask them to provide the security and safety protocols.</inlineHelpText>
+    <label>Is Room unlocked, lights good?</label>
+    <type>Checkbox</type>
+</CustomField>

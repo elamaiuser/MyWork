@@ -1,0 +1,58 @@
+<aura:component controller="CloneOpportunityController" implements="flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,force:lightningQuickActionWithoutHeader" access="global" >
+    <!--  <ltng:require styles="{!$Resource.slds_modal_large}"/> -->
+    
+    <aura:attribute name="lstLineItems" type="Object"/>
+    <aura:attribute name="fieldsetColumns" type="List"/>
+    <aura:attribute name="errors" type="Object" default="[]"/>
+    <aura:attribute name="draftValues" type="Object" default="[]"/>
+    <aura:attribute name="changesMade" type="Boolean" default="false" />
+    <aura:attribute name="loading" type="Boolean" default="false" />
+    <aura:attribute name="activetemplate" type="Boolean" default="false" />
+    <aura:attribute name="isTemplateVal" type="Boolean" default="false" />
+    <aura:attribute name="clonedOppId" type="String" />
+    <aura:attribute name="fields" type="String[]" default="['Accept_56_Day_Rule_Violation__c','AccountId','Accepts_Automation__c','Direct_Donors_To__c','Drive_Keyword__c','Flow_Start_Time_Field__c','Flow_End_Time_Field__c','Drive_Site__c','Open_to_Public__c','WB_Projected_Procedures__c',
+                                                           'Web_Scheduling_Enabled__c','Web_Schedule_Start_Date__c','Web_Schedule_End_Date__c','Publish_to_Call_Center__c','Send_Emails__c','Send_Mailers__c','Recruited_By1__c','Call_List_Recipient_Exist__c','Always_Roll__c','Do_Not_Roll__c','No_Publicity_Needed__c',
+                                                           'CDA_A_Negative__c','CDA_A_Positive__c','CDA_AB_Negtive__c','CDA_AB_Positive__c','CDA_B_Negative__c','CDA_B_Positive__c','CDA_Deferrals__c','CDA_Female__c','CDA_First_Time_Donors__c','CDA_Male__c','CDA_O_Negative__c','CDA_QNS__c','CDA_Scheduled_Donors__c']" />    
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:html tag="style">
+        .slds-modal__container{
+        height : auto;
+        width: 70%;
+        max-width: 70rem;
+        }
+        .modal-body{
+        height : 500px !important;
+        max-height: 500px !important;
+        }
+        
+        .customFooter{
+        display: inline !important;
+        z-index: 0; !important;
+        }
+    </aura:html>  
+    
+    <div class="custom-modal-container">
+        <lightning:notificationsLibrary aura:id="notifLib"/>
+        
+        <aura:if isTrue="{!v.loading}">
+            <lightning:spinner alternativeText="Loading..." size="medium" variant="brand"/>
+        </aura:if>
+        
+        <lightning:messages aura:id="OppMessage" />
+        
+         <aura:if isTrue="{!v.activetemplate}">
+        <lightning:card class="slds-p-around--medium" title="Clone Opportunity">
+            <div class="slds-p-left_large slds-p-right_medium">
+                <lightning:recordForm aura:id="recordEditForm"
+                                      objectApiName="Opportunity"
+                                      columns="2"
+                                      fields="{!v.fields}"
+                                      mode="edit"
+                                      onsubmit="{!c.createOpportunity}"
+                                      oncancel="{!c.cancelClone}"
+                                      recordId="{!v.recordId}"/>
+            </div>
+        </lightning:card>
+       </aura:if>
+    </div>
+</aura:component>

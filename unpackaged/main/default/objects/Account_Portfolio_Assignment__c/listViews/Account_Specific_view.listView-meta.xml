@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Account_Specific_view</fullName>
+    <columns>NAME</columns>
+    <columns>Account__c</columns>
+    <columns>BSF_Portfolio__c</columns>
+    <columns>Start_Date__c</columns>
+    <columns>End_Date__c</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>Account__c</field>
+        <operation>equals</operation>
+        <value>Nestle USA</value>
+    </filters>
+    <label>Account Specific view</label>
+</ListView>

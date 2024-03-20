@@ -1,0 +1,235 @@
+<template>
+    <lightning-card  title="Configure Recurrence Pattern">
+        <div class="slds-grid slds-wrap">
+            <div class="slds-size_1-of-1 slds-p-bottom_medium">
+                <div class="slds-grid slds-wrap">                    
+                        <div class="slds-size_1-of-2">
+                            <lightning-input 
+                                type="date" 
+                                name="dtStartDate" 
+                                label="Enter Start date" 
+                                required
+                                value={startDateValue}
+                            ></lightning-input>
+                        </div>
+                        <div class="slds-size_1-of-2 slds-p-left_medium">
+                            <lightning-input 
+                                type="date" 
+                                name="dtEndDate" 
+                                label="Enter End date" 
+                                required
+                                value={endDateValue}
+                            ></lightning-input>
+                        </div>            
+                    </div>
+                </div>
+            <div class="slds-size_1-of-1 slds-p-bottom_medium">
+                <lightning-radio-group name="rgRecurType"
+                            label="Select Recurrance Type"
+                            options={recurTypeOptions}
+                            required
+                            value={recurTypeValue}
+                            onchange={handleRecurTypeChange}
+                            type="button"></lightning-radio-group>
+            </div>
+            <div class="slds-size_1-of-1 slds-p-bottom_medium">
+                <template if:true={showTabWeekly}>
+                    <div>
+                        <div class="slds-grid slds-wrap">
+                            <div class="slds-size_1-of-1">
+                                <div class="slds-grid slds-wrap">
+                                    <div class="slds-size_1-of-4 slds-p-top_xx-small">Recurrs Every</div>
+                                    <div class="slds-size_1-of-4">
+                                        <lightning-input 
+                                            type="number" 
+                                            name="numWeeklyFrequency"
+                                            required 
+                                            value={weeklyFrequencyValue}                                            
+                                            variant="label-hidden"
+                                        ></lightning-input>
+                                    </div>
+                                    <div class="slds-size_2-of-4 slds-p-top_xx-small slds-p-left_small">Week(s)</div>
+                                </div>
+                            </div>
+                            <div class="slds-size_1-of-1 slds-p-top_small">
+                                <div class="slds-grid slds-wrap">
+                                    <div class="slds-size_1-of-4">
+                                        On
+                                    </div>
+                                    <div class="slds-size_1-of-4">
+                                        <lightning-input 
+                                            type="checkbox" 
+                                            label="Monday" 
+                                            name="chkMon"
+                                            onchange={handleCheckBoxChange}
+                                            checked={weeklyFreqMon}
+                                        ></lightning-input>
+                                    </div>
+                                    <div class="slds-size_1-of-4 slds-p-left_medium">
+                                        <lightning-input 
+                                            type="checkbox" 
+                                            label="Tuesday" 
+                                            name="chkTue"
+                                            onchange={handleCheckBoxChange}
+                                            checked={weeklyFreqTue}
+                                        ></lightning-input>
+                                    </div>
+                                    <div class="slds-size_1-of-4">
+                                        <lightning-input 
+                                                type="checkbox" 
+                                                label="Wednesday" 
+                                                name="chkWed"
+                                                onchange={handleCheckBoxChange}
+                                                checked={weeklyFreqWed}
+                                        ></lightning-input>
+                                    </div>
+                                </div>
+                                <div class="slds-size_1-of-1">
+                                    <div class="slds-grid slds-wrap">
+                                        <div class="slds-size_1-of-4">
+                                            
+                                        </div>
+                                        <div class="slds-size_1-of-4">
+                                            <lightning-input 
+                                                type="checkbox" 
+                                                label="Thursday" 
+                                                name="chkThu"
+                                                onchange={handleCheckBoxChange}
+                                                checked={weeklyFreqThu}
+                                            ></lightning-input>
+                                        </div>
+                                        <div class="slds-size_1-of-4 slds-p-left_medium">
+                                            <lightning-input 
+                                                type="checkbox" 
+                                                label="Friday" 
+                                                name="chkFri"
+                                                onchange={handleCheckBoxChange}
+                                                checked={weeklyFreqFri}
+                                            ></lightning-input>
+                                        </div>
+                                        <div class="slds-size_1-of-4">
+                                            <lightning-input 
+                                            type="checkbox" 
+                                            label="Saturday" 
+                                            name="chkSat"
+                                            onchange={handleCheckBoxChange}
+                                            checked={weeklyFreqSat}
+                                        ></lightning-input>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="slds-size_1-of-1">
+                                    <div class="slds-grid slds-wrap">
+                                        <div class="slds-size_1-of-4">
+                                            
+                                        </div>
+                                        <div class="slds-size_1-of-4">
+                                            <lightning-input 
+                                                type="checkbox" 
+                                                label="Sunday" 
+                                                name="chkSun"
+                                                onchange={handleCheckBoxChange}
+                                                checked={weeklyFreqSun}
+                                            ></lightning-input>
+                                        </div>
+                                        <div class="slds-size_1-of-4">
+                                           
+                                        </div>
+                                        <div class="slds-size_1-of-4">
+                                            
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </template>
+                <template if:true={showTabMonthly}>
+                    <div class="slds-grid slds-wrap">
+                        <div class="slds-size_1-of-4">
+                            <div class="slds-grid slds-wrap">
+                                <div class="slds-size_1-of-4 slds-p-top_xx-small">The</div>
+                                <div class="slds-size_3-of-4 ">
+                                    <lightning-combobox
+                                            name="cbMonthDayOccurance"
+                                            value={monthDayOccuranceValue}
+                                            placeholder="Select Occurance"
+                                            options={cbMonthDayOccuranceOption}
+                                            required
+                                            variant="label-hidden"
+                                            onchange={handleMonthDayOccuranceChange}
+                                    ></lightning-combobox>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="slds-size_1-of-4  slds-p-left_medium">
+                            <lightning-combobox
+                                            name="cbMonthDay"
+                                            value={monthDayValue}
+                                            placeholder="Select Day of Month"
+                                            options={cbMonthDayOption}
+                                            required
+                                            variant="label-hidden"
+                                            onchange={handleMonthDayChange}
+                            ></lightning-combobox>
+                        </div>
+                        <div class="slds-size_1-of-4  slds-p-left_medium">
+                            <div class="slds-grid slds-wrap">
+                                <div class="slds-size_1-of-2 slds-p-top_xx-small">of Every</div>
+                                <div class="slds-size_1-of-2 slds-p-left_medium">
+                                    <lightning-input 
+                                        type="number" 
+                                        name="numMonthlyFrequency" 
+                                        required 
+                                        value={monthlyFrequencyValue}
+                                        max="12"
+                                        variant="label-hidden"
+                                    ></lightning-input>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="slds-size_1-of-4 slds-p-top_xx-small slds-p-left_medium">
+                            Month
+                        </div>
+                    </div>
+                </template>
+            </div>
+            
+        </div>
+        <template if:true={InputEnableFlowButtons}>
+            <div class = "slds-p-top_xx-large">
+                <div class="slds-modal__footer">
+                    <template if:true={isPreviousAllowed}>
+                        <lightning-button 
+                                    label="Previous" 
+                                    title="Previous" 
+                                    onclick={handlePreviousClick} 
+                                    class="slds-m-right_small"
+                                    data-name="btnPrevious"
+                                ></lightning-button>
+                    </template>
+                    <template if:true={isNextAllowed}>
+                                <lightning-button
+                                    variant="brand" 
+                                    label="Next" 
+                                    title="Next" 
+                                    onclick={handleProceedClick} 
+                                    class="slds-m-left_xxx-small"
+                                    data-name="btnNext"
+                                ></lightning-button>
+                    </template>
+                    <template if:true={isSubmitAllowed}>
+                        <lightning-button
+                            variant="brand" 
+                            label="Finish" 
+                            title="Finish" 
+                            onclick={handleProceedClick} 
+                            class="slds-m-left_xxx-small"
+                            data-name="btnFinish"
+                        ></lightning-button>
+                    </template>
+                </div>
+            </div>
+        </template>
+    </lightning-card>
+</template>

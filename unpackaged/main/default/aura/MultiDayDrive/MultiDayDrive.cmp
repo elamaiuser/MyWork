@@ -1,0 +1,110 @@
+<aura:component controller="OpportunityLinkedDriveController" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" >
+    
+       
+    <!-- attributes -->
+    <aura:attribute name="columns" type="List" default="[]"/>
+    <aura:attribute name="data" type="List" default="[]"/>
+    <aura:attribute name="dataTableSchema" type="Object"/>
+    <aura:attribute name="keyField" type="String" default="id"/>
+    <aura:attribute name="initialRows" type="Integer" default="5"/>
+    <aura:attribute name="selectedRowsCount" type="Integer" default="0"/>
+    <aura:attribute name="enableInfiniteLoading" type="Boolean" default="true"/>
+    <aura:attribute name="rowsToLoad" type="Integer" default="50"/>
+    <aura:attribute name="loadMoreOffset" type="Integer" default="20"/>
+    <aura:attribute name="totalNumberOfRows" type="Integer" default="300"/>
+    <aura:attribute name="loadMoreStatus" type="String" default=""/>
+    <aura:attribute name="selectedSingleDriveRecord" type="String" default=""/>
+    <aura:attribute name="isLinkedDriveExist" type="Boolean" default="false"/>
+    <aura:attribute name="linkedSingleDriveRecordId" type="String" default=""/>
+    <aura:attribute name="oppRecordId1" type="String" default=""/>
+    <aura:attribute name="oppRecordId2" type="String" default=""/>
+    <aura:attribute name="isconfirmationModalOpen" type="boolean" default="false"/>
+    
+    <aura:attribute name="selectedRow" type="String" default=""/>
+    
+    <aura:attribute name="opportunityRecordFields" type="Object"/>
+    
+    <!--<force:recordData aura:id="opportunityRecordData"
+                      recordId="{!v.recordId}" 
+                      fields="Name,Linked_Opportunity_Drives__c"
+                      targetFields="{!v.opportunityRecordFields}"
+                      recordUpdated="{!c.saRecordUpdated}" />-->
+    <!-- handlers-->
+    <aura:handler name="init" value="{! this }" action="{! c.init }"/>
+    
+    
+    <div class="slds-is-relative">
+        <!-- toolbox -->
+        <div class="slds-m-vertical_small">
+            <aura:if isTrue="{!v.isLinkedDriveExist}">
+                
+                <div style="background-color: #04844b;    color: white;border-radius: 20px;">
+                    <lightning:layout horizontalAlign="space">
+                        <lightning:layoutItem padding="around-small" flexibility="auto">
+                            
+                            <lightning:formattedText value="This drive is linked and part of Single day Drive" />
+                            
+                        </lightning:layoutItem>
+                    </lightning:layout >
+
+                </div>
+
+                
+            </aura:if>
+
+        </div>
+        
+        <!-- the container element determine the height of the datatable -->
+        <div style="height: 300px">
+            <lightning:datatable
+                                 columns="{! v.columns }"
+                                 data="{! v.data }"
+                                 keyField="{! v.keyField }"
+                                 showRowNumberColumn="true"
+                                 enableInfiniteLoading="{! v.enableInfiniteLoading }"
+                                 loadMoreOffset="{! v.loadMoreOffset }"
+                                 hideCheckboxColumn="true"
+                                 onrowaction="{! c.handleRowAction }"
+                                 />
+        </div>
+        {! v.loadMoreStatus }
+    </div>
+    
+    <aura:if isTrue="{!v.isconfirmationModalOpen}">
+             
+            <!-- Modal/Popup Box starts here-->
+            <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+                <div class="slds-modal__container">
+                    <!-- Modal/Popup Box Header Starts here-->
+                    <header class="slds-modal__header">
+                        <lightning:buttonIcon iconName="utility:close"
+                                              onclick="{! c.closeModel }"
+                                              alternativeText="close"
+                                              variant="bare-inverse"
+                                              class="slds-modal__close"/>
+                        <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Do you want to continue de-linking the drive?</h2>
+                    </header>
+                    <!--Modal/Popup Box Body Starts here-->
+                    <!--<div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                        <p><b>Do you want to continue de-linking the record?
+                            </b>
+                        </p>
+                    </div>-->
+                    <!--Modal/Popup Box Footer Starts here-->
+                    <footer class="slds-modal__footer">
+                        <lightning:button variant="neutral"
+                                          label="Cancel"
+                                          title="Cancel"
+                                          onclick="{! c.closeModel }"/>
+                        <lightning:button variant="brand"
+                                          label="Yes"
+                                          title="Yes"
+                                          onclick="{!c.submitDetails}"/>
+                    </footer>
+                </div>
+            </section>
+            <div class="slds-backdrop slds-backdrop_open"></div>
+        </aura:if>
+</aura:component>
+
+<!--onloadmore="{! c.loadMoreData }"-->

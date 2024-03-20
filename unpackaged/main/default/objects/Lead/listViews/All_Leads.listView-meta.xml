@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>All_Leads</fullName>
+    <columns>LEAD.STATUS</columns>
+    <columns>FULL_NAME</columns>
+    <columns>LEAD.COMPANY</columns>
+    <columns>LEAD.PHONE</columns>
+    <columns>LEAD.EMAIL</columns>
+    <columns>LEAD.CITY</columns>
+    <columns>LEAD.ZIP</columns>
+    <columns>Rating_Visual__c</columns>
+    <columns>Comments__c</columns>
+    <columns>Lead_AM_Porfolio__c</columns>
+    <columns>Lead_Region_Name__c</columns>
+    <columns>Lead_Collection_Operation__c</columns>
+    <columns>LEAD.CREATED_DATE</columns>
+    <columns>Blood_Region__c</columns>
+    <columns>Campaign_Name__c</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>LEAD.RECORDTYPE</field>
+        <operation>equals</operation>
+        <value>Lead.Lead</value>
+    </filters>
+    <label>*All Leads</label>
+</ListView>

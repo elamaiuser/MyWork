@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Lost_Reason_required_for_Unqualified</fullName>
+    <active>true</active>
+    <description>If lead status is Unqualified (lost), users must select a Lost Reason from the list.</description>
+    <errorConditionFormula>AND(
+ ISPICKVAL( Status, &quot;Unqualified&quot; ),
+ ISPICKVAL( Lost_Reason__c , &quot;&quot; )
+)</errorConditionFormula>
+    <errorDisplayField>Lost_Reason__c</errorDisplayField>
+    <errorMessage>Please select a Lost Reason prior to marking Lead Status as Unqualified.</errorMessage>
+</ValidationRule>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<EmailTemplate xmlns="http://soap.sforce.com/2006/04/metadata">
+    <available>true</available>
+    <description>Prospecting email for College Red Cord blood drive</description>
+    <encodingKey>ISO-8859-1</encodingKey>
+    <letterhead>ARC_Logo_Test</letterhead>
+    <name>Marketing Segment_Education_CollegeRedCord_Prospect</name>
+    <style>formalLetter</style>
+    <subject>Partner with the Red Cross to help save lives!</subject>
+    <textOnly>Hi [Insert Name] ,
+
+I’m writing to invite you to partner with the American Red Cross through our College Red Cord Program.
+
+Students who host blood drives serve as a vital link between donors and patients who depend on transfusions - making lifesaving contributions that benefit accident victims, cancer and sickle cell disease patients, children with blood disorders and many others.  
+
+To recognize these student Blood Program Leaders for their leadership and support, the American Red Cross College Red Cord Program recognizes our valued higher education student Blood Program Leaders for their partnership and contribution to our mission.  
+
+Qualifying student Blood Program Leaders will receive a red graduation honor cord that they can proudly wear to signify this achievement, along with a congratulatory card from the Red Cross to recognize them for their efforts. In addition to helping those in need, student Blood Program Leaders can also develop in-action leadership experience to add to their resume and earn volunteer hours to fulfill service requirements. 
+
+Partnering with the Red Cross for a lifesaving blood drive program can help bring students, faculty and the community together to help change someone’s life with every single donation you collect.
+
+If you know a student leader who may be interested in hosting a campus blood drive, please share this email and my contact information.  I will be in touch soon to follow up.  
+
+Thank you for your support of our lifesaving mission!
+
+Sincerely, 
+
+[Insert Name]</textOnly>
+    <type>html</type>
+    <uiType>Aloha</uiType>
+</EmailTemplate>

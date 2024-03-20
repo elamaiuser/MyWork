@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<EmailTemplate xmlns="http://soap.sforce.com/2006/04/metadata">
+    <available>true</available>
+    <description>Booking Ask for SCI Recruitment to BPL</description>
+    <encodingKey>ISO-8859-1</encodingKey>
+    <letterhead>ARC_Logo_Test</letterhead>
+    <name>Marketing Segment_SCI_General_Booking_2023</name>
+    <style>formalLetter</style>
+    <subject>Host a Blood Drive. Helping Sickle Cell Patients in Need.</subject>
+    <textOnly>Hi [NAME]
+
+I wanted to reach out to you today, as a valued member of the Black community, in hosting another American Red Cross blood drive.
+
+African American blood donors play a critical role in helping patients battling sickle cell disease to receive the most compatible blood match. Today, there aren’t enough African American donors to meet this urgent need.
+
+Answer the call to help save those suffering from diseases, such as sickle cell, by hosting a Red Cross blood drive and collecting the most compatible blood for to help support over 100,000 sickle cell patients and families. Our Blood Saves Lives!
+
+Please call me at &lt;XXX_XXX_XXXX&gt; or email me at &lt;email address&gt; to schedule your lifesaving blood drive today.
+
+Sincerely,
+[NAME]</textOnly>
+    <type>html</type>
+    <uiType>Aloha</uiType>
+</EmailTemplate>

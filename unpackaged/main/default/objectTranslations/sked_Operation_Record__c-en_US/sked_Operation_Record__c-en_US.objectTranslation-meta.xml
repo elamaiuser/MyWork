@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObjectTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+    <caseValues>
+        <plural>false</plural>
+        <value>Operation Record</value>
+    </caseValues>
+    <caseValues>
+        <plural>true</plural>
+        <value>Operation Records</value>
+    </caseValues>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <layouts>
+        <layout>Operation Layout</layout>
+        <sections>
+            <label><!-- Custom Links --></label>
+            <section>Custom Links</section>
+        </sections>
+        <sections>
+            <label><!-- Drive Information --></label>
+            <section>Drive Information</section>
+        </sections>
+        <sections>
+            <label><!-- Drive Issues --></label>
+            <section>Drive Issues</section>
+        </sections>
+        <sections>
+            <label><!-- Late End Drive --></label>
+            <section>Late End Drive</section>
+        </sections>
+        <sections>
+            <label><!-- Site Information --></label>
+            <section>Site Information</section>
+        </sections>
+    </layouts>
+    <startsWith>Consonant</startsWith>
+    <validationRules>
+        <errorMessage><!-- Unable to edit Operation Record after submission. --></errorMessage>
+        <name>Operation_Record_Is_Approved</name>
+    </validationRules>
+</CustomObjectTranslation>

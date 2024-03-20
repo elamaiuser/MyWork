@@ -1,0 +1,22 @@
+<template>
+    <lightning-spinner if:true={showSpinner} class="spins" size="medium"></lightning-spinner>
+
+    <c-slwc-approval-history-console
+        record-id={recordId}
+        object-label="Pending Action Drive"
+        reject-additional-fields={rejectAdditionalFields}
+        approve-additional-fields={approveAdditionalFields}
+        onactiondone={handleActionDone}
+        hook-before-approve={beforeApproveHook}
+        hook-before-submit-approve-reject={beforeSubmitApproveRejectHook}
+    >
+    </c-slwc-approval-history-console>
+
+    <div class="slds-m-top_medium" if:true={showResolveContentions}>
+        <c-slwc-resolve-drive-contentions
+            mode="driveSubmission"
+            is-readonly={resolveContentionsReadonly}
+            record-id={recordId}>
+        </c-slwc-resolve-drive-contentions>
+    </div>
+</template>

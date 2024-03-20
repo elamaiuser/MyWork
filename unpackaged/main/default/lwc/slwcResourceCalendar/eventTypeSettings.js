@@ -1,0 +1,65 @@
+export default [
+  {
+    "backgroundColor": "#99a0b2",
+    "color": "#fff",
+    "eventType": "Pending Dispatch",
+    "objectType": "jobAllocation",
+    "showLegend": false,
+  },
+  {
+    "backgroundColor": "#1d92d2",
+    "color": "#fff",
+    "eventType": "Dispatched",
+    "objectType": "jobAllocation",
+    "showLegend": true,
+  },
+  {
+    "backgroundColor": "rgb(14, 167, 204)",
+    "color": "#fff",
+    "eventType": "Confirmed",
+    "objectType": "jobAllocation",
+    "showLegend": true,
+  },
+  {
+    "backgroundColor": "rgb(14, 167, 204)",
+    "color": "#fff",
+    "eventType": "En Route",
+    "objectType": "jobAllocation",
+    "showLegend": false,
+  },
+  {
+    "backgroundColor": "rgb(14, 167, 204)",
+    "color": "#fff",
+    "eventType": "Checked In",
+    "objectType": "jobAllocation",
+    "showLegend": false,
+  },
+  {
+    "backgroundColor": "#0070d2",
+    "color": "#fff",
+    "eventType": "In Progress",
+    "objectType": "jobAllocation",
+    "showLegend": true,
+  },
+  {
+    "backgroundColor": "#59b66e",
+    "color": "#fff",
+    "eventType": "Complete",
+    "objectType": "jobAllocation",
+    "showLegend": true,
+  },
+  {
+    "backgroundColor": "#d23331",
+    "color": "#fff",
+    "eventType": "Declined",
+    "objectType": "jobAllocation",
+    "showLegend": false,
+  },
+  {
+    "backgroundColor": "#d23331",
+    "color": "#fff",
+    "eventType": "Deleted",
+    "objectType": "jobAllocation",
+    "showLegend": false,
+  }
+]

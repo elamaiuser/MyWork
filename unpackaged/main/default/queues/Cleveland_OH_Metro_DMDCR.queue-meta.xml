@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Queue xmlns="http://soap.sforce.com/2006/04/metadata">
+    <doesSendEmailToMembers>false</doesSendEmailToMembers>
+    <name>Cleveland OH Metro: DMDCR</name>
+    <queueMembers>
+        <users>
+            <user>bonnie.flenner@redcross.org</user>
+            <user>diana.reaves@redcross.org</user>
+            <user>jill.trupo@redcross.org</user>
+            <user>katherine.uline@redcross.org</user>
+            <user>linda.hartman@redcross.org</user>
+            <user>sabrina.spikes@redcross.org</user>
+        </users>
+    </queueMembers>
+    <queueSobject>
+        <sobjectType>Task</sobjectType>
+    </queueSobject>
+    <queueSobject>
+        <sobjectType>sked_Drive_Change_Request__c</sobjectType>
+    </queueSobject>
+</Queue>

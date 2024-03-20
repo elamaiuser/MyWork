@@ -1,0 +1,200 @@
+<template>
+    <div class="">
+        <template if:true={showSpinner}>
+            <lightning-spinner class="spins" size="medium"></lightning-spinner>
+        </template>
+
+        <div class="slds-p-horizontal_small slds-p-vertical_x-small slds-grid slds-grid_align-spread">
+            <template if:true={isNotFlow}>
+                <lightning-input
+                        type="toggle"
+                        label="Recurring?"
+                        name="recurringChk"
+                        checked={recurringModel.isRecurring}
+                        message-toggle-active=""
+                        message-toggle-inactive=""
+                        onchange={toggleRecurring}
+                ></lightning-input>
+            </template>
+
+
+            <div class="slds-grid" if:true={recurringModel.isRecurring}>
+                <lightning-button variant="destructive" if:true={showBtnRemoveInvalidDays} label="Remove Invalid Dates" icon-name="utility:close" onclick={handleRemoveInvalidDays} class="slds-m-left_x-small"></lightning-button>
+                <lightning-button variant="brand" label="Schedule Pattern" icon-name="utility:event" onclick={showSchedulePatternModal} class="slds-m-left_x-small"></lightning-button>
+                <lightning-button variant="neutral" label="Reset" icon-name="utility:refresh" onclick={handleResetSeletedDays} class="slds-m-left_x-small"></lightning-button>
+            </div>
+        </div>
+        <div class="calendar-grid slds-m-top_small" if:true={recurringModel.isRecurring}>
+            <template for:each={calendars} for:item="calendar">
+                <div key={calendar.key} class="calendar">
+                    <div class="calendar-header">
+                        {calendar.header}
+                        <div class="reset-icon">
+                            <lightning-button-icon onclick={handleResetSeletedDays} data-value={calendar.dateIso} variant="bare" tooltip="Reset" icon-name="utility:refresh"></lightning-button-icon>
+                        </div>
+                    </div>
+                    <table class="calendar-table">
+                        <thead>
+                        <tr>
+                            <template for:each={weekDays} for:item="weekday">
+                                <td key={weekday}>{weekday}</td>
+                            </template>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <template for:each={calendar.weeks} for:item="week">
+                            <tr key={week.key}>
+                                <template for:each={week.days} for:item="day">
+                                    <td
+                                            key={day.dateIso}
+                                            style={day.slotStyle}
+                                            class={day.class}>
+                                        <div class="slds-grid slds-grid_align-spread slds-p-around_xxx-small">
+                                            <div class="day-info" data-value={day.dateIso} onclick={handleSelectDay}>
+                                                <lightning-formatted-date-time value={day.date} day="numeric">
+                                                </lightning-formatted-date-time>
+
+                                                <div class="dots">
+                                                    <template for:each={day.dots} for:item="dot">
+                                                        <span key={dot.key} class="dot" style={dot.style}></span>
+                                                    </template>
+                                                </div>
+
+                                                <c-slwc-popover
+                                                        if:true={day.showPopover}
+                                                        container="html"
+                                                        width="150px"
+                                                        position="right"
+                                                        trigger="hover">
+                                                    <div slot="reference" class="popover-placeholder"></div>
+                                                    <c-slwc-popover-content
+                                                            name="planDriveValidationPopover"
+                                                            popover-data={day.popoverData}
+                                                            slot="content">
+                                                    </c-slwc-popover-content>
+                                                </c-slwc-popover>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </template>
+                            </tr>
+                        </template>
+                        </tbody>
+                    </table>
+                </div>
+            </template>
+        </div>
+
+        <section role="dialog" tabindex="-1" class={customClass.modalClass} style={customStyle.modalStyle}>
+            <div class="slds-modal__container">
+                <header class={customClass.headerClass}>
+                    <lightning-button-icon onclick={closeSchedulePatternModal} class="slds-button slds-button_icon slds-modal__close" size="large" icon-name="utility:close" variant="bare-inverse" title="Close"></lightning-button-icon>
+
+                    <h2 class="slds-modal__title slds-hyphenate">Schedule Pattern</h2>
+                </header>
+                <div class="slds-modal__content slds-p-around_medium">
+                    <div class="slds-form_compound">
+                        <div class="slds-form-element__row">
+                            <lightning-combobox
+                                    name="pattern"
+                                    label="Pattern"
+                                    value={recurringModel.pattern}
+                                    required
+                                    options={patternOptions}
+                                    onchange={handleRecurringModelChanged}></lightning-combobox>
+                        </div>
+                        <div class="slds-form-element__row slds-m-top_x-small" if:true={showWeeklyPattern}>
+                            <fieldset class="slds-form-element">
+                                <legend class="slds-form-element__label"><abbr class="slds-required" title="required">*</abbr> Recurring On</legend>
+                                <div class="slds-form-element__control">
+                                    <div class="slds-checkbox_button-group">
+                                        <template for:each={recurringWeekDayOptions} for:item="weekday">
+                                            <span key={weekday.key} class="slds-button slds-checkbox_button">
+                                                <input type="checkbox" id={weekday.key} data-value={weekday.value} checked={weekday.selected} name={weekday.key} onchange={handleRecurringModelChanged} />
+                                                <label class="slds-checkbox_button__label" for={weekday.key}>
+                                                    <span class="slds-checkbox_faux">{weekday.label}</span>
+                                                </label>
+                                            </span>
+                                        </template>
+                                    </div>
+                                </div>
+                            </fieldset>
+                        </div>
+                        <div class="slds-form-element__row slds-m-top_x-small" if:true={showMonthlyPattern}>
+                            <lightning-combobox
+                                    name="nthDay"
+                                    label="Recurring On"
+                                    value={recurringModel.nthDay}
+                                    required
+                                    onchange={handleRecurringModelChanged}
+                                    options={recurringOnNthOptions}></lightning-combobox>
+                        </div>
+                        <div class="slds-form-element__row slds-m-top_x-small">
+                            <div class="slds-grid">
+                                <lightning-input
+                                        type="date"
+                                        value={recurringModel.startDate}
+                                        name="startDate"
+                                        label="Start From"
+                                        onchange={handleRecurringModelChanged}></lightning-input>
+                                <!-- <lightning-input
+                                    class="slds-m-left_x-small slds-p-top_large"
+                                    type="checkbox"
+                                    label="Skip Holidays?"
+                                    name="skipHolidaysChk"
+                                ></lightning-input> -->
+                            </div>
+                        </div>
+                        <div class="slds-form-element__row slds-m-top_x-small">
+                            <div class="slds-form-element">
+                                <div class="slds-form-element__label">
+                                    <abbr class="slds-required" title="required">*</abbr> Apply Pattern for
+                                </div>
+                                <div class="slds-form-element__control">
+                                    <div>
+                                        <lightning-input
+                                                type="checkbox"
+                                                label="All Months"
+                                                checked={recurringModel.allMonthSelected}
+                                                name="allMonthSelected"
+                                                onchange={handleRecurringModelChanged}
+                                        ></lightning-input>
+                                    </div>
+                                    <div class="slds-grid slds-wrap">
+                                        <template for:each={recurringMonthOptions} for:item="month">
+                                            <div key={month.key} style="width: 12rem">
+                                                <lightning-input
+                                                        type="checkbox"
+                                                        name={month.key}
+                                                        label={month.label}
+                                                        checked={month.selected}
+                                                        data-value={month.value}
+                                                        class="slds-m-right_x-small"
+                                                        onchange={handleRecurringModelChanged}
+                                                ></lightning-input>
+                                            </div>
+                                        </template>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <footer class={customClass.footerClass}>
+                    <lightning-input
+                            class="slds-m-right_x-small"
+                            type="checkbox"
+                            checked={recurringModel.resetBeforeApply}
+                            label="Reset Months before Applying Pattern"
+                            name="resetBeforeApply"
+                            onchange={handleRecurringModelChanged}
+                    ></lightning-input>
+                    <button class="slds-button slds-button_neutral" onclick={closeSchedulePatternModal} >Cancel</button>
+                    <button class="slds-button slds-button_brand" onclick={saveSchedulePatternModal} >Apply Pattern</button>
+                </footer>
+            </div>
+        </section>
+        <div class={customClass.backdropClass} style={customStyle.backdropStyle}></div>
+    </div>
+
+</template>

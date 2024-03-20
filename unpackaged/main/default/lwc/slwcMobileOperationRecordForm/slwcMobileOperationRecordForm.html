@@ -1,0 +1,13 @@
+<template>
+    <lightning-spinner if:true={showSpinner} class="spins" size="medium"></lightning-spinner>
+    
+    <template if:true={initialized}>
+        <c-slwc-operation-record
+            job={operationRecordModalData.job}
+            job-allocation={operationRecordModalData.jobAllocation}
+            full-screen
+            is-open={operationRecordModalData.isOpen}
+            onclose={handleCloseOperationRecordModal}
+        ></c-slwc-operation-record>
+    </template>
+</template>

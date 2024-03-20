@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+        <help><!-- Phone Type field populated from Lead --></help>
+        <label><!-- Phone Type --></label>
+        <name>Phone_Type__c</name>
+    </CustomFieldTranslation>

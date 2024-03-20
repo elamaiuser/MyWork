@@ -1,0 +1,21 @@
+.indicator {
+    width: 0.625rem;
+    height: 0.625rem;
+    border-radius: 50%;
+    background: black;
+    display: inline-block;
+    margin-right: 0.25rem;
+    border: 1px solid #fff;
+}
+
+.indicator.Staffed {
+    background: #59b66e;
+}
+
+.indicator.Understaffed {
+    background: #d23331;
+}
+
+.indicator.Overstaffed {
+    background: #fff03f;
+}

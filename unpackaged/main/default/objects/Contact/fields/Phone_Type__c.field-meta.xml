@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Phone_Type__c</fullName>
+    <description>Phone Type field populated from Lead</description>
+    <externalId>false</externalId>
+    <inlineHelpText>Phone Type field populated from Lead</inlineHelpText>
+    <label>Phone Type</label>
+    <length>255</length>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

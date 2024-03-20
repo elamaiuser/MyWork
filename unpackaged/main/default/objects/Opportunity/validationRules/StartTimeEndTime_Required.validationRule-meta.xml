@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>StartTimeEndTime_Required</fullName>
+    <active>true</active>
+    <errorConditionFormula>AND(
+OR(ISNULL(Start_Time__c),ISNULL(End_Time__c)),
+ISPICKVAL(StageName, &quot;Closed&quot;),
+ISPICKVAL(Online_Scheduling_Enabled__c,&#39;Yes&#39;)
+)</errorConditionFormula>
+    <errorMessage>Start &amp; End Time are required, if stage is Closed and Online Scheduling Enabled is Yes</errorMessage>
+</ValidationRule>

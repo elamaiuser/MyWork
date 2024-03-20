@@ -1,0 +1,53 @@
+<template>
+    <div class="slds-grid">
+        <div class="slds-col">
+            <c-slwc-drive-scheduling-filters
+                mode={filterMode}
+                onsearch={handleSearch}
+            >
+            </c-slwc-drive-scheduling-filters>
+        </div>
+        <div class="slds-col slds-scrollable_y slds-p-left_medium slds-is-relative" style="min-height: 400px; width:100%;">
+            <div class="slds-grid slds-grid_vertical-align-end slds-p-top_small">
+                <div class="slds-no-flex slds-col_bump-left slds-p-right_small">
+                    <div class="slds-grid slds-grid_vertical-align-center slds-col_bump-left">
+                        <lightning-button label={btnCloseExceptionLabel} variant="brand" onclick={handleCloseException} disabled={btnCloseExceptionDisabled}></lightning-button>
+                    </div>
+                </div>
+                <div class="slds-p-right_small" style="width: 300px;">
+                    <c-slwc-new-collection-operation-multi-picklist
+                        division-single-select
+                        date-range={collectionOperationDateRange}
+                        default-values={filters.collectionOperationValues}
+                        onchange={handleCollectionOperationChanged}>
+                    </c-slwc-new-collection-operation-multi-picklist>
+                </div>
+                <div class="slds-p-right_small">
+                    <c-slwc-date-range-picker
+                        ondaterangechange={handleOnChange}
+                        default-start-date={filters.startDate}
+                        default-end-date={filters.endDate}>
+                    </c-slwc-date-range-picker>
+                </div>
+            </div>
+            
+            <div class="slds-grow slds-p-around_small">
+                <template if:true={showSpinner}>
+                    <lightning-spinner class="spins" size="medium"></lightning-spinner>
+                </template>
+                <div class="slds-scrollable" style="height: 60vh; width: calc(100vw - 5rem);">
+                    <lightning-datatable 
+                        key-field="id"
+                        data={exceptionLog}
+                        columns={columns}
+                        wrap-text-max-lines="3"
+                        onrowselection={handleRowSelection}
+                        enable-infinite-loading={enableInfiniteLoading}
+                        onloadmore={handleLoadMoreData}>
+                    </lightning-datatable>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+</template>

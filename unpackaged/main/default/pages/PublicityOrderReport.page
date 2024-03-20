@@ -1,0 +1,171 @@
+<!--*
+    * @description: This visualforce page is used to show a detail report on Publicity OrderItems
+    **   Modification Log  ****
+    *  Date					Developer Name			Comments
+    * **************************************************************************************************************************************************************
+    * 08/03/2023			Priti Jana			  Logic for HRP-10307
+    ****************************************************************************************************************************************************************-->
+
+<apex:page title="Publicity Order Report" controller="PublicityReportController" docType="html-5.0" sidebar="false" showHeader="false"
+           lightningStylesheets="true" id="page">
+    
+    <apex:includeLightning />    
+      <div id="LightningComponentid" />
+    <!-- the Id of div tag which will be used to render your LWC component--> 
+    <!-- <script>
+$Lightning.use("c:PublicityReportApp", function() {
+$Lightning.createComponent("c:publicityReport",{},"LightningComponentid",function(cmp){
+console.log('Calling the LWC Component');
+                                   });
+    });
+    </script> -->
+    
+    
+        <style>
+         .mainTitle{ 
+           color:black !important; 
+           width:0% !important; 
+           font-size:150% !important; 
+       }
+             </style>
+    <apex:form id="form"> 
+        <!--<apex:actionFunction name="CallApexMethod" action="{!clear}" 
+                              reRender="pgBlkTbl" />-->
+        <h2> Publicity Order Report </h2>
+        <apex:pageBlock title="Filters" id="pgBlck"> 
+         
+           <table>
+                <tr>
+       				<td><h4 style="padding-bottom: 2px; "> Portfolio </h4> 
+                <apex:selectList id="selectedValue" size="1" label="selectList" value="{!searchPortfolio}">
+                <apex:selectOptions value="{!portfolioOptions}"></apex:selectOptions>
+                </apex:selectList>   </td>
+                
+                 </tr>
+                <tr><td><h4 style="padding-bottom: 5px;">Drive Date &nbsp; &nbsp; &nbsp; &nbsp;</h4></td></tr>
+                <tr>
+                    <td style="padding-bottom: 5px;">Start Date &nbsp;&nbsp;&nbsp;&nbsp; &nbsp; &nbsp;&nbsp; <apex:input type="date" value="{!driveStartDate}" id="dstart" label="Input" html-placeholder="search by Date Range"/> </td>
+                    <td style="padding-bottom: 5px;">&nbsp; &nbsp;End Date  &nbsp; &nbsp; &nbsp; &nbsp; <apex:input type="date" value="{!driveEndDate}" id="dend" label="Input" html-placeholder="search by Date Range"/> </td>
+                </tr>
+                <tr><td><h4 style="padding-bottom: 5px;">Order Approved Date &nbsp; &nbsp; &nbsp; &nbsp;</h4></td></tr>
+				<tr>
+				    <td style="padding-bottom: 5px; ">Start Date &nbsp; &nbsp; &nbsp; &nbsp; <apex:input type="date" value="{!orderApprovedDate1}" id="OAstart" label="Input" html-placeholder="search by Date Range"/> </td>
+                    <td style="padding-bottom: 5px;">&nbsp; &nbsp;End Date  &nbsp; &nbsp; &nbsp; &nbsp; <apex:input type="date" value="{!orderApprovedDate2}" id="OAend" label="Input" html-placeholder="search by Date Range"/> </td>
+                </tr>
+                   
+            </table> 
+            
+            <br/>
+            
+            <apex:commandButton value="Search" action="{!search}" rendered="true"  />             
+            <apex:commandButton action="{!ExportToExcel}" value="Export to Excel" id="ExportToPdf"/>
+            <apex:commandButton action="{!ExportToCSV}" value="Export to CSV" id="ExportToCSV"/>
+            <apex:commandButton value="clear" action="{!clear}" 
+                              />
+              </apex:pageBlock>
+                  
+        <apex:pageblock id="table" rendered="{!errorPresent}">
+             <apex:outputText value="{!errorMsg}"  ></apex:outputText>
+            
+        </apex:pageblock>
+        
+        
+        <apex:pageBlock id="pgBlkTbl" rendered="{!ReportDataWrapperListPresent}" >
+             
+
+
+            <apex:pageBlockTable value="{!ReportDataWrapperList}" rendered="{!ReportDataWrapperListPresent}" var="record" id="Opptable" >
+                <apex:column >
+                    <apex:facet name="header">
+                        <apex:inputCheckbox onclick="selectAllCheckboxes(this,'chkbox')"/>
+                    </apex:facet>
+                    <apex:inputCheckbox value="{!record.isSelected}" id="chkbox"/>
+                </apex:column>
+                <!--HRP-8136 Changes starts here-->
+                <apex:column Headervalue="Order Number" value="{!record.oitem.order.OrderNumber}">
+                </apex:column>
+                <apex:column Headervalue="Order Number" value="{!record.oitem.order.OrderNumber}">
+                </apex:column>
+                <apex:column headerValue="Account Name" value="{!record.opp.AccountId}" />
+                <apex:column headerValue="Drive Site Name" value="{!record.opp.Drive_Site_Name__c}" />
+                <apex:column headerValue="Drive Site Address"  
+                             value="{!record.opp.Drive_Site__r.sked_Address_1__c}" >
+                </apex:column>
+                <apex:column headerValue="Drive Site City" value="{!record.opp.Drive_Site__r.sked_City__c}" />
+                <apex:column headerValue="Drive Site State" value="{!record.opp.Drive_Site__r.sked_State__c}" />
+                <apex:column headerValue="Drive Site Zip" value="{!record.opp.Drive_Site__r.sked_Zip_Code__c}" />
+                <apex:column headerValue="Direct To Donors" value="{!record.opp.Direct_Donors_To__c}" />
+                <apex:column headerValue="Drive Date(s)" value="{!record.opp.Drive_Date__c}" />
+                <apex:column headerValue="Start Time" value="{!record.opp.Start_Time__c}" />
+                <apex:column headerValue="End Time" value="{!record.opp.End_Time__c}" />
+                <apex:column headerValue="Account Manager" value="{!record.opp.Account_Manager__c}" />
+                <apex:column headervalue="Publicity Materials Recipient Name" value="{!record.ocr.contact.Name}" />
+                <apex:column headervalue="Publicity Recipient Mailing Street" value="{!record.ocr.contact.OtherStreet}" />
+                <apex:column headervalue="Publicity Recipient Mailing City" value="{!record.ocr.contact.OtherCity}" />
+                <apex:column headervalue="Publicity Recipient Mailing State" value="{!record.ocr.contact.OtherState}" />
+                <apex:column headervalue="Publicity Recipient Mailing ZipCode" value="{!record.ocr.contact.OtherPostalCode}" />
+                <apex:column headervalue="Publicity Recipient Mailing Phone" value="{!record.ocr.contact.Primary_Phone_Number_New__c}" />
+                <apex:column headervalue="Publicity Recipient Mailing Email" value="{!record.ocr.contact.Email}" />
+                <apex:column headerValue="Total Products Projected" value="{!record.opp.Total_Products_Projected__c}" />
+                <apex:column headerValue="Publicity comments" >
+                <apex:outputLink target="_blank" value="/{!record.oitem.order.id}">{!record.oitem.order.Comments__c}</apex:outputLink>
+                </apex:column>
+                <apex:column headerValue="Opportunity Promotion Name" value="{!record.optypro.Promotion__r.Name}" />
+                <apex:column headerValue="Drive Keyword" value="{!record.opp.Drive_Keyword__c}" />
+                <apex:column headerValue="Total Products Projected" value="{!record.opp.Total_Products_Projected__c}" />
+                <apex:column headervalue="Budget" value="{!record.oitem.order.BudgetCurrency__c}" />
+                <apex:column headerValue="Quantity" value="{!record.oitem.Quantity}" />
+                <apex:column headervalue="Item ID" value="{!record.itemId}" /> <!--HRP - 10307-->
+                <apex:column headervalue="Product Name" value="{!record.oitem.Product2.Name}" />
+                <apex:column Headervalue="Material Recipient" value="{!record.oitem.Material_Recipient__c}" />
+                <apex:column headerValue="Drive Start Time Offset" value="{!record.opp.Collections_Zip_Code__r.Collection_Operation__r.sked_Start_Time_Offset__c}" />
+                <apex:column headerValue="End Time Offset" value="{!record.opp.Collections_Zip_Code__r.Collection_Operation__r.sked_End_Time_Offset__c}" />
+                <!--HRP-8136 Changes ends here-->
+                <!--
+                <apex:column Headervalue="Order Number" value="/{!record.oitem.order.OrderNumber}">
+                </apex:column>
+                    <apex:column headerValue="Publicity Approved by" value="{!record.oitem.order.Publicity_Approved_By__c}" />
+               -->
+                
+                 <!-- HRP 10307(1st Change) Starts --> 
+                <apex:column Headervalue="Publish to Call Center" value="{!record.publishToCallCenter}" />
+                <apex:column Headervalue="Web Scheduling Enabled" value="{!record.webScheduling}" />
+                <!-- HRP 10307(1st Change) Ends --> 
+                
+	                
+            </apex:pageBlockTable>
+    
+        </apex:pageBlock>
+    </apex:form>
+    <script>
+    function clearList(){
+        CallApexMethod();
+        console.log('clearlist method called');
+    }
+    
+    function clearValue()
+    {
+        console.log('clearvalue method called');
+        
+        document.getElementById('{!$Component.page:form:pgBlck:region}').value = '';
+        document.getElementById('{!$Component.page:form:pgBlck:portfolio}').value = '';
+        document.getElementById('{!$Component.page:form:pgBlck:dstart}').value = '';
+        document.getElementById('{!$Component.page:form:pgBlck:dend}').value = '';
+        document.getElementById('{!$Component.page:form:pgBlck:OAstart}').value = '';
+        document.getElementById('{!$Component.page:form:pgBlck:OAend}').value = '';
+        
+        return false;
+    }
+    function selectAllCheckboxes(obj,receivedInputID){
+        var inputCheckBox = document.getElementsByTagName("input"); 
+        console.log('len ' + inputCheckBox.length);
+        for(var i=0; i<inputCheckBox.length; i++){          
+            if(inputCheckBox[i].id.indexOf(receivedInputID)!=-1){                                     
+                inputCheckBox[i].checked = obj.checked;
+            }
+        }
+    }
+    
+   
+    </script>
+</apex:page>

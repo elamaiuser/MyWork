@@ -1,0 +1,75 @@
+<template>
+    <div class="calendar-card-popover">
+      <header class="slds-popover__header slds-text-align_left">
+        <div class="slds-media slds-media_center slds-has-flexi-truncate ">
+          <div class="slds-media__figure">
+            <span class="slds-icon_container">
+              <lightning-icon icon-name="standard:event"></lightning-icon>
+            </span>
+          </div>
+          <div class="slds-media__body">
+            <h2 class="slds-text-heading_small slds-text-color_weak">Drive #{popoverData.index}</h2>
+            <div class="slds-text-color_inverse-weak slds-line-height_reset">
+                <lightning-formatted-date-time value={popoverData.drive.driveDate}
+                    time-zone="GMT">
+                </lightning-formatted-date-time>
+            </div>
+          </div>
+        </div>
+      </header>
+      <div class="slds-popover__body slds-text-body_small">
+        <dl class="slds-dl_horizontal slds-text-align_left">
+            <dt class="slds-dl_horizontal__label ">Drive Name:</dt>
+            <dd class="slds-dl_horizontal__detail"><c-slwc-drive-name 
+              hide-drive-indicator
+              drive={popoverData.drive}
+            ></c-slwc-drive-name></dd>
+            <dt class="slds-dl_horizontal__label ">Drive Type:</dt>
+            <dd class="slds-dl_horizontal__detail">{popoverData.drive.typeOfDrive}</dd>
+            <dt class="slds-dl_horizontal__label ">Start Time:</dt>
+            <dd class="slds-dl_horizontal__detail">
+                <lightning-formatted-time value={popoverData.drive.startTime}>
+                </lightning-formatted-time>
+            </dd>
+            <dt class="slds-dl_horizontal__label ">End Time:</dt>
+            <dd class="slds-dl_horizontal__detail">
+                <lightning-formatted-time value={popoverData.drive.endTime}>
+                </lightning-formatted-time>
+            </dd>
+            <dt class="slds-dl_horizontal__label "># of Staff Requested:</dt>
+            <dd class="slds-dl_horizontal__detail">
+              {popoverData.drive.totalStaffRequested}
+            </dd>
+            <dt class="slds-dl_horizontal__label "># of Machines Requested:</dt>
+            <dd class="slds-dl_horizontal__detail">
+              {popoverData.drive.totalEquipmentRequested}
+            </dd>
+            <dt class="slds-dl_horizontal__label ">Proj Reg Donors:</dt>
+            <dd class="slds-dl_horizontal__detail">
+              {popoverData.drive.projectedRegisteredDonors}
+            </dd>
+        </dl>
+      </div>
+      <footer class="slds-popover__footer slds-text-align_right" if:false={popoverData.isReadonly}>
+        <div class="slds-grid slds-wrap slds-grid_align-end">
+            <span>
+                <button class="slds-button"
+                    data-action="updateLink"
+                    disabled={popoverData.disableUpdateLink}
+                    onclick={handleLinkedDrivePopoverAction}>
+                    <lightning-icon icon-name="utility:link" class="slds-current-color" variant="brand" size="xx-small"></lightning-icon>&nbsp;Link another Drive
+                </button>
+            </span>
+
+            <span class="btn-delete">
+                <button class="slds-button"
+                    data-action="unlink"
+                    disabled={popoverData.disableUnlink}
+                    onclick={handleLinkedDrivePopoverAction}>
+                    <lightning-icon icon-name="utility:unlinked" class="slds-current-color" variant="destructive" size="xx-small"></lightning-icon>&nbsp;De-Link
+                </button>
+            </span>
+        </div>
+      </footer>
+    </div>
+  </template>

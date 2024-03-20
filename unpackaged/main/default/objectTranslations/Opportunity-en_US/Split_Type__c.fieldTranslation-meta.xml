@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+        <help><!-- Opportunity Split Type --></help>
+        <label><!-- Split Type --></label>
+        <name>Split_Type__c</name>
+        <picklistValues>
+            <masterLabel>Coverage – Vacancy</masterLabel>
+            <translation><!-- Coverage – Vacancy --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Coverage – leave**</masterLabel>
+            <translation><!-- Coverage – leave** --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>DRA**</masterLabel>
+            <translation><!-- DRA** --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Fixed RSMO Donations**</masterLabel>
+            <translation><!-- Fixed RSMO Donations** --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Sickle Cell Development Growth</masterLabel>
+            <translation><!-- Sickle Cell Development Growth --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Split Credit**</masterLabel>
+            <translation><!-- Split Credit** --></translation>
+        </picklistValues>
+    </CustomFieldTranslation>

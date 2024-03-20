@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Confirmation_Required_Lock_Approaching</fullName>
+    <columns>Drive_Date__c</columns>
+    <columns>OPPORTUNITY.NAME</columns>
+    <columns>ACCOUNT.NAME</columns>
+    <columns>OPPORTUNITY.STAGE_NAME</columns>
+    <columns>Account_Manager__c</columns>
+    <columns>DriveStatus__c</columns>
+    <filterScope>SalesTeam</filterScope>
+    <filters>
+        <field>Is_Template__c</field>
+        <operation>equals</operation>
+        <value>0</value>
+    </filters>
+    <filters>
+        <field>Drive_Date__c</field>
+        <operation>equals</operation>
+        <value>NEXT_N_DAYS:84</value>
+    </filters>
+    <filters>
+        <field>DriveStatus__c</field>
+        <operation>equals</operation>
+        <value>System Generated,Hold,Pending Action,Tentative</value>
+    </filters>
+    <label>My Opportunities_Unconfirmed Appr Lock</label>
+</ListView>

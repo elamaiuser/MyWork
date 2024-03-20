@@ -1,0 +1,16 @@
+<template>
+    <div class="slds-progress-bar_container fixed-spinner" if:true={isOpen}>
+		<div class="slds-box slds-progress-bar_wrapper">
+			<div class="slds-grid slds-grid_align-spread slds-p-bottom_x-small">
+			  <span>{ builtProgressBarData.message }</span>
+			  <span aria-hidden="true" if:false={isLoadingMode}> 
+				<strong>{ builtProgressBarData.processedRecords }/{ builtProgressBarData.totalRecords }</strong>
+			  </span>
+			</div>
+			<div class="slds-progress-bar" role="progressbar">
+			  <span class="slds-progress-bar__value" style={customStyle.progressBarStyle}>
+			  </span>
+			</div>
+		</div>
+	</div>
+</template>

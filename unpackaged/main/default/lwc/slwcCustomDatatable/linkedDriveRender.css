@@ -1,0 +1,35 @@
+.linked-drive-icon-wrapper {
+
+}
+
+.linked-drive-icon-wrapper .slds-icon_container {
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+    padding-bottom: 0;
+}
+
+.linked-drive-icon-wrapper .slds-icon_container svg {
+    height: 1.5rem;
+    width: 2rem;
+}
+
+.linked-drive-icon-wrapper .linked-drive-type-text {
+    background: #e0e5ee;
+    border: 1px solid #9faab5;
+    border-bottom-left-radius: 0.25rem;
+    border-bottom-right-radius: 0.25rem;
+    z-index: 2;
+    font-size: 0.6rem;
+    font-weight: bold;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.linked-drive-icon-wrapper .linked-drive-type-text.Multi.Day:before {
+    content: 'MD';
+}
+
+.linked-drive-icon-wrapper .linked-drive-type-text.Single.Day:before {
+    content: 'SD';
+}

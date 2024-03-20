@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Stage_Validation_Excluded</fullName>
+    <active>false</active>
+    <description>Excluded stage is only available from Draft stage.</description>
+    <errorConditionFormula>ISPICKVAL(StageName, &quot;Excluded&quot;) &amp;&amp;
+(
+ISPICKVAL(PRIORVALUE(StageName), &quot;Closed&quot;) ||
+ISPICKVAL(PRIORVALUE(StageName), &quot;Solicitation&quot;) ||
+ISPICKVAL(PRIORVALUE(StageName), &quot;Committed&quot;) ||
+ISPICKVAL(PRIORVALUE(StageName), &quot;Follow Up&quot;) ||
+ISPICKVAL(PRIORVALUE(StageName), &quot;Cancelled&quot;) ||
+ISPICKVAL(PRIORVALUE(StageName), &quot;Withdrawn&quot;)
+)</errorConditionFormula>
+    <errorDisplayField>StageName</errorDisplayField>
+    <errorMessage>A Blood Drive Opportunity may only be moved to the Excluded Stage from the Discovery Stage.</errorMessage>
+</ValidationRule>

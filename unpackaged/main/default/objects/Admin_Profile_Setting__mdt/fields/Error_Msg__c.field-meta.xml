@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Error_Msg__c</fullName>
+    <description>Provides customized error msg to user</description>
+    <externalId>false</externalId>
+    <fieldManageability>DeveloperControlled</fieldManageability>
+    <label>Error Message</label>
+    <required>false</required>
+    <type>TextArea</type>
+</CustomField>

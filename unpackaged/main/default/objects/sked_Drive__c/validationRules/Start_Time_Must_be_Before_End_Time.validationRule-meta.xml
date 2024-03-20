@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Start_Time_Must_be_Before_End_Time</fullName>
+    <active>true</active>
+    <description>Drive Start Time must be before End Time and vice versa</description>
+    <errorConditionFormula>AND(
+OR(
+ISCHANGED(sked_End_Time__c),
+ISCHANGED(sked_Start_Time__c)
+),
+TIMEVALUE(sked_End_Time__c) &lt;= TIMEVALUE(sked_Start_Time__c)
+)</errorConditionFormula>
+    <errorMessage>Drive End Time must be after the Drive Start Time</errorMessage>
+</ValidationRule>

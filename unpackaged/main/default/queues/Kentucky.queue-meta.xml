@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Queue xmlns="http://soap.sforce.com/2006/04/metadata">
+    <doesSendEmailToMembers>true</doesSendEmailToMembers>
+    <name>Kentucky Lead Queue</name>
+    <queueMembers>
+        <users>
+            <user>ashley.jodry@redcross.org.biomed</user>
+            <user>donna.wesley2@redcross.org.biomed</user>
+            <user>eric.holden@redcross.org.biomed</user>
+            <user>john.davis4@redcross.org.biomed</user>
+            <user>julie.brady@redcross.org.biomed</user>
+            <user>sabrina.brown@redcross.org.biomed</user>
+        </users>
+    </queueMembers>
+    <queueSobject>
+        <sobjectType>Lead</sobjectType>
+    </queueSobject>
+</Queue>

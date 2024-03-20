@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+        <label><!-- Type --></label>
+        <name>sked_Type__c</name>
+        <picklistValues>
+            <masterLabel>Collection Operation Change</masterLabel>
+            <translation><!-- Collection Operation Change --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Regenerate Drive</masterLabel>
+            <translation><!-- Regenerate Drive --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Role Time Detail Change</masterLabel>
+            <translation><!-- Role Time Detail Change --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Role Time Variance Change</masterLabel>
+            <translation><!-- Role Time Variance Change --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Site Address Change</masterLabel>
+            <translation><!-- Site Address Change --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Travel Time Change</masterLabel>
+            <translation><!-- Travel Time Change --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>User Change</masterLabel>
+            <translation><!-- User Change --></translation>
+        </picklistValues>
+    </CustomFieldTranslation>

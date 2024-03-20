@@ -1,0 +1,35 @@
+<template>
+    <lightning-card title = "{periodLabel}" icon-name="custom:custom17">
+        <div class="slds-grid slds-gutters" style="padding-left:100px; margin-left:100px;margin-right:100px">
+            <div class="slds-col">
+                <span><lightning-button-icon icon-name="utility:back" alternative-text="Previous Month" onclick={previous}></lightning-button-icon></span>
+            </div>              
+            <div class="slds-col">
+                <div class="header-column">
+                    <p class="field-title" title="Unit Goals"><b>Unit Goals</b></p>
+                    <p><lightning-badge label={salesQuota} style="margin-left:10px"></lightning-badge></p>
+                </div>
+            </div>                
+            <div class="slds-col">
+                <div class="header-column">
+                    <p class="field-title" title="Unit Forecast"><b>Unit Forecast</b></p>
+                    <p><lightning-badge label={salesForecast} style={salesForecastStyle}></lightning-badge></p>
+                </div>
+            </div>
+            <div class="slds-col">
+                <div class="header-column">
+                    <p class="field-title" title="Actual Units"><b>Actual Units</b></p>
+                    <p><lightning-badge label={salesActual} style={salesActualStyle}></lightning-badge></p>
+                </div>
+            </div>            
+            <div class="slds-col">
+                <span><lightning-button-icon icon-name="utility:forward" alternative-text="Next Month" onclick={next}></lightning-button-icon></span>
+            </div>               
+        </div>
+        <template if:true={showSpinner}>
+            <lightning-spinner
+                alternative-text='Loading Drives'>
+            </lightning-spinner>
+        </template>
+    </lightning-card>
+</template>

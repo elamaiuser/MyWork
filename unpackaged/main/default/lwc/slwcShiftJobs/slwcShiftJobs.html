@@ -1,0 +1,15 @@
+<template>
+    <lightning-card style="width:100%">
+        <template if:true={buttonEnabled}>
+            <lightning-button-group slot="actions">
+                <lightning-button if:true={showDualRoleAssignmentButton} label="Dual Role Assignment" onclick={handleDualRoleAssigment}></lightning-button>
+                <lightning-button label="New" onclick={handleNewJob}></lightning-button>
+            </lightning-button-group>
+        </template>
+        <div class="slds-scrollable_x slds-p-bottom_x-small">
+            <c-slwc-drive-shift-job-table drive={drive} resource-type={resourceType} shift={shift} jobs={jobs} 
+                is-readonly={isReadonly} is-creatable={isCreatable} is-deletable={isDeletable} is-editable={isEditable}>
+            </c-slwc-drive-shift-job-table>
+        </div>
+    </lightning-card>
+</template>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>All</fullName>
+    <columns>Portfolio_Type__c</columns>
+    <columns>NAME</columns>
+    <columns>Parent_Portfolio__c</columns>
+    <columns>OWNER.FIRST_NAME</columns>
+    <columns>OWNER.LAST_NAME</columns>
+    <columns>Account_Based_Portfolio__c</columns>
+    <columns>Territory_Portfolio__c</columns>
+    <columns>LAST_UPDATE</columns>
+    <columns>Start_Date__c</columns>
+    <columns>End_Date__c</columns>
+    <filterScope>Everything</filterScope>
+    <label>All BSF Portfolios</label>
+</ListView>

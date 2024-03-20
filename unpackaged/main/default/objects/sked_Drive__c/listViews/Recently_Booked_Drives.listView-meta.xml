@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Recently_Booked_Drives</fullName>
+    <columns>CREATED_DATE</columns>
+    <columns>CREATEDBY_USER</columns>
+    <columns>sked_Drive_Date__c</columns>
+    <columns>NAME</columns>
+    <columns>sked_Opportunity__c</columns>
+    <columns>sked_Drive_Site__c</columns>
+    <columns>sked_Biomed_Collection_Op_Name__c</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>CREATED_DATE</field>
+        <operation>lessThan</operation>
+        <value>TODAY</value>
+    </filters>
+    <label>Recently Booked Drives</label>
+</ListView>

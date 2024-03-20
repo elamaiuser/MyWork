@@ -1,0 +1,16 @@
+<template>
+    <div class="slds-grid slds-grid--align-start slds-p-vertical_xx-small slds-p-horizontal--medium">
+        <template for:each={typeAttributes.rowActions} for:item="item" >
+            <lightning-button 
+                class="slds-m-left_small"
+                variant={item.variant} 
+                icon-name={item.icon} 
+                key={item.name} 
+                data-value={value} 
+                label={item.label} 
+                name={item.name} 
+                onclick={item.clickAction} >
+            </lightning-button>
+        </template>
+      </div>
+</template>

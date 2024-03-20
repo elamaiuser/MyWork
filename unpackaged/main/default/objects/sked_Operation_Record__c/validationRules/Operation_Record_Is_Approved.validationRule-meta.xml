@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Operation_Record_Is_Approved</fullName>
+    <active>false</active>
+    <description>Fails if a user tries to edit Operation Record Status after it has been submitted</description>
+    <errorConditionFormula>ISPICKVAL(PRIORVALUE(sked_Status__c),&quot;Submitted&quot;)</errorConditionFormula>
+    <errorMessage>Unable to edit Operation Record after submission.</errorMessage>
+</ValidationRule>

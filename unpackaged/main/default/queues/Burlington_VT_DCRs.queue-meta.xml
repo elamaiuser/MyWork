@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Queue xmlns="http://soap.sforce.com/2006/04/metadata">
+    <doesSendEmailToMembers>false</doesSendEmailToMembers>
+    <name>Burlington VT: DCRs</name>
+    <queueMembers>
+        <users>
+            <user>heather.allison@redcross.org</user>
+            <user>kelli.heffley@redcross.org</user>
+            <user>nancy.russ@redcross.org</user>
+            <user>stacy.cullen@redcross.org</user>
+            <user>steve.levinson@redcross.org</user>
+        </users>
+    </queueMembers>
+    <queueSobject>
+        <sobjectType>sked_Drive_Change_Request__c</sobjectType>
+    </queueSobject>
+</Queue>

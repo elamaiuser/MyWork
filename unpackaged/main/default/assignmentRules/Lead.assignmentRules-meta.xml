@@ -1,0 +1,711 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<AssignmentRules xmlns="http://soap.sforce.com/2006/04/metadata">
+    <assignmentRule>
+        <fullName>Lead Region Assignment Oct 2019</fullName>
+        <active>true</active>
+        <ruleEntry>
+            <assignedTo>Alabama_Mississippi</assignedTo>
+            <assignedToType>Queue</assignedToType>
+            <formula>IF(Lead_Region_Name__r.Name == &#39;Alabama Mississippi&#39;,True,False)</formula>
+            <template>unfiled$public/Spark_Lead_Assignment_Sample</template>
+        </ruleEntry>
+        <ruleEntry>
+            <assignedTo>Alaska</assignedTo>
+            <assignedToType>Queue</assignedToType>
+            <formula>IF(Lead_Region_Name__r.Name == &#39;Alaska&#39;,True,False)</formula>
+            <template>unfiled$public/Spark_Lead_Assignment_Sample</template>
+        </ruleEntry>
+        <ruleEntry>
+            <assignedTo>Arizona_New_Mexico</assignedTo>
+            <assignedToType>Queue</assignedToType>
+            <formula>IF(Lead_Region_Name__r.Name == &#39;Arizona New Mexico&#39;,True,False)</formula>
+            <template>unfiled$public/Spark_Lead_Assignment_Sample</template>
+        </ruleEntry>
+        <ruleEntry>
+            <assignedTo>California_Gold_Country</assignedTo>
+            <assignedToType>Queue</assignedToType>
+            <formula>IF(Lead_Region_Name__r.Name == &#39;California Gold Country&#39;,True,False)</formula>
+            <template>unfiled$public/Spark_Lead_Assignment_Sample</template>
+        </ruleEntry>
+        <ruleEntry>
+            <assignedTo>Southern_California</assignedTo>
+            <assignedToType>Queue</assignedToType>
+            <formula>IF(Lead_Region_Name__r.Name == &#39;California Los Angeles&#39;,True,False)</formula>
+            <template>unfiled$public/Spark_Lead_Assignment_Sample</template>
+        </ruleEntry>
+        <ruleEntry>
+            <assignedTo>Central_and_South_Texas</assignedTo>
+            <assignedToType>Queue</assignedToType>
+            <formula>IF(Lead_Region_Name__r.Name == &#39;Central and South Texas&#39;,True,False)</formula>
+            <template>unfiled$public/Spark_Lead_Assignment_Sample</template>
+        </ruleEntry>
+        <ruleEntry>
+            <assignedTo>Ohio_South</assignedTo>
+            <assignedToType>Queue</assignedToType>
+            <formula>IF(Lead_Region_Name__r.Name == &#39;Central and Southern Ohio&#39;,True,False)</formula>
+            <template>unfiled$public/Spark_Lead_Assignment_Sample</template>
+        </ruleEntry>
+        <ruleEntry>
+            <assignedTo>Central_Appalachia</assignedTo>
+            <assignedToType>Queue</assignedToType>
+            <formula>IF(Lead_Region_Name__r.Name == &#39;Central Appalachia&#39;,True,False)</formula>
+            <template>unfiled$public/Spark_Lead_Assignment_Sample</template>
+        </ruleEntry>
+        <ruleEntry>
+            <assignedTo>Central_California</assignedTo>
+            <assignedToType>Queue</assignedToType>
+            <formula>IF(Lead_Region_Name__r.Name == &#39;Central California&#39;,True,False)</formula>
+            <template>unfiled$public/Spark_Lead_Assignment_Sample</template>
+        </ruleEntry>
+        <ruleEntry>
+            <assignedTo>Central_Florida</assignedTo>
+            <assignedToType>Queue</assignedToType>
+            <formula>IF(Lead_Region_Name__r.Name == &#39;Central Florida&#39;,True,False)</formula>
+            <template>unfiled$public/Spark_Lead_Assignment_Sample</template>
+        </ruleEntry>
+        <ruleEntry>
+            <assignedTo>Colorado_Wyoming</assignedTo>
+            <assignedToType>Queue</assignedToType>
+            <formula>IF(Lead_Region_Name__r.Name == &#39;Colorado Wyoming&#39;,True,False)</formula>
+            <template>unfiled$public/Spark_Lead_Assignment_Sample</template>
+        </ruleEntry>
+        <ruleEntry>
+            <assignedTo>Connecticut_Rhode_Island</assignedTo>
+            <assignedToType>Queue</assignedToType>
+            <formula>IF(Lead_Region_Name__r.Name == &#39;Connecticut Rhode Island&#39;,True,False)</formula>
+            <template>unfiled$public/Spark_Lead_Assignment_Sample</template>
+        </ruleEntry>
+        <ruleEntry>
+            <assignedTo>DC_Maryland_Deleware</assignedTo>
+            <assignedToType>Queue</assignedToType>
+            <formula>IF(Lead_Region_Name__r.Name == &#39;DC Maryland and Delaware&#39;,True,False)</formula>
+            <template>unfiled$public/Spark_Lead_Assignment_Sample</template>
+        </ruleEntry>
+        <ruleEntry>
+            <assignedTo>Eastern_New_York</assignedTo>
+            <assignedToType>Queue</assignedToType>
+            <formula>IF(Lead_Region_Name__r.Name == &#39;Eastern New York&#39;,True,False)</formula>
+            <template>unfiled$public/Spark_Lead_Assignment_Sample</template>
+        </ruleEntry>
+        <ruleEntry>
+            <assignedTo>Eastern_North_Carolina</assignedTo>
+            <assignedToType>Queue</assignedToType>
+            <formula>IF(Lead_Region_Name__r.Name == &#39;Eastern North Carolina&#39;,True,False)</formula>
+            <template>unfiled$public/Spark_Lead_Assignment_Sample</template>
+        </ruleEntry>
+        <ruleEntry>
+            <assignedTo>Georgia</assignedTo>
+            <assignedToType>Queue</assignedToType>
+            <formula>IF(Lead_Region_Name__r.Name == &#39;Georgia&#39;,True,False)</formula>
+            <template>unfiled$public/Spark_Lead_Assignment_Sample</template>
+        </ruleEntry>
+        <ruleEntry>
+            <assignedTo>Greater_Pennsylvania</assignedTo>
+            <assignedToType>Queue</assignedToType>
+            <formula>IF(Lead_Region_Name__r.Name == &#39;Greater Alleghenies&#39;,True,False)</formula>
+            <template>unfiled$public/Spark_Lead_Assignment_Sample</template>
+        </ruleEntry>
+        <ruleEntry>
+            <assignedTo>Greater_Carolinas</assignedTo>
+            <assignedToType>Queue</assignedToType>
+            <formula>IF(Lead_Region_Name__r.Name == &#39;Greater Carolinas&#39;,True,False)</formula>
+            <template>unfiled$public/Spark_Lead_Assignment_Sample</template>
+        </ruleEntry>
+        <ruleEntry>
+            <assignedTo>Greater_New_York</assignedTo>
+            <assignedToType>Queue</assignedToType>
+            <formula>IF(Lead_Region_Name__r.Name == &#39;Greater New York&#39;,True,False)</formula>
+            <template>unfiled$public/Spark_Lead_Assignment_Sample</template>
+        </ruleEntry>
+        <ruleEntry>
+            <assignedTo>Greater_Pennsylvania</assignedTo>
+            <assignedToType>Queue</assignedToType>
+            <formula>IF(Lead_Region_Name__r.Name == &#39;Greater Pennsylvania&#39;,True,False)</formula>
+            <template>unfiled$public/Spark_Lead_Assignment_Sample</template>
+        </ruleEntry>
+        <ruleEntry>
+            <assignedTo>Idaho_Montana</assignedTo>
+            <assignedToType>Queue</assignedToType>
+            <formula>IF(Lead_Region_Name__r.Name == &#39;Idaho Montana&#39;,True,False)</formula>
+            <template>unfiled$public/Spark_Lead_Assignment_Sample</template>
+        </ruleEntry>
+        <ruleEntry>
+            <assignedTo>Illinois</assignedTo>
+            <assignedToType>Queue</assignedToType>
+            <formula>IF(Lead_Region_Name__r.Name == &#39;Illinois&#39;,True,False)</formula>
+            <template>unfiled$public/Spark_Lead_Assignment_Sample</template>
+        </ruleEntry>
+        <ruleEntry>
+            <assignedTo>Indiana</assignedTo>
+            <assignedToType>Queue</assignedToType>
+            <formula>IF(Lead_Region_Name__r.Name == &#39;Indiana&#39;,True,False)</formula>
+            <template>unfiled$public/Spark_Lead_Assignment_Sample</template>
+        </ruleEntry>
+        <ruleEntry>
+            <assignedTo>Kansas_Oklahoma</assignedTo>
+            <assignedToType>Queue</assignedToType>
+            <formula>IF(Lead_Region_Name__r.Name == &#39;Kansas Oklahoma&#39;,True,False)</formula>
+            <template>unfiled$public/Spark_Lead_Assignment_Sample</template>
+        </ruleEntry>
+        <ruleEntry>
+            <assignedTo>Kentucky</assignedTo>
+            <assignedToType>Queue</assignedToType>
+            <formula>IF(Lead_Region_Name__r.Name == &#39;Kentucky&#39;,True,False)</formula>
+            <template>unfiled$public/Spark_Lead_Assignment_Sample</template>
+        </ruleEntry>
+        <ruleEntry>
+            <assignedTo>Louisiana</assignedTo>
+            <assignedToType>Queue</assignedToType>
+            <formula>IF(Lead_Region_Name__r.Name == &#39;Louisiana&#39;,True,False)</formula>
+            <template>unfiled$public/Spark_Lead_Assignment_Sample</template>
+        </ruleEntry>
+        <ruleEntry>
+            <assignedTo>Massachusetts</assignedTo>
+            <assignedToType>Queue</assignedToType>
+            <formula>IF(Lead_Region_Name__r.Name == &#39;Massachusetts&#39;,True,False)</formula>
+            <template>unfiled$public/Spark_Lead_Assignment_Sample</template>
+        </ruleEntry>
+        <ruleEntry>
+            <assignedTo>Michigan</assignedTo>
+            <assignedToType>Queue</assignedToType>
+            <formula>IF(Lead_Region_Name__r.Name == &#39;Michigan&#39;,True,False)</formula>
+            <template>unfiled$public/Spark_Lead_Assignment_Sample</template>
+        </ruleEntry>
+        <ruleEntry>
+            <assignedTo>Minnesota_Dakotas</assignedTo>
+            <assignedToType>Queue</assignedToType>
+            <formula>IF(Lead_Region_Name__r.Name == &#39;Minnesota Dakotas&#39;,True,False)</formula>
+            <template>unfiled$public/Spark_Lead_Assignment_Sample</template>
+        </ruleEntry>
+        <ruleEntry>
+            <assignedTo>Missouri_Arkansas</assignedTo>
+            <assignedToType>Queue</assignedToType>
+            <formula>IF(Lead_Region_Name__r.Name == &#39;Missouri Arkansas&#39;,True,False)</formula>
+            <template>unfiled$public/Spark_Lead_Assignment_Sample</template>
+        </ruleEntry>
+        <ruleEntry>
+            <assignedTo>DC_Maryland_Deleware</assignedTo>
+            <assignedToType>Queue</assignedToType>
+            <formula>IF(Lead_Region_Name__r.Name == &#39;National Capital and Greater Chesapeake&#39;,True,False)</formula>
+            <template>unfiled$public/Spark_Lead_Assignment_Sample</template>
+        </ruleEntry>
+        <ruleEntry>
+            <assignedTo>Nebraska_Iowa</assignedTo>
+            <assignedToType>Queue</assignedToType>
+            <formula>IF(Lead_Region_Name__r.Name == &#39;Nebraska Iowa&#39;,True,False)</formula>
+            <template>unfiled$public/Spark_Lead_Assignment_Sample</template>
+        </ruleEntry>
+        <ruleEntry>
+            <assignedTo>North_Florida</assignedTo>
+            <assignedToType>Queue</assignedToType>
+            <formula>IF(Lead_Region_Name__r.Name == &#39;North Florida&#39;,True,False)</formula>
+            <template>unfiled$public/Spark_Lead_Assignment_Sample</template>
+        </ruleEntry>
+        <ruleEntry>
+            <assignedTo>North_Texas</assignedTo>
+            <assignedToType>Queue</assignedToType>
+            <formula>IF(Lead_Region_Name__r.Name == &#39;North Texas&#39;,True,False)</formula>
+            <template>unfiled$public/Spark_Lead_Assignment_Sample</template>
+        </ruleEntry>
+        <ruleEntry>
+            <assignedTo>Greater_Pennsylvania</assignedTo>
+            <assignedToType>Queue</assignedToType>
+            <formula>IF(Lead_Region_Name__r.Name == &#39;Northeastern Pennsylvania&#39;,True,False)</formula>
+            <template>unfiled$public/Spark_Lead_Assignment_Sample</template>
+        </ruleEntry>
+        <ruleEntry>
+            <assignedTo>California_Coastal</assignedTo>
+            <assignedToType>Queue</assignedToType>
+            <formula>IF(Lead_Region_Name__r.Name == &#39;Northern California Coastal&#39;,True,False)</formula>
+            <template>unfiled$public/Spark_Lead_Assignment_Sample</template>
+        </ruleEntry>
+        <ruleEntry>
+            <assignedTo>Northern_New_England</assignedTo>
+            <assignedToType>Queue</assignedToType>
+            <formula>IF(Lead_Region_Name__r.Name == &#39;Northern New England&#39;,True,False)</formula>
+            <template>unfiled$public/Spark_Lead_Assignment_Sample</template>
+        </ruleEntry>
+        <ruleEntry>
+            <assignedTo>Ohio_North</assignedTo>
+            <assignedToType>Queue</assignedToType>
+            <formula>IF(Lead_Region_Name__r.Name == &#39;Northern Ohio&#39;,True,False)</formula>
+            <template>unfiled$public/Spark_Lead_Assignment_Sample</template>
+        </ruleEntry>
+        <ruleEntry>
+            <assignedTo>Northwest</assignedTo>
+            <assignedToType>Queue</assignedToType>
+            <formula>IF(Lead_Region_Name__r.Name == &#39;Northwest&#39;,True,False)</formula>
+            <template>unfiled$public/Spark_Lead_Assignment_Sample</template>
+        </ruleEntry>
+        <ruleEntry>
+            <assignedTo>Ohio_North</assignedTo>
+            <assignedToType>Queue</assignedToType>
+            <formula>IF(Lead_Region_Name__r.Name == &#39;Ohio North&#39;,True,False)</formula>
+            <template>unfiled$public/Spark_Lead_Assignment_Sample</template>
+        </ruleEntry>
+        <ruleEntry>
+            <assignedTo>Ohio_South</assignedTo>
+            <assignedToType>Queue</assignedToType>
+            <formula>IF(Lead_Region_Name__r.Name == &#39;Ohio South&#39;,True,False)</formula>
+            <template>unfiled$public/Spark_Lead_Assignment_Sample</template>
+        </ruleEntry>
+        <ruleEntry>
+            <assignedTo>Pacific_Islands</assignedTo>
+            <assignedToType>Queue</assignedToType>
+            <formula>IF(Lead_Region_Name__r.Name == &#39;Pacific Islands&#39;,True,False)</formula>
+            <template>unfiled$public/Spark_Lead_Assignment_Sample</template>
+        </ruleEntry>
+        <ruleEntry>
+            <assignedTo>Penn_Jersey</assignedTo>
+            <assignedToType>Queue</assignedToType>
+            <formula>IF(Lead_Region_Name__r.Name == &#39;Penn Jersey&#39;,True,False)</formula>
+            <template>unfiled$public/Spark_Lead_Assignment_Sample</template>
+        </ruleEntry>
+        <ruleEntry>
+            <assignedTo>Puerto_Rico</assignedTo>
+            <assignedToType>Queue</assignedToType>
+            <formula>IF(Lead_Region_Name__r.Name == &#39;Puerto Rico&#39;,True,False)</formula>
+            <template>unfiled$public/Spark_Lead_Assignment_Sample</template>
+        </ruleEntry>
+        <ruleEntry>
+            <assignedTo>South_Carolina</assignedTo>
+            <assignedToType>Queue</assignedToType>
+            <formula>IF(Lead_Region_Name__r.Name == &#39;South Carolina&#39;,True,False)</formula>
+            <template>unfiled$public/Spark_Lead_Assignment_Sample</template>
+        </ruleEntry>
+        <ruleEntry>
+            <assignedTo>South_Florida</assignedTo>
+            <assignedToType>Queue</assignedToType>
+            <formula>IF(Lead_Region_Name__r.Name == &#39;South Florida&#39;,True,False)</formula>
+            <template>unfiled$public/Spark_Lead_Assignment_Sample</template>
+        </ruleEntry>
+        <ruleEntry>
+            <assignedTo>Penn_Jersey</assignedTo>
+            <assignedToType>Queue</assignedToType>
+            <formula>IF(Lead_Region_Name__r.Name == &#39;Southeastern Pennsylvania&#39;,True,False)</formula>
+            <template>unfiled$public/Spark_Lead_Assignment_Sample</template>
+        </ruleEntry>
+        <ruleEntry>
+            <assignedTo>Southern_California</assignedTo>
+            <assignedToType>Queue</assignedToType>
+            <formula>IF(Lead_Region_Name__r.Name == &#39;Southern California&#39;,True,False)</formula>
+            <template>unfiled$public/Spark_Lead_Assignment_Sample</template>
+        </ruleEntry>
+        <ruleEntry>
+            <assignedTo>Tennessee</assignedTo>
+            <assignedToType>Queue</assignedToType>
+            <formula>IF(Lead_Region_Name__r.Name == &#39;Tennessee&#39;,True,False)</formula>
+            <template>unfiled$public/Spark_Lead_Assignment_Sample</template>
+        </ruleEntry>
+        <ruleEntry>
+            <assignedTo>Texas_Gulf_Coast</assignedTo>
+            <assignedToType>Queue</assignedToType>
+            <formula>IF(Lead_Region_Name__r.Name == &#39;Texas Gulf Coast&#39;,True,False)</formula>
+            <template>unfiled$public/Spark_Lead_Assignment_Sample</template>
+        </ruleEntry>
+        <ruleEntry>
+            <assignedTo>Utah_Nevada</assignedTo>
+            <assignedToType>Queue</assignedToType>
+            <formula>IF(Lead_Region_Name__r.Name == &#39;Utah Nevada&#39;,True,False)</formula>
+            <template>unfiled$public/Spark_Lead_Assignment_Sample</template>
+        </ruleEntry>
+        <ruleEntry>
+            <assignedTo>Virginia</assignedTo>
+            <assignedToType>Queue</assignedToType>
+            <formula>IF(Lead_Region_Name__r.Name == &#39;Virginia&#39;,True,False)</formula>
+            <template>unfiled$public/Spark_Lead_Assignment_Sample</template>
+        </ruleEntry>
+        <ruleEntry>
+            <assignedTo>Western_New_York</assignedTo>
+            <assignedToType>Queue</assignedToType>
+            <formula>IF(Lead_Region_Name__r.Name == &#39;Western New York&#39;,True,False)</formula>
+            <template>unfiled$public/Spark_Lead_Assignment_Sample</template>
+        </ruleEntry>
+        <ruleEntry>
+            <assignedTo>Wisconsin</assignedTo>
+            <assignedToType>Queue</assignedToType>
+            <formula>IF(Lead_Region_Name__r.Name == &#39;Wisconsin&#39;,True,False)</formula>
+            <template>unfiled$public/Spark_Lead_Assignment_Sample</template>
+        </ruleEntry>
+        <ruleEntry>
+            <assignedTo>Alabama_Mississippi</assignedTo>
+            <assignedToType>Queue</assignedToType>
+            <criteriaItems>
+                <field>Lead.Region_Name__c</field>
+                <operation>equals</operation>
+                <value>Alabama Mississippi Region</value>
+            </criteriaItems>
+            <template>unfiled$public/Spark_Lead_Assignment_Sample</template>
+        </ruleEntry>
+        <ruleEntry>
+            <assignedTo>Arizona_New_Mexico</assignedTo>
+            <assignedToType>Queue</assignedToType>
+            <criteriaItems>
+                <field>Lead.Region_Name__c</field>
+                <operation>equals</operation>
+                <value>Arizona New Mexico Region</value>
+            </criteriaItems>
+            <template>unfiled$public/Spark_Lead_Assignment_Sample</template>
+        </ruleEntry>
+        <ruleEntry>
+            <assignedTo>California_Coastal</assignedTo>
+            <assignedToType>Queue</assignedToType>
+            <criteriaItems>
+                <field>Lead.Region_Name__c</field>
+                <operation>equals</operation>
+                <value>California Coastal Region</value>
+            </criteriaItems>
+            <template>unfiled$public/Spark_Lead_Assignment_Sample</template>
+        </ruleEntry>
+        <ruleEntry>
+            <assignedTo>California_Los_Angeles</assignedTo>
+            <assignedToType>Queue</assignedToType>
+            <criteriaItems>
+                <field>Lead.Region_Name__c</field>
+                <operation>equals</operation>
+                <value>California Los Angeles Region</value>
+            </criteriaItems>
+            <template>unfiled$public/Spark_Lead_Assignment_Sample</template>
+        </ruleEntry>
+        <ruleEntry>
+            <assignedTo>California_Quad_Counties</assignedTo>
+            <assignedToType>Queue</assignedToType>
+            <criteriaItems>
+                <field>Lead.Region_Name__c</field>
+                <operation>equals</operation>
+                <value>California Quad Counties Region</value>
+            </criteriaItems>
+            <template>unfiled$public/Spark_Lead_Assignment_Sample</template>
+        </ruleEntry>
+        <ruleEntry>
+            <assignedTo>Connecticut_Rhode_Island</assignedTo>
+            <assignedToType>Queue</assignedToType>
+            <criteriaItems>
+                <field>Lead.Region_Name__c</field>
+                <operation>equals</operation>
+                <value>Connecticut Rhode Island Region</value>
+            </criteriaItems>
+            <template>unfiled$public/Spark_Lead_Assignment_Sample</template>
+        </ruleEntry>
+        <ruleEntry>
+            <assignedTo>DC_Maryland_Deleware</assignedTo>
+            <assignedToType>Queue</assignedToType>
+            <criteriaItems>
+                <field>Lead.Region_Name__c</field>
+                <operation>equals</operation>
+                <value>DC Maryland and Delaware Region</value>
+            </criteriaItems>
+            <template>unfiled$public/Spark_Lead_Assignment_Sample</template>
+        </ruleEntry>
+        <ruleEntry>
+            <assignedTo>Eastern_New_York</assignedTo>
+            <assignedToType>Queue</assignedToType>
+            <criteriaItems>
+                <field>Lead.Region_Name__c</field>
+                <operation>equals</operation>
+                <value>Eastern New York Region</value>
+            </criteriaItems>
+            <template>unfiled$public/Spark_Lead_Assignment_Sample</template>
+        </ruleEntry>
+        <ruleEntry>
+            <assignedTo>Eastern_North_Carolina</assignedTo>
+            <assignedToType>Queue</assignedToType>
+            <criteriaItems>
+                <field>Lead.Region_Name__c</field>
+                <operation>equals</operation>
+                <value>Eastern North Carolina Region</value>
+            </criteriaItems>
+            <template>unfiled$public/Spark_Lead_Assignment_Sample</template>
+        </ruleEntry>
+        <ruleEntry>
+            <assignedTo>Georgia</assignedTo>
+            <assignedToType>Queue</assignedToType>
+            <criteriaItems>
+                <field>Lead.Region_Name__c</field>
+                <operation>equals</operation>
+                <value>Georgia Region</value>
+            </criteriaItems>
+            <template>unfiled$public/Spark_Lead_Assignment_Sample</template>
+        </ruleEntry>
+        <ruleEntry>
+            <assignedTo>Greater_Pennsylvania</assignedTo>
+            <assignedToType>Queue</assignedToType>
+            <criteriaItems>
+                <field>Lead.Region_Name__c</field>
+                <operation>equals</operation>
+                <value>Greater Alleghenies Region</value>
+            </criteriaItems>
+            <template>unfiled$public/Spark_Lead_Assignment_Sample</template>
+        </ruleEntry>
+        <ruleEntry>
+            <assignedTo>Greater_Carolinas</assignedTo>
+            <assignedToType>Queue</assignedToType>
+            <criteriaItems>
+                <field>Lead.Region_Name__c</field>
+                <operation>equals</operation>
+                <value>Greater Carolinas Region</value>
+            </criteriaItems>
+            <template>unfiled$public/Spark_Lead_Assignment_Sample</template>
+        </ruleEntry>
+        <ruleEntry>
+            <assignedTo>Idaho_Montana</assignedTo>
+            <assignedToType>Queue</assignedToType>
+            <criteriaItems>
+                <field>Lead.Region_Name__c</field>
+                <operation>equals</operation>
+                <value>Idaho Montana Region</value>
+            </criteriaItems>
+            <template>unfiled$public/Spark_Lead_Assignment_Sample</template>
+        </ruleEntry>
+        <ruleEntry>
+            <assignedTo>Illinois</assignedTo>
+            <assignedToType>Queue</assignedToType>
+            <criteriaItems>
+                <field>Lead.Region_Name__c</field>
+                <operation>equals</operation>
+                <value>Illinois Region</value>
+            </criteriaItems>
+            <template>unfiled$public/Spark_Lead_Assignment_Sample</template>
+        </ruleEntry>
+        <ruleEntry>
+            <assignedTo>Indiana</assignedTo>
+            <assignedToType>Queue</assignedToType>
+            <criteriaItems>
+                <field>Lead.Region_Name__c</field>
+                <operation>equals</operation>
+                <value>Indiana Region</value>
+            </criteriaItems>
+            <template>unfiled$public/Spark_Lead_Assignment_Sample</template>
+        </ruleEntry>
+        <ruleEntry>
+            <assignedTo>Kansas_Oklahoma</assignedTo>
+            <assignedToType>Queue</assignedToType>
+            <criteriaItems>
+                <field>Lead.Region_Name__c</field>
+                <operation>equals</operation>
+                <value>Kansas Oklahoma Region</value>
+            </criteriaItems>
+            <template>unfiled$public/Spark_Lead_Assignment_Sample</template>
+        </ruleEntry>
+        <ruleEntry>
+            <assignedTo>Kentucky</assignedTo>
+            <assignedToType>Queue</assignedToType>
+            <criteriaItems>
+                <field>Lead.Region_Name__c</field>
+                <operation>equals</operation>
+                <value>Kentucky Region</value>
+            </criteriaItems>
+            <template>unfiled$public/Spark_Lead_Assignment_Sample</template>
+        </ruleEntry>
+        <ruleEntry>
+            <assignedTo>Maine_New_Hampshire_Vermont</assignedTo>
+            <assignedToType>Queue</assignedToType>
+            <criteriaItems>
+                <field>Lead.Region_Name__c</field>
+                <operation>equals</operation>
+                <value>Maine New Hampshire and Vermont Region</value>
+            </criteriaItems>
+            <template>unfiled$public/Spark_Lead_Assignment_Sample</template>
+        </ruleEntry>
+        <ruleEntry>
+            <assignedTo>Massachusetts</assignedTo>
+            <assignedToType>Queue</assignedToType>
+            <criteriaItems>
+                <field>Lead.Region_Name__c</field>
+                <operation>equals</operation>
+                <value>Massachusetts Region</value>
+            </criteriaItems>
+            <template>unfiled$public/Spark_Lead_Assignment_Sample</template>
+        </ruleEntry>
+        <ruleEntry>
+            <assignedTo>Michigan</assignedTo>
+            <assignedToType>Queue</assignedToType>
+            <criteriaItems>
+                <field>Lead.Region_Name__c</field>
+                <operation>equals</operation>
+                <value>Michigan Region</value>
+            </criteriaItems>
+            <template>unfiled$public/Spark_Lead_Assignment_Sample</template>
+        </ruleEntry>
+        <ruleEntry>
+            <assignedTo>Minnesota_Dakotas</assignedTo>
+            <assignedToType>Queue</assignedToType>
+            <criteriaItems>
+                <field>Lead.Region_Name__c</field>
+                <operation>equals</operation>
+                <value>Minnesota Dakotas Region</value>
+            </criteriaItems>
+            <template>unfiled$public/Spark_Lead_Assignment_Sample</template>
+        </ruleEntry>
+        <ruleEntry>
+            <assignedTo>Missouri_Arkansas</assignedTo>
+            <assignedToType>Queue</assignedToType>
+            <criteriaItems>
+                <field>Lead.Region_Name__c</field>
+                <operation>equals</operation>
+                <value>Missouri Arkansas Region</value>
+            </criteriaItems>
+            <template>unfiled$public/Spark_Lead_Assignment_Sample</template>
+        </ruleEntry>
+        <ruleEntry>
+            <assignedTo>Nebraska_Iowa</assignedTo>
+            <assignedToType>Queue</assignedToType>
+            <criteriaItems>
+                <field>Lead.Region_Name__c</field>
+                <operation>equals</operation>
+                <value>Nebraska Iowa Region</value>
+            </criteriaItems>
+            <template>unfiled$public/Spark_Lead_Assignment_Sample</template>
+        </ruleEntry>
+        <ruleEntry>
+            <assignedTo>North_Texas</assignedTo>
+            <assignedToType>Queue</assignedToType>
+            <criteriaItems>
+                <field>Lead.Region_Name__c</field>
+                <operation>equals</operation>
+                <value>North Texas Region</value>
+            </criteriaItems>
+            <template>unfiled$public/Spark_Lead_Assignment_Sample</template>
+        </ruleEntry>
+        <ruleEntry>
+            <assignedTo>Northeastern_Pennsylvania</assignedTo>
+            <assignedToType>Queue</assignedToType>
+            <criteriaItems>
+                <field>Lead.Region_Name__c</field>
+                <operation>equals</operation>
+                <value>Northeastern Pennsylvania Region</value>
+            </criteriaItems>
+            <template>unfiled$public/Spark_Lead_Assignment_Sample</template>
+        </ruleEntry>
+        <ruleEntry>
+            <assignedTo>Ohio_North</assignedTo>
+            <assignedToType>Queue</assignedToType>
+            <criteriaItems>
+                <field>Lead.Region_Name__c</field>
+                <operation>equals</operation>
+                <value>Ohio North Region</value>
+            </criteriaItems>
+            <template>unfiled$public/Spark_Lead_Assignment_Sample</template>
+        </ruleEntry>
+        <ruleEntry>
+            <assignedTo>Ohio_South</assignedTo>
+            <assignedToType>Queue</assignedToType>
+            <criteriaItems>
+                <field>Lead.Region_Name__c</field>
+                <operation>equals</operation>
+                <value>Ohio South Region</value>
+            </criteriaItems>
+            <template>unfiled$public/Spark_Lead_Assignment_Sample</template>
+        </ruleEntry>
+        <ruleEntry>
+            <assignedTo>Oregon_Washington</assignedTo>
+            <assignedToType>Queue</assignedToType>
+            <criteriaItems>
+                <field>Lead.Region_Name__c</field>
+                <operation>equals</operation>
+                <value>Oregon Washington Region</value>
+            </criteriaItems>
+            <template>unfiled$public/Spark_Lead_Assignment_Sample</template>
+        </ruleEntry>
+        <ruleEntry>
+            <assignedTo>Penn_Jersey</assignedTo>
+            <assignedToType>Queue</assignedToType>
+            <criteriaItems>
+                <field>Lead.Region_Name__c</field>
+                <operation>equals</operation>
+                <value>Penn Jersey Region</value>
+            </criteriaItems>
+            <template>unfiled$public/Spark_Lead_Assignment_Sample</template>
+        </ruleEntry>
+        <ruleEntry>
+            <assignedTo>Puerto_Rico</assignedTo>
+            <assignedToType>Queue</assignedToType>
+            <criteriaItems>
+                <field>Lead.Region_Name__c</field>
+                <operation>equals</operation>
+                <value>Puerto Rico Region</value>
+            </criteriaItems>
+            <template>unfiled$public/Spark_Lead_Assignment_Sample</template>
+        </ruleEntry>
+        <ruleEntry>
+            <assignedTo>South_Carolina</assignedTo>
+            <assignedToType>Queue</assignedToType>
+            <criteriaItems>
+                <field>Lead.Region_Name__c</field>
+                <operation>equals</operation>
+                <value>South Carolina Region</value>
+            </criteriaItems>
+            <template>unfiled$public/Spark_Lead_Assignment_Sample</template>
+        </ruleEntry>
+        <ruleEntry>
+            <assignedTo>Tennessee</assignedTo>
+            <assignedToType>Queue</assignedToType>
+            <criteriaItems>
+                <field>Lead.Region_Name__c</field>
+                <operation>equals</operation>
+                <value>Tennessee Region</value>
+            </criteriaItems>
+            <template>unfiled$public/Spark_Lead_Assignment_Sample</template>
+        </ruleEntry>
+        <ruleEntry>
+            <assignedTo>Utah_Nevada</assignedTo>
+            <assignedToType>Queue</assignedToType>
+            <criteriaItems>
+                <field>Lead.Region_Name__c</field>
+                <operation>equals</operation>
+                <value>Utah Nevada Region</value>
+            </criteriaItems>
+            <template>unfiled$public/Spark_Lead_Assignment_Sample</template>
+        </ruleEntry>
+        <ruleEntry>
+            <assignedTo>Virginia</assignedTo>
+            <assignedToType>Queue</assignedToType>
+            <criteriaItems>
+                <field>Lead.Region_Name__c</field>
+                <operation>equals</operation>
+                <value>Virginia Region</value>
+            </criteriaItems>
+            <template>unfiled$public/Spark_Lead_Assignment_Sample</template>
+        </ruleEntry>
+        <ruleEntry>
+            <assignedTo>Western_New_York</assignedTo>
+            <assignedToType>Queue</assignedToType>
+            <criteriaItems>
+                <field>Lead.Region_Name__c</field>
+                <operation>equals</operation>
+                <value>Western New York Region</value>
+            </criteriaItems>
+            <template>unfiled$public/Spark_Lead_Assignment_Sample</template>
+        </ruleEntry>
+        <ruleEntry>
+            <assignedTo>Wisconsin</assignedTo>
+            <assignedToType>Queue</assignedToType>
+            <criteriaItems>
+                <field>Lead.Region_Name__c</field>
+                <operation>equals</operation>
+                <value>Wisconsin Region</value>
+            </criteriaItems>
+            <template>unfiled$public/Spark_Lead_Assignment_Sample</template>
+        </ruleEntry>
+        <ruleEntry>
+            <assignedTo>California_Coastal</assignedTo>
+            <assignedToType>Queue</assignedToType>
+            <criteriaItems>
+                <field>Lead.Region_Name__c</field>
+                <operation>equals</operation>
+                <value>Northern California Coastal Region</value>
+            </criteriaItems>
+            <template>unfiled$public/Spark_Lead_Assignment_Sample</template>
+        </ruleEntry>
+        <ruleEntry>
+            <assignedTo>Oregon_Washington</assignedTo>
+            <assignedToType>Queue</assignedToType>
+            <criteriaItems>
+                <field>Lead.Region_Name__c</field>
+                <operation>equals</operation>
+                <value>Northwest Region</value>
+            </criteriaItems>
+            <template>unfiled$public/Spark_Lead_Assignment_Sample</template>
+        </ruleEntry>
+    </assignmentRule>
+</AssignmentRules>

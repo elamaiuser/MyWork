@@ -1,0 +1,7 @@
+.event-type-indicator {
+  display: block;
+  width: .5rem;
+  height: .5rem;
+  border-radius: 50%;
+  margin-bottom: 1px;
+}

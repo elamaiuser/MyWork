@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Account_name_is_not_editable</fullName>
+    <active>true</active>
+    <errorConditionFormula>AND(NOT(ISNULL(PRIORVALUE(AccountId))),ISCHANGED(AccountId))</errorConditionFormula>
+    <errorMessage>Can&#39;t Associating Opportunity to Different Account</errorMessage>
+</ValidationRule>

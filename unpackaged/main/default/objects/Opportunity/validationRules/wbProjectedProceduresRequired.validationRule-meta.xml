@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>wbProjectedProceduresRequired</fullName>
+    <active>true</active>
+    <errorConditionFormula>AND(ISBLANK(WB_Projected_Procedures__c
+) , 
+OR(
+ISPICKVAL(StageName, &quot;Committed&quot;),
+ ISPICKVAL(StageName, &quot;Closed&quot;)))</errorConditionFormula>
+    <errorDisplayField>WB_Projected_Procedures__c</errorDisplayField>
+    <errorMessage>WB Projected procedures is required, if Stage is committed or Closed</errorMessage>
+</ValidationRule>

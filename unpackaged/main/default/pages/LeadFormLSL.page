@@ -1,0 +1,573 @@
+<apex:page controller="LeadFormLSLCon" docType="html-5.0" showHeader="false" applyHtmlTag="false" applyBodyTag="false" standardStylesheets="false" sidebar="false" >
+	
+	<html lang="en">
+    <head>
+	    
+        <!-- Google Tag Manager from BOL -->
+        <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+        new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+            j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+                'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+        })(window,document,'script','dataLayer','GTM-KXG3ZL');</script>
+        <!-- End Google Tag Manager -->
+        
+        
+        <meta charset="utf-8" />
+        <title>Blood Drive Sponsor Inquiry</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        
+        
+        <META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=UTF-8"/>
+        <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet" />
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+		
+
+        <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+        <!--[if newLead. IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+        <![endif]-->
+        
+        <!--jQuery for Adobe DTM-->
+        <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+		<script type="text/javascript">$dtm = jQuery.noConflict(true);</script>
+        
+        
+        <!--Adobe DTM Tag-->
+        <apex:outputPanel rendered="{!isSandbox}">
+           <script src="//assets.adobedtm.com/f803a962467fbf3943542ba11161bda1a485095b/satelliteLib-ed5d62a51f2d0edb2a0c8b40f90d5f389f69cc4a-staging.js" />
+		</apex:outputPanel>
+        <apex:outputPanel rendered="{!NOT(isSandbox)}">
+            <script src="//assets.adobedtm.com/f803a962467fbf3943542ba11161bda1a485095b/satelliteLib-ed5d62a51f2d0edb2a0c8b40f90d5f389f69cc4a.js" />
+        </apex:outputPanel>
+          
+        
+        
+        <style type="text/css">
+        body{
+        	font-size:10pt;
+        }
+
+		.form-control{
+            color:black;
+            font-weight:bolder;
+        }
+            
+        @media (max-width: 480px) { 
+	    	.container{
+	    		padding-left:1;
+	    	}
+	    }
+
+	    @media (min-width: 481px) { 
+			.container {
+		      padding-left:0;
+		  	}
+	    }
+
+	    .col-xs-6, .col-sm-12{
+	    	padding-bottom: 10px;
+	    }
+
+	    .visible{
+	    	visibility: visible;
+	    }
+
+	    .hidden{
+	    	visibility: hidden;
+	    }
+
+	    input.error{
+		  border: 2px solid red;
+		}
+
+		select.error{
+		  border: 2px solid red;
+		}
+
+		.error{
+			color: red;
+		  	font-weight: bold;
+		}
+        </style>
+
+
+		<!--Recaptcha -->
+		<script src='https://www.google.com/recaptcha/api.js' />
+		<script>
+		var onloadCallback = function() {
+            //grecaptcha.render('reCaptcha', {'sitekey' : '6Ldfjz4jAAAAAOM_VTVHUd-GjHvKDuAph0FdvXlp'});
+		    grecaptcha.render('reCaptcha', {'sitekey' : {!siteKey}});
+		};
+		</script>
+
+
+        
+    </head>
+    <body>
+        
+		<!-- Google Tag Manager (noscript) from BOL -->
+    	<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-KXG3ZL" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+        <!-- End Google Tag Manager (noscript) -->
+            
+            
+
+		<apex:form id="webForm">
+
+			<apex:pageMessages />
+
+
+			<apex:outputPanel id="mainPanel" rendered="{!showForm}">
+
+				<div class="container">
+		
+					<apex:actionRegion >						
+						
+
+
+						<apex:outputPanel id="zipPanel" rendered="{! NOT(validZip) || NOT(areaServed) }" >
+							<div class="form-horizontal well">
+								
+                                <legend>Let's get started. </legend>
+                                For security purposes, please verify that you are a real-life person before completing this form.
+                            
+                                <fieldset>
+                            
+									<div class ="captcha-group">
+
+                                		<!-- Recaptcha --> 
+                                		<div align="center" id = "reCaptcha" class="col-xs-7 g-recaptcha" data-sitekey="{!siteKey}"></div>
+                               		  
+                                    </div>
+                                 </fieldset>
+                                		
+                                <br/>
+                                <br/>
+                                <br/>
+                                
+								<legend>Now, please enter your zip code to begin.</legend>
+					    		
+					    		<fieldset>
+
+						    		<div class="form-group">
+
+						    			<label for="zipCode" class="col-xs-2 control-label">Zip Code</label>
+										
+										<!-- hidden field for Google Tag Manager to insert external campaign id value via javascript -->    
+										<apex:inputHidden id="cmpId" value="{!cmpId}"/>
+
+                                        <!-- ******Updates by Ivo 1/22/19********** -->
+                                         <apex:inputHidden id="cidId" value="{!cidId}"/>
+                                         <apex:inputHidden id="medId" value="{!medId}"/>
+                                         <apex:inputHidden id="sourceId" value="{!sourceId}"/>                                           
+                                         <!-- ****************************   -->
+                                         <apex:inputHidden id="did" value="{!did}"/>                                           
+
+
+										<div class="col-xs-3">
+											<apex:inputField id="zipCode" 
+												value="{!newLead.PostalCode}" 
+												styleClass="form-control zipField" 
+												required="true"
+											/>
+										</div>
+                                            
+                                             
+										<div class="col-xs-2">
+											<apex:commandButton id="zipBtn" styleClass="btn btn-danger btn-sm" action="{!validateZipcode}" reRender="mainPanel" status="zipStatus" value="Next" oncomplete="onloadCallback();" />
+											<!--<apex:actionStatus startText="      Checking zip code..." id="zipStatus"/>-->
+										</div>
+
+									</div> 
+										
+									<!-- Zip Code Look-up Success or Error Notifications --> 
+
+									<apex:outputPanel id="invalidZip" rendered="{! NOT(validZip)}">
+										<div class="row">
+											<div class="alert alert-danger" role="alert">
+												  <p>The zip code entered is not valid. Please enter a valid 5-digit zip code.</p>
+											</div>
+										</div>
+									</apex:outputPanel>
+
+									
+									<apex:outputPanel id="zipFound" rendered="{!validZip && areaServed}">
+							        	<div class="alert alert-success">
+										  <!--<strong>The Red Cross collects blood in <b>{!territory.City__c}, {!territory.State_Code__c}</b>.</strong>		-->
+										  	<p><b>Let’s get started!</b><br/>
+											Great News - {!territory.City__c} is a proud blood collecting area serviced by an American Red Cross Blood Region. Now, let’s collect a little information about you to get you started!
+											</p>
+										</div>
+							        </apex:outputPanel> 
+									
+														
+									<!-- Zip Code is NOT in a service area -->
+									<apex:outputPanel id="noService" rendered="{! newLead.PostalCode != null && validZip && NOT(areaServed)&& passedCaptcha = true}">
+										<c:LeadFormNonServiceArea />
+							        </apex:outputPanel>
+					
+                                    <!-- Captcha Errors -->        
+                                    <apex:outputPanel id="noCaptcha" rendered="{!  passedCaptcha = false && captchaMsg = True}">
+                    					 <div class="alert alert-danger" role="alert">
+                           				 <p class="mb-0">To help prevent spam, please confirm you are not a robot.</p>
+                                       
+                      						</div>
+             						</apex:outputPanel>
+							       
+								</fieldset>
+							</div>
+						</apex:outputPanel>
+							
+
+				        <apex:outputPanel id="leadForm" rendered="{!areaServed}">
+				        	
+
+
+				        	<apex:messages />
+
+							<div class="form-horizontal well">
+			    				<fieldset>
+
+
+			    					<apex:outputPanel id="errors" rendered="{!hasValidationErrors}">
+				    					<div class="alert alert-danger">
+										  	
+										  	<h2>Please correct the problems in <font color="red">red</font> below and then click <b>Save</b>.</h2>
+										  	<!--
+										  	<ul>
+											  <apex:repeat value="{!validationErrors}" var="errMsg">
+											  	<li><apex:outputText value="{!errMsg}"/></li>
+											  </apex:repeat>
+											</ul>
+											-->
+
+										</div>
+				    				</apex:outputPanel>
+
+
+				    				
+				        			<div class="row">
+				        				<div class="col-md-12"><span class="pull-right required">* Required fields</span></div>
+				        			</div>
+
+
+			    					<div class="row">
+
+						        		<div class="col-xs-6">
+						        			<label for="firstName">First Name *</label>
+						        			<apex:inputText id="firstName" value="{!firstName}" styleClass="{!IF(validFirstName,'form-control','form-control error')}" />
+						        			<apex:outputText rendered="{!NOT(validFirstName)}"><span class="error">Please enter your first name</span></apex:outputText>
+						        		</div>
+						    			
+						    			<div class="col-xs-6">
+						    				<label for="lastName">Last Name * </label>
+						    				<apex:inputText id="lastName" value="{!lastName}" styleClass="{!IF(validLastName,'form-control','form-control error')}" />
+						    				<apex:outputText rendered="{!NOT(validLastName)}"><span class="error">Please enter your last name</span></apex:outputText>
+						    			</div>
+						    		</div>
+
+
+
+
+						    		<div class="row">
+
+						    			<div class="col-xs-6">
+											<label for="ageGroup">Age Group * </label>
+											<apex:inputField value="{!newLead.Age_Group__c}" id="ageGroup" styleClass="{!IF(validAgeGroup,'form-control','form-control error')}" />
+											<apex:outputText rendered="{!NOT(validAgeGroup)}"><span class="error">Please select an Age Group</span></apex:outputText>
+										</div>
+										<div class="col-xs-6">
+						    				<label for="email">Email Address * </label>
+						    				<apex:inputText id="email" value="{!email}" styleClass="{!IF(validEmail,'form-control','form-control error')}" html-placeholder="your.name@here.com" />
+						    				<apex:outputText rendered="{!NOT(validEmail)}"><span class="error">Please enter your Email address</span></apex:outputText>
+						    			</div>
+
+						    		</div>
+
+
+						    		<div class="row">
+						    			<div class="col-xs-6">
+							    			<label for="phone">Phone Number * </label>
+							    			<apex:input type="tel" id="phone" value="{!phone}" styleClass="{!IF(validPhone,'form-control','form-control error')}" html-placeholder="999-888-7777" />
+							    			<apex:outputText rendered="{!NOT(validPhone)}"><span class="error">Please enter a Phone Number</span></apex:outputText>
+							    		</div>	
+							    		<div class="col-xs-6">
+							    			<label for="phoneType">Phone Type * </label>
+        <apex:inputField id="phoneType" value="{!newLead.Phone_Type__c}" styleClass="{!IF(validPhoneType,'form-control','form-control error')}"  />
+        <apex:outputText rendered="{!NOT(validPhoneType)}"><span class="error">Please pick valid Phone Type</span></apex:outputText>							    		</div>
+						    		</div>
+
+
+
+						    		<div class="row">
+
+							    		<div class="col-xs-6">
+						            		<label for="city">City</label>
+						            		<apex:outputText id="city" value="{!newLead.City}" styleClass="form-control" />
+						            	</div>
+						            	<div class="col-xs-6">
+						            		<label for="state">State * </label>
+						            		<apex:inputField id="stateCode" value="{!newLead.StateCode}" styleClass="form-control" />
+						            	</div>
+						            	
+
+							    	</div>
+
+
+							    	
+									<div class="row">
+						            	
+						            	<div class="col-xs-6">
+											<label for="countryCode">Country</label>
+											<apex:inputField id="countryCode" value="{!newLead.CountryCode}" styleClass="form-control" />
+										</div>
+ 										<div class="col-xs-6">
+				    						<label for="referrer">How did you hear about hosting the Leaders Save Lives program?</label>
+											<apex:inputField id="referrer" value="{!newLead.Referrer__c}" styleClass="form-control" />
+										
+                                        </div>                                           
+
+							    	</div>
+
+							    	<div class="row">
+							    		
+                                        <div class="col-xs-6">
+                                         <label>Please enter Referrer Name:</label>
+											<apex:inputField id="referrerName" value="{!newLead.Referrer_s_Name__c}" styleClass="form-control"/> 
+     									</div>
+										<div class="col-xs-6">		
+											<label for="studentType">Are you a High School Student or College Student? * </label>
+											<apex:inputField id="studentType" value="{!newLead.Student_Type__c}" styleClass="{!IF(validStudentType,'form-control','form-control error')}" required="true" />
+											<apex:outputText rendered="{!NOT(validStudentType)}"><span class="error">Please select a value</span></apex:outputText>
+										</div>
+							    	</div>
+
+
+						    		<div class="row">
+
+						    			
+						    			<div class="col-xs-6">
+											<label for="companyName">School/Instituition Name *</label>
+											<apex:inputText value="{!companyName}" id="companyName" styleClass="{!IF(validCompanyName,'form-control','form-control error')}" />
+											<apex:outputText rendered="{!NOT(validCompanyName)}"><span class="error">Please enter a company name</span></apex:outputText>
+										</div>
+										<div class="col-xs-6">		
+											<label for="currentDonor">Are you currently a blood donor? * </label>
+											<apex:inputField id="currentDonor" value="{!newLead.Current_Blood_Donor__c}" styleClass="{!IF(validCurrentDonor,'form-control','form-control error')}" required="true" />
+											<apex:outputText rendered="{!NOT(validCurrentDonor)}"><span class="error">Please select a value</span></apex:outputText>
+										</div>
+
+						    		</div>
+
+
+						    		
+
+
+									<div class="row">
+			    						<div class="col-xs-6">
+				    						<label for="corpPastDrives">Have you hosted a Leader Saves Lives (LSL) or non-LSL blood drive with the Red Cross before? *</label>
+				    						<apex:inputField id="corpPastDrives" value="{!newLead.Hosted_Before__c}" styleClass="{!IF(validHostedBefore,'form-control','form-control error')}" />
+				    						<apex:outputText rendered="{!NOT(validHostedBefore)}"><span class="error">Please select a value</span></apex:outputText>
+				    					</div>
+					    				
+				    					<div class="col-xs-6">
+				    						<label for="corpOtherRel">Do you have a relationship with any other lines of service with the Red Cross?</label>
+				    						<apex:inputField id="corpOtherRel" value="{!newLead.Other_Redcross_Relationships__c}" styleClass="form-control"/>
+				    					</div>
+				    				</div>
+
+
+				    				<div class="row">
+
+										<div class="col-xs-6">
+				    						<label for="corpPersonalStory">Do you have a reason or personal story that motivated you to host this blood drive? * </label>
+				    						<apex:inputField id="corpPersonalStory" value="{!newLead.Has_Personal_Story__c}" styleClass="{!IF(validPersonalStory,'form-control','form-control error')}" />
+				    						<apex:outputText rendered="{!NOT(validPersonalStory)}"><span class="error">Please select a value</span></apex:outputText>
+				    					</div>
+
+				    				</div>
+
+										
+                                                        
+                                                        
+                                               
+				    				<div class="row">
+										<div class="col-xs-12">
+						            		<label for="comments">Please share your personal story and any additional comments?</label>
+						            		<apex:inputField id="comments" value="{!newLead.Comments__c}" styleClass="form-control" />
+						            	</div>
+				    				</div>
+
+
+
+				    			</fieldset>
+				    		</div>
+
+							<div class="row">
+								<div class="col-sm-12 text-center">
+                                     <!-- Updated by Ivo 1-21-19 onclick="this.onclick=function(){return false;}" -->                                                                         
+								    <apex:commandButton action="{!saveLead}" value="Submit" styleClass="btn btn-danger btn-lg" onclick="this.onclick=function(){return false;}" />
+							    </div>
+					        </div>
+
+
+				        </apex:outputPanel>
+
+					</apex:actionRegion>
+				</div>
+
+			</apex:outputPanel>
+
+		</apex:form>
+				
+		<!-- /Adobe tag -->
+        <script type="text/javascript">_satellite.pageBottom();</script>
+
+		<!-- Adobe Campaign Tracking -->
+        <script type="text/javascript">
+        window.addEventListener('message', function(event) {
+            if (event.origin === "https://www.redcrossblood.org"
+                || event.origin === "https://stage.redcrossblood.org"
+                || event.origin === "https://stage-www.redcrossblood.org"
+                || event.origin === "https://m.redcrossblood.org"
+                || event.origin === "https://redcross.demdex.net"
+                || event.origin === "https://biosf--test.sandbox.my.salesforce-sites.com"
+                || event.origin === "https://biosf.my.salesforce-sites.com"){
+                
+			try{               
+
+                let params = (new URL(event.data)).searchParams;
+
+                //let params = new URLSearchParams(window.location.search);
+
+                //HRP 11743- trim string 
+
+                var cidUpdated = params.get('cid');
+
+                console.log("cidUpdated: " + params.get('cid'));
+ 
+                const cid = params.get('cid')
+
+                const med = params.get('med')
+
+                const source = params.get('source')
+
+                const scode = params.get('scode')
+
+                const campdesc = params.get('campdesc')
+
+                const did = params.get('did')
+
+                const bid = params.get('bid')
+
+                const subj = params.get('subj')
+
+                const prty = params.get('prty')
+
+                const nat = params.get('prty')
+
+                const prod = params.get('prod')
+
+                const send = params.get('send')
+
+                const delvid = params.get('delvid')
+ 
+                console.log("Cid: " + cid);
+
+                console.log("Med: " + med);
+
+                console.log("Source: " + source);
+
+                console.log("Scode: " + scode);
+
+                console.log("Campdesc: " + campdesc);
+
+                console.log("did: " + did);
+
+                console.log("bid: " + bid);
+
+                console.log("subj: " + subj);
+
+                console.log("prty: " + prty);
+
+                console.log("nat: " + nat);
+
+                console.log("prod: " + prod);
+
+                console.log("send: " + send);
+
+                console.log("Delvid: " + delvid);
+ 
+                if (cid != '')
+
+                    jQuery('input[id$=cidId]').val(cid);
+
+                if (med != '')
+
+                    jQuery('input[id$=medId]').val(med);
+
+                if (source != '')
+
+                    jQuery('input[id$=sourceId]').val(source);
+
+                if (campdesc != '')
+
+                    jQuery('input[id$=cmpId]').val(campdesc);
+
+                if (did != '')
+
+                    jQuery('input[id$=did]').val(did);
+
+                if (bid != '')
+
+                    jQuery('input[id$=bid]').val(bid);
+
+                if (subj != '')
+
+                    jQuery('input[id$=subj]').val(subj);
+
+                if (prty != '')
+
+                    jQuery('input[id$=prty]').val(prty);
+
+                if (nat != '')
+
+                    jQuery('input[id$=nat]').val(nat);
+
+                if (prod != '')
+
+                    jQuery('input[id$=prod]').val(prod);
+
+                if (send != '')
+
+                    jQuery('input[id$=send]').val(send);
+
+                if (delvid != '')
+
+                    jQuery('input[id$=delvid]').val(delvid);
+           
+                //only accept messages from appropriate senders
+                console.log('Supported origin: ' + event.origin); // comment later
+            }
+            catch(e){
+               console.log(e);
+            } 
+           }else {
+                console.log('Unsupported orgin: ' + event.origin);  // comment later  
+                return;
+            }
+            
+
+            
+        });
+        </script>
+
+	</body>
+</html>
+
+
+
+
+</apex:page>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Bypass_Validation_Rule__c</fullName>
+    <defaultValue>false</defaultValue>
+    <description>This checkbox field allows bypassing validation rules for Processes, on Opportunity.  It is by default unchecked and also not shown on the Page Layout.  Use Case:  There is a requirement that only a DRD user or System Admin can edit the Close Date.  This is enforced via a validation rule.  However, we need to bypass this validation rule to allow the system to update the Close Date based on a Drive Date which is done via a Process Builder.</description>
+    <externalId>false</externalId>
+    <label>Bypass Validation Rule</label>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Checkbox</type>
+</CustomField>

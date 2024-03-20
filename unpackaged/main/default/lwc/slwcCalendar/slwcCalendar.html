@@ -1,0 +1,107 @@
+<template>
+  <c-slwc-calendar-legend
+    metadata={metadata}
+    config-data={configData}
+  >
+  </c-slwc-calendar-legend>
+  <div style={customStyle.layoutTableWrapper}>
+    <table
+      class="hco-rac-layout-table"
+      style={customStyle.layoutTable}
+    >
+      <tr
+        class="hco-rac-data-header-table"
+        style={customStyle.headerTable}
+      >
+        <td
+          class="hco-rac-layout-table__cell cell-left cell-left_timezone"
+          style={customStyle.cellLeft}
+        >
+          <div
+            class="timeslot__header timezone slds-p-horizontal_small slds-p-vertical_x-small"
+            style={customStyle.timeslotTimezone}
+          >
+            {timezone}
+          </div>
+        </td>
+        <template for:each={calendarDays} for:item="day">
+          <td
+            key={day.dateIso} 
+            class={day.class}
+            style={customStyle.dayColumn}
+          >
+            <div class="slds-text-heading_medium">
+              <lightning-formatted-date-time value={day.date} day="numeric">
+              </lightning-formatted-date-time>
+            </div>
+            <div class="slds-text-color_inverse-weak slds-text-body_small slds-line-height_reset">
+              <lightning-formatted-date-time value={day.date} weekday="short">
+              </lightning-formatted-date-time>
+            </div>
+
+            <div class="holiday-indicator" if:true={day.hasHolidays}></div>
+          </td>
+        </template>
+      </tr>
+      <tr>
+        <td
+          class="hco-rac-layout-table__cell cell-left"
+          style={customStyle.cellLeft}
+        >
+          <div
+            class="timeslot__items"
+            style={customStyle.timeslots}
+          >
+            <ul>
+              <template for:each={timeslots} for:item="slot">
+                <li
+                  key={slot.key}
+                  style={customStyle.timeslot}>
+                  <span 
+                    if:true={slot.shown}
+                    class={slot.class}>{slot.name}</span>
+                </li>
+              </template>
+            </ul>
+          </div>
+          </td>
+        <td colspan={calendarDays.length} style="position: relative;">
+          <div class="hco-rac-data-content-wrapper">
+            <div
+              style={customStyle.dataContentContainer}
+              class="hco-rac-data-content-container individual-resource"
+            >
+              <c-slwc-calendar-drag
+                if:true={allowSelectTimes}
+                grid-render-settings={gridRenderSettings}
+                calendar-days={calendarDays}
+                timeslots={timeslots}
+              >
+                <ul slot="content" class="hco-rac-data-content-list">
+                  <template for:each={calendarDays} for:item="day">
+                    <li
+                      key={day.dateIso}
+                      class={day.class}
+                      style={customStyle.dayColumn}>
+                        <template for:each={day.allEvents} for:item="record">
+                          <span key={record.id}>
+                            <c-slwc-calendar-card 
+                              key={record.id}  
+                              record={record} timeslot-data={record.timeslotData} 
+                              settings={settings}
+                              metadata={metadata}
+                              config-data={configData}>
+                            </c-slwc-calendar-card>
+                          </span>
+                        </template>
+                    </li>
+                  </template>
+                </ul>
+              </c-slwc-calendar-drag>
+            </div>
+          </div>
+        </td>
+      </tr>
+    </table>
+  </div>
+</template>

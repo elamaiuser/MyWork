@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Queue xmlns="http://soap.sforce.com/2006/04/metadata">
+    <doesSendEmailToMembers>true</doesSendEmailToMembers>
+    <name>Greater Carolinas Lead Queue</name>
+    <queueMembers>
+        <users>
+            <user>ashley.gantt@redcross.org.biomed</user>
+            <user>ayesha.pratt@redcross.org.biomed</user>
+            <user>denise.brookie@redcross.org.biomed</user>
+            <user>donna.ehrlich@redcross.org.biomed</user>
+            <user>heather.pensule2@redcross.org.biomed</user>
+            <user>hope.martin@redcross.org</user>
+            <user>julie.farr@redcross.org.biomed</user>
+            <user>kathy.harper@redcross.org.biomed</user>
+            <user>kirsten.oakes@redcross.org.biomed</user>
+            <user>lynn.wilkes@redcross.org.biomed</user>
+            <user>rebecca.cummings@redcross.org.biomed</user>
+            <user>tabitha.bagwell@redcross.org.biomed</user>
+        </users>
+    </queueMembers>
+    <queueSobject>
+        <sobjectType>Lead</sobjectType>
+    </queueSobject>
+</Queue>

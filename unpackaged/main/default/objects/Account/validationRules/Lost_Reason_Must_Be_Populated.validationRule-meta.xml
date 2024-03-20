@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Lost_Reason_Must_Be_Populated</fullName>
+    <active>true</active>
+    <description>If the &quot;Status&quot; field picklist value is &quot;Lost,&quot; the &quot;Lost Reason&quot; field must be populated.</description>
+    <errorConditionFormula>ISPICKVAL(Account_Status__c, &quot;Lost&quot;) &amp;&amp; 
+ISBLANK( TEXT( Lost_Reason__c )) &amp;&amp;
+$Profile.Name != &#39;System Administrator&#39;</errorConditionFormula>
+    <errorDisplayField>Lost_Reason__c</errorDisplayField>
+    <errorMessage>If the Account Status is &quot;Lost,&quot; you must provide a Lost Reason.</errorMessage>
+</ValidationRule>

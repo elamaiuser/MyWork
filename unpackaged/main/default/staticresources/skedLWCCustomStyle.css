@@ -1,0 +1,130 @@
+.color-white {
+  color: #fff;
+}
+
+.color-default-text {
+  color: #16325c;
+}
+
+.background-red {
+  background-color: #d23331;
+}
+
+.background-green {
+  background-color: #59b66e;
+}
+.color-error{
+  color:  #d23331
+}
+.show-exception{
+  right: 8px;
+}
+.hide-exception .slds-icon-utility-info{
+    display:none !important;
+}
+
+.background-gray {
+  background-color: #99a0b2;
+}
+.background-red-light.important {
+  background-color: #d23331aa !important;
+}
+
+.background-green-light.important {
+  background-color: #59b66eaa !important;
+}
+
+.background-gray-light.important {
+  background-color: #99a0b2aa !important;
+}
+
+.background-yellow-light.important {
+  background-color: #f1d92daa !important;
+}
+.background-red-super-light.important {
+  background-color: #d2333155 !important;
+}
+
+.background-green-super-light.important {
+  background-color: #59b55e55 !important;
+}
+.background-blue-super-light.important {
+  background-color: #1d92d255 !important;
+}
+.background-gray-super-light.important {
+  background-color: #99a0b255 !important;
+}
+
+.background-yellow-super-light.important {
+  background-color: #f1d92d55 !important;
+}
+.background-yellow {
+  background-color: #f1d92d;
+}
+
+.background-orange {
+  background-color: #f1872d;
+}
+
+.background-blue {
+  background-color: #1d92d2;
+}
+
+.background-purple {
+  background-color: #7752ad;
+}
+
+.color-white.important {
+  color: #fff !important;
+}
+
+.background-red.important {
+  background-color: #d23331 !important;
+}
+
+.background-green.important {
+  background-color: #59b66e !important;
+}
+
+.background-gray.important {
+  background-color: #99a0b2 !important;
+}
+
+.background-yellow.important {
+  background-color: #f1d92d !important;
+}
+
+.background-orange.important {
+  background-color: #f1872d !important;
+}
+
+.background-blue.important {
+  background-color: #1d92d2 !important;
+}
+
+.background-purple.important {
+  background-color: #7752ad !important;
+}
+
+.transparent-combobox .slds-combobox__input {
+  background: transparent !important;
+  border: 0 !important;
+  outline: 0 !important;
+  box-shadow: none !important;
+  padding-right: 0.25rem !important;
+  padding-left: 0.25rem !important;
+  text-align: center;
+  cursor: pointer;
+}
+
+.transparent-combobox .slds-combobox__input:disabled {
+  cursor: not-allowed;
+}
+
+.transparent-combobox .slds-listbox__option_plain {
+  color: initial !important;
+}
+
+.transparent-combobox .slds-input__icon-group {
+  display: none;
+}

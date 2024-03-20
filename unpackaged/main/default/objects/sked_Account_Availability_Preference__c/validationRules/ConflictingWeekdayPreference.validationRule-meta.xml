@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>ConflictingWeekdayPreference</fullName>
+    <active>true</active>
+    <errorConditionFormula>OR (
+AND (INCLUDES(sked_Preferred_Weekdays__c, &#39;Sunday&#39;), INCLUDES(sked_Restricted_Weekdays__c, &#39;Sunday&#39;)),
+AND (INCLUDES(sked_Preferred_Weekdays__c, &#39;Monday&#39;), INCLUDES(sked_Restricted_Weekdays__c, &#39;Monday&#39;)),
+AND (INCLUDES(sked_Preferred_Weekdays__c, &#39;Tuesday&#39;), INCLUDES(sked_Restricted_Weekdays__c, &#39;Tuesday&#39;)),
+AND (INCLUDES(sked_Preferred_Weekdays__c, &#39;Wednesday&#39;), INCLUDES(sked_Restricted_Weekdays__c, &#39;Wednesday&#39;)),
+AND (INCLUDES(sked_Preferred_Weekdays__c, &#39;Thursday&#39;), INCLUDES(sked_Restricted_Weekdays__c, &#39;Thursday&#39;)),
+AND (INCLUDES(sked_Preferred_Weekdays__c, &#39;Friday&#39;), INCLUDES(sked_Restricted_Weekdays__c, &#39;Friday&#39;)),
+AND (INCLUDES(sked_Preferred_Weekdays__c, &#39;Saturday&#39;), INCLUDES(sked_Restricted_Weekdays__c, &#39;Saturday&#39;))
+)</errorConditionFormula>
+    <errorMessage>Conflicting Weekday Preference</errorMessage>
+</ValidationRule>

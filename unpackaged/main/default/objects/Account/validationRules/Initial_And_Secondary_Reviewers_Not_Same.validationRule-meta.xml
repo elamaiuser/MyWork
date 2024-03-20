@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Initial_And_Secondary_Reviewers_Not_Same</fullName>
+    <active>true</active>
+    <description>At least one of the fields has to be populated before we check if they are equal/the same.</description>
+    <errorConditionFormula>AND(
+OR(NOT(ISBLANK(Initial_Reviewer__r.Id)),
+NOT(ISBLANK(Secondary_Reviewer__r.Id))),
+Initial_Reviewer__r.Id = Secondary_Reviewer__r.Id)</errorConditionFormula>
+    <errorMessage>Initial Reviewer and Secondary Reviewer cannot be the same person.</errorMessage>
+</ValidationRule>

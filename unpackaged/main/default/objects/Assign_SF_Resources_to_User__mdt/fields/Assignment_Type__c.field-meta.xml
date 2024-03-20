@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Assignment_Type__c</fullName>
+    <description>Determines the type of assignment</description>
+    <externalId>false</externalId>
+    <fieldManageability>DeveloperControlled</fieldManageability>
+    <label>Assignment Type</label>
+    <required>true</required>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Permission Set</fullName>
+                <default>true</default>
+                <label>Permission Set</label>
+            </value>
+            <value>
+                <fullName>Public Group</fullName>
+                <default>false</default>
+                <label>Public Group</label>
+            </value>
+            <value>
+                <fullName>Queue</fullName>
+                <default>false</default>
+                <label>Queue</label>
+            </value>
+            <value>
+                <fullName>User Type</fullName>
+                <default>false</default>
+                <label>User Type</label>
+            </value>
+            <value>
+                <fullName>Package License</fullName>
+                <default>false</default>
+                <label>Package License</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

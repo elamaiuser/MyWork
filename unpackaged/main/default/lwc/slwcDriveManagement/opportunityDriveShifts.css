@@ -1,0 +1,13 @@
+.slds-docked-form-footer {
+    position: sticky;
+    position: -webkit-sticky;
+    bottom: 0;
+    margin-left: -0.75rem;
+    margin-right: -0.75rem;
+    margin-bottom: -0.5rem;
+    width: auto !important;
+}
+
+.slds-page-header__detail-block {
+    max-width:200px; padding-right: 0px;
+}

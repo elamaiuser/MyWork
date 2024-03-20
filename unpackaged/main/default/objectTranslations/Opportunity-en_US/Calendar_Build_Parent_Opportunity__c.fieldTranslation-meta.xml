@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+        <label><!-- Calendar Build Parent Opportunity --></label>
+        <name>Calendar_Build_Parent_Opportunity__c</name>
+        <relationshipLabel><!-- Blood Drive Opportunities (Calendar Build Parent Opportunity) --></relationshipLabel>
+    </CustomFieldTranslation>

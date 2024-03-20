@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomMetadata xmlns="http://soap.sforce.com/2006/04/metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <label>Asset CRUD - Global Admin</label>
+    <protected>false</protected>
+    <values>
+        <field>sked_Can_Delete__c</field>
+        <value xsi:type="xsd:boolean">true</value>
+    </values>
+    <values>
+        <field>sked_Can_Insert__c</field>
+        <value xsi:type="xsd:boolean">true</value>
+    </values>
+    <values>
+        <field>sked_Can_Update__c</field>
+        <value xsi:type="xsd:boolean">true</value>
+    </values>
+    <values>
+        <field>sked_Scenario__c</field>
+        <value xsi:type="xsd:string">Asset CRUD</value>
+    </values>
+    <values>
+        <field>sked_Target_Type__c</field>
+        <value xsi:type="xsd:string">Profile</value>
+    </values>
+    <values>
+        <field>sked_Target__c</field>
+        <value xsi:type="xsd:string">Global Admin</value>
+    </values>
+</CustomMetadata>

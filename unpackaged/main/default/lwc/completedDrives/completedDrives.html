@@ -1,0 +1,22 @@
+<template>
+    <lightning-card title = "My Completed Drives" icon-name="standard:task2">
+        <template if:true={showDrives}>
+            <lightning-datatable              
+                     key-field="driveId"
+                     data={drives}
+                     columns={columns}
+                     show-row-number-column="true"
+                     max-row-selection="1"
+                     onrowselection={showOpportunity}>
+            </lightning-datatable>
+        </template>
+        <template if:false={showDrives}>
+            <b>No Drives found</b>
+        </template>
+        <template if:true={showSpinner}>
+            <lightning-spinner
+                alternative-text='Loading Drives'>
+            </lightning-spinner>
+        </template>
+    </lightning-card>
+</template>

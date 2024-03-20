@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Primary_Phone_Field_Restrictions</fullName>
+    <active>true</active>
+    <description>If the Primary Phone picklist value is Home Phone, the Home Phone field must be populated. The same applies for Mobile Phone and Work Phone.</description>
+    <errorConditionFormula>(
+ISPICKVAL(  Primary_Phone__c , &quot;Home Phone&quot;) &amp;&amp; ISBLANK( HomePhone ) ||
+ISPICKVAL( Primary_Phone__c , &quot;Mobile Phone&quot;) &amp;&amp; ISBLANK( MobilePhone ) ||
+ISPICKVAL( Primary_Phone__c , &quot;Work Phone&quot;) &amp;&amp; (ISBLANK( OtherPhone ))
+) &amp;&amp;
+
+$Profile.Name != &#39;System Administrator&#39;</errorConditionFormula>
+    <errorDisplayField>Primary_Phone__c</errorDisplayField>
+    <errorMessage>The phone number you have selected to be the Primary Phone is not populated. Please enter a value in that phone field or select a different value.</errorMessage>
+</ValidationRule>

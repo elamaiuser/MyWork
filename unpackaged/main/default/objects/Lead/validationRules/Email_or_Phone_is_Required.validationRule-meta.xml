@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Email_or_Phone_is_Required</fullName>
+    <active>true</active>
+    <description>Either the email or phone field must be populated in order to save the record.</description>
+    <errorConditionFormula>RecordType.Name = &quot;Biomed Recruitment&quot; &amp;&amp;
+ISBLANK(Email) &amp;&amp; ISBLANK(Phone)</errorConditionFormula>
+    <errorMessage>Either a phone number or email address is required.</errorMessage>
+</ValidationRule>

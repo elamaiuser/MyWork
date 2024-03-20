@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<EmailTemplate xmlns="http://soap.sforce.com/2006/04/metadata">
+    <available>true</available>
+    <description>College Red Cord AM to BPL email template for prospecting</description>
+    <encodingKey>ISO-8859-1</encodingKey>
+    <letterhead>ARC_Logo_Test</letterhead>
+    <name>Marketing Segment_Education_CollegeRedCord_ProsectingFaculty</name>
+    <style>formalLetter</style>
+    <subject>Exciting Red Cross Student Recognition Program</subject>
+    <textOnly>Hi [Insert Name],
+
+I wanted to share the new College Red Cord recognition program for college students to honor and thank them for helping to save lives! 
+
+What: Each qualifying college student Blood Program Leader hosting at least one drive during the program timeframe, and collects a minimum of 25 units, will be awarded a Red Cross Graduation Cord.
+
+When: July 1 – June 30
+
+Why: This gift is intended to serve as recognition for the student’s commitment to our mission and encouragement to continue partnering with the Red Cross and help save more lives.
+
+Please tell your student BPLs and higher education colleagues about this exciting opportunity — feel free to customize and share the attached email template. We want to show our gratitude for all the students going above and beyond to ensure patients receive the blood they need!
+
+Feel free to contact me with any questions. Thank you for your continued support of our lifesaving mission!
+
+Sincerely,
+[Insert Name]</textOnly>
+    <type>html</type>
+    <uiType>Aloha</uiType>
+</EmailTemplate>

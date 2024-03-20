@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <description>Checks for valid opportunity stage transitions and profiles and running users that can bypass the restrictions</description>
+    <label>Opportunity Stage Check</label>
+    <pluralLabel>Opportunity Stage Checks</pluralLabel>
+    <visibility>Public</visibility>
+</CustomObject>

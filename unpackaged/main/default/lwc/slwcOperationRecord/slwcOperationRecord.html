@@ -1,0 +1,848 @@
+<template>
+    <template if:true={isOpen}>
+        <section role="dialog" tabindex="-1" class={customClass.modal}>
+            <lightning-spinner if:true={showSpinner} class="spins" size="medium"></lightning-spinner>
+            <div class="slds-modal__container">
+                <header class="slds-modal__header">
+                    <template if:false={fullScreen}>
+                        <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse"
+                            title="Close" onclick={closeModal}>
+                            <lightning-icon icon-name="utility:close" alternative-text="close" variant="inverse"
+                                size="small"></lightning-icon>
+                        </button>
+                    </template>
+
+                    <div if:true={fullScreen} style="width: 3rem">
+                        <lightning-button-icon icon-name="utility:chevronleft" variant="bare-inverse" alternative-text="Back" title="Back" size="large" onclick={closeModal}></lightning-button-icon>
+                    </div>
+                    
+                    <h2 class="slds-text-heading_medium slds-hyphenate">Operation Record</h2>
+
+                    <div if:true={fullScreen} style="width: 3rem">
+                        <span class="slds-text-heading_small" if:false={isReadonly} onclick={handleSave}>Save</span>
+                    </div>
+                </header>
+                <div class="slds-modal__content" style="min-height: 24rem;">
+                    <template if:true={showNoOperationRecordAlert}>
+                        <div class="slds-align_absolute-center slds-p-around_large" style="height: 100%;">
+                            <lightning-icon icon-name="utility:warning" size="x-small" alternative-text="Warning!" title="Warning"></lightning-icon>
+                            <span class="slds-m-left--small">No Operation Record found.</span>
+                        </div>
+                    </template>
+
+                    <div class="error" if:true={opsRecordIntegrationDisabled}>
+                        <h3 class="slds-text-heading_x-small">
+                            Unable to submit Operations Record, Workday integration is disabled. Please contact BSF user support or system administrator.
+                        </h3>
+                    </div>
+
+                    <div class="ready-submit" if:true={isReadyToSubmit}>
+                        <h3 class="slds-text-heading_small">
+                            Ready to submit
+                        </h3>
+                    </div>
+
+                    <div class="ready-submit" if:true={showSubmittedStatus}>
+                        <h3 class="slds-text-heading_small">
+                            Submitted
+                        </h3>
+                    </div>
+                    
+                    <div class="slds-p-horizontal_small slds-m-top_small" if:true={errorMessages.length}>
+                        <c-slwc-page-errors validities={errorMessages}></c-slwc-page-errors>
+                    </div>
+
+                    <lightning-tabset if:true={hasOperationRecord}>
+                        <lightning-tab label="Operation" show-error-indicator={errorData.operationTab}>
+                            <ul class="slds-accordion">
+                                <li class="slds-accordion__list-item">
+                                    <section class={customClass.operationDetailsSection}>
+                                        <div class="slds-accordion__summary">
+                                            <h2 class="slds-accordion__summary-heading">
+                                                <button class="slds-button slds-button_reset slds-accordion__summary-action" data-value={SECTION.OPERATION_DETAILS} onclick={toggleSection} >
+                                                    <lightning-icon class="slds-accordion__summary-action-icon slds-button__icon slds-button__icon_left" 
+                                                        icon-name="utility:switch" size="x-small"></lightning-icon>
+                                                    <span class="slds-accordion__summary-content">
+                                                        <span if:false={errorData.operationDetails}>Operation Details</span>
+                                                        <span if:true={errorData.operationDetails} class="slds-text-color_error">Operation Details</span>
+                                                    </span>
+                                                </button>
+                                            </h2>
+                                        </div>
+                                        <div class="slds-accordion__content">
+                                            <div class="slds-m-around--xx-small">
+                                                <lightning-input type="text" max-length="255" name="operationName"
+                                                    label="Operation Name" disabled value={model.name}></lightning-input>
+                                            </div>
+                                            <div class="slds-m-around--xx-small">
+                                                <lightning-input type="text" max-length="255" label="Collection Operation"
+                                                    disabled value={model.collectionOperationName}></lightning-input>
+                                            </div>
+                                            <div class="slds-m-around--xx-small">
+                                                <lightning-input type="text" max-length="255" onchange={handleOnChange}
+                                                    name="drdRep" label="DRD Rep" value={model.drdRep} disabled>
+                                                </lightning-input>
+                                            </div>
+                                            <div class="slds-m-around--xx-small">
+                                                <lightning-input type="text" max-length="255" name="drdRepContact"
+                                                    onchange={handleOnChange} label="DRD Rep Contact #"
+                                                    value={model.drdRepContact} disabled></lightning-input>
+                                            </div>
+                                            <div
+                                                class="slds-p-around_xx-small slds-grid slds-grid_vertical-align-center slds-grid--align-spread">
+                                                <label class="slds-form-element__label">Purple Top</label>
+                                                <lightning-input onchange={handleOnChange} type="toggle" variant="label-hidden"
+                                                    label="purpleTop" name="purpleTop" value={model.purpleTop} disabled={isReadonly}>
+                                                </lightning-input>
+                                            </div>
+                                            <div class="slds-p-around_xx-small">
+                                                <lightning-textarea onchange={handleOnChange} name="notesComments" disabled={isReadonly} label="Notes/Comments"
+                                                    value={model.notesComments}></lightning-textarea>
+                                            </div>
+                                        </div>
+                                    </section>
+                                </li>
+                                <li class="slds-accordion__list-item">
+                                    <section class={customClass.driveInformationSection}>
+                                        <div class="slds-accordion__summary">
+                                            <h2 class="slds-accordion__summary-heading">
+                                                <button class="slds-button slds-button_reset slds-accordion__summary-action" data-value={SECTION.DRIVE_INFORMATION} onclick={toggleSection} >
+                                                    <lightning-icon class="slds-accordion__summary-action-icon slds-button__icon slds-button__icon_left" 
+                                                        icon-name="utility:switch" size="x-small"></lightning-icon>
+                                                    <span class="slds-accordion__summary-content">
+                                                        <span if:false={errorData.driveInformation}>Drive Information</span>
+                                                        <span if:true={errorData.driveInformation} class="slds-text-color_error">Drive Information</span>
+                                                    </span>
+                                                </button>
+                                            </h2>
+                                        </div>
+                                        <div class="slds-accordion__content">
+                                            <div class="slds-text-align_center">
+                                                <template if:true={model.driveExternalID}>
+                                                    <c-barcode
+                                                        value={model.driveExternalID}
+                                                    ></c-barcode>
+                                                </template>
+                                                <template if:false={model.driveExternalID}>
+                                                    <lightning-button label="Refresh" title="Refresh" icon-name="utility:refresh" onclick={fetchExternalIds}></lightning-button>
+                                                </template>
+                                            </div>
+                                            <div class="slds-m-around--xx-small">
+                                                <lightning-input type="text" max-length="255" label="Drive" disabled
+                                                    value={model.driveName}>
+                                                </lightning-input>
+                                            </div>
+                                            <div class="slds-m-around--xx-small">
+                                                <lightning-input type="text" max-length="255" label="Drive Type" disabled
+                                                    value={model.driveType}>
+                                                </lightning-input>
+                                            </div>
+                                            <div class="slds-m-around--xx-small">
+                                                <lightning-input type="text" max-length="255" label="Account" disabled
+                                                    value={model.accountName}>
+                                                </lightning-input>
+                                            </div>
+                                            <div class="slds-m-around--xx-small">
+                                                <template if:true={model.accountExternalID}>
+                                                    <lightning-input type="text" max-length="255" label="Account External ID" disabled
+                                                        value={model.accountExternalID}>
+                                                    </lightning-input>
+                                                </template>
+                                                <template if:false={model.accountExternalID}>
+                                                    <div class="slds-form-element">
+                                                        <label class="slds-form-element__label slds-no-flex">Account External ID</label>
+                                                        <div class="slds-form-element__control slds-grow">
+                                                            <lightning-button label="Refresh" title="Refresh" icon-name="utility:refresh" onclick={fetchExternalIds}></lightning-button>
+                                                        </div>
+                                                    </div>
+                                                </template>
+                                            </div>
+                                            <div class="slds-m-around--xx-small">
+                                                <lightning-input type="text" max-length="255" label="National Account Name"
+                                                    disabled value={model.nationalAccountName}>
+                                                </lightning-input>
+                                            </div>
+                                            <div class="slds-m-around--xx-small">
+                                                <!-- <c-slwc-lookup icon-name="standard:contact" object-name="Contact"
+                                                    selection={model.primaryContact} onselectionchange={handleSelectContact}
+                                                    label="Primary Contact" placeholder="Search Contact">
+                                                </c-slwc-lookup> -->
+                                                <lightning-input type="text" max-length="255" label="Primary Contact"
+                                                    disabled value={model.primaryContactName}>
+                                                </lightning-input>
+                                            </div>
+                                            <div class="slds-m-around--xx-small">
+                                                <lightning-input type="text" max-length="255" label="Primary Contact Phone"
+                                                    disabled value={model.primaryContactPhone}>
+                                                </lightning-input>
+                                            </div>
+                                            <div class="slds-m-around--xx-small">
+                                                <lightning-input type="date" max-length="255" label="Drive Date" disabled
+                                                    value={model.driveDate}>
+                                                </lightning-input>
+                                            </div>
+                                            <div class="slds-m-around--xx-small">
+                                                <lightning-input type="text" max-length="255" label="Drive Start Time" disabled
+                                                    value={model.driveStartTimeFormat}>
+                                                </lightning-input>
+                                            </div>
+                                            <div class="slds-m-around--xx-small">
+                                                <lightning-input type="text" max-length="255" label="Drive End Time" disabled
+                                                    value={model.driveEndTimeFormat}>
+                                                </lightning-input>
+                                            </div>
+                                            <div class="slds-m-around--xx-small">
+                                                <lightning-input type="text" max-length="255" label="Drive Shift Start Time" disabled
+                                                    value={model.driveShiftStartTimeFormat}>
+                                                </lightning-input>
+                                            </div>
+                                            <div class="slds-m-around--xx-small">
+                                                <lightning-input type="text" max-length="255" label="Drive Shift End Time" disabled
+                                                    value={model.driveShiftEndTimeFormat}>
+                                                </lightning-input>
+                                            </div>
+                                            <div class="slds-m-around--xx-small">
+                                                <lightning-input type="text" max-length="255" label="Projected Procedures"
+                                                    disabled value={model.projectedProcedures}>
+                                                </lightning-input>
+                                            </div>
+                                            <div class="slds-m-around--xx-small">
+                                                <lightning-input type="text" max-length="255" label="Projected Products"
+                                                    disabled value={model.projectedProducts}>
+                                                </lightning-input>
+                                            </div>
+                                            <div class="slds-m-around--xx-small">
+                                                <lightning-input type="text" label="Donor Ambassadors Requested" disabled
+                                                    value={model.donorAmbassadorsRequested}></lightning-input>
+                                            </div>
+                                            <div class="slds-m-around--xx-small">
+                                                <lightning-input type="number" label="Donor Ambassadors Actual"
+                                                    required={isSubmit}
+                                                    onchange={handleOnChange} name="donorAmbassadorsActual"
+                                                    value={model.donorAmbassadorsActual} disabled={isReadonly}>
+                                                </lightning-input>
+                                            </div>
+                                            <div class="slds-m-around--xx-small slds-clearfix slds-float_left">
+                                                <div class="slds-form-element__label slds-no-flex" title="Drive Start">Scheduled Drive Start</div>
+                                                <c-slwc-time-input-with-timezone 
+                                                    no-label
+                                                    input-date={model.driveStart}
+                                                    timezone={model.timezoneSidId}>
+                                                    <lightning-input 
+                                                        slot="input"
+                                                        variant="label-hidden"
+                                                        type="datetime" label="Drive Start"
+                                                        timezone={model.timezoneSidId}
+                                                        value={model.driveStart} disabled>
+                                                    </lightning-input>
+                                                </c-slwc-time-input-with-timezone>
+                                            </div>
+                                            <div class="slds-m-around--xx-small slds-clearfix slds-float_left">
+                                                <div class="slds-form-element__label slds-no-flex" title="Drive End">Scheduled Drive End</div>
+                                                <c-slwc-time-input-with-timezone 
+                                                    no-label
+                                                    input-date={model.driveEnd}
+                                                    timezone={model.timezoneSidId}>
+                                                    <lightning-input 
+                                                        slot="input"
+                                                        variant="label-hidden"
+                                                        type="datetime" label="Drive End"
+                                                        timezone={model.timezoneSidId}
+                                                        value={model.driveEnd} disabled>
+                                                    </lightning-input>
+                                                </c-slwc-time-input-with-timezone>
+                                            </div>
+                                            <div class="slds-m-around--xx-small slds-clearfix slds-float_left">
+                                                <div class="slds-form-element__label slds-no-flex" title="Actual Drive Start">Actual Drive Start</div>
+                                                <c-slwc-time-input-with-timezone 
+                                                    no-label
+                                                    input-date={model.actualDriveStart}
+                                                    timezone={model.timezoneSidId}>
+                                                    <lightning-input 
+                                                        slot="input"
+                                                        variant="label-hidden"
+                                                        type="datetime" label="Actual Drive Start"
+                                                        timezone={model.timezoneSidId}
+                                                        onchange={handleOnChange} name="actualDriveStart"
+                                                        required={isSubmit}
+                                                        value={model.actualDriveStart} disabled={isReadonly}>
+                                                    </lightning-input>
+                                                </c-slwc-time-input-with-timezone>
+                                            </div>
+                                            <div class="slds-m-around--xx-small slds-clearfix slds-float_left">
+                                                <div class="slds-form-element__label slds-no-flex" title="Actual Drive End">Actual Drive End</div>
+                                                <c-slwc-time-input-with-timezone 
+                                                    no-label
+                                                    input-date={model.actualDriveEnd}
+                                                    timezone={model.timezoneSidId}>
+                                                    <lightning-input 
+                                                        slot="input"
+                                                        variant="label-hidden"
+                                                        type="datetime" label="Actual Drive End"
+                                                        timezone={model.timezoneSidId}
+                                                        onchange={handleOnChange} name="actualDriveEnd"
+                                                        required={isSubmit}
+                                                        value={model.actualDriveEnd} disabled={isReadonly}>
+                                                    </lightning-input>
+                                                </c-slwc-time-input-with-timezone>
+                                            </div>
+                                            <div class="slds-m-around--xx-small" style="clear: both;">
+                                                <lightning-input type="number" label="Checked In No HH"
+                                                    onchange={handleOnChange} name="checkedInNoHH"
+                                                    value={model.checkedInNoHH} disabled={isReadonly}>
+                                                </lightning-input>
+                                            </div>
+                                            <div class="slds-m-around--xx-small" style="clear: both;">
+                                                <lightning-input type="number" label="Power Red Machines Sent"
+                                                    onchange={handleOnChange} name="powerRedMachinesSent"
+                                                    required={isSubmit}
+                                                    value={model.powerRedMachinesSent} disabled={isReadonly}>
+                                                </lightning-input>
+                                            </div>
+                                            <div class="slds-m-around--xx-small">
+                                                <lightning-input type="number" label="Power Red Machines Used"
+                                                    onchange={handleOnChange} name="powerRedMachinesUsed"
+                                                    required={isSubmit}
+                                                    value={model.powerRedMachinesUsed} disabled={isReadonly}>
+                                                </lightning-input>
+                                            </div>
+                                        </div>
+                                    </section>
+                                </li>
+                                <li class="slds-accordion__list-item">
+                                    <section class={customClass.siteInformationSection}>
+                                        <div class="slds-accordion__summary">
+                                            <h2 class="slds-accordion__summary-heading">
+                                                <button class="slds-button slds-button_reset slds-accordion__summary-action" data-value={SECTION.SITE_INFORMATION} onclick={toggleSection} >
+                                                    <lightning-icon class="slds-accordion__summary-action-icon slds-button__icon slds-button__icon_left" 
+                                                        icon-name="utility:switch" size="x-small"></lightning-icon>
+                                                    <span class="slds-accordion__summary-content">
+                                                        <span if:false={errorData.siteInformation}>Site Information</span>
+                                                        <span if:true={errorData.siteInformation} class="slds-text-color_error">Site Information</span>
+                                                    </span>
+                                                </button>
+                                            </h2>
+                                        </div>
+                                        <div class="slds-accordion__content">
+                                            <div class="slds-m-around--xx-small">
+                                                <lightning-input type="text" max-length="255" label="Drive Site" disabled
+                                                    value={model.driveSiteName}>
+                                                </lightning-input>
+                                            </div>
+                                            <div class="slds-m-around--xx-small">
+                                                <template if:true={model.siteExternalID}>
+                                                    <lightning-input type="text" max-length="255" label="Site External ID" disabled
+                                                        value={model.siteExternalID}>
+                                                    </lightning-input>
+                                                </template>
+                                                <template if:false={model.siteExternalID}>
+                                                    <div class="slds-form-element">
+                                                        <label class="slds-form-element__label slds-no-flex">Site External ID</label>
+                                                        <div class="slds-form-element__control slds-grow">
+                                                            <lightning-button label="Refresh" title="Refresh" icon-name="utility:refresh" onclick={fetchExternalIds}></lightning-button>
+                                                        </div>
+                                                    </div>
+                                                </template>
+                                            </div>
+                                            <div class="slds-m-around--xx-small">
+                                                <lightning-input type="text" max-length="255" label="National Site Name"
+                                                    disabled value={model.nationalSiteName}>
+                                                </lightning-input>
+                                            </div>
+                                            <div class="slds-m-around--xx-small">
+                                                <lightning-input type="text" max-length="255" label="Site Address" disabled
+                                                    value={model.siteAddress}>
+                                                </lightning-input>
+                                            </div>
+                                            <div class="slds-m-around--xx-small">
+                                                <lightning-input type="text" max-length="255" label="Site Contact" disabled
+                                                    value={model.siteContactName}>
+                                                </lightning-input>
+                                            </div>
+                                            <div class="slds-m-around--xx-small">
+                                                <lightning-input type="text" max-length="255" label="Site Contact Phone"
+                                                    disabled value={model.siteContactPhone}>
+                                                </lightning-input>
+                                            </div>
+                                            <div class="slds-m-around--xx-small">
+                                                <lightning-input type="text" max-length="255" label="Floor Description" disabled
+                                                    value={model.floorDescription}>
+                                                </lightning-input>
+                                            </div>
+                                            <div class="slds-m-around--xx-small">
+                                                <lightning-input type="text" max-length="255" label="Room Name" disabled
+                                                    value={model.roomName}>
+                                                </lightning-input>
+                                            </div>
+                                            <div class="slds-m-around--xx-small">
+                                                <lightning-input type="text" max-length="255" label="Wireless Policy" disabled
+                                                    value={model.wirelessPolicy}>
+                                                </lightning-input>
+                                            </div>
+                                        </div>
+                                    </section>
+                                </li>
+                                <li class="slds-accordion__list-item">
+                                    <section class={customClass.driveIssuesSection}>
+                                        <div class="slds-accordion__summary">
+                                            <h2 class="slds-accordion__summary-heading">
+                                                <button class="slds-button slds-button_reset slds-accordion__summary-action" data-value={SECTION.DRIVE_ISSUES} onclick={toggleSection} >
+                                                    <lightning-icon class="slds-accordion__summary-action-icon slds-button__icon slds-button__icon_left" 
+                                                        icon-name="utility:switch" size="x-small"></lightning-icon>
+                                                    <span class="slds-accordion__summary-content">
+                                                        <span if:false={errorData.driveIssues}>Drive Issues</span>
+                                                        <span if:true={errorData.driveIssues} class="slds-text-color_error">Drive Issues</span>
+                                                    </span>
+                                                </button>
+                                            </h2>
+                                        </div>
+                                        <div class="slds-accordion__content">
+                                            <div class="slds-m-around--xx-small">
+                                                <c-slwc-picklist name="driveIssues" onchange={handleOnChange}
+                                                    disabled={isReadonly}
+                                                    required={isDriveIssueRequired}
+                                                    label="Drive Issues" unique-key={}
+                                                    object-api-name="sked_Operation_Record__c"
+                                                    selected-value={model.driveIssues}
+                                                    pick-listfield-api-name="sked_Drive_Issues__c">
+                                                </c-slwc-picklist>
+                                            </div>
+                                            <div
+                                                class="slds-m-horizontal--xx-small slds-m-vertical--small slds-grid slds-grid_vertical-align-center slds-grid--align-spread">
+                                                <label class="slds-form-element__label">Changed Drive Location</label>
+                                                <lightning-input variant="label-hidden" onchange={handleOnChange} type="toggle"
+                                                    disabled={isReadonly}
+                                                    label="Changed Drive Location" name="changedDriveLocation"
+                                                    checked={model.changedDriveLocation}>
+                                                </lightning-input>
+                                            </div>
+                                            <div if:true={model.changedDriveLocation} class="slds-m-around--xx-small">
+                                                <c-slwc-picklist required label="Changed Drive Location Reason"
+                                                    disabled={isReadonly}
+                                                    unique-key={} onchange={handleOnChange} name="changedDriveLocationReason"
+                                                    object-api-name="sked_Operation_Record__c"
+                                                    selected-value={model.changedDriveLocationReason}
+                                                    pick-listfield-api-name="sked_Changed_Drive_Location_Reason__c">
+                                                </c-slwc-picklist>
+                                            </div>
+                                            <div
+                                                class="slds-m-horizontal--xx-small slds-m-vertical--small slds-grid slds-grid_vertical-align-center slds-grid--align-spread">
+                                                <label class="slds-form-element__label">Drive Delayed</label>
+                                                <lightning-input variant="label-hidden" onchange={handleOnChange} disabled={isReadonly} type="toggle"
+                                                    label="Drive Delayed" name="driveDelayed" checked={model.driveDelayed}>
+                                                </lightning-input>
+                                            </div>
+                                            <div if:true={model.driveDelayed} class="slds-m-around--xx-small">
+                                                <c-slwc-picklist label="Drive Delayed Reason" unique-key={}
+                                                    onchange={handleOnChange} required name="driveDelayedReason"
+                                                    disabled={isReadonly}
+                                                    object-api-name="sked_Operation_Record__c"
+                                                    selected-value={model.driveDelayedReason}
+                                                    pick-listfield-api-name="sked_Drive_Delayed_Reason__c">
+                                                </c-slwc-picklist>
+                                            </div>
+                                            <div
+                                                class="slds-m-horizontal--xx-small slds-m-vertical--small slds-grid slds-grid_vertical-align-center slds-grid--align-spread">
+                                                <label class="slds-form-element__label">eBDR Equipment Problem/Failure</label>
+                                                <lightning-input variant="label-hidden" onchange={handleOnChange} disabled={isReadonly} type="toggle"
+                                                    label="eBDR Equipment Problem/Failure" name="eBdrEquipmentProblemFailure"
+                                                    checked={model.eBdrEquipmentProblemFailure}>
+                                                </lightning-input>
+                                            </div>
+                                            <template if:true={model.eBdrEquipmentProblemFailure}>
+                                                <div class="slds-m-horizontal--xx-small slds-m-vertical--small">
+                                                    <lightning-input onchange={handleOnChange} type="number"
+                                                        label="Total # of Devices (eBDR)" disabled={isReadonly} required name="eBdrTotalDevices"
+                                                        value={model.eBdrTotalDevices}>
+                                                    </lightning-input>
+                                                </div>
+                                                <div class="slds-m-horizontal--xx-small slds-m-vertical--small">
+                                                    <lightning-input onchange={handleOnChange} type="number"
+                                                        label="# of Devices with Issue (eBDR)" required
+                                                        name="eBdrNoOfIssueDevices" disabled={isReadonly} value={model.eBdrNoOfIssueDevices}>
+                                                    </lightning-input>
+                                                </div>
+                                                <div class="slds-m-horizontal--xx-small slds-m-vertical--small">
+                                                    <lightning-input onchange={handleOnChange} type="text" label="Master (eBDR)"
+                                                        name="eBdrMaster" required  disabled={isReadonly} value={model.eBdrMaster}>
+                                                    </lightning-input>
+                                                </div>
+                                                <div class="slds-m-horizontal--xx-small slds-m-vertical--small">
+                                                    <lightning-input onchange={handleOnChange} type="text" label="Client (eBDR)"
+                                                        name="eBdrClient" required disabled={isReadonly} value={model.eBdrClient}>
+                                                    </lightning-input>
+                                                </div>
+                                                <div class="slds-m-horizontal--xx-small slds-m-vertical--small">
+                                                    <lightning-input onchange={handleOnChange} type="text"
+                                                        label="Handheld (eBDR)" disabled={isReadonly} name="eBdrHandheld" required
+                                                        value={model.eBdrHandheld}>
+                                                    </lightning-input>
+                                                </div>
+                                                <div class="slds-m-horizontal--xx-small slds-m-vertical--small">
+                                                    <lightning-input onchange={handleOnChange} type="text" label="Zebra (eBDR)"
+                                                        name="eBdrZebra" required  disabled={isReadonly} value={model.eBdrZebra}>
+                                                    </lightning-input>
+                                                </div>
+                                            </template>
+                                            <div
+                                                class="slds-m-horizontal--xx-small slds-m-vertical--small slds-grid slds-grid_vertical-align-center slds-grid--align-spread">
+                                                <label class="slds-form-element__label">Improper Room Conditions</label>
+                                                <lightning-input variant="label-hidden" onchange={handleOnChange} disabled={isReadonly} type="toggle"
+                                                    label="Improper Room Conditions" name="improperRoomConditions"
+                                                    checked={model.improperRoomConditions}>
+                                                </lightning-input>
+                                            </div>
+                                            <div if:true={model.improperRoomConditions} class="slds-m-around--xx-small">
+                                                <c-slwc-picklist name="improperRoomConditionsReason"
+                                                    disabled={isReadonly}
+                                                    label="Improper Room Conditions Reason" unique-key={} required
+                                                    onchange={handleOnChange} object-api-name="sked_Operation_Record__c"
+                                                    selected-value={model.improperRoomConditionsReason}
+                                                    pick-listfield-api-name="sked_Improper_Room_Conditions_Reason__c">
+                                                </c-slwc-picklist>
+                                            </div>
+                                            <div
+                                                class="slds-m-horizontal--xx-small slds-m-vertical--small slds-grid slds-grid_vertical-align-center slds-grid--align-spread">
+                                                <label class="slds-form-element__label">Limited Access to Unload</label>
+                                                <lightning-input variant="label-hidden" onchange={handleOnChange} disabled={isReadonly} type="toggle"
+                                                    label="Limited Access to Unload" name="limitedAccessToUnload"
+                                                    checked={model.limitedAccessToUnload}>
+                                                </lightning-input>
+                                            </div>
+                                            <div if:true={model.limitedAccessToUnload} class="slds-m-around--xx-small">
+                                                <c-slwc-picklist name="limitedAccessToUnloadReason"
+                                                    disabled={isReadonly}
+                                                    label="Limited Access to Unload Reason" unique-key={} required
+                                                    onchange={handleOnChange} object-api-name="sked_Operation_Record__c"
+                                                    selected-value={model.limitedAccessToUnloadReason}
+                                                    pick-listfield-api-name="sked_Limited_Access_to_Unload_Reason__c">
+                                                </c-slwc-picklist>
+                                            </div>
+                                            <div
+                                                class="slds-m-horizontal--xx-small slds-m-vertical--small slds-grid slds-grid_vertical-align-center slds-grid--align-spread">
+                                                <label class="slds-form-element__label">Missing/broken Equipment/Supply</label>
+                                                <lightning-input variant="label-hidden" onchange={handleOnChange} disabled={isReadonly} type="toggle"
+                                                    label="Missing/broken Equipment/Supply" name="missingEquipmentSupply"
+                                                    checked={model.missingEquipmentSupply}>
+                                                </lightning-input>
+                                            </div>
+                                            <div if:true={model.missingEquipmentSupply} class="slds-m-around--xx-small">
+                                                <c-slwc-picklist onchange={handleOnChange}
+                                                    name="missingEquipmentSupplyReason"
+                                                    disabled={isReadonly}
+                                                    label="Missing/broken Equipment/Supply Reason" required unique-key={}
+                                                    object-api-name="sked_Operation_Record__c"
+                                                    selected-value={model.missingEquipmentSupplyReason}
+                                                    pick-listfield-api-name="sked_Missing_Equipment_Supply_Reason__c">
+                                                </c-slwc-picklist>
+                                            </div>
+                                            <div
+                                                class="slds-m-horizontal--xx-small slds-m-vertical--small slds-grid slds-grid_vertical-align-center slds-grid--align-spread">
+                                                <label class="slds-form-element__label">Room Not Accessible/Locked</label>
+                                                <lightning-input variant="label-hidden" onchange={handleOnChange} disabled={isReadonly} type="toggle"
+                                                    label="Room Not Accessible/Locked" name="roomNotAccessibleLocked"
+                                                    checked={model.roomNotAccessibleLocked}>
+                                                </lightning-input>
+                                            </div>
+                                            <div if:true={model.roomNotAccessibleLocked} class="slds-m-around--xx-small">
+                                                <c-slwc-picklist onchange={handleOnChange}
+                                                    name="roomNotAccessibleLockedReason"
+                                                    disabled={isReadonly}
+                                                    label="Room Not Accessible/Locked Reason" unique-key={} required
+                                                    object-api-name="sked_Operation_Record__c"
+                                                    selected-value={model.roomNotAccessibleLockedReason}
+                                                    pick-listfield-api-name="sked_Room_Not_Accessible_Locked_Reason__c">
+                                                </c-slwc-picklist>
+                                            </div>
+                                            <div
+                                                class="slds-m-horizontal--xx-small slds-m-vertical--small slds-grid slds-grid_vertical-align-center slds-grid--align-spread">
+                                                <label class="slds-form-element__label">Security Protocol Issue</label>
+                                                <lightning-input variant="label-hidden" onchange={handleOnChange} disabled={isReadonly} type="toggle"
+                                                    label="Security Protocol Issue" name="securityProtocolIssue"
+                                                    checked={model.securityProtocolIssue}>
+                                                </lightning-input>
+                                            </div>
+                                            <div if:true={model.securityProtocolIssue} class="slds-m-around--xx-small">
+                                                <c-slwc-picklist onchange={handleOnChange}
+                                                    name="securityProtocolIssueReason" label="Security Protocol Issue Reason"
+                                                    disabled={isReadonly}
+                                                    unique-key={} required object-api-name="sked_Operation_Record__c"
+                                                    selected-value={model.securityProtocolIssueReason}
+                                                    pick-listfield-api-name="sked_Security_Protocol_Issue_Reason__c">
+                                                </c-slwc-picklist>
+                                            </div>
+                                            <div
+                                                class="slds-m-horizontal--xx-small slds-m-vertical--small slds-grid slds-grid_vertical-align-center slds-grid--align-spread">
+                                                <label class="slds-form-element__label">QC Issue</label>
+                                                <lightning-input variant="label-hidden" onchange={handleOnChange} disabled={isReadonly} type="toggle"
+                                                    label="QC Issue" name="qcIssue" checked={model.qcIssue}>
+                                                </lightning-input>
+                                            </div>
+                                            <div if:true={model.qcIssue} class="slds-m-around--xx-small">
+                                                <c-slwc-picklist onchange={handleOnChange} name="qcIssueReason"
+                                                    disabled={isReadonly}
+                                                    label="QC Issue Reason" unique-key={} required
+                                                    object-api-name="sked_Operation_Record__c"
+                                                    selected-value={model.qcIssueReason}
+                                                    pick-listfield-api-name="sked_QC_Issue_Reason__c">
+                                                </c-slwc-picklist>
+                                            </div>
+                                            <div
+                                                class="slds-m-horizontal--xx-small slds-m-vertical--small slds-grid slds-grid_vertical-align-center slds-grid--align-spread">
+                                                <label class="slds-form-element__label">Setup</label>
+                                                <lightning-input variant="label-hidden" onchange={handleOnChange} disabled={isReadonly} type="toggle"
+                                                    label="Setup" name="setup" checked={model.setup}></lightning-input>
+                                            </div>
+                                            <div if:true={model.setup} class="slds-m-around--xx-small">
+                                                <c-slwc-picklist onchange={handleOnChange} name="setupReason"
+                                                    disabled={isReadonly}
+                                                    label="Setup Reason" unique-key={} required
+                                                    object-api-name="sked_Operation_Record__c"
+                                                    selected-value={model.setupReason}
+                                                    pick-listfield-api-name="sked_Setup_Reason__c">
+                                                </c-slwc-picklist>
+                                            </div>
+                                            <div
+                                                class="slds-m-horizontal--xx-small slds-m-vertical--small slds-grid slds-grid_vertical-align-center slds-grid--align-spread">
+                                                <label class="slds-form-element__label">Staff</label>
+                                                <lightning-input variant="label-hidden" onchange={handleOnChange} disabled={isReadonly} type="toggle"
+                                                    label="Staff" name="staff" checked={model.staff}></lightning-input>
+                                            </div>
+                                            <div if:true={model.staff} class="slds-m-around--xx-small">
+                                                <c-slwc-picklist onchange={handleOnChange} name="staffReason"
+                                                    disabled={isReadonly}
+                                                    label="Staff Reason" unique-key={} required
+                                                    object-api-name="sked_Operation_Record__c"
+                                                    selected-value={model.staffReason}
+                                                    pick-listfield-api-name="sked_Staff_Reason__c">
+                                                </c-slwc-picklist>
+                                            </div>
+                                            <div
+                                                class="slds-m-horizontal--xx-small slds-m-vertical--small slds-grid slds-grid_vertical-align-center slds-grid--align-spread">
+                                                <label class="slds-form-element__label">Master Server Issue</label>
+                                                <lightning-input variant="label-hidden" onchange={handleOnChange} disabled={isReadonly} type="toggle"
+                                                    label="Master Server Issue" name="masterServerIssue"
+                                                    checked={model.masterServerIssue}>
+                                                </lightning-input>
+                                            </div>
+                                            <div if:true={model.masterServerIssue} class="slds-m-around--xx-small">
+                                                <c-slwc-picklist onchange={handleOnChange}
+                                                    disabled={isReadonly}
+                                                    name="masterServerIssueReason" label="Master Server Issue Reason"
+                                                    unique-key={} required object-api-name="sked_Operation_Record__c"
+                                                    selected-value={model.masterServerIssueReason}
+                                                    pick-listfield-api-name="sked_Master_Server_Issue_Reason__c">
+                                                </c-slwc-picklist>
+                                            </div>
+                                            <div
+                                                class="slds-m-horizontal--xx-small slds-m-vertical--small slds-grid slds-grid_vertical-align-center slds-grid--align-spread">
+                                                <label class="slds-form-element__label">Vehicle Malfunction</label>
+                                                <lightning-input variant="label-hidden" onchange={handleOnChange} disabled={isReadonly} type="toggle"
+                                                    label="Vehicle Malfunction" name="vehicleMalfunction"
+                                                    checked={model.vehicleMalfunction}>
+                                                </lightning-input>
+                                            </div>
+                                            <div if:true={model.vehicleMalfunction} class="slds-m-around--xx-small">
+                                                <c-slwc-picklist onchange={handleOnChange}
+                                                    disabled={isReadonly}
+                                                    name="vehicleMalfunctionReason" label="Vehicle Malfunction Reason"
+                                                    unique-key={} required object-api-name="sked_Operation_Record__c"
+                                                    selected-value={model.vehicleMalfunctionReason}
+                                                    pick-listfield-api-name="sked_Vehicle_Malfunction_Reason__c">
+                                                </c-slwc-picklist>
+                                            </div>
+                                            <div
+                                                class="slds-m-horizontal--xx-small slds-m-vertical--small slds-grid slds-grid_vertical-align-center slds-grid--align-spread">
+                                                <label class="slds-form-element__label">Connectivity</label>
+                                                <lightning-input variant="label-hidden" disabled={isReadonly} class="slds-grid--align-spread"
+                                                    onchange={handleOnChange} type="toggle" label="Connectivity"
+                                                    name="connectivity" checked={model.connectivity}>
+                                                </lightning-input>
+                                            </div>
+                                            <template if:true={model.connectivity}>
+                                                <div class="slds-m-around--xx-small">
+                                                    <c-slwc-picklist onchange={handleOnChange}
+                                                        disabled={isReadonly}
+                                                        name="connectivityReason" label="Connectivity Reason" unique-key={}
+                                                        required object-api-name="sked_Operation_Record__c"
+                                                        selected-value={model.connectivityReason}
+                                                        pick-listfield-api-name="sked_Connectivity_Reason__c">
+                                                    </c-slwc-picklist>
+                                                </div>
+                                                <div class="slds-m-around--xx-small">
+                                                    <c-slwc-picklist onchange={handleOnChange}
+                                                        disabled={isReadonly}
+                                                        name="connectivityDetail" label="Connectivity Detail" unique-key={}
+                                                        required={isSlow} object-api-name="sked_Operation_Record__c"
+                                                        selected-value={model.connectivityDetail}
+                                                        pick-listfield-api-name="sked_Connectivity_Detail__c">
+                                                    </c-slwc-picklist>
+                                                </div>
+                                                <div class="slds-m-horizontal--xx-small slds-m-vertical--small">
+                                                    <lightning-input onchange={handleOnChange} type="number" required={isSlow}
+                                                        disabled={isReadonly}
+                                                        label="Total # of Devices (Connectivity)"
+                                                        name="connectivityTotalDevices" value={model.connectivityTotalDevices}>
+                                                    </lightning-input>
+                                                </div>
+                                                <div class="slds-m-horizontal--xx-small slds-m-vertical--small">
+                                                    <lightning-input onchange={handleOnChange} type="number" required={isSlow}
+                                                        disabled={isReadonly}
+                                                        label="# of Devices with Issue (Connectivity)"
+                                                        name="connectivityNoOfIssueDevices"
+                                                        value={model.connectivityNoOfIssueDevices}>
+                                                    </lightning-input>
+                                                </div>
+                                                <div class="slds-m-horizontal--xx-small slds-m-vertical--small">
+                                                    <lightning-input onchange={handleOnChange} disabled={isReadonly} type="text" required={isSlow}
+                                                        label="Client (Connectivity)" name="connectivityClient"
+                                                        value={model.connectivityClient}>
+                                                    </lightning-input>
+                                                </div>
+                                                <div class="slds-m-horizontal--xx-small slds-m-vertical--small">
+                                                    <lightning-input onchange={handleOnChange} disabled={isReadonly} type="text" required={isSlow}
+                                                        label="Handheld (Connectivity)" name="connectivityHandheld"
+                                                        value={model.connectivityHandheld}>
+                                                    </lightning-input>
+                                                </div>
+                                                <div class="slds-m-horizontal--xx-small slds-m-vertical--small">
+                                                    <lightning-input onchange={handleOnChange} disabled={isReadonly} type="text" required={isSlow}
+                                                        label="Zebra (Connectivity)" name="connectivityZebra"
+                                                        value={model.connectivityZebra}>
+                                                    </lightning-input>
+                                                </div>
+                                            </template>
+                                        </div>
+                                    </section>
+                                </li>
+                                <li class="slds-accordion__list-item">
+                                    <section class={customClass.lateEndDriveSection}>
+                                        <div class="slds-accordion__summary">
+                                            <h2 class="slds-accordion__summary-heading">
+                                                <button class="slds-button slds-button_reset slds-accordion__summary-action" data-value={SECTION.LATE_END_DRIVE} onclick={toggleSection} >
+                                                    <lightning-icon class="slds-accordion__summary-action-icon slds-button__icon slds-button__icon_left" 
+                                                        icon-name="utility:switch" size="x-small"></lightning-icon>
+                                                    <span class="slds-accordion__summary-content">
+                                                        <span if:false={errorData.lateEndDrive}>Late End Drive</span>
+                                                        <span if:true={errorData.lateEndDrive} class="slds-text-color_error">Late End Drive</span>
+                                                    </span>
+                                                </button>
+                                            </h2>
+                                        </div>
+                                        <div class="slds-accordion__content">
+                                            <div
+                                                class="slds-m-horizontal--xx-small slds-m-vertical--small slds-grid slds-grid_vertical-align-center slds-grid--align-spread">
+                                                <label class="slds-form-element__label">Late End Drive</label>
+                                                <lightning-input variant="label-hidden" onchange={handleOnChange} disabled={isReadonly} type="toggle"
+                                                    label="Late End Drive" name="lateEndDrive" checked={model.lateEndDrive}></lightning-input>
+                                            </div>
+                                            
+                                            <div if:true={model.lateEndDrive} class="slds-m-horizontal--xx-small slds-m-vertical--small">
+                                                <lightning-input onchange={handleOnChange} disabled={isReadonly} type="text"
+                                                    required
+                                                    label="Late End Drive Approved By" name="lateEndDriveApprovedBy"
+                                                    value={model.lateEndDriveApprovedBy}>
+                                                </lightning-input>
+                                            </div>
+                                            <div if:true={model.lateEndDrive} class="slds-m-horizontal--xx-small slds-m-vertical--small">
+                                                <c-slwc-picklist onchange={handleOnChange} disabled={isReadonly} name="lateEndReason"
+                                                    label="Late End Reason" unique-key={}
+                                                    required
+                                                    object-api-name="sked_Operation_Record__c"
+                                                    selected-value={model.lateEndReason}
+                                                    pick-listfield-api-name="sked_Late_End_Reason__c">
+                                                </c-slwc-picklist>
+                                            </div>
+                                        </div>
+                                    </section>
+                                </li>
+                            </ul>
+                        </lightning-tab>
+                        <lightning-tab label="Related" show-error-indicator={errorData.relatedTab}>
+                            <div class="operation-staff-list" if:true={hasStaffRecordList}>
+                                <div for:each={operationRecordStaffs} for:item="item" key={item.key}
+                                    class="slds-p-around_small slds-border--bottom">
+                                    <div class={item.customClass.card}>
+                                        <div class="slds-grow slds-p-right_small item">
+                                            <div class="slds-grid slds-wrap slds-grid--align-spread">
+                                                <div class="slds-text-color--inverse-weak">
+                                                {item.name}
+                                                </div>
+                                                <div class="">
+                                                    {item.actualRoles}
+                                                </div>
+                                                <!-- <div class="slds-text-color--inverse-weak ">
+                                                    {item.jobName}
+                                                </div> -->
+                                            </div>
+                                            <div class="slds-grid slds-wrap slds-grid--align-spread">
+                                                <div class="">
+                                                    {item.resourceName}
+                                                </div>
+                                                <!-- <div class="">
+                                                    {item.actualRoles}
+                                                </div> -->
+                                            </div>
+                                        </div>
+                                        <div class="slds-no-flex">
+                                            <lightning-button variant="neutral" if:true={isReadonly} icon-name="utility:preview" label="View" data-key={item.key} onclick={editOperationStaff}></lightning-button>
+                                            <lightning-button variant="neutral" if:false={isReadonly} icon-name="utility:edit" label="Edit" data-key={item.key} onclick={editOperationStaff}></lightning-button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div if:false={hasStaffRecordList}
+                                class="slds-text-align--center slds-text-color_inverse-weak slds-text-heading--small">
+                                NO RECORD
+                            </div>
+                        </lightning-tab>
+                    </lightning-tabset>
+                </div>
+                <footer class="slds-modal__footer slds-grid slds-grid--align-spread">
+                    <div>
+                        <lightning-button label="Create Operation Staff" title="Cancel" if:true={showCreateOperationStaffBtn} onclick={createOperationStaff}
+                            class="slds-m-right_xx-small"></lightning-button>
+                    </div>
+                    <div>
+                        <lightning-button if:false={fullScreen} label="Cancel" title="Cancel" onclick={closeModal}
+                            class="slds-m-right_xx-small">
+                        </lightning-button>
+                        <lightning-button class="slds-m-top_small slds-m-right_xx-small" if:true={isAllowedToSubmit} disabled={btnSubmitDisabled} onclick={handleSubmit} variant="success" type="submit"
+                            name="submit" label="Submit"></lightning-button>
+                    
+                        <template if:false={fullScreen}>
+                            <lightning-button class="slds-m-top_small" if:false={isReadonly} disabled={btnSaveDisabled} onclick={handleSave} variant="brand" type="submit"
+                            name="update" label="Save"></lightning-button>
+                        </template>
+                    </div>
+                </footer>
+            </div>
+        </section>
+
+        <c-slwc-operation-record-staff-modal 
+            job={job} 
+            record={operationStaffModalData.record}
+            operation-record={model}
+            map-role-to-premium-op-pay={mapRoleToPremiumOpPay}
+            is-submit={isSubmit}
+            is-readonly={isReadonly}
+            is-open={operationStaffModalData.isOpen}
+            onsave={handleSaveOperationStaffModal}
+            onclose={handleCloseOperationStaffModal}
+        ></c-slwc-operation-record-staff-modal>
+
+        <c-slwc-confirm-modal
+            is-open={confirmModalData.isOpen}
+            title={confirmModalData.title}
+            message={confirmModalData.message}
+            handle-on-close={confirmModalData.onClose}
+            confirm-btn-label={confirmModalData.confirmBtnLabel}
+            cancel-btn-label={confirmModalData.cancelBtnLabel}
+            layer-index="2"
+            size='x-small'>
+        </c-slwc-confirm-modal>
+
+        <div class="slds-backdrop slds-backdrop_open"></div>
+    </template>
+</template>

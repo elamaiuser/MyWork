@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+        <label><!-- Post Migration Completed Steps --></label>
+        <name>sked_Post_Migration_Completed_Steps__c</name>
+        <picklistValues>
+            <masterLabel>Populate Next/Previous Drive</masterLabel>
+            <translation><!-- Populate Next/Previous Drive --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Process Linked Drive</masterLabel>
+            <translation><!-- Process Linked Drive --></translation>
+        </picklistValues>
+    </CustomFieldTranslation>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>sked_Operation_Drive_Limit__c</fullName>
+    <externalId>false</externalId>
+    <label>Operation Drive Limit</label>
+    <referenceTo>sked_Operation_Drive_Limit__c</referenceTo>
+    <relationshipLabel>Operation Drive Limit Overrides</relationshipLabel>
+    <relationshipName>sked_Operation_Drive_Limit_Overrides</relationshipName>
+    <relationshipOrder>0</relationshipOrder>
+    <reparentableMasterDetail>false</reparentableMasterDetail>
+    <trackTrending>false</trackTrending>
+    <type>MasterDetail</type>
+    <writeRequiresMasterRead>false</writeRequiresMasterRead>
+</CustomField>

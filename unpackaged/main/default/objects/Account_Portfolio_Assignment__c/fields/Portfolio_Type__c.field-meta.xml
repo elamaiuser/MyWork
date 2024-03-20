@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Portfolio_Type__c</fullName>
+    <externalId>false</externalId>
+    <formula>IF( ISPICKVAL(BSF_Portfolio__r.Taxonomy_Type__c, &#39;Bio Recruitment CD&#39;),&#39;Territory Based&#39;, &#39;Account Based&#39;)</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <label>Portfolio_Type</label>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

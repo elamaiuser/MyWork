@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Queue xmlns="http://soap.sforce.com/2006/04/metadata">
+    <doesSendEmailToMembers>false</doesSendEmailToMembers>
+    <name>Richland WA: DSTs</name>
+    <queueMembers>
+        <users>
+            <user>connie.hogan@redcross.org</user>
+            <user>maureen.haegele@redcross.org</user>
+            <user>serena.bricker@redcross.org</user>
+            <user>stacey.stanford@redcross.org</user>
+        </users>
+    </queueMembers>
+    <queueSobject>
+        <sobjectType>sked_Drive_Shift_Trade__c</sobjectType>
+    </queueSobject>
+</Queue>

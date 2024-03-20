@@ -1,0 +1,219 @@
+<template>
+    <template if:true={showSpinner}>
+        <lightning-spinner class="spins" size="medium"></lightning-spinner>
+    </template>
+
+    <article class="slds-card slds-card_boundary slds-grid slds-grid_vertical" style="height: 38rem;">
+        <div class="slds-grid slds-page-header slds-page-header_joined slds-page-header_bleed slds-shrink-none test-headerRegion slds-is-relative">
+            <div class="slds-media slds-media--center slds-has-flexi-truncate">
+                <div class="slds-col slds-has-flexi-truncate firstHeaderRow">
+                    <div class="slds-media slds-no-space slds-grow">
+                        <lightning-icon icon-name="standard:product_request_line_item" class="slds-m-right_small" variant="inverse" size="small" ></lightning-icon>
+
+                        <div class="slds-media__body slds-align-middle">
+                            <h2 class="slds-card__header-title">
+                                <span class="slds-card__header-link baseCard__header-title-container">
+                                    <span class="slds-truncate slds-m-right--xx-small" title="Drive Change Request">Drive Change Request</span>
+                                    <span class="lds-shrink-none slds-m-right--xx-small">({driveChangeRequestCount})</span>
+                                </span>
+                            </h2>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="slds-no-flex">
+                <div class="slds-grid">
+                    <div class="slds-col">
+                        <lightning-button-icon tooltip="Refresh" variant="border-filled" onclick={handleRefresh} icon-name="utility:refresh"></lightning-button-icon>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <template if:true={showAlert}>
+            <div class="slds-align_absolute-center slds-p-around_large">
+                <lightning-icon icon-name="utility:warning" size="x-small" alternative-text="Warning!" title="Warning"></lightning-icon>
+                <span class="slds-m-left--small">No Drive Change Requests found.</span>
+            </div>
+        </template>
+
+        <div class="slds-grid slds-scrollable_y slds-grow" if:true={showDriveChangeRequests} >
+            <div if:true={show1ColumnRequest} class="drive-change-request-section">
+                <ul class="list-item">
+                    <template for:each={driveChangeRequests} for:item="request">
+                        <li key={request.id} class="item" data-value={request.id} onclick={handleSelectDriveChangeRequest}>
+                            <div class="request-status">
+                                <div class={request.status}>{request.status}</div>
+                            </div>
+
+                            <c-slwc-lightning-formatted-url
+                                record={request}
+                            ></c-slwc-lightning-formatted-url>
+                        
+                            <dl class="slds-dl_horizontal slds-text-color_weak slds-text-body_small slds-m-top_x-small">
+                                <dt class="slds-dl_horizontal__label">Requested By:</dt>
+                                <dd class="slds-dl_horizontal__detail">{request.createdBy.name}</dd>
+                                <dt class="slds-dl_horizontal__label">Requested Date:</dt>
+                                <dd class="slds-dl_horizontal__detail">
+                                    <lightning-formatted-date-time value={request.createdDate} year="numeric" month="numeric" day="numeric" hour="numeric"
+                                    minute="2-digit" time-zone={timezoneSidId}></lightning-formatted-date-time>
+                                </dd>
+                            </dl>
+
+                            <div class="slds-text-body_small" if:true={request.driveContentions.length}>
+                                <div class="slds-text-color_weak">Drive Contention:</div>
+                                <ul class="slds-list_dotted">
+                                    <template for:each={request.driveContentions} for:item="contention">
+                                        <li key={contention}>{contention}</li>
+                                    </template>
+                                </ul>
+                            </div>
+                        </li>
+                    </template>
+                </ul>
+            </div>
+            
+            <div if:true={show1ColumnTable} class="drive-change-request-details-section slds-grid slds-grid_vertical">
+                <div class={classButton}>
+                    <lightning-button if:true={isMobile} label="Back" icon-name="utility:chevronleft" onclick={handleBack} class="slds-m-right_x-small"></lightning-button>
+                    <lightning-button-group>
+                        <template if:true={showCancelButton}>
+                            <lightning-button label="Cancel" onclick={handleCancelRequest}></lightning-button>
+                        </template>
+                        <template if:true={showCaptureDriveImpactsButton}>
+                            <lightning-button label="Capture Drive Impacts"  onclick={handleCaptureDriveImpacts}></lightning-button>
+                        </template>
+                    </lightning-button-group>
+                </div>  
+                <div class="slds-p-around--small" if:true={selectedDriveChangeRequest}>
+                    <div class="request-status">
+                        <div class={selectedDriveChangeRequest.status}>{selectedDriveChangeRequest.status}</div>
+                    </div>
+
+                    <c-slwc-lightning-formatted-url
+                        record={selectedDriveChangeRequest}
+                    ></c-slwc-lightning-formatted-url>
+                    <dl class="slds-dl_horizontal slds-text-color_weak slds-text-body_small">
+                        <template if:true={selectedDriveChangeRequest.reason}>
+                            <dt class="slds-dl_horizontal__label">Reason:</dt>
+                            <dd class="slds-dl_horizontal__detail">{selectedDriveChangeRequest.reason}</dd>
+                            <template if:true={selectedDriveChangeRequest.subReason}>
+                                <dt class="slds-dl_horizontal__label">Sub-reason:</dt>
+                                <dd class="slds-dl_horizontal__detail">{selectedDriveChangeRequest.subReason}</dd>
+                            </template>
+                            <template if:true={selectedDriveChangeRequest.notes}>
+                                <dt class="slds-dl_horizontal__label">Notes:</dt>
+                                <dd class="slds-dl_horizontal__detail">{selectedDriveChangeRequest.notes}</dd>
+                            </template>
+                        </template>
+                        <dt class="slds-dl_horizontal__label">Requested By:</dt>
+                        <dd class="slds-dl_horizontal__detail">{selectedDriveChangeRequest.createdBy.name}</dd>
+                        <dt class="slds-dl_horizontal__label">Requested Date:</dt>
+                        <dd class="slds-dl_horizontal__detail">
+                            <lightning-formatted-date-time value={selectedDriveChangeRequest.createdDate} year="numeric" month="numeric" day="numeric" hour="numeric"
+                            minute="2-digit" time-zone={timezoneSidId}></lightning-formatted-date-time>
+                        </dd>
+                        <template if:true={selectedDriveChangeRequest.comments}>
+                            <dt class="slds-dl_horizontal__label">Comments:</dt>
+                            <dd class="slds-dl_horizontal__detail">{selectedDriveChangeRequest.comments}</dd>
+                        </template>
+                    </dl>
+
+                    <div class="slds-text-body_small" if:true={selectedDriveChangeRequest.driveContentions.length}>
+                        <div class="slds-text-color_weak">Drive Contention:</div>
+                        <ul class="slds-list_dotted">
+                            <template for:each={selectedDriveChangeRequest.driveContentions} for:item="contention">
+                                <li key={contention}>{contention}</li>
+                            </template>
+                        </ul>
+                    </div>
+                </div>
+            
+                <div class="slds-grow slds-scrollable_y slds-p-around_small">
+                    <article class="slds-card slds-card_boundary drive-change-request-section" style="width: 100%">
+                        <div class="slds-grid slds-page-header">
+                            <header class="slds-media slds-media--center slds-has-flexi-truncate">
+                                <div class="slds-media__figure slds-m-right_small slds-avatar slds-avatar_small">
+                                    <lightning-icon icon-name="standard:opportunity" size="small"></lightning-icon>
+                                </div>
+                                <div class="slds-media__body">
+                                    <div class="slds-page-header__name">
+                                        <div class="slds-page-header__name-title">
+                                            <h2 class="slds-card__header-title">
+                                                <span class="slds-page-header__title slds-truncate">Drive Changes</span>
+                                            </h2>
+                                        </div>
+                                    </div>
+                                </div>
+                            </header>
+                        </div>
+                        <div>
+                            <lightning-datatable 
+                                class="slds-max-medium-table_stacked"
+                                key-field="id"
+                                data={driveChanges}
+                                columns={detailsTableColumns}
+                                hide-checkbox-column
+                                wrap-text-max-lines="3">
+                            </lightning-datatable>
+                        </div>
+                    </article>
+        
+                    <article class="slds-card slds-card_boundary drive-change-request-section slds-m-top_medium" style="width: 100%">
+                        <div class="slds-grid slds-page-header">
+                            <header class="slds-media slds-media--center slds-has-flexi-truncate">
+                                <div class="slds-media__figure slds-m-right_small slds-avatar slds-avatar_small">
+                                    <lightning-icon icon-name="custom:custom2" size="small"></lightning-icon>
+                                </div>
+                                <div class="slds-media__body">
+                                    <div class="slds-page-header__name">
+                                        <div class="slds-page-header__name-title">
+                                            <h2 class="slds-card__header-title">
+                                                <span class="slds-page-header__title slds-truncate">Drive Impacts</span>
+                                            </h2>
+                                        </div>
+                                    </div>
+                                </div>
+                            </header>
+                        </div>
+                        <div>
+                            <lightning-datatable 
+                                class="slds-max-medium-table_stacked"
+                                key-field="id"
+                                data={driveImpacts}
+                                columns={detailsTableColumns}
+                                hide-checkbox-column
+                                wrap-text-max-lines="3">
+                            </lightning-datatable>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </div>
+    </article>
+
+    <c-slwc-confirm-modal
+        is-open={confirmModalData.isOpen}
+        title={confirmModalData.title}
+        message={confirmModalData.message}
+        handle-on-close={confirmModalData.onClose}
+        confirm-btn-label={confirmModalData.confirmBtnLabel}
+        cancel-btn-label={confirmModalData.cancelBtnLabel}
+        size='x-small'>
+    </c-slwc-confirm-modal>
+
+    <template if:true={generateDriveModalData.isOpen}>
+        <section role="dialog" tabindex="-1" aria-modal="true" class="slds-modal slds-fade-in-open">
+            <div class="slds-modal__container" style="transform: initial">
+                <c-slwc-generate-drive-modal
+                    record-id={generateDriveModalData.dcrId}
+                    mode="listenOpportunityChanged"
+                    onclosemodal={closeGenerateDriveModal}
+                ></c-slwc-generate-drive-modal>
+            </div>
+        </section>
+
+        <div class="slds-backdrop slds-backdrop_open"></div>
+    </template>
+</template>

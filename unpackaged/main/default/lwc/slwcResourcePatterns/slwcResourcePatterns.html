@@ -1,0 +1,49 @@
+<template>
+    <lightning-card  title="Availability Patterns">
+        <p class="slds-p-horizontal_small">
+            <template for:each={patternResources} for:item="patternResource">
+                <lightning-layout key={patternResource.id}>
+                    <lightning-layout-item padding="around-small">
+                        <div class="slds-media">
+                            <div class="slds-media__figure">
+                                <lightning-icon class="standard-icon" icon-name="standard:event" variant="info" size="medium"></lightning-icon>
+                            </div>
+                            <div class="slds-media__body">
+                                <div class="slds-page-header__name">
+                                <div class="slds-page-header__name-title">
+                                    <h1>
+                                        <span class="slds-page-header__title slds-truncate" title={patternResource.patternName}>{patternResource.patternName}</span>
+                                    </h1>
+                                </div>
+                                </div>
+                                <p class="slds-page-header__name-meta">{patternResource.patternData.type} • {patternResource.start} • {patternResource.finish}</p>
+                            </div>
+                        </div>
+                    </lightning-layout-item>
+                </lightning-layout>
+                <lightning-layout key={patternResource.id}>
+                    <lightning-layout-item padding="around-small">
+                        <div if:true={patternResource.patternData.isWeekly}>Repeat Weeks: {patternResource.patternData.repeatWeeks}</div>
+                        <div if:true={patternResource.patternData.isCustom}>Pattern Length: {patternResource.patternData.lengthDays}</div>
+                    </lightning-layout-item>
+                </lightning-layout>
+                <lightning-layout key={patternResource.id}>
+                    <lightning-layout-item padding="around-small">
+                        <lightning-datatable if:true={patternResource.patternData.isWeekly}
+                            key-field="id"
+                            data={patternResource.patternData.weeklyTable}
+                            columns={weekly_columns}
+                            hide-checkbox-column="true">
+                        </lightning-datatable>
+                        <lightning-datatable if:true={patternResource.patternData.isCustom}
+                            key-field="id"
+                            data={patternResource.patternData.customTable}
+                            columns={custom_columns}
+                            hide-checkbox-column="true">
+                        </lightning-datatable>
+                    </lightning-layout-item>
+                </lightning-layout>
+            </template>
+        </p>
+    </lightning-card>
+</template>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Queue xmlns="http://soap.sforce.com/2006/04/metadata">
+    <doesSendEmailToMembers>true</doesSendEmailToMembers>
+    <name>Eastern New York Lead Queue</name>
+    <queueMembers>
+        <users>
+            <user>aiden.depasquale@redcross.org.biomed</user>
+            <user>andrew.chung@redcross.org.biomed</user>
+            <user>lisa.mistretta@redcross.org</user>
+            <user>shawn.ohargan@redcross.org.biomed</user>
+        </users>
+    </queueMembers>
+    <queueSobject>
+        <sobjectType>Lead</sobjectType>
+    </queueSobject>
+</Queue>

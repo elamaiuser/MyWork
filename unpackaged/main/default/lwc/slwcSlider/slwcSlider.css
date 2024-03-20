@@ -1,0 +1,44 @@
+.slider {
+    border-radius: 5px;
+    background: #E0E0E0;
+    background: linear-gradient(left top, #E0E0E0, #c57777);
+    width: 300px;
+    height: 6px;
+    margin: 2.5px;
+}
+
+.slider::before {
+    position: absolute;
+    content: '';
+    left: -5px;
+    right: -5px;
+    top: -15px;
+    bottom: -5px;
+}
+
+.range {
+    position: relative;
+    width: 20px;
+    height: 6px;
+    left: calc(20px + 15px /2);
+    background: #5eb4ff;
+    cursor: pointer;
+}
+
+.thumb {
+    position: relative;
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    background: #0070d2;
+    cursor: pointer;
+    left: 30px;
+}
+
+.start {
+    top: -10px;
+}
+
+.end {
+    top: -26px;
+}

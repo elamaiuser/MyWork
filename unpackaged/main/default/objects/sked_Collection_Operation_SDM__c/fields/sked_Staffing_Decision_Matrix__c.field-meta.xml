@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>sked_Staffing_Decision_Matrix__c</fullName>
+    <deleteConstraint>Restrict</deleteConstraint>
+    <externalId>false</externalId>
+    <label>Staffing Decision Matrix</label>
+    <referenceTo>sked_Staffing_Decision_Matrix__c</referenceTo>
+    <relationshipLabel>Collection Operation SDMs</relationshipLabel>
+    <relationshipName>sked_Collection_Operation_SDMs</relationshipName>
+    <required>true</required>
+    <trackTrending>false</trackTrending>
+    <type>Lookup</type>
+</CustomField>

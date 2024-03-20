@@ -1,0 +1,7 @@
+<aura:component implements="flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId" access="global" >
+    
+    <aura:registerEvent name="redirectAccountListevent" type="c:RedirectAccountListViewEvent" />
+    <aura:attribute name="opportunityids" type="String"></aura:attribute>
+    
+    <c:addTeamMemberToOpportunitylwcCmp onsaveandredirect ="{!c.saveRedirect}" opportunityids="{!v.opportunityids}"/>
+</aura:component>

@@ -1,0 +1,477 @@
+<template>
+    <c-slwc-page-errors validities={shift.validities}></c-slwc-page-errors>
+    <lightning-card>
+        <div class="slds-p-bottom_medium">
+            <h3 class="slds-section-title--divider">{drive.typeOfDrive} Setup</h3>
+            <div class="slds-grid slds-wrap slds-p-right_small">
+                <div class="slds-col slds-medium-size_1-of-2 slds-large-size_3-of-12 slds-size_1-of-1 slds-p-left_small">
+                    <template if:false={masterData.fieldReadonlyMap.driveShifts}>
+                        <lightning-input type="number" name="staffSetup" label="Staff Setup" value={shift.staffSetup} readonly>
+                        </lightning-input>
+                    </template>
+                    <template if:true={masterData.fieldReadonlyMap.driveShifts}>
+                        <div class="slds-form-element slds-form-element_readonly">
+                            <span class="slds-form-element__label">Staff Setup</span>
+                            <div class="slds-form-element__control">
+                                <div class="slds-form-element__static slds-truncate">{shift.staffSetup}</div>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+                <template if:false={isFixedSiteDrive}>
+                    <div class="slds-col slds-medium-size_1-of-2 slds-large-size_3-of-12 slds-size_1-of-1 slds-p-left_small">
+                        <template if:false={masterData.fieldReadonlyMap.driveShifts}>
+                            <lightning-input type="number" name="APTSetup" label="APT Quantity" value={shift.APTSetup} readonly>
+                            </lightning-input>
+                        </template>
+                        <template if:true={masterData.fieldReadonlyMap.driveShifts}>
+                            <div class="slds-form-element slds-form-element_readonly">
+                                <span class="slds-form-element__label">APT Quantity</span>
+                                <div class="slds-form-element__control">
+                                    <div class="slds-form-element__static slds-truncate">{shift.APTSetup}</div>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                </template>
+                <div class="slds-col slds-medium-size_1-of-2 slds-large-size_3-of-12 slds-size_1-of-1 slds-p-left_small">
+                    <template if:false={masterData.fieldReadonlyMap.driveShifts}>
+                        <lightning-input type="number" name="vehiclesNeeded" label="Vehicles Needed" value={shift.vehiclesNeeded} readonly max="99" min="1">
+                        </lightning-input>
+                    </template>
+                    <template if:true={masterData.fieldReadonlyMap.driveShifts}>
+                        <div class="slds-form-element slds-form-element_readonly">
+                            <span class="slds-form-element__label">Vehicles Needed</span>
+                            <div class="slds-form-element__control">
+                                <div class="slds-form-element__static slds-truncate">{shift.vehiclesNeeded}</div>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+                <div class="slds-col slds-medium-size_1-of-2 slds-large-size_3-of-12 slds-size_1-of-1 slds-p-left_small">
+                    <template if:false={masterData.fieldReadonlyMap.driveShifts}>
+                        <lightning-input type="number" name="equipment" label="Equipment" value={shift.equipment} max="9999" min="1" readonly>
+                        </lightning-input>
+                    </template>
+                    <template if:true={masterData.fieldReadonlyMap.driveShifts}>
+                        <div class="slds-form-element slds-form-element_readonly">
+                            <span class="slds-form-element__label">Equipment</span>
+                            <div class="slds-form-element__control">
+                                <div class="slds-form-element__static slds-truncate">{shift.equipment}</div>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+            </div>
+        </div>
+        <div class="slds-p-bottom_medium">
+            <h3 class="slds-section-title--divider">Draw Hours</h3>
+            <div class="slds-grid slds-wrap slds-p-right_small">
+                <div class="slds-col slds-medium-size_1-of-2 slds-large-size_3-of-12 slds-size_1-of-2 slds-p-left_small">
+                    <template if:false={masterData.fieldReadonlyMap.driveShifts}>
+                        <c-slwc-time-input-with-timezone 
+                            input-date={drive.driveDate}
+                            timezone={masterData.timezoneSidId}>
+                            <lightning-input 
+                                slot="input"
+                                class="inputStartTime" type="time" name="startTime" 
+                                disabled
+                                label="Start Time" value={shift.startTime} onchange={handleOnChange} required>
+                            </lightning-input>
+                        </c-slwc-time-input-with-timezone>
+                    </template>
+                    <template if:true={masterData.fieldReadonlyMap.driveShifts}>
+                        <div class="slds-form-element slds-form-element_readonly">
+                            <span class="slds-form-element__label">Start Time</span>
+                            <div class="slds-form-element__control">
+                                <div class="slds-form-element__static slds-truncate">
+                                    <c-slwc-time-input-with-timezone 
+                                        read-only
+                                        input-date={drive.driveDate}
+                                        timezone={masterData.timezoneSidId}>
+                                        <lightning-formatted-time slot="input" value={shift.startTime}></lightning-formatted-time>
+                                    </c-slwc-time-input-with-timezone>
+                                </div>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+                <div class="slds-col slds-medium-size_1-of-2 slds-large-size_3-of-12 slds-size_1-of-2 slds-p-left_small">
+                    <template if:false={masterData.fieldReadonlyMap.driveShifts}>
+                        <c-slwc-time-input-with-timezone 
+                            input-date={drive.driveDate}
+                            timezone={masterData.timezoneSidId}>
+                            <lightning-input 
+                                slot="input"
+                                class="inputEndTime" type="time" name="endTime" 
+                                disabled
+                                label="End Time" value={shift.endTime} onchange={handleOnChange} required>
+                            </lightning-input>
+                        </c-slwc-time-input-with-timezone>
+                    </template>
+                    <template if:true={masterData.fieldReadonlyMap.driveShifts}>
+                        <div class="slds-form-element slds-form-element_readonly">
+                            <span class="slds-form-element__label">End Time</span>
+                            <div class="slds-form-element__control">
+                                <div class="slds-form-element__static slds-truncate">
+                                    <c-slwc-time-input-with-timezone 
+                                        read-only
+                                        input-date={drive.driveDate}
+                                        timezone={masterData.timezoneSidId}>
+                                        <lightning-formatted-time slot="input" value={shift.endTime}></lightning-formatted-time>
+                                    </c-slwc-time-input-with-timezone>
+                                </div>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+                <template if:false={isFixedSiteDrive}>
+                    <div class="slds-col slds-medium-size_1-of-2 slds-large-size_3-of-12 slds-size_1-of-1 slds-p-left_small">
+                        <template if:false={masterData.fieldReadonlyMap.driveShifts}>
+                            <lightning-input type="number" name="donorsScheduled" label="Projected Registered Donors" value={shift.donorsScheduled} readonly>
+                            </lightning-input>
+                        </template>
+                        <template if:true={masterData.fieldReadonlyMap.driveShifts}>
+                            <div class="slds-form-element slds-form-element_readonly">
+                                <span class="slds-form-element__label">Projected Registered Donors</span>
+                                <div class="slds-form-element__control">
+                                    <div class="slds-form-element__static slds-truncate">{shift.donorsScheduled}</div>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                    <div class="slds-col slds-medium-size_1-of-2 slds-large-size_3-of-12 slds-size_1-of-1 slds-p-left_small">
+                        <template if:false={masterData.fieldReadonlyMap.driveShifts}>
+                            <lightning-input type="text" name="maxDonorCapacity" label="Staff Capacity" value={driveShiftStaffCapacity} readonly>
+                            </lightning-input>
+                        </template>
+                        <template if:true={masterData.fieldReadonlyMap.driveShifts}>
+                            <div class="slds-form-element slds-form-element_readonly">
+                                <span class="slds-form-element__label">Staff Capacity</span>
+                                <div class="slds-form-element__control">
+                                    <div class="slds-form-element__static slds-truncate">{driveShiftStaffCapacity}</div>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                </template>
+                <template if:true={isFixedSiteDrive}>
+                    <div class="slds-col slds-medium-size_1-of-2 slds-large-size_3-of-12 slds-size_1-of-1 slds-p-left_small">
+                        <template if:false={masterData.fieldReadonlyMap.driveShifts}>
+                            <lightning-input type="number" name="procedureCapacity" label="Procedure Capacity" value={shift.procedureCapacity} readonly>
+                            </lightning-input>
+                        </template>
+                        <template if:true={masterData.fieldReadonlyMap.driveShifts}>
+                            <div class="slds-form-element slds-form-element_readonly">
+                                <span class="slds-form-element__label">Procedure Capacity</span>
+                                <div class="slds-form-element__control">
+                                    <div class="slds-form-element__static slds-truncate">{shift.procedureCapacity}</div>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                </template>
+            </div>
+        </div>
+        <div class="slds-p-bottom_medium">
+            <h3 class="slds-section-title--divider">Maximum Staff Shift Length</h3>
+            <div class="slds-grid slds-wrap slds-p-right_small">
+                <div class="slds-col slds-medium-size_1-of-2 slds-large-size_4-of-12 slds-size_1-of-1 slds-p-left_small">
+                    <template if:false={masterData.fieldReadonlyMap.driveShifts}>
+                        <div class="slds-form-element__label slds-no-flex" title="Start">Start</div>
+                        <c-slwc-time-input-with-timezone 
+                            no-label
+                            disabled
+                            input-date={shift.start}
+                            timezone={masterData.timezoneSidId}>
+                            <lightning-input 
+                                slot="input"
+                                variant="label-hidden"
+                                class="inputStart" type="datetime" name="start" timezone={masterData.timezoneSidId} disabled label="Start"
+                                value={shift.start} autocomplete="off">
+                            </lightning-input>
+                        </c-slwc-time-input-with-timezone>
+                    </template>
+                    <template if:true={masterData.fieldReadonlyMap.driveShifts}>
+                        <div class="slds-form-element slds-form-element_readonly">
+                            <span class="slds-form-element__label">Start</span>
+                            <div class="slds-form-element__control">
+                                <div class="slds-form-element__static slds-truncate">
+                                    <c-slwc-time-input-with-timezone 
+                                        read-only
+                                        input-date={shift.start}
+                                        timezone={masterData.timezoneSidId}>
+                                        <lightning-formatted-date-time 
+                                            slot="input"
+                                            value={shift.start} year="numeric" month="numeric" day="numeric" hour="numeric"
+                                            minute="2-digit" time-zone={masterData.timezoneSidId}></lightning-formatted-date-time>
+                                    </c-slwc-time-input-with-timezone>
+                                </div>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+                <div class="slds-col slds-medium-size_1-of-2 slds-large-size_4-of-12 slds-size_1-of-1 slds-p-left_small">
+                    <template if:false={masterData.fieldReadonlyMap.driveShifts}>
+                        <div class="slds-form-element__label slds-no-flex" title="Finish">Finish</div>
+                        <c-slwc-time-input-with-timezone 
+                            no-label
+                            disabled
+                            input-date={shift.finish}
+                            timezone={masterData.timezoneSidId}>
+                            <lightning-input 
+                                slot="input"
+                                variant="label-hidden"
+                                class="inputFinish" type="datetime" name="finish" timezone={masterData.timezoneSidId} disabled label="Finish" 
+                                value={shift.finish} autocomplete="off">
+                            </lightning-input>
+                        </c-slwc-time-input-with-timezone>                        
+                    </template>
+                    <template if:true={masterData.fieldReadonlyMap.driveShifts}>
+                        <div class="slds-form-element slds-form-element_readonly">
+                            <span class="slds-form-element__label">Finish</span>
+                            <div class="slds-form-element__control">
+                                <div class="slds-form-element__static slds-truncate">
+                                    <c-slwc-time-input-with-timezone 
+                                        read-only
+                                        input-date={shift.finish}
+                                        timezone={masterData.timezoneSidId}>
+                                        <lightning-formatted-date-time 
+                                            slot="input"
+                                            value={shift.finish} year="numeric" month="numeric" day="numeric" hour="numeric"
+                                            minute="2-digit" time-zone={masterData.timezoneSidId}></lightning-formatted-date-time>
+                                    </c-slwc-time-input-with-timezone>
+                                </div>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+            </div>
+        </div>
+        <div class="slds-p-bottom_medium">
+            <h3 class="slds-section-title--divider">Lunch Break?</h3>
+            <div class="slds-grid slds-wrap slds-p-right_small">
+                <div class="slds-col slds-medium-size_1-of-2 slds-large-size_3-of-12 slds-size_1-of-1 slds-p-left_small">
+                    <template if:false={masterData.fieldReadonlyMap.driveShifts}>
+                        <div class="slds-form-element__label slds-no-flex" title="Lunch Break?">Lunch Break?</div>
+                        <lightning-input type="checkbox" name="lunchBreak" label="Lunch Break?" variant="label-hidden" value={shift.lunchBreak} 
+                                        checked={shift.lunchBreak} onchange={handleOnChange}></lightning-input>
+                    </template>
+                    <template if:true={masterData.fieldReadonlyMap.driveShifts}>
+                        <div class="slds-form-element slds-form-element_readonly">
+                            <span class="slds-form-element__label">Lunch Break?</span>
+                            <div class="slds-form-element__control">
+                                <div class="slds-form-element__static slds-truncate">
+                                    <template if:true={shift.lunchBreak}>
+                                        <lightning-icon icon-name="utility:check" size="x-small"></lightning-icon>
+                                    </template>
+                                    <template if:false={shift.lunchBreak}>
+                                        <lightning-icon icon-name="utility:steps" size="x-small"></lightning-icon>
+                                    </template>
+                                </div>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+            </div>
+            <template if:true={shift.lunchBreak}>
+                <div class="slds-grid slds-wrap slds-p-right_small">
+                    <div class="slds-col slds-medium-size_1-of-2 slds-large-size_3-of-12 slds-size_1-of-1 slds-p-left_small">
+                        <template if:false={masterData.fieldReadonlyMap.driveShifts}>
+                            <div class="slds-form-element__label slds-no-flex" title="Lunch Break Before Draw Hours?">Lunch Break Before Draw Hours?</div>
+                            <lightning-input type="checkbox" name="lunchBreakBeforeDrawHours" label="Lunch Break Before Draw Hours?" variant="label-hidden" 
+                                            value={shift.lunchBreakBeforeDrawHours} checked={shift.lunchBreakBeforeDrawHours} onchange={handleOnChange}></lightning-input>
+                        </template>
+                        <template if:true={masterData.fieldReadonlyMap.driveShifts}>
+                            <div class="slds-form-element slds-form-element_readonly">
+                                <span class="slds-form-element__label">Lunch Break Before Draw Hours?</span>
+                                <div class="slds-form-element__control">
+                                    <div class="slds-form-element__static slds-truncate">
+                                        <template if:true={shift.lunchBreakBeforeDrawHours}>
+                                            <lightning-icon icon-name="utility:check" size="x-small"></lightning-icon>
+                                        </template>
+                                        <template if:false={shift.lunchBreakBeforeDrawHours}>
+                                            <lightning-icon icon-name="utility:steps" size="x-small"></lightning-icon>
+                                        </template>
+                                    </div>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                    <div class="slds-col slds-medium-size_1-of-2 slds-large-size_3-of-12 slds-size_1-of-1 slds-p-left_small">
+                        <template if:false={masterData.fieldReadonlyMap.driveShifts}>
+                            <c-slwc-time-input-with-timezone 
+                                input-date={drive.driveDate}
+                                timezone={masterData.timezoneSidId}>
+                                <lightning-input 
+                                    slot="input"
+                                    type="time" name="lunchBreakStartTime" required={shift.lunchBreak} label="Start Time" value={shift.lunchBreakStartTime} 
+                                    readonly={isLunchBreakReadonly} onchange={handleOnChange}>
+                                </lightning-input>
+                            </c-slwc-time-input-with-timezone>
+                        </template>
+                        <template if:true={masterData.fieldReadonlyMap.driveShifts}>
+                            <div class="slds-form-element slds-form-element_readonly">
+                                <span class="slds-form-element__label">Start Time</span>
+                                <div class="slds-form-element__control">
+                                    <div class="slds-form-element__static slds-truncate">
+                                        <c-slwc-time-input-with-timezone 
+                                            read-only
+                                            input-date={drive.driveDate}
+                                            timezone={masterData.timezoneSidId}>
+                                            <lightning-formatted-time slot="input" value={shift.lunchBreakStartTime}></lightning-formatted-time>
+                                        </c-slwc-time-input-with-timezone>
+                                    </div>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                    <div class="slds-col slds-medium-size_1-of-2 slds-large-size_3-of-12 slds-size_1-of-1 slds-p-left_small">
+                        <template if:false={masterData.fieldReadonlyMap.driveShifts}>
+                            <c-slwc-time-input-with-timezone 
+                                input-date={drive.driveDate}
+                                timezone={masterData.timezoneSidId}>
+                                <lightning-input 
+                                    slot="input"
+                                    type="time" name="lunchBreakEndTime" required={shift.lunchBreak} label="End Time" value={shift.lunchBreakEndTime} readonly></lightning-input>
+                            </c-slwc-time-input-with-timezone>
+                        </template>
+                        <template if:true={masterData.fieldReadonlyMap.driveShifts}>
+                            <div class="slds-form-element slds-form-element_readonly">
+                                <span class="slds-form-element__label">End Time</span>
+                                <div class="slds-form-element__control">
+                                    <div class="slds-form-element__static slds-truncate">
+                                        <c-slwc-time-input-with-timezone 
+                                            read-only
+                                            input-date={drive.driveDate}
+                                            timezone={masterData.timezoneSidId}>
+                                            <lightning-formatted-time slot="input" value={shift.lunchBreakEndTime}></lightning-formatted-time>
+                                        </c-slwc-time-input-with-timezone>
+                                    </div>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                    <!-- HRP-5442 -->
+                    <!-- <div class="slds-col slds-medium-size_1-of-2 slds-large-size_3-of-12 slds-size_1-of-1 slds-p-left_small">
+                        <template if:false={masterData.fieldReadonlyMap.driveShifts}>
+                            <lightning-input type="number" name="lunchBreakDuration" label="Duration" value={shift.lunchBreakDuration} readonly></lightning-input>
+                        </template>
+                        <template if:true={masterData.fieldReadonlyMap.driveShifts}>
+                            <div class="slds-form-element slds-form-element_readonly">
+                                <span class="slds-form-element__label">Duration</span>
+                                <div class="slds-form-element__control">
+                                    <div class="slds-form-element__static slds-truncate">{shift.lunchBreakDuration}</div>
+                                </div>
+                            </div>
+                        </template>
+                    </div> -->
+                </div>
+                <div if:false={shift.lunchBreakBeforeDrawHours} class="slds-grid slds-wrap slds-p-right_small">
+                    <div class="slds-col slds-medium-size_1-of-2 slds-large-size_3-of-12 slds-size_1-of-1 slds-p-left_small">
+                        <template if:false={masterData.fieldReadonlyMap.driveShifts}>
+                            <lightning-input type="number" formatter="percent-fixed" step="1" name="signUpReduction" label="Sign-Up Reduction %" 
+                                            value={shift.signUpReduction} readonly>
+                            </lightning-input>
+                        </template>
+                        <template if:true={masterData.fieldReadonlyMap.driveShifts}>
+                            <div class="slds-form-element slds-form-element_readonly">
+                                <span class="slds-form-element__label">Sign-Up Reduction %</span>
+                                <div class="slds-form-element__control">
+                                    <div class="slds-form-element__static slds-truncate">{shift.signUpReduction}</div>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+            </template>
+        </div>
+        <div class="slds-p-bottom_medium">
+            <h3 class="slds-section-title--divider">Drive Shift Minimum Certifications</h3>
+            <div class="slds-grid slds-wrap slds-p-top_small">
+                <c-slwc-shift-tags is-readonly={masterData.fieldReadonlyMap.driveShifts} shift={shift} drive-shift-tags={driveShiftTags} style="width:100%">
+                </c-slwc-shift-tags>
+            </div>
+        </div>
+        <div class="slds-p-bottom_medium">
+            <h3 class="slds-section-title--divider">Staff Complement</h3>
+            <div class="slds-grid slds-wrap slds-p-top_small">
+                <c-slwc-shift-jobs is-readonly={masterData.fieldReadonlyMap.driveShifts} drive={drive} shift={shift} jobs={personJobs} resource-type="Person"
+                                          is-creatable is-deletable is-editable style="width:100%">
+                </c-slwc-shift-jobs>
+            </div>
+        </div>
+        <div class="slds-p-bottom_medium">
+            <h3 class="slds-section-title--divider">Volunteer Complement</h3>
+            <div class="slds-grid slds-wrap slds-p-top_small">
+                <div class="slds-col slds-medium-size_1-of-2 slds-large-size_3-of-12 slds-size_1-of-1 slds-p-left_small">
+                    <template if:false={masterData.fieldReadonlyMap.driveShifts}>
+                        <lightning-input type="number" name="volunteerSetup" label="Volunteer Setup" value={shift.volunteerSetup} readonly>
+                        </lightning-input>
+                    </template>
+                    <template if:true={masterData.fieldReadonlyMap.driveShifts}>
+                        <div class="slds-form-element slds-form-element_readonly">
+                            <span class="slds-form-element__label">Volunteer Setup</span>
+                            <div class="slds-form-element__control">
+                                <div class="slds-form-element__static slds-truncate">{shift.volunteerSetup}</div>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+                
+                <c-slwc-shift-jobs is-readonly={masterData.fieldReadonlyMap.volunteerJobs} drive={drive} shift={shift} jobs={volunteerJobs} resource-type="Volunteer"
+                                          is-creatable is-deletable is-editable style="width:100%">
+                </c-slwc-shift-jobs>
+            </div>
+        </div>
+        <div class="slds-p-bottom_medium" if:true={vehicleEnabled}>
+            <h3 class="slds-section-title--divider">Vehicle Complement</h3>
+            <div class="slds-grid slds-wrap slds-p-top_small">
+                <c-slwc-shift-jobs is-readonly={masterData.fieldReadonlyMap.driveShifts} drive={drive} shift={shift} jobs={vehicleJobs} resource-type="Vehicle"
+                                        is-editable={equipmentComplementEditable} style="width:100%">
+                </c-slwc-shift-jobs>
+            </div>
+        </div>
+        <div class="slds-p-bottom_medium" if:true={equipmentEnabled}>
+            <h3 class="slds-section-title--divider">Equipment Complement</h3>
+            <div class="slds-grid slds-wrap slds-p-top_small">
+                <c-slwc-shift-jobs  drive={drive}  is-readonly={masterData.fieldReadonlyMap.driveShifts} shift={shift} jobs={equipmentJobs} resource-type="Equipment" style="width:100%">
+                </c-slwc-shift-jobs>
+            </div>
+        </div>
+        <div if:true={shift.jobAllocations} class="slds-p-bottom_medium">
+            <h3 class="slds-section-title--divider">Shift Assignment</h3>
+            <div class="slds-grid slds-wrap slds-p-top_small">
+                <c-slwc-shift-assignments job-allocations={shift.jobAllocations}></c-slwc-shift-assignments>
+            </div>
+        </div>
+
+        <div class="slds-p-bottom_medium">
+            <h3 class="slds-section-title--divider">
+                <template if:false={shift.totalSlots}>
+                    <span>Appointment Slots</span>
+                </template>
+                <template if:true={shift.totalSlots}>
+                    <span>Appointment Slots ({shift.totalSlots}) - <span> <lightning-formatted-number value={slotsPerHour} maximum-fraction-digits="2"></lightning-formatted-number>  Slots/Hour</span></span>
+                </template>
+            </h3>
+            <div class="slds-p-top_small">
+                <div if:false={shift.canGenerateSlots}>
+                    <div class="slds-align_absolute-center">
+                        <lightning-icon icon-name="utility:warning" size="x-small" alternative-text="Warning!" title="Warning"></lightning-icon>
+                        <span><strong>Shift Times</strong> and <strong>Resource Requirement</strong> are required for for generating slots.</span>
+                    </div>
+                </div>
+                <div if:true={shift.canGenerateSlots}>
+                    <c-slwc-shift-slots
+                        drive={drive}
+                        drive-shift={shift} 
+                        slots-data={shift.slots} 
+                        master-data-details={masterData}
+                    ></c-slwc-shift-slots>
+                </div>
+            </div>
+        </div>
+        
+    </lightning-card>
+</template>

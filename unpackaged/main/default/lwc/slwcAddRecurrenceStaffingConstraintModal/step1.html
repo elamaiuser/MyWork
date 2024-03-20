@@ -1,0 +1,86 @@
+<template>
+    <section role="dialog" tabindex="-1" class={customClass.modalClass} style="z-index: 9003;">
+        <div class="slds-modal__container" style="min-width: 32rem;">
+            <header class={customClass.headerClass}>
+                <lightning-button-icon onclick={handleCancel} class="slds-button slds-button_icon slds-modal__close" size="large"
+                    icon-name="utility:close" variant="bare-inverse" title="Close"></lightning-button-icon>
+
+                <h2 class="slds-modal__title slds-hyphenate">{modalHeader}</h2>
+            </header>
+            <div class="slds-modal__content" style="overflow: initial">
+                <div class="slds-is-relative">
+                    <template if:true={showSpinner}>
+                        <lightning-spinner class="spins" size="medium"></lightning-spinner>
+                    </template>
+                    
+                    <div
+                        class="slds-theme_shade slds-p-horizontal_medium slds-p-vertical_small slds-border_bottom"
+                    >
+                        <div class="slds-media slds-media_center">
+                        <div class="slds-media__figure">
+                            <lightning-icon
+                            icon-name="standard:note"
+                            size="small"
+                            ></lightning-icon>
+                        </div>
+                        <div class="slds-media__body">
+                            <h1 class="slds-text-heading_small">Information</h1>
+                        </div>
+                        </div>
+                    </div>
+                    <div class="slds-p-horizontal_medium slds-p-vertical_small">
+                        <div class="slds-form-element__row slds-grid slds-grid_pull-padded-small">
+                            <div class="slds-size_1-of-2 slds-p-horizontal_small">
+                                <c-slwc-lookup
+                                    is-required
+                                    object-name="Biomed_Collection_Op_Center__c"
+                                    icon-name="standard:location"
+                                    display-field="name"
+                                    label="Collection Operation"
+                                    name="collectionOperation"
+                                    placeholder="Search Collection Operation"
+                                    selection={model.STEP1.collectionOperation}
+                                    onselectionchange={handleStep1ModelOnChange}
+                                    >
+                                </c-slwc-lookup>
+                            </div>
+                        </div>
+                        <div class="slds-form-element__row slds-m-top_x-small slds-grid slds-grid_pull-padded-small">
+                            <div class="slds-size_1-of-2 slds-p-horizontal_small">
+                                <c-slwc-multi-picklist
+                                    required
+                                    name="driveTypes"
+                                    label="Drive Types"
+                                    selected-by-default
+                                    object-api-name="sked_Drive__c"
+                                    field-api-name="sked_Type_of_Drive__c"
+                                    default-values={model.STEP1.driveTypes}
+                                    onpicklistchange={handleStep1ModelOnChange}
+                                    >
+                                </c-slwc-multi-picklist>
+                            </div>
+                            
+                            <div class="slds-size_1-of-2 slds-p-horizontal_small">
+                                <lightning-input
+                                    name="totalStaffConstraints"
+                                    type="number"
+                                    autocomplete="off"
+                                    label="Total Staff Constraints"
+                                    value={model.STEP1.totalStaffConstraints}
+                                    onchange={handleStep1ModelOnChange}
+                                    required
+                                >
+                                </lightning-input>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <footer class={customClass.footerClass}>
+                <button class="slds-button slds-button_neutral" onclick={handleCancel}>Close</button>
+                <button class="slds-button slds-button_brand" onclick={handleNext}>Next</button>
+            </footer>
+        </div>
+    </section>
+    <div class={customClass.backdropClass} style="z-index: 9002;"></div>
+</template>

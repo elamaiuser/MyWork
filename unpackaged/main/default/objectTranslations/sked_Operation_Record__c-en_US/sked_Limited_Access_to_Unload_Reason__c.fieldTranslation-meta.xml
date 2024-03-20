@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+        <label><!-- Limited Access to Unload Reason --></label>
+        <name>sked_Limited_Access_to_Unload_Reason__c</name>
+        <picklistValues>
+            <masterLabel>Elevator size</masterLabel>
+            <translation><!-- Elevator size --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Unloading dock too small</masterLabel>
+            <translation><!-- Unloading dock too small --></translation>
+        </picklistValues>
+    </CustomFieldTranslation>

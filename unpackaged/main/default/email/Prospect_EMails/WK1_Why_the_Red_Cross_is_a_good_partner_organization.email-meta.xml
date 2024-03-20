@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<EmailTemplate xmlns="http://soap.sforce.com/2006/04/metadata">
+    <available>true</available>
+    <description>Week One Prospecting Email in Six Week Cycle</description>
+    <encodingKey>ISO-8859-1</encodingKey>
+    <letterhead>ARC_Generic_Logo1</letterhead>
+    <name>WK1 - Why the Red Cross is a good partner organization</name>
+    <style>formalLetter</style>
+    <subject>Elevate Your Partnerships</subject>
+    <textOnly>Partner with a brand you can trust.
+
+Organizations that partner with the American Red Cross enjoy:
+
+1. Visibility for actively engaging with a trusted community partner
+2. The knowledge that they are helping save lives
+3. Employee and group engagement
+4. Improved customer or member perceptions and loyalty
+5. New leadership opportunities
+
+
+You’ll also support a wide range of community services – from disaster relief to fire prevention, to water safety, first aid, CPR training, service to the Armed Forces and much more. Because, by supporting one Red Cross service, you support them all.
+
+
+At the Red Cross, we are proud to be a dominant force that supports local communities and communities across our great nation. Energize your people and your mission by joining the Red Cross Blood Program.
+
+
+
+Please call us at 1-800 RED CROSS (1-800-733-2767), or visit us at redcrossblood.org/hosting-blood-drive to learn more about community involvement opportunities.</textOnly>
+    <type>html</type>
+    <uiType>Aloha</uiType>
+</EmailTemplate>

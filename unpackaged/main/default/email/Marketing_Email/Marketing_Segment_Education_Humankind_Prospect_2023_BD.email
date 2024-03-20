@@ -1,0 +1,43 @@
+<table border="0" cellpadding="5" width="600" cellspacing="5" height="400" >
+<tr valign="top" height="50" >
+<td tEditID="c1r1" style=" background-color:#FFFFFF; bEditID:r3st1; color:#000000; bLabel:main; font-size:12pt; font-family:arial;" aEditID="c1r1" locked="0" >
+<![CDATA[]]></td>
+</tr>
+<tr valign="top" height="300" >
+<td tEditID="c1r2" style=" background-color:#FFFFFF; bEditID:r3st1; color:#000000; bLabel:main; font-size:12pt; font-family:arial;" aEditID="c1r2" locked="0" >
+<![CDATA[<p class="MsoNormal" style="color: rgb(0, 0, 0); font-family: arial; font-size: 12pt;">Hi {!Contact.FirstName},<o:p></o:p></p>
+
+<p class="MsoNormal" style="color: rgb(0, 0, 0); font-family: arial; font-size: 12pt;"><o:p>&nbsp;</o:p></p>
+
+<p class="MsoNormal" style="color: rgb(0, 0, 0); font-family: arial; font-size: 12pt;">I’m writing to invite you to partner with the American Red
+Cross through our <a href="https://www.redcrossblood.org/hosting-a-blood-drive/key/humankind.html">Humankind</a>
+campaign. <span style="mso-bidi-font-family:Arial">Humankind is a nationwide
+movement that’s touching college campuses across the U.S. and highlights the
+legacies students create as blood donors. Students are being called on to leave
+their mark on humankind by hosting blood drives and giving blood. <o:p></o:p></span></p>
+
+<p class="MsoNormal" style="color: rgb(0, 0, 0); font-family: arial; font-size: 12pt;"><o:p>&nbsp;</o:p></p>
+
+<p class="MsoNormal" style=""><font face="arial">Will you join the Humankind movement by hosting a blood drive program on your campus? Hosting blood drives is a valuable leadership experience and an opportunity for you to partner with one of the world’s largest humanitarian organizations and most recognized brands in the world. You can use this experience to enhance your education and your resume. Most importantly, you will directly impact hospital patients who are relying on donors to give blood.</font></p><p class="MsoNormal" style=""><font face="arial"><br></font></p><p class="MsoNormal" style=""><span style="font-family: arial;">Partnering with the Red Cross for a lifesaving blood drive program can help bring students, faculty and the community together to help change someone’s life with every single donation you collect.</span></p><p class="MsoNormal" style=""><font face="arial"><br></font></p><p class="MsoNormal" style=""><span style="font-family: arial;">I hope you’ll join us and make your mark on humankind. Contact me and let’s save lives together.</span></p>
+
+<p class="paragraph" style="color: rgb(0, 0, 0); font-family: arial; font-size: 12pt; margin: 0in; vertical-align: baseline;"><span class="normaltextrun"><span style="mso-bidi-font-family:&quot;Segoe UI&quot;"><o:p>&nbsp;</o:p></span></span></p>
+
+<p class="paragraph" style="color: rgb(0, 0, 0); font-family: arial; font-size: 12pt; margin: 0in; vertical-align: baseline;"><span class="normaltextrun"><span style="font-family:&quot;Akzidenz-Grotesk Std Regular&quot;;
+mso-bidi-font-family:&quot;Segoe UI&quot;">Sincerely,</span></span><span class="eop"><span style="font-family:&quot;Akzidenz-Grotesk Std Regular&quot;;mso-bidi-font-family:&quot;Segoe UI&quot;">&nbsp;</span></span><span style="font-family:&quot;Akzidenz-Grotesk Std Regular&quot;"><o:p></o:p></span></p>
+
+<p class="paragraph" style="color: rgb(0, 0, 0); font-family: arial; font-size: 12pt; margin: 0in; vertical-align: baseline;"><span style="font-family:&quot;Akzidenz-Grotesk Std Regular&quot;">{!User.Name}<o:p></o:p></span></p>
+
+<p class="MsoNormal" style="color: rgb(0, 0, 0); font-family: arial; font-size: 12pt;"><span style="font-family:&quot;Akzidenz-Grotesk Std Regular&quot;">{!User.Email}</span><span style="mso-bidi-font-family:Arial"><o:p></o:p></span></p>
+
+<p class="MsoNormal" style="color: rgb(0, 0, 0); font-family: arial; font-size: 12pt;"><span style="mso-bidi-font-family:Arial"><o:p>&nbsp;</o:p></span></p>
+
+<p class="MsoNormal" style="color: rgb(0, 0, 0); font-family: arial; font-size: 12pt;"><span style="mso-bidi-font-family:Arial">P.S. Are you involved
+in other student organizations that might be interested? If so, please forward
+this email or <a href="https://twitter.com/intent/tweet?text=Want%20to%20do%20something%20good%20and%20help%20hospital%20patients%3F%20Host%20A%20Humankind%20Blood%20Drive%20with%20the%20American%20Red%20Cross.%20Learn%20more%3A%20https%3A%2F%2Fwww.redcrossblood.org%2Fhosting-a-blood-drive%2Fkey%2Fhumankind.html%20%23Humankind%0D%0A">Tweet
+this message</a> and encourage others to get involved!<o:p></o:p></span></p>]]></td>
+</tr>
+<tr valign="top" height="50" >
+<td tEditID="c1r3" style=" background-color:#FFFFFF; bEditID:r3st1; color:#000000; bLabel:main; font-size:12pt; font-family:arial;" aEditID="c1r3" locked="0" >
+<![CDATA[]]></td>
+</tr>
+</table>

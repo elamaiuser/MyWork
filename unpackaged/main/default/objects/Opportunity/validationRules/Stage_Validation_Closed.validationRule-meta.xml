@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Stage_Validation_Closed</fullName>
+    <active>false</active>
+    <description>A Blood Drive Opportunity cannot be moved to &quot;Closed&quot; if a related Marketing Program booking date range is not active. (Booking_Period_Active__c field on Marketing Program is false.)</description>
+    <errorConditionFormula>ISPICKVAL(StageName, &quot;Closed&quot;)</errorConditionFormula>
+    <errorMessage>The Marketing Program assigned to this Blood Drive is not in an active booking period.</errorMessage>
+</ValidationRule>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <description>Used for restricting non-admin users to delete objects specified here with customized error message (HRP-10115)</description>
+    <label>Admin Profile Setting</label>
+    <pluralLabel>Admin Profile Settings</pluralLabel>
+    <visibility>Public</visibility>
+</CustomObject>

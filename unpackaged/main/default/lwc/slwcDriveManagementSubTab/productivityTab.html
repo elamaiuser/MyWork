@@ -1,0 +1,118 @@
+<template>
+    <div class="slds-grid slds-wrap slds-p-right_small">
+        <div class="slds-col slds-size_3-of-12 slds-p-left_small">
+            <template if:false={masterData.isReadonly}>
+                <div class="slds-form-element">
+                    <span class="slds-form-element__label">Drive Productivity (Planned)</span>
+                    <div class="slds-form-element__control">
+                        <div class="slds-form-element__static slds-truncate">
+                            <c-slwc-custom-datatable-planned-productivity-cell
+                                value={drive.driveProductivityPlanned}>
+                            </c-slwc-custom-datatable-planned-productivity-cell>
+                        </div>
+                    </div>
+                </div>
+            </template>
+            <template if:true={masterData.isReadonly}>
+                <div class="slds-form-element slds-form-element_readonly">
+                    <span class="slds-form-element__label">Drive Productivity (Planned)</span>
+                    <div class="slds-form-element__control">
+                        <div class="slds-form-element__static slds-truncate">
+                            <c-slwc-custom-datatable-planned-productivity-cell
+                                value={drive.driveProductivityPlanned}>
+                            </c-slwc-custom-datatable-planned-productivity-cell>
+                        </div>
+                    </div>
+                </div>
+            </template>
+        </div>
+        <div class="slds-col slds-size_3-of-12 slds-p-left_small">
+            <template if:false={masterData.isReadonly}>
+                <div class="slds-form-element">
+                    <span class="slds-form-element__label">Drive Productivity Banding</span>
+                    <div class="slds-form-element__control">
+                        <div class="slds-form-element__static slds-truncate">
+                            <c-slwc-custom-datatable-planned-productivity-cell
+                                show-banding
+                                value={drive.driveProductivityPlanned}>
+                            </c-slwc-custom-datatable-planned-productivity-cell>
+                        </div>
+                    </div>
+                </div>
+            </template>
+            <template if:true={masterData.isReadonly}>
+                <div class="slds-form-element slds-form-element_readonly">
+                    <span class="slds-form-element__label">Drive Productivity Banding</span>
+                    <div class="slds-form-element__control">
+                        <div class="slds-form-element__static slds-truncate">
+                            <c-slwc-custom-datatable-planned-productivity-cell
+                                show-banding
+                                value={drive.driveProductivityPlanned}>
+                            </c-slwc-custom-datatable-planned-productivity-cell>
+                        </div>
+                    </div>
+                </div>
+            </template>
+        </div>
+    </div>
+    <div class="slds-grid slds-wrap slds-p-right_small">
+        <div class="slds-col slds-size_3-of-12 slds-p-left_small">
+            <template if:false={masterData.isReadonly}>
+                <div class="slds-form-element">
+                    <span class="slds-form-element__label">Drive Productivity (Scheduled)</span>
+                    <div class="slds-form-element__control">
+                        <div class="slds-form-element__static slds-truncate">{drive.driveProductivityScheduled}</div>
+                    </div>
+                </div>
+            </template>
+            <template if:true={masterData.isReadonly}>
+                <div class="slds-form-element slds-form-element_readonly">
+                    <span class="slds-form-element__label">Drive Productivity (Scheduled)</span>
+                    <div class="slds-form-element__control">
+                        <div class="slds-form-element__static slds-truncate">{drive.driveProductivityScheduled}</div>
+                    </div>
+                </div>
+            </template>
+        </div>
+        <div class="slds-col slds-size_3-of-12 slds-p-left_small">
+            <template if:false={masterData.isReadonly}>
+                <div class="slds-form-element">
+                    <span class="slds-form-element__label">Drive Productivity (Actual)</span>
+                    <div class="slds-form-element__control">
+                        <div class="slds-form-element__static slds-truncate">{drive.driveProductivityActual}</div>
+                    </div>
+                </div>
+            </template>
+            <template if:true={masterData.isReadonly}>
+                <div class="slds-form-element slds-form-element_readonly">
+                    <span class="slds-form-element__label">Drive Productivity (Actual)</span>
+                    <div class="slds-form-element__control">
+                        <div class="slds-form-element__static slds-truncate">{drive.driveProductivityActual}</div>
+                    </div>
+                </div>
+            </template>
+        </div>
+    </div>
+
+    <div class="slds-grid slds-wrap slds-p-right_small">
+        <div class="slds-col slds-size_3-of-12 slds-p-left_small">
+            <template if:false={masterData.isReadonly}>
+                <div class="slds-form-element">
+                    <span class="slds-form-element__label">Target Productivity Metrics</span>
+                    <div class="slds-form-element__control">
+                        <div class="slds-form-element__static slds-truncate">{drive.targetProductivityMetric}</div>
+                    </div>
+                </div>
+            </template>
+            <template if:true={masterData.isReadonly}>
+                <div class="slds-form-element slds-form-element_readonly">
+                    <span class="slds-form-element__label">Target Productivity Metrics</span>
+                    <div class="slds-form-element__control">
+                        <div class="slds-form-element__static slds-truncate">{drive.targetProductivityMetric}</div>
+                    </div>
+                </div>
+            </template>
+        </div>
+    </div>
+
+</template>

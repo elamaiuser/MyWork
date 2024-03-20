@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>No_call_list_will_be_generated</fullName>
+    <active>false</active>
+    <errorConditionFormula>IF((ISPICKVAL( Role , &#39;Call List Recipient&#39;))  
+&amp;&amp; ( Opportunity.Drive_Date__c - TODAY() &lt;= 32) , true, false)</errorConditionFormula>
+    <errorMessage>No call list will be generated due to request within 4.5 weeks</errorMessage>
+</ValidationRule>

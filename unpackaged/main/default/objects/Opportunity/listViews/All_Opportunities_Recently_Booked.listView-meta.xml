@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>All_Opportunities_Recently_Booked</fullName>
+    <columns>OPPORTUNITY.CREATED_DATE</columns>
+    <columns>Drive_Date__c</columns>
+    <columns>OPPORTUNITY.NAME</columns>
+    <columns>ACCOUNT.NAME</columns>
+    <columns>Collection_Operation__c</columns>
+    <columns>OPPORTUNITY.STAGE_NAME</columns>
+    <columns>Anticipated_Registered_Donors__c</columns>
+    <columns>DriveStatus__c</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>Is_Template__c</field>
+        <operation>equals</operation>
+        <value>0</value>
+    </filters>
+    <filters>
+        <field>OPPORTUNITY.CREATED_DATE</field>
+        <operation>lessThan</operation>
+        <value>TODAY</value>
+    </filters>
+    <label>All Opportunities_Recently Booked</label>
+</ListView>

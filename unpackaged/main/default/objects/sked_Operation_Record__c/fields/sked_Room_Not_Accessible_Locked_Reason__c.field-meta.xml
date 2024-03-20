@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>sked_Room_Not_Accessible_Locked_Reason__c</fullName>
+    <externalId>false</externalId>
+    <label>Room Not Accessible/Locked Reason</label>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Building locked</fullName>
+                <default>false</default>
+                <label>Building locked</label>
+            </value>
+            <value>
+                <fullName>Sponsor not available</fullName>
+                <default>false</default>
+                <label>Sponsor not available</label>
+            </value>
+            <value>
+                <fullName>Room in use</fullName>
+                <default>false</default>
+                <label>Room in use</label>
+            </value>
+            <value>
+                <fullName>Room locked</fullName>
+                <default>false</default>
+                <label>Room locked</label>
+            </value>
+            <value>
+                <fullName>Room occupied</fullName>
+                <default>false</default>
+                <label>Room occupied</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

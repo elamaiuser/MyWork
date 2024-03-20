@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Sponsor_Keyword__c</fullName>
+    <description>Validation rule prevents user from saving a value which has special characters (*&amp;?%). 50 character limit. Drive Keyword on the Blood Drive Opportunity object inherits value.</description>
+    <externalId>false</externalId>
+    <inlineHelpText>Keywords are: maximum 50 characters; part of the URL link; used to search for drives on RCB.org.; not required to be unique; not case sensitive; not numbers; not ‘and’, ‘or’, ‘left’, ‘right’ as standalone words; not special characters (, ), *, ?, %,!, ‘,”</inlineHelpText>
+    <label>Sponsor Keyword</label>
+    <length>50</length>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

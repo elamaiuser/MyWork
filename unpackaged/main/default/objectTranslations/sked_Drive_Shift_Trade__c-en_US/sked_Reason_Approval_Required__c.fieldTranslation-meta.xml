@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+        <label><!-- Reason Approval Required --></label>
+        <name>sked_Reason_Approval_Required__c</name>
+        <picklistValues>
+            <masterLabel>Requesting User Drive is part of Linked Drive</masterLabel>
+            <translation><!-- Requesting User Drive is part of Linked Drive --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Requesting User exceeds Max Hours per week</masterLabel>
+            <translation><!-- Requesting User exceeds Max Hours per week --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Requesting User has a TAT Contention</masterLabel>
+            <translation><!-- Requesting User has a TAT Contention --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Requesting User unqualified</masterLabel>
+            <translation><!-- Requesting User unqualified --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Shift Trade doesn&#39;t meet cutoff requirements</masterLabel>
+            <translation><!-- Shift Trade doesn&apos;t meet cutoff requirements --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Trading User Drive is part of Linked Drive</masterLabel>
+            <translation><!-- Trading User Drive is part of Linked Drive --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Trading User exceeds Max Hours per week</masterLabel>
+            <translation><!-- Trading User exceeds Max Hours per week --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Trading User has a TAT Contention</masterLabel>
+            <translation><!-- Trading User has a TAT Contention --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Trading User unqualified</masterLabel>
+            <translation><!-- Trading User unqualified --></translation>
+        </picklistValues>
+    </CustomFieldTranslation>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Gray_Sky_Account__c</fullName>
+    <defaultValue>false</defaultValue>
+    <description>Gray Sky Account Sponsor have the opportunity to add a drive outside of their normal annual program to help during critical times (i.e. appeal, disaster, critical booking weeks)</description>
+    <externalId>false</externalId>
+    <label>Gray Sky Account</label>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>true</trackHistory>
+    <type>Checkbox</type>
+</CustomField>

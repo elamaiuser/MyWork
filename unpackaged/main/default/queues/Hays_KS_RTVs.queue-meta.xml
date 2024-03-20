@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Queue xmlns="http://soap.sforce.com/2006/04/metadata">
+    <doesSendEmailToMembers>false</doesSendEmailToMembers>
+    <name>Hays KS: RTVs</name>
+    <queueMembers>
+        <users>
+            <user>bryan.stockwell@redcross.org</user>
+            <user>cathy.schroeder@redcross.org.biomed</user>
+            <user>jennifer.freeze@redcross.org.biomed</user>
+            <user>lindsay.miller@redcross.org.biomed</user>
+            <user>michele.grimm@redcross.org.biomed</user>
+            <user>rita.anderson@redcross.org</user>
+            <user>steven.leblanc@redcross.org</user>
+        </users>
+    </queueMembers>
+    <queueSobject>
+        <sobjectType>sked__Location__c</sobjectType>
+    </queueSobject>
+</Queue>

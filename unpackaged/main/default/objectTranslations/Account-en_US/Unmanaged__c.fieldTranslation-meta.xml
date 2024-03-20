@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+        <label><!-- Unmanaged Reason --></label>
+        <name>Unmanaged__c</name>
+        <picklistValues>
+            <masterLabel>LOA Vacancy</masterLabel>
+            <translation><!-- LOA Vacancy --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Territory Vacancy</masterLabel>
+            <translation><!-- Territory Vacancy --></translation>
+        </picklistValues>
+    </CustomFieldTranslation>

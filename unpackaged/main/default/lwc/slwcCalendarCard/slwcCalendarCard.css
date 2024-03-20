@@ -1,0 +1,246 @@
+.events-container {
+  position: relative;
+}
+
+.hco-rac-event-container {
+  position: absolute;
+  width: 100%;
+  text-align: left;
+  background-image: -webkit-linear-gradient(left, #a8b7c7 0.125rem, transparent 0.125rem);
+  background-image: linear-gradient(to right, #a8b7c7 0.125rem, transparent 0.125rem);
+  background-size: 0.125rem 100%;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: local;
+  cursor: default;
+  background-image: none !important;
+  /* &.ui-draggable {
+        cursor: url(../images/openhand.cur),default;
+      }
+      &.ui-draggable-helper {
+        cursor: url(../images/closedhand.cur),move;
+      } */
+}
+
+.hco-rac-event-container.travel-time--oor {
+  background-image: -webkit-linear-gradient(left, #a8b7c7 0.125rem, transparent 0.125rem), -webkit-repeating-linear-gradient(top, #a8b7c7, #a8b7c7 0.175rem, transparent 0.175rem, transparent 0.35rem);
+  background-image: linear-gradient(to right, #a8b7c7 0.125rem, transparent 0.125rem), repeating-linear-gradient(to bottom, #a8b7c7, #a8b7c7 0.175rem, transparent 0.175rem, transparent 0.35rem);
+  background-size: 0.125rem calc(100% - 1.5rem), 0.125rem 1.5rem;
+  background-position: bottom center, top center;
+}
+
+.hco-rac-event-container.start-time--oor .hco-rac-event-box {
+  border-top-style: dashed;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
+
+.hco-rac-event-container.end-time--oor .hco-rac-event-box {
+  border-bottom-style: dashed;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.hco-rac-event-container .hco-rac-event-box {
+  position: absolute;
+  bottom: 0;
+  left: 1px;
+  right: 1px;
+  border-radius: 0.25rem;
+  border: solid 1px #1d92d2;
+  padding: 0.125rem 0.25rem;
+  overflow: hidden;
+  background-color: #fff;
+}
+
+.hco-rac-event-container .hco-rac-event-box .event-name {
+  padding-right: 1.25rem;
+}
+
+.hco-rac-event-container .hco-rac-event-box .event-meta-info {
+  margin-top: 0;
+  font-size: 0.75rem;
+  padding-right: 0;
+}
+
+.hco-rac-event-container .hco-rac-event-box.hco-rac-event-box--small .event-name {
+  font-size: 0.75rem;
+  line-height: 1.2;
+}
+
+.hco-rac-event-container .hco-rac-event-box.hco-rac-event-box--small .event-meta-info {
+  font-size: 0.625rem;
+  padding-right: 2rem;
+}
+
+.hco-rac-event-container .hco-rac-event-box.hco-rac-event-box--small .event-indicator-container .event-indicator.event-status {
+  margin-top: -0.125rem;
+}
+
+.hco-rac-event-container .hco-rac-event-box.hco-rac-event-box--small .event-indicator-container .event-indicator.event-lock {
+  position: absolute;
+  bottom: 1px;
+  margin-bottom: -0.125rem;
+  right: 1rem;
+}
+
+.hco-rac-event-container .hco-rac-event-box.hco-rac-event-box--small .event-indicator-container .event-indicator.event-info {
+  margin-bottom: -0.125rem;
+}
+
+.hco-rac-event-container .hco-rac-event-box.timesheet-entry-box {
+  background-color: #f1872d;
+  color: white;
+}
+
+.hco-rac-event-container .hco-rac-event-box.timesheet-entry-box .indicator-icon {
+  fill: white;
+}
+
+.hco-rac-event-container.highlighted .hco-rac-event-box {
+  outline: 0;
+  border-color: #d23331 !important;
+  box-shadow: 0 0 7px 1px #d23331;
+  -webkit-transition: box-shadow 0.1s linear, border-color 0.1s linear;
+  transition: box-shadow 0.1s linear, border-color 0.1s linear;
+}
+
+.hco-rac-event-container.readonly {
+  opacity: 0.7;
+}
+
+.hco-rac-event-container.readonly .hco-rac-event-box {
+  background-image: -webkit-linear-gradient(45deg, rgba(0, 0, 0, 0.0725) 25%, transparent 25%, transparent 50%, rgba(0, 0, 0, 0.0725) 50%, rgba(0, 0, 0, 0.0725) 75%, transparent 75%, transparent);
+  background-image: linear-gradient(45deg, rgba(0, 0, 0, 0.0725) 25%, transparent 25%, transparent 50%, rgba(0, 0, 0, 0.0725) 50%, rgba(0, 0, 0, 0.0725) 75%, transparent 75%, transparent);
+  background-size: 64px 64px;
+}
+
+.hco-rac-availability-area {
+  position: absolute;
+  width: 100%;
+  left: 0;
+  opacity: 0.7;
+}
+
+.hco-rac-availability-area.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  z-index: -1;
+  display: none;
+}
+
+.hco-rac-availability-area .preferred-times {
+  position: absolute;
+  width: 100%;
+  left: 0;
+  pointer-events: none;
+}
+
+.hco-rac-availability-area .info {
+  position: absolute;
+  width: 100%;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  padding: 0.125rem 0.25rem;
+}
+
+.hco-rac-availability-area .info .availability-name {
+  padding-right: 1.25rem;
+}
+
+.hco-rac-availability-area .info .availability-meta-info {
+  margin-top: 0;
+  font-size: 0.75rem;
+  padding-right: 0;
+}
+
+.hco-rac-availability-area.overlapped-mode {
+  opacity: 0.4;
+}
+
+.hco-rac-availability-area.overlapped-mode .info {
+  display: none;
+}
+
+.event-indicator-container {
+  position: absolute;
+  width: 0.875rem;
+  top: 0.25rem;
+  bottom: 0.25rem;
+  right: 0.25rem;
+}
+
+.event-indicator-container .event-indicator {
+  cursor: pointer;
+  margin-bottom: 0.25rem;
+  height: 0.875rem;
+}
+
+.event-indicator-container .event-indicator .indicator-icon {
+  vertical-align: top;
+  fill: #99a0b2;
+}
+
+.event-indicator-container .event-indicator.event-info {
+  position: absolute;
+  top: 0;
+}
+
+.event-indicator-container.pac {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -webkit-flex-direction: column;
+      -ms-flex-direction: column;
+          flex-direction: column;
+}
+
+.event-indicator-container.pac .event-indicator {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -webkit-flex-direction: column;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+}
+
+.event-indicator-container.pac .event-indicator.pulled-top {
+  margin-bottom: auto;
+}
+
+.event-indicator-container.pac .event-indicator.pulled-bottom {
+  margin-top: auto;
+}
+
+.event-indicator-container.pac .event-indicator.event-info, .event-indicator-container.pac .event-indicator.event-feed {
+  position: relative;
+}
+
+.event-indicator-container.pac .event-indicator.event-feed {
+  margin-bottom: 0;
+}
+
+.event-indicator-container.pac .event-indicator.event-feed svg {
+  fill: #fff;
+  width: 0.75rem;
+  height: 0.75rem;
+}

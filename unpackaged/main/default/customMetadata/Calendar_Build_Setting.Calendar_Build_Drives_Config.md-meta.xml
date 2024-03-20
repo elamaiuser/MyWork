@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomMetadata xmlns="http://soap.sforce.com/2006/04/metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <label>Calendar Build Drives Config</label>
+    <protected>false</protected>
+    <values>
+        <field>Automation_Flag__c</field>
+        <value xsi:type="xsd:boolean">false</value>
+    </values>
+    <values>
+        <field>Buffer_Days_For_System_Generated__c</field>
+        <value xsi:type="xsd:double">8.0</value>
+    </values>
+    <values>
+        <field>Bypass_Auto_Drive_Generation__c</field>
+        <value xsi:type="xsd:boolean">false</value>
+    </values>
+    <values>
+        <field>Calendar_Build_Review_Days__c</field>
+        <value xsi:type="xsd:double">41.0</value>
+    </values>
+    <values>
+        <field>Date_Literal__c</field>
+        <value xsi:nil="true"/>
+    </values>
+    <values>
+        <field>Draft_Drives_Batch_Size__c</field>
+        <value xsi:type="xsd:double">10.0</value>
+    </values>
+    <values>
+        <field>Number_of_Days__c</field>
+        <value xsi:type="xsd:double">15.0</value>
+    </values>
+    <values>
+        <field>System_Gen_Drives_Batch_Size__c</field>
+        <value xsi:type="xsd:double">15.0</value>
+    </values>
+    <values>
+        <field>System_Gen_End_Date__c</field>
+        <value xsi:type="xsd:date">2024-01-05</value>
+    </values>
+    <values>
+        <field>System_Gen_Start_Date__c</field>
+        <value xsi:type="xsd:date">2024-01-01</value>
+    </values>
+</CustomMetadata>

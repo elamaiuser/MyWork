@@ -1,0 +1,235 @@
+<template>
+    <div if:false={showModalMobile}>
+        <template if:true={driveShifts.length}>
+            <template if:true={driveShiftWrappers}>
+                <lightning-tabset active-tab-value={activeDriveShiftKey}>
+                    <lightning-tab label="Configuration" onactive={handleChangeTab}>
+                        <div>
+                            <div class="slds-p-bottom_medium">
+                                <h3 class="slds-section-title--divider">Lunch Break Configuration</h3>
+                                <div class="slds-grid slds-wrap slds-p-right_small">
+                                    <div class="slds-col slds-size_1-of-4 slds-p-left_small">
+                                        <template if:false={masterData.fieldReadonlyMap.driveShiftsMetadata}>
+                                            <div class="slds-form-element__label slds-no-flex" title="Lock Lunch Break?">Lock Lunch Break?</div>
+                                            <lightning-input type="checkbox" name="lockLunchBreak" label="Lock Lunch Break?" variant="label-hidden" value={drive.lockLunchBreak} 
+                                                            checked={drive.lockLunchBreak} onchange={handleOnChange}></lightning-input>
+                                        </template>
+                                        <template if:true={masterData.fieldReadonlyMap.driveShiftsMetadata}>
+                                            <div class="slds-form-element slds-form-element_readonly">
+                                                <span class="slds-form-element__label">Lock Lunch Break?</span>
+                                                <div class="slds-form-element__control">
+                                                    <div class="slds-form-element__static slds-truncate">
+                                                        <template if:true={drive.lockLunchBreak}>
+                                                            <lightning-icon icon-name="utility:check" size="x-small"></lightning-icon>
+                                                        </template>
+                                                        <template if:false={drive.lockLunchBreak}>
+                                                            <lightning-icon icon-name="utility:steps" size="x-small"></lightning-icon>
+                                                        </template>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </template>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="slds-p-bottom_medium" if:true={isFixedSiteDrive}>
+                                <h3 class="slds-section-title--divider">Fixed Site Equipment &amp; Vehicle Information</h3>
+                                <div class="slds-grid slds-wrap slds-p-right_small">
+                                    <div class="slds-col slds-size_1-of-4 slds-p-left_small" if:true={show2RBCAssetsField}>
+                                        <template if:false={masterData.fieldReadonlyMap.driveShiftsMetadata}>
+                                            <lightning-input 
+                                                type="number" autocomplete="off" 
+                                                name="numberOf2rbcAssets" 
+                                                label="Number of 2RBC Assets" 
+                                                value={drive.numberOf2rbcAssets} 
+                                                onchange={handleOnChange} 
+                                                required>
+                                            </lightning-input>
+                                        </template>
+                                        <template if:true={masterData.fieldReadonlyMap.driveShiftsMetadata}>
+                                            <div class="slds-form-element slds-form-element_readonly">
+                                                <span class="slds-form-element__label">Number of 2RBC Assets</span>
+                                                <div class="slds-form-element__control">
+                                                    <div class="slds-form-element__static slds-truncate">{drive.numberOf2rbcAssets}</div>
+                                                </div>
+                                            </div>
+                                        </template>
+                                    </div>
+                                    <div class="slds-col slds-size_1-of-4 slds-p-left_small" if:true={showPlateletAssetsField}>
+                                        <template if:false={masterData.fieldReadonlyMap.driveShiftsMetadata}>
+                                            <lightning-input 
+                                                type="number" autocomplete="off" 
+                                                name="numberOfPlateletAssets" 
+                                                label="Number of Platelet Assets" 
+                                                value={drive.numberOfPlateletAssets} 
+                                                onchange={handleOnChange} 
+                                                required>
+                                            </lightning-input>
+                                        </template>
+                                        <template if:true={masterData.fieldReadonlyMap.driveShiftsMetadata}>
+                                            <div class="slds-form-element slds-form-element_readonly">
+                                                <span class="slds-form-element__label">Number of Platelet Assets</span>
+                                                <div class="slds-form-element__control">
+                                                    <div class="slds-form-element__static slds-truncate">{drive.numberOfPlateletAssets}</div>
+                                                </div>
+                                            </div>
+                                        </template>
+                                    </div>
+                                    <div class="slds-col slds-size_1-of-4 slds-p-left_small" if:true={showPlasmaAssetsField}>
+                                        <template if:false={masterData.fieldReadonlyMap.driveShiftsMetadata}>
+                                            <lightning-input 
+                                                type="number" autocomplete="off" 
+                                                name="numberOfPlasmaAssets" 
+                                                label="Number of Plasma Assets" 
+                                                value={drive.numberOfPlasmaAssets} 
+                                                onchange={handleOnChange} 
+                                                required>
+                                            </lightning-input>
+                                        </template>
+                                        <template if:true={masterData.fieldReadonlyMap.driveShiftsMetadata}>
+                                            <div class="slds-form-element slds-form-element_readonly">
+                                                <span class="slds-form-element__label">Number of Plasma Assets</span>
+                                                <div class="slds-form-element__control">
+                                                    <div class="slds-form-element__static slds-truncate">{drive.numberOfPlasmaAssets}</div>
+                                                </div>
+                                            </div>
+                                        </template>
+                                    </div>
+                                    <div class="slds-col slds-size_1-of-4 slds-p-left_small">
+                                        <template if:false={masterData.fieldReadonlyMap.driveShiftsMetadata}>
+                                            <lightning-input 
+                                                type="number" autocomplete="off" 
+                                                name="numberOfVehicles" 
+                                                label="Number of Vehicles" 
+                                                value={drive.numberOfVehicles} 
+                                                onchange={handleOnChange}>
+                                            </lightning-input>
+                                        </template>
+                                        <template if:true={masterData.fieldReadonlyMap.driveShiftsMetadata}>
+                                            <div class="slds-form-element slds-form-element_readonly">
+                                                <span class="slds-form-element__label">Number of Vehicles</span>
+                                                <div class="slds-form-element__control">
+                                                    <div class="slds-form-element__static slds-truncate">{drive.numberOfVehicles}</div>
+                                                </div>
+                                            </div>
+                                        </template>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="slds-p-bottom_medium" if:false={isFixedSiteDrive}>
+                                <h3 class="slds-section-title--divider">Mobile Equipment &amp; Vehicle Information</h3>
+                                <div class="slds-grid slds-wrap slds-p-right_small">
+                                    <div class="slds-col slds-size_1-of-4 slds-p-left_small">
+                                        <template if:false={masterData.fieldReadonlyMap.driveShiftsMetadata}>
+                                            <lightning-input 
+                                                type="number" autocomplete="off" 
+                                                name="numberOf2rbcAssets" 
+                                                data-name="numberOf2rbcAssets"
+                                                label="Number of 2RBC Assets" 
+                                                value={drive.numberOf2rbcAssets} 
+                                                onchange={handleOnChange} 
+                                                required>
+                                            </lightning-input>
+                                        </template>
+                                        <template if:true={masterData.fieldReadonlyMap.driveShiftsMetadata}>
+                                            <div class="slds-form-element slds-form-element_readonly">
+                                                <span class="slds-form-element__label">Number of 2RBC Assets</span>
+                                                <div class="slds-form-element__control">
+                                                    <div class="slds-form-element__static slds-truncate">{drive.numberOf2rbcAssets}</div>
+                                                </div>
+                                            </div>
+                                        </template>
+                                    </div>
+                                    <div class="slds-col slds-size_1-of-4 slds-p-left_small">
+                                        <template if:false={masterData.fieldReadonlyMap.driveShiftsMetadata}>
+                                            <div class="slds-form-element__label slds-no-flex" title="Do Not Use Vehicle">Do Not Use Vehicle</div>
+                                            <lightning-input type="checkbox" name="doNotUseVehicle" label="Do Not Use Vehicle" variant="label-hidden" value={drive.doNotUseVehicle} 
+                                                            checked={drive.doNotUseVehicle} onchange={handleOnChange}></lightning-input>
+                                        </template>
+                                        <template if:true={masterData.fieldReadonlyMap.driveShiftsMetadata}>
+                                            <div class="slds-form-element slds-form-element_readonly">
+                                                <span class="slds-form-element__label">Do Not Use Vehicle</span>
+                                                <div class="slds-form-element__control">
+                                                    <div class="slds-form-element__static slds-truncate">
+                                                        <template if:true={drive.doNotUseVehicle}>
+                                                            <lightning-icon icon-name="utility:check" size="x-small"></lightning-icon>
+                                                        </template>
+                                                        <template if:false={drive.doNotUseVehicle}>
+                                                            <lightning-icon icon-name="utility:steps" size="x-small"></lightning-icon>
+                                                        </template>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </template>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <h3 class="slds-section-title--divider">
+                                Drive Shift Configuration
+                                <lightning-button-icon 
+                                    if:false={masterData.fieldReadonlyMap.driveShiftsConfiguration}
+                                    class="slds-m-left_x-small" tooltip="Edit" icon-name="utility:edit" variant="bare" size="medium"
+                                    onclick={showDriveShiftsMetadataModal}
+                                ></lightning-button-icon>
+                            </h3>
+                            <div class="slds-grid slds-wrap slds-p-right_small" style="align-items: stretch;">
+                                <template for:each={drive.driveShiftsMetadata.driveShifts} for:item="driveShift">
+                                    <div class="slds-p-left_small slds-m-top_small slds-size_1-of-3" key={driveShift.key}>
+                                        <div class="slds-box slds-box_small" style="height: 100%;">
+                                            <div class="slds-grid slds-grid_pull-padded_small">
+                                                <strong class="slds-size_1-of-3 slds-p-horizontal_small">{driveShift.label}</strong>
+                                                <strong class="slds-size_1-of-3 slds-p-horizontal_small">
+                                                    <lightning-formatted-date-time value={driveShift.start} hour="2-digit"
+                                                        minute="2-digit" time-zone={masterData.timezoneSidId}></lightning-formatted-date-time>
+                                                </strong>
+                                                <strong class="slds-size_1-of-3 slds-p-horizontal_small">
+                                                    <lightning-formatted-date-time value={driveShift.finish} hour="2-digit"
+                                                        minute="2-digit" time-zone={masterData.timezoneSidId}></lightning-formatted-date-time>
+                                                </strong>
+                                            </div>
+                                            <template if:true={driveShift.rounds}>
+                                                <div class="slds-grid slds-grid_pull-padded_small slds-m-top_xx-small" key={round.key} for:each={driveShift.rounds} for:item="round">
+                                                    <div class="slds-size_1-of-3 slds-p-horizontal_small">{round.label}</div>
+                                                    <div class="slds-size_1-of-3 slds-p-horizontal_small">
+                                                        <lightning-formatted-date-time value={round.start} hour="2-digit"
+                                                            minute="2-digit" time-zone={masterData.timezoneSidId}></lightning-formatted-date-time>
+                                                    </div>
+                                                    <div class="slds-size_1-of-3 slds-p-horizontal_small">
+                                                        <lightning-formatted-date-time value={round.end} hour="2-digit"
+                                                            minute="2-digit" time-zone={masterData.timezoneSidId}></lightning-formatted-date-time>
+                                                    </div>
+                                                </div>
+                                            </template>
+                                        </div>
+                                    </div>
+                                </template>
+                            </div>
+                        </div>
+                    </lightning-tab>
+                    <template for:each={driveShiftWrappers} for:item="wrapper" for:index="indexVar">
+                        <lightning-tab key={wrapper.driveShift.key} value={wrapper.driveShift.key} label={wrapper.name} onactive={handleChangeTab}>
+                            <template if:true={wrapper.shown}>
+                                <c-slwc-drive-shift key={wrapper.driveShift.key} master-data={masterData} show-errors={showErrors} drive={drive} shift={wrapper.driveShift}></c-slwc-drive-shift>
+                            </template>
+                        </lightning-tab>
+                    </template>
+                </lightning-tabset>
+            </template>
+        </template>
+    </div>
+    <div if:true={showModalMobile} style="height:100vh"></div>
+    
+    <c-slwc-appointment-modal if:true={isMobile} drive={drive} master-data={masterData}></c-slwc-appointment-modal>
+
+    <c-slwc-confirm-modal
+        if:true={confirmModalData.isOpen}
+        is-open={confirmModalData.isOpen}
+        title={confirmModalData.title}
+        message={confirmModalData.message}
+        handle-on-close={confirmModalData.onClose}
+        confirm-btn-label="Yes"
+        size='x-small'>
+    </c-slwc-confirm-modal>
+</template>

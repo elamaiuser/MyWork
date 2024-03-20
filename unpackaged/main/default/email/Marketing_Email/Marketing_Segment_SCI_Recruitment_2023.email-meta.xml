@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<EmailTemplate xmlns="http://soap.sforce.com/2006/04/metadata">
+    <available>true</available>
+    <description>AA Donor Recruitment BPL to Donor</description>
+    <encodingKey>ISO-8859-1</encodingKey>
+    <letterhead>ARC_Logo_Test</letterhead>
+    <name>Marketing Segment_SCI_Recruitment_2023</name>
+    <style>formalLetter</style>
+    <subject>Your Blood, Your Impact: Diverse Donors Needed Now!</subject>
+    <textOnly>Hi &lt;name&gt;,
+
+Life is a gift. Give blood. Many may need lifesaving blood right now and the only source is volunteer blood donors. Join us as we embark on a mission that can make an immense difference in the lives of countless individuals. Our goal is to collect &lt;number&gt; blood donations, so know your blood is in high demand.
+
+Our goal is not only to meet 100% of our blood drive goal but also to emphasize the importance of contributing to the diversity of the blood supply.  Diverse blood donors are crucial in ensuring that the unique needs of patients from various backgrounds, especially those with rare blood types or conditions such as sickle cell disease.
+
+1. Diverse Patient Needs: Patients from different ethnic backgrounds may require blood with specific antigen profiles. Your unique blood composition could be the lifeline for someone in need.
+2. Community Unity: By embracing diversity in our donor community, we reflect the unity that defines our society. Your participation helps build a stronger, more inclusive community.
+3. Addressing Health Disparities: Certain blood disorders, like sickle cell disease, are more prevalent in specific ethnic groups. Your donation can directly impact patients facing these health disparities.
+
+Your willingness to contribute ensures that we can provide diverse and lifesaving support to those who depend on us. We look forward to seeing you at the blood drive and appreciate your ongoing support.
+
+Visit redcrossblood.org and enter code &lt;sponsor code&gt; to schedule your appointment today. You can also reply to me at this email, or &lt;call &gt; me at &lt;phone number &gt;. Even if you cannot donate blood yourself, you can still help by encouraging friends, family and coworkers to donate.
+
+Sincerely,
+&lt;Name&gt;</textOnly>
+    <type>html</type>
+    <uiType>Aloha</uiType>
+</EmailTemplate>

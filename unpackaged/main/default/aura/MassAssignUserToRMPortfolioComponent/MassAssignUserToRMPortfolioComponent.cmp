@@ -1,0 +1,12 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,force:lightningQuickAction" access="global" >
+   <aura:registerEvent name="redirectAccountListevent" type="c:RedirectAccountListViewEvent"></aura:registerEvent>
+    <aura:attribute name="portfolioIds" type="String"></aura:attribute>
+    <aura:attribute name="PortfolioIdArrays" type="String[]"></aura:attribute>
+    <aura:attribute name="portfolioIdsplited" type="Boolean" default="false"/>
+    
+    <aura:handler name="init" value="{!this}" action="{!c.doOnload}"/>
+    
+    <aura:if isTrue="{!v.portfolioIdsplited}"> 
+        <c:selectRMPortfolioOnAccount portfolioRecords="{!v.PortfolioIdArrays}" onclosequickaction="{!c.saveRedirect}"/>
+    </aura:if>
+</aura:component>

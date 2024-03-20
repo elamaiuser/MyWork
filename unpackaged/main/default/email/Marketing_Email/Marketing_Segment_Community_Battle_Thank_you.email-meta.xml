@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<EmailTemplate xmlns="http://soap.sforce.com/2006/04/metadata">
+    <available>true</available>
+    <description>BPL Thank you - Battle of the Badges - Community Segment</description>
+    <encodingKey>ISO-8859-1</encodingKey>
+    <letterhead>ARC_Logo_Test</letterhead>
+    <name>Marketing Segment_Community_Battle_Thank you</name>
+    <style>formalLetter</style>
+    <subject>Thank you for responding to the call.</subject>
+    <textOnly>Dear [Blood Program Leader],
+
+Thank you for being a part of the American Red Cross Battle of the Badges program. Together we share a mission of helping to save lives and we appreciate the opportunity to partner with [Contact Organization].
+
+You can take pride in knowing that your partnership with us makes a positive impact on your local community — and those across the country. Families and communities depend on the Red Cross in times of need; and we depend on the support of partners, like you, to help fulfill the mission of saving lives.
+
+Your Heroes Saving Lives blood drive took place on [Date] and had a goal of [Units]. You collected a total of [xx] units, each of which can impact more than one life.
+
+We rely on blood drive partnerships throughout the year. Thank you for offering this opportunity to your group to help ensure a safe national blood supply. We appreciate you and hope we can partner again in the future.
+
+Sincerely,
+
+[Signature]</textOnly>
+    <type>html</type>
+    <uiType>Aloha</uiType>
+</EmailTemplate>

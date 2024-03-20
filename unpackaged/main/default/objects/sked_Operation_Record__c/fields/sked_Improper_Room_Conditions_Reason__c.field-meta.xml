@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>sked_Improper_Room_Conditions_Reason__c</fullName>
+    <externalId>false</externalId>
+    <label>Improper Room Conditions Reason</label>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Inadequate lighting</fullName>
+                <default>false</default>
+                <label>Inadequate lighting</label>
+            </value>
+            <value>
+                <fullName>Odor</fullName>
+                <default>false</default>
+                <label>Odor</label>
+            </value>
+            <value>
+                <fullName>Infestation</fullName>
+                <default>false</default>
+                <label>Infestation</label>
+            </value>
+            <value>
+                <fullName>Room size</fullName>
+                <default>false</default>
+                <label>Room size</label>
+            </value>
+            <value>
+                <fullName>Room not ready</fullName>
+                <default>false</default>
+                <label>Room not ready</label>
+            </value>
+            <value>
+                <fullName>Temperature</fullName>
+                <default>false</default>
+                <label>Temperature</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

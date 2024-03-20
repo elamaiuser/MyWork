@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+        <help><!-- Specify the date range for resource allocation job to execute for. --></help>
+        <label><!-- System Gen End Date --></label>
+        <name>System_Gen_End_Date__c</name>
+    </CustomFieldTranslation>

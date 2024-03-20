@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>is_Service_Role_Deleted_Permanently__c</fullName>
+    <defaultValue>false</defaultValue>
+    <description>is Service Role Deleted Permanently</description>
+    <externalId>false</externalId>
+    <inlineHelpText>is Service Role Deleted Permanently</inlineHelpText>
+    <label>is Service Role Deleted Permanently</label>
+    <trackTrending>false</trackTrending>
+    <type>Checkbox</type>
+</CustomField>

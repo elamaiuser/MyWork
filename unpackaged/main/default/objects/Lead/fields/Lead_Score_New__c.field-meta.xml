@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Lead_Score_New__c</fullName>
+    <externalId>false</externalId>
+    <formula>MIN(100,
+(
+(IF( RecordType.DeveloperName = &quot;Lead&quot;,
+(
+IF(ISPICKVAL( Hosted_Before__c , &quot;Yes&quot;), 25,0) +
+IF(ISPICKVAL( Hosted_Before__c , &quot;No&quot;), 15,0) +
+IF(ISPICKVAL( Hosted_Before__c , &quot;Not Sure&quot;), 13,0) +
+
+IF(ISPICKVAL( Company_Size__c , &quot;Less than 200&quot;), 18,0) +
+IF(ISPICKVAL( Company_Size__c , &quot;201 - 500&quot;), 24,0) +
+IF(ISPICKVAL( Company_Size__c , &quot;501 - 1000&quot;), 24,0) +
+IF(ISPICKVAL( Company_Size__c , &quot;1001 - 1500&quot;), 30,0) +
+IF(ISPICKVAL( Company_Size__c , &quot;1501 - more&quot;), 30,0) +
+
+IF(ISPICKVAL( Has_Personal_Story__c , &quot;Yes&quot;), 25,0) +
+IF(ISPICKVAL( Has_Personal_Story__c , &quot;No&quot;), 13,0) +
+
+IF(ISPICKVAL( Other_Redcross_Relationships__c,&quot;Volunteer Services&quot;), 20,0) +
+IF(ISPICKVAL( Other_Redcross_Relationships__c,&quot;Blood Donor&quot;), 20,0) +
+IF(ISPICKVAL( Other_Redcross_Relationships__c,&quot;Humanitarian&quot;), 20,0) +
+IF(ISPICKVAL( Other_Redcross_Relationships__c,&quot;Financial Donor&quot;), 20,0) +
+IF(ISPICKVAL( Other_Redcross_Relationships__c,&quot;Service to Armed Forces&quot;), 20,0) +
+IF(ISPICKVAL( Other_Redcross_Relationships__c,&quot;Disaster Services&quot;), 20,0) +
+IF(ISPICKVAL( Other_Redcross_Relationships__c,&quot;Health and Safety&quot;), 20,0) +
+IF(ISPICKVAL( Other_Redcross_Relationships__c,&quot;No Other Relationship&quot;), 10,0)
+) , 0)
+)
+
++
+
+(IF( RecordType.DeveloperName = &quot;LSL&quot;,
+(
+IF( RecordType.DeveloperName = &quot;LSL&quot;, 70, 0) +
+
+IF(ISPICKVAL( Age_Group__c , &quot;16 - 18&quot;), 10,0) +
+IF(ISPICKVAL( Age_Group__c , &quot;19 - 21&quot;), 10,0) +
+IF(ISPICKVAL( Age_Group__c , &quot;21+&quot;), 5,0) +
+
+IF(ISPICKVAL( LeadSource , &quot;National Partnership/National Accounts&quot;), 20,0) +
+IF(ISPICKVAL( LeadSource , &quot;Humanitarian Referral&quot;), 20,0) +
+IF(ISPICKVAL( LeadSource , &quot;Prospect List&quot;), 20,0) +
+IF(ISPICKVAL( LeadSource , &quot;Redcross Staff&quot;), 20,0) +
+IF(ISPICKVAL( LeadSource , &quot;Redcross.org&quot;), 20,0) +
+IF(ISPICKVAL( LeadSource , &quot;redcrossblood.org&quot;), 20,0) +
+IF(ISPICKVAL( LeadSource , &quot;Inbound Inquiry&quot;), 20,0) +
+IF(ISPICKVAL( LeadSource , &quot;General Referral&quot;), 20,0)
+) , 0)
+)
+)
+)</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <label>Lead Score</label>
+    <precision>18</precision>
+    <required>false</required>
+    <scale>2</scale>
+    <trackHistory>false</trackHistory>
+    <type>Number</type>
+    <unique>false</unique>
+</CustomField>

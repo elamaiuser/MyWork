@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomMetadata xmlns="http://soap.sforce.com/2006/04/metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <label>Active BPL Requirement</label>
+    <protected>false</protected>
+    <values>
+        <field>Error_Msg_on_DOC__c</field>
+        <value xsi:type="xsd:string">Ut Oh, we have hit a snag. An Active BPL is required to move this drive to Confirmed status</value>
+    </values>
+    <values>
+        <field>Error_Msg_on_Opportunity__c</field>
+        <value xsi:type="xsd:string">Ut Oh, we have hit a snag. An Active BPL is required to move this Drive to Closed Stage.</value>
+    </values>
+</CustomMetadata>

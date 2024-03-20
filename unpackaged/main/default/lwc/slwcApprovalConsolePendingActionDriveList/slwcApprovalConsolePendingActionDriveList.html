@@ -1,0 +1,176 @@
+<template>
+    <div class="slds-grid">
+        <div class="slds-col">
+            <c-slwc-drive-scheduling-filters
+                mode="pendingActionDrive"
+                onsearch={handleSearch}>
+            </c-slwc-drive-scheduling-filters>
+        </div>
+        
+        <div class="slds-col slds-scrollable_y slds-p-left_medium slds-is-relative" style="min-height: 400px; width:100%;">
+            <div class="slds-grid slds-grid_vertical-align-end slds-p-top_small">
+                <div class="slds-col_bump-left slds-p-right_small">
+                    <c-slwc-date-range-picker
+                        ondaterangechange={handleOnChange}
+                        default-start-date={filters.startDate}
+                        default-end-date={filters.endDate}>
+                    </c-slwc-date-range-picker>
+                </div>
+                <div class="slds-no-flex slds-p-right_small" style="width: 300px;">
+                    <c-slwc-new-collection-operation-multi-picklist
+                        division-single-select
+                        dropdown-position="right"
+                        date-range={collectionOperationDateRange}
+                        default-values={filters.collectionOperationValues}
+                        onchange={handleCollectionOperationChanged}>
+                    </c-slwc-new-collection-operation-multi-picklist>
+                </div>
+            </div>
+
+            <div class="slds-grow slds-p-around_small">
+                <template if:true={showSpinner}>
+                    <lightning-spinner class="spins" size="medium"></lightning-spinner>
+                </template>
+                <div class="slds-scrollable" style="height: 60vh; width: calc(100vw - 5rem);">
+                    <c-slwc-custom-datatable 
+                        key-field="id"
+                        data={records}
+                        columns={columns}
+                        wrap-text-max-lines="3"
+                        hide-checkbox-column
+                        sorted-by={sortOption.fieldName}
+                        sorted-direction={sortOption.sortDirection}
+                        enable-infinite-loading={enableInfiniteLoading}
+                        onsort={handleSortChanged}
+                        onloadmore={handleLoadMoreData}>
+                    </c-slwc-custom-datatable>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <c-slwc-approval-console-request-detail-modal
+        record-id={requestDetailModalData.recordId}
+        is-open={requestDetailModalData.isOpen}
+        object-label="Pending Action Drive"
+        onclose={handleCloseRequestDetailModal}
+    >   
+        <div class="slds-grow" slot="details" if:true={requestDetailModalData.record}>
+            <template if:true={showDetailsSpinner}>
+                <lightning-spinner class="spins" size="medium"></lightning-spinner>
+            </template>
+    
+            <div class="slds-form-element slds-form-element_readonly">
+                <span class="slds-form-element__label">Name</span>
+                <div class="slds-form-element__control">
+                    <div class="slds-form-element__static slds-truncate">{requestDetailModalData.record.name}</div>
+                </div>
+            </div>
+            <div class="slds-form-element slds-form-element_readonly">
+                <span class="slds-form-element__label">Approval Status</span>
+                <div class="slds-form-element__control">
+                    <div class="slds-form-element__static slds-truncate">{requestDetailModalData.record.approvalStatus}</div>
+                </div>
+                <template if:true={allowRequestDRDFeedback}>
+                    <button class="slds-button slds-button_brand btn-approve" style="margin-bottom:10px" onclick={handleRequestDRDFeedback}>Request DRD Feedback</button>
+                </template>
+            </div>
+            <div class="slds-form-element slds-form-element_readonly">
+                <span class="slds-form-element__label">Status</span>
+                <div class="slds-form-element__control">
+                    <div class="slds-form-element__static slds-truncate">{requestDetailModalData.record.status}</div>
+                </div>
+            </div>
+            <div class="slds-form-element slds-form-element_readonly">
+                <span class="slds-form-element__label">Type of Drive</span>
+                <div class="slds-form-element__control">
+                    <div class="slds-form-element__static slds-truncate">{requestDetailModalData.record.typeOfDrive}</div>
+                </div>
+            </div>
+            <div class="slds-form-element slds-form-element_readonly">
+                <span class="slds-form-element__label">Drive Date</span>
+                <div class="slds-form-element__control">
+                    <div class="slds-form-element__static slds-truncate">
+                        <lightning-formatted-date-time value={requestDetailModalData.record.driveDate} year="numeric" month="short" day="2-digit" time-zone="UTC"></lightning-formatted-date-time>
+                    </div>
+                </div>
+            </div>
+            <div class="slds-form-element slds-form-element_readonly">
+                <span class="slds-form-element__label">Start Time</span>
+                <div class="slds-form-element__control">
+                    <div class="slds-form-element__static slds-truncate">
+                        <lightning-formatted-time value={requestDetailModalData.record.startTime}></lightning-formatted-time>
+                    </div>
+                </div>
+            </div>
+            <div class="slds-form-element slds-form-element_readonly">
+                <span class="slds-form-element__label">End Time</span>
+                <div class="slds-form-element__control">
+                    <div class="slds-form-element__static slds-truncate">
+                        <lightning-formatted-time value={requestDetailModalData.record.endTime}></lightning-formatted-time>
+                    </div>
+                </div>
+            </div>
+            <div class="slds-form-element slds-form-element_readonly">
+                <span class="slds-form-element__label">Number of Shifts</span>
+                <div class="slds-form-element__control">
+                    <div class="slds-form-element__static">{requestDetailModalData.record.driveShiftCount}</div>
+                </div>
+            </div>
+            <div class="slds-form-element slds-form-element_readonly">
+                <span class="slds-form-element__label">Site Address</span>
+                <div class="slds-form-element__control">
+                    <div class="slds-form-element__static">{requestDetailModalData.record.driveSite.address}</div>
+                </div>
+            </div>
+            <div class="slds-form-element slds-form-element_readonly">
+                <span class="slds-form-element__label">Pending Action</span>
+                <div class="slds-form-element__control">
+                    <div class="slds-form-element__static">{requestDetailModalData.record.pendingAction}</div>
+                </div>
+            </div>
+            <div class="slds-form-element slds-form-element_readonly">
+                <span class="slds-form-element__label">Pending Action Reason Code</span>
+                <div class="slds-form-element__control">
+                    <div class="slds-form-element__static">{requestDetailModalData.record.pendingActionReasonCode}</div>
+                </div>
+            </div>
+            <div class="slds-form-element slds-form-element_readonly">
+                <span class="slds-form-element__label">Initiated By</span>
+                <div class="slds-form-element__control">
+                    <div class="slds-form-element__static">{requestDetailModalData.record.initiatedBy}</div>
+                </div>
+            </div>
+            <div class="slds-form-element slds-form-element_readonly">
+                <span class="slds-form-element__label">Cancellation Reason</span>
+                <div class="slds-form-element__control">
+                    <div class="slds-form-element__static">{requestDetailModalData.record.cancellationReason}</div>
+                </div>
+            </div>
+            <div class="slds-form-element slds-form-element_readonly">
+                <span class="slds-form-element__label">Submission Notes</span>
+                <div class="slds-form-element__control">
+                    <div class="slds-form-element__static">{requestDetailModalData.record.submissionNotes}</div>
+                </div>
+            </div>
+        </div>
+
+        <c-slwc-pending-action-drive-approval
+            slot="approvalHistoryConsole"        
+            record-id={requestDetailModalData.recordId}
+        >
+        </c-slwc-pending-action-drive-approval>
+        
+    </c-slwc-approval-console-request-detail-modal>
+
+    <c-slwc-confirm-modal
+        is-open={confirmModalData.isOpen}
+        title={confirmModalData.title}
+        message={confirmModalData.message}
+        handle-on-close={confirmModalData.onClose}
+        confirm-btn-label={confirmModalData.confirmBtnLabel}
+        cancel-btn-label={confirmModalData.cancelBtnLabel}
+        layer-index="2"
+        size='x-small'>
+    </c-slwc-confirm-modal>
+</template>

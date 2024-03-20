@@ -1,0 +1,45 @@
+<template>
+    <lightning-card title="Blood Drive Opportunities" icon-name="standard:opportunity"></lightning-card>
+<!--div class="slds-box slds-p-around_none slds-m-top_x-small slds-m-bottom_medium slds-m-horizontal_none"-->
+<lightning-card>
+    <lightning-layout>
+        <lightning-layout-item flexibility="auto" >
+                <div class="slds-align_absolute-center" style="height:2rem">
+               
+                    <template if:true={stageNamePicklist.data}>
+                        <lightning-combobox name="Description" 
+                                            label="Description" 
+                                            value={value} 
+                                            placeholder="-Select-"
+                                            options={stageNamePicklist.data.values} 
+                                            onchange={handleChange}>
+                        </lightning-combobox></template>
+                
+            </div>
+        </lightning-layout-item>
+        <lightning-layout-item flexibility="auto">
+            <div class="slds-p-right_xx-large slds-p-top_x-small">  
+          <lightning-button variant="brand" label="Save" 
+            title="Primary action" onclick={handleClick} 
+            class="slds-m-left_x-small">
+                </lightning-button></div>
+        </lightning-layout-item>       
+    </lightning-layout>
+ <div class="slds-m-around_medium">
+     <template if:false={dataLoaded}>
+        <lightning-spinner alternative-text="Loading..." size="large">    </lightning-spinner>
+     </template>
+            <template if:true={dataLoaded}>
+                <lightning-datatable 
+                    key-field="Id"
+                    data={data}
+                    show-row-number-column
+                    columns={columns}>
+                </lightning-datatable>
+            </template>
+            <template if:true={error}>
+                {error}
+            </template>
+        </div>
+    </lightning-card>
+</template>

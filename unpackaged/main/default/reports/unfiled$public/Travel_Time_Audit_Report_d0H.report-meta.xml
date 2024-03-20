@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Report xmlns="http://soap.sforce.com/2006/04/metadata">
+    <columns>
+        <field>sked__Location__c.sked_Site_Collection_Operations__r$Name</field>
+    </columns>
+    <columns>
+        <field>sked__Location__c$Name</field>
+    </columns>
+    <columns>
+        <field>sked__Location__c$sked__Address__c</field>
+    </columns>
+    <columns>
+        <field>sked__Location__c$sked__Type__c</field>
+    </columns>
+    <description>Audit Report for Finding Sites with Invalid Travel Time</description>
+    <filter>
+        <criteriaItems>
+            <column>sked__Location__c.sked_Site_Collection_Operations__r$Is_Travel_Time_Invalid__c</column>
+            <columnToColumn>false</columnToColumn>
+            <isUnlocked>false</isUnlocked>
+            <operator>equals</operator>
+            <value>1</value>
+        </criteriaItems>
+        <criteriaItems>
+            <column>sked__Location__c$sked_Collection_Operation_Name__c</column>
+            <columnToColumn>false</columnToColumn>
+            <isUnlocked>true</isUnlocked>
+            <operator>notEqual</operator>
+            <value></value>
+        </criteriaItems>
+        <criteriaItems>
+            <column>sked__Location__c$sked__Type__c</column>
+            <columnToColumn>false</columnToColumn>
+            <isUnlocked>false</isUnlocked>
+            <operator>equals</operator>
+            <value>Mobile Site</value>
+        </criteriaItems>
+        <language>en_US</language>
+    </filter>
+    <format>Summary</format>
+    <groupingsDown>
+        <dateGranularity>Day</dateGranularity>
+        <field>sked__Location__c$sked_Collection_Operation_Name__c</field>
+        <sortOrder>Asc</sortOrder>
+    </groupingsDown>
+    <name>Travel Time Audit Report</name>
+    <params>
+        <name>co</name>
+        <value>1</value>
+    </params>
+    <reportType>Sites_with_Site_Collection_Operation__c</reportType>
+    <scope>organization</scope>
+    <showDetails>true</showDetails>
+    <showGrandTotal>true</showGrandTotal>
+    <showSubTotals>true</showSubTotals>
+    <timeFrameFilter>
+        <dateColumn>sked__Location__c$CreatedDate</dateColumn>
+        <interval>INTERVAL_CUSTOM</interval>
+    </timeFrameFilter>
+</Report>

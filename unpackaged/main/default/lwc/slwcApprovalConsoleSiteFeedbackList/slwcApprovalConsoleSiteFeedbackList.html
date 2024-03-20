@@ -1,0 +1,168 @@
+<template>
+    <div class="slds-grid">
+        <div class="slds-col">
+            <c-slwc-drive-scheduling-filters
+                mode="siteFeedback"
+                onsearch={handleSearch}
+            >
+            </c-slwc-drive-scheduling-filters>
+        </div>
+
+        <div class="slds-col slds-scrollable_y slds-p-left_medium slds-is-relative" style="min-height: 400px; width:100%;">
+            <div class="slds-grid slds-grid_vertical-align-end slds-p-top_small">
+                <div class="slds-no-flex slds-col_bump-left slds-p-right_small" style="width: 300px;">
+                    <c-slwc-new-collection-operation-multi-picklist
+                        division-single-select
+                        dropdown-position="right"
+                        date-range={collectionOperationDateRange}
+                        default-values={filters.collectionOperationValues}
+                        onchange={handleCollectionOperationChanged}>
+                    </c-slwc-new-collection-operation-multi-picklist>
+                </div>
+            </div>
+
+            <div class="slds-grow slds-p-around_small">
+                <template if:true={showSpinner}>
+                    <lightning-spinner class="spins" size="medium"></lightning-spinner>
+                </template>
+                <div class="slds-scrollable" style="height: 60vh; width: calc(100vw - 5rem);">
+                    <c-slwc-custom-datatable 
+                        key-field="id"
+                        data={records}
+                        columns={columns}
+                        wrap-text-max-lines="3"
+                        hide-checkbox-column
+                        sorted-by={sortOption.fieldName}
+                        sorted-direction={sortOption.sortDirection}
+                        enable-infinite-loading={enableInfiniteLoading}
+                        onsort={handleSortChanged}
+                        onloadmore={handleLoadMoreData}>
+                    </c-slwc-custom-datatable>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <c-slwc-approval-console-request-detail-modal
+        record-id={requestDetailModalData.recordId}
+        is-open={requestDetailModalData.isOpen}
+        object-label="Role Time Variance Feedback"
+        onclose={handleCloseRequestDetailModal}
+    >   
+        <div class="slds-grow" slot="details" if:true={requestDetailModalData.record}>
+            <div class="slds-form-element slds-form-element_readonly">
+                <span class="slds-form-element__label">Name</span>
+                <div class="slds-form-element__control">
+                    <div class="slds-form-element__static slds-truncate">{requestDetailModalData.record.name}</div>
+                </div>
+            </div>
+            <div class="slds-form-element slds-form-element_readonly">
+                <span class="slds-form-element__label">Status</span>
+                <div class="slds-form-element__control">
+                    <div class="slds-form-element__static slds-truncate">{requestDetailModalData.record.status}</div>
+                </div>
+            </div>
+            <div class="slds-form-element slds-form-element_readonly">
+                <span class="slds-form-element__label">Site Name</span>
+                <div class="slds-form-element__control">
+                    <div class="slds-form-element__static">
+                        <c-slwc-lightning-formatted-url
+                            record={requestDetailModalData.record}
+                            id-field="siteId"
+                            label-field="siteName"
+                        ></c-slwc-lightning-formatted-url>
+                    </div>
+                </div>
+            </div>
+            <div class="slds-form-element slds-form-element_readonly">
+                <span class="slds-form-element__label">Drive Name</span>
+                <div class="slds-form-element__control">
+                    <div class="slds-form-element__static">
+                        <c-slwc-lightning-formatted-url
+                            record={requestDetailModalData.record}
+                            id-field="driveId"
+                            label-field="driveName"
+                        ></c-slwc-lightning-formatted-url>
+                    </div>
+                </div>
+            </div>
+            <div class="slds-form-element slds-form-element_readonly">
+                <span class="slds-form-element__label">Effective Start Date</span>
+                <div class="slds-form-element__control">
+                    <div class="slds-form-element__static slds-truncate">
+                        <lightning-formatted-date-time value={requestDetailModalData.record.effectiveStartDate}
+                            time-zone="GMT">
+                        </lightning-formatted-date-time>
+                    </div>
+                </div>
+            </div>
+            <div class="slds-form-element slds-form-element_readonly">
+                <span class="slds-form-element__label">Effective End Date</span>
+                <div class="slds-form-element__control">
+                    <div class="slds-form-element__static slds-truncate">
+                        <lightning-formatted-date-time value={requestDetailModalData.record.effectiveEndDate}
+                            time-zone="GMT">
+                        </lightning-formatted-date-time>
+                    </div>
+                </div>
+            </div>
+            <div class="slds-form-element slds-form-element_readonly">
+                <span class="slds-form-element__label">Variance Type</span>
+                <div class="slds-form-element__control">
+                    <div class="slds-form-element__static slds-truncate">{requestDetailModalData.record.varianceType}</div>
+                </div>
+            </div>
+            <div class="slds-form-element slds-form-element_readonly">
+                <span class="slds-form-element__label">Buffer Type</span>
+                <div class="slds-form-element__control">
+                    <div class="slds-form-element__static slds-truncate">{requestDetailModalData.record.bufferType}</div>
+                </div>
+            </div>
+            <div class="slds-form-element slds-form-element_readonly">
+                <span class="slds-form-element__label">Amount (minutes)</span>
+                <div class="slds-form-element__control">
+                    <div class="slds-form-element__static slds-truncate">{requestDetailModalData.record.amount}</div>
+                </div>
+            </div>
+            <div class="slds-form-element slds-form-element_readonly">
+                <span class="slds-form-element__label">Variance Applies to</span>
+                <div class="slds-form-element__control">
+                    <div class="slds-form-element__static">{requestDetailModalData.record.varianceAppliesTo}</div>
+                </div>
+            </div>
+            <div class="slds-form-element slds-form-element_readonly">
+                <span class="slds-form-element__label">Resource Role Group</span>
+                <div class="slds-form-element__control">
+                    <div class="slds-form-element__static">{requestDetailModalData.record.resourceRoleGroup}</div>
+                </div>
+            </div>
+            <div class="slds-form-element slds-form-element_readonly">
+                <span class="slds-form-element__label">Reason</span>
+                <div class="slds-form-element__control">
+                    <div class="slds-form-element__static slds-truncate">{requestDetailModalData.record.reason}</div>
+                </div>
+            </div>
+            <div class="slds-form-element slds-form-element_readonly">
+                <span class="slds-form-element__label">Submitted By</span>
+                <div class="slds-form-element__control">
+                    <div class="slds-form-element__static slds-truncate">{requestDetailModalData.record.createdBy.name}</div>
+                </div>
+            </div>
+            <div class="slds-form-element slds-form-element_readonly">
+                <span class="slds-form-element__label">Submission Date</span>
+                <div class="slds-form-element__control">
+                    <div class="slds-form-element__static slds-truncate">
+                        <lightning-formatted-date-time value={requestDetailModalData.record.createdDate} year="numeric" month="numeric" day="numeric" hour="numeric"
+                                    minute="2-digit" time-zone={timezoneSidId}></lightning-formatted-date-time>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <c-slwc-site-feedback-approval
+            slot="approvalHistoryConsole"
+            record-id={requestDetailModalData.recordId}
+        >
+        </c-slwc-site-feedback-approval>
+    </c-slwc-approval-console-request-detail-modal>
+
+</template>

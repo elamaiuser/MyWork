@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Mobile_Phone_Format_Restriction</fullName>
+    <active>false</active>
+    <description>Phone format must be xxx-xxx-xxxx</description>
+    <errorConditionFormula>NOT(
+ OR(
+  LEN (MobilePhone) = 0,
+  REGEX(MobilePhone, &quot;[0-9]{3}-[0-9]{3}-[0-9]{4}&quot;)
+
+ )
+)</errorConditionFormula>
+    <errorDisplayField>MobilePhone</errorDisplayField>
+    <errorMessage>Please add a valid phone number in the following format: xxx-xxx-xxxx</errorMessage>
+</ValidationRule>

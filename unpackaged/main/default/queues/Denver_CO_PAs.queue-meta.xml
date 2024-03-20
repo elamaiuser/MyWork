@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Queue xmlns="http://soap.sforce.com/2006/04/metadata">
+    <doesSendEmailToMembers>false</doesSendEmailToMembers>
+    <name>Denver CO: PAs</name>
+    <queueMembers>
+        <users>
+            <user>carlaine.ostrander@redcross.org</user>
+            <user>katina.jensen@redcross.org</user>
+            <user>noelle.nappi@redcross.org</user>
+            <user>ryan.gunderson@redcross.org</user>
+            <user>shaunte.allred@redcross.org</user>
+            <user>shawn.yanito@redcross.org</user>
+        </users>
+    </queueMembers>
+    <queueSobject>
+        <sobjectType>sked_Drive__c</sobjectType>
+    </queueSobject>
+</Queue>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>NewAccounts</fullName>
+    <columns>ACCOUNT.NAME</columns>
+    <columns>Contact_BPL__c</columns>
+    <columns>ACCOUNT.ADDRESS1_CITY</columns>
+    <columns>Next_Scheduled_Drive__c</columns>
+    <columns>Account_Manager__c</columns>
+    <columns>District_Manager__c</columns>
+    <columns>ACCOUNT.ADDRESS1_STATE_CODE</columns>
+    <columns>CREATEDBY_USER.ALIAS</columns>
+    <columns>ACCOUNT.ADDRESS1_ZIP</columns>
+    <columns>Market__c</columns>
+    <columns>ACCOUNT.TYPE</columns>
+    <columns>Industry_Code__c</columns>
+    <columns>ACCOUNT.CREATED_DATE</columns>
+    <filterScope>Mine</filterScope>
+    <filters>
+        <field>ACCOUNT.CREATED_DATE</field>
+        <operation>greaterOrEqual</operation>
+        <value>1/28/2023 12:00 AM</value>
+    </filters>
+    <label>My Accounts_New</label>
+</ListView>

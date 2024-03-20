@@ -1,0 +1,47 @@
+<apex:page standardController="Opportunity" extensions="MassUpdateOpportunityController" recordSetVar="opp" sidebar="false" showHeader="false" lightningStylesheets="true">
+    <apex:includeLightning /> 
+    
+    <div style="" id="OppAuraFlowContainer" class="slds-modal__content slds-p-around_medium" />
+    <script>
+    $Lightning.use("c:LightningOutContainerApp", function() {
+        $Lightning.createComponent("c:flowHostCMP",
+                                   {
+                                       selectedOpportunity:`{!JSENCODE(opps)}`,
+                                       selectedAccountId:`{!JSENCODE(accountId)}`
+                                   },
+                                   "OppAuraFlowContainer",
+                                   function(cmp) {
+									   $A.eventService.addHandler({
+                                           event: 'force:navigateToSObject',
+                                           handler: function(event) {
+											   console.log('Mass Opportunity Update VF - force:navigateToSObject event caught : ' + JSON.stringify(event));
+                                               if (sforce && sforce.one) {
+                                                   // VF page in S1 or Lightning Exp
+                                                   sforce.one.navigateToSObject(event.ac.recordId);
+                                               } else {
+                                                   // VF page in Classic
+                                                   window.location.assign('/'+event.ac.recordId);
+                                               }
+                                           }
+                                       });
+									   
+                                       $A.eventService.addHandler({
+                                           event: 'force:navigateToObjectHome',
+                                           handler: function(event) {
+											   console.log('Mass Opportunity Update VF - force:navigateToObjectHome event caught : ' + JSON.stringify(event));
+                                               if (sforce && sforce.one) {
+                                                   // VF page in S1 or Lightning Exp
+                                                   sforce.one.navigateToObjectHome(event.ac.scope);
+                                               } else {
+                                                   // VF page in Classic
+                                                   if (event.ac.scope === 'Account') {
+                                                       window.location = '{!URLFOR($Action.Account.Tab, $ObjectType.Account)}';
+                                                   }
+                                               }
+                                           }
+                                       });
+                                   });
+    });
+    </script>
+    
+</apex:page>

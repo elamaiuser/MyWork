@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>sked_Variation_Type__c</fullName>
+    <externalId>false</externalId>
+    <label>Variation Type</label>
+    <required>true</required>
+    <trackHistory>true</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Safety Video</fullName>
+                <default>false</default>
+                <label>Safety Video</label>
+            </value>
+            <value>
+                <fullName>Security</fullName>
+                <default>false</default>
+                <label>Security</label>
+            </value>
+            <value>
+                <fullName>Loading/ unloading area</fullName>
+                <default>false</default>
+                <label>Loading/ unloading area</label>
+            </value>
+            <value>
+                <fullName>Multiple rooms</fullName>
+                <default>false</default>
+                <label>Multiple rooms</label>
+            </value>
+            <value>
+                <fullName>Parking</fullName>
+                <default>false</default>
+                <label>Parking</label>
+            </value>
+            <value>
+                <fullName>Stairs</fullName>
+                <default>false</default>
+                <label>Stairs</label>
+            </value>
+            <value>
+                <fullName>Elevator</fullName>
+                <default>false</default>
+                <label>Elevator</label>
+            </value>
+            <value>
+                <fullName>Floor covering</fullName>
+                <default>false</default>
+                <label>Floor covering</label>
+            </value>
+            <value>
+                <fullName>Construction</fullName>
+                <default>false</default>
+                <label>Construction</label>
+            </value>
+            <value>
+                <fullName>Commercial Route</fullName>
+                <default>false</default>
+                <label>Commercial Route</label>
+            </value>
+            <value>
+                <fullName>Other</fullName>
+                <default>false</default>
+                <label>Other</label>
+            </value>
+            <value>
+                <fullName>Imported from Hemasphere</fullName>
+                <default>false</default>
+                <label>Imported from Hemasphere</label>
+            </value>
+            <value>
+                <fullName>Loading Dock</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Loading Dock</label>
+            </value>
+            <value>
+                <fullName>Parking Lot</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Parking Lot</label>
+            </value>
+            <value>
+                <fullName>Vehicle Inspection</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Vehicle Inspection</label>
+            </value>
+            <value>
+                <fullName>Wireless</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Wireless</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

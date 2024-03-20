@@ -1,0 +1,106 @@
+<apex:page controller="skedRacController" sidebar="false" standardstylesheets="false" showheader="false" doctype="html-5.0">
+<html lang="en" style="height: 100%">
+<head>
+  <meta charset="UTF-8" />
+  <title>Resource Availability Console (RAC)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1" />
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="{!URLFOR($Resource.sked_HLT_Vendors, '/slds/styles/salesforce-lightning-design-system.min.css')}" />
+  <link rel="stylesheet" href="{!URLFOR($Resource.sked_HLT_Vendors, '/jquery-ui-custom/jquery-ui.min.css')}" />
+  <link rel="stylesheet" href="{!URLFOR($Resource.sked_HLT_Vendors, '/jquery-ui-custom/jquery-ui.theme.min.css')}" />
+  <link rel="stylesheet" href="{!URLFOR($Resource.sked_HLT_Vendors, '/jquery-time-picker/jquery.timepicker.css')}" />
+
+  <link rel="stylesheet" href="{!URLFOR($Resource.sked_HLT_Dist, '/styles/resource-availability-console.css')}" />
+
+  <style>
+    .skiplink {
+      position: absolute;
+    }
+    .noSidebarCell, .sidebarCell .fixed {
+      padding: 0;
+    }
+    .globalHeaderBar {
+      margin: 0;
+    }
+  </style>
+</head>
+
+<body style="margin: 0; padding: 0; background-color: #ffffff; height: 100%">
+  <!-- app: resource-availability-console -->
+  <div ng-app="hltApp" class="sked-slds ng-cloak" ng-init="loading" style="height: 100%">
+    <!-- loading spinner -->
+    <div class="slds-spinner_container fixed-spinner" ng-show="loading">
+      <div role="status" class="slds-spinner slds-spinner--medium">
+      <span class="slds-assistive-text">Loading</span>
+      <div class="slds-spinner__dot-a"></div>
+      <div class="slds-spinner__dot-b"></div>
+      </div>
+    </div>
+
+    <!-- main component -->
+    <resource-availability-console ></resource-availability-console>
+  </div>
+
+  <!-- jquery -->
+  <script src="{!URLFOR($Resource.sked_HLT_Vendors, '/jquery/jquery-3.1.1.min.js')}"></script>
+  <script src="{!URLFOR($Resource.sked_HLT_Vendors, '/jquery-ui-1.12.1.custom/jquery-ui.min.js')}"></script>
+  <!-- angularjs -->
+  <script src="{!URLFOR($Resource.sked_HLT_Vendors, '/angularjs/angular.min.js')}"></script>
+  <script src="{!URLFOR($Resource.sked_HLT_Vendors, '/angularjs/angular-sanitize.min.js')}"></script>
+  <script src="{!URLFOR($Resource.sked_HLT_Vendors, '/ng-jquery-ui-date-picker.js')}"></script>
+  <script src="{!URLFOR($Resource.sked_HLT_Vendors, '/draganddrop.min.js')}"></script>
+  <!-- clickoutside -->
+  <script src="{!URLFOR($Resource.sked_HLT_Vendors, '/clickoutside.directive.js')}"></script>
+  <!-- jquery time picker -->
+  <script src="{!URLFOR($Resource.sked_HLT_Vendors, '/jquery-time-picker/jquery.timepicker.min.js')}"></script>
+
+  <!-- month picker -->
+  <script src="{!URLFOR($Resource.sked_HLT_Vendors, '/jquery-ui-1.11.4-widget-button/jquery-ui.min.js')}"></script>
+  <script src="{!URLFOR($Resource.sked_HLT_Vendors, '/jquery-ui-month-picker/MonthPicker.min.js')}"></script>
+
+  <!-- angular-vs-repeat -->
+  <script src="{!URLFOR($Resource.sked_HLT_Vendors, '/angular-vs-repeat/angular-vs-repeat.min.js')}"></script>
+
+  <!-- angular google map -->
+  <script src="{!URLFOR($Resource.sked_HLT_Vendors, '/angular-simple-logger.min.js')}"></script>
+  <script src="{!URLFOR($Resource.sked_HLT_Vendors, '/lodash.min.js')}"></script>
+  <script src="{!URLFOR($Resource.sked_HLT_Vendors, '/momentjs/moment.min.js')}"></script>
+  <script src="{!URLFOR($Resource.sked_HLT_Vendors, '/momentjs/moment-timezone.js')}"></script>
+  <script src="{!URLFOR($Resource.sked_HLT_Vendors, '/angular-google-maps.min.js')}"></script>
+  
+  <script src="{!URLFOR($Resource.sked_HLT_Vendors, '/ng-google-chart.min.js')}"></script>
+
+  <!-- app -->
+  <script src="{!URLFOR($Resource.sked_HLT_Dist, '/scripts/hlt-rac.js')}"></script>
+
+  <!-- app: bootstrap -->
+  <script>
+    (function (angular, apiController) {
+      angular.module('skedApp.core')
+      .config([
+        'apiProvider',
+        'envProvider',
+        'langProvider',
+        function (apiProvider, envProvider, langProvider) {
+          apiProvider.setController(apiController);
+          apiProvider.setRemotingConfiguration({
+            escape: false
+          });
+          apiProvider.enableDebug();
+          envProvider.setVariables({
+            RESOURCE_PATH: "{!URLFOR($Resource.sked_HLT_Vendors, '/')}"
+          });
+
+          langProvider.define({
+            pageTitle: 'Resource Availability Console'
+          });
+        }
+      ]);
+
+    //})(angular, angular.merge({}, skedRacController, skedSmcController));
+  })(angular, angular.merge({}, skedRacController));
+  </script>
+</body>
+</html> 
+</apex:page>

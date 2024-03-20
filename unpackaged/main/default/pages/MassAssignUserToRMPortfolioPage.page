@@ -1,0 +1,50 @@
+<apex:page standardController="BSF_Portfolio__c" extensions="MassAssignUserToRMPortfolioClass" recordSetVar="portfolio" sidebar="false" showHeader="false" standardStylesheets="false">
+ <apex:includeScript value="/lightning/lightning.out.js" />
+    
+    <apex:form >
+        <apex:pageblock >
+            <apex:pageMessages ></apex:pageMessages>
+        </apex:pageblock>
+        
+        
+        <div id="portfolio_lookup"></div>
+        
+    
+        
+            <script>
+                    var visualForceFunction = function(event)
+                    {
+                        console.log('Inside visualForceFunction');
+                        let url = "/lightning/o/BSF_Portfolio__c/list";
+                        //let url = "/lightning/o/BSF_Portfolio__c/list?filterName="+ '{!unassignedviewId}';
+                        window.location.href = url;
+                        //var myEventData1 = event.getParam("lookupVal");
+                        //var label = event.getParam("lookupLabel");
+                        //console.log('response data = ' + myEventData1 + ' : ' + label);
+                    };
+         
+                    if( '{!isError}' === 'false' ){
+                            // and...
+                            $Lightning.use("c:MassAssignUserToRMPortfolio", function()
+                            {
+                                $Lightning.createComponent
+                                (
+                                    "c:MassAssignUserToRMPortfolioComponent",
+                                    {
+                                         "portfolioIds": '{!concatenatedPortfolioIds}'
+                                        
+                                        
+                                    },
+                                    "portfolio_lookup",
+                                    function()
+                                    {
+                                        $A.eventService.addHandler({ "event": "c:RedirectAccountListViewEvent", "handler" : visualForceFunction});
+                                    }
+                                );
+                            });                        
+                    }
+
+                </script>        
+    </apex:form>
+
+</apex:page>

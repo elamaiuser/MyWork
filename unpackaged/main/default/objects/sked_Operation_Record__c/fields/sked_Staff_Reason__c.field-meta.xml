@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>sked_Staff_Reason__c</fullName>
+    <externalId>false</externalId>
+    <label>Staff Reason</label>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Arrived late weather</fullName>
+                <default>false</default>
+                <label>Arrived late weather</label>
+            </value>
+            <value>
+                <fullName>Arrived late directions (directions)</fullName>
+                <default>false</default>
+                <label>Arrived late directions (directions)</label>
+            </value>
+            <value>
+                <fullName>Arrived late traffic (accident, construction, etc)</fullName>
+                <default>false</default>
+                <label>Arrived late traffic (accident, construction, etc)</label>
+            </value>
+            <value>
+                <fullName>Arrived late (other)</fullName>
+                <default>false</default>
+                <label>Arrived late (other)</label>
+            </value>
+            <value>
+                <fullName>Staff call outs</fullName>
+                <default>false</default>
+                <label>Staff call outs</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

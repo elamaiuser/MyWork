@@ -1,0 +1,97 @@
+<template>
+    <section role="dialog" tabindex="-1" class={customClass.modalClass} style={customStyle.modalStyle}>
+        <div class="slds-modal__container" style="width: 32rem;" if:true={isOpen}>
+            <header class={customClass.headerClass}>
+                <lightning-button-icon onclick={handleCancel} class="slds-button slds-button_icon slds-modal__close"
+                    size="large" icon-name="utility:close" variant="bare-inverse" title="Close"></lightning-button-icon>
+
+                <h2 class="slds-modal__title slds-hyphenate">Drive Confirmation</h2>
+            </header>
+            <div class="slds-modal__content slds-is-relative">
+                <lightning-spinner if:true={showSpinner} class="spins" size="medium"></lightning-spinner>
+
+                <div class="slds-p-horizontal_medium slds-p-vertical_small">
+                    <template if:false={isAPSUser}>
+                        <p>
+                            The proposed drive will be put into approval queue due to the below contentions:
+                        </p>
+                        <p>
+                            <template for:each={pendingActionReasonCodes} for:item="reason">
+                                <div key={reason}>
+                                    - {reason}
+                                </div>
+                            </template>
+                        </p>
+                        <p>
+                            Do you want to continue?
+                        </p>
+                    </template>
+                   
+                    <template if:true={isAPSUser}>
+                        <p>
+                            Cannot save the proposed drive due to below contentions:
+                        </p>
+                        <p>
+                            <template for:each={pendingActionReasonCodes} for:item="reason">
+                                <div key={reason}>
+                                    - {reason}
+                                </div>
+                            </template>
+                        </p>
+                        <p>
+                            Do you want to continue resolve the contentions?
+                            <!-- Do you want to put it into approval queue or continue to resolve the contentions? -->
+                        </p>
+                    </template>
+
+                    <div class="slds-form_compound slds-m-top_small" if:false={isAPSUser}>
+                        <div class="slds-form-element__row">
+                            <lightning-textarea
+                                class="slds-grow"
+                                name="submissionNotes"
+                                label="Submission Notes"
+                                required={submissionNotesRequired}
+                                onchange={handleOnChange}
+                                value={model.submissionNotes}>
+                            </lightning-textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <footer class={customClass.footerClass}>
+                <template if:false={isAPSUser}>
+                    <button class="slds-button slds-button_neutral" onclick={handleCancel}>No</button>
+                    <button class="slds-button slds-button_brand" data-action="putToApprovalQueue" onclick={handleSave}>Yes</button>
+                </template>
+                <template if:true={isAPSUser}>
+                    <button class="slds-button slds-button_neutral" onclick={handleCancel}>Close</button>
+                    <!-- <button class="slds-button slds-button_brand" data-action="putToApprovalQueue" onclick={handleSave}>Put it to approval queue</button> -->
+                    <button class="slds-button slds-button_brand" data-action="resolveContentions" onclick={handleSave}>Resolve contentions</button>
+                </template>
+            </footer>
+        </div>
+    </section>
+    <div class={customClass.backdropClass} style={customStyle.backdropStyle}></div>
+
+    <section role="dialog" tabindex="-1" class={resolveContentionsModalCustomClass.modalClass} style={resolveContentionsModalCustomStyle.modalStyle}>
+        <div class="slds-modal__container" if:true={resolveContentionsModalData.isOpen} style="transform: none;">
+            <header class={resolveContentionsModalCustomClass.headerClass}>
+                <lightning-button-icon onclick={closeResolveContentionsModal} class="slds-button slds-button_icon slds-modal__close"
+                    size="large" icon-name="utility:close" variant="bare-inverse" title="Close"></lightning-button-icon>
+
+                <h2 class="slds-modal__title slds-hyphenate">Resolve Contentions</h2>
+            </header>
+            <div class="slds-modal__content slds-is-relative">
+                <c-slwc-resolve-drive-contentions
+                    mode="updateDrive"
+                    drive-generator-instance={driveGeneratorInstance}>
+                </c-slwc-resolve-drive-contentions>                
+            </div>
+            <footer class={resolveContentionsModalCustomClass.footerClass}>
+                <button class="slds-button slds-button_neutral" onclick={closeResolveContentionsModal}>Close</button>
+                <button class="slds-button slds-button_brand" onclick={handleSaveContentionsModal}>Save</button>
+            </footer>
+        </div>
+    </section>
+    <div class={resolveContentionsModalCustomClass.backdropClass} style={resolveContentionsModalCustomStyle.backdropStyle}></div>
+</template>

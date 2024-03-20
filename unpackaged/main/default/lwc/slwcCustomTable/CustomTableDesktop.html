@@ -1,0 +1,20 @@
+<template>
+    <template if:true={notEmpty}>
+        <div class="slds-grid ">
+            <c-slwc-custom-datatable
+                key-field={keyField}
+                data={record}
+                columns={columns}
+                class="slds-max-medium-table_stacked"
+                resize-column-disabled={resizeColumnDisabled}
+                hide-checkbox-column={hideCheckboxColumn}
+                onrowaction={handleRowActions}
+                style={styled}>
+            </c-slwc-custom-datatable>
+        </div>
+    </template>
+    <div if:false={notEmpty} class="slds-align_absolute-center slds-p-around_large">
+        <lightning-icon icon-name="utility:warning" size="x-small" alternative-text="Warning!" title="Warning"></lightning-icon>
+        <span class="slds-m-left--small">There are no records in this list.</span>
+    </div>
+</template>

@@ -1,0 +1,75 @@
+<template>
+    <div if:false={driveDriveDeliveryList.length} class="slds-align_absolute-center slds-p-around_large">
+        <lightning-icon icon-name="utility:warning" size="x-small" alternative-text="Warning!" title="Warning"></lightning-icon>
+        <span class="slds-m-left--small">There are no records in this list.</span>
+    </div>
+    <div class="wrapper">
+        <template for:each={driveDriveDeliveryList} for:item="item">
+            <div key={item.id} class="slds-card__body slds-wrap slds-grid">
+                <div class="slds-size_1-of-1">
+                    <div
+                        class="slds-var-p-horizontal_medium slds-var-p-vertical_xx-small slds-tile slds-media slds-hint-parent">
+                        <div class="slds-media__body">
+                            <div class="slds-grid slds-grid_align-spread slds-has-flexi-truncate">
+                                <h3 class="slds-tile__title slds-truncate">
+                                    <a href={item.recordPageUrl} target="_blank">{item.name}</a>
+                                </h3>
+                            </div>
+                            <div class="slds-tile__detail">
+                                <dl class="slds-list_horizontal slds-wrap">
+                                    <!-- <dt class="slds-item_label slds-text-color_weak slds-truncate">Delivery Id:</dt>
+                                    <dd class="slds-item_detail slds-truncate">
+                                        {item.deliveryId}
+                                    </dd> -->
+                                    <dt class="slds-item_label slds-text-color_weak slds-truncate">Vehicle:</dt>
+                                    <dd class="slds-item_detail slds-truncate">
+                                        {item.vehicle}
+                                    </dd>
+                                    <dt class="slds-item_label slds-text-color_weak slds-truncate">Type:</dt>
+                                    <dd class="slds-item_detail slds-truncate">
+                                        {item.type}
+                                    </dd>
+                                    <dt class="slds-item_label slds-text-color_weak slds-truncate">Start:</dt>
+                                    <dd class="slds-item_detail slds-truncate">
+                                        <lightning-formatted-date-time value={item.start} year="numeric" month="numeric" day="numeric" hour="numeric"
+                                        minute="2-digit" time-zone={timezoneSidId}></lightning-formatted-date-time>
+                                    </dd>
+                                    <dt class="slds-item_label slds-text-color_weak slds-truncate">End:</dt>
+                                    <dd class="slds-item_detail slds-truncate">
+                                        <lightning-formatted-date-time value={item.end} year="numeric" month="numeric" day="numeric" hour="numeric"
+                                        minute="2-digit" time-zone={timezoneSidId}></lightning-formatted-date-time>
+                                    </dd>
+                                    <dt class="slds-item_label slds-text-color_weak slds-truncate">Pick Up:</dt>
+                                    <dd class="slds-item_detail slds-truncate">
+                                        <lightning-formatted-date-time value={item.pickUp} year="numeric" month="numeric" day="numeric" hour="numeric"
+                                        minute="2-digit" time-zone={timezoneSidId}></lightning-formatted-date-time>
+                                    </dd>
+                                    <dt class="slds-item_label slds-text-color_weak slds-truncate">Arrive:</dt>
+                                    <dd class="slds-item_detail slds-truncate">
+                                        <lightning-formatted-date-time value={item.arrive} year="numeric" month="numeric" day="numeric" hour="numeric"
+                                        minute="2-digit" time-zone={timezoneSidId}></lightning-formatted-date-time>
+                                    </dd>
+                                    <dt class="slds-item_label slds-text-color_weak slds-truncate">Drive Bag:</dt>
+                                    
+                                    <dd class="slds-item_detail slds-truncate">
+                                        <div class="slds-p-horizontal_x-small" if:true={item.driveBags}>
+                                            <div for:each={item.driveBags} for:item="driveBag" key={driveBag.key}>
+                                                <div>{driveBag.bagType} ({driveBag.quantity})</div>
+                                              </div>
+                                        </div>
+                                    </dd>
+                                </dl>
+                            </div>
+                        </div>
+                        <div if:false={isReadonly}>
+                            <lightning-button-menu alternative-text="Show menu" icon-size="x-small" menu-alignment="right">
+                                <lightning-menu-item value="edit" label="Edit" data-value={item.id} data-action="edit" onclick={handleWidgetActions}></lightning-menu-item>
+                                <lightning-menu-item value="delete" label="Delete" data-value={item.id} data-action="delete" onclick={handleWidgetActions}></lightning-menu-item>
+                            </lightning-button-menu>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </template>
+    </div>
+</template>

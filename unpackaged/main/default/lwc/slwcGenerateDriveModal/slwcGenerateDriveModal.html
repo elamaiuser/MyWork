@@ -1,0 +1,83 @@
+<template>
+    <header class="slds-modal__header" if:false={embededMode}>
+        <h2 class="slds-text-heading_medium slds-hyphenate">Drive Generator</h2>
+    </header>
+    <div class="slds-modal__content slds-p-around_medium full-height__modal-content slds-is-relative slds-grid slds-grid_vertical" style="min-height: 18rem;">
+        <lightning-progress-indicator class="slds-shrink-none" current-step={currentStep.value} type="base" variant="base">
+            <template for:each={steps} for:item="step">
+                <lightning-progress-step key={step.value} label={step.label} value={step.value}></lightning-progress-step>
+            </template>
+        </lightning-progress-indicator>
+
+        <div class="slds-grow slds-grid slds-grid_vertical">
+            <div if:true={showSpinner} class="slds-grow slds-grid slds-grid_vertical slds-align_absolute-center">
+                <div class="slds-is-relative" style="height: 4rem; width: 4rem;">
+                    <lightning-spinner class="spins" size="medium"></lightning-spinner>
+                </div>
+                <span if:true={spinnerText}>{spinnerText}</span>
+                <span if:false={spinnerText}>{currentStep.label}</span>
+            </div> 
+
+            <template if:false={showSpinner}>
+                <template if:true={needConfirmToContinue}>
+                    <div class="slds-m-top_large slds-p-horizontal_x-large">
+                        <ul class="slds-list_dotted">
+                                <li>{resultMessage} ( 
+                                <c-slwc-custom-datatable-planned-productivity-cell
+                                    value={drive.driveProductivityPlanned}>
+                                </c-slwc-custom-datatable-planned-productivity-cell>
+                            )</li>
+                        </ul>
+                        <div>Do you want to continue?</div>
+                    </div>
+                </template>
+
+                <template if:false={needConfirmToContinue}>
+                    <template if:false={driveGeneratorHasError}>
+                        <div class="slds-grow slds-align_absolute-center">
+                            <lightning-icon icon-name="utility:warning" size="x-small"></lightning-icon>
+                            <div class="slds-m-left--small" style="white-space:pre-line;"><lightning-formatted-rich-text value={resultMessage}></lightning-formatted-rich-text></div>
+                        </div>
+
+                        <template if:true={needConfirmToSubmitDriveForApproval}>
+                            <div class="slds-form_compound slds-m-top_small">
+                                <div class="slds-form-element__row">
+                                    <lightning-textarea
+                                        class="slds-grow"
+                                        name="notes"
+                                        label="Submission Notes"
+                                        required={submissionNotesRequired}
+                                        onchange={handleOnChange}
+                                        value={driveChangeRequest.notes}>
+                                    </lightning-textarea>
+                                </div>
+                            </div>
+                        </template>
+                    </template>
+    
+                    <template if:true={driveGeneratorHasError}>
+                        <div class="slds-m-top_large slds-p-horizontal_x-large">
+                            <div>{errorHeaderMessage}</div>
+                            <ul class="slds-list_dotted">
+                                <template for:each={errorMessages} for:item="message">
+                                    <li key={message}>{message}</li>
+                                </template>
+                            </ul>
+                        </div>
+                    </template>
+                </template>
+            </template>
+        </div>
+    </div>
+    <footer class="slds-modal__footer" if:false={embededMode}>
+        <template if:true={needConfirmToSubmitDriveForApproval}>
+            <lightning-button label="No" variant="destructive" onclick={rejectDCR}></lightning-button>
+            <lightning-button class="slds-m-left_xx-small" label="Yes" variant="brand" onclick={submitDCR}></lightning-button>
+        </template>
+        <template if:false={needConfirmToSubmitDriveForApproval}>
+            <lightning-button if:false={needConfirmToContinue} label="Close" variant="neutral" onclick={closeModal}></lightning-button>
+            <lightning-button class="slds-m-left_xx-small" if:true={needConfirmToContinue} label="No" variant="destructive" onclick={declineContinue}></lightning-button>
+            <lightning-button class="slds-m-left_xx-small" if:true={needConfirmToContinue} label="Yes" variant="brand" onclick={confirmContinue}></lightning-button>
+        </template>
+    </footer>
+</template>

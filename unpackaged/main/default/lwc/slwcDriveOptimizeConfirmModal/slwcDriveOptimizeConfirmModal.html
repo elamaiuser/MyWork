@@ -1,0 +1,56 @@
+<template>
+    <section role="dialog" tabindex="-1" class={customClass.modalClass}>
+        <div class="slds-modal__container">
+            <header class="slds-modal__header">
+                <lightning-button-icon if:true={showCloseIcon} onclick={handleClose} class="slds-button slds-button_icon slds-modal__close" size="large" icon-name="utility:close" variant="bare-inverse" title="Close"></lightning-button-icon>
+
+                <h2 class="slds-modal__title slds-hyphenate">Optimize Confirmation</h2>
+            </header>
+            <div class="slds-modal__content">
+                <div class="slds-is-relative" style="height: 100%">
+                    <template if:true={showSpinner}>
+                        <lightning-spinner class="spins" size="medium"></lightning-spinner>
+                    </template>
+
+                    <div class="slds-tabs_default slds-scrollable_y slds-grid slds-grid_vertical">
+                        <ul class="slds-tabs_default__nav slds-theme_shade" role="tablist">
+                            <li class={customClass.driveListTab} role="presentation"  data-value={TABS.DRIVE_LIST} onclick={handleTabChange}>
+                                <a class="slds-tabs_default__link" role="tab">Drive List</a>
+                            </li>
+                            <li class={customClass.settingsTab} role="presentation" data-value={TABS.SETTINGS} onclick={handleTabChange}>
+                                <a class="slds-tabs_default__link" role="tab">Optimization Settings</a>
+                            </li>
+                        </ul>
+                        <div if:true={showDriveListTab} class="slds-tabs_default__content slds-scrollable_y">
+                            <div class="slds-p-horizontal_medium">
+                                <div class="slds-border_bottom slds-grid slds-grid_align-end">
+                                    <lightning-button label={btnRemoveLabel} variant="neutral" class="slds-m-bottom_xx-small" onclick={handleRemove} disabled={btnRemoveDisabled}></lightning-button>
+                                </div>
+                                <lightning-datatable 
+                                    key-field="id"
+                                    data={driveList}
+                                    columns={columns}
+                                    onrowselection={handleRowSelection}
+                                    wrap-text-max-lines="3">
+                                </lightning-datatable>
+                            </div>
+                        </div>
+                        <div if:true={showSettingsTab} class="slds-tabs_default__content slds-scrollable_y">
+                            <div class="slds-p-horizontal_xx-small">
+                                <c-slwc-drive-optimize-settings-form
+                                    settings={settings}
+                                    onchange={handleOnSettingChange}
+                                ></c-slwc-drive-optimize-settings-form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <footer class="slds-modal__footer">
+                <button class="slds-button slds-button_neutral" onclick={handleClose} >Cancel</button>
+                <button class="slds-button slds-button_brand" onclick={handleConfirm} >Confirm</button>
+            </footer>
+        </div>
+    </section>
+    <div class={customClass.backdropClass}></div>
+</template>

@@ -1,0 +1,86 @@
+<template>
+    <div class="slds-form-element">
+        <label class="slds-form-element__label">{label}</label>
+		<c-slwc-click-outside func={closeDropdown}>
+			<div class="slds-form-element__control">
+				<div class="slds-combobox_container">
+					<div class="slds-combobox slds-dropdown-trigger slds-dropdown-trigger_click slds-is-open" aria-expanded="true" aria-haspopup="listbox" role="combobox">
+                        <div class="slds-combobox__form-element slds-input-has-icon slds-input-has-icon_right" role="none">
+
+                            <!-- Text input -->
+                            <input type="text"
+                                class={getInputClass}
+                                aria-autocomplete="list"
+                                aria-controls="listbox"
+                                autocomplete="off"
+                                role="textbox"
+                                id="combobox"
+                                value={searchTerm}
+                                placeholder={placeholder}
+                                onclick={toggleOptions}
+                                oninput={handleInput} />
+    
+                            <!-- Search icon -->
+                            <lightning-icon icon-name="utility:search" size="x-small" alternative-text="Search icon" class="slds-input__icon slds-input__icon_right"></lightning-icon>
+    
+                        </div>
+                        <div if:true={showOptions} class="slds-dropdown slds-dropdown_left slds-dropdown_fluid" style="visibility: visible; opacity: 1; padding: .5rem 0;">
+							<ul class="slds-listbox slds-listbox_vertical" role="presentation">
+                                <!-- Spinner to display when waiting for results of search -->
+                                <div if:true={loading}>
+                                    <lightning-spinner alternative-text="Loading" size="small"></lightning-spinner>
+                                </div>
+    
+                                <!-- Display if results are present -->
+                                <template for:each={searchResults} for:item="result">
+                                    <li key={result.id} role="presentation" class="slds-listbox__item" onclick={handleResultClick} data-recordid={result.id}>
+                                        <span class="slds-media slds-listbox__option slds-listbox__option_entity slds-listbox__option_has-meta"
+                                            role="option">
+                                            <span class="slds-media__figure">
+                                                <lightning-icon icon-name={iconName} size="small"></lightning-icon>
+                                            </span>
+                                            
+                                            <span class="slds-media__body" style="padding-top: 9px;">
+                                                <span class="slds-listbox__option-text slds-listbox__option-text_entity">{result.label}</span>
+                                                <span if:true={result.subline} class="slds-listbox__option-meta slds-listbox__option-meta_entity">{result.subline}</span>
+                                            </span>
+                                        </span>
+                                    </li>
+                                </template>
+
+                                <!-- Display that there are no results -->
+                                <template if:true={showNoResultsText}>
+                                    <li role="presentation" class="slds-listbox__item">
+                                        <span class="slds-media slds-listbox__option_entity" role="option">
+                                            <span class="slds-media__body">No results.</span>
+                                        </span>
+                                    </li>
+                                </template>
+                            </ul>
+						</div>
+					</div>
+                </div>
+                
+                <!-- Multi-selection start -->
+                <div id="selection" if:true={selection.length} role="listbox" aria-orientation="horizontal">
+                    <ul class="slds-listbox slds-listbox_inline slds-p-top_xxx-small" role="group" aria-label="Selected Options:">
+                        <template for:each={selection} for:item="item">
+                            <li key={item.id} role="presentation" class="slds-listbox__item">
+                                <lightning-pill label={item.label} onremove={handleRemoveSelectedItem} name={item.id}>
+                                    <lightning-icon icon-name={iconName}></lightning-icon>
+                                </lightning-pill>
+                            </li>
+                        </template>
+                    </ul>
+                </div>
+                <!-- Multi-selection end -->
+
+                <!-- Errors start -->
+                <template for:each={errors} for:item="error">
+                    <label key={error.id} role="alert" class="slds-form-element__label slds-m-top_xx-small form-error">{error.message}</label>
+                </template>
+                <!-- Errors end -->
+			</div>
+        </c-slwc-click-outside>
+    </div>
+</template>

@@ -1,0 +1,97 @@
+<template>
+    <template if:true={showSpinner}>
+        <lightning-spinner class="spins" size="medium"></lightning-spinner>
+    </template>
+
+    <article class="slds-card slds-card_boundary sked-rc-page">
+        <div class="slds-page-header slds-shrink-none">
+            <div class="slds-page-header__row slds-grid_vertical-align-center">
+                <div class="slds-page-header__col-title">
+                    <div class="slds-media">
+                        <div class="slds-media__figure">
+                            <lightning-icon icon-name="standard:event"></lightning-icon>
+                        </div>
+                        <div class="slds-media__body">
+                            <p class="slds-page-header__name-meta">Resource Calendar</p>
+                            <div class="slds-page-header__name">
+                                <div class="slds-page-header__name-title">
+                                    <h1>
+                                        <span class="slds-page-header__title slds-truncate">{resourceName}</span>
+                                    </h1>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="slds-no-flex slds-grid slds-grid_vertical-align-end">
+                    <div class="slds-grid">
+                        <div class="slds-col slds-p-right_x-small">
+                            <c-slwc-month-picker 
+                                unique-key="monthPicker"
+                                variant="label-hidden" 
+                                onmonthchange={handleOnChange}
+                                default-value={queryModel.selectedMonth}>
+                            </c-slwc-month-picker>
+                        </div>
+                        <div class="slds-col slds-p-right_x-small">
+                            <lightning-button-icon tooltip="Refresh" variant="border-filled" onclick={refresh} icon-name="utility:refresh"></lightning-button-icon>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div>
+            <div class="slds-p-around_medium slds-align_absolute-center">
+                <template if:false={hasResult}>
+                    <template if:false={isValidQueryModel}>
+                        <lightning-icon icon-name="utility:warning" size="x-small" alternative-text="Warning!" title="Warning" class="slds-p-right_xxx-small"></lightning-icon>
+                        <span>Select a month.</span>
+                    </template>
+                </template>
+                <template if:true={hasResult}>
+                    <c-slwc-calendar-month
+                        style="width: 100%"
+                        settings={calendarSettings}
+                        metadata={calendarMetadata}
+                        config-data={calendarConfigData}
+                        calendar-data={calendarData}
+                        selected-month={queryModel.selectedMonth}
+                        disable-create
+                    >
+                    </c-slwc-calendar-month>
+                </template>
+            </div>
+        </div>
+    </article>
+    
+    <c-slwc-call-out-modal
+        is-open={callOutModalData.isOpen}
+        onclose={handleCloseCallOutModal}
+        onsave={handleSaveCallOutModal}
+    ></c-slwc-call-out-modal>
+
+    <c-slwc-site-feedback
+        job={siteFeedbackModalData.job}
+        is-open={siteFeedbackModalData.isOpen}
+        onclose={handleCloseSiteFeedbackModal}
+    ></c-slwc-site-feedback>
+
+    <c-slwc-operation-record
+        job={operationRecordModalData.job}
+        job-allocation={operationRecordModalData.jobAllocation}
+        is-open={operationRecordModalData.isOpen}
+        onclose={handleCloseOperationRecordModal}
+    ></c-slwc-operation-record>
+
+    <c-slwc-confirm-modal
+        is-open={confirmModalData.isOpen}
+        mode={confirmModalData.mode}
+        title={confirmModalData.title}
+        message={confirmModalData.message}
+        handle-on-close={confirmModalData.onClose}
+        confirm-btn-label={confirmModalData.confirmBtnLabel}
+        cancel-btn-label={confirmModalData.cancelBtnLabel}
+        size='x-small'>
+    </c-slwc-confirm-modal>
+</template>

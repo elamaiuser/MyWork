@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+        <label><!-- Improper Room Conditions Reason --></label>
+        <name>sked_Improper_Room_Conditions_Reason__c</name>
+        <picklistValues>
+            <masterLabel>Inadequate lighting</masterLabel>
+            <translation><!-- Inadequate lighting --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Infestation</masterLabel>
+            <translation><!-- Infestation --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Odor</masterLabel>
+            <translation><!-- Odor --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Room not ready</masterLabel>
+            <translation><!-- Room not ready --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Room size</masterLabel>
+            <translation><!-- Room size --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Temperature</masterLabel>
+            <translation><!-- Temperature --></translation>
+        </picklistValues>
+    </CustomFieldTranslation>

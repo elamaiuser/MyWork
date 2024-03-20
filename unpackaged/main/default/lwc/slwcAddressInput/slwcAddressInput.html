@@ -1,0 +1,15 @@
+<template>
+    <c-slwc-lookup
+        icon-name="standard:location"
+        label={label}
+        value={value}
+        selection={value}
+        display-field="description"
+        placeholder={placeholder}
+        is-readonly={isReadonly}
+        is-required={isRequired}
+        is-custom-search
+        custom-search-func={handleSearch}
+        onselectionchange={handleSelectAddress}>
+    </c-slwc-lookup>
+</template>

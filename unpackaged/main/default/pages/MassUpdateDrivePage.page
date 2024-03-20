@@ -1,0 +1,16 @@
+<apex:page standardController="Opportunity" recordSetVar="opp" sidebar="false" showHeader="false" lightningStylesheets="true">
+    <apex:includeLightning /> 
+    
+    <div id="MassUpdateDriveContainer" />
+    <script>
+    	$Lightning.use("c:LightningOutContainerApp", function() {
+        $Lightning.createComponent("c:slwcAccountMassListenDriveChange",
+                                   { 
+                                   },
+                                   "MassUpdateDriveContainer",
+                                   function(cmp) {
+                                       console.log('LWC Componenet added in VF page');
+                                   });
+    	});
+    </script>
+</apex:page>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<EmailTemplate xmlns="http://soap.sforce.com/2006/04/metadata">
+    <available>true</available>
+    <description>Booking Ask for SCI Recruitment to Prospect</description>
+    <encodingKey>ISO-8859-1</encodingKey>
+    <letterhead>ARC_Logo_Test</letterhead>
+    <name>Marketing Segment_SCI_Sickle Cell Awareness Month &amp; JBB_Booking_2023</name>
+    <style>formalLetter</style>
+    <subject>Join us in Supporting Sickle Cell Awareness Month with a Blood Drive</subject>
+    <textOnly>Hi [NAME]
+September is National Sickle Cell Awareness Month, and Did you know that many individuals who are Black are ideal blood donors for patients with sickle cell disease?
+
+Because one of the primary treatments for sickle cell disease is blood transfusion, we’re asking community partners such as yours, to join the Red Cross and host a blood drive in part of Joined by Blood, a focused time period within our Sickle Cell Initiative throughout the months of September and October.
+
+By hosting a blood drive, you can help ensure that there is an adequate supply of healthy blood available for those who need it most.
+
+One in 3 African American blood donors are a match for people with sickle cell disease. The Red Cross is continuously trying to recruit more blood donors who are Black.  We would be honored to have your organization partner with us for this important cause.
+
+By hosting a blood drive, and promoting blood donation among African Americans, you can help make a difference in the lives of individuals with sickle cell disease and other patients who require blood transfusions.
+
+We would be happy to provide you with more information and answer any questions you may have. You can also find more information at RedCrossBlood.org/OurBlood.
+
+September and October calendars are open and prime dates are filing fast. Let’s talk and get your blood drive scheduled! Please call me at xxx-xxx-xxxx
+
+Thank you for considering joining us in supporting Sickle Cell Awareness Month.
+
+Sincerely,
+[NAME]</textOnly>
+    <type>html</type>
+    <uiType>Aloha</uiType>
+</EmailTemplate>

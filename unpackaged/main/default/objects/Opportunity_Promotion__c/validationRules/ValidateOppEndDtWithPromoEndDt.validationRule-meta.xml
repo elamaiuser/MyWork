@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>ValidateOppEndDtWithPromoEndDt</fullName>
+    <active>true</active>
+    <description>Validate opportunity end date with promo end date</description>
+    <errorConditionFormula>Opportunity_Close_Date__c&gt; Promotion_End_Date__c</errorConditionFormula>
+    <errorMessage>Blood Drive date is not within the effective dates of the Promotion availability.</errorMessage>
+</ValidationRule>
