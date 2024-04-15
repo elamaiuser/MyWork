@@ -26,6 +26,11 @@
                 <default>false</default>
                 <label>Home Phone</label>
             </value>
+            <value>
+                <fullName>Alternate Phone</fullName>
+                <default>false</default>
+                <label>Alternate Phone</label>
+            </value>
         </valueSetDefinition>
     </valueSet>
 </CustomField>
