@@ -2,6 +2,11 @@
 - task: Checkmarx AST@2
   inputs:
     CheckmarxService: 'CheckmarxIntegration'
+    projectName: '$(Build.Repository.Name)'
+    branchName: '$(Build.SourceBranchName)'
+- task: Checkmarx AST@2
+  inputs:
+    CheckmarxService: 'CheckmarxIntegration'
     projectName: '$(Build.ARCBiomed.BSF)'
     branchName: '$(Build.Main)'
     tenantName: 'DemoTenant'
