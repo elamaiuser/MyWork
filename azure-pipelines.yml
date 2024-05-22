@@ -11,10 +11,6 @@ pool:
 
 steps:
 - script: echo Hello, world!
-- script: |
-   echo Add other tasks to build, test, and deploy your project.
-   echo See https://aka.ms.yaml
-   --debug
 - task: Checkmarx AST@2
   inputs:
     CheckmarxService: 'CheckmarxIntegration'
