@@ -15,13 +15,10 @@ steps:
    echo Add other tasks to build, test, and deploy your project.
    echo See https://aka.ms.yaml
    --debug
-
-Settings
 - task: Checkmarx AST@2
-
-   inputs:
-     CheckmarxService: 'CheckmarxIntegration'
-     projectName: '$(Build.ARCBiomed.BSF)'
-     branchName: '$(Build.Main)'
-     tenantName: 'DemoTenant'
-     additionalParams: '--debug'
+  inputs:
+    CheckmarxService: 'CheckmarxIntegration'
+    projectName: '$(Build.Repository.Name)'
+    branchName: '$(Build.SourceBranchName)'
+    tenantName: 'AmericanRedCross'
+    additionalParams: '--debug'
