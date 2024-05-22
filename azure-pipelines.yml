@@ -24,3 +24,4 @@ Settings
      projectName: '$(Build.ARCBiomed.BSF)'
      branchName: '$(Build.Main)'
      tenantName: 'DemoTenant'
+     additionalParams: '--debug'
