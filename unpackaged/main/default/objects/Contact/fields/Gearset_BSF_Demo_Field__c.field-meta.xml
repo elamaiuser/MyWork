@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Gearset_BSF_Demo_Field__c</fullName>
+    <caseSensitive>false</caseSensitive>
+    <description>Gearset End to End Demo</description>
+    <externalId>false</externalId>
+    <label>Gearset BSF Demo Field</label>
+    <length>25</length>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <type>Text</type>
+    <unique>true</unique>
+</CustomField>
