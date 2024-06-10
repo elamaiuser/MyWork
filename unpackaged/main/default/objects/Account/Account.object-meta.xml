@@ -248,15 +248,16 @@
         <customTabListAdditionalFields>Industry_Code__c</customTabListAdditionalFields>
         <customTabListAdditionalFields>Accepts_Automation2__c</customTabListAdditionalFields>
         <customTabListAdditionalFields>UFID__c</customTabListAdditionalFields>
+        <excludedStandardButtons>DiscoveryGetAccountsAction</excludedStandardButtons>
         <excludedStandardButtons>New</excludedStandardButtons>
         <excludedStandardButtons>OpenListInQuip</excludedStandardButtons>
         <excludedStandardButtons>DataDotComGetAccountsMultiAddAction</excludedStandardButtons>
-        <excludedStandardButtons>DiscoveryGetAccountsAction</excludedStandardButtons>
         <excludedStandardButtons>MassCreateCallList</excludedStandardButtons>
         <excludedStandardButtons>SendBulkMessageAction</excludedStandardButtons>
         <listViewButtons>Assign_User</listViewButtons>
         <listViewButtons>Mass_Asign_Account_Based_Portfolio</listViewButtons>
         <listViewButtons>Create_Fixed_Site_Account</listViewButtons>
+        <listViewButtons>Reset_Business_Planning_Status</listViewButtons>
         <lookupDialogsAdditionalFields>ACCOUNT.NAME</lookupDialogsAdditionalFields>
         <lookupDialogsAdditionalFields>ACCOUNT.SITE</lookupDialogsAdditionalFields>
         <lookupDialogsAdditionalFields>CORE.USERS.ALIAS</lookupDialogsAdditionalFields>
