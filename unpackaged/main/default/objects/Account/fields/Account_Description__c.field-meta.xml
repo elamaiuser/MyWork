@@ -32,6 +32,11 @@
                 <label>Other</label>
             </value>
             <value>
+                <fullName>Test Value</fullName>
+                <default>false</default>
+                <label>Test Value</label>
+            </value>
+            <value>
                 <fullName>Core</fullName>
                 <default>false</default>
                 <isActive>false</isActive>
