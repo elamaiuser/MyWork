@@ -32,10 +32,21 @@
                 <label>Other</label>
             </value>
             <value>
+                <fullName>TestValue3</fullName>
+                <default>false</default>
+                <label>TestValue3</label>
+            </value>
+            <value>
                 <fullName>Core</fullName>
                 <default>false</default>
                 <isActive>false</isActive>
                 <label>Core</label>
+            </value>
+            <value>
+                <fullName>Test Value2</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Test Value2</label>
             </value>
         </valueSetDefinition>
     </valueSet>
