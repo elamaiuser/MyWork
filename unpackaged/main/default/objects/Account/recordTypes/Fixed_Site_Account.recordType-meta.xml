@@ -64,6 +64,14 @@
             <fullName>Suboptimal</fullName>
             <default>false</default>
         </values>
+        <values>
+            <fullName>TestDelete</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>TestValue3</fullName>
+            <default>false</default>
+        </values>
     </picklistValues>
     <picklistValues>
         <picklist>Account_Status__c</picklist>
