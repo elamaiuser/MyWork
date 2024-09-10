@@ -1,7 +1,6 @@
 public class OneTimeFlowTimeFieldUpdateBatch implements Database.Batchable<sObject>{
 
      Map<Id,String> updateFailedRecords = new Map<Id,String>();
-     String query = 'select id,Flow_Start_Time_Field__c, Start_Time__c, End_Time__c, Flow_End_Time_Field__c from opportunity where ( (Flow_Start_Time_Field__c=null and  Start_Time__c != null) or (Flow_End_Time_Field__c=null and End_Time__c != null))';	
      String query = 'select id,createdDate,lastModifiedDate,Flow_Start_Time_Field__c, Start_Time__c, End_Time__c, Flow_End_Time_Field__c from opportunity where ( (Flow_Start_Time_Field__c=null and  Start_Time__c != null) or (Flow_End_Time_Field__c=null and End_Time__c != null))';	
      Static final String leadingZero='0';
       
