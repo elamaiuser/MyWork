@@ -32,6 +32,16 @@
                 <label>Sunset</label>
             </value>
             <value>
+                <fullName>Test2</fullName>
+                <default>false</default>
+                <label>Test2</label>
+            </value>
+            <value>
+                <fullName>Test3</fullName>
+                <default>false</default>
+                <label>Test3</label>
+            </value>
+            <value>
                 <fullName>Recapture</fullName>
                 <default>false</default>
                 <isActive>false</isActive>
