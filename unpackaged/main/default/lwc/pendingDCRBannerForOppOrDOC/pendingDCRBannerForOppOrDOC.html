@@ -1,0 +1,19 @@
+<!-- /* Description :  1. This custom component will be visible on Opportunity and DOC UI if there exists any pending DCR
+2. It will display a warning message for the users to capture drive impacts
+3. Error message is confurable and can be modified from custom label - Pending_DCR_Banner_Msg
+
+Modification Log
+Date                 Developer Name                  Comments
+*************************************************************************
+1/22/2024            Priti Jana                      Created (HRP-11515)
+************************************************************************* -->
+
+<template>
+    <div if:true={bannerMsg} class="slds-notify slds-notify_alert slds-alert_warning" style="text-align: center;font-size: 13px" role="alert">
+        <h2>
+            <lightning-icon class="slds-m-right_x-small slds-current-color" icon-name="utility:warning" size="x-small"></lightning-icon>
+                <span>{bannerMsg}</span>
+        </h2>
+</div>
+    
+</template>

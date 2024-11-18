@@ -144,16 +144,25 @@ export default class SlwcSchedulingConsole extends LightningElement {
       TABS.CALL_OUTS
     ];
 
-    let limitedProfiles = ['DRD Profile', 'DRD Manager', 'Biomed Read Only', 'Recruitment Admin'];
+    let limitedProfile = ['DRD Profile', 'DRD Manager', 'Biomed Read Only', 'Recruitment Admin'];
+    let limitedProfileTabs1 = [
+      TABS.DRIVE_LIST,
+      TABS.DRIVE_LIST_MAP,
+      TABS.DRIVE_CALENDAR,
+      TABS.DRIVE_PRODUCTIVITY,
+      TABS.APPROVAL_CONSOLE
+    ];
+    let mapProfileToTabs = limitedProfile.reduce((result, profileName) => {
+      result[profileName] = limitedProfileTabs1;
+      return result;
+    }, {});
+    mapProfileToTabs['Collection Management'] = [
+      TABS.APPROVAL_CONSOLE
+    ];
+
     if (this.currentUser) {
-      if (limitedProfiles.indexOf(this.currentUser.profileName) > -1) {
-        this.tabList = [
-          TABS.DRIVE_LIST,
-          TABS.DRIVE_LIST_MAP,
-          TABS.DRIVE_CALENDAR,
-          TABS.DRIVE_PRODUCTIVITY,
-          TABS.APPROVAL_CONSOLE
-        ];
+      if (this.currentUser.profileName in mapProfileToTabs) {
+        this.tabList = mapProfileToTabs[this.currentUser.profileName];
       }
 
       if (this.currentUser.approvalPermission && (

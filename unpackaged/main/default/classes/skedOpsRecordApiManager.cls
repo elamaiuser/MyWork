@@ -98,11 +98,20 @@ public class skedOpsRecordApiManager {
         
         public override skedCalloutResultBase processError(Type resultType, skedCalloutResultBase result, string response) {
             result = (skedCalloutResultBase) resultType.newInstance();
-            try {
-                ((skedOpsRecordApiData.resultBase)result).error = (skedOpsRecordApiData.error)Json.deserialize(response, skedOpsRecordApiData.error.class);
-            }
-            catch (Exception ex) {
-                ((skedOpsRecordApiData.resultBase)result).errors = (List<skedOpsRecordApiData.error>)Json.deserialize(response, List<skedOpsRecordApiData.error>.class);
+            try{
+                try {
+                    ((skedOpsRecordApiData.resultBase)result).error = (skedOpsRecordApiData.error)Json.deserialize(response, skedOpsRecordApiData.error.class);
+                }
+                catch (Exception ex) {
+                    ((skedOpsRecordApiData.resultBase)result).errors = (List<skedOpsRecordApiData.error>)Json.deserialize(response, List<skedOpsRecordApiData.error>.class);
+                }
+            }catch (Exception exp) {
+                skedOpsRecordApiData.error errObj= new skedOpsRecordApiData.error();
+                errObj.message = response;
+                errObj.errorType = '';
+                errObj.errorKey = '';
+                errObj.path = '';
+                ((skedOpsRecordApiData.resultBase)result).error = errObj;
             }
 
             return result;

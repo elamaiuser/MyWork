@@ -1,6 +1,6 @@
 <apex:page controller="LeadFormLSLCon" docType="html-5.0" showHeader="false" applyHtmlTag="false" applyBodyTag="false" standardStylesheets="false" sidebar="false" >
     <!--Changed controller from LeadFormCon to LeadFormLSLCon - Denise 1/8/18
-	Created this page for the LSL lead form because the original LeadFormComplete.vfp needs different wording than this confirmation page. Denise 1-8-18  -->
+    Created this page for the LSL lead form because the original LeadFormComplete.vfp needs different wording than this confirmation page. Denise 1-8-18  -->
     <html lang="en">
         <head>
             
@@ -117,8 +117,7 @@
                           <!-- Anil 5-19-23: Updated wording on Confirmation Page to include "within 2 business days" from custom label -->
 
                             <p>
-                            Thank you for completing the Leaders Save Lives online interest form to host a blood drive. A Red Cross representative will contact you, within {!$Label.Lead_Response_Time_In_Days} business days, with details on how to proceed. In the meantime, feel free to browse other meaningful ways to engage with the Red Cross. 
-                                </p>
+                                Thank you for completing the online interest form to host a blood drive. A Red Cross representative will contact you soon with details on how to proceed. In the meantime, feel free to browse other meaningful ways to engage with the Red Cross.                                </p>
                                 <p>
                                 <!--<b>Learn About Blood</b> - <a href="www.redcrossblood.org/learn-about-blood" target="_blank">http://www.redcrossblood.org/learn-about-blood</a><br/>-->
                                 <b>Become a Volunteer</b> - <a href="http://www.redcross.org/volunteer/volunteer-opportunities" target="_blank">www.redcross.org/volunteer/volunteer-opportunities</a><br/>

@@ -113,7 +113,7 @@ public class skedUserHandler extends skedTriggerHub implements Callable {
             List<String> collectionOperations = collectionOpsToAddByUserId.get(userId);
 
             for (String collectionOperation : collectionOperations) {
-                allUsedCollectionOperationNames.add(collectionOperation + '%');
+                allUsedCollectionOperationNames.add(collectionOperation.trim() + '%');
             }
         }
 
@@ -159,7 +159,7 @@ public class skedUserHandler extends skedTriggerHub implements Callable {
         for (Id userId : collectionOpsToRemoveByUserId.keySet()) {
             List<String> userCollectionOps = collectionOpsToRemoveByUserId.get(userId);
             for (String userCollectionOp : userCollectionOps) {
-                allCollectionOps.add(userCollectionOp + '%');
+                allCollectionOps.add(userCollectionOp.trim() + '%');
             }
         }
 
@@ -218,6 +218,8 @@ public class skedUserHandler extends skedTriggerHub implements Callable {
         if ((groupName.contains(skedConstants.PROFILE_QUEUE_DRIVE_CHANGE_REQUESTS) && profileSetting.sked_Drive_Change_Request__c) 
             || (groupName.contains(skedConstants.PROFILE_QUEUE_PENDING_ACTIONS) && profileSetting.sked_Pending_Action__c)
             || (groupName.contains(skedConstants.PROFILE_QUEUE_ROLE_TIME_VARIANCES) && profileSetting.sked_Role_Time_Variance__c)
+            || (groupName.contains(skedConstants.PROFILE_QUEUE_CM_ROLE_TIME_VARIANCES) && profileSetting.sked_CM_Role_Time_Variance__c)
+            || (groupName.contains(skedConstants.PROFILE_QUEUE_DM_ROLE_TIME_VARIANCES) && profileSetting.sked_DM_Role_Time_Variance__c)
             || (groupName.contains(skedConstants.PROFILE_QUEUE_DRIVE_SHIFT_TRADES) && profileSetting.sked_Drive_Shift_Trade_Request__c)
             || (groupName.contains(skedConstants.PROFILE_QUEUE_DM_DRIVE_CHANGE_REQUESTS) && profileSetting.sked_DM_Drive_Change_Request__c)
             || (groupName.contains(skedConstants.PROFILE_QUEUE_DM_PENDING_ACTIONS) && profileSetting.sked_DM_Pending_Action__c)) {
@@ -231,7 +233,7 @@ public class skedUserHandler extends skedTriggerHub implements Callable {
         List<sked_Profile_Approval_Queue_Access__mdt> profileQueueAccessList = [
             SELECT Id, Label, sked_Drive_Change_Request__c, sked_Drive_Shift_Trade_Request__c, 
                 sked_Pending_Action__c, sked_Role_Time_Variance__c, sked_DM_Drive_Change_Request__c,
-                sked_DM_Pending_Action__c
+                sked_DM_Pending_Action__c, sked_CM_Role_Time_Variance__c, sked_DM_Role_Time_Variance__c
             FROM sked_Profile_Approval_Queue_Access__mdt
         ];
 

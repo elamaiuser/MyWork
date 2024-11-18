@@ -18,6 +18,7 @@ export class OpportunityMappingConfigFactory {
       mappingConfig.addFieldConfig('Anticipated_Registered_Donors_Template__c', 'anticipatedRegisteredDonorsTemplate', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('Call_List_Recipient_Exist__c', 'callListRecipientExist', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('Drive_Date__c', 'driveDate', MAPPING_TYPE.direct);
+      mappingConfig.addFieldConfig('Drive_Date_Change_Reason__c', 'driveDateChangeReason', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('Drive_Status__c', 'status', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('Drive_Site__c', 'driveSiteId', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('Drive_Site__r.Operation_Type__c', 'operationType', MAPPING_TYPE.direct);
@@ -31,6 +32,7 @@ export class OpportunityMappingConfigFactory {
       mappingConfig.addFieldConfig('Plasma_Pheresis_Projected_Procedures__c', 'plasmaProjectedProcedures', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('Platelet_Projected_Procedures__c', 'plateletProjectedProcedures', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('Recruited_By__c', 'recruitedBy', MAPPING_TYPE.direct);
+      mappingConfig.addFieldConfig('Slot_Generator__c', 'slotGenerator', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('Start_Time__c', 'startTime', MAPPING_TYPE.time);
       mappingConfig.addFieldConfig('StageName', 'stage', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('Type', 'type', MAPPING_TYPE.direct);

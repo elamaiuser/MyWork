@@ -31,6 +31,10 @@
         <value xsi:nil="true"/>
     </values>
     <values>
+        <field>sked_Expiry_DateTime_Field__c</field>
+        <value xsi:type="xsd:string">sked__Start__c</value>
+    </values>
+    <values>
         <field>sked_Filter__c</field>
         <value xsi:nil="true"/>
     </values>
@@ -47,6 +51,10 @@
         <value xsi:nil="true"/>
     </values>
     <values>
+        <field>sked_Priority__c</field>
+        <value xsi:nil="true"/>
+    </values>
+    <values>
         <field>sked_Sending_From_Email_Address__c</field>
         <value xsi:nil="true"/>
     </values>
@@ -57,6 +65,10 @@
     <values>
         <field>sked_Target_Field_Value__c</field>
         <value xsi:type="xsd:string">Late Arrival</value>
+    </values>
+    <values>
+        <field>sked_Target_Field_Values__c</field>
+        <value xsi:nil="true"/>
     </values>
     <values>
         <field>sked_Target_Field__c</field>

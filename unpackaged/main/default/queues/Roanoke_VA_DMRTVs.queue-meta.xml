@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Queue xmlns="http://soap.sforce.com/2006/04/metadata">
+    <doesSendEmailToMembers>false</doesSendEmailToMembers>
+    <name>Roanoke VA: DMRTVs</name>
+    <queueMembers>
+        <users>
+            <user>austin.rehfield@redcross.org</user>
+            <user>chris.adams@redcross.org</user>
+            <user>cierra.murray@redcross.org</user>
+            <user>lori.rozecki@redcross.org.biomed</user>
+            <user>melanie.mitchell2@redcross.org</user>
+            <user>roger.gardner@redcross.org</user>
+            <user>serena.bricker@redcross.org</user>
+        </users>
+    </queueMembers>
+    <queueSobject>
+        <sobjectType>sked__Location__c</sobjectType>
+    </queueSobject>
+</Queue>

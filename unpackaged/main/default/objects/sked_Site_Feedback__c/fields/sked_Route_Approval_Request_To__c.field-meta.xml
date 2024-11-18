@@ -4,6 +4,7 @@
     <externalId>false</externalId>
     <label>Route Approval Request To</label>
     <required>false</required>
+    <trackHistory>false</trackHistory>
     <trackTrending>false</trackTrending>
     <type>Picklist</type>
     <valueSet>
@@ -11,14 +12,31 @@
         <valueSetDefinition>
             <sorted>false</sorted>
             <value>
-                <fullName>Route to DRD Manager</fullName>
+                <fullName>Request APS evaluation</fullName>
                 <default>false</default>
-                <label>Route to DRD Manager</label>
+                <label>Request APS evaluation</label>
+            </value>
+            <value>
+                <fullName>Request CM evaluation</fullName>
+                <default>false</default>
+                <label>Request CM evaluation</label>
+            </value>
+            <value>
+                <fullName>Request DM evaluation</fullName>
+                <default>false</default>
+                <label>Request DM evaluation</label>
             </value>
             <value>
                 <fullName>Route to CO Team Supervisor</fullName>
                 <default>false</default>
+                <isActive>false</isActive>
                 <label>Route to CO Team Supervisor</label>
+            </value>
+            <value>
+                <fullName>Route to DRD Manager</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Route to DRD Manager</label>
             </value>
         </valueSetDefinition>
     </valueSet>

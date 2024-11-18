@@ -19,13 +19,18 @@ export class OperationRecordStaffMappingConfigFactory {
       mappingConfig.addFieldConfig('sked_Actual_Shift_Start_Date__c', 'actualShiftStartDate', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_Actual_Shift_Start_Time__c', 'actualShiftStartTime', MAPPING_TYPE.time);
       mappingConfig.addFieldConfig('sked_Added_Staff__c', 'addedStaff', MAPPING_TYPE.direct);
-      mappingConfig.addFieldConfig('sked_EarlyDeparture_LateArrival_Reasons__c', 'earlyDepartureLateArrivalReasons', MAPPING_TYPE.direct);
+      mappingConfig.addFieldConfig('sked_Early_Departure_Reasons__c', 'earlyDepartureReasons', MAPPING_TYPE.direct);
+      mappingConfig.addFieldConfig('sked_Early_Departure_DateTime_Received__c', 'earlyDepartureDateTimeReceived', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_eBDR_ID__c', 'eBdrId', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_Job__c', 'jobId', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_Job__r.Name', 'jobName', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_Job_Allocation__c', 'jobAllocationId', MAPPING_TYPE.direct);
+      mappingConfig.addFieldConfig('sked_Late_Arrival_Reasons__c', 'lateArrivalReasons', MAPPING_TYPE.direct);
+      mappingConfig.addFieldConfig('sked_Late_Arrival_DateTime_Received__c', 'lateArrivalDateTimeReceived', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_No_Meal__c', 'noMeal', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_Notes_Comments__c', 'notesComments', MAPPING_TYPE.direct);
+      mappingConfig.addFieldConfig('sked_Number_of_Meal_Breaks_Taken__c', 'noOfMealBreaksTaken', MAPPING_TYPE.direct);
+      mappingConfig.addFieldConfig('sked_Number_of_Rest_Breaks_Taken__c', 'noOfRestBreaksTaken', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_Operation_Record__c', 'operationRecordId', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_Operation_Record__r.Name', 'operationRecordName', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_Pool__c', 'pool', MAPPING_TYPE.direct);
@@ -33,8 +38,12 @@ export class OperationRecordStaffMappingConfigFactory {
       mappingConfig.addFieldConfig('sked_Resource__c', 'resourceId', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_Resource__r.Name', 'resourceName', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_Role__c', 'role', MAPPING_TYPE.direct);
-      mappingConfig.addFieldConfig('sked_Scheduled_Shift_End__c', 'scheduledShiftEnd', MAPPING_TYPE.direct);
-      mappingConfig.addFieldConfig('sked_Scheduled_Shift_Start__c', 'scheduledShiftStart', MAPPING_TYPE.direct);
+      mappingConfig.addFieldConfig('Scheduled_Shift_End__c', 'scheduledShiftEnd', MAPPING_TYPE.direct);
+      mappingConfig.addFieldConfig('Scheduled_Shift_End_Date__c', 'scheduledShiftEndDate', MAPPING_TYPE.direct);
+      mappingConfig.addFieldConfig('Scheduled_Shift_End_Time__c', 'scheduledShiftEndTime', MAPPING_TYPE.time);
+      mappingConfig.addFieldConfig('Scheduled_Shift_Start__c', 'scheduledShiftStart', MAPPING_TYPE.direct);
+      mappingConfig.addFieldConfig('Scheduled_Shift_Start_Date__c', 'scheduledShiftStartDate', MAPPING_TYPE.direct);
+      mappingConfig.addFieldConfig('Scheduled_Shift_Start_Time__c', 'scheduledShiftStartTime', MAPPING_TYPE.time);
       mappingConfig.addFieldConfig('sked_Timezone__c', 'timezoneSidId', MAPPING_TYPE.direct);
 
       mappingConfig.readonlyFields.push('Name');

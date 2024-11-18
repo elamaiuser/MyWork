@@ -195,12 +195,8 @@ export default [
     ],
     popoverActions: [
       {
-        label: 'Role Time Variance Feedback',
+        label: 'RTV Feedback',
         iconName: 'utility:form',
-        hideIf: (item) => {
-          if(!item.canCallOut) return true;
-          return false;
-        },
         callback: (item, pageRef) => {
           let eventValues = { model: item };
           fireEvent(pageRef, 'showSiteFeedbackModal', eventValues);

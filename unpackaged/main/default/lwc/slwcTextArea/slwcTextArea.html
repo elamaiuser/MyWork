@@ -1,0 +1,5 @@
+<template>
+    <lightning-textarea name={name} disabled={disabled} label={label} onchange={handleOnChange}
+        value={value} max-length="255"></lightning-textarea>
+    <span if:true={showLength} class={textClass}>{currentLength}/{maxLength}</span>
+</template>

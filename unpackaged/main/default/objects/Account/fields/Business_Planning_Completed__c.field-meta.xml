@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Business_Planning_Completed__c</fullName>
+    <defaultValue>false</defaultValue>
+    <description>This field is created as part of HRP-9520</description>
+    <externalId>false</externalId>
+    <label>Business Planning Completed</label>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <type>Checkbox</type>
+</CustomField>

@@ -4,7 +4,7 @@
     <protected>false</protected>
     <values>
         <field>sked_Active__c</field>
-        <value xsi:type="xsd:boolean">false</value>
+        <value xsi:type="xsd:boolean">true</value>
     </values>
     <values>
         <field>sked_Content_Renderer__c</field>
@@ -31,6 +31,10 @@
         <value xsi:nil="true" />
     </values>
     <values>
+        <field>sked_Expiry_DateTime_Field__c</field>
+        <value xsi:type="xsd:string">skedHC__Job_Allocation__r.sked__Start__c</value>
+    </values>
+    <values>
         <field>sked_Filter__c</field>
         <value xsi:type="xsd:string">skedHC__Job_Allocation__r.sked_Drive_Shift_Trade__c != NULL AND skedHC__Job__r.sked_Drive__r.sked_Drive_Date__c  &lt;= TOMORROW AND (sked_Exception_Code__c = &#39;TURNAROUND_TIME_VIOLATION&#39; OR skedHC__Availability__c != NULL OR skedHC__Job_Allocation__c != NULL OR skedHC__Activity__c != NULL)</value>
     </values>
@@ -47,6 +51,10 @@
         <value xsi:nil="true" />
     </values>
     <values>
+        <field>sked_Priority__c</field>
+        <value xsi:nil="true" />
+    </values>
+    <values>
         <field>sked_Sending_From_Email_Address__c</field>
         <value xsi:nil="true" />
     </values>
@@ -56,6 +64,10 @@
     </values>
     <values>
         <field>sked_Target_Field_Value__c</field>
+        <value xsi:nil="true" />
+    </values>
+    <values>
+        <field>sked_Target_Field_Values__c</field>
         <value xsi:nil="true" />
     </values>
     <values>

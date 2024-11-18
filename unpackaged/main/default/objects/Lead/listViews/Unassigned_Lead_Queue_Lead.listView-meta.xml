@@ -12,10 +12,11 @@
     <columns>Lead_Region_Name__c</columns>
     <columns>Blood_Region__c</columns>
     <columns>Lead_AM_Porfolio__c</columns>
+    <columns>Lead_Stage_Status__c</columns>
     <filterScope>Queue</filterScope>
     <label>Unassigned Lead Queue</label>
     <queue>Unassigned_Lead_Queue</queue>
     <sharedTo>
-        <allInternalUsers></allInternalUsers>
+        <allInternalUsers />
     </sharedTo>
 </ListView>

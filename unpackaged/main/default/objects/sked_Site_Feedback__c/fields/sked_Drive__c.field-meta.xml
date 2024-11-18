@@ -8,6 +8,7 @@
     <relationshipLabel>Role Time Variance Feedback</relationshipLabel>
     <relationshipName>sked_Role_Time_Variance_Feedback</relationshipName>
     <required>false</required>
+    <trackHistory>false</trackHistory>
     <trackTrending>false</trackTrending>
     <type>Lookup</type>
 </CustomField>

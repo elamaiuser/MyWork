@@ -25,6 +25,10 @@
             </layoutItems>
             <layoutItems>
                 <behavior>Edit</behavior>
+                <field>sked_Drive_Types__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
                 <field>OwnerId</field>
             </layoutItems>
             <layoutItems>
@@ -55,10 +59,6 @@
             </layoutItems>
             <layoutItems>
                 <behavior>Edit</behavior>
-                <field>sked_Message__c</field>
-            </layoutItems>
-            <layoutItems>
-                <behavior>Edit</behavior>
                 <field>sked_Timeout_At__c</field>
             </layoutItems>
             <layoutItems>
@@ -68,6 +68,29 @@
             <layoutItems>
                 <behavior>Edit</behavior>
                 <field>sked_UniqueKey__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>sked_Timezone__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>sked_Message__c</field>
+            </layoutItems>
+            <layoutItems>
+                <emptySpace>true</emptySpace>
+            </layoutItems>
+            <layoutItems>
+                <emptySpace>true</emptySpace>
+            </layoutItems>
+            <layoutItems>
+                <emptySpace>true</emptySpace>
+            </layoutItems>
+            <layoutItems>
+                <emptySpace>true</emptySpace>
+            </layoutItems>
+            <layoutItems>
+                <emptySpace>true</emptySpace>
             </layoutItems>
         </layoutColumns>
         <style>TwoColumnsTopToBottom</style>
@@ -95,49 +118,107 @@
         <customLabel>true</customLabel>
         <detailHeading>true</detailHeading>
         <editHeading>true</editHeading>
-        <label>Optimization Settings</label>
+        <label>Optimization Run Statistics</label>
         <layoutColumns>
             <layoutItems>
                 <behavior>Edit</behavior>
-                <field>sked_Account_Preferences_Score__c</field>
+                <field>sked_Opt_Stat_Total_Planned_Allocations__c</field>
             </layoutItems>
             <layoutItems>
                 <behavior>Edit</behavior>
-                <field>sked_Geographic_Preferences_Score__c</field>
+                <field>sked_Opt_Stat_Total_Sched_Allocations__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Readonly</behavior>
+                <field>sked_Opt_Stat_Total_Unsched_Allocations__c</field>
             </layoutItems>
             <layoutItems>
                 <behavior>Edit</behavior>
-                <field>sked_Location_Preferences_Score__c</field>
+                <field>sked_Opt_Stat_Avg_Num_Alloc_Resource__c</field>
             </layoutItems>
             <layoutItems>
                 <behavior>Edit</behavior>
-                <field>sked_Seniority_Rank_Score__c</field>
+                <field>sked_Opt_Stat_Total_Resource_Sched__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>sked_Opt_Stat_Total_Resource_Unsched__c</field>
             </layoutItems>
         </layoutColumns>
         <layoutColumns>
             <layoutItems>
                 <behavior>Edit</behavior>
-                <field>sked_Account_Restrictions__c</field>
+                <field>sked_Opt_Stat_Total_Sched_Time__c</field>
             </layoutItems>
             <layoutItems>
                 <behavior>Edit</behavior>
-                <field>sked_Location_Restrictions__c</field>
+                <field>sked_Opt_Stat_Total_Travel_Time__c</field>
             </layoutItems>
             <layoutItems>
                 <behavior>Edit</behavior>
-                <field>sked_Maximum_Weekly_Hours__c</field>
+                <field>sked_Opt_Stat_Total_Travel_Distances__c</field>
             </layoutItems>
             <layoutItems>
                 <behavior>Edit</behavior>
-                <field>sked_PTO_Availability__c</field>
+                <field>sked_Opt_Stat_Max_Travel_Time_Alloc__c</field>
             </layoutItems>
             <layoutItems>
                 <behavior>Edit</behavior>
-                <field>sked_Role_Certification_Match__c</field>
+                <field>sked_Opt_Stat_Hard_Constraints_Score__c</field>
             </layoutItems>
             <layoutItems>
                 <behavior>Edit</behavior>
-                <field>sked_Role_Priorities__c</field>
+                <field>sked_Opt_Stat_Soft_Constraints_Score__c</field>
+            </layoutItems>
+        </layoutColumns>
+        <style>TwoColumnsLeftToRight</style>
+    </layoutSections>
+    <layoutSections>
+        <customLabel>true</customLabel>
+        <detailHeading>true</detailHeading>
+        <editHeading>true</editHeading>
+        <label>Optimization Run Parameters</label>
+        <layoutColumns>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>sked_Opt_Parm_Accnt_Prefer__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>sked_Opt_Parm_Geo_Prefer__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>sked_Opt_Parm_Site_Prefer__c</field>
+            </layoutItems>
+        </layoutColumns>
+        <layoutColumns>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>sked_Opt_Parm_Hire_Date_Skills__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>sked_Opt_Parm_Role_Priority_Skills__c</field>
+            </layoutItems>
+        </layoutColumns>
+        <style>TwoColumnsLeftToRight</style>
+    </layoutSections>
+    <layoutSections>
+        <customLabel>true</customLabel>
+        <detailHeading>true</detailHeading>
+        <editHeading>true</editHeading>
+        <label>Optimization Run Result</label>
+        <layoutColumns>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>sked_Opt_Run_Meta__c</field>
+            </layoutItems>
+        </layoutColumns>
+        <layoutColumns>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>sked_Opt_Run_Diff__c</field>
             </layoutItems>
         </layoutColumns>
         <style>TwoColumnsLeftToRight</style>
@@ -174,9 +255,9 @@
         <detailHeading>false</detailHeading>
         <editHeading>true</editHeading>
         <label>Custom Links</label>
-        <layoutColumns/>
-        <layoutColumns/>
-        <layoutColumns/>
+        <layoutColumns />
+        <layoutColumns />
+        <layoutColumns />
         <style>CustomLinks</style>
     </layoutSections>
     <relatedLists>
@@ -188,13 +269,27 @@
         <fields>NAME</fields>
         <relatedList>sked__Job_Allocation__c.sked_Optimization_Run__c</relatedList>
     </relatedLists>
+    <relatedLists>
+        <fields>NAME</fields>
+        <relatedList>sked_CollectionOperationOptimizerSetting__c.sked_Optimization_Run__c</relatedList>
+    </relatedLists>
+    <relatedLists>
+        <fields>NAME</fields>
+        <fields>sked_Drive_Date__c</fields>
+        <fields>sked_Opportunity__c</fields>
+        <fields>sked_Drive_Site__c</fields>
+        <fields>sked_Collection_Operation__c</fields>
+        <fields>sked_Drive_Productivity_Planned__c</fields>
+        <fields>sked_UFID__c</fields>
+        <relatedList>sked_Drive__c.sked_Optimization_Run__c</relatedList>
+    </relatedLists>
     <showEmailCheckbox>false</showEmailCheckbox>
     <showHighlightsPanel>false</showHighlightsPanel>
     <showInteractionLogPanel>false</showInteractionLogPanel>
     <showRunAssignmentRulesCheckbox>false</showRunAssignmentRulesCheckbox>
     <showSubmitAndAttachButton>false</showSubmitAndAttachButton>
     <summaryLayout>
-        <masterLabel>00h3F000002pIes</masterLabel>
+        <masterLabel>00h5c00000DaYLQ</masterLabel>
         <sizeX>4</sizeX>
         <sizeY>0</sizeY>
         <summaryLayoutStyle>Default</summaryLayoutStyle>

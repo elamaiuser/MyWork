@@ -1,0 +1,120 @@
+<template>
+    <template lwc:if={searchEnable}>
+        <lightning-card>
+            <div class="slds-grid slds-gutters slds-p-horizontal_medium slds-p-top_medium">
+                <div class="slds-col slds-size_1-of-2">
+                    <lightning-input type="date" label="Event Start Date" data-id="startDate" value={wrapper.startDate} onchange={handleChange} onfocus={handleOnFocus}></lightning-input>
+                </div>
+                <div class="slds-col slds-size_1-of-2">
+                    <lightning-input type="date" label="Event End Date" data-id="endDate" value={wrapper.endDate} onchange={handleChange} onfocus={handleOnFocus} disabled={disableenddate}></lightning-input>
+                </div>
+            </div>
+            <div class="slds-grid slds-gutters slds-p-horizontal_medium slds-p-top_medium">
+                <div class="slds-col slds-size_1-of-2">
+                    <lightning-combobox name="division"
+                        value={wrapper.division}
+                        label="Division (at the time of drive)"
+                        placeholder="-Select-"
+                        options={divisionList}
+                        onchange={handleSelectionDivision} 
+                        onfocus={handleOnFocus}>
+                    </lightning-combobox>
+                </div>
+                <div class="slds-col slds-size_1-of-2 slds-p-horizontal_medium">
+                    <lightning-combobox name="region"
+                        value={wrapper.region}
+                        label="Region" 
+                        placeholder="-Select-"
+                        options={regionList}
+                        onchange={handleSelectionRegion} 
+                        onfocus={handleOnFocus}>
+                    </lightning-combobox>
+                </div>
+            </div>
+            <div class="slds-grid slds-gutters slds-p-horizontal_medium slds-p-top_medium">
+                <div class="slds-col slds-size_1-of-2">
+                    <c-bsf-multi-select-combobox 
+                        name="district" 
+                        label="District"
+                        placeholder="-Select-"
+                        options={drictictList} 
+                        onchange={handleSelectionDistrict} 
+                        onclickevent={handleDistrictClick}>
+                    </c-bsf-multi-select-combobox>
+                </div>
+                <div class="slds-col slds-size_1-of-2 slds-p-horizontal_medium">
+                    <c-bsf-multi-select-combobox 
+                        name="collectionop"
+                        label="Collection Operation"
+                        placeholder="-Select-"
+                        options={collectionOpList} 
+                        onchange={handleSelectionCollectionOp} 
+                        onclickevent={handleCollOpClick}>
+                    </c-bsf-multi-select-combobox>
+                </div>
+            </div>
+            <template if:false={disabledrivetype}>
+                <div class="slds-grid slds-gutters slds-p-horizontal_medium slds-p-top_medium">
+                    <div class="slds-col slds-size_2-of-4 slds-p-horizontal_medium">
+                        <c-bsf-multi-select-combobox 
+                            name="drivetype"
+                            label="Drive Type"
+                            placeholder="-Select-"
+                            options={drivetypes} 
+                            onchange={handleSelectionDriveType} 
+                            onclickevent={handleDriveTypeClick}>
+                        </c-bsf-multi-select-combobox>
+                    </div>
+                    <div class="slds-col slds-size_1-of-4 slds-var-p-around_xxx-small">
+                        <label class="slds-form-element__label">Drive Dispatched</label>
+                        <ul class="slds-list_horizontal">
+                            <li>
+                                <lightning-input class="slds-var-p-around_xxx-small" type="checkbox" data-id="drivedispatchyes" label="Yes" disabled={disableCheckBox} checked={wrapper.drivedispatchyes} onchange={handleSelectionDriveDispatchYes} onfocus={handleOnFocus}></lightning-input>
+                            </li>
+                            <template if:false={disableCheckBox}>
+                                <li>
+                                    <lightning-input class="slds-var-p-around_xxx-small" type="checkbox" data-id="drivedispatchno" label="No" checked={wrapper.drivedispatchno} onchange={handleSelectionDriveDispatchNo} onfocus={handleOnFocus}></lightning-input>
+                                </li>
+                            </template>
+                        </ul>
+                    </div>
+                    <template if:false={frommobile}>
+                        <div class="slds-col slds-size_1-of-4 slds-text-align_right"><br/>
+                            <lightning-button icon-name="utility:up" variant="brand-outline" label="Hide Search Panel" title="Hide Search Panel" name="hidesearchpanel" onclick={handleSearchEnableOff} class="search-round-button"></lightning-button>
+                        </div>
+                    </template>
+                </div>
+            </template>
+            <template if:false={disabledriveufid}>
+                <div class="slds-grid slds-gutters slds-p-horizontal_medium slds-p-top_medium">
+                    <div class="slds-col slds-size_1-of-2 slds-var-p-around_xxx-small">
+                        <label class="slds-form-element__label">Appeal</label>
+                        <ul class="slds-list_horizontal">
+                            <li>
+                                <lightning-input class="slds-var-p-around_xxx-small" type="checkbox" data-id="drivedappealyes" label="Yes" checked={wrapper.driveappealyes} onchange={handleSelectionDriveAppealYes} onfocus={handleOnFocus}></lightning-input>
+                            </li>
+                            <li>
+                                <lightning-input class="slds-var-p-around_xxx-small" type="checkbox" data-id="drivedappealno" label="No" checked={wrapper.driveappealno} onchange={handleSelectionDriveAppealNo} onfocus={handleOnFocus}></lightning-input>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="slds-col slds-size_1-of-2 slds-p-horizontal_medium">
+                        <lightning-input type="text" label="Drive UFID" data-id="driveufid" value={wrapper.driveufid} onchange={handleChange} onfocus={handleOnFocus}></lightning-input>
+                    </div>
+                </div>
+            </template>
+        </lightning-card>
+        <template if:false={disabledrivetype}>
+            <template if:true={frommobile}>
+                <div class="slds-text-align_right"><br/>
+                    <lightning-button icon-name="utility:up" variant="brand-outline" label="Hide Search Panel" title="Hide Search Panel" name="hidesearchpanel" onclick={handleSearchEnableOff} class="search-round-button"></lightning-button>
+                </div>
+            </template>
+        </template>
+    </template>
+    <template lwc:else>
+        <lightning-card>
+            <lightning-button icon-name="utility:down" variant="brand-outline" label="Show Search Panel" title="Show Search Panel" name="showsearchpanel" onclick={handleSearchEnableOn} class="search-round-button"></lightning-button>
+        </lightning-card>
+    </template>
+</template>

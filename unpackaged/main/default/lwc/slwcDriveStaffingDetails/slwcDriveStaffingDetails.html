@@ -222,6 +222,14 @@
                                                                                     icon-name="utility:lock">
                                                                                 </lightning-icon>
                                                                             </span>
+                                                                            <span class="indicator locked-indicator"
+                                                                                if:true={jobAllocation.guarded}>
+                                                                                <lightning-icon
+                                                                                    class="slds-current-color"
+                                                                                    size="xx-small"
+                                                                                    icon-name="utility:shield">
+                                                                                </lightning-icon>
+                                                                            </span>
                                                                         </div>
                                                                     </li>
                                                                 </template>
@@ -563,6 +571,14 @@
                                                                                     icon-name="utility:lock">
                                                                                 </lightning-icon>
                                                                             </span>
+                                                                            <span class="indicator locked-indicator"
+                                                                                if:true={jobAllocation.guarded}>
+                                                                                <lightning-icon
+                                                                                    class="slds-current-color"
+                                                                                    size="xx-small"
+                                                                                    icon-name="utility:shield">
+                                                                                </lightning-icon>
+                                                                            </span>
                                                                         </div>
                                                                     </li>
                                                                 </template>
@@ -728,7 +744,7 @@
                                 </div>
                             </template>
                             <template if:true={isFixedSiteDrive}>
-                                <div class="slds-m-bottom_small slds-text-body_small">
+                                <div class="slds-m-bottom_small slds-text-body_small slds-hide">
                                     <div class="slds-text-title_caps drive-info">Procedure Capacity</div>
                                     <div class="">{driveDetail1.procedureCapacity}</div>
                                 </div>
@@ -870,6 +886,15 @@
                                                         </div>
                                                     </template>
                                                 </template>
+
+                                                <div class="slds-border_top slds-m-top_x-small direction-ltr" if:true={resource.exceptionLog.length}>
+                                                    <div for:each={resource.exceptionLog} for:item="exception" key={exception.exception}
+                                                        class="slds-text-body_small slds-grid_vertical-align-center slds-has-flexi-truncate">
+                                                        <p class="color-default-text slds-m-vertical_xx-small color-error" style="white-space: normal;">
+                                                            {exception.exception}
+                                                        </p>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                         <div class="slds-col slds-size_1-of-8 space-vertical">
@@ -928,6 +953,9 @@
                                         <div if:true={resource.isSecondaryCO}
                                             class="slds-badge slds-theme_warning  color-white size65rem bg-orange slds-m-top--small">
                                             Secondary CO</div>
+                                        <div if:true={resource.isTraded}
+                                            class="slds-badge slds-theme_warning  color-white size65rem bg-orange slds-m-top--small">
+                                            Traded</div>
                                     </div>
 
                                 </li>
@@ -1105,9 +1133,12 @@
     </c-slwc-dispatch-drive-modal>
 
     <c-slwc-call-out-modal
-        is-open={callOutModalData.isOpen}
         onclose={handleCloseCallOutModal}
         onsave={handleSaveCallOutModal}
+        drive-date={callOutModalData.driveDate}
+        resource-id={callOutModalData.resourceId}
+        duration={callOutModalData.duration}
+        is-open={callOutModalData.isOpen}
     ></c-slwc-call-out-modal>
 
     <c-slwc-drive-shift-job-modal></c-slwc-drive-shift-job-modal>

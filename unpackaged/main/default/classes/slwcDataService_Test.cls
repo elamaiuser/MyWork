@@ -63,9 +63,15 @@ private class slwcDataService_Test {
         settingKeys.add('lac');
         settingKeys.add('pac');
         settingKeys.add('rac');
+        settingKeys.add('mapRoleToPremiumOpPay');
         settingKeys.add('resourceRoleGroups');
         settingKeys.add('lunchBreakSettings');
         settingKeys.add('maxCDLDOTDuration');
+        settingKeys.add('exceptionSettings');
+        settingKeys.add('staffSetupExcludedRoles');
+        settingKeys.add('optimizerDefaultWeights');
+        settingKeys.add('optimizerDefaultSettings');
+        settingKeys.add('rtvAPSApprovalWindow');
         slwcDataService.getCustomSettings(settingKeys);
         
         Test.stopTest();

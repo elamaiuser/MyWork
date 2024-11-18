@@ -79,7 +79,7 @@
     <showGrandTotal>true</showGrandTotal>
     <showSubTotals>true</showSubTotals>
     <timeFrameFilter>
-        <dateColumn>sked__Resource__c$CreatedDate</dateColumn>
+        <dateColumn>sked__Resource__c$sked_Seniority_Date__c</dateColumn>
         <interval>INTERVAL_CUSTOM</interval>
     </timeFrameFilter>
 </Report>

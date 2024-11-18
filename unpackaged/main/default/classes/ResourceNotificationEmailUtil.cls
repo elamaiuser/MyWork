@@ -210,13 +210,13 @@ public inherited sharing class ResourceNotificationEmailUtil {
                     
                 }
                 if(messages.size() > 0){
-                    
-                    Messaging.SendEmailResult[] results = Messaging.sendEmail(messages);
+                    BSF_EmailNotification.sendEmails(messages,'ResourceUpdateEmail',null);//Changes for  HRP-11608
+                    /*Messaging.SendEmailResult[] results = Messaging.sendEmail(messages);
                     if(results[0].success){
                         
                     }else {
                         
-                    }
+                    }*/
                 }
                 
             }

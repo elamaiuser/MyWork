@@ -14,12 +14,12 @@
         <valueSetDefinition>
             <sorted>false</sorted>
             <value>
-                <fullName>ARC Initiated-Mobile</fullName>
+                <fullName>ARC_Initiated_Mobile</fullName>
                 <default>false</default>
                 <label>ARC Initiated-Mobile</label>
             </value>
             <value>
-                <fullName>Sponsor Initiated-Mobile</fullName>
+                <fullName>Sponsor_Initiated_Mobile</fullName>
                 <default>false</default>
                 <label>Sponsor Initiated-Mobile</label>
             </value>
@@ -44,11 +44,11 @@
         </valueSettings>
         <valueSettings>
             <controllingFieldValue>Mobile</controllingFieldValue>
-            <valueName>ARC Initiated-Mobile</valueName>
+            <valueName>ARC_Initiated_Mobile</valueName>
         </valueSettings>
         <valueSettings>
             <controllingFieldValue>Mobile</controllingFieldValue>
-            <valueName>Sponsor Initiated-Mobile</valueName>
+            <valueName>Sponsor_Initiated_Mobile</valueName>
         </valueSettings>
     </valueSet>
 </CustomField>

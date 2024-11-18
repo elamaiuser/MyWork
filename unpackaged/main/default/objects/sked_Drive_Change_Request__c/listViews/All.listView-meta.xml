@@ -13,9 +13,9 @@
     <columns>CREATED_DATE</columns>
     <filterScope>Everything</filterScope>
     <filters>
-        <field>sked_Drive_Name__c</field>
-        <operation>contains</operation>
-        <value>our lady of the seas</value>
+        <field>sked_Type__c</field>
+        <operation>equals</operation>
+        <value>Site Address Change</value>
     </filters>
     <label>All</label>
 </ListView>

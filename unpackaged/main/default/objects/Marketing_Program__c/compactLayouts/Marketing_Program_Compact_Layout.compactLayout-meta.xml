@@ -2,7 +2,6 @@
 <CompactLayout xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>Marketing_Program_Compact_Layout</fullName>
     <fields>External_Name__c</fields>
-    <fields>Recruited_By__c</fields>
     <fields>Is_Active__c</fields>
     <fields>Booking_Period_Active__c</fields>
     <label>Marketing Program Compact Layout</label>

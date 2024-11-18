@@ -6,6 +6,7 @@
 * Date					Developer Name			Comments
 * ***************************************************************************************************************************************************************************
 * 09/08/2023			Kishore Das				Added Database method and Error log(For the Story HRP-10549)
+* 03/06/2024			Balaji N		  	    logic for HRP-12136 (changes in opp name logic)
 *****************************************************************************************************************************************************************************
 */
 global class UpdateOpportunityNameBatch implements Database.Batchable<sObject>, Database.Stateful {
@@ -52,17 +53,20 @@ global class UpdateOpportunityNameBatch implements Database.Batchable<sObject>, 
             List<Opportunity> finalOppList = new List<Opportunity>();
             for (opportunity opp : lstOpportunities) {
                 if(opp.Is_Template__c == false && opp.Drive_Site__c == null) {
-                    string tmpTbdOppName = opp.Account_Internal_Name__c + ', TBD';
+                    string tmpTbdOppName = opp.Name + ', TBD';//HRP-12136  internal name--> Name
                     if(opp.Name != tmpTbdOppName) {
-                        opp.Name =  opp.Account_Internal_Name__c + ', TBD';   
+                        opp.Name =  opp.Name + ', TBD';   //HRP-12136 internal name--> Name
                         finalOppList.add(opp);
                     }
                 }                    
                 else if (opp.Is_Template__c == false && opp.Drive_Site__c != null) {
-                    string tmpOppName = opp.Account_Internal_Name__c + ', ' +  opp.Site_Building_Name__c;
-                    if(tmpOppName.length() > 120) {
+                    string tmpOppName = opp.account.name+', '+opp.Drive_Site_Name__c;//HRP-12136 opp.Account_Internal_Name__c + ', ' +  opp.Site_Building_Name__c;
+                    tmpOppName = tmpOppName.length() > 80 ? tmpOppName.substring(0, 75) + ' ...' : tmpOppName;//HRP-12136
+                    //HRP-12136
+                    /*if(tmpOppName.length() > 120) {
                         tmpOppName = tmpOppName.substring(0,120);
-                    }
+                    }*/
+                    //HRP-12136
                     if(opp.Name != tmpOppName) {
                         opp.Name = tmpOppName;
                         finalOppList.add(opp);
@@ -71,7 +75,9 @@ global class UpdateOpportunityNameBatch implements Database.Batchable<sObject>, 
             }
             // added Database method and Error log(HRP-10549):start
             //system.debug('finalOppList##'+finalOppList.size());
+            TriggerHandler.bypass('OpportunityTriggerHandler');//HRP-12136
             Database.UpsertResult[] upsertfinalOppList = Database.upsert(finalOppList,false);
+            TriggerHandler.clearBypass('OpportunityTriggerHandler');//HRP-12136
             
             if(upsertfinalOppList.size()>0){
             List<BSF_Error_Log__c> logList = BSF_Utilities.createErrorLog(upsertfinalOppList,'UpdateOpportunityName','UpdateOpportunityNameBatch','execute','Error','Error in Updating opportunity name');
@@ -82,8 +88,9 @@ global class UpdateOpportunityNameBatch implements Database.Batchable<sObject>, 
         else{
             // added Database method and Error log(HRP-10549):start
             //system.debug('lstOpportunities##'+lstOpportunities.size()+' '+lstOpportunities);
+            TriggerHandler.bypass('OpportunityTriggerHandler');//HRP-12136
             Database.UpsertResult[] upsertlstOpportunities = Database.upsert(lstOpportunities,false);
-            
+            TriggerHandler.clearBypass('OpportunityTriggerHandler');//HRP-12136
             if(upsertlstOpportunities.size()>0){
             List<BSF_Error_Log__c> logList = BSF_Utilities.createErrorLog(upsertlstOpportunities,'UpdateOpportunityName','UpdateOpportunityNameBatch','execute','Error','Error in Updating opportunity name');
             InsertBsfErrorLog.insertBsfErrors(logList);

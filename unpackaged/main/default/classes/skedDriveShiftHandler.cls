@@ -19,6 +19,7 @@ public class skedDriveShiftHandler extends skedTriggerHub {
         if (skedSetting.instance.Admin.dateTimeConversion) {
             doDateTimeConversion(this.context.newRecords, (Map<Id, sked_Drive_Shift__c>)this.context.oldMap);
         }
+        autoPopulateDriveProjProductFields(this.context.newRecords, (Map<Id, sked_Drive_Shift__c>)this.context.oldMap); 
     }
     
     public override void onAfterUpdate() {
@@ -115,6 +116,28 @@ public class skedDriveShiftHandler extends skedTriggerHub {
             }
         }
         update skedDriveShifts;
+    }
+
+    private static void autoPopulateDriveProjProductFields(List<sked_Drive_Shift__c> newDriveList,Map<Id, sked_Drive_Shift__c> oldDriveMap) {
+        for(sked_Drive_Shift__c skedDriveShift: newDriveList) {
+            decimal x2rbcProjectedProcedures = skedDriveShift.sked_2RBC_Projected_Procedures__c != NULL ? skedDriveShift.sked_2RBC_Projected_Procedures__c : 0;
+            decimal wbProjectedProcedures = skedDriveShift.sked_WB_Projected_Procedures__c != NULL ? skedDriveShift.sked_WB_Projected_Procedures__c : 0;
+            decimal plasmaProjectedProcedures = skedDriveShift.sked_Plasma_Projected_Procedures__c != NULL ? skedDriveShift.sked_Plasma_Projected_Procedures__c : 0;
+            decimal plateletProjectedProcedures = skedDriveShift.sked_Platelet_Projected_Procedures__c != NULL ? skedDriveShift.sked_Platelet_Projected_Procedures__c : 0;
+            if(oldDriveMap != NULL) {
+                if(oldDriveMap.get(skedDriveShift.id).sked_WB_Projected_Procedures__c != skedDriveShift.sked_WB_Projected_Procedures__c  
+                   ||(oldDriveMap.get(skedDriveShift.id).sked_2RBC_Projected_Procedures__c != skedDriveShift.sked_2RBC_Projected_Procedures__c )
+                   ||(oldDriveMap.get(skedDriveShift.id).sked_Platelet_Projected_Procedures__c != skedDriveShift.sked_Platelet_Projected_Procedures__c )
+                   ||(oldDriveMap.get(skedDriveShift.id).sked_Plasma_Projected_Procedures__c != skedDriveShift.sked_Plasma_Projected_Procedures__c )) {
+                    if(skedDriveShift.sked_Total_Procedures_Projected__c != NULL) {
+                        skedDriveShift.sked_Total_Procedures_Projected__c = x2rbcProjectedProcedures + wbProjectedProcedures + plasmaProjectedProcedures + plateletProjectedProcedures;
+                    }
+                    if(skedDriveShift.sked_Total_Products_Projected__c != NULL) {
+                       skedDriveShift.sked_Total_Products_Projected__c = x2rbcProjectedProcedures * 2 + wbProjectedProcedures + plasmaProjectedProcedures + plateletProjectedProcedures;
+                    }  
+                }   
+            }
+        }
     }
     
 }

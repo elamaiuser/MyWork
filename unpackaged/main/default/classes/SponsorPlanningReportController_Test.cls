@@ -1,3 +1,12 @@
+/* Description : This test class covers SponsorPlanningReportPDFController (91%) and SponsorPlanningReportController(94%) 
+   
+ * Modification Log 
+ * Date					     Developer Name			     Comments
+ * ***********************************************************************************************************************************************
+ * 11/08/2024				  Priti Jana				Modified to cover SponsorPlanningReportPDFController
+ *************************************************************************************************************************************************
+*/
+
 @isTest
 public class SponsorPlanningReportController_Test {
 	
@@ -322,6 +331,10 @@ public class SponsorPlanningReportController_Test {
         Test.setCurrentPageReference(new PageReference('Page.generatePdfWithData'));
         System.currentPageReference().getParameters().put('ids', mobileOpportunity.Id);
         sponsorPlanningReportController pdefObj = new sponsorPlanningReportController();
+        
+        // Test for SponsorPlanningReportPDFController
+        System.currentPageReference().getParameters().put('opportunityids', mobileOpportunity.Id);
+        SponsorPlanningReportPDFController pdef1Obj = new SponsorPlanningReportPDFController();
         Test.stopTest();
         
     }

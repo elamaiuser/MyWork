@@ -1,0 +1,108 @@
+<template>
+    <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true"
+        aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+        <div class="slds-modal__container">
+            <header class="slds-modal__header">
+                <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close"
+                    onclick={handleCloseOrCancelButton}>
+                    <lightning-icon 
+                        icon-name="utility:close" 
+                        alternative-text="close" 
+                        variant="inverse" 
+                        size="small">
+                    </lightning-icon>
+                </button>
+                <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">{modalPopUpHeader}
+                </h2>
+            </header>
+            <div if:false={isDeleteModal}>
+                <div class="slds-modal__content" style="overflow: initial;">
+                    <div class="slds-theme_shade slds-p-horizontal_medium slds-p-vertical_small slds-border_bottom">
+                        <div class="slds-media slds-media_center">
+                            <div class="slds-media__figure">
+                                <lightning-icon 
+                                    icon-name="standard:note" 
+                                    size="small">
+                                </lightning-icon>
+                            </div>
+                            <div class="slds-media__body">
+                                <h1 class="slds-text-heading_small">Information</h1>
+                            </div>
+                        </div>
+                    </div>
+                <div class="slds-p-around_medium">
+                    <div class="slds-form-element__row slds-grid slds-grid_pull-padded-small">
+                        <div class="slds-size_1-of-2 slds-p-horizontal_small">
+                            <lightning-input 
+                                type="text" 
+                                label="Collection Operation" 
+                                value={collectionOperationName}
+                                readonly>
+                            </lightning-input>
+                        </div>
+                        <div class="slds-size_1-of-2 slds-p-horizontal_small">
+                            <lightning-input 
+                                name="startDate" 
+                                type="date" 
+                                label="Start Date" 
+                                value={model.startDate}
+                                timezone={timezoneSidId} 
+                                onchange={handleOnChange} 
+                                required>
+                            </lightning-input>
+                        </div>
+                    </div>
+                    <div class="slds-form-element__row slds-m-top_x-small slds-grid slds-grid_pull-padded-small">
+                        <div class="slds-size_1-of-2 slds-p-horizontal_small">
+                            <c-slwc-lookup 
+                                is-required 
+                                object-name="sked_Staging_Location__c"
+                                icon-name="custom:custom71" 
+                                display-field="name" 
+                                label="Staging Location"
+                                name="stagingLocation" 
+                                is-readonly={isReadOnlyData}
+                                placeholder="Search Staging Locations..." 
+                                selection={model.stagingLocation}
+                                onselectionchange={handleOnChange}>
+                            </c-slwc-lookup>
+                        </div>
+                        <div class="slds-size_1-of-2 slds-p-horizontal_small">
+                            <lightning-input 
+                                name="endDate" 
+                                type="date" 
+                                label="End Date" 
+                                value={model.endDate}
+                                timezone={timezoneSidId} 
+                                onchange={handleOnChange} 
+                                required>
+                            </lightning-input>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <footer class="slds-modal__footer">
+                <button class="slds-button slds-button_neutral" onclick={handleCloseOrCancelButton} title="Cancel">Cancel</button>
+                <button class="slds-button slds-button_brand" onclick={handleSaveButtonOnModal} title="Save" disabled={disabled}>Save</button>
+            </footer>
+        </div>
+        <div if:true={isDeleteModal}>
+            <div class="slds-modal__content" style="overflow: initial;">
+                <div class="slds-theme_shade slds-p-horizontal_medium slds-p-vertical_small slds-border_bottom">
+                    <div class="slds-media__body">
+                        <h1 class="slds-text-align_center">Are you sure you want to delete this Collection
+                            Operation Staging Location?</h1>
+                    </div>
+                </div>
+            </div>
+            <footer class="slds-modal__footer">
+                <button class="slds-button slds-button_neutral" onclick={handleCloseOrCancelButton} title="Cancel">Cancel</button>
+                <button class="slds-button slds-button_brand" onclick={handleSaveButtonOnModal}
+                    title="delete">Delete</button>
+            </footer>
+        </div>
+    </div>
+    </section>
+    <div class="slds-backdrop slds-backdrop_open"></div>
+
+</template>

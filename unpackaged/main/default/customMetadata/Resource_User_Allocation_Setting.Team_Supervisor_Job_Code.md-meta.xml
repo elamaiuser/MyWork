@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomMetadata xmlns="http://soap.sforce.com/2006/04/metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <label>Team Supervisor Job Code</label>
+    <protected>false</protected>
+    <values>
+        <field>Job_Codes__c</field>
+        <value xsi:type="xsd:string">CO1004,CO7001,CO1002,CO1045</value>
+    </values>
+    <values>
+        <field>Profiles__c</field>
+        <value xsi:type="xsd:string">Collection Management</value>
+    </values>
+</CustomMetadata>

@@ -8,6 +8,8 @@ public with sharing class Constants {
     public static final string APHERESIS_CHARGE = 'Apheresis Charge';
     public static final string APHERESIS = 'Apheresis';
     public static final string EQUIPMENT = 'Equipment';
+    public static final string VEHICLE = 'Vehicle';
+    public static final string XRBC = '2RBC';
     public static final string DONOR_AMBASSADOR = 'Donor Ambassador';
     public static final string APPOINTMENT_TYPE_WB = 'Whole Blood';
     public static final string ACCOUNT_OPERATION_TYPE_INTEGRATED = 'Integrated';
@@ -34,6 +36,8 @@ public with sharing class Constants {
     public static final string JOB_TYPE_DRIVER_SUPPORT = 'Driver Support';
     public static final string JOB_TYPE_VP_HH = 'VP/HH';
     public static final string JOB_TYPE_CHARGE = 'Charge';
+    public static final string JOB_TYPE_DRIVE_LEAD = 'Drive Lead'; //HRP-11634
+    public static final string JOB_TYPE_TEAM_SUPERVISOR = 'Team Supervisor'; //HRP-11634
     public static final string DRIVE_LOCATION_INSIDE = 'Inside';
     public static final string SOURCE_CALENDAR_BUILD = 'Calendar Build';
     public static final string OPERATION_DRIVE_2RBC_LIMIT = '2RBC Limit';
@@ -83,5 +87,13 @@ public with sharing class Constants {
     // Drive Service Roles
 
     public static final String PRIMARY_CONTACT = 'Primary Contact';
+
+    // Status
+    public static final String STATUS_APPROVED = 'Approved';
+    public static final String STATUS_DELETED = 'Deleted';
+
+    // Collection Operation Config Variables
+    public static String TRAVEL_TIME_INCLUDED_FIXED_SITE_DRIVERS_ONLY = 'Drivers Only';
+    public static String TRAVEL_TIME_INCLUDED_FIXED_SITE_ALL_ROLES = 'All Roles';
 
 }

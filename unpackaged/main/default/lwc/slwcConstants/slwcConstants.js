@@ -96,7 +96,8 @@ export const RESOURCE_ROLE_GROUP = {
 
 export const RESOURCE_ROLE = {
   x2RBC: '2RBC',
-  VPHH: 'VP/HH'
+  VPHH: 'VP/HH',
+  DRIVER: 'Driver'
 }
 
 export const ASSET_TYPE = {
@@ -128,7 +129,8 @@ export const DRIVE_REQUEST_CHANGE_STATUS = {
   APPROVED_BY_SYSTEM: 'Approved by System',
   WAITING_FOR_DM_APPROVAL: 'Waiting for DM Approval',
   WAITING_FOR_APS_APPROVAL: 'Waiting for APS Approval',
-  WAITING_FOR_DRD_FEEDBACK: 'Waiting for DRD Feedback',
+  APS_WAITING_FOR_DRD_FEEDBACK: 'APS Waiting for DRD Feedback',
+  DM_WAITING_FOR_DRD_FEEDBACK: 'DM Waiting for DRD Feedback',
 }
 
 export const DRIVE_APPROVAL_STATUS = {
@@ -136,9 +138,31 @@ export const DRIVE_APPROVAL_STATUS = {
   SUBMITTED: 'Submitted',
   WAITING_FOR_DM_APPROVAL: 'Waiting for DM Approval',
   WAITING_FOR_APS_APPROVAL: 'Waiting for APS Approval',
-  WAITING_FOR_DRD_FEEDBACK: 'Waiting for DRD Feedback',
+  APS_WAITING_FOR_DRD_FEEDBACK: 'APS Waiting for DRD Feedback',
+  DM_WAITING_FOR_DRD_FEEDBACK: 'DM Waiting for DRD Feedback',
   APPROVED: 'Approved',
   REJECTED: 'Rejected'
+}
+
+export const RTV_APPROVAL_STATUS = {
+  NOT_SUBMITTED: 'Not Submitted',
+  SUBMITTED: 'Submitted',
+  WAITING_FOR_DM_APPROVAL: 'Waiting for DM Approval',
+  WAITING_FOR_CM_APPROVAL: 'Waiting for CM Approval',
+  WAITING_FOR_APS_APPROVAL: 'Waiting for APS Approval',
+  APPROVED: 'Approved',
+  REJECTED: 'Rejected',
+  EXPIRED: 'Expired'
+}
+
+export const AVAILABILITY_STATUS = {
+  PENDING: 'Pending',
+  WAITLIST: 'Waitlist',
+  APPROVED: 'Approved',
+  DECLINED: 'Declined',
+  EXPIRED: 'Expired',
+  CANCELLED: 'Cancelled',
+  APPROVED_FROM_WAITLIST: 'Approved From Waitlist'
 }
 
 export const OPERATION_TYPE = { 
@@ -151,6 +175,7 @@ export const OPTIMIZATION_STATUS = {
   PENDING: 'Pending',
   IN_PROGRESS: 'In Progress',
   COMPLETED: 'Completed',
+  COMPLETE: 'Complete', // HRP-12509
   POST_PROCESS: 'Post Process',
   ERROR: 'Error',
   CLOSED: 'Closed'
@@ -185,8 +210,19 @@ export const SITE_FEEDBACK_ACCESS_MODE = {
 }
 
 export const DRIVE_SHIFT_TRADE_TYPE = {
+  NONE: 'None',
   DRIVE_SHIFT: 'Drive Shift',
-  ACTIVITY: 'Activity'
+  ACTIVITY: 'Activity',
+  AVAILABLE_DAY: 'Available Day'
+}
+
+export const DRIVE_SHIFT_TRADE_STATUS = {
+  SUBMITTED: 'Submitted',
+  PENDING_APPROVAL: 'Pending Approval',
+  WAITING_FOR_REQUESTING_STAFF_ACKNOWLEDGE: 'Waiting for Requesting Staff Acknowledge',
+  WAITING_FOR_TRADING_STAFF_ACKNOWLEDGE: 'Waiting for Trading Staff Acknowledge',
+  CANCELLED: 'Cancelled',
+  EXPIRED: 'Expired'
 }
 
 export const DRIVE_CONTENTION = {
@@ -203,7 +239,10 @@ export const DRIVE_CONTENTION = {
   MULTI_SHIFT_DRIVE: 'Multi Shift Drive',
   CONFIRM_WITHIN_42_DAYS: 'Confirmed within 42 days',
   DUAL_ROLE_REMOVAL: 'Dual Role Removal',
-  STAFFING_COMPLEMENT_CHANGED: 'Staffing Complement Changed'
+  STAFFING_COMPLEMENT_CHANGED: 'Staffing Complement Changed',
+  CO_CHANGED_CROSS_REGIONS: 'Collection Operation Change cross regions',
+  ASSETS_NOT_SHARED_WITH_NEW_CO: 'Assets are not shared with new Collection Operation',
+  EXCESS_STAFF_CAPACITY: 'Excess Staff Capacity'
 }
 
 export const DRIVE_CONTENTION_RESOLUTION = {
@@ -221,7 +260,10 @@ export const DRIVE_CONTENTION_RESOLUTION = {
   ELECT_CONFIRM_WITHIN_42_DAYS: 'Elect to approve the drive that is confirmed within 42 days',
   ELECT_DUAL_ROLE_REMOVAL: 'Elect to acknowledge dual role removal',
   ELECT_STAFFING_COMPLEMENT_CHANGED_ACCEPT_NEW_CHANGE: 'Accept New Staffing Complement',
-  ELECT_STAFFING_COMPLEMENT_CHANGED_KEEP_CURRENT: 'Keep Current Staffing Complement'
+  ELECT_STAFFING_COMPLEMENT_CHANGED_KEEP_CURRENT: 'Keep Current Staffing Complement',
+  ELECT_CO_CHANGED_CROSS_REGIONS_REMOVE_FROM_LINKED_DRIVE: 'Remove from Linked Drive',
+  ELECT_ASSETS_NOT_SHARED_WITH_NEW_CO: 'Elect to acknowledge the drive has assets that are not shared with new Collection Operation',
+  ELECT_EXCESS_STAFF_CAPACITY: 'Elect to Proceed with Excess Staff Capacity'
 }
 
 export const DRIVE_CHANGE_REQUEST_ITEM_TYPE = {
@@ -283,4 +325,32 @@ export const ADDRESS_REFERENCED_FOR_SCHEDULING = {
   WORK: 'Work',
   HOME: 'Home',
   SATELLITE: 'Satellite'
+}
+
+export const COLLECTION_OPERATION = {
+  NON_COLLECTION_AREA: 'Non-Collection Area'
+}
+
+export const MAX_MIN_DATES_ISO = {
+  MIN_DATE_ISO: '1900-01-01',
+  MAX_DATE_ISO: '4000-12-31'
+}
+
+export const FIELD_TYPE = {
+  TEXT: 'text',
+  PICKLIST: 'picklist',
+  MULTIPICKLIST: 'multipicklist',
+  DATE: 'date',
+  LOOKUP: 'lookup',
+  NUMBER: 'number'
+}
+
+export const OPTIMIZER_SETTING_CONSTRAINT_TYPE = {
+  SOFT: "Soft Constraint",
+  HARD: "Hard Constraint"
+}
+
+export const OPTIMIZER_SETTING_DISPLAY_TYPE = {
+  PICKLIST: 'Picklist',
+  CHECKBOX: 'Checkbox'
 }

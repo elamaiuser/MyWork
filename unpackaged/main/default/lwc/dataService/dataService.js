@@ -61,5 +61,8 @@ export * from './travelTimeIndexItemService';
 export * from './userService';
 export * from './slotService';
 export * from './skedService';
+export * from './siteCollectionOpService';
 export * from './stagingLocationService';
 export * from './bsfPortfolioService';
+export * from './staffMealAndRestBreakService';
+export * from './collectionOperationOptimizerSettingService';

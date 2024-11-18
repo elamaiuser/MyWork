@@ -2,7 +2,8 @@
  * Date					Developer Name			Description
  * ***************************************************************************************************************************************************************************
  * 06/13/2023			Barnojit Sharma			Delete Account Team Members from Account when Effective Date is reached (Logic for HRP-4773)
- * 11/22/2023		    Balaji N			    Logic for HRP-11281(Syncing expired team Members)
+ * 11/22/2023		    Balaji N				Logic for HRP-11281(Syncing expired team Members)
+ * 01/04/2024           Balaji N		        Logic for HRP-10569 (parameter changes on accTeamDateSyncOnAccPortUpdates method call)
  *****************************************************************************************************************************************************************************
 */
 global class BSF_RemoveAccountTeamMemberBatch implements Schedulable, Database.Batchable<Sobject>{
@@ -21,11 +22,12 @@ global class BSF_RemoveAccountTeamMemberBatch implements Schedulable, Database.B
             accountIdList.add(atm.accountId);
             accTeamIdSet.add(atm.id);
         }
-        
-        map<string,AccountTeamMember> accTeamMap = AccountPortfolioAssignmentService.accTeamDateSyncOnAccPortUpdates(accountIdList,null);
+        //HRP-11281 start
+        map<string,AccountTeamMember> accTeamMap = AccountPortfolioAssignmentService.accTeamDateSyncOnAccPortUpdates(accountIdList,null,new set<id>(),new map<id,list<accountTeamMember>> (),new map<id,list<accountTeamMember>> ());//HRP-10569 parameter changes
         list<AccountTeamMember> teamTodeleteList = [select id from accountTeamMember where id in :accTeamIdSet and Is_Covering_Recruiter__c=true];
         if(!teamTodeleteList.isEmpty())
         doExecute(teamTodeleteList);
+        //HRP-11281 end
 	}
 	global void execute(SchedulableContext scon){
 		Database.executeBatch(new BSF_RemoveAccountTeamMemberBatch(),200);

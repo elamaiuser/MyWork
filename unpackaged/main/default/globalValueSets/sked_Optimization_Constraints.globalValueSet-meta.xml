@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GlobalValueSet xmlns="http://soap.sforce.com/2006/04/metadata">
+    <customValue>
+        <fullName>Account/Site Preferences</fullName>
+        <default>false</default>
+        <label>Account/Site Preferences</label>
+    </customValue>
+    <customValue>
+        <fullName>Geographic Preferences</fullName>
+        <default>false</default>
+        <label>Geographic Preferences</label>
+    </customValue>
+    <customValue>
+        <fullName>Hire Date</fullName>
+        <default>false</default>
+        <label>Hire Date</label>
+    </customValue>
+    <customValue>
+        <fullName>Role Priorities</fullName>
+        <default>false</default>
+        <label>Role Priorities</label>
+    </customValue>
+    <masterLabel>Optimization Constraints</masterLabel>
+    <sorted>false</sorted>
+</GlobalValueSet>

@@ -79,6 +79,9 @@
         <field>LAST_UPDATE</field>
     </columns>
     <columns>
+        <field>Lead.Lead_Stage_Status__c</field>
+    </columns>
+    <columns>
         <aggregateTypes>Sum</aggregateTypes>
         <field>Lead.Lead_Age__c</field>
     </columns>
@@ -87,6 +90,9 @@
     </columns>
     <columns>
         <field>Lead.Lost_Reason__c</field>
+    </columns>
+    <columns>
+        <field>Lead.Lead_Division_Name__c</field>
     </columns>
     <columns>
         <field>Lead.Lead_Region_Name__c</field>
@@ -118,6 +124,20 @@
             <operator>equals</operator>
             <value>Contacted,Converted,Future Outreach,New,Potential Feeder Group,Qualified,Unqualified</value>
         </criteriaItems>
+        <criteriaItems>
+            <column>Lead.Lead_Division_Name__c</column>
+            <columnToColumn>false</columnToColumn>
+            <isUnlocked>true</isUnlocked>
+            <operator>contains</operator>
+            <value></value>
+        </criteriaItems>
+        <criteriaItems>
+            <column>Lead.Lead_Region_Name__c</column>
+            <columnToColumn>false</columnToColumn>
+            <isUnlocked>true</isUnlocked>
+            <operator>contains</operator>
+            <value></value>
+        </criteriaItems>
         <language>en_US</language>
     </filter>
     <format>Tabular</format>
@@ -131,6 +151,8 @@
     <showDetails>true</showDetails>
     <showGrandTotal>true</showGrandTotal>
     <showSubTotals>true</showSubTotals>
+    <sortColumn>Lead.Lead_Division_Name__c</sortColumn>
+    <sortOrder>Desc</sortOrder>
     <timeFrameFilter>
         <dateColumn>CREATED_DATE</dateColumn>
         <interval>INTERVAL_LAST90</interval>

@@ -1,16 +1,36 @@
 //This batch needs to be run with chunk size = 1
 global class skedDriveRankingBatch implements Database.Batchable<sked_Drive__c>, Database.AllowsCallouts, Database.Stateful {
 
+    Set<Id> skedFixedSiteDrives;
     Set<Id> driveIds;
     List<String> inputKeys;
     Set<string> processedKey;
+    String driveSource;
+    String runType;
+    Date driveDate;
+
+    global skedDriveRankingBatch(String runType, String Source, Date driveDate, List<sked_Drive__c> inputDrives) {
+        this.runType = runType;
+        this.driveSource = source;
+        this.driveIds = new Set<Id>();
+        this.driveDate = driveDate;
+        this.processedKey = new Set<string>();
+        for (sked_Drive__c inputDrive : inputDrives) {
+            this.driveIds.add(inputDrive.Id);
+            if(inputDrive.sked_Type_of_Drive__c == skedConstants.DRIVE_TYPE_FIXED_SITE) {
+                if (this.skedFixedSiteDrives == null) {
+        			this.skedFixedSiteDrives = new Set<Id>();
+    			}
+    			this.skedFixedSiteDrives.add(inputDrive.Id);
+            }
+        }                
+	}
     
     global skedDriveRankingBatch(List<sked_Drive__c> inputDrives) {
         this.driveIds = new Set<Id>();
         for (sked_Drive__c inputDrive : inputDrives) {
             this.driveIds.add(inputDrive.Id);
-        }
-        
+        }                
         this.processedKey = new Set<string>();
     }
 
@@ -95,6 +115,13 @@ global class skedDriveRankingBatch implements Database.Batchable<sked_Drive__c>,
                 inputKeySet.addAll(this.inputKeys);
                 Database.executeBatch(new skedDriveRankingBatch(inputKeySet), 1);
             }
+        }
+        if(this.skedFixedSiteDrives != null) {
+        	Database.executeBatch(new DriveResourceAllocationBatch(runType, 
+                                                                   driveSource, 
+                                                                   skedConstants.DRIVE_TYPE_FIXED_SITE,
+                                                                   this.driveDate,
+                                                                   driveSource.equalsIgnoreCase('Calendar Build') ? new Set<Id>() : this.skedFixedSiteDrives), 1);
         }
     }
     

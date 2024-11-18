@@ -10,8 +10,11 @@ export class LinkedDrivesMappingConfigFactory {
 
       mappingConfig.addFieldConfig('Id', 'id', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('Name', 'name', MAPPING_TYPE.direct);
+      mappingConfig.addFieldConfig('sked_ARC_Region__c', 'ARCRegionId', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_Linked_Drive_Type__c', 'linkedDriveType', MAPPING_TYPE.direct);
-
+      mappingConfig.addFieldConfig('sked_Earliest_Drive_Date__c', 'earliestDriveDate', MAPPING_TYPE.direct);
+      mappingConfig.addFieldConfig('sked_Latest_Drive_Date__c', 'latestDriveDate', MAPPING_TYPE.direct);
+      
       mappingConfig.addFieldConfigWithRelatedList('sked_Activities__r', 'activities', 'sked__Activity__c', 'sked_Linked_Drives__c');
       mappingConfig.addFieldConfigWithRelatedList('sked_Drives__r', 'drives', 'sked_Drive__c', 'sked_Linked_Drives__c');
 

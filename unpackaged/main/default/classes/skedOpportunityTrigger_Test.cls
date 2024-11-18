@@ -18,11 +18,14 @@ private class skedOpportunityTrigger_Test {
             Name = 'Test',
             AccountId = testAccount1.Id,
             Drive_Date__c = testDataFactory.summary.startDate.addDays(20),
+            Start_Time__c = Time.newInstance(7, 0, 0, 0),
+            End_Time__c = Time.newInstance(17, 0, 0, 0),
             Drive_Site__c = testLocation1.Id,
             StageName = 'Solicitation',
             CloseDate = testDataFactory.summary.startDate,
             Online_Scheduling_Enabled__c = 'No',
-            Accept_56_Day_Rule_Violation__c = true
+            Accept_56_Day_Rule_Violation__c = true,
+            Slot_Generator__c = 130
         );
         opportunities.add(testOpportunity1);
         
@@ -48,7 +51,9 @@ private class skedOpportunityTrigger_Test {
         
         insert skedDrives;
         
-        testOpportunity1.Drive_Date__c = testOpportunity1.Drive_Date__c.addDays(1);
+        testOpportunity1.Start_Time__c = Time.newInstance(8, 0, 0, 0);
+        testOpportunity1.Slot_Generator__c = 115;
+        testOpportunity1.Slot_Generator_Change_Reason__c = 'Call List Recipient has been added by User';
         update testOpportunity1;
         
         Test.stopTest();

@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomMetadata xmlns="http://soap.sforce.com/2006/04/metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <label>Workday Validation Error</label>
+    <protected>false</protected>
+    <values>
+        <field>sked_Active__c</field>
+        <value xsi:type="xsd:boolean">true</value>
+    </values>
+    <values>
+        <field>sked_Content_Renderer__c</field>
+        <value xsi:nil="true" />
+    </values>
+    <values>
+        <field>sked_Custom_Filter__c</field>
+        <value xsi:nil="true" />
+    </values>
+    <values>
+        <field>sked_Custom_Target_Destination__c</field>
+        <value xsi:type="xsd:string">workdayValidationGroupTargetDestination</value>
+    </values>
+    <values>
+        <field>sked_Destination_Field__c</field>
+        <value xsi:nil="true" />
+    </values>
+    <values>
+        <field>sked_Email_From_Address_Field__c</field>
+        <value xsi:nil="true" />
+    </values>
+    <values>
+        <field>sked_Email_Target_Field__c</field>
+        <value xsi:nil="true" />
+    </values>
+    <values>
+        <field>sked_Expiry_DateTime_Field__c</field>
+        <value xsi:nil="true" />
+    </values>
+    <values>
+        <field>sked_Filter__c</field>
+        <value xsi:type="xsd:string">sked__Type__c = &#39;Workday API Request&#39;</value>
+    </values>
+    <values>
+        <field>sked_Notification_Target_Field__c</field>
+        <value xsi:nil="true" />
+    </values>
+    <values>
+        <field>sked_Notification_Type__c</field>
+        <value xsi:type="xsd:string">email</value>
+    </values>
+    <values>
+        <field>sked_Oneoff_Protocol_Field__c</field>
+        <value xsi:nil="true" />
+    </values>
+    <values>
+        <field>sked_Priority__c</field>
+        <value xsi:nil="true" />
+    </values>
+    <values>
+        <field>sked_Sending_From_Email_Address__c</field>
+        <value xsi:nil="true" />
+    </values>
+    <values>
+        <field>sked_Subject__c</field>
+        <value xsi:type="xsd:string">Validation error(s) in BSF Workday API</value>
+    </values>
+    <values>
+        <field>sked_Target_Field_Value__c</field>
+        <value xsi:type="xsd:string">Validation Error</value>
+    </values>
+    <values>
+        <field>sked_Target_Field_Values__c</field>
+        <value xsi:nil="true" />
+    </values>
+    <values>
+        <field>sked_Target_Field__c</field>
+        <value xsi:type="xsd:string">sked_Category__c</value>
+    </values>
+    <values>
+        <field>sked_Target_SObject__c</field>
+        <value xsi:type="xsd:string">sked__Debug_Log__c</value>
+    </values>
+    <values>
+        <field>sked_Template__c</field>
+        <value xsi:type="xsd:string">Validation error(s) in BSF Workday API.  See BSF Workday Debug Log for details
+&lt;br /&gt;Log entry: {{Name}}
+&lt;br /&gt;Summary: {{sked__Summary__c}}
+&lt;br /&gt;Message: {{sked__Message__c}}
+&lt;br /&gt;Record ID: {{sked_Record_URL__c}}</value>
+    </values>
+    <values>
+        <field>sked_Trigger__c</field>
+        <value xsi:type="xsd:string">Insert</value>
+    </values>
+</CustomMetadata>

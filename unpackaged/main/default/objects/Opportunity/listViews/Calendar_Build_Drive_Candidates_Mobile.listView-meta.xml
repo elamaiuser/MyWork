@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Calendar_Build_Drive_Candidates_Mobile</fullName>
+    <columns>Drive_Date__c</columns>
+    <columns>OPPORTUNITY.NAME</columns>
+    <columns>ACCOUNT.NAME</columns>
+    <columns>Account_Manager__c</columns>
+    <columns>Drive_Status__c</columns>
+    <columns>Calendar_Build_Status__c</columns>
+    <columns>Calendar_Build_Reasons_For_Unqualified__c</columns>
+    <columns>Rollover_Consideration__c</columns>
+    <columns>Collection_Operation__c</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>Type_of_Drive__c</field>
+        <operation>equals</operation>
+        <value>Mobile</value>
+    </filters>
+    <filters>
+        <field>Drive_Status__c</field>
+        <operation>equals</operation>
+        <value>Complete,Cancel</value>
+    </filters>
+    <filters>
+        <field>Drive_Date__c</field>
+        <operation>equals</operation>
+        <value>7/14/2024</value>
+    </filters>
+    <filters>
+        <field>OPPORTUNITY.RECORDTYPE</field>
+        <operation>equals</operation>
+        <value>Opportunity.Mobile_Opp</value>
+    </filters>
+    <filters>
+        <field>Source__c</field>
+        <operation>notEqual</operation>
+        <value>Calendar Build</value>
+    </filters>
+    <label>Calendar Build - Drive Candidates Mobile</label>
+</ListView>

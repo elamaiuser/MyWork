@@ -23,6 +23,10 @@ export class OperationRecordMappingConfigFactory {
       mappingConfig.addFieldConfig('sked_Checked_In_No_HH__c', 'checkedInNoHH', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_Collection_Operation__c', 'collectionOperationId', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_Collection_Operation__r.Name', 'collectionOperationName', MAPPING_TYPE.direct);
+      mappingConfig.addFieldConfig('sked_Collection_Operation__r.sked_Require_Number_of_Meal_Breaks__c', 'collectionOperationRequireNumberOfMealBreaks', MAPPING_TYPE.direct);
+      mappingConfig.addFieldConfig('sked_Collection_Operation__r.sked_Require_Number_of_Rest_Breaks__c', 'collectionOperationRequireNumberOfRestBreaks', MAPPING_TYPE.direct);
+      mappingConfig.addFieldConfig('sked_Collection_Operation__r.sked_Require_Start_End_Times_Meal_Break__c', 'collectionOperationRequireStartEndTimesForMealBreak', MAPPING_TYPE.direct);
+      mappingConfig.addFieldConfig('sked_Collection_Operation__r.sked_Require_Start_End_Times_Rest_Break__c', 'collectionOperationRequireStartEndTimesForRestBreak', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_Connectivity__c', 'connectivity', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_Connectivity_Client__c', 'connectivityClient', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_Connectivity_Detail__c', 'connectivityDetail', MAPPING_TYPE.direct);

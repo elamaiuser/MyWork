@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Queue xmlns="http://soap.sforce.com/2006/04/metadata">
+    <doesSendEmailToMembers>false</doesSendEmailToMembers>
+    <name>Nashville TN: DSTs</name>
+    <queueMembers>
+        <users>
+            <user>aisha.grant@redcross.org</user>
+            <user>alicia.yuvienco@redcross.org</user>
+            <user>amber.mchugh2@redcross.org</user>
+            <user>amy.dicarlo@redcross.org</user>
+            <user>angie.curenton@redcross.org</user>
+            <user>carrie.banks@redcross.org</user>
+            <user>crystal.thornton@redcross.org</user>
+            <user>diane.patterson@redcross.org</user>
+            <user>holly.mccormack@redcross.org</user>
+            <user>john.fleming2@redcross.org</user>
+            <user>kate.schell@redcross.org</user>
+            <user>lisa.dortch@redcross.org</user>
+            <user>melissa.gay@redcross.org</user>
+            <user>natanya.hardin@redcross.org</user>
+            <user>pam.warren@redcross.org</user>
+            <user>rainesa.hall@redcross.org</user>
+            <user>samithia.shaw@redcross.org</user>
+            <user>serena.bricker@redcross.org</user>
+            <user>tabitha.gordon@redcross.org</user>
+            <user>tchanavian.brown@redcross.org</user>
+            <user>terrie.bass@redcross.org</user>
+            <user>tina.jackson@redcross.org</user>
+            <user>todd.morgan@redcross.org.biomed</user>
+            <user>vanessa.reed@redcross.org</user>
+        </users>
+    </queueMembers>
+    <queueSobject>
+        <sobjectType>sked_Drive_Shift_Trade__c</sobjectType>
+    </queueSobject>
+</Queue>

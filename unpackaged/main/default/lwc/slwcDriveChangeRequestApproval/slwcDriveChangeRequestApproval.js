@@ -27,7 +27,7 @@ export default class SlwcDriveChangeRequestApproval extends LightningElement {
     if(!this.showResolveContentions) return true;
     const driveHelper = new DriveHelper();
     const isAPSUser = driveHelper.isAPSUser(this.loginUser); 
-    const waitingForAPSApproval = this.driveChangeRequest?.status === DRIVE_REQUEST_CHANGE_STATUS.WAITING_FOR_APS_APPROVAL; 
+    const waitingForAPSApproval = [DRIVE_REQUEST_CHANGE_STATUS.WAITING_FOR_APS_APPROVAL, DRIVE_REQUEST_CHANGE_STATUS.APS_WAITING_FOR_DRD_FEEDBACK].includes(this.driveChangeRequest?.status); 
     return !isAPSUser || !waitingForAPSApproval;
   }
   
@@ -101,26 +101,10 @@ export default class SlwcDriveChangeRequestApproval extends LightningElement {
   }
 
   handleActionDone(event) {
-    if(this.resolveContentionsReadonly) return;
-
-    const { recordId, action } = event.detail;
-    if(action === 'Approve') {
-      Promise.resolve()
-      .then(() => {
-        const resolveContentionComponent = this.template.querySelector('c-slwc-resolve-drive-contentions');
-        return resolveContentionComponent.getData()
-      })
-      .then(({drive}) => {
-        if(drive) {
-          const service = new driveService();
-  
-          this.showLoading();
-          return service.save(drive)
-          .catch(error => this.exceptionHandler(error))
-          .finally(this.hideLoading);
-        }
-      })
-    }
+    if(this.resolveContentionsReadonly) {
+      this.init();
+      return;
+    };
   }
   
   showGenerateDriveModal(dcrId) {
@@ -165,18 +149,22 @@ export default class SlwcDriveChangeRequestApproval extends LightningElement {
     return Promise.resolve()
     .then(() => {
       if(request.action !== 'Approve') return request;
+      if(!this.showResolveContentions || this.resolveContentionsReadonly) return request;
       const resolveContentionComponent = this.template.querySelector('c-slwc-resolve-drive-contentions');
       return resolveContentionComponent.getData()
-        .then(({contentionResolution}) => {
-          let _driveService = new driveService();
-          return _driveService.save({
-            id: this.driveChangeRequest.driveId,
-            contentionResolution: contentionResolution
-          })
-          .then(() => {
-            return request;
-          })
-        });
+            .then(({contentionResolution, drive}) => {
+              let _driveService = new driveService();
+              return _driveService.save(drive)
+              .then(() => {
+                return {
+                  ...request,
+                  sObj: {
+                    ...request.sObj,
+                    sked_Contention_Resolution__c: contentionResolution,
+                  }
+                }
+            })
+        })
     })
   }
 }

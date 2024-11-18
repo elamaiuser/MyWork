@@ -68,18 +68,6 @@
   padding: 0.125rem 0.25rem;
 }
 
-.trade-shift-section .header > div:nth-child(2).Pending.Approval {
-  background: #99a0b2;
-}
-
-.trade-shift-section .header > div:nth-child(2).Approved {
-  background: #59b66e;
-}
-
-.trade-shift-section .header > div:nth-child(2).Rejected {
-  background: #d23331;
-}
-
 .trade-shift-section .content {
   direction: ltr;
   border: 1px solid #d8dde6;

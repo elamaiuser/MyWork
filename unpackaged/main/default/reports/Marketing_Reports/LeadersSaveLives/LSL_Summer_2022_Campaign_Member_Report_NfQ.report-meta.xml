@@ -81,22 +81,22 @@
             <column>END_DATE</column>
             <columnToColumn>false</columnToColumn>
             <isUnlocked>true</isUnlocked>
-            <operator>lessThan</operator>
-            <value>9/1/2022</value>
+            <operator>lessOrEqual</operator>
+            <value>12/14/2024</value>
         </criteriaItems>
         <criteriaItems>
             <column>START_DATE</column>
             <columnToColumn>false</columnToColumn>
             <isUnlocked>true</isUnlocked>
             <operator>greaterOrEqual</operator>
-            <value>6/1/2022</value>
+            <value>9/9/2024</value>
         </criteriaItems>
         <criteriaItems>
             <column>CAMPAIGN_PARENT_NAME</column>
             <columnToColumn>false</columnToColumn>
             <isUnlocked>true</isUnlocked>
             <operator>equals</operator>
-            <value>Leaders Save Lives Summer 2022</value>
+            <value>Leaders Save Lives 2024-2025</value>
         </criteriaItems>
         <language>en_US</language>
     </filter>
@@ -106,7 +106,7 @@
         <field>CAMPAIGN_NAME</field>
         <sortOrder>Asc</sortOrder>
     </groupingsDown>
-    <name>LSL Summer 2022 Leads by Tactic</name>
+    <name>LSL Winter 2024 Leads by Tactic - old</name>
     <params>
         <name>scopeid</name>
         <value></value>

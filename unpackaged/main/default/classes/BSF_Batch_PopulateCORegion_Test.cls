@@ -25,7 +25,7 @@ public class BSF_Batch_PopulateCORegion_Test
         
         
         Test.startTest();
-        BSF_Batch_PopulateCORegion batch = new BSF_Batch_PopulateCORegion();
+        BSF_Batch_PopulateCORegion batch = new BSF_Batch_PopulateCORegion(null,taxo_1.version_Key__c);
         id jobid = database.executeBatch(batch,200);
         system.assert(jobid!=null, True);
         /*BSF_setting__c setting =new BSF_setting__c();

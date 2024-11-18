@@ -33,15 +33,16 @@ public class GenerateDriveTestData {
             sked_Breakdown_Time_Threshold__c = 15,
             sked_Setup_Time_Threshold__c = 15,
             sked_Lunch_Break_Before_Draw_Hours__c = false,
-            sked_Travel_Time_Included_Fixed_Site__c = '	All Roles',
             sked_Unpaid_Lunch_Break_Duration__c = 30,
+            sked_Travel_Time_Included_Fixed_Site__c = 'Drivers Only',
+            sked_Travel_Time_Included_Mobile__c = 'All Roles',
             sked_Lunch_Break__c = true
         );
         firstList.add(testCollectionOperation1);
         mapTestData.put('testCollectionOperation1', testCollectionOperation1);
         
-        	// Collection Operation - 2
-            Biomed_Collection_Op_Center__c testCollectionOperation2 = new Biomed_Collection_Op_Center__c(
+        // Collection Operation - 2
+        Biomed_Collection_Op_Center__c testCollectionOperation2 = new Biomed_Collection_Op_Center__c(
             Name = 'Collection Operation 2',
             sked_Lunch_Break_Duration_Fixed_Site__c = '30',
             sked_Lunch_Break_Duration_Mobile__c = '30',			
@@ -50,13 +51,15 @@ public class GenerateDriveTestData {
           	sked_Breakdown_Time_Threshold__c = 15,
           	sked_Setup_Time_Threshold__c = 15,
             sked_Lunch_Break_Before_Draw_Hours__c = false,
-                sked_Lunch_Break__c = true,
-          sked_Unpaid_Lunch_Break_Duration__c = 30
+            sked_Lunch_Break__c = true,
+            sked_Unpaid_Lunch_Break_Duration__c = 30,
+            sked_Travel_Time_Included_Fixed_Site__c = 'Drivers Only',
+            sked_Travel_Time_Included_Mobile__c = 'All Roles'
         );
         firstList.add(testCollectionOperation2);
         mapTestData.put('testCollectionOperation2', testCollectionOperation2);
         
-        // Staffing Decision matrix - Mobile
+        /* Staffing Decision matrix - Mobile
         sked_Staffing_Decision_Matrix__c staffingDecisionMatrix = new sked_Staffing_Decision_Matrix__c (
             sked_2RBC_Staff_Capacity__c = 1.6,
             sked_Charge_Capacity__c = 1.1,
@@ -68,21 +71,14 @@ public class GenerateDriveTestData {
            // sked_NR_Volunteer_Fixed_Site_Band_Lower__c = 15,
             RecordTypeId = Schema.SObjectType.sked_Staffing_Decision_Matrix__c.getRecordTypeInfosByDeveloperName().get('sked_Mobile').getRecordTypeId()
         );
-        firstList.add(staffingDecisionMatrix);
+        firstList.add(staffingDecisionMatrix);*/
         
         // Staffing Decision matrix - fixed site
         sked_Staffing_Decision_Matrix__c staffingDecisionMatrix2 = new sked_Staffing_Decision_Matrix__c (
             sked_WB_Hourly_Capacity__c = 2.1,
-            sked_Platelet_Hourly_Capacity__c = 0.67,
             sked_Plasma_Hourly_Capacity__c = 1.17,
+            sked_Platelet_Round_Capacity__c = 0.17,
             sked_2RBC_Hourly_Capacity__c = 1,
-            sked_2RBC_Staff_Capacity__c = 1.6,
-			sked_Charge_Capacity__c = 1.1,
-			sked_Charge_Threshold__c = 36,
-			sked_Driver_Capacity__c = 2.2,
-			sked_Driver_Support_Capacity__c = 2.2,
-			sked_Team_Supervisor_Threshold__c = 36,
-			sked_VP_HH_Capacity__c = 2.2,
             RecordTypeId = Schema.SObjectType.sked_Staffing_Decision_Matrix__c.getRecordTypeInfosByDeveloperName().get('sked_Fixed_Site').getRecordTypeId()
         );
         firstList.add(staffingDecisionMatrix2);
@@ -145,12 +141,12 @@ public class GenerateDriveTestData {
         firstList.add(personTag);
         mapTestData.put('personTag', personTag);
         
-        sked__Tag__c vehicleTag = new sked__Tag__c(
+        /*sked__Tag__c vehicleTag = new sked__Tag__c(
             Name = 'Sample Vehicle Tag',
             sked_Resource_Type__c = 'Vehicle'
         );
         firstList.add(vehicleTag);
-        mapTestData.put('vehicleTag', vehicleTag);
+        mapTestData.put('vehicleTag', vehicleTag);*/
         
         sked__Tag__c equipmentTag = new sked__Tag__c(
             Name = 'Sample Equipment Tag',
@@ -188,7 +184,8 @@ public class GenerateDriveTestData {
             StageName = 'Discovery', 
             CloseDate = testDataFactory.summary.startDate,
             Is_Template__c = TRUE,
-            Source__c = 'Calendar Build'
+            Source__c = 'Calendar Build',
+            Web_Sched_Offset_from_CO_Global_Settings__c = True
         );
         secondList.add(parentOpp);
         
@@ -199,21 +196,11 @@ public class GenerateDriveTestData {
         );
         secondList.add(testRegion1);
         mapTestData.put('testRegion1', testRegion1);
-       
-        
-        sked_Collection_Operation_SDM__c collectionOperationSdm = new sked_Collection_Operation_SDM__c(
-            sked_Collection_Operation__c = testCollectionOperation2.Id,
-            
-            sked_Effective_End_Date__c = testDataFactory.summary.endDate, 
-            sked_Effective_Start_Date__c = testDataFactory.summary.startDate, 
-            sked_Staffing_Decision_Matrix__c = staffingDecisionMatrix.Id
-        );
-        secondList.add(collectionOperationSdm);
         
         // fixed site
         sked_Collection_Operation_SDM__c collectionOperationSdm2 = new sked_Collection_Operation_SDM__c(
-            sked_Collection_Operation__c = testCollectionOperation1.Id,
-            sked_Effective_End_Date__c = testDataFactory.summary.endDate, 
+            sked_Collection_Operation__c = testCollectionOperation2.Id,
+            sked_Effective_End_Date__c = Date.newInstance(4000,12,31), 
             sked_Effective_Start_Date__c = testDataFactory.summary.startDate, 
             sked_Staffing_Decision_Matrix__c = staffingDecisionMatrix2.Id
         );
@@ -222,45 +209,27 @@ public class GenerateDriveTestData {
         sked_Lunch_Break_Definition__c setting30definition1 = new sked_Lunch_Break_Definition__c(
             sked_Lunch_Break_Duration__c = 10,
             sked_Lunch_Break_Setting__c = lunchBreakSetting30.Id,
-            sked_Max_Number_of_Staff__c = 2,
-            sked_Min_Number_of_Staff__c = 0,
-            sked_Slot_Reduction__c = 2
+            sked_Max_Number_of_Staff__c = 50,
+            sked_Min_Number_of_Staff__c = 49,
+            sked_Slot_Reduction__c = 25
         );
         secondList.add(setting30definition1);
-        
-      /*  sked_Lunch_Break_Definition__c setting30definition2 = new sked_Lunch_Break_Definition__c(
-            sked_Lunch_Break_Duration__c = 9,
-            sked_Lunch_Break_Setting__c = lunchBreakSetting30.Id,
-            sked_Max_Number_of_Staff__c = 3,
-            sked_Min_Number_of_Staff__c = 3,
-            sked_Slot_Reduction__c = 3.33
-        );
-        secondList.add(setting30definition2); */
-        
-        /*  sked_Lunch_Break_Definition__c setting30definition3 = new sked_Lunch_Break_Definition__c(
-sked_Lunch_Break_Duration__c = 120,
-sked_Lunch_Break_Setting__c = lunchBreakSetting30.Id,
-sked_Max_Number_of_Staff__c = 8,
-sked_Min_Number_of_Staff__c = 4,
-sked_Slot_Reduction__c = 5
-);
-secondList.add(setting30definition3); */
         
         sked_Lunch_Break_Definition__c setting30definition4 = new sked_Lunch_Break_Definition__c(
             sked_Lunch_Break_Duration__c = 15,
             sked_Lunch_Break_Setting__c = lunchBreakSetting30.Id,
-            sked_Max_Number_of_Staff__c = 16,
+            sked_Max_Number_of_Staff__c = 50,
             sked_Min_Number_of_Staff__c = 9,
             
-            sked_Slot_Reduction__c = 2
+            sked_Slot_Reduction__c = 25
         );
         secondList.add(setting30definition4);
         
         sked_Lunch_Break_Definition__c setting30definition5 = new sked_Lunch_Break_Definition__c(
             sked_Lunch_Break_Duration__c = 12,
             sked_Lunch_Break_Setting__c = lunchBreakSetting30.Id,
-            sked_Max_Number_of_Staff__c = 9,
-            sked_Min_Number_of_Staff__c = 17,
+            sked_Max_Number_of_Staff__c = 50,
+            sked_Min_Number_of_Staff__c = 49,
             
             sked_Slot_Reduction__c = 6.67
         );
@@ -288,17 +257,6 @@ secondList.add(setting30definition3); */
             sked_QNS__c = 25
         );
         secondList.add(fixedSiteProcedureProjection2);
-        
-        sked_Fixed_Site_Procedure_Projection__c fixedSiteProcedureProjection3 = new sked_Fixed_Site_Procedure_Projection__c(
-            sked_Account__c = fixedSiteAccount.Id,
-            sked_Deferral__c = 25,
-            sked_Effective_End_Date__c = testDataFactory.summary.endDate, 
-            sked_Effective_Start_Date__c = testDataFactory.summary.startDate, 
-            sked_Procedure_Type__c = 'Platelet',
-            sked_Productive_Procedure_Goal__c = 5,
-            sked_QNS__c = 25
-        );
-        secondList.add(fixedSiteProcedureProjection3);
         
         sked_Fixed_Site_Procedure_Projection__c fixedSiteProcedureProjection4 = new sked_Fixed_Site_Procedure_Projection__c(
             sked_Account__c = fixedSiteAccount.Id,
@@ -345,7 +303,7 @@ secondList.add(setting30definition3); */
         );
         secondList.add(fixedSiteAccountTag2);*/
         
-        sked__Account_Tag__c fixedSiteAccountTag3 = new sked__Account_Tag__c(
+        /*sked__Account_Tag__c fixedSiteAccountTag3 = new sked__Account_Tag__c(
             sked__Account__c = fixedSiteAccount.Id,
             sked__Tag__c = vehicleTag.Id,
             sked__Required__c = false,
@@ -353,8 +311,7 @@ secondList.add(setting30definition3); */
             sked__Weighting__c = 10
            // ,sked_Minimum_Quantity__c = 1
         );
-        secondList.add(fixedSiteAccountTag3);
-       
+        secondList.add(fixedSiteAccountTag3);*/
         insert secondList;
         
         sked__Account_Tag__c fixedSiteAccountTag2 = new sked__Account_Tag__c(
@@ -368,6 +325,7 @@ secondList.add(setting30definition3); */
         
         /***** Third list ****/
         List<sObject> thirdList = new List<sObject>();
+        
         // Mobile site
         sked__Location__c testLocation1 = new sked__Location__c(
             Name = 'Test Location 1',
@@ -472,11 +430,9 @@ secondList.add(setting30definition3); */
             , sked_Zip_Code__c = '18411'
         );
         thirdList.add(testLocation2);
-        mapTestData.put('testLocation2', testLocation2);
-        
+        mapTestData.put('testLocation2', testLocation2);     
         insert thirdList;
-        System.debug( 'site_location_id==' + testLocation1.Id );
-        
+
         /***** Forth list ****/
         List<sObject> forthList = new List<sObject>();
         
@@ -491,12 +447,15 @@ secondList.add(setting30definition3); */
         sked_Site_Collection_Operation__c siteCollectionOperation = new sked_Site_Collection_Operation__c(
             sked_Collection_Operation__c = testCollectionOperation1.Id,
             sked_End_Date__c = testDataFactory.summary.endDate,
-            sked_Site__c = testLocation2.Id,
+            sked_Site__c = testLocation1.Id,
             sked_Start_Date__c = testDataFactory.summary.startDate,
             sked_Region__c = testRegion1.Id,
+            External_Id__c = 'Bio_Collection_BSF_SiteCo'+'_'+testLocation1.Id+'_'+testDataFactory.summary.startDate,
+            External_Id_BackEnd__c = 'Bio_Collection_BSF_SiteCo_Backend_External_Id',
             sked_Travel_Time_Breakdown_JSON__c = '[{"weekday":"Sunday","travelTime":32,"travelDistance":22725,"startOfWindow":"00:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"08:00:00.000Z","direction":"CO to Site"},{"weekday":"Sunday","travelTime":33,"travelDistance":22725,"startOfWindow":"08:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"16:00:00.000Z","direction":"CO to Site"},{"weekday":"Sunday","travelTime":31,"travelDistance":22725,"startOfWindow":"16:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"23:59:00.000Z","direction":"CO to Site"},{"weekday":"Monday","travelTime":33,"travelDistance":22725,"startOfWindow":"00:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"08:00:00.000Z","direction":"CO to Site"},{"weekday":"Monday","travelTime":34,"travelDistance":22725,"startOfWindow":"08:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"16:00:00.000Z","direction":"CO to Site"},{"weekday":"Monday","travelTime":31,"travelDistance":22725,"startOfWindow":"16:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"23:59:00.000Z","direction":"CO to Site"},{"weekday":"Tuesday","travelTime":33,"travelDistance":22725,"startOfWindow":"00:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"08:00:00.000Z","direction":"CO to Site"},{"weekday":"Tuesday","travelTime":34,"travelDistance":22725,"startOfWindow":"08:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"16:00:00.000Z","direction":"CO to Site"},{"weekday":"Tuesday","travelTime":31,"travelDistance":22725,"startOfWindow":"16:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"23:59:00.000Z","direction":"CO to Site"},{"weekday":"Wednesday","travelTime":33,"travelDistance":22725,"startOfWindow":"00:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"08:00:00.000Z","direction":"CO to Site"},{"weekday":"Wednesday","travelTime":34,"travelDistance":22725,"startOfWindow":"08:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"16:00:00.000Z","direction":"CO to Site"},{"weekday":"Wednesday","travelTime":31,"travelDistance":22725,"startOfWindow":"16:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"23:59:00.000Z","direction":"CO to Site"},{"weekday":"Thursday","travelTime":33,"travelDistance":22725,"startOfWindow":"00:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"08:00:00.000Z","direction":"CO to Site"},{"weekday":"Thursday","travelTime":34,"travelDistance":22725,"startOfWindow":"08:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"16:00:00.000Z","direction":"CO to Site"},{"weekday":"Thursday","travelTime":31,"travelDistance":22725,"startOfWindow":"16:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"23:59:00.000Z","direction":"CO to Site"},{"weekday":"Friday","travelTime":33,"travelDistance":22725,"startOfWindow":"00:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"08:00:00.000Z","direction":"CO to Site"},{"weekday":"Friday","travelTime":34,"travelDistance":22725,"startOfWindow":"08:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"16:00:00.000Z","direction":"CO to Site"},{"weekday":"Friday","travelTime":31,"travelDistance":22725,"startOfWindow":"16:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"23:59:00.000Z","direction":"CO to Site"},{"weekday":"Saturday","travelTime":32,"travelDistance":22725,"startOfWindow":"00:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"08:00:00.000Z","direction":"CO to Site"},{"weekday":"Saturday","travelTime":33,"travelDistance":22725,"startOfWindow":"08:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"16:00:00.000Z","direction":"CO to Site"},{"weekday":"Saturday","travelTime":31,"travelDistance":22725,"startOfWindow":"16:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"23:59:00.000Z","direction":"CO to Site"}]',
             sked_Travel_Time_Breakdown_JSON_2__c = '[{"weekday":"Sunday","travelTime":32,"travelDistance":22725,"startOfWindow":"00:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"08:00:00.000Z","direction":"CO to Site"},{"weekday":"Sunday","travelTime":33,"travelDistance":22725,"startOfWindow":"08:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"16:00:00.000Z","direction":"CO to Site"},{"weekday":"Sunday","travelTime":31,"travelDistance":22725,"startOfWindow":"16:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"23:59:00.000Z","direction":"CO to Site"},{"weekday":"Monday","travelTime":33,"travelDistance":22725,"startOfWindow":"00:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"08:00:00.000Z","direction":"CO to Site"},{"weekday":"Monday","travelTime":34,"travelDistance":22725,"startOfWindow":"08:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"16:00:00.000Z","direction":"CO to Site"},{"weekday":"Monday","travelTime":31,"travelDistance":22725,"startOfWindow":"16:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"23:59:00.000Z","direction":"CO to Site"},{"weekday":"Tuesday","travelTime":33,"travelDistance":22725,"startOfWindow":"00:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"08:00:00.000Z","direction":"CO to Site"},{"weekday":"Tuesday","travelTime":34,"travelDistance":22725,"startOfWindow":"08:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"16:00:00.000Z","direction":"CO to Site"},{"weekday":"Tuesday","travelTime":31,"travelDistance":22725,"startOfWindow":"16:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"23:59:00.000Z","direction":"CO to Site"},{"weekday":"Wednesday","travelTime":33,"travelDistance":22725,"startOfWindow":"00:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"08:00:00.000Z","direction":"CO to Site"},{"weekday":"Wednesday","travelTime":34,"travelDistance":22725,"startOfWindow":"08:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"16:00:00.000Z","direction":"CO to Site"},{"weekday":"Wednesday","travelTime":31,"travelDistance":22725,"startOfWindow":"16:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"23:59:00.000Z","direction":"CO to Site"},{"weekday":"Thursday","travelTime":33,"travelDistance":22725,"startOfWindow":"00:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"08:00:00.000Z","direction":"CO to Site"},{"weekday":"Thursday","travelTime":34,"travelDistance":22725,"startOfWindow":"08:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"16:00:00.000Z","direction":"CO to Site"},{"weekday":"Thursday","travelTime":31,"travelDistance":22725,"startOfWindow":"16:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"23:59:00.000Z","direction":"CO to Site"},{"weekday":"Friday","travelTime":33,"travelDistance":22725,"startOfWindow":"00:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"08:00:00.000Z","direction":"CO to Site"},{"weekday":"Friday","travelTime":34,"travelDistance":22725,"startOfWindow":"08:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"16:00:00.000Z","direction":"CO to Site"},{"weekday":"Friday","travelTime":31,"travelDistance":22725,"startOfWindow":"16:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"23:59:00.000Z","direction":"CO to Site"},{"weekday":"Saturday","travelTime":32,"travelDistance":22725,"startOfWindow":"00:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"08:00:00.000Z","direction":"CO to Site"},{"weekday":"Saturday","travelTime":33,"travelDistance":22725,"startOfWindow":"08:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"16:00:00.000Z","direction":"CO to Site"},{"weekday":"Saturday","travelTime":31,"travelDistance":22725,"startOfWindow":"16:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"23:59:00.000Z","direction":"CO to Site"}]'
         );
+        system.debug('siteCollectionOperation '+siteCollectionOperation);
         forthList.add(siteCollectionOperation);
         
         sked_Site_Collection_Operation__c siteCollectionOperation2 = new sked_Site_Collection_Operation__c(
@@ -505,6 +464,8 @@ secondList.add(setting30definition3); */
             sked_Site__c = testLocation2.Id,
             sked_Start_Date__c = testDataFactory.summary.startDate,
             sked_Region__c = testRegion1.Id,
+            External_Id__c = 'Bio_Collection_BSF_SiteCo'+'_'+testLocation2.Id+'_'+testDataFactory.summary.startDate,
+            External_Id_BackEnd__c = 'Bio_Collection_BSF_SiteCo_Backend_External_Id',
             sked_Travel_Time_Breakdown_JSON__c = '[{"weekday":"Sunday","travelTime":32,"travelDistance":22725,"startOfWindow":"00:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"08:00:00.000Z","direction":"CO to Site"},{"weekday":"Sunday","travelTime":33,"travelDistance":22725,"startOfWindow":"08:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"16:00:00.000Z","direction":"CO to Site"},{"weekday":"Sunday","travelTime":31,"travelDistance":22725,"startOfWindow":"16:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"23:59:00.000Z","direction":"CO to Site"},{"weekday":"Monday","travelTime":33,"travelDistance":22725,"startOfWindow":"00:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"08:00:00.000Z","direction":"CO to Site"},{"weekday":"Monday","travelTime":34,"travelDistance":22725,"startOfWindow":"08:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"16:00:00.000Z","direction":"CO to Site"},{"weekday":"Monday","travelTime":31,"travelDistance":22725,"startOfWindow":"16:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"23:59:00.000Z","direction":"CO to Site"},{"weekday":"Tuesday","travelTime":33,"travelDistance":22725,"startOfWindow":"00:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"08:00:00.000Z","direction":"CO to Site"},{"weekday":"Tuesday","travelTime":34,"travelDistance":22725,"startOfWindow":"08:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"16:00:00.000Z","direction":"CO to Site"},{"weekday":"Tuesday","travelTime":31,"travelDistance":22725,"startOfWindow":"16:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"23:59:00.000Z","direction":"CO to Site"},{"weekday":"Wednesday","travelTime":33,"travelDistance":22725,"startOfWindow":"00:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"08:00:00.000Z","direction":"CO to Site"},{"weekday":"Wednesday","travelTime":34,"travelDistance":22725,"startOfWindow":"08:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"16:00:00.000Z","direction":"CO to Site"},{"weekday":"Wednesday","travelTime":31,"travelDistance":22725,"startOfWindow":"16:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"23:59:00.000Z","direction":"CO to Site"},{"weekday":"Thursday","travelTime":33,"travelDistance":22725,"startOfWindow":"00:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"08:00:00.000Z","direction":"CO to Site"},{"weekday":"Thursday","travelTime":34,"travelDistance":22725,"startOfWindow":"08:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"16:00:00.000Z","direction":"CO to Site"},{"weekday":"Thursday","travelTime":31,"travelDistance":22725,"startOfWindow":"16:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"23:59:00.000Z","direction":"CO to Site"},{"weekday":"Friday","travelTime":33,"travelDistance":22725,"startOfWindow":"00:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"08:00:00.000Z","direction":"CO to Site"},{"weekday":"Friday","travelTime":34,"travelDistance":22725,"startOfWindow":"08:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"16:00:00.000Z","direction":"CO to Site"},{"weekday":"Friday","travelTime":31,"travelDistance":22725,"startOfWindow":"16:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"23:59:00.000Z","direction":"CO to Site"},{"weekday":"Saturday","travelTime":32,"travelDistance":22725,"startOfWindow":"00:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"08:00:00.000Z","direction":"CO to Site"},{"weekday":"Saturday","travelTime":33,"travelDistance":22725,"startOfWindow":"08:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"16:00:00.000Z","direction":"CO to Site"},{"weekday":"Saturday","travelTime":31,"travelDistance":22725,"startOfWindow":"16:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"23:59:00.000Z","direction":"CO to Site"}]',
             sked_Travel_Time_Breakdown_JSON_2__c = '[{"weekday":"Sunday","travelTime":32,"travelDistance":22725,"startOfWindow":"00:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"08:00:00.000Z","direction":"CO to Site"},{"weekday":"Sunday","travelTime":33,"travelDistance":22725,"startOfWindow":"08:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"16:00:00.000Z","direction":"CO to Site"},{"weekday":"Sunday","travelTime":31,"travelDistance":22725,"startOfWindow":"16:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"23:59:00.000Z","direction":"CO to Site"},{"weekday":"Monday","travelTime":33,"travelDistance":22725,"startOfWindow":"00:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"08:00:00.000Z","direction":"CO to Site"},{"weekday":"Monday","travelTime":34,"travelDistance":22725,"startOfWindow":"08:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"16:00:00.000Z","direction":"CO to Site"},{"weekday":"Monday","travelTime":31,"travelDistance":22725,"startOfWindow":"16:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"23:59:00.000Z","direction":"CO to Site"},{"weekday":"Tuesday","travelTime":33,"travelDistance":22725,"startOfWindow":"00:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"08:00:00.000Z","direction":"CO to Site"},{"weekday":"Tuesday","travelTime":34,"travelDistance":22725,"startOfWindow":"08:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"16:00:00.000Z","direction":"CO to Site"},{"weekday":"Tuesday","travelTime":31,"travelDistance":22725,"startOfWindow":"16:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"23:59:00.000Z","direction":"CO to Site"},{"weekday":"Wednesday","travelTime":33,"travelDistance":22725,"startOfWindow":"00:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"08:00:00.000Z","direction":"CO to Site"},{"weekday":"Wednesday","travelTime":34,"travelDistance":22725,"startOfWindow":"08:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"16:00:00.000Z","direction":"CO to Site"},{"weekday":"Wednesday","travelTime":31,"travelDistance":22725,"startOfWindow":"16:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"23:59:00.000Z","direction":"CO to Site"},{"weekday":"Thursday","travelTime":33,"travelDistance":22725,"startOfWindow":"00:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"08:00:00.000Z","direction":"CO to Site"},{"weekday":"Thursday","travelTime":34,"travelDistance":22725,"startOfWindow":"08:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"16:00:00.000Z","direction":"CO to Site"},{"weekday":"Thursday","travelTime":31,"travelDistance":22725,"startOfWindow":"16:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"23:59:00.000Z","direction":"CO to Site"},{"weekday":"Friday","travelTime":33,"travelDistance":22725,"startOfWindow":"00:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"08:00:00.000Z","direction":"CO to Site"},{"weekday":"Friday","travelTime":34,"travelDistance":22725,"startOfWindow":"08:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"16:00:00.000Z","direction":"CO to Site"},{"weekday":"Friday","travelTime":31,"travelDistance":22725,"startOfWindow":"16:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"23:59:00.000Z","direction":"CO to Site"},{"weekday":"Saturday","travelTime":32,"travelDistance":22725,"startOfWindow":"00:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"08:00:00.000Z","direction":"CO to Site"},{"weekday":"Saturday","travelTime":33,"travelDistance":22725,"startOfWindow":"08:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"16:00:00.000Z","direction":"CO to Site"},{"weekday":"Saturday","travelTime":31,"travelDistance":22725,"startOfWindow":"16:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"23:59:00.000Z","direction":"CO to Site"}]'
         );
@@ -518,7 +479,8 @@ secondList.add(setting30definition3); */
             sked_Resource_Role_Group__c = 'Driving roles', 
             sked_Variance_Applies_to__c = 'Setup Time', 
             sked_Variation_Amount__c = 15, 
-            sked_Variation_Type__c = 'Safety Video'
+            sked_Variation_Type__c = 'Safety Video',
+            sked_Days_Of_Week__c = 'Monday;Tuesday;Wednesday;Thursday;Friday;Saturday;Sunday'
             
         );
         forthList.add(driverVariance);
@@ -531,11 +493,9 @@ secondList.add(setting30definition3); */
             sked_Resource_Role_Group__c = 'Staff roles', 
             sked_Variance_Applies_to__c = 'Setup Time;Breakdown Time;Travel Time To;Travel Time From', 
             sked_Variation_Amount__c = 5,
-            sked_Variation_Type__c = 'Loading/ unloading area'
-            
-            
+            sked_Variation_Type__c = 'Loading/ unloading area',
+            sked_Days_Of_Week__c = 'Monday;Tuesday;Wednesday;Thursday;Friday;Saturday;Sunday'
         ); 
-        
         forthList.add(fixSiteVariance1);
         
         sked_Role_Time_Variance__c fixSiteVariance2 = new sked_Role_Time_Variance__c(
@@ -546,9 +506,8 @@ secondList.add(setting30definition3); */
             sked_Resource_Role_Group__c = 'Supervisory roles', 
             sked_Variance_Applies_to__c = 'Lead Time;Wrap-up Time', 
             sked_Variation_Amount__c = 5,
-            sked_Variation_Type__c = 'Loading/ unloading area'
-            
-            
+            sked_Variation_Type__c = 'Loading/ unloading area',
+            sked_Days_Of_Week__c = 'Monday;Tuesday;Wednesday;Thursday;Friday;Saturday;Sunday'
         ); 
         
         forthList.add(fixSiteVariance2);
@@ -583,7 +542,8 @@ secondList.add(setting30definition3); */
             sked_Collection_Operation__c = testCollectionOperation2.Id,
             sked_Days_of_Week__c = 'Monday;Tuesday;Wednesday;Thursday;Friday;Saturday;Sunday'
         );
-        forthList.add(fixSiteRoleTime2);
+        insert fixSiteRoleTime2;
+        //forthList.add(fixSiteRoleTime2);
         
         /*sked_Resource_Role_Group__c fixSiteRoleGrp1 = new sked_Resource_Role_Group__c(
             sked_Resource_Role_Group__c = 'Supervisory roles',
@@ -660,15 +620,59 @@ secondList.add(setting30definition3); */
             Flow_Start_Time_Field__c = '1000',
             Flow_End_Time_Field__c = '1830'
         );
-        sixthList.add(fixedSiteOpportunity);
         mapTestData.put('fixedSiteOpportunity', fixedSiteOpportunity);
+        sixthList.add(fixedSiteOpportunity);
+        
+        Group collQueue = new Group (Name=testCollectionOperation1.Name+': DMDCR', Type='QUEUE');
+        sixthList.add(collQueue);
+        
         TriggerHandler.bypass('OpportunityTriggerHandler');
         insert sixthList;
+        
+        List<sObject> seventhList = new List<sObject>();
+        sked_Staging_Location__c stagingLocation = new sked_Staging_Location__c(Name = 'Test Staging Location 1', sked_Timezone__c = 'America/New_York', sked_Zip_Code__c = '18411',
+                                                                               sked_GeoLocation__Latitude__s = 38.7631899,
+            																	sked_GeoLocation__Longitude__s = -90.3815903);
+        seventhList.add(stagingLocation);
+        mapTestData.put('stagingLocation', stagingLocation);
+        insert seventhList;
+        
+        List<sObject> eighthList = new List<sObject>();
+        sked_Collection_Op_Staging_Location__c colOppStagingLocation = new sked_Collection_Op_Staging_Location__c();
+        colOppStagingLocation.sked_Collection_Operation__c = testCollectionOperation2.Id;
+        colOppStagingLocation.sked_Staging_Location__c = stagingLocation.Id;
+        colOppStagingLocation.sked_Start_Date__c = Date.newInstance(2020,01,01);
+        colOppStagingLocation.sked_End_Date__c = Date.newInstance(4000,12,31);
+        eighthList.add(colOppStagingLocation);
+        mapTestData.put('colOppStagingLocation', colOppStagingLocation);
+        insert eighthList;
+        
+        List<sked_Travel_Time_Index_Item__c> travelTimeIndexItemList = new List<sked_Travel_Time_Index_Item__c>();
+        
+        sked_Travel_Time_Index_Item__c travelTimeCoToSite = new sked_Travel_Time_Index_Item__c();
+        travelTimeCoToSite.sked_From__Latitude__s = 38.7631899;
+        travelTimeCoToSite.sked_From__Longitude__s = -90.3815903;
+        travelTimeCoToSite.sked_To__Latitude__s = 37.7450046;
+        travelTimeCoToSite.sked_To__Longitude__s = -122.4816244;
+        travelTimeCoToSite.sked_Travel_Time_Breakdown_JSON__c  = '[{"weekday":"Friday","travelTime":13,"travelDistance":6635,"startOfWindow":"00:00:00.000Z","siteId":"a1L5c00000BvyzkEAB","siteCollectionOperationIds":null,"endOfWindow":"08:00:00.000Z","direction":"CO to Site"},{"weekday":"Friday","travelTime":13,"travelDistance":6635,"startOfWindow":"08:00:00.000Z","siteId":"a1L5c00000BvyzkEAB","siteCollectionOperationIds":null,"endOfWindow":"16:00:00.000Z","direction":"CO to Site"},{"weekday":"Friday","travelTime":12,"travelDistance":6635,"startOfWindow":"16:00:00.000Z","siteId":"a1L5c00000BvyzkEAB","siteCollectionOperationIds":null,"endOfWindow":"23:59:00.000Z","direction":"CO to Site"},{"weekday":"Saturday","travelTime":12,"travelDistance":6635,"startOfWindow":"00:00:00.000Z","siteId":"a1L5c00000BvyzkEAB","siteCollectionOperationIds":null,"endOfWindow":"08:00:00.000Z","direction":"CO to Site"},{"weekday":"Saturday","travelTime":12,"travelDistance":6635,"startOfWindow":"08:00:00.000Z","siteId":"a1L5c00000BvyzkEAB","siteCollectionOperationIds":null,"endOfWindow":"16:00:00.000Z","direction":"CO to Site"},{"weekday":"Saturday","travelTime":12,"travelDistance":6635,"startOfWindow":"16:00:00.000Z","siteId":"a1L5c00000BvyzkEAB","siteCollectionOperationIds":null,"endOfWindow":"23:59:00.000Z","direction":"CO to Site"},{"weekday":"Sunday","travelTime":12,"travelDistance":6635,"startOfWindow":"00:00:00.000Z","siteId":"a1L5c00000BvyzkEAB","siteCollectionOperationIds":null,"endOfWindow":"08:00:00.000Z","direction":"CO to Site"},{"weekday":"Sunday","travelTime":12,"travelDistance":6635,"startOfWindow":"08:00:00.000Z","siteId":"a1L5c00000BvyzkEAB","siteCollectionOperationIds":null,"endOfWindow":"16:00:00.000Z","direction":"CO to Site"},{"weekday":"Sunday","travelTime":12,"travelDistance":6635,"startOfWindow":"16:00:00.000Z","siteId":"a1L5c00000BvyzkEAB","siteCollectionOperationIds":null,"endOfWindow":"23:59:00.000Z","direction":"CO to Site"},{"weekday":"Monday","travelTime":13,"travelDistance":6635,"startOfWindow":"00:00:00.000Z","siteId":"a1L5c00000BvyzkEAB","siteCollectionOperationIds":null,"endOfWindow":"08:00:00.000Z","direction":"CO to Site"},{"weekday":"Monday","travelTime":13,"travelDistance":6635,"startOfWindow":"08:00:00.000Z","siteId":"a1L5c00000BvyzkEAB","siteCollectionOperationIds":null,"endOfWindow":"16:00:00.000Z","direction":"CO to Site"},{"weekday":"Monday","travelTime":12,"travelDistance":6635,"startOfWindow":"16:00:00.000Z","siteId":"a1L5c00000BvyzkEAB","siteCollectionOperationIds":null,"endOfWindow":"23:59:00.000Z","direction":"CO to Site"},{"weekday":"Tuesday","travelTime":13,"travelDistance":6635,"startOfWindow":"00:00:00.000Z","siteId":"a1L5c00000BvyzkEAB","siteCollectionOperationIds":null,"endOfWindow":"08:00:00.000Z","direction":"CO to Site"},{"weekday":"Tuesday","travelTime":13,"travelDistance":6635,"startOfWindow":"08:00:00.000Z","siteId":"a1L5c00000BvyzkEAB","siteCollectionOperationIds":null,"endOfWindow":"16:00:00.000Z","direction":"CO to Site"},{"weekday":"Tuesday","travelTime":12,"travelDistance":6635,"startOfWindow":"16:00:00.000Z","siteId":"a1L5c00000BvyzkEAB","siteCollectionOperationIds":null,"endOfWindow":"23:59:00.000Z","direction":"CO to Site"},{"weekday":"Wednesday","travelTime":13,"travelDistance":6635,"startOfWindow":"00:00:00.000Z","siteId":"a1L5c00000BvyzkEAB","siteCollectionOperationIds":null,"endOfWindow":"08:00:00.000Z","direction":"CO to Site"},{"weekday":"Wednesday","travelTime":13,"travelDistance":6635,"startOfWindow":"08:00:00.000Z","siteId":"a1L5c00000BvyzkEAB","siteCollectionOperationIds":null,"endOfWindow":"16:00:00.000Z","direction":"CO to Site"},{"weekday":"Wednesday","travelTime":12,"travelDistance":6635,"startOfWindow":"16:00:00.000Z","siteId":"a1L5c00000BvyzkEAB","siteCollectionOperationIds":null,"endOfWindow":"23:59:00.000Z","direction":"CO to Site"},{"weekday":"Thursday","travelTime":13,"travelDistance":6635,"startOfWindow":"00:00:00.000Z","siteId":"a1L5c00000BvyzkEAB","siteCollectionOperationIds":null,"endOfWindow":"08:00:00.000Z","direction":"CO to Site"},{"weekday":"Thursday","travelTime":13,"travelDistance":6635,"startOfWindow":"08:00:00.000Z","siteId":"a1L5c00000BvyzkEAB","siteCollectionOperationIds":null,"endOfWindow":"16:00:00.000Z","direction":"CO to Site"},{"weekday":"Thursday","travelTime":12,"travelDistance":6635,"startOfWindow":"16:00:00.000Z","siteId":"a1L5c00000BvyzkEAB","siteCollectionOperationIds":null,"endOfWindow":"23:59:00.000Z","direction":"CO to Site"}]';
+        
+        travelTimeIndexItemList.add(travelTimeCoToSite);
+        
+        sked_Travel_Time_Index_Item__c travelTimeSiteToCO = new sked_Travel_Time_Index_Item__c();
+        travelTimeSiteToCO.sked_From__Latitude__s = 37.7450046;
+        travelTimeSiteToCO.sked_From__Longitude__s = -122.4816244;
+        travelTimeSiteToCO.sked_To__Latitude__s = 38.7631899;
+        travelTimeSiteToCO.sked_To__Longitude__s = -90.3815903;
+        travelTimeSiteToCO.sked_Travel_Time_Breakdown_JSON__c  = '[{"weekday":"Friday","travelTime":15,"travelDistance":6635,"startOfWindow":"00:00:00.000Z","siteId":"a1L5c00000BvyzkEAB","siteCollectionOperationIds":null,"endOfWindow":"08:00:00.000Z","direction":"Site to CO"},{"weekday":"Friday","travelTime":12,"travelDistance":6635,"startOfWindow":"08:00:00.000Z","siteId":"a1L5c00000BvyzkEAB","siteCollectionOperationIds":null,"endOfWindow":"16:00:00.000Z","direction":"Site to CO"},{"weekday":"Friday","travelTime":15,"travelDistance":6635,"startOfWindow":"16:00:00.000Z","siteId":"a1L5c00000BvyzkEAB","siteCollectionOperationIds":null,"endOfWindow":"23:59:00.000Z","direction":"Site to CO"},{"weekday":"Saturday","travelTime":12,"travelDistance":6635,"startOfWindow":"00:00:00.000Z","siteId":"a1L5c00000BvyzkEAB","siteCollectionOperationIds":null,"endOfWindow":"08:00:00.000Z","direction":"Site to CO"},{"weekday":"Saturday","travelTime":12,"travelDistance":6635,"startOfWindow":"08:00:00.000Z","siteId":"a1L5c00000BvyzkEAB","siteCollectionOperationIds":null,"endOfWindow":"16:00:00.000Z","direction":"Site to CO"},{"weekday":"Saturday","travelTime":15,"travelDistance":6635,"startOfWindow":"16:00:00.000Z","siteId":"a1L5c00000BvyzkEAB","siteCollectionOperationIds":null,"endOfWindow":"23:59:00.000Z","direction":"Site to CO"},{"weekday":"Sunday","travelTime":12,"travelDistance":6635,"startOfWindow":"00:00:00.000Z","siteId":"a1L5c00000BvyzkEAB","siteCollectionOperationIds":null,"endOfWindow":"08:00:00.000Z","direction":"Site to CO"},{"weekday":"Sunday","travelTime":12,"travelDistance":6635,"startOfWindow":"08:00:00.000Z","siteId":"a1L5c00000BvyzkEAB","siteCollectionOperationIds":null,"endOfWindow":"16:00:00.000Z","direction":"Site to CO"},{"weekday":"Sunday","travelTime":15,"travelDistance":6635,"startOfWindow":"16:00:00.000Z","siteId":"a1L5c00000BvyzkEAB","siteCollectionOperationIds":null,"endOfWindow":"23:59:00.000Z","direction":"Site to CO"},{"weekday":"Monday","travelTime":12,"travelDistance":6635,"startOfWindow":"00:00:00.000Z","siteId":"a1L5c00000BvyzkEAB","siteCollectionOperationIds":null,"endOfWindow":"08:00:00.000Z","direction":"Site to CO"},{"weekday":"Monday","travelTime":12,"travelDistance":6635,"startOfWindow":"08:00:00.000Z","siteId":"a1L5c00000BvyzkEAB","siteCollectionOperationIds":null,"endOfWindow":"16:00:00.000Z","direction":"Site to CO"},{"weekday":"Monday","travelTime":15,"travelDistance":6635,"startOfWindow":"16:00:00.000Z","siteId":"a1L5c00000BvyzkEAB","siteCollectionOperationIds":null,"endOfWindow":"23:59:00.000Z","direction":"Site to CO"},{"weekday":"Tuesday","travelTime":12,"travelDistance":6635,"startOfWindow":"00:00:00.000Z","siteId":"a1L5c00000BvyzkEAB","siteCollectionOperationIds":null,"endOfWindow":"08:00:00.000Z","direction":"Site to CO"},{"weekday":"Tuesday","travelTime":12,"travelDistance":6635,"startOfWindow":"08:00:00.000Z","siteId":"a1L5c00000BvyzkEAB","siteCollectionOperationIds":null,"endOfWindow":"16:00:00.000Z","direction":"Site to CO"},{"weekday":"Tuesday","travelTime":15,"travelDistance":6635,"startOfWindow":"16:00:00.000Z","siteId":"a1L5c00000BvyzkEAB","siteCollectionOperationIds":null,"endOfWindow":"23:59:00.000Z","direction":"Site to CO"},{"weekday":"Wednesday","travelTime":12,"travelDistance":6635,"startOfWindow":"00:00:00.000Z","siteId":"a1L5c00000BvyzkEAB","siteCollectionOperationIds":null,"endOfWindow":"08:00:00.000Z","direction":"Site to CO"},{"weekday":"Wednesday","travelTime":12,"travelDistance":6635,"startOfWindow":"08:00:00.000Z","siteId":"a1L5c00000BvyzkEAB","siteCollectionOperationIds":null,"endOfWindow":"16:00:00.000Z","direction":"Site to CO"},{"weekday":"Wednesday","travelTime":15,"travelDistance":6635,"startOfWindow":"16:00:00.000Z","siteId":"a1L5c00000BvyzkEAB","siteCollectionOperationIds":null,"endOfWindow":"23:59:00.000Z","direction":"Site to CO"},{"weekday":"Thursday","travelTime":12,"travelDistance":6635,"startOfWindow":"00:00:00.000Z","siteId":"a1L5c00000BvyzkEAB","siteCollectionOperationIds":null,"endOfWindow":"08:00:00.000Z","direction":"Site to CO"},{"weekday":"Thursday","travelTime":12,"travelDistance":6635,"startOfWindow":"08:00:00.000Z","siteId":"a1L5c00000BvyzkEAB","siteCollectionOperationIds":null,"endOfWindow":"16:00:00.000Z","direction":"Site to CO"},{"weekday":"Thursday","travelTime":15,"travelDistance":6635,"startOfWindow":"16:00:00.000Z","siteId":"a1L5c00000BvyzkEAB","siteCollectionOperationIds":null,"endOfWindow":"23:59:00.000Z","direction":"Site to CO"}]';
+        
+        travelTimeIndexItemList.add(travelTimeSiteToCO);
+        
+        insert travelTimeIndexItemList;    
         
         return mapTestData;
     }
 
-    @isTest
+    /*@isTest
     public static Map<string, sObject> testSetupForElseCondition()
     {
         Triggerhandler.bypass('OpportunitySplitTriggerHandler');
@@ -679,7 +683,7 @@ secondList.add(setting30definition3); */
         List<sObject> predefinedData = testDataFactory.setupPredefinedData();
         insert predefinedData;
         
-        /***** First list ****/
+        /***** First list 
         List<sObject> firstList = new List<sObject>();
         
         Biomed_Collection_Op_Center__c testCollectionOperation1 = new Biomed_Collection_Op_Center__c(
@@ -738,7 +742,7 @@ sked_Charge_Threshold__c = 36,
 sked_Driver_Capacity__c = 2.2,
 sked_Driver_Support_Capacity__c = 2.2,
 sked_Team_Supervisor_Threshold__c = 36,
-sked_VP_HH_Capacity__c = 2.2,*/
+sked_VP_HH_Capacity__c = 2.2,
             RecordTypeId = Schema.SObjectType.sked_Staffing_Decision_Matrix__c.getRecordTypeInfosByDeveloperName().get('sked_Fixed_Site').getRecordTypeId()
         );
         firstList.add(staffingDecisionMatrix2);
@@ -843,7 +847,7 @@ sked_VP_HH_Capacity__c = 2.2,*/
         atmList.add(atm);
         insert atmList;
         
-        /***** Second list ****/
+        /***** Second list
         List<sObject> secondList = new List<sObject>();
         
         Opportunity parentOpp = new Opportunity(
@@ -852,7 +856,8 @@ sked_VP_HH_Capacity__c = 2.2,*/
             StageName = 'Discovery', 
             CloseDate = testDataFactory.summary.startDate,
             Is_Template__c = TRUE,
-            Source__c = 'Calendar Build'
+            Source__c = 'Calendar Build',
+            Web_Sched_Offset_from_CO_Global_Settings__c = True
         );
         secondList.add(parentOpp);
         
@@ -915,7 +920,7 @@ sked_Max_Number_of_Staff__c = 8,
 sked_Min_Number_of_Staff__c = 4,
 sked_Slot_Reduction__c = 5
 );
-secondList.add(setting30definition3); */
+secondList.add(setting30definition3); 
         
         sked_Lunch_Break_Definition__c setting30definition4 = new sked_Lunch_Break_Definition__c(
             sked_Lunch_Break_Duration__c = 15,
@@ -1014,7 +1019,7 @@ secondList.add(setting30definition3); */
             sked__Weighting__c = 10,
             sked_Minimum_Quantity__c = 1
         );
-        secondList.add(fixedSiteAccountTag2);*/
+        secondList.add(fixedSiteAccountTag2);
         
         sked__Account_Tag__c fixedSiteAccountTag3 = new sked__Account_Tag__c(
             sked__Account__c = fixedSiteAccount.Id,
@@ -1039,7 +1044,19 @@ secondList.add(setting30definition3); */
 
         insert secondList;
         
-        /***** Third list ****/
+        /*Chapter for Site
+        Chapter__c testChapter = new Chapter__c(
+            Chapter_Code__c='AB299',
+            Division_Code__c='D21',
+            City__c='Charlotte',
+            State__c='NC',
+            Regional_Chapter_Code__c='00F33',
+            Type__c='Chapter',
+            Region_Name__c='Test Region'
+        );
+        insert testChapter;
+        
+        /***** Third list
         List<sObject> thirdList = new List<sObject>();
         
         sked__Location__c testLocation1 = new sked__Location__c(
@@ -1072,12 +1089,12 @@ secondList.add(setting30definition3); */
             sked_Wireless_Policy__c = 'Accepted',
             sked_Timezone__c = 'America/New_York',
             Source__c = 'Custom New Form',
-            sked_Chapter__c = 'Test Chapter'
-            ,sked_Address_1__c = 'ABC STREET'
-            , sked_City__c = 'Test City'
-            , sked_County__c = 'Test'
-            , sked_State__c = 'PA'
-            , sked_Zip_Code__c = '18411'
+            Chapter__c = testChapter.Id,
+            sked_Address_1__c = 'ABC STREET', 
+            sked_City__c = 'Test City', 
+            sked_County__c = 'Test', 
+            sked_State__c = 'PA', 
+            sked_Zip_Code__c = '18411'
         );
         thirdList.add(testLocation1);
         mapTestData.put('testLocation1', testLocation1);
@@ -1139,13 +1156,13 @@ secondList.add(setting30definition3); */
             sked_Wireless_Policy__c = 'Accepted',
             sked_Timezone__c = 'America/New_York',
             Source__c = 'Custom New Form',
-            sked_Chapter__c = 'Test Chapter'
-            ,sked_Address_1__c = 'ABC STREET'
-            , sked_City__c = 'Test City'
-            , sked_County__c = 'Test'
-            , sked_State__c = 'PA'
-            , sked_Zip_Code__c = '18411'
-            , Operation_Type__c = 'Non Integrated APH'
+            Chapter__c = testChapter.Id,
+            sked_Address_1__c = 'ABC STREET',
+            sked_City__c = 'Test City',
+            sked_County__c = 'Test',
+            sked_State__c = 'PA',
+            sked_Zip_Code__c = '18411',
+            Operation_Type__c = 'Non Integrated APH'
         );
         thirdList.add(testLocation2);
         mapTestData.put('testLocation2', testLocation2);
@@ -1160,7 +1177,7 @@ secondList.add(setting30definition3); */
             sked_Region__c = testRegion1.Id);
         insert siteCollectionOperationForMobile;
         
-        /***** Fifth list ****/
+        /***** Fifth list
         List<sObject> fifthList = new List<sObject>();
         
         sked_Staging_Location__c stagingLocation = new sked_Staging_Location__c(Name = 'Test Staging Location 1', sked_Timezone__c = 'America/New_York', sked_Zip_Code__c = '18411',
@@ -1218,7 +1235,7 @@ secondList.add(setting30definition3); */
         }
         insert skdBioCollectionList;
      
-        /***** Forth list ****/
+        /***** Forth list 
         List<sObject> forthList = new List<sObject>();
         
         
@@ -1341,7 +1358,7 @@ secondList.add(setting30definition3); */
         
         
         
-        /***** Sixth list ****/
+        /***** Sixth list 
         List<sObject> sixthList = new List<sObject>();
         
         // Mobile Opp
@@ -1402,7 +1419,7 @@ secondList.add(setting30definition3); */
         insert sixthList;
         
         return mapTestData;
-    }
+    }*/
 
     @isTest
     public static Map<string, sObject> testSetupForErrorMessage()
@@ -1587,7 +1604,8 @@ secondList.add(setting30definition3); */
             StageName = 'Discovery', 
             CloseDate = testDataFactory.summary.startDate,
             Is_Template__c = TRUE,
-            Source__c = 'Calendar Build'
+            Source__c = 'Calendar Build',
+            Web_Sched_Offset_from_CO_Global_Settings__c = True
         );
         secondList.add(parentOpp);
         
@@ -1756,6 +1774,18 @@ secondList.add(setting30definition3); */
         
         insert secondList;
         
+        /*Chapter for Site*/
+        Chapter__c testChapter = new Chapter__c(
+            Chapter_Code__c='AB299',
+            Division_Code__c='D21',
+            City__c='Charlotte',
+            State__c='NC',
+            Regional_Chapter_Code__c='00F33',
+            Type__c='Chapter',
+            Region_Name__c='Test Region'
+        );
+        insert testChapter;
+        
         /***** Third list ****/
         List<sObject> thirdList = new List<sObject>();
         
@@ -1790,12 +1820,12 @@ secondList.add(setting30definition3); */
             sked_Wireless_Policy__c = 'Accepted',
             sked_Timezone__c = 'America/New_York',
             Source__c = 'Custom New Form',
-            sked_Chapter__c = 'Test Chapter'
-            ,sked_Address_1__c = 'ABC STREET'
-            , sked_City__c = 'Test City'
-            , sked_County__c = 'Test'
-            , sked_State__c = 'PA'
-            , sked_Zip_Code__c = '18411'
+            Chapter__c = testChapter.Id,
+            sked_Address_1__c = 'ABC STREET',
+            sked_City__c = 'Test City',
+            sked_County__c = 'Test',
+            sked_State__c = 'PA',
+            sked_Zip_Code__c = '18411'
         );
         thirdList.add(testLocation1);
         mapTestData.put('testLocation1', testLocation1);
@@ -1858,12 +1888,12 @@ secondList.add(setting30definition3); */
             RecordTypeId = Schema.SObjectType.sked__Location__c.getRecordTypeInfosByName().get('Fixed Site').getRecordTypeId(),
             Operation_Type__c = 'Integrated',
             Source__c = 'Custom New Form',
-            sked_Chapter__c = 'Test Chapter'
-            ,sked_Address_1__c = 'ABC STREET'
-            , sked_City__c = 'Test City'
-            , sked_County__c = 'Test'
-            , sked_State__c = 'PA'
-            , sked_Zip_Code__c = '18411'
+            Chapter__c = testChapter.Id,
+            sked_Address_1__c = 'ABC STREET',
+            sked_City__c = 'Test City',
+            sked_County__c = 'Test',
+            sked_State__c = 'PA',
+            sked_Zip_Code__c = '18411'
         );
         thirdList.add(testLocation2);
         mapTestData.put('testLocation2', testLocation2);
@@ -1901,7 +1931,8 @@ secondList.add(setting30definition3); */
             sked_Resource_Role_Group__c = 'Driving roles', 
             sked_Variance_Applies_to__c = 'Setup Time', 
             sked_Variation_Amount__c = 15, 
-            sked_Variation_Type__c = 'Safety Video'
+            sked_Variation_Type__c = 'Safety Video',
+            sked_Days_Of_Week__c = 'Monday;Tuesday;Wednesday;Thursday;Friday;Saturday;Sunday'
             //sked_Roles__c = '2RBC;Apheresis;Drive Lead;Charge;Volunteer Donor Ambassador',
             
         );
@@ -1915,7 +1946,8 @@ secondList.add(setting30definition3); */
             sked_Resource_Role_Group__c = 'Staff roles', 
             sked_Variance_Applies_to__c = 'Setup Time;Breakdown Time;Travel Time To;Travel Time From', 
             sked_Variation_Amount__c = 5,
-            sked_Variation_Type__c = 'Loading/ unloading area'
+            sked_Variation_Type__c = 'Loading/ unloading area',
+            sked_Days_Of_Week__c = 'Monday;Tuesday;Wednesday;Thursday;Friday;Saturday;Sunday'
             //sked_Roles__c = '2RBC;Apheresis;Drive Lead;Charge;Volunteer Donor Ambassador',
             
         ); 
@@ -1930,7 +1962,8 @@ secondList.add(setting30definition3); */
             sked_Resource_Role_Group__c = 'Supervisory roles', 
             sked_Variance_Applies_to__c = 'Lead Time;Wrap-up Time', 
             sked_Variation_Amount__c = 5,
-            sked_Variation_Type__c = 'Loading/ unloading area'
+            sked_Variation_Type__c = 'Loading/ unloading area',
+            sked_Days_Of_Week__c = 'Monday;Tuesday;Wednesday;Thursday;Friday;Saturday;Sunday'
             //sked_Roles__c = '2RBC;Apheresis;Drive Lead;Charge;Volunteer Donor Ambassador',
             
         ); 
@@ -2047,7 +2080,8 @@ secondList.add(setting30definition3); */
             sked_Breakdown_Time_Threshold__c = 15,
             sked_Setup_Time_Threshold__c = 15,
             sked_Lunch_Break_Before_Draw_Hours__c = false,
-            sked_Travel_Time_Included_Fixed_Site__c = '	All Roles',
+            sked_Travel_Time_Included_Fixed_Site__c = 'Drivers Only',
+            sked_Travel_Time_Included_Mobile__c = 'All Roles',
             sked_Unpaid_Lunch_Break_Duration__c = 30,
             sked_Lunch_Break__c = true
         );
@@ -2063,7 +2097,9 @@ secondList.add(setting30definition3); */
           //  sked_Breakdown_Time_Threshold__c = 15,
           //  sked_Setup_Time_Threshold__c = 15,
             sked_Lunch_Break_Before_Draw_Hours__c = false,
-            sked_Lunch_Break__c = true
+            sked_Lunch_Break__c = true,
+            sked_Travel_Time_Included_Fixed_Site__c = 'Drivers Only',
+            sked_Travel_Time_Included_Mobile__c = 'All Roles'
           //  sked_Unpaid_Lunch_Break_Duration__c = 30
         );
         firstList.add(testCollectionOperation2);
@@ -2154,12 +2190,12 @@ sked_VP_HH_Capacity__c = 2.2,*/
         firstList.add(personTag);
         mapTestData.put('personTag', personTag);
         
-        sked__Tag__c vehicleTag = new sked__Tag__c(
+        /*sked__Tag__c vehicleTag = new sked__Tag__c(
             Name = 'Sample Vehicle Tag',
             sked_Resource_Type__c = 'Vehicle'
         );
         firstList.add(vehicleTag);
-        mapTestData.put('vehicleTag', vehicleTag);
+        mapTestData.put('vehicleTag', vehicleTag);*/
         
         sked__Tag__c equipmentTag = new sked__Tag__c(
             Name = 'Sample Equipment Tag',
@@ -2237,7 +2273,8 @@ sked_VP_HH_Capacity__c = 2.2,*/
             StageName = 'Discovery', 
             CloseDate = testDataFactory.summary.startDate,
             Is_Template__c = TRUE,
-            Source__c = 'Calendar Build'
+            Source__c = 'Calendar Build',
+            Web_Sched_Offset_from_CO_Global_Settings__c = True
         );
         secondList.add(parentOpp);
         
@@ -2286,13 +2323,13 @@ sked_VP_HH_Capacity__c = 2.2,*/
         secondList.add(setting30definition2); */
         
         /*  sked_Lunch_Break_Definition__c setting30definition3 = new sked_Lunch_Break_Definition__c(
-sked_Lunch_Break_Duration__c = 120,
-sked_Lunch_Break_Setting__c = lunchBreakSetting30.Id,
-sked_Max_Number_of_Staff__c = 8,
-sked_Min_Number_of_Staff__c = 4,
-sked_Slot_Reduction__c = 5
-);
-secondList.add(setting30definition3); */
+            sked_Lunch_Break_Duration__c = 120,
+            sked_Lunch_Break_Setting__c = lunchBreakSetting30.Id,
+            sked_Max_Number_of_Staff__c = 8,
+            sked_Min_Number_of_Staff__c = 4,
+            sked_Slot_Reduction__c = 5
+            );
+            secondList.add(setting30definition3); */
         
         sked_Lunch_Break_Definition__c setting30definition4 = new sked_Lunch_Break_Definition__c(
             sked_Lunch_Break_Duration__c = 15,
@@ -2393,28 +2430,40 @@ secondList.add(setting30definition3); */
         );
         secondList.add(mobileAccountTag2);*/
         
-        sked__Account_Tag__c mobileAccountTag3 = new sked__Account_Tag__c(
+       /* sked__Account_Tag__c mobileAccountTag3 = new sked__Account_Tag__c(
             sked__Account__c = mobileAccount.Id,
             sked__Tag__c = vehicleTag.Id,
             sked__Required__c = true,
             sked__Weighting__c = 10
            // ,sked_Minimum_Quantity__c = 1
         );
-        secondList.add(mobileAccountTag3);
+        secondList.add(mobileAccountTag3);*/
         
         insert secondList;
+        
+        /*Chapter for Site*/
+        Chapter__c testChapter = new Chapter__c(
+            Chapter_Code__c='AB299',
+            Division_Code__c='D21',
+            City__c='Charlotte',
+            State__c='NC',
+            Regional_Chapter_Code__c='00F33',
+            Type__c='Chapter',
+            Region_Name__c='Test Region'
+        );
+        insert testChapter;
         
         /***** Third list ****/
         List<sObject> thirdList = new List<sObject>();
         
-        sked__Account_Tag__c mobileAccountTag2 = new sked__Account_Tag__c(
+       /* sked__Account_Tag__c mobileAccountTag2 = new sked__Account_Tag__c(
             sked__Account__c = mobileAccount.Id,
             sked__Tag__c = vehicleTag.Id,
             sked__Required__c = false,
             sked__Weighting__c = 10,
            sked_Minimum_Quantity__c = 1
         );
-        thirdList.add(mobileAccountTag2);
+        thirdList.add(mobileAccountTag2);*/
         
         sked__Location__c testLocation1 = new sked__Location__c(
             Name = 'Test Location 1',
@@ -2447,12 +2496,12 @@ secondList.add(setting30definition3); */
             sked_Timezone__c = 'America/New_York',
             Source__c = 'Custom New Form',
             Operation_Type__c = 'Non Integrated WB',
-            sked_Chapter__c = 'Test Chapter'
-            ,sked_Address_1__c = 'ABC STREET'
-            , sked_City__c = 'Test City'
-            , sked_County__c = 'Test'
-            , sked_State__c = 'PA'
-            , sked_Zip_Code__c = '18411'
+            Chapter__c = testChapter.Id,
+            sked_Address_1__c = 'ABC STREET',
+            sked_City__c = 'Test City',
+            sked_County__c = 'Test',
+            sked_State__c = 'PA',
+            sked_Zip_Code__c = '18411'
         );
         thirdList.add(testLocation1);
         mapTestData.put('testLocation1', testLocation1);
@@ -2533,12 +2582,12 @@ secondList.add(setting30definition3); */
             sked_Wireless_Policy__c = 'Accepted',
             sked_Timezone__c = 'America/New_York',
             Source__c = 'Custom New Form',
-            sked_Chapter__c = 'Test Chapter'
-            ,sked_Address_1__c = 'ABC STREET'
-            , sked_City__c = 'Test City'
-            , sked_County__c = 'Test'
-            , sked_State__c = 'PA'
-            , sked_Zip_Code__c = '18411'
+            Chapter__c = testChapter.Id,
+            sked_Address_1__c = 'ABC STREET',
+            sked_City__c = 'Test City',
+            sked_County__c = 'Test',
+            sked_State__c = 'PA',
+            sked_Zip_Code__c = '18411'
         );
         forthList.add(testLocation2);
         mapTestData.put('testLocation2', testLocation2);
@@ -2557,6 +2606,8 @@ secondList.add(setting30definition3); */
             sked_Site__c = testLocation1.Id,
             sked_Start_Date__c = testDataFactory.summary.startDate,
             sked_Region__c = testRegion1.Id,
+            External_Id__c = 'Bio_Collection_BSF_SiteCo'+'_'+testLocation1.Id+'_'+testDataFactory.summary.startDate,
+            External_Id_BackEnd__c = 'Bio_Collection_BSF_SiteCo_Backend_External_Id',
             sked_Travel_Time_Breakdown_JSON__c = '[{"weekday":"Sunday","travelTime":32,"travelDistance":22725,"startOfWindow":"00:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"08:00:00.000Z","direction":"CO to Site"},{"weekday":"Sunday","travelTime":33,"travelDistance":22725,"startOfWindow":"08:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"16:00:00.000Z","direction":"CO to Site"},{"weekday":"Sunday","travelTime":31,"travelDistance":22725,"startOfWindow":"16:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"23:59:00.000Z","direction":"CO to Site"},{"weekday":"Monday","travelTime":33,"travelDistance":22725,"startOfWindow":"00:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"08:00:00.000Z","direction":"CO to Site"},{"weekday":"Monday","travelTime":34,"travelDistance":22725,"startOfWindow":"08:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"16:00:00.000Z","direction":"CO to Site"},{"weekday":"Monday","travelTime":31,"travelDistance":22725,"startOfWindow":"16:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"23:59:00.000Z","direction":"CO to Site"},{"weekday":"Tuesday","travelTime":33,"travelDistance":22725,"startOfWindow":"00:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"08:00:00.000Z","direction":"CO to Site"},{"weekday":"Tuesday","travelTime":34,"travelDistance":22725,"startOfWindow":"08:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"16:00:00.000Z","direction":"CO to Site"},{"weekday":"Tuesday","travelTime":31,"travelDistance":22725,"startOfWindow":"16:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"23:59:00.000Z","direction":"CO to Site"},{"weekday":"Wednesday","travelTime":33,"travelDistance":22725,"startOfWindow":"00:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"08:00:00.000Z","direction":"CO to Site"},{"weekday":"Wednesday","travelTime":34,"travelDistance":22725,"startOfWindow":"08:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"16:00:00.000Z","direction":"CO to Site"},{"weekday":"Wednesday","travelTime":31,"travelDistance":22725,"startOfWindow":"16:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"23:59:00.000Z","direction":"CO to Site"},{"weekday":"Thursday","travelTime":33,"travelDistance":22725,"startOfWindow":"00:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"08:00:00.000Z","direction":"CO to Site"},{"weekday":"Thursday","travelTime":34,"travelDistance":22725,"startOfWindow":"08:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"16:00:00.000Z","direction":"CO to Site"},{"weekday":"Thursday","travelTime":31,"travelDistance":22725,"startOfWindow":"16:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"23:59:00.000Z","direction":"CO to Site"},{"weekday":"Friday","travelTime":33,"travelDistance":22725,"startOfWindow":"00:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"08:00:00.000Z","direction":"CO to Site"},{"weekday":"Friday","travelTime":34,"travelDistance":22725,"startOfWindow":"08:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"16:00:00.000Z","direction":"CO to Site"},{"weekday":"Friday","travelTime":31,"travelDistance":22725,"startOfWindow":"16:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"23:59:00.000Z","direction":"CO to Site"},{"weekday":"Saturday","travelTime":32,"travelDistance":22725,"startOfWindow":"00:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"08:00:00.000Z","direction":"CO to Site"},{"weekday":"Saturday","travelTime":33,"travelDistance":22725,"startOfWindow":"08:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"16:00:00.000Z","direction":"CO to Site"},{"weekday":"Saturday","travelTime":31,"travelDistance":22725,"startOfWindow":"16:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"23:59:00.000Z","direction":"CO to Site"}]',
             sked_Travel_Time_Breakdown_JSON_2__c = '[{"weekday":"Sunday","travelTime":32,"travelDistance":22725,"startOfWindow":"00:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"08:00:00.000Z","direction":"CO to Site"},{"weekday":"Sunday","travelTime":33,"travelDistance":22725,"startOfWindow":"08:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"16:00:00.000Z","direction":"CO to Site"},{"weekday":"Sunday","travelTime":31,"travelDistance":22725,"startOfWindow":"16:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"23:59:00.000Z","direction":"CO to Site"},{"weekday":"Monday","travelTime":33,"travelDistance":22725,"startOfWindow":"00:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"08:00:00.000Z","direction":"CO to Site"},{"weekday":"Monday","travelTime":34,"travelDistance":22725,"startOfWindow":"08:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"16:00:00.000Z","direction":"CO to Site"},{"weekday":"Monday","travelTime":31,"travelDistance":22725,"startOfWindow":"16:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"23:59:00.000Z","direction":"CO to Site"},{"weekday":"Tuesday","travelTime":33,"travelDistance":22725,"startOfWindow":"00:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"08:00:00.000Z","direction":"CO to Site"},{"weekday":"Tuesday","travelTime":34,"travelDistance":22725,"startOfWindow":"08:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"16:00:00.000Z","direction":"CO to Site"},{"weekday":"Tuesday","travelTime":31,"travelDistance":22725,"startOfWindow":"16:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"23:59:00.000Z","direction":"CO to Site"},{"weekday":"Wednesday","travelTime":33,"travelDistance":22725,"startOfWindow":"00:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"08:00:00.000Z","direction":"CO to Site"},{"weekday":"Wednesday","travelTime":34,"travelDistance":22725,"startOfWindow":"08:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"16:00:00.000Z","direction":"CO to Site"},{"weekday":"Wednesday","travelTime":31,"travelDistance":22725,"startOfWindow":"16:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"23:59:00.000Z","direction":"CO to Site"},{"weekday":"Thursday","travelTime":33,"travelDistance":22725,"startOfWindow":"00:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"08:00:00.000Z","direction":"CO to Site"},{"weekday":"Thursday","travelTime":34,"travelDistance":22725,"startOfWindow":"08:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"16:00:00.000Z","direction":"CO to Site"},{"weekday":"Thursday","travelTime":31,"travelDistance":22725,"startOfWindow":"16:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"23:59:00.000Z","direction":"CO to Site"},{"weekday":"Friday","travelTime":33,"travelDistance":22725,"startOfWindow":"00:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"08:00:00.000Z","direction":"CO to Site"},{"weekday":"Friday","travelTime":34,"travelDistance":22725,"startOfWindow":"08:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"16:00:00.000Z","direction":"CO to Site"},{"weekday":"Friday","travelTime":31,"travelDistance":22725,"startOfWindow":"16:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"23:59:00.000Z","direction":"CO to Site"},{"weekday":"Saturday","travelTime":32,"travelDistance":22725,"startOfWindow":"00:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"08:00:00.000Z","direction":"CO to Site"},{"weekday":"Saturday","travelTime":33,"travelDistance":22725,"startOfWindow":"08:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"16:00:00.000Z","direction":"CO to Site"},{"weekday":"Saturday","travelTime":31,"travelDistance":22725,"startOfWindow":"16:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"23:59:00.000Z","direction":"CO to Site"}]'
         
@@ -2571,7 +2622,8 @@ secondList.add(setting30definition3); */
             sked_Resource_Role_Group__c = 'Driving roles', 
             sked_Variance_Applies_to__c = 'Setup Time;Site Logistics Back;Site Logistics To', 
             sked_Variation_Amount__c = 15, 
-            sked_Variation_Type__c = 'Safety Video'
+            sked_Variation_Type__c = 'Safety Video',
+            sked_Days_Of_Week__c = 'Monday;Tuesday;Wednesday;Thursday;Friday;Saturday;Sunday'
             //sked_Roles__c = '2RBC;Apheresis;Drive Lead;Charge;Volunteer Donor Ambassador',
             
         );
@@ -2585,7 +2637,8 @@ secondList.add(setting30definition3); */
             sked_Resource_Role_Group__c = 'Staff roles;Supervisory roles', 
             sked_Variance_Applies_to__c = 'Setup Time;Breakdown Time;Travel Time To;Travel Time From;Site Logistics Back;Site Logistics To;Lead Time;Wrap-up Time;', 
             sked_Variation_Amount__c = 25,
-            sked_Variation_Type__c = 'Loading/ unloading area'
+            sked_Variation_Type__c = 'Loading/ unloading area',
+            sked_Days_Of_Week__c = 'Monday;Tuesday;Wednesday;Thursday;Friday;Saturday;Sunday'
             //sked_Roles__c = '2RBC;Apheresis;Drive Lead;Charge;Volunteer Donor Ambassador',
             
         ); 
@@ -2600,7 +2653,8 @@ secondList.add(setting30definition3); */
             sked_Resource_Role_Group__c = 'Supervisory roles', 
             sked_Variance_Applies_to__c = 'Setup Time;Breakdown Time;Travel Time To;Travel Time From;Lead Time;Wrap-up Time;Site Logistics Back;Site Logistics To', 
             sked_Variation_Amount__c = 5,
-            sked_Variation_Type__c = 'Loading/ unloading area'
+            sked_Variation_Type__c = 'Loading/ unloading area',
+            sked_Days_Of_Week__c = 'Monday;Tuesday;Wednesday;Thursday;Friday;Saturday;Sunday'
             //sked_Roles__c = '2RBC;Apheresis;Drive Lead;Charge;Volunteer Donor Ambassador',
             
         ); 
@@ -2892,7 +2946,8 @@ secondList.add(setting30definition3); */
             StageName = 'Discovery', 
             CloseDate = testDataFactory.summary.startDate,
             Is_Template__c = TRUE,
-            Source__c = 'Calendar Build'
+            Source__c = 'Calendar Build',
+            Web_Sched_Offset_from_CO_Global_Settings__c = True
         );
         secondList.add(parentOpp);
         
@@ -3141,6 +3196,18 @@ secondList.add(setting30definition3); */
         
         insert thirdList;
         
+        /*Chapter for Site*/
+        Chapter__c testChapter = new Chapter__c(
+            Chapter_Code__c='AB299',
+            Division_Code__c='D21',
+            City__c='Charlotte',
+            State__c='NC',
+            Regional_Chapter_Code__c='00F33',
+            Type__c='Chapter',
+            Region_Name__c='Test Region'
+        );
+        insert testChapter;
+        
         /***** Forth list ****/
         List<sObject> forthList = new List<sObject>();
         
@@ -3187,12 +3254,12 @@ secondList.add(setting30definition3); */
             sked_Wireless_Policy__c = 'Accepted',
             sked_Timezone__c = 'America/New_York',
             Source__c = 'Custom New Form',
-            sked_Chapter__c = 'Test Chapter'
-            ,sked_Address_1__c = 'ABC STREET'
-            , sked_City__c = 'Test City'
-            , sked_County__c = 'Test'
-            , sked_State__c = 'PA'
-            , sked_Zip_Code__c = '18411'
+            Chapter__c = testChapter.Id,
+            sked_Address_1__c = 'ABC STREET',
+            sked_City__c = 'Test City',
+            sked_County__c = 'Test',
+            sked_State__c = 'PA',
+            sked_Zip_Code__c = '18411'
         );
         forthList.add(testLocation2);
         mapTestData.put('testLocation2', testLocation2);
@@ -3578,7 +3645,8 @@ sked_VP_HH_Capacity__c = 2.2,*/
             StageName = 'Discovery', 
             CloseDate = testDataFactory.summary.startDate,
             Is_Template__c = TRUE,
-            Source__c = 'Calendar Build'
+            Source__c = 'Calendar Build',
+            Web_Sched_Offset_from_CO_Global_Settings__c = True
         );
         secondList.add(parentOpp);
         
@@ -3691,6 +3759,19 @@ sked_VP_HH_Capacity__c = 2.2,*/
         
         insert thirdList;
        // System.debug( 'site_location_id==' + testLocation1.Id );
+       
+        
+        /*Chapter for Site*/
+        Chapter__c testChapter = new Chapter__c(
+            Chapter_Code__c='AB299',
+            Division_Code__c='D21',
+            City__c='Charlotte',
+            State__c='NC',
+            Regional_Chapter_Code__c='00F33',
+            Type__c='Chapter',
+            Region_Name__c='Test Region'
+        );
+        insert testChapter;
         
         /***** Forth list ****/
         List<sObject> forthList = new List<sObject>();
@@ -3738,12 +3819,12 @@ sked_VP_HH_Capacity__c = 2.2,*/
             sked_Wireless_Policy__c = 'Accepted',
             sked_Timezone__c = 'America/New_York',
             Source__c = 'Custom New Form',
-            sked_Chapter__c = 'Test Chapter'
-            ,sked_Address_1__c = 'ABC STREET'
-            , sked_City__c = 'Test City'
-            , sked_County__c = 'Test'
-            , sked_State__c = 'PA'
-            , sked_Zip_Code__c = '18411'
+            Chapter__c = testChapter.Id,
+            sked_Address_1__c = 'ABC STREET',
+            sked_City__c = 'Test City',
+            sked_County__c = 'Test',
+            sked_State__c = 'PA',
+            sked_Zip_Code__c = '18411'
         );
         forthList.add(testLocation2);
         mapTestData.put('testLocation2', testLocation2);
@@ -3771,9 +3852,9 @@ sked_VP_HH_Capacity__c = 2.2,*/
             sked_Resource_Role_Group__c = 'Driving roles', 
             sked_Variance_Applies_to__c = 'Setup Time;Site Logistics Back;Site Logistics To', 
             sked_Variation_Amount__c = 15, 
-            sked_Variation_Type__c = 'Safety Video'
-            //sked_Roles__c = '2RBC;Apheresis;Drive Lead;Charge;Volunteer Donor Ambassador',
-            
+            sked_Variation_Type__c = 'Safety Video',
+            sked_Days_of_Week__c = 'Monday;Tuesday;Wednesday;Thursday;Friday;Saturday;Sunday'
+            //sked_Roles__c = '2RBC;Apheresis;Drive Lead;Charge;Volunteer Donor Ambassador',    
         );
         finalList.add(driverVariance);
         
@@ -3785,11 +3866,10 @@ sked_VP_HH_Capacity__c = 2.2,*/
             sked_Resource_Role_Group__c = 'Staff roles;Supervisory roles', 
             sked_Variance_Applies_to__c = 'Setup Time;Breakdown Time;Travel Time To;Travel Time From;Site Logistics Back;Site Logistics To;Lead Time;Wrap-up Time;', 
             sked_Variation_Amount__c = 25,
-            sked_Variation_Type__c = 'Loading/ unloading area'
-            //sked_Roles__c = '2RBC;Apheresis;Drive Lead;Charge;Volunteer Donor Ambassador',
-            
-        ); 
-        
+            sked_Variation_Type__c = 'Loading/ unloading area',
+            sked_Days_of_Week__c = 'Monday;Tuesday;Wednesday;Thursday;Friday;Saturday;Sunday'
+            //sked_Roles__c = '2RBC;Apheresis;Drive Lead;Charge;Volunteer Donor Ambassador',        
+        );       
         finalList.add(fixSiteVariance1);
         
         sked_Role_Time_Variance__c fixSiteVariance2 = new sked_Role_Time_Variance__c(
@@ -3800,14 +3880,12 @@ sked_VP_HH_Capacity__c = 2.2,*/
             sked_Resource_Role_Group__c = 'Supervisory roles', 
             sked_Variance_Applies_to__c = 'Setup Time;Breakdown Time;Travel Time To;Travel Time From;Lead Time;Wrap-up Time;Site Logistics Back;Site Logistics To', 
             sked_Variation_Amount__c = 5,
-            sked_Variation_Type__c = 'Loading/ unloading area'
-            //sked_Roles__c = '2RBC;Apheresis;Drive Lead;Charge;Volunteer Donor Ambassador',
-            
-        ); 
-        
+            sked_Variation_Type__c = 'Loading/ unloading area',
+            sked_Days_of_Week__c = 'Monday;Tuesday;Wednesday;Thursday;Friday;Saturday;Sunday'
+            //sked_Roles__c = '2RBC;Apheresis;Drive Lead;Charge;Volunteer Donor Ambassador',    
+        );     
         finalList.add(fixSiteVariance2);
        
-        
         sked_Role_Time_Detail__c fixSiteRoleTime2 = new sked_Role_Time_Detail__c(
             sked_Type__c = 'Collection Operation',
             sked_Drive_Type__c = 'Mobile',

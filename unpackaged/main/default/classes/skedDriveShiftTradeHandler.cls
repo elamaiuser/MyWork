@@ -1,15 +1,12 @@
 public class skedDriveShiftTradeHandler extends skedTriggerHub {
 	
     public override void onBeforeInsert() {
-        populateData(this.context.newRecords);
+        populateTradeDetails(this.context.newRecords);
         cancelDuplicateTrades(this.context.newRecords);
     }
     
-    public override void onAfterInsert() {
-    	autoProcessRequest(this.context.newRecords);
-    }
-    
     public override void onBeforeUpdate() {
+        populateTradeDetails(this.context.newRecords, (Map<Id, sked_Drive_Shift_Trade__c>)this.context.oldMap);
         populateData(this.context.newRecords, (Map<Id, sked_Drive_Shift_Trade__c>)this.context.oldMap);
     }
     
@@ -38,15 +35,8 @@ public class skedDriveShiftTradeHandler extends skedTriggerHub {
         }
     }
     
-    private void autoProcessRequest(List<sked_Drive_Shift_Trade__c> newRecords) {
-        //Only handle request comes from resource submission
-        if (newRecords.size() == 1) {
-            slwcDriveShiftTradeService.autoProcessRequest(newRecords.get(0));
-        }
-    }
-    
     private void onStatusChanged(List<sked_Drive_Shift_Trade__c> newRecords, Map<Id, sked_Drive_Shift_Trade__c> oldMap) {
-        List<sked_Drive_Shift_Trade__c> approvedRecords = new List<sked_Drive_Shift_Trade__c>();
+        Set<Id> approvedRecordIds = new Set<Id>();
         List<sked_Drive_Shift_Trade__c> pendingApprovalRecords = new List<sked_Drive_Shift_Trade__c>();
         List<sked_Drive_Shift_Trade__c> submittedRecords = new List<sked_Drive_Shift_Trade__c>();
         for (sked_Drive_Shift_Trade__c newRecord : newRecords) {
@@ -54,7 +44,7 @@ public class skedDriveShiftTradeHandler extends skedTriggerHub {
                 sked_Drive_Shift_Trade__c oldData = oldMap.get(newRecord.Id);
                 if (newRecord.sked_Status__c != oldData.sked_Status__c) {
                     if (newRecord.sked_Status__c == skedConstants.DRIVE_SHIFT_TRADE_STATUS_APPROVED) {
-                        approvedRecords.add(newRecord);
+                        approvedRecordIds.add(newRecord.Id);
                     }
                     else if (newRecord.sked_Status__c == skedConstants.DRIVE_SHIFT_TRADE_STATUS_PENDING_APPROVAL) {
                         pendingApprovalRecords.add(newRecord);
@@ -62,152 +52,29 @@ public class skedDriveShiftTradeHandler extends skedTriggerHub {
                 }
             }
         }
-        if (!approvedRecords.isEmpty()) {
-            onApproved(approvedRecords);
+        if (!approvedRecordIds.isEmpty()) {
+            performShiftTrades(approvedRecordIds);
+            createShiftTradeAPIData(approvedRecordIds);
         }
         if (!pendingApprovalRecords.isEmpty()) {
             onPendingApproval(pendingApprovalRecords);
         }
     }
+
+    private void createShiftTradeAPIData(Set<Id> recordIds) {
+        skedFutureCallEventHandler.publishFutureCallEvent(
+            'slwcDriveShiftTradeService',
+            'createShiftTradeAPIData',
+            recordIds,
+            UserInfo.getUserEmail()
+        );
+    }
     
-    private void onApproved(List<sked_Drive_Shift_Trade__c> records) {
-        Set<Id> resourceIds = new Set<Id>();
-        Set<Id> nceIds = new Set<Id>();
-        Set<Id> jobAllocationIds = new Set<Id>();
-        for (sked_Drive_Shift_Trade__c record : records) {
-            resourceIds.add(record.sked_Requesting_Staff__c);
-            resourceIds.add(record.sked_Trading_Staff__c);
-            
-            if (record.sked_Requesting_Staff_Job_Allocation__c != NULL) {
-                jobAllocationIds.add(record.sked_Requesting_Staff_Job_Allocation__c);
-            }
-            if (record.sked_Trading_Staff_Job_Allocation__c != NULL) {
-                jobAllocationIds.add(record.sked_Trading_Staff_Job_Allocation__c);
-            }
-            if (record.sked_Requesting_Staff_NCE__c != NULL) {
-                nceIds.add(record.sked_Requesting_Staff_NCE__c);
-            }
-            if (record.sked_Trading_Staff_NCE__c != NULL) {
-                nceIds.add(record.sked_Trading_Staff_NCE__c);
-            }
-        }
-        
-        Map<Id, sked__Job_Allocation__c> mapAllocation = new Map<Id, sked__Job_Allocation__c>([SELECT Id, sked__Job__c, sked__Status__c,
-                                                                                               sked__Resource__c, sked__Resource__r.sked_Min_Hours_Per_Week__c 
-                                                                                               FROM sked__Job_Allocation__c
-                                                                                               WHERE Id IN :jobAllocationIds]);   
-        Map<Id, sked__Activity__c> mapActivity = new Map<Id, sked__Activity__c>([SELECT Id, 
-                                                                                 (SELECT Id, sked__Resource__c
-                                                                                  FROM sked__Activity_Resources__r
-                                                                                  WHERE sked__Resource__c IN :resourceIds)
-                                                                                 FROM sked__Activity__c
-                                                                                 WHERE Id IN :nceIds]);
-        
-        Map<Id, sked_Drive_Shift_Trade__c> mapRecordsToUpdate = new Map<Id, sked_Drive_Shift_Trade__c>();
-        List<sked__Job_Allocation__c> jobAllocationInsertList = new List<sked__Job_Allocation__c>();
-        List<sked__Job_Allocation__c> jobAllocationUpdateList = new List<sked__Job_Allocation__c>();
-        
-        List<sked__Activity_Resource__c> activityResourceInsertList = new List<sked__Activity_Resource__c>();
-        List<sked__Activity_Resource__c> activityResourceDeleteList = new List<sked__Activity_Resource__c>();
-        
-        for (sked_Drive_Shift_Trade__c record : records) {
-            if (record.sked_Requesting_Staff_Trading_Type__c == 'Drive Shift') {
-                sked__Job_Allocation__c requestingStaffJobAllocation = mapAllocation.get(record.sked_Requesting_Staff_Job_Allocation__c);
-                requestingStaffJobAllocation.sked__Status__c = skedConstants.JOB_ALLOCATION_STATUS_DELETED;
-                jobAllocationUpdateList.add(requestingStaffJobAllocation);
-                
-                sked__Job_Allocation__c newTradingStaffJobAllocation = new sked__Job_Allocation__c(
-                    sked__Job__c = requestingStaffJobAllocation.sked__Job__c,
-                    sked__Resource__c = record.sked_Trading_Staff__c,
-                    sked__Status__c = skedConstants.JOB_ALLOCATION_STATUS_DISPATCHED,
-                    sked_Drive_Shift_Trade__c = record.Id,
-                    sked_Locked__c = TRUE
-                );
-                jobAllocationInsertList.add(newTradingStaffJobAllocation);
-                
-                if (requestingStaffJobAllocation.sked__Resource__r.sked_Min_Hours_Per_Week__c != NULL) {
-                    sked_Drive_Shift_Trade__c recordToUpdate;
-                    if (mapRecordsToUpdate.containsKey(record.Id)) {
-                        recordToUpdate = mapRecordsToUpdate.get(record.Id);
-                    }
-                    else {
-                        recordToUpdate = new sked_Drive_Shift_Trade__c(Id = record.Id);
-                        mapRecordsToUpdate.put(record.Id, recordToUpdate);
-                    }
-                    recordToUpdate.sked_GuaranteedMinHrsForfeited_Requester__c = requestingStaffJobAllocation.sked__Resource__r.sked_Min_Hours_Per_Week__c != NULL;
-                }              
-            }
-            if (record.sked_Trading_Staff_Trading_Type__c == 'Drive Shift') {
-                sked__Job_Allocation__c tradingStaffJobAllocation = mapAllocation.get(record.sked_Trading_Staff_Job_Allocation__c);
-                tradingStaffJobAllocation.sked__Status__c = skedConstants.JOB_ALLOCATION_STATUS_DELETED;
-                jobAllocationUpdateList.add(tradingStaffJobAllocation);
-                
-                sked__Job_Allocation__c newRequestingStaffJobAllocation = new sked__Job_Allocation__c(
-                    sked__Job__c = tradingStaffJobAllocation.sked__Job__c,
-                    sked__Resource__c = record.sked_Requesting_Staff__c,
-                    sked__Status__c = skedConstants.JOB_ALLOCATION_STATUS_DISPATCHED,
-                    sked_Drive_Shift_Trade__c = record.Id,
-                    sked_Locked__c = TRUE
-                );
-                jobAllocationInsertList.add(newRequestingStaffJobAllocation);
-                
-                if (tradingStaffJobAllocation.sked__Resource__r.sked_Min_Hours_Per_Week__c != NULL) {
-                    sked_Drive_Shift_Trade__c recordToUpdate;
-                    if (mapRecordsToUpdate.containsKey(record.Id)) {
-                        recordToUpdate = mapRecordsToUpdate.get(record.Id);
-                    }
-                    else {
-                        recordToUpdate = new sked_Drive_Shift_Trade__c(Id = record.Id);
-                        mapRecordsToUpdate.put(record.Id, recordToUpdate);
-                    }
-                    recordToUpdate.sked_GuaranteedMinHrsForfeited_Trading__c = tradingStaffJobAllocation.sked__Resource__r.sked_Min_Hours_Per_Week__c != NULL;
-                }
-            }
-            
-            if (record.sked_Requesting_Staff_Trading_Type__c == 'Activity') {
-                sked__Activity__c requestingStaffNce = mapActivity.get(record.sked_Requesting_Staff_NCE__c);
-                for (sked__Activity_Resource__c activityResource : requestingStaffNce.sked__Activity_Resources__r) {
-                    if (activityResource.sked__Resource__c == record.sked_Requesting_Staff__c) {
-                        activityResourceDeleteList.add(activityResource);
-                        break;
-                    }
-                }
-                sked__Activity_Resource__c newTradingStaffNceResource = new sked__Activity_Resource__c(
-                    sked__Activity__c = requestingStaffNce.Id,
-                    sked__Resource__c = record.sked_Trading_Staff__c
-                );
-                activityResourceInsertList.add(newTradingStaffNceResource);
-            }
-            if (record.sked_Trading_Staff_Trading_Type__c == 'Activity') {
-                sked__Activity__c tradingStaffNce = mapActivity.get(record.sked_Trading_Staff_NCE__c);
-                for (sked__Activity_Resource__c activityResource : tradingStaffNce.sked__Activity_Resources__r) {
-                    if (activityResource.sked__Resource__c == record.sked_Trading_Staff__c) {
-                        activityResourceDeleteList.add(activityResource);
-                        break;
-                    }
-                }
-                sked__Activity_Resource__c newRequestingStaffNceResource = new sked__Activity_Resource__c(
-                    sked__Activity__c = tradingStaffNce.Id,
-                    sked__Resource__c = record.sked_Requesting_Staff__c
-                );
-                activityResourceInsertList.add(newRequestingStaffNceResource);
-            }
-        }
-        if (!activityResourceDeleteList.isEmpty()) {
-            delete activityResourceDeleteList;
-        }
-        if (!activityResourceInsertList.isEmpty()) {
-            insert activityResourceInsertList;
-        }
-        if (!jobAllocationUpdateList.isEmpty()) {
-            update jobAllocationUpdateList;
-        }
-        if (!jobAllocationInsertList.isEmpty()) {
-            insert jobAllocationInsertList;
-        }
-        if (!mapRecordsToUpdate.isEmpty()) {
-            update mapRecordsToUpdate.values();
-        }
+    private void performShiftTrades(Set<Id> recordIds) {
+        skedFutureCallEventHandler.publishFutureCallEvent(
+                'slwcDriveShiftTradeService',
+                'performShiftTrades',
+                recordIds);
     }
     
     private void onPendingApproval(List<sked_Drive_Shift_Trade__c> records) {
@@ -247,7 +114,7 @@ public class skedDriveShiftTradeHandler extends skedTriggerHub {
         }
     }
     
-    private void populateData(List<sked_Drive_Shift_Trade__c> records) {
+    private void populateTradeDetails(List<sked_Drive_Shift_Trade__c> records) {
         Set<Id> resourceIds = new Set<Id>();
         Set<Id> jobAllocationIds = new Set<Id>();
         Set<Id> activityIds = new Set<Id>();
@@ -292,6 +159,8 @@ public class skedDriveShiftTradeHandler extends skedTriggerHub {
                                                                                  sked_Timezone__c
                                                                                  FROM sked__Resource__c
                                                                                  WHERE Id IN :resourceIds]);
+        
+        List<sked_Drive_Shift_Trade__c> recordsDistrictFromRequestingStaffCO = new List<sked_Drive_Shift_Trade__c>();
         for (sked_Drive_Shift_Trade__c record : records) {
             if (mapAllocation.containsKey(record.sked_Requesting_Staff_Job_Allocation__c)) {
                 sked__Job_Allocation__c requestingStaffJobAllocation = mapAllocation.get(record.sked_Requesting_Staff_Job_Allocation__c);
@@ -324,8 +193,12 @@ public class skedDriveShiftTradeHandler extends skedTriggerHub {
                 if (mapResource.containsKey(record.sked_Requesting_Staff__c)) {
                     sked__Resource__c requestingStaff = mapResource.get(record.sked_Requesting_Staff__c);
                     record.sked_Collection_Operation__c = requestingStaff.sked__Primary_Region__r.sked_Biomed_Collection_Op_Center__c;
+                    recordsDistrictFromRequestingStaffCO.add(record);
                 }
             }
+
+            populateDistrictFromRequestingStaffCO(recordsDistrictFromRequestingStaffCO, mapResource);
+
             string requestingRecordId;
             if (record.sked_Requesting_Staff_Trading_Type__c == 'Drive Shift') {
                 requestingRecordId = record.sked_Requesting_Staff_Job_Allocation__c;
@@ -352,6 +225,49 @@ public class skedDriveShiftTradeHandler extends skedTriggerHub {
                 record.sked_Date_Trade_Approved_Text__c = record.sked_Date_Trade_Approved__c.format(skedDateTimeUtils.DATE_FORMAT, timezoneSidId);
             }
             record.sked_Date_Trade_Submitted_Text__c = system.now().format(skedDateTimeUtils.DATE_FORMAT, timezoneSidId);
+        }
+    }
+
+    private void populateTradeDetails(List<sked_Drive_Shift_Trade__c> newRecords, Map<Id, sked_Drive_Shift_Trade__c> oldMap) {
+        List<sked_Drive_Shift_Trade__c> recordsToPopulate = new List<sked_Drive_Shift_Trade__c>();
+        for (sked_Drive_Shift_Trade__c newRecord : newRecords) {
+            sked_Drive_Shift_Trade__c oldData = oldMap.get(newRecord.Id);
+            if (newRecord.sked_Trading_Staff__c != oldData.sked_Trading_Staff__c && newRecord.sked_Trading_Staff__c != NULL) {
+                recordsToPopulate.add(newRecord);
+            }
+        }
+        if (!recordsToPopulate.isEmpty()) {
+            populateTradeDetails(recordsToPopulate);
+        }
+    }
+
+    private void populateDistrictFromRequestingStaffCO(List<sked_Drive_Shift_Trade__c> records, Map<Id, sked__Resource__c> mapResource) {
+        Set<Id> requestingStaffCOIds = new Set<Id>();
+        for (sked_Drive_Shift_Trade__c record : records) {
+            requestingStaffCOIds.add(mapResource.get(record.sked_Requesting_Staff__c).sked__Primary_Region__r.sked_Biomed_Collection_Op_Center__c);
+        }
+
+        Map<Id, Biomed_Collection_Op_Center__c> mapCO = new Map<Id, Biomed_Collection_Op_Center__c>([
+            SELECT Id,
+                (SELECT Id, sked_End_Date__c, sked_Start_Date__c, sked_Territory__c
+            FROM sked_Territory_Collection_Operations__r)
+            FROM Biomed_Collection_Op_Center__c
+            WHERE Id IN :requestingStaffCOIds
+        ]);
+
+        for (sked_Drive_Shift_Trade__c record : records) {
+            Id requestingStaffCOId = mapResource.get(record.sked_Requesting_Staff__c).sked__Primary_Region__r.sked_Biomed_Collection_Op_Center__c;
+            if (mapCO.containsKey(requestingStaffCOId)) {
+                Biomed_Collection_Op_Center__c co = mapCO.get(requestingStaffCOId);
+                for (sked_Territory_Collection_Operation__c territoryCO : co.sked_Territory_Collection_Operations__r) {
+                    boolean isStartDateMatched = territoryCO.sked_Start_Date__c == NULL || territoryCO.sked_Start_Date__c <= record.sked_Requesting_Staff_Trading_Event_Date__c;
+                    boolean isEndDateMatched = territoryCO.sked_End_Date__c == NULL || territoryCO.sked_End_Date__c >= record.sked_Requesting_Staff_Trading_Event_Date__c;
+                    if (isStartDateMatched && isEndDateMatched) {
+                        record.sked_District__c = territoryCO.sked_Territory__c;
+                        break;
+                    }
+                }
+            }
         }
     }
     

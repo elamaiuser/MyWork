@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<EmailTemplate xmlns="http://soap.sforce.com/2006/04/metadata">
+    <available>true</available>
+    <description>FY25 HSSP Program Enhancement Annoucment_Existing Sponsors</description>
+    <encodingKey>ISO-8859-1</encodingKey>
+    <letterhead>ARC_Generic_Logo1</letterhead>
+    <name>FY25 HSSP Program_Existing Sponsor Announcement</name>
+    <style>formalLetter</style>
+    <subject>Exciting Updates to the American Red Cross High School Scholarship Program!</subject>
+    <textOnly>Dear [Insert Name],
+
+Thank you for partnering with the American Red Cross through our High School Scholarship Program. Your decision to host Red Cross blood drives teaches your students the important role that blood donations play in ensuring a ready blood supply, which is critical to the treatment of cancer patients, accident victims and unforeseen trauma situations.
+
+
+We are pleased to share new, exciting update to the Red Cross High School Scholarship Program, effective July 1, 2024:
+
+
+
+· Your school can earn more scholarship funds – up to $5,000!*
+· New scholarship program tiers – offering your school to earn more scholarship funds by collecting more blood.*
+· By holding additional bloods drive or recruiting additional blood donors at your high school’s blood drive(s), you have the potential to increase the amount of scholarship funds to be awarded to a student(s)!*
+
+
+
+Additional benefits of a Red Cross High School Blood Program partnership:
+
+
+· A meaningful opportunity for your students to help save lives.
+
+· Educational presentation, curriculum or classroom activities for a student learn-in-action experience.
+
+· Leadership opportunities for students to take action by volunteering on a blood drive committee or giving blood at your blood drive.
+
+· Your school will be recognized for helping save lives, with the opportunity to earn a scholarship for your school to award to a student recipient!
+
+
+Thank you for partnering with the Red Cross for a lifesaving blood drive program at your high school. Your support can bring students, faculty and the community together to help change someone’s life with every single donation you collect.
+
+
+I look forward to working with you to plan your school’s annual blood program.
+
+
+Please contact me today with any questions and let’s save lives together.
+
+
+Sincerely,
+
+[Insert Name]
+
+
+
+
+*Terms and conditions apply. See your Red Cross Representative for program terms and conditions.</textOnly>
+    <type>html</type>
+    <uiType>Aloha</uiType>
+</EmailTemplate>

@@ -1,4 +1,14 @@
-public class skedAvailabilityHandler extends skedTriggerHub implements Callable {
+public class skedAvailabilityHandler extends skedTriggerHub {
+
+    private static final List<String> PERMITTED_INSERT_EDIT_PROFILES = new List<String>{
+        'Global Admin', 'System Administrator', 'APS Scheduler', 'APS Management'
+  	};
+    
+    private static final List<String> AVAILABILITY_APPROVED_STATUSES = new List<String>{
+        skedConstants.AVAILABILITY_STATUS_APPROVED,
+        skedConstants.AVAILABILITY_STATUS_APPROVED_FROM_PENDING,
+        skedConstants.AVAILABILITY_STATUS_APPROVED_FROM_WAITLIST
+    };
     
     private List<unavailabilityWrapper> mUnavailabilityWrappers;
     protected List<unavailabilityWrapper> unavailabilityWrappers {
@@ -17,16 +27,19 @@ public class skedAvailabilityHandler extends skedTriggerHub implements Callable 
                 if (!unavailabilityRecords.isEmpty()) {
                     Set<Date> availabilityDates = new Set<Date>();
                     
-                    Map<Id, sked__Resource__c> mapResources = new Map<Id, sked__Resource__c>([SELECT Id, sked__Primary_Region__c, 
-                                                                                              sked__Primary_Region__r.sked_Biomed_Collection_Op_Center__c,
-                                                                                              sked__Primary_Region__r.sked__Timezone__c,
-                                                                                              (SELECT Id, sked__Tag__c, sked__Tag__r.Name, sked__Tag__r.sked_Priority__c
-                                                                                               FROM sked__ResourceTags__r
-                                                                                               WHERE sked__Tag__r.sked__Type__c = :skedConstants.TAG_TYPE_ROLE
-                                                                                               AND sked_Role_Status__c = :skedConstants.TAG_ROLE_STATUS_ACTIVE
-                                                                                               ORDER BY sked__Tag__r.sked_Priority__c ASC NULLS LAST)
-                                                                                              FROM sked__Resource__c
-                                                                                              WHERE Id IN :resourceIds]);
+                    Map<Id, sked__Resource__c> mapResources = new Map<Id, sked__Resource__c>([
+                        SELECT Id, sked__Primary_Region__c, sked_FCC_Code__c,
+                        sked__Primary_Region__r.sked_Biomed_Collection_Op_Center__c,
+                        sked__Primary_Region__r.sked__Timezone__c,
+                        (SELECT Id, sked__Tag__c, sked__Tag__r.Name, sked__Tag__r.sked_Priority__c
+                        FROM sked__ResourceTags__r
+                        WHERE sked__Tag__r.sked__Type__c = :skedConstants.TAG_TYPE_ROLE
+                        AND sked_Role_Status__c = :skedConstants.TAG_ROLE_STATUS_ACTIVE
+                        ORDER BY sked__Tag__r.sked_Priority__c ASC NULLS LAST)
+                        FROM sked__Resource__c
+                        WHERE Id IN :resourceIds
+                    ]);
+
                     for (sked__Availability__c unavailability : unavailabilityRecords) {
                         sked__Resource__c skedResource = mapResources.get(unavailability.sked__Resource__c);
                         if (skedResource.sked__ResourceTags__r != NULL && !skedResource.sked__ResourceTags__r.isEmpty()) {
@@ -63,17 +76,15 @@ public class skedAvailabilityHandler extends skedTriggerHub implements Callable 
         syncToResourceHoursRecord(this.context.newRecords);
         if (!skedSetting.instance.Admin.migrationMode) {
             if (!System.isBatch()) {
-                skedFutureCallEventHandler.publishFutureCallEvent(
-                    skedAvailabilityHandler.class.getName(),
-                    'doWorkdaySync',
-                    getApprovedRecordIds(this.context.newRecords)   
-                );
+                skedRecurringScheduleUtils.publishUpdateAvailabilityCountEvent(this.context.newRecords);
+                skedWorkdayUtils.publishWorkdayApprovalsEvent(skedWorkdayUtils.getApprovedRecordIds(this.context.newRecords));
             }
         }
     }
+
     
     public override void onBeforeUpdate() {
-        skedTriggerUtils.validateServiceEntry(this.context.newRecords, skedConstants.AVAILABILITY_CRUD_MUST_COME_FROM_RAC);
+        skedTriggerUtils.validateServiceEntry(this.context.newRecords, skedConstants.AVAILABILITY_CRUD_MUST_COME_FROM_RAC, PERMITTED_INSERT_EDIT_PROFILES);
         populateData(this.context.newRecords, (Map<Id, sked__Availability__c>)this.context.oldMap);
         if (skedSetting.instance.Admin.dateTimeConversion) {
             doDateTimeConversion(this.context.newRecords, (Map<Id, sked__Availability__c>)this.context.oldMap);
@@ -85,29 +96,121 @@ public class skedAvailabilityHandler extends skedTriggerHub implements Callable 
             captureExceptionLogs(this.context.newRecords, (Map<Id, sked__Availability__c>)this.context.oldMap);
             syncToResourceHoursRecord(this.context.newRecords, (Map<Id, sked__Availability__c>)this.context.oldMap);
             syncToStaffingBudgetAvailabilities(this.context.newRecords);
+            cancelCallOut(this.context.newRecords, (Map<Id, sked__Availability__c>)this.context.oldMap);
+            onAvailabilityCallOutTypeChangeToCallOut(this.context.newRecords, (Map<Id, sked__Availability__c>)this.context.oldMap);
+            sendCancelledApprovedTimeOffNotification(this.context.newRecords, (Map<Id, sked__Availability__c>)this.context.oldMap);
+            skedWorkdayUtils.initiateFullWorkdaySync(this.context.newRecords, (Map<Id, sked__Availability__c>) this.context.oldMap);
             if (!System.isBatch()) {
-                skedFutureCallEventHandler.publishFutureCallEvent(
-                    skedAvailabilityHandler.class.getName(),
-                    'doWorkdaySync',
-                    getApprovedRecordIds(this.context.newRecords, (Map<Id, sked__Availability__c>)this.context.oldMap)
-                );
+                skedRecurringScheduleUtils.publishUpdateAvailabilityCountEvent(this.context.newRecords);
             }
         }
     }
 
     public override void onBeforeDelete() {
-        skedTriggerUtils.validateServiceEntry(this.context.oldRecords, skedConstants.AVAILABILITY_CRUD_MUST_COME_FROM_RAC);
+        skedTriggerUtils.validateServiceEntry(this.context.oldRecords, skedConstants.RECORD_CHANGES_INVALID_PERMISSIONS, new List<String>{'System Administrator'}, false);
         if (!skedSetting.instance.Admin.migrationMode) {
         	removeExceptionLogs((Map<Id, sked__Availability__c>)this.context.oldMap);
         	removeResourceHoursRecord(this.context.oldMap.values());
         }
     }
 
+    public override void onAfterDelete() {
+        skedRecurringScheduleUtils.publishUpdateAvailabilityCountEvent(this.context.oldRecords);
+        deleteCallOut(this.context.oldRecords);
+        skedWorkdayUtils.publishWorkdayCancellationsEvent(skedWorkdayUtils.getCancellationsContainer(this.context.oldRecords));
+    }
+
     /*********************************************************** Private methods ***********************************************************/
+    private void cancelCallOut(List<sked__Availability__c> newRecords, Map<Id, sked__Availability__c> oldMap) {
+        Set<Id> jobAllocationIdsToDelete = new Set<Id>();
+        for (sked__Availability__c newRecord : newRecords) {
+            sked__Availability__c oldData = oldMap.get(newRecord.Id);
+            if (newRecord.sked_Custom_Status__c != oldData.sked_Custom_Status__c && newRecord.sked_Custom_Status__c == skedConstants.AVAILABILITY_STATUS_CANCELLED) {
+                if (newRecord.sked_Call_Out_for_Job_Allocation__c != NULL) {
+                    jobAllocationIdsToDelete.add(newRecord.sked_Call_Out_for_Job_Allocation__c);
+                }
+            }
+        }
+        if (!jobAllocationIdsToDelete.isEmpty()) {
+            clearDeletedCallOutJobAllocationFromRevokingCallOut(jobAllocationIdsToDelete);
+        }
+    }
+
+    private void onAvailabilityCallOutTypeChangeToCallOut(List<sked__Availability__c> newRecords, Map<Id, sked__Availability__c> oldMap) {
+        Map<Id, sked__Job_Allocation__c> map_id_jobAllocationToDelete = new Map<Id, sked__Job_Allocation__c>();
+        for (sked__Availability__c newRecord : newRecords) {
+            sked__Availability__c oldData = oldMap.get(newRecord.Id);
+            if (newRecord.sked_Call_Out_Type__c != oldData.sked_Call_Out_Type__c
+                && newRecord.sked_Call_Out_Type__c == skedConstants.AVAILABILITY_CALLOUT_TYPE_CALL_OUT
+                && newRecord.sked_Custom_Status__c != skedConstants.AVAILABILITY_STATUS_CANCELLED
+            ) {
+                if (newRecord.sked_Call_Out_for_Job_Allocation__c != NULL && !map_id_jobAllocationToDelete.containsKey(newRecord.sked_Call_Out_for_Job_Allocation__c)) {
+                    map_id_jobAllocationToDelete.put(
+                        newRecord.sked_Call_Out_for_Job_Allocation__c,
+                        new sked__Job_Allocation__c(
+                            Id = newRecord.sked_Call_Out_for_Job_Allocation__c,
+                            sked_Call_Out_Type__c = newRecord.sked_Call_Out_Type__c,
+                            sked__Status__c = skedConstants.JOB_ALLOCATION_STATUS_DELETED
+                        )
+                    );
+                }
+            }
+        }
+        if (!map_id_jobAllocationToDelete.isEmpty()) {
+            update map_id_jobAllocationToDelete.values();
+        }
+    }
+
+    private void deleteCallOut(List<sked__Availability__c> deletedAvailabilities) {
+        Set<Id> jobAllocationIdsToDelete = new Set<Id>();
+        for (sked__Availability__c deletedAvailability : deletedAvailabilities) {
+            if (deletedAvailability.sked_Call_Out_for_Job_Allocation__c != NULL) {
+                jobAllocationIdsToDelete.add(deletedAvailability.sked_Call_Out_for_Job_Allocation__c);
+            }
+        }
+        if (!jobAllocationIdsToDelete.isEmpty()) {
+            clearDeletedCallOutJobAllocationFromRevokingCallOut(jobAllocationIdsToDelete);
+        }
+    }
+
+    private void clearDeletedCallOutJobAllocationFromRevokingCallOut(Set<Id> jobAllocationIdsToDelete) {
+        List<sked__Job_Allocation__c> callOutJobAllocations = [
+            SELECT Id, sked__Job__c, sked__Resource__c, sked__Status__c,
+            sked_CDL__c, sked_DOT__c, sked__Duration__c,
+            sked__Set_End__c, sked_Set_End_Date__c, sked_Set_End_Time__c,
+            sked__Start__c, sked_Start_Date__c, sked_Start_Time__c,
+            sked__Time_Published__c, sked_Time_Published_Date__c, sked_Time_Published_Time__c, 
+            sked_Start_With_Travel_Time__c, sked_Travel_Time_Back__c, sked_Travel_Time_To__c,
+            sked_Geoservice_Travel_Time_Back__c, sked_Geoservice_Travel_Time_To__c,
+            sked_Geoservice_Travel_Distance_Back__c, sked_Geoservice_Travel_Distance_To__c,
+            sked_Is_Relocated_Resource__c, sked_Additional_Roles__c, 
+            sked_Drive_Shift_Trade__c, sked_Locked__c
+            FROM sked__Job_Allocation__c
+            WHERE Id IN :jobAllocationIdsToDelete
+            AND sked__Job__r.sked__Job_Status__c != :skedConstants.JOB_STATUS_CANCELLED
+        ];
+
+        if (!callOutJobAllocations.isEmpty()) {
+            delete callOutJobAllocations;
+        }
+    }
+    
     private void captureExceptionLogs(List<sked__Availability__c> newRecords) {
         List<skedExceptionLogService.resourceUnavailabilityModel> unavailabilityList = new List<skedExceptionLogService.resourceUnavailabilityModel>();
+        List<String> excludedCalloutTypes = new List<String> {
+            skedConstants.AVAILABILITY_CALLOUT_TYPE_EARLY_DEPARTURE,
+            skedConstants.AVAILABILITY_CALLOUT_TYPE_LATE_ARRIVAL
+        };
+        List<string> activeStatuses = new List<string> {
+            skedConstants.AVAILABILITY_STATUS_APPROVED,
+            skedConstants.AVAILABILITY_STATUS_PENDING,
+            skedConstants.AVAILABILITY_STATUS_WAITLIST
+        };
+
 		for (sked__Availability__c newRecord : newRecords) {
-			if (newRecord.sked__Is_Available__c || newRecord.sked__Status__c != skedConstants.AVAILABILITY_STATUS_APPROVED) {
+			if (newRecord.sked__Is_Available__c 
+                || !activeStatuses.contains(newRecord.sked__Status__c)
+                || excludedCalloutTypes.contains(newRecord.sked_Call_Out_Type__c)) {
 				continue;
 			}
 			skedExceptionLogService.resourceUnavailabilityModel unavailability = new skedExceptionLogService.resourceUnavailabilityModel();
@@ -128,8 +231,20 @@ public class skedAvailabilityHandler extends skedTriggerHub implements Callable 
     
     private void captureExceptionLogs(List<sked__Availability__c> newRecords, Map<Id, sked__Availability__c> updatedRecords) {
         List<skedExceptionLogService.resourceUnavailabilityModel> unavailabilityList = new List<skedExceptionLogService.resourceUnavailabilityModel>();
+        List<String> excludedCalloutTypes = new List<String> {
+            skedConstants.AVAILABILITY_CALLOUT_TYPE_EARLY_DEPARTURE,
+            skedConstants.AVAILABILITY_CALLOUT_TYPE_LATE_ARRIVAL
+        };
+        List<string> activeStatuses = new List<string> {
+            skedConstants.AVAILABILITY_STATUS_APPROVED,
+            skedConstants.AVAILABILITY_STATUS_PENDING,
+            skedConstants.AVAILABILITY_STATUS_WAITLIST
+        };
+
         for (sked__Availability__c record : newRecords) {
-            if (record.sked__Is_Available__c || record.sked__Status__c != skedConstants.AVAILABILITY_STATUS_APPROVED) {
+            if (record.sked__Is_Available__c 
+                || !activeStatuses.contains(record.sked__Status__c)
+                || excludedCalloutTypes.contains(record.sked_Call_Out_Type__c)) {
                 continue;
             }
             sked__Availability__c oldRecord = updatedRecords.get(record.Id);
@@ -152,23 +267,38 @@ public class skedAvailabilityHandler extends skedTriggerHub implements Callable 
     }
     
     private void populateData(List<sked__Availability__c> newRecords, Map<Id, sked__Availability__c> oldMap) {
+        DateTime currentTime = system.now();
+
         Set<Id> resourceIds = new Set<Id>();
         for (sked__Availability__c newRecord : newRecords) {
             resourceIds.add(newRecord.sked__Resource__c);
         }
 
         Map<Id, sked__Resource__c> mapResource = new Map<Id, sked__Resource__c>([
-            SELECT Id, sked__Resource_Type__c, sked__Primary_Region__r.sked__Timezone__c
+            SELECT Id, sked__Resource_Type__c, sked__Primary_Region__r.sked__Timezone__c, sked_Daily_Time_Off_Hours__c
             FROM sked__Resource__c
             WHERE Id IN :resourceIds
         ]);
 
         for (sked__Availability__c newRecord : newRecords) {
+            boolean isInserted = oldMap == null;
+            boolean isStatusChanged = false;
             Boolean isCancelled = false;
             if (oldMap != null && oldMap.containsKey(newRecord.Id)) {
                 sked__Availability__c oldAvailability = oldMap.get(newRecord.Id);
-                if (oldAvailability.sked_Custom_Status__c != newRecord.sked_Custom_Status__c && newRecord.sked_Custom_Status__c == skedConstants.AVAILABILITY_STATUS_CANCELLED) {
+                isStatusChanged = oldAvailability.sked_Custom_Status__c != newRecord.sked_Custom_Status__c;
+                if (isStatusChanged && newRecord.sked_Custom_Status__c == skedConstants.AVAILABILITY_STATUS_CANCELLED) {
                     isCancelled = true;
+                }
+
+                if (oldAvailability.sked_Custom_Status__c == skedConstants.AVAILABILITY_STATUS_WAITLIST && newRecord.sked_Custom_Status__c == skedConstants.AVAILABILITY_STATUS_APPROVED) {
+                    newRecord.sked_Custom_Status__c = skedConstants.AVAILABILITY_STATUS_APPROVED_FROM_WAITLIST;
+                }
+
+                if (oldAvailability.sked_Custom_Status__c == skedConstants.AVAILABILITY_STATUS_APPROVED && newRecord.sked_Custom_Status__c == skedConstants.AVAILABILITY_STATUS_PROCESSING_ADJUSTMENT) {
+                    if (oldAvailability.sked_Duration__c == newRecord.sked_Duration__c) {
+                        newRecord.sked_Custom_Status__c = skedConstants.AVAILABILITY_STATUS_APPROVED;
+                    }
                 }
             }
 
@@ -176,14 +306,21 @@ public class skedAvailabilityHandler extends skedTriggerHub implements Callable 
             newRecord.sked__Timezone__c = skedResource.sked__Primary_Region__r.sked__Timezone__c;
             if (!string.isBlank(newRecord.sked_Custom_Status__c)) {
                 newRecord.sked__Status__c = newRecord.sked_Custom_Status__c;
-                if (newRecord.sked__Status__c == skedConstants.AVAILABILITY_STATUS_WAITLIST) {
-                    newRecord.sked__Status__c = skedConstants.AVAILABILITY_STATUS_PENDING;
+                if (newRecord.sked__Status__c == skedConstants.AVAILABILITY_STATUS_WAITLIST 
+                        || newRecord.sked__Status__c == skedConstants.AVAILABILITY_STATUS_PROCESSING_APPROVAL) {
+                    newRecord.sked__Status__c = skedConstants.AVAILABILITY_STATUS_PENDING;    
                 }
-                else if (newRecord.sked__Status__c == skedConstants.AVAILABILITY_STATUS_CANCELLED) {
+                else if (newRecord.sked__Status__c == skedConstants.AVAILABILITY_STATUS_CANCELLED
+                        || newRecord.sked__Status__c == skedConstants.AVAILABILITY_STATUS_PENDING_EXPIRED
+                        || newRecord.sked__Status__c == skedConstants.AVAILABILITY_STATUS_WAITLIST_EXPIRED
+                        || newRecord.sked__Status__c == skedConstants.AVAILABILITY_STATUS_EXPIRED) {
                     newRecord.sked__Status__c = skedConstants.AVAILABILITY_STATUS_DECLINED;
                 }
-                else if (newRecord.sked__Status__c == skedConstants.AVAILABILITY_STATUS_EXPIRED) {
-                    newRecord.sked__Status__c = skedConstants.AVAILABILITY_STATUS_DECLINED;
+                else if (newRecord.sked__Status__c == skedConstants.AVAILABILITY_STATUS_APPROVED_FROM_WAITLIST
+                        || newRecord.sked__Status__c == skedConstants.AVAILABILITY_STATUS_APPROVED_FROM_PENDING
+                        || newRecord.sked__Status__c == skedConstants.AVAILABILITY_STATUS_PROCESSING_ADJUSTMENT
+                        || newRecord.sked__Status__c == skedConstants.AVAILABILITY_STATUS_PROCESSING_CANCELLATION) {
+                    newRecord.sked__Status__c = skedConstants.AVAILABILITY_STATUS_APPROVED;
                 }
             }
             else {
@@ -195,23 +332,64 @@ public class skedAvailabilityHandler extends skedTriggerHub implements Callable 
                 newRecord.sked_Custom_Status__c = skedConstants.AVAILABILITY_STATUS_APPROVED;
             }
 
-            newRecord.sked_Last_Modified_By__c = newRecord.sked_Approved_Via_Automation__c ?
-                skedTriggerHub_Cache.getAutoProcessUserFromCache().Id : UserInfo.getUserId();
-            newRecord.sked_Approved_Via_Automation__c = false;
+            if (isInserted || isStatusChanged) {
+                newRecord.sked_Last_Modified_By__c = newRecord.sked_Approved_Via_Automation__c ?
+                    skedTriggerHub_Cache.getAutoProcessUserFromCache().Id : UserInfo.getUserId();
+                newRecord.sked_Approved_Via_Automation__c = false;
+            }
+
+            if (isInserted) {
+                if (newRecord.sked_Call_Out_Type__c != null) {
+                    newRecord.sked_DateTime_of_Call_Out__c = newRecord.sked_DateTime_of_Call_Out__c == null 
+                        ? currentTime : newRecord.sked_DateTime_of_Call_Out__c;
+                    newRecord.sked_DateTime_Call_Out_Received__c = newRecord.sked_DateTime_Call_Out_Received__c == null 
+                        ? newRecord.sked_DateTime_of_Call_Out__c : newRecord.sked_DateTime_Call_Out_Received__c;
+                    if (newRecord.sked_DateTime_Call_Out_Received__c != null && newRecord.sked__Start__c != null) {
+                        newRecord.sked_Call_Out_Notice__c = skedDateTimeUtils.getDifferentMinutesText(newRecord.sked_DateTime_Call_Out_Received__c, newRecord.sked__Start__c);	
+                    }
+                }
+            }
         }
     }
 
     private void handleAutoApprovals(List<sked__Availability__c> availabilities) {
-        for (sked__Availability__c availability : availabilities) {
-            if (!availability.sked__Is_Available__c && availability.sked__Type__c != skedConstants.UNAVAILABILITY_TYPE_FLOATING_HOLIDAY && availability.sked__Type__c != skedConstants.UNAVAILABILITY_TYPE_PTO) {
-                List<String> autoApprovePermissionSets = new List<String>{'sked_Global_Admin', 'sked_APS', 'sked_APS_Admin', 'sked_APS_Manager', 'sked_APS_Planner'};
+        List<String> autoApprovePermissionSets = new List<String>{'sked_Global_Admin', 'sked_APS', 'sked_APS_Admin', 'sked_APS_Manager', 'sked_APS_Planner'};
+        if (skedTriggerUtils.hasAnyPermissionSetAssignment(autoApprovePermissionSets)) {
+            Set<Id> resourceIds = new Set<Id>();
+            for (sked__Availability__c availability : availabilities) {
+                resourceIds.add(availability.sked__Resource__c);
+            }
 
-                if (skedTriggerUtils.hasAnyPermissionSetAssignment(autoApprovePermissionSets)) {
-                    availability.sked__Status__c = skedConstants.AVAILABILITY_STATUS_APPROVED;
-                    availability.sked_Custom_Status__c = skedConstants.AVAILABILITY_STATUS_APPROVED;
+            Map<Id, sked__Resource__c> mapResource = new Map<Id, sked__Resource__c>([
+                SELECT Id, sked__Primary_Region__r.sked_Biomed_Collection_Op_Center__r.sked_Auto_Approval_Cutoff_Days__c
+                FROM sked__Resource__c
+                WHERE Id IN :resourceIds
+            ]);
+            
+            for (sked__Availability__c availability : availabilities) {
+                Boolean requiresIntegration = availability.sked_Integrate_With_Workday__c;
+                if (!availability.sked__Is_Available__c) {
+                    sked__Resource__c skedResource = mapResource.get(availability.sked__Resource__c);
+                    if (canBeAutoApproved(availability, skedResource, System.today())) {
+                        availability.sked__Status__c = requiresIntegration ? skedConstants.AVAILABILITY_STATUS_PENDING : skedConstants.AVAILABILITY_STATUS_APPROVED;
+                        availability.sked_Custom_Status__c = requiresIntegration ? skedConstants.AVAILABILITY_STATUS_PROCESSING_APPROVAL : skedConstants.AVAILABILITY_STATUS_APPROVED;
+                    }
                 }
             }
         }
+    }
+
+    private boolean canBeAutoApproved(sked__Availability__c availability, sked__Resource__c resource, Date currentDate) {
+        Set<string> excludedTypes = new Set<String>{skedConstants.UNAVAILABILITY_TYPE_PTO, skedConstants.UNAVAILABILITY_TYPE_FLOATING_HOLIDAY, skedConstants.UNAVAILABILITY_TYPE_PERSONAL, skedConstants.UNAVAILABILITY_TYPE_SICK};
+        Set<String> typesrequiresCutOffDays = new Set<String>{skedConstants.UNAVAILABILITY_TYPE_BEREAVEMENT};
+        Set<String> bypassedTypes = new Set<String>{skedConstants.UNAVAILABILITY_TYPE_UNAVAILABLE};
+
+        Date startDate = skedDateTimeUtils.getDate(availability.sked__Start__c, availability.sked__Timezone__c);
+
+        Boolean autoApprovalRule1 = !typesrequiresCutOffDays.contains(availability.sked__Type__c) && !excludedTypes.contains(availability.sked__Type__c);
+        Boolean autoApprovalRule2 = typesrequiresCutOffDays.contains(availability.sked__Type__c) && !skedStaffingBudgetUtils.isWithinCOAutoApprovalCutOffDays(resource, currentDate, startDate);
+        Boolean autoApprovalRule3 = bypassedTypes.contains(availability.sked__Type__c);
+        return autoApprovalRule1 || autoApprovalRule2 || autoApprovalRule3;
     }
 
     private void populateStaffingBudgetAvailabilities(List<sked__Availability__c> newRecords) {
@@ -254,7 +432,7 @@ public class skedAvailabilityHandler extends skedTriggerHub implements Callable 
                     if (!staffingBudgetWrappersForDate.isEmpty()) {
                         for (skedStaffingBudgetWrapper staffingBudgetWrapper : staffingBudgetWrappersForDate) {
                             List<String> staffingBudgetRoles = staffingBudgetWrapper.staffingBudget.sked_Roles__c.split(';');
-                            if (staffingBudgetWrapper.collectionOpId == wrapper.resource.sked__Primary_Region__r.sked_Biomed_Collection_Op_Center__c) {
+                            if (staffingBudgetWrapper.collectionOpById.keySet().contains(wrapper.resource.sked__Primary_Region__r.sked_Biomed_Collection_Op_Center__c)) {
                                 if (staffingBudgetRoles.contains(wrapper.role)) {
                                     hasMatchingStaffingBudgetSlot = true;
                                     staffingBudgetAvailabilities.add(new sked_Staffing_Budget_Availability__c(
@@ -262,7 +440,10 @@ public class skedAvailabilityHandler extends skedTriggerHub implements Callable 
                                         sked_Staffing_Budget__c = staffingBudgetWrapper.staffingBudget.Id,
                                         sked_Availability_Status__c = wrapper.unavailability.sked_Custom_Status__c
                                     ));
-                                    staffingBudgetWrapper.approvedSlots++;
+
+                                    if (wrapper.unavailability.sked_Custom_Status__c == skedConstants.AVAILABILITY_STATUS_APPROVED) {
+                                        staffingBudgetWrapper.approvedSlots++;
+                                    }
                                     
                                     if (wrapper.unavailability.sked_Custom_Status__c == skedConstants.AVAILABILITY_STATUS_APPROVED && staffingBudgetWrapper.availableSlots < 0) {
                                         wrapper.unavailability.addError(skedConstants.AVAILABILITY_STAFFING_BUDGET_NO_CAPACITY);
@@ -310,6 +491,8 @@ public class skedAvailabilityHandler extends skedTriggerHub implements Callable 
         for (sked__Availability__c newRecord : newRecords) {
         	skedTriggerUtils.maintainDateTimeField(newRecord, 'sked__Finish__c', 'sked_Finish_Date__c', 'sked_Finish_Time__c', 'sked__Timezone__c');
             skedTriggerUtils.maintainDateTimeField(newRecord, 'sked__Start__c', 'sked_Start_Date__c', 'sked_Start_Time__c', 'sked__Timezone__c');
+            skedTriggerUtils.maintainDateTimeField(newRecord, 'sked_DateTime_of_Call_Out__c', 'sked_Date_of_Call_Out__c', 'sked_Time_of_Call_Out__c', 'sked__Timezone__c');
+            skedTriggerUtils.maintainDateTimeField(newRecord, 'sked_DateTime_Call_Out_Received__c', 'sked_Date_Call_Out_Received__c', 'sked_Time_Call_Out_Received__c', 'sked__Timezone__c');
         }
     }
     
@@ -318,6 +501,8 @@ public class skedAvailabilityHandler extends skedTriggerHub implements Callable 
             sked__Availability__c oldData = oldMap.get(newRecord.Id);
         	skedTriggerUtils.maintainDateTimeField(newRecord, oldData, 'sked__Finish__c', 'sked_Finish_Date__c', 'sked_Finish_Time__c', 'sked__Timezone__c');
             skedTriggerUtils.maintainDateTimeField(newRecord, oldData, 'sked__Start__c', 'sked_Start_Date__c', 'sked_Start_Time__c', 'sked__Timezone__c');
+            skedTriggerUtils.maintainDateTimeField(newRecord, oldData, 'sked_DateTime_of_Call_Out__c', 'sked_Date_of_Call_Out__c', 'sked_Time_of_Call_Out__c', 'sked__Timezone__c');
+            skedTriggerUtils.maintainDateTimeField(newRecord, oldData, 'sked_DateTime_Call_Out_Received__c', 'sked_Date_Call_Out_Received__c', 'sked_Time_Call_Out_Received__c', 'sked__Timezone__c');
         }
     }
     
@@ -352,6 +537,37 @@ public class skedAvailabilityHandler extends skedTriggerHub implements Callable 
     private void removeExceptionLogs(Map<Id, sked__Availability__c> oldMap) {
         skedExceptionLogService service = (skedExceptionLogService)skedServiceFactory.instance.resolve('skedHC__Exception__c');
         service.removeExceptionLogs(oldMap.keySet());
+    }
+
+    private void sendCancelledApprovedTimeOffNotification(List<sked__Availability__c> newRecords, Map<Id, sked__Availability__c> oldMap) {
+        Set<Id> resourceIds = new Set<Id>();
+        for (sked__Availability__c newRecord : newRecords) {
+            resourceIds.add(newRecord.sked__Resource__c);
+        }
+
+        Map<Id, sked__Resource__c> mapResource = new Map<Id, sked__Resource__c>([
+            SELECT Id, sked__Primary_Region__r.sked_Biomed_Collection_Op_Center__r.sked_Auto_Approval_Cutoff_Days__c
+            FROM sked__Resource__c
+            WHERE Id IN :resourceIds
+        ]);
+
+        List<sked__Availability__c> cancelledApprovedTimeOffs = new List<sked__Availability__c>();
+
+        for (sked__Availability__c newRecord : newRecords) {
+            sked__Availability__c oldData = oldMap.get(newRecord.Id);
+            sked__Resource__c skedResource = mapResource.get(newRecord.sked__Resource__c);
+            Date startDate = skedDateTimeUtils.getDate(newRecord.sked__Start__c, newRecord.sked__Timezone__c);
+            Date cancelDate = System.today();
+
+            if (newRecord.sked__Status__c == skedConstants.AVAILABILITY_STATUS_DECLINED && oldData.sked__Status__c == skedConstants.AVAILABILITY_STATUS_APPROVED
+                && newRecord.sked__Is_Available__c == FALSE && skedStaffingBudgetUtils.isWithinCOAutoApprovalCutOffDays(skedResource, cancelDate, startDate)) {
+                cancelledApprovedTimeOffs.add(newRecord);
+            }
+        }
+
+        if (!cancelledApprovedTimeOffs.isEmpty()) {
+            new skedCustomNotificationService(new List<string> {'sked_Cancel_ATO_In_Auto_Approval_CutOff'}).generateNotifications(cancelledApprovedTimeOffs);
+        }
     }
 
     /**************************************** RESOURCE HOURS RECORD ********************************************/
@@ -437,7 +653,7 @@ public class skedAvailabilityHandler extends skedTriggerHub implements Callable 
         for (sked__Availability__c newRecord : newRecords) {
             if (newRecord.sked__Is_Available__c == FALSE && !ignoreRecordIds.contains(newRecord.Id)) {
                 sked__Availability__c oldRecord = oldMap.get(newRecord.Id);
-                if ((newRecord.sked_Custom_Status__c == skedConstants.AVAILABILITY_STATUS_APPROVED && newRecord.sked_Custom_Status__c != oldRecord.sked_Custom_Status__c)
+                if ((skedConstants.AVAILABILITY_APPROVED_STATUSES.contains(newRecord.sked_Custom_Status__c) && newRecord.sked_Custom_Status__c != oldRecord.sked_Custom_Status__c)
                    || oldRecord.sked__Start__c != newRecord.sked__Start__c || oldRecord.sked__Finish__c != newRecord.sked__Finish__c) {
                     string workWeekday = mapRecord_WorkWeekday.get(newRecord.Id);
                     Date oldEventDate = skedDateTimeUtils.getDate(oldRecord.sked__Start__c, oldRecord.sked__Timezone__c);
@@ -652,7 +868,7 @@ public class skedAvailabilityHandler extends skedTriggerHub implements Callable 
         ]);
     }
 
-    private static Decimal getResourceHoursRecordDuration(sked__Resource__c resource, sked__Availability__c availability) {
+    public static Decimal getResourceHoursRecordDuration(sked__Resource__c resource, sked__Availability__c availability) {
         Decimal duration = 0.00;
         if (!availability.sked__Is_Available__c && availability.sked_Is_All_Day__c) {
             duration = resource.sked_Daily_Time_Off_Hours__c * 60;
@@ -662,117 +878,7 @@ public class skedAvailabilityHandler extends skedTriggerHub implements Callable 
 
         return duration;
     }
-
-    /*********************************************************** Workday Sync ***********************************************************/
-    private Set<Id> getApprovedRecordIds(List<sked__Availability__c> records) {
-        Set<Id> approvedRecordIds = new Set<Id>();
-        Set<string> unavailabilityTypesToSync = getUnavailabilityTypesToSync();
-        
-        for (sked__Availability__c record : records) {
-            if (!unavailabilityTypesToSync.contains(record.sked__Type__c)) {
-                if (record.sked_Custom_Status__c == skedConstants.AVAILABILITY_STATUS_APPROVED) {
-                    approvedRecordIds.add(record.Id);
-                }
-            }
-        }
-
-        return approvedRecordIds;
-    }
-
-
-    private Set<Id> getApprovedRecordIds(List<sked__Availability__c> newRecords, Map<Id, sked__Availability__c> oldRecordsMap) {
-        Set<Id> approvedRecordIds = new Set<Id>();
-        Set<string> unavailabilityTypesToSync = getUnavailabilityTypesToSync();
-        for (sked__Availability__c newRecord : newRecords) {
-            sked__Availability__c oldData = oldRecordsMap.get(newRecord.Id);
-            if (!unavailabilityTypesToSync.contains(newRecord.sked__Type__c)) {
-                if (oldData.sked_Custom_Status__c != newRecord.sked_Custom_Status__c && newRecord.sked_Custom_Status__c == skedConstants.AVAILABILITY_STATUS_APPROVED) {
-                    approvedRecordIds.add(newRecord.Id);
-                }
-            }
-        }
-
-        return approvedRecordIds;
-    }
     
-    private Set<string> getUnavailabilityTypesToSync() {
-        Set<string> unavailabilityTypesToSync = new Set<String>();
-        unavailabilityTypesToSync.add('Floating Holiday');
-        unavailabilityTypesToSync.add('PTO');
-        unavailabilityTypesToSync.add('Sick');
-        return unavailabilityTypesToSync;
-    }
-
-    private static void doWorkdaySync(Set<Id> recordIds) {
-        if (!recordIds.isEmpty()) {
-            List<sked__Availability__c> records = [
-                SELECT Id, sked_Start_Date__c, sked_Finish_Date__c, sked__Notes__c,
-                    sked__Resource__c, sked__Is_Available__c, sked_Is_All_Day__c, sked_Duration__c,
-                    sked__Type__c
-                FROM sked__Availability__c
-                WHERE Id IN :recordIds
-            ];
-
-            Map<Id, sked__Resource__c> resourcesById = getResourceMapFromAvailabilities(records);
-            for (sked__Availability__c record : records) {
-                sked__Resource__c availabilityResource = resourcesById.get(record.sked__Resource__c);
-                skedWorkdayApiManager.processTimeOffRequest ptoReq = new skedWorkdayApiManager.processTimeOffRequest();
-                ptoReq.employeeId = resourcesById.get(record.sked__Resource__c).sked_Employee_ID__c;
-                ptoReq.comment = record.sked__Notes__c;
-                ptoReq.ptoDate = record.sked_Start_Date__c;
-                ptoReq.hoursRequested = String.valueOf(getResourceHoursRecordDuration(availabilityResource, record));
-                ptoReq.ptoEntryId = record.Id;
-                ptoReq.ptoReason = getWorkdayPtoReason(record);
-                
-                if (!Test.isRunningTest()) {
-                    skedWorkdayApiManager.processTimeOffResponse response = skedWorkdayApiManager.processTimeOffApproval(ptoReq);
-                    
-                    if (!response.isSuccess) {
-                        record.sked_Custom_Status__c = skedConstants.AVAILABILITY_STATUS_PENDING;
-                        record.sked_Workday_Sync_Status__c = skedConstants.AVAILABILITY_WD_SYNC_STATUS_FAILED;
-                        record.sked_Workday_Sync_Message__c = response.faultString;
-                    } else {
-                        record.sked_Workday_Sync_Status__c = skedConstants.AVAILABILITY_WD_SYNC_STATUS_SUCCESS;
-                    }
-                }
-            }
-
-            skedHubBase.BypassUpdateTriggers = true;
-            update records;
-            skedHubBase.BypassUpdateTriggers = false;
-        }
-    }
-
-    private static String getWorkdayPtoReason(sked__Availability__c record) {
-        String ptoReason = skedConstants.WD_PTO_UNPLANNED;
-
-        if (record.sked__Type__c == skedConstants.UNAVAILABILITY_TYPE_FLOATING_HOLIDAY || 
-            record.sked__Type__c == skedConstants.UNAVAILABILITY_TYPE_PTO
-        ) {
-            ptoReason = skedConstants.WD_PTO_PLANNED;
-        }
-
-        return ptoReason;
-    }
-
-    public static Object call(String methodName, Map<String, Object> params) {
-        skedProcessEventResult result = new skedProcessEventResult();
-        try {
-            switch on methodName {
-                when 'doWorkdaySync' {
-                    doWorkdaySync((Set<Id>) JSON.deserialize((String) params.get('param1'), Set<Id>.class));
-
-                }
-                when else {
-                    throw new skedException('Unable to locate Method: ' + methodName + ' in Class: ' + skedAvailabilityHandler.class.getName());
-                }
-            }
-        } catch (skedException ex) {
-            result.addError(ex);
-        }
-
-        return result;
-    }
     
     /*********************************************************** Nested classes ***********************************************************/
     private class unavailabilityWrapper {

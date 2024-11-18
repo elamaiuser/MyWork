@@ -12,19 +12,14 @@
     <columns>sked_Drive_Owner__c</columns>
     <filterScope>Everything</filterScope>
     <filters>
-        <field>sked_Drive_Date__c</field>
-        <operation>greaterThan</operation>
-        <value>1/20/2024</value>
-    </filters>
-    <filters>
-        <field>sked_Drive_Date__c</field>
-        <operation>lessThan</operation>
-        <value>1/22/2024</value>
-    </filters>
-    <filters>
-        <field>sked_Cancellation_Reason__c</field>
+        <field>sked_Status__c</field>
         <operation>equals</operation>
-        <value>Weather/Natural Disaster</value>
+        <value>Cancel</value>
+    </filters>
+    <filters>
+        <field>sked_Cancellation_Date__c</field>
+        <operation>equals</operation>
+        <value>7/24/2024</value>
     </filters>
     <label>All DOC_Cancelled</label>
 </ListView>

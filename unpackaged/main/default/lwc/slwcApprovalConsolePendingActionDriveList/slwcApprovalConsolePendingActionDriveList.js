@@ -166,8 +166,7 @@ export default class SlwcApprovalConsolePendingActionDriveList extends Lightning
   checkToAllowRequestDRDFeedback(loginUser, record, canApproveReject) {
     const driveHelper = new DriveHelper();
     const isAPSUser = driveHelper.isAPSUser(loginUser);
-    this.allowRequestDRDFeedback = canApproveReject && isAPSUser 
-      && (record.approvalStatus === DRIVE_APPROVAL_STATUS.WAITING_FOR_APS_APPROVAL || record.approvalStatus === DRIVE_APPROVAL_STATUS.WAITING_FOR_DM_APPROVAL);
+    this.allowRequestDRDFeedback = canApproveReject && (record.approvalStatus === DRIVE_APPROVAL_STATUS.WAITING_FOR_APS_APPROVAL || record.approvalStatus === DRIVE_APPROVAL_STATUS.WAITING_FOR_DM_APPROVAL);
   }
 
   fetchData() {
@@ -187,6 +186,8 @@ export default class SlwcApprovalConsolePendingActionDriveList extends Lightning
     query.offset = (this.records || []).length;
     query.orderBy = this.sortOption.sortField || this.sortOption.fieldName;
     query.orderAscending = this.sortOption.sortDirection;
+    query.accountManagerPortfolioIds = (this.filters.accountManagerPortfolios || []).map(item => { return item.id });
+    query.districtManagerPortfolioIds = (this.filters.districtManagerPortfolios || []).map(item => { return item.id });
 
     let service = new driveService();
 
@@ -334,16 +335,22 @@ export default class SlwcApprovalConsolePendingActionDriveList extends Lightning
       onClose: (result) => {
         this.closeConfirmModal();
         if (result) {
+          let newApprovalStatus = null;
+          if(this.requestDetailModalData.record.approvalStatus === DRIVE_APPROVAL_STATUS.WAITING_FOR_DM_APPROVAL) {
+            newApprovalStatus = DRIVE_APPROVAL_STATUS.DM_WAITING_FOR_DRD_FEEDBACK;
+          } else if(this.requestDetailModalData.record.approvalStatus === DRIVE_APPROVAL_STATUS.WAITING_FOR_APS_APPROVAL) {
+            newApprovalStatus = DRIVE_APPROVAL_STATUS.APS_WAITING_FOR_DRD_FEEDBACK;
+          }
           let service = new driveService();
           this.showDetailsSpinner = true;
           service.save({ 
             id: this.requestDetailModalData.record.id, 
-            approvalStatus: DRIVE_APPROVAL_STATUS.WAITING_FOR_DRD_FEEDBACK
+            approvalStatus: newApprovalStatus
            })
           .then((result) => {
             if(!result.success) throw result;
             this.closeConfirmModal();
-            this.requestDetailModalData.record.approvalStatus = DRIVE_APPROVAL_STATUS.WAITING_FOR_DRD_FEEDBACK;
+            this.requestDetailModalData.record.approvalStatus = newApprovalStatus;
           })
           .catch((error) => {
             this.exceptionHandler(error);

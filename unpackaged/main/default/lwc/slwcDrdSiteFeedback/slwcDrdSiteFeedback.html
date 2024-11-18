@@ -1,3 +1,4 @@
 <template>
-    <c-slwc-site-feedback display-mode="page" access-mode="drd"></c-slwc-site-feedback>
+    <lightning-button variant="neutral" label="Role Time Variance Feedback" onclick={handleOpenModal}></lightning-button>
+    <c-slwc-site-feedback is-open={modalData.isOpen} site-id={recordId} access-mode="drd" onclose={handleCloseModal}></c-slwc-site-feedback>
 </template>

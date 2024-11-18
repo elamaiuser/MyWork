@@ -523,10 +523,10 @@
             <fieldInstance>
                 <fieldInstanceProperties>
                     <name>uiBehavior</name>
-                    <value>readonly</value>
+                    <value>none</value>
                 </fieldInstanceProperties>
-                <fieldItem>Record.sked_Chapter__c</fieldItem>
-                <identifier>Recordsked_Chapter_cField2</identifier>
+                <fieldItem>Record.Chapter__c</fieldItem>
+                <identifier>RecordChapter_cField</identifier>
             </fieldInstance>
         </itemInstances>
         <itemInstances>
@@ -670,6 +670,10 @@
                     <value>Facet-2a4c4f0f-9459-4984-947f-0a42de47d0e6</value>
                 </componentInstanceProperties>
                 <componentInstanceProperties>
+                    <name>horizontalAlignment</name>
+                    <value>false</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
                     <name>label</name>
                     <value>General</value>
                 </componentInstanceProperties>
@@ -682,6 +686,10 @@
                 <componentInstanceProperties>
                     <name>columns</name>
                     <value>Facet-f760064c-f185-4b3e-8813-05282712cfec</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>horizontalAlignment</name>
+                    <value>false</value>
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>label</name>
@@ -698,6 +706,10 @@
                     <value>Facet-3759876f-0ff9-4b4c-a5eb-7abea0756cc4</value>
                 </componentInstanceProperties>
                 <componentInstanceProperties>
+                    <name>horizontalAlignment</name>
+                    <value>false</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
                     <name>label</name>
                     <value>Site Characteristics</value>
                 </componentInstanceProperties>
@@ -710,6 +722,10 @@
                 <componentInstanceProperties>
                     <name>columns</name>
                     <value>Facet-46a83781-d442-4377-a782-314ed989ee36</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>horizontalAlignment</name>
+                    <value>false</value>
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>label</name>
@@ -726,6 +742,10 @@
                     <value>Facet-88d9a512-5dad-4755-90e4-3f6885399d7e</value>
                 </componentInstanceProperties>
                 <componentInstanceProperties>
+                    <name>horizontalAlignment</name>
+                    <value>false</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
                     <name>label</name>
                     <value>Parking and Unloading</value>
                 </componentInstanceProperties>
@@ -738,6 +758,10 @@
                 <componentInstanceProperties>
                     <name>columns</name>
                     <value>Facet-708f0226-96d4-4d4f-8623-239d7235bca6</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>horizontalAlignment</name>
+                    <value>false</value>
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>label</name>
@@ -754,6 +778,10 @@
                     <value>Facet-3gjmpr9oo44</value>
                 </componentInstanceProperties>
                 <componentInstanceProperties>
+                    <name>horizontalAlignment</name>
+                    <value>false</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
                     <name>label</name>
                     <value>Red Cross Information</value>
                 </componentInstanceProperties>
@@ -766,6 +794,10 @@
                 <componentInstanceProperties>
                     <name>columns</name>
                     <value>Facet-c5d953c6-f29a-435a-8c9b-4436ccfcbbe8</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>horizontalAlignment</name>
+                    <value>false</value>
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>label</name>
@@ -1731,10 +1763,10 @@
             <fieldInstance>
                 <fieldInstanceProperties>
                     <name>uiBehavior</name>
-                    <value>readonly</value>
+                    <value>none</value>
                 </fieldInstanceProperties>
-                <fieldItem>Record.sked_Chapter__c</fieldItem>
-                <identifier>Recordsked_Chapter_cField</identifier>
+                <fieldItem>Record.Chapter__c</fieldItem>
+                <identifier>RecordChapter_cField2</identifier>
             </fieldInstance>
         </itemInstances>
         <name>Facet-2dfbead6-a726-4a84-acb4-7a09b29dee89</name>
@@ -1878,6 +1910,10 @@
                     <value>Facet-0cc2fa9e-223b-4fd9-a0ff-f65e6faa6b0b</value>
                 </componentInstanceProperties>
                 <componentInstanceProperties>
+                    <name>horizontalAlignment</name>
+                    <value>false</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
                     <name>label</name>
                     <value>General</value>
                 </componentInstanceProperties>
@@ -1890,6 +1926,10 @@
                 <componentInstanceProperties>
                     <name>columns</name>
                     <value>Facet-8dee39ef-f7ac-46a6-a3e6-bc341ff9135d</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>horizontalAlignment</name>
+                    <value>false</value>
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>label</name>
@@ -1906,6 +1946,10 @@
                     <value>Facet-5268bd91-662e-4fc3-ba1e-dd65748b745f</value>
                 </componentInstanceProperties>
                 <componentInstanceProperties>
+                    <name>horizontalAlignment</name>
+                    <value>false</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
                     <name>label</name>
                     <value>Site Availability</value>
                 </componentInstanceProperties>
@@ -1918,6 +1962,10 @@
                 <componentInstanceProperties>
                     <name>columns</name>
                     <value>Facet-e5c8b837-49d6-41ce-a6c8-a29426f9ff9e</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>horizontalAlignment</name>
+                    <value>false</value>
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>label</name>
@@ -1934,6 +1982,10 @@
                     <value>Facet-3886d78c-95c5-439c-a7c8-2653ba503d04</value>
                 </componentInstanceProperties>
                 <componentInstanceProperties>
+                    <name>horizontalAlignment</name>
+                    <value>false</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
                     <name>label</name>
                     <value>Site Characteristics</value>
                 </componentInstanceProperties>
@@ -1946,6 +1998,10 @@
                 <componentInstanceProperties>
                     <name>columns</name>
                     <value>Facet-5fabc392-f160-40d2-a6e7-0f0b3425359b</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>horizontalAlignment</name>
+                    <value>false</value>
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>label</name>
@@ -1962,6 +2018,10 @@
                     <value>Facet-60c71eca-9016-4b89-bdc2-c4c6489a189e</value>
                 </componentInstanceProperties>
                 <componentInstanceProperties>
+                    <name>horizontalAlignment</name>
+                    <value>false</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
                     <name>label</name>
                     <value>Parking and Unloading</value>
                 </componentInstanceProperties>
@@ -1974,6 +2034,10 @@
                 <componentInstanceProperties>
                     <name>columns</name>
                     <value>Facet-095fd3b4-c771-4e1a-a439-c24696ed37a8</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>horizontalAlignment</name>
+                    <value>false</value>
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>label</name>
@@ -1990,6 +2054,10 @@
                     <value>Facet-f804a715-ebd3-4791-832a-0a7943bcf026</value>
                 </componentInstanceProperties>
                 <componentInstanceProperties>
+                    <name>horizontalAlignment</name>
+                    <value>false</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
                     <name>label</name>
                     <value>Red Cross Information</value>
                 </componentInstanceProperties>
@@ -2002,6 +2070,10 @@
                 <componentInstanceProperties>
                     <name>columns</name>
                     <value>Facet-de3f5bc3-9ff0-4979-8b4b-a6f3bd33fa7a</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>horizontalAlignment</name>
+                    <value>false</value>
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>label</name>

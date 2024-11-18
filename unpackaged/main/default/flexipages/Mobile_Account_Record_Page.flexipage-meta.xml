@@ -79,6 +79,9 @@
                         <valueListItems>
                             <value>Account.sked_Check_for_Impacted_Drives</value>
                         </valueListItems>
+                        <valueListItems>
+                            <value>Account.Update_Sponsor_Keyword</value>
+                        </valueListItems>
                     </valueList>
                 </componentInstanceProperties>
                 <componentInstanceProperties>
@@ -196,10 +199,28 @@
                             <value>Drive_Date__c|GREATER_THAN|TODAY</value>
                         </valueListItems>
                         <valueListItems>
-                            <value>Drive_Status__c|NOT_EQUAL|[&quot;System Generated&quot;,&quot;Hold&quot;,&quot;Pending Action&quot;,&quot;Tentative&quot;,&quot;Confirmed&quot;,&quot;Complete&quot;,&quot;Cancel&quot;]</value>
+                            <value>DriveStatus__c|NOT_EQUAL|System Generated</value>
                         </valueListItems>
                         <valueListItems>
-                            <value>DriveStatus__c|NOT_EQUAL|System Generated, Hold, Pending Action,Confirmed, Complete, Cancel, Tentative</value>
+                            <value>DriveStatus__c|NOT_EQUAL|Hold</value>
+                        </valueListItems>
+                        <valueListItems>
+                            <value>DriveStatus__c|NOT_EQUAL|Pending Action</value>
+                        </valueListItems>
+                        <valueListItems>
+                            <value>DriveStatus__c|NOT_EQUAL|Tentative</value>
+                        </valueListItems>
+                        <valueListItems>
+                            <value>DriveStatus__c|NOT_EQUAL|Confirmed</value>
+                        </valueListItems>
+                        <valueListItems>
+                            <value>DriveStatus__c|NOT_EQUAL|Complete</value>
+                        </valueListItems>
+                        <valueListItems>
+                            <value>DriveStatus__c|NOT_EQUAL|Cancel</value>
+                        </valueListItems>
+                        <valueListItems>
+                            <value>OPPORTUNITY.STAGE_NAME|NOT_CONTAIN|[&quot;Cancelled&quot;]</value>
                         </valueListItems>
                     </valueList>
                 </componentInstanceProperties>
@@ -226,10 +247,10 @@
                             <value>OPPORTUNITY.NAME</value>
                         </valueListItems>
                         <valueListItems>
-                            <value>Day_of_Week__c</value>
+                            <value>Drive_Date__c</value>
                         </valueListItems>
                         <valueListItems>
-                            <value>Drive_Date__c</value>
+                            <value>Day_of_Week__c</value>
                         </valueListItems>
                         <valueListItems>
                             <value>OPPORTUNITY.STAGE_NAME</value>
@@ -285,11 +306,11 @@
             <componentInstance>
                 <componentInstanceProperties>
                     <name>ColumnName</name>
-                    <value>Drive Name, Day of Week, Drive Date,  Stage Name, Drive Status</value>
+                    <value>Drive Name, Drive Date,   Stage Name, Drive Status</value>
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>SOQLQuery</name>
-                    <value>Select Name, Day_of_Week__c, Drive_Date__c,  StageName, DriveStatus__c,Flow_Start_Time_Label_Text__c,Flow_End_Time_Label_Text__c,Total_Projected_Procedures__c,Total_Products_Projected__c,Parent_Template_Id__c from opportunity  where Is_Template__c=false and (DriveStatus__c =null OR DriveStatus__c=&#39;Draft&#39;) and Drive_Date__c&gt;=today and AccountId IN:</value>
+                    <value>Select Name, Drive_Date__c,  StageName, DriveStatus__c,Flow_Start_Time_Label_Text__c,Flow_End_Time_Label_Text__c,Total_Projected_Procedures__c,Total_Products_Projected__c,Parent_Template_Id__c from opportunity  where Is_Template__c=false and (Drive_Status__c =null OR Drive_Status__c=&#39;Draft&#39;) and Drive_Date__c&gt;=today and AccountId IN:</value>
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>dateFormatType</name>
@@ -344,10 +365,19 @@
                             <value>OPPORTUNITY.STAGE_NAME|NOT_EQUAL|[&quot;Cancelled&quot;]</value>
                         </valueListItems>
                         <valueListItems>
-                            <value>Drive_Status__c|NOT_EQUAL|[&quot;Draft&quot;,&quot;Pending Action&quot;,&quot;Complete&quot;,&quot;Cancel&quot;]</value>
+                            <value>DriveStatus__c|NOT_EQUAL|Draft</value>
                         </valueListItems>
                         <valueListItems>
-                            <value>DriveStatus__c|NOT_EQUAL|Draft, Pending Action, Complete, Cancel</value>
+                            <value>DriveStatus__c|NOT_EQUAL|Pending Action</value>
+                        </valueListItems>
+                        <valueListItems>
+                            <value>DriveStatus__c|NOT_EQUAL|Complete</value>
+                        </valueListItems>
+                        <valueListItems>
+                            <value>DriveStatus__c|NOT_EQUAL|Cancel</value>
+                        </valueListItems>
+                        <valueListItems>
+                            <value>DriveStatus__c|NOT_EQUAL|</value>
                         </valueListItems>
                     </valueList>
                 </componentInstanceProperties>
@@ -374,10 +404,10 @@
                             <value>OPPORTUNITY.NAME</value>
                         </valueListItems>
                         <valueListItems>
-                            <value>Day_of_Week__c</value>
+                            <value>Drive_Date__c</value>
                         </valueListItems>
                         <valueListItems>
-                            <value>Drive_Date__c</value>
+                            <value>Day_of_Week__c</value>
                         </valueListItems>
                         <valueListItems>
                             <value>OPPORTUNITY.STAGE_NAME</value>
@@ -433,11 +463,11 @@
             <componentInstance>
                 <componentInstanceProperties>
                     <name>ColumnName</name>
-                    <value>Drive Name, Day of Week, Drive Date, Stage, Drive Status,</value>
+                    <value>Drive Name, Drive Date,  Stage, Drive Status</value>
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>SOQLQuery</name>
-                    <value>select Name, Day_of_Week__c, Drive_Date__c,  StageName, DriveStatus__c from opportunity where Is_Template__c=false and Drive_Date__c&gt;=today and  StageName != &#39;Cancelled&#39; AND  DriveStatus__c in (&#39;Hold&#39;,&#39;System Generated&#39;,&#39;Tentative&#39;,&#39;Confirmed&#39;)  and AccountId IN:</value>
+                    <value>select Name, Drive_Date__c,  StageName, DriveStatus__c from opportunity where Is_Template__c=false and Drive_Date__c&gt;=today and  StageName != &#39;Cancelled&#39; AND  Drive_Status__c in (&#39;Hold&#39;,&#39;System Generated&#39;,&#39;Tentative&#39;,&#39;Confirmed&#39;)  and AccountId IN:</value>
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>dateFormatType</name>
@@ -510,10 +540,25 @@
                             <value>OPPORTUNITY.NAME</value>
                         </valueListItems>
                         <valueListItems>
+                            <value>Drive_Date__c</value>
+                        </valueListItems>
+                        <valueListItems>
                             <value>Day_of_Week__c</value>
                         </valueListItems>
                         <valueListItems>
-                            <value>Drive_Date__c</value>
+                            <value>OPPORTUNITY.STAGE_NAME</value>
+                        </valueListItems>
+                        <valueListItems>
+                            <value>Flow_Start_Time_Field__c</value>
+                        </valueListItems>
+                        <valueListItems>
+                            <value>End_Time__c</value>
+                        </valueListItems>
+                        <valueListItems>
+                            <value>Total_Projected_Procedures__c</value>
+                        </valueListItems>
+                        <valueListItems>
+                            <value>Total_Products_Projected__c</value>
                         </valueListItems>
                         <valueListItems>
                             <value>Parent_Template_Id__c</value>
@@ -551,11 +596,11 @@
             <componentInstance>
                 <componentInstanceProperties>
                     <name>ColumnName</name>
-                    <value>Drive Name, Day of Week, Drive Date</value>
+                    <value>Drive Name, Drive Date,  Stage, Drive Status</value>
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>SOQLQuery</name>
-                    <value>select Name,Day_of_Week__c, Drive_Date__c, DriveStatus__c  from opportunity where DriveStatus__c=&#39;Complete&#39; AND AccountId IN:</value>
+                    <value>select Name,Drive_Date__c,   StageName, DriveStatus__c  from opportunity where Drive_Status__c=&#39;Complete&#39; AND AccountId IN:</value>
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>dateFormatType</name>
@@ -601,7 +646,7 @@
                     <name>adminFilters</name>
                     <valueList>
                         <valueListItems>
-                            <value>DriveStatus__c|EQUALS|Cancel</value>
+                            <value>OPPORTUNITY.STAGE_NAME|EQUALS|[&quot;Cancelled&quot;]</value>
                         </valueListItems>
                     </valueList>
                 </componentInstanceProperties>
@@ -628,10 +673,28 @@
                             <value>OPPORTUNITY.NAME</value>
                         </valueListItems>
                         <valueListItems>
+                            <value>Drive_Date__c</value>
+                        </valueListItems>
+                        <valueListItems>
                             <value>Day_of_Week__c</value>
                         </valueListItems>
                         <valueListItems>
-                            <value>Drive_Date__c</value>
+                            <value>OPPORTUNITY.STAGE_NAME</value>
+                        </valueListItems>
+                        <valueListItems>
+                            <value>Flow_Start_Time_Field__c</value>
+                        </valueListItems>
+                        <valueListItems>
+                            <value>End_Time__c</value>
+                        </valueListItems>
+                        <valueListItems>
+                            <value>Total_Projected_Procedures__c</value>
+                        </valueListItems>
+                        <valueListItems>
+                            <value>Total_Products_Projected__c</value>
+                        </valueListItems>
+                        <valueListItems>
+                            <value>Parent_Template_Id__c</value>
                         </valueListItems>
                     </valueList>
                 </componentInstanceProperties>
@@ -666,11 +729,11 @@
             <componentInstance>
                 <componentInstanceProperties>
                     <name>ColumnName</name>
-                    <value>Blood Drive Opportunity Name, Day of Week, Drive Date</value>
+                    <value>Blood Drive Opportunity Name, Drive Date,Stage Name, Drive Status</value>
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>SOQLQuery</name>
-                    <value>select Name, Day_of_Week__c, Drive_Date__c, DriveStatus__c from Opportunity where DriveStatus_C= &#39;Cancelled&#39; AND AccountId IN:</value>
+                    <value>select Name, Drive_Date__c,StageName, DriveStatus__c from Opportunity where StageName= &#39;Cancelled&#39; AND AccountId IN:</value>
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>dateFormatType</name>

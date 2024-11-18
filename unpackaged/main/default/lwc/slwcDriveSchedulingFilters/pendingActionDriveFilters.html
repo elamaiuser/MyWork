@@ -45,6 +45,30 @@
                                 default-values={filters.approvalStatuses}>
                             </c-slwc-multi-picklist>
                         </div>
+                        <div class="slds-form-element slds-form-element_stacked">
+                            <c-slwc-multi-lookup
+                                name="accountManagerPortfolios"
+                                label="Account Manager Portfolio"
+                                display-subline-field="description"
+                                selection={filters.accountManagerPortfolios}
+                                is-custom-search 
+                                custom-search-func={handleSearchBsfPortfolioOnDrive}
+                                onselectionchange={handleOnChange}
+                                placeholder="Search Account Manager Portfolio">
+                            </c-slwc-multi-lookup> 
+                        </div>
+                        <div class="slds-form-element slds-form-element_stacked">
+                            <c-slwc-multi-lookup
+                                name="districtManagerPortfolios"
+                                label="District Manager Portfolio"
+                                display-subline-field="description"
+                                selection={filters.districtManagerPortfolios}
+                                is-custom-search 
+                                custom-search-func={handleSearchBsfPortfolioOnDrive}
+                                onselectionchange={handleOnChange}
+                                placeholder="Search District Manager Portfolio">
+                            </c-slwc-multi-lookup> 
+                        </div>
                         <div class="slds-form-element slds-form-element_stacked slds-m-top_medium slds-text-align_right">
                             <lightning-button label="Save" title="Save" variant="brand" onclick={handleSearch}></lightning-button>
                         </div>

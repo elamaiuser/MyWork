@@ -7,3 +7,7 @@
 .slds-is-selected.slds-is-additional .slds-day {
     background: #59b66e;
 }
+
+.slds-dropdown_center { 
+    transform: translateX(-50%);
+}

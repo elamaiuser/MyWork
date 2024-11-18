@@ -28,14 +28,23 @@
     <columns>
         <field>sked__Location__c.sked_National_Name__c</field>
     </columns>
+    <columns>
+        <field>CUST_CREATED_DATE</field>
+    </columns>
+    <columns>
+        <field>CUST_CREATED_NAME</field>
+    </columns>
+    <columns>
+        <field>sked__Location__c.sked_Timezone__c</field>
+    </columns>
+    <columns>
+        <field>sked__Location__c.sked_Automation_Suitability__c</field>
+    </columns>
+    <columns>
+        <aggregateTypes>Sum</aggregateTypes>
+        <field>sked__Location__c.sked_Max_Auto_Machines__c</field>
+    </columns>
     <filter>
-        <criteriaItems>
-            <column>FK_NAME</column>
-            <columnToColumn>false</columnToColumn>
-            <isUnlocked>true</isUnlocked>
-            <operator>notEqual</operator>
-            <value></value>
-        </criteriaItems>
         <criteriaItems>
             <column>sked__Location__c.ARC_Region__c</column>
             <columnToColumn>false</columnToColumn>
@@ -49,6 +58,13 @@
             <isUnlocked>true</isUnlocked>
             <operator>equals</operator>
             <value>1</value>
+        </criteriaItems>
+        <criteriaItems>
+            <column>sked__Location__c.Division__c</column>
+            <columnToColumn>false</columnToColumn>
+            <isUnlocked>true</isUnlocked>
+            <operator>equals</operator>
+            <value></value>
         </criteriaItems>
         <language>en_US</language>
     </filter>

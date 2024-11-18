@@ -90,7 +90,9 @@
                                 hide-checkbox-column={hideCheckboxColumn}
                                 selected-rows={selectedDriveIds}
                                 onrowselection={handleRowSelection}
-                                wrap-text-max-lines="3">
+                                wrap-text-max-lines="3"
+                                onsave={handleSave}
+                                draft-values={draftValues}>
                             </c-slwc-custom-datatable>
                         </div>
                         <div class="slds-shrink-none slds-grow-none slds-p-horizontal_small slds-p-vertical_small slds-border_top modal-content__footer">

@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObjectTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+    <caseValues>
+        <plural>false</plural>
+        <value>Site</value>
+    </caseValues>
+    <caseValues>
+        <plural>true</plural>
+        <value>Sites</value>
+    </caseValues>
+    <layouts>
+        <layout>Collections Management Profile Site Layout</layout>
+        <sections>
+            <label><!-- Custom Links --></label>
+            <section>Custom Links</section>
+        </sections>
+        <sections>
+            <label><!-- General --></label>
+            <section>General</section>
+        </sections>
+        <sections>
+            <label><!-- Parking and  Unloading --></label>
+            <section>Parking and  Unloading</section>
+        </sections>
+        <sections>
+            <label><!-- Security --></label>
+            <section>Security</section>
+        </sections>
+        <sections>
+            <label><!-- Site Address --></label>
+            <section>Site Address</section>
+        </sections>
+        <sections>
+            <label><!-- Site Characteristics --></label>
+            <section>Site Characteristics</section>
+        </sections>
+    </layouts>
+    <layouts>
+        <layout>DRD Profiles Site Layout</layout>
+        <sections>
+            <label><!-- Address &amp; Contact --></label>
+            <section>Address &amp; Contact</section>
+        </sections>
+        <sections>
+            <label><!-- Custom Links --></label>
+            <section>Custom Links</section>
+        </sections>
+        <sections>
+            <label><!-- Directions and Unloading --></label>
+            <section>Directions and Unloading</section>
+        </sections>
+        <sections>
+            <label><!-- General --></label>
+            <section>General</section>
+        </sections>
+        <sections>
+            <label><!-- Parking Detail --></label>
+            <section>Parking Detail</section>
+        </sections>
+        <sections>
+            <label><!-- Red Cross Information --></label>
+            <section>Red Cross Information</section>
+        </sections>
+        <sections>
+            <label><!-- Security --></label>
+            <section>Security</section>
+        </sections>
+        <sections>
+            <label><!-- Site Availability --></label>
+            <section>Site Availability</section>
+        </sections>
+        <sections>
+            <label><!-- Site Characteristics --></label>
+            <section>Site Characteristics</section>
+        </sections>
+        <sections>
+            <label><!-- Site Verification --></label>
+            <section>Site Verification</section>
+        </sections>
+    </layouts>
+    <layouts>
+        <layout>Fixed Site Layout</layout>
+        <sections>
+            <label><!-- Address --></label>
+            <section>Address</section>
+        </sections>
+        <sections>
+            <label><!-- Custom Links --></label>
+            <section>Custom Links</section>
+        </sections>
+        <sections>
+            <label><!-- Directions and Direction Detail --></label>
+            <section>Directions and Direction Detail</section>
+        </sections>
+        <sections>
+            <label><!-- Directions and Sharing --></label>
+            <section>Directions and Sharing</section>
+        </sections>
+        <sections>
+            <label><!-- General --></label>
+            <section>General</section>
+        </sections>
+        <sections>
+            <label><!-- Last Inspection --></label>
+            <section>Last Inspection</section>
+        </sections>
+        <sections>
+            <label><!-- Red Cross Information --></label>
+            <section>Red Cross Information</section>
+        </sections>
+        <sections>
+            <label><!-- Security --></label>
+            <section>Security</section>
+        </sections>
+        <sections>
+            <label><!-- Site Availability --></label>
+            <section>Site Availability</section>
+        </sections>
+        <sections>
+            <label><!-- Site Characteristics --></label>
+            <section>Site Characteristics</section>
+        </sections>
+    </layouts>
+    <layouts>
+        <layout>Mobile Site Layout</layout>
+        <sections>
+            <label><!-- Address --></label>
+            <section>Address</section>
+        </sections>
+        <sections>
+            <label><!-- Custom Links --></label>
+            <section>Custom Links</section>
+        </sections>
+        <sections>
+            <label><!-- Directions and Direction Detail --></label>
+            <section>Directions and Direction Detail</section>
+        </sections>
+        <sections>
+            <label><!-- Directions and Sharing --></label>
+            <section>Directions and Sharing</section>
+        </sections>
+        <sections>
+            <label><!-- General --></label>
+            <section>General</section>
+        </sections>
+        <sections>
+            <label><!-- Last Inspection --></label>
+            <section>Last Inspection</section>
+        </sections>
+        <sections>
+            <label><!-- Red Cross Information --></label>
+            <section>Red Cross Information</section>
+        </sections>
+        <sections>
+            <label><!-- Security --></label>
+            <section>Security</section>
+        </sections>
+        <sections>
+            <label><!-- Site Availability --></label>
+            <section>Site Availability</section>
+        </sections>
+        <sections>
+            <label><!-- Site Characteristics --></label>
+            <section>Site Characteristics</section>
+        </sections>
+    </layouts>
+    <quickActions>
+        <label><!-- Complete National Name Review --></label>
+        <name>Review_Complete</name>
+    </quickActions>
+    <startsWith>Consonant</startsWith>
+</CustomObjectTranslation>

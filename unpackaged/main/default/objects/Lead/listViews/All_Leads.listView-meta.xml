@@ -9,8 +9,8 @@
     <columns>LEAD.CITY</columns>
     <columns>LEAD.ZIP</columns>
     <columns>Rating_Visual__c</columns>
+    <columns>Lead_Stage_Status__c</columns>
     <columns>Comments__c</columns>
-    <columns>Lead_AM_Porfolio__c</columns>
     <columns>Lead_Region_Name__c</columns>
     <columns>Lead_Collection_Operation__c</columns>
     <columns>LEAD.CREATED_DATE</columns>

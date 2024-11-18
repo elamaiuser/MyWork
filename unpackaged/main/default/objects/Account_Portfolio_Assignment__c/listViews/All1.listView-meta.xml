@@ -7,15 +7,5 @@
     <columns>BSF_Portfolio__c</columns>
     <columns>CREATED_DATE</columns>
     <filterScope>Everything</filterScope>
-    <filters>
-        <field>Account__c</field>
-        <operation>contains</operation>
-        <value>YMCA</value>
-    </filters>
-    <filters>
-        <field>BSF_Portfolio__c</field>
-        <operation>contains</operation>
-        <value>MA East</value>
-    </filters>
     <label>All</label>
 </ListView>

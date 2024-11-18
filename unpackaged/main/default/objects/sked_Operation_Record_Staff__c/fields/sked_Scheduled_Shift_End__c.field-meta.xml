@@ -4,7 +4,7 @@
     <externalId>false</externalId>
     <formula>sked_Job_Allocation__r.sked__End1__c</formula>
     <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
-    <label>Scheduled Shift End</label>
+    <label>Scheduled Shift End (Deprecated)</label>
     <required>false</required>
     <trackHistory>false</trackHistory>
     <trackTrending>false</trackTrending>

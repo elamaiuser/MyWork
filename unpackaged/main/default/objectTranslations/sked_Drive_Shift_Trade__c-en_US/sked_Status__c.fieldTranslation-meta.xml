@@ -15,12 +15,20 @@
             <translation><!-- Denied --></translation>
         </picklistValues>
         <picklistValues>
+            <masterLabel>Expired</masterLabel>
+            <translation><!-- Expired --></translation>
+        </picklistValues>
+        <picklistValues>
             <masterLabel>Pending Approval</masterLabel>
             <translation><!-- Pending Approval --></translation>
         </picklistValues>
         <picklistValues>
             <masterLabel>Submitted</masterLabel>
             <translation><!-- Submitted --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Waiting for Requesting Staff Acknowledge</masterLabel>
+            <translation><!-- Waiting for Requesting Staff Acknowledge --></translation>
         </picklistValues>
         <picklistValues>
             <masterLabel>Waiting for Trading Staff Acknowledge</masterLabel>

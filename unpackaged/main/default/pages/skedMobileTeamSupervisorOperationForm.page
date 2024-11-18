@@ -48,7 +48,9 @@
         <script>
         $Lightning.use("c:skedMobileTeamSupervisorOperationForm", function () {
             $Lightning.createComponent("c:slwcMobileTeamSupervisorOperationRecord",
-                                       {},
+                                       {
+                                        fullScreen: true
+                                       },
                                        "lightning",
                                        function (cmp) {
                                            console.log("component was created");

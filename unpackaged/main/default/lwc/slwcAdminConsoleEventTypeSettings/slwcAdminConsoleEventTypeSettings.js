@@ -104,12 +104,6 @@ const SETTINGS_TABLE_COLUMNS = {
     class: 'slds-cell-wrap show-legend__col',
     inputType: SETTINGS_INPUT_TYPE.CHECKBOX_TOGGLE
   },
-  CAN_BE_PREDATED: {
-    id: 'canBePreDated',
-    label: 'Can Be Pre-Dated',
-    class: 'slds-cell-wrap can-be-pre-dated__col',
-    inputType: SETTINGS_INPUT_TYPE.CHECKBOX_TOGGLE
-  },
   IS_ACTIVE: {
     id: 'isActive',
     label: 'Is Active',

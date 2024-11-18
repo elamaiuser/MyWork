@@ -1,31 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Report xmlns="http://soap.sforce.com/2006/04/metadata">
-    <chart>
-        <backgroundColor1>#FFFFFF</backgroundColor1>
-        <backgroundColor2>#FFFFFF</backgroundColor2>
-        <backgroundFadeDir>Diagonal</backgroundFadeDir>
-        <chartSummaries>
-            <axisBinding>y</axisBinding>
-            <column>RowCount</column>
-        </chartSummaries>
-        <chartType>HorizontalBarStacked</chartType>
-        <enableHoverLabels>false</enableHoverLabels>
-        <expandOthers>true</expandOthers>
-        <groupingColumn>Lead.Region_Name__c</groupingColumn>
-        <legendPosition>Right</legendPosition>
-        <location>CHART_BOTTOM</location>
-        <secondaryGroupingColumn>STATUS</secondaryGroupingColumn>
-        <showAxisLabels>false</showAxisLabels>
-        <showPercentage>false</showPercentage>
-        <showTotal>false</showTotal>
-        <showValues>false</showValues>
-        <size>Medium</size>
-        <summaryAxisRange>Auto</summaryAxisRange>
-        <textColor>#000000</textColor>
-        <textSize>12</textSize>
-        <titleColor>#000000</titleColor>
-        <titleSize>18</titleSize>
-    </chart>
     <columns>
         <field>FIRST_NAME</field>
     </columns>
@@ -51,10 +25,7 @@
         <field>RATING</field>
     </columns>
     <columns>
-        <field>OWNER</field>
-    </columns>
-    <columns>
-        <field>FK_NAME</field>
+        <field>FK_$Chapter__c.Region_Name__c</field>
     </columns>
     <filter>
         <criteriaItems>
@@ -62,19 +33,14 @@
             <columnToColumn>false</columnToColumn>
             <isUnlocked>true</isUnlocked>
             <operator>equals</operator>
-            <value>,New,Contacted,Qualified,Potential Feeder Group,Unqualified,Converted,Feeder Group - Qualified,Feeder Group - Unqualified,Active Feeder Group</value>
+            <value>New</value>
         </criteriaItems>
         <language>en_US</language>
     </filter>
-    <format>Matrix</format>
-    <groupingsAcross>
-        <dateGranularity>Day</dateGranularity>
-        <field>STATUS</field>
-        <sortOrder>Asc</sortOrder>
-    </groupingsAcross>
+    <format>Summary</format>
     <groupingsDown>
         <dateGranularity>Day</dateGranularity>
-        <field>Lead.Region_Name__c</field>
+        <field>OWNER</field>
         <sortOrder>Asc</sortOrder>
     </groupingsDown>
     <name>Leads by Region and Status</name>

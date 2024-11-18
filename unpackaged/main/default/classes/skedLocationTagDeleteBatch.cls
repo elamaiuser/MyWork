@@ -33,15 +33,63 @@ global class skedLocationTagDeleteBatch implements Database.Batchable<sked_Locat
             Set<Id> affectedJobIds = new Set<Id>();
             Set<Id> affectedDriveShiftIds = new Set<Id>();
             List<SObject> recordsToDelete = new List<SObject>();
+            List<SObject> recordsToUpdate = new List<SObject>();
 
             List<sked_Drive_Shift_Tag__c> potentialDriveShiftTagsToDelete = [
-                SELECT Id, sked_Drive_Shift__c, sked_Drive_Shift__r.sked_Drive_Site__c, sked_Tag__c
+                SELECT Id, sked_Drive_Shift__c, sked_Drive_Shift__r.sked_Drive_Site__c, sked_Tag__c, sked_Drive_Shift__r.sked_Drive_Account__c
                 FROM sked_Drive_Shift_Tag__c
                 WHERE sked_Tag__c IN :allDeletedTagIds
                 AND sked_Drive_Shift__r.sked_Drive_Site__c IN :deletedTagsByLocation.keySet()
                 AND sked_Drive_Shift__r.sked_Drive__r.sked_Status__c != :skedConstants.JOB_STATUS_CANCELLED
                 AND sked_Drive_Shift__r.sked_Drive__r.sked_Status__c != :skedConstants.JOB_STATUS_COMPLETE
             ];
+
+            Set<Id> accountIds = new Set<Id>();
+            for (sked_Drive_Shift_Tag__c driveShiftTag : potentialDriveShiftTagsToDelete) {
+                accountIds.add(driveShiftTag.sked_Drive_Shift__r.sked_Drive_Account__c);
+            }
+
+            Map<Id, Account> accountById = new Map<Id, Account>([
+                SELECT Id, 
+                (SELECT Id, sked__Tag__c, sked_Minimum_Quantity__c FROM sked__Account_Tags__r WHERE sked__Required__c = FALSE)
+                FROM Account
+                WHERE Id IN :accountIds
+            ]);
+
+            List<sked_Drive_Shift_Tag__c> affectedDriveShiftTags = new List<sked_Drive_Shift_Tag__c>();
+            for (sked_Location_Tag__c deletedTag : siteTags) {
+                sked_Drive_Shift_Tag__c relatedDriveShiftTag;
+                for (sked_Drive_Shift_Tag__c driveShiftTag : potentialDriveShiftTagsToDelete) {
+                    if (driveShiftTag.sked_Drive_Shift__r.sked_Drive_Site__c == deletedTag.sked_Location__c && 
+                        driveShiftTag.sked_Tag__c == deletedTag.sked_Tag__c) {
+                            affectedDriveShiftTags.add(driveShiftTag);
+                    }
+                }
+            }
+
+            if (!affectedDriveShiftTags.isEmpty()) {
+                for (sked_Drive_Shift_Tag__c driveShiftTag : affectedDriveShiftTags) {
+                    sked__Account_Tag__c relatedAccountTag;
+                    Account account = accountById.get(driveShiftTag.sked_Drive_Shift__r.sked_Drive_Account__c);
+                    if (account != null && account.sked__Account_Tags__r != null) {
+                        for (sked__Account_Tag__c accountTag : account.sked__Account_Tags__r) {
+                            if (accountTag.sked__Tag__c == driveShiftTag.sked_Tag__c) {
+                                relatedAccountTag = accountTag;
+                                break;
+                            }
+                        }
+                    }
+    
+                    if (relatedAccountTag == null) {
+                        recordsToDelete.add(driveShiftTag);
+                    } else {
+                        driveShiftTag.sked_Minimum_Quantity__c = relatedAccountTag.sked_Minimum_Quantity__c;
+                        recordsToUpdate.add(driveShiftTag);
+                    }
+    
+                    this.driveShiftIds.add(driveShiftTag.sked_Drive_Shift__c);
+                }
+            }
 
             for (sked_Drive_Shift_Tag__c driveShiftTag : potentialDriveShiftTagsToDelete) {
                 Set<Id> deletableTagIdsForLocation = deletedTagsByLocation.get(driveShiftTag.sked_Drive_Shift__r.sked_Drive_Site__c);

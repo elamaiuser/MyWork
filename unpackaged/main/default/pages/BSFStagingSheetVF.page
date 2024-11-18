@@ -1,0 +1,738 @@
+<apex:page controller="BSFStagingSheetController" renderAs="{!renderAs}" showHeader="false" sidebar="false" applyHtmlTag="false" applyBodyTag="false">
+    <html>
+        <head>
+            <style>
+                @page{
+                    size: A4 portrait;
+                    margin: 0.25in 0.25in 0.25in 0.25in;
+                }
+            </style>
+        </head>
+        <body>
+            <apex:form rendered="{!showAllButtons}">
+                <div style="{!IF(showAllButtons, 'display:block', 'display:none')}"  align="center" draggable="false" >
+                    <apex:commandlink rendered="{!showBackToSearchButton}" action="{!OpenSearchPanel}">
+                        <apex:commandButton rendered="{!showBackToSearchButton}" value="Back to Search"/>
+                    </apex:commandLink>
+                    <apex:commandlink action="{!downloadPdf}">
+                        <apex:commandButton value="Download PDF"/>
+                    </apex:commandLink>
+                    <br/><br/><br/>
+                </div>
+            </apex:form> 
+            <apex:repeat value="{!wrapper}" var="data" >
+                <table border="n" style="width:100%;border-collapse: collapse;" class="fixed">
+                    <tr>
+                        <td style="word-wrap: break-word  !important;width:50%;font-size:12px !important;vertical-align: top;" colspan="8">
+                            <b>Drive ID:</b> {!data.driveufid}
+                        </td>
+                        <td style="word-wrap: break-word  !important;width:25%;font-size:12px !important;vertical-align: top;" colspan="4">
+                            &nbsp;
+                        </td>
+                        <td style="word-wrap: break-word  !important;width:25%;font-size:12px !important;vertical-align: top;" colspan="4">
+                            <b>Staging Sheet</b>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="word-wrap: break-word  !important;width:50%;font-size:12px !important;vertical-align: top;" colspan="8">
+                            <b>Mobile:</b> {!data.vehicles}
+                        </td>
+                        <td style="word-wrap: break-word  !important;width:25%;font-size:12px !important;vertical-align: top;" colspan="4">
+                            <b>Day:</b> {!data.dayofweek}
+                        </td>
+                        <td style="word-wrap: break-word  !important;width:25%;font-size:12px !important;vertical-align: top;" colspan="4">
+                            <b>Date:</b> {!data.drivedate}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="word-wrap: break-word  !important;width:50%;font-size:12px !important;vertical-align: top;" colspan="8">
+                            <b>Location / Site (City):</b> {!data.locationname}
+                        </td>
+                        <td style="word-wrap: break-word  !important;width:25%;font-size:12px !important;vertical-align: top;" colspan="4">
+                            &nbsp;
+                        </td>
+                        <td style="word-wrap: break-word  !important;width:25%;font-size:12px !important;vertical-align: top;" colspan="4">
+                            <b>Wireless Policy:</b> {!data.wirelesspolicy}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="word-wrap: break-word  !important;width:50%;font-size:12px !important;vertical-align: top;" colspan="8">
+                            <b>Stairs Outside:</b> {!data.stairsoutside}
+                        </td>
+                        <td style="word-wrap: break-word  !important;width:25%;font-size:12px !important;vertical-align: top;" colspan="4">
+                            <b>Stairs Inside:</b> {!data.staresinside}
+                        </td>
+                        <td style="word-wrap: break-word  !important;width:25%;font-size:12px !important;vertical-align: top;" colspan="4">
+                            <b>Wired Kits:</b> {!data.wiredkits}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="word-wrap: break-word  !important;width:50%;font-size:12px !important;vertical-align: top;" colspan="8">
+                            <b>Op Hrs:</b> {!data.ophours}
+                        </td>
+                        <td style="word-wrap: break-word  !important;width:25%;font-size:12px !important;vertical-align: top;" colspan="4">
+                            <b>Driver:</b> {!data.driver}
+                        </td>
+                        <td style="word-wrap: break-word  !important;width:25%;font-size:12px !important;vertical-align: top;" colspan="4">
+                            <b>Shift Start Time:</b> {!data.shiftstarttime}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="word-wrap: break-word  !important;width:50%;font-size:12px !important;vertical-align: top;" colspan="8">
+                            <b>Type:</b> {!data.type}
+                        </td>
+                        <td style="word-wrap: break-word  !important;width:25%;font-size:12px !important;vertical-align: top;" colspan="4">
+                            <b>Auto Machines:</b> {!data.automachines}
+                        </td>
+                        <td style="word-wrap: break-word  !important;width:25%;font-size:12px !important;vertical-align: top;" colspan="4">
+                            <b>Drive Length:</b> {!data.drivelength}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="word-wrap: break-word  !important;width:6.25%;font-size:12px !important;vertical-align: top;" colspan="1">
+                            <b>Donor Capacity</b>
+                        </td>
+                        <td style="word-wrap: break-word  !important;width:6.25%;font-size:12px !important;vertical-align: top;" colspan="1">
+                            <b>WB Proj</b>
+                        </td>
+                        <td style="word-wrap: break-word  !important;width:6.25%;font-size:12px !important;vertical-align: top;" colspan="1">
+                            <b>DRC Proj</b>
+                        </td>
+                        <td style="word-wrap: break-word  !important;width:6.25%;font-size:12px !important;vertical-align: top;" colspan="1">
+                            <b>&#35; Shut</b>
+                        </td>
+                        <td style="word-wrap: break-word  !important;width:6.25%;font-size:12px !important;vertical-align: top;" colspan="1">
+                            <b>&#35; Veh</b>
+                        </td>
+                        <td style="word-wrap: break-word  !important;width:6.25%;font-size:12px !important;vertical-align: top;" colspan="1">
+                            <b>HS Drive?</b>
+                        </td>
+                        <td style="word-wrap: break-word  !important;width:12.5%;font-size:12px !important;vertical-align: top;" colspan="2">
+                            <b>Coll/Univ/JC Drive?</b>
+                        </td>
+                        <td style="word-wrap: break-word  !important;width:50%;font-size:12px !important;vertical-align: top;" colspan="8">
+                            <b>Type Bags</b>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="word-wrap: break-word  !important;width:6.25%;font-size:12px !important;vertical-align: top;text-align: center;" colspan="1">
+                            {!data.donorcapacity}
+                        </td>
+                        <td style="word-wrap: break-word  !important;width:6.25%;font-size:12px !important;vertical-align: top;text-align: center;" colspan="1">
+                            {!data.wbproj}
+                        </td>
+                        <td style="word-wrap: break-word  !important;width:6.25%;font-size:12px !important;vertical-align: top;text-align: center;" colspan="1">
+                            {!data.drcproj}
+                        </td>
+                        <td style="word-wrap: break-word  !important;width:6.25%;font-size:12px !important;vertical-align: top;text-align: center;" colspan="1">
+                            {!data.shut}
+                        </td>
+                        <td style="word-wrap: break-word  !important;width:6.25%;font-size:12px !important;vertical-align: top;text-align: center;" colspan="1">
+                            {!data.veh}
+                        </td>
+                        <td style="word-wrap: break-word  !important;width:6.25%;font-size:12px !important;vertical-align: top;text-align: center;" colspan="1">
+                            {!data.hsdrive}
+                        </td>
+                        <td style="word-wrap: break-word  !important;width:12.5%;font-size:12px !important;vertical-align: top;text-align: center;" colspan="2">
+                            {!data.collunivjcdrive}
+                        </td>
+                        <td style="word-wrap: break-word  !important;width:50%;font-size:12px !important;vertical-align: top;" colspan="8">
+                            {!data.typebags}
+                        </td>
+                    </tr>
+                </table>
+                <table style="width:100%;" class="fixed">
+                    <tr>
+                        <td style="word-wrap: break-word  !important;width:20%;font-size:14px !important;vertical-align: top;text-align: center;" colspan="1">
+                            <b>QTY</b>
+                        </td>
+                        <td style="word-wrap: break-word  !important;width:30%;font-size:14px !important;vertical-align: top;text-align: center;" colspan="1">
+                            &nbsp;
+                        </td>
+                        <td style="word-wrap: break-word  !important;width:30%;font-size:14px !important;vertical-align: top;text-align: left;" colspan="1">
+                            <b>Tote Type</b>
+                        </td>
+                        <td style="word-wrap: break-word  !important;width:20%;font-size:14px !important;vertical-align: top;text-align: center;" colspan="1">
+                            <b>Staged</b>
+                        </td>
+                    </tr>
+                </table>
+                <table border="n" style="width:100%;border-collapse: collapse;" class="fixed">
+                    <tr>
+                        <td style="word-wrap: break-word  !important;width:100%;font-size:14px !important;vertical-align: top;text-align: center;background-color:#D3D3D3;" colspan="9">
+                            <b>Supply Cart</b>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="word-wrap: break-word  !important;width:20%;font-size:12px !important;vertical-align: top;text-align: center;" colspan="3">
+                            {!data.snacktotes}
+                        </td>
+                        <td style="word-wrap: break-word  !important;width:30%;font-size:12px !important;vertical-align: top;text-align: center;" colspan="2">
+                            &nbsp;
+                        </td>
+                        <td style="word-wrap: break-word  !important;width:30%;font-size:12px !important;vertical-align: top;text-align: left;" colspan="3">
+                            Snack Totes
+                        </td>
+                        <td style="word-wrap: break-word  !important;width:20%;font-size:12px !important;vertical-align: toptext-align: center;" colspan="1">
+                            &nbsp;
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="word-wrap: break-word  !important;width:20%;font-size:12px !important;vertical-align: top;text-align: center;" colspan="3">
+                            {!data.glovetotes}
+                        </td>
+                        <td style="word-wrap: break-word  !important;width:30%;font-size:12px !important;vertical-align: top;text-align: center;" colspan="2">
+                            &nbsp;
+                        </td>
+                        <td style="word-wrap: break-word  !important;width:30%;font-size:12px !important;vertical-align: top;text-align: left;" colspan="3">
+                            Glove Totes
+                        </td>
+                        <td style="word-wrap: break-word  !important;width:20%;font-size:12px !important;vertical-align: toptext-align: center;" colspan="1">
+                            &nbsp;
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="word-wrap: break-word  !important;width:20%;font-size:12px !important;vertical-align: top;text-align: center;" colspan="3">
+                            {!data.supervisortotes}
+                        </td>
+                        <td style="word-wrap: break-word  !important;width:30%;font-size:12px !important;vertical-align: top;text-align: center;" colspan="2">
+                            &nbsp;
+                        </td>
+                        <td style="word-wrap: break-word  !important;width:30%;font-size:12px !important;vertical-align: top;text-align: left;" colspan="3">
+                            Supervisor Totes
+                        </td>
+                        <td style="word-wrap: break-word  !important;width:20%;font-size:12px !important;vertical-align: toptext-align: center;" colspan="1">
+                            &nbsp;
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="word-wrap: break-word  !important;width:20%;font-size:12px !important;vertical-align: top;text-align: center;" colspan="3">
+                            {!data.processingtote}
+                        </td>
+                        <td style="word-wrap: break-word  !important;width:30%;font-size:12px !important;vertical-align: top;text-align: center;" colspan="2">
+                            &nbsp;
+                        </td>
+                        <td style="word-wrap: break-word  !important;width:30%;font-size:12px !important;vertical-align: top;text-align: left;" colspan="3">
+                            Processing Tote
+                        </td>
+                        <td style="word-wrap: break-word  !important;width:20%;font-size:12px !important;vertical-align: toptext-align: center;" colspan="1">
+                            &nbsp;
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="word-wrap: break-word  !important;width:20%;font-size:12px !important;vertical-align: top;text-align: center;" colspan="3">
+                            {!data.vptotes}
+                        </td>
+                        <td style="word-wrap: break-word  !important;width:30%;font-size:12px !important;vertical-align: top;text-align: center;" colspan="2">
+                            &nbsp;
+                        </td>
+                        <td style="word-wrap: break-word  !important;width:30%;font-size:12px !important;vertical-align: top;text-align: left;" colspan="3">
+                            VP Totes
+                        </td>
+                        <td style="word-wrap: break-word  !important;width:20%;font-size:12px !important;vertical-align: toptext-align: center;" colspan="1">
+                            &nbsp;
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="word-wrap: break-word  !important;width:20%;font-size:12px !important;vertical-align: top;text-align: center;" colspan="3">
+                            {!data.hhtotes}
+                        </td>
+                        <td style="word-wrap: break-word  !important;width:30%;font-size:12px !important;vertical-align: top;text-align: center;" colspan="2">
+                            &nbsp;
+                        </td>
+                        <td style="word-wrap: break-word  !important;width:30%;font-size:12px !important;vertical-align: top;text-align: left;" colspan="3">
+                            HH Totes
+                        </td>
+                        <td style="word-wrap: break-word  !important;width:20%;font-size:12px !important;vertical-align: toptext-align: center;" colspan="1">
+                            &nbsp;
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="word-wrap: break-word  !important;width:20%;font-size:12px !important;vertical-align: top;text-align: center;" colspan="3">
+                            {!data.gallonsharpescontainers}
+                        </td>
+                        <td style="word-wrap: break-word  !important;width:30%;font-size:12px !important;vertical-align: top;text-align: center;" colspan="2">
+                            &nbsp;
+                        </td>
+                        <td style="word-wrap: break-word  !important;width:30%;font-size:12px !important;vertical-align: top;text-align: left;" colspan="3">
+                            2 Gallon Sharpes Containers
+                        </td>
+                        <td style="word-wrap: break-word  !important;width:20%;font-size:12px !important;vertical-align: toptext-align: center;" colspan="1">
+                            &nbsp;
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="word-wrap: break-word  !important;width:20%;font-size:12px !important;vertical-align: top;text-align: center;" colspan="3">
+                            {!data.waterbottles}
+                        </td>
+                        <td style="word-wrap: break-word  !important;width:30%;font-size:12px !important;vertical-align: top;text-align: center;" colspan="2">
+                            &nbsp;
+                        </td>
+                        <td style="word-wrap: break-word  !important;width:30%;font-size:12px !important;vertical-align: top;text-align: left;" colspan="3">
+                            Water Bottles (24/case)
+                        </td>
+                        <td style="word-wrap: break-word  !important;width:20%;font-size:12px !important;vertical-align: toptext-align: center;" colspan="1">
+                            &nbsp;
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="word-wrap: break-word  !important;width:20%;font-size:12px !important;vertical-align: top;text-align: center;" colspan="3">
+                            {!data.juice}
+                        </td>
+                        <td style="word-wrap: break-word  !important;width:30%;font-size:12px !important;vertical-align: top;text-align: center;" colspan="2">
+                            &nbsp;
+                        </td>
+                        <td style="word-wrap: break-word  !important;width:30%;font-size:12px !important;vertical-align: top;text-align: left;" colspan="3">
+                            Juice (48/case)
+                        </td>
+                        <td style="word-wrap: break-word  !important;width:20%;font-size:12px !important;vertical-align: toptext-align: center;" colspan="1">
+                            &nbsp;
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="word-wrap: break-word  !important;width:100%;font-size:14px !important;vertical-align: top;text-align: center;background-color:#D3D3D3;" colspan="9">
+                            <b>QC Tote, Blood Bag, 2RBC Fluid Cart</b>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="word-wrap: break-word  !important;width:20%;font-size:12px !important;vertical-align: top;text-align: center;" colspan="3">
+                            {!data.qctote1}
+                        </td>
+                        <td style="word-wrap: break-word  !important;width:30%;font-size:12px !important;vertical-align: top;text-align: center;" colspan="2">
+                            &nbsp;
+                        </td>
+                        <td style="word-wrap: break-word  !important;width:30%;font-size:12px !important;vertical-align: top;text-align: left;" colspan="3">
+                            QC Tote 1
+                        </td>
+                        <td style="word-wrap: break-word  !important;width:20%;font-size:12px !important;vertical-align: toptext-align: center;" colspan="1">
+                            &nbsp;
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="word-wrap: break-word  !important;width:20%;font-size:12px !important;vertical-align: top;text-align: center;" colspan="3">
+                            {!data.qctote2}
+                        </td>
+                        <td style="word-wrap: break-word  !important;width:30%;font-size:12px !important;vertical-align: top;text-align: center;" colspan="2">
+                            &nbsp;
+                        </td>
+                        <td style="word-wrap: break-word  !important;width:30%;font-size:12px !important;vertical-align: top;text-align: left;" colspan="3">
+                            QC Tote 2
+                        </td>
+                        <td style="word-wrap: break-word  !important;width:20%;font-size:12px !important;vertical-align: toptext-align: center;" colspan="1">
+                            &nbsp;
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="word-wrap: break-word  !important;width:20%;font-size:12px !important;vertical-align: top;text-align: center;" colspan="3">
+                            {!data.drctotes}
+                        </td>
+                        <td style="word-wrap: break-word  !important;width:30%;font-size:12px !important;vertical-align: top;text-align: center;" colspan="2">
+                            &nbsp;
+                        </td>
+                        <td style="word-wrap: break-word  !important;width:30%;font-size:12px !important;vertical-align: top;text-align: left;" colspan="3">
+                            DRC Totes
+                        </td>
+                        <td style="word-wrap: break-word  !important;width:20%;font-size:12px !important;vertical-align: toptext-align: center;" colspan="1">
+                            &nbsp;
+                        </td>
+                    </tr>
+                    <apex:repeat value="{!data.solutiontoteslist}" var="item" rendered="{!IF(data.moeregion == true, true, false)}">
+                        <tr>
+                            <td style="word-wrap: break-word  !important;width:20%;font-size:12px !important;vertical-align: top;text-align: center;" colspan="3">
+                                {!item.solutiontotes}
+                            </td>
+                            <td style="word-wrap: break-word  !important;width:30%;font-size:12px !important;vertical-align: top;text-align: center;" colspan="2">
+                                &nbsp;
+                            </td>
+                            <td style="word-wrap: break-word  !important;width:30%;font-size:12px !important;vertical-align: top;text-align: left;" colspan="3">
+                                Solution Totes
+                            </td>
+                            <td style="word-wrap: break-word  !important;width:20%;font-size:12px !important;vertical-align: toptext-align: center;" colspan="1">
+                                &nbsp;
+                            </td>
+                        </tr>
+                    </apex:repeat>
+                    <tr>
+                        <td style="word-wrap: break-word  !important;width:20%;font-size:12px !important;vertical-align: top;text-align: center;" colspan="3">
+                            {!data.drccollectionsetcase}
+                        </td>
+                        <td style="word-wrap: break-word  !important;width:30%;font-size:12px !important;vertical-align: top;text-align: center;" colspan="2">
+                            &nbsp;
+                        </td>
+                        <td style="word-wrap: break-word  !important;width:30%;font-size:12px !important;vertical-align: top;text-align: left;" colspan="3">
+                            DRC Collection Set Case
+                        </td>
+                        <td style="word-wrap: break-word  !important;width:20%;font-size:12px !important;vertical-align: toptext-align: center;" colspan="1">
+                            &nbsp;
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="word-wrap: break-word  !important;width:20%;font-size:12px !important;vertical-align: top;text-align: center;" colspan="3">
+                            {!data.bloodbags}
+                        </td>
+                        <td style="word-wrap: break-word  !important;width:30%;font-size:12px !important;vertical-align: top;text-align: center;" colspan="2">
+                            &nbsp;
+                        </td>
+                        <td style="word-wrap: break-word  !important;width:30%;font-size:12px !important;vertical-align: top;text-align: left;" colspan="3">
+                            Blood Bags (case)
+                        </td>
+                        <td style="word-wrap: break-word  !important;width:20%;font-size:12px !important;vertical-align: toptext-align: center;" colspan="1">
+                            &nbsp;
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="word-wrap: break-word  !important;width:30%;font-size:12px !important;vertical-align: top;text-align: center;background-color:#D3D3D3;" colspan="4">
+                            <b>Equipment Cart</b>
+                        </td>
+                        <td style="word-wrap: break-word  !important;width:20%;font-size:12px !important;vertical-align: top;text-align: center;background-color:#D3D3D3;" colspan="1">
+                            <b>Staged</b>
+                        </td>
+                        <td style="word-wrap: break-word  !important;width:30%;font-size:12px !important;vertical-align: top;text-align: center;background-color:#D3D3D3;" colspan="3">
+                            <b>e120 Transporter Cart</b>
+                        </td>
+                        <td style="word-wrap: break-word  !important;width:20%;font-size:12px !important;vertical-align: top;text-align: center;background-color:#D3D3D3;" colspan="1">
+                            <b>Staged</b>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="word-wrap: break-word  !important;width:15%;font-size:12px !important;vertical-align: top;text-align: center;" colspan="2">
+                            1 Per Truck
+                        </td>
+                        <td style="word-wrap: break-word  !important;width:15%;font-size:12px !important;vertical-align: top;text-align: left;" colspan="2">
+                            DIN Tote
+                        </td>
+                        <td style="word-wrap: break-word  !important;width:20%;font-size:12px !important;vertical-align: top;text-align: center;" colspan="1">
+                            &nbsp;
+                        </td>
+                        <td style="word-wrap: break-word  !important;width:7%;font-size:12px !important;vertical-align: top;text-align: center;" colspan="1">
+                            {!data.var_e120bx}
+                        </td>
+                        <td style="word-wrap: break-word  !important;width:13%;font-size:12px !important;vertical-align: top;text-align: left;" colspan="1">
+                            e120 Boxes
+                        </td>
+                        <td style="word-wrap: break-word  !important;width:10%;font-size:12px !important;vertical-align: top;text-align: center;" colspan="1">
+                            BX
+                        </td>
+                        <td style="word-wrap: break-word  !important;width:20%;font-size:12px !important;vertical-align: top;text-align: center;" colspan="1">
+                            &nbsp;
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="word-wrap: break-word  !important;width:15%;font-size:12px !important;vertical-align: top;text-align: center;" colspan="2">
+                            1 Per Truck
+                        </td>
+                        <td style="word-wrap: break-word  !important;width:15%;font-size:12px !important;vertical-align: top;text-align: left;" colspan="2">
+                            HH Equipment Tote
+                        </td>
+                        <td style="word-wrap: break-word  !important;width:20%;font-size:12px !important;vertical-align: top;text-align: center;" colspan="1">
+                            &nbsp;
+                        </td>
+                        <td style="word-wrap: break-word  !important;width:7%;font-size:12px !important;vertical-align: top;text-align: center;" colspan="1">
+                            <apex:outputPanel rendered="{!data.moeregion == true}">
+                                &nbsp;
+                            </apex:outputPanel>
+                            <apex:outputPanel rendered="{!data.moeregion == false}">
+                                &nbsp;-&nbsp;
+                            </apex:outputPanel>
+                        </td>
+                        <td style="word-wrap: break-word  !important;width:13%;font-size:12px !important;vertical-align: top;text-align: left;" colspan="1">
+                            <apex:outputPanel rendered="{!data.moeregion == true}">
+                                &nbsp;
+                            </apex:outputPanel>
+                            <apex:outputPanel rendered="{!data.moeregion == false}">
+                                e120 Boxes for Ice
+                            </apex:outputPanel>
+                        </td>
+                        <td style="word-wrap: break-word  !important;width:10%;font-size:12px !important;vertical-align: top;text-align: center;" colspan="1">
+                            <apex:outputPanel rendered="{!data.moeregion == true}">
+                                &nbsp;
+                            </apex:outputPanel>
+                            <apex:outputPanel rendered="{!data.moeregion == false}">
+                                Guidelines
+                            </apex:outputPanel>
+                        </td>
+                        <td style="word-wrap: break-word  !important;width:20%;font-size:12px !important;vertical-align: top;text-align: center;" colspan="1">
+                            &nbsp;
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="word-wrap: break-word  !important;width:15%;font-size:12px !important;vertical-align: top;text-align: center;" colspan="2">
+                            1 Per Truck
+                        </td>
+                        <td style="word-wrap: break-word  !important;width:15%;font-size:12px !important;vertical-align: top;text-align: left;" colspan="2">
+                            Electrical Tote
+                        </td>
+                        <td style="word-wrap: break-word  !important;width:20%;font-size:12px !important;vertical-align: top;text-align: center;" colspan="1">
+                            &nbsp;
+                        </td>
+                        <td style="word-wrap: break-word  !important;width:7%;font-size:12px !important;vertical-align: top;text-align: center;" colspan="1">
+                            {!data.var_9lbboi}
+                        </td>
+                        <td style="word-wrap: break-word  !important;width:13%;font-size:12px !important;vertical-align: top;text-align: left;" colspan="1">
+                            9 lb Bag of Ice
+                        </td>
+                        <td style="word-wrap: break-word  !important;width:10%;font-size:12px !important;vertical-align: top;text-align: center;" colspan="1">
+                            Bag
+                        </td>
+                        <td style="word-wrap: break-word  !important;width:20%;font-size:12px !important;vertical-align: top;text-align: center;" colspan="1">
+                            &nbsp;
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="word-wrap: break-word  !important;width:15%;font-size:12px !important;vertical-align: top;text-align: center;" colspan="2">
+                            - Per Guidelines
+                        </td>
+                        <td style="word-wrap: break-word  !important;width:15%;font-size:12px !important;vertical-align: top;text-align: left;" colspan="2">
+                            Reg Med Waste Cntr
+                        </td>
+                        <td style="word-wrap: break-word  !important;width:20%;font-size:12px !important;vertical-align: top;text-align: center;" colspan="1">
+                            &nbsp;
+                        </td>
+                        <td style="word-wrap: break-word  !important;width:7%;font-size:12px !important;vertical-align: top;text-align: center;" colspan="1">
+                            {!data.var_7lbboi}
+                        </td>
+                        <td style="word-wrap: break-word  !important;width:13%;font-size:12px !important;vertical-align: top;text-align: left;" colspan="1">
+                            7 lb Bag of Ice
+                        </td>
+                        <td style="word-wrap: break-word  !important;width:10%;font-size:12px !important;vertical-align: top;text-align: center;" colspan="1">
+                            Bag
+                        </td>
+                        <td style="word-wrap: break-word  !important;width:20%;font-size:12px !important;vertical-align: top;text-align: center;" colspan="1">
+                            &nbsp;
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="word-wrap: break-word  !important;width:15%;font-size:12px !important;vertical-align: top;text-align: center;" colspan="2">
+                            - Per Guidelines
+                        </td>
+                        <td style="word-wrap: break-word  !important;width:15%;font-size:12px !important;vertical-align: top;text-align: left;" colspan="2">
+                            Canteen Cooler
+                        </td>
+                        <td style="word-wrap: break-word  !important;width:20%;font-size:12px !important;vertical-align: top;text-align: center;" colspan="1">
+                            &nbsp;
+                        </td>
+                        <td style="word-wrap: break-word  !important;width:7%;font-size:12px !important;vertical-align: top;text-align: center;" colspan="1">
+                            {!data.var_2lbboi}
+                        </td>
+                        <td style="word-wrap: break-word  !important;width:13%;font-size:12px !important;vertical-align: top;text-align: left;" colspan="1">
+                            2 lb Bag of Ice
+                        </td>
+                        <td style="word-wrap: break-word  !important;width:10%;font-size:12px !important;vertical-align: top;text-align: center;" colspan="1">
+                            Bag
+                        </td>
+                        <td style="word-wrap: break-word  !important;width:20%;font-size:12px !important;vertical-align: top;text-align: center;" colspan="1">
+                            &nbsp;
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="word-wrap: break-word  !important;width:10%;font-size:12px !important;vertical-align: top;text-align: center;background-color:#D3D3D3;" colspan="1">
+                            <b>Special Region</b>
+                        </td>
+                        <td style="word-wrap: break-word  !important;width:20%;font-size:12px !important;vertical-align: top;text-align: center;background-color:#D3D3D3;" colspan="3">
+                            <b>eBDR Equipment (individual items)</b>
+                        </td>
+                        <td style="word-wrap: break-word  !important;width:20%;font-size:12px !important;vertical-align: top;text-align: center;background-color:#D3D3D3;" colspan="1">
+                            <b>Staged</b>
+                        </td>
+                        <td style="word-wrap: break-word  !important;width:7%;font-size:12px !important;vertical-align: top;text-align: center;" colspan="1">
+                            {!data.var_plb}
+                        </td>
+                        <td style="word-wrap: break-word  !important;width:13%;font-size:12px !important;vertical-align: top;text-align: left;" colspan="1">
+                            Payload Boxes
+                        </td>
+                        <td style="word-wrap: break-word  !important;width:10%;font-size:12px !important;vertical-align: top;text-align: center;" colspan="1">
+                            BX
+                        </td>
+                        <td style="word-wrap: break-word  !important;width:20%;font-size:12px !important;vertical-align: top;text-align: center;" colspan="1">
+                            &nbsp;
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="word-wrap: break-word  !important;width:10%;font-size:12px !important;vertical-align: top;text-align: center;" colspan="1">
+                            {!data.masters}
+                        </td>
+                        <td style="word-wrap: break-word  !important;width:20%;font-size:12px !important;vertical-align: top;text-align: left;" colspan="3">
+                            Masters
+                        </td>
+                        <td style="word-wrap: break-word  !important;width:20%;font-size:12px !important;vertical-align: top;text-align: center;" colspan="1">
+                            &nbsp;
+                        </td>
+                        <td style="word-wrap: break-word  !important;width:7%;font-size:12px !important;vertical-align: top;text-align: center;" colspan="1">
+                            {!data.var_tspboxes}
+                        </td>
+                        <td style="word-wrap: break-word  !important;width:13%;font-size:12px !important;vertical-align: top;text-align: left;" colspan="1">
+                            TSP Boxes
+                        </td>
+                        <td style="word-wrap: break-word  !important;width:10%;font-size:12px !important;vertical-align: top;text-align: center;" colspan="1">
+                            Guidelines
+                        </td>
+                        <td style="word-wrap: break-word  !important;width:20%;font-size:12px !important;vertical-align: top;text-align: center;" colspan="1">
+                            &nbsp;
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="word-wrap: break-word  !important;width:10%;font-size:12px !important;vertical-align: top;text-align: center;" colspan="1">
+                            {!data.clientcase}
+                        </td>
+                        <td style="word-wrap: break-word  !important;width:20%;font-size:12px !important;vertical-align: top;text-align: left;" colspan="3">
+                            Client Case
+                        </td>
+                        <td style="word-wrap: break-word  !important;width:20%;font-size:12px !important;vertical-align: top;text-align: center;" colspan="1">
+                            &nbsp;
+                        </td>
+                        <td style="word-wrap: break-word  !important;width:7%;font-size:12px !important;vertical-align: top;text-align: center;" colspan="1">
+                            {!data.var_tspinserts}
+                        </td>
+                        <td style="word-wrap: break-word  !important;width:13%;font-size:12px !important;vertical-align: top;text-align: left;" colspan="1">
+                            TSP Inserts
+                        </td>
+                        <td style="word-wrap: break-word  !important;width:10%;font-size:12px !important;vertical-align: top;text-align: center;" colspan="1">
+                            Guidelines
+                        </td>
+                        <td style="word-wrap: break-word  !important;width:20%;font-size:12px !important;vertical-align: top;text-align: center;" colspan="1">
+                            &nbsp;
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="word-wrap: break-word  !important;width:10%;font-size:12px !important;vertical-align: top;text-align: center;" colspan="1">
+                            {!data.duplexprinter}
+                        </td>
+                        <td style="word-wrap: break-word  !important;width:20%;font-size:12px !important;vertical-align: top;text-align: left;" colspan="3">
+                            Duplex Printer
+                        </td>
+                        <td style="word-wrap: break-word  !important;width:20%;font-size:12px !important;vertical-align: top;text-align: center;" colspan="1">
+                            &nbsp;
+                        </td>
+                        <td style="word-wrap: break-word  !important;width:30%;font-size:12px !important;vertical-align: top;text-align: center;background-color:#D3D3D3;" colspan="3">
+                            <b>Other Truck Inventory</b>
+                        </td>
+                        <td style="word-wrap: break-word  !important;width:20%;font-size:12px !important;vertical-align: top;text-align: center;background-color:#D3D3D3;" colspan="1">
+                            <b>Staged</b>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="word-wrap: break-word  !important;width:10%;font-size:12px !important;vertical-align: top;text-align: center;" colspan="1">
+                            {!data.phlebotomycase}
+                        </td>
+                        <td style="word-wrap: break-word  !important;width:20%;font-size:12px !important;vertical-align: top;text-align: left;" colspan="3">
+                            Phlebotomy Case
+                        </td>
+                        <td style="word-wrap: break-word  !important;width:20%;font-size:12px !important;vertical-align: top;text-align: center;" colspan="1">
+                            &nbsp;
+                        </td>
+                        <td style="word-wrap: break-word  !important;width:7%;font-size:12px !important;vertical-align: top;text-align: center;" colspan="1">
+                            1
+                        </td>
+                        <td style="word-wrap: break-word  !important;width:13%;font-size:12px !important;vertical-align: top;text-align: left;" colspan="1">
+                            Carpet/Floor Cover
+                        </td>
+                        <td style="word-wrap: break-word  !important;width:10%;font-size:12px !important;vertical-align: top;text-align: center;" colspan="1">
+                            Full Roll
+                        </td>
+                        <td style="word-wrap: break-word  !important;width:20%;font-size:12px !important;vertical-align: top;text-align: center;" colspan="1">
+                            &nbsp;
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="word-wrap: break-word  !important;width:10%;font-size:12px !important;vertical-align: top;text-align: center;" colspan="1">
+                            &nbsp;
+                        </td>
+                        <td style="word-wrap: break-word  !important;width:20%;font-size:12px !important;vertical-align: top;text-align: left;" colspan="3">
+                            Extra Masters
+                        </td>
+                        <td style="word-wrap: break-word  !important;width:20%;font-size:12px !important;vertical-align: top;text-align: center;" colspan="1">
+                            &nbsp;
+                        </td>
+                        <td style="word-wrap: break-word  !important;width:7%;font-size:12px !important;vertical-align: top;text-align: center;" colspan="1">
+                            1
+                        </td>
+                        <td style="word-wrap: break-word  !important;width:13%;font-size:12px !important;vertical-align: top;text-align: left;" colspan="1">
+                            Carpet/Floor Cover
+                        </td>
+                        <td style="word-wrap: break-word  !important;width:10%;font-size:12px !important;vertical-align: top;text-align: center;" colspan="1">
+                            Partial Roll
+                        </td>
+                        <td style="word-wrap: break-word  !important;width:20%;font-size:12px !important;vertical-align: top;text-align: center;" colspan="1">
+                            &nbsp;
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="word-wrap: break-word  !important;width:10%;font-size:12px !important;vertical-align: top;text-align: left;" colspan="5" rowspan="2">
+                            <b>Additional Drive Logistics: </b> {!data.addrivelog}
+                        </td>
+                        <td style="word-wrap: break-word  !important;width:7%;font-size:12px !important;vertical-align: top;text-align: center;" colspan="1" rowspan="1">
+                            &nbsp;
+                        </td>
+                        <td style="word-wrap: break-word  !important;width:13%;font-size:12px !important;vertical-align: top;text-align: left;" colspan="1" rowspan="1">
+                            Easel, Heavy Duty
+                        </td>
+                        <td style="word-wrap: break-word  !important;width:10%;font-size:12px !important;vertical-align: top;text-align: center;" colspan="1" rowspan="1">
+                            1 Per Drive
+                        </td>
+                        <td style="word-wrap: break-word  !important;width:20%;font-size:12px !important;vertical-align: top;text-align: center;" colspan="1" rowspan="1">
+                            &nbsp;
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="word-wrap: break-word  !important;width:7%;font-size:12px !important;vertical-align: top;text-align: center;" colspan="1" rowspan="1">
+                            &nbsp;-&nbsp;
+                        </td>
+                        <td style="word-wrap: break-word  !important;width:13%;font-size:12px !important;vertical-align: top;text-align: left;" colspan="1" rowspan="1">
+                            Fans
+                        </td>
+                        <td style="word-wrap: break-word  !important;width:10%;font-size:12px !important;vertical-align: top;text-align: center;" colspan="1" rowspan="1">
+                            Guidelines
+                        </td>
+                        <td style="word-wrap: break-word  !important;width:20%;font-size:12px !important;vertical-align: top;text-align: center;" colspan="1" rowspan="1">
+                            &nbsp;
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="word-wrap: break-word  !important;width:10%;font-size:12px !important;vertical-align: top;text-align: left;" colspan="5" rowspan="2">
+                            <b>Drive Logistics Other: </b> {!data.drivelogOthr}
+                        </td>
+                        <td style="word-wrap: break-word  !important;width:7%;font-size:12px !important;vertical-align: top;text-align: center;" colspan="1" rowspan="1">
+                            &nbsp;-&nbsp;
+                        </td>
+                        <td style="word-wrap: break-word  !important;width:13%;font-size:12px !important;vertical-align: top;text-align: left;" colspan="1" rowspan="1">
+                            Tables
+                        </td>
+                        <td style="word-wrap: break-word  !important;width:10%;font-size:12px !important;vertical-align: top;text-align: center;" colspan="1" rowspan="1">
+                            As Needed
+                        </td>
+                        <td style="word-wrap: break-word  !important;width:20%;font-size:12px !important;vertical-align: top;text-align: center;" colspan="1" rowspan="1">
+                            &nbsp;
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="word-wrap: break-word  !important;width:7%;font-size:12px !important;vertical-align: top;text-align: center;" colspan="1" rowspan="1">
+                            &nbsp;-&nbsp;
+                        </td>
+                        <td style="word-wrap: break-word  !important;width:13%;font-size:12px !important;vertical-align: top;text-align: left;" colspan="1" rowspan="1">
+                            HH Screens
+                        </td>
+                        <td style="word-wrap: break-word  !important;width:10%;font-size:12px !important;vertical-align: top;text-align: center;" colspan="1" rowspan="1">
+                            As Needed
+                        </td>
+                        <td style="word-wrap: break-word  !important;width:20%;font-size:12px !important;vertical-align: top;text-align: center;" colspan="1" rowspan="1">
+                            &nbsp;
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="height: 35px;  !important;width:10%;font-size:12px !important;vertical-align: top;text-align: left;" colspan="9" rowspan="1">
+                            <b>Special Order: </b>
+                        </td>
+                    </tr>
+                </table>
+                <apex:outputPanel rendered="{!wrapper[wrapper.size - 1] != data}">
+                    <apex:outputPanel rendered="{!IF(CONTAINS(renderAs, 'html'),true, false)}">
+                        <p style="margin-bottom:2in;">&nbsp;</p>
+                    </apex:outputPanel>
+                    <apex:outputPanel rendered="{!IF(CONTAINS(renderAs, 'pdf'),true, false)}">
+                        <div style="page-break-after: always;">&nbsp; </div>
+                    </apex:outputPanel>
+                </apex:outputPanel>
+            </apex:repeat>
+        </body>
+    </html>
+</apex:page>

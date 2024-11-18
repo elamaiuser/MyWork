@@ -91,6 +91,7 @@
         <searchResultsAdditionalFields>FromPhoneNumber</searchResultsAdditionalFields>
         <searchResultsAdditionalFields>CallStartDateTime</searchResultsAdditionalFields>
         <searchResultsAdditionalFields>Owner</searchResultsAdditionalFields>
+        <searchResultsAdditionalFields>CallOrigin</searchResultsAdditionalFields>
     </searchLayouts>
     <sharingModel>Private</sharingModel>
 </CustomObject>

@@ -69,14 +69,14 @@ global class CalendarBuildUpdateDrivesBatch implements Schedulable, Database.Bat
     }
 
     global void finish(Database.BatchableContext bc) {
-        if(lstDrives != null && lstDrives.size() > 0) {
+       /* if(lstDrives != null && lstDrives.size() > 0) {
             Set<Id> skedDrives = new Set<ID>();
             For(sked_drive__c driveRec : lstDrives) {
                 skedDrives.add(driveRec.Id);
             }
             system.debug('### About to call drive allocation... drive = ' + skedDrives);
             database.executeBatch(new DriveResourceAllocationBatch(skedDrives), 1);
-        }
+        }*/
     }
     
     global void execute(SchedulableContext scon) {

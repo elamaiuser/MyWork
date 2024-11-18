@@ -44,6 +44,8 @@ import _validateDraftDrive from '@salesforce/apex/slwcDriveService.validateDraft
 
 import _initiateOptimizationRun from '@salesforce/apex/slwcOptimizationService.initiateOptimizationRun';
 import _getOptimizationRuns from '@salesforce/apex/slwcOptimizationService.getOptimizationRuns';
+import _getOptimizationRunStatistics from '@salesforce/apex/slwcOptimizationService.getOptimizationRunStatistics'; // HRP-12511
+import _getOptimizedJobAllocation from '@salesforce/apex/slwcOptimizationService.getOptimizedJobAllocation';
 
 import _generateOperationRecords from '@salesforce/apex/slwcOperationRecordService.generateOperationRecords';
 import _operationRecord_getResourceData from '@salesforce/apex/slwcOperationRecordService.getResourceData';
@@ -57,9 +59,17 @@ import _searchMarket from '@salesforce/apex/slwcAccountService.searchMarket';
 import _getScheduleList from '@salesforce/apex/slwcAdminConsoleController.getScheduleList';
 import _executeSchedule from '@salesforce/apex/slwcAdminConsoleController.executeSchedule';
 
-import _validateRequest from '@salesforce/apex/slwcDriveShiftTradeService.validateRequest';
+import _validateShiftTrades from '@salesforce/apex/slwcDriveShiftTradeService.validateShiftTrades';
+import _autoProcessRequest from '@salesforce/apex/slwcDriveShiftTradeService.autoProcessRequest';
 
 import _getTimezone from '@salesforce/apex/slwcSkedApiService.getTimezone';
+
+import _manualRefreshTravelTimeIndexes from '@salesforce/apex/slwcSiteCollectionOperationService.manualRefreshTravelTimeIndexes';
+import _isManualRefreshInProgress from '@salesforce/apex/slwcSiteCollectionOperationService.isManualRefreshInProgress';
+import _hasInvalidTravelTimeData from '@salesforce/apex/slwcSiteCollectionOperationService.hasInvalidTravelTimeData';
+import _getRelatedSiteInfo from '@salesforce/apex/slwcSiteCollectionOperationService.getRelatedSiteInfo';
+
+import _getUnavailabilityStatistic from '@salesforce/apex/slwcAvailabilityService.getUnavailabilityStatistic';
 
 import { ErrorHandler } from './errorHandler';
 
@@ -115,6 +125,8 @@ class auraService {
   validateDraftDrive = (params) => this.execute(_validateDraftDrive, params);
   initiateOptimizationRun = (params) => this.execute(_initiateOptimizationRun, params);
   getOptimizationRuns = (params) => this.execute(_getOptimizationRuns, params);
+  getOptimizationRunStatistics = (params) => this.execute(_getOptimizationRunStatistics, params); // HRP-12511
+  getOptimizedJobAllocation = (params) => this.execute(_getOptimizedJobAllocation, params);
   generateOperationRecords = (params) => this.execute(_generateOperationRecords, params);
   operationRecord_getResourceData = (params) => this.execute(_operationRecord_getResourceData, params);
   populateExternalIds = (params) => this.execute(_populateExternalIds, params);
@@ -123,8 +135,14 @@ class auraService {
   searchMarket = (params) => this.execute(_searchMarket, params);
   getScheduleList = (params) => this.execute(_getScheduleList, params);
   executeSchedule = (params) => this.execute(_executeSchedule, params);
-  validateRequest = (params) => this.execute(_validateRequest, params);
+  validateShiftTrades = (params) => this.execute(_validateShiftTrades, params);
+  autoProcessRequest = (params) => this.execute(_autoProcessRequest, params);
   getTimezone = (params) => this.execute(_getTimezone, params);
+  manualRefreshTravelTimeIndexes = (params) => this.execute(_manualRefreshTravelTimeIndexes, params);
+  isManualRefreshInProgress = (params) => this.execute(_isManualRefreshInProgress, params);
+  hasInvalidTravelTimeData = (params) => this.execute(_hasInvalidTravelTimeData, params);
+  getRelatedSiteInfo = (params) => this.execute(_getRelatedSiteInfo, params);
+  getUnavailabilityStatistic = (params) => this.execute(_getUnavailabilityStatistic, params);
 }
 
 const auraServiceInstance = new auraService();

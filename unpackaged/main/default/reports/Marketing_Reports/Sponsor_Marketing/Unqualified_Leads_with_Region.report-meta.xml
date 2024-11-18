@@ -51,8 +51,8 @@
     <showSubTotals>true</showSubTotals>
     <timeFrameFilter>
         <dateColumn>CREATED_DATE</dateColumn>
-        <endDate>2023-12-27</endDate>
+        <endDate>2024-07-30</endDate>
         <interval>INTERVAL_CUSTOM</interval>
-        <startDate>2022-12-27</startDate>
+        <startDate>2023-07-30</startDate>
     </timeFrameFilter>
 </Report>

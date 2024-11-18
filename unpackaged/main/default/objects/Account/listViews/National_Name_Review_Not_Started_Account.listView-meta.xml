@@ -16,8 +16,9 @@
         <value>1</value>
     </filters>
     <filters>
-        <field>District_Manager__c</field>
-        <operation>contains</operation>
+        <field>National_Name__c</field>
+        <operation>equals</operation>
+        <value>ADD</value>
     </filters>
     <label>National Name_Account Review</label>
     <sharedTo>

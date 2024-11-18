@@ -4,7 +4,7 @@
     <description>Prospecting email for Humankind blood drive program</description>
     <encodingKey>ISO-8859-1</encodingKey>
     <letterhead>ARC_Logo_Test</letterhead>
-    <name>Marketing Segment_Education_Humankind_Prospect_2023_BDF</name>
+    <name>Marketing Segment_Education_Humankind_Prospect_BDF</name>
     <style>freeForm</style>
     <subject>Partner with the Red Cross to help save lives!</subject>
     <textOnly>Hi {!Contact.FirstName},

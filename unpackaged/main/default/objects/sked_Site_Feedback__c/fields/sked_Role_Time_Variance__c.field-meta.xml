@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>sked_Role_Time_Variance__c</fullName>
+    <deleteConstraint>SetNull</deleteConstraint>
+    <externalId>false</externalId>
+    <label>Role Time Variance</label>
+    <referenceTo>sked_Role_Time_Variance__c</referenceTo>
+    <relationshipLabel>Role Time Variance Feedback</relationshipLabel>
+    <relationshipName>Role_Time_Variance_Feedback</relationshipName>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Lookup</type>
+</CustomField>

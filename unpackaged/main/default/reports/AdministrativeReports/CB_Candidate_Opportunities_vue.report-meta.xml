@@ -20,7 +20,7 @@
             <column>Opportunity$Rollover_Consideration__c</column>
             <columnToColumn>false</columnToColumn>
             <isUnlocked>true</isUnlocked>
-            <operator>notEqual</operator>
+            <operator>equals</operator>
             <value>Do Not Roll</value>
         </criteriaItems>
         <criteriaItems>
@@ -29,6 +29,13 @@
             <isUnlocked>false</isUnlocked>
             <operator>greaterOrEqual</operator>
             <value>6/1/2023</value>
+        </criteriaItems>
+        <criteriaItems>
+            <column>Opportunity$Account_Manager__c</column>
+            <columnToColumn>false</columnToColumn>
+            <isUnlocked>true</isUnlocked>
+            <operator>equals</operator>
+            <value></value>
         </criteriaItems>
         <language>en_US</language>
     </filter>
@@ -52,6 +59,8 @@
     <showDetails>true</showDetails>
     <showGrandTotal>true</showGrandTotal>
     <showSubTotals>true</showSubTotals>
+    <sortColumn>Opportunity$Rollover_Consideration__c</sortColumn>
+    <sortOrder>Asc</sortOrder>
     <timeFrameFilter>
         <dateColumn>Opportunity$Booking_Date__c</dateColumn>
         <interval>INTERVAL_CUSTOM</interval>

@@ -12,8 +12,10 @@ HRP - 9562       04/26/2023        Kishore Das           If AM is not there , ta
                                                          If DM is not there , task owner should be an AS
                                                          If AS is not there , task owner should be the opp owner                                                          
 
-HRP - 8030       05/18/2023        Priti Jana          Removed Extra check
-                                                       for Pre-Drive Security Due date from start method
+HRP - 8030       05/18/2023        Priti Jana          	 Removed Extra check
+                                                         for Pre-Drive Security Due date from start method
+HRP - 12333	     03/22/2024		   Balaji N		   		 logic for HRP-12333
+HRP - 12700	     08/14/2024		   Apurba Bhattacharjee	 HRP-12700 Add Drive Date to task list
 **************************************************************************************/
 
 global class createPreDriveTaskBatch implements Database.Batchable<sObject>
@@ -95,7 +97,8 @@ global class createPreDriveTaskBatch implements Database.Batchable<sObject>
                 preDriveSecurityTask.subject = BSF_Constants.PRE_DRIVE_SECURITY_TASK;
                 preDriveSecurityTask.priority = BSF_Constants.HIGH_PRIORITY_TASK;
                 preDriveSecurityTask.whatId = opp.Id;
-                preDriveSecurityTask.ownerId = OpportunityService.getTaskOwner(opp, oppTeamMembersMap); //HRP-9562
+                preDriveSecurityTask.Drive_Date__c = opp.Drive_Date__c; //HRP-12700
+                preDriveSecurityTask.ownerId = OpportunityService.getTaskOwner(opp, oppTeamMembersMap,Task_Reassignment_Matrix__mdt.getInstance('Security_Information_Completion').Assigned_To__c); //HRP-9562;//HRP-12333 added 3rd paarameter
                 preDriveSecurityTask.ActivityDate = opp.Drive_Site__r.sked_Pre_Drive_Security_Due_Date__c != NULL ? (opp.Drive_Date__c - Integer.ValueOf(opp.Drive_Site__r.sked_Pre_Drive_Security_Due_Date__c)) : opp.Drive_Date__c;
                 preDriveSecurityTask.Pre_Drive_Security_Due_Date__c = opp.Drive_Site__r.sked_Pre_Drive_Security_Due_Date__c!= NULL ? opp.Drive_Site__r.sked_Pre_Drive_Security_Due_Date__c : NULL;
                 preDriveSecurityTask.Staff_List__c = opp.Drive_Site__r.sked_Staff_List__c != NULL ? opp.Drive_Site__r.sked_Staff_List__c : null;

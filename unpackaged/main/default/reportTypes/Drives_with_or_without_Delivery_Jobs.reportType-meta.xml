@@ -782,12 +782,12 @@
         </columns>
         <columns>
             <checkedByDefault>false</checkedByDefault>
-            <field>sked_Drive_Site__c.sked_Chapter__c</field>
+            <field>sked_Drive_Site__c.sked_City__c</field>
             <table>sked_Drive__c</table>
         </columns>
         <columns>
             <checkedByDefault>false</checkedByDefault>
-            <field>sked_Drive_Site__c.sked_City__c</field>
+            <field>sked_Drive_Site__c.sked_Chapter__c</field>
             <table>sked_Drive__c</table>
         </columns>
         <columns>
@@ -1303,6 +1303,31 @@
         <columns>
             <checkedByDefault>false</checkedByDefault>
             <field>sked_Stage_Options__c</field>
+            <table>sked_Drive__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>account_External_Id__c</field>
+            <table>sked_Drive__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>site_External_Id__c</field>
+            <table>sked_Drive__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>Supervisory_Role__c</field>
+            <table>sked_Drive__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>sked_Optimization_Run__c</field>
+            <table>sked_Drive__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>sked_Drive_Site__c.Chapter__c.Name</field>
             <table>sked_Drive__c</table>
         </columns>
         <masterLabel>Drives on Calendar</masterLabel>

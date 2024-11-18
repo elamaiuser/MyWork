@@ -27,7 +27,7 @@ global class skedModels {
         public transient Location geoLocation;
         public boolean isAllDay;
         public boolean isAllTimePreferred;
-        public integer startTimeInMunites;
+        public integer startTimeInMinutes;
         public integer endTimeInMinutes;
         public string scheduleId;
         public string scheduleDescription;
@@ -43,6 +43,8 @@ global class skedModels {
             this.endDate = this.finish.format(skedDateTimeUtils.DATE_ISO_FORMAT, inputTimezoneSidId);
             this.startTime = integer.valueOf(this.start.format('Hmm', inputTimezoneSidId));
             this.endTime = integer.valueOf(this.finish.format('Hmm', inputTimezoneSidId));
+            this.startTimeInMinutes = skedDateTimeUtils.convertTimeNumberToMinutes(this.startTime);
+            this.endTimeInMinutes = skedDateTimeUtils.convertTimeNumberToMinutes(this.endTime);
         }
         
         public void updateStartFinish(string inputTimezoneSidId) {
@@ -186,32 +188,44 @@ global class skedModels {
     global virtual class activityResource extends event {
         public string activityId;
         public activity activity;
+        public driveShiftTrade driveShiftTrade;
         public string resourceId;
         public resource resource;
     }
     
     global virtual class availability extends event {
+        public string approvalReason;
         public boolean bypassAutoApprovalProcess;
         public string callOutForActivityId;
         public activity callOutForActivity;
         public string callOutForDriveId;
         public drive callOutForDrive;
+        public string callOutNotes;
+        public string callOutReason;
+        public string callOutReceivedDate;
+        public integer callOutReceivedTime;
+        public string callOutType;
         public string declineReason;
         public string exceptionCode;
+        public boolean integrateWithWorkday;
         public boolean isAvailable;
         public boolean isException;
         public string notes;
         public string otherDeclineReason;
+        public string remainingSlots;
         public resource resource;
         public string resourceId;
-        public string timeOffAllowance;
         public boolean waitlistConfirmed;
-        public Integer ranking;
+        public Decimal ranking;
         public staffingBudget staffingBudget;
         public string lastModifiedById;
         public boolean approvedViaAutomation;
+        public string biddingType;
         public List<staffingBudgetAvailability> staffingBudgetAvailabilities;
         public List<exceptionLog> exceptionLogs;
+        public string timeOffReasonCode;
+        public string workdaySyncMessage;
+        public string workdaySyncStatus;
         
         public transient Date availabilityDate;
     }
@@ -320,8 +334,11 @@ global class skedModels {
         public List<string> additionalRoles;
         public string calloutNotes;
         public string calloutReasonCode;
+        public string callOutReceivedDate;
+        public integer callOutReceivedTime;
         public boolean calloutReported;
         public string calloutType;
+        public driveShiftTrade driveShiftTrade;
         public boolean isAvailable;
         public boolean isQualified;
         public boolean isHandledExceptionFromClient;
@@ -335,6 +352,7 @@ global class skedModels {
         public geometry goToLocation;
         public integer travelTimeTo;
         public decimal travelDistanceTo;
+        public boolean guarded;
         
         public transient event previousEvent;
         public transient event nextEvent;
@@ -379,6 +397,7 @@ global class skedModels {
         public string timezoneSidId;
         public string userId;
         public string userType;
+        public decimal manualRankingPriority;
         public List<activity> activities;
         public List<activityResource> activityResources;
         public List<availability> availabilities;
@@ -532,6 +551,7 @@ global class skedModels {
         public address stagingLocation;
         public string territoryId;
         public List<region> regions;
+        public boolean waitlistEnabled;
     }
     
     global virtual class clientAvailability extends event {
@@ -580,11 +600,26 @@ global class skedModels {
         public string driveDate;
         public string UFID;
     }
+
+    global virtual class driveShiftTrade extends modelBase {
+        public string apsNotes;
+        public string requestingStaffTradingEventName;
+        public string requestingStaffTradingEventDate;
+        public string requestingStaffTradingType;
+        public string requestingStaffId;
+        public string requestingStaffName;
+        public string tradingStaffTradingEventName;
+        public string tradingStaffTradingEventDate;
+        public string tradingStaffTradingType;
+        public string tradingStaffId;
+        public string tradingStaffName;
+    }
     
     global virtual class exceptionLog extends modelBase implements Comparable {
         public string exceptionCode;
         public string patientName;
         public skedModels.job job;
+        public skedModels.jobAllocation jobAllocation;
         public skedModels.resource resource;
         
         public virtual Integer compareTo(Object compareTo) {
@@ -622,6 +657,7 @@ global class skedModels {
         public boolean isAvailable;
         public string shortName;
         public integer step;
+        public boolean integratedWithWorkday;
     }
     
     global virtual class jobStatusSetting {
@@ -687,6 +723,7 @@ global class skedModels {
         public biomedCollectionOp biomedCollectionOp;
         public string convertToStandardOn;
         public string districtName;
+        public List<string> driveTypes;
         public string pendingSlots;
         public string requestType;
         public List<string> roles;
@@ -731,13 +768,4 @@ global class skedModels {
         public string startDate;
         public string territoryId;
     }
-    
-    global virtual class unavailabilityStatistic extends modelBase {
-        public String label;
-        public Integer year;
-        public decimal approvedHours;
-        public decimal takenHours;
-        public decimal hoursLeft;
-    }
-    
 }

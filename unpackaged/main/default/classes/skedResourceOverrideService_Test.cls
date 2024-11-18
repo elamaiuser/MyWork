@@ -29,8 +29,8 @@ private class skedResourceOverrideService_Test {
         insert testResourceOverride;
 
         skedResourceOverrideService.queryModel query = new skedResourceOverrideService.queryModel();
-        query.startTime = System.now();
-        query.endTime = System.now().addHours(6);
+        query.startDate = System.today();
+        query.endDate = System.today()+1;
         query.biomedCollectionOpIds = new List<String>();
         query.biomedCollectionOpIds.add(testCo.Id);
 

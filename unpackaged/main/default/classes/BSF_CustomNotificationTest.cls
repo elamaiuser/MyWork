@@ -19,8 +19,7 @@ private class BSF_CustomNotificationTest {
             TimeZoneSidKey = 'America/Los_Angeles',
             EmailEncodingKey = 'UTF-8',
             LanguageLocaleKey = 'en_US',
-            LocaleSidKey = 'en_US',
-            UserRoleId = [SELECT Id FROM UserRole WHERE DeveloperName = 'WEST_BDM'].Id
+            LocaleSidKey = 'en_US'
         );
 
         system.runAs(new User(Id = UserInfo.getUserId())) {
@@ -85,6 +84,7 @@ private class BSF_CustomNotificationTest {
             .title('Title of the notification')
             .body('Some useful information')
             .target(acc.Id)
+            .category('TestCategory')
             .sendToCurrentUser();
         Test.stopTest();
     }

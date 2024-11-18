@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<WebLink xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Reset_Business_Planning_Status</fullName>
+    <availability>online</availability>
+    <description>Used to reset business plan status for all accounts where business planning completed checkbox is checked</description>
+    <displayType>massActionButton</displayType>
+    <encodingKey>UTF-8</encodingKey>
+    <height>600</height>
+    <linkType>url</linkType>
+    <masterLabel>Reset Business Planning Status</masterLabel>
+    <openType>noSidebar</openType>
+    <protected>false</protected>
+    <requireRowSelection>true</requireRowSelection>
+    <url>/flow/Reset_Business_Planning_Status?retURL=001/o</url>
+</WebLink>

@@ -56,6 +56,14 @@
     <columns>
         <field>Opportunity.Account_Manager__c</field>
     </columns>
+    <columns>
+        <aggregateTypes>Sum</aggregateTypes>
+        <field>Opportunity.Number_of_2RBC_Assets__c</field>
+    </columns>
+    <columns>
+        <aggregateTypes>Sum</aggregateTypes>
+        <field>Account.APT_Required__c</field>
+    </columns>
     <filter>
         <criteriaItems>
             <column>Opportunity.Account_Manager__c</column>
@@ -77,6 +85,13 @@
             <isUnlocked>true</isUnlocked>
             <operator>equals</operator>
             <value>Mobile</value>
+        </criteriaItems>
+        <criteriaItems>
+            <column>Opportunity.Number_of_2RBC_Assets__c</column>
+            <columnToColumn>false</columnToColumn>
+            <isUnlocked>true</isUnlocked>
+            <operator>equals</operator>
+            <value></value>
         </criteriaItems>
         <language>en_US</language>
     </filter>

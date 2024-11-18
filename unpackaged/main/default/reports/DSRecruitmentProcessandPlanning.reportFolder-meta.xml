@@ -5,5 +5,10 @@
         <sharedTo>amy.brown@redcross.org.biomed</sharedTo>
         <sharedToType>User</sharedToType>
     </folderShares>
+    <folderShares>
+        <accessLevel>Manage</accessLevel>
+        <sharedTo>Global_Admin</sharedTo>
+        <sharedToType>Group</sharedToType>
+    </folderShares>
     <name>DS Recruitment Process and Planning</name>
 </ReportFolder>

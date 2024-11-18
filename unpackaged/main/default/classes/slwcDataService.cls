@@ -157,6 +157,19 @@ public without sharing class slwcDataService {
                                               FROM sked_Staff_Setup_Excluded_Role__c];
             mapSetting.put('staffSetupExcludedRoles', staffSetupExcludedRoles);
         }
+        if (settingKeys.contains('travelTimeManager')) {
+            mapSetting.put('travelTimeManager', new slwcSetting.travelTimeManager());
+        }
+        if (settingKeys.contains('optimizerDefaultWeights')) {
+            mapSetting.put('optimizerDefaultWeights', new slwcSetting.optimizerDefaultWeights());
+        }
+        if (settingKeys.contains('optimizerDefaultSettings')) {
+            mapSetting.put('optimizerDefaultSettings', new slwcSetting.optimizerDefaultSettings());
+        }
+        if (settingKeys.contains('rtvAPSApprovalWindow')) {
+            mapSetting.put('rtvAPSApprovalWindow', skedSetting.instance.Admin.rtvAPSApprovalWindow);
+        }
+
         result.returnedData = mapSetting;
         
         return result;

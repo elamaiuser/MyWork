@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Business_Planning_Completed_By__c</fullName>
+    <deleteConstraint>SetNull</deleteConstraint>
+    <description>This field will be auto populated whenever the &#39;Business Planning Completed&#39; checkbox is checked with the logged in user&#39;s name</description>
+    <externalId>false</externalId>
+    <label>Business Planning Completed By</label>
+    <referenceTo>User</referenceTo>
+    <relationshipName>Business_Planning_Completed_By</relationshipName>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <type>Lookup</type>
+</CustomField>

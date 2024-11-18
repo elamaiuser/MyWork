@@ -6,7 +6,8 @@
  *  08/29/2023				Balaji N			        Logic for HRP-10888(bypass for addAcctTeamMembersToBloodDriveOpptyMembers)
  *  09/27/2023				Balaji N					Logic for HRP-10890(bypass for addAcctTeamMembersToBloodDriveOpptyMembers; metadata logic)
  *  11/09/2023				Balaji N					Logic for HRP-11290(Method Name:beforeUpdate,method call for uncheckCoveringRecFlagForBackEndInsert)
- *  11/23/2023				Balaji N					Logic for HRP-11281(Method Name:After Update & Insert,method call for coveringRecruiterOpptyTeamonPastOpp
+ *  11/23/2023				Balaji N					Logic for HRP-11281(Method call for coveringRecruiterOpptyTeamonPastOpp & createAccountTeamMemberHistoryRecords)
+ *  02/20/2024              Balaji N					Logic for HRP-11234(Method call for updateAccountOnTeammeberAssignment in after delete)
  *************************************************************************************************************************************************
 */
 public class AccountTeamMemberTriggerHandler extends TriggerHandler{
@@ -63,7 +64,7 @@ AccountTeamMemberService.uncheckCoveringRecFlagForBackEndInsert((List<AccountTea
         //Added for HRP-5076: Acceptance Criteria #5:
         // Not required this method, this is shifted to before insert
         //AccountTeamMemberService.updateAccessLevelsOfCoveringRecruiters((List<AccountTeamMember>)trigger.new,(Map<ID,AccountTeamMember>)trigger.newMap);
-        AccountTeamMemberService.updateAccountOnTeammeberAssignment((List<AccountTeamMember>)trigger.new);
+        AccountTeamMemberService.updateAccountOnTeammeberAssignment((List<AccountTeamMember>)trigger.new,null);//HRP-11234 2nd parameter
     }
     
     public override void afterUpdate(){
@@ -80,7 +81,7 @@ AccountTeamMemberService.uncheckCoveringRecFlagForBackEndInsert((List<AccountTea
             system.debug(' AccountTeamMemberService.addAcctTeamMembersToBloodDriveOpptyMember is Bypassed');
         }
         AccountTeamMemberService.coveringRecruiterOpptyTeamonPastOpp((List<AccountTeamMember>)trigger.new,(Map<ID,AccountTeamMember>)trigger.oldMap);//HRP-11281
-        AccountTeamMemberService.updateAccountOnTeammeberAssignment((List<AccountTeamMember>)trigger.new);
+        AccountTeamMemberService.updateAccountOnTeammeberAssignment((List<AccountTeamMember>)trigger.new,(Map<ID,AccountTeamMember>)trigger.oldMap);//HRP-11234 2nd parameter
     }
     
     public override void afterDelete(){
@@ -98,6 +99,7 @@ AccountTeamMemberService.uncheckCoveringRecFlagForBackEndInsert((List<AccountTea
         {
             system.debug(' AccountTeamMemberService.addAcctTeamMembersToBloodDriveOpptyMember is Bypassed');
         }
+        AccountTeamMemberService.updateAccountOnTeammeberAssignment((List<AccountTeamMember>)trigger.old,null);//HRP-11234 2nd parameter
     }
     
 }

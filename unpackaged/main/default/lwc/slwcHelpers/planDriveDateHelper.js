@@ -218,8 +218,7 @@ export default class slwcPlanDriveHelper {
   }
   
   getAvailableVehicles(drive, {
-    vehicles = [],
-    driveTags
+    vehicles = []
   }) {
     let availableVehicles = [...vehicles];
     if (drive.driveSite && drive.driveSite.physicalLocationType === 'Inside') {
@@ -227,26 +226,11 @@ export default class slwcPlanDriveHelper {
         return vehicle.category !== 'Bus';
       });
     }
-
-    //validate tags
-    const vehicleJobTagIds = this.driveHelper.getVehicleTags(driveTags).map((tag) => {
-      return tag.id;
-    });
-    availableVehicles = availableVehicles.filter(vehicle => {
-      const validTagIds = [];
-      (vehicle.resourceTags || []).find((resourceTag) => {
-        if (resourceTag.startDate <= drive.driveDate && (!resourceTag.expiryDate || drive.driveDate <= resourceTag.expiryDate)) {
-          validTagIds.push(resourceTag.tagId);
-        }
-      });
-
-      return difference(vehicleJobTagIds, validTagIds).length === 0;
-    })
-
+    
     return availableVehicles;
   }
 
-  calculateAvailableEquipments = (drive, { sameDateDrives }) => {
+  calculateAvailableEquipments = (drive) => {
     const totalEquipments = (this.mapEquipmentsByDate[drive.driveDate] || []).filter((item) => {
       const isDateValid = isNullOrEmpty(item.effectiveDate) || item.effectiveDate <= drive.driveDate;
       if (!isDateValid) return false;
@@ -268,11 +252,7 @@ export default class slwcPlanDriveHelper {
       return true;
     });
 
-    const usedEquipments = sum(sameDateDrives.map(item => {
-      return Math.max(item.totalEquipmentRequested || 0, item.equipmentAllocated || 0);
-    }));
-
-    return totalEquipments.length - usedEquipments;
+    return totalEquipments.length;
   }
   
   proposeVehicles = (drive, vehicles = [], {
@@ -297,13 +277,11 @@ export default class slwcPlanDriveHelper {
     return [];
   }
 
-  calculateAvailableVehicles = (drive, vehicles = [], {
-    sameDateDrives = [],
-  }) => {
+  calculateAvailableVehicles = (availableVehicles = []) => {
     const allVehicles = [];
     const allBuses = [];
     const allMobiles = [];
-    vehicles.forEach(vehicle => {
+    availableVehicles.forEach(vehicle => {
       if (vehicle.category === 'Bus') {
         allBuses.push(vehicle);
       } else {
@@ -313,19 +291,10 @@ export default class slwcPlanDriveHelper {
       allVehicles.push(vehicle);
     })
 
-    const usedVehicles = sum(sameDateDrives.map(item => {
-      return Math.max(item.totalVehicleRequested || 0, item.vehiclesAllocated || 0);
-    }));
-    const usedBuses = sum(sameDateDrives.map(item => item.noOfAllocatedBuses || 0));
-    const usedMobiles = sum(sameDateDrives.map(item => {
-      const vehiclesAllocated = Math.max(item.totalVehicleRequested || 0, item.vehiclesAllocated || 0)
-      return Math.max((vehiclesAllocated || 0) - (item.noOfAllocatedBuses || 0), 0);
-    }));
-
     return {
-      availableVehicles: allVehicles.length - usedVehicles,
-      availableBuses: allBuses.length - usedBuses,
-      availableMobiles: allMobiles.length - usedMobiles,
+      availableVehicles: allVehicles.length,
+      availableBuses: allBuses.length,
+      availableMobiles: allMobiles.length,
     }
   }
 
@@ -440,22 +409,15 @@ export default class slwcPlanDriveHelper {
       
       const vehicles = this.getAvailableVehicles(drive, {
         ...driveMasterData,
-        vehicles: this.mapVehiclesByDate[drive.driveDate] || [],
-        sameDateDrives: sameDateDrives
+        vehicles: this.mapVehiclesByDate[drive.driveDate] || []
       });   
       const {
         availableBuses,
         availableMobiles,
         availableVehicles,
-      } = this.calculateAvailableVehicles(drive, vehicles, {
-        ...driveMasterData,
-        sameDateDrives: sameDateDrives
-      });
+      } = this.calculateAvailableVehicles(vehicles);
 
-      const availableEquipments = this.calculateAvailableEquipments(drive, {
-        ...driveMasterData,
-        sameDateDrives: sameDateDrives
-      });
+      const availableEquipments = this.calculateAvailableEquipments(drive);
       const proposedVehicles = this.proposeVehicles(drive, vehicles, {
         maxDOT: isNullOrEmpty(operationalDOTLimit) ? undefined : Math.max(operationalDOTLimit - requiredDOT, 0),
         maxCDL: isNullOrEmpty(operationalCDLLimit) ? undefined : Math.max(operationalCDLLimit - requiredCDL, 0)

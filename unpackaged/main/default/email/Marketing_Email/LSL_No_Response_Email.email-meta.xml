@@ -4,7 +4,7 @@
     <description>Email follow up for an LSL Lead who is not responding</description>
     <encodingKey>ISO-8859-1</encodingKey>
     <letterhead>ARC_Logo_Test</letterhead>
-    <name>Marketing Segment_Education_LSL_Booking No Response_2023</name>
+    <name>Marketing Segment_Education_LSL_Booking No Response</name>
     <style>freeForm</style>
     <subject>Following Up</subject>
     <textOnly>Hello [NAME],

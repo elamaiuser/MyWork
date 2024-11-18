@@ -11,6 +11,9 @@
  * 12/27/2023				 Kishore Das		      Logic for HRP-11605(Newly created FS BDO's are reflecting as tentative when the DOC is reflecting as confirmed (out of sync))
  * 12/27/2023				 Barnojit Sharma		  The current 56 day validation rule that triggers when trying to change Drive Date will also be added to the Drive on Calendar. (HRP-11640)
  * 1/11/2024				 Priti Jana			      Logic for HRP-10882
+ * 12/02/2024				 Barnojit Sharma		  BDO can not be confirmed if DCR or Pending Action is in progress. (HRP-10912)
+ * 17/04/2024                Ankit Kundu              Method added as part of HRP-12170
+ * 18/10/2024                Priti Jana               Logic for HRP-9815
  ************************************************************************************************************************************************
 */
 public class DriveTriggerHandler extends TriggerHandler{ 
@@ -18,13 +21,18 @@ public class DriveTriggerHandler extends TriggerHandler{
     Boolean isMigration=Boolean.valueOf(Label.OnlyForMigration); 
     Boolean isInserted=false;
     
-    public override void beforeUpdate(){
+    public override void beforeUpdate() {
+        //Start HRP-10912
+        if (super.getTriggerMethodsToBypass().indexOf('validateNoPendingDCR') == -1) {
+            DriveTriggerService.validateNoPendingDCR((Map<Id, sked_Drive__c>)trigger.newMap, (Map<Id, sked_Drive__c>)trigger.oldMap);
+        }
+        //End HRP-10912
         if (super.getTriggerMethodsToBypass().indexOf('populateDriveWorksheetData') == -1) {
             //DriveTriggerService.populateDriveWorksheetData((List<sked_Drive__c>)trigger.new);
         }
         //Start HRP-11326
         if (super.getTriggerMethodsToBypass().indexOf('validateOpportunity') == -1) {
-            DriveTriggerService.validateOpportunity((Map<Id, sked_Drive__c>)trigger.oldMap, (List<sked_Drive__c>)trigger.new);
+            //DriveTriggerService.validateOpportunity((Map<Id, sked_Drive__c>)trigger.oldMap, (List<sked_Drive__c>)trigger.new);
         }
         //End HRP-11326
         //Start HRP-11640
@@ -43,9 +51,20 @@ public class DriveTriggerHandler extends TriggerHandler{
         }
 
          // HRP-10882 --> Ends Here
+          //Start HRP-12170
+        if (super.getTriggerMethodsToBypass().indexOf('autoPopulateDriveProjProductFields') == -1) {
+            DriveTriggerService.autoPopulateDriveProjProductFields((Map<Id, sked_Drive__c>)trigger.oldMap, (List<sked_Drive__c>)trigger.new);
+        }
+        //End HRP-12170
+        
+        // HRP-9815 --> Starts Here
+        if (super.getTriggerMethodsToBypass().indexOf('populateDriveOwnerOnAmUpdate') == -1) {
+            DriveTriggerService.populateDriveOwnerOnAmUpdate((Map<Id, sked_Drive__c>)trigger.oldMap, (List<sked_Drive__c>)trigger.new);
+        }
+        // HRP-9815 --> Ends Here
     }
      
-    public override void beforeInsert(){
+    public override void beforeInsert() {
         if (super.getTriggerMethodsToBypass().indexOf('populateDriveWorksheetData') == -1) {
             DriveTriggerService.populateDriveWorksheetData((List<sked_Drive__c>)trigger.new);
         } //HRP-10359 Start
@@ -54,12 +73,12 @@ public class DriveTriggerHandler extends TriggerHandler{
         } //HRP-10359 End
         //Start HRP-11326
         if (super.getTriggerMethodsToBypass().indexOf('validateOpportunity') == -1) {
-            DriveTriggerService.validateOpportunity(null, (List<sked_Drive__c>)trigger.new);
+            //DriveTriggerService.validateOpportunity(null, (List<sked_Drive__c>)trigger.new);
         }
         //End HRP-11326
     }
     
-    public override void afterInsert(){
+    public override void afterInsert() {
         isInserted = true;
         if(super.getTriggerMethodsToBypass().indexOf('updateReadyForNationalNameReview') == -1) {
             DriveTriggerService.updateReadyForNationalNameReview((List<sked_Drive__c>)trigger.new, null);
@@ -71,10 +90,16 @@ public class DriveTriggerHandler extends TriggerHandler{
         //Logic for HRP-11605--Ends here--
     }
     
-    public override void afterUpdate(){
+    public override void afterUpdate() {
         if(super.getTriggerMethodsToBypass().indexOf('updateReadyForNationalNameReview') == -1) {
             DriveTriggerService.updateReadyForNationalNameReview((List<sked_Drive__c>)trigger.new, (Map<Id, sked_Drive__c>)trigger.oldMap);
         }
+        
+        //HRP-9815 --> Starts Here
+        if(super.getTriggerMethodsToBypass().indexOf('updateDrdRepOnOpRecordUponOwnerChange') == -1) {
+            DriveTriggerService.updateDrdRepOnOpRecordUponOwnerChange((List<sked_Drive__c>) Trigger.new, (Map<Id, sked_Drive__c>) Trigger.oldMap);
+        }
+        //HRP-9815 --> Ends Here
         
     }
     public override void beforeDelete()

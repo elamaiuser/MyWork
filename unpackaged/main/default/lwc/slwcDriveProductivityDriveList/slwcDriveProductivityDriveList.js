@@ -130,7 +130,12 @@ export default class SlwcDriveProductivityDriveList extends LightningElement {
                         let territoryCollectionOperation = ((this.filters.collectionOperationValues || {}).territoryCollectionOperations || []).find(item => item.territoryId == drive.territoryId);
 
                         drive.recordPageUrl = '/' + drive.id;
-                        drive.driveNameData = drive;
+                        drive.driveNameData = {
+                            id: drive.id,
+                            name: drive.name,
+                            totalStaffRequested: drive.totalStaffRequested,
+                            staffAllocated: drive.staffAllocated
+                        };
 
                         drive.linkedDrive = drive.linkedDriveId ? {
                             id: drive.linkedDriveId,

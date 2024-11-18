@@ -12,7 +12,7 @@ public class TestPromotionService {
          acc.BillingCity = 'Herndon';
          acc.BillingStateCode = 'VA';
          acc.BillingPostalCode = '20170';
-         Contact contact = new Contact (firstname='Test Contact First',lastname='Test Contact Last');
+         Contact contact = new Contact (firstname='Test Contact First',lastname='TestContactLast');
          contact.MailingStreet = '2204 Westcrt ln, Apt 213'; 
          contact.MailingCity = 'Herndon';
          contact.MailingStateCode = 'VA';
@@ -94,6 +94,7 @@ public class TestPromotionService {
             opp.X2RBC_Projected_Procedures__c = 2;
             opp.Name = 'Test Opportunity';
             opp.Anticipated_Registered_Donors__c =25;
+            opp.source__c = 'Adhoc';
 			insert opp;
         
             Promotion__c promotion = new Promotion__c(Name='Test Promotion');

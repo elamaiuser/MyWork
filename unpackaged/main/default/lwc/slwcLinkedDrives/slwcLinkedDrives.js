@@ -567,22 +567,31 @@ export default class SlwcLinkedDrives extends LightningElement {
   }
 
   calculateAssetsForLinkedDrives = (linkedDrives) => {
-    const calculateVehicles = (drives, allResources = [], mapResourcePossibleAllocations = {}) => {
-      const driveHelper = new DriveHelper();
+    const driveHelper = new DriveHelper();
 
+    const calculateVehicles = (drives, allResources = [], mapResourcePossibleAllocations = {}, mapLockedResourceOnDriveByResourceId = {}, mapLockedResourceOnDriveByDriveId = {}) => {
       //vehicles has most available jobs on top
       let sortedVehicles = orderBy(allResources.filter(resource => {
         return resource.assetType === ASSET_TYPE.VEHICLE;
-      }), [(resource => {
+      }), [(resource) => {
+        const numberOfDrivesResourceLocked = mapLockedResourceOnDriveByResourceId?.[resource.id] || [];
+        return numberOfDrivesResourceLocked.length;
+      }, (resource => {
         const availableJobsCount = (mapResourcePossibleAllocations[resource.id] || []).filter(posAl => {
           return (posAl.exceptionLog || []).length === 0;
         }).length;
         return availableJobsCount;
-      }), 'presDonorCapacity'], ['desc', 'desc']);
+      }), 'presDonorCapacity'], ['desc', 'desc', 'desc']);
 
       //calculate vehicles 
       const linkedDriveNeedMostVehicle = maxBy(drives, linkedDrive => {
-        return driveHelper.getMaxDonorsScheduledOfDriveShifts(linkedDrive);;
+        const lockedVehicles = mapLockedResourceOnDriveByDriveId[linkedDrive.id]?.lockedVehicles || [];
+        const lockedVehiclesPresDonorCapacity = lockedVehicles.reduce((result, item) => {
+          return result + (item.presDonorCapacity || 0);
+        }, 0);
+        const vehicleJob = (linkedDrive.jobs || []).find(job => job.assetType === ASSET_TYPE.VEHICLE);
+        if(!vehicleJob) return -1;
+        return Math.max(driveHelper.getMaxDonorsScheduledOfDriveShifts(linkedDrive) - lockedVehiclesPresDonorCapacity, 0);
       })
 
       //simple allocation
@@ -594,23 +603,26 @@ export default class SlwcLinkedDrives extends LightningElement {
       return driveWithVehicles ? driveWithVehicles.vehicles : [];
     }
 
-    const calculateEquipments = (drives, allResources = [], mapResourcePossibleAllocations = {}) => {
-      const driveHelper = new DriveHelper();
-
+    const calculateEquipments = (drives, allResources = [], mapResourcePossibleAllocations = {}, mapLockedResourceOnDriveByResourceId = {}, mapLockedResourceOnDriveByDriveId = {}) => {
       //equipments has most available jobs on top
       let sortedEquipments = orderBy(allResources.filter(resource => {
         return resource.assetType === ASSET_TYPE.EQUIPMENT;
-      }), (resource => {
+      }), [(resource) => {
+        const numberOfDrivesResourceLocked = mapLockedResourceOnDriveByResourceId?.[resource.id] || [];
+        return numberOfDrivesResourceLocked.length;
+      }, (resource => {
         const availableJobsCount = (mapResourcePossibleAllocations[resource.id] || []).filter(posAl => {
           return (posAl.exceptionLog || []).length === 0;
         }).length;
         return availableJobsCount;
-      }), 'desc');
+      })], ['desc', 'desc']);
 
       //calculate equipments
       const linkedDriveNeedMostEquipment = maxBy(drives, linkedDrive => {
+        const lockedEquipments = mapLockedResourceOnDriveByDriveId[linkedDrive.id]?.lockedEquipments || [];
         const equipmentJob = (linkedDrive.jobs || []).find(job => job.assetType === ASSET_TYPE.EQUIPMENT);
-        return equipmentJob ? equipmentJob.quantity : -1;
+        if(!equipmentJob) return -1;
+        return Math.max(equipmentJob.quantity - (lockedEquipments?.length ?? 0), 0);
       })
 
       //simple allocation
@@ -635,8 +647,29 @@ export default class SlwcLinkedDrives extends LightningElement {
     })
     .then((result) => {
       const mapResourcePossibleAllocations = groupBy(result.possibleAllocations, 'resourceId');
-      let vehicles = calculateVehicles(result.linkedDrives, result.resources, mapResourcePossibleAllocations);
-      let equipmentJobsMap = calculateEquipments(result.linkedDrives, result.resources, mapResourcePossibleAllocations);
+      const mapLockedResourceOnDriveByResourceId = {};
+      const mapLockedResourceOnDriveByDriveId = {};
+      result.linkedDrives.forEach((drive) => {
+        const { lockedEquipments = [] } = driveHelper.getCurrentAssignedEquipments(drive);
+        const { lockedVehicles = [] } = driveHelper.getCurrentAssignedVehicles(drive);
+
+        mapLockedResourceOnDriveByDriveId[drive.id] = {
+          lockedEquipments,
+          lockedVehicles
+        }
+
+        lockedEquipments.concat(lockedVehicles).forEach(equipment => {
+          if(!mapLockedResourceOnDriveByResourceId[equipment.id]) {
+            mapLockedResourceOnDriveByResourceId[equipment.id] = [];
+          }
+
+          if(!mapLockedResourceOnDriveByResourceId[equipment.id].includes(drive.id)) {
+            mapLockedResourceOnDriveByResourceId[equipment.id].push(drive.id);
+          }
+        })
+      });
+      let vehicles = calculateVehicles(result.linkedDrives, result.resources, mapResourcePossibleAllocations, mapLockedResourceOnDriveByResourceId, mapLockedResourceOnDriveByDriveId);
+      let equipmentJobsMap = calculateEquipments(result.linkedDrives, result.resources, mapResourcePossibleAllocations, mapLockedResourceOnDriveByResourceId, mapLockedResourceOnDriveByDriveId);
 
       return {
         vehicles: vehicles,
@@ -795,19 +828,25 @@ export default class SlwcLinkedDrives extends LightningElement {
       return drivesGeneratorInstance.initialize(linkedDrives.map(linkedDrive => linkedDrive.id), true);
     })
     .then(() => {
+      const driveHelper = new DriveHelper();
       let promises = [];
       promises = drivesGeneratorInstance.drives.map(drive => {
         let driveGeneratorInstance = drivesGeneratorInstance.driveGeneratorInstanceMap[drive.id];
+        let { lockedEquipments } = driveHelper.getCurrentAssignedEquipments(drive);
+        let { lockedVehicles } = driveHelper.getCurrentAssignedVehicles(drive);
+
         return driveGeneratorInstance.onDriveDataChanged([{
           targetName: 'totalVehicleRequestedChanged',
           targetValue: {
             totalVehicleRequested: vehicles.length,
-            vehicles: vehicles
+            vehicles: vehicles,
+            lockedVehicles
           }
         }, {
           targetName: 'totalEquipmentRequestedChanged',
           targetValue: {
-            equipmentJobsMap: equipmentJobsMap
+            equipmentJobsMap: equipmentJobsMap,
+            lockedEquipments
           }
         }], true)
         .then(() => {
@@ -855,6 +894,7 @@ export default class SlwcLinkedDrives extends LightningElement {
 
   handleUpdateLinkedDrives = () => {
     //validate
+    const driveHelper = new DriveHelper();
     const linkedDrives = this.linkedDrives || [];
     if(linkedDrives.length <= 1) {
        this.dispatchEvent(new ShowToastEvent({
@@ -885,16 +925,21 @@ export default class SlwcLinkedDrives extends LightningElement {
             let promises = [];
             promises = drivesGeneratorInstance.drives.map(drive => {
               let driveGeneratorInstance = drivesGeneratorInstance.driveGeneratorInstanceMap[drive.id];
+              let { lockedEquipments } = driveHelper.getCurrentAssignedEquipments(drive);
+              let { lockedVehicles } = driveHelper.getCurrentAssignedVehicles(drive);
+      
               return driveGeneratorInstance.onDriveDataChanged([{
                 targetName: 'totalVehicleRequestedChanged',
                 targetValue: {
                   totalVehicleRequested: vehicles.length,
-                  vehicles: vehicles
+                  vehicles: vehicles,
+                  lockedVehicles
                 }
               }, {
                 targetName: 'totalEquipmentRequestedChanged',
                 targetValue: {
-                  equipmentJobsMap: equipmentJobsMap
+                  equipmentJobsMap: equipmentJobsMap,
+                  lockedEquipments
                 }
               }], true)
               .then(() => {

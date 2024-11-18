@@ -1,0 +1,228 @@
+<template>
+
+    <section role="dialog" tabindex="-1" class={customClass.modal}>
+        <lightning-spinner if:true={showSpinner} class="spins" size="medium"></lightning-spinner>
+
+        <div class="slds-modal__container">
+            <header if:false={fullScreen} class="slds-clearfix slds-page-header slds-page-header_record-home fixed-position" style="margin-bottom: var(--lwc-cardSpacingMargin);">
+                <div class="slds-page-header__row slds-grid_vertical-align-center">
+                    <div class="slds-page-header__col-title">
+                        <div class="slds-media">
+                            <div class="slds-media__figure">
+                                <lightning-icon icon-name="standard:record_create" size="medium"></lightning-icon>
+                            </div>
+                            <div class="slds-media__body">
+                                <div class="slds-page-header__name">
+                                    <div class="slds-page-header__name-title">
+                                        <h1>
+                                            <span class="slds-page-header__title slds-truncate">Select Resource</span>
+                                        </h1>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="slds-no-flex">
+                        <div class="slds-grid">
+                            <div class="slds-no-flex">
+                                <ul class="slds-button-group-row">
+                                    <li class="slds-button-group-item">
+                                        <lightning-button label="Back" onclick={handleBack}></lightning-button>
+                                        <lightning-button if:false={isAllocateResourceMode} label="Next" class="slds-m-left_xx-small" variant="brand" disabled={nextButtonDisabled} onclick={handleNext}></lightning-button>
+                                        <lightning-button if:true={isAllocateResourceMode} label="Dispatch" class="slds-m-left_xx-small" variant="brand" disabled={nextButtonDisabled} onclick={handleAllocate}></lightning-button>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+            <header if:true={fullScreen} class="slds-modal__header">
+                <div style="width: 3rem">
+                    <lightning-button-icon icon-name="utility:chevronleft" variant="bare-inverse" alternative-text="Back" title="Back" size="large" onclick={handleBack}></lightning-button-icon>
+                </div>
+                
+                <h2 class="slds-text-heading_medium slds-hyphenate">Select Resource</h2>
+
+                <div if:false={isAllocateResourceMode} style="width: 3rem">
+                    <span class="slds-text-heading_small" disabled={nextButtonDisabled} onclick={handleNext}>Next</span>
+                </div>
+
+                <div if:true={isAllocateResourceMode} style="width: 4rem">
+                    <span class="slds-text-heading_small" disabled={nextButtonDisabled} onclick={handleAllocate}>Dispatch</span>
+                </div>
+            </header>
+            <div class="slds-modal__content slds-is-relative">
+                <div class="slds-p-horizontal_small slds-p-vertical_x-small slds-no-flex slds-theme_shade slds-border--bottom" if:true={selectedResource}>
+                    <strong>Selected resource:</strong> {selectedResource.name}
+                </div>
+                <div class="slds-p-horizontal_small slds-m-top_small slds-no-flex" style="padding-bottom: 2px;">
+                    <lightning-input type="search" name="searchText" value={selectResourceFilters.searchText}
+                        onchange={handleSelectResourceFiltersChanged} max-length="255" label="Search Resources..."
+                        variant="label-hidden" placeholder="Search Resources...">
+                    </lightning-input>
+                </div>
+                <article class="slds-card slds-grow slds-scrollable_y slds-grow">
+                    <div class="slds-card__body slds-card__body_inner">
+                        <ul if:true={filteredResources.length}
+                            class="slds-grid_pull-padded slds-p-horizontal_small slds-scrollable--y events-container">
+                            <li class={resource.classes} onclick={handleSelectResource} for:each={filteredResources}
+                                for:item="resource" key={resource.key} data-id={resource.id}>
+                                <article
+                                    class="slds-p-around--small slds-hint-parent slds-border--bottom slds-border--top">
+                                    <div class="slds-media__body">
+                                        <div
+                                            class="slds-grid slds-grid_align-spread slds-has-flexi-truncate">
+                                            <h3 class="slds-tile__title">
+                                                <span class="color-text-link-hover"><strong>{resource.name}</strong></span>
+                                            </h3>
+                                        </div>
+                                        <div class="slds-tile__detail">
+                                            <dl class="slds-list_horizontal slds-wrap">
+                                                <dt
+                                                    class="slds-item_label slds-text-color_weak slds-truncate">
+                                                    Collection Operation:</dt>
+                                                <dd class="slds-item_detail slds-truncate">
+                                                    {resource.collectionOperationName}
+                                                </dd>
+                                                <dt
+                                                    class="slds-item_label slds-text-color_weak slds-truncate">
+                                                    Employment Type:</dt>
+                                                <dd class="slds-item_detail slds-truncate">
+                                                    {resource.categoryText}
+                                                </dd>
+
+                                                <dt
+                                                    class="slds-item_label slds-text-color_weak slds-truncate">
+                                                    Weekly Hours:</dt>
+                                                <dd class="slds-item_detail slds-truncate">
+                                                    {resource.weeklyHours}
+                                                </dd>
+                                            </dl>
+
+                                            <template if:true={resource.travelData.length}>
+                                                <template for:each={resource.travelData} for:item="obj">
+                                                    <div key={obj.key} style="max-width: 18rem;">
+                                                        <div
+                                                            class="slds-text-color_weak slds-text-body_small hco-resource-category-info slds-has-flexi-truncate">
+                                                            {obj.key}
+                                                        </div>
+
+                                                        <div class="slds-grid slds-grid_align-spread">
+                                                            <div class="slds-col slds-size_4-of-8">
+                                                                <div>
+                                                                    <div class="slds-text-body_small slds-grid_vertical-align-center slds-has-flexi-truncate">
+                                                                        <p
+                                                                            class="slds-text-color_inverse-weak slds-has-flexi-truncate">
+                                                                            <lightning-icon
+                                                                                class="slds-current-color slds-p-right--x-small"
+                                                                                size="xx-small"
+                                                                                icon-name="utility:travel_and_places">
+                                                                            </lightning-icon>
+                                                                            <c-slwc-lightning-formatted-travel-distance value={obj.travelDistanceTo}></c-slwc-lightning-formatted-travel-distance>
+                                                                        </p>
+                                                                    </div>
+                                                                    <div class="slds-text-body_small slds-grid_vertical-align-center slds-has-flexi-truncate">
+                                                                        <p
+                                                                            class="slds-text-color_inverse-weak slds-has-flexi-truncate">
+                                                                            <lightning-icon
+                                                                                class="slds-current-color slds-p-right--x-small"
+                                                                                size="xx-small" icon-name="utility:clock">
+                                                                            </lightning-icon>
+                                                                            <c-slwc-lightning-formatted-travel-time value={obj.travelTimeTo}></c-slwc-lightning-formatted-travel-time>
+                                                                        </p>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="slds-col slds-size_4-of-8">
+                                                                <div>
+                                                                    <div class="slds-text-body_small slds-grid_vertical-align-center slds-has-flexi-truncate">
+                                                                        <p
+                                                                            class="slds-text-color_inverse-weak slds-has-flexi-truncate">
+                                                                            <lightning-icon
+                                                                                class="slds-current-color slds-p-right--x-small"
+                                                                                size="xx-small"
+                                                                                icon-name="utility:travel_and_places">
+                                                                            </lightning-icon>
+                                                                            <c-slwc-lightning-formatted-travel-distance value={obj.travelDistanceBack}></c-slwc-lightning-formatted-travel-distance>
+                                                                        </p>
+                                                                    </div>
+                                                                    <div class="slds-text-body_small slds-grid_vertical-align-center slds-has-flexi-truncate">
+                                                                        <p
+                                                                            class="slds-text-color_inverse-weak slds-has-flexi-truncate">
+                                                                            <lightning-icon
+                                                                                class="slds-current-color slds-p-right--x-small"
+                                                                                size="xx-small" icon-name="utility:clock">
+                                                                            </lightning-icon>
+                                                                            <c-slwc-lightning-formatted-travel-time value={obj.travelTimeBack}></c-slwc-lightning-formatted-travel-time>
+                                                                        </p>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </template>
+                                            </template>
+
+                                            <div class="slds-grow">
+                                                <div if:true={resource.isCallOut}
+                                                    class="slds-badge slds-theme_warning  color-white size65rem bg-red slds-m-top--x-small">
+                                                    Call Out</div>
+                                                <div if:true={resource.isOnCall}
+                                                    class="slds-badge slds-theme_warning  color-white size65rem bg-blue slds-m-top--x-small">
+                                                    On Call</div>
+                                                <div if:true={resource.isVolunteer}
+                                                    class="slds-badge slds-theme_warning  color-white size65rem bg-blue slds-m-top--x-small">
+                                                    Volunteer</div>
+                                                <div if:true={resource.isAccountBlacklisted}
+                                                    class="slds-badge slds-theme_warning  color-white size65rem bg-red slds-m-top--x-small">
+                                                    Account Declined</div>
+                                                <div if:true={resource.isAccountWhitelisted}
+                                                    class="slds-badge slds-theme_warning  color-white size65rem bg-green slds-m-top--x-small">
+                                                    Account Preferred</div>
+                                                <div if:true={resource.isLocationBlacklisted}
+                                                    class="slds-badge slds-theme_warning  color-white size65rem bg-red slds-m-top--x-small">
+                                                    Location Declined</div>
+                                                <div if:true={resource.isLocationWhitelisted}
+                                                    class="slds-badge slds-theme_warning  color-white size65rem bg-green slds-m-top--x-small">
+                                                    Location Preferred</div>
+                                                <div if:true={resource.DOT}
+                                                    class="slds-badge slds-theme_warning  color-white size65rem bg-blue slds-m-top--x-small">
+                                                    DOT</div>
+                                                <div if:true={resource.CDL}
+                                                    class="slds-badge slds-theme_warning  color-white size65rem slds-m-top--x-small">
+                                                    CDL</div>
+                                                <div if:true={resource.isTemporaryCO}
+                                                    class="slds-badge slds-theme_warning  color-white size65rem bg-purple slds-m-top--x-small">
+                                                    Temporary CO</div>
+                                                <div if:true={resource.isSecondaryCO}
+                                                    class="slds-badge slds-theme_warning  color-white size65rem bg-orange slds-m-top--x-small">
+                                                    Secondary CO</div>
+                                                <div if:true={resource.isTraded}
+                                                    class="slds-badge slds-theme_warning  color-white size65rem bg-orange slds-m-top--x-small">
+                                                    Traded</div>
+                                            </div>        
+                                            
+                                            <div class="slds-m-top_xx-small" if:true={resource.exceptionLog.length}>
+                                                <div for:each={resource.exceptionLog} for:item="exception" key={exception.exception}
+                                                    class="slds-text-body_small slds-grid_vertical-align-center slds-has-flexi-truncate">
+                                                    <p class="slds-m-vertical_xx-small slds-text-color_error" style="white-space: normal;">
+                                                        {exception.exception}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </article>
+                            </li>
+                        </ul>
+                        <div if:false={filteredResources.length}
+                            class="slds-align--absolute-center slds-p-around--large slds-text-heading--small">
+                            No resource available
+                        </div>
+                    </div>
+                </article>
+            </div>
+        </div>
+    </section>
+</template>

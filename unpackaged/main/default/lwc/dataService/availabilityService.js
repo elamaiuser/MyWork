@@ -1,5 +1,10 @@
 import { isNullOrEmpty } from 'c/slwcUtils';
+import auraProxy from 'c/auraProxy';
 import { dataService, queryModelBase, sObjectType } from './base';
+import { jobAllocationQueryModel, jobAllocationService } from './jobAllocationService';
+import { activityResourceQueryModel, activityResourceService } from './activityResourceService';
+import { AVAILABILITY_STATUS, JOB_ALLOCATION_STATUS } from 'c/slwcConstants';
+import * as autoMapper from 'c/autoMapper';
 
 class availabilityService extends dataService {
     constructor() {
@@ -23,7 +28,7 @@ class availabilityService extends dataService {
         }
 
         if(!isNullOrEmpty(query.isAvailable)) {
-            queryBuilder.addCondition({ template: "sked__Is_Available__c = }", value: query.isAvailable });
+            queryBuilder.addCondition({ template: "sked__Is_Available__c = {0}", value: query.isAvailable, type: "boolean" });
         }
 
         if(!isNullOrEmpty(query.callOutTypes)) {
@@ -54,6 +59,8 @@ class availabilityService extends dataService {
             }
         }
     }
+
+    getUnavailabilityStatistic = (params) => auraProxy.getInstance().getUnavailabilityStatistic(params);
 }
 
 class availabilityQueryModel extends queryModelBase {

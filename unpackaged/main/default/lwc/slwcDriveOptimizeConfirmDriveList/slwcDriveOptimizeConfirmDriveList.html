@@ -1,0 +1,35 @@
+<template>
+    <div class={sectionClass}>
+        <h3 class="slds-section__title">
+            <button aria-controls="driveList" aria-expanded="true"
+                class="slds-button slds-section__title-action" onclick={toggleSection}>
+                <lightning-icon icon-name="utility:switch" size="x-small" aria-hidden="true"
+                    class="slds-section__title-action-icon slds-button__icon slds-button__icon_left slds-m-bottom_xx-small"></lightning-icon>
+                <span class="slds-truncate" title="Section Title">
+                    <template for:each={driveTypes} for:item="driveType">
+                        <template for:each={driveType.collectionOperationNames} for:item="collectionOperationName">
+                            <span key={collectionOperationName} class="slds-badge slds-badge_lightest">{collectionOperationName}</span>
+                        </template>
+                    </template>
+                    
+                    
+                </span>
+            </button>
+        </h3>
+        <div class="slds-section__content slds-grid slds-grid_vertical" id="driveList">
+            <div class="slds-col slds-clearfix">
+                <button class="slds-button slds-button_brand slds-float_right slds-m-bottom_x-small" onclick={handleOptimize}>Optimize</button>
+            </div>
+            <div class="slds-col">
+                <lightning-datatable
+                    key-field="id"
+                    data={drives}
+                    columns={columns}
+                    onrowselection={handleRowSelection}
+                    selected-rows={selectedDrives}
+                    wrap-text-max-lines="3">
+                </lightning-datatable>
+            </div>
+        </div>
+    </div>
+</template>

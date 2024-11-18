@@ -71,7 +71,9 @@ public with sharing class ProductService {
                                                                             newProductMap.get(orderItem.Product2Id).Description;
                                         notificationreq.targetId = orderItem.Order.OpportunityId;
                                         notificationreq.recipientId = orderItem.Order.Opportunity.Account.Account_Manager__c;
+                                        notificationreq.notificationCategoryName = 'DriveDateOutsideProductStartEnd';
                                         notificationreqList.add(notificationreq);
+                                        
                                         //HRP-10482 changes ends here  
                                         combinedKeyList.add(combinedKey);
                             }
@@ -80,7 +82,9 @@ public with sharing class ProductService {
         }
 
         if(!notificationreqList.isEmpty()){
-            BSF_CustomNotification.sendNotification(notificationreqList);
+            
+                BSF_CustomNotification.sendNotification(notificationreqList); 
+           
         }
 
         if(!orderItemListToDelete.isEmpty()){

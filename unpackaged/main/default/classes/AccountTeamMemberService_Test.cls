@@ -35,6 +35,17 @@ public class AccountTeamMemberService_Test {
         return users;
     }
     
+    public static Portfolio_Assignment__c portfolioAssignments(BSF_Portfolio__c bsfPortfolio,user u)
+    {
+        Portfolio_Assignment__c portfolioAssignment= new Portfolio_Assignment__c();
+        portfolioAssignment.Assignment_Type__c =bsfPortfolio.Portfolio_Type__c;
+        portfolioAssignment.BSF_Portfolio__c =bsfPortfolio.id;
+        portfolioAssignment.User__c = u.Id;
+        portfolioAssignment.Start_Date__c = system.today()-10;
+        portfolioAssignment.End_Date__c = system.today()+100;
+         
+        return portfolioAssignment;
+    }
     @isTest static void testAccountTeamMemberService1(){
         Opportunity mobileOpportunity = [Select Id,Name,AccountId,Drive_Date__c FROM Opportunity Where Is_Template__c = FALSE AND RecordType.DeveloperName = 'Mobile_Opp' Limit 1];
         Account act = new Account(Id=mobileOpportunity.AccountId,BillingPostalCode='48420');
@@ -290,6 +301,231 @@ public class AccountTeamMemberService_Test {
         coveringRecruiterList.add(coveringRecruiter2);
         test.startTest();
         insert coveringRecruiterList;
+        test.stopTest();
+    }
+    
+    @isTest
+    public static void testMethodDelAccTeam()
+    {
+        skedHubBase.BypassInsertTriggers=true;
+        skedHubBase.BypassUpdateTriggers=true;
+        BSF_TestDataSetup testDataSetup = new BSF_TestDataSetup(false);
+        Map<string, sObject> mapTestData =  testDataSetup.createAndInsertCommonObjects(); 
+                
+        // insert Mobile Account
+        Account testMobileAccount = (Account)mapTestData.get('MOBILE_ACCOUNT');
+        testMobileAccount.Internal_Name__c =  'TEST ACCOUNT 1';
+        triggerHandler.bypass('AccountTriggerHandler');
+        insert testMobileAccount;
+        
+        
+        // insert Mobile Site
+        sked__Location__c testMobileSite = (sked__Location__c)mapTestData.get('MOBILE_SITE');
+        insert testMobileSite;
+        
+        // insert templates
+        Opportunity testTemplate = (Opportunity)mapTestData.get('MOBILE_TEMPLATE_OPP');
+        testTemplate.AccountId = testMobileAccount.Id;
+        testTemplate.Drive_Site__c = testMobileSite.Id;
+        insert testTemplate;
+        
+        list<opportunity> opportunityList = new list<opportunity>();
+        
+        
+       Opportunity testMobileOpp1 = new Opportunity(
+            Name = 'Test Opportunity 2',
+        	StageName = 'Draft',
+           	Type_of_Drive__c = 'Mobile',
+        	RecordTypeId =  Opportunity.sObjectType.getDescribe().getRecordTypeInfosByName().get('Mobile Opp').getRecordTypeId(),
+        	Drive_Name__c = 'Test Drive',
+        	Drive_Date__c = system.today().addDays(55),
+        	CloseDate = system.today(),
+        	Start_Time__c = Time.newInstance(10, 0, 0, 0),
+      		End_Time__c = Time.newInstance(15, 30, 0, 0),
+        	Flow_Start_Time_Field__c = '1000',
+        	Flow_End_Time_Field__c = '1530',
+        	WB_Projected_Procedures__c = 4,
+        	X2RBC_Projected_Procedures__c = 2,
+        	Anticipated_Registered_Donors__c = 25,
+            Online_Scheduling_Enabled__c = 'No'
+		);
+        testMobileOpp1.AccountId = testMobileAccount.Id;
+        testMobileOpp1.Drive_Site__c = testMobileSite.Id;
+        testMobileOpp1.Parent_Template_Id__c = testTemplate.Id;
+       opportunityList.add(testMobileOpp1);
+        TriggerHandler.bypass('OpportunityTriggerHandler');
+        insert opportunityList;
+        List<User> users = new List<User>();
+        Profile drdProfile = [SELECT Id FROM Profile WHERE Name='DRD Profile']; //Keep this in Label
+        Profile drdManagerProfile = [SELECT Id FROM Profile WHERE Name='DRD Manager'];
+        
+        List<User> drdUsers = populateUserFields('DRD','User',drdProfile.Id,60);
+        List<User> dmUsers = populateUserFields('DM','User',drdManagerProfile.Id,60);
+        
+        List<User> allUsers = new List<User>();
+        allUsers.addAll(drdUsers);
+        allUsers.addAll(dmUsers);
+        insert allUsers;
+        List<AccountTeamMember> coveringRecruiterList = new List<AccountTeamMember>();
+        AccountTeamMember coveringRecruiter1 = new AccountTeamMember(AccountId=testMobileAccount.Id,Coverage_Reason__c='Leave of Absence (LOA)',TeamMemberRole='Account Manager',UserId=drdUsers[drdUsers.size()-1].Id);
+        coveringRecruiter1.Is_Covering_Recruiter__c = true;
+        coveringRecruiter1.Start_Date__c = System.today()-2;
+        coveringRecruiter1.End_Date__c = System.today()+30;
+        AccountTeamMember coveringRecruiter2 = new AccountTeamMember(AccountId=testMobileAccount.Id,Coverage_Reason__c='Vacant Territory',TeamMemberRole='Account Manager',UserId=drdUsers[drdUsers.size()-2].Id);
+        coveringRecruiter2.Is_Covering_Recruiter__c = true;
+        coveringRecruiter2.Start_Date__c = System.today()+50;
+        coveringRecruiter2.End_Date__c = System.today()+100;
+        
+        BSF_Constants.isTeamMemberCreatedFromBackend = false;
+        
+        coveringRecruiterList.add(coveringRecruiter1);
+        coveringRecruiterList.add(coveringRecruiter2);
+        test.startTest();
+        insert coveringRecruiterList;
+        
+        delete coveringRecruiterList;
+        test.stopTest();
+    }
+    
+    @isTest
+    public static void testMethodPortAccTeam()
+    {
+        skedHubBase.BypassInsertTriggers=true;
+        skedHubBase.BypassUpdateTriggers=true;
+        BSF_TestDataSetup testDataSetup = new BSF_TestDataSetup(false);
+        Map<string, sObject> mapTestData =  testDataSetup.createAndInsertCommonObjects(); 
+                
+        // insert Mobile Account
+        Account testMobileAccount = (Account)mapTestData.get('MOBILE_ACCOUNT');
+        testMobileAccount.Internal_Name__c =  'TEST ACCOUNT 1';
+        triggerHandler.bypass('AccountTriggerHandler');
+        insert testMobileAccount;
+        
+        
+        // insert Mobile Site
+        sked__Location__c testMobileSite = (sked__Location__c)mapTestData.get('MOBILE_SITE');
+        insert testMobileSite;
+        
+        // insert templates
+        Opportunity testTemplate = (Opportunity)mapTestData.get('MOBILE_TEMPLATE_OPP');
+        testTemplate.AccountId = testMobileAccount.Id;
+        testTemplate.Drive_Site__c = testMobileSite.Id;
+        insert testTemplate;
+        
+        list<opportunity> opportunityList = new list<opportunity>();
+        
+        
+       Opportunity testMobileOpp1 = new Opportunity(
+            Name = 'Test Opportunity 2',
+        	StageName = 'Draft',
+           	Type_of_Drive__c = 'Mobile',
+        	RecordTypeId =  Opportunity.sObjectType.getDescribe().getRecordTypeInfosByName().get('Mobile Opp').getRecordTypeId(),
+        	Drive_Name__c = 'Test Drive',
+        	Drive_Date__c = system.today().addDays(55),
+        	CloseDate = system.today(),
+        	Start_Time__c = Time.newInstance(10, 0, 0, 0),
+      		End_Time__c = Time.newInstance(15, 30, 0, 0),
+        	Flow_Start_Time_Field__c = '1000',
+        	Flow_End_Time_Field__c = '1530',
+        	WB_Projected_Procedures__c = 4,
+        	X2RBC_Projected_Procedures__c = 2,
+        	Anticipated_Registered_Donors__c = 25,
+            Online_Scheduling_Enabled__c = 'No'
+		);
+        testMobileOpp1.AccountId = testMobileAccount.Id;
+        testMobileOpp1.Drive_Site__c = testMobileSite.Id;
+        testMobileOpp1.Parent_Template_Id__c = testTemplate.Id;
+       opportunityList.add(testMobileOpp1);
+        TriggerHandler.bypass('OpportunityTriggerHandler');
+        insert opportunityList;
+        List<User> users = new List<User>();
+        Profile drdProfile = [SELECT Id FROM Profile WHERE Name='DRD Profile']; //Keep this in Label
+        Profile drdManagerProfile = [SELECT Id FROM Profile WHERE Name='DRD Manager'];
+        
+        List<User> drdUsers = populateUserFields('DRD','User',drdProfile.Id,60);
+        List<User> dmUsers = populateUserFields('DM','User',drdManagerProfile.Id,60);
+        
+        List<User> allUsers = new List<User>();
+        allUsers.addAll(drdUsers);
+        allUsers.addAll(dmUsers);
+        insert allUsers;
+        
+        TriggerHandler.bypass('BsfPortfolioTriggerHandler');
+        BSF_Portfolio__c DMPortfolio = new BSF_Portfolio__c();
+        DMPortfolio.Portfolio_Code__c = 'MICH_Detroit S';
+        DMPortfolio.Portfolio_Name__c = 'MICH_Detroit S';
+        DMPortfolio.Portfolio_Type__c = 'District Manager';
+        DMPortfolio.Taxonomy_type__c=BSF_Constants.BIO_RECRUITMENT_RECORD_TYPE;
+        DMPortfolio.Account_Based_Portfolio__c = false;
+        DMPortfolio.Territory_Portfolio__c = true;
+        
+        insert DMPortfolio;
+        
+        
+        BSF_Portfolio__c ABMPortfolio = new BSF_Portfolio__c();
+        ABMPortfolio.Portfolio_Code__c = 'NA_Detorit_ABM_1';
+        ABMPortfolio.Portfolio_Name__c = 'NA_Detorit_ABM_1';
+        ABMPortfolio.Portfolio_Type__c = BSF_Constants.AREA_BOOKING_MANAGER;
+        ABMPortfolio.Account_Based_Portfolio__c = false;
+        ABMPortfolio.Territory_Portfolio__c = true;
+        ABMPortfolio.Taxonomy_type__c=BSF_Constants.BIO_RECRUITMENT_RECORD_TYPE;
+        ABMPortfolio.Parent_Portfolio__c = [SELECT Id FROM BSF_Portfolio__c WHERE Portfolio_Code__c = 'MICH_Detroit S' AND Portfolio_Type__c = 'District Manager'].Id; 
+        
+        insert ABMPortfolio;
+        
+        BSF_Portfolio__c AMPortfolioWithABM = new BSF_Portfolio__c();
+        AMPortfolioWithABM.Portfolio_Name__c = 'Detroit South 05';
+        AMPortfolioWithABM.Portfolio_Code__c = 'HProdSEMR_1836';
+        AMPortfolioWithABM.Account_Based_Portfolio__c = false;
+        AMPortfolioWithABM.Territory_Portfolio__c = true;
+        AMPortfolioWithABM.Taxonomy_type__c=BSF_Constants.BIO_RECRUITMENT_RECORD_TYPE;
+        AMPortfolioWithABM.Portfolio_Type__c = BSF_Constants.ACCOUNT_MANAGER;
+        AMPortfolioWithABM.Parent_Portfolio__c = [SELECT Id FROM BSF_Portfolio__c WHERE Portfolio_Code__c = 'NA_Detorit_ABM_1' AND Portfolio_Type__c =:BSF_Constants.AREA_BOOKING_MANAGER].Id; 
+        
+        insert AMPortfolioWithABM;
+        
+        BSF_Portfolio__c AMPortfolioWithoutABM = new BSF_Portfolio__c();
+        AMPortfolioWithoutABM.Portfolio_Name__c = 'Detroit South 07';
+        AMPortfolioWithoutABM.Portfolio_Code__c = 'HProdSEMR_1837';
+        AMPortfolioWithoutABM.Account_Based_Portfolio__c = false;
+        AMPortfolioWithoutABM.Territory_Portfolio__c = true;
+        AMPortfolioWithoutABM.Portfolio_Type__c = 'Account Manager';
+        AMPortfolioWithoutABM.Parent_Portfolio__c = [SELECT Id FROM BSF_Portfolio__c WHERE Portfolio_Code__c = 'MICH_Detroit S' AND Portfolio_Type__c = 'District Manager'].Id; 
+        
+        insert AMPortfolioWithoutABM;
+        TriggerHandler.clearBypass('BsfPortfolioTriggerHandler');
+        List<Portfolio_Assignment__c> portfolioAssignmentList = new List<Portfolio_Assignment__c>();
+        portfolioAssignmentList.add(portfolioAssignments(DMPortfolio,dmUsers[0]));
+        portfolioAssignmentList.add(portfolioAssignments(ABMPortfolio,drdUsers[1]));
+        portfolioAssignmentList.add(portfolioAssignments(AMPortfolioWithABM,drdUsers[2]));
+        portfolioAssignmentList.add(portfolioAssignments(AMPortfolioWithoutABM,drdUsers[3]));
+        
+        
+        
+        List<Account_Portfolio_Assignment__c> accPortfolioAssignemnetList = new List<Account_Portfolio_Assignment__c>();
+        Account_Portfolio_Assignment__c accPortfolio1 = new Account_Portfolio_Assignment__c();
+        accPortfolio1.BSF_Portfolio__c =AMPortfolioWithABM.id;
+        accPortfolio1.Account__c = testMobileAccount.Id;
+        accPortfolio1.Start_Date__c = SYstem.today();
+        accPortfolio1.End_Date__c = System.today() +100;
+        
+        accPortfolioAssignemnetList.add(accPortfolio1);
+        
+        insert accPortfolioAssignemnetList;
+        test.StartTest();
+        system.debug('testMobileAccount.Id '+testMobileAccount.Id);
+        
+        TriggerHandler.bypass('PortfolioAssignmentTriggerHandler');
+        insert portfolioAssignmentList;
+        TriggerHandler.clearBypass('PortfolioAssignmentTriggerHandler');
+        system.debug('portfolioAssignmentList '+portfolioAssignmentList);
+        AccountPortfolioAssignmentService.accTeamDateSyncOnAccPortUpdates(new list<id>{testMobileAccount.Id},null,new Set<id>(),new map<id,list<accountTeamMember>> (),new map<id,list<accountTeamMember>> ());
+        
+        
+        AccountTeamMember atm = [select id from accountTeamMember where accountId=:testMobileAccount.Id limit 1];
+        
+        bsf_constants.isTeamMemberCreatedFromBackend=false;
+        delete atm;
         test.stopTest();
     }
 }

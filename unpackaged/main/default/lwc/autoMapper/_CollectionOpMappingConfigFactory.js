@@ -47,9 +47,14 @@ export class CollectionOpMappingConfigFactory {
       mappingConfig.addFieldConfig('sked_IMPACT_Start_Date__c', 'IMPACTStartDate', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_IMPACT_End_Date__c', 'IMPACTEndDate', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_Work_Week_First_Day__c', 'workWeekFirstDay', MAPPING_TYPE.direct);
+      mappingConfig.addFieldConfig('sked_High_Weight__c', 'highWeight', MAPPING_TYPE.direct);
+      mappingConfig.addFieldConfig('sked_Medium_Weight__c', 'mediumWeight', MAPPING_TYPE.direct);
+      mappingConfig.addFieldConfig('sked_Low_Weight__c', 'lowWeight', MAPPING_TYPE.direct);
+      mappingConfig.addFieldConfig('sked_Role_Priorities_Weight__c', 'rolePrioritiesWeight', MAPPING_TYPE.direct);
 
       mappingConfig.addFieldConfigWithRelatedList('sked_Regions__r', 'regions', 'sked__Region__c', 'sked_Biomed_Collection_Op_Center__c');
       mappingConfig.addFieldConfigWithRelatedList('sked_Collection_Op_Staging_Locations__r', 'collectionOpStagingLocations', 'sked_Collection_Op_Staging_Location__c', 'sked_Collection_Operation__c');
+      mappingConfig.addFieldConfigWithRelatedList('sked_CollectionOpOptimizerSettings__r', 'collectionOpOptimizerSettings', 'sked_CollectionOperationOptimizerSetting__c', 'sked_Collection_Operation__c');
 
       return mappingConfig;
   }

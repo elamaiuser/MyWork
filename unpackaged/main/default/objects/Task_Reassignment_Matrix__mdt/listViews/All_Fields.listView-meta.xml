@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>All_Fields</fullName>
+    <columns>MasterLabel</columns>
+    <columns>DeveloperName</columns>
+    <columns>NamespacePrefix</columns>
+    <columns>Task_Subject__c</columns>
+    <columns>Assigned_To__c</columns>
+    <columns>Due_Date_Offset__c</columns>
+    <columns>Creation_Date_Offset__c</columns>
+    <columns>Category__c</columns>
+    <filterScope>Everything</filterScope>
+    <label>All Fields</label>
+    <language>en_US</language>
+</ListView>

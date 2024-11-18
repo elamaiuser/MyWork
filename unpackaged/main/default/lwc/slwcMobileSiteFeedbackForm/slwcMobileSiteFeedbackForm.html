@@ -1,0 +1,9 @@
+<template>
+    <lightning-spinner if:true={showSpinner} class="spins" size="medium"></lightning-spinner>
+
+    <c-slwc-site-feedback
+        job={siteFeedbackModalData.job}
+        is-open={siteFeedbackModalData.isOpen}
+        full-screen
+    ></c-slwc-site-feedback>
+</template>

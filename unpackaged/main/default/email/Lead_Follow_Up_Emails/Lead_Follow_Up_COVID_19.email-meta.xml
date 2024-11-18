@@ -2,7 +2,7 @@
 <EmailTemplate xmlns="http://soap.sforce.com/2006/04/metadata">
     <available>true</available>
     <encodingKey>ISO-8859-1</encodingKey>
-    <name>Lead Follow Up COVID-19</name>
+    <name>Lead Follow Up Option 1</name>
     <style>none</style>
     <subject>Thank you for contacting the American Red Cross!</subject>
     <type>text</type>

@@ -8,9 +8,16 @@ private class skedOperationGeneratorBatch_Test {
     
         Test.startTest();
         sked_Drive__c testDrive = (sked_Drive__c) mapTestData.get('testDrive1');
-        testDrive.sked_Drive_Date__c = System.today().addDays(30);
-        update testDrive;
         Database.executeBatch(new skedOperationGeneratorBatch());
+        new skedOperationGeneratorBatch().execute(null, new List<sked_Drive__c>{testDrive});
         Test.stopTest();
+    }
+
+    static testmethod void testCaptureDebugLog() {
+        try {
+            throw new skedException('test');
+        } catch (Exception e) {
+            new skedOperationGeneratorBatch().captureDebugLog(e);
+        }
     }
 }

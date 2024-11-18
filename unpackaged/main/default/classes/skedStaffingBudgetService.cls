@@ -50,8 +50,6 @@ public class skedStaffingBudgetService extends skedEventService {
         if (!staffingBudgetCollectionOpsToCreate.isEmpty()) {
             insert staffingBudgetCollectionOpsToCreate;
         }
-
-
     }
     
     protected virtual override skedDataService.saveResult preSaveRecord(List<skedModels.modelBase> models) {
@@ -60,15 +58,19 @@ public class skedStaffingBudgetService extends skedEventService {
         Set<string> uniqueKeys = new Set<string>();
         Set<Date> staffingBudgetDates = new Set<Date>();
         Set<String> collectionOperationIds = new Set<String>();
+
         for (skedModels.staffingBudget staffingBudget : staffingBudgets) {
             List<string> roles = staffingBudget.roles;
             roles.sort();
+
+            List<string> driveTypes = staffingBudget.driveTypes;
+            driveTypes.sort();
 
             List<String> collectionOpIds = staffingBudget.collectionOperationIds;
             collectionOpIds.sort();
             collectionOperationIds.addAll(collectionOpIds);
 
-            staffingBudget.uniqueKey = string.join(collectionOpIds, ';') + ':' + staffingBudget.staffingBudgetDate + ':' + string.join(roles, ';');
+            staffingBudget.uniqueKey = string.join(collectionOpIds, ';') + ':' + staffingBudget.staffingBudgetDate + ':' + string.join(roles, ';') + string.join(driveTypes, ';');
             uniqueKeys.add(staffingBudget.uniqueKey);
             
             Date staffingBudgetDate = skedDateTimeUtils.getDateFromIsoString(staffingBudget.staffingBudgetDate);
@@ -93,7 +95,7 @@ public class skedStaffingBudgetService extends skedEventService {
 
         if (!sbcosBySbId.keySet().isEmpty()) { 
             Map<Id, sked_Staffing_Budget__c> existingStaffingBudgetById = new Map<Id, sked_Staffing_Budget__c>([
-                SELECT Id, sked_Roles__c, sked_Staffing_Budget_Date__c,
+                SELECT Id, sked_Roles__c, sked_Staffing_Budget_Date__c, sked_Drive_Types__c,
                 (SELECT Id, sked_Biomed_Collection_Operation__c FROM sked_Staffing_Budget_Collection_Ops__r)
                 FROM sked_Staffing_Budget__c
                 WHERE Id IN :sbcosBySbId.keySet()
@@ -117,8 +119,11 @@ public class skedStaffingBudgetService extends skedEventService {
                 List<string> roles = staffingBudget.sked_Roles__c.split(';');
                 roles.sort();
 
+                List<string> driveTypes = staffingBudget.sked_Drive_Types__c.split(';');
+                driveTypes.sort();
+
                 String sbDateStr = JSON.serialize(staffingBudget.sked_Staffing_Budget_Date__c).replace('"', '');
-                string uniqueKey = String.join(collectionOpIds, ';') + ':' + sbDateStr + ':' + string.join(roles, ';');
+                string uniqueKey = String.join(collectionOpIds, ';') + ':' + sbDateStr + ':' + string.join(roles, ';') + string.join(driveTypes, ';');
                 staffingBudgetByKey.put(uniqueKey, staffingBudget);
             }
 
@@ -210,14 +215,19 @@ public class skedStaffingBudgetService extends skedEventService {
             availabilityDates.add(availability.availabilityDate);
         }
         
-        sked__Resource__c skedResource = [SELECT Id, sked__Primary_Region__r.sked_Biomed_Collection_Op_Center__c,
-                                          (SELECT Id, sked__Tag__c, sked__Tag__r.Name, sked__Tag__r.sked_Priority__c
-                                           FROM sked__ResourceTags__r
-                                           WHERE sked__Resource__c = :resourceId
-                                           AND sked__Tag__r.sked__Type__c = :skedConstants.TAG_TYPE_ROLE
-                                           ORDER BY sked__Tag__r.sked_Priority__c ASC NULLS LAST)
-                                         FROM sked__Resource__c
-                                         WHERE Id = :resourceId];
+        sked__Resource__c skedResource = [
+            SELECT Id, sked__Primary_Region__r.sked_Biomed_Collection_Op_Center__c, sked_FCC_Code__c, sked_Daily_Time_Off_Hours__c,
+            sked__Primary_Region__r.sked_Biomed_Collection_Op_Center__r.sked_Auto_Approval_Cutoff_Days__c,
+            sked__Primary_Region__r.sked_Biomed_Collection_Op_Center__r.sked_Restricts_to_Full_day_PTO__c,
+            (SELECT Id, sked__Tag__c, sked__Tag__r.Name, sked__Tag__r.sked_Priority__c
+             FROM sked__ResourceTags__r
+             WHERE sked__Resource__c = :resourceId
+             AND sked__Tag__r.sked__Type__c = :skedConstants.TAG_TYPE_ROLE
+             AND sked_Role_Status__c = :skedConstants.TAG_ROLE_STATUS_ACTIVE
+             ORDER BY sked__Tag__r.sked_Priority__c ASC NULLS LAST)
+            FROM sked__Resource__c
+            WHERE Id = :resourceId
+        ];
         string resourcePrimaryRole = skedResource.sked__ResourceTags__r.get(0).sked__Tag__r.Name;
 
         Map<Id, sked__Resource__c> resourceById = new Map<Id, sked__Resource__c>{resourceId => skedResource};
@@ -225,28 +235,23 @@ public class skedStaffingBudgetService extends skedEventService {
         
         Map<Date, List<skedStaffingBudgetWrapper>> staffingBudgetWrappersByDate = skedStaffingBudgetUtils.getSkedStaffingBudgetWrappersByDate(datesByResourceId, resourceById);
         for (skedModels.availability availability : availabilityList) {
-            boolean isInside30DayWindow = false;
+            Boolean isOutsideAutoApprovalWindow = skedStaffingBudgetUtils.isWithinCOAutoApprovalCutOffDays(skedResource, currentDate, availability.availabilityDate);  
             Boolean availabilityRequiresValidation = availability.eventType == skedConstants.AVAILABILITY_TYPE_PTO || availability.eventType == skedConstants.AVAILABILITY_TYPE_FLOATING_HOLIDAY;
-            availability.timeOffAllowance = availabilityRequiresValidation ? 'No (General)' : 'Yes (General)';
-
-            if (currentDate.daysBetween(availability.availabilityDate) < 30) {
-                isInside30DayWindow = true;
-            }
+            availability.status = skedConstants.AVAILABILITY_STATUS_APPROVED;
+            availability.approvalReason = '';
+            availability.remainingSlots = 'Yes';
             
             if (staffingBudgetWrappersByDate.containsKey(availability.availabilityDate) && availabilityRequiresValidation) {
                 List<skedStaffingBudgetWrapper> staffingBudgetsForDate = staffingBudgetWrappersByDate.get(availability.availabilityDate);
                 
-                boolean isAnyOpenEnrollment = false;
+                boolean isAnyBiddingBudget = false;
                 boolean isAnyOutOfBiddingTime = false;
+                boolean isAnyAfterBiddingTime = false;
                 boolean isAnyBudgetFull = false;
-                boolean isAnyAllHandsOnDeck = false;
                 
                 for (skedStaffingBudgetWrapper staffingBudgetWrapper : staffingBudgetsForDate) {
-                    if (staffingBudgetWrapper.staffingBudget.sked_Request_Type__c == skedConstants.STAFFING_BUDGET_REQUEST_TYPE_ALL_HANDS_ON_DECK) {
-                        isAnyAllHandsOnDeck = true;
-                    }
                     if (staffingBudgetWrapper.staffingBudget.sked_Request_Type__c == skedConstants.STAFFING_BUDGET_REQUEST_TYPE_OPEN_ENROLLMENT) {
-                        isAnyOpenEnrollment = true;
+                        isAnyBiddingBudget = true;
                         if (isAnyOutOfBiddingTime == false) {
                             Date biddingStartDate, biddingEndDate;
                             if (staffingBudgetWrapper.staffingBudget.sked_Bidding_Start_Date__c != NULL) {
@@ -256,26 +261,44 @@ public class skedStaffingBudgetService extends skedEventService {
                                 biddingEndDate = staffingBudgetWrapper.staffingBudget.sked_Bidding_End_Date__c;
                             }
                             isAnyOutOfBiddingTime = (biddingStartDate != NULL && biddingStartDate > currentDate);
-                            isAnyOutOfBiddingTime = isAnyOutOfBiddingTime || (biddingEndDate != NULL && biddingEndDate < currentDate);
+                            isAnyAfterBiddingTime = (biddingEndDate != NULL && biddingEndDate < currentDate);
                         }
                     }
                     if (staffingBudgetWrapper.availableSlots <= 0) {
                         isAnyBudgetFull = true;
                     }
                 }
+
+                availability.remainingSlots = isAnyBudgetFull ? 'No' : 'Yes';
+                availability.approvalReason = isAnyBudgetFull ? 'Out of slot' : '';
                 
-                if (isAnyAllHandsOnDeck) {
-                    availability.timeOffAllowance = 'No (All Hands)';
+                if (isAnyBiddingBudget) {
+                    availability.approvalReason = isAnyOutOfBiddingTime ? 'Outside Bid Submission Window' 
+                                                : isAnyAfterBiddingTime ? 'After Bid Submission Window' : 'Bidding Period';
                 }
-                else if (isAnyOpenEnrollment) {
-                    availability.timeOffAllowance = isAnyOutOfBiddingTime ? 'No (Outside Bid Submission Window)' : 'Yes (Queue)';
+            }
+            
+            if (isOutsideAutoApprovalWindow) {
+                availability.approvalReason = 'Outside Auto Approval Window';
+            }
+            
+            boolean restrictsToFullDayPto = false;
+            if (skedResource.sked__Primary_Region__r != null
+                && skedResource.sked__Primary_Region__r.sked_Biomed_Collection_Op_Center__r != null 
+                && skedResource.sked__Primary_Region__r.sked_Biomed_Collection_Op_Center__r.sked_Restricts_to_Full_day_PTO__c != null
+            ) {
+                restrictsToFullDayPto = skedResource.sked__Primary_Region__r.sked_Biomed_Collection_Op_Center__r.sked_Restricts_to_Full_day_PTO__c;
+            }
+            if (restrictsToFullDayPto == true && skedResource.sked_Daily_Time_Off_Hours__c != null) {
+                integer dailyTimeOffMinutes = integer.valueOf(skedResource.sked_Daily_Time_Off_Hours__c) * 60;
+                integer timeOffDuration = skedDateTimeUtils.getDifferentMinutes(availability.start, availability.finish);
+                if (timeOffDuration < dailyTimeOffMinutes) {
+                    availability.approvalReason = 'Partial day balance request';
                 }
-                else if (isInside30DayWindow) {
-                    availability.timeOffAllowance = 'Yes (Queue)';
-                }
-                else if (!isAnyBudgetFull) {
-                    availability.timeOffAllowance = 'Yes (General)';
-                }
+            }
+            
+            if (!string.isBlank(availability.approvalReason)) {
+                availability.status = skedConstants.AVAILABILITY_STATUS_PENDING;
             }
         }
     }

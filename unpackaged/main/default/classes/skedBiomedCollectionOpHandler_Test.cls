@@ -78,4 +78,32 @@ private class skedBiomedCollectionOpHandler_Test {
 
         System.assertEquals(true, caughtException);
     }
+
+    @isTest
+    static void captureWeightLevelValueChanges_Test() {
+        skedTestDataFactory testDataFactory = new skedTestDataFactory('us', 14);
+        Map<string, sObject> mapTestData = testDataFactory.setupCommonTestData();
+
+        Biomed_Collection_Op_Center__c testCollectionOp = (Biomed_Collection_Op_Center__c) mapTestData.get('testCollectionOperation1');
+        sked_CollectionOperationOptimizerSetting__c setting = new sked_CollectionOperationOptimizerSetting__c(
+            sked_Collection_Operation__c = testCollectionOp.Id,
+            sked_Constraint__c = 'Account/Site Preferences',
+            sked_Constraint_Type__c = 'Soft Constraint',
+            sked_Default_Weight__c = 'High',
+            sked_Drive_Type__c = 'Fixed Site',
+            sked_Enabled__c = false,
+            sked_Display_Type__c = 'Picklist'
+        );
+        insert setting;
+
+        Test.startTest();
+
+        testCollectionOp.sked_High_Weight__c = 20;
+        update testCollectionOp;
+
+        Test.stopTest();
+
+        setting = [SELECT sked_Optimizer_Mapped_Weight__c FROM sked_CollectionOperationOptimizerSetting__c WHERE Id = :setting.Id];
+        System.assertEquals('20soft', setting.sked_Optimizer_Mapped_Weight__c);
+    }
 }

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GlobalValueSet xmlns="http://soap.sforce.com/2006/04/metadata">
+    <customValue>
+        <fullName>Soft Constraint</fullName>
+        <default>false</default>
+        <label>Soft Constraint</label>
+    </customValue>
+    <customValue>
+        <fullName>Hard Constraint</fullName>
+        <default>false</default>
+        <label>Hard Constraint</label>
+    </customValue>
+    <masterLabel>Constraint Types</masterLabel>
+    <sorted>false</sorted>
+</GlobalValueSet>

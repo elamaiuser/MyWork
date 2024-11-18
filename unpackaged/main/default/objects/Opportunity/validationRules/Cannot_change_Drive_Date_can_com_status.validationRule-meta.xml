@@ -3,15 +3,10 @@
     <fullName>Cannot_change_Drive_Date_can_com_status</fullName>
     <active>true</active>
     <errorConditionFormula>AND(
-    DriveStatus__c = &#39;Complete&#39;,
-    NOT($Profile.Name = &#39;System Administrator&#39;),
-    ISCHANGED(Drive_Date__c)
-)
-||
-AND(
-    DriveStatus__c = &#39;Cancel&#39;,
-    NOT($Profile.Name = &#39;System Administrator&#39;),
-    ISCHANGED(Drive_Date__c)
+OR(DriveStatus__c = &#39;Complete&#39;,DriveStatus__c = &#39;Cancel&#39;),
+ISCHANGED(Drive_Date__c),
+NOT($Profile.Name = &#39;System Administrator&#39;),
+Not($User.FirstName &amp; &#39; &#39; &amp;  $User.LastName = &#39;Automated Process&#39;)
 )</errorConditionFormula>
     <errorMessage>Drive Date cannot be changed on the Opportunity to a completed/cancelled Drive.</errorMessage>
 </ValidationRule>

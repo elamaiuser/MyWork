@@ -1,0 +1,17 @@
+<template>
+    <template if:true={showSpinner}>
+        <lightning-spinner class="spins" size="medium"></lightning-spinner>
+    </template>
+
+    <lightning-datatable 
+        key-field="id"
+        data={data}
+        columns={columnDefinitions}
+        hide-checkbox-column
+        show-row-number-column
+        sorted-by={sortOption.fieldName}
+        sorted-direction={sortOption.sortDirection}
+        onsort={handleSortChanged}
+        wrap-text-max-lines="3">
+    </lightning-datatable>
+</template>

@@ -8,25 +8,6 @@
         <plural>true</plural>
         <value>Role Time Variance Feedback</value>
     </caseValues>
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     <layouts>
         <layout>Site Feedback Layout</layout>
         <sections>
@@ -34,5 +15,32 @@
             <section>Custom Links</section>
         </sections>
     </layouts>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     <startsWith>Consonant</startsWith>
+    <validationRules>
+        <errorMessage><!-- Reason is required for Variance Type Other --></errorMessage>
+        <name>ReasonRequiredForTypeOther</name>
+    </validationRules>
 </CustomObjectTranslation>

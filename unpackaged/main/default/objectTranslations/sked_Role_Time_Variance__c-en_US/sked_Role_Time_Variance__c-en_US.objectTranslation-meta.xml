@@ -8,19 +8,6 @@
         <plural>true</plural>
         <value>Role Time Variances</value>
     </caseValues>
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     <layouts>
         <layout>Role Time Variance Layout</layout>
         <sections>
@@ -41,4 +28,18 @@
         <errorMessage><!-- &apos;Variance Type Other&apos; is required for type Other. --></errorMessage>
         <name>VariationTypeOtherRequiredForTypeOther</name>
     </validationRules>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
 </CustomObjectTranslation>

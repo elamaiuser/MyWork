@@ -1,19 +1,36 @@
+/* @Description: This Batch adds territory Account portfolio Assignments for All/Specified Accounts based on Taxonomy version 
+* ******************************************************************************************************************************
+* Modification Log                                                                                                             *
+*  Date                          Developer Name                 Comments                                                       *
+* ******************************************************************************************************************************
+* 08/02/2024                     Balaji N                      logic for HRP-12485(removed dependency on Account_AM_Portfolio_Type__c)
+*
+*/
 global class BSF_Batch_AccountPortfolioAssignment_V2 implements Database.Batchable<sObject>{
 	global String bioRecruitmentRecordType;
     global Decimal taxoVerKey;
     global List<String> postalcodeList;
+    global List<Id> accIdList = new List<Id>();
     
-    global BSF_Batch_AccountPortfolioAssignment_V2(Decimal taxoVerKey){
+    
+    global BSF_Batch_AccountPortfolioAssignment_V2(Decimal taxoVerKey, List<id> accIdList){
       this.bioRecruitmentRecordType = BSF_Constants.BIO_RECRUITMENT_RECORD_TYPE;
       this.taxoVerKey = taxoVerKey;  
-      this.postalcodeList = new List<String>(); 
+      this.postalcodeList = new List<String>();
+        if(accIdList != null && !accIdList.isEmpty() )
+        this.accIdList=accIdList;
    }
     
   global Database.QueryLocator start(Database.BatchableContext BC)
   {
         
-     String accountQuery = 'Select Id,Name,BillingPostalCode FROM Account WHERE Account_AM_Portfolio_Type__c = FALSE';
-  	
+      String accountQuery = 'Select Id,Name,BillingPostalCode FROM Account ';//HRP-12485 removed Account_AM_Portfolio_Type__c filter
+      //HRP-12485 Start
+      if(!accIdList.isEmpty())
+      {
+          accountQuery+='WHERE Id in:accIdList';
+      }
+  	  //HRP-12485 End
     return Database.getQueryLocator(accountQuery);
   }
  

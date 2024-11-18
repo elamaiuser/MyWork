@@ -1,0 +1,92 @@
+<template>
+    <template if:true={showSpinner}>
+        <lightning-spinner class="spins" size="medium"></lightning-spinner>
+    </template>
+    <template if:true={errorMessage}>
+        <div class="slds-notify slds-notify_toast slds-theme_error slds-p-around_x-small">
+            <span>{errorMessage}</span>
+        </div>
+    </template>
+    <div class="slds-p-around_x-small">
+        <lightning-input 
+            class="custom-border"
+            type="text" 
+            max-length="255" 
+            label="Drive Name"
+            name="driveName"
+            value={tempDriveName}
+            onchange={handleChange}>
+        </lightning-input>
+    </div>
+    <div class="slds-p-bottom_none slds-p-left_x-small slds-text-body_small">Drive Date</div>
+    <div class="slds-grid slds-wrap">
+        <div class="slds-p-left_x-small slds-col slds-medium-size_6-of-12 slds-size_1-of-1">
+            <lightning-input 
+                type="date" 
+                name="driveDateStart" 
+                label="Start" 
+                value={tempDriveDateStart} 
+                onchange={handleChange}>
+            </lightning-input>
+        </div>
+        <div class="slds-p-right_x-small slds-col slds-medium-size_6-of-12 slds-size_1-of-1 slds-p-left_medium">
+            <lightning-input 
+                type="date" 
+                name="driveDateEnd" 
+                label="End" 
+                value={tempDriveDateEnd} 
+                onchange={handleChange}>
+            </lightning-input>
+        </div>
+    </div>
+    
+    <div class="slds-grid ">
+        <div class= "slds-col slds-p-around_small"> 
+          <c-bsf-multi-select-combobox 
+                name="dayOfDrive" 
+                label="Day of Drive"
+                options={tempDayOfDriveList}
+                placeholder="-Select-"
+                onchange={handleChange}>
+            </c-bsf-multi-select-combobox>
+    </div>
+        <div class="slds-col slds-p-around_small">
+            <c-bsf-multi-select-combobox 
+                name="driveStatus" 
+                label="Drive Status"
+                options={tempDriveStatusList}
+                placeholder="-Select-"
+                onchange={handleChange}>
+            </c-bsf-multi-select-combobox>
+        </div>
+        <div class="slds-col slds-p-around_small">
+            <c-bsf-multi-select-combobox 
+                name="siteOperationType" 
+                label="Site Operation Type"
+                options={tempSiteOperationList}
+                placeholder="-Select-"
+                onchange={handleChange}>
+            </c-bsf-multi-select-combobox>
+        </div>
+    </div>
+    <div class="slds-grid slds-gutters slds-p-top_medium">
+        <lightning-button variant="brand" label="Search" title="Search" name="search" onclick={handleSearch} class="slds-m-left_medium"></lightning-button>
+    </div>
+    <template if:true={showDataTable}>
+        <div class="slds-scrollable_x slds-p-top_medium" style="height: 40vh; width: calc(200vw - 5rem);">
+            <lightning-datatable
+                key-field="Id" 
+                data={opportunityRecords} 
+                columns={opportunityColumns} 
+                column-widths-mode="fixed"
+                enable-infinite-loading={enableInfiniteLoading}
+                sorted-by={filterWrapper.sortBy}
+                sorted-direction={filterWrapper.sortDirection}
+                onsort={handleSortChanged}
+                onloadmore={handleLoadMoreData}
+                selected-rows={varSelectedOpportunityIdList}
+                onrowselection={handleRowSelection}>
+        </lightning-datatable>
+        </div>
+    </template>
+</template>

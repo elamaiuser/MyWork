@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Hospital_Accounts_with_no_drive_schedule</fullName>
+    <columns>ACCOUNT.NAME</columns>
+    <columns>Account_Status__c</columns>
+    <columns>Contact_BPL__c</columns>
+    <columns>ACCOUNT.ADDRESS1_CITY</columns>
+    <columns>ACCOUNT.ADDRESS1_STATE_CODE</columns>
+    <columns>ACCOUNT.ADDRESS1_ZIP</columns>
+    <columns>Next_Scheduled_Drive__c</columns>
+    <columns>Market__c</columns>
+    <columns>ACCOUNT.TYPE</columns>
+    <columns>Industry_Code__c</columns>
+    <columns>Account_Manager__c</columns>
+    <columns>Account_Manager_Portfolio__c</columns>
+    <columns>District_Manager__c</columns>
+    <columns>ACCOUNT.CREATED_DATE</columns>
+    <columns>Accepts_Automation2__c</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>ACCOUNT.RECORDTYPE</field>
+        <operation>equals</operation>
+        <value>Account.Mobile_Account</value>
+    </filters>
+    <filters>
+        <field>Next_Scheduled_Drive__c</field>
+        <operation>equals</operation>
+    </filters>
+    <filters>
+        <field>Industry_Code__c</field>
+        <operation>equals</operation>
+        <value>Ambulance / EMS,Care Facilities,Clinic,Doctor&#39;s Office,Hospital,Laboratory</value>
+    </filters>
+    <label>Hospital Accounts w/o drive scheduled</label>
+</ListView>

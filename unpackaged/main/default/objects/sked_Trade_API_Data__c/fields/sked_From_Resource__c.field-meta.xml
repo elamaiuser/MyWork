@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>sked_From_Resource__c</fullName>
+    <deleteConstraint>SetNull</deleteConstraint>
+    <externalId>false</externalId>
+    <label>From Resource</label>
+    <referenceTo>sked__Resource__c</referenceTo>
+    <relationshipLabel>Trade API Records (From)</relationshipLabel>
+    <relationshipName>sked_Trade_API_Data_From</relationshipName>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>Lookup</type>
+</CustomField>

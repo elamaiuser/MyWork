@@ -27,6 +27,8 @@ class optimizationRunService extends dataService {
   
   initiateOptimizationRun = (params) => auraProxy.getInstance().initiateOptimizationRun(params);
   getOptimizationRuns = (params) => auraProxy.getInstance().getOptimizationRuns(params);
+  getOptimizationRunStatistics = (params) => auraProxy.getInstance().getOptimizationRunStatistics(params); // HRP-12511
+  getOptimizedJobAllocation = (params) => auraProxy.getInstance().getOptimizedJobAllocation(params);
 }
 
 class optimizationRunQueryModel extends queryModelBase { 

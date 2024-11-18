@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+        <label><!-- Notification Type(Deprecated) --></label>
+        <name>BSF_Custom_Notification__c</name>
+        <picklistValues>
+            <masterLabel>CustomSMS</masterLabel>
+            <translation><!-- CustomSMS --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Email</masterLabel>
+            <translation><!-- Email --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Oneoff</masterLabel>
+            <translation><!-- Oneoff --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>SalesforcePush</masterLabel>
+            <translation><!-- SalesforcePush --></translation>
+        </picklistValues>
+    </CustomFieldTranslation>

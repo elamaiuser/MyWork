@@ -222,4 +222,11 @@ public class BSF_BatchOnDocForDriveStatusLookUpTest {
         CronTrigger contrg = [select Id,CronJobDetailId,CronJobDetail.Name from CronTrigger where CronJobDetail.Name = 'Test schedule class1'];
         system.assert(contrg.CronJobDetail.Name == 'Test schedule class1');
     }
+    
+    static testMethod void testParameterizedConstructor() {
+        Test.startTest();
+        BSF_BatchOnDocForDriveStatusLookUp batch1 = new BSF_BatchOnDocForDriveStatusLookUp(system.today(), system.today().addDays(20), null, null);
+        Database.executeBatch(batch1);
+        Test.stopTest();
+    }
 }

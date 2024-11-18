@@ -33,5 +33,10 @@
         <operation>notContain</operation>
         <value>Donor Center,TBD</value>
     </filters>
+    <filters>
+        <field>sked_Vehicles_Allocated__c</field>
+        <operation>equals</operation>
+        <value>0</value>
+    </filters>
     <label>Drives Missing Vehicles</label>
 </ListView>

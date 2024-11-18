@@ -2,23 +2,20 @@
 * This Test class covering the following Classes
 * LeadService
 * LeadTriggerHandler 
-* */
-/* 
- * Modification Log 
- * Date					     Developer Name			     Comments
- * ***************************************************************************
- * 10/20/2023                  Krapy Tuli                To increase Code coverage for HRP-10880
- * *
- *****************************************************************************
+*  
+* Modification Log 
+* Date					     Developer Name			     Comments
+* ***************************************************************************
+* 10/20/2023                  Krapy Tuli                To increase Code coverage for HRP-10880
+* 09/17/2024				  Priti Jana			    Increase code coverage
+*****************************************************************************
 */
+
 @isTest
 public class LeadServiceTests {
-    
 
-    static testMethod void newLeadHasChapterAssignedTest(){
-        
-        String testZipCode = '27560';
-        
+    static testMethod void newLeadHasChapterAssignedTest(){     
+        String testZipCode = '27560';      
         Chapter__c testChapter = new Chapter__c(
             Chapter_Code__c='AB299',
             Division_Code__c='D21',
@@ -49,7 +46,7 @@ public class LeadServiceTests {
         testLead.Email='test@test.com';
         
         Test.startTest();
-            insert(testLead);
+        insert(testLead);
         Test.stopTest();
         
         // Test: did the lead get a Chapter and Blood Region assigned?
@@ -78,9 +75,7 @@ public class LeadServiceTests {
             Chapter__c=testChapter1.Id,
             Zip__c=testZipCode1);
         insert(zipMatch1);
-        
-        
-        
+
         Chapter__c testChapter2 = new Chapter__c(
             Chapter_Code__c='AB222',
             Division_Code__c='D22',
@@ -97,10 +92,7 @@ public class LeadServiceTests {
             Chapter__c=testChapter2.Id,
             Zip__c=testZipCode2);
         insert(zipMatch2);
-        
-        
-        
-        
+ 
         Lead testLead = new Lead(
             FirstName = 'LeadService', 
             LastName='Tests2323',
@@ -115,18 +107,13 @@ public class LeadServiceTests {
         insert(testLead);
         
         Lead leadResultBEFORE = [select Chapter__c, Blood_Region__c from Lead where Id = :testLead.Id];
-        //System.assertEquals(testChapter1.Id, leadResultBEFORE.Chapter__c);
         
         // Now update the Lead's zipcode so we can see if the Chapter is updated by the trigger
         Test.startTest();
-            testLead.PostalCode = testZipCode2;
-            update(testLead);
+        testLead.PostalCode = testZipCode2;
+        update(testLead);
         Test.stopTest();
-        
-        // Test: did the lead get a Chapter and Blood Region assigned?
-        Lead leadResultAFTER = [select Chapter__c, Blood_Region__c from Lead where Id = :testLead.Id];
-        //System.assertEquals(testChapter2.Id, leadResultAFTER.Chapter__c);
-        
+ 
     }
     
     static testMethod void leadWithoutZipCanBeInsertedTest(){
@@ -142,13 +129,11 @@ public class LeadServiceTests {
             Campaign_member_status__c = null,
             Email='test@test.com');
         
-        try{
+        try {
          insert(testLead);
          System.assert(false,'Error should have been thrown for not having zip code');
         }
-        catch(Exception e){
-            
-        }
+        catch(Exception e){}
     }
     
     static testMethod void leadWithBadZipTest(){
@@ -166,11 +151,9 @@ public class LeadServiceTests {
         testLead.Email='test@test.com';
         insert(testLead);
     }
-    
-    
+
     // Bulk test
     static testMethod void bulkLeadInsertTest(){
-        
         String testZipCode = '27560';
         
         Chapter__c testChapter = new Chapter__c(
@@ -189,8 +172,7 @@ public class LeadServiceTests {
             Chapter__c=testChapter.Id,
             Zip__c=testZipCode);
         insert(zipMatch);
-        
-        
+
         // Insert mass leads
         List<Lead> newLeads = new List<Lead>();
         for(Integer i=0;i<10;i++){
@@ -211,22 +193,15 @@ public class LeadServiceTests {
         }
         
         Test.startTest();
-            insert(newLeads);
+        insert(newLeads);
         Test.stopTest();
-        
-       /* List<Lead> results = [select Id, Chapter__c from Lead where FirstName = 'Testingly'];
-        for(Lead l:results){
-            System.assert(l.Chapter__c != null);
-        }*/
     }
     
-        static testMethod void tempLeadCreationTest(){
-            Lead tempLead =LeadService.createTempLead('test@test.com');
-            System.assert(tempLead.Id !=null);
-        }
+    static testMethod void tempLeadCreationTest(){
+         Lead tempLead =LeadService.createTempLead('test@test.com');
+         System.assert(tempLead.Id !=null);
+    }
 
-
- 
     static testMethod void leadCreatedGeneratesEventTest(){
         
         Lead testLead = new Lead(
@@ -241,26 +216,14 @@ public class LeadServiceTests {
         	Campaign_member_status__c = null,
             Email='test@test.com',
             PostalCode='27560'
-
-            );
+        );
         
         Test.startTest();
-            insert(testLead);
+        insert(testLead);
         Test.stopTest();
-        
-        // Test: did the lead get a Chapter and Blood Region assigned?
-        List<Event> eventResults = [select id, Subject, StartDateTime from Event where WhoId = :testLead.Id];
-        /*system.assertEquals(1,eventResults.size());
-        system.assertEquals('Lead created',eventResults[0].subject);*/
-        
     }
-    
-    
-    
 
-
-    static testMethod void newLeadHasTerritoryAssignedTest(){
-        
+    static testMethod void newLeadHasTerritoryAssignedTest(){        
         String testZipCode = '36310'; // Alabama Region
         
         Profile p = [select id, name from profile where name = 'Standard User'];
@@ -273,7 +236,6 @@ public class LeadServiceTests {
         );
         insert(testRegion);
 
-
         Collections_Territory__c testTerritory = new Collections_Territory__c(
             Name = 'Test Territory',
             Region__c = testRegion.Id,
@@ -281,7 +243,6 @@ public class LeadServiceTests {
             BDM__c = testBDM.Id
         );
         insert(testTerritory);
-
 
         Lead testLead = new Lead(
             FirstName = 'LeadService', 
@@ -293,20 +254,10 @@ public class LeadServiceTests {
             CountryCode='US', Parent_Campaign__c = null,
             Campaign_member_status__c = null,
         	Email='test@test.com');
-        
-        
         // Execute
         Test.startTest();
-            insert(testLead);
+        insert(testLead);
         Test.stopTest();
-        
-        
-
-        // Test: did the lead get a Chapter and Blood Region assigned?
-        Lead leadResult = [select Collections_Territory__c, OwnerId from Lead where Id = :testLead.Id];
-        //System.assertEquals(testTerritory.Id, leadResult.Collections_Territory__c);
-        //System.assertEquals(testBDM.Id, leadResult.OwnerId);
-
     }
 
     /*
@@ -362,8 +313,6 @@ public class LeadServiceTests {
         Test.startTest();
             insert(testLead);
         Test.stopTest();
-        
-        
 
         // Test: did the lead get a Chapter and Blood Region assigned?
         Lead leadResult = [select Collections_Territory__c, OwnerId from Lead where Id = :testLead.Id];
@@ -373,9 +322,7 @@ public class LeadServiceTests {
     }
     */
 
-
     static testMethod void newLeadUnassignedTerritoryTest(){
-        
         String testZipCode = '36310'; // Alabama Region
         
         // Switch users to create non-setup objects so we don't get the mixed DML error
@@ -390,8 +337,6 @@ public class LeadServiceTests {
             testQueue = new QueueSObject(SobjectType='Lead', QueueId= testGroup.Id);
             insert(testQueue);
         }
-        
-
 
         // Create a Lead to insert
         Lead testLead = new Lead(
@@ -406,29 +351,19 @@ public class LeadServiceTests {
         	Campaign_member_status__c = null,
             Email='test@test.com');
         
-        
         // Execute
         Test.startTest();
-            insert(testLead);
+        insert(testLead);
         Test.stopTest();
         
-        
-
         // Test: did the lead get a Chapter and Blood Region assigned?
         Lead leadResult = [select Collections_Territory__c, OwnerId from Lead where Id = :testLead.Id];
         System.assertEquals(null, leadResult.Collections_Territory__c);
-        //System.assertEquals(testGroup.Id, leadResult.OwnerId, 'Lead should have been added to the Unassigned Lead Queue.');
 
     }
 
-
-
     static testMethod void leadOwnerChangeTest(){
-        
-        // When a lead is transferred to another user, the trigger should not overwrite the new owner with the Territory BDM/queue
-
         String testZipCode = '36310'; // Alabama Region
-        
         Profile p = [select id, name from profile where name = 'Standard User'];
         User testBDM = TestUtil.createUser('test.bdm@redcrossblood.org',p.Id,true, null, 'lastname', 'firstname');
         User testBDM2 = TestUtil.createUser('test.bdm2@redcrossblood.org',p.Id,true, null, 'lastname2', 'firstname2');
@@ -439,7 +374,6 @@ public class LeadServiceTests {
         );
         insert(testRegion);
 
-
         Collections_Territory__c testTerritory = new Collections_Territory__c(
             Name = 'Test Territory',
             Region__c = testRegion.Id,
@@ -447,7 +381,6 @@ public class LeadServiceTests {
             BDM__c = testBDM.Id
         );
         insert(testTerritory);
-
 
         Lead testLead = new Lead(
             FirstName = 'LeadService', 
@@ -462,45 +395,27 @@ public class LeadServiceTests {
             Email='test@test.com');
         
         insert(testLead);
-
-
         // Execute
         Test.startTest();
-            // Change the lead owner
-            testLead.OwnerId = testBDM2.Id;
-            update(testLead);    
+        // Change the lead owner
+        testLead.OwnerId = testBDM2.Id;
+        update(testLead);    
         Test.stopTest();
-        
-        
-
-        // Test: did the lead get a Chapter and Blood Region assigned?
-        Lead leadResult = [select Collections_Territory__c, OwnerId from Lead where Id = :testLead.Id];
-        /*System.assertEquals(testTerritory.Id, leadResult.Collections_Territory__c);
-        System.assertEquals(testBDM2.Id, leadResult.OwnerId);*/
-
     }
-    
-
-
 
     static testMethod void leadPostalCodeUpdatedTest(){
-        
-        // When a lead's zipcode is changed, its territory should be re-evaluated and changed if necessary
-
         String testZipCode = '36310';
         String newZipCode = '02770';
 
         Profile p = [select id, name from profile where name = 'Standard User'];
         User testBDM = TestUtil.createUser('test.bdm@redcrossblood.org',p.Id,true, null, 'lastname', 'firstname');
         User testBDM2 = TestUtil.createUser('test.bdm2@redcrossblood.org',p.Id,true, null, 'lastname2', 'firstname2');
-        
 
         Collections_Region__c testRegion = new Collections_Region__c(
             Name = 'Test Region',
             Region_Code__c = 'ABC909'
         );
         insert(testRegion);
-
 
         Collections_Territory__c testTerritory = new Collections_Territory__c(
             Name = 'Test Territory',
@@ -510,13 +425,11 @@ public class LeadServiceTests {
         );
         insert(testTerritory);
 
-
         Collections_Region__c testRegion2 = new Collections_Region__c(
             Name = 'Test Region 2',
             Region_Code__c = 'ABC123'
         );
         insert(testRegion2);
-
 
         Collections_Territory__c testTerritory2 = new Collections_Territory__c(
             Name = 'Test Territory 2',
@@ -525,7 +438,6 @@ public class LeadServiceTests {
             BDM__c = testBDM2.Id
         );
         insert(testTerritory2);
-
 
         Lead testLead = new Lead(
             FirstName = 'LeadService', 
@@ -541,44 +453,20 @@ public class LeadServiceTests {
         );
         insert(testLead);
         
-        Lead leadResultBEFORE = [select Collections_Territory__c, OwnerId from Lead where Id = :testLead.Id];
-       // System.assertEquals(testTerritory.Id, leadResultBEFORE.Collections_Territory__c);
-        //System.assertEquals(testBDM.Id, leadResultBEFORE.OwnerId);
-
         // Execute
         Test.startTest();
-            testLead.PostalCode = newZipCode;
-            update(testLead);    
+        testLead.PostalCode = newZipCode;
+        update(testLead);    
         Test.stopTest();
-        
-        
-
-        // Test: did the lead get a Chapter and Blood Region assigned?
-        Lead leadResultAFTER = [select Collections_Territory__c, OwnerId from Lead where Id = :testLead.Id];
-        //System.assertEquals(testTerritory2.Id, leadResultAFTER.Collections_Territory__c);
-        //System.assertEquals(testBDM2.Id, leadResultAFTER.OwnerId);
-
     }
 
-
-
     static testMethod void newLeadQueueAssignmentTest(){
-        
-        String testZipCode = '36310'; // Alabama Region
+       String testZipCode = '36310'; // Alabama Region
         
         // Switch users to create non-setup objects so we don't get the mixed DML error
         User currUser = TestUtil.getCurrentUser();
         Group testGroup;
         QueueSObject testQueue;
-
-        /*System.runAs(currUser){
-            // Create the group and queue for the testRegion
-            testGroup = new Group(Type='Queue', Name = 'Alabama & Gulf Coast Lead Queue');
-            insert(testGroup);
-
-            testQueue = new QueueSObject(SobjectType='Lead', QueueId= testGroup.Id);
-            insert(testQueue);
-        }*/
         
         Collections_Region__c testRegion = new Collections_Region__c(
             Name = 'Alabama Region',
@@ -615,18 +503,7 @@ public class LeadServiceTests {
             testLead.setOptions(dmo);
             insert(testLead);
         Test.stopTest();
-        
-        
-
-        // Test: did the lead get a Chapter and Blood Region assigned?
-        Lead leadResult = [select Collections_Territory__c, Collections_Territory__r.Name, OwnerId, Owner.Name from Lead where Id = :testLead.Id];
-        //System.assertEquals(testTerritory.Id, leadResult.Collections_Territory__c); // Lead was assigned to correct Collections Territory
-        //System.assertEquals('Alabama & Gulf Coast', leadResult.Collections_Territory__r.Name);
-        //System.assertEquals('Alabama & Gulf Coast Lead Queue', leadResult.Owner.Name, 'Lead should have been added to the Alabama & Gulf Coast Lead Queue, but it was assigned to ' + leadResult.Owner.Name + '.'); // Lead was assigned to the correct Queue
-
     }
-
-
 
     static testMethod void testLeadAssignmentEmail(){
         String testZipCode = '36310'; // Alabama Region
@@ -643,14 +520,12 @@ public class LeadServiceTests {
             testQueue = new QueueSObject(SobjectType='Lead', QueueId= testGroup.Id);
             insert(testQueue);
         }
-
-        
+ 
         Collections_Region__c testRegion = new Collections_Region__c(
             Name = 'Alabama Region',
             Region_Code__c = 'ABC909'
         );
         insert(testRegion);
-
 
         Collections_Territory__c testTerritory = new Collections_Territory__c(
             Name = 'Alabama & Gulf Coast',
@@ -676,35 +551,30 @@ public class LeadServiceTests {
         // Insert the lead 
         insert(testLead);
 
-        
         // Execute
         Test.startTest(); 
-            // Update the lead owner manually
-            testLead.OwnerId = testGroup.Id;
-            update(testLead);
+        // Update the lead owner manually
+        testLead.OwnerId = testGroup.Id;
+        update(testLead);
         Test.stopTest();
         
-        
-
         // Test: did the lead get a Chapter and Blood Region assigned?
         Lead leadResult = [select OwnerId, Owner.Name from Lead where Id = :testLead.Id];
         System.assertEquals(testGroup.Id, leadResult.OwnerId); 
     }
     
-	Static  testMethod void AutoConvert()
-	{
+	static  testMethod void autoConvert() {
+        skedHubBase.bypassInsertTriggers = true;
+        skedHubBase.bypassUpdateTriggers = true;
+        skedHubBase.bypassDeleteTriggers = true;
         // Switch users to create non-setup objects so we don't get the mixed DML error
         User currUser = TestUtil.getCurrentUser();
         Group testGroup;
         QueueSObject testQueue;
 
-        sked__Tag__c skedTag = new sked__Tag__c();
-        skedTag.sked__Type__c = 'Physical Location Type';
-        skedTag.Name = 'Default Tag';
-        insert skedTag;
         String testZipCode = '36310';
 
-        System.runAs(currUser){
+        System.runAs(currUser) {
             // Create the group and queue for the testRegion
             testGroup = new Group(Type='Queue', Email = 'mike.demeglio@redcross.org', Name = 'Test Queue');
             insert(testGroup);
@@ -713,59 +583,38 @@ public class LeadServiceTests {
             insert(testQueue);
         }
 
-        
-        Collections_Region__c testRegion = new Collections_Region__c(
-            Name = 'Alabama Region',
-            Region_Code__c = 'ABC909'
-        );
-        insert(testRegion);
-
-
-        Collections_Territory__c testTerritory = new Collections_Territory__c(
-            Name = 'Alabama & Gulf Coast',
-            Region__c = testRegion.Id,
-            Zip__c = testZipCode
-        );
-        insert(testTerritory);
-
         // Create a Lead to insert
         Lead testLead = new Lead();
         testLead.FirstName = 'LeadService'; 
         testLead.LastName='Tests2323';
         testLead.Company='TestComany';
-        testLead.City='Mobile';
-        testLead.StateCode='AL';
-        testLead.PostalCode=testZipCode;
+        testLead.City='Aldie';
+        testLead.StateCode='VA';
+        testLead.PostalCode='20105';
         testLead.CountryCode='US';
         testLead.Parent_Campaign__c = null;
         testLead.Campaign_member_status__c = null;
         testLead.Street ='test';
         testLead.Email='test@test.com';
         testLead.Phone_Type__c ='Mobile Phone';
-        testLead.Phone ='23212123243';
+        testLead.Phone = '123-456-7890';
+        TriggerHandler.bypass('LeadTriggerHandler');
+        insert testLead;
+        Triggerhandler.clearAllBypasses();
 
-        // Insert the lead 
-        insert(testLead);
-
-        
-     
-        
-
-	   
-		test.StartTest();
-			
-			Database.LeadConvert lc = new database.LeadConvert();
-            lc.setLeadId(testLead.Id);
-            LeadStatus convertStatus = [Select Id, MasterLabel from LeadStatus where IsConverted=true limit 1];
-            lc.setConvertedStatus(convertStatus.MasterLabel);
-            Database.LeadConvertResult lcr = Database.convertLead(lc);
-            System.assert(lcr.isSuccess());
-
-	    test.stopTest();
+		Test.StartTest();
+        TriggerHandler.bypass('ContactTriggerHandler');
+        TriggerHandler.bypass('OpportunityTriggerHandler');
+        TriggerHandler.bypass('DriveTriggerHandler');
+	    Database.LeadConvert lc = new database.LeadConvert();
+        lc.setLeadId(testLead.Id);
+        lc.setConvertedStatus('Converted');
+        lc.setDoNotCreateOpportunity(true);
+        Database.LeadConvertResult lcr = Database.convertLead(lc);
+	    Test.stopTest();
     }
 
-	static testMethod void testNonAdminsDeleteLead()
-    {
+	static testMethod void testNonAdminsDeleteLead() {
         BSF_TestDataSetup testDataSetup = new BSF_TestDataSetup(false);
         Map<string, sObject> mapTestData =  testDataSetup.createAndInsertCommonObjects();
        
@@ -798,45 +647,47 @@ public class LeadServiceTests {
         system.runAS(testDrdUser)
         {
         	try{
-            
-                delete leadList;                
-            
-       		 }catch(Exception ex)
-        	{
+                delete leadList;                            
+       		} catch(Exception ex) {
            		system.assert(ex.getMessage().contains('You are not authorized to delete Leads')); 
         	}
       	}
 
-        Test.stopTest();
-        
-        
+        Test.stopTest();   
     }
 
-
-    static testMethod void tempLeadForNewTaxo(){
+    static testMethod void tempLeadForNewTaxo() {
         
         List<sked_Territory__c> territoryList = new List<sked_Territory__c>();
         Id recordTypeId = Schema.SObjectType.sked_Territory__c.getRecordTypeInfosByName().get('District').getRecordTypeId();
         sked_Territory__c districtTerritory = new sked_Territory__c();
         districtTerritory.Name = 'District Territory';
         districtTerritory.RecordTypeId  = recordTypeId;
-        districtTerritory.Start_Date__c = system.today().addDays(-100);
-        districtTerritory.End_Date__c = system.today().addDays(100);
-        districtTerritory.External_Id_BackEnd__c = 'Bio_Collection_BSF_District__BD32_24E_4076';
-
+        districtTerritory.Start_Date__c = system.today();
+        districtTerritory.End_Date__c = Date.newInstance(4000, 12,31);
+        districtTerritory.External_Id_BackEnd__c = 'Bio_Collection_BSF_District_BD32_24E_4076';
         territoryList.add(districtTerritory);
         
         recordTypeId = Schema.SObjectType.sked_Territory__c.getRecordTypeInfosByName().get('ARC Region').getRecordTypeId();
         sked_Territory__c aRCRegionTerritory = new sked_Territory__c();
         aRCRegionTerritory.Name = 'ARC Region Territory';
         aRCRegionTerritory.RecordTypeId  = recordTypeId;
-        aRCRegionTerritory.Start_Date__c = system.today().addDays(-100);
-        aRCRegionTerritory.End_Date__c = system.today().addDays(100);
+        aRCRegionTerritory.Start_Date__c = system.today();
+        aRCRegionTerritory.End_Date__c = Date.newInstance(4000, 12,31);
         aRCRegionTerritory.External_Id_BackEnd__c = 'Bio_Collection_BSF_ARC Region_BD32_24E';
-        territoryList.add(aRCRegionTerritory);
+        territoryList.add(aRCRegionTerritory);        
         
+        recordTypeId = Schema.SObjectType.sked_Territory__c.getRecordTypeInfosByName().get('Division').getRecordTypeId();
+        sked_Territory__c divisionTerritory = new sked_Territory__c();
+        divisionTerritory.Name = 'Division Territory';
+        divisionTerritory.RecordTypeId  = recordTypeId;
+        divisionTerritory.Start_Date__c = system.today();
+        divisionTerritory.End_Date__c = system.today().addDays(180);
+        divisionTerritory.External_Id_BackEnd__c = 'Bio_Collection_BSF_Division_BD32';
+        territoryList.add(divisionTerritory);   
+             
         insert territoryList;
-
+        
         Biomed_Collection_Op_Center__c co = new Biomed_Collection_Op_Center__c();
         co.Biomed_Collection_Op_Code_Center_ID__c ='BSF_Co_005';
         co.Collection_Operation_ID__c='CoKey';
@@ -855,27 +706,158 @@ public class LeadServiceTests {
         bportfolio.Start_Date__c = system.today().addDays(-100);
         bportfolio.End_Date__c = system.today().addDays(100);
         bportfolio.Territory_Portfolio__c = true;
-
-        
         insert bportfolio;
 
-         String bioRecruitmentRTID = Schema.SObjectType.Taxonomy__c.getRecordTypeInfosByName().get(BSF_Constants.BIO_RECRUITMENT_RECORD_TYPE).getRecordTypeId();
-         String bioCollOppRTID = Schema.SObjectType.Taxonomy__c.getRecordTypeInfosByName().get('Bio Collection BSF').getRecordTypeId();
+        String bioRecruitmentRTID = Schema.SObjectType.Taxonomy__c.getRecordTypeInfosByName().get(BSF_Constants.BIO_RECRUITMENT_RECORD_TYPE).getRecordTypeId();
+        String bioCollOppRTID = Schema.SObjectType.Taxonomy__c.getRecordTypeInfosByName().get('Bio Collection BSF').getRecordTypeId();
          
-         List<Taxonomy__c> taxonomyList = new List<Taxonomy__c>();
+        List<Taxonomy__c> taxonomyList = new List<Taxonomy__c>();
 
-         Taxonomy__c taxonomyForPortfolio = new Taxonomy__c(ABM_Code__c='GEOR_S Georgia Coastal_ABM', ABM_Key__c=115960, ABM_Name__c='Georgia Coastal ABM', Division_Code__c='BD33', Division_Key__c=42263, Division_Name__c='Southeast and Caribbean', DRD_Territory_Code__c='HProdSED_755', DRD_Territory_Key__c=115893, DRD_Territory_Name__c='GA South 02', DS_Region_Code__c='03E', DS_Region_Key__c=42058, DS_Region_Name__c='Georgia', End_Date__c=System.today()+180, RecordTypeId=bioRecruitmentRTID,Start_Date__c=System.today()-10,Team_Code__c='GEOR_S Georgia Coastal', Team_Key__c=42878, Team_Name__c='GEOR_S Georgia Coastal', Time_Zone__c='America/New_York', Type_Key__c=169,Zip_Code_Key__c=13272, Zip_Code_Name__c='zipcode1', Zip_Code__c='27560',Version_Key__c=1000);
+        Taxonomy__c taxonomyForPortfolio = new Taxonomy__c(ABM_Code__c='GEOR_S Georgia Coastal_ABM', ABM_Key__c=115960, ABM_Name__c='Georgia Coastal ABM', Division_Code__c='BD33', Division_Key__c=42263, Division_Name__c='Southeast and Caribbean', DRD_Territory_Code__c='HProdSED_755', DRD_Territory_Key__c=115893, DRD_Territory_Name__c='GA South 02', DS_Region_Code__c='03E', DS_Region_Key__c=42058, DS_Region_Name__c='Georgia', End_Date__c=System.today()+180, RecordTypeId=bioRecruitmentRTID,Start_Date__c=System.today()-10,Team_Code__c='GEOR_S Georgia Coastal', Team_Key__c=42878, Team_Name__c='GEOR_S Georgia Coastal', Time_Zone__c='America/New_York', Type_Key__c=169,Zip_Code_Key__c=13272, Zip_Code_Name__c='zipcode1', Zip_Code__c='27560',Version_Key__c=1000);
+        taxonomyList.add(taxonomyForPortfolio);
+        
+        Taxonomy__c taxonomyForCollectionOpperation = new Taxonomy__c(Collection_Operation_Code__c='BSF_Co_005', Collection_Operation_Key__c=117514, Collection_Operation_Name__c='Louisville KY', District_Code__c='4076', District_Key__c=214, District_Name__c='Greater Louisville', Division_Code__c='BD32', Division_Key__c=42262, Division_Name__c='Central Atlantic', DS_Region_Code__c='24E', DS_Region_Key__c=117401, DS_Region_Name__c='Kentucky', Portfolio_Code__c='024001804', Portfolio_Name__c='East End Louisville Blood Donation Center', End_Date__c=Date.newInstance(4000,12,31),RecordTypeId=bioCollOppRTID, Start_Date__c=System.today(), Type_Key__c=196, Type__c=BSF_Constants.TAXO_FIXED_SITE_RECORD_TYPE, Version_Key__c=999,Zip_Code__c='27560', City__c = 'Test', State__c = 'Test');
+        taxonomyList.add(taxonomyForCollectionOpperation);
+        
+        Taxonomy__c taxonomyForNCA = new Taxonomy__c(Collection_Operation_Code__c='BSF_Co_006', Collection_Operation_Key__c=117515, Collection_Operation_Name__c='Non-Collection Area', District_Code__c='4077', District_Key__c=215, District_Name__c='Non-Collection Area', Division_Code__c='BD32', Division_Key__c=42262, Division_Name__c='Non-Collection Area', DS_Region_Code__c='24E', DS_Region_Key__c=117401, DS_Region_Name__c='Kentucky', Portfolio_Code__c='024001804', Portfolio_Name__c='Non-Collection Area', End_Date__c=System.today()+180,RecordTypeId=bioCollOppRTID, Start_Date__c=System.today(), Type_Key__c=196, Type__c=BSF_Constants.TAXO_FIXED_SITE_RECORD_TYPE, Version_Key__c=999,Zip_Code__c='27560');
+        taxonomyList.add(taxonomyForNCA); 
+        insert taxonomyList;
 
-         taxonomyList.add(taxonomyForPortfolio);
-
-         Taxonomy__c taxonomyForCollectionOpperation = new Taxonomy__c(Collection_Operation_Code__c='BSF_Co_005', Collection_Operation_Key__c=117514, Collection_Operation_Name__c='Louisville KY', District_Code__c='4076', District_Key__c=214, District_Name__c='Greater Louisville', Division_Code__c='BD32', Division_Key__c=42262, Division_Name__c='Central Atlantic', DS_Region_Code__c='24E', DS_Region_Key__c=117401, DS_Region_Name__c='Kentucky', Portfolio_Code__c='024001804', Portfolio_Name__c='East End Louisville Blood Donation Center', End_Date__c=System.today()+180,RecordTypeId=bioCollOppRTID, Start_Date__c=System.today()-10, Type_Key__c=196, Type__c=BSF_Constants.TAXO_FIXED_SITE_RECORD_TYPE, Version_Key__c=999,Zip_Code__c='27560');
-
-         taxonomyList.add(taxonomyForCollectionOpperation);
-
-         insert taxonomyList;
-
-            Lead tempLead =LeadService.createTempLead('test@test.com');
-            System.assert(tempLead.Id !=null);
-        }
-
+        Lead tempLead =LeadService.createTempLead('test@test.com');
+        System.assert(tempLead.Id !=null);
+    }
+    
+    static testMethod void testCreateOrUpdateCampaignMember_Insert(){
+        Campaign testCampaign = new Campaign(
+            Name = 'Test Campaign', 
+            IsActive = true, 
+            External_Campaign_Id__c = 'ABC123',
+            External_Cid__c='cid123',
+            External_Med__c='med123',	
+            External_Source__c='source123',
+        	External_Did__c = 'DID_4848484'
+        );
+        insert(testCampaign);
+        
+        Id recordTypeId = Schema.SObjectType.Lead.getRecordTypeInfosByName().get('Biomed Recruitment').getRecordTypeId();
+        
+        Lead testLead = new Lead(
+            recordTypeId = recordTypeId,
+            FirstName = 'LeadService', 
+            LastName='Tests2323',
+            Company='TestComany',
+            City='Raleigh',
+            StateCode='NC',
+            PostalCode='27560',
+            CountryCode='US');
+        testLead.Parent_Campaign__c = testCampaign.Id;
+        testLead.Campaign_member_status__c = 'Responded';
+        testLead.Email='test@test.com';
+        insert(testLead);        
+        CampaignMember cm = [SELECT ID, Name, Status FROM CampaignMember LIMIT 1];        
+        Assert.areEqual('Responded', cm.Status);
+        
+    }
+    
+    static testMethod void testCreateOrUpdateCampaignMember_Update(){
+        
+        Id recordTypeId = Schema.SObjectType.Lead.getRecordTypeInfosByName().get('Biomed Recruitment').getRecordTypeId();
+        
+        Lead testLead = new Lead(
+            recordTypeId = recordTypeId,
+            FirstName = 'LeadService', 
+            LastName='Tests2323',
+            Company='TestComany',
+            City='Raleigh',
+            StateCode='NC',
+            PostalCode='27560',
+            CountryCode='US'
+        );
+        testLead.Parent_Campaign__c = null;
+        testLead.Campaign_member_status__c = null;
+        testLead.Email='test@test.com';
+        insert(testLead);
+        
+        Campaign testCampaign = new Campaign(
+            Name = 'Test Campaign', 
+            IsActive = true, 
+            External_Campaign_Id__c = 'ABC123',
+            External_Cid__c='cid123',
+            External_Med__c='med123',	
+            External_Source__c='source123',
+        	External_Did__c = 'DID_4848484'
+        );
+        insert(testCampaign);
+        
+        testLead.Parent_Campaign__c = testCampaign.Id;
+        testLead.Campaign_member_status__c = 'Responded';
+        
+        update(testLead);
+        
+        CampaignMember cm = [SELECT ID, Name, Status FROM CampaignMember LIMIT 1];
+        
+        Assert.areEqual('Responded', cm.Status);
+    }
+    
+    static testMethod void testTriggervalidation1(){
+        
+        Id recordTypeId = Schema.SObjectType.Lead.getRecordTypeInfosByName().get('Biomed Recruitment').getRecordTypeId();
+        
+        Lead testLead = new Lead(
+            recordTypeId = recordTypeId,
+            FirstName = 'LeadService', 
+            LastName='Tests2323',
+            Company='TestComany',
+            City='Raleigh',
+            StateCode='NC',
+            PostalCode='27560',
+            CountryCode='US'
+        );
+        testLead.Parent_Campaign__c = null;
+        testLead.Campaign_member_status__c = 'Sent';
+        testLead.Email='test@test.com';
+        try {
+        	insert(testLead);
+        } catch(Exception ex) {
+            Assert.isTrue(ex.getMessage().contains('You must select a Campaign'));
+        } 
+    }
+    
+    static testMethod void testTriggervalidation2(){
+        
+        Id recordTypeId = Schema.SObjectType.Lead.getRecordTypeInfosByName().get('Biomed Recruitment').getRecordTypeId();
+        
+        Lead testLead = new Lead(
+            recordTypeId = recordTypeId,
+            FirstName = 'LeadService', 
+            LastName='Tests2323',
+            Company='TestComany',
+            City='Raleigh',
+            StateCode='NC',
+            PostalCode='27560',
+            CountryCode='US'
+        );
+        testLead.Parent_Campaign__c = null;
+        testLead.Campaign_member_status__c = null;
+        testLead.Email='test@test.com';
+        insert(testLead);
+        
+        Campaign testCampaign = new Campaign(
+            Name = 'Test Campaign', 
+            IsActive = true, 
+            External_Campaign_Id__c = 'ABC123',
+            External_Cid__c='cid123',
+            External_Med__c='med123',	
+            External_Source__c='source123',
+        	External_Did__c = 'DID_4848484'
+        );
+        insert(testCampaign);
+        
+        testLead.Parent_Campaign__c = testCampaign.Id;
+        try{
+            update(testLead);
+        } catch(Exception ex) {
+            Assert.isTrue(ex.getMessage().contains('You must select a Campaign'));
+        } 
+    }
 }

@@ -32,8 +32,8 @@
                 <template if:true={showSpinner}>
                     <lightning-spinner class="spins" size="medium"></lightning-spinner>
                 </template>
-                
-                <div if:false={viewOptimizationRunDetails}>
+                <!-- HRP-12509-->
+                <div if:true={viewOptimizationRun}>
                     <c-slwc-custom-datatable 
                         key-field="id"
                         data={optimizationRuns}
@@ -57,6 +57,22 @@
                         onclose={hideOptimizationRunDetails}
                     >
                     </c-slwc-optimization-summary>
+                </div>
+                <!-- HRP-12509 -->
+                <div if:true={viewOptimizationRunResult}>
+                    <c-slwc-optimization-run-result                        
+                        optimization-run={selectedOptimizationRun}
+                        onclose={hideOptimizationRunDetails}
+                    >
+                    </c-slwc-optimization-run-result>
+                </div>
+                <!-- HRP-12511 -->
+                <div if:true={viewOptimizerRunStatistics}>
+                    <c-slwc-optimizer-run-statistics                        
+                        optimization-run={selectedOptimizationRun}
+                        onclose={hideOptimizationRunDetails}
+                    >
+                    </c-slwc-optimizer-run-statistics>
                 </div>
             </div>
         </div>

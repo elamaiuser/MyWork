@@ -4,6 +4,7 @@
     <externalId>false</externalId>
     <label>Reason</label>
     <required>false</required>
+    <trackHistory>true</trackHistory>
     <trackTrending>false</trackTrending>
     <type>TextArea</type>
 </CustomField>

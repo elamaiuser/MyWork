@@ -12,9 +12,9 @@ global class skedResourceOverrideService extends skedDataService {
         if (query.biomedCollectionOpIds != NULL && !query.biomedCollectionOpIds.isEmpty()) {
             queryBuilder.addCondition('sked_Collection_Operation__c IN {0}', query.biomedCollectionOpIds);
         }
-        if (query.startTime != NULL && query.endTime != NULL) {
-            queryBuilder.addCondition('sked__Start__c < {0}', query.endTime);
-            queryBuilder.addCondition('sked__End__c > {0}', query.startTime);
+        if (query.startDate != NULL && query.endDate != NULL) {
+            queryBuilder.addCondition('sked_Start_Date__c <= {0}', query.endDate);
+            queryBuilder.addCondition('sked_End_Date__c >= {0}', query.startDate);
         }
     }
     
@@ -36,8 +36,8 @@ global class skedResourceOverrideService extends skedDataService {
     /*********************************************************** Nested classes ***********************************************************/
     global class queryModel extends skedDataService.queryModelBase {
         public List<string> biomedCollectionOpIds;
-        public DateTime endTime;
-        public DateTime startTime;
+        public Date endDate;
+        public Date startDate;
     }
     
 }

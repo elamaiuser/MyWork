@@ -1,6 +1,6 @@
 ({
     doInit: function (component, event, helper) { 
-        var action = component.get("c.fetchAccountDetails");
+        var action = component.get("c.fetchFSAccountDetails");
         var recId = component.get('v.recordId');
         action.setParams({
             "accId" : recId
@@ -41,14 +41,14 @@
     
     handleCloseOpportunities: function (component, event, helper) {
         
-        var action = component.get("c.cancelBloodDrivePendingOpp");
+        var action = component.get("c.cancelOpportunitiesOnFSAccountClosure");
         var recId = component.get('v.recordId');
         var effDate = component.get('v.effDate');
         var closeReason = component.get('v.closureReason');
         action.setParams({
             "accId" : recId,
             "selEffectiveDate" : effDate,
-            "closereason" : closeReason,
+            "closeReason" : closeReason,
         });
         action.setCallback(this, function (response) {
             var state = response.getState();
@@ -58,7 +58,7 @@
                 var resultsToast = $A.get("e.force:showToast");
                 resultsToast.setParams({
                     "type": "success",
-                    "message": "Drives Cancelled Successfully!!!"
+                    "message": lstResponse
                 });
                 resultsToast.fire();
                 component.set('v.display', false);
@@ -97,7 +97,7 @@
     },
     
     handleSave: function (component, event, helper) {
-        var action = component.get("c.fetchBloodDrivePendingOpp");
+        var action = component.get("c.getTotalNonCancelledFutureOpportunities");
         var recId = component.get('v.recordId');
         var effDate = component.get('v.effDate');
         var closeReason = component.get('v.closureReason');
@@ -105,7 +105,7 @@
             var resultsToast = $A.get("e.force:showToast");
             resultsToast.setParams({
                 "type": "error",
-                "message": "please enter missing fields."
+                "message": "Please Enter Missing Fields."
             });
             resultsToast.fire();
             return;
@@ -120,12 +120,12 @@
             var state = response.getState();
             var lstResponse = response.getReturnValue();
             if (state === "SUCCESS") {
-                if(lstResponse){
+                if(lstResponse > 0){
                     
                     var resultsToast = $A.get("e.force:showToast");
                     resultsToast.setParams({
                         "type": "warning",
-                        "message": "There are drives scheduled after your effective date that will need to be cancelled."
+                        "message": `There are ${lstResponse} drive(s) scheduled after the selected effective date that will be cancelled.`
                     });
                     resultsToast.fire();
                     
@@ -135,14 +135,14 @@
                     $A.util.addClass(cmpTarget, 'slds-fade-in-open');
                     $A.util.addClass(cmpBack, 'slds-backdrop--open');
                 }else{
-                    var action = component.get("c.cancelAccount");
+                    var action = component.get("c.closeFSAccount");
                     var recId = component.get('v.recordId');
                     var effDate = component.get('v.effDate');
                     var closeReason = component.get('v.closureReason');
                     action.setParams({
                         "accId" : recId,
                         "selEffectiveDate" : effDate,
-                        "closereason" : closeReason,
+                        "closeReason" : closeReason,
                     });
                     action.setCallback(this, function (response) {
                         var state = response.getState();
@@ -152,7 +152,7 @@
                             var resultsToast = $A.get("e.force:showToast");
                             resultsToast.setParams({
                                 "type": "success",
-                                "message": "Account Closed Successfully!!!"
+                                "message": lstResponse
                             });
                             resultsToast.fire();
                             

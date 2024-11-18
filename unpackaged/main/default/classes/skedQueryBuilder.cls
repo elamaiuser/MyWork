@@ -29,6 +29,14 @@ public class skedQueryBuilder {
         this.conditions = new List<string>();
     }
 
+    public boolean hasConditions() {
+        return !this.conditions.isEmpty();
+    }
+
+    public boolean hasConditionGroups() {
+        return !this.conditionGroups.isEmpty();
+    }
+
     //syntax: condition = 'Id = {0}'; value = true
     public string generateCondition(string condition, boolean value) {
         condition = condition.replace('{0}', string.valueOf(value));

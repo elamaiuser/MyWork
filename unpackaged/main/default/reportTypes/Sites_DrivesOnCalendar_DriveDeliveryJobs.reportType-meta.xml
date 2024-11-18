@@ -543,6 +543,11 @@
             <field>Has_Elevator__c</field>
             <table>sked__Location__c</table>
         </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>Chapter__c.Name</field>
+            <table>sked__Location__c</table>
+        </columns>
         <masterLabel>Sites</masterLabel>
     </sections>
     <sections>
@@ -1124,6 +1129,26 @@
         <columns>
             <checkedByDefault>false</checkedByDefault>
             <field>sked_Stage_Options__c</field>
+            <table>sked__Location__c.sked_Drives__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>account_External_Id__c</field>
+            <table>sked__Location__c.sked_Drives__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>site_External_Id__c</field>
+            <table>sked__Location__c.sked_Drives__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>Supervisory_Role__c</field>
+            <table>sked__Location__c.sked_Drives__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>sked_Optimization_Run__c</field>
             <table>sked__Location__c.sked_Drives__r</table>
         </columns>
         <masterLabel>Drives on Calendar</masterLabel>

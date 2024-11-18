@@ -19,6 +19,7 @@ export default class SlwcDriveAppointmentSlots extends LightningElement {
     @track confirmModalData = {};
     @track confirmDeleteSlotData = {};
     @track startTimeOptions = {};
+    @track lockAppointmentModalData = {};
 
     @api drive;
     @api driveShift;
@@ -54,21 +55,30 @@ export default class SlwcDriveAppointmentSlots extends LightningElement {
     }
 
     get isCreateable() {
-        if (this.masterData && this.masterData.loginUser && this.masterData.loginUser.slotPermission) {
+        if (this.isFixedSiteDrive && this.masterData && this.masterData.loginUser 
+            && (this.masterData.loginUser.profileName === 'DRD Manager' || this.masterData.loginUser.profileName === 'DRD Profile')) {
+                return false;
+        }else if (this.masterData && this.masterData.loginUser && this.masterData.loginUser.slotPermission) {
             return this.masterData.loginUser.slotPermission.isCreateable;
         }
         return false;
     }
 
     get isUpdateable() {
-        if (this.masterData && this.masterData.loginUser && this.masterData.loginUser.slotPermission) {
+        if (this.isFixedSiteDrive && this.masterData && this.masterData.loginUser 
+            && (this.masterData.loginUser.profileName === 'DRD Manager' || this.masterData.loginUser.profileName === 'DRD Profile')) {
+                return false;
+        }else if (this.masterData && this.masterData.loginUser && this.masterData.loginUser.slotPermission) {
             return this.masterData.loginUser.slotPermission.isUpdateable;
         }
         return false;
     }
 
     get isDeletable() {
-        if (this.masterData && this.masterData.loginUser && this.masterData.loginUser.slotPermission) {
+        if (this.isFixedSiteDrive && this.masterData && this.masterData.loginUser 
+            && (this.masterData.loginUser.profileName === 'DRD Manager' || this.masterData.loginUser.profileName === 'DRD Profile')) {
+                return false;
+        }else if (this.masterData && this.masterData.loginUser && this.masterData.loginUser.slotPermission) {
             return this.masterData.loginUser.slotPermission.isDeletable;
         }
         return false;
@@ -80,6 +90,19 @@ export default class SlwcDriveAppointmentSlots extends LightningElement {
 
     get isFixedSiteDrive() {
         return this.driveHelper.isFixedSiteDrive(this.drive);
+    }
+    
+    get allowToInputLockReason() {
+        // return true;
+        return this.driveHelper.isFixedSiteDrive(this.drive) || this.driveHelper.isWbFixedSiteDrive(this.drive);
+    }
+
+    get selectedSlots() {
+        return this.slots.filter(slot => slot.selected);
+    }
+
+    get disableLockAppointments() {
+        return !this.selectedSlots.length;
     }
 
     get displaySlotsData() {
@@ -241,6 +264,33 @@ export default class SlwcDriveAppointmentSlots extends LightningElement {
         fireEvent(this.pageRef, 'openDriveShiftConfirmModal', eventValues);
     }
 
+    lockAppointments() {
+        if(this.allowToInputLockReason) {
+            this.showLockAppointmentModal();
+            return;
+        };
+        
+        this.selectedSlots.forEach(slot => {
+            this.lockAppointment({
+                slotKey: slot.key,
+                fixedSiteLockComment: '',
+                fixedSiteLockReason: ''
+            })
+        });
+    }
+
+    unlockAppointments() {
+        this.selectedSlots.forEach(slot => {
+            this.unlockAppointment({
+                currentTarget: {
+                    dataset: {
+                        value: slot.key
+                    }
+                }
+            })
+        });
+    }
+
     regenerateAppointments() {
         const _event = {
             detail: {
@@ -253,19 +303,47 @@ export default class SlwcDriveAppointmentSlots extends LightningElement {
         let eventValues = {action: "regenerateShiftSlots", ..._event};
         fireEvent(this.pageRef, 'openDriveShiftConfirmModal', eventValues);
     }
-
-    lockAppointment(event) {
+    
+    unlockAppointment(event) {
         const slotKey = event.currentTarget.dataset['value'];
         const slot = this.findSlotByKey(slotKey);
         if(!slot) return;
-        const currentLockedStatus = slot.locked;
         const _event = new CustomEvent('saveappointment', {
             detail: {
                 driveShift: this.driveShift,
                 slotKey: slotKey,
                 newSlot: {
                     key: slotKey,
-                    locked: !currentLockedStatus
+                    locked: false,
+                    selected: false,
+                    fixedSiteLockReason: '',
+                    fixedSiteLockComment: ''
+                }
+            },
+            bubbles: true,
+            composed: true
+        });
+
+        this.dispatchEvent(_event);
+    }
+
+    lockAppointment({
+        slotKey,
+        fixedSiteLockComment,
+        fixedSiteLockReason
+    }) {
+        const slot = this.findSlotByKey(slotKey);
+        if(!slot) return;
+        const _event = new CustomEvent('saveappointment', {
+            detail: {
+                driveShift: this.driveShift,
+                slotKey: slotKey,
+                newSlot: {
+                    key: slotKey,
+                    locked: true,
+                    selected: false,
+                    fixedSiteLockReason,
+                    fixedSiteLockComment
                 }
             },
             bubbles: true,
@@ -314,6 +392,27 @@ export default class SlwcDriveAppointmentSlots extends LightningElement {
         });
     }
 
+    handleSelectSlot(event) {
+        const slotKey = event.currentTarget.dataset['value'];
+        const slot = this.findSlotByKey(slotKey);
+        if(!slot) return;
+
+        const _event = new CustomEvent('saveappointment', {
+            detail: {
+                driveShift: this.driveShift,
+                slotKey: slotKey,
+                newSlot: {
+                    key: slotKey,
+                    selected: !slot.selected
+                }
+            },
+            bubbles: true,
+            composed: true
+        });
+
+        this.dispatchEvent(_event);
+    }
+    
     deleteAppointment(event) {
         const slotKey = event.currentTarget.dataset['value'];
         const slot = this.findSlotByKey(slotKey);
@@ -345,5 +444,54 @@ export default class SlwcDriveAppointmentSlots extends LightningElement {
     handleCloseAppointmentModal() {
         this.selectedSlot = null;
     }
-    
+    get disableActionButton(){
+        if (this.isFixedSiteDrive && this.masterData && this.masterData.loginUser 
+                && (this.masterData.loginUser.profileName === 'DRD Manager' || this.masterData.loginUser.profileName === 'DRD Profile')) {
+                    return true;
+        }
+        return false;
+    }
+
+    showLockAppointmentModal(event) {
+        const slotKey = event?.currentTarget?.dataset?.['value'];
+        const slot = this.findSlotByKey(slotKey);
+        if(!this.allowToInputLockReason) {
+            this.lockAppointment({
+                slotKey,
+                fixedSiteLockComment: '',
+                fixedSiteLockReason: ''
+            })
+            return;
+        }
+
+        this.lockAppointmentModalData = {
+            isOpen: true,
+            slots: slot ? [slot] : this.selectedSlots,
+            slotKey
+        }
+    }
+
+    closeLockAppointmentModal() {
+        this.lockAppointmentModalData = {};
+    }
+
+    saveLockAppointmentModal(event) {
+        const { fixedSiteLockComment, fixedSiteLockReason } = event.detail;
+        if(!this.lockAppointmentModalData.slotKey) {
+            this.selectedSlots.forEach(slot => {
+                this.lockAppointment({
+                    slotKey: slot.key,
+                    fixedSiteLockComment,
+                    fixedSiteLockReason
+                })
+            });
+        } else {
+            this.lockAppointment({
+                slotKey: this.lockAppointmentModalData.slotKey,
+                fixedSiteLockComment,
+                fixedSiteLockReason
+            })
+        }
+        this.closeLockAppointmentModal();
+    }
 }

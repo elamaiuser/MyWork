@@ -18,6 +18,7 @@ trigger TaskPlatformEvent on Task_Platform_Event__e (after insert)
                 t.ActivityDate = tp.ActivityDate__c;
                 t.OwnerId = tp.OwnerId__c;//part of ticket HRP-9562
                 t.subject = tp.Subject__c;
+                t.Drive_Date__c = tp.Drive_Date__c;
                 t.WhatId = tp.WhatId__c;
                 taskList.add(t);
     }

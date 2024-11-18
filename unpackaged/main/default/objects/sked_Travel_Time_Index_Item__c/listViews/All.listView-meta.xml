@@ -11,6 +11,12 @@
     <columns>sked_Average_Travel_Time__c</columns>
     <columns>CREATEDBY_USER</columns>
     <columns>CREATED_DATE</columns>
+    <columns>sked_Last_Refresh_Date__c</columns>
     <filterScope>Everything</filterScope>
+    <filters>
+        <field>sked_Key__c</field>
+        <operation>contains</operation>
+        <value>34.689408,-118.171294</value>
+    </filters>
     <label>All</label>
 </ListView>

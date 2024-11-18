@@ -37,7 +37,7 @@ public class UpdateOppoSplitPortfolioBatchTest {
         
         //insert AdminUser ;
         
-        UserRole urole  = [select id from userrole where developername =: rolename ];
+        //UserRole urole  = [select id from userrole where developername =: rolename ];
         
         User DRDAMUser = new User(
             ProfileId = [SELECT Id FROM Profile WHERE Name = 'DRD Profile'].Id,
@@ -50,8 +50,8 @@ public class UpdateOppoSplitPortfolioBatchTest {
             TimeZoneSidKey = 'America/Los_Angeles',
             EmailEncodingKey = 'UTF-8',
             LanguageLocaleKey = 'en_US',
-            LocaleSidKey = 'en_US',
-            UserRoleId = urole.Id
+            LocaleSidKey = 'en_US'
+            //UserRoleId = urole.Id
         );
         
         

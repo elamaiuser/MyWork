@@ -28,14 +28,19 @@
                 <label>Waiting for DM Approval</label>
             </value>
             <value>
+                <fullName>DM Waiting for DRD Feedback</fullName>
+                <default>false</default>
+                <label>DM Waiting for DRD Feedback</label>
+            </value>
+            <value>
                 <fullName>Waiting for APS Approval</fullName>
                 <default>false</default>
                 <label>Waiting for APS Approval</label>
             </value>
             <value>
-                <fullName>Waiting for DRD Feedback</fullName>
+                <fullName>APS Waiting for DRD Feedback</fullName>
                 <default>false</default>
-                <label>Waiting for DRD Feedback</label>
+                <label>APS Waiting for DRD Feedback</label>
             </value>
             <value>
                 <fullName>Approved</fullName>
@@ -56,6 +61,12 @@
                 <fullName>Approved by System</fullName>
                 <default>false</default>
                 <label>Approved by System</label>
+            </value>
+            <value>
+                <fullName>Waiting for DRD Feedback</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Waiting for DRD Feedback</label>
             </value>
         </valueSetDefinition>
     </valueSet>

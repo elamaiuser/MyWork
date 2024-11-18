@@ -1,14 +1,12 @@
 import { LightningElement, api, track } from 'lwc';
+import { DriveHelper } from 'c/slwcDriveGenerator';
 
 export default class SlwcFixedSiteTab extends LightningElement {
+  driveHelper = new DriveHelper();
   @api drive = null;
   @api masterData = null;
 
   get drivePlateletRounds() {
-    if(!this.drive || !this.drive.driveShiftsMetadata) return null;
-
-    return (this.drive.driveShiftsMetadata.driveShifts || []).reduce((result, item) => {
-      return result + (item.numberOfRounds || 0)
-    }, 0);
+    return this.driveHelper.getDrivePlateletRounds(drive);
   }
 }

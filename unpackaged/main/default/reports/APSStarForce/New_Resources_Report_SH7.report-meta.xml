@@ -39,7 +39,29 @@
     <columns>
         <field>sked__Resource__c.sked_Hire_Date__c</field>
     </columns>
+    <columns>
+        <field>sked__Resource__c.sked_Seniority_Date__c</field>
+    </columns>
+    <columns>
+        <field>sked__Resource__c.sked_Roles__c</field>
+    </columns>
+    <columns>
+        <field>sked__Resource__c.sked_Code__c</field>
+    </columns>
+    <columns>
+        <field>sked__Resource__c.sked_Job_Code__c</field>
+    </columns>
     <description>All Collection Staff Resources in BSF</description>
+    <filter>
+        <criteriaItems>
+            <column>sked__Resource__c.sked_Roles__c</column>
+            <columnToColumn>false</columnToColumn>
+            <isUnlocked>true</isUnlocked>
+            <operator>equals</operator>
+            <value></value>
+        </criteriaItems>
+        <language>en_US</language>
+    </filter>
     <format>Tabular</format>
     <name>All Resources</name>
     <params>

@@ -429,27 +429,14 @@ public class skedResourceHoursRecordUtils {
     }
 
     public static void countTotalWorkingDays(List<Id> resourceHoursRecordIds) {
-        Map<Id, List<sked__Activity__c>> map_resourceHoursRecordId_activities = new Map<Id, List<sked__Activity__c>>();
-        Map<Id, List<sked__Activity_Resource__c>> map_resourceHoursRecordId_activityResources = new Map<Id, List<sked__Activity_Resource__c>>();
-        Map<Id, List<sked__Availability__c>> map_resourceHoursRecordId_availabilities = new Map<Id, List<sked__Availability__c>>();
-        Map<Id, List<sked__Job_Allocation__c>> map_resourceHoursRecordId_jobAllocations = new Map<Id, List<sked__Job_Allocation__c>>();
-        prepareMappingFromResourceHoursRecordIdToEvents(
-            resourceHoursRecordIds,
-            map_resourceHoursRecordId_activities,
-            map_resourceHoursRecordId_activityResources,
-            map_resourceHoursRecordId_availabilities,
-            map_resourceHoursRecordId_jobAllocations
-        );
+        Map<Id, List<sked_Resource_Hours_Record_Detail__c>> map_resourceHoursRecordId_resourceHoursRecordDetails = getMap_resourceHoursRecordId_resourceHoursRecordDetails(resourceHoursRecordIds);
 
         List<sked_Resource_Hours_Record__c> resourceHoursRecordsToUpdate = new List<sked_Resource_Hours_Record__c>();
         for (Id resourceHoursRecordId : resourceHoursRecordIds) {
             resourceHoursRecordsToUpdate.add(new sked_Resource_Hours_Record__c(
                 Id = resourceHoursRecordId,
                 sked_Total_Working_Days__c = calculateTotalWorkingDays(
-                    map_resourceHoursRecordId_activities.get(resourceHoursRecordId),
-                    map_resourceHoursRecordId_activityResources.get(resourceHoursRecordId),
-                    map_resourceHoursRecordId_availabilities.get(resourceHoursRecordId),
-                    map_resourceHoursRecordId_jobAllocations.get(resourceHoursRecordId)
+                    map_resourceHoursRecordId_resourceHoursRecordDetails.get(resourceHoursRecordId)
                 )
             ));
         }
@@ -507,20 +494,14 @@ public class skedResourceHoursRecordUtils {
 
     /*********************************************************** Privated Methods ***********************************************************/
 
-    private static void prepareMappingFromResourceHoursRecordIdToEvents(
-        List<Id> resourceHoursRecordIds,
-        Map<Id, List<sked__Activity__c>> map_resourceHoursRecordId_activities,
-        Map<Id, List<sked__Activity_Resource__c>> map_resourceHoursRecordId_activityResources,
-        Map<Id, List<sked__Availability__c>> map_resourceHoursRecordId_availabilities,
-        Map<Id, List<sked__Job_Allocation__c>> map_resourceHoursRecordId_jobAllocations
+    private static Map<Id, List<sked_Resource_Hours_Record_Detail__c>> getMap_resourceHoursRecordId_resourceHoursRecordDetails(
+        List<Id> resourceHoursRecordIds
     ) {
+        Map<Id, List<sked_Resource_Hours_Record_Detail__c>> result = new Map<Id, List<sked_Resource_Hours_Record_Detail__c>>();
         for (sked_Resource_Hours_Record_Detail__c resourceHoursRecordDetail : [
             SELECT
                 sked_Resource_Hours_Record__c,
-                sked_Activity__r.sked_Start_Date__c, sked_Activity__r.sked_End_Date__c,
-                sked_Activity_Resource__r.sked_Start_Date__c, sked_Activity_Resource__r.sked_End_Date__c,
-                sked_Availability__r.sked_Start_Date__c, sked_Availability__r.sked_Finish_Date__c,
-                sked_Job_Allocation__r.sked_Start_Date__c, sked_Job_Allocation__r.sked_Set_End_Date__c
+                sked_Start_Date__c, sked_End_Date__c
             FROM sked_Resource_Hours_Record_Detail__c
             WHERE sked_Resource_Hours_Record__c IN :resourceHoursRecordIds
             AND (
@@ -530,62 +511,28 @@ public class skedResourceHoursRecordUtils {
                 sked_Job_Allocation__c != NULL
             )
         ]) {
-            if (resourceHoursRecordDetail.sked_Availability__r != NULL) {
-                if (!map_resourceHoursRecordId_availabilities.containsKey(resourceHoursRecordDetail.sked_Resource_Hours_Record__c)) {
-                    map_resourceHoursRecordId_availabilities.put(resourceHoursRecordDetail.sked_Resource_Hours_Record__c, new List<sked__Availability__c>());
-                }
-                map_resourceHoursRecordId_availabilities.get(resourceHoursRecordDetail.sked_Resource_Hours_Record__c).add(resourceHoursRecordDetail.sked_Availability__r);
+            if (!result.containsKey(resourceHoursRecordDetail.sked_Resource_Hours_Record__c)) {
+                result.put(resourceHoursRecordDetail.sked_Resource_Hours_Record__c, new List<sked_Resource_Hours_Record_Detail__c>());
             }
-            else if (resourceHoursRecordDetail.sked_Activity__r != NULL) {
-                if (!map_resourceHoursRecordId_activities.containsKey(resourceHoursRecordDetail.sked_Resource_Hours_Record__c)) {
-                    map_resourceHoursRecordId_activities.put(resourceHoursRecordDetail.sked_Resource_Hours_Record__c, new List<sked__Activity__c>());
-                }
-                map_resourceHoursRecordId_activities.get(resourceHoursRecordDetail.sked_Resource_Hours_Record__c).add(resourceHoursRecordDetail.sked_Activity__r);
-            }
-            else if (resourceHoursRecordDetail.sked_Activity_Resource__r != NULL) {
-                if (!map_resourceHoursRecordId_activityResources.containsKey(resourceHoursRecordDetail.sked_Resource_Hours_Record__c)) {
-                    map_resourceHoursRecordId_activityResources.put(resourceHoursRecordDetail.sked_Resource_Hours_Record__c, new List<sked__Activity_Resource__c>());
-                }
-                map_resourceHoursRecordId_activityResources.get(resourceHoursRecordDetail.sked_Resource_Hours_Record__c).add(resourceHoursRecordDetail.sked_Activity_Resource__r);
-            }
-            else if (resourceHoursRecordDetail.sked_Job_Allocation__r != NULL) {
-                if (!map_resourceHoursRecordId_jobAllocations.containsKey(resourceHoursRecordDetail.sked_Resource_Hours_Record__c)) {
-                    map_resourceHoursRecordId_jobAllocations.put(resourceHoursRecordDetail.sked_Resource_Hours_Record__c, new List<sked__Job_Allocation__c>());
-                }
-                map_resourceHoursRecordId_jobAllocations.get(resourceHoursRecordDetail.sked_Resource_Hours_Record__c).add(resourceHoursRecordDetail.sked_Job_Allocation__r);
-            }
+            result.get(resourceHoursRecordDetail.sked_Resource_Hours_Record__c).add(resourceHoursRecordDetail);
         }
+
+        return result;
     }
 
-    private static Integer calculateTotalWorkingDays(
-        List<sked__Activity__c> activities,
-        List<sked__Activity_Resource__c> activityResources,
-        List<sked__Availability__c> availabilities,
-        List<sked__Job_Allocation__c> jobAllocations
-    ) {
+    private static Integer calculateTotalWorkingDays(List<sked_Resource_Hours_Record_Detail__c> resourceHoursRecordDetails) {
         Set<Date> workingDays = new Set<Date>();
-        workingDays.addAll(getWorkingDaysFromEvents(activities, 'sked_Start_Date__c', 'sked_End_Date__c'));
-        workingDays.addAll(getWorkingDaysFromEvents(activityResources, 'sked_Start_Date__c', 'sked_End_Date__c'));
-        workingDays.addAll(getWorkingDaysFromEvents(availabilities, 'sked_Start_Date__c', 'sked_Finish_Date__c'));
-        workingDays.addAll(getWorkingDaysFromEvents(jobAllocations, 'sked_Start_Date__c', 'sked_Set_End_Date__c'));
-        return workingDays.size();
-    }
-
-    private static Set<Date> getWorkingDaysFromEvents(List<SObject> events, String startDateFieldName, String endDateFieldName) {
-        Set<Date> workingDays = new Set<Date>();
-
-        if (events != null) {
-            for (SObject event : events) {
-                Date startDate = (Date)event.get(startDateFieldName);
-                Date endDate = (Date)event.get(endDateFieldName);
+        if (resourceHoursRecordDetails != null) {
+            for (sked_Resource_Hours_Record_Detail__c resourceHoursRecordDetail : resourceHoursRecordDetails) {
+                Date startDate = resourceHoursRecordDetail.sked_Start_Date__c;
+                Date endDate = resourceHoursRecordDetail.sked_End_Date__c;
                 while (startDate <= endDate) {
                     workingDays.add(startDate);
                     startDate = startDate.addDays(1);
                 }
             }
         }
-
-        return workingDays;
+        return workingDays.size();
     }
 
     private static void prepareDataBeforeValidatingWorkDaysException(

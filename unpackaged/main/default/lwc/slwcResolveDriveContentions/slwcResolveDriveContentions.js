@@ -35,7 +35,8 @@ export default class SlwcResolveDriveContentions extends LightningElement {
         staffingDecisionMatrix: null,
         timezoneSidId: null,
         vehicles: [],
-        backupDriveShiftMap: {}
+        backupDriveShiftMap: {},
+        adminSetting: {}
     },
     errorMessages: []
   };
@@ -482,10 +483,12 @@ export default class SlwcResolveDriveContentions extends LightningElement {
         fetch.retrieveDriveSite(this.drive),
         fetch.retrieveSameDateDrives(this.drive),
         fetch.retrieveSameDateActivities(this.drive),
-        fetch.retrieveVehicles(this.drive)
+        fetch.retrieveVehicles(this.drive),
+        fetch.retrieveTerritoryCollectionOperations(this.drive),
+        fetch.retrieveCustomSettings()
       ]);
     })
-    .then(([driveLimits = [], staffingConstraints = [], driveSite, sameDateDrives = [], sameDateActivities = [], vehicles = []]) => {
+    .then(([driveLimits = [], staffingConstraints = [], driveSite, sameDateDrives = [], sameDateActivities = [], vehicles = [], territoryCollectionOperations = [], adminSetting]) => {
       this.masterData = {
         driveSite,
         sameDateActivities,
@@ -493,7 +496,9 @@ export default class SlwcResolveDriveContentions extends LightningElement {
         driveLimits,
         staffingConstraints,
         vehicles,
-        timezoneSidId: driveSite ? driveSite.timezoneSidId : null
+        timezoneSidId: driveSite ? driveSite.timezoneSidId : null,
+        territoryCollectionOperations,
+        adminSetting : adminSetting.adminSetting
       }
     });
   }
@@ -535,6 +540,7 @@ export default class SlwcResolveDriveContentions extends LightningElement {
     availableEquipments = [],
     availableVehicles = []
   }) => {
+    const helper = new DriveHelper();
     const contention = item.contention;
     const data = item.data;
     if(contention === DRIVE_CONTENTION.INSUFFICIENT_RESOURCES) {
@@ -542,6 +548,14 @@ export default class SlwcResolveDriveContentions extends LightningElement {
         requested: `Staff Requested: ${data.staffRequested}`,
         current: `Current Staff Allocated: ${data.staffAllocated}`,
         calendarOverview: `Staff Available: ${data.staffAvailable}`
+      }
+    }
+
+    if(contention === DRIVE_CONTENTION.EXCESS_STAFF_CAPACITY) {
+      return {
+        requested: `Planned Capacity: ${data.plannedCapacity}`,
+        current: `Proj Registered Donor: ${data.projRegisteredDonor}`,
+        calendarOverview: `Excess Staff: ${data.excessStaff}`
       }
     }
 
@@ -693,12 +707,19 @@ export default class SlwcResolveDriveContentions extends LightningElement {
           Current Roles
           ${
             Object.keys(mapSystemGeneratedRoleJobsRemovedByDriveShiftId).map((driveShiftId, driveShiftIndex) => {
-              const {backupJobs} = mapSystemGeneratedRoleJobsRemovedByDriveShiftId[driveShiftId];
+              const {backupJobs, backupDrive} = mapSystemGeneratedRoleJobsRemovedByDriveShiftId[driveShiftId];
               if(!backupJobs?.length) return null;
+
+              const systemGeneratedJobs = backupJobs.filter(item => !helper.isManuallyCreatedJob(item, backupDrive));
+              const otherJobs = backupJobs.filter(item => helper.isManuallyCreatedJob(item, backupDrive));
+
               return `
                 Drive Shift #${driveShiftIndex + 1} 
-                ${backupJobs.map(job => {
+                ${systemGeneratedJobs.map(job => {
                   return `${compact([job.resourceRole, job.dualRole]).join('/')}: ${job.quantity}`
+                }).join('\n')}
+                ${otherJobs.map(job => {
+                  return `${compact([job.resourceRole, job.dualRole]).join('/')}: ${job.quantity} (Manual)`
                 }).join('\n')}
               `
             }).filter(item => item).join('\n')
@@ -708,17 +729,40 @@ export default class SlwcResolveDriveContentions extends LightningElement {
           New Roles
           ${
             Object.keys(mapSystemGeneratedRoleJobsRemovedByDriveShiftId).map((driveShiftId, driveShiftIndex) => {
-              const {newJobs} = mapSystemGeneratedRoleJobsRemovedByDriveShiftId[driveShiftId];
+              const {newJobs, drive} = mapSystemGeneratedRoleJobsRemovedByDriveShiftId[driveShiftId];
               if(!newJobs?.length) return null;
+
+              const systemGeneratedJobs = newJobs.filter(item => !helper.isManuallyCreatedJob(item, drive));
+              const otherJobs = newJobs.filter(item => helper.isManuallyCreatedJob(item, drive));
+
               return `
                 Drive Shift #${driveShiftIndex + 1}
-                ${newJobs.map(job => {
+                ${systemGeneratedJobs.map(job => {
                   return `${compact([job.resourceRole, job.dualRole]).join('/')}: ${job.quantity}`
+                }).join('\n')}
+                ${otherJobs.map(job => {
+                  return `${compact([job.resourceRole, job.dualRole]).join('/')}: ${job.quantity} (Manual)`
                 }).join('\n')}
               `
             }).filter(item => item).join('\n')
           }
         `
+      }
+    }
+
+    if (contention === DRIVE_CONTENTION.CO_CHANGED_CROSS_REGIONS) {
+      return {
+        requested: ``,
+        current: ``,
+        calendarOverview: `Collection Operation changed cross regions`
+      }
+    }
+
+    if (contention === DRIVE_CONTENTION.ASSETS_NOT_SHARED_WITH_NEW_CO) {
+      return {
+        requested: ``,
+        current: ``,
+        calendarOverview: `Assets are not shared with new Collection Operation`
       }
     }
   }
@@ -733,6 +777,13 @@ export default class SlwcResolveDriveContentions extends LightningElement {
       return [{
         label: DRIVE_CONTENTION_RESOLUTION.ELECT_INSUFFICIENT_RESOURCES,
         value: isContentionOverride(DRIVE_CONTENTION_RESOLUTION.ELECT_INSUFFICIENT_RESOURCES)
+      }]
+    }
+
+    if (contention === DRIVE_CONTENTION.EXCESS_STAFF_CAPACITY) {
+      return [{
+        label: DRIVE_CONTENTION_RESOLUTION.ELECT_EXCESS_STAFF_CAPACITY,
+        value: isContentionOverride(DRIVE_CONTENTION_RESOLUTION.ELECT_EXCESS_STAFF_CAPACITY)
       }]
     }
 
@@ -899,6 +950,20 @@ export default class SlwcResolveDriveContentions extends LightningElement {
         disabled: isNumOfDriveShiftChanged
       } : null].filter(item => item) 
     }
+
+    if (contention === DRIVE_CONTENTION.CO_CHANGED_CROSS_REGIONS) {
+      return [{
+        label: DRIVE_CONTENTION_RESOLUTION.ELECT_CO_CHANGED_CROSS_REGIONS_REMOVE_FROM_LINKED_DRIVE,
+        value: isContentionOverride(DRIVE_CONTENTION_RESOLUTION.ELECT_CO_CHANGED_CROSS_REGIONS_REMOVE_FROM_LINKED_DRIVE)
+      }];
+    }
+
+    if (contention === DRIVE_CONTENTION.ASSETS_NOT_SHARED_WITH_NEW_CO) {
+      return [{
+        label: DRIVE_CONTENTION_RESOLUTION.ELECT_ASSETS_NOT_SHARED_WITH_NEW_CO,
+        value: isContentionOverride(DRIVE_CONTENTION_RESOLUTION.ELECT_ASSETS_NOT_SHARED_WITH_NEW_CO)
+      }]
+    }
   }
 
   validateDriveStaffingChangedContention = () => {
@@ -951,7 +1016,7 @@ export default class SlwcResolveDriveContentions extends LightningElement {
       .then(() => {
         return helper.getAvailableAssets(this.masterData.vehicles, this.drive, true);
       })
-      .then(({ availableVehicles = [], availableEquipments = [] }) => {
+      .then(({ availableVehicles = [], availableEquipments = [], availableButNotSharedAssetIds = [] }) => {
         let contentionsToValidate = [
           DRIVE_CONTENTION.DRIVE_LIMIT,
           DRIVE_CONTENTION.x2RBC_LIMIT,
@@ -960,14 +1025,17 @@ export default class SlwcResolveDriveContentions extends LightningElement {
           DRIVE_CONTENTION.OUT_OF_OPERATIONAL_HOURS,
           DRIVE_CONTENTION.LACKING_EQUIPMENT,
           DRIVE_CONTENTION.INSUFFICIENT_RESOURCES,
+          DRIVE_CONTENTION.EXCESS_STAFF_CAPACITY,
           DRIVE_CONTENTION.WITHIN_42_DAYS,
           DRIVE_CONTENTION.CONFIRM_WITHIN_42_DAYS,
           DRIVE_CONTENTION.PART_OF_LINKED_DRIVE,
-          DRIVE_CONTENTION.MULTI_SHIFT_DRIVE,
+          DRIVE_CONTENTION.MULTI_SHIFT_DRIVE
         ];
         if(this.drive.typeOfDrive === DRIVE_TYPE.MOBILE) {
           contentionsToValidate.push(DRIVE_CONTENTION.LACKING_VEHICLE);
           contentionsToValidate.push(DRIVE_CONTENTION.DUAL_ROLE_REMOVAL);
+          contentionsToValidate.push(DRIVE_CONTENTION.CO_CHANGED_CROSS_REGIONS);
+          contentionsToValidate.push(DRIVE_CONTENTION.ASSETS_NOT_SHARED_WITH_NEW_CO);
         }
 
         let originalContentions = [];
@@ -985,7 +1053,10 @@ export default class SlwcResolveDriveContentions extends LightningElement {
           contentionResolution: this.drive.contentionResolutions.join(';')
         }, {
           ...this.masterData,
-          backupDrive: this.driveGeneratorInstance.masterData.backupDrive
+          backupDrive: this.driveGeneratorInstance.masterData.backupDrive,
+          availableAssetsInfo: {
+            availableButNotSharedAssetIds
+          }
         }, contentionsToValidate, originalContentions);
 
         this.driveContentions = contentions.map(item => {
@@ -1064,7 +1135,7 @@ export default class SlwcResolveDriveContentions extends LightningElement {
           targetName: 'staffingComplementChanged',
           targetValue: this.drive.driveShifts.map(driveShift => {
             return driveShift.jobs.reduce((staffingComplement, job) => {
-              if(driveHelper.isSystemGeneratedJob(job, this.drive) && job.resourceRole) {
+              if(job.resourceRole) {
                 return {
                   ...staffingComplement,
                   [job.resourceRole]: job
@@ -1080,7 +1151,7 @@ export default class SlwcResolveDriveContentions extends LightningElement {
           targetName: 'staffingComplementChanged',
           targetValue: this.driveGeneratorInstance?.masterData?.backupDrive?.driveShifts?.map(driveShift => {
             return driveShift.jobs.reduce((staffingComplement, job) => {
-              if(driveHelper.isSystemGeneratedJob(job, this.drive) && job.resourceRole) {
+              if(job.resourceRole) {
                 return {
                   ...staffingComplement,
                   [job.resourceRole]: job
@@ -1185,7 +1256,7 @@ export default class SlwcResolveDriveContentions extends LightningElement {
           targetName: 'staffingComplementChanged',
           targetValue: this.drive.driveShifts.map(driveShift => {
             return driveShift.jobs.reduce((staffingComplement, job) => {
-              if(driveHelper.isSystemGeneratedJob(job, this.drive) && job.resourceRole) {
+              if(job.resourceRole) {
                 return {
                   ...staffingComplement,
                   [job.resourceRole]: job
@@ -1201,7 +1272,7 @@ export default class SlwcResolveDriveContentions extends LightningElement {
           targetName: 'staffingComplementChanged',
           targetValue: this.driveGeneratorInstance?.masterData?.backupDrive?.driveShifts?.map(driveShift => {
             return driveShift.jobs.reduce((staffingComplement, job) => {
-              if(driveHelper.isSystemGeneratedJob(job, this.drive) && job.resourceRole) {
+              if(job.resourceRole) {
                 return {
                   ...staffingComplement,
                   [job.resourceRole]: job

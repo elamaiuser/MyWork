@@ -858,12 +858,12 @@
         </columns>
         <columns>
             <checkedByDefault>false</checkedByDefault>
-            <field>sked_Chapter__c</field>
+            <field>sked_City__c</field>
             <table>Account.sked__Locations__r</table>
         </columns>
         <columns>
             <checkedByDefault>false</checkedByDefault>
-            <field>sked_City__c</field>
+            <field>sked_Chapter__c</field>
             <table>Account.sked__Locations__r</table>
         </columns>
         <columns>
@@ -1309,6 +1309,11 @@
         <columns>
             <checkedByDefault>false</checkedByDefault>
             <field>Operation_Type__c</field>
+            <table>Account.sked__Locations__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>Chapter__c.Name</field>
             <table>Account.sked__Locations__r</table>
         </columns>
         <masterLabel>Locations</masterLabel>
@@ -2896,5 +2901,18 @@
             <table>Account.sked__Locations__r</table>
         </columns>
         <masterLabel>Sites</masterLabel>
+    </sections>
+    <sections>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>Recruitment_Strategy_with_Tactics__c</field>
+            <table>Account.sked__Locations__r.Opportunities__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>Recruitment_Committee_Exists__c</field>
+            <table>Account.sked__Locations__r.Opportunities__r</table>
+        </columns>
+        <masterLabel>Blood Drive Opportunities</masterLabel>
     </sections>
 </ReportType>

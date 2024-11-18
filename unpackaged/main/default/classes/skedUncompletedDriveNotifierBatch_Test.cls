@@ -12,7 +12,7 @@ private class skedUncompletedDriveNotifierBatch_Test {
         Test.startTest();
         
         testDrive.sked_Is_Notified__c = false;
-        testDrive.sked_Drive_Date__c = System.today().addDays(30);
+        testDrive.sked_Drive_Date__c = System.today();
         update testDrive;
         
         testDrive.sked_Status__c = skedConstants.DRIVE_STATUS_CONFIRMED;

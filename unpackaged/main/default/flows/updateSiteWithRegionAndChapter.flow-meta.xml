@@ -89,7 +89,7 @@
         <locationX>812</locationX>
         <locationY>576</locationY>
         <inputAssignments>
-            <field>sked_Chapter__c</field>
+            <field>Chapter__c</field>
             <value>
                 <elementReference>getChapter.Chapter__r.Name</elementReference>
             </value>
@@ -117,7 +117,7 @@
             </value>
         </filters>
         <filters>
-            <field>sked_Chapter__c</field>
+            <field>Chapter__c</field>
             <operator>IsNull</operator>
             <value>
                 <booleanValue>true</booleanValue>
@@ -127,5 +127,5 @@
         <recordTriggerType>CreateAndUpdate</recordTriggerType>
         <triggerType>RecordAfterSave</triggerType>
     </start>
-    <status>Active</status>
+    <status>Draft</status>
 </Flow>

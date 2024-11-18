@@ -9,6 +9,7 @@
  * 10/3/2023                 Priti Jana               Restricting non-admin users from Site deletion (Part of HRP-10115)
  * 11/09/2023                Barnojit Sharma          Geolocations on Sites are being lost (HRP-10835)
  * 11/17/2023			     Barnojit Sharma		  Sites are missing county information (HRP-11099)
+ * 03/08/2024			     Barnojit Sharma		  Update Chapter on the site when the zip code changes. (HRP-12045)
  ************************************************************************************************************************************************
 */
 public with sharing class SiteTriggerHandler extends TriggerHandler {
@@ -16,6 +17,16 @@ public with sharing class SiteTriggerHandler extends TriggerHandler {
     public override void beforeUpdate() {
         
         System.debug('Entered method sked__Location__c BeforeUpdate');
+        /*
+        * HRP-12045 changes starts here
+        */
+        if(super.getTriggerMethodsToBypass().indexOf('updateSiteChapter') == -1){
+            SiteService.updateSiteChapter((List<sked__Location__c>)trigger.new, (Map<Id, sked__Location__c>)trigger.oldMap);                
+        }
+        System.debug('SiteService.updateSiteChapter : '+(List<sked__Location__c>)trigger.new);
+        /*
+        * HRP-12045 changes ends here
+        */
         /*
         * HRP-10835 changes starts here
         */
@@ -84,11 +95,19 @@ public with sharing class SiteTriggerHandler extends TriggerHandler {
             System.debug('SiteTriggerHandler.beforeUpdate() - SiteService.validatePhysicaLocationTypeChange() Bypassed');                
         }       
         // HRP-10172 -----> Ends Here
-        
         System.debug('Exiting method sked__Location__c BeforeUpdate');
     }
     
     public override void beforeInsert(){
+        /*
+        * HRP-12045 changes starts here
+        */
+        if(super.getTriggerMethodsToBypass().indexOf('updateSiteChapter') == -1){
+            SiteService.updateSiteChapter((List<sked__Location__c>)trigger.new,null);                
+        }
+        /*
+        * HRP-12045 changes ends here
+        */
         // HRP - 9585
         if(super.getTriggerMethodsToBypass().indexOf('updateNationalName') == -1)
         {

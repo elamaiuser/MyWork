@@ -3,6 +3,7 @@
     <fullName>All</fullName>
     <columns>sked_Collection_Operation__c</columns>
     <columns>NAME</columns>
+    <columns>sked_Type__c</columns>
     <columns>sked_Days_of_Week__c</columns>
     <columns>sked_Quantity__c</columns>
     <columns>sked_Effective_Start_Date__c</columns>

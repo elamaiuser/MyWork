@@ -144,6 +144,7 @@ private class slwcApprovalService_Test {
         sked_Site_Feedback__c testSiteFeedback = new sked_Site_Feedback__c(
             sked_Amount__c = 5,
             sked_Buffer_Type__c = 'Add',
+            sked_Days_Of_Week__c = 'Monday;Tuesday;Wednesday;Thursday;Friday;Saturday;Sunday',
             sked_Effective_End_Date__c = System.today().addDays(100),
             sked_Effective_Start_Date__c = System.today().addDays(-10),
             sked_Job__c = testJob.Id,
@@ -154,7 +155,7 @@ private class slwcApprovalService_Test {
             sked_Status__c = skedConstants.DRIVE_STATUS_SUBMITTED,
             sked_Variance_Applies_To__c = 'Setup Time',
             sked_Variance_Type__c = 'Elevator',
-            sked_Route_Approval_Request_To__c = 'Route to DRD Manager'
+            sked_Route_Approval_Request_To__c = 'Request DM evaluation'
         );
         insert testSiteFeedback;
 

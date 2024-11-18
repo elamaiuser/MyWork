@@ -3,12 +3,20 @@
         <label><!-- Approval Status --></label>
         <name>sked_Approval_Status__c</name>
         <picklistValues>
+            <masterLabel>APS Waiting for DRD Feedback</masterLabel>
+            <translation><!-- APS Waiting for DRD Feedback --></translation>
+        </picklistValues>
+        <picklistValues>
             <masterLabel>Approved</masterLabel>
             <translation><!-- Approved --></translation>
         </picklistValues>
         <picklistValues>
             <masterLabel>Cancelled</masterLabel>
             <translation><!-- Cancelled --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>DM Waiting for DRD Feedback</masterLabel>
+            <translation><!-- DM Waiting for DRD Feedback --></translation>
         </picklistValues>
         <picklistValues>
             <masterLabel>Not Submitted</masterLabel>
@@ -29,9 +37,5 @@
         <picklistValues>
             <masterLabel>Waiting for DM Approval</masterLabel>
             <translation><!-- Waiting for DM Approval --></translation>
-        </picklistValues>
-        <picklistValues>
-            <masterLabel>Waiting for DRD Feedback</masterLabel>
-            <translation><!-- Waiting for DRD Feedback --></translation>
         </picklistValues>
     </CustomFieldTranslation>

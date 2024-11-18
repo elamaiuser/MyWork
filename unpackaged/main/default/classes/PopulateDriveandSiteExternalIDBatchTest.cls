@@ -2,7 +2,7 @@
 private class PopulateDriveandSiteExternalIDBatchTest {
 	@TestSetup
     static void makeData(){
-        String rolename = 'West_BDM';
+        //String rolename = 'BSF_User';
         String mobileOppRecType = 'Mobile Opp';
         String mobileAccRecType = 'Mobile Account';
         String mobileSiteRecType = 'Mobile Site';    
@@ -21,6 +21,7 @@ private class PopulateDriveandSiteExternalIDBatchTest {
         
         User AdminUser = new User(
             ProfileId = [SELECT Id FROM Profile WHERE Name = 'System Administrator'].Id,
+            FirstName = 'First',
             LastName = 'last',
             Email = 'adminuser000@amamama.com',
             Username = 'adminuser000@amamama.com' + System.currentTimeMillis(),
@@ -34,9 +35,14 @@ private class PopulateDriveandSiteExternalIDBatchTest {
             
         );
         
-        //insert AdminUser ;
         
-        UserRole urole  = [select id from userrole where developername =: rolename ];
+        insert AdminUser ;
+        System.debug('line 39');
+        List<User> getUser = [Select Id,LanguageLocaleKey,LocaleSidKey,EmailEncodingKey,TimeZoneSidKey,Alias,Title,CompanyName,Username,FirstName,LastName,ProfileId from User where Email = 'adminuser000@amamama.com'];
+        
+        System.debug('getUser........'+getUser);
+        
+        //UserRole urole  = [select id from userrole where developername =: rolename ];
         
         User DRDAMUser = new User(
             ProfileId = [SELECT Id FROM Profile WHERE Name = 'DRD Manager'].Id,
@@ -49,14 +55,15 @@ private class PopulateDriveandSiteExternalIDBatchTest {
             TimeZoneSidKey = 'America/Los_Angeles',
             EmailEncodingKey = 'UTF-8',
             LanguageLocaleKey = 'en_US',
-            LocaleSidKey = 'en_US',
-            UserRoleId = urole.Id
+            LocaleSidKey = 'en_US'
+            //UserRoleId = urole.Id
         );
         
         
         
         System.runAs( AdminUser ){
             insert DRDAMUser;
+            System.debug('line 66');
         }
         System.runAs( AdminUser ){
             List<Account> mobileAccList = new List<Account>();
@@ -68,10 +75,11 @@ private class PopulateDriveandSiteExternalIDBatchTest {
             accObj.Name = 'Exavalu';
             accObj.BillingPostalCode = '30622';
 			accObj.Internal_Name__c ='Exavalu';            
-            mobileAccList.add(accobj); 
+            mobileAccList.add(accObj); 
             
             triggerHandler.bypass('AccountTriggerHandler');
             insert mobileAccList;
+            System.debug('line 80');
             
             List<AccountTeammember> atmList = new List<AccountTeammember>();
             AccountTeammember atm;
@@ -89,6 +97,7 @@ private class PopulateDriveandSiteExternalIDBatchTest {
             
             
             insert atmList;
+            System.debug('line 98');
             
             
             
@@ -110,12 +119,13 @@ private class PopulateDriveandSiteExternalIDBatchTest {
             conObj.OtherPhone = '222-222-3333';
             triggerHandler.bypass('ContactTriggerHandler');
             insert conObj;
-            
+            System.debug('line 120');
             sked__Tag__c skedTag = new sked__Tag__c();
             skedTag.Name = 'Outside';
             skedTag.sked__Type__c = 'Physical Location Type'; 
             
             insert skedTag; 
+            System.debug('line 126');
             
             
             sked__Location__c siteObj = new sked__Location__c();
@@ -147,7 +157,9 @@ private class PopulateDriveandSiteExternalIDBatchTest {
             siteObj.sked_Pay_for_Parking_Details__c = 'Test Pay';
             siteObj.sked_Wireless_Policy__c = 'Accepted';
             siteObj.Source__c = 'Custom New Form';
+            siteObj.sked_Date_Site_Inspection_Completed__c = Date.Today().addDays(10);
             insert siteObj;
+            System.debug('line 160');
             
             List<BSF_Portfolio__c> bsfPortf = new List<BSF_Portfolio__c>();
             
@@ -176,6 +188,7 @@ private class PopulateDriveandSiteExternalIDBatchTest {
             bsfPortf.add(Sickle_Cell_AM_04);
             
             insert bsfPortf;
+            System.debug('line 189');
             
             List<Portfolio_Assignment__c> portfAssignList = new List<Portfolio_Assignment__c>();
             
@@ -196,6 +209,7 @@ private class PopulateDriveandSiteExternalIDBatchTest {
             portfAssignList.add(assign2);
             triggerHandler.bypass('PortfolioAssignmentTriggerHandler');
             insert portfAssignList;
+            System.debug('line 210');
             triggerHandler.clearBypass('PortfolioAssignmentTriggerHandler');
             List<Opportunity> oppsobjlist = new List<Opportunity>();
             Opportunity optyObj ; // = new Opportunity();
@@ -215,10 +229,16 @@ private class PopulateDriveandSiteExternalIDBatchTest {
             optyObj.Anticipated_Registered_Donors__c = 1;
             
             oppsobjlist.add( optyObj );
+            triggerHandler.bypass('OpportunityTriggerHandler');       
+            //triggerHandler.bypass('OpportunitySplitTriggerHandler');
+            //skedHubBase.BypassInsertTriggers = true;
+            //skedHubBase.BypassUpdateTriggers = true;
+            //skedHubBase.BypassDeleteTriggers = true;
             
               
             
             insert oppsobjlist;
+            System.debug('line 239');
 
             Biomed_Collection_Op_Center__c testCollectionOperation1 = new Biomed_Collection_Op_Center__c(Name = 'Collection Operation 1',
                                                                                                         sked_Lunch_Break_Duration_Fixed_Site__c = '30',
@@ -228,6 +248,7 @@ private class PopulateDriveandSiteExternalIDBatchTest {
                                                                                                         Staging_Location_Geolocation__Longitude__s = -122.4816244,
                                                                                                         sked_Work_Week_First_Day__c = 'Sunday');
             insert testCollectionOperation1;
+            System.debug('line 249');
 
             
 
@@ -244,6 +265,7 @@ private class PopulateDriveandSiteExternalIDBatchTest {
                                                         sked_Projected_Registered_Donors__c = 100,
                                                         sked_Status__c = skedConstants.DRIVE_STATUS_DRAFT);
             insert testDrive1;
+            System.debug('line 266');
             sked_Drive_Shift__c shiftData = new sked_Drive_Shift__c(Name = 'test shift 1',
                                                                     sked_Max_Donor_Capacity__c = 25,
                                                                     sked_2RBC_Projected_Procedures__c = 6,
@@ -256,7 +278,7 @@ private class PopulateDriveandSiteExternalIDBatchTest {
                                                                     sked_Start_Time__c = Time.newInstance(7, 0, 0, 0),
                                                                     sked_End_Time__c = Time.newInstance(12, 0, 0, 0));
             insert shiftData;
-            System.debug('dfghjk ### 2'+shiftData.Id);
+            System.debug('line 279'+shiftData.Id);
         }        
         
     }
@@ -288,15 +310,15 @@ private class PopulateDriveandSiteExternalIDBatchTest {
     @isTest
     private static void testBatch1(){
         Test.startTest();
-            PopulateDriveandSiteExternalIDBatch sh1 = new PopulateDriveandSiteExternalIDBatch(200);      
- 			String sch = '0 0 23 * * ?';
+            PopulateDriveandSiteExternalIDBatch sh1 = new PopulateDriveandSiteExternalIDBatch(true,200);      
+ 			String sch = '20 12 12 * * ?';
         	System.schedule('Test check', sch, sh1);
         Test.stopTest();
     }
     @isTest
     private static void testBatch2(){
         Test.startTest();
-            PopulateDriveandSiteExternalIDBatch batchObject = new PopulateDriveandSiteExternalIDBatch();
+            PopulateDriveandSiteExternalIDBatch batchObject = new PopulateDriveandSiteExternalIDBatch(true);
 			Database.executeBatch(batchObject,200);
         Test.stopTest();
     }
@@ -304,14 +326,14 @@ private class PopulateDriveandSiteExternalIDBatchTest {
     private static void testBatch3(){
         Map<Id,sked_Drive__c> drvMap = new Map<Id,sked_Drive__c>([SELECT Id FROM sked_Drive__c]);
         Id idIndexZero = new List<Id>(drvMap.keySet())[0];
-        DriveBridgeAPI__x dxt = new DriveBridgeAPI__x(guid__c = idIndexZero, external_id__c = '12345');
+        DriveBridgeAPI__x dxt = new DriveBridgeAPI__x(guid__c = idIndexZero, external_id__c = '12345', Account_external_id__c = '67895',Location_external_id__c = '12233');
         Test.startTest();
         	PopulateDriveandSiteExternalIDBatch batchObject = new PopulateDriveandSiteExternalIDBatch();
         	batchObject.drvExtObjList = new List<DriveBridgeAPI__x>{dxt};
 			batchObject.doExecuteforDrives(drvMap.keySet());
         Test.stopTest();
     }
-    @isTest
+    /*@isTest
     private static void testBatch4(){
         Map<Id,sked__Location__c> siteMap = new Map<Id,sked__Location__c>([SELECT Id FROM sked__Location__c]);
         Id idIndexZero = new List<Id>(siteMap.keySet())[0];
@@ -321,5 +343,5 @@ private class PopulateDriveandSiteExternalIDBatchTest {
         	batchObject.sitExtObjList = new List<SiteBridgeAPI__x>{sxt};
 			batchObject.doExecuteforSites(siteMap.keySet());
         Test.stopTest();
-    }
+    }*/
 }

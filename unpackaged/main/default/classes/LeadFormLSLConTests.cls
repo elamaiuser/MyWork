@@ -149,10 +149,8 @@ public class LeadFormLSLConTests {
             //con.setCompanyType();
         Test.stopTest();
 
-
-        System.assertEquals(true, con.areaServed);
-        System.assertEquals(true, con.validZip);
-        System.assertNotEquals(null,con.territory); 
+		//Update 12024- we are removing territory dependency and moved to taxonomy completely
+        System.assertEquals(null,con.territory); 
         //System.assertEquals(true, con.showRel); // because the Company_Type__c = 'Church/Faith-Based Group', the "showRel" property should be true
 
     }
@@ -230,7 +228,6 @@ public class LeadFormLSLConTests {
 
         System.assertEquals(false, con.areaServed);//this will be false, on lack of taxonomy record 
         System.assert(taxonomyList.size() == 0);
-        System.assertEquals(true, con.validZip);
         
     }
 

@@ -4,6 +4,7 @@
     <externalId>false</externalId>
     <label>Status</label>
     <required>false</required>
+    <trackHistory>true</trackHistory>
     <trackTrending>false</trackTrending>
     <type>Picklist</type>
     <valueSet>
@@ -26,11 +27,6 @@
                 <label>Waiting for DM Approval</label>
             </value>
             <value>
-                <fullName>Waiting for CO Supervisor Approval</fullName>
-                <default>false</default>
-                <label>Waiting for CO Supervisor Approval</label>
-            </value>
-            <value>
                 <fullName>Approved</fullName>
                 <default>false</default>
                 <label>Approved</label>
@@ -41,16 +37,32 @@
                 <label>Rejected</label>
             </value>
             <value>
+                <fullName>Waiting for CM Approval</fullName>
+                <default>false</default>
+                <label>Waiting for CM Approval</label>
+            </value>
+            <value>
+                <fullName>Waiting for APS Approval</fullName>
+                <default>false</default>
+                <label>Waiting for APS Approval</label>
+            </value>
+            <value>
+                <fullName>Expired</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Expired</label>
+            </value>
+            <value>
                 <fullName>Waiting for AP&amp;S Approval</fullName>
                 <default>false</default>
                 <isActive>false</isActive>
                 <label>Waiting for AP&amp;S Approval</label>
             </value>
             <value>
-                <fullName>Waiting for APS Approval</fullName>
+                <fullName>Waiting for CO Supervisor Approval</fullName>
                 <default>false</default>
                 <isActive>false</isActive>
-                <label>Waiting for APS Approval</label>
+                <label>Waiting for CO Supervisor Approval</label>
             </value>
         </valueSetDefinition>
     </valueSet>

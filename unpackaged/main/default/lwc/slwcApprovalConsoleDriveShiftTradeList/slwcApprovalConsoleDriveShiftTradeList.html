@@ -10,7 +10,14 @@
         
         <div class="slds-col slds-scrollable_y slds-p-left_medium slds-is-relative" style="min-height: 400px; width:100%;">
             <div class="slds-grid slds-grid_vertical-align-end slds-p-top_small">
-                <div class="slds-no-flex slds-col_bump-left slds-p-right_small" style="width: 300px;">
+                <div class="slds-col_bump-left slds-p-right_small">
+                    <c-slwc-date-range-picker
+                        ondaterangechange={handleOnChange}
+                        default-start-date={filters.startDate}
+                        default-end-date={filters.endDate}>
+                    </c-slwc-date-range-picker>
+                </div>
+                <div class="slds-no-flex slds-p-right_small" style="width: 300px;">
                     <c-slwc-new-collection-operation-multi-picklist
                         division-single-select
                         dropdown-position="right"
@@ -62,163 +69,6 @@
                     <div class="slds-form-element__static slds-truncate">{requestDetailModalData.record.status}</div>
                 </div>
             </div>
-            
-            <div class="slds-form-element slds-form-element_readonly">
-                <span class="slds-form-element__label">Requesting Staff</span>
-                <div class="slds-form-element__control">
-                    <div class="slds-form-element__static slds-truncate">{requestDetailModalData.record.requestingStaffName}</div>
-                </div>
-            </div>
-            <div class="slds-form-element slds-form-element_readonly">
-                <span class="slds-form-element__label">Requesting Staff Trading Type</span>
-                <div class="slds-form-element__control">
-                    <div class="slds-form-element__static slds-truncate">{requestDetailModalData.record.requestingStaffTradingType}</div>
-                </div>
-            </div>
-            <template if:true={requestDetailModalData.record.requestingStaffDriveId}>
-                <div class="slds-form-element slds-form-element_readonly">
-                    <span class="slds-form-element__label">Requesting Drive</span>
-                    <div class="slds-form-element__control">
-                        <div class="slds-form-element__static slds-truncate">
-                            <c-slwc-lightning-formatted-url
-                                record={requestDetailModalData.record}
-                                id-field="requestingStaffDriveId"
-                                label-field="requestingStaffDriveName"
-                            ></c-slwc-lightning-formatted-url>
-                        </div>
-                    </div>
-                </div>
-                <div class="slds-form-element slds-form-element_readonly">
-                    <span class="slds-form-element__label">Requesting Drive Date</span>
-                    <div class="slds-form-element__control">
-                        <div class="slds-form-element__static slds-truncate">
-                            <lightning-formatted-date-time value={requestDetailModalData.record.requestingStaffDriveDate} year="numeric" month="numeric" day="numeric" time-zone="GMT"></lightning-formatted-date-time>
-                        </div>
-                    </div>
-                </div>
-            </template>
-            <template if:true={requestDetailModalData.record.requestingStaffNCE}>
-                <div class="slds-form-element slds-form-element_readonly">
-                    <span class="slds-form-element__label">Requesting Activity</span>
-                    <div class="slds-form-element__control">
-                        <div class="slds-form-element__static slds-truncate"
-                            if:true={requestDetailModalData.record.requestingStaffNCE.activityTitle}>
-                            <c-slwc-lightning-formatted-url
-                                record={requestDetailModalData.record.requestingStaffNCE}
-                                label-field="activityTitle"
-                            ></c-slwc-lightning-formatted-url>
-                        </div>
-                        <div class="slds-form-element__static slds-truncate"
-                            if:false={requestDetailModalData.record.requestingStaffNCE.activityTitle}>
-                            <c-slwc-lightning-formatted-url
-                                record={requestDetailModalData.record.requestingStaffNCE}
-                            ></c-slwc-lightning-formatted-url>
-                        </div>
-                    </div>
-                </div>
-                <div class="slds-form-element slds-form-element_readonly">
-                    <span class="slds-form-element__label">Requesting Activity Start</span>
-                    <div class="slds-form-element__control">
-                        <div class="slds-form-element__static slds-truncate">
-                            <lightning-formatted-date-time value={requestDetailModalData.record.requestingStaffNCE.start}
-                                year="numeric" month="numeric" day="numeric" hour="numeric" minute="2-digit"
-                                time-zone={timezoneSidId}></lightning-formatted-date-time>
-                        </div>
-                    </div>
-                </div>
-                <div class="slds-form-element slds-form-element_readonly">
-                    <span class="slds-form-element__label">Requesting Activity End</span>
-                    <div class="slds-form-element__control">
-                        <div class="slds-form-element__static slds-truncate">
-                            <lightning-formatted-date-time value={requestDetailModalData.record.requestingStaffNCE.finish}
-                                year="numeric" month="numeric" day="numeric" hour="numeric" minute="2-digit"
-                                time-zone={timezoneSidId}></lightning-formatted-date-time>
-                        </div>
-                    </div>
-                </div>
-            </template>
-     
-            <div class="slds-form-element slds-form-element_readonly">
-                <span class="slds-form-element__label">Trading Staff</span>
-                <div class="slds-form-element__control">
-                    <div class="slds-form-element__static slds-truncate">{requestDetailModalData.record.tradingStaffName}</div>
-                </div>
-            </div>
-            <div class="slds-form-element slds-form-element_readonly">
-                <span class="slds-form-element__label">Trading Staff Trading Type</span>
-                <div class="slds-form-element__control">
-                    <div class="slds-form-element__static slds-truncate">{requestDetailModalData.record.tradingStaffTradingType}</div>
-                </div>
-            </div>
-            <template if:true={requestDetailModalData.record.tradingStaffDriveId}>
-                <div class="slds-form-element slds-form-element_readonly">
-                    <span class="slds-form-element__label">Trading Drive</span>
-                    <div class="slds-form-element__control">
-                        <div class="slds-form-element__static slds-truncate">
-                            <c-slwc-lightning-formatted-url
-                                record={requestDetailModalData.record}
-                                id-field="tradingStaffDriveId"
-                                label-field="tradingStaffDriveName"
-                            ></c-slwc-lightning-formatted-url>
-                        </div>
-                    </div>
-                </div>
-                <div class="slds-form-element slds-form-element_readonly">
-                    <span class="slds-form-element__label">Trading Drive Date</span>
-                    <div class="slds-form-element__control">
-                        <div class="slds-form-element__static slds-truncate">
-                            <lightning-formatted-date-time value={requestDetailModalData.record.tradingStaffDriveDate} year="numeric" month="numeric" day="numeric" time-zone="GMT"></lightning-formatted-date-time>
-                        </div>
-                    </div>
-                </div>
-            </template>
-            <template if:true={requestDetailModalData.record.tradingStaffNCE}>
-                <div class="slds-form-element slds-form-element_readonly">
-                    <span class="slds-form-element__label">Trading Activity</span>
-                    <div class="slds-form-element__control">
-                        <div class="slds-form-element__static slds-truncate"
-                            if:true={requestDetailModalData.record.tradingStaffNCE.activityTitle}>
-                            <c-slwc-lightning-formatted-url
-                                record={requestDetailModalData.record.tradingStaffNCE}
-                                label-field="activityTitle"
-                            ></c-slwc-lightning-formatted-url>
-                        </div>
-                        <div class="slds-form-element__static slds-truncate"
-                            if:false={requestDetailModalData.record.tradingStaffNCE.activityTitle}>
-                            <c-slwc-lightning-formatted-url
-                                record={requestDetailModalData.record.tradingStaffNCE}
-                            ></c-slwc-lightning-formatted-url>
-                        </div>
-                    </div>
-                </div>
-                <div class="slds-form-element slds-form-element_readonly">
-                    <span class="slds-form-element__label">Trading Activity Start</span>
-                    <div class="slds-form-element__control">
-                        <div class="slds-form-element__static slds-truncate">
-                            <lightning-formatted-date-time value={requestDetailModalData.record.tradingStaffNCE.start}
-                                year="numeric" month="numeric" day="numeric" hour="numeric" minute="2-digit"
-                                time-zone={timezoneSidId}></lightning-formatted-date-time>
-                        </div>
-                    </div>
-                </div>
-                <div class="slds-form-element slds-form-element_readonly">
-                    <span class="slds-form-element__label">Trading Activity End</span>
-                    <div class="slds-form-element__control">
-                        <div class="slds-form-element__static slds-truncate">
-                            <lightning-formatted-date-time value={requestDetailModalData.record.tradingStaffNCE.finish}
-                                year="numeric" month="numeric" day="numeric" hour="numeric" minute="2-digit"
-                                time-zone={timezoneSidId}></lightning-formatted-date-time>
-                        </div>
-                    </div>
-                </div>
-            </template>
-
-            <div class="slds-form-element slds-form-element_readonly">
-                <span class="slds-form-element__label">Reason For Trade</span>
-                <div class="slds-form-element__control">
-                    <div class="slds-form-element__static">{requestDetailModalData.record.reasonForTrade}</div>
-                </div>
-            </div>
 
             <div class="slds-form-element slds-form-element_readonly">
                 <span class="slds-form-element__label">APS Notes</span>
@@ -253,6 +103,7 @@
         <c-slwc-drive-shift-trade-approval
             slot="approvalHistoryConsole"
             record-id={requestDetailModalData.recordId}
+            record={requestDetailModalData.record}
         >
         </c-slwc-drive-shift-trade-approval>
     </c-slwc-approval-console-request-detail-modal>

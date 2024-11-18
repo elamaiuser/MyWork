@@ -17,12 +17,14 @@ export class ActivityMappingConfigFactory {
       mappingConfig.addFieldConfig('sked_District__c', 'districtId', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked__End__c', 'finish', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_End_Date__c', 'endDate', MAPPING_TYPE.direct);
+      mappingConfig.addFieldConfig('sked_End_Time__c', 'endTime', MAPPING_TYPE.time);
       mappingConfig.addFieldConfig('sked__GeoLocation__Latitude__s', 'geoLocationLatitude', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked__GeoLocation__Longitude__s', 'geoLocationLongitude', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked__Quantity__c', 'quantity', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked__Resource__c', 'resourceId', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked__Start__c', 'start', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_Start_Date__c', 'startDate', MAPPING_TYPE.direct);
+      mappingConfig.addFieldConfig('sked_Start_Time__c', 'startTime', MAPPING_TYPE.time);
       mappingConfig.addFieldConfig('sked__Timezone__c', 'timezoneSidId', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_Territory_Key__c', 'territoryKey', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked__Type__c', 'eventType', MAPPING_TYPE.direct);

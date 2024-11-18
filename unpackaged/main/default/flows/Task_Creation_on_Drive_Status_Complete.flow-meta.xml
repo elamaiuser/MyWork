@@ -4,8 +4,8 @@
     <assignments>
         <name>Assign_other_Task_Fields</name>
         <label>Assign other Task Fields</label>
-        <locationX>517</locationX>
-        <locationY>757</locationY>
+        <locationX>446</locationX>
+        <locationY>1379</locationY>
         <assignmentItems>
             <assignToReference>New_Task.ActivityDate</assignToReference>
             <operator>Assign</operator>
@@ -41,6 +41,13 @@
                 <elementReference>Get_Opportunity.Id</elementReference>
             </value>
         </assignmentItems>
+        <assignmentItems>
+            <assignToReference>New_Task.Drive_Date__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>Get_Opportunity.Drive_Date__c</elementReference>
+            </value>
+        </assignmentItems>
         <connector>
             <targetReference>Post_Drive_Analysis_Task_Creation</targetReference>
         </connector>
@@ -48,8 +55,8 @@
     <assignments>
         <name>Assign_to_AP</name>
         <label>Assign to AP</label>
-        <locationX>940</locationX>
-        <locationY>635</locationY>
+        <locationX>578</locationX>
+        <locationY>1187</locationY>
         <assignmentItems>
             <assignToReference>New_Task.OwnerId</assignToReference>
             <operator>Assign</operator>
@@ -64,8 +71,8 @@
     <assignments>
         <name>Assign_to_DM</name>
         <label>Assign to DM</label>
-        <locationX>939</locationX>
-        <locationY>762</locationY>
+        <locationX>314</locationX>
+        <locationY>1187</locationY>
         <assignmentItems>
             <assignToReference>New_Task.OwnerId</assignToReference>
             <operator>Assign</operator>
@@ -80,8 +87,8 @@
     <assignments>
         <name>Assign_to_Opp_Owner</name>
         <label>Assign to Opp Owner</label>
-        <locationX>949</locationX>
-        <locationY>907</locationY>
+        <locationX>842</locationX>
+        <locationY>1187</locationY>
         <assignmentItems>
             <assignToReference>New_Task.OwnerId</assignToReference>
             <operator>Assign</operator>
@@ -96,8 +103,8 @@
     <assignments>
         <name>TaskLastAssignment</name>
         <label>TaskLastAssignment</label>
-        <locationX>935</locationX>
-        <locationY>509</locationY>
+        <locationX>50</locationX>
+        <locationY>1187</locationY>
         <assignmentItems>
             <assignToReference>New_Task.OwnerId</assignToReference>
             <operator>Assign</operator>
@@ -112,8 +119,8 @@
     <decisions>
         <name>Determine_Task_Owner</name>
         <label>Determine Task Owner</label>
-        <locationX>1546</locationX>
-        <locationY>768</locationY>
+        <locationX>446</locationX>
+        <locationY>1079</locationY>
         <defaultConnector>
             <targetReference>Assign_to_Opp_Owner</targetReference>
         </defaultConnector>
@@ -167,8 +174,8 @@
     <decisions>
         <name>whether_task_present</name>
         <label>whether task present</label>
-        <locationX>1300</locationX>
-        <locationY>335</locationY>
+        <locationX>776</locationX>
+        <locationY>647</locationY>
         <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
         <rules>
             <name>task_Not_present</name>
@@ -186,7 +193,8 @@
             <label>task Not present</label>
         </rules>
     </decisions>
-    <description>This flow will be triggered whenever a DOC will get completed and create Post Drive Analysis task with a due date of drive date+4 days</description>
+    <description>This flow will be triggered whenever a DOC will get completed and create Post Drive Analysis task with a due date of drive date+4 days
+Latest Modification: HRP-12700 Add Drive Date to task list</description>
     <environments>Default</environments>
     <formulas>
         <description>Assign the task to the opp&#39;s account manager if present. Else it will go straight to the opportunity owner</description>
@@ -223,7 +231,7 @@ IF({!forAS}&lt;&gt; NULL, {!forAS},
     <processMetadataValues>
         <name>CanvasMode</name>
         <value>
-            <stringValue>FREE_FORM_CANVAS</stringValue>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
         </value>
     </processMetadataValues>
     <processMetadataValues>
@@ -237,15 +245,15 @@ IF({!forAS}&lt;&gt; NULL, {!forAS},
         <description>Post Drive Analysis Task Creation upon drive status complete and assigining it to the AM of the related  opp if present else go straight to the related  opp&#39;s owner. The due date will be 4 days after the drive date of the related opp</description>
         <name>Post_Drive_Analysis_Task_Creation</name>
         <label>Post Drive Analysis Task Creation</label>
-        <locationX>335</locationX>
-        <locationY>756</locationY>
+        <locationX>446</locationX>
+        <locationY>1487</locationY>
         <inputReference>New_Task</inputReference>
     </recordCreates>
     <recordLookups>
         <name>check_for_existing_task</name>
         <label>check for existing task</label>
-        <locationX>939</locationX>
-        <locationY>325</locationY>
+        <locationX>776</locationX>
+        <locationY>539</locationY>
         <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
         <connector>
             <targetReference>whether_task_present</targetReference>
@@ -272,8 +280,8 @@ IF({!forAS}&lt;&gt; NULL, {!forAS},
     <recordLookups>
         <name>Get_Account_Specialist</name>
         <label>Get Account Specialist</label>
-        <locationX>1890</locationX>
-        <locationY>591</locationY>
+        <locationX>446</locationX>
+        <locationY>971</locationY>
         <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
         <connector>
             <targetReference>Determine_Task_Owner</targetReference>
@@ -300,8 +308,8 @@ IF({!forAS}&lt;&gt; NULL, {!forAS},
     <recordLookups>
         <name>Get_District_Manager</name>
         <label>Get District Manager</label>
-        <locationX>1893</locationX>
-        <locationY>337</locationY>
+        <locationX>446</locationX>
+        <locationY>863</locationY>
         <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
         <connector>
             <targetReference>Get_Account_Specialist</targetReference>
@@ -328,8 +336,8 @@ IF({!forAS}&lt;&gt; NULL, {!forAS},
     <recordLookups>
         <name>Get_Opportunity</name>
         <label>Get Opportunity</label>
-        <locationX>1628</locationX>
-        <locationY>338</locationY>
+        <locationX>446</locationX>
+        <locationY>755</locationY>
         <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
         <connector>
             <targetReference>Get_District_Manager</targetReference>
@@ -349,8 +357,8 @@ IF({!forAS}&lt;&gt; NULL, {!forAS},
     <recordLookups>
         <name>Get_Task_RecordType</name>
         <label>Get Task RecordType</label>
-        <locationX>644</locationX>
-        <locationY>327</locationY>
+        <locationX>776</locationX>
+        <locationY>431</locationY>
         <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
         <connector>
             <targetReference>check_for_existing_task</targetReference>
@@ -372,8 +380,8 @@ IF({!forAS}&lt;&gt; NULL, {!forAS},
     <recordLookups>
         <name>oppteam</name>
         <label>oppteam</label>
-        <locationX>496</locationX>
-        <locationY>413</locationY>
+        <locationX>776</locationX>
+        <locationY>323</locationY>
         <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
         <connector>
             <targetReference>Get_Task_RecordType</targetReference>
@@ -406,8 +414,8 @@ IF({!forAS}&lt;&gt; NULL, {!forAS},
         <queriedFields>TeamMemberRole</queriedFields>
     </recordLookups>
     <start>
-        <locationX>369</locationX>
-        <locationY>4</locationY>
+        <locationX>650</locationX>
+        <locationY>0</locationY>
         <connector>
             <targetReference>oppteam</targetReference>
         </connector>

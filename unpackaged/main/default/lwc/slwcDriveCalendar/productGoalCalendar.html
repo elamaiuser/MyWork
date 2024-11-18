@@ -108,6 +108,16 @@
                                             </div>
                                         </div>
                                         <div class="date-slot slds-grid slds-wrap slds-grid_align-spread slds-m-top_xx-small">
+                                            <span class={day.slot.driveIndicatorClass}>Drive</span>
+                                            <div class="slds-col slds-size_1-of-3 slds-text-align_center">
+                                                <lightning-formatted-number value={day.slot.noOfDriveRequested}></lightning-formatted-number>
+                                            </div>
+                                            <div class="slds-col slds-size_1-of-3 slds-text-align_center">
+                                                <lightning-formatted-number if:false={day.slot.isNoOfDriveRemainingInfinity} value={day.slot.noOfDriveRemaining}></lightning-formatted-number>
+                                                <span if:true={day.slot.isNoOfDriveRemainingInfinity}>{day.slot.noOfDriveRemaining}</span>
+                                            </div>
+                                        </div>
+                                        <div class="date-slot slds-grid slds-wrap slds-grid_align-spread">
                                             <span class={day.slot.x2RBCIndicatorClass}>2RBC</span>
                                             <div class="slds-col slds-size_1-of-3 slds-text-align_center">
                                                 <lightning-formatted-number value={day.slot.noOf2RBCRequested}></lightning-formatted-number>

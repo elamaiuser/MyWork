@@ -10,6 +10,16 @@
         <field>Account.Opportunities$Parent_Template_Id__c</field>
     </columns>
     <columns>
+        <aggregateTypes>Sum</aggregateTypes>
+        <field>Account$Business_Planning_Completed__c</field>
+    </columns>
+    <columns>
+        <field>Account$Business_Planning_Completed_By__c</field>
+    </columns>
+    <columns>
+        <field>Account$Business_Planning_Completed_Date__c</field>
+    </columns>
+    <columns>
         <field>Account$Account_Strategy__c</field>
     </columns>
     <columns>

@@ -53,14 +53,17 @@ public class skedStaffingConstraintHandler extends skedTriggerHub {
         driveStatuses.add(skedConstants.DRIVE_STATUS_HOLD);
         
         Map<string, decimal> map_driveKey_staffRequested = new Map<string, decimal>();
-        List<AggregateResult> driveSumResults = [SELECT sked_Collection_Operation__c, sked_Drive_Date__c, sked_Type_of_Drive__c,
-                                                 SUM(sked_Total_Staff_Requested__c) totalStaffRequested
-                                                 FROM sked_Drive__c 
-                                                 WHERE sked_Collection_Operation__c IN :collectionOperationIds
-                                                 AND sked_Drive_Date__c IN :constraintDates
-                                                 AND sked_Status__c IN :driveStatuses
-                                                 GROUP BY sked_Collection_Operation__c, sked_Drive_Date__c, sked_Type_of_Drive__c
-                                                 ORDER BY sked_Drive_Date__c ASC];
+        List<AggregateResult> driveSumResults = [
+            SELECT sked_Collection_Operation__c, sked_Drive_Date__c, sked_Type_of_Drive__c,
+            SUM(sked_Total_Staff_Requested__c) totalStaffRequested
+            FROM sked_Drive__c 
+            WHERE sked_Collection_Operation__c IN :collectionOperationIds
+            AND sked_Drive_Date__c IN :constraintDates
+            AND sked_Status__c IN :driveStatuses
+            GROUP BY sked_Collection_Operation__c, sked_Drive_Date__c, sked_Type_of_Drive__c
+            ORDER BY sked_Drive_Date__c ASC
+        ];
+
         for (AggregateResult sumResult : driveSumResults) {
             string collectionOperationId = (string)sumResult.get('sked_Collection_Operation__c');
             string driveDate = Json.serialize((Date)sumResult.get('sked_Drive_Date__c')).replace('"', '');
@@ -72,14 +75,16 @@ public class skedStaffingConstraintHandler extends skedTriggerHub {
         }
         
         Map<string, decimal> map_nceKey_staffRequested = new Map<string, decimal>();
-        List<sked__Activity__c> nces = [SELECT Id, sked__Start__c, sked__Timezone__c, sked_Region__r.sked_Biomed_Collection_Op_Center__c, 
-                                        sked_Fixed_Site_Staff_Quantity__c, sked_Mobile_Staff_Quantity__c 
-                                        FROM sked__Activity__c
-                                        WHERE sked_Is_Group_Activity__c = TRUE
-                                        AND sked_Start_Date__c IN :constraintDates
-                                        AND sked_Fixed_Site_Staff_Quantity__c != NULL
-                                        AND sked_Mobile_Staff_Quantity__c != NULL
-                                        AND sked_Region__r.sked_Biomed_Collection_Op_Center__c IN :collectionOperationIds];
+        List<sked__Activity__c> nces = [
+            SELECT Id, sked__Start__c, sked__Timezone__c, sked_Region__r.sked_Biomed_Collection_Op_Center__c, 
+            sked_Fixed_Site_Staff_Quantity__c, sked_Mobile_Staff_Quantity__c 
+            FROM sked__Activity__c
+            WHERE sked_Is_Group_Activity__c = TRUE
+            AND sked_Start_Date__c IN :constraintDates
+            AND sked_Fixed_Site_Staff_Quantity__c != NULL
+            AND sked_Mobile_Staff_Quantity__c != NULL
+            AND sked_Region__r.sked_Biomed_Collection_Op_Center__c IN :collectionOperationIds
+        ];
         string userTimezoneSidId = UserInfo.getTimeZone().getID();
         for (sked__Activity__c nce : nces) {
             string timezoneSidId = nce.sked__Timezone__c != NULL ? nce.sked__Timezone__c : userTimezoneSidId;
@@ -140,11 +145,13 @@ public class skedStaffingConstraintHandler extends skedTriggerHub {
         }
         
         Map<string, List<sked_Drive__c>> map_driveKey_drives = new Map<string, List<sked_Drive__c>>();
-        List<sked_Drive__c> skedDrives = [SELECT sked_Collection_Operation__c, sked_Drive_Date__c, sked_Type_of_Drive__c, sked_Total_Staff_Requested__c
-                                          FROM sked_Drive__c 
-                                          WHERE sked_Collection_Operation__c IN :collectionOperationIds
-                                          AND sked_Drive_Date__c IN :constraintDates
-                                          AND sked_Status__c != :skedConstants.DRIVE_STATUS_CANCEL];
+        List<sked_Drive__c> skedDrives = [
+            SELECT sked_Collection_Operation__c, sked_Drive_Date__c, sked_Type_of_Drive__c, sked_Total_Staff_Requested__c
+            FROM sked_Drive__c 
+            WHERE sked_Collection_Operation__c IN :collectionOperationIds
+            AND sked_Drive_Date__c IN :constraintDates
+            AND sked_Status__c != :skedConstants.DRIVE_STATUS_CANCEL
+        ];
         
         Set<Id> impactedDriveIds = new Set<Id>();
         for (sked_Drive__c skedDrive : skedDrives) {
@@ -166,12 +173,14 @@ public class skedStaffingConstraintHandler extends skedTriggerHub {
         }
         
         Map<string, List<sked__Activity__c>> map_activityKey_activities = new Map<string, List<sked__Activity__c>>();
-        List<sked__Activity__c> skedActivities = [SELECT Id, sked__Quantity__c, sked_Fixed_Site_Staff_Quantity__c,
-                                                  sked_Mobile_Staff_Quantity__c, sked_Start_Date__c, sked_Region__r.sked_Biomed_Collection_Op_Center__c
-                                                  FROM sked__Activity__c
-                                                  WHERE sked_Is_Group_Activity__c = TRUE
-                                                  AND sked_Start_Date__c IN :constraintDates
-                                                  AND sked_Region__r.sked_Biomed_Collection_Op_Center__c = :collectionOperationIds];
+        List<sked__Activity__c> skedActivities = [
+            SELECT Id, sked__Quantity__c, sked_Fixed_Site_Staff_Quantity__c,
+            sked_Mobile_Staff_Quantity__c, sked_Start_Date__c, sked_Region__r.sked_Biomed_Collection_Op_Center__c
+            FROM sked__Activity__c
+            WHERE sked_Is_Group_Activity__c = TRUE
+            AND sked_Start_Date__c IN :constraintDates
+            AND sked_Region__r.sked_Biomed_Collection_Op_Center__c = :collectionOperationIds
+        ];
         for (sked__Activity__c skedActivity : skedActivities) {
             string collectionOperationId = skedActivity.sked_Region__r.sked_Biomed_Collection_Op_Center__c;
             string activityDate = Json.serialize(skedActivity.sked_Start_Date__c).replace('"', '');
@@ -187,6 +196,24 @@ public class skedStaffingConstraintHandler extends skedTriggerHub {
             activitiesByKey.add(skedActivity);
         }
         
+        List<skedHC__Exception__c> existingExceptions = [
+            SELECT Id,sked_Drive__c
+            FROM skedHC__Exception__c
+            WHERE sked_Drive__c IN :impactedDriveIds
+            AND sked_Exception_Code__c = :skedConstants.EXCEPTION_CODE_STAFFING_CONSTRAINT_CHANGED
+            AND skedHC__Status__c != :skedConstants.EXCEPTION_LOG_STATUS_CLOSED
+        ];
+        Map<Id, List<skedHC__Exception__c>> exceptionsByDriveId = new Map<Id, List<skedHC__Exception__c>>();
+        for (skedHC__Exception__c exceptionLog : existingExceptions) {
+            List<skedHC__Exception__c> exceptionsForDrive = exceptionsByDriveId.get(exceptionLog.sked_Drive__c);
+
+            if (exceptionsForDrive == null) {
+                exceptionsForDrive = new List<skedHC__Exception__c>();
+            }
+            exceptionsForDrive.add(exceptionLog);
+            exceptionsByDriveId.put(exceptionLog.sked_Drive__c, exceptionsForDrive);
+        }
+
         List<skedHC__Exception__c> exceptionLog = new List<skedHC__Exception__c>();
         for (sked_Staffing_Constraint__c decreasedRecord : decreasedRecords) {
             string collectionOperationId = decreasedRecord.sked_Collection_Operation__c;
@@ -213,17 +240,8 @@ public class skedStaffingConstraintHandler extends skedTriggerHub {
                     }
                 }
                 if (decreasedRecord.sked_Total_Staff_Constraints__c < totalStaffRequested) {
-                    List<skedHC__Exception__c> existingException = [SELECT Id,sked_Drive__c
-                                                                    FROM skedHC__Exception__c
-                                                                    WHERE sked_Drive__c IN :impactedDriveIds
-                                                                    AND sked_Exception_Code__c = :skedConstants.EXCEPTION_CODE_STAFFING_CONSTRAINT_CHANGED
-                                                                    AND skedHC__Status__c != :skedConstants.EXCEPTION_LOG_STATUS_CLOSED];
-                    Set<Id> driveIdsHasException = new Set<Id>();
-                    for (skedHC__Exception__c existingExceptionItem : existingException) {
-                        driveIdsHasException.add(existingExceptionItem.sked_Drive__c);
-                    }
                     for (sked_Drive__c impactedDrive : impactedDrives) {
-                        if (!driveIdsHasException.contains(impactedDrive.Id)) {
+                        if (!exceptionsByDriveId.containsKey(impactedDrive.Id)) {
                             skedHC__Exception__c newException = new skedHC__Exception__c(
                                 sked_Drive__c = impactedDrive.Id,
                                 sked_Exception_Code__c = skedConstants.EXCEPTION_CODE_STAFFING_CONSTRAINT_CHANGED
@@ -231,11 +249,12 @@ public class skedStaffingConstraintHandler extends skedTriggerHub {
                             exceptionLog.add(newException);
                         }
                     }
-                    if (!exceptionLog.isEmpty()) {
-                        upsert exceptionLog;
-                    }
                 }
             }
+        }
+
+        if (!exceptionLog.isEmpty()) {
+            upsert exceptionLog;
         }
     }
     
@@ -270,12 +289,14 @@ public class skedStaffingConstraintHandler extends skedTriggerHub {
         }
         
         Map<string, List<sked__Activity__c>> map_activityKey_activities = new Map<string, List<sked__Activity__c>>();
-        List<sked__Activity__c> skedActivities = [SELECT Id, sked__Quantity__c, sked_Fixed_Site_Staff_Quantity__c,
-                                                  sked_Mobile_Staff_Quantity__c, sked_Start_Date__c, sked_Region__r.sked_Biomed_Collection_Op_Center__c
-                                                  FROM sked__Activity__c
-                                                  WHERE sked_Is_Group_Activity__c = TRUE
-                                                  AND sked_Start_Date__c IN :constraintDates
-                                                  AND sked_Region__r.sked_Biomed_Collection_Op_Center__c = :collectionOperationIds];
+        List<sked__Activity__c> skedActivities = [
+            SELECT Id, sked__Quantity__c, sked_Fixed_Site_Staff_Quantity__c,
+            sked_Mobile_Staff_Quantity__c, sked_Start_Date__c, sked_Region__r.sked_Biomed_Collection_Op_Center__c
+            FROM sked__Activity__c
+            WHERE sked_Is_Group_Activity__c = TRUE
+            AND sked_Start_Date__c IN :constraintDates
+            AND sked_Region__r.sked_Biomed_Collection_Op_Center__c = :collectionOperationIds
+        ];
         for (sked__Activity__c skedActivity : skedActivities) {
             string collectionOperationId = skedActivity.sked_Region__r.sked_Biomed_Collection_Op_Center__c;
             string activityDate = Json.serialize(skedActivity.sked_Start_Date__c).replace('"', '');
@@ -325,11 +346,14 @@ public class skedStaffingConstraintHandler extends skedTriggerHub {
             }
         }
         if (!driveIdsToResolve.isEmpty()) {
-            List<skedHC__Exception__c> exceptionLog = [SELECT Id, skedHC__Status__c
-                                                       FROM skedHC__Exception__c
-                                                       WHERE sked_Drive__c IN :driveIdsToResolve
-                                                       AND sked_Exception_Code__c = :skedConstants.EXCEPTION_CODE_STAFFING_CONSTRAINT_CHANGED
-                                                       AND skedHC__Status__c != :skedConstants.EXCEPTION_LOG_STATUS_CLOSED];
+            List<skedHC__Exception__c> exceptionLog = [
+                SELECT Id, skedHC__Status__c
+                FROM skedHC__Exception__c
+                WHERE sked_Drive__c IN :driveIdsToResolve
+                AND sked_Exception_Code__c = :skedConstants.EXCEPTION_CODE_STAFFING_CONSTRAINT_CHANGED
+                AND skedHC__Status__c != :skedConstants.EXCEPTION_LOG_STATUS_CLOSED
+            ];
+            
             if (!exceptionLog.isEmpty()) {
                 for (skedHC__Exception__c exceptionItem : exceptionLog) {
                     exceptionItem.skedHC__Status__c = skedConstants.EXCEPTION_LOG_STATUS_CLOSED;

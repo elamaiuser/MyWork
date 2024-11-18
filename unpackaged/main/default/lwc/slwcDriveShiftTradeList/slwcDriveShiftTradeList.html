@@ -2,7 +2,7 @@
     <template if:true={showListViewPage}>
         <div class={customClass.modal}>
             <lightning-spinner if:true={showSpinner} class="spins" size="medium"></lightning-spinner>
-            <div class="slds-align-content-center slds-col width-450">
+            <div class="slds-align-content-center slds-col width-450 full-height">
                 <div class="slds-clearfix slds-page-header slds-page-header_record-home fixed-position " style="margin-bottom: var(--lwc-cardSpacingMargin);">
                     <div class="slds-page-header__row slds-grid_vertical-align-center">
                         <div class="slds-page-header__col-title">
@@ -45,6 +45,7 @@
                                 class="slds-grid slds-grid_vertical slds-p-horizontal_small slds-p-top_small slds-shrink-none slds-border--bottom slds-border--left slds-border--right slds-border--top width-100 height-100">
                                 <div class="slds-p-right_small slds-align--absolute-center slds-no-flex">
                                     <c-slwc-week-date-picker first-day={collectionOperationFirstDay}
+                                        dropdown-position="center"
                                         unique-key="optimizationHistory" onweekdatechange={handleOnChangeFilter}
                                         default-start-date={filters.startDate} default-end-date={filters.endDate}>
                                     </c-slwc-week-date-picker>
@@ -61,9 +62,7 @@
                                                         <div
                                                             class="slds-grid slds-grid_align-spread slds-has-flexi-truncate">
                                                             <h3 class="slds-tile__title slds-truncate">
-                                                                <c-slwc-lightning-formatted-url
-                                                                    record={record}
-                                                                ></c-slwc-lightning-formatted-url>
+                                                                <span class="color-text-link-hover">{record.name}</span>
                                                             </h3>
                                                         </div>
                                                         <div class="slds-tile__detail">
@@ -71,7 +70,7 @@
                                                                 <dt class="slds-item_label slds-text-color_weak slds-truncate">
                                                                     Submission Date:</dt>
                                                                 <dd class="slds-item_detail">
-                                                                    <lightning-formatted-date-time value={record.createdDate} year="numeric" month="numeric" day="numeric" hour="numeric"
+                                                                    <lightning-formatted-date-time value={record.createdDate} year="numeric" month="short" day="2-digit" hour="numeric"
                                                                     minute="2-digit" time-zone={timezoneSidId}></lightning-formatted-date-time>
                                                                 </dd>
                                                                 <dt class="slds-item_label slds-text-color_weak slds-truncate">
@@ -92,27 +91,44 @@
                                                                 <dd class="slds-item_detail">
                                                                     {record.requestingStaffTradingType}</dd>
                                                                 <dt class="slds-item_label slds-text-color_weak slds-truncate">
-                                                                    Record:</dt>
+                                                                    Event:</dt>
                                                                 <dd class="slds-item_detail">
-                                                                    {record.requestingStaffRecordName}</dd>
+                                                                    {record.requestingStaffTradingEventName}</dd>
+                                                                <dt class="slds-item_label slds-text-color_weak slds-truncate">
+                                                                    Event Date:</dt>
+                                                                <dd class="slds-item_detail">
+                                                                    <lightning-formatted-date-time value={record.requestingStaffTradingEventDate} time-zone="UTC" day="numeric" year="numeric" month="long">
+                                                                    </lightning-formatted-date-time>
+                                                                </dd>
                                                             </dl>
 
-                                                            <div class="title">Trading Staff</div>
-                                                            
-                                                            <dl class="slds-list_horizontal slds-wrap">
-                                                                <dt class="slds-item_label slds-text-color_weak slds-truncate">
-                                                                    Staff:</dt>
-                                                                <dd class="slds-item_detail">
-                                                                    {record.tradingStaffName}</dd>
-                                                                <dt class="slds-item_label slds-text-color_weak slds-truncate">
-                                                                    Trading Type:</dt>
-                                                                <dd class="slds-item_detail">
-                                                                    {record.tradingStaffTradingType}</dd>
-                                                                <dt class="slds-item_label slds-text-color_weak slds-truncate">
-                                                                    Record:</dt>
-                                                                <dd class="slds-item_detail">
-                                                                    {record.tradingStaffRecordName}</dd>
-                                                            </dl>
+                                                            <div class="title" if:false={record.tradingStaffId}>One Side Trade</div>
+                                                            <template if:true={record.tradingStaffId}>
+                                                                <div class="title">Trading Staff</div>
+                                                                
+                                                                <dl class="slds-list_horizontal slds-wrap">
+                                                                    <dt class="slds-item_label slds-text-color_weak slds-truncate">
+                                                                        Staff:</dt>
+                                                                    <dd class="slds-item_detail">
+                                                                        {record.tradingStaffName}</dd>
+                                                                    <template if:true={record.tradingStaffTradingType}>
+                                                                        <dt class="slds-item_label slds-text-color_weak slds-truncate">
+                                                                            Trading Type:</dt>
+                                                                        <dd class="slds-item_detail">
+                                                                            {record.tradingStaffTradingType}</dd>
+                                                                        <dt class="slds-item_label slds-text-color_weak slds-truncate">
+                                                                            Event:</dt>
+                                                                        <dd class="slds-item_detail">
+                                                                            {record.tradingStaffTradingEventName}</dd>
+                                                                        <dt class="slds-item_label slds-text-color_weak slds-truncate">
+                                                                            Event Date:</dt>
+                                                                        <dd class="slds-item_detail">
+                                                                            <lightning-formatted-date-time value={record.tradingStaffTradingEventDate} time-zone="UTC" day="numeric" year="numeric" month="long">
+                                                                            </lightning-formatted-date-time>
+                                                                        </dd>
+                                                                    </template>
+                                                                </dl>
+                                                            </template>
                                                         </div>
                                                     </div>
                                                     <div class="slds-grid slds-grid_align-end slds-grid_vertical-align-center slds-m-top_x-small"> 
@@ -164,4 +180,12 @@
         cancel-btn-label={confirmModalData.cancelBtnLabel}
         size='x-small'>
     </c-slwc-confirm-modal>
+
+    <c-slwc-acknowledge-confirm-modal
+        user-resource={userResource}
+        drive-shift-trade={acknowledgeConfirmModalData.driveShiftTrade}
+        is-open={acknowledgeConfirmModalData.isOpen}
+        onclose={closeAcknowledgeConfirmModal}
+        onsave={saveAcknowledgeConfirmModal}
+    ></c-slwc-acknowledge-confirm-modal>
 </template>

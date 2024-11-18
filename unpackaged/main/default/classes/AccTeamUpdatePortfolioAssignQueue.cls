@@ -1,21 +1,21 @@
-//@Description: this Queueable is triggered from portfolioAssignmentService.updateEndDateOfAccountTeamMembers, when dml limits hits while publishing events for account team update
+//@Description: this Queueable is triggered from portfolioAssignmentService.publishPlarformEventsOnAfterInsert, when dml limits hits while publishing events for account team update
 /* 
 * created by Balaji N @7/28/2023
 * Modification Log 
 * Date					     Developer Name			     Comments
 * ***************************************************************************
-* 
+* 08/05/2024				 Balaji N 					 Logic for HRP-13028(Changed PortfolioAssignmentUpdateEvent to PortfolioAssignmentEvent__e)
 * *
 *****************************************************************************
 */
 public class AccTeamUpdatePortfolioAssignQueue implements Queueable
 {
-    List<PortfolioAssignmentUpdateEvent__e> publishEvents = new List<PortfolioAssignmentUpdateEvent__e>();
-    List<PortfolioAssignmentUpdateEvent__e> publishEventLimitList = new List<PortfolioAssignmentUpdateEvent__e>();
+    List<PortfolioAssignmentEvent__e> publishEvents = new List<PortfolioAssignmentEvent__e>();
+    List<PortfolioAssignmentEvent__e> publishEventLimitList = new List<PortfolioAssignmentEvent__e>();
     @testvisible
-    List<PortfolioAssignmentUpdateEvent__e> publishEventNextList = new List<PortfolioAssignmentUpdateEvent__e>();
+    List<PortfolioAssignmentEvent__e> publishEventNextList = new List<PortfolioAssignmentEvent__e>();
     
-    public AccTeamUpdatePortfolioAssignQueue(List<PortfolioAssignmentUpdateEvent__e> publishEvents)
+    public AccTeamUpdatePortfolioAssignQueue(List<PortfolioAssignmentEvent__e> publishEvents)
     {
         this.publishEvents = publishEvents;
     }
@@ -26,7 +26,7 @@ public class AccTeamUpdatePortfolioAssignQueue implements Queueable
         //if more than 10k spliting
         if(this.publishEvents.size()>10000)
         {
-            for(PortfolioAssignmentUpdateEvent__e eve: this.publishEvents)
+            for(PortfolioAssignmentEvent__e eve: this.publishEvents)
             {
                 if(publishEventLimitList.size()<10000)
                 {

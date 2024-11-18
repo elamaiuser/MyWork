@@ -1,7 +1,7 @@
 <template>
     <div class={customClass.modal}>
         <lightning-spinner if:true={showSpinner} class="spins" size="medium"></lightning-spinner>
-        <div class="slds-align-content-center slds-col width-450">
+        <div class="slds-align-content-center slds-col width-450 full-height">
             <div class="slds-clearfix slds-page-header slds-page-header_record-home fixed-position " style="margin-bottom: var(--lwc-cardSpacingMargin);">
                 <div class="slds-page-header__row slds-grid_vertical-align-center">
                     <div class="slds-page-header__col-title">
@@ -46,13 +46,16 @@
                 </lightning-progress-indicator>
                 <div class="slds-m-top--large slds-grow slds-grid position-relative slds-scrollable_y">
                     <div class="slds-border_right slds-border_left width-100 slds-grid slds-grid_vertical">
+                        <div class="slds-border--top slds-p-horizontal_small slds-p-vertical_x-small slds-no-flex slds-theme_shade" if:true={model.tradingStaff}>
+                            <strong>Selected resource:</strong> {model.tradingStaff.name}
+                        </div>
                         <div class="slds-border--top slds-p-around_small slds-no-flex">
                             <lightning-input type="search" name="searchText" value={filters.searchText}
                                 onchange={handleOnChangeFilter} max-length="255" label="Search Resources..."
                                 variant="label-hidden" placeholder="Search Resources...">
                             </lightning-input>
                         </div>
-                        <div class="slds-p-horizontal_small slds-scrollable_y slds-grow slds-border--bottom slds-scrollable--y">
+                        <!-- <div class="slds-p-horizontal_small slds-scrollable_y slds-grow slds-border--bottom slds-scrollable--y">
                             <table class="slds-table slds-table_bordered resources-table">
                                 <tbody>
                                     <tr onclick={handleSelectResource} data-id={resource.id}
@@ -75,6 +78,20 @@
                                     </tr>
                                 </tbody>
                             </table>
+                        </div> -->
+                        <div class="slds-p-horizontal_small slds-scrollable_y slds-grow slds-border--bottom slds-scrollable--y">
+                            <div class="shift-trade-resources-table" style="height: 52vh">
+                                <c-slwc-custom-datatable
+                                    key-field="key"
+                                    data={listResourcesFiltered}
+                                    columns={resourceSelectionColumns}
+                                    hide-checkbox-column
+                                    hide-table-header
+                                    enable-infinite-loading={enableInfiniteLoading}
+                                    onloadmore={handleLoadMoreResourceData}
+                                    wrap-text-max-lines="3">
+                                </c-slwc-custom-datatable>
+                            </div>
                         </div>
                     </div>
                 </div>

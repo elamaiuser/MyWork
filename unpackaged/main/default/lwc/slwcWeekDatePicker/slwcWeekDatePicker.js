@@ -45,7 +45,8 @@ export default class SlwcWeekDatePicker extends LightningElement {
     @api variant;
     @api includesAdditionalDays = 0;
     @api fullWidth = false;
-
+    @api dropdownPosition = 'right';
+    
     @track weeks = [];
     @track labels = [];
     @track selectedMonth;
@@ -80,6 +81,11 @@ export default class SlwcWeekDatePicker extends LightningElement {
         return this.startDate != null && this.endDate != null ? this.startDate.toFormat('MMM d') + ' - ' + this.endDate.toFormat('MMM d, yyyy') : 'Select a week';
     }
 
+    get customClasses() {
+        return {
+            dropdown: classNames('slds-datepicker slds-dropdown', `slds-dropdown_${this.dropdownPosition}`)
+        }
+    }
     get customStyle() {
         return {
             buttonGroup: _.compact([

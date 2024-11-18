@@ -1,0 +1,63 @@
+<apex:page lightningStylesheets="true" sidebar="false" title="Call Out" standardstylesheets="false" showheader="false" doctype="html-5.0">
+    <apex:includeLightning />
+    
+    <html lang="en" style="height: 100%">
+        <head>
+          <meta charset="UTF-8" />
+          <title>Operation</title>
+          <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1" />
+        
+          <script>
+            delete Intl.DateTimeFormat.prototype.formatToParts;
+          </script>
+          <script src="https://cdn.polyfill.io/v2/polyfill.js?features=Intl.~locale.en-GB"></script>
+          
+          <style>
+            .skiplink {
+              position: absolute;
+            }
+            .noSidebarCell, .sidebarCell .fixed {
+              padding: 0;
+            }
+            .globalHeaderBar {
+              margin: 0;
+            }
+
+            @supports (-webkit-touch-callout: none) {
+              input[type="datetime-local"],
+              input[type="date"] {
+                height: 1.825rem;
+                min-width: 8rem;
+              }
+
+              input::-webkit-date-and-time-value{ text-align:left; }
+            }
+
+            input:disabled, textarea:disabled, input:disabled::placeholder, textarea:disabled::placeholder, select:disabled {
+              text-fill-color: gray; /* 1. sets text fill to current `color` for safari */
+              -webkit-text-fill-color: gray; /* 1. sets text fill to current `color` for safari */
+              opacity: 1; /* 2. correct opacity on iOS */
+            }
+          </style>
+        </head>
+        
+        <body style="margin: 0; padding: 0; height: 100%">
+            <div id="lightning" style="height: 100%"></div>             
+        </body>
+
+        <script>
+          $Lightning.use("c:skedMobileResourceCallOut", function () {
+              $Lightning.createComponent("c:slwcMobileResourceCallOut",
+                                        {
+                                          jobId: '{!JSENCODE($CurrentPage.parameters.jobId)}',
+                                          userId: '{!$User.Id}'
+                                        },
+                                        "lightning",
+                                        function (cmp) {
+                                            console.log("component was created");
+                                        }
+                                        );
+          });
+        </script>
+    </html> 
+</apex:page>

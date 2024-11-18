@@ -16,6 +16,7 @@ export class ResourceMappingConfigFactory {
       mappingConfig.addFieldConfig('sked__Category__c', 'category', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_CDL__c', 'CDL', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_DOT__c', 'DOT', MAPPING_TYPE.direct);
+      mappingConfig.addFieldConfig('sked_Daily_Time_Off_Hours__c', 'dailyTimeOffHours', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_Dedicated_to_Site__c', 'dedicatedToSiteId', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_Biomed_Collection_Op_Center_Name__c', 'collectionOperationName', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked__Primary_Region__r.sked_Biomed_Collection_Op_Center__c', 'collectionOperationId', MAPPING_TYPE.direct);
@@ -53,6 +54,7 @@ export class ResourceMappingConfigFactory {
       mappingConfig.addFieldConfig('sked_Termination_Date__c', 'terminationDate', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_Turnaround_Time__c', 'turnaroundTime', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('Use_CO_Address_for_Scheduling__c', 'useCOAddressForScheduling', MAPPING_TYPE.direct);
+      mappingConfig.addFieldConfig('sked_Max_Working_Days_Per_Week__c', 'maxWorkingDaysPerWeek', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked__User__c', 'userId', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked__User__r.SmallPhotoUrl', 'photoUrl', MAPPING_TYPE.direct);
 

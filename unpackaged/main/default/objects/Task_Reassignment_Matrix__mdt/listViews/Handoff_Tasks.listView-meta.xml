@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Handoff_Tasks</fullName>
+    <columns>MasterLabel</columns>
+    <columns>DeveloperName</columns>
+    <columns>NamespacePrefix</columns>
+    <columns>Assigned_To__c</columns>
+    <columns>Creation_Date_Offset__c</columns>
+    <columns>Description__c</columns>
+    <columns>Due_Date_Offset__c</columns>
+    <columns>Task_Subject__c</columns>
+    <columns>IsProtected</columns>
+    <columns>Category__c</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>Category__c</field>
+        <operation>equals</operation>
+        <value>HandOff</value>
+    </filters>
+    <label>Handoff Tasks</label>
+    <language>en_US</language>
+</ListView>

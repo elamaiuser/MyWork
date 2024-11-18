@@ -14,8 +14,7 @@
     <filters>
         <field>sked_Collection_Operation__c</field>
         <operation>equals</operation>
-        <value>L053 Baltimore Mobiles</value>
+        <value>Portland OR</value>
     </filters>
     <label>L053 Baltimore Mobiles</label>
-    <language>en_US</language>
 </ListView>

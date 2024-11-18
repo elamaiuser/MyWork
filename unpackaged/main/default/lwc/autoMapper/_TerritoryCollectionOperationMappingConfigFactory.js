@@ -16,6 +16,7 @@ export class TerritoryCollectionOperationMappingConfigFactory {
       mappingConfig.addFieldConfig('sked_Territory__c', 'territoryId', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_Territory__r.sked_High_Drive_Productivity_Threshold__c', 'highDriveProductivityThreshold', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_Territory__r.sked_Mid_Drive_Productivity_Threshold__c', 'midDriveProductivityThreshold', MAPPING_TYPE.direct);
+      mappingConfig.addFieldConfig('sked_Territory__r.sked_Parent__c', 'regionId', MAPPING_TYPE.direct);
 
       return mappingConfig;
   }

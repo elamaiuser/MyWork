@@ -8,283 +8,6 @@
         <plural>true</plural>
         <value>Blood Drive Opportunities</value>
     </caseValues>
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     <fieldSets>
         <label><!-- FieldsApplytoDrives --></label>
         <name>FieldsApplytoDrives</name>
@@ -298,6 +21,10 @@
         <sections>
             <label><!-- Additional Drive Logistics --></label>
             <section>Additional Drive Logistics</section>
+        </sections>
+        <sections>
+            <label><!-- Appointment Schedule Information --></label>
+            <section>Appointment Schedule Information</section>
         </sections>
         <sections>
             <label><!-- Calendar Build --></label>
@@ -347,6 +74,10 @@
             <section>Additional Drive Logistics</section>
         </sections>
         <sections>
+            <label><!-- Appointment Schedule Information --></label>
+            <section>Appointment Schedule Information</section>
+        </sections>
+        <sections>
             <label><!-- Calendar Build --></label>
             <section>Calendar Build</section>
         </sections>
@@ -392,6 +123,10 @@
         <sections>
             <label><!-- Additional Drive Logistics --></label>
             <section>Additional Drive Logistics</section>
+        </sections>
+        <sections>
+            <label><!-- Appointment Schedule Information --></label>
+            <section>Appointment Schedule Information</section>
         </sections>
         <sections>
             <label><!-- Calendar Build --></label>
@@ -441,6 +176,10 @@
             <section>Additional Drive Logistics</section>
         </sections>
         <sections>
+            <label><!-- Appointment Schedule Information --></label>
+            <section>Appointment Schedule Information</section>
+        </sections>
+        <sections>
             <label><!-- Calendar Build --></label>
             <section>Calendar Build</section>
         </sections>
@@ -486,6 +225,10 @@
         <sections>
             <label><!-- Additional Drive Logistics --></label>
             <section>Additional Drive Logistics</section>
+        </sections>
+        <sections>
+            <label><!-- Appointment Schedule Information --></label>
+            <section>Appointment Schedule Information</section>
         </sections>
         <sections>
             <label><!-- Calendar Build --></label>
@@ -535,6 +278,10 @@
             <section>Additional Drive Logistics</section>
         </sections>
         <sections>
+            <label><!-- Appointment Schedule Information --></label>
+            <section>Appointment Schedule Information</section>
+        </sections>
+        <sections>
             <label><!-- Calendar Build --></label>
             <section>Calendar Build</section>
         </sections>
@@ -580,6 +327,10 @@
         <sections>
             <label><!-- Additional Drive Logistics --></label>
             <section>Additional Drive Logistics</section>
+        </sections>
+        <sections>
+            <label><!-- Appointment Schedule Information --></label>
+            <section>Appointment Schedule Information</section>
         </sections>
         <sections>
             <label><!-- Calendar Build --></label>
@@ -629,6 +380,10 @@
             <section>Additional Drive Logistics</section>
         </sections>
         <sections>
+            <label><!-- Appointment Schedule Information --></label>
+            <section>Appointment Schedule Information</section>
+        </sections>
+        <sections>
             <label><!-- Calendar Build --></label>
             <section>Calendar Build</section>
         </sections>
@@ -676,6 +431,10 @@
             <section>Additional Drive Logistics</section>
         </sections>
         <sections>
+            <label><!-- Appointment Schedule Information --></label>
+            <section>Appointment Schedule Information</section>
+        </sections>
+        <sections>
             <label><!-- Calendar Build --></label>
             <section>Calendar Build</section>
         </sections>
@@ -715,6 +474,10 @@
     <layouts>
         <layout>Opportunity Layout</layout>
         <sections>
+            <label><!-- Appointment Schedule Information --></label>
+            <section>Appointment Schedule Information</section>
+        </sections>
+        <sections>
             <label><!-- Blood Drive Information --></label>
             <section>Blood Drive Information</section>
         </sections>
@@ -732,6 +495,10 @@
         <sections>
             <label><!-- Additional Drive Logistics --></label>
             <section>Additional Drive Logistics</section>
+        </sections>
+        <sections>
+            <label><!-- Appointment Schedule Information --></label>
+            <section>Appointment Schedule Information</section>
         </sections>
         <sections>
             <label><!-- Calendar Build --></label>
@@ -779,6 +546,10 @@
         <sections>
             <label><!-- Additional Drive Logistics --></label>
             <section>Additional Drive Logistics</section>
+        </sections>
+        <sections>
+            <label><!-- Appointment Schedule Information --></label>
+            <section>Appointment Schedule Information</section>
         </sections>
         <sections>
             <label><!-- Calendar Build --></label>
@@ -903,6 +674,10 @@
         <name>Additional_Description_not_Update</name>
     </validationRules>
     <validationRules>
+        <errorMessage><!-- Drive Date, Hours, Template, and Site are not editable for Past Drives --></errorMessage>
+        <name>AllowOpportunityEditForPastDrives</name>
+    </validationRules>
+    <validationRules>
         <errorMessage><!-- Anticipated Registered Donors Change Reason is required while updating Anticipated Registered Donors --></errorMessage>
         <name>AnticipatedRegiDonorChangeReasonRequired</name>
     </validationRules>
@@ -1000,6 +775,10 @@ Cancelled = No Change Allowed in Stage --></errorMessage>
         <name>Parent_Template_Id_Check</name>
     </validationRules>
     <validationRules>
+        <errorMessage><!-- Drive Date cannot be changed without setting the Drive Date Change Reason from the Blood Drive Opportunity Screen. --></errorMessage>
+        <name>Populate_Reason_on_Drive_Date_Change</name>
+    </validationRules>
+    <validationRules>
         <errorMessage><!-- Projected procedures is required, if Stage is commited --></errorMessage>
         <name>ProjectedProceduresRequiredStageCommited</name>
     </validationRules>
@@ -1010,6 +789,10 @@ Cancelled = No Change Allowed in Stage --></errorMessage>
     <validationRules>
         <errorMessage><!-- Prior to moving this Opportunity to Committed/Closed Stage, you must submit the Draft Drive on the Drive Scheduling tab. --></errorMessage>
         <name>Restrict_DriveStatus_And_Stage</name>
+    </validationRules>
+    <validationRules>
+        <errorMessage><!-- Slot Generator Change Reason is required and has to be different while updating Slot Generator --></errorMessage>
+        <name>Slot_Generator_Change_Reason_Required</name>
     </validationRules>
     <validationRules>
         <errorMessage><!-- Keywords are recommended to be 50 letters or less.
@@ -1066,6 +849,10 @@ Keywords should not allow special characters (*&amp;?%) --></errorMessage>
         <name>WBProcedureProjectedChangeReasonRequired</name>
     </validationRules>
     <validationRules>
+        <errorMessage><!-- Please either check the checkbox ‘Web Scheduling Offset from CO/Global Setting’ or enter Web Scheduling Offset values on the Template. --></errorMessage>
+        <name>Web_Scheduling_Dates_Required</name>
+    </validationRules>
+    <validationRules>
         <errorMessage><!-- This blood drive is enabled for online scheduling. Please enter a Web Schedule Start Date,Start Time,End Date,End Time --></errorMessage>
         <name>Web_Scheduling_Dates_Requirement</name>
     </validationRules>
@@ -1093,4 +880,293 @@ Keywords should not allow special characters (*&amp;?%) --></errorMessage>
         <label><!-- Run_Calendar_Build --></label>
         <name>Run_Calendar_Build</name>
     </webLinks>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
 </CustomObjectTranslation>

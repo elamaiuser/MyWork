@@ -14,7 +14,7 @@ import {
     fireEvent, registerListener, unregisterAllListeners
 } from 'c/pubsub';
 import * as slwcAvailator from 'c/slwcAvailator';
-import { ASSET_TYPE, DRIVE_STATUS, DRIVE_TYPE, JOB_ALLOCATION_STATUS, JOB_STATUS, MANUALLY_CREATED_FROM, RESOURCE_ROLE_GROUP, RESOURCE_TYPE } from 'c/slwcConstants';
+import { ASSET_TYPE, DRIVE_STATUS, RESOURCE_ROLE, JOB_ALLOCATION_STATUS, JOB_STATUS, MANUALLY_CREATED_FROM, RESOURCE_ROLE_GROUP, RESOURCE_TYPE } from 'c/slwcConstants';
 import * as slwcDateUtils from 'c/slwcDateUtils';
 import { DriveHelper } from 'c/slwcDriveGenerator';
 import * as slwcUtils from 'c/slwcUtils';
@@ -104,6 +104,23 @@ export default class SlwcDriveStaffingDetails extends LightningElement {
         this._recordId = value;
         if (this.initialized) {
             this.init();
+        }
+    }
+
+    _jobId;
+    @api
+    get jobId() {
+        return this._jobId;
+    }
+
+    set jobId(value) {
+        this._jobId = value;
+        if (this.initialized) {
+            this.onClickUnpin();   
+
+            if (value) {
+                this.preSelectJob(value);
+            }
         }
     }
 
@@ -314,8 +331,17 @@ export default class SlwcDriveStaffingDetails extends LightningElement {
         return this.allocateAssetsOnly ? 'DEFAULT' : 'DISTANCE_SORTABLE';
     }
 
+    get hasUnsavedAllocations() {
+        return find(this.driveDetail1.driveShifts, driveShift => {
+            return find(driveShift.jobs, (driveShiftJob => {
+                return find(driveShiftJob.jobAllocations, (jobAllocation => {
+                    return slwcUtils.isNullOrEmpty(jobAllocation.id)
+                }))
+            }))
+        });
+    }
+
     renderedCallback() {
-        console.log("renderedCallback");
         registerListener('saveJobModal', this.handleSaveJob, this);
 
         registerListener('showAddRoleModal', this.handleShowAddRoleModal, this);
@@ -405,6 +431,11 @@ export default class SlwcDriveStaffingDetails extends LightningElement {
 
                     })
                 })
+                .then(() => {
+                    if (this.jobId) {
+                        this.preSelectJob(this.jobId);
+                    }
+                })
                 .catch(error => this.exceptionHandler(error))
                 .finally(this.hideLoading)
         }
@@ -489,8 +520,18 @@ export default class SlwcDriveStaffingDetails extends LightningElement {
             
             if(noOfDotVehicles > 0) {
                 driverJob.quantity = driverJob.quantity - noOfDotVehicles;
-                dotDriverJob.quantity = noOfDotVehicles;
-                dotDriverJob.isShown = driverJob.isShown && true;
+                Object.assign(dotDriverJob, {
+                    start: driverJob.start,
+                    finish: driverJob.finish,
+                    startJS: driverJob.startJS,
+                    finishJS: driverJob.finishJS,
+                    startDate: driverJob.startDate,
+                    startTime: driverJob.startTime,
+                    endDate: driverJob.endDate,
+                    endTime: driverJob.endTime,
+                    quantity: noOfDotVehicles,
+                    isShown: !!driverJob.isShown
+                })
             } else {
                 dotDriverJob.quantity = null;
                 dotDriverJob.isShown = false;
@@ -500,8 +541,18 @@ export default class SlwcDriveStaffingDetails extends LightningElement {
 
             if(noOfCdlVehicles > 0) {
                 driverJob.quantity = driverJob.quantity - noOfCdlVehicles;
-                cdlDriverJob.quantity = noOfCdlVehicles;
-                cdlDriverJob.isShown = driverJob.isShown && true;
+                Object.assign(cdlDriverJob, {
+                    start: driverJob.start,
+                    finish: driverJob.finish,
+                    startJS: driverJob.startJS,
+                    finishJS: driverJob.finishJS,
+                    startDate: driverJob.startDate,
+                    startTime: driverJob.startTime,
+                    endDate: driverJob.endDate,
+                    endTime: driverJob.endTime,
+                    quantity: noOfCdlVehicles,
+                    isShown: !!driverJob.isShown
+                });
             } else {
                 cdlDriverJob.quantity = null;
                 cdlDriverJob.isShown = false;
@@ -528,7 +579,7 @@ export default class SlwcDriveStaffingDetails extends LightningElement {
         })
     }
 
-    getNumberOfDotAndCdlDrivers(drive) {
+    getNumberOfDotAndCdlDrivers(drive, includeDeletedJobAllocations = false) {
         let result = {
             noOfDotVehicles: 0,
             noOfCdlVehicles: 0
@@ -538,7 +589,7 @@ export default class SlwcDriveStaffingDetails extends LightningElement {
         const vehicleJob = drive.driveShifts[0].jobs.find(job => job.assetType === ASSET_TYPE.VEHICLE);
         if(!vehicleJob) return result;
         
-        let jobAllocations = this.getJobAllocations(vehicleJob);
+        let jobAllocations = includeDeletedJobAllocations ? vehicleJob.jobAllocations : this.getJobAllocations(vehicleJob);
         jobAllocations.forEach((jobAllocation) => {
             if (jobAllocation.resource.DOT) {
                 result.noOfDotVehicles += 1;
@@ -772,40 +823,63 @@ export default class SlwcDriveStaffingDetails extends LightningElement {
         const jobId = event.currentTarget.dataset.id;
         let [ job, driveShift, jobIndex, drive ] = this.getJobById(jobId);
 
+        let quantity = job.quantity;
+        if(job.resourceRole === RESOURCE_ROLE.DRIVER) {
+            let {
+                noOfDotVehicles,
+                noOfCdlVehicles
+            } = this.getNumberOfDotAndCdlDrivers(drive, false);
+            
+            quantity = (job.quantity || 0) + noOfDotVehicles + noOfCdlVehicles;
+        }
+
         let eventValues = {
             action: "edit",
             type: "allocationModal",
             enableAddress: true,
             resourceType: job.resourceRole ? TYPE_RESOURCE.RESOURCE: TYPE_RESOURCE.VEHICLE, 
-            driveShift: {
-                id: job.driveShiftId
-            },
+            driveShift: driveShift,
             drive: drive,
-            job: job
+            job: {
+                ...job,
+                quantity: quantity
+            }
         };
         fireEvent(this.pageRef, 'showJobModal', eventValues);
     }
     createJob(event) {
         const shiftId = event.currentTarget.dataset['shiftId'];
         const driveId = event.currentTarget.dataset['driveId'];
-        
+
         let drive = this.driveDetail1;
         if(driveId !== drive.id) {
             drive = this.driveDetail2
         }
-        
+        const [driveShift] = this.getDriveShiftById(shiftId);
+
         let eventValues = {
             action: "create",
             type: "allocationModal",
             enableAddress: true,
-            driveShift: {
-                id: shiftId
-            },
+            driveShift: driveShift,
             drive: drive,
             resourceType: TYPE_RESOURCE.RESOURCE,
             job: null
         };
-        fireEvent(this.pageRef, 'showJobModal', eventValues);
+
+        if (this.hasUnsavedAllocations) {
+            this.showConfirmModal({
+                title: 'Drive Shift has Unsaved Allocations',
+                message: 'Creating a job will cause unsaved allocations to be discarded. Do you wish to continue?',
+                onClose: (result) => {
+                    this.hideConfirmModal();
+                    if (result) {
+                        fireEvent(this.pageRef, 'showJobModal', eventValues);
+                    }
+            }});            
+        } else {
+            fireEvent(this.pageRef, 'showJobModal', eventValues);
+        }
     }
     handleDragStart(e) {
         let resourceItemEl = null
@@ -967,8 +1041,8 @@ export default class SlwcDriveStaffingDetails extends LightningElement {
             else {
                 this.removeResource(event.detail.record);
             }
-        } else if(action === 'lock') {
-            this.handleLockAction(event.detail.record);
+        } else if(action === 'lock' || action === 'guard') {
+            this.handleLockAction(event.detail.record, action);
         } else if(action === 'callOut') {
             this.handleShowCallOutModal(event.detail.record);
         } else if (action === 'edit') {
@@ -976,11 +1050,16 @@ export default class SlwcDriveStaffingDetails extends LightningElement {
         }
     }
     
-    handleLockAction(detail){
+    handleLockAction(detail, action){
         console.log("handleLockAction");
         let [ job ] = this.getJobById(detail.jobId);
-        let ja =  find(job.jobAllocations, item => item.key == detail.key)
-        ja.locked = !ja.locked
+        let ja =  find(job.jobAllocations, item => item.key == detail.key);
+        if (action === 'lock') {
+            ja.locked = !ja.locked;
+        } else if (action === 'guard') {
+            ja.guarded = !ja.guarded;
+        }
+        ja.isLocked = ja.locked || ja.guarded;
     }
     
     removeResource(event) {
@@ -2043,11 +2122,13 @@ export default class SlwcDriveStaffingDetails extends LightningElement {
                     })
 
                     item.isCallOut = item.callOutJobIds.includes(this.jobIdPin);
+                    item.isTraded = item.tradedJobIds.includes(this.jobIdPin);
                 }
                 return result;
             })
         }
-     
+
+        this.setResourceException();
         this.handleSort();
     }
     handleSort() {
@@ -2133,9 +2214,9 @@ export default class SlwcDriveStaffingDetails extends LightningElement {
             .catch(error => this.exceptionHandler(error))
     }
 
-    buildSaveParams() {
+    buildSaveParams(includeDeletedJAs = false) {
         let driveUpdate = [
-            this.mapDataToServer(this.driveDetail1),
+            this.mapDataToServer(this.driveDetail1, includeDeletedJAs),
         ];
         if (this.driveId2) {
             driveUpdate = [...driveUpdate, this.mapDataToServer(this.driveDetail2)]
@@ -2289,13 +2370,13 @@ export default class SlwcDriveStaffingDetails extends LightningElement {
         })
         return exceptionLog;
     }
-    mapDataToServer(drive) {
+    mapDataToServer(drive, includeDeleted = false) {
         let driveToSave = cloneDeep(drive);
 
         let {
             noOfDotVehicles,
             noOfCdlVehicles
-        } = this.getNumberOfDotAndCdlDrivers(drive);
+        } = this.getNumberOfDotAndCdlDrivers(drive, includeDeleted);
 
         driveToSave.driveShifts.forEach(driveShift => {
             let driverJob = driveShift.jobs.find(job => this.driveHelper.isDriverJob(job));
@@ -2375,60 +2456,8 @@ export default class SlwcDriveStaffingDetails extends LightningElement {
         }
     }
     onClickPin(event) {
-        this.radioPinValue = LIST_PINNED.RECOMMENDATED;
         const jobId = event.currentTarget.dataset.id;
-        this.jobIdPin = jobId;
-        this.isPinned = true;
-        this.resourceSort = this.resourceSort || {
-            sortBy: 'name',
-            sortDirection: 'asc'
-        }
-        let job = null;
-        let driveShifts = this.driveDetail1 ? (this.driveDetail1.driveShifts || []) : [];
-        let driveShifts2 = this.driveDetail2 ? (this.driveDetail2.driveShifts || []) : [];
-        each([...driveShifts, ...driveShifts2], item => {
-            const jobItem = item.jobs.filter(itemSub => {
-                itemSub.isPin = false;
-                itemSub.class = classNames('hco-job-header slds-grid job-item', {
-                    'is-sub-job': itemSub.isSubJob,
-                    'manually-created-staffing-modal': itemSub.isManuallyCreatedFromStaffingModal
-                })
-                return itemSub.id == jobId
-            });
-            if (jobItem.length > 0) {
-                job = jobItem[0]
-            }
-        })
-        job.isPin = true
-        job.class = classNames('hco-job-header slds-grid job-item pinned', {
-            'is-sub-job': job.isSubJob,
-            'manually-created-staffing-modal': job.isManuallyCreatedFromStaffingModal
-        })
-
-        const clonedDriveDetails1 = this.cloneDrive(this.driveDetail1);
-        const clonedDriveDetails2 = this.cloneDrive(this.driveDetail2);
-        this.resources.forEach(resource => {
-            this.validateExceptions({
-                resource: resource,
-                resourceId: resource.id,
-                job: job,
-                jobId: job.id
-            }, false, clonedDriveDetails1, clonedDriveDetails2);
-        })
-        
-        this.listResourceAvailable = this.getListResourceAvailable(jobId, true);
-        this.listResourceUnavailable = this.getListResourceAvailable(jobId, false);
-        const listjobEl = this.template.querySelectorAll('.job-item');
-        listjobEl.forEach(el => {
-            const jobIdEl = el.dataset.id;
-
-            if (jobIdEl != jobId) {
-                el.classList.add('job-disabled');
-            } else {
-                el.classList.remove('job-disabled');
-            }
-        })
-        this.updateStyleResource();
+        this.pinJob(jobId);
     }
     onClickUnpin() {
         this.jobIdPin = null;
@@ -2500,6 +2529,56 @@ export default class SlwcDriveStaffingDetails extends LightningElement {
         this.driveId2 = event.detail.value;
         this.fetchDrive2(this.driveId2);
     }
+
+    transferJobAllocations(sourceJob, destinationJob, destinationDrive, newJobAllocations) {
+        let existingdestinationJobResourceIds = (destinationJob.jobAllocations || []).map(ja => ja.resourceId);
+        let transferredResourceIds = [];
+        (sourceJob.jobAllocations || []).forEach(ja => {
+            let isValidToTransfer = ja.status !== JOB_ALLOCATION_STATUS.DELETED
+                                    && (!ja.resource.dedicatedToSiteId || ja.resource.dedicatedToSiteId === destinationDrive.driveSiteId);
+            if (isValidToTransfer) {
+                if (!existingdestinationJobResourceIds.includes(ja.resourceId)) {
+                    const posAl = this.listPossibleAllocations.find(itemEx => itemEx.resourceId == ja.resourceId && itemEx.jobId == destinationJob.id && !itemEx.isAvailable) || null
+                    let exceptionLog = [];
+                    if(posAl && posAl.exceptionLog) {
+                        exceptionLog = posAl && posAl.exceptionLog || []
+                    }
+
+                    let newJa = {
+                        jobId: destinationJob.id,
+                        job: destinationJob,
+                        key: ja.key,
+                        icon:ja.icon,
+                        resourceId: ja.resourceId,
+                        resource: ja.resource,
+                        CDL: ja.CDL,
+                        DOT: ja.DOT,
+                        exceptionLog: exceptionLog,
+                        travelTimeTo: posAl?.estimatedTravelTimeTo,
+                        travelTimeBack: posAl?.estimatedTravelTimeBack,
+                        geoServiceTravelTimeTo: posAl?.estimatedTravelData?.travelTimeTo,
+                        geoServiceTravelTimeBack: posAl?.estimatedTravelData?.travelTimeBack,
+                        geoServiceTravelDistanceTo: posAl?.estimatedTravelData?.travelDistanceTo,
+                        geoServiceTravelDistanceBack: posAl?.estimatedTravelData?.travelDistanceBack,
+                        isRelocatedResource: posAl?.isTemporaryCO || false
+                    };
+
+                    destinationJob.jobAllocations.push(newJa);
+                    newJobAllocations.push(newJa);
+                }
+                ja.status = JOB_ALLOCATION_STATUS.DELETED;
+
+                transferredResourceIds.push(ja.resourceId);
+            }
+        });
+
+        (destinationJob.jobAllocations || []).forEach(ja => {
+            if (!slwcUtils.isNullOrEmpty(transferredResourceIds) && !transferredResourceIds.includes(ja.resourceId)) {
+                ja.status = JOB_ALLOCATION_STATUS.DELETED;
+            }
+        });
+    }
+
     handleTransfer() {
         this.showConfirmModal({
             title: 'Confirm Transfer Drive',
@@ -2510,80 +2589,32 @@ export default class SlwcDriveStaffingDetails extends LightningElement {
                     let driveShifts = this.driveDetail1 ? (this.driveDetail1.driveShifts || []) : [];
                     let driveShifts2 = this.driveDetail2 ? (this.driveDetail2.driveShifts || []) : [];
                     let jobAllocationsNeedToPostProcess = [];
-                    each(driveShifts, (driveShiftsItem, driveShiftsIndex) => {
-                        if(!driveShifts2[driveShiftsIndex]) return;
+                    driveShifts?.forEach((driveShift, index) => {
+                        if(!driveShifts2[index]) return;
 
-                        each(driveShiftsItem.jobs, (jobItem, jobIndex) => {
-                            if(!jobItem.isShown) return;
-
-                            let jobDS2 = find(driveShifts2[driveShiftsIndex].jobs, itemJobDS2 => (itemJobDS2.resourceRole && itemJobDS2.resourceRole == jobItem.resourceRole) || (itemJobDS2.assetType && itemJobDS2.assetType == jobItem.assetType))
-                            if (jobDS2 && jobDS2.isShown) {
-                                jobDS2.jobAllocations = this.getJobAllocations(jobItem)
-                                .filter(itemJA => {
-                                    if(!itemJA.resource.dedicatedToSiteId) {
-                                        return true;
-                                    }
-
-                                    return itemJA.resource.dedicatedToSiteId === this.driveDetail2.driveSiteId;
-                                })
-                                .map(itemJA => {
-                                    const posAl = this.listPossibleAllocations.find(itemEx => itemEx.resourceId == itemJA.resourceId && itemEx.jobId == jobDS2.id && !itemEx.isAvailable) || null
-                                    let exceptionLog = [];
-                                    if(posAl && posAl.exceptionLog) {
-                                        exceptionLog = posAl && posAl.exceptionLog || []
-                                    }
-                                    jobAllocationsNeedToPostProcess.push(itemJA);
-                                    return {
-                                        jobId: jobDS2.id,
-                                        job: jobDS2,
-                                        key: itemJA.key,
-                                        icon:itemJA.icon,
-                                        resourceId: itemJA.resourceId,
-                                        resource: itemJA.resource,
-                                        start: itemJA.start,
-                                        end: itemJA.end,
-                                        exceptionLog: exceptionLog,
-                                        travelTimeTo: posAl?.estimatedTravelTimeTo,
-                                        travelTimeBack: posAl?.estimatedTravelTimeBack,
-                                        geoServiceTravelTimeTo: posAl?.estimatedTravelData?.travelTimeTo,
-                                        geoServiceTravelTimeBack: posAl?.estimatedTravelData?.travelTimeBack,
-                                        geoServiceTravelDistanceTo: posAl?.estimatedTravelData?.travelDistanceTo,
-                                        geoServiceTravelDistanceBack: posAl?.estimatedTravelData?.travelDistanceBack,
-                                        isRelocatedResource: posAl?.isTemporaryCO || false,
-                                    }
-                                })
+                        driveShift.jobs?.forEach(job => {
+                            let jobDS2 = find(driveShifts2[index].jobs, itemJobDS2 => {
+                                return (itemJobDS2.resourceRole && itemJobDS2.resourceRole == job.resourceRole) || 
+                                       (itemJobDS2.assetType && itemJobDS2.assetType == job.assetType);
+                            });
+                            if (jobDS2) {
+                                this.transferJobAllocations(job, jobDS2, this.driveDetail2, jobAllocationsNeedToPostProcess);
                                 this.sumUpJobData(jobDS2);
-                                if (driveShiftsItem.driveDate == driveShifts2[driveShiftsIndex].driveDate) {
-                                    jobItem.jobAllocations = [],
-                                    jobItem.jobAllocationCount = 0;
-                                    jobItem.totalAllocatedVehiclesCapacity = 0;
-                                    jobItem.willAllocations = Array.from(Array(jobItem.quantity || 0), (item, index) => ({
-                                        key: 'willAllocations' + index + 'job' + jobItem.key
-                                    })) || [];
-                                    jobItem.classQuantity = classNames(
-                                        "slds-text-color_inverse-weak"
-                                    );
-                                }
                             }
                         })
                     });
             
-                    jobAllocationsNeedToPostProcess.forEach(jobAllocation => {
-                        this.populateDefaultJobAllocationTimes(this.driveDetail2, {
-                            id: jobAllocation.resourceId
-                        });
-                    });
-            
-                    const { driveUpdate, jobsToSave } = this.buildSaveParams();
-                    
+                    const { jobsToSave } = this.buildSaveParams(true);
                     const driveId2 = this.driveDetail2.id;
                     let service = new jobService();
-                    this.showLoading()
+                    this.showLoading();
+
                     return service.saveList(jobsToSave, {
                         checkChanges: true
-                    }).then(result => {
+                    })
+                    .then(() => {
                         const event = new ShowToastEvent({
-                            message: 'Drive were transferred successfully.',
+                            message: 'Drive Staff were transferred successfully.',
                             variant: 'success',
                             mode: 'dismissable'
                         });
@@ -2678,10 +2709,15 @@ export default class SlwcDriveStaffingDetails extends LightningElement {
 
     /* Call out modal */
     handleShowCallOutModal(detail) {
+        const [ job ] = this.getJobById(detail.jobId);
+        const resourceDetail = this.getResourceById(detail.resourceId);
         this.callOutModalData = {
             isOpen: true,
             jobId: detail.jobId,
-            jobAllocationId: detail.id
+            jobAllocationId: detail.id,
+            driveDate: job.driveDate,
+            resourceId: detail.resourceId,
+            duration: resourceDetail.dailyTimeOffHours
         }
     }
 
@@ -2693,7 +2729,7 @@ export default class SlwcDriveStaffingDetails extends LightningElement {
         const { jobAllocationId, jobId } = this.callOutModalData;
         const [ job ] = this.getJobById(jobId);
         const [driveShift, indexDriveShift] = this.getDriveShiftById(job.driveShiftId)
-        const { callOutType , callOutReason, callOutNotes } = event.detail;
+        const { callOutType , callOutReason, callOutNotes, callOutReceivedDateTime, timeOffPlan, timeOffReasonCode, usePtoForCallOut, hasTimeOffPlans } = event.detail;
         const jobAllocation = find(job.jobAllocations, item => item.id == jobAllocationId);
 
         let params = {
@@ -2704,19 +2740,29 @@ export default class SlwcDriveStaffingDetails extends LightningElement {
           callOutReported: true,
           callOutType: callOutType,
           callOutReason: callOutReason,
-          callOutNotes: callOutNotes
+          callOutNotes: callOutNotes,
+          callOutReceivedDateTime: callOutReceivedDateTime,
+          timeOffPlan: timeOffPlan,
+          timeOffReasonCode: timeOffReasonCode,
+          usePtoForCallOut: usePtoForCallOut,
+          hasTimeOffPlans: hasTimeOffPlans
         };
-  
+          
         this.showLoading();
         let service = new resourceService();
         service.saveCallOut({
           request: params
         }).then(res => {
-          this.dispatchEvent(new ShowToastEvent({
-            message: 'Call out successfully.',
-            variant: 'success',
-            mode: 'dismissable',
-          }));
+            let message = 'Call out Captured Sucessfully.';
+            if (!usePtoForCallOut) {
+                message += ' No associated Time-Off created.';
+            }
+
+            this.dispatchEvent(new ShowToastEvent({
+                message: message,
+                variant: 'success',
+                mode: 'dismissable',
+            }));
   
           this.handleCloseCallOutModal();
         })
@@ -2836,5 +2882,91 @@ export default class SlwcDriveStaffingDetails extends LightningElement {
 
     hideConfirmModal() {
         this.confirmModalData = {};
+    }
+
+    pinJob(jobId, radioPinValue) {
+        let job = null;
+        let driveShifts = this.driveDetail1 ? (this.driveDetail1.driveShifts || []) : [];
+        let driveShifts2 = this.driveDetail2 ? (this.driveDetail2.driveShifts || []) : [];
+        each([...driveShifts, ...driveShifts2], item => {
+            const jobItem = item.jobs.filter(itemSub => {
+                itemSub.isPin = false;
+                itemSub.class = classNames('hco-job-header slds-grid job-item', {
+                    'is-sub-job': itemSub.isSubJob,
+                    'manually-created-staffing-modal': itemSub.isManuallyCreatedFromStaffingModal
+                })
+                return itemSub.id == jobId
+            });
+            if (jobItem.length > 0) {
+                job = jobItem[0]
+            }
+        })
+        if (!job) return;
+
+        this.radioPinValue = radioPinValue || LIST_PINNED.RECOMMENDATED;
+        this.jobIdPin = jobId;
+        this.isPinned = true;
+        this.resourceSort = this.resourceSort || {
+            sortBy: 'name',
+            sortDirection: 'asc'
+        }
+        job.isPin = true
+        job.class = classNames('hco-job-header slds-grid job-item pinned', {
+            'is-sub-job': job.isSubJob,
+            'manually-created-staffing-modal': job.isManuallyCreatedFromStaffingModal
+        })
+
+        const clonedDriveDetails1 = this.cloneDrive(this.driveDetail1);
+        const clonedDriveDetails2 = this.cloneDrive(this.driveDetail2);
+        this.resources.forEach(resource => {
+            this.validateExceptions({
+                resource: resource,
+                resourceId: resource.id,
+                job: job,
+                jobId: job.id
+            }, false, clonedDriveDetails1, clonedDriveDetails2);
+        })
+        
+        this.listResourceAvailable = this.getListResourceAvailable(jobId, true);
+        this.listResourceUnavailable = this.getListResourceAvailable(jobId, false);
+        const listjobEl = this.template.querySelectorAll('.job-item');
+        listjobEl.forEach(el => {
+            const jobIdEl = el.dataset.id;
+
+            if (jobIdEl != jobId) {
+                el.classList.add('job-disabled');
+            } else {
+                el.classList.remove('job-disabled');
+            }
+        })
+        this.updateStyleResource();
+    }
+
+    preSelectJob(jobId) {
+        let driveShifts = this.driveDetail1 ? (this.driveDetail1.driveShifts || []) : [];
+        let driveShifts2 = this.driveDetail2 ? (this.driveDetail2.driveShifts || []) : [];
+        let subJob = [...driveShifts, ...driveShifts2].map(item => item.jobs).flat().find(job => job.id === `driverdot${jobId}` || job.id === `drivercdl${jobId}`);
+        if (subJob && subJob.isShown) {
+            this.pinJob(subJob.id, LIST_PINNED.ALTERNATIVE);
+        } else {
+            this.pinJob(jobId, LIST_PINNED.ALTERNATIVE);
+        }
+
+        this.scrollToViewPinJob();
+    }
+
+    scrollToViewPinJob() {
+        setTimeout(() => {
+            let element = this.template.querySelector('.job-item.pinned');
+            element?.scrollIntoView({ behavior: "instant", block: "center"})
+        });
+    }
+
+    setResourceException() {
+        each(this.resourcesFilterList, item => {
+            item.exceptionLog = this.isPinned
+                ? this.listPossibleAllocations.find(allocation => allocation.resourceId === item.id && allocation.jobId === this.jobIdPin)?.exceptionLog || []
+                : [];
+        });
     }
 }

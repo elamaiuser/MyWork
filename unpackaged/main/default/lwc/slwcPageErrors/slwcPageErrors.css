@@ -3,13 +3,17 @@
 }
 .forcePageError {
     /* border-bottom: 1px solid var(--lwc-colorBorderSeparatorAlt,rgb(221, 219, 218)); */
-    margin-bottom: var(--lwc-spacingMedium,1rem);
+    border-bottom: 0;
+    padding-bottom: 0;
+    margin-bottom: var(--lwc-spacingSmall, 0.75rem);
     /* padding-bottom: var(--lwc-spacingSmall,0.75rem); */
 }
 .forcePageError.desktop .genericNotification {
     font-weight: 300;
     border-top-left-radius: var(--lwc-borderRadiusMedium,0.25rem);
     border-top-right-radius: var(--lwc-borderRadiusMedium,0.25rem);
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
     font-size: 1rem;
 }
 .forcePageError .genericNotification {

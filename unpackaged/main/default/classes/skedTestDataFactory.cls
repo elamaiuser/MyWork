@@ -117,13 +117,20 @@ public class skedTestDataFactory {
         skedAdminSetting.sked_Admin_FCC_Code_Fixed_Site__c = '83340;83347';
         skedAdminSetting.sked_Ops_Record_Client_Scer__c = 'test-secret';
         skedAdminSetting.sked_Ops_Record_API_URL__c = 'https://test.url';
+        skedAdminSetting.sked_Max_Record_Submission_WD_TimeBlock__c = 100;
+        skedAdminSetting.sked_Admin_Op_Record_Tech_Support_Email__c = 'ops-support@redcross.com';
         skedAdminSetting.sked_Admin_Last_Collections_Zip_Run__c = System.now() - 1;
+        skedAdminSetting.sked_Num_Auto_Expire_Days__c = 100;
 
         sked_Workday_Token_Credentials__c skedWorkdayTokenCredentials = sked_Workday_Token_Credentials__c.getOrgDefaults();
         skedWorkdayTokenCredentials.sked_Certificate_Name__c = 'test-cert';
         skedWorkdayTokenCredentials.sked_Client_ID__c = 'test-client-id';
         skedWorkdayTokenCredentials.sked_Token_Endpoint__c = 'token-endpoint';
-        upsert new List<SObject>{skedAdminSetting, skedWorkdayTokenCredentials};
+
+        sked_Notification_Manager__c skedNotificationManager = sked_Notification_Manager__c.getOrgDefaults();
+        skedNotificationManager.sked_Notification_Generation_Enabled__c = true;
+
+        upsert new List<SObject>{skedAdminSetting, skedWorkdayTokenCredentials, skedNotificationManager};
 
         Map<string, List<string>> mapResourceTypeCategories =
             skedPicklistFieldUtils.getMapDependentOptions(sked__Resource__c.sked__Resource_Type__c, sked__Resource__c.sked__Category__c);
@@ -156,6 +163,7 @@ public class skedTestDataFactory {
             LastName = 'Test',
             FirstName = 'BPL',
             Primary_Phone__c = 'Work Phone',
+            OtherPhone = '1234567899',
             Original_Service_Date__c = this.summary.startDate,
             AccountId = accountBPL.Id
         );
@@ -174,7 +182,10 @@ public class skedTestDataFactory {
             Staging_Location_Geolocation__Longitude__s = -122.4816244,
             sked_Work_Week_First_Day__c = 'Sunday',
             External_Id__c = 'external-id-1',
-            sked_Collections_Manager__c = UserInfo.getUserId()
+            sked_Low_Weight__c = 10,
+            sked_Medium_Weight__c = 15,
+            sked_High_Weight__c = 25,
+            sked_Role_Priorities_Weight__c = 10
         );
         firstList.add(testCollectionOperation1);
         mapTestData.put('testCollectionOperation1', testCollectionOperation1);
@@ -187,7 +198,11 @@ public class skedTestDataFactory {
             Staging_Location_Geolocation__Latitude__s = 37.7450046,
             Staging_Location_Geolocation__Longitude__s = -122.4816244,
             sked_Work_Week_First_Day__c = 'Sunday',
-            External_Id__c = 'external-id-2'
+            External_Id__c = 'external-id-2',
+            sked_Low_Weight__c = 10,
+            sked_Medium_Weight__c = 15,
+            sked_High_Weight__c = 25,
+            sked_Role_Priorities_Weight__c = 10
         );
         firstList.add(testCollectionOperation2);
         mapTestData.put('testCollectionOperation2', testCollectionOperation2);
@@ -228,7 +243,7 @@ public class skedTestDataFactory {
             sked_WB_Hourly_Capacity__c = 2.1,
             sked_2RBC_Hourly_Capacity__c = 1,
             sked_Plasma_Hourly_Capacity__c = 1.67,
-            sked_Platelet_Hourly_Capacity__c = 1.17,
+            sked_Platelet_Round_Capacity__c = 1.17,
             sked_NR_Volunteer_Fixed_Site_Band_Lower__c = 18,
             sked_NR_Volunteer_Fixed_Site_Band_Upper__c = 70,
         	RecordTypeId = Schema.SObjectType.sked_Staffing_Decision_Matrix__c.getRecordTypeInfosByDeveloperName().get('sked_Fixed_Site').getRecordTypeId()
@@ -260,6 +275,26 @@ public class skedTestDataFactory {
             sked_QNS__c = 2
         );
         secondList.add(fspp2);
+
+        sked_Fixed_Site_Procedure_Projection__c fspp3 = new sked_Fixed_Site_Procedure_Projection__c(
+        	sked_Account__c = testAccount1.Id,
+            sked_Deferral__c = 11,
+            sked_Effective_End_Date__c = this.summary.endDate,
+            sked_Effective_Start_Date__c = this.summary.startDate,
+            sked_Procedure_Type__c = '2RBC',
+            sked_QNS__c = 2
+        );
+        secondList.add(fspp3);
+        
+        sked_Fixed_Site_Procedure_Projection__c fspp4 = new sked_Fixed_Site_Procedure_Projection__c(
+        	sked_Account__c = testAccount1.Id,
+            sked_Deferral__c = 9,
+            sked_Effective_End_Date__c = this.summary.endDate,
+            sked_Effective_Start_Date__c = this.summary.startDate,
+            sked_Procedure_Type__c = 'Plasma',
+            sked_QNS__c = 2
+        );
+        secondList.add(fspp4);
         
         sked_Territory_Collection_Operation__c testTerritory1_testCollectionOperation1 = new sked_Territory_Collection_Operation__c(
         	sked_Territory__c = testTerritory1.Id,
@@ -446,7 +481,8 @@ public class skedTestDataFactory {
             sked_Timezone__c = this.summary.timezoneSidId,
             sked_MigrationID__c = 'migration-id',
             Source__c = 'Custom New Form',
-            Operation_Type__c = 'Integrated'
+            Operation_Type__c = 'Integrated',
+            RecordTypeId = sked__Location__c.sObjectType.getDescribe().getRecordTypeInfosByName().get('Fixed Site').getRecordTypeId()
         );
         thirdList.add(testLocation1);
         this.mapTestData.put('testLocation1', testLocation1);
@@ -476,7 +512,8 @@ public class skedTestDataFactory {
             sked_Home_Address_GeoLocation__Longitude__s = -122.4730585,
             sked_Max_Travel_Time__c = 5,
             sked_Min_Working_Days_Per_Week__c = '2',
-            Use_CO_Address_for_Scheduling__c = false
+            Use_CO_Address_for_Scheduling__c = false,
+            sked_FCC_Code__c = '83140;83340'
         );
         thirdList.add(testResource1);
         this.mapTestData.put('testResource1', testResource1);
@@ -504,7 +541,8 @@ public class skedTestDataFactory {
             sked_Home_Address_GeoLocation__Latitude__s = 37.7575256,
             sked_Home_Address_GeoLocation__Longitude__s = -122.4730585,
             sked_Min_Working_Days_Per_Week__c = '2',
-            Use_CO_Address_for_Scheduling__c = false
+            Use_CO_Address_for_Scheduling__c = false,
+            sked_FCC_Code__c = '83140;83340'
         );
         thirdList.add(testResource2);
         this.mapTestData.put('testResource2', testResource2);
@@ -571,7 +609,9 @@ public class skedTestDataFactory {
             sked_Collection_Operation__c = testCollectionOperation1.Id,
             sked_Region__c = testRegion1.Id,
             sked_Start_Date__c = this.summary.startDate,
-            sked_End_Date__c = this.summary.endDate
+            sked_End_Date__c = this.summary.endDate,
+            External_Id_BackEnd__c = UUID.randomUUID().toString(),
+            External_Id__c = UUID.randomUUID().toString()
         );
         forthList.add(testLocation1_testCollectionOperation1);
         this.mapTestData.put('testLocation1_testCollectionOperation1', testLocation1_testCollectionOperation1);
@@ -627,17 +667,6 @@ public class skedTestDataFactory {
         skedTriggerUtils.CHANGES_INITIATED_FROM_SERVICE = TRUE;
         
         setupAdminConsoleTestData();
-        
-        List<string> userTypes = new List<string>();
-        userTypes.add(skedConstants.USER_TYPE_ADMIN);
-        userTypes.add(skedConstants.USER_TYPE_SCHEDULER);
-        userTypes.add('Resource');
-        
-        User loginUser = new User(
-        	Id = UserInfo.getUserId(),
-            sked__SkeduloUserType__c = string.join(userTypes, ';')
-        );
-        update loginUser;
 
         sked__Region__c testRegion1 = (sked__Region__c)mapTestData.get('testRegion1');
         sked__Resource__c testResource1 = (sked__Resource__c)mapTestData.get('testResource1');
@@ -668,6 +697,19 @@ public class skedTestDataFactory {
         secondList.add(testActivity1);
         this.mapTestData.put('testActivity1', testActivity1);
 
+        sked__Activity__c testGroupActivity1 = new sked__Activity__c(
+            sked__Timezone__c = UserInfo.getTimeZone().getID(),
+            sked__Type__c = 'Administration',
+            sked__Start__c = this.summary.startTime.addDays(1).addHours(9),
+            sked__End__c = this.summary.startTime.addDays(1).addHours(10),
+            sked__Address__c = 'Retail Unit 2, 2 Regent St, London SW1Y 4PE, United Kingdom',
+            sked__GeoLocation__Latitude__s = 51.508105,
+            sked__GeoLocation__Longitude__s = -0.132901,
+            sked_Is_Group_Activity__c = TRUE
+        );
+        secondList.add(testGroupActivity1);
+        this.mapTestData.put('testGroupActivity1', testGroupActivity1);
+
         sked__Job__c testJob1 = new sked__Job__c(
             sked__Region__c = testRegion1.Id,
             sked__Start__c = this.summary.startTime.addHours(11),
@@ -683,6 +725,7 @@ public class skedTestDataFactory {
 
         sked_Staffing_Budget__c testStaffingBudget1 = new sked_Staffing_Budget__c(
             sked_Roles__c = '2RBC',
+            sked_Drive_Types__c = 'Mobile;Fixed Site',
             sked_Staffing_Budget_Date__c = this.summary.startDate.addDays(1),
             sked_Total_Slots__c = 20,
             sked_Request_Type__c = 'Standard',
@@ -709,6 +752,15 @@ public class skedTestDataFactory {
         );
         thirdList.add(testJobAllocation1);
         this.mapTestData.put('testJobAllocation1', testJobAllocation1);
+
+        sked__Activity_Resource__c testActivityResource1 = new sked__Activity_Resource__c(
+            sked__Activity__c = testGroupActivity1.Id,
+            sked__Resource__c = testResource1.Id,
+            sked_Start1__c = testGroupActivity1.sked__Start__c,
+            sked_End__c = testGroupActivity1.sked__End__c
+        );
+        thirdList.add(testActivityResource1);
+        this.mapTestData.put('testActivityResource1', testActivityResource1);
 
         insert thirdList;
 
@@ -897,14 +949,15 @@ public class skedTestDataFactory {
         sked_Staging_Location__c testStagingLocation1 = (sked_Staging_Location__c) mapTestData.get('testStagingLocation1');
         Account testAccount1 = (Account)mapTestData.get('testAccount1');
 
-        Opportunity parentOpp = new Opportunity(
-            Name = 'parent',
-            AccountId = testAccount1.Id,
-            StageName = 'Discovery',
-            CloseDate = this.summary.startDate,
-            Is_template__c = TRUE
-        );
-        insert parentOpp;
+        // Opportunity parentOpp = new Opportunity(
+        //     Name = 'parent',
+        //     AccountId = testAccount1.Id,
+        //     StageName = 'Discovery',
+        //     CloseDate = this.summary.startDate,
+        //     Is_template__c = TRUE,
+        //     Web_Sched_Offset_from_CO_Global_Settings__c = TRUE
+        // );
+        // insert parentOpp;
 
         List<sObject> firstList = new List<sObject>();
 

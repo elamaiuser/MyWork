@@ -12,6 +12,10 @@
  * 10/26/2023			Barnojit Sharma			Add Military Fields & Additional Drive Logistics to the Drive Worksheet(Logic for HRP-9954)
  * 11/28/2023			Barnojit Sharma			Drive Worksheet has the Incorrect Account and Site ID populated(Logic for HRP-11561)
  * 01/02/2024			Barnojit Sharma			Drive Worksheet is not populating the Account Manager field(Logic for HRP-11777)
+ * 14/03/2024			Ankit Kundu				Logic for HRP-12306 (Deleted Vehicle Jobs Reflecting on the Drive Worksheet)
+ * 10/04/2024			Barnojit Sharma			New Lookup field on Site to Lookup to Chapter and limit the chapter name to 57 charecters.(Logic for HRP-12045)
+ * 04/30/2024			Venkat					HRP-12505 - Pull account Manager from Opportunity
+ * 07/16/2024			Apurba Bhattacharjee	HRP-12166 - Add Dropdown for EAP Map Available and AED Dropdown to Site/Details/Security and Drive Worksheet-Additional Site Information.
  *****************************************************************************************************************************************************************************
 */
 public without sharing class GenerateDriveWorksheetPdfController {
@@ -115,6 +119,8 @@ public without sharing class GenerateDriveWorksheetPdfController {
         public String unloadingDir {get; set;}
         public String onSiteFoodReq {get; set;}
         public String siteSmkPolicy {get; set;}  
+        public String siteEAPMapAvailable {get; set;}  //HRP-12166
+        public String siteAEDAvailable {get; set;}  //HRP-12166
     }
     public class EmployeeTableInformation{
         public String num {get; set;}
@@ -402,7 +408,8 @@ public without sharing class GenerateDriveWorksheetPdfController {
                                                                                 sked_Drive_Site__r.sked_Air_conditioned__c,
                                                                                 sked_Drive_Site__r.sked_Heat__c,
                                                                                 sked_Drive_Site__r.sked_Elevator_Type__c,
-                                                                                sked_Drive_Site__r.sked_Chapter__c,
+                                                                                sked_Drive_Site__r.Chapter__c, //HRP-12045 Changes
+                                                                                sked_Drive_Site__r.Chapter__r.Name, //HRP-12045 Changes
                                                                                 sked_Drive_Site__r.sked__Address__c,
                                                                                 sked_Drive_Site__r.sked_Directions_From_CollectionOperation__c,
                                                                                 sked_Drive_Site__r.sked_Escort_Required__c,
@@ -424,6 +431,8 @@ public without sharing class GenerateDriveWorksheetPdfController {
                                                                                 sked_Drive_Site__r.sked_Unloading_Directions_Details__c,
                                                                                 sked_Drive_Site__r.sked_Canteen_Conditions__c,
                                                                         		sked_Drive_Site__r.Site_Smoking_Policy__c, // added for HRP-10052
+                                                                        		sked_Drive_Site__r.EAP_Map_Available__c, // added for HRP-12166
+                                                                        		sked_Drive_Site__r.AED_Available__c, // added for HRP-12166
                                                                                 sked_Status__c,
                                                                                 sked_Open_to_Public__c,
                                                                                 Operational_Notes__c,
@@ -435,9 +444,9 @@ public without sharing class GenerateDriveWorksheetPdfController {
                                                                                 sked_Primary_Contact__r.Primary_Phone__c,
                                                                                 sked_Primary_Contact__r.MobilePhone,
                                                                                 sked_Security_Escort_Name__c,
-                                                                                Account_Manager__c,// added for HRP-11777
-                                                                                Account_Manager__r.Name,// added for HRP-11777
-                                                                                Account_Manager__r.Phone// added for HRP-11777
+                                                                                sked_Opportunity__r.Account_Manager__c,// added for HRP-11777
+                                                                                sked_Opportunity__r.Account_Manager__r.Name,// added for HRP-11777
+                                                                                sked_Opportunity__r.Account_Manager__r.Phone// added for HRP-11777
                                                                         FROM sked_Drive__c 
                                                                         WHERE Id IN: driveIdSet]);
             for(sked_Drive_Shift__c shift : shiftData){
@@ -451,9 +460,27 @@ public without sharing class GenerateDriveWorksheetPdfController {
                     rw.driveName = drive.Name;
                     rw.oppInfo.report = shiftNoMap.get(shift.id)+' of '+driveTotalMap.get(drive.Id);
                     rw.oppInfo.accountName = drive.sked_Account__c != null ? drive.sked_Account__r.Name : '';
+                    
+                    //HRP-12505 -start
+					if(drive.sked_Opportunity__c != null && drive.sked_Opportunity__r.Account_Manager__c != null && 
+					   drive.sked_Opportunity__r.Account_Manager__r.Name != null){
+					   rw.oppInfo.accountManager = drive.sked_Opportunity__r.Account_Manager__r.Name;   
+					}else{
+					   rw.oppInfo.accountManager  = '';  
+					}
+
+                    if(drive.sked_Opportunity__c != null && drive.sked_Opportunity__r.Account_Manager__c != null && 
+					   drive.sked_Opportunity__r.Account_Manager__r.Phone != null){
+					   rw.oppInfo.phone = drive.sked_Opportunity__r.Account_Manager__r.Phone;   
+					}else{
+					   rw.oppInfo.phone  = '';  
+					}
+					//HRP-12505 - end
+                    /*
                     rw.oppInfo.accountManager = drive.Account_Manager__c == null ? '' : (drive.Account_Manager__r.Name != null ? drive.Account_Manager__r.Name : '');// changed for HRP-11777
                     rw.oppInfo.phone = drive.Account_Manager__c == null ? '' : (drive.Account_Manager__r.Phone != null ? drive.Account_Manager__r.Phone : '');// changed for HRP-11777
-                    if(drive.sked_Drive_Date__c != null){
+                    */
+					if(drive.sked_Drive_Date__c != null){
                         DateTime dDate = DateTime.newInstance(drive.sked_Drive_Date__c.year(),drive.sked_Drive_Date__c.month(),drive.sked_Drive_Date__c.day());
                         rw.oppInfo.driveDate = dDate.format('EEE M/d/yyyy');
                     }
@@ -525,6 +552,8 @@ public without sharing class GenerateDriveWorksheetPdfController {
                     rw.siteInfo.unloadingCond = drive.sked_Drive_Site__c != null ? drive.sked_Drive_Site__r.sked_Unloading_Conditions__c : '';
                     rw.siteInfo.unloadingDir = drive.sked_Drive_Site__c != null ? drive.sked_Drive_Site__r.sked_Unloading_Directions_Details__c : '';
                     rw.siteInfo.siteSmkPolicy = drive.sked_Drive_Site__c != null ? drive.sked_Drive_Site__r.Site_Smoking_Policy__c : ''; // added for HRP-10052
+                    rw.siteInfo.siteEAPMapAvailable = drive.sked_Drive_Site__c != null ? drive.sked_Drive_Site__r.EAP_Map_Available__c : ''; //added for HRP-12166
+                    rw.siteInfo.siteAEDAvailable = drive.sked_Drive_Site__c != null ? drive.sked_Drive_Site__r.AED_Available__c : ''; //added for HRP-12166
                     if(drive.sked_Drive_Site__c != null && drive.sked_Drive_Site__r.sked_Air_conditioned__c == true){
                         rw.siteInfo.airCondition = 'Yes';
                     }else if(drive.sked_Drive_Site__c != null){
@@ -536,7 +565,7 @@ public without sharing class GenerateDriveWorksheetPdfController {
                         rw.siteInfo.heated = 'No';
                     }
                     rw.siteInfo.elevator = drive.sked_Drive_Site__c != null ? drive.sked_Drive_Site__r.sked_Elevator_Type__c : '';
-                    rw.siteInfo.chapter = drive.sked_Drive_Site__c != null ? drive.sked_Drive_Site__r.sked_Chapter__c : '';
+                    rw.siteInfo.chapter = (drive.sked_Drive_Site__c != null && drive.sked_Drive_Site__r.Chapter__c != null) ? drive.sked_Drive_Site__r.Chapter__r.Name : ''; //HRP-12045 Changes
                     rw.siteInfo.directions = drive.sked_Drive_Site__c != null ? drive.sked_Drive_Site__r.sked_Directions_From_CollectionOperation__c : '';
                     if(String.isNotBlank(drive.Operational_Notes__c) && String.isNotBlank(drive.sked_Operation_Notes__c)){
                         rw.notes.opNotes = '1. '+drive.Operational_Notes__c+'\n2. '+drive.sked_Operation_Notes__c;
@@ -739,7 +768,8 @@ public without sharing class GenerateDriveWorksheetPdfController {
                                     rw.empInfoList.add(emp);
                                 }else if(jjball.sked__Resource__c != null && String.isNotBlank(jjball.sked__Resource__r.Name) 
                                         && String.isNotBlank(jjball.sked__Resource__r.sked_Asset_Type__c) 
-                                        && jjball.sked__Resource__r.sked_Asset_Type__c.equalsIgnoreCase('Vehicle')){
+                                        && jjball.sked__Resource__r.sked_Asset_Type__c.equalsIgnoreCase('Vehicle') 
+                                         && (jjball.sked__Status__c != 'Deleted')){ //HRP-12306
                                             vehicleList.add(jjball.sked__Resource__r.Name);
                                 }
                             }
@@ -772,7 +802,7 @@ public without sharing class GenerateDriveWorksheetPdfController {
                 rw.oppInfo.drawStart = shift.sked_Start_Time__c != null ? getFormattedTime(shift.sked_Start_Time__c.hour(),shift.sked_Start_Time__c.minute()) : '';
                 rw.oppInfo.drawEnd = shift.sked_End_Time__c != null ? getFormattedTime(shift.sked_End_Time__c.hour(),shift.sked_End_Time__c.minute()) : '';
                 rw.shiftInfo.shift = shift.Name;
-                rw.shiftInfo.presentingDonorCapacity = shift.sked_Max_Donor_Capacity__c != null ? String.valueOf(shift.sked_Max_Donor_Capacity__c) : '';
+                rw.shiftInfo.presentingDonorCapacity = shift.sked_Max_Donor_Capacity__c != null ? String.valueOf(Math.floor(shift.sked_Max_Donor_Capacity__c)) : '';//HRP-12189
                 rw.shiftInfo.typeRBC = '2RBC';
                 rw.shiftInfo.typeWB = 'WB';
                 rw.shiftInfo.staffReq = shift.sked_Staff_Setup__c != null ? String.valueOf(shift.sked_Staff_Setup__c) : '';

@@ -3,6 +3,7 @@
 * Date					     Developer Name			     Comments
 * ***********************************************************************************************************************************************
 * 01/03/2024				 Krapy Tuli					 Logic for HRP-11777
+* 08/07/2024				 Balaji N					 Logic for HRP-11815(reduced accteam query; unmanaged reason & is_account_managed__c population)
 ************************************************************************************************************************************************
 */
 public with sharing class UpdateAccountTeamMemberDailyBatchHelper {
@@ -10,20 +11,34 @@ public with sharing class UpdateAccountTeamMemberDailyBatchHelper {
     public static void updateAccountTeamMemberLookUps(List<AccountTeamMember> accTeamMemberList){ 
         
         List<id>atmAccountId=new List<id>();
+        List<AccountTeamMember> allTeamListnotCRecruiter = new List<AccountTeamMember>();
+        List<AccountTeamMember> coveringTeamMemberList = new List<AccountTeamMember>();
+        Map<String,AccountTeamMember> mapOfCoveringTeamMember=new Map<String,AccountTeamMember>();
         for(AccountTeamMember atm: accTeamMemberList)
         {
+            //HRP-11815 
+                if(atm.Is_Covering_Recruiter__c)
+                {
+                    coveringTeamMemberList.add(atm);
+                    mapOfCoveringTeamMember.put(atm.AccountID+atm.TeamMemberRole,atm);
+                }
+                else
+                {
+                    allTeamListnotCRecruiter.add(atm);
+                }
+                //HRP-11815 
             atmAccountId.add(atm.AccountId); 
         }
         
-        List<AccountTeamMember> coveringTeamMemberList =[SELECT Id, AccountId,TeamMemberRole, UserId,Start_Date__c,End_Date__c,Is_Covering_Recruiter__c,BSF_Portfolio__c FROM AccountTeamMember WHERE (accountId IN: atmAccountId and Start_Date__c <= today and End_Date__c >=today and Is_Covering_Recruiter__c=true) and (TeamMemberRole='Account Manager' OR TeamMemberRole='District Manager')]; //HRP-10359
-              
-        Map<String,id> mapOfCoveringTeamMember=new Map<String,id>();
+        //List<AccountTeamMember> coveringTeamMemberList =[SELECT Id, AccountId,TeamMemberRole, UserId,Start_Date__c,End_Date__c,Is_Covering_Recruiter__c,BSF_Portfolio__c FROM AccountTeamMember WHERE (accountId IN: atmAccountId and Start_Date__c <= today and End_Date__c >=today and Is_Covering_Recruiter__c=true) and (TeamMemberRole='Account Manager' OR TeamMemberRole='District Manager')]; //HRP-10359
+              /*HRP-11814
+        Map<String,AccountTeamMember> mapOfCoveringTeamMember=new Map<String,AccountTeamMember>();
         for(AccountTeamMember atm:coveringTeamMemberList)
         {
             mapOfCoveringTeamMember.put(atm.AccountID+atm.TeamMemberRole,atm.userID);
         }
-        
-        List<AccountTeamMember> allTeamListnotCRecruiter =[SELECT Id, AccountId,TeamMemberRole, UserId,Start_Date__c,End_Date__c,Is_Covering_Recruiter__c,BSF_Portfolio__c FROM AccountTeamMember WHERE (accountId IN: atmAccountId and Start_Date__c <= today and End_Date__c >=today and Is_Covering_Recruiter__c=false) and (TeamMemberRole='Account Manager' OR TeamMemberRole='District Manager')]; //HRP-10359
+        */
+        //List<AccountTeamMember> allTeamListnotCRecruiter =[SELECT Id, AccountId,TeamMemberRole, UserId,Start_Date__c,End_Date__c,Is_Covering_Recruiter__c,BSF_Portfolio__c FROM AccountTeamMember WHERE (accountId IN: atmAccountId and Start_Date__c <= today and End_Date__c >=today and Is_Covering_Recruiter__c=false) and (TeamMemberRole='Account Manager' OR TeamMemberRole='District Manager')]; //HRP-10359
         Map<Id,AccountTeamMember> defaultAMmap = new Map<Id,AccountTeamMember>();
         Map<String,Id> atmPortfolio = new Map<String,Id>();  //HRP-10359
         for(AccountTeamMember atm:allTeamListnotCRecruiter){
@@ -35,7 +50,7 @@ public with sharing class UpdateAccountTeamMemberDailyBatchHelper {
             } //HRP-10359 end
         }
         
-        
+        system.debug('mapOfCoveringTeamMember'+mapOfCoveringTeamMember);
         Map<Id, Account> accMap = new Map<Id, Account>();
         
         for(AccountTeamMember atm : accTeamMemberList) 
@@ -114,16 +129,17 @@ public with sharing class UpdateAccountTeamMemberDailyBatchHelper {
                             AmDmLookupUpdatedFlag=True;
                             acc.Account_Manager__c=atm.UserId;
                             acc.Unmanaged__c=null;
+                            acc.Is_Account_Managed__c = True;//HRP-11815
                             if(atm.BSF_Portfolio__c != null){ //HRP-10359 start
                                 acc.Account_Manager_Portfolio__c = atm.BSF_Portfolio__c;
                             } //HRP-10359 end
                             system.debug('entered here4'+acc.Is_Account_Managed__c+' '+acc.Unmanaged__c);
-                        }else if(mapOfCoveringTeamMember.get(atm.AccountiD+atm.TeamMemberRole)!=Null && (acc.Account_Manager__c!=mapOfCoveringTeamMember.get(atm.AccountiD+atm.TeamMemberRole) || test.isRunningTest())|| (atmPortfolio.get(atm.TeamMemberRole+'_'+atm.accountId) !=null && ( acc.Account_Manager_Portfolio__c == null || (acc.Account_Manager_Portfolio__c != atmPortfolio.get(atm.TeamMemberRole+'_'+atm.accountId)))))  //HRP-10359
+                        }else if(mapOfCoveringTeamMember.get(atm.AccountiD+atm.TeamMemberRole)!=Null && (acc.Account_Manager__c!=mapOfCoveringTeamMember.get(atm.AccountiD+atm.TeamMemberRole).UserId || test.isRunningTest())|| (atmPortfolio.get(atm.TeamMemberRole+'_'+atm.accountId) !=null && ( acc.Account_Manager_Portfolio__c == null || (acc.Account_Manager_Portfolio__c != atmPortfolio.get(atm.TeamMemberRole+'_'+atm.accountId)))))  //HRP-10359
                         {
                             AmDmLookupUpdatedFlag=True;
-                            acc.Account_Manager__c=mapOfCoveringTeamMember.get(atm.AccountiD+atm.TeamMemberRole);
-                            acc.Is_Account_Managed__c = true;
-                            acc.Unmanaged__c=null;
+                            acc.Account_Manager__c=mapOfCoveringTeamMember.get(atm.AccountiD+atm.TeamMemberRole).UserId;
+                            acc.Is_Account_Managed__c = False;
+                            acc.Unmanaged__c=mapOfCoveringTeamMember.get(atm.AccountiD+atm.TeamMemberRole).Coverage_Reason__c=='Leave of Absence (LOA)'?'LOA Vacancy':'Vacant Territory';//HRP-11815;
                             system.debug('entered here5'+acc.Is_Account_Managed__c+' '+acc.Unmanaged__c);
                             if(atmPortfolio.get(atm.TeamMemberRole+'_'+atm.accountId) != null){ //HRP-10359 start
                                 acc.Account_Manager_Portfolio__c = atmPortfolio.get(atm.TeamMemberRole+'_'+atm.accountId);
@@ -131,7 +147,9 @@ public with sharing class UpdateAccountTeamMemberDailyBatchHelper {
                         } 
                         
                     } 
-                }else if(atm.TeamMemberRole == BSF_Constants.DISTRICT_MANAGER && atm.Start_Date__c <=System.today() && atm.End_Date__c>=System.today()){
+                }
+                //Commented part of HRP-11815
+                /*else if(atm.TeamMemberRole == BSF_Constants.DISTRICT_MANAGER && atm.Start_Date__c <=System.today() && atm.End_Date__c>=System.today()){
                     if(defaultAMmap.get(atm.AccountId)!=null){
                        system.debug('defaultAMmap'+defaultAMmap);
                         AmDmLookupUpdatedFlag=True;
@@ -147,7 +165,7 @@ public with sharing class UpdateAccountTeamMemberDailyBatchHelper {
                         acc.Is_Account_Managed__c = false;
                         acc.Unmanaged__c=null;  
                     }
-                } 
+                } */ //Commented part of HRP-11234  
                 
             }
             //DM assignment logic
@@ -170,10 +188,10 @@ public with sharing class UpdateAccountTeamMemberDailyBatchHelper {
                         if(atm.BSF_Portfolio__c != null){ //HRP-10359 start
                             acc.District_Manager_Portfolio__c = atm.BSF_Portfolio__c;
                         } //HRP-10359 end
-                    }else if(mapOfCoveringTeamMember.get(atm.AccountiD+atm.TeamMemberRole)!=Null && (acc.District_Manager__c!=mapOfCoveringTeamMember.get(atm.AccountiD+atm.TeamMemberRole) || test.isRunningTest() || (atmPortfolio.get(atm.TeamMemberRole+'_'+atm.accountId) !=null && ( acc.Account_Manager_Portfolio__c == null || (acc.Account_Manager_Portfolio__c != atmPortfolio.get(atm.TeamMemberRole+'_'+atm.accountId)))))) //HRP-10359
+                    }else if(mapOfCoveringTeamMember.get(atm.AccountiD+atm.TeamMemberRole)!=Null && (acc.District_Manager__c!=mapOfCoveringTeamMember.get(atm.AccountiD+atm.TeamMemberRole).UserId || test.isRunningTest() || (atmPortfolio.get(atm.TeamMemberRole+'_'+atm.accountId) !=null && ( acc.Account_Manager_Portfolio__c == null || (acc.Account_Manager_Portfolio__c != atmPortfolio.get(atm.TeamMemberRole+'_'+atm.accountId)))))) //HRP-10359
                     {
                         AmDmLookupUpdatedFlag=True;
-                        acc.District_Manager__c = mapOfCoveringTeamMember.get(atm.AccountiD+atm.TeamMemberRole);
+                        acc.District_Manager__c = mapOfCoveringTeamMember.get(atm.AccountiD+atm.TeamMemberRole).UserId;
                         if(atmPortfolio.get(atm.TeamMemberRole+'_'+atm.accountId) != null){ //HRP-10359 start
                             acc.District_Manager_Portfolio__c = atmPortfolio.get(atm.TeamMemberRole+'_'+atm.accountId);
                         } //HRP-10359 end

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Slot_Generator_Change_Reason_Required</fullName>
+    <active>true</active>
+    <description>Change reason is required while updating slot generator value - HRP-12011</description>
+    <errorConditionFormula>AND(
+NOT(ISNEW()),
+ISCHANGED(Slot_Generator__c),
+NOT($User.FirstName &amp; &#39; &#39; &amp; $User.LastName = &#39;Automated Process&#39;),
+OR(
+ISBLANK( Slot_Generator_Change_Reason__c ),
+NOT(ISCHANGED(Slot_Generator_Change_Reason__c))
+)
+)</errorConditionFormula>
+    <errorDisplayField>Slot_Generator_Change_Reason__c</errorDisplayField>
+    <errorMessage>Slot Generator Change Reason is required and has to be different while updating Slot Generator</errorMessage>
+</ValidationRule>

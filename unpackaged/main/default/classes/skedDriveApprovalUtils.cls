@@ -1,4 +1,22 @@
 public class skedDriveApprovalUtils {
+
+    public static List<string> getDMApprovalStatuses() {
+        List<String> results = new List<string>();
+        results.add('Waiting for DM Approval');
+        results.add('DM Waiting for DRD Feedback');
+        return results;
+    }
+
+    public static List<string> getPendingApprovalStatuses() {
+        List<string> results = new List<string>();
+        results.add('Submitted');
+        results.add('Waiting for APS Approval');
+        results.add('Waiting for DM Approval');
+        results.add('APS Waiting for DRD Feedback');
+        results.add('DM Waiting for DRD Feedback');
+        return results;
+    }
+    
     public static void processDriveApprovals(List<Approval.ProcessSubmitRequest> requests, Map<Id, sked_Drive__c> driveById) {
         List<sked__Debug_Log__c> debugLogs = new List<sked__Debug_Log__c>();
         if (!requests.isEmpty()) {
@@ -33,4 +51,5 @@ public class skedDriveApprovalUtils {
             insert debugLogs;
         }
     }
+
 }

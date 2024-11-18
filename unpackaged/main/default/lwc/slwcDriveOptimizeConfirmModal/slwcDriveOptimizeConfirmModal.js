@@ -1,22 +1,21 @@
 import { LightningElement, api, track } from 'lwc';
 import { classNames } from 'c/slwcUtils';
-import { pick, cloneDeep, extend, orderBy } from 'c/lodash';
+import { pick, cloneDeep, orderBy, groupBy, uniqueId } from 'c/lodash';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
-import { collectionOperationQueryModel, collectionOperationService, optimizationRunService } from 'c/dataService';
-import TIME_ZONE from '@salesforce/i18n/timeZone';
-import * as slwcUtils from 'c/slwcUtils';
-
-const TABS = {
-  DRIVE_LIST: 'driveList',
-  SETTINGS: 'settings'
-};
+import { optimizationRunService, collectionOperationOptimizerSettingQueryModel, collectionOperationOptimizerSettingService, dataService } from 'c/dataService';
+import SelectDrives from "./selectDrives.html";
+import ConfigureOptimization from "./configureOptimization.html";
+import { OPTIMIZER_SETTING_DISPLAY_TYPE } from 'c/slwcConstants';
 
 export default class SlwcDriveOptimizeConfirmModal extends LightningElement {
   _isOpen = false;
+  _defaultOptimizationSettings;
+
   @api 
   get isOpen() {
     return this._isOpen;
   };
+
   set isOpen(value) {
     this._isOpen = value;
 
@@ -26,6 +25,7 @@ export default class SlwcDriveOptimizeConfirmModal extends LightningElement {
       });
     }
   }
+
   @api drives = [];
   @api collectionOperationId = null;
   @api handleOnClose = null;
@@ -33,30 +33,11 @@ export default class SlwcDriveOptimizeConfirmModal extends LightningElement {
   @api endDate; 
   
   @track showSpinner = false;
-
-  defaultSettings = null;
+  @track optimizationSettings = [];
   @track settings = null;
   @track driveList = [];
-  @track selectedDriveIds = [];
-  @track currentTab = TABS.DRIVE_LIST;
-
-  get TABS() {
-    return TABS;
-  }
-
-  get columns() {
-    let results = [];
-    results.push({ label: 'Drive Date', fieldName: 'driveDate', type: 'date-local', typeAttributes: { year: "numeric", month: "short", day: "2-digit" }, hideDefaultActions: true });
-    results.push({ label: 'Drive Name', fieldName: 'recordPageUrl', type: 'url', hideDefaultActions: false, wrapText: true, typeAttributes: { label: { fieldName: 'name' }, target: '_blank' }, hideDefaultActions: true });
-    results.push({ label: 'Optimization Status', fieldName: 'optimizationStatus', type: 'text', hideDefaultActions: true, wrapText: true });
-    results.push({ label: 'Event Type', fieldName: 'typeOfDrive', type: 'text', hideDefaultActions: true, wrapText: true });
-    results.push({ label: 'Vehicle Types', fieldName: 'vehicleTypes', type: 'text', hideDefaultActions: true, wrapText: true });
-    results.push({ label: 'Min Shift Start', fieldName: 'minShiftStart', type: 'date', typeAttributes: { hour: "numeric", minute: "2-digit", timeZone: TIME_ZONE }, hideDefaultActions: true });
-    results.push({ label: 'Max Shift End', fieldName: 'maxShiftEnd', type: 'date', typeAttributes: { hour: "numeric", minute: "2-digit", timeZone: TIME_ZONE }, hideDefaultActions: true });
-    results.push({ label: 'Staff Requested', fieldName: 'totalStaffRequested', type: 'number', cellAttributes: { alignment: 'left' }, hideDefaultActions: true });
-    results.push({ label: 'Staff Scheduled', fieldName: 'staffAllocated', type: 'number', cellAttributes: { alignment: 'left' }, hideDefaultActions: true });
-    return results;
-  }
+  @track driveGroups = [];
+  @track selectedDrives = [];
 
   get customClass() {
     return {
@@ -65,107 +46,86 @@ export default class SlwcDriveOptimizeConfirmModal extends LightningElement {
       }),
       backdropClass: classNames('slds-backdrop', {
         'slds-backdrop_open': this.isOpen
-      }),
-      driveListTab: slwcUtils.classNames('slds-tabs_default__item', {
-        'slds-is-active': this.showDriveListTab
-      }),
-      settingsTab: slwcUtils.classNames('slds-tabs_default__item', {
-          'slds-is-active': this.showSettingsTab
       })
     }
   }
 
-  get showDriveListTab() {
-    return this.currentTab === TABS.DRIVE_LIST;
-  }
-
-  get showSettingsTab() {
-    return this.currentTab === TABS.SETTINGS;
-  }
-
-  get btnRemoveLabel() {
-    return `Remove (${this.selectedDriveIds.length} selected)`;
-  }
-
-  get btnRemoveDisabled() {
-    return this.selectedDriveIds.length === 0;
-  }
-
-  connectedCallback() {
-  }
-
   initialize() {
-    this.currentTab = TABS.DRIVE_LIST;
-    this.getDefaultSettings()
-      .then(() => {
-        this.initialized = true;
-        this.settings = cloneDeep(this.defaultSettings);
-        this.driveList = orderBy([...this.drives], ['driveDate', 'minShiftStart', 'maxShiftEnd'], ['asc', 'asc', 'asc']);
-      })
-  }
-
-  getDefaultSettings() {
-    let query = new collectionOperationQueryModel();
-    query.recordIds = [this.collectionOperationId];
-    let service = new collectionOperationService();
+    this.step = this.ALLSTEP.STEP1.value;
     this.showSpinner = true;
-    return service.query(query)
-      .then((result) => {
-        const fields = [
-          'accountPreferencesScore',
-          'geographicPreferencesScore',
-          'locationPreferencesScore',
-          'seniorityRankScore',
-          'accountRestrictions',
-          'locationRestrictions',
-          'maximumWeeklyHours',
-          'ptoAvailability',
-          'roleCertificationMatch',
-          'rolePriorities'
-        ]
-        this.defaultSettings = pick(result[0], fields);
+   
+    return Promise.all([
+        this.getOptimizerSettings(),
+        this.getDefaultSettings()
+      ])
+      .then(([optimizerSettings, defaultSettings]) => {
+        this.defaultSettings = defaultSettings.returnedData.optimizerDefaultSettings.optimizerSettings
+          .map(setting => {
+            return {
+              ...setting,
+              id: uniqueId()
+            }
+        });
+        this.driveList = orderBy(cloneDeep(this.drives), ['driveDate', 'minShiftStart', 'maxShiftEnd'], ['asc', 'asc', 'asc']);
+        this.driveList.forEach((drive) => {
+          drive.collectionOperation.collectionOpOptimizerSettings = optimizerSettings.filter(item => item.collectionOperation.id === drive.collectionOperationId);
+        });
+        this.groupDrives();
       })
       .finally(() => this.showSpinner = false);
   }
 
-  handleRowSelection(event) {
-    this.selectedDriveIds = (event.detail.selectedRows || []).map(item => item.id);
+  clear() {
+    this.driveGroups = [];
+    this.selectedDrives = [];
+    this.settings = [];
   }
 
-  handleRemove() {
-    if (this.selectedDriveIds.length === this.driveList.length) {
-      this.dispatchEvent(new ShowToastEvent({
-        message: 'Need at least 1 drive to optimize.',
-        variant: 'error',
-        mode: 'dismissable'
-      }));
+  getDefaultSettings() {
+    let _dataService = new dataService();
+    return _dataService.getCustomSettings({ settingKeys: ["optimizerDefaultSettings"]});
+  }
+
+  getOptimizerSettings() {
+    let service = new collectionOperationOptimizerSettingService();
+    let query = new collectionOperationOptimizerSettingQueryModel();
+    query.collectionOperationIds = this.drives.map(item => item.collectionOperation.id);
+    return service.query(query);
+  }
+
+  findConstraint(id) {
+    return this.optimizationSettings.find(item => item.id === id);
+  }
+  
+  handleOnSettingChange(event) {
+    let constraint = this.findConstraint(event.detail.id);
+    if(!constraint) {
       return;
     }
 
-    this.driveList = this.driveList.filter(item => !this.selectedDriveIds.includes(item.id));
-    this.selectedDriveIds = [];
+    if(constraint.displayType === OPTIMIZER_SETTING_DISPLAY_TYPE.PICKLIST) {
+      constraint.defaultWeight = event.detail.value || "";
+    } else if(constraint.displayType === OPTIMIZER_SETTING_DISPLAY_TYPE.CHECKBOX) {
+      constraint.enabled = event.detail.value;
+    }
   }
 
-  handleOnSettingChange(event) {
-    this.settings = extend(this.settings, event.detail);
+  handleOnSettingReset() {
+    this.optimizationSettings = cloneDeep(this._defaultOptimizationSettings);
   }
 
-  handleTabChange(event) {
-    const newTab = event.currentTarget.dataset['value'];
-    this.currentTab = newTab;
-    this.selectedDriveIds = []
-  }
   handleConfirm = () => {
     this.showSpinner = true;
+
     return Promise.resolve()
       .then(() => {
         let service = new optimizationRunService();
         return service.initiateOptimizationRun({
           request: {
-            driveIds: this.driveList.map(item => item.id),
+            driveIds: this.selectedDrives.map(item => item.id),
             startDate: this.startDate,
             endDate: this.endDate,
-            optimizationSetting: this.settings
+            optimizationSettings: this.optimizationSettings
           }
         })
       })
@@ -180,6 +140,7 @@ export default class SlwcDriveOptimizeConfirmModal extends LightningElement {
           this.handleOnClose(true);
         }
         this.isOpen = false;
+        this.clear();
       })
       .catch((error) => {
         this.dispatchEvent(new ShowToastEvent({
@@ -197,6 +158,119 @@ export default class SlwcDriveOptimizeConfirmModal extends LightningElement {
     if (this.handleOnClose) {
       this.handleOnClose(false);
     }
+
+    this.clear();
     this.isOpen = false;
+  }
+
+  ALLSTEP = {
+    STEP1: {
+      label: "Select Drives",
+      value: 1,
+      function: () => {},
+      render: () => SelectDrives
+    },
+    STEP2: {
+      label: "Configure Optimization",
+      value: 2,
+      function: () => {},
+      render: () => ConfigureOptimization
+    }
+  }
+
+  step = this.ALLSTEP.STEP1.value;
+
+  @track listStep = [
+    this.ALLSTEP.STEP1,
+    this.ALLSTEP.STEP2
+  ];
+
+  get stepLabel() {
+    const step = Object.values(this.ALLSTEP).find(item => item.value === this.step);
+    return (step || {}).label;
+  }
+
+  get stepHeader() {
+    if (!this.model) return null;
+    return `Optimization Confirmation`;
+  }
+
+  get isStep1() {
+    return this.step === 1;
+  }
+
+  get isStep2() {
+    return this.step === 2;
+  }
+
+  get mode() {
+    return "STEP" + this.step;
+  }
+
+  get disabledNext() {
+    return this.isStep2;
+  }
+
+  get showPrevious() {
+    return !this.isStep1;
+  }
+
+  handleNext() {
+    if (this.step < this.listStep.length) {
+      this.step += 1;
+    }
+    
+    this.ALLSTEP[this.mode].function();
+  }
+
+  handlePrev() {
+    this.step -= 1;
+  }
+
+  render() {
+    return this.ALLSTEP[this.mode].render();
+  }
+
+  groupDrives() {
+    let driveGroupsByKey = groupBy(this.driveList, (drive) => this.getDriveOptimizationSettingKey(drive));
+    this.driveGroups = Object.keys(driveGroupsByKey).map((key, index) => {
+      return {
+        key: key,
+        name: `Group ${index + 1}`,
+        drives: driveGroupsByKey[key]
+      };
+    });
+  }
+
+  getCollectionOperationOptimizerSettings(collectionOperation, driveType) {
+    let collectionOpOptimizerSettings = collectionOperation.collectionOpOptimizerSettings.length > 0
+      ? collectionOperation.collectionOpOptimizerSettings
+      : this.defaultSettings;
+
+    return collectionOpOptimizerSettings.filter(item => item.driveType === driveType);
+  }
+
+  getDriveOptimizationSettingKey(drive) {
+    let optimizerSetting = this.getCollectionOperationOptimizerSettings(drive.collectionOperation, drive.typeOfDrive)
+      .map(setting => pick(setting, ['constraint', 'constraintType', 'defaultWeight', 'enabled', 'optimizerMappedWeight']));
+    
+    return JSON.stringify(optimizerSetting);
+  }
+
+  handleOptimize(event) {
+    this.selectedDrives = event.detail.selectedDrives;
+
+    let collectionOpOptimizerSettings = this.getCollectionOperationOptimizerSettings(this.selectedDrives[0].collectionOperation, this.selectedDrives[0].typeOfDrive);
+    this.optimizationSettings = orderBy(collectionOpOptimizerSettings.map(item => 
+      {
+        return  {
+          ...item,
+          displayOrder: item.displayOrder ?? Number.MAX_VALUE
+        }
+      }),
+      ["displayOrder"],
+      ["asc"]);
+    this._defaultOptimizationSettings = cloneDeep(this.optimizationSettings);
+    this.handleNext();
   }
 }

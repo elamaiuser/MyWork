@@ -232,6 +232,14 @@ const DRIVE_FIELD_CHANGE_MAPPING = {
       { actions: ['applyStaffingComplementAndProposeDriveShifts', 'calculateDriveProductivityPlanned'] },
       { actions: [] }
     ]
+  },
+  'slotGenerator': {
+    groups: [
+      { actions: [] },
+      { actions: [] },
+      { actions: ['proposeDriveShiftSlots', 'updateDriveTotalSlots'] },
+      { actions: [] }
+    ]
   }
 }
 
@@ -702,7 +710,11 @@ class FixedSiteGenerator extends BaseGenerator {
     this.calculateTotalProceduresProjected(this.drive.driveShiftsMetadata);
     this.drive.driveShiftsMetadata.driveShifts.forEach(driveShift => {
       this.calculateTotalProceduresProjected(driveShift);
-      driveShift.resourceRoleGroupRoleTimeDataMap = this.helper.calculateDriveShiftRoleTimeData(this.drive, driveShift);
+      driveShift.resourceRoleGroupRoleTimeDataMap = this.helper.calculateDriveShiftRoleTimeData(
+        this.masterData,
+        this.drive,
+        driveShift
+      );
       driveShift.lunchBreakSettings = this.helper.calculateDriveShiftLunchBreakSettings(this.drive, driveShift, this.masterData);
     })
   }
@@ -723,19 +735,31 @@ class FixedSiteGenerator extends BaseGenerator {
       let setting = (this.masterData.fixedSiteProcedureProjections || []).find((setting) => {
         return setting.procedureType === procedureType;
       });
-      if (!setting) return;
+      if (!setting && procedureType !== PROCEDURE_TYPE.PLATELET) return;
 
-      const procedureTypeCapacity = this.helper.getFixedSiteDonorsPerHourCapacity(procedureType, this.masterData);
+      const procedureTypeCapacity = this.helper.getFixedSiteProcedureTypeCapacity(procedureType, this.masterData);
       const drawHoursInMinutesByProcedureType = this.helper.getDrawHoursInMinutesByProcedureType(this.drive, procedureType, this.masterData);
       const projectedProceduresByProcedureType = this.helper.getProjectedProceduresByProcedureType(this.drive, procedureType)
-      let procedureCapacity = projectedProceduresByProcedureType / (1 - setting.qns / 100) / (1 - setting.deferral / 100) / (drawHoursInMinutesByProcedureType / 60) / procedureTypeCapacity;
+      let procedureCapacity = 0;
+      if (procedureType !== PROCEDURE_TYPE.PLATELET) {
+        let noOfStaff = projectedProceduresByProcedureType / (1 - setting.qns / 100) / (1 - setting.deferral / 100) / (drawHoursInMinutesByProcedureType / 60) / procedureTypeCapacity;
+        procedureCapacity = noOfStaff * procedureTypeCapacity * (drawHoursInMinutesByProcedureType / 60) * (1 - setting.deferral / 100) * (1 - setting.qns / 100);
+      } else {
+        let noOfStaff = projectedProceduresByProcedureType / this.helper.getDrivePlateletRounds(this.drive) / procedureTypeCapacity;
+        procedureCapacity = noOfStaff * procedureTypeCapacity * this.helper.getDrivePlateletRounds(this.drive);
+      }
+
+      if (isNaN(procedureCapacity) || !isFinite(procedureCapacity)) {
+        procedureCapacity = 0;
+      }
+
       driveProcedureCapacity = driveProcedureCapacity + procedureCapacity;
       driveProcedureCapacityMap[procedureType] = procedureCapacity;
 
       this.helper.splitProcedureCapacity(this.drive, tempDriveShifts, driveProcedureCapacityMap, procedureType, this.masterData.timezoneSidId);
     })
 
-    driveProcedureCapacity = Math.ceil(driveProcedureCapacity);
+    driveProcedureCapacity = Math.round(driveProcedureCapacity);
     this.drive.procedureCapacity = driveProcedureCapacity;
 
     let remainingProcedureCapacity = driveProcedureCapacity;
@@ -743,7 +767,10 @@ class FixedSiteGenerator extends BaseGenerator {
       let driveShift = this.drive.driveShifts[tempDriveShiftIndex];
       let driveShiftProcedureCapacity = 0;
       procedureTypes.forEach(procedureType => {
-        driveShiftProcedureCapacity = driveShiftProcedureCapacity + tempDriveShift[procedureType];
+        const shiftProcedureCapacityByProcedureType = tempDriveShift[procedureType];
+        if (shiftProcedureCapacityByProcedureType) {
+          driveShiftProcedureCapacity = driveShiftProcedureCapacity + shiftProcedureCapacityByProcedureType;
+        }
       });
       driveShift.procedureCapacity = Math.ceil(driveShiftProcedureCapacity);
       if (driveShift.procedureCapacity > remainingProcedureCapacity) {
@@ -842,7 +869,12 @@ class FixedSiteGenerator extends BaseGenerator {
       this.calculateTotalProceduresProjected(driveShiftsMetadata);
       driveShiftsMetadata.driveShifts.forEach(driveShift => {
         this.calculateTotalProceduresProjected(driveShift);
-        driveShift.resourceRoleGroupRoleTimeDataMap = this.helper.calculateDriveShiftRoleTimeData(this.drive, driveShift, driveShiftsMetadata.driveShifts);
+        driveShift.resourceRoleGroupRoleTimeDataMap = this.helper.calculateDriveShiftRoleTimeData(
+          this.masterData,
+          this.drive,
+          driveShift,
+          driveShiftsMetadata.driveShifts
+      );
         driveShift.lunchBreakSettings = this.helper.calculateDriveShiftLunchBreakSettings(this.drive, driveShift, this.masterData);
       })
     }
@@ -916,7 +948,7 @@ class FixedSiteGenerator extends BaseGenerator {
           jobs
         }
       })
-    }, this.masterData.backupDrive);
+    }, this.masterData.backupDrive, { isDriveGettingRegenerated : this.isRegenerateDriveChange });
     if(!systemGeneratedStaffingComplementChanges.newJobs.length && 
       !systemGeneratedStaffingComplementChanges.changedJobs.length && 
       !systemGeneratedStaffingComplementChanges.deletedJobs.length) {
@@ -949,12 +981,25 @@ class FixedSiteGenerator extends BaseGenerator {
 
     const driveShiftsMetadata = this.drive.driveShiftsMetadata;
     let totalApheresisStaff = 0;
+
+    //Calculate Platelet Staff count Separately and add it to 'totalApheresisStaff'
+    const plateletProcedureProjected = this.helper.getProjectedProceduresByProcedureType(this.drive, PROCEDURE_TYPE.PLATELET);
+    const plateletRoundCapacity = this.helper.getFixedSiteProcedureTypeCapacity(PROCEDURE_TYPE.PLATELET, this.masterData);
+    const plateletRounds = this.helper.getDrivePlateletRounds(this.drive);
+    if(!isNaN(plateletProcedureProjected) || isFinite(plateletProcedureProjected)) { 
+      totalApheresisStaff = plateletProcedureProjected / plateletRounds / plateletRoundCapacity;
+    }
+
+    // Calculate other Staff counts and add on top of 'totalApheresisStaff' value
     (this.masterData.fixedSiteProcedureProjections || []).forEach((setting) => {
-      const procedureTypeCapacity = this.helper.getFixedSiteDonorsPerHourCapacity(setting.procedureType, this.masterData);
+      const procedureTypeCapacity = this.helper.getFixedSiteProcedureTypeCapacity(setting.procedureType, this.masterData);
       const drawHoursInMinutesByProcedureType = this.helper.getDrawHoursInMinutesByProcedureType(this.drive, setting.procedureType, this.masterData);
       const projectedProceduresByProcedureType = this.helper.getProjectedProceduresByProcedureType(this.drive, setting.procedureType)
+      let noOfStaff = 0;
+      if (setting.procedureType !== PROCEDURE_TYPE.PLATELET) {
+        noOfStaff += projectedProceduresByProcedureType / (1 - setting.qns / 100) / (1 - setting.deferral / 100) / (drawHoursInMinutesByProcedureType / 60) / procedureTypeCapacity;
+      } 
 
-      let noOfStaff = Math.ceil(projectedProceduresByProcedureType / (1 - setting.qns / 100) / (1 - setting.deferral / 100) / (drawHoursInMinutesByProcedureType / 60) / procedureTypeCapacity);
       if (isNaN(noOfStaff) || !isFinite(noOfStaff)) {
         noOfStaff = 0;
       }
@@ -971,7 +1016,7 @@ class FixedSiteGenerator extends BaseGenerator {
     driveShiftsMetadata.driveShifts.forEach(driveShift => {
       let resourceQuantityMap = this.mapResourceQuantity.get(driveShift.key);
       resourceQuantityMap.set('Apheresis', {
-        quantity: totalApheresisStaff
+        quantity: Math.round(totalApheresisStaff)
       })
     });
   }
@@ -1239,10 +1284,17 @@ class FixedSiteGenerator extends BaseGenerator {
     });
 
     //manually created jobs 
-    const manuallyCreatedJobs = (originalDriveShift?.jobs || []).filter(job => {
+    let manuallyCreatedJobs = (originalDriveShift?.jobs || []).filter(job => {
       const isManuallyCreatedJob = this.helper.isManuallyCreatedJob(job, this.drive);
       const existed = this.helper.findJob(job, jobs);
       return isManuallyCreatedJob && !existed;
+    })
+    .map(job => {
+      let updatedJob = extend({}, job, jobTemplate);
+      return extend(updatedJob, {
+        isManuallyCreated: true, 
+        manuallyCreatedFrom: job.manuallyCreatedFrom
+      });
     });
     driveShift.jobs = jobs.concat(cloneDeep(manuallyCreatedJobs));
   }
@@ -1573,22 +1625,23 @@ class FixedSiteGenerator extends BaseGenerator {
     if (!numberOfPlasmaAssets) return [];
 
     let driveShiftStart = this.helper.newDateTime(driveShift.driveDate, driveShift.startTime, this.masterData.timezoneSidId);
-    //need to reduce start time to make sure first slot is at 10 or 40 minutes
-    let startInMinutes = driveShiftStart.getMinutes();
-    if (startInMinutes > 30) {
-      driveShiftStart = new Date(driveShiftStart.getTime() - (startInMinutes - 30) * 60000);
-      //driveShiftStart.setMinutues(30);
-    } else if (startInMinutes > 0) {
-      driveShiftStart = new Date(driveShiftStart.getTime() - startInMinutes * 60000);
-      //driveShiftStart.setMinutes(0);
-    }
-
     let driveShiftEnd = this.helper.newDateTime(driveShift.driveDate, driveShift.endTime, this.masterData.timezoneSidId);
     let driveShiftIndex = this.drive.driveShifts.findIndex(item => item.key === driveShift.key);
     let firstSlotStart, lastSlotStart;
     
-    firstSlotStart = new Date(driveShiftStart.getTime() + 70 * 60000); //70 minutes after Drive Shift Start
-
+    const firstPlateletRoundEnd = new Date(driveShiftStart.getTime() + 60 * 60000); //end after 60m
+    firstSlotStart = firstPlateletRoundEnd;
+    //need to reduce start time to make sure first slot is at 10 or 40 minutes
+    let startInMinutes = firstSlotStart.getMinutes();
+    if (startInMinutes > 40) {
+      firstSlotStart.setMinutes(40);
+      firstSlotStart = new Date(firstSlotStart.getTime() + 30 * 60000);
+    } else if (startInMinutes > 10) {
+      firstSlotStart.setMinutes(40);
+    } else if (startInMinutes >= 0) {
+      firstSlotStart.setMinutes(10);
+    }
+    
     if (driveShiftIndex === this.drive.driveShifts.length - 1) {
       //last shift
       lastSlotStart = new Date(driveShiftEnd.getTime() - 50 * 60000); //50 minutes before Drive Shift End
@@ -1611,9 +1664,9 @@ class FixedSiteGenerator extends BaseGenerator {
 
   generateWbSlots(driveShift, excludedTimeRanges = []) {
     let wbSetting = (this.masterData.fixedSiteProcedureProjections || []).find((setting) => setting.procedureType === PROCEDURE_TYPE.WB);
-    let projectedProcedures = this.helper.getProjectedProceduresByProcedureType(this.drive, wbSetting.procedureType);
-    let x = Math.ceil(projectedProcedures / (1 - wbSetting.qns / 100) / (1 - wbSetting.deferral / 100));
-    let paddingPercentage = this.masterData.adminSetting.callListRecipientNone;
+    let projectedProcedures = this.helper.getProjectedProceduresByProcedureType(this.drive, PROCEDURE_TYPE.WB);
+    let x = isNullOrEmpty(wbSetting) ? 0 : Math.ceil(projectedProcedures / (1 - wbSetting.qns / 100) / (1 - wbSetting.deferral / 100));
+    let paddingPercentage = isNullOrEmpty(this.drive.opportunity.slotGenerator) ? this.masterData.adminSetting.callListRecipientNoneFixedSite : this.drive.opportunity.slotGenerator / 100;
     let totalSlots = Math.ceil(x * paddingPercentage);
     let shiftStart = this.helper.newDateTime(driveShift.driveDate, driveShift.startTime, this.masterData.timezoneSidId);
     let shiftEnd = this.helper.newDateTime(driveShift.driveDate, driveShift.endTime, this.masterData.timezoneSidId);
@@ -1870,7 +1923,11 @@ class FixedSiteGenerator extends BaseGenerator {
       this.calculateTotalProceduresProjected(this.drive.driveShiftsMetadata);
       this.drive.driveShiftsMetadata.driveShifts.forEach((driveShiftMetadata) => {
         this.calculateTotalProceduresProjected(driveShiftMetadata);
-        driveShiftMetadata.resourceRoleGroupRoleTimeDataMap = this.helper.calculateDriveShiftRoleTimeData(this.drive, driveShiftMetadata);
+        driveShiftMetadata.resourceRoleGroupRoleTimeDataMap = this.helper.calculateDriveShiftRoleTimeData(
+          this.masterData,
+          this.drive,
+          driveShiftMetadata
+        );
         driveShiftMetadata.lunchBreakSettings = this.helper.calculateDriveShiftLunchBreakSettings(this.drive, driveShiftMetadata, this.masterData);
       });
       

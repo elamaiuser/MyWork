@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Layout xmlns="http://soap.sforce.com/2006/04/metadata">
     <excludeButtons>ChangeRecordType</excludeButtons>
-    <excludeButtons>DataDotComAccountInsights</excludeButtons>
-    <excludeButtons>DataDotComCompanyHierarchy</excludeButtons>
+    <excludeButtons>DataDotComClean</excludeButtons>
     <excludeButtons>Delete</excludeButtons>
     <excludeButtons>DisableCustomerPortalAccount</excludeButtons>
     <excludeButtons>Edit</excludeButtons>
     <excludeButtons>IncludeOffline</excludeButtons>
+    <excludeButtons>OpenSlackRecordChannel</excludeButtons>
     <excludeButtons>Submit</excludeButtons>
     <excludeButtons>XClean</excludeButtons>
     <layoutSections>
@@ -67,6 +67,14 @@
                 <behavior>Edit</behavior>
                 <field>Exclude_from_sponsor_direct_marketing__c</field>
             </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>Chapter__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>Next_Scheduled_Drive_Updated__c</field>
+            </layoutItems>
         </layoutColumns>
         <layoutColumns>
             <layoutItems>
@@ -113,10 +121,6 @@
                 <behavior>Edit</behavior>
                 <field>Market__c</field>
             </layoutItems>
-            <layoutItems>
-                <behavior>Edit</behavior>
-                <field>Chapter__c</field>
-            </layoutItems>
         </layoutColumns>
         <style>TwoColumnsLeftToRight</style>
     </layoutSections>
@@ -154,8 +158,29 @@
                 <field>BillingAddress</field>
             </layoutItems>
         </layoutColumns>
-        <layoutColumns/>
+        <layoutColumns />
         <style>TwoColumnsTopToBottom</style>
+    </layoutSections>
+    <layoutSections>
+        <customLabel>true</customLabel>
+        <detailHeading>true</detailHeading>
+        <editHeading>true</editHeading>
+        <label>Business Planning</label>
+        <layoutColumns>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>Business_Planning_Completed__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>Business_Planning_Completed_By__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>Business_Planning_Completed_Date__c</field>
+            </layoutItems>
+        </layoutColumns>
+        <style>OneColumn</style>
     </layoutSections>
     <layoutSections>
         <customLabel>true</customLabel>
@@ -183,10 +208,6 @@
         <layoutColumns>
             <layoutItems>
                 <behavior>Edit</behavior>
-                <field>Is_Account_Managed__c</field>
-            </layoutItems>
-            <layoutItems>
-                <behavior>Edit</behavior>
                 <field>Unmanaged__c</field>
             </layoutItems>
             <layoutItems>
@@ -205,8 +226,8 @@
         <detailHeading>false</detailHeading>
         <editHeading>true</editHeading>
         <label>Additional Information</label>
-        <layoutColumns/>
-        <layoutColumns/>
+        <layoutColumns />
+        <layoutColumns />
         <style>TwoColumnsLeftToRight</style>
     </layoutSections>
     <layoutSections>
@@ -214,7 +235,7 @@
         <detailHeading>false</detailHeading>
         <editHeading>false</editHeading>
         <label>Description Information</label>
-        <layoutColumns/>
+        <layoutColumns />
         <style>OneColumn</style>
     </layoutSections>
     <layoutSections>
@@ -261,9 +282,9 @@
         <detailHeading>true</detailHeading>
         <editHeading>false</editHeading>
         <label>Custom Links</label>
-        <layoutColumns/>
-        <layoutColumns/>
-        <layoutColumns/>
+        <layoutColumns />
+        <layoutColumns />
+        <layoutColumns />
         <style>CustomLinks</style>
     </layoutSections>
     <platformActionList>
@@ -357,14 +378,11 @@
         <excludeButtons>New</excludeButtons>
         <fields>NAME</fields>
         <fields>Account_Affiliation_Name__c</fields>
-        <fields>Active_Status__c</fields>
         <fields>Affiliation_Name__c</fields>
-        <fields>Affiliation_Record_Type__c</fields>
-        <fields>Deleted_Date__c</fields>
-        <fields>End_Date__c</fields>
-        <fields>Start_Date__c</fields>
+        <fields>Assigned_By__c</fields>
         <fields>Date_Assigned__c</fields>
         <fields>Date_Removed__c</fields>
+        <fields>Removed_By__c</fields>
         <relatedList>Account_Affiliation_History__c.Account__c</relatedList>
     </relatedLists>
     <relatedLists>
@@ -450,12 +468,12 @@
     </relatedLists>
     <relatedLists>
         <fields>NAME</fields>
-        <fields>CREATED_DATE</fields>
+        <fields>sked_Procedure_Type__c</fields>
         <fields>sked_QNS__c</fields>
         <fields>sked_Deferral__c</fields>
+        <fields>CREATED_DATE</fields>
         <fields>sked_Effective_End_Date__c</fields>
         <fields>sked_Effective_Start_Date__c</fields>
-        <fields>sked_Procedure_Type__c</fields>
         <fields>sked_Productive_Procedure_Goal__c</fields>
         <relatedList>sked_Fixed_Site_Procedure_Projection__c.sked_Account__c</relatedList>
     </relatedLists>
@@ -507,15 +525,6 @@
     </relatedLists>
     <relatedLists>
         <relatedList>RelatedFileList</relatedList>
-    </relatedLists>
-    <relatedLists>
-        <fields>NAME</fields>
-        <fields>sked_Month_Name__c</fields>
-        <fields>sked_Preferred_Weeks__c</fields>
-        <fields>sked_Preferred_Weekdays__c</fields>
-        <fields>sked_Restricted_Weeks__c</fields>
-        <fields>sked_Restricted_Weekdays__c</fields>
-        <relatedList>sked_Account_Availability_Preference__c.sked_Account__c</relatedList>
     </relatedLists>
     <relatedLists>
         <relatedList>RelatedEntityHistoryList</relatedList>

@@ -12,7 +12,7 @@
                         <valueListItems>
                             <value>sked_Drive__c.sked_Generate_Operation_Records</value>
                             <visibilityRule>
-                                <booleanFilter>1 AND (2 OR 3 OR 4)</booleanFilter>
+                                <booleanFilter>1 AND (2 OR 3 OR 4 OR 5)</booleanFilter>
                                 <criteria>
                                     <leftValue>{!Record.sked_Is_Surrogate__c}</leftValue>
                                     <operator>EQUAL</operator>
@@ -32,6 +32,11 @@
                                     <leftValue>{!$User.Profile.Name}</leftValue>
                                     <operator>EQUAL</operator>
                                     <rightValue>System Administrator</rightValue>
+                                </criteria>
+                                <criteria>
+                                    <leftValue>{!$User.Profile.Name}</leftValue>
+                                    <operator>EQUAL</operator>
+                                    <rightValue>Global Admin</rightValue>
                                 </criteria>
                             </visibilityRule>
                         </valueListItems>
@@ -72,8 +77,26 @@
         </itemInstances>
         <itemInstances>
             <componentInstance>
+                <componentName>nonCollectionAreaSiteCollectionOpCheck</componentName>
+                <identifier>c_nonCollectionAreaSiteCollectionOpCheck</identifier>
+            </componentInstance>
+        </itemInstances>
+        <itemInstances>
+            <componentInstance>
                 <componentName>slwcDrivePendingActionWarning</componentName>
                 <identifier>c_slwcDrivePendingActionWarning1</identifier>
+            </componentInstance>
+        </itemInstances>
+        <itemInstances>
+            <componentInstance>
+                <componentName>pendingDCRBannerForOppOrDOC</componentName>
+                <identifier>c_pendingDCRBannerForOppOrDOC</identifier>
+            </componentInstance>
+        </itemInstances>
+        <itemInstances>
+            <componentInstance>
+                <componentName>ErrorBanner</componentName>
+                <identifier>c_ErrorBanner</identifier>
             </componentInstance>
         </itemInstances>
         <name>header</name>
@@ -206,6 +229,19 @@
                 </componentInstanceProperties>
                 <componentName>flexipage:tab</componentName>
                 <identifier>flexipage_tab1</identifier>
+                <visibilityRule>
+                    <booleanFilter>1 AND 2</booleanFilter>
+                    <criteria>
+                        <leftValue>{!$User.Profile.Name}</leftValue>
+                        <operator>NE</operator>
+                        <rightValue>Collections</rightValue>
+                    </criteria>
+                    <criteria>
+                        <leftValue>{!$User.Profile.Name}</leftValue>
+                        <operator>NE</operator>
+                        <rightValue>Collection Management</rightValue>
+                    </criteria>
+                </visibilityRule>
             </componentInstance>
         </itemInstances>
         <name>maintabs</name>

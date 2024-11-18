@@ -11,13 +11,14 @@ import { DRIVE_SHIFT_TRADE_TYPE } from 'c/slwcConstants';
 export default class SlwcApprovalConsoleDriveShiftTradeList extends LightningElement {
   COLUMNS = [
     { label: 'Name', sortable: true, sortField: 'name', fieldName: 'recordUrl', type: 'url', hideDefaultActions: true, wrapText: true, typeAttributes: { label: { fieldName: 'name' }, target: '_blank' } },
-    { label: 'Requesting Staff', sortable: true, fieldName: 'requestingStaffName', type: 'text', hideDefaultActions: true, wrapText: true, },
-    { label: 'Requesting Staff Trading Type', sortable: true, fieldName: 'requestingStaffTradingType', type: 'text', hideDefaultActions: true, wrapText: true, },
-    { label: 'Requesting Staff Record', sortable: false, fieldName: 'requestingStaffRecordUrl', type: 'url', hideDefaultActions: true, wrapText: true, typeAttributes: { label: { fieldName: 'requestingStaffRecordName' }, target: '_blank' } },
+    { label: 'Req Staff', sortable: true, fieldName: 'requestingStaffName', type: 'text', hideDefaultActions: true, wrapText: true, },
+    { label: 'Req Staff Trading Type', sortable: true, fieldName: 'requestingStaffTradingType', type: 'text', hideDefaultActions: true, wrapText: true, },
+    { label: 'Req Staff Event', sortable: false, fieldName: 'requestingStaffRecordUrl', type: 'tradingEvent', hideDefaultActions: true, wrapText: true, typeAttributes: { label: { fieldName: 'requestingStaffTradingEventName' } } },
+    { label: 'Req Event Date', sortable: true, fieldName: 'requestingStaffTradingEventDate', type: 'date-local', hideDefaultActions: true, typeAttributes: { year: 'numeric', month: 'short', day: '2-digit' } },
     { label: 'Trading Staff', sortable: true, fieldName: 'tradingStaffName', type: 'text', hideDefaultActions: true, wrapText: true, },
     { label: 'Trading Staff Trading Type', sortable: true, fieldName: 'tradingStaffTradingType', type: 'text', hideDefaultActions: true, wrapText: true, },
-    { label: 'Trading Staff Record', sortable: false, fieldName: 'tradingStaffRecordUrl', type: 'url', hideDefaultActions: true, wrapText: true, typeAttributes: { label: { fieldName: 'tradingStaffRecordName' }, target: '_blank' } },
-    { label: 'Submitted By', sortable: true, fieldName: 'createdByName', type: 'text', hideDefaultActions: true, wrapText: true },
+    { label: 'Trading Staff Event', sortable: false, fieldName: 'tradingStaffRecordUrl', type: 'tradingEvent', hideDefaultActions: true, wrapText: true, typeAttributes: { label: { fieldName: 'tradingStaffTradingEventName' } } },
+    { label: 'Trading Event Date', sortable: true, fieldName: 'tradingStaffTradingEventDate', type: 'date-local', hideDefaultActions: true, typeAttributes: { year: 'numeric', month: 'short', day: '2-digit' } },
     {
       label: 'Submission Date', sortable: true, fieldName: 'createdDate', type: 'date', hideDefaultActions: true, typeAttributes: {
         year: 'numeric',
@@ -28,8 +29,8 @@ export default class SlwcApprovalConsoleDriveShiftTradeList extends LightningEle
         timeZone: TIME_ZONE
       }
     },
-    { label: 'Designated Approver', sortable: true, fieldName: 'designatedApproverName', type: 'text', hideDefaultActions: true, wrapText: true },
     { label: 'Approval Status', sortable: true, fieldName: 'status', type: 'text', hideDefaultActions: true, wrapText: true },
+    { label: 'Reason Approval Req', sortable: false, fieldName: 'reasonApprovalRequired', type: 'text', hideDefaultActions: true, wrapText: true },
     {
       label: '', type: 'actionButton', fieldName: 'id', hideDefaultActions: true, initialWidth: 100, typeAttributes: {
         rowActions: [
@@ -85,6 +86,14 @@ export default class SlwcApprovalConsoleDriveShiftTradeList extends LightningEle
       if (!this.filters.collectionOperationValues.territoryCollectionOperations) {
         this.filters.collectionOperationValues.territoryCollectionOperations = [];
       }
+
+      if (!this.filters.startDate || !this.filters.endDate) {
+        const firstDay = this.dateUtils.getFirstDayValue(this.collectionOperationFirstDay);
+        this.filters.startDate = this.dateUtils.startOfWeek(DateTime.local(), firstDay).toISODate();
+        this.filters.endDate = DateTime.fromISO(this.filters.startDate).plus({
+          day: 42
+        }).toISODate();
+      }
     }
   }
 
@@ -115,8 +124,8 @@ export default class SlwcApprovalConsoleDriveShiftTradeList extends LightningEle
 
   get collectionOperationDateRange() {
     return {
-      startDate: this.todayIso,
-      endDate: this.todayIso
+      startDate: this.filters.startDate,
+      endDate: this.filters.endDate
     }
   }
 
@@ -143,11 +152,13 @@ export default class SlwcApprovalConsoleDriveShiftTradeList extends LightningEle
     let query = new driveShiftTradeQueryModel();
     query.territoryKeys = territoryKeys;
     query.statuses = this.filters.statuses;
-    // query.driveTypes = this.filters.driveTypes;
-    query.tradingEventStartDate = this.todayIso;
-    query.tradingEventEndDate = '9999-01-01';
-    // query.driveStartDate = this.filters.driveStartDate;
-    // query.driveEndDate = this.filters.driveEndDate;
+    query.tradingEventStartDate = this.filters.startDate;
+    query.tradingEventEndDate = this.filters.endDate;
+    query.submissionStartDate = this.filters.submissionStartDate;
+    query.submissionEndDate = this.filters.submissionEndDate;
+    query.staffName = this.filters.staffName;
+    query.eventName = this.filters.eventName;
+    query.ufid = this.filters.ufid;
     query.limit = 20;
     query.offset = (this.records || []).length;
     query.orderBy = this.sortOption.sortField || this.sortOption.fieldName;
@@ -170,11 +181,14 @@ export default class SlwcApprovalConsoleDriveShiftTradeList extends LightningEle
             }
           } else if(item.requestingStaffTradingType === DRIVE_SHIFT_TRADE_TYPE.ACTIVITY) {
             item.requestingStaffRecord = item.requestingStaffNCE;
+          } else if(item.requestingStaffTradingType === DRIVE_SHIFT_TRADE_TYPE.AVAILABLE_DAY) {
+            item.requestingStaffRecord = {
+              name: DRIVE_SHIFT_TRADE_TYPE.AVAILABLE_DAY
+            };
           }
 
           if(item.requestingStaffRecord) {
-            item.requestingStaffRecordUrl = '/' + item.requestingStaffRecord.id;
-            item.requestingStaffRecordName = item.requestingStaffRecord.activityTitle || item.requestingStaffRecord.name;
+            item.requestingStaffRecordUrl = item.requestingStaffRecord.id ? '/' + item.requestingStaffRecord.id : null;
           }
 
           item.tradingStaffRecord = null;
@@ -185,10 +199,13 @@ export default class SlwcApprovalConsoleDriveShiftTradeList extends LightningEle
             }
           } else if(item.tradingStaffTradingType === DRIVE_SHIFT_TRADE_TYPE.ACTIVITY) {
             item.tradingStaffRecord = item.tradingStaffNCE;
-          } 
+          } else if(item.tradingStaffTradingType === DRIVE_SHIFT_TRADE_TYPE.AVAILABLE_DAY) {
+            item.tradingStaffRecord = {
+              name: DRIVE_SHIFT_TRADE_TYPE.AVAILABLE_DAY
+            };
+          }
           if(item.tradingStaffRecord) {
-            item.tradingStaffRecordUrl = '/' + item.tradingStaffRecord.id;
-            item.tradingStaffRecordName = item.tradingStaffRecord.name;
+            item.tradingStaffRecordUrl = item.tradingStaffRecord.id ? '/' + item.tradingStaffRecord.id : null;
           }
         })
         return result;
@@ -213,7 +230,7 @@ export default class SlwcApprovalConsoleDriveShiftTradeList extends LightningEle
   }
 
   handleOnChange(event) {
-    if (event.type === 'weekdatechange') {
+    if (event.type === 'daterangechange') {
         this.filters = {
           ...this.filters, 
           startDate: event.detail.startDate,

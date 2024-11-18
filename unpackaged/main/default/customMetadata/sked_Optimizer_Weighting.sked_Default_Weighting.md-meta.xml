@@ -42,7 +42,7 @@
 		&quot;costs&quot;: &quot;1soft&quot;,
 		&quot;wages&quot;: &quot;1soft&quot;,
 		&quot;priority&quot;: &quot;1soft&quot;,
-		&quot;softSkills&quot;: &quot;1soft&quot;
+		&quot;softSkills&quot;: &quot;50soft&quot;
 }</value>
     </values>
 </CustomMetadata>

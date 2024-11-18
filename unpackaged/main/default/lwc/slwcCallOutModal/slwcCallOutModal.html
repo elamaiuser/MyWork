@@ -1,19 +1,49 @@
 <template>
     <template if:true={isOpen}>
-        <section role="dialog" tabindex="-1" class="slds-modal slds-fade-in-open" style="z-index:9999">
+        <section role="dialog" tabindex="-1" class={customClass.modal} style="z-index:9999">
         <div class="slds-modal__container">
-            <header class="slds-modal__header">
-                <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close" onclick={closeModal}>
+            <header class="slds-modal__header" if:false={hideHeader}>
+                <button if:false={fullScreen} class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close" onclick={closeModal}>
                     <lightning-icon icon-name="utility:close" alternative-text="close" variant="inverse" size="small" ></lightning-icon>
                 </button>
                 
+                <div if:true={showBackButton} style="width: 3rem">
+                    <lightning-button-icon icon-name="utility:chevronleft" variant="bare-inverse" alternative-text="Back" title="Back" size="large" onclick={handleBack}></lightning-button-icon>
+                </div>
+                
                 <h2 class="slds-text-heading_medium slds-hyphenate">Call Out</h2>
+
+                <div if:true={showBackButton} style="width: 3rem">
+                </div>
+
             </header>
 
             <div class="slds-modal__content slds-p-around_medium full-height__modal-content" style="position: relative;">
+                <lightning-spinner style="z-index:10000" if:true={showSpinner} class="spins" size="medium"></lightning-spinner>
                 <div>Are you sure you want to call out this job?</div>
                 <div class="slds-m-top_small" style="overflow: initial;">
-                    <div class="slds-form-element">
+                    <div class="slds-form-element" if:false={isResourceMode}>
+                        <lightning-input 
+                            name="callOutReceivedDate" 
+                            type="date" 
+                            label="Call Out Received Date" 
+                            value={model.callOutReceivedDate}
+                            timezone={timezoneSidId} 
+                            onchange={handleOnChange} 
+                            required>
+                        </lightning-input>
+                    </div>
+                    <div class="slds-m-top_x-small slds-form-element" if:false={isResourceMode}>
+                        <c-slwc-time-input-with-timezone 
+                            input-date={model.callOutReceivedDate}
+                            timezone={timezoneSidId}>
+                            <lightning-input 
+                                slot="input"
+                                type="time" name="callOutReceivedTime" required label="Call Out Received Time" value={model.callOutReceivedTime} onchange={handleOnChange}>
+                            </lightning-input>
+                        </c-slwc-time-input-with-timezone>
+                    </div>
+                    <div class="slds-m-top_x-small slds-form-element">
                         <c-slwc-picklist
                             name="callOutType"
                             label="If Yes, please select the Call Out Type"
@@ -21,7 +51,7 @@
                             selected-value={model.callOutType}  
                             pick-listfield-api-name="sked_Call_Out_Type__c"
                             required
-                            onpicklistchange={handleOnChange}>
+                            onpicklistchange={handleOnCallOutTypeChange}>
                         </c-slwc-picklist>
                     </div>
 
@@ -40,13 +70,50 @@
                         </c-slwc-dependent-picklist>
                     </div>
 
+                    <!-- <div if:true={allowPtoForCallOut} class="slds-m-top_x-small slds-form-element">
+                        <lightning-input 
+                            type="checkbox" 
+                            label="Use PTO for call out?" 
+                            name="usePtoForCallOut"
+                            checked={model.usePtoForCallOut}
+                            onchange={handleOnChange}>
+                        </lightning-input>
+                    </div>
+
+                    <div if:true={model.usePtoForCallOut}>
+                        <div class="slds-m-top_x-small slds-form-element">
+                            <div class={planBalanceClass}  if:true={showBalance}>Plan Balance: {planBalance} (hours) / Time Off Duration: {duration} (hours)</div>
+                            <lightning-combobox 
+                                label="Time Off Plan"
+                                name="timeOffPlan"
+                                options={timeOffPlans}
+                                value={model.timeOffPlan}
+                                onchange={handleOnPlanChange}
+                                required
+                                disabled={timeOffPlanDisabled}>
+                            </lightning-combobox>
+                        </div>
+    
+                        <div class="slds-m-top_x-small slds-form-element">
+                            <lightning-combobox
+                                label="Time Off Reason Code"
+                                name="timeOffReasonCode"
+                                options={timeOffReasonCodes}
+                                value={model.timeOffReasonCode}
+                                onchange={handleOnChange}
+                                required
+                                disabled={timeOffReasonCodeDisabled}>
+                            </lightning-combobox>
+                        </div>
+                    </div> -->
+
                     <lightning-textarea class="slds-m-top_x-small" value={model.callOutNotes} label="Call Out Notes" name="callOutNotes"  onchange={handleOnChange}></lightning-textarea>
                 </div>
             </div>
 
             <footer class="slds-modal__footer">
-                <lightning-button label="Cancel" title="Cancel" onclick={closeModal} class="slds-m-right_xx-small"></lightning-button>
-                <lightning-button class="slds-m-top_small" onclick={handleSave} variant="brand" type="submit" name="update" label="Save"></lightning-button>
+                <lightning-button if:false={fullScreen} label="Cancel" title="Cancel" onclick={closeModal} class="slds-m-right_xx-small"></lightning-button>
+                <lightning-button class="slds-m-top_small" onclick={handleSave} variant="brand" type="submit" name="update" label={saveBtnLabel}></lightning-button>
             </footer>
         </div>
         </section>

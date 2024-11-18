@@ -11,6 +11,7 @@
     <columns>LEAD.UNREAD</columns>
     <columns>Lead_AM_Porfolio__c</columns>
     <columns>Lead_Region_Name__c</columns>
+    <columns>Lead_Stage_Status__c</columns>
     <filterScope>Queue</filterScope>
     <filters>
         <field>LEAD.STATUS</field>
@@ -20,6 +21,6 @@
     <label>Future Outreach</label>
     <queue>Future_Outreach</queue>
     <sharedTo>
-        <allInternalUsers></allInternalUsers>
+        <allInternalUsers />
     </sharedTo>
 </ListView>

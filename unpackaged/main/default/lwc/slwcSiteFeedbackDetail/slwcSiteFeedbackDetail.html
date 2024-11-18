@@ -27,83 +27,88 @@
                                 label="Site" 
                                 name="site" 
                                 placeholder="Search Site"
-                                selection={model.site}
-                                onselectionchange={handleSiteChanged}>
+                                selection={model.site}>
                             </c-slwc-lookup>
-                            <template if:false={disableSiteLookup}>
-                                <div class="slds-form-element">
-                                    <label class="slds-form-element__label">&nbsp;</label>
-                                    <div class="slds-form-element__control">
-                                        <lightning-button 
-                                            class="slds-m-top_large slds-m-left_x-small" 
-                                            variant="brand-outline" 
-                                            label="Select Site" 
-                                            onclick={showSearchSiteModal}></lightning-button>
-                                    </div>
-                                </div>
-                            </template>
                         </div>
                     </div>
-                    <div class="slds-m-around--xx-small" if:true={showDriveLookup}>
+                    <div class="slds-m-around--xx-small" if:true={isCreatedForRTVChangesFeedback}>
                         <div class="slds-grid">
                             <c-slwc-lookup 
                                 class="slds-grow"
                                 is-readonly
-                                is-required
-                                object-name="sked_Drive__c"
-                                icon-name="custom:custom63" 
+                                object-name="sked_Role_Time_Variance__c"
+                                icon-name="custom:custom8" 
                                 display-field="name" 
-                                label="Drive" 
-                                name="drive" 
-                                selection={model.drive}
-                                onselectionchange={handleDriveChanged}>
+                                label="Role Time Variance" 
+                                name="roleTimeVariance" 
+                                selection={model.roleTimeVariance}>
                             </c-slwc-lookup>
-                            <template if:false={isReadonly}>
-                                <div class="slds-form-element">
-                                    <label class="slds-form-element__label">&nbsp;</label>
-                                    <div class="slds-form-element__control">
-                                        <lightning-button 
-                                            class="slds-m-top_large slds-m-left_x-small" 
-                                            variant="brand-outline" 
-                                            label="Select Drive" 
-                                            onclick={showSearchDriveModal}></lightning-button>
-                                    </div>
-                                </div>
-                            </template>
                         </div>
                     </div>
-                    <template if:true={enableEffectiveDates}>
-                        <div class="slds-m-around--xx-small">
-                            <lightning-input 
-                                type="date" 
-                                name="effectiveStartDate" 
-                                label="Effective Start Date" 
-                                value={model.effectiveStartDate} 
-                                onchange={handleOnChange} 
-                                autocomplete="off" 
-                                disabled={isReadonly} 
-                                required>
-                            </lightning-input>
-                        </div>
-                        <div class="slds-m-around--xx-small">
-                            <lightning-input 
-                                type="date" 
-                                name="effectiveEndDate" 
-                                label="Effective End Date" 
-                                value={model.effectiveEndDate} 
-                                onchange={handleOnChange} 
-                                autocomplete="off" 
-                                disabled={isReadonly} 
-                                required>
-                            </lightning-input>
-                        </div>
-                    </template>
                     <div class="slds-m-around--xx-small">
-                        <c-slwc-picklist name="varianceType" label="Variance Type" unique-key={} required
+                        <lightning-input 
+                            type="date" 
+                            name="effectiveStartDate" 
+                            label="Effective Start Date" 
+                            value={model.effectiveStartDate} 
+                            onchange={handleOnChange} 
+                            autocomplete="off" 
                             disabled={isReadonly} 
-                            onchange={handleOnChange} object-api-name="sked_Site_Feedback__c"
-                            selected-value={model.varianceType} pick-listfield-api-name="sked_Variance_Type__c">
-                        </c-slwc-picklist>
+                            required>
+                        </lightning-input>
+                    </div>
+                    <div class="slds-m-around--xx-small">
+                        <lightning-input 
+                            type="date" 
+                            name="effectiveEndDate" 
+                            label="Effective End Date" 
+                            value={model.effectiveEndDate} 
+                            onchange={handleOnChange} 
+                            autocomplete="off" 
+                            disabled={isReadonly} 
+                            required>
+                        </lightning-input>
+                    </div>
+                    <div class="slds-m-around--xx-small">
+                        <c-slwc-multi-picklist 
+                            name="daysOfWeek" 
+                            label="Days Of Week"
+                            required
+                            disabled={isReadonly} 
+                            object-api-name="sked_Site_Feedback__c"
+                            field-api-name="sked_Days_Of_Week__c"
+                            default-values={model.daysOfWeek}
+                            onpicklistchange={handleOnChange}>
+                        </c-slwc-multi-picklist>
+                    </div>
+                    <div class="slds-m-around--xx-small">
+                        <template if:false={disableVarianceType}>
+                            <c-slwc-picklist name="varianceType" label="Variance Type" unique-key={} required
+                                onchange={handleOnChange} object-api-name="sked_Site_Feedback__c"
+                                selected-value={model.varianceType} pick-listfield-api-name="sked_Variance_Type__c">
+                            </c-slwc-picklist>
+                            <template if:true={showVarianceTypeOther}>
+                                <lightning-input 
+                                    name="varianceTypeOther" 
+                                    type="text" 
+                                    max-length="100" 
+                                    label="Variance Type Other" 
+                                    value={model.varianceTypeOther} 
+                                    required 
+                                    pattern="[a-zA-Z0-9\s]+"
+                                    title="Please only input alphanumeric value"
+                                    onchange={handleOnChange}>
+                                </lightning-input>
+                            </template>
+                        </template>
+                        <template if:true={disableVarianceType}>
+                            <div class="slds-m-around--xx-small">
+                                <lightning-input type="text" label="Variance Type" read-only value={model.varianceType}></lightning-input>
+                            </div>
+                            <template if:true={showVarianceTypeOther}>
+                                <lightning-input type="text" label="Variance Type Other" read-only value={model.varianceTypeOther}></lightning-input>
+                            </template>
+                        </template>
                     </div>
                     <div class="slds-m-around--xx-small">
                         <c-slwc-picklist name="bufferType" label="Buffer Type" unique-key={} required
@@ -113,11 +118,17 @@
                         </c-slwc-picklist>
                     </div>
                     <div class="slds-m-around--xx-small">
-                        <c-slwc-picklist name="varianceAppliesTo" label="Variance Applies To" unique-key={} required
+                        <c-slwc-multi-picklist name="varianceAppliesTo" 
+                            label="Variance Applies To" 
+                            required
                             disabled={isReadonly} 
-                            onchange={handleOnChange} object-api-name="sked_Site_Feedback__c"
-                            selected-value={model.varianceAppliesTo} pick-listfield-api-name="sked_Variance_Applies_To__c">
-                        </c-slwc-picklist>
+                            object-api-name="sked_Site_Feedback__c"
+                            field-api-name="sked_Variance_Applies_To__c"
+                            dependent-field-api-name="sked_Variance_Type__c"
+                            controlling-field-values={model.varianceTypeControllingFieldValues}
+                            default-values={model.varianceAppliesTo}
+                            onpicklistchange={handleOnChange}>
+                        </c-slwc-multi-picklist>
                     </div>
                     <div class="slds-m-around--xx-small">
                         <c-slwc-multi-picklist name="resourceRoleGroup" 
@@ -134,14 +145,16 @@
                         <lightning-input type="text" label="Status" read-only value={model.status}></lightning-input>
                     </div>
                     <div class="slds-m-around--xx-small">
-                        <c-slwc-select
-                            name="amount"
-                            label="Amount (minutes)"
-                            selected-value={model.amount}
-                            options={amountOptions}
+                        <lightning-input
+                            name="varianceAmount"
+                            type="number"
+                            min="5"
+                            step="5"
+                            label="Variation Amount (minutes)"
+                            value={model.varianceAmount}
                             required
                             read-only={isReadonly} 
-                            onchange={handleOnChange}></c-slwc-select>
+                            onchange={handleOnChange}></lightning-input>
                     </div>
                     <div class="slds-m-around--xx-small">
                         <lightning-textarea onchange={handleOnChange} name="reason"  disabled={isReadonly}  label="Reason" value={model.reason}>
@@ -152,148 +165,11 @@
                     <lightning-button label="Cancel" title="Cancel" onclick={closeModal} class="slds-m-right_xx-small">
                     </lightning-button>
                     <lightning-button class="slds-m-right_xx-small" if:false={isReadonly} onclick={handleSubmit} variant="success" type="submit"
-                        name="submit" label="Save & Submit"></lightning-button>
-                    <lightning-button class="" if:false={isReadonly} onclick={handleSave} variant="brand" type="submit"
-                        name="save" label="Save"></lightning-button>
+                        name="submit" label="Submit">
+                    </lightning-button>
                 </footer>
             </div>
         </section>
         <div class="slds-backdrop slds-backdrop_open" style="z-index:10000"></div>
-
-        <template if:true={searchDriveModalData.isOpen}>
-            <section role="dialog" tabindex="-1" class="slds-modal slds-fade-in-open slds-modal_large" style="z-index:10003">
-                <lightning-spinner if:true={searchDriveModalData.showSpinner} class="spins" size="medium"></lightning-spinner>
-                <div class="slds-modal__container">
-                    <header class="slds-modal__header">
-                        <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close"
-                            onclick={closeSearchDriveModal}>
-                            <lightning-icon icon-name="utility:close" alternative-text="close" variant="inverse" size="small">
-                            </lightning-icon>
-                        </button>
-    
-                        <h2 class="slds-text-heading_medium slds-hyphenate">Select Drive</h2>
-                    </header>
-                    <div class="slds-modal__content slds-p-around_small">
-                        <div class="slds-scrollable_y">
-                            <div class="slds-grid">
-                                <div class="slds-size_2-of-12 slds-p-horizontal_small">
-                                    <lightning-input type="text" max-length="255" name="ufid" label="UFID"
-                                        onchange={handleSearchDriveModalFiltersChanged}
-                                        value={searchDriveModalData.filters.ufid}></lightning-input>
-                                </div>
-                                
-                                <div class="slds-size_2-of-12 slds-p-horizontal_small">
-                                    <c-slwc-multi-picklist
-                                        name="driveTypes"
-                                        label="Drive Types"
-                                        object-api-name="sked_Drive__c"
-                                        field-api-name="sked_Type_of_Drive__c"
-                                        onpicklistchange={handleSearchDriveModalFiltersChanged}
-                                        default-values={searchDriveModalData.filters.driveTypes}>
-                                    </c-slwc-multi-picklist>     
-                                </div>
-
-                                <div class=" slds-size_2-of-12 slds-p-horizontal_small">
-                                    <c-slwc-multi-picklist
-                                        name="driveStatuses"
-                                        label="Drive Statuses"
-                                        object-api-name="sked_Drive__c"
-                                        field-api-name="sked_Status__c"
-                                        onpicklistchange={handleSearchDriveModalFiltersChanged}
-                                        default-values={searchDriveModalData.filters.driveStatuses}>
-                                    </c-slwc-multi-picklist>   
-                                </div>
-
-                                <div class="slds-col_bump-left slds-p-right_small">
-                                    <c-slwc-week-date-picker
-                                        first-day="0"
-                                        unique-key="siteFeedbackDetail"
-                                        onweekdatechange={handleSearchDriveModalFiltersChanged}
-                                        default-start-date={searchDriveModalData.filters.startDate}
-                                        default-end-date={searchDriveModalData.filters.endDate}>
-                                    </c-slwc-week-date-picker>
-                                </div>
-                            </div>
-                            <div class="slds-grow slds-m-top_small">
-                                <div class="slds-scrollable_y" style="height: 45vh;">
-                                    <c-slwc-custom-datatable 
-                                        key-field="id"
-                                        data={searchDriveModalData.drives}
-                                        columns={DRIVE_TABLE_COLUMNS}
-                                        onrowselection={handleSearchDriveTableRowSelection}
-                                        max-row-selection="1"
-                                        wrap-text-max-lines="3">
-                                    </c-slwc-custom-datatable>
-                                </div>
-                                <div class="slds-shrink-none slds-grow-none slds-p-horizontal_small slds-p-top_small slds-border_top modal-content__footer">
-                                    <div class="slds-grid slds-grid_align-spread slds-grid_vertical-align-center"> 
-                                        <div class="slds-text-color_weak ng-binding">Total drives: {searchDriveModalData.drives.length} </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <footer class="slds-modal__footer">
-                        <lightning-button label="Cancel" title="Cancel" onclick={closeSearchDriveModal} class="slds-m-right_xx-small">
-                        </lightning-button>
-                        <lightning-button class="" onclick={saveSearchDriveModal} variant="brand" type="submit"
-                            name="save" label="Select"></lightning-button>
-                    </footer>
-                </div>
-            </section>
-            <div class="slds-backdrop slds-backdrop_open" style="z-index:10002"></div>
-        </template>
-
-        <template if:true={searchSiteModalData.isOpen}>
-            <section role="dialog" tabindex="-1" class="slds-modal slds-fade-in-open slds-modal_large" style="z-index:10003">
-                <lightning-spinner if:true={searchSiteModalData.showSpinner} class="spins" size="medium"></lightning-spinner>
-                <div class="slds-modal__container">
-                    <header class="slds-modal__header">
-                        <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close"
-                            onclick={closeSearchSiteModal}>
-                            <lightning-icon icon-name="utility:close" alternative-text="close" variant="inverse" size="small">
-                            </lightning-icon>
-                        </button>
-    
-                        <h2 class="slds-text-heading_medium slds-hyphenate">Select Site</h2>
-                    </header>
-                    <div class="slds-modal__content slds-p-around_small">
-                        <div class="slds-scrollable_y">
-                            <div class="slds-grid">
-                                <div class="slds-size_3-of-12 slds-p-horizontal_small">
-                                    <lightning-input type="text" max-length="255" name="name" label="Site Name"
-                                        onchange={handleSearchSiteModalFiltersChanged}
-                                        value={searchSiteModalData.filters.name}></lightning-input>
-                                </div>
-                            </div>
-                            <div class="slds-grow slds-m-top_small">
-                                <div class="slds-scrollable_y" style="height: 45vh;">
-                                    <c-slwc-custom-datatable 
-                                        key-field="id"
-                                        data={searchSiteModalData.sites}
-                                        columns={SITE_TABLE_COLUMNS}
-                                        onrowselection={handleSearchSiteTableRowSelection}
-                                        max-row-selection="1"
-                                        wrap-text-max-lines="3">
-                                    </c-slwc-custom-datatable>
-                                </div>
-                                <div class="slds-shrink-none slds-grow-none slds-p-horizontal_small slds-p-top_small slds-border_top modal-content__footer">
-                                    <div class="slds-grid slds-grid_align-spread slds-grid_vertical-align-center"> 
-                                        <div class="slds-text-color_weak ng-binding">Total sites: {searchSiteModalData.sites.length} </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <footer class="slds-modal__footer">
-                        <lightning-button label="Cancel" title="Cancel" onclick={closeSearchSiteModal} class="slds-m-right_xx-small">
-                        </lightning-button>
-                        <lightning-button class="" onclick={saveSearchSiteModal} variant="brand" type="submit"
-                            name="save" label="Select"></lightning-button>
-                    </footer>
-                </div>
-            </section>
-            <div class="slds-backdrop slds-backdrop_open" style="z-index:10002"></div>
-        </template>
     </template>
 </template>

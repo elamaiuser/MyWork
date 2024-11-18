@@ -22,6 +22,11 @@
                 <label>Activity</label>
             </value>
             <value>
+                <fullName>Available Day</fullName>
+                <default>false</default>
+                <label>Available Day</label>
+            </value>
+            <value>
                 <fullName>On Call</fullName>
                 <default>false</default>
                 <isActive>false</isActive>

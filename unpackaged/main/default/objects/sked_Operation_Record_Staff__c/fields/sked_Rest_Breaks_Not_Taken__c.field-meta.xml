@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>sked_Rest_Breaks_Not_Taken__c</fullName>
+    <externalId>false</externalId>
+    <formula>IF(sked_Number_of_Rest_Breaks_Taken__c &gt; sked_Rest_Breaks_Earned__c, 
+    0, 
+    sked_Rest_Breaks_Earned__c - sked_Number_of_Rest_Breaks_Taken__c
+)</formula>
+    <label>Rest Breaks Not Taken</label>
+    <precision>18</precision>
+    <required>false</required>
+    <scale>0</scale>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Number</type>
+    <unique>false</unique>
+</CustomField>

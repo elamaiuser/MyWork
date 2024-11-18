@@ -1,0 +1,7 @@
+:host {
+    --textarea-height: 150px;
+}
+
+.variable-height-textarea textarea {
+    height: var(--textarea-height);
+}

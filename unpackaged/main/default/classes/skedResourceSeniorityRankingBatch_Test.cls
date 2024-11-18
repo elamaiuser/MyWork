@@ -3,7 +3,7 @@ private class skedResourceSeniorityRankingBatch_Test {
     @isTest
     static void skedResourceSeniorityRankingBatch_Test() {
         Test.startTest();
-            Database.executeBatch(new skedResourceSeniorityRankingBatch());
+        Database.executeBatch(new skedResourceSeniorityRankingBatch());
         Test.stopTest();
 
         List<sked__Resource__c> testResources = [
@@ -14,6 +14,30 @@ private class skedResourceSeniorityRankingBatch_Test {
 
         for (sked__Resource__c testResource : testResources) {
             System.assertNotEquals(null, testResource.sked_Seniority_Rank__c);
+        }
+    }
+    
+    @isTest
+    static void skedResourceSeniorityRankingBatch_Test_Parameterized() {
+        Set<Id> territoryIds = new Set<Id>();
+    	Set<Id> skedResourceIds = new Set<Id>();
+        List<sked__Resource__c> resourceRecord = [ SELECT Id, sked__Primary_Region__r.sked_Biomed_Collection_Op_Center__c FROM sked__Resource__c WHERE sked__Resource_Type__c = :skedConstants.RESOURCE_TYPE_PERSON];
+        for(sked__Resource__c resource: resourceRecord){
+            skedResourceIds.add(resource.Id);
+            territoryIds.add(resource.sked__Primary_Region__r.sked_Biomed_Collection_Op_Center__c);
+        }
+        Test.startTest();
+        Database.executeBatch(new skedResourceSeniorityRankingBatch(territoryIds, skedResourceIds));
+        Test.stopTest();
+
+        List<sked__Resource__c> testResources = [
+            SELECT Id, sked_Seniority_Rank__c 
+            FROM sked__Resource__c 
+            WHERE sked__Resource_Type__c = :skedConstants.RESOURCE_TYPE_PERSON
+        ];
+
+        for (sked__Resource__c testResource : testResources) {
+            System.assertEquals(null, testResource.sked_Seniority_Rank__c);
         }
     }
 

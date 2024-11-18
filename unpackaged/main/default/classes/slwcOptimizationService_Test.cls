@@ -2,6 +2,8 @@
 private class slwcOptimizationService_Test {
     
     static testmethod void mainTest() {
+        Test.setMock(HttpCalloutMock.class, new skedMockTest());
+
         skedTestDataFactory testDataFactory = new skedTestDataFactory('us', 14);
         Map<string, sObject> mapTestData = testDataFactory.setupCommonTestData();
         mapTestData = testDataFactory.setupDriveData();
@@ -51,12 +53,11 @@ private class slwcOptimizationService_Test {
         insert testJob;
         
         slwcOptimizationService.optimizationSettingModel setting = new slwcOptimizationService.optimizationSettingModel();
-        setting.accountRestrictions = true;
-        setting.locationRestrictions = true;
-        setting.maximumWeeklyHours = true;
-        setting.ptoAvailability = true;
-        setting.roleCertificationMatch = true;
-        setting.rolePriorities = true;
+        setting.constraint = 'Account/Site Preferences';
+        setting.constraintType = 'Soft Constraint';
+        setting.driveType = 'Mobile';
+        setting.defaultWeight = 'High';
+        setting.enabled = true;
         
         List<string> driveIds = new List<string>();
         driveIds.add(testDrive.Id);
@@ -65,7 +66,7 @@ private class slwcOptimizationService_Test {
         initiateOptimizationRunRequest.driveIds = driveIds;
         initiateOptimizationRunRequest.startDate = testDataFactory.summary.startDate;
         initiateOptimizationRunRequest.endDate = testDataFactory.summary.endDate;
-        initiateOptimizationRunRequest.optimizationSetting = setting;
+        initiateOptimizationRunRequest.optimizationSettings = new List<slwcOptimizationService.optimizationSettingModel> {setting};
         
         slwcOptimizationService.initiateOptimizationRun(initiateOptimizationRunRequest);
         
@@ -74,8 +75,14 @@ private class slwcOptimizationService_Test {
         system.assert(optimizationRunQuery.size() == 1);
         if (!optimizationRunQuery.isEmpty()) {
             sked_Optimization_Run__c optimizationRun = optimizationRunQuery.get(0);
+            optimizationRun.sked_Run_ID__c = 'abc786ff-f168-426c-8325-0abafdf370af';
             optimizationRun.sked_Status__c = skedConstants.OPTIMIZATION_RUN_STATUS_COMPLETE;
+            optimizationRun.sked_Opt_Run_Meta__c = '[{"jobId":"driverdota1J5c00000YbwEUEAZ","featureAllocId":"alloc_a2l5c000003Gs91AAC:driverdota1J5c00000YbwEUEAZ:0","existingAllocationId":null},{"jobId":"a1J5c00000YbwEVEAZ","featureAllocId":"alloc_a2l5c000003Gs91AAC:a1J5c00000YbwEVEAZ:0","existingAllocationId":null},{"jobId":"a1J5c00000YbwEWEAZ","featureAllocId":"alloc_a2l5c000003Gs91AAC:a1J5c00000YbwEWEAZ:0","existingAllocationId":null},{"jobId":"a1J5c00000YbwEWEAZ","featureAllocId":"alloc_a2l5c000003Gs91AAC:a1J5c00000YbwEWEAZ:1","existingAllocationId":null},{"jobId":"a1J5c00000YbwEWEAZ","featureAllocId":"alloc_a2l5c000003Gs91AAC:a1J5c00000YbwEWEAZ:2","existingAllocationId":null},{"jobId":"a1J5c00000YbwEWEAZ","featureAllocId":"alloc_a2l5c000003Gs91AAC:a1J5c00000YbwEWEAZ:3","existingAllocationId":null}]';
+            optimizationRun.sked_Opt_Run_Diff__c = '{"alloc_a2l5c000003Gs91AAC:a1J5c00000YbwEWEAZ:1":{"deallocation":null,"allocation":"a1c5c00000FBnMdAAL"},"alloc_a2l5c000003Gs91AAC:a1J5c00000YbwEWEAZ:0":{"deallocation":null,"allocation":"a1c5c00000FBmATAA1"},"alloc_a2l5c000003Gs91AAC:driverdota1J5c00000YbwEUEAZ:0":{"deallocation":null,"allocation":"a1c5c00000FBnWMAA1"},"alloc_a2l5c000003Gs91AAC:a1J5c00000YbwEWEAZ:3":{"deallocation":null,"allocation":"a1c5c00000FBmhIAAT"},"alloc_a2l5c000003Gs91AAC:a1J5c00000YbwEWEAZ:2":{"deallocation":null,"allocation":"a1c5c00000FBmJcAAL"},"alloc_a2l5c000003Gs91AAC:a1J5c00000YbwEVEAZ:0":{"deallocation":null,"allocation":"a1c5c00000FBmmcAAD"}}';
             update optimizationRun;
+
+            Set<Id> optimizationRunIds = new Set<Id>();
+            optimizationRunIds.add(optimizationRun.Id);
             
             slwcOptimizationService.getOptimizationRunsRequestModel getOptimizationRunsRequest = new slwcOptimizationService.getOptimizationRunsRequestModel();
             getOptimizationRunsRequest.territoryKeys = new List<string>();
@@ -84,6 +91,9 @@ private class slwcOptimizationService_Test {
             getOptimizationRunsRequest.endDate = testDataFactory.summary.endDate;
             
             slwcOptimizationService.getOptimizationRuns(getOptimizationRunsRequest);
+            slwcOptimizationService.getOptimizationRunStatistics(optimizationRun.Id);
+            slwcOptimizationService.getOptimizedJobAllocation(optimizationRun.Id);
+            slwcOptimizationService.compareOptimizerSettings(optimizationRun.Id, optimizationRunIds);
             
             sked__Job_Allocation__c testJobAllocation = new sked__Job_Allocation__c(
                 sked__Job__c = testJob.Id,

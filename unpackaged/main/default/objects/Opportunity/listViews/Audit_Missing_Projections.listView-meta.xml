@@ -14,12 +14,8 @@
     <columns>Calendar_Build_Reasons_For_Unqualified__c</columns>
     <columns>Rollover_Consideration__c</columns>
     <columns>Calendar_Build_Parent_Opportunity__c</columns>
+    <columns>ARC_Region__c</columns>
     <filterScope>Everything</filterScope>
-    <filters>
-        <field>Drive_Status__c</field>
-        <operation>contains</operation>
-        <value>Draft,System Generated,Hold,Pending Action,Tentative,Confirmed</value>
-    </filters>
     <filters>
         <field>Type_of_Drive__c</field>
         <operation>equals</operation>
@@ -34,6 +30,27 @@
         <field>Total_Products_Projected__c</field>
         <operation>equals</operation>
         <value>0</value>
+    </filters>
+    <filters>
+        <field>DriveStatus__c</field>
+        <operation>contains</operation>
+        <value>Draft,System Generated,Hold,Pending Action,Tentative,Confirmed</value>
+    </filters>
+    <filters>
+        <field>Account_Manager__c</field>
+        <operation>contains</operation>
+    </filters>
+    <filters>
+        <field>District_Manager__c</field>
+        <operation>contains</operation>
+    </filters>
+    <filters>
+        <field>ARC_Region__c</field>
+        <operation>contains</operation>
+    </filters>
+    <filters>
+        <field>Division__c</field>
+        <operation>contains</operation>
     </filters>
     <label>Audit Missing Projections</label>
 </ListView>

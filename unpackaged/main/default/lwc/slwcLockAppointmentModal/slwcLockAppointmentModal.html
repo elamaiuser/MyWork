@@ -1,0 +1,47 @@
+<template>
+    <template if:true={isOpen}>
+        <section role="dialog" tabindex="-1" class="slds-modal slds-fade-in-open" style="z-index:9999">
+        <div class="slds-modal__container">
+            <header class="slds-modal__header">
+                <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close" onclick={closeModal}>
+                    <lightning-icon icon-name="utility:close" alternative-text="close" variant="inverse" size="small" ></lightning-icon>
+                </button>
+                
+                <h2 class="slds-text-heading_medium slds-hyphenate">Lock Appointment(s)</h2>
+            </header>
+
+            <div class="slds-theme_default">
+                <div class="slds-modal__content slds-p-around_medium" style="overflow: initial;">
+                    <div class="slds-form-element__row slds-m-top_x-small">
+                        <c-slwc-picklist
+                            name="fixedSiteLockReason"
+                            label="Lock Reason"
+                            object-api-name="sked__Slot__c"
+                            required
+                            selected-value={model.fixedSiteLockReason}  
+                            pick-listfield-api-name="sked_Fixed_Site_Lock_Reason__c"
+                            excluded-values={excludedValues}
+                            onpicklistchange={handleOnChange}>
+                        </c-slwc-picklist>
+                    </div>
+                    <div class="slds-form-element__row slds-m-top_x-small">
+                        <lightning-textarea 
+                            name="fixedSiteLockComment"
+                            label="Lock Comments"
+                            onchange={handleOnChange}
+                            max-length="255"
+                            value={model.fixedSiteLockComment}>
+                        </lightning-textarea>
+                    </div>
+                </div>
+            </div>
+
+            <footer class="slds-modal__footer">
+                <lightning-button label="Cancel" title="Cancel" onclick={closeModal} class="slds-m-right_xx-small"></lightning-button>
+                <lightning-button class="slds-m-top_small" onclick={handleSave} variant="brand" type="submit" name="update" label="Save"></lightning-button>
+            </footer>
+        </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open" style="z-index:9998"></div>
+    </template>
+</template>

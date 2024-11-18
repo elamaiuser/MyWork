@@ -14,6 +14,7 @@ public class skedTravelTimeIndexTravelTimeBatch implements Database.Batchable<sk
                 FROM sked_Travel_Time_Index_Refresh_Request__c
                 WHERE sked_Request_Type__c = 'Travel Time'
                 AND sked_Status__c = 'Pending'
+                ORDER BY sked_Priority__c ASC NULLS LAST, CreatedDate ASC
                 LIMIT :noOfRequestsToExecute];
     }
     

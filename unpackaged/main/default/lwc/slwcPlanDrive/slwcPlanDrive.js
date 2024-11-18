@@ -319,7 +319,9 @@ export default class SlwcPlanDrive extends LightningElement {
             return Promise.resolve()
               .then(() => {
                 let oppService = new opportunityService();
-                return oppService.save({ id: this.recordId, driveDate: selectedDate })
+                return oppService.save({ id: this.recordId, driveDate: selectedDate , driveDateChangeReason : `Changed from Plan a Drive at ${DateTime.fromObject({
+                  zone: this.opportunity.driveSite.timezoneSidId
+                  }).toFormat('yyyy-MM-dd hh:mm:ss z')}`})
               })
               .then((result) => {
                 this.driveDate = selectedDate;

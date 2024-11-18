@@ -859,6 +859,11 @@
         </columns>
         <columns>
             <checkedByDefault>false</checkedByDefault>
+            <field>sked_Chapter__c</field>
+            <table>Account.sked__Locations__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
             <field>sked__GeoLocation__Longitude__s</field>
             <table>Account.sked__Locations__r</table>
         </columns>
@@ -980,11 +985,6 @@
         <columns>
             <checkedByDefault>false</checkedByDefault>
             <field>sked_Canteen_Conditions__c</field>
-            <table>Account.sked__Locations__r</table>
-        </columns>
-        <columns>
-            <checkedByDefault>false</checkedByDefault>
-            <field>sked_Chapter__c</field>
             <table>Account.sked__Locations__r</table>
         </columns>
         <columns>
@@ -1320,6 +1320,11 @@
         <columns>
             <checkedByDefault>false</checkedByDefault>
             <field>sked_On_Site_Food_Canteen_Requirements__c</field>
+            <table>Account.sked__Locations__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>Chapter__c.Name</field>
             <table>Account.sked__Locations__r</table>
         </columns>
         <masterLabel>Locations</masterLabel>
@@ -1908,6 +1913,26 @@
         <columns>
             <checkedByDefault>false</checkedByDefault>
             <field>sked_Stage_Options__c</field>
+            <table>Account.sked__Locations__r.sked_Drives__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>account_External_Id__c</field>
+            <table>Account.sked__Locations__r.sked_Drives__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>site_External_Id__c</field>
+            <table>Account.sked__Locations__r.sked_Drives__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>Supervisory_Role__c</field>
+            <table>Account.sked__Locations__r.sked_Drives__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>sked_Optimization_Run__c</field>
             <table>Account.sked__Locations__r.sked_Drives__r</table>
         </columns>
         <masterLabel>Drives on Calendar</masterLabel>

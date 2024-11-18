@@ -4,12 +4,18 @@ global class slwcUserService {
     public static slwcAuraResult getLoginUser() {
         slwcAuraResult result = new slwcAuraResult();
         
-        User loginUser = [SELECT Id, Name, Profile.Name
+        User loginUser = [SELECT Id, Name, Profile.Name, sked_Collection_Operations__c
                           FROM User
                           WHERE Id = :UserInfo.getUserId()];
         userModel model = new userModel();
         model.id = loginUser.Id;
-        model.name = loginUser.Name;
+        model.name = loginUser.Name;            
+
+        model.collectionOperationNames = new List<string>();
+        if (loginUser.sked_Collection_Operations__c != null && loginUser.sked_Collection_Operations__c != '') {
+            model.collectionOperationNames = loginUser.sked_Collection_Operations__c.split(';');
+        }
+                
         model.profileName = NULL;
         if (loginUser.Profile != NULL) {
             model.profileName = loginUser.Profile.Name;
@@ -41,7 +47,12 @@ global class slwcUserService {
         if (model.profileName.toLowerCase().startsWith('drd')) {
             model.approvalPermission.driveChangeRequest = TRUE;
             model.approvalPermission.pendingActionDrive = TRUE;
+            model.approvalPermission.roleTimeVariance = TRUE;
         }
+        if (model.profileName == 'Collection Management') {
+            model.approvalPermission.roleTimeVariance = TRUE;
+        }
+        
         
         result.returnedData = model;
         return result;
@@ -52,6 +63,7 @@ global class slwcUserService {
         @AuraEnabled public string id {get; set;}
         @AuraEnabled public string name {get; set;}
         @AuraEnabled public string profileName {get; set;}
+        @AuraEnabled public List<string> collectionOperationNames {get; set;}
         @AuraEnabled public objectPermissionModel slotPermission {get; set;}
         @AuraEnabled public approvalPermissionModel approvalPermission {get; set;}
     }

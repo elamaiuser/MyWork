@@ -13,11 +13,6 @@
     <columns>sked_Submitted_By__c</columns>
     <filterScope>Everything</filterScope>
     <filters>
-        <field>sked_Drive_Date__c</field>
-        <operation>greaterOrEqual</operation>
-        <value>12/18/2023</value>
-    </filters>
-    <filters>
         <field>sked_Status__c</field>
         <operation>equals</operation>
         <value>Not Submitted</value>

@@ -1,0 +1,26 @@
+<template>
+
+    <section role="dialog" tabindex="-1" class={customClass.modal}>
+        <lightning-spinner if:true={showSpinner} class="spins" size="medium"></lightning-spinner>
+
+        <div class="slds-modal__container">
+            <div class="slds-modal__content">
+                <article class="slds-card slds-grow slds-scrollable_y slds-grow">
+                    <div class="slds-card__body slds-card__body_inner" style="height: 100vh;">
+                        <c-slwc-call-out-modal
+                            full-screen
+                            save-btn-label="Save & Dispatch"
+                            onsave={handleSaveCallOutModal}
+                            onback={handleBackCallOutModal}
+                            drive-date={selectedAllocationData.callOutModalData.driveDate}
+                            resource-id={selectedAllocationData.callOutModalData.resourceId}
+                            duration={selectedAllocationData.callOutModalData.duration}
+                            show-back-button
+                            is-open
+                        ></c-slwc-call-out-modal>
+                    </div>
+                </article>
+            </div>
+        </div>
+    </section>
+</template>

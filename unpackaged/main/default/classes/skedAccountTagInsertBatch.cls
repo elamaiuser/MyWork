@@ -45,7 +45,7 @@ global class skedAccountTagInsertBatch implements Database.Batchable<sked__Accou
 
         List<sked_Drive_Shift__c> driveShifts = [
             SELECT Id, Name, sked_Drive_Account__c, sked_Drive__c, sked_Drive__r.sked_Drive_Date__c,
-            (SELECT Id, Name, sked_Tag__c 
+            (SELECT Id, Name, sked_Tag__c, sked_Minimum_Quantity__c
              FROM sked_Drive_Shift_Tags__r)
             FROM sked_Drive_Shift__c
             WHERE sked_Drive_Account__c IN :accountIds
@@ -53,7 +53,24 @@ global class skedAccountTagInsertBatch implements Database.Batchable<sked__Accou
             AND sked_Drive__r.sked_Drive_Date__c >= TODAY
         ];
 
+        Map<Id, List<sked_Drive_Shift__c>> driveShiftsByDriveAccount = new Map<Id, List<sked_Drive_Shift__c>>();
+        Map<Id, Set<Id>> tagsIdsByDriveShiftId = new Map<Id, Set<Id>>();
         for (sked_Drive_Shift__c driveShift : driveShifts) {
+            // DriveShiftsByAccount
+            List<sked_Drive_Shift__c> driveShiftsForAccount = driveShiftsByDriveAccount.get(driveShift.sked_Drive_Account__c);
+            if (driveShiftsForAccount == null) {
+                driveShiftsForAccount = new List<sked_Drive_Shift__c>();
+            }
+            driveShiftsForAccount.add(driveShift);
+            driveShiftsByDriveAccount.put(driveShift.sked_Drive_Account__c, driveShiftsForAccount);
+
+            // TagsIdsByDriveShiftId
+            Set<Id> tagIdsForDriveShift = new Set<Id>();
+            for (sked_Drive_Shift_Tag__c driveShiftTag : driveShift.sked_Drive_Shift_Tags__r) {
+                tagIdsForDriveShift.add(driveShiftTag.sked_Tag__c);
+            }
+            tagsIdsByDriveShiftId.put(driveShift.Id, tagIdsForDriveShift);
+
             driveShiftIds.add(driveShift.Id);
             driveIds.add(driveShift.sked_Drive__c);
             
@@ -69,24 +86,37 @@ global class skedAccountTagInsertBatch implements Database.Batchable<sked__Accou
         }
 
         if (!nonRequiredTags.isEmpty()) {
-            List<sked_Drive_Shift_Tag__c> driveShiftTagsToInsert = new List<sked_Drive_Shift_Tag__c>();
+            List<sked_Drive_Shift_Tag__c> driveShiftTagsToUpsert = new List<sked_Drive_Shift_Tag__c>();
             
             for (sked__Account_Tag__c accountTag : nonRequiredTags) {
                 sked__Tag__c tag = tagById.get(accountTag.sked__Tag__c);
-
-                for (sked_Drive_Shift__c driveShift : driveShifts) {
-                    if (driveShift.sked_Drive_Account__c == accountTag.sked__Account__c) {
-                        driveShiftTagsToInsert.add(new sked_Drive_Shift_Tag__c(
-                            sked_Tag__c = accountTag.sked__Tag__c,
-                            sked_Drive_Shift__c = driveShift.Id,
-                            sked_Minimum_Quantity__c = accountTag.sked_Minimum_Quantity__c
-                        ));
+                List<sked_Drive_Shift__c> affectedDriveShifts = driveShiftsByDriveAccount.get(accountTag.sked__Account__c);
+                if (affectedDriveShifts != null && !affectedDriveShifts.isEmpty()) {
+                    for (sked_Drive_Shift__c driveShift : affectedDriveShifts) {
+                        Set<Id> tagIdsForDriveShift = tagsIdsByDriveShiftId.get(driveShift.Id);
+                        if (tagIdsForDriveShift == null || !tagIdsForDriveShift.contains(tag.Id)) {
+                                driveShiftTagsToUpsert.add(new sked_Drive_Shift_Tag__c(
+                                sked_Tag__c = accountTag.sked__Tag__c,
+                                sked_Drive_Shift__c = driveShift.Id,
+                                sked_Minimum_Quantity__c = accountTag.sked_Minimum_Quantity__c
+                            ));
+                        } else {
+                            for (sked_Drive_Shift_Tag__c driveShiftTag : driveShift.sked_Drive_Shift_Tags__r) {
+                                if (driveShiftTag.sked_Tag__c == accountTag.sked__Tag__c) {
+                                    if (accountTag.sked_Minimum_Quantity__c > driveShiftTag.sked_Minimum_Quantity__c) {
+                                        driveShiftTag.sked_Minimum_Quantity__c = accountTag.sked_Minimum_Quantity__c;
+                                        driveShiftTagsToUpsert.add(driveShiftTag);
+                                    }
+                                    break;
+                                }
+                            }
+                        }
                     }
                 }
             }
 
-            if (!driveShiftTagsToInsert.isEmpty()) {
-                insert driveShiftTagsToInsert;
+            if (!driveShiftTagsToUpsert.isEmpty()) {
+                upsert driveShiftTagsToUpsert;
             }
         }
 

@@ -1120,17 +1120,12 @@ class SlwcLinkedDrivesAvailator {
                 if(!resourceTag.tag) return;
 
                 const tagStartDateValid = resourceTag.startDate <= job.driveDate;
-                const tagExpired = resourceTag.expiryDate && job.driveDate > resourceTag.expiryDate;
                 const tagRestricted = resourceTag.restrictionStartDate && resourceTag.restrictionEndDate && 
                   resourceTag.restrictionStartDate <= job.driveDate && resourceTag.restrictionEndDate >= job.driveDate;
 
-                if (tagStartDateValid && !tagExpired && !tagRestricted) {
+                if (tagStartDateValid && !tagRestricted) {
                   validTagNames.push(resourceTag.tag.name);
                 } else {
-                  if (tagExpired) {
-                    expiredTagNames.push(resourceTag.tag.name);
-                  } 
-
                   if (tagRestricted) {
                     restrictedTagNames.push(resourceTag.tag.name);
                   }

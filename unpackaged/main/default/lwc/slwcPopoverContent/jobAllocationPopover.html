@@ -54,6 +54,7 @@
                 </div>
 
                 <strong if:true={popoverData.locked}>Locked</strong>
+                <strong if:true={popoverData.guarded}>Guarded</strong>
             </div>
 
             <div class="slds-media__body direction-ltr">
@@ -84,39 +85,38 @@
 
             <div class="slds-m-top_x-small trade-shift-section" if:true={popoverData.hasDriveShiftTrade}>
                 <div class="header">
-                    <div>Traded Shift</div>
-                    <div class={popoverData.driveShiftTrade.status}>{popoverData.driveShiftTrade.status}</div>
+                    <div>Traded Event</div>
                 </div>
                 <dl class="slds-dl_horizontal content">
-                    <dt class="slds-dl_horizontal__label slds-text-color_weak slds-m-bottom_xx-small">Drive Shift:</dt>
-                    <dd class="slds-dl_horizontal__detail  slds-m-bottom_xx-small">
-                        <a if:false={popoverData.isRequestingStaff} href={popoverData.tradingDriveShiftUrl} target="_blank">
-                            {popoverData.driveShiftTrade.tradingStaffDriveShiftName}
-                        </a>
-                        <a if:true={popoverData.isRequestingStaff} href={popoverData.requestingDriveShiftUrl} target="_blank">
-                            {popoverData.driveShiftTrade.requestingStaffDriveShiftName}
-                        </a>
-                    </dd>
-                    <dt class="slds-dl_horizontal__label slds-text-color_weak slds-m-bottom_xx-small">Drive:</dt>
-                    <dd class="slds-dl_horizontal__detail  slds-m-bottom_xx-small">
-                        <span if:false={popoverData.isRequestingStaff}>{popoverData.driveShiftTrade.tradingStaffDriveName} - {popoverData.driveShiftTrade.tradingStaffDriveUfid}</span>
-                        <span if:true={popoverData.isRequestingStaff}>{popoverData.driveShiftTrade.requestingStaffDriveName} - {popoverData.driveShiftTrade.requestingStaffDriveUfid}</span>
-                    </dd>
                     <dt class="slds-dl_horizontal__label slds-text-color_weak slds-m-bottom_xx-small">Requesting Staff:</dt>
                     <dd class="slds-dl_horizontal__detail  slds-m-bottom_xx-small">
-                        <a href={popoverData.requestingStaffUrl} target="_blank">{popoverData.driveShiftTrade.requestingStaffName}</a>
+                        {popoverData.driveShiftTrade.requestingStaffName}
                     </dd>
+                    <dt class="slds-dl_horizontal__label slds-text-color_weak slds-m-bottom_xx-small">Event:</dt>
+                    <dd class="slds-dl_horizontal__detail  slds-m-bottom_xx-small">
+                        {popoverData.driveShiftTrade.requestingStaffTradingEventName}
+                    </dd>
+                    <dt class="slds-dl_horizontal__label slds-text-color_weak slds-m-bottom_xx-small">Event Date:</dt>
+                    <dd class="slds-dl_horizontal__detail  slds-m-bottom_xx-small">
+                        <lightning-formatted-date-time value={popoverData.driveShiftTrade.requestingStaffTradingEventDate} year="numeric" month="short" day="2-digit" time-zone="UTC"></lightning-formatted-date-time>
+                    </dd>
+                    <div class="slds-has-divider_top slds-m-vertical_x-small slds-size_1-of-1"></div>
                     <dt class="slds-dl_horizontal__label slds-text-color_weak slds-m-bottom_xx-small">Trading Staff:</dt>
                     <dd class="slds-dl_horizontal__detail  slds-m-bottom_xx-small">
-                        <a href={popoverData.tradingStaffUrl} target="_blank">{popoverData.driveShiftTrade.tradingStaffName}</a>
+                        {popoverData.driveShiftTrade.tradingStaffName}
                     </dd>
-                    <dt class="slds-dl_horizontal__label slds-text-color_weak slds-m-bottom_xx-small">Trade Initiated Date:</dt>
+                    <dt class="slds-dl_horizontal__label slds-text-color_weak slds-m-bottom_xx-small">Event:</dt>
                     <dd class="slds-dl_horizontal__detail  slds-m-bottom_xx-small">
-                        <lightning-formatted-date-time value={popoverData.driveShiftTrade.createdDate} year="numeric" month="numeric" day="numeric" hour="numeric"
-                                                                minute="2-digit" time-zone={popoverData.timezoneSidId}></lightning-formatted-date-time>
+                        {popoverData.driveShiftTrade.tradingStaffTradingEventName}
                     </dd>
-                    <dt class="slds-dl_horizontal__label slds-text-color_weak slds-m-bottom_xx-small">APS Notes:</dt>
-                    <div class="white-space_prewrap">{popoverData.driveShiftTrade.apsNotes}</div>
+                    <dt class="slds-dl_horizontal__label slds-text-color_weak slds-m-bottom_xx-small">Event Date:</dt>
+                    <dd class="slds-dl_horizontal__detail  slds-m-bottom_xx-small">
+                        <lightning-formatted-date-time value={popoverData.driveShiftTrade.tradingStaffTradingEventDate} year="numeric" month="short" day="2-digit" time-zone="UTC"></lightning-formatted-date-time>
+                    </dd>
+                    <template if:true={popoverData.driveShiftTrade.apsNotes}>
+                        <dt class="slds-dl_horizontal__label slds-text-color_weak slds-m-bottom_xx-small">APS Notes:</dt>
+                        <div class="white-space_prewrap">{popoverData.driveShiftTrade.apsNotes}</div>
+                    </template>
                 </dl>
             </div>
         </div>
@@ -124,7 +124,7 @@
         <template if:false={readOnly}>
             <footer class="slds-popover__footer slds-text-align_right">
                 <div class="slds-grid slds-wrap slds-grid--align-spread direction-rtl">
-                    <template if:false={popoverData.locked}>
+                    <template if:false={popoverData.isLocked}>
                         <span if:true={isPerson}>
                             <button class="slds-button direction-ltr"
                                 data-action="unallocate"
@@ -149,14 +149,30 @@
                             <lightning-icon icon-name="utility:unlock" class="slds-current-color" size="xx-small"></lightning-icon>&nbsp;Unlock
                         </button>
                     </span>
-                    <span if:false={popoverData.locked}>
+                    <span if:true={popoverData.guarded}>
                         <button class="slds-button direction-ltr"
-                            data-action="lock"
+                            data-action="guard"
                             onclick={handleJobAllocationPopoverAction}>
-                            <lightning-icon icon-name="utility:lock" class="slds-current-color" size="xx-small"></lightning-icon>&nbsp;Lock
+                            <lightning-icon icon-name="utility:unlock" class="slds-current-color" size="xx-small"></lightning-icon>&nbsp;Unguard
                         </button>
                     </span>
-                    <template if:false={popoverData.locked}>
+                    <template if:false={popoverData.isLocked}>
+                        <span>
+                            <button class="slds-button direction-ltr"
+                                data-action="lock"
+                                onclick={handleJobAllocationPopoverAction}>
+                                <lightning-icon icon-name="utility:lock" class="slds-current-color" size="xx-small"></lightning-icon>&nbsp;Lock
+                            </button>
+                        </span>
+                        <span>
+                            <button class="slds-button direction-ltr"
+                                data-action="guard"
+                                onclick={handleJobAllocationPopoverAction}>
+                                <lightning-icon icon-name="utility:shield" class="slds-current-color" size="xx-small"></lightning-icon>&nbsp;Guard
+                            </button>
+                        </span>
+                    </template>
+                    <template if:false={popoverData.isLocked}>
                         <span class="btn-delete">
                             <button class="slds-button direction-ltr"
                                 data-action="unallocate"

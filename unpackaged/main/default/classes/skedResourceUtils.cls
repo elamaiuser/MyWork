@@ -45,4 +45,18 @@ public class skedResourceUtils {
 
         return resourceBelongsToCollectionOp;
     }
+
+    public static string getResourceTimezonesidId(string resourceId) {
+        string result = UserInfo.getTimeZone().getID();
+        List<sked__Resource__c> resourceQuery = [
+            SELECT Id, sked__Primary_Region__r.sked__Timezone__c
+            FROM sked__Resource__c
+            WHERE Id = :resourceId
+        ];
+        
+        if (!resourceQuery.isEmpty()) {
+            result = resourceQuery.get(0).sked__Primary_Region__r.sked__Timezone__c;
+        }
+        return result;
+    }
 }

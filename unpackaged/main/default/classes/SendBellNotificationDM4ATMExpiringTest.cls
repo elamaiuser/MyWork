@@ -63,6 +63,7 @@ public class SendBellNotificationDM4ATMExpiringTest {
         	insert atmList;
             bsf_constants.isTeamMemberCreatedFromBackend = false;
         Test.startTest();
+        SendBellNotificationDM4ATMExpiringHelper.SendBellNotificationTODM(atmList);
         BellNotificationDM4ATMExpiryScheduler amExpBellNotificationSch = new BellNotificationDM4ATMExpiryScheduler(100);
 		System.schedule('Notify DM 4 AM Expiry Batch1', '0 30 0 * * ?', amExpBellNotificationSch );
         

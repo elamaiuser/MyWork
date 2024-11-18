@@ -1,4 +1,4 @@
-import { MAPPING_TYPE, fieldConfigModel, mappingConfigModel }  from './_base.js';
+import { MAPPING_TYPE, mappingConfigModel }  from './_base.js';
 
 export class SiteFeedbackMappingConfigFactory {
   constructor() {}
@@ -9,9 +9,11 @@ export class SiteFeedbackMappingConfigFactory {
       mappingConfig.objectType = 'siteFeedback';
 
       mappingConfig.addFieldConfig('Id', 'id', MAPPING_TYPE.direct);
+      mappingConfig.addFieldConfig('sked_Role_Time_Variance__c', 'roleTimeVarianceId', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('Name', 'name', MAPPING_TYPE.direct);
-      mappingConfig.addFieldConfig('sked_Amount__c', 'amount', MAPPING_TYPE.direct);
+      mappingConfig.addFieldConfig('sked_Amount__c', 'varianceAmount', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_Buffer_Type__c', 'bufferType', MAPPING_TYPE.direct);
+      mappingConfig.addFieldConfig('sked_Days_Of_Week__c', 'daysOfWeek', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_Designated_Approver__c', 'designatedApproverId', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_Designated_Approver__r.Name', 'designatedApproverName', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_DM_Approver__c', 'dmApproverId', MAPPING_TYPE.direct);
@@ -29,10 +31,13 @@ export class SiteFeedbackMappingConfigFactory {
       mappingConfig.addFieldConfig('sked_Status__c', 'status', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_Variance_Applies_To__c', 'varianceAppliesTo', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_Variance_Type__c', 'varianceType', MAPPING_TYPE.direct);
+      mappingConfig.addFieldConfig('sked_Variance_Type_Other__c', 'varianceTypeOther', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('CreatedBy', 'createdBy', MAPPING_TYPE.related, 'User');
       mappingConfig.addFieldConfig('CreatedBy.Name', 'createdByName', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('CreatedDate', 'createdDate', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('LastModifiedDate', 'lastModifiedDate', MAPPING_TYPE.direct);
+
+      mappingConfig.addFieldConfig('sked_Role_Time_Variance__r', 'roleTimeVariance', MAPPING_TYPE.related, 'sked_Role_Time_Variance__c');
 
       return mappingConfig;
   }

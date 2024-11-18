@@ -5,7 +5,7 @@
 * ***************************************************************************
 * 08/29/2023				  Balaji N					 Logic for HRP-10888(Start Method: added orderby on Team_Code__ABM_Code__c; Finish Method: removed start,end parameters and added tax version on BSF_Batch_AccountPortfolioAssignment)
 * 09/27/2023				  Balaji N					 Logic for HRP-10890(Method call: BSF_Utilities.metaDataupdate)
-*
+* 05/15/2024                  Balaji N                   Logic for HRP-12054
 *****************************************************************************
 */
 global class BSF_Batch_TaxonomyEndDateHandler  implements Database.Batchable<sObject>,Database.Stateful
@@ -140,6 +140,8 @@ system.debug('oldTaxVersionKey'+oldTaxVersionKey);
     global void finish(Database.BatchableContext BC) 
     {
         system.debug('The BSF_Batch_TaxonomyEndDateHandler is completed');
+        if(this.recordType != BSF_Constants.BIO_COLLECTION_RECORD_TYPE)//HRP-12054
+        {
         BatchByPassSettings__mdt accPortbatchBypass = BSF_Utilities.metaDataupdate(null,null,null,'Account_Portfolio_Assignment_Batch');//HRP-10890
             
         if(this.runAssignmentBatch)
@@ -155,12 +157,13 @@ system.debug('oldTaxVersionKey'+oldTaxVersionKey);
             system.debug('BatchSize----->'+integer.valueof(accPortbatchBypass.Batch_Size__c));
             BatchByPassSettings__mdt batchBypass = BSF_Utilities.metaDataupdate(null,System.now(),false,'Opportunity_Team_Sync_Batch');//HRP-10890
         }
-        
+        }
         if(this.recordType == BSF_Constants.BIO_COLLECTION_RECORD_TYPE)
         {
             if(!test.isRunningTest())
             {
-                Database.executebatch(new skedCollectionsZipCodeBatch(),200);
+                //Database.executebatch(new skedCollectionsZipCodeBatch(),200);//HRP-12054
+                Database.executebatch(new BSF_Batch_GenerateCollectionZipcode (this.taxVer,null,null),50);//HRP-12054
             }
         }
     }          

@@ -42,20 +42,14 @@ global class skedJobAllocationPostProcessBatch implements Database.Batchable<sOb
     global void finish(Database.BatchableContext BC) {
         skedJobAllocationHandler.isRunningPostProcess = FALSE;
         if (!this.newExceptionIds.isEmpty()) {
-            List<sked_Notification_Setting__mdt> skedNotificationSettings = [SELECT Id
-                                                                             FROM sked_Notification_Setting__mdt
-                                                                             WHERE sked_Target_SObject__c = 'skedHC__Exception__c'
-                                                                             AND sked_Trigger__c = 'Insert'
-                                                                             AND sked_Active__c = TRUE];
-            if (!skedNotificationSettings.isEmpty()) {
-                Map<Id, Set<Id>> map_settingId_recordIds = new Map<Id, Set<Id>>();
-                for (sked_Notification_Setting__mdt skedNotificationSetting : skedNotificationSettings) {
-                    map_settingId_recordIds.put(skedNotificationSetting.Id, this.newExceptionIds);
-                }
-                if (!Test.isRunningTest()) {
-                    Database.executeBatch(new skedSendNotificationBatch(map_settingId_recordIds), 20);
-                }
+            List<sObject> newExceptions = new List<SObject>();
+            for (Id exceptionId : this.newExceptionIds) {
+                skedHC__Exception__c ex = new skedHC__Exception__c(Id = exceptionId);
+                newExceptions.add(ex);
             }
+
+            skedNotificationService notificationService = new skedTriggerActionNotificationService('Insert', 'skedHC__Exception__c');
+            notificationService.generateNotifications(newExceptions);
         }
     }
 
@@ -68,36 +62,19 @@ global class skedJobAllocationPostProcessBatch implements Database.Batchable<sOb
             }
         }
         if (!allocationsNeedToCaptureException.isEmpty()) {
-            exceptionMasterModel master = intializeMasterModel(allocationsNeedToCaptureException);
+            skedExceptionMasterModel master = initializeMasterModel(allocationsNeedToCaptureException);
             
             List<skedHC__Exception__c> exceptionLog = new List<skedHC__Exception__c>();
-            
-            List<skedHC__Exception__c> geographicExceptionLog = captureTravelTimeExceptionLog(master);
-            exceptionLog.addAll(geographicExceptionLog);
-            
-            List<skedHC__Exception__c> turnaroundTimeExceptionLog = captureTurnaroundTimeExceptionLog(master);
-            exceptionLog.addAll(turnaroundTimeExceptionLog);
-            
-            List<skedHC__Exception__c> requiredTagExceptionLog = captureRequiredTagExceptionLog(master);
-            exceptionLog.addAll(requiredTagExceptionLog);
-
-            List<skedHC__Exception__c> moreThan14hrsExceptionLog = capture14hrsMoreExceptionLog(master);
-            exceptionLog.addAll(moreThan14hrsExceptionLog);
-
-            List<skedHC__Exception__c> blacklistExceptionLog = captureBlacklistExceptionLog(master);
-            exceptionLog.addAll(blacklistExceptionLog);
-
-            List<skedHC__Exception__c> driveShiftExceptionLog = captureDriveShiftExceptionLog(master);
-            exceptionLog.addAll(driveShiftExceptionLog);
-
-            List<skedHC__Exception__c> nonWorkingExceptionLog = captureNonWorkingExceptionLog(master);
-            exceptionLog.addAll(nonWorkingExceptionLog);
-
-            List<skedHC__Exception__c> invalidCollectionOp = captureInvalidCollectionOp(master);
-            exceptionLog.addAll(invalidCollectionOp);
-
-            List<skedHC__Exception__c> roleRestrictedExceptionLog = captureRoleRestrictedExceptionLog(master);
-            exceptionLog.addAll(roleRestrictedExceptionLog);
+            exceptionLog.addAll(captureTravelTimeExceptionLog(master));
+            exceptionLog.addAll(captureTurnaroundTimeExceptionLog(master));
+            exceptionLog.addAll(captureRequiredTagExceptionLog(master));
+            exceptionLog.addAll(capture14hrsMoreExceptionLog(master));
+            exceptionLog.addAll(captureBlacklistExceptionLog(master));
+            exceptionLog.addAll(captureDriveShiftExceptionLog(master));
+            exceptionLog.addAll(captureNonWorkingExceptionLog(master));
+            exceptionLog.addAll(captureInvalidCollectionOp(master));
+            exceptionLog.addAll(captureRoleRestrictedExceptionLog(master));
+            exceptionLog.addAll(captureLinkedDriveMismatchedAssetExceptionLog(master));
 
             if (!exceptionLog.isEmpty()) {
                 upsert exceptionLog;
@@ -296,7 +273,9 @@ global class skedJobAllocationPostProcessBatch implements Database.Batchable<sOb
 
         Set<string> driveIds = new Set<string>();
         for (sked__Job_Allocation__c newRecord : newRecords) {
-            driveIds.add(newRecord.sked__Job__r.sked_Drive__c);
+            if (newRecord.sked_Resource_Role__c != NULL) {
+                driveIds.add(newRecord.sked__Job__r.sked_Drive__c);
+            }
         }
         List<sked_Operation_Record__c> operationRecords = [SELECT Id, sked_Drive__c
                                                           FROM sked_Operation_Record__c
@@ -449,8 +428,8 @@ global class skedJobAllocationPostProcessBatch implements Database.Batchable<sOb
     }
     
     /**************************************** EXCEPTION LOG PRIVATE METHOD ********************************************/
-    private exceptionMasterModel intializeMasterModel(List<sked__Job_Allocation__c> skedAllocations) {
-        exceptionMasterModel master = new exceptionMasterModel();
+    private skedExceptionMasterModel initializeMasterModel(List<sked__Job_Allocation__c> skedAllocations) {
+        skedExceptionMasterModel master = new skedExceptionMasterModel();
         master.jobAllocations = skedAllocations;
         Set<Id> jobIds = new Set<Id>();
         Set<Id> resourceIds = new Set<Id>();
@@ -458,13 +437,17 @@ global class skedJobAllocationPostProcessBatch implements Database.Batchable<sOb
             jobIds.add(skedAllocation.sked__Job__c);
             resourceIds.add(skedAllocation.sked__Resource__c);
         }
-        master.mapJob = new Map<Id, sked__Job__c>([SELECT Id, Name, sked__Start__c, sked__Finish__c, sked__GeoLocation__c, sked__Type__c, sked__Duration__c,
-                                                   sked_Drive__c, sked_Drive__r.sked_Account__c, sked_Drive__r.sked_Drive_Site__c, sked_Drive_Shift__c,
-                                                   sked_Start_Date__c, sked_Finish_Date__c, sked_Drive__r.sked_Drive_Date__c, sked_Drive__r.sked_Collection_Operation__c,
-                                                   (SELECT Id, sked__Tag__c, sked__Tag__r.Name
-                                                    FROM sked__JobTags__r)
-                                                   FROM sked__Job__c
-                                                   WHERE Id IN :jobIds]);
+        master.mapJob = new Map<Id, sked__Job__c>([
+            SELECT Id, Name, sked__Start__c, sked__Finish__c, sked__GeoLocation__c, sked__Type__c, sked__Duration__c,
+            sked_Drive__c, sked_Drive__r.sked_Account__c, sked_Drive__r.sked_Drive_Site__c, sked_Drive_Shift__c,
+            sked_Start_Date__c, sked_Finish_Date__c, sked_Drive__r.sked_Drive_Date__c, sked_Drive__r.sked_Collection_Operation__c,
+            sked_Drive__r.sked_Linked_Drives__c, sked_Asset_Type__c,
+            (SELECT Id, sked__Tag__c, sked__Tag__r.Name
+            FROM sked__JobTags__r)
+            FROM sked__Job__c
+            WHERE Id IN :jobIds
+        ]);
+
 		Set<Id> accountIds = new Set<Id>();
         Set<Id> locationIds = new Set<Id>();
         for (sked__Job__c skedJob : master.mapJob.values()) {
@@ -478,36 +461,37 @@ global class skedJobAllocationPostProcessBatch implements Database.Batchable<sOb
             }
         }
         
-        master.mapResource = new Map<Id, sked__Resource__c>(
-            [SELECT Id, sked_Maximum_Travel_Radius__c, sked_Turnaround_Time__c, sked__Resource_Type__c,
-                sked__GeoLocation__c, sked__Primary_Region__r.sked__Timezone__c, sked_Max_Travel_Time__c,
-                sked__Primary_Region__r.sked_Biomed_Collection_Op_Center__c,
-                (SELECT Id, sked__Tag__c, sked__Tag__r.Name, sked_Expiry_Date__c, sked_Start_Date__c, sked_Role_Status__c, sked_Restriction_Start_Date__c, sked_Restriction_End_Date__c
-                FROM sked__ResourceTags__r
-                WHERE (sked_Role_Status__c = NULL OR sked_Role_Status__c = :skedConstants.TAG_ROLE_STATUS_ACTIVE)
-                ),
-                (SELECT Id, sked__Account__c, sked__Resource__c
-                FROM sked__Account_Resource_Scores__r
-                WHERE sked__Account__c IN :accountIds
-                AND sked__Blacklisted__c = TRUE
-                ),
-                (SELECT Id, sked__Location__c, sked__Resource__c
-                FROM sked__Location_Resource_Scores__r
-                WHERE sked__Location__c IN :locationIds
-                AND sked__Blacklisted__c = TRUE
-                ),
-                (SELECT Id, sked_Biomed_Collection_Op_Center__c, sked_Start_Date__c, sked_End_Date__c
-                FROM sked_Resource_Biomed_Collection_Ops__r
-                ),
-                (SELECT Id, sked_Collection_Operation__c, sked__Start__c, sked__End__c, sked_Start_Date__c, sked_End_Date__c
-                FROM sked__Resource_Overrides__r
-                )
-                FROM sked__Resource__c
-                WHERE Id IN :resourceIds]);
+        master.mapResource = new Map<Id, sked__Resource__c>([
+            SELECT Id, sked_Maximum_Travel_Radius__c, sked_Turnaround_Time__c, sked__Resource_Type__c,
+            sked__GeoLocation__c, sked__Primary_Region__r.sked__Timezone__c, sked_Max_Travel_Time__c,
+            sked__Primary_Region__r.sked_Biomed_Collection_Op_Center__c, sked_Asset_Type__c,
+            (SELECT Id, sked__Tag__c, sked__Tag__r.Name, sked_Expiry_Date__c, sked_Start_Date__c, sked_Role_Status__c, sked_Restriction_Start_Date__c, sked_Restriction_End_Date__c
+            FROM sked__ResourceTags__r
+            WHERE (sked_Role_Status__c = NULL OR sked_Role_Status__c = :skedConstants.TAG_ROLE_STATUS_ACTIVE)
+            ),
+            (SELECT Id, sked__Account__c, sked__Resource__c
+            FROM sked__Account_Resource_Scores__r
+            WHERE sked__Account__c IN :accountIds
+            AND sked__Blacklisted__c = TRUE
+            ),
+            (SELECT Id, sked__Location__c, sked__Resource__c
+            FROM sked__Location_Resource_Scores__r
+            WHERE sked__Location__c IN :locationIds
+            AND sked__Blacklisted__c = TRUE
+            ),
+            (SELECT Id, sked_Biomed_Collection_Op_Center__c, sked_Start_Date__c, sked_End_Date__c
+            FROM sked_Resource_Biomed_Collection_Ops__r
+            ),
+            (SELECT Id, sked_Collection_Operation__c, sked__Start__c, sked__End__c, sked_Start_Date__c, sked_End_Date__c
+            FROM sked__Resource_Overrides__r
+            )
+            FROM sked__Resource__c
+            WHERE Id IN :resourceIds
+        ]);
     	return master;
     }
     
-    private List<skedHC__Exception__c> captureTravelTimeExceptionLog(exceptionMasterModel master) {
+    private List<skedHC__Exception__c> captureTravelTimeExceptionLog(skedExceptionMasterModel master) {
         List<skedHC__Exception__c> exceptionLog = new List<skedHC__Exception__c>();
         for (sked__Job_Allocation__c skedAllocation : master.jobAllocations) {
             sked__Resource__c resource = master.mapResource.get(skedAllocation.sked__Resource__c);
@@ -527,7 +511,7 @@ global class skedJobAllocationPostProcessBatch implements Database.Batchable<sOb
         return exceptionLog;
     }
     
-    private List<skedHC__Exception__c> captureTurnaroundTimeExceptionLog(exceptionMasterModel master) {
+    private List<skedHC__Exception__c> captureTurnaroundTimeExceptionLog(skedExceptionMasterModel master) {
         List<skedHC__Exception__c> exceptionLog = new List<skedHC__Exception__c>();
         
         DateTime minTime, maxTime;
@@ -608,7 +592,7 @@ global class skedJobAllocationPostProcessBatch implements Database.Batchable<sOb
         return exceptionLog;
     }
     
-    private List<skedHC__Exception__c> captureRequiredTagExceptionLog(exceptionMasterModel master) {
+    private List<skedHC__Exception__c> captureRequiredTagExceptionLog(skedExceptionMasterModel master) {
         List<string> driverTagNames = new List<string>();
         driverTagNames.add(TAG_DRIVER);
         driverTagNames.add(TAG_DRIVER_DOT);
@@ -630,16 +614,10 @@ global class skedJobAllocationPostProcessBatch implements Database.Batchable<sOb
                     sked__Resource__c resource = master.mapResource.get(skedAllocation.sked__Resource__c);
                     
                     Set<Id> resourceTagIds = new Set<Id>();
-                    Set<Id> expiredTagIds = new Set<Id>();
                     if (resource.sked__ResourceTags__r != NULL) {
                         for (sked__Resource_Tag__c resourceTag : resource.sked__ResourceTags__r) {
                             if (resourceTag.sked_Start_Date__c <= job.sked_Drive__r.sked_Drive_Date__c) {
-                                if (resourceTag.sked_Expiry_Date__c != NULL && job.sked_Drive__r.sked_Drive_Date__c > resourceTag.sked_Expiry_Date__c) {
-                                    expiredTagIds.add(resourceTag.sked__Tag__c);
-                                }
-                                else {
-                                    resourceTagIds.add(resourceTag.sked__Tag__c);
-                                }
+                                resourceTagIds.add(resourceTag.sked__Tag__c);
                             }
                         }
                     }
@@ -660,11 +638,7 @@ global class skedJobAllocationPostProcessBatch implements Database.Batchable<sOb
                             }
                         }
                         
-                        if (expiredTagIds.contains(tagId)) {
-                            skedHC__Exception__c newException = skedExceptionUtils.generateException(skedAllocation, skedConstants.EXCEPTION_CODE_EXPIRED_REQUIRED_TAG, 'Expired required tag ' + tagName);
-                            exceptionLog.add(newException);
-                        }
-                        else if (!resourceTagIds.contains(tagId)) {
+                        if (!resourceTagIds.contains(tagId)) {
                             skedHC__Exception__c newException = skedExceptionUtils.generateException(skedAllocation, skedConstants.EXCEPTION_CODE_MISSING_REQUIRED_TAG, 'Missing required tag ' + tagName);
                             exceptionLog.add(newException);
                         }
@@ -675,7 +649,7 @@ global class skedJobAllocationPostProcessBatch implements Database.Batchable<sOb
         return exceptionLog;
     }
 
-    private List<skedHC__Exception__c> capture14hrsMoreExceptionLog(exceptionMasterModel master) {
+    private List<skedHC__Exception__c> capture14hrsMoreExceptionLog(skedExceptionMasterModel master) {
         integer maxCDLDOTDurationInMinutes = skedSetting.instance.Admin.maxCDLDOTDuration * 60;
 
         List<sked_Resource_Role_Group__c> resourceRoleGroups = [SELECT Id, sked_Resource_Role_Group__c, sked_Resource_Roles__c
@@ -700,7 +674,7 @@ global class skedJobAllocationPostProcessBatch implements Database.Batchable<sOb
         return exceptionLog;
     }
     
-    private List<skedHC__Exception__c> captureBlacklistExceptionLog(exceptionMasterModel master) {
+    private List<skedHC__Exception__c> captureBlacklistExceptionLog(skedExceptionMasterModel master) {
         List<skedHC__Exception__c> exceptionLog = new List<skedHC__Exception__c>();
         
         Set<string> blacklistedResources = new Set<string>();
@@ -735,7 +709,7 @@ global class skedJobAllocationPostProcessBatch implements Database.Batchable<sOb
         return exceptionLog;
     }
     
-    private List<skedHC__Exception__c> captureDriveShiftExceptionLog(exceptionMasterModel master) {
+    private List<skedHC__Exception__c> captureDriveShiftExceptionLog(skedExceptionMasterModel master) {
         List<skedHC__Exception__c> exceptionLog = new List<skedHC__Exception__c>();
         
         Set<Id> driveShiftIds = new Set<Id>();
@@ -776,7 +750,7 @@ global class skedJobAllocationPostProcessBatch implements Database.Batchable<sOb
             }
             
             Map<Id, sked__Resource__c> mapResource = new Map<Id, sked__Resource__c>([SELECT Id,
-                                                                                     (SELECT Id, sked__Tag__c, sked_Expiry_Date__c, sked_Start__c, sked_Role_Status__c
+                                                                                     (SELECT Id, sked__Tag__c, sked_Start__c, sked_Role_Status__c
                                                                                       FROM sked__ResourceTags__r
                                                                                       WHERE (sked_Role_Status__c = NULL OR sked_Role_Status__c = :skedConstants.TAG_ROLE_STATUS_ACTIVE))
                                                                                      FROM sked__Resource__c
@@ -792,9 +766,8 @@ global class skedJobAllocationPostProcessBatch implements Database.Batchable<sOb
                     sked__Resource__c resource = mapResource.get(driveShiftAllocation.sked__Resource__c);
                     for (sked__Resource_Tag__c resourceTag : resource.sked__ResourceTags__r) {
                         if (resourceTag.sked__Tag__c == driveShiftTag.sked_Tag__c) {
-                            boolean isNotExpired = resourceTag.sked_Start__c <= driveShiftAllocation.sked__Start__c
-                                && (resourceTag.sked_Expiry_Date__c == NULL || driveShiftAllocation.sked__Job__r.sked_Drive__r.sked_Drive_Date__c <= resourceTag.sked_Expiry_Date__c);
-                            if (isNotExpired) {
+                            boolean isValid = resourceTag.sked_Start__c <= driveShiftAllocation.sked__Start__c;
+                            if (isValid) {
                                 numberOfResourcesHaveTag++;
                                 break;
                             }
@@ -835,7 +808,7 @@ global class skedJobAllocationPostProcessBatch implements Database.Batchable<sOb
         return exceptionLog;
     }
     
-    private List<skedHC__Exception__c> captureUnavailabilityExceptionLog(exceptionMasterModel master) {
+    private List<skedHC__Exception__c> captureUnavailabilityExceptionLog(skedExceptionMasterModel master) {
         List<skedHC__Exception__c> exceptionLog = new List<skedHC__Exception__c>();
             
         List<skedExceptionLogService.resourceUnavailabilityModel> unavailabilityList = new List<skedExceptionLogService.resourceUnavailabilityModel>();
@@ -862,7 +835,7 @@ global class skedJobAllocationPostProcessBatch implements Database.Batchable<sOb
         return exceptionLog;
     }
 
-    private List<skedHC__Exception__c> captureInvalidCollectionOp(exceptionMasterModel master) {
+    private List<skedHC__Exception__c> captureInvalidCollectionOp(skedExceptionMasterModel master) {
         List<skedHC__Exception__c> exceptionLogs = new List<skedHC__Exception__c>();
 
         for (sked__Job_Allocation__c jobAllocation : master.jobAllocations) {
@@ -886,7 +859,7 @@ global class skedJobAllocationPostProcessBatch implements Database.Batchable<sOb
         return exceptionLogs;
     }
 
-    private List<skedHC__Exception__c> captureNonWorkingExceptionLog(exceptionMasterModel master) {
+    private List<skedHC__Exception__c> captureNonWorkingExceptionLog(skedExceptionMasterModel master) {
         List<skedHC__Exception__c> exceptionLog = new List<skedHC__Exception__c>();
 
         DateTime minStart;
@@ -924,13 +897,15 @@ global class skedJobAllocationPostProcessBatch implements Database.Batchable<sOb
                 boolean conflictNonWorkingTime = false;
                 for (skedModels.event event : resource.availability) {
                     DateTime resourceEventStart = skedDateTimeUtils.newDateTimeInstance(event.startDate, 0, resourceTimezoneSidId);
-                    if (resourceEventStart != NULL && event.startTimeInMunites != NULL) {
-                        resourceEventStart = resourceEventStart.addMinutes(event.startTimeInMunites);
+                    if (resourceEventStart != NULL && event.startTimeInMinutes != NULL) {
+                        resourceEventStart = resourceEventStart.addMinutes(event.startTimeInMinutes);
                     }
+                    
                     DateTime resourceEventFinish = skedDateTimeUtils.newDateTimeInstance(event.endDate, 0, resourceTimezoneSidId);
                     if (resourceEventFinish != NULL && event.endTimeInMinutes != NULL) {
                         resourceEventFinish = resourceEventFinish.addMinutes(event.endTimeInMinutes);
                     }
+
                     if (resourceEventStart != NULL && resourceEventFinish != NULL) {
                         if (resourceEventStart < skedJobAllocation.sked__Set_End__c && resourceEventFinish > skedJobAllocation.sked__Start__c) {
                             conflictNonWorkingTime = TRUE;
@@ -953,11 +928,10 @@ global class skedJobAllocationPostProcessBatch implements Database.Batchable<sOb
                 }
             }
         }
-
         return exceptionLog;
     }
 
-    private List<skedHC__Exception__c> captureRoleRestrictedExceptionLog(exceptionMasterModel master) {
+    private List<skedHC__Exception__c> captureRoleRestrictedExceptionLog(skedExceptionMasterModel master) {
         List<skedHC__Exception__c> exceptionLog = new List<skedHC__Exception__c>();
 
         for (sked__Job_Allocation__c skedJobAllocation : master.jobAllocations) {
@@ -990,16 +964,108 @@ global class skedJobAllocationPostProcessBatch implements Database.Batchable<sOb
         return exceptionLog;
     }
 
+public static List<skedHC__Exception__c> captureLinkedDriveMismatchedAssetExceptionLog(skedExceptionMasterModel master) {
+        Set<Id> linkedDriveIds = new Set<Id>();
+        for (sked__Job_Allocation__c ja : master.jobAllocations) {
+            sked__Job__c skedJob = master.mapJob.get(ja.sked__Job__c);
+            Boolean belongsToLinkedDrive = skedJob.sked_Drive__r.sked_Linked_Drives__c != null;
+            if (belongsToLinkedDrive && skedJob.sked_Asset_Type__c != null) {
+                linkedDriveIds.add(skedJob.sked_Drive__r.sked_Linked_Drives__c);
+            }
+        }
+
+        List<sked_Linked_Drives__c> linkedDrives = new List<sked_Linked_Drives__c>([
+            SELECT Id, Name,
+            (SELECT Id, sked_Drive_Date__c, Name
+             FROM sked_Drives__r),
+            (SELECT Id, skedHC__Exception__c
+             FROM sked_Exception_Logs__r
+             WHERE sked_Exception_Code__c = :skedConstants.EXCEPTION_CODE_LINKED_DRIVE_MISMATCHING_ASSETS)
+            FROM sked_Linked_Drives__c
+            WHERE Id IN :linkedDriveIds
+        ]);
+
+        Set<Id> affectedDriveIds = new Set<Id>();
+        for (sked_Linked_Drives__c linkedDrive : linkedDrives) {
+            Set<Id> driveIds = new Set<Id>();
+            for (sked_Drive__c ldDrive : linkedDrive.sked_Drives__r) {
+                driveIds.add(ldDrive.Id);
+            }
+            affectedDriveIds.addAll(driveIds);
+        }
+
+        List<String> deletedStatuses = new List<String>{
+            skedConstants.JOB_ALLOCATION_STATUS_DECLINED,
+            skedConstants.JOB_ALLOCATION_STATUS_DELETED
+        };
+        Map<Id, sked__Job_Allocation__c> jobAllocationById = new Map<Id, sked__Job_Allocation__c>([
+            SELECT Id, sked__Status__c, sked__Resource__c, sked__Job__r.Name, sked__Job__r.sked_Drive__c, 
+                sked__Job__r.sked_Drive__r.Name, sked__Job__r.sked_Drive__r.sked_Linked_Drives__c
+            FROM sked__Job_Allocation__c
+            WHERE sked__Job__r.sked_Drive__c IN :affectedDriveIds
+            AND sked__Job__r.sked_Asset_Type__c != null
+            AND sked__Status__c NOT IN :deletedStatuses
+        ]);
+
+        Map<Id, List<sked__Job_Allocation__c>> jasByDriveId = new Map<Id, List<sked__Job_Allocation__c>>();
+        for (Id jaId : jobAllocationById.keySet()) {
+            sked__Job_Allocation__c ja = jobAllocationById.get(jaId);
+            List<sked__Job_Allocation__c> jaForDrives = jasByDriveId.get(ja.sked__Job__r.sked_Drive__c);
+            if (jaForDrives == null) {
+                jaForDrives = new List<sked__Job_Allocation__c>();
+            }
+
+            jaForDrives.add(ja);
+            jasByDriveId.put(ja.sked__Job__r.sked_Drive__c, jaForDrives);
+        }
+
+        Map<Id, String> assetSetByDriveId = new Map<Id, String>();
+        for (Id driveId : jasByDriveId.keySet()) {
+            Set<String> assetSet = new Set<String>();
+            for (sked__Job_Allocation__c ja : jasByDriveId.get(driveId)) {
+                assetSet.add(ja.sked__Resource__c);
+            }
+            if (!assetSet.isEmpty()) {
+                List<String> assetList = new List<String>(assetSet);
+                assetList.sort();
+                assetSetByDriveId.put(driveId, String.join(assetList, ','));
+            }
+        }
+
+        List<skedHC__Exception__c> exceptionLogs = new List<skedHC__Exception__c>();
+        for (sked_Linked_Drives__c linkedDrive : linkedDrives) {
+            Set<String> assetSetsForDrives = new Set<String>();
+            for (sked_Drive__c drive : linkedDrive.sked_Drives__r) {
+                if (assetSetByDriveId.containsKey(drive.Id)) {
+                    assetSetsForDrives.add(assetSetByDriveId.get(drive.Id));
+                }
+            }
+
+            Boolean hasMatchingAllocationForAllDrives = assetSetsForDrives.size() <= 1;
+            Boolean hasExistingExceptions = linkedDrive.sked_Exception_Logs__r != null && !linkedDrive.sked_Exception_Logs__r.isEmpty();
+            if (hasExistingExceptions) {
+                String exceptionStatus = hasMatchingAllocationForAllDrives ? 
+                    skedConstants.EXCEPTION_LOG_STATUS_CLOSED : skedConstants.EXCEPTION_LOG_STATUS_OPEN; 
+                for (skedHC__Exception__c skedException : linkedDrive.sked_Exception_Logs__r) {
+                    skedException.skedHC__Status__c = exceptionStatus;
+                    exceptionLogs.add(skedException);
+                }
+            } else if (!hasMatchingAllocationForAllDrives) {
+                exceptionLogs.add(new skedHC__Exception__c(
+                    sked_Linked_Drive__c = linkedDrive.Id,
+                    sked_Exception_Code__c = skedConstants.EXCEPTION_CODE_LINKED_DRIVE_MISMATCHING_ASSETS,
+                    skedHC__Exception__c = 'Linked Drive has mismatching Asset allocations across drives',
+                    skedHC__Status__c = skedConstants.EXCEPTION_LOG_STATUS_OPEN
+                ));
+            }
+        }
+
+        return exceptionLogs;
+    }
+
     /**************************************** NESTED CLASS ********************************************/
     global class batchSetting {
         public boolean geographicException;
-    }
-    
-    public class exceptionMasterModel {
-        public List<sked__Job_Allocation__c> jobAllocations;
-        public Map<Id, sked_Drive_Shift__c> mapDriveShift;
-        public Map<Id, sked__Job__c> mapJob;
-        public Map<Id, sked__Resource__c> mapResource;
     }
 
     public class jobAllocationModel {

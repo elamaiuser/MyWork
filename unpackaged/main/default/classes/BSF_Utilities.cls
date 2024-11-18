@@ -7,12 +7,20 @@
   ********************************************************************************************************************************************************************
 * 08/29/2023				 Balaji N				 Logic for HRP-10890(New Method: MetaDataupdate)  
 * 10/03/2023                 Priti Jana              Logic for HRP-10115
+* 03/12/2024				 Balaji N				 HRP-11375 Method: getJobCodeVsProfileMap,getProfileId, custom metadata changes, start query sked_FCC_Code__c filter
+* 06/06/2024                 Priti Jana              Logic for HRP-12011
+* 06/28/2024                 Balaji N                Logic for HRP-12054
+* 09/18/2024				 Priti Jana				 Added an utility boolean to forcibly generate exceptions, especially during test class run (HRP-12706)
+* 09/24/2024				 Fitsum Worku			 Fix for HRP-13435
+* 10/18/2024				 Balaji N				 HRP-13489 Methods isWbFixedSiteOpportunity
  *********************************************************************************************************************************************************************
 */
 
 public with sharing class BSF_Utilities {
     
     private static Map<String, RecordType> recordTypeMap = null;
+    public static Boolean IS_SET_TO_GENERATE_EXCEPTION = FALSE; //HRP-12706
+    
     private static void populateRecordTypeMap() {
         recordTypeMap = new Map<String, RecordType>();
         RecordType[] rtList = [Select Id, sObjectType, Name From RecordType  ];
@@ -330,4 +338,227 @@ public with sharing class BSF_Utilities {
             return batchBypass;
     }
     //HRP-10890  Ends
+    /*
+     * HRP-11375 starts here
+    */
+    public static List<String> getActivePicklistValues(Schema.sObjectField field) 
+    {
+        List<Schema.PicklistEntry> pickList = field.getDescribe().getPickListValues();
+        List<String> activePickList = new List<String>();
+        for (Schema.PicklistEntry value : pickList) 
+        {
+            if (value.isActive()) 
+            {
+                activePickList.add(value.getValue());
+            }
+        }
+        return activePickList;
+    }
+    /*
+     * HRP-11375 ends here
+    */
+
+    //HRP-12011 --> starts Here
+    public static Boolean isWbFixedSiteOpportunity(Opportunity newOpp,sked__Location__c driveSite) //HRP-13489 2nd parameter driveSite
+    {
+        //Commented part of HRP-13489
+        /*sked__Location__c driveSite = new sked__Location__c();
+        if(newOpp.Drive_Site__c != NULL) {
+            driveSite = [SELECT Id, Operation_Type__c FROM sked__Location__c WHERE ID = :newOpp.Drive_Site__c LIMIT 1]; 
+        }*/
+        return newOpp.Type_of_Drive__c.equalsIgnoreCase(Constants.FIX_SITE_OPP) && driveSite != NULL && driveSite.Operation_Type__c != NULL && driveSite.Operation_Type__c.equalsIgnoreCase(Constants.NON_INTEGRATED_WB_OPERATION_TYPE);
+    }
+    public static Boolean isMobileOpportunity(Opportunity newOpp) {
+        return newOpp.Type_of_Drive__c != NULL && newOpp.Type_of_Drive__c.equalsIgnoreCase(Constants.MOBILE_SITE_OPP);
+    }
+    //HRP-12011 --> Ends Here
+    //HRP-12054 start
+    Public Static Map<String,Id> findSkedRegion(Set<String> collOpCodeSet,Set<String> zipCodeSet,List<Taxonomy__c> taxoList,List<sked_Site_Collection_Operation__c> siteCoList, Map<Id,Collections_Territory__c> collZipIdMap,Map<Id,sked__Location__c> siteIdMap)
+    {
+        Boolean isTaxNull;
+        Map<String,Id> CollZipRegionMap = new Map<String,Id>();
+        Map<String,Id> CollcodeRegionMap = new Map<String,Id>();
+        
+        Set<String> timeZoneSiteSet = new Set<String>();
+        if((taxoList==null || taxoList.isEmpty()) && !siteCoList.isEmpty() && siteCoList!=null)
+        {
+            taxoList=[select Id,Collection_Operation_Code__c, End_Date__c, Start_Date__c, Zip_Code__c,Time_Zone__c from Taxonomy__c where Collection_Operation_Code__c IN:collOpCodeSet AND Zip_Code__c IN:zipCodeSet];
+            isTaxNull=true;
+            
+            Map<String,List<Taxonomy__c>> collZipTaxoListMap = new Map<String,List<Taxonomy__c>>();
+            for(Taxonomy__c tx:taxoList)
+            {
+                if(!collZipTaxoListMap.containsKey(tx.Collection_Operation_Code__c+'_'+tx.Zip_Code__c))
+                    collZipTaxoListMap.put(tx.Collection_Operation_Code__c+'_'+tx.Zip_Code__c,new List<Taxonomy__c>()); 
+                
+                collZipTaxoListMap.get(tx.Collection_Operation_Code__c+'_'+tx.Zip_Code__c).add(tx);
+            }
+            List<Taxonomy__c> taxoListFiltered =new List<Taxonomy__c>();
+            for(sked_Site_Collection_Operation__c siteCo : siteCoList)
+            {
+                Taxonomy__c filteredTax;
+                String key =siteCo.sked_Collections_Zip_Code__c;
+                if(collZipIdMap.containsKey(key))
+                {
+                    Key =collZipIdMap.get(siteCo.sked_Collections_Zip_Code__c).Collection_Operation__r.Biomed_Collection_Op_Code_Center_ID__c+'_'+collZipIdMap.get(siteCo.sked_Collections_Zip_Code__c).Zip__c;
+                    if(collZipTaxoListMap.containsKey(Key))
+                    {
+                        for(Taxonomy__c tx :collZipTaxoListMap.get(Key))
+                        {
+                            if((filteredTax == null && tx.End_date__c >= siteCo.sked_End_Date__c) || (filteredTax!=null && filteredTax.End_Date__c < tx.End_date__c))
+                            {
+                                filteredTax=tx;
+                            }
+                        }
+                        
+                        if(filteredTax != null)
+                        {
+                            taxoListFiltered.add(filteredTax);
+                        }
+                        else
+                        {
+                            timeZoneSiteSet.add(siteIdMap.get(siteCo.sked_Site__c).sked_Timezone__c);
+                        }
+                    }
+                }
+            }
+            taxoList.addAll(taxoListFiltered);
+            
+        }
+        
+        if(!taxoList.isEmpty())
+        {
+            Set<String> timeZoneSet = new Set<String>();
+            for(Taxonomy__c tx: taxoList)
+            {
+                timeZoneSet.add(tx.Time_Zone__c);
+            }
+            
+            for(sked__Region__c region :[SELECT Id, sked__Timezone__c,sked_Biomed_Collection_Op_Center__r.Biomed_Collection_Op_Code_Center_ID__c FROM sked__Region__c where sked_Biomed_Collection_Op_Center__r.Biomed_Collection_Op_Code_Center_ID__c IN:collOpCodeSet AND (sked__Timezone__c IN:timeZoneSet OR sked__Timezone__c IN:timeZoneSiteSet)])
+            {
+                CollcodeRegionMap.put(region.sked_Biomed_Collection_Op_Center__r.Biomed_Collection_Op_Code_Center_ID__c+'_'+region.sked__Timezone__c,region.Id);
+            }
+            
+            
+            for(Taxonomy__c tx: taxoList)
+            {
+                CollZipRegionMap.put(tx.Collection_Operation_Code__c+'_'+tx.Zip_Code__c,CollcodeRegionMap.get(tx.Collection_Operation_Code__c+'_'+tx.Time_Zone__c));
+            }
+        }
+        
+        if(siteCoList != null && !siteCoList.isEmpty())
+        {
+            for(sked_Site_Collection_Operation__c siteCo : siteCoList)
+            {
+                if(collZipIdMap.containsKey(siteCo.sked_Collections_Zip_Code__c))
+                {
+                    String Key=collZipIdMap.get(siteCo.sked_Collections_Zip_Code__c).Collection_Operation__r.Biomed_Collection_Op_Code_Center_ID__c+'_'+collZipIdMap.get(siteCo.sked_Collections_Zip_Code__c).Zip__c;
+                    String siteKey = collZipIdMap.get(siteCo.sked_Collections_Zip_Code__c).Collection_Operation__r.Biomed_Collection_Op_Code_Center_ID__c+'_'+siteIdMap.get(siteCo.sked_Site__c).sked_Timezone__c;
+                    if(CollZipRegionMap.containsKey(Key))
+                    {
+                        siteCo.sked_Region__c=CollZipRegionMap.get(Key);
+                    }
+                    else if(CollcodeRegionMap.containsKey(siteKey))
+                    {
+                        siteCo.sked_Region__c=CollcodeRegionMap.get(siteKey);
+                    }
+                }
+            }
+        }
+        
+        
+        return CollZipRegionMap;
+    }
+    //HRP-12054 End
+
+    public static List<BSF_Error_Log__c> createErrorLogWithObjectId(Database.SaveResult[] saveResults, String processName, String className, String methodName, String typeValue, String functionality) {
+        List<BSF_Error_Log__c> errorList = new List<BSF_Error_Log__c>();
+        for(Database.SaveResult result : saveResults) {
+            if(result != null && result.getErrors() != null && result.getErrors().size() > 0) {
+                BSF_Error_Log__c log = new BSF_Error_Log__c(
+                    Process_Name__c = processName, 
+                    ApexClass__c = className,
+                    Method__c = methodName,
+                    Type__c = typeValue,
+                    Functionality__c = functionality
+                );
+                log.Error_Description__c  = result.getErrors()[0].getMessage().length() > 255 ? result.getErrors()[0].getMessage().subString(0,255) : result.getErrors()[0].getMessage();
+                log.Error_Description_Long__c = 'Error Details : \n'+result.getErrors()[0];
+                log.Object_RecordId__c = result.getId();
+                if(result.getId() != NULL) {
+                    log.Object_Name__c = String.valueOf(result.getId().getSobjectType());
+                }
+                errorList.add(log);
+            }
+        } 
+        return errorList;
+    }
+
+    public static BSF_Error_Log__c createBsfErrorLogForExceptions(
+        Exception ex, 
+        String className, 
+        String methodName, 
+        String processName,
+        String functionality,
+        String objectName,
+        String objectRecordId
+    ) {
+        String errorDescription = 'Error Type - '+ex.getTypeName()+'\n'+ex.getMessage();
+        BSF_Error_Log__c errorLog = new BSF_Error_Log__c(
+            ApexClass__c = className,
+            Method__c = methodName,
+            Type__c = 'Error',
+            Error_Description__c = errorDescription.length() > 255 ? errorDescription.subString(0, 255) : errorDescription,
+            Error_Description_Long__c = 'Message : '+ex.getMessage()+'\nStackTracing : \n'+ex.getStackTraceString()+'\n'+'Specific Line Number :: '+ex.getLineNumber(),
+            Process_Name__c = processName,
+            Functionality__c = functionality,
+            Object_Name__c = objectName,
+            Object_RecordId__c = objectRecordId
+        );
+        return errorLog;
+    }
+
+    public static Set<ID> getSuccessfullySavedRecordIds(Database.SaveResult[] saveResults) {
+        Set<ID> recordIds = new Set<ID>();
+        for(Database.SaveResult result : saveResults) {
+            if(result != null && result.isSuccess()) {
+                recordIds.add(result.getId());
+            }
+        }
+        return recordIds;
+    }
+
+    @AuraEnabled(cacheable = true)
+    public static List<String> getActivePicklistValues(String objectApiName, String fieldApiName) {
+        List<String> activePickList = new List<String>();
+
+        Schema.SObjectType objSobjectType = Schema.getGlobalDescribe().get(objectApiName);
+        Schema.DescribeSObjectResult objDescribeSobject = objSobjectType.getDescribe();
+        Map<String, Schema.SObjectField> map_fieldStringName_sObjectField = objDescribeSobject.fields.getMap();
+        Schema.DescribeFieldResult fieldResult = map_fieldStringName_sObjectField.get(fieldApiName).getDescribe();
+        List<Schema.PicklistEntry> pickList = fieldResult.getPickListValues();
+        
+        for (Schema.PicklistEntry value : pickList) {
+            if (value.isActive()) {
+                activePickList.add(value.getValue());
+            }
+        }
+        return activePickList;
+    }
+
+    public static String createDriveQueryForCalendarBuild() {
+        return 'SELECT Id, Is_Template__c, Name, Drive_Date__c, StageName, Drive_Designations__c, Rollover_Consideration__c, RecordTypeId, '+
+                'Parent_Template_Id__c, Parent_Template_Id__r.name, drive_status__c, sked_Cancellation_Reason__c, '+
+                'Accept_56_Day_Rule_Violation__c, Accepts_Automation__c, Drive_Site__c, Open_to_Public__c, '+
+                'Anticipated_Registered_Donors__c,WB_Projected_Procedures__c, Double_Red_Projected_Units__c, Drive_Keyword__c, '+
+                'Online_Scheduling_Enabled__c, Type_of_Drive__c, Start_Time__c, End_Time__c,AccountId, Account.Account_Strategy__c, '+
+                'Account.Marketing_Strategy__c, Account.Account_Status__c, X2RBC_Projected_Procedures__c, Collection_Operation__c, Collections_Zip_Code__c, '+
+                'Flow_Start_Time_Field__c, Flow_End_Time_Field__c, OwnerId, anticipated_registered_donors_template__c, WholeBloodProceduresProjectedTemplate__c, '+
+                'Double_red_Procedures_Projected_template__c, AcceptblankMilitaryAuthNamePhone__c, From_Template_Id__c, '+
+                'Number_of_2RBC_Assets__c, Number_of_Plasma_Assets__c, Number_of_Platelet_Assets__c,Direct_Donors_To__c, '+
+                'No_Publicity_Needed__c, Publish_to_Call_Center__c, Web_Scheduling_Enabled__c, Send_Emails__c, Send_Mailers__c, '+
+                'Web_Scheduling_End_Date_Offset__c, Web_Scheduling_End_Time_Offset__c, Web_Scheduling_Start_Date_Offset__c, Platelet_Projected_Procedures__c, '+
+                'Plasma_Pheresis_Projected_Procedures__c, Calendar_Build_Parent_Opportunity__c, Type, DriveStatus__c, Slot_Generator__c, Related_Scheduled_Drive__c '+ //HRP-12011 
+                'FROM Opportunity';
+    }
 }

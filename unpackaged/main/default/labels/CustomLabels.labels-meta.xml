@@ -15,6 +15,20 @@
         <value>You are not authorized to merge the Accounts</value>
     </labels>
     <labels>
+        <fullName>Account_Portfolio_Account_team_Delete_Permission</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Account Portfolio &amp; Account team Delete Permission</shortDescription>
+        <value>System Administrator,Global Admin,Recruitment Admin</value>
+    </labels>
+    <labels>
+        <fullName>All_Org_Wide_Addresses</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>All Org Wide Addresses</shortDescription>
+        <value>bsfsystem@redcross.org,customercare@redcross.org</value>
+    </labels>
+    <labels>
         <fullName>AssignResourceProfileToExclude</fullName>
         <language>en_US</language>
         <protected>false</protected>
@@ -29,6 +43,13 @@
         <value>Yes</value>
     </labels>
     <labels>
+        <fullName>BSF_BatchUpdateSiteCollectionOperation_SOQL</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>BSF_BatchUpdateSiteCollectionOperation_SOQL</shortDescription>
+        <value>SELECT Id, sked_Collection_Operation__c, sked__Region__c,sked_Timezone__c FROM sked__Location__c WHERE sked_Active__c = true</value>
+    </labels>
+    <labels>
         <fullName>BSF_OWEA_SENDER</fullName>
         <language>en_US</language>
         <protected>false</protected>
@@ -41,6 +62,13 @@
         <protected>false</protected>
         <shortDescription>BSF_SUPPORT_EMAIL_ID</shortDescription>
         <value>subhajit.bose@exavalu.com,barnojit.sharma@exavalu.com,fitsum.worku@redcross.org</value>
+    </labels>
+    <labels>
+        <fullName>Block_ZipCode_Update_On_Site</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>To Block zip code update on site if it is true</shortDescription>
+        <value>true</value>
     </labels>
     <labels>
         <fullName>BloodProgram</fullName>
@@ -127,11 +155,39 @@
         <value>Skedulo Region</value>
     </labels>
     <labels>
+        <fullName>DriveDispatchedCheckBoxEnableProfile</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>DriveDispatchedCheckBoxEnableProfile</shortDescription>
+        <value>APS Admin,System Administrator,APS Management,APS Planner,APS Scheduler,APS Scheduler1</value>
+    </labels>
+    <labels>
+        <fullName>DriveGenerationFailureEmailKey</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>DriveGenerationFailureEmailKey</shortDescription>
+        <value>Drive Generation Failure Email</value>
+    </labels>
+    <labels>
+        <fullName>Drive_Change_Restriction_Message</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Drive Change Restriction Message</shortDescription>
+        <value>Only Global Admin and System Admin can change the Drive Status from Complete to Cancel via selecting Opportunity Stage from Close to Cancel</value>
+    </labels>
+    <labels>
         <fullName>Drive_Worksheet_Report_Drive_Status</fullName>
         <language>en_US</language>
         <protected>false</protected>
         <shortDescription>Drive Worksheet Report Drive Status</shortDescription>
         <value>&#39;Confirmed&#39;</value>
+    </labels>
+    <labels>
+        <fullName>Eligible_Account_Statuses_for_HandOff_Tasks</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Eligible Account Statuses for HandOff Tasks</shortDescription>
+        <value>Active,Prospect,Reactivate</value>
     </labels>
     <labels>
         <fullName>Else_Error_Message</fullName>
@@ -153,6 +209,28 @@
         <protected>false</protected>
         <shortDescription>GeneralTask</shortDescription>
         <value>General Task</value>
+    </labels>
+    <labels>
+        <fullName>Generate_DCR_For_Drives</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Generate DCR For Drives</shortDescription>
+        <value>No</value>
+    </labels>
+    <labels>
+        <fullName>Generate_DCR_For_Drives_Days_To_Add</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Generate DCR For Drives Days To Add</shortDescription>
+        <value>43</value>
+    </labels>
+    <labels>
+        <fullName>HRP_10083ByPassLabel</fullName>
+        <categories>10083ByPassLabel</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>HRP-10083ByPassLabel</shortDescription>
+        <value>true</value>
     </labels>
     <labels>
         <fullName>InformaticaNamedCredentials</fullName>
@@ -227,6 +305,13 @@
         <value>20</value>
     </labels>
     <labels>
+        <fullName>MOEStagingSheetReportURL</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>MOEStagingSheetReportURL</shortDescription>
+        <value>https://app.powerbi.com/groups/me/apps/1bf85886-e730-4e80-9ea2-4330448f7aa5/rdlreports/dc0404a3-5cb2-4fb2-9573-3fd49c9532d8?ctid=dd5b5d42-c0d3-4ad2-b5f1-60edb3af2771&amp;experience=power-bi</value>
+    </labels>
+    <labels>
         <fullName>NationalNameAllowedProfiles</fullName>
         <language>en_US</language>
         <protected>false</protected>
@@ -269,6 +354,20 @@
         <protected>false</protected>
         <shortDescription>No Collection Operation Filter Link</shortDescription>
         <value>/lightning/o/sked__Resource__c/list?filterName=00B5c000008b41cEAA</value>
+    </labels>
+    <labels>
+        <fullName>NonCollectionArea</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>NonCollectionArea</shortDescription>
+        <value>This Drive is currently in a Non-Collection Area. Please take action to change to a site in a valid Collection Operation or Cancel and leverage the Cancelation Reason of Geo Alignment.</value>
+    </labels>
+    <labels>
+        <fullName>NonCollectionArea_Label</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>NonCollectionArea-Label</shortDescription>
+        <value>Non-Collection Area</value>
     </labels>
     <labels>
         <fullName>NotifyAmWeekConfigForBplRecruited</fullName>
@@ -333,6 +432,13 @@ Withdrawn/Excluded-&gt; Cancelled, Closed</value>
         <protected>false</protected>
         <shortDescription>PROMOTION_SENDER_EMAIL</shortDescription>
         <value>customercare@redcross.org</value>
+    </labels>
+    <labels>
+        <fullName>Pending_DCR_Banner_Msg</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Pending DCR Banner Msg</shortDescription>
+        <value>Please capture Drive Impacts by processing the Pending Drive Change Request</value>
     </labels>
     <labels>
         <fullName>PerformAddressCleanup</fullName>
@@ -448,6 +554,20 @@ Withdrawn/Excluded-&gt; Cancelled, Closed</value>
         <value>50</value>
     </labels>
     <labels>
+        <fullName>Recurring_Drive_Async_Limit</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Recurring Drive Async Limit</shortDescription>
+        <value>100</value>
+    </labels>
+    <labels>
+        <fullName>Recurring_Drive_Limit</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Recurring Drive Limit</shortDescription>
+        <value>200</value>
+    </labels>
+    <labels>
         <fullName>ResetPortfolioAssignmentTime</fullName>
         <language>en_US</language>
         <protected>false</protected>
@@ -460,6 +580,13 @@ Withdrawn/Excluded-&gt; Cancelled, Closed</value>
         <protected>false</protected>
         <shortDescription>Resource Change Event Field List</shortDescription>
         <value>sked__Is_Active__c,sked_Employment_Status__c,sked_Union_Affiliation__c,sked_Union_Description__c,sked__Employment_Type__c,sked__Primary_Region__c</value>
+    </labels>
+    <labels>
+        <fullName>RestrictOrderForOpportunity</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>RestrictOrderForOpportunity</shortDescription>
+        <value>System Administrator,Recruitment Admin,Global Admin</value>
     </labels>
     <labels>
         <fullName>Restrict_Operation_Type_Change_Error_Msg</fullName>
@@ -481,6 +608,13 @@ Withdrawn/Excluded-&gt; Cancelled, Closed</value>
         <protected>false</protected>
         <shortDescription>Review_Completed</shortDescription>
         <value>Review Completed</value>
+    </labels>
+    <labels>
+        <fullName>RoleTimeMaxDateDifference</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>RoleTimeMaxDateDifference</shortDescription>
+        <value>365</value>
     </labels>
     <labels>
         <fullName>SYNC_RESOURCE_ADDRESS_AND_PHONE</fullName>
@@ -513,11 +647,18 @@ Withdrawn/Excluded-&gt; Cancelled, Closed</value>
         <value>RSMO Donations</value>
     </labels>
     <labels>
+        <fullName>SponsorPlanningMeetingTaskThresholdDays</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>SponsorPlanningMeetingTaskThresholdDays</shortDescription>
+        <value>112</value>
+    </labels>
+    <labels>
         <fullName>StagingSheetReportURL</fullName>
         <language>en_US</language>
         <protected>false</protected>
         <shortDescription>StagingSheetReportURL</shortDescription>
-        <value>https://app.powerbi.com/groups/me/apps/1bf85886-e730-4e80-9ea2-4330448f7aa5/rdlreports/7ed1ce82-1f15-4528-8e48-e05c48fc0b17</value>
+        <value>https://app.powerbi.com/groups/me/apps/1bf85886-e730-4e80-9ea2-4330448f7aa5/rdlreports/7ed1ce82-1f15-4528-8e48-e05c48fc0b17?ctid=dd5b5d42-c0d3-4ad2-b5f1-60edb3af2771&amp;experience=power-bi</value>
     </labels>
     <labels>
         <fullName>Success_Message</fullName>
@@ -541,6 +682,13 @@ Withdrawn/Excluded-&gt; Cancelled, Closed</value>
         <value>CO1004,CO7001,CO1002,CO1045</value>
     </labels>
     <labels>
+        <fullName>TravelTimeEditableProfiles</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>TravelTimeEditableProfiles</shortDescription>
+        <value>APS Admin,System Administrator,Global Admin</value>
+    </labels>
+    <labels>
         <fullName>WeeklyStaffingRoleReportURL</fullName>
         <language>en_US</language>
         <protected>false</protected>
@@ -553,6 +701,20 @@ Withdrawn/Excluded-&gt; Cancelled, Closed</value>
         <protected>false</protected>
         <shortDescription>callListRecipient</shortDescription>
         <value>Call List Recipient</value>
+    </labels>
+    <labels>
+        <fullName>generatePendingDCRErrorMessages</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>generatePendingDCRErrorMessages</shortDescription>
+        <value>{
+&quot;fromDriveDateError&quot; : &quot;Start date of drive should be less than end date of drive&quot;,
+&quot;startTimeFromError&quot; : &quot;Start time of drive should be less than end time of drive&quot;,
+&quot;endTimeFromError&quot; : &quot;End time of drive should be greater than start time of drive&quot;,
+&quot;toDriveDateError&quot; : &quot;End time of drive should be greater than start time of drive&quot;,
+&quot;startTimeToError&quot; : &quot;Start time of drive should be less than end time of drive&quot;,
+&quot;endTimeToError&quot; : &quot;End time of drive should be greater than start time of drive&quot;
+}</value>
     </labels>
     <labels>
         <fullName>storeProfileToCreateBsfPortfolioTask</fullName>

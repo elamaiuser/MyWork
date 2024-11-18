@@ -11,10 +11,5 @@
     <columns>sked_Variation_Amount__c</columns>
     <columns>sked_Effective_Start_Date__c</columns>
     <filterScope>Everything</filterScope>
-    <filters>
-        <field>sked_Collection_Operation_Name__c</field>
-        <operation>equals</operation>
-        <value>Wichita KS</value>
-    </filters>
     <label>All</label>
 </ListView>

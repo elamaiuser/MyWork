@@ -4,11 +4,11 @@
     <protected>false</protected>
     <values>
         <field>sked_Active__c</field>
-        <value xsi:type="xsd:boolean">false</value>
+        <value xsi:type="xsd:boolean">true</value>
     </values>
     <values>
         <field>sked_Content_Renderer__c</field>
-        <value xsi:nil="true"/>
+        <value xsi:nil="true" />
     </values>
     <values>
         <field>sked_Custom_Filter__c</field>
@@ -16,27 +16,31 @@
     </values>
     <values>
         <field>sked_Custom_Target_Destination__c</field>
-        <value xsi:nil="true"/>
+        <value xsi:nil="true" />
     </values>
     <values>
         <field>sked_Destination_Field__c</field>
-        <value xsi:type="xsd:string">sked__Resource__r.sked__Email__c</value>
+        <value xsi:type="xsd:string">sked__Resource__r.sked__User__c</value>
     </values>
     <values>
         <field>sked_Email_From_Address_Field__c</field>
-        <value xsi:nil="true"/>
+        <value xsi:nil="true" />
     </values>
     <values>
         <field>sked_Email_Target_Field__c</field>
         <value xsi:type="xsd:string">sked__Resource__r.sked__User__c</value>
     </values>
     <values>
+        <field>sked_Expiry_DateTime_Field__c</field>
+        <value xsi:type="xsd:string">sked__Start__c</value>
+    </values>
+    <values>
         <field>sked_Filter__c</field>
-        <value xsi:nil="true"/>
+        <value xsi:nil="true" />
     </values>
     <values>
         <field>sked_Notification_Target_Field__c</field>
-        <value xsi:type="xsd:string">sked__Resource__r.sked__User__c</value>
+        <value xsi:nil="true" />
     </values>
     <values>
         <field>sked_Notification_Type__c</field>
@@ -44,11 +48,15 @@
     </values>
     <values>
         <field>sked_Oneoff_Protocol_Field__c</field>
-        <value xsi:nil="true"/>
+        <value xsi:nil="true" />
+    </values>
+    <values>
+        <field>sked_Priority__c</field>
+        <value xsi:nil="true" />
     </values>
     <values>
         <field>sked_Sending_From_Email_Address__c</field>
-        <value xsi:nil="true"/>
+        <value xsi:nil="true" />
     </values>
     <values>
         <field>sked_Subject__c</field>
@@ -56,11 +64,15 @@
     </values>
     <values>
         <field>sked_Target_Field_Value__c</field>
-        <value xsi:type="xsd:string">Wait-list</value>
+        <value xsi:type="xsd:string">Waitlist</value>
+    </values>
+    <values>
+        <field>sked_Target_Field_Values__c</field>
+        <value xsi:nil="true" />
     </values>
     <values>
         <field>sked_Target_Field__c</field>
-        <value xsi:type="xsd:string">sked__Status__c</value>
+        <value xsi:type="xsd:string">sked_Custom_Status__c</value>
     </values>
     <values>
         <field>sked_Target_SObject__c</field>
@@ -68,7 +80,9 @@
     </values>
     <values>
         <field>sked_Template__c</field>
-        <value xsi:type="xsd:string">Please be informed that your Time Off Request {{sked_record_url__c}}  has been moved to wait-list.</value>
+        <value xsi:type="xsd:string">Hi {{sked__Resource__r.Name}}, &lt;br /&gt;
+
+Your unavailability on [[StartMMMM]] was submitted and it&#39;s on the waitlist. To review or cancel this request, please navigate to the mobile app or to My Availability Console.</value>
     </values>
     <values>
         <field>sked_Trigger__c</field>

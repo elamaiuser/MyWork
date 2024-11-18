@@ -15,6 +15,12 @@ class roleTimeVarianceService extends dataService {
           queryBuilder.addCondition({template: "sked_Effective_Start_Date__c <= {0}", value: query.startDate});
           queryBuilder.addCondition({template: "sked_Effective_End_date__c >= {0}", value: query.endDate});
       }
+      if (query.daysOfWeek && query.daysOfWeek.length) {
+          queryBuilder.addCondition({template: "sked_Days_Of_Week__c INCLUDES{0}", value: query.daysOfWeek, type: "array_string"});
+      }
+      if (query.excludeExpiry) {
+          queryBuilder.addCondition({template: "(sked_Effective_End_Date__c = NULL OR sked_Effective_End_Date__c >= TODAY)"});
+      }
   }
 }
 
@@ -22,6 +28,8 @@ class roleTimeVarianceQueryModel extends queryModelBase {
   driveSiteIds;
   endDate;
   startDate;
+  excludeExpiry;
+  daysOfWeek;
 }
 
 export {

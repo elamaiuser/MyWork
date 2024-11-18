@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomMetadata xmlns="http://soap.sforce.com/2006/04/metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <label>Static_Text_8</label>
+    <protected>false</protected>
+    <values>
+        <field>Additional_Text__c</field>
+        <value xsi:nil="true"/>
+    </values>
+    <values>
+        <field>Category__c</field>
+        <value xsi:type="xsd:string">Note:</value>
+    </values>
+    <values>
+        <field>IsCheckbox__c</field>
+        <value xsi:type="xsd:boolean">false</value>
+    </values>
+    <values>
+        <field>UI_Text__c</field>
+        <value xsi:type="xsd:string">Proper room clearing of tables/chairs/furniture should be done prior to the arrival of mobile staff. Staff shall not be required to remove, move or re-set furniture outside of the furniture (i.e., tables and chairs, etc.) required for the blood drive, or a determinate amount of sponsor furniture. If staff encounter a situation where the removal of additional sponsor furniture is needed, the staff should immediately contact local management who will attempt to resolve.</value>
+    </values>
+</CustomMetadata>

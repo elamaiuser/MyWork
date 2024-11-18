@@ -25,132 +25,181 @@ global class skedUpdateJobTimeVarianceBatch implements Database.Batchable<sObjec
     };
     
     private Map<String, Set<String>> resourceRoleByGroup;
-    private List<sked_Role_Time_Variance__c> rtvs;
+    private Map<Id, List<skedRoleTimeVarianceAdjustment>> map_siteId_rtvAdjustments;
+    private skedModels.startEnd minMaxRTVEffectiveDate;
 
-    private List<sked_Drive_Shift__c> driveShiftsToUpdate;
-    private List<sked__Job__c> jobsToUpdate;
-
-    global skedUpdateJobTimeVarianceBatch(List<sked_Role_Time_Variance__c> updated) {
-        this.rtvs = updated;
+    global skedUpdateJobTimeVarianceBatch(List<skedRoleTimeVarianceAdjustment> rtvAdjustments) {
+        this.map_siteId_rtvAdjustments = getMapSiteIdToRtvAdjustments(rtvAdjustments);
         this.resourceRoleByGroup = skedResourceUtils.getResourceRolesByGroup();
-
-        this.driveShiftsToUpdate = new List<sked_Drive_Shift__c>();
-        this.jobsToUpdate = new List<sked__Job__c>();
+        this.minMaxRTVEffectiveDate = getMinMaxRTVEffectiveDate(rtvAdjustments);
     }
 
-    global List<sked_Role_Time_Variance__c> start(Database.BatchableContext BC) {
-        return this.rtvs;
+    global Database.QueryLocator start(Database.BatchableContext BC) {
+        return Database.getQueryLocator([
+            SELECT 
+                Id, sked_Drive_Site__c,
+                (
+                    SELECT
+                        Id, sked_Setup_Time__c, sked_Lead_Time__c, sked_Travel_Time__c, sked_Site_Logistics_To__c,
+                        sked_Wrap_Up_Time__c, sked_Breakdown_Time__c, sked_Travel_Time2__c, sked_Site_Logistics_Back__c,
+                        sked__Start__c, sked_Start_Time__c, sked__Finish__c, sked_Finish_Time__c, sked_Start_Date__c, sked_Finish_Date__c,
+                        sked_Resource_Role__c, sked_Asset_Type__c, sked_Drive_Shift__c
+                    FROM sked_Jobs__r
+                ),
+                (
+                    SELECT 
+                        Id, sked_Drive__r.sked_Drive_Date__c, sked_Drive__r.sked_Start_Time__c, sked_Drive__r.sked_Timezone__c,
+                        sked_Order__c, sked_Drive__r.sked_Drive_Shift_Count__c,
+                        sked_Drive__r.sked_Collection_Operation__r.sked_Breakdown_Time_Threshold__c, sked_Drive__r.sked_Collection_Operation__r.sked_Setup_Time_Threshold__c
+                    FROM sked_Drive_Shifts__r
+                    ORDER BY sked_Order__c
+                )
+            FROM sked_Drive__c
+            WHERE sked_Drive_Date__c <= :this.minMaxRTVEffectiveDate.endDate
+            AND sked_Drive_Date__c >= :this.minMaxRTVEffectiveDate.startDate
+            AND sked_Drive_Site__c IN :this.map_siteId_rtvAdjustments.keySet()
+            AND sked_Drive_Date__c > TODAY
+            AND sked_Status__c != :skedConstants.DRIVE_STATUS_CANCEL
+            AND sked_Drive_Shift_Count__c > 0
+            ORDER BY Id
+        ]);
     }
 
-    global void execute(Database.BatchableContext BC, List<sked_Role_Time_Variance__c> records) {
-        // Run with context of 1 so this is only ever 1 record at a time
-        for (sked_Role_Time_Variance__c rtv : records) {
-            Set<String> affectedResourceRoles = new Set<String>();
+    global void execute(Database.BatchableContext BC, List<sked_Drive__c> drives) {
+        Map<Id, sked__Job__c> map_id_jobToUpdate = new Map<Id, sked__Job__c>();
+        List<sked_Drive_Shift__c> driveShiftsToUpdate = new List<sked_Drive_Shift__c>();
+        List<String> assetJobIds = new List<String>();
 
-            if (rtv.sked_Resource_Role_Group__c != null && rtv.sked_Resource_Role_Group__c != '') {
-                List<String> affectedResourceRoleGroups = rtv.sked_Resource_Role_Group__c.split(';');
-                for (String affectedResourceRoleGroup : affectedResourceRoleGroups) {
-                    affectedResourceRoles.addAll(this.resourceRoleByGroup.get(affectedResourceRoleGroup));
-                }
-            }
+        for (sked_Drive__c drive : drives) {
+            Map<Id, List<sked__Job__c>> map_shiftId_jobs = getShiftIdJobsMap(drive.sked_Jobs__r);
+            for (sked_Drive_Shift__c driveShift : drive.sked_Drive_Shifts__r) {
+                List<sked__Job__c> jobs = map_shiftId_jobs.get(driveShift.Id);
+                if (jobs != NULL && !jobs.isEmpty()) {
+                    Boolean needRecalculateDriveShiftStartEndTime = false;
+                    List<skedRoleTimeVarianceAdjustment> rtvAdjustments = this.map_siteId_rtvAdjustments.get(drive.sked_Drive_Site__c);
+                    for (skedRoleTimeVarianceAdjustment rtvAdjustment : rtvAdjustments) {
+                        if (checkAdjustmentDaysOfWeekAffectsDriveShift(rtvAdjustment, driveShift)) {
+                            Set<String> affectedResourceRoles = getAffectedResourceRolesByResourceRoleGroup(rtvAdjustment.resourceRoleGroup);
+                            for (sked__Job__c job : jobs) {
+                                if (job.sked_Asset_Type__c != null) {
+                                    assetJobIds.add(job.Id);
+                                } else if (affectedResourceRoles.contains(job.sked_Resource_Role__c)
+                                    && job.sked_Start_Date__c >= rtvAdjustment.startDate && job.sked_Finish_Date__c <= rtvAdjustment.endDate
+                                ) {
+                                    List<String> affectedFields = getAffectedFields(rtvAdjustment.varianceApplyTo);
+                                    Integer numAffectedStartFields = getNumAffectedFields(rtvAdjustment.varianceApplyTo, false);
+                                    Integer numAffectedFinishFields = getNumAffectedFields(rtvAdjustment.varianceApplyTo, true);
+                                    
+                                    for (String affectedField : affectedFields) {
+                                        Object jobFieldValue = job.get(affectedField);
+                                        Integer originalFieldValue = 0;
+                                        if (jobFieldValue != NULL) {
+                                            originalFieldValue = ((Decimal)jobFieldValue).intValue();
+                                        }
+            
+                                        job.put(affectedField, adjustAmountByCollectionOpThreshold(affectedField, originalFieldValue + rtvAdjustment.adjustAmount, driveShift));
+                                    }
+            
+                                    if (numAffectedStartFields > 0) {
+                                        Integer totalStartTimeAdjustAmount = rtvAdjustment.adjustAmount * numAffectedStartFields;
+                                        job.sked__Start__c = job.sked__Start__c.addMinutes(totalStartTimeAdjustAmount * -1);
+                                    }
+            
+                                    if (numAffectedFinishFields > 0) { 
+                                        Integer totalFinishTimeAdjustAmount = rtvAdjustment.adjustAmount * numAffectedFinishFields;
+                                        job.sked__Finish__c = job.sked__Finish__c.addMinutes(totalFinishTimeAdjustAmount);
+                                    }
+            
+                                    map_id_jobToUpdate.put(job.Id, job);
+                                    needRecalculateDriveShiftStartEndTime = true;
+                                }
+                            }
+                        }
+                    }
+        
+                    if (needRecalculateDriveShiftStartEndTime) {
+                        DateTime minStartTime = NULL;
+                        DateTime maxFinishTime = NULL;
+                        for (sked__Job__c job : jobs) {
+                            if (job.sked_Resource_Role__c != null && job.sked_Asset_Type__c == null) {
+                                if (minStartTime == NULL || job.sked__Start__c < minStartTime) {
+                                    minStartTime = job.sked__Start__c;
+                                }
+            
+                                if (maxFinishTime == NULL || job.sked__Finish__c > maxFinishTime) {
+                                    maxFinishTime = job.sked__Finish__c;
+                                }
+                            }
+                        }
+        
+                        driveShift.sked_Start__c = minStartTime;
+                        driveShift.sked_Finish__c = maxFinishTime;
+                        driveShiftsToUpdate.add(driveShift);
+                    }
+                }     
+            } 
+        }   
+        
+        update map_id_jobToUpdate.values();
+        update driveShiftsToUpdate;
 
-            List<sked__Job__c> jobs = [
-                SELECT Id, Name, sked_Setup_Time__c, sked_Lead_Time__c, sked_Travel_Time__c, sked_Site_Logistics_To__c,
-                sked_Wrap_Up_Time__c, sked_Breakdown_Time__c, sked_Travel_Time2__c, sked_Site_Logistics_Back__c,
-                sked__Start__c, sked_Start_Time__c, sked__Finish__c, sked_Finish_Time__c,
-                sked_Drive_Shift__c, sked_Drive_Shift__r.sked_Start__c, sked_Drive_Shift__r.sked_Finish__c
+        if (!assetJobIds.isEmpty()) {
+            List<sked__Job__c> assetJobsToUpdate = new List<sked__Job__c>();
+            for (sked__Job__c assetJob : [
+                SELECT Id, sked_Drive__r.sked_Min_Shift_Start__c, sked_Drive__r.sked_Max_Shift_End__c
                 FROM sked__Job__c
-                WHERE sked_Start_Date__c >= :rtv.sked_Effective_Start_Date__c
-                AND sked_Finish_Date__c <= :rtv.sked_Effective_End_Date__c
-                AND sked__Location__c = :rtv.sked_Location__c
-                AND sked_Resource_Role__c IN :affectedResourceRoles
-            ];
-
-            Map<Id, DateTime> minStartDateByDriveShift = new Map<Id, DateTime>();
-            Map<Id, DateTime> maxFinishDateByDriveShift = new Map<Id, DateTime>();
-
-            for (sked__Job__c job : jobs) {
-                List<String> affectedFields = getAffectedFields(rtv.sked_Variance_Applies_to__c);
-                Integer numAffectedStartFields = getNumAffectedFields(rtv.sked_Variance_Applies_to__c, false);
-                Integer numAffectedFinishFields = getNumAffectedFields(rtv.sked_Variance_Applies_to__c, true);
-                Integer variationAmount = Integer.valueOf(rtv.sked_Variation_Amount__c);
-                
-                for (String affectedField : affectedFields) {
-                    Object jobFieldValue = job.get(affectedField);
-                    Integer originalFieldValue = 0;
-                    if (jobFieldValue != NULL) {
-                        originalFieldValue = ((Decimal)jobFieldValue).intValue();
-                    }
-
-                    if (rtv.sked_Buffer_Type__c == skedConstants.ROLE_TIME_VARIANCE_BUFFER_ADD) {
-                        job.put(affectedField, originalFieldValue + variationAmount);
-                    } else {
-                        job.put(affectedField, originalFieldValue - variationAmount);
-                    }
-                }
-
-                if (numAffectedStartFields > 0) {
-                    Integer totalStartTimeVariation = variationAmount * numAffectedStartFields;
-                    if (rtv.sked_Buffer_Type__c == skedConstants.ROLE_TIME_VARIANCE_BUFFER_ADD) {
-                        // We're Adding to the time it takes to start the job, so they should start earlier.
-                        job.sked__Start__c = job.sked__Start__c.addMinutes(totalStartTimeVariation * -1);
-                    } else {
-                        job.sked__Start__c = job.sked__Start__c.addMinutes(totalStartTimeVariation);
-                    }
-                }
-
-                if (numAffectedFinishFields > 0) { 
-                    Integer totalFinishTimeVariation = variationAmount * numAffectedFinishFields;
-                    if (rtv.sked_Buffer_Type__c == skedConstants.ROLE_TIME_VARIANCE_BUFFER_ADD) {
-                        // We're Adding to the time it takes to finish up, so they should end later.
-                        job.sked__Finish__c = job.sked__Finish__c.addMinutes(totalFinishTimeVariation);
-                    } else {
-                        job.sked__Finish__c = job.sked__Finish__c.addMinutes(totalFinishTimeVariation * -1);
-                    }
-                }
-
-                DateTime minStartDateForDriveShift = minStartDateByDriveShift.get(job.sked_Drive_Shift__c);
-                if (null == minStartDateForDriveShift || job.sked__Start__c < minStartDateForDriveShift) {
-                    minStartDateByDriveShift.put(job.sked_Drive_Shift__c, job.sked__Start__c);
-                }
-
-                DateTime maxFinishDateForDriveShift = maxFinishDateByDriveShift.get(job.sked_Drive_Shift__c);
-                if (null == maxFinishDateForDriveShift || job.sked__Finish__c > maxFinishDateForDriveShift) {
-                    maxFinishDateByDriveShift.put(job.sked_Drive_Shift__c, job.sked__Finish__c);
-                }
-
-                this.jobsToUpdate.add(job);
+                WHERE Id IN :assetJobIds
+            ]) {
+                assetJob.sked__Start__c = assetJob.sked_Drive__r.sked_Min_Shift_Start__c;
+                assetJob.sked__Finish__c = assetJob.sked_Drive__r.sked_Max_Shift_End__c;
+                assetJobsToUpdate.add(assetJob);
             }
 
-            for (Id driveShiftId : minStartDateByDriveShift.keySet()) {
-                this.driveShiftsToUpdate.add(new sked_Drive_Shift__c(
-                    Id = driveShiftId,
-                    sked_Start__c = minStartDateByDriveShift.get(driveShiftId),
-                    sked_Finish__c = maxFinishDateByDriveShift.get(driveShiftId)
-                ));
-            }
+            update assetJobsToUpdate;
         }
     }
 
     global void finish(Database.BatchableContext BC) {
-        Integer numJobsUpdated = 0;
-        List<Database.SaveResult> jobsSaveResults = Database.update(jobsToUpdate, false);
-        for (Database.SaveResult jsr : jobsSaveResults) {
-            if (jsr.isSuccess()) {
-                numJobsUpdated++;
+    }
+
+    private Map<Id, List<skedRoleTimeVarianceAdjustment>> getMapSiteIdToRtvAdjustments(List<skedRoleTimeVarianceAdjustment> rtvAdjustments) {
+        Map<Id, List<skedRoleTimeVarianceAdjustment>> map_siteId_rtvAdjustments = new Map<Id, List<skedRoleTimeVarianceAdjustment>>();
+
+        for (skedRoleTimeVarianceAdjustment rtvAdjustment : rtvAdjustments) {
+            if (!map_siteId_rtvAdjustments.containsKey(rtvAdjustment.siteId)) {
+                map_siteId_rtvAdjustments.put(rtvAdjustment.siteId, new List<skedRoleTimeVarianceAdjustment>());
             }
 
+            map_siteId_rtvAdjustments.get(rtvAdjustment.siteId).add(rtvAdjustment);
         }
 
-        Integer numDriveShiftsUpdated = 0;
-        List<Database.SaveResult> driveShiftsSaveResults = Database.update(driveShiftsToUpdate, false);
-        for (Database.SaveResult dssr : driveShiftsSaveResults) {
-            if (dssr.isSuccess()) {
-                numDriveShiftsUpdated++;
+        return map_siteId_rtvAdjustments;
+    }
+
+    private skedModels.startEnd getMinMaxRTVEffectiveDate(List<skedRoleTimeVarianceAdjustment> rtvAdjustments) {
+        skedModels.startEnd startEnd = new skedModels.startEnd();
+
+        for (skedRoleTimeVarianceAdjustment rtvAdjustment : rtvAdjustments) {
+            if (startEnd.startDate == null || rtvAdjustment.startDate < startEnd.startDate) {
+                startEnd.startDate = rtvAdjustment.startDate;
+            }
+
+            if (startEnd.endDate == null || rtvAdjustment.endDate > startEnd.endDate) {
+                startEnd.endDate = rtvAdjustment.endDate;
             }
         }
 
-        System.debug('Finished a Job Time Variance batch process that updated: ' + numJobsUpdated + ' Jobs, and: ' + numDriveShiftsUpdated + ' Drive Shifts');
+        return startEnd;
+    }
+
+    private Set<String> getAffectedResourceRolesByResourceRoleGroup(String resourceRoleGroup) {
+        Set<String> affectedResourceRoles = new Set<String>();
+        List<String> affectedResourceRoleGroups = resourceRoleGroup.split(';');
+        for (String affectedResourceRoleGroup : affectedResourceRoleGroups) {
+            affectedResourceRoles.addAll(this.resourceRoleByGroup.get(affectedResourceRoleGroup));
+        }
+
+        return affectedResourceRoles;
     }
 
     private List<String> getAffectedFields(String appliesTo) {
@@ -176,5 +225,48 @@ global class skedUpdateJobTimeVarianceBatch implements Database.Batchable<sObjec
         }
 
         return numAffectedFields;
+    }
+
+    private boolean checkAdjustmentDaysOfWeekAffectsDriveShift(skedRoleTimeVarianceAdjustment rtvAdjustment, sked_Drive_Shift__c driveShift) {
+        DateTime driveDate = DateTime.newInstance(driveShift.sked_Drive__r.sked_Drive_Date__c, driveShift.sked_Drive__r.sked_Start_Time__c);
+        driveDate = skedDateTimeUtils.toTimezone(driveDate, driveShift.sked_Drive__r.sked_Timezone__c);
+        string driveWeekday = driveDate.format('EEEE');
+        return rtvAdjustment.daysOfWeek != null && rtvAdjustment.daysOfWeek.contains(driveWeekday);
+    }
+
+    private Map<Id, List<sked__Job__c>> getShiftIdJobsMap(List<sked__Job__c> jobs) {
+        Map<Id, List<sked__Job__c>> shiftIdJobsMap = new Map<Id, List<sked__Job__c>>();
+        for (sked__Job__c job : jobs) {
+            if (!shiftIdJobsMap.containsKey(job.sked_Drive_Shift__c)) {
+                shiftIdJobsMap.put(job.sked_Drive_Shift__c, new List<sked__Job__c>());
+            }
+
+            shiftIdJobsMap.get(job.sked_Drive_Shift__c).add(job);
+        }
+
+        return shiftIdJobsMap;
+    }
+
+    private Integer adjustAmountByCollectionOpThreshold(String affectedField, Integer amount, sked_Drive_Shift__c driveShift) {
+        Integer breakdownTimeThreshold = driveShift.sked_Drive__r.sked_Collection_Operation__r.sked_Breakdown_Time_Threshold__c != NULL ?
+                Integer.valueOf(driveShift.sked_Drive__r.sked_Collection_Operation__r.sked_Breakdown_Time_Threshold__c) : 0;
+        Integer setupTimeThreshold = driveShift.sked_Drive__r.sked_Collection_Operation__r.sked_Setup_Time_Threshold__c != NULL ?
+                 Integer.valueOf(driveShift.sked_Drive__r.sked_Collection_Operation__r.sked_Setup_Time_Threshold__c) : 0;
+        switch on affectedField {
+            when 'sked_Setup_Time__c' {
+                if (driveShift.sked_Order__c > 1) {
+                    return amount > setupTimeThreshold ?
+                        setupTimeThreshold : amount;
+                }
+            }
+            when 'sked_Breakdown_Time__c' {
+                if (driveShift.sked_Order__c < driveShift.sked_Drive__r.sked_Drive_Shift_Count__c) {
+                    return amount > breakdownTimeThreshold ?
+                        breakdownTimeThreshold : amount;
+                }
+            }
+        }
+
+        return amount;
     }
 }

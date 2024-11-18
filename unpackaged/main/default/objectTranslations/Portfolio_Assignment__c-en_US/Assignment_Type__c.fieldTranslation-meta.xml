@@ -15,10 +15,6 @@
             <translation><!-- Account Specialist --></translation>
         </picklistValues>
         <picklistValues>
-            <masterLabel>Area Booking Manager</masterLabel>
-            <translation><!-- Area Booking Manager --></translation>
-        </picklistValues>
-        <picklistValues>
             <masterLabel>Booking Support</masterLabel>
             <translation><!-- Booking Support --></translation>
         </picklistValues>
@@ -61,6 +57,10 @@
         <picklistValues>
             <masterLabel>Sickle Cell Account Manager</masterLabel>
             <translation><!-- Sickle Cell Account Manager --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Strategic Business Planning Manager</masterLabel>
+            <translation><!-- Strategic Business Planning Manager --></translation>
         </picklistValues>
         <picklistValues>
             <masterLabel>Supervisor</masterLabel>

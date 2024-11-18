@@ -2,6 +2,11 @@
 <Queue xmlns="http://soap.sforce.com/2006/04/metadata">
     <doesSendEmailToMembers>false</doesSendEmailToMembers>
     <name>California Gold Country Lead Queue</name>
+    <queueMembers>
+        <users>
+            <user>emily.dore@redcross.org</user>
+        </users>
+    </queueMembers>
     <queueSobject>
         <sobjectType>Lead</sobjectType>
     </queueSobject>

@@ -7,8 +7,16 @@
             <translation><!-- Accept New Staffing Complement --></translation>
         </picklistValues>
         <picklistValues>
+            <masterLabel>Elect to Proceed with Excess Staff Capacity</masterLabel>
+            <translation><!-- Elect to Proceed with Excess Staff Capacity --></translation>
+        </picklistValues>
+        <picklistValues>
             <masterLabel>Elect to acknowledge dual role removal</masterLabel>
             <translation><!-- Elect to acknowledge dual role removal --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Elect to acknowledge the drive has assets that are not shared with new Collection Operation</masterLabel>
+            <translation><!-- Elect to acknowledge the drive has assets that are not shared with new Collection Operation --></translation>
         </picklistValues>
         <picklistValues>
             <masterLabel>Elect to acknowledge the drive that is multi shift drive</masterLabel>
@@ -57,6 +65,10 @@
         <picklistValues>
             <masterLabel>Keep Current Staffing Complement</masterLabel>
             <translation><!-- Keep Current Staffing Complement --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Remove from Linked Drive</masterLabel>
+            <translation><!-- Remove from Linked Drive --></translation>
         </picklistValues>
         <picklistValues>
             <masterLabel>Use rental vehicles</masterLabel>

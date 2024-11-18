@@ -50,18 +50,13 @@ public with sharing class BloodDriveInvokable {
                                             .title('Hi! '+'One of your coming Blood Drive ' + opty.Name + 'is still has an Unassigned Account!: '+opty.Account.Name)
                                             .sender(Userinfo.getUserId())           			
                                             .typeId(typeId )
-                                            .target(opty.Id); // target object id
+                                            .target(opty.Id) // target object id
+                                            .category('UnmanagedAccount');
                         //HRP-10482 changes ends here
                         userId = new List<String>();
                         System.debug('==notification=='+notification);                        
                         userId.add(opty.Account.District_Manager__c);
-                        try{
-                            notification.send(userId);
-                        }
-                        catch(Exception e) {
-                            System.debug('The following exception has occurred: ' + e.getMessage());
-                            System.debug('Line number: '+e.getLineNumber());
-                        } 
+                        notification.send(userId);
                     }
                 }
             }

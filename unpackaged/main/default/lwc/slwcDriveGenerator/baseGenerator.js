@@ -2,7 +2,7 @@ import { serial, generateUUID, parseJSON, isNullOrEmpty } from 'c/slwcUtils';
 import { DateTime } from 'c/luxon';
 import { cloneDeep, orderBy, extend, remove, max, compact, groupBy, uniq, pick } from 'c/lodash';
 import { DriveHelper } from './helper';
-import { DRIVE_STATUS, ASSET_TYPE, PENDING_ACTION, JOB_ALLOCATION_STATUS, DRIVE_TYPE, DRIVE_REQUEST_CHANGE_STATUS, MANUALLY_CREATED_FROM, OPERATION_TYPE, DRIVE_CONTENTION_RESOLUTION } from 'c/slwcConstants';
+import { DRIVE_STATUS, ASSET_TYPE, PENDING_ACTION, JOB_ALLOCATION_STATUS, DRIVE_TYPE, DRIVE_REQUEST_CHANGE_STATUS, MANUALLY_CREATED_FROM, OPERATION_TYPE, DRIVE_CONTENTION_RESOLUTION, DRIVE_CHANGE_REQUEST_TYPE } from 'c/slwcConstants';
 import {
   sObjectType,
   driveQueryModel,
@@ -49,6 +49,8 @@ class BaseGenerator {
     backupDriveShiftMap: {},
     fieldPermissionsMap: {},
     activeDriveChangeRequest: null,
+    waitingDriveChangeRequest : null,
+    pendingDriveChangeRequest : null,
     staffSetupExcludedRoles: [],
     
     //fixed site
@@ -56,6 +58,7 @@ class BaseGenerator {
   };
   mapSlotRecurrenceDates = {};
   errorMessages = [];
+  isRegenerateDriveChange = false;
 
   constructor({
     fetch,
@@ -116,8 +119,14 @@ class BaseGenerator {
       masterData.timezoneSidId = this.drive.driveSite.timezoneSidId;
     }
     
-    masterData.adminSetting.callListRecipientNone = masterData.adminSetting.callListRecipientNone ? masterData.adminSetting.callListRecipientNone / 100 : 1.4;
-    masterData.adminSetting.callListRecipient = masterData.adminSetting.callListRecipient ? masterData.adminSetting.callListRecipient / 100 : 1.15;
+    if (masterData.activeDriveChangeRequest && masterData.activeDriveChangeRequest.status === DRIVE_REQUEST_CHANGE_STATUS.PENDING && masterData.activeDriveChangeRequest.type.includes(DRIVE_CHANGE_REQUEST_TYPE.USER_CHANGE)) {
+      masterData.pendingDriveChangeRequest = masterData.activeDriveChangeRequest;
+    }  else if(masterData.activeDriveChangeRequest && masterData.activeDriveChangeRequest.status !== DRIVE_REQUEST_CHANGE_STATUS.PENDING){
+      masterData.waitingDriveChangeRequest = masterData.activeDriveChangeRequest;
+    }
+    masterData.adminSetting.callListRecipientNone = masterData.adminSetting.callListRecipientNone / 100;
+    masterData.adminSetting.callListRecipient = masterData.adminSetting.callListRecipient / 100;
+    masterData.adminSetting.callListRecipientNoneFixedSite = masterData.adminSetting.callListRecipientNoneFixedSite / 100;
     
     let { isReadonly, fieldReadonlyMap, fieldChangeRestrictionMap } = this.helper.buildFieldPermissionsMap(this.drive, masterData);
     masterData.isReadonly = isReadonly;
@@ -204,11 +213,9 @@ class BaseGenerator {
         this.drive.travelTimeIncluded = this.drive.typeOfDrive === DRIVE_TYPE.MOBILE ? this.drive.collectionOperation.travelTimeIncludedMobile : this.drive.collectionOperation.travelTimeIncludedFixedSite;
       }
 
-      if (this.drive.siteCollectionOperation) {
-        const siteCO = this.drive.driveSite.siteCollectionOperations.find(item => item.id === this.drive.siteCollectionOperation.id);
-        if(siteCO) {
-          this.drive.collectionOperation = siteCO.collectionOperation;
-        }
+      const matchedSiteCO = this.helper.getMatchedSiteCOForDrive(this.drive);
+      if (matchedSiteCO) {
+        this.drive.collectionOperation = matchedSiteCO.collectionOperation;
       }
 
       this.drive.IMPACT = false;
@@ -231,7 +238,7 @@ class BaseGenerator {
   }
 
   populateDriveTerritory() {
-    this.drive.territoryId = this.helper.getDriveTerritory(this.drive, this.masterData.territoryCollectionOperations);
+    this.drive.territoryId = this.helper.getDriveTerritory(this.drive, this.masterData.territoryCollectionOperations)?.territoryId;
   }
 
   applyJobTimeToJobAllocations(job) {
@@ -599,6 +606,7 @@ class BaseGenerator {
     this.drive.status = DRIVE_STATUS.HOLD;
     this.drive.routeApprovalRequestTo = null;
     this.drive.pendingAction = null;
+    this.drive.approvalStatus = null;
 
     return this.drive;
   }
@@ -629,10 +637,13 @@ class BaseGenerator {
   checkAndApplyDriveChangeRequest() {
     return Promise.resolve()
     .then(() => {
-      if(!this.masterData.activeDriveChangeRequest) return;
+      if(!this.masterData.waitingDriveChangeRequest) return;
 
-      let driveChanges = this.helper.generateDriveChangesFromDCR(this.drive, this.masterData.activeDriveChangeRequest);
-      return this.onDriveDataChanged(driveChanges, false, true);
+      let driveChanges = this.helper.generateDriveChangesFromDCR(this.drive, this.masterData.waitingDriveChangeRequest);
+      return this.onDriveDataChanged(driveChanges, {
+        skipNotifyDriveChanged : false, 
+        changedFromApplyingDCRs : true
+      });
     })        
   }
 
@@ -664,6 +675,15 @@ class BaseGenerator {
         remove(currentContentionResolutions, item => item === DRIVE_CONTENTION_RESOLUTION.ELECT_INSUFFICIENT_RESOURCES);
       }
 
+      if(
+        currentDrive.projectedRegisteredDonors !== backupDrive.projectedRegisteredDonors ||
+        currentDrive.staffCapacity !== backupDrive.staffCapacity ||
+        currentDrive.averageStaffCapacity !== backupDrive.averageStaffCapacity ||
+        currentDrive.excessStaffCapacity !== backupDrive.excessStaffCapacity
+      ) {
+        remove(currentContentionResolutions, item => item === DRIVE_CONTENTION_RESOLUTION.ELECT_EXCESS_STAFF_CAPACITY);
+      }
+
       //Lacking of vehicles
       if(currentDrive.totalVehicleRequested > backupDrive.totalVehicleRequested) {
         remove(currentContentionResolutions, item => item === DRIVE_CONTENTION_RESOLUTION.ELECT_LACKING_VEHICLE_INSUFFICIENT_CAPACITY);
@@ -683,7 +703,12 @@ class BaseGenerator {
     this.drive.contentionResolution = currentContentionResolutions.join(';');
   }
 
-  onDriveDataChanged(properties, skipNotifyDriveChanged = false, changedFromApplyingDCRs = false) {
+  onDriveDataChanged(properties, {
+    skipNotifyDriveChanged = false, 
+    changedFromApplyingDCRs = false, 
+    isCalledFromDCRProcessingModal = false
+  } = {}) {
+    this.isRegenerateDriveChange = isCalledFromDCRProcessingModal && properties.filter(record => record.targetName === 'regenerateDrive').length > 0 ;
     properties.forEach(property => {
       this.drive[property.targetName] = property.targetValue;
 
@@ -1077,7 +1102,7 @@ class BaseGenerator {
         const driveQuery = new driveQueryModel();
         driveQuery.selectedDates = validRecurrenceDates;
         driveQuery.eventTypes = [DRIVE_TYPE.FIXED_SITE];
-        driveQuery.operationTypes = [OPERATION_TYPE.INTEGRATED, OPERATION_TYPE.NON_INTEGRATED_APH];
+        driveQuery.operationTypes = [OPERATION_TYPE.INTEGRATED, OPERATION_TYPE.NON_INTEGRATED_APH, OPERATION_TYPE.NON_INTEGRATED_WB];
         driveQuery.collectionOpIds = [drive.collectionOperationId];
         driveQuery.locationIds = [drive.driveSiteId];
         driveQuery.statuses = [
@@ -1242,7 +1267,7 @@ class BaseGenerator {
       if(!resourceQuantityMap) return;
 
       driveShift.jobs?.forEach(job => {
-        const isSystemGeneratedResourceRole = this.helper.isSystemGeneratedJob(job, this.drive) && job.resourceRole;
+        const isSystemGeneratedResourceRole = this.helper.isSystemRole(job, this.drive) && job.resourceRole;
         if(!isSystemGeneratedResourceRole) return;
 
         const backupDriveShift = backupDrive.driveShifts?.[driveShiftIndex];
@@ -1259,17 +1284,17 @@ class BaseGenerator {
         
         if(job.resourceRole === 'VP/HH') {
           resourceQuantityMap.set(job.resourceRole, {
+            ...(resourceQuantityMap.get(job.resourceRole) ?? {}),
             quantity: backupJob.quantity,
             vphhQuantity: backupJob.vphhQuantity,
             aptQuantity: backupJob.aptQuantity,
             systemQuantity: backupJob.systemQuantity,
-            dualRole: backupJob.dualRole
           })
         } else {
           resourceQuantityMap.set(job.resourceRole, {
+            ...(resourceQuantityMap.get(job.resourceRole) ?? {}),
             quantity: backupJob.quantity,
             systemQuantity: backupJob.systemQuantity,
-            dualRole: backupJob.dualRole
           })
         }
       }); 

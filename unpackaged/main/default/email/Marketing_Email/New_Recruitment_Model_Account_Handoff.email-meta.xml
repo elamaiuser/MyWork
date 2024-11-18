@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<EmailTemplate xmlns="http://soap.sforce.com/2006/04/metadata">
+    <available>true</available>
+    <description>New Recruitment Model Handoff Letter from District Leadership</description>
+    <encodingKey>ISO-8859-1</encodingKey>
+    <letterhead>ARC_Generic_Logo1</letterhead>
+    <name>New Recruitment Model Account Handoff</name>
+    <style>formalLetter</style>
+    <subject>Exciting Announcement from The American Red Cross</subject>
+    <textOnly>Dear &lt;name&gt;,
+
+I’m excited to tell you about changes we’re making to enhance your Red Cross partnership experience.  Going forward, American Red Cross Account support will be fulfilled by a cohesive team supporting your blood program - a Strategic Business Planning team member to assist in building a strong calendar of blood drives and an Account Manager to support traditional blood drive planning and donor engagement. &lt;She/he/they&gt; will work with you until drive dates are confirmed, at which time the Account Manager, &lt;name&gt;, will continue donor engagement, scheduling and Drive Day preparation with you as usual. &lt;AM name&gt; specializes in ensuring a blood drive is successful and will now have greater focus that allows examination of processes and technologies to continue improving the drive experience for all.
+
+Planning a blood program calendar as far out as possible ensures no patient is left without the blood they need to survive trauma or illness. As a team, our goals are to maximize turnout at your drives, enable your ability to build your annual blood program and help impact more patient lives. Our team is here to support you!
+
+You’re in good hands with &lt;name&gt; and &lt;name&gt; as your Strategic Business Planning Manager and Account Manager, and I hope you’ll enjoy the increased service. We’re so grateful for your partnership!
+
+If you have any questions, don’t hesitate to reach out. 
+
+Best Regards,
+
+&lt;Sender Name&gt;
+&lt;Sender Title&gt;
+
+Your American Red Cross Team 
+Blood Program Manager	Account
+Manager	Account
+Specialist	District
+Manager
+&lt;name&gt;	&lt;name&gt;	&lt;name&gt;	&lt;name&gt;
+&lt;email&gt;	&lt;email&gt;	&lt;email&gt;	&lt;email&gt;
+&lt;phone&gt;	&lt;phone&gt;	&lt;phone&gt;	&lt;phone&gt;</textOnly>
+    <type>html</type>
+    <uiType>Aloha</uiType>
+</EmailTemplate>

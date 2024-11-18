@@ -48,6 +48,6 @@
     <sortOrder>Desc</sortOrder>
     <timeFrameFilter>
         <dateColumn>LAST_LOGIN</dateColumn>
-        <interval>INTERVAL_LAST30</interval>
+        <interval>INTERVAL_LAST90</interval>
     </timeFrameFilter>
 </Report>

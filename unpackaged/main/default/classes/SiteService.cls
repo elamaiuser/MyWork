@@ -15,6 +15,8 @@
   11/09/2023                Barnojit Sharma        Geolocations on Sites are being lost (HRP-10835)
   11/17/2023			    Barnojit Sharma		   Sites are missing county information (HRP-11099)
   1/15/2024                 Priti Jana             Logic for HRP-11418
+  03/06/2024			    Balaji N		  	   logic for HRP-12136 (Method:getSiteBuildingNameChangedAccounts,updateDivesOnCalenderForSiteBuidlingNameChange;changes in opp name logic)
+  03/08/2024			    Barnojit Sharma		   Update Chapter on the site when the zip code changes. (HRP-12045)
  ***********************************************************************************************************************************************************************************
 */
 
@@ -58,7 +60,7 @@ public with sharing class SiteService {
         Set<Id> siteIds = new Set<Id>();
         for (sked__Location__c newSite : newSiteList) {
             sked__Location__c oldSite = oldSiteMap?.get(newSite.Id);
-            if (newSite.sked_Site_Building_Name__c != oldSite?.sked_Site_Building_Name__c) {
+            if ((newSite.Name != oldSite?.Name)) {//HRP-12136 sked_Site_Building_Name__c ---> Name
                 siteIds.add(newSite.Id);
             }
         }
@@ -290,8 +292,11 @@ public with sharing class SiteService {
             if(!oldSiteMap.containsKey(st.Id) || oldSiteMap.get(st.Id) == null){
                 continue;
             }
-            if((String.isNotBlank(st.sked_Site_Building_Name__c) && !st.sked_Site_Building_Name__c.equals(oldSiteMap.get(st.Id).sked_Site_Building_Name__c))
-                    ||(String.isNotBlank(st.sked_Room_Name__c) && !st.sked_Room_Name__c.equals(oldSiteMap.get(st.Id).sked_Room_Name__c))){
+            //commented part of HRP-12136
+            /*if((String.isNotBlank(st.sked_Site_Building_Name__c) && !st.sked_Site_Building_Name__c.equals(oldSiteMap.get(st.Id).sked_Site_Building_Name__c))
+                    ||(String.isNotBlank(st.sked_Room_Name__c) && !st.sked_Room_Name__c.equals(oldSiteMap.get(st.Id).sked_Room_Name__c)))*/
+            //commented part of HRP-12136
+            if(String.isNotBlank(st.Name) && !st.Name.equals(oldSiteMap.get(st.Id).Name)){//HRP-12136 condition change
                         nameChangedSiteMap.put(st.Id,st);
                         
             }
@@ -312,17 +317,29 @@ public with sharing class SiteService {
             
             if(sdc.sked_Account__r != null && nameChangedSiteMap.get(sdc.sked_Drive_Site__c) != null){
                 drivenameNew = sdc.sked_Account__r.name + ', ';
-                drivenameNew += nameChangedSiteMap.get(sdc.sked_Drive_Site__c).sked_Site_Building_Name__c;
-                if(String.isNotBlank(nameChangedSiteMap.get(sdc.sked_Drive_Site__c).sked_Room_Name__c)){
+                driveNameNew += nameChangedSiteMap.get(sdc.sked_Drive_Site__c).Name;//HRP-12136
+                //commented part of HRP-12136
+                /*if(String.isNotBlank(nameChangedSiteMap.get(sdc.sked_Drive_Site__c).sked_Room_Name__c)){
                     drivenameNew = drivenameNew + '-' + nameChangedSiteMap.get(sdc.sked_Drive_Site__c).sked_Room_Name__c;
-                }
-                sdc.Name = drivenameNew.length() > 80 ? drivenameNew.substring(0,80) : drivenameNew ;
+                }*/
+                 //commented part of HRP-12136
+                sdc.Name = driveNameNew.length() > 80 ? driveNameNew.substring(0, 75) + ' ...' : driveNameNew; //HRP-12136 changed; Prev drivenameNew.length() > 80 ? drivenameNew.substring(0,80) : drivenameNew ;
             }
         }
         if(!DrivesList.isEmpty())
         {
             skedTriggerUtils.CHANGES_INITIATED_FROM_SERVICE = true; //HRP-11418 (Add check to prevent DOC update failure)
-            List<Database.SaveResult> saveResults = Database.update(DrivesList,false); 
+            //HRP-12136 start
+            TriggerHandler.bypass('DriveTriggerHandler');
+            skedHubBase.BypassInsertTriggers = true;
+        	skedHubBase.BypassUpdateTriggers = true;
+            //HRP-12136 End
+            List<Database.SaveResult> saveResults = Database.update(DrivesList,false);
+            //HRP-12136 start
+            skedHubBase.BypassInsertTriggers = false;
+        	skedHubBase.BypassUpdateTriggers = false;
+            TriggerHandler.clearBypass('DriveTriggerHandler');
+            //HRP-12136 End
             for(Database.SaveResult sr : saveResults){
                 if (!sr.isSuccess()) {
                     for(Database.Error err : sr.getErrors()) 
@@ -479,11 +496,11 @@ public with sharing class SiteService {
     * HRP-10835 changes starts here
     */
     public static void checkSiteAddress(Map<Id, sked__Location__c> oldMap , Map<Id, sked__Location__c> newMap){
-        if(oldMap == null || oldMap.isEmpty() || newMap == null || newMap.isEmpty()){
+        if(newMap == null || newMap.isEmpty()){
             return;
         }
         for(Id siteId : newMap.keySet()){
-            if(oldMap.containsKey(siteId)
+            if(oldMap != null && !oldMap.isEmpty() && oldMap.containsKey(siteId)
                     && compareText(newMap.get(siteId).sked_Address_1__c,oldMap.get(siteId).sked_Address_1__c,false)
                     && compareText(newMap.get(siteId).sked_Address_2__c,oldMap.get(siteId).sked_Address_2__c,true)
                     && compareText(newMap.get(siteId).sked_City__c,oldMap.get(siteId).sked_City__c,false)
@@ -496,6 +513,14 @@ public with sharing class SiteService {
                         newMap.get(siteId).sked__GeoLocation__Latitude__s = oldMap.get(siteId).sked__GeoLocation__Latitude__s;
                         newMap.get(siteId).sked__GeoLocation__Longitude__s = oldMap.get(siteId).sked__GeoLocation__Longitude__s;
             }
+            //HRP-12533[Start->>]
+             if(newMap.get(siteId).sked__GeoLocation__Longitude__s != null && (newMap.get(siteId).sked__Geolocation__Longitude__s < -180
+             		|| newMap.get(siteId).sked__Geolocation__Longitude__s >= -30) || newMap.get(siteId).sked__GeoLocation__Latitude__s != null && (newMap.get(siteId).sked__GeoLocation__Latitude__s > 71 || newMap.get(siteId).sked__GeoLocation__Latitude__s < 25
+             		)){
+                        
+                		newMap.get(siteId).addError('Geolocation must be in North America');
+            }
+            //HRP-12533[End->>]
         }
     }
     private static Boolean compareText(String val1, String val2, Boolean nullPass){
@@ -564,5 +589,54 @@ public with sharing class SiteService {
     }
     /*
     * HRP-11099 changes ends here
+    */
+    /*
+    * HRP-12045 changes starts here
+    */
+    public static void updateSiteChapter(List<sked__Location__c> newList , Map<Id, sked__Location__c> oldMap){
+        Map<String, Id> zipCodesVsChapterIdMap = new Map<String, Id>();
+        if(newList != null && !newList.isEmpty()){
+            for(sked__Location__c site : newList){
+                if(String.isNotBlank(site.sked_Zip_Code__c) && (oldMap == null 
+                        || (oldMap != null && !oldMap.isEmpty() && site.Id != null && oldMap.containsKey(site.Id)
+                        && oldMap.get(site.Id).sked_Zip_Code__c != site.sked_Zip_Code__c))){
+                            String zipCode = site.sked_Zip_Code__c.trim();
+                            zipCode = zipCode.length() > 5 ?  zipCode.left(5) :  zipCode;                         
+                            zipCodesVsChapterIdMap.put(zipCode,null);
+                }
+            }
+        }
+        System.debug('zipCodesVsChapterIdMap1 : '+zipCodesVsChapterIdMap);
+        if(!zipCodesVsChapterIdMap.isEmpty()){
+            for(Chapter_Blood_Region_Zip_Match__c chapterZipMatch : [SELECT Id, 
+                                                                            Chapter__c,
+                                                                            Chapter__r.Type__c,
+                                                                            Zip__c
+                                                                    FROM Chapter_Blood_Region_Zip_Match__c
+                                                                    WHERE Zip__c IN :zipCodesVsChapterIdMap.keySet()
+                                                                    AND Chapter__c != null
+                                                                    AND Chapter__r.Type__c = 'Chapter'
+                                                                    ORDER BY CreatedDate ASC]){
+                zipCodesVsChapterIdMap.put(chapterZipMatch.Zip__c.trim(),chapterZipMatch.Chapter__c);
+            }
+        }
+        System.debug('zipCodesVsChapterIdMap2 : '+zipCodesVsChapterIdMap);
+        if(newList != null && !newList.isEmpty() && !zipCodesVsChapterIdMap.isEmpty()){
+            for(sked__Location__c site : newList){
+                if(String.isNotBlank(site.sked_Zip_Code__c)){
+                    String zipCode = site.sked_Zip_Code__c.trim();
+                    zipCode = zipCode.length() > 5 ?  zipCode.left(5) :  zipCode;     
+                    if(zipCodesVsChapterIdMap.containsKey(zipCode)){
+                        site.Chapter__c = zipCodesVsChapterIdMap.get(zipCode);
+                    }
+                }else{
+                    site.Chapter__c = null;
+                }
+                System.debug('site.Chapter__c : '+site.Chapter__c);
+            }
+        }
+    }
+    /*
+    * HRP-12045 changes ends here
     */
 }

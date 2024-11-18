@@ -55,7 +55,7 @@
             <columnToColumn>false</columnToColumn>
             <isUnlocked>true</isUnlocked>
             <operator>equals</operator>
-            <value>Active</value>
+            <value>Active,Leave</value>
         </criteriaItems>
         <criteriaItems>
             <column>FK_$sked__Tag__c.sked__Type__c</column>
@@ -75,15 +75,22 @@
             <column>FK_NAME</column>
             <columnToColumn>false</columnToColumn>
             <isUnlocked>true</isUnlocked>
-            <operator>equals</operator>
-            <value>OJI</value>
+            <operator>contains</operator>
+            <value>DOT</value>
         </criteriaItems>
         <criteriaItems>
             <column>sked__Resource__c.sked_ARC_Region_Name__c</column>
             <columnToColumn>false</columnToColumn>
             <isUnlocked>true</isUnlocked>
+            <operator>notEqual</operator>
+            <value></value>
+        </criteriaItems>
+        <criteriaItems>
+            <column>sked__Resource_Tag__c.sked_Role_Status__c</column>
+            <columnToColumn>false</columnToColumn>
+            <isUnlocked>true</isUnlocked>
             <operator>equals</operator>
-            <value>Indiana,Kentucky,Illinois,Minnesota Dakotas,Nebraska Iowa,Wisconsin,Tennessee,Kansas Oklahoma,North Texas,Missouri Arkansas</value>
+            <value>Active</value>
         </criteriaItems>
         <language>en_US</language>
     </filter>

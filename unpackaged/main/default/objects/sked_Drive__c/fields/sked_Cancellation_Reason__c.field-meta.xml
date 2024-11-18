@@ -11,7 +11,7 @@
     <valueSet>
         <controllingField>sked_Initiated_By__c</controllingField>
         <valueSetDefinition>
-            <sorted>false</sorted>
+            <sorted>true</sorted>
             <value>
                 <fullName>Account Plan Sponsor Declined</fullName>
                 <default>false</default>
@@ -51,6 +51,16 @@
                 <fullName>Equipment Issues</fullName>
                 <default>false</default>
                 <label>Equipment Issues</label>
+            </value>
+            <value>
+                <fullName>FS Quarterly Calibration</fullName>
+                <default>false</default>
+                <label>FS Quarterly Calibration</label>
+            </value>
+            <value>
+                <fullName>Geo Alignment</fullName>
+                <default>false</default>
+                <label>Geo Alignment</label>
             </value>
             <value>
                 <fullName>Lost Room/Site Issues</fullName>
@@ -117,114 +127,114 @@
                 <default>false</default>
                 <label>Weather/Natural Disaster</label>
             </value>
-            <value>
-                <fullName>Geo Alignment</fullName>
-                <default>false</default>
-                <label>Geo Alignment</label>
-            </value>
         </valueSetDefinition>
         <valueSettings>
-            <controllingFieldValue>ARC Initiated-Mobile</controllingFieldValue>
+            <controllingFieldValue>ARC_Initiated_Mobile</controllingFieldValue>
             <controllingFieldValue>ARC Initiated-Fixed</controllingFieldValue>
             <valueName>ARC Management</valueName>
         </valueSettings>
         <valueSettings>
-            <controllingFieldValue>ARC Initiated-Mobile</controllingFieldValue>
-            <controllingFieldValue>ARC Initiated-Fixed</controllingFieldValue>
+            <controllingFieldValue>ARC_Initiated_Mobile</controllingFieldValue>
+            <controllingFieldValue>Sponsor_Initiated_Mobile</controllingFieldValue>
             <valueName>ARC Staff Strike</valueName>
         </valueSettings>
         <valueSettings>
-            <controllingFieldValue>ARC Initiated-Mobile</controllingFieldValue>
+            <controllingFieldValue>ARC_Initiated_Mobile</controllingFieldValue>
             <controllingFieldValue>ARC Initiated-Fixed</controllingFieldValue>
             <valueName>Budgeted FTE Reduction</valueName>
         </valueSettings>
         <valueSettings>
-            <controllingFieldValue>ARC Initiated-Mobile</controllingFieldValue>
-            <controllingFieldValue>Sponsor Initiated-Mobile</controllingFieldValue>
+            <controllingFieldValue>ARC_Initiated_Mobile</controllingFieldValue>
+            <controllingFieldValue>Sponsor_Initiated_Mobile</controllingFieldValue>
             <controllingFieldValue>ARC Initiated-Fixed</controllingFieldValue>
             <controllingFieldValue>Sponsor Initiated-Fixed</controllingFieldValue>
             <valueName>COVID</valueName>
         </valueSettings>
         <valueSettings>
-            <controllingFieldValue>ARC Initiated-Mobile</controllingFieldValue>
+            <controllingFieldValue>ARC_Initiated_Mobile</controllingFieldValue>
             <controllingFieldValue>ARC Initiated-Fixed</controllingFieldValue>
             <valueName>Equipment Issues</valueName>
         </valueSettings>
         <valueSettings>
-            <controllingFieldValue>ARC Initiated-Mobile</controllingFieldValue>
+            <controllingFieldValue>ARC_Initiated_Mobile</controllingFieldValue>
+            <controllingFieldValue>ARC Initiated-Fixed</controllingFieldValue>
+            <valueName>Geo Alignment</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>ARC_Initiated_Mobile</controllingFieldValue>
             <valueName>Low Prod/High CPUC</valueName>
         </valueSettings>
         <valueSettings>
-            <controllingFieldValue>ARC Initiated-Mobile</controllingFieldValue>
-            <controllingFieldValue>Sponsor Initiated-Mobile</controllingFieldValue>
+            <controllingFieldValue>ARC_Initiated_Mobile</controllingFieldValue>
+            <controllingFieldValue>Sponsor_Initiated_Mobile</controllingFieldValue>
             <controllingFieldValue>ARC Initiated-Fixed</controllingFieldValue>
             <controllingFieldValue>Sponsor Initiated-Fixed</controllingFieldValue>
             <valueName>Man-made Disaster</valueName>
         </valueSettings>
         <valueSettings>
-            <controllingFieldValue>ARC Initiated-Mobile</controllingFieldValue>
+            <controllingFieldValue>ARC_Initiated_Mobile</controllingFieldValue>
             <controllingFieldValue>ARC Initiated-Fixed</controllingFieldValue>
             <valueName>Overbooked Day</valueName>
         </valueSettings>
         <valueSettings>
-            <controllingFieldValue>ARC Initiated-Mobile</controllingFieldValue>
+            <controllingFieldValue>ARC_Initiated_Mobile</controllingFieldValue>
             <controllingFieldValue>ARC Initiated-Fixed</controllingFieldValue>
             <valueName>Region Consolidation</valueName>
         </valueSettings>
         <valueSettings>
-            <controllingFieldValue>ARC Initiated-Mobile</controllingFieldValue>
+            <controllingFieldValue>ARC_Initiated_Mobile</controllingFieldValue>
             <controllingFieldValue>ARC Initiated-Fixed</controllingFieldValue>
             <valueName>Staff Call-Out</valueName>
         </valueSettings>
         <valueSettings>
-            <controllingFieldValue>ARC Initiated-Mobile</controllingFieldValue>
+            <controllingFieldValue>ARC_Initiated_Mobile</controllingFieldValue>
             <controllingFieldValue>ARC Initiated-Fixed</controllingFieldValue>
             <valueName>Staff Shortage</valueName>
         </valueSettings>
         <valueSettings>
-            <controllingFieldValue>ARC Initiated-Mobile</controllingFieldValue>
+            <controllingFieldValue>ARC_Initiated_Mobile</controllingFieldValue>
             <controllingFieldValue>ARC Initiated-Fixed</controllingFieldValue>
             <valueName>System Need</valueName>
         </valueSettings>
         <valueSettings>
-            <controllingFieldValue>ARC Initiated-Mobile</controllingFieldValue>
+            <controllingFieldValue>ARC_Initiated_Mobile</controllingFieldValue>
             <valueName>Time elapsed</valueName>
         </valueSettings>
         <valueSettings>
-            <controllingFieldValue>ARC Initiated-Mobile</controllingFieldValue>
+            <controllingFieldValue>ARC_Initiated_Mobile</controllingFieldValue>
             <valueName>Vehicle Issue</valueName>
         </valueSettings>
         <valueSettings>
-            <controllingFieldValue>ARC Initiated-Mobile</controllingFieldValue>
-            <controllingFieldValue>Sponsor Initiated-Mobile</controllingFieldValue>
+            <controllingFieldValue>ARC_Initiated_Mobile</controllingFieldValue>
+            <controllingFieldValue>Sponsor_Initiated_Mobile</controllingFieldValue>
             <controllingFieldValue>ARC Initiated-Fixed</controllingFieldValue>
             <controllingFieldValue>Sponsor Initiated-Fixed</controllingFieldValue>
             <valueName>Weather/Natural Disaster</valueName>
         </valueSettings>
         <valueSettings>
-            <controllingFieldValue>Sponsor Initiated-Mobile</controllingFieldValue>
+            <controllingFieldValue>Sponsor_Initiated_Mobile</controllingFieldValue>
             <valueName>Account Plan Sponsor Declined</valueName>
         </valueSettings>
         <valueSettings>
-            <controllingFieldValue>Sponsor Initiated-Mobile</controllingFieldValue>
+            <controllingFieldValue>Sponsor_Initiated_Mobile</controllingFieldValue>
             <valueName>Competition</valueName>
         </valueSettings>
         <valueSettings>
-            <controllingFieldValue>Sponsor Initiated-Mobile</controllingFieldValue>
+            <controllingFieldValue>Sponsor_Initiated_Mobile</controllingFieldValue>
             <valueName>Donor Base Illness</valueName>
         </valueSettings>
         <valueSettings>
-            <controllingFieldValue>Sponsor Initiated-Mobile</controllingFieldValue>
+            <controllingFieldValue>Sponsor_Initiated_Mobile</controllingFieldValue>
             <controllingFieldValue>Sponsor Initiated-Fixed</controllingFieldValue>
             <valueName>Lost Room/Site Issues</valueName>
         </valueSettings>
         <valueSettings>
-            <controllingFieldValue>Sponsor Initiated-Mobile</controllingFieldValue>
+            <controllingFieldValue>Sponsor_Initiated_Mobile</controllingFieldValue>
             <valueName>Sponsor Conflict</valueName>
         </valueSettings>
         <valueSettings>
             <controllingFieldValue>ARC Initiated-Fixed</controllingFieldValue>
-            <valueName>Geo Alignment</valueName>
+            <valueName>FS Quarterly Calibration</valueName>
         </valueSettings>
     </valueSet>
 </CustomField>

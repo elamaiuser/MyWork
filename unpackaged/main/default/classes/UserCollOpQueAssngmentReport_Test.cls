@@ -1,3 +1,13 @@
+/* Description : This test class covers UserCollOpQueAssngmentReportController 
+ * Current Test Coverage : 85%
+   
+ * Modification Log 
+ * Date					     Developer Name			     Comments
+ * *********************************************************************************************
+ * 11/08/2024				  Priti Jana				Updated to increase code coverage
+ ***********************************************************************************************
+*/
+
 @isTest
 public class UserCollOpQueAssngmentReport_Test 
 {
@@ -65,46 +75,56 @@ public class UserCollOpQueAssngmentReport_Test
         
        System.runAs(AdminUser){
             insert DRDAMUser;
-       }
-        
-        
-        
+       }   
     }
     
     @isTest
-    public static void testMethod1()
-    {
+    public static void testReportController() {
+        Test.startTest();
+        
         user u =[select id,Name,sked_Collection_Operations__c from user Limit 1];
         user AdminUser=[select id,Name,sked_Collection_Operations__c from user where profile.name='System Administrator' Limit 1];
-        
-        system.debug('userMapid'+u);
+
         Group objGroup = new Group(Name = 'TestGroup1', Type='Queue',DeveloperName='Test_Group1');
         insert objGroup;
         
-       QueueSObject q = new QueueSObject(SobjectType='Lead', QueueId=objGroup.Id);
+        QueueSObject q = new QueueSObject(SobjectType='Lead', QueueId=objGroup.Id);
 		insert q;
-        //id userid =;
+
         groupmember grpMem = new groupMember();
         grpMem.GroupId =objGroup.id;
         grpMem.userorGroupId=AdminUser.id;
         
-        system.runAs(new User(Id = UserInfo.getUserId()))
-        {}
-         insert grpMem;
-        
+        system.runAs(new User(Id = UserInfo.getUserId())) {
+         	insert grpMem;
+        }
         
         UserCollOpQueAssngmentReportController reportController = new UserCollOpQueAssngmentReportController();
         reportController.searchUser=AdminUser.Name;
         reportController.searchCollOpp=AdminUser.sked_Collection_Operations__c;
         
         reportController.search();
-        
-        
         reportController.clear();
-        reportController.searchUser=u.Name;
-        reportController.searchCollOpp=u.sked_Collection_Operations__c;
+        reportController.searchUser = u.Name;
+        reportController.searchCollOpp = u.sked_Collection_Operations__c;
         
         reportController.search();
-    	    
+  
+        UserCollOpQueAssngmentReportController.getRoleSubordinateUsers(u.Id);
+        UserCollOpQueAssngmentReportController.UserCollOpQueWrapper wrapperData = new UserCollOpQueAssngmentReportController.UserCollOpQueWrapper(
+        	u,
+        	1,
+        	1,
+        	'Test'
+        );
+        wrapperData.isSelected = true;
+        wrapperData.grpMembers = grpMem;
+
+        reportController.UserCollOpQueWrapList = new List<UserCollOpQueAssngmentReportController.UserCollOpQueWrapper>{wrapperData};
+        
+        reportController.selectedRecords();
+        reportController.ExportToExcel();
+        
+        Test.stopTest(); 	    
     }
 }

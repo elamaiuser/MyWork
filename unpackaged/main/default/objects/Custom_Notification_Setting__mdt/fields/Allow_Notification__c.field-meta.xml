@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Allow_Notification__c</fullName>
+    <defaultValue>false</defaultValue>
+    <description>This field is used to turn on/off notification completely</description>
+    <externalId>false</externalId>
+    <fieldManageability>DeveloperControlled</fieldManageability>
+    <label>Allow Notification</label>
+    <type>Checkbox</type>
+</CustomField>

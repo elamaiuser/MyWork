@@ -12,6 +12,11 @@
  * 11/20/2023                 Krapy Tuli             Logic for HRP-11419
  * 11/28/2023                 Krapy Tuli             Logic for HRP-11513
  * 12/11/2023                 Priti Jana             Logic for HRP-11653
+ * 02/05/2024                 Priti Jana             Logic for HRP-11547
+ * 05/02/2024                 Priti Jana             Logic for HRP-12480
+ * 06/05/2024                 Priti Jana             Logic for HRP-11908
+ * 06/06/2024                 Priti Jana             Logic for HRP-12011
+ * 17/06/2024                 Barnojit Sharma        Logic for HRP-12738
  ***************************************************************************
 */
 
@@ -20,25 +25,18 @@ public class FetchRelatedDriveData {
     public static DMLData getDriveGenerationData(set<Id> oppIds) {
          
         List<Opportunity> oppportunities = fetchOpportunities(oppIds);
-        system.debug('oppportunities In FetchRelatedDriveData ' + oppportunities);  
             
         DMLSchedulingBounds schedulingBounds = reduceSchedulingBoundsFromOpportunities(oppportunities);
-        system.debug('schedulingBounds In FetchRelatedDriveData ' + schedulingBounds);   
         
         Set<Id> siteIds = reduceSiteIdsFromOpportunities(oppportunities);
-        system.debug('siteIds In FetchRelatedDriveData ' + siteIds);   
         
         List<sked__Location__c> sites = fetchSites(siteIds, schedulingBounds);
-        system.debug('sites In FetchRelatedDriveData ' + sites);   
         
         Set<Id> accountIds = reduceAccountIdsFromOpportunities(oppportunities);
-        system.debug('accountIds In FetchRelatedDriveData ' + accountIds);   
         
-        List<Account> accounts = fetchAccounts(accountIds);
-        system.debug('accounts In FetchRelatedDriveData ' + accounts);   
+        List<Account> accounts = fetchAccounts(accountIds, schedulingBounds); //HRP-12480
         
-        Set<Id> collectionOperationIds = reduceCollectionOperationIdsFromSites(sites);
-        system.debug('collectionOperationIds In FetchRelatedDriveData ' + collectionOperationIds);   
+        Set<Id> collectionOperationIds = reduceCollectionOperationIdsFromSites(sites);  
         
         List<Biomed_Collection_Op_Center__c> collectionOperations = fetchCollectionOperations(collectionOperationIds);
 
@@ -56,11 +54,8 @@ public class FetchRelatedDriveData {
         List<sked_Role_Time_Detail__c> roleTimeDetails = fetchRoleTimeDetails(collectionOperationIds, schedulingBounds);
         
         List<sked_Role_Time_Variance__c> roleTimeVariances = fetchRoleTimeVariances(siteIds, schedulingBounds);
-        system.debug('roleTimeVariances:: '+roleTimeVariances);
+      
         List<sked_Lunch_Break_Setting__c> lunchBreakSettings = fetchLunchBreakSettings();    
-        
-        // NEW
-        //List<sked_Collection_Op_Staging_Location__c> collectionOperationStagingLocations = fetchCollectionOperationStagingLocation(collectionOperationIds, schedulingBounds);
         
         return combineDriveGeneratorData(oppportunities,accounts,sites,collectionOperations,collectionOperationSDMs, 
                                          staffingDecisionMatrices,resourceRoleGroups, roleTimeDetails, roleTimeVariances,
@@ -120,8 +115,18 @@ public class FetchRelatedDriveData {
         }
         
         data.map_group_resourceRoles = new Map<string, DMLResourceRoleGroup>();
+        data.resourceRoleGroups = new List<String>(); // HRP-11908
+        data.map_resourceRole_resourceRoleGroup = new Map<String, String>(); //HRP-11908
         for (sked_Resource_Role_Group__c resourceRoleGroup : resourceRoleGroups) {
             data.map_group_resourceRoles.put(resourceRoleGroup.sked_Resource_Role_Group__c, new DMLResourceRoleGroup(resourceRoleGroup));
+
+            // HRP-11908 --> Starts Here
+            data.resourceRoleGroups.add(resourceRoleGroup.sked_Resource_Role_Group__c); 
+            List<String> resourceRoles = new List<String>(resourceRoleGroup.sked_Resource_Roles__c.split(';'));
+            for(String resourceRole : resourceRoles) {
+                data.map_resourceRole_resourceRoleGroup.put(resourceRole, resourceRoleGroup.sked_Resource_Role_Group__c);
+            }
+            // HRP-11908 --> Ends Here
         }
         
         data.roleTimeDetails = new List<DMLRoleTimeDetail>();
@@ -162,13 +167,14 @@ public class FetchRelatedDriveData {
         return data;
     }
     
+    //HRP-12011 - Added Slot_Generator__c field
     static List<Opportunity> fetchOpportunities(Set<Id> oppIds) {
         return [SELECT Id, Name, AccountId, Account_Type__c, Anticipated_Registered_Donors__c,
                 Drive_Date__c, Drive_Site__c, Drive_Site__r.sked_Collection_Operation__c, Drive_Site__r.Operation_Type__c,
                 End_Time__c, Industry_Code__c, Recruited_By__c, Start_Time__c,
                 Type_of_Drive__c, WB_Projected_Procedures__c,Flow_Start_Time_Field__c,Flow_End_Time_Field__c, X2RBC_Projected_Procedures__c,
                 Number_of_2RBC_Assets__c, Number_of_Plasma_Assets__c, Number_of_Platelet_Assets__c ,
-                Plasma_Pheresis_Projected_Procedures__c,Platelet_Projected_Procedures__c, Day_of_Week__c	
+                Plasma_Pheresis_Projected_Procedures__c,Platelet_Projected_Procedures__c, Day_of_Week__c, Slot_Generator__c	
                 FROM Opportunity
                 WHERE Id IN :oppIds];
     }
@@ -190,16 +196,20 @@ public class FetchRelatedDriveData {
                 WHERE Id IN :siteIds];
     }
     
-    // HRP - 9901 - removed account Operation Type field
+    /* 1. HRP - 9901 - removed account Operation Type field
+       2. HRP - 12480 - Added Start and End Date check for FSPP
+    */
 
-    public static List<Account> fetchAccounts(Set<Id> accountIds) {
+    public static List<Account> fetchAccounts(Set<Id> accountIds, DMLSchedulingBounds schedulingBounds) {
         return [SELECT Id, Name, Accepts_Automation2__c, APT_Required__c,
                 (SELECT Id, sked__Account__c, sked__Required__c, sked__Tag__c, sked_Minimum_Quantity__c,
                  sked__Tag__r.sked_Resource_Type__c, sked__Tag__r.sked__Type__c, sked__Tag__r.Name //HRP-11513
                  FROM sked__Account_Tags__r),
                 (SELECT Id, sked_Account__c, sked_Deferral__c, sked_Effective_End_Date__c, sked_Effective_Start_Date__c,
                  sked_Procedure_Type__c, sked_Productive_Procedure_Goal__c, sked_QNS__c
-                 FROM sked_Fixed_Site_Procedure_Projections__r)
+                 FROM sked_Fixed_Site_Procedure_Projections__r
+                 WHERE ((sked_Effective_Start_Date__c = NULL OR sked_Effective_Start_Date__c <= :schedulingBounds.endDate)
+                 AND (sked_Effective_End_Date__c = NULL OR sked_Effective_End_Date__c >= :schedulingBounds.startDate)))
                 FROM Account
                 WHERE Id IN :accountIds];
     }
@@ -262,7 +272,7 @@ public class FetchRelatedDriveData {
                 sked_NR_Volunteer_Fixed_Site_Band_Lower__c, sked_NR_Volunteer_Fixed_Site_Band_Upper__c,
                 sked_Team_Supervisor_Threshold__c, sked_VP_HH_Capacity__c, sked_2RBC_Hourly_Capacity__c,
                 sked_WB_Hourly_Capacity__c, sked_Platelet_Hourly_Capacity__c, sked_Plasma_Hourly_Capacity__c,
-                RecordType.Name
+                RecordType.Name, sked_Platelet_Round_Capacity__c //HRP-11547
                 FROM sked_Staffing_Decision_Matrix__c
                 WHERE Id IN :staffingDecisionMatrixIds];
     }
@@ -331,7 +341,8 @@ public class FetchRelatedDriveData {
     
     static List<sked_Role_Time_Variance__c> fetchRoleTimeVariances(Set<Id> siteIds, DMLSchedulingBounds schedulingBounds) {
         return [SELECT Id, sked_Buffer_Type__c, sked_Effective_End_Date__c, sked_Effective_Start_Date__c, sked_Location__c,
-                sked_Resource_Role_Group__c, sked_Variance_Applies_to__c, sked_Variation_Amount__c, sked_Variation_Type__c 
+                sked_Resource_Role_Group__c, sked_Variance_Applies_to__c, sked_Variation_Amount__c, sked_Variation_Type__c, 
+                sked_Days_Of_Week__c //added for HRP-12738
                 FROM sked_Role_Time_Variance__c
                 WHERE sked_Location__c IN :siteIds
                 AND sked_Effective_Start_Date__c <= :schedulingBounds.endDate
@@ -371,14 +382,8 @@ public class FetchRelatedDriveData {
             skedDrive.sked_Drive_Date__c = drive.driveDate;
             skedDrive.sked_Total_Procedures_Projected__c = drive.totalProceduresProjected;
             skedDrive.sked_Total_Products_Projected__c = drive.totalProductsProjected;
-            //skedDrive.sked_Drive_Owner__c = drive.sked_Drive_Owner__c == null ? opp.Account_Manager__c : drive.sked_Drive_Owner__c ;
-            // skedDrive.Account_Manager__c = opp.Account_Manager__c != null ?  opp.Account_Manager__c: null; //HRP-10359
-            // skedDrive.Account_Manager_Portfolio__c = opp.Account_Manager_Portfolio__c != null ?  opp.Account_Manager_Portfolio__c: null; //HRP-10359
-            // skedDrive.District_Manager__c = opp.District_Manager__c != null ?  opp.District_Manager__c: null; //HRP-10359
-            // skedDrive.District_Manager_Portfolio__c = opp.District_Manager_Portfolio__c != null ?  opp.District_Manager_Portfolio__c: null; //HRP-10359
-            
-            skedDrives.add(skedDrive);
-            
+            skedDrive.sked_Drive_Owner__c = skedDrive.sked_Drive_Owner__c == null ? opp.Account_Manager__c : skedDrive.sked_Drive_Owner__c; //HRP-9815
+            skedDrives.add(skedDrive);    
             map_tempId_sObject.put(drive.tempId, skedDrive);
         }
         insert skedDrives;
@@ -512,6 +517,8 @@ public class FetchRelatedDriveData {
 
         public Map<Id, List<sked_Collection_Op_Staging_Location__c>> mapCoIdVsStagingLocations;
         public List<TravelTimeIndex> travelTimeIndexes;
+        public List<String> resourceRoleGroups; //HRP-11908
+        public Map<String, String> map_resourceRole_resourceRoleGroup; //HRP-11908
     }
     
     public virtual class DMLEntityBase {
@@ -571,6 +578,7 @@ public class FetchRelatedDriveData {
         public DMLAccount account;
         public DMLCollectionOperation collectionOperation;
         public DMLLocation driveSite;
+        public Decimal slotGenerator; //HRP-12011
         
         public List<DMLDriveShift> driveShifts;
         public Boolean hasError = false;
@@ -595,6 +603,7 @@ public class FetchRelatedDriveData {
             this.x2rbcProjectedProcedures = opp.X2RBC_Projected_Procedures__c != null ? opp.X2RBC_Projected_Procedures__c : 0;
             this.plasmaProjectedProcedures = opp.Plasma_Pheresis_Projected_Procedures__c != null ? opp.Plasma_Pheresis_Projected_Procedures__c : 0;
             this.plateletProjectedProcedures = opp.Platelet_Projected_Procedures__c != null ? opp.Platelet_Projected_Procedures__c : 0;
+            this.slotGenerator = opp.Slot_Generator__c; //HRP-12011
         }
         
         public override SObject toSObject() {
@@ -818,6 +827,7 @@ this.travelTimeBreakdownsSiteToCo = (List<DMLTravelTimeBreakdown>)JSON.deseriali
         public decimal plateletHourlyCapacity;
         public decimal plasmaHourlyCapacity;
         public decimal x2rbcHourlyCapacity;
+        public decimal plateletRoundCapacity; //HRP-11547
         
         public DMLStaffingDecisionMatrix(sked_Staffing_Decision_Matrix__c staffingDecisionMatrix) {
             this.id = staffingDecisionMatrix.Id;
@@ -835,6 +845,7 @@ this.travelTimeBreakdownsSiteToCo = (List<DMLTravelTimeBreakdown>)JSON.deseriali
             this.plateletHourlyCapacity = staffingDecisionMatrix.sked_Platelet_Hourly_Capacity__c;
             this.plasmaHourlyCapacity = staffingDecisionMatrix.sked_Plasma_Hourly_Capacity__c;
             this.x2rbcHourlyCapacity = staffingDecisionMatrix.sked_2RBC_Hourly_Capacity__c;
+            this.plateletRoundCapacity = staffingDecisionMatrix.sked_Platelet_Round_Capacity__c; //HRP-11547
         }
     }
 
@@ -1304,6 +1315,7 @@ this.travelTimeBreakdownsSiteToCo = (List<DMLTravelTimeBreakdown>)JSON.deseriali
         public string varianceAppliesTo;
         public decimal varianceAmount;
         public string varianceType;
+        public List<String> daysOfWeek; //HRP-12738
         
         public DMLRoleTimeVariance(sked_Role_Time_Variance__c roleTimeVariance) {
             this.id = roleTimeVariance.Id;
@@ -1318,6 +1330,16 @@ this.travelTimeBreakdownsSiteToCo = (List<DMLTravelTimeBreakdown>)JSON.deseriali
             this.varianceAppliesTo = roleTimeVariance.sked_Variance_Applies_to__c;
             this.varianceAmount = roleTimeVariance.sked_Variation_Amount__c;
             this.varianceType = roleTimeVariance.sked_Variation_Type__c;
+            /*
+            * HRP-12738 changes stats here
+            */
+            this.daysOfWeek = new List<String> ();
+            if (roleTimeVariance.sked_Days_of_Week__c != NULL) {
+                this.daysOfWeek = roleTimeVariance.sked_Days_of_Week__c.split(';');
+            }
+            /*
+            * HRP-12738 changes ends here
+            */
         }
     }
     

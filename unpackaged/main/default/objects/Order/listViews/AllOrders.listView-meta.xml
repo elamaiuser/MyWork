@@ -16,9 +16,9 @@
     <columns>Publicity_Submitted_Date__c</columns>
     <filterScope>Everything</filterScope>
     <filters>
-        <field>ORDERS.ORDER_NUMBER</field>
+        <field>ORDERS.STATUS</field>
         <operation>equals</operation>
-        <value>112888</value>
+        <value>Activated</value>
     </filters>
     <label>All Orders</label>
 </ListView>

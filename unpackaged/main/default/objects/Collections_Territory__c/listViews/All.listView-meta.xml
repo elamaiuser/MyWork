@@ -16,13 +16,9 @@
     <columns>CREATEDBY_USER</columns>
     <filterScope>Everything</filterScope>
     <filters>
-        <field>sked_Start_Date__c</field>
-        <operation>notEqual</operation>
-    </filters>
-    <filters>
         <field>Zip__c</field>
         <operation>equals</operation>
-        <value>34085</value>
+        <value>59851</value>
     </filters>
     <label>All</label>
 </ListView>

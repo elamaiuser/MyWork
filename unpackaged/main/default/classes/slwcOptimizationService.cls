@@ -1,9 +1,10 @@
-global class slwcOptimizationService {
+global class slwcOptimizationService implements Callable {
     
     @AuraEnabled
     public static slwcAuraResult initiateOptimizationRun(initiateOptimizationRunRequestModel request) {
         skedTriggerUtils.CHANGES_INITIATED_FROM_SERVICE = true;
         slwcAuraResult result = new slwcAuraResult();
+        List<String> optimizationDriveTypes = new List<String>();
         List<sked_Optimization_Queue__c> newQueues = addDrivesToQueues(request);
         indicateInheritances(newQueues);
         
@@ -16,24 +17,48 @@ global class slwcOptimizationService {
             sked_End_Date__c = request.endDate,
             sked_Status__c = skedConstants.OPTIMIZATION_RUN_STATUS_PENDING,
             sked_UniqueKey__c = runKey,
-            sked_Is_Dev__c = skedSetting.instance.Admin.runOptimizationOnDev,
-            sked_Account_Preferences_Score__c = request.optimizationSetting.accountPreferencesScore,
-            sked_Geographic_Preferences_Score__c = request.optimizationSetting.geographicPreferencesScore,
-            sked_Location_Preferences_Score__c = request.optimizationSetting.locationPreferencesScore,
-            sked_Seniority_Rank_Score__c = request.optimizationSetting.seniorityRankScore,
-            sked_Account_Restrictions__c = request.optimizationSetting.accountRestrictions,
-            sked_Location_Restrictions__c = request.optimizationSetting.locationRestrictions,
-            sked_Maximum_Weekly_Hours__c = request.optimizationSetting.maximumWeeklyHours,
-            sked_PTO_Availability__c = request.optimizationSetting.ptoAvailability,
-            sked_Role_Certification_Match__c = request.optimizationSetting.roleCertificationMatch,
-            sked_Role_Priorities__c = request.optimizationSetting.rolePriorities
+            sked_Is_Dev__c = skedSetting.instance.Admin.runOptimizationOnDev
         );
         insert newRun;
 
+        sked__Region__c skedRegion = [SELECT sked__Timezone__c
+                                      FROM sked__Region__c
+                                      WHERE sked_Biomed_Collection_Op_Center__c = :newRun.sked_Collection_Operation__c
+                                      LIMIT 1];
+
         for (sked_Optimization_Queue__c newQueue : newQueues) {
             newQueue.sked_Optimization_Run__c = newRun.Id;
+            if(!optimizationDriveTypes.contains(newQueue.sked_Drive_Type__c)){
+                optimizationDriveTypes.add(newQueue.sked_Drive_Type__c);
+            }            
         }
         update newQueues;
+        newRun.sked_Drive_Types__c = String.join(optimizationDriveTypes, ';');
+        newRun.sked_Timezone__c = skedRegion.sked__Timezone__c;
+        update newRun;
+
+        insertOptimizationRunSettings(request, newQueues.get(0).sked_Collection_Operation__c, newRun.Id);
+
+        List<sked_Drive__c> reshuffledDrives = getReshuffledDrives(request.driveIds, request.startDate, request.endDate, newRun.Id, newRun.sked_Drive_Types__c);
+       
+        if (reshuffledDrives != null && !reshuffledDrives.isEmpty()) {            
+            List<sked_Optimization_Queue_Item__c> reshuffledQueueItems = new List<sked_Optimization_Queue_Item__c>();
+            for (sked_Drive__c reshuffledDrive : reshuffledDrives) { 
+                for (sked_Optimization_Queue__c newQueue : newQueues) { 
+                    if (newQueue.sked_Drive_Type__c == reshuffledDrive.sked_Type_of_Drive__c && newQueue.sked_Collection_Operation__c == reshuffledDrive.sked_Collection_Operation__c
+                        && newQueue.sked_Optimization_Run__c == newRun.Id) { 
+                            sked_Optimization_Queue_Item__c reshuffledQueueItem = new sked_Optimization_Queue_Item__c(
+                                sked_Optimization_Queue__c = newQueue.Id,
+                                sked_Drive__c = reshuffledDrive.Id,
+                                sked_Type__c = 'Reshuffled'
+                            );                            
+                            reshuffledQueueItems.add(reshuffledQueueItem);
+                    }
+                }            
+            }
+            insert reshuffledQueueItems;
+        }
+        
 
         Set<Id> runIds = new Set<Id>();
         runIds.add(newRun.Id);
@@ -66,18 +91,202 @@ global class slwcOptimizationService {
         result.returnedData = optimizationRuns;
         return result;
     }
-    
+
+    //HRP-12511
+    @AuraEnabled
+    public static slwcAuraResult getOptimizationRunStatistics(String optimizationId) {
+        skedTriggerUtils.CHANGES_INITIATED_FROM_SERVICE = true;
+        slwcAuraResult result = new slwcAuraResult();
+        List<sked_Optimization_Run__c> optimizationRuns =  new List<sked_Optimization_Run__c>();
+        
+            optimizationRuns = [SELECT sked_Opt_Stat_Total_Planned_Allocations__c, sked_Opt_Stat_Total_Sched_Allocations__c, sked_Opt_Stat_Total_Unsched_Allocations__c, sked_Opt_Stat_Total_Resource_Sched__c,
+                                sked_Opt_Stat_Total_Resource_Unsched__c, sked_Opt_Stat_Total_Sched_Time__c, sked_Opt_Stat_Total_Travel_Time__c, sked_Opt_Stat_Total_Travel_Distances__c,
+                                sked_Opt_Stat_Max_Travel_Time_Alloc__c, sked_Opt_Stat_Avg_Num_Alloc_Resource__c, sked_Opt_Stat_Hard_Constraints_Score__c, sked_Opt_Stat_Soft_Constraints_Score__c,
+                                sked_Opt_Parm_Accnt_Prefer__c, sked_Opt_Parm_Site_Prefer__c, sked_Opt_Parm_Geo_Prefer__c, sked_Opt_Parm_Hire_Date_Skills__c,sked_Opt_Parm_Role_Priority_Skills__c,
+                                sked_Start_Date__c, sked_End_Date__c, sked_Timezone__c
+                                FROM sked_Optimization_Run__c WHERE Id = :optimizationId];
+        result.returnedData = optimizationRuns;
+        return result;
+    }
+
+    @AuraEnabled
+    public static slwcAuraResult getOptimizedJobAllocation(String optimizationId) {
+        skedTriggerUtils.CHANGES_INITIATED_FROM_SERVICE = true;
+        slwcAuraResult result = new slwcAuraResult();
+        List<sked__Job_Allocation__c> jobAllocationRecords = new List<sked__Job_Allocation__c>();
+        sked_Optimization_Run__c optimizationRun = [SELECT sked_Opt_Run_Meta__c, sked_Opt_Run_Diff__c
+                                                    FROM sked_Optimization_Run__c WHERE Id = :optimizationId];
+        List<JobAllocationWrapper> jobAllocations = getJobAllocationsFromRunMetaAndDifference(optimizationRun.sked_Opt_Run_Meta__c, optimizationRun.sked_Opt_Run_Diff__c );
+        jobAllocationRecords = getJobAllocations(jobAllocations);
+        result.returnedData = jobAllocationRecords;
+        return result;
+    }
+
+    // HRP-12511: Added this Callable method to populate the sked_Optimization_Run_Stat_Parm__c fields
+    public static Object call(String methodName, Map<String, Object> params) {
+        skedProcessEventResult result = new skedProcessEventResult();
+        try {
+            switch on methodName {
+                when 'populateOptimizationRunStatParmFields' {
+                    populateOptimizationRunStatParmFields((Set<Id>) JSON.deserialize((String) params.get('param1'), Set<Id>.class));
+                }
+                when else {
+                    throw new skedException('Unable to locate Method: ' + methodName + ' in Class: ' + slwcOptimizationService.class.getName());
+                }
+            }
+        } catch (skedException ex) {
+            result.addError(ex);
+        }
+        return result;
+    }
+
+    public static Set<Id> compareOptimizerSettings(String currentOptimizerRunId, Set<Id> previousOptimizerRunIds) { 
+        Set<Id> matchingOptimizationRunIds = new Set<Id>();
+
+        List<sked_CollectionOperationOptimizerSetting__c> currentOptimizerSettings = [
+            SELECT sked_Constraint__c, sked_Default_Weight__c, sked_Optimizer_Mapped_Weight__c
+            FROM sked_CollectionOperationOptimizerSetting__c
+            WHERE sked_Optimization_Run__c = :currentOptimizerRunId
+            ORDER BY sked_Constraint__c ASC
+        ];
+
+        string currentRunSetting = '';
+        for (sked_CollectionOperationOptimizerSetting__c setting : currentOptimizerSettings) {
+            currentRunSetting += setting.sked_Constraint__c + ',' + setting.sked_Default_Weight__c + ',' + setting.sked_Optimizer_Mapped_Weight__c + ';';
+        }
+
+        List<sked_Optimization_Run__c> previousRuns = [
+            SELECT Id,
+            (SELECT sked_Constraint__c, sked_Default_Weight__c, sked_Optimizer_Mapped_Weight__c
+             FROM sked_CollectionOpOptimizerSettings__r
+             ORDER BY sked_Constraint__c ASC)
+            FROM sked_Optimization_Run__c
+            WHERE Id IN :previousOptimizerRunIds
+        ];
+
+        for (sked_Optimization_Run__c previousRun : previousRuns) {
+            string previousRunSetting = '';
+            for (sked_CollectionOperationOptimizerSetting__c setting : previousRun.sked_CollectionOpOptimizerSettings__r) {
+                previousRunSetting += setting.sked_Constraint__c + ',' + setting.sked_Default_Weight__c + ',' + setting.sked_Optimizer_Mapped_Weight__c + ';';
+            }
+            if (currentRunSetting == previousRunSetting) {
+                matchingOptimizationRunIds.add(previousRun.Id);
+            }
+        }
+
+        return matchingOptimizationRunIds;
+    }
+
+    public static List<sked_Drive__c> getReshuffledDrives(List<String> driveIds, date startDate, date endDate, String currentOptimizationRunId, String optDriveTypes) {
+        Set<Id> driveCollectionOperationIds = new Set<Id>();
+        Set<Id> coMatchedResourceIds = new Set<Id>();
+        Set<Id> reshufflingCandidateDriveIds = new Set<Id>();
+        Set<Id> optimizationRunIdsForReshufflingCandidateDrives = new Set<Id>();
+        Set<Id> reshuffledDriveOptimizationIds = new Set<Id>();
+        List<sked_Drive__c> reshuffledDrives = new List<sked_Drive__c>();
+
+        List<sked_Drive__c> selectedDrives = [SELECT Id, sked_Collection_Operation__c 
+                                              FROM sked_Drive__c WHERE Id IN :driveIds];
+
+        for (sked_Drive__c selectedDrive : selectedDrives) {
+            driveCollectionOperationIds.add(selectedDrive.sked_Collection_Operation__c);
+        }
+
+        List<sked__Resource__c> primaryCoResources = [
+            SELECT Id
+            FROM sked__Resource__c
+            WHERE sked__Primary_Region__r.sked_Biomed_Collection_Op_Center__c IN :driveCollectionOperationIds
+            AND sked__Resource_Type__c = :skedConstants.RESOURCE_TYPE_PERSON
+            AND ((sked_Employment_Status__c = :skedConstants.RESOURCE_EMPLOYMENT_STATUS_ACTIVE) 
+                OR (sked_Employment_Status__c = :skedConstants.RESOURCE_EMPLOYMENT_STATUS_LEAVE AND sked_Anticipated_Leave_Return_Date__c <= :endDate))
+            AND (sked_Termination_Date__c = NULL OR sked_Termination_Date__c > :startDate)
+            AND (sked_Planned_Termination_Date__c = NULL OR sked_Planned_Termination_Date__c > :startDate)
+        ];
+        for (sked__Resource__c primaryCoResource : primaryCoResources) {
+            coMatchedResourceIds.add(primaryCoResource.Id);
+        }
+
+        List<sked_Resource_Biomed_Collection_Op__c> secondaryCoResources = [
+            SELECT sked_Resource__c 
+            FROM sked_Resource_Biomed_Collection_Op__c
+            WHERE sked_Biomed_Collection_Op_Center__c IN :driveCollectionOperationIds
+            AND ((sked_Start_Date__c = NULL OR sked_Start_Date__c <= :endDate) AND (sked_End_Date__c = NULL OR sked_End_Date__c  >= :startDate))
+            AND sked_Resource__r.sked__Resource_Type__c = :skedConstants.RESOURCE_TYPE_PERSON
+            AND sked_Resource__r.sked_Drive_Type__c = :optDriveTypes
+        ];
+        for (sked_Resource_Biomed_Collection_Op__c secondaryCoResource : secondaryCoResources) {
+            coMatchedResourceIds.add(secondaryCoResource.sked_Resource__c);
+        }
+
+        List<sked__Resource_Override__c> resourceOverrides = [
+            SELECT Id, sked__Resource__c 
+            FROM sked__Resource_Override__c 
+            WHERE sked_Collection_Operation__c IN :driveCollectionOperationIds
+            AND (sked_Start_Date__c <= :endDate AND sked_End_Date__c >= :startDate)
+            AND sked__Resource__r.sked__Resource_Type__c = :skedConstants.RESOURCE_TYPE_PERSON
+            AND sked__Resource__r.sked_Drive_Type__c = :optDriveTypes
+        ];
+        for (sked__Resource_Override__c resourceOverride : resourceOverrides) {
+            coMatchedResourceIds.add(resourceOverride.sked__Resource__c);
+        }
+
+        List<sked__Job_Allocation__c> coMatchedResourceAllocations = [
+            SELECT sked__Job__r.sked_Drive__c
+            FROM sked__Job_Allocation__c 
+            WHERE sked__Resource__c IN :coMatchedResourceIds
+            AND sked__Status__c != :skedConstants.JOB_ALLOCATION_STATUS_DELETED
+            AND sked__Job__r.sked__Job_Status__c != :skedConstants.JOB_STATUS_CANCELLED
+            AND sked__Job__r.sked_Drive__r.sked_Drive_Date__c >= :startDate
+            AND sked__Job__r.sked_Drive__r.sked_Drive_Date__c <= :endDate
+        ];
+        
+        for (sked__Job_Allocation__c coMatchedResourceAllocation : coMatchedResourceAllocations) {
+            if (!driveIds.contains(coMatchedResourceAllocation.sked__Job__r.sked_Drive__c)) {
+                reshufflingCandidateDriveIds.add(coMatchedResourceAllocation.sked__Job__r.sked_Drive__c);
+            }
+        }
+
+        List<sked_Drive__c> reshufflingCandidateDrives = [
+            SELECT Id, sked_Collection_Operation__c, sked_Drive_Date__c, sked_Type_of_Drive__c, sked_Optimization_Run__c
+            FROM sked_Drive__c 
+            WHERE Id IN :reshufflingCandidateDriveIds
+            AND sked_Exclude_from_Optimizer__c = false
+        ];
+                                                          
+        for (sked_Drive__c reshufflingCandidateDrive : reshufflingCandidateDrives) {
+            optimizationRunIdsForReshufflingCandidateDrives.add(reshufflingCandidateDrive.sked_Optimization_Run__c);
+        }
+
+        if (!optimizationRunIdsForReshufflingCandidateDrives.isEmpty()) {
+            reshuffledDriveOptimizationIds = compareOptimizerSettings(currentOptimizationRunId, optimizationRunIdsForReshufflingCandidateDrives);
+        }
+
+        if (!reshuffledDriveOptimizationIds.isEmpty()) {
+            for (sked_Drive__c reshufflingCandidateDrive : reshufflingCandidateDrives) {
+                if (reshuffledDriveOptimizationIds.contains(reshufflingCandidateDrive.sked_Optimization_Run__c)) {
+                    reshuffledDrives.add(reshufflingCandidateDrive);
+                }
+            }  
+        }
+        
+        return reshuffledDrives;                                                               
+    }
     
     /*********************************************************** Private methods ***********************************************************/
     private static List<sked_Optimization_Queue__c> addDrivesToQueues(initiateOptimizationRunRequestModel request) {
         List<sked_Drive__c> drivesToAddToQueues = [SELECT Id, sked_Collection_Operation__c,
-                                                   sked_Drive_Date__c, sked_Type_of_Drive__c
+                                                   sked_Drive_Date__c, sked_Type_of_Drive__c,
+                                                   sked_Operation_Type__c
                                                    FROM sked_Drive__c
                                                    WHERE Id IN :request.driveIds];
         Map<string, List<sked_Drive__c>> map_queueKey_Drives = new Map<string, List<sked_Drive__c>>();
         for (sked_Drive__c skedDrive : drivesToAddToQueues) {
+            string driveType = skedDrive.sked_Type_of_Drive__c;
+            if(skedDrive.sked_Operation_Type__c == skedConstants.OPERATION_TYPE_WB){
+                driveType = skedConstants.DRIVE_TYPE_MOBILE;
+            }
             string startDateStr = Json.serialize(request.startDate).replace('"', '');
-            string key = startDateStr + ':' + skedDrive.sked_Collection_Operation__c + ':' + skedDrive.sked_Type_of_Drive__c;
+            string key = startDateStr + ':' + skedDrive.sked_Collection_Operation__c + ':' + driveType;
             List<sked_Drive__c> drives;
             if (map_queueKey_Drives.containsKey(key)) {
                 drives = map_queueKey_Drives.get(key);
@@ -115,7 +324,8 @@ global class slwcOptimizationService {
             for (sked_Drive__c drive : drives) {
                 sked_Optimization_Queue_Item__c queueItem = new sked_Optimization_Queue_Item__c(
                     sked_Optimization_Queue__c = queue.Id,
-                    sked_Drive__c = drive.Id
+                    sked_Drive__c = drive.Id,
+                    sked_Type__c = 'Selected'
                 );
                 queueItems.add(queueItem);
             }
@@ -136,8 +346,8 @@ global class slwcOptimizationService {
                                                            (SELECT Id, sked_Drive__c, 
                                                             sked_Drive__r.sked_Drive_Date__c, sked_Drive__r.sked_Total_Staff_Requested__c,
                                                             sked_Drive__r.sked_Linked_Drives__r.Name, sked_Drive__r.sked_Linked_Drives__r.sked_Linked_Drive_Type__c
-                                                            FROM sked_Optimization_Queue_Items__r)
-                                                           FROM sked_Optimization_Queue__c];
+                                                            FROM sked_Optimization_Queue_Items__r WHERE sked_Drive__r.sked_Linked_Drives__c != NULL)
+                                                           FROM sked_Optimization_Queue__c WHERE Id IN :queueIds];
             List<sked_Optimization_Queue_Item__c> queueItemsToUpdate = new List<sked_Optimization_Queue_Item__c>();
             for (sked_Optimization_Queue__c skedQueue : skedQueues) {
                 Map<string, linkedDriveModel> mapLinkedDrive = new Map<string, linkedDriveModel>();
@@ -187,9 +397,10 @@ global class slwcOptimizationService {
     public static void evaluateOptimizationRunResult(Id optimizationRunId) {
         sked_Optimization_Run__c skedRun = [SELECT Id, sked_Start_Date__c, sked_End_Date__c,
                                             sked_Total_Travel_Time__c, sked_No_of_Percent_Jobs_Filled__c, 
-                                            sked_Priority_Role_Scheduled_Percent__c, sked_Average_Hours_per_Staff__c 
+                                            sked_Priority_Role_Scheduled_Percent__c, sked_Average_Hours_per_Staff__c, sked_Collection_Operation__c
                                             FROM sked_Optimization_Run__c
-                                            WHERE Id = :optimizationRunId];
+                                            WHERE Id = :optimizationRunId]; 
+
         //Total Travel Time
         List<AggregateResult> aggregateTravelTimeResult = [SELECT sum(sked_GeoService_Travel_Time_To__c) totalTravelTimeTo,
                                                            sum(sked_GeoService_Travel_Time_Back__c) totalTravelTimeBack
@@ -276,13 +487,166 @@ global class slwcOptimizationService {
         
         update skedRun;
     }
-    
+
+    //HRP-12511
+    @future (callout=true)
+    public static void populateOptimizationRunStatParmFields(Set<Id> optimizationIds) {
+        skedSkeduloApiManager api = new skedSkeduloApiManager();
+        List<sked__Debug_Log__c> debugLogs = new List<sked__Debug_Log__c>();
+        List<sked_Optimization_Run__c> optimizationRuns = [SELECT Id, sked_Run_ID__c, sked_Opt_Stat_Total_Planned_Allocations__c, sked_Opt_Stat_Total_Sched_Allocations__c, sked_Opt_Stat_Total_Resource_Sched__c,
+                                                    sked_Opt_Stat_Total_Resource_Unsched__c, sked_Opt_Stat_Total_Sched_Time__c, sked_Opt_Stat_Total_Travel_Time__c, sked_Opt_Stat_Total_Travel_Distances__c,
+                                                    sked_Opt_Stat_Max_Travel_Time_Alloc__c, sked_Opt_Stat_Avg_Num_Alloc_Resource__c, sked_Opt_Stat_Hard_Constraints_Score__c, sked_Opt_Stat_Soft_Constraints_Score__c,
+                                                    sked_Opt_Parm_Accnt_Prefer__c, sked_Opt_Parm_Site_Prefer__c, sked_Opt_Parm_Geo_Prefer__c, sked_Opt_Parm_Hire_Date_Skills__c,sked_Opt_Parm_Role_Priority_Skills__c,
+                                                    sked_Opt_Run_Meta__c, sked_Opt_Run_Diff__c   
+                                                    FROM sked_Optimization_Run__c WHERE Id IN :optimizationIds];
+
+        List<sked_CollectionOperationOptimizerSetting__c> skedCollectionOptimizerSettings = [SELECT sked_Constraint__c, sked_Optimizer_Mapped_Weight__c
+                                                                                             FROM sked_CollectionOperationOptimizerSetting__c
+                                                                                             WHERE sked_Optimization_Run__c IN :optimizationIds];              
+
+        if (!optimizationRuns.isEmpty() && !test.isRunningTest()) {
+            for (sked_Optimization_Run__c optimizationRun : optimizationRuns) {                                
+                try {
+                    skedSkeduloApiData.OptimizationRunStatisticsResult optRunStatResponse = api.getOptimizerRunStatistics(optimizationRun.sked_Run_ID__c);
+                    skedSkeduloApiData.OptimizationRunParametersResult optRunParmResponse = api.getOptimizerRunParameters(optimizationRun.sked_Run_ID__c);
+                    skedSkeduloApiData.optimizationRunMetaResult optRunMetaResponse = api.getOptimizerRunMetaResult(optimizationRun.sked_Run_ID__c);
+                    skedSkeduloApiData.optimizationRunDiffResult optRunDiffResponse = api.getOptimizerRunDiffResult(optimizationRun.sked_Run_ID__c);
+                    if (optRunStatResponse.success) {
+                        skedSkeduloApiData.OptimizationRunStatistics optRunStatResult = optRunStatResponse.result;
+                        optimizationRun.sked_Opt_Stat_Total_Planned_Allocations__c = optRunStatResult.totalPlannedAllocations;
+                        optimizationRun.sked_Opt_Stat_Total_Sched_Allocations__c = optRunStatResult.totalScheduledAllocations;
+                        optimizationRun.sked_Opt_Stat_Total_Resource_Sched__c = optRunStatResult.utilizedResources;
+                        optimizationRun.sked_Opt_Stat_Total_Resource_Unsched__c = optRunStatResult.unutilizedResources;
+                        optimizationRun.sked_Opt_Stat_Total_Sched_Time__c = optRunStatResult.averageTotalScheduledTimePerUtilizedResourceInMinutes * optRunStatResult.utilizedResources;
+                        optimizationRun.sked_Opt_Stat_Total_Travel_Time__c = optRunStatResult.totalTravelTimeInMinutes;
+                        optimizationRun.sked_Opt_Stat_Total_Travel_Distances__c = optRunStatResult.totalTravelDistanceInMeters;
+                        optimizationRun.sked_Opt_Stat_Max_Travel_Time_Alloc__c = optRunStatResult.maxTravelTimeToAllocationInMinutes;
+                        optimizationRun.sked_Opt_Stat_Avg_Num_Alloc_Resource__c = optRunStatResult.averageNumberOfAllocationsPerResource;                
+                    }                               
+                    if (optRunParmResponse.success) {
+                        skedSkeduloApiData.OptimizationRunParameters optRunParmResult = optRunParmResponse.result;            
+                        optimizationRun.sked_Opt_Stat_Hard_Constraints_Score__c = optRunParmResult.score.hardScore;
+                        optimizationRun.sked_Opt_Stat_Soft_Constraints_Score__c = optRunParmResult.score.softScore;
+                        optimizationRun.sked_Opt_Parm_Accnt_Prefer__c = optRunParmResult.weights.pref;
+                        optimizationRun.sked_Opt_Parm_Site_Prefer__c = optRunParmResult.weights.pref;
+                        optimizationRun.sked_Opt_Parm_Geo_Prefer__c = optRunParmResult.weights.distanceAL;                                        
+                    }                    
+                    if (optRunMetaResponse.success) {
+                        optimizationRun.sked_Opt_Run_Meta__c = JSON.serialize(optRunMetaResponse.allocationMeta);
+                    }                    
+                    if (optRunDiffResponse.success) {
+                        optimizationRun.sked_Opt_Run_Diff__c = JSON.serialize(optRunDiffResponse.allocations);
+                    }
+                    if (!skedCollectionOptimizerSettings.isEmpty()) {
+                        for (sked_CollectionOperationOptimizerSetting__c skedCollectionOptimizerSetting : skedCollectionOptimizerSettings){
+                            if (skedCollectionOptimizerSetting.sked_Constraint__c == 'Hire Date') {
+                                optimizationRun.sked_Opt_Parm_Hire_Date_Skills__c = skedCollectionOptimizerSetting.sked_Optimizer_Mapped_Weight__c;
+                            } else if (skedCollectionOptimizerSetting.sked_Constraint__c == 'Role Priorities') {
+                                optimizationRun.sked_Opt_Parm_Role_Priority_Skills__c = skedCollectionOptimizerSetting.sked_Optimizer_Mapped_Weight__c;
+                            }
+                        }
+                    }                                     
+                }
+                catch(Exception ex) {
+                    debugLogs.add(new sked__Debug_Log__c (
+                        sked__Type__c = 'Optimizer',
+                        sked__Message__c = ex.getMessage(),
+                        sked__Summary__c = ex.getStackTraceString()
+                    ));
+                }                
+            }
+            update  optimizationRuns;            
+        }               
+    }
+
+    public static List<JobAllocationWrapper> getJobAllocationsFromRunMetaAndDifference(String runMeta, String runDifference) {
+        List<JobAllocationWrapper> jobAllocations = new List<JobAllocationWrapper>(); 
+        List<Object> runMetaList = (List<Object>)JSON.deserializeUntyped(runMeta);
+        Map<String, Object> runDifferenceMap = (Map<String, Object>)JSON.deserializeUntyped(runDifference);  
+        String jobPrefix1 = 'drivercdl'; 
+        String jobPrefix2 = 'driverdot';     
+        
+        for (Object runMetaObj : runMetaList) {
+            Map<String, Object> runMetaMap = (Map<String, Object>)runMetaObj;
+            String featureAllocId = (String)runMetaMap.get('featureAllocId');
+            String jobId = (String)runMetaMap.get('jobId');
+            if (jobId.startsWith(jobPrefix1)) {
+                jobId = jobId.substring(jobPrefix1.length());
+            } else if (jobId.startsWith(jobPrefix2)) {
+                jobId = jobId.substring(jobPrefix2.length());
+            }            
+            if (runDifferenceMap.containsKey(featureAllocId)) {
+                Map<String, Object> allocationData = (Map<String, Object>)runDifferenceMap.get(featureAllocId);
+                String allocation = (String)allocationData.get('allocation');    
+                if (allocation != null) {
+                    jobAllocations.add(new JobAllocationWrapper(jobId, allocation));
+                }
+            }
+        }    
+        return jobAllocations;
+    }
+
+    public static List<sked__Job_Allocation__c> getJobAllocations(List<JobAllocationWrapper> jobAllocations) {
+        Set<Id> jobIds = new Set<Id>(); 
+        Set<Id> resourceIds = new Set<Id>();      
+        for (JobAllocationWrapper jobAlloc : jobAllocations) {            
+            jobIds.add(jobAlloc.jobId);
+            resourceIds.add(jobAlloc.allocation);            
+        }
+        List<sked__Job_Allocation__c> jobAllocationRecords = [
+            SELECT Id, sked__Job__c, sked__Resource__c, sked_Optimization_Run__c, sked__Resource__r.Name,
+            sked__Job__r.sked_Resource_Role__c, sked__Job__r.sked_Drive__c
+            FROM sked__Job_Allocation__c
+            WHERE sked__Job__c IN :jobIds
+            AND sked__Resource__c IN :resourceIds            
+        ];            
+        return jobAllocationRecords;
+    }   
+
+    private static void insertOptimizationRunSettings(initiateOptimizationRunRequestModel request, String collectionOperationId, String optimizationRunId) {
+        Biomed_Collection_Op_Center__c collectionOperation = [
+                SELECT Id, sked_Low_Weight__c, sked_Medium_Weight__c, sked_High_Weight__c, sked_Role_Priorities_Weight__c
+                FROM Biomed_Collection_Op_Center__c
+                WHERE Id = :collectionOperationId
+                LIMIT 1
+            ];
+        
+        List<sked_CollectionOperationOptimizerSetting__c> optimizeRunSettings = new List<sked_CollectionOperationOptimizerSetting__c>();
+        for (optimizationSettingModel setting : request.optimizationSettings) {
+            sked_CollectionOperationOptimizerSetting__c optimizeRunSetting = new sked_CollectionOperationOptimizerSetting__c(
+                sked_Optimization_Run__c = optimizationRunId,
+                sked_Drive_Type__c = setting.driveType,
+                sked_Constraint__c = setting.constraint,
+                sked_Constraint_Type__c = setting.constraintType,
+                sked_Display_Type__c = setting.displayType,
+                sked_Default_Weight__c = setting.defaultWeight,
+                sked_Enabled__c = setting.enabled
+            );
+            skedCollectionOpOptimizerSettingUtils.populateOptimizerMappedWeight(optimizeRunSetting, collectionOperation);
+            optimizeRunSettings.add(optimizeRunSetting);
+        }
+
+        if (!optimizeRunSettings.isEmpty()) {
+            insert optimizeRunSettings;
+        }
+    }
+
     /*********************************************************** Nested Classes ***********************************************************/
+    global class JobAllocationWrapper {
+        public String jobId { get; set; }
+        public String allocation { get; set; }
+        public String uniqueKey { get; set;}
+        public JobAllocationWrapper(String jobId, String allocation) {
+            this.jobId = jobId;
+            this.allocation = allocation;
+            this.uniqueKey = jobId + ':' + allocation;
+        }
+    }
     global class initiateOptimizationRunRequestModel {
         @AuraEnabled public List<string> driveIds {get;set;}
         @AuraEnabled public Date startDate {get;set;}
         @AuraEnabled public Date endDate {get;set;}
-        @AuraEnabled public optimizationSettingModel optimizationSetting {get;set;}
+        @AuraEnabled public List<optimizationSettingModel> optimizationSettings {get;set;}
     }
     
     global class getOptimizationRunsRequestModel {
@@ -292,23 +656,17 @@ global class slwcOptimizationService {
     }
     
     global class optimizationSettingModel {
-        @AuraEnabled public string accountPreferencesScore {get;set;}
-        @AuraEnabled public string geographicPreferencesScore {get;set;}
-        @AuraEnabled public string locationPreferencesScore {get;set;}
-        @AuraEnabled public string seniorityRankScore {get;set;}
-        
-        @AuraEnabled public boolean accountRestrictions {get;set;}
-        @AuraEnabled public boolean locationRestrictions {get;set;}
-        @AuraEnabled public boolean maximumWeeklyHours {get;set;}
-        @AuraEnabled public boolean ptoAvailability {get;set;}
-        @AuraEnabled public boolean roleCertificationMatch {get;set;}
-        @AuraEnabled public boolean rolePriorities {get;set;}
+        @AuraEnabled public string constraint {get;set;}
+        @AuraEnabled public string constraintType {get;set;}
+        @AuraEnabled public string displayType {get;set;}
+        @AuraEnabled public string driveType {get;set;}
+        @AuraEnabled public string defaultWeight {get;set;}
+        @AuraEnabled public boolean enabled {get;set;}
     }
     
     public class linkedDriveModel {
         public string name;
         public string type;
         public sked_Optimization_Queue_Item__c queueItemToOptimize;
-    }
-    
+    }    
 }

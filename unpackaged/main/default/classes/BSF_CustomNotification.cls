@@ -46,6 +46,18 @@ global without sharing class  BSF_CustomNotification {
 
     @TestVisible
     private Id senderId; 
+    
+    @TestVisible
+    private String category;
+
+    @TestVisible
+    private Custom_Notification_Setting__mdt customNoSetting;
+
+    @TestVisible
+    private List<BSF_Custom_Notification__c> bsfNotList = new List<BSF_Custom_Notification__c>();
+
+    @TestVisible
+    private boolean calledFromFlow = false;
 
     public BSF_CustomNotification(){}
 
@@ -90,9 +102,9 @@ global without sharing class  BSF_CustomNotification {
         return this;
     }
 
-    public BSF_CustomNotification target(String target) {
-        if(String.isNotBlank(target)){
-            this.targetId = target;
+    public BSF_CustomNotification category(String categoryKey) {
+        if(String.isNotBlank(categoryKey)){
+            this.category = categoryKey;
         }
         return this;
     }
@@ -100,6 +112,13 @@ global without sharing class  BSF_CustomNotification {
     public BSF_CustomNotification pageRef(String pageRef) {
         if(String.isNotBlank(pageRef)){
             this.targetPageRef = pageRef;
+        }
+        return this;
+    }
+
+    public BSF_CustomNotification target(String target) {
+        if(String.isNotBlank(target)){
+            this.targetId = target;
         }
         return this;
     }
@@ -112,16 +131,27 @@ global without sharing class  BSF_CustomNotification {
                 }
                 this.recipientIds.addAll((Set<String>)JSON.deserialize(JSON.serialize(recipients), Set<String>.class));
             }
-            
-            
+            if(String.isNotBlank(this.category)){
+                this.customNoSetting = Custom_Notification_Setting__mdt.getInstance(this.category.trim());
+            }
+            System.debug('BSF_CustomNotification 12 '+this);
+            System.debug('BSF_CustomNotification 13 '+this.customNoSetting);
+            System.debug('BSF_CustomNotification 14 '+this.category);
             validate();
-
-            Messaging.CustomNotification notification = getNotificationObject();
-                        
-            try {
-                notification.send(this.recipientIds);
-            }catch (Exception ex) {
-                throw new CustomNotificationException('Error sending notification: ' + ex.getMessage());
+            if(this.customNoSetting != null && this.customNoSetting.Allow_Notification__c && this.customNoSetting.Send_Notification_Separately__c){
+                Messaging.CustomNotification notification = getNotificationObject();
+                try {
+                    notification.send(this.recipientIds);  
+                }catch (Exception ex) {
+                    throw new CustomNotificationException('Error sending notification: ' + ex.getMessage());
+                }
+            }else if(this.customNoSetting != null && this.customNoSetting.Allow_Notification__c && !this.customNoSetting.Send_Notification_Separately__c){
+                this.bsfNotList = BSF_General_Notification.getBellNotificationRecord(this.notificationTypeId, this.recipientIds, this.notificationTitle, 
+                                                                                    this.notificationBody, this.targetId, Integer.valueOf(this.customNoSetting.Priority__c),
+                                                                                    this.category, null);
+                if(!this.bsfNotList.isEmpty() && !this.calledFromFlow){
+                    BSF_General_Notification.insertNotificationRecord(bsfNotList);
+                }
             }
             if(Test.isRunningTest()){
                 throw new CustomNotificationException('Error');
@@ -241,6 +271,9 @@ global without sharing class  BSF_CustomNotification {
         if(String.isBlank(this.notificationTypeId)){
             throw new CustomNotificationException('Invalid Custom Notification Type.');
         }
+        if(this.customNoSetting == null){
+            throw new CustomNotificationException('Invalid Custom Notification Category.');
+        }
         if(String.isBlank(this.notificationTitle)){
             throw new CustomNotificationException('Error: Must specify the Notification Title.');
         }else if(this.notificationTitle.length() > 250){
@@ -304,6 +337,8 @@ global without sharing class  BSF_CustomNotification {
         try{
             String exptMessage = '';
             getAllNotificationTypeMap();
+            List<BSF_Custom_Notification__c> bsfNotificationtList = new List<BSF_Custom_Notification__c>();
+            Map<String, Custom_Notification_Setting__mdt> notificationSettings = Custom_Notification_Setting__mdt.getAll();
             for(CustomNotificationRequest wrapper : req){
                 try{
                     if(wrapper.recipientIds == null){
@@ -322,21 +357,32 @@ global without sharing class  BSF_CustomNotification {
                                                                 .body(wrapper.notificationBody)
                                                                 .sender(wrapper.senderId)
                                                                 .target(wrapper.targetId)
-                                                                .pageRef(wrapper.targetPageRef);
+                                                                .pageRef(wrapper.targetPageRef)
+                                                                .category(wrapper.notificationCategoryName);
+                                                                
+                    if(String.isNotBlank(wrapper.notificationCategoryName)){
+                        notification.customNoSetting = notificationSettings.get(wrapper.notificationCategoryName); 
+                    }
+                    notification.calledFromFlow = true;
                     if(wrapper.sendToCurrentUser == true){
                         notification.addCurrentUserAsRecipient();
                     }
                     if(wrapper.sendToOwner == true){
                         notification.addRecordOwnerAsRecipient();
                     }
-
                     notification.send(wrapper.recipientIds);
+                    if(!notification.bsfNotList.isEmpty()){
+                        bsfNotificationtList.addAll(notification.bsfNotList);
+                    }
 
                 }catch(Exception e){
                     exptMessage = exptMessage + e.getTypeName()+' '+e.getStackTraceString()+
                             ' '+e.getLineNumber()+' '+e.getCause()+' '+e.getMessage();
                     continue;
                 }
+            }
+            if(!bsfNotificationtList.isEmpty()){
+                BSF_General_Notification.insertNotificationRecord(bsfNotificationtList);
             }
             if(String.isNotBlank(exptMessage) || Test.isRunningTest()){
                 BSF_Error_Log__c erre = BSF_Utilities.getErrorLog(null,'BSF_CustomNotification','','Error','Error sending notification',exptMessage);
@@ -370,6 +416,11 @@ global without sharing class  BSF_CustomNotification {
                             description='The Developer Name of the Custom Notification Type being used for the notification.' 
                             required=true)
         global String notificationTypeName;
+
+        @InvocableVariable (label='Custom Notification Category Name' 
+                            description='The category Name of the Notification being used for sending the notification.'
+                            required=true)
+        global String notificationCategoryName;
     
         @InvocableVariable (label='Notification Recipient IDs' 
                             description='Set of recipient IDs that the notification should be sent to.')

@@ -5,11 +5,13 @@ public class skedResourceHandler extends skedTriggerHub {
     public override void onBeforeInsert() {
         validate(this.context.newRecords);
         populateData(this.context.newRecords);
+        populateSupervisor(this.context.newRecords);
         populateTaxonomyData(this.context.newRecords);
         populateResourceActivation(this.context.newRecords);
         updateAddress(this.context.newRecords);
         updatePrimaryPhone(this.context.newRecords);
         onUpsertResourceRoles(this.context.newRecords);
+        updateResourceSeniorityRankings(this.context.newRecords, null); 
     }
     
     public override void onAfterInsert() {
@@ -17,8 +19,7 @@ public class skedResourceHandler extends skedTriggerHub {
         addMobileTypeTags(this.context.newRecords);
         addEquipmentDriveTypeTags(this.context.newRecords);
         addPersonDriveTypeTags(this.context.newRecords);
-        assignDefaultPatterns(this.context.newRecords);
-        updateResourceSeniorityRankings(this.context.newRecords);
+        assignDefaultPatterns(this.context.newRecords); 
         
         if (!skedSetting.instance.Admin.migrationMode) {
             populateGeoLocation(this.context.newRecords);
@@ -31,18 +32,19 @@ public class skedResourceHandler extends skedTriggerHub {
             revertAccidientallyChangedGeolocation(this.context.newRecords, (Map<Id, sked__Resource__c>)this.context.oldMap);
         }
         populateData(this.context.newRecords, (Map<Id, sked__Resource__c>)this.context.oldMap);
+        populateSupervisor(this.context.newRecords, (Map<Id, sked__Resource__c>)this.context.oldMap);
         populateTaxonomyData(this.context.newRecords, (Map<Id, sked__Resource__c>)this.context.oldMap);
         populateResourceActivation(this.context.newRecords, (Map<Id, sked__Resource__c>)this.context.oldMap);
         updateAddress(this.context.newRecords, (Map<Id, sked__Resource__c>)this.context.oldMap);
         updatePrimaryPhone(this.context.newRecords, (Map<Id, sked__Resource__c>)this.context.oldMap);
         onUpsertResourceRoles(this.context.newRecords, (Map<Id, sked__Resource__c>)this.context.oldMap);
+        updateResourceSeniorityRankings(this.context.newRecords, (Map<Id, sked__Resource__c>)this.context.oldMap); 
     }
     
     public override void onAfterUpdate() {
         updateMobileTypeTags(this.context.newRecords, (Map<Id, sked__Resource__c>)this.context.oldMap);
         updateEquipmentDriveTypeTags(this.context.newRecords, (Map<Id, sked__Resource__c>)this.context.oldMap);
         updatePersonDriveTypeTags(this.context.newRecords, (Map<Id, sked__Resource__c>)this.context.oldMap);
-        updateResourceSeniorityRankings(this.context.newRecords, (Map<Id, sked__Resource__c>)this.context.oldMap);
         
         if (!skedSetting.instance.Admin.migrationMode) {
             captureFieldChangeExceptionLog(this.context.newRecords, (Map<Id, sked__Resource__c>)this.context.oldMap);
@@ -282,6 +284,19 @@ public class skedResourceHandler extends skedTriggerHub {
         mapTrackingFields.put('sked_Employment_Status__c', 'Employment Status');
         mapTrackingFields.put('sked_Union_Affiliation__c', 'Union Code');
         mapTrackingFields.put('sked__Primary_Region__c', 'Primary Region');
+
+        Set<Id> affectedRegions = new Set<Id>();
+        for (sked__Resource__c newRecord : newRecords) { 
+            sked__Resource__c oldRecord = oldMap.get(newRecord.Id);
+            affectedRegions.add(newRecord.sked__Primary_Region__c);
+            affectedRegions.add(oldRecord.sked__Primary_Region__c);
+        }
+        
+        Map<Id, sked__Region__c> regionsById = new Map<Id, sked__Region__c>([
+            SELECT Id, Name
+            FROM sked__Region__c
+            WHERE Id IN :affectedRegions
+        ]);
         
         string exceptionCodeTemplate = '{{resourceName}} has {{fieldLabel}} changed from {{oldValue}} to {{newValue}}';
         Map<Id, string> mapResourceIdExceptionCode = new Map<Id, string>();
@@ -298,6 +313,11 @@ public class skedResourceHandler extends skedTriggerHub {
                     oldValue = string.valueOf(oldData.get(trackingField));
                 }
                 if (newValue != oldValue) {
+                    if (trackingField == 'sked__Primary_Region__c') {
+                        newValue = regionsById.get(newValue).Name;
+                        oldValue = regionsById.get(oldValue).Name;
+                    }
+
                     string fieldLabel = mapTrackingFields.get(trackingField);
                     string resourceName = newRecord.Name;
                     exceptionCode = exceptionCodeTemplate.replace('{{resourceName}}', resourceName)
@@ -344,36 +364,58 @@ public class skedResourceHandler extends skedTriggerHub {
         for (sked__Resource__c newRecord : newRecords) {
             if (newRecord.sked_Timezone__c != null) {
                 sked__Resource__c oldData = oldMap.get(newRecord.Id);
-                skedExceptionLogService.resourceUnavailabilityModel unavailability = new skedExceptionLogService.resourceUnavailabilityModel();
-                unavailability.resourceId = newRecord.Id;
-                unavailability.startTime = skedDateTimeUtils.getStartOfDate(currentDate, newRecord.sked_Timezone__c);
-                unavailability.exceptionCode = skedConstants.EXCEPTION_CODE_RESOURCE_IS_INACTIVE;
                 
-                boolean isOnLeave = isResourceOnLeave(newRecord, oldData);
-                boolean isTerminated = isResourceTerminated(newRecord, oldData);
-                boolean isInactive = newRecord.sked__Is_Active__c == FALSE && oldData.sked__Is_Active__c == TRUE;
-                if (isOnLeave || isTerminated || isInactive) {
-                    if (isTerminated) {
-                        unavailability.exceptionCode = skedConstants.EXCEPTION_CODE_RESOURCE_PENDING_TERMINATION;
-
-                        Date terminationDate = skedUtils.getMinFromDates(new List<Date>{newRecord.sked_Planned_Termination_Date__c, newRecord.sked_Termination_Date__c});
-                        unavailability.startTime = skedDateTimeUtils.getStartOfDate(terminationDate, newRecord.sked_Timezone__c);
-                    }
-                    if (isOnLeave) {
-                        DateTime returnDateDt = NULL;
-                        if (newRecord.sked_Anticipated_Leave_Return_Date__c != NULL) {
-                            returnDateDt = skedDateTimeUtils.getEndOfDate(newRecord.sked_Anticipated_Leave_Return_Date__c, newRecord.sked_Timezone__c);
-                        }
-                        unavailability.endTime = returnDateDt;
-                    }
-                    unavailabilityList.add(unavailability);
+                boolean isOnLeaveChanged = isResourceOnLeaveChanged(newRecord, oldData);
+                boolean isTerminationChanged = isResourceTerminationChanged(newRecord, oldData);
+                boolean isInactiveChanged = newRecord.sked__Is_Active__c != oldData.sked__Is_Active__c;
+                if (isInactiveChanged) {
+                    unavailabilityList.add(getInactiveUnavailability(newRecord));
+                }
+                if (isOnLeaveChanged) {
+                    unavailabilityList.add(getLeaveUnavailability(newRecord));
+                }
+                if (isTerminationChanged) {
+                    unavailabilityList.add(getTerminationUnavailability(newRecord));
                 }
             }
         }
         if (!unavailabilityList.isEmpty()) {
             skedExceptionLogService service = (skedExceptionLogService)skedServiceFactory.instance.resolve('skedHC__Exception__c');
-            service.captureExceptionLogs(unavailabilityList);
+            service.captureResourceExceptionLogs(unavailabilityList);
         }
+    }
+
+    private skedExceptionLogService.resourceUnavailabilityModel getInactiveUnavailability(sked__Resource__c resource) {
+        skedExceptionLogService.resourceUnavailabilityModel unavailability = new skedExceptionLogService.resourceUnavailabilityModel();
+        unavailability.resourceId = resource.Id;
+        unavailability.startTime = resource.sked__Is_Active__c == TRUE ? skedDateTimeUtils.MIN_DATETIME : skedDateTimeUtils.getStartOfDate(System.today(), resource.sked_Timezone__c);
+        unavailability.endTime = resource.sked__Is_Active__c == TRUE ? skedDateTimeUtils.MIN_DATETIME : skedDateTimeUtils.MAX_DATETIME;
+        unavailability.exceptionCode = skedConstants.EXCEPTION_CODE_RESOURCE_IS_INACTIVE;
+        return unavailability;
+    }
+
+    private skedExceptionLogService.resourceUnavailabilityModel getLeaveUnavailability(sked__Resource__c resource) {
+        skedExceptionLogService.resourceUnavailabilityModel unavailability = new skedExceptionLogService.resourceUnavailabilityModel();
+        unavailability.resourceId = resource.Id;
+        if (resource.sked_Employment_Status__c == skedConstants.RESOURCE_EMPLOYMENT_STATUS_LEAVE) {
+            unavailability.startTime = skedDateTimeUtils.getStartOfDate(System.today(), resource.sked_Timezone__c);
+            unavailability.endTime = resource.sked_Anticipated_Leave_Return_Date__c != NULL ? skedDateTimeUtils.getStartOfDate(resource.sked_Anticipated_Leave_Return_Date__c, resource.sked_Timezone__c) : skedDateTimeUtils.MAX_DATETIME;
+        } else {
+            unavailability.startTime = skedDateTimeUtils.MIN_DATETIME;
+            unavailability.endTime = skedDateTimeUtils.MIN_DATETIME;
+        }
+        unavailability.exceptionCode = skedConstants.EXCEPTION_CODE_RESOURCE_IS_INACTIVE;
+        return unavailability;
+    }
+
+    private skedExceptionLogService.resourceUnavailabilityModel getTerminationUnavailability(sked__Resource__c resource) {
+        skedExceptionLogService.resourceUnavailabilityModel unavailability = new skedExceptionLogService.resourceUnavailabilityModel();
+        unavailability.resourceId = resource.Id;
+        Date terminationDate = skedUtils.getMinFromDates(new List<Date>{resource.sked_Planned_Termination_Date__c, resource.sked_Termination_Date__c});
+        unavailability.startTime = terminationDate == NULL ? skedDateTimeUtils.MIN_DATETIME : skedDateTimeUtils.getStartOfDate(terminationDate, resource.sked_Timezone__c);
+        unavailability.endTime = terminationDate == NULL ? skedDateTimeUtils.MIN_DATETIME : skedDateTimeUtils.MAX_DATETIME;
+        unavailability.exceptionCode = skedConstants.EXCEPTION_CODE_RESOURCE_PENDING_TERMINATION;
+        return unavailability;
     }
 
     private void captureWorkDaysPerWeekException(List<sked__Resource__c> newRecords, Map<Id, sked__Resource__c> oldMap) {
@@ -405,14 +447,16 @@ public class skedResourceHandler extends skedTriggerHub {
         }
     }
 
-    private Boolean isResourceTerminated(sked__Resource__c newRecord, sked__Resource__c oldData) {
-        return (newRecord.sked_Planned_Termination_Date__c != NULL && oldData.sked_Planned_Termination_Date__c == NULL) ||
-               (newRecord.sked_Termination_Date__c != NULL && oldData.sked_Termination_Date__c == NULL);
+    private Boolean isResourceTerminationChanged(sked__Resource__c newRecord, sked__Resource__c oldData) {
+        return (oldData.sked_Planned_Termination_Date__c != newRecord.sked_Planned_Termination_Date__c) ||
+               (oldData.sked_Termination_Date__c != newRecord.sked_Termination_Date__c);
     }
 
-    private Boolean isResourceOnLeave(sked__Resource__c newRecord, sked__Resource__c oldData) {
-        return newRecord.sked_Employment_Status__c != oldData.sked_Employment_Status__c && 
-               newRecord.sked_Employment_Status__c == skedConstants.RESOURCE_EMPLOYMENT_STATUS_LEAVE;
+    private Boolean isResourceOnLeaveChanged(sked__Resource__c newRecord, sked__Resource__c oldData) {
+        return (newRecord.sked_Employment_Status__c != oldData.sked_Employment_Status__c && 
+               (newRecord.sked_Employment_Status__c == skedConstants.RESOURCE_EMPLOYMENT_STATUS_LEAVE || 
+               oldData.sked_Employment_Status__c == skedConstants.RESOURCE_EMPLOYMENT_STATUS_LEAVE)) || 
+               newRecord.sked_Anticipated_Leave_Return_Date__c != oldData.sked_Anticipated_Leave_Return_Date__c;
     }
 
     private Boolean isResourceTerminatedOrLeave(sked__Resource__c resource) {
@@ -567,6 +611,9 @@ public class skedResourceHandler extends skedTriggerHub {
                 if (newRecord.sked_Mobile_Type__c == NULL) {
                     newRecord.sked_Mobile_Type__c = 'Inside;Outside';
                 }
+                if (newRecord.sked_Max_Hours_Per_Week__c == NULL) {
+                    newRecord.sked_Max_Hours_Per_Week__c = 40;
+                }
             }
             else if (newRecord.sked__Resource_Type__c == skedConstants.RESOURCE_TYPE_ASSET) {
                 if (newRecord.sked_Site_Type__c == NULL) {
@@ -598,6 +645,9 @@ public class skedResourceHandler extends skedTriggerHub {
                 if (!string.isBlank(newRecord.sked_Employee_ID__c)) {
                     newRecord.Name = newRecord.Name + ' ' + newRecord.sked_Employee_ID__c;
                 }
+                if (newRecord.sked_Max_Hours_Per_Week__c != oldData.sked_Max_Hours_Per_Week__c && newRecord.sked_Max_Hours_Per_Week__c == NULL) {
+                    newRecord.sked_Max_Hours_Per_Week__c = 40;
+                }
             }
             else if (newRecord.sked__Resource_Type__c == skedConstants.RESOURCE_TYPE_ASSET) {
                 if (newRecord.sked__Primary_Region__c != oldData.sked__Primary_Region__c) {
@@ -608,6 +658,44 @@ public class skedResourceHandler extends skedTriggerHub {
 
         if (!resourceTimezonesToUpdate.isEmpty()) {
             populateTimezones(resourceTimezonesToUpdate);
+        }
+    }
+    
+    private void populateSupervisor(List<sked__Resource__c> newRecords, Map<Id, sked__Resource__c> oldMap) {
+        List<sked__Resource__c> recordsToPopulate = new List<sked__Resource__c>();
+        for (sked__Resource__c newRecord : newRecords) {
+            sked__Resource__c oldData = oldMap.get(newRecord.Id);
+            if (newRecord.sked_Supervisor_Email__c != oldData.sked_Supervisor_Email__c) {
+                recordsToPopulate.add(newRecord);
+            }
+        }
+        if (!recordsToPopulate.isEmpty()) {
+            populateSupervisor(recordsToPopulate);
+        }
+    }
+    
+    private void populateSupervisor(List<sked__Resource__c> newRecords) {
+        Set<string> supervisorEmails = new Set<string>();
+        for (sked__Resource__c newRecord : newRecords) {
+            newRecord.sked_Supervisor__c = null;
+            if (newRecord.sked_Supervisor_Email__c != null) {
+                supervisorEmails.add(newRecord.sked_Supervisor_Email__c);
+            }
+        }
+        if (!supervisorEmails.isEmpty()) {
+            List<User> supervisorUsers = [SELECT Id, Email
+                                          FROM User
+                                          WHERE Email IN :supervisorEmails];
+            Map<string, User> map_Email_User = new Map<string, User>();
+            for (User supervisorUser : supervisorUsers) {
+                map_Email_User.put(supervisorUser.Email, supervisorUser);
+            }
+            for (sked__Resource__c newRecord : newRecords) {
+                if (map_Email_User.containsKey(newRecord.sked_Supervisor_Email__c)) {
+                    User supervisorUser = map_Email_User.get(newRecord.sked_Supervisor_Email__c);
+                    newRecord.sked_Supervisor__c = supervisorUser.Id;
+                }
+            }
         }
     }
     
@@ -674,41 +762,46 @@ public class skedResourceHandler extends skedTriggerHub {
             if (newRecord.sked_Work_Zip_Code__c != NULL) {
                 zipcodes.add(newRecord.sked_Work_Zip_Code__c);
             }
-            if (newRecord.sked_Home_Zip_Code__c != NULL) {
-                zipcodes.add(newRecord.sked_Home_Zip_Code__c);
+            if(newRecord.sked_Work_Zip_Code__c == NULL && newRecord.sked_Satellite_Zip_Code__c != NULL) {
+                zipcodes.add(newRecord.sked_Satellite_Zip_Code__c);
             }
         }
         
-        List<Taxonomy__c> taxonomyRecords = [SELECT Id, Collection_Operation_Name__c, Zip_Code__c, Time_Zone__c
-                                             FROM Taxonomy__c
-                                             WHERE Zip_Code__c IN :zipcodes
-                                             AND Start_Date__c <= TODAY
-                                             AND End_Date__c >= TODAY
-                                             AND Time_Zone__c != NULL];
-        Set<String> collectionOpNames = new Set<String>();
+        List<Taxonomy__c> taxonomyRecords = [
+            SELECT Id, Collection_Operation_Name__c,Collection_Operation_Code__c, Zip_Code__c, Time_Zone__c 
+            FROM Taxonomy__c
+            WHERE Zip_Code__c IN :zipcodes
+            AND Start_Date__c <= TODAY
+            AND End_Date__c >= TODAY
+            AND Time_Zone__c != NULL
+            AND Collection_Operation_Code__c != null
+        ];
+        Set<String> collectionOpCodes = new Set<String>();
         Map<string, Taxonomy__c> taxonomyByZipcode = new Map<string, Taxonomy__c>();
         for (Taxonomy__c taxonomy : taxonomyRecords) {
-         	collectionOpNames.add(taxonomy.Collection_Operation_Name__c);
+         	collectionOpCodes.add('Bio_Collection_BSF_'+taxonomy.Collection_Operation_Code__c);
             taxonomyByZipcode.put(taxonomy.Zip_Code__c, taxonomy);
         }
         
-        List<sked__Region__c> skedRegions = [SELECT Id, sked_Biomed_Collection_Op_Center__r.Name, sked__Timezone__c
-                                             FROM sked__Region__c
-                                             WHERE sked_Biomed_Collection_Op_Center__r.Name IN :collectionOpNames];
+        List<sked__Region__c> skedRegions = [
+            SELECT Id, sked_Biomed_Collection_Op_Center__r.Name,sked_Biomed_Collection_Op_Center__r.External_Id__c, sked__Timezone__c
+            FROM sked__Region__c
+            WHERE sked_Biomed_Collection_Op_Center__r.External_Id__c IN :collectionOpCodes
+        ];
         Map<string, sked__Region__c> mapRegion = new Map<string, sked__Region__c>();
         for (sked__Region__c region : skedRegions) {
-            string key = region.sked_Biomed_Collection_Op_Center__r.Name + ':' + region.sked__Timezone__c;
+            string key = region.sked_Biomed_Collection_Op_Center__r.External_Id__c + ':' + region.sked__Timezone__c;
             mapRegion.put(key, region);
         }
         
         for (sked__Resource__c newRecord : newRecords) {
-         	string resourceZipcode = newRecord.sked_Work_Zip_Code__c != NULL ? newRecord.sked_Work_Zip_Code__c : newRecord.sked_Home_Zip_Code__c;
+         	string resourceZipcode = newRecord.sked_Work_Zip_Code__c != NULL ? newRecord.sked_Work_Zip_Code__c : newRecord.sked_Satellite_Zip_Code__c;
             if (!string.isBlank(resourceZipcode)) {
                 if (taxonomyByZipcode.containsKey(resourceZipcode)) {
                     Taxonomy__c taxonomy = taxonomyByZipcode.get(resourceZipcode);
                     newRecord.sked_Timezone__c = taxonomy.Time_Zone__c;
                             
-                    string regionKey = taxonomy.Collection_Operation_Name__c + ':' + taxonomy.Time_Zone__c;
+                    string regionKey = 'Bio_Collection_BSF_' + taxonomy.Collection_Operation_Code__c + ':' + taxonomy.Time_Zone__c;
                     if (mapRegion.containsKey(regionKey)) {
                         sked__Region__c skedRegion = mapRegion.get(regionKey);
                         newRecord.sked__Primary_Region__c = skedRegion.Id;
@@ -722,7 +815,7 @@ public class skedResourceHandler extends skedTriggerHub {
         List<sked__Resource__c> recordsToPopulate = new List<sked__Resource__c>();
         for (sked__Resource__c newRecord : newRecords) {
             sked__Resource__c oldData = oldMap.get(newRecord.Id);
-            if (newRecord.sked_Work_Zip_Code__c != oldData.sked_Work_Zip_Code__c || newRecord.sked_Home_Zip_Code__c != oldData.sked_Home_Zip_Code__c) {
+            if (newRecord.sked_Work_Zip_Code__c != oldData.sked_Work_Zip_Code__c || newRecord.sked_Satellite_Zip_Code__c != oldData.sked_Satellite_Zip_Code__c ) {
                 recordsToPopulate.add(newRecord);
             }
         }
@@ -1104,20 +1197,20 @@ public class skedResourceHandler extends skedTriggerHub {
     }
 
     private void updateResourceSeniorityRankings(List<sked__Resource__c> newRecords, Map<Id, sked__Resource__c> oldMap) {
-        List<sked__Resource__c> resourcesToProcess = new List<sked__Resource__c>();
+        List<sked__Resource__c> resourcesToUpdate = new List<sked__Resource__c>();
         for (sked__Resource__c newRecord : newRecords) {
-            sked__Resource__c oldRecord = oldMap.get(newRecord.Id);
-            if (newRecord.sked_Employment_Status__c != oldRecord.sked_Employment_Status__c) {
-                resourcesToProcess.add(newRecord);
-            }
-        }
-
-        if (!resourcesToProcess.isEmpty()) {
-            updateResourceSeniorityRankings(resourcesToProcess);
+            if (oldMap == null && newRecord.sked__Resource_Type__c == skedConstants.RESOURCE_TYPE_PERSON) {
+                newRecord.IsChangedEmploymentStatus__c = true;
+            } else if(oldMap != null && newRecord.sked__Resource_Type__c == skedConstants.RESOURCE_TYPE_PERSON) {
+                sked__Resource__c oldRecord = oldMap.get(newRecord.Id);
+                if (newRecord.sked_Employment_Status__c != oldRecord.sked_Employment_Status__c) {
+                    newRecord.IsChangedEmploymentStatus__c = true;
+                }
+        	}
         }
     }
-
-    private void updateResourceSeniorityRankings(List<sked__Resource__c> newRecords) {
+   
+    public static Set<Id> getAffectedArcRegions(List<sked__Resource__c> newRecords) {
         Set<Id> collectionOperationIds = new Set<Id>();
         
         newRecords = [
@@ -1148,9 +1241,8 @@ public class skedResourceHandler extends skedTriggerHub {
             }
         }
 
-        if (!affectedArcRegions.isEmpty()) {
-            Database.executeBatch(new skedResourceSeniorityRankingBatch(affectedArcRegions), 1);
-        }
+        
+        return affectedArcRegions;
     }
     
     private void revertAccidientallyChangedGeolocation(List<sked__Resource__c> newRecords, Map<Id, sked__Resource__c> oldMap) {

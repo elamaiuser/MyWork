@@ -3,7 +3,8 @@
  **  Modification Log  ****
  *  Date					Developer Name			Comments
  * *****************************************************************************************************************************************************************************************
- * 10/28/2023			    Kishore Das 			Logic for HRP-10929(Marketing Exception Enhancement)
+ * 10/28/2023			    Kishore Das 			Logic for HRP-10929 (Marketing Exception Enhancement)
+ * 12/13/2023			    Barnojit Sharma			Logic for HRP-11608 (General Email Sending Method)
  * *****************************************************************************************************************************************************************************************
  **/
 
@@ -47,19 +48,51 @@ global class BSF_EmailNotification {
             emailList.add(email);
         }
         system.debug('emailList##' + emailList);
-        Messaging.SendEmailResult[] mrs = Messaging.sendEmail(emailList);
-        for (Messaging.SendEmailResult mr : mrs){
-            if(mr.isSuccess()){
-                System.debug('Email send successfully.');  
-            }else{
-                // Operation failed, so get all errors                        
-                for(Messaging.SendEmailError err : mr.getErrors()) {
-                    System.debug('The following error has occurred.');  
-                    System.debug(err.getStatusCode() + ': ' + err.getMessage());
-                    System.debug('fields that affected this error: ' + err.getFields());
-                }
-            }
-        }
+        sendEmails(emailList,'MarketingExceptionApproveReject',null);//Changes for  HRP-11608
     }
-    
+    /*
+    * HRP-11608 changes starts here
+    */
+    public static void sendEmails(List<Messaging.SingleEmailMessage> emailList, String notificationKey, DateTime emailExpiry){
+        final string logTag = '[BSF_EmailNotification:sendEmails]';
+        System.debug(logTag + ' Entering method==> ' + emailList);
+        Custom_Notification_Setting__mdt customEmailSetting;
+        if(emailList == null || emailList.isEmpty()){
+            return;
+        }
+        if(String.isNotBlank(notificationKey)){
+            customEmailSetting = Custom_Notification_Setting__mdt.getInstance(notificationKey.trim());
+        }
+        if(customEmailSetting == null){
+            throw new BSF_EmailNotification_Exception('Invalid Email Category');
+        }
+        if(customEmailSetting.Allow_Notification__c && customEmailSetting.Send_Notification_Separately__c){
+            String errMsg = '';
+            try{
+                Messaging.SendEmailResult[] mrs = Messaging.sendEmail(emailList);
+                for (Messaging.SendEmailResult mr : mrs){
+                    if(!mr.isSuccess()){                     
+                        for(Messaging.SendEmailError err : mr.getErrors()) {
+                            errMsg = errMsg + err.getStatusCode() + ': ' + err.getMessage()+' : fields that affected this error: ' + err.getFields();
+                        }
+                    }
+                }
+            }catch(Exception except){
+                errMsg = errMsg + except.getMessage();
+            }
+            if(String.isNotBlank(errMsg)){
+                throw new BSF_EmailNotification_Exception(errMsg);
+            }
+        }else if(customEmailSetting.Allow_Notification__c && !customEmailSetting.Send_Notification_Separately__c){
+            List<BSF_Custom_Notification__c> notificationList = BSF_General_Notification.getEmailNotificationRecord(emailList, notificationKey, 
+                                                                                                                    Integer.valueOf(customEmailSetting.Priority__c), 
+                                                                                                                    emailExpiry);
+            System.debug('Calling BSF_General_Notification.insertNotificationRecord==>');
+            BSF_General_Notification.insertNotificationRecord(notificationList);
+        }
+    }   
+    public class BSF_EmailNotification_Exception extends Exception{} 
+    /*
+    * HRP-11608 changes ends here
+    */
 }

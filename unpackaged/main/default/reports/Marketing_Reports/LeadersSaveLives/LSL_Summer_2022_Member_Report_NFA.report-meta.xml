@@ -74,11 +74,74 @@
     </columns>
     <filter>
         <criteriaItems>
-            <column>CAMPAIGN_PARENT_NAME</column>
+            <column>CAMPAIGN_NAME</column>
             <columnToColumn>false</columnToColumn>
             <isUnlocked>true</isUnlocked>
             <operator>equals</operator>
-            <value>Leaders Save Lives Summer 2022</value>
+            <value>EM_BHQ_BPL_IN_LSL_Act_Coll_Rea_W1_202409</value>
+        </criteriaItems>
+        <criteriaItems>
+            <column>CAMPAIGN_NAME</column>
+            <columnToColumn>false</columnToColumn>
+            <isUnlocked>true</isUnlocked>
+            <operator>equals</operator>
+            <value>EM_BHQ_BPL_IN_LSL_Act_Coll_Rea_W2_202410</value>
+        </criteriaItems>
+        <criteriaItems>
+            <column>CAMPAIGN_NAME</column>
+            <columnToColumn>false</columnToColumn>
+            <isUnlocked>true</isUnlocked>
+            <operator>equals</operator>
+            <value>EM_BHQ_BPL_IN_LSL_Act_HS_Rea_W1_202409</value>
+        </criteriaItems>
+        <criteriaItems>
+            <column>CAMPAIGN_NAME</column>
+            <columnToColumn>false</columnToColumn>
+            <isUnlocked>true</isUnlocked>
+            <operator>equals</operator>
+            <value>EM_BHQ_BPL_IN_LSL_Act_HS_Rea_W2_202410</value>
+        </criteriaItems>
+        <criteriaItems>
+            <column>CAMPAIGN_NAME</column>
+            <columnToColumn>false</columnToColumn>
+            <isUnlocked>true</isUnlocked>
+            <operator>equals</operator>
+            <value>EM_BHQ_BPL_IN_LSL_AIL_Faith_Rea_W1_202409</value>
+        </criteriaItems>
+        <criteriaItems>
+            <column>CAMPAIGN_NAME</column>
+            <columnToColumn>false</columnToColumn>
+            <isUnlocked>true</isUnlocked>
+            <operator>equals</operator>
+            <value>EM_BHQ_BPL_IN_LSL_AIL_Faith_Rea_W2_202410</value>
+        </criteriaItems>
+        <criteriaItems>
+            <column>CAMPAIGN_NAME</column>
+            <columnToColumn>false</columnToColumn>
+            <isUnlocked>true</isUnlocked>
+            <operator>equals</operator>
+            <value>EM_BHQ_BPL_IN_LSL_AIL_LSL_Rea_W1_202409</value>
+        </criteriaItems>
+        <criteriaItems>
+            <column>CAMPAIGN_NAME</column>
+            <columnToColumn>false</columnToColumn>
+            <isUnlocked>true</isUnlocked>
+            <operator>equals</operator>
+            <value>EM_BHQ_BPL_IN_LSL_AIL_LSL_Rea_W2_202410</value>
+        </criteriaItems>
+        <criteriaItems>
+            <column>CAMPAIGN_NAME</column>
+            <columnToColumn>false</columnToColumn>
+            <isUnlocked>true</isUnlocked>
+            <operator>equals</operator>
+            <value>EM_BHQ_BPL_IN_LSL_DD_Acq_W1_202409</value>
+        </criteriaItems>
+        <criteriaItems>
+            <column>CAMPAIGN_NAME</column>
+            <columnToColumn>false</columnToColumn>
+            <isUnlocked>true</isUnlocked>
+            <operator>equals</operator>
+            <value>EM_BHQ_BPL_IN_LSL_DD_Acq_W2_202410</value>
         </criteriaItems>
         <language>en_US</language>
     </filter>
@@ -88,7 +151,7 @@
         <field>CAMPAIGN_NAME</field>
         <sortOrder>Asc</sortOrder>
     </groupingsDown>
-    <name>LSL Summer 2022 Total Leads</name>
+    <name>LSL Winter 2024 Total Leads</name>
     <params>
         <name>scopeid</name>
         <value></value>

@@ -38,6 +38,9 @@ public class skedOpportunityHandler extends skedTriggerHub {
                         if (fieldToCheck == 'WB_Projected_Procedures__c') {
                             item.changeReason = newRecord.WholeBloodProcedureProjectedChangeReason__c;
                         }
+                        if (fieldToCheck == 'Slot_Generator__c') {
+                            item.changeReason = newRecord.Slot_Generator_Change_Reason__c;
+                        }
                         request.driveChangeRequestItems.add(item);
                     }
                 }
@@ -62,7 +65,7 @@ public class skedOpportunityHandler extends skedTriggerHub {
         }
         
         if (!requests.isEmpty()) {
-            slwcDriveService.captureDriveChangeRequests(requests);
+            slwcDriveService.captureUserChangeDriveChangeRequests(requests);
         }
     }
     
@@ -81,6 +84,7 @@ public class skedOpportunityHandler extends skedTriggerHub {
         fieldsToCheck.add('Number_of_2RBC_Assets__c');
         fieldsToCheck.add('Number_of_Plasma_Assets__c');
         fieldsToCheck.add('Number_of_Platelet_Assets__c');
+        fieldsToCheck.add('Slot_Generator__c');
         return fieldsToCheck;
     }
     

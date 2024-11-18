@@ -1,0 +1,51 @@
+<template>
+    <template if:true={hasError}>
+        <div class="slds-notify slds-notify_alert slds-alert_error" role="alert">
+            <span class="slds-assistive-text">error</span>
+            <span class="slds-icon_container slds-icon-utility-error slds-m-right_x-small">
+              <svg class="slds-icon slds-icon_x-small" aria-hidden="true">
+                <use xlink:href="/assets/icons/utility-sprite/svg/symbols.svg#error"></use>
+              </svg>
+            </span>
+            <h2>{errorMessageToDisplay}</h2>
+          </div>
+    </template>
+    <lightning-card>
+        <div class="slds-p-horizontal_medium" style="font-size: 16px;"><b>BSF Staging Sheet Search Panel</b></div>
+        <c-bsf-staffing-report-search-panel 
+            onselectevent={handleSelectedValues} 
+            onresetevent={handleResetValues} 
+            prepopulatevalues={prepopulatevalues}
+            frommobile={frommobile}
+            enabledriveufid={enablelastrow}>
+        </c-bsf-staffing-report-search-panel>
+        <div class="slds-grid slds-gutters slds-p-horizontal_medium slds-p-top_medium">
+            <lightning-button icon-name="utility:preview" variant="brand" label="View Report" title="View Report" name="viewreport" onclick={handleViewReport} class="slds-m-left_x-small"></lightning-button>
+            <lightning-button icon-name="utility:download" variant="brand" label="Download PDF" title="Download PDF" name="download" onclick={exportToPdf} disabled={disablePdfButton} class="slds-m-left_x-small"></lightning-button>
+        </div>
+    </lightning-card>
+    <template if:true={loaded}>
+        <lightning-spinner alternative-text="Loading"></lightning-spinner>
+    </template>
+    <template if:true={showPopup}>
+        <section role="dialog" tabindex="-1" aria-modal="true" aria-labelledby="modal-heading-01" class="slds-modal slds-fade-in-open slds-modal_large">
+            <div class="slds-modal__container">
+                <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close" onclick={handleClosePopupHandler}>
+                    <lightning-icon icon-name="utility:close"
+                    alternative-text="close"
+                    variant="inverse"
+                    size="small" ></lightning-icon>
+                <span class="slds-assistive-text">Close</span>
+                </button>
+                <div class="slds-modal__header">
+                    <lightning-button icon-name="utility:back" variant="brand" label="Back to Search" title="Back to Search" name="backtosearch" onclick={handleClosePopupHandler} class="slds-m-left_x-small"></lightning-button>
+                    <lightning-button icon-name="utility:download" variant="brand" label="Download PDF" title="Download PDF" name="download" onclick={exportToPdf} class="slds-m-left_x-small"></lightning-button>
+                </div>
+                <div class="slds-modal__content slds-p-around_medium slds-modal__content_headless" id="modal-content-id-1">
+                    <iframe id="LWCWithVFPage" src={getPopUpRedirectUrl} width="100%" height="600" frameborder="0"> </iframe>
+                </div>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open" role="presentation"></div>
+    </template>
+</template>

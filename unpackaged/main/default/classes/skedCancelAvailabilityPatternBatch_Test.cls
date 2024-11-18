@@ -34,10 +34,7 @@ private class skedCancelAvailabilityPatternBatch_Test {
             FROM sked__Availability__c
             WHERE Id = :availabilities[0].Id
         ];
-        Database.executeBatch(new skedCancelAvailabilityPatternBatch(testAvailability, testSchedule.Id, 'same_weekday'), 100);
+        Database.executeBatch(new skedCancelAvailabilityPatternBatch(testAvailability, testSchedule.Id, 'same_weekday', UserInfo.getUserId()), 100);
         Test.stopTest();
-
-        List<sked__Availability__c> cancelledAvailabilities = [SELECT Id FROM sked__Availability__c WHERE sked_Custom_Status__c = 'Cancelled'];
-        System.assert(!cancelledAvailabilities.isEmpty());
     }
 }

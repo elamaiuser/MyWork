@@ -3,27 +3,51 @@
         <label><!-- Variance Type --></label>
         <name>sked_Variance_Type__c</name>
         <picklistValues>
+            <masterLabel>Commercial Route</masterLabel>
+            <translation><!-- Commercial Route --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Construction</masterLabel>
+            <translation><!-- Construction --></translation>
+        </picklistValues>
+        <picklistValues>
             <masterLabel>Elevator</masterLabel>
             <translation><!-- Elevator --></translation>
         </picklistValues>
         <picklistValues>
-            <masterLabel>Loading Dock</masterLabel>
-            <translation><!-- Loading Dock --></translation>
+            <masterLabel>Floor covering</masterLabel>
+            <translation><!-- Floor covering --></translation>
         </picklistValues>
         <picklistValues>
-            <masterLabel>Parking Lot</masterLabel>
-            <translation><!-- Parking Lot --></translation>
+            <masterLabel>Imported from Hemasphere</masterLabel>
+            <translation><!-- Imported from Hemasphere --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Loading/ unloading area</masterLabel>
+            <translation><!-- Loading/ unloading area --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Multiple rooms</masterLabel>
+            <translation><!-- Multiple rooms --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Other</masterLabel>
+            <translation><!-- Other --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Parking</masterLabel>
+            <translation><!-- Parking --></translation>
         </picklistValues>
         <picklistValues>
             <masterLabel>Safety Video</masterLabel>
             <translation><!-- Safety Video --></translation>
         </picklistValues>
         <picklistValues>
-            <masterLabel>Vehicle Inspection</masterLabel>
-            <translation><!-- Vehicle Inspection --></translation>
+            <masterLabel>Security</masterLabel>
+            <translation><!-- Security --></translation>
         </picklistValues>
         <picklistValues>
-            <masterLabel>Wireless</masterLabel>
-            <translation><!-- Wireless --></translation>
+            <masterLabel>Stairs</masterLabel>
+            <translation><!-- Stairs --></translation>
         </picklistValues>
     </CustomFieldTranslation>

@@ -2,21 +2,7 @@ public class skedCreateNonUserChangeDCRBatch implements Schedulable, Database.Ba
     public Boolean stopProcessing = true;
 
     public static void schedule() {
-        List<CronTrigger> runningScheduleQuery = [SELECT Id
-                                                  FROM CronTrigger
-                                                  WHERE CronJobDetail.Name LIKE '%skedCreateNonUserChangeDCRBatch%' AND (State = 'EXECUTING' OR State = 'WAITING')];
-        if (runningScheduleQuery.isEmpty()) {
-            Datetime nextFireTime = Datetime.now().addSeconds(15);
-            Decimal ss = nextFireTime.second();
-            Decimal min = nextFireTime.minute();
-            Decimal hour = nextFireTime.hour();
-            string dayOfMonth = String.valueOf(nextFireTime.day());
-            string month = String.valueOf(nextFireTime.month());
-            string year = String.valueOf(nextFireTime.year());
-            //parse to cron expression
-            String nextFireTimeCronExpression = String.valueOf(ss) + ' ' + String.valueOf(min) + ' ' + String.valueOf(hour) + ' ' + dayOfMonth + ' ' +  month +' ? ' + year + '-' + year;
-            System.schedule('skedCreateNonUserChangeDCRBatch' + '_' + String.valueOf(Datetime.now()), nextFireTimeCronExpression, new skedCreateNonUserChangeDCRBatch());
-        }
+        skedUtils.scheduleUniqueJobInSeconds('skedCreateNonUserChangeDCRBatch', new skedCreateNonUserChangeDCRBatch(), 15, true);
     }
 
     public void execute(SchedulableContext SC) {

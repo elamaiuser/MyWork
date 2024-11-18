@@ -136,10 +136,22 @@ global class slwcResourceService {
     @AuraEnabled
     public static slwcAuraResult saveCallOut(saveCallOutRequestModel request) {
         skedTriggerUtils.CHANGES_INITIATED_FROM_SERVICE = true;
-
-        DateTime currentTime = system.now();
+        
         slwcAuraResult result = new slwcAuraResult();
-
+        
+        if (string.isBlank(request.id)) {
+            createCallOut(request);
+        }
+        else {
+            editCallOut(request);
+        }
+        
+        return result;
+    }
+    
+    private static void createCallOut(saveCallOutRequestModel request) {
+        DateTime currentTime = system.now();
+        
         DateTime unavailabilityStart;
         DateTime unavailabilityEnd;
         String unavailabilityTimezone;
@@ -148,25 +160,27 @@ global class slwcResourceService {
         if (!string.isBlank(request.jobId)) {
             List<sked__Job_Allocation__c> jobAllocationQuery = [
                 SELECT Id, sked_Job_Timezone__c, sked__Start__c, sked__Set_End__c,
-                    sked__Job__r.sked_Drive__r.sked_UFID__c
+                    sked__Job__r.sked_Drive__r.sked_UFID__c, sked__Resource__r.sked_Timezone__c, sked__Job__r.sked_Drive__r.sked_Timezone__c,
+                    (SELECT Id,  sked_Early_Departure_Date_Received__c, sked_Early_Departure_DateTime_Received__c,
+                        sked_Early_Departure_Time_Received__c, sked_Early_Departure_Reasons__c, 
+                        sked_Late_Arrival_Date_Received__c, sked_Late_Arrival_DateTime_Received__c, 
+                        sked_Late_Arrival_Reasons__c, sked_Late_Arrival_Time_Received__c
+                    FROM sked_Operation_Record_Staff__r)
                 FROM sked__Job_Allocation__c
                 WHERE sked__Job__c = :request.jobId
                 AND sked__Resource__c = :request.resourceId
                 AND sked__Status__c != :skedConstants.JOB_ALLOCATION_STATUS_DELETED
             ];
-
+            
             if (!jobAllocationQuery.isEmpty()) {
                 sked__Job_Allocation__c jobAllocation = jobAllocationQuery.get(0);
                 request.jobAllocationId = jobAllocation.Id;
-                    
+                
                 jobAllocation.sked_Call_Out_Notes__c = request.callOutNotes;
                 jobAllocation.sked_Call_Out_Reason_Code__c = request.callOutReason;
                 jobAllocation.sked_Call_Out_Reported__c = request.callOutReported;
                 jobAllocation.sked_Call_Out_Type__c = request.callOutType;
-                jobAllocation.sked_DateTime_of_Call_Out__c = currentTime;
-                skedTriggerUtils.maintainDateTimeField(jobAllocation, 'sked_DateTime_of_Call_Out__c', 'sked_Date_of_Call_Out__c', 'sked_Time_of_Call_Out__c', 'sked_Job_Timezone__c');
-                jobAllocation.sked_Call_Out_Notice__c = skedDateTimeUtils.getDifferentMinutesText(jobAllocation.sked_DateTime_of_Call_Out__c, jobAllocation.sked__Start__c);
-
+                jobAllocation.sked_DateTime_Call_Out_Received__c = request.callOutReceivedDateTime;
                 if (request.calloutType == skedConstants.AVAILABILITY_CALLOUT_TYPE_CALL_OUT) {
                     jobAllocation.sked__Status__c = skedConstants.JOB_ALLOCATION_STATUS_DELETED;
                 }
@@ -174,8 +188,8 @@ global class slwcResourceService {
 
                 unavailabilityStart = jobAllocation.sked__Start__c;
                 unavailabilityEnd = jobAllocation.sked__Set_End__c;
-                unavailabilityTimezone = jobAllocation.sked_Job_Timezone__c;
-
+                unavailabilityTimezone = jobAllocation.sked__Resource__r.sked_Timezone__c;
+                
                 if (!string.isBlank(jobAllocation.sked__Job__r.sked_Drive__r.sked_UFID__c)) {
                     notes.add(jobAllocation.sked__Job__r.sked_Drive__r.sked_UFID__c);
                 }
@@ -183,23 +197,25 @@ global class slwcResourceService {
         }
         else if (!string.isBlank(request.activityId)) {
             List<sked__Activity_Resource__c> activityResourceQuery = [
-                SELECT Id, sked__Activity__r.sked__Start__c,
-                    sked__Activity__r.sked__End__c, sked__Resource__r.sked_Timezone__c
+                SELECT Id, sked__Activity__r.sked__Start__c, sked__Activity__r.sked__Timezone__c,
+                sked__Activity__r.sked__End__c, sked__Resource__r.sked_Timezone__c
                 FROM sked__Activity_Resource__c
                 WHERE sked__Activity__c = :request.activityId
                 AND sked__Resource__c = :request.resourceId
             ];
-
+            
             if (!activityResourceQuery.isEmpty()) {
                 sked__Activity_Resource__c activityResource = activityResourceQuery.get(0);
                 unavailabilityStart = activityResource.sked__Activity__r.sked__Start__c;
                 unavailabilityEnd = activityResource.sked__Activity__r.sked__End__c;
                 unavailabilityTimezone = activityResource.sked__Resource__r.sked_Timezone__c;
-
-                delete activityResource;
+                
+                if (request.calloutType == skedConstants.AVAILABILITY_CALLOUT_TYPE_CALL_OUT) {
+                    delete activityResource;
+                }
             }
         }
-
+        
         sked__Availability__c callOutAvailability = new sked__Availability__c(
             sked__Type__c = skedConstants.AVAILABILITY_TYPE_CALL_OUT,
             sked__Is_Available__c = FALSE,
@@ -207,29 +223,69 @@ global class slwcResourceService {
             sked__Start__c = unavailabilityStart,
             sked__Resource__c = request.resourceId,
             sked__Notes__c = request.callOutNotes,
-            sked__Status__c = skedConstants.AVAILABILITY_STATUS_APPROVED,
+            sked__Status__c = skedConstants.AVAILABILITY_STATUS_PENDING,
             sked__Timezone__c = unavailabilityTimezone,
-            sked_Custom_Status__c = skedConstants.AVAILABILITY_STATUS_APPROVED,
+            sked_Custom_Status__c = skedConstants.AVAILABILITY_STATUS_PROCESSING_APPROVAL,
             sked_Call_Out_For_Activity__c = request.activityId,
             sked_Call_Out_For_Job_Allocation__c = request.jobAllocationId,
             sked_Call_Out_Notes__c = request.callOutNotes,
             sked_Call_Out_Reason_Code__c = request.callOutReason,
             sked_Call_Out_Reported__c = request.callOutReported != NULL ? request.callOutReported : FALSE,
             sked_Call_Out_Type__c = request.callOutType,
-            sked_DateTime_of_Call_Out__c = currentTime
+            sked_DateTime_Call_Out_Received__c = request.callOutReceivedDateTime,
+            sked_DateTime_of_Call_Out__c = currentTime,
+            sked_Time_Off_Plan__c = request.timeOffPlan,
+            sked_Time_Off_Reason_Code__c = request.timeOffReasonCode            
         );
-        callOutAvailability.sked_Call_Out_Notice__c = skedDateTimeUtils.getDifferentMinutesText(callOutAvailability.sked_DateTime_of_Call_Out__c, callOutAvailability.sked__Start__c);
-        skedTriggerUtils.maintainDateTimeField(callOutAvailability, 'sked_DateTime_of_Call_Out__c', 'sked_Date_of_Call_Out__c', 'sked_Time_of_Call_Out__c', 'sked__Timezone__c');
-        insert callOutAvailability;
 
+        if (request.calloutType == skedConstants.AVAILABILITY_CALLOUT_TYPE_CALL_OUT) {
+            Date callOutDate = unavailabilityStart.date();
+            callOutAvailability.sked_Is_All_Day__c = true;
+            callOutAvailability.sked__Start__c = skedDateTimeUtils.getStartOfDate(callOutDate, unavailabilityTimezone);
+            callOutAvailability.sked__Finish__c = skedDateTimeUtils.getEndOfDate(callOutDate, unavailabilityTimezone);
+        }
+
+        if (request.usePtoForCallOut == false || request.usePtoForCallOut == null) {
+            callOutAvailability.sked_Workday_Sync_Status__c = skedConstants.AVAILABILITY_WORKDAY_SYNC_STATUS_NA;
+            callOutAvailability.sked_Workday_Sync_Message__c = request.hasTimeOffPlans ? 'User chose to not submit time off' : 'No time off plan for workday sync';
+            callOutAvailability.sked_Custom_Status__c = skedConstants.AVAILABILITY_STATUS_APPROVED;
+            callOutAvailability.sked__Status__c = skedConstants.AVAILABILITY_STATUS_APPROVED;
+        }
+
+        if (callOutAvailability.sked_DateTime_of_Call_Out__c != NULL && callOutAvailability.sked__Start__c != NULL) {
+            callOutAvailability.sked_Call_Out_Notice__c = skedDateTimeUtils.getDifferentMinutesText(callOutAvailability.sked_DateTime_of_Call_Out__c, callOutAvailability.sked__Start__c);
+        	skedTriggerUtils.maintainDateTimeField(callOutAvailability, 'sked_DateTime_of_Call_Out__c', 'sked_Date_of_Call_Out__c', 'sked_Time_of_Call_Out__c', 'sked__Timezone__c');
+        }
+        insert callOutAvailability;
+        
         if (!notes.isEmpty()) {
             String driveUFIDNotes = String.join(notes, ' - ');
             if (!string.isBlank(callOutAvailability.sked__Notes__c)) {
                 callOutAvailability.sked__Notes__c = driveUFIDNotes + '. ' + callOutAvailability.sked__Notes__c;
             }
         }
+    }
+    
+    private static void editCallOut(saveCallOutRequestModel request) {
+        sked__Availability__c skedAvail = [SELECT Id, sked_Call_Out_For_Job_Allocation__c,
+                                           sked__Notes__c, sked_Call_Out_Notes__c, sked_Call_Out_Reason_Code__c, sked_Call_Out_Type__c
+                                           FROM sked__Availability__c
+                                           WHERE Id = :request.id];
         
-        return result;
+        skedAvail.sked__Notes__c = request.callOutNotes;
+        skedAvail.sked_Call_Out_Notes__c = request.callOutNotes;
+        skedAvail.sked_Call_Out_Reason_Code__c = request.callOutReason;
+        skedAvail.sked_Call_Out_Type__c = request.callOutType;
+        update skedAvail;
+        
+        if (skedAvail.sked_Call_Out_For_Job_Allocation__c != NULL) {
+            update new sked__Job_Allocation__c(
+            	Id = skedAvail.sked_Call_Out_For_Job_Allocation__c,
+                sked_Call_Out_Notes__c = request.callOutNotes,
+                sked_Call_Out_Reason_Code__c = request.callOutReason,
+                sked_Call_Out_Type__c = request.callOutType
+            );
+        }
     }
     
     /*********************************************************** Nested Classes ***********************************************************/
@@ -242,13 +298,19 @@ global class slwcResourceService {
     }
     
     global class saveCallOutRequestModel {
+        @AuraEnabled public string id {get;set;}
         @AuraEnabled public string activityId {get;set;}
         @AuraEnabled public string jobId {get;set;}
         @AuraEnabled public string resourceId {get;set;}
         @AuraEnabled public string callOutReason {get;set;}
+        @AuraEnabled public DateTime callOutReceivedDateTime {get;set;}
         @AuraEnabled public string callOutNotes {get;set;}
         @AuraEnabled public boolean callOutReported {get;set;}
         @AuraEnabled public string callOutType {get;set;}
+        @AuraEnabled public string timeOffPlan {get;set;}
+        @AuraEnabled public string timeOffReasonCode {get;set;}
+        @AuraEnabled public boolean usePtoForCallOut {get;set;}
+        @AuraEnabled public boolean hasTimeOffPlans {get;set;}
         
         @AuraEnabled public string jobAllocationId {get;set;}
     }

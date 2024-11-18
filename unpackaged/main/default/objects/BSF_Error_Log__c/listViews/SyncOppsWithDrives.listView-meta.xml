@@ -10,14 +10,19 @@
     <columns>OBJECT_ID</columns>
     <filterScope>Everything</filterScope>
     <filters>
-        <field>CREATEDBY_USER</field>
+        <field>CREATED_DATE</field>
         <operation>equals</operation>
-        <value>Evan Woods</value>
+        <value>11/15/2024 10:05 AM</value>
+    </filters>
+    <filters>
+        <field>Error_Description__c</field>
+        <operation>contains</operation>
+        <value>Sync Request</value>
     </filters>
     <filters>
         <field>CREATEDBY_USER</field>
-        <operation>greaterOrEqual</operation>
-        <value>3/14/2024</value>
+        <operation>contains</operation>
+        <value>Elizabeth Ruch,Automated process</value>
     </filters>
     <label>SyncOppsWithDrives</label>
 </ListView>

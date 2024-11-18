@@ -8,13 +8,6 @@
         <plural>true</plural>
         <value>Travel Time Index Refresh Requests</value>
     </caseValues>
-    
-    
-    
-    
-    
-    
-    
     <layouts>
         <layout>Travel Time Index Refresh Request Layout</layout>
         <sections>
@@ -22,5 +15,14 @@
             <section>Custom Links</section>
         </sections>
     </layouts>
+    
+    
+    
+    
+    
+    
+    
+    
+    
     <startsWith>Consonant</startsWith>
 </CustomObjectTranslation>

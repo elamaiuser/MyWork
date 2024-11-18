@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomMetadata xmlns="http://soap.sforce.com/2006/04/metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <label>Current ABM Account/Portfolio Meeting</label>
+    <protected>false</protected>
+    <values>
+        <field>Assigned_To__c</field>
+        <value xsi:type="xsd:string">ABM2SUPER</value>
+    </values>
+    <values>
+        <field>Category__c</field>
+        <value xsi:type="xsd:string">HandOff</value>
+    </values>
+    <values>
+        <field>Creation_Date_Offset__c</field>
+        <value xsi:type="xsd:double">42.0</value>
+    </values>
+    <values>
+        <field>Description__c</field>
+        <value xsi:nil="true"/>
+    </values>
+    <values>
+        <field>Due_Date_Offset__c</field>
+        <value xsi:type="xsd:double">28.0</value>
+    </values>
+    <values>
+        <field>Task_Subject__c</field>
+        <value xsi:type="xsd:string">Current ABM Account/Portfolio Review Meeting</value>
+    </values>
+</CustomMetadata>

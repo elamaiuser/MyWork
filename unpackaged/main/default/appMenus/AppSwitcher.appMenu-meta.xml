@@ -200,4 +200,24 @@
         <name>ARC360_Integration_User</name>
         <type>ConnectedApp</type>
     </appMenuItems>
+    <appMenuItems>
+        <name>standard__FlowsApp</name>
+        <type>CustomApplication</type>
+    </appMenuItems>
+    <appMenuItems>
+        <name>dlrs__DeclarativeLookupRollupSummaries</name>
+        <type>CustomApplication</type>
+    </appMenuItems>
+    <appMenuItems>
+        <name>dlrs__DeclarativeLookupRollupSummaries2</name>
+        <type>CustomApplication</type>
+    </appMenuItems>
+    <appMenuItems>
+        <name>Copy_Storm_User</name>
+        <type>ConnectedApp</type>
+    </appMenuItems>
+    <appMenuItems>
+        <name>EDW_Informatica_User</name>
+        <type>ConnectedApp</type>
+    </appMenuItems>
 </AppMenu>

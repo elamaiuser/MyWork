@@ -3,6 +3,10 @@
   background-color: #fafaf9;
 }
 
+.record-disabled {
+  opacity: 0.5;
+}
+
 .width-450 {
   width: 450px;
 }
@@ -26,12 +30,13 @@
 .full-screen {
   height: 100%;
 }
-
 .full-screen .height-custom {
   height: 100%;
 }
-
-.full-screen  .width-450 {
+.full-screen .full-height {
+  height: 100%;
+}
+.full-screen .width-450 {
   margin: 0 auto;
   width: 100%;
   max-width: 40rem;
@@ -39,4 +44,15 @@
   padding: 0;
   display: flex;
   flex-direction: column;
+}
+
+.color-text-link-hover {
+  color: rgb(1, 118, 211);
+}
+
+.slds-list_horizontal .slds-item_label {
+  width: 40%;
+}
+.slds-list_horizontal .slds-item_detail {
+  width: 60%;
 }

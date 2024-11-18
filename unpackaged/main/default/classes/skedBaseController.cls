@@ -69,6 +69,9 @@ global virtual class skedBaseController {
             if (keys.contains('customAvailabilityTypes')) {
                 result.put('customAvailabilityTypes', skedUtils.getPickListValues('sked_Custom_Availability__c', 'sked_Type__c'));
             }
+            if (keys.contains('driveTypes')) {
+                result.put('driveTypes', skedUtils.getPickListValues('sked_Drive__c', 'sked_Type_of_Drive__c'));
+            }
             if (keys.contains('jobCancellationReasons')) {
                 result.put('jobCancellationReasons', skedUtils.getPickListValues('sked__Job__c', 'sked_Cancellation_Reason__c'));
             }

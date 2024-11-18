@@ -16,7 +16,7 @@ private class PromotionServiceTest {
          acc.BillingCity = 'Herndon';
          acc.BillingStateCode = 'VA';
          acc.BillingPostalCode = '20170';
-         Contact contact = new Contact (firstname='Test Contact First',lastname='Test Contact Last');
+         Contact contact = new Contact (firstname='Test Contact First',lastname='TestContactLast');
          contact.MailingStreet = '2204 Westcrt ln, Apt 213'; 
          contact.MailingCity = 'Herndon';
          contact.MailingStateCode = 'VA';

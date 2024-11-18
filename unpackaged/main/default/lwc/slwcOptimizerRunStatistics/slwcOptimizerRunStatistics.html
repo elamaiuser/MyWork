@@ -1,0 +1,71 @@
+<template>
+    <div class="optimizer-run-statistics-page">
+        <lightning-spinner if:true={showSpinner} class="spins" size="medium"></lightning-spinner>
+        
+        <div class="slds-grid slds-grid_vertical-align-end">
+            <div class="slds-col slds-grid slds-grid_vertical-align-center">
+            <lightning-button icon-name="utility:chevronleft" onclick={handleClose} label="Back"></lightning-button>
+            <h2 class="slds-nav-vertical__title slds-m-left_small" style="padding: 0 0.25rem;">
+                {optimizationRun.name} (Run Stats)
+            </h2>
+            </div>        
+        </div>
+        <lightning-card>        
+            <lightning-layout vertical-align="stretch" class="slds-p-around_large">
+                <div class="slds-col slds-size_1-of-12"></div>
+                <div class="slds-col slds-size_4-of-12">
+                    <article class="slds-card slds-card_boundary">
+                        <h2 class="slds-page-header__title slds-p-around_medium">Optimization Stats</h2>
+                        <template for:each={optimizerRunStatistics} for:item="optimizerRunStat">
+                            <div key={optimizerRunStat.OptLabel}>                                                           
+                                <div class ="float-optStats-left slds-p-left_large">
+                                    <p class = "slds-truncate slds-p-bottom_small">{optimizerRunStat.OptLabel} :</p>
+                                </div>
+                                <div class ="float-optStats-right slds-text-align_right slds-p-right_xx-large">
+                                    <p class="slds-p-bottom_small">{optimizerRunStat.OptValue}</p>
+                                </div>                                
+                            </div>
+                        </template>
+                    </article>
+                </div>
+                <div class="slds-col slds-size_2-of-12"></div>
+                <div class="slds-col slds-size_4-of-12">
+                    <article class="slds-card slds-card_boundary">
+                        <div class="slds-grid slds-wrap slds-grid_vertical-stretch full-height">                        
+                            <div class="slds-col slds-size_2-of-2">
+                                <article class="slds-card">
+                                    <h2 class="slds-page-header__title slds-p-around_medium">Optimization Parameters</h2>
+                                    <template for:each={optimizerRunParameters} for:item="optimizerRunParam">
+                                        <div key={optimizerRunParam.OptLabel}>                                                                   
+                                            <div class ="float-left slds-p-left_large">
+                                                <p class="slds-truncate slds-p-bottom_small">{optimizerRunParam.OptLabel} :</p>
+                                            </div>
+                                            <div class ="float-right slds-text-align_right slds-p-right_xx-large">
+                                                <p class = "slds-p-bottom_small">{optimizerRunParam.OptValue}</p>
+                                            </div>                                        
+                                        </div>
+                                    </template>
+                                </article>
+                            </div>                
+                            <div class="slds-col slds-size_2-of-2">
+                                <article class="slds-card slds-p-top_medium">
+                                    <h2 class="slds-page-header__title slds-p-around_medium">Optimization Weights</h2>
+                                    <div class="slds-p-left_large slds-p-right_large">                                
+                                        <lightning-datatable
+                                            class="slds-p-around_medium slds-table_col-bordered" 
+                                            hide-checkbox-column
+                                            key-field="OptLabel"
+                                            data = {optimizerRunWeights}
+                                            columns = {weightColumns}>
+                                        </lightning-datatable>
+                                    </div>
+                                </article>
+                            </div>                                       
+                        </div>
+                    </article>
+                </div>
+                <div class="slds-col slds-size_1-of-12"></div>
+            </lightning-layout>        
+        </lightning-card>
+    </div>
+</template>

@@ -40,7 +40,7 @@ private class skedCreateDCRForTravelTimeChange_Test {
         
         Set<Id> indexIds = new Set<Id>();
         indexIds.add(item1.Id);
-        Database.executeBatch(new skedCreateDCRForTravelTimeChangeBatch(indexIds));
+        Database.executeBatch(new skedCreateDCRForTravelTimeChangeBatch(indexIds, new Set<Id>()));
 
         Test.stopTest();
     }

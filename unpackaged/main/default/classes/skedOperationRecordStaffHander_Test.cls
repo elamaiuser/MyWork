@@ -64,6 +64,17 @@ private class skedOperationRecordStaffHander_Test {
         operationRecordStaff.sked_Actual_Shift_Start__c = testDriveShift.sked_Start__c;
         operationRecordStaff.sked_Actual_Shift_End__c = testDriveShift.sked_Finish__c;
         update operationRecordStaff;
+
+        sked_Staff_Meal_Rest_Break_Setting__c staffMealAndRestBreakSetting = new sked_Staff_Meal_Rest_Break_Setting__c(
+            Name = 'Meal Break 1',
+        	sked_Operation_Record_Staff__c = operationRecordStaff.Id,
+            sked_Break_Type__c = 'Meal',
+            sked_Actual_Start__c = DateTime.newInstance(System.today(), Time.newInstance(14,0,0,0)),
+            sked_Actual_End__c = DateTime.newInstance(System.today(), Time.newInstance(20,0,0,0))
+        );
+        insert staffMealAndRestBreakSetting;
+       
+        delete operationRecordStaff;
         
         Test.stopTest();
     }

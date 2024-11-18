@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+        <help><!-- Number of days after drive completion (Complete/Cancel/Confirmed) --></help>
+        <label><!-- No. of Days for Calendar Build Batch --></label>
+        <name>No_of_Days_for_Calendar_Build_Batch__c</name>
+    </CustomFieldTranslation>

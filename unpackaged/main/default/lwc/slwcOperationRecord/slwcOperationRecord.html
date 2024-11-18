@@ -96,8 +96,8 @@
                                                 </lightning-input>
                                             </div>
                                             <div class="slds-p-around_xx-small">
-                                                <lightning-textarea onchange={handleOnChange} name="notesComments" disabled={isReadonly} label="Notes/Comments"
-                                                    value={model.notesComments}></lightning-textarea>
+                                                <c-slwc-text-area onchange={handleOnChange} name="notesComments" disabled={isReadonly} label="Notes/Comments"
+                                                    value={model.notesComments} max-length="255" show-length></c-slwc-text-area>
                                             </div>
                                         </div>
                                     </section>

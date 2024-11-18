@@ -6,6 +6,7 @@
 * Date					Developer Name			Comments
 * ***************************************************************************************************************************************************************************
 * 19/09/2023		    Kishore Das			    HRP-10741
+* 02/20/2024            Balaji N				Logic for HRP-11234(Method : addTeamMemberPortfolio,DRD System User changes)
 *****************************************************************************************************************************************************************************
 */
 public with sharing class OpportunitySplitService {
@@ -251,9 +252,15 @@ public with sharing class OpportunitySplitService {
             opportunityUserMap.get(oppSplit.OpportunityId).add(oppSplit.SplitOwnerId);
         }
         */
-        
+        //HRP-11234
+        user u = [select id from user where name='DRD System User'];
         for(OpportunitySplit oppSplit : newItems){
-            
+            if(oppSplit.SplitOwnerId == u.id)
+            {
+                oppSplit.BSF_Portfolio__c=null;
+                continue;
+            }
+            //HRP-11234
              Opportunity currentOpp = opptyMap.get(oppSplit.OpportunityId);        
             
             If(oppSplit.SplitOwnerId==userInfo.getUserId() && !MapIds.keyset().contains(oppSplit.SplitOwnerId)){// MapIds.get(oppSplit.SplitOwnerId) ==null

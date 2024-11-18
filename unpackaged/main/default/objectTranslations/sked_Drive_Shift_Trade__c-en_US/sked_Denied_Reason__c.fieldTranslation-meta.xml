@@ -11,6 +11,10 @@
             <translation><!-- Denied (cutoff days) --></translation>
         </picklistValues>
         <picklistValues>
+            <masterLabel>Denied (double booked)</masterLabel>
+            <translation><!-- Denied (double booked) --></translation>
+        </picklistValues>
+        <picklistValues>
             <masterLabel>Denied (duplicate)</masterLabel>
             <translation><!-- Denied (duplicate) --></translation>
         </picklistValues>
@@ -25,5 +29,9 @@
         <picklistValues>
             <masterLabel>Denied (travel distance)</masterLabel>
             <translation><!-- Denied (travel distance) --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Other</masterLabel>
+            <translation><!-- Other --></translation>
         </picklistValues>
     </CustomFieldTranslation>

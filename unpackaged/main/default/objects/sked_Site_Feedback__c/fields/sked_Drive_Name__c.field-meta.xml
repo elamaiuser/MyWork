@@ -5,6 +5,7 @@
     <formula>sked_Drive__r.Name</formula>
     <label>Drive Name</label>
     <required>false</required>
+    <trackHistory>false</trackHistory>
     <trackTrending>false</trackTrending>
     <type>Text</type>
     <unique>false</unique>

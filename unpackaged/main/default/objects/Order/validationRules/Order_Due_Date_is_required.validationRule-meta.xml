@@ -3,7 +3,7 @@
     <fullName>Order_Due_Date_is_required</fullName>
     <active>true</active>
     <description>If Order Due Date is blank then it will throw an error.</description>
-    <errorConditionFormula>ISCHANGED( Order_Due_Date__c ) &amp;&amp;  ISBLANK( Order_Due_Date__c )</errorConditionFormula>
+    <errorConditionFormula>ISCHANGED( Order_Due_Date__c ) &amp;&amp; ISBLANK( Order_Due_Date__c ) &amp;&amp; Opportunity.Is_Template__c == False</errorConditionFormula>
     <errorDisplayField>Order_Due_Date__c</errorDisplayField>
     <errorMessage>Order Due Date should not be blank.</errorMessage>
 </ValidationRule>

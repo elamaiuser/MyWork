@@ -3,6 +3,11 @@ public class skedTriggerContainer {
     public static Set<Id> revetingDcrRecordIds = new Set<Id>();
     public static Map<string, boolean> mapObjectActivation = new Map<string, boolean>();
 
+    private static final List<String> MOBILE_APP_SOBJECT_BYPASSES = new List<String>{
+        'Beforesked_Drive__c', 'Beforesked_Drive_Shift__c', 'Beforesked__Availability__c', 'Beforesked__Activity_Resource__c',
+        'Beforesked__Job__c', 'Beforesked__Job_Allocation__c', 'Beforesked_Site_Feedback__c'
+    };
+
     public skedTriggerContainer() {
         sObjectStack = new List<string>();
     }
@@ -21,7 +26,8 @@ public class skedTriggerContainer {
         }
         sObjectStack.add(triggerActionOnObject);
 
-        if (sObjectStack[0] != 'Beforesked_Drive__c' && sObjectStack[0] != 'Beforesked_Drive_Shift__c') {
+
+        if (!MOBILE_APP_SOBJECT_BYPASSES.contains(sObjectStack[0])) {
             skedTriggerUtils.CHANGES_INITIATED_FROM_SERVICE = true;
         }
 
@@ -34,7 +40,7 @@ public class skedTriggerContainer {
     private void sendNotifications(triggerContext context) {
         if (context.isAfter && (context.isInsert || context.isUpdate)) {
             string action = context.isInsert ? 'Insert' : 'Update';
-            skedNotificationService.addNotificationQueueItems(action, context.sObjectName, context.newRecords, context.oldMap);
+            new skedTriggerActionNotificationService(action, context.sObjectName).generateNotifications(context.newRecords, context.oldMap);
         }
     }
     

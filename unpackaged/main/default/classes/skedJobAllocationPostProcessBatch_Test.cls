@@ -750,4 +750,110 @@ private class skedJobAllocationPostProcessBatch_Test {
         
         Test.stopTest();
     }
+
+    @isTest
+    static void skedJobAllocationPostProcessBatch_Test_LinkedDriveMismatchedAsset() {
+        skedTestDataFactory testDataFactory = new skedTestDataFactory('us', 14);
+        Map<string, sObject> mapTestData = testDataFactory.setupCommonTestData();
+        mapTestData = testDataFactory.setupDriveData();
+
+        sked_Linked_Drives__c testLinkedDrive = new sked_Linked_Drives__c();
+        insert testLinkedDrive;
+        
+        sked__Region__c testRegion = (sked__Region__c) mapTestData.get('testRegion1');
+        sked_Drive__c testDrive = (sked_Drive__c) mapTestData.get('testDrive1');
+        testDrive.sked_Linked_Drives__c = testLinkedDrive.Id;
+
+        sked_Drive__c testDrive2 = testDrive.clone(false, false, false, false);
+        testDrive2.sked_Drive_Date__c = testDrive.sked_Drive_Date__c.addDays(1);
+        testDrive2.sked_Linked_Drives__c = testLinkedDrive.Id;
+        
+        upsert new List<sked_Drive__c>{testDrive, testDrive2};
+
+        sked__Resource__c testAsset = (sked__Resource__c) mapTestData.get('testVehicle1');
+
+        Test.startTest();
+        
+        sked_Drive_Shift__c testDriveShift = new sked_Drive_Shift__c(
+            sked_Donors_Scheduled__c = 1,
+            sked_End_Time__c = Time.newInstance(20,0,0,0),
+            sked_Start_Time__c = Time.newInstance(14,0,0,0),
+            sked_Drive__c = testDrive.Id,
+            sked_Drive_Date__c = testDrive.sked_Drive_Date__c,
+            sked_Equipment__c = 1,
+            sked_Lunch_Break__c = FALSE,
+            sked_Lunch_Break_Before_Draw_Hours__c = FALSE,
+            sked_Lunch_Break_Duration__c = 0,
+            sked_Lunch_Break_End_Time__c = NULL,
+            sked_Lunch_Break_Start_Time__c = NULL,
+            sked_Finish__c = DateTime.newInstance(System.today(), Time.newInstance(20,0,0,0)),
+            sked_Start__c = DateTime.newInstance(System.today(), Time.newInstance(14,0,0,0)),
+            sked_Order__c = 1,
+            sked_Sign_Up_Reduction__c = 0,
+            sked_Staff_Setup__c = 1,
+            sked_Vehicles_Needed__c = 1,
+            sked_Volunteer_Setup__c = 1
+        );
+
+        sked_Drive_Shift__c testDrive2Shift = new sked_Drive_Shift__c(
+            sked_Donors_Scheduled__c = 1,
+            sked_End_Time__c = Time.newInstance(20,0,0,0),
+            sked_Start_Time__c = Time.newInstance(14,0,0,0),
+            sked_Drive__c = testDrive2.Id,
+            sked_Drive_Date__c = testDrive2.sked_Drive_Date__c,
+            sked_Equipment__c = 1,
+            sked_Lunch_Break__c = FALSE,
+            sked_Lunch_Break_Before_Draw_Hours__c = FALSE,
+            sked_Lunch_Break_Duration__c = 0,
+            sked_Lunch_Break_End_Time__c = NULL,
+            sked_Lunch_Break_Start_Time__c = NULL,
+            sked_Finish__c = DateTime.newInstance(System.today(), Time.newInstance(20,0,0,0)),
+            sked_Start__c = DateTime.newInstance(System.today(), Time.newInstance(14,0,0,0)),
+            sked_Order__c = 1,
+            sked_Sign_Up_Reduction__c = 0,
+            sked_Staff_Setup__c = 1,
+            sked_Vehicles_Needed__c = 1,
+            sked_Volunteer_Setup__c = 1
+        );
+        insert new List<sked_Drive_Shift__c>{testDriveShift, testDrive2Shift};
+        
+        sked__Job__c testAssetJob = new sked__Job__c(
+            sked__Region__c = testRegion.Id,
+            sked__Start__c = testDataFactory.summary.startTime.addHours(11).addMinutes(15),
+            sked__Finish__c = testDataFactory.summary.startTime.addHours(11).addMInutes(30),
+            sked__Duration__c = 15,
+            sked__Job_Status__c = skedConstants.JOB_STATUS_PENDING_ALLOCATION,
+            sked_Drive__c = testDrive.Id,
+            sked_Drive_Shift__c = testDriveShift.Id,
+            sked_Asset_Type__c = 'Vehicle',
+            sked__GeoLocation__Latitude__s = 51.508105,
+            sked__GeoLocation__Longitude__s = -0.132901
+        );
+        sked__Job__c testAsset2Job = new sked__Job__c(
+            sked__Region__c = testRegion.Id,
+            sked__Start__c = testDataFactory.summary.startTime.addHours(11).addMinutes(15),
+            sked__Finish__c = testDataFactory.summary.startTime.addHours(11).addMInutes(30),
+            sked__Duration__c = 15,
+            sked__Job_Status__c = skedConstants.JOB_STATUS_PENDING_ALLOCATION,
+            sked_Drive__c = testDrive2.Id,
+            sked_Drive_Shift__c = testDrive2Shift.Id,
+            sked_Asset_Type__c = 'Vehicle',
+            sked__GeoLocation__Latitude__s = 51.508105,
+            sked__GeoLocation__Longitude__s = -0.132901
+        );
+        insert new List<sked__Job__c>{testAssetJob, testAsset2Job};
+            
+        sked__Job_Allocation__c testAssetJobAllocation = new sked__Job_Allocation__c(
+            sked__Job__c = testAssetJob.Id,
+            sked__Resource__c = testAsset.Id,
+            sked__Status__c = skedConstants.JOB_ALLOCATION_STATUS_PENDING_DISPATCH
+        );
+        insert testAssetJobAllocation;
+
+        skedJobAllocationPostProcessBatch.batchSetting batchSetting = new skedJobAllocationPostProcessBatch.batchSetting();
+        batchSetting.geographicException = false;
+        Database.executeBatch(new skedJobAllocationPostProcessBatch(batchSetting, new Set<Id>{testAssetJobAllocation.Id}));
+        
+        Test.stopTest();
+    }
 }

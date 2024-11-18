@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Queue xmlns="http://soap.sforce.com/2006/04/metadata">
+    <doesSendEmailToMembers>false</doesSendEmailToMembers>
+    <name>Paducah KY: DMRTVs</name>
+    <queueMembers>
+        <users>
+            <user>eric.holden@redcross.org.biomed</user>
+            <user>john.davis4@redcross.org.biomed</user>
+            <user>kristi.bradley@redcross.org</user>
+            <user>robert.wagner@redcross.org</user>
+            <user>serena.bricker@redcross.org</user>
+        </users>
+    </queueMembers>
+    <queueSobject>
+        <sobjectType>sked__Location__c</sobjectType>
+    </queueSobject>
+</Queue>

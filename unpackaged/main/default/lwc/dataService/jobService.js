@@ -37,7 +37,9 @@ class jobService extends dataService {
       
       if (query.includes(sObjectType.JOB_ALLOCATION)) {
           let subQueryBuilder = query.getQueryBuilder("sked__Job_Allocation__c");
-          subQueryBuilder.addCondition({template: "sked__Status__c != 'Deleted'"});
+          if(!query.includeDeletedJobAllocs){
+            subQueryBuilder.addCondition({template: "sked__Status__c != 'Deleted'"});
+          }          
       }
       if (query.includes(sObjectType.JOB_TAG)) {
           let subQueryBuilder = query.getQueryBuilder("sked__Job_Tag__c");
@@ -60,6 +62,7 @@ class jobQueryModel extends queryModelBase {
   assetTypes;
 
   isSubDriveQuery;
+  includeDeletedJobAllocs;
 }
 
 export {

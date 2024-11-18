@@ -8,6 +8,7 @@
   **************************************************************************
  * 06/12/2023				  Priti Jana			 Logic for HRP-9901
  * 10/5/2023                  Priti Jana             Logic for HRP-11027
+ * 05/02/2024                 Priti Jana             Logic for HRP-12480
  ***************************************************************************
 */
 
@@ -29,11 +30,10 @@ public class DriveGeneratorService {
             siteIdSet.add(opp.Drive_Site__c); // HRP - 9901 - populating drive site set
         }
 
-        List<Account> accounts = FetchRelatedDriveData.fetchAccounts(accountIdSet);
-
         // HRP - 9901 ----> starts Here (Fetching Related Sites)
         
         FetchRelatedDriveData.DMLSchedulingBounds schedulingBounds = FetchRelatedDriveData.reduceSchedulingBoundsFromOpportunities(oppList);
+        List<Account> accounts = FetchRelatedDriveData.fetchAccounts(accountIdSet, schedulingBounds); //HRP-12480
         List<sked__Location__c> sites = FetchRelatedDriveData.fetchSites(siteIdSet , schedulingBounds);
 
         if(sites.isEmpty() || sites.size() < 1)

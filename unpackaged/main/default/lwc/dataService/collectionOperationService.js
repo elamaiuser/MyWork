@@ -5,6 +5,7 @@ import { territoryCollectionOperationService, territoryCollectionOperationQueryM
 import * as autoMapper from 'c/autoMapper';
 import dataStorageInstance from './dataStorage';
 import auraProxy from 'c/auraProxy';
+import { COLLECTION_OPERATION } from 'c/slwcConstants';
 
 class collectionOperationService extends dataService {
   constructor() {
@@ -15,6 +16,12 @@ class collectionOperationService extends dataService {
   getQueryConditions(query) {
       let queryBuilder = query.getQueryBuilder(this.sObjectApiName);
       queryBuilder.addCondition({template: 'sked_Is_Deactivated__c = FALSE'});
+      let exludedCONames = [COLLECTION_OPERATION.NON_COLLECTION_AREA];
+      queryBuilder.addCondition({template: "Name NOT IN {0}", value: exludedCONames, type: "array_string"});
+      if(query.recordIds && query.recordIds.length) {
+        queryBuilder.addCondition({ template: "Id IN {0}", value: query.recordIds, type: "array_string" });
+      }
+      
       queryBuilder.orderClause = 'ORDER BY Name ASC';
 
       if (query.includes(sObjectType.REGION)) {
@@ -23,6 +30,10 @@ class collectionOperationService extends dataService {
 
       if (query.includes(sObjectType.COLLECTION_OPERATION_STAGING_LOCATION)) {
         let subQueryBuilder = query.getQueryBuilder("sked_Collection_Op_Staging_Location__c");
+      }
+
+      if (query.includes(sObjectType.COLLECTION_OPERATION_OPTIMIZER_SETTING)) {
+        let subQueryBuilder = query.getQueryBuilder("sked_CollectionOperationOptimizerSetting__c");
       }
   }
 
@@ -129,6 +140,7 @@ class collectionOperationService extends dataService {
 
 class collectionOperationQueryModel extends queryModelBase { 
   userId;
+  recordIds;
 }
 
 export {

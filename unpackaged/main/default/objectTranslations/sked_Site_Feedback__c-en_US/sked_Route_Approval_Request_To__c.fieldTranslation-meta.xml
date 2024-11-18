@@ -3,11 +3,15 @@
         <label><!-- Route Approval Request To --></label>
         <name>sked_Route_Approval_Request_To__c</name>
         <picklistValues>
-            <masterLabel>Route to CO Team Supervisor</masterLabel>
-            <translation><!-- Route to CO Team Supervisor --></translation>
+            <masterLabel>Request APS evaluation</masterLabel>
+            <translation><!-- Request APS evaluation --></translation>
         </picklistValues>
         <picklistValues>
-            <masterLabel>Route to DRD Manager</masterLabel>
-            <translation><!-- Route to DRD Manager --></translation>
+            <masterLabel>Request CM evaluation</masterLabel>
+            <translation><!-- Request CM evaluation --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Request DM evaluation</masterLabel>
+            <translation><!-- Request DM evaluation --></translation>
         </picklistValues>
     </CustomFieldTranslation>

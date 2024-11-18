@@ -177,6 +177,31 @@ export default class SlwcDriveShiftJobModal extends LightningElement {
         }
     }
 
+    populateDefaultTags() {
+        if(this.job.id || !this.isPersonResource) return;
+
+        let fetch = new DriveFetch({
+            driveType: this.drive.typeOfDrive
+        })
+        let helper = new DriveHelper();
+
+        return Promise.all([
+            fetch.retrieveDefaultTags(this.drive),
+        ])
+        .then(([driveTags]) => {
+            const jobTagsMap = helper.calculateJobTagsMap({
+                driveTags
+            });
+            const personTags = jobTagsMap[RESOURCE_TYPE.PERSON] || [];
+            this.job.jobTags = personTags.map(item => {
+                return {
+                    ...item,
+                    systemCreated: true
+                }
+            });
+        })
+    }
+
     populateRoleTimeData() {
         let fetch = new DriveFetch({
             driveType: this.drive.typeOfDrive
@@ -228,7 +253,9 @@ export default class SlwcDriveShiftJobModal extends LightningElement {
                 driveSite
             }, masterData)
             
-            let driveShiftResourceRoleGroupRoleTimeDataMap = helper.calculateDriveShiftRoleTimeData({
+            let driveShiftResourceRoleGroupRoleTimeDataMap = helper.calculateDriveShiftRoleTimeData(
+                masterData, {
+                ...this.drive,
                 driveShiftsMetadata: {
                     driveShifts: (this.drive.driveShifts || []).map(driveShift => {
                         return {
@@ -308,6 +335,9 @@ export default class SlwcDriveShiftJobModal extends LightningElement {
         .then(() => {
             return this.populateRoleTimeData()
         })
+        .then(() => {
+            return this.populateDefaultTags()
+        })
         .catch(error => this.exceptionHandler(error))
         .finally(this.hideLoading);
     }
@@ -338,6 +368,26 @@ export default class SlwcDriveShiftJobModal extends LightningElement {
 
     handleSave() {
         if(!this.validate()) return;
+
+        if(this.isVolunteerResource) {
+            const existed = this.driveShift.jobs?.find(job => job.volunteerRole === this.job.volunteerRole);
+            if(existed) {
+                this.job = {
+                    ...this.job,
+                    key: existed.key,
+                    id: existed.id
+                }
+
+                this.dispatchEvent(
+                    new ShowToastEvent({
+                        title: 'Success',
+                        message: 'Volunteer complement quantity has been updated!',
+                        variant: 'success'
+                    })
+                );
+            }
+        }
+
         let eventValues = {action: this.action, shiftKey: this.driveShift.key, job: this.job};
         if(this.type != "allocationModal"){
             fireEvent(this.pageRef, 'saveJob', eventValues);

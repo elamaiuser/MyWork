@@ -6,6 +6,7 @@
  * 03/08/2023				 Kishore Das		      Users other than System Admin should not have any delete record permissions(Logic for HRP-10572--> Deleted)
  * 10/03/2023                Priti Jana               Restricting non-admin users from Portfolio deletion (Part of HRP-HRP-10115)
  * 20/10/2023                Krapy Tuli                Logic for HRP-10880 (Update Leads to consume New Taxonomy - Geo Realignment)
+ * 10/22/2024				 Balaji N				  Logic for HRP-13603 handleLeadStageStatus method call
  ************************************************************************************************************************************************
 */
 
@@ -16,7 +17,16 @@ public class LeadTriggerHandler extends TriggerHandler{
     
     public override void beforeUpdate(){
         LeadService.setLeadTerritory((List<Lead>)trigger.new,(Map<Id,Lead>)trigger.oldMap);
-
+        //HRP-13603 Start
+        if(super.getTriggerMethodsToBypass().indexOf('handleLeadStageStatus') == -1) 
+        {
+			LeadService.handleLeadStageStatus((List<Lead>)trigger.new,(Map<Id,Lead>)trigger.oldMap);
+        }
+        else
+        {
+            System.debug('LeadService.beforeUpdate() - LeadService.handleLeadStageStatus() Bypassed');
+        }
+		//HRP-13603 End
     }
      
     public override void beforeInsert(){

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Priority__c</fullName>
+    <description>Priority of the Notification of all the records which has the same 
+Proposed Time. It should be looked it at a system as a whole. Default value/LOW priority is 10,000 and high priority is 1 , medium is 5000</description>
+    <externalId>false</externalId>
+    <label>Priority</label>
+    <precision>18</precision>
+    <required>false</required>
+    <scale>0</scale>
+    <trackTrending>false</trackTrending>
+    <type>Number</type>
+    <unique>false</unique>
+</CustomField>

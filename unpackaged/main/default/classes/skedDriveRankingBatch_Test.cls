@@ -49,4 +49,25 @@ private class skedDriveRankingBatch_Test {
         
         Test.stopTest();
     }
+    
+    @isTest
+    static void skedDriveRankingBatch_FsDriveConstructor_Test() {
+        Map<string, sObject> mapTestData = GenerateDriveTestData.setupData();
+        Opportunity fixOpportunity = (Opportunity)mapTestData.get('fixedSiteOpportunity');
+     
+        Test.startTest();
+        AccountTeamMemberHelper.skipAccountTrigger = true;
+        TriggerHandler.bypass('AccountTriggerHandler');
+        TriggerHandler.bypass('OpportunityTriggerHandler');
+        TriggerHandler.bypass('OpportunitySplitTriggerHandler');
+        
+        CreateSkedDrive.createDrives(new List<Opportunity>{fixOpportunity});
+        List<sked_Drive__c> fixedSiteDriveCreated = [SELECT Id , sked_Opportunity__c, sked_Type_of_Drive__c 
+                                                     FROM sked_Drive__c 
+                                                     WHERE sked_Opportunity__c = :fixOpportunity.Id];
+        
+        //Call the batch
+        Database.executeBatch(new skedDriveRankingBatch('Manual', '', System.today(), fixedSiteDriveCreated), 1);
+        Test.stopTest();
+    }
 }

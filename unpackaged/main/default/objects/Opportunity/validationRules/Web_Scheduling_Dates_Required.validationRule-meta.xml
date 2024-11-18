@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Web_Scheduling_Dates_Required</fullName>
+    <active>true</active>
+    <description>HRP-4878 If Web Sched Offset from CO/Global Settings value is unchecked, Web Schedule Start Date,Start Time,End Date,End Time fields must be populated.</description>
+    <errorConditionFormula>((Web_Sched_Offset_from_CO_Global_Settings__c == False) &amp;&amp;
+Is_Template__c == True &amp;&amp;
+(
+ISBLANK(Web_Scheduling_Start_Date_Offset__c) ||
+ISPICKVAL(Web_Scheduling_Start_Time__c,&quot;&quot;) ||
+ISBLANK(Web_Scheduling_End_Time_Offset__c) ||
+ISBLANK(Web_Scheduling_End_Date_Offset__c)
+))
+||
+((Web_Sched_Offset_from_CO_Global_Settings__c == True) &amp;&amp;
+Is_Template__c == True &amp;&amp;
+(
+NOT(ISBLANK(Web_Scheduling_Start_Date_Offset__c)) ||
+NOT(ISPICKVAL(Web_Scheduling_Start_Time__c,&quot;&quot;)) ||
+NOT(ISBLANK(Web_Scheduling_End_Time_Offset__c)) ||
+NOT(ISBLANK(Web_Scheduling_End_Date_Offset__c))
+))</errorConditionFormula>
+    <errorMessage>Please either check the checkbox ‘Web Scheduling Offset from CO/Global Setting’ or enter Web Scheduling Offset values on the Template.</errorMessage>
+</ValidationRule>

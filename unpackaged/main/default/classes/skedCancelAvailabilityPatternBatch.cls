@@ -3,16 +3,18 @@ public class skedCancelAvailabilityPatternBatch  implements Database.Batchable<s
     String bulkAction;
     sked__Availability__c cancelledAvailability;
     Id recurringScheduleId;
+    Id initiatedById;
 
-    public skedCancelAvailabilityPatternBatch(sked__Availability__c cancelledAvailability, Id recurringScheduleId, String bulkAction) {
+    public skedCancelAvailabilityPatternBatch(sked__Availability__c cancelledAvailability, Id recurringScheduleId, String bulkAction, Id initiatedById) {
         this.cancelledAvailability = cancelledAvailability;
         this.recurringScheduleId = recurringScheduleId;
         this.bulkAction = bulkAction;
+        this.initiatedById = initiatedById;
     }
 
     public List<sked__Availability__c> start(Database.BatchableContext BC) {
         return [
-            SELECT Id, sked_Start_Date__c
+            SELECT Id, sked_Start_Date__c, sked_Workday_Sync_Status__c, sked_Integrate_With_Workday__c, sked_Approval_Reason__c
             FROM sked__Availability__c
             WHERE (sked_Recurring_Schedule__c = :recurringScheduleId OR Id = :cancelledAvailability.Id)
             AND sked__Status__c NOT IN :cancelledStatuses
@@ -37,7 +39,14 @@ public class skedCancelAvailabilityPatternBatch  implements Database.Batchable<s
             }
 
             if (cancelAvailability) {
-                availability.sked_Custom_Status__c = skedConstants.AVAILABILITY_STATUS_CANCELLED;
+                if (availability.sked_Workday_Sync_Status__c == skedConstants.AVAILABILITY_WORKDAY_SYNC_STATUS_MANUAL && !skedTriggerUtils.isUserAPS(this.initiatedById)) {
+                    availability.sked_Custom_Status__c = skedConstants.AVAILABILITY_STATUS_PENDING;
+                    availability.sked_Approval_Reason__c = skedConstants.AVAILABILITY_APPROVAL_REASON_WORKDAY_CANCELLATION_REQUIRED;
+                } else if (availability.sked_Integrate_With_Workday__c && availability.sked_Workday_Sync_Status__c == skedConstants.AVAILABILITY_WORKDAY_SYNC_STATUS_SUCCESS) {
+                    availability.sked_Custom_Status__c = skedConstants.AVAILABILITY_STATUS_PROCESSING_CANCELLATION;
+                } else {
+                    availability.sked_Custom_Status__c = skedConstants.AVAILABILITY_STATUS_CANCELLED;
+                }
                 availabilitiesToUpdate.add(availability);
             }
         }

@@ -8,11 +8,6 @@
         <plural>true</plural>
         <value>PortfolioAssignments</value>
     </caseValues>
-    
-    
-    
-    
-    
     <layouts>
         <layout>Portfolio Assignment Layout</layout>
         <sections>
@@ -25,4 +20,13 @@
         <errorMessage><!-- DM Portfolio can only be assigned to users having DRD Manager Profile --></errorMessage>
         <name>DM_Assignment_only_to_DRD_Manager</name>
     </validationRules>
+    <validationRules>
+        <errorMessage><!-- User End Date can&apos;t be lesser than the Start Date --></errorMessage>
+        <name>Start_Date_Must_be_Before_End_Date</name>
+    </validationRules>
+    
+    
+    
+    
+    
 </CustomObjectTranslation>

@@ -5,11 +5,15 @@
 public class PersonalStaffScheduleReportTest {
     @isTest 
     public static void testPersonalStaffScheduleReportController(){
+        skedHubBase.BypassInsertTriggers = true;
+        skedHubBase.BypassUpdateTriggers = true;
+        TriggerHandler.bypass('OpportunityTriggerHandler');
         Account testAccount1 = new Account(
             Name = 'Test Account1',
             Internal_Name__c  = 'Test Internal Name 1',
             District_Manager__c = UserInfo.getUserId()
         );
+        TriggerHandler.bypass('AccountTriggerHandler');
         insert testAccount1; 
         System.assertNotEquals(null,testAccount1.Id, 'Account Not Inserted.');
         
@@ -20,6 +24,8 @@ public class PersonalStaffScheduleReportTest {
             CloseDate = system.today()+10,
             Is_template__c = TRUE
         );
+        skedHubBase.BypassInsertTriggers = true;
+        TriggerHandler.bypass('OpportunityTriggerHandler');
         insert parentOpp; 
         System.assertNotEquals(null,parentOpp.Id, 'Opportunity Not Inserted.');
         Biomed_Collection_Op_Center__c testCollectionOperation1 = new Biomed_Collection_Op_Center__c(
@@ -32,6 +38,8 @@ public class PersonalStaffScheduleReportTest {
             Staging_Location_Geolocation__Longitude__s = -122.4816244,
             sked_Work_Week_First_Day__c = 'Sunday'
         );
+        skedHubBase.BypassInsertTriggers = true;
+        TriggerHandler.bypass('CollectionOperationTriggerHandler');
         insert testCollectionOperation1; 
         System.assertNotEquals(null,testCollectionOperation1.Id, 'Coll opp Not Inserted.');
         sked__Location__c testLocation1 = new sked__Location__c(
@@ -95,6 +103,7 @@ public class PersonalStaffScheduleReportTest {
             sked_2RBC_Projected_Procedures__c = 2,
             sked_Total_Products_Projected__c = 10           
         );
+        triggerHandler.bypass('DriveTriggerHandler');
         insert testDrive1;
         System.assertNotEquals(null,testDrive1.Id, 'drive Not Inserted.');
         RecordType rt = [SELECT Id FROM RecordType WHERE sObjectType='sked__Resource__c' AND Name = 'Staff'];
@@ -210,6 +219,10 @@ public class PersonalStaffScheduleReportTest {
             sked_Drive_Shift__c = skdDriveShift.Id,
             sked_APT_Quantity__c = 10
         );
+        triggerHandler.bypass('OpportunityTriggerHandler');
+        triggerHandler.bypass('JobTriggerHandler');
+        skedHubBase.BypassInsertTriggers = true;
+        skedHubBase.BypassUpdateTriggers = true;
         insert job1;
         System.assertNotEquals(null,job1.Id, 'job Not Inserted.');
         sked__Job_Allocation__c testResource1_job1 = new sked__Job_Allocation__c(
@@ -222,6 +235,10 @@ public class PersonalStaffScheduleReportTest {
             //sked_Set_End_Time__c = Time.newInstance(17, 20, 0, 0),
             sked_Additional_Roles__c = 'Charge - Special Collections'
         );
+        triggerHandler.bypass('OpportunityTriggerHandler');
+        triggerHandler.bypass('JobAllocationTriggerHandler');
+        skedHubBase.BypassInsertTriggers = true;
+        skedHubBase.BypassUpdateTriggers = true;
         insert testResource1_job1;
         System.assertNotEquals(null,testResource1_job1.Id, 'job alloc Not Inserted.');
         Test.startTest();
@@ -231,12 +248,15 @@ public class PersonalStaffScheduleReportTest {
     }
     @isTest 
     public static void testPersonalStaffScheduleReportControllerV2(){
-        
+        skedHubBase.BypassInsertTriggers = true;
+        skedHubBase.BypassUpdateTriggers = true;
+        TriggerHandler.bypass('OpportunityTriggerHandler');
         Account testAccount1 = new Account(
             Name = 'Test Account1',
             Internal_Name__c  = 'Test Internal Name 1',
             District_Manager__c = UserInfo.getUserId()
         );
+        TriggerHandler.bypass('AccountTriggerHandler');
         insert testAccount1; 
         System.assertNotEquals(null,testAccount1.Id, 'Account Not Inserted.');
         Opportunity parentOpp = new Opportunity(
@@ -246,6 +266,8 @@ public class PersonalStaffScheduleReportTest {
             CloseDate = system.today()+10,
             Is_template__c = TRUE
         );
+        skedHubBase.BypassInsertTriggers = true;
+        TriggerHandler.bypass('OpportunityTriggerHandler');
         insert parentOpp; 
         System.assertNotEquals(null,parentOpp.Id, 'opportunity Not Inserted.');
         Biomed_Collection_Op_Center__c testCollectionOperation1 = new Biomed_Collection_Op_Center__c(
@@ -258,6 +280,8 @@ public class PersonalStaffScheduleReportTest {
             Staging_Location_Geolocation__Longitude__s = -122.4816244,
             sked_Work_Week_First_Day__c = 'Sunday'
         );
+        skedHubBase.BypassInsertTriggers = true;
+        TriggerHandler.bypass('CollectionOperationTriggerHandler');
         insert testCollectionOperation1; 
         System.assertNotEquals(null,testCollectionOperation1.Id, 'coll opp Not Inserted.');
         sked__Location__c testLocation1 = new sked__Location__c(
@@ -321,6 +345,7 @@ public class PersonalStaffScheduleReportTest {
             sked_2RBC_Projected_Procedures__c = 2,
             sked_Total_Products_Projected__c = 10           
         );
+        triggerHandler.bypass('DriveTriggerHandler');
         insert testDrive1;
         System.assertNotEquals(null,testDrive1.Id, 'drive Not Inserted.');
         RecordType rt = [SELECT Id FROM RecordType WHERE sObjectType='sked__Resource__c' AND Name = 'Staff'];
@@ -435,6 +460,10 @@ public class PersonalStaffScheduleReportTest {
             sked_Drive_Shift__c = skdDriveShift.Id,
             sked_APT_Quantity__c = 10
         );
+        triggerHandler.bypass('OpportunityTriggerHandler');
+        triggerHandler.bypass('JobTriggerHandler');
+        skedHubBase.BypassInsertTriggers = true;
+        skedHubBase.BypassUpdateTriggers = true;
         insert job1;
         System.assertNotEquals(null,job1.Id, 'job Not Inserted.');
         sked__Job_Allocation__c testResource1_job1 = new sked__Job_Allocation__c(
@@ -447,6 +476,10 @@ public class PersonalStaffScheduleReportTest {
             sked_Set_End_Time__c = Time.newInstance(17, 20, 0, 0),
             sked_Additional_Roles__c = 'Charge - Special Collections'
         );
+        triggerHandler.bypass('OpportunityTriggerHandler');
+        triggerHandler.bypass('JobAllocationTriggerHandler');
+        skedHubBase.BypassInsertTriggers = true;
+        skedHubBase.BypassUpdateTriggers = true;
         insert testResource1_job1;
         System.assertNotEquals(null,testResource1_job1.Id, 'job alloc Not Inserted.');
         Test.startTest();
@@ -456,12 +489,16 @@ public class PersonalStaffScheduleReportTest {
     }
     @isTest 
     public static void testPersonalStaffScheduleReportControllerV3(){
-        
+        skedHubBase.BypassInsertTriggers = true;
+        skedHubBase.BypassUpdateTriggers = true;
+        TriggerHandler.bypass('OpportunityTriggerHandler');
         Account testAccount1 = new Account(
             Name = 'Test Account1',
             Internal_Name__c  = 'Test Internal Name 1',
             District_Manager__c = UserInfo.getUserId()
         );
+        skedHubBase.BypassInsertTriggers = true;
+        TriggerHandler.bypass('AccountTriggerHandler');
         insert testAccount1; 
         System.assertNotEquals(null,testAccount1.Id, 'Account Not Inserted.');
         Opportunity parentOpp = new Opportunity(
@@ -471,6 +508,8 @@ public class PersonalStaffScheduleReportTest {
             CloseDate = system.today()+10,
             Is_template__c = TRUE
         );
+        skedHubBase.BypassInsertTriggers = true;
+        TriggerHandler.bypass('OpportunityTriggerHandler');
         insert parentOpp; 
         System.assertNotEquals(null,parentOpp.Id, 'opportunity Not Inserted.');
         Biomed_Collection_Op_Center__c testCollectionOperation1 = new Biomed_Collection_Op_Center__c(
@@ -483,6 +522,8 @@ public class PersonalStaffScheduleReportTest {
             Staging_Location_Geolocation__Longitude__s = -122.4816244,
             sked_Work_Week_First_Day__c = 'Sunday'
         );
+        skedHubBase.BypassInsertTriggers = true;
+        TriggerHandler.bypass('CollectionOperationTriggerHandler');
         insert testCollectionOperation1; 
         System.assertNotEquals(null,testCollectionOperation1.Id, 'coll opp Not Inserted.');
         sked__Location__c testLocation1 = new sked__Location__c(
@@ -546,6 +587,7 @@ public class PersonalStaffScheduleReportTest {
             sked_2RBC_Projected_Procedures__c = 2,
             sked_Total_Products_Projected__c = 10           
         );
+        triggerHandler.bypass('DriveTriggerHandler');
         insert testDrive1;
         System.assertNotEquals(null,testDrive1.Id, 'drive Not Inserted.');
         RecordType rt = [SELECT Id FROM RecordType WHERE sObjectType='sked__Resource__c' AND Name = 'Staff'];
@@ -622,6 +664,10 @@ public class PersonalStaffScheduleReportTest {
             sked_Drive_Shift__c = skdDriveShift.Id,
             sked_APT_Quantity__c = 10
         );
+        triggerHandler.bypass('OpportunityTriggerHandler');
+        triggerHandler.bypass('JobTriggerHandler');
+        skedHubBase.BypassInsertTriggers = true;
+        skedHubBase.BypassUpdateTriggers = true;
         insert job1;
         System.assertNotEquals(null,job1.Id, 'job Not Inserted.');
         sked__Job__c job2 = new sked__Job__c(
@@ -638,6 +684,10 @@ public class PersonalStaffScheduleReportTest {
             sked_Drive_Shift__c = skdDriveShift.Id,
             sked_APT_Quantity__c = 10
         );
+        triggerHandler.bypass('OpportunityTriggerHandler');
+        triggerHandler.bypass('JobTriggerHandler');
+        skedHubBase.BypassInsertTriggers = true;
+        skedHubBase.BypassUpdateTriggers = true;
         insert job2;
         System.assertNotEquals(null,job2.Id, 'job Not Inserted.');
         sked__Job_Allocation__c testResource1_job1 = new sked__Job_Allocation__c(
@@ -650,6 +700,10 @@ public class PersonalStaffScheduleReportTest {
             sked_Set_End_Time__c = Time.newInstance(17, 20, 0, 0),
             sked_Additional_Roles__c = 'Charge - Special Collections'
         );
+        triggerHandler.bypass('OpportunityTriggerHandler');
+        triggerHandler.bypass('JobAllocationTriggerHandler');
+        skedHubBase.BypassInsertTriggers = true;
+        skedHubBase.BypassUpdateTriggers = true;
         insert testResource1_job1;
         System.assertNotEquals(null,testResource1_job1.Id, 'job alloc Not Inserted.');
         sked__Job_Allocation__c testResource1_job2 = new sked__Job_Allocation__c(
@@ -662,6 +716,10 @@ public class PersonalStaffScheduleReportTest {
             sked_Set_End_Time__c = Time.newInstance(17, 20, 0, 0),
             sked_Additional_Roles__c = 'Charge - Special Collections'
         );
+        triggerHandler.bypass('OpportunityTriggerHandler');
+        triggerHandler.bypass('JobAllocationTriggerHandler');
+        skedHubBase.BypassInsertTriggers = true;
+        skedHubBase.BypassUpdateTriggers = true;
         insert testResource1_job2;
         System.assertNotEquals(null,testResource1_job2.Id, 'job alloc Not Inserted.');
         Test.startTest();

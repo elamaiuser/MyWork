@@ -10,6 +10,9 @@
     <columns>Anticipated_Registered_Donors__c</columns>
     <columns>Account_Manager_Portfolio__c</columns>
     <columns>Account_Manager__c</columns>
+    <columns>Total_Projected_Procedures__c</columns>
+    <columns>WB_Projected_Procedures__c</columns>
+    <columns>X2RBC_Projected_Procedures__c</columns>
     <filterScope>Everything</filterScope>
     <filters>
         <field>Is_Template__c</field>
@@ -18,7 +21,7 @@
     </filters>
     <filters>
         <field>Drive_Date__c</field>
-        <operation>greaterOrEqual</operation>
+        <operation>greaterThan</operation>
         <value>TODAY</value>
     </filters>
     <filters>

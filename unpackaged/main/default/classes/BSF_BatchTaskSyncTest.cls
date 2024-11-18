@@ -1,6 +1,18 @@
 @isTest
 public class BSF_BatchTaskSyncTest {
-    @isTest static void Test(){
+    @testSetup static void createData()
+    {
+        skedHubBase.BypassInsertTriggers = true;
+        //TriggerHandler.bypass('AccountTriggerHandler');
+        TriggerHandler.bypass('OpportunityTriggerHandler');
+        Map<string, sObject> mapTestData = GenerateDriveTestData.setupData();
+        TriggerHandler.clearBypass('OpportunityHandler');
+        //TriggerHandler.clearBypass('AccountTriggerHandler');
+        skedHubBase.BypassInsertTriggers = false;
+        
+    }
+    @isTest static void Test()
+    {
         
 User AdminUser = new User(
              ProfileId = [SELECT Id FROM Profile WHERE Name = 'System Administrator'].Id,
@@ -17,44 +29,37 @@ User AdminUser = new User(
              
         );    
         insert AdminUser;
-        //List<Account> mobileAccList = new List<Account>();       
-        Account accobj = new Account();
-        accobj.Name = 'Exavalu';
-        accobj.Type = 'Business';
-        accobj.Internal_Name__c='test';
-        insert accobj;
-        //List<Opportunity> opplist = new List<Opportunity>();
-        Opportunity optyObj = new Opportunity();
-        optyObj.Name = 'Test Drive 1';
-        optyObj.StageName = 'Discovery';
-        optyObj.Drive_Date__c = System.Today()-1;
-        optyObj.CloseDate= System.Today()-2;
-        optyObj.AccountId=accobj.id;
-        optyObj.Account_Manager__c=AdminUser.Id;
-        optyObj.Start_Time__c = Time.newInstance(10, 0, 0, 0);
-        optyObj.End_Time__c = Time.newInstance(15, 30, 0, 0);
-        optyObj.Flow_Start_Time_Field__c = '1000';
-        optyObj.Flow_End_Time_Field__c = '1530';
-        optyObj.WB_Projected_Procedures__c = 4;
-        optyObj.X2RBC_Projected_Procedures__c = 2;
-        optyObj.Anticipated_Registered_Donors__c = 25;
-        optyObj.Online_Scheduling_Enabled__c = 'No';
-            
-            insert optyObj;
         
         
+        skedHubBase.BypassInsertTriggers = true;
+        skedHubBase.BypassUpdateTriggers = true;
+        Opportunity mobileOpportunity = [Select Id,Name,AccountId,Drive_Date__c,Drive_Site__c,Drive_Site__r.Name FROM Opportunity Where Is_Template__c = FALSE AND RecordType.DeveloperName = 'Mobile_Opp' Limit 1];
+        system.debug('mobileOpportunity '+mobileOpportunity.Drive_Site__r.Name);
+        Sked_Site_Collection_Operation__c siteCollOpList = [select id,sked_Site__c,sked_Start_Date__c,sked_End_Date__c,sked_collection_operation__r.Name from Sked_Site_Collection_Operation__c where sked_Site__c =:mobileOpportunity.Drive_Site__c Limit 1];
+        siteCollOpList.sked_Start_Date__c=system.Today();
+        update siteCollOpList;
+        
+        System.runAs(AdminUser)
+        {
+            String siteCoName=siteCollOpList.sked_collection_operation__r.Name+': DMDCR';
+        Group q =[Select id from Group where Name=:siteCoName Limit 1];
+        QueuesObject testQueue = new QueueSObject(QueueID = q.id, SobjectType = 'Task');
+		insert testQueue;
+        }
+        
+        system.debug('siteCollOpList '+siteCollOpList);
         OpportunityTeamMember testoppteammem= new OpportunityTeamMember();
-        testoppteammem.OpportunityId=optyObj.id;
+        testoppteammem.OpportunityId=mobileOpportunity.id;
         testoppteammem.UserId=AdminUser.Id;
         testoppteammem.TeamMemberRole=BSF_Constants.DISTRICT_MANAGER ;
         insert testoppteammem;
         Task testtsk = new Task();
-        testtsk.WhatId=optyObj.Id;
+        testtsk.WhatId=mobileOpportunity.Id;
         testtsk.Status='Not Started';
         testtsk.Subject='Recruitment Task - System Generated';
         insert testtsk;
         Task testtaskDM = new Task();
-        testtaskDM.WhatId=optyObj.Id;
+        testtaskDM.WhatId=mobileOpportunity.Id;
         testtaskDM.Status='Not Started';
         testtaskDM.Subject='Request for Marketing Exception';
         insert testtaskDM;
@@ -67,6 +72,198 @@ User AdminUser = new User(
         DataBase.executeBatch(taskbatch); 
         
         Test.stopTest();
+    }
+    
+    @isTest static void Test2()
+    {
+        
+User AdminUser = new User(
+             ProfileId = [SELECT Id FROM Profile WHERE Name = 'System Administrator'].Id,
+             LastName = 'last',
+             Email = 'puser000@amamama.com',
+             Username = 'adminuser000@amamama.com' + System.currentTimeMillis(),
+             CompanyName = 'TEST',
+             Title = 'title',
+             Alias = 'alias',
+             TimeZoneSidKey = 'America/Los_Angeles',
+             EmailEncodingKey = 'UTF-8',
+             LanguageLocaleKey = 'en_US',
+             LocaleSidKey = 'en_US'
+             
+        );    
+        insert AdminUser;
+        
+        
+        skedHubBase.BypassInsertTriggers = true;
+        skedHubBase.BypassUpdateTriggers = true;
+        Opportunity mobileOpportunity = [Select Id,Name,AccountId,Drive_Date__c,Drive_Site__c,Drive_Site__r.Name FROM Opportunity Where Is_Template__c = FALSE AND RecordType.DeveloperName = 'Mobile_Opp' Limit 1];
+        system.debug('mobileOpportunity '+mobileOpportunity.Drive_Site__r.Name);
+        Sked_Site_Collection_Operation__c siteCollOpList = [select id,sked_Site__c,sked_Start_Date__c,sked_End_Date__c,sked_collection_operation__r.Name from Sked_Site_Collection_Operation__c where sked_Site__c =:mobileOpportunity.Drive_Site__c Limit 1];
+        siteCollOpList.sked_Start_Date__c=system.Today();
+        update siteCollOpList;
+        
+        System.runAs(AdminUser)
+        {
+            String siteCoName=siteCollOpList.sked_collection_operation__r.Name+': DMDCR';
+        Group q =[Select id from Group where Name=:siteCoName Limit 1];
+        QueuesObject testQueue = new QueueSObject(QueueID = q.id, SobjectType = 'Task');
+		insert testQueue;
+        }
+        
+        system.debug('siteCollOpList '+siteCollOpList);
+        OpportunityTeamMember testoppteammem= new OpportunityTeamMember();
+        testoppteammem.OpportunityId=mobileOpportunity.id;
+        testoppteammem.UserId=AdminUser.Id;
+        testoppteammem.TeamMemberRole=BSF_Constants.DISTRICT_MANAGER ;
+        insert testoppteammem;
+        Task testtsk = new Task();
+        testtsk.WhatId=mobileOpportunity.Id;
+        testtsk.Status='Not Started';
+        testtsk.Subject='Recruitment Task - System Generated';
+        insert testtsk;
+        Task testtaskDM = new Task();
+        testtaskDM.WhatId=mobileOpportunity.Id;
+        testtaskDM.Status='Not Started';
+        testtaskDM.Subject='Request for Marketing Exception';
+        insert testtaskDM;
+        /*Task_Reassignment_Matrix__mdt testreassign = new Task_Reassignment_Matrix__mdt();
+        testreassign.Assigned_To__c='AM'; 
+        testreassign.Task_Subject__c='72 Hour Check in - Sytem Generated';
+        testreassign.Label='72 Hour Check In';*/
+        Test.startTest();
+        BSF_BatchTaskSync taskbatch = new BSF_BatchTaskSync(null,new List<Id>{testtaskDM.Id});
+        DataBase.executeBatch(taskbatch);
+        Test.stopTest();        
+        
+    }
+    
+    @isTest static void Test3()
+    {
+        
+User AdminUser = new User(
+             ProfileId = [SELECT Id FROM Profile WHERE Name = 'System Administrator'].Id,
+             LastName = 'last',
+             Email = 'puser000@amamama.com',
+             Username = 'adminuser000@amamama.com' + System.currentTimeMillis(),
+             CompanyName = 'TEST',
+             Title = 'title',
+             Alias = 'alias',
+             TimeZoneSidKey = 'America/Los_Angeles',
+             EmailEncodingKey = 'UTF-8',
+             LanguageLocaleKey = 'en_US',
+             LocaleSidKey = 'en_US'
+             
+        );    
+        insert AdminUser;
+        
+        
+        skedHubBase.BypassInsertTriggers = true;
+        skedHubBase.BypassUpdateTriggers = true;
+        Opportunity mobileOpportunity = [Select Id,Name,AccountId,Drive_Date__c,Drive_Site__c,Drive_Site__r.Name FROM Opportunity Where Is_Template__c = FALSE AND RecordType.DeveloperName = 'Mobile_Opp' Limit 1];
+        system.debug('mobileOpportunity '+mobileOpportunity.Drive_Site__r.Name);
+        Sked_Site_Collection_Operation__c siteCollOpList = [select id,sked_Site__c,sked_Start_Date__c,sked_End_Date__c,sked_collection_operation__r.Name from Sked_Site_Collection_Operation__c where sked_Site__c =:mobileOpportunity.Drive_Site__c Limit 1];
+        siteCollOpList.sked_Start_Date__c=system.Today();
+        update siteCollOpList;
+        
+        System.runAs(AdminUser)
+        {
+            String siteCoName=siteCollOpList.sked_collection_operation__r.Name+': DMDCR';
+        Group q =[Select id from Group where Name=:siteCoName Limit 1];
+        QueuesObject testQueue = new QueueSObject(QueueID = q.id, SobjectType = 'Task');
+		insert testQueue;
+        }
+        
+        system.debug('siteCollOpList '+siteCollOpList);
+        OpportunityTeamMember testoppteammem= new OpportunityTeamMember();
+        testoppteammem.OpportunityId=mobileOpportunity.id;
+        testoppteammem.UserId=AdminUser.Id;
+        testoppteammem.TeamMemberRole=BSF_Constants.DISTRICT_MANAGER ;
+        insert testoppteammem;
+        Task testtsk = new Task();
+        testtsk.WhatId=mobileOpportunity.Id;
+        testtsk.Status='Not Started';
+        testtsk.Subject='Recruitment Task - System Generated';
+        insert testtsk;
+        Task testtaskDM = new Task();
+        testtaskDM.WhatId=mobileOpportunity.Id;
+        testtaskDM.Status='Not Started';
+        testtaskDM.Subject='Request for Marketing Exception';
+        insert testtaskDM;
+        /*Task_Reassignment_Matrix__mdt testreassign = new Task_Reassignment_Matrix__mdt();
+        testreassign.Assigned_To__c='AM'; 
+        testreassign.Task_Subject__c='72 Hour Check in - Sytem Generated';
+        testreassign.Label='72 Hour Check In';*/
+        
+         Test.startTest();
+        BSF_BatchTaskSync taskbatch1 = new BSF_BatchTaskSync(new List<Id>{mobileOpportunity.Id},new List<Id>{testtaskDM.Id});
+        DataBase.executeBatch(taskbatch1);
+         Test.stopTest();     
+        
+    }
+    
+    @isTest static void Test4()
+    {
+        
+User AdminUser = new User(
+             ProfileId = [SELECT Id FROM Profile WHERE Name = 'System Administrator'].Id,
+             LastName = 'last',
+             Email = 'puser000@amamama.com',
+             Username = 'adminuser000@amamama.com' + System.currentTimeMillis(),
+             CompanyName = 'TEST',
+             Title = 'title',
+             Alias = 'alias',
+             TimeZoneSidKey = 'America/Los_Angeles',
+             EmailEncodingKey = 'UTF-8',
+             LanguageLocaleKey = 'en_US',
+             LocaleSidKey = 'en_US'
+             
+        );    
+        insert AdminUser;
+        
+        
+        skedHubBase.BypassInsertTriggers = true;
+        skedHubBase.BypassUpdateTriggers = true;
+        Opportunity mobileOpportunity = [Select Id,Name,AccountId,Drive_Date__c,Drive_Site__c,Drive_Site__r.Name FROM Opportunity Where Is_Template__c = FALSE AND RecordType.DeveloperName = 'Mobile_Opp' Limit 1];
+        system.debug('mobileOpportunity '+mobileOpportunity.Drive_Site__r.Name);
+        Sked_Site_Collection_Operation__c siteCollOpList = [select id,sked_Site__c,sked_Start_Date__c,sked_End_Date__c,sked_collection_operation__r.Name from Sked_Site_Collection_Operation__c where sked_Site__c =:mobileOpportunity.Drive_Site__c Limit 1];
+        siteCollOpList.sked_Start_Date__c=system.Today();
+        update siteCollOpList;
+        
+        System.runAs(AdminUser)
+        {
+            String siteCoName=siteCollOpList.sked_collection_operation__r.Name+': DMDCR';
+        Group q =[Select id from Group where Name=:siteCoName Limit 1];
+        QueuesObject testQueue = new QueueSObject(QueueID = q.id, SobjectType = 'Task');
+		insert testQueue;
+        }
+        
+        system.debug('siteCollOpList '+siteCollOpList);
+        OpportunityTeamMember testoppteammem= new OpportunityTeamMember();
+        testoppteammem.OpportunityId=mobileOpportunity.id;
+        testoppteammem.UserId=AdminUser.Id;
+        testoppteammem.TeamMemberRole=BSF_Constants.DISTRICT_MANAGER ;
+        insert testoppteammem;
+        Task testtsk = new Task();
+        testtsk.WhatId=mobileOpportunity.Id;
+        testtsk.Status='Not Started';
+        testtsk.Subject='Recruitment Task - System Generated';
+        insert testtsk;
+        Task testtaskDM = new Task();
+        testtaskDM.WhatId=mobileOpportunity.Id;
+        testtaskDM.Status='Not Started';
+        testtaskDM.Subject='Request for Marketing Exception';
+        insert testtaskDM;
+        /*Task_Reassignment_Matrix__mdt testreassign = new Task_Reassignment_Matrix__mdt();
+        testreassign.Assigned_To__c='AM'; 
+        testreassign.Task_Subject__c='72 Hour Check in - Sytem Generated';
+        testreassign.Label='72 Hour Check In';*/
+        
+        Test.startTest();
+        BSF_BatchTaskSync taskbatch2 = new BSF_BatchTaskSync(new List<Id>{mobileOpportunity.Id},null);
+        DataBase.executeBatch(taskbatch2); 
+         Test.stopTest();
+        
+        
     }
     @isTest static void executeTest(){
         

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Are_you_currently_hosting_blood_drives__c</fullName>
+    <defaultValue>false</defaultValue>
+    <description>Part of HRP-12459</description>
+    <externalId>false</externalId>
+    <label>Are you currently hosting blood drives?</label>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <type>Checkbox</type>
+</CustomField>

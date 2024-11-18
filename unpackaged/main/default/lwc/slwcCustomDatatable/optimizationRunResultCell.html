@@ -1,0 +1,16 @@
+<template>     
+    <template if:true={typeAttributes.cellValue}>
+        <template for:each={typeAttributes.cellValue} for:item="span">
+            <div if:true={span.single} key={span.key} class={span.class}>{span.text}</div>
+            <template if:false={span.single}>
+                <div key ={span.key} class={span.class}> 
+                    <template for:each={span.text} for:item="item">                
+                        <span key={item.key} class={item.class}>{item.text}</span>
+                        <span key={item.key} if:true={item.hasComma}>, </span>
+                        <span key={item.key} if:false={item.hasComma}>&nbsp;</span>                             
+                    </template>
+                </div>
+            </template>
+        </template>
+    </template>
+</template>

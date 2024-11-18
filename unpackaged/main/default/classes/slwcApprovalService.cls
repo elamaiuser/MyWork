@@ -86,13 +86,19 @@ global class slwcApprovalService implements Callable {
         skedTriggerUtils.CHANGES_INITIATED_FROM_SERVICE = TRUE;
         slwcAuraResult result = new slwcAuraResult();
         
-        List<ProcessInstanceWorkItem> workItems = [SELECT Id
+        List<ProcessInstanceWorkItem> workItems = [SELECT Id, ProcessInstance.ProcessDefinition.DeveloperName
                                                    FROM ProcessInstanceWorkItem 
                                                    WHERE ProcessInstance.TargetObjectId = :request.recordId
                                                    ORDER BY CreatedDate DESC];
         
         if (!workItems.isEmpty()) {
+            Id recordId = Id.valueOf(request.recordId);
+            string recordObjApiName = recordId.getSobjectType().getDescribe().getName();
+
             if (request.sObj != NULL) {
+                if (recordObjApiName == sked_Site_Feedback__c.getSobjectType().getDescribe().getName()) {
+                    populateAdditionalDataForSiteFeedback(request);
+                }
                 update request.sObj;
             }
             
@@ -101,11 +107,8 @@ global class slwcApprovalService implements Callable {
             workItemRequest.setAction(request.action);
             workItemRequest.setWorkitemId(workItems.get(0).Id);
             
-            Id recordId = Id.valueOf(request.recordId);
-            string recordObjApiName = recordId.getSobjectType().getDescribe().getName();
-            
             if (recordObjApiName == sked_Site_Feedback__c.getSobjectType().getDescribe().getName()) {
-                processSiteFeedbackApproval(recordId, workItemRequest, request);
+                processSiteFeedbackApproval(recordId, workItemRequest, workItems[0], request);
             }
             else if (recordObjApiName == sked_Drive_Change_Request__c.getSobjectType().getDescribe().getName()) {
                 processDriveChangeRequestApproval(recordId, workItemRequest, request);
@@ -227,23 +230,97 @@ global class slwcApprovalService implements Callable {
     }
     
     /*********************************************************** Private methods ***********************************************************/
-    private static void processSiteFeedbackApproval(Id recordId, Approval.ProcessWorkitemRequest workItemRequest, approveRejectRequestModel request) {
-        sked_Site_Feedback__c record = [SELECT Id, sked_Route_Approval_Request_To__c, sked_Status__c,
-                                        sked_Drive__r.sked_Collection_Operation__r.sked_Collections_Manager__c,
-                                        sked_Designated_Approver__c
+    private static void processSiteFeedbackApproval(Id recordId, Approval.ProcessWorkitemRequest workItemRequest, ProcessInstanceWorkItem workItem, approveRejectRequestModel request) {
+        sked_Site_Feedback__c record = [SELECT Id, sked_Route_Approval_Request_To__c, sked_Status__c, sked_Site__c,
+                                               sked_Effective_End_Date__c, sked_Effective_Start_Date__c, sked_Days_Of_Week__c, sked_Current_Submitter__c
                                         FROM sked_Site_Feedback__c
                                         WHERE Id = :recordId];
+        Date effectiveStartDate = skedDateTimeUtils.getValueOrMinDate(record.sked_Effective_Start_Date__c);
+        Date effectiveEndDate = skedDateTimeUtils.getValueOrMaxDate(record.sked_Effective_End_Date__c);
+        sked_Site_Collection_Operation__c siteCO = [
+            SELECT sked_Collection_Operation__r.Name
+            FROM sked_Site_Collection_Operation__c
+            WHERE sked_Site__c = :record.sked_Site__c
+            AND sked_Start_Date__c <= :effectiveEndDate
+            AND sked_End_Date__c >= :effectiveStartDate
+            ORDER BY sked_Start_Date__c DESC
+        ];
+        String approvalProcessName = workItem.ProcessInstance.ProcessDefinition.DeveloperName;
         if (request.action == 'Approve') {
-            if (record.sked_Route_Approval_Request_To__c == 'Route to DRD Manager' && record.sked_Status__c == 'Waiting for DM Approval') {
-                List<Id> collectionsManagerIds = new List<Id>();
-                collectionsManagerIds.add(record.sked_Drive__r.sked_Collection_Operation__r.sked_Collections_Manager__c);
-                workItemRequest.setNextApproverIds(collectionsManagerIds);
-                
+            String profileQueueTarget;
+            if (record.sked_Route_Approval_Request_To__c == skedConstants.RTV_ROUTE_APPROVAL_REQUEST_TO_CM && record.sked_Status__c == skedConstants.RTV_FEEDBACK_STATUS_WAITING_FOR_CM_APPROVAL) {
+                if (approvalProcessName == skedConstants.RTV_CM_DM_APS_APPROVAL_PROCESS) {
+                    profileQueueTarget = skedConstants.PROFILE_QUEUE_DM_ROLE_TIME_VARIANCES;
+                    record.sked_Route_Approval_Request_To__c = skedConstants.RTV_ROUTE_APPROVAL_REQUEST_TO_DM;
+                } else if (isAffectingDriveWithAPSApprovalWindow(record)) {
+                    profileQueueTarget = skedConstants.PROFILE_QUEUE_ROLE_TIME_VARIANCES;
+                    record.sked_Route_Approval_Request_To__c = skedConstants.RTV_ROUTE_APPROVAL_REQUEST_TO_APS;
+                    record.sked_Status__c = skedConstants.RTV_FEEDBACK_STATUS_WAITING_FOR_APS_APPROVAL;
+                } else {
+                    record.sked_Status__c = skedConstants.RTV_FEEDBACK_STATUS_APPROVED;
+                }
+            } else if (record.sked_Route_Approval_Request_To__c == skedConstants.RTV_ROUTE_APPROVAL_REQUEST_TO_DM && record.sked_Status__c == skedConstants.RTV_FEEDBACK_STATUS_WAITING_FOR_DM_APPROVAL) {
+                if (approvalProcessName == skedConstants.RTV_DM_CM_APS_APPROVAL_PROCESS) {
+                    profileQueueTarget = skedConstants.PROFILE_QUEUE_CM_ROLE_TIME_VARIANCES;
+                    record.sked_Route_Approval_Request_To__c = skedConstants.RTV_ROUTE_APPROVAL_REQUEST_TO_CM;
+                } else if (isAffectingDriveWithAPSApprovalWindow(record)) {
+                    profileQueueTarget = skedConstants.PROFILE_QUEUE_ROLE_TIME_VARIANCES;
+                    record.sked_Route_Approval_Request_To__c = skedConstants.RTV_ROUTE_APPROVAL_REQUEST_TO_APS;
+                    record.sked_Status__c = skedConstants.RTV_FEEDBACK_STATUS_WAITING_FOR_APS_APPROVAL;
+                } else {
+                    record.sked_Status__c = skedConstants.RTV_FEEDBACK_STATUS_APPROVED;
+                }
+            }
+
+            if (profileQueueTarget != null) {
+                Group approvalQueue = getApprovalQueue(siteCO.sked_Collection_Operation__r.Name, profileQueueTarget);
+                if (approvalQueue == null) {
+                    throw new skedException('Approval Queue ' + siteCO.sked_Collection_Operation__r.Name + ': ' + profileQueueTarget + ' does not exist');
+                }
+
+                workItemRequest.setNextApproverIds(new List<string> {approvalQueue.Id});
                 record.sked_Designated_Approver__c = NULL;
             }
         }
         
         update record;
+    }
+
+    private static void populateAdditionalDataForSiteFeedback(approveRejectRequestModel request) {
+        Id recordId = Id.valueOf(request.recordId);
+        sked_Site_Feedback__c record = [SELECT Id, sked_Route_Approval_Request_To__c, sked_Status__c, sked_Site__c,
+                                               sked_Effective_End_Date__c, sked_Effective_Start_Date__c, sked_Days_Of_Week__c, sked_Current_Submitter__c
+                                        FROM sked_Site_Feedback__c
+                                        WHERE Id = :recordId];
+        request.sObj.put('sked_Current_Submitter__c', UserInfo.getUserId());
+    }
+
+    private static Boolean isAffectingDriveWithAPSApprovalWindow(sked_Site_Feedback__c record) {
+        List<String> execludedStatuses = new List<String> {
+            skedConstants.DRIVE_STATUS_COMPLETE,
+            skedConstants.DRIVE_STATUS_CANCEL
+        };
+        Integer apsApprovalWindow = skedSetting.instance.Admin.rtvAPSApprovalWindow;
+
+        for (sked_Drive__c affectedDrive : [
+            SELECT sked_Drive_Date__c, sked_Start_Time__c, sked_Timezone__c
+            FROM sked_Drive__c
+            WHERE sked_Drive_Site__c = :record.sked_Site__c
+            AND sked_Drive_Date__c >= TODAY
+            AND sked_Drive_Date__c <= :System.today().addDays(apsApprovalWindow)
+            AND sked_Drive_Date__c >= :record.sked_Effective_Start_Date__c
+            AND sked_Drive_Date__c <= :record.sked_Effective_End_Date__c
+            AND sked_Status__c NOT IN :execludedStatuses
+        ]) {
+            DateTime driveDate = DateTime.newInstance(affectedDrive.sked_Drive_Date__c, affectedDrive.sked_Start_Time__c);
+            driveDate = skedDateTimeUtils.toTimezone(driveDate, affectedDrive.sked_Timezone__c);
+            string driveWeekday = driveDate.format('EEEE');
+            if (record.sked_Days_of_Week__c != NULL && record.sked_Days_of_Week__c.contains(driveWeekday)) {
+                return true;
+            }
+        }
+
+        return false;
     }
     
     private static void processDriveChangeRequestApproval(Id recordId, Approval.ProcessWorkitemRequest workItemRequest, approveRejectRequestModel request) {

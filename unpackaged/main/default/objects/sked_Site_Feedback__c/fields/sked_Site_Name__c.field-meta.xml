@@ -5,6 +5,7 @@
     <formula>sked_Site__r.Name</formula>
     <label>Site Name</label>
     <required>false</required>
+    <trackHistory>false</trackHistory>
     <trackTrending>false</trackTrending>
     <type>Text</type>
     <unique>false</unique>

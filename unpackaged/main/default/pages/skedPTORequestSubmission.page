@@ -45,6 +45,9 @@
   <script src="{!URLFOR($Resource.sked_HLT_Vendors, '/angularjs/angular-sanitize.min.js')}"></script>
   <script src="{!URLFOR($Resource.sked_HLT_Vendors, '/lodash.min.js')}"></script>
 
+  <script src="{!URLFOR($Resource.sked_HLT_Vendors, '/momentjs/moment.min.js')}"></script>
+  <script src="{!URLFOR($Resource.sked_HLT_Vendors, '/momentjs/moment-timezone.js')}"></script>
+  
   <!-- angular google chart -->
   <script src="{!URLFOR($Resource.sked_HLT_Vendors, '/ng-google-chart.min.js')}"></script>
 

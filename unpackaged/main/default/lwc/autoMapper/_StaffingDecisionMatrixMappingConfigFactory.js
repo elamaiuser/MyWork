@@ -19,11 +19,11 @@ export class StaffingDecisionMatrixMappingConfigFactory {
       mappingConfig.addFieldConfig('sked_NR_Volunteer_Fixed_Site_Band_Upper__c', 'nrVolunteerFixedSiteBandUpper', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_Team_Supervisor_Threshold__c', 'teamSupervisorThreshold', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_VP_HH_Capacity__c', 'vpHhCapacity', MAPPING_TYPE.direct);
-      mappingConfig.addFieldConfig('sked_Platelet_Hourly_Capacity__c', 'plateletHourlyCapacity', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_Plasma_Hourly_Capacity__c', 'plasmaHourlyCapacity', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_WB_Hourly_Capacity__c', 'wbHourlyCapacity', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_2RBC_Hourly_Capacity__c', 'x2rbcHourlyCapacity', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('RecordType.Name', 'recordTypeName', MAPPING_TYPE.direct);
+      mappingConfig.addFieldConfig('sked_Platelet_Round_Capacity__c', 'plateletRoundCapacity', MAPPING_TYPE.direct);
       
       mappingConfig.readonlyFields.push('Name');
 

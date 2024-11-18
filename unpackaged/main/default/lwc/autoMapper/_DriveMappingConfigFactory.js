@@ -115,7 +115,10 @@ export class DriveMappingConfigFactory {
       mappingConfig.addFieldConfig('sked_Vehicle_Capacity__c', 'vehicleCapacity', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_Vehicle_Types__c', 'vehicleTypes', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_Lock_Lunch_Break__c', 'lockLunchBreak', MAPPING_TYPE.direct);
-
+      mappingConfig.addFieldConfig('sked_ARC_Region_ID__c', 'arcRegionId', MAPPING_TYPE.direct);
+      mappingConfig.addFieldConfig('sked_Drive_Productivity_Banding__c', 'driveProductivityBanding', MAPPING_TYPE.direct); //HRP-10892
+      mappingConfig.addFieldConfig('Average_Staff_Capacity__c', 'averageStaffCapacity', MAPPING_TYPE.direct);
+      mappingConfig.addFieldConfig('Excess_Staff_Capacity__c', 'excessStaffCapacity', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_Account__r', 'account', MAPPING_TYPE.related, 'Account');
       mappingConfig.addFieldConfig('sked_Collection_Operation__r', 'collectionOperation', MAPPING_TYPE.related, 'Biomed_Collection_Op_Center__c');
       mappingConfig.addFieldConfig('sked_Drive_Owner__r', 'driveOwner', MAPPING_TYPE.related, 'User');
@@ -138,6 +141,7 @@ export class DriveMappingConfigFactory {
       mappingConfig.addFieldConfigWithRelatedList('sked_Drive_Shifts__r', 'driveShifts', 'sked_Drive_Shift__c', 'sked_Drive__c');
       mappingConfig.addFieldConfigWithRelatedList('sked_Jobs__r', 'jobs', 'sked__Job__c', 'sked_Drive__c');
       mappingConfig.addFieldConfigWithRelatedList('sked_Exception_Log__r', 'exceptionLog', 'skedHC__Exception__c', 'sked_Drive__c');
+      mappingConfig.addFieldConfigWithRelatedList('sked_Drive_Change_Requests__r', 'driveChangeRequests', 'sked_Drive_Change_Request__c', 'sked_Drive__c');
 
       mappingConfig.masterFields.push('sked_Opportunity__c');
 

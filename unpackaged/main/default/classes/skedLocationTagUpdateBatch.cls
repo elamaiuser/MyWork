@@ -87,10 +87,10 @@ global class skedLocationTagUpdateBatch implements Database.Batchable<sked_Locat
     }
 
     /* Private Methods */
-    private void updateMinimumQuantityOnDriveShiftTags(List<sked_Location_Tag__c> LocationTags, Map<Id, Set<Id>> changedTagsByLocationId, Set<Id> tagIds) {
+    private void updateMinimumQuantityOnDriveShiftTags(List<sked_Location_Tag__c> locationTags, Map<Id, Set<Id>> changedTagsByLocationId, Set<Id> tagIds) {
         List<sked_Drive_Shift_Tag__c> driveShiftTags = [
             SELECT Id, Name, sked_Minimum_Quantity__c, sked_Tag__c, sked_Drive_Shift__c,
-                sked_Drive_Shift__r.sked_Drive_Site__c
+                sked_Drive_Shift__r.sked_Drive_Site__c, sked_Drive_Shift__r.sked_Drive_Account__c
             FROM sked_Drive_Shift_Tag__c
             WHERE sked_Tag__c IN :tagIds
             AND sked_Drive_Shift__r.sked_Drive_Site__c IN :changedTagsByLocationId.keyset()
@@ -98,17 +98,45 @@ global class skedLocationTagUpdateBatch implements Database.Batchable<sked_Locat
             AND sked_Drive_Shift__r.sked_Drive__r.sked_Status__c != :skedConstants.JOB_STATUS_COMPLETE
         ];
 
+        Set<Id> accountIds = new Set<Id>();
+        for (sked_Drive_Shift_Tag__c driveShiftTag : driveShiftTags) {
+            accountIds.add(driveShiftTag.sked_Drive_Shift__r.sked_Drive_Account__c);
+        }
+
+        Map<Id, Account> accountById = new Map<Id, Account>([
+            SELECT Id, 
+            (SELECT Id, sked__Tag__c, sked_Minimum_Quantity__c FROM sked__Account_Tags__r WHERE sked__Required__c = FALSE)
+            FROM Account
+            WHERE Id IN :accountIds
+        ]);
+
         List<sked_Drive_Shift_Tag__c> driveShiftTagsToUpdate = new List<sked_Drive_Shift_Tag__c>();
-        for (sked_Location_Tag__c LocationTag : LocationTags) {
+        for (sked_Location_Tag__c locationTag : locationTags) {
             sked_Drive_Shift_Tag__c relatedDriveShiftTag; 
             for (sked_Drive_shift_Tag__c driveShiftTag : driveShiftTags) {
-                if (driveShiftTag.sked_Drive_Shift__r.sked_Drive_Site__c == LocationTag.sked_Location__c &&
-                        driveShiftTag.sked_Tag__c == LocationTag.sked_Tag__c) {
+                if (driveShiftTag.sked_Drive_Shift__r.sked_Drive_Site__c == locationTag.sked_Location__c &&
+                        driveShiftTag.sked_Tag__c == locationTag.sked_Tag__c) {
                     relatedDriveShiftTag = driveShiftTag;
                 }
 
                 if (relatedDriveShiftTag != null) {
-                    relatedDriveShiftTag.sked_Minimum_Quantity__c = LocationTag.sked_Minimum_Quantity__c;
+                    sked__Account_Tag__c relatedAccountTag;
+                    Account account = accountById.get(relatedDriveShiftTag.sked_Drive_Shift__r.sked_Drive_Account__c);
+                    if (account != null && account.sked__Account_Tags__r != null) {
+                        for (sked__Account_Tag__c accTag : account.sked__Account_Tags__r) {
+                            if (accTag.sked__Tag__c == relatedDriveShiftTag.sked_Tag__c) {
+                                relatedAccountTag = accTag;
+                                break;
+                            }
+                        }
+                    }
+
+                    Decimal newMinimumQuantity = locationTag.sked_Minimum_Quantity__c;
+                    if (relatedAccountTag != null && relatedAccountTag.sked_Minimum_Quantity__c > newMinimumQuantity) {
+                        newMinimumQuantity = relatedAccountTag.sked_Minimum_Quantity__c;
+                    }
+
+                    relatedDriveShiftTag.sked_Minimum_Quantity__c = newMinimumQuantity;
                     driveShiftTagsToUpdate.add(driveShiftTag);    
                 }
 

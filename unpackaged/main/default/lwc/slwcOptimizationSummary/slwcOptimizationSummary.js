@@ -14,32 +14,20 @@ import {
 import { registerListener, unregisterAllListeners } from "c/pubsub";
 import * as autoMapper from 'c/autoMapper';
 import {
-    uniqBy,
     each,
-    get,
-    groupBy,
-    orderBy,
-    omit,
-    uniqueId
+    groupBy
 } from 'c/lodash';
 import {
     sObjectType,
     driveService,
-    driveQueryModel,
     optimizationQueueService,
     optimizationQueueQueryModel
 } from 'c/dataService';
-import {
-    classNames,
-    camelize,
-} from 'c/slwcUtils';
 import * as slwcDateUtils from 'c/slwcDateUtils';
 import { DateTime } from 'c/luxon';
 
 import customLWCStyle from '@salesforce/resourceUrl/skedLWCCustomStyle'
-const actions = [
-    { label: 'View details', name: 'show_details' },
-];
+
 export default class SlwcOptimizationSummary extends LightningElement {
     _optimizationRun;
     @api
@@ -188,7 +176,7 @@ export default class SlwcOptimizationSummary extends LightningElement {
                 each(dataGrouped, (item, dateIso) => {
                     arrGrouped.push({ data: item, dateIso: dateIso });
                 })
-                optimizationQueue.dataGrouped = this.mapData(arrGrouped);
+                optimizationQueue.dataGrouped = arrGrouped;
             })
             
             this.toggleExpandAll();
@@ -204,211 +192,19 @@ export default class SlwcOptimizationSummary extends LightningElement {
         }
     }
 
-    setCss(allocation, quantity) {
-        if(allocation === undefined || quantity === undefined) {
-            return 'color-gray background-gray-light important'
-        } else if (allocation == 0) {
-            return 'color-gray background-red-light important'
-        } else if (allocation == quantity) {
-            return 'color-gray background-green-light important'
-        } else if (allocation < quantity) {
-            return 'color-gray background-yellow-light important'
-        } else {
-            return 'color-gray background-gray-light important'
-        }
-    }
-
-    setCssDriveShift(allocation, quantity) {
-        if(allocation === undefined || quantity === undefined) {
-            return 'color-default-text background-gray-super-light important'
-        } else if (allocation == 0) {
-            return 'color-default-text background-red-super-light important'
-        } else if (allocation == quantity) {
-            return 'color-default-text background-green-super-light important'
-        } else if (allocation < quantity) {
-            return 'color-default-text background-yellow-super-light important'
-        } else {
-            return 'color-default-text background-gray-super-light important'
-        }
-    }
-
-    generateSectionClass(item) {
-        return classNames('slds-section', {
-            'has-data': item.hasData,
-            'slds-is-open': item.expanded
-        });
-    }
-
-    mapData(arrGrouped) {
-        let dataGrouped = [];
-        each(arrGrouped, itemGrouped => {
-            const rawData = itemGrouped.data;
-            let roleList = []
-            let data = []
-            const res = rawData.map(drive => {
-                let driveRecord = {
-                    name: `${drive.name} - ${drive.ufid}`,
-                    driveId: drive.id,
-                    projectedRegisteredDonors:drive.projectedRegisteredDonors,
-                    hasException: drive.hasException,
-                    hasExceptionClass: drive.hasException ?'slds-current-color color-error show-exception':'hide-exception'
-                };
-
-                const driveShiftRecord = drive.driveShifts.map(driveShiftItem => {
-                    let driveShiftItemRecord = {
-                        name: driveShiftItem.name,
-                        id: driveShiftItem.id,
-                        driveId: drive.id,
-                    };
-
-                    (driveShiftItem.jobs || []).forEach((job) => {
-                        if(!(job.resourceRole || job.assetType)) return;
-
-                        const fieldName = camelize(job.resourceRole || job.assetType);
-
-                        driveShiftItemRecord[fieldName + 'Class'] = this.setCssDriveShift()
-                        driveShiftItemRecord["hasExceptionClass"] = 'hide-exception';
-
-                        if (job.driveShiftId == driveShiftItem.id) {
-                            driveShiftItemRecord[fieldName] = `${job.jobAllocationCount}/${job.quantity}`;
-                            driveShiftItemRecord[fieldName + 'Class'] = this.setCssDriveShift(job.jobAllocationCount, job.quantity)
-                            if (driveRecord[fieldName]) {
-                                const numberArr = driveRecord[fieldName].split('/');
-                                driveRecord[fieldName] = `${parseInt(numberArr[0]) + job.jobAllocationCount}/${parseInt(numberArr[1]) + job.quantity}`
-                                driveRecord[fieldName + 'Class'] = this.setCss(parseInt(numberArr[0]) + job.jobAllocationCount, parseInt(numberArr[1]) + job.quantity)
-                            } else {
-                                driveRecord[fieldName] = `${job.jobAllocationCount}/${job.quantity}`
-                                driveRecord[fieldName + 'Class'] = this.setCss(job.jobAllocationCount, job.quantity)
-                            }
-                        }
-
-                        let roleTag = (job.jobTags || []).find(jobTag => {
-                            return jobTag.tag && jobTag.tag.name === (job.resourceRole || job.assetType);
-                        })
-                        let rolePriority = roleTag ? roleTag.tag.priority : Number.MAX_SAFE_INTEGER;
-                        
-                        roleList.push({
-                            priority: rolePriority,
-                            role: job.resourceRole || job.assetType
-                        })
-                    })
-                    
-                    return driveShiftItemRecord
-                })
-                driveRecord["_children"] = driveShiftRecord
-                data.push(driveRecord)
-            })
-            roleList = uniqBy(roleList, item => item.role);
-            roleList = orderBy(roleList, ['priority', 'role'], ['asc', 'asc']);
-            roleList = roleList.map(item => ({
-                type: 'text',
-                fieldName: camelize(item.role),
-                cellAttributes: { class: { fieldName: camelize(item.role) + 'Class' }},
-                label: item.role,
-            }))
-
-            roleList = [{
-                type: 'text',
-                fieldName: 'name',
-                label: "Drive Name - Drive ID",
-                wrapText: true,
-                cellAttributes: { wrapText: true },
-                initialWidth: 380,
-            },
-            {
-                type: 'action',
-                typeAttributes: { rowActions: actions },
-                cellAttributes: {iconName: 'utility:info', class: {fieldName: 'hasExceptionClass'}},
-            }, ...roleList]
-
-            let newItem = {
-                key: uniqueId(),
-                dateIso: itemGrouped.dateIso,
-                data: data,
-                columns: roleList,
-                hasData: data.length,
-                expanded: false 
-            };
-            newItem.class = this.generateSectionClass(newItem);
-            dataGrouped.push(newItem);
-        })
-
-        return dataGrouped;
-    }
-
-    handleRowAction(event) {
-        console.log('handleRowAction', event);
-        const actionName = event.detail.action.name;
-        const row = event.detail.row;
-        switch (actionName) {
-            case 'show_details':
-                this.openDriveSideMenu(row.driveId)
-                break;
-            default:
-        }
-    }
-
-    toggleExpand(event) {
-        const dateIso = event.currentTarget.dataset['dateIso'];
-        const optimizationQueueId = event.currentTarget.dataset['optimizationQueueId'];
-        let optimizationQueue = this.optimizationQueues.find(item => item.id === optimizationQueueId);
-        if(!optimizationQueue) return;
-
-        let item = optimizationQueue.dataGrouped.find(item => item.dateIso === dateIso);
-        if(!item) return;
-
-        item.expanded = !item.expanded;
-        item.class = this.generateSectionClass(item);
-    }
-
-    toggleCollapseAll(event) {
-        const optimizationQueueId = get(event, 'currentTarget.dataset.optimizationQueueId');
-        let optimizationQueue = this.optimizationQueues.find(item => item.id === optimizationQueueId);
-        let optimizationQueues = [];
-        if(optimizationQueue) {
-            optimizationQueues = [optimizationQueue]
-        } else {
-            optimizationQueues = this.optimizationQueues;
-        }
-
-        optimizationQueues.forEach(optimizationQueue => {
-            optimizationQueue.dataGrouped.forEach(item => {
-                item.expanded = false;
-                item.class = this.generateSectionClass(item);
-            })
-        })
-    }
-
-    toggleExpandAll(event) {
-        const optimizationQueueId = get(event, 'currentTarget.dataset.optimizationQueueId');
-        let optimizationQueue = this.optimizationQueues.find(item => item.id === optimizationQueueId);
-        let optimizationQueues = [];
-        if(optimizationQueue) {
-            optimizationQueues = [optimizationQueue]
-        } else {
-            optimizationQueues = this.optimizationQueues;
-        }
-
-        optimizationQueues.forEach(optimizationQueue => {
-            optimizationQueue.dataGrouped.forEach(item => {
-                item.expanded = true;
-                item.class = this.generateSectionClass(item);
-            })
-        })
-    }
-
     handleClose() {
         const closeEvent = new CustomEvent('close', {});
         this.dispatchEvent(closeEvent);
     }
 
-    openDriveSideMenu(recordId) {
+    openDriveSideMenu(driveId, jobId) {
         const driveStaffingDetailsCmp = this.template.querySelector('c-slwc-drive-staffing-details');
         if(driveStaffingDetailsCmp && driveStaffingDetailsCmp.isLoading()) return;
         
         this.driveSideMenuData = {
             shown: true,
-            recordId: recordId
+            recordId: driveId,
+            jobId: jobId
         }
     }
     
@@ -437,5 +233,9 @@ export default class SlwcOptimizationSummary extends LightningElement {
 
         if(result) {
         }
+    }
+
+    handleRoleClick(event) {
+        this.openDriveSideMenu(event.detail.driveId, event.detail.jobId);
     }
 }

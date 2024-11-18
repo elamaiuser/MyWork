@@ -76,7 +76,8 @@ public class PublicityReportController_Test {
             accObj = new Account();
             accObj.RecordTypeId = accRecTypeId;
             accObj.Name = 'Exavalu';
-            accObj.BillingPostalCode = '30622';            
+            accObj.BillingPostalCode = '30622';
+			accObj.Internal_Name__c = 'TEST';            
             mobileAccList.add(accobj); 
             
             
@@ -305,12 +306,13 @@ public class PublicityReportController_Test {
         
         //skedTriggerHub.BypassInsertTriggers = true; commented during HRP-9324 changes
         skedHubBase.BypassInsertTriggers = true; // added during HRP-9324 changes
-        
+		
         TriggerHandler.bypass('OpportunityTriggerHandler');
         TriggerHandler.bypass('OrderTriggerHandler');
         TriggerHandler.bypass('OrderItemTriggerHandler');
         TriggerHandler.bypass('skedDriveHandler');
-
+        TriggerHandler.bypass('AccountTriggerHandler');
+        
         prepareDataset();
                 
         // create product and pricebook

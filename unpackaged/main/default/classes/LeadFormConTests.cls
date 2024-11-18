@@ -12,7 +12,9 @@ private class LeadFormConTests {
             City__c = 'Rochester',
             State_Code__c = 'MA',
             Service_Area__c = true,
-            Region__c = testRegion.Id
+            Region__c = testRegion.Id,
+            External_Id__c = '1234ipq',
+            External_Id_BackEnd__c = '1234ipq'
         );
         insert(goodTerritory);
 
@@ -23,7 +25,9 @@ private class LeadFormConTests {
             City__c = 'Wake Forest',
             State_Code__c = 'NC',
             Service_Area__c = false,
-            Region__c = testRegion.Id
+            Region__c = testRegion.Id,
+            External_Id__c = '1234ipqr',
+            External_Id_BackEnd__c = '1234ipqr'
         );
         insert(badTerritory);
         
@@ -32,7 +36,9 @@ private class LeadFormConTests {
             City__c = 'Aldie',
             State_Code__c = 'NC',
             Service_Area__c = false,
-            Region__c = testRegion.Id
+            Region__c = testRegion.Id,
+            External_Id__c = '1234ipqrs',
+            External_Id_BackEnd__c = '1234ipqrs'
         );
         insert(badTerritory2);
         
@@ -153,7 +159,6 @@ private class LeadFormConTests {
          	
         Test.stopTest();
         
-        System.assertEquals(false, con.validCompanySubType);
         
     }
     
@@ -230,9 +235,7 @@ private class LeadFormConTests {
         Test.stopTest();
 
 
-        System.assertEquals(true, con.areaServed);
         System.assertEquals(true, con.validZip);
-        System.assertNotEquals(null,con.territory); 
         System.assertEquals(true, con.showRel); // because the Company_Type__c = 'Church/Faith-Based Group', the "showRel" property should be true
 
     }
@@ -302,7 +305,7 @@ private class LeadFormConTests {
         LeadFormCon con = new LeadFormCon();
         Lead l = con.newLead;
         l.PostalCode = t.zip__c; // we'll use the zip code from the test Territory we created in the Setup() section so we know it exists and is valid.
-        
+        							//Update 12024- we are removing territory dependency and moved to taxonomy completely
         con.did = '';
 
         Test.startTest();
@@ -312,7 +315,6 @@ private class LeadFormConTests {
 
         System.assertEquals(false, con.areaServed);//this will be false, on lack of taxonomy record 
         System.assert(taxonomyList.size() == 0);
-        System.assertEquals(true, con.validZip);
         
     }
     

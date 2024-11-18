@@ -31,6 +31,10 @@
         <value xsi:nil="true"/>
     </values>
     <values>
+        <field>sked_Expiry_DateTime_Field__c</field>
+        <value xsi:type="xsd:string">sked__Start__c</value>
+    </values>
+    <values>
         <field>sked_Filter__c</field>
         <value xsi:nil="true"/>
     </values>
@@ -47,20 +51,28 @@
         <value xsi:nil="true"/>
     </values>
     <values>
+        <field>sked_Priority__c</field>
+        <value xsi:nil="true"/>
+    </values>
+    <values>
         <field>sked_Sending_From_Email_Address__c</field>
         <value xsi:nil="true"/>
     </values>
     <values>
         <field>sked_Subject__c</field>
-        <value xsi:type="xsd:string">PTO Request has been rejected</value>
+        <value xsi:type="xsd:string">PTO Request has been declined</value>
     </values>
     <values>
         <field>sked_Target_Field_Value__c</field>
         <value xsi:type="xsd:string">Declined</value>
     </values>
     <values>
+        <field>sked_Target_Field_Values__c</field>
+        <value xsi:nil="true"/>
+    </values>
+    <values>
         <field>sked_Target_Field__c</field>
-        <value xsi:type="xsd:string">sked_Custom_Status__c</value>
+        <value xsi:type="xsd:string">sked__Status__c</value>
     </values>
     <values>
         <field>sked_Target_SObject__c</field>
@@ -68,7 +80,7 @@
     </values>
     <values>
         <field>sked_Template__c</field>
-        <value xsi:type="xsd:string">{{sked__Resource__r.Name}} PTO request for [[RequestedDate]] has been rejected</value>
+        <value xsi:type="xsd:string">{{sked__Resource__r.Name}} PTO request for [[RequestedDate]] has been declined</value>
     </values>
     <values>
         <field>sked_Trigger__c</field>

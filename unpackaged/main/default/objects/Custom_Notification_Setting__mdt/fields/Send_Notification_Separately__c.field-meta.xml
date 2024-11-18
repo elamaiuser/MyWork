@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Send_Notification_Separately__c</fullName>
+    <defaultValue>false</defaultValue>
+    <description>This field is used to control how the notification being sent, either separately or using batch job. 
+True - notification sent separately
+False - using the batch job</description>
+    <externalId>false</externalId>
+    <fieldManageability>DeveloperControlled</fieldManageability>
+    <label>Send Notification Separately</label>
+    <type>Checkbox</type>
+</CustomField>

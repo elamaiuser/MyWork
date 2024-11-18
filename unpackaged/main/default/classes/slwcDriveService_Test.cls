@@ -44,7 +44,6 @@ private class slwcDriveService_Test {
             sked_Drive_Shift__c = testDriveShift.Id,
             sked_Resource_Role__c = '2RBC'
         );
-        
         sked__Job__c testVehicleJob1 = new sked__Job__c(
             sked__Region__c = testRegion1.Id,
             sked__Start__c = testDataFactory.summary.startTime.addHours(11).addMinutes(15),
@@ -168,7 +167,7 @@ private class slwcDriveService_Test {
         capRec.opportunityId = testDrive1.sked_Opportunity__c;
         newItem1.oldValue = '0.6351446718419196';
         newItem1.newValue = '0.8351446718419196';
-        slwcDriveService.captureDriveChangeRequests(new List<slwcDriveService.driveChangeRequestModel>{capRec});
+        slwcDriveService.captureUserChangeDriveChangeRequests(new List<slwcDriveService.driveChangeRequestModel>{capRec});
         
         Test.stopTest();
     }   

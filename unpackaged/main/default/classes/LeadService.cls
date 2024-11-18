@@ -1,12 +1,17 @@
 // do NOT add with Sharing Key word here
 /* 
  * Modification Log 
- * Date					     Developer Name			     Comments
+ * Date                      Developer Name              Comments
  * ***********************************************************************************************************************************************
  * 
- *  03/08/2023				 Kishore Das		        Users other than System Admin should not have any delete record permissions(Logic for HRP-10572)(Deleted)
+ *  03/08/2023               Kishore Das                Users other than System Admin should not have any delete record permissions(Logic for HRP-10572)(Deleted)
 
  *  20/10/2023               Krapy Tuli                 Logic for HRP-10880 (Update Leads to consume New Taxonomy - Geo Realignment)
+ *  02/19/2024               Anil K                     HRP-12024-> Check Future Taxonomy records if a particular zip code is falling in non collection area
+ *  03/27/2024               Apurba Bhattacgarjee       Modified logic for HRP-12321
+ *  03/27/2024               Apurba Bhattacgarjee       Changes for  HRP-11347
+ *  08/14/2024               Priti Jana                 Logic for HRP-12190
+ *  10/22/2024				 Balaji N				  	Logic for HRP-13603 handleLeadStageStatus method creation
  *************************************************************************************************************************************************
 */
 
@@ -45,15 +50,12 @@ public class LeadService {
 
         }
 
-        if ( listAcctForUpdate.size() > 0 ){
-           
-                update listAcctForUpdate;//dml for security
-                        
-        }
-            
-     }
-     }
-         public static void setLeadTerritory(List<Lead> newLeads, Map<Id,Lead> oldMap){
+        if ( listAcctForUpdate.size() > 0 ) {
+            update listAcctForUpdate;//dml for security             
+        }     
+    }
+}
+    public static void setLeadTerritory(List<Lead> newLeads, Map<Id,Lead> oldMap) {
         
         final string logTag = '[LeadService:setLeadTerritory]';
         //System.debug(logTag + 'Starting - ' + newLeads.size() + ' leads to process.');
@@ -63,18 +65,30 @@ public class LeadService {
         String leadOwnerId;
         Date startDate; // HRP-10880 start
         Date endDate;
-        Map<String,String> taxonomyMapZipVsDRDTerritoryCode = new Map<String,String> ();
-        Map<String,String> taxonomyMapZipVsCollectionOppCode = new Map<String,String> ();
-        Map<String,String> taxonomyMapZipVsDistrictCode = new Map<String,String> ();
-        Map<String,String> taxonomyMapZipVsARCRegionCode = new Map<String,String> ();
-        Map<String,String> bSFPortfolioPortfolioCodeVsId = new Map<String,String> ();
+        Map<String,String> taxonomyMapZipVsDRDTerritoryCode = new Map<String,String>();
+        Map<String,String> taxonomyMapZipVsCollectionOppCode = new Map<String,String>();
+        //HRP-12024-begin
+        Map<String,String> futureTaxonomyMapZipVsCollectionOppCode = new Map<String,String>();
+        Map<String,String> futureTaxonomyMapZipVsARCRegionCode = new Map<String,String>();
+        Map<String,String> futureTaxonomyMapZipVsDistrictCode = new Map<String,String>();
+        Map<String,String> futureTaxonomyMapZipVsDivisionCode = new Map<String,String>(); //HRP-12190
+        Map<String,String> futureTaxonomyMapZipVsDRDTerritoryCode = new Map<String,String>();
+        Map<String,String> futureBSFPortfolioPortfolioCodeVsId = new Map<String,String>();
+        Map<String,String> futureCollectionOppCodeVsId = new Map<String,String>(); // HRP-10880 end
+
+        //HRP-12024-end
+
+        Map<String,String> taxonomyMapZipVsDistrictCode = new Map<String,String>();
+        Map<String,String> taxonomyMapZipVsARCRegionCode = new Map<String,String>();
+        Map<String,String> taxonomyMapZipVsDivisionCode = new Map<String,String>(); //HRP-12190
+        Map<String,String> bSFPortfolioPortfolioCodeVsId = new Map<String,String>();
+
         Map<String,String> collectionOppCodeVsId = new Map<String,String> (); // HRP-10880 end
         // Check each new Lead and if the Postal Code is present, add them to a List for further processing, also build a list of all 
         // the unique postal codes for later use..
         for(Lead newLead:newLeads){
             
             Lead oldLead = new Lead();
-            System.debug('newLead postalCode->'+newLead.PostalCode);
 
             // Has this lead has been updated? If so, set "oldLead" equal the old lead record instance.
             if(oldMap != null && newLead.Id != null && oldMap.containsKey(newLead.Id)){
@@ -83,8 +97,7 @@ public class LeadService {
             
              
             // If it's a brand new Lead - OR - an old Lead with a new Zipcode, we want to keep track of it and update it later on.
-            if(newLead.PostalCode != null || newLead.PostalCode != oldLead.PostalCode){
-               // System.debug(logTag + 'Lead postalcode is new or has changed: old: [' + oldLead.PostalCode + '], new: [' + newLead.PostalCode + ']');
+            if( (oldLead == null && !String.isBlank(newLead.PostalCode))  || (newLead.PostalCode != oldLead.PostalCode && !String.isBlank(newLead.PostalCode))  ){ // HRP-12321 - Modification in logic
                 zipSet.add(newLead.PostalCode);
                 
                 if((startDate == null) || (startDate >= newLead.CreatedDate)){ // HRP-10880 start
@@ -93,17 +106,11 @@ public class LeadService {
                 if((endDate == null)||(endDate <= newLead.CreatedDate)){
                     endDate = newLead.CreatedDate == null ? system.today() : date.newinstance(newLead.CreatedDate.year(), newLead.CreatedDate.month(), newLead.CreatedDate.day());
                 } // HRP-10880 end
-               // System.debug(logTag + ' adding Lead [' + newLead.FirstName + ' ' + newLead.LastName + '] to leadUpdates list for processing..');
                 leadUpdates.add(newLead);    
                 
-            } else {
-              //  System.debug(logTag + 'Lead not added to leadUpdates: ' + newLead.LastName + ' (zipCode: ' + newLead.PostalCode + ')');
-            }
-            
+            }  
         }
-        
-        
-        
+ 
         // Make a map of Zipcode to Blood Region for later lookup.
         Map<String,Chapter_Blood_Region_Zip_Match__c> chapterMap = new Map<String,Chapter_Blood_Region_Zip_Match__c>();
         for(Chapter_Blood_Region_Zip_Match__c zm : [select Chapter__c, Blood_Region__c, Chapter__r.Name, Zip__c from Chapter_Blood_Region_Zip_Match__c where Zip__c IN :zipSet  ]){
@@ -113,54 +120,116 @@ public class LeadService {
         
         // Similarly, make a map of Zipcode to Territory for later lookup
         Map<string,Collections_Territory__c> territoryMap = new Map<string,Collections_Territory__c>();
-            System.debug('zipSet being passed ->'+zipSet);
         for(Collections_Territory__c ct : [select Id, Name, BDM__c, Zip__c, Region__r.Name from Collections_Territory__c where sked_start_date__c <= today and sked_End_Date__c >= today and Zip__c IN :zipSet]){ // HRP-10880
-            System.debug('Collections Territory fetched->'+ct);
             territoryMap.put(ct.Zip__c, ct);
         }
 
         // HRP-10880 start
+        //HRP-12024-> Check Future Taxonomy records if a particular zip code is falling in non collection area
+
+        List<Taxonomy__c> allTaxonomies = [SELECT Zip_Code__c, Collection_Operation_Code__c, Division_Code__c, DS_Region_Code__c, District_Code__c, DRD_Territory_Code__c,RecordType.Name, 
+                                            Collection_Operation_Name__c,District_Name__c,Division_Name__c,DS_Region_Name__c FROM Taxonomy__c 
+                                            /*where Collection_Operation_Name__c != :nonServiceArea and District_Name__c != :nonServiceArea 
+                                            and Division_Name__c != :nonServiceArea and DS_Region_Name__c != :nonServiceArea and City__c!=null and State__c != null*/
+                                            WHERE End_Date__c >=: endDate AND Start_Date__c <=: startDate
+                                            AND (RecordType.Name = 'Bio Recruitment CD' OR RecordType.Name = 'Bio Collection BSF') 
+                                            AND Zip_Code__c IN :zipSet
+                                        ];
         
-        for(Taxonomy__c taxo : [SELECT Zip_Code__c, Collection_Operation_Code__c, Division_Code__c, DS_Region_Code__c, District_Code__c, DRD_Territory_Code__c,RecordType.Name FROM Taxonomy__c where End_Date__c >=: endDate AND Start_Date__c <=: startDate AND (RecordType.Name = 'Bio Recruitment CD' OR RecordType.Name = 'Bio Collection BSF') AND Zip_Code__c IN :zipSet]){
-            if(taxo.RecordType.Name == 'Bio Recruitment CD'){
+        Map<String,Map<String,Taxonomy__c>> taxonomyMap = segragateTaxonomies(allTaxonomies, startDate);                   
+        Map<String,Taxonomy__c> currentTaxonomies = taxonomyMap.get('Current');
+        if(currentTaxonomies == null) {
+            currentTaxonomies = new Map<String,Taxonomy__c> ();
+        }
+        Map<String,Taxonomy__c> futureTaxonomies = taxonomyMap.get('Future');
+        if(futureTaxonomies == null) {
+            futureTaxonomies = new Map<String,Taxonomy__c> ();
+        }
+
+        Date endDate4000 = Date.newInstance(4000, 12, 31);
+        for(Taxonomy__c taxo : currentTaxonomies.Values()) { //HRP 12024        
+            if(taxo.RecordType.Name == 'Bio Recruitment CD') {
                 taxonomyMapZipVsDRDTerritoryCode.put(taxo.Zip_Code__c,taxo.DRD_Territory_Code__c);
-            } else if(taxo.RecordType.Name == 'Bio Collection BSF'){
+            } else if(taxo.RecordType.Name == 'Bio Collection BSF') {
                 taxonomyMapZipVsCollectionOppCode.put(taxo.Zip_Code__c,taxo.Collection_Operation_Code__c);
                 String districtCodeString = 'Bio_Collection_BSF_District_'+taxo.Division_Code__c+'_'+taxo.DS_Region_Code__c+'_'+taxo.District_Code__c;
                 String aRCRegionCodeString = 'Bio_Collection_BSF_ARC Region_'+taxo.Division_Code__c+'_'+taxo.DS_Region_Code__c;
-                taxonomyMapZipVsDistrictCode.put(taxo.Zip_Code__c,districtCodeString);
-                taxonomyMapZipVsARCRegionCode.put(taxo.Zip_Code__c,aRCRegionCodeString);
+                String divisionCodeString = 'Bio_Collection_BSF_Division_'+taxo.Division_Code__c; //HRP-12190
+                taxonomyMapZipVsDistrictCode.put(taxo.Zip_Code__c, districtCodeString);
+                taxonomyMapZipVsARCRegionCode.put(taxo.Zip_Code__c, aRCRegionCodeString);
+                taxonomyMapZipVsDivisionCode.put(taxo.Zip_Code__c, divisionCodeString); //HRP-12190
             }
             
         }
-        
-        List<sked_Territory__c> aRCRegionANDDistrictList = [SELECT Id, RecordType.Name, End_Date__c, Start_Date__c, External_Id_BackEnd__c FROM sked_Territory__c where (RecordType.Name ='ARC Region' OR RecordType.Name ='District') AND End_Date__c >=: endDate AND Start_Date__c <=: startDate AND (External_Id_BackEnd__c IN: taxonomyMapZipVsARCRegionCode.Values() or External_Id_BackEnd__c IN: taxonomyMapZipVsDistrictCode.Values()) ];
-        system.debug('aRCRegionANDDistrictList ::'+aRCRegionANDDistrictList);
-        for(BSF_Portfolio__c portfolio : [SELECT Id, End_Date__c, Start_Date__c, Territory_Portfolio__c, Portfolio_Code__c FROM BSF_Portfolio__c where Portfolio_Code__c IN: taxonomyMapZipVsDRDTerritoryCode.Values() AND Territory_Portfolio__c = true AND End_Date__c >=: endDate AND Start_Date__c <=: startDate]){
-            bSFPortfolioPortfolioCodeVsId.put(portfolio.Portfolio_Code__c,portfolio.Id);
+        for(Taxonomy__c taxo : futureTaxonomies.Values()) { //HRP 12024               
+            if(taxo.RecordType.Name == 'Bio Recruitment CD') {
+                futureTaxonomyMapZipVsDRDTerritoryCode.put(taxo.Zip_Code__c,taxo.DRD_Territory_Code__c);
+            } else if(taxo.RecordType.Name == 'Bio Collection BSF') {
+                futureTaxonomyMapZipVsCollectionOppCode.put(taxo.Zip_Code__c,taxo.Collection_Operation_Code__c);
+                String districtCodeString = 'Bio_Collection_BSF_District_'+taxo.Division_Code__c+'_'+taxo.DS_Region_Code__c+'_'+taxo.District_Code__c;
+                String aRCRegionCodeString = 'Bio_Collection_BSF_ARC Region_'+taxo.Division_Code__c+'_'+taxo.DS_Region_Code__c;
+                String divisionCodeString = 'Bio_Collection_BSF_Division_'+taxo.Division_Code__c; //HRP-12190
+                futureTaxonomyMapZipVsDistrictCode.put(taxo.Zip_Code__c, districtCodeString);
+                futureTaxonomyMapZipVsARCRegionCode.put(taxo.Zip_Code__c, aRCRegionCodeString);
+                futureTaxonomyMapZipVsDivisionCode.put(taxo.Zip_Code__c, divisionCodeString); //HRP-12190
+            }
+            
         }
-        
-        for(Biomed_Collection_Op_Center__c collOpp : [SELECT Id, Biomed_Collection_Op_Code_Center_ID__c FROM Biomed_Collection_Op_Center__c where Biomed_Collection_Op_Code_Center_ID__c IN: taxonomyMapZipVsCollectionOppCode.Values()]){
-            System.debug('BSF Portfolio fetched->'+collOpp);
-            collectionOppCodeVsId.put(collOpp.Biomed_Collection_Op_Code_Center_ID__c,collOpp.Id);
+
+        List<sked_Territory__c> currentTerritoryList = new List<sked_Territory__c>();
+        if(currentTaxonomies.size() > 0) {
+            currentTerritoryList = [SELECT Id, RecordType.Name, End_Date__c, Start_Date__c, External_Id_BackEnd__c 
+                                    FROM sked_Territory__c 
+                                    WHERE End_Date__c >=: endDate 
+                                    AND Start_Date__c <=: startDate 
+                                    AND (External_Id_BackEnd__c IN: taxonomyMapZipVsARCRegionCode.Values() 
+                                            OR External_Id_BackEnd__c IN: taxonomyMapZipVsDistrictCode.Values()
+                                            OR External_Id_BackEnd__c IN: taxonomyMapZipVsDivisionCode.Values()
+                                        )
+                                    ];
+
+            for(BSF_Portfolio__c portfolio : [SELECT Id, End_Date__c, Start_Date__c, Territory_Portfolio__c, Portfolio_Code__c FROM BSF_Portfolio__c where Portfolio_Code__c IN: taxonomyMapZipVsDRDTerritoryCode.Values() AND Territory_Portfolio__c = true AND End_Date__c >=: endDate AND Start_Date__c <=: startDate]) {
+                bSFPortfolioPortfolioCodeVsId.put(portfolio.Portfolio_Code__c,portfolio.Id);
+            }
+            
+            for(Biomed_Collection_Op_Center__c collOpp : [SELECT Id, Biomed_Collection_Op_Code_Center_ID__c FROM Biomed_Collection_Op_Center__c where Biomed_Collection_Op_Code_Center_ID__c IN: taxonomyMapZipVsCollectionOppCode.Values()]) {
+                collectionOppCodeVsId.put(collOpp.Biomed_Collection_Op_Code_Center_ID__c,collOpp.Id);
+            }
+        }
+
+        //HRP-12024
+        List<sked_Territory__c> futureTerritoryList = new List<sked_Territory__c>();
+
+        if(futureTaxonomies.size() > 0) {
+            futureTerritoryList = [SELECT Id, RecordType.Name, End_Date__c, Start_Date__c, External_Id_BackEnd__c 
+                                    FROM sked_Territory__c 
+                                    WHERE End_Date__c = :endDate4000 
+                                    AND  (External_Id_BackEnd__c IN: futureTaxonomyMapZipVsARCRegionCode.Values() 
+                                            OR External_Id_BackEnd__c IN: futureTaxonomyMapZipVsDistrictCode.Values()
+                                            OR External_Id_BackEnd__c IN: futureTaxonomyMapZipVsDivisionCode.Values()
+                                        )
+                                    ];
+
+            for(BSF_Portfolio__c portfolio : [SELECT Id, End_Date__c, Start_Date__c, Territory_Portfolio__c, Portfolio_Code__c FROM BSF_Portfolio__c where Portfolio_Code__c IN: futureTaxonomyMapZipVsDRDTerritoryCode.Values() AND Territory_Portfolio__c = true AND End_Date__c =: endDate4000 ]){
+                futureBSFPortfolioPortfolioCodeVsId.put(portfolio.Portfolio_Code__c,portfolio.Id);
+            }
+
+            for(Biomed_Collection_Op_Center__c collOpp : [SELECT Id, Biomed_Collection_Op_Code_Center_ID__c FROM Biomed_Collection_Op_Center__c where Biomed_Collection_Op_Code_Center_ID__c IN: futureTaxonomyMapZipVsCollectionOppCode.Values()]){
+                futureCollectionOppCodeVsId.put(collOpp.Biomed_Collection_Op_Code_Center_ID__c,collOpp.Id);
+            }
         }
         
         // HRP-10880 end
         // Now we can loop through all the leads again and assign the correct Chapter to them.
         for(Lead l:leadUpdates){
-            
-            
+
             // Look up the Chapter_Blood_Region_Zip_Match__c for this lead's zipcode.. 
             Chapter_Blood_Region_Zip_Match__c zp = chapterMap.get(l.PostalCode);
             if(zp != null){
                 // Set the Chapter and Blood Region..
                 l.Chapter__c = zp.Chapter__c;
                 l.Blood_Region__c = zp.Blood_Region__c;
-               // System.debug(logTag + 'Lead ' + l.LastName + ' assigned to Chapter ' + zp.Chapter__c);
-            } else {
-                // System.debug(logTag + 'Blood Region not found for zipcode: ' + l.PostalCode);
-            }
-            
+            } 
             
             // Look up the Collections Territory from the map we created earlier
             Collections_Territory__c territory = territoryMap.get(l.PostalCode);
@@ -170,57 +239,121 @@ public class LeadService {
               //  System.debug(logTag + 'Lead territory found: ' + territory.Name);
                 l.Collections_Territory__c = territory.Id;
 
-            } else {
-              //  System.debug(logTag + 'NO TERRITORY FOUND FOR LEAD WITH ZIPCODE: ' + l.PostalCode);
             }
             // HRP-10880 start
             
-            if(!aRCRegionANDDistrictList.isEmpty()){
-
-                for(sked_Territory__c ter : aRCRegionANDDistrictList){
-                    Date startDate1; // HRP-10880 start
-                    //Date endDate1;
-                    startDate1 = l.CreatedDate == null ?  system.today() : date.newinstance(l.CreatedDate.year(), l.CreatedDate.month(), l.CreatedDate.day());
-                    if(ter.Start_Date__c <= startDate1 && ter.End_Date__c >= startDate1){
-                        System.debug('sked_Territory__c inside if createdate->');
-                        if(ter.RecordType.Name == 'ARC Region' && taxonomyMapZipVsARCRegionCode.get(l.PostalCode) != NULL && ter.External_Id_BackEnd__c == taxonomyMapZipVsARCRegionCode.get(l.PostalCode)){
+            if(!currentTerritoryList.isEmpty()) {
+                for(sked_Territory__c ter : currentTerritoryList) {
+                        if(ter.RecordType.Name == BSF_Constants.TERRITORY_TYPE_ARC_REGION && taxonomyMapZipVsARCRegionCode.get(l.PostalCode) != NULL && ter.External_Id_BackEnd__c == taxonomyMapZipVsARCRegionCode.get(l.PostalCode)){
                                 l.Lead_Region_Name__c = ter.ID;
-                                System.debug('sked_Territory__c inside if RecordType->');
-                            }else if(ter.RecordType.Name == 'District' && taxonomyMapZipVsDistrictCode.get(l.PostalCode) != NULL && ter.External_Id_BackEnd__c == taxonomyMapZipVsDistrictCode.get(l.PostalCode)){
+                        } else if(ter.RecordType.Name == BSF_Constants.TERRITORY_TYPE_DISTRICT && taxonomyMapZipVsDistrictCode.get(l.PostalCode) != NULL && ter.External_Id_BackEnd__c == taxonomyMapZipVsDistrictCode.get(l.PostalCode)){
                                 l.Lead_District__c = ter.ID;
-                                System.debug('sked_Territory__c inside else RecordType->');
-                            }
-                         } else{
-                            System.debug('There are no ARC Region territory associated with this');
-                         }
+                        } 
+                        // HRP-12190 --> starts Here
+                        else if(ter.RecordType.Name == BSF_Constants.TERRITORY_TYPE_DIVISION && taxonomyMapZipVsDivisionCode.get(l.PostalCode) != NULL && ter.External_Id_BackEnd__c == taxonomyMapZipVsDivisionCode.get(l.PostalCode)) {
+                            l.Lead_Division_Name__c = ter.ID;
+                        }
+                        // HRP-12190 --> Ends Here
                      }
-  
-              } else {
-                 System.debug(logTag + 'There are no ARC Region territory record found ' + l.PostalCode);
               }
+            if(!futureTerritoryList.isEmpty()) {
+                for(sked_Territory__c ter : futureTerritoryList){
+                if(ter.RecordType.Name == BSF_Constants.TERRITORY_TYPE_ARC_REGION && futureTaxonomyMapZipVsARCRegionCode.get(l.PostalCode) != NULL && ter.External_Id_BackEnd__c == futureTaxonomyMapZipVsARCRegionCode.get(l.PostalCode)) {
+                    l.Lead_Region_Name__c = ter.ID;
+                }else if(ter.RecordType.Name == BSF_Constants.TERRITORY_TYPE_DISTRICT && futureTaxonomyMapZipVsDistrictCode.get(l.PostalCode) != NULL && ter.External_Id_BackEnd__c == futureTaxonomyMapZipVsDistrictCode.get(l.PostalCode)) {
+                    l.Lead_District__c = ter.ID;
+                }       
+                // HRP-12190 --> starts Here
+                else if(ter.RecordType.Name == BSF_Constants.TERRITORY_TYPE_DIVISION && futureTaxonomyMapZipVsDistrictCode.get(l.PostalCode) != NULL && ter.External_Id_BackEnd__c == futureTaxonomyMapZipVsDivisionCode.get(l.PostalCode)) {
+                    l.Lead_Division_Name__c = ter.ID;
+                }
+                // HRP-12190 --> Ends Here
+              }
+            }
 
-              if(!bSFPortfolioPortfolioCodeVsId.isEmpty()){
-                l.Lead_AM_Porfolio__c = taxonomyMapZipVsDRDTerritoryCode.get(l.PostalCode) != null ? bSFPortfolioPortfolioCodeVsId.get(taxonomyMapZipVsDRDTerritoryCode.get(l.PostalCode)) : null;
-              } else {
+              if(!bSFPortfolioPortfolioCodeVsId.isEmpty()) {
+                l.Lead_AM_Porfolio__c = taxonomyMapZipVsDRDTerritoryCode.get(l.PostalCode) != null ? bSFPortfolioPortfolioCodeVsId.get(taxonomyMapZipVsDRDTerritoryCode.get(l.PostalCode)):null;
+              } else if(!futureBSFPortfolioPortfolioCodeVsId.isEmpty()) {
+                l.Lead_AM_Porfolio__c = futureTaxonomyMapZipVsDRDTerritoryCode.get(l.PostalCode) != null ? futureBSFPortfolioPortfolioCodeVsId.get(futureTaxonomyMapZipVsDRDTerritoryCode.get(l.PostalCode)):null ;
+              }else {
                  System.debug(logTag + 'There are no BSF portfolio territory record found ' + l.PostalCode);
               }
               
-              if(!collectionOppCodeVsId.isEmpty()){
-                l.Lead_Collection_Operation__c = taxonomyMapZipVsCollectionOppCode.get(l.PostalCode) != null ? collectionOppCodeVsId.get(taxonomyMapZipVsCollectionOppCode.get(l.PostalCode)) : null;
+              if(!collectionOppCodeVsId.isEmpty()) {
+                l.Lead_Collection_Operation__c = taxonomyMapZipVsCollectionOppCode.get(l.PostalCode) != null ? collectionOppCodeVsId.get(taxonomyMapZipVsCollectionOppCode.get(l.PostalCode)):null;
+              }if(!futureCollectionOppCodeVsId.isEmpty()) {
+                l.Lead_Collection_Operation__c =  (futureTaxonomyMapZipVsCollectionOppCode.get(l.PostalCode) != null ? futureCollectionOppCodeVsId.get(futureTaxonomyMapZipVsCollectionOppCode.get(l.PostalCode)):null );
               } else {
-                 System.debug(logTag + 'There are no BSF Collection Opperation record found ' + l.PostalCode);
+                System.debug(logTag + 'There are no BSF Collection Opperation record found ' + l.PostalCode);
               }
             // HRP-10880 end
-        }
-
-        // for(Lead l:leadUpdates){
-        //     l.Lead_Region_Name__c = 'a3N5c0000048cakEAA';
-        // }
-                
+        }    
         
     }
+    /**
+     * HRP -12024 This method makes two maps
+     * first is map of Current -> Current Taxonomies. Current means all zips with current effective taxonomy AND zips that does not have future taxonomies and are currently in Non Service Area 
+     * second is map of Future->Future Taxonomies. This means only zip codes that do not have current effective taxonomy but has future effective ones
+     */
+
+    public static  Map<String,Map<String,Taxonomy__c>> segragateTaxonomies(List<Taxonomy__c> fullTaxonomyList,Date startDate){
+       Date endDate4000 = Date.newInstance(4000, 12, 31);
+       String nonServiceArea=Label.NonCollectionArea_Label;
+       Map<String,Map<String,Taxonomy__c>> taxonomyMap = new Map<String,Map<String,Taxonomy__c>>();
+       Map<String,Taxonomy__c> fullTaxonomyMap = getZipToTaxonomyMap(fullTaxonomyList);
+
+        Map<String,List<Taxonomy__c>> currentCollectionAreaTaxonomies =  new Map<String,List<Taxonomy__c>>();
+        Map<String,List<Taxonomy__c>> futureCollectioAreaTaxonomies =  new Map<String,List<Taxonomy__c>>();
+        List<Taxonomy__c> futureEffectiveTaxonomies = new List<Taxonomy__c>();
+        Map<String,Taxonomy__c> futureTaxonomyMap = new Map<String,Taxonomy__c>();
+
+        if(fullTaxonomyList.size()<1){
+            return taxonomyMap;
+        }
+        Set<String> checkForFutureTaxoZips = new Set<String>();
+        for(Taxonomy__c taxonomy:fullTaxonomyList){
+            if(taxonomy.Collection_Operation_Name__c == nonServiceArea || taxonomy.District_Name__c == nonServiceArea
+               || taxonomy.Division_Name__c == nonServiceArea || taxonomy.Division_Name__c == nonServiceArea){
+                checkForFutureTaxoZips.add(taxonomy.Zip_Code__c);
+               }
+        }
+        if(checkForFutureTaxoZips.size() >0) {  //meaning any zip codes do not have currently effective taxonomies
+          futureEffectiveTaxonomies = [SELECT Zip_Code__c, Collection_Operation_Code__c, Division_Code__c, DS_Region_Code__c, District_Code__c, DRD_Territory_Code__c,RecordType.Name FROM Taxonomy__c 
+            where Collection_Operation_Name__c != :nonServiceArea and District_Name__c != :nonServiceArea 
+            and Division_Name__c != :nonServiceArea and DS_Region_Name__c != :nonServiceArea and City__c!=null and State__c != null  
+            and End_Date__c =: endDate4000 AND Start_Date__c >=: startDate
+            AND (RecordType.Name = 'Bio Recruitment CD' OR RecordType.Name = 'Bio Collection BSF') AND Zip_Code__c IN :checkForFutureTaxoZips];
+
+            futureTaxonomyMap = getZipToTaxonomyMap(futureEffectiveTaxonomies);
+        
+        }
+
+        for(String futureTaxoZip:futureTaxonomyMap.keySet()){ //for each future entry remove it from all taxonomy list to end up with all current taxo list
+            if(fullTaxonomyMap.containsKey(futureTaxoZip)){
+               fullTaxonomyMap.remove(futureTaxoZip);
+            }
+        }
+
+        taxonomyMap.put('Current',fullTaxonomyMap);//Current means all zips with current effective taxonomy AND zips that does not have future taxonomies and are currently in Non Service Area 
+        
+        if(futureTaxonomyMap.size()>0){
+            taxonomyMap.put('Future',futureTaxonomyMap);
+        }
+        return taxonomyMap;
+
+    }
     
-    
+    //HRP-12024-returns a map with key is zip+recordtypeid and value is taxonomy
+    public static Map<String,Taxonomy__c> getZipToTaxonomyMap( List<Taxonomy__c> currentlyEffectiveTaxonomies){
+        Map<String,Taxonomy__c> zipToTaxonomyMap = new Map<String,Taxonomy__c>();
+        if(currentlyEffectiveTaxonomies == null || currentlyEffectiveTaxonomies.size()<1)
+            return zipToTaxonomyMap;
+
+        for(Taxonomy__c taxonomy:currentlyEffectiveTaxonomies)  {
+            zipToTaxonomyMap.put(taxonomy.Zip_Code__c+taxonomy.recordTypeID,taxonomy);
+        } 
+        return zipToTaxonomyMap;
+    }
     
     public static void createTimelineEvents(List<Lead> newLeads, Map<Id,Lead> oldMap, String op){
         
@@ -303,24 +436,21 @@ public class LeadService {
             }
 
             //New instance of a single email message
-            Messaging.SingleEmailMessage mail = 
-                new Messaging.SingleEmailMessage();
+            Messaging.SingleEmailMessage mail;
      
-            // Who you are sending the email to
-            mail.setTargetObjectId(newLead.Id);
-
-            // The email template ID used for the email
-            mail.setTemplateId(template.Id);
-              
-            //mail.setWhatId(newLead.Id);    
-            mail.setBccSender(false);
-            mail.setUseSignature(false);
-            mail.setReplyTo('no-response@redcrossblood.org');
-            mail.setSenderDisplayName('American Red Cross');
-            mail.setSaveAsActivity(false);  
+            if(template.Id != null){
+                mail = new Messaging.SingleEmailMessage();
+                Messaging.SingleEmailMessage tempMessage = Messaging.renderStoredEmailTemplate(template.Id, null, newLead.Id);
+                mail.setSubject(tempMessage.getSubject());
+                mail.setHtmlBody(tempMessage.getHtmlBody() == null ? tempMessage.getPlainTextBody() : tempMessage.getHtmlBody());
+                mail.setToAddresses(new String[] {newLead.Email});
+            }       
+             
      
             try{
-                if(!Test.isRunningTest()) Messaging.sendEmail(new Messaging.SingleEmailMessage[] { mail });
+                // if(!Test.isRunningTest()) Messaging.sendEmail(new Messaging.SingleEmailMessage[] { mail });
+                if(!Test.isRunningTest() && mail!=null) 
+                    BSF_EmailNotification.sendEmails(new Messaging.SingleEmailMessage[] { mail },'WebLeadAutoResponse',null); //Changes for  HRP-11608 
             } catch (Exception e){
                 //System.debug('ERROR SENDING WELCOME EMAIL TO LEAD: ' + e);
             }
@@ -363,119 +493,100 @@ public class LeadService {
         }
 
 
-        Map<Id,Group> queueMap = new Map<Id,Group>([select Id, Name, Email, Type from Group where Id IN :queueIdSet]);
+        Map<Id,Group> queueMap = new Map<Id,Group>([select Id, Name, Email, Type, DoesSendEmailToMembers from Group where Id IN :queueIdSet]);
 
 
-        //System.debug(logTag + 'queueMap: ' + queueMap);
+        System.debug(logTag + 'queueMap: ' + queueMap);
         //System.debug(logTag + 'queueLeadMap: ' + queueLeadMap);
 
-        //EmailTemplate template = [Select id from EmailTemplate where name = 'AM Leads' limit 1];
+        
+        EmailTemplate template;
+        // Look up the Lead assignment template
+        try{
+            template = [select Id, Name, DeveloperName from EmailTemplate where DeveloperName = 'Spark_Lead_Assignment_Sample'  limit 1];
+           // System.debug('Found email template [' + template.Name + ' (' + template.Id + '] for lead assignment email use.');
+        } catch(Exception e){
+          //  System.debug('ERROR: unable to find email template for lead assignment. ' + e);
+            return;
+        } 
         List<Messaging.SingleEmailMessage> msgList = new List<Messaging.SingleEmailMessage>();
-
-        // First, reserve email capacity for the current Apex transaction to ensure
-        // that we won't exceed our daily email limits when sending email after
-        // the current transaction is committed.
-        Messaging.reserveSingleEmailCapacity(leadList.size());
 
         List<Lead> leadsToDelete = new List<Lead>();
 
+        Map<Lead, Group> leadvsQueueMap = new Map<Lead, Group>();
+        Set<Id> leadQueueIdSet = new Set<Id>();
         for(Lead l:leadList){
 
             Group leadQueue = queueMap.get(l.OwnerId);
-            
-            // Create a temporary lead so we can have a object for hte WhatId and use an Email template
-            /*Lead tempLead = createTempLead(leadQueue.Email);
-            if(tempLead.Id == null){
-                System.debug(LoggingLevel.Error,'Error: temp lead not created.');
-                continue;
-            }
-            */
+            leadQueueIdSet.add(leadQueue.Id);
+            leadvsQueueMap.put(l,leadQueue);
 
-            // Check first if the Group actually has an Email specified
-            if(leadQueue.Email == null){
-               // System.debug(logTag + 'Lead queue email is blank, skipping lead ' + l.Id);
-                continue;
-            }
-
-            Messaging.SingleEmailMessage msg = createNotificationMessage(leadQueue, l, leadQueue);
-            if(msg != null){
-               // System.debug('Adding message for ' + l.LastName + ' for '+ leadQueue.Email);
-                msgList.add(msg);
-            } else {
-               // System.debug('msg is null, nothing to send.');
-            }
-
-            //leadsToDelete.add(tempLead);
         }
-
-        
-
+        Map<Id,List<GroupMember>> queueIdVsQueueMembers = new Map<Id,List<GroupMember>>();
+        List<GroupMember> queueMembers = [SELECT Id, GroupId, Group.Name, UserOrGroupId FROM GroupMember WHERE GroupId In :leadQueueIdSet];
+        for (GroupMember member : queueMembers) {
+            if(!queueIdVsQueueMembers.containsKey(member.GroupId)){
+                queueIdVsQueueMembers.put(member.GroupId, new List<GroupMember>());
+            }
+            queueIdVsQueueMembers.get(member.GroupId).add(member);
+        }
+        for (Lead l:leadList) {
+            if(leadvsQueueMap.get(l).DoesSendEmailToMembers){
+                for (GroupMember member : queueIdVsQueueMembers.get(leadvsQueueMap.get(l).Id)) {
+                    msgList.add(createNotificationMessage(template.Id, l, new Map<String, String>{'destinationId' => member.UserOrGroupId}));
+                }
+            }
+            if (leadvsQueueMap.get(l).Email!=null) {
+                msgList.add(createNotificationMessage(template.Id, l, new Map<String, String>{'destinationEmail' => leadvsQueueMap.get(l).Email}));
+            }
+        }    
         if(!msgList.isEmpty() && !Test.isRunningTest()){
-            //System.debug('There are ' + msgList.size() + ' emails to send out.');
-            Messaging.sendEmail(msgList,false);
+            System.debug('There are ' + msgList.size() + ' emails to send out.');
+            BSF_EmailNotification.sendEmails(msgList,'LeadCreation',null);//Changes for  HRP-11347
         } else {
-           // System.debug('msgList is empty or we are running a test, no email will be sent.');
+           System.debug('msgList is empty or we are running a test, no email will be sent.');
         }
-
-
         // Dispose of temp leads
         if(!leadsToDelete.isEmpty()){
            // System.debug('Deleting ' + leadsToDelete.size()+ ' leads..');
-          
-                delete(leadsToDelete);//dml for security
+          delete(leadsToDelete);//dml for security
            
         }
-
-
     }
 
 
-    private static Messaging.SingleEmailMessage createNotificationMessage(Group grp, Lead lead, Group recipient){
-        
+    private static Messaging.SingleEmailMessage createNotificationMessage(String templateId, Lead lead, Map<String,String> destinationMap){
+           
+        final string logTag = '[LeadService:createNotificationMessage]';
         String leadName = lead.FirstName + ' ' + lead.LastName;
-        // System.debug('Email for ' + leadName + ' will go to ' + recipient.Email);
-            
-        // Processes and actions involved in the Apex transaction occur next,
-        // which conclude with sending a single email.
 
-        // Now create a new single email message object
-        // that will send out a single email to the addresses in the To, CC & BCC list.
         Messaging.SingleEmailMessage mail = new Messaging.SingleEmailMessage();
-
-        // Strings to hold the email addresses to which you are sending the email.
-        String[] toAddresses = new String[] {grp.Email}; 
-        //String[] ccAddresses = new String[] {'smith@gmail.com'};
-        
-        
-        /*
-        mail.setTargetObjectId(recipient.Id);
-
-        // Select the template to user
-        EmailTemplate tmpl;
-        try{
-            tmpl = [select Id from EmailTemplate where DeveloperName = 'Lead_Assignment'];
-        } catch (Exception ex){
-            System.debug(LoggingLevel.ERROR, 'Error: unable to find email template named Lead_Assignment');
-            return null;
+        String[] toAddresses;
+        if(destinationMap.containsKey('destinationEmail'))
+        mail.setToAddresses(new String[] {destinationMap.get('destinationEmail')}); 
+        else if(destinationMap.containsKey('destinationId')){
+            mail.treatTargetObjectAsRecipient = true;
+            mail.setTargetObjectId(destinationMap.get('destinationId')); // Who you are sending the email to
         }
-        mail.setTemplateId(tmpl.Id);
-
-        // Set the lead for the template's merge fields
-        mail.setWhatId(lead.Id);
-        */
+        
+        if(templateId != null){
+            Messaging.SingleEmailMessage tempMessage = Messaging.renderStoredEmailTemplate(templateId, null, lead.Id);
+            mail.setSubject(tempMessage.getSubject());
+            mail.setHtmlBody(tempMessage.getHtmlBody() == null ? tempMessage.getPlainTextBody() : tempMessage.getHtmlBody());
+        }
 
         // Assign the addresses for the To and CC lists to the mail object.
-        mail.setToAddresses(toAddresses);
+        // mail.setToAddresses(toAddresses);
         //mail.setCcAddresses(ccAddresses);
 
         // Specify the address used when the recipients reply to the email. 
-        mail.setReplyTo('no-reply@redcross.org');
+        // mail.setReplyTo('no-reply@redcross.org');
 
         // Specify the name used as the display name.
-        mail.setSenderDisplayName('Salesforce Lead Notification');
+        // mail.setSenderDisplayName('Salesforce Lead Notification');
 
         // Specify the subject line for your email address.
-        mail.setSubject('New Lead  : ' + leadName + ' in ' + lead.City + ', ' + lead.StateCode);
+        // mail.setSubject('New Lead  : ' + leadName + ' in ' + lead.City + ', ' + lead.StateCode);
 
         // Set to True if you want to BCC yourself on the email.
         mail.setBccSender(false);
@@ -484,52 +595,7 @@ public class LeadService {
         // The email address of the user executing the Apex Code will be used.
         mail.setUseSignature(false);
 
-        // Specify the text content of the email.
-        //mail.setPlainTextBody('A new lead: ' + leadName + ' has been assigned to your territory.');
-
-        mail.setHtmlBody(
-            'A new lead has been assigned to your territory:<br/>' +
-            '<h3>Lead Information</h3>' + 
-            '<b>Name: </b>' + leadName + '<br/>' +
-            '<b>Title: </b>' + lead.Title + '<br/>' + 
-            '<b>Organization Name: </b> ' + lead.Company + '<br/>' + 
-            '<b>Email: </b>' + lead.Email + '<br/>' +
-            '<b>Phone: </b>' + lead.Phone + '<br/>' +
-            '<b>Phone Type: </b>' + lead.Phone_Type__c + '<br/>' + 
-            '<b>Referrer: </b>' + lead.Referrer__c + '<br/>' + 
-            '<b>Source: </b>' + lead.LeadSource + '<br/>' + 
-
-            '<h3>Location / Region Information</h3>' + 
-            '<b>City: </b>' + lead.City + '<br/>' +
-            '<b>State: </b>' + lead.StateCode + '<br/>' +
-            '<b>Zip code: </b>' + lead.PostalCode + '<br/>' + 
-            '<b>Territory: </b>' + lead.Territory_Name__c + '<br/>' +
-            '<b>District: </b>' + lead.District__c + '<br/>'  + 
-            '<b>Region: </b>' + lead.Region_Name__c + '<br/>' + 
-            '<b>Blood Region: </b>' + lead.Blood_Region__c + '<br/>' + 
-            '<b>Blood Chapter: </b>' + lead.Chapter__c + '<br/>' + 
-
-            '<h3>Company / Organization Information:</h3>' + 
-            '<b>Company Type: </b>' + lead.Company_Type__c + '<br/>' +
-            '<b>Sub-Type: </b>' + lead.Company_Sub_Type__c + '<br/>' +
-            '<b>Type (if Other): </b>' + lead.Company_Type_Other__c + '<br/>' +
-            '<b>Organization/Company Size: </b>' + lead.Company_Size__c + '<br/>' +
-
-            '<h3>Lead Scoring</h3>' + 
-            '<b>Score (0=poor, 100=great): </b>' + lead.leadScoring__Lead_Score__c + '<br/>' + 
-            '<b>Has hosted before? </b>' + lead.Hosted_Before__c + '<br/>' + 
-            '<b>Has other Red Cross relationships: </b>' + lead.Other_Redcross_Relationships__c + '<br/>' +
-            '<b>Has personal story? </b>' + lead.Has_Personal_Story__c + '<br/>' + 
-            '<b>Personal Story: </b>' + lead.Personal_Story__c + '<br/>' + 
-            '<b>Comments provided: </b>' + lead.Comments__c
-
-        );
-        
-
-            
-
         return mail;
-
             
     }
 
@@ -768,7 +834,7 @@ public class LeadService {
             
              
             // If it's a brand new Lead - OR - an old Lead with a new Zipcode, we want to keep track of it and update it later on.
-            if(newLead.PostalCode != null && newLead.PostalCode != oldLead.PostalCode){
+            if( (oldLead == null && !String.isBlank(newLead.PostalCode))  || (newLead.PostalCode != oldLead.PostalCode && !String.isBlank(newLead.PostalCode))  ){ // HRP-12321 - Modification in logic
                
                 ids.add(newLead.Id);
             
@@ -791,4 +857,18 @@ public class LeadService {
             List<Lead> toAssign = [SELECT Id FROM Lead WHERE Id = :leadIds];
             Database.update(toAssign,dmo);
         } //HRP-10880 end
+		
+    //HRP-13603 Start 10/22/2024
+    public static void handleLeadStageStatus(List<Lead> newLeads, Map<Id,Lead> oldMap)
+    {
+        List<String> focusedLeadStatus = new List<String>{'Contacted','Qualified'};
+        for(Lead newLead : newLeads)
+        {
+            if(newLead.Status != oldMap.get(newLead.Id).status && focusedLeadStatus.contains(newLead.Status))
+            {
+                newLead.Last_Modified_Date_Status__c = System.Today();
+            }
+        }
+    }
+    //HRP-13603 End
 }

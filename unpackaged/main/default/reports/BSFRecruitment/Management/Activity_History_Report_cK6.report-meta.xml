@@ -24,6 +24,12 @@
     <columns>
         <field>Activity.Account_Manager__c</field>
     </columns>
+    <columns>
+        <field>DUE_DATE</field>
+    </columns>
+    <columns>
+        <field>Activity.Drive_Date__c</field>
+    </columns>
     <description>Open Tasks
 Filter Task Owner to applicable names</description>
     <filter>
@@ -41,6 +47,20 @@ Filter Task Owner to applicable names</description>
             <operator>contains</operator>
             <value></value>
         </criteriaItems>
+        <criteriaItems>
+            <column>DUE_DATE</column>
+            <columnToColumn>false</columnToColumn>
+            <isUnlocked>true</isUnlocked>
+            <operator>greaterOrEqual</operator>
+            <value>8/1/2022 12:00 AM</value>
+        </criteriaItems>
+        <criteriaItems>
+            <column>Activity.Drive_Date__c</column>
+            <columnToColumn>false</columnToColumn>
+            <isUnlocked>true</isUnlocked>
+            <operator>greaterOrEqual</operator>
+            <value>8/1/2022</value>
+        </criteriaItems>
         <language>en_US</language>
     </filter>
     <format>Summary</format>
@@ -53,10 +73,6 @@ Filter Task Owner to applicable names</description>
         <dateGranularity>Day</dateGranularity>
         <field>STATUS</field>
         <sortOrder>Desc</sortOrder>
-    </groupingsDown>
-    <groupingsDown>
-        <field>DUE_DATE</field>
-        <sortOrder>Asc</sortOrder>
     </groupingsDown>
     <name>Activity_Open Tasks</name>
     <params>
@@ -76,6 +92,8 @@ Filter Task Owner to applicable names</description>
     <showDetails>true</showDetails>
     <showGrandTotal>false</showGrandTotal>
     <showSubTotals>false</showSubTotals>
+    <sortColumn>Activity.Drive_Date__c</sortColumn>
+    <sortOrder>Desc</sortOrder>
     <timeFrameFilter>
         <dateColumn>CREATED_DATE</dateColumn>
         <interval>INTERVAL_CUSTOM</interval>

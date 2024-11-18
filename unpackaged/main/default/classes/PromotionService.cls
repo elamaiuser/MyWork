@@ -72,7 +72,7 @@ public with sharing class PromotionService {
         message.plainTextBody = text;
         
         Messaging.SingleEmailMessage[] messages =   new List<Messaging.SingleEmailMessage> {message};
-            Messaging.SendEmailResult[] results = Messaging.sendEmail(messages);
+        BSF_EmailNotification.sendEmails(messages,'PromotionExpiry',null);//Changes for  HRP-11608
         
         // if (results[0].success) 
         // {

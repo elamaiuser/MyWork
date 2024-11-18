@@ -176,25 +176,6 @@
                                             </template>
                                         </td>
 
-                                        <td class="slds-cell-wrap can-be-pre-dated__col">
-                                            <template if:false={isReadonly}>
-                                                <lightning-input type="toggle" name="canBePreDated" label="canBePreDated" class="canBePreDated"
-                                                    data-item={item.id}
-                                                    data-object-type={item.category}    
-                                                    onchange={handleOnChange}
-                                                    message-toggle-active="" message-toggle-inactive="" variant="label-hidden" checked={item.canBePreDated}>
-                                                </lightning-input>
-                                            </template>
-                                            <template if:true={isReadonly}>
-                                                <template if:true={item.canBePreDated}>
-                                                    <lightning-icon icon-name="utility:check" size="x-small"></lightning-icon>
-                                                </template>
-                                                <template if:false={item.canBePreDated}>
-                                                    <lightning-icon icon-name="utility:steps" size="x-small"></lightning-icon>
-                                                </template>
-                                            </template>
-                                        </td>
-                                        
                                         <td class="slds-cell-wrap is-active__col">
                                             <template if:false={isReadonly}>
                                                 <lightning-input type="toggle" name="isActive" label="isActive" class="isActive"

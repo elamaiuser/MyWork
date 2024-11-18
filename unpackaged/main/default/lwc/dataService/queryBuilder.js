@@ -20,7 +20,7 @@ class queryBuilder {
     }
 
     stringify(value) {
-        return "'" + (isNullOrEmpty(value) ? '' : value.replace('\'', '\\\'')) + "'";
+        return "'" + (isNullOrEmpty(value) ? '' : value.replaceAll('\'', '\\\'')) + "'";
     }
 
     generateCondition(condition) {
@@ -94,6 +94,10 @@ class queryBuilder {
         }
 
         return statement;
+    }
+
+    toSearchText(value) {
+        return '%' + value + '%';
     }
 }
 

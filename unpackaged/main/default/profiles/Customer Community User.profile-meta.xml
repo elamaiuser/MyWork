@@ -1,6 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Profile xmlns="http://soap.sforce.com/2006/04/metadata">
     <custom>false</custom>
+    <userLicense>Customer Community</userLicense>
+    <pageAccesses>
+        <apexPage>BSFStagingSheetLinks</apexPage>
+        <enabled>true</enabled>
+    </pageAccesses>
+    <pageAccesses>
+        <apexPage>BSFStagingSheetSearchVF</apexPage>
+        <enabled>true</enabled>
+    </pageAccesses>
+    <pageAccesses>
+        <apexPage>BSFStagingSheetVF</apexPage>
+        <enabled>true</enabled>
+    </pageAccesses>
+    <pageAccesses>
+        <apexPage>BSFWeeklyStaffScheduleReportPDF</apexPage>
+        <enabled>true</enabled>
+    </pageAccesses>
+    <pageAccesses>
+        <apexPage>BSFWeeklyStaffingRTReport</apexPage>
+        <enabled>true</enabled>
+    </pageAccesses>
     <pageAccesses>
         <apexPage>LeadFormComplete</apexPage>
         <enabled>true</enabled>
@@ -11,6 +32,26 @@
     </pageAccesses>
     <pageAccesses>
         <apexPage>LeadFormLSLComplete</apexPage>
+        <enabled>true</enabled>
+    </pageAccesses>
+    <pageAccesses>
+        <apexPage>SponsorPlanningReportPdf</apexPage>
+        <enabled>true</enabled>
+    </pageAccesses>
+    <pageAccesses>
+        <apexPage>UserCollOppQueueAssigReportVF</apexPage>
+        <enabled>true</enabled>
+    </pageAccesses>
+    <pageAccesses>
+        <apexPage>UserCollOppQueueAssignExcelVF</apexPage>
+        <enabled>true</enabled>
+    </pageAccesses>
+    <pageAccesses>
+        <apexPage>bsfWeeklyStaffScheduleReport</apexPage>
+        <enabled>true</enabled>
+    </pageAccesses>
+    <pageAccesses>
+        <apexPage>bsfWeeklyStaffingRTReportPdf</apexPage>
         <enabled>true</enabled>
     </pageAccesses>
     <applicationVisibilities>
@@ -154,6 +195,11 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
+        <field>Account.CompanyOrganization_Comments__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>Account.Description</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -164,7 +210,17 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
+        <field>Account.Existing_Relationship_with_HS__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>Account.Fax</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Account.Have_you_received_assistance_from_HS__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -175,6 +231,16 @@
     <fieldPermissions>
         <editable>true</editable>
         <field>Account.Jigsaw</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>Account.Lead_Rating_Stars__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Account.Mission_Vision_Core_Values__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -194,6 +260,11 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
+        <field>Account.Potential_Partnership_Reasons__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>Account.ShippingAddress</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -204,12 +275,22 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
+        <field>Account.Supported_Nonprofit_Organizations__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>Account.Type</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
         <field>Account.Website</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Account.Wellness_Programs__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -629,6 +710,11 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
+        <field>Contact.Contact_Comments__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>Contact.Department</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -685,6 +771,26 @@
     <fieldPermissions>
         <editable>true</editable>
         <field>Contact.Phone</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Contact.Preferred_Pronouns__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Contact.Preferred_Time_to_Call__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Contact.Primary_Phone__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Contact.Race__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -1065,6 +1171,16 @@
     <fieldPermissions>
         <editable>true</editable>
         <field>Event.Location</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Event.Related_Order__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>Event.Status_Visual__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -2229,6 +2345,16 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
+        <field>Task.Related_Order__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>Task.Status_Visual__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>Task.WhatId</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -2286,6 +2412,9 @@
         <layout>Account_Contact_History__c-Account Contact History Layout</layout>
     </layoutAssignments>
     <layoutAssignments>
+        <layout>Account_Handoff_Settings__mdt-Account Handoff task Layout</layout>
+    </layoutAssignments>
+    <layoutAssignments>
         <layout>Account_Marketing_Program__c-Account Marketing Program Layout</layout>
     </layoutAssignments>
     <layoutAssignments>
@@ -2325,10 +2454,22 @@
         <layout>AuthorizationFormText-Authorization Form Text Layout</layout>
     </layoutAssignments>
     <layoutAssignments>
+        <layout>BSF_Custom_Notification__c-BSF Custom Notification Layout</layout>
+    </layoutAssignments>
+    <layoutAssignments>
         <layout>BSF_Error_Log__c-BSF Error Log Layout</layout>
     </layoutAssignments>
     <layoutAssignments>
+        <layout>BSF_Outbound_Notification_Settings__mdt-BSFOutboundNotificationLimitMdt Layout</layout>
+    </layoutAssignments>
+    <layoutAssignments>
         <layout>BSF_Portfolio__c-BSF Portfolio Layout</layout>
+    </layoutAssignments>
+    <layoutAssignments>
+        <layout>BSF_Slot_Multiplier_Settings__mdt-BSF Slot Multiplier Setting Layout</layout>
+    </layoutAssignments>
+    <layoutAssignments>
+        <layout>BSF_Task_Checklist__c-BSF Task Checklist Layout</layout>
     </layoutAssignments>
     <layoutAssignments>
         <layout>BatchByPassSettings__mdt-BatchByPassSetting Layout</layout>
@@ -2347,6 +2488,15 @@
     </layoutAssignments>
     <layoutAssignments>
         <layout>BusinessBrand-Business Brand Layout</layout>
+    </layoutAssignments>
+    <layoutAssignments>
+        <layout>Calendar_Build_Error_Log__c-Calendar Build Error Log Layout</layout>
+    </layoutAssignments>
+    <layoutAssignments>
+        <layout>Calendar_Build_Log_Manual_Run__c-Calendar Build Log Manual Run Layout</layout>
+    </layoutAssignments>
+    <layoutAssignments>
+        <layout>Calendar_Build_Log__c-Calendar Build Log Layout</layout>
     </layoutAssignments>
     <layoutAssignments>
         <layout>Calendar_Build_Setting__mdt-Calendar Build Setting Layout</layout>
@@ -2429,7 +2579,16 @@
         <layout>Contract-Contract Layout</layout>
     </layoutAssignments>
     <layoutAssignments>
+        <layout>CspTrustedSite-Trusted URL Layout</layout>
+    </layoutAssignments>
+    <layoutAssignments>
         <layout>Custom_Messages__mdt-Custom Message Layout</layout>
+    </layoutAssignments>
+    <layoutAssignments>
+        <layout>Custom_Notification_Setting__mdt-Custom Notification Priority Layout</layout>
+    </layoutAssignments>
+    <layoutAssignments>
+        <layout>Custom_Report_Config__mdt-Custom Report Config Layout</layout>
     </layoutAssignments>
     <layoutAssignments>
         <layout>Customer-Customer Layout</layout>
@@ -2472,6 +2631,12 @@
     </layoutAssignments>
     <layoutAssignments>
         <layout>Email_Recipient__mdt-Email Recipient Layout</layout>
+    </layoutAssignments>
+    <layoutAssignments>
+        <layout>EmpUserProvisionProcessErr-Employee User Provisioning Process Error Layout</layout>
+    </layoutAssignments>
+    <layoutAssignments>
+        <layout>EmpUserProvisioningProcess-Employee User Provisioning Process Layout</layout>
     </layoutAssignments>
     <layoutAssignments>
         <layout>EngagementChannelType-Engagement Channel Type Layout</layout>
@@ -2535,6 +2700,17 @@
         <recordType>Lead.Market_Manager</recordType>
     </layoutAssignments>
     <layoutAssignments>
+        <layout>License_Usage__c-License Usage Layout</layout>
+    </layoutAssignments>
+    <layoutAssignments>
+        <layout>License_Usage__c-License Usage Layout</layout>
+        <recordType>License_Usage__c.Managed_Package</recordType>
+    </layoutAssignments>
+    <layoutAssignments>
+        <layout>License_Usage__c-License Usage Layout</layout>
+        <recordType>License_Usage__c.Salesforce_License</recordType>
+    </layoutAssignments>
+    <layoutAssignments>
         <layout>Linked_Opportunity_Drives__c-Linked Opportunity Drives Layout</layout>
     </layoutAssignments>
     <layoutAssignments>
@@ -2585,7 +2761,13 @@
         <recordType>Marketing_Program__c.Sponsor_Recognition</recordType>
     </layoutAssignments>
     <layoutAssignments>
+        <layout>NotificationThrottleBatchSettings__mdt-Notification Throttle Batch Settings Layout</layout>
+    </layoutAssignments>
+    <layoutAssignments>
         <layout>Object_Specific_Setting__mdt-Object Specific Setting Layout</layout>
+    </layoutAssignments>
+    <layoutAssignments>
+        <layout>Operation_Meals_And_Rest_Calculation__mdt-Operation Meals And Rest Calculation Layout</layout>
     </layoutAssignments>
     <layoutAssignments>
         <layout>Opportunity-Opportunity Layout</layout>
@@ -2624,6 +2806,9 @@
     </layoutAssignments>
     <layoutAssignments>
         <layout>OrderItem-Order Product Layout</layout>
+    </layoutAssignments>
+    <layoutAssignments>
+        <layout>Package_Name__mdt-Package Name Layout</layout>
     </layoutAssignments>
     <layoutAssignments>
         <layout>PartyConsent-Party Consent Layout</layout>
@@ -2674,6 +2859,12 @@
         <layout>QuoteLineItem-Quote Line Item Layout</layout>
     </layoutAssignments>
     <layoutAssignments>
+        <layout>Reset_Business_Planning_Setting__mdt-Reset Business Planning Setting Layout</layout>
+    </layoutAssignments>
+    <layoutAssignments>
+        <layout>Resource_User_Allocation_Setting__mdt-Resource User Allocation Setting Layout</layout>
+    </layoutAssignments>
+    <layoutAssignments>
         <layout>Scorecard-Scorecard Layout</layout>
     </layoutAssignments>
     <layoutAssignments>
@@ -2692,6 +2883,12 @@
         <layout>Site_Mandatory_Fields_Setting__mdt-Site Mandatory Fields Setting Layout</layout>
     </layoutAssignments>
     <layoutAssignments>
+        <layout>Site_Suitability_Checklist_Setting__mdt-Site Suitability Checklist Setting Layout</layout>
+    </layoutAssignments>
+    <layoutAssignments>
+        <layout>Site_Suitability_Checklist__c-Site Suitability Checklist Layout</layout>
+    </layoutAssignments>
+    <layoutAssignments>
         <layout>SocialPersona-Social Persona Layout</layout>
     </layoutAssignments>
     <layoutAssignments>
@@ -2699,6 +2896,9 @@
     </layoutAssignments>
     <layoutAssignments>
         <layout>Solution-Solution Layout</layout>
+    </layoutAssignments>
+    <layoutAssignments>
+        <layout>Staging_Sheet_Config__mdt-Staging Sheet Config Layout</layout>
     </layoutAssignments>
     <layoutAssignments>
         <layout>Task-Task Layout</layout>
@@ -2728,7 +2928,13 @@
         <recordType>Task.X72_Hour_CheckIn</recordType>
     </layoutAssignments>
     <layoutAssignments>
+        <layout>Task_Checklist_Setting__mdt-Task Checklist Setting Layout</layout>
+    </layoutAssignments>
+    <layoutAssignments>
         <layout>Task_Reassignment_Matrix__mdt-Task Reassignment Matrix Layout</layout>
+    </layoutAssignments>
+    <layoutAssignments>
+        <layout>Task_Report_Link__mdt-Task Report Link Layout</layout>
     </layoutAssignments>
     <layoutAssignments>
         <layout>Taxonomy_Region_CO_Mapping__mdt-Taxonomy - Region CO Mapping Layout</layout>
@@ -2803,6 +3009,9 @@
         <layout>pp__c-pp Layout</layout>
     </layoutAssignments>
     <layoutAssignments>
+        <layout>restrictFieldChangeWhenPendingAction__mdt-restrictFieldChangeWhenPendingAction Layout</layout>
+    </layoutAssignments>
+    <layoutAssignments>
         <layout>sked_Account_Availability_Preference__c-Account Availability Preference Layout</layout>
     </layoutAssignments>
     <layoutAssignments>
@@ -2810,6 +3019,9 @@
     </layoutAssignments>
     <layoutAssignments>
         <layout>sked_Calendar_Message__c-Calendar Message Layout</layout>
+    </layoutAssignments>
+    <layoutAssignments>
+        <layout>sked_CollectionOperationOptimizerSetting__c-Collection Operation Optimizer Setting Layout</layout>
     </layoutAssignments>
     <layoutAssignments>
         <layout>sked_Collection_Op_Staging_Location__c-Collection Operation Staging Location Layout</layout>
@@ -2923,6 +3135,12 @@
         <layout>sked_Optimization_Run__c-Optimization Run Layout</layout>
     </layoutAssignments>
     <layoutAssignments>
+        <layout>sked_Optimizer_Default_Setting__mdt-Skedulo Optimizer Default Setting Layout</layout>
+    </layoutAssignments>
+    <layoutAssignments>
+        <layout>sked_Optimizer_Default_Weight__mdt-Skedulo Optimizer Default Weight Layout</layout>
+    </layoutAssignments>
+    <layoutAssignments>
         <layout>sked_Optimizer_Weighting__mdt-Skedulo Optimizer Weighting Layout</layout>
     </layoutAssignments>
     <layoutAssignments>
@@ -2969,6 +3187,9 @@
     </layoutAssignments>
     <layoutAssignments>
         <layout>sked_Site_Feedback__c-Site Feedback Layout</layout>
+    </layoutAssignments>
+    <layoutAssignments>
+        <layout>sked_Staff_Meal_Rest_Break_Setting__c-Staff Meal %26 Rest Break Setting Layout</layout>
     </layoutAssignments>
     <layoutAssignments>
         <layout>sked_Staffing_Budget_Availability__c-Staffing Budget Availability Layout</layout>
@@ -3018,6 +3239,9 @@
         <recordType>sked_Territory__c.sked_Division</recordType>
     </layoutAssignments>
     <layoutAssignments>
+        <layout>sked_Trade_API_Data__c-Trade API Data Layout</layout>
+    </layoutAssignments>
+    <layoutAssignments>
         <layout>sked_Travel_Time_Breakdown_Refresh_Item__c-Travel Time Breakdown Refresh Queue Item Layout</layout>
     </layoutAssignments>
     <layoutAssignments>
@@ -3043,6 +3267,9 @@
     </layoutAssignments>
     <layoutAssignments>
         <layout>sked_User_Profile_Object_Access__mdt-User%2FProfile Object Access Layout</layout>
+    </layoutAssignments>
+    <layoutAssignments>
+        <layout>sked_Workday_Validation_Error_Mapping__mdt-Workday Validation Error Mapping Layout</layout>
     </layoutAssignments>
     <layoutAssignments>
         <layout>sked_Workday_XML_Template__mdt-Workday XML Template Layout</layout>
@@ -3090,6 +3317,16 @@
     <recordTypeVisibilities>
         <default>false</default>
         <recordType>Lead.Market_Manager</recordType>
+        <visible>false</visible>
+    </recordTypeVisibilities>
+    <recordTypeVisibilities>
+        <default>false</default>
+        <recordType>License_Usage__c.Managed_Package</recordType>
+        <visible>false</visible>
+    </recordTypeVisibilities>
+    <recordTypeVisibilities>
+        <default>false</default>
+        <recordType>License_Usage__c.Salesforce_License</recordType>
         <visible>false</visible>
     </recordTypeVisibilities>
     <recordTypeVisibilities>
@@ -3252,11 +3489,19 @@
         <visibility>DefaultOn</visibility>
     </tabVisibilities>
     <tabVisibilities>
+        <tab>BSF_Custom_Notification__c</tab>
+        <visibility>Hidden</visibility>
+    </tabVisibilities>
+    <tabVisibilities>
         <tab>BSF_Error_Log__c</tab>
         <visibility>Hidden</visibility>
     </tabVisibilities>
     <tabVisibilities>
         <tab>BSF_Portfolio__c</tab>
+        <visibility>Hidden</visibility>
+    </tabVisibilities>
+    <tabVisibilities>
+        <tab>BSF_Staging_Sheet</tab>
         <visibility>Hidden</visibility>
     </tabVisibilities>
     <tabVisibilities>
@@ -3269,6 +3514,18 @@
     </tabVisibilities>
     <tabVisibilities>
         <tab>Biomed_Market_Manager_Territory__c</tab>
+        <visibility>Hidden</visibility>
+    </tabVisibilities>
+    <tabVisibilities>
+        <tab>Calendar_Build_Error_Log__c</tab>
+        <visibility>Hidden</visibility>
+    </tabVisibilities>
+    <tabVisibilities>
+        <tab>Calendar_Build_Log_Manual_Run__c</tab>
+        <visibility>Hidden</visibility>
+    </tabVisibilities>
+    <tabVisibilities>
+        <tab>Calendar_Build_Log__c</tab>
         <visibility>Hidden</visibility>
     </tabVisibilities>
     <tabVisibilities>
@@ -3325,6 +3582,10 @@
     </tabVisibilities>
     <tabVisibilities>
         <tab>Lead_Form_LSL</tab>
+        <visibility>DefaultOn</visibility>
+    </tabVisibilities>
+    <tabVisibilities>
+        <tab>License_Usage__c</tab>
         <visibility>DefaultOn</visibility>
     </tabVisibilities>
     <tabVisibilities>
@@ -3400,6 +3661,10 @@
         <visibility>Hidden</visibility>
     </tabVisibilities>
     <tabVisibilities>
+        <tab>Staging_Sheet</tab>
+        <visibility>DefaultOn</visibility>
+    </tabVisibilities>
+    <tabVisibilities>
         <tab>Taxonomy__c</tab>
         <visibility>Hidden</visibility>
     </tabVisibilities>
@@ -3408,8 +3673,20 @@
         <visibility>DefaultOn</visibility>
     </tabVisibilities>
     <tabVisibilities>
+        <tab>Vehicle_Planning_Report</tab>
+        <visibility>Hidden</visibility>
+    </tabVisibilities>
+    <tabVisibilities>
         <tab>Web_to_Lead</tab>
         <visibility>Hidden</visibility>
+    </tabVisibilities>
+    <tabVisibilities>
+        <tab>Weekly_Staff_Schedule_Report</tab>
+        <visibility>DefaultOn</visibility>
+    </tabVisibilities>
+    <tabVisibilities>
+        <tab>Weekly_Staffing_Role_Time_Report</tab>
+        <visibility>DefaultOn</visibility>
     </tabVisibilities>
     <tabVisibilities>
         <tab>sked_Account_Availability_Preference__c</tab>
@@ -3624,8 +3901,8 @@
         <visibility>Hidden</visibility>
     </tabVisibilities>
     <tabVisibilities>
-        <tab>slwc_RTV_Feedback_Submission</tab>
-        <visibility>Hidden</visibility>
+        <tab>slwc_On_Call_Call_Out_Management</tab>
+        <visibility>DefaultOn</visibility>
     </tabVisibilities>
     <tabVisibilities>
         <tab>slwc_Resource_Calendar</tab>
@@ -3638,6 +3915,14 @@
     <tabVisibilities>
         <tab>slwc_Staffing_Constraint_Console</tab>
         <visibility>Hidden</visibility>
+    </tabVisibilities>
+    <tabVisibilities>
+        <tab>slwc_Submit_Operation_Record</tab>
+        <visibility>DefaultOn</visibility>
+    </tabVisibilities>
+    <tabVisibilities>
+        <tab>slwc_Trades</tab>
+        <visibility>DefaultOn</visibility>
     </tabVisibilities>
     <tabVisibilities>
         <tab>standard-Account</tab>
@@ -3753,6 +4038,10 @@
     </tabVisibilities>
     <tabVisibilities>
         <tab>standard-DuplicateRecordSet</tab>
+        <visibility>Hidden</visibility>
+    </tabVisibilities>
+    <tabVisibilities>
+        <tab>standard-EmpUserProvisioningProcess</tab>
         <visibility>Hidden</visibility>
     </tabVisibilities>
     <tabVisibilities>
@@ -3911,7 +4200,6 @@
         <tab>standard-report</tab>
         <visibility>DefaultOff</visibility>
     </tabVisibilities>
-    <userLicense>Customer Community</userLicense>
     <userPermissions>
         <enabled>true</enabled>
         <name>ActivitiesAccess</name>
@@ -3968,4 +4256,100 @@
         <enabled>true</enabled>
         <name>UseWebLink</name>
     </userPermissions>
+    <classAccesses>
+        <apexClass>BSFNotificationThrottlerUtil</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>BSFStagingSheetController</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>BSFStagingSheetLinkController</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>BSFWeeklyStaffingRTReportController</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>BSFWeeklyStaffingRTVFController</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>BSFWeeklyStaffingRoleTimeController</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>BSF_BatchFutureDriveUpdate</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>BSF_NotificationThrottlerBatch</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>BSF_Utilities</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>FutureDrivesController</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>LicenseUsageHelper</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>LicenseUsageHelperTest</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>LicenseUsageSchedulable</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>MassUpdateOpportunity</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>OrderCloningService</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>OrderService</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>SiteSuitabilityController</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>SponsorPlanningReportPDFController</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>TaskChecklistController</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>TaskService</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>UserCollOpQueAssngmentReportController</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>WeeklyStaffScheduleReportController</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>closeFixedSiteAccountController</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <customMetadataTypeAccesses>
+        <enabled>true</enabled>
+        <name>Package_Name__mdt</name>
+    </customMetadataTypeAccesses>
 </Profile>

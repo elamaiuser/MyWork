@@ -6,6 +6,7 @@
                     <template if:false={masterData.fieldReadonlyMap.driveShiftSlots}>
                         <div if:true={isMobile} class="slds-grid">
                             <div class="slds-col slds-p-around_small">
+                                <lightning-button if:true={allowToInputLockReason} label="Lock Appointments" disabled={disableLockAppointments} variant="neutral" icon-name="utility:lock" icon-position="left" onclick={lockAppointments}></lightning-button>
                                 <lightning-button label="Reset Appointments" variant="neutral" icon-name="utility:refresh" icon-position="left" onclick={resetAppointments}></lightning-button>
                                 <lightning-button label="Re-generate Appointments" variant="neutral" icon-name="utility:refresh" icon-position="left" onclick={regenerateAppointments}></lightning-button>
                             </div>
@@ -51,20 +52,54 @@
                                                             </div>
                                                         </div>
 
+                                                        <template if:true={isUpdateable}>
+                                                            <div class="slot-checkbox">
+                                                                <lightning-input type="checkbox" data-value={slot.key} name="slotCheckbox"
+                                                                    label="" variant="label-hidden"
+                                                                    value={slot.selected} checked={slot.selected} onchange={handleSelectSlot}>
+                                                                </lightning-input>
+                                                            </div>
+                                                        </template>
+
                                                         <template if:true={slot.recurrenceDates}>
                                                             <div class="slot-recurrence-dates" if:true={slot.recurrenceDates.length}>
                                                                 <span>+{slot.recurrenceDates.length}</span>
                                                             </div>
                                                         </template>
                                                         
-                                                        <template if:false={masterData.fieldReadonlyMap.driveShiftSlots}>
-                                                            <div class="slot-actions">
-                                                                <lightning-icon if:true={slot.locked} class="action slds-current-color unlock-icon" icon-name="utility:unlock" size="xx-small" data-value={slot.key} onclick={lockAppointment}></lightning-icon>
-                                                                <lightning-icon if:false={slot.locked} class="action slds-current-color lock-icon" icon-name="utility:lock" size="xx-small" data-value={slot.key} onclick={lockAppointment}></lightning-icon>
-                                                                <lightning-icon if:true={isUpdateable} class="action slds-current-color edit-icon" icon-name="utility:edit" size="xx-small" data-value={slot.key} onclick={editAppointment}></lightning-icon>
-                                                                <lightning-icon if:true={isDeletable} class="action slds-current-color delete-icon" icon-name="utility:delete" size="xx-small" data-value={slot.key} onclick={deleteAppointment}></lightning-icon>
-                                                            </div>
-                                                        </template>
+                                                        <div class="slot-actions">
+                                                            <template if:true={isUpdateable}>
+                                                                <template if:true={slot.locked}>
+                                                                    <template if:true={allowToInputLockReason}>
+                                                                        <c-slwc-popover
+                                                                            position="right">
+                                                                            <span slot="reference">
+                                                                                <lightning-icon class="action slds-current-color unlock-icon" icon-name="utility:unlock" size="xx-small" data-value={slot.key} onclick={unlockAppointment}></lightning-icon>
+                                                                            </span>
+                                                                            <div slot="content">
+                                                                                <dl class="slds-dl_horizontal">
+                                                                                    <dt class="slds-dl_horizontal__label"><strong>Reason:</strong></dt>
+                                                                                    <dd class="slds-dl_horizontal__detail">
+                                                                                    {slot.fixedSiteLockReason}
+                                                                                    </dd>
+                                                                                    <dt class="slds-dl_horizontal__label"><strong>Comments:</strong></dt>
+                                                                                    <dd class="slds-dl_horizontal__detail">
+                                                                                        {slot.fixedSiteLockComment}
+                                                                                    </dd>
+                                                                                </dl>
+                                                                            </div>
+                                                                        </c-slwc-popover>
+                                                                    </template>
+                                                                    <template if:false={allowToInputLockReason}>
+                                                                        <lightning-icon class="action slds-current-color unlock-icon" icon-name="utility:unlock" size="xx-small" data-value={slot.key} onclick={unlockAppointment}></lightning-icon>
+                                                                    </template>
+                                                                </template>
+                                                                <lightning-icon if:false={slot.locked} class="action slds-current-color lock-icon" icon-name="utility:lock" size="xx-small" data-value={slot.key} onclick={showLockAppointmentModal}></lightning-icon>
+                                                            </template>
+
+                                                            <lightning-icon if:true={isUpdateable} class="action slds-current-color edit-icon" icon-name="utility:edit" size="xx-small" data-value={slot.key} onclick={editAppointment}></lightning-icon>
+                                                            <lightning-icon if:true={isDeletable} class="action slds-current-color delete-icon" icon-name="utility:delete" size="xx-small" data-value={slot.key} onclick={deleteAppointment}></lightning-icon>
+                                                        </div>
                                                     </div>
                                                 </li>
                                             </template>
@@ -80,19 +115,29 @@
                     </template>
                 </div>
             </div>
-            <template if:false={masterData.fieldReadonlyMap.driveShiftSlots}>
-                <div if:false={isMobile} class="side-bar slds-no-flex">
-                    <h3 class="slds-section-title--divider">Actions</h3>
-                    <div class="slds-grid">
-                        <div class="slds-col slds-p-vertical_small">
-                            <lightning-button label="Reset" variant="neutral" icon-name="utility:refresh" icon-position="left" onclick={resetAppointments}></lightning-button>
-                            <lightning-button class="slds-m-left_x-small" label="Re-generate" variant="neutral" icon-name="utility:refresh" icon-position="left" onclick={regenerateAppointments}></lightning-button>
-                        </div>
+            <div if:false={isMobile} class="side-bar slds-no-flex">
+                <h3 class="slds-section-title--divider">Actions</h3>
+                <div class="slds-grid">
+                    <div class="slds-col slds-p-vertical_small">
+                        <template if:true={isUpdateable}>
+                            <lightning-button class="slds-m-right_x-small slds-m-bottom_xx-small" label="Lock" disabled={disableLockAppointments} variant="neutral" icon-name="utility:lock" icon-position="left" onclick={lockAppointments}></lightning-button>
+                            <lightning-button class="slds-m-right_x-small slds-m-bottom_xx-small" label="Unlock" disabled={disableLockAppointments} variant="neutral" icon-name="utility:unlock" icon-position="left" onclick={unlockAppointments}></lightning-button>
+                        </template>
+                        <lightning-button class="slds-m-bottom_xx-small" label="Reset" variant="neutral" icon-name="utility:refresh" icon-position="left" onclick={resetAppointments} disabled={disableActionButton}></lightning-button>
+                        <lightning-button class="slds-m-left_x-small  slds-m-bottom_xx-small" label="Re-generate" variant="neutral" icon-name="utility:refresh" icon-position="left" onclick={regenerateAppointments} disabled={disableActionButton}></lightning-button>
                     </div>
-                    
-                    <c-slwc-appointment-modal compact-view drive={drive} master-data={masterData}></c-slwc-appointment-modal>
                 </div>
-            </template>
+                
+                <c-slwc-appointment-modal compact-view drive={drive} master-data={masterData}></c-slwc-appointment-modal>
+            </div>
         </div>
     </template>
+
+    <c-slwc-lock-appointment-modal
+        slots={lockAppointmentModalData.slots}
+        is-open={lockAppointmentModalData.isOpen}
+        onclose={closeLockAppointmentModal}
+        onsave={saveLockAppointmentModal}
+    >
+    </c-slwc-lock-appointment-modal>
 </template>

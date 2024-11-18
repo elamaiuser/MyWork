@@ -49,7 +49,7 @@ const isJobRequireTravelTimes = (isTemporaryCO, job, drive, {
     resourceRoleGroups
   });
   const rule1 = isDrivingRole;
-  const rule2 = !isDrivingRole && !drive.collectionOperation.noTravelTime && (drive.travelTimeIncluded === 'All Roles' || isTemporaryCO);
+  const rule2 = !isDrivingRole && !drive.collectionOperation?.noTravelTime && (drive.travelTimeIncluded === 'All Roles' || isTemporaryCO);
 
   return rule1 || rule2;
 }
@@ -122,10 +122,12 @@ class SlwcAvailator {
   drive;
   driveId;
   mapApis;
+  considerDateOnly = false;
 
   //local keepData
   collectionOperationId;
   collectionOperationIds = [];
+  arcRegionIds = [];
   travelTimeVelocity = 35;
   timezoneSidId = null;
   jobs = [];
@@ -137,6 +139,7 @@ class SlwcAvailator {
   groupActivities = [];
   resourceRoleGroups = [];
   callOutJobAllocations = [];
+  tradedJobAllocations = [];
   resourceOverrides = [];
   maxCDLDOTDurationInMinutes = 60;
   travelTimeMap = {};
@@ -152,23 +155,23 @@ class SlwcAvailator {
     this.drive = data.drive;
     this.driveId = data.driveId;
     this.mapApis = data.mapApis;
-
+    this.considerDateOnly = data.considerDateOnly;
     console.log('>>> Init Availator', this)
   }
 
   populateDateTime(rawData) {
-    let startDateTime = this.dateUtils.getDateTimeInfo(rawData.start);
+    let startDateTime = this.dateUtils.getDateTimeInfo(this.considerDateOnly ? (rawData.startDate || rawData.start) : rawData.start);
     if(startDateTime) {
       rawData.startJS = startDateTime.dateTime;
       rawData.startDate = startDateTime.date;
       rawData.startTime = startDateTime.timeNumber
     }
 
-    let endDateTime = this.dateUtils.getDateTimeInfo(rawData.finish || rawData.end);
+    let endDateTime = this.dateUtils.getDateTimeInfo(this.considerDateOnly ? (rawData.endDate || rawData.finish || rawData.end) : rawData.finish || rawData.end);
     if(endDateTime) {
-      rawData.finishJS = endDateTime.dateTime;
+      rawData.finishJS = this.considerDateOnly ? DateTime.fromJSDate(endDateTime.dateTime).endOf('days').toJSDate() : endDateTime.dateTime;
       rawData.endDate = endDateTime.date;
-      rawData.endTime = endDateTime.timeNumber
+      rawData.endTime = this.considerDateOnly ? 2359 : endDateTime.timeNumber
     }
 
     return rawData;
@@ -222,10 +225,12 @@ class SlwcAvailator {
     return distance;
   };
 
-  doTransformResources(skedResources, groupActivities, callOutJobAllocations, resourceOverrides) {
+  doTransformResources(skedResources, groupActivities, callOutJobAllocations, tradedJobAllocations, resourceOverrides, resourceHoursRecordDetails) {
     let groupActivitiesMap = keyBy(groupActivities, "id");
     let callOutJobAllocationsMap = groupBy(callOutJobAllocations, "resourceId");
+    let tradedJobAllocationsMap = groupBy(tradedJobAllocations, "resourceId"); 
     let resourceOverridesMap = groupBy(resourceOverrides, "resourceId");
+    let resourceHoursRecordDetailsMap = groupBy(resourceHoursRecordDetails, "resourceHoursRecordId");
 
     return (skedResources || []).map((skedResource) => {
       let resource = autoMapper.autoMapperInstance.mapTo('sked__Resource__c', skedResource);
@@ -319,15 +324,25 @@ class SlwcAvailator {
       });
       resource.callOutJobIds = resource.callOutJobAllocations.map(jobAllocation => jobAllocation.jobId);
       resource.isCallOut = resource.callOutJobIds.length > 0;
+
+      resource.tradedJobAllocations = (tradedJobAllocationsMap[resource.id] || []).map((jobAllocation) => {
+        jobAllocation.objectType = OBJECT_TYPE.JOB_ALLOCATION;
+        this.populateDateTime(jobAllocation);
+        return jobAllocation;
+      })
+      resource.tradedJobIds = resource.tradedJobAllocations.map(jobAllocation => jobAllocation.jobId);
+      resource.isTraded = resource.tradedJobIds.length > 0;
+
       resource.resourceOverrides = resourceOverridesMap[resource.id] || [];
 
       if(!resource.secondaryCollectionOperations) {
         resource.secondaryCollectionOperations = [];
       }
 
-      if(!resource.resourceHoursRecords) {
-        resource.resourceHoursRecords = [];
-      }
+      resource.resourceHoursRecords = (resource.resourceHoursRecords || []).map((resourceHoursRecord) => {
+        resourceHoursRecord.details = resourceHoursRecordDetailsMap[resourceHoursRecord.id] || [];
+        return resourceHoursRecord;
+      });
 
       if(!resource.resourceTags) {
         resource.resourceTags = [];
@@ -373,6 +388,14 @@ class SlwcAvailator {
       return availabilityPattern;
     });
     return availabilityPatterns;
+  }
+
+  doTransformResourceHoursRecordDetails(data) {
+    let resourceHoursRecordDetails = (data || []).map((skedResourceHoursRecordDetail) => {
+      let resourceHoursRecordDetail = autoMapper.autoMapperInstance.mapTo('sked_Resource_Hours_Record_Detail__c', skedResourceHoursRecordDetail);
+      return resourceHoursRecordDetail;
+    });
+    return resourceHoursRecordDetails;
   }
 
   doTransformJobs(data) {
@@ -422,6 +445,7 @@ class SlwcAvailator {
     let request = {
       accountIds: this.drive.accountId ? [this.drive.accountId] : [],
       collectionOperationIds: this.collectionOperationIds,
+      arcRegionIds: this.arcRegionIds,
       locationIds: this.drive.driveSiteId ? [this.drive.driveSiteId] : [],
       inputDates: inputDates,
       jobIds: this.jobs.filter(job => !!job.id).map(job => job.id),
@@ -453,10 +477,22 @@ class SlwcAvailator {
         let returnCallOutJobAllocations = this.doTransformJobAllocations(result.returnedData.calloutJobAllocations);
         this.callOutJobAllocations = this.callOutJobAllocations.concat(returnCallOutJobAllocations);
 
+        let returnTradedJobAllocations = this.doTransformJobAllocations(result.returnedData.tradedJobAllocations);
+        this.tradedJobAllocations = this.tradedJobAllocations.concat(returnTradedJobAllocations);
+
         let returnResourceOverrides = this.doTransformResourceOverrides(result.returnedData.resourceOverrides);
         this.resourceOverrides = this.resourceOverrides.concat(returnResourceOverrides);
 
-        let returnedResources = this.doTransformResources(result.returnedData.resources, this.groupActivities, this.callOutJobAllocations, this.resourceOverrides);
+        let returnResourceHoursRecordDetails = this.doTransformResourceHoursRecordDetails(result.returnedData.resourceHoursRecordDetails);
+
+        let returnedResources = this.doTransformResources(
+          result.returnedData.resources,
+          this.groupActivities,
+          this.callOutJobAllocations,
+          this.tradedJobAllocations,
+          this.resourceOverrides,
+          returnResourceHoursRecordDetails
+        );
         this.resources = this.resources.concat(returnedResources);
 
         if (pageNo == 1) {
@@ -581,6 +617,37 @@ class SlwcAvailator {
     })
   }
 
+  fetchResourcesDataCallOutReplacement(jobs, drive, {
+    timezoneSidId,
+    excludedDriveIds = [],
+    excludedActivityIds = [],
+    collectionOperationIds = []
+  }) {
+    console.log('>>> Start fetching data', new Date());
+    return Promise.resolve()
+    .then(() => {
+      console.log('>>> Start retrieveCustomSettings', new Date());
+      return this.retrieveCustomSettings();
+    })
+    .then(() => {
+      this.timezoneSidId = timezoneSidId;
+      this.collectionOperationIds = collectionOperationIds;
+      this.jobs = this.doTransformJobs(jobs);
+      this.excludedDriveIds = excludedDriveIds;
+      this.excludedActivityIds = excludedActivityIds;
+      this.drive = drive || {};
+    })
+    .then(() => {
+      console.log('>>> Start fetching resources', new Date());
+      return this.fetchResources(1, null, false);
+    })
+    .then(() => {
+      console.log('>>> Finished Fetching data', new Date());
+      console.log('>>> jobs', this.jobs);
+      console.log('>>> resources', this.resources);
+    })
+  }
+
   fetchDataForDriveGenerator(drive, jobs, resources) {
     console.log('>>> Start fetching data', new Date());
     return Promise.resolve()
@@ -598,6 +665,38 @@ class SlwcAvailator {
       console.log('>>> Start fetching resources', new Date());
       return this.fetchResources(1, null, false, {
         recordIds: resources.map(item => item.id)
+      });
+    })
+    .then(() => {
+      console.log('>>> Finished Fetching data', new Date());
+      console.log('>>> jobs', this.jobs);
+      console.log('>>> resources', this.resources);
+    })
+  }
+
+  fetchResourceDataForTrade(jobs, {
+    timezoneSidId,
+    collectionOperationIds = [],
+    arcRegionIds = [],
+    resourceIds = []
+  }) {
+    console.log('>>> Start fetching data', new Date());
+    return Promise.resolve()
+    .then(() => {
+      console.log('>>> Start retrieveCustomSettings', new Date());
+      return this.retrieveCustomSettings();
+    })
+    .then(() => {
+      this.timezoneSidId = timezoneSidId;
+      this.collectionOperationIds = collectionOperationIds;
+      this.arcRegionIds = arcRegionIds;
+      this.jobs = this.doTransformJobs(jobs);
+      this.drive = {};
+    })
+    .then(() => {
+      console.log('>>> Start fetching resources', new Date());
+      return this.fetchResources(1, null, false, {
+        recordIds: resourceIds
       });
     })
     .then(() => {
@@ -903,7 +1002,8 @@ class SlwcAvailator {
               lat: item.latitude,
               lng: item.longitude
             }
-          })
+          }),
+          departureTime: this.drive.minShiftStart
         })
         .then(result => {
           const matrixData = result?.returnedData?.result?.matrix || [];
@@ -1179,7 +1279,7 @@ class SlwcAvailator {
         if (mapWeekdayPattern[weekday]) {
           let weekdayIndex = mapWeekdayIndex.get(weekday);
           let daysDifference = this.dateUtils.diffDays(patternResource.startDate, inputDate);
-          let weekNo = ((daysDifference - (weekdayIndex - startDateWeekdayIndex)) / 7) + 1;
+          let weekNo = Math.floor((daysDifference - (weekdayIndex - startDateWeekdayIndex)) / 7) + 1;
           if (patternData.repeatWeeks == 1 || weekNo % patternData.repeatWeeks == 1) {
             if (mapWeekdayPattern[weekday]) {
               let day = mapWeekdayPattern[weekday];
@@ -1607,6 +1707,41 @@ class SlwcAvailator {
                 exceptionLog.push(exception);
               }
 
+              //validate maximum working days per week
+              if (resource.resourceHoursRecords && resource.maxWorkingDaysPerWeek) {
+                const matchedResourceHoursRecord = resource.resourceHoursRecords.find((resourceHoursRecord) => {
+                  return this.dateUtils.compareDateJS(this.drive.driveDate, resourceHoursRecord.startDate) >= 0
+                      && this.dateUtils.compareDateJS(this.drive.driveDate, resourceHoursRecord.endDate) <= 0
+                });
+
+                if (matchedResourceHoursRecord) {
+                  let workingDates = new Set([this.drive.driveDate]);
+                  (matchedResourceHoursRecord.details || []).forEach(detail => {
+                    let tempDt = new Date(detail.startDate);
+                    while (this.dateUtils.compareDateJS(tempDt, detail.endDate) <= 0) {
+                      workingDates.add(this.dateUtils.dateToStringNative(tempDt));
+                      tempDt = this.dateUtils.addDay(tempDt, 1);
+                    }
+                  });
+
+                  if (workingDates.size > resource.maxWorkingDaysPerWeek) {
+                    let exceptionMsg = `Maximum weekly work days violation. Week: ${matchedResourceHoursRecord.startDate}`;
+                    if (this.exceptionSettingsMap["MAXIMUM_WEEKLY_WORK_DAYS_VIOLATION"] && this.exceptionSettingsMap["MAXIMUM_WEEKLY_WORK_DAYS_VIOLATION"].exception) {
+                      exceptionMsg = this.exceptionSettingsMap["MAXIMUM_WEEKLY_WORK_DAYS_VIOLATION"].exception.replace("{{weekStartDate}}", matchedResourceHoursRecord.startDate);
+                    }
+
+                    let exception = {
+                      driveId: this.driveId,
+                      jobId: job.id,
+                      resource: resource.id,
+                      exception: exceptionMsg,
+                      exceptionCode: 'MAXIMUM_WEEKLY_WORK_DAYS_VIOLATION'
+                    };
+                    exceptionLog.push(exception);
+                  }
+                }
+              }
+
               //validate account blacklisted
               if(resource.isAccountBlacklisted) {
                 let exceptionMsg = 'Resource in declined account';
@@ -1647,17 +1782,12 @@ class SlwcAvailator {
                 if(!resourceTag.tag) return;
 
                 const tagStartDateValid = resourceTag.startDate <= job.driveDate;
-                const tagExpired = resourceTag.expiryDate && job.driveDate > resourceTag.expiryDate;
                 const tagRestricted = resourceTag.restrictionStartDate && resourceTag.restrictionEndDate && 
                   resourceTag.restrictionStartDate <= job.driveDate && resourceTag.restrictionEndDate >= job.driveDate;
 
-                if (tagStartDateValid && !tagExpired && !tagRestricted) {
+                if (tagStartDateValid && !tagRestricted) {
                   validTagNames.push(resourceTag.tag.name);
                 } else {
-                  if (tagExpired) {
-                    expiredTagNames.push(resourceTag.tag.name);
-                  } 
-
                   if (tagRestricted) {
                     restrictedTagNames.push(resourceTag.tag.name);
                   }
@@ -1898,6 +2028,8 @@ class SlwcAvailator {
                   isPendingTermination = true;
                 } else if (employmentStatus === RESOURCE_EMPLOYMENT_STATUS.LEAVE) {
                   isActive = resource.anticipatedLeaveReturnDate && resource.anticipatedLeaveReturnDate <= job.driveDate;
+                } else if (employmentStatus === RESOURCE_EMPLOYMENT_STATUS.INACTIVE) {
+                  isActive = false;
                 }
               }
       

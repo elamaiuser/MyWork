@@ -45,8 +45,6 @@ public class publicityReportNewPortfoliosTest {
         
         //insert AdminUser ;
         
-        UserRole urole  = [select id from userrole where developername =: rolename ];
-        
         User DRDAMUser = new User(
             ProfileId = [SELECT Id FROM Profile WHERE Name = 'DRD Manager'].Id,
             LastName = 'last',
@@ -58,8 +56,7 @@ public class publicityReportNewPortfoliosTest {
             TimeZoneSidKey = 'America/Los_Angeles',
             EmailEncodingKey = 'UTF-8',
             LanguageLocaleKey = 'en_US',
-            LocaleSidKey = 'en_US',
-            UserRoleId = urole.Id
+            LocaleSidKey = 'en_US'
         );
         
         
@@ -75,7 +72,8 @@ public class publicityReportNewPortfoliosTest {
             accObj = new Account();
             accObj.RecordTypeId = accRecTypeId;
             accObj.Name = 'Exavalu';
-            accObj.BillingPostalCode = '30622';            
+            accObj.BillingPostalCode = '30622';
+			accObj.Internal_Name__c = 'TEST';            
             mobileAccList.add(accobj); 
             
             
@@ -309,7 +307,8 @@ public class publicityReportNewPortfoliosTest {
         TriggerHandler.bypass('OrderTriggerHandler');
         TriggerHandler.bypass('OrderItemTriggerHandler');
         TriggerHandler.bypass('skedDriveHandler');
-
+		TriggerHandler.bypass('AccountTriggerHandler');
+        
         prepareDataset();
                 
         // create product and pricebook
@@ -376,8 +375,8 @@ public class publicityReportNewPortfoliosTest {
         for(integer i =0;i<2;i++)
         {
         contact con = new contact ();
-        con.Firstname='Test Contact First'+i;
-        con.lastname='Test Contact Last'+i;
+        con.Firstname='TestContactFirst'+i;
+        con.lastname='TestContactLast'+i;
         con.Email = 'con'+i+'@gmail.com';
         con.Original_Service_Date__c = system.today().addDays(3);
         con.Primary_Phone__c = 'Mobile Phone';

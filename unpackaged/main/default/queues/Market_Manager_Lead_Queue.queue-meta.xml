@@ -4,16 +4,11 @@
     <name>Market Manager Lead Queue</name>
     <queueMembers>
         <users>
-            <user>ann.wells@redcross.org.biomed</user>
-            <user>brian.boyle@redcross.org.biomed</user>
             <user>evelyn.hart@redcross.org.biomed</user>
             <user>jeffrey.hollingsworth@redcross.org.biomed</user>
             <user>jessica.winkel@redcross.org.biomed</user>
-            <user>karen.avitabile@redcross.org.biomed</user>
-            <user>katrell.patterson@redcross.org.biomed</user>
             <user>kelley.udouj@redcross.org.biomed</user>
             <user>shawn.ohargan@redcross.org.biomed</user>
-            <user>stephanie.mulvihill@redcross.org</user>
             <user>tracy.fox@redcross.org.biomed</user>
         </users>
     </queueMembers>

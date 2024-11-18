@@ -1,5 +1,5 @@
-import { get, cloneDeep, orderBy, isEqual, sum, compact, uniqBy, isObject, isDate } from 'c/lodash';
-import { RESOURCE_TYPE, MANUALLY_CREATED_FROM, DRIVE_CHANGE_REQUEST_TYPE , ASSET_TYPE, PROCEDURE_TYPE, DRIVE_TYPE, OPERATION_TYPE, RESOURCE_ROLE_GROUP, PENDING_ACTION, DRIVE_STATUS, RESOURCE_ROLE, DRIVE_CHANGE_REQUEST_ITEM_TYPE, DRIVE_CONTENTION, DRIVE_CONTENTION_RESOLUTION, JOB_ALLOCATION_STATUS, DRIVE_APPROVAL_STATUS, OPERATION_DRIVE_LIMIT_TYPE} from 'c/slwcConstants';
+import { get, cloneDeep, orderBy, isEqual, sum, compact, uniqBy, isObject, isDate, max } from 'c/lodash';
+import { RESOURCE_TYPE, MANUALLY_CREATED_FROM, DRIVE_CHANGE_REQUEST_TYPE , ASSET_TYPE, PROCEDURE_TYPE, DRIVE_TYPE, OPERATION_TYPE, RESOURCE_ROLE_GROUP, PENDING_ACTION, DRIVE_STATUS, RESOURCE_ROLE, DRIVE_CHANGE_REQUEST_ITEM_TYPE, DRIVE_CONTENTION, DRIVE_CONTENTION_RESOLUTION, JOB_ALLOCATION_STATUS, DRIVE_APPROVAL_STATUS, OPERATION_DRIVE_LIMIT_TYPE, DRIVE_REQUEST_CHANGE_STATUS} from 'c/slwcConstants';
 import { DateTime } from 'c/luxon';
 import { isNullOrEmpty, parseJSON, getTravelTimeIndexKey } from 'c/slwcUtils';
 import { territoryCollectionOperationQueryModel, territoryCollectionOperationService } from 'c/dataService';
@@ -44,6 +44,18 @@ class DriveHelper {
 
     return loginUser && loginUser.profileName &&
       (loginUser.profileName.startsWith('APS'));
+  }
+
+  isAPSAdmin(loginUser) {
+    return loginUser && loginUser.profileName && loginUser.profileName.startsWith('APS Admin');
+  }
+
+  isAPSManagement(loginUser) {
+    return loginUser && loginUser.profileName && loginUser.profileName.startsWith('APS Management');
+  }
+
+  isCollectionManagentUser(loginUser) {
+    return loginUser && loginUser.profileName && loginUser.profileName.startsWith('Collection Management');
   }
 
   isDRDUser(loginUser) {
@@ -172,7 +184,7 @@ class DriveHelper {
           (drive.collectionOperationId == item.collectionOperationId);  
       });
 
-      return (tco || {}).territoryId || null;
+      return tco;
   }
 
   isDriveInPathOfLinkedDrive(drive) {
@@ -433,7 +445,12 @@ class DriveHelper {
     })
     jobs.forEach(job => {
       if(job.resourceRole) {
-        resourceQuantity.set(job.resourceRole, {
+        let key = job.resourceRole;
+        if(job.dualRole) {
+          key = `${job.resourceRole}-${job.dualRole}`
+        }
+        
+        resourceQuantity.set(key, {
           quantity: this.getJobQuantity(job) || 0,
           dualRole: job.dualRole
         });
@@ -491,11 +508,22 @@ class DriveHelper {
           }
         }).map(posAl => posAl.resource);
 
+        let availableButNotSharedAssetIds = (result.possibleAllocations || []).filter(posAl => {
+          return (posAl.exceptionLog || []).length === 1 && posAl.exceptionLog[0].exceptionCode === 'RESOURCE_NOT_AVAILABLE_FOR_CO'
+        }).map(posAl => posAl.resourceId);
+
         return {
           availableVehicles: vehicles.filter(vehicle => availableVehicleIds.includes(vehicle.id)),
-          availableEquipments: availableEquipments
+          availableEquipments: availableEquipments,
+          availableButNotSharedAssetIds
         }
       })
+  }
+
+  getCurrentAssignedAssets(drive) {
+    let { assignedVehicles } = this.getCurrentAssignedVehicles(drive);
+    let { assignedEquipments } = this.getCurrentAssignedEquipments(drive);
+    return [...assignedVehicles, ...assignedEquipments];
   }
 
   getCurrentAssignedVehicles(drive) {
@@ -507,7 +535,7 @@ class DriveHelper {
       (vehicleJob.jobAllocations || []).forEach(jobAllocation => {
         if(jobAllocation.status !== JOB_ALLOCATION_STATUS.DELETED) {
           assignedVehicles.push(jobAllocation.resource);
-          if(jobAllocation.locked) {
+          if(jobAllocation.isLocked) {
             lockedVehicles.push(jobAllocation.resource);
           }
           totalCurrentAssignedVehiclesCapacity += (jobAllocation.resource.presDonorCapacity || 0)
@@ -534,7 +562,7 @@ class DriveHelper {
           .filter((jobAllocation) =>  jobAllocation.status !== JOB_ALLOCATION_STATUS.DELETED)
           .forEach(jobAllocation => {
             assignedEquipments.push(jobAllocation.resource);
-            if(jobAllocation.locked) {
+            if(jobAllocation.isLocked) {
               lockedEquipments.push(jobAllocation.resource);
             }
           })
@@ -588,7 +616,7 @@ class DriveHelper {
     if (roleTimeData) {
       if (roleTimeData.roleTimeDetails && roleTimeData.roleTimeDetails.length) {
         roleTimeData.roleTimeDetails.forEach((item) => {
-          if(this.isFixedSiteDrive(drive) && 
+          if((this.isFixedSiteDrive(drive) || this.isWbFixedSiteDrive(drive)) && 
             item.fixedSiteOperationType && 
             item.fixedSiteOperationType !== drive.operationType) return;
           
@@ -604,7 +632,7 @@ class DriveHelper {
           }
         });
         roleTimeData.roleTimeDetails.forEach((item) => {
-          if(this.isFixedSiteDrive(drive) && 
+          if((this.isFixedSiteDrive(drive) || this.isWbFixedSiteDrive(drive))&& 
             item.fixedSiteOperationType && 
             item.fixedSiteOperationType !== drive.operationType) return;
             
@@ -665,6 +693,7 @@ class DriveHelper {
         'totalProceduresProjected',
         'totalProductsProjected',
         'driveProductivityPlanned',
+        'totalSlots'
     ]
     
     let driveChanges = [];
@@ -692,29 +721,40 @@ class DriveHelper {
   }
 
   buildFieldPermissionsMap(drive, {
-    activeDriveChangeRequest,
+    waitingDriveChangeRequest,
+    pendingDriveChangeRequest,
     adminSetting,
     loginUser, 
-    timezoneSidId
+    timezoneSidId,
+    travelTimeIndexItemMap
   }) {
     const isAdminUser = this.isAdminUser(loginUser);
     const isAPSUser = this.isAPSUser(loginUser);
     const isDRDUser = this.isDRDUser(loginUser);
     const isManufacturingUser = this.isManufacturingUser(loginUser);
     const isTelerecuiterUser = this.isTelerecuiterUser(loginUser);
+    const isAPSAdmin = this.isAPSAdmin(loginUser);
 
-    const isDriveSubmittedForDriveChangeRequest = !!activeDriveChangeRequest;
+    const isDriveSubmittedForDriveChangeRequest = !!waitingDriveChangeRequest;
     const isDriveSubmittedForSubmissionApproval = this.isDriveSubmittedForSubmissionApproval(drive);
     const isDriveSubmittedForCancelApproval = this.isDriveSubmittedForCancelApproval(drive);
-  
-    if (
-      isDriveSubmittedForCancelApproval || 
-      drive.status === DRIVE_STATUS.HOLD || 
-      (!isAdminUser && !isAPSUser && (
-        isDriveSubmittedForDriveChangeRequest ||
-        isDriveSubmittedForSubmissionApproval
-      ))
-    ) {
+    
+    const readonlyRule1 = isDriveSubmittedForCancelApproval
+                            || drive.status === DRIVE_STATUS.HOLD 
+                            || (!isAdminUser && !isAPSUser && (
+                                (isDriveSubmittedForDriveChangeRequest) ||
+                                isDriveSubmittedForSubmissionApproval
+                              ));
+    
+    const matchedSiteCO = this.getMatchedSiteCOForDrive(drive);
+    const { travelTimeBreakdownsCoToSite, travelTimeBreakdownsSiteToCo} = this.getTravelTimeBreakdownData({
+      driveDate: drive.driveDate,
+      driveSite: drive.driveSite,
+      collectionOperation: matchedSiteCO ? matchedSiteCO.collectionOperation : drive.collectionOperation
+    }, { travelTimeIndexItemMap });
+    const readonlyRule2 = !isAdminUser && !isAPSAdmin && drive && drive.typeOfDrive === DRIVE_TYPE.MOBILE && (!travelTimeBreakdownsCoToSite?.length || !travelTimeBreakdownsSiteToCo?.length);
+    const readonlyRule3 = pendingDriveChangeRequest;
+    if (readonlyRule1 || readonlyRule2 || readonlyRule3) {
       return {
         isReadonly: true,
         fieldReadonlyMap: {
@@ -873,7 +913,8 @@ class DriveHelper {
         'wbProjectedProcedures',
         'x2rbcProjectedProcedures',
         'plateletProjectedProcedures',
-        'plasmaProjectedProcedures'
+        'plasmaProjectedProcedures',
+        'slotGenerator'
       ]
     } else {
       driveFields = [
@@ -887,7 +928,8 @@ class DriveHelper {
         'projectedRegisteredDonors',
         'wbProjectedProcedures',
         'x2rbcProjectedProcedures',
-        'aptRequired'
+        'aptRequired',
+        'slotGenerator'
       ];
     }
 
@@ -1321,7 +1363,10 @@ class DriveHelper {
   }, {
     timezoneSidId,
     travelTimeIndexItemMap = {}
-  }) {
+  }, 
+  roleTimeData = {}
+  ) {
+
     let travelTimeToStagingLocation = driveSite.travelTimeToStagingLocation ? driveSite.travelTimeToStagingLocation : 45;
     let travelTimeCoToStie = travelTimeToStagingLocation;
     let travelTimeSiteToCo = travelTimeToStagingLocation;
@@ -1329,6 +1374,22 @@ class DriveHelper {
     let driveDateObj = DateTime.fromISO(driveDate, { zone: timezoneSidId });
     let driveDateWeekday = driveDateObj.toFormat('EEEE');
 
+    let dateTimeObj = {
+      start: this.newDateTime(driveDate, startTime, timezoneSidId),
+      end: this.newDateTime(driveDate, endTime, timezoneSidId)
+    };
+  
+    const durationObj = {
+      minDurationBefore: roleTimeData.setupTime + roleTimeData.siteLogisticsTo,
+      maxDurationAfter: roleTimeData.breakdownTime + roleTimeData.siteLogisticsBack
+    };
+
+    dateTimeObj.start = new Date(dateTimeObj.start.getTime() - durationObj.minDurationBefore * 60000); 
+    dateTimeObj.end = new Date(dateTimeObj.end.getTime() + durationObj.maxDurationAfter * 60000); 
+
+    startTime = this.dateJSToTimeIso(dateTimeObj.start, timezoneSidId);
+    endTime = this.dateJSToTimeIso(dateTimeObj.end, timezoneSidId);
+    
     const driveStartTimeString = startTime + 'Z';
     const { travelTimeBreakdownsCoToSite, travelTimeBreakdownsSiteToCo} = this.getTravelTimeBreakdownData({
       driveSite,
@@ -1340,6 +1401,7 @@ class DriveHelper {
     
     if (travelTimeBreakdownsCoToSite && travelTimeBreakdownsCoToSite.length) {
       let travelTimeBreakdown = travelTimeBreakdownsCoToSite.find((item) => item.weekday == driveDateWeekday && item.startOfWindow <= driveStartTimeString && driveStartTimeString <= item.endOfWindow);
+      
       if (travelTimeBreakdown && !isNaN(travelTimeBreakdown.travelTime)) {
         travelTimeCoToStie = Math.ceil(travelTimeBreakdown.travelTime);
       }
@@ -1425,7 +1487,6 @@ class DriveHelper {
   }
 
   calculateDriveRoleTimeData(drive, masterData) {
-    const { travelTime, travelTime2 } = this.calculateDriveTravelTime(drive, masterData);
     const { roleGroupTimeDetailMap, roleGroupTimeVarianceMap, resourceRoleGroups: resourceRoleGroupsMap} = masterData;
     const resourceRoleGroups = Object.keys(resourceRoleGroupsMap);
     let resourceRoleGroupRoleTimeDataMap = {};
@@ -1433,13 +1494,15 @@ class DriveHelper {
       resourceRoleGroups.forEach(resourceRoleGroup => {
         let roleTimeData = {
           leadTime: 0,
-          travelTime: travelTime,
+          travelTime: 0,
           siteLogisticsTo: 0,
           setupTime: 0,
           breakdownTime: 0,
-          travelTime2: travelTime2,
+          travelTime2: 0,
           siteLogisticsBack: 0,
           wrapUpTime: 0,
+          travelTimeCoToSiteVariance: 0,
+          travelTimeSiteToCoVariance: 0
         }
 
         const roleGroupTimeDetail = roleGroupTimeDetailMap[resourceRoleGroup];
@@ -1470,11 +1533,11 @@ class DriveHelper {
             if (appliesTo.includes('Wrap-up Time')) {
               roleTimeData.wrapUpTime += amount;
             }
-            if (appliesTo.includes('Travel Time To')) {
-              roleTimeData.travelTime += amount;
+            if (appliesTo.includes('Travel Time To') && (!drive.collectionOperation?.noTravelTime || resourceRoleGroup === RESOURCE_ROLE_GROUP.DRIVING_ROLES)) {
+              roleTimeData.travelTimeCoToSiteVariance += amount;
             }
-            if (appliesTo.includes('Travel Time From')) {
-              roleTimeData.travelTime2 += amount;
+            if (appliesTo.includes('Travel Time From') && (!drive.collectionOperation?.noTravelTime || resourceRoleGroup === RESOURCE_ROLE_GROUP.DRIVING_ROLES)) {
+              roleTimeData.travelTimeSiteToCoVariance += amount;
             }
             if (appliesTo.includes('Site Logistics To')) {
               roleTimeData.siteLogisticsTo += amount;
@@ -1484,17 +1547,21 @@ class DriveHelper {
             }
           });
         }
+        const { travelTime, travelTime2 } = this.calculateDriveTravelTime(drive, masterData, roleTimeData);
+        roleTimeData.travelTime = travelTime + roleTimeData.travelTimeCoToSiteVariance;
+        roleTimeData.travelTime2 = travelTime2 + roleTimeData.travelTimeSiteToCoVariance;
 
         if (
           resourceRoleGroup !== RESOURCE_ROLE_GROUP.DRIVING_ROLES && (
-            drive.travelTimeIncluded === 'Drivers Only' || 
+            drive.travelTimeIncluded === 'Drivers Only' ||
             drive.collectionOperation?.noTravelTime
           )
         ) {
-          roleTimeData.travelTime = 0;
-          roleTimeData.travelTime2 = 0;
+          roleTimeData.travelTime = roleTimeData.travelTimeCoToSiteVariance;
+          roleTimeData.travelTime2 = roleTimeData.travelTimeSiteToCoVariance;
         }
 
+        roleTimeData = this.getAdjustedRoleTimeDetailData(roleTimeData);
         resourceRoleGroupRoleTimeDataMap[resourceRoleGroup] = roleTimeData;
       })
     }
@@ -1502,7 +1569,21 @@ class DriveHelper {
     return resourceRoleGroupRoleTimeDataMap;
   }
 
-  calculateDriveShiftRoleTimeData(drive, driveShiftMetadata) {
+  getAdjustedRoleTimeDetailData(roleTimeData) {
+    return {
+      ... roleTimeData,
+      leadTime:  max([0, roleTimeData.leadTime]),
+      setupTime: max([0, roleTimeData.setupTime]),
+      breakdownTime: max([0, roleTimeData.breakdownTime]),
+      wrapUpTime: max([0, roleTimeData.wrapUpTime]),
+      travelTime: max([0, roleTimeData.travelTime]),
+      travelTime2: max([0, roleTimeData.travelTime2]),
+      siteLogisticsTo: max([0, roleTimeData.siteLogisticsTo]),
+      siteLogisticsBack: max([0, roleTimeData.siteLogisticsBack])
+    }
+  }
+
+  calculateDriveShiftRoleTimeData(masterData, drive, driveShiftMetadata) {
     const driveShiftsMetadata = drive.driveShiftsMetadata;
     const driveShiftIndex = driveShiftsMetadata.driveShifts.findIndex(item => item.key === driveShiftMetadata.key);
     const breakdownTimeThreshold = drive.collectionOperation.breakdownTimeThreshold;
@@ -1510,18 +1591,44 @@ class DriveHelper {
     
     let resourceRoleGroupRoleTimeDataMap = cloneDeep(driveShiftsMetadata.resourceRoleGroupRoleTimeDataMap);
 
-    Object.values(resourceRoleGroupRoleTimeDataMap).forEach(roleTimeData => {
-      if (driveShiftIndex > 0) {
-        if (roleTimeData.setupTime > setupTimeThreshold) {
-          roleTimeData.setupTime = setupTimeThreshold;
+    const resourceRoleGroups = Object.keys(resourceRoleGroupRoleTimeDataMap);
+    if(resourceRoleGroups && resourceRoleGroups.length) {
+      resourceRoleGroups.forEach(resourceRoleGroup => {
+        let roleTimeData = resourceRoleGroupRoleTimeDataMap[resourceRoleGroup];
+        if (driveShiftIndex > 0) {
+          if (roleTimeData.setupTime > setupTimeThreshold) {
+            roleTimeData.setupTime = setupTimeThreshold;
+          }
         }
-      }
-      if (driveShiftIndex < driveShiftsMetadata.driveShifts.length - 1) {
-        if (roleTimeData.breakdownTime > breakdownTimeThreshold) {
-          roleTimeData.breakdownTime = breakdownTimeThreshold;
+        if (driveShiftIndex < driveShiftsMetadata.driveShifts.length - 1) {
+          if (roleTimeData.breakdownTime > breakdownTimeThreshold) {
+            roleTimeData.breakdownTime = breakdownTimeThreshold;
+          }
         }
-      }
-    })
+        const { travelTime, travelTime2 } = this.calculateDriveTravelTime({
+          ... drive, 
+          startTime: driveShiftMetadata.startTime,
+          endTime: driveShiftMetadata.endTime
+          }, 
+          masterData, 
+          roleTimeData
+        );
+        roleTimeData.travelTime = travelTime + roleTimeData.travelTimeCoToSiteVariance;
+        roleTimeData.travelTime2 = travelTime2 + roleTimeData.travelTimeSiteToCoVariance;
+  
+        if (
+          resourceRoleGroup !== RESOURCE_ROLE_GROUP.DRIVING_ROLES && (
+            drive.travelTimeIncluded === 'Drivers Only' ||
+            drive.collectionOperation?.noTravelTime
+          )
+        ) {
+          roleTimeData.travelTime = roleTimeData.travelTimeCoToSiteVariance;
+          roleTimeData.travelTime2 = roleTimeData.travelTimeSiteToCoVariance;
+        }
+        roleTimeData = this.getAdjustedRoleTimeDetailData(roleTimeData);
+        resourceRoleGroupRoleTimeDataMap[resourceRoleGroup] = roleTimeData
+      })
+    }
 
     return resourceRoleGroupRoleTimeDataMap;
   }
@@ -1546,7 +1653,7 @@ class DriveHelper {
 
     //NOTE: If Fixed Site, exclude driving roles group
     let resourceRoleGroupsToProcess = drive.typeOfDrive === DRIVE_TYPE.FIXED_SITE ? [RESOURCE_ROLE_GROUP.SUPERVISORY_ROLES, RESOURCE_ROLE_GROUP.STAFF_ROLES] : [];
-    const { maxDurationBefore, maxDurationAfter } = this.calculateMinMaxRoleTimeDuration(driveShiftMetadata.resourceRoleGroupRoleTimeDataMap, resourceRoleGroupsToProcess);
+    const { maxDurationBefore, maxDurationAfter } = this.calculateMinMaxRoleTimeDuration(drive, driveShiftMetadata.resourceRoleGroupRoleTimeDataMap, resourceRoleGroupsToProcess);
     const driveShiftDrawHoursInMinutes = this.calculateDrawHoursInMinutes(driveShiftMetadata, {
       timezoneSidId
     });
@@ -1559,15 +1666,20 @@ class DriveHelper {
     return lunchBreakSettings;
   }
 
-  calculateMinMaxRoleTimeDuration(resourceRoleGroupRoleTimeDataMap, resourceRoleGroups = []) {
+  calculateMinMaxRoleTimeDuration(drive, resourceRoleGroupRoleTimeDataMap, resourceRoleGroups = []) {
     let maxDurationBefore = 0;  
     let maxDurationAfter = 0;
     Object.keys(resourceRoleGroupRoleTimeDataMap).forEach(resourceRoleGroup => {
       if (resourceRoleGroups.length && !resourceRoleGroups.includes(resourceRoleGroup)) return;
 
       const roleTimeData = resourceRoleGroupRoleTimeDataMap[resourceRoleGroup];
-      let durationBefore = sum(compact([roleTimeData.travelTime, roleTimeData.leadTime, roleTimeData.setupTime, roleTimeData.siteLogisticsTo]));
-      let durationAfter = sum(compact([roleTimeData.breakdownTime, roleTimeData.wrapUpTime, roleTimeData.travelTime2, roleTimeData.siteLogisticsBack]));
+      let durationBefore = sum(compact([roleTimeData.leadTime, roleTimeData.setupTime, roleTimeData.siteLogisticsTo]));
+      let durationAfter = sum(compact([roleTimeData.breakdownTime, roleTimeData.wrapUpTime, roleTimeData.siteLogisticsBack]));
+
+      if(this.isMobileDrive(drive)) {
+        durationBefore += roleTimeData.travelTime;
+        durationAfter += roleTimeData.travelTime2;
+      }
       
       if(durationBefore > maxDurationBefore) {
         maxDurationBefore = durationBefore;
@@ -1613,6 +1725,17 @@ class DriveHelper {
 
   calculateStaffSetup(resourceRoles = [], driveShift) {
     const mapResourceQuantity = this.getDriveShiftResourceQuantity(driveShift);
+    mapResourceQuantity.forEach((value, key) => {
+       if (value.dualRole) {
+        let variable1, variable2;
+        if (key.includes('-')) {
+          [variable1, variable2] = key.split('-');
+        }
+        if (variable1 && resourceRoles.length > 0 && resourceRoles.includes(variable1)) {
+          resourceRoles.push(`${key}`);
+        }
+      }
+    });
     let staffSetup = 0;
     resourceRoles.forEach(resourceRole => {
       let resourceQuantity = mapResourceQuantity.get(resourceRole);
@@ -1650,6 +1773,8 @@ class DriveHelper {
 
     let staffCapacity = 0;
     Array.from(resourceQuantity.keys()).forEach(resourceRole => {
+      if(!resourceRole) return;
+      
       const data = resourceQuantity.get(resourceRole);
       let noOfResources = data || 0;
       let dualRole = null;
@@ -1658,8 +1783,8 @@ class DriveHelper {
         dualRole = data.dualRole;
       }
 
-      let role = resourceRole;
-      let roleCapacity = staffingDecisionMatrix[resourceRoleCapacityFieldMap[resourceRole]] || 0;
+      let role = resourceRole.split('-')[0];;
+      let roleCapacity = staffingDecisionMatrix[resourceRoleCapacityFieldMap[role]] || 0;
 
       if(resourceRoles.includes(role)) {
         if(role === RESOURCE_ROLE.x2RBC) {
@@ -1678,6 +1803,30 @@ class DriveHelper {
     });
 
     return staffCapacity;
+  }
+
+  countDriveStaffs(resourceRoles = [], drive, driveShiftMetadata, mapResourceQuantity, {
+    staffingDecisionMatrix,
+    timezoneSidId 
+  }, ignoreLunchBreak = false) {
+    const resourceQuantity = mapResourceQuantity.get(driveShiftMetadata.key);
+    let staffCount = 0;
+    Array.from(resourceQuantity.keys()).forEach(resourceRole => {
+      if(!resourceRole) return;
+      const data = resourceQuantity.get(resourceRole);
+      let noOfResources = data || 0;
+      if(isObject(data)) {
+        noOfResources = data.quantity || 0;
+      }
+
+      let role = resourceRole.split('-')[0];
+
+      if(resourceRoles.includes(role)) {
+        staffCount += noOfResources;
+      }
+    });
+
+    return staffCount;
   }
 
   calculateDriveShiftTags({
@@ -1756,7 +1905,7 @@ class DriveHelper {
       resourceTypes.forEach(resourceType => {
         let tags = jobTagsMap[resourceType];
         if (tags) {
-          let found = tags.find(item => item.name === tag.name);
+          let found = tags.find(item => item.tag.name === tag.name);
           if (!found) {
             tags.push({
               tagId: tag.id,
@@ -1832,11 +1981,11 @@ class DriveHelper {
     });
   }
 
-  getFixedSiteDonorsPerHourCapacity(procedureType, masterData) {
+  getFixedSiteProcedureTypeCapacity(procedureType, masterData) {
     if (!masterData || !masterData.staffingDecisionMatrix) return 0;
 
     if (procedureType === PROCEDURE_TYPE.PLATELET) {
-      return masterData.staffingDecisionMatrix.plateletHourlyCapacity || 0;
+      return masterData.staffingDecisionMatrix.plateletRoundCapacity || 0;
     }
     else if (procedureType === PROCEDURE_TYPE.PLASMA) {
       return masterData.staffingDecisionMatrix.plasmaHourlyCapacity || 0;
@@ -1915,7 +2064,7 @@ class DriveHelper {
   checkForChangesToDrive(drive, backupDrive) { 
     let requiresAssetValidation = false;
 
-    const triggeringFields = ['status', 'driveDate', 'startTime', 'endTime', 'driveSiteId'];
+    const triggeringFields = ['status', 'driveDate', 'startTime', 'endTime', 'driveSiteId', 'projectedRegisteredDonors'];
     triggeringFields.every(field => {
       if (drive[field] !== backupDrive[field]) {
           requiresAssetValidation = true;
@@ -2001,7 +2150,10 @@ class DriveHelper {
         [DRIVE_CONTENTION.PART_OF_LINKED_DRIVE]: [DRIVE_CONTENTION_RESOLUTION.ELECT_PART_OF_LINKED_DRIVE],
         [DRIVE_CONTENTION.INSUFFICIENT_RESOURCES]: [DRIVE_CONTENTION_RESOLUTION.ELECT_INSUFFICIENT_RESOURCES],
         [DRIVE_CONTENTION.MULTI_SHIFT_DRIVE]: [DRIVE_CONTENTION_RESOLUTION.ELECT_MULTI_SHIFT_DRIVE],
-        [DRIVE_CONTENTION.DUAL_ROLE_REMOVAL]: [DRIVE_CONTENTION_RESOLUTION.ELECT_DUAL_ROLE_REMOVAL],      
+        [DRIVE_CONTENTION.DUAL_ROLE_REMOVAL]: [DRIVE_CONTENTION_RESOLUTION.ELECT_DUAL_ROLE_REMOVAL],     
+        [DRIVE_CONTENTION.CO_CHANGED_CROSS_REGIONS]: [DRIVE_CONTENTION_RESOLUTION.ELECT_CO_CHANGED_CROSS_REGIONS_REMOVE_FROM_LINKED_DRIVE],
+        [DRIVE_CONTENTION.ASSETS_NOT_SHARED_WITH_NEW_CO]: [DRIVE_CONTENTION_RESOLUTION.ELECT_ASSETS_NOT_SHARED_WITH_NEW_CO],
+        [DRIVE_CONTENTION.EXCESS_STAFF_CAPACITY]: [DRIVE_CONTENTION_RESOLUTION.ELECT_EXCESS_STAFF_CAPACITY]
       };
 
       const driveContentionResolutions = drive.contentionResolution ? drive.contentionResolution.split(';') : [];
@@ -2385,6 +2537,25 @@ class DriveHelper {
       result.passed = !result.violated || isContentionOverrided(drive, DRIVE_CONTENTION.INSUFFICIENT_RESOURCES);
       return result;
     }
+
+    const validateExcessStaffCapacity = (drive,masterData) => {
+      // Excess Staff Capacity
+      let result = {
+        contention: DRIVE_CONTENTION.EXCESS_STAFF_CAPACITY,
+        violated: false,
+        passed: true,
+        data: null
+      }
+      
+      result.data = {
+        plannedCapacity: drive.staffCapacity || 0,
+        projRegisteredDonor: drive.projectedRegisteredDonors || 0,
+        excessStaff: drive.excessStaffCapacity 
+      }
+      result.violated = drive.excessStaffCapacity >= masterData.adminSetting.excessStaffCapacityThreshold;
+      result.passed = !result.violated || isContentionOverrided(drive, DRIVE_CONTENTION.EXCESS_STAFF_CAPACITY);
+      return result;
+    }
    
     const validateLackingVehicles = (drive) => {
       //validate lacking of vehicles
@@ -2483,8 +2654,9 @@ class DriveHelper {
         mapSystemGeneratedRoleJobsRemovedByDriveShiftId[driveShiftIndex] = {
           ...mapSystemGeneratedRoleJobsRemovedByDriveShiftId[driveShiftIndex],
           backupDriveShift: backupDriveShift,
-          backupJobs: backupDriveShift.jobs.filter(job => {
-            return this.isSystemGeneratedJob(job, backupDrive) && job.resourceRole;
+          backupDrive: backupDrive,
+          backupJobs: backupDriveShift.jobs?.filter(job => {
+            return this.isSystemRole(job, backupDrive) && job.resourceRole;
           })
         }
       });
@@ -2493,8 +2665,9 @@ class DriveHelper {
         mapSystemGeneratedRoleJobsRemovedByDriveShiftId[driveShiftIndex] = {
           ...mapSystemGeneratedRoleJobsRemovedByDriveShiftId[driveShiftIndex],
           driveShift: driveShift,
-          newJobs: driveShift.jobs.filter(job => {
-            return this.isSystemGeneratedJob(job, drive) && job.resourceRole;
+ 		      drive: drive,
+          newJobs: driveShift.jobs?.filter(job => {
+            return this.isSystemRole(job, drive) && job.resourceRole;
           })
         }
       });
@@ -2508,6 +2681,51 @@ class DriveHelper {
 
       result.violated = staffingComplementChanged;
       result.passed = !result.violated;
+      return result;
+    }
+
+    const validateCOChangeCrossRegions = (drive, {
+      backupDrive,
+      territoryCollectionOperations
+    }) => {
+      //Collection Operation Change cross regions
+      let result = {
+        contention: DRIVE_CONTENTION.CO_CHANGED_CROSS_REGIONS,
+        violated: false,
+        passed: true,
+        data: {}
+      }
+
+      const backupDriveRegionId = backupDrive.arcRegionId;
+      const driveRegionId = this.getDriveTerritory(drive, territoryCollectionOperations)?.regionId;
+      const isCOChangedCrossRegions = !!this.isDriveInPathOfLinkedDrive(drive) && backupDrive && backupDrive.collectionOperationId !== drive.collectionOperationId && backupDriveRegionId !== driveRegionId;
+      result.violated = isCOChangedCrossRegions;
+      result.passed = !result.violated || isContentionOverrided(drive, DRIVE_CONTENTION.CO_CHANGED_CROSS_REGIONS);
+      return result;
+    }
+
+    const validateAssetsNotSharedWithNewCO = (drive, {
+      backupDrive,
+      territoryCollectionOperations,
+      availableAssetsInfo
+    }) => {
+      //Assets are not shared with new Collection Operation
+      let result = {
+        contention: DRIVE_CONTENTION.ASSETS_NOT_SHARED_WITH_NEW_CO,
+        violated: false,
+        passed: true,
+        data: {}
+      }
+
+      let availableButNotSharedAssetIds = availableAssetsInfo?.availableButNotSharedAssetIds || [];
+      let currentAssignedAssets = this.getCurrentAssignedAssets(drive);
+      const backupDriveRegionId = backupDrive.arcRegionId;
+      const driveRegionId = this.getDriveTerritory(drive, territoryCollectionOperations)?.regionId;
+      const hasAssignedAssetNotSharedWithNewCO = currentAssignedAssets.some(assignedAsset => availableButNotSharedAssetIds.includes(assignedAsset.id));
+      result.violated = !!this.isDriveInPathOfLinkedDrive(drive) 
+                        && backupDrive && backupDrive.collectionOperationId !== drive.collectionOperationId && backupDriveRegionId === driveRegionId
+                        && hasAssignedAssetNotSharedWithNewCO;;
+      result.passed = !result.violated || isContentionOverrided(drive, DRIVE_CONTENTION.ASSETS_NOT_SHARED_WITH_NEW_CO);
       return result;
     }
 
@@ -2530,6 +2748,9 @@ class DriveHelper {
       [DRIVE_CONTENTION.MULTI_SHIFT_DRIVE]: validateIsMultiShiftDrive,
       [DRIVE_CONTENTION.DUAL_ROLE_REMOVAL]: validateDualRoleRemoval,
       [DRIVE_CONTENTION.STAFFING_COMPLEMENT_CHANGED]: validateStaffingComplementChanged,
+      [DRIVE_CONTENTION.CO_CHANGED_CROSS_REGIONS]: validateCOChangeCrossRegions,
+      [DRIVE_CONTENTION.ASSETS_NOT_SHARED_WITH_NEW_CO]: validateAssetsNotSharedWithNewCO,
+      [DRIVE_CONTENTION.EXCESS_STAFF_CAPACITY]: validateExcessStaffCapacity
     }
     let validateFns = orderBy(contentionsToValidate,(contention) => {
       return Object.keys(contentionValidateFnMap).indexOf(contention);
@@ -2605,7 +2826,8 @@ class DriveHelper {
       DRIVE_APPROVAL_STATUS.SUBMITTED,
       DRIVE_APPROVAL_STATUS.WAITING_FOR_DM_APPROVAL,
       DRIVE_APPROVAL_STATUS.WAITING_FOR_APS_APPROVAL,
-      DRIVE_APPROVAL_STATUS.WAITING_FOR_DRD_FEEDBACK
+      DRIVE_APPROVAL_STATUS.APS_WAITING_FOR_DRD_FEEDBACK,
+      DRIVE_APPROVAL_STATUS.DM_WAITING_FOR_DRD_FEEDBACK
     ];
 
     if (!drive.pendingAction || !validApprovalStatuses.includes(drive.approvalStatus)) return false;
@@ -2620,7 +2842,8 @@ class DriveHelper {
       DRIVE_APPROVAL_STATUS.SUBMITTED,
       DRIVE_APPROVAL_STATUS.WAITING_FOR_DM_APPROVAL,
       DRIVE_APPROVAL_STATUS.WAITING_FOR_APS_APPROVAL,
-      DRIVE_APPROVAL_STATUS.WAITING_FOR_DRD_FEEDBACK
+      DRIVE_APPROVAL_STATUS.APS_WAITING_FOR_DRD_FEEDBACK,
+      DRIVE_APPROVAL_STATUS.DM_WAITING_FOR_DRD_FEEDBACK
     ];
 
     if (!drive.pendingAction || !validApprovalStatuses.includes(drive.approvalStatus)) return false;
@@ -2663,9 +2886,9 @@ class DriveHelper {
     return totalRounds;
   }
 
-  isSystemGeneratedJob(job, drive) {
+  isSystemRole(job, drive) {
     if(!job) return false;
-    if(job.isManuallyCreated) return false;
+    // if(job.isManuallyCreated) return false;
 
     if (job.resourceRole) {
       if(this.isMobileDrive(drive)) {
@@ -2694,10 +2917,12 @@ class DriveHelper {
     if(!job) return false;
     
     if(job.isManuallyCreated) return true;
-    return !this.isSystemGeneratedJob(job, drive);
+    return !this.isSystemRole(job, drive);
   }
 
-  getDriveSystemGeneratedStaffingComplementChanges(currentDrive, backupDrive) {
+  getDriveSystemGeneratedStaffingComplementChanges(currentDrive, backupDrive, {
+    isDriveGettingRegenerated = false
+  } = {}) {
     const mapResult = (job, backupJob, driveShift, driveShiftIndex, result) => {
       result.push({
         id: job.id,
@@ -2722,7 +2947,7 @@ class DriveHelper {
 
     currentDrive.driveShifts?.forEach((driveShift, driveShiftIndex) => {
       driveShift.jobs?.forEach(job => {
-        const isSystemGenerated = this.isSystemGeneratedJob(job, currentDrive);
+        const isSystemGenerated = this.isSystemRole(job, currentDrive);
         if(!isSystemGenerated || !job.resourceRole) return;
 
         const backupDriveShift = backupDrive.driveShifts?.[driveShiftIndex];
@@ -2742,21 +2967,19 @@ class DriveHelper {
           }
         } else {
           if(job.resourceRole === 'VP/HH') {
-            if(currentDrive.aptRequired) {
-              if((!job.aptQuantity && !!backupJob.aptQuantity) ||
-                (!!job.aptQuantity && !backupJob.aptQuantity)) {
-                mapResult(job, backupJob, driveShift, driveShiftIndex, result.changedJobs);
-                return;
-              }
+            if((!job.aptQuantity && !!backupJob.aptQuantity) ||
+              (!!job.aptQuantity && !backupJob.aptQuantity)) {
+              mapResult(job, backupJob, driveShift, driveShiftIndex, result.changedJobs);
+              return;
             }
 
             const currentJobVphhSystemQuantity = Math.max(job.systemQuantity - (currentDrive.aptRequired ? 1 : 0), 0);
             const backupJobVphhSystemQuantity = Math.max(backupJob.systemQuantity - (backupDrive.aptRequired ? 1 : 0), 0);
-            if(currentJobVphhSystemQuantity !== backupJobVphhSystemQuantity) {
+            if(currentJobVphhSystemQuantity !== backupJobVphhSystemQuantity || isDriveGettingRegenerated) {
               mapResult(job, backupJob, driveShift, driveShiftIndex, result.changedJobs);
             }
           } else {
-            if(job.systemQuantity !== backupJob.systemQuantity) {
+            if(job.systemQuantity !== backupJob.systemQuantity || isDriveGettingRegenerated) {
               mapResult(job, backupJob, driveShift, driveShiftIndex, result.changedJobs);
             }
           }
@@ -2766,7 +2989,7 @@ class DriveHelper {
 
     backupDrive.driveShifts?.forEach((backupDriveShift, backupDriveShiftIndex) => {
       backupDriveShift.jobs?.forEach(backupJob => {
-        const isSystemGenerated = this.isSystemGeneratedJob(backupJob, backupDrive);
+        const isSystemGenerated = this.isSystemRole(backupJob, backupDrive);
         if(!isSystemGenerated || !backupJob.resourceRole) return;
 
         const driveShift = currentDrive.driveShifts?.[backupDriveShiftIndex];
@@ -2828,12 +3051,12 @@ class DriveHelper {
     const requiresTravelTime = this.isJobRequireTravelTimes( isRelocatedResource, job, drive, {
       resourceRoleGroups
     })
-    const travelTimeTo = jobAllocation.travelTimeTo || 0;
+    const travelTimeTo = isNullOrEmpty(jobAllocation.travelTimeTo) ? job.travelTime : jobAllocation.travelTimeTo;
     jaStartWithTravelTime = DateTime.fromISO(jaStartWithTravelTime, { zone: timezoneSidId }).minus({
       minute: requiresTravelTime ? (travelTimeTo - (job.travelTime || 0)) : travelTimeTo
     }).toUTC().toISO();
 
-    const travelTimeBack = jobAllocation.travelTimeBack || 0;
+    const travelTimeBack = isNullOrEmpty(jobAllocation.travelTimeBack) ? job.travelTime2 : jobAllocation.travelTimeBack;
     jaEndWithTravelTime = DateTime.fromISO(jaEndWithTravelTime, { zone: timezoneSidId }).plus({
       minute: requiresTravelTime ? (travelTimeBack - (job.travelTime2 || 0)) : travelTimeBack
     }).toUTC().toISO();
@@ -2986,6 +3209,20 @@ class DriveHelper {
 
       return true;
     });
+  }
+
+  getDrivePlateletRounds(drive) {
+    if(!drive || !drive.driveShiftsMetadata) return null;
+
+    return (drive.driveShiftsMetadata.driveShifts || []).reduce((result, item) => {
+      return result + (item.numberOfRounds || 0)
+    }, 0);
+  }
+
+  getMatchedSiteCOForDrive(drive) {
+    if (!drive || !drive.siteCollectionOperation || !drive.driveSite) return null;
+
+    return drive.driveSite.siteCollectionOperations.find(item => item.id === drive.siteCollectionOperation.id);
   }
 
   /** Date Time Utils **/

@@ -10,6 +10,7 @@
     <columns>CORE.USERS.ALIAS</columns>
     <columns>LAST_UPDATE</columns>
     <columns>UPDATEDBY_USER.ALIAS</columns>
+    <columns>Drive_Date__c</columns>
     <filterScope>Mine</filterScope>
     <filters>
         <field>IS_CLOSED</field>

@@ -385,6 +385,10 @@ export default class SlwcDriveCalendar extends LightningElement {
             noOfStaffRemaining: 0,
             noOfFixedSiteStaffRemaining: 0,
             noOfMobileStaffRemaining: 0,
+            totalDrives: 0,
+            noOfDriveRequested: 0,
+            noOfDriveRemaining: 0,
+            isNoOfDriveRemainingInfinity: false,
             total2RBC: 0,
             noOf2RBCRequested: 0,
             noOf2RBCRemaining: 0,
@@ -463,6 +467,8 @@ export default class SlwcDriveCalendar extends LightningElement {
         });
 
         (this.drivesMapByDate[day.dateIso] || []).forEach((drive) => {
+            day.slot.noOfDriveRequested += 1;
+
             if (!this.driveHelper.isFixedSiteDrive(drive) && drive.totalEquipmentRequested) {
                 day.slot.noOf2RBCRequested += drive.totalEquipmentRequested || 0;
             }
@@ -543,6 +549,10 @@ export default class SlwcDriveCalendar extends LightningElement {
         });
 
         const collectionOpIds = this.collectionOperations.map(item => item.id);
+        day.slot.totalDrives = this.planDriveHelper.findDriveLimitByDay({
+            collectionOperationIds: collectionOpIds,
+            driveDate: day.dateIso
+        }, this.driveLimits, OPERATION_DRIVE_LIMIT_TYPE.DRIVE_LIMIT);
         day.slot.total2RBC = this.planDriveHelper.findDriveLimitByDay({
             collectionOperationIds: collectionOpIds,
             driveDate: day.dateIso
@@ -561,6 +571,8 @@ export default class SlwcDriveCalendar extends LightningElement {
         day.slot.noOfEquipmentRemaining = day.slot.totalEquipments - day.slot.noOfEquipmentRequested;
         day.slot.noOfVehicleRemaining = day.slot.totalVehicles - day.slot.noOfVehicleRequested;
         day.slot.noOfBusRemaining = day.slot.totalBuses - day.slot.noOfBusRequested;
+        day.slot.noOfDriveRemaining = !isNullOrEmpty(day.slot.totalDrives) ? (day.slot.totalDrives - day.slot.noOfDriveRequested) : '∞';
+        day.slot.isNoOfDriveRemainingInfinity = day.slot.noOfDriveRemaining === '∞';
         day.slot.noOf2RBCRemaining = !isNullOrEmpty(day.slot.total2RBC) ? (day.slot.total2RBC - day.slot.noOf2RBCRequested) : '∞';
         day.slot.isNoOf2RBCRemainingInfinity = day.slot.noOf2RBCRemaining === '∞';
         day.slot.noOfDOTRemaining = !isNullOrEmpty(day.slot.totalDOT) ? (day.slot.totalDOT - day.slot.noOfDOTRequested) : '∞';
@@ -579,6 +591,11 @@ export default class SlwcDriveCalendar extends LightningElement {
         day.slot.staffIndicatorClass = classNames('day-of-slot slds-col slds-size_1-of-3 slds-text-align_center', {
             'day-of-slot__green': day.slot.noOfStaffRemaining > 0,
             'day-of-slot__red': day.slot.noOfStaffRemaining <= 0,
+        });
+
+        day.slot.driveIndicatorClass = classNames('day-of-slot slds-col slds-size_1-of-3 slds-text-align_center slds-text-body_small', {
+            'day-of-slot__green': day.slot.noOfDriveRemaining > 0 || day.slot.isNoOfDriveRemainingInfinity,
+            'day-of-slot__red': day.slot.noOfDriveRemaining <= 0 && !day.slot.isNoOfDriveRemainingInfinity,
         });
 
         day.slot.x2RBCIndicatorClass = classNames('day-of-slot slds-col slds-size_1-of-3 slds-text-align_center slds-text-body_small', {
@@ -801,7 +818,8 @@ export default class SlwcDriveCalendar extends LightningElement {
                 }
 
                 this.availator = slwcAvailator.getInstance({
-                    mapApis: window.google ? window.google.maps : null
+                    mapApis: window.google ? window.google.maps : null,
+                    considerDateOnly: true
                 })
                 return this.availator.fetchAssetsDataDriveCalendar(jobs, {
                     timezoneSidId: TIME_ZONE,

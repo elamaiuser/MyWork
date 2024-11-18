@@ -5,5 +5,10 @@
         <sharedTo>joseph.simpson@redcross.org.biomed</sharedTo>
         <sharedToType>User</sharedToType>
     </folderShares>
+    <folderShares>
+        <accessLevel>Manage</accessLevel>
+        <sharedTo>Global_Admin</sharedTo>
+        <sharedToType>Group</sharedToType>
+    </folderShares>
     <name>Administrative Reports</name>
 </ReportFolder>

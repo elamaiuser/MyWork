@@ -9,7 +9,8 @@
 * ***************************************************************************
 * 08/29/2023				  Balaji N					 Logic for HRP-10888(assignAccountToPortfolio Method: null check on supervisor)
 * 11/09/2023				  Balaji N					 Logic for HRP-11290(Method Name: assignAccountToPortfolio;Supervisor Date check)
-* *
+* 02/13/2024                  Priti Jana                 Logic for HRP-12087
+* 08/01/2024				  Balaji N					 Logic for HRP-12485(Method:assignAccountToPortfolio,Accounts coverd by exception)
 *****************************************************************************
 */
 public with sharing class AccountPortfolioAssignmentHelper {
@@ -41,8 +42,8 @@ public with sharing class AccountPortfolioAssignmentHelper {
         
         List<Account_Portfolio_Assignment__c> insertList = new List<Account_Portfolio_Assignment__c>();
         List<Account_Portfolio_Assignment__c> updateList = new List<Account_Portfolio_Assignment__c>();
-        Set<String> superAMCodeSet = new Set<String>();
-        
+        //Set<String> superAMCodeSet = new Set<String>();//HRP-12485
+
         for(Taxonomy__c taxoRecord:taxonomyRecords){
             zipCodes.add(taxoRecord.Zip_Code__c);
             zipTaxonomyMap.put(taxoRecord.Zip_Code__c,taxoRecord);
@@ -51,13 +52,13 @@ public with sharing class AccountPortfolioAssignmentHelper {
             }else{
                 zipPortfolioKeyMap.put(taxoRecord.Zip_Code__c,taxoRecord.RecordType.Name+'_'+taxoRecord.Division_Code__c +'_'+taxoRecord.DS_Region_Code__c+'_'+taxoRecord.Team_Code__c+'_'+taxoRecord.DRD_Territory_Code__c);
             }
-            superAMCodeSet.add(taxoRecord.DRD_Territory_Code__c);
+            //superAMCodeSet.add(taxoRecord.DRD_Territory_Code__c);
         }
-        
+        /*commented part of HRP-12485
         //Supervisor Taxonomy records - Start
-        Set<String> supervisorTaxoKey = new Set<String>();
-        Map<String,List<String>> supervisorTaxoMap = new Map<String,List<String>>();
-        Map<String,Taxonomy__c> suprKeyTaxo = new Map<String,Taxonomy__c>();
+        //Set<String> supervisorTaxoKey = new Set<String>();
+        //Map<String,List<String>> supervisorTaxoMap = new Map<String,List<String>>();
+        //Map<String,Taxonomy__c> suprKeyTaxo = new Map<String,Taxonomy__c>();
         
         List<Taxonomy__c> supervisorTaxoRecords = [SELECT Zip_Code__c ,Start_Date__c,End_Date__c,Division_Code__c,Division_Key__c,Division_Name__c,DRD_Territory_Code__c,DRD_Territory_Key__c,DRD_Territory_Name__c,DS_Region_Code__c,DS_Region_Key__c,DS_Region_Name__c,
                                              Team_Code__c,Team_Key__c,Team_Name__c,Type_Key__c,Type__c,RecordType.Name,Supervisor_Code__c,Supervisor_Name__c
@@ -74,22 +75,23 @@ public with sharing class AccountPortfolioAssignmentHelper {
             } 
             suprKeyTaxo.put(key,superTaxo);
         }
+		commented part of HRP-12485*/
         //Supervisor Taxonomy records - End
         List<String> externalKeys = new List<String>();
         externalKeys.addAll(zipPortfolioKeyMap.values());
-        externalKeys.addAll(supervisorTaxoKey);
+        //externalKeys.addAll(supervisorTaxoKey);
         
         List<Account> accts = new List<Account>();
         if(accountList != null && accountList.size() > 0){
-        	accts = [Select Id,Name,BillingPostalCode,(Select Id,Name,Start_Date__c,End_Date__c,BSF_Portfolio__c,BSF_Portfolio__r.External_Key__c  FROM AccountPortfolioAssignments__r WHERE END_DATE__c > TODAY AND BSF_Portfolio__r.Territory_Portfolio__c = TRUE ORDER BY Start_Date__c) FROM Account WHERE Id IN :accountList AND Account_AM_Portfolio_Type__c = FALSE ];    
+        	accts = [Select Id,Name,BillingPostalCode,(Select Id,Account__c,Name,Start_Date__c,End_Date__c,BSF_Portfolio__c,BSF_Portfolio__r.External_Key__c,BSF_Portfolio__r.Taxonomy_Type__c  FROM AccountPortfolioAssignments__r WHERE END_DATE__c >= TODAY AND BSF_Portfolio__r.Portfolio_Type__c='Account Manager' AND  BSF_Portfolio__r.Taxonomy_Type__c!=:BSF_Constants.TAXO_SUPERVISOR_RECORD_TYPE ORDER BY Start_Date__c) FROM Account WHERE Id IN :accountList]; //HRP-12485 removed Account_AM_Portfolio_Type__c;End_date_c>=Today    
         }else{
-            accts = [Select Id,Name,BillingPostalCode,(Select Id,Name,Start_Date__c,End_Date__c,BSF_Portfolio__c,BSF_Portfolio__r.External_Key__c  FROM AccountPortfolioAssignments__r WHERE END_DATE__c > TODAY AND BSF_Portfolio__r.Territory_Portfolio__c = TRUE ORDER BY Start_Date__c) FROM Account WHERE BillingPostalCode IN :zipCodes AND Account_AM_Portfolio_Type__c = FALSE ];
+            accts = [Select Id,Name,BillingPostalCode,(Select Id,Account__c,Name,Start_Date__c,End_Date__c,BSF_Portfolio__c,BSF_Portfolio__r.External_Key__c,BSF_Portfolio__r.Taxonomy_Type__c  FROM AccountPortfolioAssignments__r WHERE END_DATE__c >= TODAY AND BSF_Portfolio__r.Portfolio_Type__c='Account Manager' AND  BSF_Portfolio__r.Taxonomy_Type__c!=:BSF_Constants.TAXO_SUPERVISOR_RECORD_TYPE ORDER BY Start_Date__c) FROM Account WHERE BillingPostalCode IN :zipCodes];//HRP-12485 removed Account_AM_Portfolio_Type__c;End_date_c>=Today
         }
         
         Map<Id,Account> superAcctAssmts = new Map<Id,Account>([Select Id,Name,BillingPostalCode,(Select Id,Name,Start_Date__c,End_Date__c,BSF_Portfolio__c,BSF_Portfolio__r.External_Key__c  FROM AccountPortfolioAssignments__r WHERE END_DATE__c > TODAY AND BSF_Portfolio__r.Account_Based_Portfolio__c = TRUE ORDER BY Start_Date__c) FROM Account WHERE ID IN :accts]);
         
-        for(String extKey:externalKeys)
-        System.debug(' externalKey -> '+extKey);
+        //for(String extKey:externalKeys)
+        
         
         List<BSF_Portfolio__c> portfolios = [Select Id,Name,External_Key__c,External_Key_BackEnd__c,Portfolio_Code__c,Parent_Portfolio__c,Parent_Portfolio__r.Parent_Portfolio__c,Territory_Portfolio__c,start_date__c,End_date__c FROM BSF_Portfolio__c WHERE External_Key_BackEnd__c IN :externalKeys AND Portfolio_Type__c = :BSF_Constants.ACCOUNT_MANAGER order by createdDate desc];
         List<String> teamRoleList = new List<String>();
@@ -131,13 +133,11 @@ public with sharing class AccountPortfolioAssignmentHelper {
         	portfolioUserMap.get(portfolioUser.BSF_Portfolio__c).add(portfolioUser);        
         }
         
-        System.debug('portFolioUsers ->'+portFolioUsers);
-        System.debug('accts -> '+accts.size());
-        System.debug(' portfolios -> '+portfolios.size());
+        
         
         
         for(Account acct:accts){
-        //    System.debug(acct);
+        
             BSF_Portfolio__c portfolio = portfolioMap.get(zipPortfolioKeyMap.get(acct.BillingPostalCode));
             Taxonomy__c taxoRecord = zipTaxonomyMap.get(acct.BillingPostalCode);
             Boolean isABMAvaialable = false;
@@ -169,9 +169,10 @@ public with sharing class AccountPortfolioAssignmentHelper {
                 	}    
                 }
                 //Supervisor portfolio changes - start
-                System.debug('supervisorTaxoMap is '+supervisorTaxoMap);
-                System.debug('portfolio.Portfolio_Code__c is '+portfolio.Portfolio_Code__c);
-                List<String> suprTaxoKeys = new List<String>();
+                //System.debug('supervisorTaxoMap is '+supervisorTaxoMap);
+                
+               /* commented part of HRP-12485
+                * List<String> suprTaxoKeys = new List<String>();
                 if(supervisorTaxoMap.containsKey(portfolio.Portfolio_Code__c))
                 	suprTaxoKeys = supervisorTaxoMap.get(portfolio.Portfolio_Code__c);
                 
@@ -204,16 +205,17 @@ public with sharing class AccountPortfolioAssignmentHelper {
                     }
                 }
                 //Supervisor portfolio changes - end
-                
+                commented part of HRP-12485*/
                 if(actPortfolioList == null || actPortfolioList.size() == 0){
                     //insert new record
+                    system.debug(acct);
                     Account_Portfolio_Assignment__c newActPortfolioAssignment = new Account_Portfolio_Assignment__c(Account__c = acct.Id,BSF_Portfolio__c = portfolio.Id);
                     newActPortfolioAssignment.Start_Date__c = taxoRecord.Start_Date__c;
                     newActPortfolioAssignment.End_Date__c = taxoRecord.End_Date__c;
                     
                     insertList.add(newActPortfolioAssignment);
                     
-                    for(Integer Index=suprAsignIndex;Index<suprTaxoKeys.size();Index++){
+                    /*for(Integer Index=suprAsignIndex;Index<suprTaxoKeys.size();Index++){
                         BSF_Portfolio__c suprPort = portfolioMap.get(suprTaxoKeys[Index]);
                         if(suprPort == null || suprPort.End_Date__C<newActPortfolioAssignment.start_Date__c || suprPort.start_Date__c>newActPortfolioAssignment.End_Date__C) //11290 
                             continue;
@@ -225,45 +227,63 @@ public with sharing class AccountPortfolioAssignmentHelper {
                         Account_Portfolio_Assignment__c suprPortfolioAssignment = new Account_Portfolio_Assignment__c(Account__c = acct.Id,BSF_Portfolio__c=suprPort.Id);
                         suprPortfolioAssignment.Start_Date__c = sDate>=newActPortfolioAssignment.start_Date__c? sDate:newActPortfolioAssignment.start_Date__c;//11290 
                         suprPortfolioAssignment.End_Date__c = eDate<=newActPortfolioAssignment.End_Date__c? eDate:newActPortfolioAssignment.End_Date__c;//11290 
-                        insertList.add(suprPortfolioAssignment);
-                    }
-                    populateAccountTeam(taxoRecord,newActPortfolioAssignment,currentPortfolioUsers,accountTeamMap.get(acct.Id),false,accTeamInsertList,accTeamUpdateList,accTeamDeleteList);
+                        //insertList.add(suprPortfolioAssignment);
+                    }*/
+                    //populateAccountTeam(taxoRecord,newActPortfolioAssignment,currentPortfolioUsers,accountTeamMap.get(acct.Id),false,accTeamInsertList,accTeamUpdateList,accTeamDeleteList);
+                    //AccountPortfolioAssignmentService.accTeamDateSyncOnAccPortUpdates(new List<Id>(acct.Id),NULL, new set<Id>(), new Map<Id, List<AccountTeamMember>>() ,accountTeamMap); //HRP-12087
+
+                }
+                else
+                {
                     
-                }else{
-                    
-                    
+						system.debug(acct);                    
                     
                     //Take last record in list. This is the record insreted for previous taxonomy unless there is switch to acocunt based portfolio and revert. 
                     Account_Portfolio_Assignment__c actPortfolioAssignment = actPortfolioList[actPortfolioList.size()-1];
                     Account_Portfolio_Assignment__c newActPortfolioAssignment = new Account_Portfolio_Assignment__c();
-                    if(portfolio.Id == actPortfolioAssignment.BSF_Portfolio__c){
-                        if(actPortfolioAssignment.End_Date__c == taxoRecord.End_Date__c){
-                            //do nothing. Zip code belong to same territory and new taxonomy has same end date from previous version
-                        }else{
-                            //Zip code belong to same territory and new taxonomy has differebt end date from previous version
+                    
+                    if(portfolio.Id == actPortfolioAssignment.BSF_Portfolio__c)
+                    {
+                        if(actPortfolioAssignment.End_Date__c != taxoRecord.End_Date__c)//HRP-12485
+                        {
+                        	//Zip code belong to same territory and new taxonomy has differebt end date from previous version
                             actPortfolioAssignment.End_Date__c = taxoRecord.End_Date__c;
                             updateList.add(actPortfolioAssignment);
-                            populateAccountTeam(taxoRecord,actPortfolioAssignment,currentPortfolioUsers,accountTeamMap.get(acct.Id),true,accTeamInsertList,accTeamUpdateList,accTeamDeleteList);
-                        }
+                            //populateAccountTeam(taxoRecord,actPortfolioAssignment,currentPortfolioUsers,accountTeamMap.get(acct.Id),true,accTeamInsertList,accTeamUpdateList,accTeamDeleteList);
+                         }
                             
-                    }else{
+                    }
+                    else
+                    {
                         //End date current portfolio assignment and insert new one.
-                        actPortfolioAssignment.End_Date__c = taxoRecord.Start_Date__c - 1;
-                        updateList.add(actPortfolioAssignment);
+                        //HRP-12485 Start
+                        if(actPortfolioAssignment.bsf_portfolio__r.Taxonomy_Type__c == BSF_Constants.TAXO_ACCOUNT_RECORD_TYPE && actPortfolioAssignment.end_date__c == BSF_Constants.maxDate)
+                        {
+                            continue;
+                        }
+                        Date newStartDate =actPortfolioAssignment.bsf_portfolio__r.Taxonomy_Type__c == BSF_Constants.BIO_RECRUITMENT_RECORD_TYPE?taxoRecord.Start_Date__c:actPortfolioAssignment.End_Date__c+1;
+                        //HRP-12485 End
+                        
+                        if(actPortfolioAssignment.bsf_portfolio__r.Taxonomy_Type__c == BSF_Constants.BIO_RECRUITMENT_RECORD_TYPE)//HRP-12485
+                        {
+                            actPortfolioAssignment.End_Date__c = newStartDate - 1;
+                        	updateList.add(actPortfolioAssignment);
+                        }
+                        
                             
                         
                         newActPortfolioAssignment.Account__c = acct.Id;
                         newActPortfolioAssignment.BSF_Portfolio__c = portfolio.Id;
-                        newActPortfolioAssignment.Start_Date__c = taxoRecord.Start_Date__c;
+                        newActPortfolioAssignment.Start_Date__c = newStartDate;//HRP-12485 taxoRecord.Start_Date__c=>newStartDate
                         newActPortfolioAssignment.End_Date__c = taxoRecord.End_Date__c;
                    //   newActPortfolioAssignment.External_Identifier__c = portfolio.External_Key__c + taxoRecord.Start_Date__c;
                         
                         insertList.add(newActPortfolioAssignment);
                         
-                        populateAccountTeam(taxoRecord,newActPortfolioAssignment,currentPortfolioUsers,accountTeamMap.get(acct.Id),false,accTeamInsertList,accTeamUpdateList,accTeamDeleteList);
+                       // populateAccountTeam(taxoRecord,newActPortfolioAssignment,currentPortfolioUsers,accountTeamMap.get(acct.Id),false,accTeamInsertList,accTeamUpdateList,accTeamDeleteList);
                     } //end if
 
-                    for(Integer Index=suprAsignIndex;Index<suprTaxoKeys.size();Index++){
+                    /*for(Integer Index=suprAsignIndex;Index<suprTaxoKeys.size();Index++){
                         BSF_Portfolio__c suprPort = portfolioMap.get(suprTaxoKeys[Index]);
                         if((suprPort == null) || (suprPort.End_Date__C<newActPortfolioAssignment.start_Date__c || suprPort.start_Date__c>newActPortfolioAssignment.End_Date__C))//11290
                             continue;
@@ -286,20 +306,19 @@ public with sharing class AccountPortfolioAssignmentHelper {
                         suprPortfolioAssignment.End_Date__c = eDate<=newActPortfolioAssignment.End_Date__c? eDate:newActPortfolioAssignment.End_Date__c;//11290 
                         system.debug('suprPortfolioAssignment'+suprPortfolioAssignment);
                         insertList.add(suprPortfolioAssignment);
-                    }
+                    }commented part of HRP-12485*/
                 }// end if
+				
             }// end if
         } //end for
-        
         Database.SaveResult[] actPortfolioInsert = Database.insert(insertList, false);
-        //Log Errors in BSF_Error_Log__c 
         
         Database.SaveResult[] actPortfolioupdate = Database.update(updateList, false);
         //Log Errors in BSF_Error_Log__c 
         insertErrors(actPortfolioInsert,'Account Portfolio Insert','Assign Account to Portfolio');
         insertErrors(actPortfolioupdate,'Account Portfolio Update','Assign Account to Portfolio');
         
-        for(AccountTeamMember teamM:accTeamInsertList){
+        /*for(AccountTeamMember teamM:accTeamInsertList){
             teamM.AccountAccessLevel= 'Edit';
             teamM.CaseAccessLevel = 'Edit';
             teamM.OpportunityAccessLevel = 'Edit';
@@ -313,10 +332,32 @@ public with sharing class AccountPortfolioAssignmentHelper {
         
         insertErrors(actTeamInsert,'Account Team Insert','Populate Account Team');
         insertErrors(actTeamUpdate,'Account Team Update','Populate Account Team');
-        insertErrors(actTeamDelete,'Account Team Delete','Populate Account Team');
+        insertErrors(actTeamDelete,'Account Team Delete','Populate Account Team');*/
+
+        //HRP-12087 --> Starts Here
+		List<Account_Portfolio_Assignment__c> modifiedAccountPortfolioList = new List<Account_Portfolio_Assignment__c>();
+        List<Id> accountIds = new List<Id>();
+        
+        
+        modifiedAccountPortfolioList.addAll(updateList);
+        modifiedAccountPortfolioList.addAll(insertList);
+
+        if(!modifiedAccountPortfolioList.isEmpty())
+        {
+            for(Account_Portfolio_Assignment__c accPort : modifiedAccountPortfolioList)
+            {
+                if(!accountIds.contains(accPort.Account__c))
+                {
+                    accountIds.add(accPort.Account__c);
+                }
+            }
+        }
+		AccountPortfolioAssignmentService.accTeamDateSyncOnAccPortUpdates(accountIds,NULL, new set<Id>(), new Map<Id, List<AccountTeamMember>>() ,new Map<Id, List<AccountTeamMember>>());       
+
+        //HRP-12087 --> Ends Here
     }
     
-    public void populateAccountTeam(Taxonomy__c taxoRecord,Account_Portfolio_Assignment__c newActPortfolioAssignment,List<Portfolio_Assignment__c> userPortfolioAssigmentList,List<AccountTeamMember> accountTeamList,Boolean endDateChangeOnly,
+    /*public void populateAccountTeam(Taxonomy__c taxoRecord,Account_Portfolio_Assignment__c newActPortfolioAssignment,List<Portfolio_Assignment__c> userPortfolioAssigmentList,List<AccountTeamMember> accountTeamList,Boolean endDateChangeOnly,
                                     		List<AccountTeamMember> accTeamInsertList,List<AccountTeamMember> accTeamUpdateList,List<AccountTeamMember> accTeamDeleteList){
         
         
@@ -328,10 +369,10 @@ public with sharing class AccountPortfolioAssignmentHelper {
                                                 
          if(endDateChangeOnly){
             for(AccountTeamMember teamMember:accountTeamList){
-              /*  if(taxoRecord.End_Date__c == teamMember.End_Date__c){
+            ----------- if(taxoRecord.End_Date__c == teamMember.End_Date__c){
                     teamMember.End_Date__c = newActPortfolioAssignment.End_Date__c;
                     accTeamUpdateList.add(teamMember);
-                }*/
+                }--------
             }
         }else{
             if((accountTeamList == null || accountTeamList.size() ==0) && userPortfolioAssigmentList != null){
@@ -796,7 +837,7 @@ public with sharing class AccountPortfolioAssignmentHelper {
         }
         system.debug('accTeamUpdateList:'+accTeamUpdateList);
         
-    }
+    }*/
     
     public void insertErrors(Database.SaveResult[] saveErrors,String errorDesc, String processName){
         List<BSF_Error_Log__c> errorList = new List<BSF_Error_Log__c>();

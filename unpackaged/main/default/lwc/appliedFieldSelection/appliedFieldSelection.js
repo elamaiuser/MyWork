@@ -7,30 +7,32 @@ export default class AppliedFieldSelection extends LightningElement {
     _selected = [];
     fieldresult;
     @track fieldnames = [];
-    @track defaultOptions=[];
+    @track defaultOptions = [];
     doselect = true;
     dodeselect = false;
 
-    connectedCallback(){
+    connectedCallback() {
 
         getFieldsFromFieldSets()
-        .then( (result)=>{
-            this.fieldresult = result;
-            result.forEach( (item)=>{
-                this.fieldnames.push( { label: item.fieldlabel , value: item.fieldapiname } );
-            });
-            this.fieldnames.push( { label: 'Drive Affiliations' , value: 'Drive Affiliations' } );
-        this.fieldnames.push( { label: 'Drive Service Roles' , value: 'Drive Service Roles' } );
-        })
-        .catch( (error)=>{
+            .then((result) => {
+                this.fieldresult = result;
+                result.forEach((item) => {
+                    this.fieldnames.push({ label: item.fieldlabel, value: item.fieldapiname });
+                });
+                this.fieldnames.push({ label: 'Web Scheduling Settings', value: 'Web Scheduling Settings' });
+                this.fieldnames.push({ label: 'Drive Affiliations', value: 'Drive Affiliations' });
+                this.fieldnames.push({ label: 'Drive Service Roles', value: 'Drive Service Roles' });
+                this.fieldnames.push({ label: 'Template Order', value: 'Template Order' });
+            })
+            .catch((error) => {
 
-        })
+            })
     }
     get fieldsapinames() {
-        
+
         return this.fieldnames;
     }
-    get allfieldsapinames(){
+    get allfieldsapinames() {
         return this.defaultOptions;
     }
 
@@ -42,24 +44,24 @@ export default class AppliedFieldSelection extends LightningElement {
         this._selected = e.detail.value;
         //console.log( 'field selection is ' , JSON.stringify( this._selected ) );
         //let isdisable = this._selected.length ? false : true;
-        let selectionarray = [ ...this._selected ];
-        
+        let selectionarray = [...this._selected];
+
         //console.log( 'field selection is ' , selectionarray );
 
         let fieldsopted = {};
         fieldsopted.selectedfields = selectionarray;
-        this.dispatchEvent(new CustomEvent('selectionfields', { detail : fieldsopted} ));
-       
+        this.dispatchEvent(new CustomEvent('selectionfields', { detail: fieldsopted }));
+
 
     }
-    selectallnow(event){
+    selectallnow(event) {
         this.doselect = false;
         this.dodeselect = true;
         this.defaultOptions = [];
 
-        this.fieldnames.forEach( (item)=>{
+        this.fieldnames.forEach((item) => {
             //this.defaultOptions.push( { label: item.fieldlabel , value: item.fieldapiname }  );
-            this.defaultOptions.push( item.value  );
+            this.defaultOptions.push(item.value);
         });
 
         // console.log( 'this.defaultOptions is before ' + this.defaultOptions );
@@ -73,11 +75,11 @@ export default class AppliedFieldSelection extends LightningElement {
 
         let fieldsopted = {};
         fieldsopted.selectedfields = this._selected;
-        this.dispatchEvent(new CustomEvent('selectionfields', { detail : fieldsopted} ));
-        
+        this.dispatchEvent(new CustomEvent('selectionfields', { detail: fieldsopted }));
+
     }
 
-    deselectallnow(event){
+    deselectallnow(event) {
         this.doselect = true;
         this.dodeselect = false;
 
@@ -88,7 +90,7 @@ export default class AppliedFieldSelection extends LightningElement {
 
         let fieldsopted = {};
         fieldsopted.selectedfields = this._selected;
-        this.dispatchEvent(new CustomEvent('selectionfields', { detail : fieldsopted} ));
+        this.dispatchEvent(new CustomEvent('selectionfields', { detail: fieldsopted }));
 
 
     }

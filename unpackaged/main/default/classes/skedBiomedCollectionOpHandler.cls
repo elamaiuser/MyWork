@@ -6,6 +6,7 @@ public class skedBiomedCollectionOpHandler extends skedTriggerHub implements Cal
 
     public override void onAfterUpdate() {
         captureJobIMPACTChanges(this.context.newRecords, (Map<Id, Biomed_Collection_Op_Center__c>) this.context.oldMap);
+        captureWeightLevelValueChanges(this.context.newRecords, (Map<Id, Biomed_Collection_Op_Center__c>) this.context.oldMap);
     }
     
     public override void onAfterInsert() {
@@ -72,6 +73,8 @@ public class skedBiomedCollectionOpHandler extends skedTriggerHub implements Cal
         sObjectsToCreateQueuesForByName.put(skedConstants.PROFILE_QUEUE_DRIVE_CHANGE_REQUESTS, 'sked_Drive_Change_Request__c');
         sObjectsToCreateQueuesForByName.put(skedConstants.PROFILE_QUEUE_PENDING_ACTIONS, 'sked_Drive__c');
         sObjectsToCreateQueuesForByName.put(skedConstants.PROFILE_QUEUE_ROLE_TIME_VARIANCES, 'sked__Location__c');
+        sObjectsToCreateQueuesForByName.put(skedConstants.PROFILE_QUEUE_DM_ROLE_TIME_VARIANCES, 'sked__Location__c');
+        sObjectsToCreateQueuesForByName.put(skedConstants.PROFILE_QUEUE_CM_ROLE_TIME_VARIANCES, 'sked__Location__c');
         sObjectsToCreateQueuesForByName.put(skedConstants.PROFILE_QUEUE_DRIVE_SHIFT_TRADES, 'sked_Drive_Shift_Trade__c');
         sObjectsToCreateQueuesForByName.put(skedConstants.PROFILE_QUEUE_DM_DRIVE_CHANGE_REQUESTS, 'sked_Drive_Change_Request__c');
         sObjectsToCreateQueuesForByName.put(skedConstants.PROFILE_QUEUE_DM_PENDING_ACTIONS, 'sked_Drive__c');
@@ -141,6 +144,34 @@ public class skedBiomedCollectionOpHandler extends skedTriggerHub implements Cal
         if (!impactChangedCOs.isEmpty() && !Test.isRunningTest()) {
             Database.executeBatch(new skedCaptureJobIMPACTBatch(impactChangedCOs), 200);
         }
+    }
+
+    private void captureWeightLevelValueChanges(List<Biomed_Collection_Op_Center__c> newRecords, Map<Id, Biomed_Collection_Op_Center__c> oldMap) {
+        Map<Id, Biomed_Collection_Op_Center__c> coWithWeightLevelValueChanges = new Map<Id, Biomed_Collection_Op_Center__c>();
+        for (Biomed_Collection_Op_Center__c co : newRecords) {
+            Biomed_Collection_Op_Center__c oldCo = oldMap.get(co.Id);
+            if (co.sked_Low_Weight__c != oldCo.sked_Low_Weight__c
+                || co.sked_Medium_Weight__c != oldCo.sked_Medium_Weight__c
+                || co.sked_High_Weight__c != oldCo.sked_High_Weight__c
+                || co.sked_Role_Priorities_Weight__c  != oldCo.sked_Role_Priorities_Weight__c) {
+                coWithWeightLevelValueChanges.put(co.Id, co);
+            }
+        }
+        if (coWithWeightLevelValueChanges.isEmpty()) {
+            return;
+        }
+
+        List<sked_CollectionOperationOptimizerSetting__c> optimizerSettings = [
+            SELECT sked_Collection_Operation__c, sked_Default_Weight__c, sked_Constraint_Type__c, sked_Constraint__c, sked_Enabled__c, sked_Display_Type__c 
+            FROM sked_CollectionOperationOptimizerSetting__c
+            WHERE sked_Collection_Operation__c IN :coWithWeightLevelValueChanges.keySet()
+        ];
+        if (optimizerSettings.isEmpty()) {
+            return;
+        }
+
+        skedCollectionOpOptimizerSettingUtils.populateOptimizerMappedWeight(optimizerSettings, coWithWeightLevelValueChanges);
+        update optimizerSettings;
     }
 
     public static Object call(String methodName, Map<String, Object> params) {

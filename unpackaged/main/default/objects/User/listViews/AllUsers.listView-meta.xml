@@ -5,7 +5,6 @@
     <columns>CORE.USERS.FIRST_NAME</columns>
     <columns>CORE.USERS.ALIAS</columns>
     <columns>CORE.USERS.USERNAME</columns>
-    <columns>CORE.USERS.LAST_LOGIN</columns>
     <columns>CORE.USER_ROLE.NAME</columns>
     <columns>CORE.USERS.ACTIVE</columns>
     <columns>CORE.PROFILE.NAME</columns>
@@ -13,9 +12,9 @@
     <columns>CORE.USERS.TITLE</columns>
     <filterScope>Everything</filterScope>
     <filters>
-        <field>FULL_NAME</field>
+        <field>CORE.USERS.EMAIL</field>
         <operation>contains</operation>
-        <value>Vuong</value>
+        <value>Skedulo</value>
     </filters>
     <label>Find User</label>
     <language>en_US</language>

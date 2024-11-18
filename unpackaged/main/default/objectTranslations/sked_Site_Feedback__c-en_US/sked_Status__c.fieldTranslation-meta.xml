@@ -19,8 +19,12 @@
             <translation><!-- Submitted --></translation>
         </picklistValues>
         <picklistValues>
-            <masterLabel>Waiting for CO Supervisor Approval</masterLabel>
-            <translation><!-- Waiting for CO Supervisor Approval --></translation>
+            <masterLabel>Waiting for APS Approval</masterLabel>
+            <translation><!-- Waiting for APS Approval --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Waiting for CM Approval</masterLabel>
+            <translation><!-- Waiting for CM Approval --></translation>
         </picklistValues>
         <picklistValues>
             <masterLabel>Waiting for DM Approval</masterLabel>
