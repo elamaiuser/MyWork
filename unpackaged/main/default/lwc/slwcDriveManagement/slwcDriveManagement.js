@@ -17,7 +17,7 @@ import surrogateDriveTemplate from './surrogateDrive.html';
 import { driveService, driveChangeRequestService, driveQueryModel, approvalService, slotService, debugLogService } from 'c/dataService';
 import { DateTime } from 'c/luxon';
 import { chunk, isEqual } from 'c/lodash';
-import { DRIVE_STATUS, DRIVE_APPROVAL_STATUS, PENDING_ACTION, ASSET_TYPE, OPPORTUNITY_STAGE } from 'c/slwcConstants';
+import { DRIVE_STATUS, DRIVE_APPROVAL_STATUS, PENDING_ACTION, ASSET_TYPE, OPPORTUNITY_STAGE, DRIVE_REQUEST_CHANGE_STATUS, DRIVE_CHANGE_REQUEST_TYPE } from 'c/slwcConstants';
 import TIME_ZONE from '@salesforce/i18n/timeZone';
 import { slwcDriveGeneratorHelper, DriveHelper } from 'c/slwcDriveGenerator';
 import { autoMapperInstance } from 'c/autoMapper';
@@ -68,6 +68,10 @@ const TABS = {
     SYSTEM_INFORMATION: 'systemInformation'
 }
 
+const eventListeners = {
+    'driveGenerator:driveChanged': [],
+};
+
 export default class SlwcDriveManagement extends NavigationMixin(LightningElement) {
     @api displayMode = DISPLAY_MODE.DRIVE_MANAGEMENT_TAB;
     // @api recordId = 'a1Z2i000001ikePEAQ';
@@ -93,6 +97,8 @@ export default class SlwcDriveManagement extends NavigationMixin(LightningElemen
     tabDetailsValidationFields = [];
     driveHelper = new DriveHelper();
     isDirty = false;
+    isSetUnsavedChangesDone = false;
+    bindHandleDriveChanged;
     
     get driveHasGenerated() {
         if(!this.recordId) return false;
@@ -248,7 +254,7 @@ export default class SlwcDriveManagement extends NavigationMixin(LightningElemen
     }
 
     get showDCRWarning() {
-        return this.drive && this.drive.pendingAction && this.drive.pendingAction === PENDING_ACTION.DRIVE_CHANGE_REQUEST && driveGeneratorInstance.masterData.activeDriveChangeRequest;
+        return this.drive && this.drive.pendingAction && this.drive.pendingAction === PENDING_ACTION.DRIVE_CHANGE_REQUEST && driveGeneratorInstance.masterData.waitingDriveChangeRequest;
     }
 
     get showNoTravelDataWarning() {
@@ -261,6 +267,11 @@ export default class SlwcDriveManagement extends NavigationMixin(LightningElemen
             !travelTimeBreakdownsCoToSite?.length || 
             !travelTimeBreakdownsSiteToCo?.length
         );
+    }
+
+    get showPendingUserChangeWarning() {
+        if(!this.drive || !driveGeneratorInstance.masterData.pendingDriveChangeRequest) return false;
+        return driveGeneratorInstance.masterData.pendingDriveChangeRequest.status === DRIVE_REQUEST_CHANGE_STATUS.PENDING && driveGeneratorInstance.masterData.pendingDriveChangeRequest.type.includes(DRIVE_CHANGE_REQUEST_TYPE.USER_CHANGE);
     }
 
     get showApproveDriveSubmissionBtn() {
@@ -289,7 +300,11 @@ export default class SlwcDriveManagement extends NavigationMixin(LightningElemen
 
         this.tabDetailsValidationFields = ['driveDate', 'projectedRegisteredDonors', 'name', 'startTime'];
         
-        document.addEventListener('driveGenerator:driveChanged', (event) => this.handleDriveChanged(event));
+        this.bindHandleDriveChanged = this.handleDriveChanged.bind(this);
+        
+        this.removeAllEventListeners('driveGenerator:driveChanged');
+
+        this.addEventListenerWithStore('driveGenerator:driveChanged', this.bindHandleDriveChanged);
         document.addEventListener('driveGenerator:showToastr', (event) => {
             this.dispatchEvent(new ShowToastEvent({
                 message: event.detail.message,
@@ -310,9 +325,26 @@ export default class SlwcDriveManagement extends NavigationMixin(LightningElemen
     }
 
     disconnectedCallback() {
-        document.removeEventListener('driveGenerator:driveChanged', (event) => this.handleDriveChanged(event));
+        document.removeEventListener('driveGenerator:driveChanged', this.bindHandleDriveChanged);
 
         unregisterAllListeners(this);
+    }
+
+    addEventListenerWithStore(eventType, listener) {
+        document.addEventListener(eventType, listener);
+        if (!eventListeners[eventType]) {
+            eventListeners[eventType] = [];
+        }
+        eventListeners[eventType].push(listener);
+    }
+
+    removeAllEventListeners(eventType) {
+        if (eventListeners[eventType]) {
+            eventListeners[eventType].forEach((listener) => {
+                document.removeEventListener(eventType, listener);
+            });
+            eventListeners[eventType] = [];
+        }
     }
 
     render() {
@@ -434,8 +466,9 @@ export default class SlwcDriveManagement extends NavigationMixin(LightningElemen
             }
         }
 
-        if (this.isDirty === false && location.href.includes('sked_Drive__c') && !event.detail.changedFromApplyingDCRs) {
+        if (this.isDirty === false && location.href.includes('sked_Drive__c') && !event.detail.changedFromApplyingDCRs && this.isSetUnsavedChangesDone === false) {
             this.isDirty = true;
+            this.isSetUnsavedChangesDone = true;
             this.handleDirtyStateChanged(true);
         }
     }
@@ -507,7 +540,7 @@ export default class SlwcDriveManagement extends NavigationMixin(LightningElemen
                  - Drive Date: ${driveDate}
                  - Start Time: ${driveStartTime}
                  - End Time: ${driveEndTime}
-                 - Opporunity: ${this.drive.opportunity.name}
+                 - Opportunity: ${this.drive.opportunity.name}
 
                 Do you want to continue?`,
 
@@ -602,7 +635,7 @@ export default class SlwcDriveManagement extends NavigationMixin(LightningElemen
         if(!this.showApproveDriveSubmissionBtn) return;
 
         if([DRIVE_APPROVAL_STATUS.WAITING_FOR_DM_APPROVAL, 
-            DRIVE_APPROVAL_STATUS.WAITING_FOR_DRD_FEEDBACK].includes(this.drive.approvalStatus)) {
+            DRIVE_APPROVAL_STATUS.DM_WAITING_FOR_DRD_FEEDBACK].includes(this.drive.approvalStatus)) {
             //save draft & approve
             this.btnSaveDraftClicked(null, true);
         } else {
@@ -812,7 +845,7 @@ export default class SlwcDriveManagement extends NavigationMixin(LightningElemen
                 return _approvalService.approveReject({request: request})
                 .then(() => {
                     if(isAPSUser && (this.drive.approvalStatus === DRIVE_APPROVAL_STATUS.WAITING_FOR_DM_APPROVAL || 
-                        this.drive.approvalStatus === DRIVE_APPROVAL_STATUS.WAITING_FOR_DRD_FEEDBACK)) {
+                        this.drive.approvalStatus === DRIVE_APPROVAL_STATUS.DM_WAITING_FOR_DRD_FEEDBACK)) {
                         return _approvalService.approveReject({request: request})
                     }
                 });
@@ -820,26 +853,26 @@ export default class SlwcDriveManagement extends NavigationMixin(LightningElemen
             .then(() => {
                 //approve DCR if needed
                 if(!needToApproveApprovalIfAny) return;
-                if(!this.showDCRWarning || !driveGeneratorInstance.masterData.activeDriveChangeRequest) {
+                if(!this.showDCRWarning || !(driveGeneratorInstance.masterData.waitingDriveChangeRequest)) {
                     return;
                 }
                 
                 const request = {
-                    recordId: driveGeneratorInstance.masterData.activeDriveChangeRequest.id,
+                    recordId: driveGeneratorInstance.masterData.waitingDriveChangeRequest.id,
                     action: 'Approve'
                 };
                 
                 const _approvalService = new approvalService();
                 return _approvalService.approveReject({request: request})
                 .then(() => {
-                    if(isAPSUser && (driveGeneratorInstance.masterData.activeDriveChangeRequest.status === DRIVE_APPROVAL_STATUS.WAITING_FOR_DM_APPROVAL || 
-                        driveGeneratorInstance.masterData.activeDriveChangeRequest.status === DRIVE_APPROVAL_STATUS.WAITING_FOR_DRD_FEEDBACK )) {
+                    if(isAPSUser && (driveGeneratorInstance.masterData.waitingDriveChangeRequest.status === DRIVE_REQUEST_CHANGE_STATUS.WAITING_FOR_DM_APPROVAL || 
+                        driveGeneratorInstance.masterData.waitingDriveChangeRequest.status === DRIVE_REQUEST_CHANGE_STATUS.DM_WAITING_FOR_DRD_FEEDBACK )) {
                             return _approvalService.approveReject({request: request})
                         }
                 });
             })
             .then(() => {
-                if(!this.isFixedSiteDrive) return;
+                if(!this.isFixedSiteDrive && !this.isWbFixedSiteDrive) return;
                 return driveGeneratorInstance.calculateRecurrenceSlots(model)
                 .then((drivesToSave = []) => {
                     if(!drivesToSave.length) return;
@@ -915,6 +948,7 @@ export default class SlwcDriveManagement extends NavigationMixin(LightningElemen
                     'Lacking of equipment',
                     'Exceeds Operational Drive Limit',
                     'Exceeds 2RBC Operational Limit',
+                    'Excess Staff Capacity'
                 ];
                 const anyContentionsPreventHold = pendingActionReasonCodes.filter(pendingActionReasonCode => {
                     return contentionsPreventHold.includes(pendingActionReasonCode);
@@ -967,6 +1001,8 @@ export default class SlwcDriveManagement extends NavigationMixin(LightningElemen
 
     handleNavigateToRecord() {
         this.handleDirtyStateChanged(false);
+        this.isSetUnsavedChangesDone = false;
+        this.isDirty = false;
         if(this.showCloseButton) return;
 
         this[NavigationMixin.Navigate]({
@@ -985,8 +1021,9 @@ export default class SlwcDriveManagement extends NavigationMixin(LightningElemen
         const detail = event.detail;
 
         console.log('on drive data changed' + detail.cmpName);
-        if (this.isDirty === false && location.href.includes('sked_Drive__c')) {
+        if (this.isDirty === false && location.href.includes('sked_Drive__c') && this.isSetUnsavedChangesDone === false) {
             this.isDirty = true;
+            this.isSetUnsavedChangesDone = true;
             this.handleDirtyStateChanged(true);
         }
         if (detail.cmpName == 'slwcDriveDetails' || detail.cmpName == 'slwcDriveCompactView' || detail.cmpName == 'slwcDriveMarketing') {

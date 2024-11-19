@@ -87,11 +87,6 @@
         </columns>
         <columns>
             <checkedByDefault>false</checkedByDefault>
-            <field>sked_Chapter__c</field>
-            <table>sked__Location__c</table>
-        </columns>
-        <columns>
-            <checkedByDefault>false</checkedByDefault>
             <field>sked_City__c</field>
             <table>sked__Location__c</table>
         </columns>
@@ -143,6 +138,11 @@
         <columns>
             <checkedByDefault>false</checkedByDefault>
             <field>sked_Days_of_Week_Preferred__c</field>
+            <table>sked__Location__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>sked_Chapter__c</field>
             <table>sked__Location__c</table>
         </columns>
         <columns>
@@ -588,6 +588,11 @@
         <columns>
             <checkedByDefault>false</checkedByDefault>
             <field>Has_Elevator__c</field>
+            <table>sked__Location__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>Chapter__c.Name</field>
             <table>sked__Location__c</table>
         </columns>
         <masterLabel>Sites</masterLabel>

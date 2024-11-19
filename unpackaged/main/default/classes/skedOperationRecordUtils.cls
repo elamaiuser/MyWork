@@ -63,7 +63,7 @@ public class skedOperationRecordUtils {
 
         Map<Id, sked__Resource__c> resourceById = new Map<Id, sked__Resource__c>([
             SELECT Id, Name,
-                (SELECT Id, Name, sked_Premium_Pay__c, sked__Tag__r.Name, sked_Start_Date__c, sked_Expiry_Date__c FROM sked__ResourceTags__r)
+                (SELECT Id, Name, sked_Premium_Pay__c, sked__Tag__r.Name, sked_Start_Date__c FROM sked__ResourceTags__r)
             FROM sked__Resource__c
             WHERE Id IN :resourceIds
         ]);
@@ -86,11 +86,11 @@ public class skedOperationRecordUtils {
                 }
                 
                 request.shiftId = shiftId;
-                request.scheduled =  opRecordStaff.sked_Job__r.sked_Drive_Shift__r.sked_Donors_Scheduled__c != null ? (integer)opRecordStaff.sked_Job__r.sked_Drive_Shift__r.sked_Donors_Scheduled__c : 0;
+                request.scheduled =  opRecordStaff.sked_Job__r.sked_Drive_Shift__r.sked_Donors_Scheduled__c != null ? Integer.valueOf(opRecordStaff.sked_Job__r.sked_Drive_Shift__r.sked_Donors_Scheduled__c) : 0;
                 request.roomUsed = !string.isBlank(opRecordStaff.sked_Job__r.sked__Location__r.sked_Room_Name__c) ? opRecordStaff.sked_Job__r.sked__Location__r.sked_Room_Name__c : ''; 
-                request.powerRedMachinesUsed = (integer) opRecord.sked_Power_Red_Machines_Used__c;
+                request.powerRedMachinesUsed = Integer.valueOf(opRecord.sked_Power_Red_Machines_Used__c);
                 request.powerRedMachinesUsed = request.powerRedMachinesUsed != NULL ? request.powerRedMachinesUsed : 1;
-                request.powerRedMachinesSent = (integer) opRecord.sked_Power_Red_Machines_Sent__c;
+                request.powerRedMachinesSent = Integer.valueOf(opRecord.sked_Power_Red_Machines_Sent__c);
                 request.powerRedMachinesSent = request.powerRedMachinesSent != NULL ? request.powerRedMachinesSent : 1;
                 request.numberWhiteNoiseMachineUsed = 1;
                 request.numberTables = 1;
@@ -101,7 +101,7 @@ public class skedOperationRecordUtils {
                 request.numberBedsSetup2RBC = 1;
                 request.notes = !string.isBlank(opRecordStaff.sked_Notes_Comments__c) ? opRecordStaff.sked_Notes_Comments__c : ''; 
                 request.maximumPossibleHH = 1;
-                request.maximumPossibleBeds = opRecordStaff.sked_Job__r.sked__Location__r.sked_Maximum_Beds__c != NULL ? (integer)opRecordStaff.sked_Job__r.sked__Location__r.sked_Maximum_Beds__c : 1;
+                request.maximumPossibleBeds = opRecordStaff.sked_Job__r.sked__Location__r.sked_Maximum_Beds__c != NULL ? Integer.valueOf(opRecordStaff.sked_Job__r.sked__Location__r.sked_Maximum_Beds__c) : 1;
                 request.lockRecord = true;
                 request.lockedByEmployeeId = skedTriggerHub_Cache.getCurrentUserResource().sked_Employee_ID__c;
                 request.lockedByEmployeeEmail = skedTriggerHub_Cache.getCurrentUserResource().sked__Email__c;
@@ -142,7 +142,7 @@ public class skedOperationRecordUtils {
                         opDetail.shiftStart = convertToWorkdayDateTimeFormat(recordStaff.sked_Actual_Shift_Start__c, recordStaff.sked_Timezone__c);
                         opDetail.shiftEnd = convertToWorkdayDateTimeFormat(recordStaff.sked_Actual_Shift_End__c, recordStaff.sked_Timezone__c);
                         
-                        opDetail.role = recordStaff.sked_Actual_Roles__c.replace(';', ', ');
+                        opDetail.role = String.isNotBlank(recordStaff.sked_Actual_Roles__c) ? recordStaff.sked_Actual_Roles__c.replace(';', ', ') : '';//HRP-10778 Changes
                         if (recordStaff.sked_Premiums_Op_Pay__c != NULL) {
                             opDetail.premiumTranslator = hasPremiumTagForRole('Translator', premiumPayTagsByRole.get('Translator'), skedResource, recordStaff, driveDate);
                             opDetail.premiumOJI = hasPremiumTagForRole('OJI', premiumPayTagsByRole.get('OJI'), skedResource, recordStaff, driveDate);
@@ -205,8 +205,7 @@ public class skedOperationRecordUtils {
                         for (sked__Resource_Tag__c resourceTag : skedResource.sked__ResourceTags__r) {
                             String tagName = resourceTag.sked__Tag__r.Name;
                             Boolean isPremiumPay = resourceTag.sked_Premium_Pay__c;
-                            Boolean isTagActiveOnDriveDate = resourceTag.sked_Start_Date__c <= driveDate && 
-                                (resourceTag.sked_Expiry_Date__c == null || resourceTag.sked_Expiry_Date__c >= driveDate);
+                            Boolean isTagActiveOnDriveDate = resourceTag.sked_Start_Date__c <= driveDate;
     
                             if (applicableRole == tagName && isPremiumPay && isTagActiveOnDriveDate) {
                                 hasPremiumTagForRole = true;

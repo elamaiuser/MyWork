@@ -1,0 +1,20 @@
+<template>
+    <template lwc:if={hasReport}>
+        <lightning-accordion allow-multiple-sections-open active-section-name={activeSection}>
+            <lightning-accordion-section name="A" label="Important Links">
+                <div class="slds-p-top_x-small slds-p-left_medium slds-p-right_medium">
+                    <div class="slds-grid slds-grid_vertical">
+                        <template for:each={reportData} for:item="report">
+                            <div key={report.id} class="slds-col">
+                                <label class="slds-form-element__label slds-text-body_regular">{report.name}</label><br>
+                                <div class="slds-border_bottom slds-text-body_regular slds-card__body_inner slds-truncate">
+                                    <lightning-formatted-url value={report.link} target="_blank"><hr></lightning-formatted-url>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+            </lightning-accordion-section>
+        </lightning-accordion>
+    </template>
+</template>

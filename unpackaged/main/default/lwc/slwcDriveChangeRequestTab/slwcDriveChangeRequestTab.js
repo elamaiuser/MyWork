@@ -9,11 +9,13 @@ import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import {
   sObjectType,
   driveChangeRequestQueryModel,
-  driveChangeRequestService
+  driveChangeRequestService,
+  debugLogService
 } from 'c/dataService';
 import TIME_ZONE from '@salesforce/i18n/timeZone';
 import * as slwcUtils from 'c/slwcUtils';
 import { DRIVE_REQUEST_CHANGE_STATUS, DRIVE_CHANGE_REQUEST_ITEM_TYPE } from 'c/slwcConstants';
+import { NavigationMixin } from 'lightning/navigation';
 
 const DRIVE_CHANGE_REQUEST_DETAILS_COLUMNS = [
   { label: 'Field Label', fieldName: 'fieldLabel', type: 'text', wrapText: true},
@@ -25,7 +27,7 @@ const DRIVE_CHANGE_REQUEST_DETAILS_COLUMNS = [
   minute: '2-digit', timeZone: TIME_ZONE } }
 ];
 
-export default class SlwcDriveChangeRequestTab extends LightningElement {
+export default class SlwcDriveChangeRequestTab extends NavigationMixin(LightningElement) {
   @api recordId = null;
   // @api recordId = '0062i000008JSa2AAG';
 
@@ -83,7 +85,8 @@ export default class SlwcDriveChangeRequestTab extends LightningElement {
       DRIVE_REQUEST_CHANGE_STATUS.SUBMITTED, 
       DRIVE_REQUEST_CHANGE_STATUS.WAITING_FOR_DM_APPROVAL, 
       DRIVE_REQUEST_CHANGE_STATUS.WAITING_FOR_APS_APPROVAL, 
-      DRIVE_REQUEST_CHANGE_STATUS.WAITING_FOR_DRD_FEEDBACK
+      DRIVE_REQUEST_CHANGE_STATUS.APS_WAITING_FOR_DRD_FEEDBACK,
+      DRIVE_REQUEST_CHANGE_STATUS.DM_WAITING_FOR_DRD_FEEDBACK
     ]
 
     return validStatuses.includes(this.selectedDriveChangeRequest.status);
@@ -250,6 +253,16 @@ export default class SlwcDriveChangeRequestTab extends LightningElement {
               .then(() => {
                 this.fetchData();
               })
+              .catch(error => {
+                this.exceptionHandler(error);
+                this[NavigationMixin.Navigate]({
+                  type: 'standard__recordPage',
+                  attributes: {
+                      recordId: this.recordId,
+                      actionName: 'view'
+                    }
+                });
+              })
               .finally(() => this.hideLoading());
           }
       }
@@ -286,5 +299,14 @@ export default class SlwcDriveChangeRequestTab extends LightningElement {
     this.generateDriveModalData = {};
 
     this.handleRefresh();
+  }
+
+  exceptionHandler = (error) => {
+    new debugLogService().captureDebugLog(error, this.recordId);
+    this.dispatchEvent(new ShowToastEvent({
+        message: error.message,
+        variant: 'error',
+        mode: 'dismissable',
+    }));
   }
 }

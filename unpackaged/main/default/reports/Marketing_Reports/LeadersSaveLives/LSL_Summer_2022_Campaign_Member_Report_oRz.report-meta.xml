@@ -99,19 +99,19 @@
             <columnToColumn>false</columnToColumn>
             <isUnlocked>true</isUnlocked>
             <operator>greaterOrEqual</operator>
-            <value>6/1/2022</value>
+            <value>9/9/2024</value>
         </criteriaItems>
         <criteriaItems>
             <column>END_DATE</column>
             <columnToColumn>false</columnToColumn>
             <isUnlocked>true</isUnlocked>
-            <operator>lessThan</operator>
-            <value>9/1/2022</value>
+            <operator>lessOrEqual</operator>
+            <value>12/14/2024</value>
         </criteriaItems>
         <language>en_US</language>
     </filter>
     <format>Tabular</format>
-    <name>LSL Summer 2022 Lead Details</name>
+    <name>LSL Winter 2024 Lead Details</name>
     <params>
         <name>scopeid</name>
         <value></value>

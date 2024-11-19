@@ -7,8 +7,12 @@
         <value xsi:type="xsd:boolean">false</value>
     </values>
     <values>
+        <field>Batch_Size_for_Status_Correction_Batch__c</field>
+        <value xsi:type="xsd:double">100.0</value>
+    </values>
+    <values>
         <field>Buffer_Days_For_System_Generated__c</field>
-        <value xsi:type="xsd:double">8.0</value>
+        <value xsi:type="xsd:double">7.0</value>
     </values>
     <values>
         <field>Bypass_Auto_Drive_Generation__c</field>
@@ -16,7 +20,7 @@
     </values>
     <values>
         <field>Calendar_Build_Review_Days__c</field>
-        <value xsi:type="xsd:double">41.0</value>
+        <value xsi:type="xsd:double">14.0</value>
     </values>
     <values>
         <field>Date_Literal__c</field>
@@ -24,22 +28,38 @@
     </values>
     <values>
         <field>Draft_Drives_Batch_Size__c</field>
-        <value xsi:type="xsd:double">10.0</value>
+        <value xsi:type="xsd:double">1.0</value>
+    </values>
+    <values>
+        <field>No_of_Days_for_Calendar_Build_Batch__c</field>
+        <value xsi:type="xsd:double">21.0</value>
+    </values>
+    <values>
+        <field>No_of_Days_for_Status_Correction_Batch__c</field>
+        <value xsi:type="xsd:double">18.0</value>
+    </values>
+    <values>
+        <field>No_of_Days_for_Sys_Gen_Batch_FS__c</field>
+        <value xsi:type="xsd:double">0.0</value>
+    </values>
+    <values>
+        <field>No_of_Days_for_Sys_Gen_Batch_Mobile__c</field>
+        <value xsi:type="xsd:double">21.0</value>
     </values>
     <values>
         <field>Number_of_Days__c</field>
-        <value xsi:type="xsd:double">15.0</value>
+        <value xsi:type="xsd:double">60.0</value>
     </values>
     <values>
         <field>System_Gen_Drives_Batch_Size__c</field>
-        <value xsi:type="xsd:double">15.0</value>
+        <value xsi:type="xsd:double">1.0</value>
     </values>
     <values>
         <field>System_Gen_End_Date__c</field>
-        <value xsi:type="xsd:date">2024-01-05</value>
+        <value xsi:type="xsd:date">2025-06-27</value>
     </values>
     <values>
         <field>System_Gen_Start_Date__c</field>
-        <value xsi:type="xsd:date">2024-01-01</value>
+        <value xsi:type="xsd:date">2025-06-27</value>
     </values>
 </CustomMetadata>

@@ -1,7 +1,8 @@
 /* Modification Log 
  * Date					     Developer Name			     Comments
  * ***********************************************************************************************************************************************
- * 1/17/2024				  Priti Jana				Fixed the test class, used new ASSERT class and increased code coverage.
+ * 01/17/2024				  Priti Jana				Fixed the test class, used new ASSERT class and increased code coverage
+ * 11/06/2024				  Priti Jana				Added new test method for HRP-9815
  *************************************************************************************************************************************************
 */
 
@@ -716,7 +717,7 @@ private class DriveTriggerServiceTest
                                                         sked_Projected_Registered_Donors__c = 100,
                                                      	sked_2RBC_Projected_Procedures__c = 20,
                                                         sked_WB_Projected_Procedures__c = 20,
-                                                        sked_Status__c = skedConstants.DRIVE_STATUS_DRAFT);
+                                                        sked_Status__c = 'Draft');
         
         insert testDrive1;
         
@@ -725,7 +726,7 @@ private class DriveTriggerServiceTest
             update testDrive1;
         }catch(Exception ex)
         {            
-            //Assert.isTrue(ex.getMessage().contains('This drive date violates the 56 day rule. Please change the drive date.'));
+            //Assert.isFalse(ex.getMessage().contains('This drive date violates the 56 day rule. Please change the drive date.'));
         }
         
         Test.stopTest();        
@@ -829,6 +830,127 @@ private class DriveTriggerServiceTest
         }
 
         return result;
-    }   
+    } 
+    static testMethod void testValidateSiteMandatoryFields1()
+    {
+        Test.startTest();
+        
+        TriggerHandler.bypass('OpportunitySplitTriggerHandler');
+        TriggerHandler.bypass('OpportunityTriggerHandler');
+        TriggerHandler.bypass('AccountTriggerHandler');
+        TriggerHandler.bypass('ContactTriggerHandler');
+        TriggerHandler.bypass('SiteTriggerHandler');
+        skedHubBase.BypassInsertTriggers = true;
+        skedHubBase.BypassUpdateTriggers = true;
+        skedHubBase.BypassDeleteTriggers = true;
+        
+        BSF_TestDataSetup testDataSetup = new BSF_TestDataSetup(false);
+        Map<string, sObject> mapTestData =  testDataSetup.createAndInsertCommonObjects(); 
+                
+        // insert Mobile Account
+        Account testMobileAccount = (Account)mapTestData.get('MOBILE_ACCOUNT');
+        testMobileAccount.Internal_Name__c =  'TEST ACCOUNT 1';
+        insert testMobileAccount;
+        
+        // insert contact
+        Contact testContact = (Contact)mapTestData.get('CONTACT');
+        testContact.AccountId =  testMobileAccount.Id;
+        insert testContact;
+        
+        // insert Mobile Site
+        sked__Location__c testMobileSite = (sked__Location__c)mapTestData.get('MOBILE_SITE');
+        //testMobileSite.sked_Site_Contact__c = testContact.Id;
+        insert testMobileSite;
+        
+        // insert templates
+        Opportunity testTemplate = (Opportunity)mapTestData.get('MOBILE_TEMPLATE_OPP');
+        testTemplate.AccountId = testMobileAccount.Id;
+        testTemplate.Drive_Site__c = testMobileSite.Id;
+        insert testTemplate;
+        
+        // insert Mobile Opp
+        Opportunity testMobileOpp2 = (Opportunity)mapTestData.get('MOBILE_OPP');
+        testMobileOpp2.AccountId = testMobileAccount.Id;
+        testMobileOpp2.Drive_Site__c = testMobileSite.Id;
+        testMobileOpp2.Parent_Template_Id__c = testTemplate.Id;
+        insert testMobileOpp2;
+        
+        sked_Drive__c testDrive1 = new sked_Drive__c(Name = 'Test Drive1',                                                       
+                                                        sked_Drive_Date__c = System.today(),
+                                                        sked_Drive_Site__c = testMobileSite.Id,
+                                                        sked_Opportunity__c = testMobileOpp2.Id,
+                                                        sked_Type_of_Drive__c = 'Mobile',
+                                                        sked_Account__c = testMobileAccount.Id,
+                                                        sked_Start_Time__c = Time.newInstance(7, 0, 0, 0),
+                                                        sked_End_Time__c = Time.newInstance(17, 0, 0, 0),
+                                                        sked_Drive_Productivity_Planned__c = 0.8,
+                                                        sked_Projected_Registered_Donors__c = 100,
+                                                     	sked_2RBC_Projected_Procedures__c = 20,
+                                                        sked_WB_Projected_Procedures__c = 20,
+                                                        sked_Status__c = skedConstants.DRIVE_STATUS_DRAFT);
+        
+        insert testDrive1;
+        Map<Id,sked_Drive__c> ddmap = new Map<Id,sked_Drive__c>(new List<sked_Drive__c>{testDrive1});
+        ddmap.get(testDrive1.Id).sked_Opportunity__c = null;
+        
+        try{
+            DriveTriggerService.validateOpportunity(ddmap, new List<sked_Drive__c>{testDrive1});
+        }catch(Exception ex)
+        {            
+            //Assert.isTrue(ex.getMessage().contains('Please populate below site mandatory fields before moving this Mobile drive'));
+        }
+        
+        Test.stopTest();        
+    }  
+    
+    // Test method added for HRP-9815
+    static testMethod void updateDrdRepOnOpRecordUponOwnerChange_Test() {
+
+        Map<string, sObject> mapTestData = GenerateDriveTestData.testSetupForMobileDriveV2();
+        Opportunity mobileOpportunity = (Opportunity)mapTestData.get('mobileOpportunity');
+        
+        MobileDriveGeneratorDMLService.driveGeneratorConfig config = new MobileDriveGeneratorDMLService.driveGeneratorConfig();
+        config.oppIds = new Set<Id>();
+        config.oppIds.add(mobileOpportunity.Id);
+        
+        Test.startTest();
+        
+        AccountTeamMemberHelper.skipAccountTrigger = true;
+        TriggerHandler.bypass('AccountTriggerHandler');
+        TriggerHandler.bypass('OpportunityTriggerHandler');
+        TriggerHandler.bypass('OpportunitySplitTriggerHandler');
+        GenerateMobileDrive.generateDrives(config);
+        
+        sked_Drive__c drive = [Select Id , sked_WB_Projected_Procedures__c, sked_Drive_Owner__c, Account_Manager__c,
+                               sked_Account__c, sked_Collection_Operation__c, sked_Primary_Contact__c,
+                               sked_Drive_Site__c, sked_Drive_Site__r.sked_Site_Contact__c,
+                               (SELECT Id FROM sked_Drive_Shifts__r)
+                               FROM sked_Drive__c 
+                               WHERE sked_Opportunity__c IN :config.oppIds LIMIT 1];
+        
+        sked_Operation_Record__c newOperation = new sked_Operation_Record__c(
+                            sked_Account__c = drive.sked_Account__c,
+                            sked_Collection_Operation__c = drive.sked_Collection_Operation__c,
+                            sked_Donor_Ambassadors_Requested__c = 0,
+                            sked_Drive__c = drive.Id,
+                            sked_Drive_Shift__c = drive.sked_Drive_Shifts__r[0].Id,
+                            sked_Drive_Site__c = drive.sked_Drive_Site__c,
+                            sked_Primary_Contact__c = drive.sked_Primary_Contact__c,
+                            sked_Site_Contact__c = drive.sked_Drive_Site__r.sked_Site_Contact__c,
+                            sked_Unique_Key__c = drive.sked_Drive_Shifts__r[0].Id
+                        );
+        insert newOperation;
+        
+        // Generate Op Records
+        //List<sked_Operation_Record__c> operationRecords = skedOperationRecordService.generateOperationRecords(new Set<Id>{mobileDriveCreated[0].Id});
+        
+        drive.Account_Manager__c = UserInfo.getUserId();
+        drive.sked_WB_Projected_Procedures__c = 12;
+        skedHubBase.BypassUpdateTriggers = TRUE;
+        update drive;
+        skedHubBase.BypassUpdateTriggers = FALSE;
+        
+        Test.stopTest();
+    }
     
 }

@@ -4,7 +4,7 @@
     <description>Does the lead / organization have any other relationships with other Red Cross lines?</description>
     <externalId>false</externalId>
     <inlineHelpText>Does the lead / organization have any other relationships with other Red Cross lines?</inlineHelpText>
-    <label>Other Redcross Relationships</label>
+    <label>Other Red Cross Relationships</label>
     <required>false</required>
     <trackFeedHistory>false</trackFeedHistory>
     <trackHistory>false</trackHistory>

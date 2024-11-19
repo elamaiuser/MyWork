@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>sked_Constraint__c</fullName>
+    <externalId>false</externalId>
+    <fieldManageability>DeveloperControlled</fieldManageability>
+    <label>Constraint</label>
+    <required>false</required>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Account/Site Preferences</fullName>
+                <default>true</default>
+                <label>Account/Site Preferences</label>
+            </value>
+            <value>
+                <fullName>Geographic Preferences</fullName>
+                <default>false</default>
+                <label>Geographic Preferences</label>
+            </value>
+            <value>
+                <fullName>Hire Date</fullName>
+                <default>false</default>
+                <label>Hire Date</label>
+            </value>
+            <value>
+                <fullName>Role Priorities</fullName>
+                <default>false</default>
+                <label>Role Priorities</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

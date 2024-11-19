@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PermissionSet xmlns="http://soap.sforce.com/2006/04/metadata">
+    <description>This enables any user assigned with this permset to use SSO only (username/password won&#39;t work anymore for users with this permissionset)</description>
+    <hasActivationRequired>false</hasActivationRequired>
+    <label>Force Single Sign On</label>
+    <userPermissions>
+        <enabled>true</enabled>
+        <name>IsSsoEnabled</name>
+    </userPermissions>
+</PermissionSet>

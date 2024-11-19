@@ -82,13 +82,6 @@
             <value>7</value>
         </criteriaItems>
         <criteriaItems>
-            <column>Lead.Blood_Region__c</column>
-            <columnToColumn>false</columnToColumn>
-            <isUnlocked>true</isUnlocked>
-            <operator>contains</operator>
-            <value>Western Lake Erie,Northern Ohio,Central Ohio,Missouri-Illinois Blood Region,River Valley Blood Region,Greater Ozarks-Arkansas Blood Region,Great Lakes,Southeastern Michigan,Indiana-Ohio,Tennessee,Alabama,Southern Blood Region,Badger-Hawkeye,Heart of America,Pacific Northwest,North Central,Lewis and Clark Blood Region,Arizona,Central Plains,Midwest,Southwest,Southern California,Northern California,Northeastern Pennsylvania,Penn-Jersey,Carolinas,South Carolina,Massachusetts,Connecticut,Northern New England,New York-Penn,Greater Alleghenies,Greater Chesapeake,Mid-Atlantic,Appalachian</value>
-        </criteriaItems>
-        <criteriaItems>
             <column>RECORDTYPE</column>
             <columnToColumn>false</columnToColumn>
             <isUnlocked>true</isUnlocked>
@@ -103,7 +96,7 @@
         <field>Lead.Hosted_Before__c</field>
         <sortOrder>Asc</sortOrder>
     </groupingsDown>
-    <name>LSL Summer 2022 New Leads Over 7 Days</name>
+    <name>LSL Winter 2024 New Leads Over 7 Days</name>
     <params>
         <name>co</name>
         <value>1</value>
@@ -115,8 +108,8 @@
     <showSubTotals>true</showSubTotals>
     <timeFrameFilter>
         <dateColumn>CREATED_DATE</dateColumn>
-        <endDate>2022-09-01</endDate>
+        <endDate>2024-12-14</endDate>
         <interval>INTERVAL_CUSTOM</interval>
-        <startDate>2022-06-01</startDate>
+        <startDate>2024-09-09</startDate>
     </timeFrameFilter>
 </Report>

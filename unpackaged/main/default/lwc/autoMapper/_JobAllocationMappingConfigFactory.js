@@ -47,11 +47,14 @@ export class JobAllocationMappingConfigFactory {
       mappingConfig.addFieldConfig('sked_Call_Out_Reason_Code__c', 'callOutReasonCode', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_Call_Out_Notes__c', 'callOutNotes', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_Call_Out_Type__c', 'callOutType', MAPPING_TYPE.direct);
-      
+      mappingConfig.addFieldConfig('sked_Optimization_Run__c', 'optimizationRunId', MAPPING_TYPE.direct);      
       mappingConfig.addFieldConfig('sked__Job__r', 'job', MAPPING_TYPE.related, 'sked__Job__c');
       mappingConfig.addFieldConfig('sked__Resource__r', 'resource', MAPPING_TYPE.related, 'sked__Resource__c');
       mappingConfig.addFieldConfig('sked_Drive_Shift_Trade__r', 'driveShiftTrade', MAPPING_TYPE.related, 'sked_Drive_Shift_Trade__c');
-
+      mappingConfig.addFieldConfig('sked_Optimization_Run__r', 'optimizationRun', MAPPING_TYPE.related, 'sked_Optimization_Run__c');
+      mappingConfig.addFieldConfig('sked_Guarded__c', 'guarded', MAPPING_TYPE.direct);
+      mappingConfig.addFieldConfig('sked_Is_Locked__c', 'isLocked', MAPPING_TYPE.direct);
+      
       mappingConfig.addFieldConfigWithRelatedList('skedHC__Exception_Log__r', 'exceptionLog', 'skedHC__Exception__c', 'skedHC__Job_Allocation__c');
 
       mappingConfig.readonlyFields.push('Name');

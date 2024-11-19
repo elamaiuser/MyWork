@@ -227,6 +227,14 @@
                                                                                             icon-name="utility:lock">
                                                                                         </lightning-icon>
                                                                                     </span>
+                                                                                    <span class="indicator locked-indicator"
+                                                                                        if:true={jobAllocation.guarded}>
+                                                                                        <lightning-icon
+                                                                                            class="slds-current-color"
+                                                                                            size="xx-small"
+                                                                                            icon-name="utility:shield">
+                                                                                        </lightning-icon>
+                                                                                    </span>
                                                                                 </div>
                                                                             </template>
                                                                         </li>
@@ -457,6 +465,14 @@
                                                                                 class="slds-current-color"
                                                                                 size="xx-small"
                                                                                 icon-name="utility:lock">
+                                                                            </lightning-icon>
+                                                                        </span>
+                                                                        <span class="indicator locked-indicator"
+                                                                            if:true={jobAllocation.guarded}>
+                                                                            <lightning-icon
+                                                                                class="slds-current-color"
+                                                                                size="xx-small"
+                                                                                icon-name="utility:shield">
                                                                             </lightning-icon>
                                                                         </span>
                                                                     </div>
@@ -849,9 +865,12 @@
     </c-slwc-dispatch-drive-modal>
 
     <c-slwc-call-out-modal
-        is-open={callOutModalData.isOpen}
         onclose={handleCloseCallOutModal}
         onsave={handleSaveCallOutModal}
+        drive-date={callOutModalData.driveDate}
+        resource-id={callOutModalData.resourceId}
+        duration={callOutModalData.duration}
+        is-open={callOutModalData.isOpen}
     ></c-slwc-call-out-modal>
 
     <c-slwc-drive-shift-tag-modal></c-slwc-drive-shift-tag-modal>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Not_allow_to_change_approved_DCR_status</fullName>
+    <active>true</active>
+    <description>HRP-11899 : Implement Backend Validations for Cancelled or Rejected DCRs (DCR and DOC Sync Flow)</description>
+    <errorConditionFormula>AND(
+ISCHANGED(sked_Status__c),
+OR(
+ISPICKVAL(PRIORVALUE(sked_Status__c), &quot;Approved by System&quot;),
+ISPICKVAL(PRIORVALUE(sked_Status__c), &quot;Approved&quot;)
+),
+OR(
+ISPICKVAL(sked_Status__c, &quot;Cancelled&quot;),
+ISPICKVAL(sked_Status__c, &quot;Rejected&quot;)
+)
+)</errorConditionFormula>
+    <errorDisplayField>sked_Status__c</errorDisplayField>
+    <errorMessage>If a Drive Change Request is in &#39;Approved&#39; or &#39;Approved By System&#39; status, it cannot be changed to a &#39;Cancelled&#39; or &#39;Rejected&#39; status.</errorMessage>
+</ValidationRule>

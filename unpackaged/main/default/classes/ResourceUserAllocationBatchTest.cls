@@ -85,7 +85,8 @@ private class ResourceUserAllocationBatchTest {
                                                 sked_Work_City__c = 'Sylmar',
                                                 sked_Work_State__c = 'CA',
                                                 sked_Work_Address_1__c = '11970 Gager St',
-                                                sked_Work_Zip_Code__c = '91342'
+                                                sked_Work_Zip_Code__c = '91342',
+            									sked_FCC_Code__c='83140'
                                                 );
 
         insert resourceObj;

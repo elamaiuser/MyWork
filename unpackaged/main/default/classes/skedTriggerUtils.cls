@@ -154,19 +154,32 @@ public class skedTriggerUtils {
         }
     }
 
-    public static void validateServiceEntry(List<SObject> newRecords, String errorMessage) {
-        User loginUser = [SELECT Id, Name, Profile.Name
-                          FROM User
-                          WHERE Id = :UserInfo.getUserId()];
-        List<string> systemAdminProfiles = new List<string>();
-        systemAdminProfiles.add('Global Admin');
-        systemAdminProfiles.add('System Administrator');
-        boolean isAdmin = systemAdminProfiles.contains(loginUser.Profile.Name);
-        boolean isAutoProcUser = UserInfo.getUserId() == skedTriggerHub_Cache.getAutoProcessUserFromCache().Id;
+    public static boolean isUserAPS(Id userId) {
+        List<String> otherProfiles = new List<String>{'Global Admin', 'System Administrator'};
+        if (userId == UserInfo.getUserId()) {
+            return skedTriggerHub_Cache.loginUser.Profile.Name.contains('APS') || otherProfiles.contains(skedTriggerHub_Cache.loginUser.Profile.Name);
+        }
+        
+        User u = [SELECT Id, Profile.Name FROM User WHERE Id = :userId];
+        return u.Profile.Name.contains('APS') || otherProfiles.contains(u.Profile.Name);
+    }
 
-        if (!System.isBatch() && !isAutoProcUser && !isAdmin && !CHANGES_INITIATED_FROM_SERVICE) {
+    public static void validateServiceEntry(List<SObject> newRecords, String errorMessage) {
+        validateServiceEntry(newRecords, errorMessage, new List<String>{'Global Admin', 'System Administrator'}, true);
+    }
+
+    public static void validateServiceEntry(List<SObject> newRecords, String errorMessage, List<String> allowedProfiles) {
+        validateServiceEntry(newRecords, errorMessage, allowedProfiles, true);
+    }
+
+    public static void validateServiceEntry(List<SObject> newRecords, String errorMessage, List<String> allowedProfiles, Boolean usageAllowedViaService) {
+        boolean isAllowedProfile = allowedProfiles.contains(skedTriggerHub_Cache.loginUser.Profile.Name);
+        boolean isAutoProcUser = UserInfo.getUserId() == skedTriggerHub_Cache.getAutoProcessUserFromCache().Id;
+        boolean isPermittedUsage = usageAllowedViaService ? CHANGES_INITIATED_FROM_SERVICE : usageAllowedViaService;
+
+        if (!System.isBatch() && !isAutoProcUser && !isAllowedProfile && !isPermittedUsage) {
             for (SObject newRecord : newRecords) {
-                newRecord.addError(errorMessage);
+            newRecord.addError(errorMessage);
             }
         }
     }

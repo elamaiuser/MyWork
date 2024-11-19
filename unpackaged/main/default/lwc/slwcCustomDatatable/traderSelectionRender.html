@@ -1,0 +1,16 @@
+<template>
+    <div class={typeAttributes.classes} onclick={typeAttributes.clickAction} data-id={value} style="cursor: pointer;padding: 5px">
+        <div class="slds-media hco-resource-info">
+            <div class="slds-media__figure resource-avatar">
+                <lightning-avatar fallback-icon-name="standard:user"
+                    src={typeAttributes.photoUrl}></lightning-avatar>
+    
+            </div>
+            <div class="slds-media__body">
+                <p class="resource-name slds-truncate">{typeAttributes.name}</p>
+                <p class="slds-text-color_weak slds-text-body_small slds-truncate">
+                    {typeAttributes.category}</p>
+            </div>
+        </div>
+    </div>
+</template>

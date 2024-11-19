@@ -15,8 +15,20 @@
             <translation><!-- Setup Time --></translation>
         </picklistValues>
         <picklistValues>
-            <masterLabel>Travel Time</masterLabel>
-            <translation><!-- Travel Time --></translation>
+            <masterLabel>Site Logistics Back</masterLabel>
+            <translation><!-- Site Logistics Back --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Site Logistics To</masterLabel>
+            <translation><!-- Site Logistics To --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Travel Time From</masterLabel>
+            <translation><!-- Travel Time From --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Travel Time To</masterLabel>
+            <translation><!-- Travel Time To --></translation>
         </picklistValues>
         <picklistValues>
             <masterLabel>Wrap-up Time</masterLabel>

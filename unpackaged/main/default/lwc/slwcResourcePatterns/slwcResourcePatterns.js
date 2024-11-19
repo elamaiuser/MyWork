@@ -34,7 +34,7 @@ export default class SlwcResourcePatterns extends LightningElement {
             WED : 'Wednesday',
             THU : 'Thursday',
             FRI : 'Friday',
-            SAT : 'Satruday'
+            SAT : 'Saturday' //HRP-10648 Fixed the typo on 'Saturday'
         };
         
         let patternResources = [];

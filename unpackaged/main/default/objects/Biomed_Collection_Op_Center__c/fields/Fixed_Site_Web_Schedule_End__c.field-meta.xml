@@ -2,7 +2,7 @@
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>Fixed_Site_Web_Schedule_End__c</fullName>
     <externalId>false</externalId>
-    <label>Fixed Site Web Schedule End</label>
+    <label>Fixed Site Web Schedule End(Do Not Use)</label>
     <precision>3</precision>
     <required>false</required>
     <scale>0</scale>

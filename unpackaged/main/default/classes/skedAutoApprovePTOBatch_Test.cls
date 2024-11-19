@@ -36,11 +36,9 @@ private class skedAutoApprovePTOBatch_Test {
             sked__Start__c = testDataFactory.summary.startTime,
             sked__Finish__c = testDataFactory.summary.startTime.addHours(2),
             sked_Bypass_Auto_Approval_Process__c = FALSE,
-            sked_Staffing_Budget__c = staffingBudget.Id,
             sked_Custom_Status__c = 'Pending',
             sked__Type__c = skedConstants.AVAILABILITY_TYPE_PTO
         );
-        
         insert availability;
         
         Database.executeBatch(new skedAutoApprovePTOBatch(new Set<Id>{staffingBudget.Id}));

@@ -63,6 +63,7 @@ public class NewFixedSiteDriveTest {
         opp1.WholeBloodProcedureProjectedChangeReason__c = 'demo';
         opp1.X2RBC_Projected_Procedures__c = 10;
         opp1.DoubleRedProceduresProjectedChangeReason__c = 'demo';
+        opp1.Source__c = 'Adhoc';
         opplist.add(opp1);  
         
         Opportunity opp2 = new Opportunity();
@@ -91,6 +92,7 @@ public class NewFixedSiteDriveTest {
         opp2.DoubleRedProceduresProjectedChangeReason__c = 'demo';
         opp2.sked_Cancellation_Reason__c = 'Staff Shortage';
         opp2.Initiated_By__c = 'ARC_Initiated_Mobile';
+        opp2.Source__c = 'Adhoc';
         opplist.add(opp2);        
         insert opplist; 
         

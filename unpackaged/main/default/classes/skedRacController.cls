@@ -5,6 +5,7 @@ global virtual class skedRacController extends skedBaseController {
         skedRemoteResultModel result = new skedRemoteResultModel();
         try {
             Map<string, object> mapConfigData = getConfigData(request.configKeys);
+            System.debug(mapConfigData.get('biomedCollectionOps'));
 
             User loginUser = [SELECT Id, sked__SkeduloUserType__c, Profile.Name
                 FROM User
@@ -62,6 +63,7 @@ global virtual class skedRacController extends skedBaseController {
         skedRemoteResultModel result = new skedRemoteResultModel(request.viewData);
         try {
             skedResourceService.queryModel query = new skedResourceService.queryModel();
+            query.availabilityStatuses = request.availabilityStatuses;
             query.biomedCollectionOpIds = request.biomedCollectionOpIds;
             query.categories = request.resourceCategories;
             query.employmentTypes = request.resourceEmploymentTypes;
@@ -81,15 +83,16 @@ global virtual class skedRacController extends skedBaseController {
             query.searchColumns = new List<string>();
             query.searchColumns.add('Name');
             query.startDate = request.startDate;
-            query.subQueryIndicator = skedSObjectType.RESOURCE_RAC_DATA | skedSObjectType.CUSTOM_AVAILABILITY;
+            query.subQueryIndicator = skedSObjectType.RESOURCE_RAC_DATA;
             query.tagIds = request.tagIds;
             query.matchAllSelectedTags = request.matchAllSelectedTags;
             query.tagExpiry = skedDateTimeUtils.getDateFromIsoString(request.startDate);
             query.patternIds = request.patternIds;
             query.activeTagsOnly = true;
+            query.activityTypes = request.activityTypes;
             query.availabilityTypes = request.availabilityTypes;
             query.excludedAvailabilityTypes = new List<String>{skedConstants.AVAILABILITY_TYPE_ON_CALL};
-            query.activityTypes = request.activityTypes;
+            query.customAvailabilityStatuses = new List<String>{skedConstants.AVAILABILITY_STATUS_APPROVED};
             
             skedResourceService service = (skedResourceService)skedServiceFactory.instance.resolve('sked__Resource__c');
             skedDataService.paginationQueryModel paginationResult = service.doPaginationQuery(query);
@@ -131,16 +134,11 @@ global virtual class skedRacController extends skedBaseController {
             data.totalRecords = paginationResult.totalRecords;
             data.totalPages = (integer)Math.ceil(decimal.valueOf(data.totalRecords) / request.pageSize);
             
-            skedModels.userFilter filters = skedSetting.instance.RAC.filters;
-            if (filters == NULL) {
-                filters = new skedModels.userFilter();
-                filters.category = 'RAC';
-                filters.userId = UserInfo.getUserId();
-            }
-            filters.jsonData = Json.serialize(request);
+            skedModels.userFilter filter = getUserFilterByCategory(skedSetting.instance.RAC.filters, 'RAC');
+            filter.jsonData = Json.serialize(request);
             
             skedDataService userFilterService = skedServiceFactory.instance.resolve('sked_User_Filter__c');
-            skedDataService.saveResult saveResult = userFilterService.saveRecord(filters);
+            skedDataService.saveResult saveResult = userFilterService.saveRecord(filter);
             
             result.data = data;
         }
@@ -172,6 +170,7 @@ global virtual class skedRacController extends skedBaseController {
             query.tagIds = request.tagIds;
             query.matchAllSelectedTags = request.matchAllSelectedTags;
             query.startDate = request.startDate;
+            query.endDate = request.endDate;
             query.activeTagsOnly = true;
 
             skedResourceService service = (skedResourceService)skedServiceFactory.instance.resolve('sked__Resource__c');
@@ -194,7 +193,7 @@ global virtual class skedRacController extends skedBaseController {
     global static skedRemoteResultModel getIndividualResourceData(getResourceRequestModel request) {
         skedRemoteResultModel result = new skedRemoteResultModel(request.viewData);
         try {
-            string timezoneSidId = getResourceTimezonesidId(request.resourceId);
+            string timezoneSidId = skedResourceUtils.getResourceTimezonesidId(request.resourceId);
             skedSetting.instance.App.setTimezoneSidId(timezoneSidId);
 
             resourceDataModel data = new resourceDataModel();
@@ -216,7 +215,8 @@ global virtual class skedRacController extends skedBaseController {
             query.startDate = request.startDate;
             query.endDate = request.endDate;
             query.jobAllocationStatuses = request.jobAllocationStatuses;
-            query.subQueryIndicator = skedSObjectType.RESOURCE_RAC_DATA | skedSObjectType.CUSTOM_AVAILABILITY;
+            query.customAvailabilityStatuses = new List<String>{skedConstants.AVAILABILITY_STATUS_APPROVED};
+            query.subQueryIndicator = skedSObjectType.RESOURCE_RAC_DATA;
             query.recordIds = recordIds;
             
             List<skedModels.resource> resources = (List<skedModels.resource>)resourceService.getList(query);
@@ -259,10 +259,14 @@ global virtual class skedRacController extends skedBaseController {
                 //override activity dateTime by activityResource dateTime
                 for (skedModels.activity groupActivity : groupActivities) {
                     sked__Activity_Resource__c skedActivityResource = map_activityId_activityResource.get(groupActivity.id);
-                    groupActivity.startDate = skedActivityResource.sked_Start1__c.format(skedDateTimeUtils.DATE_ISO_FORMAT, groupActivity.timezoneSidId);
-                    groupActivity.endDate = skedActivityResource.sked_End__c.format(skedDateTimeUtils.DATE_ISO_FORMAT, groupActivity.timezoneSidId);
-                    groupActivity.startTime = integer.valueOf(skedActivityResource.sked_Start1__c.format('Hmm', groupActivity.timezoneSidId));
-                    groupActivity.endTime = integer.valueOf(skedActivityResource.sked_End__c.format('Hmm', groupActivity.timezoneSidId));
+                    if (skedActivityResource.sked_Start1__c != NULL) {
+                        groupActivity.startDate = skedActivityResource.sked_Start1__c.format(skedDateTimeUtils.DATE_ISO_FORMAT, groupActivity.timezoneSidId);
+                    	groupActivity.startTime = integer.valueOf(skedActivityResource.sked_Start1__c.format('Hmm', groupActivity.timezoneSidId));
+                    }
+                    if (skedActivityResource.sked_End__c != NULL) {
+                        groupActivity.endDate = skedActivityResource.sked_End__c.format(skedDateTimeUtils.DATE_ISO_FORMAT, groupActivity.timezoneSidId);
+                        groupActivity.endTime = integer.valueOf(skedActivityResource.sked_End__c.format('Hmm', groupActivity.timezoneSidId));
+                    }
                 }
                 
                 resource.events.addAll(groupActivities);
@@ -321,6 +325,7 @@ global virtual class skedRacController extends skedBaseController {
         skedRemoteResultModel result = new skedRemoteResultModel(request.viewData);
         try {
             skedActivityService.queryModel query = new skedActivityService.queryModel();
+            query.activityTypes = request.activityTypes;
             query.biomedCollectionOpIds = request.biomedCollectionOpIds;
             query.territoryKeys = request.territoryKeys;
             query.endDate = request.endDate;
@@ -366,6 +371,7 @@ global virtual class skedRacController extends skedBaseController {
         try {
             skedAvailabilityService.queryModel query = new skedAvailabilityService.queryModel();
             query.availabilityStatuses = request.availabilityStatuses;
+            query.availabilityTypes = request.availabilityTypes;
             query.biomedCollectionOpIds = request.biomedCollectionOpIds;
             query.endDate = request.endDate;
             query.orderBy = skedAutoMapper.instance.mapToSObjectFieldPath('availability', request.orderBy);
@@ -387,6 +393,8 @@ global virtual class skedRacController extends skedBaseController {
             query.searchColumns = new List<string>();
             query.searchColumns.add('sked__Resource__r.Name');
             query.startDate = request.startDate;
+            query.submissionEndDate = request.submissionEndDate;
+            query.submissionStartDate = request.submissionStartDate;
             query.subQueryIndicator = skedSObjectType.EXCEPTION_LOG | skedSObjectType.STAFFING_BUDGET_AVAILABILITY;
             
             skedAvailabilityService service = (skedAvailabilityService)skedServiceFactory.instance.resolve('sked__Availability__c');
@@ -452,6 +460,12 @@ global virtual class skedRacController extends skedBaseController {
             data.totalRecords = paginationResult.totalRecords;
             data.totalPages = (integer)Math.ceil(decimal.valueOf(data.totalRecords) / request.pageSize);
             result.data = data;
+
+            skedModels.userFilter filter = getUserFilterByCategory(skedSetting.instance.RAC.filters, 'RAC-ApprovalRequests');
+            filter.jsonData = Json.serialize(request);
+
+            skedDataService userFilterService = skedServiceFactory.instance.resolve('sked_User_Filter__c');
+            skedDataService.saveResult saveResult = userFilterService.saveRecord(filter);
         }
         catch (Exception ex) {
             result.getError(ex);
@@ -585,27 +599,63 @@ global virtual class skedRacController extends skedBaseController {
 
             if (string.isBlank(request.event.id)) {
                 request.event.status = skedConstants.AVAILABILITY_STATUS_PENDING;
+            } else {
+                sked__Availability__c avail = [
+                    SELECT Id, sked_Integrate_With_Workday__c, sked_Workday_Sync_Status__c
+                    FROM sked__Availability__c
+                    WHERE Id = :request.event.id
+                    LIMIT 1
+                ][0];
+
+                if (avail.sked_Workday_Sync_Status__c == skedConstants.AVAILABILITY_WORKDAY_SYNC_STATUS_MANUAL && !skedTriggerUtils.isUserAPS(UserInfo.getUserId())) {
+                    request.event.status = skedConstants.AVAILABILITY_STATUS_PENDING;
+                    request.event.approvalReason = skedConstants.AVAILABILITY_APPROVAL_REASON_WORKDAY_ADJUSTMENT_REQUIRED;
+                } else if (avail.sked_Integrate_With_Workday__c) {
+                    if (avail.sked_Workday_Sync_Status__c == skedConstants.AVAILABILITY_WORKDAY_SYNC_STATUS_SUCCESS) {
+                        request.event.status = skedConstants.AVAILABILITY_STATUS_PROCESSING_ADJUSTMENT;
+                    } else {
+                        request.event.status = skedConstants.AVAILABILITY_STATUS_PENDING;
+                    }
+                }
             }
+
             string key = 'availability:' + request.event.eventType;
             if (skedSetting.instance.RAC.mapShiftTypeSetting.containsKey(key)) {
                 skedModels.eventTypeSetting setting = skedSetting.instance.RAC.mapShiftTypeSetting.get(key);
                 request.event.isAvailable = setting.isAvailable;
             }
             
-            skedModels.resource currentResource = resources.get(0);
-            if (!string.isBlank(currentResource.userType) && currentResource.userType.contains('Resource')) {
-                if ((request.recurringOptions == NULL && string.isBlank(request.event.id)) || (string.isNotBlank(request.event.id) && string.isBlank(request.event.scheduleId))) {
-                    query.startTime = skedDateTimeUtils.getStartOfDate(startDate, skedSetting.instance.App.timezoneSidId);
-                    query.endTime = skedDateTimeUtils.getEndOfDate(endDate, skedSetting.instance.App.timezoneSidId);
-                    resourceService.populateNonWorkingEvents(resources, inputDates, query.startTime, query.endTime);
-                    Boolean hasNonWorking = FALSE;
-                    for (skedModels.event availability : currentResource.availability) {
-                        if (availability.objectType == 'availability' && availability.eventType == 'non-working') {
-                            hasNonWorking = TRUE;
+            if (resources != NULL && !resources.isEmpty()) {
+                skedModels.resource currentResource = resources.get(0);
+                if (!string.isBlank(currentResource.userType) && currentResource.userType.contains('Resource')) {
+                    if ((request.recurringOptions == NULL && string.isBlank(request.event.id)) || (string.isNotBlank(request.event.id) && string.isBlank(request.event.scheduleId))) {
+                        query.startTime = skedDateTimeUtils.getStartOfDate(startDate, skedSetting.instance.App.timezoneSidId);
+                        query.endTime = skedDateTimeUtils.getEndOfDate(endDate, skedSetting.instance.App.timezoneSidId);
+                        
+                        skedAvailabilityPatternService patternService = (skedAvailabilityPatternService)skedServiceFactory.instance.resolve('sked__Availability_Pattern__c');
+                        Map<Id, List<skedModels.event>> mapResourceTemplateEvents = patternService.getPatternEvents(new Set<Id> {currentResource.id}, inputDates);
+                        
+                        Map<string, skedModels.event> mapTempateEvents = new Map<string, skedModels.event>();
+                        if (!mapResourceTemplateEvents.isEmpty()) {
+                            List<skedModels.event> resourceTemplateEvents = mapResourceTemplateEvents.values().get(0);
+                            for (skedModels.event resourceTemplateEvent : resourceTemplateEvents) {
+                                mapTempateEvents.put(resourceTemplateEvent.startDate, resourceTemplateEvent);
+                            }
                         }
-                    }
-                    if (hasNonWorking && !request.event.isAvailable) {
-                        throw new skedException('The availability must be created at working days');
+                        boolean hasNonWorking = FALSE;
+                        tempDate = startDate;
+                        while (tempDate <= endDate) {
+                            string dateIso = Json.serialize(tempDate).replace('"', '');
+                            if (!mapTempateEvents.containsKey(dateIso)) {
+                                hasNonWorking = TRUE;
+                                break;
+                            }
+                            tempDate = tempDate.addDays(1);
+                        }
+                        
+                        if (hasNonWorking && !request.event.isAvailable) {
+                            throw new skedException('The availability must be created at working days');
+                        }
                     }
                 }
             }
@@ -729,16 +779,14 @@ global virtual class skedRacController extends skedBaseController {
                         request.recurringOptions.dateValues.add(skedDateTimeUtils.getDateFromIsoString(selectedDate));
                     }
                 }
-                
-                if(request.recurringOptions.availabilityTemplate != null) {                  
+
+                if (request.recurringOptions.availabilityTemplate != NULL) { 
                     Date startDate = skedDateTimeUtils.getDateFromIsoString(request.recurringOptions.availabilityTemplate.startDate);
                     Date endDate = skedDateTimeUtils.getDateFromIsoString(request.recurringOptions.availabilityTemplate.endDate);
-                    if(startDate != null && endDate != null) {
-                        if (endDate > startDate.addYears(skedSetting.instance.RAC.maxActivityRecurringYears)) {
-                            throw new skedException('Recurring Pattern exceeds maximum duration');
-                        }
+                    if (endDate > startDate.addYears(skedSetting.instance.RAC.maxActivityRecurringYears)) {
+                        throw new skedException('Recurring Pattern exceeds maximum duration');
                     }
-                }            
+                }
             }
 
             skedTriggerUtils.CHANGES_INITIATED_FROM_SERVICE = true;
@@ -830,14 +878,23 @@ global virtual class skedRacController extends skedBaseController {
     global static skedRemoteResultModel saveCallOut(saveCallOutRequestModel request) {
         skedRemoteResultModel result = new skedRemoteResultModel(request.viewData);
         try {
+            string timezoneSidId = skedResourceUtils.getResourceTimezonesidId(request.resourceId);
+            skedSetting.instance.App.setTimezoneSidId(timezoneSidId);
+
             slwcResourceService.saveCallOutRequestModel lwcRequest = new slwcResourceService.saveCallOutRequestModel();
+            lwcRequest.id = request.id;
             lwcRequest.activityId = request.activityId;
             lwcRequest.jobId = request.jobId;
             lwcRequest.resourceId = request.resourceId;
             lwcRequest.callOutReason = request.callOutReason;
+            lwcRequest.callOutReceivedDateTime = skedDateTimeUtils.newDateTimeInstance(request.callOutReceivedDate, request.callOutReceivedTime, timezoneSidId);
             lwcRequest.callOutNotes = request.callOutNotes;
             lwcRequest.callOutReported = request.callOutReported;
             lwcRequest.callOutType = request.callOutType;
+            lwcRequest.timeOffPlan = request.timeOffPlan;
+            lwcRequest.timeOffReasonCode = request.timeOffReasonCode;
+            lwcRequest.usePtoForCallOut = request.usePtoForCallOut;
+            lwcRequest.hasTimeOffPlans = request.hasTimeOffPlans;
             
             skedTriggerUtils.CHANGES_INITIATED_FROM_SERVICE = true;
             result.data = slwcResourceService.saveCallOut(lwcRequest);
@@ -971,8 +1028,20 @@ global virtual class skedRacController extends skedBaseController {
             skedSetting.instance.App.setTimezoneSidId(request.events.get(0).timezoneSidId);
             
             if (request.events != NULL && !request.events.isEmpty()) {
+                Set<Id> availIds = new Set<Id>();
+                for (skedModels.availability avail : request.events) {
+                    availIds.add(avail.id);
+                }
+                Map<Id, sked__Availability__c> availById = new Map<Id, sked__Availability__c>([
+                    SELECT Id, sked_Time_Off_Reason_Code__c, sked_Integrate_With_Workday__c
+                    FROM sked__Availability__c
+                    WHERE Id IN :availIds
+                ]);
+                
                 for (skedModels.availability availability : request.events) {
-                    availability.status = skedConstants.AVAILABILITY_STATUS_APPROVED;
+                    sked__Availability__c availRecord = availById.get(availability.id);
+                    availability.status = availRecord.sked_Integrate_With_Workday__c ?
+                        skedConstants.AVAILABILITY_STATUS_PROCESSING_APPROVAL : skedConstants.AVAILABILITY_STATUS_APPROVED;
                 }
             }
             
@@ -1006,17 +1075,25 @@ global virtual class skedRacController extends skedBaseController {
             if (originalEventId != null) {
                 List<String> bulkActions = new List<String>{'all_events', 'following_events', 'same_weekday'};
                 sked__Availability__c availability = [
-                    SELECT Id, Name, sked_Start_Date__c
+                    SELECT Id, Name, sked_Start_Date__c, sked_Time_Off_Reason_Code__c, sked_Integrate_With_Workday__c, sked_Workday_Sync_Status__c, sked__Resource__c
                     FROM sked__Availability__c
                     WHERE Id = :originalEventId
-                ];
+                    LIMIT 1
+                ][0];
 
                 if (recurringScheduleId != null && bulkActions.contains(editAction)) {
-                    Database.executeBatch(new skedCancelAvailabilityPatternBatch(availability, recurringScheduleId, editAction));
+                    Database.executeBatch(new skedCancelAvailabilityPatternBatch(availability, recurringScheduleId, editAction, UserInfo.getUserId()));
                     result.message = 'Successfully started a batch process to cancel availabilities. You will receive an email when this process completes.';
 
                 } else {
-                    availability.sked_Custom_Status__c = skedConstants.AVAILABILITY_STATUS_CANCELLED;
+                    if (availability.sked_Workday_Sync_Status__c == skedConstants.AVAILABILITY_WORKDAY_SYNC_STATUS_MANUAL && !skedTriggerUtils.isUserAPS(UserInfo.getUserId())) {
+                        availability.sked_Custom_Status__c = skedConstants.AVAILABILITY_STATUS_PENDING;
+                        availability.sked_Approval_Reason__c = skedConstants.AVAILABILITY_APPROVAL_REASON_WORKDAY_CANCELLATION_REQUIRED;
+                    } else if (availability.sked_Integrate_With_Workday__c && availability.sked_Workday_Sync_Status__c == skedConstants.AVAILABILITY_WORKDAY_SYNC_STATUS_SUCCESS) {
+                        availability.sked_Custom_Status__c = skedConstants.AVAILABILITY_STATUS_PROCESSING_CANCELLATION;
+                    } else {
+                        availability.sked_Custom_Status__c = skedConstants.AVAILABILITY_STATUS_CANCELLED;
+                    }
                     skedTriggerUtils.CHANGES_INITIATED_FROM_SERVICE = true;
                     update availability;
                     result.message = 'Availability has been successfully cancelled.';
@@ -1100,7 +1177,7 @@ global virtual class skedRacController extends skedBaseController {
                 resourceDailyTimeOffHours = skedResource.sked_Daily_Time_Off_Hours__c * 60;
             }
             
-            string timezoneSidId = getResourceTimezonesidId(resourceId);
+            string timezoneSidId = skedResourceUtils.getResourceTimezonesidId(resourceId);
             skedSetting.instance.App.setTimezoneSidId(timezoneSidId);
             
             skedResourceService.queryModel query = new skedResourceService.queryModel();
@@ -1129,34 +1206,18 @@ global virtual class skedRacController extends skedBaseController {
                 }
             }
             
+            skedUnavailabilityBalanceResultModel data = skedWorkdayUtils.verifyUnavailabilityBalance(skedResource, latestEndDate, requestedDuration, timeOffType);
             skedStaffingBudgetService staffingBudgetService = (skedStaffingBudgetService) skedServiceFactory.instance.resolve('sked_Staffing_Budget__c');
-            
-            verifyUnavailabilityBalanceResultModel data = new verifyUnavailabilityBalanceResultModel();
-            data.noOfRequestedHours = requestedDuration / 60;
-            data.hasEnoughHours = true;
+            staffingBudgetService.verifyStaffingBudget(resourceId, unavailabilityList);
+            data.unavailability = unavailabilityList;    
 
-            if (skedSetting.instance.Admin.workdayIntegration) {
-                skedWorkdayApiManager.getTimeOffPlanBalancesRequest availableHoursRequest = new skedWorkdayApiManager.getTimeOffPlanBalancesRequest();
-                availableHoursRequest.employeeId = skedResource.sked_Employee_Id__c;
-                availableHoursRequest.selectedYear = latestEndDate.year();
-                skedWorkdayApiManager.getTimeOffPlanBalancesResponse availableHoursResponse = skedWorkdayApiManager.getTimeOffPlanBalances(availableHoursRequest);
-    
-                if (availableHoursResponse != null) {
-                    if (timeOffType == skedConstants.UNAVAILABILITY_TYPE_PTO) {
-                        data.noOfAvailableHours = availableHoursResponse.pto.hoursLeft;
-                    } else if (timeOffType == skedConstants.UNAVAILABILITY_TYPE_FLOATING_HOLIDAY) {
-                        data.noOfAvailableHours = availableHoursResponse.floatingHoliday.hoursLeft;
-                    }
-                }
+            skedAvailabilityService availabilityService = (skedAvailabilityService) skedServiceFactory.instance.resolve('sked__Availability__c');
+            availabilityService.verifyResourceAvailability(resourceId, unavailabilityList);
+            data.unavailability = unavailabilityList; 
+            result.data = data;
 
-                data.hasEnoughHours = data.noOfAvailableHours >= data.noOfRequestedHours;
-            }
-            
-            if (data.hasEnoughHours) {
-                staffingBudgetService.verifyStaffingBudget(resourceId, unavailabilityList);
-            	data.unavailability = unavailabilityList;    
-            }
-            
+            availabilityService.setDefaultStatusesForUnavailabilities(data.hasEnoughHours, unavailabilityList);
+            data.unavailability = unavailabilityList;
             result.data = data;
         }
         catch (Exception ex) {
@@ -1183,13 +1244,14 @@ global virtual class skedRacController extends skedBaseController {
             }
             
             sked__Resource__c skedResource = [
-                SELECT Id, sked__Primary_Region__c, sked__Primary_Region__r.sked_Biomed_Collection_Op_Center__c,
-                    (SELECT Id, sked__Tag__r.Name
-                    FROM sked__ResourceTags__r
-                    WHERE sked__Tag__r.sked__Type__c = 'Role'
-                    AND sked_Role_Status__c = :skedConstants.TAG_ROLE_STATUS_ACTIVE
-                    ORDER BY sked__Tag__r.sked_Priority__c ASC NULLS LAST
-                    LIMIT 1)
+                SELECT Id, sked__Primary_Region__c, sked_FCC_Code__c,
+                sked__Primary_Region__r.sked_Biomed_Collection_Op_Center__c,
+                (SELECT Id, sked__Tag__r.Name
+                 FROM sked__ResourceTags__r
+                 WHERE sked__Tag__r.sked__Type__c = :skedConstants.TAG_TYPE_ROLE
+                 AND sked_Role_Status__c = :skedConstants.TAG_ROLE_STATUS_ACTIVE
+                 ORDER BY sked__Tag__r.sked_Priority__c ASC NULLS LAST
+                LIMIT 1)
                 FROM sked__Resource__c 
                 WHERE Id = :request.event.resourceId
             ];
@@ -1322,17 +1384,45 @@ global virtual class skedRacController extends skedBaseController {
         }
         return result;
     }
-    
+
     @remoteAction
+    global static skedRemoteResultModel saveAvailabilityRecords(saveUnavailabilityRequestModel request) {
+        skedRemoteResultModel result = new skedRemoteResultModel(request.viewData);
+        SavePoint sp = Database.setSavepoint();
+        try {
+            skedTriggerUtils.CHANGES_INITIATED_FROM_SERVICE = true;
+
+            skedSetting.instance.App.setTimezoneSidId(request.availability.get(0).timezoneSidId);
+
+            skedAvailabilityService service = (skedAvailabilityService)skedServiceFactory.instance.resolve('sked__Availability__c');
+            skedDataService.saveResult saveResult = service.saveRecords(request.availability);
+            result.data = saveResult.success == FALSE ? saveResult.returnedData : request.model;
+
+            skedTriggerUtils.CHANGES_INITIATED_FROM_SERVICE = false;
+        }
+        catch (Exception ex) {
+            result.getError(ex, sp);
+        }
+        return result;
+    }
+    
+    @AuraEnabled @remoteAction
     global static skedRemoteResultModel getUnavailabilityStatistic(getUnavailabilityStatisticRequestModel request) {
         skedRemoteResultModel result = new skedRemoteResultModel(request.viewData);
         try {
-            string timezoneSidId = getResourceTimezonesidId(request.resourceId);
+            string timezoneSidId = skedResourceUtils.getResourceTimezonesidId(request.resourceId);
             skedSetting.instance.App.setTimezoneSidId(timezoneSidId);
 			
-            Date selectedDate = skedDateTimeUtils.getDateFromIsoString(request.selectedDate);
+            Date selectedDate = System.today();
+            if (request.selectedDate != null) {
+                selectedDate = skedDateTimeUtils.getDateFromIsoString(request.selectedDate);
+            }
+
+            if (request.isCallOut == null) {
+                request.isCallOut = false;
+            }
             skedAvailabilityService service = (skedAvailabilityService)skedServiceFactory.instance.resolve('sked__Availability__c');
-            result.data = service.getUnavailabilityStatistics(request.resourceId, selectedDate);
+            result.data = service.getUnavailabilityStatistics(request.resourceId, selectedDate, request.isCallOut);
         }
         catch (Exception ex) {
             result.getError(ex);
@@ -1396,7 +1486,7 @@ global virtual class skedRacController extends skedBaseController {
         skedRemoteResultModel result = new skedRemoteResultModel(request.viewData);
         SavePoint sp = Database.setSavepoint();
         try {
-            string timezoneSidId = getResourceTimezonesidId(request.resourceOverride.resourceId);
+            string timezoneSidId = skedResourceUtils.getResourceTimezonesidId(request.resourceOverride.resourceId);
             skedSetting.instance.App.setTimezoneSidId(timezoneSidId);
             
             DateTime startTime = skedDateTimeUtils.newDateTimeInstance(request.resourceOverride.startDate, request.resourceOverride.startTime, timezoneSidId);
@@ -1524,10 +1614,13 @@ global virtual class skedRacController extends skedBaseController {
         try {
             string timezoneSidId = UserInfo.getTimeZone().getID();
 
+            Boolean isBiddingPeriodRequest = request.requestTypes != null && request.requestTypes.contains(skedConstants.STAFFING_BUDGET_REQUEST_TYPE_OPEN_ENROLLMENT);
             skedStaffingBudgetCollectionOpService.queryModel sbCoQuery = new skedStaffingBudgetCollectionOpService.queryModel();
             sbCoQuery.collectionOpIds = request.biomedCollectionOpIds;
+            sbCoQuery.requestTypes = request.requestTypes;
             sbCoQuery.endDate = request.endDate;
             sbCoQuery.startDate = request.startDate;
+            sbCoQuery.isBiddingPeriodRequest = isBiddingPeriodRequest;
 
             skedStaffingBudgetCollectionOpService sbCoService = (skedStaffingBudgetCollectionOpService) skedServiceFactory.instance.resolve('sked_Staffing_Budget_Collection_Op__c');
             List<sObject> sbCoQueryResult = sbCoService.query(sbCoQuery);
@@ -1550,13 +1643,16 @@ global virtual class skedRacController extends skedBaseController {
             
             if (!staffingBudgetIdsList.isEmpty()) {
                 skedStaffingBudgetService.queryModel query = new skedStaffingBudgetService.queryModel();
-                query.requestTypes = request.requestTypes;
                 query.recordIds = staffingBudgetIdsList;
                 query.pageNo = request.pageNo;
                 query.pageSize = request.pageSize;
                 query.orderBy = skedAutoMapper.instance.mapToSObjectFieldPath('staffingBudget', request.orderBy);
                 query.orderAscending = request.orderDirection == 1 ? 'ASC' : 'DESC';
                 query.subQueryIndicator = skedSObjectType.STAFFING_BUDGET_COLLECTION_OP;
+
+                if (isBiddingPeriodRequest) {
+                    query.subQueryIndicator = skedSObjectType.STAFFING_BUDGET_COLLECTION_OP | skedSObjectType.STAFFING_BUDGET_AVAILABILITY;
+                }
                 
                 skedStaffingBudgetService service = (skedStaffingBudgetService)skedServiceFactory.instance.resolve('sked_Staffing_Budget__c');
                 skedDataService.paginationQueryModel paginationResult = service.doPaginationQuery(query);
@@ -1566,10 +1662,10 @@ global virtual class skedRacController extends skedBaseController {
                     //skedSetting.instance.App.setTimezoneSidId(timezoneSidId);
                     skedModels.staffingBudget staffingBudget = (skedModels.staffingBudget)skedAutoMapper.instance.mapTo(record, skedModels.staffingBudget.class);
                     //TODO: verify timezone
-                    staffingBudget.timezone = record.CreatedDate.format('z', timezoneSidId);
+                    staffingBudget.timezone = record.CreatedDate.format('z', timezoneSidId); 
                     staffingBudgets.add(staffingBudget);
                 }
-                data.totalRecords = paginationResult.totalRecords;
+                data.totalRecords = staffingBudgets.size();
             }
             
             data.totalPages = (integer)Math.ceil(decimal.valueOf(data.totalRecords) / request.pageSize);
@@ -1823,6 +1919,27 @@ global virtual class skedRacController extends skedBaseController {
     }
 
     @remoteAction
+    global static skedRemoteResultModel cancelCustomAvailability(saveCustomAvailabilityRequestModel request) {
+        skedRemoteResultModel result = new skedRemoteResultModel(request.viewData);
+        SavePoint sp = Database.setSavepoint();
+        try {
+            string timezoneSidId = request.event.timezoneSidId;
+            skedSetting.instance.App.setTimezoneSidId(timezoneSidId);
+            
+            request.event.status = skedConstants.AVAILABILITY_STATUS_CANCELLED;
+
+            skedDataService service = (skedDataService)skedServiceFactory.instance.resolve('sked_Custom_Availability__c');
+            skedTriggerUtils.CHANGES_INITIATED_FROM_SERVICE = true;
+            skedDataService.saveResult saveResult = service.saveRecord(request.event);
+            result.data = saveResult.success == false ? saveResult.returnedData : NULL;
+        }
+        catch (Exception ex) {
+            result.getError(ex, sp);
+        }
+        return result;
+    }
+
+    @remoteAction
     global static skedRemoteResultModel deleteCustomAvailability(saveCustomAvailabilityRequestModel request) {
         skedRemoteResultModel result = new skedRemoteResultModel(request.viewData);
         SavePoint sp = Database.setSavepoint();
@@ -1847,11 +1964,14 @@ global virtual class skedRacController extends skedBaseController {
             query.queryText = request.queryText;
             query.availabilityStatuses = request.availabilityStatuses;
             query.recurringScheduleIds = request.recurringScheduleIds;
+            query.hideRecordsOutsideBiddingPeriod = request.hideRecordsOutsideBiddingPeriod;
             query.searchColumns = new List<string>();
             query.searchColumns.add('sked_Availability__r.sked__Resource__r.Name');
             query.searchColumns.add('CreatedBy.Name');
             query.searchColumns.add('sked_Staffing_Budget__r.sked_Biomed_Collection_Op_Center__r.Name');
             query.subQueryIndicator = skedSObjectType.AVAILABILITY | skedSObjectType.STAFFING_BUDGET;
+            query.orderBy = skedAutoMapper.instance.mapToSObjectFieldPath('staffingBudgetAvailability', request.orderBy);
+            query.orderAscending = request.orderDirection == 1 ? 'ASC' : 'DESC';
             
             skedStaffingBudgetAvailabilityService service = (skedStaffingBudgetAvailabilityService) skedServiceFactory.instance.resolve('sked_Staffing_Budget_Availability__c');
             List<sked_Staffing_Budget_Availability__c> records = (List<sked_Staffing_Budget_Availability__c>) service.query(query);
@@ -1894,16 +2014,33 @@ global virtual class skedRacController extends skedBaseController {
     }
 
     @remoteAction
-    global static skedRemoteResultModel validateResourceOverride(saveResourceOverrideRequestModel request) {
+    global static skedRemoteResultModel getAvailatorData(getAvailatorDataRequestModel request) {
         skedRemoteResultModel result = new skedRemoteResultModel(request.viewData);
         try {
-            result.success = true;
-        } catch (Exception ex) {
+            slwcAllocationService.getResourceDataRequestModel model = new slwcAllocationService.getResourceDataRequestModel();
+            model.accountIds = request.accountIds;
+            model.collectionOperationIds = request.collectionOperationIds;
+            model.excludedActivityIds = request.excludedActivityIds;
+            model.excludedDriveIds = request.excludedDriveIds;
+            model.locationIds = request.locationIds;
+            model.inputDates = request.inputDates;
+            model.jobIds = request.jobIds;
+            model.recordIds = request.recordIds;
+            model.pageSize = request.pageSize;
+            model.pageNo = request.pageNo;
+            model.timezoneSidId = request.timezoneSidId;
+            model.getAssetsOnly = request.getAssetsOnly;
+            
+            slwcAuraResult availatorData = slwcAllocationService.getResourceData(model);
+            
+            result.data = availatorData.returnedData;
+        } 
+        catch (Exception ex) {
             result.getError(ex);
         }
         return result;
     }
-
+  
     /*********************************************************** Private methods ***********************************************************/
     private static List<sked__Availability_Pattern__c> getAvailabilityPatterns(List<sked__Resource__c> skedResources) {
         Set<Id> resourceIds = new Set<Id>();
@@ -1922,14 +2059,21 @@ global virtual class skedRacController extends skedBaseController {
                 WHERE Id IN :patternIds];
     }
 
-    private static string getResourceTimezonesidId(string resourceId) {
-        List<sked__Resource__c> resources = [SELECT Id, sked__Primary_Region__r.sked__Timezone__c
-                                            FROM sked__Resource__c
-                                            WHERE Id = :resourceId];
-        if (resources == NULL || resources.isEmpty()) {
-            return UserInfo.getTimeZone().getID();
+    private static skedModels.userFilter getUserFilterByCategory(List<skedModels.userFilter> filters, string category) {
+        skedModels.userFilter result;
+
+        for (skedModels.userFilter filter : filters) {
+            if (filter.category == category) {
+                result = filter;
+                break;
+            }
         }
-        return resources.get(0).sked__Primary_Region__r.sked__Timezone__c;
+        if (result == null) {
+            result = new skedModels.userFilter();
+            result.category = category;
+            result.userId = UserInfo.getUserId();
+        }
+        return result;
     }
     
     /*********************************************************** Sked APIs ***********************************************************/
@@ -1972,10 +2116,24 @@ global virtual class skedRacController extends skedBaseController {
     global class getPlaceDetailsModel extends getDataRequestModel {
         public string placeId;
     }
-
+    
     /*********************************************************** Nested classes ***********************************************************/
+    global class getAvailatorDataRequestModel extends getDataRequestModel {
+        public List<string> accountIds;
+        public List<string> collectionOperationIds;
+        public List<string> excludedActivityIds;
+        public List<string> excludedDriveIds;
+        public List<string> locationIds;
+        public List<string> inputDates;
+        public List<string> jobIds;
+        public List<string> recordIds;
+        public string timezoneSidId;
+        public boolean getAssetsOnly;
+    }   
+    
     global class getResourceRequestModel extends getDataRequestModel {
         public List<string> arcRegionIds;
+        public List<string> availabilityStatuses;
         public List<string> biomedCollectionOpIds;
         public List<string> districtIds;
         public List<string> divisionIds;
@@ -2021,6 +2179,7 @@ global virtual class skedRacController extends skedBaseController {
     
     global class getPendingAvailabilityRequestModel extends getDataRequestModel {
         public List<string> availabilityStatuses;
+        public List<string> availabilityTypes;
         public List<string> biomedCollectionOpIds;
         public string endDate;
         public string timezoneSidId;
@@ -2032,6 +2191,8 @@ global virtual class skedRacController extends skedBaseController {
         public Boolean isException;
         public List<string> requestTypes;
         public List<string> staffingBudgetIds;
+        public string submissionEndDate;
+        public string submissionStartDate;
         public List<string> recurringScheduleIds;
     }
 
@@ -2047,6 +2208,7 @@ global virtual class skedRacController extends skedBaseController {
         public List<string> availabilityStatuses;
         public List<string> recurringScheduleIds;
         public List<String> staffingBudgetIds;
+        public Boolean hideRecordsOutsideBiddingPeriod = false;
     }
     
     global class getTerritoriesRequestModel extends getDataRequestModel {
@@ -2057,6 +2219,7 @@ global virtual class skedRacController extends skedBaseController {
     global class getUnavailabilityStatisticRequestModel extends getDataRequestModel {
         public string resourceId;
         public string selectedDate;
+        public boolean isCallOut;
     }
 
     global class saveAvailabilityRequestModel extends saveRequestModel {
@@ -2092,13 +2255,20 @@ global virtual class skedRacController extends skedBaseController {
     }
 
     global class saveCallOutRequestModel extends saveRequestModel {
+        public string id;
         public string activityId;
         public string jobId; 
         public string resourceId; 
-        public string callOutReason; 
+        public string callOutReason;
+        public string callOutReceivedDate;
+        public integer callOutReceivedTime; 
         public string callOutNotes;
         public boolean callOutReported;
         public string callOutType;
+        public string timeOffPlan {get;set;}
+        public string timeOffReasonCode {get;set;}
+        public boolean usePtoForCallOut {get;set;}
+        public boolean hasTimeOffPlans {get;set;}
     }
     
     global class savePatternRequestModel extends saveRequestModel {
@@ -2173,13 +2343,6 @@ global virtual class skedRacController extends skedBaseController {
     }
     
     global class verifyUnavailabilityBalanceRequestModel extends saveRequestModel {
-        public List<skedModels.availability> unavailability;
-    }
-    
-    global class verifyUnavailabilityBalanceResultModel {
-        public boolean hasEnoughHours;
-        public decimal noOfAvailableHours;
-        public decimal noOfRequestedHours;
         public List<skedModels.availability> unavailability;
     }
 

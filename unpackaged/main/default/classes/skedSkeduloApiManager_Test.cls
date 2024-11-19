@@ -75,6 +75,51 @@ private class skedSkeduloApiManager_Test {
         Test.stopTest();
     }
 
+    // HRP-12511
+    @isTest
+    static void getOptimizerRunStatistics_Test() {
+        String runId = 'abc786ff-f168-426c-8325-0abafdf370af';
+
+        Test.setMock(HttpCalloutMock.class, new skedMockTest());
+        Test.startTest();
+            skedSkeduloApiManager apiManager = new skedSkeduloApiManager();
+            skedSkeduloApiData.OptimizationRunStatisticsResult result = apiManager.getOptimizerRunStatistics(runId);
+        Test.stopTest();
+    }
+
+    @isTest
+    static void getOptimizerRunParameters_Test() {
+        String runId = 'abc786ff-f168-426c-8325-0abafdf370af';
+
+        Test.setMock(HttpCalloutMock.class, new skedMockTest());
+        Test.startTest();
+            skedSkeduloApiManager apiManager = new skedSkeduloApiManager();
+            skedSkeduloApiData.OptimizationRunParametersResult result = apiManager.getOptimizerRunParameters(runId);
+        Test.stopTest();
+    }
+
+    @isTest
+    static void getOptimizerRunMetaResult_Test() {
+        String runId = 'abc786ff-f168-426c-8325-0abafdf370af';
+
+        Test.setMock(HttpCalloutMock.class, new skedMockTest());
+        Test.startTest();
+            skedSkeduloApiManager apiManager = new skedSkeduloApiManager();
+            skedSkeduloApiData.optimizationRunMetaResult result = apiManager.getOptimizerRunMetaResult(runId);
+        Test.stopTest();
+    }
+
+    @isTest
+    static void getOptimizerRunDiffResult_Test() {
+        String runId = 'abc786ff-f168-426c-8325-0abafdf370af';
+
+        Test.setMock(HttpCalloutMock.class, new skedMockTest());
+        Test.startTest();
+            skedSkeduloApiManager apiManager = new skedSkeduloApiManager();
+            skedSkeduloApiData.optimizationRunDiffResult result = apiManager.getOptimizerRunDiffResult(runId);
+        Test.stopTest();
+    }
+
     @isTest
     static void getTimezonesFromLocation_Test() {
         Location testLocation = Location.newInstance(38.955349, -77.393841);

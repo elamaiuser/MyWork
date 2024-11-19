@@ -1149,15 +1149,15 @@ export default class SlwcLinkedDriveStaffingDetails extends LightningElement {
             else {
                 this.unallocate(event.detail.record);
             }
-        } else if(action === 'lock') {
-            this.handleLockAction(event.detail.record);
+        } else if(action === 'lock' || action === 'guard') {
+            this.handleLockAction(event.detail.record, action);
         } else if(action === 'callOut') {
             this.handleShowCallOutModal(event.detail.record);
         } else if (action === 'edit') {
             this.handleShowEditJobAllocationModal(event.detail.record);
         }
     }
-    handleLockAction(detail){
+    handleLockAction(detail, action){
         console.log("handleLockAction");
         const jobId = detail.jobId;
         let [job, driveShift, jobIndex, drive, parentJob] = this.getJobById(jobId);
@@ -1171,7 +1171,12 @@ export default class SlwcLinkedDriveStaffingDetails extends LightningElement {
         jobsToLocked.forEach(job => {
             let ja = find(this.getJobAllocations(job), item => item.resourceId == detail.resourceId)
             if(ja) {
-                ja.locked = !detail.locked
+                if (action === 'lock') {
+                    ja.locked = !detail.locked;
+                } else if (action === 'guard') {
+                    ja.guarded = !detail.guarded;
+                }
+                ja.isLocked = ja.locked || ja.guarded;
             }
         })
 
@@ -2113,12 +2118,13 @@ export default class SlwcLinkedDriveStaffingDetails extends LightningElement {
             parentJob.childJobs.forEach(childJob => {
                 const childJobAllocations = this.getJobAllocations(childJob);
                 const childJobAllocation = childJobAllocations.find(item => item.resourceId === parentJobAllocation.resourceId);
-                if(childJobAllocation && !childJobAllocation.locked) {
+                if(childJobAllocation && !childJobAllocation.isLocked) {
                     allChildJobAllocationsLocked = false;
                 }
             });
 
             parentJobAllocation.locked = allChildJobAllocationsLocked;
+            parentJobAllocation.isLocked = parentJobAllocation.locked || parentJobAllocation.guarded;
         });
 
         //excludeFromOptimizer 
@@ -2245,7 +2251,7 @@ export default class SlwcLinkedDriveStaffingDetails extends LightningElement {
         const { jobAllocationId, jobId } = this.callOutModalData;
         const [ job ] = this.getJobById(jobId);
         const [driveShift, indexDriveShift] = this.getDriveShiftById(job.driveShiftId)
-        const { callOutType , callOutReason, callOutNotes } = event.detail;
+        const { callOutType , callOutReason, callOutNotes, callOutReceivedDateTime } = event.detail;
         const jobAllocation = find(job.jobAllocations, item => item.id == jobAllocationId);
 
         let params = {
@@ -2256,9 +2262,10 @@ export default class SlwcLinkedDriveStaffingDetails extends LightningElement {
           callOutReported: true,
           callOutType: callOutType,
           callOutReason: callOutReason,
-          callOutNotes: callOutNotes
+          callOutNotes: callOutNotes,
+          callOutReceivedDateTime: callOutReceivedDateTime
         };
-  
+        
         this.showLoading();
         let service = new resourceService();
         service.saveCallOut({

@@ -25,9 +25,6 @@
     <columns>
         <field>sked__Resource__c.sked__Availabilities1__r$CreatedDate</field>
     </columns>
-    <columns>
-        <field>sked__Resource__c.sked__Availabilities1__r$CreatedBy</field>
-    </columns>
     <description>Staff Schedule by CO - Time Off</description>
     <filter>
         <criteriaItems>
@@ -75,7 +72,7 @@
     <showGrandTotal>true</showGrandTotal>
     <showSubTotals>true</showSubTotals>
     <timeFrameFilter>
-        <dateColumn>sked__Resource__c$CreatedDate</dateColumn>
+        <dateColumn>sked__Resource__c$sked_Seniority_Date__c</dateColumn>
         <interval>INTERVAL_CUSTOM</interval>
     </timeFrameFilter>
 </Report>

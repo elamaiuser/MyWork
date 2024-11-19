@@ -1,7 +1,7 @@
 <template>
     <div class={customClass.modal}>
         <lightning-spinner if:true={showSpinner} class="spins" size="medium"></lightning-spinner>
-        <div class="slds-align-content-center slds-col width-450">
+        <div class="slds-align-content-center slds-col width-450 full-height">
             <div class="slds-clearfix slds-page-header slds-page-header_record-home fixed-position "
                 style="margin-bottom: var(--lwc-cardSpacingMargin);">
                 <div class="slds-page-header__row slds-grid_vertical-align-center">
@@ -57,8 +57,8 @@
                                 class="slds-p-around--small slds-hint-parent slds-border--bottom slds-border--top">
                                 <div class="slds-media__body">
                                     <div class="slds-grid slds-grid_align-spread slds-has-flexi-truncate">
-                                        <h3 class="slds-tile__title slds-truncate">
-                                            <a href={record.recordUrl}>{record.job.resourceRole}</a>
+                                        <h3 class="slds-tile__title">
+                                            <span class="color-text-link-hover">{record.rolesString}</span>
                                         </h3>
                                     </div>
                                     <div class="slds-tile__detail">
@@ -107,10 +107,10 @@
                                 <div class="slds-media__body">
                                     <div class="slds-grid slds-grid_align-spread slds-has-flexi-truncate">
                                         <h3 class="slds-tile__title slds-truncate">
-                                            <a href={record.recordUrl}
-                                                if:true={record.activity.activityTitle}>{record.activity.activityTitle}</a>
-                                            <a href={record.recordUrl}
-                                                if:false={record.activity.activityTitle}>{record.activity.name}</a>
+                                            <span class="color-text-link-hover"
+                                                if:true={record.activity.activityTitle}>{record.activity.activityTitle}</span>
+                                            <span class="color-text-link-hover"
+                                                if:false={record.activity.activityTitle}>{record.activity.name}</span>
                                         </h3>
                                     </div>
                                     <div class="slds-tile__detail">
@@ -162,34 +162,93 @@
                                     </div>
                                 </div>
                             </article>
+
+                            <article if:true={record.isNoTradingRecord}
+                            class="slds-p-around--small slds-hint-parent slds-border--bottom slds-border--top">
+                                <div class="slds-media__body">
+                                    <div class="slds-tile__detail">
+                                        <dl class="slds-list_horizontal slds-wrap">
+                                            <dt class="slds-item_label slds-text-color_weak slds-truncate">
+                                                Staff:</dt>
+                                            <dd class="slds-item_detail slds-truncate">
+                                                {record.resource.name}
+                                            </dd>
+                                            <template if:true={record.isAvailableDay}>
+                                                <dt class="slds-item_label slds-text-color_weak slds-truncate">
+                                                    Available Day:</dt>
+                                                <dd class="slds-item_detail slds-truncate">
+                                                    <lightning-formatted-date-time 
+                                                        value={record.startDate}
+                                                        year="numeric"
+                                                        day="2-digit"
+                                                        month="short"
+                                                        time-zone='GMT'>
+                                                    </lightning-formatted-date-time>
+                                                </dd>
+                                            </template>
+                                        </dl>
+                                    </div>
+                                </div>
+                            </article>
+
                             <div if:true={record.isFirst} class="slds-align--absolute-center slds-m-vertical--xx-small">
                                 <lightning-icon icon-name="action:sort" size="xx-small"></lightning-icon>
                             </div>
                         </li>
                     </ul>
                     <div class="slds-m-vertical--small" if:true={canConfirmTrade}>
-                        <div class="slds-p-vertical--x-small">
-                            <c-slwc-picklist name="contactMethod" label="Contact Method"
+                        <div class="slds-notify slds-notify_alert slds-alert_warning" role="alert" style="margin-bottom: var(--lwc-cardSpacingMargin);" if:true={isMarketOneSideTrade}>
+                            <h2>
+                                <lightning-icon class="slds-m-right_x-small slds-current-color" icon-name="utility:warning" size="x-small"></lightning-icon>
+                                You are requesting one side trade.
+                            </h2>
+                        </div> 
+                        <div class="slds-p-vertical--x-small" if:false={isMarketTrade}>
+                            <c-slwc-picklist name="contactMethod" label="Requester &amp; Trading Staff Communication Method"
                                 unique-key={model.contactMethod} object-api-name="sked_Drive_Shift_Trade__c"
                                 selected-value={model.contactMethod} pick-listfield-api-name="sked_Contact_Method__c"
                                 required onpicklistchange={handleOnChangeModel}>
                             </c-slwc-picklist>
                         </div>
                         <div class="slds-p-vertical--x-small">
-                            <lightning-input type="text" name="reasonForTrade" value={model.reasonForTrade}
+                            <lightning-input type="text" name="requestingStaffTradeReason" value={model.requestingStaffTradeReason}
                                 label="Reason For Trade" required onchange={handleOnChangeModel}>
                             </lightning-input>
                         </div>
                         <div class="slds-p-vertical--x-small">
-                            <lightning-textarea value={model.tradeRequesterNotes} label="Trade Requester Notes"
-                                name="tradeRequesterNotes" onchange={handleOnChangeModel}></lightning-textarea>
+                            <c-slwc-text-area value={model.requestingStaffNotes} label="Trade Requester Notes"
+                                name="requestingStaffNotes" onchange={handleOnChangeModel} max-length="255" show-length></c-slwc-text-area>
                         </div>
                         
                         <template if:false={preventSubmit}>
-                            <div class="slds-p-vertical--x-small" if:true={errorMessages.length}>
+                            <div class="slds-p-vertical--x-small" if:true={isContentionAcknowledgeRequired}>
                                 <lightning-input type="checkbox" name="contentionAcknowledge"
                                     label="By submitting this trade request, you acknowledge the above contentions" required
                                     value={model.contentionAcknowledge} checked={model.contentionAcknowledge} onchange={handleOnChangeModel}>
+                                </lightning-input>
+                            </div>
+                            <div class="slds-p-vertical--x-small" if:true={isTATAcknowledgeRequired}>
+                                <lightning-input type="checkbox" name="requestingStaffTATAcknowledge"
+                                    label="By submitting this trade request, you acknowledge this trade may result in not receiving a TAT violation payment. Please see your scheduler/timekeeper for more information." required
+                                    value={model.requestingStaffTATAcknowledge} checked={model.requestingStaffTATAcknowledge} onchange={handleOnChangeModel}>
+                                </lightning-input>
+                            </div>
+                            <div class="slds-p-vertical--x-small" if:true={isGMHAcknowledgeRequired}>
+                                <lightning-input type="checkbox" name="requestingStaffGMHAcknowledge"
+                                    label="By submitting this trade request, you acknowledge this trade may result in not receiving a guaranteed minimum time payment. Please see your scheduler/timekeeper for more information." required
+                                    value={model.requestingStaffGMHAcknowledge} checked={model.requestingStaffGMHAcknowledge} onchange={handleOnChangeModel}>
+                                </lightning-input>
+                            </div>
+                            <div class="slds-p-vertical--x-small" if:true={isRelocatedAcknowledgeRequired}>
+                                <lightning-input type="checkbox" name="requesterRelocatedAcknowledge"
+                                    label="By submitting this trade request, you acknowledge you are relocated for this trade. Please see your scheduler/timekeeper for more information." required
+                                    value={model.requesterRelocatedAcknowledge} checked={model.requesterRelocatedAcknowledge} onchange={handleOnChangeModel}>
+                                </lightning-input>
+                            </div>
+                            <div class="slds-p-vertical--x-small" if:true={isUnavailableForCOAcknowledgeRequired}>
+                                <lightning-input type="checkbox" name="requesterUnavailableForCOAcknowledge"
+                                    label="By submitting this trade request, you acknowledge you are not available for the collection operation in this trade. Please see your scheduler/timekeeper for more information." required
+                                    value={model.requesterUnavailableForCOAcknowledge} checked={model.requesterUnavailableForCOAcknowledge} onchange={handleOnChangeModel}>
                                 </lightning-input>
                             </div>
                         </template>

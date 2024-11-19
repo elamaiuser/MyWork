@@ -433,6 +433,43 @@ global class skedSkeduloApiData {
         public string existingAllocationId;
     }
 
+    //HRP-12511
+    public class OptimizationRunStatisticsResult extends ResultBase {
+        public OptimizationRunStatistics result;
+    }
+
+    public class OptimizationRunStatistics {
+        public integer totalPlannedAllocations;
+        public integer totalScheduledAllocations;
+        public integer utilizedResources;
+        public integer unutilizedResources;
+        public integer averageTotalScheduledTimePerUtilizedResourceInMinutes;
+        public integer totalTravelTimeInMinutes;
+        public integer totalTravelDistanceInMeters;        
+        public integer maxTravelTimeToAllocationInMinutes;
+        public integer averageNumberOfAllocationsPerResource;
+    }
+
+    public class OptimizationRunParametersResult extends ResultBase {
+        public OptimizationRunParameters result;
+    }
+
+    public class OptimizationRunParameters {
+        public Weights weights;
+        public Scores score;
+    }
+
+    public class Weights {
+        public String pref;
+        public String distanceAL;
+        public String softSkillsLevel;
+    }
+
+    public class Scores {
+        public integer hardScore;
+        public integer softScore;
+    }
+
     /* Geo Direction */
     public class directionsRequest {
         public latlng origin;

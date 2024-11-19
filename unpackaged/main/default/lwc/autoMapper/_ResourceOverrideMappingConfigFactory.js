@@ -11,6 +11,7 @@ export class ResourceOverrideMappingConfigFactory {
       mappingConfig.addFieldConfig('Id', 'id', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('Name', 'name', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_Collection_Operation__c', 'collectionOperationId', MAPPING_TYPE.direct);
+      mappingConfig.addFieldConfig('sked_Collection_Operation__r.Name', 'collectionOperationName', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked__Description__c', 'description', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked__End__c', 'end', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_End_Date__c', 'endDate', MAPPING_TYPE.direct);

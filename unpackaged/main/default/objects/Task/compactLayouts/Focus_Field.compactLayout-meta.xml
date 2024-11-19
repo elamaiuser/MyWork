@@ -6,5 +6,6 @@
     <fields>OwnerId</fields>
     <fields>ActivityDate</fields>
     <fields>Status</fields>
+    <fields>Status_Visual__c</fields>
     <label>Focus Field</label>
 </CompactLayout>

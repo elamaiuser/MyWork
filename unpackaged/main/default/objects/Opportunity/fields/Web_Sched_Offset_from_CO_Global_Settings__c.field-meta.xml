@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Web_Sched_Offset_from_CO_Global_Settings__c</fullName>
+    <defaultValue>true</defaultValue>
+    <externalId>false</externalId>
+    <label>Web Sched Offset from CO/Global Settings</label>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Checkbox</type>
+</CustomField>

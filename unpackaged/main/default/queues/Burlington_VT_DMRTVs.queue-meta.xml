@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Queue xmlns="http://soap.sforce.com/2006/04/metadata">
+    <doesSendEmailToMembers>false</doesSendEmailToMembers>
+    <name>Burlington VT: DMRTVs</name>
+    <queueMembers>
+        <users>
+            <user>gary.beaton@redcross.org</user>
+            <user>latasha.tate@redcross.org</user>
+            <user>michelle.heleba@redcross.org</user>
+            <user>raymond.poulin@redcross.org</user>
+        </users>
+    </queueMembers>
+    <queueSobject>
+        <sobjectType>sked__Location__c</sobjectType>
+    </queueSobject>
+</Queue>

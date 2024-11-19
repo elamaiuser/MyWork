@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>sked_Opt_Run_Diff__c</fullName>
+    <description>HRP-12510 Added this field to get the response from rundiff api</description>
+    <externalId>false</externalId>
+    <label>Run Difference</label>
+    <length>131072</length>
+    <trackTrending>false</trackTrending>
+    <type>LongTextArea</type>
+    <visibleLines>3</visibleLines>
+</CustomField>

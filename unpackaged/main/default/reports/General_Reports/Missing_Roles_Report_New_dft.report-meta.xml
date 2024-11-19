@@ -52,6 +52,18 @@
     <columns>
         <field>sked__Job__c.sked__Job_Allocations__r$sked__Resource__c.Name</field>
     </columns>
+    <columns>
+        <aggregateTypes>Sum</aggregateTypes>
+        <field>sked__Job__c$sked_APT_Quantity__c</field>
+    </columns>
+    <columns>
+        <aggregateTypes>Sum</aggregateTypes>
+        <field>sked__Job__c$sked_Drive__c.sked_APT_Required__c</field>
+    </columns>
+    <columns>
+        <aggregateTypes>Sum</aggregateTypes>
+        <field>sked__Job__c$sked_Drive_Shift__c.sked_APT_Setup__c</field>
+    </columns>
     <description>Missing Roles Report (Jobs with Or Without Job Allocations)</description>
     <filter>
         <criteriaItems>
@@ -66,21 +78,21 @@
             <columnToColumn>false</columnToColumn>
             <isUnlocked>true</isUnlocked>
             <operator>greaterOrEqual</operator>
-            <value>9/2/2023</value>
+            <value>10/2/2024</value>
         </criteriaItems>
         <criteriaItems>
             <column>sked__Job__c$sked_Drive__c.sked_Drive_Date__c</column>
             <columnToColumn>false</columnToColumn>
             <isUnlocked>true</isUnlocked>
             <operator>lessOrEqual</operator>
-            <value>9/8/2023</value>
+            <value>10/8/2024</value>
         </criteriaItems>
         <criteriaItems>
             <column>sked__Job__c$sked_Drive__c.sked_Biomed_Collection_Op_Name__c</column>
             <columnToColumn>false</columnToColumn>
             <isUnlocked>true</isUnlocked>
             <operator>contains</operator>
-            <value>Philadelphia,Newark,Camden,West Chester</value>
+            <value>savannah</value>
         </criteriaItems>
         <criteriaItems>
             <column>sked__Job__c$sked_Drive__c.sked_Status__c</column>

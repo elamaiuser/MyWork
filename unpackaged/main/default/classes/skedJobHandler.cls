@@ -1,7 +1,14 @@
 public class skedJobHandler extends skedTriggerHub {  
+    private static final List<String> PERMITTED_INSERT_EDIT_PROFILES = new List<String>{
+        'Global Admin', 'System Administrator', 'APS Admin', 'Collections', 'Collection Management'
+    };
+
+    private static final List<String> PERMITTED_DELETE_PROFILES = new List<String>{
+        'Global Admin', 'System Administrator', 'APS Admin'
+    };
     
     public override void onBeforeInsert() {
-        skedTriggerUtils.validateServiceEntry(this.context.newRecords, skedConstants.DRIVE_CRUD_MUST_COME_FROM_RECORD_PAGE);
+        skedTriggerUtils.validateServiceEntry(this.context.newRecords, skedConstants.RECORD_CHANGES_INVALID_FROM_LIST_VIEW, PERMITTED_INSERT_EDIT_PROFILES);
         populateData(this.context.newRecords);
         if (skedSetting.instance.Admin.dateTimeConversion) {
             doDateTimeConversion(this.context.newRecords);
@@ -15,7 +22,7 @@ public class skedJobHandler extends skedTriggerHub {
     }
     
     public override void onBeforeUpdate() {
-        skedTriggerUtils.validateServiceEntry(this.context.newRecords, skedConstants.DRIVE_CRUD_MUST_COME_FROM_RECORD_PAGE);
+        skedTriggerUtils.validateServiceEntry(this.context.newRecords, skedConstants.RECORD_CHANGES_INVALID_FROM_LIST_VIEW, PERMITTED_INSERT_EDIT_PROFILES);
         populateData(this.context.newRecords, (Map<Id, sked__Job__c>)this.context.oldMap);
         if (skedSetting.instance.Admin.dateTimeConversion) {
             doDateTimeConversion(this.context.newRecords, (Map<Id, sked__Job__c>)this.context.oldMap);
@@ -33,6 +40,10 @@ public class skedJobHandler extends skedTriggerHub {
         if (!skedSetting.instance.Admin.migrationMode) {
             sendNotification(this.context.newRecords, (Map<Id, sked__Job__c>)this.context.oldMap);
         }
+    }
+
+    public override void onBeforeDelete() {
+        skedTriggerUtils.validateServiceEntry(this.context.oldRecords, skedConstants.RECORD_CHANGES_INVALID_FROM_LIST_VIEW, PERMITTED_DELETE_PROFILES);
     }
     
     /*********************************************************** Privated Methods ***********************************************************/
@@ -483,13 +494,13 @@ public class skedJobHandler extends skedTriggerHub {
                     assignedStaffCountExcludedRoles.add(staffSetupExcludedRole.sked_Resource_Role__c);
                 }
             }
-            
+
             for (sked_Drive_Shift__c driveShift : driveShifts) {
                 driveShift.sked_Assigned_Staff_Count__c = 0;
                 driveShift.sked_Staff_Allocated__c = 0;
                 driveShift.sked_Equipment_Allocated__c = 0;
                 driveShift.sked_Vehicles_Allocated__c = 0;
-                
+
                 if (driveShift.sked_Jobs__r != NULL) {
                     for (sked__Job__c skedJob : driveShift.sked_Jobs__r) {
                         if (skedJob.sked_Resource_Role__c != NULL) {
@@ -541,14 +552,10 @@ public class skedJobHandler extends skedTriggerHub {
                         }
                         if (rescheduledJob.sked__Finish__c != oldData.sked__Finish__c) {
                             integer difference = skedDateTimeUtils.getDifferentMinutes(oldData.sked__Finish__c, rescheduledJob.sked__Finish__c);
-                            allocation.sked__Set_End__c = rescheduledJob.sked__Finish__c;
+                            allocation.sked__Set_End__c = allocation.sked__Set_End__c.addMinutes(difference);
                         }
-                        if (allocation.sked__Start__c < rescheduledJob.sked__Start__c || allocation.sked__Start__c > rescheduledJob.sked__Finish__c) {
-                            allocation.sked__Start__c = rescheduledJob.sked__Start__c;
-                        }
-                        if (allocation.sked__Set_End__c > rescheduledJob.sked__Finish__c || allocation.sked__Set_End__c < rescheduledJob.sked__Start__c) {
-                            allocation.sked__Set_End__c = rescheduledJob.sked__Finish__c;
-                        }
+                        integer duration = skedDateTimeUtils.getDifferentMinutes(allocation.sked__Start__c, allocation.sked__Set_End__c);
+                        allocation.sked__Duration__c = duration;
                         allocationsToUpdate.add(allocation);
                     }
                 }
@@ -594,7 +601,7 @@ public class skedJobHandler extends skedTriggerHub {
             }
         }
         if (!jobIdsLogisticChange.isEmpty()) {
-            if (!Test.isRunningTest() || !System.isBatch()) {
+            if (!Test.isRunningTest() && !System.isBatch()) {
                 Database.executeBatch(new skedScheduleChangeNotificationBatch(jobIdsLogisticChange, mapImpactedJobs, oldMap));
             }
         }

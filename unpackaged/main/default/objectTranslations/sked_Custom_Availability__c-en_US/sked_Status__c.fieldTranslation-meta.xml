@@ -7,6 +7,10 @@
             <translation><!-- Approved --></translation>
         </picklistValues>
         <picklistValues>
+            <masterLabel>Cancelled</masterLabel>
+            <translation><!-- Cancelled --></translation>
+        </picklistValues>
+        <picklistValues>
             <masterLabel>Declined</masterLabel>
             <translation><!-- Declined --></translation>
         </picklistValues>

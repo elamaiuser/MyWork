@@ -25,6 +25,9 @@
  * 8/2/2023					Anil Kallu			Fix for HRP-10312 Fixed sync issue to opportunity when DCR is rejected
  * 8/8/2023                 Krapy Tuli          Fix for HRP-10659 Drive Stage remains in Discovery after drive is submitted and Start Time does not revert back to original value when DCR is rejected
  * 10/27/2023			    Anil Kallu			Fix for HRP-11296 Capture error logs in case of DB failures and run time exceptions
+ * 4/23/2024                Krapy Tuli          Update type field in catch block.
+ * 4/23/2024                Krapy Tuli          Update logic to handle duplicate id error as part of (HRP-12422).
+ * 06/06/2024				Priti Jana			Logic for HRP-12011 (Added Slot Generator Field to sync after DCR cancellation/rejection)
  *****************************************************************************************************************************************************************************
 */
 
@@ -43,7 +46,7 @@ trigger updateEventTrigger on Update_Event__e (After Insert) {
 
     system.debug('###FWO inside trigger for update event. lstUpdateEvent = ' + lstUpdateEvent);    
     
-    List<Opportunity> lstOppToUpdate = new List<Opportunity>();
+    Map<Id,Opportunity> mapOfOppToUpdate = new Map<Id,Opportunity>(); //HRP-12422
     List<sked_Drive__c> lstSkedDrives = new List<sked_Drive__c>();
     
     //Add logic for filter out collections
@@ -52,6 +55,9 @@ trigger updateEventTrigger on Update_Event__e (After Insert) {
             for(FieldIdentifiers oppFields : ev.objectFields) {
                 Opportunity recOpp = new Opportunity();  //HRP-10010 moved this inside the loop for the fields
                 recOpp.Id = oppFields.OppId;
+                if(mapOfOppToUpdate.containsKey(recOpp.Id)){ //HRP-12422 start
+                    recOpp = mapOfOppToUpdate.get(recOpp.Id);
+                } //HRP-12422 end
                 if(oppFields.updatedDataKeys.contains('Drive_Status__c')) { //HRP-10312
                     recOpp.Drive_Status__c = oppFields.Drive_Status;
                 }
@@ -66,6 +72,7 @@ trigger updateEventTrigger on Update_Event__e (After Insert) {
                 }
                 if(oppFields.updatedDataKeys.contains('Drive_Date__c')) { //HRP-10312
                     recOpp.Drive_Date__c = oppFields.Drive_Date;
+                    recOpp.Drive_Date_Change_Reason__c = oppFields.driveDateChangeReason;//HRP-12063
                 }
                 if(oppFields.updatedDataKeys.contains('Flow_Start_Time_Field__c') || oppFields.updatedDataKeys.contains('Start_Time__c')) { //HRP-10312 & //HRP-10659
                     recOpp.Flow_Start_Time_Field__c = oppFields.Start_Time;
@@ -127,9 +134,17 @@ trigger updateEventTrigger on Update_Event__e (After Insert) {
                 if(oppFields.updatedDataKeys.contains('Parent_Template_Id__c')) { //HRP-10312
                     recOpp.Parent_Template_Id__c = oppFields.Parent_Template_Id;
                 }
+                // HRP-12011 --> Starts here
+                if(oppFields.updatedDataKeys.contains('Slot_Generator__c')) { 
+                    recOpp.Slot_Generator__c = oppFields.Slot_Generator;
+                }
+                if(oppFields.updatedDataKeys.contains('Slot_Generator_Change_Reason__c')) { 
+                    recOpp.Slot_Generator_Change_Reason__c = oppFields.Slot_Generator_Change_Reason;
+                }
+                // HRP-12011 --> Ends here
                 System.debug('recOpp being updated->'+recOpp);
                 
-                lstOppToUpdate.add(recOpp);
+                mapOfOppToUpdate.put(recOpp.Id,recOpp);//HRP-12422
             }
         }
         else if(ev.objectName == 'DrivesOnCalendar'){
@@ -150,10 +165,10 @@ trigger updateEventTrigger on Update_Event__e (After Insert) {
             }
         }
     }
-    system.debug('###FWO inside trigger for update event.  final opp list to update.' + lstOppToUpdate);
-    if(!lstOppToUpdate.isEmpty()) {
-        Database.SaveResult[] lsOpp = Database.update(lstOppToUpdate, false);
-        system.debug('lstOppToUpdate:-'+lstOppToUpdate);
+    system.debug('###FWO inside trigger for update event.  final opp list to update.' + mapOfOppToUpdate);
+    if(!mapOfOppToUpdate.isEmpty()) {//HRP-12422 start
+        Database.SaveResult[] lsOpp = Database.update(mapOfOppToUpdate.values(), false);//HRP-12422 end
+        System.debug('mapOfOppToUpdate being updated->'+mapOfOppToUpdate);
         //HRP-11296-Begin-Fix for HRP-11296 Capture error logs in case of DB failures and run time exceptions
         List<BSF_Error_Log__c> errorLog = BSF_Utilities.createErrorLog(lsOpp,'','updateEventTrigger','execute','Error','Error syncing Opportunity with Drives On Calendar');
 		insert errorLog;
@@ -169,7 +184,7 @@ trigger updateEventTrigger on Update_Event__e (After Insert) {
     }
    }catch(Exception e){
         System.debug('Exception happened in updateEventTrigger->');
-        BSF_Error_Log__c errorLog = BSF_Utilities.getErrorLog(null,'updateEventTrigger','execute',e.getTypeName(),e.getStackTraceString(), e.getMessage());
+        BSF_Error_Log__c errorLog = BSF_Utilities.getErrorLog(null,'updateEventTrigger','execute','Error',e.getStackTraceString(), e.getMessage()); //HRP-12422
    		insert errorLog;
    }
    //HRP-11296-End

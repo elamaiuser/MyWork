@@ -8,33 +8,12 @@
         <plural>true</plural>
         <value>Operation Record Staff</value>
     </caseValues>
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     <layouts>
         <layout>Operation Record Staff Layout</layout>
+        <sections>
+            <label><!-- Call Out --></label>
+            <section>Call Out</section>
+        </sections>
         <sections>
             <label><!-- Custom Links --></label>
             <section>Custom Links</section>
@@ -45,4 +24,57 @@
         <errorMessage><!-- Early Departure / Late Arrival Reasons is required. --></errorMessage>
         <name>RequiresEarlyDepartureLateArrivalReasons</name>
     </validationRules>
+    <validationRules>
+        <errorMessage><!-- Early Departure Reason is required. --></errorMessage>
+        <name>RequiresEarlyDepartureReasons</name>
+    </validationRules>
+    <validationRules>
+        <errorMessage><!-- Late Arrival Reason is required. --></errorMessage>
+        <name>RequiresLateArrivalReasons</name>
+    </validationRules>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
 </CustomObjectTranslation>

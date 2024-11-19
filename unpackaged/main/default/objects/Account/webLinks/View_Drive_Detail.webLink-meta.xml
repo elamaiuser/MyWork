@@ -17,5 +17,5 @@
     <protected>false</protected>
     <showsLocation>false</showsLocation>
     <showsStatus>false</showsStatus>
-    <url>https://app.powerbi.com/groups/me/apps/1bf85886-e730-4e80-9ea2-4330448f7aa5/reports/3b86e87c-ef7c-4fdd-8f8a-5e629cd46fdf/ReportSection1e6fdcc6cb66d5be6de8?filter=Sponsor_x0020_Alt_x0020_IDs%2FSFBD_x0020_Sponsor_x0020_UFID%20eq%20%27{!Account.UFID__c}%27</url>
+    <url>https://app.powerbi.com/groups/me/apps/1bf85886-e730-4e80-9ea2-4330448f7aa5/reports/b70b8b63-b94e-4afc-94f3-f508db82b22d/336ae90c8c6408d2bed8?filter=Sponsor_x0020_Alt_x0020_IDs%2FSFBD_x0020_Sponsor_x0020_UFID%20eq%20%27{!Account.UFID__c}%27</url>
 </WebLink>

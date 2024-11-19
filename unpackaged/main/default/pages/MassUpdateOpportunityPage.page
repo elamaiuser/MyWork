@@ -5,8 +5,7 @@
     <script>
     $Lightning.use("c:LightningOutContainerApp", function() {
         $Lightning.createComponent("c:flowHostCMP",
-                                   {
-                                       selectedOpportunity:`{!JSENCODE(opps)}`,
+                                   {                                       
                                        selectedAccountId:`{!JSENCODE(accountId)}`
                                    },
                                    "OppAuraFlowContainer",
@@ -17,10 +16,10 @@
 											   console.log('Mass Opportunity Update VF - force:navigateToSObject event caught : ' + JSON.stringify(event));
                                                if (sforce && sforce.one) {
                                                    // VF page in S1 or Lightning Exp
-                                                   sforce.one.navigateToSObject(event.ac.recordId);
+                                                   sforce.one.navigateToSObject(event?.fc? event.fc.recordId : (event?.ac? event.ac.recordId : event?.bc?.recordId)); //HRP-12765, 13465 (event.fc)
                                                } else {
                                                    // VF page in Classic
-                                                   window.location.assign('/'+event.ac.recordId);
+                                                   window.location.assign('/'+ event?.fc? event.fc.recordId : (event?.ac? event.ac.recordId : event?.bc?.recordId)); //HRP-12765, 13465 (event.fc)
                                                }
                                            }
                                        });
@@ -31,10 +30,10 @@
 											   console.log('Mass Opportunity Update VF - force:navigateToObjectHome event caught : ' + JSON.stringify(event));
                                                if (sforce && sforce.one) {
                                                    // VF page in S1 or Lightning Exp
-                                                   sforce.one.navigateToObjectHome(event.ac.scope);
+                                                   sforce.one.navigateToObjectHome(event?.fc? event.fc.scope : (event?.ac? event.ac.scope : event?.bc?.scope)); //HRP-12765, 13465 (event.fc)
                                                } else {
                                                    // VF page in Classic
-                                                   if (event.ac.scope === 'Account') {
+                                                   if (event?.fc ? event.fc.scope : (event?.bc? event.bc.scope : event?.ac?.scope) === 'Account') { //HRP-12765, 13465 (event.fc)
                                                        window.location = '{!URLFOR($Action.Account.Tab, $ObjectType.Account)}';
                                                    }
                                                }

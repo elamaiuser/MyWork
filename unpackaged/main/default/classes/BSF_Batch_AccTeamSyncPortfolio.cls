@@ -5,6 +5,7 @@
 * Date					     Developer Name			     Comments
 * ***************************************************************************
 * 8/2/2023					 Balaji N					 Logic for HRP-8897 (creation of this class)
+* 01/09/2024				 Balaji N					 Logic for HRP-10569 (parameter changes on accTeamDateSyncOnAccPortUpdates method call)
 * *
 *****************************************************************************
 */
@@ -14,7 +15,7 @@ global class BSF_Batch_AccTeamSyncPortfolio implements Database.Batchable<sObjec
    
     global database.QueryLocator start(Database.BatchableContext bc){
         list<string> amNodeList = new list<string>{BSF_Constants.ACCOUNT_MANAGER,BSF_Constants.AREA_BOOKING_MANAGER,BSF_Constants.DISTRICT_MANAGER};
-        string query='select Id,Bsf_Portfolio__c,Assignment_type__c,Start_Date__c,End_date__c from Portfolio_Assignment__c where (Start_date__c=Today or End_date__c=Yesterday or (lastmodifiedDate=Yesterday)) and Assignment_type__c IN:amNodeList';
+        string query='select Id,Bsf_Portfolio__c,Assignment_type__c,Start_Date__c,End_date__c from Portfolio_Assignment__c where (Start_date__c=Today or End_date__c=Yesterday or (lastmodifiedDate=Yesterday) or (lastmodifiedDate=today)) and Assignment_type__c IN:amNodeList';
         return database.getQueryLocator(query); 
         
     }
@@ -51,7 +52,7 @@ global class BSF_Batch_AccTeamSyncPortfolio implements Database.Batchable<sObjec
             accIdList.add(apa.account__c);
         }
         
-        accountPortfolioassignmentservice.accTeamDateSyncOnAccPortUpdates(accIdList,null);
+        accountPortfolioassignmentservice.accTeamDateSyncOnAccPortUpdates(accIdList,null,new set<id>(),new map<id,list<accountTeamMember>> (),new map<id,list<accountTeamMember>> ());//HRP-10569 parameter changes
     }
     global void finish(Database.BatchableContext bc){
         system.debug('The BSF_Batch_AccTeamSyncPortfolio batch ran succesfully');

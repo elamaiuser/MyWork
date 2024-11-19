@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+        <label><!-- Category --></label>
+        <name>Category__c</name>
+        <picklistValues>
+            <masterLabel>Calendar Build</masterLabel>
+            <translation><!-- Calendar Build --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Drive Generation</masterLabel>
+            <translation><!-- Drive Generation --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Drive Status Correction</masterLabel>
+            <translation><!-- Drive Status Correction --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Sys Gen Run - FS</masterLabel>
+            <translation><!-- Sys Gen Run - FS --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Sys Gen Run - Mobile</masterLabel>
+            <translation><!-- Sys Gen Run - Mobile --></translation>
+        </picklistValues>
+    </CustomFieldTranslation>

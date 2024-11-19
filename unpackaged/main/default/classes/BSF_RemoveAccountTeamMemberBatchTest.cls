@@ -83,7 +83,7 @@ public class BSF_RemoveAccountTeamMemberBatchTest {
         
         coveringRecruiterList.add(coveringRecruiter1);
         coveringRecruiterList.add(coveringRecruiter2);
-        
+        TriggerHandler.bypass('AccountTeamMemberTriggerHandler');
         insert coveringRecruiterList;
         
         coveringRecruiter1.Start_Date__c = System.today()+50;
@@ -93,6 +93,7 @@ public class BSF_RemoveAccountTeamMemberBatchTest {
         update coveringRecruiterList;
 		
         Test.startTest();
+        
         	Database.executeBatch(new BSF_RemoveAccountTeamMemberBatch(), 200);
         	System.schedule('BSF_RemoveAccountTeamMemberBatch', '0 0 13 * * ?', new BSF_RemoveAccountTeamMemberBatch());
         Test.stopTest();

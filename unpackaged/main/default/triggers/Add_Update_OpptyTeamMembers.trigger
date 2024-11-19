@@ -1,3 +1,11 @@
+/* 
+* @description: This is a Platform Trigger called from AccountTeamMemberSerive; the logic updates opportunity team based on account team considering drive date
+* Modification Log 
+* Date					     Developer Name			     Comments
+* ***********************************************************************************************************************************************
+* 01/03/2024                 Balaji N					 Logic for HRP-10569 (Method call AccountPortfolioAssignmentService.accTeamDateSyncOnAccPortUpdates to get the future team info)
+************************************************************************************************************************************************
+*/
 trigger Add_Update_OpptyTeamMembers on UpdateOpptyTeamEvent__e (After Insert) {
     
     Set<Id>  setOfacctTeamMemberIdsInsert = new Set<Id>();
@@ -36,6 +44,19 @@ trigger Add_Update_OpptyTeamMembers on UpdateOpptyTeamEvent__e (After Insert) {
     
     if(!mapOfAcctsWithTeamMembers.isEmpty()){
         //AccountTeamMemberService.addAcctTeamMembers_To_BloodDriveOpptyMembers(mapOfAcctsWithTeamMembers,true,Trigger.New.size());
+        //HRP-10569 start
+        list<id> accIdList = new list<id>(mapOfAcctsWithTeamMembers.keyset());
+        map<id,list<accountTeamMember>> accIdFutureAccTeamMap = new map<id,list<accountTeamMember>>();
+        AccountPortfolioAssignmentService.accTeamDateSyncOnAccPortUpdates(accIdList,BSF_constants.BYPASS_TEAMDML,new set<id>(),accIdFutureAccTeamMap,new map<id,list<accountTeamMember>> ());
+        
+        for(id i:mapOfAcctsWithTeamMembers.keyset())
+        {
+            if(accIdFutureAccTeamMap != null && accIdFutureAccTeamMap.containsKey(i))
+            {
+                mapOfAcctsWithTeamMembers.get(i).addAll(accIdFutureAccTeamMap.get(i));
+            }
+        }
+        //HRP-10569 End
         Database.executeBatch(new BSF_Batch_OpportunityTeamSync(mapOfAcctsWithTeamMembers,Trigger.New.size()),100);
     } 
         

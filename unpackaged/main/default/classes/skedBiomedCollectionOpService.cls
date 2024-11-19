@@ -12,6 +12,8 @@ global class skedBiomedCollectionOpService extends skedDataService {
         if (query.includes(skedSObjectType.REGION)) {
             skedQueryBuilder regionBuilder = query.getQueryBuilder('sked__Region__c');
         }
+        List<String> excludedCONames = new List<String>{skedConstants.NON_COLLECTION_AREA_CO};
+        queryBuilder.addCondition('(Name NOT IN {0})', excludedCONames);
     }
     
     /*********************************************************** Nested classes ***********************************************************/

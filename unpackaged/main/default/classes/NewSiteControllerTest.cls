@@ -21,4 +21,27 @@ private class NewSiteControllerTest {
         insert collectionZipcode;
         NewSiteController.predictCollectionOperations('94116');
     }
+      static testmethod void testCheckSiteCollectionOpForNoncollectionAreaForDrive() {
+        skedTestDataFactory testDataFactory = new skedTestDataFactory('us', system.today().addMonths(6), 14);
+        Map<string, sObject> mapTestData = testDataFactory.setupCommonTestData();
+        mapTestData = testDataFactory.setupDriveData();
+        sked_Drive__c dr = (sked_Drive__c)mapTestData.get('testDrive1');
+		Boolean isNonCollectionArea = NewSiteController.checkSiteCollectionOpForNoncollectionArea(dr.id);
+        System.assert(isNonCollectionArea == false);  
+        sked_Site_Collection_Operation__c siteCollOp = (sked_Site_Collection_Operation__c)mapTestData.get('testLocation1_testCollectionOperation1');
+        Biomed_Collection_Op_Center__c   collOp=new Biomed_Collection_Op_Center__c(id=siteCollOp.sked_Collection_Operation__c);
+        collOp.name=Label.NonCollectionArea_Label;
+        update   collOp;
+        Boolean isNonCollectionAreaOne = NewSiteController.checkSiteCollectionOpForNoncollectionArea(dr.id);
+        System.assert(isNonCollectionAreaOne == true);
+
+  
+    }
+    
+    static testmethod void testCheckSiteCollectionOpForOpportunities() {
+         Map<string, sObject> mapTestData = GenerateDriveTestData.setupData();
+        Opportunity opp = (Opportunity)mapTestData.get('mobileOpportunity');
+		Boolean isNonCollectionArea = NewSiteController.checkSiteCollectionOpForNoncollectionArea(opp.id);
+        System.assert(isNonCollectionArea == false);  
+    }
 }

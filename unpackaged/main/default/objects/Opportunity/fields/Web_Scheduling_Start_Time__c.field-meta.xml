@@ -14,7 +14,7 @@
             <sorted>false</sorted>
             <value>
                 <fullName>0001</fullName>
-                <default>true</default>
+                <default>false</default>
                 <label>12:01 AM</label>
             </value>
             <value>

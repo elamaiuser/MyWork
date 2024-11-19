@@ -4,7 +4,7 @@
     <description>Email to BPLs about Type O</description>
     <encodingKey>ISO-8859-1</encodingKey>
     <letterhead>ARC_Logo_Test</letterhead>
-    <name>Evergreen_General_Type O Information to BPL_2023</name>
+    <name>Evergreen_General_Type O Information to BPL</name>
     <style>formalLetter</style>
     <subject>Upcoming Blood Drive Information - Blood Type O</subject>
     <textOnly>Dear [Insert Name],

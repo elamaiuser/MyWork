@@ -1,0 +1,108 @@
+<template>
+
+    <section role="dialog" tabindex="-1" class={customClass.modal}>
+        <lightning-spinner if:true={showSpinner} class="spins" size="medium"></lightning-spinner>
+
+        <div class="slds-modal__container">
+            <header if:false={fullScreen} class="slds-clearfix slds-page-header slds-page-header_record-home fixed-position" style="margin-bottom: var(--lwc-cardSpacingMargin);">
+                <div class="slds-page-header__row slds-grid_vertical-align-center">
+                    <div class="slds-page-header__col-title">
+                        <div class="slds-media">
+                            <div class="slds-media__figure">
+                                <lightning-icon icon-name="standard:record_create" size="medium"></lightning-icon>
+                            </div>
+                            <div class="slds-media__body">
+                                <div class="slds-page-header__name">
+                                    <div class="slds-page-header__name-title">
+                                        <h1>
+                                            <span class="slds-page-header__title slds-truncate">Search Criteria</span>
+                                        </h1>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="slds-no-flex">
+                        <div class="slds-grid">
+                            <div class="slds-no-flex">
+                                <ul class="slds-button-group-row">
+                                    <li class="slds-button-group-item">
+                                        <lightning-button label="Next" variant="brand" onclick={handleNext}></lightning-button>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+            <header if:true={fullScreen} class="slds-modal__header">
+                <div style="width: 3rem"></div>
+
+                <h2 class="slds-text-heading_medium slds-hyphenate">Search Criteria</h2>
+
+                <div style="width: 3rem">
+                    <span class="slds-text-heading_small" onclick={handleNext}>Next</span>
+                </div>
+            </header>
+            <div class="slds-modal__content slds-is-relative slds-p-around_medium" style="overflow: initial">
+                <div class="slds-form">
+                    <lightning-radio-group 
+                        name="eventType"
+                        label="Event Type"
+                        options={eventTypeOptions}
+                        value={filters.eventType}
+                        required
+                        type="radio"
+                        onchange={handleFiltersChanged}></lightning-radio-group>
+                        
+                    <div class="slds-m-top_x-small">
+                        <c-slwc-lookup 
+                            is-required
+                            object-name="Biomed_Collection_Op_Center__c"
+                            icon-name="standard:location" 
+                            display-field="name" 
+                            label="Collection Operation" 
+                            name="collectionOperation" 
+                            placeholder="Search Collection Operation"
+                            selection={filters.collectionOperation}
+                            onselectionchange={handleFiltersChanged}>
+                        </c-slwc-lookup>
+                    </div>
+
+                    <lightning-input 
+                        class="slds-m-top_x-small"
+                        type="date" 
+                        name="eventDate" 
+                        label="Event Date" 
+                        value={filters.eventDate} 
+                        required
+                        onchange={handleFiltersChanged} 
+                        autocomplete="off">
+                    </lightning-input>
+
+                    <lightning-input 
+                        if:true={showDriveUfid}
+                        class="slds-m-top_x-small"
+                        type="text" 
+                        name="driveUfid" 
+                        label="Drive UFID" 
+                        value={filters.driveUfid} 
+                        onchange={handleFiltersChanged}>
+                    </lightning-input>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <c-slwc-confirm-modal
+        is-open={confirmModalData.isOpen}
+        mode={confirmModalData.mode}
+        title={confirmModalData.title}
+        message={confirmModalData.message}
+        handle-on-close={confirmModalData.onClose}
+        confirm-btn-label={confirmModalData.confirmBtnLabel}
+        cancel-btn-label={confirmModalData.cancelBtnLabel}
+        layer-index="2"
+        size='x-small'>
+    </c-slwc-confirm-modal>
+</template>

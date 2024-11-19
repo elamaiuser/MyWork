@@ -1,8 +1,3 @@
-/* @Description - This constant class includes constants (Record Type , Roles) related to bsf objects and mainly used 
-                  in non drive generation related classes
-                  
-****************************************************************************************************************************8
-*/
 public class BSF_Constants {
     //Account Roles
 	public static final String ACCOUNT_MANAGER = 'Account Manager';
@@ -16,6 +11,9 @@ public class BSF_Constants {
     public static final String RELATIONSHIP_MANAGER = 'Relationship Manager';
     public static final String SUPERVISOR = 'Supervisor';//Recruitment Supervisor
     public static final String FIXED_SITE = 'Fixed Site'; 
+    
+    //OpportunityRoles
+    public static final String OPPORTUNITY_OWNER = 'Opportunity Owner';//HRP-11424
         
 	// 3807
 	// Add account specialist role for portfolio type without having any record type
@@ -59,9 +57,11 @@ public class BSF_Constants {
 	public static Boolean skipAccountPortfolioAssignmentTrigger = false;
     public static Boolean skipAccountPortfolioAssignmentUpdateTrigger=false;
     public static Boolean skipAccountPortfolioAssignmentInsertTrigger=false;
+    public static Boolean skipAccountPortfolioAssignmentDeleteTrigger=false;
     public static Boolean skipPortfolioAssignmentTrigger = false;
     public static Boolean isEndateBatch = false;
     public static Boolean isdateCheckbeforeInsertUpdate = true;
+    public static Boolean isBackEndDelete = false;
     
     //Static boolean Variable for unchecking covering recruiter flag in backend
     public static Boolean isTeamMemberCreatedFromBackend = false;
@@ -102,6 +102,16 @@ public class BSF_Constants {
     public static final String DOC_STATUS_COMPLETE = 'Complete';
     public static final String DOC_STATUS_CANCEL = 'Cancel';
     public static final String DOC_SOURCE = 'Calendar Build';
+    
+    //Operation Record Status:
+    public static final String OPRECORD_STATUS_SUBMITTED = 'Submitted';
+    public static final String OPRECORD_STATUS_NOTSUBMITTED = 'Not Submitted';
+    
+     // Opportunity Sources
+     public static final String OPP_SOURCE_CALENDAR_BUILD = 'Calendar Build';
+     public static final String OPP_SOURCE_PLAN_A_DRIVE = 'Plan a Drive';
+     public static final String OPP_SOURCE_ADHOC = 'Adhoc';
+     public static final String OPP_SOURCE_BUSINESS_PLANNING = 'Business Planning';
 
 
     // Opportunity Contact Roles
@@ -122,6 +132,7 @@ public class BSF_Constants {
     public static final String X72_HOUR_CHECK_IN_TASK = '72 Hour Check in - System Generated';
     public static final String RECRUITMENT_TASK = 'Recruitment Task - System Generated';
     public static final String SPONSOR_PLANNING_MEETING_TASK = 'Sponsor Planning Meeting - System Generated';
+    public static final String MARKETING_EXCEPTION_TASK = 'Request for Marketing Exception';
 
     // Task Configuration Days
     public static final Integer PUBLICITY_REVIEW_DAYS_CONFIGURATION = 63;
@@ -143,15 +154,20 @@ public class BSF_Constants {
 
     // Batch Related Stuffs
     public static final String DEFAULT_TERRITORY ='Called from DefaultTerritoryPortfolioBatchHelper';
+    
 
-    // Admin Profiles
+    // Profiles
     public static final String SYS_ADMIN = 'System Administrator';
     public static final String GLOBAL_ADMIN = 'Global Admin';
     public static final String APS_ADMIN = 'APS Admin';
     public static final String RECRUITMENT_ADMIN = 'Recruitment Admin';
+    public static final String DRD_PROFILE = 'DRD Profile';
+    public static final String DRD_MANAGER = 'DRD Manager';
+    public static final String AUTOMATED_PROCESS = 'Automated Process';
 
-    //AccountPOrtfolioAssignment Service
+    //AccountPortfolioAssignment Service
     public static final String BYPASS_TEAMDML ='Bypass Team DML';
+    public static final String ONE_TIME_BATCH ='One Time Batch';//HRP-12390
 
     // Template Status 
     public static final String ACTIVE_TEMPLATE = 'Active';
@@ -160,9 +176,152 @@ public class BSF_Constants {
     // Type of Drive Picklist Values
     public static final String MOBILE_DRIVE = 'Mobile';
     public static final String FIXED_SITE_DRIVE = 'Fixed Site';
-    
+
     //Test Class
     public static  Boolean Test_Run = false;
 
+    public static map<String,String> taskSubjectKeyMap = new map<String,String>
+    {'Recruitment Task - System Generated'=>'RecruitmentTask',BSF_Constants.PUBLICITY_REVIEW_NEEDED_TASK=>'PublicityOrderTask',
+     'Calendar Build Review'=>'CBUnqualifiedStatus',string.valueof(System.Label.InvalidAccountAddressTaskSubject)=>'AccountInvalidAddress',
+      BSF_Constants.PRE_DRIVE_SECURITY_TASK=>'OpportunityPreDriveTask','Drive Generation Failure Email'=>'DriveGenerationFailure',
+      'Sponsor Planning Meeting - System Generated'=>'SponsorPlanningMeetingTask','72 Hour Check in - System Generated'=>'ClosedOpportunity72HourTask', 
+        'Request for Marketing Exception'=>'MarketingException', 'Error in CB Drive Creation' => 'CBOpportunityGenerationFailure', //HRP-11611
+        'Template Order Task' => 'TemplateOrderExpiry',//HRP-12664
+        //HRP-11784 
+        'Current AM Data integrity review' => 'CurrentAMDataIntegrityReview',
+        'Current ABM Data integrity review' => 'CurrentABMDataIntegrityReview',
+        'Blood Program Confirmation' => 'BloodProgramConfirmation',
+        'Sponsor Introduction' => 'SponsorIntroduction',
+        'First Notification to Sponsor' => 'FirstNotificationToSponsor',
+        'Current AM Account/Portfolio Review Meeting' => 'CurrentAMAccPortfolioReviewMeeting',
+        'Current ABM Account/Portfolio Review Meeting' => 'CurrentABMAccPortfolioReviewMeeting',
+        'New AM Account/Portfolio Review Meeting' => 'NewAMAccPortfolioReviewMeeting',
+        'New SBPM Account/Portfolio Review Meeting' => 'NewSBPMAccPortfolioReviewMeeting',
+        'Template Order Task' => 'TemplateOrderExpiry'//HRP-12664
+        //HRP-11784
+        }; 
+
+    // Initiated By picklist Values
+    public static final String ARC_INITIATED_FIXED = 'ARC Initiated-Fixed';
+    public static final String ARC_INITIATED_MOBILE = 'ARC_Initiated_Mobile';
+    public static final String SPONSOR_INITIATED_FIXED = 'Sponsor Initiated-Fixed';
+    public static final String SPONSOR_INITIATED_MOBILE = 'Sponsor_Initiated_Mobile';
+
+    // Cancellation Reason picklist Values
+    public static final String ARC_MANAGEMENT_CANCELLATION_REASON = 'ARC Management';
+    public static final String GEO_ALIGNMENT_CANCELLATION_REASON = 'Geo Alignment';
+
+    // Account Status Picklist values
+    public static final String ACCOUNT_STATUS_CLOSED = 'Closed';
+    public static final String ACCOUNT_STATUS_ACTIVE = 'Active';
     
+
+    //Notification Types
+    public static final String NOTIFICATION_TYPE_EMAIL = 'Email';
+    public static final String NOTIFICATION_TYPE_SALESFORCEPUSH = 'SalesforcePush';
+    public static final String NOTIFICATION_TYPE_ONEOFF = 'Oneoff';
+    public static final String NOTIFICATION_TYPE_CUSTOMSMS = 'CustomSMS';
+    public static final String NOTIFICATION_TYPE_CALLOUT = 'CallOut';
+
+    //Notification Status
+    public static final String NOTIFICATION_STATUS_COMPLETE = 'Email';
+    public static final String NOTIFICATION_STATUS_ERROR = 'Email';
+    
+    //Supervisory role for Jobs and Job Allocation
+    public static final String SUPER_ROLE_APHERESIS_CHARGE = 'Apheresis Charge';
+    public static final String SUPER_ROLE_CHARGE = 'Charge';
+    public static final String SUPER_ROLE_CHARGE_2RBC = 'Charge - 2RBC';
+    public static final String SUPER_ROLE_SPECIAL_COLLECTIONS_CHARGE = 'Special Collections Charge';
+    public static final String SUPER_ROLE_DRIVE_LEAD = 'Drive Lead';
+    public static final String SUPER_ROLE_TEAM_SUPERVISOR = 'Team Supervisor';
+    
+    //check if called from after delete
+    public static  Boolean After_Delete = false;
+    
+    //HRP-11784 HandOffTasks
+    public static final List<String> NoAMChangeTaskList = new List<String>{'Current AM Data integrity review','Current ABM Data integrity review','Blood Program Confirmation'};
+    public static final String DRDSystemUser ='DRD System User';
+    public static final string currentAMDataReview='Current_AM_Data_integrity_review';
+    public static final String HandOffApiName='Account_Handoff_Settings__mdt.';
+    public static final string ABM2SUPER='ABM2SUPER';
+    public static final string ABM='ABM';
+    public static final string AM='AM';
+    public static final string Current='Current';
+    public static final string Newtask='New';
+    
+    //HRP-12333 Task Reassignment Matrix Metadata category
+    public static final String opportunityTasks='Opportunity Task';
+    public static final String handOffTasks='HandOff';
+    
+    //HRP-13028 MaxDate
+    public static final Date maxDate = Date.newInstance(4000,12,31);
+    public static final DateTime CURRENT_DATE_TIME = system.now();
+    public static final Date CURRENT_DATE = system.today();
+
+
+    //HRP-12706 --> Starts here
+    public static final String ROLLOVER_CONSIDERATION_DO_NOT_ROLL = 'Do Not Roll';
+    public static final String  RUN_TYPE_MANUAL = 'Manual';
+    public static final String  RUN_TYPE_SCHEDULED = 'Scheduled';
+
+    public static Map<String, List<String>> MAP_BATCHINFO_FIELDSTOUPDATE = new Map<String, List<String>>{
+        'Drive Status Correction' => new List<String>{'Status_Correction_Batch_Status__c', 'Status_Correction_Batch_Execution_Date__c'},
+        'Calendar Build' => new List<String>{'CB_Batch_Status__c', 'CB_Batch_Execution_Date__c'},
+        'Drive Generation' => new List<String>{'Drive_Gen_Batch_Status__c', 'Drive_Gen_Batch_Execution_Date__c'},
+        'Sys Gen Run - FS' => new List<String>{'FS_Sys_Gen_Batch_Run_Status__c', 'FS_Sys_Gen_Batch_Run_Date__c'},
+        'Sys Gen Run - Mobile' => new List<String>{'Mobile_Sys_Gen_Batch_Run_Status__c', 'Mobile_Sys_Gen_Batch_Run_Date__c'}
+    };
+
+    public static Map<String, List<String>> MAP_BATCHINFO_CBERRORLOGFIELDS = new Map<String, List<String>>{
+        'Drive Status Correction' => new List<String>{'Drive__c', 'Operation_Record__c'},
+        'Calendar Build' => new List<String>{'Opportunity__c'},
+        'Drive Generation' => new List<String>{'Opportunity__c'},
+        'Sys Gen Run - FS' => new List<String>{'Drive__c'},
+        'Sys Gen Run - Mobile' => new List<String>{'Drive__c'}
+    };
+
+    public static Map<String, String> MAP_BATCHINFO_CLASSNAME = new Map<String, String>{
+        'Drive Status Correction' => 'BSF_Batch_Drive_OpRecordStatusCorrection',
+        'Calendar Build' => 'CalendarBuildEvaluateDrivesBatch',
+        'Drive Generation' => 'CreateSkedDrivesBatch',
+        'Sys Gen Run - FS' => 'DriveResourceAllocationBatch',
+        'Sys Gen Run - Mobile' => 'DriveResourceAllocationBatch'
+    };
+
+    public static Map<String, String> MAP_DRIVETYPE_BATCHTYPE = new Map<String, String>{
+        'Fixed Site' => 'Sys Gen Run - FS',
+        'Mobile' => 'Sys Gen Run - Mobile'   
+    };
+    
+    // Batch Status
+    public static final String BATCH_STATUS_COMPLETED = 'Completed';
+    public static final String BATCH_STATUS_PENDING = 'Pending';
+    public static final String BATCH_STATUS_ERROR = 'Error';
+
+    //CB Batches
+    public static final String BATCH_CALENDAR_BUILD = 'Calendar Build';
+    public static final String BATCH_DRIVE_STATUS_CORRECTION = 'Drive Status Correction';
+    public static final String BATCH_DRIVE_GENERATION = 'Drive Generation';
+    public static final String BATCH_SYSTEM_GENERATION = 'System Generation';
+    public static final String BATCH_SYS_GEN_FS = 'Sys Gen Run - FS';
+    public static final String BATCH_SYS_GEN_MOBILE = 'Sys Gen Run - Mobile';
+
+    //HRP-12706 --> Ends here
+
+    public static final String TERRITORY_TYPE_DIVISION = 'Division';
+    public static final String TERRITORY_TYPE_ARC_REGION = 'ARC Region';
+    public static final String TERRITORY_TYPE_DISTRICT = 'District';
+
+    public static Map<String, Map<String, String>> map_eventType_startEndFieldApiName = new Map<String, Map<String, String>>{
+        'sked__Job_Allocation__c' => new Map<String, String>{'Start' => 'sked__Start__c', 'End' => 'sked__Set_End__c'},
+        'sked__Availability__c' => new Map<String, String>{'Start' => 'sked__Start__c', 'End' => 'sked__Finish__c'},
+        'sked__Activity_Resource__c' => new Map<String, String>{'Start' => 'sked_Start1__c', 'End' => 'sked_End__c'},
+        'sked__Activity__c' => new Map<String, String>{'Start' => 'sked__Start__c', 'End' => 'sked__End__c'},
+        'sked__Resource_Override__c' => new Map<String, String>{'Start' => 'sked__Start__c', 'End' => 'sked__End__c'}
+    };
+      
+    //HRP-7123 --> 
+    public static final String POST_DRIVE_ANALYSIS_TASK = 'Post Drive Analysis Task';
+    public static final String RECRUITMENT_PLANNING_TASK = 'Recruitment Planning Meeting';
+    public static final String OPP_TYPE_Mobile = 'Mobile Opp';
 }

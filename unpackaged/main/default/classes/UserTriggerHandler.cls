@@ -1,7 +1,14 @@
+/* Modification Log 
+ * 
+ * Date					   Developer Name			    Comments
+ * ****************************************************************************
+ * 10/18/2024               Priti Jana              Logic for HRP-9815
+ ******************************************************************************
+*/
+
 public with sharing class UserTriggerHandler extends TriggerHandler{
     
-    public override void beforeInsert(){
-        //system.debug('entered111');
+    public override void beforeInsert() {
         if(super.getTriggerMethodsToBypass().indexOf('formatMobilePhone') == -1) {
             System.debug('UserTriggerHandler.beforeInsert() - userService.formatMobilePhone Executing...');
             userService.formatMobilePhone((List<User>) Trigger.new);
@@ -11,8 +18,7 @@ public with sharing class UserTriggerHandler extends TriggerHandler{
         }
     }
     
-    public override void beforeUpdate(){
-        system.debug('beforeupdateuser');
+    public override void beforeUpdate() {
         if(super.getTriggerMethodsToBypass().indexOf('formatMobilePhone') == -1) {
             System.debug('UserTriggerHandler.beforeUpdate() - userService.formatMobilePhone Executing...');
             userService.formatMobilePhone((List<User>) Trigger.new);
@@ -23,7 +29,7 @@ public with sharing class UserTriggerHandler extends TriggerHandler{
     }
     
     public override void afterUpdate() {
-        if(!checkRecursive.firstcall){
+        if(!checkRecursive.firstcall) {
             if(super.getTriggerMethodsToBypass().indexOf('PublishEventForAssigningResourcesToUsers') == -1) {
                 System.debug('UserTriggerHandler.afterUpdate() - userService.PublishEventForAssigningResourcesToUsers() Executing...');
                 userService.PublishEventForAssigningResourcesToUsers((List<User>) Trigger.new);
@@ -31,6 +37,15 @@ public with sharing class UserTriggerHandler extends TriggerHandler{
             else {
                 System.debug('UserTriggerHandler.afterUpdate() - userService.PublishEventForAssigningResourcesToUsers() Bypassed');
             }
+                        
+            //HRP-9815 --> Starts Here
+            if(super.getTriggerMethodsToBypass().indexOf('updateDrdRepContactOnOpRecordUponPhoneChange') == -1) {
+                System.debug('UserTriggerHandler.afterUpdate() - userService.updateDrdRepContactOnOpRecordUponPhoneChange Executing...');
+                userService.updateDrdRepContactOnOpRecordUponPhoneChange((List<User>) Trigger.new, (Map<Id, User>) Trigger.oldMap);
+            } else {
+                System.debug('UserTriggerHandler.afterUpdate() - userService.updateDrdRepContactOnOpRecordUponPhoneChange Bypassed');
+            }
+            //HRP-9815 --> Ends Here
         }
     }    
 }

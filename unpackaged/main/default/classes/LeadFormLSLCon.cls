@@ -6,7 +6,8 @@
  * HRP- 9328- Anil K-> Use taxonomy record for zip code to city and state mapping, if no taxonomy record, check in collections territory
  * HRP-9370 - Anil K-> Switch sitekey and secrets to custom labels 
  * HRP-11743-Anil K->Campaign Tracking Not Working as Excepted
- *
+ * HRP-12024-Anil K-> Check Future Taxonomy records if a particular zip code is falling in non collection area *
+ * HRP-13011-Apurba Bhattacharjee-> Lead intake form error message for NCA and invalid zip codes
  * **/
 public class LeadFormLSLCon {
     
@@ -131,6 +132,7 @@ public class LeadFormLSLCon {
    	/**
 	 * HRP-93298 add city and state to taxonomy and use taxonomy record
 	 * over collections terriotory when it is available, otherwise fall back on collections zip record
+	 * HRP-12024-> Check Future Taxonomy records if a particular zip code is falling in non collection area and remove reference to collections territory 
 	 * */
     public PageReference validateZipcode(){
         
@@ -155,43 +157,50 @@ public class LeadFormLSLCon {
 
         zipCode = newLead.PostalCode;
 
-        List<Collections_Territory__c> results = new List<Collections_Territory__c>();
+        List<Taxonomy__c> futureTaxonomyresults = new List<Taxonomy__c>();
+        // HRP- 9328 Begin (Use taxonomy record for zip code to city and state mapping, if no taxonomy record, check in collections territory)
         Date thisDate = Date.today();
         String taxonomyBioSFRecordType = Schema.SObjectType.Taxonomy__c.getRecordTypeInfosByName().get(BSF_Constants.BIO_COLLECTION_RECORD_TYPE).getRecordTypeId();
 		String nonServiceArea='Non-Collection Area';
-        
-        List<Taxonomy__c > taxonomyResults = [select Id,RecordTypeId, Name, City__c, State__c,Collection_Operation_Name__c  from Taxonomy__c where Start_Date__c <= :thisDate and End_Date__c >= :thisDate and Zip_Code__c  = :zipCode 
-                                              	and RecordTypeId=:taxonomyBioSFRecordType and Collection_Operation_Name__c != :nonServiceArea and District_Name__c != :nonServiceArea 
-                                              and Division_Name__c != :nonServiceArea and DS_Region_Name__c != :nonServiceArea and City__c!=null and State__c != null];
-		System.debug('taxonomyResults size->'+taxonomyResults.size());
-        if(taxonomyResults.isEmpty()){
-             results = [select Id, Name, City__c, State_Code__c, Service_Area__c from Collections_Territory__c where sked_start_date__c=null and Zip__c = :zipCode];
-			 System.debug('Collections_Territory__c Result size for ' + zipCode + ': ' + results.size());
-
-        }
-        if(results.isEmpty() && taxonomyResults.isEmpty()){
+        // HRP-13011--> Start
+        List<Taxonomy__c > taxonomyRecord = [SELECT Id,RecordTypeId, Name, City__c, State__c,Collection_Operation_Name__c 
+                                              FROM Taxonomy__c WHERE RecordTypeId=:taxonomyBioSFRecordType AND City__c!=null AND State__c != null AND Zip_Code__c = :zipCode];
+        //invalid input
+        if(taxonomyRecord.isEmpty()){
             System.debug('No results for ' + zipCode);
-            territory = null;
-            areaServed = false; // just because the zip code isn't in the database, doesn't mean we don't serve this area.
             validZip = false;
-        } else {
-            Taxonomy__c taxonomy = (taxonomyResults != null && taxonomyResults.size()>0)? taxonomyResults[0]:null;
-            Collections_Territory__c collectionsTerritory = (results != null && results.size()>0) ? results[0]:null;
-            areaServed = true;
-
-            if(collectionsTerritory != null){
-                territory = (results != null && results.size()>0) ? results[0]:null;
-                areaServed = territory != null ? territory.Service_Area__c == true:false;
+            return null;
+        }else {
+            //zip code valid and it's a current ARC service area
+            List<Taxonomy__c > taxonomyResults = [SELECT Id,RecordTypeId, Name, City__c, State__c,Collection_Operation_Name__c  FROM Taxonomy__c WHERE RecordTypeId=:taxonomyBioSFRecordType AND Start_Date__c < :thisDate and End_Date__c >= :thisDate AND Zip_Code__c = :zipCode 
+                                              AND City__c!=null AND State__c != null AND (Collection_Operation_Name__c != :nonServiceArea AND District_Name__c != :nonServiceArea 
+                                              AND Division_Name__c != :nonServiceArea AND DS_Region_Name__c != :nonServiceArea)];
+            System.debug('taxonomyResults size->'+taxonomyResults.size());
+            if(taxonomyResults.isEmpty()){
+                //HRP-12024--> Check Future Taxonomy records if a particular zip code is falling in non collection area
+                futureTaxonomyresults = [SELECT Id,RecordTypeId, Name, City__c, State__c,Collection_Operation_Name__c  FROM Taxonomy__c WHERE RecordTypeId=:taxonomyBioSFRecordType AND Start_Date__c >= :thisDate and End_Date__c > :thisDate and Zip_Code__c = :zipCode 
+                                        AND City__c!=null AND State__c != null AND Collection_Operation_Name__c != :nonServiceArea AND District_Name__c != :nonServiceArea 
+                                        AND Division_Name__c != :nonServiceArea AND DS_Region_Name__c != :nonServiceArea];
+                System.debug('Future Taxonomy records Result size for ' + zipCode + ': ' + futureTaxonomyresults.size());
+            }// HRP-13011--> End
+            if(taxonomyResults.isEmpty() && futureTaxonomyresults.isEmpty()){
+                System.debug('No results for ' + zipCode);
+                territory = null;
+                areaServed = false; // just because the zip code isn't in the database, doesn't mean we don't serve this area.
+                validZip = true;
+            } else {
+                Taxonomy__c taxonomy = (taxonomyResults != null && taxonomyResults.size()>0)? taxonomyResults[0]:futureTaxonomyresults[0];//HRP-12024
+                areaServed = true;
+                String city = 	taxonomy !=null ? taxonomy.City__c :territory.City__c;           
+                String stateCode = 	taxonomy !=null ? taxonomy.State__c :territory.State_Code__c;           
+                // HRP- 9328 End
+                newLead.City = city;
+                newLead.StateCode = stateCode;
+                stateCode = stateCode;
+                showForm = true;
+                validZip = true;
             }
-		    String city = 	taxonomy !=null ? taxonomy.City__c :territory.City__c;           
-            String stateCode = 	taxonomy !=null ? taxonomy.State__c :territory.State_Code__c;           
-
-            newLead.City = city;
-            newLead.StateCode = stateCode;
-            stateCode = stateCode;
-            showForm = true;
-            validZip = true;
-        } 
+        }
            
         return null;
     }

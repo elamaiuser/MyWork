@@ -4,16 +4,21 @@
     <description>A post-drive thank you email to BPLs with drive results.</description>
     <encodingKey>ISO-8859-1</encodingKey>
     <letterhead>ARC_Logo_Test</letterhead>
-    <name>Evergreen_General_Thank You Post Drive Results_2024</name>
+    <name>Evergreen_General_Thank You Post Drive Results</name>
     <style>formalLetter</style>
     <subject>Results for your recent blood drive!</subject>
     <textOnly>Dear [BPL Name],
 
-Thank you for coordinating the [Date] blood drive.  We were very pleased with the drive overall, and the willingness of the donors to share this life saving gift.
+Thank you for coordinating the [Date] blood drive. The efforts of [Account Name] have always been greatly appreciated and their support of the community blood program will go a long way toward replenishing blood supplies and ultimately saving lives.
 
-The efforts of [Account Name] have always been greatly appreciated and their support of the community blood program will go a long way toward replenishing blood supplies and ultimately saving lives.
+The results of your blood drive are as follows:
 
-In addition, we very much appreciate your efforts during this crucial time. You may be interested to know that [#] donors registered, [#] donors were deferred and [#] units were collected!  We also registered [#] first time donors!
+[#] donors registered
+[#] donors deferred
+[#] units collected
+[#] first time donors
+
+In the coming days, you will receive an email with a brief satisfaction survey. We have updated our survey questions to make it a more concise and easier experience for you. Your response to the survey is essential for the Red Cross to continually evaluate your overall experience and satisfaction. We want to hear from your because your voice matters!
 
 Again, thank you for your contribution and ongoing support of this important community program. I look forward to working with you again on an upcoming blood drive.
 

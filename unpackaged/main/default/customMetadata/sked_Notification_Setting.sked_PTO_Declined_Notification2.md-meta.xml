@@ -4,7 +4,7 @@
     <protected>false</protected>
     <values>
         <field>sked_Active__c</field>
-        <value xsi:type="xsd:boolean">false</value>
+        <value xsi:type="xsd:boolean">true</value>
     </values>
     <values>
         <field>sked_Content_Renderer__c</field>
@@ -20,7 +20,7 @@
     </values>
     <values>
         <field>sked_Destination_Field__c</field>
-        <value xsi:type="xsd:string">sked__Resource__r.sked__Email__c</value>
+        <value xsi:type="xsd:string">sked__Resource__r.sked__User__c</value>
     </values>
     <values>
         <field>sked_Email_From_Address_Field__c</field>
@@ -31,12 +31,16 @@
         <value xsi:type="xsd:string">sked__Resource__r.sked__User__c</value>
     </values>
     <values>
+        <field>sked_Expiry_DateTime_Field__c</field>
+        <value xsi:type="xsd:string">sked__Start__c</value>
+    </values>
+    <values>
         <field>sked_Filter__c</field>
         <value xsi:type="xsd:string">sked__Is_Available__c = FALSE</value>
     </values>
     <values>
         <field>sked_Notification_Target_Field__c</field>
-        <value xsi:type="xsd:string">sked__Resource__r.sked__User__c</value>
+        <value xsi:nil="true" />
     </values>
     <values>
         <field>sked_Notification_Type__c</field>
@@ -44,6 +48,10 @@
     </values>
     <values>
         <field>sked_Oneoff_Protocol_Field__c</field>
+        <value xsi:nil="true" />
+    </values>
+    <values>
+        <field>sked_Priority__c</field>
         <value xsi:nil="true" />
     </values>
     <values>
@@ -59,6 +67,10 @@
         <value xsi:type="xsd:string">Declined</value>
     </values>
     <values>
+        <field>sked_Target_Field_Values__c</field>
+        <value xsi:nil="true" />
+    </values>
+    <values>
         <field>sked_Target_Field__c</field>
         <value xsi:type="xsd:string">sked__Status__c</value>
     </values>
@@ -68,7 +80,9 @@
     </values>
     <values>
         <field>sked_Template__c</field>
-        <value xsi:type="xsd:string">Please be informed that your Time Off Request &lt;a style=&quot;text-align: center; text-decoration: none; display: inline-block; margin: 4px 2px; cursor: pointer;&quot; href=&quot;!$sked_Skedulo_Email_Handler$?availabilityId={{Id}}&amp;action=View&amp;startDate={{sked_Date_ISO_Format__c}}&quot;&gt;{{Name}}&lt;/a&gt;  has been declined.</value>
+        <value xsi:type="xsd:string">Hi {{sked__Resource__r.Name}}, &lt;br /&gt;
+
+Your unavailability on [[StartMMMM]] was submitted and it&#39;s declined. To review or cancel this request, please navigate to the mobile app or to My Availability Console.</value>
     </values>
     <values>
         <field>sked_Trigger__c</field>

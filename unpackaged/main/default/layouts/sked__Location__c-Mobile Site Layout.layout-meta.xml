@@ -3,6 +3,7 @@
     <excludeButtons>ChangeOwnerOne</excludeButtons>
     <excludeButtons>ChangeRecordType</excludeButtons>
     <excludeButtons>Clone</excludeButtons>
+    <excludeButtons>OpenSlackRecordChannel</excludeButtons>
     <excludeButtons>RecordShareHierarchy</excludeButtons>
     <excludeButtons>Share</excludeButtons>
     <excludeButtons>Submit</excludeButtons>
@@ -20,8 +21,12 @@
                 <behavior>Edit</behavior>
                 <field>Has_Elevator__c</field>
             </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>User_Override__c</field>
+            </layoutItems>
         </layoutColumns>
-        <layoutColumns/>
+        <layoutColumns />
         <style>TwoColumnsTopToBottom</style>
     </layoutSections>
     <layoutSections>
@@ -50,7 +55,7 @@
             </layoutItems>
             <layoutItems>
                 <behavior>Edit</behavior>
-                <field>sked_Chapter__c</field>
+                <field>Chapter__c</field>
             </layoutItems>
         </layoutColumns>
         <style>TwoColumnsLeftToRight</style>
@@ -208,7 +213,7 @@
                 <field>sked_Days_of_Week_Declined__c</field>
             </layoutItems>
         </layoutColumns>
-        <layoutColumns/>
+        <layoutColumns />
         <style>TwoColumnsLeftToRight</style>
     </layoutSections>
     <layoutSections>
@@ -261,12 +266,12 @@
                 <field>sked_Maximum_Beds__c</field>
             </layoutItems>
             <layoutItems>
-                <behavior>Required</behavior>
-                <field>sked_Automation_Suitability__c</field>
-            </layoutItems>
-            <layoutItems>
                 <behavior>Edit</behavior>
                 <field>sked_Max_Auto_Machines__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Required</behavior>
+                <field>sked_Automation_Suitability__c</field>
             </layoutItems>
             <layoutItems>
                 <behavior>Required</behavior>
@@ -297,6 +302,10 @@
             <layoutItems>
                 <behavior>Edit</behavior>
                 <field>sked_On_Site_Food_Canteen_Requirements__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>sked_On_Site_Food_Conditions__c</field>
             </layoutItems>
             <layoutItems>
                 <behavior>Edit</behavior>
@@ -497,9 +506,9 @@
         <detailHeading>false</detailHeading>
         <editHeading>true</editHeading>
         <label>Custom Links</label>
-        <layoutColumns/>
-        <layoutColumns/>
-        <layoutColumns/>
+        <layoutColumns />
+        <layoutColumns />
+        <layoutColumns />
         <style>CustomLinks</style>
     </layoutSections>
     <platformActionList>
@@ -567,6 +576,11 @@
         <relatedList>sked_Role_Time_Variance__c.sked_Location__c</relatedList>
         <sortField>sked_Variation_Amount__c</sortField>
         <sortOrder>Asc</sortOrder>
+    </relatedLists>
+    <relatedLists>
+        <excludeButtons>MassChangeOwner</excludeButtons>
+        <fields>NAME</fields>
+        <relatedList>Site_Suitability_Checklist__c.Site__c</relatedList>
     </relatedLists>
     <relatedLists>
         <fields>NAME</fields>

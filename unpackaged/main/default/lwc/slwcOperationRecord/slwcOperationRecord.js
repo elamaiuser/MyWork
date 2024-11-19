@@ -474,34 +474,39 @@ export default class SlwcOperationRecord extends LightningElement {
                     return;
                 }
 
-                if((!operationStaff.actualShiftStart || !operationStaff.actualShiftEnd)) {
+                if((!operationStaff.actualShiftStart || !operationStaff.actualShiftEnd || !operationStaff.scheduledShiftStart || !operationStaff.scheduledShiftEnd)) {
                     if(!slientValidate) {
                         operationStaff.hasError = true;
                     }
                     hasError = true;
                     anyOperationRecordStaffError = true;
                 } else {
-                    if(operationStaff.actualShiftEnd <= operationStaff.actualShiftStart) {
+                    if(operationStaff.actualShiftEnd <= operationStaff.actualShiftStart || operationStaff.scheduledShiftEnd <= operationStaff.scheduledShiftStart) {
                         if(!slientValidate) {
                             operationStaff.hasError = true;
                         }
                         hasError = true;
                         anyOperationRecordStaffError = true;
                     } else {
-                        const duration = DateTime.fromISO(operationStaff.actualShiftEnd, {
+                        const durationForActualShiftStartEnd = DateTime.fromISO(operationStaff.actualShiftEnd, {
                             zone: this.model.timezoneSidId
                         }).diff(DateTime.fromISO(operationStaff.actualShiftStart, {
                             zone: this.model.timezoneSidId
                         })).as('minutes');
 
-                        if (duration > 24 * 60) {
+                        const durationForScheduledShiftStartEnd = DateTime.fromISO(operationStaff.scheduledShiftEnd, {
+                            zone: this.model.timezoneSidId
+                          }).diff(DateTime.fromISO(operationStaff.scheduledShiftStart, {
+                              zone: this.model.timezoneSidId
+                          })).as('minutes');
+
+                        if (durationForActualShiftStartEnd > 24 * 60 || durationForScheduledShiftStartEnd > 24 * 60) {
                             if (!slientValidate) {
                                 operationStaff.hasError = true;
                             }
                             hasError = true;
                             anyOperationRecordStaffError = true;
                         }
-
 
                         let allowedDriveEndDate = this.model.driveDate;
                         let actualShiftStartDate = DateTime.fromISO(operationStaff.actualShiftStart, {
@@ -510,13 +515,19 @@ export default class SlwcOperationRecord extends LightningElement {
                         let actualShiftEndDate = DateTime.fromISO(operationStaff.actualShiftEnd, {
                             zone: this.model.timezoneSidId
                         }).toFormat('yyyy-MM-dd');
+                        let scheduledShiftStartDate = DateTime.fromISO(operationStaff.scheduledShiftStart, {
+                            zone: this.model.timezoneSidId
+                          }).toFormat('yyyy-MM-dd');
+                        let scheduledShiftEndDate = DateTime.fromISO(operationStaff.scheduledShiftEnd, {
+                            zone: this.model.timezoneSidId
+                          }).toFormat('yyyy-MM-dd');
                         if (this.model.lateEndDrive) {
                             allowedDriveEndDate = DateTime.fromFormat(this.model.driveDate, 'yyyy-MM-dd').plus({
                                 days: 1
                             }).toFormat('yyyy-MM-dd');
                         }
 
-                        if (actualShiftStartDate !== this.model.driveDate) {
+                        if (actualShiftStartDate !== this.model.driveDate || scheduledShiftStartDate !== this.model.driveDate) {
                             if (!slientValidate) {
                                 operationStaff.hasError = true;
                             }
@@ -524,7 +535,7 @@ export default class SlwcOperationRecord extends LightningElement {
                             anyOperationRecordStaffError = true;
                         }
 
-                        if(actualShiftEndDate > allowedDriveEndDate) {
+                        if(actualShiftEndDate > allowedDriveEndDate || scheduledShiftEndDate > allowedDriveEndDate) {
                             if (!slientValidate) {
                                 operationStaff.hasError = true;
                             }
@@ -722,7 +733,7 @@ export default class SlwcOperationRecord extends LightningElement {
                             .then(res => {
                                 if (!res.success) throw res;
                                 this.dispatchEvent(new ShowToastEvent({
-                                    message: 'Operation were submitted successfully.',
+                                    message: res.message,
                                     variant: 'success',
                                     mode: 'dismissable'
                                 }));
@@ -730,7 +741,7 @@ export default class SlwcOperationRecord extends LightningElement {
                                 this.closeModal(null, true);
                             })
                             .catch((error) => {
-                                let message = error.message ? error.message : 'Op Record failed submit: Retry submission or contact BSF support or system administrator for assistance.';
+                                let message = error.message ;
                                 console.debug('Error while submitting operation record: ', error.returnedData);
                                 new debugLogService().captureDebugLog(error, this.model?.id);
                                 this.dispatchEvent(new ShowToastEvent({

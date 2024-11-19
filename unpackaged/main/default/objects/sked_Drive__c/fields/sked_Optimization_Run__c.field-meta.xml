@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>sked_Optimization_Run__c</fullName>
+    <deleteConstraint>SetNull</deleteConstraint>
+    <description>HRP-12670</description>
+    <externalId>false</externalId>
+    <label>Optimization Run</label>
+    <referenceTo>sked_Optimization_Run__c</referenceTo>
+    <relationshipLabel>Drives on Calendar</relationshipLabel>
+    <relationshipName>Drives_on_Calendar</relationshipName>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Lookup</type>
+</CustomField>

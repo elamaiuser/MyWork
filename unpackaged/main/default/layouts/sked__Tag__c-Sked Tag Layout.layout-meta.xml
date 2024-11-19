@@ -64,9 +64,9 @@
         <detailHeading>false</detailHeading>
         <editHeading>true</editHeading>
         <label>Custom Links</label>
-        <layoutColumns/>
-        <layoutColumns/>
-        <layoutColumns/>
+        <layoutColumns />
+        <layoutColumns />
+        <layoutColumns />
         <style>CustomLinks</style>
     </layoutSections>
     <relatedLists>
@@ -78,7 +78,6 @@
         <fields>NAME</fields>
         <fields>sked__Resource__c.NAME</fields>
         <fields>sked__Resource__c.sked_Biomed_Collection_Op_Center_Name__c</fields>
-        <fields>sked__Expiry_Date__c</fields>
         <relatedList>sked__Resource_Tag__c.sked__Tag__c</relatedList>
     </relatedLists>
     <relatedLists>
@@ -105,7 +104,7 @@
     <showRunAssignmentRulesCheckbox>false</showRunAssignmentRulesCheckbox>
     <showSubmitAndAttachButton>false</showSubmitAndAttachButton>
     <summaryLayout>
-        <masterLabel>00he0000000j8AM</masterLabel>
+        <masterLabel>00h5c00000DaYN1</masterLabel>
         <sizeX>4</sizeX>
         <sizeY>0</sizeY>
         <summaryLayoutStyle>Default</summaryLayoutStyle>

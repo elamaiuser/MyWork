@@ -6,10 +6,11 @@ public class skedOptimizationRunHandler extends skedTriggerHub {
     
     public override void onAfterUpdate() {
         //Batch >> Run >> Queue >> Queue Item >> Drive
-        updateOptimizationStatus(this.context.newRecords, (Map<Id, sked_Optimization_Run__c>)this.context.oldMap);
+        updateOptimizationStatus(this.context.newRecords, (Map<Id, sked_Optimization_Run__c>)this.context.oldMap);        
     }
     
-    /*********************************************************** Privated Methods ***********************************************************/
+    /*********************************************************** Privated Methods ***********************************************************/  
+
     private void updateOptimizationStatus(List<sked_Optimization_Run__c> newRecords, Map<Id, sked_Optimization_Run__c> oldMap) {
         List<sked_Optimization_Run__c> optimizationRuns = new List<sked_Optimization_Run__c>();
         for (sked_Optimization_Run__c newRecord : newRecords) {
@@ -18,6 +19,9 @@ public class skedOptimizationRunHandler extends skedTriggerHub {
                 optimizationRuns.add(newRecord);
             }
         }
+        //HRP-12511
+        publishOptimizationRunStatPlatformEvents(optimizationRuns);
+
         List<sked_Optimization_Queue__c> optimizationQueues = [SELECT Id, sked_Status__c, sked_Optimization_Run__c,
                                                                (SELECT Id, sked_Drive__c
                                                                 FROM sked_Optimization_Queue_Items__r)
@@ -63,6 +67,24 @@ public class skedOptimizationRunHandler extends skedTriggerHub {
         if (!drivesToUpdate.isEmpty()) {
             update drivesToUpdate;
         }
+    }
+
+    //HRP-12511
+    private void publishOptimizationRunStatPlatformEvents(List<sked_Optimization_Run__c> updOptRunRecords){
+        Set<Id> optimizationIds = new Set<Id>();        
+        for (sked_Optimization_Run__c optimizationRunStat : updOptRunRecords){
+            if(optimizationRunStat.sked_Status__c == skedConstants.OPTIMIZATION_RUN_STATUS_COMPLETE){                
+                optimizationIds.add(optimizationRunStat.Id);                 
+            }            
+        }
+
+        if(!optimizationIds.isEmpty()){
+            skedFutureCallEventHandler.publishFutureCallEvent(
+                'slwcOptimizationService', 
+                'populateOptimizationRunStatParmFields', 
+                optimizationIds
+            );
+        }           
     }
 
     private void populateData(List<sked_Optimization_Run__c> newRecords) {

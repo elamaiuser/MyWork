@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomMetadata xmlns="http://soap.sforce.com/2006/04/metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <label>Well_Maintained_Space</label>
+    <protected>false</protected>
+    <values>
+        <field>Additional_Text__c</field>
+        <value xsi:nil="true"/>
+    </values>
+    <values>
+        <field>Category__c</field>
+        <value xsi:type="xsd:string">Multi-Day Blood Drives:</value>
+    </values>
+    <values>
+        <field>IsCheckbox__c</field>
+        <value xsi:type="xsd:boolean">true</value>
+    </values>
+    <values>
+        <field>UI_Text__c</field>
+        <value xsi:type="xsd:string">Ensure space is heated/cooled and well-ventilated to maintain a comfortable room temperature while secure.</value>
+    </values>
+</CustomMetadata>

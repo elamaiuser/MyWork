@@ -9,10 +9,14 @@ public class skedTravelTimeIndexItemUtils {
             + ':' + string.valueOf(toLoc.latitude) + ' ' + string.valueOf(toLoc.longitude);
     }
 
+    public static String getOrderingKey(String dir, Location loc) {
+        return dir + loc.latitude + ':' + loc.longitude;
+    }
+
     public static Map<String, sked_Travel_Time_Index_Item__c> getTravelTimeIndexItemsByKey(Set<String> keys) {
         Map<String, sked_Travel_Time_Index_Item__c> ttiiByKey = new Map<String, sked_Travel_Time_Index_Item__c>();
         for(sked_Travel_Time_Index_Item__c ttii : [
-            SELECT Id, sked_Key__c
+            SELECT Id, sked_Key__c, sked_Travel_Distance__c, sked_Travel_Time_Breakdown_JSON__c
             FROM sked_Travel_Time_Index_Item__c
             WHERE sked_Key__c IN :keys
         ]) {
@@ -44,7 +48,7 @@ public class skedTravelTimeIndexItemUtils {
                     sked_To__Latitude__s = ttii.toLoc.latitude,
                     sked_To__Longitude__s = ttii.toLoc.longitude,
                     sked_Timezone__c = ttii.timezone,
-                    sked_Ordering_Key__c = ttii.dir + coLoc.latitude + ':' + coLoc.longitude
+                    sked_Ordering_Key__c = getOrderingKey(ttii.dir, coLoc)
                 ));
                 addedKeys.add(key);
             }

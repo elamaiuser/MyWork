@@ -156,7 +156,7 @@
                     </div>
                 </template>
                 <template if:true={isFixedSiteDrive}>
-                    <div class="slds-col slds-medium-size_1-of-2 slds-large-size_3-of-12 slds-size_1-of-1 slds-p-left_small">
+                    <div class="slds-col slds-medium-size_1-of-2 slds-large-size_3-of-12 slds-size_1-of-1 slds-p-left_small slds-hide">
                         <template if:false={masterData.fieldReadonlyMap.driveShifts}>
                             <lightning-input type="number" name="procedureCapacity" label="Procedure Capacity" value={shift.procedureCapacity} readonly>
                             </lightning-input>

@@ -27,6 +27,19 @@ public class skedUtils {
         }
         return string.join(values, ';');
     }
+
+    public static string removeItemFromMultiPicklist(string picklistValue, string itemToRemove) {
+        List<string> values = new List<string>();
+        if (!string.isBlank(picklistValue)) {
+            values = picklistValue.split(';');
+        }
+
+        Integer foundIndex = values.indexOf(itemToRemove);
+        if (foundIndex != -1) {
+            values.remove(foundIndex);
+        }
+        return string.join(values, ';');
+    }
     
     public static object getFieldValue(string input, string fieldType) {
         object result;
@@ -45,6 +58,10 @@ public class skedUtils {
         }
         else if (fieldType == 'double') {
             result = Json.deserialize(input, Decimal.class);
+        }
+        else if (fieldType == 'percent') {
+            String modifiedInput = input.replace('%', '');
+            result = Json.deserialize(modifiedInput, Decimal.class);
         }
         else {
             result = input;
@@ -418,6 +435,36 @@ public class skedUtils {
             }
         }
         return minDate;
+    }
+
+    public static Date getMaxFromDates(List<Date> inputDates) {
+        Date maxDate = NULL;
+        for (Date inputDate : inputDates) {
+            if (maxDate == NULL || (inputDate != NULL && inputDate > maxDate)) {
+                maxDate = inputDate;
+            }
+        }
+        return maxDate;
+    }
+
+    public static void scheduleUniqueJobInSeconds(string schedulableClassName, Schedulable schedulableInstance, Integer seconds, Boolean isUnique) {
+        String jobSearchText = '%' + schedulableClassName + '%'; 
+        List<CronTrigger> runningScheduleQuery = [SELECT Id
+            FROM CronTrigger
+            WHERE CronJobDetail.Name LIKE :jobSearchText AND (State = 'EXECUTING' OR State = 'WAITING')
+        ];
+        if (runningScheduleQuery.isEmpty() || !isUnique) {
+            Datetime nextFireTime = Datetime.now().addSeconds(seconds);
+            Decimal ss = nextFireTime.second();
+            Decimal min = nextFireTime.minute();
+            Decimal hour = nextFireTime.hour();
+            string dayOfMonth = String.valueOf(nextFireTime.day());
+            string month = String.valueOf(nextFireTime.month());
+            string year = String.valueOf(nextFireTime.year());
+            //parse to cron expression
+            String nextFireTimeCronExpression = String.valueOf(ss) + ' ' + String.valueOf(min) + ' ' + String.valueOf(hour) + ' ' + dayOfMonth + ' ' +  month +' ? ' + year + '-' + year;
+            System.schedule(schedulableClassName + '_' + String.valueOf(nextFireTime.getTime()), nextFireTimeCronExpression, schedulableInstance);
+        }
     }
 
     /************************************************ Private methods ***********************************************/

@@ -11,10 +11,11 @@
     <columns>LEAD.CREATED_DATE</columns>
     <columns>CORE.USERS.ALIAS</columns>
     <columns>LEAD.UNREAD</columns>
+    <columns>Lead_Stage_Status__c</columns>
     <filterScope>Queue</filterScope>
     <label>California Coastal Lead Queue</label>
     <queue>California_Coastal</queue>
     <sharedTo>
-        <allInternalUsers></allInternalUsers>
+        <allInternalUsers />
     </sharedTo>
 </ListView>

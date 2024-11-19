@@ -26,6 +26,7 @@ private class PopulateResourceRegionBatchTest {
         System.assertNotEquals(null, testResource.sked_Work_Zip_Code__c, 'resource not updated' );
         
         testCo.Name = testResource.sked_Collection_Operation_Name_Staging__c;
+        testCo.External_Id__c = 'Bio_Collection_BSF_12345';
         update testCo;
         System.assertNotEquals(null,  testCo.Name, 'collection opp not updated' );
         sked__Region__c testRegion = new sked__Region__c(
@@ -34,6 +35,9 @@ private class PopulateResourceRegionBatchTest {
             sked_Biomed_Collection_Op_Center__c = testCo.Id
         );
         List<Taxonomy__c> taxonomies = PortfolioTestDataFactory.createTaxonomies('48420','48421');
+        for(Taxonomy__c tx : taxonomies){
+            tx.Collection_Operation_Code__c = '12345';
+        }
         insert taxonomies;
         System.assertNotEquals(null, taxonomies[0].Id, 'taxonomy not inserted' );
         taxonomies[0].Collection_Operation_Name__c = testResource.sked_Collection_Operation_Name_Staging__c;
@@ -61,6 +65,7 @@ private class PopulateResourceRegionBatchTest {
         update testResource;
         System.assertNotEquals(null, testResource.sked_Collection_Operation_Name_Staging__c, 'region not updated' );
         Test.startTest();
+        system.debug('THIS IS THE populateResourceRegionBatch_Test');
         Database.executeBatch(new PopulateResourceRegionBatch());
         Test.stopTest();
     }
@@ -118,7 +123,7 @@ private class PopulateResourceRegionBatchTest {
         Biomed_Collection_Op_Center__c testCo = [SELECT Id, Name FROM Biomed_Collection_Op_Center__c LIMIT 1][0];
         
         testResource.sked__Primary_Region__c = null;
-        update testResource;
+        //update testResource;
 		System.assertEquals(null, testResource.sked__Primary_Region__c, 'resource not updated' );        
         Test.startTest();
         //Testing of batch schedulling (HRP-10504)

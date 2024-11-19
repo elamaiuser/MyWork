@@ -9,6 +9,12 @@ public class skedTravelTimeIndexItemHandler extends skedTriggerHub  {
             captureTravelTimeImpact(this.context.newRecords, (Map<Id, sked_Travel_Time_Index_Item__c>)this.context.oldMap);
         }
     }
+
+    public override void onAfterInsert() {
+        if (!skedSetting.instance.Admin.migrationMode) {
+            refreshTravelTimeIndexData(this.context.newMap.keySet());
+        }
+    }
     
     /*********************************************************** Privated Methods ***********************************************************/
     private void setKey(List<sked_Travel_Time_Index_Item__c> newRecords) {
@@ -26,20 +32,29 @@ public class skedTravelTimeIndexItemHandler extends skedTriggerHub  {
         Set<Id> impactedIndexIds = new Set<Id>();
         for (sked_Travel_Time_Index_Item__c newRecord : newRecords) {
             sked_Travel_Time_Index_Item__c oldData = oldMap.get(newRecord.Id);
-            if (newRecord.sked_Average_Travel_Time__c != oldData.sked_Average_Travel_Time__c
-                && newRecord.sked_Average_Travel_Time__c != NULL
-                && oldData.sked_Average_Travel_Time__c != NULL) {
-                    decimal beforeAfterGap = Math.abs(oldData.sked_Average_Travel_Time__c - newRecord.sked_Average_Travel_Time__c);
-                    if (beforeAfterGap >= skedSetting.instance.TravelTime.driveImpactThreshold) {
+            if (newRecord.User_Override__c == false
+                && newRecord.sked_Average_Travel_Time__c != oldData.sked_Average_Travel_Time__c
+               	&& newRecord.sked_Average_Travel_Time__c!= NULL) {
+                    if(oldData.sked_Average_Travel_Time__c == NULL) {
                         impactedIndexIds.add(newRecord.Id);
+                    }else {
+                        decimal beforeAfterGap = Math.abs(oldData.sked_Average_Travel_Time__c - newRecord.sked_Average_Travel_Time__c);
+                        if (beforeAfterGap >= skedSetting.instance.TravelTime.driveImpactThreshold) {
+                            impactedIndexIds.add(newRecord.Id);
+                        }
                     }
                 }
-        }
+            }
         if (!impactedIndexIds.isEmpty()) {
             if (!System.isBatch() && !Test.isRunningTest()) {
-                Database.executeBatch(new skedCreateDCRForTravelTimeChangeBatch(impactedIndexIds), 200);
+                Database.executeBatch(new skedCreateDCRForTravelTimeChangeBatch(impactedIndexIds, new Set<Id>()), 200);
             }
         }
     }
     
+    private void refreshTravelTimeIndexData(Set<Id> indexIds) {
+        if (!System.isBatch() && !Test.isRunningTest()) {
+            Database.executeBatch(new skedImmediateRefreshTravelTimeIndexBatch(new List<Id>(indexIds), skedSetting.instance.TravelTime.newIndexPriority), 200);
+        }
+    }
 }

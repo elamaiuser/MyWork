@@ -61,10 +61,25 @@ private class GenerateDriveWorksheetPdfControllerTest {
             LocaleSidKey = 'en_US'
         );
         
+        User DRDAMUser1 = new User(
+            ProfileId = [SELECT Id FROM Profile WHERE Name = 'DRD Profile'].Id,
+            LastName = 'last1',
+            FirstName = 'first1',
+            Phone = '8188188188',
+            Email = 'DRDProfile0001@amamama.com',
+            Username = 'drduser0001@amamama.com' + System.currentTimeMillis(),
+            CompanyName = 'TEST',
+            Title = 'title',
+            Alias = 'alias1',
+            TimeZoneSidKey = 'America/Los_Angeles',
+            EmailEncodingKey = 'UTF-8',
+            LanguageLocaleKey = 'en_US',
+            LocaleSidKey = 'en_US'
+        );
         
         
         System.runAs( AdminUser ){
-            insert DRDAMUser;
+            insert new List<User>{DRDAMUser,DRDAMUser1};
         }
         System.runAs( AdminUser ){
             List<Account> mobileAccList = new List<Account>();
@@ -224,6 +239,7 @@ private class GenerateDriveWorksheetPdfControllerTest {
             optyObj.WB_Projected_Procedures__c = 1;
             optyObj.X2RBC_Projected_Procedures__c = 1;
             optyObj.Anticipated_Registered_Donors__c = 1;
+			optyObj.Account_Manager__c = DRDAMUser1.Id;
             
             oppsobjlist.add( optyObj );
 
@@ -321,6 +337,10 @@ private class GenerateDriveWorksheetPdfControllerTest {
                                                     sked_Wrap_up_Time__c = 5,
                                                     sked_Sponsor_Volunteer_Quantity__c = 1,
                                                     sked_Redcross_Volunteer_Quantity__c = 1);
+            triggerHandler.bypass('OpportunityTriggerHandler');
+            triggerHandler.bypass('JobTriggerHandler');
+            skedHubBase.BypassInsertTriggers = true;
+        	skedHubBase.BypassUpdateTriggers = true;
             insert skedjob;
             id_job = skedjob.Id;
             sked__Job__c skedjob2 = new sked__Job__c(sked_Drive_Shift__c = shiftData.Id,
@@ -334,6 +354,10 @@ private class GenerateDriveWorksheetPdfControllerTest {
                                                     sked_Breakdown_Time__c = 5,
                                                     sked_Travel_Time2__c = 5,
                                                     sked_Wrap_up_Time__c = 5);
+            triggerHandler.bypass('OpportunityTriggerHandler');
+            triggerHandler.bypass('JobTriggerHandler');
+            skedHubBase.BypassInsertTriggers = true;
+        	skedHubBase.BypassUpdateTriggers = true;
             insert skedjob2;
             /*
             * HRP-10127 Changes starts here 
@@ -422,6 +446,10 @@ private class GenerateDriveWorksheetPdfControllerTest {
                 sked_Start_Time__c = Time.newInstance(5, 0, 0, 0),
                 sked_Set_End_Time__c = Time.newInstance(12, 0, 0, 0)
             );
+            triggerHandler.bypass('OpportunityTriggerHandler');
+            triggerHandler.bypass('JobAllocationTriggerHandler');
+            skedHubBase.BypassInsertTriggers = true;
+        	skedHubBase.BypassUpdateTriggers = true;
             insert joballc1;
             Assert.areEqual('Complete', joballc1.sked__Status__c,'status should match');
 
@@ -432,6 +460,10 @@ private class GenerateDriveWorksheetPdfControllerTest {
                 sked_Start_Time__c = Time.newInstance(5, 0, 0, 0),
                 sked_Set_End_Time__c = Time.newInstance(12, 0, 0, 0)
             );
+            triggerHandler.bypass('OpportunityTriggerHandler');
+            triggerHandler.bypass('JobAllocationTriggerHandler');
+            skedHubBase.BypassInsertTriggers = true;
+        	skedHubBase.BypassUpdateTriggers = true;
             insert joballc2;
             Assert.areEqual('Complete', joballc2.sked__Status__c,'status should match');
             /*

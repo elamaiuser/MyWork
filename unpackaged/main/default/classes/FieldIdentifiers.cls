@@ -84,6 +84,9 @@ global class FieldIdentifiers {
     @AuraEnabled
     global Id Parent_Template_Id;
     
+    @AuraEnabled 
+    global String driveDateChangeReason;////HRP-12063
+    
     @AuraEnabled
     global String StageName;
     
@@ -95,6 +98,14 @@ global class FieldIdentifiers {
     
     @AuraEnabled 
     global Integer Plasma_Pheresis_Projected_Procedure; //HRP-10659 Plasma_Pheresis_Projected_Procedure__c//
+
+    // HRP-12011 --> Starts Here
+    @AuraEnabled 
+    global Decimal Slot_Generator;
+
+    @AuraEnabled 
+    global String Slot_Generator_Change_Reason;
+    // HRP-12011 --> Ends Here
     
     global Set<String> updatedDataKeys = new Set<string>();
 }

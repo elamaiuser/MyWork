@@ -26,6 +26,7 @@ public class skedDateTimeUtils {
     public static final string TIME_ISO_FORMAT = 'HH:mm:ss.SSS\'Z\'';
     public static final String INT_TIME_FORMAT = 'Hmm';
     public static final Datetime MAX_DATETIME = Datetime.newInstance(4000, 1, 1, 0, 0, 0);
+    public static final Datetime MIN_DATETIME = Datetime.newInstance(1970, 1, 1, 0, 0, 0);
     public static final Date MAX_DATE = Date.newInstance(4000, 1, 1);
     public static final Date MIN_DATE = Date.newInstance(1970, 1, 1);
 
@@ -119,6 +120,11 @@ public class skedDateTimeUtils {
 
     public static integer getDifferentMinutes(DateTime dtime1, DateTime dTime2) {
         return Integer.valueOf((dTime2.getTime() - dtime1.getTime()) / 60000);
+    }
+
+    public static Decimal getDifferenceInHoursAndMinutes(DateTime dt1, DateTime dt2) {
+        Decimal value = Decimal.valueOf(dt2.getTime() - dt1.getTime()) / 3600000;
+        return value;
     }
     
     public static string getDifferentMinutesText(DateTime dtime1, DateTime dTime2) {
@@ -266,4 +272,11 @@ public class skedDateTimeUtils {
         return dt;
     }
 
+    public static Date getValueOrMaxDate(Date input) {
+        return input != NULL ? input : MAX_DATE;
+    }
+
+    public static Date getValueOrMinDate(Date input) {
+        return input != NULL ? input : MIN_DATE;
+    }
 }

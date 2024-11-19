@@ -16,10 +16,13 @@ global virtual class skedSkeduloApiManager {
     public static final string SKEDULO_PROD_DOMAIN = 'https://api.skedulo.com';
     public static final string SKEDULO_DEV_DOMAIN = 'https://dev-api.test.skl.io';
     public static final string OPTIMIZE_ARC_SHIFT_ENDPOINT = '/optimization/schedule/arc';
-    public static final String GET_OPTIMIZATION_RUN_DIFF_END_POINT = '/optimization/run/$id/diff';
-    public static final String GET_OPTIMIZATION_RUN_META_END_POINT = '/optimization/run/$id/meta';
+    public static final String GET_OPTIMIZATION_RUN_DIFF_END_POINT = 'https://api.skedulo.com/optimization/run/{{runId}}/diff';
+    public static final String GET_OPTIMIZATION_RUN_META_END_POINT = 'https://api.skedulo.com/optimization/run/{{runId}}/meta';
     
     public static final string OPTIMIZATION_RUN_ARC_ENDPOINT = 'https://api.skedulo.com/function/ArcPackage/Functions/triggerOptimizationRun';
+    //Optmizer Stat HRP-12511
+    public static final string OPTIMIZAION_RUN_STATISTICS_ENDPOINT = 'https://api.skedulo.com/optimization/run/{{runId}}/statistics';
+    public static final string OPTIMIZAION_RUN_PARAMETERS_ENDPOINT = 'https://api.skedulo.com/optimization/run/{{runId}}/solvice';
     
     protected string longLiveDevToken;
     protected string longLiveToken;
@@ -84,6 +87,40 @@ global virtual class skedSkeduloApiManager {
     	return response;
     }
 
+    // HRP-12511
+    public skedSkeduloApiData.OptimizationRunStatisticsResult getOptimizerRunStatistics(string runId){
+        Map<string, string> headers = getDefaultHeader();                
+        string url = OPTIMIZAION_RUN_STATISTICS_ENDPOINT.replace('{{runId}}', runId);        
+        actionBase action = new actionBase();
+        skedSkeduloApiData.OptimizationRunStatisticsResult response = (skedSkeduloApiData.OptimizationRunStatisticsResult)action.execute(skedSkeduloApiData.OptimizationRunStatisticsResult.class, url, 'GET', headers, '', true );                        
+        return response;
+    }
+    
+    // HRP-12511
+    public skedSkeduloApiData.OptimizationRunParametersResult getOptimizerRunParameters(string runId){
+        Map<string, string> headers = getDefaultHeader();             
+        string url = OPTIMIZAION_RUN_PARAMETERS_ENDPOINT.replace('{{runId}}', runId);
+        actionBase action = new actionBase();
+        skedSkeduloApiData.OptimizationRunParametersResult response = (skedSkeduloApiData.OptimizationRunParametersResult)action.execute(skedSkeduloApiData.OptimizationRunParametersResult.class, url, 'GET', headers, '', true );                
+        return response;
+    }
+
+    public skedSkeduloApiData.optimizationRunMetaResult getOptimizerRunMetaResult(string runId){
+        Map<string, string> headers = getDefaultHeader();              
+        string url = GET_OPTIMIZATION_RUN_META_END_POINT.replace('{{runId}}', runId);
+        actionBase action = new actionBase();
+        skedSkeduloApiData.optimizationRunMetaResult response = (skedSkeduloApiData.optimizationRunMetaResult)action.execute(skedSkeduloApiData.optimizationRunMetaResult.class, url, 'GET', headers, '', true );                
+        return response;
+    }
+
+    public skedSkeduloApiData.optimizationRunDiffResult getOptimizerRunDiffResult(string runId){
+        Map<string, string> headers = getDefaultHeader();               
+        string url = GET_OPTIMIZATION_RUN_DIFF_END_POINT.replace('{{runId}}', runId);
+        actionBase action = new actionBase();
+        skedSkeduloApiData.optimizationRunDiffResult response = (skedSkeduloApiData.optimizationRunDiffResult)action.execute(skedSkeduloApiData.optimizationRunDiffResult.class, url, 'GET', headers, '', true );                
+        return response;
+    }    
+
     /******************************************* Google Related *******************************************/
     public skedSkeduloApiData.geocodeResult getGeocode(List<string> addresses) {
         Map<string, object> mapBody = new Map<string, object>();
@@ -114,16 +151,23 @@ global virtual class skedSkeduloApiManager {
         return (skedSkeduloApiData.timezoneResult)action.execute(skedSkeduloApiData.timezoneResult.class, endPoint, 'GET', getDefaultHeader(), '');
     }
 
-    public skedSkeduloApiData.distanceMatrixResult calculateDistanceMatrix(List<object> origins, List<object> destinations) {
+    public skedSkeduloApiData.distanceMatrixResult calculateDistanceMatrix(List<object> origins, List<object> destinations, Datetime departureTime) {
         Map<string, object> mapBody = new Map<string, object>();
         mapBody.put('origins', origins);
         mapBody.put('destinations', destinations);
+        if (departureTime != null) {
+            mapBody.put('departureTime', JSON.serialize(departureTime).replace('"', ''));
+        }
         string jsonBody = Json.serialize(mapBody);
         jsonBody = jsonBody.replace('latitude', 'lat');
         jsonBody = jsonBody.replace('longitude', 'lng');
 
         actionBase action = new actionBase();
         return (skedSkeduloApiData.distanceMatrixResult)action.execute(skedSkeduloApiData.distanceMatrixResult.class, DISTANCE_MATRIX_ENDPOINT, 'POST', getDefaultHeader(), jsonBody);
+    }
+
+    public skedSkeduloApiData.distanceMatrixResult calculateDistanceMatrix(List<object> origins, List<object> destinations) {
+        return calculateDistanceMatrix(origins, destinations, null);
     }
 
     public skedSkeduloApiData.directionsResult findDirections(List<skedSkeduloApiData.directionsRequest> requests, List<String> avoid) {
@@ -278,7 +322,7 @@ global virtual class skedSkeduloApiManager {
         }
 
         return mapHeader;
-    }
+    }    
 
     /******************************************* Nested Classes *******************************************/
     public virtual class actionBase extends skedCalloutActionBase {

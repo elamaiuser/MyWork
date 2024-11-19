@@ -1,0 +1,23 @@
+.width-100 {
+    width: 100%;
+  }
+  
+  .optimization-summary-page {
+    background: #fff;
+    width: 100%;
+  }
+  
+  .optimization-summary-page > .slds-grid {
+    min-height: 24rem;
+  }
+  
+  .optimization-summary-page .slds-section .slds-section__title-action {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
+    opacity: 0.4;
+  }
+  
+  .optimization-summary-page .slds-section.has-data .slds-section__title-action {
+    background-color: #f3f2f2;
+    opacity: 1;
+  }

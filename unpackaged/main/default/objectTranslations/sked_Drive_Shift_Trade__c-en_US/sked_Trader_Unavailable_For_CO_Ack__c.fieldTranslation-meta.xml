@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+        <label><!-- Trader Unavailable For CO Acknowledge --></label>
+        <name>sked_Trader_Unavailable_For_CO_Ack__c</name>
+    </CustomFieldTranslation>

@@ -8,6 +8,14 @@ class siteFeedbackService extends dataService {
 
     getQueryConditions(query) {
         let queryBuilder = query.getQueryBuilder(this.sObjectApiName);
+        if (query.siteName) {
+            queryBuilder.addCondition({
+                template: `sked_Site__r.Name LIKE {0}`,
+                value: queryBuilder.toSearchText(query.siteName),
+                type: "string"
+            });
+        }
+
         if (query.createdByIds && query.createdByIds.length) {
             queryBuilder.addCondition({ template: "CreatedById IN {0}", value: query.createdByIds, type: "array_string" });
         }
@@ -33,6 +41,9 @@ class siteFeedbackService extends dataService {
         if (query.queryDRDFeedback) {
             queryBuilder.addCondition({ template: "sked_Job__c = NULL" });
         }
+        if (query.excludeExpiry) {
+            queryBuilder.addCondition({ template: "(sked_Effective_End_Date__c = NULL OR sked_Effective_End_Date__c >= TODAY)" });
+        }
         queryBuilder.orderClause = 'ORDER BY CreatedDate DESC';
     }
 }
@@ -47,6 +58,8 @@ class siteFeedbackQueryModel extends queryModelBase {
     submissionEndDate;
     submissionStartDate;
     queryDRDFeedback;
+    siteName;
+    excludeExpiry;
 }
 
 export {

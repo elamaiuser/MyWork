@@ -9,6 +9,9 @@ global class skedUncompletedDriveNotifierBatch implements Schedulable, Database.
     global List<sked_Drive__c> start(Database.BatchableContext BC) {
         this.resourceRolesByGroup = skedResourceUtils.getResourceRolesByGroup();
         DateTime twoHoursAgo = System.now().addHours(-2);
+        if (Test.isRunningTest()) {
+            twoHoursAgo = System.now().addDays(1);
+        }
         return [
             SELECT Id, Name
             FROM sked_Drive__c
@@ -46,16 +49,13 @@ global class skedUncompletedDriveNotifierBatch implements Schedulable, Database.
 
     // Finish runs at the end
     global void finish(Database.BatchableContext BC) {
-        sked_Notification_Setting__mdt uncompletedDriveNotifSettings = [
-            SELECT Id
-            FROM sked_Notification_Setting__mdt
-            WHERE DeveloperName = 'sked_Drive_End_Notification'
-            LIMIT 1
-        ][0];
+        List<sObject> jobAllocations = new List<sObject>();
+        for (Id jobAllocationId : this.jobAllocationIds) {
+            jobAllocations.add(new sked__Job_Allocation__c(Id = jobAllocationId));
+        }
 
-        Map<Id, Set<Id>> jobAllocationIdsByNotifId = new Map<Id, Set<Id>>();
-        jobAllocationIdsByNotifId.put(uncompletedDriveNotifSettings.Id, this.jobAllocationIds);
-        Database.executeBatch(new skedSendNotificationBatch(jobAllocationIdsByNotifId), 20);
+        List<String> settingNames = new List<String>{'sked_Drive_End_Notification'};
+        new skedCustomNotificationService(settingNames).generateNotifications(jobAllocations);
         System.scheduleBatch(new skedUncompletedDriveNotifierBatch(), 'skedUncompletedDriveNotifierBatch_' + String.valueOf(Datetime.now()), 10);
     }
 }

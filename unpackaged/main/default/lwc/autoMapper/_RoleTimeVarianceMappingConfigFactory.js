@@ -11,6 +11,7 @@ export class RoleTimeVarianceMappingConfigFactory {
       mappingConfig.addFieldConfig('Id', 'id', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('Name', 'name', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_Buffer_Type__c', 'bufferType', MAPPING_TYPE.direct);
+      mappingConfig.addFieldConfig('sked_Days_Of_Week__c', 'daysOfWeek', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_Effective_End_Date__c', 'effectiveEndDate', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_Effective_Start_Date__c', 'effectiveStartDate', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_Location__c', 'locationId', MAPPING_TYPE.direct);
@@ -18,6 +19,7 @@ export class RoleTimeVarianceMappingConfigFactory {
       mappingConfig.addFieldConfig('sked_Variance_Applies_to__c', 'varianceAppliesTo', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_Variation_Amount__c', 'varianceAmount', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_Variation_Type__c', 'varianceType', MAPPING_TYPE.direct);
+      mappingConfig.addFieldConfig('sked_Variation_Type_Other__c', 'varianceTypeOther', MAPPING_TYPE.direct);
 
       mappingConfig.readonlyFields.push('Name');
 

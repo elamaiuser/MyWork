@@ -48,6 +48,9 @@ global class skedActivityService extends skedEventService {
         if (query.resourceIds != NULL && !query.resourceIds.isEmpty()) {
             queryBuilder.addCondition('sked__Resource__c IN {0}', query.resourceIds);
         }
+        if (query.activityTypes != NULL && !query.activityTypes.isEmpty()) {
+            queryBuilder.addCondition('sked__Type__c IN {0}', query.activityTypes);
+        }
         if (query.subTypes != NULL && !query.subTypes.isEmpty()) {
             queryBuilder.addCondition('sked_Subtype__c IN {0}', query.subTypes);
         }

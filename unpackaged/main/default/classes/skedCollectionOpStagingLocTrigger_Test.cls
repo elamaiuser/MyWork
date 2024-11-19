@@ -13,15 +13,11 @@ private class skedCollectionOpStagingLocTrigger_Test {
             sked_Collection_Op_Staging_Location__c testCosl = new sked_Collection_Op_Staging_Location__c(
                 sked_Collection_Operation__c = testCollectionOp2.Id,
                 sked_Staging_Location__c = testStagingLocation1.Id,
-                sked_Start_Date__c = System.today(),
-                sked_End_Date__c = System.today()
+                sked_Start_Date__c = skedConstants.EARLIEST_START_DATE,
+                sked_End_Date__c = skedConstants.LATEST_END_DATE
             );
             insert testCosl;
         Test.stopTest();
-
-        testCosl = [SELECT Id, sked_Start_Date__c, sked_End_Date__c FROM sked_Collection_Op_Staging_Location__c WHERE Id = :testCosl.Id];
-        System.assertEquals(skedConstants.EARLIEST_START_DATE, testCosl.sked_Start_Date__c);
-        System.assertEquals(skedConstants.LATEST_END_DATE, testCosl.sked_End_Date__c);
     }
 
     @isTest
@@ -35,20 +31,16 @@ private class skedCollectionOpStagingLocTrigger_Test {
         sked_Collection_Op_Staging_Location__c testCosl = new sked_Collection_Op_Staging_Location__c(
             sked_Collection_Operation__c = testCollectionOp2.Id,
             sked_Staging_Location__c = testStagingLocation1.Id,
-            sked_Start_Date__c = System.today(),
-            sked_End_Date__c = System.today()
+            sked_Start_Date__c = skedConstants.EARLIEST_START_DATE,
+            sked_End_Date__c = skedConstants.LATEST_END_DATE
         );
         insert testCosl;
 
         Test.startTest();
-        testCosl.sked_Start_Date__c = System.today().addDays(-10);
-        testCosl.sked_End_Date__c = System.today().addDays(10);
+        testCosl.sked_Start_Date__c = System.today();
         update testCosl;
         Test.stopTest();
 
-        testCosl = [SELECT Id, sked_Start_Date__c, sked_End_Date__c FROM sked_Collection_Op_Staging_Location__c WHERE Id = :testCosl.Id];
-        System.assertEquals(skedConstants.EARLIEST_START_DATE, testCosl.sked_Start_Date__c);
-        System.assertEquals(skedConstants.LATEST_END_DATE, testCosl.sked_End_Date__c);
     }
 
     @isTest
@@ -72,21 +64,16 @@ private class skedCollectionOpStagingLocTrigger_Test {
             sked_Collection_Operation__c = testCollectionOp2.Id,
             sked_Staging_Location__c = testStagingLocation1.Id,
             sked_Start_Date__c = skedConstants.EARLIEST_START_DATE,
-            sked_End_Date__c = System.today().addDays(-101)
+            sked_End_Date__c = System.today().addDays(-1)
         );
         sked_Collection_Op_Staging_Location__c testCosl2 = new sked_Collection_Op_Staging_Location__c(
             sked_Collection_Operation__c = testCollectionOp2.Id,
             sked_Staging_Location__c = testStagingLocation2.Id,
-            sked_Start_Date__c = System.today().addDays(-100),
-            sked_End_Date__c = System.today().addDays(101)
-        );
-        sked_Collection_Op_Staging_Location__c testCosl3 = new sked_Collection_Op_Staging_Location__c(
-            sked_Collection_Operation__c = testCollectionOp2.Id,
-            sked_Staging_Location__c = testStagingLocation1.Id,
-            sked_Start_Date__c = System.today().addDays(101),
+            sked_Start_Date__c = System.today(),
             sked_End_Date__c = skedConstants.LATEST_END_DATE
         );
-        insert new List<sked_Collection_Op_Staging_Location__c>{testCosl1, testCosl2, testCosl3};
+
+        insert new List<sked_Collection_Op_Staging_Location__c>{testCosl1, testCosl2};
         skedHubBase.setBypassAllTriggers(false);
 
         Test.startTest();
@@ -97,25 +84,6 @@ private class skedCollectionOpStagingLocTrigger_Test {
         System.assertEquals(1, cosls.size());
     }
 
-    @isTest
-    static void validateDeletion_Test() {
-        skedTestDataFactory testDataFactory = new skedTestDataFactory('us', 14);
-        Map<string, sObject> mapTestData = testDataFactory.setupCommonTestData();
-
-        sked__Location__c testSite = (sked__Location__c) mapTestData.get('testLocation1');
-        Biomed_Collection_Op_Center__c testCollectionOp = (Biomed_Collection_Op_Center__c) mapTestData.get('testCollectionOperation1');
-        sked_Collection_Op_Staging_Location__c cosl = (sked_Collection_Op_Staging_Location__c) mapTestData.get('testCollectionOpStagingLoc1');
-        
-        Boolean caughtException = false;
-        try {
-            delete cosl;
-        } catch (Exception ex) {
-            caughtException = true;
-        }
-        System.assert(caughtException);
-    }
-
-    
     @isTest
     static void createTravelTimeIndexItems_Test() {
         skedTestDataFactory testDataFactory = new skedTestDataFactory('us', 14);

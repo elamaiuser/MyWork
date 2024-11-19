@@ -31,6 +31,10 @@
         <value xsi:nil="true" />
     </values>
     <values>
+        <field>sked_Expiry_DateTime_Field__c</field>
+        <value xsi:type="xsd:string">skedHC__Job_Allocation__r.sked__Start__c</value>
+    </values>
+    <values>
         <field>sked_Filter__c</field>
         <value xsi:type="xsd:string">skedHC__Job_Allocation__c != NULL AND sked_Drive__r.sked_Drive_Date__c &gt; TOMORROW AND sked_Drive__r.sked_Drive_Date__c &lt;= NEXT_WEEK AND skedHC__Job_Allocation__r.sked__Status__c NOT IN (&#39;Pending Dispatch&#39;,&#39;Declined&#39;,&#39;Deleted&#39;)</value>
     </values>
@@ -47,6 +51,10 @@
         <value xsi:nil="true" />
     </values>
     <values>
+        <field>sked_Priority__c</field>
+        <value xsi:nil="true" />
+    </values>
+    <values>
         <field>sked_Sending_From_Email_Address__c</field>
         <value xsi:nil="true" />
     </values>
@@ -56,6 +64,10 @@
     </values>
     <values>
         <field>sked_Target_Field_Value__c</field>
+        <value xsi:nil="true" />
+    </values>
+    <values>
+        <field>sked_Target_Field_Values__c</field>
         <value xsi:nil="true" />
     </values>
     <values>

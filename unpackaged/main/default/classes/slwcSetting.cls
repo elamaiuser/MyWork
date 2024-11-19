@@ -3,26 +3,34 @@ public class slwcSetting {
     public class adminSetting {
         @AuraEnabled public decimal callListRecipient {get;set;}
         @AuraEnabled public decimal callListRecipientNone {get;set;}
+        @AuraEnabled public decimal callListRecipientNoneFixedSite {get;set;}
         @AuraEnabled public string distanceMeasurementUnit {get;set;}
         @AuraEnabled public boolean enableResourceCallOut {get;set;}
         @AuraEnabled public boolean enableResourcePto {get;set;}
+        @AuraEnabled public decimal excessStaffCapacityThreshold {get;set;}
         @AuraEnabled public string fccCodeFixedSite {get;set;}
         @AuraEnabled public string fccCodeMobile {get;set;}
         @AuraEnabled public string globalJobUrl {get;set;}
+        @AuraEnabled public decimal maxRecordSubmissionToWDTimeBlocks {get;set;} 
         @AuraEnabled public boolean opsRecordIntegration {get;set;}
+        @AuraEnabled public string opRecordTechSupportEmail {get;set;} 
         @AuraEnabled public decimal siteChangeRestrictionDays {get;set;}
         
         public adminSetting() { 
             sked_Admin_Setting__c setting = sked_Admin_Setting__c.getOrgDefaults();
-            this.callListRecipient = setting.sked_Admin_Call_List_Recipient__c;
-            this.callListRecipientNone = setting.sked_Admin_Call_List_Recipient_None__c;
+            this.callListRecipient = setting.sked_Admin_Call_List_Recipient__c != NULL ? setting.sked_Admin_Call_List_Recipient__c : 115;
+            this.callListRecipientNone = setting.sked_Admin_Call_List_Recipient_None__c != NULL ? setting.sked_Admin_Call_List_Recipient_None__c : 130;
+            this.callListRecipientNoneFixedSite = setting.Admin_Call_List_Recipient_None_FS__c != NULL ? setting.Admin_Call_List_Recipient_None_FS__c : 140;
             this.distanceMeasurementUnit = setting.sked_Admin_Distance_Measurement_Unit__c;
             this.enableResourceCallOut = setting.sked_Admin_Enable_Resource_Call_Out__c ;
-            this.enableResourcePto = setting.sked_Admin_Enable_Resource_PTO__c;
+            this.enableResourcePto = setting.sked_Admin_Enable_Resource_PTO__c; 
+            this.excessStaffCapacityThreshold = setting.Admin_Excess_Staff_Capacity_Threshold__c != NULL ? setting.Admin_Excess_Staff_Capacity_Threshold__c : 1;
             this.fccCodeFixedSite = setting.sked_Admin_FCC_Code_Fixed_Site__c;
             this.fccCodeMobile = setting.sked_Admin_FCC_Code_Mobile__c;
             this.globalJobUrl = setting.sked_Admin_Global_JobURL__c;
+            this.maxRecordSubmissionToWDTimeBlocks = setting.sked_Max_Record_Submission_WD_TimeBlock__c;
             this.opsRecordIntegration = setting.sked_Admin_Ops_Record_Integration__c;
+            this.opRecordTechSupportEmail = setting.sked_Admin_Op_Record_Tech_Support_Email__c;
             this.siteChangeRestrictionDays = setting.sked_Admin_Site_Change_Restriction_Days__c != NULL ? setting.sked_Admin_Site_Change_Restriction_Days__c : 14;
         }
     }
@@ -115,6 +123,25 @@ public class slwcSetting {
             this.startWorkingTime = this.calendarStart;
         }
     }
+
+    public class travelTimeManager {
+        @AuraEnabled public integer driveImpactThreshold {get;set;}
+        @AuraEnabled public integer numberOfParallelRequests {get;set;}
+        @AuraEnabled public integer refreshInterval {get;set;}
+        @AuraEnabled public integer newIndexPriority {get;set;}
+        @AuraEnabled public integer manualRefreshPriority {get;set;}
+        @AuraEnabled public boolean enableManualRefreshBanner {get;set;}
+
+        public travelTimeManager() {
+            sked_Travel_Time_Manager__c setting = sked_Travel_Time_Manager__c.getOrgDefaults();
+            this.driveImpactThreshold = setting.sked_Drive_Impact_Threshold__c != NULL ? integer.valueOf(setting.sked_Drive_Impact_Threshold__c) : 15;
+            this.numberOfParallelRequests = setting.sked_Number_of_Parallel_Requests__c != NULL ? integer.valueOf(setting.sked_Number_of_Parallel_Requests__c) : 4;
+            this.refreshInterval = setting.sked_Refresh_Interval__c != NULL ? integer.valueOf(setting.sked_Refresh_Interval__c) : 180;
+            this.newIndexPriority = setting.sked_New_Index_Priority__c != NULL ? integer.valueOf(setting.sked_New_Index_Priority__c) : 1000;
+            this.manualRefreshPriority = setting.sked_Manual_Refresh_Priority__c != NULL ? integer.valueOf(setting.sked_Manual_Refresh_Priority__c) : 1000;
+            this.enableManualRefreshBanner = setting.sked_Enable_Manual_Refresh_Banner__c;
+        }
+    }
     
     /********************************************** Abstract Classes *****************************************/
     public abstract class calendarSettingBase {
@@ -181,4 +208,45 @@ public class slwcSetting {
         @AuraEnabled public integer step {get;set;}
     }
 
+    public class optimizerDefaultWeights {
+        @AuraEnabled public integer high {get;set;}
+        @AuraEnabled public integer medium {get;set;}
+        @AuraEnabled public integer low {get;set;} 
+
+        public optimizerDefaultWeights() {
+            Map<String, sked_Optimizer_Default_Weight__mdt> settingsMap = sked_Optimizer_Default_Weight__mdt.getAll();
+            this.high = settingsMap.get('High').sked_Default_Value__c != NULL ? Integer.valueOf(settingsMap.get('High').sked_Default_Value__c) : null;
+            this.medium = settingsMap.get('Medium').sked_Default_Value__c != NULL ? Integer.valueOf(settingsMap.get('Medium').sked_Default_Value__c) : null;
+            this.low = settingsMap.get('Low').sked_Default_Value__c != NULL ? Integer.valueOf(settingsMap.get('Low').sked_Default_Value__c) : null;
+        }
+    }
+
+    public class optimizerDefaultSettings {
+        @AuraEnabled public List<optimizerSetting> optimizerSettings {get;set;}
+
+        public optimizerDefaultSettings() {
+            this.optimizerSettings = new List<optimizerSetting>();
+            for (sked_Optimizer_Default_Setting__mdt setting : sked_Optimizer_Default_Setting__mdt.getAll().values()) {
+                optimizerSetting model = new optimizerSetting();
+                model.constraint = setting.sked_Constraint__c;
+                model.constraintType = setting.sked_Constraint_Type__c;
+                model.defaultWeight = setting.sked_Default_Weight__c;
+                model.displayOrder = setting.sked_Display_Order__c?.intValue();
+                model.displayType = setting.sked_Display_Type__c;
+                model.driveType = setting.sked_Drive_Type__c;
+                model.enabled = setting.sked_Enabled__c;
+                this.optimizerSettings.add(model);
+            }
+        }
+    }
+
+    public class optimizerSetting {
+        @AuraEnabled public string constraint {get;set;}
+        @AuraEnabled public string constraintType {get;set;}
+        @AuraEnabled public string defaultWeight {get;set;}
+        @AuraEnabled public integer displayOrder {get;set;}
+        @AuraEnabled public string displayType {get;set;}
+        @AuraEnabled public string driveType {get;set;}
+        @AuraEnabled public boolean enabled {get;set;}
+    }
 }

@@ -1,4 +1,5 @@
 public class skedResourceTagHandler_Cache {
+    public static String RESOURCE_TO_HIGHEST_PRIORITY_ROLE_MAP = 'RESOURCE_TO_HIGHEST_PRIORITY_ROLE_MAP';
     
     private static sked__Tag__c traineeTag;
     public static sked__Tag__c getTraineeTagFromCache() {
@@ -34,5 +35,14 @@ public class skedResourceTagHandler_Cache {
         }
 
         return driveLeadTag;
+    }
+
+    private static Map<String, Object> cache = new Map<String, Object>();
+    public static Object getFromCache(String key) {
+        return cache.get(key);
+    }
+
+    public static void putInCache(String key, Object value) {
+        cache.put(key, value);
     }
 }

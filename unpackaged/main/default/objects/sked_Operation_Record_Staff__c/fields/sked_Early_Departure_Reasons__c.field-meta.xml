@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>sked_Early_Departure_Reasons__c</fullName>
+    <externalId>false</externalId>
+    <label>Early Departure Reasons</label>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Personal</fullName>
+                <default>false</default>
+                <label>Personal</label>
+            </value>
+            <value>
+                <fullName>Turnaround Time</fullName>
+                <default>false</default>
+                <label>Turnaround Time</label>
+            </value>
+            <value>
+                <fullName>Not Early</fullName>
+                <default>false</default>
+                <label>Not Early</label>
+            </value>
+            <value>
+                <fullName>Management Decision</fullName>
+                <default>false</default>
+                <label>Management Decision</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

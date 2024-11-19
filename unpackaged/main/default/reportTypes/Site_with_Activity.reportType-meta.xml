@@ -545,6 +545,11 @@
             <field>Has_Elevator__c</field>
             <table>sked__Location__c</table>
         </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>Chapter__c.Name</field>
+            <table>sked__Location__c</table>
+        </columns>
         <masterLabel>Sites</masterLabel>
     </sections>
 </ReportType>

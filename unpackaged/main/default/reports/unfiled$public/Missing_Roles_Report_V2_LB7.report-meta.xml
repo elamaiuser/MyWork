@@ -147,8 +147,8 @@
             <column>sked_Drive__c$sked_Collection_Operation__c</column>
             <columnToColumn>false</columnToColumn>
             <isUnlocked>true</isUnlocked>
-            <operator>notEqual</operator>
-            <value>null</value>
+            <operator>contains</operator>
+            <value>Albany</value>
         </criteriaItems>
         <criteriaItems>
             <column>sked_Drive__c$sked_Start_Time__c</column>

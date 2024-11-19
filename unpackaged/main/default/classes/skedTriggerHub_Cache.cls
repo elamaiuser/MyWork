@@ -19,6 +19,7 @@ public class skedTriggerHub_Cache {
                 List<string> systemAdminProfiles = new List<string>();
                 systemAdminProfiles.add('Global Admin');
                 systemAdminProfiles.add('System Administrator');
+                systemAdminProfiles.add('APS Admin'); 
                 string userProfile = skedTriggerHub_Cache.loginUser.Profile.Name;
                 
                 mIsAdminUser = systemAdminProfiles.contains(userProfile);

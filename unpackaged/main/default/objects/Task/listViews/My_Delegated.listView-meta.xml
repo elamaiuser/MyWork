@@ -8,6 +8,7 @@
     <columns>STATUS</columns>
     <columns>CORE.USERS.FULL_NAME</columns>
     <columns>Account_Manager__c</columns>
+    <columns>Drive_Date__c</columns>
     <filterScope>Everything</filterScope>
     <filters>
         <field>Delegate__c</field>

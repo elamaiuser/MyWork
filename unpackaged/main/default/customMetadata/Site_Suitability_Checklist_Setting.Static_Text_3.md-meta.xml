@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomMetadata xmlns="http://soap.sforce.com/2006/04/metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <label>Static_Text_3</label>
+    <protected>false</protected>
+    <values>
+        <field>Additional_Text__c</field>
+        <value xsi:nil="true"/>
+    </values>
+    <values>
+        <field>Category__c</field>
+        <value xsi:type="xsd:string">Static_Text_3</value>
+    </values>
+    <values>
+        <field>IsCheckbox__c</field>
+        <value xsi:type="xsd:boolean">false</value>
+    </values>
+    <values>
+        <field>UI_Text__c</field>
+        <value xsi:type="xsd:string">Collection staff are trained and will review the suitability on the day of drive per FDA regulations. If any of the statements below are concerning. AP&amp;S, Collections and Safety must be notified prior to marking Site Inspection complete and before the site hosts a blood drive.</value>
+    </values>
+</CustomMetadata>

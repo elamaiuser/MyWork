@@ -74,6 +74,18 @@
                     </div>
                 </div>
             </div>
+            <div if:true={requestDetailModalData.record.roleTimeVariance} class="slds-form-element slds-form-element_readonly">
+                <span class="slds-form-element__label">RTV Name</span>
+                <div class="slds-form-element__control">
+                    <div class="slds-form-element__static">
+                        <c-slwc-lightning-formatted-url
+                            record={requestDetailModalData.record.roleTimeVariance}
+                            id-field="id"
+                            label-field="name"
+                        ></c-slwc-lightning-formatted-url>
+                    </div>
+                </div>
+            </div>
             <div class="slds-form-element slds-form-element_readonly">
                 <span class="slds-form-element__label">Drive Name</span>
                 <div class="slds-form-element__control">
@@ -107,6 +119,12 @@
                 </div>
             </div>
             <div class="slds-form-element slds-form-element_readonly">
+                <span class="slds-form-element__label">Days Of Week</span>
+                <div class="slds-form-element__control">
+                    <div class="slds-form-element__static">{requestDetailModalData.record.daysOfWeek}</div>
+                </div>
+            </div>
+            <div class="slds-form-element slds-form-element_readonly">
                 <span class="slds-form-element__label">Variance Type</span>
                 <div class="slds-form-element__control">
                     <div class="slds-form-element__static slds-truncate">{requestDetailModalData.record.varianceType}</div>
@@ -121,7 +139,7 @@
             <div class="slds-form-element slds-form-element_readonly">
                 <span class="slds-form-element__label">Amount (minutes)</span>
                 <div class="slds-form-element__control">
-                    <div class="slds-form-element__static slds-truncate">{requestDetailModalData.record.amount}</div>
+                    <div class="slds-form-element__static slds-truncate">{requestDetailModalData.record.varianceAmount}</div>
                 </div>
             </div>
             <div class="slds-form-element slds-form-element_readonly">
@@ -158,11 +176,36 @@
                 </div>
             </div>
         </div>
-        <c-slwc-site-feedback-approval
-            slot="approvalHistoryConsole"
-            record-id={requestDetailModalData.recordId}
-        >
-        </c-slwc-site-feedback-approval>
+        <div slot="approvalHistoryConsole">
+            <c-slwc-site-feedback-approval
+                record-id={requestDetailModalData.recordId}>
+            </c-slwc-site-feedback-approval>
+            <article class="slds-card slds-card_boundary affected-drives-section slds-m-top_medium">
+                <div class="slds-grid slds-page-header">
+                    <header class="slds-media slds-media--center slds-has-flexi-truncate">
+                        <div class="slds-media__figure slds-m-right_small slds-avatar slds-avatar_small">
+                            <lightning-icon icon-name="custom:custom63" size="small"></lightning-icon>
+                        </div>
+                        <div class="slds-media__body">
+                            <div class="slds-page-header__name">
+                                <div class="slds-page-header__name-title">
+                                    <h2 class="slds-card__header-title">
+                                        <span class="slds-page-header__title slds-truncate">APS Approval Window Affected Drives</span>
+                                    </h2>
+                                </div>
+                            </div>
+                        </div>
+                    </header>
+                </div>
+                <div>
+                    <c-slwc-advanced-datatable
+                        fetch-data-func={fetchAPSApprovalWindowAffectedDrives}
+                        fetch-params={requestDetailModalData.record}
+                        column-definitions={DRIVE_COLUMNS}>
+                    </c-slwc-advanced-datatable>
+                </div>
+            </article>
+        </div>
     </c-slwc-approval-console-request-detail-modal>
 
 </template>

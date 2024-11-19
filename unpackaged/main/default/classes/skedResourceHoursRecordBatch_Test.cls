@@ -25,6 +25,9 @@ private class skedResourceHoursRecordBatch_Test {
         
         sked__Resource__c testResource = (sked__Resource__c) mapTestData.get('testResource1');
         sked__Activity__c testActivity = (sked__Activity__c) mapTestData.get('testActivity1');
+        
+        Test.startTest();
+        
         sked__Activity_Resource__c testActivityResource = new sked__Activity_Resource__c(
             sked__Resource__c = testResource.Id,
             sked__Activity__c = testActivity.Id
@@ -36,8 +39,6 @@ private class skedResourceHoursRecordBatch_Test {
         for (sked__Activity__c activity : testActivities) {
             activityIds.add(activity.Id);
         }
-        
-        Test.startTest();
         
         Database.executeBatch(new skedResourceHoursRecordBatch(activityIds));
         
@@ -76,6 +77,9 @@ private class skedResourceHoursRecordBatch_Test {
         
         sked__Resource__c testResource = (sked__Resource__c) mapTestData.get('testResource1');
         sked__Activity__c testActivity = (sked__Activity__c) mapTestData.get('testActivity1');
+        
+        Test.startTest();
+        
         sked__Activity_Resource__c testActivityResource = new sked__Activity_Resource__c(
             sked__Resource__c = testResource.Id,
             sked__Activity__c = testActivity.Id
@@ -87,8 +91,6 @@ private class skedResourceHoursRecordBatch_Test {
         for (sked__Activity_Resource__c activityResource : testActivitieResources) {
             activityResourceIds.add(activityResource.Id);
         }
-        
-        Test.startTest();
         
         Database.executeBatch(new skedResourceHoursRecordBatch(activityResourceIds));
         

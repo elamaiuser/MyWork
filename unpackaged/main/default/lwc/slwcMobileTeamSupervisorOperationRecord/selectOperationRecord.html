@@ -1,10 +1,41 @@
 <template>
 
-    <section role="dialog" tabindex="-1" class="slds-modal slds-fade-in-open">
+    <section role="dialog" tabindex="-1" class={customClass.modal}>
         <lightning-spinner if:true={showSpinner} class="spins" size="medium"></lightning-spinner>
 
         <div class="slds-modal__container">
-            <header class="slds-modal__header">
+            <header if:false={fullScreen} class="slds-clearfix slds-page-header slds-page-header_record-home fixed-position" style="margin-bottom: var(--lwc-cardSpacingMargin);">
+                <div class="slds-page-header__row slds-grid_vertical-align-center">
+                    <div class="slds-page-header__col-title">
+                        <div class="slds-media">
+                            <div class="slds-media__figure">
+                                <lightning-icon icon-name="standard:record_create" size="medium"></lightning-icon>
+                            </div>
+                            <div class="slds-media__body">
+                                <div class="slds-page-header__name">
+                                    <div class="slds-page-header__name-title">
+                                        <h1>
+                                            <span class="slds-page-header__title slds-truncate">Select Operation Record</span>
+                                        </h1>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="slds-no-flex">
+                        <div class="slds-grid">
+                            <div class="slds-no-flex">
+                                <ul class="slds-button-group-row">
+                                    <li class="slds-button-group-item">
+                                        <lightning-button label="Back" onclick={handleBack}></lightning-button>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+            <header if:true={fullScreen} class="slds-modal__header">
                 <div style="width: 3rem">
                     <lightning-button-icon icon-name="utility:chevronleft" variant="bare-inverse" alternative-text="Back" title="Back" size="large" onclick={handleBack}></lightning-button-icon>
                 </div>

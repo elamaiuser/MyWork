@@ -8,29 +8,6 @@
         <plural>true</plural>
         <value>Drive Change Requests</value>
     </caseValues>
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     <layouts>
         <layout>Drive Change Request Layout</layout>
         <sections>
@@ -38,5 +15,36 @@
             <section>Custom Links</section>
         </sections>
     </layouts>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     <startsWith>Consonant</startsWith>
+    <validationRules>
+        <errorMessage><!-- If a Drive Change Request is in &apos;Approved&apos; or &apos;Approved By System&apos; status, it cannot be changed to a &apos;Cancelled&apos; or &apos;Rejected&apos; status. --></errorMessage>
+        <name>Not_allow_to_change_approved_DCR_status</name>
+    </validationRules>
+    <validationRules>
+        <errorMessage><!-- If a Drive Change Request is in &apos;Cancelled&apos; or &apos;Rejected&apos; status, it cannot be changed to an &apos;Approved&apos; or &apos;Approved By System&apos; status. --></errorMessage>
+        <name>Not_allow_to_change_cancelled_DCR_status</name>
+    </validationRules>
 </CustomObjectTranslation>

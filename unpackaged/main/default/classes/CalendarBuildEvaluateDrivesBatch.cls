@@ -1,129 +1,237 @@
 /***************************************************************************************************************************************
- * 
- * Description:     This is a batch job for "Calendar Build".  It runs every night and evaluates previously
- *                  completed and cancelled drives and rolls them over to next year with a drive status of
- *                  "draft".  It then performs various criteria evaluations and identifies each rolled over
- *                  drive as either "qualifed" or "unqualifed".  Afterwards, it determines if it's time to
- *                  run the process for moving the drives from Draft to System Generated.  This will be
- * 					scheduled to run every night.
- * 
+ * Description:     
+ 		*  This is a batch job for "Calendar Build".  
+ 		* It runs every night and evaluates previously completed/cancelled/confirmed drives (maintaining an offset of 21 days from drive date)
+ 		   and rolls them over to next year.  
+ 		* It then performs various criteria evaluations and identifies each rolled over drive as either "qualifed" or "unqualifed" followed by
+ 		  Drive Generation process which generates DOC in Draft(Mobile) or Confirmed(Fixed Site) status.
+ 		* It then triggers Resource Allocation Batch(equipment for FS and equipment + Vehicle for mobile) 
+  		  for FS drives immediately. 
+        * Above batch will run daily (Chained from finish method for sys gen - FS) for mobile drives 
+          maintaining an offset of 21 days from the CB Opportunity Roll date.
+  
  * Modification Log:    
- * --------------------------------------------------------------------------------------------------------
- * Date         Author              Brief Mod Description
- * 04/28/21     Fitsum Worku        Initial Code Creation
- * 07/27/23		Fitsum Worku		HRP-10179 sending email notification if there is an error during draft drive generation
- *
+ * ---------------------------------------------------------------------------------------------------------------------------------
+ *  Date                  Author                 Brief Mod Description
+ * 04/28/21            Fitsum Worku            Initial Code Creation
+ * 07/27/23		       Fitsum Worku		       HRP-10179 sending email notification if there is an error during draft drive generation
+ * 02/05/24		        Priti Jana		       Added Type,DriveStatus__c fields in the initial query (HRP-11814)
+ * 06/07/24             Priti Jana             Added Slot_Generator__c field in the initial query (HRP-12011)
+ * 08/06/24             Priti Jana             Logic for HRP-12706 (Restructured)
  ************************************************************************************************************************************/
-global class CalendarBuildEvaluateDrivesBatch implements Schedulable, Database.Batchable<sObject>, Database.Stateful {
 
-    global List<Opportunity> lstCBOpps = new List<Opportunity>();    
-    global Integer batchSize;
+ global class CalendarBuildEvaluateDrivesBatch implements Database.Batchable<Opportunity>, Database.Stateful, Schedulable {
 
-    global Database.QueryLocator start(Database.BatchableContext bc) {
-        Set<Id> setCurOppIds = new Set<Id>();
-        system.debug('### Inside start method for batch...');
-    
-        //get # of days after drive completion from custom metadata type and batch size
-        Calendar_Build_Setting__mdt mdtDriveCompletion = Calendar_Build_Setting__mdt.getInstance('Calendar_Build_Drives_Config');
-        Integer numOfDays = mdtDriveCompletion?.Number_Of_Days__c.intValue();
-        batchSize = mdtDriveCompletion?.Draft_Drives_Batch_Size__c.intValue(); //HRP-10179
-        system.debug('### Inside start method for batch; numOfDays is: ...' + numOfDays);
-        if(numOfDays != null) {
-            //Date driveDateToEval = Helper.AddBusinessDays(system.today(), -numOfDays);  //Per business, we are changing this from business days to include all days
-            Date driveDateToEval = system.today().addDays(-numOfDays); 
-            system.debug('Inside start method for batch; driveDateToEval is: ' + driveDateToEval);
-            
-            return Database.getQueryLocator([SELECT Id, Name, Drive_Date__c, StageName, Drive_Designations__c, Rollover_Consideration__c, RecordTypeId,
-                                                Parent_Template_Id__c, Parent_Template_Id__r.name, drive_status__c, sked_Cancellation_Reason__c,
-                                                Accept_56_Day_Rule_Violation__c, Accepts_Automation__c, Drive_Site__c, Open_to_Public__c, Anticipated_Registered_Donors__c,
-                                                WB_Projected_Procedures__c, Double_Red_Projected_Units__c, Drive_Keyword__c, Online_Scheduling_Enabled__c, Type_of_Drive__c, Start_Time__c, End_Time__c,
-                                                AccountId, Account.Account_Strategy__c, Account.Marketing_Strategy__c, Account.Account_Status__c, X2RBC_Projected_Procedures__c, Collection_Operation__c, Collections_Zip_Code__c,
-                                             	Flow_Start_Time_Field__c, Flow_End_Time_Field__c, OwnerId, anticipated_registered_donors_template__c, WholeBloodProceduresProjectedTemplate__c,
-												Double_red_Procedures_Projected_template__c, AcceptblankMilitaryAuthNamePhone__c, From_Template_Id__c, Number_of_2RBC_Assets__c, Number_of_Plasma_Assets__c, Number_of_Platelet_Assets__c,
-                                                Direct_Donors_To__c, No_Publicity_Needed__c, Publish_to_Call_Center__c, Web_Scheduling_Enabled__c, Send_Emails__c, Send_Mailers__c,
-                                                Web_Scheduling_End_Date_Offset__c, Web_Scheduling_End_Time_Offset__c, Web_Scheduling_Start_Date_Offset__c, Platelet_Projected_Procedures__c,
-                                                Plasma_Pheresis_Projected_Procedures__c,Calendar_Build_Parent_Opportunity__c
-                                            FROM Opportunity
-                                            WHERE (drive_status__c = 'cancel' OR drive_status__c = 'complete') 
-                                            AND Rollover_Consideration__c <> 'Do Not Roll'
-                                            AND drive_date__c =:driveDateToEval]);                
-        }
-        else {
-            return null;
+    private Set<Id> lstCBOpps = new Set<Id>(); 
+    private Set<Id> errorLogIdsCreatedDuringBatchRun = new Set<Id>();
+    private Map<String, List<BSF_Error_Log__c>> map_driveType_failureLogDetails = new  Map<String, List<BSF_Error_Log__c>>();
+    private DriveGenerationUtil.CalendarBuildLogWrapper cbLogWrapper;
+    private String runType = '';
+    private Date driveDateToEval;
+    private Boolean byPassDriveGeneration = false; 
+
+    /* @Reference : 
+     		* CreatedBy : Priti Jana
+			* CreatedDate : 8/6/2024
+			* CreatedFor : HRP-12706
+    * @Description : 
+     		* This constructor will be used for running CB Batch on demand
+            * It can be used for both the type of drives
+    *  @Parameters : 
+            * manualRunDate : Drive Date or complete/cancel/confirmed drives
+    *   @Error Handling : 
+            * Log the issue in BSF Error Log
+            * Send error notification to BSF Support Team
+            * Log the same issue in CB Error log with Parent CB Log record where CB Batch Status = Error
+	*/
+
+    global CalendarBuildEvaluateDrivesBatch(Date manualRunDate) {
+        try {
+            this.driveDateToEval = manualRunDate;
+            this.runType = BSF_Constants.RUN_TYPE_MANUAL;
+            cbLogWrapper = new DriveGenerationUtil.CalendarBuildLogWrapper(manualRunDate, BSF_Constants.BATCH_CALENDAR_BUILD, this.runType);
+            cbLogWrapper = CalendarBuildBatchHandler.getEligibleOppsToRunCb(cbLogWrapper);
+        } catch(Exception ex) {
+            sendErrorNotification(new Map<Exception, String>{ex => ''}, new Map<Id, String>());
+            cbLogWrapper = new DriveGenerationUtil.CalendarBuildLogWrapper(
+                manualRunDate, 
+                BSF_Constants.BATCH_CALENDAR_BUILD, 
+                BSF_Constants.RUN_TYPE_MANUAL
+            );
+            cbLogWrapper.apexMethodName = 'Constructor Call for Manual Run';
+            cbLogWrapper.eligibleOpportunityForCbList = new List<Opportunity>();
+            DriveGenerationUtil.captureErrorLoggingForException(BSF_Constants.BATCH_CALENDAR_BUILD, ex, cbLogWrapper);    
         }
     }
 
-    global void execute(Database.BatchableContext bc, List<Opportunity> lstOpportunities) {
-        
-        List<BSF_Error_Log__c> errorLogList = new List<BSF_Error_Log__c>();
-        Map<Exception,String> common_exception_map = new Map<Exception,String>();
-    	Map<Id, String> dml_error_map = new Map<Id, String>(); 
-        
+    /* @Reference : 
+     		* ModifiedBy : Priti Jana
+			* ModifiedDate : 8/6/2024
+			* ModifiedFor : HRP-12706
+    * @Description : 
+     		* This constructor will be used during scheduled run of CB
+            * It can be used for both the type of drives
+    *  @Parameters : 
+            * N/A
+    *   @Error Handling : 
+            * Log the issue in BSF Error Log
+            * Send error notification to BSF Support Team
+            * Log the same issue in CB Error log with Parent CB Log record where CB Batch Status = Error
+	*/
+    
+    global CalendarBuildEvaluateDrivesBatch() {
         try {
-            system.debug('### Inside execute for CalendarBuildEvaluateDrivesBatch opps to be cloned' + lstOpportunities.size());
-            List<Opportunity> lstOpps = CalendarBuildBatchHandler.cloneDrives(lstOpportunities);
-            system.debug('### Inside execute for CalendarBuildEvaluateDrivesBatch cloned opps' + lstOpps.size());
-            lstCBOpps.addall(lstOpps);
-            //Insert cloned opportunities (Calendar Build Opportunities)
-            if(lstOpps != null && lstOpps.size() > 0 ) {
-                List<Database.SaveResult> saveResultList = Database.insert(lstOpps, false);
-                for(Database.SaveResult sr : saveResultList){
+            Calendar_Build_Setting__mdt cbMetadata = Calendar_Build_Setting__mdt.getInstance('Calendar_Build_Drives_Config');
+            Decimal daysAfterDriveCompletion = cbMetadata?.No_of_Days_for_Calendar_Build_Batch__c;
+            this.byPassDriveGeneration = cbMetadata?.Bypass_Auto_Drive_Generation__c;
+            this.runType = BSF_Constants.RUN_TYPE_SCHEDULED;
+            if(daysAfterDriveCompletion != null) {
+                this.driveDateToEval = BSF_Constants.CURRENT_DATE.addDays(-daysAfterDriveCompletion.intValue()); 
+            } else {
+                this.driveDateToEval = BSF_Constants.CURRENT_DATE.addDays(-21); 
+            }
+            cbLogWrapper = new DriveGenerationUtil.CalendarBuildLogWrapper(this.driveDateToEval, BSF_Constants.BATCH_CALENDAR_BUILD, this.runType);
+            cbLogWrapper = CalendarBuildBatchHandler.getEligibleOppsToRunCb(cbLogWrapper);
+        } catch(Exception ex) {
+            sendErrorNotification(new Map<Exception, String>{ex => ''}, new Map<Id, String>());
+            cbLogWrapper = new DriveGenerationUtil.CalendarBuildLogWrapper(
+                BSF_Constants.CURRENT_DATE.addDays(-21), 
+                BSF_Constants.BATCH_CALENDAR_BUILD, 
+                BSF_Constants.RUN_TYPE_SCHEDULED
+            );
+            cbLogWrapper.apexMethodName = 'Constructor Call for Scheduled Run';
+            cbLogWrapper.eligibleOpportunityForCbList = new List<Opportunity>();
+            DriveGenerationUtil.captureErrorLoggingForException(BSF_Constants.BATCH_CALENDAR_BUILD, ex, cbLogWrapper);           
+        }
+    }
+
+    global Iterable<Opportunity> start(Database.BatchableContext bc) {
+        return cbLogWrapper.eligibleOpportunityForCbList;
+    }
+
+    global void execute(Database.BatchableContext bc, List<Opportunity> eligibleOppList) {
+   
+        Map<Exception, String> common_exception_map = new Map<Exception, String>();
+    	Map<Id, String> dml_error_map = new Map<Id, String>(); 
+        List<BSF_Error_Log__c> bsfErrorLogToInsertList = new List<BSF_Error_Log__c>();
+
+        try {
+            List<Opportunity> lstOpps = CalendarBuildBatchHandler.cloneDrives(eligibleOppList);
+            lstCBOpps.add(lstOpps[0].Calendar_Build_Parent_Opportunity__c);
+            if(lstOpps != NULL && lstOpps.size() > 0 ) {
+                Database.SaveResult[] clonedOppInsertResultList = Database.insert(lstOpps, false);
+                for(Database.SaveResult sr : clonedOppInsertResultList) {
                     Integer i = 0;
                     if(!sr.isSuccess()) {
                         for(Database.Error err : sr.getErrors()) {
-							BSF_Error_Log__c errorLog = new BSF_Error_Log__c(Process_Name__c = '', ApexClass__c = 'CalendarBuildEvaluateDrivesBatch', Method__c = 'Batch Execute', Type__c = '',
-                				Error_Description__c = 'Opportunity: ' + lstOpps.get(i).Calendar_Build_Parent_Opportunity__c + ' failed to clone. ' + err.getMessage(),
-                				Error_Description_Long__c = err.getStatusCode() + ':::' + err.getFields()
+							BSF_Error_Log__c errorLog = new BSF_Error_Log__c(
+                            	Process_Name__c = BSF_Constants.BATCH_CALENDAR_BUILD,
+                                Functionality__c = BSF_Constants.BATCH_CALENDAR_BUILD+' - '+lstOpps.get(i).Type_of_Drive__c,
+                				ApexClass__c = 'CalendarBuildEvaluateDrivesBatch',
+                				Method__c = 'Execute Method Call',
+                				Type__c = 'Error',
+                                Object_Name__c = String.valueOf(lstOpps.get(i).Calendar_Build_Parent_Opportunity__c.getSobjectType()),
+                                Object_RecordId__c = lstOpps.get(i).Calendar_Build_Parent_Opportunity__c,
+                				Error_Description__c = err.getMessage().length() > 255 ? err.getMessage().subString(0, 255) : err.getMessage(),
+                				Error_Description_Long__c = err.getStatusCode() + '\nFields ::: ' + err.getFields()
                             );
-                			errorLogList.add(errorLog);
-                            //Start HRP-10179
-                    		dml_error_map.put(sr.getId(),'<tr><td>'+errorLog.ApexClass__c + ', ' + errorLog.Method__c + ' : ' + errorLog.Error_Description__c + ' : ' + err.getMessage()+' Field: '+err.getFields()+'</td><td>'+sr.getId()+'</td></tr>'); 
-                            //End HRP-10179
+                            bsfErrorLogToInsertList.add(errorLog);
+                            if(!map_driveType_failureLogDetails.containsKey(lstOpps.get(i).Type_of_Drive__c)) {
+                                map_driveType_failureLogDetails.put(lstOpps.get(i).Type_of_Drive__c, new List<BSF_Error_Log__c>());
+                            }
+                            map_driveType_failureLogDetails.get(lstOpps.get(i).Type_of_Drive__c).add(errorLog);           
+                    		dml_error_map.put(lstOpps.get(i).Calendar_Build_Parent_Opportunity__c ,'<tr><td>'+errorLog.ApexClass__c + ', ' + errorLog.Method__c + ' : ' + errorLog.Error_Description__c + ' : ' + err.getMessage()+' Field: '+err.getFields()+'</td><td>'+sr.getId()+'</td></tr>'); // HRP-10179
                         }
                     }
                     i++;
                 }
-                insert errorLogList;
-            } 
-        }
-        catch(Exception e) {
-			common_exception_map.put(e,'');  //HRP-10179
+            }
+            Database.SaveResult[] logInsertResult = Database.insert(bsfErrorLogToInsertList, FALSE);
+            errorLogIdsCreatedDuringBatchRun.addAll(BSF_Utilities.getSuccessfullySavedRecordIds(logInsertResult));
+        } catch(Exception ex) {
+            BSF_Error_Log__c errorLogToInsert = BSF_Utilities.createBsfErrorLogForExceptions(
+                ex,
+                'CalendarBuildEvaluateDrivesBatch',
+                'Execute Method Call',
+                BSF_Constants.BATCH_CALENDAR_BUILD,
+                BSF_Constants.BATCH_CALENDAR_BUILD+' - '+(eligibleOppList!= NULL ? eligibleOppList.get(0).Type_of_Drive__c : 'No Opps found'),
+                'Opportunity',
+                eligibleOppList != NULL ? eligibleOppList[0].Id : NULL
+            );
+            bsfErrorLogToInsertList.add(errorLogToInsert);
+            if(eligibleOppList != NULL) {
+                if(!map_driveType_failureLogDetails.containsKey(eligibleOppList[0].Type_of_Drive__c)) {
+                    map_driveType_failureLogDetails.put(eligibleOppList[0].Type_of_Drive__c, new List<BSF_Error_Log__c>());
+                }
+                map_driveType_failureLogDetails.get(eligibleOppList[0].Type_of_Drive__c).add(errorLogToInsert);
+            }
+            Database.SaveResult[] logInsertResult = Database.insert(bsfErrorLogToInsertList, FALSE);
+            errorLogIdsCreatedDuringBatchRun.addAll(BSF_Utilities.getSuccessfullySavedRecordIds(logInsertResult));
+            common_exception_map.put(ex, '');  //HRP-10179
         }
         
      	//Start HRP-10179   
-        if(!common_exception_map.isEmpty() || !dml_error_map.isEmpty()){
+        if(!common_exception_map.isEmpty() || !dml_error_map.isEmpty()) {
             sendErrorNotification(common_exception_map, dml_error_map);
-            /*List<String> emailIds = System.label.BSF_SUPPORT_EMAIL_ID.split(',');
-            String oweFromAddress = System.label.BSF_OWEA_SENDER;
-            List<OrgWideEmailAddress> owea = [SELECT Id FROM OrgWideEmailAddress WHERE Address=:oweFromAddress];
-            if(!owea.isEmpty()) {
-                Helper.sendEmail(common_exception_map, dml_error_map, emailIds, owea[0].Id, true);
-            }*/
         }
         //End HRP-10179
     }
 
     global void finish(Database.BatchableContext bc) {
-        system.debug('### --> Inside finish of CalendarBuildEvaluateDrivesBatch.  Size of cloned opps' + lstCBOpps.size());
-        //Call either the Skedulo or Exavalu class to create 'drives on calendar' records for each cloned opportunity
-        Calendar_Build_Setting__mdt mdtCBConfigs = Calendar_Build_Setting__mdt.getInstance('Calendar_Build_Drives_Config');
-        Boolean byPassDriveGeneration = mdtCBConfigs?.Bypass_Auto_Drive_Generation__c;
-        if(!byPassDriveGeneration) {
-        	CreateSkedDrivesBatch batchOppRecs = new CreateSkedDrivesBatch(lstCBOpps);
-        	Database.executeBatch(batchOppRecs, 1);
+        //HRP-12706 --> Starts Here
+        try {
+            if(!cbLogWrapper.eligibleOpportunityForCbList.isEmpty()) {
+                if(cbLogWrapper.batchException == NULL) {
+                    cbLogWrapper.eligibleFsOppCount = cbLogWrapper.map_driveType_eligibleOppList.get(BSF_Constants.FIXED_SITE_DRIVE) != NULL ? (Decimal)cbLogWrapper.map_driveType_eligibleOppList.get(BSF_Constants.FIXED_SITE_DRIVE).size() : 0;
+                    cbLogWrapper.eligibleMobileOppCount = cbLogWrapper.map_driveType_eligibleOppList.get(BSF_Constants.MOBILE_DRIVE) != NULL ? (Decimal)cbLogWrapper.map_driveType_eligibleOppList.get(BSF_Constants.MOBILE_DRIVE).size() : 0;
+                    cbLogWrapper.fsOpportunitiesFailureCount = map_driveType_failureLogDetails.get(BSF_Constants.FIXED_SITE_DRIVE) != NULL ? (Decimal)map_driveType_failureLogDetails.get(BSF_Constants.FIXED_SITE_DRIVE).size() : 0;
+                    cbLogWrapper.mobileOpportunitiesFailureCount = map_driveType_failureLogDetails.get(BSF_Constants.MOBILE_DRIVE) != NULL ? (Decimal)map_driveType_failureLogDetails.get(BSF_Constants.MOBILE_DRIVE).size() : 0;
+                    cbLogWrapper.fsOpportunitiesCreated = cbLogWrapper.eligibleFsOppCount - cbLogWrapper.fsOpportunitiesFailureCount;
+                    cbLogWrapper.mobileOpportunitiesCreated = cbLogWrapper.eligibleMobileOppCount - cbLogWrapper.mobileOpportunitiesFailureCount;
+                    cbLogWrapper.errorLogIdsCreatedDuringBatchRun = errorLogIdsCreatedDuringBatchRun != NULL ? errorLogIdsCreatedDuringBatchRun : new Set<Id>();
+                    DriveGenerationUtil.captureCbLogAndCbErrorLog(cbLogWrapper);
+                }
+                DateTime dt = Helper.getSameDayOfNextYear(cbLogWrapper.driveDateToEval);
+                driveDateToEval = Date.newInstance(dT.year(), dT.month(), dT.day());
+                
+                if(!this.byPassDriveGeneration) {
+                    List<Opportunity> oppListToGenerateDrivesFor = CalendarBuildBatchHandler.getEligibleDrivesToRunCb(
+                        BSF_Constants.BATCH_CALENDAR_BUILD, 
+                        driveDateToEval, 
+                        lstCBOpps
+                    );
+                    CreateSkedDrivesBatch driveGenBatchInstance = new CreateSkedDrivesBatch(
+                        cbLogWrapper.runType, 
+                        BSF_Constants.BATCH_CALENDAR_BUILD,
+                        driveDateToEval, 
+                        oppListToGenerateDrivesFor
+                    );
+                    Database.executeBatch(driveGenBatchInstance, 1);
+                }
+            }
+        } catch(Exception ex) {
+            sendErrorNotification(new Map<Exception, String>{ex => ''}, new Map<Id, String>()); 
+            cbLogWrapper = new DriveGenerationUtil.CalendarBuildLogWrapper(
+                this.driveDateToEval,
+                BSF_Constants.BATCH_CALENDAR_BUILD, 
+                this.runType
+            );
+            cbLogWrapper.apexMethodName = 'Finish Method Call';
+            DriveGenerationUtil.captureErrorLoggingForException(BSF_Constants.BATCH_CALENDAR_BUILD, ex, cbLogWrapper);  
         }
+        //HRP-12706 --> Ends Here
     }
     
     global void execute(SchedulableContext scon) {
-      Database.executeBatch(new CalendarBuildEvaluateDrivesBatch(), batchSize);
+      Database.executeBatch(new CalendarBuildEvaluateDrivesBatch(), 1);
    	}
     
     @testvisible private static void sendErrorNotification(Map<Exception, String> commonExMap, Map<Id, String> dmlErrMap ) {
         List<String> emailIds = System.label.BSF_SUPPORT_EMAIL_ID.split(',');
         String oweFromAddress = System.label.BSF_OWEA_SENDER;
-        List<OrgWideEmailAddress> owea = [SELECT Id FROM OrgWideEmailAddress WHERE Address=:oweFromAddress];
+        List<OrgWideEmailAddress> owea = [SELECT Id FROM OrgWideEmailAddress WHERE Address= :oweFromAddress];
         if(!owea.isEmpty()) {
-            Helper.sendEmail(commonExMap, dmlErrMap, emailIds, owea[0].Id, true);
+            Helper.sendEmail(commonExMap, dmlErrMap, emailIds, owea[0].Id, true, 'Error in CB Drive Creation');
         }
     }
 }

@@ -20,7 +20,7 @@
     </values>
     <values>
         <field>sked_Destination_Field__c</field>
-        <value xsi:type="xsd:string">CreatedBy.Email</value>
+        <value xsi:type="xsd:string">CreatedById</value>
     </values>
     <values>
         <field>sked_Email_From_Address_Field__c</field>
@@ -31,12 +31,16 @@
         <value xsi:nil="true"/>
     </values>
     <values>
+        <field>sked_Expiry_DateTime_Field__c</field>
+        <value xsi:nil="true"/>
+    </values>
+    <values>
         <field>sked_Filter__c</field>
         <value xsi:nil="true"/>
     </values>
     <values>
         <field>sked_Notification_Target_Field__c</field>
-        <value xsi:type="xsd:string">CreatedById</value>
+        <value xsi:nil="true"/>
     </values>
     <values>
         <field>sked_Notification_Type__c</field>
@@ -44,6 +48,10 @@
     </values>
     <values>
         <field>sked_Oneoff_Protocol_Field__c</field>
+        <value xsi:nil="true"/>
+    </values>
+    <values>
+        <field>sked_Priority__c</field>
         <value xsi:nil="true"/>
     </values>
     <values>
@@ -57,6 +65,10 @@
     <values>
         <field>sked_Target_Field_Value__c</field>
         <value xsi:type="xsd:string">Error</value>
+    </values>
+    <values>
+        <field>sked_Target_Field_Values__c</field>
+        <value xsi:nil="true"/>
     </values>
     <values>
         <field>sked_Target_Field__c</field>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Notification_ON_Summary</fullName>
+    <columns>DeveloperName</columns>
+    <columns>MasterLabel</columns>
+    <columns>sked_Active__c</columns>
+    <columns>sked_Target_SObject__c</columns>
+    <columns>sked_Target_Field__c</columns>
+    <columns>sked_Target_Field_Value__c</columns>
+    <columns>sked_Trigger__c</columns>
+    <columns>sked_Notification_Type__c</columns>
+    <columns>sked_Destination_Field__c</columns>
+    <columns>sked_Subject__c</columns>
+    <columns>sked_Template__c</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>sked_Active__c</field>
+        <operation>equals</operation>
+        <value>1</value>
+    </filters>
+    <label>Notification ON_Summary</label>
+    <language>en_US</language>
+</ListView>

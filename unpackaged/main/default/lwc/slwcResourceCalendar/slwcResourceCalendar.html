@@ -66,9 +66,13 @@
     </article>
     
     <c-slwc-call-out-modal
-        is-open={callOutModalData.isOpen}
         onclose={handleCloseCallOutModal}
         onsave={handleSaveCallOutModal}
+        drive-date={callOutModalData.driveDate}
+        resource-id={callOutModalData.resourceId}
+        duration={callOutModalData.duration}
+        is-resource-mode
+        is-open={callOutModalData.isOpen}
     ></c-slwc-call-out-modal>
 
     <c-slwc-site-feedback

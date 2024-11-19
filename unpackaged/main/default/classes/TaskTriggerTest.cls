@@ -1,6 +1,8 @@
 /*
- * This Test class covering following classes 
- * TaskService 
+ * This Test class covering following classes and trigger 
+ * TaskService (100%),
+ * TaskTriggerHandler(89%),
+ * TaskTrigger (100%)
  */
 @isTest
 public class TaskTriggerTest {
@@ -74,7 +76,7 @@ public class TaskTriggerTest {
              
         );
         
-        UserRole urole  = [select id from userrole where developername =: rolename ];
+        // UserRole urole  = [select id from userrole where developername =: rolename ];
         
         User DRDAMUser = new User(
              ProfileId = [SELECT Id FROM Profile WHERE Name = 'DRD Profile'].Id,
@@ -88,8 +90,8 @@ public class TaskTriggerTest {
              TimeZoneSidKey = 'America/Los_Angeles',
              EmailEncodingKey = 'UTF-8',
              LanguageLocaleKey = 'en_US',
-             LocaleSidKey = 'en_US',
-             UserRoleId = urole.Id
+             LocaleSidKey = 'en_US'
+            //  UserRoleId = urole.Id
         );
              
         System.runAs( AdminUser ){
@@ -109,7 +111,7 @@ public class TaskTriggerTest {
 		mobileAccList.add(accobj);
 		insert mobileAccList;
         
-        Contact contact = new Contact (firstname='Test Contact First',lastname='Test Contact Last');
+        Contact contact = new Contact (firstname='Test Contact First',lastname='TestContactLast');
         contact.MailingStreet = '2204 Westcrt ln, Apt 213'; 
         contact.Email = 'testContact@gmail.com';
         contact.Original_Service_Date__c = system.today().addDays(3);
@@ -270,8 +272,220 @@ public class TaskTriggerTest {
         insert taskList1;
 
         taskList1[0].Related_Record_Name__c = taskList1[0].What.Name;
-        update taskList1;                    
+        update taskList1;   
+
         Test.stopTest(); 
         
      }
+    
+    static testMethod void getReportLinks_Test() {
+        TriggerHandler.Bypass('AccountTriggerHandler');
+        TriggerHandler.Bypass('OpportunityTriggerHandler');
+        TriggerHandler.Bypass('SiteTriggerHandler');
+        
+        Task_Reassignment_Matrix__mdt recruitmentTask = Task_Reassignment_Matrix__mdt.getInstance('Recruitment_Task');
+    	Date driveDate = system.today().addDays(Integer.valueOf(recruitmentTask.Creation_Date_Offset__c));
+        
+        BSF_TestDataSetup testDataSetup = new BSF_TestDataSetup(false);
+        Map<string, sObject> mapTestData =  testDataSetup.createAndInsertCommonObjects(); 
+        
+        // insert DRD User
+        User drdUser = (User)mapTestData.get('DRD_USER');
+        System.runAs( new User(Id = UserInfo.getUserId())) {
+            insert drdUser;
+        }
+               
+        //insert mobile account
+        Account testMobileAccount = (Account)mapTestData.get('MOBILE_ACCOUNT');
+        testMobileAccount.Internal_Name__c = 'Test Account';
+        insert testMobileAccount;
+        
+        // insert mobile site
+        sked__Location__c testMobileSite = (sked__Location__c)mapTestData.get('MOBILE_SITE');
+    	insert testMobileSite;
+        
+        // insert template
+        Opportunity testTemplate = (Opportunity)mapTestData.get('MOBILE_TEMPLATE_OPP');
+        testTemplate.AccountId = testMobileAccount.Id;
+        testTemplate.Drive_Site__c = testMobileSite.Id;
+        insert testTemplate;
+        
+        //insert opportunity
+		opportunity testMobileOpp =new opportunity();
+		testMobileOpp.RecordTypeId = Opportunity.sObjectType.getDescribe().getRecordTypeInfosByName().get('Mobile Opp').getRecordTypeId();        
+        testMobileOpp.AccountId=testMobileAccount.Id;
+        testMobileOpp.name='testOpp1';
+        testMobileOpp.StageName= 'Closed';
+        testMobileOpp.Parent_Template_Id__c=testTemplate.id;
+        testMobileOpp.CloseDate= system.today().addDays(1); 
+        testMobileOpp.Drive_Date__c = driveDate;
+        testMobileOpp.Accept_56_Day_Rule_Violation__c = true;
+        testMobileOpp.Account_Manager__c = UserInfo.getUserId();
+        testMobileOpp.Start_Time__c = System.now().Time();
+		testMobileOpp.End_Time__c = System.now().Time()+1;
+		testMobileOpp.Anticipated_Registered_Donors__c = 1;	
+        insert testMobileOpp;
+        
+        // insert team member
+        OpportunityTeamMember oppTeammember = new OpportunityTeamMember(OpportunityId = testMobileOpp.Id, 
+                                                                        Start_Date__c = system.today(), 
+                                                                        TeamMemberRole = 'District Manager',
+                                                                        OpportunityAccessLevel = 'Edit',
+                                                                        UserId = drdUser.Id);
+        insert oppTeammember;
+        
+        Test.startTest();
+        BSF_Batch_RecruitmentTaskCreation batchInstance = new BSF_Batch_RecruitmentTaskCreation();
+        Database.executeBatch(batchInstance);
+        Test.stopTest(); 
+        
+        Task createdTasks = [SELECT Id FROM Task WHERE Subject = 'Recruitment Planning Meeting' LIMIT 1];
+        TaskService.getReportLinks(createdTasks.Id);
+        
+    }
+    
+    static testMethod void stopPublicityOrderTaskCompletionWithoutOrder_Test() {
+        TriggerHandler.Bypass('AccountTriggerHandler');
+        TriggerHandler.Bypass('OpportunityTriggerHandler');
+        TriggerHandler.Bypass('SiteTriggerHandler');
+        
+        BSF_TestDataSetup testDataSetup = new BSF_TestDataSetup(false);
+        Map<string, sObject> mapTestData =  testDataSetup.createAndInsertCommonObjects(); 
+        
+        // insert DRD User
+        User drdUser = (User)mapTestData.get('DRD_USER');
+        System.runAs( new User(Id = UserInfo.getUserId())) {
+            insert drdUser;
+        }
+               
+        //insert mobile account
+        Account testMobileAccount = (Account)mapTestData.get('MOBILE_ACCOUNT');
+        testMobileAccount.Internal_Name__c = 'Test Account';
+        insert testMobileAccount;
+        
+        // insert mobile site
+        sked__Location__c testMobileSite = (sked__Location__c)mapTestData.get('MOBILE_SITE');
+    	insert testMobileSite;
+        
+        // insert template
+        Opportunity testTemplate = (Opportunity)mapTestData.get('MOBILE_TEMPLATE_OPP');
+        testTemplate.AccountId = testMobileAccount.Id;
+        testTemplate.Drive_Site__c = testMobileSite.Id;
+        insert testTemplate;
+        
+        //insert opportunity
+		opportunity testMobileOpp =new opportunity();
+		testMobileOpp.RecordTypeId = Opportunity.sObjectType.getDescribe().getRecordTypeInfosByName().get('Mobile Opp').getRecordTypeId();        
+        testMobileOpp.AccountId=testMobileAccount.Id;
+        testMobileOpp.name='testOpp1';
+        testMobileOpp.StageName= 'Closed';
+        testMobileOpp.Parent_Template_Id__c=testTemplate.id;
+        testMobileOpp.CloseDate= system.today().addDays(1); 
+        testMobileOpp.Drive_Date__c = system.today();
+        testMobileOpp.Accept_56_Day_Rule_Violation__c = true;
+        testMobileOpp.Account_Manager__c = UserInfo.getUserId();
+        testMobileOpp.Start_Time__c = System.now().Time();
+		testMobileOpp.End_Time__c = System.now().Time()+1;
+		testMobileOpp.Anticipated_Registered_Donors__c = 1;	
+        insert testMobileOpp;
+        
+        Test.startTest();
+        Task_Reassignment_Matrix__mdt publicityOrder = Task_Reassignment_Matrix__mdt.getInstance('Publicity_Order_Not_Created');
+        
+        Task publicityTask = new Task(
+        	Subject = publicityOrder.Task_Subject__c,
+            OwnerId = drdUser.Id,
+            Priority = 'Normal',
+            Status = 'Not Started',
+            WhatId = testMobileOpp.Id
+        );
+        insert publicityTask;
+        publicityTask.Status = 'Completed';
+        try{
+            update publicityTask;
+        } catch(Exception ex) {
+            Assert.isTrue(ex.getMessage().contains('No Publicity Items are ordered. Please create the Publicity Order or check "No Publicity Needed" on the opportunity before completing the task'));
+        }
+        Test.stopTest();
+    }
+    
+    static testMethod void updateRelatedAccountAndOpportunity_Test() {
+        TriggerHandler.Bypass('AccountTriggerHandler');
+        TriggerHandler.Bypass('OpportunityTriggerHandler');
+        TriggerHandler.Bypass('SiteTriggerHandler');
+        
+        BSF_TestDataSetup testDataSetup = new BSF_TestDataSetup(false);
+        Map<string, sObject> mapTestData =  testDataSetup.createAndInsertCommonObjects(); 
+        
+        // insert DRD User
+        User drdUser = (User)mapTestData.get('DRD_USER');
+        System.runAs( new User(Id = UserInfo.getUserId())) {
+            insert drdUser;
+        }
+               
+        //insert mobile account
+        Account testMobileAccount = (Account)mapTestData.get('MOBILE_ACCOUNT');
+        testMobileAccount.Internal_Name__c = 'Test Account';
+        insert testMobileAccount;
+        
+        // insert mobile site
+        sked__Location__c testMobileSite = (sked__Location__c)mapTestData.get('MOBILE_SITE');
+    	insert testMobileSite;
+        
+        // insert template
+        Opportunity testTemplate = (Opportunity)mapTestData.get('MOBILE_TEMPLATE_OPP');
+        testTemplate.AccountId = testMobileAccount.Id;
+        testTemplate.Drive_Site__c = testMobileSite.Id;
+        insert testTemplate;
+        
+        //insert opportunity
+		opportunity testMobileOpp =new opportunity();
+		testMobileOpp.RecordTypeId = Opportunity.sObjectType.getDescribe().getRecordTypeInfosByName().get('Mobile Opp').getRecordTypeId();        
+        testMobileOpp.AccountId=testMobileAccount.Id;
+        testMobileOpp.name='testOpp1';
+        testMobileOpp.StageName= 'Closed';
+        testMobileOpp.Parent_Template_Id__c=testTemplate.id;
+        testMobileOpp.CloseDate= system.today().addDays(1); 
+        testMobileOpp.Drive_Date__c = system.today();
+        testMobileOpp.Accept_56_Day_Rule_Violation__c = true;
+        testMobileOpp.Account_Manager__c = UserInfo.getUserId();
+        testMobileOpp.Start_Time__c = System.now().Time();
+		testMobileOpp.End_Time__c = System.now().Time()+1;
+		testMobileOpp.Anticipated_Registered_Donors__c = 1;	
+        insert testMobileOpp;
+        
+        Test.startTest();
+        //insert Publicity Task
+        Task pdaTask = new Task(
+        	Subject = BSF_Constants.POST_DRIVE_ANALYSIS_TASK,
+            OwnerId = drdUser.Id,
+            Priority = 'Normal',
+            Status = 'Not Started',
+            WhatId = testMobileOpp.Id
+        );
+        insert pdaTask;
+        
+        // insert BSF Task Checklist
+        List<BSF_Task_Checklist__c> taskCheckListToInsert = new List<BSF_Task_Checklist__c>();
+        BSF_Task_Checklist__c taskCheckList;
+        taskCheckList = new BSF_Task_Checklist__c(
+                            TaskLookup__c = (String) pdaTask.Id,
+                            TaskType__c = BSF_Constants.POST_DRIVE_ANALYSIS_TASK,
+                            Unique_Name__c = 'Account_Strategy_Notes__c'
+        );
+        taskCheckListToInsert.add(taskCheckList);
+        
+        taskCheckList = new BSF_Task_Checklist__c(
+                            TaskLookup__c = (String) pdaTask.Id,
+                            TaskType__c = BSF_Constants.POST_DRIVE_ANALYSIS_TASK,
+                            Unique_Name__c = 'Rollover_Consideration__c'
+        );
+        taskCheckListToInsert.add(taskCheckList);
+        
+        insert taskCheckListToInsert;
+        
+        pdaTask.Status = 'Completed';
+        update pdaTask;
+        Test.stopTest();
+    }
 }

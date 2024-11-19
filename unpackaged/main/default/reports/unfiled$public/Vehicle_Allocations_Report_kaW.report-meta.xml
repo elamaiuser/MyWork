@@ -112,8 +112,6 @@
     <sortOrder>Asc</sortOrder>
     <timeFrameFilter>
         <dateColumn>sked_Drive__c$sked_Drive_Date__c</dateColumn>
-        <endDate>2024-03-31</endDate>
         <interval>INTERVAL_CUSTOM</interval>
-        <startDate>2024-03-01</startDate>
     </timeFrameFilter>
 </Report>

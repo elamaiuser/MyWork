@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CompactLayout xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Custom_Compact_Layout</fullName>
+    <fields>Name</fields>
+    <fields>Status_Correction_Batch_Execution_Date__c</fields>
+    <fields>Status_Correction_Batch_Drive_Count__c</fields>
+    <fields>Final_State_Drive_Count__c</fields>
+    <fields>Open_Drive_Count__c</fields>
+    <fields>Corrected_Drive_Count__c</fields>
+    <fields>Op_Record_Count__c</fields>
+    <fields>Submitted_Op_Record_Count__c</fields>
+    <fields>Not_Submitted_Op_Record_Count__c</fields>
+    <label>Custom Compact Layout</label>
+</CompactLayout>

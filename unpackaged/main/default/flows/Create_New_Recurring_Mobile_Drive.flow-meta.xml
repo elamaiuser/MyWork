@@ -1,10 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Flow xmlns="http://soap.sforce.com/2006/04/metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <actionCalls>
+        <name>Queue_recurring_opp_creation</name>
+        <label>Queue recurring opp creation</label>
+        <locationX>2865</locationX>
+        <locationY>806</locationY>
+        <actionName>PlanADriveUtilityClass</actionName>
+        <actionType>apex</actionType>
+        <connector>
+            <targetReference>Is_the_matching_template_inactive</targetReference>
+        </connector>
+        <flowTransactionModel>Automatic</flowTransactionModel>
+        <inputParameters>
+            <name>oppList</name>
+            <value>
+                <elementReference>MobileOppCollection</elementReference>
+            </value>
+        </inputParameters>
+        <nameSegment>PlanADriveUtilityClass</nameSegment>
+        <versionSegment>1</versionSegment>
+    </actionCalls>
+    <actionCalls>
         <name>Validate_Account</name>
         <label>Validate Account</label>
         <locationX>367</locationX>
-        <locationY>586</locationY>
+        <locationY>730</locationY>
         <actionName>DriveValidationService</actionName>
         <actionType>apex</actionType>
         <connector>
@@ -31,7 +51,7 @@
         <name>Validate_Plan_A_Drive_Apex_Action</name>
         <label>Validate Plan A Drive Apex Action</label>
         <locationX>2371</locationX>
-        <locationY>284</locationY>
+        <locationY>428</locationY>
         <actionName>DriveValidationService</actionName>
         <actionType>apex</actionType>
         <connector>
@@ -51,18 +71,6 @@
             <name>driveDate</name>
             <value>
                 <elementReference>seriesStartDate</elementReference>
-            </value>
-        </inputParameters>
-        <inputParameters>
-            <name>driveDateList</name>
-            <value>
-                <elementReference>RecurringDateCollection</elementReference>
-            </value>
-        </inputParameters>
-        <inputParameters>
-            <name>recurringDrive</name>
-            <value>
-                <booleanValue>true</booleanValue>
             </value>
         </inputParameters>
         <inputParameters>
@@ -94,7 +102,7 @@
         <name>Validate_Planned_Drive</name>
         <label>Validate Planned Drive</label>
         <locationX>1957</locationX>
-        <locationY>577</locationY>
+        <locationY>721</locationY>
         <actionName>DriveValidationService</actionName>
         <actionType>apex</actionType>
         <connector>
@@ -114,12 +122,6 @@
             <name>driveDate</name>
             <value>
                 <elementReference>Drive_Date</elementReference>
-            </value>
-        </inputParameters>
-        <inputParameters>
-            <name>recurringDrive</name>
-            <value>
-                <booleanValue>false</booleanValue>
             </value>
         </inputParameters>
         <inputParameters>
@@ -147,12 +149,12 @@
         </outputParameters>
         <versionSegment>1</versionSegment>
     </actionCalls>
-    <apiVersion>49.0</apiVersion>
+    <apiVersion>62.0</apiVersion>
     <assignments>
         <name>AddToCollection</name>
         <label>AddToCollection</label>
         <locationX>1921</locationX>
-        <locationY>252</locationY>
+        <locationY>396</locationY>
         <assignmentItems>
             <assignToReference>MobileOppCollection</assignToReference>
             <operator>Add</operator>
@@ -168,7 +170,7 @@
         <name>Assign_Close_and_Targeted_Ask_Date</name>
         <label>Assign Close and Targeted Ask Date</label>
         <locationX>1838</locationX>
-        <locationY>1091</locationY>
+        <locationY>1235</locationY>
         <assignmentItems>
             <assignToReference>varTargetedAskDate</assignToReference>
             <operator>Assign</operator>
@@ -190,8 +192,8 @@
     <assignments>
         <name>Assign_Opp</name>
         <label>Assign Opp</label>
-        <locationX>1792</locationX>
-        <locationY>229</locationY>
+        <locationX>1804</locationX>
+        <locationY>412</locationY>
         <assignmentItems>
             <assignToReference>MobileOpp.Accept_56_Day_Rule_Violation__c</assignToReference>
             <operator>Assign</operator>
@@ -287,7 +289,7 @@
             <assignToReference>MobileOpp.Source__c</assignToReference>
             <operator>Assign</operator>
             <value>
-                <stringValue>Adhoc</stringValue>
+                <elementReference>Source</elementReference>
             </value>
         </assignmentItems>
         <assignmentItems>
@@ -322,14 +324,14 @@
             <assignToReference>MobileOpp.WB_Projected_Procedures__c</assignToReference>
             <operator>Assign</operator>
             <value>
-                <elementReference>Whole_Blood_Procedures1</elementReference>
+                <elementReference>varFinalWholeBloodProcedure</elementReference>
             </value>
         </assignmentItems>
         <assignmentItems>
             <assignToReference>MobileOpp.X2RBC_Projected_Procedures__c</assignToReference>
             <operator>Assign</operator>
             <value>
-                <elementReference>Double_Red_Procedures</elementReference>
+                <elementReference>varFinalDoubleRedProcedure</elementReference>
             </value>
         </assignmentItems>
         <assignmentItems>
@@ -396,7 +398,7 @@
         <name>Assign_Selected_Start_and_End_Times</name>
         <label>Assign Selected Start and End Times</label>
         <locationX>1080</locationX>
-        <locationY>660</locationY>
+        <locationY>804</locationY>
         <assignmentItems>
             <assignToReference>varSelectedStartTime</assignToReference>
             <operator>Assign</operator>
@@ -419,7 +421,7 @@
         <name>Assign_Targeted_Ask_Date_And_Close_Date</name>
         <label>Assign Targeted Ask Date and Close Date</label>
         <locationX>1708</locationX>
-        <locationY>569</locationY>
+        <locationY>713</locationY>
         <assignmentItems>
             <assignToReference>varTargetedAskDate</assignToReference>
             <operator>Assign</operator>
@@ -442,7 +444,7 @@
         <name>Assign_Targeted_Ask_Date_Only_And_Close_Date</name>
         <label>Assign Targeted Ask Date Only and Close Date</label>
         <locationX>1922</locationX>
-        <locationY>867</locationY>
+        <locationY>1011</locationY>
         <assignmentItems>
             <assignToReference>varTargetedAskDate</assignToReference>
             <operator>Assign</operator>
@@ -464,8 +466,8 @@
     <assignments>
         <name>Assign_Total_Number_of_Drives</name>
         <label>Assign Total Number of Drives</label>
-        <locationX>2080</locationX>
-        <locationY>321</locationY>
+        <locationX>475</locationX>
+        <locationY>382</locationY>
         <assignmentItems>
             <assignToReference>TotalCountofRecurringDrives</assignToReference>
             <operator>AssignCount</operator>
@@ -474,14 +476,14 @@
             </value>
         </assignmentItems>
         <connector>
-            <targetReference>FinalConfirmationForRecurringSeries</targetReference>
+            <targetReference>isTotalCountMoreThanLimit</targetReference>
         </connector>
     </assignments>
     <assignments>
         <name>AssignTemplateCount</name>
         <label>AssignTemplateCount</label>
         <locationX>967</locationX>
-        <locationY>54</locationY>
+        <locationY>198</locationY>
         <assignmentItems>
             <assignToReference>TemplateCount</assignToReference>
             <operator>AssignCount</operator>
@@ -496,8 +498,8 @@
     <assignments>
         <name>For_Each_Date_In_Series</name>
         <label>For Each Date In Series</label>
-        <locationX>240</locationX>
-        <locationY>263</locationY>
+        <locationX>108</locationX>
+        <locationY>422</locationY>
         <assignmentItems>
             <assignToReference>seriesEndDate</assignToReference>
             <operator>Assign</operator>
@@ -513,7 +515,7 @@
         <name>PickSelectedTemplate</name>
         <label>PickSelectedTemplate</label>
         <locationX>1356</locationX>
-        <locationY>522</locationY>
+        <locationY>665</locationY>
         <assignmentItems>
             <assignToReference>varSelectedStartTime</assignToReference>
             <operator>Assign</operator>
@@ -670,7 +672,7 @@
         <name>ReActivate_Account</name>
         <label>ReActivate Account</label>
         <locationX>875</locationX>
-        <locationY>725</locationY>
+        <locationY>869</locationY>
         <assignmentItems>
             <assignToReference>Get_Account.Account_Status__c</assignToReference>
             <operator>Assign</operator>
@@ -686,7 +688,7 @@
         <name>Set_Location_Type</name>
         <label>Set Location Type</label>
         <locationX>1215</locationX>
-        <locationY>128</locationY>
+        <locationY>272</locationY>
         <assignmentItems>
             <assignToReference>varLocationType</assignToReference>
             <operator>Assign</operator>
@@ -702,7 +704,7 @@
         <name>Set_Location_Type_to_Inside_Outside</name>
         <label>Set Location Type to Inside/Outside</label>
         <locationX>890</locationX>
-        <locationY>428</locationY>
+        <locationY>572</locationY>
         <assignmentItems>
             <assignToReference>varLocationType</assignToReference>
             <operator>Assign</operator>
@@ -765,6 +767,22 @@
         <dataType>String</dataType>
         <value>
             <stringValue>false</stringValue>
+        </value>
+    </choices>
+    <choices>
+        <name>Opportunity_Source_Adhoc</name>
+        <choiceText>&lt;span style=&quot;background-color: rgb(255, 255, 255); color: rgb(68, 68, 68);&quot;&gt;Adhoc&lt;/span&gt;</choiceText>
+        <dataType>String</dataType>
+        <value>
+            <stringValue>Adhoc</stringValue>
+        </value>
+    </choices>
+    <choices>
+        <name>Opportunity_Source_Business_Planning</name>
+        <choiceText>&lt;span style=&quot;background-color: rgb(255, 255, 255); color: rgb(68, 68, 68);&quot;&gt;Business Planning&lt;/span&gt;</choiceText>
+        <dataType>String</dataType>
+        <value>
+            <stringValue>Business Planning</stringValue>
         </value>
     </choices>
     <choices>
@@ -943,7 +961,7 @@
         <name>Account_Lost_or_Defunct</name>
         <label>Account Lost or Defunct?</label>
         <locationX>485</locationX>
-        <locationY>579</locationY>
+        <locationY>723</locationY>
         <defaultConnector>
             <targetReference>Create_New_Mobile_Drive</targetReference>
         </defaultConnector>
@@ -983,7 +1001,7 @@
         <name>Check_Account_Validated</name>
         <label>Check Account Validated</label>
         <locationX>397</locationX>
-        <locationY>752</locationY>
+        <locationY>896</locationY>
         <defaultConnector>
             <targetReference>Account_Validation_Failed</targetReference>
         </defaultConnector>
@@ -1012,7 +1030,7 @@
         <name>Check_Plan_a_Drive1</name>
         <label>Check Plan a Drive1</label>
         <locationX>2063</locationX>
-        <locationY>579</locationY>
+        <locationY>723</locationY>
         <defaultConnector>
             <targetReference>Error_Plan_A_Drive_Screen1</targetReference>
         </defaultConnector>
@@ -1041,7 +1059,7 @@
         <name>Check_Plan_a_Drive2</name>
         <label>Check Plan a Drive2</label>
         <locationX>2377</locationX>
-        <locationY>462</locationY>
+        <locationY>606</locationY>
         <defaultConnector>
             <targetReference>Error_Plan_A_Drive_Screen2</targetReference>
         </defaultConnector>
@@ -1061,7 +1079,7 @@
                 <operator>EqualTo</operator>
             </conditions>
             <connector>
-                <targetReference>Create_Opportunity_Open_To_Public</targetReference>
+                <targetReference>is_morethan_Recurring_Drive_Async_Limit</targetReference>
             </connector>
             <label>Recurring Series Validated</label>
         </rules>
@@ -1070,7 +1088,7 @@
         <name>checkValidationStatus</name>
         <label>checkValidationStatus</label>
         <locationX>1387</locationX>
-        <locationY>246</locationY>
+        <locationY>390</locationY>
         <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
         <rules>
             <name>Valid</name>
@@ -1107,7 +1125,7 @@
         <name>Is_Create_Recurring_Series</name>
         <label>Is Create Recurring Series</label>
         <locationX>568</locationX>
-        <locationY>335</locationY>
+        <locationY>479</locationY>
         <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
         <rules>
             <name>Yes</name>
@@ -1144,8 +1162,8 @@
         <description>Check if Drive Date is &gt;= 6 Months From Today</description>
         <name>Is_Drive_Date_6_Month_From_Today</name>
         <label>Is Drive Date &gt;= 6 Month From Today</label>
-        <locationX>1414</locationX>
-        <locationY>787</locationY>
+        <locationX>1480</locationX>
+        <locationY>818</locationY>
         <defaultConnector>
             <targetReference>Is_Drive_Date_85_Days_From_Today</targetReference>
         </defaultConnector>
@@ -1170,7 +1188,7 @@
         <name>Is_Drive_Date_85_Days_From_Today</name>
         <label>Is Drive Date &lt; 85 Days From Today?</label>
         <locationX>1607</locationX>
-        <locationY>819</locationY>
+        <locationY>963</locationY>
         <defaultConnector>
             <targetReference>Enter_Targeted_Ask_Date</targetReference>
         </defaultConnector>
@@ -1195,7 +1213,7 @@
         <name>Is_End_Time_LessThan_Or_EqualTo_Start_Time</name>
         <label>Is End Time &lt;= Start Time</label>
         <locationX>1070</locationX>
-        <locationY>832</locationY>
+        <locationY>976</locationY>
         <defaultConnector>
             <targetReference>Is_Recurring_Series</targetReference>
         </defaultConnector>
@@ -1217,12 +1235,37 @@
         </rules>
     </decisions>
     <decisions>
+        <name>is_morethan_Recurring_Drive_Async_Limit</name>
+        <label>is morethan Recurring Drive Async Limit</label>
+        <locationX>2380</locationX>
+        <locationY>811</locationY>
+        <defaultConnector>
+            <targetReference>Create_Opportunity_Open_To_Public</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>lesser or equal to Async limit</defaultConnectorLabel>
+        <rules>
+            <name>more_than_limit_switching_to_Async</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>TotalCountofRecurringDrives</leftValueReference>
+                <operator>GreaterThan</operator>
+                <rightValue>
+                    <elementReference>Recurring_Drive_Async_Limit</elementReference>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Queue_recurring_opp_creation</targetReference>
+            </connector>
+            <label>more than limit switching to Async</label>
+        </rules>
+    </decisions>
+    <decisions>
         <name>Is_Recurring_Series</name>
         <label>Is Recurring Series</label>
         <locationX>1275</locationX>
-        <locationY>619</locationY>
+        <locationY>763</locationY>
         <defaultConnector>
-            <targetReference>For_Each_Date_in_Recurring_Series</targetReference>
+            <targetReference>getSiteCollectionOpRecordsRecurring</targetReference>
         </defaultConnector>
         <defaultConnectorLabel>Recurring</defaultConnectorLabel>
         <rules>
@@ -1233,7 +1276,7 @@
                 <operator>EqualTo</operator>
             </conditions>
             <connector>
-                <targetReference>Is_Drive_Date_6_Month_From_Today</targetReference>
+                <targetReference>Is_Site_TBD</targetReference>
             </connector>
             <label>Non Recurring</label>
         </rules>
@@ -1242,8 +1285,8 @@
         <description>Is Series End Date Greater Than Site End Date</description>
         <name>Is_Series_End_Date_Greater_Than_Site_End_Date</name>
         <label>Is Series End Date Greater Than Site End Date</label>
-        <locationX>505</locationX>
-        <locationY>50</locationY>
+        <locationX>609</locationX>
+        <locationY>98</locationY>
         <defaultConnector>
             <targetReference>getMatchingTemplates</targetReference>
         </defaultConnector>
@@ -1268,7 +1311,7 @@
         <name>Is_Site_Address_Valid</name>
         <label>Is Site Address Valid</label>
         <locationX>1159</locationX>
-        <locationY>461</locationY>
+        <locationY>605</locationY>
         <defaultConnector>
             <targetReference>Invalid_Site_Address</targetReference>
         </defaultConnector>
@@ -1300,7 +1343,7 @@
         <name>Is_Site_Decided</name>
         <label>Is Site Decided</label>
         <locationX>769</locationX>
-        <locationY>369</locationY>
+        <locationY>513</locationY>
         <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
         <rules>
             <name>Site_not_Decided</name>
@@ -1334,10 +1377,36 @@
         </rules>
     </decisions>
     <decisions>
+        <description>If site TBD is checked, bypass collection opp check</description>
+        <name>Is_Site_TBD</name>
+        <label>Is Site TBD</label>
+        <locationX>1309</locationX>
+        <locationY>1005</locationY>
+        <defaultConnector>
+            <targetReference>Get_Site_Collection_Operation_Records</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Fetch Site Col Opp</defaultConnectorLabel>
+        <rules>
+            <name>Bypass_Col_Opp_Check</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>Site_TBD</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Is_Drive_Date_6_Month_From_Today</targetReference>
+            </connector>
+            <label>Bypass Col Opp Check</label>
+        </rules>
+    </decisions>
+    <decisions>
         <name>Is_Templates_Found</name>
         <label>Is Templates Found</label>
         <locationX>1025</locationX>
-        <locationY>254</locationY>
+        <locationY>398</locationY>
         <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
         <rules>
             <name>No_Templates_Found</name>
@@ -1374,7 +1443,7 @@
         <name>Is_the_matching_template_inactive</name>
         <label>Is the matching template inactive</label>
         <locationX>2143</locationX>
-        <locationY>757</locationY>
+        <locationY>901</locationY>
         <defaultConnector>
             <targetReference>Opportunity_Confirmation</targetReference>
         </defaultConnector>
@@ -1396,10 +1465,125 @@
         </rules>
     </decisions>
     <decisions>
+        <name>isDriveFallingInNonCollectionOp</name>
+        <label>isDriveFallingInNonCollectionOp</label>
+        <locationX>1667</locationX>
+        <locationY>50</locationY>
+        <defaultConnector>
+            <targetReference>LoopAllDriveDates</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>validSiteCollectionOpRecord</defaultConnectorLabel>
+        <rules>
+            <name>Drive_Date_falling_in_NCA</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>ForEachSiteCollectionOp.sked_Start_Date__c</leftValueReference>
+                <operator>LessThanOrEqualTo</operator>
+                <rightValue>
+                    <elementReference>LoopAllDriveDates</elementReference>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>ForEachSiteCollectionOp.sked_End_Date__c</leftValueReference>
+                <operator>GreaterThanOrEqualTo</operator>
+                <rightValue>
+                    <elementReference>LoopAllDriveDates</elementReference>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>ForEachSiteCollectionOp.sked_Collection_Operation__r.Name</leftValueReference>
+                <operator>Contains</operator>
+                <rightValue>
+                    <stringValue>Non-Collection Area</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>NonCollectionOpScreen</targetReference>
+            </connector>
+            <label>Drive Date falling in NCA</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>IsSiteCollectionOpNonCollectionArea</name>
+        <label>IsSiteCollectionOpNonCollectionArea</label>
+        <locationX>1514</locationX>
+        <locationY>1047</locationY>
+        <defaultConnector>
+            <targetReference>Is_Drive_Date_6_Month_From_Today</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Collection Area</defaultConnectorLabel>
+        <rules>
+            <name>Non_Collection_Area</name>
+            <conditionLogic>or</conditionLogic>
+            <conditions>
+                <leftValueReference>Get_Site_Collection_Operation_Records.sked_Collection_Operation__r.Name</leftValueReference>
+                <operator>Contains</operator>
+                <rightValue>
+                    <stringValue>Non-Collection Area</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>Get_Site_Collection_Operation_Records</leftValueReference>
+                <operator>EqualTo</operator>
+            </conditions>
+            <connector>
+                <targetReference>StopNonCollectionAreaDrive</targetReference>
+            </connector>
+            <label>Non Collection Area</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>isTotalCountMoreThanLimit</name>
+        <label>isTotalCountMoreThanLimit</label>
+        <locationX>204</locationX>
+        <locationY>453</locationY>
+        <defaultConnector>
+            <targetReference>Recurring_Series_Date_Collection</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>moreThanLimit</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>TotalCountofRecurringDrives</leftValueReference>
+                <operator>GreaterThan</operator>
+                <rightValue>
+                    <elementReference>RecurringDriveLimit</elementReference>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>More_Than_Recurring_Limit_Screen</targetReference>
+            </connector>
+            <label>moreThanLimit</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>NoSiteCollectionOpRecordsFound</name>
+        <label>NoSiteCollectionOpRecordsFound</label>
+        <locationX>1474</locationX>
+        <locationY>525</locationY>
+        <defaultConnector>
+            <targetReference>ForEachSiteCollectionOp</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>ifValidSiteCollectionOpRecord</defaultConnectorLabel>
+        <rules>
+            <name>NoSiteCollectionOpRecordsFoundRecurring</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>getSiteCollectionOpRecordsRecurring</leftValueReference>
+                <operator>EqualTo</operator>
+            </conditions>
+            <connector>
+                <targetReference>NonCollectionOpScreen</targetReference>
+            </connector>
+            <label>NoSiteCollectionOpRecordsFoundRecurring</label>
+        </rules>
+    </decisions>
+    <decisions>
         <name>Yes_Or_No</name>
         <label>Yes Or No?</label>
         <locationX>746</locationX>
-        <locationY>815</locationY>
+        <locationY>959</locationY>
         <defaultConnector>
             <targetReference>ReActivate_Account</targetReference>
         </defaultConnector>
@@ -1427,7 +1611,7 @@
             <label>End Flow</label>
         </rules>
     </decisions>
-    <description>Added Error for Created Records</description>
+    <description>HRP-13690 Source field is not getting populated during plan a drive V3</description>
     <dynamicChoiceSets>
         <name>AcceptsAutomation</name>
         <dataType>Picklist</dataType>
@@ -1780,6 +1964,32 @@
         <expression>{!Get_Account.Internal_Name__c} + &quot;, &quot; + {!varSiteBuildingName}</expression>
     </formulas>
     <formulas>
+        <name>OpportunitySuccessMessage</name>
+        <dataType>String</dataType>
+        <expression>IF(
+ISBLANK({!seriesStartDate}), 
+&quot;The Opportunity record was&quot;, 
+TEXT({!TotalCountofRecurringDrives})+&quot; Opportunity records were&quot;)</expression>
+    </formulas>
+    <formulas>
+        <name>Recurring_Drive_Async_Limit</name>
+        <dataType>Number</dataType>
+        <expression>VALUE({!$Label.Recurring_Drive_Async_Limit})</expression>
+        <scale>0</scale>
+    </formulas>
+    <formulas>
+        <name>RecurringDriveLimit</name>
+        <dataType>Number</dataType>
+        <expression>VALUE({!$Label.Recurring_Drive_Limit})</expression>
+        <scale>0</scale>
+    </formulas>
+    <formulas>
+        <name>remainingOverTheLimit</name>
+        <dataType>Number</dataType>
+        <expression>{!TotalCountofRecurringDrives}-{!RecurringDriveLimit}</expression>
+        <scale>0</scale>
+    </formulas>
+    <formulas>
         <name>selectedDriveNameDefault</name>
         <dataType>String</dataType>
         <expression>BLANKVALUE({!varSelectedDriveName},&#39;&#39;)</expression>
@@ -1809,6 +2019,13 @@ MOD(({!For_Each_Date_in_Recurring_Series} - 85) - DATE(1900, 1, 6), 7),
         <scale>0</scale>
     </formulas>
     <formulas>
+        <description>Ensures to return 0 if template value is null</description>
+        <name>varDoubleRedFromTemplate</name>
+        <dataType>Number</dataType>
+        <expression>BLANKVALUE({!varSelectedTemplatedProjectedReds}, 0)</expression>
+        <scale>0</scale>
+    </formulas>
+    <formulas>
         <name>varFinalAcceptAutomation</name>
         <dataType>String</dataType>
         <expression>If(IsBlank({!Selected_Account_Accept_Automation}), Text({!Get_Account.Accepts_Automation2__c}), {!Selected_Account_Accept_Automation})</expression>
@@ -1822,6 +2039,18 @@ MOD(({!For_Each_Date_in_Recurring_Series} - 85) - DATE(1900, 1, 6), 7),
         <name>varFinalAccountType</name>
         <dataType>String</dataType>
         <expression>If(IsBlank({!Selected_Account_Type}), Text({!Get_Account.Type}), {!Selected_Account_Type})</expression>
+    </formulas>
+    <formulas>
+        <name>varFinalDoubleRedProcedure</name>
+        <dataType>Number</dataType>
+        <expression>BLANKVALUE({!Double_Red_Procedures}, 0)</expression>
+        <scale>0</scale>
+    </formulas>
+    <formulas>
+        <name>varFinalWholeBloodProcedure</name>
+        <dataType>Number</dataType>
+        <expression>BLANKVALUE({!Whole_Blood_Procedures1}, 0)</expression>
+        <scale>0</scale>
     </formulas>
     <formulas>
         <name>varLocationTypeFormula</name>
@@ -1859,6 +2088,13 @@ MOD(({!Drive_Date} - {!Get_Opportunity_Date_MetaData.Days_from_Drive_Date__c}) -
 {!Drive_Date}-{!Get_Opportunity_Date_MetaData.Days_from_Drive_Date__c})</expression>
     </formulas>
     <formulas>
+        <description>Ensures to return 0 if template value is null</description>
+        <name>varWholeBloodFromTemplate</name>
+        <dataType>Number</dataType>
+        <expression>BLANKVALUE({!varSelectedTemplateWBProceduresProjected}, 0)</expression>
+        <scale>0</scale>
+    </formulas>
+    <formulas>
         <name>WebStart</name>
         <dataType>Date</dataType>
         <expression>{!Drive_Date} - 30</expression>
@@ -1869,21 +2105,51 @@ MOD(({!Drive_Date} - {!Get_Opportunity_Date_MetaData.Days_from_Drive_Date__c}) -
         <name>For_Each_Date_in_Recurring_Series</name>
         <label>For Each Date in Recurring Series</label>
         <locationX>1795</locationX>
-        <locationY>435</locationY>
+        <locationY>579</locationY>
         <collectionReference>RecurringDateCollection</collectionReference>
         <iterationOrder>Asc</iterationOrder>
         <nextValueConnector>
             <targetReference>Assign_Opp</targetReference>
         </nextValueConnector>
         <noMoreValuesConnector>
-            <targetReference>Assign_Total_Number_of_Drives</targetReference>
+            <targetReference>FinalConfirmationForRecurringSeries</targetReference>
+        </noMoreValuesConnector>
+    </loops>
+    <loops>
+        <description>ForEachSiteCollectionOp</description>
+        <name>ForEachSiteCollectionOp</name>
+        <label>ForEachSiteCollectionOp</label>
+        <locationX>1686</locationX>
+        <locationY>369</locationY>
+        <collectionReference>getSiteCollectionOpRecordsRecurring</collectionReference>
+        <iterationOrder>Asc</iterationOrder>
+        <nextValueConnector>
+            <targetReference>LoopAllDriveDates</targetReference>
+        </nextValueConnector>
+        <noMoreValuesConnector>
+            <targetReference>For_Each_Date_in_Recurring_Series</targetReference>
+        </noMoreValuesConnector>
+    </loops>
+    <loops>
+        <description>LoopAllDriveDates and check if any of dates fall with in non collection area site collection op record</description>
+        <name>LoopAllDriveDates</name>
+        <label>LoopAllDriveDates</label>
+        <locationX>1677</locationX>
+        <locationY>208</locationY>
+        <collectionReference>RecurringDateCollection</collectionReference>
+        <iterationOrder>Asc</iterationOrder>
+        <nextValueConnector>
+            <targetReference>isDriveFallingInNonCollectionOp</targetReference>
+        </nextValueConnector>
+        <noMoreValuesConnector>
+            <targetReference>ForEachSiteCollectionOp</targetReference>
         </noMoreValuesConnector>
     </loops>
     <loops>
         <name>Recurring_Series_Date_Collection</name>
         <label>Recurring Series Date Collection</label>
-        <locationX>232</locationX>
-        <locationY>99</locationY>
+        <locationX>149</locationX>
+        <locationY>146</locationY>
         <collectionReference>RecurringDateCollection</collectionReference>
         <iterationOrder>Asc</iterationOrder>
         <nextValueConnector>
@@ -1915,8 +2181,8 @@ MOD(({!Drive_Date} - {!Get_Opportunity_Date_MetaData.Days_from_Drive_Date__c}) -
     <recordCreates>
         <name>Create_Opportunity_Open_To_Public</name>
         <label>Create Opportunity Open To Public</label>
-        <locationX>2233</locationX>
-        <locationY>471</locationY>
+        <locationX>2145</locationX>
+        <locationY>614</locationY>
         <connector>
             <targetReference>Is_the_matching_template_inactive</targetReference>
         </connector>
@@ -1929,7 +2195,7 @@ MOD(({!Drive_Date} - {!Get_Opportunity_Date_MetaData.Days_from_Drive_Date__c}) -
         <name>Create_Opportunity_Single_Record</name>
         <label>Create Opportunity Single Record</label>
         <locationX>2008</locationX>
-        <locationY>737</locationY>
+        <locationY>881</locationY>
         <connector>
             <targetReference>Is_the_matching_template_inactive</targetReference>
         </connector>
@@ -2065,7 +2331,7 @@ MOD(({!Drive_Date} - {!Get_Opportunity_Date_MetaData.Days_from_Drive_Date__c}) -
         <inputAssignments>
             <field>Source__c</field>
             <value>
-                <stringValue>Adhoc</stringValue>
+                <elementReference>Source</elementReference>
             </value>
         </inputAssignments>
         <inputAssignments>
@@ -2089,7 +2355,7 @@ MOD(({!Drive_Date} - {!Get_Opportunity_Date_MetaData.Days_from_Drive_Date__c}) -
         <inputAssignments>
             <field>WB_Projected_Procedures__c</field>
             <value>
-                <elementReference>Whole_Blood_Procedures1</elementReference>
+                <elementReference>varFinalWholeBloodProcedure</elementReference>
             </value>
         </inputAssignments>
         <inputAssignments>
@@ -2101,7 +2367,7 @@ MOD(({!Drive_Date} - {!Get_Opportunity_Date_MetaData.Days_from_Drive_Date__c}) -
         <inputAssignments>
             <field>X2RBC_Projected_Procedures__c</field>
             <value>
-                <elementReference>Double_Red_Procedures</elementReference>
+                <elementReference>varFinalDoubleRedProcedure</elementReference>
             </value>
         </inputAssignments>
         <object>Opportunity</object>
@@ -2111,7 +2377,7 @@ MOD(({!Drive_Date} - {!Get_Opportunity_Date_MetaData.Days_from_Drive_Date__c}) -
         <name>Get_Account</name>
         <label>Get Account</label>
         <locationX>220</locationX>
-        <locationY>579</locationY>
+        <locationY>723</locationY>
         <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
         <connector>
             <targetReference>Validate_Account</targetReference>
@@ -2135,7 +2401,7 @@ MOD(({!Drive_Date} - {!Get_Opportunity_Date_MetaData.Days_from_Drive_Date__c}) -
         <name>Get_Blood_Drive_Opp_Record_Type</name>
         <label>Get Blood Drive Opp Record Type</label>
         <locationX>143</locationX>
-        <locationY>723</locationY>
+        <locationY>867</locationY>
         <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
         <connector>
             <targetReference>Get_Profile_Info</targetReference>
@@ -2159,7 +2425,7 @@ MOD(({!Drive_Date} - {!Get_Opportunity_Date_MetaData.Days_from_Drive_Date__c}) -
         <name>Get_Location_Account</name>
         <label>Get Location Account</label>
         <locationX>506</locationX>
-        <locationY>745</locationY>
+        <locationY>889</locationY>
         <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
         <connector>
             <targetReference>Account_Lost_or_Defunct</targetReference>
@@ -2198,7 +2464,7 @@ MOD(({!Drive_Date} - {!Get_Opportunity_Date_MetaData.Days_from_Drive_Date__c}) -
         <name>Get_Opportunity_Date_MetaData</name>
         <label>Get Opportunity Date MetaData</label>
         <locationX>50</locationX>
-        <locationY>577</locationY>
+        <locationY>721</locationY>
         <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
         <connector>
             <targetReference>Get_Blood_Drive_Opp_Record_Type</targetReference>
@@ -2222,7 +2488,7 @@ MOD(({!Drive_Date} - {!Get_Opportunity_Date_MetaData.Days_from_Drive_Date__c}) -
         <name>Get_Profile_Info</name>
         <label>Get Profile Info</label>
         <locationX>304</locationX>
-        <locationY>745</locationY>
+        <locationY>889</locationY>
         <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
         <connector>
             <targetReference>Get_Account</targetReference>
@@ -2242,10 +2508,46 @@ MOD(({!Drive_Date} - {!Get_Opportunity_Date_MetaData.Days_from_Drive_Date__c}) -
         <storeOutputAutomatically>true</storeOutputAutomatically>
     </recordLookups>
     <recordLookups>
+        <description>getSiteCollectionOpRecords for non recurring selection</description>
+        <name>Get_Site_Collection_Operation_Records</name>
+        <label>Get Site Collection Operation Records</label>
+        <locationX>1194</locationX>
+        <locationY>1139</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>IsSiteCollectionOpNonCollectionArea</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>sked_Site__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>varSiteId</elementReference>
+            </value>
+        </filters>
+        <filters>
+            <field>sked_Start_Date__c</field>
+            <operator>LessThanOrEqualTo</operator>
+            <value>
+                <elementReference>Drive_Date</elementReference>
+            </value>
+        </filters>
+        <filters>
+            <field>sked_End_Date__c</field>
+            <operator>GreaterThanOrEqualTo</operator>
+            <value>
+                <elementReference>Drive_Date</elementReference>
+            </value>
+        </filters>
+        <getFirstRecordOnly>true</getFirstRecordOnly>
+        <object>sked_Site_Collection_Operation__c</object>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+    <recordLookups>
         <name>Get_Site_Details</name>
         <label>Get Site Details</label>
         <locationX>1082</locationX>
-        <locationY>115</locationY>
+        <locationY>259</locationY>
         <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
         <connector>
             <targetReference>Set_Location_Type</targetReference>
@@ -2272,7 +2574,7 @@ MOD(({!Drive_Date} - {!Get_Opportunity_Date_MetaData.Days_from_Drive_Date__c}) -
         <name>getMatchingTemplates</name>
         <label>getMatchingTemplates</label>
         <locationX>851</locationX>
-        <locationY>172</locationY>
+        <locationY>316</locationY>
         <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
         <connector>
             <targetReference>AssignTemplateCount</targetReference>
@@ -2314,7 +2616,7 @@ MOD(({!Drive_Date} - {!Get_Opportunity_Date_MetaData.Days_from_Drive_Date__c}) -
         <name>getSelectedTemplateProperties</name>
         <label>getSelectedTemplateProperties</label>
         <locationX>1357</locationX>
-        <locationY>419</locationY>
+        <locationY>563</locationY>
         <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
         <connector>
             <targetReference>PickSelectedTemplate</targetReference>
@@ -2331,12 +2633,34 @@ MOD(({!Drive_Date} - {!Get_Opportunity_Date_MetaData.Days_from_Drive_Date__c}) -
         <object>Opportunity</object>
         <storeOutputAutomatically>true</storeOutputAutomatically>
     </recordLookups>
+    <recordLookups>
+        <description>getSiteCollectionOpRecords for Recurring series</description>
+        <name>getSiteCollectionOpRecordsRecurring</name>
+        <label>getSiteCollectionOpRecordsRecurring</label>
+        <locationX>1567</locationX>
+        <locationY>642</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>NoSiteCollectionOpRecordsFound</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>sked_Site__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>varSiteId</elementReference>
+            </value>
+        </filters>
+        <getFirstRecordOnly>false</getFirstRecordOnly>
+        <object>sked_Site_Collection_Operation__c</object>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
     <recordUpdates>
         <description>Update Account to ReActivate Status</description>
         <name>Update_Account_to_ReActivate_Status</name>
         <label>Update Account to ReActivate Status</label>
         <locationX>947</locationX>
-        <locationY>581</locationY>
+        <locationY>725</locationY>
         <connector>
             <targetReference>Create_New_Mobile_Drive</targetReference>
         </connector>
@@ -2346,7 +2670,7 @@ MOD(({!Drive_Date} - {!Get_Opportunity_Date_MetaData.Days_from_Drive_Date__c}) -
         <name>Update_Template_to_Active</name>
         <label>Update Template to Active</label>
         <locationX>2297</locationX>
-        <locationY>1129</locationY>
+        <locationY>1273</locationY>
         <connector>
             <targetReference>Opportunity_Confirmation</targetReference>
         </connector>
@@ -2371,7 +2695,7 @@ MOD(({!Drive_Date} - {!Get_Opportunity_Date_MetaData.Days_from_Drive_Date__c}) -
         <name>Account_Validation_Failed</name>
         <label>Account Validation Failed</label>
         <locationX>417</locationX>
-        <locationY>927</locationY>
+        <locationY>1071</locationY>
         <allowBack>true</allowBack>
         <allowFinish>true</allowFinish>
         <allowPause>true</allowPause>
@@ -2387,7 +2711,7 @@ MOD(({!Drive_Date} - {!Get_Opportunity_Date_MetaData.Days_from_Drive_Date__c}) -
         <name>Create_New_Drive</name>
         <label>Create New Drive</label>
         <locationX>1046</locationX>
-        <locationY>542</locationY>
+        <locationY>686</locationY>
         <allowBack>true</allowBack>
         <allowFinish>true</allowFinish>
         <allowPause>false</allowPause>
@@ -2450,6 +2774,7 @@ MOD(({!Drive_Date} - {!Get_Opportunity_Date_MetaData.Days_from_Drive_Date__c}) -
                     </defaultValue>
                     <fieldText>Drive Date</fieldText>
                     <fieldType>InputField</fieldType>
+                    <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
                     <isRequired>true</isRequired>
                     <validationRule>
                         <errorMessage>&lt;p&gt;&lt;span style=&quot;color: rgb(244, 0, 0); font-family: Arial, Helvetica, sans-serif; font-size: 12px; background-color: rgb(255, 255, 255);&quot;&gt;Drives may not be scheduled for dates prior to today&#39;s date and Drive date cannot be greater than site end date {!varSiteEndDate}&lt;/span&gt;&lt;/p&gt;</errorMessage>
@@ -2475,6 +2800,7 @@ MOD(({!Drive_Date} - {!Get_Opportunity_Date_MetaData.Days_from_Drive_Date__c}) -
                     <defaultSelectedChoiceReference>selectedTemplateStartTimeDefault</defaultSelectedChoiceReference>
                     <fieldText>Start Time</fieldText>
                     <fieldType>DropdownBox</fieldType>
+                    <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
                     <isRequired>true</isRequired>
                 </fields>
                 <fields>
@@ -2485,16 +2811,18 @@ MOD(({!Drive_Date} - {!Get_Opportunity_Date_MetaData.Days_from_Drive_Date__c}) -
                     <defaultSelectedChoiceReference>selectedTemplateFlowEndTimeDefault</defaultSelectedChoiceReference>
                     <fieldText>End Time</fieldText>
                     <fieldType>DropdownBox</fieldType>
+                    <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
                     <isRequired>true</isRequired>
                 </fields>
                 <fields>
                     <name>Whole_Blood_Procedures1</name>
                     <dataType>Number</dataType>
                     <defaultValue>
-                        <elementReference>varSelectedTemplateWBProceduresProjected</elementReference>
+                        <elementReference>varWholeBloodFromTemplate</elementReference>
                     </defaultValue>
                     <fieldText>Whole Blood Procedures</fieldText>
                     <fieldType>InputField</fieldType>
+                    <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
                     <isRequired>true</isRequired>
                     <scale>0</scale>
                 </fields>
@@ -2502,10 +2830,11 @@ MOD(({!Drive_Date} - {!Get_Opportunity_Date_MetaData.Days_from_Drive_Date__c}) -
                     <name>Double_Red_Procedures</name>
                     <dataType>Number</dataType>
                     <defaultValue>
-                        <elementReference>varSelectedTemplatedProjectedReds</elementReference>
+                        <elementReference>varDoubleRedFromTemplate</elementReference>
                     </defaultValue>
                     <fieldText>Double Red Procedures</fieldText>
                     <fieldType>InputField</fieldType>
+                    <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
                     <isRequired>true</isRequired>
                     <scale>0</scale>
                     <visibilityRule>
@@ -2534,6 +2863,7 @@ MOD(({!Drive_Date} - {!Get_Opportunity_Date_MetaData.Days_from_Drive_Date__c}) -
                     </defaultValue>
                     <fieldText>Anticipated Registered Donors</fieldText>
                     <fieldType>InputField</fieldType>
+                    <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
                     <isRequired>true</isRequired>
                     <scale>0</scale>
                 </fields>
@@ -2556,6 +2886,7 @@ MOD(({!Drive_Date} - {!Get_Opportunity_Date_MetaData.Days_from_Drive_Date__c}) -
                     <defaultSelectedChoiceReference>Current_Industry_Code</defaultSelectedChoiceReference>
                     <fieldText>Account Industry Code</fieldText>
                     <fieldType>DropdownBox</fieldType>
+                    <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
                     <isRequired>true</isRequired>
                     <visibilityRule>
                         <conditionLogic>and</conditionLogic>
@@ -2583,6 +2914,7 @@ MOD(({!Drive_Date} - {!Get_Opportunity_Date_MetaData.Days_from_Drive_Date__c}) -
                     <defaultSelectedChoiceReference>Current_Account_Type</defaultSelectedChoiceReference>
                     <fieldText>Account Type</fieldText>
                     <fieldType>DropdownBox</fieldType>
+                    <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
                     <isRequired>true</isRequired>
                     <visibilityRule>
                         <conditionLogic>and</conditionLogic>
@@ -2612,6 +2944,7 @@ MOD(({!Drive_Date} - {!Get_Opportunity_Date_MetaData.Days_from_Drive_Date__c}) -
                     </defaultValue>
                     <fieldText>Open To Public</fieldText>
                     <fieldType>DropdownBox</fieldType>
+                    <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
                     <isRequired>true</isRequired>
                 </fields>
                 <fields>
@@ -2623,6 +2956,18 @@ MOD(({!Drive_Date} - {!Get_Opportunity_Date_MetaData.Days_from_Drive_Date__c}) -
                     </defaultValue>
                     <fieldText>Online Scheduling Enabled</fieldText>
                     <fieldType>DropdownBox</fieldType>
+                    <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
+                    <isRequired>true</isRequired>
+                </fields>
+                <fields>
+                    <name>Source</name>
+                    <choiceReferences>Opportunity_Source_Adhoc</choiceReferences>
+                    <choiceReferences>Opportunity_Source_Business_Planning</choiceReferences>
+                    <dataType>String</dataType>
+                    <defaultSelectedChoiceReference>Opportunity_Source_Adhoc</defaultSelectedChoiceReference>
+                    <fieldText>Source</fieldText>
+                    <fieldType>DropdownBox</fieldType>
+                    <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
                     <isRequired>true</isRequired>
                 </fields>
                 <fields>
@@ -2639,6 +2984,7 @@ MOD(({!Drive_Date} - {!Get_Opportunity_Date_MetaData.Days_from_Drive_Date__c}) -
                     <fieldText>Drive Keyword</fieldText>
                     <fieldType>InputField</fieldType>
                     <helpText>&lt;p&gt;&lt;span style=&quot;color: rgb(23, 43, 77); font-family: -apple-system, &amp;quot;system-ui&amp;quot;, &amp;quot;Segoe UI&amp;quot;, Roboto, Oxygen, Ubuntu, &amp;quot;Fira Sans&amp;quot;, &amp;quot;Droid Sans&amp;quot;, &amp;quot;Helvetica Neue&amp;quot;, sans-serif; font-size: 14px; background-color: rgb(255, 255, 255);&quot;&gt;Keywords are used to search for drives on RCB.org. Maximum 50 characters, not required to be unique; not case sensitive; excludes numbers; &#39;and&#39;, &#39;or&#39;, &#39;left&#39;, &#39;right&#39; as standalone words; special characters.&lt;/span&gt;&lt;/p&gt;</helpText>
+                    <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
                     <isRequired>false</isRequired>
                     <validationRule>
                         <errorMessage>&lt;p&gt;&lt;span style=&quot;font-size: 11.36px; font-family: Arial, Helvetica, sans-serif; color: rgb(0, 0, 0);&quot;&gt;Keywords are recommended to be 50 letters or less.&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot;font-size: 11.36px; font-family: Arial, Helvetica, sans-serif; color: rgb(0, 0, 0);&quot;&gt;Keywords should begin by being letter based. They may have numbers after words; i.e. Bulldog2018, not 2018Bulldog&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot;font-size: 11.36px; font-family: Arial, Helvetica, sans-serif; color: rgb(0, 0, 0);&quot;&gt;Keywords should not allow special characters (*&amp;amp;?%)&lt;/span&gt;&lt;/p&gt;</errorMessage>
@@ -2654,6 +3000,7 @@ REGEX( {!Drive_Keyword}, &quot;[a-zA-Z0-9 ]+&quot;)</formulaExpression>
                     </defaultValue>
                     <fieldText>Accept 56 Day Rule Violation</fieldText>
                     <fieldType>InputField</fieldType>
+                    <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
                     <isRequired>true</isRequired>
                 </fields>
                 <inputParameters>
@@ -2674,7 +3021,7 @@ REGEX( {!Drive_Keyword}, &quot;[a-zA-Z0-9 ]+&quot;)</formulaExpression>
         <name>Create_New_Mobile_Drive</name>
         <label>Plan New Mobile Drive</label>
         <locationX>792</locationX>
-        <locationY>547</locationY>
+        <locationY>691</locationY>
         <allowBack>true</allowBack>
         <allowFinish>true</allowFinish>
         <allowPause>false</allowPause>
@@ -2694,6 +3041,7 @@ REGEX( {!Drive_Keyword}, &quot;[a-zA-Z0-9 ]+&quot;)</formulaExpression>
             </defaultValue>
             <fieldText>Account</fieldText>
             <fieldType>InputField</fieldType>
+            <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
             <isRequired>true</isRequired>
         </fields>
         <fields>
@@ -2704,6 +3052,7 @@ REGEX( {!Drive_Keyword}, &quot;[a-zA-Z0-9 ]+&quot;)</formulaExpression>
             </defaultValue>
             <fieldText>Site TBD</fieldText>
             <fieldType>InputField</fieldType>
+            <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
             <isRequired>true</isRequired>
         </fields>
         <fields>
@@ -2712,6 +3061,7 @@ REGEX( {!Drive_Keyword}, &quot;[a-zA-Z0-9 ]+&quot;)</formulaExpression>
             <dataType>String</dataType>
             <fieldText>Select Site</fieldText>
             <fieldType>RadioButtons</fieldType>
+            <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
             <isRequired>true</isRequired>
             <visibilityRule>
                 <conditionLogic>and</conditionLogic>
@@ -2732,6 +3082,7 @@ REGEX( {!Drive_Keyword}, &quot;[a-zA-Z0-9 ]+&quot;)</formulaExpression>
             <defaultSelectedChoiceReference>NOselection</defaultSelectedChoiceReference>
             <fieldText>Is this for recurring series</fieldText>
             <fieldType>DropdownBox</fieldType>
+            <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
             <isRequired>true</isRequired>
             <visibilityRule>
                 <conditionLogic>and</conditionLogic>
@@ -2751,7 +3102,7 @@ REGEX( {!Drive_Keyword}, &quot;[a-zA-Z0-9 ]+&quot;)</formulaExpression>
         <name>Defunct_Account</name>
         <label>Defunct Account</label>
         <locationX>605</locationX>
-        <locationY>743</locationY>
+        <locationY>887</locationY>
         <allowBack>true</allowBack>
         <allowFinish>true</allowFinish>
         <allowPause>false</allowPause>
@@ -2770,6 +3121,7 @@ REGEX( {!Drive_Keyword}, &quot;[a-zA-Z0-9 ]+&quot;)</formulaExpression>
             <dataType>String</dataType>
             <fieldText>Yes or No</fieldText>
             <fieldType>RadioButtons</fieldType>
+            <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
             <isRequired>true</isRequired>
         </fields>
         <pausedText>&lt;p&gt;&lt;span style=&quot;font-size: 16px;&quot;&gt;This Account is currently in a &quot;Defunct&quot; status. &lt;/span&gt;&lt;/p&gt;</pausedText>
@@ -2780,7 +3132,7 @@ REGEX( {!Drive_Keyword}, &quot;[a-zA-Z0-9 ]+&quot;)</formulaExpression>
         <name>End_Time_Cannot_be_Less_Than_Start_Time</name>
         <label>End Time Cannot be Less Than Start Time</label>
         <locationX>1082</locationX>
-        <locationY>1043</locationY>
+        <locationY>1187</locationY>
         <allowBack>true</allowBack>
         <allowFinish>false</allowFinish>
         <allowPause>false</allowPause>
@@ -2796,7 +3148,7 @@ REGEX( {!Drive_Keyword}, &quot;[a-zA-Z0-9 ]+&quot;)</formulaExpression>
         <name>EndFlowScreen</name>
         <label>EndFlowScreen</label>
         <locationX>753</locationX>
-        <locationY>1047</locationY>
+        <locationY>1191</locationY>
         <allowBack>false</allowBack>
         <allowFinish>true</allowFinish>
         <allowPause>false</allowPause>
@@ -2812,7 +3164,7 @@ REGEX( {!Drive_Keyword}, &quot;[a-zA-Z0-9 ]+&quot;)</formulaExpression>
         <name>Enter_Close_Date_and_Targeted_Ask_Date</name>
         <label>Enter Close Date and Targeted Ask Date</label>
         <locationX>1619</locationX>
-        <locationY>1093</locationY>
+        <locationY>1237</locationY>
         <allowBack>true</allowBack>
         <allowFinish>true</allowFinish>
         <allowPause>true</allowPause>
@@ -2829,6 +3181,7 @@ REGEX( {!Drive_Keyword}, &quot;[a-zA-Z0-9 ]+&quot;)</formulaExpression>
             <dataType>Date</dataType>
             <fieldText>Close Date</fieldText>
             <fieldType>InputField</fieldType>
+            <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
             <isRequired>true</isRequired>
             <validationRule>
                 <errorMessage>&lt;p&gt;Close Date cannot be after the Drive Date.&lt;/p&gt;</errorMessage>
@@ -2840,6 +3193,7 @@ REGEX( {!Drive_Keyword}, &quot;[a-zA-Z0-9 ]+&quot;)</formulaExpression>
             <dataType>Date</dataType>
             <fieldText>Target Ask Date</fieldText>
             <fieldType>InputField</fieldType>
+            <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
             <isRequired>true</isRequired>
             <validationRule>
                 <errorMessage>&lt;p&gt;Targeted Ask Date cannot be after the Drive Date and/or after the Close Date.&lt;/p&gt;</errorMessage>
@@ -2853,7 +3207,7 @@ REGEX( {!Drive_Keyword}, &quot;[a-zA-Z0-9 ]+&quot;)</formulaExpression>
         <name>Enter_Targeted_Ask_Date</name>
         <label>Enter Targeted Ask Date</label>
         <locationX>1770</locationX>
-        <locationY>867</locationY>
+        <locationY>1011</locationY>
         <allowBack>true</allowBack>
         <allowFinish>true</allowFinish>
         <allowPause>true</allowPause>
@@ -2870,6 +3224,7 @@ REGEX( {!Drive_Keyword}, &quot;[a-zA-Z0-9 ]+&quot;)</formulaExpression>
             <dataType>Date</dataType>
             <fieldText>Target Ask Date</fieldText>
             <fieldType>InputField</fieldType>
+            <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
             <isRequired>true</isRequired>
             <validationRule>
                 <errorMessage>&lt;p&gt;&lt;span style=&quot;color: rgb(240, 23, 11); background-color: rgb(255, 255, 255);&quot;&gt;Targeted Ask Date cannot be after the Drive Date and/or after the Close Date.&lt;/span&gt;&lt;/p&gt;</errorMessage>
@@ -2883,7 +3238,7 @@ REGEX( {!Drive_Keyword}, &quot;[a-zA-Z0-9 ]+&quot;)</formulaExpression>
         <name>Error_Plan_A_Drive_Screen1</name>
         <label>Error Plan A Drive Screen1</label>
         <locationX>2004</locationX>
-        <locationY>474</locationY>
+        <locationY>618</locationY>
         <allowBack>true</allowBack>
         <allowFinish>true</allowFinish>
         <allowPause>true</allowPause>
@@ -2899,7 +3254,7 @@ REGEX( {!Drive_Keyword}, &quot;[a-zA-Z0-9 ]+&quot;)</formulaExpression>
         <name>Error_Plan_A_Drive_Screen2</name>
         <label>Error Plan A Drive Screen2</label>
         <locationX>2491</locationX>
-        <locationY>358</locationY>
+        <locationY>502</locationY>
         <allowBack>true</allowBack>
         <allowFinish>true</allowFinish>
         <allowPause>true</allowPause>
@@ -2914,8 +3269,8 @@ REGEX( {!Drive_Keyword}, &quot;[a-zA-Z0-9 ]+&quot;)</formulaExpression>
     <screens>
         <name>Exception_Handler</name>
         <label>Exception Handler</label>
-        <locationX>1329</locationX>
-        <locationY>1082</locationY>
+        <locationX>1344</locationX>
+        <locationY>1305</locationY>
         <allowBack>true</allowBack>
         <allowFinish>true</allowFinish>
         <allowPause>true</allowPause>
@@ -2931,7 +3286,7 @@ REGEX( {!Drive_Keyword}, &quot;[a-zA-Z0-9 ]+&quot;)</formulaExpression>
         <name>Final_Confirmation</name>
         <label>Final Confirmation</label>
         <locationX>1847</locationX>
-        <locationY>569</locationY>
+        <locationY>713</locationY>
         <allowBack>true</allowBack>
         <allowFinish>true</allowFinish>
         <allowPause>false</allowPause>
@@ -2950,7 +3305,7 @@ REGEX( {!Drive_Keyword}, &quot;[a-zA-Z0-9 ]+&quot;)</formulaExpression>
         <name>FinalConfirmationForRecurringSeries</name>
         <label>FinalConfirmationForRecurringSeries</label>
         <locationX>2221</locationX>
-        <locationY>276</locationY>
+        <locationY>422</locationY>
         <allowBack>true</allowBack>
         <allowFinish>true</allowFinish>
         <allowPause>true</allowPause>
@@ -2968,8 +3323,8 @@ REGEX( {!Drive_Keyword}, &quot;[a-zA-Z0-9 ]+&quot;)</formulaExpression>
     <screens>
         <name>Invalid_Drive_Date_Header</name>
         <label>Invalid Drive Date</label>
-        <locationX>359</locationX>
-        <locationY>292</locationY>
+        <locationX>450</locationX>
+        <locationY>228</locationY>
         <allowBack>true</allowBack>
         <allowFinish>true</allowFinish>
         <allowPause>true</allowPause>
@@ -2985,7 +3340,7 @@ REGEX( {!Drive_Keyword}, &quot;[a-zA-Z0-9 ]+&quot;)</formulaExpression>
         <name>Invalid_Site_Address</name>
         <label>Invalid Site Address</label>
         <locationX>1291</locationX>
-        <locationY>386</locationY>
+        <locationY>530</locationY>
         <allowBack>true</allowBack>
         <allowFinish>true</allowFinish>
         <allowPause>true</allowPause>
@@ -3001,7 +3356,7 @@ REGEX( {!Drive_Keyword}, &quot;[a-zA-Z0-9 ]+&quot;)</formulaExpression>
         <name>Lost_Account</name>
         <label>Lost Account</label>
         <locationX>684</locationX>
-        <locationY>478</locationY>
+        <locationY>622</locationY>
         <allowBack>true</allowBack>
         <allowFinish>true</allowFinish>
         <allowPause>false</allowPause>
@@ -3020,6 +3375,7 @@ REGEX( {!Drive_Keyword}, &quot;[a-zA-Z0-9 ]+&quot;)</formulaExpression>
             <dataType>String</dataType>
             <fieldText>Yes or No</fieldText>
             <fieldType>RadioButtons</fieldType>
+            <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
             <isRequired>true</isRequired>
         </fields>
         <pausedText>&lt;p&gt;&lt;span style=&quot;font-size: 16px; color: rgb(0, 0, 0);&quot;&gt;This Account is currently marked as &quot;Lost&quot; because of either Market Optimization or a Red Cross Decision not to run. If you are sure you want to continue creating a new Drive for this Account, click &quot;Next.&quot; If you do not, close the page.&lt;/span&gt;&lt;/p&gt;</pausedText>
@@ -3027,10 +3383,28 @@ REGEX( {!Drive_Keyword}, &quot;[a-zA-Z0-9 ]+&quot;)</formulaExpression>
         <showHeader>false</showHeader>
     </screens>
     <screens>
+        <description>Error screen when more than Recurring limit</description>
+        <name>More_Than_Recurring_Limit_Screen</name>
+        <label>More Than Recurring Limit Screen</label>
+        <locationX>296</locationX>
+        <locationY>232</locationY>
+        <allowBack>true</allowBack>
+        <allowFinish>true</allowFinish>
+        <allowPause>false</allowPause>
+        <fields>
+            <name>more_than_Recurring_limit</name>
+            <fieldText>&lt;p&gt;&lt;span style=&quot;color: rgb(255, 0, 0);&quot;&gt;Exceeding the maximum number of recurring drives that can be created in a single invocation. Modify the recurring dates such that the total drive count is lesser or equal to the limit of {!RecurringDriveLimit}. Once you have added the first &lt;/span&gt;&lt;span style=&quot;color: rgb(255, 0, 0); background-color: rgb(255, 255, 255);&quot;&gt;{!RecurringDriveLimit} &lt;/span&gt;&lt;span style=&quot;color: rgb(255, 0, 0);&quot;&gt;drives, you can use the same plan a drive button again to create the remaining {!remainingOverTheLimit} drives&lt;/span&gt;&lt;/p&gt;</fieldText>
+            <fieldType>DisplayText</fieldType>
+        </fields>
+        <nextOrFinishButtonLabel>Cancel</nextOrFinishButtonLabel>
+        <showFooter>true</showFooter>
+        <showHeader>false</showHeader>
+    </screens>
+    <screens>
         <name>No_Templates_Found_Text</name>
         <label>No Templates Found</label>
         <locationX>1028</locationX>
-        <locationY>401</locationY>
+        <locationY>545</locationY>
         <allowBack>true</allowBack>
         <allowFinish>true</allowFinish>
         <allowPause>false</allowPause>
@@ -3043,16 +3417,32 @@ REGEX( {!Drive_Keyword}, &quot;[a-zA-Z0-9 ]+&quot;)</formulaExpression>
         <showHeader>false</showHeader>
     </screens>
     <screens>
+        <name>NonCollectionOpScreen</name>
+        <label>NonCollectionOpScreen</label>
+        <locationX>1436</locationX>
+        <locationY>106</locationY>
+        <allowBack>true</allowBack>
+        <allowFinish>true</allowFinish>
+        <allowPause>false</allowPause>
+        <fields>
+            <name>DisplayTextNonCollectionAreaRecords</name>
+            <fieldText>&lt;p&gt;&lt;strong style=&quot;background-color: rgb(255, 255, 255); font-size: 14px; font-family: -apple-system, &amp;quot;system-ui&amp;quot;, &amp;quot;Segoe UI&amp;quot;, Roboto, &amp;quot;Noto Sans&amp;quot;, Ubuntu, &amp;quot;Droid Sans&amp;quot;, &amp;quot;Helvetica Neue&amp;quot;, sans-serif; color: rgb(51, 51, 51);&quot;&gt;Based on Drive Date, there is not a valid Site Collection Operation (Non-Collection Area). Please contact your administrator for additional support.&lt;/strong&gt;&lt;/p&gt;</fieldText>
+            <fieldType>DisplayText</fieldType>
+        </fields>
+        <showFooter>true</showFooter>
+        <showHeader>false</showHeader>
+    </screens>
+    <screens>
         <name>Opportunity_Confirmation</name>
         <label>Opportunity Confirmation</label>
-        <locationX>2398</locationX>
-        <locationY>757</locationY>
+        <locationX>2490</locationX>
+        <locationY>1085</locationY>
         <allowBack>true</allowBack>
         <allowFinish>true</allowFinish>
         <allowPause>true</allowPause>
         <fields>
             <name>Confirmation</name>
-            <fieldText>&lt;p&gt;&lt;span style=&quot;color: rgb(71, 124, 234); font-size: 14px;&quot;&gt;The Opportunity record was successfully created.&lt;/span&gt;&lt;/p&gt;</fieldText>
+            <fieldText>&lt;p&gt;&lt;span style=&quot;font-size: 14px; color: rgb(71, 124, 234);&quot;&gt;{!OpportunitySuccessMessage} successfully created.&lt;/span&gt;&lt;/p&gt;</fieldText>
             <fieldType>DisplayText</fieldType>
         </fields>
         <showFooter>true</showFooter>
@@ -3062,7 +3452,7 @@ REGEX( {!Drive_Keyword}, &quot;[a-zA-Z0-9 ]+&quot;)</formulaExpression>
         <name>Pick_Template</name>
         <label>Pick Template</label>
         <locationX>1208</locationX>
-        <locationY>313</locationY>
+        <locationY>457</locationY>
         <allowBack>true</allowBack>
         <allowFinish>true</allowFinish>
         <allowPause>false</allowPause>
@@ -3091,6 +3481,7 @@ REGEX( {!Drive_Keyword}, &quot;[a-zA-Z0-9 ]+&quot;)</formulaExpression>
             <dataType>String</dataType>
             <fieldText>Matching Templates</fieldText>
             <fieldType>DropdownBox</fieldType>
+            <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
             <isRequired>true</isRequired>
         </fields>
         <showFooter>true</showFooter>
@@ -3099,13 +3490,13 @@ REGEX( {!Drive_Keyword}, &quot;[a-zA-Z0-9 ]+&quot;)</formulaExpression>
     <screens>
         <name>Recurring_Pattern</name>
         <label>Recurring Pattern</label>
-        <locationX>575</locationX>
-        <locationY>187</locationY>
+        <locationX>592</locationX>
+        <locationY>342</locationY>
         <allowBack>true</allowBack>
         <allowFinish>true</allowFinish>
         <allowPause>false</allowPause>
         <connector>
-            <targetReference>Recurring_Series_Date_Collection</targetReference>
+            <targetReference>Assign_Total_Number_of_Drives</targetReference>
         </connector>
         <fields>
             <name>lwcRecurringUI</name>
@@ -3216,10 +3607,26 @@ REGEX( {!Drive_Keyword}, &quot;[a-zA-Z0-9 ]+&quot;)</formulaExpression>
         <showHeader>true</showHeader>
     </screens>
     <screens>
+        <name>StopNonCollectionAreaDrive</name>
+        <label>StopNonCollectionAreaDrive</label>
+        <locationX>1418</locationX>
+        <locationY>1198</locationY>
+        <allowBack>true</allowBack>
+        <allowFinish>true</allowFinish>
+        <allowPause>false</allowPause>
+        <fields>
+            <name>TextNonCollectionArea</name>
+            <fieldText>&lt;p&gt;&lt;strong style=&quot;color: rgb(51, 51, 51); background-color: rgb(255, 255, 255); font-size: 14px; font-family: -apple-system, &amp;quot;system-ui&amp;quot;, &amp;quot;Segoe UI&amp;quot;, Roboto, &amp;quot;Noto Sans&amp;quot;, Ubuntu, &amp;quot;Droid Sans&amp;quot;, &amp;quot;Helvetica Neue&amp;quot;, sans-serif;&quot;&gt;Based on Drive Date, there is not a valid Site Collection Operation (Non-Collection Area). Please contact your administrator for additional support.&lt;/strong&gt;&lt;/p&gt;</fieldText>
+            <fieldType>DisplayText</fieldType>
+        </fields>
+        <showFooter>true</showFooter>
+        <showHeader>false</showHeader>
+    </screens>
+    <screens>
         <name>Template_Inactive_0</name>
         <label>Template Inactive</label>
         <locationX>2140</locationX>
-        <locationY>1002</locationY>
+        <locationY>1146</locationY>
         <allowBack>true</allowBack>
         <allowFinish>true</allowFinish>
         <allowPause>false</allowPause>
@@ -3236,7 +3643,7 @@ REGEX( {!Drive_Keyword}, &quot;[a-zA-Z0-9 ]+&quot;)</formulaExpression>
     </screens>
     <start>
         <locationX>282</locationX>
-        <locationY>452</locationY>
+        <locationY>596</locationY>
         <connector>
             <targetReference>Get_Opportunity_Date_MetaData</targetReference>
         </connector>

@@ -1,0 +1,55 @@
+<template>
+    <table class="slds-table slds-table_bordered slds-table_fixed-layout slds-tree slds-table_tree" role="treegrid">
+			<thead>
+				<tr>
+					<template for:each={columns} for:item="column">
+						<th key={column.fieldName} scope="col" width={column.initialWidth}>
+							<div class="slds-grid slds-grid_vertical-align-center slds-has-flexi-truncate">
+								<span class="slds-truncate" title={column.label}>{column.label}</span>
+							</div>
+						</th>
+					</template>
+				</tr>
+			</thead>
+			<tbody>
+				<template for:each={rows} for:item="rowData">
+					<tr key={rowData.id} aria-expanded={rowData.expanded} aria-level="1" class="slds-hint-parent">
+						<template for:each={rowData.cells} for:item="cellData" for:index="index">
+							<template if:true={cellData.expandable}>
+								<th key={cellData.fieldName} class="slds-tree__item" scope="row">
+									<button data-id={rowData.id} class="slds-button slds-button_icon slds-button_icon-x-small slds-m-right_x-small" aria-hidden="true" tabindex="-1" onclick={toggleExpand}>
+										<lightning-icon icon-name="utility:chevronright" size="x-small" aria-hidden="true" 
+											class="slds-button__icon slds-button__icon_small"></lightning-icon>
+										<span class="slds-assistive-text">Collapse</span>
+									</button>
+									<div class="slds-truncate" title={cellData.value}>{cellData.value}</div>
+								</th>
+							</template>
+							<template if:false={cellData.expandable}> 
+								<td key={cellData.id} class={cellData.class} data-id={cellData.id} role="gridcell" onclick={handleCellClick}>
+									<div class="slds-truncate">
+										<span>{cellData.value}</span>
+										<span>
+											<lightning-icon size="x-small" icon-name={cellData.iconName}></lightning-icon>
+										</span>
+									</div>
+								</td>
+							</template>
+						</template>
+					</tr>
+					<template if:true={rowData.expanded} for:each={rowData.children} for:item="childRowData">
+						<tr key={childRowData.key} aria-level="2" class="slds-hint-parent">
+							<template for:each={childRowData.cells} for:item="cellData" for:index="index">
+								<th if:false={index} key={cellData.fieldName} class="slds-tree__item" scope="row">
+									<div class="slds-truncate">{cellData.value}</div>
+								</th>
+								<td if:true={index} key={cellData.fieldName} class={cellData.class} data-id={cellData.id} role="gridcell" onclick={handleCellClick}>
+									<div class="slds-truncate">{cellData.value}</div>
+								</td>
+							</template>
+						</tr>
+					</template>
+				</template>
+			</tbody>
+    </table>
+</template>

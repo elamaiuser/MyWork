@@ -44,6 +44,9 @@ class resourceService extends dataService {
           let subQueryBuilder = query.getQueryBuilder("sked__Resource_Tag__c");
           subQueryBuilder.addCondition({template: "(sked_Role_Status__c = NULL OR sked_Role_Status__c = 'Active')"});
       }
+      if (query.includes(sObjectType.RESOURCE_OVERRIDE)) {
+        let subQueryBuilder = query.getQueryBuilder("sked__Resource_Override__c");
+      }
   }
 
   getPatternResources = (params) => auraProxy.getInstance().getPatternResources(params);

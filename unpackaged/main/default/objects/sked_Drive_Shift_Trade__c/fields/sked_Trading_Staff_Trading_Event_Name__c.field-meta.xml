@@ -1,11 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>sked_Trading_Staff_Trading_Event_Name__c</fullName>
+    <description>.</description>
     <externalId>false</externalId>
-    <formula>IF( ISPICKVAL(sked_Trading_Staff_Trading_Type__c, &#39;Drive Shift&#39;),  
-sked_Trading_Staff_Drive_Name__c, 
+    <formula>CASE(TEXT(sked_Trading_Staff_Trading_Type__c),
+&#39;Drive Shift&#39;, sked_Trading_Staff_Drive_Name__c,
+&#39;Activity&#39;, IF (
+NOT(ISBLANK(sked_Trading_Staff_NCE__r.sked_Activity_Title__c)),
+sked_Trading_Staff_NCE__r.sked_Activity_Title__c,
 sked_Trading_Staff_NCE__r.Name
-)</formula>
+),
+&#39;Available Day&#39;, &#39;Available Day&#39;,
+NULL)</formula>
     <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
     <label>Trading Staff Trading Event Name</label>
     <required>false</required>

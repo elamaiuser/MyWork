@@ -58,7 +58,7 @@
         <field>CONVERTED</field>
     </columns>
     <filter>
-        <booleanFilter>1 AND 2 AND 3</booleanFilter>
+        <booleanFilter>1 AND 2</booleanFilter>
         <criteriaItems>
             <column>STATUS</column>
             <columnToColumn>false</columnToColumn>
@@ -73,13 +73,6 @@
             <operator>equals</operator>
             <value>Lead.LSL</value>
         </criteriaItems>
-        <criteriaItems>
-            <column>Lead.Parent_Campaign__c</column>
-            <columnToColumn>false</columnToColumn>
-            <isUnlocked>true</isUnlocked>
-            <operator>equals</operator>
-            <value>Leaders Save Lives Summer 2022</value>
-        </criteriaItems>
         <language>en_US</language>
     </filter>
     <format>Matrix</format>
@@ -93,7 +86,7 @@
         <field>STATUS</field>
         <sortOrder>Asc</sortOrder>
     </groupingsDown>
-    <name>LSL Summer 2022 Leads by Stage</name>
+    <name>LSL Winter 2024 Leads by Stage</name>
     <params>
         <name>co</name>
         <value>1</value>
@@ -105,8 +98,8 @@
     <showSubTotals>true</showSubTotals>
     <timeFrameFilter>
         <dateColumn>CREATED_DATE</dateColumn>
-        <endDate>2022-09-01</endDate>
+        <endDate>2024-12-14</endDate>
         <interval>INTERVAL_CUSTOM</interval>
-        <startDate>2022-06-01</startDate>
+        <startDate>2024-09-09</startDate>
     </timeFrameFilter>
 </Report>

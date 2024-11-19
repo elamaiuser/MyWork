@@ -27,6 +27,16 @@
                 <label>Requesting User unqualified</label>
             </value>
             <value>
+                <fullName>Requesting User is declined from Account</fullName>
+                <default>false</default>
+                <label>Requesting User is declined from Account</label>
+            </value>
+            <value>
+                <fullName>Requesting User is declined from Site</fullName>
+                <default>false</default>
+                <label>Requesting User is declined from Site</label>
+            </value>
+            <value>
                 <fullName>Requesting User has a TAT Contention</fullName>
                 <default>false</default>
                 <label>Requesting User has a TAT Contention</label>
@@ -35,6 +45,11 @@
                 <fullName>Requesting User Drive is part of Linked Drive</fullName>
                 <default>false</default>
                 <label>Requesting User Drive is part of Linked Drive</label>
+            </value>
+            <value>
+                <fullName>Requesting User is already assigned to Trading User Event</fullName>
+                <default>false</default>
+                <label>Requesting User is already assigned to Trading User Event</label>
             </value>
             <value>
                 <fullName>Trading User exceeds Max Hours per week</fullName>
@@ -47,6 +62,16 @@
                 <label>Trading User unqualified</label>
             </value>
             <value>
+                <fullName>Trading User is declined from Account</fullName>
+                <default>false</default>
+                <label>Trading User is declined from Account</label>
+            </value>
+            <value>
+                <fullName>Trading User is declined from Site</fullName>
+                <default>false</default>
+                <label>Trading User is declined from Site</label>
+            </value>
+            <value>
                 <fullName>Trading User has a TAT Contention</fullName>
                 <default>false</default>
                 <label>Trading User has a TAT Contention</label>
@@ -55,6 +80,56 @@
                 <fullName>Trading User Drive is part of Linked Drive</fullName>
                 <default>false</default>
                 <label>Trading User Drive is part of Linked Drive</label>
+            </value>
+            <value>
+                <fullName>Trading User is already assigned to Requesting User Event</fullName>
+                <default>false</default>
+                <label>Trading User is already assigned to Requesting User Event</label>
+            </value>
+            <value>
+                <fullName>Group Activity Trade needs Approval</fullName>
+                <default>false</default>
+                <label>Group Activity Trade needs Approval</label>
+            </value>
+            <value>
+                <fullName>Requesting User overnight activity</fullName>
+                <default>false</default>
+                <label>Requesting User overnight activity</label>
+            </value>
+            <value>
+                <fullName>Trading User overnight activity</fullName>
+                <default>false</default>
+                <label>Trading User overnight activity</label>
+            </value>
+            <value>
+                <fullName>Requesting User has been temporarily relocated</fullName>
+                <default>false</default>
+                <label>Requesting User has been temporarily relocated</label>
+            </value>
+            <value>
+                <fullName>Trading User has been temporarily relocated</fullName>
+                <default>false</default>
+                <label>Trading User has been temporarily relocated</label>
+            </value>
+            <value>
+                <fullName>Requesting User is not available for Drive CO</fullName>
+                <default>false</default>
+                <label>Requesting User is not available for Drive CO</label>
+            </value>
+            <value>
+                <fullName>Trading User is not available for Drive CO</fullName>
+                <default>false</default>
+                <label>Trading User is not available for Drive CO</label>
+            </value>
+            <value>
+                <fullName>Trading User Missing Role</fullName>
+                <default>false</default>
+                <label>Trading User Missing Role</label>
+            </value>
+            <value>
+                <fullName>Requesting User Missing Role</fullName>
+                <default>false</default>
+                <label>Requesting User Missing Role</label>
             </value>
         </valueSetDefinition>
     </valueSet>

@@ -9,7 +9,7 @@
  * 									to this helper class so that it's reusable from multiple places.  For outbound emails,
  * 									the only way the "From" address can be configured for programatically generated emails
  * 									is via org wide email addresses.
- * 
+ * 08/05/24    Priti Jana           Added new method to get same day porevious year for HRP-12706
  ***********************************************************************************************************************/
 
 public with sharing class Helper {
@@ -677,22 +677,45 @@ public with sharing class Helper {
         DateTime dt = DateTime.newInstance(incomingDate, Time.newInstance(0, 0, 0, 0));
 
         String dayOfWeek = dt.format('EEEE');
-        //system.debug('incoming date is: ' + dt + 'day of week of incoming date is: ' + dayOfWeek);
         DateTime newDate = dt.addYears(1);
         String nextYearDayOfWeek = newDate.format('u');
-        //system.debug('next year date is: ' + newDate + 'new year day of week is: ' + nextYearDayOfWeek);
        
         for(Integer i=1; i<=7; i++){
             DateTime newDates = newDate.addDays(-i);
             String newDayOfWeek = newDates.format('EEEE');
-            //system.debug('newdates ' + newDates + 'new day of week ' + newDayOfWeek);
             if(dayOfWeek == newDayOfWeek){
-                //system.debug('they match: ' + dayOfWeek + '--' + newDayOfWeek);
                 dateNextYear = newDates;
                 break;
             }   
         }
         return dateNextYear;
+    }
+
+    /** HRP-12706 --> Starts Here
+     * getSameDayOfPrevYear subtract a year to a date and adjusts so that it falls on the same day
+     * @param   dt DateTime that we are subtracting one year from
+     * @return  a new date which is one year to dt
+     * @created August 2024
+     */
+    
+     public static DateTime getSameDayOfPrevYear(Date incomingDate) {
+        
+        Datetime datePrevYear;
+        DateTime dt = DateTime.newInstance(incomingDate, Time.newInstance(0, 0, 0, 0));
+
+        String dayOfWeek = dt.format('EEEE');
+        DateTime newDate = dt.addYears(-1);
+        String prevYearDayOfWeek = newDate.format('u');
+       
+        for(Integer i=1; i<=7; i++) {
+            DateTime newDates = newDate.addDays(i);
+            String newDayOfWeek = newDates.format('EEEE');
+            if(dayOfWeek == newDayOfWeek) {
+                datePrevYear = newDates;
+                break;
+            }   
+        }
+        return datePrevYear;
     }
     
     public static string getStartEndTimeLabelText(String incomingTimeValue){
@@ -1003,7 +1026,7 @@ public with sharing class Helper {
     */
     @TestVisible
     public static void sendEmail(Map<Exception,String> common_exception_map, Map<Id, String> dml_error_map, 
-                           List<string> toAddress, string orgWideEmailId, boolean addNoReplyMsg){
+                           List<string> toAddress, string orgWideEmailId, boolean addNoReplyMsg, String subject){
         try{
             if((dml_error_map!= null && dml_error_map.size() > 0) || (common_exception_map != null && common_exception_map.size() > 0)){
                 //String emailBody = '<html><table><thead><tr><th>Error Details</th><th>Record Id</th></tr></thead><tbody>';
@@ -1015,7 +1038,7 @@ public with sharing class Helper {
                     
                 if(dml_error_map.size() > 0){
                     for(Id recordId : dml_error_map.keySet()){
-                        emailBody = emailBody + dml_error_map.get(recordId);
+                        emailBody = emailBody + dml_error_map.get(recordId)+ '</td><td>'+recordId;
                     }
                 }
                 if(common_exception_map.size() > 0){
@@ -1033,15 +1056,11 @@ public with sharing class Helper {
                 }
                 message.toAddresses = toAddress;
                 message.optOutPolicy = 'FILTER';
-                message.subject = 'Error on updating of Resourses';
+                message.subject = subject;
                 message.setHtmlBody(emailBody);
                 Messaging.SingleEmailMessage[] messages =  new List<Messaging.SingleEmailMessage> {message};
-                Messaging.SendEmailResult[] results = Messaging.sendEmail(messages);
-                if (results[0].success) {
-                    System.debug('The email was sent successfully.');
-                } else {
-                    System.debug('The email failed to send: '+ results[0].errors[0].message);
-                }
+                String notificationkey = BSF_Constants.taskSubjectKeyMap.get('Error in CB Drive Creation');
+                BSF_EmailNotification.sendEmails(messages,notificationkey, NULL);
             }
         }catch(Exception expm){}
     }

@@ -3,7 +3,8 @@ import { classNames } from 'c/slwcUtils';
 
 const MODE = {
   CONFIRM: 'confirm',
-  ERROR: 'error'
+  ERROR: 'error',
+  SUCCESS: 'success',
 }
 
 export default class SlwcConfirmModal extends LightningElement {
@@ -39,20 +40,21 @@ export default class SlwcConfirmModal extends LightningElement {
   }
   
   get showCloseIcon() {
-    return this.error !== MODE.ERROR;
+    return this.mode !== MODE.ERROR && this.mode !== MODE.SUCCESS;
   }
 
   get customClass() {
     return {
       modalClass: classNames('slds-modal', `slds-modal_${this.size}`, {
         'slds-fade-in-open': this.isOpen,
-        'slds-modal--prompt':  this.mode === MODE.ERROR
+        'slds-modal--prompt':  this.mode === MODE.ERROR || this.mode === MODE.SUCCESS
       }),
       headerClass: classNames('slds-modal__header', {
-        'slds-theme--error slds-theme--alert-texture': this.mode === MODE.ERROR
+        'slds-theme--error slds-theme--alert-texture': this.mode === MODE.ERROR,
+        'slds-theme--success slds-theme--success-texture': this.mode === MODE.SUCCESS
       }),
       footerClass: classNames('slds-modal__footer', {
-        'slds-theme--default': this.mode === MODE.ERROR
+        'slds-theme--default': this.mode === MODE.ERROR || this.mode === MODE.SUCCESS
       }),
       backdropClass: classNames('slds-backdrop', {
         'slds-backdrop_open': this.isOpen

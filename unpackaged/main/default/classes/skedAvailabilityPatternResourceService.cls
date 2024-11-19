@@ -14,8 +14,8 @@ public with sharing class skedAvailabilityPatternResourceService extends skedDat
         if (query.availabilityPatternIds != NULL && !query.availabilityPatternIds.isEmpty()) {
             queryBuilder.addCondition('sked__Availability_Pattern__c IN {0}', query.availabilityPatternIds);
         }
-        queryBuilder.addCondition('sked_Start_Date__c <= {0}', endDate);
-        queryBuilder.addCondition('sked_End_Date__c >= {0}', startDate);
+        queryBuilder.addCondition('(sked_Start_Date__c = NULL OR sked_Start_Date__c <= {0})', endDate);
+        queryBuilder.addCondition('(sked_End_Date__c = NULL OR sked_End_Date__c >= {0})', startDate);
     }
 
     public List<string> getResourceIds(queryModel query) {

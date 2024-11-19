@@ -5,13 +5,11 @@ public class AccTeamUpdatePortfolioAssignQueue_Test
     
     @isTest static void testMethod1()
      {
-         List<PortfolioAssignmentUpdateEvent__e> publishEvent =new List<PortfolioAssignmentUpdateEvent__e>();
+         List<PortfolioAssignmentEvent__e> publishEvent =new List<PortfolioAssignmentEvent__e>();
          for(integer i=0;i<=10000;i++)
         {
-                        PortfolioAssignmentUpdateEvent__e eve = new PortfolioAssignmentUpdateEvent__e();
-                        eve.AccountTeamMemberId__c = 'teamMember'+i ;
-                        eve.StartDate__c=system.today().addDays(i);
-                        eve.EndDate__c=eve.StartDate__c.addDays(i+i); 
+                        PortfolioAssignmentEvent__e eve = new PortfolioAssignmentEvent__e();
+                        eve.Id__c = 'teamMember'+i ;
                     	publishEvent.add(eve);
         }
 		
@@ -25,14 +23,12 @@ public class AccTeamUpdatePortfolioAssignQueue_Test
     
     @isTest static void testMethod2()
      {
-         List<PortfolioAssignmentUpdateEvent__e> publishEvent =new List<PortfolioAssignmentUpdateEvent__e>();
+         List<PortfolioAssignmentEvent__e> publishEvent =new List<PortfolioAssignmentEvent__e>();
          for(integer i=0;i<10000;i++)
         {
-                        PortfolioAssignmentUpdateEvent__e eve = new PortfolioAssignmentUpdateEvent__e();
-                        eve.AccountTeamMemberId__c = 'teamMember'+i ;
-                        eve.StartDate__c=system.today().addDays(i);
-                        eve.EndDate__c=eve.StartDate__c.addDays(i+i); 
-                    	publishEvent.add(eve);
+                        PortfolioAssignmentEvent__e eve = new PortfolioAssignmentEvent__e();
+                        eve.Id__c = 'teamMember'+i ;
+                        publishEvent.add(eve);
         }
 		
          test.startTest();

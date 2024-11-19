@@ -1,0 +1,13 @@
+<template>
+    <ul>
+        <li class="slds-m-top_xx-small" for:each={value.drives} for:item="drive" key={drive.id}>
+            <div><c-slwc-drive-name drive={drive} hide-drive-indicator></c-slwc-drive-name></div>
+            <div>
+                <lightning-formatted-date-time value={drive.driveDate} year="numeric" month="short" day="2-digit" time-zone="UTC"></lightning-formatted-date-time>
+                <lightning-formatted-time class="slds-m-left_x-small" value={drive.startTime}></lightning-formatted-time>
+                <span class="slds-m-horizontal_xx-small">-</span>
+                <lightning-formatted-time value={drive.endTime}></lightning-formatted-time>
+            </div>
+        </li>
+    </ul>
+</template>

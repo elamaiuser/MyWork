@@ -87,7 +87,7 @@
         <field>Lead.Region_Name__c</field>
         <sortOrder>Asc</sortOrder>
     </groupingsDown>
-    <name>LSL Summer 2022 Leads Converted Region</name>
+    <name>LSL Winter 2024 Leads Converted Region</name>
     <params>
         <name>co</name>
         <value>1</value>
@@ -98,9 +98,9 @@
     <showGrandTotal>true</showGrandTotal>
     <showSubTotals>true</showSubTotals>
     <timeFrameFilter>
-        <dateColumn>CONVERTED_DATE</dateColumn>
-        <endDate>2022-09-01</endDate>
+        <dateColumn>CREATED_DATE</dateColumn>
+        <endDate>2024-12-14</endDate>
         <interval>INTERVAL_CUSTOM</interval>
-        <startDate>2022-06-01</startDate>
+        <startDate>2024-09-09</startDate>
     </timeFrameFilter>
 </Report>

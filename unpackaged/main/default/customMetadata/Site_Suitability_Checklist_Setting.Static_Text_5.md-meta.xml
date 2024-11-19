@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomMetadata xmlns="http://soap.sforce.com/2006/04/metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <label>Static_Text_5</label>
+    <protected>false</protected>
+    <values>
+        <field>Additional_Text__c</field>
+        <value xsi:nil="true" />
+    </values>
+    <values>
+        <field>Category__c</field>
+        <value xsi:type="xsd:string">Whom to Meet(enter Drive Service Role on Blood Drive Opportunity)</value>
+    </values>
+    <values>
+        <field>IsCheckbox__c</field>
+        <value xsi:type="xsd:boolean">false</value>
+    </values>
+    <values>
+        <field>UI_Text__c</field>
+        <value xsi:type="xsd:string">The Person who has been designated the role of Whom to Meet needs to be at the site upon staff&#39;s arrival to direct Red Cross vehicles to parking areas, including SCU&#39;s and to explain any pertinent emergency protocols (fire alarms, disaster drills, active shooter).</value>
+    </values>
+</CustomMetadata>

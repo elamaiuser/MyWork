@@ -8,27 +8,6 @@
         <plural>true</plural>
         <value>Staffing Budgets</value>
     </caseValues>
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     <layouts>
         <layout>Staffing Budget Layout</layout>
         <sections>
@@ -36,5 +15,27 @@
             <section>Custom Links</section>
         </sections>
     </layouts>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     <startsWith>Consonant</startsWith>
 </CustomObjectTranslation>

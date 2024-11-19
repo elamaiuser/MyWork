@@ -12,6 +12,7 @@ private class skedRoleTimeVariance_Test {
         
         sked_Role_Time_Variance__c roleTimeVariance = new sked_Role_Time_Variance__c(
             sked_Buffer_Type__c = 'Add',
+            sked_Days_Of_Week__c = 'Monday;Tuesday;Wednesday;Thursday;Friday;Saturday;Sunday',
             sked_Effective_End_Date__c = testDataFactory.summary.endDate,
             sked_Effective_Start_Date__c = testDataFactory.summary.startDate,
         	sked_Location__c = testLocation1.Id,

@@ -8,25 +8,6 @@
         <plural>true</plural>
         <value>Chapter/Blood Regions</value>
     </caseValues>
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     <layouts>
         <layout>Blood Region Layout</layout>
         <sections>
@@ -49,5 +30,28 @@
         <label><!-- Chapter --></label>
         <name>Chapter</name>
     </recordTypes>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     <startsWith>Consonant</startsWith>
+    <validationRules>
+        <errorMessage><!-- Chapter name must be within 57 characters. --></errorMessage>
+        <name>Chapter_Name_Maxlength_to_57_Characters</name>
+    </validationRules>
 </CustomObjectTranslation>

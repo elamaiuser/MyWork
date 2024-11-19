@@ -24,6 +24,8 @@ export default class SlwcDriveOptimizeDriveList extends LightningElement {
     @track optimizeConfirmModalData = {};
     @track dispatchDriveModalData = {};
     @track linkedDriveModalData = {};
+    isEditable = false;
+    draftValues = [];
 
     @track selectedDriveIdsMap = {
         [OPTIMIZATION_STATUS.PENDING]: [],
@@ -162,6 +164,7 @@ export default class SlwcDriveOptimizeDriveList extends LightningElement {
         results.push({label: 'Max Shift End', fieldName: 'maxShiftEnd', type: 'date', typeAttributes: { hour: "numeric", minute: "2-digit", timeZone: TIME_ZONE }, hideDefaultActions: true } );
         results.push({label: 'Staff Requested', fieldName: 'totalStaffRequested', type: 'number', cellAttributes: { alignment: 'left' }, hideDefaultActions: true } );
         results.push({label: 'Staff Scheduled', fieldName: 'staffAllocated', type: 'number', cellAttributes: { alignment: 'left' }, hideDefaultActions: true } );
+        results.push({label: 'Exclude From Optimizer', fieldName: 'excludeFromOptimizer', type: 'boolean', hideDefaultActions:true, editable: this.isEditable } );
         return results;
     }
 
@@ -211,7 +214,7 @@ export default class SlwcDriveOptimizeDriveList extends LightningElement {
             }
             
             let optimizationStatuses = [OPTIMIZATION_STATUS.PENDING, OPTIMIZATION_STATUS.IN_PROGRESS, OPTIMIZATION_STATUS.COMPLETED, OPTIMIZATION_STATUS.ERROR];
-            optimizationStatuses.forEach((status) => {
+            optimizationStatuses.forEach((status) => {                
                 let statusGroup = {
                     class: "slds-grid slds-grid_vertical-align-center scheduling-status__filter-item",
                     status: status,
@@ -313,9 +316,7 @@ export default class SlwcDriveOptimizeDriveList extends LightningElement {
                 this.resetSelectedDriveIds();
                 this.filterDriveList(this.selectedStatus || OPTIMIZATION_STATUS.PENDING);
             })
-            .catch((error) => {
-                console.log(error);
-            })
+            .catch((error) => this.exceptionHandler(error))
             .finally(() => {
                 this.hideLoading();
             });
@@ -371,17 +372,18 @@ export default class SlwcDriveOptimizeDriveList extends LightningElement {
 
     handleFilterDrives(event) {
         this.selectedStatus = event.currentTarget.dataset['value'];
+        this.isEditable = this.selectedStatus === OPTIMIZATION_STATUS.COMPLETED ? true : false;        
         this.filterDriveList(this.selectedStatus);
     }
 
     filterDriveList(optimizationStatus) {
         this.filteredList = (this.driveList || []).filter((drive) => {
-            if(optimizationStatus === OPTIMIZATION_STATUS.PENDING) {
+            if(optimizationStatus === OPTIMIZATION_STATUS.PENDING) {                
                 return !drive.optimizationStatus || drive.optimizationStatus === optimizationStatus;
             }
-            if(optimizationStatus === OPTIMIZATION_STATUS.IN_PROGRESS) {
+            if(optimizationStatus === OPTIMIZATION_STATUS.IN_PROGRESS) {                
                 return drive.optimizationStatus === OPTIMIZATION_STATUS.IN_PROGRESS || drive.optimizationStatus === OPTIMIZATION_STATUS.POST_PROCESS;
-            }
+            }            
             return drive.optimizationStatus === optimizationStatus;
         });
         
@@ -443,6 +445,40 @@ export default class SlwcDriveOptimizeDriveList extends LightningElement {
 
     handleRefresh() {
         this.getDriveList()
+    }
+
+    handleSave(event) {
+        this.showLoading();
+       let excludeDrives = event.detail.draftValues.map((item) => {
+        return { 
+            ...item,
+            id: item.id,
+            excludeFromOptimizer: item.excludeFromOptimizer            
+        }
+       });
+       this.draftValues = [];       
+       let service = new driveService();
+       service.saveList(excludeDrives).then((result) => {
+        if(!result.success) throw result;
+        this.handleRefresh();        
+        this.dispatchEvent(new ShowToastEvent({
+            message: 'Drives updated successfully',
+            variant: 'success',
+            mode: 'dismissable'
+        }));        
+        })
+        .catch((error) => this.exceptionHandler(error))
+        .finally(this.hideLoading());            
+    }
+
+    exceptionHandler = (error) => {        
+        if(error && error.message) {
+            this.dispatchEvent(new ShowToastEvent({
+                message: error.message,
+                variant: 'error',
+                mode: 'dismissable',
+            }));
+        }
     }
 
     showOptimizeConfirmModal() {

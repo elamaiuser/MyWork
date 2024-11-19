@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>sked_Opt_Stat_Total_Unsched_Allocations__c</fullName>
+    <description>HRP-12511: Optimization Run Stats Field</description>
+    <externalId>false</externalId>
+    <formula>sked_Opt_Stat_Total_Planned_Allocations__c - sked_Opt_Stat_Total_Sched_Allocations__c</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <label>Total Unscheduled Allocations</label>
+    <precision>18</precision>
+    <required>false</required>
+    <scale>0</scale>
+    <trackTrending>false</trackTrending>
+    <type>Number</type>
+    <unique>false</unique>
+</CustomField>

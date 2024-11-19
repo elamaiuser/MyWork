@@ -25,6 +25,7 @@ public class skedConstants {
     
     public static final string ACTIVITY_TYPE_ON_CALL = 'On Call';
     public static final string ACTIVITY_TYPE_AFTER_HOURS_CALL_OUT_MANAGEMENT = 'After Hours Call Out Management';
+    public static final string ACTIVITY_TYPE_OVERNIGHT = 'Overnight';
 
     public static final string ACTIVITY_INSERT_BATCH_STARTED = 'Successfully initiated a batch process to create activities. You will receive an email when this process completes.';
 
@@ -48,11 +49,31 @@ public class skedConstants {
     public static final string AVAILABILITY_STATUS_DECLINED = 'Declined';
     public static final string AVAILABILITY_STATUS_EXPIRED = 'Expired';
     public static final string AVAILABILITY_STATUS_PENDING = 'Pending';
+    public static final string AVAILABILITY_STATUS_PENDING_EXPIRED = 'Pending Expired';
+    public static final string AVAILABILITY_STATUS_PROCESSING_APPROVAL = 'Processing Approval';
+    public static final string AVAILABILITY_STATUS_PROCESSING_ADJUSTMENT = 'Processing Adjustment';
+    public static final string AVAILABILITY_STATUS_PROCESSING_CANCELLATION = 'Processing Cancellation';
     public static final string AVAILABILITY_STATUS_WAITLIST = 'Waitlist';
+    public static final string AVAILABILITY_STATUS_WAITLIST_EXPIRED = 'Waitlist Expired';
+    public static final string AVAILABILITY_STATUS_APPROVED_FROM_PENDING = 'Approved From Pending';
+    public static final string AVAILABILITY_STATUS_APPROVED_FROM_WAITLIST = 'Approved From Waitlist';
+    public static final list<string> AVAILABILITY_APPROVED_STATUSES = new list<string>{AVAILABILITY_STATUS_APPROVED, AVAILABILITY_STATUS_APPROVED_FROM_WAITLIST, AVAILABILITY_STATUS_APPROVED_FROM_PENDING};
+    public static final list<string> AVAILABILITY_PENDING_STATUSES = new list<string>{AVAILABILITY_STATUS_PENDING, AVAILABILITY_STATUS_WAITLIST};
+
+    public static final string AVAILABILITY_APPROVAL_REASON_WORKDAY_SYNC_FAILURE = 'Workday Sync Failure';
+    public static final string AVAILABILITY_APPROVAL_REASON_WORKDAY_ADJUSTMENT_REQUIRED = 'Manual Workday adjustment required';
+    public static final string AVAILABILITY_APPROVAL_REASON_WORKDAY_CANCELLATION_REQUIRED = 'Manual Workday cancellation required';
+
+    public static final string AVAILABILITY_WORKDAY_SYNC_STATUS_FAILED = 'Failed';
+    public static final string AVAILABILITY_WORKDAY_SYNC_STATUS_MANUAL = 'Manual';
+    public static final string AVAILABILITY_WORKDAY_SYNC_STATUS_NA = 'Not Applicable';
+    public static final string AVAILABILITY_WORKDAY_SYNC_STATUS_SUCCESS = 'Success';
 
     public static final String AVAILABILITY_STAFFING_BUDGET_NO_CAPACITY = 'Unable to approve Unavailability due to insufficient Staffing Budget balance';
     public static final String AVAILABILITY_CRUD_MUST_COME_FROM_RAC = 'Unable to complete operation - Please use the Resource Availability Console to perform Availability/Activity related actions';
     public static final String DRIVE_CRUD_MUST_COME_FROM_RECORD_PAGE = 'Unable to complete operation - Please use the Drive Record Page to perform Drive/Job/Allocation related actions';
+    public static final String RECORD_CHANGES_INVALID_FROM_LIST_VIEW = 'Unable to complete operation - You do not have permission to update records from this location.';
+    public static final String RECORD_CHANGES_INVALID_PERMISSIONS = 'Unable to complete operation - You do not have permission to perform this operation.';
 
     public static final string AVAILABILITY_TYPE_CALL_OUT = 'Call Out';
     public static final string AVAILABILITY_TYPE_FLOATING_HOLIDAY = 'Floating Holiday';
@@ -64,9 +85,16 @@ public class skedConstants {
 
     public static final string AVAILABILITY_CALLOUT_TYPE_CALL_OUT = 'Call Out';
     public static final string AVAILABILITY_CALLOUT_TYPE_LATE_ARRIVAL = 'Late Arrival';
+    public static final string AVAILABILITY_CALLOUT_TYPE_EARLY_DEPARTURE = 'Early Departure';
+
+    public static final string LATE_ARRIVAL_REASON_NOT_LATE = 'Not Late';
+    public static final string EARLY_DEPARTURE_REASON_NOT_EARLY = 'Not Early';
 
     public static final String AVAILABILITY_WD_SYNC_STATUS_SUCCESS = 'Success';
     public static final String AVAILABILITY_WD_SYNC_STATUS_FAILED = 'Failed';
+
+    public static final String AVAILABILITY_BIDDING_TYPE_BIDDING = 'Bidding';
+    public static final String AVAILABILITY_BIDDING_TYPE_STANDARD = 'Standard';
 
     public static final string CALENDAR_BUILD_STATUS_QUALIFIED = 'Qualified';
     public static final string CALENDAR_BUILD_STATUS_UNQUALIFIED = 'Unqualified';
@@ -117,26 +145,47 @@ public class skedConstants {
     public static final string DRIVE_SHIFT_TRADE_APPROVAL_REASON_TRADING_STAFF_UNQUALIFIED = 'Trading User unqualified';
     public static final string DRIVE_SHIFT_TRADE_APPROVAL_REASON_REQUESTING_STAFF_DRIVE_PART_OF_LINKED = 'Requesting User Drive is part of Linked Drive';
     public static final string DRIVE_SHIFT_TRADE_APPROVAL_REASON_TRADING_STAFF_DRIVE_PART_OF_LINKED = 'Trading User Drive is part of Linked Drive';
+    public static final string DRIVE_SHIFT_TRADE_APPROVAL_REASON_REQUESTING_STAFF_IS_DECLINED_FROM_ACCOUNT = 'Requesting User is declined from Account';
+    public static final string DRIVE_SHIFT_TRADE_APPROVAL_REASON_TRADING_STAFF_IS_DECLINED_FROM_ACCOUNT = 'Trading User is declined from Account';
+    public static final string DRIVE_SHIFT_TRADE_APPROVAL_REASON_REQUESTING_STAFF_IS_DECLINED_FROM_SITE = 'Requesting User is declined from Site';
+    public static final string DRIVE_SHIFT_TRADE_APPROVAL_REASON_TRADING_STAFF_IS_DECLINED_FROM_SITE = 'Trading User is declined from Site';
+    public static final string DRIVE_SHIFT_TRADE_APPROVAL_REASON_REQUESTING_STAFF_IS_ALREADY_ASSIGNED = 'Requesting User is already assigned to Trading User Event';
+    public static final string DRIVE_SHIFT_TRADE_APPROVAL_REASON_TRADING_STAFF_IS_ALREADY_ASSIGNED = 'Trading User is already assigned to Requesting User Event';
+    public static final string DRIVE_SHIFT_TRADE_APPROVAL_REASON_GROUP_ACTIVITY_TRADE_NEEDS_APPROVAL = 'Group Activity Trade needs Approval';
+    public static final string DRIVE_SHIFT_TRADE_APPROVAL_REASON_REQUESTING_STAFF_OVERNIGHT_ACTIVITY = 'Requesting User overnight activity';
+    public static final string DRIVE_SHIFT_TRADE_APPROVAL_REASON_TRADING_STAFF_OVERNIGHT_ACTIVITY = 'Trading User overnight activity';
+    public static final string DRIVE_SHIFT_TRADE_APPROVAL_REASON_REQUESTING_STAFF_RELOCATED = 'Requesting User has been temporarily relocated';
+    public static final string DRIVE_SHIFT_TRADE_APPROVAL_REASON_TRADING_STAFF_RELOCATED = 'Trading User has been temporarily relocated';
+    public static final string DRIVE_SHIFT_TRADE_APPROVAL_REASON_REQUESTING_STAFF_UNAVAILABLE_FOR_CO = 'Requesting User is not available for Drive CO';
+    public static final string DRIVE_SHIFT_TRADE_APPROVAL_REASON_TRADING_STAFF_UNAVAILABLE_FOR_CO = 'Trading User is not available for Drive CO';
+    public static final string DRIVE_SHIFT_TRADE_APPROVAL_REASON_TRADING_STAFF_MISSING_ROLE = 'Trading User Missing Role';
+    public static final string DRIVE_SHIFT_TRADE_APPROVAL_REASON_REQUESTING_STAFF_MISSING_ROLE = 'Requesting User Missing Role';
 
     public static final string DRIVE_SHIFT_TRADE_DENIED_REASON_CANCELLED = 'Denied (cancelled)';
     public static final string DRIVE_SHIFT_TRADE_DENIED_REASON_CUTOFF_DAYS = 'Denied (cutoff days)';
     public static final string DRIVE_SHIFT_TRADE_DENIED_REASON_DUPLICATE = 'Denied (duplicate)';
+    public static final string DRIVE_SHIFT_TRADE_DENIED_REASON_DOUBLE_BOOKED = 'Denied (double booked)';
     public static final string DRIVE_SHIFT_TRADE_DENIED_REASON_HOURS = 'Denied (hours)';
     public static final string DRIVE_SHIFT_TRADE_DENIED_REASON_ROLE = 'Denied (role)';
     public static final string DRIVE_SHIFT_TRADE_DENIED_REASON_TRAVEL_DISTANCE = 'Denied (travel distance)';
+    public static final string DRIVE_SHIFT_TRADE_DENIED_REASON_OTHER = 'Other';
 
     public static final string DRIVE_SHIFT_TRADE_STATUS_APPROVED = 'Approved';
     public static final string DRIVE_SHIFT_TRADE_STATUS_CANCELLED = 'Cancelled';
     public static final string DRIVE_SHIFT_TRADE_STATUS_DENIED = 'Denied';
     public static final string DRIVE_SHIFT_TRADE_STATUS_PENDING_APPROVAL = 'Pending Approval';
+    public static final string DRIVE_SHIFT_TRADE_STATUS_EXPIRED = 'Expired';
+    public static final string DRIVE_SHIFT_TRADE_STATUS_WAITING_FOR_REQUESTING_STAFF_ACKNOWLEDGE = 'Waiting for Requesting Staff Acknowledge';
     public static final string DRIVE_SHIFT_TRADE_STATUS_WAITING_FOR_TRADING_STAFF_ACKNOWLEDGE = 'Waiting for Trading Staff Acknowledge';
+
+    public static final string DRIVE_SHIFT_TRADE_TRADING_TYPE_DRIVE_SHIFT = 'Drive Shift';
+    public static final string DRIVE_SHIFT_TRADE_TRADING_TYPE_ACTIVITY = 'Activity';
 
     public static final string EXCEPTION_CODE_CDL_DOT_HOURS_VIOLATION = 'CDL_DOT_HOURS_VIOLATION';
     public static final string EXCEPTION_CODE_CERT_ADDED_42DAYS = 'CERT_ADDED_42DAYS';
     public static final string EXCEPTION_CODE_DRIVE_CHANGE_REQUEST_SUBMITTED = 'DRIVE_CHANGE_REQUEST_SUBMITTED';
     public static final string EXCEPTION_CODE_DRIVE_COLLECTION_OPERATION_CHANGED = 'DRIVE_COLLECTION_OPERATION_CHANGED';
     public static final string EXCEPTION_CODE_EQUIPMENT_REDUCED = 'EQUIPMENT_REDUCED';
-    public static final string EXCEPTION_CODE_EXPIRED_REQUIRED_TAG = 'EXPIRED_REQUIRED_TAG';
     public static final string EXCEPTION_CODE_MAXIMUM_TRAVEL_TIME_VIOLATION = 'MAXIMUM_TRAVEL_TIME_VIOLATION';
     public static final string EXCEPTION_CODE_MAXIMUM_WEEKLY_HOURS_VIOLATION = 'MAXIMUM_WEEKLY_HOURS_VIOLATION';
     public static final string EXCEPTION_CODE_MINIMUM_QUANTITY_NOT_MET = 'MINIMUM_QUANTITY_NOT_MET';
@@ -158,6 +207,7 @@ public class skedConstants {
     public static final string EXCEPTION_CODE_RESOURCE_ROLE_RESTRICTED = 'RESOURCE_ROLE_RESTRICTED';
     public static final string EXCEPTION_CODE_MAXIMUM_WEEKLY_WORK_DAYS_VIOLATION = 'MAXIMUM_WEEKLY_WORK_DAYS_VIOLATION';
     public static final string EXCEPTION_CODE_MINIMUM_WEEKLY_WORK_DAYS_VIOLATION = 'MINIMUM_WEEKLY_WORK_DAYS_VIOLATION';
+    public static final string EXCEPTION_CODE_LINKED_DRIVE_MISMATCHING_ASSETS = 'LINKED_DRIVE_MISMATCHING_ASSETS';
 
     public static final Map<String, String> MAP_EXCEPTION_CODE_TO_DEFAULT_EXCEPTION_MESSAGE = new Map<String, String> {
         EXCEPTION_CODE_MAXIMUM_WEEKLY_WORK_DAYS_VIOLATION => 'Maximum weekly work days violation. Week: {{weekStartDate}}',
@@ -197,6 +247,12 @@ public class skedConstants {
     public static final string JOB_ALLOCATION_STATUS_DISPATCHED = 'Dispatched';
     public static final string JOB_ALLOCATION_STATUS_PENDING_DISPATCH = 'Pending Dispatch';
     public static final string JOB_ALLOCATION_STATUS_IN_PROGRESS = 'In Progress';
+    public static final List<String> JOB_ALLOCATION_DELETED_STATUSES = new List<String>{
+        JOB_ALLOCATION_STATUS_DELETED, JOB_ALLOCATION_STATUS_DECLINED
+    };
+
+    public static final string JOB_ALLOCATION_POST_PROCESS_TRAVEL_TIME = 'Travel Time';
+    public static final string JOB_ALLOCATION_POST_PROCESS_MAIN_PROCESS = 'Main Process';
 
     public static final string JOB_OFFER_STATUS_PENDING = 'Pending';
     public static final string JOB_OFFER_STATUS_CANCELLED = 'Cancelled';
@@ -218,12 +274,17 @@ public class skedConstants {
     public static final string LOCATION_TYPE_INSIDE = 'Inside';
     public static final string LOCATION_TYPE_INSIDE_OUTSIDE = 'Inside/Outside';
 
+    public static final string NON_COLLECTION_AREA_CO = 'Non-Collection Area';
+
     public static final string OPERATION_STATUS_SUBMITTED = 'Submitted';
     public static final string OP_RECORD_DELETE_INVALID_PERMISSION = 'Failed to delete Operation Record due to invalid permissions.';
     public static final string OP_RECORD_SUBMIT_200 = 'Op Record successfully submitted.';
     public static final string OP_RECORD_SUBMIT_400 = 'Op Record submission failed due to problem with Op Record or Staff. Check to make sure Op Record and Staffing is complete and correct, and retry. Contact BSF support or system administrator with the Op Record Name or Drive ID for assistance.';
     public static final string OP_RECORD_SUBMIT_500 = 'Op Record submission failed due to problem with Azure server or database.  Please contact BSF support or system administrator Op Record Name or Drive ID for assistance, and wait a few minutes before retrying.';
-
+	
+    public static final String OP_RECORD_STAFF_BREAK_TYPE_REST = 'Rest';
+    public static final String OP_RECORD_STAFF_BREAK_TYPE_MEAL = 'Meal';
+    
     public static final string OPPORTUNITY_STAGE_CANCELLED = 'Cancelled';
     public static final string OPPORTUNITY_STAGE_CLOSED = 'Closed';
 
@@ -269,6 +330,8 @@ public class skedConstants {
     public static final String ROLE_TIME_VARIANCE_APPLIES_TO_SITE_LOSGISTICS_TO = 'Site Logistics To';
     public static final String ROLE_TIME_VARIANCE_APPLIES_TO_SITE_LOSGISTICS_BACK = 'Site Logistics Back';
 
+    public static final String ROLE_TIME_VARIANCE_VARIANCE_TYPE_OTHER = 'Other';
+
     public static final string SITE_FEEDBACK_STATUS_APPROVED = 'Approved';
     public static final string SITE_FEEDBACK_STATUS_SUBMITTED = 'Submitted';
 
@@ -307,6 +370,8 @@ public class skedConstants {
     public static final string PROFILE_QUEUE_DRIVE_CHANGE_REQUESTS = 'DCRs';
     public static final string PROFILE_QUEUE_PENDING_ACTIONS = 'PAs';
     public static final string PROFILE_QUEUE_ROLE_TIME_VARIANCES = 'RTVs';
+    public static final string PROFILE_QUEUE_CM_ROLE_TIME_VARIANCES = 'CMRTVs';
+    public static final string PROFILE_QUEUE_DM_ROLE_TIME_VARIANCES = 'DMRTVs';
     public static final string PROFILE_QUEUE_DRIVE_SHIFT_TRADES = 'DSTs';
     public static final string PROFILE_QUEUE_DM_PENDING_ACTIONS = 'DMPA';
     public static final string PROFILE_QUEUE_DM_DRIVE_CHANGE_REQUESTS = 'DMDCR';
@@ -316,11 +381,12 @@ public class skedConstants {
     public static final string UNAVAILABILITY_TYPE_FLOATING_HOLIDAY = 'Floating Holiday';
     public static final string UNAVAILABILITY_TYPE_PTO = 'PTO';
     public static final string UNAVAILABILITY_TYPE_SICK = 'Sick';
+    public static final string UNAVAILABILITY_TYPE_BEREAVEMENT = 'Bereavement';
     public static final string UNAVAILABILITY_TYPE_UNAVAILABLE = 'Unavailable';
+    public static final string UNAVAILABILITY_TYPE_PERSONAL = 'Personal';
 
-    public static final String WD_PTO_7_DAY_LAG_ID = 'Planned - PTO - 7 Day Lag - Time Off';
-    public static final String WD_PTO_PLANNED = 'Planned';
-    public static final String WD_PTO_UNPLANNED = 'Unplanned';
+    public static final String WORKDAY_PLAN_SICK_LEAVE_BANK = 'Sick Leave Bank';
+
 
     /* Internal coding */
     public static final string CUSTOM_FIELDS_EXTENSION = '__c';
@@ -333,6 +399,7 @@ public class skedConstants {
     public static final string TEMPORARY_ID_PREFIX = 'temp_';
 
     public static final string GROUP_TYPE_QUEUE = 'Queue';
+    public static final string GROUP_TYPE_REGULAR = 'Regular';
 
     public static final date EARLIEST_START_DATE = Date.newInstance(1900, 01, 01);
     public static final date LATEST_END_DATE = Date.newInstance(4000, 12, 31);
@@ -350,4 +417,56 @@ public class skedConstants {
     /* Travel Time Index Items */
     public static final string TTII_DIRECTION_SITE_TO_CO = 'SiteToCO:';
     public static final string TTII_DIRECTION_CO_TO_SITE = 'COToSite:';
+
+    /* Debug Log */
+    public static final string DEBUG_LOG_TYPE_WORKDAY_API = 'Workday API Request';
+
+    public static final string DEBUG_LOG_CATEGORY_SYSTEM_ERROR = 'System Error';
+    public static final string DEBUG_LOG_CATEGORY_VALIDATION_ERROR = 'Validation Error';
+
+    /* BSF Custom Notification */
+    public static final string BSF_CUSTOM_NOTIFICATION_STATUS_QUEUED = 'Queued';
+
+    /* Optimization */
+    public static final string OPTIMIZATION_WEIGHT_LEVEL_LOW = 'Low';
+    public static final string OPTIMIZATION_WEIGHT_LEVEL_MEDIUM = 'Medium';
+    public static final string OPTIMIZATION_WEIGHT_LEVEL_HIGH = 'High';
+    public static final string OPTIMIZATION_WEIGHT_ROLE_PRIORITIES = 'Role Priorities';
+
+    public static final string OPTIMIZATION_CONSTRAINT_TYPE_HARD = 'Hard Constraint';
+    public static final string OPTIMIZATION_CONSTRAINT_TYPE_SOFT = 'Soft Constraint';
+
+    public static final string OPTIMIZATION_WEIGHT_POSTFIX_HARD = 'hard';
+    public static final string OPTIMIZATION_WEIGHT_POSTFIX_SOFT = 'soft';
+
+    public static final string OPTIMIZATION_SETTING_DISPLAY_TYPE_PICKLIST = 'Picklist';
+    public static final string OPTIMIZATION_SETTING_DISPLAY_TYPE_CHECKBOX = 'Checkbox';
+
+    /* Role Time Variance Feedback Approval */
+    public static final string RTV_FEEDBACK_STATUS_APPROVED = 'Approved';
+    public static final string RTV_FEEDBACK_STATUS_REJECTED = 'Rejected';
+    public static final string RTV_FEEDBACK_STATUS_EXPIRED = 'Expired';
+    public static final string RTV_FEEDBACK_STATUS_WAITING_FOR_DM_APPROVAL = 'Waiting for DM Approval';
+    public static final string RTV_FEEDBACK_STATUS_WAITING_FOR_CM_APPROVAL = 'Waiting for CM Approval';
+    public static final string RTV_FEEDBACK_STATUS_WAITING_FOR_APS_APPROVAL = 'Waiting for APS Approval';
+    public static final string RTV_ROUTE_APPROVAL_REQUEST_TO_CM = 'Request CM evaluation';
+    public static final string RTV_ROUTE_APPROVAL_REQUEST_TO_DM = 'Request DM evaluation';
+    public static final string RTV_ROUTE_APPROVAL_REQUEST_TO_APS = 'Request APS evaluation';
+    public static final string RTV_CM_DM_APS_APPROVAL_PROCESS = 'sked_RTVs_CM_DM_APS_Approval';
+    public static final string RTV_DM_CM_APS_APPROVAL_PROCESS = 'sked_RTVs_DM_CM_APS_Approval';
+    public static final string RTV_CM_APS_APPROVAL_PROCESS = 'sked_RTVs_CM_APS_Approval';
+
+    /* Trade API Data */
+    public static final string TRADE_API_DATA_STATUS_SENT = 'Sent';
+    public static final string TRADE_API_DATA_STATUS_QUEUED = 'Queued';
+    public static final string TRADE_API_DATA_STATUS_FAILED = 'Failed';
+    public static final string TRADE_API_DATA_STATUS_NOT_APPLICABLE = 'Not Applicable';
+
+    /* Time Entry Codes for WD Time Reporting */
+    public static final string WD_REST_BREAKS_NOT_TAKEN_CODE = 'CA Missed/Short Rest Break';
+
+    public static final string TRAVEL_TIME_INDEX_REFRESH_GROUP_STATUS_PENDING = 'Pending';
+    public static final string TRAVEL_TIME_INDEX_REFRESH_GROUP_STATUS_COMPLETED = 'Completed';
+    public static final string TRAVEL_TIME_INDEX_REFRESH_GROUP_STATUS_PROCESSING = 'Processing';
+    public static final string TRAVEL_TIME_INDEX_REFRESH_GROUP_STATUS_GENERATING_REFRESH_REQUEST = 'Generating Refresh Request';
 }

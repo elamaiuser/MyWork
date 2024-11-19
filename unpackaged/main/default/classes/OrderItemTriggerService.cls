@@ -6,6 +6,8 @@
  * Date					Developer Name			Comments
  * ***************************************************************************************************************************************************************************
  * 08/03/2023			Priti Jana				Logic for HRP-10307
+ * 14/07/2024           Ankit Kundu             Publicity Material Ordering at template level(HRP-12664)
+ * 10/25/2024			Balaji N				Logic for HRP-13489 calculateBudgetforProductsProjected error for Budget exceeding
  *****************************************************************************************************************************************************************************
 */
 
@@ -144,58 +146,67 @@ public with sharing class OrderItemTriggerService {
                                                                
                                                                
                                                                
-                                                               Set<Id> orderids = new Set<Id>();
-                                                               Set<Id> orderitemids = new Set<Id>(); 
-                                                               List<Order> orderList = new List<Order>();
-                                                               List<OrderItem> oitems = new List<OrderItem>();
+                                                               //HRP-13489 Start
+                                                               Map<Id,List<OrderItem>> orderIdOrderItemListMap = new Map<Id,List<OrderItem>>();
                                                                
-                                                               Map<Id, Order> orderidObjectmap = new Map<Id, Order>();			
-                                                               
-                                                               for( OrderItem oit : newOrderItems ){				
-                                                                   orderids.add( oit.OrderId );
-                                                                   oitems.add(oit);
-                                                                   orderitemids.add(oit.Id);
+                                                               for( OrderItem oit : newOrderItems )
+                                                               {				
+                                                                   if(!orderIdOrderItemListMap.containsKey(oit.OrderId))
+                                                                       orderIdOrderItemListMap.put(oit.OrderId, new List<OrderItem>());
+                                                                       orderIdOrderItemListMap.get(oit.OrderId).add(oit);
                                                                }
                                                                
-                                                               orderList = [ select Id, BudgetCurrency__c from Order where Id IN: orderids ];
-                                                               for( Order od : orderList ){
-                                                                   if( !orderidObjectmap.containsKey( od.Id ) ){
-                                                                       orderidObjectmap.put( od.Id, od );
-                                                                   }
-                                                               }
+                                                               Map<Id, Order> orderIdOrdermap = new Map<Id, Order>([ select Id, BudgetCurrency__c from Order where Id IN: orderIdOrderItemListMap.KeySet() ]);
+                                                               //HRP-13489 End
+/*Commented part of HRP-13489
+for( Order ord : orderList ){
+if( !orderIdOrdermap.containsKey( ord.Id ) ){
+orderIdOrdermap.put( ord.Id, ord );
+}
+}*/
                                                                
-                                                               List<OrderItem> oitemlist = [select Id, Quantity, UnitPrice from OrderItem where orderid in:orderids ];                                            
-                                                              /* if( !oitemlist.isEmpty() ){
-                                                                   oitems.addAll(oitemlist);
-                                                               } */
+                                                               List<OrderItem> oitemlist = [select Id, Quantity, UnitPrice,OrderId from OrderItem where orderid in:orderIdOrdermap.KeySet()];                                            
                                                                if( !oitemlist.isEmpty() ){
-																   for( OrderItem oitem : oitemlist ){                                                                       
-																	   if( !orderitemids.contains( oitem.Id ) ){
-																		   oitems.add(oitem);
-																	   }
-																   }                                                                   
+                                                                   for( OrderItem oitem : oitemlist )
+                                                                   {        
+                                                                       //HRP-13489 Start
+                                                                       if(!orderIdOrderItemListMap.containsKey(oitem.OrderId))
+                                                                       orderIdOrderItemListMap.put(oitem.OrderId, new List<OrderItem>());
+                                                                       orderIdOrderItemListMap.get(oitem.OrderId).add(oitem);
+                                                                       //HRP-13489 End
+                                                                   }                                                                   
                                                                }                                                              
                                                                
-                                                               Decimal totalProductBudget = 0.0;
-                                                               for( OrderItem oit : oitems ){
-                                                                   Decimal eachProductBudget = oit.Quantity * oit.UnitPrice;
-                                                                   totalProductBudget = totalProductBudget + eachProductBudget;
+                                                               //HRP-13489 Start
+                                                               Map<Id,Decimal> orderIdTotalBudMap = new Map<Id,Decimal>();
+                                                               for(Id ordId : orderIdOrderItemListMap.Keyset())
+                                                               {
+                                                                   Decimal totalProductBudget = 0.0;
+                                                                   for(OrderItem oitem : orderIdOrderItemListMap.get(ordId))
+                                                                   {
+                                                                       Decimal eachProductBudget = oitem.Quantity * oitem.UnitPrice;
+                                                                       totalProductBudget = totalProductBudget + eachProductBudget;
+                                                                   }
+                                                                   orderIdTotalBudMap.put(ordId,totalProductBudget);
                                                                }
+                                                                 
+                                                               
                                                                
                                                                //Decimal Orderbudget = orderidObjectmap.get(newOrderItems[0].OrderId).Budget__c;
-                                                               Decimal Orderbudget = orderidObjectmap.get(newOrderItems[0].OrderId).BudgetCurrency__c;
+                                                               //Decimal Orderbudget = orderIdOrdermap.get(newOrderItems[0].OrderId).BudgetCurrency__c;
                                                                
-                                                               // System.debug( 'totalProductBudget : ' + totalProductBudget  );			
-                                                               // System.debug( 'Orderbudget : ' + Orderbudget  );
-                                                               // System.debug( 'newOrderItems size : ' + newOrderItems.size()  );
-                                                               
-                                                               
-                                                               for( OrderItem oit : newOrderItems ){				
-                                                                   if( totalProductBudget > Orderbudget){
+                                                               for( OrderItem oitem : newOrderItems )
+                                                               {
+                                                                   Decimal Orderbudget= orderIdOrdermap != null && orderIdOrdermap.containsKey(oitem.OrderId)?orderIdOrdermap.get(oitem.OrderId).BudgetCurrency__c:null;
+                                                                   Decimal totalProductBudget = orderIdTotalBudMap != null && orderIdTotalBudMap.containsKey(oitem.OrderId)?orderIdTotalBudMap.get(oitem.OrderId):null;
+                                                                   
+                                                                   if( totalProductBudget!=null && Orderbudget != null && totalProductBudget > Orderbudget)
+                                                                   {
                                                                        Decimal budgetdiff = totalProductBudget - Orderbudget ;
-                                                                       oit.addError('Total Budget is exceeding, please update the selection, exceeding amount is ' + budgetdiff );
+                                                                       oitem.addError('Total Budget is exceeding, please update the selection, exceeding amount is ' + budgetdiff );
                                                                    }
                                                                }
+                                                               //HRP-13489 End 
                                                                
                                                            }    
     
@@ -366,5 +377,42 @@ public with sharing class OrderItemTriggerService {
             }                                              
     }
     // HRP - 10307 --> Ends Here
-    
+     // HRP- 12664 --> Start
+    public static void validateProductEndDate(List<OrderItem> newOrderItemList)
+    {
+        
+        Set<Id> productIds = new Set<Id>();
+        for (OrderItem ot : newOrderItemList) {
+            productIds.add(ot.Product2Id);
+        }
+        
+        Map<Id, Product2> productMap = new Map<Id, Product2>(
+            [SELECT Id, End_Date__c FROM Product2 WHERE Id IN :productIds]
+        );
+        
+        for (OrderItem ot : newOrderItemList) {
+            Product2 product = productMap.get(ot.Product2Id);
+            if (product != null && product.End_Date__c < System.today()) {
+                //Error message will be: 'You cannot add expired product.'
+                ot.addError(Custom_Messages__mdt.getInstance('Expired_Order_Product_Restriction').value__c);
+            }
+        }
+    }   
+    public static void validatedProductToOrderItem(List<OrderItem> newOrderItemList)
+    {
+        Set<Id> orderIds = new Set<Id>();
+        for (OrderItem ot : newOrderItemList) {
+            OrderIds.add(ot.OrderId);
+        }
+        Map<Id, Order> orders = new Map<Id, Order>([SELECT Id, Publicity_Approved__c, Publicity_Submitted__c FROM Order WHERE Id IN :orderIds]);
+        for (OrderItem item : newOrderItemList) {
+            Order relatedOrder = orders.get(item.OrderId);
+            if (relatedOrder != null) {
+                if (relatedOrder.Publicity_Approved__c || relatedOrder.Publicity_Submitted__c ) {
+                    item.addError(Custom_Messages__mdt.getInstance('Add_Product_Restriction').value__c);
+                }
+            }
+        }
+    }
+    // HRP- 12664 --> End
 }

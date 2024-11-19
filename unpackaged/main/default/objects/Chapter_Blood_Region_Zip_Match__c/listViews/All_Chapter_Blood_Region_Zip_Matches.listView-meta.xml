@@ -10,5 +10,10 @@
     <columns>BL_ID__c</columns>
     <columns>LAST_UPDATE</columns>
     <filterScope>Everything</filterScope>
+    <filters>
+        <field>Zip__c</field>
+        <operation>equals</operation>
+        <value>49416</value>
+    </filters>
     <label>All Chapter/Blood Region Zip Matches</label>
 </ListView>

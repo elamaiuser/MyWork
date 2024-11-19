@@ -194,16 +194,18 @@ export default class SlwcPendingActionDriveConfirmModal extends LightningElement
   
       let equipmentAllocations = equipmentJob ? equipmentJob.jobAllocations : null;
       let vehicleAllocations = vehicleJob ? vehicleJob.jobAllocations : null;
-  
-      const closeEvent = new CustomEvent('save', {
-        detail: {
-          submissionNotes: this.model.submissionNotes,
-          contentionResolution: contentionResolution,
-          status: [DRIVE_STATUS.DRAFT].includes(this.drive.status) ? DRIVE_STATUS.TENTATIVE : this.drive.status,
-          equipmentAllocations,
-          vehicleAllocations
-        }
-      });
+      const closeEventDetail = {
+        submissionNotes: this.model.submissionNotes,
+        contentionResolution: contentionResolution,
+        equipmentAllocations,
+        vehicleAllocations
+      };
+      if(!this.driveHelper.isDriveSubmittedForSubmissionApproval(this.drive)){
+        closeEventDetail.status = [DRIVE_STATUS.DRAFT].includes(this.drive.status) ? DRIVE_STATUS.TENTATIVE : this.drive.status;
+      } else {
+        closeEventDetail.status = this.drive.status;
+      }
+      const closeEvent = new CustomEvent('save', { detail: closeEventDetail });
       this.dispatchEvent(closeEvent);
     })
   }

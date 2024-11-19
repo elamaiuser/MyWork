@@ -1,0 +1,28 @@
+<template>
+    <lightning-spinner style="z-index: 10000" if:true={showSpinner} class="spins" size="medium"></lightning-spinner>
+
+    <template if:true={initialized}>
+        <c-slwc-call-out-modal
+            full-screen
+            hide-header
+            onsave={handleSaveCallOutModal}
+            drive-date={driveDate}
+            resource-id={resourceId}
+            duration={duration}
+            is-resource-mode
+            is-open
+        ></c-slwc-call-out-modal>
+    </template>
+
+    <c-slwc-confirm-modal
+        is-open={confirmModalData.isOpen}
+        mode={confirmModalData.mode}
+        title={confirmModalData.title}
+        message={confirmModalData.message}
+        handle-on-close={confirmModalData.onClose}
+        confirm-btn-label={confirmModalData.confirmBtnLabel}
+        cancel-btn-label={confirmModalData.cancelBtnLabel}
+        layer-index="1000"
+        size='x-small'>
+    </c-slwc-confirm-modal>
+</template>

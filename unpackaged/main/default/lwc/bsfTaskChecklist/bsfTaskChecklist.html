@@ -1,0 +1,88 @@
+<template>
+    <template if:true={isLoaded}>
+        <template if:true={noDataFound}>
+            <c-bsf-no-data-found-cmp err_message={errMsg}></c-bsf-no-data-found-cmp>
+        </template>
+        <template if:false={noDataFound}>
+            <lightning-card>
+                <template if:true={isProcessing}>
+                    <div class="exampleHolder">
+                        <lightning-spinner alternative-text="Loading" size="medium"></lightning-spinner>
+                    </div>
+                </template>
+                <div class="slds-section slds-is-open">
+                    <h3 class="slds-section__title">
+                        <button aria-controls="expando-unique-id" aria-expanded="true"
+                            class="slds-button slds-section__title-action">
+                            <lightning-icon icon-name='utility:switch' alternative-text='switch' size='x-small'
+                                title='switch'></lightning-icon>
+                            <span class="slds-truncate slds-p-left_x-small" title="Checklist">Task Checklist</span>
+                        </button>
+                    </h3>
+                    <div class="slds-grid slds-wrap slds-gutters slds-m-around_x-small">
+                        <div class="slds-col slds-large-size_1-of-2 slds-size_1-of-1">
+                            <!-- <p>Column 1</p> -->
+                            <template for:each={column_1_items} for:item="element">
+                                <template if:true={element.sectionHeader}>
+                                    <p class="slds-p-top_medium slds-p-bottom_xx-small" key={element.sectionHeader}>
+                                        <strong>{element.sectionHeader}</strong>
+                                    </p>
+                                    <div key={element.sectionHeader} class="slds-p-left_medium">
+                                        <template for:each={element.sectionItems} for:item="sectionItems">
+                                            <c-bsf-task-checklist-child key={sectionItems.recordId}
+                                                disable-edit-access={disableEditAccess}
+                                                ui-elements={sectionItems.fields} oninputchange={handleInputChange}>
+                                            </c-bsf-task-checklist-child>
+                                        </template>
+                                    </div>
+                                </template>
+                                <template if:false={element.sectionHeader}>
+                                    <c-bsf-task-checklist-child key={element.recordId}
+                                        disable-edit-access={disableEditAccess} ui-elements={element.fields}
+                                        oninputchange={handleInputChange}>
+                                    </c-bsf-task-checklist-child>
+                                </template>
+                            </template>
+                        </div>
+                        <div class="slds-col slds-large-size_1-of-2 slds-size_1-of-1">
+                            <!-- <p>Column 2</p> -->
+                            <template for:each={column_2_items} for:item="element">
+                                <template if:true={element.sectionHeader}>
+                                    <p class="slds-p-top_medium slds-p-bottom_xx-small" key={element.sectionHeader}>
+                                        <strong>{element.sectionHeader}</strong>
+                                    </p>
+                                    <div key={element.sectionHeader} class="slds-p-left_medium">
+                                        <template for:each={element.sectionItems} for:item="sectionItems">
+                                            <c-bsf-task-checklist-child key={sectionItems.recordId}
+                                                disable-edit-access={disableEditAccess}
+                                                ui-elements={sectionItems.fields} oninputchange={handleInputChange}>
+                                            </c-bsf-task-checklist-child>
+                                        </template>
+                                    </div>
+                                </template>
+                                <template if:false={element.sectionHeader}>
+                                    <c-bsf-task-checklist-child key={element.recordId}
+                                        disable-edit-access={disableEditAccess} ui-elements={element.fields}
+                                        oninputchange={handleInputChange}>
+                                    </c-bsf-task-checklist-child>
+                                </template>
+                            </template>
+                        </div>
+                    </div>
+                </div>
+                <template if:false={disableEditAccess}>
+                    <div slot="footer">
+                        <lightning-button class="slds-button slds-m-left_x-small" variant="brand" label="Save"
+                            onclick={handleSave}>
+                        </lightning-button>
+                    </div>
+                </template>
+            </lightning-card>
+        </template>
+    </template>
+    <template if:false={isLoaded}>
+        <div class="exampleHolder">
+            <lightning-spinner alternative-text="Loading" size="x-small"></lightning-spinner>
+        </div>
+    </template>
+</template>

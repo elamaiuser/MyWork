@@ -1,0 +1,110 @@
+<template>
+    <template for:each={uiElements} for:item="field">
+        <template if:true={field.isCheckbox}>
+            <fieldset key={field.recordId} id={field.recordId} class="slds-form-element">
+                <!-- <span class="slds-grid slds-m-around_xx-small">
+                    <lightning-input type="checkbox" label={field.inputLabel}
+                        name={field.recordId} checked={field.value}
+                        disabled={disableEditAccess} onchange={handleChecklist}
+                        ariant="label-hidden">
+                    </lightning-input>
+                    <template if:true={field.helpText}>
+                        <lightning-helptext
+                            content={field.helpText}></lightning-helptext>
+                    </template>
+                </span> -->
+                <div class="slds-grid slds-grid_vertical-align-left">
+                    <lightning-input type="checkbox" label="" data-record-id={field.recordId} name={field.inputAPIName}
+                        checked={field.value} disabled={disableEditAccess} onchange={handleInputChange}
+                        ariant="label-hidden">
+                    </lightning-input>
+                    <template if:true={field.hyperlink}>
+                        <label class="slds-checkbox__label">
+                            <span class="slds-form-element__label">
+                                <a href={field.hyperlink} target="_blank">{field.inputLabel}</a>
+                            </span>
+                        </label>
+                    </template>
+                    <template if:false={field.hyperlink}>
+                        <label class="slds-checkbox__label">
+                            <span class="slds-form-element__label">
+                                {field.inputLabel}
+                            </span>
+                        </label>
+                    </template>
+                    <template if:true={field.helpText}>
+                        <!--lightning-helptext content={field.helpText}></lightning-helptext-->
+                        <c-lwc-tooltip content={field.helpText} align={field.helpTextAlign}>
+                            <lightning-button-icon icon-name="utility:info" alternative-text="info" size="medium" variant="bare"></lightning-button-icon>
+                        </c-lwc-tooltip>
+                    </template>
+                </div>
+            </fieldset>
+        </template>
+        <template if:true={field.isTextInput}>
+            <fieldset key={field.recordId} id={field.recordId} class="slds-form-element">
+                <span class="slds-grid  slds-m-around_xx-small">
+                    <lightning-input type="text" label={field.inputLabel} data-record-id={field.recordId}
+                        name={field.inputAPIName} variant={field.variant} value={field.value}
+                        disabled={disableEditAccess} onblur={handleInputChange}>
+                    </lightning-input>
+                    <template if:true={field.helpText}>
+                        <!--lightning-helptext content={field.helpText}></lightning-helptext-->
+                        <c-lwc-tooltip content={field.helpText} align={field.helpTextAlign}>
+                            <lightning-button-icon icon-name="utility:info" alternative-text="info" size="medium" variant="bare"></lightning-button-icon>
+                        </c-lwc-tooltip>
+                    </template>
+                </span>
+            </fieldset>
+        </template>
+        <template if:true={field.isTextArea}>
+            <fieldset key={field.recordId} id={field.recordId} class="slds-form-element">
+                <span class="slds-grid  slds-m-around_xx-small">
+                    <lightning-textarea label={field.inputLabel} data-record-id={field.recordId}
+                        name={field.inputAPIName} variant={field.variant} value={field.value}
+                        disabled={disableEditAccess} onblur={handleInputChange} style="width:100%">
+                    </lightning-textarea>
+                    <template if:true={field.helpText}>
+                        <!--lightning-helptext content={field.helpText}></lightning-helptext-->
+                        <c-lwc-tooltip content={field.helpText} align={field.helpTextAlign}>
+                            <lightning-button-icon icon-name="utility:info" alternative-text="info" size="medium" variant="bare"></lightning-button-icon>
+                        </c-lwc-tooltip>
+                    </template>
+                </span>
+            </fieldset>
+        </template>
+        <template if:true={field.isNumber}>
+            <fieldset key={field.recordId} id={field.recordId} class="slds-form-element">
+                <span class="slds-grid  slds-m-around_xx-small">
+                    <lightning-input type="number" label={field.inputLabel} data-record-id={field.recordId}
+                        name={field.inputAPIName} value={field.value} variant={field.variant}
+                        disabled={disableEditAccess} onblur={handleInputChange}>
+                    </lightning-input>
+                    <template if:true={field.helpText}>
+                        <!--lightning-helptext content={field.helpText}></lightning-helptext-->
+                        <c-lwc-tooltip content={field.helpText} align={field.helpTextAlign}>
+                            <lightning-button-icon icon-name="utility:info" alternative-text="info" size="medium" variant="bare"></lightning-button-icon>
+                        </c-lwc-tooltip>
+                    </template>
+                </span>
+            </fieldset>
+        </template>
+        <template if:true={field.isPicklist}>
+            <!-- <p key={field.recordId}> Selected Value: {field.value}</p> -->
+            <fieldset key={field.recordId} id={field.recordId} class="slds-form-element">
+                <span class="slds-grid  slds-m-around_xx-small">
+                    <lightning-combobox data-record-id={field.recordId} name={field.inputAPIName}
+                        label={field.inputLabel} placeholder="Select Option" options={field.picklistOptions}
+                        value={field.value} onchange={handleInputChange} disabled={disableEditAccess}>
+                    </lightning-combobox>
+                    <template if:true={field.helpText}>
+                        <!--lightning-helptext content={field.helpText}></lightning-helptext-->
+                        <c-lwc-tooltip content={field.helpText} align={field.helpTextAlign}>
+                            <lightning-button-icon icon-name="utility:info" alternative-text="info" size="medium" variant="bare"></lightning-button-icon>
+                        </c-lwc-tooltip>
+                    </template>
+                </span>
+            </fieldset>
+        </template>
+    </template>
+</template>

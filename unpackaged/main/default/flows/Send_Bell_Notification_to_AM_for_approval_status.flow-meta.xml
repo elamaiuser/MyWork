@@ -244,7 +244,7 @@
             </processMetadataValues>
             <name>notificationBody</name>
             <value>
-                <elementReference>formula_3_myRule_1_A3_2649210416</elementReference>
+                <elementReference>formula_3_myRule_1_A3_7255039343</elementReference>
             </value>
         </inputParameters>
         <inputParameters>
@@ -287,6 +287,48 @@
             <name>targetId</name>
             <value>
                 <elementReference>myVariable_current.Id</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <processMetadataValues>
+                <name>dataType</name>
+                <value>
+                    <stringValue>String</stringValue>
+                </value>
+            </processMetadataValues>
+            <processMetadataValues>
+                <name>isRequired</name>
+                <value>
+                    <booleanValue>false</booleanValue>
+                </value>
+            </processMetadataValues>
+            <processMetadataValues>
+                <name>leftHandSideLabel</name>
+                <value>
+                    <stringValue>Custom Notification Category Name</stringValue>
+                </value>
+            </processMetadataValues>
+            <processMetadataValues>
+                <name>maxOccurs</name>
+                <value>
+                    <numberValue>1.0</numberValue>
+                </value>
+            </processMetadataValues>
+            <processMetadataValues>
+                <name>objectType</name>
+                <value>
+                    <stringValue></stringValue>
+                </value>
+            </processMetadataValues>
+            <processMetadataValues>
+                <name>rightHandSideType</name>
+                <value>
+                    <stringValue>String</stringValue>
+                </value>
+            </processMetadataValues>
+            <name>notificationCategoryName</name>
+            <value>
+                <stringValue>MarketingExceptionApproveReject</stringValue>
             </value>
         </inputParameters>
         <nameSegment>BSF_CustomNotification</nameSegment>
@@ -491,7 +533,7 @@
             </processMetadataValues>
             <name>notificationBody</name>
             <value>
-                <elementReference>formula_9_myRule_7_A3_4272562527</elementReference>
+                <elementReference>formula_9_myRule_7_A3_4706564536</elementReference>
             </value>
         </inputParameters>
         <inputParameters>
@@ -576,6 +618,48 @@
             <name>targetId</name>
             <value>
                 <elementReference>myVariable_current.Id</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <processMetadataValues>
+                <name>dataType</name>
+                <value>
+                    <stringValue>String</stringValue>
+                </value>
+            </processMetadataValues>
+            <processMetadataValues>
+                <name>isRequired</name>
+                <value>
+                    <booleanValue>false</booleanValue>
+                </value>
+            </processMetadataValues>
+            <processMetadataValues>
+                <name>leftHandSideLabel</name>
+                <value>
+                    <stringValue>Custom Notification Category Name</stringValue>
+                </value>
+            </processMetadataValues>
+            <processMetadataValues>
+                <name>maxOccurs</name>
+                <value>
+                    <numberValue>1.0</numberValue>
+                </value>
+            </processMetadataValues>
+            <processMetadataValues>
+                <name>objectType</name>
+                <value>
+                    <stringValue></stringValue>
+                </value>
+            </processMetadataValues>
+            <processMetadataValues>
+                <name>rightHandSideType</name>
+                <value>
+                    <stringValue>String</stringValue>
+                </value>
+            </processMetadataValues>
+            <name>notificationCategoryName</name>
+            <value>
+                <stringValue>MarketingExceptionApproveReject</stringValue>
             </value>
         </inputParameters>
         <nameSegment>BSF_CustomNotification</nameSegment>
@@ -1018,7 +1102,7 @@
                 <stringValue> [Task].LastModifiedBy.FirstName + &#39; &#39; + [Task].LastModifiedBy.LastName + &#39;. &#39;</stringValue>
             </value>
         </processMetadataValues>
-        <name>formula_10_myRule_7_A1_0350267142</name>
+        <name>formula_10_myRule_7_A1_7687380549</name>
         <dataType>String</dataType>
         <expression> {!myVariable_current.LastModifiedBy.FirstName} + &#39; &#39; + {!myVariable_current.LastModifiedBy.LastName} + &#39;. &#39;</expression>
     </formulas>
@@ -1029,7 +1113,7 @@
                 <stringValue>NOW() </stringValue>
             </value>
         </processMetadataValues>
-        <name>formula_11_myRule_7_A1_6863166466</name>
+        <name>formula_11_myRule_7_A1_5982279877</name>
         <dataType>DateTime</dataType>
         <expression>NOW()</expression>
     </formulas>
@@ -1042,7 +1126,7 @@
 </stringValue>
             </value>
         </processMetadataValues>
-        <name>formula_3_myRule_1_A3_2649210416</name>
+        <name>formula_3_myRule_1_A3_7255039343</name>
         <dataType>String</dataType>
         <expression>&#39;Hi &#39; + {!myVariable_current.CreatedBy.FirstName} + &#39; &#39; + {!myVariable_current.CreatedBy.LastName} + &#39;, &#39; +
 &#39;Your Request has been approved by &#39; + {!myVariable_current.LastModifiedBy.FirstName} + &#39; &#39; + {!myVariable_current.LastModifiedBy.LastName} + &#39;. &#39;</expression>
@@ -1054,7 +1138,7 @@
                 <stringValue> [Task].LastModifiedBy.FirstName + &#39; &#39; + [Task].LastModifiedBy.LastName + &#39;. &#39;</stringValue>
             </value>
         </processMetadataValues>
-        <name>formula_4_myRule_1_A1_7648664056</name>
+        <name>formula_4_myRule_1_A1_9340429779</name>
         <dataType>String</dataType>
         <expression> {!myVariable_current.LastModifiedBy.FirstName} + &#39; &#39; + {!myVariable_current.LastModifiedBy.LastName} + &#39;. &#39;</expression>
     </formulas>
@@ -1065,7 +1149,7 @@
                 <stringValue>NOW() </stringValue>
             </value>
         </processMetadataValues>
-        <name>formula_5_myRule_1_A1_0624359293</name>
+        <name>formula_5_myRule_1_A1_1854420326</name>
         <dataType>DateTime</dataType>
         <expression>NOW()</expression>
     </formulas>
@@ -1078,12 +1162,12 @@
 </stringValue>
             </value>
         </processMetadataValues>
-        <name>formula_9_myRule_7_A3_4272562527</name>
+        <name>formula_9_myRule_7_A3_4706564536</name>
         <dataType>String</dataType>
         <expression>&#39;Hi &#39; + {!myVariable_current.CreatedBy.FirstName} + &#39; &#39; + {!myVariable_current.CreatedBy.LastName} + &#39;, &#39; +
 &#39;Your Request has been rejected by &#39; + {!myVariable_current.LastModifiedBy.FirstName} + &#39; &#39; + {!myVariable_current.LastModifiedBy.LastName} + &#39;. &#39;</expression>
     </formulas>
-    <interviewLabel>Send_Bell_Notification_to_AM_for_approval_status-5_InterviewLabel</interviewLabel>
+    <interviewLabel>Send_Bell_Notification_to_AM_for_approval_status-6_InterviewLabel</interviewLabel>
     <label>Send Bell Notification to AM for approval status</label>
     <processMetadataValues>
         <name>ObjectType</name>
@@ -1189,7 +1273,7 @@
             </processMetadataValues>
             <field>Approved_Rejected_By__c</field>
             <value>
-                <elementReference>formula_4_myRule_1_A1_7648664056</elementReference>
+                <elementReference>formula_4_myRule_1_A1_9340429779</elementReference>
             </value>
         </inputAssignments>
         <inputAssignments>
@@ -1225,7 +1309,7 @@
             </processMetadataValues>
             <field>Approved_Rejected_Date__c</field>
             <value>
-                <elementReference>formula_5_myRule_1_A1_0624359293</elementReference>
+                <elementReference>formula_5_myRule_1_A1_1854420326</elementReference>
             </value>
         </inputAssignments>
         <object>Task</object>
@@ -1309,7 +1393,7 @@
             </processMetadataValues>
             <field>Approved_Rejected_By__c</field>
             <value>
-                <elementReference>formula_10_myRule_7_A1_0350267142</elementReference>
+                <elementReference>formula_10_myRule_7_A1_7687380549</elementReference>
             </value>
         </inputAssignments>
         <inputAssignments>
@@ -1345,7 +1429,7 @@
             </processMetadataValues>
             <field>Approved_Rejected_Date__c</field>
             <value>
-                <elementReference>formula_11_myRule_7_A1_6863166466</elementReference>
+                <elementReference>formula_11_myRule_7_A1_5982279877</elementReference>
             </value>
         </inputAssignments>
         <object>Task</object>

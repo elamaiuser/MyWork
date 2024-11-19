@@ -13,7 +13,6 @@ export class EventTypeSettingMappingConfigFactory {
       mappingConfig.addFieldConfig('sked_Available_End__c', 'availableEnd');
       mappingConfig.addFieldConfig('sked_Available_Start__c', 'availableStart');
       mappingConfig.addFieldConfig('sked_Background_Color__c', 'backgroundColor');
-      mappingConfig.addFieldConfig('sked_Can_Be_Pre_dated__c', 'canBePreDated');
       mappingConfig.addFieldConfig('sked_Category__c', 'category');
       mappingConfig.addFieldConfig('sked_Color__c', 'color');
       mappingConfig.addFieldConfig('sked_Is_Active__c', 'isActive');

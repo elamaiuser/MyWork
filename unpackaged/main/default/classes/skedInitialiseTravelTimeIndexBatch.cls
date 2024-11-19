@@ -68,7 +68,7 @@ public class skedInitialiseTravelTimeIndexBatch implements Database.Batchable<sk
                             sked_Travel_Time_Breakdown_JSON__c = sco.sked_Travel_Time_Breakdown_JSON__c,
                             sked_Travel_Distance__c = sco.sked_Travel_Distance_1__c,
                             sked_Timezone__c = timezoneSidId,
-                            sked_Ordering_Key__c = skedConstants.TTII_DIRECTION_CO_TO_SITE + coLoc.latitude + ':' + coLoc.longitude
+                            sked_Ordering_Key__c = skedTravelTimeIndexItemUtils.getOrderingKey(skedConstants.TTII_DIRECTION_CO_TO_SITE, coLoc)
                         );
                         if (sco.sked_Travel_Time_Breakdown_JSON__c != NULL) {
                             newIndexItem.sked_Last_Refresh_Date__c = sco.LastModifiedDate;
@@ -87,7 +87,7 @@ public class skedInitialiseTravelTimeIndexBatch implements Database.Batchable<sk
                             sked_Travel_Time_Breakdown_JSON__c = sco.sked_Travel_Time_Breakdown_JSON_2__c,
                             sked_Travel_Distance__c = sco.sked_Travel_Distance_2__c,
                             sked_Timezone__c = timezoneSidId,
-                            sked_Ordering_Key__c = skedConstants.TTII_DIRECTION_SITE_TO_CO + coLoc.latitude + ':' + coLoc.longitude
+                            sked_Ordering_Key__c = skedTravelTimeIndexItemUtils.getOrderingKey(skedConstants.TTII_DIRECTION_SITE_TO_CO, coLoc)
                         );
                         if (sco.sked_Travel_Time_Breakdown_JSON_2__c != NULL) {
                             newIndexItem.sked_Last_Refresh_Date__c = sco.LastModifiedDate;

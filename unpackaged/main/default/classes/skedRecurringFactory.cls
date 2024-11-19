@@ -169,6 +169,9 @@ public class skedRecurringFactory {
                         newEvent.scheduleId = schedule.temporaryId;
                         newEvent.start = newEventStart;
                         newEvent.finish = newEventEnd;
+                        if (entry.isAllDay != null) {
+                            newEvent.isAllDay = entry.isAllDay;
+                        }
                         newEvent.updateDateTimeFields(this.timezoneSidId);
 
                         schedule.events.add(newEvent);

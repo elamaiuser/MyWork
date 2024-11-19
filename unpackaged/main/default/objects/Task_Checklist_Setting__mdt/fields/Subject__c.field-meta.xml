@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Subject__c</fullName>
+    <externalId>false</externalId>
+    <fieldManageability>DeveloperControlled</fieldManageability>
+    <label>Subject</label>
+    <required>false</required>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>true</sorted>
+            <value>
+                <fullName>Post Drive Analysis Task</fullName>
+                <default>true</default>
+                <label>Post Drive Analysis Task</label>
+            </value>
+            <value>
+                <fullName>Post Drive FollowUp</fullName>
+                <default>false</default>
+                <label>Post Drive FollowUp</label>
+            </value>
+            <value>
+                <fullName>Recruitment Planning Meeting</fullName>
+                <default>false</default>
+                <label>Recruitment Planning Meeting</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Profile xmlns="http://soap.sforce.com/2006/04/metadata">
+    <custom>false</custom>
+    <userLicense>Salesforce</userLicense>
     <classAccesses>
         <apexClass>ARCAddressStdProtectedSvc</apexClass>
         <enabled>true</enabled>
@@ -137,6 +139,10 @@
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
+        <apexClass>AccountPortfolioAssignmentTrigger_Test</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
         <apexClass>AccountService</apexClass>
         <enabled>true</enabled>
     </classAccesses>
@@ -190,6 +196,10 @@
     </classAccesses>
     <classAccesses>
         <apexClass>AccountTriggerTest</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>ActiveTemplateControllerTest</apexClass>
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
@@ -297,11 +307,75 @@
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
+        <apexClass>BSFCustomNotificationTriggerHandler</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>BSFNotificationThrottlerUtil</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>BSFPopulateSiteChapterBatch</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>BSFPopulateSiteChapterBatchTest</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
         <apexClass>BSFPortfolioHelper</apexClass>
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
         <apexClass>BSFPortfolioHelperTest</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>BSFStagingSheetController</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>BSFStagingSheetControllerTest</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>BSFStagingSheetLinkController</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>BSFTaskChecklistTriggerHandler</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>BSFTaskChecklistTrigger_Test</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>BSFVehiclePlanningController</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>BSFWeeklyStaffingRTReportController</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>BSFWeeklyStaffingRTReportControllerTest</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>BSFWeeklyStaffingRTVFController</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>BSFWeeklyStaffingRTVFControllerTest</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>BSFWeeklyStaffingRoleTimeController</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>BSFWeeklyStaffingRoleTimeControllerTest</apexClass>
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
@@ -318,6 +392,14 @@
     </classAccesses>
     <classAccesses>
         <apexClass>BSF_BatchDeleteFromAccountServiceRole</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>BSF_BatchFutureDriveUpdate</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>BSF_BatchFutureDriveUpdateTest</apexClass>
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
@@ -338,6 +420,14 @@
     </classAccesses>
     <classAccesses>
         <apexClass>BSF_BatchPopulateDriveShift_Test</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>BSF_BatchSendNotificationToDM</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>BSF_BatchSendNotificationToDM_Test</apexClass>
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
@@ -385,6 +475,14 @@
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
+        <apexClass>BSF_BatchUpdateSiteCOTest</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>BSF_BatchUpdateSiteCollectionOperation</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
         <apexClass>BSF_Batch_AccTeamSyncAccPortfolio</apexClass>
         <enabled>true</enabled>
     </classAccesses>
@@ -417,7 +515,27 @@
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
+        <apexClass>BSF_Batch_CollectionZipOneTime</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>BSF_Batch_CollectionZipOneTime_test</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
         <apexClass>BSF_Batch_CreateDefaultPortfolioAssign</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>BSF_Batch_CreateHandOffTasks</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>BSF_Batch_CreateHandOffTasks_Test</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>BSF_Batch_CreatePublicityTasks</apexClass>
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
@@ -430,6 +548,26 @@
     </classAccesses>
     <classAccesses>
         <apexClass>BSF_Batch_DeleteExpiredTaxoVersionBatch</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>BSF_Batch_Drive_OpRecordStatusCorrection</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>BSF_Batch_EndCollectionZip</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>BSF_Batch_GenerateCollectionZipcode</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>BSF_Batch_GenerateCollectionZipcode_Test</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>BSF_Batch_OppLookupCorrection</apexClass>
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
@@ -477,11 +615,43 @@
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
+        <apexClass>BSF_Batch_RecruitmentTaskCreation</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>BSF_Batch_RecruitmentTaskCreation_Test</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>BSF_Batch_ResetBusinessPlanningStatus</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>BSF_Batch_TaskRename</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>BSF_Batch_TaskRename_Test</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
         <apexClass>BSF_Batch_TaxonomyEndDateHandler</apexClass>
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
         <apexClass>BSF_Batch_TaxonomyEndDateHelper</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>BSF_Batch_TaxonomyEndDate_Test</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>BSF_Batch_TemplateOrderExpiration</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>BSF_Batch_TemplateOrderExpiration_Test</apexClass>
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
@@ -537,6 +707,22 @@
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
+        <apexClass>BSF_General_Notification</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>BSF_NotificationThrottlerBatch</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>BSF_NotificationThrottlerBatchTest</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>BSF_Queueable_CreateRecurringOpp</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
         <apexClass>BSF_RemoveAccountTeamMemberBatch</apexClass>
         <enabled>true</enabled>
     </classAccesses>
@@ -553,6 +739,18 @@
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
+        <apexClass>BSF_TaskCreationBatch</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>BSF_TaskCreationBatch_Test</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>BSF_TaskTestBatch</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
         <apexClass>BSF_TemplateCDA_FutureOpportunity_Batch</apexClass>
         <enabled>true</enabled>
     </classAccesses>
@@ -565,11 +763,27 @@
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
+        <apexClass>BSF_TravelTimePanelController</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>BSF_TravelTimePanelControllerTest</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
         <apexClass>BSF_UpdateCollectionOperationsBatch</apexClass>
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
         <apexClass>BSF_UpdateCollectionOperationsBatchTest</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>BSF_UpdateDriveExcessStaffCapacityBatch</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>BSF_UpdateDriveExcessStaffCapacityTest</apexClass>
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
@@ -646,6 +860,10 @@
     </classAccesses>
     <classAccesses>
         <apexClass>CalendarBuildBatchOnDemandController</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>CalendarBuildBatchOnDemandControllerTest</apexClass>
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
@@ -829,11 +1047,23 @@
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
+        <apexClass>DriveAffiliationHandler</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>DriveAffiliationHandlerTest</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
         <apexClass>DriveGenerationErrorHandler</apexClass>
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
         <apexClass>DriveGenerationErrorHandlerTest</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>DriveGenerationUtil</apexClass>
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
@@ -961,6 +1191,10 @@
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
+        <apexClass>FutureOpportunityUpdateTriggerTest</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
         <apexClass>GenerateDriveTestData</apexClass>
         <enabled>true</enabled>
     </classAccesses>
@@ -981,6 +1215,14 @@
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
+        <apexClass>GeneratePendingDCRController</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>GeneratePendingDCRControllerTest</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
         <apexClass>GenericCustomLookup</apexClass>
         <enabled>true</enabled>
     </classAccesses>
@@ -994,6 +1236,22 @@
     </classAccesses>
     <classAccesses>
         <apexClass>GenericRelatedListControllerTest</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>GetDrivesForDCRBatch</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>GetDrivesForDCRCreateBatch</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>GetDrivesWithIncorrectJobTimesBatch</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>GetDrivesWithIncorrectJobTimesBatch_Test</apexClass>
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
@@ -1029,6 +1287,14 @@
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
+        <apexClass>JobAllocationTriggerHandler</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>JobTriggerHandler</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
         <apexClass>LeadFormCon</apexClass>
         <enabled>true</enabled>
     </classAccesses>
@@ -1054,6 +1320,22 @@
     </classAccesses>
     <classAccesses>
         <apexClass>LeadTriggerHandler</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>LeadUtils</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>LicenseUsageHelper</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>LicenseUsageHelperTest</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>LicenseUsageSchedulable</apexClass>
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
@@ -1189,6 +1471,14 @@
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
+        <apexClass>OpRecordStatusCorrectionTest</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>OppLookupCorrectionBatch_Test</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
         <apexClass>OpportunityContactRoleService</apexClass>
         <enabled>true</enabled>
     </classAccesses>
@@ -1222,6 +1512,14 @@
     </classAccesses>
     <classAccesses>
         <apexClass>OpportunityService</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>OpportunityServiceController</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>OpportunityServiceControllerTest</apexClass>
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
@@ -1273,6 +1571,10 @@
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
+        <apexClass>OrderCloningService</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
         <apexClass>OrderItemTriggerHandler</apexClass>
         <enabled>true</enabled>
     </classAccesses>
@@ -1302,6 +1604,18 @@
     </classAccesses>
     <classAccesses>
         <apexClass>PersonalStaffScheduleReportTest</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>PlanADriveUtilityClass</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>PlanADriveUtilityClass_Test</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>PopulateDriveSupervisoryRoleBatch</apexClass>
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
@@ -1421,6 +1735,18 @@
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
+        <apexClass>RemoveDuplicateTagBatchTest</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>RemoveDuplicateTagFromDriveShift</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>RemoveDuplicateTagFromJob</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
         <apexClass>RemoveSkedLicenseBatchTest</apexClass>
         <enabled>true</enabled>
     </classAccesses>
@@ -1437,11 +1763,23 @@
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
+        <apexClass>ResetBusinessPlanningStatusHelper</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>ResetBusinessPlanningStatusHelperTest</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
         <apexClass>ResourceNotificationEmailConstants</apexClass>
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
         <apexClass>ResourceNotificationEmailUtil</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>ResourceNotificationEmailUtilTest</apexClass>
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
@@ -1493,6 +1831,14 @@
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
+        <apexClass>SiteCollectionOperationTriggerHandler</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>SiteCollectionOperationTriggerTest</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
         <apexClass>SiteLoginController</apexClass>
         <enabled>true</enabled>
     </classAccesses>
@@ -1533,6 +1879,14 @@
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
+        <apexClass>SiteSuitabilityController</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>SiteSuitabilityController_Test</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
         <apexClass>SiteTriggerHandler</apexClass>
         <enabled>true</enabled>
     </classAccesses>
@@ -1545,7 +1899,19 @@
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
+        <apexClass>SponsorPlanningReportPDFController</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
         <apexClass>StaticTest</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>TaskChecklistController</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>TaskChecklistController_Test</apexClass>
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
@@ -1657,6 +2023,18 @@
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
+        <apexClass>TestskedJobNonDeclinable_batch</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>TravelTimeIndexItemTriggerHandler</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>TravelTimeIndexItemTriggerTest</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
         <apexClass>TriggerFactory</apexClass>
         <enabled>true</enabled>
     </classAccesses>
@@ -1690,6 +2068,10 @@
     </classAccesses>
     <classAccesses>
         <apexClass>UpdateAMAndDMOnAccountPortfolioBatch</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>UpdateAMAndDMOnOppPortfolioBatchTest</apexClass>
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
@@ -1761,6 +2143,26 @@
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
+        <apexClass>UpdateDriveShiftProjProc_ProductAndProc</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>UpdateDriveShiftProjectedProcTest</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>UpdateDrivesVehicleAllocationFieldsBatch</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>UpdateDrivesVehicleAllocationFieldsTest</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>UpdateDrivesVehicleAllocationSchedulable</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
         <apexClass>UpdateEvent</apexClass>
         <enabled>true</enabled>
     </classAccesses>
@@ -1825,6 +2227,18 @@
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
+        <apexClass>UpdateTaskChecklistEventHandler</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>UpdateTaskDriveDateBatch</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>UpdateTaskDriveDateBatchTest</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
         <apexClass>UserCollOpQueAssngmentReportController</apexClass>
         <enabled>true</enabled>
     </classAccesses>
@@ -1837,11 +2251,31 @@
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
+        <apexClass>WeeklyStaffScheduleReportController</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>WeeklyStaffScheduleReportControllerTest</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>activeTemplateController</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
         <apexClass>calculateOrderDueDateTest</apexClass>
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
         <apexClass>checkRecursive</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>closeFixedSiteAccountController</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>closeFixedSiteAccountControllerTest</apexClass>
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
@@ -1858,6 +2292,10 @@
     </classAccesses>
     <classAccesses>
         <apexClass>contactService_Test</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>createBsfErrorLogs_TEST</apexClass>
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
@@ -1885,7 +2323,23 @@
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
+        <apexClass>dlrs_AccountTest</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>dlrs_OpportunityTest</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
         <apexClass>generateTemplateOppIdTest</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>populateDriveSupRoleBatch_Test</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>populateDriveSupervisoryRoleTriggerTest</apexClass>
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
@@ -2057,7 +2511,19 @@
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
+        <apexClass>skedBiomedCollectionOpUtils</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
         <apexClass>skedCOImpactChangedModel</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>skedCOOptimizerSettingTrigger_Test</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>skedCOOptimizerSettingUtils_Test</apexClass>
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
@@ -2098,6 +2564,14 @@
     </classAccesses>
     <classAccesses>
         <apexClass>skedCoSlWrapper</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>skedCollectionOpOptimizerSettingHandler</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>skedCollectionOpOptimizerSettingUtils</apexClass>
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
@@ -2217,6 +2691,10 @@
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
+        <apexClass>skedCustomNotificationService</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
         <apexClass>skedDataService</apexClass>
         <enabled>true</enabled>
     </classAccesses>
@@ -2250,6 +2728,14 @@
     </classAccesses>
     <classAccesses>
         <apexClass>skedDateTimeUtils_Test</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>skedDebugLogHandler</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>skedDebugLogTrigger_Test</apexClass>
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
@@ -2306,6 +2792,14 @@
     </classAccesses>
     <classAccesses>
         <apexClass>skedDriveHandler</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>skedDriveProcedureCapacityOTBatch_Test</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>skedDriveProcedureCapacityOneTimeBatch</apexClass>
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
@@ -2389,7 +2883,27 @@
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
+        <apexClass>skedExceptionMasterModel</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
         <apexClass>skedExceptionUtils</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>skedExpireSiteFeedbacksSchedulable</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>skedExpireSiteFeedbacks_Test</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>skedExpireStaffTradeEventsSchedulable</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>skedExpireStaffTradeEvents_Test</apexClass>
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
@@ -2421,6 +2935,18 @@
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
+        <apexClass>skedImmediateRefreshTTIIndexBatch_Test</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>skedImmediateRefreshTravelTimeIndexBatch</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>skedImportReportedTimeBlocksMock</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
         <apexClass>skedInitialiseTravelTimeIndexBatch</apexClass>
         <enabled>true</enabled>
     </classAccesses>
@@ -2445,6 +2971,10 @@
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
+        <apexClass>skedJobAllocTravelTimeUpdate_Test</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
         <apexClass>skedJobAllocationBatchTemp</apexClass>
         <enabled>true</enabled>
     </classAccesses>
@@ -2466,6 +2996,14 @@
     </classAccesses>
     <classAccesses>
         <apexClass>skedJobAllocationTravelTimeBatch_Test</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>skedJobAllocationTravelTimeService</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>skedJobAllocationTravelTimeService_Test</apexClass>
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
@@ -2589,7 +3127,51 @@
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
+        <apexClass>skedNightlyAutofillPTOSlotsBatch</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>skedNightlyAutofillPTOSlotsBatch_Test</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>skedNightlyRefreshTTIndexBatch_Test</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>skedNightlyRefreshTravelTimeIndexBatch</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>skedNightlyTradeProcessBatch</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>skedNightlyTradeProcessBatch_Test</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>skedNightlyTradeProcessSchedulable</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>skedNightlyTradeProcessSchedulable_Test</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
         <apexClass>skedNotificationBatchBase</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>skedNotificationGenerationBatch</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>skedNotificationGenerationBatch_Test</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>skedNotificationGenerationEventHandler</apexClass>
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
@@ -2602,6 +3184,10 @@
     </classAccesses>
     <classAccesses>
         <apexClass>skedNotificationService</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>skedNotificationService_Test</apexClass>
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
@@ -2829,6 +3415,14 @@
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
+        <apexClass>skedPrimaryRegionExcDataFixBatch</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>skedPrimaryRegionExcDataFix_Test</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
         <apexClass>skedProcessBiddingPTOSchedulable</apexClass>
         <enabled>true</enabled>
     </classAccesses>
@@ -2873,7 +3467,15 @@
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
+        <apexClass>skedRecurringScheduleUtils</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
         <apexClass>skedRefreshTravelTimeIndexBatch</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>skedRefreshTravelTimeIndexBatchBase</apexClass>
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
@@ -3121,7 +3723,19 @@
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
+        <apexClass>skedRoleTimeVarianceAdjustment</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
         <apexClass>skedRoleTimeVarianceHandler</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>skedRoleTimeVarianceUtils</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>skedRoleTimeVarianceUtils_Test</apexClass>
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
@@ -3154,6 +3768,10 @@
     </classAccesses>
     <classAccesses>
         <apexClass>skedScheduleChangeNotificationBatch_Test</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>skedScheduledJobAllocTravelTimeUpdate</apexClass>
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
@@ -3261,6 +3879,10 @@
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
+        <apexClass>skedStaffingBudgetAvailabilityHandler</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
         <apexClass>skedStaffingBudgetAvailabilityServ_Test</apexClass>
         <enabled>true</enabled>
     </classAccesses>
@@ -3274,6 +3896,10 @@
     </classAccesses>
     <classAccesses>
         <apexClass>skedStaffingBudgetCollectionOpService</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>skedStaffingBudgetHandler</apexClass>
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
@@ -3337,6 +3963,14 @@
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
+        <apexClass>skedTTChangeDCROnAddressChangeBatch</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>skedTTChangeDCROnAddressChange_Test</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
         <apexClass>skedTagHandler</apexClass>
         <enabled>true</enabled>
     </classAccesses>
@@ -3350,6 +3984,18 @@
     </classAccesses>
     <classAccesses>
         <apexClass>skedTestDataFactory</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>skedTravelDistanceOneTimeBatch</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>skedTravelDistanceOneTimeBatch_Test</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>skedTravelTimeBreakdownModel</apexClass>
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
@@ -3389,6 +4035,10 @@
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
+        <apexClass>skedTriggerActionNotificationService</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
         <apexClass>skedTriggerContainer</apexClass>
         <enabled>true</enabled>
     </classAccesses>
@@ -3414,6 +4064,10 @@
     </classAccesses>
     <classAccesses>
         <apexClass>skedTriggerUtils_Test</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>skedUnavailabilityBalanceResultModel</apexClass>
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
@@ -3473,11 +4127,71 @@
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
+        <apexClass>skedWorkdayAbsenceManagement</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>skedWorkdayAbsenceManagementBsvc</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>skedWorkdayAbsenceManagementHttpMock</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>skedWorkdayAbsenceManagementSvcTest</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>skedWorkdayAdjustTimeOffRequest</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>skedWorkdayAdjustTimeOffResponse</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
         <apexClass>skedWorkdayApiManager</apexClass>
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
         <apexClass>skedWorkdayApiManager_Test</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>skedWorkdayApiRequest</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>skedWorkdayApiResponse</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>skedWorkdayEnterTimeOffRequest</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>skedWorkdayEnterTimeOffResponse</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>skedWorkdayGetPlanBalanceRequest</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>skedWorkdayGetPlanBalanceResponse</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>skedWorkdayImportTimeBlockRequest</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>skedWorkdayImportTimeBlockResponse</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>skedWorkdayPTOAdjustmentMock</apexClass>
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
@@ -3494,6 +4208,30 @@
     </classAccesses>
     <classAccesses>
         <apexClass>skedWorkdayPTOReportMock</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>skedWorkdayTimeTracking</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>skedWorkdayTimeTrackingBsvc</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>skedWorkdayTimeTrackingHttpMock</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>skedWorkdayTimeTrackingSvcTest</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>skedWorkdayUtils</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>skedWorkdayUtils_Test</apexClass>
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
@@ -3550,6 +4288,14 @@
     </classAccesses>
     <classAccesses>
         <apexClass>slwcAvailabilityPatternService_Test</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>slwcAvailabilityService</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>slwcAvailabilityService_Test</apexClass>
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
@@ -3633,6 +4379,14 @@
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
+        <apexClass>slwcSiteCollectionOperationService</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>slwcSiteCollectionOperationService_Test</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
         <apexClass>slwcSkedApiService</apexClass>
         <enabled>true</enabled>
     </classAccesses>
@@ -3676,7 +4430,6 @@
         <apexClass>userServiceTest</apexClass>
         <enabled>true</enabled>
     </classAccesses>
-    <custom>false</custom>
     <pageAccesses>
         <apexPage>AddTeamMemberToAccountPage</apexPage>
         <enabled>true</enabled>
@@ -3687,6 +4440,26 @@
     </pageAccesses>
     <pageAccesses>
         <apexPage>AnswersHome</apexPage>
+        <enabled>true</enabled>
+    </pageAccesses>
+    <pageAccesses>
+        <apexPage>BSFStagingSheetLinks</apexPage>
+        <enabled>true</enabled>
+    </pageAccesses>
+    <pageAccesses>
+        <apexPage>BSFStagingSheetSearchVF</apexPage>
+        <enabled>true</enabled>
+    </pageAccesses>
+    <pageAccesses>
+        <apexPage>BSFStagingSheetVF</apexPage>
+        <enabled>true</enabled>
+    </pageAccesses>
+    <pageAccesses>
+        <apexPage>BSFWeeklyStaffScheduleReportPDF</apexPage>
+        <enabled>true</enabled>
+    </pageAccesses>
+    <pageAccesses>
+        <apexPage>BSFWeeklyStaffingRTReport</apexPage>
         <enabled>true</enabled>
     </pageAccesses>
     <pageAccesses>
@@ -3739,6 +4512,10 @@
     </pageAccesses>
     <pageAccesses>
         <apexPage>LeadFormLSLComplete</apexPage>
+        <enabled>true</enabled>
+    </pageAccesses>
+    <pageAccesses>
+        <apexPage>MOEStagingSheetReport</apexPage>
         <enabled>true</enabled>
     </pageAccesses>
     <pageAccesses>
@@ -3814,6 +4591,10 @@
         <enabled>true</enabled>
     </pageAccesses>
     <pageAccesses>
+        <apexPage>SponsorPlanningReportPdf</apexPage>
+        <enabled>true</enabled>
+    </pageAccesses>
+    <pageAccesses>
         <apexPage>StagingSheetReport</apexPage>
         <enabled>true</enabled>
     </pageAccesses>
@@ -3842,6 +4623,18 @@
         <enabled>true</enabled>
     </pageAccesses>
     <pageAccesses>
+        <apexPage>bsfVehiclePlanningReportPDF</apexPage>
+        <enabled>true</enabled>
+    </pageAccesses>
+    <pageAccesses>
+        <apexPage>bsfWeeklyStaffScheduleReport</apexPage>
+        <enabled>true</enabled>
+    </pageAccesses>
+    <pageAccesses>
+        <apexPage>bsfWeeklyStaffingRTReportPdf</apexPage>
+        <enabled>true</enabled>
+    </pageAccesses>
+    <pageAccesses>
         <apexPage>generateDriveWorksheetHTM</apexPage>
         <enabled>true</enabled>
     </pageAccesses>
@@ -3866,7 +4659,15 @@
         <enabled>true</enabled>
     </pageAccesses>
     <pageAccesses>
+        <apexPage>skedMobileActivityCallOut</apexPage>
+        <enabled>true</enabled>
+    </pageAccesses>
+    <pageAccesses>
         <apexPage>skedMobileDriveShiftTrade</apexPage>
+        <enabled>true</enabled>
+    </pageAccesses>
+    <pageAccesses>
+        <apexPage>skedMobileOnCallCallOutManagement</apexPage>
         <enabled>true</enabled>
     </pageAccesses>
     <pageAccesses>
@@ -3874,7 +4675,15 @@
         <enabled>true</enabled>
     </pageAccesses>
     <pageAccesses>
+        <apexPage>skedMobileResourceCallOut</apexPage>
+        <enabled>true</enabled>
+    </pageAccesses>
+    <pageAccesses>
         <apexPage>skedMobileResourceDriveList</apexPage>
+        <enabled>true</enabled>
+    </pageAccesses>
+    <pageAccesses>
+        <apexPage>skedMobileSiteFeedbackForm</apexPage>
         <enabled>true</enabled>
     </pageAccesses>
     <pageAccesses>
@@ -4179,6 +4988,16 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
+        <field>Account.Average_Productivity__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Account.Average_Products__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>Account.BillingAddress</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -4205,6 +5024,21 @@
     <fieldPermissions>
         <editable>true</editable>
         <field>Account.Business_Info_Number__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Account.Business_Planning_Completed_By__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Account.Business_Planning_Completed_Date__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Account.Business_Planning_Completed__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -4253,8 +5087,18 @@
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
+        <editable>false</editable>
+        <field>Account.Combined_City_and_State__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
         <editable>true</editable>
         <field>Account.Comments__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Account.CompanyOrganization_Comments__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -4394,6 +5238,11 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
+        <field>Account.Existing_Relationship_with_HS__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>Account.External_System_ID__c</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -4420,6 +5269,11 @@
     <fieldPermissions>
         <editable>true</editable>
         <field>Account.Has_Personal_Story__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Account.Have_you_received_assistance_from_HS__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -4484,6 +5338,16 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>false</editable>
+        <field>Account.Lead_Rating_Stars__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Account.Lead_Score__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
         <field>Account.Logged_In_User_Initial_Reviewer__c</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -4528,6 +5392,11 @@
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
+        <editable>true</editable>
+        <field>Account.Mission_Vision_Core_Values__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
         <editable>false</editable>
         <field>Account.Most_Recent_Closed_Drive__c</field>
         <readable>true</readable>
@@ -4565,6 +5434,11 @@
     <fieldPermissions>
         <editable>false</editable>
         <field>Account.Next_Draft_Drive__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Account.Next_Scheduled_Drive_Updated__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -4610,6 +5484,11 @@
     <fieldPermissions>
         <editable>true</editable>
         <field>Account.Phone</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Account.Potential_Partnership_Reasons__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -4694,6 +5573,11 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
+        <field>Account.Supported_Nonprofit_Organizations__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>Account.Temporary_Account_Manager__c</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -4740,6 +5624,11 @@
     <fieldPermissions>
         <editable>true</editable>
         <field>Account.Website</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Account.Wellness_Programs__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -5254,6 +6143,106 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
+        <field>BSF_Custom_Notification__c.BSF_Custom_Notification__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>BSF_Custom_Notification__c.Body__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>BSF_Custom_Notification__c.Category__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>BSF_Custom_Notification__c.Custom_Notification_Type_Id__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>BSF_Custom_Notification__c.Destination_Email__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>BSF_Custom_Notification__c.Destination_Id__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>BSF_Custom_Notification__c.Email_Template__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>BSF_Custom_Notification__c.Error_Message__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>BSF_Custom_Notification__c.Expiry_TimeStamp__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>BSF_Custom_Notification__c.Notification_Sent_Timestamp__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>BSF_Custom_Notification__c.Oneoff_Protocol__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>BSF_Custom_Notification__c.Parent_Record__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>BSF_Custom_Notification__c.Phone_Number__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>BSF_Custom_Notification__c.Priority__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>BSF_Custom_Notification__c.SMS_Country_Code_Abbreviation__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>BSF_Custom_Notification__c.Scheduled_TimeStamp__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>BSF_Custom_Notification__c.Sender_Email__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>BSF_Custom_Notification__c.Subject__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>BSF_Custom_Notification__c.Target_Record_Id__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>BSF_Custom_Notification__c.sked_Notification_Setting_Id__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>BSF_Error_Log__c.ApexClass__c</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -5364,6 +6353,56 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
+        <field>BSF_Task_Checklist__c.Input_Checkbox__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>BSF_Task_Checklist__c.Input_Long_Text_Area__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>BSF_Task_Checklist__c.Input_Short_Text_1__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>BSF_Task_Checklist__c.Input_Short_Text_2__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>BSF_Task_Checklist__c.OpportunityLookup__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>BSF_Task_Checklist__c.Picklist_Input_1__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>BSF_Task_Checklist__c.Picklist_Input_2__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>BSF_Task_Checklist__c.TaskLookup__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>BSF_Task_Checklist__c.TaskType__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>BSF_Task_Checklist__c.Unique_Name__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>Biomed_Account_Manager__c.DRD_Team__c</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -5404,6 +6443,26 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
+        <field>Biomed_Collection_Op_Center__c.FS_Web_Scheduling_End_Date_Offset__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Biomed_Collection_Op_Center__c.FS_Web_Scheduling_End_Time_Offset__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Biomed_Collection_Op_Center__c.FS_Web_Scheduling_Start_Date_Offset__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Biomed_Collection_Op_Center__c.FS_Web_Scheduling_Start_Time__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>Biomed_Collection_Op_Center__c.Fixed_Site_Global_Override__c</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -5434,6 +6493,26 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
+        <field>Biomed_Collection_Op_Center__c.Mobile_Web_Scheduling_End_Date_Offset__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Biomed_Collection_Op_Center__c.Mobile_Web_Scheduling_End_Time_Offset__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Biomed_Collection_Op_Center__c.Mobile_Web_Scheduling_Start_Date_Offset__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Biomed_Collection_Op_Center__c.Mobile_Web_Scheduling_Start_Time__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>Biomed_Collection_Op_Center__c.Staging_Location_Address__c</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -5443,12 +6522,12 @@
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
-        <editable>false</editable>
+        <editable>true</editable>
         <field>Biomed_Collection_Op_Center__c.sked_Account_Preferences_Score__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
-        <editable>false</editable>
+        <editable>true</editable>
         <field>Biomed_Collection_Op_Center__c.sked_Account_Preferences__c</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -5459,21 +6538,31 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
+        <field>Biomed_Collection_Op_Center__c.sked_Auto_Approval_Cutoff_Days__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Biomed_Collection_Op_Center__c.sked_Available_Day_Trade_Window__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>Biomed_Collection_Op_Center__c.sked_Collection_Operation_Assignment__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
-        <editable>false</editable>
+        <editable>true</editable>
         <field>Biomed_Collection_Op_Center__c.sked_Collections_Manager__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
-        <editable>false</editable>
+        <editable>true</editable>
         <field>Biomed_Collection_Op_Center__c.sked_Collections_Team_Supervisor__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
-        <editable>false</editable>
+        <editable>true</editable>
         <field>Biomed_Collection_Op_Center__c.sked_Daily_Guaranteed_Hours__c</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -5483,12 +6572,12 @@
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
-        <editable>false</editable>
+        <editable>true</editable>
         <field>Biomed_Collection_Op_Center__c.sked_Geographic_Preferences_Score__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
-        <editable>false</editable>
+        <editable>true</editable>
         <field>Biomed_Collection_Op_Center__c.sked_Geographic_Preferences__c</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -5499,16 +6588,41 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
+        <field>Biomed_Collection_Op_Center__c.sked_High_Weight__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>Biomed_Collection_Op_Center__c.sked_Hold_Threshold__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
-        <editable>false</editable>
+        <editable>true</editable>
+        <field>Biomed_Collection_Op_Center__c.sked_IMPACT_End_Date__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Biomed_Collection_Op_Center__c.sked_IMPACT_Start_Date__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Biomed_Collection_Op_Center__c.sked_IMPACT__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Biomed_Collection_Op_Center__c.sked_Is_Deactivated__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>Biomed_Collection_Op_Center__c.sked_Location_Preferences_Score__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
-        <editable>false</editable>
+        <editable>true</editable>
         <field>Biomed_Collection_Op_Center__c.sked_Location_Preferences__c</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -5519,7 +6633,17 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
+        <field>Biomed_Collection_Op_Center__c.sked_Low_Weight__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>Biomed_Collection_Op_Center__c.sked_Lunch_Break_Before_Draw_Hours__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Biomed_Collection_Op_Center__c.sked_Lunch_Break__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -5538,6 +6662,11 @@
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
+        <editable>true</editable>
+        <field>Biomed_Collection_Op_Center__c.sked_Medium_Weight__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
         <editable>false</editable>
         <field>Biomed_Collection_Op_Center__c.sked_Mid_Drive_Productivity_Threshold__c</field>
         <readable>true</readable>
@@ -5548,8 +6677,13 @@
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
-        <editable>false</editable>
+        <editable>true</editable>
         <field>Biomed_Collection_Op_Center__c.sked_Minimum_Weekly_Hours__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Biomed_Collection_Op_Center__c.sked_No_Travel_Time__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -5564,6 +6698,36 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>false</editable>
+        <field>Biomed_Collection_Op_Center__c.sked_Regulated_Medi_Screener_Drive_Types__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Biomed_Collection_Op_Center__c.sked_Relocated_Driver_TT_from_Drive_CO__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Biomed_Collection_Op_Center__c.sked_Require_Number_of_Meal_Breaks__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Biomed_Collection_Op_Center__c.sked_Require_Number_of_Rest_Breaks__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Biomed_Collection_Op_Center__c.sked_Require_Start_End_Times_Meal_Break__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Biomed_Collection_Op_Center__c.sked_Require_Start_End_Times_Rest_Break__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>Biomed_Collection_Op_Center__c.sked_Restricts_to_Full_day_PTO__c</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -5574,16 +6738,21 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
+        <field>Biomed_Collection_Op_Center__c.sked_Role_Priorities_Weight__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>Biomed_Collection_Op_Center__c.sked_Role_Priorities__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
-        <editable>false</editable>
+        <editable>true</editable>
         <field>Biomed_Collection_Op_Center__c.sked_Scheduling_Manager__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
-        <editable>false</editable>
+        <editable>true</editable>
         <field>Biomed_Collection_Op_Center__c.sked_Seniority_Rank_Score__c</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -5598,7 +6767,7 @@
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
-        <editable>false</editable>
+        <editable>true</editable>
         <field>Biomed_Collection_Op_Center__c.sked_Skip_Last_Appointment__c</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -5613,12 +6782,12 @@
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
-        <editable>false</editable>
+        <editable>true</editable>
         <field>Biomed_Collection_Op_Center__c.sked_Travel_Time_Included_Fixed_Site__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
-        <editable>false</editable>
+        <editable>true</editable>
         <field>Biomed_Collection_Op_Center__c.sked_Travel_Time_Included_Mobile__c</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -5630,6 +6799,11 @@
     <fieldPermissions>
         <editable>true</editable>
         <field>Biomed_Collection_Op_Center__c.sked_Turnaround_Time__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Biomed_Collection_Op_Center__c.sked_Waitlist_Enabled__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -5675,6 +6849,401 @@
     <fieldPermissions>
         <editable>true</editable>
         <field>BusinessBrand.ParentId</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Calendar_Build_Error_Log__c.BSF_Error_Log__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Calendar_Build_Error_Log__c.Calendar_Build_Log_Manual_Run__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Calendar_Build_Error_Log__c.Calendar_Build_Log__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Calendar_Build_Error_Log__c.Category__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Calendar_Build_Error_Log__c.Drive__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Calendar_Build_Error_Log__c.Error_Information__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Calendar_Build_Error_Log__c.Operation_Record__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Calendar_Build_Error_Log__c.Opportunity__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Calendar_Build_Log_Manual_Run__c.CB_Batch_Execution_Date__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Calendar_Build_Log_Manual_Run__c.CB_Batch_Status__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Calendar_Build_Log_Manual_Run__c.CB_FS_Eligible_Opportunity_Count__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Calendar_Build_Log_Manual_Run__c.CB_FS_Opportunities_Created__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Calendar_Build_Log_Manual_Run__c.CB_FS_Opportunities_Failure_Count__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Calendar_Build_Log_Manual_Run__c.CB_Mobile_Eligible_Opportunity_Count__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Calendar_Build_Log_Manual_Run__c.CB_Mobile_Opportunities_Created__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Calendar_Build_Log_Manual_Run__c.CB_Mobile_Opportunities_Failure_Count__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Calendar_Build_Log_Manual_Run__c.Corrected_Drive_Count__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Calendar_Build_Log_Manual_Run__c.Drive_Date__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Calendar_Build_Log_Manual_Run__c.Drive_Gen_Batch_Execution_Date__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Calendar_Build_Log_Manual_Run__c.Drive_Gen_Batch_Status__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Calendar_Build_Log_Manual_Run__c.External_Id__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Calendar_Build_Log_Manual_Run__c.FS_Drive_Generation_Count__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Calendar_Build_Log_Manual_Run__c.FS_Drive_Generation_Failure_Count__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Calendar_Build_Log_Manual_Run__c.FS_Drives_Failed_Processing__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Calendar_Build_Log_Manual_Run__c.FS_Drives_with_Resource_Allocation__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Calendar_Build_Log_Manual_Run__c.FS_Drives_wo_Resource_Allocation__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Calendar_Build_Log_Manual_Run__c.FS_Sys_Gen_Batch_Run_Date__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Calendar_Build_Log_Manual_Run__c.FS_Sys_Gen_Batch_Run_Status__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Calendar_Build_Log_Manual_Run__c.Final_State_Drive_Count__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Calendar_Build_Log_Manual_Run__c.Mobile_Drive_Generation_Count__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Calendar_Build_Log_Manual_Run__c.Mobile_Drive_Generation_Failure_Count__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Calendar_Build_Log_Manual_Run__c.Mobile_Drives_Failed_Processing__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Calendar_Build_Log_Manual_Run__c.Mobile_Drives_with_Resource_Allocation__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Calendar_Build_Log_Manual_Run__c.Mobile_Drives_wo_Resource_Allocation__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Calendar_Build_Log_Manual_Run__c.Mobile_Sys_Gen_Batch_Run_Date__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Calendar_Build_Log_Manual_Run__c.Mobile_Sys_Gen_Batch_Run_Status__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Calendar_Build_Log_Manual_Run__c.Not_Submitted_Op_Record_Count__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Calendar_Build_Log_Manual_Run__c.Op_Record_Count__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Calendar_Build_Log_Manual_Run__c.Open_Drive_Count__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Calendar_Build_Log_Manual_Run__c.Parent_Calendar_Build_Log__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Calendar_Build_Log_Manual_Run__c.Status_Correction_Batch_Drive_Count__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Calendar_Build_Log_Manual_Run__c.Status_Correction_Batch_Execution_Date__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Calendar_Build_Log_Manual_Run__c.Status_Correction_Batch_Status__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Calendar_Build_Log_Manual_Run__c.Submitted_Op_Record_Count__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Calendar_Build_Log__c.CB_Batch_Execution_Date__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Calendar_Build_Log__c.CB_Batch_Status__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Calendar_Build_Log__c.CB_FS_Eligible_Opportunity_Count__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Calendar_Build_Log__c.CB_FS_Opportunities_Created__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Calendar_Build_Log__c.CB_FS_Opportunities_Failure_Count__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Calendar_Build_Log__c.CB_Mobile_Eligible_Opportunity_Count__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Calendar_Build_Log__c.CB_Mobile_Opportunities_Created__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Calendar_Build_Log__c.CB_Mobile_Opportunities_Failure_Count__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Calendar_Build_Log__c.Corrected_Drive_Count__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Calendar_Build_Log__c.Drive_Date__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Calendar_Build_Log__c.Drive_Gen_Batch_Execution_Date__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Calendar_Build_Log__c.Drive_Gen_Batch_Status__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Calendar_Build_Log__c.External_Id__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Calendar_Build_Log__c.FS_Drive_Generation_Count__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Calendar_Build_Log__c.FS_Drive_Generation_Failure_Count__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Calendar_Build_Log__c.FS_Drives_Failed_Processing__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Calendar_Build_Log__c.FS_Drives_with_Resource_Allocation__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Calendar_Build_Log__c.FS_Drives_wo_Resource_Allocation__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Calendar_Build_Log__c.FS_Sys_Gen_Batch_Run_Date__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Calendar_Build_Log__c.FS_Sys_Gen_Batch_Run_Status__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Calendar_Build_Log__c.Final_State_Drive_Count__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Calendar_Build_Log__c.Mobile_Drive_Generation_Count__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Calendar_Build_Log__c.Mobile_Drive_Generation_Failure_Count__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Calendar_Build_Log__c.Mobile_Drives_Failed_Processing__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Calendar_Build_Log__c.Mobile_Drives_with_Resource_Allocation__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Calendar_Build_Log__c.Mobile_Drives_wo_Resource_Allocation__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Calendar_Build_Log__c.Mobile_Sys_Gen_Batch_Run_Date__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Calendar_Build_Log__c.Mobile_Sys_Gen_Batch_Run_Status__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Calendar_Build_Log__c.Not_Submitted_Op_Record_Count__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Calendar_Build_Log__c.Op_Record_Count__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Calendar_Build_Log__c.Open_Drive_Count__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Calendar_Build_Log__c.Status_Correction_Batch_Drive_Count__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Calendar_Build_Log__c.Status_Correction_Batch_Execution_Date__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Calendar_Build_Log__c.Status_Correction_Batch_Status__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Calendar_Build_Log__c.Submitted_Op_Record_Count__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -5949,11 +7518,6 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>Chapter_Blood_Region_Zip_Match__c.Zip__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
         <field>Chapter__c.Address__c</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -6030,11 +7594,6 @@
     <fieldPermissions>
         <editable>true</editable>
         <field>Chapter__c.State__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Chapter__c.Type__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -6175,6 +7734,16 @@
     <fieldPermissions>
         <editable>false</editable>
         <field>Collections_Territory__c.Donor_Services_Region_Code__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Collections_Territory__c.External_Id_BackEnd__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Collections_Territory__c.External_Id__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -6339,6 +7908,11 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
+        <field>Contact.Campaign_Name__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>Contact.Communication_Preference__c</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -6349,12 +7923,22 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
+        <field>Contact.Contact_Comments__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>Contact.Contact_Hours_Preference__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>false</editable>
         <field>Contact.Contact_Name_Change__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Contact.Current_Blood_Donor__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -6524,6 +8108,11 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
+        <field>Contact.Other_Redcross_Relationships__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>Contact.Personal_Story__c</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -6535,6 +8124,16 @@
     <fieldPermissions>
         <editable>true</editable>
         <field>Contact.Phone_Type__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Contact.Preferred_Pronouns__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Contact.Preferred_Time_to_Call__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -6554,12 +8153,27 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
+        <field>Contact.Race__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>Contact.ReActivation_Date__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>false</editable>
         <field>Contact.Red_Cross_Email__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Contact.Referrer__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Contact.Referrer_s_Name__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -7233,6 +8847,11 @@
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
+        <editable>true</editable>
+        <field>Event.Customer_Service_Issues__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
         <editable>false</editable>
         <field>Event.Date_Completed__c</field>
         <readable>true</readable>
@@ -7250,6 +8869,16 @@
     <fieldPermissions>
         <editable>true</editable>
         <field>Event.Description</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Event.Drive_Date__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Event.Highlights_and_Feedback__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -7313,6 +8942,11 @@
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
+        <editable>true</editable>
+        <field>Event.Related_Order__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
         <editable>false</editable>
         <field>Event.Related_Record_Link__c</field>
         <readable>true</readable>
@@ -7355,6 +8989,11 @@
     <fieldPermissions>
         <editable>true</editable>
         <field>Event.Staff_List__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>Event.Status_Visual__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -7604,6 +9243,11 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
+        <field>Lead.Are_you_currently_hosting_blood_drives__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>Lead.BDM_Assigned__c</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -7694,6 +9338,11 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
+        <field>Lead.Company_Organization_Comments__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>Lead.Company_Size__c</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -7710,6 +9359,11 @@
     <fieldPermissions>
         <editable>true</editable>
         <field>Lead.Company_Type__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Lead.Contact_Comments__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -7749,6 +9403,11 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
+        <field>Lead.Existing_Relationship_with_HS__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>Lead.External_Campaign_ID__c</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -7780,6 +9439,16 @@
     <fieldPermissions>
         <editable>true</editable>
         <field>Lead.Has_Personal_Story__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Lead.Have_you_received_assistance_from_HS__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Lead.Hosted_Before_Comments__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -7839,6 +9508,11 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
+        <field>Lead.Last_Modified_Date_Status__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>Lead.Last_Name__c</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -7863,6 +9537,16 @@
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
+        <editable>true</editable>
+        <field>Lead.Lead_District__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Lead.Lead_Division_Name__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
         <editable>false</editable>
         <field>Lead.Lead_Rating_Stars__c</field>
         <readable>true</readable>
@@ -7880,6 +9564,16 @@
     <fieldPermissions>
         <editable>false</editable>
         <field>Lead.Lead_Score_New__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>Lead.Lead_Stage_Status_Updated__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>Lead.Lead_Stage_Status__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -7903,6 +9597,11 @@
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
+        <editable>false</editable>
+        <field>Lead.Lead_age_Hours__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
         <editable>true</editable>
         <field>Lead.Lost_Reason_Other__c</field>
         <readable>true</readable>
@@ -7910,6 +9609,11 @@
     <fieldPermissions>
         <editable>true</editable>
         <field>Lead.Lost_Reason__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Lead.Mission_Vision_Core_Values__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -7935,6 +9639,11 @@
     <fieldPermissions>
         <editable>false</editable>
         <field>Lead.New_to_Unqualified_Status__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>Lead.No_of_Weekend_Days_Btw_Status_Change__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -7968,6 +9677,21 @@
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
+        <editable>true</editable>
+        <field>Lead.Potential_Partnership_Reasons__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Lead.Preferred_Pronouns__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Lead.Preferred_Time_to_Call__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
         <editable>false</editable>
         <field>Lead.QUALIFIED_Status_Agr_Days__c</field>
         <readable>true</readable>
@@ -7979,11 +9703,16 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>Lead.Rating</field>
+        <field>Lead.Race__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
+        <field>Lead.Rating</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
         <field>Lead.Rating_Visual__c</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -8013,6 +9742,11 @@
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
+        <editable>true</editable>
+        <field>Lead.Supported_Nonprofit_Organizations__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
         <editable>false</editable>
         <field>Lead.Territory_Name__c</field>
         <readable>true</readable>
@@ -8038,6 +9772,11 @@
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
+        <editable>true</editable>
+        <field>Lead.Wellness_Programs__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
         <editable>false</editable>
         <field>Lead.lead_Status_CONVERTED__c</field>
         <readable>true</readable>
@@ -8060,6 +9799,61 @@
     <fieldPermissions>
         <editable>false</editable>
         <field>Lead_Email_Phone__e.SysModStamp__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>License_Usage__c.Expiration_Date__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>License_Usage__c.License_Definition_Key__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>License_Usage__c.License_Snapshot_Date_Time__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>License_Usage__c.Licenses_Remaining__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>License_Usage__c.Name__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>License_Usage__c.Namespace_Prefix__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>License_Usage__c.Package_Id__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>License_Usage__c.Record_Type_Name__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>License_Usage__c.Status__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>License_Usage__c.Total_Licenses__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>License_Usage__c.Used_Licenses__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -8423,6 +10217,11 @@
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
+        <editable>true</editable>
+        <field>Opportunity.AA_Unit_Projection__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
         <editable>false</editable>
         <field>Opportunity.ARC_Region__c</field>
         <readable>true</readable>
@@ -8768,6 +10567,11 @@
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
+        <editable>true</editable>
+        <field>Opportunity.Diverse_Donor_Recruitment_Strategy__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
         <editable>false</editable>
         <field>Opportunity.Division__c</field>
         <readable>true</readable>
@@ -8799,12 +10603,22 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>false</editable>
+        <field>Opportunity.Draw_Rate__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
         <field>Opportunity.DriveStatus__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
         <field>Opportunity.Drive_Completed_Date__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Opportunity.Drive_Date_Change_Reason__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -8985,6 +10799,11 @@
     <fieldPermissions>
         <editable>true</editable>
         <field>Opportunity.Last_Contact_Type__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Opportunity.Latino_Unit_Projection__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -9213,6 +11032,11 @@
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
+        <editable>false</editable>
+        <field>Opportunity.Related_Scheduled_Drive_Productivity__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
         <editable>true</editable>
         <field>Opportunity.Related_Scheduled_Drive__c</field>
         <readable>true</readable>
@@ -9244,6 +11068,11 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>false</editable>
+        <field>Opportunity.Show_Rate__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
         <field>Opportunity.Site_Building_Name__c</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -9260,6 +11089,16 @@
     <fieldPermissions>
         <editable>false</editable>
         <field>Opportunity.Site_Zip_Code__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Opportunity.Slot_Generator_Change_Reason__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Opportunity.Slot_Generator__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -9395,6 +11234,11 @@
     <fieldPermissions>
         <editable>true</editable>
         <field>Opportunity.WB_Projected_Procedures__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Opportunity.Web_Sched_Offset_from_CO_Global_Settings__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -10274,6 +12118,16 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
+        <field>Package_Name__mdt.Package_Name__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Package_Name__mdt.Package_Namespace__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>PartyConsent.DoubleConsentCaptureDate</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -10734,6 +12588,11 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
+        <field>Site_Suitability_Checklist__c.Value__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>SocialPersona.AreWeFollowing</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -11163,6 +13022,11 @@
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
+        <editable>true</editable>
+        <field>Task.Customer_Service_Issues__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
         <editable>false</editable>
         <field>Task.Date_Completed__c</field>
         <readable>true</readable>
@@ -11180,6 +13044,16 @@
     <fieldPermissions>
         <editable>true</editable>
         <field>Task.Description</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Task.Drive_Date__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Task.Highlights_and_Feedback__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -11233,6 +13107,11 @@
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
+        <editable>true</editable>
+        <field>Task.Related_Order__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
         <editable>false</editable>
         <field>Task.Related_Record_Link__c</field>
         <readable>true</readable>
@@ -11275,6 +13154,11 @@
     <fieldPermissions>
         <editable>true</editable>
         <field>Task.Staff_List__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>Task.Status_Visual__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -11749,6 +13633,56 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
+        <field>sked_CollectionOperationOptimizerSetting__c.sked_Collection_Operation__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>sked_CollectionOperationOptimizerSetting__c.sked_Constraint_Type__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>sked_CollectionOperationOptimizerSetting__c.sked_Constraint__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>sked_CollectionOperationOptimizerSetting__c.sked_Default_Weight__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>sked_CollectionOperationOptimizerSetting__c.sked_Display_Order__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>sked_CollectionOperationOptimizerSetting__c.sked_Display_Type__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>sked_CollectionOperationOptimizerSetting__c.sked_Drive_Type__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>sked_CollectionOperationOptimizerSetting__c.sked_Enabled__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>sked_CollectionOperationOptimizerSetting__c.sked_Optimization_Run__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>sked_CollectionOperationOptimizerSetting__c.sked_Optimizer_Mapped_Weight__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>sked_Collection_Operation_SDM__c.sked_Effective_End_Date__c</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -12039,6 +13973,21 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
+        <field>sked_Drive_Shift_Trade__c.sked_Requester_Not_Available_For_CO__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>sked_Drive_Shift_Trade__c.sked_Requester_Relocated_Acknowledge__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>sked_Drive_Shift_Trade__c.sked_Requester_Unavailable_For_CO_Ack__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>sked_Drive_Shift_Trade__c.sked_RequestingStaffScheduledHoursAfter__c</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -12109,7 +14058,17 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
+        <field>sked_Drive_Shift_Trade__c.sked_Requesting_Staff_Relocated__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>sked_Drive_Shift_Trade__c.sked_Requesting_Staff_Role_on_Drive__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>sked_Drive_Shift_Trade__c.sked_Requesting_Staff_Trading_Avail_Date__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -12135,6 +14094,21 @@
     <fieldPermissions>
         <editable>true</editable>
         <field>sked_Drive_Shift_Trade__c.sked_Trade_Requester_Notes__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>sked_Drive_Shift_Trade__c.sked_Trader_Not_Available_For_CO__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>sked_Drive_Shift_Trade__c.sked_Trader_Relocated_Acknowledge__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>sked_Drive_Shift_Trade__c.sked_Trader_Unavailable_For_CO_Ack__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -12204,12 +14178,22 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
+        <field>sked_Drive_Shift_Trade__c.sked_Trading_Staff_Relocated__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>sked_Drive_Shift_Trade__c.sked_Trading_Staff_Role_on_Drive__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
         <field>sked_Drive_Shift_Trade__c.sked_Trading_Staff_Scheduled_Hours_After__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>sked_Drive_Shift_Trade__c.sked_Trading_Staff_Trading_Avail_Date__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -12349,12 +14333,22 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
+        <field>sked_Drive__c.Average_Staff_Capacity__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>sked_Drive__c.District_Manager_Portfolio__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
         <field>sked_Drive__c.District_Manager__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>sked_Drive__c.Excess_Staff_Capacity__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -12393,13 +14387,38 @@
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
+        <editable>true</editable>
+        <field>sked_Drive__c.Supervisory_Role__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>sked_Drive__c.account_External_Id__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
         <editable>false</editable>
         <field>sked_Drive__c.is_Shift_Start_or_End_Different__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
+        <field>sked_Drive__c.site_External_Id__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>sked_Drive__c.sked_2RBC_Projected_Procedures__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>sked_Drive__c.sked_APT_Required__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>sked_Drive__c.sked_ARC_Region_ID__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -12424,7 +14443,17 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>false</editable>
+        <field>sked_Drive__c.sked_Assigned_Staff_Count__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
         <field>sked_Drive__c.sked_Biomed_Collection_Op_Name__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>sked_Drive__c.sked_Can_Edit_Drive_During_Active_DCR__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -12443,8 +14472,33 @@
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
+        <editable>true</editable>
+        <field>sked_Drive__c.sked_Contention_Resolution__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
         <editable>false</editable>
+        <field>sked_Drive__c.sked_Date_to_Confirm__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>sked_Drive__c.sked_Day_of_Week__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>sked_Drive__c.sked_Designated_Approver__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>sked_Drive__c.sked_Dispatched_At__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>sked_Drive__c.sked_Dispatched_By__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -12454,12 +14508,32 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
+        <field>sked_Drive__c.sked_Do_Not_Use_Vehicle__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>sked_Drive__c.sked_Drive_Date_Text__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>sked_Drive__c.sked_Drive_Date__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
+        <field>sked_Drive__c.sked_Drive_Dispatched__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>sked_Drive__c.sked_Drive_External_Id__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>sked_Drive__c.sked_Drive_Has_Change_Request__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -12488,6 +14562,16 @@
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
+        <editable>false</editable>
+        <field>sked_Drive__c.sked_Drive_Shift_2RBC_Procedures__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>sked_Drive__c.sked_Drive_Shift_Count__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
         <editable>true</editable>
         <field>sked_Drive__c.sked_Drive_Site__c</field>
         <readable>true</readable>
@@ -12503,6 +14587,11 @@
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
+        <editable>false</editable>
+        <field>sked_Drive__c.sked_Equipment_Allocated__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
         <editable>true</editable>
         <field>sked_Drive__c.sked_Event_Published__c</field>
         <readable>true</readable>
@@ -12510,6 +14599,16 @@
     <fieldPermissions>
         <editable>true</editable>
         <field>sked_Drive__c.sked_Exclude_from_Optimizer__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>sked_Drive__c.sked_Geo_From_To_Key__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>sked_Drive__c.sked_Geo_To_From_Key__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -12538,8 +14637,23 @@
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
+        <editable>true</editable>
+        <field>sked_Drive__c.sked_Initiated_By__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>sked_Drive__c.sked_Is_2RBC_Procedures_Not_Matched__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
         <editable>false</editable>
         <field>sked_Drive__c.sked_Is_Logistic_Different__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>sked_Drive__c.sked_Is_New_Drive_Confirmation__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -12573,12 +14687,37 @@
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
+        <editable>true</editable>
+        <field>sked_Drive__c.sked_Linked_Drive__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>sked_Drive__c.sked_Linked_Drives__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>sked_Drive__c.sked_Lock_Lunch_Break__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>sked_Drive__c.sked_Market__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
         <editable>false</editable>
         <field>sked_Drive__c.sked_Max_Shift_End__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
-        <editable>false</editable>
+        <editable>true</editable>
+        <field>sked_Drive__c.sked_Maximum_Lunch_Break_Duration__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>sked_Drive__c.sked_MigrationID__c</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -12608,8 +14747,18 @@
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
-        <editable>false</editable>
+        <editable>true</editable>
         <field>sked_Drive__c.sked_No_of_Allocated_Buses__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>sked_Drive__c.sked_No_of_Allocated_CDL__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>sked_Drive__c.sked_No_of_Allocated_DOT__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -12628,8 +14777,48 @@
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
+        <editable>true</editable>
+        <field>sked_Drive__c.sked_Num_Of_Pending_DCRs__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>sked_Drive__c.sked_Number_of_2RBC_Assets__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>sked_Drive__c.sked_Number_of_Plasma_Assets__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>sked_Drive__c.sked_Number_of_Platelet_Assets__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>sked_Drive__c.sked_Number_of_Vehicles__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>sked_Drive__c.sked_Open_to_Public__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>sked_Drive__c.sked_Operation_Notes__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
         <editable>false</editable>
         <field>sked_Drive__c.sked_Operation_Type__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>sked_Drive__c.sked_Optimization_Run__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -12645,6 +14834,11 @@
     <fieldPermissions>
         <editable>true</editable>
         <field>sked_Drive__c.sked_Pending_Action__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>sked_Drive__c.sked_Plasma_Projected_Procedures__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -12684,6 +14878,11 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
+        <field>sked_Drive__c.sked_Procedure_Capacity__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>sked_Drive__c.sked_Procedures_Projected__c</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -12713,8 +14912,23 @@
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
-        <editable>false</editable>
+        <editable>true</editable>
+        <field>sked_Drive__c.sked_RTD_Change_DCR_Required__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>sked_Drive__c.sked_RTV_Approval_Status__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>sked_Drive__c.sked_RTV_Change_DCR_Required__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>sked_Drive__c.sked_Rank__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -12728,8 +14942,23 @@
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
-        <editable>false</editable>
+        <editable>true</editable>
+        <field>sked_Drive__c.sked_Rejection_Reason_Code__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>sked_Drive__c.sked_Replacement_Drive__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>sked_Drive__c.sked_Require_APS_Approval__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>sked_Drive__c.sked_Route_Approval_Request_To__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -12739,7 +14968,27 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
+        <field>sked_Drive__c.sked_Shadow_Drive__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>sked_Drive__c.sked_Site_Collection_Operation__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>sked_Drive__c.sked_Staff_Allocated__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>sked_Drive__c.sked_Staff_Capacity__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>sked_Drive__c.sked_Staff_Delta__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -12763,6 +15012,11 @@
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
+        <editable>true</editable>
+        <field>sked_Drive__c.sked_Staging_Location__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
         <editable>false</editable>
         <field>sked_Drive__c.sked_Start_Time_Offset__c</field>
         <readable>true</readable>
@@ -12778,8 +15032,28 @@
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
-        <editable>false</editable>
+        <editable>true</editable>
+        <field>sked_Drive__c.sked_Submission_Notes__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>sked_Drive__c.sked_Submitted_By__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>sked_Drive__c.sked_Surrogate_Drive_for__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>sked_Drive__c.sked_Target_Productivity_Metric__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>sked_Drive__c.sked_Territory_Key__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -12819,6 +15093,26 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
+        <field>sked_Drive__c.sked_Travel_Time_CO_To_Site__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>sked_Drive__c.sked_Travel_Time_Change_DCR_Required__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>sked_Drive__c.sked_Travel_Time_Included__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>sked_Drive__c.sked_Travel_Time_Site_To_CO__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>sked_Drive__c.sked_Type_of_Drive__c</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -12834,7 +15128,22 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
+        <field>sked_Drive__c.sked_Use_Chaser_Vehicle__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>sked_Drive__c.sked_Vehicle_Capacity__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>sked_Drive__c.sked_Vehicle_Types__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>sked_Drive__c.sked_Vehicles_Allocated__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -13733,13 +16042,18 @@
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
-        <editable>false</editable>
+        <editable>true</editable>
         <field>sked_Optimization_Queue_Item__c.sked_Inherit_Result_From__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
-        <editable>false</editable>
+        <editable>true</editable>
         <field>sked_Optimization_Queue_Item__c.sked_MigrationID__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>sked_Optimization_Queue_Item__c.sked_Type__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -13783,13 +16097,18 @@
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
-        <editable>false</editable>
+        <editable>true</editable>
         <field>sked_Optimization_Run__c.sked_Account_Preferences_Score__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
-        <editable>false</editable>
+        <editable>true</editable>
         <field>sked_Optimization_Run__c.sked_Account_Preferences__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>sked_Optimization_Run__c.sked_Account_Restrictions_Constraint__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -13799,16 +16118,21 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
+        <field>sked_Optimization_Run__c.sked_Average_Hours_per_Staff__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>sked_Optimization_Run__c.sked_Collection_Operation__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
-        <editable>false</editable>
+        <editable>true</editable>
         <field>sked_Optimization_Run__c.sked_Daily_Guaranteed_Hours_Score__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
-        <editable>false</editable>
+        <editable>true</editable>
         <field>sked_Optimization_Run__c.sked_Daily_Guaranteed_Hours__c</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -13819,32 +16143,52 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
+        <field>sked_Optimization_Run__c.sked_District__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>sked_Optimization_Run__c.sked_Drive_Types__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>sked_Optimization_Run__c.sked_End_Date_Str__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>sked_Optimization_Run__c.sked_End_Date__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
-        <editable>false</editable>
+        <editable>true</editable>
         <field>sked_Optimization_Run__c.sked_Exception_Count__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
-        <editable>false</editable>
+        <editable>true</editable>
         <field>sked_Optimization_Run__c.sked_Geographic_Preferences_Score__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
-        <editable>false</editable>
+        <editable>true</editable>
         <field>sked_Optimization_Run__c.sked_Is_Dev__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
-        <editable>false</editable>
+        <editable>true</editable>
         <field>sked_Optimization_Run__c.sked_Location_Preferences_Score__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
-        <editable>false</editable>
+        <editable>true</editable>
         <field>sked_Optimization_Run__c.sked_Location_Preferences__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>sked_Optimization_Run__c.sked_Location_Restrictions_Constraint__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -13853,7 +16197,7 @@
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
-        <editable>false</editable>
+        <editable>true</editable>
         <field>sked_Optimization_Run__c.sked_Maximum_Weekly_Hours_Score__c</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -13868,23 +16212,128 @@
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
-        <editable>false</editable>
+        <editable>true</editable>
         <field>sked_Optimization_Run__c.sked_MigrationID__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
-        <editable>false</editable>
+        <editable>true</editable>
         <field>sked_Optimization_Run__c.sked_Minimum_Weekly_Hours_Score__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
-        <editable>false</editable>
+        <editable>true</editable>
         <field>sked_Optimization_Run__c.sked_Minimum_Weekly_Hours__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
+        <editable>true</editable>
+        <field>sked_Optimization_Run__c.sked_No_of_Percent_Jobs_Filled__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>sked_Optimization_Run__c.sked_Opt_Parm_Accnt_Prefer__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>sked_Optimization_Run__c.sked_Opt_Parm_Geo_Prefer__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>sked_Optimization_Run__c.sked_Opt_Parm_Hire_Date_Skills__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>sked_Optimization_Run__c.sked_Opt_Parm_Role_Priority_Skills__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>sked_Optimization_Run__c.sked_Opt_Parm_Site_Prefer__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>sked_Optimization_Run__c.sked_Opt_Run_Diff__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>sked_Optimization_Run__c.sked_Opt_Run_Meta__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>sked_Optimization_Run__c.sked_Opt_Stat_Avg_Num_Alloc_Resource__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>sked_Optimization_Run__c.sked_Opt_Stat_Hard_Constraints_Score__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>sked_Optimization_Run__c.sked_Opt_Stat_Max_Travel_Time_Alloc__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>sked_Optimization_Run__c.sked_Opt_Stat_Soft_Constraints_Score__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>sked_Optimization_Run__c.sked_Opt_Stat_Total_Planned_Allocations__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>sked_Optimization_Run__c.sked_Opt_Stat_Total_Resource_Sched__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>sked_Optimization_Run__c.sked_Opt_Stat_Total_Resource_Unsched__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>sked_Optimization_Run__c.sked_Opt_Stat_Total_Sched_Allocations__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>sked_Optimization_Run__c.sked_Opt_Stat_Total_Sched_Time__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>sked_Optimization_Run__c.sked_Opt_Stat_Total_Travel_Distances__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>sked_Optimization_Run__c.sked_Opt_Stat_Total_Travel_Time__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
         <editable>false</editable>
+        <field>sked_Optimization_Run__c.sked_Opt_Stat_Total_Unsched_Allocations__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>sked_Optimization_Run__c.sked_Optimized_Drive_Count__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>sked_Optimization_Run__c.sked_PTO_Availability_Constraint__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -13894,11 +16343,26 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>sked_Optimization_Run__c.sked_Role_Certification_Match__c</field>
+        <field>sked_Optimization_Run__c.sked_Priority_Role_Scheduled_Percent__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>false</editable>
+        <field>sked_Optimization_Run__c.sked_Record_URL__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>sked_Optimization_Run__c.sked_Role_Certification_Match_Constraint__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>sked_Optimization_Run__c.sked_Role_Certification_Match__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>sked_Optimization_Run__c.sked_Role_Priorities_Score__c</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -13913,13 +16377,18 @@
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
-        <editable>false</editable>
+        <editable>true</editable>
         <field>sked_Optimization_Run__c.sked_Seniority_Rank_Score__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
-        <editable>false</editable>
+        <editable>true</editable>
         <field>sked_Optimization_Run__c.sked_Staff_Scheduled_Count__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>sked_Optimization_Run__c.sked_Start_Date_Str__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -13933,8 +16402,23 @@
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
+        <editable>false</editable>
+        <field>sked_Optimization_Run__c.sked_Territory_Key__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
         <editable>true</editable>
         <field>sked_Optimization_Run__c.sked_Timeout_At__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>sked_Optimization_Run__c.sked_Timezone__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>sked_Optimization_Run__c.sked_Total_Travel_Time__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -14069,6 +16553,16 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
+        <field>sked_Site_Collection_Operation__c.External_Id_BackEnd__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>sked_Site_Collection_Operation__c.External_Id__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>sked_Site_Collection_Operation__c.Is_Travel_Time_Invalid__c</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -14155,6 +16649,11 @@
     <fieldPermissions>
         <editable>false</editable>
         <field>sked_Site_Feedback__c.sked_DM_Approver__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>sked_Site_Feedback__c.sked_Drive_Date_Text__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -14464,6 +16963,61 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
+        <field>sked_Trade_API_Data__c.sked_Approver_Email__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>sked_Trade_API_Data__c.sked_Employee_Id__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>sked_Trade_API_Data__c.sked_Event_Date__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>sked_Trade_API_Data__c.sked_From_Employee_Id__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>sked_Trade_API_Data__c.sked_From_Resource__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>sked_Trade_API_Data__c.sked_Quantity__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>sked_Trade_API_Data__c.sked_Resource__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>sked_Trade_API_Data__c.sked_Status__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>sked_Trade_API_Data__c.sked_Sync_Message__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>sked_Trade_API_Data__c.sked_Time_Entry_Code__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>sked_Trade_API_Data__c.sked_Trade_Into_Key__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>sked_Travel_Time_Breakdown_Refresh_Item__c.sked_Collection_Operation__c</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -14571,6 +17125,9 @@
         <layout>Account_Contact_History__c-Account Contact History Layout</layout>
     </layoutAssignments>
     <layoutAssignments>
+        <layout>Account_Handoff_Settings__mdt-Account Handoff task Layout</layout>
+    </layoutAssignments>
+    <layoutAssignments>
         <layout>Account_Marketing_Program__c-Account Marketing Program Layout</layout>
     </layoutAssignments>
     <layoutAssignments>
@@ -14610,10 +17167,22 @@
         <layout>AuthorizationFormText-Authorization Form Text Layout</layout>
     </layoutAssignments>
     <layoutAssignments>
+        <layout>BSF_Custom_Notification__c-BSF Custom Notification Layout</layout>
+    </layoutAssignments>
+    <layoutAssignments>
         <layout>BSF_Error_Log__c-BSF Error Log Layout</layout>
     </layoutAssignments>
     <layoutAssignments>
+        <layout>BSF_Outbound_Notification_Settings__mdt-BSFOutboundNotificationLimitMdt Layout</layout>
+    </layoutAssignments>
+    <layoutAssignments>
         <layout>BSF_Portfolio__c-BSF Portfolio Layout</layout>
+    </layoutAssignments>
+    <layoutAssignments>
+        <layout>BSF_Slot_Multiplier_Settings__mdt-BSF Slot Multiplier Setting Layout</layout>
+    </layoutAssignments>
+    <layoutAssignments>
+        <layout>BSF_Task_Checklist__c-BSF Task Checklist Layout</layout>
     </layoutAssignments>
     <layoutAssignments>
         <layout>BatchByPassSettings__mdt-BatchByPassSetting Layout</layout>
@@ -14632,6 +17201,15 @@
     </layoutAssignments>
     <layoutAssignments>
         <layout>BusinessBrand-Business Brand Layout</layout>
+    </layoutAssignments>
+    <layoutAssignments>
+        <layout>Calendar_Build_Error_Log__c-Calendar Build Error Log Layout</layout>
+    </layoutAssignments>
+    <layoutAssignments>
+        <layout>Calendar_Build_Log_Manual_Run__c-Calendar Build Log Manual Run Layout</layout>
+    </layoutAssignments>
+    <layoutAssignments>
+        <layout>Calendar_Build_Log__c-Calendar Build Log Layout</layout>
     </layoutAssignments>
     <layoutAssignments>
         <layout>Calendar_Build_Setting__mdt-Calendar Build Setting Layout</layout>
@@ -14714,7 +17292,16 @@
         <layout>Contract-Contract Layout</layout>
     </layoutAssignments>
     <layoutAssignments>
+        <layout>CspTrustedSite-Trusted URL Layout</layout>
+    </layoutAssignments>
+    <layoutAssignments>
         <layout>Custom_Messages__mdt-Custom Message Layout</layout>
+    </layoutAssignments>
+    <layoutAssignments>
+        <layout>Custom_Notification_Setting__mdt-Custom Notification Priority Layout</layout>
+    </layoutAssignments>
+    <layoutAssignments>
+        <layout>Custom_Report_Config__mdt-Custom Report Config Layout</layout>
     </layoutAssignments>
     <layoutAssignments>
         <layout>Customer-Customer Layout</layout>
@@ -14757,6 +17344,12 @@
     </layoutAssignments>
     <layoutAssignments>
         <layout>Email_Recipient__mdt-Email Recipient Layout</layout>
+    </layoutAssignments>
+    <layoutAssignments>
+        <layout>EmpUserProvisionProcessErr-Employee User Provisioning Process Error Layout</layout>
+    </layoutAssignments>
+    <layoutAssignments>
+        <layout>EmpUserProvisioningProcess-Employee User Provisioning Process Layout</layout>
     </layoutAssignments>
     <layoutAssignments>
         <layout>EngagementChannelType-Engagement Channel Type Layout</layout>
@@ -14823,6 +17416,17 @@
         <recordType>Lead.Market_Manager</recordType>
     </layoutAssignments>
     <layoutAssignments>
+        <layout>License_Usage__c-License Usage Layout</layout>
+    </layoutAssignments>
+    <layoutAssignments>
+        <layout>License_Usage__c-License Usage Layout</layout>
+        <recordType>License_Usage__c.Managed_Package</recordType>
+    </layoutAssignments>
+    <layoutAssignments>
+        <layout>License_Usage__c-License Usage Layout</layout>
+        <recordType>License_Usage__c.Salesforce_License</recordType>
+    </layoutAssignments>
+    <layoutAssignments>
         <layout>Linked_Opportunity_Drives__c-Linked Opportunity Drives Layout</layout>
     </layoutAssignments>
     <layoutAssignments>
@@ -14873,7 +17477,13 @@
         <recordType>Marketing_Program__c.Sponsor_Recognition</recordType>
     </layoutAssignments>
     <layoutAssignments>
+        <layout>NotificationThrottleBatchSettings__mdt-Notification Throttle Batch Settings Layout</layout>
+    </layoutAssignments>
+    <layoutAssignments>
         <layout>Object_Specific_Setting__mdt-Object Specific Setting Layout</layout>
+    </layoutAssignments>
+    <layoutAssignments>
+        <layout>Operation_Meals_And_Rest_Calculation__mdt-Operation Meals And Rest Calculation Layout</layout>
     </layoutAssignments>
     <layoutAssignments>
         <layout>Opportunity-Fixed Site Opp APS Layout</layout>
@@ -14912,6 +17522,9 @@
     </layoutAssignments>
     <layoutAssignments>
         <layout>OrderItem-Order Product Layout</layout>
+    </layoutAssignments>
+    <layoutAssignments>
+        <layout>Package_Name__mdt-Package Name Layout</layout>
     </layoutAssignments>
     <layoutAssignments>
         <layout>PartyConsent-Party Consent Layout</layout>
@@ -14962,6 +17575,12 @@
         <layout>QuoteLineItem-Quote Line Item Layout</layout>
     </layoutAssignments>
     <layoutAssignments>
+        <layout>Reset_Business_Planning_Setting__mdt-Reset Business Planning Setting Layout</layout>
+    </layoutAssignments>
+    <layoutAssignments>
+        <layout>Resource_User_Allocation_Setting__mdt-Resource User Allocation Setting Layout</layout>
+    </layoutAssignments>
+    <layoutAssignments>
         <layout>Scorecard-Scorecard Layout</layout>
     </layoutAssignments>
     <layoutAssignments>
@@ -14980,6 +17599,12 @@
         <layout>Site_Mandatory_Fields_Setting__mdt-Site Mandatory Fields Setting Layout</layout>
     </layoutAssignments>
     <layoutAssignments>
+        <layout>Site_Suitability_Checklist_Setting__mdt-Site Suitability Checklist Setting Layout</layout>
+    </layoutAssignments>
+    <layoutAssignments>
+        <layout>Site_Suitability_Checklist__c-Site Suitability Checklist Layout</layout>
+    </layoutAssignments>
+    <layoutAssignments>
         <layout>SocialPersona-Social Persona Layout</layout>
     </layoutAssignments>
     <layoutAssignments>
@@ -14987,6 +17612,9 @@
     </layoutAssignments>
     <layoutAssignments>
         <layout>Solution-Solution Layout</layout>
+    </layoutAssignments>
+    <layoutAssignments>
+        <layout>Staging_Sheet_Config__mdt-Staging Sheet Config Layout</layout>
     </layoutAssignments>
     <layoutAssignments>
         <layout>Task-Marketing Exception</layout>
@@ -15016,7 +17644,13 @@
         <recordType>Task.Team_Portfolio_Assignment</recordType>
     </layoutAssignments>
     <layoutAssignments>
+        <layout>Task_Checklist_Setting__mdt-Task Checklist Setting Layout</layout>
+    </layoutAssignments>
+    <layoutAssignments>
         <layout>Task_Reassignment_Matrix__mdt-Task Reassignment Matrix Layout</layout>
+    </layoutAssignments>
+    <layoutAssignments>
+        <layout>Task_Report_Link__mdt-Task Report Link Layout</layout>
     </layoutAssignments>
     <layoutAssignments>
         <layout>Taxonomy_Region_CO_Mapping__mdt-Taxonomy - Region CO Mapping Layout</layout>
@@ -15091,6 +17725,9 @@
         <layout>pp__c-pp Layout</layout>
     </layoutAssignments>
     <layoutAssignments>
+        <layout>restrictFieldChangeWhenPendingAction__mdt-restrictFieldChangeWhenPendingAction Layout</layout>
+    </layoutAssignments>
+    <layoutAssignments>
         <layout>sked_Account_Availability_Preference__c-Account Availability Preference Layout</layout>
     </layoutAssignments>
     <layoutAssignments>
@@ -15098,6 +17735,9 @@
     </layoutAssignments>
     <layoutAssignments>
         <layout>sked_Calendar_Message__c-Calendar Message Layout</layout>
+    </layoutAssignments>
+    <layoutAssignments>
+        <layout>sked_CollectionOperationOptimizerSetting__c-Collection Operation Optimizer Setting Layout</layout>
     </layoutAssignments>
     <layoutAssignments>
         <layout>sked_Collection_Op_Staging_Location__c-Collection Operation Staging Location Layout</layout>
@@ -15211,6 +17851,12 @@
         <layout>sked_Optimization_Run__c-Optimization Run Layout</layout>
     </layoutAssignments>
     <layoutAssignments>
+        <layout>sked_Optimizer_Default_Setting__mdt-Skedulo Optimizer Default Setting Layout</layout>
+    </layoutAssignments>
+    <layoutAssignments>
+        <layout>sked_Optimizer_Default_Weight__mdt-Skedulo Optimizer Default Weight Layout</layout>
+    </layoutAssignments>
+    <layoutAssignments>
         <layout>sked_Optimizer_Weighting__mdt-Skedulo Optimizer Weighting Layout</layout>
     </layoutAssignments>
     <layoutAssignments>
@@ -15257,6 +17903,9 @@
     </layoutAssignments>
     <layoutAssignments>
         <layout>sked_Site_Feedback__c-Site Feedback Layout</layout>
+    </layoutAssignments>
+    <layoutAssignments>
+        <layout>sked_Staff_Meal_Rest_Break_Setting__c-Staff Meal %26 Rest Break Setting Layout</layout>
     </layoutAssignments>
     <layoutAssignments>
         <layout>sked_Staffing_Budget_Availability__c-Staffing Budget Availability Layout</layout>
@@ -15306,6 +17955,9 @@
         <recordType>sked_Territory__c.sked_District</recordType>
     </layoutAssignments>
     <layoutAssignments>
+        <layout>sked_Trade_API_Data__c-Trade API Data Layout</layout>
+    </layoutAssignments>
+    <layoutAssignments>
         <layout>sked_Travel_Time_Breakdown_Refresh_Item__c-Travel Time Breakdown Refresh Queue Item Layout</layout>
     </layoutAssignments>
     <layoutAssignments>
@@ -15333,6 +17985,9 @@
         <layout>sked_User_Profile_Object_Access__mdt-User%2FProfile Object Access Layout</layout>
     </layoutAssignments>
     <layoutAssignments>
+        <layout>sked_Workday_Validation_Error_Mapping__mdt-Workday Validation Error Mapping Layout</layout>
+    </layoutAssignments>
+    <layoutAssignments>
         <layout>sked_Workday_XML_Template__mdt-Workday XML Template Layout</layout>
     </layoutAssignments>
     <recordTypeVisibilities>
@@ -15342,6 +17997,7 @@
     </recordTypeVisibilities>
     <recordTypeVisibilities>
         <default>true</default>
+        <personAccountDefault>true</personAccountDefault>
         <recordType>Account.Mobile_Account</recordType>
         <visible>true</visible>
     </recordTypeVisibilities>
@@ -15362,6 +18018,7 @@
     </recordTypeVisibilities>
     <recordTypeVisibilities>
         <default>true</default>
+        <personAccountDefault>true</personAccountDefault>
         <recordType>Lead.Biomed_Recruitment</recordType>
         <visible>true</visible>
     </recordTypeVisibilities>
@@ -15379,6 +18036,16 @@
         <default>false</default>
         <recordType>Lead.Market_Manager</recordType>
         <visible>true</visible>
+    </recordTypeVisibilities>
+    <recordTypeVisibilities>
+        <default>false</default>
+        <recordType>License_Usage__c.Managed_Package</recordType>
+        <visible>false</visible>
+    </recordTypeVisibilities>
+    <recordTypeVisibilities>
+        <default>false</default>
+        <recordType>License_Usage__c.Salesforce_License</recordType>
+        <visible>false</visible>
     </recordTypeVisibilities>
     <recordTypeVisibilities>
         <default>true</default>
@@ -15412,6 +18079,7 @@
     </recordTypeVisibilities>
     <recordTypeVisibilities>
         <default>true</default>
+        <personAccountDefault>true</personAccountDefault>
         <recordType>Opportunity.Mobile_Opp</recordType>
         <visible>true</visible>
     </recordTypeVisibilities>
@@ -15432,6 +18100,7 @@
     </recordTypeVisibilities>
     <recordTypeVisibilities>
         <default>true</default>
+        <personAccountDefault>true</personAccountDefault>
         <recordType>Task.Recruitment_Meeting</recordType>
         <visible>true</visible>
     </recordTypeVisibilities>
@@ -15540,12 +18209,20 @@
         <visibility>DefaultOn</visibility>
     </tabVisibilities>
     <tabVisibilities>
+        <tab>BSF_Custom_Notification__c</tab>
+        <visibility>DefaultOn</visibility>
+    </tabVisibilities>
+    <tabVisibilities>
         <tab>BSF_Error_Log__c</tab>
         <visibility>DefaultOn</visibility>
     </tabVisibilities>
     <tabVisibilities>
         <tab>BSF_Portfolio__c</tab>
         <visibility>DefaultOn</visibility>
+    </tabVisibilities>
+    <tabVisibilities>
+        <tab>BSF_Staging_Sheet</tab>
+        <visibility>Hidden</visibility>
     </tabVisibilities>
     <tabVisibilities>
         <tab>Biomed_Account_Manager__c</tab>
@@ -15557,6 +18234,18 @@
     </tabVisibilities>
     <tabVisibilities>
         <tab>Biomed_Market_Manager_Territory__c</tab>
+        <visibility>DefaultOn</visibility>
+    </tabVisibilities>
+    <tabVisibilities>
+        <tab>Calendar_Build_Error_Log__c</tab>
+        <visibility>DefaultOn</visibility>
+    </tabVisibilities>
+    <tabVisibilities>
+        <tab>Calendar_Build_Log_Manual_Run__c</tab>
+        <visibility>DefaultOn</visibility>
+    </tabVisibilities>
+    <tabVisibilities>
+        <tab>Calendar_Build_Log__c</tab>
         <visibility>DefaultOn</visibility>
     </tabVisibilities>
     <tabVisibilities>
@@ -15613,6 +18302,10 @@
     </tabVisibilities>
     <tabVisibilities>
         <tab>Lead_Form_LSL</tab>
+        <visibility>DefaultOn</visibility>
+    </tabVisibilities>
+    <tabVisibilities>
+        <tab>License_Usage__c</tab>
         <visibility>DefaultOn</visibility>
     </tabVisibilities>
     <tabVisibilities>
@@ -15688,6 +18381,10 @@
         <visibility>DefaultOff</visibility>
     </tabVisibilities>
     <tabVisibilities>
+        <tab>Staging_Sheet</tab>
+        <visibility>DefaultOn</visibility>
+    </tabVisibilities>
+    <tabVisibilities>
         <tab>Taxonomy__c</tab>
         <visibility>DefaultOn</visibility>
     </tabVisibilities>
@@ -15696,7 +18393,19 @@
         <visibility>DefaultOn</visibility>
     </tabVisibilities>
     <tabVisibilities>
+        <tab>Vehicle_Planning_Report</tab>
+        <visibility>DefaultOn</visibility>
+    </tabVisibilities>
+    <tabVisibilities>
         <tab>Web_to_Lead</tab>
+        <visibility>DefaultOn</visibility>
+    </tabVisibilities>
+    <tabVisibilities>
+        <tab>Weekly_Staff_Schedule_Report</tab>
+        <visibility>DefaultOn</visibility>
+    </tabVisibilities>
+    <tabVisibilities>
+        <tab>Weekly_Staffing_Role_Time_Report</tab>
         <visibility>DefaultOn</visibility>
     </tabVisibilities>
     <tabVisibilities>
@@ -15912,7 +18621,7 @@
         <visibility>Hidden</visibility>
     </tabVisibilities>
     <tabVisibilities>
-        <tab>slwc_RTV_Feedback_Submission</tab>
+        <tab>slwc_On_Call_Call_Out_Management</tab>
         <visibility>DefaultOn</visibility>
     </tabVisibilities>
     <tabVisibilities>
@@ -15926,6 +18635,14 @@
     <tabVisibilities>
         <tab>slwc_Staffing_Constraint_Console</tab>
         <visibility>DefaultOff</visibility>
+    </tabVisibilities>
+    <tabVisibilities>
+        <tab>slwc_Submit_Operation_Record</tab>
+        <visibility>DefaultOn</visibility>
+    </tabVisibilities>
+    <tabVisibilities>
+        <tab>slwc_Trades</tab>
+        <visibility>DefaultOn</visibility>
     </tabVisibilities>
     <tabVisibilities>
         <tab>standard-Account</tab>
@@ -16042,6 +18759,10 @@
     <tabVisibilities>
         <tab>standard-DuplicateRecordSet</tab>
         <visibility>DefaultOn</visibility>
+    </tabVisibilities>
+    <tabVisibilities>
+        <tab>standard-EmpUserProvisioningProcess</tab>
+        <visibility>DefaultOff</visibility>
     </tabVisibilities>
     <tabVisibilities>
         <tab>standard-EngagementChannelType</tab>
@@ -16203,7 +18924,6 @@
         <tab>standard-report</tab>
         <visibility>DefaultOn</visibility>
     </tabVisibilities>
-    <userLicense>Salesforce</userLicense>
     <userPermissions>
         <enabled>true</enabled>
         <name>AIViewInsightObjects</name>
@@ -16482,6 +19202,22 @@
     </userPermissions>
     <userPermissions>
         <enabled>true</enabled>
+        <name>ExternalClientAppAdmin</name>
+    </userPermissions>
+    <userPermissions>
+        <enabled>true</enabled>
+        <name>ExternalClientAppDeveloper</name>
+    </userPermissions>
+    <userPermissions>
+        <enabled>true</enabled>
+        <name>ExternalClientAppViewer</name>
+    </userPermissions>
+    <userPermissions>
+        <enabled>true</enabled>
+        <name>FreezeUsers</name>
+    </userPermissions>
+    <userPermissions>
+        <enabled>true</enabled>
         <name>GiveRecognitionBadge</name>
     </userPermissions>
     <userPermissions>
@@ -16566,6 +19302,10 @@
     </userPermissions>
     <userPermissions>
         <enabled>true</enabled>
+        <name>ManageCustomDomains</name>
+    </userPermissions>
+    <userPermissions>
+        <enabled>true</enabled>
         <name>ManageCustomPermissions</name>
     </userPermissions>
     <userPermissions>
@@ -16583,6 +19323,10 @@
     <userPermissions>
         <enabled>true</enabled>
         <name>ManageDataIntegrations</name>
+    </userPermissions>
+    <userPermissions>
+        <enabled>true</enabled>
+        <name>ManageDevSandboxes</name>
     </userPermissions>
     <userPermissions>
         <enabled>true</enabled>
@@ -16758,6 +19502,10 @@
     </userPermissions>
     <userPermissions>
         <enabled>true</enabled>
+        <name>MonitorLoginHistory</name>
+    </userPermissions>
+    <userPermissions>
+        <enabled>true</enabled>
         <name>NewReportBuilder</name>
     </userPermissions>
     <userPermissions>
@@ -16906,6 +19654,10 @@
     </userPermissions>
     <userPermissions>
         <enabled>true</enabled>
+        <name>ViewClientSecret</name>
+    </userPermissions>
+    <userPermissions>
+        <enabled>true</enabled>
         <name>ViewDataAssessment</name>
     </userPermissions>
     <userPermissions>
@@ -16964,4 +19716,8 @@
         <enabled>true</enabled>
         <name>ViewUserPII</name>
     </userPermissions>
+    <customMetadataTypeAccesses>
+        <enabled>true</enabled>
+        <name>Package_Name__mdt</name>
+    </customMetadataTypeAccesses>
 </Profile>

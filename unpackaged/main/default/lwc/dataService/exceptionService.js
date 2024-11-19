@@ -17,6 +17,9 @@ class exceptionService extends dataService {
         });
         queryBuilder.addCondition({template: `(sked_Drive__r.sked_Territory_Key__c IN {0} OR skedHC__Resource__r.sked__Primary_Region__r.sked_Biomed_Collection_Op_Center__c IN (${collectionOperationIds.join(',')}))`, value: query.territoryKeys, type: "array_string"});
       }
+      if (query.arcRegionIds && query.arcRegionIds.length) {
+        queryBuilder.addCondition({template: `sked_Linked_Drive__r.sked_ARC_Region__c IN {0}`, value: query.arcRegionIds, type: "array_string"});
+      }
       if (query.exceptionCodes && query.exceptionCodes.length) {
           queryBuilder.addCondition({template: "sked_Exception_Code__c IN {0}", value: query.exceptionCodes, type: "array_string"});
       }
@@ -35,11 +38,21 @@ class exceptionService extends dataService {
             (sked_Drive__r.sked_Drive_Date__c <= ${query.endDate} AND sked_Drive__r.sked_Drive_Date__c >= ${query.startDate}) OR 
             (sked_Resource_Hours_Record__r.sked_Start_Date__c <= ${query.endDate} AND sked_Resource_Hours_Record__r.sked_End_Date__c >= ${query.startDate})
           )` });
-        } else if (query.exceptionType == "resource") {
-          queryBuilder.addCondition({ template: `CreatedDate <= ${query.endDate}T23:59:59Z AND CreatedDate >= ${query.startDate}T00:00:00Z` });
+        } else if (query.exceptionType == "linkedDrive") {
+          queryBuilder.addCondition({ template: `( 
+            sked_Linked_Drive__r.sked_Earliest_Drive_Date__c <= ${query.endDate} AND sked_Linked_Drive__r.sked_Latest_Drive_Date__c >= ${query.startDate}
+          )` });
         }
       }
-      queryBuilder.orderClause = 'ORDER BY sked_Drive__r.sked_Drive_Date__c ASC, skedHC__Job__r.Name ASC NULLS LAST'
+      
+      if (query.exceptionType == "drive") {
+        queryBuilder.orderClause = 'ORDER BY sked_Drive__r.sked_Drive_Date__c ASC, skedHC__Job__r.Name ASC NULLS LAST'
+      }
+      else if (query.exceptionType == "resource") {
+        queryBuilder.orderClause = 'ORDER BY CreatedDate ASC';
+      } else  if (query.exceptionType == "linkedDrive") {
+        queryBuilder.orderClause = 'ORDER BY sked_Linked_Drive__r.sked_Earliest_Drive_Date__c ASC, sked_Linked_Drive__r.sked_Latest_Drive_Date__c ASC, sked_Linked_Drive__r.Name ASC NULLS LAST'
+      }
   }
 }
 
@@ -47,6 +60,7 @@ class exceptionQueryModel extends queryModelBase {
   collectionOperationIds;
   territoryKeys;
   driveIds;
+  arcRegionIds;
   endDate;
   exceptionCodes;
   priorities;

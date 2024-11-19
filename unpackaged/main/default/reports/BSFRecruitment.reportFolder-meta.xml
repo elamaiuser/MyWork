@@ -20,5 +20,10 @@
         <sharedTo>DRD_Users</sharedTo>
         <sharedToType>Group</sharedToType>
     </folderShares>
+    <folderShares>
+        <accessLevel>Manage</accessLevel>
+        <sharedTo>Global_Admin</sharedTo>
+        <sharedToType>Group</sharedToType>
+    </folderShares>
     <name>DS Recruitment Standard</name>
 </ReportFolder>

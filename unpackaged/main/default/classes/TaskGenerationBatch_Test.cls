@@ -8,22 +8,23 @@ private class TaskGenerationBatch_Test {
 
         insert acc;
         TriggerHandler.clearBypass('AccountTriggerHandler');
-        Contact contact = new Contact (firstname='Test Contact First',lastname='Test Contact Last');
+        Contact contact = new Contact (firstname='Test Contact First',lastname='Test_Contact_Last');
         contact.MailingStreet = '2204 Westcrt ln, Apt 213'; 
         contact.Email = 'testContact@gmail.com';
 		contact.Original_Service_Date__c = system.today().addDays(3);
 		contact.Primary_Phone__c = 'Mobile Phone';
         contact.MobilePhone = '752-781-0090';
-         contact.MailingCity = 'Herndon';
-         contact.MailingStateCode = 'VA';
-         contact.MailingPostalCode = '20170';
-         contact.MailingStreet = '2204 Westcourt Ln,Apt 218'; 
+        contact.MailingCity = 'Herndon';
+        contact.MailingStateCode = 'VA';
+        contact.MailingPostalCode = '20170';
+        contact.MailingStreet = '2204 Westcourt Ln,Apt 218'; 
         contact.AccountId = acc.id;
         insert contact;
     }
 
     @isTest static void batchtest() {
-            
+        Test.startTest();
+        
             sked__Location__c site = new sked__Location__c();
             site.Name = 'testSite';
             site.sked_Floor_Description__c = 'test Floor';
@@ -135,7 +136,7 @@ private class TaskGenerationBatch_Test {
 			
         	insert taskList;
         
-        Test.startTest();
+        
         TaskGenerationBatch tgb = new TaskGenerationBatch();
         Id batchId = Database.executeBatch(tgb);
         Test.stopTest();

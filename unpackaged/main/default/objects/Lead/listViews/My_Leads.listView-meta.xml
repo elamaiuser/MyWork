@@ -13,6 +13,7 @@
     <columns>Comments__c</columns>
     <columns>Lead_AM_Porfolio__c</columns>
     <columns>LEAD.CREATED_DATE</columns>
+    <columns>Lead_Stage_Status__c</columns>
     <filterScope>Mine</filterScope>
     <filters>
         <field>LEAD.STATUS</field>

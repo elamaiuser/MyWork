@@ -32,7 +32,7 @@ public class OrderItemTrigger_Test
              
         );
         
-        UserRole urole  = [select id from userrole where developername =: rolename ];
+        //UserRole urole  = [select id from userrole where developername =: rolename ];
         
         User DRDAMUser = new User(
              ProfileId = [SELECT Id FROM Profile WHERE Name = 'DRD Profile'].Id,
@@ -45,8 +45,7 @@ public class OrderItemTrigger_Test
              TimeZoneSidKey = 'America/Los_Angeles',
              EmailEncodingKey = 'UTF-8',
              LanguageLocaleKey = 'en_US',
-             LocaleSidKey = 'en_US',
-             UserRoleId = urole.Id
+             LocaleSidKey = 'en_US'
         );
                 
         System.runAs( AdminUser )

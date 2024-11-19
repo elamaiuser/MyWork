@@ -7,4 +7,8 @@
         <enabled>true</enabled>
         <name>ApiUserOnly</name>
     </userPermissions>
+    <classAccesses>
+        <apexClass>slwcAvailabilityService</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
 </PermissionSet>

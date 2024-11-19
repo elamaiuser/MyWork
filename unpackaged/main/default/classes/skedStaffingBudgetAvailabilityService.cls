@@ -24,6 +24,10 @@ public with sharing class skedStaffingBudgetAvailabilityService extends skedData
         if (query.staffingBudgetIds != NULL && !query.staffingBudgetIds.isEmpty()) {
             queryBuilder.addCondition('sked_Staffing_Budget__c IN {0}', query.staffingBudgetIds);
         }
+
+        if (query.hideRecordsOutsideBiddingPeriod) {
+            queryBuilder.addCondition('sked_Created_Inside_Bidding_Period__c = TRUE');
+        }
     }
 
     public class queryModel extends skedEventService.queryModel {
@@ -31,6 +35,7 @@ public with sharing class skedStaffingBudgetAvailabilityService extends skedData
         public List<String> availabilityIds;
         public List<String> staffingBudgetIds;
         public List<String> recurringScheduleIds;
+        public Boolean hideRecordsOutsideBiddingPeriod = false;
     }
 
 }

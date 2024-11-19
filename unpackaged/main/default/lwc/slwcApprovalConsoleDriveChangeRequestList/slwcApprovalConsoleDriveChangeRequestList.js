@@ -175,7 +175,8 @@ export default class SlwcApprovalConsoleDriveChangeRequestList extends Lightning
     query.offset = (this.records || []).length;
     query.orderBy = this.sortOption.sortField || this.sortOption.fieldName;
     query.orderAscending = this.sortOption.sortDirection;
-
+    query.accountManagerPortfolios = (this.filters.accountManagerPortfolios || []).map(item => { return item.id });
+    query.districtManagerPortfolios = (this.filters.districtManagerPortfolios || []).map(item => { return item.id });
     let service = new driveChangeRequestService();
 
     return Promise.resolve()

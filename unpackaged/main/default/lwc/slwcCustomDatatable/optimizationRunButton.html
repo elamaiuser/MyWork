@@ -17,5 +17,27 @@
             label="View Details" 
             onclick={typeAttributes.clickAction} >
         </lightning-button>
-      </div>
+    </div>
+    
+    <div class="slds-grid slds-grid--align-end slds-p-vertical_xx-small slds-p-horizontal--medium">
+        <lightning-button 
+            if:true={typeAttributes.isStatusCompleted}
+            variant="base" 
+            data-value={value} 
+            data-action="runResults"
+            label="View Run Result" 
+            onclick={typeAttributes.clickAction} >
+        </lightning-button>
+    </div>
+    
+    <div class="slds-grid slds-grid--align-end slds-p-vertical_xx-small slds-p-horizontal--medium">
+        <lightning-button 
+            if:true={typeAttributes.isStatusCompleted}
+            variant="base" 
+            data-value={value} 
+            data-action="statistics"
+            label="View Run Stats" 
+            onclick={typeAttributes.clickAction} >
+        </lightning-button>
+    </div>
 </template>

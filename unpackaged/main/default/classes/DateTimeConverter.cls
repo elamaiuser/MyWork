@@ -12,8 +12,8 @@ public class DateTimeConverter {
         DateTime dateTimeInfo=DateTime.newInstance(dateInfo.year(),dateInfo.month(),dateinfo.day(), timeInfo.hour(),timeInfo.minute(),0);
              Integer userTimeZoneValue=mapOfTimeZones.get(UserInfo.getTimeZone().getId());          
              Integer driveSiteTimeZoneValue=mapOfTimeZones.get(timeZoneInfo);
-              System.debug('userTimeZoneValue==='+userTimeZoneValue);
-              System.debug('driveSiteTimeZoneValue==='+driveSiteTimeZoneValue);
+              //System.debug('userTimeZoneValue==='+userTimeZoneValue);
+              //System.debug('driveSiteTimeZoneValue==='+driveSiteTimeZoneValue);
              if(driveSiteTimeZoneValue!=null && userTimeZoneValue!=null && userTimeZoneValue!=driveSiteTimeZoneValue){
                dateTimeInfo=dateTimeInfo.addhours(driveSiteTimeZoneValue-userTimeZoneValue);
               }

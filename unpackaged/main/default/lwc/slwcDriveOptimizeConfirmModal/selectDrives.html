@@ -1,0 +1,52 @@
+<template>
+    <section role="dialog" tabindex="-1" class={customClass.modalClass}>
+        <div class="slds-modal__container">
+            <header class="slds-modal__header">
+                <lightning-button-icon onclick={handleClose} class="slds-button slds-button_icon slds-modal__close" size="large" icon-name="utility:close" variant="bare-inverse" title="Close"></lightning-button-icon>
+                <h2 class="slds-modal__title slds-hyphenate">Optimize Confirmation</h2>
+            </header>
+            <div class="slds-modal__content">
+                <div class="slds-is-relative" style="height: 100%">
+                    <template if:true={showSpinner}>
+                        <lightning-spinner class="spins" size="medium"></lightning-spinner>
+                    </template>
+                    <div class="slds-align-content-center slds-col width-450">
+                        <div class="slds-clearfix slds-page-header slds-page-header_record-home fixed-position " style="margin-bottom: var(--lwc-cardSpacingMargin);">
+                            <div class="slds-page-header__row slds-grid_vertical-align-center">
+                                <div class="slds-page-header__col-title">
+                                    <div class="slds-media">
+                                        <div class="slds-media__figure">
+                                            <lightning-icon icon-name="standard:metrics" size="medium"></lightning-icon>
+                                        </div>
+                                        <div class="slds-media__body">
+                                            <div class="slds-page-header__name">
+                                                <div class="slds-page-header__name-title">
+                                                    <h1>
+                                                        <span class="slds-page-header__title slds-truncate">{stepLabel}</span>
+                                                    </h1>
+                                                </div>
+                                            </div>
+                                            <p class="slds-page-header__name-meta">{stepHeader}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+            
+                        <div class="slds-tabs_card slds-scrollable--y height-custom">
+                            <div class="slds-grid_vertical slds-grid position-relative">
+                                <div class="slds-p-around_small slds-shrink-none slds-border--bottom slds-border--left slds-border--right slds-border--top">
+                                    <template for:each={driveGroups} for:item="driveGroup" for:index="groupIndex">
+                                        <c-slwc-drive-optimize-confirm-drive-list key={driveGroup.key} drives={driveGroup.drives} group-name={driveGroup.name} onoptimize={handleOptimize} selected-drives={selectedDrives}>
+                                        </c-slwc-drive-optimize-confirm-drive-list>
+                                    </template>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <div class={customClass.backdropClass}></div>
+</template>

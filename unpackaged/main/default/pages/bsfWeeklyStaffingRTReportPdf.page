@@ -1,0 +1,127 @@
+<apex:page controller="BSFWeeklyStaffingRTReportController" renderAs="pdf" showHeader="false" sidebar="false">
+    <html>
+        <head>
+            <style type="text/CSS">
+                @page {
+                    size: a4 portrait;
+                }
+                td {
+                	font-size:12px; 
+                    padding-bottom: 0px;
+                    padding-top: 0px; 
+                    overflow: hidden;
+                	word-break: break-word !important;
+    				white-space: break-spaces !important;
+                }
+                th {
+                    font-size:14px;
+                    padding-bottom: 0px;
+                    padding-top: 0px;
+                    overflow: hidden; 
+                }
+                .fill-height {
+                    height: inherit;
+                }
+            </style>
+        </head>
+        <body>
+            <div style="text-align: center;">
+                <span style="font-size:20px;"><b>Weekly Staffing Role Time Report</b></span>
+            </div><br/><br/>
+            <div style="text-align: right;">
+                <span style="font-size:8px;">* Staff Arrival Time includes lunch prior to draw start</span>
+            </div>
+            <table border="n" cellpadding="0" cellspacing="0" style="-fs-table-paginate: paginate;width:100%;border-collapse: collapse;" class="fixed">
+                <thead>
+                    <tr>
+                        <th style="width:10%;font-size:14px !important;word-wrap: break-word !important; overflow-wrap: break-word !important;vertical-align: top;">
+                            Event Date
+                        </th>
+                        <th style="width:18%;font-size:14px !important;word-wrap: break-word !important; overflow-wrap: break-word !important;vertical-align: top;">
+                            Event Name
+                        </th>
+                        <th style="width:14%;font-size:14px !important;word-wrap: break-word !important; overflow-wrap: break-word !important;vertical-align: top;">
+                            Details
+                        </th>
+                        <th style="width:13%;font-size:14px !important;word-wrap: break-word !important; overflow-wrap: break-word !important;vertical-align: top;">
+                            Vehicles
+                        </th>
+                        <th style="width:9%;font-size:14px !important;word-wrap: break-word !important; overflow-wrap: break-word !important;vertical-align: top;">
+                            Resource Name ID
+                        </th>
+                        <th style="width:9%;font-size:14px !important;word-wrap: break-word !important; overflow-wrap: break-word !important;vertical-align: top;">
+                            Resource Role
+                        </th>
+                        <th style="width:9%;font-size:14px !important;word-wrap: break-word !important; overflow-wrap: break-word !important;vertical-align: top;">
+                            Staff Arrival Time
+                        </th>
+                        <th style="width:9%;font-size:14px !important;word-wrap: break-word !important; overflow-wrap: break-word !important;vertical-align: top;">
+                            Shift Start
+                        </th>
+                        <th style="width:9%;font-size:14px !important;word-wrap: break-word !important; overflow-wrap: break-word !important;vertical-align: top;">
+                            Shift End
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    
+                    <apex:repeat value="{!wrapper}" var="data" > 
+                            <tr>
+                                <td style="width:10%;font-size:12px !important;word-wrap: break-word !important; overflow-wrap: break-word !important;vertical-align: top;">
+                                    {!data.eventDate}
+                                </td>
+                                <td colspan="8" style="width:90%;vertical-align: top;">
+                                    <table border="n" cellpadding="0" cellspacing="0" style="width:100%;border-collapse: collapse;" class="fixed">
+                                        <apex:repeat value="{!data.eventDetails}" var="evDetails" >
+                                            <tr style="page-break-inside:avoid !important; page-break-after:auto !important;">
+                                                <td style="width:20%;font-size:12px !important;word-wrap: break-word !important; overflow-wrap: break-word !important;vertical-align:top !important;white-space:preserve nowrap;">
+                                                    {!evDetails.eventName}
+                                                </td>
+                                                <td style="width:15%;font-size:12px !important;word-wrap: break-word !important; overflow-wrap: break-word !important;vertical-align: top;">
+                                                    
+                                                        <apex:outputPanel rendered="{!evDetails.isDrive}">
+                                                            <b>Proj Proc: </b>{!evDetails.projProc}<br /><br />
+                                                            <b>Assigned Machine Count: </b>{!evDetails.assignedMachineCount}<br /><br />
+                                                            <b>Staff Req: </b>{!evDetails.staffReq}<br /><br />
+                                                        </apex:outputPanel>
+                                                        <b>Hours: </b>{!evDetails.hours}
+                                                </td>
+                                                <td style="width:15%;font-size:12px !important;word-wrap: break-word !important; overflow-wrap: break-word !important;vertical-align:top;">
+                                                    
+                                                        <b>Vehicles: </b>{!evDetails.eventVehicles}<br /><br />
+                                                        <b>Auto Machines: </b>{!evDetails.autoMachines}
+                                                </td>
+                                                <td class="table-cell" style="width:50%;vertical-align: top;">
+                                                    <table border="n" cellpadding="0" cellspacing="0" style="width:100%;border-collapse: collapse;" class="fixed fill-height">
+                                                        <apex:repeat value="{!evDetails.resources}" var="reso" >
+                                                            <tr>
+                                                                <td style="width:20%;max-width:20% !important;font-size:12px !important;hyphens: auto !important;word-wrap: break-word !important; overflow-wrap: break-word !important;vertical-align: top;">
+                                                                    {!reso.resourceName}
+                                                                </td>
+                                                                <td  style="width:20%;font-size:12px !important;word-wrap: break-word !important; overflow-wrap: break-word !important;vertical-align: top;">
+                                                                    {!reso.resourceRole}
+                                                                </td>
+                                                                <td style="width:20%;font-size:12px !important;word-wrap: break-word !important; overflow-wrap: break-word !important;vertical-align: top;">
+                                                                    {!reso.staffArrivalTime}
+                                                                </td>
+                                                                <td style="width:20%;font-size:12px !important;word-wrap: break-word !important; overflow-wrap: break-word !important;vertical-align: top;">
+                                                                    {!reso.shiftStart}
+                                                                </td>
+                                                                <td style="width:20%;font-size:12px !important;word-wrap: break-word !important; overflow-wrap: break-word !important;vertical-align: top;">
+                                                                    {!reso.shiftEnd}
+                                                                </td>
+                                                            </tr>
+                                                        </apex:repeat>
+                                                    </table>
+                                                </td>
+                                            </tr>
+                                        </apex:repeat>
+                                    </table>
+                                </td>
+                            </tr>
+                    </apex:repeat>
+                </tbody>
+            </table>
+        </body>
+    </html>
+</apex:page>

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Status_Visual__c</fullName>
+    <description>Green: From creation up to the task&#39;s due date. 
+Amber: The day after the task&#39;s due date. 
+Red: Starting two days after the due date and beyond. 
+Grey: When a Task is Completed or Cancelled.</description>
+    <externalId>false</externalId>
+    <formula>IF(
+    OR(
+        ISPICKVAL(Status,&#39;Completed&#39;),
+        ISPICKVAL(Status,&#39;Cancelled&#39;)
+    ),
+    IMAGE(&quot;/resource/BSF_Static_Resources&quot;, &quot;Grey&quot;, 25, 92),
+    IF(
+        ISNULL(ActivityDate),
+        &#39;&#39;,
+        IF(
+            ActivityDate &gt;= TODAY(),
+            IMAGE(&quot;/resource/sked_HLT_Dist/images/Green.png&quot;, &quot;Green&quot;, 25, 92),
+            IF(
+                TODAY() - ActivityDate &gt; 2,
+                IMAGE(&quot;/resource/sked_HLT_Dist/images/Red.png&quot;, &quot;Red&quot;, 25, 92),
+                IMAGE(&quot;/resource/sked_HLT_Dist/images/Amber.png&quot;, &quot;Amber&quot;, 25, 92)
+            )
+        )
+    )
+)</formula>
+    <label>Status Visual</label>
+    <required>false</required>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

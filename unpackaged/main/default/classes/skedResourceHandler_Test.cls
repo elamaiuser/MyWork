@@ -1,7 +1,7 @@
 @isTest
 private class skedResourceHandler_Test {
-    @isTest
-    static void testDataPopulation() {
+    
+    static testmethod void testDataPopulation() {
         skedTestDataFactory testDataFactory = new skedTestDataFactory('us', 14);
 
         sked_Admin_Setting__c skedAdminSetting = sked_Admin_Setting__c.getOrgDefaults();
@@ -70,8 +70,6 @@ private class skedResourceHandler_Test {
         );
         predefinedData.add(driveTypeTagFixedSite);
         
-        insert predefinedData;
-        
         Biomed_Collection_Op_Center__c testCollectionOperation1 = new Biomed_Collection_Op_Center__c(
             Name = 'Collection Operation 1',
             sked_Lunch_Break_Duration_Fixed_Site__c = '30',
@@ -81,14 +79,7 @@ private class skedResourceHandler_Test {
             Staging_Location_Geolocation__Longitude__s = -122.4816244,
             sked_Work_Week_First_Day__c = 'Sunday'
         );
-        insert testCollectionOperation1;
-        
-        sked__Region__c testRegion1 = new sked__Region__c(
-            Name = 'Region 1',
-            sked__Timezone__c = UserInfo.getTimeZone().getID(),
-            sked_Biomed_Collection_Op_Center__c = testCollectionOperation1.Id
-        );
-        insert testRegion1;
+        predefinedData.add(testCollectionOperation1);
         
         sked__Availability_Pattern__c testWeeklyPattern = new sked__Availability_Pattern__c(
             Name = 'Test Weekly Pattern',
@@ -97,10 +88,20 @@ private class skedResourceHandler_Test {
             sked__Pattern__c = '',
             sked_Default_for_Resource_Type__c = 'Equipment'
         );
-        insert testWeeklyPattern;
+        predefinedData.add(testWeeklyPattern);
+        
+        insert predefinedData;
+        
+        sked__Region__c testRegion1 = new sked__Region__c(
+            Name = 'Region 1',
+            sked__Timezone__c = UserInfo.getTimeZone().getID(),
+            sked_Biomed_Collection_Op_Center__c = testCollectionOperation1.Id
+        );
+        insert testRegion1;
         
         Test.startTest();
         
+        List<sked__Resource__c> testResources = new List<sked__Resource__c>();
         sked__Resource__c testResource = new sked__Resource__c(
             sked__Primary_Region__c = testRegion1.Id,
             sked__User__c = UserInfo.getUserId(),
@@ -122,11 +123,7 @@ private class skedResourceHandler_Test {
             sked_ULID__c = 'ULID1',
             sked_Timezone__c = testDataFactory.summary.timezoneSidId
         );
-        insert testResource;
-        
-        testResource.sked_FCC_Code__c = '83140';
-        testResource.sked_Mobile_Type__c = 'Outside';
-        update testResource;
+        testResources.add(testResource);
         
         sked__Resource__c testEquipment = new sked__Resource__c(
             Name = 'Test Equipment',
@@ -140,7 +137,13 @@ private class skedResourceHandler_Test {
             sked_Max_Hours_Per_Weekend__c = null,
             sked_Max_Hours_Per_Week__c = null
         );
-        insert testEquipment;
+        testResources.add(testEquipment);
+        
+        insert testResources;
+        
+        testResource.sked_FCC_Code__c = '83140';
+        testResource.sked_Mobile_Type__c = 'Outside';
+        update testResource;
         
         testEquipment.sked_Site_Type__c = 'Mobile';
         update testEquipment;
@@ -148,8 +151,7 @@ private class skedResourceHandler_Test {
         Test.stopTest();
     }
     
-    @isTest
-    static void testException() {
+    static testmethod void testException() {
         skedTestDataFactory testDataFactory = new skedTestDataFactory('us', system.today().addMonths(6), 14);
         Map<string, sObject> mapTestData = testDataFactory.setupCommonTestData(); 
         mapTestData = testDataFactory.setupDriveData();
@@ -209,8 +211,7 @@ private class skedResourceHandler_Test {
         Test.stopTest();
     }
 
-    @isTest
-    static void testSeniorityBatch() {
+    static testmethod void testSeniorityBatch() {
         skedTestDataFactory testDataFactory = new skedTestDataFactory('us', system.today().addMonths(1), 14);
         Map<string, sObject> mapTestData = testDataFactory.setupRacTestData();
         sked__Resource__c testResource = [
@@ -237,8 +238,7 @@ private class skedResourceHandler_Test {
         Test.stopTest();
     }
 
-    @isTest
-    static void testPopulateTimezone() {
+    static testmethod void testPopulateTimezone() {
         skedTestDataFactory testDataFactory = new skedTestDataFactory('us', system.today().addMonths(1), 14);
         Map<string, sObject> mapTestData = testDataFactory.setupRacTestData();
         sked__Resource__c testResource = [
@@ -269,37 +269,35 @@ private class skedResourceHandler_Test {
         ];
 
         Test.startTest();
+        
         testResource.sked_Employment_Status__c = skedConstants.RESOURCE_EMPLOYMENT_STATUS_LEAVE;
         testResource.sked_Anticipated_Leave_Return_Date__c = System.today().addDays(100);
         testResource.sked_Planned_Termination_Date__c = System.today().addDays(130);
         update testResource;
+        
         Test.stopTest();
     }
 
     static testmethod void testCancelTimeOffOnResourceTerminationOrLeave() {
         skedTestDataFactory testDataFactory = new skedTestDataFactory('us', system.today().addMonths(1), 14);
-        Map<string, sObject> mapTestData = testDataFactory.setupRacTestData();
-        sked__Resource__c testResource = [
-            SELECT Id, sked_Timezone__c 
-            FROM sked__Resource__c 
-            WHERE sked__Resource_Type__c = :skedConstants.RESOURCE_TYPE_PERSON
-            LIMIT 1
-        ];
+        Map<string, sObject> mapTestData = testDataFactory.setupCommonTestData();
+        
+        sked__Resource__c testResource = (sked__Resource__c)mapTestData.get('testResource1');
 
         sked__Availability__c unavailability = new sked__Availability__c(
             sked__Resource__c = testResource.Id,
-            sked_Start_Date__c = System.today().addDays(1),
-            sked_Finish_Date__c = System.today().addDays(1),
-            sked_Start_Time__c = Time.newInstance(0,0,0,0),
-            sked_Finish_Time__c = Time.newInstance(23,59,0,0),
+            sked__Is_Available__c = FALSE,
+            sked__Start__c = System.now(),
+            sked__Finish__c = System.now().addhours(1),
             sked__Timezone__c = testResource.sked_Timezone__c,
             sked__Type__c = skedConstants.AVAILABILITY_TYPE_PTO,
-            sked__Status__c = skedConstants.AVAILABILITY_STATUS_APPROVED
+            sked__Status__c = skedConstants.AVAILABILITY_STATUS_PENDING
         );
 
         insert unavailability;
 
         Test.startTest();
+        
         testResource.sked_Employment_Status__c = skedConstants.RESOURCE_EMPLOYMENT_STATUS_LEAVE;
         testResource.sked_Anticipated_Leave_Return_Date__c = System.today().addDays(2);
         testResource.sked_Planned_Termination_Date__c = System.today().addDays(1);
@@ -309,20 +307,18 @@ private class skedResourceHandler_Test {
         update unavailability;
 
         activateResource(testResource);
-        update testResource;
         testResource.sked_Employment_Status__c = skedConstants.RESOURCE_EMPLOYMENT_STATUS_LEAVE;
         testResource.sked_Anticipated_Leave_Return_Date__c = System.today().addDays(2);
         update testResource;
 
         activateResource(testResource);
-        update testResource;
         testResource.sked_Planned_Termination_Date__c = System.today().addDays(1);
         update testResource;
 
         activateResource(testResource);
-        update testResource;
         testResource.sked_Employment_Status__c = skedConstants.RESOURCE_EMPLOYMENT_STATUS_LEAVE;
         update testResource;
+        
         Test.stopTest();
     }
 
@@ -347,5 +343,9 @@ private class skedResourceHandler_Test {
         resource.sked_Anticipated_Leave_Return_Date__c = NULL;
         resource.sked_Planned_Termination_Date__c = NULL;
         resource.sked_Termination_Date__c = NULL;
+        skedHubBase.setBypassAllTriggers(true);
+        update resource;
+        skedHubBase.setBypassAllTriggers(false);
     }
+    
 }

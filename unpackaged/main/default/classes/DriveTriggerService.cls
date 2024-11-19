@@ -2,16 +2,19 @@
  * Modification Log 
  * Date					     Developer Name			     Comments
  * ***********************************************************************************************************************************************
- * 
  *  03/08/2023				 Kishore Das		        Users other than System Admin should not have any delete record permissions(Logic for HRP-10572-->Deleted)
  *  18/08/2023				 Kishore Das				Logic for HRP-10765(Ready for National Name Review True when associated drive in Tentative status)
-
  *  09/20/2023				 Krapy Tuli					Logic for HRP-10359 (Update AM, DM, AM Portfolio and DM Portfolio)
  *  11/09/2023               Barnojit Sharma            Validation added to stop referring two DOC to a single BDO. (HRP-11326)
  *  12/27/2023				 Kishore Das		        Logic for HRP-11605(Newly created FS BDO's are reflecting as tentative when the DOC is reflecting as confirmed (out of sync))
  *  12/27/2023				 Barnojit Sharma		    The current 56 day validation rule that triggers when trying to change Drive Date will also be added to the Drive on Calendar. (HRP-11640)
- *  1/9/2024                 Priti Jana                 Logic for HRP-10882
- *  2/1/2024		         Fitsum Worku				Updated logic for 56 day rule so that 56th day itself is considered eligible (HRP-12034); also exculding cancelled drives
+ *  01/09/2024               Priti Jana                 Logic for HRP-10882
+ *  02/01/2024		         Fitsum Worku				Updated logic for 56 day rule so that 56th day itself is considered eligible (HRP-12034); also exculding cancelled drives
+ *  12/02/2024				 Barnojit Sharma		    BDO can not be confirmed if DCR or Pending Action is in progress. (HRP-10912)
+ *  03/06/2024				 Priti Jana					Logic for HRP-12271
+ *  04/25/2024				 Raktim Ghosal				Populate Drive Lead / Charge (Supervisory Role) on Drive. (HRP-12493)
+ *  08/19/2024				 Priti Jana					Logic for HRP-13056
+ *  10/18/2024               Priti Jana                 Logic for HRP-9815
  *************************************************************************************************************************************************
 */
 
@@ -231,17 +234,21 @@ public without sharing class DriveTriggerService {
                                }
         
         if (!oppListToUpdate.isEmpty()) {
-            Database.SaveResult[] updateResults = Database.update(oppListToUpdate, false);
             
-            for (Database.SaveResult updateResult : updateResults) {
-                if (updateResult.isSuccess()) {
-                    System.debug('Record Successfully updated: ' + updateResult.getId());
-                } else {
-                    for (Database.Error error : updateResult.getErrors()) {
-                        System.debug('Record Update Failed: ' + error);
-                    }
-                }
-            }
+            //HRP-13056 --> Starts Here
+            TriggerHandler.bypass('OpportunityTriggerHandler');
+            Database.SaveResult[] updateResults = Database.update(oppListToUpdate, false);
+            TriggerHandler.clearBypass('OpportunityTriggerHandler');
+            List<BSF_Error_Log__c> errorLogList = BSF_Utilities.createErrorLogWithObjectId(
+                updateResults, 
+                'Error in populating DOC lookup on Opportunity', 
+                'DriveTriggerService', 
+                'populateLookupOnOpportunityDoc', 
+                'Error', 
+                'Error in update'
+            );
+            Insert errorLogList;
+            //HRP-13056 --> Ends Here
         }
     }
 
@@ -250,17 +257,15 @@ public without sharing class DriveTriggerService {
     * HRP-11640 changes starts here
     */
     public static void checkAccept56DaysVoilation(Map<Id, sked_Drive__c> oldMap, List<sked_Drive__c> newItems) {
-        if(newItems == null || newItems.isEmpty() || oldMap == null || oldMap.isEmpty()){
-            return;
-        }
         Map<Id,Id> oppVsDocMap = new Map<Id,Id>();
         Map<Id,Id> docVsAccMap = new Map<Id,Id>();
         Map<Id,List<Date>> accVsDriveDateMap = new Map<Id,List<Date>>();
+        List<String> driveStatusToValidate = new List<String>{BSF_Constants.DOC_STATUS_CONFIRMED};
         for(sked_Drive__c doc : newItems){
             if(doc.sked_Opportunity__c != null && doc.sked_Drive_Date__c != null && oldMap.containsKey(doc.Id) 
                     && (doc.sked_Drive_Date__c != oldMap.get(doc.Id).sked_Drive_Date__c
                     || (String.isNotBlank(doc.sked_Status__c) && doc.sked_Status__c != oldMap.get(doc.Id).sked_Status__c
-                    && (doc.sked_Status__c.equalsIgnoreCase('Confirmed') || doc.sked_Status__c.equalsIgnoreCase('Complete'))))){
+                    && (driveStatusToValidate.contains(doc.sked_Status__c))))){
                         oppVsDocMap.put(doc.sked_Opportunity__c,doc.Id);
             }
         }
@@ -425,4 +430,195 @@ public without sharing class DriveTriggerService {
 	}
 
      // HRP-10882 --> Ends Here
+    /*
+    * HRP-10912 changes starts here
+    @Description : This method will block Opportunities status changed while Pending Action Request is in process.
+    */
+    public static void validateNoPendingDCR(Map<Id, sked_Drive__c> newMap, Map<Id, sked_Drive__c> oldMap){
+        if(newMap == null || newMap.isEmpty() || oldMap == null || oldMap.isEmpty()){
+            return;
+        }
+        Map<Id, Boolean> dcrMap = new Map<Id, Boolean>(); 
+        Map<Id,Id> oppToDOCMap = new Map<Id,Id>();
+        Custom_Messages__mdt messageLabel1 = Custom_Messages__mdt.getInstance('Pending_Approval_Statuses_Drive');
+		List<String> pendingApprovalStatusList = messageLabel1.value__c.split(',');
+        for(Id driveId : newMap.keySet()){
+            if(oldMap.containsKey(driveId) 
+                    && newMap.get(driveId).sked_Status__c != oldMap.get(driveId).sked_Status__c
+                    && !newMap.get(driveId).sked_Status__c.equalsIgnoreCase('Complete')
+                    && !newMap.get(driveId).sked_Status__c.equalsIgnoreCase('Cancel')){
+                        if(String.isNotBlank(oldMap.get(driveId).sked_Approval_Status__c)
+                                && pendingApprovalStatusList.contains(oldMap.get(driveId).sked_Approval_Status__c)
+                                && (oldMap.get(driveId).sked_Approval_Status__c == newMap.get(driveId).sked_Approval_Status__c
+                                || (oldMap.get(driveId).sked_Approval_Status__c != newMap.get(driveId).sked_Approval_Status__c)
+                                && pendingApprovalStatusList.contains(newMap.get(driveId).sked_Approval_Status__c))){
+                                    newMap.get(driveId).addError(Custom_Messages__mdt.getInstance('Pending_DCR_Drives').value__c);
+                        }
+            }
+        }
+    }
+    /*
+    * HRP-10912 changes ends here
+    */
+    
+    
+    /*HRP-12493 starts here
+     * Description: Populate the name of resources allocated to jobs with supervisory role on the Supervisory Role text field on Drive.
+     */ 
+    public static void populateDriveSupervisoryRole(Set<Id> driveIds){
+        List<String> supervisoryRoles;
+   
+    sked_Resource_Role_Group__c roleGroup = [SELECT sked_Resource_Roles__c 
+                                              FROM sked_Resource_Role_Group__c 
+                                              WHERE sked_Resource_Role_Group__c = 'Supervisory roles' 
+                                              ORDER BY LastModifiedDate DESC 
+                                              LIMIT 1];
+    
+    if(roleGroup == null || String.isBlank(roleGroup.sked_Resource_Roles__c)){
+        supervisoryRoles = new List<String>{BSF_Constants.SUPER_ROLE_APHERESIS_CHARGE, BSF_Constants.SUPER_ROLE_CHARGE,BSF_Constants.SUPER_ROLE_CHARGE_2RBC, BSF_Constants.SUPER_ROLE_SPECIAL_COLLECTIONS_CHARGE,BSF_Constants.SUPER_ROLE_DRIVE_LEAD, BSF_Constants.SUPER_ROLE_TEAM_SUPERVISOR};
+    } else {
+        supervisoryRoles = roleGroup.sked_Resource_Roles__c.split(';');
+    }
+        List<sked_Drive__c> drivestoUpdate = new List<sked_Drive__c>();
+        if(driveIds != null && !driveIds.isEmpty()){
+            Map<Id,String> oldDriveResourceMap = new Map<Id,String>();
+            Map<Id, Set<String>> driveResourceMap = new Map<Id, Set<String>>();
+            for(sked__Job_Allocation__c jobAllocation : (List<sked__Job_Allocation__c>)Database.query(
+                                                        'SELECT Id,sked_Additional_Roles__c,sked__Job__c,sked__Job__r.sked_Drive__c,sked__Job__r.sked_Drive__r.Supervisory_Role__c,'+
+                                                        'sked__Job__r.sked_Resource_Role__c,sked__Job__r.sked_Dual_Role__c,sked__Job__r.sked__Type__c,'+
+                                                        'sked__Resource__c,sked__Resource__r.Name,sked__Resource__r.sked__Resource_Type__c,'+
+                                                        'sked__Resource__r.RecordTypeId,sked__Resource__r.RecordType.Name,sked__Resource__r.sked_First_Name__c,'+
+                                                        'sked__Resource__r.sked_Last_Name__c FROM sked__Job_Allocation__c WHERE sked__Status__c != \'Deleted\' '+
+                                                        'AND sked__Job__r.sked_Drive__c IN (\'' +
+                                                        String.join((List<String>)new List<Id>(driveIds), '\',\'') + '\') AND sked__Resource__r.sked__Resource_Type__c = '+
+                                                        '\'Person\' AND sked__Resource__r.RecordType.Name = \'Staff\' AND (sked__Job__r.sked__Type__c IN (\'' + 
+                                                        String.join(supervisoryRoles, '\',\'') + '\') OR sked__Job__r.sked_Resource_Role__c IN (\'' + 
+                                                        String.join(supervisoryRoles, '\',\'') + '\') OR sked__Job__r.sked_Dual_Role__c IN (\'' + 
+                                                        String.join(supervisoryRoles, '\',\'') + '\') OR sked_Additional_Roles__c INCLUDES (\'' + 
+                                                        String.join(supervisoryRoles, '\',\'') + '\')'+')',AccessLevel.SYSTEM_MODE)){
+                if(!driveResourceMap.containsKey(jobAllocation.sked__Job__r.sked_Drive__c)){
+                    driveResourceMap.put(jobAllocation.sked__Job__r.sked_Drive__c, new Set<String>());
+                }
+                oldDriveResourceMap.put(jobAllocation.sked__Job__r.sked_Drive__c,jobAllocation.sked__Job__r.sked_Drive__r.Supervisory_Role__c);
+                driveResourceMap.get(jobAllocation.sked__Job__r.sked_Drive__c).add(jobAllocation.sked__Resource__r.sked_First_Name__c+' '+
+                                                                                    jobAllocation.sked__Resource__r.sked_Last_Name__c);
+            }
+            for(Id driveId : driveIds){
+                sked_Drive__c drive = new sked_Drive__c(Id = driveId);
+                if(driveResourceMap.containsKey(driveId) && !driveResourceMap.get(driveId).isEmpty()){
+                    drive.Supervisory_Role__c = String.join(new List<String>(driveResourceMap.get(driveId)),',');
+                }
+                else{
+                    drive.Supervisory_Role__c = null;
+                    if(BSF_Constants.After_Delete == True){
+                        drivestoUpdate.add(drive);
+                    }
+                    
+                }
+                if(oldDriveResourceMap.containsKey(driveId) && oldDriveResourceMap.get(driveId) != drive.Supervisory_Role__c){
+                    drivestoUpdate.add(drive);
+                }
+                
+            }
+        }
+        if(!drivestoUpdate.isEmpty()){
+            Database.update(drivestoUpdate,false);
+        }
+    }
+    //HRP-12493 ends here
+   //HRP-12170 [Start ->>]
+    public static void autoPopulateDriveProjProductFields(Map<Id, sked_Drive__c> oldDriveMap, List<sked_Drive__c> newDriveList)
+    {
+        for(sked_Drive__c skedDrive: newDriveList)
+        {
+            decimal x2rbcProjectedProcedures = skedDrive.sked_2RBC_Projected_Procedures__c != NULL ? skedDrive.sked_2RBC_Projected_Procedures__c : 0;
+            decimal wbProjectedProcedures = skedDrive.sked_WB_Projected_Procedures__c != NULL ? skedDrive.sked_WB_Projected_Procedures__c : 0;
+            decimal plasmaProjectedProcedures = skedDrive.sked_Plasma_Projected_Procedures__c != NULL ? skedDrive.sked_Plasma_Projected_Procedures__c : 0;
+            decimal plateletProjectedProcedures = skedDrive.sked_Platelet_Projected_Procedures__c != NULL ? skedDrive.sked_Platelet_Projected_Procedures__c : 0;
+
+            if(oldDriveMap != NULL)
+            {
+                if(oldDriveMap.get(skedDrive.id).sked_WB_Projected_Procedures__c != skedDrive.sked_WB_Projected_Procedures__c  
+                   ||(oldDriveMap.get(skedDrive.id).sked_2RBC_Projected_Procedures__c != skedDrive.sked_2RBC_Projected_Procedures__c )
+                   ||(oldDriveMap.get(skedDrive.id).sked_Platelet_Projected_Procedures__c != skedDrive.sked_Platelet_Projected_Procedures__c )
+                   ||(oldDriveMap.get(skedDrive.id).sked_Plasma_Projected_Procedures__c != skedDrive.sked_Plasma_Projected_Procedures__c ))
+                {
+                    if(skedDrive.sked_Total_Procedures_Projected__c != NULL )
+                    {
+                        skedDrive.sked_Total_Procedures_Projected__c = x2rbcProjectedProcedures + wbProjectedProcedures + plasmaProjectedProcedures + plateletProjectedProcedures;
+                    }
+                    if(skedDrive.sked_Total_Products_Projected__c != NULL)
+                    {
+                        skedDrive.sked_Total_Products_Projected__c = wbProjectedProcedures + (x2rbcProjectedProcedures * 2) +plateletProjectedProcedures + plasmaProjectedProcedures;
+                    }  
+                }
+                  
+            }
+            
+        }
+    }
+    //<<-[End] HRP-12170
+    
+    /*HRP-9815 --> Starts Here
+    @Description : This method will update related op record's DRD Rep and DRD Rep Contact # whenever Drive owner gets changed
+    */
+
+    public static void populateDriveOwnerOnAmUpdate(Map<Id, sked_Drive__c> oldMap , List<sked_Drive__c> newList) {
+        if(newList != NULL && !newList.isEmpty()) {
+            for(sked_Drive__c newDrive : newList) {
+                sked_Drive__c oldDrive = oldMap.get(newDrive.Id);
+                if(oldDrive != NULL && oldDrive.Account_Manager__c != newDrive.Account_Manager__c) {
+                    newDrive.sked_Drive_Owner__c = newDrive.Account_Manager__c;
+                }
+            }
+        }
+    }
+
+    public static void updateDrdRepOnOpRecordUponOwnerChange(List<sked_Drive__c> newDriveList, Map<Id, sked_Drive__c> map_oldDriveId_oldDriveInfo) {
+        Map<Id, String> map_driveId_driveOwner = new Map<Id, String>();
+        if(newDriveList != NULL && !newDriveList.isEmpty()) {
+            for(sked_Drive__c drive : newDriveList) {
+                sked_Drive__c oldDrive = map_oldDriveId_oldDriveInfo != NULL && map_oldDriveId_oldDriveInfo.get(drive.Id) != NULL ? map_oldDriveId_oldDriveInfo.get(drive.Id) : new sked_Drive__c();
+                if(oldDrive != NULL && (drive.sked_Drive_Owner__c != oldDrive.sked_Drive_Owner__c || drive.District_Manager__c != oldDrive.District_Manager__c)) {
+                    if(drive.sked_Drive_Owner__c != NULL) {
+                    	map_driveId_driveOwner.put(drive.Id, drive.sked_Drive_Owner__c);
+                    } else {
+                        map_driveId_driveOwner.put(drive.Id, drive.District_Manager__c);
+                    }
+                }
+            }
+        }
+        if(map_driveId_driveOwner != NULL && !map_driveId_driveOwner.isEmpty()) {
+            List<sked_Operation_Record__c> relatedOpRecords = [SELECT Id, sked_Drive__c, sked_DRD_Rep__c, sked_DRD_Rep_Contact__c
+                                                               FROM sked_Operation_Record__c
+                                                               WHERE sked_Drive__c IN :map_driveId_driveOwner.keySet()];
+            if(relatedOpRecords != NULL && !relatedOpRecords.isEmpty()) {
+                Map<Id, User> map_userId_user = new Map<Id, User>([SELECT Id, FirstName, LastName, WorkPhone__c FROM User WHERE Id IN :map_driveId_driveOwner.values()]);
+                for(sked_Operation_Record__c opRecord : relatedOpRecords) {
+                    if(map_driveId_driveOwner.get(opRecord.sked_Drive__c) != NULL) {
+                        String DrdRep = map_userId_user.get(map_driveId_driveOwner.get(opRecord.sked_Drive__c)).FirstName + ' ' + map_userId_user.get(map_driveId_driveOwner.get(opRecord.sked_Drive__c)).LastName;
+                        opRecord.sked_DRD_Rep__c = DrdRep;
+                        opRecord.sked_DRD_Rep_Contact__c = map_userId_user.get(map_driveId_driveOwner.get(opRecord.sked_Drive__c)).WorkPhone__c;
+                    } else {
+                        opRecord.sked_DRD_Rep__c = null;
+                        opRecord.sked_DRD_Rep_Contact__c = null;
+                    }
+                }
+                Database.SaveResult[] opRecordUpdateResult = Database.update(relatedOpRecords, FALSE);
+                List<BSF_Error_Log__c> errorlogEntry = BSF_Utilities.createErrorLogWithObjectId(
+                    opRecordUpdateResult,
+                    'Op Record DRD Rep  Contact # Update',
+                    'DriveTriggerService',
+                    'updateDrdRepOnOpRecordUponOwnerChange',
+                    'Error',
+                    'DRD Rep Contact # Update'
+                );
+                if(errorlogEntry != NULL && !errorlogEntry.isEmpty()) {
+                    insert errorlogEntry;
+                }
+            }
+        }
+    }
+    //HRP-9815 --> Ends Here
+    
 }

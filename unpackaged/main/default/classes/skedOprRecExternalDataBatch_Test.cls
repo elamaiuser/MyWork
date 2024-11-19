@@ -12,6 +12,9 @@ global class skedOprRecExternalDataBatch_Test {
         Account testAccount = (Account) mapTestData.get('testAccount1');
         sked__Resource__c testResource = (sked__Resource__c) mapTestData.get('testResource1');
 
+        testDrive.sked_Drive_Date__c = System.today();
+        update testDrive;
+        
         Test.startTest();
         sked_Drive_Shift__c testDriveShift = new sked_Drive_Shift__c(
             sked_Donors_Scheduled__c = 1,

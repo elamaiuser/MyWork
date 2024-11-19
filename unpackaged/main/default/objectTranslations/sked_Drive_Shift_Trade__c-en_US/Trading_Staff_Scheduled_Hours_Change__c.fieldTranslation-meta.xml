@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+        <help><!-- Change in Trading Staff Scheduled Hours --></help>
+        <label><!-- Trading Staff Scheduled Hours Change --></label>
+        <name>Trading_Staff_Scheduled_Hours_Change__c</name>
+    </CustomFieldTranslation>

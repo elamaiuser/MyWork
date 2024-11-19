@@ -20,11 +20,13 @@ import {
     OpportunityMappingConfigFactory, OpportunityContactRoleMappingConfigFactory,
     OptimizationQueueItemMappingConfigFactory, OptimizationQueueMappingConfigFactory, OptimizationRunMappingConfigFactory, 
     ProductGoalMappingConfigFactory, RecurringScheduleMappingConfigFactory, RegionMappingConfigFactory, 
-    ResourceHoursRecordMappingConfigFactory, ResourceMappingConfigFactory, ResourceOverrideMappingConfigFactory, ResourceSecondaryCollectionOperationMappingConfigFactory, ResourceRoleGroupMappingConfigFactory,
+    ResourceHoursRecordMappingConfigFactory, ResourceHoursRecordDetailMappingConfigFactory, ResourceMappingConfigFactory, ResourceOverrideMappingConfigFactory,
+    ResourceSecondaryCollectionOperationMappingConfigFactory, ResourceRoleGroupMappingConfigFactory,
     ResourceTagMappingConfigFactory, RoleTimeDetailMappingConfigFactory, RoleTimeVarianceMappingConfigFactory, 
     SiteBridgeApiMappingConfigFactory, SiteCollectionOperationMappingConfigFactory, SiteFeedbackMappingConfigFactory, SlotMappingConfigFactory, 
     StagingLocationMappingConfigFactory, StaffingConstraintMappingConfigFactory, StaffingDecisionMatrixMappingConfigFactory, TagMappingConfigFactory, TerritoryCollectionOperationMappingConfigFactory,
-    TerritoryMappingConfigFactory, TravelTimeIndexItemMappingConfigFactory, UserMappingConfigFactory, BsfPortfolioMappingConfigFactory, StaffSetupExcludedRoleMappingConfigFactory
+    TerritoryMappingConfigFactory, TravelTimeIndexItemMappingConfigFactory, UserMappingConfigFactory, BsfPortfolioMappingConfigFactory, StaffSetupExcludedRoleMappingConfigFactory, StaffMealAndRestBreakMappingConfigFactory,
+    CollectionOperationOptimizerSettingConfigFactory
 } from './index.js';
 
 class mappingConfigContainer {
@@ -102,6 +104,7 @@ class mappingConfigContainer {
             'sked__Resource_Override__cMappingConfigFactory' : ResourceOverrideMappingConfigFactory,
             'sked_Resource_Biomed_Collection_Op__cMappingConfigFactory' : ResourceSecondaryCollectionOperationMappingConfigFactory,
             'sked_Resource_Hours_Record__cMappingConfigFactory': ResourceHoursRecordMappingConfigFactory,
+            'sked_Resource_Hours_Record_Detail__cMappingConfigFactory': ResourceHoursRecordDetailMappingConfigFactory,
             'sked__Resource_Tag__cMappingConfigFactory' : ResourceTagMappingConfigFactory,
             'sked_Role_Time_Detail__cMappingConfigFactory' : RoleTimeDetailMappingConfigFactory,
             'sked_Role_Time_Variance__cMappingConfigFactory' : RoleTimeVarianceMappingConfigFactory,
@@ -117,7 +120,9 @@ class mappingConfigContainer {
             'sked_Travel_Time_Index_Item__cMappingConfigFactory' : TravelTimeIndexItemMappingConfigFactory,
             'skedHC__Exception__cMappingConfigFactory' : ExceptionMappingConfigFactory,
             'BSF_Portfolio__cMappingConfigFactory' : BsfPortfolioMappingConfigFactory,
-            'sked_Staff_Setup_Excluded_Role__cMappingConfigFactory' : StaffSetupExcludedRoleMappingConfigFactory
+            'sked_Staff_Setup_Excluded_Role__cMappingConfigFactory' : StaffSetupExcludedRoleMappingConfigFactory,
+            'sked_Staff_Meal_Rest_Break_Setting__cMappingConfigFactory' : StaffMealAndRestBreakMappingConfigFactory,
+            'sked_CollectionOperationOptimizerSetting__cMappingConfigFactory' : CollectionOperationOptimizerSettingConfigFactory
         };
     }
 

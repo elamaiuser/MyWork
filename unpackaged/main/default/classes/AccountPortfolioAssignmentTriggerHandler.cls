@@ -4,7 +4,7 @@
 * Date					     Developer Name			     Comments
 * ***********************************************************************************************************************************************
 * 12/08/2023				  Balaji N				 logic for HRP-6028 (Method:HandleSpecialistForAM,Logic for Adding account Specialist based on AM node)
-* 													  
+* 02/13/2024				  Balaji N               logic for HRP-11138 (Method call:HandleAccExceptionDelete,logic for Territory revert on Exception delete)													  
 * *
 *************************************************************************************************************************************************
 */
@@ -51,8 +51,12 @@ public class AccountPortfolioAssignmentTriggerHandler extends TriggerHandler{
     //HRP-6028 start
     public override void afterDelete()
     {
+        if(!BSF_Constants.skipAccountPortfolioAssignmentDeleteTrigger)
+        {
+            AccountPortfolioAssignmentService.HandleAccExceptionDelete((List<Account_Portfolio_Assignment__c>)Trigger.old);//HRP-11138
         if(super.getTriggerMethodsToBypass().indexOf('HandleSpecialistForAM') == -1) {
         AccountPortfolioAssignmentService.HandleSpecialistForAM((List<Account_Portfolio_Assignment__c>)Trigger.old,null,null);
+        }
         }
     }
     //HRP-6028 end

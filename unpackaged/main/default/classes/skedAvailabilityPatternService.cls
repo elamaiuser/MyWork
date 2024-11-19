@@ -168,7 +168,7 @@ global class skedAvailabilityPatternService extends skedDataService {
                 event.eventType = 'template';
                 event.start = startWorkingTime;
                 event.finish = endWorkingTime;
-                event.startTimeInMunites = startWorkingInMinutes;
+                event.startTimeInMinutes = startWorkingInMinutes;
                 event.endTimeInMinutes = endWorkingInMinutes;
                 event.updateDateTimeFields(this.timezoneSidId);
                 dayEvents.add(event);

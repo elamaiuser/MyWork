@@ -1143,6 +1143,10 @@
             <default>false</default>
         </values>
         <values>
+            <fullName>Business Planning</fullName>
+            <default>false</default>
+        </values>
+        <values>
             <fullName>Calendar Build</fullName>
             <default>false</default>
         </values>
@@ -1211,7 +1215,7 @@
         <picklist>Web_Scheduling_Start_Time__c</picklist>
         <values>
             <fullName>0001</fullName>
-            <default>true</default>
+            <default>false</default>
         </values>
         <values>
             <fullName>0015</fullName>

@@ -1,5 +1,24 @@
 public class skedDriveChangeRequestHandler extends skedTriggerHub {
     
+    private static final Map<String, String> genDriveFieldByOppFieldMap = new Map<String, String>{
+        'Drive_Date__c' => 'sked_Drive_Date__c',
+        'Drive_Status__c' => 'sked_Status__c',
+        'Start_Time__c' => 'sked_Start_Time__c',
+        'End_Time__c' => 'sked_End_Time__c',
+        'Drive_Site__c' => 'sked_Drive_Site__c',
+        'sked_Replacement_Drive__c' => 'sked_Replacement_Drive__c',
+        'Anticipated_Registered_Donors__c' => 'sked_Projected_Registered_Donors__c',
+        'WB_Projected_Procedures__c' => 'sked_WB_Projected_Procedures__c',
+        'X2RBC_Projected_Procedures__c' => 'sked_2RBC_Projected_Procedures__c',
+        'Platelet_Projected_Procedures__c' => 'sked_Platelet_Projected_Procedures__c',
+        'Plasma_Pheresis_Projected_Procedures__c' => 'sked_Plasma_Projected_Procedures__c',
+        'Number_of_2RBC_Assets__c' => 'sked_Number_of_2RBC_Assets__c',
+        'Number_of_Plasma_Assets__c' => 'sked_Number_of_Plasma_Assets__c',
+        'Number_of_Platelet_Assets__c' => 'sked_Number_of_Platelet_Assets__c',
+        'sked_Cancellation_Reason__c' => 'sked_Cancellation_Reason__c',
+        'Initiated_By__c' => 'sked_Initiated_By__c'
+    };
+
     public override void onBeforeInsert() {
         populateNewCollectionOperationData(this.context.newRecords);
     }
@@ -18,6 +37,7 @@ public class skedDriveChangeRequestHandler extends skedTriggerHub {
             onSubmitted(this.context.newRecords, (Map<Id, sked_Drive_Change_Request__c>)this.context.oldMap);
             onCancelledRejected(this.context.newRecords, (Map<Id, sked_Drive_Change_Request__c>)this.context.oldMap);
             onBackToPending(this.context.newRecords, (Map<Id, sked_Drive_Change_Request__c>)this.context.oldMap);
+            createRequestToSyncOppsWithDrives(this.context.newRecords, (Map<Id, sked_Drive_Change_Request__c>)this.context.oldMap);
         }
     }
 
@@ -75,24 +95,41 @@ public class skedDriveChangeRequestHandler extends skedTriggerHub {
 
     private void onSubmitted(List<sked_Drive_Change_Request__c> newRecords, Map<Id, sked_Drive_Change_Request__c> oldMap) {
         Map<Id, sked_Drive_Change_Request__c> mapSubmittedDcr = new Map<Id, sked_Drive_Change_Request__c>();
+        Boolean hasRouteApprovalRequestChanged = false;
         for (sked_Drive_Change_Request__c newRecord : newRecords) {
             sked_Drive_Change_Request__c oldData = oldMap.get(newRecord.Id);
             if (newRecord.sked_Status__c != oldData.sked_Status__c && newRecord.sked_Status__c == 'Submitted') {
                 mapSubmittedDcr.put(newRecord.Id, newRecord);
+                if(newRecord.sked_Route_Approval_Request_To__c != oldData.sked_Route_Approval_Request_To__c) {
+                    hasRouteApprovalRequestChanged = true;
+                }
             }
         }
         if (!mapSubmittedDcr.isEmpty()) {
-            doSubmission(mapSubmittedDcr);
+            doSubmission(mapSubmittedDcr, hasRouteApprovalRequestChanged);
         }
     }
     
-    private void doSubmission(Map<Id, sked_Drive_Change_Request__c> mapSubmittedDcr) {
+    private void doSubmission(Map<Id, sked_Drive_Change_Request__c> mapSubmittedDcr, Boolean hasRouteApprovalRequestChanged) {
         List<sked_Drive_Change_Request__c> submittedDcrs = [SELECT Id, sked_Drive__c, sked_Route_Approval_Request_To__c, sked_Status__c,
                                                             sked_New_Collection_Operation__c, sked_New_Collection_Operation__r.Name 
                                                             FROM sked_Drive_Change_Request__c
                                                             WHERE Id IN :mapSubmittedDcr.keySet()
                                                             FOR UPDATE];
-        
+        List<Approval.ProcessWorkitemRequest> activeApprovalProcesses = new List<Approval.ProcessWorkitemRequest>();
+        if(hasRouteApprovalRequestChanged) {
+            List<ProcessInstanceWorkitem> activeWorkItems = [SELECT Id, ProcessInstanceId 
+                                                             FROM ProcessInstanceWorkitem 
+                                                             WHERE ProcessInstance.TargetObjectId IN :mapSubmittedDcr.keySet()
+                                                             AND ProcessInstance.Status = 'Pending'];
+            for (ProcessInstanceWorkitem workItem : activeWorkItems) {
+                Approval.ProcessWorkitemRequest req = new Approval.ProcessWorkitemRequest();
+                req.setWorkitemId(workItem.Id);
+                req.setAction('Removed');  // Remove the existing pending approval process
+                activeApprovalProcesses.add(req);
+            }
+        }
+
         Set<Id> accountIds = new Set<Id>();
         Set<string> queueNames = new Set<string>();
         
@@ -150,6 +187,7 @@ public class skedDriveChangeRequestHandler extends skedTriggerHub {
                 ? submittedDcr.sked_New_Collection_Operation__r.Name : skedDrive.sked_Collection_Operation__r.Name;
             
             String approvalQueueName;
+            
             if (submittedDcr.sked_Route_Approval_Request_To__c == 'Request DM evaluation')  {
                 request.setProcessDefinitionNameOrId('sked_DCR_DM_APS_Approval');
                 approvalQueueName = coName + ': ' + skedConstants.PROFILE_QUEUE_DM_DRIVE_CHANGE_REQUESTS;
@@ -163,11 +201,15 @@ public class skedDriveChangeRequestHandler extends skedTriggerHub {
                 submittedDcr.sked_Status__c = 'Waiting for APS Approval';
             }
             
+            system.debug('#mapQueueByName#' + mapQueueByName);
+            system.debug('#approvalQueueName#' + approvalQueueName);
+            
             if (approvalQueueName != null && mapQueueByName.containsKey(approvalQueueName)) {
                 Group approvalQueue = mapQueueByName.get(approvalQueueName);
                 request.setNextApproverIds(new List<string> {approvalQueue.Id});
-                approvalRequests.add(request);
-                
+                if(hasRouteApprovalRequestChanged) {
+                	approvalRequests.add(request);
+                }
                 recordsToUpdate.add(submittedDcr);
             }
             else {
@@ -184,6 +226,10 @@ public class skedDriveChangeRequestHandler extends skedTriggerHub {
 
         if (!recordsToUpdate.isEmpty()) {
             update recordsToUpdate;
+        }
+        
+        if(!activeApprovalProcesses.isEmpty()) {
+            Approval.process(activeApprovalProcesses);
         }
 
         if (!approvalRequests.isEmpty()) {
@@ -232,11 +278,6 @@ public class skedDriveChangeRequestHandler extends skedTriggerHub {
             }
         }
         if (!rejectedDriveChangeRequestIds.isEmpty()) {
-            Map<string, string> mapReasonFields = new Map<string, string>();
-            mapReasonFields.put('Anticipated_Registered_Donors__c', 'AnticipatedRegisterDonorChangeReason__c');
-            mapReasonFields.put('WB_Projected_Procedures__c', 'WholeBloodProcedureProjectedChangeReason__c');
-            mapReasonFields.put('X2RBC_Projected_Procedures__c', 'DoubleRedProceduresProjectedChangeReason__c');
-            
             List<sked_Drive_Change_Request__c> rejectedDCRs = [SELECT Id, sked_Drive__c, sked_Opportunity_Id__c,
                                                                (SELECT Id, sked_Field_API_Name__c, sked_Field_Type__c, 
                                                                 sked_Old_Value__c
@@ -258,8 +299,8 @@ public class skedDriveChangeRequestHandler extends skedTriggerHub {
                         
 						oppRec.put(oppDataField, fieldVal);
                         
-                        if (mapReasonFields.containsKey(oppDataField)) {
-                            string reasonField = mapReasonFields.get(oppDataField);
+                        if (skedDriveHandler.mapReasonFields.containsKey(oppDataField)) {
+                            string reasonField = skedDriveHandler.mapReasonFields.get(oppDataField);
                             string reason = 'Drive Change Requested is rejected. ' + system.now();
                             oppRec.put(reasonField, reason);
                         }
@@ -345,6 +386,60 @@ public class skedDriveChangeRequestHandler extends skedTriggerHub {
                         }
                     }
                 }
+            }
+        }
+    }
+
+    private void createRequestToSyncOppsWithDrives(List<sked_Drive_Change_Request__c> newRecords, Map<Id, sked_Drive_Change_Request__c> oldMap) {
+        Set<Id> approvedDriveChangeRequestIds = new Set<Id>();
+        Set<Id> driveIds = new Set<Id>();
+        for (sked_Drive_Change_Request__c newRecord : newRecords) {
+            sked_Drive_Change_Request__c oldData = oldMap.get(newRecord.Id);
+            if (newRecord.sked_Status__c != oldData.sked_Status__c) {
+                if (newRecord.sked_Status__c == skedConstants.DRIVE_CHANGE_REQUEST_STATUS_APPROVED) {
+                    approvedDriveChangeRequestIds.add(newRecord.Id);
+                    driveIds.add(newRecord.sked_Drive__c);
+                }
+            }
+        }
+        if (!approvedDriveChangeRequestIds.isEmpty()) {
+            Map<Id, sked_Drive__c> mapOfDoc = new Map<Id, sked_Drive__c>([SELECT Id, sked_Drive_Date__c,sked_Status__c,sked_Start_Time__c,sked_End_Time__c,sked_Drive_Site__c,sked_Replacement_Drive__c,
+                                                                        sked_Projected_Registered_Donors__c,sked_WB_Projected_Procedures__c,sked_2RBC_Projected_Procedures__c,sked_Platelet_Projected_Procedures__c,
+                                                                        sked_Plasma_Projected_Procedures__c,sked_Number_of_2RBC_Assets__c,sked_Number_of_Plasma_Assets__c,sked_Number_of_Platelet_Assets__c,
+                                                                        sked_Cancellation_Reason__c,sked_Opportunity__c FROM sked_Drive__c 
+                                                                        WHERE Id in : driveIds]);
+            List<Opportunity> oppLst = new List<Opportunity>();
+            for (sked_Drive_Change_Request__c approvedDCR : [SELECT Id, sked_Drive__c, sked_Opportunity_Id__c, (SELECT Id, sked_Field_API_Name__c, sked_Field_Type__c,
+                                                            sked_Old_Value__c, sked_New_Value__c FROM sked_Drive_Change_Request_Items__r 
+                                                            WHERE sked_Object_API_Name__c = 'Opportunity' AND sked_Type__c = 'Change') 
+                                                            FROM sked_Drive_Change_Request__c 
+                                                            WHERE Id IN :approvedDriveChangeRequestIds]) {
+                if (approvedDCR.sked_Drive_Change_Request_Items__r != NULL && !approvedDCR.sked_Drive_Change_Request_Items__r.isEmpty()) {
+                    Opportunity oppRec = new Opportunity(Id = approvedDCR.sked_Opportunity_Id__c);
+                    boolean isOpportunityNeedToUpdate = FALSE;
+                    for (sked_Drive_Change_Request_Item__c item : approvedDCR.sked_Drive_Change_Request_Items__r) {
+                        string getDriveFieldNameFromOppField = genDriveFieldByOppFieldMap.get(item.sked_Field_API_Name__c);
+                        if(mapOfDoc.get(approvedDCR.sked_Drive__c) != null && getDriveFieldNameFromOppField != null && string.valueOf(mapOfDoc.get(approvedDCR.sked_Drive__c).get(getDriveFieldNameFromOppField)).toLowerCase() == item.sked_Old_Value__c.toLowerCase()){
+                            string oppDataField = item.sked_Field_API_Name__c;
+                            object fieldVal = skedUtils.getFieldValue(item.sked_Old_Value__c, item.sked_Field_Type__c);
+                            oppRec.put(oppDataField, fieldVal);
+                            isOpportunityNeedToUpdate = TRUE;
+                            if (skedDriveHandler.mapReasonFields.containsKey(oppDataField)) {
+                                string reasonField = skedDriveHandler.mapReasonFields.get(oppDataField);
+                                string reason = 'Changed from Drive record. ' + system.now();
+                                oppRec.put(reasonField, reason);
+                            }
+                            oppRec.Is_Recursion_On__c = TRUE;
+                        }
+                    }
+                    if(isOpportunityNeedToUpdate){
+                        oppLst.add(oppRec);
+                    }
+                }
+            }
+            
+            if (!oppLst.isEmpty()){
+                OpportunityService.syncOppsWithDrives(oppLst);
             }
         }
     }

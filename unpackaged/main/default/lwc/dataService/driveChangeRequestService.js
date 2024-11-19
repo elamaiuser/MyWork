@@ -53,6 +53,13 @@ class driveChangeRequestService extends dataService {
             }
             subQueryBuilder.orderClause = 'ORDER BY CreatedDate DESC';
         }
+        if (query.accountManagerPortfolios && query.accountManagerPortfolios.length) {
+            queryBuilder.addCondition({ template: "sked_Drive__r.Account_Manager_Portfolio__c IN {0}", value: query.accountManagerPortfolios, type: "array_string"});
+        }
+        if (query.districtManagerPortfolios && query.districtManagerPortfolios.length) {
+            queryBuilder.addCondition({ template: "sked_Drive__r.District_Manager_Portfolio__c IN {0}", value: query.districtManagerPortfolios, type: "array_string"});
+        }
+
         queryBuilder.orderClause = 'ORDER BY CreatedDate DESC, Id ASC';
     }
 }

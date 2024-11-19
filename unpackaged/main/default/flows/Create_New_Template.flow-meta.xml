@@ -349,6 +349,7 @@
             <label>End Flow</label>
         </rules>
     </decisions>
+    <description>HRP-12639</description>
     <dynamicChoiceSets>
         <name>AcceptsAutomation</name>
         <dataType>Picklist</dataType>
@@ -751,6 +752,13 @@
         <expression>BLANKVALUE({!varSelectedDriveName},&#39;&#39;)</expression>
     </formulas>
     <formulas>
+        <description>Ensures to return 0 if double red procedure is null</description>
+        <name>varDoubleRedProcedure</name>
+        <dataType>Number</dataType>
+        <expression>BLANKVALUE({!Double_Red_Procedures}, 0)</expression>
+        <scale>2</scale>
+    </formulas>
+    <formulas>
         <name>varFinalAcceptAutomation</name>
         <dataType>String</dataType>
         <expression>If(IsBlank({!Selected_Account_Accept_Automation}), Text({!Get_Account.Accepts_Automation2__c}), {!Selected_Account_Accept_Automation})</expression>
@@ -775,6 +783,13 @@
         <name>varSelectedStartTimeNumber</name>
         <dataType>Number</dataType>
         <expression>VALUE({!varSelectedStartTime})</expression>
+        <scale>2</scale>
+    </formulas>
+    <formulas>
+        <description>Ensures to return zero if WB procedure is null</description>
+        <name>varWholeBloodProcedure</name>
+        <dataType>Number</dataType>
+        <expression>BLANKVALUE({!Whole_Blood_Procedures1}, 0)</expression>
         <scale>2</scale>
     </formulas>
     <interviewLabel>Create New Template {!$Flow.CurrentDateTime}</interviewLabel>
@@ -932,13 +947,13 @@
         <inputAssignments>
             <field>WB_Projected_Procedures__c</field>
             <value>
-                <elementReference>Whole_Blood_Procedures1</elementReference>
+                <elementReference>varWholeBloodProcedure</elementReference>
             </value>
         </inputAssignments>
         <inputAssignments>
             <field>X2RBC_Projected_Procedures__c</field>
             <value>
-                <elementReference>Double_Red_Procedures</elementReference>
+                <elementReference>varDoubleRedProcedure</elementReference>
             </value>
         </inputAssignments>
         <object>Opportunity</object>

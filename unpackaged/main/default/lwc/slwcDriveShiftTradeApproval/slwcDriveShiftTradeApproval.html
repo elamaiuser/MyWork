@@ -4,6 +4,13 @@
         object-label="Drive Shift Trade"
         reject-action-label="Deny"
         reject-additional-fields={rejectAdditionalFields}
+        is-readonly={isReadonly}
     >
     </c-slwc-approval-history-console>
+    <template if:true={record}>
+        <div class="slds-m-top_medium">
+            <c-slwc-drive-shift-trade-detail drive-shift-trade={record}>
+            </c-slwc-drive-shift-trade-detail>
+        </div>
+    </template>
 </template>

@@ -3,6 +3,7 @@
  * Date					     Developer Name			     Comments
  * ***********************************************************************************************************************************************
  *  03/08/2023				 Kishore Das		        Users other than System Admin should not have any delete record permissions(Logic for HRP-10572 --> Deleted)
+ *  02/14/2024				 Balaji N				    logic for HRP-11138(Method :updatePortfolioAssignments, isBackEndDelete)
  *************************************************************************************************************************************************
 */
 
@@ -232,8 +233,10 @@ system.debug('updateAccPortfoliAssignList-1-1'+ap);
         // territory account portfolio update and next account based update
         if(!deleteAccPortfoliAssignList.isEmpty())
         {
+            BSF_Constants.isBackEndDelete=true;//HRP-11138
             List<BSF_Error_Log__c> logList = BSF_Utilities.createErrorLog(Database.delete(deleteAccPortfoliAssignList,false), 'Create Portfolio','BSFPortfolioService','updatePortfolioAssignments','Error','deleting AccportfolioAssignments');
             InsertBsfErrorLog.insertBsfErrors(logList);
+            BSF_Constants.isBackEndDelete=false;//HRP-11138
         }
         if(!recAccPortfoliAssignList.isEmpty())
         {

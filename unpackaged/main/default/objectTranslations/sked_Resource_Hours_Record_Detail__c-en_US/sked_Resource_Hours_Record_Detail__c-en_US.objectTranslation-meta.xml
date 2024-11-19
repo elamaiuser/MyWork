@@ -8,15 +8,6 @@
         <plural>true</plural>
         <value>Resource Hours Record	Details</value>
     </caseValues>
-    
-    
-    
-    
-    
-    
-    
-    
-    
     <layouts>
         <layout>Resource Extension Detail Layout</layout>
         <sections>
@@ -24,5 +15,18 @@
             <section>Custom Links</section>
         </sections>
     </layouts>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     <startsWith>Consonant</startsWith>
 </CustomObjectTranslation>

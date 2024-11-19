@@ -11,6 +11,7 @@
     <columns>CONTACT.PHONE3</columns>
     <columns>CONTACT.PHONE5</columns>
     <columns>Do_Not_Contact__c</columns>
+    <columns>Primary_Phone__c</columns>
     <filterScope>Everything</filterScope>
     <label>All Contacts</label>
 </ListView>

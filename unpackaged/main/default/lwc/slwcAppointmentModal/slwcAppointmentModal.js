@@ -35,7 +35,10 @@ export default class SlwcAppointmentModal extends LightningElement {
 
     get showApplyFutureDatesBtn() {
         const isLinkedDrive = this.drive.linkedDriveId;
-        return this.driveHelper.isFixedSiteDrive(this.drive) && !isLinkedDrive;
+        return (
+            this.driveHelper.isFixedSiteDrive(this.drive) ||
+            this.driveHelper.isWbFixedSiteDrive(this.drive)
+        ) && !isLinkedDrive;
     }
 
     get saveButtonLabel() {

@@ -22,6 +22,11 @@
                 <default>false</default>
                 <label>Calendar Build</label>
             </value>
+            <value>
+                <fullName>Business Planning</fullName>
+                <default>false</default>
+                <label>Business Planning</label>
+            </value>
         </valueSetDefinition>
     </valueSet>
 </CustomField>

@@ -61,6 +61,7 @@ export { ProductGoalMappingConfigFactory } from './_ProductGoalMappingConfigFact
 export { RecurringScheduleMappingConfigFactory } from './_RecurringScheduleMappingConfigFactory.js';
 export { RegionMappingConfigFactory } from './_RegionMappingConfigFactory.js';
 export { ResourceHoursRecordMappingConfigFactory } from './_ResourceHoursRecordMappingConfigFactory.js';
+export { ResourceHoursRecordDetailMappingConfigFactory } from './_ResourceHoursRecordDetailMappingConfigFactory.js';
 export { ResourceMappingConfigFactory } from './_ResourceMappingConfigFactory.js';
 export { ResourceSecondaryCollectionOperationMappingConfigFactory } from './_ResourceSecondaryCollectionOperationMappingConfigFactory.js';
 export { ResourceOverrideMappingConfigFactory } from './_ResourceOverrideMappingConfigFactory.js';
@@ -82,3 +83,5 @@ export { TravelTimeIndexItemMappingConfigFactory } from './_TravelTimeIndexItemM
 export { UserMappingConfigFactory } from './_UserMappingConfigFactory.js';
 export { BsfPortfolioMappingConfigFactory } from './_BsfPortfolioMappingConfigFactory.js';
 export { StaffSetupExcludedRoleMappingConfigFactory } from './_StaffSetupExcludedRoleMappingConfigFactory.js';
+export { StaffMealAndRestBreakMappingConfigFactory } from './_StaffMealAndRestBreakMappingConfigFactory.js';
+export { CollectionOperationOptimizerSettingConfigFactory } from './_CollectionOperationOptimizerSettingConfigFactory.js';

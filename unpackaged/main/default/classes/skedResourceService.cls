@@ -35,8 +35,8 @@ global class skedResourceService extends skedDataService {
             skedResourceOverrideService.queryModel resourceOverrideQuery = new skedResourceOverrideService.queryModel();
             resourceOverrideQuery.biomedCollectionOpIds = query.biomedCollectionOpIds;
             if (query.startDate != NULL && query.endDate != NULL) {
-                resourceOverrideQuery.startTime = startDate;
-                resourceOverrideQuery.endTime = endDate;
+                resourceOverrideQuery.startDate = startDate;
+                resourceOverrideQuery.endDate = endDate;
             }
             
             List<string> temporaryCOResourceIds = resourceOverrideService.getResourceIds(resourceOverrideQuery);
@@ -233,10 +233,18 @@ global class skedResourceService extends skedDataService {
         }
         if (query.includes(skedSObjectType.AVAILABILITY)) {
             skedQueryBuilder availabilityBuilder = query.getQueryBuilder('sked__Availability__c');
-            List<string> statusList = new List<string>();
-            statusList.add(skedConstants.AVAILABILITY_STATUS_APPROVED);
-            statusList.add(skedConstants.AVAILABILITY_STATUS_PENDING);
-            statusList.add(skedConstants.AVAILABILITY_STATUS_WAITLIST);
+            List<string> statusList = query.availabilityStatuses;
+            if (statusList == NULL || statusList.isEmpty()) {
+                statusList = new List<string>();
+                statusList.add(skedConstants.AVAILABILITY_STATUS_APPROVED);
+                statusList.add(skedConstants.AVAILABILITY_STATUS_APPROVED_FROM_PENDING);
+                statusList.add(skedConstants.AVAILABILITY_STATUS_APPROVED_FROM_WAITLIST);
+                statusList.add(skedConstants.AVAILABILITY_STATUS_PENDING);
+                statusList.add(skedConstants.AVAILABILITY_STATUS_WAITLIST);
+                statusList.add(skedConstants.AVAILABILITY_STATUS_PROCESSING_APPROVAL);
+                statusList.add(skedConstants.AVAILABILITY_STATUS_PROCESSING_ADJUSTMENT);
+                statusList.add(skedConstants.AVAILABILITY_STATUS_PROCESSING_CANCELLATION);
+            }
             availabilityBuilder.addCondition('sked_Custom_Status__c IN {0}', statusList);
             if (query.startTime != NULL && query.endTime != NULL) {
                 availabilityBuilder.addCondition('sked__Start__c < {0}', query.endTime);
@@ -322,6 +330,9 @@ global class skedResourceService extends skedDataService {
                 customAvailabilityBuilder.addCondition('sked_Start_Date__c <= {0}', endDate);
                 customAvailabilityBuilder.addCondition('sked_Finish_Date__c >= {0}', startDate);
                 customAvailabilityBuilder.orderClause = 'ORDER BY sked_Start_Date__c ASC';
+            }
+            if (query.customAvailabilityStatuses != null && !query.customAvailabilityStatuses.isEmpty()) {
+                customAvailabilityBuilder.addCondition('sked_Status__c IN {0}', query.customAvailabilityStatuses);
             }
         }
     }
@@ -446,26 +457,28 @@ global class skedResourceService extends skedDataService {
 
     /*********************************************************** Nested classes ***********************************************************/
     global class queryModel extends skedDataService.queryModelBase {
+        public Boolean activeTagsOnly;
+        public List<String> activityTypes;
+        public List<string> availabilityStatuses;
+        public List<String> availabilityTypes;
         public List<string> biomedCollectionOpIds;
         public List<string> categories;
+        public List<string> customAvailabilityStatuses;
         public List<string> employmentTypes;
         public string endDate;
         public DateTime endTime;
+        public List<String> excludedAvailabilityTypes;
         public List<string> jobAllocationStatuses;
         public List<string> locationIds;
+        public Boolean matchAllSelectedTags;
         public List<string> patternIds;
         public List<string> resourceTypes;
         public List<string> regionIds;
         public DateTime startTime;
         public string startDate;
         public Date tagExpiry;
-        public Boolean activeTagsOnly;
-        public Boolean matchAllSelectedTags;
         public List<string> tagIds;
         public List<string> templateIds;
-        public List<String> availabilityTypes;
-        public List<String> excludedAvailabilityTypes;
-        public List<String> activityTypes;
     }
 
 }

@@ -1,0 +1,400 @@
+<template>
+    <!-- <div style="width: 768px;"> -->
+        <article class="slds-card slds-card_boundary">
+            <div class="slds-page-header">
+                <header class="slds-media slds-media--center slds-has-flexi-truncate">
+                    <div class="slds-media__figure slds-m-right_small slds-avatar slds-avatar_small">
+                        <lightning-icon icon-name="custom:custom18" size="small"></lightning-icon>
+                    </div>
+                    <div class="slds-media__body">
+                        <div class="slds-page-header__name">
+                            <div class="slds-page-header__name-title">
+                                <h2 class="slds-card__header-title">
+                                    <span class="slds-page-header__title slds-truncate">Trade Details</span>
+                                </h2>
+                            </div>
+                        </div>
+                    </div>
+                </header>
+            </div>
+            <div class="slds-grid slds-gutters slds-wrap slds-p-around_small">
+                <div class="slds-col slds-medium-size_6-of-12 slds-size_1-of-1">
+                    <h3 class="slds-section-title--divider">Requesting Staff</h3>
+                    <div class="slds-grow slds-p-horizontal_small">
+                        <div class="slds-form-element slds-form-element_readonly">
+                            <span class="slds-form-element__label">Name</span>
+                            <div class="slds-form-element__control">
+                                <div class="slds-form-element__static slds-truncate">{driveShiftTrade.requestingStaffName}</div>
+                            </div>
+                        </div>
+                        <div class="slds-form-element slds-form-element_readonly">
+                            <span class="slds-form-element__label">Hire Date</span>
+                            <div class="slds-form-element__control">
+                                <div class="slds-form-element__static slds-truncate">
+                                    <lightning-formatted-date-time value={driveShiftTrade.requestingStaffHireDate} year="numeric" month="numeric" day="numeric" time-zone="GMT"></lightning-formatted-date-time>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="slds-form-element slds-form-element_readonly">
+                            <span class="slds-form-element__label">Primary Collection Operation</span>
+                            <div class="slds-form-element__control">
+                                <div class="slds-form-element__static slds-truncate">{driveShiftTrade.requestingStaffPrimaryCOName}</div>
+                            </div>
+                        </div>
+                        <div class="slds-form-element slds-form-element_readonly">
+                            <span class="slds-form-element__label">Trading Type</span>
+                            <div class="slds-form-element__control">
+                                <div class="slds-form-element__static slds-truncate">{driveShiftTrade.requestingStaffTradingType}</div>
+                            </div>
+                        </div>
+                        <div class="slds-form-element slds-form-element_readonly">
+                            <span class="slds-form-element__label">Event Name</span>
+                            <div class="slds-form-element__control">
+                                <div class="slds-form-element__static slds-truncate">{driveShiftTrade.requestingStaffTradingEventName}</div>
+                            </div>
+                        </div>
+                        <div class="slds-form-element slds-form-element_readonly">
+                            <span class="slds-form-element__label">Event Date</span>
+                            <div class="slds-form-element__control">
+                                <div class="slds-form-element__static slds-truncate">
+                                    <lightning-formatted-date-time value={driveShiftTrade.requestingStaffTradingEventDate} year="numeric" month="numeric" day="numeric" time-zone="GMT"></lightning-formatted-date-time>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="slds-form-element slds-form-element_readonly">
+                            <span class="slds-form-element__label">Assigned Roles</span>
+                            <div class="slds-form-element__control">
+                                <div class="slds-form-element__static slds-truncate">{driveShiftTrade.requestingStaffAssignedRoles}</div>
+                            </div>
+                        </div>
+                        <div class="slds-form-element slds-form-element_readonly">
+                            <span class="slds-form-element__label">Reason For Trade</span>
+                            <div class="slds-form-element__control">
+                                <div class="slds-form-element__static slds-truncate">
+                                    {driveShiftTrade.requestingStaffTradeReason}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="slds-form-element slds-form-element_readonly">
+                            <span class="slds-form-element__label">Requesting Staff Notes</span>
+                            <div class="slds-form-element__control">
+                                <div class="slds-form-element__static">
+                                    {driveShiftTrade.requestingStaffNotes}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="slds-form-element">
+                            <span class="slds-form-element__label">Has Turnaround Violation After Trade?</span>
+                            <div class="slds-form-element__control">
+                                <div class="slds-form-element__static slds-truncate">
+                                    <template if:true={driveShiftTrade.requestingStaffTurnaroundViolation}>
+                                        <lightning-icon icon-name="utility:check" size="x-small"></lightning-icon>
+                                    </template>
+                                    <template if:false={driveShiftTrade.requestingStaffTurnaroundViolation}>
+                                        <lightning-icon icon-name="utility:steps" size="x-small"></lightning-icon>
+                                    </template>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="slds-form-element">
+                            <span class="slds-form-element__label">Guaranteed Min Hrs Forfeited (Requester)?</span>
+                            <div class="slds-form-element__control">
+                                <div class="slds-form-element__static slds-truncate">
+                                    <template if:true={driveShiftTrade.requestingStaffGuaranteedMinHrsForfeited}>
+                                        <lightning-icon icon-name="utility:check" size="x-small"></lightning-icon>
+                                    </template>
+                                    <template if:false={driveShiftTrade.requestingStaffGuaranteedMinHrsForfeited}>
+                                        <lightning-icon icon-name="utility:steps" size="x-small"></lightning-icon>
+                                    </template>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="slds-form-element">
+                            <span class="slds-form-element__label">Relocated to CO</span>
+                            <div class="slds-form-element__control">
+                                <div class="slds-form-element__static slds-truncate">
+                                    <template if:true={driveShiftTrade.requestingStaffRelocated}>
+                                        <lightning-icon icon-name="utility:check" size="x-small"></lightning-icon>
+                                    </template>
+                                    <template if:false={driveShiftTrade.requestingStaffRelocated}>
+                                        <lightning-icon icon-name="utility:steps" size="x-small"></lightning-icon>
+                                    </template>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="slds-form-element">
+                            <span class="slds-form-element__label">Unavailable for CO</span>
+                            <div class="slds-form-element__control">
+                                <div class="slds-form-element__static slds-truncate">
+                                    <template if:true={driveShiftTrade.requestingStaffUnavailableForCO}>
+                                        <lightning-icon icon-name="utility:check" size="x-small"></lightning-icon>
+                                    </template>
+                                    <template if:false={driveShiftTrade.requestingStaffUnavailableForCO}>
+                                        <lightning-icon icon-name="utility:steps" size="x-small"></lightning-icon>
+                                    </template>
+                                </div>
+                            </div>
+                        </div>
+                        <fieldset class="slds-form-element slds-form-element_compound">
+                            <legend class="slds-form-element__legend slds-form-element__label">Weekly Hours</legend>
+                            <div class="slds-form-element__control">
+                                <div class="slds-grid slds-p-horizontal_small slds-gutters">
+                                  <div class="slds-col slds-size_1-of-2">
+                                    <div class="slds-form-element slds-form-element_readonly">
+                                        <label class="slds-form-element__label">Before Trade</label>
+                                        <div class="slds-form-element__control">
+                                            <div class="slds-form-element__static slds-truncate">{driveShiftTrade.requestingStaffScheduledHoursBefore}</div>
+                                        </div>
+                                    </div>
+                                  </div>
+                                  <div class="slds-col slds-size_1-of-2">
+                                    <div class="slds-form-element slds-form-element_readonly">
+                                        <label class="slds-form-element__label">After Trade</label>
+                                        <div class="slds-form-element__control">
+                                            <div class="slds-form-element__static slds-truncate">{driveShiftTrade.requestingStaffScheduledHoursAfter}</div>
+                                        </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                        </fieldset>
+                        <fieldset class="slds-form-element slds-form-element_compound">
+                            <legend class="slds-form-element__legend slds-form-element__label">Travel Time To</legend>
+                            <div class="slds-form-element__control">
+                                <div class="slds-grid slds-p-horizontal_small slds-gutters">
+                                  <div class="slds-col slds-size_1-of-2">
+                                    <div class="slds-form-element slds-form-element_readonly">
+                                        <label class="slds-form-element__label">Before Trade</label>
+                                        <div class="slds-form-element__control">
+                                            <div class="slds-form-element__static slds-truncate">{driveShiftTrade.requestingStaffTravelTimeToBeforeTrade}</div>
+                                        </div>
+                                    </div>
+                                  </div>
+                                  <div class="slds-col slds-size_1-of-2">
+                                    <div class="slds-form-element slds-form-element_readonly">
+                                        <label class="slds-form-element__label">After Trade</label>
+                                        <div class="slds-form-element__control">
+                                            <div class="slds-form-element__static slds-truncate">{driveShiftTrade.requestingStaffTravelTimeToAfterTrade}</div>
+                                        </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                        </fieldset>
+                        <fieldset class="slds-form-element slds-form-element_compound">
+                            <legend class="slds-form-element__legend slds-form-element__label">Travel Time Back</legend>
+                            <div class="slds-form-element__control">
+                                <div class="slds-grid slds-p-horizontal_small slds-gutters">
+                                  <div class="slds-col slds-size_1-of-2">
+                                    <div class="slds-form-element slds-form-element_readonly">
+                                        <label class="slds-form-element__label">Before Trade</label>
+                                        <div class="slds-form-element__control">
+                                            <div class="slds-form-element__static slds-truncate">{driveShiftTrade.requestingStaffTravelTimeBackBeforeTrade}</div>
+                                        </div>
+                                    </div>
+                                  </div>
+                                  <div class="slds-col slds-size_1-of-2">
+                                    <div class="slds-form-element slds-form-element_readonly">
+                                        <label class="slds-form-element__label">After Trade</label>
+                                        <div class="slds-form-element__control">
+                                            <div class="slds-form-element__static slds-truncate">{driveShiftTrade.requestingStaffTravelTimeBackAfterTrade}</div>
+                                        </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                        </fieldset>
+                    </div>
+                </div>
+                <div class="slds-col slds-medium-size_6-of-12 slds-size_1-of-1">
+                    <h3 class="slds-section-title--divider">Trading Staff</h3>
+                    <div class="slds-grow slds-p-horizontal_small">
+                        <div class="slds-form-element slds-form-element_readonly">
+                            <span class="slds-form-element__label">Name</span>
+                            <div class="slds-form-element__control">
+                                <div class="slds-form-element__static slds-truncate">{driveShiftTrade.tradingStaffName}</div>
+                            </div>
+                        </div>
+                        <div class="slds-form-element slds-form-element_readonly">
+                            <span class="slds-form-element__label">Hire Date</span>
+                            <div class="slds-form-element__control">
+                                <div class="slds-form-element__static slds-truncate">
+                                    <lightning-formatted-date-time value={driveShiftTrade.tradingStaffHireDate} year="numeric" month="numeric" day="numeric" time-zone="GMT"></lightning-formatted-date-time>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="slds-form-element slds-form-element_readonly">
+                            <span class="slds-form-element__label">Primary Collection Operation</span>
+                            <div class="slds-form-element__control">
+                                <div class="slds-form-element__static slds-truncate">{driveShiftTrade.tradingStaffPrimaryCOName}</div>
+                            </div>
+                        </div>
+                        <div class="slds-form-element slds-form-element_readonly">
+                            <span class="slds-form-element__label">Trading Type</span>
+                            <div class="slds-form-element__control">
+                                <div class="slds-form-element__static slds-truncate">{driveShiftTrade.tradingStaffTradingType}</div>
+                            </div>
+                        </div>
+                        <div class="slds-form-element slds-form-element_readonly">
+                            <span class="slds-form-element__label">Event Name</span>
+                            <div class="slds-form-element__control">
+                                <div class="slds-form-element__static slds-truncate">{driveShiftTrade.tradingStaffTradingEventName}</div>
+                            </div>
+                        </div>
+                        <div class="slds-form-element slds-form-element_readonly">
+                            <span class="slds-form-element__label">Event Date</span>
+                            <div class="slds-form-element__control">
+                                <div class="slds-form-element__static slds-truncate">
+                                    <lightning-formatted-date-time value={driveShiftTrade.tradingStaffTradingEventDate} year="numeric" month="numeric" day="numeric" time-zone="GMT"></lightning-formatted-date-time>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="slds-form-element slds-form-element_readonly">
+                            <span class="slds-form-element__label">Assigned Roles</span>
+                            <div class="slds-form-element__control">
+                                <div class="slds-form-element__static slds-truncate">{driveShiftTrade.tradingStaffAssignedRoles}</div>
+                            </div>
+                        </div>
+                        <div class="slds-form-element slds-form-element_readonly">
+                            <span class="slds-form-element__label">Reason For Trade</span>
+                            <div class="slds-form-element__control">
+                                <div class="slds-form-element__static slds-truncate">
+                                    {driveShiftTrade.tradingStaffTradeReason}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="slds-form-element slds-form-element_readonly">
+                            <span class="slds-form-element__label">Trading Staff Notes</span>
+                            <div class="slds-form-element__control">
+                                <div class="slds-form-element__static">
+                                    {driveShiftTrade.tradingStaffNotes}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="slds-form-element">
+                            <span class="slds-form-element__label">Has Turnaround Violation After Trade?</span>
+                            <div class="slds-form-element__control">
+                                <div class="slds-form-element__static slds-truncate">
+                                    <template if:true={driveShiftTrade.tradingStaffTurnaroundViolation}>
+                                        <lightning-icon icon-name="utility:check" size="x-small"></lightning-icon>
+                                    </template>
+                                    <template if:false={driveShiftTrade.tradingStaffTurnaroundViolation}>
+                                        <lightning-icon icon-name="utility:steps" size="x-small"></lightning-icon>
+                                    </template>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="slds-form-element">
+                            <span class="slds-form-element__label">Guaranteed Min Hrs Forfeited (Trading)?</span>
+                            <div class="slds-form-element__control">
+                                <div class="slds-form-element__static slds-truncate">
+                                    <template if:true={driveShiftTrade.tradingStaffGuaranteedMinHrsForfeited}>
+                                        <lightning-icon icon-name="utility:check" size="x-small"></lightning-icon>
+                                    </template>
+                                    <template if:false={driveShiftTrade.tradingStaffGuaranteedMinHrsForfeited}>
+                                        <lightning-icon icon-name="utility:steps" size="x-small"></lightning-icon>
+                                    </template>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="slds-form-element">
+                            <span class="slds-form-element__label">Relocated to CO</span>
+                            <div class="slds-form-element__control">
+                                <div class="slds-form-element__static slds-truncate">
+                                    <template if:true={driveShiftTrade.tradingStaffRelocated}>
+                                        <lightning-icon icon-name="utility:check" size="x-small"></lightning-icon>
+                                    </template>
+                                    <template if:false={driveShiftTrade.tradingStaffRelocated}>
+                                        <lightning-icon icon-name="utility:steps" size="x-small"></lightning-icon>
+                                    </template>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="slds-form-element">
+                            <span class="slds-form-element__label">Unavailable for CO</span>
+                            <div class="slds-form-element__control">
+                                <div class="slds-form-element__static slds-truncate">
+                                    <template if:true={driveShiftTrade.tradingStaffUnavailableForCO}>
+                                        <lightning-icon icon-name="utility:check" size="x-small"></lightning-icon>
+                                    </template>
+                                    <template if:false={driveShiftTrade.tradingStaffUnavailableForCO}>
+                                        <lightning-icon icon-name="utility:steps" size="x-small"></lightning-icon>
+                                    </template>
+                                </div>
+                            </div>
+                        </div>
+                        <fieldset class="slds-form-element slds-form-element_compound">
+                            <legend class="slds-form-element__legend slds-form-element__label">Weekly Hours</legend>
+                            <div class="slds-form-element__control">
+                                <div class="slds-grid slds-p-horizontal_small slds-gutters">
+                                  <div class="slds-col slds-size_1-of-2">
+                                    <div class="slds-form-element slds-form-element_readonly">
+                                        <label class="slds-form-element__label">Before Trade</label>
+                                        <div class="slds-form-element__control">
+                                            <div class="slds-form-element__static slds-truncate">{driveShiftTrade.tradingStaffScheduledHoursBefore}</div>
+                                        </div>
+                                    </div>
+                                  </div>
+                                  <div class="slds-col slds-size_1-of-2">
+                                    <div class="slds-form-element slds-form-element_readonly">
+                                        <label class="slds-form-element__label">After Trade</label>
+                                        <div class="slds-form-element__control">
+                                            <div class="slds-form-element__static slds-truncate">{driveShiftTrade.tradingStaffScheduledHoursAfter}</div>
+                                        </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                        </fieldset>
+                        <fieldset class="slds-form-element slds-form-element_compound">
+                            <legend class="slds-form-element__legend slds-form-element__label">Travel Time To</legend>
+                            <div class="slds-form-element__control">
+                                <div class="slds-grid slds-p-horizontal_small slds-gutters">
+                                  <div class="slds-col slds-size_1-of-2">
+                                    <div class="slds-form-element slds-form-element_readonly">
+                                        <label class="slds-form-element__label">Before Trade</label>
+                                        <div class="slds-form-element__control">
+                                            <div class="slds-form-element__static slds-truncate">{driveShiftTrade.tradingStaffTravelTimeToBeforeTrade}</div>
+                                        </div>
+                                    </div>
+                                  </div>
+                                  <div class="slds-col slds-size_1-of-2">
+                                    <div class="slds-form-element slds-form-element_readonly">
+                                        <label class="slds-form-element__label">After Trade</label>
+                                        <div class="slds-form-element__control">
+                                            <div class="slds-form-element__static slds-truncate">{driveShiftTrade.tradingStaffTravelTimeToAfterTrade}</div>
+                                        </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                        </fieldset>
+                        <fieldset class="slds-form-element slds-form-element_compound">
+                            <legend class="slds-form-element__legend slds-form-element__label">Travel Time Back</legend>
+                            <div class="slds-form-element__control">
+                                <div class="slds-grid slds-p-horizontal_small slds-gutters">
+                                  <div class="slds-col slds-size_1-of-2">
+                                    <div class="slds-form-element slds-form-element_readonly">
+                                        <label class="slds-form-element__label">Before Trade</label>
+                                        <div class="slds-form-element__control">
+                                            <div class="slds-form-element__static slds-truncate">{driveShiftTrade.tradingStaffTravelTimeBackBeforeTrade}</div>
+                                        </div>
+                                    </div>
+                                  </div>
+                                  <div class="slds-col slds-size_1-of-2">
+                                    <div class="slds-form-element slds-form-element_readonly">
+                                        <label class="slds-form-element__label">After Trade</label>
+                                        <div class="slds-form-element__control">
+                                            <div class="slds-form-element__static slds-truncate">{driveShiftTrade.tradingStaffTravelTimeBackAfterTrade}</div>
+                                        </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                        </fieldset>
+                    </div>
+                </div>
+            </div>
+        </article>
+    <!-- </div> -->
+</template>

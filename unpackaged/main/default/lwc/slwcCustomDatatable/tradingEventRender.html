@@ -1,0 +1,10 @@
+<template>
+    <span class="slds-grid slds-grid_align-spread">
+        <div class="slds-truncate">
+            <template if:true={value}>
+                <lightning-formatted-url class="slds-m-left_x-small" value={value} target="_blank" label={typeAttributes.label} title={typeAttributes.label}></lightning-formatted-url>
+            </template>
+            <template if:false={value}>{typeAttributes.label}</template>
+        </div>
+    </span>
+</template>

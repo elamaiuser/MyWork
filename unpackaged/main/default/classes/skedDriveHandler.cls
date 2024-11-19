@@ -5,6 +5,12 @@ public class skedDriveHandler extends skedTriggerHub {
     public static boolean processConfirmedDriveDCRs;
     public static List<sked_Drive_Change_Request__c> confirmedDriveNewDCR;
     public static List<sked_Drive_Change_Request__c> confirmedDriveExistingDCR;
+    public static Map<string, string> mapReasonFields = new Map<string, string>{
+        'Anticipated_Registered_Donors__c' => 'AnticipatedRegisterDonorChangeReason__c',
+        'WB_Projected_Procedures__c' => 'WholeBloodProcedureProjectedChangeReason__c',
+        'X2RBC_Projected_Procedures__c' => 'DoubleRedProceduresProjectedChangeReason__c',
+        'Slot_Generator__c' => 'Slot_Generator_Change_Reason__c'
+    };
 
     private static final Map<String, String> DRIVE_GEN_OPP_FIELD_BY_DRIVE_FIELD = new Map<String, String>{
         'sked_Drive_Date__c' => 'Drive_Date__c',
@@ -62,6 +68,7 @@ public class skedDriveHandler extends skedTriggerHub {
             rankDrives();
             submitConfirmDriveRequest(newRecords, (Map<Id, sked_Drive__c>)this.context.oldMap);
             sendNotification(newRecords, (Map<Id, sked_Drive__c>)this.context.oldMap);
+            processLinkedDriveRemoval(newRecords, (Map<Id, sked_Drive__c>)this.context.oldMap);
             onUnholdDrives(newRecords, (Map<Id, sked_Drive__c>)this.context.oldMap);
             onCancelDrives(newRecords, (Map<Id, sked_Drive__c>)this.context.oldMap);
             onCancelledRejectedApproval(newRecords, (Map<Id, sked_Drive__c>)this.context.oldMap);
@@ -70,6 +77,7 @@ public class skedDriveHandler extends skedTriggerHub {
             submitDriveForCancelApproval(newRecords,(Map<Id, sked_Drive__c>)this.context.oldMap);
             notifyDriveChanges(newRecords,(Map<Id, sked_Drive__c>)this.context.oldMap);
             onStagingLocationChanged(newRecords, (Map<Id, sked_Drive__c>) this.context.oldMap);
+            handleLinkedDriveUpdates(newRecords, (Map<Id, sked_Drive__c>) this.context.oldMap);
         }
     }
     
@@ -195,6 +203,7 @@ public class skedDriveHandler extends skedTriggerHub {
             List<sked_Drive_Change_Request__c> pendingDCRs = [SELECT Id, sked_Status__c
                                                               FROM sked_Drive_Change_Request__c
                                                               WHERE sked_Drive__c IN :cancelledDriveIds
+                                                              AND sked_Status__c != :skedConstants.DRIVE_CHANGE_REQUEST_STATUS_APPROVED_BY_SYSTEM
                                                               AND sked_Status__c != :skedConstants.DRIVE_CHANGE_REQUEST_STATUS_APPROVED
                                                               AND sked_Status__c != :skedConstants.DRIVE_CHANGE_REQUEST_STATUS_REJECTED
                                                               AND sked_Status__c != :skedConstants.DRIVE_CHANGE_REQUEST_STATUS_CANCELLED];
@@ -390,11 +399,6 @@ public class skedDriveHandler extends skedTriggerHub {
     }
     
     private void notifyDriveChanges(List<sked_Drive__c> newRecords, Map<Id, sked_Drive__c> oldMap) {
-        Map<string, string> mapReasonFields = new Map<string, string>();
-        mapReasonFields.put('Anticipated_Registered_Donors__c', 'AnticipatedRegisterDonorChangeReason__c');
-        mapReasonFields.put('WB_Projected_Procedures__c', 'WholeBloodProcedureProjectedChangeReason__c');
-        mapReasonFields.put('X2RBC_Projected_Procedures__c', 'DoubleRedProceduresProjectedChangeReason__c');
-        
         List<Opportunity> oppList = new List<Opportunity>();
         for (sked_Drive__c newRecord : newRecords) {
             if (newRecord.sked_Opportunity__c != NULL) {
@@ -660,11 +664,7 @@ public class skedDriveHandler extends skedTriggerHub {
     }
     
     private void populateData(List<sked_Drive__c> newRecords, Map<Id, sked_Drive__c> oldMap) {
-        List<string> pendingApprovalStatuses = new List<string>();
-        pendingApprovalStatuses.add('Submitted');
-        pendingApprovalStatuses.add('Waiting for APS Approval');
-        pendingApprovalStatuses.add('Waiting for DM Approval');
-        pendingApprovalStatuses.add('Waiting for DRD Feedback');
+        List<string> pendingApprovalStatuses = skedDriveApprovalUtils.getPendingApprovalStatuses();
         
         Date currentDate = system.today();
         for (sked_Drive__c newRecord : newRecords) {
@@ -804,20 +804,42 @@ public class skedDriveHandler extends skedTriggerHub {
                     driveIdsLogisticChanges.add(newRecord.Id);
                 }
             }
-            boolean isCancelled = newRecord.sked_Status__c != oldData.sked_Status__c && newRecord.sked_Status__c == skedConstants.DRIVE_STATUS_CANCEL;
-            boolean isChangedDate = newRecord.sked_Drive_Date__c != oldData.sked_Drive_Date__c;
-            if (isCancelled || isChangedDate) {
-                if (newRecord.sked_Linked_Drives__c != NULL) {
-                    driveIdsLinkedRemoval.add(newRecord.Id);
-                }
-            }
         }
         if (!driveIdsLogisticChanges.isEmpty()) {
             sendLogisticChangesNotification(driveIdsLogisticChanges, newRecords, oldMap);
         }
-        if (!driveIdsLinkedRemoval.isEmpty()) {
-            removeDriveFromLinkedDrive(driveIdsLinkedRemoval, newRecords, oldMap);
-            sendLinkedDriveRemovalNotification(driveIdsLinkedRemoval, newRecords, oldMap);
+    }
+
+    private void processLinkedDriveRemoval(List<sked_Drive__c> newRecords, Map<Id, sked_Drive__c> oldMap) {
+        List<sked_Drive__c> drivesLinkedRemoval = new List<sked_Drive__c>();
+        Set<Id> driveIdsLinkedRemovalToNotify = new Set<Id>();
+        for (sked_Drive__c newRecord : newRecords) {
+			sked_Drive__c oldData = oldMap.get(newRecord.Id);
+            boolean isCancelled = newRecord.sked_Status__c != oldData.sked_Status__c && newRecord.sked_Status__c == skedConstants.DRIVE_STATUS_CANCEL;
+            boolean isChangedDate = newRecord.sked_Drive_Date__c != oldData.sked_Drive_Date__c;
+            boolean hasRemoveFromLinkedDriveResolution = !String.isBlank(newRecord.sked_Contention_Resolution__c) && newRecord.sked_Contention_Resolution__c.contains('Remove from Linked Drive');
+            if (isCancelled || isChangedDate || hasRemoveFromLinkedDriveResolution) {
+                if (newRecord.sked_Linked_Drives__c != NULL) {
+                    drivesLinkedRemoval.add(new sked_Drive__c(
+                        Id = newRecord.Id,
+                        sked_Linked_Drives__c = NULL,
+                        sked_Contention_Resolution__c = hasRemoveFromLinkedDriveResolution ?
+                            skedUtils.removeItemFromMultiPicklist(newRecord.sked_Contention_Resolution__c, 'Remove from Linked Drive') : newRecord.sked_Contention_Resolution__c
+                    ));
+
+                    if (!hasRemoveFromLinkedDriveResolution) {
+                        driveIdsLinkedRemovalToNotify.add(newRecord.Id);
+                    }
+                }
+            }
+        }
+
+        if (!drivesLinkedRemoval.isEmpty()) {
+            update drivesLinkedRemoval;
+        }
+
+        if (!driveIdsLinkedRemovalToNotify.isEmpty()) {
+            sendLinkedDriveRemovalNotification(driveIdsLinkedRemovalToNotify, newRecords, oldMap);
         }
     }
 
@@ -825,55 +847,15 @@ public class skedDriveHandler extends skedTriggerHub {
         List<string> settingNames = new List<string>();
         settingNames.add('sked_Logistic_Change_SF_Push');
         settingNames.add('sked_Logistic_Change_SF_Push_7Days');
-        
-        List<sked_Notification_Setting__mdt> skedNotificationSettings = [SELECT Id
-                                                                         FROM sked_Notification_Setting__mdt
-                                                                         WHERE DeveloperName = :settingNames
-                                                                         AND sked_Trigger__c = 'Custom'
-                                                                         AND sked_Active__c = TRUE];
-        if (!skedNotificationSettings.isEmpty() && !recordIds.isEmpty()) {
-            if (!Test.isRunningTest() && !System.isBatch()) {
-                Map<Id, Set<Id>> map_settingId_recordIds = new Map<Id, Set<Id>>();
-                for (sked_Notification_Setting__mdt skedNotificationSetting : skedNotificationSettings) {
-                    map_settingId_recordIds.put(skedNotificationSetting.Id, recordIds);
-                }
-                Database.executeBatch(new skedSendNotificationBatch(map_settingId_recordIds,  newRecords, oldMap), 20);
-            }
-        }
-    }
 
-	public static void removeDriveFromLinkedDrive(Set<Id> recordIds, List<sObject> newRecords, Map<Id, sObject> oldMap) {
-        List<sked_Drive__c> drivesToUpdate = new List<sked_Drive__c>();
-        for (Id driveId : recordIds) {
-            sked_Drive__c skedDrive = new sked_Drive__c(
-                Id = driveId,
-                sked_Linked_Drives__c = NULL
-            );
-            drivesToUpdate.add(skedDrive);
-        }
-        if (!drivesToUpdate.isEmpty()) {
-            update drivesToUpdate;
-        }
-	}
+        new skedCustomNotificationService(settingNames).generateNotifications(newRecords, oldMap);
+    }
     
     public static void sendLinkedDriveRemovalNotification(Set<Id> recordIds, List<sObject> newRecords, Map<Id, sObject> oldMap) {
     	List<string> settingNames = new List<string>();
         settingNames.add('sked_Linked_Drive_Removal_Email');
         
-        List<sked_Notification_Setting__mdt> skedNotificationSettings = [SELECT Id
-                                                                         FROM sked_Notification_Setting__mdt
-                                                                         WHERE DeveloperName = :settingNames
-                                                                         AND sked_Trigger__c = 'Custom'
-                                                                         AND sked_Active__c = TRUE];
-        if (!skedNotificationSettings.isEmpty() && !recordIds.isEmpty()) {
-            Map<Id, Set<Id>> map_settingId_recordIds = new Map<Id, Set<Id>>();
-            for (sked_Notification_Setting__mdt skedNotificationSetting : skedNotificationSettings) {
-                map_settingId_recordIds.put(skedNotificationSetting.Id, recordIds);
-            }
-            if (!Test.isRunningTest() && !System.isBatch()) {
-                Database.executeBatch(new skedSendNotificationBatch(map_settingId_recordIds,  newRecords, oldMap), 20);
-            }
-        }
+        new skedCustomNotificationService(settingNames).generateNotifications(newRecords, oldMap);
 	}
     
     private void submitDriveForApproval(List<sked_Drive__c> newRecords, Map<Id, sked_Drive__c> oldMap) {
@@ -1089,8 +1071,9 @@ public class skedDriveHandler extends skedTriggerHub {
             sked_Drive__c oldData = oldMap.get(newRecord.Id);
             boolean isDriveDateChanged = newRecord.sked_Drive_Date__c != oldData.sked_Drive_Date__c;
             boolean isCOChanged = newRecord.sked_Collection_Operation__c != oldData.sked_Collection_Operation__c;
+            boolean isLinkedDriveChanged = newRecord.sked_Linked_Drives__c != oldData.sked_Linked_Drives__c;
             
-            boolean requiresRevalidate = isDriveDateChanged || isCOChanged;
+            boolean requiresRevalidate = isDriveDateChanged || isCOChanged || isLinkedDriveChanged;
             if (requiresRevalidate) {
                 driveIdsToRevalidate.add(newRecord.Id);
             }
@@ -1202,6 +1185,33 @@ public class skedDriveHandler extends skedTriggerHub {
             request.impactedDrives = impactedDrives;
             
             slwcDriveService.skedCaptureNonUserChangeDCRs(request);
+        }
+    }
+
+    private void handleLinkedDriveUpdates(List<sked_Drive__c> newRecords, Map<Id, sked_Drive__c> oldMap) {
+        Set<Id> linkedDrivesToUpdate = new Set<Id>();
+        for (sked_Drive__c drive : newRecords) { 
+            sked_Drive__c oldDrive = oldMap.get(drive.Id);
+            if (drive.sked_Linked_Drives__c != null || oldDrive.sked_Linked_Drives__c != null) {
+                Boolean driveDateChanged = drive.sked_Drive_Date__c != oldDrive.sked_Drive_Date__c;
+                Boolean linkedDriveChanged = drive.sked_Linked_Drives__c != oldDrive.sked_Linked_Drives__c;
+
+                if (drive.sked_Linked_Drives__c != null && (driveDateChanged || linkedDriveChanged)) {
+                    linkedDrivesToUpdate.add(drive.sked_Linked_Drives__c);
+                }
+
+                if (oldDrive.sked_Linked_Drives__c != null) {
+                    linkedDrivesToUpdate.add(oldDrive.sked_Linked_Drives__c);
+                }
+            }
+        }
+
+        if (!linkedDrivesToUpdate.isEmpty()) {
+            skedFutureCallEventHandler.publishFutureCallEvent(
+                'skedLinkedDrivesHandler',
+                'updateLinkedDriveDetails',
+                linkedDrivesToUpdate
+            );
         }
     }
     

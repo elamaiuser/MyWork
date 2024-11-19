@@ -35,6 +35,10 @@
             <translation><!-- Equipment Issues --></translation>
         </picklistValues>
         <picklistValues>
+            <masterLabel>FS Quarterly Calibration</masterLabel>
+            <translation><!-- FS Quarterly Calibration --></translation>
+        </picklistValues>
+        <picklistValues>
             <masterLabel>Geo Alignment</masterLabel>
             <translation><!-- Geo Alignment --></translation>
         </picklistValues>

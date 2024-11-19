@@ -1,7 +1,7 @@
-import { LightningElement, track } from 'lwc';
+import { LightningElement, track, api } from 'lwc';
 import { dataService, resourceService, resourceQueryModel, operationRecordService, operationRecordQueryModel } from 'c/dataService';
 import { ShowToastEvent } from "lightning/platformShowToastEvent";
-import { getValueFromEvent } from 'c/slwcUtils';
+import { getValueFromEvent, classNames } from 'c/slwcUtils';
 import { orderBy } from 'c/lodash';
 import searchTemplate from './search.html';
 import selectOperationRecordTemplate from './selectOperationRecord.html';
@@ -51,6 +51,8 @@ const STEP_SETTINGS = {
 }
 
 export default class SlwcMobileTeamSupervisorOperationRecord extends LightningElement {
+  @api fullScreen = false;
+
   @track showSpinner = false;
   @track confirmModalData = {};
   @track step = STEP.SEARCH;
@@ -59,6 +61,14 @@ export default class SlwcMobileTeamSupervisorOperationRecord extends LightningEl
   @track filters = {};
   @track operationRecords = [];
   @track selectedOperationRecord = null;
+
+  get customClass() {
+    return {
+      modal: classNames('slds-modal slds-fade-in-open', {
+        'full-screen': this.fullScreen
+      }),
+    }
+  }
 
   render() {
     return STEP_SETTINGS[this.step].render;

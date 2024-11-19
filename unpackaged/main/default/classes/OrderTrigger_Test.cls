@@ -15,7 +15,8 @@ public class OrderTrigger_Test {
 
     
     @isTest static void orderMethod1() {
-        
+        skedHubBase.BypassInsertTriggers = true;
+        skedHubBase.BypassUpdateTriggers = true;
         // create user 
         
         User AdminUser = new User(
@@ -176,7 +177,8 @@ public class OrderTrigger_Test {
         optyObj.Plasma_Pheresis_Projected_Procedures__c = 3;
         optyObj.Platelet_Projected_Procedures__c = 1;
         
-        opplist.add(optyObj);       
+        opplist.add(optyObj);  
+        triggerHandler.bypass('OpportunityTriggerHandler');
         insert opplist;
         
         test.startTest();
@@ -300,7 +302,8 @@ public class OrderTrigger_Test {
     }
 
     @isTest static void orderMethod2() {
-        
+        skedHubBase.BypassInsertTriggers = true;
+        skedHubBase.BypassUpdateTriggers = true;
         // create user 
         
         User AdminUser = new User(
@@ -459,7 +462,8 @@ public class OrderTrigger_Test {
         optyObj.Plasma_Pheresis_Projected_Procedures__c = 3;
         optyObj.Platelet_Projected_Procedures__c = 1;
         
-        opplist.add(optyObj);       
+        opplist.add(optyObj);  
+        triggerHandler.bypass('OpportunityTriggerHandler');
         insert opplist;
         
         // Create Marketing Program/Affiliation
@@ -635,7 +639,8 @@ public class OrderTrigger_Test {
     
     
     @isTest static void orderMethod3() {
-        
+        skedHubBase.BypassInsertTriggers = true;
+        skedHubBase.BypassUpdateTriggers = true;
         // create user 
         
         User AdminUser = new User(
@@ -792,7 +797,8 @@ public class OrderTrigger_Test {
         optyObj.Plasma_Pheresis_Projected_Procedures__c = 3;
         optyObj.Platelet_Projected_Procedures__c = 1;
         
-        opplist.add(optyObj);       
+        opplist.add(optyObj); 
+        triggerHandler.bypass('OpportunityTriggerHandler');
         insert opplist;
         
         // Create Marketing Program/Affiliation

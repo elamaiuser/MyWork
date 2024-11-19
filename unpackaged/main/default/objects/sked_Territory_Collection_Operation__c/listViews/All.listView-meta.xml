@@ -10,10 +10,5 @@
     <columns>UPDATEDBY_USER</columns>
     <columns>LAST_UPDATE</columns>
     <filterScope>Everything</filterScope>
-    <filters>
-        <field>sked_Collection_Operation__c</field>
-        <operation>equals</operation>
-        <value>Columbus OH Franklin</value>
-    </filters>
     <label>All</label>
 </ListView>

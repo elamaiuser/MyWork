@@ -6,16 +6,24 @@
 * 08/05/2023                 Balaji N                    Logic for HRP-8897 (New Method: dateCheckbeforeInsertUpdate)
 * 09/20/2023				 Krapy Tuli					 Logic for HRP-10359(Update AM, DM, AM Portfolio and DM Portfolio)
 * 11/09/2023				 Balaji N					 Logic for HRP-11290(Method Name:uncheckCoveringRecFlagForBackEndInsert,is covering recruiter flag in update)
-* 11/22/2023				 Balaji N					 Logic for HRP-11281(Method Name:coveringRecruiterOpptyTeamonPastOpp, OpportunityTeam Recalculation for covering recruiters with past Opportunities)
+* 11/22/2023				 Balaji N					 Logic for HRP-11281(Method Name:coveringRecruiterOpptyTeamonPastOpp, OpportunityTeam Recalculation for covering recruiters with past Opportunities,createAccountTeamMemberHistoryRecords update & Delete scenario)
 * 12/14/2023				 Balaji N					 Logic for HRP-6028(Method Name:uncheckCoveringRecFlagForBackEndInsert; commented is_covering_recruiter__c population)
 * 12/14/2023				 Balaji N					 Logic for HRP-6028(Method Name:dateCheckbeforeInsertUpdate; if check to prevent covering recruiter getting dates from Portfolio assignment)
 * 01/16/2024				 Balaji N   				 Logic for HRP-11919 (Method Name :uncheckCoveringRecFlagForBackEndInsert;dateCheckbeforeInsertUpdate)
+* 01/03/2024                 Balaji N					 Logic for HRP-10569 (Method Name :uncheckCoveringRecFlagForBackEndInsert,parameter changes on accTeamDateSyncOnAccPortUpdates method call)
+* 01/31/2024				 Balaji N                    Logic for HRP-11234 (Method Name: addAcctTeamMembers_To_BloodDriveOpptyMembers;Method call for systemUserAsOwner, New method oppLookupUpdates)
+* 02/08/2024                 Balaji N                    Logic for HRP-11424 (Static map accIdUserDate, for reducing the "accTeamDateSyncOnAccPortUpdates" method call;Method:uncheckCoveringRecFlagForBackEndInsert,dateCheckbeforeInsertUpdate)
+* 02/08/2024				 Balaji N					 Logic for HRP-11424 (new method stopDeletingNonCRTeamMemberFromUI)
+* 02/20/2024                 Balaji N					 Logic for HRP-11234(Method : updateAccountOnTeammeberAssignment,oldMap changes)
+* 03/20/2024				 Balaji N					 Logic for HRP-12052(Method : uncheckCoveringRecFlagForBackEndInsert & allowOnlyDateUpdatesForCoveringRecs, added access level default)
 ************************************************************************************************************************************************
 */
 public with sharing class AccountTeamMemberService {
     
     public static Boolean isAccessLevelUpdated = false;
     public static Boolean isExecuted = false;
+    
+    public static map<string,AccountTeamMember> accIdUserDate = new map<string,AccountTeamMember>();//HRP-11424
     
     //Added as part of HRP-2193
     //Create TeamMemberHistory Records whenver a new record is created on AccountTeamMember
@@ -34,7 +42,7 @@ public with sharing class AccountTeamMemberService {
                     oldMap.get(teamMember.id).End_Date__c != teamMember.End_Date__c || 
                     oldMap.get(teamMember.id).Is_Covering_Recruiter__c != teamMember.Is_Covering_Recruiter__c ||
                     oldMap.get(teamMember.id).TeamMemberRole != teamMember.TeamMemberRole ||
-                    oldMap.get(teamMember.id).Coverage_Reason__c != teamMember.Coverage_Reason__c))//update
+                    oldMap.get(teamMember.id).Coverage_Reason__c != teamMember.Coverage_Reason__c))//update //HRP-11281 if check
 				    || oldMap==null) //Insert or Update
                 {
                 Team_Member_History__c historyRecord = new Team_Member_History__c();
@@ -53,7 +61,7 @@ public with sharing class AccountTeamMemberService {
                 if(teamMember.End_Date__c!=null){
                     historyRecord.End_Date__c = teamMember.End_Date__c;
                 }
-                    
+                    //HRP-11281 start
                 if(trigger.isDelete)
                 {
                     if(teamMember.Start_Date__c > system.today())
@@ -70,6 +78,7 @@ public with sharing class AccountTeamMemberService {
                     }
                     
                 }
+                    //HRP-11281 End
                     
                     
                     
@@ -85,10 +94,10 @@ public with sharing class AccountTeamMemberService {
           
         
     }
-    
+    /* commented part of HRP-11281
     //Added as part of HRP-1084
     //Update the TeamMemberHistory Records when Team Member's Start Date, End Date and Coverage Reason are updated
-    /*public static void updateAccountTeamMemberHistoryRecords( Map<ID, AccountTeamMember> newAccountTeamMembersMap){
+    public static void updateAccountTeamMemberHistoryRecords( Map<ID, AccountTeamMember> newAccountTeamMembersMap){
         Set<Id> userIdList = new Set<Id>(); 
         Set<Id> accIdList = new Set<Id>(); 
         Map<Id,AccountTeamMember> userTeamMemberMap = new Map<Id,AccountTeamMember>();
@@ -120,11 +129,11 @@ public with sharing class AccountTeamMemberService {
                 System.debug('Error occured: '+e.getMessage());
             }     
         }
-    }*/
+    }
     
     //Added as part of HRP-2193
     //Populate End Date on TeamMemberHistory record when an AccountTeamMember record gets deleted
-    /*public static void populateEndDateOnAccountTeamMemberHistoryRecords(List<AccountTeamMember> deletedMappings, Map<ID, AccountTeamMember> MappingMap){
+    public static void populateEndDateOnAccountTeamMemberHistoryRecords(List<AccountTeamMember> deletedMappings, Map<ID, AccountTeamMember> MappingMap){
         
         System.debug('Entered populateEndDateOnAccountTeamMemberHistoryRecords');
         System.debug('MappingMap: '+MappingMap.keySet());
@@ -149,7 +158,7 @@ public with sharing class AccountTeamMemberService {
         //if (Schema.sObjectType.Team_Member_History__c.fields.End_Date__c.isUpdateable()) {}
             Database.update(teamMemberHistoryListToUpdate);
          
-    }*/
+    }commented part of HRP-11281*/
     
     //Added as part of HRP-1084
     //Add Account Team Members to Blood Drive Team Members when Account Team Member is inserted
@@ -605,6 +614,9 @@ public with sharing class AccountTeamMemberService {
                 System.debug('Error occured: '+e.getMessage());
             }     
         }
+        
+        if(!BSF_Constants.isTeamMemberCreatedFromBackend)
+        AccountPortfolioAssignmentService.accTeamDateSyncOnAccPortUpdates(new List<id>(acctTeamMemberMap.Keyset()),null,new set<id>(),new map<id,list<accountTeamMember>>(),new map<id,list<accountTeamMember>> ());
     }
    
     //Added for HRP-5076: Acceptance Criteria #5
@@ -612,54 +624,117 @@ public with sharing class AccountTeamMemberService {
      public static void uncheckCoveringRecFlagForBackEndInsert(List<AccountTeamMember> newAccountTeamMembers,map<id,AccountTeamMember> oldMap){
         System.debug('BSF_Constants.isTeamMemberCreatedFromBackend '+BSF_Constants.isTeamMemberCreatedFromBackend);
         set<id> errorAtmSet = new set<id>();
+        set<id> portfolioErrorAtmSet = new set<id>();
+        list<id> accIdList = new list<id>();
+        for(AccountTeamMember atm :newAccountTeamMembers)
+        {
+            //HRP-12052 start
+            atm.AccountAccessLevel = 'Edit';
+            atm.OpportunityAccessLevel = 'Edit';
+            atm.CaseAccessLevel = 'None';
+            //HRP-12052 end
+            if(!accIdList.contains(atm.accountid))
+            {
+                accIdList.add(atm.accountid);
+            }
+        }
+        //HRP-11424 Start prev this call was in dateCheckbeforeInsertUpdate method
+        map<id,list<accountTeamMember>> accIdFutureAccTeamMap = new map<id,list<accountTeamMember>>();
+        accIdUserDate=accountPortfolioassignmentservice.accTeamDateSyncOnAccPortUpdates(accIdList,bsf_constants.BYPASS_TEAMDML,new set<id>(),accIdFutureAccTeamMap,new map<id,list<accountTeamMember>> ());//HRP-10569 new parameters
+		//HRP-11424 End     
+		   
         //HRP-11290 start
         if(BSF_Constants.isTeamMemberCreatedFromBackend == true)
         {
-           for(accountTeamMember atm : newAccountTeamMembers)
+            for(accountTeamMember atm : newAccountTeamMembers)
             {
-                if((oldMap!=null && (atm.Start_Date__c!=oldMap.get(atm.id).start_date__c || atm.End_date__c!=oldMap.get(atm.id).End_date__c) && oldMap.get(atm.id).is_Covering_recruiter__c && oldMap.get(atm.id).End_date__c >= system.today()) && !(atm.start_date__c<=oldMap.get(atm.id).start_date__c && atm.End_date__c>=oldMap.get(atm.id).End_date__c))
+                //covering recruiter Handled in accountPortfolioassignmentservice.accTeamDateSyncOnAccPortUpdates method
+                //HRP-11424 commented Start 
+                /*if((oldMap!=null  && (atm.Start_Date__c!=oldMap.get(atm.id).start_date__c || atm.End_date__c!=oldMap.get(atm.id).End_date__c) && oldMap.get(atm.id).is_Covering_recruiter__c && oldMap.get(atm.id).End_date__c >= system.today()))// && !(atm.start_date__c<=oldMap.get(atm.id).start_date__c && atm.End_date__c>=oldMap.get(atm.id).End_date__c))
                 {
-                    atm.Start_Date__c=oldMap.get(atm.id).start_date__c;
-                    atm.End_date__c=oldMap.get(atm.id).End_date__c;
+                    //atm.Start_Date__c=oldMap.get(atm.id).start_date__c;
+                    //atm.End_date__c=oldMap.get(atm.id).End_date__c;
                     //populate back end date fields,error is not needed
-                }
-                else
-                {
-                    atm.Is_Covering_Recruiter__c = false;
-                    atm.Coverage_Reason__c = null;//HRP-11919
-                }
+                }*/
+                //HRP-11424 commented End
                 
-            }
+                   if(oldMap==null ||(oldMap!=null && (atm.start_date__c<=oldMap.get(atm.id).start_date__c && oldMap.get(atm.id).End_date__c<=atm.End_date__c) ))
+                      {
+                          atm.Is_Covering_Recruiter__c = false;
+                          atm.Coverage_Reason__c = null;//HRP-11919
+                      }
+                    
+                
+             }
             
             
         }
         else
         {
+            //HRP-11424 Start
+            Map<string,AccountTeamMember> accIdUserFutureDate = new Map<string,AccountTeamMember>();
+            
+            for(id i: accIdFutureAccTeamMap.keyset())
+            {
+                for(accountTeamMember atm : accIdFutureAccTeamMap.get(i))
+                {
+                    string Key = atm.accountId+'_'+atm.userId;
+                    if(!accIdUserFutureDate.containsKey(key))
+                        accIdUserFutureDate.put(key,atm);
+                }
+            }
+             //HRP-11424 End
             for(accountTeamMember atm : newAccountTeamMembers)
             {
                 if(oldMap == null)
                 {
-                        //atm.Is_Covering_Recruiter__c = true; commented part of HRP-6028
-                    	atm.AccountAccessLevel = 'Edit';
-                        atm.OpportunityAccessLevel = 'Edit';
-                        atm.CaseAccessLevel = 'None';
-                    
+                    //HRP-12052 Start
+                    //atm.Is_Covering_Recruiter__c = true; commented part of HRP-6028
+                    atm.AccountAccessLevel = 'Edit';
+                    atm.OpportunityAccessLevel = 'Edit';
+                    atm.CaseAccessLevel = 'None';
+                    //HRP-12052 End
                 }
                 else
                 {
-                    //HRP-11919
-                    if(oldMap.get(atm.id).Coverage_Reason__c == null && atm.Coverage_Reason__c != null &&
-                         (atm.Start_Date__c < oldMap.get(atm.id).Start_Date__c  && atm.End_Date__c>=system.today()) || ((atm.Start_Date__c > oldMap.get(atm.id).End_Date__c) && oldMap.get(atm.id).End_Date__c< system.today())){
-                        atm.Is_Covering_Recruiter__c = true;     
+                    //HRP-11424 Start
+                    if(oldMap.get(atm.id).Coverage_Reason__c == null && atm.Coverage_Reason__c != null || 
+                       (oldMap.get(atm.id).is_covering_recruiter__c && (oldMap.get(atm.id).Start_Date__c!= atm.Start_Date__c || oldMap.get(atm.id).End_Date__c!= atm.End_Date__c)))//HRP-11919
+                    {
+                        string key=atm.AccountId+'_'+atm.userId;
+                        boolean cr=true;//HRP-12052 false to true
+                        boolean crfuture=true;//HRP-12052 false to true
+                        if(accIdUserDate!= null && accIdUserDate.containsKey(key) && !((atm.Start_Date__c < accIdUserDate.get(key).Start_Date__c  && atm.End_Date__c < accIdUserDate.get(key).Start_Date__c) || ((atm.Start_Date__c > accIdUserDate.get(key).End_Date__c))))//HRP-12052 changed oldMap to accIdUserDate and NOT logic
+                          {
+                              cr= false;//HRP-12052 true to false
+                          }
+                        if(accIdUserFutureDate != null && accIdUserFutureDate.containsKey(Key))
+                        {
+                            accountTeamMember futAtm =  accIdUserFutureDate.get(Key);
+                            if(!((atm.Start_Date__c < futAtm.Start_Date__c  && atm.End_Date__c < futAtm.Start_Date__c) || ((atm.Start_Date__c > futAtm.End_Date__c) )))//HRP-12052 NOT logic
+                            {
+                                crfuture=false;//HRP-12052 true to false
+                            }
+                        }
+                        
+                        if(cr && crfuture)
+                        {
+                            atm.Is_Covering_Recruiter__c = true;//HRP-11919
+                        }
+                        else
+                        {
+                            portfolioErrorAtmSet.add(atm.id);
+                        }
                     }
-                    //HRP-11919
+                    //HRP-11424 End
+                    
                     if(oldMap.get(atm.id).is_Covering_recruiter__c && !atm.Is_Covering_Recruiter__c)
                     {
                         errorAtmSet.add(atm.id);
                     }
                 }
             }
-            //HRP-11290 end
+            
         }
         
         
@@ -667,8 +742,10 @@ public with sharing class AccountTeamMemberService {
         {
             if(errorAtmSet.contains(atm.id))
                 atm.addError('Once covering Recruiter Cannot be unchecked accountid: '+atm.accountid+' User.id: '+atm.UserId);
+            else if(portfolioErrorAtmSet.contains(atm.id))//HRP-11424
+                atm.addError('The covering Recruiter assignment is overlapping the portfolio assignment please add the covering recruiter before or after account team Date ');//HRP-11424
         }
-        
+        //HRP-11290 end
         
         
         /*if(BSF_Constants.isTeamMemberCreatedFromBackend == false){
@@ -708,9 +785,11 @@ teamMember.addError( 'Covering Recruiters need to have a Case Access of Read/Wri
                 AccountTeamMember oldTeamMember = oldAccountTeamMembersMap.get(newTeamMember.Id);
                 if(BSF_Constants.isTeamMemberCreatedFromBackend == false){
                     if(oldTeamMember.Is_Covering_Recruiter__c == true){
-                      newTeamMember.AccountAccessLevel = 'Edit';
-                     newTeamMember.OpportunityAccessLevel = 'Edit';
-                     newTeamMember.CaseAccessLevel = 'None';
+                      //HRP-12052 start
+                        /*newTeamMember.AccountAccessLevel = 'Edit';
+                        newTeamMember.OpportunityAccessLevel = 'Edit';
+                        newTeamMember.CaseAccessLevel = 'None';*/
+                        //HRP-12052 end
                 if(newTeamMember.AccountId != oldTeamMember.AccountId 
                            ||newTeamMember.Coverage_Reason__c !=  oldTeamMember.Coverage_Reason__c
                            ||newTeamMember.TeamMemberRole !=  oldTeamMember.TeamMemberRole
@@ -824,9 +903,10 @@ teamMember.addError( 'Covering Recruiters need to have a Case Access of Read/Wri
 */    
    public static void addAcctTeamMembers_To_BloodDriveOpptyMembers(Map<Id,List<AccountTeamMember>> mapOfAcctsWithTeamMembers,List<Opportunity> listofOppties,List<OpportunityTeamMember> listOfOpptyTeamMembersTodelete,List<OpportunityTeamMember> optyTeamMemberNotExistListToInsert){
         system.debug('addAcctTeamMembers_To_BloodDriveOpptyMembers '+mapOfAcctsWithTeamMembers);
-        List<OpportunityTeamMember> optyTeamMemberListToInsert = new List<OpportunityTeamMember>();
-		Map<Id,List<AccountTeamMember>> mapOfOpptyWithAcctTeamsToDelete=new Map<Id,List<AccountTeamMember>>();
-        List<Opportunity> listofOpptiesOwnersToupdate=new List<Opportunity>();
+        insert new BSF_Error_Log__c(Process_Name__c ='Run Logs',ApexClass__c='AccountTeamMemeberService',Method__c='addAcctTeamMembers_To_BloodDriveOpptyMembers',Type__c='Success',Error_Description__c='mapOfAcctsWithTeamMembers '+String.valueOf(mapOfAcctsWithTeamMembers.size()));
+        list<OpportunityTeamMember> optyTeamMemberListToInsert = new list<OpportunityTeamMember>();
+        Map<Id,List<AccountTeamMember>> mapOfOpptyWithAcctTeamsToDelete=new Map<Id,List<AccountTeamMember>>();
+        list<Opportunity> listofOpptiesOwnersToupdate=new list<Opportunity>();
         Set<Id> setOfOpptyIds=new Set<Id>();
         Set<String> acctTeamKeySet = new Set<String>();
         Set<String> opptyInsertTeamKeySet = new Set<String>();
@@ -834,60 +914,76 @@ teamMember.addError( 'Covering Recruiters need to have a Case Access of Read/Wri
         Map<Id,Id> oppWithAccMangrIdMap = new Map<Id,Id>();
         Map<Id,Opportunity> oppIdVsAMDMPortfoliodMap = new Map<Id,Opportunity>(); //HRP-10359
         /*Date leastStartDate = null;
-        Date maxEndDate = null;
-        for(Id acctId : mapOfAcctsWithTeamMembers.keySet()){
-            for(AccountTeamMember actTeamMember :mapOfAcctsWithTeamMembers.get(acctId)){
-                if(leastStartDate == null || leastStartDate > actTeamMember.Start_Date__c){
-                    leastStartDate = actTeamMember.Start_Date__c;
-                }
-                if(maxEndDate == null || maxEndDate < actTeamMember.End_Date__c){
-                    maxEndDate = actTeamMember.End_Date__c;
-                }
-            }
-        }
-        
-        List<Opportunity> listofOppties =[SELECT Id,ownerId,AccountId, Drive_Date__c, Account_Manager__c,Covering_Recruiter__c FROM Opportunity WHERE AccountId IN:mapOfAcctsWithTeamMembers.keySet() AND Drive_Date__c != null AND Drive_Date__c >= :leastStartDate AND Drive_Date__c <= :maxEndDate];
-        */
-		List<Account> accList = [select id,Account_Manager__c,District_manager__c from Account Where Id IN:mapOfAcctsWithTeamMembers.keySet()];
-        populateAmDMLookuponDelete(mapOfAcctsWithTeamMembers,accList);
+Date maxEndDate = null;
+for(Id acctId : mapOfAcctsWithTeamMembers.keySet()){
+for(AccountTeamMember actTeamMember :mapOfAcctsWithTeamMembers.get(acctId)){
+if(leastStartDate == null || leastStartDate > actTeamMember.Start_Date__c){
+leastStartDate = actTeamMember.Start_Date__c;
+}
+if(maxEndDate == null || maxEndDate < actTeamMember.End_Date__c){
+maxEndDate = actTeamMember.End_Date__c;
+}
+}
+}
+
+List<Opportunity> listofOppties =[SELECT Id,ownerId,AccountId, Drive_Date__c, Account_Manager__c,Covering_Recruiter__c FROM Opportunity WHERE AccountId IN:mapOfAcctsWithTeamMembers.keySet() AND Drive_Date__c != null AND Drive_Date__c >= :leastStartDate AND Drive_Date__c <= :maxEndDate];
+*/
+        List<Account> accList = [select id,Account_Manager__c,District_manager__c from Account Where Id IN:mapOfAcctsWithTeamMembers.keySet()];
+        //populateAmDMLookuponDelete(mapOfAcctsWithTeamMembers,accList);//HRP-11234
         /*if(listofOppties.isEmpty()){
-            insert new BSF_Error_Log__c(Process_Name__c ='Run Logs',ApexClass__c='AccountTeamMemeberService',Method__c='addAcctTeamMembers_To_BloodDriveOpptyMembers',Type__c='Success',Error_Description__c='listofOppties empty');
-            Database.executeBatch(new BSF_Batch_OpportunityTeamMember(new List<OpportunityTeamMember>(),new List<OpportunityTeamMember>(),'Delete',true,countAccounts),100);
-            return;
-        }*/
+insert new BSF_Error_Log__c(Process_Name__c ='Run Logs',ApexClass__c='AccountTeamMemeberService',Method__c='addAcctTeamMembers_To_BloodDriveOpptyMembers',Type__c='Success',Error_Description__c='listofOppties empty');
+Database.executeBatch(new BSF_Batch_OpportunityTeamMember(new List<OpportunityTeamMember>(),new List<OpportunityTeamMember>(),'Delete',true,countAccounts),100);
+return;
+}*/
         
         //HRP-8050
         map<id,AccountTeamMember> oppIdCoverageAmMap = new  map<id,AccountTeamMember>();
         oppIdCoverageAmMap = isCoverageAmPresent(mapOfAcctsWithTeamMembers,listofOppties);
+        system.debug('oppIdCoverageAmMap:: '+oppIdCoverageAmMap);
         map<id,AccountTeamMember> oppIdCoverageDmMap = new  map<id,AccountTeamMember>();
         oppIdCoverageDmMap = isCoverageDmPresent(mapOfAcctsWithTeamMembers,listofOppties);
-           //----------------------------//	
-        Map<Id,Id> oppWithOldOwnerIdMap = new Map<Id,Id>();		
+        system.debug('oppIdCoverageDmMap:: '+oppIdCoverageDmMap);
+        //----------------------------//	
+        Map<Id,Id> oppWithOldOwnerIdMap = new Map<Id,Id>();	
+        Set<id> oppSet = new Set<id> ();
+        map<id,list<String>> oppIdLookupPopulatedListMap = new map<id,list<String>>();//HRP-11234
         //------------------------------//
-       for(Opportunity opRecord:listofOppties){
+        
+        
+        for(Opportunity opRecord:listofOppties){
+            oppSet.add(opRecord.id);
+            setOfOpptyIds.add(opRecord.Id);
             if(mapOfAcctsWithTeamMembers.containsKey(opRecord.AccountId))	{
                 for(AccountTeamMember atmRecords:mapOfAcctsWithTeamMembers.get(opRecord.AccountId)){
+                    system.debug('atmRecords:'+atmRecords);
                     acctTeamKeySet.add(opRecord.AccountId+':'+atmRecords.UserId);
-                    		
+                    
                     if(!oppWithOldOwnerIdMap.keyset().contains(opRecord.id))
-                    oppWithOldOwnerIdMap.put(opRecord.id,opRecord.OwnerId);		
-                    		
-            		//-----------------------------------------------------------------//
+                        oppWithOldOwnerIdMap.put(opRecord.id,opRecord.OwnerId);		
+                    
+                    //-----------------------------------------------------------------//
                     if(opRecord.Drive_Date__c>=atmRecords.Start_Date__c && opRecord.Drive_Date__c<=atmRecords.End_Date__c){ //HRP-10359 start
-                        if(atmRecords.TeamMemberRole == 'Account Manager' && (oppIdCoverageAmMap.get(opRecord.id)==null || (oppIdCoverageAmMap.get(opRecord.id).UserId !=null && oppIdCoverageAmMap.get(opRecord.id).UserId!=opRecord.Account_Manager__c))){
-                             if(atmRecords.Is_Covering_Recruiter__c==false){
-                            opRecord.OwnerId=atmRecords.UserId;
-                            if(atmRecords.BSF_Portfolio__c != NULL){ //HRP-10359 start
-                                opRecord.Account_Manager_Portfolio__c = atmRecords.BSF_Portfolio__c;
-                            } // HRP-10359 end
-                            oppWithOwnerIdMap.put(opRecord.id,opRecord.OwnerId);
-                         }
-                            //system.debug('opRecord.id '+opRecord.id);
-                            opRecord.Account_Manager__c=atmRecords.UserId;
+                        if(atmRecords.TeamMemberRole == 'Account Manager'){
+                            if(atmRecords.Is_Covering_Recruiter__c==false){
+                                opRecord.OwnerId=atmRecords.UserId; //HRP-10359
+                                if(atmRecords.BSF_Portfolio__c != NULL){ //HRP-10359 start
+                                    opRecord.Account_Manager_Portfolio__c = atmRecords.BSF_Portfolio__c;
+                                } // HRP-10359 end
+                                oppWithOwnerIdMap.put(opRecord.id,opRecord.OwnerId);
+                                
+                            }
+                            //HRP-11234
+                            if((oppIdCoverageAmMap==null || (oppIdCoverageAmMap.get(opRecord.id)==null || (oppIdCoverageAmMap.containsKey(opRecord.id) && oppIdCoverageAmMap.get(opRecord.id).UserId !=null && oppIdCoverageAmMap.get(opRecord.id).UserId!=opRecord.Account_Manager__c))))
+                            
+                            {
+                                opRecord.Account_Manager__c=atmRecords.UserId; //HRP-10359
+                            }
+                            //HRP-11234
                             oppWithAccMangrIdMap.put(opRecord.id,opRecord.Account_Manager__c);
+                            system.debug('opRecord '+opRecord);
                             oppIdVsAMDMPortfoliodMap.put(opRecord.id,opRecord); //HRP-10359
                             listofOpptiesOwnersToupdate.add(opRecord);
-                             
+                            
                         } //HRP-10359 start
                         if(atmRecords.TeamMemberRole == 'District Manager' && (oppIdCoverageDmMap.get(opRecord.id)==null || (oppIdCoverageDmMap.get(opRecord.id).UserId !=null && oppIdCoverageDmMap.get(opRecord.id).UserId!=opRecord.District_Manager__c))){
                             if(atmRecords.Is_Covering_Recruiter__c==false){
@@ -901,12 +997,37 @@ teamMember.addError( 'Covering Recruiters need to have a Case Access of Read/Wri
                             listofOpptiesOwnersToupdate.add(opRecord);
                             
                         } //HRP-10359 end
-                        
-						setOfOpptyIds.add(opRecord.Id);
+                        //HRP-11234 start
+                        if(atmRecords.TeamMemberRole == 'Account Manager')
+                        {
+                            if(!oppIdLookupPopulatedListMap.containsKey(opRecord.id))
+                                oppIdLookupPopulatedListMap.put(opRecord.id,new list<string>());
+                            if(!atmRecords.Is_Covering_Recruiter__c)
+                            oppIdLookupPopulatedListMap.get(opRecord.id).add('AM');
+                            
+                            if(atmRecords.Is_Covering_Recruiter__c)
+                                oppIdLookupPopulatedListMap.get(opRecord.id).add('CovAM');
+                            
+                        }
+                        if(atmRecords.TeamMemberRole == 'District Manager')
+                        {
+                            if(!oppIdLookupPopulatedListMap.containsKey(opRecord.id))
+                                oppIdLookupPopulatedListMap.put(opRecord.id,new list<string>());
+                            
+                            oppIdLookupPopulatedListMap.get(opRecord.id).add('DM');
+                        }
+                        //HRP-11234 End
+                        //setOfOpptyIds.add(opRecord.Id);
                         
                         OpportunityTeamMember optyTeamMemeberToAdd = new OpportunityTeamMember();
                         optyTeamMemeberToAdd.OpportunityId = opRecord.Id;
                         optyTeamMemeberToAdd.TeamMemberRole = atmRecords.TeamMemberRole;
+                        //HRP-11424 Start
+                        if(!atmRecords.is_covering_recruiter__c && atmRecords.TeamMemberRole==BSF_Constants.ACCOUNT_MANAGER)
+                        {
+                            optyTeamMemeberToAdd.TeamMemberRole=BSF_Constants.OPPORTUNITY_OWNER;
+                        }
+                        //HRP-11424 End 
                         optyTeamMemeberToAdd.OpportunityAccessLevel = 'Edit';
                         optyTeamMemeberToAdd.UserId = atmRecords.UserId; 
                         optyTeamMemeberToAdd.is_AccountTeammember__c = true; //is_AccountTeammember__c = true
@@ -917,7 +1038,130 @@ teamMember.addError( 'Covering Recruiters need to have a Case Access of Read/Wri
             }
             
         }
+        //commented part of HRP-11234 start
+        /*
+//HRP-8050
+if(oppWithOwnerIdMap != null || oppWithAccMangrIdMap!= null)
+{
+TriggerHandler.bypass('OpportunityTriggerHandler');
+OpportunityService.UpdateDriveOwnerOnOppOwnerUpdate(oppWithOwnerIdMap,oppWithAccMangrIdMap,oppIdVsAMDMPortfoliodMap); //HRP-10359
+TriggerHandler.clearBypass('OpportunityTriggerHandler');
+}
+
+//system.debug('opptyInsertTeamKeySet'+opptyInsertTeamKeySet);
+if(!listofOpptiesOwnersToupdate.isEmpty()){
+Map<Id,Opportunity> mapofOpptyOwnersToUpdate=new Map<Id,Opportunity>();
+mapofOpptyOwnersToUpdate.putall(listofOpptiesOwnersToupdate);
+OpportunitySplitRecursive.isOppotysplitBackEndUpdated = true;
+TriggerHandler.bypass('OpportunityTriggerHandler');
+Database.SaveResult[] srList = Database.update(mapofOpptyOwnersToUpdate.values(), false);
+TriggerHandler.clearBypass('OpportunityTriggerHandler');
+for (Database.SaveResult sr : srList) {
+if (!sr.isSuccess()) {
+for(Database.Error err : sr.getErrors()) {
+System.debug('The following error has occurred in AccountTeamMemberService.'+err);                    
+System.debug('errorr are '+err.getStatusCode() + ': ' + err.getMessage());
+System.debug(' fields that affected this error: ' + err.getFields());
+}	
+
+}
+}
+List<BSF_Error_Log__c> logList = BSF_Utilities.createErrorLog(srList, 'Populate Account Team','AccountTeamMemeberService','addAcctTeamMembers_To_BloodDriveOpptyMembers','Error','Error in updating Opp with Owner & AM');
+InsertBsfErrorLog.insertBsfErrors(logList);
+}*/
+        //commented part of HRP-11234 end
         
+        
+        //HRP-11234 start
+        map<string,OpportunityTeamMember> oppTeamToAdd = new map<string,OpportunityTeamMember>();
+        listofOpptiesOwnersToupdate.addAll(AccountPortfolioAssignmentService.systemUserAsOwner(listofOppties,oppIdLookupPopulatedListMap,oppTeamToAdd,false,oppWithOwnerIdMap,oppIdVsAMDMPortfoliodMap));
+        optyTeamMemberListToInsert.addAll(oppTeamToAdd.values());
+        oppLookupUpdates(oppWithOwnerIdMap,oppWithAccMangrIdMap,oppIdVsAMDMPortfoliodMap,listofOpptiesOwnersToupdate,oppWithOldOwnerIdMap);
+        //HRP-11234 end
+        if(!setOfOpptyIds.isEmpty() ){
+            Map<Id,List<OpportunityTeamMember>> mapOfOpptyIdsWithTeamMembers=new Map<Id,List<OpportunityTeamMember>>();
+            //List<OpportunityTeamMember> optyTeamMemberNotExistListToInsert = new List<OpportunityTeamMember>();
+            //List<OpportunityTeamMember> listOfOpptyTeamMembersTodelete = new List<OpportunityTeamMember>();
+            List<OpportunityTeamMember> listOfOpptyTeamMembers = [select Id,OpportunityId,Opportunity.AccountId,user.name,TeamMemberRole,OpportunityAccessLevel,UserId from OpportunityTeamMember where OpportunityId IN:setOfOpptyIds ];
+            for(OpportunityTeamMember opTeamMember :listOfOpptyTeamMembers){
+                if(!mapOfOpptyIdsWithTeamMembers.containsKey(opTeamMember.OpportunityId)){
+                    mapOfOpptyIdsWithTeamMembers.put(opTeamMember.OpportunityId,new List<OpportunityTeamMember>());
+                }
+                mapOfOpptyIdsWithTeamMembers.get(opTeamMember.OpportunityId).add(opTeamMember); 
+            }
+            
+            
+            
+            
+            
+            
+            for(Id oppId:mapOfOpptyIdsWithTeamMembers.keySet()){
+                for(OpportunityTeamMember opTeamMember:mapOfOpptyIdsWithTeamMembers.get(oppId)){
+                    if(!opptyInsertTeamKeySet.contains(oppId+':'+opTeamMember.UserId) ){
+                        if(opTeamMember.TeamMemberRole == BSF_Constants.OPPORTUNITY_OWNER || opTeamMember.TeamMemberRole == BSF_Constants.ACCOUNT_MANAGER){
+                            system.debug('listOfOpptyTeamMembersTodelete'+opTeamMember.user.name);
+                            listOfOpptyTeamMembersTodelete.add(opTeamMember);
+                        }else if(acctTeamKeySet.contains(opTeamMember.Opportunity.AccountId+':'+opTeamMember.UserId)){
+                            listOfOpptyTeamMembersTodelete.add(opTeamMember);
+                            system.debug('elselistOfOpptyTeamMembersTodelete'+opTeamMember.user.name);
+                        }
+                    }
+                }
+            }
+            for(OpportunityTeamMember opTeamMembers:optyTeamMemberListToInsert){
+                if(mapOfOpptyIdsWithTeamMembers.containsKey(opTeamMembers.OpportunityId)){
+                    Map<Id,OpportunityTeamMember> mapOfUserIds=new Map<Id,OpportunityTeamMember>();
+                    for(OpportunityTeamMember opTeamMember:mapOfOpptyIdsWithTeamMembers.get(opTeamMembers.OpportunityId)){
+                        mapOfUserIds.put(opTeamMember.UserId,opTeamMember);
+                    }
+                    if((!mapOfUserIds.containsKey(opTeamMembers.UserId) || mapOfUserIds.get(opTeamMembers.UserId).TeamMemberRole == null || mapOfUserIds.get(opTeamMembers.UserId).TeamMemberRole == BSF_Constants.ACCOUNT_MANAGER || mapOfUserIds.get(opTeamMembers.UserId).TeamMemberRole == BSF_Constants.OPPORTUNITY_OWNER || mapOfUserIds.get(opTeamMembers.UserId).OpportunityAccessLevel == 'Read Only' || mapOfUserIds.get(opTeamMembers.UserId).userId==oppWithOwnerIdMap.get(opTeamMembers.UserId)
+                       || opTeamMembers.TeamMemberRole != mapOfUserIds.get(opTeamMembers.UserId).TeamMemberRole)){//HRP-11234 added Account Manager & Opportunity Owner checks
+                        opTeamMembers.is_AccountTeammember__c = true; //is_AccountTeammember__c = true
+                        optyTeamMemberNotExistListToInsert.add(opTeamMembers);                  
+                        
+                    }			 
+                }
+                
+            }
+            //commented part of HRP-11234 start
+            /*
+opportunityService.UpdateOwnerSplit(listofOpptiesOwnersToupdate);
+
+//----------------------------------------------------//
+//-------------------------------------------------------------------------//	
+OpportunitySplitType oppSplitType = [SELECT Id, DeveloperName FROM OpportunitySplitType WHERE DeveloperName = 'Revenue' ];		
+List<OpportunitySplit> oppSplit = [SELECT id,OpportunityId,SplitOwnerId,opportunity.ownerId FROM OpportunitySplit WHERE Opportunity.stageName IN ('Withdrawn','Excluded','Cancelled','Closed') AND SplitOwnerId IN: oppWithOldOwnerIdMap.values() AND SplitTypeId = : oppSplitType.Id AND OpportunityId IN :  oppWithOldOwnerIdMap.keySet()];		
+List<OpportunitySplit> oppDeleteList = new List<OpportunitySplit>();		
+for(opportunitySplit os : oppSplit){		
+if(oppWithOldOwnerIdMap.get(os.opportunityId) == os.SplitOwnerId && oppWithOwnerIdMap.get(os.OpportunityId) != os.SplitOwnerId && os.SplitOwnerId!=os.opportunity.ownerId){		
+oppDeleteList.add(os);	
+system.debug(os.opportunityId+'_'+os.SplitOwnerId);
+}	
+} 		
+Database.delete(oppDeleteList,false);	
+//------------------------------------------------//
+insert new BSF_Error_Log__c(Process_Name__c ='Run Logs',ApexClass__c='AccountTeamMemeberService',Method__c='addAcctTeamMembers_To_BloodDriveOpptyMembers',Type__c='Success',Error_Description__c='Batch Execute In If');
+//Database.executeBatch(new BSF_Batch_OpportunityTeamMember(listOfOpptyTeamMembersTodelete,optyTeamMemberNotExistListToInsert,'Delete',true,countAccounts),100);*/
+            //commented part of HRP-11234 end
+        }
+        else{	
+            insert new BSF_Error_Log__c(Process_Name__c ='Run Logs',ApexClass__c='AccountTeamMemeberService',Method__c='addAcctTeamMembers_To_BloodDriveOpptyMembers',Type__c='Success',Error_Description__c='Batch Execute In Else');
+            //Database.executeBatch(new BSF_Batch_OpportunityTeamMember(new List<OpportunityTeamMember>(),new List<OpportunityTeamMember>(),'Delete',true),100);	
+            //Database.executeBatch(new BSF_Batch_OpportunityTeamMember(new List<OpportunityTeamMember>(),new List<OpportunityTeamMember>(),'Delete',true,countAccounts),100);
+        }
+        
+        /* if(!optyTeamMemberListToInsert.isEmpty() && accTeamUpdated == false  ){ 
+insert optyTeamMemberListToInsert;	
+}
+*/
+        
+    }
+    /*
+* Method Implemented part of HRP-11234 start
+* populates drive record owner and assigns split values for Owner of opportunity 
+* */
+    public static void oppLookupUpdates(Map<Id,Id> oppWithOwnerIdMap,Map<Id,Id> oppWithAccMangrIdMap,Map<Id,Opportunity> oppIdVsAMDMPortfoliodMap,list<Opportunity> listofOpptiesOwnersToupdate,Map<Id,Id> oppWithOldOwnerIdMap)
+    {
         //HRP-8050
         if(oppWithOwnerIdMap != null || oppWithAccMangrIdMap!= null)
         {
@@ -930,95 +1174,32 @@ teamMember.addError( 'Covering Recruiters need to have a Case Access of Read/Wri
         if(!listofOpptiesOwnersToupdate.isEmpty()){
             Map<Id,Opportunity> mapofOpptyOwnersToUpdate=new Map<Id,Opportunity>();
             mapofOpptyOwnersToUpdate.putall(listofOpptiesOwnersToupdate);
-             OpportunitySplitRecursive.isOppotysplitBackEndUpdated = true;
+            OpportunitySplitRecursive.isOppotysplitBackEndUpdated = true;
             TriggerHandler.bypass('OpportunityTriggerHandler');
             Database.SaveResult[] srList = Database.update(mapofOpptyOwnersToUpdate.values(), false);
             TriggerHandler.clearBypass('OpportunityTriggerHandler');
-            for (Database.SaveResult sr : srList) {
-                if (!sr.isSuccess()) {
-                    for(Database.Error err : sr.getErrors()) {
-                        System.debug('The following error has occurred in AccountTeamMemberService.'+err);                    
-                        System.debug('errorr are '+err.getStatusCode() + ': ' + err.getMessage());
-                        System.debug(' fields that affected this error: ' + err.getFields());
-                    }	
-                    
-                }
-            }
+            
             List<BSF_Error_Log__c> logList = BSF_Utilities.createErrorLog(srList, 'Populate Account Team','AccountTeamMemeberService','addAcctTeamMembers_To_BloodDriveOpptyMembers','Error','Error in updating Opp with Owner & AM');
             InsertBsfErrorLog.insertBsfErrors(logList);
         }
         
-        if(!setOfOpptyIds.isEmpty() ){
-         Map<Id,List<OpportunityTeamMember>> mapOfOpptyIdsWithTeamMembers=new Map<Id,List<OpportunityTeamMember>>();
-         //List<OpportunityTeamMember> optyTeamMemberNotExistListToInsert = new List<OpportunityTeamMember>();
-         //List<OpportunityTeamMember> listOfOpptyTeamMembersTodelete = new List<OpportunityTeamMember>();
-		 List<OpportunityTeamMember> listOfOpptyTeamMembers = [select Id,OpportunityId,Opportunity.AccountId,user.name,TeamMemberRole,OpportunityAccessLevel,UserId from OpportunityTeamMember where OpportunityId IN:setOfOpptyIds ];
-		  for(OpportunityTeamMember opTeamMember :listOfOpptyTeamMembers){
-		 	if(!mapOfOpptyIdsWithTeamMembers.containsKey(opTeamMember.OpportunityId)){
-                mapOfOpptyIdsWithTeamMembers.put(opTeamMember.OpportunityId,new List<OpportunityTeamMember>());
-            }
-            mapOfOpptyIdsWithTeamMembers.get(opTeamMember.OpportunityId).add(opTeamMember); 
-       	  }
-		 
-            for(Id oppId:mapOfOpptyIdsWithTeamMembers.keySet()){
-                for(OpportunityTeamMember opTeamMember:mapOfOpptyIdsWithTeamMembers.get(oppId)){
-                    if(!opptyInsertTeamKeySet.contains(oppId+':'+opTeamMember.UserId)){
-                        if(opTeamMember.TeamMemberRole == 'Opportunity Owner' || opTeamMember.TeamMemberRole == 'Account Manager'){
-                            //system.debug('opTeamMember'+opTeamMember.user.name);
-                            listOfOpptyTeamMembersTodelete.add(opTeamMember);
-                        }else if(acctTeamKeySet.contains(opTeamMember.Opportunity.AccountId+':'+opTeamMember.UserId)){
-                            listOfOpptyTeamMembersTodelete.add(opTeamMember);
-                        }
-                    }
-				}
-            }
-            for(OpportunityTeamMember opTeamMembers:optyTeamMemberListToInsert){
-                if(mapOfOpptyIdsWithTeamMembers.containsKey(opTeamMembers.OpportunityId)){
-                    Map<Id,OpportunityTeamMember> mapOfUserIds=new Map<Id,OpportunityTeamMember>();
-                    for(OpportunityTeamMember opTeamMember:mapOfOpptyIdsWithTeamMembers.get(opTeamMembers.OpportunityId)){
-                        mapOfUserIds.put(opTeamMember.UserId,opTeamMember);
-                    }
-                    if((!mapOfUserIds.containsKey(opTeamMembers.UserId) || mapOfUserIds.get(opTeamMembers.UserId).TeamMemberRole == null || mapOfUserIds.get(opTeamMembers.UserId).OpportunityAccessLevel == 'Read Only' || mapOfUserIds.get(opTeamMembers.UserId).userId==oppWithOwnerIdMap.get(opTeamMembers.UserId))){
-                        opTeamMembers.is_AccountTeammember__c = true; //is_AccountTeammember__c = true
-                        optyTeamMemberNotExistListToInsert.add(opTeamMembers);                  
-                        
-                    }			 
-                }
-                
-            }
-            
-             opportunityService.UpdateOwnerSplit(listofOpptiesOwnersToupdate);
-            
-       //----------------------------------------------------//
-          //-------------------------------------------------------------------------//	
-           OpportunitySplitType oppSplitType = [SELECT Id, DeveloperName FROM OpportunitySplitType WHERE DeveloperName = 'Revenue' ];		
-            List<OpportunitySplit> oppSplit = [SELECT id,OpportunityId,SplitOwnerId,opportunity.ownerId FROM OpportunitySplit WHERE Opportunity.stageName IN ('Withdrawn','Excluded','Cancelled','Closed') AND SplitOwnerId IN: oppWithOldOwnerIdMap.values() AND SplitTypeId = : oppSplitType.Id AND OpportunityId IN :  oppWithOldOwnerIdMap.keySet()];		
-            List<OpportunitySplit> oppDeleteList = new List<OpportunitySplit>();		
-            for(opportunitySplit os : oppSplit){		
-                if(oppWithOldOwnerIdMap.get(os.opportunityId) == os.SplitOwnerId && oppWithOwnerIdMap.get(os.OpportunityId) != os.SplitOwnerId && os.SplitOwnerId!=os.opportunity.ownerId){		
-                    oppDeleteList.add(os);	
-                    system.debug(os.opportunityId+'_'+os.SplitOwnerId);
-                }	
-            } 		
-          Database.delete(oppDeleteList,false);	
-       //------------------------------------------------//
-          insert new BSF_Error_Log__c(Process_Name__c ='Run Logs',ApexClass__c='AccountTeamMemeberService',Method__c='addAcctTeamMembers_To_BloodDriveOpptyMembers',Type__c='Success',Error_Description__c='Batch Execute In If');
-          //Database.executeBatch(new BSF_Batch_OpportunityTeamMember(listOfOpptyTeamMembersTodelete,optyTeamMemberNotExistListToInsert,'Delete',true,countAccounts),100);
-         
-		}
-        else{	
-            insert new BSF_Error_Log__c(Process_Name__c ='Run Logs',ApexClass__c='AccountTeamMemeberService',Method__c='addAcctTeamMembers_To_BloodDriveOpptyMembers',Type__c='Success',Error_Description__c='Batch Execute In Else');
-           //Database.executeBatch(new BSF_Batch_OpportunityTeamMember(new List<OpportunityTeamMember>(),new List<OpportunityTeamMember>(),'Delete',true),100);	
-           //Database.executeBatch(new BSF_Batch_OpportunityTeamMember(new List<OpportunityTeamMember>(),new List<OpportunityTeamMember>(),'Delete',true,countAccounts),100);
-        }
-         
-       /* if(!optyTeamMemberListToInsert.isEmpty() && accTeamUpdated == false  ){ 
-            insert optyTeamMemberListToInsert;	
-        }
-        */
         
+        
+        opportunityService.UpdateOwnerSplit(listofOpptiesOwnersToupdate);
+        
+        OpportunitySplitType oppSplitType = [SELECT Id, DeveloperName FROM OpportunitySplitType WHERE DeveloperName = 'Revenue' ];		
+        List<OpportunitySplit> oppSplit = [SELECT id,OpportunityId,SplitOwnerId,opportunity.ownerId FROM OpportunitySplit WHERE Opportunity.stageName IN ('Withdrawn','Excluded','Cancelled','Closed') AND SplitOwnerId IN: oppWithOldOwnerIdMap.values() AND SplitTypeId = : oppSplitType.Id AND OpportunityId IN :  oppWithOldOwnerIdMap.keySet()];		
+        List<OpportunitySplit> oppDeleteList = new List<OpportunitySplit>();		
+        for(opportunitySplit os : oppSplit){		
+            if(oppWithOldOwnerIdMap.get(os.opportunityId) == os.SplitOwnerId && oppWithOwnerIdMap.get(os.OpportunityId) != os.SplitOwnerId && os.SplitOwnerId!=os.opportunity.ownerId){		
+                oppDeleteList.add(os);	
+                system.debug(os.opportunityId+'_'+os.SplitOwnerId);
+            }	
+        } 		
+        Database.delete(oppDeleteList,false);	
     }
-     
+    
+      //HRP-11234 End 
      public static map<id,AccountTeamMember> isCoverageAmPresent(Map<Id,List<AccountTeamMember>> mapOfAcctsWithTeamMembers,List<Opportunity> listofOppties)
     {
         map<id,AccountTeamMember> oppIdCoverageAmMap = new  map<id,AccountTeamMember>();
@@ -1077,7 +1258,8 @@ teamMember.addError( 'Covering Recruiters need to have a Case Access of Read/Wri
         
     } //HRP-10359 end
     
-   public static void populateAmDMLookuponDelete(Map<Id,List<AccountTeamMember>> mapOfAcctsWithTeamMembers,List<Account> accList)
+   /*retired part of HRP-11234
+    public static void populateAmDMLookuponDelete(Map<Id,List<AccountTeamMember>> mapOfAcctsWithTeamMembers,List<Account> accList)
     {
         List<AccountTeamMember> atmList = new List<AccountTeamMember>();
         for(Account acc : accList)
@@ -1096,23 +1278,23 @@ teamMember.addError( 'Covering Recruiters need to have a Case Access of Read/Wri
         if(!atmList.isEmpty()){
             
             TriggerHandler.bypass('AccountTeamMemberTriggerHandler');
-            updateAccountOnTeammeberAssignment(atmList);
+            //updateAccountOnTeammeberAssignment(atmList,null);
             TriggerHandler.clearBypass('AccountTeamMemberTriggerHandler');
         }
-    }
+    }*/
     
-    public static void updateAccountOnTeammeberAssignment(List<AccountTeamMember> newAccountTeamMembers)
+    public static void updateAccountOnTeammeberAssignment(List<AccountTeamMember> newAccountTeamMembers,Map<Id,AccountTeamMember> oldMap)
     {
-        list<id> accTeamId = new list<id>();
+        list<id> accId = new list<id>();
         for(AccountTeamMember atm :newAccountTeamMembers)
         {
-            if(atm.teamMemberRole == bsf_constants.ACCOUNT_MANAGER || atm.teamMemberRole == bsf_constants.DISTRICT_MANAGER)
+            if((oldMap==null ||(oldMap!=null && (oldMap.get(atm.id).start_date__c!=atm.Start_Date__c || oldMap.get(atm.id).End_date__c!=atm.End_date__c))) &&(atm.teamMemberRole == bsf_constants.ACCOUNT_MANAGER || atm.teamMemberRole == bsf_constants.DISTRICT_MANAGER))//HRP-11234
             {
-                accTeamId.add(atm.id);
+                accId.add(atm.AccountId);
             }
         }
         
-        AccountTeamMemberHelper.getAccountTeamMembers(accTeamId);
+        AccountTeamMemberHelper.getAccountTeamMembers(accId);
     }
     
     //HRP-8897 New Method
@@ -1128,19 +1310,15 @@ teamMember.addError( 'Covering Recruiters need to have a Case Access of Read/Wri
             }
         }
         
-        map<string,AccountTeamMember> accIdUserDate=accountPortfolioassignmentservice.accTeamDateSyncOnAccPortUpdates(accIdList,bsf_constants.BYPASS_TEAMDML);
+        
         for(AccountTeamMember atm:atmList)
         {
-            
+            String key = atm.AccountId+'_'+atm.userid;
             if(!(atm.Is_Covering_Recruiter__c && atm.End_Date__c>system.today()))//HRP-6028
             {
-            string Key = atm.AccountId+'_'+atm.userid;
-            if(accIdUserDate.containsKey(Key))
-            {
-                
+                if(accIdUserDate.containsKey(Key))
+                {
                     AccountTeamMember acctm = accIdUserDate.get(key);
-                    system.debug('atm**'+atm);
-                    system.debug('acctm**'+acctm);
                     if(atm.Start_Date__c != acctm.Start_Date__c)
                     {
                         atm.Start_Date__c = acctm.Start_Date__c;
@@ -1155,11 +1333,11 @@ teamMember.addError( 'Covering Recruiters need to have a Case Access of Read/Wri
                     }
                     atm.Is_Covering_Recruiter__c=false;//HRP-11919
                     atm.Coverage_Reason__c=null;//HRP-11919
-            }
+                }
             }
         }
         
-     }
+    }
     
     /*Method added for HRP-11281 logic for opportunityTeam Recalculation for covering Recruiter
      *Added by Balaji N
@@ -1184,7 +1362,7 @@ teamMember.addError( 'Covering Recruiters need to have a Case Access of Read/Wri
             }
             if(!atm.Is_Covering_Recruiter__c && (oldMap!=null && (atm.Is_Covering_Recruiter__c!= oldMap.get(atm.id).Is_Covering_Recruiter__c)))
             {
-                accIdAccTeam4SplitMap.put(atm.accountId+':'+atm.UserId,atm);
+                accIdAccTeam4SplitMap.put(atm.accountId+':'+atm.UserId,oldMap.get(atm.id));//HRP-11234 replaced new value with old value in map value
             
             	userIdSet.add(atm.UserId);
             }
@@ -1199,7 +1377,7 @@ teamMember.addError( 'Covering Recruiters need to have a Case Access of Read/Wri
             string key=os.Opportunity.accountId+':'+os.splitOwnerId;
 			if(accIdAccTeam4SplitMap.containskey(key) && accIdAccTeam4SplitMap.get(key).start_date__c <= os.Opportunity.drive_Date__c && accIdAccTeam4SplitMap.get(key).End_date__c >= os.Opportunity.drive_Date__c)
             {
-                opptySplitDelList.add(os);
+                 opptySplitDelList.add(os);
             }
         }
         
@@ -1282,5 +1460,23 @@ teamMember.addError( 'Covering Recruiters need to have a Case Access of Read/Wri
             triggerHandler.clearBypass('OpportunityTriggerHandler');
         }
            
+    }
+    
+    /* 
+ * HRP-11424 changes starts here
+ * @Description: trigger method called on After Delete, blocks delete of account team part of portfolio
+ * @Date: 02/08/2024
+*/
+    public static void stopDeletingNonCRTeamMemberFromUI(List<AccountTeamMember> deletedTeamMembers)
+    {
+        if(!bsf_constants.isTeamMemberCreatedFromBackend)
+        {
+            Profile userProfile = [select name,id from profile where id=:userinfo.getProfileId() limit 1];
+            for(AccountTeamMember atm :deletedTeamMembers)
+            {
+                if(!atm.is_covering_recruiter__c && !System.Label.Account_Portfolio_Account_team_Delete_Permission.contains(userProfile.name))
+                    atm.addError('You cannot delete a User from Account Team which is not a covering Recruiter. Since its managed in accordance with Portfolio assignments');
+            }
+        }
     }
 }

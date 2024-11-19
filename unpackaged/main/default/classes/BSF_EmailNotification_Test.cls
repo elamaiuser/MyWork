@@ -10,7 +10,7 @@ public class BSF_EmailNotification_Test {
     public static List<Task> tasks = new List<Task>();
     public static Map<Id,Task> taskMap = new Map<Id,Task>();
     
-        @testSetup 
+    @testSetup 
     public static void prepareDataset(){
         recordTypeMap = recordTypeMap( 'Account' );
         opprecordTypeMap = opprecordTypeMap('Opportunity');
@@ -122,9 +122,20 @@ public class BSF_EmailNotification_Test {
         List<BSF_EmailNotification.Request> requests = new List<BSF_EmailNotification.Request>{request};
 
         Test.startTest();
-
         BSF_EmailNotification.sendEmail(requests);
+		BSF_EmailNotification.sendEmails(new List<Messaging.SingleEmailMessage>(), 'abc', system.now().addDays(10));
+        Test.stopTest();
 
+       }
+    
+    	static testMethod void testSendEmailSeperately() {
+        
+        Messaging.SingleEmailMessage message = new Messaging.SingleEmailMessage();
+        message.toAddresses = new String[] { UserInfo.getUserId() };
+        message.subject = 'Opt Out Test Message';
+        message.plainTextBody = 'This is the message body.';
+        Test.startTest();
+        BSF_EmailNotification.sendEmails(new List<Messaging.SingleEmailMessage>{message}, 'MarketingException', system.now().addDays(10));
         Test.stopTest();
 
        }

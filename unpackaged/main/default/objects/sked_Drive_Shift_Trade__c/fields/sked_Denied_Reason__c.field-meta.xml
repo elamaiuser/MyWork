@@ -41,6 +41,16 @@
                 <default>false</default>
                 <label>Denied (duplicate)</label>
             </value>
+            <value>
+                <fullName>Denied (double booked)</fullName>
+                <default>false</default>
+                <label>Denied (double booked)</label>
+            </value>
+            <value>
+                <fullName>Other</fullName>
+                <default>false</default>
+                <label>Other</label>
+            </value>
         </valueSetDefinition>
     </valueSet>
 </CustomField>

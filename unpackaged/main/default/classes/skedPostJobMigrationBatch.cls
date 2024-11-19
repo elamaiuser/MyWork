@@ -104,8 +104,8 @@ global class skedPostJobMigrationBatch implements Database.Batchable<sked__Job__
                     siteCO.id = skedSiteCO.Id;
                     siteCO.startDate = skedSiteCO.sked_Start_Date__c;
                     siteCO.endDate = skedSiteCO.sked_End_Date__c;
-                    siteCO.coToSiteList = (List<travelTimeBreakdownModel>)JSON.deserialize(skedSiteCO.sked_Travel_Time_Breakdown_JSON__c, List<travelTimeBreakdownModel>.class);
-                    siteCO.siteToCoList = (List<travelTimeBreakdownModel>)JSON.deserialize(skedSiteCO.sked_Travel_Time_Breakdown_JSON_2__c, List<travelTimeBreakdownModel>.class);
+                    siteCO.coToSiteList = (List<skedTravelTimeBreakdownModel>)JSON.deserialize(skedSiteCO.sked_Travel_Time_Breakdown_JSON__c, List<skedTravelTimeBreakdownModel>.class);
+                    siteCO.siteToCoList = (List<skedTravelTimeBreakdownModel>)JSON.deserialize(skedSiteCO.sked_Travel_Time_Breakdown_JSON_2__c, List<skedTravelTimeBreakdownModel>.class);
                     site.siteCos.add(siteCO);
                 }
             }
@@ -164,7 +164,7 @@ global class skedPostJobMigrationBatch implements Database.Batchable<sked__Job__
                             drawHourEnd = skedDateTimeUtils.toTimezone(drawHourEnd, skedJob.sked__Timezone__c);
                             string driveWeekday = drawHourStart.format('EEEE');
                             
-                            for (travelTimeBreakdownModel breakdown : siteCO.coToSiteList) {
+                            for (skedTravelTimeBreakdownModel breakdown : siteCO.coToSiteList) {
                                 if (breakdown.weekday == driveWeekday && breakdown.startOfWindow <= skedJob.sked_Drive__r.sked_Start_Time__c && skedJob.sked_Drive__r.sked_Start_Time__c <= breakdown.endOfWindow) {
                                     if (skedJob.sked_Travel_Time__c != breakdown.travelTime && breakdown.travelTime != NULL) {
                                         decimal currentTravelTime = skedJob.sked_Travel_Time__c != NULL ? skedJob.sked_Travel_Time__c : 0;
@@ -178,7 +178,7 @@ global class skedPostJobMigrationBatch implements Database.Batchable<sked__Job__
                                 }
                             }
                             
-                            for (travelTimeBreakdownModel breakdown : siteCO.siteToCoList) {
+                            for (skedTravelTimeBreakdownModel breakdown : siteCO.siteToCoList) {
                                 if (breakdown.weekday == driveWeekday && breakdown.startOfWindow <= skedJob.sked_Drive__r.sked_End_Time__c && skedJob.sked_Drive__r.sked_End_Time__c <= breakdown.endOfWindow) {
                                     if (skedJob.sked_Travel_Time2__c != breakdown.travelTime && breakdown.travelTime != NULL) {
                                         decimal currentTravelTime = skedJob.sked_Travel_Time2__c != NULL ? skedJob.sked_Travel_Time2__c : 0;
@@ -201,16 +201,6 @@ global class skedPostJobMigrationBatch implements Database.Batchable<sked__Job__
     }
     
     /*********************************************************** Nested classes ***********************************************************/
-    public class travelTimeBreakdownModel {
-        public string siteId;
-        public string weekday;
-        public Time endOfWindow;
-        public Time startOfWindow;
-        public string direction;   
-        public decimal travelTime;
-        public decimal travelDistance;
-    }
-    
     public class siteModel {
         public Id id;
         public List<siteCoModel> siteCos;
@@ -220,8 +210,8 @@ global class skedPostJobMigrationBatch implements Database.Batchable<sked__Job__
         public Id id;
         public Date startDate;
         public Date endDate;
-        public List<travelTimeBreakdownModel> coToSiteList;
-        public List<travelTimeBreakdownModel> siteToCoList;
+        public List<skedTravelTimeBreakdownModel> coToSiteList;
+        public List<skedTravelTimeBreakdownModel> siteToCoList;
     }
     
 }

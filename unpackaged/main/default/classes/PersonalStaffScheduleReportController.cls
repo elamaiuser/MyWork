@@ -1,13 +1,14 @@
-/** This controller has two VF pages.PersonalStaffSchedulereport and PersonalStaffSchedulereport_viewOnly.
+/**This controller has two VF pages.PersonalStaffSchedulereport and PersonalStaffSchedulereport_viewOnly.
 * @description: This class is the controller class for PersonalStaffScheduleReport visualforce page.
 **   Modification Log  ****
 *  Date					Developer Name			Comments
  * ***************************************************************************************************************************************************************************
  * 07/06/2023			Barnojit Sharma			Populated Timezone field for both Activity and Job allocation in PDF (Logic for HRP-10247)
  * 11/17/2023			Kishore Das				Logic for HRP-11350(Collections staff PTO not displayed on Personal Staff Schedule Lightning report)
+ * 05/27/2023			Barnojit Sharma			Event details misaligned & Total hours missing for drive for Personal Staff Schedule Report (Logic for HRP-12745)
  *****************************************************************************************************************************************************************************
 */
-public without sharing class PersonalStaffScheduleReportController { 
+public without sharing class PersonalStaffScheduleReportController {
     public List<staffScheduleWrapper> staffScheduleList {get; set;}
     public Integer staffScheduleEndDate {get; set;}
     
@@ -33,6 +34,7 @@ public without sharing class PersonalStaffScheduleReportController {
             System.debug('4567# : '+staffSchedule.availabilityList);
             for(sked__Activity_Resource__c actR : [Select Id,sked__Activity__r.Id,sked__Activity__r.Name,sked__Activity__r.sked__Type__c,sked__Activity__r.sked_Subtype__c,sked__Activity__r.sked_Start_Time__c,sked__Activity__r.sked_End_Time__c,
                                                     sked__Activity__r.sked__Timezone__c,  //Timezone field added for HRP-10247
+                                                    sked__Activity__r.sked_Activity_Title__c, // Activity Title field added for HRP-12745
                                                    sked__Activity__r.sked__Address__c,sked__Activity__r.sked__Notes__c,sked__Activity__r.sked__Location__r.Name,sked__Activity__r.sked_Start_Date__c,sked__Activity__r.sked_End_Date__c From sked__Activity_Resource__c
                                                    Where sked__Resource__c =: resourceId.Id AND sked__Activity__r.sked_Start_Date__c >=: startDate AND sked__Activity__r.sked_End_Date__c <=: endDate order by sked__Activity__r.sked_Start_Time__c,sked__Activity__r.sked_Start_Date__c ASC NULLS LAST LIMIT 10]) 
             {
@@ -175,20 +177,29 @@ public without sharing class PersonalStaffScheduleReportController {
             else{
                 this.formattedShiftLunchETime = '';
             }
-            if(jobAllo.sked__Job__r.sked_Drive_Shift__r.sked_Lunch_Break_Start_Time__c != null && jobAllo.sked__Job__r.sked_Drive_Shift__r.sked_Lunch_Break_End_Time__c != null && jobAllo.sked__Job__r.sked_Drive_Shift__r.sked_Lunch_Break_Duration__c != null){
+            /*
+            * HRP-12745 changes starts here
+            */
+            if(jobAllo.sked_Set_End_Time__c != null && jobAllo.sked_Start_Time__c != null){
                 long timeDef = (jobAllo.sked_Set_End_Time__c.hour()*60 +jobAllo.sked_Set_End_Time__c.minute()) - (jobAllo.sked_Start_Time__c.hour()*60 +jobAllo.sked_Start_Time__c.minute());
                 long hours = timeDef /60;
                 long remainingMins = timeDef -(hours*60);
                 this.timeDifference = String.valueOf(hours) + '.' + String.valueOf(remainingMins);
+            }
+            /*
+            * HRP-12745 changes ends here
+            */
+            if(jobAllo.sked__Job__r.sked_Drive_Shift__r.sked_Lunch_Break_Start_Time__c != null && jobAllo.sked__Job__r.sked_Drive_Shift__r.sked_Lunch_Break_End_Time__c != null && jobAllo.sked__Job__r.sked_Drive_Shift__r.sked_Lunch_Break_Duration__c != null){
+                long timeDef = (jobAllo.sked_Set_End_Time__c.hour()*60 +jobAllo.sked_Set_End_Time__c.minute()) - (jobAllo.sked_Start_Time__c.hour()*60 +jobAllo.sked_Start_Time__c.minute());
+                long hours = timeDef /60;
+                long remainingMins = timeDef -(hours*60);
+                //this.timeDifference = String.valueOf(hours) + '.' + String.valueOf(remainingMins); // commented for HRP-12745
                 long lunchTimeDiff = (jobAllo.sked__Job__r.sked_Drive_Shift__r.sked_Lunch_Break_End_Time__c.hour()*60 +jobAllo.sked__Job__r.sked_Drive_Shift__r.sked_Lunch_Break_End_Time__c.minute()) - (jobAllo.sked__Job__r.sked_Drive_Shift__r.sked_Lunch_Break_Start_Time__c.hour()*60 +jobAllo.sked__Job__r.sked_Drive_Shift__r.sked_Lunch_Break_Start_Time__c.minute());
                 long lunchhours = lunchTimeDiff /60;
                 long remainingLunchMins = lunchTimeDiff -(lunchhours*60);
                 String lunchbrkDiff = String.valueOf(lunchhours) + '.' + String.valueOf(remainingLunchMins);
                 Decimal totalHrsCalc = (hours*60 + remainingMins) - (lunchhours*60 + remainingLunchMins);
                 this.lunchBreakCalc = ((totalHrsCalc)/60).setScale(2);
-            }
-            else{
-                this.timeDifference = '';
             }
         }
     }

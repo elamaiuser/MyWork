@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Queue xmlns="http://soap.sforce.com/2006/04/metadata">
+    <doesSendEmailToMembers>false</doesSendEmailToMembers>
+    <name>Greenville NC: DMRTVs</name>
+    <queueMembers>
+        <users>
+            <user>angie.curenton@redcross.org</user>
+            <user>austin.rehfield@redcross.org</user>
+            <user>bruce.roberts@redcross.org</user>
+            <user>chris.adams@redcross.org</user>
+            <user>denisha.jones@redcross.org</user>
+            <user>jaquelin.listecki@redcross.org</user>
+            <user>melanie.mitchell2@redcross.org</user>
+            <user>miranda.harrison@redcross.org.biomed</user>
+            <user>roger.gardner@redcross.org</user>
+        </users>
+    </queueMembers>
+    <queueSobject>
+        <sobjectType>sked__Location__c</sobjectType>
+    </queueSobject>
+</Queue>

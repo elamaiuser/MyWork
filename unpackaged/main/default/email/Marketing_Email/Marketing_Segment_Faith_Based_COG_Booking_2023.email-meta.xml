@@ -4,7 +4,7 @@
     <description>Faith-Based Booking Email Template</description>
     <encodingKey>ISO-8859-1</encodingKey>
     <letterhead>ARC_Logo_Test</letterhead>
-    <name>Marketing Segment_Faith-Based_COG_Booking_2023</name>
+    <name>Marketing Segment_Faith-Based_COG_Booking</name>
     <style>freeForm</style>
     <subject>Be part of a lifesaving cause</subject>
     <textOnly>Dear {!Contact.Name}, {!Contact.Title}:

@@ -178,6 +178,10 @@
             <label>Projected Registered Donors Default</label>
         </forecastingObjectListLabelMappings>
         <forecastingObjectListLabelMappings>
+            <field>00N5c00000Jrfd3</field>
+            <label>Recruitment Committee Exists</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
             <field>00N5c00000JGrwb</field>
             <label>Total Procedures Projected</label>
         </forecastingObjectListLabelMappings>
@@ -188,6 +192,10 @@
         <forecastingObjectListLabelMappings>
             <field>00N5c00000JGrVd</field>
             <label>Projection Change Comments</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00N5c00000Jrfd4</field>
+            <label>Recruitment Strategy with Tactics</label>
         </forecastingObjectListLabelMappings>
         <forecastingObjectListLabelMappings>
             <field>00N5c00000JGrWE</field>
@@ -778,6 +786,10 @@
             <label>Accept 56 Day Rule Violation</label>
         </forecastingObjectListLabelMappings>
         <forecastingObjectListLabelMappings>
+            <field>00N5c00000Jrhib</field>
+            <label>Related Scheduled Drive Productivity</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
             <field>SPLITAMOUNT</field>
             <label>Forecasted Amount</label>
         </forecastingObjectListLabelMappings>
@@ -824,6 +836,10 @@
         <forecastingObjectListLabelMappings>
             <field>OPPORTUNITY.CLOSE_DATE</field>
             <label>Close Date</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00N5c00000JrR1B</field>
+            <label>Drive Date Change Reason</label>
         </forecastingObjectListLabelMappings>
         <forecastingObjectListLabelMappings>
             <field>OPPORTUNITY.PROBABILITY</field>
@@ -930,6 +946,18 @@
             <label>Private</label>
         </forecastingObjectListLabelMappings>
         <forecastingObjectListLabelMappings>
+            <field>00N5c00000JreN2</field>
+            <label>AA Unit Projection</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00N5c00000JreN3</field>
+            <label>Diverse Donor Recruitment Strategy</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00N5c00000JreN4</field>
+            <label>Draw Rate</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
             <field>00No0000004LBrE</field>
             <label>Date Of Last Contact/Activity</label>
         </forecastingObjectListLabelMappings>
@@ -952,6 +980,26 @@
         <forecastingObjectListLabelMappings>
             <field>FULL_NAME</field>
             <label>Owner Full Name</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00N5c00000JreN9</field>
+            <label>Web Sched Offset from CO/Global Settings</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00N5c00000JreN5</field>
+            <label>Latino Unit Projection</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00N5c00000JreN6</field>
+            <label>Show Rate</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00N5c00000JreN7</field>
+            <label>Slot Generator Change Reason</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00N5c00000JreN8</field>
+            <label>Slot Generator</label>
         </forecastingObjectListLabelMappings>
         <forecastingObjectListLabelMappings>
             <field>ACCOUNT.NAME</field>
@@ -1001,6 +1049,7 @@
             <field>00N5c00000JGrVH</field>
             <field>00N5c00000JGrVI</field>
             <field>00N5c00000JGrVJ</field>
+            <field>00N5c00000JreN2</field>
             <field>00N5c00000JGrU2</field>
             <field>00N5c00000JGrU3</field>
             <field>00N5c00000JGrU4</field>
@@ -1062,16 +1111,19 @@
             <field>00N5c00000JGrwF</field>
             <field>00N5c00000JrJem</field>
             <field>00N5c00000JrJel</field>
+            <field>00N5c00000JreN3</field>
             <field>00N5c00000Ir4Qf</field>
             <field>00N5c00000JGrUj</field>
             <field>00N5c00000JGrWJ</field>
             <field>00N5c00000JGrUl</field>
             <field>00N5c00000JGrUm</field>
             <field>00N5c00000JGrUn</field>
+            <field>00N5c00000JreN4</field>
             <field>00N5c00000JGrw9</field>
             <field>00N5c00000JGrWK</field>
             <field>00N5c00000JGrUo</field>
             <field>00N5c00000JGrUq</field>
+            <field>00N5c00000JrR1B</field>
             <field>00N5c00000JGrUp</field>
             <field>00N5c00000JGrwG</field>
             <field>00N5c00000JGrUr</field>
@@ -1106,6 +1158,7 @@
             <field>00N5c00000JGrVA</field>
             <field>00No0000004LBrd</field>
             <field>00No0000004LBrO</field>
+            <field>00N5c00000JreN5</field>
             <field>00N5c00000JGrVC</field>
             <field>00N5c00000JGrVD</field>
             <field>00N5c00000JGrwN</field>
@@ -1142,22 +1195,28 @@
             <field>00N5c00000JGrVf</field>
             <field>00N5c00000JGrUZ</field>
             <field>00N5c00000JGrVg</field>
+            <field>00N5c00000Jrfd3</field>
+            <field>00N5c00000Jrfd4</field>
             <field>00No0000004LBn2</field>
             <field>00No0000004LBnH</field>
             <field>00N5c00000JGrVi</field>
             <field>00N5c00000JGrVh</field>
             <field>00No0000005SiIS</field>
             <field>00N5c00000JGrVj</field>
+            <field>00N5c00000Jrhib</field>
             <field>00N5c00000JGrWL</field>
             <field>00N5c00000JGrVk</field>
             <field>00N5c00000JGrVl</field>
             <field>00N5c00000JGrVm</field>
             <field>00N5c00000JGrVn</field>
+            <field>00N5c00000JreN6</field>
             <field>00N5c00000JGrwS</field>
             <field>00N5c00000JGrwQ</field>
             <field>00N5c00000JGrwT</field>
             <field>00N5c00000JGrVo</field>
             <field>00N5c00000JGrwU</field>
+            <field>00N5c00000JreN8</field>
+            <field>00N5c00000JreN7</field>
             <field>00N5c00000JGrVp</field>
             <field>00N5c00000JGrVq</field>
             <field>00N5c00000JGrVr</field>
@@ -1185,6 +1244,7 @@
             <field>00N5c00000JGrW1</field>
             <field>00N5c00000JGrW2</field>
             <field>00N5c00000JGrWF</field>
+            <field>00N5c00000JreN9</field>
             <field>00N5c00000JGrW4</field>
             <field>00N5c00000JGrW5</field>
             <field>00N5c00000JGrW6</field>
@@ -1385,6 +1445,10 @@
             <label>Projected Registered Donors Default</label>
         </forecastingObjectListLabelMappings>
         <forecastingObjectListLabelMappings>
+            <field>00N5c00000Jrfd3</field>
+            <label>Recruitment Committee Exists</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
             <field>00N5c00000JGrwb</field>
             <label>Total Procedures Projected</label>
         </forecastingObjectListLabelMappings>
@@ -1395,6 +1459,10 @@
         <forecastingObjectListLabelMappings>
             <field>00N5c00000JGrVd</field>
             <label>Projection Change Comments</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00N5c00000Jrfd4</field>
+            <label>Recruitment Strategy with Tactics</label>
         </forecastingObjectListLabelMappings>
         <forecastingObjectListLabelMappings>
             <field>00N5c00000JGrWE</field>
@@ -1985,6 +2053,10 @@
             <label>Accept 56 Day Rule Violation</label>
         </forecastingObjectListLabelMappings>
         <forecastingObjectListLabelMappings>
+            <field>00N5c00000Jrhib</field>
+            <label>Related Scheduled Drive Productivity</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
             <field>00N5c00000JrPkt</field>
             <label>Drive Status</label>
         </forecastingObjectListLabelMappings>
@@ -2027,6 +2099,10 @@
         <forecastingObjectListLabelMappings>
             <field>OPPORTUNITY.CLOSE_DATE</field>
             <label>Close Date</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00N5c00000JrR1B</field>
+            <label>Drive Date Change Reason</label>
         </forecastingObjectListLabelMappings>
         <forecastingObjectListLabelMappings>
             <field>OPPORTUNITY.PROBABILITY</field>
@@ -2133,6 +2209,18 @@
             <label>Private</label>
         </forecastingObjectListLabelMappings>
         <forecastingObjectListLabelMappings>
+            <field>00N5c00000JreN2</field>
+            <label>AA Unit Projection</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00N5c00000JreN3</field>
+            <label>Diverse Donor Recruitment Strategy</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00N5c00000JreN4</field>
+            <label>Draw Rate</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
             <field>00No0000004LBrE</field>
             <label>Date Of Last Contact/Activity</label>
         </forecastingObjectListLabelMappings>
@@ -2155,6 +2243,26 @@
         <forecastingObjectListLabelMappings>
             <field>FULL_NAME</field>
             <label>Owner Full Name</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00N5c00000JreN9</field>
+            <label>Web Sched Offset from CO/Global Settings</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00N5c00000JreN5</field>
+            <label>Latino Unit Projection</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00N5c00000JreN6</field>
+            <label>Show Rate</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00N5c00000JreN7</field>
+            <label>Slot Generator Change Reason</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00N5c00000JreN8</field>
+            <label>Slot Generator</label>
         </forecastingObjectListLabelMappings>
         <forecastingObjectListLabelMappings>
             <field>ACCOUNT.NAME</field>
@@ -2203,6 +2311,7 @@
             <field>00N5c00000JGrVH</field>
             <field>00N5c00000JGrVI</field>
             <field>00N5c00000JGrVJ</field>
+            <field>00N5c00000JreN2</field>
             <field>00N5c00000JGrU2</field>
             <field>00N5c00000JGrU3</field>
             <field>00N5c00000JGrU4</field>
@@ -2264,16 +2373,19 @@
             <field>00N5c00000JGrwF</field>
             <field>00N5c00000JrJem</field>
             <field>00N5c00000JrJel</field>
+            <field>00N5c00000JreN3</field>
             <field>00N5c00000Ir4Qf</field>
             <field>00N5c00000JGrUj</field>
             <field>00N5c00000JGrWJ</field>
             <field>00N5c00000JGrUl</field>
             <field>00N5c00000JGrUm</field>
             <field>00N5c00000JGrUn</field>
+            <field>00N5c00000JreN4</field>
             <field>00N5c00000JGrw9</field>
             <field>00N5c00000JGrWK</field>
             <field>00N5c00000JGrUo</field>
             <field>00N5c00000JGrUq</field>
+            <field>00N5c00000JrR1B</field>
             <field>00N5c00000JGrUp</field>
             <field>00N5c00000JGrwG</field>
             <field>00N5c00000JGrUr</field>
@@ -2308,6 +2420,7 @@
             <field>00N5c00000JGrVA</field>
             <field>00No0000004LBrd</field>
             <field>00No0000004LBrO</field>
+            <field>00N5c00000JreN5</field>
             <field>00N5c00000JGrVC</field>
             <field>00N5c00000JGrVD</field>
             <field>00N5c00000JGrwN</field>
@@ -2344,22 +2457,28 @@
             <field>00N5c00000JGrVf</field>
             <field>00N5c00000JGrUZ</field>
             <field>00N5c00000JGrVg</field>
+            <field>00N5c00000Jrfd3</field>
+            <field>00N5c00000Jrfd4</field>
             <field>00No0000004LBn2</field>
             <field>00No0000004LBnH</field>
             <field>00N5c00000JGrVi</field>
             <field>00N5c00000JGrVh</field>
             <field>00No0000005SiIS</field>
             <field>00N5c00000JGrVj</field>
+            <field>00N5c00000Jrhib</field>
             <field>00N5c00000JGrWL</field>
             <field>00N5c00000JGrVk</field>
             <field>00N5c00000JGrVl</field>
             <field>00N5c00000JGrVm</field>
             <field>00N5c00000JGrVn</field>
+            <field>00N5c00000JreN6</field>
             <field>00N5c00000JGrwS</field>
             <field>00N5c00000JGrwQ</field>
             <field>00N5c00000JGrwT</field>
             <field>00N5c00000JGrVo</field>
             <field>00N5c00000JGrwU</field>
+            <field>00N5c00000JreN8</field>
+            <field>00N5c00000JreN7</field>
             <field>00N5c00000JGrVp</field>
             <field>00N5c00000JGrVq</field>
             <field>00N5c00000JGrVr</field>
@@ -2387,6 +2506,7 @@
             <field>00N5c00000JGrW1</field>
             <field>00N5c00000JGrW2</field>
             <field>00N5c00000JGrWF</field>
+            <field>00N5c00000JreN9</field>
             <field>00N5c00000JGrW4</field>
             <field>00N5c00000JGrW5</field>
             <field>00N5c00000JGrW6</field>
@@ -2587,6 +2707,10 @@
             <label>Projected Registered Donors Default</label>
         </forecastingObjectListLabelMappings>
         <forecastingObjectListLabelMappings>
+            <field>00N5c00000Jrfd3</field>
+            <label>Recruitment Committee Exists</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
             <field>00N5c00000JGrwb</field>
             <label>Total Procedures Projected</label>
         </forecastingObjectListLabelMappings>
@@ -2597,6 +2721,10 @@
         <forecastingObjectListLabelMappings>
             <field>00N5c00000JGrVd</field>
             <label>Projection Change Comments</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00N5c00000Jrfd4</field>
+            <label>Recruitment Strategy with Tactics</label>
         </forecastingObjectListLabelMappings>
         <forecastingObjectListLabelMappings>
             <field>00N5c00000JGrWE</field>
@@ -3187,6 +3315,10 @@
             <label>Accept 56 Day Rule Violation</label>
         </forecastingObjectListLabelMappings>
         <forecastingObjectListLabelMappings>
+            <field>00N5c00000Jrhib</field>
+            <label>Related Scheduled Drive Productivity</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
             <field>SPLITAMOUNT</field>
             <label>Forecasted Amount</label>
         </forecastingObjectListLabelMappings>
@@ -3233,6 +3365,10 @@
         <forecastingObjectListLabelMappings>
             <field>OPPORTUNITY.CLOSE_DATE</field>
             <label>Close Date</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00N5c00000JrR1B</field>
+            <label>Drive Date Change Reason</label>
         </forecastingObjectListLabelMappings>
         <forecastingObjectListLabelMappings>
             <field>OPPORTUNITY.PROBABILITY</field>
@@ -3339,6 +3475,18 @@
             <label>Private</label>
         </forecastingObjectListLabelMappings>
         <forecastingObjectListLabelMappings>
+            <field>00N5c00000JreN2</field>
+            <label>AA Unit Projection</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00N5c00000JreN3</field>
+            <label>Diverse Donor Recruitment Strategy</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00N5c00000JreN4</field>
+            <label>Draw Rate</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
             <field>00No0000004LBrE</field>
             <label>Date Of Last Contact/Activity</label>
         </forecastingObjectListLabelMappings>
@@ -3361,6 +3509,26 @@
         <forecastingObjectListLabelMappings>
             <field>FULL_NAME</field>
             <label>Owner Full Name</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00N5c00000JreN9</field>
+            <label>Web Sched Offset from CO/Global Settings</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00N5c00000JreN5</field>
+            <label>Latino Unit Projection</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00N5c00000JreN6</field>
+            <label>Show Rate</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00N5c00000JreN7</field>
+            <label>Slot Generator Change Reason</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00N5c00000JreN8</field>
+            <label>Slot Generator</label>
         </forecastingObjectListLabelMappings>
         <forecastingObjectListLabelMappings>
             <field>ACCOUNT.NAME</field>
@@ -3410,6 +3578,7 @@
             <field>00N5c00000JGrVH</field>
             <field>00N5c00000JGrVI</field>
             <field>00N5c00000JGrVJ</field>
+            <field>00N5c00000JreN2</field>
             <field>00N5c00000JGrU2</field>
             <field>00N5c00000JGrU3</field>
             <field>00N5c00000JGrU4</field>
@@ -3471,16 +3640,19 @@
             <field>00N5c00000JGrwF</field>
             <field>00N5c00000JrJem</field>
             <field>00N5c00000JrJel</field>
+            <field>00N5c00000JreN3</field>
             <field>00N5c00000Ir4Qf</field>
             <field>00N5c00000JGrUj</field>
             <field>00N5c00000JGrWJ</field>
             <field>00N5c00000JGrUl</field>
             <field>00N5c00000JGrUm</field>
             <field>00N5c00000JGrUn</field>
+            <field>00N5c00000JreN4</field>
             <field>00N5c00000JGrw9</field>
             <field>00N5c00000JGrWK</field>
             <field>00N5c00000JGrUo</field>
             <field>00N5c00000JGrUq</field>
+            <field>00N5c00000JrR1B</field>
             <field>00N5c00000JGrUp</field>
             <field>00N5c00000JGrwG</field>
             <field>00N5c00000JGrUr</field>
@@ -3515,6 +3687,7 @@
             <field>00N5c00000JGrVA</field>
             <field>00No0000004LBrd</field>
             <field>00No0000004LBrO</field>
+            <field>00N5c00000JreN5</field>
             <field>00N5c00000JGrVC</field>
             <field>00N5c00000JGrVD</field>
             <field>00N5c00000JGrwN</field>
@@ -3551,22 +3724,28 @@
             <field>00N5c00000JGrVf</field>
             <field>00N5c00000JGrUZ</field>
             <field>00N5c00000JGrVg</field>
+            <field>00N5c00000Jrfd3</field>
+            <field>00N5c00000Jrfd4</field>
             <field>00No0000004LBn2</field>
             <field>00No0000004LBnH</field>
             <field>00N5c00000JGrVi</field>
             <field>00N5c00000JGrVh</field>
             <field>00No0000005SiIS</field>
             <field>00N5c00000JGrVj</field>
+            <field>00N5c00000Jrhib</field>
             <field>00N5c00000JGrWL</field>
             <field>00N5c00000JGrVk</field>
             <field>00N5c00000JGrVl</field>
             <field>00N5c00000JGrVm</field>
             <field>00N5c00000JGrVn</field>
+            <field>00N5c00000JreN6</field>
             <field>00N5c00000JGrwS</field>
             <field>00N5c00000JGrwQ</field>
             <field>00N5c00000JGrwT</field>
             <field>00N5c00000JGrVo</field>
             <field>00N5c00000JGrwU</field>
+            <field>00N5c00000JreN8</field>
+            <field>00N5c00000JreN7</field>
             <field>00N5c00000JGrVp</field>
             <field>00N5c00000JGrVq</field>
             <field>00N5c00000JGrVr</field>
@@ -3594,6 +3773,7 @@
             <field>00N5c00000JGrW1</field>
             <field>00N5c00000JGrW2</field>
             <field>00N5c00000JGrWF</field>
+            <field>00N5c00000JreN9</field>
             <field>00N5c00000JGrW4</field>
             <field>00N5c00000JGrW5</field>
             <field>00N5c00000JGrW6</field>
@@ -3794,6 +3974,10 @@
             <label>Projected Registered Donors Default</label>
         </forecastingObjectListLabelMappings>
         <forecastingObjectListLabelMappings>
+            <field>00N5c00000Jrfd3</field>
+            <label>Recruitment Committee Exists</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
             <field>00N5c00000JGrwb</field>
             <label>Total Procedures Projected</label>
         </forecastingObjectListLabelMappings>
@@ -3804,6 +3988,10 @@
         <forecastingObjectListLabelMappings>
             <field>00N5c00000JGrVd</field>
             <label>Projection Change Comments</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00N5c00000Jrfd4</field>
+            <label>Recruitment Strategy with Tactics</label>
         </forecastingObjectListLabelMappings>
         <forecastingObjectListLabelMappings>
             <field>00N5c00000JGrWE</field>
@@ -4394,6 +4582,10 @@
             <label>Accept 56 Day Rule Violation</label>
         </forecastingObjectListLabelMappings>
         <forecastingObjectListLabelMappings>
+            <field>00N5c00000Jrhib</field>
+            <label>Related Scheduled Drive Productivity</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
             <field>00N5c00000JrPkt</field>
             <label>Drive Status</label>
         </forecastingObjectListLabelMappings>
@@ -4436,6 +4628,10 @@
         <forecastingObjectListLabelMappings>
             <field>OPPORTUNITY.CLOSE_DATE</field>
             <label>Close Date</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00N5c00000JrR1B</field>
+            <label>Drive Date Change Reason</label>
         </forecastingObjectListLabelMappings>
         <forecastingObjectListLabelMappings>
             <field>OPPORTUNITY.PROBABILITY</field>
@@ -4542,6 +4738,18 @@
             <label>Private</label>
         </forecastingObjectListLabelMappings>
         <forecastingObjectListLabelMappings>
+            <field>00N5c00000JreN2</field>
+            <label>AA Unit Projection</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00N5c00000JreN3</field>
+            <label>Diverse Donor Recruitment Strategy</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00N5c00000JreN4</field>
+            <label>Draw Rate</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
             <field>00No0000004LBrE</field>
             <label>Date Of Last Contact/Activity</label>
         </forecastingObjectListLabelMappings>
@@ -4564,6 +4772,26 @@
         <forecastingObjectListLabelMappings>
             <field>FULL_NAME</field>
             <label>Owner Full Name</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00N5c00000JreN9</field>
+            <label>Web Sched Offset from CO/Global Settings</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00N5c00000JreN5</field>
+            <label>Latino Unit Projection</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00N5c00000JreN6</field>
+            <label>Show Rate</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00N5c00000JreN7</field>
+            <label>Slot Generator Change Reason</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00N5c00000JreN8</field>
+            <label>Slot Generator</label>
         </forecastingObjectListLabelMappings>
         <forecastingObjectListLabelMappings>
             <field>ACCOUNT.NAME</field>
@@ -4612,6 +4840,7 @@
             <field>00N5c00000JGrVH</field>
             <field>00N5c00000JGrVI</field>
             <field>00N5c00000JGrVJ</field>
+            <field>00N5c00000JreN2</field>
             <field>00N5c00000JGrU2</field>
             <field>00N5c00000JGrU3</field>
             <field>00N5c00000JGrU4</field>
@@ -4673,16 +4902,19 @@
             <field>00N5c00000JGrwF</field>
             <field>00N5c00000JrJem</field>
             <field>00N5c00000JrJel</field>
+            <field>00N5c00000JreN3</field>
             <field>00N5c00000Ir4Qf</field>
             <field>00N5c00000JGrUj</field>
             <field>00N5c00000JGrWJ</field>
             <field>00N5c00000JGrUl</field>
             <field>00N5c00000JGrUm</field>
             <field>00N5c00000JGrUn</field>
+            <field>00N5c00000JreN4</field>
             <field>00N5c00000JGrw9</field>
             <field>00N5c00000JGrWK</field>
             <field>00N5c00000JGrUo</field>
             <field>00N5c00000JGrUq</field>
+            <field>00N5c00000JrR1B</field>
             <field>00N5c00000JGrUp</field>
             <field>00N5c00000JGrwG</field>
             <field>00N5c00000JGrUr</field>
@@ -4717,6 +4949,7 @@
             <field>00N5c00000JGrVA</field>
             <field>00No0000004LBrd</field>
             <field>00No0000004LBrO</field>
+            <field>00N5c00000JreN5</field>
             <field>00N5c00000JGrVC</field>
             <field>00N5c00000JGrVD</field>
             <field>00N5c00000JGrwN</field>
@@ -4753,22 +4986,28 @@
             <field>00N5c00000JGrVf</field>
             <field>00N5c00000JGrUZ</field>
             <field>00N5c00000JGrVg</field>
+            <field>00N5c00000Jrfd3</field>
+            <field>00N5c00000Jrfd4</field>
             <field>00No0000004LBn2</field>
             <field>00No0000004LBnH</field>
             <field>00N5c00000JGrVi</field>
             <field>00N5c00000JGrVh</field>
             <field>00No0000005SiIS</field>
             <field>00N5c00000JGrVj</field>
+            <field>00N5c00000Jrhib</field>
             <field>00N5c00000JGrWL</field>
             <field>00N5c00000JGrVk</field>
             <field>00N5c00000JGrVl</field>
             <field>00N5c00000JGrVm</field>
             <field>00N5c00000JGrVn</field>
+            <field>00N5c00000JreN6</field>
             <field>00N5c00000JGrwS</field>
             <field>00N5c00000JGrwQ</field>
             <field>00N5c00000JGrwT</field>
             <field>00N5c00000JGrVo</field>
             <field>00N5c00000JGrwU</field>
+            <field>00N5c00000JreN8</field>
+            <field>00N5c00000JreN7</field>
             <field>00N5c00000JGrVp</field>
             <field>00N5c00000JGrVq</field>
             <field>00N5c00000JGrVr</field>
@@ -4796,6 +5035,7 @@
             <field>00N5c00000JGrW1</field>
             <field>00N5c00000JGrW2</field>
             <field>00N5c00000JGrWF</field>
+            <field>00N5c00000JreN9</field>
             <field>00N5c00000JGrW4</field>
             <field>00N5c00000JGrW5</field>
             <field>00N5c00000JGrW6</field>
@@ -4996,6 +5236,10 @@
             <label>Projected Registered Donors Default</label>
         </forecastingObjectListLabelMappings>
         <forecastingObjectListLabelMappings>
+            <field>00N5c00000Jrfd3</field>
+            <label>Recruitment Committee Exists</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
             <field>00N5c00000JGrwb</field>
             <label>Total Procedures Projected</label>
         </forecastingObjectListLabelMappings>
@@ -5006,6 +5250,10 @@
         <forecastingObjectListLabelMappings>
             <field>00N5c00000JGrVd</field>
             <label>Projection Change Comments</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00N5c00000Jrfd4</field>
+            <label>Recruitment Strategy with Tactics</label>
         </forecastingObjectListLabelMappings>
         <forecastingObjectListLabelMappings>
             <field>00N5c00000JGrWE</field>
@@ -5596,6 +5844,10 @@
             <label>Accept 56 Day Rule Violation</label>
         </forecastingObjectListLabelMappings>
         <forecastingObjectListLabelMappings>
+            <field>00N5c00000Jrhib</field>
+            <label>Related Scheduled Drive Productivity</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
             <field>SPLITAMOUNT</field>
             <label>Forecasted Amount</label>
         </forecastingObjectListLabelMappings>
@@ -5642,6 +5894,10 @@
         <forecastingObjectListLabelMappings>
             <field>OPPORTUNITY.CLOSE_DATE</field>
             <label>Close Date</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00N5c00000JrR1B</field>
+            <label>Drive Date Change Reason</label>
         </forecastingObjectListLabelMappings>
         <forecastingObjectListLabelMappings>
             <field>OPPORTUNITY.PROBABILITY</field>
@@ -5748,6 +6004,18 @@
             <label>Private</label>
         </forecastingObjectListLabelMappings>
         <forecastingObjectListLabelMappings>
+            <field>00N5c00000JreN2</field>
+            <label>AA Unit Projection</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00N5c00000JreN3</field>
+            <label>Diverse Donor Recruitment Strategy</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00N5c00000JreN4</field>
+            <label>Draw Rate</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
             <field>00No0000004LBrE</field>
             <label>Date Of Last Contact/Activity</label>
         </forecastingObjectListLabelMappings>
@@ -5770,6 +6038,26 @@
         <forecastingObjectListLabelMappings>
             <field>FULL_NAME</field>
             <label>Owner Full Name</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00N5c00000JreN9</field>
+            <label>Web Sched Offset from CO/Global Settings</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00N5c00000JreN5</field>
+            <label>Latino Unit Projection</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00N5c00000JreN6</field>
+            <label>Show Rate</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00N5c00000JreN7</field>
+            <label>Slot Generator Change Reason</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00N5c00000JreN8</field>
+            <label>Slot Generator</label>
         </forecastingObjectListLabelMappings>
         <forecastingObjectListLabelMappings>
             <field>ACCOUNT.NAME</field>
@@ -5819,6 +6107,7 @@
             <field>00N5c00000JGrVH</field>
             <field>00N5c00000JGrVI</field>
             <field>00N5c00000JGrVJ</field>
+            <field>00N5c00000JreN2</field>
             <field>00N5c00000JGrU2</field>
             <field>00N5c00000JGrU3</field>
             <field>00N5c00000JGrU4</field>
@@ -5880,16 +6169,19 @@
             <field>00N5c00000JGrwF</field>
             <field>00N5c00000JrJem</field>
             <field>00N5c00000JrJel</field>
+            <field>00N5c00000JreN3</field>
             <field>00N5c00000Ir4Qf</field>
             <field>00N5c00000JGrUj</field>
             <field>00N5c00000JGrWJ</field>
             <field>00N5c00000JGrUl</field>
             <field>00N5c00000JGrUm</field>
             <field>00N5c00000JGrUn</field>
+            <field>00N5c00000JreN4</field>
             <field>00N5c00000JGrw9</field>
             <field>00N5c00000JGrWK</field>
             <field>00N5c00000JGrUo</field>
             <field>00N5c00000JGrUq</field>
+            <field>00N5c00000JrR1B</field>
             <field>00N5c00000JGrUp</field>
             <field>00N5c00000JGrwG</field>
             <field>00N5c00000JGrUr</field>
@@ -5924,6 +6216,7 @@
             <field>00N5c00000JGrVA</field>
             <field>00No0000004LBrd</field>
             <field>00No0000004LBrO</field>
+            <field>00N5c00000JreN5</field>
             <field>00N5c00000JGrVC</field>
             <field>00N5c00000JGrVD</field>
             <field>00N5c00000JGrwN</field>
@@ -5960,22 +6253,28 @@
             <field>00N5c00000JGrVf</field>
             <field>00N5c00000JGrUZ</field>
             <field>00N5c00000JGrVg</field>
+            <field>00N5c00000Jrfd3</field>
+            <field>00N5c00000Jrfd4</field>
             <field>00No0000004LBn2</field>
             <field>00No0000004LBnH</field>
             <field>00N5c00000JGrVi</field>
             <field>00N5c00000JGrVh</field>
             <field>00No0000005SiIS</field>
             <field>00N5c00000JGrVj</field>
+            <field>00N5c00000Jrhib</field>
             <field>00N5c00000JGrWL</field>
             <field>00N5c00000JGrVk</field>
             <field>00N5c00000JGrVl</field>
             <field>00N5c00000JGrVm</field>
             <field>00N5c00000JGrVn</field>
+            <field>00N5c00000JreN6</field>
             <field>00N5c00000JGrwS</field>
             <field>00N5c00000JGrwQ</field>
             <field>00N5c00000JGrwT</field>
             <field>00N5c00000JGrVo</field>
             <field>00N5c00000JGrwU</field>
+            <field>00N5c00000JreN8</field>
+            <field>00N5c00000JreN7</field>
             <field>00N5c00000JGrVp</field>
             <field>00N5c00000JGrVq</field>
             <field>00N5c00000JGrVr</field>
@@ -6003,6 +6302,7 @@
             <field>00N5c00000JGrW1</field>
             <field>00N5c00000JGrW2</field>
             <field>00N5c00000JGrWF</field>
+            <field>00N5c00000JreN9</field>
             <field>00N5c00000JGrW4</field>
             <field>00N5c00000JGrW5</field>
             <field>00N5c00000JGrW6</field>
@@ -6203,6 +6503,10 @@
             <label>Projected Registered Donors Default</label>
         </forecastingObjectListLabelMappings>
         <forecastingObjectListLabelMappings>
+            <field>00N5c00000Jrfd3</field>
+            <label>Recruitment Committee Exists</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
             <field>00N5c00000JGrwb</field>
             <label>Total Procedures Projected</label>
         </forecastingObjectListLabelMappings>
@@ -6213,6 +6517,10 @@
         <forecastingObjectListLabelMappings>
             <field>00N5c00000JGrVd</field>
             <label>Projection Change Comments</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00N5c00000Jrfd4</field>
+            <label>Recruitment Strategy with Tactics</label>
         </forecastingObjectListLabelMappings>
         <forecastingObjectListLabelMappings>
             <field>00N5c00000JGrWE</field>
@@ -6803,6 +7111,10 @@
             <label>Accept 56 Day Rule Violation</label>
         </forecastingObjectListLabelMappings>
         <forecastingObjectListLabelMappings>
+            <field>00N5c00000Jrhib</field>
+            <label>Related Scheduled Drive Productivity</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
             <field>00N5c00000JrPkt</field>
             <label>Drive Status</label>
         </forecastingObjectListLabelMappings>
@@ -6845,6 +7157,10 @@
         <forecastingObjectListLabelMappings>
             <field>OPPORTUNITY.CLOSE_DATE</field>
             <label>Close Date</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00N5c00000JrR1B</field>
+            <label>Drive Date Change Reason</label>
         </forecastingObjectListLabelMappings>
         <forecastingObjectListLabelMappings>
             <field>OPPORTUNITY.PROBABILITY</field>
@@ -6951,6 +7267,18 @@
             <label>Private</label>
         </forecastingObjectListLabelMappings>
         <forecastingObjectListLabelMappings>
+            <field>00N5c00000JreN2</field>
+            <label>AA Unit Projection</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00N5c00000JreN3</field>
+            <label>Diverse Donor Recruitment Strategy</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00N5c00000JreN4</field>
+            <label>Draw Rate</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
             <field>00No0000004LBrE</field>
             <label>Date Of Last Contact/Activity</label>
         </forecastingObjectListLabelMappings>
@@ -6973,6 +7301,26 @@
         <forecastingObjectListLabelMappings>
             <field>FULL_NAME</field>
             <label>Owner Full Name</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00N5c00000JreN9</field>
+            <label>Web Sched Offset from CO/Global Settings</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00N5c00000JreN5</field>
+            <label>Latino Unit Projection</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00N5c00000JreN6</field>
+            <label>Show Rate</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00N5c00000JreN7</field>
+            <label>Slot Generator Change Reason</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00N5c00000JreN8</field>
+            <label>Slot Generator</label>
         </forecastingObjectListLabelMappings>
         <forecastingObjectListLabelMappings>
             <field>ACCOUNT.NAME</field>
@@ -7021,6 +7369,7 @@
             <field>00N5c00000JGrVH</field>
             <field>00N5c00000JGrVI</field>
             <field>00N5c00000JGrVJ</field>
+            <field>00N5c00000JreN2</field>
             <field>00N5c00000JGrU2</field>
             <field>00N5c00000JGrU3</field>
             <field>00N5c00000JGrU4</field>
@@ -7082,16 +7431,19 @@
             <field>00N5c00000JGrwF</field>
             <field>00N5c00000JrJem</field>
             <field>00N5c00000JrJel</field>
+            <field>00N5c00000JreN3</field>
             <field>00N5c00000Ir4Qf</field>
             <field>00N5c00000JGrUj</field>
             <field>00N5c00000JGrWJ</field>
             <field>00N5c00000JGrUl</field>
             <field>00N5c00000JGrUm</field>
             <field>00N5c00000JGrUn</field>
+            <field>00N5c00000JreN4</field>
             <field>00N5c00000JGrw9</field>
             <field>00N5c00000JGrWK</field>
             <field>00N5c00000JGrUo</field>
             <field>00N5c00000JGrUq</field>
+            <field>00N5c00000JrR1B</field>
             <field>00N5c00000JGrUp</field>
             <field>00N5c00000JGrwG</field>
             <field>00N5c00000JGrUr</field>
@@ -7126,6 +7478,7 @@
             <field>00N5c00000JGrVA</field>
             <field>00No0000004LBrd</field>
             <field>00No0000004LBrO</field>
+            <field>00N5c00000JreN5</field>
             <field>00N5c00000JGrVC</field>
             <field>00N5c00000JGrVD</field>
             <field>00N5c00000JGrwN</field>
@@ -7162,22 +7515,28 @@
             <field>00N5c00000JGrVf</field>
             <field>00N5c00000JGrUZ</field>
             <field>00N5c00000JGrVg</field>
+            <field>00N5c00000Jrfd3</field>
+            <field>00N5c00000Jrfd4</field>
             <field>00No0000004LBn2</field>
             <field>00No0000004LBnH</field>
             <field>00N5c00000JGrVi</field>
             <field>00N5c00000JGrVh</field>
             <field>00No0000005SiIS</field>
             <field>00N5c00000JGrVj</field>
+            <field>00N5c00000Jrhib</field>
             <field>00N5c00000JGrWL</field>
             <field>00N5c00000JGrVk</field>
             <field>00N5c00000JGrVl</field>
             <field>00N5c00000JGrVm</field>
             <field>00N5c00000JGrVn</field>
+            <field>00N5c00000JreN6</field>
             <field>00N5c00000JGrwS</field>
             <field>00N5c00000JGrwQ</field>
             <field>00N5c00000JGrwT</field>
             <field>00N5c00000JGrVo</field>
             <field>00N5c00000JGrwU</field>
+            <field>00N5c00000JreN8</field>
+            <field>00N5c00000JreN7</field>
             <field>00N5c00000JGrVp</field>
             <field>00N5c00000JGrVq</field>
             <field>00N5c00000JGrVr</field>
@@ -7205,6 +7564,7 @@
             <field>00N5c00000JGrW1</field>
             <field>00N5c00000JGrW2</field>
             <field>00N5c00000JGrWF</field>
+            <field>00N5c00000JreN9</field>
             <field>00N5c00000JGrW4</field>
             <field>00N5c00000JGrW5</field>
             <field>00N5c00000JGrW6</field>
@@ -7405,6 +7765,10 @@
             <label>Projected Registered Donors Default</label>
         </forecastingObjectListLabelMappings>
         <forecastingObjectListLabelMappings>
+            <field>00N5c00000Jrfd3</field>
+            <label>Recruitment Committee Exists</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
             <field>00N5c00000JGrwb</field>
             <label>Total Procedures Projected</label>
         </forecastingObjectListLabelMappings>
@@ -7415,6 +7779,10 @@
         <forecastingObjectListLabelMappings>
             <field>00N5c00000JGrVd</field>
             <label>Projection Change Comments</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00N5c00000Jrfd4</field>
+            <label>Recruitment Strategy with Tactics</label>
         </forecastingObjectListLabelMappings>
         <forecastingObjectListLabelMappings>
             <field>00N5c00000JGrWE</field>
@@ -8005,6 +8373,10 @@
             <label>Accept 56 Day Rule Violation</label>
         </forecastingObjectListLabelMappings>
         <forecastingObjectListLabelMappings>
+            <field>00N5c00000Jrhib</field>
+            <label>Related Scheduled Drive Productivity</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
             <field>SPLITAMOUNT</field>
             <label>Forecasted Amount</label>
         </forecastingObjectListLabelMappings>
@@ -8051,6 +8423,10 @@
         <forecastingObjectListLabelMappings>
             <field>OPPORTUNITY.CLOSE_DATE</field>
             <label>Close Date</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00N5c00000JrR1B</field>
+            <label>Drive Date Change Reason</label>
         </forecastingObjectListLabelMappings>
         <forecastingObjectListLabelMappings>
             <field>OPPORTUNITY.PROBABILITY</field>
@@ -8157,6 +8533,18 @@
             <label>Private</label>
         </forecastingObjectListLabelMappings>
         <forecastingObjectListLabelMappings>
+            <field>00N5c00000JreN2</field>
+            <label>AA Unit Projection</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00N5c00000JreN3</field>
+            <label>Diverse Donor Recruitment Strategy</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00N5c00000JreN4</field>
+            <label>Draw Rate</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
             <field>00No0000004LBrE</field>
             <label>Date Of Last Contact/Activity</label>
         </forecastingObjectListLabelMappings>
@@ -8179,6 +8567,26 @@
         <forecastingObjectListLabelMappings>
             <field>FULL_NAME</field>
             <label>Owner Full Name</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00N5c00000JreN9</field>
+            <label>Web Sched Offset from CO/Global Settings</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00N5c00000JreN5</field>
+            <label>Latino Unit Projection</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00N5c00000JreN6</field>
+            <label>Show Rate</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00N5c00000JreN7</field>
+            <label>Slot Generator Change Reason</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00N5c00000JreN8</field>
+            <label>Slot Generator</label>
         </forecastingObjectListLabelMappings>
         <forecastingObjectListLabelMappings>
             <field>ACCOUNT.NAME</field>
@@ -8228,6 +8636,7 @@
             <field>00N5c00000JGrVH</field>
             <field>00N5c00000JGrVI</field>
             <field>00N5c00000JGrVJ</field>
+            <field>00N5c00000JreN2</field>
             <field>00N5c00000JGrU2</field>
             <field>00N5c00000JGrU3</field>
             <field>00N5c00000JGrU4</field>
@@ -8289,16 +8698,19 @@
             <field>00N5c00000JGrwF</field>
             <field>00N5c00000JrJem</field>
             <field>00N5c00000JrJel</field>
+            <field>00N5c00000JreN3</field>
             <field>00N5c00000Ir4Qf</field>
             <field>00N5c00000JGrUj</field>
             <field>00N5c00000JGrWJ</field>
             <field>00N5c00000JGrUl</field>
             <field>00N5c00000JGrUm</field>
             <field>00N5c00000JGrUn</field>
+            <field>00N5c00000JreN4</field>
             <field>00N5c00000JGrw9</field>
             <field>00N5c00000JGrWK</field>
             <field>00N5c00000JGrUo</field>
             <field>00N5c00000JGrUq</field>
+            <field>00N5c00000JrR1B</field>
             <field>00N5c00000JGrUp</field>
             <field>00N5c00000JGrwG</field>
             <field>00N5c00000JGrUr</field>
@@ -8333,6 +8745,7 @@
             <field>00N5c00000JGrVA</field>
             <field>00No0000004LBrd</field>
             <field>00No0000004LBrO</field>
+            <field>00N5c00000JreN5</field>
             <field>00N5c00000JGrVC</field>
             <field>00N5c00000JGrVD</field>
             <field>00N5c00000JGrwN</field>
@@ -8369,22 +8782,28 @@
             <field>00N5c00000JGrVf</field>
             <field>00N5c00000JGrUZ</field>
             <field>00N5c00000JGrVg</field>
+            <field>00N5c00000Jrfd3</field>
+            <field>00N5c00000Jrfd4</field>
             <field>00No0000004LBn2</field>
             <field>00No0000004LBnH</field>
             <field>00N5c00000JGrVi</field>
             <field>00N5c00000JGrVh</field>
             <field>00No0000005SiIS</field>
             <field>00N5c00000JGrVj</field>
+            <field>00N5c00000Jrhib</field>
             <field>00N5c00000JGrWL</field>
             <field>00N5c00000JGrVk</field>
             <field>00N5c00000JGrVl</field>
             <field>00N5c00000JGrVm</field>
             <field>00N5c00000JGrVn</field>
+            <field>00N5c00000JreN6</field>
             <field>00N5c00000JGrwS</field>
             <field>00N5c00000JGrwQ</field>
             <field>00N5c00000JGrwT</field>
             <field>00N5c00000JGrVo</field>
             <field>00N5c00000JGrwU</field>
+            <field>00N5c00000JreN8</field>
+            <field>00N5c00000JreN7</field>
             <field>00N5c00000JGrVp</field>
             <field>00N5c00000JGrVq</field>
             <field>00N5c00000JGrVr</field>
@@ -8412,6 +8831,7 @@
             <field>00N5c00000JGrW1</field>
             <field>00N5c00000JGrW2</field>
             <field>00N5c00000JGrWF</field>
+            <field>00N5c00000JreN9</field>
             <field>00N5c00000JGrW4</field>
             <field>00N5c00000JGrW5</field>
             <field>00N5c00000JGrW6</field>
@@ -8612,6 +9032,10 @@
             <label>Projected Registered Donors Default</label>
         </forecastingObjectListLabelMappings>
         <forecastingObjectListLabelMappings>
+            <field>00N5c00000Jrfd3</field>
+            <label>Recruitment Committee Exists</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
             <field>00N5c00000JGrwb</field>
             <label>Total Procedures Projected</label>
         </forecastingObjectListLabelMappings>
@@ -8622,6 +9046,10 @@
         <forecastingObjectListLabelMappings>
             <field>00N5c00000JGrVd</field>
             <label>Projection Change Comments</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00N5c00000Jrfd4</field>
+            <label>Recruitment Strategy with Tactics</label>
         </forecastingObjectListLabelMappings>
         <forecastingObjectListLabelMappings>
             <field>00N5c00000JGrWE</field>
@@ -9212,6 +9640,10 @@
             <label>Accept 56 Day Rule Violation</label>
         </forecastingObjectListLabelMappings>
         <forecastingObjectListLabelMappings>
+            <field>00N5c00000Jrhib</field>
+            <label>Related Scheduled Drive Productivity</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
             <field>00N5c00000JrPkt</field>
             <label>Drive Status</label>
         </forecastingObjectListLabelMappings>
@@ -9254,6 +9686,10 @@
         <forecastingObjectListLabelMappings>
             <field>OPPORTUNITY.CLOSE_DATE</field>
             <label>Close Date</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00N5c00000JrR1B</field>
+            <label>Drive Date Change Reason</label>
         </forecastingObjectListLabelMappings>
         <forecastingObjectListLabelMappings>
             <field>OPPORTUNITY.PROBABILITY</field>
@@ -9360,6 +9796,18 @@
             <label>Private</label>
         </forecastingObjectListLabelMappings>
         <forecastingObjectListLabelMappings>
+            <field>00N5c00000JreN2</field>
+            <label>AA Unit Projection</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00N5c00000JreN3</field>
+            <label>Diverse Donor Recruitment Strategy</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00N5c00000JreN4</field>
+            <label>Draw Rate</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
             <field>00No0000004LBrE</field>
             <label>Date Of Last Contact/Activity</label>
         </forecastingObjectListLabelMappings>
@@ -9382,6 +9830,26 @@
         <forecastingObjectListLabelMappings>
             <field>FULL_NAME</field>
             <label>Owner Full Name</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00N5c00000JreN9</field>
+            <label>Web Sched Offset from CO/Global Settings</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00N5c00000JreN5</field>
+            <label>Latino Unit Projection</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00N5c00000JreN6</field>
+            <label>Show Rate</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00N5c00000JreN7</field>
+            <label>Slot Generator Change Reason</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00N5c00000JreN8</field>
+            <label>Slot Generator</label>
         </forecastingObjectListLabelMappings>
         <forecastingObjectListLabelMappings>
             <field>ACCOUNT.NAME</field>
@@ -9430,6 +9898,7 @@
             <field>00N5c00000JGrVH</field>
             <field>00N5c00000JGrVI</field>
             <field>00N5c00000JGrVJ</field>
+            <field>00N5c00000JreN2</field>
             <field>00N5c00000JGrU2</field>
             <field>00N5c00000JGrU3</field>
             <field>00N5c00000JGrU4</field>
@@ -9491,16 +9960,19 @@
             <field>00N5c00000JGrwF</field>
             <field>00N5c00000JrJem</field>
             <field>00N5c00000JrJel</field>
+            <field>00N5c00000JreN3</field>
             <field>00N5c00000Ir4Qf</field>
             <field>00N5c00000JGrUj</field>
             <field>00N5c00000JGrWJ</field>
             <field>00N5c00000JGrUl</field>
             <field>00N5c00000JGrUm</field>
             <field>00N5c00000JGrUn</field>
+            <field>00N5c00000JreN4</field>
             <field>00N5c00000JGrw9</field>
             <field>00N5c00000JGrWK</field>
             <field>00N5c00000JGrUo</field>
             <field>00N5c00000JGrUq</field>
+            <field>00N5c00000JrR1B</field>
             <field>00N5c00000JGrUp</field>
             <field>00N5c00000JGrwG</field>
             <field>00N5c00000JGrUr</field>
@@ -9535,6 +10007,7 @@
             <field>00N5c00000JGrVA</field>
             <field>00No0000004LBrd</field>
             <field>00No0000004LBrO</field>
+            <field>00N5c00000JreN5</field>
             <field>00N5c00000JGrVC</field>
             <field>00N5c00000JGrVD</field>
             <field>00N5c00000JGrwN</field>
@@ -9571,22 +10044,28 @@
             <field>00N5c00000JGrVf</field>
             <field>00N5c00000JGrUZ</field>
             <field>00N5c00000JGrVg</field>
+            <field>00N5c00000Jrfd3</field>
+            <field>00N5c00000Jrfd4</field>
             <field>00No0000004LBn2</field>
             <field>00No0000004LBnH</field>
             <field>00N5c00000JGrVi</field>
             <field>00N5c00000JGrVh</field>
             <field>00No0000005SiIS</field>
             <field>00N5c00000JGrVj</field>
+            <field>00N5c00000Jrhib</field>
             <field>00N5c00000JGrWL</field>
             <field>00N5c00000JGrVk</field>
             <field>00N5c00000JGrVl</field>
             <field>00N5c00000JGrVm</field>
             <field>00N5c00000JGrVn</field>
+            <field>00N5c00000JreN6</field>
             <field>00N5c00000JGrwS</field>
             <field>00N5c00000JGrwQ</field>
             <field>00N5c00000JGrwT</field>
             <field>00N5c00000JGrVo</field>
             <field>00N5c00000JGrwU</field>
+            <field>00N5c00000JreN8</field>
+            <field>00N5c00000JreN7</field>
             <field>00N5c00000JGrVp</field>
             <field>00N5c00000JGrVq</field>
             <field>00N5c00000JGrVr</field>
@@ -9614,6 +10093,7 @@
             <field>00N5c00000JGrW1</field>
             <field>00N5c00000JGrW2</field>
             <field>00N5c00000JGrWF</field>
+            <field>00N5c00000JreN9</field>
             <field>00N5c00000JGrW4</field>
             <field>00N5c00000JGrW5</field>
             <field>00N5c00000JGrW6</field>
@@ -9818,6 +10298,10 @@
             <label>Projected Registered Donors Default</label>
         </forecastingObjectListLabelMappings>
         <forecastingObjectListLabelMappings>
+            <field>00N5c00000Jrfd3</field>
+            <label>Recruitment Committee Exists</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
             <field>00N5c00000JGrwb</field>
             <label>Total Procedures Projected</label>
         </forecastingObjectListLabelMappings>
@@ -9828,6 +10312,10 @@
         <forecastingObjectListLabelMappings>
             <field>00N5c00000JGrVd</field>
             <label>Projection Change Comments</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00N5c00000Jrfd4</field>
+            <label>Recruitment Strategy with Tactics</label>
         </forecastingObjectListLabelMappings>
         <forecastingObjectListLabelMappings>
             <field>00N5c00000JGrWE</field>
@@ -10418,6 +10906,10 @@
             <label>Accept 56 Day Rule Violation</label>
         </forecastingObjectListLabelMappings>
         <forecastingObjectListLabelMappings>
+            <field>00N5c00000Jrhib</field>
+            <label>Related Scheduled Drive Productivity</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
             <field>SPLITAMOUNT</field>
             <label>Forecasted Amount</label>
         </forecastingObjectListLabelMappings>
@@ -10464,6 +10956,10 @@
         <forecastingObjectListLabelMappings>
             <field>OPPORTUNITY.CLOSE_DATE</field>
             <label>Close Date</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00N5c00000JrR1B</field>
+            <label>Drive Date Change Reason</label>
         </forecastingObjectListLabelMappings>
         <forecastingObjectListLabelMappings>
             <field>OPPORTUNITY.PROBABILITY</field>
@@ -10570,6 +11066,18 @@
             <label>Private</label>
         </forecastingObjectListLabelMappings>
         <forecastingObjectListLabelMappings>
+            <field>00N5c00000JreN2</field>
+            <label>AA Unit Projection</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00N5c00000JreN3</field>
+            <label>Diverse Donor Recruitment Strategy</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00N5c00000JreN4</field>
+            <label>Draw Rate</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
             <field>00No0000004LBrE</field>
             <label>Date Of Last Contact/Activity</label>
         </forecastingObjectListLabelMappings>
@@ -10592,6 +11100,26 @@
         <forecastingObjectListLabelMappings>
             <field>FULL_NAME</field>
             <label>Owner Full Name</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00N5c00000JreN9</field>
+            <label>Web Sched Offset from CO/Global Settings</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00N5c00000JreN5</field>
+            <label>Latino Unit Projection</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00N5c00000JreN6</field>
+            <label>Show Rate</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00N5c00000JreN7</field>
+            <label>Slot Generator Change Reason</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00N5c00000JreN8</field>
+            <label>Slot Generator</label>
         </forecastingObjectListLabelMappings>
         <forecastingObjectListLabelMappings>
             <field>ACCOUNT.NAME</field>
@@ -10642,6 +11170,7 @@
             <field>00N5c00000JGrVH</field>
             <field>00N5c00000JGrVI</field>
             <field>00N5c00000JGrVJ</field>
+            <field>00N5c00000JreN2</field>
             <field>00N5c00000JGrU2</field>
             <field>00N5c00000JGrU3</field>
             <field>00N5c00000JGrU4</field>
@@ -10703,16 +11232,19 @@
             <field>00N5c00000JGrwF</field>
             <field>00N5c00000JrJem</field>
             <field>00N5c00000JrJel</field>
+            <field>00N5c00000JreN3</field>
             <field>00N5c00000Ir4Qf</field>
             <field>00N5c00000JGrUj</field>
             <field>00N5c00000JGrWJ</field>
             <field>00N5c00000JGrUl</field>
             <field>00N5c00000JGrUm</field>
             <field>00N5c00000JGrUn</field>
+            <field>00N5c00000JreN4</field>
             <field>00N5c00000JGrw9</field>
             <field>00N5c00000JGrWK</field>
             <field>00N5c00000JGrUo</field>
             <field>00N5c00000JGrUq</field>
+            <field>00N5c00000JrR1B</field>
             <field>00N5c00000JGrUp</field>
             <field>00N5c00000JGrwG</field>
             <field>00N5c00000JGrUr</field>
@@ -10747,6 +11279,7 @@
             <field>00N5c00000JGrVA</field>
             <field>00No0000004LBrd</field>
             <field>00No0000004LBrO</field>
+            <field>00N5c00000JreN5</field>
             <field>00N5c00000JGrVC</field>
             <field>00N5c00000JGrVD</field>
             <field>00N5c00000JGrwN</field>
@@ -10783,22 +11316,28 @@
             <field>00N5c00000JGrVf</field>
             <field>00N5c00000JGrUZ</field>
             <field>00N5c00000JGrVg</field>
+            <field>00N5c00000Jrfd3</field>
+            <field>00N5c00000Jrfd4</field>
             <field>00No0000004LBn2</field>
             <field>00No0000004LBnH</field>
             <field>00N5c00000JGrVi</field>
             <field>00N5c00000JGrVh</field>
             <field>00No0000005SiIS</field>
             <field>00N5c00000JGrVj</field>
+            <field>00N5c00000Jrhib</field>
             <field>00N5c00000JGrWL</field>
             <field>00N5c00000JGrVk</field>
             <field>00N5c00000JGrVl</field>
             <field>00N5c00000JGrVm</field>
             <field>00N5c00000JGrVn</field>
+            <field>00N5c00000JreN6</field>
             <field>00N5c00000JGrwS</field>
             <field>00N5c00000JGrwQ</field>
             <field>00N5c00000JGrwT</field>
             <field>00N5c00000JGrVo</field>
             <field>00N5c00000JGrwU</field>
+            <field>00N5c00000JreN8</field>
+            <field>00N5c00000JreN7</field>
             <field>00N5c00000JGrVp</field>
             <field>00N5c00000JGrVq</field>
             <field>00N5c00000JGrVr</field>
@@ -10826,6 +11365,7 @@
             <field>00N5c00000JGrW1</field>
             <field>00N5c00000JGrW2</field>
             <field>00N5c00000JGrWF</field>
+            <field>00N5c00000JreN9</field>
             <field>00N5c00000JGrW4</field>
             <field>00N5c00000JGrW5</field>
             <field>00N5c00000JGrW6</field>
@@ -11030,6 +11570,10 @@
             <label>Projected Registered Donors Default</label>
         </forecastingObjectListLabelMappings>
         <forecastingObjectListLabelMappings>
+            <field>00N5c00000Jrfd3</field>
+            <label>Recruitment Committee Exists</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
             <field>00N5c00000JGrwb</field>
             <label>Total Procedures Projected</label>
         </forecastingObjectListLabelMappings>
@@ -11040,6 +11584,10 @@
         <forecastingObjectListLabelMappings>
             <field>00N5c00000JGrVd</field>
             <label>Projection Change Comments</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00N5c00000Jrfd4</field>
+            <label>Recruitment Strategy with Tactics</label>
         </forecastingObjectListLabelMappings>
         <forecastingObjectListLabelMappings>
             <field>00N5c00000JGrWE</field>
@@ -11630,6 +12178,10 @@
             <label>Accept 56 Day Rule Violation</label>
         </forecastingObjectListLabelMappings>
         <forecastingObjectListLabelMappings>
+            <field>00N5c00000Jrhib</field>
+            <label>Related Scheduled Drive Productivity</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
             <field>SPLITAMOUNT</field>
             <label>Forecasted Amount</label>
         </forecastingObjectListLabelMappings>
@@ -11676,6 +12228,10 @@
         <forecastingObjectListLabelMappings>
             <field>OPPORTUNITY.CLOSE_DATE</field>
             <label>Close Date</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00N5c00000JrR1B</field>
+            <label>Drive Date Change Reason</label>
         </forecastingObjectListLabelMappings>
         <forecastingObjectListLabelMappings>
             <field>OPPORTUNITY.PROBABILITY</field>
@@ -11782,6 +12338,18 @@
             <label>Private</label>
         </forecastingObjectListLabelMappings>
         <forecastingObjectListLabelMappings>
+            <field>00N5c00000JreN2</field>
+            <label>AA Unit Projection</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00N5c00000JreN3</field>
+            <label>Diverse Donor Recruitment Strategy</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00N5c00000JreN4</field>
+            <label>Draw Rate</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
             <field>00No0000004LBrE</field>
             <label>Date Of Last Contact/Activity</label>
         </forecastingObjectListLabelMappings>
@@ -11804,6 +12372,26 @@
         <forecastingObjectListLabelMappings>
             <field>FULL_NAME</field>
             <label>Owner Full Name</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00N5c00000JreN9</field>
+            <label>Web Sched Offset from CO/Global Settings</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00N5c00000JreN5</field>
+            <label>Latino Unit Projection</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00N5c00000JreN6</field>
+            <label>Show Rate</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00N5c00000JreN7</field>
+            <label>Slot Generator Change Reason</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00N5c00000JreN8</field>
+            <label>Slot Generator</label>
         </forecastingObjectListLabelMappings>
         <forecastingObjectListLabelMappings>
             <field>ACCOUNT.NAME</field>
@@ -11854,6 +12442,7 @@
             <field>00N5c00000JGrVH</field>
             <field>00N5c00000JGrVI</field>
             <field>00N5c00000JGrVJ</field>
+            <field>00N5c00000JreN2</field>
             <field>00N5c00000JGrU2</field>
             <field>00N5c00000JGrU3</field>
             <field>00N5c00000JGrU4</field>
@@ -11915,16 +12504,19 @@
             <field>00N5c00000JGrwF</field>
             <field>00N5c00000JrJem</field>
             <field>00N5c00000JrJel</field>
+            <field>00N5c00000JreN3</field>
             <field>00N5c00000Ir4Qf</field>
             <field>00N5c00000JGrUj</field>
             <field>00N5c00000JGrWJ</field>
             <field>00N5c00000JGrUl</field>
             <field>00N5c00000JGrUm</field>
             <field>00N5c00000JGrUn</field>
+            <field>00N5c00000JreN4</field>
             <field>00N5c00000JGrw9</field>
             <field>00N5c00000JGrWK</field>
             <field>00N5c00000JGrUo</field>
             <field>00N5c00000JGrUq</field>
+            <field>00N5c00000JrR1B</field>
             <field>00N5c00000JGrUp</field>
             <field>00N5c00000JGrwG</field>
             <field>00N5c00000JGrUr</field>
@@ -11959,6 +12551,7 @@
             <field>00N5c00000JGrVA</field>
             <field>00No0000004LBrd</field>
             <field>00No0000004LBrO</field>
+            <field>00N5c00000JreN5</field>
             <field>00N5c00000JGrVC</field>
             <field>00N5c00000JGrVD</field>
             <field>00N5c00000JGrwN</field>
@@ -11995,22 +12588,28 @@
             <field>00N5c00000JGrVf</field>
             <field>00N5c00000JGrUZ</field>
             <field>00N5c00000JGrVg</field>
+            <field>00N5c00000Jrfd3</field>
+            <field>00N5c00000Jrfd4</field>
             <field>00No0000004LBn2</field>
             <field>00No0000004LBnH</field>
             <field>00N5c00000JGrVi</field>
             <field>00N5c00000JGrVh</field>
             <field>00No0000005SiIS</field>
             <field>00N5c00000JGrVj</field>
+            <field>00N5c00000Jrhib</field>
             <field>00N5c00000JGrWL</field>
             <field>00N5c00000JGrVk</field>
             <field>00N5c00000JGrVl</field>
             <field>00N5c00000JGrVm</field>
             <field>00N5c00000JGrVn</field>
+            <field>00N5c00000JreN6</field>
             <field>00N5c00000JGrwS</field>
             <field>00N5c00000JGrwQ</field>
             <field>00N5c00000JGrwT</field>
             <field>00N5c00000JGrVo</field>
             <field>00N5c00000JGrwU</field>
+            <field>00N5c00000JreN8</field>
+            <field>00N5c00000JreN7</field>
             <field>00N5c00000JGrVp</field>
             <field>00N5c00000JGrVq</field>
             <field>00N5c00000JGrVr</field>
@@ -12038,6 +12637,7 @@
             <field>00N5c00000JGrW1</field>
             <field>00N5c00000JGrW2</field>
             <field>00N5c00000JGrWF</field>
+            <field>00N5c00000JreN9</field>
             <field>00N5c00000JGrW4</field>
             <field>00N5c00000JGrW5</field>
             <field>00N5c00000JGrW6</field>
@@ -12238,6 +12838,10 @@
             <label>Projected Registered Donors Default</label>
         </forecastingObjectListLabelMappings>
         <forecastingObjectListLabelMappings>
+            <field>00N5c00000Jrfd3</field>
+            <label>Recruitment Committee Exists</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
             <field>00N5c00000JGrwb</field>
             <label>Total Procedures Projected</label>
         </forecastingObjectListLabelMappings>
@@ -12248,6 +12852,10 @@
         <forecastingObjectListLabelMappings>
             <field>00N5c00000JGrVd</field>
             <label>Projection Change Comments</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00N5c00000Jrfd4</field>
+            <label>Recruitment Strategy with Tactics</label>
         </forecastingObjectListLabelMappings>
         <forecastingObjectListLabelMappings>
             <field>00N5c00000JGrWE</field>
@@ -12838,6 +13446,10 @@
             <label>Accept 56 Day Rule Violation</label>
         </forecastingObjectListLabelMappings>
         <forecastingObjectListLabelMappings>
+            <field>00N5c00000Jrhib</field>
+            <label>Related Scheduled Drive Productivity</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
             <field>00N5c00000JrPkt</field>
             <label>Drive Status</label>
         </forecastingObjectListLabelMappings>
@@ -12880,6 +13492,10 @@
         <forecastingObjectListLabelMappings>
             <field>OPPORTUNITY.CLOSE_DATE</field>
             <label>Close Date</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00N5c00000JrR1B</field>
+            <label>Drive Date Change Reason</label>
         </forecastingObjectListLabelMappings>
         <forecastingObjectListLabelMappings>
             <field>OPPORTUNITY.PROBABILITY</field>
@@ -12986,6 +13602,18 @@
             <label>Private</label>
         </forecastingObjectListLabelMappings>
         <forecastingObjectListLabelMappings>
+            <field>00N5c00000JreN2</field>
+            <label>AA Unit Projection</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00N5c00000JreN3</field>
+            <label>Diverse Donor Recruitment Strategy</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00N5c00000JreN4</field>
+            <label>Draw Rate</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
             <field>00No0000004LBrE</field>
             <label>Date Of Last Contact/Activity</label>
         </forecastingObjectListLabelMappings>
@@ -13008,6 +13636,26 @@
         <forecastingObjectListLabelMappings>
             <field>FULL_NAME</field>
             <label>Owner Full Name</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00N5c00000JreN9</field>
+            <label>Web Sched Offset from CO/Global Settings</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00N5c00000JreN5</field>
+            <label>Latino Unit Projection</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00N5c00000JreN6</field>
+            <label>Show Rate</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00N5c00000JreN7</field>
+            <label>Slot Generator Change Reason</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00N5c00000JreN8</field>
+            <label>Slot Generator</label>
         </forecastingObjectListLabelMappings>
         <forecastingObjectListLabelMappings>
             <field>ACCOUNT.NAME</field>
@@ -13056,6 +13704,7 @@
             <field>00N5c00000JGrVH</field>
             <field>00N5c00000JGrVI</field>
             <field>00N5c00000JGrVJ</field>
+            <field>00N5c00000JreN2</field>
             <field>00N5c00000JGrU2</field>
             <field>00N5c00000JGrU3</field>
             <field>00N5c00000JGrU4</field>
@@ -13117,16 +13766,19 @@
             <field>00N5c00000JGrwF</field>
             <field>00N5c00000JrJem</field>
             <field>00N5c00000JrJel</field>
+            <field>00N5c00000JreN3</field>
             <field>00N5c00000Ir4Qf</field>
             <field>00N5c00000JGrUj</field>
             <field>00N5c00000JGrWJ</field>
             <field>00N5c00000JGrUl</field>
             <field>00N5c00000JGrUm</field>
             <field>00N5c00000JGrUn</field>
+            <field>00N5c00000JreN4</field>
             <field>00N5c00000JGrw9</field>
             <field>00N5c00000JGrWK</field>
             <field>00N5c00000JGrUo</field>
             <field>00N5c00000JGrUq</field>
+            <field>00N5c00000JrR1B</field>
             <field>00N5c00000JGrUp</field>
             <field>00N5c00000JGrwG</field>
             <field>00N5c00000JGrUr</field>
@@ -13161,6 +13813,7 @@
             <field>00N5c00000JGrVA</field>
             <field>00No0000004LBrd</field>
             <field>00No0000004LBrO</field>
+            <field>00N5c00000JreN5</field>
             <field>00N5c00000JGrVC</field>
             <field>00N5c00000JGrVD</field>
             <field>00N5c00000JGrwN</field>
@@ -13197,22 +13850,28 @@
             <field>00N5c00000JGrVf</field>
             <field>00N5c00000JGrUZ</field>
             <field>00N5c00000JGrVg</field>
+            <field>00N5c00000Jrfd3</field>
+            <field>00N5c00000Jrfd4</field>
             <field>00No0000004LBn2</field>
             <field>00No0000004LBnH</field>
             <field>00N5c00000JGrVi</field>
             <field>00N5c00000JGrVh</field>
             <field>00No0000005SiIS</field>
             <field>00N5c00000JGrVj</field>
+            <field>00N5c00000Jrhib</field>
             <field>00N5c00000JGrWL</field>
             <field>00N5c00000JGrVk</field>
             <field>00N5c00000JGrVl</field>
             <field>00N5c00000JGrVm</field>
             <field>00N5c00000JGrVn</field>
+            <field>00N5c00000JreN6</field>
             <field>00N5c00000JGrwS</field>
             <field>00N5c00000JGrwQ</field>
             <field>00N5c00000JGrwT</field>
             <field>00N5c00000JGrVo</field>
             <field>00N5c00000JGrwU</field>
+            <field>00N5c00000JreN8</field>
+            <field>00N5c00000JreN7</field>
             <field>00N5c00000JGrVp</field>
             <field>00N5c00000JGrVq</field>
             <field>00N5c00000JGrVr</field>
@@ -13240,6 +13899,7 @@
             <field>00N5c00000JGrW1</field>
             <field>00N5c00000JGrW2</field>
             <field>00N5c00000JGrWF</field>
+            <field>00N5c00000JreN9</field>
             <field>00N5c00000JGrW4</field>
             <field>00N5c00000JGrW5</field>
             <field>00N5c00000JGrW6</field>
@@ -13440,6 +14100,10 @@
             <label>Projected Registered Donors Default</label>
         </forecastingObjectListLabelMappings>
         <forecastingObjectListLabelMappings>
+            <field>00N5c00000Jrfd3</field>
+            <label>Recruitment Committee Exists</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
             <field>00N5c00000JGrwb</field>
             <label>Total Procedures Projected</label>
         </forecastingObjectListLabelMappings>
@@ -13450,6 +14114,10 @@
         <forecastingObjectListLabelMappings>
             <field>00N5c00000JGrVd</field>
             <label>Projection Change Comments</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00N5c00000Jrfd4</field>
+            <label>Recruitment Strategy with Tactics</label>
         </forecastingObjectListLabelMappings>
         <forecastingObjectListLabelMappings>
             <field>00N5c00000JGrWE</field>
@@ -14040,6 +14708,10 @@
             <label>Accept 56 Day Rule Violation</label>
         </forecastingObjectListLabelMappings>
         <forecastingObjectListLabelMappings>
+            <field>00N5c00000Jrhib</field>
+            <label>Related Scheduled Drive Productivity</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
             <field>SPLITAMOUNT</field>
             <label>Forecasted Amount</label>
         </forecastingObjectListLabelMappings>
@@ -14086,6 +14758,10 @@
         <forecastingObjectListLabelMappings>
             <field>OPPORTUNITY.CLOSE_DATE</field>
             <label>Close Date</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00N5c00000JrR1B</field>
+            <label>Drive Date Change Reason</label>
         </forecastingObjectListLabelMappings>
         <forecastingObjectListLabelMappings>
             <field>OPPORTUNITY.PROBABILITY</field>
@@ -14192,6 +14868,18 @@
             <label>Private</label>
         </forecastingObjectListLabelMappings>
         <forecastingObjectListLabelMappings>
+            <field>00N5c00000JreN2</field>
+            <label>AA Unit Projection</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00N5c00000JreN3</field>
+            <label>Diverse Donor Recruitment Strategy</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00N5c00000JreN4</field>
+            <label>Draw Rate</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
             <field>00No0000004LBrE</field>
             <label>Date Of Last Contact/Activity</label>
         </forecastingObjectListLabelMappings>
@@ -14214,6 +14902,26 @@
         <forecastingObjectListLabelMappings>
             <field>FULL_NAME</field>
             <label>Owner Full Name</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00N5c00000JreN9</field>
+            <label>Web Sched Offset from CO/Global Settings</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00N5c00000JreN5</field>
+            <label>Latino Unit Projection</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00N5c00000JreN6</field>
+            <label>Show Rate</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00N5c00000JreN7</field>
+            <label>Slot Generator Change Reason</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00N5c00000JreN8</field>
+            <label>Slot Generator</label>
         </forecastingObjectListLabelMappings>
         <forecastingObjectListLabelMappings>
             <field>ACCOUNT.NAME</field>
@@ -14263,6 +14971,7 @@
             <field>00N5c00000JGrVH</field>
             <field>00N5c00000JGrVI</field>
             <field>00N5c00000JGrVJ</field>
+            <field>00N5c00000JreN2</field>
             <field>00N5c00000JGrU2</field>
             <field>00N5c00000JGrU3</field>
             <field>00N5c00000JGrU4</field>
@@ -14324,16 +15033,19 @@
             <field>00N5c00000JGrwF</field>
             <field>00N5c00000JrJem</field>
             <field>00N5c00000JrJel</field>
+            <field>00N5c00000JreN3</field>
             <field>00N5c00000Ir4Qf</field>
             <field>00N5c00000JGrUj</field>
             <field>00N5c00000JGrWJ</field>
             <field>00N5c00000JGrUl</field>
             <field>00N5c00000JGrUm</field>
             <field>00N5c00000JGrUn</field>
+            <field>00N5c00000JreN4</field>
             <field>00N5c00000JGrw9</field>
             <field>00N5c00000JGrWK</field>
             <field>00N5c00000JGrUo</field>
             <field>00N5c00000JGrUq</field>
+            <field>00N5c00000JrR1B</field>
             <field>00N5c00000JGrUp</field>
             <field>00N5c00000JGrwG</field>
             <field>00N5c00000JGrUr</field>
@@ -14368,6 +15080,7 @@
             <field>00N5c00000JGrVA</field>
             <field>00No0000004LBrd</field>
             <field>00No0000004LBrO</field>
+            <field>00N5c00000JreN5</field>
             <field>00N5c00000JGrVC</field>
             <field>00N5c00000JGrVD</field>
             <field>00N5c00000JGrwN</field>
@@ -14404,22 +15117,28 @@
             <field>00N5c00000JGrVf</field>
             <field>00N5c00000JGrUZ</field>
             <field>00N5c00000JGrVg</field>
+            <field>00N5c00000Jrfd3</field>
+            <field>00N5c00000Jrfd4</field>
             <field>00No0000004LBn2</field>
             <field>00No0000004LBnH</field>
             <field>00N5c00000JGrVi</field>
             <field>00N5c00000JGrVh</field>
             <field>00No0000005SiIS</field>
             <field>00N5c00000JGrVj</field>
+            <field>00N5c00000Jrhib</field>
             <field>00N5c00000JGrWL</field>
             <field>00N5c00000JGrVk</field>
             <field>00N5c00000JGrVl</field>
             <field>00N5c00000JGrVm</field>
             <field>00N5c00000JGrVn</field>
+            <field>00N5c00000JreN6</field>
             <field>00N5c00000JGrwS</field>
             <field>00N5c00000JGrwQ</field>
             <field>00N5c00000JGrwT</field>
             <field>00N5c00000JGrVo</field>
             <field>00N5c00000JGrwU</field>
+            <field>00N5c00000JreN8</field>
+            <field>00N5c00000JreN7</field>
             <field>00N5c00000JGrVp</field>
             <field>00N5c00000JGrVq</field>
             <field>00N5c00000JGrVr</field>
@@ -14447,6 +15166,7 @@
             <field>00N5c00000JGrW1</field>
             <field>00N5c00000JGrW2</field>
             <field>00N5c00000JGrWF</field>
+            <field>00N5c00000JreN9</field>
             <field>00N5c00000JGrW4</field>
             <field>00N5c00000JGrW5</field>
             <field>00N5c00000JGrW6</field>
@@ -14647,6 +15367,10 @@
             <label>Projected Registered Donors Default</label>
         </forecastingObjectListLabelMappings>
         <forecastingObjectListLabelMappings>
+            <field>00N5c00000Jrfd3</field>
+            <label>Recruitment Committee Exists</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
             <field>00N5c00000JGrwb</field>
             <label>Total Procedures Projected</label>
         </forecastingObjectListLabelMappings>
@@ -14657,6 +15381,10 @@
         <forecastingObjectListLabelMappings>
             <field>00N5c00000JGrVd</field>
             <label>Projection Change Comments</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00N5c00000Jrfd4</field>
+            <label>Recruitment Strategy with Tactics</label>
         </forecastingObjectListLabelMappings>
         <forecastingObjectListLabelMappings>
             <field>00N5c00000JGrWE</field>
@@ -15247,6 +15975,10 @@
             <label>Accept 56 Day Rule Violation</label>
         </forecastingObjectListLabelMappings>
         <forecastingObjectListLabelMappings>
+            <field>00N5c00000Jrhib</field>
+            <label>Related Scheduled Drive Productivity</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
             <field>00N5c00000JrPkt</field>
             <label>Drive Status</label>
         </forecastingObjectListLabelMappings>
@@ -15289,6 +16021,10 @@
         <forecastingObjectListLabelMappings>
             <field>OPPORTUNITY.CLOSE_DATE</field>
             <label>Close Date</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00N5c00000JrR1B</field>
+            <label>Drive Date Change Reason</label>
         </forecastingObjectListLabelMappings>
         <forecastingObjectListLabelMappings>
             <field>OPPORTUNITY.PROBABILITY</field>
@@ -15395,6 +16131,18 @@
             <label>Private</label>
         </forecastingObjectListLabelMappings>
         <forecastingObjectListLabelMappings>
+            <field>00N5c00000JreN2</field>
+            <label>AA Unit Projection</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00N5c00000JreN3</field>
+            <label>Diverse Donor Recruitment Strategy</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00N5c00000JreN4</field>
+            <label>Draw Rate</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
             <field>00No0000004LBrE</field>
             <label>Date Of Last Contact/Activity</label>
         </forecastingObjectListLabelMappings>
@@ -15417,6 +16165,26 @@
         <forecastingObjectListLabelMappings>
             <field>FULL_NAME</field>
             <label>Owner Full Name</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00N5c00000JreN9</field>
+            <label>Web Sched Offset from CO/Global Settings</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00N5c00000JreN5</field>
+            <label>Latino Unit Projection</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00N5c00000JreN6</field>
+            <label>Show Rate</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00N5c00000JreN7</field>
+            <label>Slot Generator Change Reason</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00N5c00000JreN8</field>
+            <label>Slot Generator</label>
         </forecastingObjectListLabelMappings>
         <forecastingObjectListLabelMappings>
             <field>ACCOUNT.NAME</field>
@@ -15465,6 +16233,7 @@
             <field>00N5c00000JGrVH</field>
             <field>00N5c00000JGrVI</field>
             <field>00N5c00000JGrVJ</field>
+            <field>00N5c00000JreN2</field>
             <field>00N5c00000JGrU2</field>
             <field>00N5c00000JGrU3</field>
             <field>00N5c00000JGrU4</field>
@@ -15526,16 +16295,19 @@
             <field>00N5c00000JGrwF</field>
             <field>00N5c00000JrJem</field>
             <field>00N5c00000JrJel</field>
+            <field>00N5c00000JreN3</field>
             <field>00N5c00000Ir4Qf</field>
             <field>00N5c00000JGrUj</field>
             <field>00N5c00000JGrWJ</field>
             <field>00N5c00000JGrUl</field>
             <field>00N5c00000JGrUm</field>
             <field>00N5c00000JGrUn</field>
+            <field>00N5c00000JreN4</field>
             <field>00N5c00000JGrw9</field>
             <field>00N5c00000JGrWK</field>
             <field>00N5c00000JGrUo</field>
             <field>00N5c00000JGrUq</field>
+            <field>00N5c00000JrR1B</field>
             <field>00N5c00000JGrUp</field>
             <field>00N5c00000JGrwG</field>
             <field>00N5c00000JGrUr</field>
@@ -15570,6 +16342,7 @@
             <field>00N5c00000JGrVA</field>
             <field>00No0000004LBrd</field>
             <field>00No0000004LBrO</field>
+            <field>00N5c00000JreN5</field>
             <field>00N5c00000JGrVC</field>
             <field>00N5c00000JGrVD</field>
             <field>00N5c00000JGrwN</field>
@@ -15606,22 +16379,28 @@
             <field>00N5c00000JGrVf</field>
             <field>00N5c00000JGrUZ</field>
             <field>00N5c00000JGrVg</field>
+            <field>00N5c00000Jrfd3</field>
+            <field>00N5c00000Jrfd4</field>
             <field>00No0000004LBn2</field>
             <field>00No0000004LBnH</field>
             <field>00N5c00000JGrVi</field>
             <field>00N5c00000JGrVh</field>
             <field>00No0000005SiIS</field>
             <field>00N5c00000JGrVj</field>
+            <field>00N5c00000Jrhib</field>
             <field>00N5c00000JGrWL</field>
             <field>00N5c00000JGrVk</field>
             <field>00N5c00000JGrVl</field>
             <field>00N5c00000JGrVm</field>
             <field>00N5c00000JGrVn</field>
+            <field>00N5c00000JreN6</field>
             <field>00N5c00000JGrwS</field>
             <field>00N5c00000JGrwQ</field>
             <field>00N5c00000JGrwT</field>
             <field>00N5c00000JGrVo</field>
             <field>00N5c00000JGrwU</field>
+            <field>00N5c00000JreN8</field>
+            <field>00N5c00000JreN7</field>
             <field>00N5c00000JGrVp</field>
             <field>00N5c00000JGrVq</field>
             <field>00N5c00000JGrVr</field>
@@ -15649,6 +16428,7 @@
             <field>00N5c00000JGrW1</field>
             <field>00N5c00000JGrW2</field>
             <field>00N5c00000JGrWF</field>
+            <field>00N5c00000JreN9</field>
             <field>00N5c00000JGrW4</field>
             <field>00N5c00000JGrW5</field>
             <field>00N5c00000JGrW6</field>
@@ -15849,6 +16629,10 @@
             <label>Projected Registered Donors Default</label>
         </forecastingObjectListLabelMappings>
         <forecastingObjectListLabelMappings>
+            <field>00N5c00000Jrfd3</field>
+            <label>Recruitment Committee Exists</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
             <field>00N5c00000JGrwb</field>
             <label>Total Procedures Projected</label>
         </forecastingObjectListLabelMappings>
@@ -15859,6 +16643,10 @@
         <forecastingObjectListLabelMappings>
             <field>00N5c00000JGrVd</field>
             <label>Projection Change Comments</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00N5c00000Jrfd4</field>
+            <label>Recruitment Strategy with Tactics</label>
         </forecastingObjectListLabelMappings>
         <forecastingObjectListLabelMappings>
             <field>00N5c00000JGrWE</field>
@@ -16449,6 +17237,10 @@
             <label>Accept 56 Day Rule Violation</label>
         </forecastingObjectListLabelMappings>
         <forecastingObjectListLabelMappings>
+            <field>00N5c00000Jrhib</field>
+            <label>Related Scheduled Drive Productivity</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
             <field>00N5c00000JrPkt</field>
             <label>Drive Status</label>
         </forecastingObjectListLabelMappings>
@@ -16491,6 +17283,10 @@
         <forecastingObjectListLabelMappings>
             <field>OPPORTUNITY.CLOSE_DATE</field>
             <label>Close Date</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00N5c00000JrR1B</field>
+            <label>Drive Date Change Reason</label>
         </forecastingObjectListLabelMappings>
         <forecastingObjectListLabelMappings>
             <field>OPPORTUNITY.PROBABILITY</field>
@@ -16597,6 +17393,18 @@
             <label>Private</label>
         </forecastingObjectListLabelMappings>
         <forecastingObjectListLabelMappings>
+            <field>00N5c00000JreN2</field>
+            <label>AA Unit Projection</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00N5c00000JreN3</field>
+            <label>Diverse Donor Recruitment Strategy</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00N5c00000JreN4</field>
+            <label>Draw Rate</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
             <field>00No0000004LBrE</field>
             <label>Date Of Last Contact/Activity</label>
         </forecastingObjectListLabelMappings>
@@ -16619,6 +17427,26 @@
         <forecastingObjectListLabelMappings>
             <field>FULL_NAME</field>
             <label>Owner Full Name</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00N5c00000JreN9</field>
+            <label>Web Sched Offset from CO/Global Settings</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00N5c00000JreN5</field>
+            <label>Latino Unit Projection</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00N5c00000JreN6</field>
+            <label>Show Rate</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00N5c00000JreN7</field>
+            <label>Slot Generator Change Reason</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00N5c00000JreN8</field>
+            <label>Slot Generator</label>
         </forecastingObjectListLabelMappings>
         <forecastingObjectListLabelMappings>
             <field>ACCOUNT.NAME</field>
@@ -16667,6 +17495,7 @@
             <field>00N5c00000JGrVH</field>
             <field>00N5c00000JGrVI</field>
             <field>00N5c00000JGrVJ</field>
+            <field>00N5c00000JreN2</field>
             <field>00N5c00000JGrU2</field>
             <field>00N5c00000JGrU3</field>
             <field>00N5c00000JGrU4</field>
@@ -16728,16 +17557,19 @@
             <field>00N5c00000JGrwF</field>
             <field>00N5c00000JrJem</field>
             <field>00N5c00000JrJel</field>
+            <field>00N5c00000JreN3</field>
             <field>00N5c00000Ir4Qf</field>
             <field>00N5c00000JGrUj</field>
             <field>00N5c00000JGrWJ</field>
             <field>00N5c00000JGrUl</field>
             <field>00N5c00000JGrUm</field>
             <field>00N5c00000JGrUn</field>
+            <field>00N5c00000JreN4</field>
             <field>00N5c00000JGrw9</field>
             <field>00N5c00000JGrWK</field>
             <field>00N5c00000JGrUo</field>
             <field>00N5c00000JGrUq</field>
+            <field>00N5c00000JrR1B</field>
             <field>00N5c00000JGrUp</field>
             <field>00N5c00000JGrwG</field>
             <field>00N5c00000JGrUr</field>
@@ -16772,6 +17604,7 @@
             <field>00N5c00000JGrVA</field>
             <field>00No0000004LBrd</field>
             <field>00No0000004LBrO</field>
+            <field>00N5c00000JreN5</field>
             <field>00N5c00000JGrVC</field>
             <field>00N5c00000JGrVD</field>
             <field>00N5c00000JGrwN</field>
@@ -16808,22 +17641,28 @@
             <field>00N5c00000JGrVf</field>
             <field>00N5c00000JGrUZ</field>
             <field>00N5c00000JGrVg</field>
+            <field>00N5c00000Jrfd3</field>
+            <field>00N5c00000Jrfd4</field>
             <field>00No0000004LBn2</field>
             <field>00No0000004LBnH</field>
             <field>00N5c00000JGrVi</field>
             <field>00N5c00000JGrVh</field>
             <field>00No0000005SiIS</field>
             <field>00N5c00000JGrVj</field>
+            <field>00N5c00000Jrhib</field>
             <field>00N5c00000JGrWL</field>
             <field>00N5c00000JGrVk</field>
             <field>00N5c00000JGrVl</field>
             <field>00N5c00000JGrVm</field>
             <field>00N5c00000JGrVn</field>
+            <field>00N5c00000JreN6</field>
             <field>00N5c00000JGrwS</field>
             <field>00N5c00000JGrwQ</field>
             <field>00N5c00000JGrwT</field>
             <field>00N5c00000JGrVo</field>
             <field>00N5c00000JGrwU</field>
+            <field>00N5c00000JreN8</field>
+            <field>00N5c00000JreN7</field>
             <field>00N5c00000JGrVp</field>
             <field>00N5c00000JGrVq</field>
             <field>00N5c00000JGrVr</field>
@@ -16851,6 +17690,7 @@
             <field>00N5c00000JGrW1</field>
             <field>00N5c00000JGrW2</field>
             <field>00N5c00000JGrWF</field>
+            <field>00N5c00000JreN9</field>
             <field>00N5c00000JGrW4</field>
             <field>00N5c00000JGrW5</field>
             <field>00N5c00000JGrW6</field>

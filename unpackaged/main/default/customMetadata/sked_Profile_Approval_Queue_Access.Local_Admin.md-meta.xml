@@ -3,11 +3,19 @@
     <label>Local Admin</label>
     <protected>false</protected>
     <values>
+        <field>sked_CM_Role_Time_Variance__c</field>
+        <value xsi:type="xsd:boolean">false</value>
+    </values>
+    <values>
         <field>sked_DM_Drive_Change_Request__c</field>
         <value xsi:type="xsd:boolean">false</value>
     </values>
     <values>
         <field>sked_DM_Pending_Action__c</field>
+        <value xsi:type="xsd:boolean">false</value>
+    </values>
+    <values>
+        <field>sked_DM_Role_Time_Variance__c</field>
         <value xsi:type="xsd:boolean">false</value>
     </values>
     <values>

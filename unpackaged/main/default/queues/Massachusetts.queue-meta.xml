@@ -4,7 +4,9 @@
     <name>Massachusetts Lead Queue</name>
     <queueMembers>
         <users>
+            <user>cathy.alegria@redcross.org</user>
             <user>christine.bergeron@redcross.org.biomed</user>
+            <user>james.gallant@redcross.org</user>
         </users>
     </queueMembers>
     <queueSobject>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ContentAsset xmlns="http://soap.sforce.com/2006/04/metadata">
+    <isVisibleByExternalUsers>true</isVisibleByExternalUsers>
+    <language>en_US</language>
+    <masterLabel>X12924_Henkel_Digital_Marketing_Slid</masterLabel>
+    <versions>
+        <version>
+            <number>1</number>
+            <pathOnClient>12-9-24 Henkel Digital Marketing Slide.pptx</pathOnClient>
+        </version>
+    </versions>
+</ContentAsset>

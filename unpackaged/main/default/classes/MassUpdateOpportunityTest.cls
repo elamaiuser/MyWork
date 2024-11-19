@@ -35,7 +35,6 @@ public class MassUpdateOpportunityTest {
         siteObj.sked_County__c='AMERICA';
         siteObj.sked_State__c='test state';
         siteObj.sked_Wireless_Policy__c='Accepted';
-        siteObj.Operation_Type__c='Integrated';
         siteObj.sked_Zip_Code__c='94608';
         insert siteObj;
         
@@ -50,8 +49,7 @@ public class MassUpdateOpportunityTest {
         opp1.CloseDate = System.today();
         opp1.Start_Time__c = System.now().Time();
         opp1.End_Time__c = System.now().Time()+1;
-        opp1.Anticipated_Registered_Donors__c = 10;  
-        opp1.AnticipatedRegisterDonorChangeReason__c='demo';
+        opp1.Anticipated_Registered_Donors__c = 10;   
         opp1.Plasma_Pheresis_Projected_Procedures__c = 10;
         opp1.Platelet_Projected_Procedures__c = 11;   
         opp1.Number_of_Platelet_Assets__c = 10;
@@ -79,8 +77,7 @@ public class MassUpdateOpportunityTest {
         opp2.CloseDate = System.today();
         opp2.Start_Time__c = System.now().Time();
         opp2.End_Time__c = System.now().Time()+1;
-        opp2.Anticipated_Registered_Donors__c = 10; 
-        opp2.AnticipatedRegisterDonorChangeReason__c = 'demo';
+        opp2.Anticipated_Registered_Donors__c = 10;   
         opp2.Plasma_Pheresis_Projected_Procedures__c = 40;
         opp2.Platelet_Projected_Procedures__c = 40;   
         opp2.Number_of_Platelet_Assets__c = 40;
@@ -94,7 +91,6 @@ public class MassUpdateOpportunityTest {
         opp2.WholeBloodProcedureProjectedChangeReason__c = 'demo';
         opp2.X2RBC_Projected_Procedures__c = 40;
         opp2.DoubleRedProceduresProjectedChangeReason__c = 'demo';
-        
         opp2.sked_Cancellation_Reason__c = 'Staff Shortage';
         opp2.Initiated_By__c = 'ARC_Initiated_Mobile';
         opp2.Processing_Status__c = 'Mass Update Not Processed';     
@@ -117,8 +113,6 @@ public class MassUpdateOpportunityTest {
         opWrap.updatedWBProjectedProc = 20;
         opWrap.updatedDRReason = 'test';
         opWrap.updatedWBProcReason = 'test';
-        opWrap.updatedAnticipatedRegisteredDonors = 20;
-        opWrap.updatedARegisteredDonorsReason ='Test';
         opWrap.updated2RBCProjProcedure = 20;
         opWrap.updatedStartTime = '0300';
         opWrap.updatedEndTime = '0830';
@@ -141,8 +135,7 @@ public class MassUpdateOpportunityTest {
         opWrap1.updatedPlateletPP = 20;
         opWrap1.updatedPlasmaPheresisPP = 20;
         opWrap1.updatedWBProjectedProc = 20;
-        opWrap1.updatedAnticipatedRegisteredDonors = 20;
-        opWrap1.updatedARegisteredDonorsReason ='Test';
+        opWrap1.updatedAnticipatedRegisteredDonors= 20;
         opWrap1.updatedDRReason = 'test';
         opWrap1.updatedWBProcReason = 'test';
         opWrap1.updated2RBCProjProcedure = 20;
@@ -154,6 +147,22 @@ public class MassUpdateOpportunityTest {
         Test.startTest();
         MassUpdateOpportunity.updateSelectedRecords(oppWrapper);
         MassUpdateOpportunity.updateSelectedRecords(oppWrapper1);
+        //List<String> driveStatusList = new List
+        Map<String, Object> filterWrapper = new Map<String, Object> {
+            'accountId' => accobj.Id,
+            'driveName' => 'Test Drive',
+            'sortBy' => 'Drive_Date__c',
+            'sortDirection' => 'DESC',
+            'recordLimit' => 1,
+            'rowOffset' => 0,
+            'driveStatus' => new List<String>{'Draft'},
+            'dayOfDrive' => new List<String>{'SUN'},
+            'siteOperationType' => new List<String>{'Integrated'},
+            'driveDateStart' => String.valueOf(System.today()),
+            'driveDateEnd' => String.valueOf(System.today())  
+        };
+        List<Opportunity> oppListToFilter = MassUpdateOpportunity.getFilteredOpportunities(filterWrapper);
+        Assert.areEqual(0, oppListToFilter.size());
         Test.stopTest();
     }
 }

@@ -1,7 +1,7 @@
 @isTest
 private class skedSiteFeedbackHandler_Test {
-    @isTest
-    static void populateData_Test() {
+    
+    static testmethod void populateData_Test() {
         skedTestDataFactory testDataFactory = new skedTestDataFactory('us', 14);
         Map<string, sObject> mapTestData = testDataFactory.setupCommonTestData();
         mapTestData = testDataFactory.setupDriveData();
@@ -27,6 +27,7 @@ private class skedSiteFeedbackHandler_Test {
         sked_Site_Feedback__c testSiteFeedback = new sked_Site_Feedback__c(
             sked_Amount__c = 5,
             sked_Buffer_Type__c = 'Add',
+            sked_Days_Of_Week__c = 'Monday;Tuesday;Wednesday;Thursday;Friday;Saturday;Sunday',
             sked_Effective_End_Date__c = System.today().addDays(100),
             sked_Effective_Start_Date__c = System.today().addDays(-10),
             sked_Job__c = testJob.Id,
@@ -36,7 +37,7 @@ private class skedSiteFeedbackHandler_Test {
             sked_Site__c = testDriveSite.Id,
             sked_Status__c = 'Not Submitted',
             sked_Variance_Applies_To__c = 'Setup Time',
-            sked_Variance_Type__c = 'Vehicle Inspection'
+            sked_Variance_Type__c = 'Parking'
         );
         
         insert testSiteFeedback;
@@ -44,17 +45,21 @@ private class skedSiteFeedbackHandler_Test {
         Test.stopTest();
     }
     
-    @isTest
-    static void onApproved_Test() {
+    static testmethod void onApproved_Test() {
         skedTestDataFactory testDataFactory = new skedTestDataFactory('us', 14);
         Map<string, sObject> mapTestData = testDataFactory.setupCommonTestData();
         mapTestData = testDataFactory.setupDriveData();
         
+        Biomed_Collection_Op_Center__c opCenter = (Biomed_Collection_Op_Center__c)mapTestData.get('testCollectionOperation1');
         sked__Region__c testRegion = (sked__Region__c)mapTestData.get('testRegion1');
         sked_Drive__c testDrive = (sked_Drive__c)mapTestData.get('testDrive1');
         sked__Location__c testDriveSite = (sked__Location__c)mapTestData.get('testLocation1');
         
         Test.startTest();
+        
+        System.runAs(new User(Id = UserInfo.getUserId())){
+            skedBiomedCollectionOpHandler.createQueues(new Set<String>{opCenter.Name});
+        }
         
         sked__Job__c testJob = new sked__Job__c(
             sked__Region__c = testRegion.Id,
@@ -71,6 +76,7 @@ private class skedSiteFeedbackHandler_Test {
         sked_Site_Feedback__c testSiteFeedback = new sked_Site_Feedback__c(
             sked_Amount__c = 5,
             sked_Buffer_Type__c = 'Add',
+            sked_Days_Of_Week__c = 'Monday;Tuesday;Wednesday;Thursday;Friday;Saturday;Sunday',
             sked_Effective_End_Date__c = System.today().addDays(100),
             sked_Effective_Start_Date__c = System.today().addDays(-10),
             sked_Job__c = testJob.Id,
@@ -84,14 +90,25 @@ private class skedSiteFeedbackHandler_Test {
         );
         insert testSiteFeedback;
         
-        testSiteFeedback.sked_Status__c = skedConstants.DRIVE_STATUS_APPROVED;
+        testSiteFeedback.sked_Status__c = 'Submitted';
+        testSiteFeedback.sked_Route_Approval_Request_To__c = skedConstants.RTV_ROUTE_APPROVAL_REQUEST_TO_CM;
+        update testSiteFeedback;
+        
+        slwcApprovalService.approveRejectRequestModel model = new slwcApprovalService.approveRejectRequestModel();
+        model.action = 'Approve';
+        model.recordId = testSiteFeedback.Id;
+        model.comments = 'Testing';
+        model.sObj = new sked_Site_Feedback__c(Id = testSiteFeedback.Id);
+        slwcAuraResult approveRejectResult = slwcApprovalService.approveReject(model);
+        
+        testSiteFeedback.sked_Status__c = 'Approved';
         update testSiteFeedback;
         
         Test.stopTest();
     }
     
-    @isTest
-    static void onSubmitted_Test() {
+    
+    static testmethod void onSubmitted_Test() {
         skedTestDataFactory testDataFactory = new skedTestDataFactory('us', 14);
         Map<string, sObject> mapTestData = testDataFactory.setupCommonTestData();
         mapTestData = testDataFactory.setupDriveData();
@@ -117,6 +134,7 @@ private class skedSiteFeedbackHandler_Test {
         sked_Site_Feedback__c testSiteFeedback = new sked_Site_Feedback__c(
             sked_Amount__c = 5,
             sked_Buffer_Type__c = 'Add',
+            sked_Days_Of_Week__c = 'Monday;Tuesday;Wednesday;Thursday;Friday;Saturday;Sunday',
             sked_Effective_End_Date__c = System.today().addDays(100),
             sked_Effective_Start_Date__c = System.today().addDays(-10),
             sked_Job__c = testJob.Id,

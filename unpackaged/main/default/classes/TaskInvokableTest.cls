@@ -24,8 +24,7 @@ public class TaskInvokableTest {
     }
     
     @isTest static void sendNotificationToTaskOwner() {
-        
-        
+
         User AdminUser = new User(
              ProfileId = [SELECT Id FROM Profile WHERE Name = 'System Administrator'].Id,
              FirstName='SystemAdmin',
@@ -41,9 +40,7 @@ public class TaskInvokableTest {
              LocaleSidKey = 'en_US'
              
         );
-        
-        UserRole urole  = [select id from userrole where developername =: rolename ];
-        
+           
         User DRDAMUser = new User(
              ProfileId = [SELECT Id FROM Profile WHERE Name = 'DRD Profile'].Id,
              FirstName = 'Amy',
@@ -56,16 +53,14 @@ public class TaskInvokableTest {
              TimeZoneSidKey = 'America/Los_Angeles',
              EmailEncodingKey = 'UTF-8',
              LanguageLocaleKey = 'en_US',
-             LocaleSidKey = 'en_US',
-             UserRoleId = urole.Id
+             LocaleSidKey = 'en_US'
         );
         
-        
-        System.runAs( AdminUser ){
+        System.runAs( AdminUser) {
             insert DRDAMUser;
         }
         
-        System.runAs( DRDAMUser ){
+        System.runAs( DRDAMUser) {
             recordTypeMap = recordTypeMap( 'Account' );
 			Id recTypeId = recordTypeMap.get(mobileAccRecType);
 			List<Account> mobileAccList = new List<Account>();
@@ -76,30 +71,19 @@ public class TaskInvokableTest {
 			accobj.RecordTypeId = recTypeId;
 			accobj.Name = 'Exavalu';
 			accobj.BillingPostalCode = '30146';
-			
 			mobileAccList.add(accobj);
-			
 			insert mobileAccList;
-			
-			
-            
+           
             Task t = new Task();
 			t.OwnerId = UserInfo.getUserId();
             t.whatId = mobileAccList[0].Id;
 			t.Subject='Call';
 			t.Status='Not Started';
 			t.Priority='Normal';
-
-			insert t;
-            
-            List<Task> tasklist = [select Id from Task];
-            
+			insert t;    
+            List<Task> tasklist = [select Id from Task];   
             System.assert(tasklist!=null);
         }        
         
-    }	
-    
- 
-    
-    
+    }	  
 }

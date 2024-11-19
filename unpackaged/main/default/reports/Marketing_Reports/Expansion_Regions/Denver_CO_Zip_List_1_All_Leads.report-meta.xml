@@ -34,7 +34,7 @@
         <field>STATUS</field>
         <sortOrder>Asc</sortOrder>
     </groupingsDown>
-    <name>Denver CO Zip List 1 All Leads</name>
+    <name>Denver CO All Leads</name>
     <params>
         <name>co</name>
         <value>1</value>

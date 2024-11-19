@@ -9,6 +9,8 @@ private class skedSetting_Test {
         skedSetting.skedLacSetting lacSetting = skedSetting.instance.LAC;
         skedSetting.skedPacSetting pacSetting = skedSetting.instance.PAC;
         skedSetting.skedRacSetting racSetting = skedSetting.instance.RAC;
+        skedSetting.skedEmailSetting emailSetting = skedSetting.instance.Email;
+        skedSetting.skedTravelTimeManager travelTimeSetting = skedSetting.instance.TravelTime;
         Map<String, Set<Date>> holidays = appSetting.mapHoliday;
     }
 
@@ -48,5 +50,20 @@ private class skedSetting_Test {
             sked_Category__c = 'job'
         );
         insert testEventTypeSetting;
+        
+        sked_Email_Setting__c testEmailSetting = new sked_Email_Setting__c(
+        	sked_APS_Directors__c = 'test1@abc.org',
+        	sked_BHQ_APS_Staff_SchedulingTimekeeping__c = 'test2@abc.org',
+        	sked_BHQ_APS_Staff_Scheduling_Managers__c = 'test3@abc.org',
+        	sked_BIT_Technical_Support__c = 'test4@abc.org',
+        	sked_Opp_DOC_Sync_Error_Email__c = 'test5@abc.org'
+        );
+        insert testEmailSetting;
+        
+        sked_Travel_Time_Manager__c testTravelTimeManager = new sked_Travel_Time_Manager__c(
+        	sked_Drive_Impact_Threshold__c = 100,
+        	sked_Manual_Refresh_Priority__c = 10
+        );
+        insert testTravelTimeManager;
     }
 }

@@ -1,0 +1,515 @@
+<apex:page controller="SponsorPlanningReportPDFController" renderAs="{!renderAs}" showHeader="false" sidebar="false" applyHtmlTag="false" applyBodyTag="false">
+    <html>
+        <head>
+            <style>
+                @page{
+                    size: A4 portrait;
+                    margin: 0.25in 0.25in 0.25in 0.25in;
+                	@bottom-right {
+                            content: "Page " counter(page) " of " counter(pages);
+                    }
+                }
+                tr {
+                    page-break-inside:avoid !important; 
+                	page-break-after:auto !important;
+                }
+                td {
+                    font-family:sans-serif;
+                	vertical-align: top;
+                	width:12.5%; 
+                	max-width:12.5% !important;
+                	word-wrap: break-word !important;
+                	overflow-wrap: break-word !important;
+                }
+            </style>
+        </head>
+        <body>
+            <apex:repeat value="{!wrapper}" var="data" >
+                <div style="text-align: center;">
+                	<span style="font-family:sans-serif;font-size:24px;"><b>Sponsor Planning Report</b><br/><br/></span>
+            	</div>
+                <table border="1" cellpadding="1" cellspacing="0" style="width:100%;border-color: #000000;border-style: solid;border-collapse: collapse;" class="fixed">
+                    <tr>
+                        <td colspan="8" style="font-size:16px;color:#ffffff;font-weight:bold;text-align:left;background-color:#000000;">Opportunity Information</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" rowspan="3" style="font-size:12px;font-weight:bold;text-align:left;">Account Name</td>
+                        <td colspan="2" rowspan="3" style="font-size:12px;text-align:left;">{!data.accountName}</td>
+                        <td colspan="2" style="font-size:12px;font-weight:bold;text-align:left;">Drive Date</td>
+                        <td colspan="2" style="font-size:12px;text-align:left;">{!data.driveDate}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" style="font-size:12px;font-weight:bold;text-align:left;">Start Time</td>
+                        <td colspan="2" style="font-size:12px;text-align:left;">{!data.startTime}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" style="font-size:12px;font-weight:bold;text-align:left;">End Time</td>
+                        <td colspan="2" style="font-size:12px;text-align:left;">{!data.endTime}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" style="font-size:12px;font-weight:bold;text-align:left;">Premier Partner Affiliation</td>
+                        <td colspan="2" style="font-size:12px;text-align:left;">{!data.premierPartnerAff}</td>
+                        <td colspan="2" style="font-size:12px;font-weight:bold;text-align:left;">Drive Stage</td>
+                        <td colspan="2" style="font-size:12px;text-align:left;">{!data.driveStage}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" rowspan="2" style="font-size:12px;font-weight:bold;text-align:left;">Primary Account Manager</td>
+                        <td colspan="2" rowspan="2" style="font-size:12px;text-align:left;"><apex:outputText value="{!data.primaryAM}" escape="false" /></td>
+                        <td colspan="2" style="font-size:12px;font-weight:bold;text-align:left;">Drive Status</td>
+                        <td colspan="2" style="font-size:12px;text-align:left;">{!data.driveStatus}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" style="font-size:12px;font-weight:bold;text-align:left;">Drive Productivity</td>
+                        <td colspan="2" style="font-size:12px;text-align:left;">{!data.driveProductivity}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" style="font-size:12px;font-weight:bold;text-align:left;">Primary Contact</td>
+                        <td colspan="2" style="font-size:12px;text-align:left;">{!data.primaryContact}</td>
+                        <td colspan="2" style="font-size:12px;font-weight:bold;text-align:left;">Primary Contact Email/Phone</td>
+                        <td colspan="2" style="font-size:12px;text-align:left;">{!data.primaryEmailPhone}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="8" style="font-size:16px;color:#ffffff;font-weight:bold;text-align:left;background-color:#000000;">Shifts</td>
+                    </tr>
+                    <apex:repeat value="{!data.shiftData}" var="sftdata" >
+                        <tr>
+                        	<td colspan="2" style="font-size:12px;font-weight:bold;text-align:left;">Shifts</td>
+                        	<td colspan="6" style="font-size:12px;text-align:left;">{!sftdata.shiftName}</td>
+                    	</tr>
+                        <tr>
+                        	<td colspan="2" style="font-size:12px;font-weight:bold;text-align:left;background-color:#e0e0e0;">Procedure Type</td>
+                            <td style="font-size:12px;font-weight:bold;text-align:left;background-color:#e0e0e0;">Proc Proj</td>
+                            <td style="font-size:12px;font-weight:bold;text-align:left;background-color:#e0e0e0;">Prod Proj</td>
+                            <td colspan="2" style="font-size:12px;font-weight:bold;text-align:left;">Shift Hour</td>
+                        	<td colspan="2" style="font-size:12px;text-align:left;">{!sftdata.shiftHour}</td>
+                    	</tr>
+                        <tr>
+                        	<td colspan="2" style="font-size:12px;font-weight:bold;text-align:left;">2RBC</td>
+                            <td style="font-size:12px;text-align:left;">{!sftdata.twoRBCProcProj}</td>
+                            <td style="font-size:12px;text-align:left;">{!sftdata.twoRBCProdProj}</td>
+                            <td colspan="2" style="font-size:12px;font-weight:bold;text-align:left;">Lunch Break</td>
+                        	<td colspan="2" style="font-size:12px;text-align:left;">{!sftdata.lunchBreak}</td>
+                    	</tr>
+                        <tr>
+                        	<td colspan="2" style="font-size:12px;font-weight:bold;text-align:left;">WB</td>
+                            <td style="font-size:12px;text-align:left;">{!sftdata.wbProcProj}</td>
+                            <td style="font-size:12px;text-align:left;">{!sftdata.wbProdProj}</td>
+                            <td colspan="2" style="font-size:12px;font-weight:bold;text-align:left;">ARC Volunteer</td>
+                        	<td colspan="2" style="font-size:12px;text-align:left;">{!sftdata.arcVolunteer}</td>
+                    	</tr>
+                        <tr>
+                        	<td colspan="2" style="font-size:12px;font-weight:bold;text-align:left;">Shift Total</td>
+                            <td style="font-size:12px;text-align:left;">{!sftdata.totalProcProj}</td>
+                            <td style="font-size:12px;text-align:left;">{!sftdata.totalProdProj}</td>
+                            <td colspan="2" style="font-size:12px;font-weight:bold;text-align:left;">Sponsor Volunteer</td>
+                        	<td colspan="2" style="font-size:12px;text-align:left;">{!sftdata.sponsorVolunteer}</td>
+                    	</tr>
+                        <tr style= "display: {!If(data.shiftData[data.shiftData.size - 1] != sftdata ,'','none') }">
+                        	<td colspan="8" style="font-size:12px;text-align:left;">&nbsp;</td>
+                    	</tr>
+                    </apex:repeat>
+                    <tr>
+                        <td colspan="8" style="font-size:16px;color:#ffffff;font-weight:bold;text-align:left;background-color:#000000;">Projections and Appointments</td>
+                    </tr>
+                    <tr>
+                        <td colspan="8" style="font-size:14px;font-weight:bold;text-align:center;background-color:#d0d0d0;">Projections</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" style="font-size:12px;font-weight:bold;text-align:left;">Anticipated Registered Donors</td>
+                        <td colspan="2" style="font-size:12px;text-align:left;">{!data.anticipatedRegDonors}</td>
+                        <td colspan="2" style="font-size:12px;font-weight:bold;text-align:left;">Template Anticipated Registered Donors</td>
+                        <td colspan="2" style="font-size:12px;text-align:left;">{!data.tempAnticipatedRegDonors}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" style="font-size:12px;font-weight:bold;text-align:left;">WB Procedure Projection</td>
+                        <td colspan="2" style="font-size:12px;text-align:left;">{!data.wbProcedureProjection}</td>
+                        <td colspan="2" style="font-size:12px;font-weight:bold;text-align:left;">Template WB Procedure Projection</td>
+                        <td colspan="2" style="font-size:12px;text-align:left;">{!data.tempWBProcedureProjection}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" style="font-size:12px;font-weight:bold;text-align:left;">2RBC Procedure Projection</td>
+                        <td colspan="2" style="font-size:12px;text-align:left;">{!data.twoRBCProcedureProjection}</td>
+                        <td colspan="2" style="font-size:12px;font-weight:bold;text-align:left;">Template 2RBC Procedure Projection</td>
+                        <td colspan="2" style="font-size:12px;text-align:left;">{!data.temp2RBCProcedureProjection}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" style="font-size:12px;font-weight:bold;text-align:left;">Total Product Projection</td>
+                        <td colspan="2" style="font-size:12px;text-align:left;">{!data.totalProductProjection}</td>
+                        <td colspan="2" style="font-size:12px;font-weight:bold;text-align:left;">Template Product Projection</td>
+                        <td colspan="2" style="font-size:12px;text-align:left;">{!data.tempProductProjection}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" rowspan="2" style="font-size:12px;font-weight:bold;text-align:left;">Presenting Donor Capacity</td>
+                        <td colspan="2" rowspan="2" style="font-size:12px;text-align:left;">{!data.presentingDonorCapacity}</td>
+                        <td colspan="2" style="font-size:12px;font-weight:bold;text-align:left;">(Template) CDA O+</td>
+                        <td colspan="2" style="font-size:12px;text-align:left;">{!data.tempCDAOplus}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" style="font-size:12px;font-weight:bold;text-align:left;">(Template) CDA O-</td>
+                        <td colspan="2" style="font-size:12px;text-align:left;">{!data.tempCDAOminus}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="8" style="font-size:14px;font-weight:bold;text-align:center;background-color:#d0d0d0;">Appointments and Eligibility</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" style="font-size:12px;font-weight:bold;text-align:left;">Current Drive WB Eligibility</td>
+                        <td colspan="2" style="font-size:12px;text-align:left;">{!data.driveWBEligibility}</td>
+                        <td colspan="2" style="font-size:12px;font-weight:bold;text-align:left;"># of Scheduled Appointments</td>
+                        <td colspan="2" style="font-size:12px;text-align:left;">{!data.scheduledAppointments}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" style="font-size:12px;font-weight:bold;text-align:left;">Current Drive PR Eligibility</td>
+                        <td colspan="2" style="font-size:12px;text-align:left;">{!data.drivePREligibility}</td>
+                        <td colspan="2" style="font-size:12px;font-weight:bold;text-align:left;">Web Scheduling Start Date</td>
+                        <td colspan="2" style="font-size:12px;text-align:left;">{!data.webSchedulingStartDate}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" style="font-size:12px;font-weight:bold;text-align:left;">Total Slots</td>
+                        <td colspan="2" style="font-size:12px;text-align:left;">{!data.totalSlots}</td>
+                        <td colspan="2" style="font-size:12px;font-weight:bold;text-align:left;">Web Scheduling End Date</td>
+                        <td colspan="2" style="font-size:12px;text-align:left;">{!data.webSchedulingEndDate}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="8" style="font-size:16px;color:#ffffff;font-weight:bold;text-align:left;background-color:#000000;">Contacts</td>
+                    </tr>
+                    <tr>
+                        <td colspan="4" style="font-size:14px;font-weight:bold;text-align:center;background-color:#d0d0d0;">Account Contacts</td>
+                        <td colspan="4" style="font-size:14px;font-weight:bold;text-align:center;background-color:#d0d0d0;">Drive Contacts</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" style="font-size:12px;font-weight:bold;text-align:left;background-color:#e5e5e5;">Name</td>
+                        <td colspan="2" style="font-size:12px;font-weight:bold;text-align:left;background-color:#e5e5e5;">Role</td>
+                        <td colspan="2" style="font-size:12px;font-weight:bold;text-align:left;background-color:#e5e5e5;">Name</td>
+                        <td colspan="2" style="font-size:12px;font-weight:bold;text-align:left;background-color:#e5e5e5;">Role</td>
+                    </tr>
+                    <apex:repeat value="{!data.contactsData}" var="condata" >
+                        <tr>
+                        	<td colspan="2" style="font-size:12px;text-align:left;">{!condata.accountContactName}</td>
+                        	<td colspan="2" style="font-size:12px;text-align:left;">{!condata.accountContactRole}</td>
+                        	<td colspan="2" style="font-size:12px;text-align:left;">{!condata.driveContactName}</td>
+                        	<td colspan="2" style="font-size:12px;text-align:left;">{!condata.driveContactRole}</td>
+                    	</tr>
+                    </apex:repeat>
+                    <tr>
+                        <td colspan="8" style="font-size:12px;text-align:left;">&nbsp;</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" style="font-size:12px;font-weight:bold;text-align:left;">After Hours Contact</td>
+                        <td colspan="2" style="font-size:12px;text-align:left;">{!data.afterHoursContact}</td>
+                        <td colspan="2" style="font-size:12px;font-weight:bold;text-align:left;">After Hours Contact Phone</td>
+                        <td colspan="2" style="font-size:12px;text-align:left;">{!data.afterHoursContactPh}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" style="font-size:12px;font-weight:bold;text-align:left;">Whom to Meet (day of drive)</td>
+                        <td colspan="2" style="font-size:12px;text-align:left;">{!data.whomToMeet}</td>
+                        <td colspan="2" style="font-size:12px;font-weight:bold;text-align:left;">Military Authority Name</td>
+                        <td colspan="2" style="font-size:12px;text-align:left;"><apex:outputText value="{!data.militaryAuthorityName}" escape="false" /></td>
+                    </tr>
+                    <tr>
+                        <td colspan="8" style="font-size:16px;color:#ffffff;font-weight:bold;text-align:left;background-color:#000000;">Site Information and Site Set Up</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" style="font-size:12px;font-weight:bold;text-align:left;">Collection Operation</td>
+                        <td colspan="2" style="font-size:12px;text-align:left;">{!data.collectionOperation}</td>
+                        <td colspan="2" style="font-size:12px;font-weight:bold;text-align:left;">Location Name</td>
+                        <td colspan="2" style="font-size:12px;text-align:left;">{!data.locationName}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" style="font-size:12px;font-weight:bold;text-align:left;">Site Wireless Policy</td>
+                        <td colspan="2" style="font-size:12px;text-align:left;">{!data.siteWirelessPolicy}</td>
+                        <td colspan="2" style="font-size:12px;font-weight:bold;text-align:left;">Floor Description</td>
+                        <td colspan="2" style="font-size:12px;text-align:left;">{!data.floorDescription}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" style="font-size:12px;font-weight:bold;text-align:left;">Automation Suitability</td>
+                        <td colspan="2" style="font-size:12px;text-align:left;">{!data.automationSuitability}</td>
+                        <td colspan="2" style="font-size:12px;font-weight:bold;text-align:left;">Room Name</td>
+                        <td colspan="2" style="font-size:12px;text-align:left;">{!data.roomName}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" style="font-size:12px;font-weight:bold;text-align:left;">Site Contact</td>
+                        <td colspan="2" style="font-size:12px;text-align:left;"><apex:outputText value="{!data.siteContact}" escape="false" /></td>
+                        <td colspan="2" style="font-size:12px;font-weight:bold;text-align:left;">Site Address</td>
+                        <td colspan="2" style="font-size:12px;text-align:left;"><apex:outputText value="{!data.siteAddress}" escape="false" /></td>
+                    </tr>
+                    <tr>
+                        <td colspan="8" style="font-size:14px;font-weight:bold;text-align:center;background-color:#d0d0d0;">Directions &amp; Security</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" style="font-size:12px;font-weight:bold;text-align:left;">Driving Direction from Collection Operation</td>
+                        <td colspan="6" style="font-size:12px;text-align:left;">{!data.drivingDirectionFromCO}<apex:outputText value="{!data.drivingDirectionFromCO}" escape="false" /></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" style="font-size:12px;font-weight:bold;text-align:left;">ARC Vehicle Parking Directions</td>
+                        <td colspan="6" style="font-size:12px;text-align:left;"><apex:outputText value="{!data.arcVehicleParkingDirections}" escape="false" /></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" style="font-size:12px;font-weight:bold;text-align:left;">Staff Personal Parking Directions</td>
+                        <td colspan="6" style="font-size:12px;text-align:left;"><apex:outputText value="{!data.staffParkingDirections}" escape="false" /></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" style="font-size:12px;font-weight:bold;text-align:left;">Pay for Parking Details</td>
+                        <td colspan="6" style="font-size:12px;text-align:left;"><apex:outputText value="{!data.payForParkingDetails}" escape="false" /></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" style="font-size:12px;font-weight:bold;text-align:left;">Unloading Conditions</td>
+                        <td colspan="6" style="font-size:12px;text-align:left;"><apex:outputText value="{!data.unloadingConditions}" escape="false" /></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" style="font-size:12px;font-weight:bold;text-align:left;">Unloading Direction Details</td>
+                        <td colspan="6" style="font-size:12px;text-align:left;"><apex:outputText value="{!data.unloadingDirectionDetails}" escape="false" /></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" style="font-size:12px;font-weight:bold;text-align:left;">Additional Drive Logistics</td>
+                        <td colspan="6" style="font-size:12px;text-align:left;"><apex:outputText value="{!data.additionalDriveLogistics}" escape="false" /></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" style="font-size:12px;font-weight:bold;text-align:left;">Security Directions</td>
+                        <td colspan="6" style="font-size:12px;text-align:left;"><apex:outputText value="{!data.securityDirections}" escape="false" /></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" style="font-size:12px;font-weight:bold;text-align:left;">Security Escort Name</td>
+                        <td colspan="2" style="font-size:12px;text-align:left;">{!data.securityEscortName}</td>
+                        <td colspan="2" style="font-size:12px;font-weight:bold;text-align:left;">Security Information Needed</td>
+                        <td colspan="2" style="font-size:12px;text-align:left;">{!data.securityInformationNeeded}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" style="font-size:12px;font-weight:bold;text-align:left;">Escort Required</td>
+                        <td colspan="2" style="font-size:12px;text-align:left;">{!data.escortRequired}</td>
+                        <td colspan="2" style="font-size:12px;font-weight:bold;text-align:left;">Setup Time</td>
+                        <td colspan="2" style="font-size:12px;text-align:left;">{!data.setupTime}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" style="font-size:12px;font-weight:bold;text-align:left;">Equipment X Ray Required</td>
+                        <td colspan="2" style="font-size:12px;text-align:left;">{!data.equipmentXRayRequired}</td>
+                        <td colspan="2" style="font-size:12px;font-weight:bold;text-align:left;">Pre-Drive Security Due Date</td>
+                        <td colspan="2" style="font-size:12px;text-align:left;">{!data.preDriveSecurityDueDate}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" style="font-size:12px;font-weight:bold;text-align:left;">No Cell Phones</td>
+                        <td colspan="2" style="font-size:12px;text-align:left;">{!data.noCellPhones}</td>
+                        <td colspan="2" style="font-size:12px;font-weight:bold;text-align:left;">Staff List</td>
+                        <td colspan="2" style="font-size:12px;text-align:left;">{!data.staffList}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" style="font-size:12px;font-weight:bold;text-align:left;">Sponsor Security Form Required (Chosen Value)</td>
+                        <td colspan="2" style="font-size:12px;text-align:left;">{!data.sponsorSecurityFormRequired}</td>
+                        <td colspan="2" style="font-size:12px;font-weight:bold;text-align:left;">Emergency Action Plan</td>
+                        <td colspan="2" style="font-size:12px;text-align:left;">{!data.emergencyActionPlan}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="8" style="font-size:14px;font-weight:bold;text-align:center;background-color:#d0d0d0;">Additional Site Details</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" style="font-size:12px;font-weight:bold;text-align:left;">Site Inspection Completed By</td>
+                        <td colspan="2" style="font-size:12px;text-align:left;">{!data.siteInspectionCompletedBy}</td>
+                        <td colspan="2" style="font-size:12px;font-weight:bold;text-align:left;">Emergency Contact</td>
+                        <td colspan="2" style="font-size:12px;text-align:left;">{!data.emergencyContact}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" style="font-size:12px;font-weight:bold;text-align:left;">Site Inspection Completed</td>
+                        <td colspan="2" style="font-size:12px;text-align:left;">{!data.siteInspectionCompleted}</td>
+                        <td colspan="2" style="font-size:12px;font-weight:bold;text-align:left;">Site Main Phone</td>
+                        <td colspan="2" style="font-size:12px;text-align:left;">{!data.siteMainPhone}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" rowspan="2" style="font-size:12px;font-weight:bold;text-align:left;">Site Inspection Comments</td>
+                        <td colspan="2" rowspan="2" style="font-size:12px;text-align:left;">{!data.siteInspectionComments}</td>
+                        <td colspan="2" style="font-size:12px;font-weight:bold;text-align:left;">Elevator Type</td>
+                        <td colspan="2" style="font-size:12px;text-align:left;">{!data.elevatorType}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" style="font-size:12px;font-weight:bold;text-align:left;">Elevator Open</td>
+                        <td colspan="2" style="font-size:12px;text-align:left;">{!data.elevatorOpen}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" style="font-size:12px;font-weight:bold;text-align:left;">Room Size</td>
+                        <td colspan="2" style="font-size:12px;text-align:left;">{!data.roomSize}</td>
+                        <td colspan="2" style="font-size:12px;font-weight:bold;text-align:left;">Elevator Closed</td>
+                        <td colspan="2" style="font-size:12px;text-align:left;">{!data.elevatorClosed}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" style="font-size:12px;font-weight:bold;text-align:left;">Maximum Beds</td>
+                        <td colspan="2" style="font-size:12px;text-align:left;">{!data.maximumBeds}</td>
+                        <td colspan="2" style="font-size:12px;font-weight:bold;text-align:left;">Site Open</td>
+                        <td colspan="2" style="font-size:12px;text-align:left;">{!data.siteOpen}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" style="font-size:12px;font-weight:bold;text-align:left;">Max Auto Machines</td>
+                        <td colspan="2" style="font-size:12px;text-align:left;">{!data.maxAutoMachines}</td>
+                        <td colspan="2" style="font-size:12px;font-weight:bold;text-align:left;">Site Closed</td>
+                        <td colspan="2" style="font-size:12px;text-align:left;">{!data.siteClosed}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" style="font-size:12px;font-weight:bold;text-align:left;">Outside Stairs</td>
+                        <td colspan="2" style="font-size:12px;text-align:left;">{!data.outsideStairs}</td>
+                        <td colspan="2" style="font-size:12px;font-weight:bold;text-align:left;">Air Conditioned?</td>
+                        <td colspan="2" style="font-size:12px;text-align:left;">{!data.airConditioned}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" style="font-size:12px;font-weight:bold;text-align:left;">Inside Stairs</td>
+                        <td colspan="2" style="font-size:12px;text-align:left;">{!data.insideStairs}</td>
+                        <td colspan="2" style="font-size:12px;font-weight:bold;text-align:left;">Heat?</td>
+                        <td colspan="2" style="font-size:12px;text-align:left;">{!data.heat}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" style="font-size:12px;font-weight:bold;text-align:left;">110 Outlets</td>
+                        <td colspan="2" style="font-size:12px;text-align:left;">{!data.oneOneZeroOutlets}</td>
+                        <td colspan="2" style="font-size:12px;font-weight:bold;text-align:left;">Break location</td>
+                        <td colspan="2" style="font-size:12px;text-align:left;">{!data.breaklocation}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" style="font-size:12px;font-weight:bold;text-align:left;">Floor Covering Requirment</td>
+                        <td colspan="2" style="font-size:12px;text-align:left;">{!data.floorCoveringRequirment}</td>
+                        <td colspan="2" style="font-size:12px;font-weight:bold;text-align:left;">Restroom location</td>
+                        <td colspan="2" style="font-size:12px;text-align:left;">{!data.restroomlocation}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" style="font-size:12px;font-weight:bold;text-align:left;">On-Site Food Requirements</td>
+                        <td colspan="2" style="font-size:12px;text-align:left;">{!data.onSiteFoodRequirements}</td>
+                        <td colspan="2" style="font-size:12px;font-weight:bold;text-align:left;">Canteen/Kitting Requirements</td>
+                        <td colspan="2" style="font-size:12px;text-align:left;">{!data.canteenKittingRequirements}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="8" style="font-size:16px;color:#ffffff;font-weight:bold;text-align:left;background-color:#000000;">Certification</td>
+                    </tr>
+                    <tr style= "display: {!If(OR(data.certificationData == null, data.certificationData.size == 0) ,'','none') }">
+                        <td colspan="8" style="font-size:12px;text-align:left;">No Certification Available.</td>
+                    </tr>
+                    <tr style= "display: {!If(AND(data.certificationData != null, data.certificationData.size > 0 ),'','none') }">
+                        <td colspan="2" style="font-size:14px;font-weight:bold;text-align:left;background-color:#d0d0d0;">Tag Type</td>
+                        <td colspan="4" style="font-size:14px;font-weight:bold;text-align:left;background-color:#d0d0d0;">Tag Name</td>
+                        <td colspan="2" style="font-size:14px;font-weight:bold;text-align:left;background-color:#d0d0d0;">Minimum Quantity</td>
+                    </tr>
+                    <apex:repeat value="{!data.certificationData}" var="certdata">
+                        <tr>
+                            <td colspan="2" style="font-size:12px;text-align:left;">{!certdata.tagType}</td>
+                            <td colspan="4" style="font-size:12px;text-align:left;">{!certdata.tagName}</td>
+                            <td colspan="2" style="font-size:12px;text-align:left;">{!certdata.minimumQuantity}</td>
+                        </tr>
+                    </apex:repeat>
+                    <tr>
+                        <td colspan="8" style="font-size:16px;color:#ffffff;font-weight:bold;text-align:left;background-color:#000000;">Recruitment Plan</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" style="font-size:12px;font-weight:bold;text-align:left;">Call List Recipient?</td>
+                        <td colspan="2" style="font-size:12px;text-align:left;">{!data.callListRecipient}</td>
+                        <td colspan="2" style="font-size:12px;font-weight:bold;text-align:left;">Publish to Call Center</td>
+                        <td colspan="2" style="font-size:12px;text-align:left;">{!data.publishToCallCenter}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" style="font-size:12px;font-weight:bold;text-align:left;">Drive Keyword</td>
+                        <td colspan="2" style="font-size:12px;text-align:left;">{!data.driveKeyword}</td>
+                        <td colspan="2" style="font-size:12px;font-weight:bold;text-align:left;">Send Email</td>
+                        <td colspan="2" style="font-size:12px;text-align:left;">{!data.sendEmail}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" style="font-size:12px;font-weight:bold;text-align:left;">Direct Donors To</td>
+                        <td colspan="2" style="font-size:12px;text-align:left;">{!data.directDonorsTo}</td>
+                        <td colspan="2" style="font-size:12px;font-weight:bold;text-align:left;">Send Mailers</td>
+                        <td colspan="2" style="font-size:12px;text-align:left;">{!data.sendMailers}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" style="font-size:12px;font-weight:bold;text-align:left;">Online Donor Message</td>
+                        <td colspan="2" style="font-size:12px;text-align:left;"><apex:outputText value="{!data.onlineDonorMessage}" escape="false" /></td>
+                        <td colspan="2" style="font-size:12px;font-weight:bold;text-align:left;">Online Scheduling Enabled</td>
+                        <td colspan="2" style="font-size:12px;text-align:left;">{!data.onlineSchedulingEnabled}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="8" style="font-size:14px;font-weight:bold;text-align:center;background-color:#d0d0d0;">Affiliations</td>
+                    </tr>
+                    <tr style= "display: {!If(OR(data.affiliationData == null, data.affiliationData.size == 0) ,'','none') }">
+                        <td colspan="8" style="font-size:12px;text-align:left;">No Affiliations Available.</td>
+                    </tr>
+                    <tr style= "display: {!If(AND(data.affiliationData != null, data.affiliationData.size > 0 ),'','none') }">
+                        <td colspan="4" style="font-size:12px;font-weight:bold;text-align:left;background-color:#e5e5e5;">Account Affiliation(s) Name</td>
+                        <td colspan="4" style="font-size:12px;font-weight:bold;text-align:left;background-color:#e5e5e5;">Drive Affiliation(s) Name</td>
+                    </tr>
+                    <apex:repeat value="{!data.affiliationData}" var="affdata">
+                        <tr>
+                            <td colspan="4" style="font-size:12px;text-align:left;">{!affdata.accountAffiliationName}</td>
+                            <td colspan="4" style="font-size:12px;text-align:left;">{!affdata.driveAffiliationName}</td>
+                        </tr>
+                    </apex:repeat>
+                    <tr>
+                        <td colspan="8" style="font-size:16px;color:#ffffff;font-weight:bold;text-align:left;background-color:#000000;">Orders</td>
+                    </tr>
+                    <tr style= "display: {!If(OR(data.orderData == null, data.orderData.size == 0) ,'','none') }">
+                        <td colspan="8" style="font-size:12px;text-align:left;">No Orders Available.</td>
+                    </tr>
+                    <apex:repeat value="{!data.orderData}" var="ordData">
+                        <tr>
+                            <td colspan="2" style="font-size:12px;font-weight:bold;text-align:left;">Order Number</td>
+                            <td colspan="6" style="font-size:12px;text-align:left;">{!ordData.orderNumber}</td>
+                        </tr>
+                        <tr>
+                            <td colspan="2" style="font-size:12px;font-weight:bold;text-align:left;">Local Recruitment Request</td>
+                            <td colspan="2" style="font-size:12px;text-align:left;">{!ordData.localRecruitmentRequest}</td>
+                            <td colspan="2" style="font-size:12px;font-weight:bold;text-align:left;">Local Recruitment Request Need by Date</td>
+                            <td colspan="2" style="font-size:12px;text-align:left;">{!ordData.localRecruitmentReqNeedDate}</td>
+                        </tr>
+                        <tr>
+                            <td colspan="2" style="font-size:12px;font-weight:bold;text-align:left;">Publicity Order Budget</td>
+                            <td colspan="2" style="font-size:12px;text-align:left;">{!ordData.publicityOrderBudget}</td>
+                            <td colspan="2" style="font-size:12px;font-weight:bold;text-align:left;">Publicity Order Amount</td>
+                            <td colspan="2" style="font-size:12px;text-align:left;">{!ordData.publicityOrderAmount}</td>
+                        </tr>
+                        <tr>
+                            <td colspan="2" style="font-size:12px;font-weight:bold;text-align:left;">Publicity Comments</td>
+                            <td colspan="6" style="font-size:12px;text-align:left;">{!ordData.publicityComments}</td>
+                        </tr>
+                        <tr style= "display: {!If(AND(ordData.publicityProductData != null, ordData.publicityProductData.size > 0 ),'','none') }">
+                            <td colspan="2" style="font-size:12px;font-weight:bold;text-align:center;background-color:#d0d0d0;">Publicity Products</td>
+                            <td colspan="3" style="font-size:12px;font-weight:bold;text-align:center;background-color:#d0d0d0;">Publicity Quantity</td>
+                            <td colspan="3" style="font-size:12px;font-weight:bold;text-align:center;background-color:#d0d0d0;">Product Cost</td>
+                        </tr>
+                        <apex:repeat value="{!ordData.publicityProductData}" var="ppData">
+                            <tr>
+                                <td colspan="2" style="font-size:12px;text-align:left;">{!ppData.publicityProduct}</td>
+                                <td colspan="3" style="font-size:12px;text-align:left;">{!ppData.publicityQuantity}</td>
+                                <td colspan="3" style="font-size:12px;text-align:left;">{!ppData.productCost}</td>
+                            </tr>
+                        </apex:repeat>
+                        <tr style= "display: {!If(data.orderData[data.orderData.size - 1] != ordData ,'','none') }">
+                        	<td colspan="8" style="font-size:12px;text-align:left;">&nbsp;</td>
+                    	</tr>
+                    </apex:repeat>
+                    <tr>
+                        <td colspan="8" style="font-size:16px;color:#ffffff;font-weight:bold;text-align:left;background-color:#000000;">Future Drives</td>
+                    </tr>
+                    <tr>
+                        <td style="font-size:14px;font-weight:bold;text-align:left;background-color:#d0d0d0;">Drive Date</td>
+                        <td colspan="2" style="font-size:14px;font-weight:bold;text-align:left;background-color:#d0d0d0;">Site Name</td>
+                        <td style="font-size:14px;font-weight:bold;text-align:left;background-color:#d0d0d0;">Start Time</td>
+                        <td style="font-size:14px;font-weight:bold;text-align:left;background-color:#d0d0d0;">End Time</td>
+                        <td style="font-size:14px;font-weight:bold;text-align:left;background-color:#d0d0d0;">Drive Status</td>
+                        <td style="font-size:14px;font-weight:bold;text-align:left;background-color:#d0d0d0;">Stage</td>
+                        <td style="font-size:14px;font-weight:bold;text-align:left;background-color:#d0d0d0;">Primary Contact Name</td>
+                    </tr>
+                    <tr style= "display: {!If(OR(data.futureDrives == null, data.futureDrives.size == 0) ,'','none') }">
+                        <td colspan="8" style="font-size:12px;text-align:left;">No Future Drives Available.</td>
+                    </tr>
+                    <apex:repeat value="{!data.futureDrives}" var="fdrive">
+                        <tr>
+                            <td style="font-size:12px;text-align:left;">{!fdrive.driveDate}</td>
+                            <td colspan="2" style="font-size:12px;text-align:left;">{!fdrive.siteName}</td>
+                            <td style="font-size:12px;text-align:left;">{!fdrive.startTime}</td>
+                            <td style="font-size:12px;text-align:left;">{!fdrive.endTime}</td>
+                            <td style="font-size:12px;text-align:left;">{!fdrive.driveStatus}</td>
+                            <td style="font-size:12px;text-align:left;">{!fdrive.driveStage}</td>
+                            <td style="font-size:12px;text-align:left;">{!fdrive.primaryContactName}</td>
+                        </tr>
+                    </apex:repeat>
+                </table>
+                <div style= "display: {!If(wrapper[wrapper.size - 1] != data ,'','none') }">
+                    <div style= "display: {!If(CONTAINS(renderAs, 'html'),'','none') }">
+                        <p style="margin-bottom:2in;">&nbsp;</p>
+                    </div>
+                    <div style= "display: {!If(CONTAINS(renderAs, 'pdf'),'','none') }">
+                        <div style="page-break-after: always;">&nbsp; </div>
+                    </div>
+                </div>
+            </apex:repeat>
+        </body>
+    </html>
+</apex:page>

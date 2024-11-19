@@ -11,56 +11,93 @@
                 <template if:true={showSpinner}>
                     <lightning-spinner class="spins" size="medium"></lightning-spinner>
                 </template>
+                    <c-slwc-page-errors validities={errorMessages}></c-slwc-page-errors>
 
                     <div 
                         for:each={transformedAdditionalFields} for:item="fieldSetting"
                         key={fieldSetting.field}
                         class="slds-m-bottom_x-small">
-                        <c-slwc-picklist
-                            if:true={fieldSetting.showPicklist}
-                            name={fieldSetting.field}
-                            label={fieldSetting.label}
-                            required={fieldSetting.required}
-                            dirty={dirty}
-                            object-api-name={fieldSetting.objectApiName}
-                            selected-value={fieldSetting.defaultValue}
-                            pick-listfield-api-name={fieldSetting.picklistFieldApiName}
-                            onpicklistchange={handleOnChange}>
-                        </c-slwc-picklist>
+                        <template if:true={fieldSetting.show}>
+                            <c-slwc-picklist
+                                if:true={fieldSetting.showPicklist}
+                                name={fieldSetting.field}
+                                data-name={fieldSetting.field}
+                                label={fieldSetting.label}
+                                required={fieldSetting.required}
+                                disabled={fieldSetting.readonly}
+                                dirty={dirty}
+                                object-api-name={fieldSetting.objectApiName}
+                                selected-value={fieldSetting.defaultValue}
+                                pick-listfield-api-name={fieldSetting.picklistFieldApiName}
+                                onpicklistchange={handleOnChange}>
+                            </c-slwc-picklist>
 
-                        <lightning-input 
-                            if:true={fieldSetting.showText}
-                            type={fieldSetting.type}
-                            name={fieldSetting.field}
-                            label={fieldSetting.label}
-                            readonly={fieldSetting.readonly}
-                            required={fieldSetting.required}
-                            max-length={fieldSetting.maxLength}
-                            value={fieldSetting.defaultValue}
-                            onchange={handleOnChange}
-                        ></lightning-input>
+                            <c-slwc-multi-picklist 
+                                if:true={fieldSetting.showMultiPicklist}
+                                name={fieldSetting.field} 
+                                data-name={fieldSetting.field}
+                                label={fieldSetting.label}
+                                required={fieldSetting.required}
+                                disabled={fieldSetting.readonly} 
+                                object-api-name={fieldSetting.objectApiName}
+                                field-api-name={fieldSetting.multiPicklistFieldApiName}
+                                dependent-field-api-name={fieldSetting.dependentFieldApiName}
+                                controlling-field-values={fieldSetting.controllingFieldValues}
+                                default-values={fieldSetting.defaultValue}
+                                onpicklistchange={handleOnChange}>
+                            </c-slwc-multi-picklist>
 
-                        <lightning-input 
-                            if:true={fieldSetting.showDate}
-                            type="date"
-                            name={fieldSetting.field}
-                            label={fieldSetting.label}
-                            required={fieldSetting.required}
-                            value={fieldSetting.defaultValue}
-                            onchange={handleOnChange}
-                        ></lightning-input>
+                            <lightning-input 
+                                if:true={fieldSetting.showText}
+                                type={fieldSetting.type}
+                                name={fieldSetting.field}
+                                data-name={fieldSetting.field}
+                                label={fieldSetting.label}
+                                readonly={fieldSetting.readonly}
+                                required={fieldSetting.required}
+                                max-length={fieldSetting.maxLength}
+                                value={fieldSetting.defaultValue}
+                                onchange={handleOnChange}
+                            ></lightning-input>
 
-                        <c-slwc-lookup
-                            if:true={fieldSetting.showLookup}
-                            icon-name={fieldSetting.iconName}
-                            object-name={fieldSetting.objectName}
-                            name={fieldSetting.field}
-                            label={fieldSetting.label}
-                            is-required={fieldSetting.required}
-                            placeholder={fieldSetting.placeholder}
-                            selection={fieldSetting.defaultValue}
-                            onselectionchange={handleOnChange}>
-                        </c-slwc-lookup>
+                            <lightning-input 
+                                if:true={fieldSetting.showNumber}
+                                type="number"
+                                name={fieldSetting.field}
+                                data-name={fieldSetting.field}
+                                label={fieldSetting.label}
+                                readonly={fieldSetting.readonly}
+                                required={fieldSetting.required}
+                                min={fieldSetting.min}
+                                step={fieldSetting.step}
+                                value={fieldSetting.defaultValue}
+                                onchange={handleOnChange}
+                            ></lightning-input>
+
+                            <lightning-input 
+                                if:true={fieldSetting.showDate}
+                                type="date"
+                                name={fieldSetting.field}
+                                data-name={fieldSetting.field}
+                                label={fieldSetting.label}
+                                required={fieldSetting.required}
+                                value={fieldSetting.defaultValue}
+                                onchange={handleOnChange}
+                            ></lightning-input>
+
+                            <c-slwc-lookup
+                                if:true={fieldSetting.showLookup}
+                                icon-name={fieldSetting.iconName}
+                                object-name={fieldSetting.objectName}
+                                name={fieldSetting.field}
+                                data-name={fieldSetting.field}
+                                label={fieldSetting.label}
+                                is-required={fieldSetting.required}
+                                placeholder={fieldSetting.placeholder}
+                                selection={fieldSetting.defaultValue}
+                                onselectionchange={handleOnChange}>
+                            </c-slwc-lookup>
+                        </template>
                     </div>
 
                 <div class="slds-form" if:false={hideComments}>

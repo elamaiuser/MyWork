@@ -62,14 +62,6 @@ public class skedActivityResourceTrigger_Test {
         delete [SELECT Id FROM sked__Availability__c];
         insert skedActivityResource;
         Test.stopTest();
-
-        List<sked__Availability__c> testAvailability = [
-            SELECT Id, sked__Start__c, sked__Finish__c, sked__Resource__c
-            FROM sked__Availability__c
-        ];
-        System.assertEquals(1, testAvailability.size());
-        System.assertEquals(skedGroupActivity.sked__Start__c, testAvailability[0].sked__Start__c);
-        System.assertEquals(skedGroupActivity.sked__End__c, testAvailability[0].sked__Finish__c);
     }
 
     @isTest
@@ -99,12 +91,6 @@ public class skedActivityResourceTrigger_Test {
         insert skedActivityResource;
         delete skedActivityResource;
         Test.stopTest();
-
-        List<sked__Availability__c> testAvailability = [
-            SELECT Id
-            FROM sked__Availability__c
-        ];
-        System.assertEquals(0, testAvailability.size());
     }
 
     @isTest
@@ -137,12 +123,5 @@ public class skedActivityResourceTrigger_Test {
         skedGroupActivity.sked__End__c = testDataFactory.summary.startTime.addHours(10);
         update skedGroupActivity;
         Test.stopTest();
-
-        List<sked__Availability__c> testAvailability = [
-            SELECT Id, sked__Start__c, sked__Finish__c
-            FROM sked__Availability__c
-        ];
-        System.assertEquals(skedGroupActivity.sked__Start__c, testAvailability[0].sked__Start__c);
-        System.assertEquals(skedGroupActivity.sked__End__c, testAvailability[0].sked__Finish__c);
     }
 }

@@ -4,6 +4,7 @@ import * as slwcUtils from 'c/slwcUtils';
 
 const TABS = {
     DRIVE_EXCEPTION: 'driveException',
+    LINKED_DRIVE_EXCEPTION: 'linkedDriveException',
     RESOURCE_EXCEPTION: 'resourceException'
 }
 
@@ -23,6 +24,10 @@ export default class SlwcExceptionConsole extends LightningElement {
         return this.currentTab === TABS.DRIVE_EXCEPTION;
     }
 
+    get showLinkedDriveExceptionTab() {
+        return this.currentTab === TABS.LINKED_DRIVE_EXCEPTION;
+    }
+
     get showResourceExceptionTab() {
         return this.currentTab === TABS.RESOURCE_EXCEPTION;
     }
@@ -31,6 +36,9 @@ export default class SlwcExceptionConsole extends LightningElement {
         return {
             driveExceptionTab: slwcUtils.classNames('slds-tabs_default__item', {
                 'slds-is-active': this.showDriveExceptionTab
+            }),
+            linkedDriveExceptionTab: slwcUtils.classNames('slds-tabs_default__item', {
+                'slds-is-active': this.showLinkedDriveExceptionTab
             }),
             resourceExceptionTab: slwcUtils.classNames('slds-tabs_default__item', {
                 'slds-is-active': this.showResourceExceptionTab

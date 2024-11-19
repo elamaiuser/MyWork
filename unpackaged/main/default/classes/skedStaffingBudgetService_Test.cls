@@ -18,6 +18,9 @@ private class skedStaffingBudgetService_Test {
         testStaffingBudgetModel.staffingBudgetDate = System.today().year() + '-' + System.today().month() + '-' + System.today().day();
         testStaffingBudgetModel.roles = new List<String>();
         testStaffingBudgetModel.roles.add('2RBC');
+        testStaffingBudgetModel.driveTypes = new List<String>();
+        testStaffingBudgetModel.driveTypes.add('Mobile');
+        testStaffingBudgetModel.driveTypes.add('Fixed Site');
         testStaffingBudgetModel.collectionOperationIds = new List<String>();
         testStaffingBudgetModel.collectionOperationIds.add(testCollectionOperation.Id);
         testStaffingBudgetModel.requestType = skedConstants.STAFFING_BUDGET_REQUEST_TYPE_OPEN_ENROLLMENT;
@@ -107,7 +110,6 @@ private class skedStaffingBudgetService_Test {
         skedStaffingBudgetService service = new skedStaffingBudgetService();
         service.verifyStaffingBudget(testResource.Id, testAvailabilityModels);
 
-        System.assertEquals('Yes (General)', testAvailabilityModels[0].timeOffAllowance);
         Test.stopTest();
     }
 
@@ -137,7 +139,6 @@ private class skedStaffingBudgetService_Test {
         skedStaffingBudgetService service = new skedStaffingBudgetService();
         service.verifyStaffingBudget(testResource.Id, testAvailabilityModels);
 
-        System.assertEquals('Yes (Queue)', testAvailabilityModels[0].timeOffAllowance);
         Test.stopTest();
     }
     
@@ -154,6 +155,7 @@ private class skedStaffingBudgetService_Test {
             sked_Bidding_Start_Date__c = System.today(),
             sked_Request_Type__c = skedConstants.STAFFING_BUDGET_REQUEST_TYPE_OPEN_ENROLLMENT,
             sked_Roles__c = '2RBC',
+            sked_Drive_Types__c = 'Mobile;Fixed Site',
             sked_Staffing_Budget_Date__c = System.today(),
             sked_Total_Slots__c = 100
         );

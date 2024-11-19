@@ -1,0 +1,15 @@
+<apex:page sidebar="false" showHeader="false" lightningStylesheets="true">
+    <apex:includeLightning />
+    <div id="LwcId" />
+    <script>
+        $Lightning.use("c:BSFStagingSheetAura", function() {
+        $Lightning.createComponent(
+        "c:bsfStagingSheetLwc",
+        {},
+        "LwcId",
+        function(cmp) {
+          console.log('Calling the LWC Component');
+        });
+        });
+  </script>
+</apex:page>

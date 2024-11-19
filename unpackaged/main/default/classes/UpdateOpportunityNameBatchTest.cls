@@ -78,19 +78,29 @@ public class UpdateOpportunityNameBatchTest {
     
     static testMethod void updateOppNameTest2()
 	{
-        List<Opportunity> oppList = [select id, Name, is_template__c from Opportunity limit 2];
+        List<Opportunity> oppList = [select id, Name, is_template__c,AccountId,Drive_Site__c from Opportunity limit 2];
+        BSF_TestDataSetup testDataSetup = new BSF_TestDataSetup(false);
+    	Map<string, sObject> mapTestData =  testDataSetup.createAndInsertCommonObjects();
+        Opportunity testMobileOpp1 = (Opportunity)mapTestData.get('MOBILE_OPP');
+        testMobileOpp1.accountId = oppList[0].accountId;
+        testMobileOpp1.Drive_Date__c = system.today().addDays(-1);
+        testMobileOpp1.CloseDate = system.today().addDays(-20);
+        triggerHandler.bypass('OpportunityTriggerHandler');
+        triggerHandler.bypass('AccountTriggerHandler');
+        triggerHandler.bypass('AccountTeamMemberServiceTriggerHandler');
+        insert testMobileOpp1;
     
     	for(Opportunity opp : oppList)
     	{
         	opp.Name = 'Test Opportunity Updated 2';
     	}
    
-    	String query = 'Select Id, is_template__c, Drive_Site__c, Account_Internal_Name__c, Site_Building_Name__c, Name from Opportunity';
+    	String query = 'Select Id, is_template__c, Drive_Site__c, Account_Internal_Name__c, Site_Building_Name__c, Name,account.name,Drive_Site_Name__c from Opportunity';
                    
     	UpdateOpportunityNameBatch nameBulkUpdateBatch = new UpdateOpportunityNameBatch(true, query);
     
     	Test.startTest();
-    
+    	
     	Database.executeBatch(nameBulkUpdateBatch);
                     
     	Test.stopTest();

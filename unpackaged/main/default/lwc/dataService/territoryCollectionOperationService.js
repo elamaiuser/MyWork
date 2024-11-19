@@ -1,5 +1,6 @@
 import { dataService, queryModelBase } from './base';
 import auraProxy from 'c/auraProxy';
+import { COLLECTION_OPERATION } from 'c/slwcConstants';
 
 class territoryCollectionOperationService extends dataService {
   constructor() {
@@ -23,6 +24,9 @@ class territoryCollectionOperationService extends dataService {
       queryBuilder.addCondition({template: "(sked_End_Date__c = NULL OR sked_End_Date__c >= {0})", value: query.startDate});
     }
     queryBuilder.addCondition({template: "sked_Collection_Operation__r.sked_Is_Deactivated__c = FALSE"});
+    
+    let exludedCONames = [COLLECTION_OPERATION.NON_COLLECTION_AREA];
+    queryBuilder.addCondition({template: "sked_Collection_Operation__r.Name NOT IN {0}", value: exludedCONames, type: "array_string"});
 
     queryBuilder.orderClause = 'ORDER BY sked_Start_Date__c ASC';
   }

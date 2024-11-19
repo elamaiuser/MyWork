@@ -42,6 +42,12 @@
                 <identifier>runtime_sales_pathassistant_pathAssistant</identifier>
             </componentInstance>
         </itemInstances>
+        <itemInstances>
+            <componentInstance>
+                <componentName>orderBanner</componentName>
+                <identifier>c_orderBanner</identifier>
+            </componentInstance>
+        </itemInstances>
         <mode>Replace</mode>
         <name>subheader</name>
         <type>Region</type>
@@ -310,6 +316,10 @@
     <flexiPageRegions>
         <itemInstances>
             <componentInstance>
+                <componentInstanceProperties>
+                    <name>showLegacyActivityComposer</name>
+                    <value>false</value>
+                </componentInstanceProperties>
                 <componentName>runtime_sales_activities:activityPanel</componentName>
                 <identifier>runtime_sales_activities_activityPanel</identifier>
             </componentInstance>

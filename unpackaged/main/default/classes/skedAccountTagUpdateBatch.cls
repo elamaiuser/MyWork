@@ -87,7 +87,7 @@ global class skedAccountTagUpdateBatch implements Database.Batchable<sked__Accou
     private void updateMinimumQuantityOnDriveShiftTags(List<sked__Account_Tag__c> accountTags, Map<Id, Set<Id>> changedTagsByAccountId, Set<Id> tagIds) {
         List<sked_Drive_Shift_Tag__c> driveShiftTags = [
             SELECT Id, Name, sked_Minimum_Quantity__c, sked_Tag__c, sked_Drive_Shift__c,
-                sked_Drive_Shift__r.sked_Drive_Account__c
+                sked_Drive_Shift__r.sked_Drive_Account__c, sked_Drive_Shift__r.sked_Drive_Site__c
             FROM sked_Drive_Shift_Tag__c
             WHERE sked_Tag__c IN :tagIds
             AND sked_Drive_Shift__r.sked_Drive_Account__c IN :changedTagsByAccountId.keyset()
@@ -95,9 +95,22 @@ global class skedAccountTagUpdateBatch implements Database.Batchable<sked__Accou
             AND sked_Drive_Shift__r.sked_Drive__r.sked_Status__c != :skedConstants.JOB_STATUS_COMPLETE
         ];
 
+        Set<Id> siteIds = new Set<Id>();
+        for (sked_Drive_Shift_Tag__c driveShiftTag : driveShiftTags) {
+            siteIds.add(driveShiftTag.sked_Drive_Shift__r.sked_Drive_Site__c);
+        }
+
+        Map<Id, sked__Location__c> siteById = new Map<Id, sked__Location__c>([
+            SELECT Id, 
+            (SELECT Id, sked_Tag__c, sked_Minimum_Quantity__c FROM sked_Location_Tags__r WHERE sked_Required__c = FALSE)
+            FROM sked__Location__c
+            WHERE Id IN :siteIds
+        ]);
+
+
         List<sked_Drive_Shift_Tag__c> driveShiftTagsToUpdate = new List<sked_Drive_Shift_Tag__c>();
         for (sked__Account_Tag__c accountTag : accountTags) {
-            sked_Drive_Shift_Tag__c relatedDriveShiftTag; 
+            sked_Drive_Shift_Tag__c relatedDriveShiftTag;
             for (sked_Drive_shift_Tag__c driveShiftTag : driveShiftTags) {
                 if (driveShiftTag.sked_Drive_Shift__r.sked_Drive_Account__c == accountTag.sked__Account__c &&
                         driveShiftTag.sked_Tag__c == accountTag.sked__Tag__c) {
@@ -105,7 +118,23 @@ global class skedAccountTagUpdateBatch implements Database.Batchable<sked__Accou
                 }
 
                 if (relatedDriveShiftTag != null) {
-                    relatedDriveShiftTag.sked_Minimum_Quantity__c = accountTag.sked_Minimum_Quantity__c;
+                    sked_Location_Tag__c relatedSiteTag;
+                    sked__Location__c site = siteById.get(relatedDriveShiftTag.sked_Drive_Shift__r.sked_Drive_Site__c);
+                    if (site != null && site.sked_Location_Tags__r != null) {
+                        for (sked_Location_Tag__c siteTag : site.sked_Location_Tags__r) {
+                            if (siteTag.sked_Tag__c == relatedDriveShiftTag.sked_Tag__c) {
+                                relatedSiteTag = siteTag;
+                                break;
+                            }
+                        }
+                    }
+
+                    Decimal newMinimumQuantity = accountTag.sked_Minimum_Quantity__c;
+                    if (relatedSiteTag != null && relatedSiteTag.sked_Minimum_Quantity__c > newMinimumQuantity) {
+                        newMinimumQuantity = relatedSiteTag.sked_Minimum_Quantity__c;
+                    }
+
+                    relatedDriveShiftTag.sked_Minimum_Quantity__c = newMinimumQuantity;
                     driveShiftTagsToUpdate.add(driveShiftTag);    
                 }
 

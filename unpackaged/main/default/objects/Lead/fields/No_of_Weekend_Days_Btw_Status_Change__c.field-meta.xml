@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>No_of_Weekend_Days_Btw_Status_Change__c</fullName>
+    <externalId>false</externalId>
+    <formula>(FLOOR(( Today()- Last_Modified_Date_Status__c)/7)*2) 
++ (IF((MOD( Last_Modified_Date_Status__c- DATE(2000,1,2),7) = 6 &amp;&amp; MOD( Today() - DATE(2000,1,2),7) != 6) 
+|| (MOD( Last_Modified_Date_Status__c- DATE(2000,1,2),7) != 6 &amp;&amp; MOD( Today() - DATE(2000,1,2),7) = 6), 1, 
+IF(MOD(Last_Modified_Date_Status__c- DATE(2000,1,2),7) &gt; MOD( Today() - DATE(2000,1,2),7), 2, 0)))</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <label>No of Weekend Days Btw Status Change</label>
+    <precision>18</precision>
+    <required>false</required>
+    <scale>0</scale>
+    <trackHistory>false</trackHistory>
+    <type>Number</type>
+    <unique>false</unique>
+</CustomField>

@@ -21,6 +21,26 @@
         <reevaluateOnChange>false</reevaluateOnChange>
     </fieldUpdates>
     <fieldUpdates>
+        <fullName>sked_RTVs_Waiting_for_CM_Approval</fullName>
+        <field>sked_Status__c</field>
+        <literalValue>Waiting for CM Approval</literalValue>
+        <name>RTVs: Waiting for CM Approval</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>sked_RTVs_Waiting_for_DM_approval</fullName>
+        <field>sked_Status__c</field>
+        <literalValue>Waiting for DM Approval</literalValue>
+        <name>RTVs: Waiting for DM approval</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
         <fullName>sked_Reject_RTV_Feedback</fullName>
         <field>sked_Status__c</field>
         <literalValue>Rejected</literalValue>

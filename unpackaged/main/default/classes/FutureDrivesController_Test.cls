@@ -178,6 +178,8 @@ public class FutureDrivesController_Test {
         optyObj.Web_Scheduling_Start_Date_Offset__c=1;
         optyObj.Web_Scheduling_End_Date_Offset__c=0;
         optyObj.Web_Scheduling_End_Time_Offset__c=0;
+        optyObj.Web_Scheduling_Start_Time__c='0001';
+		optyObj.Web_Sched_Offset_from_CO_Global_Settings__c = false;        
 		
 		opplist.add(optyObj);
         
@@ -266,6 +268,50 @@ public class FutureDrivesController_Test {
                 ocr1.Role = 'Primary Contact';
                 insert ocr1;
         
+        Id pricebookId = Test.getStandardPricebookId();
+        
+        List<Order> orderlist = new List<Order>();
+            Order o = new Order();
+            o.name='Test1';
+            o.AccountId= mobileAccList[0].Id ;
+            o.OpportunityId = opplist[0].Id ;
+            o.Material_Recipient_Type__c = 'Same';
+            o.Material_Recipient__c = 'Account Manager';
+            o.EffectiveDate=system.today();
+            o.status='draft' ;
+            o.Pricebook2Id =  pricebookId ;
+            orderlist.add(o);
+        triggerHandler.bypass('TaskTriggerHandler');
+        insert orderlist;
+        
+        List<Product2> productlist = new List<Product2>(); 
+        Product2 prod = new Product2(Name = 'Laptop X200',
+                                    
+                                     Family = 'Hardware');
+        productlist.add(prod);
+        insert productlist;
+        
+        List<PricebookEntry> pentrylist = new List<PricebookEntry>();
+        PricebookEntry standardPrice = new PricebookEntry(
+                                                            Pricebook2Id = pricebookId, Product2Id = productlist[0].Id,
+                                                            UnitPrice = 0.01, IsActive = true);
+                                                            
+                                                            
+        pentrylist.add(standardPrice);
+        
+        insert pentrylist;
+        
+        List<OrderItem> oitemlist = new List<OrderItem>();
+                OrderItem oi = new OrderItem();
+                oi.OrderId= orderlist[0].id ;
+                oi.PricebookEntryId= pentrylist[0].Id ;
+                oi.Quantity = 1 ;
+                oi.UnitPrice = 0.01 ; 
+                oi.Product2id  = productlist[0].Id ;
+                oi.Material_Recipient__c  = 'Account Manager';
+                oitemlist.add(oi);
+        insert oitemlist;
+        
         test.startTest();
         System.runAs( AdminUser){
             List<FutureDrivesController.FieldSetClass> fc = FutureDrivesController.getFieldsFromFieldSets();
@@ -275,7 +321,7 @@ public class FutureDrivesController_Test {
                 fdcitr.isselected = true;
             }
             
-            List<String> fields = new List<String>{'Call_List_Recipient_Exist__c','Drive Affiliations','Web_Schedule_EndDate__c','Web_Schedule_StartDate__c','Web_Schedule_End_Time__c','Drive Service Roles'} ;
+            List<String> fields = new List<String>{'Call_List_Recipient_Exist__c','Drive Affiliations','Web Scheduling Settings','Drive Service Roles','Template Order'} ;
             String resp = FutureDrivesController.applyChangestoFutureDrives( JSON.serialize( fdc ) , sourceOppId, fields );
             test.stopTest();
             System.assertEquals( 'success', resp);

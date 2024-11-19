@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<EmailTemplate xmlns="http://soap.sforce.com/2006/04/metadata">
+    <available>true</available>
+    <description>Blood Booster - AM ask to BPL</description>
+    <encodingKey>ISO-8859-1</encodingKey>
+    <letterhead>ARC_Generic_Logo1</letterhead>
+    <name>Blood Booster Email Template - AM to BPL</name>
+    <style>formalLetter</style>
+    <subject>Join The American Red Cross as a Blood Booster Partner</subject>
+    <textOnly>Dear &lt;BPL Name&gt;,
+
+As many things evolve in our world, blood collection is no different. While we remain steadfast in our commitment to every patient who needs lifesaving blood, the way in which blood donors serve our mission requires more flexibility than ever.
+
+As someone who has answered the call to protect patient care in your community in the past, we hope we can count on you to help us boost the blood supply to support patients in need.  
+
+Join us as a Blood Booster, a public advocate connecting willing and able blood donors to the most convenient location to donate near them.
+
+What is volunteer service as a Blood Booster?
+    
+
+Protect the stability of the blood supply by communicating flexibility donation opportunities for blood donors in your community.
+
+Be aware and knowledgeable of blood programs in your local community and have the ability to communicate the donation opportunities with coworkers, patrons, family and friends.
+
+
+Act as liaison between the American Red Cross and businesses/organizations or your personal connections to drive donations to specific donation events in your area
+
+o   Share the attached flyer and ask donors to download the Red Cross Blood App to schedule their appointment
+
+o   Share info about the drives on the flyer in your social media channels or intranet
+
+o   Recruit other Blood Boosters to extend donation invitations within their networks
+
+
+No matter what role you have played in the past, or hoped to play, we need your help with today to help boost the blood supply! We would be so grateful for your partnership!
+
+
+
+To learn more about becoming a Blood Booster, please reference the attached information sheet.
+
+
+
+Thank you!
+
+&lt;Red Cross Representative Name and contact information&gt;</textOnly>
+    <type>html</type>
+    <uiType>Aloha</uiType>
+</EmailTemplate>

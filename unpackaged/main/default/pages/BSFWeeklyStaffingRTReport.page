@@ -1,0 +1,26 @@
+<apex:page controller="BSFWeeklyStaffingRTVFController" sidebar="false" showHeader="false" lightningStylesheets="true">
+    <apex:includeLightning />
+    <div id="LwcId" />
+    <script>
+        $Lightning.use("c:bsfWeeklyStaffingRTReport", function() {
+        $Lightning.createComponent(
+        "c:bsfWeeklyStaffingRoleTimeReport",
+        {
+          selecteddivision: '{!div}',
+          selectedregion: '{!reg}',
+          selecteddistict: '{!dist}',
+          selectedcollopp: '{!coll}',
+          selectedstartdate: '{!startDate}',
+          selectedenddate: '{!endDate}',
+          selecteddrivetype: 'mobile',
+          selecteddrivedispatched: 'true',
+          vfdata: '{!vfdata}',
+          frommobile: true
+        },
+        "LwcId",
+        function(cmp) {
+          console.log('Calling the LWC Component');
+        });
+        });
+  </script>
+</apex:page>

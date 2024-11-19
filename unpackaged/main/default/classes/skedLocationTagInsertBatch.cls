@@ -58,15 +58,32 @@ global class skedLocationTagInsertBatch implements Database.Batchable<sked_Locat
 
         List<sked_Drive_Shift__c> driveShifts = [
             SELECT Id, Name, sked_Drive_Site__c, sked_Drive__c, sked_Drive__r.sked_Drive_Date__c,
-            (SELECT Id, Name, sked_Tag__c 
+            (SELECT Id, Name, sked_Tag__c, sked_Minimum_Quantity__c
              FROM sked_Drive_Shift_Tags__r)
             FROM sked_Drive_Shift__c
             WHERE sked_Drive_Site__c IN :locationIds
             AND sked_Drive__r.sked_Status__c != :skedConstants.DRIVE_STATUS_CANCEL
             AND sked_Drive__r.sked_Drive_Date__c >= TODAY
         ];
-        
+
+        Map<Id, List<sked_Drive_Shift__c>> driveShiftsBySiteId = new Map<Id, List<sked_Drive_Shift__c>>();
+        Map<Id, Set<Id>> tagsIdsByDriveShiftId = new Map<Id, Set<Id>>();
         for (sked_Drive_Shift__c driveShift : driveShifts) {
+            // DriveShiftsByAccount
+            List<sked_Drive_Shift__c> driveShiftsForSite = driveShiftsBySiteId.get(driveShift.sked_Drive_Site__c);
+            if (driveShiftsForSite == null) {
+                driveShiftsForSite = new List<sked_Drive_Shift__c>();
+            }
+            driveShiftsForSite.add(driveShift);
+            driveShiftsBySiteId.put(driveShift.sked_Drive_Site__c, driveShiftsForSite);
+
+            // TagsIdsByDriveShiftId
+            Set<Id> tagIdsForDriveShift = new Set<Id>();
+            for (sked_Drive_Shift_Tag__c driveShiftTag : driveShift.sked_Drive_Shift_Tags__r) {
+                tagIdsForDriveShift.add(driveShiftTag.sked_Tag__c);
+            }
+            tagsIdsByDriveShiftId.put(driveShift.Id, tagIdsForDriveShift);
+
             driveShiftIds.add(driveShift.Id);
             driveIds.add(driveShift.sked_Drive__c);
             
@@ -82,24 +99,37 @@ global class skedLocationTagInsertBatch implements Database.Batchable<sked_Locat
         }
 
         if (!nonRequiredTags.isEmpty()) {
-            List<sked_Drive_Shift_Tag__c> driveShiftTagsToInsert = new List<sked_Drive_Shift_Tag__c>();
+            List<sked_Drive_Shift_Tag__c> driveShiftTagsToUpsert = new List<sked_Drive_Shift_Tag__c>();
             
             for (sked_Location_Tag__c locationTag : nonRequiredTags) {
                 sked__Tag__c tag = tagById.get(locationTag.sked_Tag__c);
-
-                for (sked_Drive_Shift__c driveShift : driveShifts) {
-                    if (driveShift.sked_Drive_Site__c == locationTag.sked_Location__c) {
-                        driveShiftTagsToInsert.add(new sked_Drive_Shift_Tag__c(
-                            sked_Tag__c = locationTag.sked_Tag__c,
-                            sked_Drive_Shift__c = driveShift.Id,
-                            sked_Minimum_Quantity__c = locationTag.sked_Minimum_Quantity__c
-                        ));
+                List<sked_Drive_Shift__c> affectedDriveShifts = driveShiftsBySiteId.get(locationTag.sked_Location__c);
+                if (affectedDriveShifts != null && !affectedDriveShifts.isEmpty()) {
+                    for (sked_Drive_Shift__c driveShift : affectedDriveShifts) {
+                        Set<Id> tagIdsForDriveShift = tagsIdsByDriveShiftId.get(driveShift.Id);
+                        if (tagIdsForDriveShift == null || !tagIdsForDriveShift.contains(tag.Id)) {
+                                driveShiftTagsToUpsert.add(new sked_Drive_Shift_Tag__c(
+                                sked_Tag__c = locationTag.sked_Tag__c,
+                                sked_Drive_Shift__c = driveShift.Id,
+                                sked_Minimum_Quantity__c = locationTag.sked_Minimum_Quantity__c
+                            ));
+                        } else {
+                            for (sked_Drive_Shift_Tag__c driveShiftTag : driveShift.sked_Drive_Shift_Tags__r) {
+                                if (driveShiftTag.sked_Tag__c == locationTag.sked_Tag__c) {
+                                    if (locationTag.sked_Minimum_Quantity__c > driveShiftTag.sked_Minimum_Quantity__c) {
+                                        driveShiftTag.sked_Minimum_Quantity__c = locationTag.sked_Minimum_Quantity__c;
+                                        driveShiftTagsToUpsert.add(driveShiftTag);
+                                    }
+                                    break;
+                                }
+                            }
+                        }
                     }
                 }
             }
 
-            if (!driveShiftTagsToInsert.isEmpty()) {
-                insert driveShiftTagsToInsert;
+            if (!driveShiftTagsToUpsert.isEmpty()) {
+                upsert driveShiftTagsToUpsert;
             }
         }
 
@@ -168,7 +198,9 @@ global class skedLocationTagInsertBatch implements Database.Batchable<sked_Locat
             if (!this.autoProcessDeleteTrigger) {
                 skedTriggerUtils.updateJobAllocations(this.jobIds, this.driveShiftIds);
             } else {
-                Database.executeBatch(new skedLocationTagDeleteBatch(deletedSiteTags), 1);
+                if (!Test.isRunningTest() && this.deletedSiteTags != null && !this.deletedSiteTags.isEmpty()) {
+                    Database.executeBatch(new skedLocationTagDeleteBatch(deletedSiteTags), 1);
+                }
             }
         }
     }

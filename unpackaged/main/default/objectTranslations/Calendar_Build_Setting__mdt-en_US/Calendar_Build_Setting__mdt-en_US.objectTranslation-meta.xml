@@ -8,16 +8,6 @@
         <plural>true</plural>
         <value>Calendar Build Settings</value>
     </caseValues>
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     <layouts>
         <layout>Calendar Build Setting Layout</layout>
         <sections>
@@ -38,4 +28,19 @@
         <errorMessage><!-- Since automation is off, provide data for Date Literal OR System Gen Start Date and System Gen End Date fields.  If Date Literal is used, System Gen Date fields need to be blank and Start Date needs to be before End Date. --></errorMessage>
         <name>System_Gen_Date_Validation</name>
     </validationRules>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
 </CustomObjectTranslation>

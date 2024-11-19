@@ -34,4 +34,8 @@ xmlns:wsse=&quot;http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecur
 &lt;/env:Body&gt;
 &lt;/env:Envelope&gt;</value>
     </values>
+    <values>
+        <field>sked_Version__c</field>
+        <value xsi:nil="true" />
+    </values>
 </CustomMetadata>

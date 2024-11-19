@@ -128,3 +128,8 @@
 .transparent-combobox .slds-input__icon-group {
   display: none;
 }
+
+.optimization-changed-allocation {
+  color: #808080;
+  font-weight: bold;
+}

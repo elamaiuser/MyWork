@@ -1,0 +1,11 @@
+<template>
+    <c-slwc-picklist
+        name={settingRecord.key}
+        data-id={settingRecord.key}
+        selected-value={settingRecord.defaultWeight}
+        object-api-name="sked_CollectionOperationOptimizerSetting__c"
+        disabled={disabled}
+        pick-listfield-api-name="sked_Default_Weight__c"
+        onpicklistchange={handleOnChange}>
+    </c-slwc-picklist>
+</template>

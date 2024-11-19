@@ -42,11 +42,7 @@
         <picklist>Type__c</picklist>
         <values>
             <fullName>Blood Region</fullName>
-            <default>false</default>
-        </values>
-        <values>
-            <fullName>Chapter</fullName>
-            <default>false</default>
+            <default>true</default>
         </values>
     </picklistValues>
 </RecordType>

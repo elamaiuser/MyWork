@@ -22,15 +22,5 @@
         <operation>equals</operation>
         <value>Account.Mobile_Account</value>
     </filters>
-    <filters>
-        <field>Accepts_Automation2__c</field>
-        <operation>equals</operation>
-        <value>No</value>
-    </filters>
-    <filters>
-        <field>ACCOUNT.TYPE</field>
-        <operation>equals</operation>
-        <value>Military</value>
-    </filters>
     <label>All Mobile Accounts</label>
 </ListView>

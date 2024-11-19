@@ -1,5 +1,6 @@
-public class skedRepopulateDriveStagingLocBatch implements Database.Batchable<SObject> {
+public class skedRepopulateDriveStagingLocBatch implements Database.Batchable<SObject>, Database.Stateful {
     private Set<Id> stagingLocationIds;
+    Set<Id> impactedDriveIds = new Set<Id>();
 
     public skedRepopulateDriveStagingLocBatch(Set<Id> stagingLocationIds) {
         this.stagingLocationIds = stagingLocationIds;
@@ -15,7 +16,6 @@ public class skedRepopulateDriveStagingLocBatch implements Database.Batchable<SO
 
     public void execute(Database.BatchableContext BC, List<SObject> scope) {
         List<sked_Drive__c> drives = (List<sked_Drive__c>) scope;
-        
         Set<Id> coIds = new Set<Id>();
         for (sked_Drive__c drive : drives) {
             coIds.add(drive.sked_Collection_Operation__c);
@@ -39,7 +39,7 @@ public class skedRepopulateDriveStagingLocBatch implements Database.Batchable<SO
                         if (drive.sked_Staging_Location__c != cosl.sked_Staging_Location__c) {
                             drive.sked_Staging_Location__c = cosl.sked_Staging_Location__c;
                             drivesToUpdate.add(drive);
-
+							this.impactedDriveIds.add(drive.Id);
                         }
                     }
                 }
@@ -51,5 +51,9 @@ public class skedRepopulateDriveStagingLocBatch implements Database.Batchable<SO
         }
     }
 
-    public void finish(Database.BatchableContext BC) {}
+    public void finish(Database.BatchableContext BC) {
+        if(!this.impactedDriveIds.isEmpty()) {
+        	Database.executeBatch(new skedCreateDCRForTravelTimeChangeBatch(new Set<Id>(),this.impactedDriveIds));
+        }
+    }
 }

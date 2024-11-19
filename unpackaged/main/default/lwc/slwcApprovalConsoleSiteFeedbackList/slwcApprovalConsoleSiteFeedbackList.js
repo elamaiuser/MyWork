@@ -1,11 +1,13 @@
-import { LightningElement, track, api, wire } from 'lwc';
+import { LightningElement, track, wire } from 'lwc';
 import { CurrentPageReference } from 'lightning/navigation';
-import { siteFeedbackQueryModel, siteFeedbackService } from 'c/dataService';
+import { ShowToastEvent } from 'lightning/platformShowToastEvent'
+import { driveQueryModel, driveService, siteCollectionOpQueryModel, siteCollectionOpService, siteFeedbackQueryModel, siteFeedbackService } from 'c/dataService';
 import * as slwcUtils from 'c/slwcUtils';
 import * as slwcDateUtils from 'c/slwcDateUtils';
 import { DateTime } from 'c/luxon';
 import TIME_ZONE from '@salesforce/i18n/timeZone';
 import { pick } from 'c/lodash';
+import { DRIVE_STATUS } from 'c/slwcConstants';
 
 export default class SlwcApprovalConsoleSiteFeedbackList extends LightningElement {
   COLUMNS = [
@@ -41,6 +43,14 @@ export default class SlwcApprovalConsoleSiteFeedbackList extends LightningElemen
     },
   ];
 
+  DRIVE_COLUMNS = [
+    {label: 'Drive Name', fieldName: 'recordPageUrl', type: 'url', wrapText: true, typeAttributes: {label: { fieldName: 'name' }, target: '_blank' } },
+    {label: 'UFID', fieldName: 'ufid', type: 'text', wrapText: true },
+    {label: 'Drive Type', fieldName: 'typeOfDrive', type: 'text', wrapText: true, sortable: true },
+    {label: 'Drive Status', fieldName: 'status', type: 'text', wrapText: true, sortable: true },
+    {label: 'Drive Date', fieldName: 'driveDate', type: 'date-local', typeAttributes: { year: 'numeric', month: 'short', day: '2-digit' }, wrapText: true, sortable: true }
+  ]
+
   initialized = false;
 
   @wire(CurrentPageReference) pageRef;
@@ -63,7 +73,7 @@ export default class SlwcApprovalConsoleSiteFeedbackList extends LightningElemen
   @track sortOption = {
     fieldName: 'createdDate',
     sortDirection: 'asc'
-  };
+  };  
   @track requestDetailModalData = {};
 
   connectedCallback() {
@@ -90,7 +100,7 @@ export default class SlwcApprovalConsoleSiteFeedbackList extends LightningElemen
   }
 
   get isValidQueryModel() {
-    return this.territoryKeys && this.territoryKeys.length;
+    return this.collectionOperationIds && this.collectionOperationIds.length;
   }
 
   get collectionOperations() {
@@ -98,9 +108,9 @@ export default class SlwcApprovalConsoleSiteFeedbackList extends LightningElemen
     return this.filters.collectionOperationValues.territoryCollectionOperations.map(item => item.collectionOperation);
   }
 
-  get territoryKeys() {
+  get collectionOperationIds() {
     if (!this.filters || !this.filters.collectionOperationValues) [];
-    return this.filters.collectionOperationValues.territoryCollectionOperations.map(item => `${item.territoryId}:${item.collectionOperationId}`);
+    return this.filters.collectionOperationValues.territoryCollectionOperations.map(item => item.collectionOperationId);
   }
 
   get collectionOperationFirstDay() {
@@ -127,24 +137,28 @@ export default class SlwcApprovalConsoleSiteFeedbackList extends LightningElemen
   }
 
   fetchData() {
-    const territoryKeys = this.territoryKeys;
-    if(!territoryKeys.length) {
+    if(!this.collectionOperationIds.length) {
         return Promise.resolve([]);
     }
+    
+    let siteCoService = new siteCollectionOpService;
+    return siteCoService.getRelatedSiteInfo({collectionOperationIds: this.collectionOperationIds, startDate: this.collectionOperationDateRange.startDate, endDate: this.collectionOperationDateRange.endDate})
+    .then(siteCOs => {
+      let siteIds = siteCOs.returnedData.map(siteCO => siteCO.sked_Site__c);
+      let query = new siteFeedbackQueryModel();
+      query.siteIds = siteIds;
+      query.statuses = this.filters.statuses;
+      query.submissionStartDate = this.filters.startDate;
+      query.submissionEndDate = this.filters.endDate;
+      query.siteName = this.filters.siteName;
+      query.limit = 50;
+      query.offset = (this.records || []).length;
+      query.orderBy = this.sortOption.sortField || this.sortOption.fieldName;
+      query.orderAscending = this.sortOption.sortDirection;
 
-    let query = new siteFeedbackQueryModel();
-    query.territoryKeys = this.territoryKeys;
-    query.statuses = this.filters.statuses;
-    query.submissionStartDate = this.filters.startDate;
-    query.submissionEndDate = this.filters.endDate;
-    query.limit = 50;
-    query.offset = (this.records || []).length;
-    query.orderBy = this.sortOption.sortField || this.sortOption.fieldName;
-    query.orderAscending = this.sortOption.sortDirection;
+      let service = new siteFeedbackService();
 
-    let service = new siteFeedbackService();
-
-    return Promise.resolve()
+      return Promise.resolve()
       .then(() => {
         return service.query(query)
       })
@@ -153,10 +167,15 @@ export default class SlwcApprovalConsoleSiteFeedbackList extends LightningElemen
           item.recordUrl = '/' + item.id;
         })
         return result;
-      })
-      .catch((error) => {
-        console.log(error);
       });
+    })
+    .catch((error) => {
+      this.dispatchEvent(new ShowToastEvent({
+        message: error.message,
+        variant: 'error',
+        mode: 'dismissable',
+      }));
+    });
   }
 
   handleSortChanged(event) {
@@ -201,7 +220,7 @@ export default class SlwcApprovalConsoleSiteFeedbackList extends LightningElemen
     this.filters = {
       ...this.filters,
       ...filters,
-      territoryKeys: this.territoryKeys
+      collectionOperationIds: this.collectionOperationIds
     };
 
     if (!this.isValidQueryModel) return;
@@ -257,6 +276,34 @@ export default class SlwcApprovalConsoleSiteFeedbackList extends LightningElemen
     }
 
     this.requestDetailModalData = {}
+  }
+
+  fetchAPSApprovalWindowAffectedDrives(selectedSiteFeedBack) {
+    const service = new driveService();
+    return service.getCustomSettings({ settingKeys: ['rtvAPSApprovalWindow']})
+    .then((result) => {
+      const rtvAPSApprovalWindow = result.returnedData.rtvAPSApprovalWindow;
+      let queryModel = new driveQueryModel();
+      queryModel.startDate = selectedSiteFeedBack.effectiveStartDate;
+      queryModel.endDate = selectedSiteFeedBack.effectiveEndDate;
+      queryModel.locationIds = [selectedSiteFeedBack.siteId];
+      queryModel.statuses = [DRIVE_STATUS.CONFIRMED, DRIVE_STATUS.DRAFT, DRIVE_STATUS.HOLD, DRIVE_STATUS.SYSTEM_GENERATED, DRIVE_STATUS.TENTATIVE];
+      queryModel.onlyWithinDayAmount = rtvAPSApprovalWindow;
+  
+      return service.query(queryModel);
+    })
+    .then((drives) => {
+      return drives.filter((drive) => {
+        let dayOfWeek = DateTime.fromFormat(drive.driveDate, 'yyyy-MM-dd').toFormat('cccc');
+        return selectedSiteFeedBack.daysOfWeek && selectedSiteFeedBack.daysOfWeek.includes(dayOfWeek);
+      })
+      .map((drive) => {
+        return {
+          ...drive,
+          recordPageUrl: '/' + drive.id
+        }
+      });
+    });
   }
 
   setLastQuery() {

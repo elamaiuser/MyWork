@@ -1,70 +1,118 @@
 @isTest
 private class skedWorkdayApiManager_Test {
     @isTest
-    static void processTimeOffApproval_Test() {
+    static void enterTimeOff_Test() {
         Test.setMock(HttpCalloutMock.class, new skedWorkdayPTOApprovalMock());
-        skedWorkdayApiManager.processTimeOffRequest ptoReq = new skedWorkdayApiManager.processTimeOffRequest();
+        skedWorkdayEnterTimeOffRequest ptoReq = new skedWorkdayEnterTimeOffRequest();
+        skedWorkdayEnterTimeOffRequest.skedWorkdayTimeOffEntry timeOffEntry = new skedWorkdayEnterTimeOffRequest.skedWorkdayTimeOffEntry();
         ptoReq.employeeId = '123123';
-        ptoReq.comment = 'unit test';
-        ptoReq.hoursRequested = '8.00';
-        ptoReq.ptoDate = System.today().addDays(10);
-        ptoReq.ptoEntryId = 'unit-test-id';
-        ptoReq.ptoReason = skedConstants.WD_PTO_7_DAY_LAG_ID;
+        timeOffEntry.comment = 'unit test';
+        timeOffEntry.hoursRequested = 8.00;
+        timeOffEntry.ptoDate = System.today().addDays(10);
+        timeOffEntry.ptoEntryId = 'unit-test-id';
+        timeOffEntry.timeOffType = 'PTO';
+        timeOffEntry.ptoReason = 'PTO - 7 Day Lag - Time Off - Planned';
+        ptoReq.timeOffEntries.add(timeOffEntry);
         
         Test.startTest(); 
-            skedWorkdayApiManager.processTimeOffResponse ptoRes = skedWorkdayApiManager.processTimeOffApproval(ptoReq);
+            skedWorkdayEnterTimeOffResponse ptoRes = skedWorkdayApiManager.enterTimeOff(ptoReq);
         Test.stopTest();
 
-        System.assert(ptoRes.isSuccess);
+        System.assert(ptoRes.isSuccess, ptoRes);
     } 
 
     @isTest
     static void processTimeOff_Invalid_Test() {
         String testError = 'Test Error Response';
         Test.setMock(HttpCalloutMock.class, new skedWorkdayPTOApprovalMock(testError));
-        skedWorkdayApiManager.processTimeOffRequest ptoReq = new skedWorkdayApiManager.processTimeOffRequest();
+        skedWorkdayEnterTimeOffRequest ptoReq = new skedWorkdayEnterTimeOffRequest();
+        skedWorkdayEnterTimeOffRequest.skedWorkdayTimeOffEntry timeOffEntry = new skedWorkdayEnterTimeOffRequest.skedWorkdayTimeOffEntry();
         ptoReq.employeeId = '123123';
-        ptoReq.comment = 'unit test';
-        ptoReq.hoursRequested = '8.00';
-        ptoReq.ptoDate = System.today().addDays(10);
-        ptoReq.ptoEntryId = 'unit-test-id';
-        ptoReq.ptoReason = skedConstants.WD_PTO_7_DAY_LAG_ID;
+        timeOffEntry.comment = 'unit test';
+        timeOffEntry.hoursRequested = 8.00;
+        timeOffEntry.ptoDate = System.today().addDays(10);
+        timeOffEntry.ptoEntryId = 'unit-test-id';
+        timeOffEntry.ptoReason = 'Planned';
+        timeOffEntry.timeOffType = 'PTO';
+        ptoReq.timeOffEntries.add(timeOffEntry);
         
         Test.startTest(); 
-            skedWorkdayApiManager.processTimeOffResponse ptoRes = skedWorkdayApiManager.processTimeOffApproval(ptoReq);
+            skedWorkdayEnterTimeOffResponse ptoRes = skedWorkdayApiManager.enterTimeOff(ptoReq);
         Test.stopTest();
 
         System.assert(!ptoRes.isSuccess);
-        System.assertEquals(testError, ptoRes.faultString);
     }
 
     @isTest
-    static void getTimeOffReport_Test() {
-        Test.setMock(HttpCalloutMock.class, new skedWorkdayPTOReportMock());
-        skedWorkdayApiManager.getTimeOffReportRequest ptoRepReq = new skedWorkdayApiManager.getTimeOffReportRequest();
-        ptoRepReq.employeeId = '123123';
-        ptoRepReq.selectedYear = System.today().year();
-
-        Test.startTest();
-            skedWorkdayApiManager.getTimeOffReportResponse ptoRepRes = skedWorkdayApiManager.getTimeOffReport(ptoRepReq);
+    static void adjustTimeOff_Test() {
+        Test.setMock(HttpCalloutMock.class, new skedWorkdayPTOAdjustmentMock());
+        skedWorkdayAdjustTimeOffRequest adjustPtoReq = new skedWorkdayAdjustTimeOffRequest();
+        skedWorkdayAdjustTimeOffRequest.skedWorkdayAdjustTimeOffEntry adjustPtoEntry = new skedWorkdayAdjustTimeOffRequest.skedWorkdayAdjustTimeOffEntry();
+        adjustPtoReq.employeeId = '123123';
+        adjustPtoEntry.comment = 'unit test';
+        adjustPtoEntry.adjustment = -8.00;
+        adjustPtoEntry.ptoEntryId = 'unit-test-id';
+        adjustPtoReq.adjustTimeOffEntries.add(adjustPtoEntry);
+        
+        Test.startTest(); 
+            skedWorkdayAdjustTimeOffResponse ptoRes = skedWorkdayApiManager.adjustTimeOff(adjustPtoReq);
         Test.stopTest();
 
-        System.assert(!ptoRepRes.timeOffReports.isEmpty());
+        System.assert(ptoRes.isSuccess, ptoRes);
+    } 
+
+    @isTest
+    static void adjustTimeOff_Invalid_Test() {
+        String testError = 'Test Error Response';
+        Test.setMock(HttpCalloutMock.class, new skedWorkdayPTOAdjustmentMock(testError));
+        skedWorkdayAdjustTimeOffRequest adjustPtoReq = new skedWorkdayAdjustTimeOffRequest();
+        skedWorkdayAdjustTimeOffRequest.skedWorkdayAdjustTimeOffEntry adjustPtoEntry = new skedWorkdayAdjustTimeOffRequest.skedWorkdayAdjustTimeOffEntry();
+        adjustPtoReq.employeeId = '123123';
+        adjustPtoEntry.comment = 'unit test';
+        adjustPtoEntry.adjustment = -8.00;
+        adjustPtoEntry.ptoEntryId = 'unit-test-id';
+        adjustPtoReq.adjustTimeOffEntries.add(adjustPtoEntry);
+        
+        Test.startTest(); 
+            skedWorkdayAdjustTimeOffResponse ptoRes = skedWorkdayApiManager.AdjustTimeOff(adjustPtoReq);
+        Test.stopTest();
+
+        System.assert(!ptoRes.isSuccess);
     }
 
     @isTest
     static void getTimeOffPlanBalances_Test() {
         Test.setMock(HttpCalloutMock.class, new skedWorkdayPTOBalanceMock());
-        skedWorkdayApiManager.getTimeOffPlanBalancesRequest ptoBalReq = new skedWorkdayApiManager.getTimeOffPlanBalancesRequest();
+        skedWorkdayGetPlanBalanceRequest ptoBalReq = new skedWorkdayGetPlanBalanceRequest();
         ptoBalReq.employeeId = '123123';
-        ptoBalReq.selectedYear = System.today().year();
+        ptoBalReq.selectedDate = System.today();
 
         Test.startTest();
-            skedWorkdayApiManager.getTimeOffPlanBalancesResponse ptoBalRes = skedWorkdayApiManager.getTimeOffPlanBalances(ptoBalReq);
+            skedWorkdayGetPlanBalanceResponse ptoBalRes = skedWorkdayApiManager.getTimeOffPlanBalances(ptoBalReq);
         Test.stopTest();
 
-        System.assertNotEquals(null, ptoBalRes.pto);
-        System.assertNotEquals(null, ptoBalRes.floatingHoliday);
+        Assert.isNotNull(ptoBalRes.timeOffPlansByLabel);
+        Assert.isNotNull(ptoBalRes.totalBalance);
+    }
+
+    @isTest
+    static void importReportedTimeBlocks_Test() {
+        sked__Resource__c testResource = [SELECT Id, sked_Employee_Id__c FROM sked__Resource__c LIMIT 1][0];
+
+        Test.setMock(HttpCalloutMock.class, new skedImportReportedTimeBlocksMock());
+        List<skedWorkdayImportTimeBlockRequest> requests = new List<skedWorkdayImportTimeBlockRequest>();
+        requests.add(new skedWorkdayImportTimeBlockRequest(
+            testResource.Id,
+            testResource.sked_Employee_Id__c,
+            'Traded Shift',
+            'jkittridge@skedulo.com',
+            1,
+            System.today().addDays(-1)
+        ));
+
+        Test.startTest();
+            skedWorkdayImportTimeBlockResponse timeBlockRes = skedWorkdayApiManager.ImportReportedTimeBlocks(requests);
+        Test.stopTest();
     }
 
     @TestSetup

@@ -2,6 +2,12 @@ import { LightningElement, track} from 'lwc';
 import search from '@salesforce/apex/sponsorPlanningReportController.search';
 export default class SponsorPlanningReport extends LightningElement {
     @track wrapper = {};
+    @track loaded = false;
+    @track searched = false;
+    @track errormessage = '';
+    @track hasRecords = false;
+    @track data = [];
+    
     selectedIds = '';
     columns = [
         {label: 'Account Name', fieldName: 'AccountURL', type: 'url', typeAttributes: {label: {fieldName: 'Name'}}},
@@ -21,8 +27,7 @@ export default class SponsorPlanningReport extends LightningElement {
         { label: 'Send Mailers', fieldName: 'Send_Mailers__c' },
         { label: 'Online Scheduling Enabled', fieldName: 'Online_Scheduling_Enabled__c' },
     ];
-    hasRecords = false;
-    data = [];
+    
 
     connectedCallback () {
         this.initializeWrapper();
@@ -63,6 +68,9 @@ export default class SponsorPlanningReport extends LightningElement {
         };
         this.selectedIds = '';
         this.hasRecords = false;
+        this.loaded = false;
+        this.searched = false;
+        this.errormessage = '';
         this.data = [];
         const players = this.template.querySelectorAll('c-custom-lookup');
         if (players !== null && players.length > 0) {
@@ -74,16 +82,22 @@ export default class SponsorPlanningReport extends LightningElement {
 
     exportToPdf () {
         if (this.selectedIds) {
-            window.open('/apex/generatePdfWithData?ids='+this.selectedIds);
+            window.open('/apex/SponsorPlanningReportPdf?renderas=pdf&force_download=true&opportunityids='+this.selectedIds);
         }
     }
 
     search () {
+        this.loaded = true;
+        this.searched = true;
+        this.hasRecords = false;
+        this.errormessage = '';
+        this.data = [];
         const start = this.wrapper.startDate ? this.wrapper.startDate : this.getStartDate ();        
         const end = this.wrapper.endDate ? this.wrapper.endDate : this.getEndDate ();        
         search({searchAcc : this.wrapper.account, searchPortfolio: this.wrapper.portfolio,searchStartDate: start, searchEndDate: end, searchTeamMember: this.wrapper.driveTeamMember})
             .then(result => {
                 console.log('result:-'+result);
+                this.loaded = false;
                 if (result && result.length > 0) {
                     this.hasRecords = true;
                     this.data = result;
@@ -91,9 +105,17 @@ export default class SponsorPlanningReport extends LightningElement {
                         this.data.forEach(item => item['AccountURL'] = '/lightning/r/Account/' +item['AccountId'] +'/view');
                         this.data.forEach(item => item['DriveURL'] = '/lightning/r/Opportunity/' +item['Id'] +'/view');
                     }
+                }else{
+                    this.errormessage = 'No data found.';
+                    this.hasRecords = false;
+                    this.data = [];
                 }
             })
             .catch(error => {
+                this.loaded = false;
+                this.hasRecords = false;
+                this.data = [];
+                this.errormessage = `${error}`;
                 console.log(error);
             });
     }

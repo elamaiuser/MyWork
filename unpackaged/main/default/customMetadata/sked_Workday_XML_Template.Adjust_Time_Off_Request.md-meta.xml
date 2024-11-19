@@ -8,7 +8,7 @@
     </values>
     <values>
         <field>sked_Endpoint__c</field>
-        <value xsi:type="xsd:string">https://wd2-impl-services1.workday.com/ccx/service/americanredcross1/Absence_Management/v38.1</value>
+        <value xsi:type="xsd:string">https://services1.myworkday.com/ccx/service/americanredcross/Absence_Management/v38.1</value>
     </values>
     <values>
         <field>sked_Namespace__c</field>
@@ -21,12 +21,9 @@
   &lt;env:Body&gt;
     &lt;wd:Adjust_Time_Off_Request xmlns:wd=&quot;urn:com.workday/bsvc&quot; wd:version=&quot;v38.1&quot;&gt;
       &lt;wd:Business_Process_Parameters&gt;
-        &lt;wd:Auto_Complete&gt;false&lt;/wd:Auto_Complete&gt;
+        &lt;wd:Auto_Complete&gt;true&lt;/wd:Auto_Complete&gt;
         &lt;wd:Run_Now&gt;true&lt;/wd:Run_Now&gt;
         &lt;wd:Discard_On_Exit_Validation_Error&gt;true&lt;/wd:Discard_On_Exit_Validation_Error&gt;
-        &lt;wd:Comment_Data&gt;
-          &lt;wd:Comment&gt;%COMMENT%&lt;/wd:Comment&gt;
-        &lt;/wd:Comment_Data&gt;
       &lt;/wd:Business_Process_Parameters&gt;
       &lt;wd:Adjust_Time_Off_Data&gt;
         &lt;wd:Run_Time_Off_Validations&gt;true&lt;/wd:Run_Time_Off_Validations&gt;
@@ -44,5 +41,9 @@
     &lt;/wd:Adjust_Time_Off_Request&gt;
   &lt;/env:Body&gt;
 &lt;/env:Envelope&gt;</value>
+    </values>
+    <values>
+        <field>sked_Version__c</field>
+        <value xsi:nil="true" />
     </values>
 </CustomMetadata>

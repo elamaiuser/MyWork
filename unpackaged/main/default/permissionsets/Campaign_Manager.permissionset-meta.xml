@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <PermissionSet xmlns="http://soap.sforce.com/2006/04/metadata">
     <description>assign to users who will create and edit campaign records</description>
+    <hasActivationRequired>false</hasActivationRequired>
+    <label>Campaign Manager</label>
+    <license>Salesforce</license>
     <fieldPermissions>
         <editable>true</editable>
         <field>Campaign.ActualCost</field>
@@ -156,9 +159,21 @@
         <field>Campaign.Type</field>
         <readable>true</readable>
     </fieldPermissions>
-    <hasActivationRequired>false</hasActivationRequired>
-    <label>Campaign Manager</label>
-    <license>Salesforce</license>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Event.Drive_Date__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>Lead.Lead_Stage_Status__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Task.Drive_Date__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
     <objectPermissions>
         <allowCreate>true</allowCreate>
         <allowDelete>true</allowDelete>
@@ -172,4 +187,8 @@
         <tab>standard-Campaign</tab>
         <visibility>Visible</visibility>
     </tabSettings>
+    <classAccesses>
+        <apexClass>slwcAvailabilityService</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
 </PermissionSet>

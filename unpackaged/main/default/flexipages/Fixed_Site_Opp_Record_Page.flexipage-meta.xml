@@ -15,10 +15,16 @@
                         <valueListItems>
                             <value>Opportunity.Exclude</value>
                             <visibilityRule>
+                                <booleanFilter>1 AND 2</booleanFilter>
                                 <criteria>
                                     <leftValue>{!$User.Profile_Name__c}</leftValue>
                                     <operator>CONTAINS</operator>
                                     <rightValue>DRD</rightValue>
+                                </criteria>
+                                <criteria>
+                                    <leftValue>{!$User.Profile_Name__c}</leftValue>
+                                    <operator>NE</operator>
+                                    <rightValue>DRD Manager</rightValue>
                                 </criteria>
                             </visibilityRule>
                         </valueListItems>
@@ -26,7 +32,10 @@
                             <value>Delete</value>
                         </valueListItems>
                         <valueListItems>
-                            <value>Opportunity.sked_Generate_Drive</value>
+                            <value>Opportunity.Apply_Changes_to_Future_Drives</value>
+                        </valueListItems>
+                        <valueListItems>
+                            <value>Submit</value>
                         </valueListItems>
                         <valueListItems>
                             <value>ChangeOwnerOne</value>
@@ -45,6 +54,9 @@
                         </valueListItems>
                         <valueListItems>
                             <value>Opportunity.Initiate_Marketing_Exception</value>
+                        </valueListItems>
+                        <valueListItems>
+                            <value>Opportunity.sked_Generate_Drive</value>
                         </valueListItems>
                     </valueList>
                 </componentInstanceProperties>
@@ -88,15 +100,33 @@
         </itemInstances>
         <itemInstances>
             <componentInstance>
+                <componentName>orderBanner</componentName>
+                <identifier>c_orderBanner</identifier>
+            </componentInstance>
+        </itemInstances>
+        <itemInstances>
+            <componentInstance>
                 <componentName>ErrorBanner</componentName>
                 <identifier>c_ErrorBanner</identifier>
                 <visibilityRule>
+                    <booleanFilter>1 AND 2</booleanFilter>
                     <criteria>
-                        <leftValue>{!Record.DriveStatus__c}</leftValue>
+                        <leftValue>{!Record.Is_Template__c}</leftValue>
+                        <operator>EQUAL</operator>
+                        <rightValue>false</rightValue>
+                    </criteria>
+                    <criteria>
+                        <leftValue>{!Record.Drive_Status__c}</leftValue>
                         <operator>NE</operator>
                         <rightValue>Cancel</rightValue>
                     </criteria>
                 </visibilityRule>
+            </componentInstance>
+        </itemInstances>
+        <itemInstances>
+            <componentInstance>
+                <componentName>nonCollectionAreaSiteCollectionOpCheck</componentName>
+                <identifier>c_nonCollectionAreaSiteCollectionOpCheck</identifier>
             </componentInstance>
         </itemInstances>
         <itemInstances>
@@ -109,6 +139,12 @@
             <componentInstance>
                 <componentName>slwcDrivePendingActionWarning</componentName>
                 <identifier>c_slwcDrivePendingActionWarning</identifier>
+            </componentInstance>
+        </itemInstances>
+        <itemInstances>
+            <componentInstance>
+                <componentName>pendingDCRBannerForOppOrDOC</componentName>
+                <identifier>c_pendingDCRBannerForOppOrDOC</identifier>
             </componentInstance>
         </itemInstances>
         <name>header</name>

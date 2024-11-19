@@ -61,34 +61,64 @@
                         </c-slwc-multi-picklist>
                     </div>
                     <div class="slds-p-around_x-small slds-clearfix slds-float_left">
-                        <div class="slds-form-element__label slds-no-flex" title="Scheduled Shift Start">Scheduled Shift Start</div>
-                        <c-slwc-time-input-with-timezone 
-                            no-label
-                            input-date={model.scheduledShiftStart}
-                            timezone={model.timezoneSidId}>
-                            <lightning-input 
-                                slot="input"
-                                variant="label-hidden"
-                                type="datetime" label="Scheduled Shift Start"
-                                timezone={model.timezoneSidId}
-                                value={model.scheduledShiftStart} disabled>
-                            </lightning-input>
-                        </c-slwc-time-input-with-timezone>
+                        <div class="slds-grid slds-wrap">
+                            <div class="slds-col slds-medium-size_6-of-12 slds-size_1-of-1">
+                                <lightning-input 
+                                    type="date" 
+                                    name="scheduledShiftStartDate" 
+                                    label="Scheduled Shift Start Date" 
+                                    value={model.scheduledShiftStartDate} 
+                                    onchange={handleChange}
+                                    autocomplete="off"
+                                    required={isSubmit}
+                                    disabled={disableScheduledShiftStartEnd}>
+                                </lightning-input>
+                            </div>
+                            <div class="slds-col slds-medium-size_6-of-12 slds-size_1-of-1 slds-p-left_x-small">
+                                <c-slwc-time-input-with-timezone 
+                                    input-date={model.scheduledShiftStartDate}
+                                    timezone={model.timezoneSidId}>
+                                    <lightning-input 
+                                        slot="input"
+                                        type="time" name="scheduledShiftStartTime" 
+                                        label="Scheduled Shift Start Time" value={model.scheduledShiftStartTime} 
+                                        onchange={handleChange}
+                                        required={isSubmit}
+                                        disabled={disableScheduledShiftStartEnd}>
+                                    </lightning-input>
+                                </c-slwc-time-input-with-timezone>
+                            </div>
+                        </div>
                     </div>
                     <div class="slds-p-around_x-small slds-clearfix slds-float_left">
-                        <div class="slds-form-element__label slds-no-flex" title="Scheduled Shift End">Scheduled Shift End</div>
-                        <c-slwc-time-input-with-timezone 
-                            no-label
-                            input-date={model.scheduledShiftEnd}
-                            timezone={model.timezoneSidId}>
-                            <lightning-input 
-                                slot="input"
-                                variant="label-hidden"
-                                type="datetime" label="Scheduled Shift End"
-                                timezone={model.timezoneSidId}
-                                value={model.scheduledShiftEnd} disabled>
-                            </lightning-input>
-                        </c-slwc-time-input-with-timezone>
+                        <div class="slds-grid slds-wrap">
+                            <div class="slds-col slds-medium-size_6-of-12 slds-size_1-of-1">
+                                <lightning-input 
+                                    type="date" 
+                                    name="scheduledShiftEndDate" 
+                                    label="Scheduled Shift End Date" 
+                                    value={model.scheduledShiftEndDate} 
+                                    onchange={handleChange} 
+                                    autocomplete="off" 
+                                    required={isSubmit}
+                                    disabled={disableScheduledShiftStartEnd}>
+                                </lightning-input>
+                            </div>
+                            <div class="slds-col slds-medium-size_6-of-12 slds-size_1-of-1 slds-p-left_x-small">
+                                <c-slwc-time-input-with-timezone 
+                                    input-date={model.scheduledShiftEndDate}
+                                    timezone={model.timezoneSidId}>
+                                    <lightning-input 
+                                        slot="input"
+                                        type="time" name="scheduledShiftEndTime" 
+                                        label="Scheduled Shift End Time" value={model.scheduledShiftEndTime} 
+                                        onchange={handleChange}
+                                        required={isSubmit}
+                                        disabled={disableScheduledShiftStartEnd}>
+                                    </lightning-input>
+                                </c-slwc-time-input-with-timezone>
+                            </div>
+                        </div>
                     </div>
                     <div class="slds-p-around_x-small slds-clearfix slds-float_left">
                         <div class="slds-grid slds-wrap">
@@ -136,7 +166,7 @@
                             </div>
                             <div class="slds-col slds-medium-size_6-of-12 slds-size_1-of-1 slds-p-left_x-small">
                                 <c-slwc-time-input-with-timezone 
-                                    input-date={model.actualShiftEndTime}
+                                    input-date={model.actualShiftEndDate}
                                     timezone={model.timezoneSidId}>
                                     <lightning-input 
                                         slot="input"
@@ -150,26 +180,200 @@
                             </div>
                         </div>
                     </div>
-                    <div class="slds-p-around_x-small" style="clear: both;">
+                    <div class="slds-p-around_x-small slds-clearfix" style="clear: both">
                         <lightning-input if:true={isAbsent} disabled type="text" onchange={handleChange}
-                            name="earlyDepartureLateArrivalReasons" label="Early Departure / Late Arrival Reasons"
-                            value={model.earlyDepartureLateArrivalReasons}>
+                            name="lateArrivalReasons" label="Late Arrival Reasons"
+                            value={model.lateArrivalReasons}>
                         </lightning-input>
-                        <c-slwc-picklist if:false={isAbsent} name="earlyDepartureLateArrivalReasons"
+                        <c-slwc-picklist if:false={isAbsent} name="lateArrivalReasons"
                             disabled={disabled}
-                            label="Early Departure / Late Arrival Reasons" unique-key={} onchange={handleChange}
+                            label="Late Arrival Reasons" unique-key={} onchange={handleChange}
                             object-api-name="sked_Operation_Record_Staff__c"
-                            selected-value={model.earlyDepartureLateArrivalReasons}
-                            required={isEarlyLate}
-                            pick-listfield-api-name="sked_EarlyDeparture_LateArrival_Reasons__c">
+                            selected-value={model.lateArrivalReasons}
+                            required={isLate}
+                            pick-listfield-api-name="sked_Late_Arrival_Reasons__c">
                         </c-slwc-picklist>
                     </div>
-                    <div
+                    <div class="slds-p-around_x-small slds-clearfix slds-float_left" if:true={requiresLateArrivalDateTime}>
+                        <div class="slds-form-element__label slds-no-flex" title="Date/Time Late Arrival Received"><abbr class="slds-required" title="required">* </abbr>Date/Time Late Arrival Received</div>
+                        <c-slwc-time-input-with-timezone 
+                            no-label
+                            input-date={model.lateArrivalDateTimeReceived}
+                            timezone={model.timezoneSidId}>
+                            <lightning-input 
+                                slot="input"
+                                variant="label-hidden"
+                                type="datetime" label="Date/Time Late Arrival Received"
+                                name="lateArrivalDateTimeReceived"
+                                timezone={model.timezoneSidId}
+                                onchange={handleChange}
+                                required={isLate}
+                                disabled={disabled}
+                                value={model.lateArrivalDateTimeReceived}>
+                            </lightning-input>
+                        </c-slwc-time-input-with-timezone>
+                    </div>
+                    <div class="slds-p-around_x-small slds-clearfix" style="clear: both">
+                        <lightning-input if:true={isAbsent} disabled type="text" onchange={handleChange}
+                            name="earlyDepartureReasons" label="Early Departure Reasons"
+                            value={model.earlyDepartureReasons}>
+                        </lightning-input>
+                        <c-slwc-picklist if:false={isAbsent} name="earlyDepartureReasons"
+                            disabled={disabled}
+                            label="Early Departure Reasons" unique-key={} onchange={handleChange}
+                            object-api-name="sked_Operation_Record_Staff__c"
+                            selected-value={model.earlyDepartureReasons}
+                            required={isEarly}
+                            pick-listfield-api-name="sked_Early_Departure_Reasons__c">
+                        </c-slwc-picklist>
+                    </div>
+                    <div class="slds-p-around_x-small slds-clearfix slds-float_left" if:true={requiresEarlyDepartureDateTime}>
+                        <div class="slds-form-element__label slds-no-flex" title="Date/Time Early Departure Received"><abbr class="slds-required" title="required">* </abbr>Date/Time Early Departure Received</div>
+                        <c-slwc-time-input-with-timezone 
+                            no-label
+                            input-date={model.earlyDepartureDateTimeReceived}
+                            timezone={model.timezoneSidId}>
+                            <lightning-input 
+                                slot="input"
+                                variant="label-hidden"
+                                name="earlyDepartureDateTimeReceived"
+                                type="datetime" label="Date/Time Early Departure Received"
+                                timezone={model.timezoneSidId}
+                                onchange={handleChange}
+                                required={isEarly}
+                                disabled={disabled}
+                                value={model.earlyDepartureDateTimeReceived}>
+                            </lightning-input>
+                        </c-slwc-time-input-with-timezone>
+                    </div>
+                    <div style="clear: both;"
                         class="slds-m-horizontal--x-small slds-m-vertical--small slds-grid slds-grid_vertical-align-center slds-grid--align-spread">
                         <label class="slds-form-element__label">No Meal</label>
                         <lightning-input onchange={handleChange} disabled={disabled} name="noMeal" variant="label-hidden"
                             type="toggle" label="No Meal" checked={model.noMeal}>
                         </lightning-input>
+                    </div>
+                    <div
+                        class="slds-m-horizontal--x-small slds-m-vertical--small slds-grid slds-grid_vertical-align-center slds-grid--align-spread">
+                        <label class="slds-form-element__label">Add Meal Breaks Taken</label>
+                        <lightning-input onchange={handleChange} disabled={disabledConfigVariable.addMealBreaksTaken} name="addMealBreaksTaken" variant="label-hidden"
+                            type="toggle" label="Add Meal Breaks Taken" checked={model.addMealBreaksTaken}>
+                        </lightning-input>
+                    </div>
+                    <div if:true={model.addMealBreaksTaken}>
+                        <div class="slds-m-horizontal--x-small slds-m-vertical--small slds-grid slds-grid_vertical-align-center slds-grid--align-spread">
+                            <label class="slds-form-element__label">
+                                <template if:false={disabled}>
+                                    <abbr class="slds-required" title="required">* </abbr>
+                                </template>Meal Breaks</label>
+                            <lightning-input onchange={handleChange} name="noOfMealBreaksTaken" value={model.noOfMealBreaksTaken}  
+                                type="number" disabled={disabled}>
+                            </lightning-input>
+                            <label class="slds-form-element__label">Enter Meal Break Times</label>
+                            <lightning-input onchange={handleChange} disabled={disabledConfigVariable.enterMealBreakTimes} name="enterMealBreakTimes" variant="label-hidden"
+                                type="toggle" label="Enter Meal Break Times" checked={model.enterMealBreakTimes}>
+                            </lightning-input>      
+                        </div>
+                        <div if:true={customErrorModel.showMealBreakError} class="slds-text-color_error slds-p-left_medium">Meal Break must be populated</div>
+                        <div if:true={model.enterMealBreakTimes}>
+                            <template for:each={mealOrRestBreakTimes.mealBreakTimings} for:item="input" for:index="index">
+                                <div key={input.id} class="slds-grid slds-form-element slds-p-top_medium">
+                                    <label class="slds-form-element__label slds-p-left_x-small">{input.name}</label>
+                                    <div class="slds-col slds-p-horizontal_medium">                                        
+                                        <lightning-input 
+                                            slot="input" 
+                                            variant="label-hidden" 
+                                            type="time" 
+                                            label={input.name}
+                                            onchange={handleMealAndRestBreakTimeChange} 
+                                            data-index={index} 
+                                            data-field="mealStartTime"
+                                            name="startTime" 
+                                            required={model.enterMealBreakTimes}
+                                            value={input.startTime}
+                                            disabled={disabled}>              
+                                        </lightning-input>
+                                    </div>                                       
+                                    <div class="slds-col slds-p-horizontal_medium">                                          
+                                        <lightning-input 
+                                            slot="input" 
+                                            variant="label-hidden" 
+                                            type="time" 
+                                            label={input.Name}
+                                            onchange={handleMealAndRestBreakTimeChange}
+                                            data-index={index} 
+                                            data-field="mealEndTime" 
+                                            name="endTime" 
+                                            required={model.enterMealBreakTimes}
+                                            value={input.endTime}
+                                            disabled={disabled}>
+                                        </lightning-input>
+                                    </div>
+                                </div>                               
+                            </template>
+                        </div>                    
+                    </div>
+                    <div
+                        class="slds-m-horizontal--x-small slds-m-vertical--small slds-grid slds-grid_vertical-align-center slds-grid--align-spread">
+                        <label class="slds-form-element__label">Add Rest Breaks Taken</label>
+                        <lightning-input onchange={handleChange} disabled={disabledConfigVariable.addRestBreaksTaken} name="addRestBreaksTaken" variant="label-hidden"
+                            type="toggle" label="Add rest breaks taken" checked={model.addRestBreaksTaken}>
+                        </lightning-input>
+                    </div>
+                    <div if:true={model.addRestBreaksTaken}>
+                        <div class="slds-m-horizontal--x-small slds-m-vertical--small slds-grid slds-grid_vertical-align-center slds-grid--align-spread">
+                        <label class="slds-form-element__label">
+                            <template if:false={disabled}>
+                                <abbr class="slds-required" title="required">* </abbr>
+                            </template>Rest Breaks</label>
+                        <lightning-input onchange={handleChange} name="noOfRestBreaksTaken" value={model.noOfRestBreaksTaken} 
+                            type="number" disabled={disabled}>
+                        </lightning-input>  
+                        <label class="slds-form-element__label">Enter Rest Break Times</label>
+                        <lightning-input onchange={handleChange} disabled={disabledConfigVariable.enterRestBreakTimes} name="enterRestBreakTimes" variant="label-hidden"
+                            type="toggle" label="Enter Rest Break Times" checked={model.enterRestBreakTimes}>
+                        </lightning-input>
+                        </div>
+                        <div if:true={customErrorModel.showRestBreakError} class="slds-text-color_error slds-p-left_medium">Rest Break must be populated</div>
+                        <div if:true={model.enterRestBreakTimes}>
+                            <template for:each={mealOrRestBreakTimes.restBreakTimings} for:item="input" for:index="index">
+                                <div key={input.id} class="slds-grid slds-form-element slds-p-top_medium">
+                                    <label class="slds-form-element__label slds-p-left_x-small">{input.name}</label>
+                                    <div class="slds-col slds-p-horizontal_medium">                                        
+                                        <lightning-input 
+                                            slot="input" 
+                                            variant="label-hidden" 
+                                            type="time" 
+                                            label={input.name}
+                                            timezone={model.timezoneSidId} 
+                                            data-index={index} 
+                                            data-field="restStartTime"
+                                            onchange={handleMealAndRestBreakTimeChange} 
+                                            name="startTime" 
+                                            required={model.enterRestBreakTimes}
+                                            value={input.startTime}
+                                            disabled={disabled}>              
+                                        </lightning-input>
+                                    </div>                                       
+                                    <div class="slds-col slds-p-horizontal_medium">                                          
+                                        <lightning-input 
+                                            slot="input" 
+                                            variant="label-hidden" 
+                                            type="time" 
+                                            label={input.Name}
+                                            timezone={model.timezoneSidId} 
+                                            data-index={index} 
+                                            data-field="restEndTime"
+                                            onchange={handleMealAndRestBreakTimeChange} 
+                                            name="endTime" 
+                                            required={model.enterRestBreakTimes}
+                                            value={input.endTime}
+                                            disabled={disabled}>
+                                        </lightning-input>
+                                    </div>
+                                </div>                               
+                            </template>
+                        </div>                       
                     </div>
                     <div if:true={isAbsent} class="slds-m-horizontal--x-small slds-m-vertical--small slds-grid slds-grid_vertical-align-center slds-grid--align-spread">
                         <label class="slds-form-element__label">Premiums/Op Pay</label>
@@ -205,5 +409,15 @@
             </div>
         </section>
         <div class="slds-backdrop slds-backdrop_open" style="z-index:10000"></div>
+        <c-slwc-confirm-modal
+            is-open={warningModalData.isOpen}
+            title={warningModalData.title}
+            message={warningModalData.message}
+            handle-on-close={warningModalData.onClose}
+            confirm-btn-label={warningModalData.confirmBtnLabel}
+            cancel-btn-label={warningModalData.cancelBtnLabel}
+            layer-index="10002"
+            size='x-small'>
+        </c-slwc-confirm-modal>                             
     </template>
 </template>

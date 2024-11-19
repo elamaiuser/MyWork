@@ -43,4 +43,8 @@ public class skedXMLUtils {
 
         return hasChild;
     }
+
+    public String getInnerText(Dom.XmlNode node, String key) {
+        return getChild(node, key).getText();
+    }
 }

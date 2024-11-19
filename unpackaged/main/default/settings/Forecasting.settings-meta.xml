@@ -61,6 +61,13 @@
         </weightedSourceCategories>
     </forecastingCategoryMappings>
     <forecastingCategoryMappings>
+        <forecastingItemCategoryApiName>customcategory</forecastingItemCategoryApiName>
+        <weightedSourceCategories>
+            <sourceCategoryApiName>custom category</sourceCategoryApiName>
+            <weight>1.0</weight>
+        </weightedSourceCategories>
+    </forecastingCategoryMappings>
+    <forecastingCategoryMappings>
         <forecastingItemCategoryApiName>commitforecast</forecastingItemCategoryApiName>
         <weightedSourceCategories>
             <sourceCategoryApiName>closed</sourceCategoryApiName>
@@ -87,6 +94,7 @@
         <forecastedCategoryApiNames>commitonly</forecastedCategoryApiNames>
         <forecastedCategoryApiNames>closedonly</forecastedCategoryApiNames>
         <forecastedCategoryApiNames>pipelineonly</forecastedCategoryApiNames>
+        <forecastedCategoryApiNames>customcategory</forecastedCategoryApiNames>
         <forecastedCategoryApiNames>bestcaseonly</forecastedCategoryApiNames>
         <forecastingDateType>ProductDate</forecastingDateType>
         <hasProductFamily>false</hasProductFamily>
@@ -244,6 +252,10 @@
             <label>#of Platelet Assets</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
+            <field>00N5c00000JreN2</field>
+            <label>AA Unit Projection</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
             <field>00N5c00000JGrU2</field>
             <label>Accept 56 Day Rule Violation</label>
         </opportunityListFieldsLabelMappings>
@@ -488,6 +500,10 @@
             <label>District Manager Portfolio</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
+            <field>00N5c00000JreN3</field>
+            <label>Diverse Donor Recruitment Strategy</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
             <field>00N5c00000Ir4Qf</field>
             <label>Division</label>
         </opportunityListFieldsLabelMappings>
@@ -512,6 +528,10 @@
             <label>Double Red Projected Units</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
+            <field>00N5c00000JreN4</field>
+            <label>Draw Rate</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
             <field>00N5c00000JGrw9</field>
             <label>DRD Territory</label>
         </opportunityListFieldsLabelMappings>
@@ -526,6 +546,10 @@
         <opportunityListFieldsLabelMappings>
             <field>00N5c00000JGrUq</field>
             <label>Drive Date</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
+            <field>00N5c00000JrR1B</field>
+            <label>Drive Date Change Reason</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
             <field>00N5c00000JGrUp</field>
@@ -662,6 +686,10 @@
         <opportunityListFieldsLabelMappings>
             <field>00No0000004LBrO</field>
             <label>Last Contact Type</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
+            <field>00N5c00000JreN5</field>
+            <label>Latino Unit Projection</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
             <field>00N5c00000JGrVC</field>
@@ -808,6 +836,14 @@
             <label>Recruited By</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
+            <field>00N5c00000Jrfd3</field>
+            <label>Recruitment Committee Exists</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
+            <field>00N5c00000Jrfd4</field>
+            <label>Recruitment Strategy with Tactics</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
             <field>00No0000004LBn2</field>
             <label>Referred?</label>
         </opportunityListFieldsLabelMappings>
@@ -832,6 +868,10 @@
             <label>Related Scheduled Drive</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
+            <field>00N5c00000Jrhib</field>
+            <label>Related Scheduled Drive Productivity</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
             <field>00N5c00000JGrWL</field>
             <label>Replacement Drive</label>
         </opportunityListFieldsLabelMappings>
@@ -852,6 +892,10 @@
             <label>Send Mailers</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
+            <field>00N5c00000JreN6</field>
+            <label>Show Rate</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
             <field>00N5c00000JGrwS</field>
             <label>Site/Building Name</label>
         </opportunityListFieldsLabelMappings>
@@ -870,6 +914,14 @@
         <opportunityListFieldsLabelMappings>
             <field>00N5c00000JGrwU</field>
             <label>Site Zip Code</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
+            <field>00N5c00000JreN8</field>
+            <label>Slot Generator</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
+            <field>00N5c00000JreN7</field>
+            <label>Slot Generator Change Reason</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
             <field>00N5c00000JGrVp</field>
@@ -978,6 +1030,10 @@
         <opportunityListFieldsLabelMappings>
             <field>00N5c00000JGrWF</field>
             <label>WB Procedure Cng Rsn</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
+            <field>00N5c00000JreN9</field>
+            <label>Web Sched Offset from CO/Global Settings</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
             <field>00N5c00000JGrW4</field>
@@ -1095,6 +1151,7 @@
             <field>00N5c00000JGrVH</field>
             <field>00N5c00000JGrVI</field>
             <field>00N5c00000JGrVJ</field>
+            <field>00N5c00000JreN2</field>
             <field>00N5c00000JGrU2</field>
             <field>00N5c00000JGrU3</field>
             <field>00N5c00000JGrU4</field>
@@ -1156,16 +1213,19 @@
             <field>00N5c00000JGrwF</field>
             <field>00N5c00000JrJem</field>
             <field>00N5c00000JrJel</field>
+            <field>00N5c00000JreN3</field>
             <field>00N5c00000Ir4Qf</field>
             <field>00N5c00000JGrUj</field>
             <field>00N5c00000JGrWJ</field>
             <field>00N5c00000JGrUl</field>
             <field>00N5c00000JGrUm</field>
             <field>00N5c00000JGrUn</field>
+            <field>00N5c00000JreN4</field>
             <field>00N5c00000JGrw9</field>
             <field>00N5c00000JGrWK</field>
             <field>00N5c00000JGrUo</field>
             <field>00N5c00000JGrUq</field>
+            <field>00N5c00000JrR1B</field>
             <field>00N5c00000JGrUp</field>
             <field>00N5c00000JGrwG</field>
             <field>00N5c00000JGrUr</field>
@@ -1200,6 +1260,7 @@
             <field>00N5c00000JGrVA</field>
             <field>00No0000004LBrd</field>
             <field>00No0000004LBrO</field>
+            <field>00N5c00000JreN5</field>
             <field>00N5c00000JGrVC</field>
             <field>00N5c00000JGrVD</field>
             <field>00N5c00000JGrwN</field>
@@ -1236,22 +1297,28 @@
             <field>00N5c00000JGrVf</field>
             <field>00N5c00000JGrUZ</field>
             <field>00N5c00000JGrVg</field>
+            <field>00N5c00000Jrfd3</field>
+            <field>00N5c00000Jrfd4</field>
             <field>00No0000004LBn2</field>
             <field>00No0000004LBnH</field>
             <field>00N5c00000JGrVi</field>
             <field>00N5c00000JGrVh</field>
             <field>00No0000005SiIS</field>
             <field>00N5c00000JGrVj</field>
+            <field>00N5c00000Jrhib</field>
             <field>00N5c00000JGrWL</field>
             <field>00N5c00000JGrVk</field>
             <field>00N5c00000JGrVl</field>
             <field>00N5c00000JGrVm</field>
             <field>00N5c00000JGrVn</field>
+            <field>00N5c00000JreN6</field>
             <field>00N5c00000JGrwS</field>
             <field>00N5c00000JGrwQ</field>
             <field>00N5c00000JGrwT</field>
             <field>00N5c00000JGrVo</field>
             <field>00N5c00000JGrwU</field>
+            <field>00N5c00000JreN8</field>
+            <field>00N5c00000JreN7</field>
             <field>00N5c00000JGrVp</field>
             <field>00N5c00000JGrVq</field>
             <field>00N5c00000JGrVr</field>
@@ -1279,6 +1346,7 @@
             <field>00N5c00000JGrW1</field>
             <field>00N5c00000JGrW2</field>
             <field>00N5c00000JGrWF</field>
+            <field>00N5c00000JreN9</field>
             <field>00N5c00000JGrW4</field>
             <field>00N5c00000JGrW5</field>
             <field>00N5c00000JGrW6</field>
@@ -1309,6 +1377,7 @@
         <forecastedCategoryApiNames>commitonly</forecastedCategoryApiNames>
         <forecastedCategoryApiNames>closedonly</forecastedCategoryApiNames>
         <forecastedCategoryApiNames>pipelineonly</forecastedCategoryApiNames>
+        <forecastedCategoryApiNames>customcategory</forecastedCategoryApiNames>
         <forecastedCategoryApiNames>bestcaseonly</forecastedCategoryApiNames>
         <forecastingDateType>ProductDate</forecastingDateType>
         <hasProductFamily>false</hasProductFamily>
@@ -1462,6 +1531,10 @@
             <label>#of Platelet Assets</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
+            <field>00N5c00000JreN2</field>
+            <label>AA Unit Projection</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
             <field>00N5c00000JGrU2</field>
             <label>Accept 56 Day Rule Violation</label>
         </opportunityListFieldsLabelMappings>
@@ -1706,6 +1779,10 @@
             <label>District Manager Portfolio</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
+            <field>00N5c00000JreN3</field>
+            <label>Diverse Donor Recruitment Strategy</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
             <field>00N5c00000Ir4Qf</field>
             <label>Division</label>
         </opportunityListFieldsLabelMappings>
@@ -1730,6 +1807,10 @@
             <label>Double Red Projected Units</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
+            <field>00N5c00000JreN4</field>
+            <label>Draw Rate</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
             <field>00N5c00000JGrw9</field>
             <label>DRD Territory</label>
         </opportunityListFieldsLabelMappings>
@@ -1744,6 +1825,10 @@
         <opportunityListFieldsLabelMappings>
             <field>00N5c00000JGrUq</field>
             <label>Drive Date</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
+            <field>00N5c00000JrR1B</field>
+            <label>Drive Date Change Reason</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
             <field>00N5c00000JGrUp</field>
@@ -1880,6 +1965,10 @@
         <opportunityListFieldsLabelMappings>
             <field>00No0000004LBrO</field>
             <label>Last Contact Type</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
+            <field>00N5c00000JreN5</field>
+            <label>Latino Unit Projection</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
             <field>00N5c00000JGrVC</field>
@@ -2026,6 +2115,14 @@
             <label>Recruited By</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
+            <field>00N5c00000Jrfd3</field>
+            <label>Recruitment Committee Exists</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
+            <field>00N5c00000Jrfd4</field>
+            <label>Recruitment Strategy with Tactics</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
             <field>00No0000004LBn2</field>
             <label>Referred?</label>
         </opportunityListFieldsLabelMappings>
@@ -2050,6 +2147,10 @@
             <label>Related Scheduled Drive</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
+            <field>00N5c00000Jrhib</field>
+            <label>Related Scheduled Drive Productivity</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
             <field>00N5c00000JGrWL</field>
             <label>Replacement Drive</label>
         </opportunityListFieldsLabelMappings>
@@ -2070,6 +2171,10 @@
             <label>Send Mailers</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
+            <field>00N5c00000JreN6</field>
+            <label>Show Rate</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
             <field>00N5c00000JGrwS</field>
             <label>Site/Building Name</label>
         </opportunityListFieldsLabelMappings>
@@ -2088,6 +2193,14 @@
         <opportunityListFieldsLabelMappings>
             <field>00N5c00000JGrwU</field>
             <label>Site Zip Code</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
+            <field>00N5c00000JreN8</field>
+            <label>Slot Generator</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
+            <field>00N5c00000JreN7</field>
+            <label>Slot Generator Change Reason</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
             <field>00N5c00000JGrVp</field>
@@ -2196,6 +2309,10 @@
         <opportunityListFieldsLabelMappings>
             <field>00N5c00000JGrWF</field>
             <label>WB Procedure Cng Rsn</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
+            <field>00N5c00000JreN9</field>
+            <label>Web Sched Offset from CO/Global Settings</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
             <field>00N5c00000JGrW4</field>
@@ -2312,6 +2429,7 @@
             <field>00N5c00000JGrVH</field>
             <field>00N5c00000JGrVI</field>
             <field>00N5c00000JGrVJ</field>
+            <field>00N5c00000JreN2</field>
             <field>00N5c00000JGrU2</field>
             <field>00N5c00000JGrU3</field>
             <field>00N5c00000JGrU4</field>
@@ -2373,16 +2491,19 @@
             <field>00N5c00000JGrwF</field>
             <field>00N5c00000JrJem</field>
             <field>00N5c00000JrJel</field>
+            <field>00N5c00000JreN3</field>
             <field>00N5c00000Ir4Qf</field>
             <field>00N5c00000JGrUj</field>
             <field>00N5c00000JGrWJ</field>
             <field>00N5c00000JGrUl</field>
             <field>00N5c00000JGrUm</field>
             <field>00N5c00000JGrUn</field>
+            <field>00N5c00000JreN4</field>
             <field>00N5c00000JGrw9</field>
             <field>00N5c00000JGrWK</field>
             <field>00N5c00000JGrUo</field>
             <field>00N5c00000JGrUq</field>
+            <field>00N5c00000JrR1B</field>
             <field>00N5c00000JGrUp</field>
             <field>00N5c00000JGrwG</field>
             <field>00N5c00000JGrUr</field>
@@ -2417,6 +2538,7 @@
             <field>00N5c00000JGrVA</field>
             <field>00No0000004LBrd</field>
             <field>00No0000004LBrO</field>
+            <field>00N5c00000JreN5</field>
             <field>00N5c00000JGrVC</field>
             <field>00N5c00000JGrVD</field>
             <field>00N5c00000JGrwN</field>
@@ -2453,22 +2575,28 @@
             <field>00N5c00000JGrVf</field>
             <field>00N5c00000JGrUZ</field>
             <field>00N5c00000JGrVg</field>
+            <field>00N5c00000Jrfd3</field>
+            <field>00N5c00000Jrfd4</field>
             <field>00No0000004LBn2</field>
             <field>00No0000004LBnH</field>
             <field>00N5c00000JGrVi</field>
             <field>00N5c00000JGrVh</field>
             <field>00No0000005SiIS</field>
             <field>00N5c00000JGrVj</field>
+            <field>00N5c00000Jrhib</field>
             <field>00N5c00000JGrWL</field>
             <field>00N5c00000JGrVk</field>
             <field>00N5c00000JGrVl</field>
             <field>00N5c00000JGrVm</field>
             <field>00N5c00000JGrVn</field>
+            <field>00N5c00000JreN6</field>
             <field>00N5c00000JGrwS</field>
             <field>00N5c00000JGrwQ</field>
             <field>00N5c00000JGrwT</field>
             <field>00N5c00000JGrVo</field>
             <field>00N5c00000JGrwU</field>
+            <field>00N5c00000JreN8</field>
+            <field>00N5c00000JreN7</field>
             <field>00N5c00000JGrVp</field>
             <field>00N5c00000JGrVq</field>
             <field>00N5c00000JGrVr</field>
@@ -2496,6 +2624,7 @@
             <field>00N5c00000JGrW1</field>
             <field>00N5c00000JGrW2</field>
             <field>00N5c00000JGrWF</field>
+            <field>00N5c00000JreN9</field>
             <field>00N5c00000JGrW4</field>
             <field>00N5c00000JGrW5</field>
             <field>00N5c00000JGrW6</field>
@@ -2526,6 +2655,7 @@
         <forecastedCategoryApiNames>commitonly</forecastedCategoryApiNames>
         <forecastedCategoryApiNames>closedonly</forecastedCategoryApiNames>
         <forecastedCategoryApiNames>pipelineonly</forecastedCategoryApiNames>
+        <forecastedCategoryApiNames>customcategory</forecastedCategoryApiNames>
         <forecastedCategoryApiNames>bestcaseonly</forecastedCategoryApiNames>
         <forecastingDateType>ProductDate</forecastingDateType>
         <hasProductFamily>true</hasProductFamily>
@@ -2683,6 +2813,10 @@
             <label>#of Platelet Assets</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
+            <field>00N5c00000JreN2</field>
+            <label>AA Unit Projection</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
             <field>00N5c00000JGrU2</field>
             <label>Accept 56 Day Rule Violation</label>
         </opportunityListFieldsLabelMappings>
@@ -2927,6 +3061,10 @@
             <label>District Manager Portfolio</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
+            <field>00N5c00000JreN3</field>
+            <label>Diverse Donor Recruitment Strategy</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
             <field>00N5c00000Ir4Qf</field>
             <label>Division</label>
         </opportunityListFieldsLabelMappings>
@@ -2951,6 +3089,10 @@
             <label>Double Red Projected Units</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
+            <field>00N5c00000JreN4</field>
+            <label>Draw Rate</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
             <field>00N5c00000JGrw9</field>
             <label>DRD Territory</label>
         </opportunityListFieldsLabelMappings>
@@ -2965,6 +3107,10 @@
         <opportunityListFieldsLabelMappings>
             <field>00N5c00000JGrUq</field>
             <label>Drive Date</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
+            <field>00N5c00000JrR1B</field>
+            <label>Drive Date Change Reason</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
             <field>00N5c00000JGrUp</field>
@@ -3101,6 +3247,10 @@
         <opportunityListFieldsLabelMappings>
             <field>00No0000004LBrO</field>
             <label>Last Contact Type</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
+            <field>00N5c00000JreN5</field>
+            <label>Latino Unit Projection</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
             <field>00N5c00000JGrVC</field>
@@ -3247,6 +3397,14 @@
             <label>Recruited By</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
+            <field>00N5c00000Jrfd3</field>
+            <label>Recruitment Committee Exists</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
+            <field>00N5c00000Jrfd4</field>
+            <label>Recruitment Strategy with Tactics</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
             <field>00No0000004LBn2</field>
             <label>Referred?</label>
         </opportunityListFieldsLabelMappings>
@@ -3271,6 +3429,10 @@
             <label>Related Scheduled Drive</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
+            <field>00N5c00000Jrhib</field>
+            <label>Related Scheduled Drive Productivity</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
             <field>00N5c00000JGrWL</field>
             <label>Replacement Drive</label>
         </opportunityListFieldsLabelMappings>
@@ -3291,6 +3453,10 @@
             <label>Send Mailers</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
+            <field>00N5c00000JreN6</field>
+            <label>Show Rate</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
             <field>00N5c00000JGrwS</field>
             <label>Site/Building Name</label>
         </opportunityListFieldsLabelMappings>
@@ -3309,6 +3475,14 @@
         <opportunityListFieldsLabelMappings>
             <field>00N5c00000JGrwU</field>
             <label>Site Zip Code</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
+            <field>00N5c00000JreN8</field>
+            <label>Slot Generator</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
+            <field>00N5c00000JreN7</field>
+            <label>Slot Generator Change Reason</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
             <field>00N5c00000JGrVp</field>
@@ -3417,6 +3591,10 @@
         <opportunityListFieldsLabelMappings>
             <field>00N5c00000JGrWF</field>
             <label>WB Procedure Cng Rsn</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
+            <field>00N5c00000JreN9</field>
+            <label>Web Sched Offset from CO/Global Settings</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
             <field>00N5c00000JGrW4</field>
@@ -3534,6 +3712,7 @@
             <field>00N5c00000JGrVH</field>
             <field>00N5c00000JGrVI</field>
             <field>00N5c00000JGrVJ</field>
+            <field>00N5c00000JreN2</field>
             <field>00N5c00000JGrU2</field>
             <field>00N5c00000JGrU3</field>
             <field>00N5c00000JGrU4</field>
@@ -3595,16 +3774,19 @@
             <field>00N5c00000JGrwF</field>
             <field>00N5c00000JrJem</field>
             <field>00N5c00000JrJel</field>
+            <field>00N5c00000JreN3</field>
             <field>00N5c00000Ir4Qf</field>
             <field>00N5c00000JGrUj</field>
             <field>00N5c00000JGrWJ</field>
             <field>00N5c00000JGrUl</field>
             <field>00N5c00000JGrUm</field>
             <field>00N5c00000JGrUn</field>
+            <field>00N5c00000JreN4</field>
             <field>00N5c00000JGrw9</field>
             <field>00N5c00000JGrWK</field>
             <field>00N5c00000JGrUo</field>
             <field>00N5c00000JGrUq</field>
+            <field>00N5c00000JrR1B</field>
             <field>00N5c00000JGrUp</field>
             <field>00N5c00000JGrwG</field>
             <field>00N5c00000JGrUr</field>
@@ -3639,6 +3821,7 @@
             <field>00N5c00000JGrVA</field>
             <field>00No0000004LBrd</field>
             <field>00No0000004LBrO</field>
+            <field>00N5c00000JreN5</field>
             <field>00N5c00000JGrVC</field>
             <field>00N5c00000JGrVD</field>
             <field>00N5c00000JGrwN</field>
@@ -3675,22 +3858,28 @@
             <field>00N5c00000JGrVf</field>
             <field>00N5c00000JGrUZ</field>
             <field>00N5c00000JGrVg</field>
+            <field>00N5c00000Jrfd3</field>
+            <field>00N5c00000Jrfd4</field>
             <field>00No0000004LBn2</field>
             <field>00No0000004LBnH</field>
             <field>00N5c00000JGrVi</field>
             <field>00N5c00000JGrVh</field>
             <field>00No0000005SiIS</field>
             <field>00N5c00000JGrVj</field>
+            <field>00N5c00000Jrhib</field>
             <field>00N5c00000JGrWL</field>
             <field>00N5c00000JGrVk</field>
             <field>00N5c00000JGrVl</field>
             <field>00N5c00000JGrVm</field>
             <field>00N5c00000JGrVn</field>
+            <field>00N5c00000JreN6</field>
             <field>00N5c00000JGrwS</field>
             <field>00N5c00000JGrwQ</field>
             <field>00N5c00000JGrwT</field>
             <field>00N5c00000JGrVo</field>
             <field>00N5c00000JGrwU</field>
+            <field>00N5c00000JreN8</field>
+            <field>00N5c00000JreN7</field>
             <field>00N5c00000JGrVp</field>
             <field>00N5c00000JGrVq</field>
             <field>00N5c00000JGrVr</field>
@@ -3718,6 +3907,7 @@
             <field>00N5c00000JGrW1</field>
             <field>00N5c00000JGrW2</field>
             <field>00N5c00000JGrWF</field>
+            <field>00N5c00000JreN9</field>
             <field>00N5c00000JGrW4</field>
             <field>00N5c00000JGrW5</field>
             <field>00N5c00000JGrW6</field>
@@ -3748,6 +3938,7 @@
         <forecastedCategoryApiNames>commitonly</forecastedCategoryApiNames>
         <forecastedCategoryApiNames>closedonly</forecastedCategoryApiNames>
         <forecastedCategoryApiNames>pipelineonly</forecastedCategoryApiNames>
+        <forecastedCategoryApiNames>customcategory</forecastedCategoryApiNames>
         <forecastedCategoryApiNames>bestcaseonly</forecastedCategoryApiNames>
         <forecastingDateType>ProductDate</forecastingDateType>
         <hasProductFamily>true</hasProductFamily>
@@ -3901,6 +4092,10 @@
             <label>#of Platelet Assets</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
+            <field>00N5c00000JreN2</field>
+            <label>AA Unit Projection</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
             <field>00N5c00000JGrU2</field>
             <label>Accept 56 Day Rule Violation</label>
         </opportunityListFieldsLabelMappings>
@@ -4145,6 +4340,10 @@
             <label>District Manager Portfolio</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
+            <field>00N5c00000JreN3</field>
+            <label>Diverse Donor Recruitment Strategy</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
             <field>00N5c00000Ir4Qf</field>
             <label>Division</label>
         </opportunityListFieldsLabelMappings>
@@ -4169,6 +4368,10 @@
             <label>Double Red Projected Units</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
+            <field>00N5c00000JreN4</field>
+            <label>Draw Rate</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
             <field>00N5c00000JGrw9</field>
             <label>DRD Territory</label>
         </opportunityListFieldsLabelMappings>
@@ -4183,6 +4386,10 @@
         <opportunityListFieldsLabelMappings>
             <field>00N5c00000JGrUq</field>
             <label>Drive Date</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
+            <field>00N5c00000JrR1B</field>
+            <label>Drive Date Change Reason</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
             <field>00N5c00000JGrUp</field>
@@ -4319,6 +4526,10 @@
         <opportunityListFieldsLabelMappings>
             <field>00No0000004LBrO</field>
             <label>Last Contact Type</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
+            <field>00N5c00000JreN5</field>
+            <label>Latino Unit Projection</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
             <field>00N5c00000JGrVC</field>
@@ -4465,6 +4676,14 @@
             <label>Recruited By</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
+            <field>00N5c00000Jrfd3</field>
+            <label>Recruitment Committee Exists</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
+            <field>00N5c00000Jrfd4</field>
+            <label>Recruitment Strategy with Tactics</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
             <field>00No0000004LBn2</field>
             <label>Referred?</label>
         </opportunityListFieldsLabelMappings>
@@ -4489,6 +4708,10 @@
             <label>Related Scheduled Drive</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
+            <field>00N5c00000Jrhib</field>
+            <label>Related Scheduled Drive Productivity</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
             <field>00N5c00000JGrWL</field>
             <label>Replacement Drive</label>
         </opportunityListFieldsLabelMappings>
@@ -4509,6 +4732,10 @@
             <label>Send Mailers</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
+            <field>00N5c00000JreN6</field>
+            <label>Show Rate</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
             <field>00N5c00000JGrwS</field>
             <label>Site/Building Name</label>
         </opportunityListFieldsLabelMappings>
@@ -4527,6 +4754,14 @@
         <opportunityListFieldsLabelMappings>
             <field>00N5c00000JGrwU</field>
             <label>Site Zip Code</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
+            <field>00N5c00000JreN8</field>
+            <label>Slot Generator</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
+            <field>00N5c00000JreN7</field>
+            <label>Slot Generator Change Reason</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
             <field>00N5c00000JGrVp</field>
@@ -4635,6 +4870,10 @@
         <opportunityListFieldsLabelMappings>
             <field>00N5c00000JGrWF</field>
             <label>WB Procedure Cng Rsn</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
+            <field>00N5c00000JreN9</field>
+            <label>Web Sched Offset from CO/Global Settings</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
             <field>00N5c00000JGrW4</field>
@@ -4751,6 +4990,7 @@
             <field>00N5c00000JGrVH</field>
             <field>00N5c00000JGrVI</field>
             <field>00N5c00000JGrVJ</field>
+            <field>00N5c00000JreN2</field>
             <field>00N5c00000JGrU2</field>
             <field>00N5c00000JGrU3</field>
             <field>00N5c00000JGrU4</field>
@@ -4812,16 +5052,19 @@
             <field>00N5c00000JGrwF</field>
             <field>00N5c00000JrJem</field>
             <field>00N5c00000JrJel</field>
+            <field>00N5c00000JreN3</field>
             <field>00N5c00000Ir4Qf</field>
             <field>00N5c00000JGrUj</field>
             <field>00N5c00000JGrWJ</field>
             <field>00N5c00000JGrUl</field>
             <field>00N5c00000JGrUm</field>
             <field>00N5c00000JGrUn</field>
+            <field>00N5c00000JreN4</field>
             <field>00N5c00000JGrw9</field>
             <field>00N5c00000JGrWK</field>
             <field>00N5c00000JGrUo</field>
             <field>00N5c00000JGrUq</field>
+            <field>00N5c00000JrR1B</field>
             <field>00N5c00000JGrUp</field>
             <field>00N5c00000JGrwG</field>
             <field>00N5c00000JGrUr</field>
@@ -4856,6 +5099,7 @@
             <field>00N5c00000JGrVA</field>
             <field>00No0000004LBrd</field>
             <field>00No0000004LBrO</field>
+            <field>00N5c00000JreN5</field>
             <field>00N5c00000JGrVC</field>
             <field>00N5c00000JGrVD</field>
             <field>00N5c00000JGrwN</field>
@@ -4892,22 +5136,28 @@
             <field>00N5c00000JGrVf</field>
             <field>00N5c00000JGrUZ</field>
             <field>00N5c00000JGrVg</field>
+            <field>00N5c00000Jrfd3</field>
+            <field>00N5c00000Jrfd4</field>
             <field>00No0000004LBn2</field>
             <field>00No0000004LBnH</field>
             <field>00N5c00000JGrVi</field>
             <field>00N5c00000JGrVh</field>
             <field>00No0000005SiIS</field>
             <field>00N5c00000JGrVj</field>
+            <field>00N5c00000Jrhib</field>
             <field>00N5c00000JGrWL</field>
             <field>00N5c00000JGrVk</field>
             <field>00N5c00000JGrVl</field>
             <field>00N5c00000JGrVm</field>
             <field>00N5c00000JGrVn</field>
+            <field>00N5c00000JreN6</field>
             <field>00N5c00000JGrwS</field>
             <field>00N5c00000JGrwQ</field>
             <field>00N5c00000JGrwT</field>
             <field>00N5c00000JGrVo</field>
             <field>00N5c00000JGrwU</field>
+            <field>00N5c00000JreN8</field>
+            <field>00N5c00000JreN7</field>
             <field>00N5c00000JGrVp</field>
             <field>00N5c00000JGrVq</field>
             <field>00N5c00000JGrVr</field>
@@ -4935,6 +5185,7 @@
             <field>00N5c00000JGrW1</field>
             <field>00N5c00000JGrW2</field>
             <field>00N5c00000JGrWF</field>
+            <field>00N5c00000JreN9</field>
             <field>00N5c00000JGrW4</field>
             <field>00N5c00000JGrW5</field>
             <field>00N5c00000JGrW6</field>
@@ -4965,6 +5216,7 @@
         <forecastedCategoryApiNames>commitonly</forecastedCategoryApiNames>
         <forecastedCategoryApiNames>closedonly</forecastedCategoryApiNames>
         <forecastedCategoryApiNames>pipelineonly</forecastedCategoryApiNames>
+        <forecastedCategoryApiNames>customcategory</forecastedCategoryApiNames>
         <forecastedCategoryApiNames>bestcaseonly</forecastedCategoryApiNames>
         <forecastingDateType>ScheduleDate</forecastingDateType>
         <hasProductFamily>false</hasProductFamily>
@@ -5122,6 +5374,10 @@
             <label>#of Platelet Assets</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
+            <field>00N5c00000JreN2</field>
+            <label>AA Unit Projection</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
             <field>00N5c00000JGrU2</field>
             <label>Accept 56 Day Rule Violation</label>
         </opportunityListFieldsLabelMappings>
@@ -5366,6 +5622,10 @@
             <label>District Manager Portfolio</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
+            <field>00N5c00000JreN3</field>
+            <label>Diverse Donor Recruitment Strategy</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
             <field>00N5c00000Ir4Qf</field>
             <label>Division</label>
         </opportunityListFieldsLabelMappings>
@@ -5390,6 +5650,10 @@
             <label>Double Red Projected Units</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
+            <field>00N5c00000JreN4</field>
+            <label>Draw Rate</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
             <field>00N5c00000JGrw9</field>
             <label>DRD Territory</label>
         </opportunityListFieldsLabelMappings>
@@ -5404,6 +5668,10 @@
         <opportunityListFieldsLabelMappings>
             <field>00N5c00000JGrUq</field>
             <label>Drive Date</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
+            <field>00N5c00000JrR1B</field>
+            <label>Drive Date Change Reason</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
             <field>00N5c00000JGrUp</field>
@@ -5540,6 +5808,10 @@
         <opportunityListFieldsLabelMappings>
             <field>00No0000004LBrO</field>
             <label>Last Contact Type</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
+            <field>00N5c00000JreN5</field>
+            <label>Latino Unit Projection</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
             <field>00N5c00000JGrVC</field>
@@ -5686,6 +5958,14 @@
             <label>Recruited By</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
+            <field>00N5c00000Jrfd3</field>
+            <label>Recruitment Committee Exists</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
+            <field>00N5c00000Jrfd4</field>
+            <label>Recruitment Strategy with Tactics</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
             <field>00No0000004LBn2</field>
             <label>Referred?</label>
         </opportunityListFieldsLabelMappings>
@@ -5710,6 +5990,10 @@
             <label>Related Scheduled Drive</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
+            <field>00N5c00000Jrhib</field>
+            <label>Related Scheduled Drive Productivity</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
             <field>00N5c00000JGrWL</field>
             <label>Replacement Drive</label>
         </opportunityListFieldsLabelMappings>
@@ -5730,6 +6014,10 @@
             <label>Send Mailers</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
+            <field>00N5c00000JreN6</field>
+            <label>Show Rate</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
             <field>00N5c00000JGrwS</field>
             <label>Site/Building Name</label>
         </opportunityListFieldsLabelMappings>
@@ -5748,6 +6036,14 @@
         <opportunityListFieldsLabelMappings>
             <field>00N5c00000JGrwU</field>
             <label>Site Zip Code</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
+            <field>00N5c00000JreN8</field>
+            <label>Slot Generator</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
+            <field>00N5c00000JreN7</field>
+            <label>Slot Generator Change Reason</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
             <field>00N5c00000JGrVp</field>
@@ -5856,6 +6152,10 @@
         <opportunityListFieldsLabelMappings>
             <field>00N5c00000JGrWF</field>
             <label>WB Procedure Cng Rsn</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
+            <field>00N5c00000JreN9</field>
+            <label>Web Sched Offset from CO/Global Settings</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
             <field>00N5c00000JGrW4</field>
@@ -5973,6 +6273,7 @@
             <field>00N5c00000JGrVH</field>
             <field>00N5c00000JGrVI</field>
             <field>00N5c00000JGrVJ</field>
+            <field>00N5c00000JreN2</field>
             <field>00N5c00000JGrU2</field>
             <field>00N5c00000JGrU3</field>
             <field>00N5c00000JGrU4</field>
@@ -6034,16 +6335,19 @@
             <field>00N5c00000JGrwF</field>
             <field>00N5c00000JrJem</field>
             <field>00N5c00000JrJel</field>
+            <field>00N5c00000JreN3</field>
             <field>00N5c00000Ir4Qf</field>
             <field>00N5c00000JGrUj</field>
             <field>00N5c00000JGrWJ</field>
             <field>00N5c00000JGrUl</field>
             <field>00N5c00000JGrUm</field>
             <field>00N5c00000JGrUn</field>
+            <field>00N5c00000JreN4</field>
             <field>00N5c00000JGrw9</field>
             <field>00N5c00000JGrWK</field>
             <field>00N5c00000JGrUo</field>
             <field>00N5c00000JGrUq</field>
+            <field>00N5c00000JrR1B</field>
             <field>00N5c00000JGrUp</field>
             <field>00N5c00000JGrwG</field>
             <field>00N5c00000JGrUr</field>
@@ -6078,6 +6382,7 @@
             <field>00N5c00000JGrVA</field>
             <field>00No0000004LBrd</field>
             <field>00No0000004LBrO</field>
+            <field>00N5c00000JreN5</field>
             <field>00N5c00000JGrVC</field>
             <field>00N5c00000JGrVD</field>
             <field>00N5c00000JGrwN</field>
@@ -6114,22 +6419,28 @@
             <field>00N5c00000JGrVf</field>
             <field>00N5c00000JGrUZ</field>
             <field>00N5c00000JGrVg</field>
+            <field>00N5c00000Jrfd3</field>
+            <field>00N5c00000Jrfd4</field>
             <field>00No0000004LBn2</field>
             <field>00No0000004LBnH</field>
             <field>00N5c00000JGrVi</field>
             <field>00N5c00000JGrVh</field>
             <field>00No0000005SiIS</field>
             <field>00N5c00000JGrVj</field>
+            <field>00N5c00000Jrhib</field>
             <field>00N5c00000JGrWL</field>
             <field>00N5c00000JGrVk</field>
             <field>00N5c00000JGrVl</field>
             <field>00N5c00000JGrVm</field>
             <field>00N5c00000JGrVn</field>
+            <field>00N5c00000JreN6</field>
             <field>00N5c00000JGrwS</field>
             <field>00N5c00000JGrwQ</field>
             <field>00N5c00000JGrwT</field>
             <field>00N5c00000JGrVo</field>
             <field>00N5c00000JGrwU</field>
+            <field>00N5c00000JreN8</field>
+            <field>00N5c00000JreN7</field>
             <field>00N5c00000JGrVp</field>
             <field>00N5c00000JGrVq</field>
             <field>00N5c00000JGrVr</field>
@@ -6157,6 +6468,7 @@
             <field>00N5c00000JGrW1</field>
             <field>00N5c00000JGrW2</field>
             <field>00N5c00000JGrWF</field>
+            <field>00N5c00000JreN9</field>
             <field>00N5c00000JGrW4</field>
             <field>00N5c00000JGrW5</field>
             <field>00N5c00000JGrW6</field>
@@ -6187,6 +6499,7 @@
         <forecastedCategoryApiNames>commitonly</forecastedCategoryApiNames>
         <forecastedCategoryApiNames>closedonly</forecastedCategoryApiNames>
         <forecastedCategoryApiNames>pipelineonly</forecastedCategoryApiNames>
+        <forecastedCategoryApiNames>customcategory</forecastedCategoryApiNames>
         <forecastedCategoryApiNames>bestcaseonly</forecastedCategoryApiNames>
         <forecastingDateType>ScheduleDate</forecastingDateType>
         <hasProductFamily>false</hasProductFamily>
@@ -6340,6 +6653,10 @@
             <label>#of Platelet Assets</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
+            <field>00N5c00000JreN2</field>
+            <label>AA Unit Projection</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
             <field>00N5c00000JGrU2</field>
             <label>Accept 56 Day Rule Violation</label>
         </opportunityListFieldsLabelMappings>
@@ -6584,6 +6901,10 @@
             <label>District Manager Portfolio</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
+            <field>00N5c00000JreN3</field>
+            <label>Diverse Donor Recruitment Strategy</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
             <field>00N5c00000Ir4Qf</field>
             <label>Division</label>
         </opportunityListFieldsLabelMappings>
@@ -6608,6 +6929,10 @@
             <label>Double Red Projected Units</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
+            <field>00N5c00000JreN4</field>
+            <label>Draw Rate</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
             <field>00N5c00000JGrw9</field>
             <label>DRD Territory</label>
         </opportunityListFieldsLabelMappings>
@@ -6622,6 +6947,10 @@
         <opportunityListFieldsLabelMappings>
             <field>00N5c00000JGrUq</field>
             <label>Drive Date</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
+            <field>00N5c00000JrR1B</field>
+            <label>Drive Date Change Reason</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
             <field>00N5c00000JGrUp</field>
@@ -6758,6 +7087,10 @@
         <opportunityListFieldsLabelMappings>
             <field>00No0000004LBrO</field>
             <label>Last Contact Type</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
+            <field>00N5c00000JreN5</field>
+            <label>Latino Unit Projection</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
             <field>00N5c00000JGrVC</field>
@@ -6904,6 +7237,14 @@
             <label>Recruited By</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
+            <field>00N5c00000Jrfd3</field>
+            <label>Recruitment Committee Exists</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
+            <field>00N5c00000Jrfd4</field>
+            <label>Recruitment Strategy with Tactics</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
             <field>00No0000004LBn2</field>
             <label>Referred?</label>
         </opportunityListFieldsLabelMappings>
@@ -6928,6 +7269,10 @@
             <label>Related Scheduled Drive</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
+            <field>00N5c00000Jrhib</field>
+            <label>Related Scheduled Drive Productivity</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
             <field>00N5c00000JGrWL</field>
             <label>Replacement Drive</label>
         </opportunityListFieldsLabelMappings>
@@ -6948,6 +7293,10 @@
             <label>Send Mailers</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
+            <field>00N5c00000JreN6</field>
+            <label>Show Rate</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
             <field>00N5c00000JGrwS</field>
             <label>Site/Building Name</label>
         </opportunityListFieldsLabelMappings>
@@ -6966,6 +7315,14 @@
         <opportunityListFieldsLabelMappings>
             <field>00N5c00000JGrwU</field>
             <label>Site Zip Code</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
+            <field>00N5c00000JreN8</field>
+            <label>Slot Generator</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
+            <field>00N5c00000JreN7</field>
+            <label>Slot Generator Change Reason</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
             <field>00N5c00000JGrVp</field>
@@ -7074,6 +7431,10 @@
         <opportunityListFieldsLabelMappings>
             <field>00N5c00000JGrWF</field>
             <label>WB Procedure Cng Rsn</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
+            <field>00N5c00000JreN9</field>
+            <label>Web Sched Offset from CO/Global Settings</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
             <field>00N5c00000JGrW4</field>
@@ -7190,6 +7551,7 @@
             <field>00N5c00000JGrVH</field>
             <field>00N5c00000JGrVI</field>
             <field>00N5c00000JGrVJ</field>
+            <field>00N5c00000JreN2</field>
             <field>00N5c00000JGrU2</field>
             <field>00N5c00000JGrU3</field>
             <field>00N5c00000JGrU4</field>
@@ -7251,16 +7613,19 @@
             <field>00N5c00000JGrwF</field>
             <field>00N5c00000JrJem</field>
             <field>00N5c00000JrJel</field>
+            <field>00N5c00000JreN3</field>
             <field>00N5c00000Ir4Qf</field>
             <field>00N5c00000JGrUj</field>
             <field>00N5c00000JGrWJ</field>
             <field>00N5c00000JGrUl</field>
             <field>00N5c00000JGrUm</field>
             <field>00N5c00000JGrUn</field>
+            <field>00N5c00000JreN4</field>
             <field>00N5c00000JGrw9</field>
             <field>00N5c00000JGrWK</field>
             <field>00N5c00000JGrUo</field>
             <field>00N5c00000JGrUq</field>
+            <field>00N5c00000JrR1B</field>
             <field>00N5c00000JGrUp</field>
             <field>00N5c00000JGrwG</field>
             <field>00N5c00000JGrUr</field>
@@ -7295,6 +7660,7 @@
             <field>00N5c00000JGrVA</field>
             <field>00No0000004LBrd</field>
             <field>00No0000004LBrO</field>
+            <field>00N5c00000JreN5</field>
             <field>00N5c00000JGrVC</field>
             <field>00N5c00000JGrVD</field>
             <field>00N5c00000JGrwN</field>
@@ -7331,22 +7697,28 @@
             <field>00N5c00000JGrVf</field>
             <field>00N5c00000JGrUZ</field>
             <field>00N5c00000JGrVg</field>
+            <field>00N5c00000Jrfd3</field>
+            <field>00N5c00000Jrfd4</field>
             <field>00No0000004LBn2</field>
             <field>00No0000004LBnH</field>
             <field>00N5c00000JGrVi</field>
             <field>00N5c00000JGrVh</field>
             <field>00No0000005SiIS</field>
             <field>00N5c00000JGrVj</field>
+            <field>00N5c00000Jrhib</field>
             <field>00N5c00000JGrWL</field>
             <field>00N5c00000JGrVk</field>
             <field>00N5c00000JGrVl</field>
             <field>00N5c00000JGrVm</field>
             <field>00N5c00000JGrVn</field>
+            <field>00N5c00000JreN6</field>
             <field>00N5c00000JGrwS</field>
             <field>00N5c00000JGrwQ</field>
             <field>00N5c00000JGrwT</field>
             <field>00N5c00000JGrVo</field>
             <field>00N5c00000JGrwU</field>
+            <field>00N5c00000JreN8</field>
+            <field>00N5c00000JreN7</field>
             <field>00N5c00000JGrVp</field>
             <field>00N5c00000JGrVq</field>
             <field>00N5c00000JGrVr</field>
@@ -7374,6 +7746,7 @@
             <field>00N5c00000JGrW1</field>
             <field>00N5c00000JGrW2</field>
             <field>00N5c00000JGrWF</field>
+            <field>00N5c00000JreN9</field>
             <field>00N5c00000JGrW4</field>
             <field>00N5c00000JGrW5</field>
             <field>00N5c00000JGrW6</field>
@@ -7404,6 +7777,7 @@
         <forecastedCategoryApiNames>commitonly</forecastedCategoryApiNames>
         <forecastedCategoryApiNames>closedonly</forecastedCategoryApiNames>
         <forecastedCategoryApiNames>pipelineonly</forecastedCategoryApiNames>
+        <forecastedCategoryApiNames>customcategory</forecastedCategoryApiNames>
         <forecastedCategoryApiNames>bestcaseonly</forecastedCategoryApiNames>
         <forecastingDateType>ScheduleDate</forecastingDateType>
         <hasProductFamily>true</hasProductFamily>
@@ -7561,6 +7935,10 @@
             <label>#of Platelet Assets</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
+            <field>00N5c00000JreN2</field>
+            <label>AA Unit Projection</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
             <field>00N5c00000JGrU2</field>
             <label>Accept 56 Day Rule Violation</label>
         </opportunityListFieldsLabelMappings>
@@ -7805,6 +8183,10 @@
             <label>District Manager Portfolio</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
+            <field>00N5c00000JreN3</field>
+            <label>Diverse Donor Recruitment Strategy</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
             <field>00N5c00000Ir4Qf</field>
             <label>Division</label>
         </opportunityListFieldsLabelMappings>
@@ -7829,6 +8211,10 @@
             <label>Double Red Projected Units</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
+            <field>00N5c00000JreN4</field>
+            <label>Draw Rate</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
             <field>00N5c00000JGrw9</field>
             <label>DRD Territory</label>
         </opportunityListFieldsLabelMappings>
@@ -7843,6 +8229,10 @@
         <opportunityListFieldsLabelMappings>
             <field>00N5c00000JGrUq</field>
             <label>Drive Date</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
+            <field>00N5c00000JrR1B</field>
+            <label>Drive Date Change Reason</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
             <field>00N5c00000JGrUp</field>
@@ -7979,6 +8369,10 @@
         <opportunityListFieldsLabelMappings>
             <field>00No0000004LBrO</field>
             <label>Last Contact Type</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
+            <field>00N5c00000JreN5</field>
+            <label>Latino Unit Projection</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
             <field>00N5c00000JGrVC</field>
@@ -8125,6 +8519,14 @@
             <label>Recruited By</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
+            <field>00N5c00000Jrfd3</field>
+            <label>Recruitment Committee Exists</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
+            <field>00N5c00000Jrfd4</field>
+            <label>Recruitment Strategy with Tactics</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
             <field>00No0000004LBn2</field>
             <label>Referred?</label>
         </opportunityListFieldsLabelMappings>
@@ -8149,6 +8551,10 @@
             <label>Related Scheduled Drive</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
+            <field>00N5c00000Jrhib</field>
+            <label>Related Scheduled Drive Productivity</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
             <field>00N5c00000JGrWL</field>
             <label>Replacement Drive</label>
         </opportunityListFieldsLabelMappings>
@@ -8169,6 +8575,10 @@
             <label>Send Mailers</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
+            <field>00N5c00000JreN6</field>
+            <label>Show Rate</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
             <field>00N5c00000JGrwS</field>
             <label>Site/Building Name</label>
         </opportunityListFieldsLabelMappings>
@@ -8187,6 +8597,14 @@
         <opportunityListFieldsLabelMappings>
             <field>00N5c00000JGrwU</field>
             <label>Site Zip Code</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
+            <field>00N5c00000JreN8</field>
+            <label>Slot Generator</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
+            <field>00N5c00000JreN7</field>
+            <label>Slot Generator Change Reason</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
             <field>00N5c00000JGrVp</field>
@@ -8295,6 +8713,10 @@
         <opportunityListFieldsLabelMappings>
             <field>00N5c00000JGrWF</field>
             <label>WB Procedure Cng Rsn</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
+            <field>00N5c00000JreN9</field>
+            <label>Web Sched Offset from CO/Global Settings</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
             <field>00N5c00000JGrW4</field>
@@ -8412,6 +8834,7 @@
             <field>00N5c00000JGrVH</field>
             <field>00N5c00000JGrVI</field>
             <field>00N5c00000JGrVJ</field>
+            <field>00N5c00000JreN2</field>
             <field>00N5c00000JGrU2</field>
             <field>00N5c00000JGrU3</field>
             <field>00N5c00000JGrU4</field>
@@ -8473,16 +8896,19 @@
             <field>00N5c00000JGrwF</field>
             <field>00N5c00000JrJem</field>
             <field>00N5c00000JrJel</field>
+            <field>00N5c00000JreN3</field>
             <field>00N5c00000Ir4Qf</field>
             <field>00N5c00000JGrUj</field>
             <field>00N5c00000JGrWJ</field>
             <field>00N5c00000JGrUl</field>
             <field>00N5c00000JGrUm</field>
             <field>00N5c00000JGrUn</field>
+            <field>00N5c00000JreN4</field>
             <field>00N5c00000JGrw9</field>
             <field>00N5c00000JGrWK</field>
             <field>00N5c00000JGrUo</field>
             <field>00N5c00000JGrUq</field>
+            <field>00N5c00000JrR1B</field>
             <field>00N5c00000JGrUp</field>
             <field>00N5c00000JGrwG</field>
             <field>00N5c00000JGrUr</field>
@@ -8517,6 +8943,7 @@
             <field>00N5c00000JGrVA</field>
             <field>00No0000004LBrd</field>
             <field>00No0000004LBrO</field>
+            <field>00N5c00000JreN5</field>
             <field>00N5c00000JGrVC</field>
             <field>00N5c00000JGrVD</field>
             <field>00N5c00000JGrwN</field>
@@ -8553,22 +8980,28 @@
             <field>00N5c00000JGrVf</field>
             <field>00N5c00000JGrUZ</field>
             <field>00N5c00000JGrVg</field>
+            <field>00N5c00000Jrfd3</field>
+            <field>00N5c00000Jrfd4</field>
             <field>00No0000004LBn2</field>
             <field>00No0000004LBnH</field>
             <field>00N5c00000JGrVi</field>
             <field>00N5c00000JGrVh</field>
             <field>00No0000005SiIS</field>
             <field>00N5c00000JGrVj</field>
+            <field>00N5c00000Jrhib</field>
             <field>00N5c00000JGrWL</field>
             <field>00N5c00000JGrVk</field>
             <field>00N5c00000JGrVl</field>
             <field>00N5c00000JGrVm</field>
             <field>00N5c00000JGrVn</field>
+            <field>00N5c00000JreN6</field>
             <field>00N5c00000JGrwS</field>
             <field>00N5c00000JGrwQ</field>
             <field>00N5c00000JGrwT</field>
             <field>00N5c00000JGrVo</field>
             <field>00N5c00000JGrwU</field>
+            <field>00N5c00000JreN8</field>
+            <field>00N5c00000JreN7</field>
             <field>00N5c00000JGrVp</field>
             <field>00N5c00000JGrVq</field>
             <field>00N5c00000JGrVr</field>
@@ -8596,6 +9029,7 @@
             <field>00N5c00000JGrW1</field>
             <field>00N5c00000JGrW2</field>
             <field>00N5c00000JGrWF</field>
+            <field>00N5c00000JreN9</field>
             <field>00N5c00000JGrW4</field>
             <field>00N5c00000JGrW5</field>
             <field>00N5c00000JGrW6</field>
@@ -8626,6 +9060,7 @@
         <forecastedCategoryApiNames>commitonly</forecastedCategoryApiNames>
         <forecastedCategoryApiNames>closedonly</forecastedCategoryApiNames>
         <forecastedCategoryApiNames>pipelineonly</forecastedCategoryApiNames>
+        <forecastedCategoryApiNames>customcategory</forecastedCategoryApiNames>
         <forecastedCategoryApiNames>bestcaseonly</forecastedCategoryApiNames>
         <forecastingDateType>ScheduleDate</forecastingDateType>
         <hasProductFamily>true</hasProductFamily>
@@ -8779,6 +9214,10 @@
             <label>#of Platelet Assets</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
+            <field>00N5c00000JreN2</field>
+            <label>AA Unit Projection</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
             <field>00N5c00000JGrU2</field>
             <label>Accept 56 Day Rule Violation</label>
         </opportunityListFieldsLabelMappings>
@@ -9023,6 +9462,10 @@
             <label>District Manager Portfolio</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
+            <field>00N5c00000JreN3</field>
+            <label>Diverse Donor Recruitment Strategy</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
             <field>00N5c00000Ir4Qf</field>
             <label>Division</label>
         </opportunityListFieldsLabelMappings>
@@ -9047,6 +9490,10 @@
             <label>Double Red Projected Units</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
+            <field>00N5c00000JreN4</field>
+            <label>Draw Rate</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
             <field>00N5c00000JGrw9</field>
             <label>DRD Territory</label>
         </opportunityListFieldsLabelMappings>
@@ -9061,6 +9508,10 @@
         <opportunityListFieldsLabelMappings>
             <field>00N5c00000JGrUq</field>
             <label>Drive Date</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
+            <field>00N5c00000JrR1B</field>
+            <label>Drive Date Change Reason</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
             <field>00N5c00000JGrUp</field>
@@ -9197,6 +9648,10 @@
         <opportunityListFieldsLabelMappings>
             <field>00No0000004LBrO</field>
             <label>Last Contact Type</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
+            <field>00N5c00000JreN5</field>
+            <label>Latino Unit Projection</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
             <field>00N5c00000JGrVC</field>
@@ -9343,6 +9798,14 @@
             <label>Recruited By</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
+            <field>00N5c00000Jrfd3</field>
+            <label>Recruitment Committee Exists</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
+            <field>00N5c00000Jrfd4</field>
+            <label>Recruitment Strategy with Tactics</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
             <field>00No0000004LBn2</field>
             <label>Referred?</label>
         </opportunityListFieldsLabelMappings>
@@ -9367,6 +9830,10 @@
             <label>Related Scheduled Drive</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
+            <field>00N5c00000Jrhib</field>
+            <label>Related Scheduled Drive Productivity</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
             <field>00N5c00000JGrWL</field>
             <label>Replacement Drive</label>
         </opportunityListFieldsLabelMappings>
@@ -9387,6 +9854,10 @@
             <label>Send Mailers</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
+            <field>00N5c00000JreN6</field>
+            <label>Show Rate</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
             <field>00N5c00000JGrwS</field>
             <label>Site/Building Name</label>
         </opportunityListFieldsLabelMappings>
@@ -9405,6 +9876,14 @@
         <opportunityListFieldsLabelMappings>
             <field>00N5c00000JGrwU</field>
             <label>Site Zip Code</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
+            <field>00N5c00000JreN8</field>
+            <label>Slot Generator</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
+            <field>00N5c00000JreN7</field>
+            <label>Slot Generator Change Reason</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
             <field>00N5c00000JGrVp</field>
@@ -9513,6 +9992,10 @@
         <opportunityListFieldsLabelMappings>
             <field>00N5c00000JGrWF</field>
             <label>WB Procedure Cng Rsn</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
+            <field>00N5c00000JreN9</field>
+            <label>Web Sched Offset from CO/Global Settings</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
             <field>00N5c00000JGrW4</field>
@@ -9629,6 +10112,7 @@
             <field>00N5c00000JGrVH</field>
             <field>00N5c00000JGrVI</field>
             <field>00N5c00000JGrVJ</field>
+            <field>00N5c00000JreN2</field>
             <field>00N5c00000JGrU2</field>
             <field>00N5c00000JGrU3</field>
             <field>00N5c00000JGrU4</field>
@@ -9690,16 +10174,19 @@
             <field>00N5c00000JGrwF</field>
             <field>00N5c00000JrJem</field>
             <field>00N5c00000JrJel</field>
+            <field>00N5c00000JreN3</field>
             <field>00N5c00000Ir4Qf</field>
             <field>00N5c00000JGrUj</field>
             <field>00N5c00000JGrWJ</field>
             <field>00N5c00000JGrUl</field>
             <field>00N5c00000JGrUm</field>
             <field>00N5c00000JGrUn</field>
+            <field>00N5c00000JreN4</field>
             <field>00N5c00000JGrw9</field>
             <field>00N5c00000JGrWK</field>
             <field>00N5c00000JGrUo</field>
             <field>00N5c00000JGrUq</field>
+            <field>00N5c00000JrR1B</field>
             <field>00N5c00000JGrUp</field>
             <field>00N5c00000JGrwG</field>
             <field>00N5c00000JGrUr</field>
@@ -9734,6 +10221,7 @@
             <field>00N5c00000JGrVA</field>
             <field>00No0000004LBrd</field>
             <field>00No0000004LBrO</field>
+            <field>00N5c00000JreN5</field>
             <field>00N5c00000JGrVC</field>
             <field>00N5c00000JGrVD</field>
             <field>00N5c00000JGrwN</field>
@@ -9770,22 +10258,28 @@
             <field>00N5c00000JGrVf</field>
             <field>00N5c00000JGrUZ</field>
             <field>00N5c00000JGrVg</field>
+            <field>00N5c00000Jrfd3</field>
+            <field>00N5c00000Jrfd4</field>
             <field>00No0000004LBn2</field>
             <field>00No0000004LBnH</field>
             <field>00N5c00000JGrVi</field>
             <field>00N5c00000JGrVh</field>
             <field>00No0000005SiIS</field>
             <field>00N5c00000JGrVj</field>
+            <field>00N5c00000Jrhib</field>
             <field>00N5c00000JGrWL</field>
             <field>00N5c00000JGrVk</field>
             <field>00N5c00000JGrVl</field>
             <field>00N5c00000JGrVm</field>
             <field>00N5c00000JGrVn</field>
+            <field>00N5c00000JreN6</field>
             <field>00N5c00000JGrwS</field>
             <field>00N5c00000JGrwQ</field>
             <field>00N5c00000JGrwT</field>
             <field>00N5c00000JGrVo</field>
             <field>00N5c00000JGrwU</field>
+            <field>00N5c00000JreN8</field>
+            <field>00N5c00000JreN7</field>
             <field>00N5c00000JGrVp</field>
             <field>00N5c00000JGrVq</field>
             <field>00N5c00000JGrVr</field>
@@ -9813,6 +10307,7 @@
             <field>00N5c00000JGrW1</field>
             <field>00N5c00000JGrW2</field>
             <field>00N5c00000JGrWF</field>
+            <field>00N5c00000JreN9</field>
             <field>00N5c00000JGrW4</field>
             <field>00N5c00000JGrW5</field>
             <field>00N5c00000JGrW6</field>
@@ -9843,6 +10338,7 @@
         <forecastedCategoryApiNames>commitonly</forecastedCategoryApiNames>
         <forecastedCategoryApiNames>closedonly</forecastedCategoryApiNames>
         <forecastedCategoryApiNames>pipelineonly</forecastedCategoryApiNames>
+        <forecastedCategoryApiNames>customcategory</forecastedCategoryApiNames>
         <forecastedCategoryApiNames>bestcaseonly</forecastedCategoryApiNames>
         <forecastingDateType>OpportunityCloseDate</forecastingDateType>
         <hasProductFamily>false</hasProductFamily>
@@ -10004,6 +10500,10 @@
             <label>#of Platelet Assets</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
+            <field>00N5c00000JreN2</field>
+            <label>AA Unit Projection</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
             <field>00N5c00000JGrU2</field>
             <label>Accept 56 Day Rule Violation</label>
         </opportunityListFieldsLabelMappings>
@@ -10248,6 +10748,10 @@
             <label>District Manager Portfolio</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
+            <field>00N5c00000JreN3</field>
+            <label>Diverse Donor Recruitment Strategy</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
             <field>00N5c00000Ir4Qf</field>
             <label>Division</label>
         </opportunityListFieldsLabelMappings>
@@ -10272,6 +10776,10 @@
             <label>Double Red Projected Units</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
+            <field>00N5c00000JreN4</field>
+            <label>Draw Rate</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
             <field>00N5c00000JGrw9</field>
             <label>DRD Territory</label>
         </opportunityListFieldsLabelMappings>
@@ -10286,6 +10794,10 @@
         <opportunityListFieldsLabelMappings>
             <field>00N5c00000JGrUq</field>
             <label>Drive Date</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
+            <field>00N5c00000JrR1B</field>
+            <label>Drive Date Change Reason</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
             <field>00N5c00000JGrUp</field>
@@ -10422,6 +10934,10 @@
         <opportunityListFieldsLabelMappings>
             <field>00No0000004LBrO</field>
             <label>Last Contact Type</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
+            <field>00N5c00000JreN5</field>
+            <label>Latino Unit Projection</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
             <field>00N5c00000JGrVC</field>
@@ -10568,6 +11084,14 @@
             <label>Recruited By</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
+            <field>00N5c00000Jrfd3</field>
+            <label>Recruitment Committee Exists</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
+            <field>00N5c00000Jrfd4</field>
+            <label>Recruitment Strategy with Tactics</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
             <field>00No0000004LBn2</field>
             <label>Referred?</label>
         </opportunityListFieldsLabelMappings>
@@ -10592,6 +11116,10 @@
             <label>Related Scheduled Drive</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
+            <field>00N5c00000Jrhib</field>
+            <label>Related Scheduled Drive Productivity</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
             <field>00N5c00000JGrWL</field>
             <label>Replacement Drive</label>
         </opportunityListFieldsLabelMappings>
@@ -10612,6 +11140,10 @@
             <label>Send Mailers</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
+            <field>00N5c00000JreN6</field>
+            <label>Show Rate</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
             <field>00N5c00000JGrwS</field>
             <label>Site/Building Name</label>
         </opportunityListFieldsLabelMappings>
@@ -10630,6 +11162,14 @@
         <opportunityListFieldsLabelMappings>
             <field>00N5c00000JGrwU</field>
             <label>Site Zip Code</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
+            <field>00N5c00000JreN8</field>
+            <label>Slot Generator</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
+            <field>00N5c00000JreN7</field>
+            <label>Slot Generator Change Reason</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
             <field>00N5c00000JGrVp</field>
@@ -10738,6 +11278,10 @@
         <opportunityListFieldsLabelMappings>
             <field>00N5c00000JGrWF</field>
             <label>WB Procedure Cng Rsn</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
+            <field>00N5c00000JreN9</field>
+            <label>Web Sched Offset from CO/Global Settings</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
             <field>00N5c00000JGrW4</field>
@@ -10856,6 +11400,7 @@
             <field>00N5c00000JGrVH</field>
             <field>00N5c00000JGrVI</field>
             <field>00N5c00000JGrVJ</field>
+            <field>00N5c00000JreN2</field>
             <field>00N5c00000JGrU2</field>
             <field>00N5c00000JGrU3</field>
             <field>00N5c00000JGrU4</field>
@@ -10917,16 +11462,19 @@
             <field>00N5c00000JGrwF</field>
             <field>00N5c00000JrJem</field>
             <field>00N5c00000JrJel</field>
+            <field>00N5c00000JreN3</field>
             <field>00N5c00000Ir4Qf</field>
             <field>00N5c00000JGrUj</field>
             <field>00N5c00000JGrWJ</field>
             <field>00N5c00000JGrUl</field>
             <field>00N5c00000JGrUm</field>
             <field>00N5c00000JGrUn</field>
+            <field>00N5c00000JreN4</field>
             <field>00N5c00000JGrw9</field>
             <field>00N5c00000JGrWK</field>
             <field>00N5c00000JGrUo</field>
             <field>00N5c00000JGrUq</field>
+            <field>00N5c00000JrR1B</field>
             <field>00N5c00000JGrUp</field>
             <field>00N5c00000JGrwG</field>
             <field>00N5c00000JGrUr</field>
@@ -10961,6 +11509,7 @@
             <field>00N5c00000JGrVA</field>
             <field>00No0000004LBrd</field>
             <field>00No0000004LBrO</field>
+            <field>00N5c00000JreN5</field>
             <field>00N5c00000JGrVC</field>
             <field>00N5c00000JGrVD</field>
             <field>00N5c00000JGrwN</field>
@@ -10997,22 +11546,28 @@
             <field>00N5c00000JGrVf</field>
             <field>00N5c00000JGrUZ</field>
             <field>00N5c00000JGrVg</field>
+            <field>00N5c00000Jrfd3</field>
+            <field>00N5c00000Jrfd4</field>
             <field>00No0000004LBn2</field>
             <field>00No0000004LBnH</field>
             <field>00N5c00000JGrVi</field>
             <field>00N5c00000JGrVh</field>
             <field>00No0000005SiIS</field>
             <field>00N5c00000JGrVj</field>
+            <field>00N5c00000Jrhib</field>
             <field>00N5c00000JGrWL</field>
             <field>00N5c00000JGrVk</field>
             <field>00N5c00000JGrVl</field>
             <field>00N5c00000JGrVm</field>
             <field>00N5c00000JGrVn</field>
+            <field>00N5c00000JreN6</field>
             <field>00N5c00000JGrwS</field>
             <field>00N5c00000JGrwQ</field>
             <field>00N5c00000JGrwT</field>
             <field>00N5c00000JGrVo</field>
             <field>00N5c00000JGrwU</field>
+            <field>00N5c00000JreN8</field>
+            <field>00N5c00000JreN7</field>
             <field>00N5c00000JGrVp</field>
             <field>00N5c00000JGrVq</field>
             <field>00N5c00000JGrVr</field>
@@ -11040,6 +11595,7 @@
             <field>00N5c00000JGrW1</field>
             <field>00N5c00000JGrW2</field>
             <field>00N5c00000JGrWF</field>
+            <field>00N5c00000JreN9</field>
             <field>00N5c00000JGrW4</field>
             <field>00N5c00000JGrW5</field>
             <field>00N5c00000JGrW6</field>
@@ -11071,6 +11627,7 @@
         <forecastedCategoryApiNames>commitonly</forecastedCategoryApiNames>
         <forecastedCategoryApiNames>closedonly</forecastedCategoryApiNames>
         <forecastedCategoryApiNames>pipelineonly</forecastedCategoryApiNames>
+        <forecastedCategoryApiNames>customcategory</forecastedCategoryApiNames>
         <forecastedCategoryApiNames>bestcaseonly</forecastedCategoryApiNames>
         <forecastingDateType>OpportunityCloseDate</forecastingDateType>
         <hasProductFamily>false</hasProductFamily>
@@ -11232,6 +11789,10 @@
             <label>#of Platelet Assets</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
+            <field>00N5c00000JreN2</field>
+            <label>AA Unit Projection</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
             <field>00N5c00000JGrU2</field>
             <label>Accept 56 Day Rule Violation</label>
         </opportunityListFieldsLabelMappings>
@@ -11476,6 +12037,10 @@
             <label>District Manager Portfolio</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
+            <field>00N5c00000JreN3</field>
+            <label>Diverse Donor Recruitment Strategy</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
             <field>00N5c00000Ir4Qf</field>
             <label>Division</label>
         </opportunityListFieldsLabelMappings>
@@ -11500,6 +12065,10 @@
             <label>Double Red Projected Units</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
+            <field>00N5c00000JreN4</field>
+            <label>Draw Rate</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
             <field>00N5c00000JGrw9</field>
             <label>DRD Territory</label>
         </opportunityListFieldsLabelMappings>
@@ -11514,6 +12083,10 @@
         <opportunityListFieldsLabelMappings>
             <field>00N5c00000JGrUq</field>
             <label>Drive Date</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
+            <field>00N5c00000JrR1B</field>
+            <label>Drive Date Change Reason</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
             <field>00N5c00000JGrUp</field>
@@ -11650,6 +12223,10 @@
         <opportunityListFieldsLabelMappings>
             <field>00No0000004LBrO</field>
             <label>Last Contact Type</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
+            <field>00N5c00000JreN5</field>
+            <label>Latino Unit Projection</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
             <field>00N5c00000JGrVC</field>
@@ -11796,6 +12373,14 @@
             <label>Recruited By</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
+            <field>00N5c00000Jrfd3</field>
+            <label>Recruitment Committee Exists</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
+            <field>00N5c00000Jrfd4</field>
+            <label>Recruitment Strategy with Tactics</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
             <field>00No0000004LBn2</field>
             <label>Referred?</label>
         </opportunityListFieldsLabelMappings>
@@ -11820,6 +12405,10 @@
             <label>Related Scheduled Drive</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
+            <field>00N5c00000Jrhib</field>
+            <label>Related Scheduled Drive Productivity</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
             <field>00N5c00000JGrWL</field>
             <label>Replacement Drive</label>
         </opportunityListFieldsLabelMappings>
@@ -11840,6 +12429,10 @@
             <label>Send Mailers</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
+            <field>00N5c00000JreN6</field>
+            <label>Show Rate</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
             <field>00N5c00000JGrwS</field>
             <label>Site/Building Name</label>
         </opportunityListFieldsLabelMappings>
@@ -11858,6 +12451,14 @@
         <opportunityListFieldsLabelMappings>
             <field>00N5c00000JGrwU</field>
             <label>Site Zip Code</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
+            <field>00N5c00000JreN8</field>
+            <label>Slot Generator</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
+            <field>00N5c00000JreN7</field>
+            <label>Slot Generator Change Reason</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
             <field>00N5c00000JGrVp</field>
@@ -11966,6 +12567,10 @@
         <opportunityListFieldsLabelMappings>
             <field>00N5c00000JGrWF</field>
             <label>WB Procedure Cng Rsn</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
+            <field>00N5c00000JreN9</field>
+            <label>Web Sched Offset from CO/Global Settings</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
             <field>00N5c00000JGrW4</field>
@@ -12084,6 +12689,7 @@
             <field>00N5c00000JGrVH</field>
             <field>00N5c00000JGrVI</field>
             <field>00N5c00000JGrVJ</field>
+            <field>00N5c00000JreN2</field>
             <field>00N5c00000JGrU2</field>
             <field>00N5c00000JGrU3</field>
             <field>00N5c00000JGrU4</field>
@@ -12145,16 +12751,19 @@
             <field>00N5c00000JGrwF</field>
             <field>00N5c00000JrJem</field>
             <field>00N5c00000JrJel</field>
+            <field>00N5c00000JreN3</field>
             <field>00N5c00000Ir4Qf</field>
             <field>00N5c00000JGrUj</field>
             <field>00N5c00000JGrWJ</field>
             <field>00N5c00000JGrUl</field>
             <field>00N5c00000JGrUm</field>
             <field>00N5c00000JGrUn</field>
+            <field>00N5c00000JreN4</field>
             <field>00N5c00000JGrw9</field>
             <field>00N5c00000JGrWK</field>
             <field>00N5c00000JGrUo</field>
             <field>00N5c00000JGrUq</field>
+            <field>00N5c00000JrR1B</field>
             <field>00N5c00000JGrUp</field>
             <field>00N5c00000JGrwG</field>
             <field>00N5c00000JGrUr</field>
@@ -12189,6 +12798,7 @@
             <field>00N5c00000JGrVA</field>
             <field>00No0000004LBrd</field>
             <field>00No0000004LBrO</field>
+            <field>00N5c00000JreN5</field>
             <field>00N5c00000JGrVC</field>
             <field>00N5c00000JGrVD</field>
             <field>00N5c00000JGrwN</field>
@@ -12225,22 +12835,28 @@
             <field>00N5c00000JGrVf</field>
             <field>00N5c00000JGrUZ</field>
             <field>00N5c00000JGrVg</field>
+            <field>00N5c00000Jrfd3</field>
+            <field>00N5c00000Jrfd4</field>
             <field>00No0000004LBn2</field>
             <field>00No0000004LBnH</field>
             <field>00N5c00000JGrVi</field>
             <field>00N5c00000JGrVh</field>
             <field>00No0000005SiIS</field>
             <field>00N5c00000JGrVj</field>
+            <field>00N5c00000Jrhib</field>
             <field>00N5c00000JGrWL</field>
             <field>00N5c00000JGrVk</field>
             <field>00N5c00000JGrVl</field>
             <field>00N5c00000JGrVm</field>
             <field>00N5c00000JGrVn</field>
+            <field>00N5c00000JreN6</field>
             <field>00N5c00000JGrwS</field>
             <field>00N5c00000JGrwQ</field>
             <field>00N5c00000JGrwT</field>
             <field>00N5c00000JGrVo</field>
             <field>00N5c00000JGrwU</field>
+            <field>00N5c00000JreN8</field>
+            <field>00N5c00000JreN7</field>
             <field>00N5c00000JGrVp</field>
             <field>00N5c00000JGrVq</field>
             <field>00N5c00000JGrVr</field>
@@ -12268,6 +12884,7 @@
             <field>00N5c00000JGrW1</field>
             <field>00N5c00000JGrW2</field>
             <field>00N5c00000JGrWF</field>
+            <field>00N5c00000JreN9</field>
             <field>00N5c00000JGrW4</field>
             <field>00N5c00000JGrW5</field>
             <field>00N5c00000JGrW6</field>
@@ -12299,6 +12916,7 @@
         <forecastedCategoryApiNames>commitonly</forecastedCategoryApiNames>
         <forecastedCategoryApiNames>closedonly</forecastedCategoryApiNames>
         <forecastedCategoryApiNames>pipelineonly</forecastedCategoryApiNames>
+        <forecastedCategoryApiNames>customcategory</forecastedCategoryApiNames>
         <forecastedCategoryApiNames>bestcaseonly</forecastedCategoryApiNames>
         <forecastingDateType>OpportunityCloseDate</forecastingDateType>
         <hasProductFamily>true</hasProductFamily>
@@ -12452,6 +13070,10 @@
             <label>#of Platelet Assets</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
+            <field>00N5c00000JreN2</field>
+            <label>AA Unit Projection</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
             <field>00N5c00000JGrU2</field>
             <label>Accept 56 Day Rule Violation</label>
         </opportunityListFieldsLabelMappings>
@@ -12696,6 +13318,10 @@
             <label>District Manager Portfolio</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
+            <field>00N5c00000JreN3</field>
+            <label>Diverse Donor Recruitment Strategy</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
             <field>00N5c00000Ir4Qf</field>
             <label>Division</label>
         </opportunityListFieldsLabelMappings>
@@ -12720,6 +13346,10 @@
             <label>Double Red Projected Units</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
+            <field>00N5c00000JreN4</field>
+            <label>Draw Rate</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
             <field>00N5c00000JGrw9</field>
             <label>DRD Territory</label>
         </opportunityListFieldsLabelMappings>
@@ -12734,6 +13364,10 @@
         <opportunityListFieldsLabelMappings>
             <field>00N5c00000JGrUq</field>
             <label>Drive Date</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
+            <field>00N5c00000JrR1B</field>
+            <label>Drive Date Change Reason</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
             <field>00N5c00000JGrUp</field>
@@ -12870,6 +13504,10 @@
         <opportunityListFieldsLabelMappings>
             <field>00No0000004LBrO</field>
             <label>Last Contact Type</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
+            <field>00N5c00000JreN5</field>
+            <label>Latino Unit Projection</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
             <field>00N5c00000JGrVC</field>
@@ -13016,6 +13654,14 @@
             <label>Recruited By</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
+            <field>00N5c00000Jrfd3</field>
+            <label>Recruitment Committee Exists</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
+            <field>00N5c00000Jrfd4</field>
+            <label>Recruitment Strategy with Tactics</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
             <field>00No0000004LBn2</field>
             <label>Referred?</label>
         </opportunityListFieldsLabelMappings>
@@ -13040,6 +13686,10 @@
             <label>Related Scheduled Drive</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
+            <field>00N5c00000Jrhib</field>
+            <label>Related Scheduled Drive Productivity</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
             <field>00N5c00000JGrWL</field>
             <label>Replacement Drive</label>
         </opportunityListFieldsLabelMappings>
@@ -13060,6 +13710,10 @@
             <label>Send Mailers</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
+            <field>00N5c00000JreN6</field>
+            <label>Show Rate</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
             <field>00N5c00000JGrwS</field>
             <label>Site/Building Name</label>
         </opportunityListFieldsLabelMappings>
@@ -13078,6 +13732,14 @@
         <opportunityListFieldsLabelMappings>
             <field>00N5c00000JGrwU</field>
             <label>Site Zip Code</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
+            <field>00N5c00000JreN8</field>
+            <label>Slot Generator</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
+            <field>00N5c00000JreN7</field>
+            <label>Slot Generator Change Reason</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
             <field>00N5c00000JGrVp</field>
@@ -13186,6 +13848,10 @@
         <opportunityListFieldsLabelMappings>
             <field>00N5c00000JGrWF</field>
             <label>WB Procedure Cng Rsn</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
+            <field>00N5c00000JreN9</field>
+            <label>Web Sched Offset from CO/Global Settings</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
             <field>00N5c00000JGrW4</field>
@@ -13302,6 +13968,7 @@
             <field>00N5c00000JGrVH</field>
             <field>00N5c00000JGrVI</field>
             <field>00N5c00000JGrVJ</field>
+            <field>00N5c00000JreN2</field>
             <field>00N5c00000JGrU2</field>
             <field>00N5c00000JGrU3</field>
             <field>00N5c00000JGrU4</field>
@@ -13363,16 +14030,19 @@
             <field>00N5c00000JGrwF</field>
             <field>00N5c00000JrJem</field>
             <field>00N5c00000JrJel</field>
+            <field>00N5c00000JreN3</field>
             <field>00N5c00000Ir4Qf</field>
             <field>00N5c00000JGrUj</field>
             <field>00N5c00000JGrWJ</field>
             <field>00N5c00000JGrUl</field>
             <field>00N5c00000JGrUm</field>
             <field>00N5c00000JGrUn</field>
+            <field>00N5c00000JreN4</field>
             <field>00N5c00000JGrw9</field>
             <field>00N5c00000JGrWK</field>
             <field>00N5c00000JGrUo</field>
             <field>00N5c00000JGrUq</field>
+            <field>00N5c00000JrR1B</field>
             <field>00N5c00000JGrUp</field>
             <field>00N5c00000JGrwG</field>
             <field>00N5c00000JGrUr</field>
@@ -13407,6 +14077,7 @@
             <field>00N5c00000JGrVA</field>
             <field>00No0000004LBrd</field>
             <field>00No0000004LBrO</field>
+            <field>00N5c00000JreN5</field>
             <field>00N5c00000JGrVC</field>
             <field>00N5c00000JGrVD</field>
             <field>00N5c00000JGrwN</field>
@@ -13443,22 +14114,28 @@
             <field>00N5c00000JGrVf</field>
             <field>00N5c00000JGrUZ</field>
             <field>00N5c00000JGrVg</field>
+            <field>00N5c00000Jrfd3</field>
+            <field>00N5c00000Jrfd4</field>
             <field>00No0000004LBn2</field>
             <field>00No0000004LBnH</field>
             <field>00N5c00000JGrVi</field>
             <field>00N5c00000JGrVh</field>
             <field>00No0000005SiIS</field>
             <field>00N5c00000JGrVj</field>
+            <field>00N5c00000Jrhib</field>
             <field>00N5c00000JGrWL</field>
             <field>00N5c00000JGrVk</field>
             <field>00N5c00000JGrVl</field>
             <field>00N5c00000JGrVm</field>
             <field>00N5c00000JGrVn</field>
+            <field>00N5c00000JreN6</field>
             <field>00N5c00000JGrwS</field>
             <field>00N5c00000JGrwQ</field>
             <field>00N5c00000JGrwT</field>
             <field>00N5c00000JGrVo</field>
             <field>00N5c00000JGrwU</field>
+            <field>00N5c00000JreN8</field>
+            <field>00N5c00000JreN7</field>
             <field>00N5c00000JGrVp</field>
             <field>00N5c00000JGrVq</field>
             <field>00N5c00000JGrVr</field>
@@ -13486,6 +14163,7 @@
             <field>00N5c00000JGrW1</field>
             <field>00N5c00000JGrW2</field>
             <field>00N5c00000JGrWF</field>
+            <field>00N5c00000JreN9</field>
             <field>00N5c00000JGrW4</field>
             <field>00N5c00000JGrW5</field>
             <field>00N5c00000JGrW6</field>
@@ -13516,6 +14194,7 @@
         <forecastedCategoryApiNames>commitonly</forecastedCategoryApiNames>
         <forecastedCategoryApiNames>closedonly</forecastedCategoryApiNames>
         <forecastedCategoryApiNames>pipelineonly</forecastedCategoryApiNames>
+        <forecastedCategoryApiNames>customcategory</forecastedCategoryApiNames>
         <forecastedCategoryApiNames>bestcaseonly</forecastedCategoryApiNames>
         <forecastingDateType>OpportunityCloseDate</forecastingDateType>
         <hasProductFamily>true</hasProductFamily>
@@ -13673,6 +14352,10 @@
             <label>#of Platelet Assets</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
+            <field>00N5c00000JreN2</field>
+            <label>AA Unit Projection</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
             <field>00N5c00000JGrU2</field>
             <label>Accept 56 Day Rule Violation</label>
         </opportunityListFieldsLabelMappings>
@@ -13917,6 +14600,10 @@
             <label>District Manager Portfolio</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
+            <field>00N5c00000JreN3</field>
+            <label>Diverse Donor Recruitment Strategy</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
             <field>00N5c00000Ir4Qf</field>
             <label>Division</label>
         </opportunityListFieldsLabelMappings>
@@ -13941,6 +14628,10 @@
             <label>Double Red Projected Units</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
+            <field>00N5c00000JreN4</field>
+            <label>Draw Rate</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
             <field>00N5c00000JGrw9</field>
             <label>DRD Territory</label>
         </opportunityListFieldsLabelMappings>
@@ -13955,6 +14646,10 @@
         <opportunityListFieldsLabelMappings>
             <field>00N5c00000JGrUq</field>
             <label>Drive Date</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
+            <field>00N5c00000JrR1B</field>
+            <label>Drive Date Change Reason</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
             <field>00N5c00000JGrUp</field>
@@ -14091,6 +14786,10 @@
         <opportunityListFieldsLabelMappings>
             <field>00No0000004LBrO</field>
             <label>Last Contact Type</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
+            <field>00N5c00000JreN5</field>
+            <label>Latino Unit Projection</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
             <field>00N5c00000JGrVC</field>
@@ -14237,6 +14936,14 @@
             <label>Recruited By</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
+            <field>00N5c00000Jrfd3</field>
+            <label>Recruitment Committee Exists</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
+            <field>00N5c00000Jrfd4</field>
+            <label>Recruitment Strategy with Tactics</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
             <field>00No0000004LBn2</field>
             <label>Referred?</label>
         </opportunityListFieldsLabelMappings>
@@ -14261,6 +14968,10 @@
             <label>Related Scheduled Drive</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
+            <field>00N5c00000Jrhib</field>
+            <label>Related Scheduled Drive Productivity</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
             <field>00N5c00000JGrWL</field>
             <label>Replacement Drive</label>
         </opportunityListFieldsLabelMappings>
@@ -14281,6 +14992,10 @@
             <label>Send Mailers</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
+            <field>00N5c00000JreN6</field>
+            <label>Show Rate</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
             <field>00N5c00000JGrwS</field>
             <label>Site/Building Name</label>
         </opportunityListFieldsLabelMappings>
@@ -14299,6 +15014,14 @@
         <opportunityListFieldsLabelMappings>
             <field>00N5c00000JGrwU</field>
             <label>Site Zip Code</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
+            <field>00N5c00000JreN8</field>
+            <label>Slot Generator</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
+            <field>00N5c00000JreN7</field>
+            <label>Slot Generator Change Reason</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
             <field>00N5c00000JGrVp</field>
@@ -14407,6 +15130,10 @@
         <opportunityListFieldsLabelMappings>
             <field>00N5c00000JGrWF</field>
             <label>WB Procedure Cng Rsn</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
+            <field>00N5c00000JreN9</field>
+            <label>Web Sched Offset from CO/Global Settings</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
             <field>00N5c00000JGrW4</field>
@@ -14524,6 +15251,7 @@
             <field>00N5c00000JGrVH</field>
             <field>00N5c00000JGrVI</field>
             <field>00N5c00000JGrVJ</field>
+            <field>00N5c00000JreN2</field>
             <field>00N5c00000JGrU2</field>
             <field>00N5c00000JGrU3</field>
             <field>00N5c00000JGrU4</field>
@@ -14585,16 +15313,19 @@
             <field>00N5c00000JGrwF</field>
             <field>00N5c00000JrJem</field>
             <field>00N5c00000JrJel</field>
+            <field>00N5c00000JreN3</field>
             <field>00N5c00000Ir4Qf</field>
             <field>00N5c00000JGrUj</field>
             <field>00N5c00000JGrWJ</field>
             <field>00N5c00000JGrUl</field>
             <field>00N5c00000JGrUm</field>
             <field>00N5c00000JGrUn</field>
+            <field>00N5c00000JreN4</field>
             <field>00N5c00000JGrw9</field>
             <field>00N5c00000JGrWK</field>
             <field>00N5c00000JGrUo</field>
             <field>00N5c00000JGrUq</field>
+            <field>00N5c00000JrR1B</field>
             <field>00N5c00000JGrUp</field>
             <field>00N5c00000JGrwG</field>
             <field>00N5c00000JGrUr</field>
@@ -14629,6 +15360,7 @@
             <field>00N5c00000JGrVA</field>
             <field>00No0000004LBrd</field>
             <field>00No0000004LBrO</field>
+            <field>00N5c00000JreN5</field>
             <field>00N5c00000JGrVC</field>
             <field>00N5c00000JGrVD</field>
             <field>00N5c00000JGrwN</field>
@@ -14665,22 +15397,28 @@
             <field>00N5c00000JGrVf</field>
             <field>00N5c00000JGrUZ</field>
             <field>00N5c00000JGrVg</field>
+            <field>00N5c00000Jrfd3</field>
+            <field>00N5c00000Jrfd4</field>
             <field>00No0000004LBn2</field>
             <field>00No0000004LBnH</field>
             <field>00N5c00000JGrVi</field>
             <field>00N5c00000JGrVh</field>
             <field>00No0000005SiIS</field>
             <field>00N5c00000JGrVj</field>
+            <field>00N5c00000Jrhib</field>
             <field>00N5c00000JGrWL</field>
             <field>00N5c00000JGrVk</field>
             <field>00N5c00000JGrVl</field>
             <field>00N5c00000JGrVm</field>
             <field>00N5c00000JGrVn</field>
+            <field>00N5c00000JreN6</field>
             <field>00N5c00000JGrwS</field>
             <field>00N5c00000JGrwQ</field>
             <field>00N5c00000JGrwT</field>
             <field>00N5c00000JGrVo</field>
             <field>00N5c00000JGrwU</field>
+            <field>00N5c00000JreN8</field>
+            <field>00N5c00000JreN7</field>
             <field>00N5c00000JGrVp</field>
             <field>00N5c00000JGrVq</field>
             <field>00N5c00000JGrVr</field>
@@ -14708,6 +15446,7 @@
             <field>00N5c00000JGrW1</field>
             <field>00N5c00000JGrW2</field>
             <field>00N5c00000JGrWF</field>
+            <field>00N5c00000JreN9</field>
             <field>00N5c00000JGrW4</field>
             <field>00N5c00000JGrW5</field>
             <field>00N5c00000JGrW6</field>
@@ -14738,6 +15477,7 @@
         <forecastedCategoryApiNames>commitonly</forecastedCategoryApiNames>
         <forecastedCategoryApiNames>closedonly</forecastedCategoryApiNames>
         <forecastedCategoryApiNames>pipelineonly</forecastedCategoryApiNames>
+        <forecastedCategoryApiNames>customcategory</forecastedCategoryApiNames>
         <forecastedCategoryApiNames>bestcaseonly</forecastedCategoryApiNames>
         <forecastingDateType>OpportunityCloseDate</forecastingDateType>
         <hasProductFamily>false</hasProductFamily>
@@ -14891,6 +15631,10 @@
             <label>#of Platelet Assets</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
+            <field>00N5c00000JreN2</field>
+            <label>AA Unit Projection</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
             <field>00N5c00000JGrU2</field>
             <label>Accept 56 Day Rule Violation</label>
         </opportunityListFieldsLabelMappings>
@@ -15135,6 +15879,10 @@
             <label>District Manager Portfolio</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
+            <field>00N5c00000JreN3</field>
+            <label>Diverse Donor Recruitment Strategy</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
             <field>00N5c00000Ir4Qf</field>
             <label>Division</label>
         </opportunityListFieldsLabelMappings>
@@ -15159,6 +15907,10 @@
             <label>Double Red Projected Units</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
+            <field>00N5c00000JreN4</field>
+            <label>Draw Rate</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
             <field>00N5c00000JGrw9</field>
             <label>DRD Territory</label>
         </opportunityListFieldsLabelMappings>
@@ -15173,6 +15925,10 @@
         <opportunityListFieldsLabelMappings>
             <field>00N5c00000JGrUq</field>
             <label>Drive Date</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
+            <field>00N5c00000JrR1B</field>
+            <label>Drive Date Change Reason</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
             <field>00N5c00000JGrUp</field>
@@ -15309,6 +16065,10 @@
         <opportunityListFieldsLabelMappings>
             <field>00No0000004LBrO</field>
             <label>Last Contact Type</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
+            <field>00N5c00000JreN5</field>
+            <label>Latino Unit Projection</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
             <field>00N5c00000JGrVC</field>
@@ -15455,6 +16215,14 @@
             <label>Recruited By</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
+            <field>00N5c00000Jrfd3</field>
+            <label>Recruitment Committee Exists</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
+            <field>00N5c00000Jrfd4</field>
+            <label>Recruitment Strategy with Tactics</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
             <field>00No0000004LBn2</field>
             <label>Referred?</label>
         </opportunityListFieldsLabelMappings>
@@ -15479,6 +16247,10 @@
             <label>Related Scheduled Drive</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
+            <field>00N5c00000Jrhib</field>
+            <label>Related Scheduled Drive Productivity</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
             <field>00N5c00000JGrWL</field>
             <label>Replacement Drive</label>
         </opportunityListFieldsLabelMappings>
@@ -15499,6 +16271,10 @@
             <label>Send Mailers</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
+            <field>00N5c00000JreN6</field>
+            <label>Show Rate</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
             <field>00N5c00000JGrwS</field>
             <label>Site/Building Name</label>
         </opportunityListFieldsLabelMappings>
@@ -15517,6 +16293,14 @@
         <opportunityListFieldsLabelMappings>
             <field>00N5c00000JGrwU</field>
             <label>Site Zip Code</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
+            <field>00N5c00000JreN8</field>
+            <label>Slot Generator</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
+            <field>00N5c00000JreN7</field>
+            <label>Slot Generator Change Reason</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
             <field>00N5c00000JGrVp</field>
@@ -15625,6 +16409,10 @@
         <opportunityListFieldsLabelMappings>
             <field>00N5c00000JGrWF</field>
             <label>WB Procedure Cng Rsn</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
+            <field>00N5c00000JreN9</field>
+            <label>Web Sched Offset from CO/Global Settings</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
             <field>00N5c00000JGrW4</field>
@@ -15741,6 +16529,7 @@
             <field>00N5c00000JGrVH</field>
             <field>00N5c00000JGrVI</field>
             <field>00N5c00000JGrVJ</field>
+            <field>00N5c00000JreN2</field>
             <field>00N5c00000JGrU2</field>
             <field>00N5c00000JGrU3</field>
             <field>00N5c00000JGrU4</field>
@@ -15802,16 +16591,19 @@
             <field>00N5c00000JGrwF</field>
             <field>00N5c00000JrJem</field>
             <field>00N5c00000JrJel</field>
+            <field>00N5c00000JreN3</field>
             <field>00N5c00000Ir4Qf</field>
             <field>00N5c00000JGrUj</field>
             <field>00N5c00000JGrWJ</field>
             <field>00N5c00000JGrUl</field>
             <field>00N5c00000JGrUm</field>
             <field>00N5c00000JGrUn</field>
+            <field>00N5c00000JreN4</field>
             <field>00N5c00000JGrw9</field>
             <field>00N5c00000JGrWK</field>
             <field>00N5c00000JGrUo</field>
             <field>00N5c00000JGrUq</field>
+            <field>00N5c00000JrR1B</field>
             <field>00N5c00000JGrUp</field>
             <field>00N5c00000JGrwG</field>
             <field>00N5c00000JGrUr</field>
@@ -15846,6 +16638,7 @@
             <field>00N5c00000JGrVA</field>
             <field>00No0000004LBrd</field>
             <field>00No0000004LBrO</field>
+            <field>00N5c00000JreN5</field>
             <field>00N5c00000JGrVC</field>
             <field>00N5c00000JGrVD</field>
             <field>00N5c00000JGrwN</field>
@@ -15882,22 +16675,28 @@
             <field>00N5c00000JGrVf</field>
             <field>00N5c00000JGrUZ</field>
             <field>00N5c00000JGrVg</field>
+            <field>00N5c00000Jrfd3</field>
+            <field>00N5c00000Jrfd4</field>
             <field>00No0000004LBn2</field>
             <field>00No0000004LBnH</field>
             <field>00N5c00000JGrVi</field>
             <field>00N5c00000JGrVh</field>
             <field>00No0000005SiIS</field>
             <field>00N5c00000JGrVj</field>
+            <field>00N5c00000Jrhib</field>
             <field>00N5c00000JGrWL</field>
             <field>00N5c00000JGrVk</field>
             <field>00N5c00000JGrVl</field>
             <field>00N5c00000JGrVm</field>
             <field>00N5c00000JGrVn</field>
+            <field>00N5c00000JreN6</field>
             <field>00N5c00000JGrwS</field>
             <field>00N5c00000JGrwQ</field>
             <field>00N5c00000JGrwT</field>
             <field>00N5c00000JGrVo</field>
             <field>00N5c00000JGrwU</field>
+            <field>00N5c00000JreN8</field>
+            <field>00N5c00000JreN7</field>
             <field>00N5c00000JGrVp</field>
             <field>00N5c00000JGrVq</field>
             <field>00N5c00000JGrVr</field>
@@ -15925,6 +16724,7 @@
             <field>00N5c00000JGrW1</field>
             <field>00N5c00000JGrW2</field>
             <field>00N5c00000JGrWF</field>
+            <field>00N5c00000JreN9</field>
             <field>00N5c00000JGrW4</field>
             <field>00N5c00000JGrW5</field>
             <field>00N5c00000JGrW6</field>
@@ -15955,6 +16755,7 @@
         <forecastedCategoryApiNames>commitonly</forecastedCategoryApiNames>
         <forecastedCategoryApiNames>closedonly</forecastedCategoryApiNames>
         <forecastedCategoryApiNames>pipelineonly</forecastedCategoryApiNames>
+        <forecastedCategoryApiNames>customcategory</forecastedCategoryApiNames>
         <forecastedCategoryApiNames>bestcaseonly</forecastedCategoryApiNames>
         <forecastingDateType>OpportunityCloseDate</forecastingDateType>
         <hasProductFamily>false</hasProductFamily>
@@ -16108,6 +16909,10 @@
             <label>#of Platelet Assets</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
+            <field>00N5c00000JreN2</field>
+            <label>AA Unit Projection</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
             <field>00N5c00000JGrU2</field>
             <label>Accept 56 Day Rule Violation</label>
         </opportunityListFieldsLabelMappings>
@@ -16352,6 +17157,10 @@
             <label>District Manager Portfolio</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
+            <field>00N5c00000JreN3</field>
+            <label>Diverse Donor Recruitment Strategy</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
             <field>00N5c00000Ir4Qf</field>
             <label>Division</label>
         </opportunityListFieldsLabelMappings>
@@ -16376,6 +17185,10 @@
             <label>Double Red Projected Units</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
+            <field>00N5c00000JreN4</field>
+            <label>Draw Rate</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
             <field>00N5c00000JGrw9</field>
             <label>DRD Territory</label>
         </opportunityListFieldsLabelMappings>
@@ -16390,6 +17203,10 @@
         <opportunityListFieldsLabelMappings>
             <field>00N5c00000JGrUq</field>
             <label>Drive Date</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
+            <field>00N5c00000JrR1B</field>
+            <label>Drive Date Change Reason</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
             <field>00N5c00000JGrUp</field>
@@ -16526,6 +17343,10 @@
         <opportunityListFieldsLabelMappings>
             <field>00No0000004LBrO</field>
             <label>Last Contact Type</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
+            <field>00N5c00000JreN5</field>
+            <label>Latino Unit Projection</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
             <field>00N5c00000JGrVC</field>
@@ -16672,6 +17493,14 @@
             <label>Recruited By</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
+            <field>00N5c00000Jrfd3</field>
+            <label>Recruitment Committee Exists</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
+            <field>00N5c00000Jrfd4</field>
+            <label>Recruitment Strategy with Tactics</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
             <field>00No0000004LBn2</field>
             <label>Referred?</label>
         </opportunityListFieldsLabelMappings>
@@ -16696,6 +17525,10 @@
             <label>Related Scheduled Drive</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
+            <field>00N5c00000Jrhib</field>
+            <label>Related Scheduled Drive Productivity</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
             <field>00N5c00000JGrWL</field>
             <label>Replacement Drive</label>
         </opportunityListFieldsLabelMappings>
@@ -16716,6 +17549,10 @@
             <label>Send Mailers</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
+            <field>00N5c00000JreN6</field>
+            <label>Show Rate</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
             <field>00N5c00000JGrwS</field>
             <label>Site/Building Name</label>
         </opportunityListFieldsLabelMappings>
@@ -16734,6 +17571,14 @@
         <opportunityListFieldsLabelMappings>
             <field>00N5c00000JGrwU</field>
             <label>Site Zip Code</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
+            <field>00N5c00000JreN8</field>
+            <label>Slot Generator</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
+            <field>00N5c00000JreN7</field>
+            <label>Slot Generator Change Reason</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
             <field>00N5c00000JGrVp</field>
@@ -16842,6 +17687,10 @@
         <opportunityListFieldsLabelMappings>
             <field>00N5c00000JGrWF</field>
             <label>WB Procedure Cng Rsn</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
+            <field>00N5c00000JreN9</field>
+            <label>Web Sched Offset from CO/Global Settings</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
             <field>00N5c00000JGrW4</field>
@@ -16958,6 +17807,7 @@
             <field>00N5c00000JGrVH</field>
             <field>00N5c00000JGrVI</field>
             <field>00N5c00000JGrVJ</field>
+            <field>00N5c00000JreN2</field>
             <field>00N5c00000JGrU2</field>
             <field>00N5c00000JGrU3</field>
             <field>00N5c00000JGrU4</field>
@@ -17019,16 +17869,19 @@
             <field>00N5c00000JGrwF</field>
             <field>00N5c00000JrJem</field>
             <field>00N5c00000JrJel</field>
+            <field>00N5c00000JreN3</field>
             <field>00N5c00000Ir4Qf</field>
             <field>00N5c00000JGrUj</field>
             <field>00N5c00000JGrWJ</field>
             <field>00N5c00000JGrUl</field>
             <field>00N5c00000JGrUm</field>
             <field>00N5c00000JGrUn</field>
+            <field>00N5c00000JreN4</field>
             <field>00N5c00000JGrw9</field>
             <field>00N5c00000JGrWK</field>
             <field>00N5c00000JGrUo</field>
             <field>00N5c00000JGrUq</field>
+            <field>00N5c00000JrR1B</field>
             <field>00N5c00000JGrUp</field>
             <field>00N5c00000JGrwG</field>
             <field>00N5c00000JGrUr</field>
@@ -17063,6 +17916,7 @@
             <field>00N5c00000JGrVA</field>
             <field>00No0000004LBrd</field>
             <field>00No0000004LBrO</field>
+            <field>00N5c00000JreN5</field>
             <field>00N5c00000JGrVC</field>
             <field>00N5c00000JGrVD</field>
             <field>00N5c00000JGrwN</field>
@@ -17099,22 +17953,28 @@
             <field>00N5c00000JGrVf</field>
             <field>00N5c00000JGrUZ</field>
             <field>00N5c00000JGrVg</field>
+            <field>00N5c00000Jrfd3</field>
+            <field>00N5c00000Jrfd4</field>
             <field>00No0000004LBn2</field>
             <field>00No0000004LBnH</field>
             <field>00N5c00000JGrVi</field>
             <field>00N5c00000JGrVh</field>
             <field>00No0000005SiIS</field>
             <field>00N5c00000JGrVj</field>
+            <field>00N5c00000Jrhib</field>
             <field>00N5c00000JGrWL</field>
             <field>00N5c00000JGrVk</field>
             <field>00N5c00000JGrVl</field>
             <field>00N5c00000JGrVm</field>
             <field>00N5c00000JGrVn</field>
+            <field>00N5c00000JreN6</field>
             <field>00N5c00000JGrwS</field>
             <field>00N5c00000JGrwQ</field>
             <field>00N5c00000JGrwT</field>
             <field>00N5c00000JGrVo</field>
             <field>00N5c00000JGrwU</field>
+            <field>00N5c00000JreN8</field>
+            <field>00N5c00000JreN7</field>
             <field>00N5c00000JGrVp</field>
             <field>00N5c00000JGrVq</field>
             <field>00N5c00000JGrVr</field>
@@ -17142,6 +18002,7 @@
             <field>00N5c00000JGrW1</field>
             <field>00N5c00000JGrW2</field>
             <field>00N5c00000JGrWF</field>
+            <field>00N5c00000JreN9</field>
             <field>00N5c00000JGrW4</field>
             <field>00N5c00000JGrW5</field>
             <field>00N5c00000JGrW6</field>

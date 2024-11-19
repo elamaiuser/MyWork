@@ -177,3 +177,9 @@
   align-items: center;
   font-size: 0.75rem;
 }
+
+.slot-checkbox {
+  position: absolute;
+  left: 1rem;
+  top: 0.125rem;
+}

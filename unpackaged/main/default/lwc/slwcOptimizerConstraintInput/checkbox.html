@@ -1,0 +1,11 @@
+<template>
+    <lightning-input
+        type="toggle"
+        data-id={settingRecord.key}
+        name={settingRecord.key}
+        onchange={handleOnChange}
+        class="slds-m-top_small"
+        disabled={disabled}
+        checked={settingRecord.enabled}>
+    </lightning-input>
+</template>

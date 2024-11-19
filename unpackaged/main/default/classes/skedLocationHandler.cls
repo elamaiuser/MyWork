@@ -75,28 +75,16 @@ public class skedLocationHandler extends skedTriggerHub {
     }
     
     private void generateSiteCollectionOperations(List<sked__Location__c> newRecords, Map<Id, sked__Location__c> oldMap) {
+        Map<String,Integer> zipCodeVsSCOCount = new Map<String,Integer>();
+        Map<String,String> zipCodeOldVsNew = new Map<String,String>();
+        Map<String,Map<Id,Boolean>> zipCodeVsSCOUpdateCheckMap = new Map<String,Map<Id,Boolean>>();
+        Map<string, List<sked__Location__c>> map_zipcode_Sites = new Map<string, List<sked__Location__c>>();
         Map<Id, sked__Location__c> mapRecordToPopulate = new Map<Id, sked__Location__c>();
         for (sked__Location__c newRecord : newRecords) {
             sked__Location__c oldData = oldMap.get(newRecord.Id);
             if (newRecord.sked_Zip_Code__c != oldData.sked_Zip_Code__c) {
+                zipCodeOldVsNew.put(oldData.sked_Zip_Code__c,newRecord.sked_Zip_Code__c);
                 mapRecordToPopulate.put(newRecord.Id, newRecord);
-            }
-        }
-        if (!mapRecordToPopulate.isEmpty()) {
-            List<sked_Site_Collection_Operation__c> existingSCOs = [SELECT Id
-                                                                    FROM sked_Site_Collection_Operation__c
-                                                                    WHERE sked_Site__c IN :mapRecordToPopulate.keySet()];
-            if (!existingSCOs.isEmpty()) {
-                delete existingSCOs;
-            }
-            generateSiteCollectionOperations(mapRecordToPopulate.values());
-        }
-    }
-
-    private void generateSiteCollectionOperations(List<sked__Location__c> newRecords) {
-        Map<string, List<sked__Location__c>> map_zipcode_Sites = new Map<string, List<sked__Location__c>>();
-        for (sked__Location__c newRecord : newRecords) {
-            if (!string.isBlank(newRecord.sked_Zip_Code__c)) {
                 List<sked__Location__c> sites;
                 if (map_zipcode_Sites.containsKey(newRecord.sked_Zip_Code__c)) {
                     sites = map_zipcode_Sites.get(newRecord.sked_Zip_Code__c);
@@ -108,7 +96,112 @@ public class skedLocationHandler extends skedTriggerHub {
                 sites.add(newRecord);
             }
         }
+        if (!mapRecordToPopulate.isEmpty()) {
+            List<sked_Site_Collection_Operation__c> existingSCOs = [SELECT Id, sked_End_Date__c, sked_Collections_Zip_Code__c, sked_Collections_Zip_Code__r.Zip__c, sked_Start_Date__c, sked_Region__c, sked_Site__c, sked_Collection_Operation__c
+                                                                    FROM sked_Site_Collection_Operation__c
+                                                                    WHERE sked_Site__c IN :mapRecordToPopulate.keySet() AND sked_End_Date__c >= TODAY];
+            if ((!existingSCOs.isEmpty()) && (!map_zipcode_Sites.isEmpty())) {
+                Map<Id, List<sked_Site_Collection_Operation__c>> map_SiteId_existingSCO= new Map<Id, List<sked_Site_Collection_Operation__c>>();
+                for(sked_Site_Collection_Operation__c sco : existingSCOs){
+                    List<sked_Site_Collection_Operation__c> siteCollOpp;
+                    if (map_SiteId_existingSCO.containsKey(sco.sked_Site__c)) {
+                        siteCollOpp = map_SiteId_existingSCO.get(sco.sked_Site__c);
+                    }
+                    else {
+                        siteCollOpp = new List<sked_Site_Collection_Operation__c>();
+                        map_SiteId_existingSCO.put(sco.sked_Site__c, siteCollOpp);
+                    }
+                    siteCollOpp.add(sco);
+                    if(zipCodeVsSCOUpdateCheckMap.get(zipCodeOldVsNew.get(sco.sked_Collections_Zip_Code__r.Zip__c)) != null){
+                        Map<Id,Boolean> getExistingSCOFromMap = zipCodeVsSCOUpdateCheckMap.get(zipCodeOldVsNew.get(sco.sked_Collections_Zip_Code__r.Zip__c));
+                        getExistingSCOFromMap.put(sco.Id,FALSE);
+                        zipCodeVsSCOUpdateCheckMap.put(zipCodeOldVsNew.get(sco.sked_Collections_Zip_Code__r.Zip__c),getExistingSCOFromMap);
+                    } else{
+                        Map<Id,Boolean> getExistingSCOFromMap = new Map<Id,Boolean>{sco.Id => FALSE};
+                        zipCodeVsSCOUpdateCheckMap.put(zipCodeOldVsNew.get(sco.sked_Collections_Zip_Code__r.Zip__c),getExistingSCOFromMap);
+                    }
+                }
+                for(Id siteId : map_SiteId_existingSCO.keySet()){
+                    zipCodeVsSCOCount.put((zipCodeOldVsNew.get(map_SiteId_existingSCO.get(siteId)[0].sked_Collections_Zip_Code__r.Zip__c)), map_SiteId_existingSCO.get(siteId).size());
+                }
+                updateSiteCollectionOperation(map_zipcode_Sites, map_SiteId_existingSCO, zipCodeVsSCOCount, newRecords, zipCodeVsSCOUpdateCheckMap);
+
+            }
+            if(existingSCOs.isEmpty()){
+                generateSiteCollectionOperations(mapRecordToPopulate.values());
+            }
+            
+        }
+    }
+
+    private void generateSiteCollectionOperations(List<sked__Location__c> newRecords) {
+        Map<string, List<sked__Location__c>> map_zipcode_Sites = new Map<string, List<sked__Location__c>>();
+        //HRP-12054
+        Set<String> zipCodeSet = new Set<String>();
+        Set<String> collOpCodeSet = new Set<String>();
+        Map<Id,Collections_Territory__c> collZipIdMap = new Map<Id,Collections_Territory__c>();
+        Map<Id,sked__Location__c> siteIdMap = new Map<Id,sked__Location__c>();
+        //HRP-12054
+        for (sked__Location__c newRecord : newRecords) {
+            if (!string.isBlank(newRecord.sked_Zip_Code__c)) {
+                zipCodeSet.add(newRecord.sked_Zip_Code__c);//HRP-12054
+                List<sked__Location__c> sites;
+                if (map_zipcode_Sites.containsKey(newRecord.sked_Zip_Code__c)) {
+                    sites = map_zipcode_Sites.get(newRecord.sked_Zip_Code__c);
+                }
+                else {
+                    sites = new List<sked__Location__c>();
+                    map_zipcode_Sites.put(newRecord.sked_Zip_Code__c, sites);
+                }
+                sites.add(newRecord);
+            }
+            siteIdMap.put(newRecord.Id,newRecord);//HRP-12054
+        }
         if (!map_zipcode_Sites.isEmpty()) {
+            List<Collections_Territory__c> collectionZipCodes = [SELECT Id, Collection_Operation__c, sked_End_Date__c, sked_Start_Date__c, Zip__c,Collection_Operation__r.Biomed_Collection_Op_Code_Center_ID__c
+                                                                 FROM Collections_Territory__c
+                                                                 WHERE Zip__c IN :map_zipcode_Sites.keySet()
+                                                                 AND sked_End_Date__c >= :system.today()];
+            if (!collectionZipCodes.isEmpty()) {
+                Set<Id> collectionOperationIds = new Set<Id>();
+                for (Collections_Territory__c collectionZipCode : collectionZipCodes) {
+                    collectionOperationIds.add(collectionZipCode.Collection_Operation__c);
+                    collOpCodeSet.add(collectionZipCode.Collection_Operation__r.Biomed_Collection_Op_Code_Center_ID__c);//HRP-12054
+                    collZipIdMap.put(collectionZipCode.Id,collectionZipCode);//HRP-12054
+                }
+                //Map<String, sked__Region__c> mapCollOperToRegion = skedRegionService.getMapOfCollectionOperationToRegion(collectionOperationIds);//HRP-12054
+                
+                List<sked_Site_Collection_Operation__c> siteCollectionOperations = new List<sked_Site_Collection_Operation__c>();
+                for (Collections_Territory__c collectionZipCode : collectionZipCodes) {
+                    if (map_zipcode_Sites.containsKey(collectionZipCode.Zip__c)) {
+                        List<sked__Location__c> sites = map_zipcode_Sites.get(collectionZipCode.Zip__c);
+                        for (sked__Location__c site : sites) {
+                            /*Id regionId = skedRegionService.getRegionForCollectionOperation(collectionZipCode.Collection_Operation__c, 
+mapCollOperToRegion, site.sked_Timezone__c);*///HRP-12054
+                            sked_Site_Collection_Operation__c siteCollectionOperation = new sked_Site_Collection_Operation__c(
+                                sked_Collection_Operation__c = collectionZipCode.Collection_Operation__c,
+                                sked_Site__c = site.Id,
+                                sked_Collections_Zip_Code__c = collectionZipCode.Id,
+                                sked_Start_Date__c = collectionZipCode.sked_Start_Date__c,
+                                sked_End_Date__c = collectionZipCode.sked_End_Date__c,
+                                External_Id_BackEnd__c='Bio_Collection_BSF_SiteCo_'+collectionZipCode.Collection_Operation__r.Biomed_Collection_Op_Code_Center_ID__c+'_'+site.Id,//HRP-12054
+                                External_Id__c='Bio_Collection_BSF_SiteCo_'+collectionZipCode.Collection_Operation__r.Biomed_Collection_Op_Code_Center_ID__c+'_'+site.Id+'_'+collectionZipCode.sked_Start_Date__c//HRP-12054
+                            );
+                            siteCollectionOperations.add(siteCollectionOperation);
+                        }
+                    }
+                }
+                Map<String,Id> CollZipRegionMap = BSF_Utilities.findSkedRegion(collOpCodeSet,zipCodeSet,new List<Taxonomy__c>(),siteCollectionOperations,collZipIdMap,siteIdMap);//HRP-12054
+                if (!siteCollectionOperations.isEmpty()) {
+                    insert siteCollectionOperations;
+                }
+            }
+        }
+    }
+    
+    private void updateSiteCollectionOperation(Map<string, List<sked__Location__c>> map_zipcode_Sites, Map<Id, List<sked_Site_Collection_Operation__c>> map_SiteId_existingSCO, Map<String,Integer> zipCodeVsSCOCount, List<sked__Location__c> newRecords, Map<String,Map<Id,Boolean>> zipCodeVsSCOUpdateCheckMap) {
+        if (!map_zipcode_Sites.isEmpty()) {
+            Map<String,Integer> ZipCodeVsCollZipCount = new Map<String,Integer>();
             List<Collections_Territory__c> collectionZipCodes = [SELECT Id, Collection_Operation__c, sked_End_Date__c, sked_Start_Date__c, Zip__c
                                                                  FROM Collections_Territory__c
                                                                  WHERE Zip__c IN :map_zipcode_Sites.keySet()
@@ -117,6 +210,20 @@ public class skedLocationHandler extends skedTriggerHub {
                 Set<Id> collectionOperationIds = new Set<Id>();
                 for (Collections_Territory__c collectionZipCode : collectionZipCodes) {
                     collectionOperationIds.add(collectionZipCode.Collection_Operation__c);
+                    if(ZipCodeVsCollZipCount.containsKey(collectionZipCode.Zip__c)){
+                        integer i = ZipCodeVsCollZipCount.get(collectionZipCode.Zip__c) + 1;
+                        ZipCodeVsCollZipCount.put(collectionZipCode.Zip__c,i);
+                    } else {
+                        ZipCodeVsCollZipCount.put(collectionZipCode.Zip__c,1);
+                    }
+
+                }
+                if(Boolean.ValueOf(System.label.Block_ZipCode_Update_On_Site)){
+                    for (sked__Location__c sites : newRecords) {
+                        if (ZipCodeVsCollZipCount.get(sites.sked_Zip_Code__c) != null && zipCodeVsSCOCount.get(sites.sked_Zip_Code__c) != null && ZipCodeVsCollZipCount.get(sites.sked_Zip_Code__c) != zipCodeVsSCOCount.get(sites.sked_Zip_Code__c)) {
+                            sites.addError('Zip code change not allow because collection operation before and after zip code change is different in future');
+                        }
+                    }
                 }
                 Map<String, sked__Region__c> mapCollOperToRegion = skedRegionService.getMapOfCollectionOperationToRegion(collectionOperationIds);
                 
@@ -127,20 +234,58 @@ public class skedLocationHandler extends skedTriggerHub {
                         for (sked__Location__c site : sites) {
                             Id regionId = skedRegionService.getRegionForCollectionOperation(collectionZipCode.Collection_Operation__c, 
                                                                                             mapCollOperToRegion, site.sked_Timezone__c);
-                            sked_Site_Collection_Operation__c siteCollectionOperation = new sked_Site_Collection_Operation__c(
-                                sked_Collection_Operation__c = collectionZipCode.Collection_Operation__c,
-                                sked_Site__c = site.Id,
-                                sked_Collections_Zip_Code__c = collectionZipCode.Id,
-                                sked_Start_Date__c = collectionZipCode.sked_Start_Date__c,
-                                sked_End_Date__c = collectionZipCode.sked_End_Date__c,
-                                sked_Region__c = regionId
-                            );
-                            siteCollectionOperations.add(siteCollectionOperation);
+                            if(map_SiteId_existingSCO.containsKey(site.Id)){
+                                for(sked_Site_Collection_Operation__c siteCollectionOperation : map_SiteId_existingSCO.get(site.Id)){
+                                    if((ZipCodeVsCollZipCount.get(collectionZipCode.Zip__c) != null && zipCodeVsSCOCount.get(collectionZipCode.Zip__c) != null && ZipCodeVsCollZipCount.get(collectionZipCode.Zip__c) == zipCodeVsSCOCount.get(collectionZipCode.Zip__c) && siteCollectionOperation.sked_Collection_Operation__c == collectionZipCode.Collection_Operation__c)
+                                    && ((siteCollectionOperation.sked_Start_Date__c <= system.today() && system.today() <= siteCollectionOperation.sked_End_Date__c)
+                                        || (siteCollectionOperation.sked_Start_Date__c >= system.today() && system.today() <= siteCollectionOperation.sked_End_Date__c))){
+                                        if(ZipCodeVsCollZipCount.get(collectionZipCode.Zip__c) > 1){
+                                            if(siteCollectionOperation.sked_Start_Date__c == collectionZipCode.sked_Start_Date__c && siteCollectionOperation.sked_End_Date__c == collectionZipCode.sked_End_Date__c){
+                                                siteCollectionOperation.Id = siteCollectionOperation.Id;
+                                                siteCollectionOperation.sked_Collections_Zip_Code__c = collectionZipCode.Id;
+                                                siteCollectionOperation.sked_Start_Date__c = collectionZipCode.sked_Start_Date__c;
+                                                siteCollectionOperation.sked_End_Date__c = collectionZipCode.sked_End_Date__c;
+                                                siteCollectionOperation.sked_Region__c = regionId;
+                                                siteCollectionOperations.add(siteCollectionOperation);
+                                                Map<Id,Boolean> noError = zipCodeVsSCOUpdateCheckMap.get(collectionZipCode.Zip__c);
+                                                noError.put(siteCollectionOperation.Id,TRUE);
+                                                zipCodeVsSCOUpdateCheckMap.put(collectionZipCode.Zip__c,noError);
+                                            }
+                                        } else {
+                                            siteCollectionOperation.Id = siteCollectionOperation.Id;
+                                            siteCollectionOperation.sked_Collections_Zip_Code__c = collectionZipCode.Id;
+                                            siteCollectionOperation.sked_Start_Date__c = collectionZipCode.sked_Start_Date__c;
+                                            siteCollectionOperation.sked_End_Date__c = collectionZipCode.sked_End_Date__c;
+                                            siteCollectionOperation.sked_Region__c = regionId;
+                                            siteCollectionOperations.add(siteCollectionOperation);
+                                            Map<Id,Boolean> noError = zipCodeVsSCOUpdateCheckMap.get(collectionZipCode.Zip__c);
+                                            noError.put(siteCollectionOperation.Id,TRUE);
+                                            zipCodeVsSCOUpdateCheckMap.put(collectionZipCode.Zip__c,noError);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                set<String> errorZipCode = new Set<String>();
+                for(String ZipCode : zipCodeVsSCOUpdateCheckMap.keySet()){
+                    for(Id sCOId : zipCodeVsSCOUpdateCheckMap.get(ZipCode).keySet()){
+                        Map<Id,Boolean> checkingSCOIsUpdated = zipCodeVsSCOUpdateCheckMap.get(ZipCode); 
+                        if(checkingSCOIsUpdated.get(sCOId) == FALSE){
+                            errorZipCode.add(ZipCode);
+                        }
+                    }
+                }
+                if(Boolean.ValueOf(System.label.Block_ZipCode_Update_On_Site)){
+                    for (sked__Location__c sites : newRecords) {
+                        if (errorZipCode.contains(sites.sked_Zip_Code__c)) {
+                            sites.addError('Zip code change not allow because after zip code change SCO collection operation will also change');
                         }
                     }
                 }
                 if (!siteCollectionOperations.isEmpty()) {
-                    insert siteCollectionOperations;
+                    update siteCollectionOperations;
                 }
             }
         }
@@ -162,6 +307,7 @@ public class skedLocationHandler extends skedTriggerHub {
                 Database.executeBatch(new skedUpdateJobAddressBatch(mapSiteWithAddressChanged.keySet()));
             }
             createTravelTimeIndexItems(mapSiteWithAddressChanged.keySet());
+            Database.executeBatch(new skedTTChangeDCROnAddressChangeBatch(mapSiteWithAddressChanged.keySet()));
         }
     }
     

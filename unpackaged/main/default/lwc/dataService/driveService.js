@@ -122,6 +122,10 @@ class driveService extends dataService {
             }
         }
 
+        if (query.onlyWithinDayAmount) {
+            queryBuilder.addCondition({ template: `sked_Drive_Date__c >= TODAY AND sked_Drive_Date__c <= NEXT_N_DAYS:${query.onlyWithinDayAmount}`});
+        }
+
         queryBuilder.addCondition({ template: "sked_Surrogate_Drive_for__c = NULL" });
 
         if (query.accountManagerPortfolioIds && query.accountManagerPortfolioIds.length) {
@@ -145,6 +149,15 @@ class driveService extends dataService {
             let subQueryBuilder = query.getQueryBuilder("skedHC__Exception__c");
             subQueryBuilder.addCondition({ template: "skedHC__Status__c != 'Closed'" });
             subQueryBuilder.orderClause = "ORDER BY skedHC__Job__r.Name ASC NULLS LAST";
+        }
+        if (query.includes(sObjectType.DRIVE_CHANGE_REQUEST)) {
+            let subQueryBuilder = query.getQueryBuilder("sked_Drive_Change_Request__c");
+            if (query.driveChangeRequestStatuses && query.driveChangeRequestStatuses.length) {
+                subQueryBuilder.addCondition({ template: "sked_Status__c IN {0}", value: query.driveChangeRequestStatuses, type: "array_string" });
+            }
+            if (query.driveChangeRequestType && query.driveChangeRequestType.length) {
+                subQueryBuilder.addCondition({ template: "sked_Type__c includes {0}", value: query.driveChangeRequestType, type: "array_string" });
+            }
         }
     }
 
@@ -308,7 +321,7 @@ class driveService extends dataService {
         });
     }
 
-    getDrivesByIds(driveIds, excludeExceptions = false) {
+    getDrivesByIds(driveIds, excludeExceptions = false, includeDeletedJobAllocs = false) {
         let driveQuery = new driveQueryModel();
         driveQuery.recordIds = driveIds;
 
@@ -325,7 +338,8 @@ class driveService extends dataService {
         let driveShiftQueryStr = driveShiftSvc.buildQuery(driveShiftQuery);
 
         let jobQuery = new jobQueryModel();
-        jobQuery.driveIds = driveIds;
+        jobQuery.driveIds = driveIds; 
+        jobQuery.includeDeletedJobAllocs = includeDeletedJobAllocs;      
         jobQuery.subQueryIndicator = sObjectType.JOB_ALLOCATION | sObjectType.JOB_TAG;
         let jobSvc = new jobService();
         let jobQueryStr = jobSvc.buildQuery(jobQuery);
@@ -520,6 +534,9 @@ class driveQueryModel extends queryModelBase {
     ufid;
     accountManagerPortfolioIds;
     districtManagerPortfolioIds;
+    driveChangeRequestStatuses;
+    driveChangeRequestType;
+    onlyWithinDayAmount;
 }
 
 export {

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<EmailTemplate xmlns="http://soap.sforce.com/2006/04/metadata">
+    <available>false</available>
+    <description>Booking Email for drives Aug 1-31 to support Emergency Appeal</description>
+    <encodingKey>ISO-8859-1</encodingKey>
+    <letterhead>ARC_Logo_Test</letterhead>
+    <name>Seasonal_Appeal_AugEmergencyBloodShortage_Booking</name>
+    <style>formalLetter</style>
+    <subject>Emergency Blood Shortage - We need your help!</subject>
+    <textOnly>{!Contact.FirstName}
+
+The American Red Cross is experiencing an emergency blood shortage.  Overall, the Red Cross national blood supply has fallen by more than 25% since July 1. Blood product distributions to hospitals are outpacing the number of blood donations coming in, which is rapidly drawing down the blood supply. I need your help!
+
+Schedule a blood drive today. Help replenish the blood supply.
+
+Need another reason to help? When you host a blood drive in the month of August and meet goal, you’ll receive a $100 Amazon.com Gift Card**, by email^.
+
+I look forward to working with you and scheduling your blood drive soon!
+
+Sincerely,
+
+{!Lead.OwnerFirstName}
+
+
+**Restrictions apply, see amazon.com/gc-legal.
+
+^Sponsors who host a blood drive(s) during the promotional period (7/1/2024–08/31/2024) and meet their blood drive goal. This offer is non-transferable and not redeemable for cash. Limit one (1) $100 Amazon.com Holiday Leader Gift Card per Blood Drive Primary Contact email address during the promotional period. This offer is subject to change at any time in the promotional period. Blood Program Leader must have a valid email address on file. Instructions on how to claim the gift card will be sent via email to the primary contact Blood Program Leader of the blood drive. The online claim form must be completed within 30 days of the email being sent. All gift cards are subject to individual merchant terms and conditions, and all trademarks are property of their respective owners. Merchants and offers are subject to change. No substitutions by presenting donors. American Red Cross is not responsible for lost, damaged, corrupted or stolen gift cards and may replace any such cards at its sole discretion. Any questions or problems in connection with redeeming gift cards must be directed to the merchant. American Red Cross employees are not eligible for this promotion.</textOnly>
+    <type>html</type>
+    <uiType>Aloha</uiType>
+</EmailTemplate>

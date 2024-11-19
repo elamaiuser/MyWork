@@ -7,6 +7,10 @@
             <translation><!-- Activity --></translation>
         </picklistValues>
         <picklistValues>
+            <masterLabel>Available Day</masterLabel>
+            <translation><!-- Available Day --></translation>
+        </picklistValues>
+        <picklistValues>
             <masterLabel>Drive Shift</masterLabel>
             <translation><!-- Drive Shift --></translation>
         </picklistValues>

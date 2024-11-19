@@ -12,7 +12,7 @@ import {
   roleTimeDetailService, sObjectType, territoryCollectionOperationService, territoryCollectionOperationQueryModel, operationRecordQueryModel, travelTimeIndexItemService, travelTimeIndexItemQueryModel
 } from 'c/dataService';
 import * as autoMapper from 'c/autoMapper';
-import { DRIVE_TYPE, ASSET_TYPE, PENDING_ACTION, DRIVE_REQUEST_CHANGE_STATUS } from 'c/slwcConstants';
+import { DRIVE_TYPE, ASSET_TYPE, PENDING_ACTION, DRIVE_REQUEST_CHANGE_STATUS, DRIVE_CHANGE_REQUEST_TYPE } from 'c/slwcConstants';
 import { keyBy, groupBy, uniq } from 'c/lodash';
 import { getTravelTimeIndexKey } from 'c/slwcUtils';
 class Fetch {
@@ -98,7 +98,7 @@ class Fetch {
         if (driveDate && collectionOperationId) {
           let service = new roleTimeDetailService();
 
-          return service.getRoleTimeData(driveDate, driveDate, [collectionOperationId], [driveSiteId], [this.driveType], [driveSite.physicalLocationType])
+          return service.getRoleTimeData(driveDate, driveDate, [collectionOperationId], [driveSiteId], [typeOfDrive], [driveSite.physicalLocationType])
             .then(roleTimeData => {
               return roleTimeData;
             })
@@ -161,7 +161,7 @@ class Fetch {
     return coStagingLocationService.query(coStagingLocationQueryModel)
       .then(coStagingLocations => {
         const travelTimeIndexItemKeys = [];
-        coStagingLocations.forEach(coStagingLocation => {
+        coStagingLocations?.forEach(coStagingLocation => {
           const { geoLocationLatitude: stagingLocationGeoLocationLatitude, geoLocationLongitude: stagingLocationGeoLocationLongitude } = coStagingLocation.stagingLocation;
           const siteToCOKey = getTravelTimeIndexKey(driveSiteGeoLocationLatitude, driveSiteGeoLocationLongitude, stagingLocationGeoLocationLatitude, stagingLocationGeoLocationLongitude);
           const coToSiteKey = getTravelTimeIndexKey(stagingLocationGeoLocationLatitude, stagingLocationGeoLocationLongitude, driveSiteGeoLocationLatitude, driveSiteGeoLocationLongitude);
@@ -334,16 +334,18 @@ class Fetch {
     return Promise.resolve()
       .then(() => {
         if (!id) return null;
-        if (pendingAction !== PENDING_ACTION.DRIVE_CHANGE_REQUEST) return null;
+        if (pendingAction !== PENDING_ACTION.DRIVE_CHANGE_REQUEST && pendingAction !== null) return null;
 
         let dcrService = new driveChangeRequestService();
         let dcrQueryModel = new driveChangeRequestQueryModel();
         dcrQueryModel.driveIds = [id];
         dcrQueryModel.statuses = [
+          DRIVE_REQUEST_CHANGE_STATUS.PENDING,
           DRIVE_REQUEST_CHANGE_STATUS.SUBMITTED,
           DRIVE_REQUEST_CHANGE_STATUS.WAITING_FOR_DM_APPROVAL,
           DRIVE_REQUEST_CHANGE_STATUS.WAITING_FOR_APS_APPROVAL,
-          DRIVE_REQUEST_CHANGE_STATUS.WAITING_FOR_DRD_FEEDBACK
+          DRIVE_REQUEST_CHANGE_STATUS.APS_WAITING_FOR_DRD_FEEDBACK,
+          DRIVE_REQUEST_CHANGE_STATUS.DM_WAITING_FOR_DRD_FEEDBACK
         ];
         dcrQueryModel.subQueryIndicator = sObjectType.DRIVE_CHANGE_REQUEST_ITEM;
 

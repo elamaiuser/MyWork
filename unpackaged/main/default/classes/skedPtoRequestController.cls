@@ -49,7 +49,8 @@ global class skedPtoRequestController extends skedBaseController {
             
             result.data = mapConfigData;
 
-            result.viewData.put('timezoneSidId', UserInfo.getTimeZone().getID());
+            string timezoneSidId = skedResourceUtils.getResourceTimezonesidId(request.resourceId);
+            result.viewData.put('timezoneSidId', timezoneSidId);
         }
         catch (Exception ex) {
             result.getError(ex);
@@ -62,6 +63,8 @@ global class skedPtoRequestController extends skedBaseController {
         skedRemoteResultModel result = new skedRemoteResultModel(request.viewData);
         SavePoint sp = Database.setSavepoint();
         try {
+            skedTriggerUtils.CHANGES_INITIATED_FROM_SERVICE = TRUE;
+            
             sked__Availability__c availability = new sked__Availability__c(
                 Id = request.event.Id,
                 sked_Waitlist_Confirmed__c = request.event.waitlistConfirmed,
@@ -107,61 +110,10 @@ global class skedPtoRequestController extends skedBaseController {
     }
     
     @remoteAction
-    global static skedRemoteResultModel getStaffingBudget(getStaffingBudgetRequest request) {
-        skedRemoteResultModel result = new skedRemoteResultModel(request.viewData);
-        try {
-            string timezoneSidId = (string)request.viewData.get('timezoneSidId');
-            skedSetting.instance.App.setTimezoneSidId(timezoneSidId);
-            
-            List<string> recordIds = new List<string>();
-            recordIds.add(request.resourceId);
-            skedResourceService.queryModel resourceQuery = new skedResourceService.queryModel();
-            resourceQuery.recordIds = recordIds;
-            
-            skedResourceService resourceService = (skedResourceService)skedServiceFactory.instance.resolve('sked__Resource__c');
-            skedModels.resource resource = ((List<skedModels.resource>)resourceService.getList(resourceQuery)).get(0);
-            
-            skedStaffingBudgetService.queryModel staffingBudgetQuery = new skedStaffingBudgetService.queryModel();
-            staffingBudgetQuery.biomedCollectionOpIds = new List<string>();
-            staffingBudgetQuery.biomedCollectionOpIds.add(resource.biomedCollectionOpId);
-            staffingBudgetQuery.roles = resource.roles.split(';');
-            staffingBudgetQuery.startDate = request.startDate;
-            
-            skedStaffingBudgetService staffingBudgetService = (skedStaffingBudgetService)skedServiceFactory.instance.resolve('sked_Staffing_Budget__c');
-            List<skedModels.staffingBudget> staffingBudgets = (List<skedModels.staffingBudget>)staffingBudgetService.getList(staffingBudgetQuery);
-            
-            Map<string, integer> map_type_priority = new Map<string, integer>();
-            map_type_priority.put(skedConstants.STAFFING_BUDGET_REQUEST_TYPE_STANDARD, 1);
-            map_type_priority.put(skedConstants.STAFFING_BUDGET_REQUEST_TYPE_OPEN_ENROLLMENT, 2);
-            map_type_priority.put(skedConstants.STAFFING_BUDGET_REQUEST_TYPE_ALL_HANDS_ON_DECK, 3);
-                
-            Map<string, skedModels.staffingBudget> mapStaffingBudget = new Map<string, skedModels.staffingBudget>();
-            for (skedModels.staffingBudget staffingBudget : staffingBudgets) {
-                if (!mapStaffingBudget.containsKey(staffingBudget.staffingBudgetDate)) {
-                    mapStaffingBudget.put(staffingBudget.staffingBudgetDate, staffingBudget);
-                }
-                else {
-                    skedModels.staffingBudget existingStaffingBudget = mapStaffingBudget.get(staffingBudget.staffingBudgetDate);
-                    integer existingStaffingBudgetPriority = map_type_priority.get(existingStaffingBudget.requestType);
-                    integer staffingBudgetPriority = map_type_priority.get(staffingBudget.requestType);
-                    if (staffingBudgetPriority > existingStaffingBudgetPriority) {
-                        mapStaffingBudget.put(staffingBudget.staffingBudgetDate, staffingBudget);
-                    }
-                }
-            }
-            result.data = mapStaffingBudget.values();
-        }
-        catch (Exception ex) {
-            result.getError(ex);
-        }
-        return result;
-    }
-    
-    @remoteAction
     global static skedRemoteResultModel getUnavailabilityStatistic(getUnavailabilityStatisticRequest request) {
         skedRemoteResultModel result = new skedRemoteResultModel(request.viewData);
         try {
-            string timezoneSidId = (string)request.viewData.get('timezoneSidId');
+            string timezoneSidId = skedResourceUtils.getResourceTimezonesidId(request.resourceId);
             skedSetting.instance.App.setTimezoneSidId(timezoneSidId);
 			
             Date selectedDate = skedDateTimeUtils.getDateFromIsoString(request.selectedDate);
@@ -179,6 +131,8 @@ global class skedPtoRequestController extends skedBaseController {
         skedRemoteResultModel result = new skedRemoteResultModel(request.viewData);
         SavePoint sp = Database.setSavepoint();
         try {
+            skedTriggerUtils.CHANGES_INITIATED_FROM_SERVICE = TRUE;
+
             string timezoneSidId = (string)request.viewData.get('timezoneSidId');
             skedSetting.instance.App.setTimezoneSidId(timezoneSidId);
 
@@ -199,7 +153,7 @@ global class skedPtoRequestController extends skedBaseController {
         try {
             string resourceId = request.unavailability.get(0).resourceId;
             
-            sked__Resource__c skedResource = [SELECT Id, sked_Daily_Time_Off_Hours__c, sked_Employee_Id__c
+            sked__Resource__c skedResource = [SELECT Id, sked_Daily_Time_Off_Hours__c, sked_Employee_ID__c
                                               FROM sked__Resource__c
                                               WHERE Id = :resourceId];
             
@@ -208,7 +162,7 @@ global class skedPtoRequestController extends skedBaseController {
                 resourceDailyTimeOffHours = skedResource.sked_Daily_Time_Off_Hours__c * 60;
             }
             
-            string timezoneSidId = getResourceTimezonesidId(resourceId);
+            string timezoneSidId = skedResourceUtils.getResourceTimezonesidId(resourceId);
             skedSetting.instance.App.setTimezoneSidId(timezoneSidId);
             
             skedResourceService.queryModel query = new skedResourceService.queryModel();
@@ -237,35 +191,17 @@ global class skedPtoRequestController extends skedBaseController {
                 }
             }
             
+            skedUnavailabilityBalanceResultModel data = skedWorkdayUtils.verifyUnavailabilityBalance(skedResource, latestEndDate, requestedDuration, timeOffType);
             skedStaffingBudgetService staffingBudgetService = (skedStaffingBudgetService) skedServiceFactory.instance.resolve('sked_Staffing_Budget__c');
-            
-            verifyUnavailabilityBalanceResultModel data = new verifyUnavailabilityBalanceResultModel();
-            data.noOfRequestedHours = requestedDuration / 60;
+            staffingBudgetService.verifyStaffingBudget(resourceId, unavailabilityList);
 
-            skedWorkdayApiManager.getTimeOffPlanBalancesResponse availableHoursResponse;
-            if (skedSetting.instance.Admin.workdayIntegration) {
-                skedWorkdayApiManager.getTimeOffPlanBalancesRequest availableHoursRequest = new skedWorkdayApiManager.getTimeOffPlanBalancesRequest();
-                availableHoursRequest.employeeId = skedResource.sked_Employee_Id__c;
-                availableHoursRequest.selectedYear = latestEndDate.year();
-                availableHoursResponse = skedWorkdayApiManager.getTimeOffPlanBalances(availableHoursRequest);
-                
-                if (availableHoursResponse != null) {
-                    if (timeOffType == skedConstants.UNAVAILABILITY_TYPE_PTO) {
-                        data.noOfAvailableHours = availableHoursResponse.pto.hoursLeft;
-                    } else if (timeOffType == skedConstants.UNAVAILABILITY_TYPE_FLOATING_HOLIDAY) {
-                        data.noOfAvailableHours = availableHoursResponse.floatingHoliday.hoursLeft;
-                    }
-                }
+            skedAvailabilityService availabilityService = (skedAvailabilityService) skedServiceFactory.instance.resolve('sked__Availability__c');
+            availabilityService.verifyResourceAvailability(resourceId, unavailabilityList);
+            data.unavailability = unavailabilityList;    
 
-                data.hasEnoughHours = data.noOfAvailableHours >= data.noOfRequestedHours;
-            } else {
-                data.hasEnoughHours = true;
-            }
-
-            if (data.hasEnoughHours) {
-                staffingBudgetService.verifyStaffingBudget(resourceId, unavailabilityList);
-            	data.unavailability = unavailabilityList;    
-            }
+            availabilityService.setDefaultStatusesForUnavailabilities(data.hasEnoughHours, unavailabilityList);
+            data.unavailability = unavailabilityList;
+            result.data = data;
             
             result.data = data;
         }
@@ -292,48 +228,26 @@ global class skedPtoRequestController extends skedBaseController {
                 tempDate = tempDate.addDays(1);
             }
             
-            sked__Resource__c skedResource = [SELECT Id, sked__Primary_Region__c, sked__Primary_Region__r.sked_Biomed_Collection_Op_Center__c,
-                                              (SELECT Id, sked__Tag__r.Name
-                                               FROM sked__ResourceTags__r
-                                               WHERE sked__Tag__r.sked__Type__c = 'Role'
-                                               AND sked_Start_Date__c <= :startDate
-                                               AND (sked_Expiry_Date__c >= :endDate OR sked_Expiry_Date__c = NULL)
-                                               ORDER BY sked__Tag__r.sked_Priority__c ASC
-                                               LIMIT 1)
-                                              FROM sked__Resource__c 
-                                              WHERE Id = :request.event.resourceId];
-            List<string> resourceTags = new List<string>();
-            if (!skedResource.sked__ResourceTags__r.isEmpty()) {
-                for (sked__Resource_Tag__c resourceTag : skedResource.sked__ResourceTags__r) {
-                    resourceTags.add(resourceTag.sked__Tag__r.Name);
-                }
-            }
+            sked__Resource__c skedResource = [
+                SELECT Id, sked__Primary_Region__c, sked_FCC_Code__c,
+                sked__Primary_Region__r.sked_Biomed_Collection_Op_Center__c,
+                (SELECT Id, sked__Tag__r.Name
+                 FROM sked__ResourceTags__r
+                 WHERE sked__Tag__r.sked__Type__c = :skedConstants.TAG_TYPE_ROLE
+                 AND sked_Role_Status__c = :skedConstants.TAG_ROLE_STATUS_ACTIVE
+                 ORDER BY sked__Tag__r.sked_Priority__c ASC NULLS LAST
+                LIMIT 1)
+                FROM sked__Resource__c 
+                WHERE Id = :request.event.resourceId
+            ];
+
+            Map<Id, sked__Resource__c> resourceById = new Map<Id, sked__Resource__c>{request.event.resourceId => skedResource};
+            Map<Id, Set<Date>> datesByResourceId = new Map<Id, Set<Date>>{request.event.resourceId => inputDates};
             
-            Map<Date, sked_Staffing_Budget__c> mapStaffingBudgetDate = new Map<Date, sked_Staffing_Budget__c>();
-            if (!resourceTags.isEmpty()) {
-                string staffingBudgetQuery = 'SELECT Id, sked_Total_Slots__c, sked_Available_Slots__c, sked_Staffing_Budget_Date__c, sked_Request_Type__c, sked_Roles__c ';
-                staffingBudgetQuery += 'FROM sked_Staffing_Budget__c ';
-                staffingBudgetQuery += 'WHERE sked_Biomed_Collection_Op_Center__c = \'' +skedResource.sked__Primary_Region__r.sked_Biomed_Collection_Op_Center__c + '\' ';
-                
-                List<string> resourceTagClauses = new List<string>();
-                for (string resourceTag : resourceTags) {
-                    resourceTagClauses.add('sked_Roles__c INCLUDES(\'' + resourceTag + '\')');
-                }
-                staffingBudgetQuery += 'AND ( ' + string.join(resourceTagClauses, ' OR ') + ' ) ';
-                List<sked_Staffing_Budget__c> staffingBudgets = (List<sked_Staffing_Budget__c>)Database.query(staffingBudgetQuery);
-                
-                if (staffingBudgets != NULL && !staffingBudgets.isEmpty()) {
-                    for (sked_Staffing_Budget__c staffingBudget : staffingBudgets) {
-                        mapStaffingBudgetDate.put(staffingBudget.sked_Staffing_Budget_Date__c, staffingBudget);
-                    }
-                }
-            }
-            
-            Set<Id> resourceIds = new Set<Id>();
-            resourceIds.add(request.event.resourceId);
+            Map<Date, List<skedStaffingBudgetWrapper>> staffingBudgetWrappersByDate = skedStaffingBudgetUtils.getSkedStaffingBudgetWrappersByDate(datesByResourceId, resourceById);
             
             skedAvailabilityPatternService patternService = (skedAvailabilityPatternService)skedServiceFactory.instance.resolve('sked__Availability_Pattern__c');
-            Map<Id, List<skedModels.event>> mapResourceTemplateEvents = patternService.getPatternEvents(resourceIds, inputDates);
+            Map<Id, List<skedModels.event>> mapResourceTemplateEvents = patternService.getPatternEvents(resourceById.keySet(), inputDates);
             
             Map<string, skedModels.event> mapTempateEvents = new Map<string, skedModels.event>();
             if (!mapResourceTemplateEvents.isEmpty()) {
@@ -382,7 +296,7 @@ global class skedPtoRequestController extends skedBaseController {
                 string dateIso = Json.serialize(tempDate).replace('"', '');
                 unavailabilityModel unavailability = new unavailabilityModel();
                 unavailability.unavailabilityDate = dateIso;
-                sked_Staffing_Budget__c skedStaffingBudget = mapStaffingBudgetDate.get(tempDate);
+                List<skedStaffingBudgetWrapper> skedStaffingBudgetWrappers = staffingBudgetWrappersByDate.get(tempDate);
                 
                 if (allHolidays.contains(tempDate)) {
                     unavailability.unavailabilityType = 'holiday';
@@ -390,11 +304,15 @@ global class skedPtoRequestController extends skedBaseController {
                 else if (!mapTempateEvents.containsKey(dateIso)) {
                     unavailability.unavailabilityType = 'non-working';
                 }
-                else if (skedStaffingBudget != NULL && skedStaffingBudget.sked_Request_Type__c == 'Unavailability Day') {
-                    unavailability.unavailabilityType = 'unavailability-day';
+                else if (skedStaffingBudgetWrappers != NULL && !skedStaffingBudgetWrappers.isEmpty()) {
+                    for (skedStaffingBudgetWrapper staffingBudgetWrapper : skedStaffingBudgetWrappers) {
+                        if (staffingBudgetWrapper.staffingBudget.sked_Request_Type__c == 'Unavailability Day') {
+                            unavailability.unavailabilityType = 'unavailability-day';
+                        }
+                    }
                 }
-                else if (request.event.eventType != 'Sick') {
-                    if (skedStaffingBudget == NULL) {
+                else if (request.event.eventType == skedConstants.AVAILABILITY_TYPE_PTO || request.event.eventType == skedConstants.AVAILABILITY_TYPE_FLOATING_HOLIDAY) {
+                    if (skedStaffingBudgetWrappers == NULL || skedStaffingBudgetWrappers.isEmpty()) {
                         unavailability.unavailabilityType = 'no-slots-defined';
                     }
                 }
@@ -407,9 +325,11 @@ global class skedPtoRequestController extends skedBaseController {
                     skedModels.event templateEvent = mapTempateEvents.get(dateIso);
                     unavailability.workingStartTime = templateEvent.startTime;
                     unavailability.workingEndTime = templateEvent.endTime;
-                    if (skedStaffingBudget != NULL) {
-                        skedModels.staffingBudget staffingBudget = (skedModels.staffingBudget)skedAutoMapper.instance.mapTo(skedStaffingBudget, skedModels.staffingBudget.class);
-                        data.staffingBudgets.add(staffingBudget);
+                    if (skedStaffingBudgetWrappers != NULL && !skedStaffingBudgetWrappers.isEmpty()) {
+                        for (skedStaffingBudgetWrapper skedStaffingBudgetWrapper : skedStaffingBudgetWrappers) {
+                            skedModels.staffingBudget staffingBudget = (skedModels.staffingBudget) skedAutoMapper.instance.mapTo(skedStaffingBudgetWrapper.staffingBudget, skedModels.staffingBudget.class);
+                            data.staffingBudgets.add(staffingBudget);
+                        }
                     }
                 }
                 
@@ -430,6 +350,8 @@ global class skedPtoRequestController extends skedBaseController {
         skedRemoteResultModel result = new skedRemoteResultModel(request.viewData);
         SavePoint sp = Database.setSavepoint();
         try {
+            skedTriggerUtils.CHANGES_INITIATED_FROM_SERVICE = TRUE;
+
             string timezoneSidId = (string)request.viewData.get('timezoneSidId');
             skedSetting.instance.App.setTimezoneSidId(timezoneSidId);
 
@@ -452,6 +374,8 @@ global class skedPtoRequestController extends skedBaseController {
         skedRemoteResultModel result = new skedRemoteResultModel(request.viewData);
         SavePoint sp = Database.setSavepoint();
         try {
+            skedTriggerUtils.CHANGES_INITIATED_FROM_SERVICE = TRUE;
+
             if (request.event != NULL) {
                 request.events = new List<skedModels.availability>();
                 request.events.add(request.event);
@@ -459,8 +383,27 @@ global class skedPtoRequestController extends skedBaseController {
             skedSetting.instance.App.setTimezoneSidId(request.events.get(0).timezoneSidId);
             
             if (request.events != NULL && !request.events.isEmpty()) {
+                Set<Id> availabilityIds = new Set<Id>();
                 for (skedModels.availability availability : request.events) {
-                    availability.status = skedConstants.AVAILABILITY_STATUS_CANCELLED;
+                    availabilityIds.add(availability.id);
+                }
+
+                Map<Id, sked__Availability__c> availById = new Map<Id, sked__Availability__c>([
+                    SELECT Id, sked_Integrate_With_Workday__c, sked_Workday_Sync_Status__c
+                    FROM sked__Availability__c
+                    WHERE Id IN :availabilityIds
+                ]);
+
+                for (skedModels.availability availability : request.events) {
+                    sked__Availability__c availRecord = availById.get(availability.id);
+                    if (availRecord.sked_Workday_Sync_Status__c == skedConstants.AVAILABILITY_WORKDAY_SYNC_STATUS_MANUAL && !skedTriggerUtils.isUserAPS(UserInfo.getUserId())) {
+                        availability.status = skedConstants.AVAILABILITY_STATUS_PENDING;
+                        availability.approvalReason = skedConstants.AVAILABILITY_APPROVAL_REASON_WORKDAY_CANCELLATION_REQUIRED;
+                    } else if (availRecord.sked_Integrate_With_Workday__c && availRecord.sked_Workday_Sync_Status__c == skedConstants.AVAILABILITY_WORKDAY_SYNC_STATUS_SUCCESS) {
+                        availability.status = skedConstants.AVAILABILITY_STATUS_PROCESSING_CANCELLATION;
+                    } else {
+                        availability.status = skedConstants.AVAILABILITY_STATUS_CANCELLED;
+                    }
                 }
             }
 
@@ -481,6 +424,8 @@ global class skedPtoRequestController extends skedBaseController {
         skedRemoteResultModel result = new skedRemoteResultModel(request.viewData);
         SavePoint sp = Database.setSavepoint();
         try {
+            skedTriggerUtils.CHANGES_INITIATED_FROM_SERVICE = TRUE;
+
             string timezoneSidId = (string)request.viewData.get('timezoneSidId');
             skedSetting.instance.App.setTimezoneSidId(timezoneSidId);
 
@@ -556,10 +501,33 @@ global class skedPtoRequestController extends skedBaseController {
     }
 
     @remoteAction
+    global static skedRemoteResultModel cancelCustomAvailability(saveCustomAvailabilityRequestModel request) {
+        skedRemoteResultModel result = new skedRemoteResultModel(request.viewData);
+        SavePoint sp = Database.setSavepoint();
+        try {
+            string timezoneSidId = (string)request.viewData.get('timezoneSidId');
+            skedSetting.instance.App.setTimezoneSidId(timezoneSidId);
+            
+            request.event.status = skedConstants.AVAILABILITY_STATUS_CANCELLED;
+
+            skedDataService service = (skedDataService)skedServiceFactory.instance.resolve('sked_Custom_Availability__c');
+            skedTriggerUtils.CHANGES_INITIATED_FROM_SERVICE = true;
+            skedDataService.saveResult saveResult = service.saveRecord(request.event);
+            result.data = saveResult.success == false ? saveResult.returnedData : NULL;
+        }
+        catch (Exception ex) {
+            result.getError(ex, sp);
+        }
+        return result;
+    }
+
+    @remoteAction
     global static skedRemoteResultModel deleteCustomAvailability(saveCustomAvailabilityRequestModel request) {
         skedRemoteResultModel result = new skedRemoteResultModel(request.viewData);
         SavePoint sp = Database.setSavepoint();
         try {
+            skedTriggerUtils.CHANGES_INITIATED_FROM_SERVICE = TRUE;
+            
             string timezoneSidId = (string)request.viewData.get('timezoneSidId');
             skedSetting.instance.App.setTimezoneSidId(timezoneSidId);
 
@@ -606,29 +574,12 @@ global class skedPtoRequestController extends skedBaseController {
         return result;
     }
     
-    /*********************************************************** Private methods ***********************************************************/
-    private static string getResourceTimezonesidId(string resourceId) {
-        List<sked__Resource__c> resources = [SELECT Id, sked__Primary_Region__r.sked__Timezone__c
-                                            FROM sked__Resource__c
-                                            WHERE Id = :resourceId];
-        if (resources == NULL || resources.isEmpty()) {
-            return UserInfo.getTimeZone().getID();
-        }
-        return resources.get(0).sked__Primary_Region__r.sked__Timezone__c;
-    }
-    
     /*********************************************************** Nested classes ***********************************************************/
     global class initializeRequestModel extends skedRemoteRequestModel {
         public string resourceId;
     }
 
     global class getPendingAvailabilityRequest extends getDataRequestModel {
-        public string endDate;
-        public string resourceId;
-        public string startDate;
-    }
-    
-    global class getStaffingBudgetRequest extends getDataRequestModel {
         public string endDate;
         public string resourceId;
         public string startDate;
@@ -662,13 +613,6 @@ global class skedPtoRequestController extends skedBaseController {
     }
     
     global class verifyUnavailabilityBalanceRequestModel extends saveRequestModel {
-        public List<skedModels.availability> unavailability;
-    }
-    
-    global class verifyUnavailabilityBalanceResultModel {
-        public boolean hasEnoughHours;
-        public decimal noOfAvailableHours;
-        public decimal noOfRequestedHours;
         public List<skedModels.availability> unavailability;
     }
     

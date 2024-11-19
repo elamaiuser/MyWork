@@ -398,7 +398,7 @@ public class PortfolioAssignmentServiceTest {
         portfolioAssignmentList.add(portfolioAssignment1);
         
         
-        
+        TriggerHandler.bypass('AccountPortfolioAssignmentTriggerHandler');
         Account_Portfolio_Assignment__c accPortfolioAssignemnet = [select id from Account_Portfolio_Assignment__c where BSF_Portfolio__c=:bsfIdMap.get('HProdSEMR_1836')];
         delete accPortfolioAssignemnet;
         

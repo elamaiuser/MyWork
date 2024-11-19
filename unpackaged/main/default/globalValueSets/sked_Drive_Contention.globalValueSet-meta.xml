@@ -76,16 +76,31 @@
         <label>Staffing Complement Changed</label>
     </customValue>
     <customValue>
-        <fullName>Role Time Variant Changed</fullName>
+        <fullName>Collection Operation Change cross regions</fullName>
         <default>false</default>
-        <isActive>false</isActive>
-        <label>Role Time Variant Changed</label>
+        <label>Collection Operation Change cross regions</label>
+    </customValue>
+    <customValue>
+        <fullName>Assets are not shared with new Collection Operation</fullName>
+        <default>false</default>
+        <label>Assets are not shared with new Collection Operation</label>
+    </customValue>
+    <customValue>
+        <fullName>Excess Staff Capacity</fullName>
+        <default>false</default>
+        <label>Excess Staff Capacity</label>
     </customValue>
     <customValue>
         <fullName>Cancel In Process</fullName>
         <default>false</default>
         <isActive>false</isActive>
         <label>Cancel In Process</label>
+    </customValue>
+    <customValue>
+        <fullName>Role Time Variant Changed</fullName>
+        <default>false</default>
+        <isActive>false</isActive>
+        <label>Role Time Variant Changed</label>
     </customValue>
     <masterLabel>Drive Contention</masterLabel>
     <sorted>false</sorted>

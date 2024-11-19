@@ -81,12 +81,11 @@ global class slwcDriveService {
                     if (jobAllocation.sked__Resource__r.sked__Resource_Type__c == skedConstants.RESOURCE_TYPE_PERSON) {
                         jobAllocationIdsNeedToNotify.add(jobAllocation.Id);
                     }
-                } else if (jobAllocation.sked__Resource__r.sked__Resource_Type__c == skedConstants.RESOURCE_TYPE_ASSET) {
+                }else if (jobAllocation.sked__Resource__r.sked__Resource_Type__c == skedConstants.RESOURCE_TYPE_ASSET) {
                     jobAllocation.sked_Locked__c = TRUE;
                     dispatchedJobAllocations.add(jobAllocation);
                 }
             }
-            
             if (!dispatchedJobAllocations.isEmpty()) {
                 update dispatchedJobAllocations;
             }
@@ -118,20 +117,13 @@ global class slwcDriveService {
                 notificationSettingNames.add('sked_Job_Allocation_OneOff');
                 notificationSettingNames.add('sked_Job_Allocation_SF_Push');
                 
-                List<sked_Notification_Setting__mdt> skedNotificationSettings = [SELECT Id
-                                                                                 FROM sked_Notification_Setting__mdt
-                                                                                 WHERE DeveloperName IN :notificationSettingNames
-                                                                                 AND sked_Trigger__c = 'Custom'
-                                                                                 AND sked_Active__c = TRUE];
-                if (!skedNotificationSettings.isEmpty()) {
-                    Map<Id, Set<Id>> map_settingId_recordIds = new Map<Id, Set<Id>>();
-                    for (sked_Notification_Setting__mdt skedNotificationSetting : skedNotificationSettings) {
-                        map_settingId_recordIds.put(skedNotificationSetting.Id, jobAllocationIdsNeedToNotify);
-                    }
-                    if (!Test.isRunningTest() && !System.isBatch()) {
-                        Database.executeBatch(new skedSendNotificationBatch(map_settingId_recordIds), 20);
-                    }
+                List<sked__Job_Allocation__c> jobAllocationsNeedToNotify = new List<sked__Job_Allocation__c>();
+                for (Id jobAllocationId : jobAllocationIdsNeedToNotify) {
+                    sked__Job_Allocation__c jobAllocation = new sked__Job_Allocation__c(Id = jobAllocationId);
+                    jobAllocationsNeedToNotify.add(jobAllocation);
                 }
+
+                new skedCustomNotificationService(notificationSettingNames).generateNotifications(jobAllocationsNeedToNotify);
             }
         }
         return result;
@@ -229,15 +221,14 @@ global class slwcDriveService {
         
         Set<string> driveStatusesRequireCancellationApproval = new Set<string>();
         driveStatusesRequireCancellationApproval.add(skedConstants.DRIVE_STATUS_CONFIRMED);
-        
         for (driveModel drive : request.drives) {
             boolean canUpdateStatus = TRUE;
             sked_Drive__c skedDrive = mapSkedDrive.get(drive.id);
-            if (drive.status == skedConstants.DRIVE_STATUS_CANCEL) {
+            if (drive.status == skedConstants.DRIVE_STATUS_CANCEL)
+            {
                 decimal daysBetween = currentDate.daysBetween(skedDrive.sked_Drive_Date__c);
                 Boolean inside42days = daysBetween <= noOfDaysRequireCancellationApproval;
                 Boolean isLinkedDrive = skedDrive.sked_Linked_Drives__c != null;
-                
                 Boolean rule1 = driveStatusesRequireCancellationApproval.contains(skedDrive.sked_Status__c) && inside42days;
                 Boolean rule2 = isLinkedDrive;
                 
@@ -256,7 +247,6 @@ global class slwcDriveService {
                 skedDrive.sked_Status__c = drive.status;
             }
         }
-        
         update mapSkedDrive.values();
         return result;
     }
@@ -339,7 +329,7 @@ global class slwcDriveService {
         }
     }
     
-    public static void captureDriveChangeRequests(List<driveChangeRequestModel> lsRequests) {
+    public static void captureUserChangeDriveChangeRequests(List<driveChangeRequestModel> lsRequests) {
         List<driveChangeRequestModel> filteredRequests = filterDriveChangeRequests(lsRequests);
         
         if (!filteredRequests.isEmpty()) {
@@ -556,7 +546,7 @@ global class slwcDriveService {
         if (ref.setDriveIds.isEmpty()) return;
         
         // get 'Drive change requests' & generate two maps - mapDriveToExistingChangeReq & mapKeyToExistingChangeItem
-        List<sked_Drive_Change_Request__c> changeRequestQuery = [SELECT Id, Name, sked_Drive__c, sked_Status__c, sked_Process_Counter__c,
+        List<sked_Drive_Change_Request__c> changeRequestQuery = [SELECT Id, Name, sked_Drive__c, sked_Status__c, sked_Process_Counter__c, sked_Type__c,
                                                                  (SELECT Id, sked_Old_Value__c, sked_New_Value__c, sked_Object_API_Name__c, 
                                                                   sked_Field_API_Name__c, sked_Field_Label__c, sked_Field_Type__c,
                                                                   sked_Change_Reason__c
@@ -577,9 +567,9 @@ global class slwcDriveService {
         }
         
         // create 'change request' for drives where 'change req' not exists already & add to existing map
-        ref.setDriveIds.removeAll(ref.mapDriveToExistingChangeReq.keySet());
         List<Id> lsDriveIdChangeReq_NotExisting = new List<Id>(ref.setDriveIds);
         Map<Id, sked_Drive_Change_Request__c> mapDriveToNewChangeReq = new Map<Id, sked_Drive_Change_Request__c>();
+        List<sked_Drive_Change_Request__c> dcrsToUpsert = new List<sked_Drive_Change_Request__c>();
         for (Id driveId : ref.setDriveIds) {
             sked_Drive_Change_Request__c skedDcr = ref.mapDriveToExistingChangeReq.get(driveId);
             if (skedDcr == NULL) {
@@ -588,10 +578,19 @@ global class slwcDriveService {
                 );
                 mapDriveToNewChangeReq.put(driveId, skedDcr);
             }
+            List<string> dcrTypes = skedDcr.sked_Type__c != null ? skedDcr.sked_Type__c.split(';') : new List<string>();
+            if (!dcrTypes.contains(skedConstants.DRIVE_CHANGE_REQUEST_TYPE_USER_CHANGE)) {
+                dcrTypes.add(skedConstants.DRIVE_CHANGE_REQUEST_TYPE_USER_CHANGE);
+                skedDcr.sked_Type__c = string.join(dcrTypes, ';');
+                dcrsToUpsert.add(skedDcr);
+            }
             skedDcr.sked_Status__c = 'Pending';
         }
+        if(!dcrsToUpsert.isEmpty()){
+            upsert dcrsToUpsert;
+        }
         if (!mapDriveToNewChangeReq.isEmpty()) {
-            insert mapDriveToNewChangeReq.values();
+            upsert mapDriveToNewChangeReq.values();
             
             //add this to existing map
             ref.mapDriveToExistingChangeReq.putAll(mapDriveToNewChangeReq);

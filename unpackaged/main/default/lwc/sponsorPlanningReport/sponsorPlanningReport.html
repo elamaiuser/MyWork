@@ -33,6 +33,20 @@
             <lightning-button variant="brand" label="Clear All" title="Clear All" name="clear" onclick={handleClick} class="slds-m-left_x-small"></lightning-button>
         </div>
     </lightning-card>
+    <template if:true={loaded}>
+        <lightning-spinner alternative-text="Fetching data"></lightning-spinner>
+    </template>
+    <template if:false={loaded}>
+        <template if:false={hasRecords}>
+            <template if:true={searched}>
+                <template if:true={errormessage}>
+                    <lightning-card>
+                        <p><lightning-formatted-text style="color:red;" value={errormessage}></lightning-formatted-text></p>
+                    </lightning-card>
+                </template>
+            </template>
+        </template>
+    </template>
     <template if:true={hasRecords}>
         <lightning-card>
             <div style="height: 1000px;">

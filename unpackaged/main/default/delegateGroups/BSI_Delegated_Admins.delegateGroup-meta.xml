@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DelegateGroup xmlns="http://soap.sforce.com/2006/04/metadata">
+    <label>BSI Delegated Admins</label>
+    <loginAccess>true</loginAccess>
+    <profiles>APS Scheduler</profiles>
+    <profiles>Telerecruiter</profiles>
+    <profiles>APS Admin</profiles>
+    <profiles>APS Management</profiles>
+    <profiles>APS Planner</profiles>
+    <profiles>Analytics</profiles>
+    <profiles>Biomed Read Only</profiles>
+    <profiles>Collection Management</profiles>
+    <profiles>Collections</profiles>
+    <profiles>Customer Care</profiles>
+    <profiles>DRD Manager</profiles>
+    <profiles>DRD Profile</profiles>
+    <profiles>Global Admin</profiles>
+    <profiles>Manufacturing</profiles>
+    <profiles>Promotional Manager</profiles>
+    <profiles>Recruitment Admin</profiles>
+    <profiles>Sponsor Marketing</profiles>
+    <profiles>Biomed Sponsor Management</profiles>
+    <profiles>Standard User</profiles>
+    <profiles>Read Only</profiles>
+    <roles>BSI User</roles>
+</DelegateGroup>

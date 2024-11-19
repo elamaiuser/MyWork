@@ -202,6 +202,7 @@ global class skedSetting {
         public boolean enableObjectSync;
         public boolean enableOperationRecordLog;
         public boolean enableResourcePto;
+        public boolean enableWorkdayLogging;
         public boolean exavaluIntegration;
         public string fccCodeFixedSite;
         public string fccCodeMobile;
@@ -209,6 +210,8 @@ global class skedSetting {
         public string jobURL;
         public Integer maxCDLDOTDuration;
         public boolean migrationMode;
+        public integer nightlyMaxAutoApprovalRequests;
+        public integer numAutoExpireDays;
         public string opsRecordApiUrl;
         public string opsRecordClientSecret;
         public string publicSiteURL;
@@ -221,6 +224,7 @@ global class skedSetting {
         public boolean opsRecordIntegration;
         public boolean workdayIntegration;
         public integer daysToValidateWorkDaysException;
+        public integer rtvAPSApprovalWindow;
 
         public skedAdminSetting() {
             sked_Admin_Setting__c setting = sked_Admin_Setting__c.getOrgDefaults();
@@ -232,12 +236,15 @@ global class skedSetting {
             this.enableObjectSync = setting.sked_Admin_Enable_Object_Sync__c;
             this.enableOperationRecordLog = setting.sked_Admin_Enable_Operation_Record_Log__c;
             this.enableResourcePto = setting.sked_Admin_Enable_Resource_PTO__c;
+            this.enableWorkdayLogging = setting.sked_Admin_Enable_Workday_Logging__c;
             this.exavaluIntegration = setting.sked_Admin_Exavalu_Integration__c;
             this.fccCodeFixedSite = setting.sked_Admin_FCC_Code_Fixed_Site__c;
             this.fccCodeMobile = setting.sked_Admin_FCC_Code_Mobile__c;
             this.geographicPreferences = TRUE;
             this.maxCDLDOTDuration = setting.sked_Max_CDL_DOT_Duration__c != NULL ? integer.valueOf(setting.sked_Max_CDL_DOT_Duration__c) : 14;
             this.migrationMode = setting.sked_Admin_Migration_Mode__c;
+            this.nightlyMaxAutoApprovalRequests = setting.sked_Nightly_Max_Auto_Approval_Requests__c != null ? integer.valueOf(setting.sked_Nightly_Max_Auto_Approval_Requests__c) : 10000;
+            this.numAutoExpireDays = setting.sked_Num_Auto_Expire_Days__c != null ? integer.valueOf(setting.sked_Num_Auto_Expire_Days__c) : 10000;
             this.opsRecordApiUrl = setting.sked_Ops_Record_API_URL__c;
             this.opsRecordClientSecret = setting.sked_Ops_Record_Client_Scer__c;
             this.publicSiteURL = setting.sked_Public_Site_URL__c;
@@ -250,6 +257,7 @@ global class skedSetting {
             this.opsRecordIntegration = setting.sked_Admin_Ops_Record_Integration__c;
             this.workdayIntegration = setting.sked_Admin_Workday_Integration__c;
             this.daysToValidateWorkDaysException = setting.sked_Admin_Days_To_Validate_Work_Days_Ex__c != NULL ? integer.valueOf(setting.sked_Admin_Days_To_Validate_Work_Days_Ex__c) : 7;
+            this.rtvAPSApprovalWindow = setting.sked_RTV_APS_Approval_Window__c != NULL ? integer.valueOf(setting.sked_RTV_APS_Approval_Window__c) : 42;
         }
     }
 
@@ -320,11 +328,11 @@ global class skedSetting {
     }
     
     public class skedNotificationManager {
-        public integer numberOfRecordsPerQueueItem;
+        public boolean notificationGenerationEnabled;
 
         public skedNotificationManager() {
             sked_Notification_Manager__c setting = sked_Notification_Manager__c.getOrgDefaults();
-            this.numberOfRecordsPerQueueItem = setting.sked_Number_Of_Records_Per_Queue_Item__c != NULL ? integer.valueOf(setting.sked_Number_Of_Records_Per_Queue_Item__c) : 100;
+            this.notificationGenerationEnabled = setting.sked_Notification_Generation_Enabled__c;
         }
     }
 
@@ -359,10 +367,12 @@ global class skedSetting {
 
     public class skedRacSetting extends skedCalendarSettingBase {
         public boolean autoApproveAvailability;
+        public Integer autoApprovalCutoffDays;
         public boolean enableActivity;
         public boolean enableAvailabilityTemplate;
         public boolean respectResourceTimezone;
         public Integer maxActivityRecurringYears;
+        public Integer staffingBudgetChunkSize;
 
         public skedRacSetting() {
             sked_Admin_Setting__c setting = sked_Admin_Setting__c.getOrgDefaults();
@@ -377,11 +387,13 @@ global class skedSetting {
             this.calendarEnd = setting.sked_RAC_Calendar_End__c != NULL ? integer.valueOf(setting.sked_RAC_Calendar_End__c) : 1900;
             this.calendarStep = setting.sked_RAC_Calendar_Step__c != NULL ? integer.valueOf(setting.sked_RAC_Calendar_Step__c) : 30;
             this.autoApproveAvailability = setting.sked_RAC_Auto_Approve_Availability__c;
+            this.autoApprovalCutoffDays = setting.sked_RAC_Auto_Approval_Cutoff_Days__c != NULL ? integer.valueOf(setting.sked_RAC_Auto_Approval_Cutoff_Days__c) : 30;
             this.enableActivity = setting.sked_RAC_Enable_Activity__c;
             this.enableAvailabilityTemplate = setting.sked_RAC_Enable_Availability_Template__c;
             this.respectResourceTimezone = setting.sked_RAC_Respect_Resource_Timezone__c;
             this.showLegend = setting.sked_RAC_Show_Legend__c;
             this.maxActivityRecurringYears = Integer.valueOf(setting.sked_RAC_Max_Activity_Recurring_Years__c);
+            this.staffingBudgetChunkSize = Integer.valueOf(setting.sked_RAC_SB_Chunk_Size__c);
             
             List<string> objectTypes = new List<string>();
             objectTypes.add('availability');
@@ -389,7 +401,7 @@ global class skedSetting {
             objectTypes.add('job');
             objectTypes.add('customAvailability');
             this.mapShiftTypeSetting = getMapShiftTypeSetting(objectTypes);
-            this.filters = getUserFilters('RAC');
+            this.filters = getUserFilters();
         }
     }
     
@@ -397,12 +409,20 @@ global class skedSetting {
         public integer driveImpactThreshold;
         public integer numberOfParallelRequests;
         public integer refreshInterval;
-
+        public integer newIndexPriority;
+        public integer manualRefreshPriority;
+        public boolean enableManualRefreshBanner;
+        public integer maxTravelTimeIndexItemsForPeriodicRefresh;
+        
         public skedTravelTimeManager() {
             sked_Travel_Time_Manager__c setting = sked_Travel_Time_Manager__c.getOrgDefaults();
             this.driveImpactThreshold = setting.sked_Drive_Impact_Threshold__c != NULL ? integer.valueOf(setting.sked_Drive_Impact_Threshold__c) : 15;
             this.numberOfParallelRequests = setting.sked_Number_of_Parallel_Requests__c != NULL ? integer.valueOf(setting.sked_Number_of_Parallel_Requests__c) : 4;
             this.refreshInterval = setting.sked_Refresh_Interval__c != NULL ? integer.valueOf(setting.sked_Refresh_Interval__c) : 180;
+            this.newIndexPriority = setting.sked_New_Index_Priority__c != NULL ? integer.valueOf(setting.sked_New_Index_Priority__c) : 1000;
+            this.manualRefreshPriority = setting.sked_Manual_Refresh_Priority__c != NULL ? integer.valueOf(setting.sked_Manual_Refresh_Priority__c) : 1000;
+            this.enableManualRefreshBanner = setting.sked_Enable_Manual_Refresh_Banner__c;
+            this.maxTravelTimeIndexItemsForPeriodicRefresh = setting.sked_Max_TTI_Items_For_Periodic_Refresh__c != NULL ? integer.valueOf(setting.sked_Max_TTI_Items_For_Periodic_Refresh__c) : 10000;
         }
     }
 
@@ -419,7 +439,7 @@ global class skedSetting {
         public integer calendarEnd;
         public integer calendarStep;
         public boolean showLegend;
-        public skedModels.userFilter filters;
+        public List<skedModels.userFilter> filters;
         public transient Map<string, skedModels.eventTypeSetting> mapShiftTypeSetting;
 
         protected Map<string, skedModels.eventTypeSetting> getMapShiftTypeSetting(List<string> objectTypes) {
@@ -427,7 +447,7 @@ global class skedSetting {
             List<sked_Event_Type_Setting__c> skedShiftTypeSettings = [SELECT Id, sked_Item__c, sked_Available_Start__c, sked_Available_End__c,
                                                                         sked_Background_Color__c, sked_Can_Be_Pre_dated__c, sked_Color__c,
                                                                         sked_Short_Name__c, sked_Step__c, sked_Is_Available__c, sked_Show_Legend__c,
-                                                                        sked_Category__c
+                                                                        sked_Category__c, sked_Integrated_with_Workday__c
                                                                         FROM sked_Event_Type_Setting__c
                                                                         WHERE sked_Is_Active__c = TRUE
                                                                         AND sked_Category__c IN :objectTypes];
@@ -446,6 +466,7 @@ global class skedSetting {
                     model.objectType = skedShiftTypeSetting.sked_Category__c;
                     model.step = integer.valueOf(skedShiftTypeSetting.sked_Step__c);
                     model.showLegend = skedShiftTypeSetting.sked_Show_Legend__c;
+                    model.integratedWithWorkday = skedShiftTypeSetting.sked_Integrated_with_Workday__c;
                     results.put(model.objectType + ':' + model.eventType, model);
                 }
             }
@@ -472,21 +493,20 @@ global class skedSetting {
             return results;
         }
         
-        protected skedModels.userFilter getUserFilters(string category) {
+        protected List<skedModels.userFilter> getUserFilters() {
+            List<skedModels.userFilter> result = new List<skedModels.userFilter>();
             List<sked_User_Filter__c> skedUserFilters = [SELECT Id, sked_User__c, sked_JSON_Data__c, sked_Category__c
                                                          FROM sked_User_Filter__c
-                                                         WHERE sked_Category__c = :category
-                                                         AND sked_User__c = :UserInfo.getUserId()];
-            if (skedUserFilters != NULL && !skedUserFilters.isEmpty()) {
-                sked_User_Filter__c filter = skedUserFilters.get(0);
+                                                         WHERE sked_User__c = :UserInfo.getUserId()];
+            for (sked_User_Filter__c filter : skedUserFilters) {
                 skedModels.userFilter model = new skedModels.userFilter();
                 model.id = filter.Id;
                 model.category = filter.sked_Category__c;
                 model.userId = filter.sked_User__c;
                 model.jsonData = filter.sked_JSON_Data__c;
-                return model;
+                result.add(model);
             }
-            return null;
+            return result;
         }
     }
 

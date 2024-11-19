@@ -930,6 +930,7 @@ public without sharing class sponsorPlanningReportController {
       //  list<Opportunity> oppListResult = new list<Opportunity>();
         if(whereCondition != null){
             errorMsg = null;
+            whereCondition = whereCondition + ' AND StageName !=\'Cancelled\'';
         	String q = 'select Id,Name,Account_Manager__c,AccountId,Drive_Name__c,Additional_Description__c,'+
             'Additional_Drive_Logistics__c, Drive_Date__c, Call_List_Recipient_Exist__c,Start_Time__c,'+
             'End_Time__c,Web_Schedule_Start_Date__c, Web_Schedule_End_Date__c,Online_Donor_Message__c,Drive_Keyword__c,'+                                          

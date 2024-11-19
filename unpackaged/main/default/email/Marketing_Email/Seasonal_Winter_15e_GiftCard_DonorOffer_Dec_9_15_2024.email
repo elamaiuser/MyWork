@@ -1,0 +1,55 @@
+<table border="0" cellpadding="5" width="600" cellspacing="5" height="400" >
+<tr valign="top" height="50" >
+<td tEditID="c1r1" style=" background-color:#FFFFFF; bEditID:r3st1; color:#000000; bLabel:main; font-size:12pt; font-family:arial;" aEditID="c1r1" locked="0" >
+<![CDATA[]]></td>
+</tr>
+<tr valign="top" height="300" >
+<td tEditID="c1r2" style=" background-color:#FFFFFF; bEditID:r3st1; color:#000000; bLabel:main; font-size:12pt; font-family:arial;" aEditID="c1r2" locked="0" >
+<![CDATA[<p class="MsoNormal" style="color: rgb(0, 0, 0); font-size: 12pt; font-family: arial;"><span style="color: rgb(0, 0, 0); font-family: arial; font-size: 12pt;">Hello&nbsp;<o:p></o:p></span><font face="arial">{!Contact.FirstName},</font></p><p class="MsoNormal" style="color: rgb(0, 0, 0); font-size: 12pt; font-family: arial;"><font face="arial"><br></font></p>
+
+<p class="MsoNormal" style="color: rgb(0, 0, 0); font-size: 12pt; font-family: arial;"><span style="mso-fareast-font-family:&quot;Times New Roman&quot;;
+mso-bidi-font-family:Calibri;mso-bidi-theme-font:minor-latin">Your blood drive
+is coming up, and every donation is vital because hospital patients are counting
+on lifesaving blood products from your drive. We are grateful for your kindness
+and commitment to helping those in need.<o:p></o:p></span></p>
+
+<p class="MsoNormal" style="color: rgb(0, 0, 0); font-size: 12pt; font-family: arial;"><b><span style="mso-fareast-font-family:&quot;Times New Roman&quot;;
+mso-bidi-font-family:Calibri;mso-bidi-theme-font:minor-latin"><o:p><br></o:p></span></b></p><p class="MsoPlainText" style="color: rgb(0, 0, 0); font-size: 12pt; font-family: arial;">To show appreciation, we've got a gift for donors!</p>
+
+<p class="MsoPlainText" style="color: rgb(0, 0, 0); font-size: 12pt; font-family: arial;"><br></p>
+
+<p class="MsoNormal" style=""><span style="background-color: rgb(255, 255, 255);"><font face="Arial, sans-serif" style=""><b>Those who come to give blood Dec. 9-15, 2024, will receive a $15 e-gift card to a merchant of their choice.*</b></font></span></p>
+
+<p class="MsoNormal" style="color: rgb(0, 0, 0); font-size: 12pt; font-family: arial;"><b style="mso-bidi-font-weight:normal"><span style="mso-bidi-font-family:Calibri;mso-bidi-theme-font:minor-latin"><o:p>&nbsp;</o:p></span></b></p>
+
+<p class="MsoNormal" style="color: rgb(0, 0, 0); font-size: 12pt; font-family: arial;"><b style="mso-bidi-font-weight:normal"><span style="mso-bidi-font-family:Calibri;mso-bidi-theme-font:minor-latin">As you
+continue the work to make your drive a success – remember to use these tips:</span></b></p><p class="MsoNormal" style="color: rgb(0, 0, 0); font-size: 12pt; font-family: arial;"><b style="mso-bidi-font-weight:normal"><span style="mso-bidi-font-family:Calibri;mso-bidi-theme-font:minor-latin"><br></span></b></p><ul style="color: rgb(0, 0, 0); font-size: 12pt; font-family: arial; margin-top: 0in;" type="disc"><li class="MsoNormal"><b>Share the attached email</b>&nbsp;about this exciting incentive to recruit more blood donors!</li><li class="MsoNormal"><b>Fill your schedule</b>. Use these<a href="https://www.redcrossblood.org/hosting-a-blood-drive/manage-my-blood-drive/blood-drive-coordinator-toolkit/tips-tools-for-recruiting-donors/coordinator-toolkit---tips-and-tools.html">&nbsp;tools</a>&nbsp;to recruit blood donors and schedule them using the&nbsp;<a href="https://www.redcrossblood.org/account-login.html">Blood Drive Management Portal</a>.</li>
+ <li class="MsoNormal" style="mso-list:l0 level1 lfo1"><b style="mso-bidi-font-weight:
+     normal"><span style="mso-bidi-font-family:Calibri;mso-bidi-theme-font:
+     minor-latin">Encourage donors to schedule a donation for a friend</span></b><span style="mso-bidi-font-family:Calibri;mso-bidi-theme-font:minor-latin">.
+     Each additional donor scheduled means more lives saved!</span></li></ul>
+
+<p class="MsoNormal" style="color: rgb(0, 0, 0); font-size: 12pt; font-family: arial;">If you have any questions, please do not hesitate to reach
+out – I’m always here to help!<o:p></o:p></p><p class="MsoNormal" style="color: rgb(0, 0, 0); font-size: 12pt; font-family: arial;"><br></p>
+
+<p class="MsoNormal" style="color: rgb(0, 0, 0); font-size: 12pt; font-family: arial;"><b style="mso-bidi-font-weight:normal">IMPORTANT: Donors
+MUST have a valid email address on file to receive their reward.<span style="mso-spacerun:yes">&nbsp; </span></b><o:p></o:p></p>
+
+<p class="MsoNormal" style="color: rgb(0, 0, 0); font-size: 12pt; font-family: arial;"><o:p>&nbsp;</o:p></p>
+
+<p class="MsoNormal" style="color: rgb(0, 0, 0); font-size: 12pt; font-family: arial;">All the best, <o:p></o:p></p>
+
+<p class="MsoNormal" style="color: rgb(0, 0, 0); font-size: 12pt; font-family: arial;"><span style="background:yellow;mso-highlight:yellow">{!Lead.OwnerFirstName}</span><o:p></o:p></p>
+
+<p class="MsoNormal" style="color: rgb(0, 0, 0); font-size: 12pt; font-family: arial;"><o:p>&nbsp;</o:p></p>
+
+<p class="MsoNormal" style="color: rgb(0, 0, 0); font-size: 12pt; font-family: arial;"><br></p>
+
+<p class="MsoNormal" style="color: rgb(0, 0, 0); font-size: 12pt; font-family: arial; margin-bottom: 0.25in; background: white;"><br></p>]]></td>
+</tr>
+<tr valign="top" height="50" >
+<td tEditID="c1r3" style=" background-color:#FFFFFF; bEditID:r3st1; color:#000000; bLabel:main; font-size:12pt; font-family:arial;" aEditID="c1r3" locked="0" >
+<![CDATA[<p style="margin-top:0in;margin-right:0in;margin-bottom:16.8pt;margin-left:
+0in;line-height:16.8pt;background:white"></p><p class="MsoNormal" style="background:white"><span style="color: rgb(50, 49, 48); font-family: &quot;Segoe UI&quot;, &quot;Segoe UI Web (West European)&quot;, -apple-system, BlinkMacSystemFont, Roboto, &quot;Helvetica Neue&quot;, sans-serif; font-size: 10px;">*Presenting donors who receive this offer and present to donate during the applicable promotional time frame are eligible to receive the above described e-gift card(s). This offer is non-transferable and not redeemable for cash. Limit one (1) per presenting donor unless otherwise indicated. If a presenting donor qualifies for multiple offers, the donor will only receive the higher offer unless otherwise indicated. Instructions on how to redeem the gift card will be emailed to the address listed on the presenting donor’s American Red Cross donor profile approximately thirty (30) days after attempted donation(s). All gift cards are subject to individual merchant terms and conditions, and all trademarks are property of their respective owners. Merchants and offers are subject to change. No substitutions by presenting donors. American Red Cross is not responsible for lost, damaged, corrupted or stolen gift cards and may replace any such cards at its sole discretion. Any questions or problems in connection with redeeming gift cards must be directed to the merchant.&nbsp;</span></p><p></p>]]></td>
+</tr>
+</table>

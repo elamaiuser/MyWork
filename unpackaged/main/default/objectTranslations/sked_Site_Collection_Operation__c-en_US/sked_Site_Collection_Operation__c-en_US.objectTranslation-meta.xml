@@ -8,24 +8,6 @@
         <plural>true</plural>
         <value>Site Collection Operations</value>
     </caseValues>
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     <layouts>
         <layout>DRD Site Collection Operation Layout</layout>
         <sections>
@@ -40,5 +22,26 @@
             <section>Custom Links</section>
         </sections>
     </layouts>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     <startsWith>Consonant</startsWith>
 </CustomObjectTranslation>

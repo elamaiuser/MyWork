@@ -216,15 +216,19 @@ var onloadCallback = function() {
                                                                 </apex:outputPanel> 
                                                                 
                                                                 
-                                                                
+                                                                <!-- Zip Code is NOT in a service area -->
                                                                 <apex:outputPanel id="noService" rendered="{! newLead.PostalCode != null && validZip && NOT(areaServed)&& passedCaptcha = true}">
-                                                                <div class="alert alert-danger" role="alert">
+                                                                    <c:LeadFormNonServiceArea />
+                                                                </apex:outputPanel>
+                                                                <!-- <apex:outputPanel id="noService" rendered="{! newLead.PostalCode != null && validZip && NOT(areaServed)&& passedCaptcha = true}">
+                                                                <div class="alert alert-danger" role="alert"> -->
                                                                 <!--<h4 class="alert-heading">Service Area Notice</h4>
                                                                 <p>Unfortunately the American Red Cross does not collect blood in <b>{!territory.City__c}, {!territory.State_Code__c}</b>.</p>-->
-                                                                <p class="mb-0">Unfortunately, the zip code you entered is not a zip code serviced by an American Red Cross Blood Services Region -- but you can still help! For more information on other potential blood services programs in your area, visit <a href="https://www.aabb.org">AABB.org</a> or <a href="https://www.americasblood.org">americasblood.org</a>.  Also, please consider supporting other programs at the Red Cross, visit <a href="https://www.redcross.org">redcross.org</a> for more information.
+                                                                <!-- <p class="mb-0">Unfortunately, the zip code you entered is not a zip code serviced by an American Red Cross Blood Services Region -- but you can still help! For more information on other potential blood services programs in your area, visit <a href="https://www.aabb.org">AABB.org</a> or <a href="https://www.americasblood.org">americasblood.org</a>.  Also, please consider supporting other programs at the Red Cross, visit <a href="https://www.redcross.org">redcross.org</a> for more information.
                                                                 </p>
                                                                 </div>
-                                                                </apex:outputPanel>
+                                                                </apex:outputPanel> -->
+
                                                                 
                                                                 <!-- Captcha Errors -->        
                                                                 <apex:outputPanel id="noCaptcha" rendered="{!  passedCaptcha = false && captchaMsg = True}">

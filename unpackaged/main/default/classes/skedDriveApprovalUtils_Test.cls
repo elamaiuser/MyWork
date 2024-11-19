@@ -1,13 +1,16 @@
 @isTest
 private class skedDriveApprovalUtils_Test {
-    @isTest
-    static void skedDriveApprovalUtils_Test() {
+
+    static testmethod void skedDriveApprovalUtils_Test() {
         skedTestDataFactory testDataFactory = new skedTestDataFactory('us', 14);
         Map<string, sObject> mapTestData = testDataFactory.setupCommonTestData();
         mapTestData = testDataFactory.setupDriveData();
 
         sked_Drive__c testDrive = (sked_Drive__c) mapTestData.get('testDrive1');
         Biomed_Collection_Op_Center__c testCollectionOperation1 = (Biomed_Collection_Op_Center__c)mapTestData.get('testCollectionOperation1');
+
+        List<string> dmApprovalStatuses = skedDriveApprovalUtils.getDMApprovalStatuses();
+        List<string> pendingApprovalStatuses = skedDriveApprovalUtils.getPendingApprovalStatuses();
 
         System.runAs(new User(Id = UserInfo.getUserId())){
             Set<string> coNames = new Set<string>();

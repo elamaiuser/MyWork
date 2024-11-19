@@ -25,10 +25,10 @@ global class slwcSkedApiService {
     }
     
     @AuraEnabled(cacheable=true)
-    public static slwcAuraResult calculateDistanceMatrix(List<skedSkeduloApiData.latlng> origins, List<skedSkeduloApiData.latlng> destinations) {
+    public static slwcAuraResult calculateDistanceMatrix(List<skedSkeduloApiData.latlng> origins, List<skedSkeduloApiData.latlng> destinations, Datetime departureTime) {
         slwcAuraResult result = new slwcAuraResult();
         skedSkeduloApiManager apiManager = new skedSkeduloApiManager();
-        skedSkeduloApiData.distanceMatrixResult distanceMatrixResult = apiManager.calculateDistanceMatrix(origins, destinations);
+        skedSkeduloApiData.distanceMatrixResult distanceMatrixResult = apiManager.calculateDistanceMatrix(origins, destinations, departureTime);
         result.returnedData = distanceMatrixResult;
         system.debug('#result.returnedData#' + result.returnedData);
         return result;

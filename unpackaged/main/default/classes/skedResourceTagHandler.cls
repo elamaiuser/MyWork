@@ -2,64 +2,42 @@ public class skedResourceTagHandler extends skedTriggerHub {
     public override void onBeforeInsert() {
         populateData(this.context.newRecords);
         populateExpiryData(this.context.newRecords);
-        
-        if (!skedSetting.instance.Admin.migrationMode) {
-            updateApprovedAvailability(this.context.newRecords);
-        }
+        trackResourceHighestPriorityRole(this.context.newRecords);
     }
     
     public override void onAfterInsert() {
+        updateResourceDriveType(this.context.newRecords);
         updateResourceRoles(this.context.newRecords);
         maintainTraineeRoleTags(getPendingTagsToMaintain(this.context.newRecords));
+        processResourceHighestPriorityRoleChanged();
     }
     
     public override void onBeforeUpdate() {
         populateExpiryData(this.context.newRecords, (Map<Id, sked__Resource_Tag__c>)this.context.oldMap);
+        trackResourceHighestPriorityRole(this.context.newRecords);
     }
     
     public override void onAfterUpdate() {
         if (!skedSetting.instance.Admin.migrationMode) {
             manageExceptions(this.context.newRecords, (Map<Id, sked__Resource_Tag__c>)this.context.oldMap);
         }
-        updateResourcePremiumPayRoles(this.context.newRecords, (Map<Id, sked__Resource_Tag__c>)this.context.oldMap);
+        updateResourceRoles(this.context.newRecords, (Map<Id, sked__Resource_Tag__c>)this.context.oldMap);
         maintainTraineeRoleTags(getPendingTagsToMaintain(this.context.newRecords, (Map<Id, sked__Resource_Tag__c>) this.context.oldMap));
+        processResourceHighestPriorityRoleChanged();
+    }
+
+    public override void onBeforeDelete() {
+        trackResourceHighestPriorityRole(this.context.oldMap.values());
     }
     
     public override void onAfterDelete() {
+        updateResourceDriveType(this.context.oldMap.values());
         updateResourceRoles(this.context.oldMap.values());
-        updateApprovedAvailability(this.context.oldMap.values());
         maintainTraineeRoleTags(getPendingTagsToMaintain(this.context.oldMap.values()));
+        processResourceHighestPriorityRoleChanged();
         
         if (!skedSetting.instance.Admin.migrationMode) {
             manageExceptions(this.context.oldMap.values());
-        }
-    }
-
-    private void populateData(List<sked__Resource_Tag__c> newRecords) {
-        Set<Id> tagIds = new Set<Id>();
-        for (sked__Resource_Tag__c rt : newRecords) {
-            tagIds.add(rt.sked__Tag__c);
-        }
-        Map<Id, sked__Tag__c> tagsById = new Map<Id, sked__Tag__c>([
-            SELECT Id, Name
-            FROM sked__Tag__c
-            WHERE Id IN :tagIds
-        ]);
-
-
-        Id standardRecordTypeId = Schema.SObjectType.sked__Resource_Tag__c.getRecordTypeInfosByDeveloperName()
-            .get('Standard').getRecordTypeId();
-            
-        Set<String> premiumRoleTags = skedUtils.getMapRoleToPremiumOpPay().keySet();
-        for (sked__Resource_Tag__c rt : newRecords) {
-            sked__Tag__c tag = tagsById.get(rt.sked__Tag__c);
-            if (premiumRoleTags.contains(tag.Name)) {
-                rt.sked_Premium_Pay__c = true;
-            }
-
-            if (rt.RecordTypeId == null) {
-                rt.RecordTypeId = standardRecordTypeId;
-            }
         }
     }
     
@@ -246,9 +224,13 @@ public class skedResourceTagHandler extends skedTriggerHub {
             AND sked__Job__r.sked__Job_Status__c != :skedConstants.JOB_STATUS_CANCELLED
             AND sked__Status__c != :skedConstants.JOB_ALLOCATION_STATUS_DELETED
             AND sked__Status__c != :skedConstants.JOB_ALLOCATION_STATUS_DECLINED),
-            (SELECT Id, sked_Exception_Code__c, skedHC__Exception__c, skedHC__Job_Allocation__c FROM skedHC__Exception_Log__r)
+            (SELECT Id, sked_Exception_Code__c, skedHC__Exception__c, skedHC__Job_Allocation__c FROM skedHC__Exception_Log__r
+            	WHERE skedHC__Status__c != :skedConstants.EXCEPTION_LOG_STATUS_CLOSED
+				AND (sked_Exception_Code__c = :skedConstants.EXCEPTION_CODE_RESOURCE_ROLE_RESTRICTED 
+					OR sked_Exception_Code__c = :skedConstants.EXCEPTION_CODE_RESOURCE_ROLE_STATUS_CHANGED))
             FROM sked__Resource__c
             WHERE Id IN :resourceIds
+            AND sked__Resource_Type__c =  :skedConstants.RESOURCE_TYPE_PERSON
         ]);
         
         List<skedHC__Exception__c> exceptionsToUpsert = new List<skedHC__Exception__c>();
@@ -256,8 +238,10 @@ public class skedResourceTagHandler extends skedTriggerHub {
             sked__Resource_Tag__c oldData = oldMap.get(newRecord.Id);
             sked__Resource__c skedResource = mapResource.get(newRecord.sked__Resource__c);
             sked__Tag__c tag = tagById.get(newRecord.sked__Tag__c);
-            manageRoleStatusChangedExceptions(exceptionsToUpsert, tag, newRecord, oldData, skedResource);
-            manageRoleRestrictedExceptions(exceptionsToUpsert, tag, newRecord, oldData, skedResource);
+            if(skedResource != null){
+            	manageRoleStatusChangedExceptions(exceptionsToUpsert, tag, newRecord, oldData, skedResource);
+            	manageRoleRestrictedExceptions(exceptionsToUpsert, tag, newRecord, oldData, skedResource);
+            }
         }
         if (!exceptionsToUpsert.isEmpty()) {
             upsert exceptionsToUpsert;
@@ -301,6 +285,50 @@ public class skedResourceTagHandler extends skedTriggerHub {
             populateExpiryData(recordsToPopulateData);
         }
     }
+
+    private void updateResourceDriveType(List<sked__Resource_Tag__c> newRecords) { 
+        Map<Id, sked__Tag__c> mapDriveType = new Map<Id, sked__Tag__c>([SELECT Id
+                                                                        FROM sked__Tag__c
+                                                                        WHERE sked__Type__c = :skedConstants.TAG_TYPE_DRIVE_TYPE]);
+        Set<Id> resourceIdsToUpdateDriveTypes = new Set<Id>();
+        List<string> resourceDriveTypes = new List<string>();
+        for (sked__Resource_Tag__c newRecord : newRecords) { 
+            if (mapDriveType.containsKey(newRecord.sked__Tag__c)) {
+                resourceIdsToUpdateDriveTypes.add(newRecord.sked__Resource__c);
+            }
+        }
+        if (!resourceIdsToUpdateDriveTypes.isEmpty()) { 
+            List<sked__Resource__c> skedResources = [SELECT Id, sked_Drive_Type__c,
+                                                     (SELECT Id, sked__Tag__r.Name
+                                                      FROM sked__ResourceTags__r
+                                                      WHERE sked__Tag__r.sked__Type__c = :skedConstants.TAG_TYPE_DRIVE_TYPE)
+                                                     FROM sked__Resource__c
+                                                     WHERE Id IN :resourceIdsToUpdateDriveTypes 
+                                                     AND sked__Resource_Type__c = :skedConstants.TAG_RESOURCE_TYPE_PERSON];
+            for (sked__Resource__c skedResource : skedResources) {
+                for(sked__Resource_Tag__c skedResourceTag : skedResource.sked__ResourceTags__r) {
+                    if(!resourceDriveTypes.contains(skedResourceTag.sked__Tag__r.Name)){
+                        resourceDriveTypes.add(skedResourceTag.sked__Tag__r.Name);
+                    }                                        
+                }
+                skedResource.sked_Drive_Type__c = String.join(resourceDriveTypes, ';');                
+            }
+            update skedResources;            
+        }
+    }
+
+    private void updateResourceRoles(List<sked__Resource_Tag__c> newRecords, Map<Id, sked__Resource_Tag__c> oldMap) {
+        List<sked__Resource_Tag__c> recordsToUpdateRoles = new List<sked__Resource_Tag__c>();
+        for (sked__Resource_Tag__c newRecord : newRecords) {
+            sked__Resource_Tag__c oldData = oldMap.get(newRecord.Id);
+            if (newRecord.sked_Role_Status__c != oldData.sked_Role_Status__c || 
+                 newRecord.sked_Premium_Pay__c != oldData.sked_Premium_Pay__c) {
+                recordsToUpdateRoles.add(newRecord);
+            }
+        }
+
+        updateResourceRoles(recordsToUpdateRoles);
+    }
     
     private void updateResourceRoles(List<sked__Resource_Tag__c> newRecords) {
         Map<Id, sked__Tag__c> mapRole = new Map<Id, sked__Tag__c>([SELECT Id
@@ -313,113 +341,32 @@ public class skedResourceTagHandler extends skedTriggerHub {
             }
         }
         if (!resourceIdsToUpdateRoles.isEmpty()) {
-            skedResourceHandler.canUpdateResourceRole = true;
-            List<sked__Resource__c> skedResources = [SELECT Id,
-                                                     (SELECT Id, sked__Tag__r.Name, sked_Premium_Pay__c
-                                                      FROM sked__ResourceTags__r
-                                                      WHERE sked__Tag__r.sked__Type__c = :skedConstants.TAG_TYPE_ROLE)
-                                                     FROM sked__Resource__c
-                                                     WHERE Id IN :resourceIdsToUpdateRoles];
-            for (sked__Resource__c skedResource : skedResources) {
-                List<string> roles = new List<string>();
-                List<string> premiumPayRoles = new List<string>();
-                for (sked__Resource_Tag__c skedResourceTag : skedResource.sked__ResourceTags__r) {
-                    roles.add(skedResourceTag.sked__Tag__r.Name);
-                    if (skedResourceTag.sked_Premium_Pay__c == TRUE) {
-                        premiumPayRoles.add(skedResourceTag.sked__Tag__r.Name);
-                    }
-                }
-                skedResource.sked_Roles__c = string.join(roles, ';');
-                skedResource.sked_Premium_Pay_Roles__c = string.join(premiumPayRoles, ';');
-            }
-            update skedResources;
+            updateResourceRolesForResourceIds(resourceIdsToUpdateRoles);
         }
     }
-    
-    private void updateResourcePremiumPayRoles(List<sked__Resource_Tag__c> newRecords, Map<Id, sked__Resource_Tag__c> oldMap) {
-        Map<Id, sked__Tag__c> mapRole = new Map<Id, sked__Tag__c>([SELECT Id
-                                                                   FROM sked__Tag__c
-                                                                   WHERE sked__Type__c = :skedConstants.TAG_TYPE_ROLE]);
-        Set<Id> resourceIdsToUpdate = new Set<Id>();
-        for (sked__Resource_Tag__c newRecord : newRecords) {
-            sked__Resource_Tag__c oldData = oldMap.get(newRecord.Id);
-            if (newRecord.sked_Premium_Pay__c != oldData.sked_Premium_Pay__c) {
-                resourceIdsToUpdate.add(newRecord.sked__Resource__c);
-            }
-        }
-        if (!resourceIdsToUpdate.isEmpty()) {
-            List<sked__Resource__c> skedResources = [SELECT Id,
-                                                     (SELECT Id, sked__Tag__r.Name, sked_Premium_Pay__c
-                                                      FROM sked__ResourceTags__r
-                                                      WHERE sked__Tag__r.sked__Type__c = :skedConstants.TAG_TYPE_ROLE)
-                                                     FROM sked__Resource__c
-                                                     WHERE Id IN :resourceIdsToUpdate];
-            for (sked__Resource__c skedResource : skedResources) {
-                List<string> premiumPayRoles = new List<string>();
-                for (sked__Resource_Tag__c skedResourceTag : skedResource.sked__ResourceTags__r) {
-                    if (skedResourceTag.sked_Premium_Pay__c == TRUE) {
-                        premiumPayRoles.add(skedResourceTag.sked__Tag__r.Name);
-                    }
+
+    public static void updateResourceRolesForResourceIds(Set<Id> resourceIds) {
+        skedResourceHandler.canUpdateResourceRole = true;
+        List<sked__Resource__c> skedResources = [SELECT Id,
+                                                    (SELECT Id, sked__Tag__r.Name, sked_Premium_Pay__c
+                                                    FROM sked__ResourceTags__r
+                                                    WHERE sked__Tag__r.sked__Type__c = :skedConstants.TAG_TYPE_ROLE
+                                                    AND sked_Role_Status__c = :skedConstants.TAG_ROLE_STATUS_ACTIVE)
+                                                    FROM sked__Resource__c
+                                                    WHERE Id IN :resourceIds];
+        for (sked__Resource__c skedResource : skedResources) {
+            List<string> roles = new List<string>();
+            List<string> premiumPayRoles = new List<string>();
+            for (sked__Resource_Tag__c skedResourceTag : skedResource.sked__ResourceTags__r) {
+                roles.add(skedResourceTag.sked__Tag__r.Name);
+                if (skedResourceTag.sked_Premium_Pay__c == TRUE) {
+                    premiumPayRoles.add(skedResourceTag.sked__Tag__r.Name);
                 }
-                skedResource.sked_Premium_Pay_Roles__c = string.join(premiumPayRoles, ';');
             }
-            update skedResources;
+            skedResource.sked_Roles__c = string.join(roles, ';');
+            skedResource.sked_Premium_Pay_Roles__c = string.join(premiumPayRoles, ';');
         }
-    }
-    
-    private void updateApprovedAvailability(List<sked__Resource_Tag__c> newRecords) {
-        Set<Id> resourceIds = new Set<Id>();
-        Set<Id> tagIds = new Set<Id>();
-        for (sked__Resource_Tag__c newRecord : newRecords) {
-            resourceIds.add(newRecord.sked__Resource__c);
-            tagIds.add(newRecord.sked__Tag__c);
-        }
-        Map<Id, sked__Tag__c> mapTag = new Map<Id, sked__Tag__c>([
-            SELECT Id, sked_Priority__c 
-            FROM sked__Tag__c 
-            WHERE Id IN :tagIds
-        ]);
-
-        List<sked__Resource__c> resources = [
-            SELECT Id, 
-            (SELECT Id, sked__Tag__r.sked_Priority__c
-            FROM sked__ResourceTags__r
-            WHERE sked__Tag__r.sked__Type__c = :skedConstants.TAG_TYPE_ROLE AND sked__Tag__r.sked_Priority__c != NULL
-            ORDER BY sked__Tag__r.sked_Priority__c ASC
-            LIMIT 1)
-            FROM sked__Resource__c
-            WHERE Id IN :resourceIds
-        ];
-        Map<Id, sked__Resource__c> mapResource = new Map<Id, sked__Resource__c>(resources);
-        Set<Id> impactResourceIds = new Set<Id>();
-        for (sked__Resource_Tag__c newRecord : newRecords) {
-            sked__Tag__c tag = mapTag.get(newRecord.sked__Tag__c);
-            sked__Resource__c resource = mapResource.get(newRecord.sked__Resource__c);
-            if (resource.sked__ResourceTags__r == NULL 
-                || (resource.sked__ResourceTags__r != NULL && !resource.sked__ResourceTags__r.isEmpty()
-                    && tag.sked_Priority__c < resource.sked__ResourceTags__r.get(0).sked__Tag__r.sked_Priority__c)) {
-                        impactResourceIds.add(resource.Id);
-                    }
-        }
-        
-        if (!impactResourceIds.isEmpty()) {
-            Datetime currentTime = system.now();
-            List<sked__Availability__c> impactedAvailabilities = [
-                SELECT Id, sked_Exception_Code__c
-                FROM sked__Availability__c
-                WHERE sked__Resource__c IN :impactResourceIds
-                AND sked__Start__c > :currentTime
-                AND sked_Custom_Status__c  = :skedConstants.AVAILABILITY_STATUS_APPROVED
-                AND sked__Is_Available__c = FALSE
-                AND sked__Type__c = :skedConstants.AVAILABILITY_TYPE_PTO
-            ];
-            for (sked__Availability__c item : impactedAvailabilities) {
-                item.sked_Exception_Code__c = skedConstants.AVAILABILITY_EXEPTION_CODE;
-            }
-
-            skedTriggerUtils.CHANGES_INITIATED_FROM_SERVICE = true;
-            update impactedAvailabilities;
-        }
+        update skedResources;
     }
 
     private void manageRoleStatusChangedExceptions(List<skedHC__Exception__c> exceptionsToUpsert, sked__Tag__c tag, sked__Resource_Tag__c resourceTag, sked__Resource_Tag__c oldResourceTag, sked__Resource__c resource) {
@@ -565,5 +512,118 @@ public class skedResourceTagHandler extends skedTriggerHub {
                 insert newExceptions;
             }
         }
+    }
+
+    private void populateData(List<sked__Resource_Tag__c> newRecords) {
+        Set<Id> tagIds = new Set<Id>();
+        for (sked__Resource_Tag__c rt : newRecords) {
+            tagIds.add(rt.sked__Tag__c);
+        }
+        Map<Id, sked__Tag__c> tagsById = new Map<Id, sked__Tag__c>([
+            SELECT Id, Name
+            FROM sked__Tag__c
+            WHERE Id IN :tagIds
+        ]);
+
+
+        Id standardRecordTypeId = Schema.SObjectType.sked__Resource_Tag__c.getRecordTypeInfosByDeveloperName()
+            .get('Standard').getRecordTypeId();
+            
+        Set<String> premiumRoleTags = skedUtils.getMapRoleToPremiumOpPay().keySet();
+        for (sked__Resource_Tag__c rt : newRecords) {
+            sked__Tag__c tag = tagsById.get(rt.sked__Tag__c);
+            if (premiumRoleTags.contains(tag.Name)) {
+                rt.sked_Premium_Pay__c = true;
+            }
+
+            if (rt.RecordTypeId == null) {
+                rt.RecordTypeId = standardRecordTypeId;
+            }
+        }
+    }
+
+    private void trackResourceHighestPriorityRole(List<sked__Resource_Tag__c> newRecords) {
+        Set<Id> resourceIds = new Set<Id>();
+        Set<Id> tagIds = new Set<Id>();
+        for (sked__Resource_Tag__c rt : newRecords) {
+            tagIds.add(rt.sked__Tag__c);
+        }
+
+        Map<Id, sked__Tag__c> map_id_roleTag = new Map<Id, sked__Tag__c>([
+            SELECT Id
+            FROM sked__Tag__c
+            WHERE Id IN :tagIds
+            AND sked__Type__c =: skedConstants.TAG_TYPE_ROLE
+        ]);
+
+        for (sked__Resource_Tag__c rt : newRecords) {
+            if (map_id_roleTag.containsKey(rt.sked__Tag__c)) {
+                resourceIds.add(rt.sked__Resource__c);
+            }
+        }
+
+        skedResourceTagHandler_Cache.putInCache(skedResourceTagHandler_Cache.RESOURCE_TO_HIGHEST_PRIORITY_ROLE_MAP, getResourceWithHighestPriorityResourceRoleMap(resourceIds));
+    }
+
+    private void processResourceHighestPriorityRoleChanged() {
+        Map<Id, Id> cachedResourceToHighestPriorityRoleMap = (Map<Id, Id>)skedResourceTagHandler_Cache.getFromCache(skedResourceTagHandler_Cache.RESOURCE_TO_HIGHEST_PRIORITY_ROLE_MAP);
+        if (cachedResourceToHighestPriorityRoleMap != null && !cachedResourceToHighestPriorityRoleMap.isEmpty()) {
+            Map<Id, Id> afterTriggerResourceToHighestPriorityResourceRoleMap = getResourceWithHighestPriorityResourceRoleMap(cachedResourceToHighestPriorityRoleMap.keySet());
+
+            Set<Id> highestPriorityRoleChangedResourceIds = new Set<Id>();
+            for (Id resourceId : afterTriggerResourceToHighestPriorityResourceRoleMap.keySet()) {
+                Id cachedHighestPriorityRole = cachedResourceToHighestPriorityRoleMap.get(resourceId);
+                Id afterTriggerHighestPriorityRole = afterTriggerResourceToHighestPriorityResourceRoleMap.get(resourceId);
+
+                if (cachedHighestPriorityRole != afterTriggerHighestPriorityRole) {
+                    highestPriorityRoleChangedResourceIds.add(resourceId);
+                }
+            }
+
+            if (!highestPriorityRoleChangedResourceIds.isEmpty()) {
+                markApprovedAvailabilitiesWithException(highestPriorityRoleChangedResourceIds);
+            }
+        }
+    }
+
+    private Map<Id, Id> getResourceWithHighestPriorityResourceRoleMap(Set<Id> resourceIds) {
+        List<sked__Resource__c> resources = [
+            SELECT Id,
+                (SELECT Id, sked__Tag__r.sked_Priority__c
+                FROM sked__ResourceTags__r
+                WHERE sked__Tag__r.sked__Type__c = :skedConstants.TAG_TYPE_ROLE AND sked__Tag__r.sked_Priority__c != NULL
+                AND sked_Role_Status__c = :skedConstants.TAG_ROLE_STATUS_ACTIVE
+                ORDER BY sked__Tag__r.sked_Priority__c ASC
+                LIMIT 1)
+            FROM sked__Resource__c
+            WHERE Id IN :resourceIds
+        ];
+
+        Map<Id, Id> resourceToHighestPriorityRoleMap = new Map<Id, Id>();
+        for (sked__Resource__c resource : resources) {
+            resourceToHighestPriorityRoleMap.put(resource.Id, !resource.sked__ResourceTags__r.isEmpty() ? resource.sked__ResourceTags__r[0].sked__Tag__c : null);
+        }
+
+        return resourceToHighestPriorityRoleMap;
+    }
+
+    private void markApprovedAvailabilitiesWithException(Set<Id> resourceIds) {
+        Datetime currentTime = system.now();
+        List<sked__Availability__c> impactedAvailabilities = [
+            SELECT Id, sked_Exception_Code__c
+            FROM sked__Availability__c
+            WHERE sked__Resource__c IN :resourceIds
+            AND sked__Start__c > :currentTime
+            AND sked__Status__c  = :skedConstants.AVAILABILITY_STATUS_APPROVED
+            AND sked__Is_Available__c = FALSE
+            AND sked__Type__c = :skedConstants.AVAILABILITY_TYPE_PTO
+        ];
+
+        for (sked__Availability__c item : impactedAvailabilities) {
+            item.sked_Exception_Code__c = skedConstants.AVAILABILITY_EXEPTION_CODE;
+        }
+
+        skedTriggerUtils.CHANGES_INITIATED_FROM_SERVICE = true;
+        update impactedAvailabilities;
     }
 }

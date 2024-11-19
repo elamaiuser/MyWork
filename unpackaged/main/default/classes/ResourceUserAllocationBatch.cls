@@ -14,6 +14,9 @@
 * 09/29/2023			Barnojit Sharma			When Linking Existing User to Resource, Profile Should be updated based on Job Code.(HRP-10628)
 * 09/29/2023			Barnojit Sharma			When Job Code of Resource Changes and Profile is Either Collections or Collection Management and Resource is active, Profile should be updated.(HRP-10628)
 * 09/29/2023			Barnojit Sharma			When Updating User based on Changes to Resource Details including Active/Inactive - have Profile check of Collection Or Collection Management. Details should be only update if Resource is active..(HRP-10628)
+* 09/29/2023			Barnojit Sharma			Fix for HRP-11055
+* 03/12/2024			Balaji N				HRP-11375 Method: getJobCodeVsProfileMap,getProfileId, custom metadata changes, start query sked_FCC_Code__c filter
+* 07/24/2024            Apurba Bhattacharjee    HRP-12628: UL Push on BSF Resources Not Applying Due to Locking Issues
 * ***************************************************************************************************************************************************************************
 **/
 global class ResourceUserAllocationBatch implements Database.Batchable<sked__Resource__c>,Database.Stateful,Schedulable{
@@ -27,6 +30,7 @@ global class ResourceUserAllocationBatch implements Database.Batchable<sked__Res
     private Map<Id,String> userNameMap = new Map<Id,String>(); //changes for HRP-10628
     private List<sked__Resource__c> updatableResource = new List<sked__Resource__c>();
     private Map<String,String> jobCodeVsProfileMap = getJobCodeVsProfileMap(); //changes for HRP-10628
+    List<String> activeFccCodesList =BSF_Utilities.getActivePicklistValues(sked__Resource__c.sked_FCC_Code__c);//HRP-11375
 
     private Id rcId;
     private Boolean isSandbox;
@@ -148,7 +152,7 @@ global class ResourceUserAllocationBatch implements Database.Batchable<sked__Res
                             sked__User__c,
                     		sked_Job_Code__c
                     FROM sked__Resource__c 
-                    WHERE RecordType.Name = 'Staff' AND LastModifiedDate >=: dateTimeFilter
+                    WHERE RecordType.Name = 'Staff' AND LastModifiedDate >=: dateTimeFilter AND sked_FCC_Code__c IN:activeFccCodesList//HRP-11375 sked_FCC_Code__c IN:activeFccCodesList
                     ORDER BY sked__User__c NULLS LAST, CreatedDate ASC];
         }
     }
@@ -171,6 +175,8 @@ global class ResourceUserAllocationBatch implements Database.Batchable<sked__Res
     
     global void finish(Database.BatchableContext bc){
         updateResources();
+        System.debug('invokeSkedResourceSeniorityRankingBatch calling==>');
+        invokeSkedResourceSeniorityRankingBatch(); //HRP-12628
     }
 
     @TestVisible
@@ -279,7 +285,7 @@ global class ResourceUserAllocationBatch implements Database.Batchable<sked__Res
                 Boolean updateUser = false;
                 if(newRecord.recordTypeId != rcId || !collOpNameMap.containsKey(newRecord.Id) || collOppNames.contains(collOpNameMap.get(newRecord.Id)) //changes for HRP-10628
                         || userMap.isEmpty() || !userMap.containsKey(newRecord.sked__User__c) || userMap.get(newRecord.sked__User__c) == null){
-                    continue;
+                            continue;
                 }
                 try{
                     User userData = userMap.get(newRecord.sked__User__c);
@@ -287,10 +293,7 @@ global class ResourceUserAllocationBatch implements Database.Batchable<sked__Res
                     * HRP-10628 changes starts here
                     */
                     List<Id> pfIdList = profileIdMap.values();
-                    System.debug('## Resource Name : '+newRecord.Name);
-                    System.debug('## pfIdList List : '+pfIdList);
-                    System.debug('## userData.profileId : '+userData.profileId);
-                    if(newRecord.sked__Is_Active__c == false && userData.IsActive == true && !pfIdList.isEmpty() && !pfIdList.contains(userData.profileId)){
+                    if(userData.IsActive == true && !pfIdList.isEmpty() && !pfIdList.contains(userData.profileId)){//changes fore HRP-11055 //HRP-11375 newRecord.sked__Is_Active__c == false
                         continue;
                     }
                     /*
@@ -576,6 +579,7 @@ global class ResourceUserAllocationBatch implements Database.Batchable<sked__Res
                         /*
                         * HRP-10628 changes starts here
                         */
+                        
                         Id profileId;
                         if(String.isNotBlank(newRecord.sked_Job_Code__c) && jobCodeVsProfileMap.containsKey(newRecord.sked_Job_Code__c) && profileIdMap.containsKey(jobCodeVsProfileMap.get(newRecord.sked_Job_Code__c))){
                             profileId = profileIdMap.get(jobCodeVsProfileMap.get(newRecord.sked_Job_Code__c));
@@ -773,7 +777,12 @@ global class ResourceUserAllocationBatch implements Database.Batchable<sked__Res
     @TestVisible
     private Map<String,Id> getProfileId(){
         Map<String,Id> profileMap = new Map<String,Id>();
-        for(Profile pr : [SELECT Id, Name FROM Profile WHERE Name IN ('Collections','Collection Management')]){
+        //HRP-11375
+        Resource_User_Allocation_Setting__mdt TeamSupervisorJobCode = Resource_User_Allocation_Setting__mdt.getInstance('Collection_Profiles');
+ 		list<String> profileNames = new list<String>();
+		profileNames.addAll(TeamSupervisorJobCode.Profiles__c.split(','));
+		//HRP-11375
+		for(Profile pr : [SELECT Id, Name FROM Profile WHERE Name IN :profileNames]){//HRP-11375
             profileMap.put(pr.Name,pr.Id);
         }
         return profileMap;
@@ -850,12 +859,7 @@ global class ResourceUserAllocationBatch implements Database.Batchable<sked__Res
                 message.subject = 'Error on updating of Resourses';
                 message.setHtmlBody(emailBody);
                 Messaging.SingleEmailMessage[] messages =  new List<Messaging.SingleEmailMessage> {message};
-                Messaging.SendEmailResult[] results = Messaging.sendEmail(messages);
-                if (results[0].success) {
-                    System.debug('The email was sent successfully.');
-                } else {
-                    System.debug('The email failed to send: '+ results[0].errors[0].message);
-                }
+                BSF_EmailNotification.sendEmails(messages,'ResourceAllocationBatchFailure',null);//Changes for  HRP-11608
             }
         }catch(Exception expm){}
     }
@@ -878,15 +882,40 @@ global class ResourceUserAllocationBatch implements Database.Batchable<sked__Res
     //Job Codes for Collection Management profile moved to Custom label
     @TestVisible
     private Map<String,String> getJobCodeVsProfileMap(){
-        String jobCodes = System.label.Team_Supervisor_Job_Code;
-        List<String> jobCodeList = jobCodes.split(',');
+        //String jobCodes = System.label.Team_Supervisor_Job_Code;//HRP-11375
+        Resource_User_Allocation_Setting__mdt TeamSupervisorJobCode = Resource_User_Allocation_Setting__mdt.getInstance('Team_Supervisor_Job_Code');//HRP-11375
+ 		List<String> jobCodeList = TeamSupervisorJobCode.Job_Codes__c.split(',');
         Map<String,String> jobCodeVsProfileMap = new Map<String,String>();
         for (String jobCode : jobCodeList) {
-            jobCodeVsProfileMap.put(jobCode,'Collection Management');
+            jobCodeVsProfileMap.put(jobCode,TeamSupervisorJobCode.Profiles__c);//HRP-11375
         }
         return jobCodeVsProfileMap;
     }
     /*
     * HRP-10628 changes ends here
     */
+
+    /* HRP-12628: UL Push on BSF Resources Not Applying Due to Locking Issues
+    * The following method, invokeSkedResourceSeniorityRankingBatch, query all the resource records with employment status changed and
+    * also retrieves the corresponding regions of each resource. Finally the region Ids are passed to the SkedResourceSeniorityRankingBatch to update 
+    * the resource seniority ranking.
+    */
+    private void invokeSkedResourceSeniorityRankingBatch(){
+        System.debug('902==>');
+        Set<Id> skedResourceIds = new Set<Id>();
+        list<sked__Resource__c> resourcesEmpStatusChanged = [SELECT Id  FROM sked__Resource__c WHERE IsChangedEmploymentStatus__c = true AND sked__Resource_Type__c='Person' LIMIT 10000];
+        for (sked__Resource__c resource : resourcesEmpStatusChanged) {
+            skedResourceIds.add(resource.Id);
+        }
+        Set<Id> affectedArcRegions = new Set<Id>();
+        if (!resourcesEmpStatusChanged.isEmpty()) {
+            affectedArcRegions = skedResourceHandler.getAffectedArcRegions(resourcesEmpStatusChanged);
+        }
+        System.debug('affectedArcRegions==>'+affectedArcRegions.size());
+        System.debug('resourcesEmpStatusChanged==>'+resourcesEmpStatusChanged.size());
+        if (!affectedArcRegions.isEmpty()) {
+            System.debug('skedResourceSeniorityRankingBatch==>');
+            Database.executeBatch(new skedResourceSeniorityRankingBatch(affectedArcRegions, skedResourceIds), 1);
+        }
+    }
 }

@@ -26,13 +26,13 @@
     </columns>
     <description>A listing of sites created since 12/1/2023 with @, at, Memorial, Memory, Honor in name. New sites should only contain the site/building name .</description>
     <filter>
-        <booleanFilter>1 AND (2 OR 3 OR 4 OR 5 OR 8) AND 6 AND 7</booleanFilter>
+        <booleanFilter>1 AND (2 OR 3 OR 4 OR 5 OR 8 OR 9 OR 10 OR 11 OR 12) AND 6 AND 7</booleanFilter>
         <criteriaItems>
             <column>CUST_CREATED_DATE</column>
             <columnToColumn>false</columnToColumn>
             <isUnlocked>true</isUnlocked>
             <operator>greaterOrEqual</operator>
-            <value>12/1/2023 12:00 AM</value>
+            <value>9/1/2024 12:00 AM</value>
         </criteriaItems>
         <criteriaItems>
             <column>CUST_NAME</column>
@@ -74,7 +74,7 @@
             <columnToColumn>false</columnToColumn>
             <isUnlocked>true</isUnlocked>
             <operator>notEqual</operator>
-            <value>L06J4G,L06J5N,L06J0X,L06J1N,L06J1U,L06J0E,L06HXG,L06HW9,L06HW8,L06HXL,L06HW4,L06HUE,L06HTQ,L06HTX,L06HTE,L06HR9,L06HNH,L06HNV,L06HGM,L06HJW,L06HL4,L06HCQ,L06H8Q,L06H82,L06H6D,L06H6V,L06H3V,L06H08,L06H2C,L06GWP,L06GRU,L06GRQ,L06GPE,L06GPK,L06GMY,L06GN8,L06GNL,L06GKD,L06GJF,L06GFW,L06GFU,L06GG3,L06GF2,L06GD3,L06GD7,L06GA1,L06G6G,L06G6M,L06G3D,L06G1R,L06G27,L06FYA,L06FXN,L06FWX,L06FXH,L06FV1,L06FUQ,L06FWC,L06FTE,L06FG6,L06FMH,L06FP5,L06FKT,L06FJD,L06FDK,L06F8Y,L06F88,L06F7Q,L06F31,L06F1A,L06F22,L06F27,L06F05,L06EEG,L06EF1,L06EF9,L06EFH,L06ERP,L06ET5,L06EUR,L06EWJ</value>
+            <value>L06T9Q,L06TE8,L06TGR,L06T8D,L06T58,L06T3W,L06T4M,L06T2M,L06T29,L06RX8,L06RYG,L06RWU,L06RQJ,L06RQX,L06RQC,L06RNF,L06RJL,L06RGU,L06R6J,L06R0W,L06R3D,L06R68,L06R3Q,L06QW5,L06QTD,L06QRE,L06QRP,L06QRV,L06QPA,L06QHY,L06QFV,L06QGH,L06QJ9,L06QJR,L06QA3,L06QA5,L06QA6,L06QDN,L06QA9,L06QAP,L06Q93,L06Q9K,L06Q8F,L06Q7P,L06Q6E,L06Q36,L06Q3T</value>
         </criteriaItems>
         <criteriaItems>
             <column>CUST_NAME</column>
@@ -82,6 +82,34 @@
             <isUnlocked>true</isUnlocked>
             <operator>contains</operator>
             <value>Memory</value>
+        </criteriaItems>
+        <criteriaItems>
+            <column>CUST_NAME</column>
+            <columnToColumn>false</columnToColumn>
+            <isUnlocked>true</isUnlocked>
+            <operator>contains</operator>
+            <value>&quot; with &quot;</value>
+        </criteriaItems>
+        <criteriaItems>
+            <column>CUST_NAME</column>
+            <columnToColumn>false</columnToColumn>
+            <isUnlocked>true</isUnlocked>
+            <operator>contains</operator>
+            <value>Battle of the Badges</value>
+        </criteriaItems>
+        <criteriaItems>
+            <column>CUST_NAME</column>
+            <columnToColumn>false</columnToColumn>
+            <isUnlocked>true</isUnlocked>
+            <operator>contains</operator>
+            <value>FM99</value>
+        </criteriaItems>
+        <criteriaItems>
+            <column>CUST_NAME</column>
+            <columnToColumn>false</columnToColumn>
+            <isUnlocked>true</isUnlocked>
+            <operator>contains</operator>
+            <value>LSL</value>
         </criteriaItems>
         <language>en_US</language>
     </filter>

@@ -78,6 +78,10 @@
                 <behavior>Edit</behavior>
                 <field>Chapter__c</field>
             </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>Next_Scheduled_Drive_Updated__c</field>
+            </layoutItems>
         </layoutColumns>
         <layoutColumns>
             <layoutItems>
@@ -95,6 +99,10 @@
             <layoutItems>
                 <behavior>Readonly</behavior>
                 <field>Accepts_Automation2__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>Operation_Type__c</field>
             </layoutItems>
             <layoutItems>
                 <behavior>Edit</behavior>
@@ -123,6 +131,18 @@
             <layoutItems>
                 <behavior>Edit</behavior>
                 <field>Market__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>Business_Planning_Completed__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>Business_Planning_Completed_By__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>Business_Planning_Completed_Date__c</field>
             </layoutItems>
         </layoutColumns>
         <style>TwoColumnsLeftToRight</style>
@@ -160,12 +180,8 @@
                 <behavior>Edit</behavior>
                 <field>BillingAddress</field>
             </layoutItems>
-            <layoutItems>
-                <behavior>Edit</behavior>
-                <field>Zipcode_change__c</field>
-            </layoutItems>
         </layoutColumns>
-        <layoutColumns/>
+        <layoutColumns />
         <style>TwoColumnsTopToBottom</style>
     </layoutSections>
     <layoutSections>
@@ -173,8 +189,8 @@
         <detailHeading>false</detailHeading>
         <editHeading>true</editHeading>
         <label>Additional Information</label>
-        <layoutColumns/>
-        <layoutColumns/>
+        <layoutColumns />
+        <layoutColumns />
         <style>TwoColumnsLeftToRight</style>
     </layoutSections>
     <layoutSections>
@@ -182,7 +198,7 @@
         <detailHeading>false</detailHeading>
         <editHeading>false</editHeading>
         <label>Description Information</label>
-        <layoutColumns/>
+        <layoutColumns />
         <style>OneColumn</style>
     </layoutSections>
     <layoutSections>
@@ -272,9 +288,9 @@
         <detailHeading>true</detailHeading>
         <editHeading>false</editHeading>
         <label>Custom Links</label>
-        <layoutColumns/>
-        <layoutColumns/>
-        <layoutColumns/>
+        <layoutColumns />
+        <layoutColumns />
+        <layoutColumns />
         <style>CustomLinks</style>
     </layoutSections>
     <platformActionList>
@@ -440,12 +456,12 @@
     </relatedLists>
     <relatedLists>
         <fields>NAME</fields>
-        <fields>CREATED_DATE</fields>
+        <fields>sked_Procedure_Type__c</fields>
         <fields>sked_QNS__c</fields>
         <fields>sked_Deferral__c</fields>
+        <fields>CREATED_DATE</fields>
         <fields>sked_Effective_End_Date__c</fields>
         <fields>sked_Effective_Start_Date__c</fields>
-        <fields>sked_Procedure_Type__c</fields>
         <fields>sked_Productive_Procedure_Goal__c</fields>
         <relatedList>sked_Fixed_Site_Procedure_Projection__c.sked_Account__c</relatedList>
     </relatedLists>
@@ -518,15 +534,6 @@
     </relatedLists>
     <relatedLists>
         <relatedList>RelatedFileList</relatedList>
-    </relatedLists>
-    <relatedLists>
-        <fields>NAME</fields>
-        <fields>sked_Month_Name__c</fields>
-        <fields>sked_Preferred_Weeks__c</fields>
-        <fields>sked_Preferred_Weekdays__c</fields>
-        <fields>sked_Restricted_Weeks__c</fields>
-        <fields>sked_Restricted_Weekdays__c</fields>
-        <relatedList>sked_Account_Availability_Preference__c.sked_Account__c</relatedList>
     </relatedLists>
     <relatedLists>
         <relatedList>RelatedEntityHistoryList</relatedList>

@@ -15,5 +15,10 @@
         <operation>equals</operation>
         <value>0</value>
     </filters>
+    <filters>
+        <field>Zip__c</field>
+        <operation>contains</operation>
+        <value>85935</value>
+    </filters>
     <label>Non-Service Areas</label>
 </ListView>

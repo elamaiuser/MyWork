@@ -10,16 +10,15 @@
  * 
  * Modification Log 
  * 
- * Date					Developer Name			Comments
+ * Date					    Developer Name			   Comments
  * ***************************************************************************************************************************************************************************
- * 5/5/2023				Fitsum Worku			Logic for HRP-9982. Added logic to exclude the system admin profile from user type assignment/removal.  Also added support for
- * 												license assignment.
- * 
- * 
+ * 05/05/2023				Fitsum Worku			Logic for HRP-9982. Added logic to exclude the system admin profile from user type assignment/removal.  Also added support for
+  												    license assignment. 
+ * 10/18/2024               Priti Jana              Logic for HRP-9815
  *****************************************************************************************************************************************************************************
 */
 
-public class userService {
+public class userService implements Callable {
     public static boolean runUser=true;
     public static void formatMobilePhone(List<User> UserList){
         system.debug('UserList'+UserList);
@@ -347,5 +346,80 @@ public class userService {
         //if(errorList.size() > 0){
         //    Database.insert(errorList,false);
         //}
-    }    
+    }
+    
+    /********************************************************************** CALLABLE INTERFACE  *****************************************************************/
+    public static Object call(String methodName, Map<String, Object> params) {
+        skedProcessEventResult result = new skedProcessEventResult();
+        try {
+            switch on methodName {
+                when 'performOpRecordSync' {
+                    performOpRecordSync((Map<String, String>) JSON.deserialize((String) params.get('param1'), Map<String, String>.class));
+                }
+                when else {
+                    throw new skedException('Unable to locate Method: ' + methodName + ' in Class: ' + userService.class.getName());
+                }
+            }
+        } catch (skedException ex) {
+            result.addError(ex);
+        }
+        return result;
+    }
+    /************************************************************************************************************************************************************/
+
+    /*HRP-9815 -> Starts Here
+    @Description : This method will update the operation records whenever user's work phone gets changed and that very user is the DRD Rep on the Op Record
+    */
+    
+    public static void updateDrdRepContactOnOpRecordUponPhoneChange(List<User> newUserList, Map<Id, User> map_oldUserId_oldUserInfo) {
+        Map<String, String> map_DrdRepName_DrdRepContact = new Map<String, String>();
+        if(newUserList != NULL && !newUserList.isEmpty()) {
+            for(User newUser : newUserList) {
+                User oldUser = map_oldUserId_oldUserInfo != NULL && map_oldUserId_oldUserInfo.get(newUser.Id) != NULL ? map_oldUserId_oldUserInfo.get(newUser.Id) : new User();
+                system.debug('olduser '+oldUser.WorkPhone__c+' newuser '+newUser.WorkPhone__c);
+                if(oldUser != NULL && newUser.WorkPhone__c != oldUser.WorkPhone__c) {
+                    if(!map_DrdRepName_DrdRepContact.containsKey(newUser.FirstName + ' ' + newUser.LastName)) {
+                        map_DrdRepName_DrdRepContact.put(newUser.FirstName + ' ' + newUser.LastName, newUser.WorkPhone__c);
+                    }
+                }
+            }
+        }
+        if (!map_DrdRepName_DrdRepContact.isEmpty()) {
+            if (!System.isBatch()) {
+                skedFutureCallEventHandler.publishFutureCallEvent(
+                    userService.class.getName(),
+                    'performOpRecordSync',
+                    map_DrdRepName_DrdRepContact
+                );
+            } else {
+                performOpRecordSync(map_DrdRepName_DrdRepContact);
+            }
+        }
+    }
+
+    private static void performOpRecordSync(Map<String, String> map_DrdRepName_DrdRepContact) {
+        List<sked_Operation_Record__c> opRecordList = [SELECT Id, sked_DRD_Rep__c, sked_DRD_Rep_Contact__c
+                                                        FROM sked_Operation_Record__c
+                                                        WHERE sked_Drive_Date__c >= TODAY
+                                                        AND sked_DRD_Rep__c IN :map_DrdRepName_DrdRepContact.keySet()];
+        if(opRecordList != NULL && !opRecordList.isEmpty()) {
+            for(sked_Operation_Record__c opRecord : opRecordList) {
+                opRecord.sked_DRD_Rep_Contact__c = map_DrdRepName_DrdRepContact.get(opRecord.sked_DRD_Rep__c);
+            }
+        }
+        Database.SaveResult[] opRecordUpdateResult = Database.update(opRecordList, FALSE);
+        List<BSF_Error_Log__c> errorlogEntry = BSF_Utilities.createErrorLogWithObjectId(
+            opRecordUpdateResult,
+            'Op Record DRD Rep Contact # Update',
+            'UserService',
+            'performOpRecordSync',
+            'Error',
+            'DRD Rep Contact # Update'
+        );
+        if(errorlogEntry != NULL && !errorlogEntry.isEmpty()) {
+            insert errorlogEntry;
+        }
+    }
+    //HRP-9815 -> Ends Here
+  
 }

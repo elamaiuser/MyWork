@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>All</fullName>
+    <columns>NAME</columns>
+    <columns>Notification_Type__c</columns>
+    <columns>Oneoff_Protocol__c</columns>
+    <columns>Phone_Number__c</columns>
+    <columns>Category__c</columns>
+    <columns>Status__c</columns>
+    <columns>Subject__c</columns>
+    <columns>Body__c</columns>
+    <columns>Destination_Id__c</columns>
+    <columns>Custom_Notification_Type_Id__c</columns>
+    <columns>Target_Record_Id__c</columns>
+    <columns>Sender_Email__c</columns>
+    <columns>Expiry_TimeStamp__c</columns>
+    <columns>sked_Notification_Setting_Id__c</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>Oneoff_Protocol__c</field>
+        <operation>notEqual</operation>
+    </filters>
+    <label>All</label>
+</ListView>

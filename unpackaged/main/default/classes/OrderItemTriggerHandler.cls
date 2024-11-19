@@ -28,6 +28,27 @@ public class OrderItemTriggerHandler extends TriggerHandler{
         }
        
         // HRP - 10307 Ends Here -->
+        // HRP-12664 Start -->
+        if(super.getTriggerMethodsToBypass().indexOf('validateProductEndDate') == -1)
+        {
+            System.debug('OrderItemTriggerService.beforeInsert() - OrderItemTriggerService.validateProductEndDate() Executing...');
+            OrderItemTriggerService.validateProductEndDate((List<OrderItem>)Trigger.New);            
+        }
+        else
+        {
+            System.debug('OrderItemTriggerService.beforeInsert() - OrderItemTriggerService.validateProductEndDate() Bypassed');            
+        }
+        
+        if(super.getTriggerMethodsToBypass().indexOf('validatedProductToOrderItem') == -1)
+        {
+            System.debug('OrderItemTriggerService.beforeInsert() - OrderItemTriggerService.validatedProductToOrderItem() Executing...');
+            OrderItemTriggerService.validatedProductToOrderItem((List<OrderItem>)Trigger.New);            
+        }
+        else
+        {
+            System.debug('OrderItemTriggerService.beforeInsert() - OrderItemTriggerService.validatedProductToOrderItem() Bypassed');            
+        }
+       // HRP-12664 End -->
         
         system.debug('Exiting beforeInsert Trigger');
         

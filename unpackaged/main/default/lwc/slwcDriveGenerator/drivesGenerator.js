@@ -263,7 +263,7 @@ class SlwcDrivesGenerator {
           
           driveSite.siteCollectionOperations?.forEach(siteCO => {
             const _coStagingLocations = mapCOStagingLocationsByCOId[siteCO.collectionOperationId];
-            _coStagingLocations.forEach(coStagingLocation => {
+            _coStagingLocations?.forEach(coStagingLocation => {
               const { geoLocationLatitude: stagingLocationGeoLocationLatitude, geoLocationLongitude: stagingLocationGeoLocationLongitude } = coStagingLocation.stagingLocation;
               const siteToCOKey = getTravelTimeIndexKey(driveSiteGeoLocationLatitude, driveSiteGeoLocationLongitude, stagingLocationGeoLocationLatitude, stagingLocationGeoLocationLongitude);
               const coToSiteKey = getTravelTimeIndexKey(stagingLocationGeoLocationLatitude, stagingLocationGeoLocationLongitude, driveSiteGeoLocationLatitude, driveSiteGeoLocationLongitude);

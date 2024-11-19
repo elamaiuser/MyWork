@@ -1,4 +1,4 @@
-<aura:component controller="AccountService" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickActionWithoutHeader" access="global" >
+<aura:component controller="closeFixedSiteAccountController" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickActionWithoutHeader" access="global" >
     
     <aura:handler name="init" value="this" action="{!c.doInit}" />
     <aura:attribute name="display" type="boolean" default="false" />
@@ -27,7 +27,7 @@
                 <div class="slds-modal__content slds-p-around--x-small slds-align_absolute-center slds-size_1-of-1 slds-is-relative" style="height: 280px;">
                     <form class="slds-form--stacked">
                         <p style="padding:20px">Would you like to Cancel drives scheduled after {!v.effDate}?</p> 
-                        <p style="padding:20px">Note: All site records for Fixed Sites will need to be placed in Inactive Status.</p>
+                        <p style="padding:20px">Please Note: All site records for Fixed Sites will need to be placed in Inactive Status.</p>
                     </form> 
                 </div>
                 <!--End of Modal Body--> 

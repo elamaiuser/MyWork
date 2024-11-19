@@ -1,15 +1,17 @@
-/* 
- * @description: This class is called from Account trigger.
+/* @Description: This class is called from Account trigger to serve different functionalities in different trigger contexts for Account Object.
+ 
  * Modification Log 
  * Date					     Developer Name			     Comments
  * ***********************************************************************************************************************************************
- *  *  08/06/2023			 Kishore Das				Logic for HRP-10085 (It changes all the associated opportunities/templates name when account internal name changes,also changes related drives on calendar name when account name changes.
+ * 08/06/2023			     Kishore Das			  Logic for HRP-10085 (It changes all the associated opportunities/templates name when account internal name changes,also changes related drives on calendar name when account name changes.
  																For site, when room name/site building name changes the related opportunity/template/drives on calendar name changes)
 
  * 31/07/2023				 Barnojit Sharma		  Phone Numbers must be limited to 10 Numbers (Logic for HRP-10394)
  * 03/08/2023				 Kishore Das		      Users other than System Admin should not have any delete record permissions(Logic for HRP-10572 --> Deleted)
  * 09/18/2023				 Balaji N				  Logic for HRP-10878(Method call:AccountService.setZipcodeChang)
  * 10/03/2023				 Priti Jana				  Logic for HRP-10115 (usage of utility method)
+ * 02/06/2024				 Priti Jana				  Logic for HRP-9520
+ * 10/29/2024			     Barnojit Sharma		  Post Drive Analysis task Enhancements. (Logic for HRP-12142)
  ************************************************************************************************************************************************
 */
 /**
@@ -226,6 +228,21 @@ public with sharing class AccountTriggerHandler extends TriggerHandler{
         }else{
             System.debug('AccountTriggerHandler.afterUpdate() - AccountService.updateBloodDriveOpportunitiesForInternalNameChange() Bypassed');
         }
+            
+            // HRP- 9520/11951 --> Starts Here
+            if(super.getTriggerMethodsToBypass().indexOf('setBusinessPlanningDateAndUser') == -1) {
+            	System.debug('AccountTriggerHandler.afterUpdate() - AccountService.setBusinessPlanningDateAndUser() Executing...');
+            	AccountService.setBusinessPlanningDateAndUser((List<Account>)trigger.new , (Map<Id,Account>)trigger.oldMap);       
+        	}else{
+            	System.debug('AccountTriggerHandler.afterUpdate() - AccountService.setBusinessPlanningDateAndUser() Bypassed');
+        	}
+            // HRP- 9520/11951 --> Ends Here
+            // HRP- 12142 --> Starts Here
+            if(super.getTriggerMethodsToBypass().indexOf('updateTaskChecklist') == -1) {
+            	System.debug('AccountTriggerHandler.afterUpdate() - BSFTaskChecklistTriggerHandler.updateTaskChecklist() Executing...');
+            	BSFTaskChecklistTriggerHandler.updateTaskChecklist((List<Account>)trigger.new,(Map<Id,Account>)trigger.oldMap); 
+            }
+            // HRP- 12142 --> Ends Here
       }
     }
     

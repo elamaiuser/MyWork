@@ -3,5 +3,5 @@
     <description>Workday_API</description>
     <disableProtocolSecurity>false</disableProtocolSecurity>
     <isActive>true</isActive>
-    <url>https://wd2-impl-services1.workday.com</url>
+    <url>https://services1.myworkday.com</url>
 </RemoteSiteSetting>

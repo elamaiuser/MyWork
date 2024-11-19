@@ -6,6 +6,7 @@
     <columns>NamespacePrefix</columns>
     <columns>Assigned_To__c</columns>
     <columns>Task_Subject__c</columns>
+    <columns>Category__c</columns>
     <filterScope>Everything</filterScope>
     <label>All Fields</label>
     <language>en_US</language>

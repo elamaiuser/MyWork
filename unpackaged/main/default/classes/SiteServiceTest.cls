@@ -39,6 +39,7 @@
          testMobileSite.sked_Start_Date__c = system.today().addDays(-30);
          testMobileSite.sked_End_Date__c = system.today().addDays(30);
          testMobileSite.National_Name_Status__c = 'Second Review Pending';
+         testMobileSite.sked_Zip_Code__c = '12344';
          siteListToInsert.add(testMobileSite);
          
          // insert Fixed Site
@@ -46,6 +47,7 @@
          testFixedSite.sked_Active__c = true;
          testFixedSite.sked_Start_Date__c = system.today().addDays(-30);
          testFixedSite.sked_End_Date__c = system.today().addDays(30);
+         testFixedSite.sked_Zip_Code__c = '12344';
          siteListToInsert.add(testFixedSite);
          insert siteListToInsert;
          

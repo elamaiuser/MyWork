@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>All_Recruitment_Planning_Meeting_Task</fullName>
+    <columns>MasterLabel</columns>
+    <columns>Column__c</columns>
+    <columns>Order__c</columns>
+    <columns>Help_Text__c</columns>
+    <columns>Input_API_Name__c</columns>
+    <columns>Input_Type__c</columns>
+    <columns>Picklist_Input_1__c</columns>
+    <columns>Section_Header__c</columns>
+    <columns>Subject__c</columns>
+    <columns>Subtype__c</columns>
+    <columns>UI_Text__c</columns>
+    <columns>Unique_Name__c</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>Subject__c</field>
+        <operation>equals</operation>
+        <value>Recruitment Planning Meeting</value>
+    </filters>
+    <label>All Recruitment Planning Meeting Task</label>
+    <language>en_US</language>
+</ListView>

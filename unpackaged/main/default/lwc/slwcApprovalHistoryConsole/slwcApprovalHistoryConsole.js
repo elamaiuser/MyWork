@@ -17,6 +17,8 @@ export default class SlwcApprovalHistoryConsole extends LightningElement {
   
   @api hookBeforeApprove = null;
   @api hookBeforeSubmitApproveReject = null;
+  @api isReadonly = false;
+  @api canApproveOrReject = null;
   
   @track showSpinner = false;
   @track columns = [
@@ -107,7 +109,7 @@ export default class SlwcApprovalHistoryConsole extends LightningElement {
         ])
       })
       .then(([record, getApprovalHistoryListResult, canApproveResult]) => {
-        this.canApproveReject = !!canApproveResult.returnedData;
+        this.canApproveReject = !this.isReadonly && (!this.canApproveOrReject || this.canApproveOrReject(record)) && !!canApproveResult.returnedData;
         this.record = record;
         this.data = getApprovalHistoryListResult.returnedData;
         this.sortData();

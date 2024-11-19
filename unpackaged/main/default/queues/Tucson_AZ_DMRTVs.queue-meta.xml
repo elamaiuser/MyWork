@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Queue xmlns="http://soap.sforce.com/2006/04/metadata">
+    <doesSendEmailToMembers>false</doesSendEmailToMembers>
+    <name>Tucson AZ: DMRTVs</name>
+    <queueMembers>
+        <users>
+            <user>blaine.devesty@redcross.org.biomed</user>
+            <user>celine.brown@redcross.org</user>
+            <user>greg.pithan@redcross.org</user>
+            <user>mario.moreno@redcross.org.biomed</user>
+            <user>rita.anderson@redcross.org</user>
+            <user>sarah.dixon2@redcross.org</user>
+            <user>serena.bricker@redcross.org</user>
+        </users>
+    </queueMembers>
+    <queueSobject>
+        <sobjectType>sked__Location__c</sobjectType>
+    </queueSobject>
+</Queue>

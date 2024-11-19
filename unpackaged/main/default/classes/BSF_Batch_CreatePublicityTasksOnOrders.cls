@@ -2,13 +2,15 @@
 @ Component Name : BSF_Batch_CreatePublicityTasksOnOrders 
 @ Developed By: Exavalu / ARC 
 @ purpose: Create Publicity Tasks on Orders when it's created with publicity approved = false 
-					and related opp is moved to Closed stage with No Publicity Needed = false
+					and related opp is moved to Closed stage with No Publicity Needed = false 
 
 **********************************************************************************************
-Story               Date                Modified by             Description
-==============================================================================================
-HRP - 10023       05/03/2023           Exavalu / ARC              Created
-
+* Modification Log 
+*  Date                          Developer Name                 Comments
+* ***********************************************************************************************************************************************
+* 05/03/2023                   	 Exavalu / ARC                HRP - 10023 Created
+* 03/22/2024					 Balaji N				  	  logic for HRP-12333 (Method: Execute method, changes in parameter and Hierarchy logic, Changes on the method calls OpportunityService.getTaskOwner)
+* 08/13/2024					 Apurba Bhattacharjee		  HRP-12700 Add Drive Date to task list
 **********************************************************************************************/
 
 global class BSF_Batch_CreatePublicityTasksOnOrders implements Database.Batchable<sObject> , Schedulable
@@ -110,7 +112,8 @@ global class BSF_Batch_CreatePublicityTasksOnOrders implements Database.Batchabl
                     publicityTask.Status = BSF_Constants.STATUS_NOT_STARTED;
                     publicityTask.Priority = BSF_Constants.HIGH_PRIORITY_TASK;
                     publicityTask.WhatId = orderObj.Id;
-                    publicityTask.OwnerId = OpportunityService.getTaskOwner(opp, oppTeamMembersMap); //HRP-9562
+                    publicityTask.OwnerId = OpportunityService.getTaskOwner(opp, oppTeamMembersMap,Task_Reassignment_Matrix__mdt.getInstance('Publicity_Review_Needed').Assigned_To__c); //HRP-9562;//HRP-12333 added 3rd paarameter
+                    publicityTask.Drive_Date__c = opp.Drive_Date__c; //HRP-12700;
                     Date dueDate = opp.Drive_Date__c - BSF_Constants.PUBLICITY_REVIEW_DAYS_CONFIGURATION;
                     /*String myDateString = Datetime.newInstance(dueDate.year(),dueDate.month(),dueDate.day()).format('EEE');
                     if('Sat'.equals(myDateString)){

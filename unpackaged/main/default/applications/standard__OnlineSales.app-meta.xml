@@ -11,5 +11,8 @@
     <tabs>sked_Staging_Location__c</tabs>
     <tabs>sked_Collection_Op_Staging_Location__c</tabs>
     <tabs>sked_Travel_Time_Index_Item__c</tabs>
+    <tabs>standard-SalesforceContract</tabs>
+    <tabs>standard-SalesforceInvoice</tabs>
+    <tabs>standard-SalesforceProductCatalog</tabs>
     <uiType>Lightning</uiType>
 </CustomApplication>

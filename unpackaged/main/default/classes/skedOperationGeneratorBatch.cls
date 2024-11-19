@@ -14,9 +14,23 @@ global class skedOperationGeneratorBatch implements Database.Batchable<sked_Driv
     global void execute(Database.BatchableContext BC, List<sked_Drive__c> drives) {
         Map<Id, sked_Drive__c> mapDrive = new Map<Id, sked_Drive__c>(drives);
 
-        skedOperationRecordService.generateOperationRecords(mapDrive.keySet());
+        try {
+            skedOperationRecordService.generateOperationRecords(mapDrive.keySet());
+        } catch (Exception ex) {
+            captureDebugLog(ex);
+            throw ex;
+        }
     }
     
     global void finish(Database.BatchableContext BC) {}
     
+    @testVisible
+    private void captureDebugLog(Exception ex) {
+        insert new sked__Debug_Log__c(
+            sked__Type__c = 'Operation Record Generation',
+            sked__User__c = UserInfo.getUserId(),
+            sked__Summary__c = ex.getMessage(),
+            sked__Message__c = ex.getMessage() + ': ' + ex.getStackTraceString()
+        );
+    }
 }

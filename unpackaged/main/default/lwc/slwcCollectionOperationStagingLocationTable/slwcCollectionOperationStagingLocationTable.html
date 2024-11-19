@@ -1,0 +1,42 @@
+<template>
+    <div if:true={isDataPresent}>
+        <div class="slds-grow slds-scrollable_y">
+            <div class="slds-border_top slds-p-bottom_small">
+                <c-slwc-custom-datatable 
+                    key-field="id" 
+                    data={records} 
+                    columns={columns} 
+                    onrowaction={handleRowActions}
+                    column-widths-mode="fixed" 
+                    hide-checkbox-column>
+                </c-slwc-custom-datatable>
+            </div>
+        </div>
+        <c-slwc-add-col-op-staging-location-modal 
+            record-id={recordId} 
+            if:true={addColOpStagingLocationModal.isOpen}
+            is-open={addColOpStagingLocationModal.isOpen} 
+            is-delete-modal={addColOpStagingLocationModal.isDeleteModal}
+            collection-operation-name={collectionOperationName} 
+            action={addColOpStagingLocationModal.action} 
+            model={model}
+            onclose={handleCloseColOpStagingLocationModal}
+            onmodaldatachange={handleTableDataAfterModalOperation}>
+        </c-slwc-add-col-op-staging-location-modal>
+    </div>
+    <div if:false={isDataPresent} class="slds-align_absolute-center slds-p-around_large">
+        <lightning-icon 
+            icon-name="utility:warning" 
+            size="x-small" 
+            alternative-text="Warning!" 
+            title="Warning">
+        </lightning-icon>
+        <span class="slds-m-left--small">Table will only be visible if this collection operation has any staging location associated to it.</span>
+    </div>
+    <div if:false={isDisableRequired}>
+        <div class="slds-text-align_center slds-p-top_xx-small slds-p-bottom_small">
+            <button class="slds-button slds-button_neutral" onclick={handleCancel} title="Cancel">Cancel</button>
+            <button class="slds-button slds-button_brand" onclick={handleSave} title="Save">Save</button>
+        </div>
+    </div>
+</template>

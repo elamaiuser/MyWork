@@ -5,7 +5,7 @@ import { debugLogService, operationDriveLimitService, operationDriveLimitQueryMo
   staffingConstraintService, staffingConstraintQueryModel } from 'c/dataService';
 import { isNullOrEmpty, generateUUID } from 'c/slwcUtils';
 import { DateTime } from 'c/luxon';
-import { cloneDeep, difference, uniqueId } from 'c/lodash';
+import { cloneDeep, difference, uniqueId, extend } from 'c/lodash';
 import { Fetch } from './fetch';
 import { PROCEDURE_TYPE, DRIVE_STATUS, ASSET_TYPE, PENDING_ACTION, DRIVE_APPROVAL_STATUS, RESOURCE_TYPE, DRIVE_TYPE, DRIVE_CONTENTION, JOB_ALLOCATION_STATUS } from 'c/slwcConstants';
 
@@ -82,7 +82,7 @@ const DRIVE_FIELD_CHANGE_MAPPING = {
   'collectionOperationId': {
     groups: [
       { actions: ['populateSiteCollectionOperation'] },
-      { actions: ['retrieveVehicles', 'retrieveSameDateDrives', 'retrieveSameDateActivities', 'retrieveCollectionOperationSDM', 'retrieveRoleTimeData', 'retrieveDefaultTags'] },
+      { actions: ['retrieveVehicles', 'retrieveSameDateDrives', 'retrieveSameDateActivities', 'retrieveCollectionOperationSDM', 'retrieveRoleTimeData', 'retrieveDefaultTags', 'retrieveTerritoryCollectionOperations'] },
       { actions: ['calculateDriveShiftsMetadata', 'proposeDriveShifts', 'calculateDriveProductivityPlanned'] },
       { actions: ['correctJobAllocationTimes'] }
     ]
@@ -123,7 +123,7 @@ const DRIVE_FIELD_CHANGE_MAPPING = {
     groups: [
       { actions: [] },
       { actions: [] },
-      { actions: ['calculateDriveShiftsMetadata', 'proposeDriveShifts', 'calculateDriveProductivityPlanned'] },
+      { actions: ['calculateNumberOf2rbcAssets','calculateDriveShiftsMetadata', 'proposeDriveShifts', 'calculateDriveProductivityPlanned'] },
       { actions: [] }
     ]
   },
@@ -131,7 +131,7 @@ const DRIVE_FIELD_CHANGE_MAPPING = {
     groups: [
       { actions: [] },
       { actions: [] },
-      { actions: ['calculateDriveShiftsMetadata', 'proposeDriveShifts', 'calculateDriveProductivityPlanned'] },
+      { actions: ['calculateNumberOf2rbcAssets','calculateDriveShiftsMetadata', 'proposeDriveShifts', 'calculateDriveProductivityPlanned'] },
       { actions: [] }
     ]
   },
@@ -222,6 +222,14 @@ const DRIVE_FIELD_CHANGE_MAPPING = {
       { actions: ['applyStaffingComplementAndProposeDriveShifts', 'calculateDriveProductivityPlanned'] },
       { actions: [] }
     ]
+  },
+  'slotGenerator': {
+    groups: [
+      { actions: [] },
+      { actions: [] },
+      { actions: ['proposeDriveShiftSlots', 'updateDriveTotalSlots'] },
+      { actions: [] }
+    ]
   }
 }
 
@@ -229,7 +237,7 @@ const DRIVE_SHIFT_FIELD_CHANGE_MAPPING = {
   'lunchBreak': {
     groups: [
       { actions: [] },
-      { actions: ['updateLunchBreakSettings', 'populateLunchBreakTime', 'populateShiftTime', 'populateDriveTime', 'updateDriveStaffCapacity', 'generateShiftSlots', 'updateDriveTotalSlots'] },
+      { actions: ['updateLunchBreakSettings', 'populateLunchBreakTime', 'populateShiftTime', 'populateDriveTime', 'updateDriveStaffCapacity', 'updateDriveAverageStaffCapacity', 'updateDriveExcessStaffCapacity', 'generateShiftSlots', 'updateDriveTotalSlots'] },
     ]
   },
   'lunchBreakBeforeDrawHours': {
@@ -246,6 +254,8 @@ const DRIVE_SHIFT_FIELD_CHANGE_MAPPING = {
             $this.populateShiftTime(driveShift);
             $this.populateDriveTime();
             $this.updateDriveStaffCapacity();
+            $this.updateDriveAverageStaffCapacity();
+            $this.updateDriveExcessStaffCapacity();
             $this.generateShiftSlots(driveShift);
             $this.updateDriveTotalSlots()
           }
@@ -254,6 +264,8 @@ const DRIVE_SHIFT_FIELD_CHANGE_MAPPING = {
             $this.populateShiftTime(driveShift);
             $this.populateDriveTime();
             $this.updateDriveStaffCapacity();
+            $this.updateDriveAverageStaffCapacity();
+            $this.updateDriveExcessStaffCapacity();
             $this.generateShiftSlots(driveShift);
             $this.updateDriveTotalSlots();
           }
@@ -264,7 +276,7 @@ const DRIVE_SHIFT_FIELD_CHANGE_MAPPING = {
   'lunchBreakStartTime': {
     groups: [
       { actions: [] },
-      { actions: ['changeLunchBreakStartTime', 'updateDriveStaffCapacity', 'generateShiftSlots', 'updateDriveTotalSlots'] },
+      { actions: ['changeLunchBreakStartTime', 'updateDriveStaffCapacity', 'updateDriveAverageStaffCapacity', 'updateDriveExcessStaffCapacity', 'generateShiftSlots', 'updateDriveTotalSlots'] },
     ]
   }
 }
@@ -488,13 +500,14 @@ class MobileGenerator extends BaseGenerator {
   }
 
   validateCurrentAssignedAssets(properties = [], validateDraftDrive = false) {
-    const validateEqipments = (drive, availableEquipments = []) => {
+    const validateEqipments = (drive, availableEquipments = [], availableButNotSharedAssetIds = []) => {
       //validate current assigned equipment
       let { totalRequired, assignedEquipments: currentAssignedEquipments, lockedEquipments } = this.getCurrentAssignedEquipments();
-      let assignedEquipmentsValid = currentAssignedEquipments.filter(assignedEquipment => {
-        return availableEquipments.find(availableEquipment => availableEquipment.id === assignedEquipment.id);
+      let availableEquipmentIds = availableEquipments.map(availableEquipment => availableEquipment.id);
+      let validAssignedEquipments = currentAssignedEquipments.filter(assignedEquipment => {
+        return availableEquipmentIds.includes(assignedEquipment.id) || (availableButNotSharedAssetIds.includes(assignedEquipment.id) && this.helper.isDriveInPathOfLinkedDrive(this.drive))
       });
-      let allAssignedEquipmentsValid = assignedEquipmentsValid.length === currentAssignedEquipments.length;
+      let allAssignedEquipmentsValid = validAssignedEquipments.length === currentAssignedEquipments.length;
 
       if (!allAssignedEquipmentsValid || currentAssignedEquipments.length < totalRequired) {
         //slots to be allocated
@@ -514,9 +527,9 @@ class MobileGenerator extends BaseGenerator {
           lockedEquipments: lockedEquipments,
           newEquipmentJobsMap: newEquipmentJobsMap,
         }
-      } else if (assignedEquipmentsValid.length > totalRequired) {
+      } else if (validAssignedEquipments.length > totalRequired) {
         //slots to be allocated
-        let { slotsToAllocate, availableEquipmentsCanBeUsed } = this.helper.preProcessSuggestEquipments(totalRequired, assignedEquipmentsValid, lockedEquipments);
+        let { slotsToAllocate, availableEquipmentsCanBeUsed } = this.helper.preProcessSuggestEquipments(totalRequired, validAssignedEquipments, lockedEquipments);
         
         //remove redundant equipments
         let drivesWithEquipments = this.helper.suggestEquipments([drive], availableEquipmentsCanBeUsed, slotsToAllocate);
@@ -539,7 +552,7 @@ class MobileGenerator extends BaseGenerator {
       }
     }
 
-    const validateVehicles = (drive, availableVehicles = [], driveLimits = []) => {
+    const validateVehicles = (drive, availableVehicles = [], driveLimits = [], availableButNotSharedAssetIds = []) => {
       if(drive.doNotUseVehicle) {
         return {
           allAssignedVehiclesValid: false,
@@ -556,10 +569,12 @@ class MobileGenerator extends BaseGenerator {
         driveLimits
       });
       let maxRegisteredDonors = this.helper.getMaxDonorsScheduledOfDriveShifts(this.drive);
-      let allAssignedVehiclesValid = !assignedVehicles.find(assignedVehicle => {
-        return !availableVehicles.find(availableVehicle => availableVehicle.id === assignedVehicle.id);
-      });
-      if (!allAssignedVehiclesValid || totalCurrentAssignedVehiclesCapacity < maxRegisteredDonors) {
+      let availableVehicleIds = availableVehicles.map(availableVehicle => availableVehicle.id);
+      let isAllAssignedVehiclesValid = assignedVehicles.every(assignedVehicle => {
+        return availableVehicleIds.includes(assignedVehicle.id) || (availableButNotSharedAssetIds.includes(assignedVehicle.id) && this.helper.isDriveInPathOfLinkedDrive(this.drive))
+      })
+
+      if (!isAllAssignedVehiclesValid || totalCurrentAssignedVehiclesCapacity < maxRegisteredDonors) {
         let { maxRegisteredDonorsToAllocate, availableVehiclesCanBeUsed, remainingMaxDOT, remainingMaxCDL } = this.helper.preProcessSuggestVehicles(maxRegisteredDonors, availableVehicles, lockedVehicles, {
           maxDOT,
           maxCDL
@@ -591,7 +606,7 @@ class MobileGenerator extends BaseGenerator {
       }
 
       return {
-        allAssignedVehiclesValid: allAssignedVehiclesValid,
+        allAssignedVehiclesValid: isAllAssignedVehiclesValid,
         canHandleDriveProjectedRegisteredDonors: true
       }
     }
@@ -622,9 +637,9 @@ class MobileGenerator extends BaseGenerator {
       this.fetch.retrieveOperationDriveLimit(newDrive),
       this.helper.getAvailableAssets(this.masterData.vehicles, newDrive)
     ])
-      .then(([ driveLimits = [], { availableVehicles = [], availableEquipments = [] }])  => {
-        const { allAssignedEquipmentsValid, newEquipmentJobsMap, lockedEquipments } = validateEqipments(newDrive, availableEquipments);
-        const { allAssignedVehiclesValid, newVehicles, lockedVehicles, canHandleDriveProjectedRegisteredDonors } = validateVehicles(newDrive, availableVehicles, driveLimits);
+      .then(([ driveLimits = [], { availableVehicles = [], availableEquipments = [], availableButNotSharedAssetIds = [] }])  => {
+        const { allAssignedEquipmentsValid, newEquipmentJobsMap, lockedEquipments } = validateEqipments(newDrive, availableEquipments, availableButNotSharedAssetIds);
+        const { allAssignedVehiclesValid, newVehicles, lockedVehicles, canHandleDriveProjectedRegisteredDonors } = validateVehicles(newDrive, availableVehicles, driveLimits, availableButNotSharedAssetIds);
 
         return {
           allAssignedEquipmentsValid,
@@ -657,17 +672,19 @@ class MobileGenerator extends BaseGenerator {
 
         return Promise.all([
           driveLimitSvc.query(driveLimitQuery),
-          staffingConstraintSvc.query(staffingConstraintQuery)
+          staffingConstraintSvc.query(staffingConstraintQuery),
+          this.helper.getAvailableAssets(this.masterData.vehicles, this.drive)
         ]);
       })
-      .then(([driveLimitResult, staffingConstraintResult]) => {
+      .then(([driveLimitResult, staffingConstraintResult, availableAssetsInfo]) => {
         let {
           passed,
           pendingActionReasonCodes
         } = this.helper.validateDrive(this.drive, {
           ...this.masterData,
           driveLimits: driveLimitResult,
-          staffingConstraints: staffingConstraintResult
+          staffingConstraints: staffingConstraintResult,
+          availableAssetsInfo
         }, [
           DRIVE_CONTENTION.DRIVE_LIMIT,
           DRIVE_CONTENTION.x2RBC_LIMIT,
@@ -682,7 +699,10 @@ class MobileGenerator extends BaseGenerator {
           DRIVE_CONTENTION.PART_OF_LINKED_DRIVE,
           DRIVE_CONTENTION.MULTI_SHIFT_DRIVE,
           DRIVE_CONTENTION.DUAL_ROLE_REMOVAL,
-          DRIVE_CONTENTION.STAFFING_COMPLEMENT_CHANGED
+          DRIVE_CONTENTION.STAFFING_COMPLEMENT_CHANGED,
+          DRIVE_CONTENTION.CO_CHANGED_CROSS_REGIONS,
+          DRIVE_CONTENTION.ASSETS_NOT_SHARED_WITH_NEW_CO,
+          DRIVE_CONTENTION.EXCESS_STAFF_CAPACITY
         ])
 
         if (pendingActionReasonCodes && pendingActionReasonCodes.length) {
@@ -838,7 +858,11 @@ class MobileGenerator extends BaseGenerator {
     this.calculateTotalProceduresProjected(this.drive.driveShiftsMetadata);
     this.drive.driveShiftsMetadata.driveShifts.forEach(driveShift => {
       this.calculateTotalProceduresProjected(driveShift);
-      driveShift.resourceRoleGroupRoleTimeDataMap = this.helper.calculateDriveShiftRoleTimeData(this.drive, driveShift);
+      driveShift.resourceRoleGroupRoleTimeDataMap = this.helper.calculateDriveShiftRoleTimeData(
+        this.masterData,
+        this.drive, 
+        driveShift
+      );
       driveShift.lunchBreakSettings = this.helper.calculateDriveShiftLunchBreakSettings(this.drive, driveShift, this.masterData);
     })
   }
@@ -854,6 +878,17 @@ class MobileGenerator extends BaseGenerator {
     return driveShiftStaffCapacity;
   }
 
+  countDriveShiftStaffs(driveShift, ignoreLunchBreak = false) {
+    const driveShiftStaffs = Math.floor(this.helper.countDriveStaffs([
+      'Driver', 'Driver Support', '2RBC', 'VP/HH', 'Charge'
+    ], this.drive, driveShift.driveShiftMetadata, 
+      new Map()
+        .set(driveShift.driveShiftMetadata.key, this.helper.getDriveShiftResourceQuantity(driveShift))
+    , this.masterData, ignoreLunchBreak));
+
+    return driveShiftStaffs;
+  }
+
   updateDriveStaffCapacity() {
     let driveStaffCapacity = 0;
     if (this.masterData && this.masterData.staffingDecisionMatrix) {
@@ -864,6 +899,36 @@ class MobileGenerator extends BaseGenerator {
       });
     }
     this.drive.staffCapacity = driveStaffCapacity;
+  }
+
+  updateDriveAverageStaffCapacity() {
+    let driveStaffCount = 0;
+    if (this.masterData && this.masterData.staffingDecisionMatrix) {
+      this.drive.driveShifts.forEach((driveShift) => {
+        const driveShiftStaffCount = this.countDriveShiftStaffs(driveShift);
+        driveStaffCount += driveShiftStaffCount;
+      });
+    }
+    if(this.drive.staffCapacity && this.drive.staffCapacity > 0 && driveStaffCount > 0) {
+      this.drive.averageStaffCapacity = this.drive.staffCapacity / driveStaffCount;
+      this.drive.averageStaffCapacity = this.drive.averageStaffCapacity.toFixed(1);
+    } else {
+      this.drive.averageStaffCapacity = 0;
+    }
+    
+  }
+
+  updateDriveExcessStaffCapacity() {
+    if(this.drive.staffCapacity && this.drive.staffCapacity > 0 && this.drive.averageStaffCapacity && this.drive.averageStaffCapacity > 0) {
+      if(this.drive.projectedRegisteredDonors) {
+        this.drive.excessStaffCapacity = (this.drive.staffCapacity - this.drive.projectedRegisteredDonors) / this.drive.averageStaffCapacity;
+      } else {
+        this.drive.excessStaffCapacity = this.drive.staffCapacity / this.drive.averageStaffCapacity;
+      }
+      this.drive.excessStaffCapacity = this.drive.excessStaffCapacity.toFixed(1);
+    } else {
+      this.drive.excessStaffCapacity = 0;
+    }
   }
   
   calculateNumberOf2rbcAssets() {
@@ -924,7 +989,7 @@ class MobileGenerator extends BaseGenerator {
     if (this.drive.driveDate && this.drive.startTime && this.drive.endTime) {
       const driveStart = this.helper.newDateTime(this.drive.driveDate, this.drive.startTime, this.masterData.timezoneSidId);
       const maximumShiftLengthThreshold = this.drive.collectionOperation.maximumShiftLengthThreshold;
-      const { maxDurationBefore, maxDurationAfter } = this.helper.calculateMinMaxRoleTimeDuration(driveShiftsMetadata.resourceRoleGroupRoleTimeDataMap);
+      const { maxDurationBefore, maxDurationAfter } = this.helper.calculateMinMaxRoleTimeDuration(this.drive, driveShiftsMetadata.resourceRoleGroupRoleTimeDataMap);
       const driveDrawHoursInMinutes = this.helper.calculateDrawHoursInMinutes(this.drive, this.masterData);
       const maxDriveLengthInMinutes = driveDrawHoursInMinutes + maxDurationBefore + maxDurationAfter;
       const noOfShifts = maximumShiftLengthThreshold ? Math.ceil(maxDriveLengthInMinutes / maximumShiftLengthThreshold) : 0;
@@ -975,7 +1040,12 @@ class MobileGenerator extends BaseGenerator {
     this.calculateTotalProceduresProjected(driveShiftsMetadata);
     driveShiftsMetadata.driveShifts.forEach(driveShift => {
       this.calculateTotalProceduresProjected(driveShift);
-      driveShift.resourceRoleGroupRoleTimeDataMap = this.helper.calculateDriveShiftRoleTimeData(this.drive, driveShift, driveShiftsMetadata.driveShifts);
+      driveShift.resourceRoleGroupRoleTimeDataMap = this.helper.calculateDriveShiftRoleTimeData(
+        this.masterData,
+        this.drive, 
+        driveShift, 
+        driveShiftsMetadata.driveShifts
+      );
       driveShift.lunchBreakSettings = this.helper.calculateDriveShiftLunchBreakSettings(this.drive, driveShift, this.masterData);
     })
   }
@@ -1031,19 +1101,23 @@ class MobileGenerator extends BaseGenerator {
         let resourceQuantityMap = this.mapResourceQuantity.get(driveShift.key);
         const staffingComplement = staffingComplementChanged[driveShiftIndex];
         Object.keys(staffingComplement).forEach(resourceRole => {
-          const { quantity, systemQuantity, vphhQuantity, aptQuantity, dualRole } = staffingComplement[resourceRole];
+          const { quantity, systemQuantity, vphhQuantity, aptQuantity, dualRole, isManuallyCreated, manuallyCreatedFrom } = staffingComplement[resourceRole]; //preserve properties for manually created jobs
           if(resourceRole === 'VP/HH') {
             resourceQuantityMap.set('VP/HH', {
               vphhQuantity: vphhQuantity,
               aptQuantity: aptQuantity,
               systemQuantity: systemQuantity,
-              dualRole: dualRole
+              dualRole: dualRole,
+              isManuallyCreated: isManuallyCreated,
+              manuallyCreatedFrom: manuallyCreatedFrom
             });
           } else {
             resourceQuantityMap.set(resourceRole, {
               quantity: quantity,
               systemQuantity: systemQuantity,
-              dualRole: dualRole
+              dualRole: dualRole,
+              isManuallyCreated: isManuallyCreated,
+              manuallyCreatedFrom: manuallyCreatedFrom
             });
           }
         })
@@ -1080,7 +1154,7 @@ class MobileGenerator extends BaseGenerator {
           jobs
         }
       })
-    }, this.masterData.backupDrive);
+    }, this.masterData.backupDrive, { isDriveGettingRegenerated : this.isRegenerateDriveChange });
     if(!systemGeneratedStaffingComplementChanges.newJobs.length && 
       !systemGeneratedStaffingComplementChanges.changedJobs.length && 
       !systemGeneratedStaffingComplementChanges.deletedJobs.length) {
@@ -1096,17 +1170,20 @@ class MobileGenerator extends BaseGenerator {
       if(!resourceQuantityMap) return;
 
       let tempResourceQuantityMap = cloneDeep(resourceQuantityMap);
+      let tempManuallyCreatedQuantityMap = new Map();
       let backupDualRoles = backupDualRolesMap[driveShiftIndex];
       backupDualRoles.forEach(item => {
+        if(item.isManuallyCreated) return;
+
         const { resourceRole, dualRole, quantity } = item;
         //after
-        let hasResourceRoleAfterRegenerated = tempResourceQuantityMap.has(resourceRole);
+        const hasResourceRoleAfterRegenerated = tempResourceQuantityMap.has(resourceRole);
         let hasDualRoleAfterRegenerated = tempResourceQuantityMap.has(dualRole);
         let resourceRoleQuantityAfterRegenreted = tempResourceQuantityMap.get(resourceRole);
 
         const canRestore = hasResourceRoleAfterRegenerated && hasDualRoleAfterRegenerated && (
-          tempResourceQuantityMap.get(resourceRole)?.quantity === quantity && 
-          tempResourceQuantityMap.get(dualRole)?.quantity === quantity
+          tempResourceQuantityMap.get(resourceRole)?.quantity >= quantity && 
+          tempResourceQuantityMap.get(dualRole)?.quantity >= quantity
         );
 
         if(canRestore) {
@@ -1116,16 +1193,36 @@ class MobileGenerator extends BaseGenerator {
         }
       });
 
+      backupDualRoles.forEach(item => {
+        if(!item.isManuallyCreated) return;
+
+        const { resourceRole, quantity, vphhQuantity, aptQuantity, isManuallyCreated, manuallyCreatedFrom } = item;
+        tempManuallyCreatedQuantityMap.set(resourceRole, {
+          isManuallyCreated,
+          manuallyCreatedFrom,
+          resourceRole,
+          quantity,
+          vphhQuantity,
+          aptQuantity
+        })
+      });
+
+      tempResourceQuantityMap.forEach((item, resourceRole) => {
+        if(resourceRole === 'VP/HH') {
+          item.quantity = item.vphhQuantity + (item.aptQuantity || 0);
+        }
+      });
+
       //check if latest Resources still can adapt current drive shift donors, if yes apply tempResourceQuantityMap to this.mapResourceQuantity
       const driveShiftStaffCapacity = Math.floor(this.helper.calculateStaffCapacity([
         'Driver', 'Driver Support', '2RBC', 'VP/HH', 'Charge'
       ], this.drive, driveShiftMetadata, 
         new Map()
-          .set(driveShiftMetadata.key, tempResourceQuantityMap)
+          .set(driveShiftMetadata.key, new Map([...tempResourceQuantityMap, ...tempManuallyCreatedQuantityMap]))
       , this.masterData));
       const canAdaptCurrentDriveShiftDonors = driveShiftStaffCapacity >= driveShiftMetadata.donorsScheduled;
       if(canAdaptCurrentDriveShiftDonors) {
-        this.mapResourceQuantity.set(driveShiftMetadata?.key, tempResourceQuantityMap);
+        this.mapResourceQuantity.set(driveShiftMetadata?.key, new Map([...tempResourceQuantityMap, ...tempManuallyCreatedQuantityMap]));
       }
     });
   }
@@ -1162,7 +1259,7 @@ class MobileGenerator extends BaseGenerator {
     let availableVehicles = vehicles.filter(vehicle => {
       const validTagIds = [];
       (vehicle.resourceTags || []).find((resourceTag) => {
-        if (resourceTag.startDate <= this.drive.driveDate && (!resourceTag.expiryDate || this.drive.driveDate <= resourceTag.expiryDate)) {
+        if (resourceTag.startDate <= this.drive.driveDate) {
           validTagIds.push(resourceTag.tagId);
         }
       });
@@ -1375,6 +1472,19 @@ class MobileGenerator extends BaseGenerator {
           }
 
           driveShift.jobs.forEach(job => {
+            if(!job.resourceRole) return;
+            
+            if(this.helper.isManuallyCreatedJob(job, this.drive)) {
+              this.backupDualRolesMap[driveShiftIndex].push({
+                resourceRole: job.resourceRole,
+                quantity: job.quantity,
+                vphhQuantity: job.vphhQuantity,
+                aptQuantity: job.aptQuantity,
+                isManuallyCreated: true,
+                manuallyCreatedFrom: job.manuallyCreatedFrom 
+              })
+            }
+
             if(job.resourceRole && job.dualRole) {
               this.backupDualRolesMap[driveShiftIndex].push({
                 resourceRole: job.resourceRole,
@@ -1391,6 +1501,8 @@ class MobileGenerator extends BaseGenerator {
       this.drive.driveShifts = this.buildMultiDriveShifts();
       this.populateDriveTime();
       this.updateDriveStaffCapacity();
+      this.updateDriveAverageStaffCapacity();
+      this.updateDriveExcessStaffCapacity();
       this.updateDriveRequestedResources();
 
       if(!skipGenerateSlots) {
@@ -1519,21 +1631,25 @@ class MobileGenerator extends BaseGenerator {
       job.resourceRole = resourceRole;
 
       if (resourceRole === 'VP/HH') {
-        let { vphhQuantity, aptQuantity, dualRole, systemQuantity } = mapResourceQuantity.get(resourceRole);
+        let { vphhQuantity, aptQuantity, dualRole, systemQuantity, isManuallyCreated, manuallyCreatedFrom } = mapResourceQuantity.get(resourceRole);
         if (vphhQuantity > 0 || aptQuantity > 0) {
           job.dualRole = dualRole || '';
           job.vphhQuantity = vphhQuantity;
           job.aptQuantity = aptQuantity;
           job.quantity = vphhQuantity + (aptQuantity || 0);
           job.systemQuantity = systemQuantity || job.quantity;
+          job.isManuallyCreated = !!isManuallyCreated;
+          job.manuallyCreatedFrom = manuallyCreatedFrom;
           jobs.push(job);
         }
       } else {
-        let { quantity, dualRole, systemQuantity } = mapResourceQuantity.get(resourceRole);
+        let { quantity, dualRole, systemQuantity, isManuallyCreated, manuallyCreatedFrom } = mapResourceQuantity.get(resourceRole);
         if (quantity > 0) {
           job.quantity = quantity;
           job.dualRole = dualRole || '';
           job.systemQuantity = systemQuantity || job.quantity;
+          job.isManuallyCreated = !!isManuallyCreated;
+          job.manuallyCreatedFrom = manuallyCreatedFrom;
           jobs.push(job);
         }
       }
@@ -1579,11 +1695,19 @@ class MobileGenerator extends BaseGenerator {
     });
 
     let originalDriveShift = this.drive.driveShifts[driveShiftIndex];
-    //manually created jobs 
-    const manuallyCreatedJobs = (originalDriveShift?.jobs || []).filter(job => {
+
+    //manually created jobs
+    let manuallyCreatedJobs = (originalDriveShift?.jobs || []).filter(job => {
       const isManuallyCreatedJob = this.helper.isManuallyCreatedJob(job, this.drive);
       const existed = this.helper.findJob(job, jobs);
       return isManuallyCreatedJob && !existed;
+    })
+    .map(job => {
+      let updatedJob = extend({}, job, jobTemplate);
+      return extend(updatedJob, {
+        isManuallyCreated: true, 
+        manuallyCreatedFrom: job.manuallyCreatedFrom
+      });
     });
     driveShift.jobs = jobs.concat(cloneDeep(manuallyCreatedJobs));
   }
@@ -1731,6 +1855,9 @@ class MobileGenerator extends BaseGenerator {
     let paddingPercentage = this.masterData.adminSetting.callListRecipient;
     if (this.drive.opportunity && !this.drive.opportunity.callListRecipientExist) {
       paddingPercentage = this.masterData.adminSetting.callListRecipientNone;
+    }
+    if(!isNullOrEmpty(this.drive.opportunity.slotGenerator)) {
+      paddingPercentage = this.drive.opportunity.slotGenerator / 100;
     }
     const driveShiftStaffCapacity = this.calculateDriveShiftStaffCapacity(driveShift, true);
     let totalDefaultSlots = Math.ceil(driveShiftStaffCapacity * paddingPercentage);
@@ -1939,7 +2066,11 @@ class MobileGenerator extends BaseGenerator {
       this.calculateTotalProceduresProjected(this.drive.driveShiftsMetadata);
       this.drive.driveShiftsMetadata.driveShifts.forEach((driveShiftMetadata) => {
         this.calculateTotalProceduresProjected(driveShiftMetadata);
-        driveShiftMetadata.resourceRoleGroupRoleTimeDataMap = this.helper.calculateDriveShiftRoleTimeData(this.drive, driveShiftMetadata);
+        driveShiftMetadata.resourceRoleGroupRoleTimeDataMap = this.helper.calculateDriveShiftRoleTimeData(
+          this.masterData, 
+          this.drive, 
+          driveShiftMetadata
+        );
         driveShiftMetadata.lunchBreakSettings = this.helper.calculateDriveShiftLunchBreakSettings(this.drive, driveShiftMetadata, this.masterData);
       });
 
@@ -2100,6 +2231,8 @@ class MobileGenerator extends BaseGenerator {
       this.populateShiftTime(driveShift);
       this.populateDriveTime();
       this.updateDriveStaffCapacity();
+      this.updateDriveAverageStaffCapacity();
+      this.updateDriveExcessStaffCapacity();
       this.updateDriveRequestedResources();
       this.calculateDriveProductivityPlanned();
       this.generateShiftSlots(driveShift);
@@ -2174,6 +2307,13 @@ class MobileGenerator extends BaseGenerator {
     return this.fetch.retrieveCollectionOperationSDM(this.drive)
     .then((staffingDecisionMatrix) => {
       this.masterData.staffingDecisionMatrix = staffingDecisionMatrix;
+    })
+  }
+
+  retrieveTerritoryCollectionOperations() {
+    return this.fetch.retrieveTerritoryCollectionOperations(this.drive)
+    .then((territoryCollectionOperations) => {
+      this.masterData.territoryCollectionOperations = territoryCollectionOperations;
     })
   }
 

@@ -5,10 +5,9 @@ import {
 import { sObjectType, debugLogService, driveService, driveChangeRequestQueryModel, driveChangeRequestService, opportunityQueryModel, opportunityService, locationService, locationQueryModel, driveQueryModel, approvalService } from 'c/dataService';
 import { isNullOrEmpty, getValueFromEvent, waitUntil} from 'c/slwcUtils';
 import { DateTime } from 'c/luxon';
-import { PENDING_ACTION, DRIVE_REQUEST_CHANGE_STATUS, DRIVE_STATUS, DRIVE_CHANGE_REQUEST_ITEM_TYPE, DRIVE_APPROVAL_STATUS } from 'c/slwcConstants';
-import { slwcDriveGeneratorHelper, DriveHelper } from 'c/slwcDriveGenerator';
+import { PENDING_ACTION, DRIVE_REQUEST_CHANGE_STATUS, DRIVE_STATUS, DRIVE_CHANGE_REQUEST_ITEM_TYPE, DRIVE_APPROVAL_STATUS, DRIVE_TYPE } from 'c/slwcConstants';
+import { slwcDriveGeneratorHelper, DriveHelper, DriveFetch } from 'c/slwcDriveGenerator';
 import { NavigationMixin } from 'lightning/navigation';
-import { DriveFetch } from 'c/slwcDriveGenerator';
 
 let driveGeneratorInstance = {
   drive: null,
@@ -98,7 +97,7 @@ const STEP = {
     value: 4,
     label: 'Saving Drive',
     action: function(scope) {
-      return scope.saveDrive(scope.drive)
+      return scope.saveDrive(scope.drive, scope)
         .then(() => {
           if (scope.mode === MODE.GENERATE_DRIVE) {
             scope.resultMessage = 'Drive was generated successfully.';
@@ -116,6 +115,12 @@ const STEP = {
             scope.resultMessage = 'Drive was updated successfully.';
           }
           scope.hookAfterFinishedHandler(true, scope.resultMessage);
+        })
+        .catch(error => {
+          scope.resultMessage = error.message;
+          scope.hookAfterFinishedHandler(false, scope.resultMessage);
+        })
+        .finally(() => {
           return false;
         })
     }
@@ -131,7 +136,7 @@ const STEP = {
         })
         .then(() => {
           let driveChanges = scope.generateDriveChangesFromDCR(scope.drive, scope.driveChangeRequest);
-          return driveGeneratorInstance.onDriveDataChanged(driveChanges)
+          return driveGeneratorInstance.onDriveDataChanged(driveChanges, { isCalledFromDCRProcessingModal : true })
         })
         .then(() => {
           scope.drive = driveGeneratorInstance.drive;
@@ -340,6 +345,26 @@ const STEP = {
         return false;
       });
     }
+  },
+  PRE_GENERATE_DRIVE_CHECKING: {
+    value: 13,
+    label: 'Pre-generate Drive Checking',
+    action: function(scope) {
+      return scope.validatePreGenerateDrive(scope.recordId)
+      .then((errorMessages = []) => {
+        if(errorMessages.length > 0) {
+          scope.resultMessage = `Cannot generate drive due to below errors:
+              ${errorMessages.map(erorrMessage => {
+                return `- ${erorrMessage}`
+              }).join('\n')}
+          `;
+
+          scope.hookAfterFinishedHandler(false, scope.resultMessage);
+        }
+
+        return errorMessages.length <= 0;
+      });
+    }
   }
 }
 
@@ -358,6 +383,7 @@ const MODE_STEPS = {
   ],
   [MODE.GENERATE_DRIVE]: [
     STEP.VALIDATE_OPPORTUNITY,
+    STEP.PRE_GENERATE_DRIVE_CHECKING,
     STEP.GENERATE_DRIVE,
     STEP.VALIDATE_DRIVE_PRODUCTIVITY,
     STEP.SAVE_DRIVE
@@ -398,6 +424,7 @@ export default class SlwcGenerateDriveModal extends NavigationMixin(LightningEle
   @track needToRefreshPage = false;
   @track needConfirmToContinue = false;
   @track needConfirmToSubmitDriveForApproval = false;
+  opportunity = null;
 
   get submissionNotesRequired() {
     return this.drive && this.drive.routeApprovalRequestTo === 'Request DM evaluation';
@@ -525,20 +552,7 @@ export default class SlwcGenerateDriveModal extends NavigationMixin(LightningEle
     let fetch = null;
     return Promise.resolve()
     .then(() => {
-      if(oppOrDriveId.startsWith('006')) {
-        let service = new opportunityService();
-        let queryModel = new opportunityQueryModel();
-        queryModel.recordIds = [oppOrDriveId];
-        return service.query(queryModel)
-      } else {
-        let service = new driveService();
-        let queryModel = new driveQueryModel();
-        queryModel.recordIds = [oppOrDriveId];
-        return service.query(queryModel)
-        .then(([drive]) => {
-          return [drive.opportunity];
-        })
-      }
+      return this.retrieveOpportunity(oppOrDriveId);
     })
     .then(([opportunity]) => {
       if(!opportunity.driveSiteId) {
@@ -610,22 +624,140 @@ export default class SlwcGenerateDriveModal extends NavigationMixin(LightningEle
     })
   }
 
-  saveDrive(drive) {
-    let drivesToSave = [];
-    let model = { ...drive };
+  validatePreGenerateDrive(oppOrDriveId) {
+    const validateTravelTimeData = ({ driveSite, driveDate, typeOfDrive, travelTimeIndexItemMap, loginUser }) => {
+      let errorMessages = [];
+      const helper = new DriveHelper();
+      if (typeOfDrive === DRIVE_TYPE.MOBILE && !helper.isAdminUser(loginUser) && !helper.isAPSAdmin(loginUser)) {
+        const validSiteCollectionOperation = (driveSite.siteCollectionOperations || []).find(item => {
+          return item.startDate <= driveDate && driveDate <= item.endDate;
+        });
 
-    drivesToSave.push(model);
-    let service = new driveService();
-    return service.saveList(drivesToSave);
+        const { travelTimeBreakdownsCoToSite, travelTimeBreakdownsSiteToCo} = helper.getTravelTimeBreakdownData({
+          driveDate,
+          driveSite,
+          collectionOperation: validSiteCollectionOperation?.collectionOperation || {}
+        }, { travelTimeIndexItemMap });
+
+        if (!travelTimeBreakdownsCoToSite?.length || !travelTimeBreakdownsSiteToCo?.length) {
+          errorMessages.push('Travel Time Data is missing.');
+        }
+      }
+
+      return errorMessages;
+    }
+
+    return Promise.resolve()
+      .then(() => {
+        return this.retrieveOpportunity(oppOrDriveId);
+      })
+      .then(([opportunity]) => {
+        const fetch = new DriveFetch({
+          driveType: opportunity.typeOfDrive
+        });
+        return fetch.retrieveDriveSite(opportunity)
+        .then(driveSite => {
+          return Promise.all([
+            opportunity,
+            driveSite,
+            fetch.retrieveTravelTimeIndexItemMap({ driveSite }),
+            fetch.retrieveLoginUser()
+          ]);
+        });
+      })
+      .then(([opportunity, driveSite, travelTimeIndexItemMap, loginUser]) => {
+        return Promise.all([
+          validateTravelTimeData({ 
+            driveSite,
+            driveDate: opportunity.driveDate,
+            typeOfDrive: opportunity.typeOfDrive,
+            travelTimeIndexItemMap,
+            loginUser
+          })
+        ]);
+      })
+      .then(errorLists => {
+        return errorLists.reduce((mergedList, currentErrorList) => {
+          return [...mergedList, ...currentErrorList];
+        }, []);
+      });
+  }
+
+  retrieveOpportunity(oppOrDriveId) {
+    return Promise.resolve()
+    .then(() => {
+      if (this.opportunity) {
+        return [this.opportunity];
+      } else {
+        if(oppOrDriveId.startsWith('006')) {
+          let service = new opportunityService();
+          let queryModel = new opportunityQueryModel();
+          queryModel.recordIds = [oppOrDriveId];
+          return service.query(queryModel)
+          .then(([opportunity]) => {
+            this.opportunity = opportunity;
+            return [opportunity];
+          })
+        } else {
+          let service = new driveService();
+          let queryModel = new driveQueryModel();
+          queryModel.recordIds = [oppOrDriveId];
+          return service.query(queryModel)
+          .then(([drive]) => {
+            this.opportunity = drive.opportunity;
+            return [drive.opportunity];
+          });
+        } 
+      }
+    });
+  }
+
+  saveDrive(drive, scope) {
+    return Promise.resolve()
+      .then(()=> {
+          let drivesToSave = [];
+          let model = { ...drive };
+          drivesToSave.push(model);
+          let service = new driveService();
+          return service.saveList(drivesToSave);
+      })
+      .then((result) => {
+        if(!result.success) throw result;
+
+        if (scope.mode === MODE.LISTEN_OPPORTUNITY_CHANGED && scope.driveChangeRequest) {
+          let dcrService = new driveChangeRequestService();
+          let dcr = {
+            id: scope.driveChangeRequest.id,
+            status: DRIVE_REQUEST_CHANGE_STATUS.APPROVED_BY_SYSTEM
+          }
+          return dcrService.save(dcr);
+        }
+      })
+      .catch(error => {
+        return Promise.resolve()
+          .then(() => {
+            if (this.mode === MODE.LISTEN_OPPORTUNITY_CHANGED && this.driveChangeRequest) {
+              let dcrService = new driveChangeRequestService();
+              let dcr = {
+                id: this.driveChangeRequest.id,
+                status: DRIVE_REQUEST_CHANGE_STATUS.CANCELLED
+              }
+              return dcrService.save(dcr);
+            }
+          })
+          .then(() => {
+            throw error;
+          })
+      })
   }
 
   validate() {
     let allInputsCorrect = [
-        ...this.template.querySelectorAll("lightning-textarea")
+      ...this.template.querySelectorAll("lightning-textarea")
     ];
     return allInputsCorrect.reduce((validSoFar, inputField) => {
-        inputField.reportValidity();
-        return validSoFar && inputField.checkValidity();
+      inputField.reportValidity();
+      return validSoFar && inputField.checkValidity();
     }, true);
   }
 
@@ -661,7 +793,7 @@ export default class SlwcGenerateDriveModal extends NavigationMixin(LightningEle
 
   submitDCR() {
     this.needConfirmToSubmitDriveForApproval = false;
-
+    
     this.showLoading();
     let driveContentions = this.getDriveContentions(this.drive);
     let driveChangeRequestItems = driveGeneratorInstance.compareAndGetDriveChanges();
@@ -673,57 +805,56 @@ export default class SlwcGenerateDriveModal extends NavigationMixin(LightningEle
         driveChangeRequestItems: driveChangeRequestItems
       }
     })
-    .then(() => {
-      const service = new approvalService();
-      return service.isPendingApproval({
-        recordId: this.drive.id
-      })
-    })
-    .then((result) => {
-      const isDrivePendingApproval = result.returnedData;
-      return Promise.resolve()
       .then(() => {
-        if(isDrivePendingApproval) {
-          const approvalSvc = new approvalService();
-          return approvalSvc.withdraw({
-            request : {
-              recordId: this.drive.id
+        const service = new approvalService();
+        return service.isPendingApproval({
+          recordId: this.drive.id
+        })
+      })
+      .then((result) => {
+        const isDrivePendingApproval = result.returnedData;
+        return Promise.resolve()
+          .then(() => {
+            if (isDrivePendingApproval) {
+              const approvalSvc = new approvalService();
+              return approvalSvc.withdraw({
+                request: {
+                  recordId: this.drive.id
+                }
+              })
+                .then(() => {
+                  //wait until isDrivePendingApproval returned false
+                  return waitUntil(() => {
+                    return approvalSvc.isPendingApproval({
+                      recordId: this.drive.id
+                    })
+                      .then(result => {
+                        return !result.returnedData;
+                      });
+                  }, 3000, 100);
+                })
             }
           })
           .then(() => {
-            //wait until isDrivePendingApproval returned false
-            return waitUntil(() => {
-              return approvalSvc.isPendingApproval({
-                recordId: this.drive.id
-              })
-              .then(result => {
-                return !result.returnedData;
-              });
-            }, 3000, 100);
+            return isDrivePendingApproval;
           })
-        }
       })
-      .then(() => {
-        return isDrivePendingApproval;
-      })
-    })
-    .then((isDrivePendingApproval) => {
-      const driveHelper = new DriveHelper();
-      const autoApprove = driveHelper.isFixedSiteDrive(this.drive) || (this.drive.status === DRIVE_STATUS.DRAFT && !isDrivePendingApproval);
-      if(!autoApprove && driveContentions.length > 0) {
-        if(this.drive.status === DRIVE_STATUS.DRAFT) {
-          this.showLoading('Re-submitting Drive Approval Request...');
-          let dcrService = new driveChangeRequestService();
-          let dcr = {
-            id: this.driveChangeRequest.id,
-            status: 'Approved by System'
-          }
-          return dcrService.save(dcr)
-          .then(() => {
-            return this.nextStep(null, STEP.SAVE_DRIVE);
-          });
-        } else {
-          if(this.driveChangeRequest.status === DRIVE_REQUEST_CHANGE_STATUS.PENDING) {
+      .then((isDrivePendingApproval) => {
+        const driveHelper = new DriveHelper();
+        const autoApprove = driveHelper.isFixedSiteDrive(this.drive) || (this.drive.status === DRIVE_STATUS.DRAFT && !isDrivePendingApproval);
+        if (!autoApprove && driveContentions.length > 0) {
+          if (this.drive.status === DRIVE_STATUS.DRAFT) {
+            this.showLoading('Re-submitting Drive Approval Request...');
+            let dcrService = new driveChangeRequestService();
+            let dcr = {
+              id: this.driveChangeRequest.id,
+              status: 'Approved by System'
+            }
+            return dcrService.save(dcr)
+              .then(() => {
+                return this.nextStep(null, STEP.SAVE_DRIVE);
+              });
+          } else {
             let dcrService = new driveChangeRequestService();
             let dcr = {
               id: this.driveChangeRequest.id,
@@ -733,36 +864,23 @@ export default class SlwcGenerateDriveModal extends NavigationMixin(LightningEle
               routeApprovalRequestTo: this.drive.routeApprovalRequestTo
             }
             return dcrService.save(dcr)
-            .then(() => {
-              this.resultMessage = `Drive has been submitted for approval.`;
-              this.hookAfterFinishedHandler(true, this.resultMessage);
-              return false;
-            })
-            .catch(error => {
-              this.resultMessage = error.message || 'Cannot submit drive for approval.';
-              this.hookAfterFinishedHandler(false, this.resultMessage);
-              return false;
-            });
-          } else {
-  
-            this.resultMessage = `Drive has been submitted for approval.`;
-            this.hookAfterFinishedHandler(true, this.resultMessage);
-            return false;
+              .then(() => {
+                this.resultMessage = `Drive has been submitted for approval.`;
+                this.hookAfterFinishedHandler(true, this.resultMessage);
+                return false;
+              })
+              .catch(error => {
+                this.resultMessage = error.message || 'Cannot submit drive for approval.';
+                this.hookAfterFinishedHandler(false, this.resultMessage);
+                return false;
+              });
           }
         }
-      } else {
-        let dcrService = new driveChangeRequestService();
-        let dcr = {
-          id: this.driveChangeRequest.id,
-          status: 'Approved by System'
+        else {
+          return this.nextStep(null, STEP.SAVE_DRIVE);
         }
-        return dcrService.save(dcr)
-        .then(() => {
-          return this.nextStep(null, STEP.SAVE_DRIVE)
-        });
-      }
-    })
-    .finally(() => this.hideLoading())
+      })
+      .finally(() => this.hideLoading())
   }
 
   rejectDCR() {

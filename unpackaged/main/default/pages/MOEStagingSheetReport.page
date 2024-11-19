@@ -1,0 +1,15 @@
+<apex:page title="MOEStagingSheetReport" controller="PowerBIProxyController"  docType="html-5.0" action="{!redirect}">
+    
+    
+    <script>
+    /*window.onload=function()
+        {
+        //var inputCheckBox = "";
+        //console.log(inputCheckBox);
+        //window.location.href ='{!redirectUrl}';
+        //window.location.Assign('{!redirectUrl}');
+        location.replace('{!redirectUrl}');
+    };*/
+    </script>
+    
+</apex:page>

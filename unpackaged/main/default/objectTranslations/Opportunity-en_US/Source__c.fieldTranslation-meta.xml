@@ -7,6 +7,10 @@
             <translation><!-- Adhoc --></translation>
         </picklistValues>
         <picklistValues>
+            <masterLabel>Business Planning</masterLabel>
+            <translation><!-- Business Planning --></translation>
+        </picklistValues>
+        <picklistValues>
             <masterLabel>Calendar Build</masterLabel>
             <translation><!-- Calendar Build --></translation>
         </picklistValues>

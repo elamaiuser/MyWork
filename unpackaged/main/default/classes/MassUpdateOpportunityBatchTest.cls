@@ -10,15 +10,14 @@ private class MassUpdateOpportunityBatchTest{
         String mobileSiteRecType = 'Mobile Site';    
         Map<String,Id> recordTypeMap  = new Map<String,Id>();
         recordTypeMap = recordTypeMap( 'Opportunity' );
-        System.debug( '#debug#1 is ' + recordTypeMap );
         Id optyRecTypeId = recordTypeMap.get(mobileOppRecType);
         
         recordTypeMap = recordTypeMap( 'Account' );
-        System.debug( '#debug#1 is ' + recordTypeMap );
+        
         Id accRecTypeId = recordTypeMap.get(mobileAccRecType);
         
         recordTypeMap = recordTypeMap( 'sked__Location__c' );
-        System.debug( '#debug#1 is ' + recordTypeMap );
+        
         Id siteRecTypeId = recordTypeMap.get(mobileSiteRecType);
         
         User AdminUser = new User(
@@ -38,7 +37,7 @@ private class MassUpdateOpportunityBatchTest{
         
         //insert AdminUser ;
         
-        UserRole urole  = [select id from userrole where developername =: rolename ];
+        //UserRole urole  = [select id from userrole where developername =: rolename ];
         
         User DRDAMUser = new User(
             ProfileId = [SELECT Id FROM Profile WHERE Name = 'DRD Manager'].Id,
@@ -51,12 +50,9 @@ private class MassUpdateOpportunityBatchTest{
             TimeZoneSidKey = 'America/Los_Angeles',
             EmailEncodingKey = 'UTF-8',
             LanguageLocaleKey = 'en_US',
-            LocaleSidKey = 'en_US',
-            UserRoleId = urole.Id
+            LocaleSidKey = 'en_US'
         );
-        
-        
-        
+
         System.runAs( AdminUser ){
             insert DRDAMUser;
         }
@@ -68,14 +64,17 @@ private class MassUpdateOpportunityBatchTest{
             accObj = new Account();
             accObj.RecordTypeId = accRecTypeId;
             accObj.Name = 'Exavalu';
-            accObj.BillingPostalCode = '30622';            
+            accObj.BillingPostalCode = '30622';
+            accObj.Internal_Name__c ='Exavalu';             
             mobileAccList.add(accobj); 
             
             accObj = new Account();
             accObj.RecordTypeId = accRecTypeId;
             accObj.Name = 'Exavalu2';
-            accObj.BillingPostalCode = '30623';            
-            mobileAccList.add(accobj); 
+            accObj.BillingPostalCode = '30623';    
+            accObj.Internal_Name__c ='Exavalu2';         
+            mobileAccList.add(accobj);
+            triggerHandler.bypass('AccountTriggerHandler');
             insert mobileAccList;
             
             List<AccountTeammember> atmList = new List<AccountTeammember>();
@@ -103,7 +102,7 @@ private class MassUpdateOpportunityBatchTest{
             atm.End_Date__c = Date.Today().addDays(10);
             atm.Start_Date__c = Date.Today().addDays(-10);
             atmList.add(atm);
-            
+            triggerHandler.bypass('AccountTeamMemberTriggerHandler');
             insert atmList;
             
             Contact conObj = new Contact();
@@ -121,6 +120,7 @@ private class MassUpdateOpportunityBatchTest{
             conObj.HomePhone = '222-222-3333';
             conObj.MobilePhone = '222-222-3333';
             conObj.OtherPhone = '222-222-3333';
+            triggerHandler.bypass('ContactTriggerHandler');
             insert conObj;
             
             sked__Tag__c skedTag = new sked__Tag__c();
@@ -128,8 +128,7 @@ private class MassUpdateOpportunityBatchTest{
             skedTag.sked__Type__c = 'Physical Location Type'; 
             
             insert skedTag; 
-            
-            
+
             sked__Location__c siteObj = new sked__Location__c();
             siteObj.RecordTypeId = siteRecTypeId;
             siteObj.Name = 'Test Site';
@@ -160,6 +159,7 @@ private class MassUpdateOpportunityBatchTest{
             siteObj.sked_Wireless_Policy__c = 'Accepted';
             siteObj.Source__c = 'Custom New Form';
             siteObj.sked_Date_Site_Inspection_Completed__c = Date.today();
+            TriggerHandler.bypass('SiteTriggerHandler');
             insert siteObj;
             
             List<Opportunity> oppsobjlist = new List<Opportunity>();
@@ -178,8 +178,9 @@ private class MassUpdateOpportunityBatchTest{
             optyObj.X2RBC_Projected_Procedures__c = 1;
             optyObj.Anticipated_Registered_Donors__c = 1;
             
-            oppsobjlist.add( optyObj );
-			insert oppsobjlist;
+            oppsobjlist.add( optyObj );       
+            triggerHandler.bypass('OpportunityTriggerHandler');
+            insert oppsobjlist;
 
             Biomed_Collection_Op_Center__c testCollectionOperation1 = new Biomed_Collection_Op_Center__c(Name = 'Collection Operation 1',
                                                                                                         sked_Lunch_Break_Duration_Fixed_Site__c = '30',
@@ -203,7 +204,9 @@ private class MassUpdateOpportunityBatchTest{
                                                         sked_End_Time__c = Time.newInstance(17, 0, 0, 0),
                                                         sked_Drive_Productivity_Planned__c = 0.8,
                                                         sked_Projected_Registered_Donors__c = 100,
-                                                        sked_Status__c = 'Draft');
+                                                        sked_2RBC_Projected_Procedures__c = 10,
+                                                        sked_Status__c = skedConstants.DRIVE_STATUS_DRAFT);
+            triggerHandler.bypass('DriveTriggerHandler');
             insert testDrive1;
         }        
         
@@ -211,52 +214,55 @@ private class MassUpdateOpportunityBatchTest{
     @isTest
     static void testMethod1(){
         MassUpdateOpportunity.oppVariable objid = new MassUpdateOpportunity.oppVariable();
-        List<Opportunity> oplist = [SELECT Id,	
-                                            Number_of_Platelet_Assets__c,	
-                                            Number_of_Plasma_Assets__c,	
-                                            Number_of_2RBC_Assets__c,	
-                                            Calendar_Description__c,	
-                                            Online_Donor_Message__c,	
-                                            Open_to_Public__c,	
-                                            sked_Cancellation_Reason__c,	
-                                            Platelet_Projected_Procedures__c,	
-                                            Plasma_Pheresis_Projected_Procedures__c,	
-                                            WB_Projected_Procedures__c,	
-                                            WholeBloodProcedureProjectedChangeReason__c,	
-                                            X2RBC_Projected_Procedures__c,	
-                                            DoubleRedProceduresProjectedChangeReason__c,	
-                                            Start_Time__c,	
-                                    		Initiated_By__c,	
-                                            End_Time__c,	
-                                            Processing_Status__c,	
-                                    		StageName
-                                    FROM Opportunity LIMIT 1];	
-        objid.oppToUpdate = oplist;	
-        objid.updatedPlateletAsset = 10;	
-        objid.updatedPlasmaAsset = 10;	
-        objid.updated2rbcAsset = 10;	
-        objid.updatedCalendarDesc = 'test';	
-        objid.updatedOnlineDonor = 'test';	
-        objid.updatedOpenToPublic = 'test';	
-        objid.updatedStage = 'Cancelled';	
-        objid.updatedPlateletPP = 10;	
-        objid.updatedPlasmaPheresisPP = 10;	
-        objid.updatedWBProjectedProc = 10;	
-        objid.updatedDRReason = 'test';	
-        objid.updatedWBProcReason = 'test';	
-        objid.updated2RBCProjProcedure = 10;	
-        objid.updatedCancelledStage = 'Cancelled';	
-        objid.updatedCancellationReason = 'ARC Management';	
-        objid.updatedInitiatedBy = 'ARC Initiated-Mobile';	
-        objid.updatedEndTime = '1230';	
+        List<Opportunity> oplist = [SELECT Id,
+                                            Number_of_Platelet_Assets__c,
+                                            Number_of_Plasma_Assets__c,
+                                            Number_of_2RBC_Assets__c,
+                                            Calendar_Description__c,
+                                            Online_Donor_Message__c,
+                                            Open_to_Public__c,
+                                            sked_Cancellation_Reason__c,
+                                            Platelet_Projected_Procedures__c,
+                                            Plasma_Pheresis_Projected_Procedures__c,
+                                            WB_Projected_Procedures__c,
+                                            WholeBloodProcedureProjectedChangeReason__c,
+                                            X2RBC_Projected_Procedures__c,
+                                            DoubleRedProceduresProjectedChangeReason__c,
+                                            Start_Time__c,
+                                    		Initiated_By__c,
+                                            End_Time__c,
+                                            Processing_Status__c,
+                                    		StageName,
+                                    		Anticipated_Registered_Donors__c,
+                                    		AnticipatedRegisterDonorChangeReason__c
+                                    FROM Opportunity LIMIT 1];
+        objid.oppToUpdate = oplist;
+        objid.updatedPlateletAsset = 10;
+        objid.updatedPlasmaAsset = 10;
+        objid.updated2rbcAsset = 10;
+        objid.updatedCalendarDesc = 'test';
+        objid.updatedAnticipatedRegisteredDonors = 10;
+        objid.updatedARegisteredDonorsReason = 'test';
+        objid.updatedOnlineDonor = 'test';
+        objid.updatedOpenToPublic = 'test';
+        objid.updatedStage = 'Cancelled';
+        objid.updatedPlateletPP = 10;
+        objid.updatedPlasmaPheresisPP = 10;
+        objid.updatedWBProjectedProc = 10;
+        objid.updatedDRReason = 'test';
+        objid.updatedWBProcReason = 'test';
+        objid.updated2RBCProjProcedure = 10;
+        objid.updatedCancelledStage = 'Cancelled';
+        objid.updatedCancellationReason = 'ARC Management';
+        objid.updatedInitiatedBy = 'ARC Initiated-Mobile';
+        objid.updatedEndTime = '1230';
         objid.updatedStartTime = '0430';
         Test.startTest();
-        skedHubBase.BypassUpdateTriggers = true;
         MassUpdateOpportunityBatch x = new MassUpdateOpportunityBatch(new List<MassUpdateOpportunity.oppVariable>{objid});
         Database.executeBatch(x);
-        Test.stopTest();
-        
+        Test.stopTest();  
     }
+    
     //Method to get the map of recordType Name as key and recordTypeId as value 
     private static Map<String,Id> recordTypeMap(string obj){
         Map<String,Id> recTypeNameWithIdMap = new Map<String,Id>();

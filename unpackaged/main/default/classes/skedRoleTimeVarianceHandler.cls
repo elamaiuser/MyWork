@@ -9,8 +9,7 @@ public class skedRoleTimeVarianceHandler extends skedTriggerHub {
     public override void onAfterInsert() {
         if (!skedSetting.instance.Admin.migrationMode) {
         	captureExceptionLog(this.context.newRecords);
-            // createDriveChangeRequests(this.context.newRecords);
-            updateRelatedJobs(this.context.newRecords);
+            updateRelatedJobs(skedRoleTimeVarianceUtils.getAdjustmentsToAddBufferForRelatedJobs(this.context.newRecords));
         }
     }
 
@@ -23,14 +22,14 @@ public class skedRoleTimeVarianceHandler extends skedTriggerHub {
     public override void onAfterUpdate() {
         if (!skedSetting.instance.Admin.migrationMode) {
         	captureExceptionLog(this.context.newRecords);
-            // createDriveChangeRequests(this.context.newRecords, (Map<Id, sked_Role_Time_Variance__c>) this.context.oldMap);
+            updateRelatedJobs(skedRoleTimeVarianceUtils.getAdjustmentsToModifyBufferForRelatedJobs(this.context.newRecords, (Map<Id, sked_Role_Time_Variance__c>)this.context.oldMap));
         }
     }
     
     public override void onAfterDelete() {
         if (!skedSetting.instance.Admin.migrationMode) {
         	captureExceptionLog(((Map<Id, sked_Role_Time_Variance__c>)this.context.oldMap).values());
-            // createDriveChangeRequests(this.context.oldRecords);
+            updateRelatedJobs(skedRoleTimeVarianceUtils.getAdjustmentsToRemoveBufferForRelatedJobs(((Map<Id, sked_Role_Time_Variance__c>)this.context.oldMap).values()));
         }
     }
     
@@ -66,29 +65,9 @@ public class skedRoleTimeVarianceHandler extends skedTriggerHub {
         }
     }
 
-    private void updateRelatedJobs(List<sked_Role_Time_Variance__c> rtvs) {
-        if (!Test.isRunningTest() && !System.isBatch() && !rtvs.isEmpty()) {
-            Database.executeBatch(new skedUpdateJobTimeVarianceBatch(rtvs), 1);
+    private void updateRelatedJobs(List<skedRoleTimeVarianceAdjustment> rtvAdjustments) {
+        if (!Test.isRunningTest() && !System.isBatch() && !rtvAdjustments.isEmpty()) {
+            Database.executeBatch(new skedUpdateJobTimeVarianceBatch(rtvAdjustments), 100);
         }
     }
-
-    // private void createDriveChangeRequests(List<sked_Role_Time_Variance__c> rtvs) {
-    //     if (!Test.isRunningTest() && !System.isBatch() && !rtvs.isEmpty()) {
-    //         Database.executeBatch(new skedCreateDCRForRTVBatch(rtvs), 1);
-    //     }
-    // }
-
-    // private void createDriveChangeRequests(List<sked_Role_Time_Variance__c> newRecords, Map<Id, sked_Role_Time_Variance__c> oldMap) {
-    //     List<sked_Role_Time_Variance__c> rtvsRequiringBatch = new List<sked_Role_Time_Variance__c>();
-    //     for (sked_Role_Time_Variance__c rtv : newRecords) {
-    //         sked_Role_Time_Variance__c oldRtv = oldMap.get(rtv.Id);
-    //         if (rtv.sked_Variation_Amount__c != oldRtv.sked_Variation_Amount__c) {
-    //             rtvsRequiringBatch.add(rtv);
-    //         }
-    //     }
-
-    //     if (!rtvsRequiringBatch.isEmpty()) {
-    //         Database.executeBatch(new skedCreateDCRForRTVBatch(rtvsRequiringBatch), 1);
-    //     }
-    // }
 }

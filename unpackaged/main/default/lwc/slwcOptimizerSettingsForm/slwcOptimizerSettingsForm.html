@@ -1,0 +1,61 @@
+<template>
+    <template if:true={showSpinner}>
+        <lightning-spinner class="spins" size="medium"></lightning-spinner>
+    </template>
+    <template if:true={initialized}>
+        <div class="slds-clearfix" if:false={readonly}>
+            <c-slwc-page-errors validities={errorMessages}></c-slwc-page-errors>
+            <lightning-button class="slds-float_right slds-m-right_xx-small" onclick={handleSave} variant="brand"
+                type="submit" name="update" label="Save"></lightning-button>
+        </div>
+        <div class={customClasses.weightLevelSection}>
+            <h3 class="slds-section__title">
+                <button aria-controls="weightLevelSettings" aria-expanded="true"
+                    class="slds-button slds-section__title-action" onclick={toggleWeightLevelSection}>
+                    <lightning-icon icon-name="utility:switch" size="x-small" aria-hidden="true"
+                        class="slds-section__title-action-icon slds-button__icon slds-button__icon_left slds-m-bottom_xx-small"></lightning-icon>
+                    <span class="slds-truncate" title="Section Title">Weight Level Settings</span>
+                </button>
+            </h3>
+            <div class="slds-section__content" id="weightLevelSettings">
+                <c-slwc-optimizer-weight-form 
+                    collection-operation={collectionOperation}
+                    is-readonly={readonly}
+                    onweightchange={handleWeightChange}
+                    onweightreset={handleWeightReset}></c-slwc-optimizer-weight-form>
+            </div>
+        </div>
+        <div class={customClasses.mobileSitesSection}>
+            <h3 class="slds-section__title">
+                <button aria-controls="mobileSites" aria-expanded="true" class="slds-button slds-section__title-action" onclick={toggleMobileSitesSection}>
+                    <lightning-icon icon-name="utility:switch" size="x-small" aria-hidden="true"
+                        class="slds-section__title-action-icon slds-button__icon slds-button__icon_left slds-m-bottom_xx-small"></lightning-icon>
+                    <span class="slds-truncate" title="Section Title">Mobile Sites</span>
+                </button>
+            </h3>
+            <div class="slds-section__content" id="mobileSites">
+                <c-slwc-optimizer-constraint-form 
+                    optimizer-constraint-settings={mobileSettings}
+                    is-readonly={readonly}
+                    onconstraintchange={handleConstraintChange}
+                    onconstraintreset={handleConstraintReset}></c-slwc-optimizer-constraint-form>
+            </div>
+        </div>
+        <div class={customClasses.fixedSitesSection}>
+            <h3 class="slds-section__title">
+                <button aria-controls="fixedSite" aria-expanded="true" class="slds-button slds-section__title-action" onclick={toggleFixedSitesSection}>
+                    <lightning-icon icon-name="utility:switch" size="x-small" aria-hidden="true"
+                        class="slds-section__title-action-icon slds-button__icon slds-button__icon_left slds-m-bottom_xx-small"></lightning-icon>
+                    <span class="slds-truncate" title="Section Title">Fixed Sites</span>
+                </button>
+            </h3>
+            <div class="slds-section__content" id="fixedSite">
+                <c-slwc-optimizer-constraint-form 
+                    optimizer-constraint-settings={fixedSiteSettings}
+                    is-readonly={readonly}
+                    onconstraintchange={handleConstraintChange}
+                    onconstraintreset={handleConstraintReset}></c-slwc-optimizer-constraint-form>
+            </div>
+        </div>
+    </template>
+</template>

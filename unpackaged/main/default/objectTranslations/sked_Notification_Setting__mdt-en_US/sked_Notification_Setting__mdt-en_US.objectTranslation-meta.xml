@@ -8,24 +8,6 @@
         <plural>true</plural>
         <value>Skedulo Notification Settings</value>
     </caseValues>
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     <layouts>
         <layout>Skedulo Notification Setting Layout</layout>
         <sections>
@@ -33,5 +15,26 @@
             <section>Custom Links</section>
         </sections>
     </layouts>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     <startsWith>Consonant</startsWith>
 </CustomObjectTranslation>

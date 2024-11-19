@@ -7,7 +7,7 @@ import { driveQueryModel, driveService, debugLogService, sObjectType } from 'c/d
 import { DateTime } from 'c/luxon';
 import { groupBy, result } from 'c/lodash';
 import { classNames, generateColors } from 'c/slwcUtils';
-import { DRIVE_STATUS, DRIVE_TYPE, LINK_DRIVE_TYPE } from 'c/slwcConstants';
+import { DRIVE_STATUS, DRIVE_TYPE, LINK_DRIVE_TYPE, DRIVE_REQUEST_CHANGE_STATUS, DRIVE_CHANGE_REQUEST_TYPE } from 'c/slwcConstants';
 import { drivesGeneratorInstance } from 'c/slwcDriveGenerator';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import customLWCStyle from '@salesforce/resourceUrl/skedLWCCustomStyle'
@@ -233,7 +233,12 @@ export default class SlwcDriveCalendarDriveList extends LightningElement {
                 if (result && result.length) {
                     result.forEach((drive) => {
                         drive.recordPageUrl = '/' + drive.id;
-                        drive.driveNameData = drive;
+                        drive.driveNameData = {
+                            id: drive.id,
+                            name: drive.name,
+                            totalStaffRequested: drive.totalStaffRequested,
+                            staffAllocated: drive.staffAllocated
+                        };
                         
                         drive.linkedDrive = drive.linkedDriveId ? {
                             id: drive.linkedDriveId,
@@ -380,6 +385,14 @@ export default class SlwcDriveCalendarDriveList extends LightningElement {
         this.showSpinner = true;
         let service = new driveService();
         return service.saveList(drives)
+            .then(() => {
+                this.dispatchEvent(new ShowToastEvent({
+                    message: 'Drives are updated successfully.',
+                    variant: 'success',
+                    mode: 'dismissable'
+                }));
+                return this.handleRefresh();
+            })
             .catch((e) => this.exceptionHandler(e))
             .finally(() => {
                 this.showSpinner = false;
@@ -464,22 +477,44 @@ export default class SlwcDriveCalendarDriveList extends LightningElement {
             let service = new driveService();
             let queryModel = new driveQueryModel();
             queryModel.recordIds = drives.map(drive => drive.id);
+            queryModel.subQueryIndicator = sObjectType.DRIVE_CHANGE_REQUEST;
+            queryModel.driveChangeRequestStatuses = [
+                                DRIVE_REQUEST_CHANGE_STATUS.PENDING,
+                                DRIVE_REQUEST_CHANGE_STATUS.SUBMITTED,
+                                DRIVE_REQUEST_CHANGE_STATUS.WAITING_FOR_DM_APPROVAL,
+                                DRIVE_REQUEST_CHANGE_STATUS.WAITING_FOR_APS_APPROVAL,
+                                DRIVE_REQUEST_CHANGE_STATUS.APS_WAITING_FOR_DRD_FEEDBACK,
+                                DRIVE_REQUEST_CHANGE_STATUS.DM_WAITING_FOR_DRD_FEEDBACK
+            ];
+            queryModel.driveChangeRequestType = [DRIVE_CHANGE_REQUEST_TYPE.USER_CHANGE];
             return service.query(queryModel);
         })
         .then((drives) => {
             return drives.map(drive => {
-                const passed = !!drive.primaryContactId;
+                const validateDriveRule1 = !!drive.primaryContactId || drive.typeOfDrive === DRIVE_TYPE.FIXED_SITE;
+                const validateDriveRule2 = !(drive && drive.driveChangeRequests && drive.driveChangeRequests.length > 0 && drive.driveChangeRequests[0].type.includes(DRIVE_CHANGE_REQUEST_TYPE.USER_CHANGE));
+                const passed = validateDriveRule1 && validateDriveRule2;
+                const messages = [];
+                if (!validateDriveRule1) {
+                    messages.push('Please add a contact with a drive service role of Primary Contact before proceeding.');
+                }
+                if (!validateDriveRule2) {
+                    messages.push('Please process the [User Change] Drive Change Request prior to updating the Drive.');
+                }
+                const message = passed
+                                ? 'Successfully confirmed drive.'
+                                : messages.join('\n');
                 return {
                     id: drive.id,
                     passed: passed,
                     drive: drive,
-                    message: passed ? 'Successfully confirmed drive.' : 'Please add a contact with a drive service role of Primary Contact before proceeding.'
+                    message: message
                 }
             });
         });
     }
 
-    handleConfirmBtnOld() {
+    handleConfirmBtn() {
         const doConfirm = () => {
             let service = new driveService();
             this.showSpinner = true;
@@ -511,53 +546,10 @@ export default class SlwcDriveCalendarDriveList extends LightningElement {
         this.checkForAnyDriveOutsideCurrentWeek(doConfirm)
     }
 
-    handleConfirmBtn() {
-        const doConfirm = () => {
-            this.showSpinner = true;
-            this.confirmDrives(this.selectedDrivesWithinCurrentWeek)
-            .then(({impactedDrives, confirmedDrives}) => {
-                if(impactedDrives.length) {
-                    this.showConfirmImpactedDrivesModal(confirmedDrives, impactedDrives)
-                } else {
-                    return this.saveDrives(confirmedDrives)
-                    .then(() => {
-                        this.dispatchEvent(new ShowToastEvent({
-                            message: 'Drives are updated successfully.',
-                            variant: 'success',
-                            mode: 'dismissable'
-                        }));
-                        return this.getDriveList();
-                    })
-                }
-            })   
-            .catch(e => {
-                if(e && e.errorMessage) {
-                    this.dispatchEvent(new ShowToastEvent({
-                        message: e.errorMessage,
-                        variant: 'error',
-                        mode: 'dismissable'
-                    }));
-                }
-            })
-            .finally(() => {
-                this.showSpinner = false;
-            })
-        }
-        this.checkForAnyDriveOutsideCurrentWeek(doConfirm);
-    }
-
     handleCompleteBtn() {
         const doComplete = () => {
             let drivesToSave = this.updateConfirmDriveStatus(this.selectedDrivesWithinCurrentWeek);
-            return this.saveDrives(drivesToSave)
-            .then(() => {
-                this.dispatchEvent(new ShowToastEvent({
-                    message: 'Drives are updated successfully.',
-                    variant: 'success',
-                    mode: 'dismissable'
-                }));
-                return this.handleRefresh();
-            })
+            return this.saveDrives(drivesToSave);
         }
         this.checkForAnyDriveOutsideCurrentWeek(doComplete)
     }
@@ -577,15 +569,7 @@ export default class SlwcDriveCalendarDriveList extends LightningElement {
                     status: DRIVE_STATUS.DRAFT
                 }
             })
-            return this.saveDrives(drivesToSave)
-            .then(() => {
-                this.dispatchEvent(new ShowToastEvent({
-                    message: 'Drives are updated successfully.',
-                    variant: 'success',
-                    mode: 'dismissable'
-                }));
-                return this.handleRefresh();
-            })
+            return this.saveDrives(drivesToSave);
         }
         this.checkForAnyDriveOutsideCurrentWeek(doRemoveHold)
     }
@@ -648,10 +632,7 @@ export default class SlwcDriveCalendarDriveList extends LightningElement {
         const confirmedDrives = this.confirmImpactedDrivesModalData.confirmedDrives || [];
         this.confirmImpactedDrivesModalData = {};
 
-        this.saveDrives(confirmedDrives.concat(impactedDrives))
-        .then(() => {
-            return this.getDriveList();
-        })
+        this.saveDrives(confirmedDrives.concat(impactedDrives));
     }
 
     formatTime(time) {

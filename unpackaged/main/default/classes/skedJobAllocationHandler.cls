@@ -1,18 +1,25 @@
-public class skedJobAllocationHandler extends skedTriggerHub {
+public class skedJobAllocationHandler extends skedTriggerHub implements Callable {
+    private static final List<String> PERMITTED_INSERT_EDIT_PROFILES = new List<String>{
+        'Global Admin', 'System Administrator', 'APS Admin', 'Collections', 'Collection Management'
+    };
+
+    private static final List<String> PERMITTED_DELETE_PROFILES = new List<String>{
+        'Global Admin', 'System Administrator', 'APS Admin'
+    };
     
     public static boolean isRunningPostProcess = FALSE;
     
     public override void onBeforeDelete() {
-        skedTriggerUtils.validateServiceEntry(this.context.newRecords, skedConstants.DRIVE_CRUD_MUST_COME_FROM_RECORD_PAGE);
+        skedTriggerUtils.validateServiceEntry(this.context.oldRecords, skedConstants.RECORD_CHANGES_INVALID_FROM_LIST_VIEW, PERMITTED_DELETE_PROFILES);
         if (!skedSetting.instance.Admin.migrationMode) {
             onDeleteJobAllocation((Map<Id, sked__Job_Allocation__c>)this.context.oldMap);
             removeResourceForLinkedActivities((Map<Id, sked__Job_Allocation__c>)this.context.oldMap);
-            removeResourceHoursRecord(this.context.oldMap.values());
+            deleteResourceHoursRecordDetails(this.context.oldMap.values());
         }
     }
     
     public override void onBeforeInsert() {
-        skedTriggerUtils.validateServiceEntry(this.context.newRecords, skedConstants.DRIVE_CRUD_MUST_COME_FROM_RECORD_PAGE);
+        skedTriggerUtils.validateServiceEntry(this.context.newRecords, skedConstants.RECORD_CHANGES_INVALID_FROM_LIST_VIEW, PERMITTED_INSERT_EDIT_PROFILES);
         populateData(this.context.newRecords);
         if (skedSetting.instance.Admin.dateTimeConversion) {
             doDateTimeConversion(this.context.newRecords);
@@ -26,7 +33,7 @@ public class skedJobAllocationHandler extends skedTriggerHub {
     }
     
     public override void onBeforeUpdate() {
-        skedTriggerUtils.validateServiceEntry(this.context.newRecords, skedConstants.DRIVE_CRUD_MUST_COME_FROM_RECORD_PAGE);
+        skedTriggerUtils.validateServiceEntry(this.context.newRecords, skedConstants.RECORD_CHANGES_INVALID_FROM_LIST_VIEW, PERMITTED_INSERT_EDIT_PROFILES);
         populateData(this.context.newRecords, (Map<Id, sked__Job_Allocation__c>)this.context.oldMap);
         if (skedSetting.instance.Admin.dateTimeConversion) {
             doDateTimeConversion(this.context.newRecords, (Map<Id, sked__Job_Allocation__c>)this.context.oldMap);
@@ -40,8 +47,52 @@ public class skedJobAllocationHandler extends skedTriggerHub {
             updateDriveVehicleTypes(this.context.newRecords, (Map<Id, sked__Job_Allocation__c>)this.context.oldMap);
             removeResourceForLinkedActivities(this.context.newRecords, (Map<Id, sked__Job_Allocation__c>)this.context.oldMap);
             syncToResourceHoursRecord(this.context.newRecords, (Map<Id, sked__Job_Allocation__c>)this.context.oldMap);
+            syncToOperationRecordStaffRecords(this.context.newRecords, (Map<Id, sked__Job_Allocation__c>)this.context.oldMap);
         }
     }
+
+    /**************************************** CALLABLE INTERFACE  ***************************************/
+    public static Object call(String methodName, Map<String, Object> params) {
+        skedProcessEventResult result = new skedProcessEventResult();
+        try {
+            switch on methodName {
+                when 'performResourceHoursRecordDetailsSync' {
+                    performResourceHoursRecordDetailsSync((Set<Id>) JSON.deserialize((String) params.get('param1'), Set<Id>.class));
+                }
+                when 'manageResourceHoursRecordDetails' {
+                    manageResourceHoursRecordDetails(
+                        (Map<String, jobAllocationModel>) JSON.deserialize((String) params.get('param1'), Map<String, jobAllocationModel>.class),
+                        (Set<Id>) JSON.deserialize((String) params.get('param2'), Set<Id>.class)
+                    );
+                }
+                when 'performActivityResourceSync' {
+                    performActivityResourceSync((Set<Id>) JSON.deserialize((String) params.get('param1'), Set<Id>.class));
+                }
+                when 'performOperationRecordStaffSync' {
+                    performOperationRecordStaffSync((Map<Id, sked__Job_Allocation__c>) JSON.deserialize((String) params.get('param1'), Map<Id, sked__Job_Allocation__c>.class));
+                }
+                when 'maintainExceptionLog' {
+                    maintainExceptionLog(
+                        (List<sked__Job_Allocation__c>) JSON.deserialize((String) params.get('param1'), List<sked__Job_Allocation__c>.class),
+                        (Boolean) JSON.deserialize((String) params.get('param2'), Boolean.class),
+                        (Boolean) JSON.deserialize((String) params.get('param3'), Boolean.class),
+                        (Boolean) JSON.deserialize((String) params.get('param4'), Boolean.class)
+                    );
+                }
+                when 'performDriveVehicleTypeSync' {
+                    performDriveVehicleTypeSync((Set<Id>) JSON.deserialize((String) params.get('param1'), Set<Id>.class));
+                }
+                when else {
+                    throw new skedException('Unable to locate Method: ' + methodName + ' in Class: ' + skedJobAllocationHandler.class.getName());
+                }
+            }
+        } catch (skedException ex) {
+            result.addError(ex);
+        }
+
+        return result;
+    }
+
     /**************************************** PRIVATE METHOD ********************************************/
     private void processPostInsert(List<sked__Job_Allocation__c> newRecords) {
         Set<Id> jobAllocationIds = new Set<Id>();
@@ -49,7 +100,7 @@ public class skedJobAllocationHandler extends skedTriggerHub {
             jobAllocationIds.add(newRecord.Id);
         }
         if (!Test.isRunningTest() && !System.isBatch() && !skedSetting.instance.Admin.migrationMode) {
-            Database.executeBatch(new skedJobAllocationTravelTimeBatch(jobAllocationIds), 100);
+            Database.executeBatch(new skedJobAllocationTravelTimeBatch(jobAllocationIds), 40);
         }
     }
 
@@ -63,6 +114,8 @@ public class skedJobAllocationHandler extends skedTriggerHub {
             skedTriggerUtils.maintainDateTimeField(newRecord, 'sked__Time_Published__c', 'sked_Time_Published_Date__c', 'sked_Time_Published_Time__c', 'sked_Job_Timezone__c');
             skedTriggerUtils.maintainDateTimeField(newRecord, 'sked__Time_Responded__c', 'sked_Time_Responded_Date__c', 'sked_Time_Responded_Time__c', 'sked_Job_Timezone__c');
             skedTriggerUtils.maintainDateTimeField(newRecord, 'sked__Time_Start_Travel__c', 'sked_Time_Start_Travel_Date__c', 'sked_Time_Start_Travel_Time__c', 'sked_Job_Timezone__c');
+            skedTriggerUtils.maintainDateTimeField(newRecord, 'sked_DateTime_of_Call_Out__c', 'sked_Date_of_Call_Out__c', 'sked_Time_of_Call_Out__c', 'sked_Job_Timezone__c');
+            skedTriggerUtils.maintainDateTimeField(newRecord, 'sked_DateTime_Call_Out_Received__c', 'sked_Date_Call_Out_Received__c', 'sked_Time_Call_Out_Received__c', 'sked_Job_Timezone__c');
         }
     }
 
@@ -77,24 +130,34 @@ public class skedJobAllocationHandler extends skedTriggerHub {
             skedTriggerUtils.maintainDateTimeField(newRecord, oldData, 'sked__Time_Published__c', 'sked_Time_Published_Date__c', 'sked_Time_Published_Time__c', 'sked_Job_Timezone__c');
             skedTriggerUtils.maintainDateTimeField(newRecord, oldData, 'sked__Time_Responded__c', 'sked_Time_Responded_Date__c', 'sked_Time_Responded_Time__c', 'sked_Job_Timezone__c');
             skedTriggerUtils.maintainDateTimeField(newRecord, oldData, 'sked__Time_Start_Travel__c', 'sked_Time_Start_Travel_Date__c', 'sked_Time_Start_Travel_Time__c', 'sked_Job_Timezone__c');
+            skedTriggerUtils.maintainDateTimeField(newRecord, oldData, 'sked_DateTime_of_Call_Out__c', 'sked_Date_of_Call_Out__c', 'sked_Time_of_Call_Out__c', 'sked_Job_Timezone__c');
+            skedTriggerUtils.maintainDateTimeField(newRecord, oldData, 'sked_DateTime_Call_Out_Received__c', 'sked_Date_Call_Out_Received__c', 'sked_Time_Call_Out_Received__c', 'sked_Job_Timezone__c');
         }
     }
 
     private void removeResourceForLinkedActivities(Map<Id, sked__Job_Allocation__c> oldMap) {
-        Set<String> jobAlloctionIds = new Set<string>();
+        Set<Id> jobAlloctionIds = new Set<Id>();
 
         for (sked__Job_Allocation__c oldData : oldMap.values()) {
             jobAlloctionIds.add(oldData.Id);
         }
 
         if (!jobAlloctionIds.isEmpty()) {
-            syncResourceForLinkedActivity(jobAlloctionIds, FALSE, TRUE);
+            if (!System.isBatch()) {
+                skedFutureCallEventHandler.publishFutureCallEvent(
+                    skedJobAllocationHandler.class.getName(),
+                    'performActivityResourceSync',
+                    jobAlloctionIds
+                );
+            } else {
+                performActivityResourceSync(jobAlloctionIds);
+            }
         }
     }
 
     private void removeResourceForLinkedActivities(List<sked__Job_Allocation__c> newRecords, Map<Id, sked__Job_Allocation__c> oldMap) {
         List<string> statuses = new List<string> {skedConstants.JOB_ALLOCATION_STATUS_DELETED, skedConstants.JOB_ALLOCATION_STATUS_DECLINED};
-        Set<string> jobAlloctionIds = new Set<string>();
+        Set<Id> jobAlloctionIds = new Set<Id>();
         for (sked__Job_Allocation__c newRecord : newRecords) {
             sked__Job_Allocation__c oldData = oldMap.get(newRecord.Id);
 
@@ -104,11 +167,23 @@ public class skedJobAllocationHandler extends skedTriggerHub {
         }
 
         if (!jobAlloctionIds.isEmpty()) {
-            syncResourceForLinkedActivity(jobAlloctionIds, FALSE, TRUE);
+            if (!System.isBatch()) {
+                skedFutureCallEventHandler.publishFutureCallEvent(
+                    skedJobAllocationHandler.class.getName(),
+                    'performActivityResourceSync',
+                    jobAlloctionIds
+                );
+            } else {
+                performActivityResourceSync(jobAlloctionIds);
+            }
         }
     }
 
-    private void syncResourceForLinkedActivity(Set<string> jobAlloctionIds, Boolean isAdd, Boolean isRemove) {
+    private static void performActivityResourceSync(Set<Id> jobAllocationIds) {
+        syncResourceForLinkedActivity(jobAllocationIds, FALSE, TRUE);
+    }
+
+    private static void syncResourceForLinkedActivity(Set<Id> jobAlloctionIds, Boolean isAdd, Boolean isRemove) {
         Set<Id> driveIds = new Set<Id>();
         Set<Id> linkedDriveIds = new Set<Id>();
         Map<string, Set<string>> mapDrive_JobAllocationResourceIds = new Map<string, Set<string>>();
@@ -283,7 +358,20 @@ public class skedJobAllocationHandler extends skedTriggerHub {
         
         boolean processDriveShiftException = TRUE;
         boolean processTravelTimeException = FALSE;
-        maintainExceptionLog(oldMap.values(), processDriveShiftException, processTravelTimeException);
+        boolean processLinkedDriveException = TRUE;
+
+        if (!System.isBatch()) {
+            skedFutureCallEventHandler.publishFutureCallEvent(
+                skedJobAllocationHandler.class.getName(),
+                'maintainExceptionLog',
+                oldMap.values(),
+                processDriveShiftException,
+                processTravelTimeException,
+                processLinkedDriveException
+            );
+        } else {
+            maintainExceptionLog(oldMap.values(), processDriveShiftException, processTravelTimeException, processLinkedDriveException);
+        }
     }
     
     private void onStatusChanged(List<sked__Job_Allocation__c> newRecords, Map<Id, sked__Job_Allocation__c> oldMap) {
@@ -302,7 +390,20 @@ public class skedJobAllocationHandler extends skedTriggerHub {
             
             boolean processDriveShiftException = TRUE;
             boolean processTravelTimeException = FALSE;
-            maintainExceptionLog(mapDeletedRecord.values(), processDriveShiftException, processTravelTimeException);
+            boolean processLinkedDriveException = TRUE;
+
+            if (!System.isBatch()) {
+                skedFutureCallEventHandler.publishFutureCallEvent(
+                    skedJobAllocationHandler.class.getName(),
+                    'maintainExceptionLog',
+                    mapDeletedRecord.values(),
+                    processDriveShiftException,
+                    processTravelTimeException,
+                    processLinkedDriveException
+                );
+            } else {
+                maintainExceptionLog(mapDeletedRecord.values(), processDriveShiftException, processTravelTimeException, processLinkedDriveException);
+            }
         }
     }
     
@@ -317,7 +418,19 @@ public class skedJobAllocationHandler extends skedTriggerHub {
         if (!recordsToProcess.isEmpty()) {
             boolean processDriveShiftException = FALSE;
             boolean processTravelTimeException = TRUE;
-            maintainExceptionLog(recordsToProcess, processDriveShiftException, processTravelTimeException);
+
+            if (!System.isBatch()) {
+                skedFutureCallEventHandler.publishFutureCallEvent(
+                    skedJobAllocationHandler.class.getName(),
+                    'maintainExceptionLog',
+                    recordsToProcess,
+                    processDriveShiftException,
+                    processTravelTimeException,
+                    false
+                );
+            } else {
+                maintainExceptionLog(recordsToProcess, processDriveShiftException, processTravelTimeException, false);
+            }
         }
     }
 
@@ -364,6 +477,16 @@ public class skedJobAllocationHandler extends skedTriggerHub {
                 newRecord.sked__Status__c = skedConstants.JOB_ALLOCATION_STATUS_CONFIRMED;
                 newRecord.sked_Locked__c = TRUE;
             }
+
+            if (newRecord.sked_Call_Out_Type__c != oldData.sked_Call_Out_Type__c && newRecord.sked_Call_Out_Type__c != null) {
+                newRecord.sked_DateTime_of_Call_Out__c = newRecord.sked_DateTime_of_Call_Out__c == null 
+                    ? currentTime : newRecord.sked_DateTime_of_Call_Out__c;
+                newRecord.sked_DateTime_Call_Out_Received__c = newRecord.sked_DateTime_Call_Out_Received__c == null 
+                    ? newRecord.sked_DateTime_of_Call_Out__c : newRecord.sked_DateTime_Call_Out_Received__c;
+                if (newRecord.sked_DateTime_Call_Out_Received__c != null && newRecord.sked__Start__c != null) {
+                    newRecord.sked_Call_Out_Notice__c = skedDateTimeUtils.getDifferentMinutesText(newRecord.sked_DateTime_Call_Out_Received__c, newRecord.sked__Start__c);	
+                }
+            }
         }
     }
     
@@ -394,7 +517,15 @@ public class skedJobAllocationHandler extends skedTriggerHub {
         for (sked__Job_Allocation__c newRecord : newRecords) {
             jobAllocationIds.add(newRecord.Id);
         }
-        skedJobAllocationHandler.updateDriveVehicleTypes(jobAllocationIds);
+        if (!System.isBatch() && !jobAllocationIds.isEmpty()) {
+            skedFutureCallEventHandler.publishFutureCallEvent(
+                skedJobAllocationHandler.class.getName(),
+                'performDriveVehicleTypeSync',
+                jobAllocationIds
+            );
+        } else {
+            performDriveVehicleTypeSync(jobAllocationIds);
+        } 
     }
     
     private void updateDriveVehicleTypes(List<sked__Job_Allocation__c> newRecords, Map<Id, sked__Job_Allocation__c> oldMap) {
@@ -407,12 +538,18 @@ public class skedJobAllocationHandler extends skedTriggerHub {
                 }
             }
         }
-        if (!jobAllocationIds.isEmpty()) {
-            updateDriveVehicleTypes(jobAllocationIds);
-        }
+        if (!System.isBatch() && !jobAllocationIds.isEmpty()) {
+            skedFutureCallEventHandler.publishFutureCallEvent(
+                skedJobAllocationHandler.class.getName(),
+                'performDriveVehicleTypeSync',
+                jobAllocationIds
+            );
+        } else {
+            performDriveVehicleTypeSync(jobAllocationIds);
+        } 
     }
     
-    public static void updateDriveVehicleTypes(Set<Id> jobAllocationIds) {
+    public static void performDriveVehicleTypeSync(Set<Id> jobAllocationIds) {
         List<sked__Job_Allocation__c> inputJobAllocations = [SELECT Id, sked__Job__r.sked_Drive__c
                                                              FROM sked__Job_Allocation__c
                                                              WHERE Id IN :jobAllocationIds
@@ -485,25 +622,70 @@ public class skedJobAllocationHandler extends skedTriggerHub {
             }
         }
     }
+    
+    private void syncToOperationRecordStaffRecords(List<sked__Job_Allocation__c> newRecords, Map<Id, sked__Job_Allocation__c> oldMap) {
+        Map<Id, sked__Job_Allocation__c> map_jobAllocationId_jobAllocation = new Map<Id, sked__Job_Allocation__c>();
+        
+        for (sked__Job_Allocation__c newRecord : newRecords) {
+            sked__Job_Allocation__c oldRecord = oldMap.get(newRecord.Id);
+            if(newRecord.sked_Start_Date__c != oldRecord.sked_Start_Date__c || 
+                newRecord.sked_Start_Time__c != oldRecord.sked_Start_Time__c ||
+                newRecord.sked_Set_End_Date__c != oldRecord.sked_Set_End_Date__c ||
+                newRecord.sked_Set_End_Time__c != oldRecord.sked_Set_End_Time__c
+            ) {
+                map_jobAllocationId_jobAllocation.put(newRecord.Id, newRecord);
+            }
+        }
+
+        if (!map_jobAllocationId_jobAllocation.isEmpty()) {
+            if (!System.isBatch()) {
+                skedFutureCallEventHandler.publishFutureCallEvent(
+                    skedJobAllocationHandler.class.getName(),
+                    'performOperationRecordStaffSync',
+                    map_jobAllocationId_jobAllocation
+                );
+            } else {
+                performOperationRecordStaffSync(map_jobAllocationId_jobAllocation);
+            }
+        }
+    }
+
+    public static void performOperationRecordStaffSync(Map<Id, sked__Job_Allocation__c> map_jobAllocationId_jobAllocation) {
+        List<sked_Operation_Record_Staff__c> opRecordStaffListToUpdate = [SELECT Id, sked_Job_Allocation__c, sked_Timezone__c,
+                                                                            Scheduled_Shift_Start__c, Scheduled_Shift_End__c,
+                                                                            Scheduled_Shift_Start_Date__c,  Scheduled_Shift_Start_Time__c,
+                                                                            Scheduled_Shift_End_Date__c, Scheduled_Shift_End_Time__c
+                                                                            FROM sked_Operation_Record_Staff__c
+                                                                            WHERE sked_Job_Allocation__c = :map_jobAllocationId_jobAllocation.keySet()];
+            
+        for(sked_Operation_Record_Staff__c opRecordStaff : opRecordStaffListToUpdate) {
+            sked__Job_Allocation__c relatedJobAllocation = map_jobAllocationId_jobAllocation.get(opRecordStaff.sked_Job_Allocation__c);
+            opRecordStaff.Scheduled_Shift_Start_Date__c = relatedJobAllocation.sked_Start_Date__c;
+            opRecordStaff.Scheduled_Shift_Start_Time__c = relatedJobAllocation.sked_Start_Time__c;
+            opRecordStaff.Scheduled_Shift_End_Date__c = relatedJobAllocation.sked_Set_End_Date__c;
+            opRecordStaff.Scheduled_Shift_End_Time__c = relatedJobAllocation.sked_Set_End_Time__c;
+        }
+        update opRecordStaffListToUpdate;
+
+    }
 
     /**************************************** RESOURCE HOURS RECORD ********************************************/
     private void syncToResourceHoursRecord(List<sked__Job_Allocation__c> newRecords, Map<Id, sked__Job_Allocation__c> oldMap) {
-        Set<Id> ignoreRecordIds = syncHoursAfterChangeStatus(newRecords, oldMap);
+        Set<Id> recordIdsToDelete = getDeletedJobAllocationIds(newRecords, oldMap);
         Map<Id, string> mapRecord_WorkWeekday = getMapRecord_WorkWeekday(newRecords);
         
         Map<string, jobAllocationModel> mapUniqueKey_Allocations = new Map<string, jobAllocationModel>();
-        Map<Id, sked__Job_Allocation__c> mapAllocationNeedToSync = new Map<Id, sked__Job_Allocation__c>();
-        List<sked__Job_Allocation__c> jobAllocationsNeedToDeleteResourceHoursRecordDetail = new List<sked__Job_Allocation__c>();
+        Set<Id> recordIdsRequiringSync = new Set<Id>();
         for (sked__Job_Allocation__c newRecord : newRecords) {
             sked__Job_Allocation__c oldRecord = oldMap.get(newRecord.Id);
-            if (!ignoreRecordIds.contains(newRecord.Id) && (oldRecord.sked__Start__c != newRecord.sked__Start__c || oldRecord.sked__Duration__c != newRecord.sked__Duration__c)) {
+            if (!recordIdsToDelete.contains(newRecord.Id) && (oldRecord.sked__Start__c != newRecord.sked__Start__c || oldRecord.sked__Duration__c != newRecord.sked__Duration__c)) {
                 string workWeekday = mapRecord_WorkWeekday.get(newRecord.Id);
                 Date oldEventDate = skedDateTimeUtils.getDate(oldRecord.sked__Start__c, oldRecord.sked_Job_Timezone__c);
                 Date newEventDate = skedDateTimeUtils.getDate(newRecord.sked__Start__c, newRecord.sked_Job_Timezone__c);
                 Date oldStartOfWeek = skedDateTimeUtils.findWeekStartDate(oldEventDate, workWeekday);
                 Date newStartOfWeek = skedDateTimeUtils.findWeekStartDate(newEventDate, workWeekday);
                 if (oldStartOfWeek != newStartOfWeek) {
-                    jobAllocationsNeedToDeleteResourceHoursRecordDetail.add(newRecord);
+                    recordIdsToDelete.add(newRecord.Id);
 
                     Date startOfWeek = newStartOfWeek;
                     Date endOfWeek = startOfWeek.addDays(6);
@@ -525,111 +707,151 @@ public class skedJobAllocationHandler extends skedTriggerHub {
                     }
                 }
                 else {
-                    mapAllocationNeedToSync.put(newRecord.Id,  newRecord);
+                    recordIdsRequiringSync.add(newRecord.Id);
                 }
             }
         }
-        if (!mapAllocationNeedToSync.isEmpty()) {
-            List<sked_Resource_Hours_Record_Detail__c> resourceHoursRecordDetails = [SELECT Id, sked_Duration__c, sked_Job_Allocation__c, sked_Job_Allocation_Status__c
-                                                                                    FROM sked_Resource_Hours_Record_Detail__c
-                                                                                    WHERE sked_Job_Allocation__c IN :mapAllocationNeedToSync.keySet()];
-            for (sked_Resource_Hours_Record_Detail__c resourceHoursRecordDetail : resourceHoursRecordDetails) {
-                sked__Job_Allocation__c jobAllocation = mapAllocationNeedToSync.get(resourceHoursRecordDetail.sked_Job_Allocation__c);
-                resourceHoursRecordDetail.sked_Duration__c = jobAllocation.sked_Duration_with_Travel_Time__c;
-                resourceHoursRecordDetail.sked_Job_Allocation_Status__c = jobAllocation.sked__Status__c;
-            }
-            update resourceHoursRecordDetails;
-        }
-        
-        if (!jobAllocationsNeedToDeleteResourceHoursRecordDetail.isEmpty()) {
-            delete [SELECT Id FROM sked_Resource_Hours_Record_Detail__c WHERE sked_Job_Allocation__c IN :jobAllocationsNeedToDeleteResourceHoursRecordDetail];
-        }
-        if (!mapUniqueKey_Allocations.isEmpty()) {
-            List<sked_Resource_Hours_Record__c> existingResourceHoursRecords = [SELECT Id, sked_Unique_Key__c
-                                                                                FROM sked_Resource_Hours_Record__c
-                                                                                WHERE sked_Unique_Key__c IN :mapUniqueKey_Allocations.keySet()];
-            for (jobAllocationModel model : mapUniqueKey_Allocations.values()) {
-                model.hasKey = FALSE;
-                for (sked_Resource_Hours_Record__c existingResourceHoursRecord : existingResourceHoursRecords) {
-                    if (model.key == existingResourceHoursRecord.sked_Unique_Key__c) {
-                        for (sked__Job_Allocation__c jobAllocation : model.jobAllocations) {
-                            sked_Resource_Hours_Record_Detail__c resourceHoursRecordDetail = new sked_Resource_Hours_Record_Detail__c(
-                                sked_Resource_Hours_Record__c = existingResourceHoursRecord.Id, 
-                                sked_Job_Allocation__c = jobAllocation.Id,
-                                sked_Job_Allocation_Status__c = jobAllocation.sked__Status__c,
-                                sked_Duration__c = jobAllocation.sked_Duration_with_Travel_Time__c,
-                                sked_Job__c = jobAllocation.sked__Job__c
-                            );
-                            model.resourceHoursRecordDetails.add(resourceHoursRecordDetail);
-                        }
-                        model.hasKey = TRUE;
-                        break;
-                    }
-                }
-                if (!model.hasKey) {
-                    sked_Resource_Hours_Record__c resourceHoursRecord = new sked_Resource_Hours_Record__c(
-                        sked_End_Date__c = model.endDate, 
-                        sked_Resource__c = model.resourceId, 
-                        sked_Start_Date__c = model.startDate, 
-                        sked_Unique_Key__c = model.key
-                    );
-                    model.resourceHoursRecord = resourceHoursRecord;
-                }
-            }
-            
-            List<sked_Resource_Hours_Record__c> newResourceHoursRecords = new List<sked_Resource_Hours_Record__c>();
-            for (jobAllocationModel model : mapUniqueKey_Allocations.values()) {
-                if (!model.hasKey) {
-                    newResourceHoursRecords.add(model.resourceHoursRecord);
-                }
-            }
-            insert newResourceHoursRecords;
 
-            List<sked_Resource_Hours_Record_Detail__c> resourceHoursRecordDetails = new List<sked_Resource_Hours_Record_Detail__c>();
-            for (jobAllocationModel model : mapUniqueKey_Allocations.values()) {
-                if (!model.hasKey) {
+        if (!recordIdsRequiringSync.isEmpty()) {
+            if (!System.isBatch()) {
+                skedFutureCallEventHandler.publishFutureCallEvent(
+                    skedJobAllocationHandler.class.getName(),
+                    'performResourceHoursRecordDetailsSync',
+                    recordIdsRequiringSync
+                );
+            } else {
+                performResourceHoursRecordDetailsSync(recordIdsRequiringSync);
+            }
+        }
+
+        if (!mapUniqueKey_Allocations.isEmpty() || !recordIdsToDelete.isEmpty()) {
+            if (!System.isBatch()) {
+                skedFutureCallEventHandler.publishFutureCallEvent(
+                    skedJobAllocationHandler.class.getName(),
+                    'manageResourceHoursRecordDetails',
+                    mapUniqueKey_Allocations,
+                    recordIdsToDelete
+                );
+            } else {
+                manageResourceHoursRecordDetails(mapUniqueKey_Allocations, recordIdsToDelete);
+            }
+        }
+    }
+
+    private static void manageResourceHoursRecordDetails(Map<String, jobAllocationModel> jobAllocationModelsByKey, Set<Id> recordIdsToDelete) {
+        if (recordIdsToDelete != null && !recordIdsToDelete.isEmpty()) {
+            deleteResourceHoursRecordDetails(recordIdsToDelete);
+        }
+
+        if (jobAllocationModelsByKey == null || jobAllocationModelsByKey.isEmpty()) return; 
+
+        List<sked_Resource_Hours_Record__c> existingResourceHoursRecords = [
+            SELECT Id, sked_Unique_Key__c
+            FROM sked_Resource_Hours_Record__c
+            WHERE sked_Unique_Key__c IN :jobAllocationModelsByKey.keySet()
+        ];
+            
+        for (jobAllocationModel model : jobAllocationModelsByKey.values()) {
+            model.hasKey = FALSE;
+            for (sked_Resource_Hours_Record__c existingResourceHoursRecord : existingResourceHoursRecords) {
+                if (model.key == existingResourceHoursRecord.sked_Unique_Key__c) {
                     for (sked__Job_Allocation__c jobAllocation : model.jobAllocations) {
                         sked_Resource_Hours_Record_Detail__c resourceHoursRecordDetail = new sked_Resource_Hours_Record_Detail__c(
-                            sked_Resource_Hours_Record__c = model.resourceHoursRecord.Id, 
+                            sked_Resource_Hours_Record__c = existingResourceHoursRecord.Id, 
                             sked_Job_Allocation__c = jobAllocation.Id,
                             sked_Job_Allocation_Status__c = jobAllocation.sked__Status__c,
                             sked_Duration__c = jobAllocation.sked_Duration_with_Travel_Time__c,
                             sked_Job__c = jobAllocation.sked__Job__c
                         );
-                        resourceHoursRecordDetails.add(resourceHoursRecordDetail);
+                        model.resourceHoursRecordDetails.add(resourceHoursRecordDetail);
                     }
-                }
-                else {
-                    resourceHoursRecordDetails.addAll(model.resourceHoursRecordDetails);
+                    model.hasKey = TRUE;
+                    break;
                 }
             }
-            insert resourceHoursRecordDetails;
+            if (!model.hasKey) {
+                sked_Resource_Hours_Record__c resourceHoursRecord = new sked_Resource_Hours_Record__c(
+                    sked_End_Date__c = model.endDate, 
+                    sked_Resource__c = model.resourceId, 
+                    sked_Start_Date__c = model.startDate, 
+                    sked_Unique_Key__c = model.key
+                );
+                model.resourceHoursRecord = resourceHoursRecord;
+            }
         }
+        
+        List<sked_Resource_Hours_Record__c> newResourceHoursRecords = new List<sked_Resource_Hours_Record__c>();
+        for (jobAllocationModel model : jobAllocationModelsByKey.values()) {
+            if (!model.hasKey) {
+                newResourceHoursRecords.add(model.resourceHoursRecord);
+            }
+        }
+        insert newResourceHoursRecords;
+
+        List<sked_Resource_Hours_Record_Detail__c> resourceHoursRecordDetails = new List<sked_Resource_Hours_Record_Detail__c>();
+        for (jobAllocationModel model : jobAllocationModelsByKey.values()) {
+            if (!model.hasKey) {
+                for (sked__Job_Allocation__c jobAllocation : model.jobAllocations) {
+                    sked_Resource_Hours_Record_Detail__c resourceHoursRecordDetail = new sked_Resource_Hours_Record_Detail__c(
+                        sked_Resource_Hours_Record__c = model.resourceHoursRecord.Id, 
+                        sked_Job_Allocation__c = jobAllocation.Id,
+                        sked_Job_Allocation_Status__c = jobAllocation.sked__Status__c,
+                        sked_Duration__c = jobAllocation.sked_Duration_with_Travel_Time__c,
+                        sked_Job__c = jobAllocation.sked__Job__c
+                    );
+                    resourceHoursRecordDetails.add(resourceHoursRecordDetail);
+                }
+            }
+            else {
+                resourceHoursRecordDetails.addAll(model.resourceHoursRecordDetails);
+            }
+        }
+        insert resourceHoursRecordDetails;
     }
 
-    private void removeResourceHoursRecord(List<sked__Job_Allocation__c> newRecords) {
-        delete [SELECT Id FROM sked_Resource_Hours_Record_Detail__c WHERE sked_Job_Allocation__c IN :newRecords];
+    private static void performResourceHoursRecordDetailsSync(Set<Id> jobAllocationIds) {
+        Map<Id, sked__Job_Allocation__c> jobAllocationById = new Map<Id, sked__Job_Allocation__c>([
+            SELECT Id, sked_Duration_with_Travel_Time__c, sked__Status__c
+            FROM sked__Job_Allocation__c
+            WHERE Id IN :jobAllocationIds
+        ]);
+
+        List<sked_Resource_Hours_Record_Detail__c> resourceHoursRecordDetails = [
+            SELECT Id, sked_Duration__c, sked_Job_Allocation__c, sked_Job_Allocation_Status__c
+            FROM sked_Resource_Hours_Record_Detail__c
+            WHERE sked_Job_Allocation__c IN :jobAllocationById.keySet()
+        ];
+                
+        for (sked_Resource_Hours_Record_Detail__c resourceHoursRecordDetail : resourceHoursRecordDetails) {
+            sked__Job_Allocation__c jobAllocation = jobAllocationById.get(resourceHoursRecordDetail.sked_Job_Allocation__c);
+            resourceHoursRecordDetail.sked_Duration__c = jobAllocation.sked_Duration_with_Travel_Time__c;
+            resourceHoursRecordDetail.sked_Job_Allocation_Status__c = jobAllocation.sked__Status__c;
+        }
+        update resourceHoursRecordDetails;       
     }
 
-    private Set<Id> syncHoursAfterChangeStatus(List<sked__Job_Allocation__c> newRecords, Map<Id, sked__Job_Allocation__c> oldMap) {
-        Set<Id> ignoreRecordIds = new Set<Id>();
-        List<string> excludedStatuses = new List<string>();
-        excludedStatuses.add(skedConstants.JOB_ALLOCATION_STATUS_DECLINED);
-        excludedStatuses.add(skedConstants.JOB_ALLOCATION_STATUS_DELETED);
+    private static void deleteResourceHoursRecordDetails(List<sked__Job_Allocation__c> records) {
+        delete [SELECT Id FROM sked_Resource_Hours_Record_Detail__c WHERE sked_Job_Allocation__c IN :records];
+    }
 
-        Set<Id> needToDeleteRecords = new Set<Id>();
+    private static void deleteResourceHoursRecordDetails(Set<Id> recordIds) {
+        delete [SELECT Id FROM sked_Resource_Hours_Record_Detail__c WHERE sked_Job_Allocation__c IN :recordIds];
+    }
+
+    private Set<Id> getDeletedJobAllocationIds(List<sked__Job_Allocation__c> newRecords, Map<Id, sked__Job_Allocation__c> oldMap) {
+        Set<Id> recordIdsToIgnore = new Set<Id>();
+        
+        List<string> deletedStatuses = new List<string>();
+        deletedStatuses.add(skedConstants.JOB_ALLOCATION_STATUS_DECLINED);
+        deletedStatuses.add(skedConstants.JOB_ALLOCATION_STATUS_DELETED);
         for (sked__Job_Allocation__c newRecord : newRecords) {
             sked__Job_Allocation__c oldRecord = oldMap.get(newRecord.Id);
-            if (oldRecord.sked__Status__c != newRecord.sked__Status__c && excludedStatuses.contains(newRecord.sked__Status__c) && !excludedStatuses.contains(oldRecord.sked__Status__c)) {
-                needToDeleteRecords.add(newRecord.Id);
-                ignoreRecordIds.add(newRecord.Id);
+            if (oldRecord.sked__Status__c != newRecord.sked__Status__c && deletedStatuses.contains(newRecord.sked__Status__c) && !deletedStatuses.contains(oldRecord.sked__Status__c)) {
+                recordIdsToIgnore.add(newRecord.Id);
             }
         }
-        if (!needToDeleteRecords.isEmpty()) {
-            delete [SELECT Id FROM sked_Resource_Hours_Record_Detail__c WHERE sked_Job_Allocation__c IN :needToDeleteRecords];
-        }
 
-        return ignoreRecordIds;
+        return recordIdsToIgnore;
     }
 
     private Map<Id, string> getMapRecord_WorkWeekday(List<sked__Job_Allocation__c> newRecords) {
@@ -649,19 +871,23 @@ public class skedJobAllocationHandler extends skedTriggerHub {
     }
     
     /**************************************** EXCEPTION LOG PRIVATE METHOD ********************************************/
-    private void maintainExceptionLog(List<sked__Job_Allocation__c> skedAllocations, boolean processDriveShiftException, boolean processTravelTimeException) {
-        exceptionMasterModel master = intializeMasterModel(skedAllocations);
+
+    private static void maintainExceptionLog(List<sked__Job_Allocation__c> skedAllocations, 
+            boolean processDriveShiftException, boolean processTravelTimeException, boolean processLinkedDriveExceptions) {
+        skedExceptionMasterModel master = intializeMasterModel(skedAllocations);
         
         List<skedHC__Exception__c> exceptionLog = new List<skedHC__Exception__c>();
         
         if (processDriveShiftException == TRUE) {
-            List<skedHC__Exception__c> driveShiftExceptionLog = captureDriveShiftExceptionLog(master);
-            exceptionLog.addAll(driveShiftExceptionLog);
+            exceptionLog.addAll(captureDriveShiftExceptionLog(master));
         }
         
         if (processTravelTimeException == TRUE) {
-            List<skedHC__Exception__c> travelTimeExceptionLog = captureTravelTimeExceptionLog(master);
-            exceptionLog.addAll(travelTimeExceptionLog);
+            exceptionLog.addAll(captureTravelTimeExceptionLog(master));
+        }
+
+        if (processLinkedDriveExceptions) {
+            exceptionLog.addAll(captureLinkedDriveExceptionLog(master));
         }
         
         if (!exceptionLog.isEmpty()) {
@@ -669,8 +895,8 @@ public class skedJobAllocationHandler extends skedTriggerHub {
         }
     }
     
-    private exceptionMasterModel intializeMasterModel(List<sked__Job_Allocation__c> skedAllocations) {
-        exceptionMasterModel master = new exceptionMasterModel();
+    private static skedExceptionMasterModel intializeMasterModel(List<sked__Job_Allocation__c> skedAllocations) {
+        skedExceptionMasterModel master = new skedExceptionMasterModel();
         Set<Id> jobIds = new Set<Id>();
         Set<Id> resourceIds = new Set<Id>();
         Set<Id> jobAllocationIds = new Set<Id>();
@@ -679,21 +905,26 @@ public class skedJobAllocationHandler extends skedTriggerHub {
             jobIds.add(skedAllocation.sked__Job__c);
             resourceIds.add(skedAllocation.sked__Resource__c);
         }
-        master.jobAllocations = [SELECT Id, Name, sked__Job__r.sked_Drive__c, sked__Job__r.sked_Drive_Shift__c,
-                                 sked__Resource__c, sked__Job__c, sked_Geoservice_Travel_Time_To__c, sked_Geoservice_Travel_Time_Back__c,
-                                 (SELECT Id, skedHC__Status__c, sked_Exception_Code__c
-                                  FROM skedHC__Exception_Log__r
-                                  WHERE sked_Exception_Code__c = :skedConstants.EXCEPTION_CODE_MAXIMUM_TRAVEL_TIME_VIOLATION
-                                  AND skedHC__Status__c = :skedConstants.EXCEPTION_LOG_STATUS_OPEN)
-                                 FROM sked__Job_Allocation__c
-                                 WHERE Id IN :jobAllocationIds];
+        master.jobAllocations = [
+            SELECT Id, Name, sked__Status__c, sked__Job__r.sked_Drive__c, sked__Job__r.sked_Drive_Shift__c,
+            sked__Resource__c, sked__Job__c, sked_Geoservice_Travel_Time_To__c, sked_Geoservice_Travel_Time_Back__c,
+            (SELECT Id, skedHC__Status__c, sked_Exception_Code__c
+            FROM skedHC__Exception_Log__r
+            WHERE sked_Exception_Code__c = :skedConstants.EXCEPTION_CODE_MAXIMUM_TRAVEL_TIME_VIOLATION
+            AND skedHC__Status__c = :skedConstants.EXCEPTION_LOG_STATUS_OPEN)
+            FROM sked__Job_Allocation__c
+            WHERE Id IN :jobAllocationIds
+        ];
         
-        master.mapJob = new Map<Id, sked__Job__c>([SELECT Id, sked__Start__c, sked__Finish__c, sked__GeoLocation__c, sked__Type__c, sked__Duration__c,
-                                                   sked_Drive__r.sked_Account__c, sked_Drive__r.sked_Drive_Site__c, sked_Drive_Shift__c,
-                                                   (SELECT Id, sked__Tag__c, sked__Tag__r.Name
-                                                    FROM sked__JobTags__r)
-                                                   FROM sked__Job__c
-                                                   WHERE Id IN :jobIds]);
+        master.mapJob = new Map<Id, sked__Job__c>([
+            SELECT Id, sked__Start__c, sked__Finish__c, sked__GeoLocation__c, sked__Type__c, sked__Duration__c, sked_Asset_Type__c,
+            sked_Drive__r.sked_Account__c, sked_Drive__r.sked_Drive_Site__c, sked_Drive_Shift__c, sked_Drive__r.sked_Linked_Drives__c,
+            (SELECT Id, sked__Tag__c, sked__Tag__r.Name
+            FROM sked__JobTags__r)
+            FROM sked__Job__c
+            WHERE Id IN :jobIds
+        ]);
+
 		Set<Id> accountIds = new Set<Id>();
         Set<Id> locationIds = new Set<Id>();
         for (sked__Job__c skedJob : master.mapJob.values()) {
@@ -707,24 +938,26 @@ public class skedJobAllocationHandler extends skedTriggerHub {
             }
         }
         
-        master.mapResource = new Map<Id, sked__Resource__c>([SELECT Id, sked_Maximum_Travel_Radius__c, sked_Turnaround_Time__c, sked__Resource_Type__c,
-                                                             sked__GeoLocation__c, sked_Max_Travel_Time__c,
-                                                             (SELECT Id, sked__Tag__c, sked__Expiry_Date__c, sked_Start__c
-                                                              FROM sked__ResourceTags__r),
-                                                             (SELECT Id, sked__Account__c, sked__Resource__c
-                                                              FROM sked__Account_Resource_Scores__r
-                                                              WHERE sked__Account__c IN :accountIds
-                                                              AND sked__Blacklisted__c = TRUE),
-                                                             (SELECT Id, sked__Location__c, sked__Resource__c
-                                                              FROM sked__Location_Resource_Scores__r
-                                                              WHERE sked__Location__c IN :locationIds
-                                                              AND sked__Blacklisted__c = TRUE)
-                                                             FROM sked__Resource__c
-                                                             WHERE Id IN :resourceIds]);
+        master.mapResource = new Map<Id, sked__Resource__c>([
+            SELECT Id, sked_Maximum_Travel_Radius__c, sked_Turnaround_Time__c, sked__Resource_Type__c,
+            sked__GeoLocation__c, sked_Max_Travel_Time__c,
+            (SELECT Id, sked__Tag__c, sked__Expiry_Date__c, sked_Start__c
+            FROM sked__ResourceTags__r),
+            (SELECT Id, sked__Account__c, sked__Resource__c
+            FROM sked__Account_Resource_Scores__r
+            WHERE sked__Account__c IN :accountIds
+            AND sked__Blacklisted__c = TRUE),
+            (SELECT Id, sked__Location__c, sked__Resource__c
+            FROM sked__Location_Resource_Scores__r
+            WHERE sked__Location__c IN :locationIds
+            AND sked__Blacklisted__c = TRUE)
+            FROM sked__Resource__c
+            WHERE Id IN :resourceIds
+        ]);
     	return master;
     }
     
-    private List<skedHC__Exception__c> captureDriveShiftExceptionLog(exceptionMasterModel master) {
+    private static List<skedHC__Exception__c> captureDriveShiftExceptionLog(skedExceptionMasterModel master) {
         List<skedHC__Exception__c> exceptionLog = new List<skedHC__Exception__c>();
         
         Set<Id> driveShiftIds = new Set<Id>();
@@ -769,7 +1002,7 @@ public class skedJobAllocationHandler extends skedTriggerHub {
             }
             
             Map<Id, sked__Resource__c> mapResource = new Map<Id, sked__Resource__c>([SELECT Id,
-                                                                                     (SELECT Id, sked__Tag__c, sked_Expiry_Date__c, sked_Start__c
+                                                                                     (SELECT Id, sked__Tag__c, sked_Start__c
                                                                                       FROM sked__ResourceTags__r)
                                                                                      FROM sked__Resource__c
                                                                                      WHERE Id IN :resourceIds]);
@@ -786,9 +1019,8 @@ public class skedJobAllocationHandler extends skedTriggerHub {
                             sked__Resource__c resource = mapResource.get(driveShiftAllocation.sked__Resource__c);
                             for (sked__Resource_Tag__c resourceTag : resource.sked__ResourceTags__r) {
                                 if (resourceTag.sked__Tag__c == driveShiftTag.sked_Tag__c) {
-                                    boolean isNotExpired = resourceTag.sked_Start__c <= driveShiftAllocation.sked__Start__c
-                                        && (resourceTag.sked_Expiry_Date__c == NULL || driveShiftAllocation.sked__Job__r.sked_Drive__r.sked_Drive_Date__c <= resourceTag.sked_Expiry_Date__c);
-                                    if (isNotExpired) {
+                                    boolean isValid = resourceTag.sked_Start__c <= driveShiftAllocation.sked__Start__c;
+                                    if (isValid) {
                                         numberOfResourcesHaveTag++;
                                         break;
                                     }
@@ -833,7 +1065,7 @@ public class skedJobAllocationHandler extends skedTriggerHub {
         return exceptionLog;
     }
     
-    private List<skedHC__Exception__c> captureTravelTimeExceptionLog(exceptionMasterModel master) {
+    private static List<skedHC__Exception__c> captureTravelTimeExceptionLog(skedExceptionMasterModel master) {
         List<skedHC__Exception__c> exceptionLog = new List<skedHC__Exception__c>();
         
         for (sked__Job_Allocation__c skedAllocation : master.jobAllocations) {
@@ -867,15 +1099,13 @@ public class skedJobAllocationHandler extends skedTriggerHub {
         
         return exceptionLog;
     }
+
+    private static List<skedHC__Exception__c> captureLinkedDriveExceptionLog(skedExceptionMasterModel master) {
+        System.debug('CAPTURING LINKED DRIVE EXCEPTIONS');
+        return skedJobAllocationPostProcessBatch.captureLinkedDriveMismatchedAssetExceptionLog(master);
+    }
     
     /**************************************** NESTED CLASS ********************************************/
-    public class exceptionMasterModel {
-        public List<sked__Job_Allocation__c> jobAllocations;
-        public Map<Id, sked_Drive_Shift__c> mapDriveShift;
-        public Map<Id, sked__Job__c> mapJob;
-        public Map<Id, sked__Resource__c> mapResource;
-    }
-
     public class jobAllocationModel {
         public Boolean hasKey;
         public string key;

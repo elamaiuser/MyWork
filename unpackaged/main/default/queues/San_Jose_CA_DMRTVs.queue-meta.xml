@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Queue xmlns="http://soap.sforce.com/2006/04/metadata">
+    <doesSendEmailToMembers>false</doesSendEmailToMembers>
+    <name>San Jose CA: DMRTVs</name>
+    <queueMembers>
+        <users>
+            <user>kerry.morris@redcross.org.biomed</user>
+            <user>kristen.merrill@redcross.org</user>
+            <user>serena.bricker@redcross.org</user>
+        </users>
+    </queueMembers>
+    <queueSobject>
+        <sobjectType>sked__Location__c</sobjectType>
+    </queueSobject>
+</Queue>

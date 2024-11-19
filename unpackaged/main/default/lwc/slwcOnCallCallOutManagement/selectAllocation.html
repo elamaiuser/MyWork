@@ -1,0 +1,156 @@
+<template>
+
+    <section role="dialog" tabindex="-1" class={customClass.modal}>
+        <lightning-spinner if:true={showSpinner} class="spins" size="medium"></lightning-spinner>
+
+        <div class="slds-modal__container">
+            <header if:false={fullScreen} class="slds-clearfix slds-page-header slds-page-header_record-home fixed-position" style="margin-bottom: var(--lwc-cardSpacingMargin);">
+                <div class="slds-page-header__row slds-grid_vertical-align-center">
+                    <div class="slds-page-header__col-title">
+                        <div class="slds-media">
+                            <div class="slds-media__figure">
+                                <lightning-icon icon-name="standard:record_create" size="medium"></lightning-icon>
+                            </div>
+                            <div class="slds-media__body">
+                                <div class="slds-page-header__name">
+                                    <div class="slds-page-header__name-title">
+                                        <h1>
+                                            <span class="slds-page-header__title slds-truncate">Select Allocation</span>
+                                        </h1>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="slds-no-flex">
+                        <div class="slds-grid">
+                            <div class="slds-no-flex">
+                                <ul class="slds-button-group-row">
+                                    <li class="slds-button-group-item">
+                                        <lightning-button label="Back" onclick={handleBack}></lightning-button>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+            <header if:true={fullScreen} class="slds-modal__header">
+                <div style="width: 3rem">
+                    <lightning-button-icon icon-name="utility:chevronleft" variant="bare-inverse" alternative-text="Back" title="Back" size="large" onclick={handleBack}></lightning-button-icon>
+                </div>
+                
+                <h2 class="slds-text-heading_medium slds-hyphenate">Select Allocation</h2>
+
+                <div style="width: 3rem">
+                </div>
+            </header>
+            <div class="slds-modal__content slds-is-relative">
+                <article class="slds-card slds-grow slds-scrollable_y slds-grow">
+                    <div class="slds-card__body slds-card__body_inner">
+                        <template if:true={selectedEvent.isDrive}>
+                            <template for:each={allocationGroups} for:item="item">
+                                <div class="slds-theme_shade slds-p-horizontal_medium slds-p-vertical_small" key={item.id}><strong>{item.name}</strong></div>
+                                <ul  key={item.id} class="slds-grid_pull-padded slds-p-horizontal_small slds-scrollable--y events-container">
+                                    <li for:each={item.jobs}
+                                        for:item="job" key={job.key} data-id={job.id}>
+                                        <article
+                                            class="slds-p-around--small slds-hint-parent slds-border--bottom slds-border--top">
+                                            <div class="slds-media__body">
+                                                <div
+                                                    class="slds-grid slds-grid_align-spread slds-has-flexi-truncate">
+                                                    <h3 class="slds-tile__title">
+                                                        <strong>{job.resourceRoleText}</strong>
+                                                    </h3>
+                                                </div>
+                                                <div class="slds-tile__detail">
+                                                    <template for:each={job.jobAllocations} for:item="jobAllocation">
+                                                        <div key={jobAllocation.id} class="slds-m-top_x-small">
+                                                            <div class="slds-grid slds-m-top_xx-small slds-wrap">
+                                                                <div class="">
+                                                                    {jobAllocation.resourceName}
+                                                                </div>
+                                                                <span if:true={jobAllocation.status} class="slds-m-horizontal_xx-small">-</span>
+                                                                <div>
+                                                                    {jobAllocation.status}
+                                                                </div>
+                                                                <div class="slds-m-left_small">
+                                                                    <a href="javascript:void(0);" data-id={jobAllocation.id} onclick={handleSelectAllocation}>Select</a>
+                                                                </div>
+                                                            </div>
+                                                            <div if:true={jobAllocation.start}>
+                                                                <p class="slds-text-color_inverse-weak">
+                                                                    <lightning-formatted-date-time value={jobAllocation.start}
+                                                                        hour="2-digit" minute="2-digit" hour12="true"
+                                                                        time-zone={timezoneSidId}>
+                                                                    </lightning-formatted-date-time>
+                                                                    <span> - </span>
+                                                                    <lightning-formatted-date-time value={jobAllocation.end}
+                                                                        hour="2-digit" minute="2-digit" hour12="true"
+                                                                        time-zone={timezoneSidId}>
+                                                                    </lightning-formatted-date-time>
+                                                                </p>
+                                                            </div>
+                                                        </div>
+                                                    </template>
+                                                </div>
+                                            </div>
+                                        </article>
+                                    </li>
+                                </ul>
+                            </template>
+                        </template>
+
+                        <template if:false={selectedEvent.isDrive}>      
+                            <template for:each={allocationGroups} for:item="item">
+                                <article
+                                    key={item.id} class="slds-p-around--small slds-hint-parent slds-border--bottom slds-border--top">
+                                    <div class="slds-media__body">
+                                        <div
+                                            class="slds-grid slds-grid_align-spread slds-has-flexi-truncate">
+                                            <h3 class="slds-tile__title">
+                                                <strong>{item.activityTitle}</strong>
+                                            </h3>
+                                        </div>
+                                        <div class="slds-tile__detail" >
+                                            <template for:each={item.activityResources} for:item="activityResource">
+                                                <div key={activityResource.id} class="slds-m-top_x-small">
+                                                    <div class="slds-grid slds-m-top_xx-small slds-wrap">
+                                                        <div class="">
+                                                            {activityResource.resource.name}
+                                                        </div>
+                                                        <div class="slds-m-left_small">
+                                                            <a href="javascript:void(0);" data-id={activityResource.id} onclick={handleSelectAllocation}>Select</a>
+                                                        </div>
+                                                    </div>
+                                                    <div if:true={activityResource.start}>
+                                                        <p class="slds-text-color_inverse-weak">
+                                                            <lightning-formatted-date-time value={activityResource.start}
+                                                                hour="2-digit" minute="2-digit" hour12="true"
+                                                                time-zone={timezoneSidId}>
+                                                            </lightning-formatted-date-time>
+                                                            <span> - </span>
+                                                            <lightning-formatted-date-time value={activityResource.finish}
+                                                                hour="2-digit" minute="2-digit" hour12="true"
+                                                                time-zone={timezoneSidId}>
+                                                            </lightning-formatted-date-time>
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </template>
+                                        </div>
+                                    </div>
+                                </article>
+                            </template>                
+                        </template>
+            
+                        <div if:false={allocationGroups.length}
+                            class="slds-align--absolute-center slds-p-around--large slds-text-heading--small">
+                            No record found
+                        </div>
+                    </div>
+                </article>
+            </div>
+        </div>
+    </section>
+</template>

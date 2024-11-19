@@ -1,0 +1,364 @@
+<template>
+    <div class={customClass.modal}>
+        <lightning-spinner if:true={showSpinner} class="spins" size="medium"></lightning-spinner>
+        <div class="slds-align-content-center slds-col width-450 full-height">
+            <div class="slds-clearfix slds-page-header slds-page-header_record-home fixed-position " style="margin-bottom: var(--lwc-cardSpacingMargin);">
+                <div class="slds-page-header__row slds-grid_vertical-align-center">
+                    <div class="slds-page-header__col-title">
+                        <div class="slds-media">
+                            <div class="slds-media__figure">
+                                <lightning-icon icon-name="standard:metrics" size="medium"></lightning-icon>
+                            </div>
+                            <div class="slds-media__body">
+                                <div class="slds-page-header__name">
+                                    <div class="slds-page-header__name-title">
+                                        <h1>
+                                            <span class="slds-page-header__title slds-truncate">{stepLabel}</span>
+                                        </h1>
+                                    </div>
+                                </div>
+                                <p class="slds-page-header__name-meta">Market Trade</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="slds-no-flex">
+                        <div class="slds-grid">
+                            <div class="slds-no-flex">
+                                <ul class="slds-button-group-row">
+                                    <li if:true={showPrevious} class="slds-button-group-item">
+                                        <button onclick={handlePrev}
+                                            class="slds-button slds-button_neutral">Previous</button>
+                                    </li>
+                                    <li class="slds-button-group-item">
+                                        <button disabled={disabledNext} class="slds-button slds-button_brand"
+                                            onclick={handleNext}>Next</button>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="slds-tabs_card slds-scrollable--y height-custom slds-grid slds-grid_vertical">
+                <lightning-progress-indicator current-step={step} type="base" variant="base">
+                    <lightning-progress-step for:each={listStep} for:item="step" key={step.value} label={step.label} value={step.value}></lightning-progress-step>
+                </lightning-progress-indicator>
+               
+                <div class="slds-m-top--large slds-grow slds-grid position-relative slds-scrollable_y">
+                    <div class="slds-grid slds-grid_vertical width-100 height-100">
+                        <div
+                            class="slds-grid slds-grid_vertical slds-p-horizontal_small slds-p-top_small slds-shrink-none slds-border--bottom slds-border--left slds-border--right slds-border--top width-100 height-100">
+                            <div class="slds-align--absolute-center slds-no-flex">
+                                <c-slwc-week-date-picker if:true={showWeekDatePicker} first-day={collectionOperationFirstDay}
+                                    dropdown-position="center"
+                                    unique-key="optimizationHistory" onweekdatechange={handleOnChangeFilter}
+                                    default-start-date={filters.startDate} default-end-date={filters.endDate}>
+                                </c-slwc-week-date-picker>
+                            </div>
+
+                            <div class="slds-no-flex slds-m-top_x-small">
+                                <lightning-input 
+                                    type="checkbox" 
+                                    label="Show only auto-approval candidates" 
+                                    name="showOnlyAutoApprovalDSTs"
+                                    checked={driveShiftTradeFilers.showOnlyAutoApprovalDSTs}
+                                    onchange={handleDriveShiftTradeFiltersChanged}>
+                                </lightning-input>
+                            </div>
+
+                            <article class="slds-card slds-grow slds-scrollable_y">
+                                <div class="slds-card__body slds-card__body_inner">
+                                    <ul if:true={listRecords.length}
+                                        class="slds-grid_pull-padded slds-p-horizontal_small slds-scrollable--y">
+                                        <template for:each={listRecords} for:item="record">
+                                            <li class={record.classes} onclick={handleSelectRecord} key={record.key} data-id={record.id}>
+                                                <article
+                                                    if:true={record.isJobAllocation}
+                                                    class="slds-p-around--small slds-hint-parent slds-border--bottom slds-border--top">
+                                                    <div class="slds-media__body">
+                                                        <div
+                                                            class="slds-grid slds-grid_align-spread slds-has-flexi-truncate">
+                                                            <h3 class="slds-tile__title">
+                                                                <span class="color-text-link-hover">{record.rolesString}</span>
+                                                            </h3>
+                                                        </div>
+                                                        <div class="slds-tile__detail">
+                                                            <dl class="slds-list_horizontal slds-wrap">
+                                                                <dt
+                                                                    class="slds-item_label slds-text-color_weak slds-truncate">
+                                                                    Drive:</dt>
+                                                                <dd class="slds-item_detail">
+                                                                    {record.driveName}</dd>
+                                                                <dt
+                                                                    class="slds-item_label slds-text-color_weak slds-truncate">
+                                                                    Drive Shift:</dt>
+                                                                <dd class="slds-item_detail slds-truncate">
+                                                                    {record.driveShiftName}</dd>
+                                                                <dt
+                                                                    class="slds-item_label slds-text-color_weak slds-truncate">
+                                                                    Shift Date:</dt>
+                                                                <dd class="slds-item_detail slds-truncate">
+                                                                    <lightning-formatted-date-time value={record.start}
+                                                                        year="numeric" day="2-digit" month="short"
+                                                                        time-zone={timezoneSidId}>
+                                                                    </lightning-formatted-date-time>
+                                                                </dd>
+                                                                <dt
+                                                                    class="slds-item_label slds-text-color_weak slds-truncate">
+                                                                    Shift Time:</dt>
+                                                                <dd class="slds-item_detail slds-truncate">
+                                                                    <lightning-formatted-date-time value={record.start}
+                                                                        hour="numeric" minute="2-digit"
+                                                                        time-zone={timezoneSidId}>
+                                                                    </lightning-formatted-date-time> -
+                                                                    <lightning-formatted-date-time value={record.end}
+                                                                        hour="numeric" minute="2-digit"
+                                                                        time-zone={timezoneSidId}>
+                                                                    </lightning-formatted-date-time>
+                                                                </dd>
+                                                            </dl>
+                                                        </div>
+                                                    </div>
+                                                </article>
+
+                                                <article
+                                                    if:true={record.isGroupActivity}
+                                                    class="slds-p-around--small slds-hint-parent slds-border--bottom slds-border--top">
+                                                    <div class="slds-media__body">
+                                                        <div
+                                                            class="slds-grid slds-grid_align-spread slds-has-flexi-truncate">
+                                                            <h3 class="slds-tile__title slds-truncate">
+                                                                <span class="color-text-link-hover" if:true={record.activity.activityTitle}>{record.activity.activityTitle}</span>
+                                                                <span class="color-text-link-hover" if:false={record.activity.activityTitle}>{record.activity.name}</span>
+                                                            </h3>
+                                                        </div>
+                                                        <div class="slds-tile__detail">
+                                                            <dl class="slds-list_horizontal slds-wrap">
+                                                                <dt
+                                                                    class="slds-item_label slds-text-color_weak slds-truncate">
+                                                                    Type:</dt>
+                                                                <dd class="slds-item_detail slds-truncate">
+                                                                    {record.activity.eventType}
+                                                                </dd>
+                                                                <dt
+                                                                    class="slds-item_label slds-text-color_weak slds-truncate">
+                                                                    Sub-type:</dt>
+                                                                <dd class="slds-item_detail slds-truncate">
+                                                                    {record.activity.subtype}
+                                                                </dd>
+                                                                <dt
+                                                                    class="slds-item_label slds-text-color_weak slds-truncate">
+                                                                    Start:</dt>
+                                                                <dd class="slds-item_detail slds-truncate">
+                                                                    <lightning-formatted-date-time value={record.activity.start}
+                                                                        year="numeric" day="2-digit" month="short"
+                                                                        time-zone={timezoneSidId}>
+                                                                    </lightning-formatted-date-time>
+                                                                    &nbsp;
+                                                                    <lightning-formatted-date-time value={record.activity.start}
+                                                                        hour="numeric" minute="2-digit"
+                                                                        time-zone={timezoneSidId}>
+                                                                    </lightning-formatted-date-time>
+                                                                </dd>
+                                                                <dt
+                                                                    class="slds-item_label slds-text-color_weak slds-truncate">
+                                                                    End:</dt>
+                                                                <dd class="slds-item_detail slds-truncate">
+                                                                    <lightning-formatted-date-time value={record.activity.finish}
+                                                                        year="numeric" day="2-digit" month="short"
+                                                                        time-zone={timezoneSidId}>
+                                                                    </lightning-formatted-date-time>
+                                                                    &nbsp;
+                                                                    <lightning-formatted-date-time value={record.activity.finish}
+                                                                        hour="numeric" minute="2-digit"
+                                                                        time-zone={timezoneSidId}>
+                                                                    </lightning-formatted-date-time>
+                                                                </dd>
+                                                            </dl>
+                                                        </div>
+                                                    </div>
+                                                </article>
+                                                
+                                                <template if:true={record.isDriveShiftTrade}>
+                                                    <article
+                                                        if:true={record.requestingStaffJobAllocationId}
+                                                        class="slds-p-around--small slds-hint-parent slds-border--bottom slds-border--top">
+                                                        <div class="slds-media__body">
+                                                            <div
+                                                                class="slds-grid slds-grid_align-spread slds-has-flexi-truncate">
+                                                                <h3 class="slds-tile__title slds-truncate">
+                                                                    <span class="color-text-link-hover">{record.requestingStaffTradingEventName}</span>
+                                                                </h3>
+                                                            </div>
+                                                            <div class="slds-tile__detail">
+                                                                <dl class="slds-list_horizontal slds-wrap">
+                                                                    <dt
+                                                                        class="slds-item_label slds-text-color_weak slds-truncate">
+                                                                        Staff:</dt>
+                                                                    <dd class="slds-item_detail">
+                                                                        {record.requestingStaffName}</dd>
+                                                                    <dt
+                                                                        class="slds-item_label slds-text-color_weak slds-truncate">
+                                                                        Roles:</dt>
+                                                                    <dd class="slds-item_detail">
+                                                                        {record.requestingStaffAssignedRoles}</dd>
+                                                                    <dt
+                                                                        class="slds-item_label slds-text-color_weak slds-truncate">
+                                                                        Drive:</dt>
+                                                                    <dd class="slds-item_detail">
+                                                                        {record.requestingStaffDriveName}</dd>
+                                                                    <dt
+                                                                        class="slds-item_label slds-text-color_weak slds-truncate">
+                                                                        Drive Shift:</dt>
+                                                                    <dd class="slds-item_detail slds-truncate">
+                                                                        {record.requestingStaffDriveShiftName}</dd>
+                                                                    <dt
+                                                                        class="slds-item_label slds-text-color_weak slds-truncate">
+                                                                        Shift Date:</dt>
+                                                                    <dd class="slds-item_detail slds-truncate">
+                                                                        <lightning-formatted-date-time value={record.requestingStaffDriveDate}
+                                                                            year="numeric" day="2-digit" month="short"
+                                                                            time-zone="GMT">
+                                                                        </lightning-formatted-date-time>
+                                                                    </dd>
+                                                                    <dt
+                                                                        class="slds-item_label slds-text-color_weak slds-truncate">
+                                                                        Shift Time:</dt>
+                                                                    <dd class="slds-item_detail slds-truncate">
+                                                                        <lightning-formatted-date-time value={record.requestingStaffJobStart}
+                                                                            hour="numeric" minute="2-digit"
+                                                                            time-zone={timezoneSidId}>
+                                                                        </lightning-formatted-date-time> -
+                                                                        <lightning-formatted-date-time value={record.requestingStaffJobStart}
+                                                                            hour="numeric" minute="2-digit"
+                                                                            time-zone={timezoneSidId}>
+                                                                        </lightning-formatted-date-time>
+                                                                    </dd>
+                                                                </dl>
+                                                            </div>
+                                                            <div class="slds-m-top_medium" if:true={record.contentions.length}>
+                                                                <c-slwc-page-errors title="Contentions" validities={record.contentions}></c-slwc-page-errors>
+                                                            </div>
+                                                        </div>
+                                                    </article>
+
+                                                    <article
+                                                        if:true={record.requestingStaffNCEId}
+                                                        class="slds-p-around--small slds-hint-parent slds-border--bottom slds-border--top">
+                                                        <div class="slds-media__body">
+                                                            <div
+                                                                class="slds-grid slds-grid_align-spread slds-has-flexi-truncate">
+                                                                <h3 class="slds-tile__title slds-truncate">
+                                                                    <span class="color-text-link-hover">{record.requestingStaffTradingEventName}</span>
+                                                                </h3>
+                                                            </div>
+                                                            <div class="slds-tile__detail">
+                                                                <dl class="slds-list_horizontal slds-wrap">
+                                                                    <dt
+                                                                        class="slds-item_label slds-text-color_weak slds-truncate">
+                                                                        Staff:</dt>
+                                                                    <dd class="slds-item_detail">
+                                                                        {record.requestingStaffName}</dd>
+                                                                    <dt
+                                                                        class="slds-item_label slds-text-color_weak slds-truncate">
+                                                                        Type:</dt>
+                                                                    <dd class="slds-item_detail slds-truncate">
+                                                                        {record.requestingStaffNCE.eventType}
+                                                                    </dd>
+                                                                    <dt
+                                                                        class="slds-item_label slds-text-color_weak slds-truncate">
+                                                                        Sub-type:</dt>
+                                                                    <dd class="slds-item_detail slds-truncate">
+                                                                        {record.requestingStaffNCE.subtype}
+                                                                    </dd>
+                                                                    <dt
+                                                                        class="slds-item_label slds-text-color_weak slds-truncate">
+                                                                        Start:</dt>
+                                                                    <dd class="slds-item_detail slds-truncate">
+                                                                        <lightning-formatted-date-time value={record.requestingStaffNCE.start}
+                                                                            year="numeric" day="2-digit" month="short"
+                                                                            time-zone={timezoneSidId}>
+                                                                        </lightning-formatted-date-time>
+                                                                        &nbsp;
+                                                                        <lightning-formatted-date-time value={record.requestingStaffNCE.start}
+                                                                            hour="numeric" minute="2-digit"
+                                                                            time-zone={timezoneSidId}>
+                                                                        </lightning-formatted-date-time>
+                                                                    </dd>
+                                                                    <dt
+                                                                        class="slds-item_label slds-text-color_weak slds-truncate">
+                                                                        End:</dt>
+                                                                    <dd class="slds-item_detail slds-truncate">
+                                                                        <lightning-formatted-date-time value={record.requestingStaffNCE.finish}
+                                                                            year="numeric" day="2-digit" month="short"
+                                                                            time-zone={timezoneSidId}>
+                                                                        </lightning-formatted-date-time>
+                                                                        &nbsp;
+                                                                        <lightning-formatted-date-time value={record.requestingStaffNCE.finish}
+                                                                            hour="numeric" minute="2-digit"
+                                                                            time-zone={timezoneSidId}>
+                                                                        </lightning-formatted-date-time>
+                                                                    </dd>
+                                                                </dl>
+                                                            </div>
+                                                            <div class="slds-m-top_medium" if:true={record.contentions.length}>
+                                                                <c-slwc-page-errors title="Contentions" validities={record.contentions}></c-slwc-page-errors>
+                                                            </div>
+                                                        </div>
+                                                    </article>
+
+                                                    <article
+                                                        if:true={record.requestingStaffTradingAvailableDate}
+                                                        class="slds-p-around--small slds-hint-parent slds-border--bottom slds-border--top">
+                                                        <div class="slds-media__body">
+                                                            <div
+                                                                class="slds-grid slds-grid_align-spread slds-has-flexi-truncate">
+                                                                <h3 class="slds-tile__title slds-truncate">
+                                                                    <span class="color-text-link-hover">Available Day</span>
+                                                                </h3>
+                                                            </div>
+                                                            <div class="slds-tile__detail">
+                                                                <dl class="slds-list_horizontal slds-wrap">
+                                                                    <dt
+                                                                        class="slds-item_label slds-text-color_weak slds-truncate">
+                                                                        Staff:</dt>
+                                                                    <dd class="slds-item_detail">
+                                                                        {record.requestingStaffName}</dd>
+                                                                        <dt
+                                                                        class="slds-item_label slds-text-color_weak slds-truncate">
+                                                                        Date:</dt>
+                                                                    <dd class="slds-item_detail slds-truncate">
+                                                                        <lightning-formatted-date-time 
+                                                                            value={record.requestingStaffTradingAvailableDate}
+                                                                            year="numeric"
+                                                                            day="2-digit"
+                                                                            month="short"
+                                                                            time-zone='GMT'>
+                                                                        </lightning-formatted-date-time>
+                                                                    </dd>
+                                                                </dl>
+                                                            </div>
+                                                            <div class="slds-m-top_medium" if:true={record.contentions.length}>
+                                                                <c-slwc-page-errors title="Contentions" validities={record.contentions}></c-slwc-page-errors>
+                                                            </div>
+                                                        </div>
+                                                    </article>
+                                                </template>
+                                            </li>
+                                        </template>
+                                    </ul>
+                                    <div if:false={listRecords.length}
+                                        class="slds-align--absolute-center slds-p-around--large slds-text-heading--small">
+                                        No record found
+                                    </div>
+                                </div>
+                            </article>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>

@@ -24,7 +24,7 @@ set custom notification
             typeId=CUstomNotificationTypeList[0].Id;
         }
         
-        for(Account acc:accList){
+        for(Account acc:accList){ 
             if(typeId!=null){      
                 for(Opportunity opty:acc.Opportunities){
                     if((opty.DriveStatus__c != null && (opty.DriveStatus__c == 'Tentative' || opty.DriveStatus__c == 'Confirmed')) 
@@ -39,13 +39,14 @@ set custom notification
                                                 .title('Hi! '+'One of your coming Blood Drive is still has an Unassigned Account!: '+acc.Name)
                                                 .sender(Userinfo.getUserId())            			
                                                 .typeId(typeId )
-                                                .target(acc.Id); // target object id
+                                                .target(acc.Id) // target object id
+                           						.category('UnmanagedAccount');
                             //HRP-10482 changes ends here
                            userId = new List<String>();
                            System.debug('==notification=='+notification);                        
                            userId.add(acc.District_Manager__c);
                            try{
-                               notification.send(userId);
+                                notification.send(userId);  
                            }
                            catch(Exception e) {
                                System.debug('The following exception has occurred: ' + e.getMessage());

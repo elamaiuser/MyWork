@@ -10,7 +10,7 @@ global class skedCommonService extends skedDataService {
     }
     
     public List<skedModels.biomedCollectionOp> getAllBiomedCollectionOp() {
-        List<Biomed_Collection_Op_Center__c> records = [SELECT Id, Name, Staging_Location_Address__c, Staging_Location_Geolocation__c,
+        List<Biomed_Collection_Op_Center__c> records = [SELECT Id, Name, sked_Waitlist_Enabled__c, Staging_Location_Address__c, Staging_Location_Geolocation__c,
                                                         (SELECT Id, Name, sked__Timezone__c, sked_Biomed_Collection_Op_Center__c,
                                                          sked_Territory__c
                                                          FROM sked_Regions__r)

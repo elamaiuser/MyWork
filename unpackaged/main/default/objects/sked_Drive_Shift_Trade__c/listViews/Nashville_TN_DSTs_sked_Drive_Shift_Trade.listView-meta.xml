@@ -2,9 +2,9 @@
 <ListView xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>Nashville_TN_DSTs_sked_Drive_Shift_Trade</fullName>
     <filterScope>Queue</filterScope>
-    <label>Nashville TN East: DSTs</label>
-    <queue>Nashville_TN_East_DSTs</queue>
+    <label>Nashville TN: DSTs</label>
+    <queue>Nashville_TN_DSTs</queue>
     <sharedTo>
-        <allInternalUsers></allInternalUsers>
+        <allInternalUsers />
     </sharedTo>
 </ListView>

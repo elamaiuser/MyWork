@@ -39,11 +39,7 @@ export default class SlwcSchedulingProgressTab extends LightningElement {
   @api masterData = null;
 
   get drivePlateletRounds() {
-    if(!this.drive || !this.drive.driveShiftsMetadata) return null;
-
-    return (this.drive.driveShiftsMetadata.driveShifts || []).reduce((result, item) => {
-      return result + (item.numberOfRounds || 0)
-    }, 0);
+    return this.driveHelper.getDrivePlateletRounds(this.drive);
   }
 
   get accountName() {

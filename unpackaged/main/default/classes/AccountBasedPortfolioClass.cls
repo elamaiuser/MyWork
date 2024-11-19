@@ -6,6 +6,10 @@
 * 8/9/2023                   Balaji N               Logic for HRP-8897 [commented code for account team Handling and added method call for accountPortfolioassignmentservice.accTeamDateSyncOnAccPortUpdates]
 * 11/9/2023                  Ankit Kundu            Logic for HRP-10545[portfolio list is displayed in alphabetical order]
 * 11/9/2023					 Balaji N				Logic for HRP-11290[MethodName:checkAndCreateAccPortfolioForSupervisor,createAccountTeamData;Date Check for Supervisor]
+* 01/04/2024                 Balaji N			    Logic for HRP-10569(Method Name:createAccountTeamData;parameter changes on accTeamDateSyncOnAccPortUpdates method call)
+* 01/16/2024                 Balaji N			    Logic for HRP-11401[MethodName:createAccountPortfolioData(Changes regarding exception added with same date as territory)
+* 02/14/2024				 Balaji N				Logic for HRP-11138(Method :createAccountPortfolioData, isBackEndDelete)
+* 08/05/2024				 Balaji N				Logic for HRP-12485(Method :createAccountPortfolioData removed dependency on Account_AM_Portfolio_Type__c)
 **
 *****************************************************************************
 */
@@ -253,10 +257,11 @@ return bsplist;
                 if(portfoliolist.isEmpty())
                     portfoliolist = getPortfolio(' ',null,selectedPortfolioType,taxonomyType);
             }
-         //HRP:10545->portfolio list is displayed in alphabetical order   
+            //HRP-10545->portfolio list is displayed in alphabetical order   
+            //Start->
             if( !portfoliolist.isEmpty() ){
                 for( BSF_Portfolio__c bsfport : portfoliolist ){                              
-                  BSFPortfolioWrapper  bsp = new BSFPortfolioWrapper();
+                    BSFPortfolioWrapper  bsp = new BSFPortfolioWrapper();
                     bsp.portfolioid = bsfport.Id;
                     bsp.Portfolio_Name = bsfport.Portfolio_Name__c ;
                     bsp.Start_Date = getFormattedDate(bsfport.Start_Date__c);
@@ -264,7 +269,7 @@ return bsplist;
                     bsplist.add(bsp);                
                 }
                 return bsplist;
-            }
+            }//<-End
         }catch (Exception e) {
             throw new AuraHandledException(e.getMessage());
         }
@@ -272,93 +277,93 @@ return bsplist;
     }
     
     /*public static List<BSFPortfolioWrapper> checkParentPortfolioRegionLevel(List<BSF_Portfolio__c> portfoliolist ){            
-        List<BSFPortfolioWrapper> portfoliosnames = new List<BSFPortfolioWrapper>();
-        List<BSF_Portfolio__c> validdataportfoliolist = new List<BSF_Portfolio__c>();
-        Map<String, List<BSFPortfolioWrapper>> portfolioNameByRegionMap = new Map<String, List<BSFPortfolioWrapper>>();
-        List<BSFPortfolioWrapper> nullParentPortfolioList = new List<BSFPortfolioWrapper>();
-        BSFPortfolioWrapper bsp ;
-        if( !portfoliolist.isEmpty() ){
-            for( BSF_Portfolio__c bsfport : portfoliolist ){
-                //HRP-7113 added by Balaji N
-                if( bsfport.Parent_Portfolio__c ==null)
-                {
-                    bsp = new BSFPortfolioWrapper();
-                    bsp.portfolioid = bsfport.Id;
-                    bsp.Portfolio_Name = bsfport.Portfolio_Name__c ;
-                    bsp.Start_Date = getFormattedDate(bsfport.Start_Date__c);
-                    bsp.End_Date = getFormattedDate(bsfport.End_Date__c);
-                    nullParentPortfolioList.add(bsp);
-                    
-                }//
-                else if( bsfport.Parent_Portfolio__c !=null ){ // FIND REGION AT FIRST LEVEL UP
-                    if( bsfport.Parent_Portfolio__r.Portfolio_Type__c == BSF_Constants.REGION_PORTFOLIO_TYPE ){
-                        // populate map here
-                        if( !portfolioNameByRegionMap.containsKey(bsfport.Parent_Portfolio__r.Portfolio_Name__c) ){
-                            portfolioNameByRegionMap.put( bsfport.Parent_Portfolio__r.Portfolio_Name__c, new List<BSFPortfolioWrapper>() );
-                        }
-                        bsp = new BSFPortfolioWrapper();
-                        bsp.portfolioid = bsfport.Id;
-                        bsp.Portfolio_Name = bsfport.Portfolio_Name__c ;
-                        bsp.Start_Date = getFormattedDate(bsfport.Start_Date__c);
-                        bsp.End_Date = getFormattedDate(bsfport.End_Date__c);
-                        portfolioNameByRegionMap.get(bsfport.Parent_Portfolio__r.Portfolio_Name__c).add( bsp );
-                        
-                    }else if(   bsfport.Parent_Portfolio__r.Parent_Portfolio__c != null ){ // FIND REGION AT SECOND LEVEL UP                                
-                        if( bsfport.Parent_Portfolio__r.Parent_Portfolio__r.Portfolio_Type__c == BSF_Constants.REGION_PORTFOLIO_TYPE ){
-                            // populate map here
-                            if( !portfolioNameByRegionMap.containsKey(bsfport.Parent_Portfolio__r.Parent_Portfolio__r.Portfolio_Name__c) ){
-                                portfolioNameByRegionMap.put( bsfport.Parent_Portfolio__r.Parent_Portfolio__r.Portfolio_Name__c, new List<BSFPortfolioWrapper>() );
-                            }
-                            bsp = new BSFPortfolioWrapper();
-                            bsp.portfolioid = bsfport.Id;
-                            bsp.Portfolio_Name = bsfport.Portfolio_Name__c ;
-                            bsp.Start_Date = getFormattedDate(bsfport.Start_Date__c);
-                            bsp.End_Date = getFormattedDate(bsfport.End_Date__c);
-                            portfolioNameByRegionMap.get(bsfport.Parent_Portfolio__r.Parent_Portfolio__r.Portfolio_Name__c).add( bsp );
-                        }else if(   bsfport.Parent_Portfolio__r.Parent_Portfolio__r.Parent_Portfolio__c != null ){ // FIND REGION AT THIRD LEVEL UP
-                            
-                            // populate map here
-                            if( bsfport.Parent_Portfolio__r.Parent_Portfolio__r.Parent_Portfolio__r.Portfolio_Type__c == BSF_Constants.REGION_PORTFOLIO_TYPE ){
-                                if( !portfolioNameByRegionMap.containsKey( bsfport.Parent_Portfolio__r.Parent_Portfolio__r.Parent_Portfolio__r.Portfolio_Name__c ) ){
-                                    portfolioNameByRegionMap.put( bsfport.Parent_Portfolio__r.Parent_Portfolio__r.Parent_Portfolio__r.Portfolio_Name__c, new List<BSFPortfolioWrapper>() );
-                                }
-                                bsp = new BSFPortfolioWrapper();
-                                bsp.portfolioid = bsfport.Id;
-                                bsp.Portfolio_Name = bsfport.Portfolio_Name__c ;
-                                bsp.Start_Date = getFormattedDate(bsfport.Start_Date__c);
-                                bsp.End_Date = getFormattedDate(bsfport.End_Date__c);
-                                portfolioNameByRegionMap.get(  bsfport.Parent_Portfolio__r.Parent_Portfolio__r.Parent_Portfolio__r.Portfolio_Name__c ).add( bsp );
-                            }
-                            
-                        }
-                    }
-                }
-            } // end of FOR LOOP
-            
-            List<String> portfolioKeys = new List<String>();
-            List<String> portfolioKeyssorted = new List<String>();
-            for( String s1 : portfolioNameByRegionMap.keySet() ){
-                portfolioKeys.add( s1 );
-            }
-            portfolioKeys.sort() ;
-            portfolioKeyssorted = portfolioKeys ;
-            
-            List<BSFPortfolioWrapper> portfoliosertedList;
-            for( String portkey : portfolioKeyssorted ){
-                portfoliosertedList = new List<BSFPortfolioWrapper>();
-                portfoliosertedList = portfolioNameByRegionMap.get( portkey ) ;
-                //portfoliosertedList.sort() ;
-                
-                portfoliosnames.addAll( portfoliosertedList );
-            }
-            //HRP-7113 added by Balaji N
-            if(!nullParentPortfolioList.isEmpty())
-            {
-                portfoliosnames.addAll(nullParentPortfolioList);
-            }//
-        }
-        return portfoliosnames;
-    }*/
+List<BSFPortfolioWrapper> portfoliosnames = new List<BSFPortfolioWrapper>();
+List<BSF_Portfolio__c> validdataportfoliolist = new List<BSF_Portfolio__c>();
+Map<String, List<BSFPortfolioWrapper>> portfolioNameByRegionMap = new Map<String, List<BSFPortfolioWrapper>>();
+List<BSFPortfolioWrapper> nullParentPortfolioList = new List<BSFPortfolioWrapper>();
+BSFPortfolioWrapper bsp ;
+if( !portfoliolist.isEmpty() ){
+for( BSF_Portfolio__c bsfport : portfoliolist ){
+//HRP-7113 added by Balaji N
+if( bsfport.Parent_Portfolio__c ==null)
+{
+bsp = new BSFPortfolioWrapper();
+bsp.portfolioid = bsfport.Id;
+bsp.Portfolio_Name = bsfport.Portfolio_Name__c ;
+bsp.Start_Date = getFormattedDate(bsfport.Start_Date__c);
+bsp.End_Date = getFormattedDate(bsfport.End_Date__c);
+nullParentPortfolioList.add(bsp);
+
+}//
+else if( bsfport.Parent_Portfolio__c !=null ){ // FIND REGION AT FIRST LEVEL UP
+if( bsfport.Parent_Portfolio__r.Portfolio_Type__c == BSF_Constants.REGION_PORTFOLIO_TYPE ){
+// populate map here
+if( !portfolioNameByRegionMap.containsKey(bsfport.Parent_Portfolio__r.Portfolio_Name__c) ){
+portfolioNameByRegionMap.put( bsfport.Parent_Portfolio__r.Portfolio_Name__c, new List<BSFPortfolioWrapper>() );
+}
+bsp = new BSFPortfolioWrapper();
+bsp.portfolioid = bsfport.Id;
+bsp.Portfolio_Name = bsfport.Portfolio_Name__c ;
+bsp.Start_Date = getFormattedDate(bsfport.Start_Date__c);
+bsp.End_Date = getFormattedDate(bsfport.End_Date__c);
+portfolioNameByRegionMap.get(bsfport.Parent_Portfolio__r.Portfolio_Name__c).add( bsp );
+
+}else if(   bsfport.Parent_Portfolio__r.Parent_Portfolio__c != null ){ // FIND REGION AT SECOND LEVEL UP                                
+if( bsfport.Parent_Portfolio__r.Parent_Portfolio__r.Portfolio_Type__c == BSF_Constants.REGION_PORTFOLIO_TYPE ){
+// populate map here
+if( !portfolioNameByRegionMap.containsKey(bsfport.Parent_Portfolio__r.Parent_Portfolio__r.Portfolio_Name__c) ){
+portfolioNameByRegionMap.put( bsfport.Parent_Portfolio__r.Parent_Portfolio__r.Portfolio_Name__c, new List<BSFPortfolioWrapper>() );
+}
+bsp = new BSFPortfolioWrapper();
+bsp.portfolioid = bsfport.Id;
+bsp.Portfolio_Name = bsfport.Portfolio_Name__c ;
+bsp.Start_Date = getFormattedDate(bsfport.Start_Date__c);
+bsp.End_Date = getFormattedDate(bsfport.End_Date__c);
+portfolioNameByRegionMap.get(bsfport.Parent_Portfolio__r.Parent_Portfolio__r.Portfolio_Name__c).add( bsp );
+}else if(   bsfport.Parent_Portfolio__r.Parent_Portfolio__r.Parent_Portfolio__c != null ){ // FIND REGION AT THIRD LEVEL UP
+
+// populate map here
+if( bsfport.Parent_Portfolio__r.Parent_Portfolio__r.Parent_Portfolio__r.Portfolio_Type__c == BSF_Constants.REGION_PORTFOLIO_TYPE ){
+if( !portfolioNameByRegionMap.containsKey( bsfport.Parent_Portfolio__r.Parent_Portfolio__r.Parent_Portfolio__r.Portfolio_Name__c ) ){
+portfolioNameByRegionMap.put( bsfport.Parent_Portfolio__r.Parent_Portfolio__r.Parent_Portfolio__r.Portfolio_Name__c, new List<BSFPortfolioWrapper>() );
+}
+bsp = new BSFPortfolioWrapper();
+bsp.portfolioid = bsfport.Id;
+bsp.Portfolio_Name = bsfport.Portfolio_Name__c ;
+bsp.Start_Date = getFormattedDate(bsfport.Start_Date__c);
+bsp.End_Date = getFormattedDate(bsfport.End_Date__c);
+portfolioNameByRegionMap.get(  bsfport.Parent_Portfolio__r.Parent_Portfolio__r.Parent_Portfolio__r.Portfolio_Name__c ).add( bsp );
+}
+
+}
+}
+}
+} // end of FOR LOOP
+
+List<String> portfolioKeys = new List<String>();
+List<String> portfolioKeyssorted = new List<String>();
+for( String s1 : portfolioNameByRegionMap.keySet() ){
+portfolioKeys.add( s1 );
+}
+portfolioKeys.sort() ;
+portfolioKeyssorted = portfolioKeys ;
+
+List<BSFPortfolioWrapper> portfoliosertedList;
+for( String portkey : portfolioKeyssorted ){
+portfoliosertedList = new List<BSFPortfolioWrapper>();
+portfoliosertedList = portfolioNameByRegionMap.get( portkey ) ;
+//portfoliosertedList.sort() ;
+
+portfoliosnames.addAll( portfoliosertedList );
+}
+//HRP-7113 added by Balaji N
+if(!nullParentPortfolioList.isEmpty())
+{
+portfoliosnames.addAll(nullParentPortfolioList);
+}//
+}
+return portfoliosnames;
+}*/
     // @AuraEnabled
     // public static AccountPortfolioWrapper getAccountPortfolioData( Id accountid ){
     //     AccountPortfolioWrapper apwrapper = new AccountPortfolioWrapper();
@@ -454,8 +459,9 @@ Creating Accoiut Portfolio data
         bsfportfolioobj = [ select Id, Portfolio_Type__c, Parent_Portfolio__c, Portfolio_Name__c,Portfolio_Code__c,Start_Date__c,End_Date__c from BSF_Portfolio__c where Id in:portfolio_ids  ];
         
         // Query On Account for Update
-        acclist = [select Id, Name, Account_AM_Portfolio_Type__c from Account where Id in:acc_ids  ];        
-        for( Account ac : acclist ){
+        acclist = [select Id, Name from Account where Id in:acc_ids  ];        
+        /*HRP-12485
+         *for( Account ac : acclist ){
             if( !ac.Account_AM_Portfolio_Type__c && portfolioType.equals(BSF_Constants.ACCOUNT_MANAGER) 
                && date.valueOf(accportfoliowrpmap.get(ac.Id).Start_Date) == system.today()){
                    ac.Account_AM_Portfolio_Type__c = true;
@@ -463,10 +469,11 @@ Creating Accoiut Portfolio data
                }    
             accountIdMap.put(ac.Id, ac );        
         }
-        
+        HRP-12485*/
         try{
             //System.debug( 'Account update list is ' + accupdatelist );
             // Update Account's <AM Portfolio type> field if not checked
+            /*HRP-12485
             if( !accupdatelist.isEmpty() ){
                 //Schema.DescribeSObjectResult ds = Account.sObjectType.getDescribe();if( ds.isUpdateable() ){}
                 
@@ -475,37 +482,69 @@ Creating Accoiut Portfolio data
                 
             }
             //System.debug( 'Account update is done');
+            HRP-12485*/
             // check over the existing Account Portfolio record, whether end date is greater than incoming record start date  
             if(portfolioType.equals(BSF_Constants.ACCOUNT_MANAGER)){
                 List<Account_Portfolio_Assignment__c> aplist = new List<Account_Portfolio_Assignment__c>();
                 aplist = [ select Id, Start_Date__c, End_Date__c, Account__c from  Account_Portfolio_Assignment__c 
                           where Account__c in: acc_ids AND BSF_Portfolio__r.Portfolio_Type__c =:BSF_Constants.ACCOUNT_MANAGER  ];
                 List<Account_Portfolio_Assignment__c> aplistToUpdate = new List<Account_Portfolio_Assignment__c>();
+                List<Account_Portfolio_Assignment__c> aplistTodelete = new List<Account_Portfolio_Assignment__c>();//HRP-11401
                 if( !aplist.isEmpty() ){
+                    date maxDate = date.newInstance(4000, 12, 31);//HRP-11401
                     for( Account_Portfolio_Assignment__c aps : aplist )
-                    {                    
-                        if((aps.End_Date__c >=st_date && aps.Start_Date__c <=st_date ) )
-                    {
-                        aps.End_Date__c = Date.valueOf(accportfoliowrpmap.get(aps.Account__c).Start_Date).AddDays(-1);
-                        aplistToUpdate.add(aps);
-                    }
-                     if((aps.End_Date__c >=en_date && aps.Start_Date__c <=en_date) && st_date<= aps.Start_Date__c)
-                     {
-                         aps.Start_Date__c = Date.valueOf(accportfoliowrpmap.get(aps.Account__c).end_date).AddDays(1);
-                         aplistToUpdate.add(aps);
-                     }
-                     
+                    {   
+                        //HRP-11401
+                        if(st_date == aps.Start_Date__c)
+                        {
+                            aplistTodelete.add(aps);
+                        }
+                        //HRP-11401
+                        else
+                        {
+                            if((aps.End_Date__c >=st_date && aps.Start_Date__c <st_date ) )
+                            {
+                                aps.End_Date__c = Date.valueOf(accportfoliowrpmap.get(aps.Account__c).Start_Date).AddDays(-1);
+                                aplistToUpdate.add(aps);
+                            }
+                            if((aps.End_Date__c >=en_date && aps.Start_Date__c <=en_date) && st_date< aps.Start_Date__c)
+                            {
+                                if( Date.valueOf(accportfoliowrpmap.get(aps.Account__c).end_date)!=maxDate)//HRP-11401
+                                {
+                                    aps.Start_Date__c = Date.valueOf(accportfoliowrpmap.get(aps.Account__c).end_date).AddDays(1);
+                                    aplistToUpdate.add(aps);
+                                }
+                                //HRP-11401
+                                else
+                                {
+                                    aplistTodelete.add(aps);
+                                }
+                                //HRP-11401
+                            }
+                        }
+                        
+                        
+                        
+                        
                     }
                     //Schema.DescribeSObjectResult ds = Account_Portfolio_Assignment__c.sObjectType.getDescribe();if( ds.isUpdateable() ){}
-                    BSF_Constants.skipAccountPortfolioAssignmentTrigger = true;
                     system.debug('aplist'+aplist);
-                    update aplist;
-                    BSF_Constants.skipAccountPortfolioAssignmentTrigger = false;
-                    
+                    triggerHandler.bypass('AccountPortfolioAssignmentTriggerHandler');
+                    if(!aplist.isEmpty())
+                        update aplist;
+                    //HRP-11401
+                    if(!aplistTodelete.isEmpty())
+                    {
+                        BSF_Constants.isBackEndDelete=true;//HRP-11138
+                        delete aplistTodelete;
+                        BSF_Constants.isBackEndDelete=false;//HRP-11138
+                    }
+                    //HRP-11401
+                    triggerHandler.Clearbypass('AccountPortfolioAssignmentTriggerHandler');
                     
                 }
             }         
-            checkAndCreateAccPortfolioForSupervisor(bsfportfolioobj[0],acc_ids,Date.valueOf(apwrp[0].Start_Date), Date.valueOf(apwrp[0].End_Date));
+            //checkAndCreateAccPortfolioForSupervisor(bsfportfolioobj[0],acc_ids,Date.valueOf(apwrp[0].Start_Date), Date.valueOf(apwrp[0].End_Date));
             
             // Insert new Account Portfolio data
             Map<Id,Account_Portfolio_Assignment__c> acctPortMap = new Map<Id,Account_Portfolio_Assignment__c>();
@@ -545,7 +584,7 @@ Creating Accoiut Portfolio data
         }        
     }
     
-    public static void checkAndCreateAccPortfolioForSupervisor(BSF_Portfolio__c amPortfolio,Set<Id> accIdList,Date startdate, Date enddate){
+    /*public static void checkAndCreateAccPortfolioForSupervisor(BSF_Portfolio__c amPortfolio,Set<Id> accIdList,Date startdate, Date enddate){
         List<Account_Portfolio_Assignment__c> accPortfoliosNeedEndDateUpdateList = new List<Account_Portfolio_Assignment__c>();
         List<Account_Portfolio_Assignment__c> accPortfoliosNeedToCreate = new List<Account_Portfolio_Assignment__c>();
         List<Account_Portfolio_Assignment__c> accountPortfolioList=[SELECT Id,
@@ -635,7 +674,7 @@ Creating Accoiut Portfolio data
                 System.debug('An Error has occured: '+e.getMessage());
             }
         }
-    }
+    }*/
     
     /*
 Create Account Team member data
@@ -645,176 +684,179 @@ Create Account Team member data
     public static void createAccountTeamData( List<Id> accids, Map<Id,Account_Portfolio_Assignment__c> acctPortMap,String  portfolioid, String portfolioType, Date startdate, Date enddate, BSF_Portfolio__c bsfportfolioobj ){
         System.debug('Inside createAccountTeamData');
         BSF_Constants.isTeamMemberCreatedFromBackend = true;  
-        if(portfolioType.equals(BSF_Constants.ACCOUNT_PORTFOLIO)){
-            portfolioType = BSF_Constants.ACCOUNT_MANAGER;
-        }
-        if(portfolioType.equals(BSF_Constants.SICKLE_CELL_ACCOUNT_MANAGER)||portfolioType.equals(BSF_Constants.NATIONAL_ACCOUNT_MANAGER)||portfolioType.equals(BSF_Constants.Booking_Support)||portfolioType.equals(BSF_Constants.ACCOUNT_SPECIALIST)){
-            
-            List<BSF_Portfolio__c> portfolioList = [select Id, Portfolio_Type__c, Portfolio_Name__c from BSF_Portfolio__c where Id =: portfolioid  ];
-            
-            List<Portfolio_Assignment__c> portfolioAssignmentList = [SELECT Id, User__c, BSF_Portfolio__c, Start_Date__c, End_Date__c from Portfolio_Assignment__c WHERE BSF_Portfolio__c =: portfolioid  ORDER BY Start_Date__c];
-            
-            try{
-                if( !portfolioAssignmentList.isEmpty() ) {
-                    List<AccountTeammember> atms = new List<AccountTeammember>();
-                    Integer index = 0;
-                    for( Portfolio_Assignment__c pfassign : portfolioAssignmentList ){
-                        index = index +1;
-                        for( ID aid: accids ){
-                            AccountTeammember atm = new AccountTeammember();
-                            atm.AccountAccessLevel = 'Edit';
-                            atm.CaseAccessLevel = 'Edit';
-                            atm.OpportunityAccessLevel = 'Edit';
-                            atm.userId = pfassign.User__c;
-                            atm.AccountId = aid;
-                            atm.Start_Date__c = pfassign.Start_Date__c;
-                            atm.End_Date__c = pfassign.End_Date__c;
-                            atm.TeamMemberRole = portfolioType;
-                            
-                            if(index == 1){
-                                if(startdate > pfassign.Start_Date__c) 
-                                    atm.Start_Date__c = startdate;
-                            } 
-                            
-                            if(index == portfolioAssignmentList.size()){
-                                if(enddate < pfassign.End_Date__c) 
-                                    atm.End_Date__c = enddate;
-                            }
-                            atms.add(atm);
-                        }
-                        
-                    }
-                    
-                    if(!atms.isEmpty()){
-                        //Schema.DescribeSObjectResult ds = AccountTeammember.sObjectType.getDescribe();if( ds.isCreateable() ){}
-                        
-                        insert atms;
-                        
-                        
-                    }
-                    
-                }
-            } catch (Exception e) {
-                throw new AuraHandledException(e.getMessage());
-            }
-            
-        }
-        else if(portfolioType.equals(BSF_Constants.ACCOUNT_MANAGER)){
-            
-            System.debug('Inside Else Part');
-            
-            List<AccountTeamMember> accTeamInsertList = new List<AccountTeamMember>();
-            List<AccountTeamMember> accTeamUpdateList = new List<AccountTeamMember>();
-            List<AccountTeamMember> accTeamDeleteList = new List<AccountTeamMember>();
-            Map<Id,List<AccountTeamMember>> accountTeamMap = new Map<Id,List<AccountTeamMember>>();
-            Map<String,BSF_Portfolio__c> portfolioMap = new Map<String,BSF_Portfolio__c>();
-            Map<String,List<Portfolio_Assignment__c>> portfolioUserMap = new Map<String,List<Portfolio_Assignment__c>>();
-            
-            AccountPortfolioAssignmentHelper helper = new AccountPortfolioAssignmentHelper();
-            
-            List<Account> accts = [Select Id,Name,BillingPostalCode,(Select Id,Name,Start_Date__c,End_Date__c,BSF_Portfolio__c,BSF_Portfolio__r.External_Key__c  FROM AccountPortfolioAssignments__r WHERE END_DATE__c > TODAY ORDER BY Start_Date__c) FROM ACCOUNT WHERE ID IN :accids  ];
-            List<BSF_Portfolio__c> portfolios = [Select Id,Name,Portfolio_Name__c,Portfolio_Code__c,External_Key__c,Parent_Portfolio__c,Parent_Portfolio__r.Parent_Portfolio__c,Parent_Portfolio__r.Parent_Portfolio__r.Portfolio_Type__c,Portfolio_Type__c,Start_Date__c,end_date__c FROM BSF_Portfolio__c WHERE ID = :portfolioid AND Portfolio_Type__c = :BSF_Constants.ACCOUNT_MANAGER  ];
-            //Check if there is any Supervisor Portfolio is Present for the same AM Portfolio Code
-            List<BSF_Portfolio__c> supervisorPortfolioList = [Select Id,Name,Portfolio_Name__c,Portfolio_Code__c,Taxonomy_Type__c,Parent_Portfolio__c FROM BSF_Portfolio__c WHERE Portfolio_Code__c =: portfolios[0].Portfolio_Code__c AND end_Date__c>=: portfolios[0].Start_Date__c AND Taxonomy_Type__c =: BSF_Constants.TAXO_SUPERVISOR_RECORD_TYPE AND Portfolio_Type__c = :BSF_Constants.ACCOUNT_MANAGER  ];//11290 portolio code date check for EndDate
-            Map<String,Id> supervisorPortfolioCodeIdMap = new Map<String,Id>();
-            if(supervisorPortfolioList.size()>0){
-                for(BSF_Portfolio__c supervisorAMPortfolio:supervisorPortfolioList){
-                    supervisorPortfolioCodeIdMap.put(supervisorAMPortfolio.Portfolio_Code__c, supervisorAMPortfolio.Parent_Portfolio__c);
-                }
-            }
-            List<String> teamRoleList = new List<String>();
-            teamRoleList.add(BSF_Constants.ACCOUNT_MANAGER);
-            teamRoleList.add(BSF_Constants.AREA_BOOKING_MANAGER);
-            teamRoleList.add(BSF_Constants.DISTRICT_MANAGER);
-            teamRoleList.add(BSF_Constants.SUPERVISOR);
-            
-            List<AccountTeamMember> accountTeamList = [Select Id, UserId ,TeamMemberRole,Bsf_Portfolio__C,Start_Date__c ,End_Date__c ,AccountId FROM AccountTeamMember WHERE AccountId IN :accts AND TeamMemberRole IN :teamRoleList   ORDER BY Start_Date__c ];
-            
-            for(AccountTeamMember teamMember:accountTeamList){
-                if(accountTeamMap.get(teamMember.AccountId) == null){
-                    accountTeamMap.put(teamMember.AccountId,new List<AccountTeamMember>());
-                }
-                accountTeamMap.get(teamMember.AccountId).add(teamMember);
-            }
-            
-            Set<Id> portfolioIds = new Set<Id>();
-            Map<Id,String> portfolioIdCodeMap = new Map<Id,String>();
-            for(BSF_Portfolio__c portfolio:portfolios){
-                //portfolioMap.put(portfolio.External_Key__c,portfolio);
-                portfolioMap.put(portfolio.Id,portfolio);
-                portfolioIds.add(portfolio.Id); //AM ID
-                portfolioIds.add(portfolio.Parent_Portfolio__c); //ABM ID
-                if(supervisorPortfolioCodeIdMap.containsKey(portfolio.Portfolio_Code__c)){
-                    portfolioIds.add(supervisorPortfolioCodeIdMap.get(portfolio.Portfolio_Code__c));//Supervisor Portfolio ID
-                    portfolioIdCodeMap.put(portfolio.Id,portfolio.Portfolio_Code__c);
-                }
-                if(portfolio.Parent_Portfolio__r.Parent_Portfolio__r.Portfolio_Type__c == BSF_Constants.DISTRICT_MANAGER)
-                    portfolioIds.add(portfolio.Parent_Portfolio__r.Parent_Portfolio__c); //DM ID
-            }
-            
-            List<Portfolio_Assignment__c> portFolioUsers = [Select Id,Name, User__c ,Start_Date__c ,End_Date__c,BSF_Portfolio__c,BSF_Portfolio__r.Portfolio_Type__c  FROM Portfolio_Assignment__c WHERE BSF_Portfolio__c IN :portfolioIds AND End_Date__c > TODAY   ORDER BY Start_Date__c ];
-            
-            for(Portfolio_Assignment__c portfolioUser:portFolioUsers){
-                if(!portfolioUserMap.containsKey(portfolioUser.BSF_Portfolio__c)){
-                    portfolioUserMap.put(portfolioUser.BSF_Portfolio__c,new List<Portfolio_Assignment__c>());
-                }
-                portfolioUserMap.get(portfolioUser.BSF_Portfolio__c).add(portfolioUser);        
-            }
-            
-            System.debug('portFolioUsers ->'+portFolioUsers.size());
-            System.debug('accts -> '+accts.size());
-            System.debug(' portfolios -> '+portfolios.size());
-            
-            
-            System.debug('Account List: '+accts);
-            System.debug('portfolioUserMap: '+portfolioUserMap);
-            //HRP-8897
-            /*for(Account acct:accts){
-                System.debug('1st If:portfolioid: '+portfolioid);
-                System.debug('portfolioMap: '+portfolioMap);
-                BSF_Portfolio__c portfolio = portfolioMap.get(portfolioid);
-                Account_Portfolio_Assignment__c newActPortfolioAssignment = acctPortMap.get(acct.Id);
-                List<Portfolio_Assignment__c> userPortfolioAssigmentList = new List<Portfolio_Assignment__c>();
-                
-                System.debug('portfolio from PortfolioMap: '+portfolio); 
-                
-                if(portfolioUserMap.get(portfolio.Id) != null){ //AM
-                    System.debug('Portfolio Id: '+portfolio.Id);
-                    System.debug(portfolioUserMap.get(portfolio.Id));
-                    userPortfolioAssigmentList.addAll(portfolioUserMap.get(portfolio.Id));
-                }
-                if(portfolioUserMap.get(portfolio.Parent_Portfolio__c) != null){ //ABM. If No ABM, this is DM.
-                    System.debug('Parent Portfolio: '+portfolio.Parent_Portfolio__c);
-                    userPortfolioAssigmentList.addAll(portfolioUserMap.get(portfolio.Parent_Portfolio__c));
-                }
-                if(portfolioUserMap.get(portfolio.Parent_Portfolio__r.Parent_Portfolio__c) != null){ // If ABM present, this is DM. Otherwise, this does not execute.
-                    userPortfolioAssigmentList.addAll(portfolioUserMap.get(portfolio.Parent_Portfolio__r.Parent_Portfolio__c));
-                }    
-                if(portfolioUserMap.get(supervisorPortfolioCodeIdMap.get(portfolioIdCodeMap.get(portfolio.Id)))!=null){
-                    userPortfolioAssigmentList.addAll(portfolioUserMap.get(supervisorPortfolioCodeIdMap.get(portfolioIdCodeMap.get(portfolio.Id))));
-                }
-                System.debug('userPortfolioAssigmentList: '+userPortfolioAssigmentList);
-                
-                helper.populateAccountTeam(null,newActPortfolioAssignment,userPortfolioAssigmentList,accountTeamMap.get(acct.id),false,accTeamInsertList,accTeamUpdateList,accTeamDeleteList);
-                
-            }
-            for(AccountTeamMember teamM:accTeamInsertList){
-                teamM.AccountAccessLevel= 'Edit';
-                teamM.CaseAccessLevel = 'Edit';
-                teamM.OpportunityAccessLevel = 'Edit';
-            }
-            
-            
-            Database.SaveResult[] actTeamInsert = Database.insert(accTeamInsertList, false);
-            
-            Database.SaveResult[] actTeamUpdate = Database.update(accTeamUpdateList, false);
-            system.debug('accTeamUpdateList'+accTeamUpdateList);
-            Database.DeleteResult[] actTeamDelete = Database.delete(accTeamDeleteList, false);
+        accountPortfolioassignmentservice.accTeamDateSyncOnAccPortUpdates(accids,null,new set<id>(),new map<id,list<accountTeamMember>> (),new map<id,list<accountTeamMember>> ()); //HRP-8897 syncs the account team as per account portfolio assignment
+        //HRP-10569 parameter changes
+        /*if(portfolioType.equals(BSF_Constants.ACCOUNT_PORTFOLIO)){
+portfolioType = BSF_Constants.ACCOUNT_MANAGER;
+}
+if(portfolioType.equals(BSF_Constants.SICKLE_CELL_ACCOUNT_MANAGER)||portfolioType.equals(BSF_Constants.NATIONAL_ACCOUNT_MANAGER)||portfolioType.equals(BSF_Constants.Booking_Support)||portfolioType.equals(BSF_Constants.ACCOUNT_SPECIALIST)){
+
+List<BSF_Portfolio__c> portfolioList = [select Id, Portfolio_Type__c, Portfolio_Name__c from BSF_Portfolio__c where Id =: portfolioid  ];
+
+List<Portfolio_Assignment__c> portfolioAssignmentList = [SELECT Id, User__c, BSF_Portfolio__c, Start_Date__c, End_Date__c from Portfolio_Assignment__c WHERE BSF_Portfolio__c =: portfolioid  ORDER BY Start_Date__c];
+
+try{
+if( !portfolioAssignmentList.isEmpty() ) {
+List<AccountTeammember> atms = new List<AccountTeammember>();
+Integer index = 0;
+for( Portfolio_Assignment__c pfassign : portfolioAssignmentList ){
+index = index +1;
+for( ID aid: accids ){
+AccountTeammember atm = new AccountTeammember();
+atm.AccountAccessLevel = 'Edit';
+atm.CaseAccessLevel = 'Edit';
+atm.OpportunityAccessLevel = 'Edit';
+atm.userId = pfassign.User__c;
+atm.AccountId = aid;
+atm.Start_Date__c = pfassign.Start_Date__c;
+atm.End_Date__c = pfassign.End_Date__c;
+atm.TeamMemberRole = portfolioType;
+
+if(index == 1){
+if(startdate > pfassign.Start_Date__c) 
+atm.Start_Date__c = startdate;
+} 
+
+if(index == portfolioAssignmentList.size()){
+if(enddate < pfassign.End_Date__c) 
+atm.End_Date__c = enddate;
+}
+atms.add(atm);
+}
+
+}
+
+if(!atms.isEmpty()){
+//Schema.DescribeSObjectResult ds = AccountTeammember.sObjectType.getDescribe();if( ds.isCreateable() ){}
+
+insert atms;
+
+
+}
+
+}
+} catch (Exception e) {
+throw new AuraHandledException(e.getMessage());
+}
+
+}
+else if(portfolioType.equals(BSF_Constants.ACCOUNT_MANAGER)){
+
+System.debug('Inside Else Part');
+
+List<AccountTeamMember> accTeamInsertList = new List<AccountTeamMember>();
+List<AccountTeamMember> accTeamUpdateList = new List<AccountTeamMember>();
+List<AccountTeamMember> accTeamDeleteList = new List<AccountTeamMember>();
+Map<Id,List<AccountTeamMember>> accountTeamMap = new Map<Id,List<AccountTeamMember>>();
+Map<String,BSF_Portfolio__c> portfolioMap = new Map<String,BSF_Portfolio__c>();
+Map<String,List<Portfolio_Assignment__c>> portfolioUserMap = new Map<String,List<Portfolio_Assignment__c>>();
+
+AccountPortfolioAssignmentHelper helper = new AccountPortfolioAssignmentHelper();
+
+List<Account> accts = [Select Id,Name,BillingPostalCode,(Select Id,Name,Start_Date__c,End_Date__c,BSF_Portfolio__c,BSF_Portfolio__r.External_Key__c  FROM AccountPortfolioAssignments__r WHERE END_DATE__c > TODAY ORDER BY Start_Date__c) FROM ACCOUNT WHERE ID IN :accids  ];
+List<BSF_Portfolio__c> portfolios = [Select Id,Name,Portfolio_Name__c,Portfolio_Code__c,External_Key__c,Parent_Portfolio__c,Parent_Portfolio__r.Parent_Portfolio__c,Parent_Portfolio__r.Parent_Portfolio__r.Portfolio_Type__c,Portfolio_Type__c,Start_Date__c,end_date__c FROM BSF_Portfolio__c WHERE ID = :portfolioid AND Portfolio_Type__c = :BSF_Constants.ACCOUNT_MANAGER  ];
+//Check if there is any Supervisor Portfolio is Present for the same AM Portfolio Code
+List<BSF_Portfolio__c> supervisorPortfolioList = [Select Id,Name,Portfolio_Name__c,Portfolio_Code__c,Taxonomy_Type__c,Parent_Portfolio__c FROM BSF_Portfolio__c WHERE Portfolio_Code__c =: portfolios[0].Portfolio_Code__c AND end_Date__c>=: portfolios[0].Start_Date__c AND Taxonomy_Type__c =: BSF_Constants.TAXO_SUPERVISOR_RECORD_TYPE AND Portfolio_Type__c = :BSF_Constants.ACCOUNT_MANAGER  ];//11290 portolio code date check for EndDate
+Map<String,Id> supervisorPortfolioCodeIdMap = new Map<String,Id>();
+if(supervisorPortfolioList.size()>0){
+for(BSF_Portfolio__c supervisorAMPortfolio:supervisorPortfolioList){
+supervisorPortfolioCodeIdMap.put(supervisorAMPortfolio.Portfolio_Code__c, supervisorAMPortfolio.Parent_Portfolio__c);
+}
+}
+List<String> teamRoleList = new List<String>();
+teamRoleList.add(BSF_Constants.ACCOUNT_MANAGER);
+teamRoleList.add(BSF_Constants.AREA_BOOKING_MANAGER);
+teamRoleList.add(BSF_Constants.DISTRICT_MANAGER);
+teamRoleList.add(BSF_Constants.SUPERVISOR);
+
+List<AccountTeamMember> accountTeamList = [Select Id, UserId ,TeamMemberRole,Bsf_Portfolio__C,Start_Date__c ,End_Date__c ,AccountId FROM AccountTeamMember WHERE AccountId IN :accts AND TeamMemberRole IN :teamRoleList   ORDER BY Start_Date__c ];
+
+for(AccountTeamMember teamMember:accountTeamList){
+if(accountTeamMap.get(teamMember.AccountId) == null){
+accountTeamMap.put(teamMember.AccountId,new List<AccountTeamMember>());
+}
+accountTeamMap.get(teamMember.AccountId).add(teamMember);
+}
+
+Set<Id> portfolioIds = new Set<Id>();
+Map<Id,String> portfolioIdCodeMap = new Map<Id,String>();
+for(BSF_Portfolio__c portfolio:portfolios){
+//portfolioMap.put(portfolio.External_Key__c,portfolio);
+portfolioMap.put(portfolio.Id,portfolio);
+portfolioIds.add(portfolio.Id); //AM ID
+portfolioIds.add(portfolio.Parent_Portfolio__c); //ABM ID
+if(supervisorPortfolioCodeIdMap.containsKey(portfolio.Portfolio_Code__c)){
+portfolioIds.add(supervisorPortfolioCodeIdMap.get(portfolio.Portfolio_Code__c));//Supervisor Portfolio ID
+portfolioIdCodeMap.put(portfolio.Id,portfolio.Portfolio_Code__c);
+}
+if(portfolio.Parent_Portfolio__r.Parent_Portfolio__r.Portfolio_Type__c == BSF_Constants.DISTRICT_MANAGER)
+portfolioIds.add(portfolio.Parent_Portfolio__r.Parent_Portfolio__c); //DM ID
+}
+
+List<Portfolio_Assignment__c> portFolioUsers = [Select Id,Name, User__c ,Start_Date__c ,End_Date__c,BSF_Portfolio__c,BSF_Portfolio__r.Portfolio_Type__c  FROM Portfolio_Assignment__c WHERE BSF_Portfolio__c IN :portfolioIds AND End_Date__c > TODAY   ORDER BY Start_Date__c ];
+
+for(Portfolio_Assignment__c portfolioUser:portFolioUsers){
+if(!portfolioUserMap.containsKey(portfolioUser.BSF_Portfolio__c)){
+portfolioUserMap.put(portfolioUser.BSF_Portfolio__c,new List<Portfolio_Assignment__c>());
+}
+portfolioUserMap.get(portfolioUser.BSF_Portfolio__c).add(portfolioUser);        
+}
+
+System.debug('portFolioUsers ->'+portFolioUsers.size());
+System.debug('accts -> '+accts.size());
+System.debug(' portfolios -> '+portfolios.size());
+
+
+System.debug('Account List: '+accts);
+System.debug('portfolioUserMap: '+portfolioUserMap);
+//HRP-8897
+for(Account acct:accts){
+System.debug('1st If:portfolioid: '+portfolioid);
+System.debug('portfolioMap: '+portfolioMap);
+BSF_Portfolio__c portfolio = portfolioMap.get(portfolioid);
+Account_Portfolio_Assignment__c newActPortfolioAssignment = acctPortMap.get(acct.Id);
+List<Portfolio_Assignment__c> userPortfolioAssigmentList = new List<Portfolio_Assignment__c>();
+
+System.debug('portfolio from PortfolioMap: '+portfolio); 
+
+if(portfolioUserMap.get(portfolio.Id) != null){ //AM
+System.debug('Portfolio Id: '+portfolio.Id);
+System.debug(portfolioUserMap.get(portfolio.Id));
+userPortfolioAssigmentList.addAll(portfolioUserMap.get(portfolio.Id));
+}
+if(portfolioUserMap.get(portfolio.Parent_Portfolio__c) != null){ //ABM. If No ABM, this is DM.
+System.debug('Parent Portfolio: '+portfolio.Parent_Portfolio__c);
+userPortfolioAssigmentList.addAll(portfolioUserMap.get(portfolio.Parent_Portfolio__c));
+}
+if(portfolioUserMap.get(portfolio.Parent_Portfolio__r.Parent_Portfolio__c) != null){ // If ABM present, this is DM. Otherwise, this does not execute.
+userPortfolioAssigmentList.addAll(portfolioUserMap.get(portfolio.Parent_Portfolio__r.Parent_Portfolio__c));
+}    
+if(portfolioUserMap.get(supervisorPortfolioCodeIdMap.get(portfolioIdCodeMap.get(portfolio.Id)))!=null){
+userPortfolioAssigmentList.addAll(portfolioUserMap.get(supervisorPortfolioCodeIdMap.get(portfolioIdCodeMap.get(portfolio.Id))));
+}
+System.debug('userPortfolioAssigmentList: '+userPortfolioAssigmentList);
+
+helper.populateAccountTeam(null,newActPortfolioAssignment,userPortfolioAssigmentList,accountTeamMap.get(acct.id),false,accTeamInsertList,accTeamUpdateList,accTeamDeleteList);
+
+}
+for(AccountTeamMember teamM:accTeamInsertList){
+teamM.AccountAccessLevel= 'Edit';
+teamM.CaseAccessLevel = 'Edit';
+teamM.OpportunityAccessLevel = 'Edit';
+}
+
+
+Database.SaveResult[] actTeamInsert = Database.insert(accTeamInsertList, false);
+
+Database.SaveResult[] actTeamUpdate = Database.update(accTeamUpdateList, false);
+system.debug('accTeamUpdateList'+accTeamUpdateList);
+Database.DeleteResult[] actTeamDelete = Database.delete(accTeamDeleteList, false);
 */
-            //HRP-8897
-            accountPortfolioassignmentservice.accTeamDateSyncOnAccPortUpdates(accids,null); //HRP-8897 syncs the account team as per account portfolio assignment
-            
-            /*
+        //HRP-8897
+        //accountPortfolioassignmentservice.accTeamDateSyncOnAccPortUpdates(accids,null,new set<id>(),new map<id,list<accountTeamMember>> (),new map<id,list<accountTeamMember>> ()); //HRP-8897 syncs the account team as per account portfolio assignment
+        //HRP-10569 added 3rd parameter
+        
+        /*
 Set<Id> portfolioassignmentids = new Set<Id>();        
 List<Portfolio_Assignment__c> passign = new List<Portfolio_Assignment__c>();
 List<BSF_Portfolio__c> bsfportfolios = new List<BSF_Portfolio__c>();
@@ -866,7 +908,7 @@ insert atms;
 } catch (Exception e) {
 throw new AuraHandledException(e.getMessage());
 }*/
-        }else if(portfolioType.equals(BSF_Constants.RELATIONSHIP_MANAGER)){
+        if(portfolioType.equals(BSF_Constants.RELATIONSHIP_MANAGER)){
             System.debug('Inside RM Block');
             List<Portfolio_assignment__c> portfolioAssignmentList = [SELECT Id,BSF_Portfolio__c,User__c,Start_Date__c,End_Date__c FROM Portfolio_Assignment__c WHERE BSF_Portfolio__c=:portfolioid
                                                                      order by createdDate DESC LIMIT 1  ];

@@ -1,0 +1,104 @@
+<template>
+        <lightning-card title="Travel Time Breakdown" icon-name="custom:custom63">
+            <div class="slds-grid slds-align_absolute-center slds-p-horizontal_small">
+                <div class="slds-col slds-size_1-of-1 slds-large-size_10-of-12">
+                    <h2 class="slds-card__header-title slds-text-heading_small" style="font-size: 13px;">Travel Time Breakdown Data </h2>
+                </div>
+                <div class="slds-col slds-large-size_2-of-12">
+                    <lightning-button label="Generate DCR" class="slds-float_right" icon-name="utility:save" variant="brand" onclick={generateDCR}></lightning-button>
+                    <template if:true={isOpenModel}>
+                        <c-generate-pending-d-c-r travel-time-site-to-co={}
+                                                  travel-time-co-to-site={} 
+                                                  modified-record-ids={modifiedRecordIds}
+                                                  is-show-modal={isOpenModel}
+                                                  onclose={handleclose}>
+                        </c-generate-pending-d-c-r>
+                    </template>
+                </div>
+            </div>
+        <div class="slds-m-around_medium">
+            
+
+            <template for:each={records} for:item="record">
+                <div key={record.id} class="slds-box slds-theme_default slds-m-bottom_medium">
+                    <div class="slds-grid slds-wrap">
+                        <div class="slds-col slds-size_1-of-1">
+                            <div><strong>Collection Operation:</strong> {record.collectionOpName}</div>
+                            <div><strong>Address:</strong> {record.address}</div>
+                            <div><strong>Effective Dates:</strong>  {record.effectiveDates}</div>
+                            <div><strong>Direction: </strong><strong>  {record.direction}</strong></div>
+                        </div>
+                        
+                    </div>
+                    
+                    
+                    
+
+                    <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-m-top_medium">
+                        <thead>
+                            <tr class="slds-line-height_reset">
+                                <th class="" scope="col">Time Slot</th>
+                                <template for:each={daysOfWeek} for:item="day">
+                                    <th key={day} class="" scope="col">{day}</th>
+                                </template>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <template for:each={record.timeSlots} for:item="slot" for:index="index">
+                                <tr key={index.id}>
+                                    <td>{slot.timeRange}</td> 
+                                    <template for:each={slot.travelTimes} for:item="time" for:index="dayIndex">
+                                        <td key={dayIndex.id}>
+                                            <template if:true={record.isEditMode}>
+                                                <!--<lightning-input type="text" value={time}></lightning-input>-->
+                                                <lightning-input 
+                                                    type="text" 
+                                                    value={time} 
+                                                    data-index-id={record.indexId} 
+                                                    data-time-slot={slot.timeRange} 
+                                                    data-day-index={dayIndex} 
+                                                    onchange={handleTimeChange}
+                                                    onblur={handleTimeChange}>
+                                                </lightning-input>
+                                            </template>
+                                            <template if:false={record.isEditMode}>
+                                                {time}
+                                            </template>
+                                        </td>
+                                    </template>
+                                </tr>
+                            </template>
+                        </tbody>
+                    </table>
+
+                    <div class="slds-grid slds-wrap slds-grid_vertical-align-center slds-m-top_medium">
+                        <div class="slds-col slds-size_1-of-1 slds-m-bottom_small">
+                            <lightning-textarea label="Comment" value={record.overrideComment} data-index-id={record.indexId} onchange={handleCommentChange} disabled={record.inputsDisabled}></lightning-textarea>
+                            <template if:true={record.commentError}>
+                                <span class="slds-text-color_error">{record.commentError}</span>
+                            </template>
+                        </div>
+                        <div class="slds-col slds-size_1-of-1 slds-m-bottom_small">
+                            <lightning-input type="checkbox" label="User Override" checked={record.userOverride} data-index-id={record.indexId} onchange={handleUserOverrideChange} disabled={record.inputsDisabled}></lightning-input>
+
+                        </div>
+                        <div class="slds-col slds-size_1-of-1 slds-text-align_right">
+                            <template if:true={record.isEditMode}>
+                                <lightning-button label="Cancel" variant="destructive" class="slds-m-right_x-small" onclick={handleCancel} data-id={record.id} data-index-id={record.indexId}></lightning-button>
+                                <lightning-button label="Reset" variant="neutral" class="slds-m-right_x-small" onclick={handleReset} data-id={record.id} data-index-id={record.indexId}></lightning-button>
+                                <lightning-button label="Save" variant="brand" class="slds-m-right_x-small" onclick={handleSave} data-id={record.id}></lightning-button>
+                            </template>
+                            <template if:false={record.isEditMode}>
+                                <lightning-button label="Edit" variant="brand" onclick={handleEditRecord} data-id={record.id} data-index-id={record.indexId}></lightning-button>
+                            </template>
+                        </div>
+                    </div>
+                </div>
+            </template>
+
+            <!-- Action Buttons here  -->
+            
+
+        </div>
+    </lightning-card>
+</template>

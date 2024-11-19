@@ -25,6 +25,7 @@ public class NotifyAMforBPLRecruitedDailyBatchTest {
         opp1.Accept_56_Day_Rule_Violation__c = true;
 		opp1.Start_Time__c = Time.newInstance(9, 0, 0, 0);
 		opp1.End_Time__c = Time.newInstance(15, 0, 0, 0);
+        opp1.Source__c = 'Adhoc';
         oppList.add(opp1);
         
         opportunity opp2=new opportunity();
@@ -36,6 +37,7 @@ public class NotifyAMforBPLRecruitedDailyBatchTest {
         opp2.Accept_56_Day_Rule_Violation__c = true;
 		opp2.Start_Time__c = Time.newInstance(9, 0, 0, 0);
 		opp2.End_Time__c = Time.newInstance(15, 0, 0, 0);
+        opp2.Source__c = 'Adhoc';
         oppList.add(opp2);
         
         insert oppList;

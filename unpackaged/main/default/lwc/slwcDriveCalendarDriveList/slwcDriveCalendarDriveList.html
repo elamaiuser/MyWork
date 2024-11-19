@@ -16,8 +16,7 @@
         </div>
         <div if:false={hideCheckboxColumn} class="slds-shrink-none slds-col_bump-left slds-p-horizontal_small">
             <lightning-button-group>
-                <lightning-button if:true={showConfirmBtn} label="Confirm" onclick={handleConfirmBtnOld} disabled={confirmBtnDisabled}></lightning-button>
-                <!-- <lightning-button if:true={showConfirmBtn} label="Confirm & Assign Vehicles" onclick={handleConfirmBtn} disabled={confirmBtnDisabled}></lightning-button> -->
+                <lightning-button if:true={showConfirmBtn} label="Confirm" onclick={handleConfirmBtn} disabled={confirmBtnDisabled}></lightning-button>
                 <lightning-button if:true={showCompleteBtn} label="Complete" onclick={handleCompleteBtn} disabled={completeBtnDisabled}></lightning-button>
                 <lightning-button if:true={showRemoveHoldBtn} label="Remove Hold" onclick={handleRemoveHoldBtn} disabled={removeHoldBtnDisabled}></lightning-button>
                 <lightning-button if:true={showCancelBtn} label="Cancel" onclick={handleCancelBtn} disabled={cancelBtnDisabled}></lightning-button>

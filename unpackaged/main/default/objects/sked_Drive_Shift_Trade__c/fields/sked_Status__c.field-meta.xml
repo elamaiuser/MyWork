@@ -42,6 +42,16 @@
                 <label>Cancelled</label>
             </value>
             <value>
+                <fullName>Waiting for Requesting Staff Acknowledge</fullName>
+                <default>false</default>
+                <label>Waiting for Requesting Staff Acknowledge</label>
+            </value>
+            <value>
+                <fullName>Expired</fullName>
+                <default>false</default>
+                <label>Expired</label>
+            </value>
+            <value>
                 <fullName>Rejected</fullName>
                 <default>false</default>
                 <isActive>false</isActive>

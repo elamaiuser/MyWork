@@ -1,0 +1,39 @@
+<template>
+  <div class="slds-grid">
+    <div class="slds-size_7-of-12 slds-p-horizontal_small">
+      <article class="slds-card">
+        <div class="slds-card__header slds-grid">
+          <header class="slds-media slds-media_center slds-has-flexi-truncate">
+            <div class="slds-media__body">
+              <h2 class="slds-card__header-title">
+                <span>Scoring Factors</span>
+              </h2>
+            </div>
+            <div class="slds-no-flex" if:false={isReadonly}>
+              <lightning-button
+                label="Reset"
+                onclick={handleReset}
+                variant="neutral"></lightning-button>
+            </div>
+          </header>
+        </div>
+        <div class="slds-card__body slds-card__body_inner">
+          <template for:each={optimizerConstraintSettings} for:item="settingRecord">
+            <div key={settingRecord.key} class="slds-grid slds-grid_vertical-align-center">
+              <div class="slds-size_4-of-12">
+                <label class="slds-form-element__label">{settingRecord.constraint}</label>
+              </div>
+              <div class="slds-size_8-of-12">
+                <c-slwc-optimizer-constraint-input
+                  setting-record={settingRecord}
+                  disabled={isReadonly}
+                  onvaluechange={handleOnChange}>
+                </c-slwc-optimizer-constraint-input>
+              </div>
+            </div>
+          </template>
+        </div>
+      </article>
+    </div>
+  </div>
+</template>

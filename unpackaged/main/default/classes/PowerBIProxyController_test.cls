@@ -55,6 +55,7 @@ public class PowerBIProxyController_test
 			sked_Zip_Code__c = '532432',
             sked_Timezone__c = UserInfo.getTimezone().getID()
         );
+        triggerHandler.bypass('SiteTriggerHandler');
         insert testLocation1; 
         
        
@@ -116,6 +117,7 @@ public class PowerBIProxyController_test
             sked_Asset_Type__c = 'Equipment',
             sked__Job_Status__c = skedConstants.JOB_STATUS_PENDING_ALLOCATION
         );
+        triggerHandler.bypass('JobTriggerHandler');
         insert job3;
     }
     
@@ -136,6 +138,17 @@ public class PowerBIProxyController_test
     {
         Test.startTest();
         PageReference pageRef = Page.WeeklyStaffingRoleReport;
+        Test.setCurrentPage(pageRef);
+        PowerBIProxyController controller = new PowerBIProxyController();
+        controller.jid=string.valueof([select id from sked__Job__c where sked_Asset_Type__c='Equipment' limit 1].id);
+        controller.redirect();
+        test.stopTest();
+    }
+    @isTest
+	public static void testMethod3()
+    {
+        Test.startTest();
+        PageReference pageRef = Page.MOEStagingSheetReport;
         Test.setCurrentPage(pageRef);
         PowerBIProxyController controller = new PowerBIProxyController();
         controller.jid=string.valueof([select id from sked__Job__c where sked_Asset_Type__c='Equipment' limit 1].id);

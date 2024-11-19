@@ -10,7 +10,7 @@
     <filters>
         <field>Account__c</field>
         <operation>equals</operation>
-        <value>Nestle USA</value>
+        <value>Pompey Community Church</value>
     </filters>
     <label>Account Specific view</label>
 </ListView>

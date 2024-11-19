@@ -66,7 +66,7 @@ public class skedAccountHandler extends skedTriggerHub {
                     }
                 }
                 if (!requests.isEmpty()) {
-                    slwcDriveService.captureDriveChangeRequests(requests);
+                    slwcDriveService.captureUserChangeDriveChangeRequests(requests);
                 }
             }
         }

@@ -1490,6 +1490,24 @@
             <field>Product2.Product_Code2__c</field>
             <table>Opportunity.Orders.OrderItems</table>
         </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>Product2.End_Date__c</field>
+            <table>Opportunity.Orders.OrderItems</table>
+        </columns>
         <masterLabel>Order Products</masterLabel>
+    </sections>
+    <sections>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>Recruitment_Strategy_with_Tactics__c</field>
+            <table>Opportunity</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>Recruitment_Committee_Exists__c</field>
+            <table>Opportunity</table>
+        </columns>
+        <masterLabel>Blood Drive Opportunities</masterLabel>
     </sections>
 </ReportType>

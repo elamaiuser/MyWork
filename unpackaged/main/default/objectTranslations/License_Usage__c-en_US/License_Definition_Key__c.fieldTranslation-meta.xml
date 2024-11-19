@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+        <label><!-- License Definition Key --></label>
+        <name>License_Definition_Key__c</name>
+        <picklistValues>
+            <masterLabel>AUL</masterLabel>
+            <translation><!-- AUL --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>CLOUD_INTEGRATION_USER</masterLabel>
+            <translation><!-- CLOUD_INTEGRATION_USER --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>CSN_External_User</masterLabel>
+            <translation><!-- CSN_External_User --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>CSN_User</masterLabel>
+            <translation><!-- CSN_User --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>FDC_ISV_SUB</masterLabel>
+            <translation><!-- FDC_ISV_SUB --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>FDC_SUB</masterLabel>
+            <translation><!-- FDC_SUB --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>GUEST</masterLabel>
+            <translation><!-- GUEST --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>HIGH_VOLUME_PORTAL</masterLabel>
+            <translation><!-- HIGH_VOLUME_PORTAL --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>High_Volume_Customer_Portal_User</masterLabel>
+            <translation><!-- High_Volume_Customer_Portal_User --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>INSIGHTS_INTEGRATION_USER</masterLabel>
+            <translation><!-- INSIGHTS_INTEGRATION_USER --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>PID_Customer_Community</masterLabel>
+            <translation><!-- PID_Customer_Community --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>PID_Customer_Community_Login</masterLabel>
+            <translation><!-- PID_Customer_Community_Login --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>PID_Customer_Community_Plus</masterLabel>
+            <translation><!-- PID_Customer_Community_Plus --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>PID_Customer_Community_Plus_Login</masterLabel>
+            <translation><!-- PID_Customer_Community_Plus_Login --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>PID_Customer_Portal_Basic</masterLabel>
+            <translation><!-- PID_Customer_Portal_Basic --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>PID_Customer_Portal_Standard</masterLabel>
+            <translation><!-- PID_Customer_Portal_Standard --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>PID_External_Apps_Login</masterLabel>
+            <translation><!-- PID_External_Apps_Login --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>PID_External_Identity</masterLabel>
+            <translation><!-- PID_External_Identity --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>PID_FDC_FREE</masterLabel>
+            <translation><!-- PID_FDC_FREE --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>PID_Identity_User</masterLabel>
+            <translation><!-- PID_Identity_User --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>PID_Partner_Community</masterLabel>
+            <translation><!-- PID_Partner_Community --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>PID_Partner_Community_Login</masterLabel>
+            <translation><!-- PID_Partner_Community_Login --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>PID_STANDARD_PRM</masterLabel>
+            <translation><!-- PID_STANDARD_PRM --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>PID_STRATEGIC_PRM</masterLabel>
+            <translation><!-- PID_STRATEGIC_PRM --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>PID_WCUSER</masterLabel>
+            <translation><!-- PID_WCUSER --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>PID_XOrg_Proxy_User</masterLabel>
+            <translation><!-- PID_XOrg_Proxy_User --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>PLATFORM_PORTAL</masterLabel>
+            <translation><!-- PLATFORM_PORTAL --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Platform_Portal_User</masterLabel>
+            <translation><!-- Platform_Portal_User --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>SALESFORCE_INTEGRATION_USER</masterLabel>
+            <translation><!-- SALESFORCE_INTEGRATION_USER --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>SF</masterLabel>
+            <translation><!-- SF --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>SFDC</masterLabel>
+            <translation><!-- SFDC --></translation>
+        </picklistValues>
+    </CustomFieldTranslation>

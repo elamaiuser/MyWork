@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LightningComponentBundle xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>58.0</apiVersion>
+    <isExposed>true</isExposed>
+    <targets>
+        <target>lightning__FlowScreen</target>
+        <target>lightning__RecordPage</target>
+    </targets>
+    <targetConfigs>
+        <targetConfig targets="lightning__FlowScreen">
+            <property name="recordId" label="Account Id" type="String" role="inputOnly"/>
+            <property name="tempDriveName" label="Selected Drive Name" type="String" />
+            <property name="tempDriveDateStart" label="Selected Drive Date Start" type="String" />
+            <property name="tempDriveDateEnd" label="Selected Drive Date End" type="String" />
+            <property name="tempDriveStatus" label="Selected Drive Status" type="String[]" />
+            <property name="tempDayOfDrive" label="Selected Day of Drive" type="String[]" />
+            <property name="tempSiteOperationType" label="Selected Site Operation Type" type="String[]" />
+            <property name="opportunityRecordsInTable" label="Opportunity Records in Table" type="@salesforce/schema/Opportunity[]"/>
+            <property name="varSelectedOpportunityIdList" label="Output Selected Opportunity Ids" type="String[]" />
+        </targetConfig>
+    </targetConfigs>
+</LightningComponentBundle>

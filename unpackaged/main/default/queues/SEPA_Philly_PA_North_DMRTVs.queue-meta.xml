@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Queue xmlns="http://soap.sforce.com/2006/04/metadata">
+    <doesSendEmailToMembers>false</doesSendEmailToMembers>
+    <name>SEPA Philly PA North: DMRTVs</name>
+    <queueMembers>
+        <users>
+            <user>amy.brauner@redcross.org.biomed</user>
+            <user>annette.tucci-jenkins@redcross.org</user>
+            <user>emily.ho@redcross.org</user>
+            <user>janine.hanosek@redcross.org</user>
+            <user>jarrett.mccullough@redcross.org</user>
+            <user>jason.gunsenhouser@redcross.org</user>
+            <user>lena.wassel@redcross.org</user>
+            <user>lisa.kennedy@redcross.org</user>
+        </users>
+    </queueMembers>
+    <queueSobject>
+        <sobjectType>sked__Location__c</sobjectType>
+    </queueSobject>
+</Queue>

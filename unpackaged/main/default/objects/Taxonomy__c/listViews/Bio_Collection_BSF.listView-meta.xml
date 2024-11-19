@@ -8,7 +8,9 @@
     <columns>CREATED_DATE</columns>
     <columns>Division_Name__c</columns>
     <columns>DS_Region_Name__c</columns>
+    <columns>District_Code__c</columns>
     <columns>District_Name__c</columns>
+    <columns>Collection_Operation_Code__c</columns>
     <columns>Collection_Operation_Name__c</columns>
     <columns>Time_Zone__c</columns>
     <columns>skedulo_region_name__c</columns>
@@ -21,9 +23,9 @@
         <value>Taxonomy__c.Bio_Collection_BSF</value>
     </filters>
     <filters>
-        <field>Collection_Operation_Name__c</field>
-        <operation>contains</operation>
-        <value>Denver</value>
+        <field>Zip_Code__c</field>
+        <operation>equals</operation>
+        <value>14102</value>
     </filters>
     <label>Bio Collection BSF</label>
 </ListView>

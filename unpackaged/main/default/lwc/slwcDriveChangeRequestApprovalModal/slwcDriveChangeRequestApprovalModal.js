@@ -89,8 +89,7 @@ export default class SlwcDriveChangeRequestApprovalModal extends LightningElemen
   checkToAllowRequestDRDFeedback(loginUser, status, canApproveReject) {
     const driveHelper = new DriveHelper();
     const isAPSUser = driveHelper.isAPSUser(loginUser);
-    this.allowRequestDRDFeedback = canApproveReject && isAPSUser 
-      && (status === DRIVE_REQUEST_CHANGE_STATUS.WAITING_FOR_APS_APPROVAL || status === DRIVE_REQUEST_CHANGE_STATUS.WAITING_FOR_DM_APPROVAL);
+    this.allowRequestDRDFeedback = canApproveReject && (status === DRIVE_REQUEST_CHANGE_STATUS.WAITING_FOR_APS_APPROVAL || status === DRIVE_REQUEST_CHANGE_STATUS.WAITING_FOR_DM_APPROVAL);
   }
 
   fetchDriveChangeRequest() {
@@ -126,7 +125,7 @@ export default class SlwcDriveChangeRequestApprovalModal extends LightningElemen
       onClose: (result) => {
         this.closeConfirmModal();
         if (result) {
-          this.handleAPSApproval();
+          this.handleRequestDRDFeedback();
         }
       }
     };
@@ -136,10 +135,16 @@ export default class SlwcDriveChangeRequestApprovalModal extends LightningElemen
     this.confirmModalData = {};
   }
 
-  handleAPSApproval() {
+  handleRequestDRDFeedback() {
+    let newStatus = null;
+    if(this.requestDetailModalData.record.status === DRIVE_REQUEST_CHANGE_STATUS.WAITING_FOR_DM_APPROVAL) {
+      newStatus = DRIVE_REQUEST_CHANGE_STATUS.DM_WAITING_FOR_DRD_FEEDBACK;
+    } else if(this.requestDetailModalData.record.status === DRIVE_REQUEST_CHANGE_STATUS.WAITING_FOR_APS_APPROVAL) {
+      newStatus = DRIVE_REQUEST_CHANGE_STATUS.APS_WAITING_FOR_DRD_FEEDBACK;
+    }
     let service = new driveChangeRequestService();
     this.showLoading();
-    service.save({ id:this.requestDetailModalData.record.id, status: DRIVE_REQUEST_CHANGE_STATUS.WAITING_FOR_DRD_FEEDBACK })
+    service.save({ id:this.requestDetailModalData.record.id, status: newStatus })
     .then((result) => {
       if (result.success) {
         this.isOpen = false;

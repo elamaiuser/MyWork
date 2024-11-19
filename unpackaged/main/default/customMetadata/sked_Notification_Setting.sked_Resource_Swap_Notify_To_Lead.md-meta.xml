@@ -4,7 +4,7 @@
     <protected>false</protected>
     <values>
         <field>sked_Active__c</field>
-        <value xsi:type="xsd:boolean">false</value>
+        <value xsi:type="xsd:boolean">true</value>
     </values>
     <values>
         <field>sked_Content_Renderer__c</field>
@@ -16,7 +16,7 @@
     </values>
     <values>
         <field>sked_Custom_Target_Destination__c</field>
-        <value xsi:type="xsd:string">driveLeadTargetDestination</value>
+        <value xsi:type="xsd:string">resourceAllocationDriveLeadEmailTargetDestination</value>
     </values>
     <values>
         <field>sked_Destination_Field__c</field>
@@ -29,6 +29,10 @@
     <values>
         <field>sked_Email_Target_Field__c</field>
         <value xsi:nil="true"/>
+    </values>
+    <values>
+        <field>sked_Expiry_DateTime_Field__c</field>
+        <value xsi:type="xsd:string">sked__Start__c</value>
     </values>
     <values>
         <field>sked_Filter__c</field>
@@ -47,15 +51,23 @@
         <value xsi:nil="true"/>
     </values>
     <values>
+        <field>sked_Priority__c</field>
+        <value xsi:nil="true"/>
+    </values>
+    <values>
         <field>sked_Sending_From_Email_Address__c</field>
         <value xsi:nil="true"/>
     </values>
     <values>
         <field>sked_Subject__c</field>
-        <value xsi:nil="true"/>
+        <value xsi:type="xsd:string">Resource Swap</value>
     </values>
     <values>
         <field>sked_Target_Field_Value__c</field>
+        <value xsi:nil="true"/>
+    </values>
+    <values>
+        <field>sked_Target_Field_Values__c</field>
         <value xsi:nil="true"/>
     </values>
     <values>

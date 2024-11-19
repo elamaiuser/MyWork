@@ -36,10 +36,12 @@ class roleTimeDetailService extends dataService {
       roleTimeDetailQuery.collectionOpIds = collectionOpIds;
       roleTimeDetailQuery.startDate = startDate;
       roleTimeDetailQuery.endDate = endDate;
+      let daysOfWeek = [];
       if (!slwcUtils.isNullOrEmpty(startDate) && startDate === endDate) {
         let dayOfWeek = DateTime.fromFormat(startDate, 'yyyy-MM-dd').toFormat('cccc');
-        roleTimeDetailQuery.daysOfWeek = [dayOfWeek];
+        daysOfWeek = [dayOfWeek];
       }
+      roleTimeDetailQuery.daysOfWeek = daysOfWeek;
       roleTimeDetailQuery.driveTypes = driveTypes;
       roleTimeDetailQuery.mobileTypes = mobileTypes;
       let roleTimeDetailQueryStr = this.buildQuery(roleTimeDetailQuery);
@@ -48,6 +50,7 @@ class roleTimeDetailService extends dataService {
       roleTimeVariancelQuery.driveSiteIds = driveSiteIds;
       roleTimeVariancelQuery.startDate = startDate;
       roleTimeVariancelQuery.endDate = endDate;
+      roleTimeVariancelQuery.daysOfWeek = daysOfWeek;
       let roleTimeVarianceSvc = new roleTimeVarianceService();
       let roleTimeVariancelQueryStr = roleTimeVarianceSvc.buildQuery(roleTimeVariancelQuery);
 

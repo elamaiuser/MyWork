@@ -1,13 +1,14 @@
 import TIME_ZONE from "@salesforce/i18n/timeZone";
 import USER_ID from "@salesforce/user/Id";
 import {
-	driveShiftQueryModel, driveShiftTradeService, resourceQueryModel, resourceService
+	driveShiftQueryModel, driveShiftTradeService, resourceQueryModel, resourceService,
+  sObjectType
 } from "c/dataService";
 import { DateTime } from "c/luxon";
 import * as slwcDateUtils from "c/slwcDateUtils";
 import { ShowToastEvent } from "lightning/platformShowToastEvent";
 import { LightningElement, track, api } from "lwc";
-import { DRIVE_SHIFT_TRADE_TYPE } from 'c/slwcConstants';
+import { DRIVE_SHIFT_TRADE_STATUS, DRIVE_SHIFT_TRADE_TYPE } from 'c/slwcConstants';
 import { classNames } from 'c/slwcUtils';
 
 const MODE = {
@@ -28,6 +29,7 @@ export default class SlwcDriveShiftTradeList extends LightningElement {
   @track showSpinner = false;
 	@track confirmModalData = {};
 	@track driveShiftTradeModalData = {};
+  @track acknowledgeConfirmModalData = {};
 	@track userResource = null;
 
 	@track mode = MODE.LIST_VIEW;
@@ -61,6 +63,7 @@ export default class SlwcDriveShiftTradeList extends LightningElement {
   init() {
 		let query = new resourceQueryModel();
     query.userIds = [USER_ID]
+    query.subQueryIndicator = sObjectType.RESOURCE_OVERRIDE;
     // Quan
     // query.userIds = ['0053F000003lc8UQAQ']
     // Hieu
@@ -147,9 +150,10 @@ export default class SlwcDriveShiftTradeList extends LightningElement {
 	fetchDriveShiftTrades() {
 		let service = new driveShiftTradeService();
 		let query = new driveShiftQueryModel();
-    query.submissionStartDate = this.filters.startDate;
-    query.submissionEndDate = this.filters.endDate;
+    query.tradingEventStartDate = this.filters.startDate;
+    query.tradingEventEndDate = this.filters.endDate;
 		query.resourceIds = [this.userResource.id];
+    query.onlyOneSideTrade = false;
     query.orderBy = 'submissionStartDate';
     query.orderAscending = 'asc';
 
@@ -157,38 +161,16 @@ export default class SlwcDriveShiftTradeList extends LightningElement {
 		return service.query(query)
 			.then((driveShiftTrades = []) => {
 				this.allDriveShiftTrades = driveShiftTrades.map(item => {
-					item.requestingStaffRecord = null;
-          if(item.requestingStaffTradingType === DRIVE_SHIFT_TRADE_TYPE.DRIVE_SHIFT) {
-            item.requestingStaffRecord = {
-              id: item.requestingStaffDriveId,
-              name: item.requestingStaffDriveName
-            }
-          } else if(item.requestingStaffTradingType === DRIVE_SHIFT_TRADE_TYPE.ACTIVITY) {
-            item.requestingStaffRecord = item.requestingStaffNCE;
-          }
-
-          if(item.requestingStaffRecord) {
-            item.requestingStaffRecordUrl = '/' + item.requestingStaffRecord.id;
-            item.requestingStaffRecordName = item.requestingStaffRecord.name;
-          }
-
-          item.tradingStaffRecord = null;
-          if(item.tradingStaffTradingType === DRIVE_SHIFT_TRADE_TYPE.DRIVE_SHIFT) {
-            item.tradingStaffRecord = {
-              id: item.tradingStaffDriveId,
-              name: item.tradingStaffDriveName
-            }
-          } else if(item.tradingStaffTradingType === DRIVE_SHIFT_TRADE_TYPE.ACTIVITY) {
-            item.tradingStaffRecord = item.tradingStaffNCE;
-          }
-
-          if(item.tradingStaffRecord) {
-            item.tradingStaffRecordUrl = '/' + item.tradingStaffRecord.id;
-            item.tradingStaffRecordName = item.tradingStaffRecord.activityTitle || item.tradingStaffRecord.name;
-          }
-
-					item.canAcknowledge = ['Waiting for Trading Staff Acknowledge'].includes(item.status) && item.tradingStaffId === this.userResource.id;
-					item.canCancel = ['Submitted', 'Pending Approval', 'Waiting for Trading Staff Acknowledge'].includes(item.status) && item.requestingStaffId === this.userResource.id;;
+					item.canAcknowledge = (
+            [DRIVE_SHIFT_TRADE_STATUS.WAITING_FOR_TRADING_STAFF_ACKNOWLEDGE].includes(item.status) && item.tradingStaffId === this.userResource.id || 
+            [DRIVE_SHIFT_TRADE_STATUS.WAITING_FOR_REQUESTING_STAFF_ACKNOWLEDGE].includes(item.status) && item.requestingStaffId === this.userResource.id
+          );
+          item.canCancel = [
+            DRIVE_SHIFT_TRADE_STATUS.SUBMITTED, DRIVE_SHIFT_TRADE_STATUS.PENDING_APPROVAL,
+            DRIVE_SHIFT_TRADE_STATUS.WAITING_FOR_TRADING_STAFF_ACKNOWLEDGE,
+            DRIVE_SHIFT_TRADE_STATUS.WAITING_FOR_REQUESTING_STAFF_ACKNOWLEDGE
+          ].includes(item.status) &&
+            item.requestingStaffId === this.userResource.id;
 					
 					return item;
 				});
@@ -202,34 +184,12 @@ export default class SlwcDriveShiftTradeList extends LightningElement {
 		this.showDriveShiftTradeModal();
 	}
 
-	handleAcknowledgeButton() {
+	handleAcknowledgeButton(event) {
 		const recordId = event.currentTarget.dataset['id'];
 		const record = this.allDriveShiftTrades.find(item => item.id === recordId);
 		if(!record) return;
 
-		this.showConfirmModal({
-			title: 'Acknowledge Shift Trade',
-			message: 'Do you want to acknowledge this shift trade?',
-			onClose: (result) => {
-					this.hideConfirmModal();
-					if (result) {
-						this.showLoading();
-						let service = new driveShiftTradeService();
-						service.save({
-							id: record.id,
-							status: 'Pending Approval'
-						})
-						.then((result) => {
-							if(!result.success) throw result;
-							return this.fetchDriveShiftTrades();
-						})
-						.catch(error => this.exceptionHandler(error))
-						.finally(this.hideLoading);
-					}
-			},
-			confirmBtnLabel: 'Yes',
-			cancelBtnLabel: 'No'
-		});
+    this.showAcknowledgeConfirmModal(record);
 	}
 
 	handleCancelButton(event) {
@@ -261,6 +221,63 @@ export default class SlwcDriveShiftTradeList extends LightningElement {
 			cancelBtnLabel: 'No'
 		});
 	}
+
+  /** Acknowledge Confirm Modal */
+  showAcknowledgeConfirmModal(driveShiftTrade) {
+    this.acknowledgeConfirmModalData = {
+      isOpen: true,
+      driveShiftTrade
+    }
+  }
+
+  closeAcknowledgeConfirmModal() {
+    this.acknowledgeConfirmModalData = {};
+  }
+
+  saveAcknowledgeConfirmModal(event) {
+    const driveShiftTrade = this.acknowledgeConfirmModalData.driveShiftTrade;
+    const { 
+      id, requestingStaffTATAcknowledge, requestingStaffGMHAcknowledge, requesterRelocatedAcknowledge, requesterUnavailableForCOAcknowledge,
+      tradingStaffTATAcknowledge, tradingStaffGMHAcknowledge, traderRelocatedAcknowledge, traderUnavailableForCOAcknowledge
+    } = event.detail;
+    this.showLoading();
+    let service = new driveShiftTradeService();
+    service.save({
+      id: id,
+      requestingStaffTATAcknowledge,
+      requestingStaffGMHAcknowledge,
+      requesterRelocatedAcknowledge,
+      requesterUnavailableForCOAcknowledge,
+      tradingStaffTATAcknowledge,
+      tradingStaffGMHAcknowledge,
+      traderRelocatedAcknowledge,
+      traderUnavailableForCOAcknowledge
+    })
+    .then((result) => {
+      if(!result.success) throw result;
+      return service.autoProcessRequest({
+        request: {
+          ...driveShiftTrade,
+          requestingStaffTATAcknowledge,
+          requestingStaffGMHAcknowledge,
+          requesterRelocatedAcknowledge,
+          requesterUnavailableForCOAcknowledge,
+          tradingStaffTATAcknowledge,
+          tradingStaffGMHAcknowledge,
+          traderRelocatedAcknowledge,
+          traderUnavailableForCOAcknowledge
+        }
+      });
+    }).then((result) => {
+      if(!result.success) throw result;
+      return this.fetchDriveShiftTrades();
+    })
+    .catch(error => this.exceptionHandler(error))
+    .finally(() => {
+      this.closeAcknowledgeConfirmModal();
+      this.hideLoading()
+    });
+  }
 
 	/** Drive Shift Trade Modal **/
 	showDriveShiftTradeModal() {

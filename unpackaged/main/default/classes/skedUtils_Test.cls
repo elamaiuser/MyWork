@@ -8,6 +8,7 @@ private class skedUtils_Test {
         Boolean testBoolean = (Boolean) skedUtils.getFieldValue('true', 'boolean');
         Double testDouble = (Double) skedUtils.getFieldValue('15.00', 'double');
         String testString = (String) skedUtils.getFieldValue('test', 'string');
+        Double testDouble2 = (Double) skedUtils.getFieldValue('120%', 'percent');
     }
 
     @isTest
@@ -32,12 +33,13 @@ private class skedUtils_Test {
 
     @isTest static void getFieldNameFromTemplate_Test() {
         sked_Notification_Setting__mdt skedNotificationSetting = [
-            SELECT Id, DeveloperName, sked_Target_SObject__c, sked_Target_Field__c, 
+            SELECT Id, DeveloperName, Label, sked_Target_SObject__c, sked_Target_Field__c, 
                 sked_Target_Field_Value__c, sked_Notification_Type__c, sked_Filter__c,
                 sked_Destination_Field__c, sked_Notification_Target_Field__c, 
-                sked_Email_From_Address_Field__c, sked_Template__c, 
+                sked_Email_From_Address_Field__c, sked_Template__c, sked_Priority__c,
                 sked_Sending_From_Email_Address__c, sked_Custom_Target_Destination__c,
                 sked_Content_Renderer__c, sked_Oneoff_Protocol_Field__c, sked_Subject__c,
+                sked_Expiry_DateTime_Field__c,
                 (SELECT Id, sked_Date_Time_Field__c, sked_Format_For_Token__c, 
                 sked_Format_String__c, sked_Timezone_Field__c
             FROM sked_Notification_Formats__r)
@@ -130,5 +132,9 @@ private class skedUtils_Test {
         System.assertEquals(date2, minDate);
         minDate = skedUtils.getMinFromDates(new List<Date>{null, null});
         System.assertEquals(null, minDate);
+    }
+
+    static testmethod void scheduleUniqueJobInSeconds_Test() {
+        skedUtils.scheduleUniqueJobInSeconds('skedCreateNonUserChangeDCRBatch', new skedCreateNonUserChangeDCRBatch(), 15, true);
     }
 }

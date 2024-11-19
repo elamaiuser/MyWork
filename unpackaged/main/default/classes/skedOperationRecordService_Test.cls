@@ -1,7 +1,7 @@
 @isTest
-private class skedOperationRecordService_Test {
-    @isTest
-    static void generateOperationRecords_Test() {
+public class skedOperationRecordService_Test {
+    
+    @testSetup static void prepareTestData() {
         skedTestDataFactory testDataFactory = new skedTestDataFactory('us', system.today().addMonths(6), 14);
         Map<string, sObject> mapTestData = testDataFactory.setupCommonTestData(); 
         mapTestData = testDataFactory.setupDriveData();
@@ -12,7 +12,8 @@ private class skedOperationRecordService_Test {
         Account testAccount = (Account) mapTestData.get('testAccount1');
         sked__Resource__c testResource = (sked__Resource__c) mapTestData.get('testResource1');
         
-        Test.startTest();
+        testDrive.sked_Drive_Owner__c = Userinfo.getUserId();
+        update testDrive;
         
         sked_Drive_Shift__c testDriveShift = new sked_Drive_Shift__c(
             sked_Donors_Scheduled__c = 1,
@@ -52,13 +53,41 @@ private class skedOperationRecordService_Test {
         sked__Job_Allocation__c testJobAllocation = new sked__Job_Allocation__c(
             sked__Job__c = testJob.Id,
             sked__Resource__c = testResource.Id,
-            sked__Status__c = skedConstants.JOB_ALLOCATION_STATUS_IN_PROGRESS
+            sked__Status__c = skedConstants.JOB_ALLOCATION_STATUS_IN_PROGRESS,
+            sked_Call_Out_Type__c = skedConstants.AVAILABILITY_CALLOUT_TYPE_LATE_ARRIVAL,
+            sked_DateTime_Call_Out_Received__c = system.now().addDays(10),
+            sked_Call_Out_Reason_Code__c = 'Personal'
         );
         insert testJobAllocation;
-        
-        List<sked_Operation_Record__c> operationRecords = skedOperationRecordService.generateOperationRecords(new Set<Id>{testDrive.Id});
-        
-        Test.stopTest();
     }
     
+    @isTest
+    public static List<sked_Operation_Record__c> generateOperationRecords_Test() {
+        
+        Test.startTest();
+        sked_Drive__c testDrive = [SELECT Id FROM sked_Drive__c LIMIT 1];
+        List<sked_Operation_Record__c> operationRecords = skedOperationRecordService.generateOperationRecords(new Set<Id>{testDrive.Id});
+        Set<Id> operationRecordIds = new Set<Id>();
+        for (sked_Operation_Record__c operationRecord : operationRecords) {
+            operationRecordIds.add(operationRecord.Id);
+        }
+
+        skedOperationRecordService.populateExternalIds(operationRecordIds);
+        Test.stopTest();
+        return operationRecords;
+    }
+    
+    @isTest
+    private static void regenrateOpRecords_Test() {
+        Test.startTest();
+        sked_Drive__c testDrive = [SELECT Id FROM sked_Drive__c LIMIT 1];
+        List<sked_Operation_Record__c> operationRecords = skedOperationRecordService.generateOperationRecords(new Set<Id>{testDrive.Id});
+        
+        skedHubBase.BypassDeleteTriggers = TRUE;
+        List<sked_Operation_Record__c> regeneratedOpRecords = skedOperationRecordService.regenerateOperationRecords(new Set<Id>{testDrive.Id});
+        skedHubBase.BypassDeleteTriggers = FALSE;
+        
+        Test.stopTest();
+        Assert.isTrue(regeneratedOpRecords != NULL && !regeneratedOpRecords.isEmpty());
+    }
 }

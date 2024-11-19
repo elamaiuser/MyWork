@@ -18,21 +18,12 @@ import {
     locationService,
     locationQueryModel
 } from 'c/dataService';
-import USER_ID from '@salesforce/user/Id';
 import {
     findIndex,
-    keyBy,
-    remove,
     cloneDeep
 } from 'c/lodash';
-import slwcSiteFeedbackModal from './slwcSiteFeedbackModal.html';
-import slwcSiteFeedbackPage from './slwcSiteFeedbackPage.html';
-import { SITE_FEEDBACK_ACCESS_MODE } from 'c/slwcConstants';
-
-const DISPLAY_MODE = {
-    PAGE: 'page',
-    MODAL: 'modal'
-}
+import { RTV_APPROVAL_STATUS, SITE_FEEDBACK_ACCESS_MODE } from 'c/slwcConstants';
+import { classNames } from 'c/slwcUtils';
 
 export default class SlwcSiteFeedback extends LightningElement {
     @track _isOpen = false;
@@ -47,40 +38,34 @@ export default class SlwcSiteFeedback extends LightningElement {
         }
     }
     @api job = null;
-    @api displayMode = DISPLAY_MODE.MODAL;
+    @api siteId = null;
     @api accessMode = SITE_FEEDBACK_ACCESS_MODE.RESOURCE;
+    @api fullScreen = false;
 
     @track roleTimeVarianceList = [];
     @track siteFeedbackList = [];
     @track showSpinner = false;
+    @track site = null;
     
     @track siteFeedbackDetailModalData = {};
+    @track confirmModalData = {};
 
-    get site() {
-        if(!this.job) return null;
-        return {
-            id: this.job.driveSiteId,
-            name: this.job.driveSiteName,
-            label: this.job.driveSiteName
-        };
-    }
     @wire(CurrentPageReference) pageRef;
 
-    connectedCallback() {
-        this.displayMode = this.displayMode || DISPLAY_MODE.MODAL;
-        this.accessMode = this.accessMode || SITE_FEEDBACK_ACCESS_MODE.RESOURCE;
-
-        if(this.displayMode === DISPLAY_MODE.PAGE) {
-            this.init();
+    get customClass() {
+        return {
+            modal: classNames('slds-modal slds-fade-in-open', {
+                'full-screen': this.fullScreen
+            }),
+            siteName: classNames('slds-hyphenate', {
+                'slds-text-heading_small slds-text-color_weak slds-var-m-top_xx-small': !this.fullScreen,
+                'slds-text-heading_medium': this.fullScreen
+            })
         }
     }
 
-    render() {
-        if(this.displayMode === DISPLAY_MODE.MODAL) {
-            return slwcSiteFeedbackModal;
-        } else {
-            return slwcSiteFeedbackPage;
-        }
+    connectedCallback() {
+        this.accessMode = this.accessMode || SITE_FEEDBACK_ACCESS_MODE.RESOURCE;
     }
 
     showLoading() {
@@ -91,20 +76,25 @@ export default class SlwcSiteFeedback extends LightningElement {
         this.showSpinner = false;
     }
 
+    /** Confirm Modal **/
+    showConfirmModal(confirmModalData) {
+        this.confirmModalData = {...confirmModalData,
+            isOpen: true
+        }
+    }
+
+    hideConfirmModal() {
+        this.confirmModalData = {};
+    }
+
     init() {
         this.showLoading();
-        Promise.resolve()
+        return this.fetchSite()
         .then(() => {
-            if(this.accessMode === SITE_FEEDBACK_ACCESS_MODE.RESOURCE) {
-                return Promise.all([
-                    this.fetchFeedback(),
-                    this.fetchRoleTimeVariances(this.job)
-                ])
-            } else {
-                return Promise.all([
-                    this.fetchFeedback()
-                ])
-            }
+            return Promise.all([
+                this.fetchFeedback(),
+                this.fetchRoleTimeVariances()
+            ]);
         })
         .catch((error) => {
             this.dispatchEvent(new ShowToastEvent({
@@ -118,38 +108,39 @@ export default class SlwcSiteFeedback extends LightningElement {
         });
     }
 
+    fetchSite() {
+        let query = new locationQueryModel();
+        query.recordIds = [this.siteId || this.job.driveSiteId];
+        const service = new locationService();
+        return service.query(query)
+            .then(([site]) => {
+                this.site = site;
+            });
+    }
+
     fetchFeedback() {
         let query = new siteFeedbackQueryModel();
-        query.createdByIds = [USER_ID];
-        // query.createdByIds = ['0053F000007PH10QAG'];
-        if(this.accessMode === SITE_FEEDBACK_ACCESS_MODE.RESOURCE) {
-            query.jobIds = [this.job.id];
-        } 
-        if(this.accessMode === SITE_FEEDBACK_ACCESS_MODE.DRD) {
-            query.queryDRDFeedback = true;
-        }
+        query.siteIds = [this.site.id];
+        query.statuses = [
+            RTV_APPROVAL_STATUS.SUBMITTED,
+            RTV_APPROVAL_STATUS.WAITING_FOR_DM_APPROVAL,
+            RTV_APPROVAL_STATUS.WAITING_FOR_CM_APPROVAL,
+            RTV_APPROVAL_STATUS.WAITING_FOR_APS_APPROVAL,
+            RTV_APPROVAL_STATUS.APPROVED
+        ];
+        query.excludeExpiry = true;
 
         const service = new siteFeedbackService();
 
         return service.query(query)
             .then(res => {
                 this.siteFeedbackList = res.map(item => {
-                    item.isReadonly = item.status !== 'Not Submitted';
-                    item.isDeleteDisabled = item.status !== 'Not Submitted' && item.status !== 'Submitted';
-                    item.drive = item.driveId ? {
-                        id: item.driveId,
-                        name: item.driveName
-                    } : null;
+                    item.isReadonly = item.status !== RTV_APPROVAL_STATUS.NOT_SUBMITTED;
+                    item.isDeletable = item.status !== RTV_APPROVAL_STATUS.NOT_SUBMITTED && item.status !== RTV_APPROVAL_STATUS.APPROVED;
                     item.site = item.siteId ? {
                         id: item.siteId,
                         name: item.siteName
                     } : null;
-                    if(item.drive) {
-                        item.driveRecordPageUrl = '/' + item.drive.id;
-                    }
-                    if(item.site) {
-                        item.siteRecordPageUrl = '/' + item.site.id;
-                    }
                     return item;
                 })
 
@@ -157,14 +148,15 @@ export default class SlwcSiteFeedback extends LightningElement {
             })
     }
 
-    fetchRoleTimeVariances(job) {        
-        if(!job) return;
+    fetchRoleTimeVariances() {        
+        if(!this.site) return;
 
         return Promise.resolve()
         .then(() => {
             let roleTimeVarianceSvc = new roleTimeVarianceService();
             let roleTimeVariancelQuery = new roleTimeVarianceQueryModel();
-            roleTimeVariancelQuery.driveSiteIds = [job.driveSiteId];
+            roleTimeVariancelQuery.driveSiteIds = [this.site.id];
+            roleTimeVariancelQuery.excludeExpiry = true;
             return roleTimeVarianceSvc.query(roleTimeVariancelQuery);
         })
         .then(result => {
@@ -179,50 +171,66 @@ export default class SlwcSiteFeedback extends LightningElement {
         }));
     }
 
-    handleDeleteSiteFeedback(event) {
+    handleViewSiteFeedback(event) {
         const key = event.currentTarget.dataset.key;
-        let newList = [...this.siteFeedbackList];
-        const index = newList.findIndex((item) => item.key === key);
-        newList.splice(index, 1);
-        this.siteFeedbackList = newList;
+        let siteFeedbackRecord = this.siteFeedbackList.find(item => item.key === key);
+        this.handleShowSiteModal({ siteFeedbackRecord });
     }
 
-    handleEditSiteFeedback(event) {
-        const key = event.currentTarget.dataset.key;
-        let record = this.siteFeedbackList.find(item => item.key === key);
-        this.handleShowSiteModal(record);
+    handleDeleteSiteFeedback(event) {
+        let key = event.currentTarget.dataset.key;
+        this.showConfirmModal({
+            title: 'Confirm Deletion',
+            message: 'Are you sure you want to delete this RTV feedback request?',
+            onClose: (result) => {
+                this.hideConfirmModal();
+                if (result) {
+                    let newList = [...this.siteFeedbackList];
+                    const index = newList.findIndex((item) => item.key === key);
+                    newList.splice(index, 1);
+                    this.siteFeedbackList = newList;
+
+                    this.handleSave();
+                }
+            },
+            confirmBtnLabel: 'Yes',
+            cancelBtnLabel: 'No'
+        });
     }
 
     createSiteFeedback() {
         this.handleShowSiteModal();
     }
 
-    handleShowSiteModal(record) {
+    handleShowSiteModal({
+        siteFeedbackRecord,
+        roleTimeVarianceRecord,
+    } = {}) {
         this.siteFeedbackDetailModalData = {
             isOpen: true,
-            record: record
+            siteFeedbackRecord,
+            roleTimeVarianceRecord
         };
     }
 
-    handleSaveSiteModal(event) {
-        let newRecord = event.detail;
-        newRecord.isReadonly = newRecord.status !== 'Not Submitted';
+    handleCreateFeedbackRTVChanges(event) {
+        const key = event.currentTarget.dataset.key;
+        let roleTimeVarianceRecord = this.roleTimeVarianceList.find(item => item.key === key);
+        this.handleShowSiteModal({roleTimeVarianceRecord});
+    }
 
-        if(newRecord.drive) {
-            newRecord.driveRecordPageUrl = '/' + newRecord.drive.id;
-        }
-        if(newRecord.site) {
-            newRecord.siteRecordPageUrl = '/' + newRecord.site.id;
-        }
-
-        const index = findIndex(this.siteFeedbackList, item => item.key === newRecord.key);
-        if (index > -1) {
-            this.siteFeedbackList[index] = newRecord;
-        }
-        else {
-            this.siteFeedbackList.push(newRecord);
-        }
+    handleSiteFeedbackSubmitted() {
         this.handleCloseSiteModal();
+        this.showLoading();
+        this.fetchFeedback()
+        .catch((error) => {
+            this.dispatchEvent(new ShowToastEvent({
+                message: error.message,
+                variant: 'error',
+                mode: 'dismissable'
+            }));
+        })
+        .finally(() => this.hideLoading());
     }
 
     handleCloseSiteModal() {
@@ -240,19 +248,13 @@ export default class SlwcSiteFeedback extends LightningElement {
         service.deleteList(recordsToDelete)
         .then(res => {
             if(!res.success) throw res;
-
-            return service.saveList(this.siteFeedbackList);
-        })
-        .then(res => {
-            if(!res.success) throw res;
             const event = new ShowToastEvent({
-                message: 'Role Time Variance Feedback were updated successfully.',
+                message: 'Role Time Variance Feedback were deleted successfully.',
                 variant: 'success',
                 mode: 'dismissable'
             });
             this.dispatchEvent(event);
-
-            this.closeModal();
+            this.fetchFeedback();
         })
         .catch((error) => {
             this.dispatchEvent(new ShowToastEvent({

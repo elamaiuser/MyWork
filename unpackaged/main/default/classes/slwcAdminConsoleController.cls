@@ -63,13 +63,12 @@ global class slwcAdminConsoleController {
         Map<string, string> map_scheduleName_label = new Map<string, string>();
         map_scheduleName_label.put('skedBiddingExpirationSchedulable', 'Bidding Expiration Schedule');
         map_scheduleName_label.put('skedCollectionsZipCodeBatch', 'Collections Zip Code Batch');
-        map_scheduleName_label.put('skedConvertBiddingToStandardSchedulable', 'Convert Bidding To Standard Schedule');
         map_scheduleName_label.put('skedOperationGeneratorSchedulable', 'Operation Record Generator Schedule');
         map_scheduleName_label.put('skedOperationRecordExternalDataBatch', 'Operation Record External Data Schedule');
         map_scheduleName_label.put('skedProcessBiddingPTOSchedulable', 'Process Bidding PTO Schedule');
         map_scheduleName_label.put('skedRegulatedMedicalScreenerGenBatch', 'Regulated Medical Screener Generation');
         map_scheduleName_label.put('skedResourceSeniorityRankingBatch', 'Resource Seniority Ranking Batch');
-        map_scheduleName_label.put('skedResourceTagExpirySchedulable', 'Resource Tag Expiry Schedule');
+        map_scheduleName_label.put('skedExpireStaffTradeEventsSchedulable', 'Expire Staff Trade Events Schedule');
         List<scheduleModel> schedules = new List<scheduleModel>();
         List<CronTrigger> skedSchedules = [SELECT Id, State, CronJobDetail.Name, StartTime, NextFireTime
                                            FROM CronTrigger

@@ -2,7 +2,7 @@
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>sked_ARC_Region_ID__c</fullName>
     <externalId>false</externalId>
-    <formula>sked_District__r.sked_Parent__c</formula>
+    <formula>CASESAFEID(sked_District__r.sked_Parent__c)</formula>
     <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
     <label>ARC Region ID</label>
     <required>false</required>

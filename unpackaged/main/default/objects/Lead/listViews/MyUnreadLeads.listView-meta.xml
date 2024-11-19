@@ -9,6 +9,7 @@
     <columns>LEAD.STATUS</columns>
     <columns>LEAD.LEAD_SOURCE</columns>
     <columns>Territory_Name__c</columns>
+    <columns>Lead_Stage_Status__c</columns>
     <filterScope>Mine</filterScope>
     <filters>
         <field>LEAD.UNREAD</field>

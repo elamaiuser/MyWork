@@ -34,7 +34,20 @@
     <columns>
         <field>Collections_Territory__c.City__c</field>
     </columns>
+    <columns>
+        <field>Collections_Territory__c.District__c</field>
+    </columns>
     <description>Includes all records for the Collections ZipCodes object and includes all fields.</description>
+    <filter>
+        <criteriaItems>
+            <column>Collections_Territory__c.Zip__c</column>
+            <columnToColumn>false</columnToColumn>
+            <isUnlocked>true</isUnlocked>
+            <operator>equals</operator>
+            <value>62973</value>
+        </criteriaItems>
+        <language>en_US</language>
+    </filter>
     <format>Tabular</format>
     <name>All Collections Zip Codes</name>
     <params>
@@ -47,7 +60,7 @@
     <showGrandTotal>true</showGrandTotal>
     <showSubTotals>true</showSubTotals>
     <sortColumn>Collections_Territory__c.Zip__c</sortColumn>
-    <sortOrder>Asc</sortOrder>
+    <sortOrder>Desc</sortOrder>
     <timeFrameFilter>
         <dateColumn>CUST_CREATED_DATE</dateColumn>
         <interval>INTERVAL_CUSTOM</interval>

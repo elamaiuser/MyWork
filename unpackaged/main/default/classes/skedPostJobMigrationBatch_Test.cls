@@ -23,10 +23,10 @@ private class skedPostJobMigrationBatch_Test {
         directions.add('CO to Site');
         directions.add('Site to CO');
         
-        List<skedAsyncJobHandler.travelTimeBreakdownModel> models = new List<skedAsyncJobHandler.travelTimeBreakdownModel>();
+        List<skedTravelTimeBreakdownModel> models = new List<skedTravelTimeBreakdownModel>();
         for (string direction : directions) {
             for (string weekday : weekdays) {
-                skedAsyncJobHandler.travelTimeBreakdownModel model = new skedAsyncJobHandler.travelTimeBreakdownModel();
+                skedTravelTimeBreakdownModel model = new skedTravelTimeBreakdownModel();
                 model.siteId = testLocation.Id;
                 model.weekday = weekday;
                 model.endOfWindow = Time.newInstance(23, 59, 0, 0);

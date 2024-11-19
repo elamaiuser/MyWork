@@ -14,7 +14,9 @@ import { OPTIMIZATION_STATUS } from 'c/slwcConstants';
 
 const VIEW_MODE = {
     ALL: 'all',
-    DETAILS: 'details'
+    DETAILS: 'details',
+    RUN_RESULTS: 'runResults', // HRP-12509
+    STATISTICS: 'statistics' // HRP-12511    
 }
 
 export default class SlwcOptimizationHistory extends LightningElement {
@@ -33,6 +35,9 @@ export default class SlwcOptimizationHistory extends LightningElement {
             typeAttributes: { 
                 canClose: {
                     fieldName: 'canClose'
+                },
+                isStatusCompleted: {
+                    fieldName: 'isStatusCompleted' // HRP-12509
                 },
                 clickAction: (event) => {
                     this.handleRowAction({
@@ -80,6 +85,21 @@ export default class SlwcOptimizationHistory extends LightningElement {
     
     get viewOptimizationRunDetails() {
         return this.viewMode === VIEW_MODE.DETAILS;
+    }
+
+    // HRP-12509
+    get viewOptimizationRun() {
+        return this.viewMode === VIEW_MODE.ALL;
+    }
+
+    // HRP-12509
+    get viewOptimizationRunResult(){
+        return this.viewMode === VIEW_MODE.RUN_RESULTS;
+    }
+
+    // HRP-12511
+    get viewOptimizerRunStatistics() {
+        return this.viewMode === VIEW_MODE.STATISTICS;
     }
     
     get dateUtils() {
@@ -214,6 +234,7 @@ export default class SlwcOptimizationHistory extends LightningElement {
                 data.forEach((item) => {
                     item.recordPageUrl = '/' + item.id;
                     item.canClose = [OPTIMIZATION_STATUS.IN_PROGRESS, OPTIMIZATION_STATUS.POST_PROCESS].includes(item.status);
+                    item.isStatusCompleted =[OPTIMIZATION_STATUS.COMPLETED, OPTIMIZATION_STATUS.COMPLETE].includes(item.status); // HRP-12509                                       
                     if(item.status === OPTIMIZATION_STATUS.POST_PROCESS) {
                         item.status = OPTIMIZATION_STATUS.IN_PROGRESS;
                     }
@@ -240,6 +261,18 @@ export default class SlwcOptimizationHistory extends LightningElement {
     showOptimizationRunDetails(item) {
         this.selectedOptimizationRun = item;
         this.viewMode = this.VIEW_MODE.DETAILS;
+    }
+
+    // HRP-12509
+    showOptimizationRunResult(item) {
+        this.selectedOptimizationRun = item;
+        this.viewMode = this.VIEW_MODE.RUN_RESULTS;
+    }
+
+    // HRP-12511
+    showOptimizerRunStatistics(item) {
+        this.selectedOptimizationRun = item;
+        this.viewMode = this.VIEW_MODE.STATISTICS;
     }
 
     showCloseOptimizationRunConfirmModal(item) {
@@ -282,6 +315,12 @@ export default class SlwcOptimizationHistory extends LightningElement {
                 break;
             case 'close':
                 this.showCloseOptimizationRunConfirmModal(row)
+                break;
+            case 'runResults': // HRP-12509
+                this.showOptimizationRunResult(row)
+                break;            
+            case 'statistics': // HRP-12511
+                this.showOptimizerRunStatistics(row)
                 break;
             default:
         }

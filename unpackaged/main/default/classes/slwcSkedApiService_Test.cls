@@ -42,9 +42,19 @@ private class slwcSkedApiService_Test {
         Test.setMock(HttpCalloutMock.class, mockTest);
 
         Test.startTest();
-            slwcAuraResult prediction = slwcSkedApiService.calculateDistanceMatrix(null, null);
+            slwcAuraResult prediction = slwcSkedApiService.calculateDistanceMatrix(null, null, Datetime.now());
         Test.stopTest();
 
         System.assert(prediction != null);
+    }
+    
+    @isTest
+    static void getTimezone_Test() {
+        skedMockTest mockTest = new skedMockTest();
+        Test.setMock(HttpCalloutMock.class, mockTest);
+
+        Test.startTest();
+            String prediction = slwcSkedApiService.getTimezone(32.1283768, -81.443496);
+        Test.stopTest();
     }
 }

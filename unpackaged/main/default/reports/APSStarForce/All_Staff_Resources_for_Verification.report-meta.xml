@@ -99,6 +99,12 @@
     <columns>
         <field>CUST_ID</field>
     </columns>
+    <columns>
+        <field>CUST_CREATED_DATE</field>
+    </columns>
+    <columns>
+        <field>CUST_LAST_UPDATE</field>
+    </columns>
     <filter>
         <criteriaItems>
             <column>sked__Resource__c.sked__Resource_Type__c</column>
@@ -129,7 +135,7 @@
             <value></value>
         </criteriaItems>
         <criteriaItems>
-            <column>sked__Resource__c.sked_Daily_Time_Off_Hours__c</column>
+            <column>sked__Resource__c.sked_Max_Hours_Per_Week__c</column>
             <columnToColumn>false</columnToColumn>
             <isUnlocked>true</isUnlocked>
             <operator>equals</operator>
@@ -148,7 +154,7 @@
     <showDetails>true</showDetails>
     <showGrandTotal>true</showGrandTotal>
     <showSubTotals>true</showSubTotals>
-    <sortColumn>sked__Resource__c.sked_ARC_Region_Name__c</sortColumn>
+    <sortColumn>sked__Resource__c.sked_Biomed_Collection_Op_Center_Name__c</sortColumn>
     <sortOrder>Asc</sortOrder>
     <timeFrameFilter>
         <dateColumn>sked__Resource__c.sked_Hire_Date__c</dateColumn>

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+        <label><!-- Parent Calendar Build Log --></label>
+        <name>Parent_Calendar_Build_Log__c</name>
+        <relationshipLabel><!-- Calendar Build Log Manual Run --></relationshipLabel>
+    </CustomFieldTranslation>

@@ -1,15 +1,31 @@
+/* Description:
+ * This class is the controller behind Apply changes to future drives Quick action from Template Opportunity 
+ * The quick action is used to pass selected values from template to selected future drives
+ * Related Components - Aura- ApplychangestoDrives,LWC-filterDriveContainer,AppliedFieldSelecetion,FilteredDriveTable
+ * 
+ * 
+ * Modification Log 
+ * Date					     Developer Name			     Comments
+ * ***************************************************************************
+ * 05/10/2023				  Balaji N					 Logic for HRP-10083 (Method:applyChangestoFutureDrives,BSF Error Log)
+ * 06/13/2024				  Apurba Bhattacharjee		 Logic for HRP-4878
+ * 06/08/2024				  Raktim Ghosal			  	 Publicity Material Ordering at template level(HRP-12664) 
+ * 09/12/2024				  Priti Jana			     Logic for HRP-13275, 13367
+ * 10/28/2024				  Barnojit Sharma			 Template Order products not cascading to Opportunity Order. (Logic for HRP-13521)
+ * 11/13/2024				  Barnojit Sharma		     Unable to create Mobile Drive when the Template has an over-budget template order (Logic for HRP-13716)
+ *****************************************************************************
+*/
 public with sharing class FutureDrivesController {
     @AuraEnabled
     public static List<FieldSetClass> getFieldsFromFieldSets(){
         List<FieldSetClass> fdlist = new List<FieldSetClass>();
         try {
             FieldSetClass fdset;
-            for( Schema.FieldSetMember f : Schema.SObjectType.Opportunity.fieldSets.FieldsApplytoDrives.getFields() ){ 
+            for( Schema.FieldSetMember f : Schema.SObjectType.Opportunity.fieldSets.FieldsApplytoDrives.getFields() ){
                 fdset = new FieldSetClass();
                 fdset.fieldapiname = f.getFieldPath() ; 
                 fdset.fieldlabel = f.getLabel() ;
                 fdlist.add( fdset );
-                //System.debug( ' label is ' + f.getFieldPath() + ' api name is ' + f.getLabel() ) ;
             }
         } catch (Exception e) {
             throw new AuraHandledException(e.getMessage());
@@ -52,60 +68,88 @@ public with sharing class FutureDrivesController {
         }
         return FutureDriveClassList;
     }
+
     @AuraEnabled
-    public static string applyChangestoFutureDrives( String FutureDriveClass, String recordid, List<String> fields ){
+    public static string applyChangestoFutureDrives(String FutureDriveClass, String recordid, List<String> fields ){
+        List<String> driveidset = new List<String>();
         try {
-            String driverecordid = recordid;
-            String fieldstoberetrieved = '';
-            boolean isDriveAffiliationFound = false;
-            boolean isDriveServiceRolesFound = false;
-            boolean isEndTimeFound = false;
-            boolean isWebscheduleStartDateFound = false;
-            boolean isWebscheduleEndDateFound = false;
-            boolean isWebscheduleEndTimeFound = false;
-            List<String> fields2 = new List<String>();
-            List<String> driveidset = new List<String>();
-            List<Opportunity> updateopplist = new List<Opportunity>();
-            List<Opportunity> sourceopplist = new List<Opportunity>();
-            Map<Id, Opportunity> sourceopp = new Map<Id, Opportunity>();
-            Map<Id, Opportunity> targetopp = new Map<Id, Opportunity>();
-            GlobalWebSchedulingSettings__mdt globalWebScMetaData=opportunityService.fetchGlobalWebScheduleMetaDate();
             List<FutureDriveClass> fslist = (List<FutureDriveClass>)JSON.deserialize( FutureDriveClass, List<FutureDriveClass>.class );
             for( FutureDriveClass fd: fslist ){
                 if( fd.driveid != null && fd.isselected == true ){
                     driveidset.add( fd.driveid );
                 }
             }
-            System.debug('fields12:'+fields);
+            if(!driveidset.isEmpty()){   
+                Integer batchSize = Integer.valueOf(Custom_Messages__mdt.getInstance('BatchSizeFor_BSF_BatchFutureDriveUpdate').Value__c);
+                DataBase.executeBatch(new BSF_BatchFutureDriveUpdate(driveidset,recordid,fields),batchSize);
+            }
+        } catch (Exception e) {
+            throw new AuraHandledException(e.getMessage());
+        }
+        return 'success';
+    }
+    public static void applyChangestoFutureDrives(List<String> driveidset, String recordid, List<String> fields ){
+        try {
+            String driverecordid = recordid;
+            String fieldstoberetrieved = '';
+            boolean isDriveAffiliationFound = false;
+            boolean isDriveServiceRolesFound = false;
+            boolean isWebschedulingSettingsFound = false;
+            boolean isTemplateOrderFound = false;
+            List<String> fields2 = new List<String>();
+            List<String> fieldSetFields = new List<String>();
+            //List<String> driveidset = new List<String>();//HRP-13521
+            List<Opportunity> updateopplist = new List<Opportunity>();
+            List<Opportunity> sourceopplist = new List<Opportunity>();
+            Map<Id, Opportunity> sourceopp = new Map<Id, Opportunity>();
+            Map<Id, Opportunity> targetopp = new Map<Id, Opportunity>();
+            GlobalWebSchedulingSettings__mdt globalWebSchedulingSettings = GlobalWebSchedulingSettings__mdt.getInstance('MobileDriveSettings'); //added for HRP-4878              
+            //set of mandatory fields in case of webschedule date updates in functionality
+            Set<String> webSchedulingFields = new Set<String>{'End_Time__c','Web_Schedule_Start_Time__c','Web_Schedule_EndDate__c', 'Web_Schedule_StartDate__c',
+                                                            'TimeZone__c','Web_Schedule_Start_Date__c','Web_Schedule_End_Date__c','Web_Schedule_End_Time__c','Web_Sched_Offset_from_CO_Global_Settings__c'}; //added for HRP-4878  
+            /*List<FutureDriveClass> fslist = (List<FutureDriveClass>)JSON.deserialize( FutureDriveClass, List<FutureDriveClass>.class );
+            for( FutureDriveClass fd: fslist ){
+                if( fd.driveid != null && fd.isselected == true ){
+                    driveidset.add( fd.driveid );
+                }
+            }*/
+            
+            for(FieldSetClass fdset : getFieldsFromFieldSets()){
+                fieldSetFields.add(fdset.fieldapiname);
+            }
             for( String str : fields ){
+                if(str.equalsIgnoreCase('Template Order')){
+                    isTemplateOrderFound = true;
+                }
                 if(str.equalsIgnoreCase('Drive Affiliations')){
                     isDriveAffiliationFound = true;
                 }
                 if(str.equalsIgnoreCase('Drive Service Roles')){
                     isDriveServiceRolesFound = true;
                 }
-                if(str.equalsIgnoreCase('End_Time__c')){
-                    isEndTimeFound = true;
+                if(str.equalsIgnoreCase('Web Scheduling Settings')){
+                    isWebschedulingSettingsFound = true;
                 }
-                if(str.equalsIgnoreCase('Web_Schedule_EndDate__c')){
-                    isWebscheduleEndDateFound = true;
-                }
-                if(str.equalsIgnoreCase('Web_Schedule_StartDate__c')){
-                    isWebscheduleStartDateFound = true;
-                }
-                if(str.equalsIgnoreCase('Web_Schedule_End_Time__c')){
-                    isWebscheduleEndTimeFound = true;
-                }
-                if((!str.contains('Drive Affiliations'))&&(!str.contains('Drive Service Roles'))){
-                    //System.debug('STR::'+str);
+                if((!str.contains('Drive Affiliations'))&&(!str.contains('Drive Service Roles')) &&(!str.contains('Web Scheduling Settings')) && (!str.contains('Template Order'))){
                     fields2.add(str);
                 }
             }
             System.debug('fields2:'+fields2);
-            //set of mandatory fields in case of webschedule date updates in functionality
-            set<string>fieldsNeeded=new set<string>{'End_Time__c','Web_Scheduling_Start_Time__c','TimeZone__c','Web_Schedule_Start_Date__c','Web_Schedule_End_Date__c','Web_Schedule_End_Time__c'};
-                fieldsNeeded.addAll(fields2);
-            system.debug('fieldsNeeded '+fieldsNeeded);
+
+			//HRP-10083 Start
+			if(boolean.valueof(system.label.HRP_10083ByPassLabel) || test.isRunningTest())
+            {
+            List<BSF_Error_Log__c> logList = new List<BSF_Error_Log__c>();
+            logList.add(BSF_Utilities.getErrorLog('Apply future chnages to Drives','Future Drives Controller','applyChangestoFutureDrives','Debug Log','ParentTemplateid:'+recordid+'__Selected Fields'+fields+'__Date & Time'+system.today(),'Future Fields'));
+            InsertBsfErrorLog.insertBsfErrors(logList);
+            }
+            //HRP-10083 End
+            // HRP-4878 --> Start
+            set<string>fieldsNeeded=new set<string>(); 
+            fieldsNeeded.addAll(fields2);
+            if(isWebschedulingSettingsFound)
+                fieldsNeeded.addAll(webSchedulingFields);
+            // HRP-4878 --> End
             for( String str : fieldsNeeded ){
                 if(fieldstoberetrieved==''){
                     fieldstoberetrieved = str;
@@ -119,12 +163,10 @@ public with sharing class FutureDrivesController {
             fieldsarray = fieldstoberetrieved.split( ',');
             system.debug('fieldsarray '+fieldsarray);
             fieldsarray.sort();// sorted so that webschedule fields comes last
-            //System.debug('fieldstoberetrieved before query: '+fieldstoberetrieved);
-            //System.debug('fieldstoberetrieved before query: '+fieldsNeeded);
             String sourcequery = '';
             if(fieldstoberetrieved.length()>0){
                 //quering offset fields for calculation of webschedule dates
-                     sourcequery = ' select Id,Web_Scheduling_Start_Date_Offset__c,Web_Scheduling_End_Date_Offset__c,Web_Scheduling_End_Time_Offset__c, ' + fieldstoberetrieved + ' from Opportunity where Id =:driverecordid' ;
+                     sourcequery = ' select Id,Web_Scheduling_Start_Date_Offset__c,Web_Scheduling_Start_Time__c,Web_Scheduling_End_Date_Offset__c,Web_Scheduling_End_Time_Offset__c, ' + fieldstoberetrieved + ' from Opportunity where Id =:driverecordid' ;
                 sourceopplist = Database.query( sourcequery );
             }
             else if(fieldstoberetrieved.length()==0 && (isDriveAffiliationFound == true || isDriveServiceRolesFound == true)){
@@ -135,8 +177,9 @@ public with sharing class FutureDrivesController {
                 sourceopp.put( opp.Id, opp );
             }
             String targetquery = '';
+            
             if(fieldstoberetrieved.length()>0){
-                targetquery = ' select Id,Drive_date__c,' + fieldstoberetrieved + ' from Opportunity where Id IN:driveidset' ;
+                targetquery = ' select Id,Drive_date__c,Drive_Site__c,' + fieldstoberetrieved + ' from Opportunity where Id IN:driveidset' ;
                 updateopplist = Database.query( targetquery );
             }
             else if(fieldstoberetrieved.length()==0 && (isDriveAffiliationFound == true || isDriveServiceRolesFound == true)){
@@ -147,116 +190,167 @@ public with sharing class FutureDrivesController {
             if(isDriveAffiliationFound == true || isDriveServiceRolesFound == true){
                 rollAffiliationsOrServiceRoles(isDriveAffiliationFound,isDriveServiceRolesFound,recordid,updateopplist,driveidset);
             }
-            //using this map to get the unmodified values of the opportunity to be updated
-            map<id,Opportunity> updateOpplistMap = new map<id,Opportunity>();
-            for(opportunity opp: updateopplist)
-            {
-                updateOpplistMap.put(opp.id,opp);
+            if(isTemplateOrderFound == true){
+                //syncTemplateOrderToOpportunity(recordid,driveidset);
+                OrderCloningService.cloneTemplateOrder(driveidset);//Logic for HRP-13716
             }
-            //System.debug('fieldsarray:'+fieldsarray);
-            if(fieldsarray.size()>0){
-                for( String s1 : fieldsarray ){
+            //using this map to get the unmodified values of the opportunity to be updated
+            Set<Id> opportunitySiteIds = new Set<Id>();
+            map<id,Opportunity> updateOpplistMap = new map<id,Opportunity>();
+            //HRP-4878--> Start the following fields are to fetch the drive CO web scheduling offset values
+            Map<Id, sked_Site_Collection_Operation__c> oppIdVsCoMap = new Map<Id, sked_Site_Collection_Operation__c>(); 
+            if(isWebschedulingSettingsFound){
+                for(opportunity opp: updateopplist)
+                {
+                    updateOpplistMap.put(opp.id,opp);
+                    opportunitySiteIds.add(opp.Drive_Site__c);
+                }
+                Map<Id, sked__Location__c> siteVsSiteCoMap = new Map<Id, sked__Location__c>([SELECT Id, Name, sked_Collection_Operation__r.Name, sked_Site_Collection_Operation_Count__c, (Select Id, Name, sked_Start_Date__c, sked_End_Date__c, sked_Collection_Operation__c, sked_Collection_Operation__r.Name, 
+                                                                        sked_Collection_Operation__r.Mobile_Web_Scheduling_Start_Time__c, sked_Collection_Operation__r.Mobile_Web_Scheduling_Start_Date_Offset__c, sked_Collection_Operation__r.Mobile_Web_Scheduling_End_Time_Offset__c, 
+                                                                        sked_Collection_Operation__r.Mobile_Web_Scheduling_End_Date_Offset__c,sked_Collection_Operation__r.FS_Web_Scheduling_Start_Time__c, sked_Collection_Operation__r.FS_Web_Scheduling_Start_Date_Offset__c, 
+                                                                        sked_Collection_Operation__r.FS_Web_Scheduling_End_Time_Offset__c, sked_Collection_Operation__r.FS_Web_Scheduling_End_Date_Offset__c FROM sked_Site_Collection_Operations__r WHERE sked_Start_Date__c<= TODAY AND sked_End_Date__c>= TODAY ) FROM sked__Location__c WHERE Id IN :opportunitySiteIds]);
+                
+                
+                                             
+                for (Opportunity opp : updateopplist) {
+                    for (sked_Site_Collection_Operation__c siteCo : siteVsSiteCoMap.get(opp.Drive_Site__c).sked_Site_Collection_Operations__r) {
+                        if (opp.drive_Date__c>=siteCo.sked_Start_Date__c && opp.drive_Date__c<=siteCo.sked_End_Date__c) {
+                            oppIdVsCoMap.put(opp.Id, siteCo);
+                            break;
+                        }
+                    }
+                }
+            }
+            //HRP-4878 --> End
+            System.debug('fieldsarray==> '+fieldsarray);
+            if(fieldsarray.size() > 0) {
+                for( String s1 : fieldsarray ) {
                     for( Opportunity opp : updateopplist )
                     {
-                        opportunity oppty = new opportunity();
-                        if(updateOpplistMap.get(opp.id)!=null)
-                        {
-                            oppty = updateOpplistMap.get(opp.id);
                             if(s1!=null && s1!='' && sourceopp!=null)
                             {
-                                if((s1=='Web_Schedule_End_Date__c' && isWebscheduleEndDateFound==false)||
-                                   (s1=='End_Time__c' && isEndTimeFound==false)||
-                                   (s1=='Web_Schedule_StartDate__c' && isWebscheduleStartDateFound==false) ||
-                                   (s1=='Web_Schedule_End_Time__c' && isWebscheduleEndTimeFound==false)){
+                                // Web_Schedule_Start_Time__c
+                                // Web_Schedule_End_Time__c
+                                // Web_Schedule_EndDate__c
+                                // Web_Schedule_StartDate__c
+                                if(s1=='Web Scheduling Settings' && isWebschedulingSettingsFound == false) {
                                     continue;
                                 }
+                               
                                 //these fields need not be stamped on opportunity instead used as a label to filter the calculation of the webschedule dates using offset values
-                                if(s1!='Web_Schedule_EndDate__c' && s1!='Web_Schedule_StartDate__c'
-                                   && s1!='Web_Schedule_End_Time__c' && s1 !='TimeZone__c' && s1 !='Web_Scheduling_Start_Time__c'
-                                   && s1!='Web_Schedule_End_Date__c' && s1!='Web_Schedule_Start_Date__c' )
-                                {
+                                if(!webSchedulingFields.contains(s1) || fieldSetFields.contains(s1)) {
                                     opp.put(s1, sourceopp.get(driverecordid).get(s1));
                                 }
+                                //HRP-4878  --> Starts
                                 //webschedule dates & time fields calculation
-                                else if(s1=='Web_Schedule_StartDate__c'|| s1=='Web_Schedule_EndDate__c'|| s1=='Web_Schedule_End_Time__c')
-                                {
-                                    String S2='Web_Scheduling_Start_Date_Offset__c';
-                                    String S3='Web_Scheduling_End_Date_Offset__c';
-                                    String S4='Web_Scheduling_End_Time_Offset__c';
+                                else if(webSchedulingFields.contains(s1)) {
+                                    opportunity oppty = new opportunity();
+                        			if(updateOpplistMap.get(opp.id)!=null)
+                        			{
+                            		oppty = updateOpplistMap.get(opp.id);
+                                    String WebSchedStartDateOffset='Web_Scheduling_Start_Date_Offset__c';
+                                    String WebSchedEndDateOffset='Web_Scheduling_End_Date_Offset__c';
+                                    String WebSchedEndTimeOffset='Web_Scheduling_End_Time_Offset__c';
+                                    String WebSchedStartTime='Web_Scheduling_Start_Time__c';
                                     Date driveDate=oppty.Drive_Date__c;
-                                    String webStartTime = globalWebScMetaData.Web_Scheduling_Start_Time__c;
+                                    Integer WebSchedulingStartDateOffset;
+                                    String webStartTime;
+                                    Integer WebSchedulingEndDateOffset;
+                                    Integer WebSchedulingEndTimeOffset;
+                                    Boolean fetchFromTemplate = (Boolean)sourceopp.get(driverecordid).get('Web_Sched_Offset_from_CO_Global_Settings__c');
+                                    if (!fetchFromTemplate) {
+                                        WebSchedulingStartDateOffset = Integer.valueOf(sourceopp.get(driverecordid).get(WebSchedStartDateOffset));
+                                        webStartTime = String.valueOf(sourceopp.get(driverecordid).get(WebSchedStartTime));
+                                        WebSchedulingEndDateOffset = Integer.valueOf(sourceopp.get(driverecordid).get(WebSchedEndDateOffset));
+                                        WebSchedulingEndTimeOffset = Integer.valueOf(sourceopp.get(driverecordid).get(WebSchedEndTimeOffset));
+                                    } else {
+                                        if(oppIdVsCoMap.get(oppty.Id).sked_Collection_Operation__r.Mobile_Web_Scheduling_Start_Date_Offset__c!=null)
+                                            WebSchedulingStartDateOffset = (Integer)oppIdVsCoMap.get(oppty.Id).sked_Collection_Operation__r.Mobile_Web_Scheduling_Start_Date_Offset__c;
+                                        else
+                                            WebSchedulingStartDateOffset = (Integer)globalWebSchedulingSettings.Web_Scheduling_Start_Date_Offset__c;
+                                        if(!String.isBlank(oppIdVsCoMap.get(oppty.Id).sked_Collection_Operation__r.Mobile_Web_Scheduling_Start_Time__c))
+                                            webStartTime = oppIdVsCoMap.get(oppty.Id).sked_Collection_Operation__r.Mobile_Web_Scheduling_Start_Time__c;
+                                        else
+                                            webStartTime = globalWebSchedulingSettings.Web_Scheduling_Start_Time__c;
+                                        if(oppIdVsCoMap.get(oppty.Id).sked_Collection_Operation__r.Mobile_Web_Scheduling_End_Date_Offset__c!=null)
+                                            WebSchedulingEndDateOffset = (Integer)oppIdVsCoMap.get(oppty.Id).sked_Collection_Operation__r.Mobile_Web_Scheduling_End_Date_Offset__c;
+                                        else
+                                            WebSchedulingEndDateOffset = (Integer)globalWebSchedulingSettings.Web_Scheduling_End_Date_Offset__c;
+                                        if(oppIdVsCoMap.get(oppty.Id).sked_Collection_Operation__r.Mobile_Web_Scheduling_End_Time_Offset__c!=null)
+                                            WebSchedulingEndTimeOffset = (Integer)oppIdVsCoMap.get(oppty.Id).sked_Collection_Operation__r.Mobile_Web_Scheduling_End_Time_Offset__c;
+                                        else
+                                            WebSchedulingEndTimeOffset = (Integer)globalWebSchedulingSettings.Web_Scheduling_End_Date_Offset__c;
+                                    }
+                                    
+                                    //HRP-4878  --> Ends
                                     DateTime wsStartDateTime;
                                     DateTime wsEndDateTime;
-                                    if(s1=='Web_Schedule_StartDate__c')
+                                    if(s1=='Web_Schedule_StartDate__c' || s1=='Web_Schedule_Start_Date__c')
                                     {
-                                    //WebSchedule StartDate Calc 
+                                    //WebSchedule StartDate Calc
                                     Time startTimeInstance= Time.newInstance(Integer.valueOf(webStartTime.left(2)),Integer.valueOf(webStartTime.right(2)),0,0);  
                                     
-                                    Date driveDateAddStartDateOffSet=sourceopp.get(driverecordid).get(s2) != null?driveDate.addDays(Integer.valueOf(sourceopp.get(driverecordid).get(s2))):null;
+                                    Date driveDateAddStartDateOffSet=driveDate.addDays(WebSchedulingStartDateOffset);
                                     if(driveDateAddStartDateOffSet != null){    
                                         DateTime driveDateAddStartDateOffSetTime=driveDateAddStartDateOffSet;  
                                         DateTime webSchStartDate=driveDateAddStartDateOffSetTime.addHours(Integer.valueOf(webStartTime.left(2))).addMinutes(Integer.valueOf(webStartTime.right(2)));
-                                        System.debug('webSchStartDate==='+webSchStartDate);
+                                        
                                         
                                         
                                         if(opp.TimeZone__c!=null){
                                             wsStartDateTime= DateTimeConverter.convertDateTimeIntoGMT(oppty.TimeZone__c,driveDateAddStartDateOffSet,startTimeInstance);
-                                            //system.debug('StartDateTime'+wsStartDateTime);
+                                            
                                         } else {
                                             wsStartDateTime=webSchStartDate;
-                                            //system.debug('StartDateTime'+wsStartDateTime);
+                                            
                                         }
                                     }
                                     opp.put('Web_Schedule_Start_Time__c',startTimeInstance);
                                     opp.put('Web_Schedule_StartDate__c',driveDateAddStartDateOffSet);
                                     opp.put('Web_Schedule_Start_Date__c',wsStartDateTime);
+                                    
                                     }
                                     if(s1=='Web_Schedule_EndDate__c' || s1=='Web_Schedule_End_Time__c')
                                     {
                                     //WebSchedule EndDate Calc
                                     Time endTime = oppty.End_Time__c;     
-                                    Time calculatedEndTime= sourceopp.get(driverecordid).get(s4) != null?endTime.addHours(Integer.valueOf(sourceopp.get(driverecordid).get(s4))):null;
+                                    Time calculatedEndTime= endTime.addHours(WebSchedulingEndTimeOffset);
                                         
-                                    Date driveDateAddEndDateOffSet=sourceopp.get(driverecordid).get(s3) != null?driveDate.addDays(Integer.valueOf(sourceopp.get(driverecordid).get(s3))):null;
+                                    Date driveDateAddEndDateOffSet=driveDate.addDays(WebSchedulingEndDateOffset);
                                     if(driveDateAddEndDateOffSet != null && calculatedEndTime != null){    
                                         DateTime driveDateAddEndDateOffSetTime=driveDateAddEndDateOffSet;
                                         DateTime webSchEndDate=driveDateAddEndDateOffSetTime.addHours(calculatedEndTime.hour()).addMinutes(calculatedEndTime.minute());
-                                        System.debug('webSchEndDate==='+webSchEndDate);
+                                        
                                         
                                         if(oppty.TimeZone__c!=null){
                                             wsEndDateTime= DateTimeConverter.convertDateTimeIntoGMT(oppty.TimeZone__c,driveDateAddEndDateOffSet,calculatedEndTime);
-                                            //system.debug('StartDateTime'+wsEndDateTime);
                                         } else {
-                                            wsEndDateTime=webSchEndDate; 
-                                            //system.debug('StartDateTime'+wsEndDateTime);
+                                            wsEndDateTime=webSchEndDate;
                                         } 
                                     }
                                     opp.put('Web_Schedule_EndDate__c',driveDateAddEndDateOffSet);
                                     opp.put('Web_Schedule_End_Date__c',wsEndDateTime);
                                     opp.put('Web_Schedule_End_Time__c',calculatedEndTime);
                                     }
+                                    
                                 }
                             }
                         }
                     }
                 }
             }
-            //System.debug( 'updateopplist is now ' + updateOpplistMap.values() );
             if(!updateopplist.isEmpty())
-            {
-                //Schema.DescribeSObjectResult ds = Opportunity.sObjectType.getDescribe();
-                //if( ds.isUpdateable() ){}
-                update updateopplist;
+            {   
+                //Integer batchSize = Integer.valueOf(Custom_Messages__mdt.getInstance('BatchSizeFor_BSF_BatchFutureDriveUpdate').Value__c);
+                //DataBase.executeBatch(new BSF_BatchFutureDriveUpdate(updateopplist, batchSize));
+                DataBase.saveResult[] srOppList = Database.update(updateopplist,true);//HRP-13521
+                List<BSF_Error_Log__c> errorLogJobs = BSF_Utilities.createErrorLog(srOppList,'Update processed record status', 'BSF_BatchFutureDriveUpdate', 'execute', 'Error', 'Error in Future Drives Update');
+                insert errorLogJobs;
             }
-            //System.debug( 'query is ' + query );
-            //System.debug( 'updateopplist is ' + updateopplist );
-            //System.debug( 'fieldstoberetrieved is ' + fieldstoberetrieved );
-            //System.debug( 'driveidset is ' + driveidset );
         } catch (Exception e) {
             System.debug('An error is occured:'+e.getLineNumber()+'___'+e.getMessage());
-            throw new AuraHandledException(e.getMessage());
+            throw new FutureDrivesControllerException(e.getMessage());//HRP-13521
         }
-        return 'success';
     }
     public static string rollAffiliationsOrServiceRoles(Boolean isDriveAffiliationFound,Boolean isDriveServiceRolesFound,String recordid, List<Opportunity> updateopplist,List<String> driveidset){
         try{
@@ -271,7 +365,7 @@ public with sharing class FutureDrivesController {
                                                                                          WHERE Blood_Drive_Opportunity__c IN:driveidset
                                                                                           ];
                 if(existingDriveAffliationsToDeleteList.size()>0){
-                    Database.delete(existingDriveAffliationsToDeleteList);
+                    Database.delete(existingDriveAffliationsToDeleteList,true);//HRP-13521
                 }
                 List<Drive_Marketing_Programs__c> driveAffiliationsList = [SELECT Marketing_Program__c,Account__c,Migration_ID__c,
                                                                            Date_Removed__c, Start_Date__c,End_Date__c,
@@ -298,9 +392,7 @@ public with sharing class FutureDrivesController {
                                                                                      FROM OpportunityContactRole 
                                                                                      WHERE OpportunityId =:driveidset];
                 if(existingDriveServiceRoleToDeleteList.size()>0){
-                    //Schema.DescribeSObjectResult ds = OpportunityContactRole.sObjectType.getDescribe();
-                    //if( ds.isUpdateable() ){}
-                    Database.delete(existingDriveServiceRoleToDeleteList);
+                     Database.delete(existingDriveServiceRoleToDeleteList,true);//HRP-13521
                 }
                 List<OpportunityContactRole> driveServiceRoleList = [SELECT OpportunityId,ContactId, Role
                                                                      FROM OpportunityContactRole
@@ -316,24 +408,124 @@ public with sharing class FutureDrivesController {
                 }
             }
             if(driveAffliationsToInsertList.size()>0){
-                //System.debug('driveAffliationsToInsertList:'+driveAffliationsToInsertList);
-                //Schema.DescribeSObjectResult ds = Drive_Marketing_Programs__c.sObjectType.getDescribe();
-                //if( ds.isUpdateable() ){}
-                Database.insert(driveAffliationsToInsertList);
+                Database.insert(driveAffliationsToInsertList,true);//HRP-13521
             }
             if(driveServiceRolesToInsertList.size()>0){
-                //System.debug('driveServiceRolesToInsertList:'+driveServiceRolesToInsertList);
-                //Schema.DescribeSObjectResult ds = OpportunityContactRole.sObjectType.getDescribe();
-                //if( ds.isUpdateable() ){}
-                Database.insert(driveServiceRolesToInsertList);
+                Database.insert(driveServiceRolesToInsertList,true);//HRP-13521
             }
         }
         catch (Exception e) {
-            //System.debug('An error is occured:'+e.getStackTraceString());
-            throw new AuraHandledException(e.getMessage());
+            throw new FutureDrivesControllerException(e.getMessage());//HRP-13521
         }
         return 'success';
     }
+    @AuraEnabled
+    public static string futureDriveSubmissionMessage(){
+        return String.valueOf(Custom_Messages__mdt.getInstance('Apply_Changes_to_Future_Drive_Toast').Value__c);
+    }
+    //--> HRP-12664 continues
+    /*public static string syncTemplateOrderToOpportunity(String recordid, List<String> driveidset){
+        try{
+        Set<ID> oppID = new Set<ID>();
+        List<Order> createOppOrder = new List<Order>();
+        List<OrderItem> createOppOrderItem = new List<OrderItem>();
+		List<Order> getExistingOppOrder = new List<Order>();
+        List<Order> getTemplateOrder = [SELECT Id, Order_Due_Date__c, EffectiveDate, AccountId, OpportunityId, Material_Recipient__c, Material_Recipient_Type__c,
+                                        Comments__c, Publicity_Approved__c, Publicity_Submitted__c, Status, StatusCode,Pricebook2Id,Local_Recruitment_Request__c,
+                                        Local_Recruitment_Request_Need_by_Date__c,Material_Recipient_Default__c,
+                                        (SELECT Id, OrderID, Product2Id, TotalPrice, ListPrice, Quantity, UnitPrice, PricebookEntryId FROM OrderItems)
+                                        FROM Order WHERE OpportunityId =: recordid];
+
+        Set<String> setOfDriveID=new Set<String>(driveidset);  
+                                              
+        getExistingOppOrder = [SELECT Id, OpportunityId, Publicity_Approved__c, Publicity_Submitted__c,
+        (SELECT Id, OrderID, Product2Id, TotalPrice, ListPrice, Quantity, UnitPrice, PricebookEntryId FROM OrderItems)
+                                      FROM Order WHERE OpportunityId IN: setOfDriveID];
+        List<OrderItem> deleteOppOrderProds = new List<OrderItem>();
+        Map<Id,Id> oppVsOrderId = new Map<Id,Id>();
+            for(Order getOrder : getExistingOppOrder){
+                if(getOrder.Publicity_Approved__c == False && getOrder.Publicity_Submitted__c == False){
+                    //deleteOppOrder.add(getOrder);
+                    oppVsOrderId.put(getOrder.OpportunityId,getOrder.Id);
+                    for (OrderItem odrItem : getOrder.OrderItems){
+                        deleteOppOrderProds.add(odrItem);
+                    }
+                }
+                 if(getOrder.Publicity_Approved__c == True || getOrder.Publicity_Submitted__c == True){
+                    oppID.add(getOrder.OpportunityId);
+                }
+            }
+            if(deleteOppOrderProds != NULL && !deleteOppOrderProds.isEmpty()) {
+            	Database.DeleteResult[] drList = Database.delete(deleteOppOrderProds, true);//HRP-13521
+                    
+    	}
+       if(getTemplateOrder != NULL && !getTemplateOrder.isEmpty()){
+        for(String driveid:driveidset){
+			if(oppID != NULL && !oppID.isEmpty() && oppID.contains(driveid)){
+                Continue;
+            }
+            Order newOrder = new Order();
+                newOrder.EffectiveDate = getTemplateOrder[0].EffectiveDate;
+                newOrder.AccountId = getTemplateOrder[0].AccountId;
+                newOrder.Material_Recipient__c = getTemplateOrder[0].Material_Recipient__c;
+                newOrder.Material_Recipient_Type__c = getTemplateOrder[0].Material_Recipient_Type__c;
+                newOrder.Comments__c = getTemplateOrder[0].Comments__c;
+                newOrder.Publicity_Submitted__c = getTemplateOrder[0].Publicity_Submitted__c;
+                newOrder.Pricebook2Id = getTemplateOrder[0].Pricebook2Id;
+                newOrder.Status = getTemplateOrder[0].Status;
+                newOrder.Publicity_Approved__c = getTemplateOrder[0].Publicity_Approved__c;
+                newOrder.Local_Recruitment_Request__c = getTemplateOrder[0].Local_Recruitment_Request__c;
+                newOrder.Local_Recruitment_Request_Need_by_Date__c = getTemplateOrder[0].Local_Recruitment_Request_Need_by_Date__c;
+                newOrder.Publicity_Approved_By__c = null;
+                newOrder.Publicity_Approved_Date__c = null;
+                newOrder.Publicity_Submitted_By__c = null;
+                newOrder.Publicity_Submitted_Date__c = null;
+                newOrder.Material_Recipient_Default__c = getTemplateOrder[0].Material_Recipient_Default__c;
+                newOrder.OpportunityId = driveid;
+                newOrder.Id = null;
+                if(!oppVsOrderId.isEmpty() && oppVsOrderId.containsKey(driveid)){
+                    newOrder.Id = oppVsOrderId.get(driveid);
+                }
+                
+                createOppOrder.add(newOrder);
+           
+        }
+        if (!createOppOrder.isEmpty()) {
+            Database.upsertResult[] srList = Database.upsert(createOppOrder, true);//HRP-13521
+            for (Database.upsertResult sr : srList) {
+                if (sr.isSuccess()) {
+                    for(Order cloneOrder: getTemplateOrder){
+                        if(cloneOrder.OrderItems != NULL){
+                            for (OrderItem cloneOrderItem : cloneOrder.OrderItems){
+                                
+                                OrderItem newOrderItem = new OrderItem();
+                                newOrderItem.OrderId = sr.getId();
+                                newOrderItem.Product2Id = cloneOrderItem.Product2Id;                        
+                                newOrderItem.ListPrice = cloneOrderItem.ListPrice;
+                                newOrderItem.Quantity = cloneOrderItem.Quantity;
+                                newOrderItem.UnitPrice = cloneOrderItem.UnitPrice;
+                                newOrderItem.PricebookEntryId = cloneOrderItem.PricebookEntryId;
+                                
+                               If(newOrderItem.OrderId != NULL){
+                                createOppOrderItem.add(newOrderItem);
+                              }
+                           }
+                        }
+                    }
+                }
+                
+            }
+            if (!createOppOrderItem.isEmpty()){
+                Database.SaveResult[] oppOrderList = Database.insert(createOppOrderItem, true);//HRP-13521
+            }
+        }
+       }
+      } catch (Exception e) {
+            throw new FutureDrivesControllerException(e.getMessage());//HRP-13521
+        }      
+        return 'Success';
+    }*/
+    //--> HRP-12664 ends here
     public class FutureDriveClass{
         @AuraEnabled public String drivenanme;
         @AuraEnabled public String driveid;
@@ -347,4 +539,5 @@ public with sharing class FutureDrivesController {
         @AuraEnabled public String fieldapiname;
         @AuraEnabled public String fieldlabel;
     }
+    public class FutureDrivesControllerException extends Exception{}//HRP-13521
 }

@@ -3,6 +3,7 @@ import * as slwcUtils from 'c/slwcUtils';
 import driveSchedulingFiltersTemplate from './driveSchedulingFilters.html';
 import productGoalCalendarFiltersTemplate from './productGoalCalendarFilters.html';
 import driveExceptionLogFiltersTemplate from './driveExceptionLogFilters.html';
+import linkedDriveExceptionLogFiltersTemplate from './linkedDriveExceptionLogFilters.html';
 import resourceExceptionLogFiltersTemplate from './resourceExceptionLogFilters.html';
 import driveShiftTradeFiltersTemplate from './driveShiftTradeFilters.html';
 import siteFeedbackFiltersTemplate from './siteFeedbackFilters.html';
@@ -11,7 +12,7 @@ import pendingDriveChangeRequestFiltersTemplate from './pendingDriveChangeReques
 import pendingActionDriveFiltersTemplate from './pendingActionDriveFilters.html';
 import callOutsFiltersTemplate from './callOutsFilters.html';
 import { accountService, bsfPortfolioQueryModel, bsfPortfolioService } from 'c/dataService';
-import { PENDING_ACTION, PROCEDURE_TYPE, DRIVE_REQUEST_CHANGE_STATUS, DRIVE_APPROVAL_STATUS, OPPORTUNITY_STAGE, DRIVE_CHANGE_REQUEST_TYPE, DRIVE_CONTENTION} from 'c/slwcConstants';
+import { PENDING_ACTION, PROCEDURE_TYPE, DRIVE_REQUEST_CHANGE_STATUS, DRIVE_SHIFT_TRADE_STATUS, DRIVE_APPROVAL_STATUS, OPPORTUNITY_STAGE, DRIVE_CHANGE_REQUEST_TYPE, DRIVE_CONTENTION} from 'c/slwcConstants';
 
 const MODE = {
   PRODUCT_GOAL_CALENDAR: {
@@ -54,6 +55,7 @@ const MODE = {
       searchField: "sked_Drive__r.Name",
       exceptionCodes: [
         "CDL_DOT_HOURS_VIOLATION",
+        "CERT_ADDED_42DAYS",
         "DRIVE_COLLECTION_OPERATION_CHANGED",
         "EQUIPMENT_REDUCED",
         "MINIMUM_QUANTITY_NOT_MET",
@@ -74,9 +76,50 @@ const MODE = {
         "STAFFING_CONSTRAINT_CHANGED",
         "TURNAROUND_TIME_VIOLATION",
         "MAXIMUM_WEEKLY_HOURS_VIOLATION",
-        "RESOURCE_ROLE_RESTRICTED"
+        "RESOURCE_ROLE_RESTRICTED",
+        "MINIMUM_WEEKLY_WORK_DAYS_VIOLATION",
+        "MAXIMUM_WEEKLY_WORK_DAYS_VIOLATION"
       ],
-      excludedValues: ['RESOURCE_DUPLICATE_SENIORITY_RANKING']
+      excludedValues: ['RESOURCE_DUPLICATE_SENIORITY_RANKING', 'LINKED_DRIVE_MISMATCHING_ASSETS']
+    },
+  },
+  LINKED_DRIVE_EXCEPTION_LOG: {
+    id: 'linkedDriveExceptionLog',
+    template: linkedDriveExceptionLogFiltersTemplate,
+    defaultModel: {
+      priorities: ["High", "Medium", "Low"],
+      statuses: ["Open"],
+      exceptionCodes: [
+        "LINKED_DRIVE_MISMATCHING_ASSETS",
+      ],
+      excludedValues: [
+        "CDL_DOT_HOURS_VIOLATION",
+        "DRIVE_COLLECTION_OPERATION_CHANGED",
+        "EQUIPMENT_REDUCED",
+        "MINIMUM_QUANTITY_NOT_MET",
+        "MAXIMUM_TRAVEL_TIME_VIOLATION",
+        "MISSING_REQUIRED_TAG",
+        "EXPIRED_REQUIRED_TAG",
+        "RESOURCE_ACCOUNT_DECLINED",
+        "RESOURCE_DATA_CHANGED",
+        "RESOURCE_IS_INACTIVE",
+        "RESOURCE_OUT_OF_CO",
+        "RESOURCE_NOT_AVAILABLE_FOR_CO",
+        "RESOURCE_PENDING_TERMINATION",
+        "RESOURCE_ROLE_STATUS_CHANGED",
+        "RESOURCE_SITE_DECLINED",
+        "RESOURCE_TIME_CONFLICT",
+        "ROLE_TIME_DETAIL_CHANGED",
+        "ROLE_TIME_VARIANCE_CHANGED",
+        "STAFFING_CONSTRAINT_CHANGED",
+        "TURNAROUND_TIME_VIOLATION",
+        "MAXIMUM_WEEKLY_HOURS_VIOLATION",
+        "RESOURCE_ROLE_RESTRICTED",
+        "MINIMUM_WEEKLY_WORK_DAYS_VIOLATION",
+        "MAXIMUM_WEEKLY_WORK_DAYS_VIOLATION",
+        "RESOURCE_DUPLICATE_SENIORITY_RANKING",
+        "CERT_ADDED_42DAYS"
+      ]
     },
   },
   RESOURCE_EXCEPTION_LOG: {
@@ -94,19 +137,20 @@ const MODE = {
       statuses: ['Submitted', 'Waiting for DM Approval', 'Waiting for CO Supervisor Approval'],
       submissionStartDate: null,
       submissionEndDate: null,
+      siteName: null
     }
   },
   DRIVE_SHIFT_TRADE: {
     id: 'driveShiftTrade',
     template: driveShiftTradeFiltersTemplate,
     defaultModel: {
-      // driveStartDate: null,
-      // driveEndDate: null,
-      // driveTypes: ['Fixed Site', 'Mobile'],
-      statuses: ['Submitted', 'Pending Approval'],
+      eventName: null,
+      ufid: null,
+      staffName: null,
+      statuses: [DRIVE_SHIFT_TRADE_STATUS.SUBMITTED, DRIVE_SHIFT_TRADE_STATUS.PENDING_APPROVAL],
       submissionStartDate: null,
       submissionEndDate: null,
-      excludedStatuses: ['Waiting for Trading Staff Acknowledge', 'Cancelled']
+      excludedStatuses: [DRIVE_SHIFT_TRADE_STATUS.CANCELLED]
     }
   },
   DRIVE_CHANGE_REQUEST: {
@@ -133,14 +177,18 @@ const MODE = {
         DRIVE_CONTENTION.MULTI_SHIFT_DRIVE,
         DRIVE_CONTENTION.DUAL_ROLE_REMOVAL,
         DRIVE_CONTENTION.STAFFING_COMPLEMENT_CHANGED,
+        DRIVE_CONTENTION.EXCESS_STAFF_CAPACITY,
       ],
       statuses: [
         DRIVE_REQUEST_CHANGE_STATUS.SUBMITTED, 
         DRIVE_REQUEST_CHANGE_STATUS.WAITING_FOR_DM_APPROVAL, 
         DRIVE_REQUEST_CHANGE_STATUS.WAITING_FOR_APS_APPROVAL, 
-        DRIVE_REQUEST_CHANGE_STATUS.WAITING_FOR_DRD_FEEDBACK 
+        DRIVE_REQUEST_CHANGE_STATUS.DM_WAITING_FOR_DRD_FEEDBACK,
+        DRIVE_REQUEST_CHANGE_STATUS.APS_WAITING_FOR_DRD_FEEDBACK,
       ],
-      excludedStatuses: [DRIVE_REQUEST_CHANGE_STATUS.PENDING]
+      excludedStatuses: [DRIVE_REQUEST_CHANGE_STATUS.PENDING],
+      accountManagerPortfolios: [],
+      districtManagerPortfolios: []
     }
   },
   PENDING_DRIVE_CHANGE_REQUEST: {
@@ -152,8 +200,10 @@ const MODE = {
       submissionStartDate: null,
       submissionEndDate: null,
       driveTypes: ['Fixed Site', 'Mobile'],
-      driveContentions: ['Insufficient Resources', 'Exceed Operation Drive Limit', 'Out of Operational Hours', 'Low Drive Productivity', 'Lacking of vehicles', 'Lacking of equipment', 'Within 42 days'],
+      driveContentions: ['Insufficient Resources', 'Exceed Operation Drive Limit', 'Out of Operational Hours', 'Low Drive Productivity', 'Lacking of vehicles', 'Lacking of equipment', 'Within 42 days', 'Excess Staff Capacity'],
       types: [DRIVE_CHANGE_REQUEST_TYPE.COLLECTION_OPERATION_CHANGE],
+      accountManagerPortfolios: [],
+      districtManagerPortfolios: []
       // excludedTypes: [DRIVE_CHANGE_REQUEST_TYPE.USER_CHANGE]
     }
   },
@@ -169,9 +219,12 @@ const MODE = {
         DRIVE_APPROVAL_STATUS.SUBMITTED, 
         DRIVE_APPROVAL_STATUS.WAITING_FOR_APS_APPROVAL, 
         DRIVE_APPROVAL_STATUS.WAITING_FOR_DM_APPROVAL,
-        DRIVE_APPROVAL_STATUS.WAITING_FOR_DRD_FEEDBACK
+        DRIVE_APPROVAL_STATUS.DM_WAITING_FOR_DRD_FEEDBACK,
+        DRIVE_APPROVAL_STATUS.APS_WAITING_FOR_DRD_FEEDBACK
       ],
-      excludedPendingActions: [PENDING_ACTION.DRIVE_CHANGE_REQUEST]
+      excludedPendingActions: [PENDING_ACTION.DRIVE_CHANGE_REQUEST],
+      accountManagerPortfolios: [],
+      districtManagerPortfolios: []
     }
   },
   CALL_OUTS: {

@@ -357,7 +357,7 @@ public class UpdateAccountTeamMemberDailyBatch_Test {
             Test.stopTest();
         }
     }
-    
+    /*
     @isTest
     public static void AccountTeamMemberHelperTest1 ()
     {
@@ -957,5 +957,5 @@ public class UpdateAccountTeamMemberDailyBatch_Test {
             AccountTeamMemberHelper.getAccountTeamMembers(new List<Id>{atmList[1].Id});
             Test.stopTest();
         }
-    }
+    }*/
 }

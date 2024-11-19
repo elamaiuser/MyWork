@@ -196,11 +196,12 @@ export default class SlwcNewCollectionOperationMultiPicklist extends LightningEl
     .then((data) => {
         const territories = data.territories || [];
         const collectionOperations = data.collectionOperations || [];
-        const territoryCollectionOperations = data.territoryCollectionOperations || [];
+        const territoryCollectionOperations = data.territoryCollectionOperations || [];        
+        const {validDistricts, validARCRegions, validDivisions} = this.filterValidTerritoryOptions(territoryCollectionOperations,territories);
 
-        this.allDivisionOptions = this.buildPicklistOptions(territories.filter(item => item.recordTypeName === TERRITORY_TYPE.DIVISION));
-        this.allARCRegionOptions = this.buildPicklistOptions(territories.filter(item => item.recordTypeName === TERRITORY_TYPE.ARC_REGION));
-        this.allDistrictOptions = this.buildPicklistOptions(territories.filter(item => item.recordTypeName === TERRITORY_TYPE.DISTRICT));
+        this.allDivisionOptions = this.buildPicklistOptions(validDivisions);
+        this.allARCRegionOptions = this.buildPicklistOptions(validARCRegions);
+        this.allDistrictOptions = this.buildPicklistOptions(validDistricts);
         this.allCollectionOperationOptions = this.buildPicklistOptions(collectionOperations, territoryCollectionOperations);
         
         this.mapTerritoryCollectionOperations = this.buildMapTerritoryCollectionOperations(this.allCollectionOperationOptions, territoryCollectionOperations);
@@ -212,6 +213,28 @@ export default class SlwcNewCollectionOperationMultiPicklist extends LightningEl
       console.log(e);
     })
     .finally(() => this.hideLoading());
+  }
+
+  filterValidTerritoryOptions = (territoryCollectionOperations, allTerritories) => {
+    if (!territoryCollectionOperations || !territoryCollectionOperations.length) return [];
+
+    let validDistricts = allTerritories.filter(item => {
+      return (territoryCollectionOperations.map(item => item.territoryId).includes(item.id)) && item.recordTypeName === TERRITORY_TYPE.DISTRICT;
+    });
+
+    let validARCRegions = allTerritories.filter(item => {
+      return (validDistricts.map(item => item.parentId).includes(item.id)) && item.recordTypeName === TERRITORY_TYPE.ARC_REGION;
+    });
+
+    let validDivisions = allTerritories.filter(item => {
+      return (validARCRegions.map(item => item.parentId).includes(item.id)) && item.recordTypeName === TERRITORY_TYPE.DIVISION;
+    });
+
+    return {
+      validDistricts,
+      validARCRegions,
+      validDivisions
+    };
   }
 
   buildPicklistOptions = (data) => {
@@ -249,12 +272,12 @@ export default class SlwcNewCollectionOperationMultiPicklist extends LightningEl
 
     this.territoryPopverState.arcRegionOptions = this.filterARCRegionOptions(this.allARCRegionOptions, this.territoryPopverState.selectedDivisions);
     this.territoryPopverState.selectedARCRegions = cloneDeep(this.territoryPopverState.arcRegionOptions.filter(item => {
-      return !!this.defaultValues.arcRegions.find(selected => selected.value === item.value);
+      return !!this.defaultValues.arcRegions.find(selected => selected.value === item.value); 
     }))
 
     this.territoryPopverState.districtOptions = this.filterDistrictOptions(this.allDistrictOptions, this.territoryPopverState.selectedARCRegions);
     this.territoryPopverState.selectedDistricts = cloneDeep(this.territoryPopverState.districtOptions.filter(item => {
-      return !!this.defaultValues.districts.find(selected => selected.value === item.value);
+      return !!this.defaultValues.districts.find(selected => selected.value === item.value); 
     }))
 
     this.collectionOperationPicklistState.selectedTerritoryCollectionOperations = cloneDeep(this.defaultValues.territoryCollectionOperations);

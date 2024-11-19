@@ -154,6 +154,7 @@ public class skedMappingConfigContainer {
             mappingConfig.addFieldConfig('sked_Linked_Drives__c', 'linkedDrivesId', 'direct');
             mappingConfig.addFieldConfig('sked_Linked_Drives__r', 'linkedDrives', 'related', skedModels.linkedDrives.class, 'sked_Linked_Drives__c');
             mappingConfig.addFieldConfig('sked_Fixed_Site_Staff_Quantity__c', 'fixedSiteStaffQuantity', 'direct');
+            mappingConfig.addFieldConfig('sked_Is_All_Day__c', 'isAllDay', 'direct');
             mappingConfig.addFieldConfig('sked_Is_Group_Activity__c', 'isGroupActivity', 'direct');
             mappingConfig.addFieldConfig('sked_Inherit_Resources_From_Drive__c', 'inheritResourcesFromDrive', 'direct');
             mappingConfig.addFieldConfig('sked_Mobile_Staff_Quantity__c', 'mobileStaffQuantity', 'direct');
@@ -193,6 +194,8 @@ public class skedMappingConfigContainer {
             mappingConfig.addFieldConfig('sked_End__c', 'end', 'datetime');
             mappingConfig.addFieldConfig('sked_Start1__c', 'start', 'datetime');
             mappingConfig.addFieldConfig('sked_Timezone__c', 'timezoneSidId', 'direct');
+
+            mappingConfig.addFieldConfig('sked_Drive_Shift_Trade__r', 'driveShiftTrade', 'related', skedModels.driveShiftTrade.class, 'sked_Drive_Shift_Trade__c');
             
             mappingConfig.readonlyFields = new Set<string>();
             mappingConfig.readonlyFields.add('Name');
@@ -229,15 +232,22 @@ public class skedMappingConfigContainer {
             mappingConfig.addFieldConfig('sked__Start__c', 'start', 'datetime');
             mappingConfig.addFieldConfig('sked__Timezone__c', 'timezoneSidId', 'direct');
             mappingConfig.addFieldConfig('sked__Type__c', 'eventType', 'direct');
+            mappingConfig.addFieldConfig('sked_Approval_Reason__c', 'approvalReason', 'direct');
             mappingConfig.addFieldConfig('sked_Bypass_Auto_Approval_Process__c', 'bypassAutoApprovalProcess', 'direct');
             mappingConfig.addFieldConfig('sked_Waitlist_Confirmed__c', 'waitlistConfirmed', 'direct');
             mappingConfig.addFieldConfig('sked_Call_Out_for_Activity__c', 'callOutForActivityId', 'direct');
             mappingConfig.addFieldConfig('sked_Call_Out_for_Activity__r', 'callOutForActivity', 'related', skedModels.activity.class, 'sked__Activity__c');
             mappingConfig.addFieldConfig('sked_Call_Out_For_Drive__c', 'callOutForDriveId', 'direct');
             mappingConfig.addFieldConfig('sked_Call_Out_For_Drive__r', 'callOutForDrive', 'related', skedModels.drive.class, 'sked_Drive__c');
+            mappingConfig.addFieldConfig('sked_Call_Out_Notes__c', 'callOutNotes', 'direct');
+            mappingConfig.addFieldConfig('sked_Call_Out_Reason_Code__c', 'callOutReason', 'direct');
+            mappingConfig.addFieldConfig('sked_Call_Out_Type__c', 'callOutType', 'direct');
+            mappingConfig.addFieldConfig('sked_DateTime_Call_Out_Received__c', 'callOutReceived', 'datetime');
+            mappingConfig.addFieldConfig('sked__Start__c', 'start', 'datetime');
             mappingConfig.addFieldConfig('sked_Custom_Status__c', 'status', 'direct');
             mappingConfig.addFieldConfig('sked_Decline_Reason__c', 'declineReason', 'direct');
             mappingConfig.addFieldConfig('sked_Exception_Code__c', 'exceptionCode', 'direct');
+            mappingConfig.addFieldConfig('sked_Integrate_With_Workday__c', 'integrateWithWorkday', 'direct');
             mappingConfig.addFieldConfig('sked_Is_All_Day__c', 'isAllDay', 'direct');
             mappingConfig.addFieldConfig('sked_Is_Exception__c', 'isException', 'direct');
             mappingConfig.addFieldConfig('sked_Other_Decline_Reason__c', 'otherDeclineReason', 'direct');
@@ -247,6 +257,10 @@ public class skedMappingConfigContainer {
             mappingConfig.addFieldConfig('sked_Recurring_Schedule__c', 'scheduleId', 'direct');
             mappingConfig.addFieldConfig('sked_Recurring_Schedule__r.sked__Description__c', 'scheduleDescription', 'direct');
             mappingConfig.addFieldConfig('sked_Approved_Via_Automation__c', 'approvedViaAutomation', 'direct');
+            mappingConfig.addFieldConfig('sked_Bidding_Type__c', 'biddingType', 'direct');
+            mappingConfig.addFieldConfig('sked_Time_Off_Reason_Code__c', 'timeOffReasonCode', 'direct');
+            mappingConfig.addFieldConfig('sked_Workday_Sync_Message__c', 'workdaySyncMessage', 'direct');
+            mappingConfig.addFieldConfig('sked_Workday_Sync_Status__c', 'workdaySyncStatus', 'direct');
             mappingConfig.addFieldConfig('availability', 'objectType', 'value');
             
             mappingConfig.addFieldConfig('skedHC__Exception_Log__r', 'exceptionLogs', 'relatedList', 'skedHC__Exception__c');
@@ -391,6 +405,7 @@ public class skedMappingConfigContainer {
             mappingConfig.addFieldConfig('Staging_Location_Address__c', 'stagingLocation', 'fullAddress');
             mappingConfig.addFieldConfig('Staging_Location_Geolocation__c', 'stagingLocation', 'addressLocation');
             mappingConfig.addFieldConfig('sked_Regions__r', 'regions', 'relatedList', 'sked__Region__c');
+            mappingConfig.addFieldConfig('sked_Waitlist_Enabled__c', 'waitlistEnabled', 'direct');
             
             mappingConfig.readonlyFields = new Set<string>();
             mappingConfig.readonlyFields.add('Name');
@@ -512,6 +527,31 @@ public class skedMappingConfigContainer {
             return mappingConfig;
         }
     }
+
+    public class driveShiftTradeMappingConfigFactory extends mappingConfigFactory {
+        public override mappingConfigModel process() {
+            mappingConfigModel mappingConfig = new mappingConfigModel();
+            mappingConfig.sObjectName = 'sked_Drive_Shift_Trade__c';
+            mappingConfig.objectType = 'driveShiftTrade';
+            
+            mappingConfig.addFieldConfig('Id', 'id', 'direct');
+            mappingConfig.addFieldConfig('Name', 'name', 'direct');
+            mappingConfig.addFieldConfig('CreatedDate', 'createdOn', 'datetime');
+            mappingConfig.addFieldConfig('sked_APS_Notes__c', 'apsNotes', 'direct');
+            mappingConfig.addFieldConfig('sked_Requesting_Staff_Trading_Event_Name__c', 'requestingStaffTradingEventName', 'direct');
+            mappingConfig.addFieldConfig('sked_Requesting_Staff_Trading_Event_Date__c', 'requestingStaffTradingEventDate', 'direct');
+            mappingConfig.addFieldConfig('sked_Requesting_Staff_Trading_Type__c', 'requestingStaffTradingType', 'direct');
+            mappingConfig.addFieldConfig('sked_Requesting_Staff__c', 'requestingStaffId', 'direct');
+            mappingConfig.addFieldConfig('sked_Requesting_Staff__r.Name', 'requestingStaffName', 'direct');
+            mappingConfig.addFieldConfig('sked_Trading_Staff_Trading_Event_Name__c', 'tradingStaffTradingEventName', 'direct');
+            mappingConfig.addFieldConfig('sked_Trading_Staff_Trading_Event_Date__c', 'tradingStaffTradingEventDate', 'direct');
+            mappingConfig.addFieldConfig('sked_Trading_Staff_Trading_Type__c', 'tradingStaffTradingType', 'direct');
+            mappingConfig.addFieldConfig('sked_Trading_Staff__c', 'tradingStaffId', 'direct');
+            mappingConfig.addFieldConfig('sked_Trading_Staff__r.Name', 'tradingStaffName', 'direct');
+
+            return mappingConfig;
+        }
+    }
     
     public class exceptionMappingConfigFactory extends mappingConfigFactory {
         public override mappingConfigModel process() {
@@ -526,6 +566,7 @@ public class skedMappingConfigContainer {
             mappingConfig.addFieldConfig('skedHC__Job__r.sked__Account__r.Name', 'job.account.name', 'direct');
             mappingConfig.addFieldConfig('skedHC__Job__r.Name', 'job.name', 'direct');
             mappingConfig.addFieldConfig('skedHC__Job__r', 'job', 'related', skedModels.job.class, 'sked__Job__c');
+            mappingConfig.addFieldConfig('skedHC__Job_Allocation__r', 'jobAllocation', 'related', skedModels.jobAllocation.class, 'sked__Job_Allocation__c');
             mappingConfig.addFieldConfig('skedHC__Resource__r', 'resource', 'related', skedModels.resource.class, 'sked__Resource__c');
             
             mappingConfig.readonlyFields = new Set<string>();
@@ -642,7 +683,11 @@ public class skedMappingConfigContainer {
             mappingConfig.addFieldConfig('sked_Call_Out_Reason_Code__c', 'calloutReasonCode', 'direct');
             mappingConfig.addFieldConfig('sked_Call_Out_Reported__c', 'calloutReported', 'direct');
             mappingConfig.addFieldConfig('sked_Call_Out_Type__c', 'calloutType', 'direct');
+            mappingConfig.addFieldConfig('sked_DateTime_Call_Out_Received__c', 'callOutReceived', 'datetime');
+            mappingConfig.addFieldConfig('sked_Guarded__c', 'guarded', 'direct');
             mappingConfig.addFieldConfig('jobAllocation', 'objectType', 'value');
+
+            mappingConfig.addFieldConfig('sked_Drive_Shift_Trade__r', 'driveShiftTrade', 'related', skedModels.driveShiftTrade.class, 'sked_Drive_Shift_Trade__c');
             
             mappingConfig.readonlyFields = new Set<string>();
             mappingConfig.readonlyFields.add('Name');
@@ -785,6 +830,7 @@ public class skedMappingConfigContainer {
             
             mappingConfig.addFieldConfig('Id', 'id', 'direct');
             mappingConfig.addFieldConfig('Name', 'name', 'direct');
+            mappingConfig.addFieldConfig('sked_Asset_Type__c', 'assetType', 'direct');
             mappingConfig.addFieldConfig('sked__Category__c', 'category', 'direct');
             mappingConfig.addFieldConfig('sked__Email__c', 'email', 'direct');
             mappingConfig.addFieldConfig('sked__Employment_Type__c', 'employmentType', 'direct');
@@ -814,6 +860,7 @@ public class skedMappingConfigContainer {
             mappingConfig.addFieldConfig('sked_Planned_Termination_Date__c', 'plannedTerminationDate', 'date');
             mappingConfig.addFieldConfig('sked_Seniority_Date__c', 'seniorityDate', 'date');
             mappingConfig.addFieldConfig('sked_Termination_Date__c', 'terminationDate', 'date');
+            mappingConfig.addFieldConfig('sked_Manual_Ranking_Priority__c', 'manualRankingPriority', 'direct');
             
             mappingConfig.addFieldConfig('sked__Job_Allocations__r', 'jobAllocations', 'relatedList', 'sked__Job_Allocation__c');
             mappingConfig.addFieldConfig('sked__Availabilities1__r', 'availabilities', 'relatedList', 'sked__Availability__c');
@@ -967,8 +1014,16 @@ public class skedMappingConfigContainer {
             mappingConfig.addFieldConfig('sked_Staffing_Budget__r.sked_Approved_Slots_Rollup__c', 'approvedSlots', 'direct');
             mappingConfig.addFieldConfig('sked_Staffing_Budget__r.sked_Pending_Slots_Rollup__c', 'pendingSlots', 'direct');
             mappingConfig.addFieldConfig('sked_Staffing_Budget__r.sked_Wait_List_Slots_Rollup__c', 'approvedSlots', 'direct');
+            mappingConfig.addFieldConfig('sked_Availability__r.sked__Resource__r.Name', 'resource.name', 'direct');
+            mappingConfig.addFieldConfig('sked_Availability__r.sked__Resource__r.sked_Seniority_Date__c', 'resource.seniorityDate', 'direct');
+            mappingConfig.addFieldConfig('sked_Availability__r.sked__Start__c', 'start', 'direct');
+            mappingConfig.addFieldConfig('sked_Availability__r.sked__Type__c', 'type', 'direct');
+            mappingConfig.addFieldConfig('sked_Availability__r.sked__Status__c', 'status', 'direct');
+            mappingConfig.addFieldConfig('sked_Availability__r.sked_Ranking__c', 'ranking', 'direct');
             mappingConfig.addFieldConfig('sked_Availability__r.CreatedBy', 'createdBy', 'related', skedModels.user.class, 'User');
+            mappingConfig.addFieldConfig('sked_Availability__r.CreatedDate', 'createdOn', 'datetime');
             mappingConfig.addFieldConfig('sked_Availability__r.sked_Last_Modified_By__r', 'lastModifiedBy', 'related', skedModels.user.class, 'User');
+            mappingConfig.addFieldConfig('sked_Availability__r.LastModifiedDate', 'lastModified', 'datetime');
 
             mappingConfig.readonlyFields = new Set<string>();
             mappingConfig.readonlyFields.add('Name');
@@ -997,6 +1052,7 @@ public class skedMappingConfigContainer {
             mappingConfig.addFieldConfig('sked_District_Name__c', 'districtName', 'direct');
             mappingConfig.addFieldConfig('sked_Biomed_Collection_Op_Center__r', 'biomedCollectionOp', 'related', skedModels.biomedCollectionOp.class, 'sked_Biomed_Collection_Op_Center__c');
             mappingConfig.addFieldConfig('sked_Convert_to_Standard_On__c', 'convertToStandardOn', 'date');
+            mappingConfig.addFieldConfig('sked_Drive_Types__c', 'driveTypes', 'multiPicklist');
             mappingConfig.addFieldConfig('sked_Pending_Slots_Rollup__c', 'pendingSlots', 'direct');
             mappingConfig.addFieldConfig('sked_Recurring_Schedule__c', 'scheduleId', 'direct');
             mappingConfig.addFieldConfig('sked_Request_Type__c', 'requestType', 'direct');

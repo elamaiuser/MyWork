@@ -11,6 +11,7 @@
     <columns>LEAD.CREATED_DATE</columns>
     <columns>CORE.USERS.ALIAS</columns>
     <columns>LEAD.UNREAD</columns>
+    <columns>Lead_Stage_Status__c</columns>
     <filterScope>Queue</filterScope>
     <label>Northwest Lead Queue</label>
     <queue>Northwest</queue>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>BSF_Error_Log__c</fullName>
+    <deleteConstraint>SetNull</deleteConstraint>
+    <externalId>false</externalId>
+    <label>BSF Error Log</label>
+    <referenceTo>BSF_Error_Log__c</referenceTo>
+    <relationshipLabel>Calendar Build Error Logs</relationshipLabel>
+    <relationshipName>Calendar_Build_Error_Logs</relationshipName>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Lookup</type>
+</CustomField>

@@ -78,8 +78,8 @@
     <showSubTotals>true</showSubTotals>
     <timeFrameFilter>
         <dateColumn>CREATED_DATE</dateColumn>
-        <endDate>2022-09-01</endDate>
+        <endDate>2024-12-14</endDate>
         <interval>INTERVAL_CUSTOM</interval>
-        <startDate>2022-06-01</startDate>
+        <startDate>2024-09-09</startDate>
     </timeFrameFilter>
 </Report>

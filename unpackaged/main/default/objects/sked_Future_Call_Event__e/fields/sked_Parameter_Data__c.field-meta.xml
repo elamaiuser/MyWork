@@ -6,7 +6,7 @@
     <isNameField>false</isNameField>
     <isSortingDisabled>false</isSortingDisabled>
     <label>Parameter Data</label>
-    <length>5000</length>
+    <length>131072</length>
     <type>LongTextArea</type>
     <visibleLines>2</visibleLines>
 </CustomField>

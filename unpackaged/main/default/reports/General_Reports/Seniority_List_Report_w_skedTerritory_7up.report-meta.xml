@@ -107,6 +107,13 @@
             <operator>notEqual</operator>
             <value></value>
         </criteriaItems>
+        <criteriaItems>
+            <column>sked_Territory__c.sked_Regions__r.sked__Resources__r.sked__ResourceTags__r$sked__Tag__c.sked_Priority__c</column>
+            <columnToColumn>false</columnToColumn>
+            <isUnlocked>true</isUnlocked>
+            <operator>notEqual</operator>
+            <value></value>
+        </criteriaItems>
         <language>en_US</language>
     </filter>
     <format>Summary</format>

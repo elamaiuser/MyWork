@@ -71,12 +71,37 @@ public class PowerBIProxyController
                 driveUfid = job.sked_Drive__r.sked_UFID__c;
                 driveDate = job.sked_Drive__r.sked_Opportunity__r.Drive_date__c.month()+'%2F'+job.sked_Drive__r.sked_Opportunity__r.Drive_date__c.Day()+'%2F'+job.sked_Drive__r.sked_Opportunity__r.Drive_date__c.Year();
             }
-            redirectURL=system.label.StagingSheetReportURL+'?rp:FromDateDate='+driveDate+'&rp:ToDateDate='+driveDate+'&rp:DriveDriveUFID='+driveUfid;
+            redirectURL=system.label.StagingSheetReportURL+'&rp:FromDateDate='+driveDate+'&rp:ToDateDate='+driveDate+'&rp:DriveDriveUFID='+driveUfid;
         }
         //Staging Sheet
         
+       if(pageName == 'MOEStagingSheetReport')
+        {
+            String dJobId =Apexpages.currentPage().getParameters().get('jobId');
+            if(dJobId==null)
+            {
+                dJobId = 'a1J5c00000XS4skEAD';
+            }
+            if(test.isRunningTest())
+                {
+                    dJobId=this.jid;
+                }
+            
+            String driveUfid;
+            String driveDate;
+            if(dJobId != null)
+            {
+                id jobId = id.valueof(dJobId);
+                sked__Job__c job = [select id,sked_Drive__c,sked_Drive__r.sked_UFID__c,sked_Drive__r.sked_Opportunity__r.Drive_date__c from sked__Job__c where id =:jobId limit 1];
+                driveUfid = job.sked_Drive__r.sked_UFID__c;
+                driveDate = job.sked_Drive__r.sked_Opportunity__r.Drive_date__c.month()+'%2F'+job.sked_Drive__r.sked_Opportunity__r.Drive_date__c.Day()+'%2F'+job.sked_Drive__r.sked_Opportunity__r.Drive_date__c.Year();
+            }
+            redirectURL=system.label.MOEStagingSheetReportURL+'&rp:FromDateDate='+driveDate+'&rp:ToDateDate='+driveDate+'&rp:DriveDriveUFID='+driveUfid;
+        }
+
         system.debug(redirectURL);
         return redirectURL;
+
     }
     
     /*public   PowerBIProxyController()

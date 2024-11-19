@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomMetadata xmlns="http://soap.sforce.com/2006/04/metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <label>B07_No_Traffic_Direction_Needed</label>
+    <protected>false</protected>
+    <values>
+        <field>Additional_Text__c</field>
+        <value xsi:nil="true"/>
+    </values>
+    <values>
+        <field>Category__c</field>
+        <value xsi:type="xsd:string">Parking, Loading and Unloading (Staff, Truck, Donor and SCU):</value>
+    </values>
+    <values>
+        <field>IsCheckbox__c</field>
+        <value xsi:type="xsd:boolean">true</value>
+    </values>
+    <values>
+        <field>UI_Text__c</field>
+        <value xsi:type="xsd:string">Staff are not needed to stop or direct traffic for SCU or truck to park/unload</value>
+    </values>
+</CustomMetadata>

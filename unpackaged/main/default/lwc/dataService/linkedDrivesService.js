@@ -12,6 +12,8 @@ class linkedDrivesService extends dataService {
       //Related List
       let driveQueryBuilder = query.getQueryBuilder('sked_Drive__c');
       let activityQueryBuilder = query.getQueryBuilder('sked__Activity__c');
+
+      driveQueryBuilder.orderClause = 'ORDER BY sked_Drive_Date__c ASC, sked_Start_Time__c ASC';
   }
 }
 

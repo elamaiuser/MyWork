@@ -55,7 +55,7 @@
         <field>Opportunity.Drive_Site__c</field>
     </columns>
     <columns>
-        <field>Account.Next_Scheduled_Drive__c</field>
+        <field>Account.Next_Scheduled_Drive_Updated__c</field>
     </columns>
     <format>Tabular</format>
     <name>All Drives Opportunities</name>

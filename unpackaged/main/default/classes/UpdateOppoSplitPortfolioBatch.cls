@@ -72,7 +72,7 @@ global class UpdateOppoSplitPortfolioBatch implements Database.Batchable<sObject
                     }
                 }
                 System.debug('>>>>UpdateOppoSplitPortfolioBatch.execute() errorMsgMap : ' + JSON.serialize(errorMsgMap));
-                Map<Id,opportunitySplit> oppoSplitMap = new Map<Id,opportunitySplit>([select Id, OpportunityId, Opportunity.AccountId, Opportunity.Account.District_Manager__c, BSF_Portfolio__c, SplitOwnerId, SplitOwner.Name FROM OpportunitySplit WHERE Id IN: errorMsgMap.keySet()]);
+                Map<Id,opportunitySplit> oppoSplitMap = new Map<Id,opportunitySplit>([select Id, OpportunityId, Opportunity.AccountId, Opportunity.Account.District_Manager__c, Opportunity.Drive_Date__c, BSF_Portfolio__c, SplitOwnerId, SplitOwner.Name FROM OpportunitySplit WHERE Id IN: errorMsgMap.keySet()]);
                 
                 //create task for Errors
                 List<task> taskList = new list<task>();
@@ -84,6 +84,7 @@ global class UpdateOppoSplitPortfolioBatch implements Database.Batchable<sObject
                     portfAssignTask.RecordTypeId = recTypeId;
                     portfAssignTask.ActivityDate = Helper.AddBusinessDays(Date.Today(), 1);
                     portfAssignTask.OwnerId = oppoSplit.Opportunity.Account.District_Manager__c;
+                    portfAssignTask.Drive_Date__c = oppoSplit.Opportunity.Drive_Date__c; //HRP-12700
                     portfAssignTask.subject = 'Verify Opportunity Split Portfolio For : ('+ oppoSplit.SplitOwner.Name +')';
                     portfAssignTask.Description = 'Please review following Errors / Warnings for Opportunity Split Team Memeber ('+ oppoSplit.SplitOwner.Name +') : \\n \\n ' + errorMsgMap.get(oppoSplit.Id);
                     portfAssignTask.WhatId = oppoSplit.OpportunityId;

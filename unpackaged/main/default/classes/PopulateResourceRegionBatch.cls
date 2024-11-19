@@ -7,6 +7,7 @@
  * 07/22/2023			Barnojit Sharma			If no collection operations are found with the zipcode, the batch will update Skedulo Region as a primary region of the resource. (HRP-10504)
  * 09/26/2023			Krapy Tuli 			    Utilize Mapping from Custom Metadata to assign region to resources where CO has been renamed (HRP-11049)
  * 10/13/2023			Barnojit Sharma			Email Notification while resource has No Timezone/CO due to no matching Work/Satellite Zip Code. (HRP-10217)
+ * 03/12/2024			Barnojit Sharma			Remove Need to Translation Old to New CO Names in Resource Region Correction Batch. (HRP-12113)
 ********************************************************************************************************************************************************************************************
 */ 
 global class PopulateResourceRegionBatch implements Database.Batchable<sObject>,Database.Stateful,Schedulable {
@@ -33,7 +34,8 @@ global class PopulateResourceRegionBatch implements Database.Batchable<sObject>,
 	* HRP-10504 Changes ends here 
 	*/
     global void execute(Database.BatchableContext BC, List<sked__Resource__c> resources) {
-        Set<string> collectionOperationNames = new Set<string>();
+        //Set<string> collectionOperationNames = new Set<string>();
+        Set<string> collectionOperationExternalIds = new Set<string>();//HRP-12113 changes
         Set<String> workZipCodeList = new Set<String>();
         Set<String> homeZipCodeList = new Set<String>();
         Map<Id,String> zipCodeList = new Map<Id,String>();
@@ -66,16 +68,19 @@ global class PopulateResourceRegionBatch implements Database.Batchable<sObject>,
         
         taxonomyList = [SELECT Id,
                         		Collection_Operation_Name__c,
+                                Collection_Operation_Code__c,//HRP-12113 changes
                         		Time_Zone__c,
                         		Zip_Code__c 
                         FROM Taxonomy__c 
                         WHERE Zip_Code__c IN: zipCodeList.values()
-                        AND Collection_Operation_Name__c != null 
+                        //AND Collection_Operation_Name__c != null 
+                        AND Collection_Operation_Code__c != null //HRP-12113 changes
                         AND Start_Date__c <= TODAY 
                         AND End_Date__c >= TODAY 
-                        AND Type__c = 'Bio Collection BSF' LIMIT 10000];  
-        
-        /* HRP-11049 Start */
+                        AND Type__c = 'Bio Collection BSF'  
+                        ORDER BY CreatedDate DESC LIMIT 10000];  
+        //Commented for HRP-12113 changes
+        /* HRP-11049 Start * 
         Map<String, String> taxoRegionMapping = new Map<String, String>();
         List<Taxonomy_Region_CO_Mapping__mdt > coMappings = [SELECT Id, New_Value__c, Old_Value__c from Taxonomy_Region_CO_Mapping__mdt Where Active__c = true];
         if (!coMappings.isEmpty()) {
@@ -84,15 +89,16 @@ global class PopulateResourceRegionBatch implements Database.Batchable<sObject>,
             } 
         }
         
-        /* HRP-11049 End */
+        * HRP-11049 End */
         if(!taxonomyList.isEmpty()){
             for(Taxonomy__c taxo : taxonomyList){
-                /* HRP-11049 Start */
+                /* HRP-11049 Start *
                 if (taxoRegionMapping.containsKey(taxo.Collection_Operation_Name__c)) {
 					taxo.Collection_Operation_Name__c = taxoRegionMapping.get(taxo.Collection_Operation_Name__c);
                 }
-                /* HRP-11049 End */
-                collectionOperationNames.add(taxo.Collection_Operation_Name__c);
+                * HRP-11049 End */
+                //collectionOperationNames.add(taxo.Collection_Operation_Name__c);
+                collectionOperationExternalIds.add('Bio_Collection_BSF_'+taxo.Collection_Operation_Code__c);//HRP-12113 changes
                 resTimezone.add(taxo.Time_Zone__c);
                 taxonomyZipMap.put(taxo.Zip_Code__c,taxo);
             }
@@ -100,14 +106,16 @@ global class PopulateResourceRegionBatch implements Database.Batchable<sObject>,
         
         List<sked__Region__c> regionList = new List<sked__Region__c>();
         
-        if(collectionOperationNames != null && resTimezone != null){
+        if(collectionOperationExternalIds != null && resTimezone != null){
             regionList = [SELECT Id, 
                           		Name,
                           		sked__Timezone__c, 
                           		sked_Biomed_Collection_Op_Center__r.Name, 
-                          		sked_Biomed_Collection_Op_Center__r.Id 
+                          		sked_Biomed_Collection_Op_Center__r.Id,
+                                sked_Biomed_Collection_Op_Center__r.External_Id__c//HRP-12113 changes
                           FROM sked__Region__c 
-                          WHERE sked_Biomed_Collection_Op_Center__r.Name IN :collectionOperationNames 
+                          WHERE sked_Biomed_Collection_Op_Center__r.External_Id__c IN :collectionOperationExternalIds //HRP-12113 changes
+                          //AND sked_Biomed_Collection_Op_Center__r.Name IN :collectionOperationNames
                           AND sked__Timezone__c IN :resTimezone];
         }
         
@@ -115,7 +123,7 @@ global class PopulateResourceRegionBatch implements Database.Batchable<sObject>,
             Map<string, sked__Region__c> mapRegion = new Map<string, sked__Region__c>();
             for (sked__Region__c region : regionList) {
                 
-                string key = region.sked_Biomed_Collection_Op_Center__r.Name + ':' + region.sked__Timezone__c;
+                string key = region.sked_Biomed_Collection_Op_Center__r.External_Id__c + ':' + region.sked__Timezone__c;//HRP-12113 changes
                 
                 mapRegion.put(key, region);
             } 
@@ -139,7 +147,7 @@ global class PopulateResourceRegionBatch implements Database.Batchable<sObject>,
                         resource.sked_Timezone__c = taxoForResource.Time_Zone__c;
                         resIsChanged = true;
                     }
-                    string key = taxoForResource.Collection_Operation_Name__c + ':' + taxoForResource.Time_Zone__c;
+                    string key = 'Bio_Collection_BSF_' + taxoForResource.Collection_Operation_Code__c + ':' + taxoForResource.Time_Zone__c;//HRP-12113 changes
                     if (mapRegion.containsKey(key)) {
                         sked__Region__c region = mapRegion.get(key);
                         if(resource.sked__Primary_Region__c != null && resource.sked__Primary_Region__c != region.Id){
@@ -246,9 +254,8 @@ global class PopulateResourceRegionBatch implements Database.Batchable<sObject>,
         }
 
         emailBodyTable = emailBodyTable + '</tbody></table>';
-        Integer noOfResourceSent = noOfResourceToSent > noOfResource ? noOfResource : noOfResourceToSent;
         String emailHeader = 'Hi,<p>Timezones or collection operations are not available for '+noOfResource
-                                +' resources, of which the top '+noOfResourceSent+' are as follows:</p><br>';
+                                +' resources, of which the top '+noOfResourceToSent+' are as follows:</p><br>';
         String emailFooter =  '<br>Please click on the following link to view the complete list: '
                                 +'<a href="'+lightningUrl+'">Visit No Collection Operation List</a><br>';
         
@@ -265,7 +272,8 @@ global class PopulateResourceRegionBatch implements Database.Batchable<sObject>,
         message.subject = 'Timezone/collection operation are blank for the following resources';
         message.setHtmlBody(emailBody);
         Messaging.SingleEmailMessage[] messages =  new List<Messaging.SingleEmailMessage> {message};
-        Messaging.SendEmailResult[] results = Messaging.sendEmail(messages);
+        //Messaging.SendEmailResult[] results = Messaging.sendEmail(messages);
+        BSF_EmailNotification.sendEmails(messages,'ResourceNoCollOpEmail',null);//Changes for  HRP-11608
     }
     public String setEmailBody(List<sked__Resource__c> resourceList, String emailBody, Integer counter){
         if(resourceList.size() == 0 || counter <= 0){

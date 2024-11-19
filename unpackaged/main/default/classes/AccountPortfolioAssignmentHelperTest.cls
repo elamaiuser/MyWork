@@ -881,7 +881,7 @@ insert portAssigment;
             Online_Scheduling_Enabled__c = 'No',
             //Drive_Site__c = mobileSite.id,
             accountid= account.id);
-         
+         triggerHandler.bypass('OpportunityTriggerHandler');
         System.runAs( DRDUser ){
         insert opp;
         }
@@ -1106,6 +1106,7 @@ insert portAssigment;
         TriggerHandler.clearBypass('OpportunityTriggerHandler');
         
          opp.Drive_Date__c =System.today()+1;
+        opp.Drive_Date_Change_Reason__c = 'TEST';
          Test.startTest();
          update opp;
          Test.stopTest();
@@ -1206,6 +1207,7 @@ insert portAssigment;
              oppList.add(opp1);
          }
          system.debug('10 opp insert'+oppList);
+        triggerHandler.bypass('OpportunityTriggerHandler');
          insert oppList;
         
          
@@ -1656,5 +1658,280 @@ insert portAssigment;
         test.startTest();
         update mobileAcc2;
         test.stopTest();
+    }
+    
+    static testMethod void testErrorMethod() {
+        User DRDUser = new User(
+             ProfileId = [SELECT Id FROM Profile WHERE Name = 'DRD Manager'].Id,
+             LastName = 'last',
+             Email = 'puser000@amamama.com',
+             Username = 'drdmanageruser000@amamama.com' + System.currentTimeMillis(),
+             CompanyName = 'TEST',
+             Title = 'title',
+             Alias = 'alias',
+             TimeZoneSidKey = 'America/Los_Angeles',
+             EmailEncodingKey = 'UTF-8',
+             LanguageLocaleKey = 'en_US',
+             LocaleSidKey = 'en_US'
+             
+        );
+        insert DRDUser;
+         
+        List<Taxonomy__c> taxoList = [SELECT Division_Code__c,Division_Key__c,Division_Name__c,DRD_Territory_Code__c,DRD_Territory_Key__c,DRD_Territory_Name__c,DS_Region_Code__c,DS_Region_Key__c,DS_Region_Name__c,
+                                            Team_Code__c,Team_Key__c,Team_Name__c,ABM_Code__c,ABM_Name__c,Type_Key__c,Type__c,Start_Date__c,End_Date__c,
+        									RecordType.Name,District_Code__c,District_Name__c,Collection_Operation_Code__c,Collection_Operation_Name__c,Supervisor_Code__c,Supervisor_Name__c,Portfolio_Code__c,Portfolio_Name__c
+        									FROM Taxonomy__c WHERE RecordType.Name != :BSF_Constants.BIO_COLLECTION_RECORD_TYPE]; 
+        
+        
+        TriggerHandler.bypass('BsfPortfolioTriggerHandler');
+        BSFPortfolioHelper portfolioHelper = new BSFPortfolioHelper();
+        portfolioHelper.createOrUpdatePortfolio(taxoList);
+        TriggerHandler.clearBypass('BsfPortfolioTriggerHandler');
+        
+       
+        //create users
+        List<User> users = new List<User>();
+        Profile drdProfile = null;
+        for(Profile pf:[SELECT Id,Name FROM Profile WHERE Name IN ('DRD Profile','DRD Manager')]){
+            if(pf.Name == 'DRD Profile'){
+                drdProfile = pf;
+            }
+        }
+        
+        List<User> drdUsers = populateUserFields('DRD','User',drdProfile.Id,60);        
+        insert drdUsers;
+        
+        Date defaultStartDate = System.today() -10;
+        Date defaultEndDate = Date.newInstance(4000, 12, 31);
+        
+        BSF_Portfolio__c accountPorfolio = null;
+        List<BSF_Portfolio__c> portfolios = [Select Id,Name,Portfolio_Code__c , Portfolio_Name__c ,Taxonomy_Type__c,Portfolio_Type__c,External_Key__c,Parent_Portfolio__c,Parent_Portfolio__r.Portfolio_Type__c,Account_Based_Portfolio__c,Territory_Portfolio__c  FROM BSF_Portfolio__c];
+        Integer drdUserIndex = 0;
+        
+        List<Portfolio_Assignment__c> portAssigment = new List<Portfolio_Assignment__c>();
+        for(BSF_Portfolio__c portfolio:portfolios){
+            System.debug('portfolio record is '+portfolio);
+            if(portfolio.Taxonomy_Type__c == BSF_Constants.BIO_RECRUITMENT_RECORD_TYPE || portfolio.Taxonomy_Type__c == BSF_Constants.TAXO_ACCOUNT_RECORD_TYPE){
+                if(portfolio.Taxonomy_Type__c == BSF_Constants.TAXO_ACCOUNT_RECORD_TYPE){
+                    accountPorfolio = portfolio;
+                }
+                
+                if(portfolio.Portfolio_Type__c == 'Account Manager'){
+                    portAssigment.add(new Portfolio_Assignment__c(BSF_Portfolio__c=portfolio.Id,User__c=drdUsers[drdUserIndex++].Id,Assignment_Type__c=portfolio.Portfolio_Type__c,Start_Date__c=defaultStartDate ,End_Date__c=defaultStartDate+350));
+                   	portAssigment.add(new Portfolio_Assignment__c(BSF_Portfolio__c=portfolio.Id,User__c=drdUsers[drdUserIndex++].Id,Assignment_Type__c=portfolio.Portfolio_Type__c,Start_Date__c=defaultStartDate+351 ,End_Date__c=defaultEndDate));
+                }
+                
+                
+            }
+        } 
+        
+         triggerHandler.bypass('PortfolioAssignmentTriggerHandler');
+		 insert portAssigment;
+ 		 triggerHandler.clearBypass('PortfolioAssignmentTriggerHandler');       
+         AccountPortfolioAssignmentHelper.processTaxonomyData(1000);
+        
+         Test.startTest();
+         List<Account_Portfolio_Assignment__c> accPortAssignment = [Select Id,BSF_Portfolio__c,Portfolio_Type__c from Account_Portfolio_Assignment__c];
+         system.debug('accPortAssignment '+accPortAssignment);
+         Database.DeleteResult[] drList = Database.Delete(accPortAssignment,false);
+         AccountPortfolioAssignmentHelper helper = new AccountPortfolioAssignmentHelper();
+         helper.insertErrors(drList , 'Error during deleteting default territory portfolio', 'test class');
+         Test.stopTest();
+          
+    }
+    
+    @isTest static void testAccountPortfolioAssignment19(){
+        //covers CreateDefaultTerritory portfolio batch 
+        List<Taxonomy__c> taxoList = [SELECT Division_Code__c,Division_Key__c,Division_Name__c,DRD_Territory_Code__c,DRD_Territory_Key__c,DRD_Territory_Name__c,DS_Region_Code__c,DS_Region_Key__c,DS_Region_Name__c,
+                                            Team_Code__c,Team_Key__c,Team_Name__c,ABM_Code__c,ABM_Name__c,Type_Key__c,Type__c,Start_Date__c,End_Date__c,
+        									RecordType.Name,District_Code__c,District_Name__c,Collection_Operation_Code__c,Collection_Operation_Name__c,Supervisor_Code__c,Supervisor_Name__c,Portfolio_Code__c,Portfolio_Name__c
+        									FROM Taxonomy__c WHERE RecordType.Name != :BSF_Constants.BIO_COLLECTION_RECORD_TYPE]; 
+        
+        
+        TriggerHandler.bypass('BsfPortfolioTriggerHandler');
+        BSFPortfolioHelper portfolioHelper = new BSFPortfolioHelper();
+        portfolioHelper.createOrUpdatePortfolio(taxoList);
+        TriggerHandler.clearBypass('BsfPortfolioTriggerHandler');
+        
+        
+        //create users
+        List<User> users = new List<User>();
+        Profile drdProfile = null;
+        Profile drdManagerProfile = null;
+        for(Profile pf:[SELECT Id,Name FROM Profile WHERE Name IN ('DRD Profile','DRD Manager')]){
+            if(pf.Name == 'DRD Profile'){
+                drdProfile = pf;
+            }
+            if(pf.Name == 'DRD Manager'){
+                drdManagerProfile = pf;
+            }
+        }
+        
+        List<User> drdUsers = populateUserFields('DRD','User',drdProfile.Id,60);
+        List<User> dmUsers = populateUserFields('DM','User',drdManagerProfile.Id,60);
+        
+        List<User> allUsers = new List<User>();
+        allUsers.addAll(drdUsers);
+        allUsers.addAll(dmUsers);
+        insert allUsers;
+        
+        Date defaultStartDate = System.today() -10;
+        Date defaultEndDate = Date.newInstance(4000, 12, 31);
+        
+        BSF_Portfolio__c accountPorfolio = null;
+        List<BSF_Portfolio__c> portfolios = [Select Id,Name,Portfolio_Code__c , Portfolio_Name__c ,Taxonomy_Type__c,Portfolio_Type__c,External_Key__c,Parent_Portfolio__c,Parent_Portfolio__r.Portfolio_Type__c,Account_Based_Portfolio__c,Territory_Portfolio__c  FROM BSF_Portfolio__c];
+        Integer drdUserIndex = 0;
+        Integer dmUserIndex = 0;
+        
+        List<Portfolio_Assignment__c> portAssigment = new List<Portfolio_Assignment__c>();
+        for(BSF_Portfolio__c portfolio:portfolios){
+            System.debug('portfolio record is '+portfolio);
+            if(portfolio.Taxonomy_Type__c == BSF_Constants.BIO_RECRUITMENT_RECORD_TYPE || portfolio.Taxonomy_Type__c == BSF_Constants.TAXO_ACCOUNT_RECORD_TYPE){
+                if(portfolio.Taxonomy_Type__c == BSF_Constants.TAXO_ACCOUNT_RECORD_TYPE){
+                    accountPorfolio = portfolio;
+                }
+                
+                if(portfolio.Portfolio_Type__c == 'Account Manager'){
+                    portAssigment.add(new Portfolio_Assignment__c(BSF_Portfolio__c=portfolio.Id,User__c=drdUsers[drdUserIndex++].Id,Assignment_Type__c=portfolio.Portfolio_Type__c,Start_Date__c=defaultStartDate ,End_Date__c=defaultStartDate+350));
+                   	portAssigment.add(new Portfolio_Assignment__c(BSF_Portfolio__c=portfolio.Id,User__c=drdUsers[drdUserIndex++].Id,Assignment_Type__c=portfolio.Portfolio_Type__c,Start_Date__c=defaultStartDate+351 ,End_Date__c=defaultEndDate));
+                }
+                
+                if(portfolio.Portfolio_Type__c == 'District Manager'){
+                    portAssigment.add(new Portfolio_Assignment__c(BSF_Portfolio__c=portfolio.Id,User__c=dmUsers[dmUserIndex++].Id,Assignment_Type__c=portfolio.Portfolio_Type__c,Start_Date__c=defaultStartDate ,End_Date__c=defaultStartDate+350));
+                    portAssigment.add(new Portfolio_Assignment__c(BSF_Portfolio__c=portfolio.Id,User__c=dmUsers[dmUserIndex++].Id,Assignment_Type__c=portfolio.Portfolio_Type__c,Start_Date__c=defaultStartDate+351 ,End_Date__c=defaultEndDate));
+                }
+              }
+        }
+        
+         triggerHandler.bypass('PortfolioAssignmentTriggerHandler');
+insert portAssigment;
+ triggerHandler.clearBypass('PortfolioAssignmentTriggerHandler');
+       
+        AccountPortfolioAssignmentHelper.processTaxonomyData(1000);
+        
+        Account account = [Select Id,BillingPostalCode from Account where BillingPostalCode = '48420' limit 1];
+        //Account_Portfolio_Assignment__c ap = [select id,BSf_portfolio__c from Account_Portfolio_Assignment__c where (Account__c=:account.id and BSf_portfolio__r.Territory_Portfolio__c=true) limit 1];
+        //system.debug('ap'+ap);
+        Datetime myDT = System.today();
+        AccountBasedPortfolioClass.AccountPortfolioWrapper accountPortfolioAssignment = new AccountBasedPortfolioClass.AccountPortfolioWrapper();
+        accountPortfolioAssignment.selectedPortfolioType = BSF_Constants.ACCOUNT_PORTFOLIO;
+        accountPortfolioAssignment.accountRecid = account.id;
+        accountPortfolioAssignment.Start_Date = myDT.format('yyyy-MM-dd');
+        accountPortfolioAssignment.End_Date = myDT.addDays(200).format('yyyy-MM-dd');
+        accountPortfolioAssignment.portfolioRecId  = accountPorfolio.Id;  
+        accountPortfolioAssignment.selectedAccountbasedreason=new list<string>{'Hospital Partner'};
+        List<AccountBasedPortfolioClass.AccountPortfolioWrapper> apwrp = new List<AccountBasedPortfolioClass.AccountPortfolioWrapper>();
+        apwrp.add(accountPortfolioAssignment);
+        String accportfoliodata = JSON.serialize(apwrp);
+        AccountBasedPortfolioClass.createAccountPortfolioData(accportfoliodata);
+        Test.startTest();
+        account_portfolio_assignment__c apa = [select id from account_portfolio_assignment__c where account__c =:account.id and bsf_portfolio__c=:accountPorfolio.Id];
+        delete apa;
+       
+        Test.stopTest();
+        //BSF_Portfolio__c bsfPort = [select id,Start_Date__c,End_Date__c from BSF_Portfolio__c where id=:accountPorfolio.Id  limit 1];
+        //bsfPort.End_Date__c = System.today().addDays(100);
+        //update bsfPort;
+        //account a = [select Account_AM_Portfolio_Type__c from account where id =:account.id];
+        //system.assert(a.Account_AM_Portfolio_Type__c);
+        
+    }
+    @isTest static void testAccountPortfolioAssignment20(){
+        //covers CreateDefaultTerritory portfolio batch 
+        List<Taxonomy__c> taxoList = [SELECT Division_Code__c,Division_Key__c,Division_Name__c,DRD_Territory_Code__c,DRD_Territory_Key__c,DRD_Territory_Name__c,DS_Region_Code__c,DS_Region_Key__c,DS_Region_Name__c,
+                                            Team_Code__c,Team_Key__c,Team_Name__c,ABM_Code__c,ABM_Name__c,Type_Key__c,Type__c,Start_Date__c,End_Date__c,
+        									RecordType.Name,District_Code__c,District_Name__c,Collection_Operation_Code__c,Collection_Operation_Name__c,Supervisor_Code__c,Supervisor_Name__c,Portfolio_Code__c,Portfolio_Name__c
+        									FROM Taxonomy__c WHERE RecordType.Name != :BSF_Constants.BIO_COLLECTION_RECORD_TYPE]; 
+        
+        
+        TriggerHandler.bypass('BsfPortfolioTriggerHandler');
+        BSFPortfolioHelper portfolioHelper = new BSFPortfolioHelper();
+        portfolioHelper.createOrUpdatePortfolio(taxoList);
+        TriggerHandler.clearBypass('BsfPortfolioTriggerHandler');
+        
+        //create users
+        List<User> users = new List<User>();
+        Profile drdProfile = null;
+        Profile drdManagerProfile = null;
+        for(Profile pf:[SELECT Id,Name FROM Profile WHERE Name IN ('DRD Profile','DRD Manager')]){
+            if(pf.Name == 'DRD Profile'){
+                drdProfile = pf;
+            }
+            if(pf.Name == 'DRD Manager'){
+                drdManagerProfile = pf;
+            }
+        }
+        
+        List<User> drdUsers = populateUserFields('DRD','User',drdProfile.Id,60);
+        List<User> dmUsers = populateUserFields('DM','User',drdManagerProfile.Id,60);
+        
+        List<User> allUsers = new List<User>();
+        allUsers.addAll(drdUsers);
+        allUsers.addAll(dmUsers);
+        insert allUsers;
+        
+        Date defaultStartDate = System.today() -10;
+        Date defaultEndDate = Date.newInstance(4000, 12, 31);
+        
+        BSF_Portfolio__c accountPorfolio = null;
+        List<BSF_Portfolio__c> portfolios = [Select Id,Name,Portfolio_Code__c , Portfolio_Name__c ,Taxonomy_Type__c,Portfolio_Type__c,External_Key__c,Parent_Portfolio__c,Parent_Portfolio__r.Portfolio_Type__c,Account_Based_Portfolio__c,Territory_Portfolio__c  FROM BSF_Portfolio__c];
+        Integer drdUserIndex = 0;
+        Integer dmUserIndex = 0;
+        
+        List<Portfolio_Assignment__c> portAssigment = new List<Portfolio_Assignment__c>();
+        for(BSF_Portfolio__c portfolio:portfolios){
+            System.debug('portfolio record is '+portfolio);
+            if(portfolio.Taxonomy_Type__c == BSF_Constants.BIO_RECRUITMENT_RECORD_TYPE || portfolio.Taxonomy_Type__c == BSF_Constants.TAXO_ACCOUNT_RECORD_TYPE){
+                if(portfolio.Taxonomy_Type__c == BSF_Constants.TAXO_ACCOUNT_RECORD_TYPE){
+                    accountPorfolio = portfolio;
+                }
+                
+                if(portfolio.Portfolio_Type__c == 'Account Manager'){
+                    portAssigment.add(new Portfolio_Assignment__c(BSF_Portfolio__c=portfolio.Id,User__c=drdUsers[drdUserIndex++].Id,Assignment_Type__c=portfolio.Portfolio_Type__c,Start_Date__c=defaultStartDate ,End_Date__c=defaultStartDate+350));
+                   	portAssigment.add(new Portfolio_Assignment__c(BSF_Portfolio__c=portfolio.Id,User__c=drdUsers[drdUserIndex++].Id,Assignment_Type__c=portfolio.Portfolio_Type__c,Start_Date__c=defaultStartDate+351 ,End_Date__c=defaultEndDate));
+                }
+                
+                if(portfolio.Portfolio_Type__c == 'District Manager'){
+                    portAssigment.add(new Portfolio_Assignment__c(BSF_Portfolio__c=portfolio.Id,User__c=dmUsers[dmUserIndex++].Id,Assignment_Type__c=portfolio.Portfolio_Type__c,Start_Date__c=defaultStartDate ,End_Date__c=defaultStartDate+350));
+                    portAssigment.add(new Portfolio_Assignment__c(BSF_Portfolio__c=portfolio.Id,User__c=dmUsers[dmUserIndex++].Id,Assignment_Type__c=portfolio.Portfolio_Type__c,Start_Date__c=defaultStartDate+351 ,End_Date__c=defaultEndDate));
+                }
+              }
+        }
+        
+         triggerHandler.bypass('PortfolioAssignmentTriggerHandler');
+insert portAssigment;
+ triggerHandler.clearBypass('PortfolioAssignmentTriggerHandler');
+       
+        //AccountPortfolioAssignmentHelper.processTaxonomyData(1000);
+        
+        Account account = [Select Id,BillingPostalCode from Account where BillingPostalCode = '48420' limit 1];
+        //Account_Portfolio_Assignment__c ap = [select id,BSf_portfolio__c from Account_Portfolio_Assignment__c where (Account__c=:account.id and BSf_portfolio__r.Territory_Portfolio__c=true) limit 1];
+        //system.debug('ap'+ap);
+        Datetime myDT = System.today();
+        AccountBasedPortfolioClass.AccountPortfolioWrapper accountPortfolioAssignment = new AccountBasedPortfolioClass.AccountPortfolioWrapper();
+        accountPortfolioAssignment.selectedPortfolioType = BSF_Constants.ACCOUNT_PORTFOLIO;
+        accountPortfolioAssignment.accountRecid = account.id;
+        accountPortfolioAssignment.Start_Date = myDT.format('yyyy-MM-dd');
+        accountPortfolioAssignment.End_Date = myDT.addDays(200).format('yyyy-MM-dd');
+        accountPortfolioAssignment.portfolioRecId  = accountPorfolio.Id;  
+        accountPortfolioAssignment.selectedAccountbasedreason=new list<string>{'Hospital Partner'};
+        List<AccountBasedPortfolioClass.AccountPortfolioWrapper> apwrp = new List<AccountBasedPortfolioClass.AccountPortfolioWrapper>();
+        apwrp.add(accountPortfolioAssignment);
+        String accportfoliodata = JSON.serialize(apwrp);
+        AccountBasedPortfolioClass.createAccountPortfolioData(accportfoliodata);
+        
+        BSF_Batch_CreateDefaultPortfolioAssign batch = new BSF_Batch_CreateDefaultPortfolioAssign();
+         database.executeBatch(batch);
+        test.startTest();
+        account_portfolio_assignment__c apa = [select id from account_portfolio_assignment__c where account__c =:account.id and bsf_portfolio__c=:accountPorfolio.Id];
+        delete apa;
+       
+        Test.stopTest();
+        //BSF_Portfolio__c bsfPort = [select id,Start_Date__c,End_Date__c from BSF_Portfolio__c where id=:accountPorfolio.Id  limit 1];
+        //bsfPort.End_Date__c = System.today().addDays(100);
+        //update bsfPort;
+        //account a = [select Account_AM_Portfolio_Type__c from account where id =:account.id];
+        //system.assert(a.Account_AM_Portfolio_Type__c);
+        
     }
 }

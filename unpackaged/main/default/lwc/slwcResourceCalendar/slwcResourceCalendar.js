@@ -255,7 +255,10 @@ export default class SlwcResourceCalendar extends NavigationMixin(LightningEleme
   handleShowCallOutModal(event) {
     this.callOutModalData = {
       isOpen: true,
-      record: event.model
+      record: event.model,
+      resourceId: event.model.resourceId,
+      driveDate: event.model.startDate,
+      duration: this.resource.dailyTimeOffHours
     }
   }
 
@@ -274,15 +277,21 @@ export default class SlwcResourceCalendar extends NavigationMixin(LightningEleme
 
   handleSaveCallOutModal(event) {
       const { record } = this.callOutModalData;
-      const { callOutType , callOutReason, callOutNotes } = event.detail;
+      const { callOutType, callOutReason, callOutNotes, callOutReceivedDateTime, timeOffPlan, timeOffReasonCode, usePtoForCallOut, hasTimeOffPlans } = event.detail;
 
-      let params = {
-        resourceId: this.resource.id,
-        callOutReported: true,
-        callOutType: callOutType,
-        callOutReason: callOutReason,
-        callOutNotes: callOutNotes
-      };
+        let params = {
+            resourceId: this.resource.id,
+            jobId: this.jobId,
+            callOutReported: true,
+            callOutType: callOutType,
+            callOutReason: callOutReason,
+            callOutNotes: callOutNotes,
+            callOutReceivedDateTime: callOutReceivedDateTime,
+            timeOffPlan: timeOffPlan,
+            timeOffReasonCode: timeOffReasonCode,
+            usePtoForCallOut: usePtoForCallOut,
+            hasTimeOffPlans: hasTimeOffPlans
+        };
 
       if(record.objectType === 'jobAllocation') {
         params.jobId = record.jobId;
@@ -291,18 +300,22 @@ export default class SlwcResourceCalendar extends NavigationMixin(LightningEleme
       if(record.objectType === 'activity') {
         params.activityId = record.activityId;
       }
-  
+      
       this.showLoading();
       let service = new resourceService();
       service.saveCallOut({
         request: params
       }).then(res => {
-        this.dispatchEvent(new ShowToastEvent({
-          message: 'Call out successfully.',
-          variant: 'success',
-          mode: 'dismissable',
-        }));
+        let message = 'Call out Captured Sucessfully.';
+        if (!usePtoForCallOut) {
+            message += ' No associated Time-Off created.';
+        }
 
+        this.dispatchEvent(new ShowToastEvent({
+            message: message,
+            variant: 'success',
+            mode: 'dismissable',
+        }));
         this.handleCloseCallOutModal();
 
         return this.refresh();

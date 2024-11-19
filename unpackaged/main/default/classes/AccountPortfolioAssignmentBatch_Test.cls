@@ -81,7 +81,7 @@ public class AccountPortfolioAssignmentBatch_Test {
         Date defaultStartDate = System.today() -10;
         Date defaultEndDate = Date.newInstance(4000, 12, 31);
         
-        List<BSF_Portfolio__c> portfolios = [Select Id,Name,Portfolio_Code__c , Portfolio_Name__c ,Taxonomy_Type__c,Portfolio_Type__c,External_Key__c,Parent_Portfolio__c,Parent_Portfolio__r.Portfolio_Type__c,Account_Based_Portfolio__c,Territory_Portfolio__c  FROM BSF_Portfolio__c];
+        List<BSF_Portfolio__c> portfolios = [Select Id,Name,Start_date__c,End_Date__c,Portfolio_Code__c , Portfolio_Name__c ,Taxonomy_Type__c,Portfolio_Type__c,External_Key__c,Parent_Portfolio__c,Parent_Portfolio__r.Portfolio_Type__c,Account_Based_Portfolio__c,Territory_Portfolio__c  FROM BSF_Portfolio__c];
         Integer drdUserIndex = 0;
         Integer dmUserIndex = 0;
         Integer supIndex = 0;
@@ -89,28 +89,19 @@ public class AccountPortfolioAssignmentBatch_Test {
         for(BSF_Portfolio__c portfolio:portfolios){
             if(portfolio.Taxonomy_Type__c == BSF_Constants.BIO_RECRUITMENT_RECORD_TYPE || portfolio.Taxonomy_Type__c == BSF_Constants.TAXO_ACCOUNT_RECORD_TYPE){
                 if(portfolio.Portfolio_Type__c == 'Account Manager'){
-                    portAssigment.add(new Portfolio_Assignment__c(BSF_Portfolio__c=portfolio.Id,User__c=drdUsers[drdUserIndex++].Id,Assignment_Type__c=portfolio.Portfolio_Type__c,Start_Date__c=defaultStartDate ,End_Date__c=defaultStartDate+365));
-                	portAssigment.add(new Portfolio_Assignment__c(BSF_Portfolio__c=portfolio.Id,User__c=drdUsers[drdUserIndex++].Id,Assignment_Type__c=portfolio.Portfolio_Type__c,Start_Date__c=defaultStartDate+366 ,End_Date__c=defaultEndDate));
-                }
+                    portAssigment.add(new Portfolio_Assignment__c(BSF_Portfolio__c=portfolio.Id,User__c=drdUsers[drdUserIndex++].Id,Assignment_Type__c=portfolio.Portfolio_Type__c,Start_Date__c=portfolio.start_Date__c ,End_Date__c=portfolio.start_Date__c+10));
+                	}
                 
                 if(portfolio.Portfolio_Type__c == 'District Manager'){
-                    portAssigment.add(new Portfolio_Assignment__c(BSF_Portfolio__c=portfolio.Id,User__c=dmUsers[dmUserIndex++].Id,Assignment_Type__c=portfolio.Portfolio_Type__c,Start_Date__c=defaultStartDate ,End_Date__c=defaultStartDate+365));
-                	portAssigment.add(new Portfolio_Assignment__c(BSF_Portfolio__c=portfolio.Id,User__c=dmUsers[dmUserIndex++].Id,Assignment_Type__c=portfolio.Portfolio_Type__c,Start_Date__c=defaultStartDate+366 ,End_Date__c=defaultEndDate));
-                }
+                    portAssigment.add(new Portfolio_Assignment__c(BSF_Portfolio__c=portfolio.Id,User__c=dmUsers[dmUserIndex++].Id,Assignment_Type__c=portfolio.Portfolio_Type__c,Start_Date__c=portfolio.start_Date__c ,End_Date__c=portfolio.start_Date__c+10));
+                	}
                 
                 if(portfolio.Portfolio_Type__c == 'Area Booking Manager'){
-                    portAssigment.add(new Portfolio_Assignment__c(BSF_Portfolio__c=portfolio.Id,User__c=drdUsers[drdUserIndex++].Id,Assignment_Type__c=portfolio.Portfolio_Type__c,Start_Date__c=defaultStartDate ,End_Date__c=defaultStartDate+365));
-					portAssigment.add(new Portfolio_Assignment__c(BSF_Portfolio__c=portfolio.Id,User__c=drdUsers[drdUserIndex++].Id,Assignment_Type__c=portfolio.Portfolio_Type__c,Start_Date__c=defaultStartDate+366 ,End_Date__c=defaultEndDate));
-                }
-            }else if(portfolio.Taxonomy_Type__c == BSF_Constants.TAXO_SUPERVISOR_RECORD_TYPE){
-                if(portfolio.Portfolio_Type__c == 'Account Manager'){
-                	portAssigment.add(new Portfolio_Assignment__c(BSF_Portfolio__c=portfolio.Parent_Portfolio__c,User__c=drdUsers[drdUserIndex++].Id,Assignment_Type__c=portfolio.Parent_Portfolio__r.Portfolio_Type__c,Start_Date__c=defaultStartDate ,End_Date__c=defaultStartDate+365));
-                    if(supIndex > 0)
-                    	portAssigment.add(new Portfolio_Assignment__c(BSF_Portfolio__c=portfolio.Parent_Portfolio__c,User__c=drdUsers[drdUserIndex++].Id,Assignment_Type__c=portfolio.Parent_Portfolio__r.Portfolio_Type__c,Start_Date__c=defaultStartDate+366 ,End_Date__c=defaultEndDate));
-                	supIndex++;
-                }
-            }else{
-                portAssigment.add(new Portfolio_Assignment__c(BSF_Portfolio__c=portfolio.Id,User__c=drdUsers[drdUserIndex++].Id,Assignment_Type__c=portfolio.Portfolio_Type__c,Start_Date__c=defaultStartDate ,End_Date__c=defaultEndDate));
+                    portAssigment.add(new Portfolio_Assignment__c(BSF_Portfolio__c=portfolio.Id,User__c=drdUsers[drdUserIndex++].Id,Assignment_Type__c=portfolio.Portfolio_Type__c,Start_Date__c=portfolio.start_Date__c ,End_Date__c=portfolio.start_Date__c+10));
+					}
+            }
+            else{
+                portAssigment.add(new Portfolio_Assignment__c(BSF_Portfolio__c=portfolio.Id,User__c=drdUsers[drdUserIndex++].Id,Assignment_Type__c=portfolio.Portfolio_Type__c,Start_Date__c=portfolio.start_Date__c ,End_Date__c=portfolio.End_Date__c));
             }
         } 
         //TriggerHandler.bypass('PortfolioAssignmentTriggerHandler');
@@ -125,7 +116,7 @@ public class AccountPortfolioAssignmentBatch_Test {
         update accList;
         
         test.startTest();
-        BSF_Batch_AccountPortfolioAssignment_V2 batchV2 = new BSF_Batch_AccountPortfolioAssignment_V2(1000);
+        BSF_Batch_AccountPortfolioAssignment_V2 batchV2 = new BSF_Batch_AccountPortfolioAssignment_V2(1000,null);
         database.executeBatch(batchV2);
         test.stopTest();
         system.assert(!([select id from Account_Portfolio_Assignment__C where account__c=:mobileAcc1.id].isEmpty()));

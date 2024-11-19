@@ -16,7 +16,7 @@ export class SiteCollectionOperationMappingConfigFactory {
       mappingConfig.addFieldConfig('sked_Start_Date__c', 'startDate', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_Travel_Time_Breakdown_JSON__c', 'travelTimeBreakdownJson', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_Travel_Time_Breakdown_JSON_2__c', 'travelTimeBreakdownJson2', MAPPING_TYPE.direct);
-      
+            
       mappingConfig.addFieldConfig('sked_Collection_Operation__r', 'collectionOperation', MAPPING_TYPE.related, 'Biomed_Collection_Op_Center__c');
 
       return mappingConfig;

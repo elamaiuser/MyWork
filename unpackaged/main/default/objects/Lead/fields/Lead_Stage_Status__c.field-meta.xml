@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Lead_Stage_Status__c</fullName>
+    <description>HRP-12210: Color coding leads by age - alerting to overdue lead activity</description>
+    <externalId>false</externalId>
+    <formula>IF( ISBLANK( Last_Modified_Date_Status__c ) , 
+IF(AND((Lead_age_Hours__c &lt;= 1*24), ISPICKVAL(Status, &#39;New&#39;)), 
+    IMAGE(&quot;/resource/sked_HLT_Dist/images/Green.png&quot;, &quot;Green&quot;, 25, 92), 
+    IF(AND((Lead_age_Hours__c &gt;= 1*24), (Lead_age_Hours__c &lt; 2*24), ISPICKVAL(Status, &#39;New&#39;)),
+        IMAGE(&quot;/resource/sked_HLT_Dist/images/Amber.png&quot;, &quot;Amber&quot;, 25, 92),
+        IF(AND((Lead_age_Hours__c &gt;= 2*24), ISPICKVAL(Status, &#39;New&#39;)),
+            IMAGE(&quot;/resource/sked_HLT_Dist/images/Red.png&quot;, &quot;Red&quot;, 25, 92),
+            IF(AND((Lead_age_Hours__c &lt;= 1*24), ISPICKVAL(Status, &#39;Contacted&#39;)),
+                IMAGE(&quot;/resource/sked_HLT_Dist/images/Green.png&quot;, &quot;Green&quot;, 25, 92),
+                IF( AND(((ABS((NOW() - CreatedDate)*24)) &gt;= 1*24), (Lead_age_Hours__c &lt; 2*24), ISPICKVAL(Status, &#39;Contacted&#39;)),
+                    IMAGE(&quot;/resource/sked_HLT_Dist/images/Amber.png&quot;, &quot;Amber&quot;, 25, 92),
+                    IF(AND((Lead_age_Hours__c &gt;= 2*24), ISPICKVAL(Status, &#39;Contacted&#39;)),
+                        IMAGE(&quot;/resource/sked_HLT_Dist/images/Red.png&quot;, &quot;Red&quot;, 25, 92),
+                        IF(AND(((ABS((NOW() - CreatedDate)*24)) &lt;= 5*24), ISPICKVAL(Status, &#39;Qualified&#39;)),
+                            IMAGE(&quot;/resource/sked_HLT_Dist/images/Green.png&quot;, &quot;Green&quot;, 25, 92),
+                            IF(AND((Lead_age_Hours__c &gt; 5*24), (Lead_age_Hours__c &lt;= 6*24), ISPICKVAL(Status, &#39;Qualified&#39;)),
+                                IMAGE(&quot;/resource/sked_HLT_Dist/images/Amber.png&quot;, &quot;Amber&quot;, 25, 92),
+                                IF(AND((Lead_age_Hours__c &gt; 6*24), ISPICKVAL(Status, &#39;Qualified&#39;)),
+                                    IMAGE(&quot;/resource/sked_HLT_Dist/images/Red.png&quot;, &quot;Red&quot;, 25, 92),
+                                    IF(AND((Lead_age_Hours__c &lt;= 28*24), ISPICKVAL(Status, &#39;Converted&#39;)),
+                                        IMAGE(&quot;/resource/sked_HLT_Dist/images/Green.png&quot;, &quot;Green&quot;, 25, 92),
+                                        IF(AND((Lead_age_Hours__c &gt; 28*24), (Lead_age_Hours__c &lt;= 29*24), ISPICKVAL(Status, &#39;Converted&#39;)),IMAGE(&quot;/resource/sked_HLT_Dist/images/Amber.png&quot;, &quot;Amber&quot;, 25, 92),IF(AND(((ABS((NOW() - CreatedDate)*24)) &gt;= 30*24), ISPICKVAL(Status, &#39;Converted&#39;)),IMAGE(&quot;/resource/sked_HLT_Dist/images/Red.png&quot;, &quot;Red&quot;, 25, 92),IMAGE(&quot;/resource/Grey&quot;, &quot;Grey&quot;, 25, 92)
+                                            )
+                                        )
+                                    )
+                                )
+                            )
+                        )
+                    )
+                )
+            )
+        )
+    )
+),Lead_Stage_Status_Updated__c)</formula>
+    <label>Lead Stage Status</label>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

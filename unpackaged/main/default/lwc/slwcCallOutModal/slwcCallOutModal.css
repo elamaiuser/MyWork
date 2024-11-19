@@ -1,0 +1,29 @@
+.slds-plan-balance-text-green {
+    color: green;
+}
+
+.slds-plan-balance-text-red {
+    color: red;
+}
+
+.full-screen .slds-modal__container { 
+    margin: 0 auto;
+    width: 100%;
+    max-width: 40rem;
+    min-width: auto;
+    padding: 0;
+}
+
+.full-screen .slds-modal__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #007ee6;
+    color: #fff;
+    border-radius: 0;
+}
+
+.full-screen .slds-modal__content {
+    height: 100%;
+    border-radius: 0;
+}

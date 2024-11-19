@@ -8,19 +8,6 @@
         <plural>true</plural>
         <value>AccountPortfolioAssignments</value>
     </caseValues>
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     <layouts>
         <layout>Account Portfolio Assignment Layout</layout>
         <sections>
@@ -37,4 +24,18 @@
         <errorMessage><!-- End date can&apos;t be lesser than the Start Date --></errorMessage>
         <name>Validation_of_Dates</name>
     </validationRules>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
 </CustomObjectTranslation>

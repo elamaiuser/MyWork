@@ -4,6 +4,7 @@
  * Date					Developer Name			Comments
  *****************************************************************************************************************************************************************************
  26-09-2023				Kishore Das				Logic for HRP-11051(GEO_Publicity Report Not Functioning)
+ 03/18/24               Venkat D 				Logic for HRP-12165(Publicity Ordering Report Missing District/Recruitment Team Selection)
  *****************************************************************************************************************************************************************************
 */
 
@@ -156,8 +157,11 @@ public class PublicityReportNewPortfoliosController {
         }
         
         if(String.isNotBlank(searchPortfolio) && !searchPortfolio.equalsIgnoreCase('None')){
+            //Logic for HRP-12165
 			for(Account_Portfolio_Assignment__c accPort: [SELECT Id, Account__r.Name, Account__c FROM Account_Portfolio_Assignment__c 
-                                                             WHERE (BSF_Portfolio__r.Name=:String.escapeSingleQuotes(searchPortfolio)) OR (BSF_Portfolio__r.Parent_Portfolio__r.Name=:String.escapeSingleQuotes(searchPortfolio)) OR (BSF_Portfolio__r.Parent_Portfolio__r.Parent_Portfolio__r.Name=:String.escapeSingleQuotes(searchPortfolio))]){
+                                                             WHERE (BSF_Portfolio__r.Name=:String.escapeSingleQuotes(searchPortfolio) AND BSF_Portfolio__r.Portfolio_Type__c=:BSF_Constants.ACCOUNT_MANAGER) 
+                                                          		OR (BSF_Portfolio__r.Parent_Portfolio__r.Name=:String.escapeSingleQuotes(searchPortfolio) AND BSF_Portfolio__r.Parent_Portfolio__r.Portfolio_Type__c=:BSF_Constants.DISTRICT_MANAGER) 
+                                                          		OR (BSF_Portfolio__r.Parent_Portfolio__r.Parent_Portfolio__r.Name=:String.escapeSingleQuotes(searchPortfolio) AND BSF_Portfolio__r.Parent_Portfolio__r.Parent_Portfolio__r.Portfolio_Type__c=:BSF_Constants.DISTRICT_MANAGER)]){
         		accNameSet.add(accPort.Account__r.Name); 
                 accIdSet.add(accPort.Account__c);      
             }

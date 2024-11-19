@@ -87,6 +87,21 @@
                 <default>false</default>
                 <label>Keep Current Staffing Complement</label>
             </value>
+            <value>
+                <fullName>Remove from Linked Drive</fullName>
+                <default>false</default>
+                <label>Remove from Linked Drive</label>
+            </value>
+            <value>
+                <fullName>Elect to acknowledge the drive has assets that are not shared with new Collection Operation</fullName>
+                <default>false</default>
+                <label>Elect to acknowledge the drive has assets that are not shared with new Collection Operation</label>
+            </value>
+            <value>
+                <fullName>Elect to Proceed with Excess Staff Capacity</fullName>
+                <default>false</default>
+                <label>Elect to Proceed with Excess Staff Capacity</label>
+            </value>
         </valueSetDefinition>
     </valueSet>
     <visibleLines>4</visibleLines>

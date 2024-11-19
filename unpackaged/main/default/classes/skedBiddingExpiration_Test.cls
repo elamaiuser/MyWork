@@ -17,6 +17,7 @@ public class skedBiddingExpiration_Test {
             sked_Biomed_Collection_Op_Center__c = testCollectionOperation1.id,
             sked_Request_Type__c = skedConstants.STAFFING_BUDGET_REQUEST_TYPE_OPEN_ENROLLMENT,
             sked_Roles__c = '2RBC',
+            sked_Drive_Types__c = 'Mobile;Fixed Site',
             sked_Staffing_Budget_Date__c = System.today(),
             sked_Total_Slots__c = 100
         );
@@ -63,6 +64,7 @@ public class skedBiddingExpiration_Test {
             sked_Biomed_Collection_Op_Center__c = testCollectionOperation1.id,
             sked_Request_Type__c = skedConstants.STAFFING_BUDGET_REQUEST_TYPE_OPEN_ENROLLMENT,
             sked_Roles__c = '2RBC',
+            sked_Drive_Types__c = 'Mobile;Fixed Site',
             sked_Staffing_Budget_Date__c = testDataFactory.summary.startDate,
             sked_Total_Slots__c = 100,
             sked_Convert_to_Standard_On__c = System.today()

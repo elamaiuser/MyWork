@@ -4,9 +4,11 @@
     <externalId>false</externalId>
     <label>Variance Applies to</label>
     <required>false</required>
+    <trackHistory>true</trackHistory>
     <trackTrending>false</trackTrending>
     <type>MultiselectPicklist</type>
     <valueSet>
+        <controllingField>sked_Variance_Type__c</controllingField>
         <restricted>true</restricted>
         <valueSetDefinition>
             <sorted>false</sorted>
@@ -31,11 +33,138 @@
                 <label>Wrap-up Time</label>
             </value>
             <value>
+                <fullName>Travel Time To</fullName>
+                <default>false</default>
+                <label>Travel Time To</label>
+            </value>
+            <value>
+                <fullName>Travel Time From</fullName>
+                <default>false</default>
+                <label>Travel Time From</label>
+            </value>
+            <value>
+                <fullName>Site Logistics To</fullName>
+                <default>false</default>
+                <label>Site Logistics To</label>
+            </value>
+            <value>
+                <fullName>Site Logistics Back</fullName>
+                <default>false</default>
+                <label>Site Logistics Back</label>
+            </value>
+            <value>
                 <fullName>Travel Time</fullName>
                 <default>false</default>
+                <isActive>false</isActive>
                 <label>Travel Time</label>
             </value>
         </valueSetDefinition>
+        <valueSettings>
+            <controllingFieldValue>Elevator</controllingFieldValue>
+            <controllingFieldValue>Security</controllingFieldValue>
+            <controllingFieldValue>Loading/ unloading area</controllingFieldValue>
+            <controllingFieldValue>Multiple rooms</controllingFieldValue>
+            <controllingFieldValue>Parking</controllingFieldValue>
+            <controllingFieldValue>Safety Video</controllingFieldValue>
+            <controllingFieldValue>Stairs</controllingFieldValue>
+            <controllingFieldValue>Floor covering</controllingFieldValue>
+            <controllingFieldValue>Construction</controllingFieldValue>
+            <controllingFieldValue>Commercial Route</controllingFieldValue>
+            <controllingFieldValue>Other</controllingFieldValue>
+            <controllingFieldValue>Imported from Hemasphere</controllingFieldValue>
+            <valueName>Lead Time</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Elevator</controllingFieldValue>
+            <controllingFieldValue>Security</controllingFieldValue>
+            <controllingFieldValue>Loading/ unloading area</controllingFieldValue>
+            <controllingFieldValue>Multiple rooms</controllingFieldValue>
+            <controllingFieldValue>Parking</controllingFieldValue>
+            <controllingFieldValue>Safety Video</controllingFieldValue>
+            <controllingFieldValue>Stairs</controllingFieldValue>
+            <controllingFieldValue>Floor covering</controllingFieldValue>
+            <controllingFieldValue>Construction</controllingFieldValue>
+            <controllingFieldValue>Commercial Route</controllingFieldValue>
+            <controllingFieldValue>Other</controllingFieldValue>
+            <controllingFieldValue>Imported from Hemasphere</controllingFieldValue>
+            <valueName>Setup Time</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Elevator</controllingFieldValue>
+            <controllingFieldValue>Security</controllingFieldValue>
+            <controllingFieldValue>Loading/ unloading area</controllingFieldValue>
+            <controllingFieldValue>Multiple rooms</controllingFieldValue>
+            <controllingFieldValue>Parking</controllingFieldValue>
+            <controllingFieldValue>Safety Video</controllingFieldValue>
+            <controllingFieldValue>Stairs</controllingFieldValue>
+            <controllingFieldValue>Floor covering</controllingFieldValue>
+            <controllingFieldValue>Construction</controllingFieldValue>
+            <controllingFieldValue>Commercial Route</controllingFieldValue>
+            <controllingFieldValue>Other</controllingFieldValue>
+            <controllingFieldValue>Imported from Hemasphere</controllingFieldValue>
+            <valueName>Breakdown Time</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Elevator</controllingFieldValue>
+            <controllingFieldValue>Security</controllingFieldValue>
+            <controllingFieldValue>Loading/ unloading area</controllingFieldValue>
+            <controllingFieldValue>Multiple rooms</controllingFieldValue>
+            <controllingFieldValue>Parking</controllingFieldValue>
+            <controllingFieldValue>Safety Video</controllingFieldValue>
+            <controllingFieldValue>Stairs</controllingFieldValue>
+            <controllingFieldValue>Floor covering</controllingFieldValue>
+            <controllingFieldValue>Construction</controllingFieldValue>
+            <controllingFieldValue>Commercial Route</controllingFieldValue>
+            <controllingFieldValue>Other</controllingFieldValue>
+            <controllingFieldValue>Imported from Hemasphere</controllingFieldValue>
+            <valueName>Wrap-up Time</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Elevator</controllingFieldValue>
+            <controllingFieldValue>Security</controllingFieldValue>
+            <controllingFieldValue>Loading/ unloading area</controllingFieldValue>
+            <controllingFieldValue>Multiple rooms</controllingFieldValue>
+            <controllingFieldValue>Parking</controllingFieldValue>
+            <controllingFieldValue>Safety Video</controllingFieldValue>
+            <controllingFieldValue>Stairs</controllingFieldValue>
+            <controllingFieldValue>Floor covering</controllingFieldValue>
+            <controllingFieldValue>Construction</controllingFieldValue>
+            <controllingFieldValue>Commercial Route</controllingFieldValue>
+            <controllingFieldValue>Other</controllingFieldValue>
+            <controllingFieldValue>Imported from Hemasphere</controllingFieldValue>
+            <valueName>Travel Time To</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Elevator</controllingFieldValue>
+            <controllingFieldValue>Security</controllingFieldValue>
+            <controllingFieldValue>Loading/ unloading area</controllingFieldValue>
+            <controllingFieldValue>Multiple rooms</controllingFieldValue>
+            <controllingFieldValue>Parking</controllingFieldValue>
+            <controllingFieldValue>Safety Video</controllingFieldValue>
+            <controllingFieldValue>Stairs</controllingFieldValue>
+            <controllingFieldValue>Floor covering</controllingFieldValue>
+            <controllingFieldValue>Construction</controllingFieldValue>
+            <controllingFieldValue>Commercial Route</controllingFieldValue>
+            <controllingFieldValue>Other</controllingFieldValue>
+            <controllingFieldValue>Imported from Hemasphere</controllingFieldValue>
+            <valueName>Travel Time From</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Security</controllingFieldValue>
+            <controllingFieldValue>Loading/ unloading area</controllingFieldValue>
+            <controllingFieldValue>Parking</controllingFieldValue>
+            <controllingFieldValue>Safety Video</controllingFieldValue>
+            <controllingFieldValue>Other</controllingFieldValue>
+            <valueName>Site Logistics To</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Security</controllingFieldValue>
+            <controllingFieldValue>Loading/ unloading area</controllingFieldValue>
+            <controllingFieldValue>Parking</controllingFieldValue>
+            <controllingFieldValue>Safety Video</controllingFieldValue>
+            <controllingFieldValue>Other</controllingFieldValue>
+            <valueName>Site Logistics Back</valueName>
+        </valueSettings>
     </valueSet>
     <visibleLines>4</visibleLines>
 </CustomField>

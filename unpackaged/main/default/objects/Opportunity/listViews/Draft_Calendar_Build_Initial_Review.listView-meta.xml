@@ -4,8 +4,6 @@
     <columns>Drive_Date__c</columns>
     <columns>OPPORTUNITY.NAME</columns>
     <columns>ACCOUNT.NAME</columns>
-    <columns>Account_Manager__c</columns>
-    <columns>District_Manager__c</columns>
     <columns>Anticipated_Registered_Donors__c</columns>
     <columns>WB_Projected_Procedures__c</columns>
     <columns>X2RBC_Projected_Procedures__c</columns>
@@ -14,12 +12,9 @@
     <columns>Calendar_Build_Reasons_For_Unqualified__c</columns>
     <columns>Rollover_Consideration__c</columns>
     <columns>Calendar_Build_Parent_Opportunity__c</columns>
-    <filterScope>SalesTeam</filterScope>
-    <filters>
-        <field>Type_of_Drive__c</field>
-        <operation>equals</operation>
-        <value>Mobile</value>
-    </filters>
+    <columns>OPPORTUNITY.CREATED_DATE</columns>
+    <columns>DriveStatus__c</columns>
+    <filterScope>Mine</filterScope>
     <filters>
         <field>Source__c</field>
         <operation>equals</operation>
@@ -28,7 +23,7 @@
     <filters>
         <field>DriveStatus__c</field>
         <operation>contains</operation>
-        <value>Draft</value>
+        <value>Draft,System Generated,Confirmed</value>
     </filters>
     <label>Draft Calendar Build_Initial Review</label>
 </ListView>

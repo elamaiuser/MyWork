@@ -1,5 +1,31 @@
 @isTest
 private class skedRacStory_Test {
+    
+    static testmethod void testMyAvailability() {
+        skedTestDataFactory testDataFactory = new skedTestDataFactory('us', 14);
+        Map<string, sObject> mapTestData = testDataFactory.setupRacTestData();
+        
+        List<string> userTypes = new List<string>();
+        userTypes.add('Resource');
+        
+        User loginUser = new User(
+        	Id = UserInfo.getUserId(),
+            sked__SkeduloUserType__c = string.join(userTypes, ';')
+        );
+        update loginUser;
+        
+        Test.startTest();
+        
+        Test.setCurrentPage(new PageReference('skedRAC'));
+        
+        //intialize
+        skedRemoteRequestModel initializeRequest = new skedRemoteRequestModel();
+        initializeRequest.configKeys = new List<string>();
+        initializeRequest.configKeys.add('availabilityTypes');
+        skedRemoteResultModel initializeResult = skedRacController.initialize(initializeRequest);
+        
+        Test.stopTest();
+    }
 
     static testmethod void testAvailabilityPattern() {
         skedTestDataFactory testDataFactory = new skedTestDataFactory('us', 14);
@@ -146,7 +172,7 @@ private class skedRacStory_Test {
         skedRacController.resourceDataModel resourcesDataResult = (skedRacController.resourceDataModel)getResourcesResult.data;
         List<sked__Resource__c> skedResources = (List<sked__Resource__c>)resourcesDataResult.resources;
         
-        //getResources for a second region
+        //getResources for second region
         getResourcesRequest.regionIds = new List<string>();
         getResourcesRequest.regionIds.add(testRegion2.Id);
         getResourcesResult = skedRacController.getResourceData(getResourcesRequest);
@@ -163,6 +189,7 @@ private class skedRacStory_Test {
         getResourceRequest.timezoneSidId = testDataFactory.summary.timezoneSidId;
         skedRemoteResultModel getResourceResult = skedRacController.getIndividualResourceData(getResourceRequest);
         skedRacController.resourceDataModel resourceDataResult = (skedRacController.resourceDataModel)getResourceResult.data;
+        
         List<skedModels.resource> resources = (List<skedModels.resource>)resourceDataResult.resources;
         
         Test.stopTest();
@@ -332,6 +359,15 @@ private class skedRacStory_Test {
         );
         insert testAvailabilityPatternResource;
         
+        List<string> userTypes = new List<string>();
+        userTypes.add('Resource');
+        
+        User loginUser = new User(
+        	Id = UserInfo.getUserId(),
+            sked__SkeduloUserType__c = string.join(userTypes, ';')
+        );
+        update loginUser;
+        
         Test.startTest();
         
         Test.setCurrentPage(new PageReference('skedRAC'));
@@ -404,28 +440,40 @@ private class skedRacStory_Test {
         saveAvailabilityRequest.event.timezoneSidId = testDataFactory.summary.timezoneSidId;
         skedRemoteResultModel prepareUnavailabilityResult = skedRacController.prepareUnavailabilityRequest(saveAvailabilityRequest);
         
-        skedModels.availability event = new skedModels.availability();
-        event.endDate = testDataFactory.summary.startDateIso;
-        event.endTime = 1700;
-        event.eventType = 'PTO';
-        event.notes = 'notes';
-        event.startDate = testDataFactory.summary.startDateIso;
-        event.startTime = 900;
-        event.resourceId = testResource1.Id;
-        event.timezoneSidId = testDataFactory.summary.timezoneSidId;
+        skedModels.availability event1 = new skedModels.availability();
+        event1.endDate = testDataFactory.summary.startDateIso;
+        event1.endTime = 1700;
+        event1.eventType = 'PTO';
+        event1.notes = 'notes';
+        event1.startDate = testDataFactory.summary.startDateIso;
+        event1.startTime = 900;
+        event1.resourceId = testResource1.Id;
+        event1.timezoneSidId = testDataFactory.summary.timezoneSidId;
+        
+        skedModels.availability event2 = new skedModels.availability();
+        event2.endDate = testDataFactory.summary.startDateIso;
+        event2.endTime = 1700;
+        event2.eventType = 'PTO';
+        event2.notes = 'notes';
+        event2.startDate = Json.serialize(testDataFactory.summary.startDate.addDays(1)).replace('"', '');
+        event2.startTime = 900;
+        event2.resourceId = testResource1.Id;
+        event2.timezoneSidId = testDataFactory.summary.timezoneSidId;
         
         skedRacController.verifyUnavailabilityBalanceRequestModel verifyUnavailabilityBalanceRequest = new skedRacController.verifyUnavailabilityBalanceRequestModel();
         verifyUnavailabilityBalanceRequest.viewData = new Map<string, object>();
         verifyUnavailabilityBalanceRequest.viewData.put('timezoneSidId', testDataFactory.summary.timezoneSidId);
         verifyUnavailabilityBalanceRequest.unavailability = new List<skedModels.availability>();
-        verifyUnavailabilityBalanceRequest.unavailability.add(event);
+        verifyUnavailabilityBalanceRequest.unavailability.add(event1);
+        verifyUnavailabilityBalanceRequest.unavailability.add(event2);
         skedRemoteResultModel verifyUnavailabilityBalanceResult = skedRacController.verifyUnavailabilityBalance(verifyUnavailabilityBalanceRequest);
         
         skedRacController.saveUnavailabilityRequestModel saveUnavailabilityRequest = new skedRacController.saveUnavailabilityRequestModel();
         saveUnavailabilityRequest.viewData = new Map<string, object>();
         saveUnavailabilityRequest.viewData.put('timezoneSidId', testDataFactory.summary.timezoneSidId);
         saveUnavailabilityRequest.availability = new List<skedModels.availability>();
-        saveUnavailabilityRequest.availability.add(event);
+        saveUnavailabilityRequest.availability.add(event1);
+        saveUnavailabilityRequest.availability.add(event2);
         skedRemoteResultModel saveUnavailabilityResult = skedRacController.saveUnavailability(saveUnavailabilityRequest);
         
         Test.stopTest();
@@ -700,6 +748,8 @@ private class skedRacStory_Test {
         getPendingAvailabilityRequest.regionIds.add(testRegion1.Id);
         getPendingAvailabilityRequest.resourceCategories = resourceCategories;
         getPendingAvailabilityRequest.startDate = testDataFactory.summary.startDateIso;
+        getPendingAvailabilityRequest.submissionEndDate = testDataFactory.summary.endDateIso;
+        getPendingAvailabilityRequest.submissionStartDate = testDataFactory.summary.startDateIso;
         getPendingAvailabilityRequest.timezoneSidId = testDataFactory.summary.timezoneSidId;
         skedRemoteResultModel getPendingAvailabilityResult = skedRacController.getPendingAvailability(getPendingAvailabilityRequest);
         skedRacController.availabilityDataModel availabilityDataResult = (skedRacController.availabilityDataModel)getPendingAvailabilityResult.data;
@@ -820,18 +870,6 @@ private class skedRacStory_Test {
         template.startDate = testDataFactory.summary.startDateIso;
         saveAvailabilityRequest.recurringOptions.availabilityTemplate = template;
         saveAvailabilityRequest.recurringOptions.skipHolidays = TRUE;
-        //skedRemoteResultModel saveAvailabilityResult = skedRacController.verifyAvailabilityBalance(saveAvailabilityRequest);
-        //skedRacController.verifyAvailabilityBalanceResultModel verifyAvailabilityBalanceData = (skedRacController.verifyAvailabilityBalanceResultModel)saveAvailabilityResult.data;
-        //List<skedModels.availability> availabilityList = (List<skedModels.availability>)verifyAvailabilityBalanceData.availability;
-        //for (skedModels.availability availability : availabilityList) {
-        //    system.assert(availability.timeOffAllowance == 'No (General)');
-        //}
-        
-        //skedRacController.saveUnavailabilityRequestModel saveUnavailabilityRequest = new skedRacController.saveUnavailabilityRequestModel();
-        //saveUnavailabilityRequest.viewData = new Map<string, object>();
-        //saveUnavailabilityRequest.viewData.put('timezoneSidId', testDataFactory.summary.timezoneSidId);
-        //saveUnavailabilityRequest.availability = availabilityList;
-        //skedRacController.saveUnavailability(saveUnavailabilityRequest);
         
         Test.stopTest();
     }
@@ -1101,6 +1139,8 @@ private class skedRacStory_Test {
         searchDrivesRequest.viewData.put('timezoneSidId', testDataFactory.summary.timezoneSidId);
         searchDrivesRequest.queryText = 'Test';
         searchDrivesRequest.collectionOperationId = testCollectionOperation1.Id;
+        searchDrivesRequest.startDate = testDataFactory.summary.startDateIso;
+        searchDrivesRequest.endDate = testDataFactory.summary.endDateIso;
         skedRemoteResultModel searchDrivesResult = skedRacController.searchDrives(searchDrivesRequest);
         
         Test.stopTest();
@@ -1122,6 +1162,9 @@ private class skedRacStory_Test {
         saveStaffingBudgetRequest.event.staffingBudgetDate = testDataFactory.summary.startDateIso;
         saveStaffingBudgetRequest.event.roles = new List<string>();
         saveStaffingBudgetRequest.event.roles.add('Driver');
+        saveStaffingBudgetRequest.event.driveTypes = new List<string>();
+        saveStaffingBudgetRequest.event.driveTypes.add('Mobile');
+        saveStaffingBudgetRequest.event.driveTypes.add('Fixed Site');
         saveStaffingBudgetRequest.event.collectionOperationIds = new List<String>();
         saveStaffingBudgetRequest.event.collectionOperationIds.add(testCollectionOperation1.Id);
         
@@ -1135,10 +1178,15 @@ private class skedRacStory_Test {
         saveBulkStaffingBudget.viewData = new Map<string, object>();
         saveBulkStaffingBudget.viewData.put('timezoneSidId', testDataFactory.summary.timezoneSidId);
         saveBulkStaffingBudget.staffingBudgets = new List<skedModels.staffingBudget>();
+        
         skedModels.staffingBudget staffingBudgetInput = new skedModels.staffingBudget();
         staffingBudgetInput.staffingBudgetDate = testDataFactory.summary.startDateIso;
         staffingBudgetInput.roles = new List<string>();
         staffingBudgetInput.roles.add('Driver');
+        staffingBudgetInput.driveTypes = new List<String>();
+        staffingBudgetInput.driveTypes.add('Mobile');
+        staffingBudgetInput.driveTypes.add('Fixed Site');
+        
         saveBulkStaffingBudget.staffingBudgets.add(staffingBudgetInput);
         skedRemoteResultModel saveBulkStaffingBudgetResult = skedRacController.saveBulkStaffingBudget(saveBulkStaffingBudget);
         
@@ -1163,6 +1211,16 @@ private class skedRacStory_Test {
         getStaffingBudgetDetailsRequest.viewData.put('timezoneSidId', testDataFactory.summary.timezoneSidId);
         getStaffingBudgetDetailsRequest.recordId = staffingBudget.Id;
         skedRemoteResultModel getStaffingBudgetDetailsResult = skedRacController.getStaffingBudgetDetails(getStaffingBudgetDetailsRequest);
+        
+        skedRacController.saveBulkStaffingBudgetRequestModel deleteStaffingBudgetsRequest = new skedRacController.saveBulkStaffingBudgetRequestModel();
+        deleteStaffingBudgetsRequest.viewData = new Map<string, object>();
+        deleteStaffingBudgetsRequest.viewData.put('timezoneSidId', testDataFactory.summary.timezoneSidId);
+        deleteStaffingBudgetsRequest.staffingBudgets = new List<skedModels.staffingBudget>();
+        skedModels.staffingBudget staffingBudgetToDelete = new skedModels.staffingBudget();
+        staffingBudgetToDelete.id = staffingBudget.Id;
+        deleteStaffingBudgetsRequest.staffingBudgets.add(staffingBudgetToDelete);
+        skedRemoteResultModel deleteStaffingBudgetsResult = skedRacController.deleteStaffingBudgets(deleteStaffingBudgetsRequest);
+        system.debug('#deleteStaffingBudgetsResult#' + deleteStaffingBudgetsResult);
         
         Test.stopTest();
     }
@@ -1214,8 +1272,10 @@ private class skedRacStory_Test {
         
         sked__Resource__c testResource1 = (sked__Resource__c) mapTestData.get('testResource1');
         sked_Staffing_Budget__c testStaffingBudget = (sked_Staffing_Budget__c) mapTestData.get('testStaffingBudget1');
-        
         Biomed_Collection_Op_Center__c testCollectionOperation = (Biomed_Collection_Op_Center__c) mapTestData.get('testCollectionOperation1');
+        
+        Test.startTest();
+        
         testStaffingBudget.sked_Biomed_Collection_Op_Center__c = testCollectionOperation.Id;
         update testStaffingBudget;
         
@@ -1240,8 +1300,8 @@ private class skedRacStory_Test {
         model.viewData = new Map<string, object>();
         model.availabilityStatuses = availabilityStatuses;
         
-        Test.startTest();
         skedRacController.getStaffingBudgetsAvailabilities(model);
+        
         Test.stopTest();
     }
 
@@ -1249,4 +1309,53 @@ private class skedRacStory_Test {
         skedTestDataFactory testDataFactory = new skedTestDataFactory('us', 14);
         Map<string, sObject> mapTestData = testDataFactory.setupCommonTestData();
     }
+
+    static testmethod void getAVailatorData_Test() {
+        List<String> dates = new List<String>();
+        Date startDate = System.today();
+        Date endDate = System.today().addDays(10);
+
+        while (startDate < endDate) {
+            dates.add('' + startDate.year() + '-' + startDate.month() + '-' + startDate.day());
+            startDate = startDate.addDays(1);
+        }
+        dates.add('' + endDate.year() + '-' + endDate.month() + '-' + endDate.day());
+
+        List<Id> accountIds = new List<Id>(); 
+        List<Account> testAccounts = [SELECT Id FROM Account];
+        for (Account account : testAccounts) { accountIds.add(account.Id); }
+
+        List<Id> collectionOpIds = new List<Id>(); 
+        List<Biomed_Collection_Op_Center__c> testCollectionOps = [SELECT Id FROM Biomed_Collection_Op_Center__c];
+        for (Biomed_Collection_Op_Center__c collectionOp : testCollectionOps) { collectionOpIds.add(collectionOp.Id); }
+
+        List<Id> jobIds = new List<Id>(); 
+        List<sked__Job__c> testJobs = [SELECT Id FROM sked__Job__c];
+        for (sked__Job__c job : testJobs) { jobIds.add(job.Id); }
+
+        List<Id> locationIds = new List<Id>(); 
+        List<sked__Location__c> testLocations = [SELECT Id FROM sked__Location__c];
+        for (sked__Location__c location : testLocations) { locationIds.add(location.Id); }
+
+        skedRacController.getAvailatorDataRequestModel model = new skedRacController.getAvailatorDataRequestModel();
+        model.viewData = new Map<string, object>();
+        model.accountIds = accountIds;
+        model.collectionOperationIds = collectionOpIds;
+        model.excludedActivityIds = new List<string>();
+        model.excludedDriveIds = new List<string>();
+        model.locationIds = locationIds;
+        model.inputDates = dates;
+        model.jobIds = jobIds;
+        model.pageSize = 50;
+        model.pageNo = 1;
+        model.timezoneSidId = UserInfo.getTimeZone().getID();
+        model.getAssetsOnly = false;
+
+        Test.startTest();
+        
+        skedRacController.getAvailatorData(model);
+        
+        Test.stopTest();
+    }
+
 }

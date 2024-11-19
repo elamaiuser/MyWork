@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomMetadata xmlns="http://soap.sforce.com/2006/04/metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <label>Call Out SFPush APS</label>
+    <protected>false</protected>
+    <values>
+        <field>sked_Active__c</field>
+        <value xsi:type="xsd:boolean">true</value>
+    </values>
+    <values>
+        <field>sked_Content_Renderer__c</field>
+        <value xsi:nil="true"/>
+    </values>
+    <values>
+        <field>sked_Custom_Filter__c</field>
+        <value xsi:nil="true"/>
+    </values>
+    <values>
+        <field>sked_Custom_Target_Destination__c</field>
+        <value xsi:type="xsd:string">apsSchedulersCallOutTargetDestination</value>
+    </values>
+    <values>
+        <field>sked_Destination_Field__c</field>
+        <value xsi:nil="true"/>
+    </values>
+    <values>
+        <field>sked_Email_From_Address_Field__c</field>
+        <value xsi:nil="true"/>
+    </values>
+    <values>
+        <field>sked_Email_Target_Field__c</field>
+        <value xsi:nil="true"/>
+    </values>
+    <values>
+        <field>sked_Expiry_DateTime_Field__c</field>
+        <value xsi:type="xsd:string">sked__Start__c</value>
+    </values>
+    <values>
+        <field>sked_Filter__c</field>
+        <value xsi:type="xsd:string">sked_Call_Out_Created_By_Resource__c = TRUE</value>
+    </values>
+    <values>
+        <field>sked_Notification_Target_Field__c</field>
+        <value xsi:type="xsd:string">Id</value>
+    </values>
+    <values>
+        <field>sked_Notification_Type__c</field>
+        <value xsi:type="xsd:string">salesforcepush</value>
+    </values>
+    <values>
+        <field>sked_Oneoff_Protocol_Field__c</field>
+        <value xsi:nil="true"/>
+    </values>
+    <values>
+        <field>sked_Priority__c</field>
+        <value xsi:nil="true"/>
+    </values>
+    <values>
+        <field>sked_Sending_From_Email_Address__c</field>
+        <value xsi:nil="true"/>
+    </values>
+    <values>
+        <field>sked_Subject__c</field>
+        <value xsi:type="xsd:string">Resource Call Out</value>
+    </values>
+    <values>
+        <field>sked_Target_Field_Value__c</field>
+        <value xsi:type="xsd:string">Call Out</value>
+    </values>
+    <values>
+        <field>sked_Target_Field_Values__c</field>
+        <value xsi:nil="true"/>
+    </values>
+    <values>
+        <field>sked_Target_Field__c</field>
+        <value xsi:type="xsd:string">sked__Type__c</value>
+    </values>
+    <values>
+        <field>sked_Target_SObject__c</field>
+        <value xsi:type="xsd:string">sked__Availability__c</value>
+    </values>
+    <values>
+        <field>sked_Template__c</field>
+        <value xsi:type="xsd:string">{{sked__Resource__r.Name}} has submitted {{sked_Call_Out_for_Job_Allocation__r.sked_Call_Out_Type__c}} for {{sked_Call_Out_for_Job_Allocation__r.sked_Drive_Date__c}} {{sked_Call_Out_for_Job_Allocation__r.sked__Job__r.sked_Drive__r.Name}}</value>
+    </values>
+    <values>
+        <field>sked_Trigger__c</field>
+        <value xsi:type="xsd:string">Insert</value>
+    </values>
+</CustomMetadata>

@@ -380,6 +380,20 @@ public class BSF_TestDataSetup {
         }
         mapTestData.put('COLLECTION_TERRITORY_REGION', regionTerritory);
         
+        /*Chapter for Site*/
+        Chapter__c testChapter = new Chapter__c(
+            Chapter_Code__c='AB299',
+            Division_Code__c='D21',
+            City__c='Charlotte',
+            State__c='NC',
+            Regional_Chapter_Code__c='00F33',
+            Type__c='Chapter',
+            Region_Name__c='Test Region'
+        );
+        if(doInsert) {
+            insert testChapter;
+        }
+        
         /* Mobile Account Tag - US Citizen */
         sked__Account_Tag__c mobileAccountTagUsCitizen = new sked__Account_Tag__c(
             sked__Tag__c = usCitizenTag.Id,
@@ -451,7 +465,7 @@ public class BSF_TestDataSetup {
             sked_National_Name__c = 'USA',
             sked_Outside_stairs__c = 3,
             sked_Inside_stairs__c = 3,
-            sked_Chapter__c = 'Test Chapter',
+            Chapter__c = testChapter.Id,
             sked_Pay_for_Parking__c = 'Other',
             sked_Pay_for_Parking_Details__c = 'Pay for parking details',
             sked_Physical_Location_Type__c = 'Inside',
@@ -656,6 +670,27 @@ public class BSF_TestDataSetup {
         }
         mapTestData.put('FIXED_SITE_COLLECTION_OPERATION', fixedSiteCollectionOperation); 
         
+        sked_Territory__c territory = new sked_Territory__c(
+        Name = 'Test one',
+        Start_Date__c = Date.Today().addDays(-20),
+        End_Date__c = Date.Today().addDays(10)    
+        );
+         if(doInsert) {
+       		
+            insert territory;
+        }
+        mapTestData.put('TERRITORY', territory);
+        
+        sked_Territory_Collection_Operation__c territoryCollectionOperation = new sked_Territory_Collection_Operation__c(
+             sked_Collection_Operation__c = collectionOperation.Id
+             
+        );
+         if(doInsert) {
+       		territoryCollectionOperation.sked_Territory__c = territory.Id;
+            insert territoryCollectionOperation;
+        }
+        mapTestData.put('TERRITORY_COLLECTION_OPERATION', territoryCollectionOperation);
+        
 		/* Mobile Opportunity */
         Opportunity mobileOpp = new Opportunity(
             Name = 'Test Opportunity',
@@ -672,11 +707,14 @@ public class BSF_TestDataSetup {
         	WB_Projected_Procedures__c = 4,
         	X2RBC_Projected_Procedures__c = 2,
         	Anticipated_Registered_Donors__c = 25,
-            Online_Scheduling_Enabled__c = 'No'
+            Online_Scheduling_Enabled__c = 'No',
+            Source__c = 'Adhoc',
+            Slot_Generator__c = 130
 		);
         if(doInsert) {
             mobileOpp.AccountId = mobileAcc.Id;
             mobileOpp.Drive_Site__c = mobileSite.id;
+            //mobileOpp.Drive_Date__c = system.today().addDays(55);
 			insert mobileOpp;        
         }
         mapTestData.put('MOBILE_OPP', mobileOpp);   
@@ -692,7 +730,9 @@ public class BSF_TestDataSetup {
       		End_Time__c = Time.newInstance(15, 30, 0, 0),
             Anticipated_Registered_Donors__c = 10,
             WB_Projected_Procedures__c = 11,
-            X2RBC_Projected_Procedures__c = 12
+            X2RBC_Projected_Procedures__c = 12,
+            Source__c = 'Adhoc',
+            Slot_Generator__c = 140
         );
         if(doInsert) {
             fixedTemplateOpp.AccountId = fixedAcc.Id;
@@ -714,7 +754,9 @@ public class BSF_TestDataSetup {
         	Flow_Start_Time_Field__c = '1000',
         	Flow_End_Time_Field__c = '1530',
         	WB_Projected_Procedures__c = 4,
-        	X2RBC_Projected_Procedures__c = 2
+        	X2RBC_Projected_Procedures__c = 2,
+            Source__c = 'Adhoc',
+            Slot_Generator__c = 140
 		);
         if(doInsert) {
             fixedOpp.accountId = fixedAcc.Id;

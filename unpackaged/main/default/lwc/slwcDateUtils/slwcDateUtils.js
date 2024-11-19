@@ -174,28 +174,24 @@ class SlwcDateUtils {
             mm = DateTime.fromISO(timestamp, {
                 zone: this.timezone
             });
-
-            dateTimeInfo.date = new Date(mm.year, mm.month - 1, mm.day, mm.hour, mm.minute, mm.second, 0);
-
-            dateTimeInfo.timeNumber = Number(DateTime.fromJSDate(dateTimeInfo.date).toFormat(this.timeNumberFormat));
-            dateTimeInfo.dateTime = cloneDeep(dateTimeInfo.date);
-            dateTimeInfo.dateIso = DateTime.fromJSDate(dateTimeInfo.date).toISODate();
-            dateTimeInfo.timeIso = DateTime.fromJSDate(dateTimeInfo.date).toFormat(this.timeIsoFormat);
-            dateTimeInfo.date.setHours(0, 0, 0, 0);
-        } else if (this.isDate(timestamp) || this.isNumber(timestamp)) {
+        } else if (this.isNumber(timestamp)) {
             mm = DateTime.fromMillis(timestamp, {
                 zone: this.timezone
             });
-
-            dateTimeInfo.date = new Date(mm.year, mm.month - 1, mm.day, mm.hour, mm.minute, mm.second, 0);
-
-            dateTimeInfo.timeNumber = Number(DateTime.fromJSDate(dateTimeInfo.date).toFormat(this.timeNumberFormat));
-            dateTimeInfo.dateTime = cloneDeep(dateTimeInfo.date);
-            dateTimeInfo.dateIso = DateTime.fromJSDate(dateTimeInfo.date).toISODate();
-            dateTimeInfo.timeIso = DateTime.fromJSDate(dateTimeInfo.date).toFormat(this.timeIsoFormat);
-            dateTimeInfo.date.setHours(0, 0, 0, 0);
+        } else if (this.isDate(timestamp)) {
+            mm = DateTime.fromJSDate(timestamp, {
+                zone: this.timezone
+            });
         }
 
+        dateTimeInfo.date = new Date(mm.year, mm.month - 1, mm.day, mm.hour, mm.minute, mm.second, 0);
+
+        dateTimeInfo.timeNumber = Number(DateTime.fromJSDate(dateTimeInfo.date).toFormat(this.timeNumberFormat));
+        dateTimeInfo.dateTime = cloneDeep(dateTimeInfo.date);
+        dateTimeInfo.dateIso = DateTime.fromJSDate(dateTimeInfo.date).toISODate();
+        dateTimeInfo.timeIso = DateTime.fromJSDate(dateTimeInfo.date).toFormat(this.timeIsoFormat);
+        dateTimeInfo.date.setHours(0, 0, 0, 0);
+        
         return dateTimeInfo;
     };
 
@@ -259,6 +255,17 @@ class SlwcDateUtils {
         this.patternDateTimeCache[key] = this.getDateTimeInfo(startDateTimeValue, timezoneSidId);
 
         return this.patternDateTimeCache[key];
+    }
+
+    generateDateRange(fromDate, toDate) {
+        let dateRange = [];
+        let tempDt = new Date(fromDate);
+        while (this.compareDateJS(tempDt, toDate) <= 0) {
+            dateRange.push(tempDt);
+            tempDt = this.addDay(tempDt, 1);
+        }
+
+        return dateRange;
     }
 };
 

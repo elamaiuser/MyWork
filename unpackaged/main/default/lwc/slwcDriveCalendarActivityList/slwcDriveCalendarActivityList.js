@@ -31,23 +31,19 @@ export default class SlwcActivityCalendarActivityList extends LightningElement {
         results.push({label: 'Activity Name', fieldName: 'recordPageUrl', type: 'url', hideDefaultActions: false, wrapText: true, typeAttributes: {label: { fieldName: 'activityTitle' }, target: '_blank' }, hideDefaultActions: true } );
         results.push({label: 'Type', fieldName: 'eventType', type: 'text', hideDefaultActions: true, wrapText: true } );
         results.push({label: 'Sub-type', fieldName: 'subtype', type: 'text', hideDefaultActions: true, wrapText: true } );
-        results.push({label: 'Start', fieldName: 'start', initialWidth: 160, type: 'date', typeAttributes: {
+        results.push({label: 'Start Date', fieldName: 'startDate', initialWidth: 160, type: 'date-local', typeAttributes: {
             year: 'numeric',
             month: 'numeric',
-            day: 'numeric',
-            hour: 'numeric',
-            minute: '2-digit',
-            timeZone: TIME_ZONE
+            day: 'numeric'
         }, cellAttributes: { alignment: 'left', class: { fieldName: 'activityDateClass' } }, hideDefaultActions: true } );
-        results.push({label: 'End', fieldName: 'finish', initialWidth: 160, type: 'date', 
+        results.push({label: 'Start Time', fieldName: 'startTimeStr', type: 'text', hideDefaultActions: true, wrapText: true });
+        results.push({label: 'End Date', fieldName: 'endDate', initialWidth: 160, type: 'date-local', 
         typeAttributes: {
             year: 'numeric',
             month: 'numeric',
-            day: 'numeric',
-            hour: 'numeric',
-            minute: '2-digit',
-            timeZone: TIME_ZONE
+            day: 'numeric'
         }, cellAttributes: { alignment: 'left' }, hideDefaultActions: true } );
+        results.push({label: 'End Time', fieldName: 'endTimeStr', type: 'text', hideDefaultActions: true, wrapText: true });
         results.push({label: '# of Resources', fieldName: 'quantityText', type: 'text', cellAttributes: { alignment: 'left' }, hideDefaultActions: true } );
         results.push({label: 'Resources/Assets', fieldName: 'resources', type: 'resources', initialWidth: 250, hideDefaultActions: true } );
         results.push({label: 'MDL Drives', fieldName: 'linkedDrivesUrl', type: 'url', initialWidth: 160, typeAttributes: {label: { fieldName: 'linkedDrivesName' }, target: '_blank' }, cellAttributes: { alignment: 'left' }, hideDefaultActions: true } );
@@ -102,6 +98,8 @@ export default class SlwcActivityCalendarActivityList extends LightningElement {
                         activity.linkedDrivesUrl = activity.linkedDrivesId ? '/' + activity.linkedDrivesId : null;
                         activity.quantityText = [(activity.activityResources || []).length, activity.quantity || ''].join('/');
                         activity.activityDate = DateTime.fromISO(activity.start).toISODate();
+                        activity.startTimeStr = this.formatTime(activity.startTime);
+                        activity.endTimeStr = this.formatTime(activity.endTime);
                         activity.activityDateClass = (activity.activityDate < this.filters.startDate || 
                             activity.activityDate > this.filters.endDate) ? 'background-green-super-light important' : 'background-blue-super-light important';
                         activity.resources = (activity.activityResources || []).map(activityResource => {
@@ -119,5 +117,12 @@ export default class SlwcActivityCalendarActivityList extends LightningElement {
             .finally(() => {
                 this.showSpinner = false;
             });
+    }
+
+    formatTime(time) {
+        if (!time) {
+            return '';
+        }
+        return DateTime.fromFormat(time, 'HH:mm:ss.SSS').toFormat('h:mm a');
     }
 }

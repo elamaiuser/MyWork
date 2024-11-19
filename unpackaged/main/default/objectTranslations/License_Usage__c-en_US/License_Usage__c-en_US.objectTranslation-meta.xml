@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObjectTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+    <caseValues>
+        <plural>false</plural>
+        <value>License Usage</value>
+    </caseValues>
+    <caseValues>
+        <plural>true</plural>
+        <value>License Usages</value>
+    </caseValues>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <layouts>
+        <layout>License Usage Layout</layout>
+        <sections>
+            <label><!-- Custom Links --></label>
+            <section>Custom Links</section>
+        </sections>
+        <sections>
+            <label><!-- Usage Information --></label>
+            <section>Usage Information</section>
+        </sections>
+    </layouts>
+    <layouts>
+        <layout>Managed Package License</layout>
+        <sections>
+            <label><!-- Custom Links --></label>
+            <section>Custom Links</section>
+        </sections>
+        <sections>
+            <label><!-- Package Information --></label>
+            <section>Package Information</section>
+        </sections>
+        <sections>
+            <label><!-- Usage Information --></label>
+            <section>Usage Information</section>
+        </sections>
+    </layouts>
+    <layouts>
+        <layout>Salesforce License</layout>
+        <sections>
+            <label><!-- Custom Links --></label>
+            <section>Custom Links</section>
+        </sections>
+        <sections>
+            <label><!-- Usage Information --></label>
+            <section>Usage Information</section>
+        </sections>
+    </layouts>
+    <recordTypes>
+        <description><!-- Managed Package Licenses --></description>
+        <label><!-- Managed Package --></label>
+        <name>Managed_Package</name>
+    </recordTypes>
+    <recordTypes>
+        <description><!-- Salesforce Licenses --></description>
+        <label><!-- Salesforce License --></label>
+        <name>Salesforce_License</name>
+    </recordTypes>
+    <startsWith>Consonant</startsWith>
+</CustomObjectTranslation>

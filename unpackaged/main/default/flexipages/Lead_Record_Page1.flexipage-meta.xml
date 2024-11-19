@@ -151,10 +151,10 @@
             <fieldInstance>
                 <fieldInstanceProperties>
                     <name>uiBehavior</name>
-                    <value>readonly</value>
+                    <value>none</value>
                 </fieldInstanceProperties>
-                <fieldItem>Record.Lead_Rating_Stars__c</fieldItem>
-                <identifier>RecordLead_Rating_Stars_cField</identifier>
+                <fieldItem>Record.Rating_Visual__c</fieldItem>
+                <identifier>RecordRating_Visual_cField</identifier>
             </fieldInstance>
         </itemInstances>
         <itemInstances>
@@ -251,6 +251,40 @@
                     <name>uiBehavior</name>
                     <value>none</value>
                 </fieldInstanceProperties>
+                <fieldItem>Record.Preferred_Pronouns__c</fieldItem>
+                <identifier>RecordPreferred_Pronouns_cField</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.Race__c</fieldItem>
+                <identifier>RecordRace_cField</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.Current_Blood_Donor__c</fieldItem>
+                <identifier>RecordCurrent_Blood_Donor_cField</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <name>Facet-9dc1ffcd-c115-49f1-be97-3e5ea564b050</name>
+        <type>Facet</type>
+    </flexiPageRegions>
+    <flexiPageRegions>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
                 <fieldItem>Record.Email</fieldItem>
                 <identifier>RecordEmailField</identifier>
             </fieldInstance>
@@ -281,14 +315,20 @@
                     <name>uiBehavior</name>
                     <value>none</value>
                 </fieldInstanceProperties>
-                <fieldItem>Record.Current_Blood_Donor__c</fieldItem>
-                <identifier>RecordCurrent_Blood_Donor_cField</identifier>
+                <fieldItem>Record.Preferred_Time_to_Call__c</fieldItem>
+                <identifier>RecordPreferred_Time_to_Call_cField</identifier>
             </fieldInstance>
         </itemInstances>
-        <name>Facet-9dc1ffcd-c115-49f1-be97-3e5ea564b050</name>
-        <type>Facet</type>
-    </flexiPageRegions>
-    <flexiPageRegions>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.Contact_Comments__c</fieldItem>
+                <identifier>RecordContact_Comments_cField</identifier>
+            </fieldInstance>
+        </itemInstances>
         <name>Facet-8bdbf681-8df9-413e-b463-389ab6a7bbe5</name>
         <type>Facet</type>
     </flexiPageRegions>
@@ -379,6 +419,46 @@
                 </fieldInstanceProperties>
                 <fieldItem>Record.Industry_Code__c</fieldItem>
                 <identifier>RecordIndustry_Code_cField</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.Wellness_Programs__c</fieldItem>
+                <identifier>RecordWellness_Programs_cField</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.Mission_Vision_Core_Values__c</fieldItem>
+                <identifier>RecordMission_Vision_Core_Values_cField</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.Company_Organization_Comments__c</fieldItem>
+                <identifier>RecordCompany_Organization_Comments_cField</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.Supported_Nonprofit_Organizations__c</fieldItem>
+                <identifier>RecordSupported_Nonprofit_Organizations_cField</identifier>
             </fieldInstance>
         </itemInstances>
         <name>Facet-c95d5e58-829a-467c-9940-2d19ba3ec352</name>
@@ -487,6 +567,16 @@
                     <name>uiBehavior</name>
                     <value>none</value>
                 </fieldInstanceProperties>
+                <fieldItem>Record.Hosted_Before_Comments__c</fieldItem>
+                <identifier>RecordHosted_Before_Comments_cField</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
                 <fieldItem>Record.Has_Personal_Story__c</fieldItem>
                 <identifier>RecordHas_Personal_Story_cField</identifier>
             </fieldInstance>
@@ -499,6 +589,30 @@
                 </fieldInstanceProperties>
                 <fieldItem>Record.Personal_Story__c</fieldItem>
                 <identifier>RecordPersonal_Story_cField</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <name>Facet-6d1f61e1-3ce0-4d7d-8b7a-d00d51824ad8</name>
+        <type>Facet</type>
+    </flexiPageRegions>
+    <flexiPageRegions>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.Are_you_currently_hosting_blood_drives__c</fieldItem>
+                <identifier>RecordAre_you_currently_hosting_blood_drives_cField</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.Potential_Partnership_Reasons__c</fieldItem>
+                <identifier>RecordPotential_Partnership_Reasons_cField</identifier>
             </fieldInstance>
         </itemInstances>
         <itemInstances>
@@ -521,7 +635,7 @@
                 <identifier>RecordComments_cField</identifier>
             </fieldInstance>
         </itemInstances>
-        <name>Facet-6d1f61e1-3ce0-4d7d-8b7a-d00d51824ad8</name>
+        <name>Facet-11605a0b-062f-437d-8a36-bb7c6a9408cd</name>
         <type>Facet</type>
     </flexiPageRegions>
     <flexiPageRegions>
@@ -533,6 +647,16 @@
                 </componentInstanceProperties>
                 <componentName>flexipage:column</componentName>
                 <identifier>flexipage_column9</identifier>
+            </componentInstance>
+        </itemInstances>
+        <itemInstances>
+            <componentInstance>
+                <componentInstanceProperties>
+                    <name>body</name>
+                    <value>Facet-11605a0b-062f-437d-8a36-bb7c6a9408cd</value>
+                </componentInstanceProperties>
+                <componentName>flexipage:column</componentName>
+                <identifier>flexipage_column20</identifier>
             </componentInstance>
         </itemInstances>
         <name>Facet-bd4be93d-c2d5-42ab-afc6-97a6d4f12f56</name>
@@ -571,10 +695,30 @@
         <type>Facet</type>
     </flexiPageRegions>
     <flexiPageRegions>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.Existing_Relationship_with_HS__c</fieldItem>
+                <identifier>RecordExisting_Relationship_with_HS_cField</identifier>
+            </fieldInstance>
+        </itemInstances>
         <name>Facet-a68d2e45-b8e8-4705-8f45-912c55de141e</name>
         <type>Facet</type>
     </flexiPageRegions>
     <flexiPageRegions>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.Have_you_received_assistance_from_HS__c</fieldItem>
+                <identifier>RecordHave_you_received_assistance_from_HS_cField</identifier>
+            </fieldInstance>
+        </itemInstances>
         <name>Facet-155bf41a-23f2-4263-a77a-d21f49a97d32</name>
         <type>Facet</type>
     </flexiPageRegions>

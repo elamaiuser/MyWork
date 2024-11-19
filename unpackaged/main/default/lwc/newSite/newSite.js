@@ -1,5 +1,6 @@
-import { LightningElement,api,wire,track } from 'lwc';
+import { LightningElement, api, wire, track } from 'lwc';
 import { getObjectInfo } from 'lightning/uiObjectInfoApi';
+import { getPicklistValues } from 'lightning/uiObjectInfoApi';
 import SITE_OBJECT from '@salesforce/schema/sked__Location__c';
 
 import predictCollectionOperation from '@salesforce/apex/NewSiteController.predictCollectionOperations';
@@ -68,13 +69,17 @@ import Staff_Personal_Parking_Directions from '@salesforce/schema/sked__Location
 import Unloading_Directions_Details from '@salesforce/schema/sked__Location__c.sked_Unloading_Directions_Details__c';
 import Fixed_Site_Appointment_Pattern from '@salesforce/schema/sked__Location__c.sked_Fixed_Site_Appointment_Pattern__c';
 import On_Site_Food_Conditions from '@salesforce/schema/sked__Location__c.sked_On_Site_Food_Conditions__c';
+//import Primary_Contact from '@salesforce/schema/sked__Location__c.sked_Primary_Contact__c';
 import Operation_Type from '@salesforce/schema/sked__Location__c.Operation_Type__c';
+import EAP_Map_Available from '@salesforce/schema/sked__Location__c.EAP_Map_Available__c';
+import AED_Available from '@salesforce/schema/sked__Location__c.AED_Available__c';
+
 
 import SOURCE from '@salesforce/schema/sked__Location__c.Source__c';
 
 export default class NewSite extends LightningElement {
 
-// objectApiName is "Account" when this component is placed on an account record page
+    // objectApiName is "Account" when this component is placed on an account record page
     @api objectApiName;
     @api recordId;
     @api recordTypeId;
@@ -85,33 +90,29 @@ export default class NewSite extends LightningElement {
     isAlertOpen = false;
     isSpinner = false;
     @track disableButton = false;
-    input ={};
-    fields = [PHYSICAL_LOCATION_TYPE, SITE_CONTACT,SITE_MAIN_PHONE,ADDRESS1,ADDRESS2,CITY,COUNTRY,STATE,ZIP_CODE,
-        DAYS_OF_WEEK_PREFERRED,DAYS_OF_WEEK_DECLINED,SITE_INSPECTION_COMPLETED_BY,SITE_INSPECTION_COMPLETED_COMMENTS,
-        DATE_SITE_INSPECTION_COMPLETED,SITE_BUILDING,FLOOR_DESCRIPTION,ROOM_NAME,ROOM_SIZE,
-        AUTOMATION_SUITABLITY,WIRELESS_POLICY,DIRECTION_FROM_COLLECTION_OPERATION,
-        Outlets_110,Air_conditioned,Outlets_220,Unavailable_911,ARC_Vehicle_Parking_Directions,Elevator_Type,
-        Break_location,Elevator_Open,Elevator_Close,Canteen_Requirements,Emergency_Contact,
-        Equipment_X_Ray_Require,Floor_Covering_Requirement,Escort_Required,Heat,Inside_stairs,Max_Auto_Machines,
-        Maximum_Beds,Maximum_Booths,No_Cell_Phones,Site_Food_Canteen_Other,On_Site_Food_Canteen_Requirements,
-        Pay_for_Parking,Outside_stairs,Pay_for_Parking_Details,Pre_Drive_Security_Due_Date,Restroom_Location,
-        Safety_Emergency_Action_Plan,Security_Directions,Security_Information_Needed,Site_Close,Site_Contact_Email,
-        Site_Contact_Phone,Site_Open,Site_Room_Phone,Sponsor_Security_Form_Required,Staff_List,
-        Unloading_Conditions,Staff_Personal_Parking_Directions,Fixed_Site_Appointment_Pattern, 
-        On_Site_Food_Conditions,Operation_Type];
-   
-    connectedCallback(){
-        
+    placeHolderForOperationType;
+    input = {};
+    fields = [PHYSICAL_LOCATION_TYPE, SITE_CONTACT, SITE_MAIN_PHONE, ADDRESS1, ADDRESS2, CITY, COUNTRY, STATE, ZIP_CODE, DAYS_OF_WEEK_PREFERRED, DAYS_OF_WEEK_DECLINED, SITE_INSPECTION_COMPLETED_BY, SITE_INSPECTION_COMPLETED_COMMENTS,
+        DATE_SITE_INSPECTION_COMPLETED, SITE_BUILDING, FLOOR_DESCRIPTION, ROOM_NAME, ROOM_SIZE, AUTOMATION_SUITABLITY, WIRELESS_POLICY, DIRECTION_FROM_COLLECTION_OPERATION,
+        Outlets_110, Air_conditioned, Outlets_220, Unavailable_911, ARC_Vehicle_Parking_Directions, Elevator_Type, Break_location, Elevator_Open, Elevator_Close, Canteen_Requirements, Emergency_Contact,
+        Equipment_X_Ray_Require, Floor_Covering_Requirement, Escort_Required, Heat, Inside_stairs, Max_Auto_Machines, Maximum_Beds, Maximum_Booths, No_Cell_Phones, Site_Food_Canteen_Other, On_Site_Food_Canteen_Requirements,
+        Pay_for_Parking, Outside_stairs, Pay_for_Parking_Details, Pre_Drive_Security_Due_Date, Restroom_Location, Safety_Emergency_Action_Plan, Security_Directions, Security_Information_Needed, Site_Close, Site_Contact_Email,
+        Site_Contact_Phone, Site_Open, Site_Room_Phone, Sponsor_Security_Form_Required,
+        Staff_List, Unloading_Conditions, Staff_Personal_Parking_Directions,
+        Fixed_Site_Appointment_Pattern, On_Site_Food_Conditions, Operation_Type, EAP_Map_Available, AED_Available];
+
+    connectedCallback() {
+
     }
 
-    @wire(getObjectInfo, {objectApiName: SITE_OBJECT})
+    @wire(getObjectInfo, { objectApiName: SITE_OBJECT })
     wiredObjectInfo({ error, data }) {
         if (data) {
             this.isModalOpen = true;
             const params = new Proxy(new URLSearchParams(window.location.search), {
                 get: (searchParams, prop) => searchParams.get(prop),
-              });
-              this.recordTypeId = params.recordTypeId;
+            });
+            this.recordTypeId = params.recordTypeId;
 
             let recordTypeName = data.recordTypeInfos[this.recordTypeId].name;
             recordTypeName == 'Mobile Site' ? this.isMobile = true : this.isMobile = false;
@@ -121,11 +122,13 @@ export default class NewSite extends LightningElement {
             this.contacts = undefined;
         }
     };
-    
-  
+
+
+
+
     async handleSubmit(event) {
         this.disableButton = true;
-        event.preventDefault(); 
+        event.preventDefault();
         this.input = JSON.parse(JSON.stringify(event.detail.fields));
         this.input.Source__c = 'Custom New Form'
         this.template.querySelector('lightning-record-edit-form').submit(this.input);
@@ -159,14 +162,14 @@ export default class NewSite extends LightningElement {
     closeAlert() {
         this.isAlertOpen = false;
     }
-    
-    confirm(){
+
+    confirm() {
         this.template.querySelector('lightning-record-edit-form').submit(this.input);
         this.closeAlert();
     }
-    handleSucess(event){
+    handleSucess(event) {
         this.isSpinner = false;
-        this.showToast('Success','Site Created Successfully '+'Id '+event.detail.id,'success');
+        this.showToast('Success', 'Site Created Successfully ' + 'Id ' + event.detail.id, 'success');
         //this.closeModal();
         const value = event.detail.id;
         const valueChangeEvent = new CustomEvent("save", {
@@ -176,16 +179,16 @@ export default class NewSite extends LightningElement {
         this.dispatchEvent(valueChangeEvent);
     }
 
-    showToast(title,message,variant) {
+    showToast(title, message, variant) {
         const event = new ShowToastEvent({
             title: title,
-            message:message,
-            variant:variant
+            message: message,
+            variant: variant
         });
         this.dispatchEvent(event);
     }
 
-    handleError(){
+    handleError() {
         setInterval(() => {
             this.disableButton = false;
         }, 3000);

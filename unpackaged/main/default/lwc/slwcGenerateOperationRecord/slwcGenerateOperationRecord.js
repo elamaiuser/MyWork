@@ -1,7 +1,7 @@
 import { LightningElement, api, track} from 'lwc';
 import { NavigationMixin } from 'lightning/navigation';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent'
-import { operationRecordService } from 'c/dataService';
+import { operationRecordService, debugLogService } from 'c/dataService';
 
 export default class SlwcGenerateOperationRecord extends NavigationMixin(LightningElement) {
     @api recordId;
@@ -42,6 +42,7 @@ export default class SlwcGenerateOperationRecord extends NavigationMixin(Lightni
                 });
             })
             .catch(error => {
+                new debugLogService().captureDebugLog(error, this.recordId);
                 this.dispatchEvent(
                     new ShowToastEvent({
                         title: 'Error Generate Operations Record.',

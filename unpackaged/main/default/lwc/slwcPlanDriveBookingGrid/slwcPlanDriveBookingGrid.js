@@ -338,7 +338,8 @@ export default class SlwcPlanDriveBookingGrid extends LightningElement {
     }
 
     this.availator = slwcAvailator.getInstance({
-      mapApis: window.google ? window.google.maps : null
+      mapApis: window.google ? window.google.maps : null,
+      considerDateOnly: true
     })
     return this.availator.fetchAssetsDataDriveCalendar(jobs, {
       timezoneSidId: TIME_ZONE,

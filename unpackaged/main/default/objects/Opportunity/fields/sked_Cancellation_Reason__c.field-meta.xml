@@ -53,6 +53,11 @@
                 <label>Equipment Issues</label>
             </value>
             <value>
+                <fullName>FS Quarterly Calibration</fullName>
+                <default>false</default>
+                <label>FS Quarterly Calibration</label>
+            </value>
+            <value>
                 <fullName>Geo Alignment</fullName>
                 <default>false</default>
                 <label>Geo Alignment</label>
@@ -130,7 +135,7 @@
         </valueSettings>
         <valueSettings>
             <controllingFieldValue>ARC_Initiated_Mobile</controllingFieldValue>
-            <controllingFieldValue>ARC Initiated-Fixed</controllingFieldValue>
+            <controllingFieldValue>Sponsor_Initiated_Mobile</controllingFieldValue>
             <valueName>ARC Staff Strike</valueName>
         </valueSettings>
         <valueSettings>
@@ -149,6 +154,11 @@
             <controllingFieldValue>ARC_Initiated_Mobile</controllingFieldValue>
             <controllingFieldValue>ARC Initiated-Fixed</controllingFieldValue>
             <valueName>Equipment Issues</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>ARC_Initiated_Mobile</controllingFieldValue>
+            <controllingFieldValue>ARC Initiated-Fixed</controllingFieldValue>
+            <valueName>Geo Alignment</valueName>
         </valueSettings>
         <valueSettings>
             <controllingFieldValue>ARC_Initiated_Mobile</controllingFieldValue>
@@ -224,7 +234,7 @@
         </valueSettings>
         <valueSettings>
             <controllingFieldValue>ARC Initiated-Fixed</controllingFieldValue>
-            <valueName>Geo Alignment</valueName>
+            <valueName>FS Quarterly Calibration</valueName>
         </valueSettings>
     </valueSet>
 </CustomField>

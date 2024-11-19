@@ -39,7 +39,7 @@ global class skedExceptionLogService extends skedDataService {
             maxDt = NULL;
         }
         
-        List<sked__Job_Allocation__c> conflictedAllocations = getConflictedAllocations(resourceIds, minDt, maxDt, excludedIds);
+        List<sked__Job_Allocation__c> conflictedAllocations = getConflictedAllocations(resourceIds, minDt, maxDt, excludedIds, false);
         
         List<skedHC__Exception__c> existingExceptionLogs = [
             SELECT Id, skedHC__Job_Allocation__c, skedHC__Exception__c,
@@ -123,6 +123,105 @@ global class skedExceptionLogService extends skedDataService {
         
         return newExceptionLogs;
     }
+
+    public void captureResourceExceptionLogs(List<resourceUnavailabilityModel> unavailabilityList) {
+        DateTime minDt, maxDt;
+        Map<Id, List<resourceUnavailabilityModel>> resourceUnavailabilityMap = new Map<Id, List<resourceUnavailabilityModel>>();
+        for (resourceUnavailabilityModel unavailability : unavailabilityList) {
+            if (!resourceUnavailabilityMap.containsKey(unavailability.resourceId)) {
+                resourceUnavailabilityMap.put(unavailability.resourceId, new List<resourceUnavailabilityModel>());
+            }
+            resourceUnavailabilityMap.get(unavailability.resourceId).add(unavailability);
+
+            if (minDt == NULL || unavailability.startTime < minDt) {
+                minDt = unavailability.startTime;
+            }
+            if (maxDt == NULL || unavailability.endTime > maxDt) {
+                maxDt = unavailability.endTime;
+            }
+        }
+
+        List<sked__Job_Allocation__c> conflictedAllocations = getConflictedAllocations(resourceUnavailabilityMap.keySet(), minDt, maxDt, null, true);
+        Map<Id, List<sked__Job_Allocation__c>> resourceConflictedAllocationsMap = new Map<Id, List<sked__Job_Allocation__c>>();
+        for (sked__Job_Allocation__c conflictedAllocation : conflictedAllocations) {
+            if (!resourceConflictedAllocationsMap.containsKey(conflictedAllocation.sked__Resource__c)) {
+                resourceConflictedAllocationsMap.put(conflictedAllocation.sked__Resource__c, new List<sked__Job_Allocation__c>());
+            }
+            resourceConflictedAllocationsMap.get(conflictedAllocation.sked__Resource__c).add(conflictedAllocation);
+        }
+
+        List<String> includedExceptionCodes = new List<String> {
+            skedConstants.EXCEPTION_CODE_RESOURCE_IS_INACTIVE,
+            skedConstants.EXCEPTION_CODE_RESOURCE_PENDING_TERMINATION
+        };
+        List<skedHC__Exception__c> existingExceptionLogs = [
+            SELECT Id, sked_Exception_Code__c, skedHC__Resource__c, skedHC__Job_Allocation__c,
+            skedHC__Job_Allocation__r.sked__Start__c, skedHC__Job_Allocation__r.sked__Set_End__c
+            FROM skedHC__Exception__c
+            WHERE skedHC__Status__c = :skedConstants.EXCEPTION_LOG_STATUS_OPEN
+            AND skedHC__Resource__c IN :resourceUnavailabilityMap.keySet()
+            AND sked_Exception_Code__c IN :includedExceptionCodes
+        ];
+
+        Map<string, skedHC__Exception__c> mapExistingExceptionLog = new Map<string, skedHC__Exception__c>();
+        List<skedHC__Exception__c> exceptionLogsToUpdate = new List<skedHC__Exception__c>();
+        for (skedHC__Exception__c existingExceptionLog : existingExceptionLogs) {
+            Boolean keepOpen = false;
+            if (resourceUnavailabilityMap.containsKey(existingExceptionLog.skedHC__Resource__c)) {
+                for (resourceUnavailabilityModel unavailability : resourceUnavailabilityMap.get(existingExceptionLog.skedHC__Resource__c)) {
+                    if (unavailability.exceptionCode == existingExceptionLog.sked_Exception_Code__c &&
+                        unavailability.startTime <= existingExceptionLog.skedHC__Job_Allocation__r.sked__Start__c &&
+                        unavailability.endTime >= existingExceptionLog.skedHC__Job_Allocation__r.sked__Set_End__c) {
+                        keepOpen = true;
+                        break;
+                    }
+                }
+            } else {
+                keepOpen = true;
+            }
+
+            if (!keepOpen) {
+                existingExceptionLog.skedHC__Status__c = skedConstants.EXCEPTION_LOG_STATUS_CLOSED;
+                exceptionLogsToUpdate.add(existingExceptionLog);
+            } else {
+                string key = existingExceptionLog.skedHC__Job_Allocation__c + ':' + existingExceptionLog.sked_Exception_Code__c;
+                mapExistingExceptionLog.put(key, existingExceptionLog);	
+            }
+        }
+        if (!exceptionLogsToUpdate.isEmpty()) {
+            update exceptionLogsToUpdate;
+        }
+
+        List<skedHC__Exception__c> newExceptionLogs = new List<skedHC__Exception__c>();
+        for (resourceUnavailabilityModel unavailability : unavailabilityList) {
+            if (resourceConflictedAllocationsMap.containsKey(unavailability.resourceId)) {
+                for (sked__Job_Allocation__c conflictedAllocation : resourceConflictedAllocationsMap.get(unavailability.resourceId)) {
+                    if (unavailability.startTime <= conflictedAllocation.sked__Set_End__c && unavailability.endTime >= conflictedAllocation.sked__Start__c) {
+                        string key = conflictedAllocation.Id + ':' + unavailability.exceptionCode;
+                        if (!mapExistingExceptionLog.containsKey(key)) {
+                            skedHC__Exception__c newExceptionLog = new skedHC__Exception__c(
+                                skedHC__Job__c = conflictedAllocation.sked__Job__c,
+                                sked_Conflicted_Job__c = conflictedAllocation.sked__Job__c,
+                                skedHC__Job_Allocation__c = conflictedAllocation.Id,
+                                sked_Conflicted_Job_Allocation__c = conflictedAllocation.Id,
+                                sked_Drive__c = conflictedAllocation.sked__Job__r.sked_Drive__c,
+                                sked_Conflicted_Drive__c = conflictedAllocation.sked__Job__r.sked_Drive__c,
+                                skedHC__Resource__c = conflictedAllocation.sked__Resource__c,
+                                sked_Exception_Code__c = unavailability.exceptionCode,
+                                skedHC__Status__c = skedConstants.EXCEPTION_LOG_STATUS_OPEN
+                            );
+                            newExceptionLogs.add(newExceptionLog);
+                            mapExistingExceptionLog.put(key, newExceptionLog);
+                        }
+                    }
+                }
+            }
+        }
+
+        if (!newExceptionLogs.isEmpty()) {
+            insert newExceptionLogs;
+        }
+    }
     
     public void removeExceptionLogs(Set<Id> relatedRecordIds) {
         Id firstRecordId;
@@ -174,7 +273,7 @@ global class skedExceptionLogService extends skedDataService {
     }
     
     /*********************************************************** Private methods ***********************************************************/
-    private List<sked__Job_Allocation__c> getConflictedAllocations(Set<Id> resourceIds, DateTime startTime, DateTime endTime, Set<Id> excludedIds) {
+    private List<sked__Job_Allocation__c> getConflictedAllocations(Set<Id> resourceIds, DateTime startTime, DateTime endTime, Set<Id> excludedIds, boolean futureOnly) {
         skedQueryBuilder jobAllocationBuilder = new skedQueryBuilder();
         jobAllocationBuilder.setFromClause('sked__Job_Allocation__c');
         jobAllocationBuilder.addField('Id');
@@ -193,6 +292,9 @@ global class skedExceptionLogService extends skedDataService {
         }
         else if (startTime != NULL) {
             jobAllocationBuilder.addCondition('sked__Start__c >= {0}', startTime);			
+        }
+        if (futureOnly) {
+            jobAllocationBuilder.addCondition('sked_Start_Date__c >= TODAY');
         }
         List<string> jobAllocationDeletedStatuses = new List<string>();
         jobAllocationDeletedStatuses.add(skedConstants.JOB_ALLOCATION_STATUS_DELETED);

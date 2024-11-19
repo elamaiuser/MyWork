@@ -1,0 +1,51 @@
+<template>
+  <div class="slds-grid slds-grid slds-grid_vertical-align-center"  >
+    <h2 class="slds-nav-vertical__title" style="padding: 0.75rem 0;">
+      {optimizationQueue.name}
+    </h2>
+
+    <div class="slds-col_bump-left">
+      <lightning-button-group>
+        <lightning-button onclick={toggleCollapseAll} data-optimization-queue-id={optimizationQueue.id} label="Collapse All"></lightning-button>
+        <lightning-button onclick={toggleExpandAll} data-optimization-queue-id={optimizationQueue.id} label="Expand All"></lightning-button>
+      </lightning-button-group>
+    </div>
+  </div>
+
+  <div class="slds-tabs_default" key={optimizationQueue.id}>
+    <ul class="slds-tabs_default__nav slds-theme_shade" role="tablist">
+        <li class={customClass.allDrivesTab} role="presentation" data-value={TABS.ALL_DRIVES} onclick={handleTabChange}>
+            <a class="slds-tabs_default__link" role="tab">All Drives</a>
+        </li>
+        <li class={customClass.allocatedDrivesTab} role="presentation" data-value={TABS.ALLOCATED_DRIVES} onclick={handleTabChange}>
+            <a class="slds-tabs_default__link" role="tab">Allocated Drives</a>
+        </li>
+        <li class={customClass.unallocatedDrivesTab} role="presentation" data-value={TABS.UNALLOCATED_DRIVES} onclick={handleTabChange}>
+          <a class="slds-tabs_default__link" role="tab">Unallocated Drives</a>
+      </li>
+    </ul>
+  </div>
+  
+  <div class="slds-tabs_default__content">
+    <template for:each={dataGrouped} for:item="item">
+        <div key={item.key} class={item.class}>
+          <h3 class="slds-section__title">
+            <button aria-expanded="true" class="slds-button slds-section__title-action" data-date-iso={item.dateIso} onclick={toggleExpand}>
+              <lightning-icon class="slds-section__title-action-icon" icon-name="utility:switch" size="xx-small"></lightning-icon>
+              <span class="slds-truncate slds-m-left_small slds-text-title_caps">
+                <lightning-formatted-date-time value={item.dateIso} time-zone="UTC" day="numeric" year="numeric" month="long">
+                </lightning-formatted-date-time>
+              </span>
+            </button>
+          </h3>
+          <div aria-hidden="false" if:true={item.hasData} class="slds-section__content">
+            <c-slwc-tree-grid
+              columns={item.columns} 
+              rows={item.data}
+              oncellclick={handleCellClick}>
+            </c-slwc-tree-grid>
+          </div>
+        </div>
+      </template>
+  </div>
+</template>

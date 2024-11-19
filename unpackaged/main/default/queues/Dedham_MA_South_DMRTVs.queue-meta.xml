@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Queue xmlns="http://soap.sforce.com/2006/04/metadata">
+    <doesSendEmailToMembers>false</doesSendEmailToMembers>
+    <name>Dedham MA South: DMRTVs</name>
+    <queueMembers>
+        <users>
+            <user>cathy.alegria@redcross.org</user>
+            <user>dan.craig2@redcross.org</user>
+            <user>james.gallant@redcross.org</user>
+            <user>lisa.mistretta@redcross.org</user>
+        </users>
+    </queueMembers>
+    <queueSobject>
+        <sobjectType>sked__Location__c</sobjectType>
+    </queueSobject>
+</Queue>

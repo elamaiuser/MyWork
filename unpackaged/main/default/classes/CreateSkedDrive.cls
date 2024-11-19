@@ -15,14 +15,24 @@
  * 08/03/2023                 Priti Jana             Logic for HRP-10456
  * 08/09/2023                 Priti Jana             Logic for HRP-10450
  * 08/11/2023                 Priti Jana             Logic for HRP-10626
- * 10/5/2023                  Priti Jana             Logic for HRP-11027
+ * 10/05/2023                 Priti Jana             Logic for HRP-11027
  * 10/25/2023                 Krapy Tuli             Logic for HRP-11226
  * 11/15/2023                 Priti Jana             Logic for HRP-11046
  * 11/15/2023                 Priti Jana             Logic for HRP-11295
  * 11/20/2023                 Krapy Tuli             Logic for HRP-11419
  * 12/20/2023                 Krapy Tuli             Logic for HRP-11513
  * 12/22/2023                 Priti Jana             Logic for HRP-10915
- * 1/15/2024                  Priti Jana             Logic for HRP-11418
+ * 01/15/2024                 Priti Jana             Logic for HRP-11418
+ * 02/05/2024                 Priti Jana             Logic for HRP-11547
+ * 02/12/2024                 Priti Jana             Logic for HRP-11443
+ * 02/22/2024                 Priti Jana             Logic for HRP-12144
+ * 02/26/2024                 Krapy Tuli             Logic for HRP-12019
+ * 03/11/2024				  Fitsum Worku			 Logic for HRP-12218
+ * 05/02/2024                 Priti Jana             Logic for HRP-12480
+ * 06/05/2024                 Priti Jana             Logic for HRP-11908
+ * 06/06/2024                 Priti Jana             Logic for HRP-12011
+ * 06/17/2024                 Barnojit Sharma        Logic for HRP-12738
+ * 10/15/2024                 Priti Jana             Logic for HRP-13198
  *****************************************************************************
 */
 
@@ -33,24 +43,19 @@ public class CreateSkedDrive
     static DateTime equipmentJobFinishTime; // HRP-11295
     static DateTime equipmentJobStartTime; // HRP-11295
     
-    public static void createDrives(list<Opportunity> oppList)
-    {
+    public static void createDrives(list<Opportunity> oppList) {
        try {
             set<Id> oppIds = new set<Id>();
             for(opportunity opp: oppList){
                 oppIds.add(opp.Id);
-            }
-            
+            }            
             FetchRelatedDriveData.DMLData allData = FetchRelatedDriveData.getDriveGenerationData(oppIds);
             for (FetchRelatedDriveData.DMLDrive drive : allData.drives) {
                 String customMsg = customMessage(allData,drive);
-                System.debug('Message--> '+customMsg);
                 if(customMsg == 'No Error' || Test.isRunningTest()){
                     generateDrive(allData,drive);
-                } else
-                {
+                } else {
                     // HRP-11027 --> starts Here
-                
                     //CustomNotification.notifyUsers(new Set <String>{userInfo.getUserId()} , drive.opportunityId , 'Error!' , customMsg );
                     String targetId = String.valueOf(drive.opportunityId);
                     DriveGenerationErrorHandler.notifyUsersUponFailureAndLogErrors(NULL, targetId, customMsg, Constants.DATA_ISSSUE, Constants.FIXED_SITE_DRIVE_GENEERRATOR, Constants.FIXED_SITE_DRIVE_GEN_METHOD); 
@@ -58,56 +63,54 @@ public class CreateSkedDrive
                 }
             }
             List<FetchRelatedDriveData.DMLDrive> drivesToSave = new List<FetchRelatedDriveData.DMLDrive>();
-            for(FetchRelatedDriveData.DMLDrive dmlDrive : allData.drives){
+            for(FetchRelatedDriveData.DMLDrive dmlDrive : allData.drives) {
                 oppId = dmlDrive.Id;
                 if(!dmlDrive.hasError)
                 {                    
                     drivesToSave.add(dmlDrive);
                 }
             }
-            if(drivesToSave.size() > 0)
-            {
+            if(drivesToSave.size() > 0) {
                 skedTriggerUtils.CHANGES_INITIATED_FROM_SERVICE = true; //HRP-11418
                 FetchRelatedDriveData.saveDrives(drivesToSave);
             }
            
-        }catch(Exception ex){
-            
+        } catch(Exception ex){
             // HRP-11027
             oppId = String.valueOf(oppList[0].Id);
             DriveGenerationErrorHandler.notifyUsersUponFailureAndLogErrors(ex, oppId, NULL, Constants.TECHNICAL_ISSSUE, Constants.FIXED_SITE_DRIVE_GENEERRATOR, Constants.FIXED_SITE_DRIVE_GEN_METHOD);
         }
     }
     
-    private static string customMessage(FetchRelatedDriveData.DMLData data,FetchRelatedDriveData.DMLDrive drive){
+    private static string customMessage(FetchRelatedDriveData.DMLData data,FetchRelatedDriveData.DMLDrive drive) {
         Boolean isError = false;
         String errorMessage='';
         FetchRelatedDriveData.DMLLocation driveSite = data.mapLocation.get(drive.driveSiteId);
         FetchRelatedDriveData.DMLAccount account = data.mapAccount.get(drive.accountId);
-        if(driveSite == null){  
+        if(driveSite == null) {  
             errorMessage += 'Site not found\n';
             isError = true;
         }
-        if(driveSite.timezoneSidId == null){  
-            errorMessage += 'Site do not have Time Zone\n';
+        if(driveSite.timezoneSidId == null) {  
+            errorMessage += 'Site does not have Time Zone\n';
             isError = true;
         }
        
         if (driveSite.siteCollectionOperations == NULL) {
             errorMessage += 'No Site Collection Operations found\n';
             isError = true;
-        } else{
+        } else {
             for (FetchRelatedDriveData.DMLSiteCollectionOperation siteCollectionOperation : driveSite.siteCollectionOperations) {
                 if(siteCollectionOperation.collectionOperationId == NULL){
-                    errorMessage += 'SiteCollectionOperation collectionOperationId is null\n';
+                    errorMessage += 'Site Collection Operation : Collection Operation is null\n';
                     isError = true;
                 }
                 if(siteCollectionOperation.startDate == NULL){
-                    errorMessage += 'SiteCollectionOperation startDate is null\n';
+                    errorMessage += 'Site Collection Operation : Start Date is null\n';
                     isError = true;
                 }
                 if(siteCollectionOperation.endDate == NULL){
-                    errorMessage += 'SiteCollectionOperation endDate is null\n';
+                    errorMessage += 'Site Collection Operation : End Date is null\n';
                     isError = true;
                 }
                 if (siteCollectionOperation.startDate <= drive.driveDate && drive.driveDate <= siteCollectionOperation.endDate) {
@@ -123,17 +126,17 @@ public class CreateSkedDrive
             errorMessage += 'No collection operation\n';
             isError = true;
         }else{
-            if(drive.collectionOperation.lunchBreakDurationFixedSite == null){
-                errorMessage += 'Collection Operation lunchBreakDurationFixedSite is null\n';
+            if(drive.collectionOperation.lunchBreakDurationFixedSite == null) {
+                errorMessage += 'Collection Operation : lunch Break Duration for Fixed Site is null\n';
                 isError = true;
-            } if (drive.collectionOperation.breakdownTimeThreshold == null){
-                errorMessage += 'Collection Operation breakdownTimeThreshold is null\n';
+            } if (drive.collectionOperation.breakdownTimeThreshold == null) {
+                errorMessage += 'Collection Operation : Breakdown Time Threshold is null\n';
                 isError = true;
-            } if(drive.collectionOperation.setupTimeThreshold == null){
-                errorMessage += 'Collection Operation setupTimeThreshold is null\n';
+            } if(drive.collectionOperation.setupTimeThreshold == null) {
+                errorMessage += 'Collection Operation : Setup Time Threshold is null\n';
                 isError = true;
-            }if(drive.collectionOperation.unpaidLunchBreakDuration == null){
-                errorMessage += 'Collection Operation unpaidLunchBreakDuration is null\n';
+            }if(drive.collectionOperation.unpaidLunchBreakDuration == null) {
+                errorMessage += 'Collection Operation : Unpaid Lunch Break Duration is null\n';
                 isError = true;
             }
         }
@@ -143,49 +146,48 @@ public class CreateSkedDrive
             errorMessage += 'No Staffing Matrix found\n';
             isError = true;
         }else{
-            if(matrix.nrVolunteerFixedSiteBandLower == null){
-                errorMessage += 'Matrix FixedSiteBandLower is null\n';
+            if(matrix.nrVolunteerFixedSiteBandLower == null) {
+                errorMessage += 'Matrix : Fixed Site Band Lower is null\n';
                 isError = true;
             }
-            if(matrix.nrVolunteerFixedSiteBandUpper == null){
-                errorMessage += 'Matrix FixedSiteBandUpper is null\n';
+            if(matrix.nrVolunteerFixedSiteBandUpper == null) {
+                errorMessage += 'Matrix : Fixed Site Band Upper is null\n';
                 isError = true;
             }
-            if(matrix.plateletHourlyCapacity == null){	
-                errorMessage += 'Matrix plateletHourlyCapacity is null\n';	
+            if(matrix.plateletRoundCapacity == null) {	// HRP-11547
+                errorMessage += 'Matrix : Platelet Round Capacity is null\n';	
                 isError = true;	
             }	
-            if(matrix.plasmaHourlyCapacity == null){	
-                errorMessage += 'Matrix plasmaHourlyCapacity is null\n';	
+            if(matrix.plasmaHourlyCapacity == null) {	
+                errorMessage += 'Matrix : Plasma Hourly Capacity is null\n';	
                 isError = true;	
             }	
-            if(matrix.wbHourlyCapacity == null){	
-                errorMessage += 'Matrix wbHourlyCapacity is null\n';	
+            if(matrix.wbHourlyCapacity == null) {	
+                errorMessage += 'Matrix : WB Hourly Capacity is null\n';	
                 isError = true;	
             }	
-            if(matrix.x2rbcHourlyCapacity == null){	
-                errorMessage += 'Matrix x2rbcHourlyCapacity is null\n';	
+            if(matrix.x2rbcHourlyCapacity == null) {	
+                errorMessage += 'Matrix : x2rbc Hourly Capacity is null\n';	
                 isError = true;	
             }
         }
 
-        if(account.fixedSiteProcedureProjections == null || account.fixedSiteProcedureProjections.isEmpty()){
-            errorMessage += 'Account fixedSiteProcedureProjections is null\n';  
+        if(account.fixedSiteProcedureProjections == null || account.fixedSiteProcedureProjections.isEmpty()) {
+            errorMessage += 'Account : Fixed Site Procedure Projections not found\n';  
             isError = true;
-        }else{
+        } else {
             for(FetchRelatedDriveData.DMLFixedSiteProcedureProjection fsProjection : account.fixedSiteProcedureProjections) {
-                if(fsProjection.deferral == null){
+                if(fsProjection.deferral == null) {
                     errorMessage += 'Fixed Site Projection deferral is null\n';  
                     isError = true;
                 }
-                if(fsProjection.qns == null){
+                if(fsProjection.qns == null) {
                     errorMessage += 'Fixed Site Projection qns is null\n';  
                     isError = true;
                 }
             }
         }
-
-        if(isError){
+        if(isError) {
             drive.hasError = true;
             return errorMessage;
         }
@@ -195,19 +197,19 @@ public class CreateSkedDrive
         }
     }
     
-    static void generateDrive(FetchRelatedDriveData.DMLData data, FetchRelatedDriveData.DMLDrive drive){
+    static void generateDrive(FetchRelatedDriveData.DMLData data, FetchRelatedDriveData.DMLDrive drive) {
         prepareDriveData(data, drive);		// preparing account, site, collection operationfor creating drives
         calculateTotalProceduresProjected(drive);	    /****** point no 1 ******/ 
         calculatePlateletRounds(drive);         /****** point no 2 ******/
         proposeDriveShifts(data, drive);	    /****** point no 6d ******/
         calculateDriveProductivityPlanned(drive);	// Calculate drive productivity planned - HRP-10456
-        if (drive.driveShifts != NULL)
-        {
+        if (drive.driveShifts != NULL) {
             populateDriveShiftTags(drive);
             populateJobTags(drive);
             updateDriveTotalSlots(drive);
         }
     }
+
     static void prepareDriveData(FetchRelatedDriveData.DMLData data, FetchRelatedDriveData.DMLDrive drive) {
         FetchRelatedDriveData.DMLAccount account = data.mapAccount.get(drive.accountId);
         drive.account = account;    
@@ -226,7 +228,18 @@ public class CreateSkedDrive
                 }
             }
         }
-        
+
+        // HRP-11653 --> Starts Here
+        if (drive.collectionOperationId != null && data.mapCoIdVsStagingLocations.containsKey(drive.collectionOperationId)) {
+            for (sked_Collection_Op_Staging_Location__c sloc : data.mapCoIdVsStagingLocations.get(drive.collectionOperationId)) {
+                if (sloc.sked_Start_Date__c <= drive.driveDate && drive.driveDate <= sloc.sked_End_Date__c) {
+                    drive.coStagingLocation = sloc; //HRP-11650
+                    drive.stagingLocation = sloc.sked_Staging_Location__c; //NEW
+                    break;
+                }
+            }
+        }
+        // HRP-11653 --> Ends Here
         drive.maximumLunchBreakDuration = drive.collectionOperation.lunchBreakDurationFixedSite;
         drive.drawStart = DateTime.newInstanceGmt(drive.driveDate, drive.startTime);
         drive.drawEnd = DateTime.newInstanceGmt(drive.driveDate, drive.endTime);
@@ -235,7 +248,7 @@ public class CreateSkedDrive
     }
     
     /****** point no 1 ******/
-    static void calculateTotalProceduresProjected(FetchRelatedDriveData.DMLDrive drive){        
+    static void calculateTotalProceduresProjected(FetchRelatedDriveData.DMLDrive drive) {        
         decimal x2rbcProjectedProcedures = drive.x2rbcProjectedProcedures != NULL ? drive.x2rbcProjectedProcedures : 0;
         decimal wbProjectedProcedures = drive.wbProjectedProcedures != NULL ? drive.wbProjectedProcedures : 0;
         decimal plasmaProjectedProcedures = drive.plasmaProjectedProcedures != NULL ? drive.plasmaProjectedProcedures : 0;
@@ -284,21 +297,26 @@ public class CreateSkedDrive
         
         Decimal noOfDriveShift = drive.plateletRounds > 3 ? Math.ceil(drive.plateletRounds / 3) : 1;
 
-        CalculateResourceQuantity(data, drive);	// 5
+        Map<String, Decimal> fsppTypeAndValuesMap = getFSPPTypeAndDeferalQnsValue(drive); //HRP-11547
+
+        Map<String, Decimal> mapResourceQuantity = CalculateResourceQuantity(data, drive);	// 5
+
+        calculateDriveProcedureCapacity(data, drive, mapResourceQuantity,fsppTypeAndValuesMap); // HRP-11547
+
         FetchRelatedDriveData.DMLDriveShift suggestedDriveShift = initiateDriveShift(data, drive);   
         
         /**** POint no 4 ***/
         // splitProjectedProcedure(noOfDriveShift, drive, suggestedDriveShift); -> This logic has been shifted to buildMultiDriveShifts method
+
         //populateTravelTime(data, drive, suggestedDriveShift);
-        generateShiftSlots(data, drive, suggestedDriveShift, noOfDriveShift);
+
+        
         
         /******* 3b *******/
         List<FetchRelatedDriveData.DMLDriveShift> driveShifts = buildMultiDriveShifts(data, drive, suggestedDriveShift,noOfDriveShift);
         drive.driveShifts = driveShifts;
         
         calculateDriveShiftProcedureCapacityValue(drive,drive.driveShifts); // HRP - 10456
-
-        System.debug('Exiting proposeDriveShifts Method'); 
     }
     
     static driveStaffingComplementModel calculateDriveStaffingComplement(FetchRelatedDriveData.DMLData data, FetchRelatedDriveData.DMLDrive drive,Decimal noOfDriveShift) {
@@ -394,61 +412,92 @@ public class CreateSkedDrive
         // HRP-10456 --> Ends here
 
     /******** Point no 5 **********/
-    static void CalculateResourceQuantity(FetchRelatedDriveData.DMLData data, FetchRelatedDriveData.DMLDrive drive){            
+    static map<String, Decimal> CalculateResourceQuantity(FetchRelatedDriveData.DMLData data, FetchRelatedDriveData.DMLDrive drive)
+    {
+        map<String, Decimal> mapResourceQuantity = new map<String, Decimal>(); 
+
         calculateFixedSiteStaffQuantity(data, drive);		// 5a
-        calculateApheresisChargeQuantity(data, drive);		// 5b
+        mapResourceQuantity = calculateTotalStaffQuantity(data, drive);		// HRP-11547
+
+        return mapResourceQuantity;
     }
+
     /*** Point no 5a ***/
     static void calculateFixedSiteStaffQuantity(FetchRelatedDriveData.DMLData data, FetchRelatedDriveData.DMLDrive drive){
         decimal totalDriveProcedureCapacity = 0;
         if(drive.account.fixedSiteProcedureProjections != null){
         	for (FetchRelatedDriveData.DMLFixedSiteProcedureProjection setting : drive.account.fixedSiteProcedureProjections) {
-                decimal donorsPerHoursCapacity = getFixedSiteDonorsPerHourCapacity(data, drive, setting.procedureType);           
+                decimal donorsPerHoursCapacity = getFixedSiteDonorsCapacity(data, drive, setting.procedureType);           
                 decimal projectedTypeHours = getDrawHoursAdjusted(data, drive, setting.procedureType);            
                 decimal requiredStaff = 0;
                 decimal driveProcedureCapacity = 0;
                 
-                
-                if (setting.procedureType == Constants.PROCEDURE_TYPE_PLATELET) {
+                // Platelet staff calculation logic has been changed as part of HRP-11547
+
+                /*if (setting.procedureType == Constants.PROCEDURE_TYPE_PLATELET) {
                     driveProcedureCapacity = calculateStaff(setting, drive.plateletProjectedProcedures != null ? drive.plateletProjectedProcedures : 0, projectedTypeHours,donorsPerHoursCapacity);
                     requiredStaff = Math.ceil(driveProcedureCapacity);
                     totalDriveProcedureCapacity += driveProcedureCapacity;
                     
                     drive.projectedPlateletDonors = Math.ceil(requiredStaff * projectedTypeHours);
                     
-                }
-                else if (setting.procedureType == Constants.PROCEDURE_TYPE_PLASMA) {
+                }*/
+
+                if (setting.procedureType == Constants.PROCEDURE_TYPE_PLASMA) {
                     driveProcedureCapacity = calculateStaff(setting, drive.plasmaProjectedProcedures,projectedTypeHours,donorsPerHoursCapacity);
-                    requiredStaff = Math.ceil(driveProcedureCapacity);
+                    requiredStaff = driveProcedureCapacity; //HRP-11547
                     totalDriveProcedureCapacity += driveProcedureCapacity;
                     
                     drive.projectedPlasmaDonors = Math.ceil(requiredStaff * projectedTypeHours);
+
+                    mapResourceQuantity.put(setting.procedureType+'Staff' ,requiredStaff); //HRP-11547
                     
                 }
                 else if (setting.procedureType == Constants.PROCEDURE_TYPE_WB) {
                     driveProcedureCapacity = calculateStaff(setting, drive.wbProjectedProcedures,projectedTypeHours,donorsPerHoursCapacity);
-                    requiredStaff = Math.ceil(driveProcedureCapacity);
-                    mapResourceQuantity.put('noOfWBResources', requiredStaff);
+                    requiredStaff = driveProcedureCapacity; // HRP-11547
+                    //mapResourceQuantity.put('noOfWBResources', requiredStaff);
                     totalDriveProcedureCapacity += driveProcedureCapacity;
                     
-                    drive.projectedWbDonors = Math.ceil(requiredStaff * projectedTypeHours);                
+                    drive.projectedWbDonors = Math.ceil(requiredStaff * projectedTypeHours); 
+                    
+                    mapResourceQuantity.put(setting.procedureType+'Staff' ,requiredStaff); //HRP-11547
                 }
                 else if (setting.procedureType == Constants.PROCEDURE_TYPE_2RBC) {
                     driveProcedureCapacity= calculateStaff(setting, drive.x2rbcProjectedProcedures,projectedTypeHours,donorsPerHoursCapacity);
-                    requiredStaff = Math.ceil(driveProcedureCapacity);
+                    requiredStaff = driveProcedureCapacity; // HRP-11547
                     totalDriveProcedureCapacity += driveProcedureCapacity;
-                    drive.projected2rbcDonors = Math.ceil(requiredStaff * projectedTypeHours);                
-                }           
-                mapResourceQuantity.put(setting.procedureType + '- Capacity ', driveProcedureCapacity);
-                mapResourceQuantity.put(setting.resourceRole + '-' +setting.procedureType , requiredStaff);
+                    drive.projected2rbcDonors = Math.ceil(requiredStaff * projectedTypeHours);  
+                    
+                    mapResourceQuantity.put(setting.procedureType+'Staff' ,requiredStaff); //HRP-11547
+                }      
+
+                /*mapResourceQuantity.put(setting.procedureType + '- Capacity ', driveProcedureCapacity);
+                mapResourceQuantity.put(setting.resourceRole + '-' +setting.procedureType , requiredStaff);*/
         	}
+
+            // HRP-11547 --> Starts Here (1)
+            if(drive.plateletProjectedProcedures > 0)
+            {
+                Decimal donorsPerRoundCapacity = getFixedSiteDonorsCapacity(data, drive, Constants.PROCEDURE_TYPE_PLATELET);
+                Decimal projectedTypeHours = getDrawHoursAdjusted(data, drive, Constants.PROCEDURE_TYPE_PLATELET);  
+
+                Decimal plateletStaff = (drive.plateletProjectedProcedures / drive.plateletRounds / donorsPerRoundCapacity); //HRP-11547
+
+                drive.projectedPlateletDonors = Math.ceil(plateletStaff * projectedTypeHours);
+
+                mapResourceQuantity.put(Constants.PROCEDURE_TYPE_PLATELET+'Staff',plateletStaff);
+
+            }
+            // HRP-11547 --> Ends Here (1)
             mapResourceQuantity.put('Equipment - 2RBC Asset', drive.numberOf2rbcAssets);
         }
-        drive.driveProcedureCapacity = Math.ceil(totalDriveProcedureCapacity);
+
+        // drive.driveProcedureCapacity = Math.ceil(totalDriveProcedureCapacity); Prodcedure capacity calculation logic has been changed as part of HRP-11547
     }   
     
    // HRP - 10456 --> Starts Here
-    /**** Pointn no 11 - Calculate Drive Shift Procudure Capacity ****/
+    /**** Point no 11 - Calculate Drive Shift Procedure Capacity ****/
     static void calculateDriveShiftProcedureCapacityValue(FetchRelatedDriveData.DMLDrive drive, List<FetchRelatedDriveData.DMLDriveShift> driveShifts)
     {
         Decimal driveProcedureCapacity = drive.driveProcedureCapacity;
@@ -486,7 +535,7 @@ public class CreateSkedDrive
                     }
                 }
                 
-                driveShift.procedureCapacity = math.ceil(totalDriveShiftProcedureCapacity);
+                driveShift.procedureCapacity = totalDriveShiftProcedureCapacity.round(System.RoundingMode.HALF_UP);
                 
                 if(remainingCapacityValue < driveShift.procedureCapacity && remainingCapacityValue!= 0)
                 {
@@ -503,39 +552,39 @@ public class CreateSkedDrive
     }
     // HRP - 10456 --> Ends Here
 
-    static decimal getFixedSiteDonorsPerHourCapacity(FetchRelatedDriveData.DMLData data, FetchRelatedDriveData.DMLDrive drive, String procedureType) {
+    static decimal getFixedSiteDonorsCapacity(FetchRelatedDriveData.DMLData data, FetchRelatedDriveData.DMLDrive drive, String staffType) {
         FetchRelatedDriveData.DMLStaffingDecisionMatrix matrix = getStaffingDecisionMatrix(data, drive);
         Decimal donorsPerHourCapacicy = 0;		//  Procedure Type Capacity 
         if (matrix != null) {
-            if (procedureType == Constants.PROCEDURE_TYPE_PLATELET) {
-                donorsPerHourCapacicy = matrix.plateletHourlyCapacity;
+            if (staffType.contains(Constants.PROCEDURE_TYPE_PLATELET)) {
+                donorsPerHourCapacicy = matrix.plateletRoundCapacity; //HRP-11547
             }
-            else if (procedureType == Constants.PROCEDURE_TYPE_PLASMA) {
+            else if (staffType.contains(Constants.PROCEDURE_TYPE_PLASMA)) {
                 donorsPerHourCapacicy = matrix.plasmaHourlyCapacity;
             }
-            else if (procedureType == Constants.PROCEDURE_TYPE_WB) {
+            else if (staffType.contains(Constants.PROCEDURE_TYPE_WB)) {
                 donorsPerHourCapacicy = matrix.wbHourlyCapacity;
             }
-            else if (procedureType == Constants.PROCEDURE_TYPE_2RBC) {
+            else if (staffType.contains(Constants.PROCEDURE_TYPE_2RBC)) {
                 donorsPerHourCapacicy = matrix.x2rbcHourlyCapacity;
             }
         }        
         return donorsPerHourCapacicy;
     }
     
-    static decimal getDrawHoursAdjusted(FetchRelatedDriveData.DMLData data, FetchRelatedDriveData.DMLDrive drive, String procedureType) {
+    static decimal getDrawHoursAdjusted(FetchRelatedDriveData.DMLData data, FetchRelatedDriveData.DMLDrive drive, String staffType) {
         DateTime driveStart = DateTime.newInstance(drive.driveDate, drive.startTime);
         DateTime driveEnd = DateTime.newInstance(drive.driveDate, drive.endTime);       
         
-        if (procedureType == Constants.PROCEDURE_TYPE_PLATELET) {
+        if (staffType.contains(Constants.PROCEDURE_TYPE_PLATELET)) {
             driveStart = driveStart;
             driveEnd = driveEnd;
         }
-        else if (procedureType == Constants.PROCEDURE_TYPE_PLASMA) {
+        else if (staffType.contains(Constants.PROCEDURE_TYPE_PLASMA)) {
             driveStart = driveStart.addMinutes(60);
             driveEnd = driveEnd.addMinutes(-50);
         }
-        else if (procedureType == Constants.PROCEDURE_TYPE_WB) {
+        else if (staffType.contains(Constants.PROCEDURE_TYPE_WB)) {
             driveStart = driveStart.addMinutes(60);
             FetchRelatedDriveData.DMLCollectionOperation coRec = data.mapCollectionOperation.get(drive.collectionOperationId);
             if(!string.isBlank(coRec.skipLastAppointmentFor) && coRec.skipLastAppointmentFor.contains(drive.typeOfDrive)){
@@ -544,7 +593,7 @@ public class CreateSkedDrive
                 driveEnd = driveEnd;
             }
         }
-        else if (procedureType == Constants.PROCEDURE_TYPE_2RBC) {
+        else if (staffType.contains(Constants.PROCEDURE_TYPE_2RBC)) {
             driveStart = driveStart.addMinutes(60);
             driveEnd = driveEnd.addMinutes(-30);
         }
@@ -558,35 +607,120 @@ public class CreateSkedDrive
         decimal projectedProcedure,
         decimal projectedTypeHours,
         decimal donorsPerHoursCapacity
-    ){
+    ) {
+        
         decimal requiredStaff = projectedProcedure / (1 - setting.qns / 100) / (1 - setting.deferral / 100) / projectedTypeHours / donorsPerHoursCapacity;
         return requiredStaff;
     }
+
     /*** Point no 5b ***/
-    static void calculateApheresisChargeQuantity (FetchRelatedDriveData.DMLData data, FetchRelatedDriveData.DMLDrive drive) {
-        if(drive.totalProceduresProjected == NULL){
-            return;
-        }              
-        decimal totalStaff = 0;
-        System.debug(mapResourceQuantity);
-        for(String role: mapResourceQuantity.keySet()){
-            if(role.contains(Constants.APHERESIS) && mapResourceQuantity.containsKey(role)){
-                totalStaff += mapResourceQuantity.get(role);
-				}
+    static map<String, Decimal> calculateTotalStaffQuantity (FetchRelatedDriveData.DMLData data, FetchRelatedDriveData.DMLDrive drive)
+    {
+        if(drive.totalProceduresProjected != NULL)
+        {          
+            Decimal totalStaff = 0;
+
+            for(String role: mapResourceQuantity.keySet())
+            {
+                if(role.contains('Staff')) // HRP-11547
+                {
+                    totalStaff += mapResourceQuantity.get(role);
+                }
+            }
+           
+            Decimal numberOfApheresisCharge = 1;  
+            totalStaff = Math.round(totalStaff); // HRP-11547
+            mapResourceQuantity.put(Constants.APHERESIS , totalStaff);
+            mapResourceQuantity.put(Constants.APHERESIS_CHARGE , numberOfApheresisCharge);         
+            mapResourceQuantity.put('staffSetup' , totalStaff+numberOfApheresisCharge);
         }
-        //decimal numberOfApheresisCharge = Math.ceil(totalStaff / 9);
-        decimal numberOfApheresisCharge = 1;    
-        mapResourceQuantity.put(Constants.APHERESIS_CHARGE , numberOfApheresisCharge);
-        mapResourceQuantity.put('Quantity' , totalStaff);
-        mapResourceQuantity.put('staffSetup' , totalStaff+numberOfApheresisCharge);
-    }    
+
+        return mapResourceQuantity;
+    }
+    
+    // HRP-11547 --> Starts Here (2)
+
+    static Map<String, Decimal> getFSPPTypeAndDeferalQnsValue(FetchRelatedDriveData.DMLDrive drive) {
+        Map<String, Decimal> fsppTypeVsValuesMap = new Map<String,Decimal>();
+        if(drive.account.fixedSiteProcedureProjections != NULL) {
+        	for (FetchRelatedDriveData.DMLFixedSiteProcedureProjection setting : drive.account.fixedSiteProcedureProjections) {
+                if(setting.procedureType != Constants.PROCEDURE_TYPE_PLATELET) {
+                    if((setting.effectiveStartDate == NULL || setting.effectiveStartDate <= drive.driveDate) 
+                        && (setting.effectiveEndDate == NULL || setting.effectiveEndDate >= drive.driveDate)) {
+                        fsppTypeVsValuesMap.put('Deferral_'+setting.procedureType+'Staff', setting.deferral / 100);
+                        fsppTypeVsValuesMap.put('QNS_'+setting.procedureType+'Staff', setting.qns / 100);
+                    }
+                }
+            }
+        }
+        return fsppTypeVsValuesMap;
+    }
+
+    public static void calculateDriveProcedureCapacity(FetchRelatedDriveData.DMLData data, 
+                                                       FetchRelatedDriveData.DMLDrive drive,
+                                                       Map<String, Decimal> mapResourceQuantity,
+                                                       Map<String, Decimal> fsppTypeAndValuesMap)
+    {
+        
+        Decimal individualProcedureCapacity = 0;
+
+        for(String staff : mapResourceQuantity.keySet())
+        {
+            if(staff.contains('Staff'))
+            {
+                Decimal donorsPerHoursCapacity = getFixedSiteDonorsCapacity(data, drive, staff);
+
+                Decimal projectedTypeHours = getDrawHoursAdjusted(data, drive, staff);
+                        
+                individualProcedureCapacity += getIndividualProcedureCapacity(drive.plateletRounds, staff, mapResourceQuantity.get(staff),fsppTypeAndValuesMap, projectedTypeHours, donorsPerHoursCapacity);
+            
+            }
+        }
+                  
+        drive.driveProcedureCapacity = individualProcedureCapacity.round(System.RoundingMode.HALF_UP);
+       
+    }
+
+    static Decimal getIndividualProcedureCapacity(Decimal plateletRounds, String staff, Decimal noOfStaff, Map<String,Decimal> fsppTypeAndValuesMap, Decimal projectedTypeHours, Decimal donorsPerHoursCapacity)
+    {
+        Decimal deferralValue = 0;
+        Decimal qnsValue = 0; 
+        Decimal procedureCapacity = 0;
+        
+        for(String fspp : fsppTypeAndValuesMap.keySet())
+        {             
+            if(fspp.contains(staff) && fspp.contains('Deferral'))
+            {
+                deferralValue = fsppTypeAndValuesMap.get(fspp);
+            }
+            else if(fspp.contains(staff) && fspp.contains('QNS'))
+            {
+                qnsValue = fsppTypeAndValuesMap.get(fspp);
+            }
+        }
+
+        if(!staff.contains(Constants.PROCEDURE_TYPE_PLATELET))  
+        {
+            procedureCapacity = (noOfStaff * (1 - deferralValue) * (1 - qnsValue) * projectedTypeHours * donorsPerHoursCapacity).setScale(2);
+        }
+        else{
+            procedureCapacity = (noOfStaff * plateletRounds * donorsPerHoursCapacity).setScale(2);
+        }
+
+        mapResourceQuantity.put(staff+'Capacity',procedureCapacity);
+
+
+        return procedureCapacity;
+
+    }
+
+    //HRP-11547 --> Ends here (2)
+    
     
     /*********************************************************** Staffing Decision Matrix ***********************************************************/
     static FetchRelatedDriveData.DMLStaffingDecisionMatrix getStaffingDecisionMatrix(FetchRelatedDriveData.DMLData data, FetchRelatedDriveData.DMLDrive drive) {
         FetchRelatedDriveData.DMLStaffingDecisionMatrix matrix;
-        
         for (FetchRelatedDriveData.DMLCollectionOperationSdm collectionOperationSdm : data.collectionOperationSdms) {
-            
             if (collectionOperationSdm.collectionOperationId == drive.collectionOperationId
                 &&  collectionOperationSdm.staffingDecisionMatrix.driveType == drive.typeOfDrive
                 && collectionOperationSdm.effectiveStartDate <= drive.driveDate 
@@ -631,11 +765,11 @@ public class CreateSkedDrive
             job.equipmentSubtype = '2RBC Asset'; // HRP- 10456
             driveShift.jobs.add(job);
         }       
-        if (mapResourceQuantity.get('Quantity') > 0) {
+        if (mapResourceQuantity.get(Constants.APHERESIS) > 0) {
             FetchRelatedDriveData.DMLJob job = new FetchRelatedDriveData.DMLJob();
             job.driveSiteId = driveShift.drive.driveSiteId;
             job.resourceRole = Constants.APHERESIS;
-            job.quantity = mapResourceQuantity.get('Quantity');
+            job.quantity = mapResourceQuantity.get(Constants.APHERESIS);
             driveShift.jobs.add(job);
         }
         if (mapResourceQuantity.get(Constants.APHERESIS_CHARGE) > 0) {
@@ -660,44 +794,6 @@ public class CreateSkedDrive
         driveShift.vehiclesNeeded = 0;
         return driveShift.jobs; // HRP-11295
     }
-    
-    /**** POint no 4 ***/
-    /*static void splitProjectedProcedure(Decimal noOfshifts, FetchRelatedDriveData.DMLDrive drive, FetchRelatedDriveData.DMLDriveShift driveShift){
-        Decimal wbProjectedProcedure = 0;
-        Decimal xrbcProjectedProcedure = 0;
-        Decimal plateletProjectedProcedure = 0;
-        Decimal plasmaProjectedProcedure = 0;
-        Decimal totalProcedureProjected;
-        Decimal totalProductsProjected;
-        
-        driveShift.wbProjectedProcedure = drive.wbProjectedProcedures/drive.plateletRounds*noOfshifts;
-        driveShift.xrbcProjectedProcedure = drive.x2rbcProjectedProcedures/drive.plateletRounds*noOfshifts;
-        driveShift.plateletProjectedProcedure =drive.plateletProjectedProcedures != null ? drive.plateletProjectedProcedures/drive.plateletRounds*noOfshifts : 0;
-        driveShift.plasmaProjectedProcedure = drive.plasmaProjectedProcedures/drive.plateletRounds*noOfshifts;
-        
-        driveShift.totalProjectedProcedure = driveShift.xrbcProjectedProcedure + driveShift.wbProjectedProcedure + 
-            driveShift.plasmaProjectedProcedure + driveShift.plateletProjectedProcedure;		
-        driveShift.totalProductsProjected = driveShift.xrbcProjectedProcedure * 2 + driveShift.wbProjectedProcedure + 
-            driveShift.plasmaProjectedProcedure + driveShift.plateletProjectedProcedure;	
-        
-        wbProjectedProcedure += driveShift.wbProjectedProcedure;
-        xrbcProjectedProcedure += driveShift.xrbcProjectedProcedure;
-        plateletProjectedProcedure += driveShift.plateletProjectedProcedure;
-        plasmaProjectedProcedure +=driveShift.plasmaProjectedProcedure;        
-        
-        if(noOfshifts == 3){
-            driveShift.wbProjectedProcedure = drive.wbProjectedProcedures - wbProjectedProcedure;
-            driveShift.xrbcProjectedProcedure = drive.x2rbcProjectedProcedures - xrbcProjectedProcedure ;
-            driveShift.plateletProjectedProcedure =drive.plateletProjectedProcedures - plateletProjectedProcedure;
-            driveShift.plasmaProjectedProcedure =drive.plasmaProjectedProcedures - plasmaProjectedProcedure;
-            
-            driveShift.totalProjectedProcedure =driveShift.xrbcProjectedProcedure + driveShift.wbProjectedProcedure + 
-                driveShift.plasmaProjectedProcedure + driveShift.plateletProjectedProcedure;
-            driveShift.totalProductsProjected = driveShift.xrbcProjectedProcedure * 2 + driveShift.wbProjectedProcedure + 
-                driveShift.plasmaProjectedProcedure + driveShift.plateletProjectedProcedure;
-        }  
-    }*/
-    
       
    static void updateShiftFixedSiteSetup(FetchRelatedDriveData.DMLDriveShift driveShift, Integer shiftNo) {
         driveShift.staffSetup  = mapResourceQuantity.get('staffSetup');
@@ -722,15 +818,13 @@ public class CreateSkedDrive
     	Decimal plasmaProjectedProcedurePerShift = Math.ceil(drive.plasmaProjectedProcedures/drive.plateletRounds*noOfDriveShift);
         
         List<FetchRelatedDriveData.DMLDriveShift> driveShifts = new List<FetchRelatedDriveData.DMLDriveShift>();
-        System.debug('drive.plateletRounds--> '+drive.plateletRounds);
-        if(true)
-        { 
+        
+        if(true) { 
             integer firstShiftRounds = integer.valueOf(Math.ceil(drive.plateletRounds / noOfDriveShift));
             integer remainingRounds = integer.valueOf(Math.ceil(drive.plateletRounds));
             integer hourPerRound = 3;
             
-            for (integer i = 0; i < noOfDriveShift; i++) {
-               
+            for (integer i = 0; i < noOfDriveShift; i++) {      
                 FetchRelatedDriveData.DMLDriveShift driveShift= new FetchRelatedDriveData.DMLDriveShift(inputDriveShift, i+1);
                 
                 // HRP - 10012 ---> Start
@@ -752,7 +846,6 @@ public class CreateSkedDrive
 				
                 // HRP - 10012 ---> End
 
-                System.debug(driveShift);
                 DateTime drawHoursStart, drawHoursEnd;
                 decimal plateletRounds;
                 
@@ -772,130 +865,151 @@ public class CreateSkedDrive
                 driveShift.startTime = drawHoursStart.timeGmt();
                 driveShift.drawEnd = drawHoursEnd;
                 driveShift.endTime = drawHoursEnd.timeGmt(); 
-				
 				updateShiftFixedSiteSetup(driveShift, i);
                 driveShifts.add(driveShift);
             }
+
             /********* POint no 6e *********/
             // HRP-10456 --> Starts Here
             driveStaffingComplementModel staffingComplement = calculateVolunteerDonorAmbassadorValue(data,drive,driveShifts); 
-
+            DriveGenerationUtil.TravelTimeSettingModel travelTimeModel = getTravelTimeSpecificInfo(data,drive); //HRP-11908
             Integer shiftCount = 0;
-
             List<FetchRelatedDriveData.DMLJob> jobList = new List<FetchRelatedDriveData.DMLJob>(); // HRP-11295
 
-            List<FetchRelatedDriveData.DMLSlot> allSlots = inputDriveShift.slots;
-
-            for (FetchRelatedDriveData.DMLDriveShift driveShift : driveShifts)
-            {
+            for (FetchRelatedDriveData.DMLDriveShift driveShift : driveShifts) {
+                Map<String, DriveGenerationUtil.TimeConfigurationModel> timeConfig = prepareTimeConfigurationModel(data, drive, shiftCount, noOfDriveShift); //HRP-11908
                 jobList.addAll(populateDriveShiftJobs(data, driveShift,staffingComplement,shiftCount)); // HRP-11295
-                populateTravelTime(data, drive, driveShift); 
                 updateShiftFixedSiteSetup(driveShift, shiftCount);
-                applyRoleTimeForMultiDriveShift(data, drive, driveShift,shiftCount, noOfDriveShift); // HRP - 10456
+                populateTravelTimeOnJobs(data, drive, driveShift, travelTimeModel, timeConfig); //HRP-11908
+                applyRoleTimeForMultiDriveShift(data, driveShift, timeConfig); // HRP-11908
                 populateShiftTime(data, driveShift, drive, shiftCount, noOfDriveShift); // HRP-11295
                 shiftCount++;
+                // HRP-10456 --> Ends Here
 
-            // HRP-10456 --> Ends Here
-
-            // HRP-11295 --> Starts Here
-            if(shiftCount == noOfDriveShift)
-            {
-                updateEquipmentJobFinishTime(jobList); 
-            }
-            // HRP-11295 --> Ends Here
-
-                /*********** POint no 6f and 6g *********/                
-                populateLunchBreakTime(data, drive, driveShift);
-                
-                /*********** POint no 7 *********/
-                List<FetchRelatedDriveData.DMLSlot> wbslots = new List<FetchRelatedDriveData.DMLSlot>();
-                List<FetchRelatedDriveData.DMLSlot> wbslotsAfterReduce = new List<FetchRelatedDriveData.DMLSlot>();
-                List<FetchRelatedDriveData.DMLSlot> rbcSlot = new List<FetchRelatedDriveData.DMLSlot>();
-                List<FetchRelatedDriveData.DMLSlot> plasmaSlot = new List<FetchRelatedDriveData.DMLSlot>();
-                List<FetchRelatedDriveData.DMLSlot> plateletSlot = new List<FetchRelatedDriveData.DMLSlot>();
-                
-                for (FetchRelatedDriveData.DMLSlot slot : allSlots) {
-                    Datetime driveShiftdrawStart = skedDateTimeUtils.switchTimezone(driveShift.drawStart,TimeZone.getTimeZone('GMT').getId(),drive.driveSite.timezoneSidId);
-                    Datetime driveShiftdrawEnd = skedDateTimeUtils.switchTimezone(driveShift.drawEnd,TimeZone.getTimeZone('GMT').getId(),drive.driveSite.timezoneSidId);
-                    
-                    if (driveShiftdrawStart <= slot.startTime && slot.startTime < driveShiftdrawEnd) {
-                        if(slot.slotType == Constants.APPOINTMENT_TYPE_WB){
-                           // wbslots.add(slot);
-                        }else if(slot.slotType == Constants.PROCEDURE_TYPE_2RBC){
-                            rbcSlot.add(slot);
-                        }else if(slot.slotType == Constants.PROCEDURE_TYPE_PLASMA){
-                            plasmaSlot.add(slot);
-                        }else if(slot.slotType == Constants.PROCEDURE_TYPE_PLATELET){
-                            plateletSlot.add(slot);
-                        }
-                    }
+                // HRP-11295 --> Starts Here
+                if(shiftCount == noOfDriveShift) {
+                    updateEquipmentJobFinishTime(jobList); 
                 }
-                driveShift.slots.addAll(rbcSlot);
-                driveShift.slots.addAll(plasmaSlot);
-                driveShift.slots.addAll(plateletSlot);
-                wbslots = generateWbSlots (data, drive, driveShift, driveShifts.size());
-                //wbslotsAfterReduce = applylunchBreakSlotReductionOnWb(wbslots, drive, data, driveShift); HRP - 10456
-                driveShift.slots.addAll(wbslots);
-                driveShift.defaultPlateletSlots = plateletSlot != NULL ? plateletSlot.size() : 0;
-                driveShift.defaultPlasmaSlots = plasmaSlot != NULL ? plasmaSlot.size() : 0;
-                driveShift.default2rbcSlots = rbcSlot != NULL ? rbcSlot.size() : 0;
-                driveShift.defaultWbSlots = wbslots != NULL ? wbslots.size() : 0; // HRP - 10456
+                // HRP-11295 --> Ends Here
+
+                populateLunchBreakTime(data, drive, driveShift);
+                generateShiftSlots(data, drive, driveShift, noOfDriveShift);
             }
-            
         }
         return driveShifts;
     }
     
     /*********************************************************** Role Time Data ***********************************************************/
-    
-    // HRP-11046 (Changed the method parameters to incorporate changes for 11046)
-    static void applyRoleTimeForMultiDriveShift(FetchRelatedDriveData.DMLData data, 
-                                                    FetchRelatedDriveData.DMLDrive drive, 
-                                                    FetchRelatedDriveData.DMLDriveShift driveShift,
-                                                    Integer shiftCount,
-                                                    Decimal noOfDriveShift)
-    {
-        decimal breakdownTimeThreshold = drive.collectionOperation.breakdownTimeThreshold;
-        decimal setupTimeThreshold = drive.collectionOperation.setupTimeThreshold;
-        
-        if (driveShift.jobs != NULL && !driveShift.jobs.isEmpty())
-        {
-            applyRoleTimeForSingleDriveShift(data, drive, driveShift);
 
-            // HRP-11046 --> Starts Here
-            if(noOfDriveShift > 1)
-            {    
-                for (FetchRelatedDriveData.DMLJob job : driveShift.jobs)
-                {
-                    if (!string.isBlank(job.resourceRole))
-                    {
-                        
-                        if (shiftCount > 0)
-                        {
-                            if (job.setupTime > setupTimeThreshold)
-                            {
-                                job.setupTime = setupTimeThreshold;
-                            }
-                        }
-                        if (shiftCount <noOfDriveShift - 1) 
-                        {
-                            if (job.breakdownTime > breakdownTimeThreshold)
-                            {
-                                job.breakdownTime = breakdownTimeThreshold;
-                            }
-                        }
-                        
+    // HRP-11908 --> Starts Here 
+    private static String getResourceRoleGroupUponResourceRole(FetchRelatedDriveData.DMLData data, String resourceRole) {
+        return data.map_resourceRole_resourceRoleGroup.get(resourceRole);
+    }
+
+    private static Map<String, DriveGenerationUtil.TimeConfigurationModel> prepareTimeConfigurationModel(
+        FetchRelatedDriveData.DMLData data, 
+        FetchRelatedDriveData.DMLDrive drive,
+        Integer shiftCount,
+        Decimal noOfDriveShift
+    ) {
+        Map<string, FetchRelatedDriveData.DMLRoleTimeDetail> map_resourceRoleGroup_roleTimeDetail = reduceMapRoleTimeDetailByDrive(data, drive);
+        Map<string, List<FetchRelatedDriveData.DMLRoleTimeVariance>> map_resourceRoleGroup_roleTimeVariance = reduceMapRoleTimeVarianceByDrive(data, drive);
+        Map<String, DriveGenerationUtil.TimeConfigurationModel> map_resourceRoleGroup_timeConfig = generateTimeConfiguration(data, drive, shiftCount, noOfDriveShift, map_resourceRoleGroup_roleTimeDetail, map_resourceRoleGroup_roleTimeVariance);
+        return map_resourceRoleGroup_timeConfig;
+    }
+
+    private static Map<String, DriveGenerationUtil.TimeConfigurationModel> generateTimeConfiguration(
+        FetchRelatedDriveData.DMLData data, 
+        FetchRelatedDriveData.DMLDrive drive,
+        Integer shiftCount,
+        Decimal noOfDriveShift,
+        Map<string, FetchRelatedDriveData.DMLRoleTimeDetail> map_resourceRoleGroup_roleTimeDetail,
+        Map<string, List<FetchRelatedDriveData.DMLRoleTimeVariance>> map_resourceRoleGroup_roleTimeVariance
+    ) {
+
+        Decimal breakdownTimeThreshold = drive.collectionOperation.breakdownTimeThreshold;
+        Decimal setupTimeThreshold = drive.collectionOperation.setupTimeThreshold;
+        Map<String, DriveGenerationUtil.TimeConfigurationModel> map_resourceRoleGroup_timeConfig = new Map<String, DriveGenerationUtil.TimeConfigurationModel>();
+        for(String resourceRoleGroup : data.resourceRoleGroups) {
+            DriveGenerationUtil.TimeConfigurationModel config = new DriveGenerationUtil.TimeConfigurationModel();
+            config.resourceRoleGroup = resourceRoleGroup;
+            if(map_resourceRoleGroup_roleTimeDetail.containsKey(resourceRoleGroup)) {
+                config.leadTime = map_resourceRoleGroup_roleTimeDetail.get(resourceRoleGroup).leadTime != NULL ? map_resourceRoleGroup_roleTimeDetail.get(resourceRoleGroup).leadTime : 0;
+                config.setupTime = map_resourceRoleGroup_roleTimeDetail.get(resourceRoleGroup).setupTime!= NULL ? map_resourceRoleGroup_roleTimeDetail.get(resourceRoleGroup).setupTime : 0;
+                config.breakDownTime = map_resourceRoleGroup_roleTimeDetail.get(resourceRoleGroup).breakdownTime!= NULL ? map_resourceRoleGroup_roleTimeDetail.get(resourceRoleGroup).breakdownTime : 0;
+                config.wrapUpTime = map_resourceRoleGroup_roleTimeDetail.get(resourceRoleGroup).wrapUpTime!= NULL ? map_resourceRoleGroup_roleTimeDetail.get(resourceRoleGroup).wrapUpTime : 0;
+                config.siteLogisticsTo = map_resourceRoleGroup_roleTimeDetail.get(resourceRoleGroup).siteLogisticsTo!= NULL ? map_resourceRoleGroup_roleTimeDetail.get(resourceRoleGroup).siteLogisticsTo : 0; //HRP-11226
+                config.siteLogisticsBack = map_resourceRoleGroup_roleTimeDetail.get(resourceRoleGroup).siteLogisticsBack!= NULL ? map_resourceRoleGroup_roleTimeDetail.get(resourceRoleGroup).siteLogisticsBack : 0; //HRP-11226
+            }
+
+            if(map_resourceRoleGroup_roleTimeVariance.containsKey(resourceRoleGroup)) {
+                List<FetchRelatedDriveData.DMLRoleTimeVariance> roleTimeVariances = map_resourceRoleGroup_roleTimeVariance.get(resourceRoleGroup);
+                for (FetchRelatedDriveData.DMLRoleTimeVariance roleTimeVariance : roleTimeVariances) {
+                    Decimal amount = roleTimeVariance.varianceAmount;
+                    Set<string> appliesTo = new Set<string>();
+                    appliesTo.addAll(roleTimeVariance.varianceAppliesTo.split(';'));
+                    if (roleTimeVariance.bufferType == 'Subtract') {
+                        amount = -1 * amount;
                     }
+
+                    if (appliesTo.contains('Lead Time')) {
+                        config.leadTime += amount;
+                    }
+                    if (appliesTo.contains('Setup Time')) {
+                        config.setupTime += amount;
+                    }
+                    if (appliesTo.contains('Breakdown Time')) {
+                        config.breakdownTime += amount;
+                    }
+                    if (appliesTo.contains('Wrap-up Time')) {
+                        config.wrapUpTime += amount;
+                    }
+                    if ((appliesTo.contains('Travel Time To'))) { 
+                        config.travelTime += amount;
+                    }
+                    if ((appliesTo.contains('Travel Time From'))) {
+                        config.travelTime2 += amount;
+                    }
+                    if (appliesTo.contains('Site Logistics To')) { //HRP-11226 start
+                        config.siteLogisticsTo += amount;
+                    }
+                    if (appliesTo.contains('Site Logistics Back')) {
+                        config.siteLogisticsBack += amount;
+                    } //HRP-11226 end 
                 }
             }
-            // HRP-11046 --> Ends Here
+            if(shiftCount > 0) {
+                if(config.setupTime > setupTimeThreshold) {
+                    config.setupTime = setupTimeThreshold;
+                }
+            }
+            if(shiftCount < noOfDriveShift - 1) {
+                if(config.breakdownTime > breakdownTimeThreshold) {
+                    config.breakdownTime = breakdownTimeThreshold;
+                }
+            }
+            config = compareAndAdjustTimeConfiguration(config);
+            map_resourceRoleGroup_timeConfig.put(config.resourceRoleGroup, config); 
+        }
+        return map_resourceRoleGroup_timeConfig;
+    }
+    
+    // HRP-11046 (Changed the method parameters to incorporate changes for 11046)
+    static void applyRoleTimeForMultiDriveShift(
+        FetchRelatedDriveData.DMLData data, 
+        FetchRelatedDriveData.DMLDriveShift driveShift, 
+        Map<String, DriveGenerationUtil.TimeConfigurationModel> timeConfig
+    ) {
+        if (driveShift.jobs != NULL && !driveShift.jobs.isEmpty()) {
+            applyRoleTimeForSingleDriveShift(data, driveShift, timeConfig);
         }
     }
     
-    static void applyRoleTimeForSingleDriveShift(FetchRelatedDriveData.DMLData data, FetchRelatedDriveData.DMLDrive drive, FetchRelatedDriveData.DMLDriveShift driveShift) {
-        Map<string, FetchRelatedDriveData.DMLRoleTimeDetail> map_resourceRole_roleTimeDetail = reduceMapRoleTimeDetailByDrive(data, drive);
-        Map<string, List<FetchRelatedDriveData.DMLRoleTimeVariance>> map_resourceRole_roleTimeVariance = reduceMapRoleTimeVarianceByDrive(data, drive);
-        
+    static void applyRoleTimeForSingleDriveShift(
+        FetchRelatedDriveData.DMLData data,
+        FetchRelatedDriveData.DMLDriveShift driveShift, 
+        Map<String, DriveGenerationUtil.TimeConfigurationModel> timeConfig
+    ) {
         for (FetchRelatedDriveData.DMLJob job : driveShift.jobs) {
             if (!string.isBlank(job.resourceRole)) {
                 job.leadTime = 0;
@@ -904,104 +1018,75 @@ public class CreateSkedDrive
                 job.wrapUpTime = 0;
                 job.siteLogisticsTo = 0; //HRP-11226
                 job.siteLogisticsBack = 0; //HRP-11226
-                
-                // added
-                job.travelTime = job.travelTime == NULL ? 0 : job.travelTime;
-                job.travelTime2 = job.travelTime2 == NULL ? 0 : job.travelTime2;
-                
-                
-                if (map_resourceRole_roleTimeDetail.containsKey(job.resourceRole)) {
-                    FetchRelatedDriveData.DMLRoleTimeDetail roleTimeDetail = map_resourceRole_roleTimeDetail.get(job.resourceRole);
-                    job.leadTime += roleTimeDetail.leadTime != NULL ? roleTimeDetail.leadTime : 0;
-                    job.breakdownTime += roleTimeDetail.breakdownTime != NULL ? roleTimeDetail.breakdownTime : 0;
-                    job.setupTime += roleTimeDetail.setupTime != NULL ? roleTimeDetail.setupTime : 0;
-                    job.wrapUpTime += roleTimeDetail.wrapUpTime != NULL ? roleTimeDetail.wrapUpTime : 0;
-                    job.siteLogisticsBack += roleTimeDetail.siteLogisticsBack != NULL ? roleTimeDetail.siteLogisticsBack : 0; // HRP-11226
-                    job.siteLogisticsTo += roleTimeDetail.siteLogisticsTo != NULL ? roleTimeDetail.siteLogisticsTo : 0; //HRP-11226
-                }
-                
-                if (map_resourceRole_roleTimeVariance.containsKey(job.resourceRole)) {
-                    List<FetchRelatedDriveData.DMLRoleTimeVariance> roleTimeVariances = map_resourceRole_roleTimeVariance.get(job.resourceRole);
-                    Boolean isTravelTimeIncludedForAllRoles = (drive.collectionOperation.travelTimeIncludedFixed == 'All Roles');
-                    Boolean skipTravelTime = drive.collectionOperation.noTravelTime; //HRP-11419
-                    for (FetchRelatedDriveData.DMLRoleTimeVariance roleTimeVariance : roleTimeVariances) {
-                        decimal amount = roleTimeVariance.varianceAmount;
-                        Set<string> appliesTo = new Set<string>();
-                        appliesTo.addAll(roleTimeVariance.varianceAppliesTo.split(';'));
-                        if (roleTimeVariance.bufferType == 'Subtract') {
-                            amount = -1 * amount;
-                        }
-                        if (appliesTo.contains('Lead Time')) {
-                            job.leadTime += amount;
-                        }
-                        if (appliesTo.contains('Setup Time')) {
-                            job.setupTime += amount;
-                        }
-                        if (appliesTo.contains('Breakdown Time')) {
-                            job.breakdownTime += amount;
-                        }
-                        if (appliesTo.contains('Wrap-up Time')) {
-                            job.wrapUpTime += amount;
-                        }
-                        if ((appliesTo.contains('Travel Time To')) && (isTravelTimeIncludedForAllRoles) && (!skipTravelTime)) { //HRP-11419
-                            job.travelTime += amount;
-                        }
-                        if ((appliesTo.contains('Travel Time From')) && (isTravelTimeIncludedForAllRoles) && (!skipTravelTime)) { //HRP-11419
-                            job.travelTime2 += amount;
-                        }  
-                        if (appliesTo.contains('Site Logistics To')) //HRP-11226 start
-                        {
-                            job.siteLogisticsTo += amount;
-                        }
-                        if (appliesTo.contains('Site Logistics Back'))
-                        {
-                            job.siteLogisticsBack += amount;
-                        } //HRP-11226 end
-                    }
+                if (!string.isBlank(job.resourceRole) && timeConfig.containsKey(getResourceRoleGroupUponResourceRole(data, job.resourceRole))) {
+                    DriveGenerationUtil.TimeConfigurationModel config = timeConfig.get(getResourceRoleGroupUponResourceRole(data, job.resourceRole)); //HRP-11908
+                    job.leadTime = config.leadTime != NULL ? config.leadTime : 0;
+                    job.setupTime = config.setupTime != NULL ? config.setupTime : 0;
+                    job.breakdownTime = config.breakdownTime != NULL ? config.breakdownTime : 0;
+                    job.wrapUpTime = config.wrapUpTime != NULL ? config.wrapUpTime : 0;
+                    job.siteLogisticsTo = config.siteLogisticsTo != NULL ? config.siteLogisticsTo : 0; //HRP-11226
+                    job.siteLogisticsBack = config.siteLogisticsBack != NULL ? config.siteLogisticsBack : 0; //HRP-11226
                 }
             }
-        }
+        }          
     }
-    
+
+    static DriveGenerationUtil.TimeConfigurationModel compareAndAdjustTimeConfiguration(DriveGenerationUtil.TimeConfigurationModel timeConfig) {
+        if(timeConfig != NULL) {
+            timeConfig.leadTime = Math.max(0, timeConfig.leadTime);
+            timeConfig.setupTime = Math.max(0, timeConfig.setupTime);
+            timeConfig.breakdownTime = Math.max(0, timeConfig.breakdownTime);
+            timeConfig.wrapUpTime = Math.max(0, timeConfig.wrapUpTime);
+            timeConfig.travelTime = Math.max(0, timeConfig.travelTime);
+            timeConfig.travelTime2 = Math.max(0, timeConfig.travelTime2);
+            timeConfig.siteLogisticsTo = Math.max(0, timeConfig.siteLogisticsTo);
+            timeConfig.siteLogisticsBack = Math.max(0, timeConfig.siteLogisticsBack);
+        }
+        return timeConfig;
+    }
+    // HRP-11908 --> Ends Here
+
     static Map<string, List<FetchRelatedDriveData.DMLRoleTimeVariance>> reduceMapRoleTimeVarianceByDrive(FetchRelatedDriveData.DMLData data, FetchRelatedDriveData.DMLDrive drive) {
-        Map<string, List<FetchRelatedDriveData.DMLRoleTimeVariance>> map_resourceRole_roleTimeVariance = new Map<string, List<FetchRelatedDriveData.DMLRoleTimeVariance>>();
+        Map<string, List<FetchRelatedDriveData.DMLRoleTimeVariance>> map_resourceRoleGroup_roleTimeVariance = new Map<string, List<FetchRelatedDriveData.DMLRoleTimeVariance>>();
         for (FetchRelatedDriveData.DMLRoleTimeVariance roleTimeVariance : data.roleTimeVariances) {
             for (string varianceResourceRoleGroup : roleTimeVariance.resourceRoleGroups) {
                 boolean isValid = roleTimeVariance.siteId == drive.driveSiteId
                     && roleTimeVariance.effectiveStartDate <= drive.driveDate
                     && roleTimeVariance.effectiveEndDate >= drive.driveDate;
+                /*
+                * HRP-12738 changes stats here
+                */
+                if(isValid && (roleTimeVariance.daysOfWeek.isEmpty() || !roleTimeVariance.daysOfWeek.contains(drive.driveDay))){
+                    isValid = false;
+                }
+                /*
+                * HRP-12738 changes ends here
+                */
                 if (isValid) {
-                    FetchRelatedDriveData.DMLResourceRoleGroup resourceRoleGroup = data.map_group_resourceRoles.get(varianceResourceRoleGroup);
-                    for (string resourceRole : resourceRoleGroup.resourceRoles) {
-                        List<FetchRelatedDriveData.DMLRoleTimeVariance> variances;
-                        if (map_resourceRole_roleTimeVariance.containsKey(resourceRole)) { // HRP-11226 start
-                            //variances = new List<FetchRelatedDriveData.DMLRoleTimeVariance>();
-                            if(!map_resourceRole_roleTimeVariance.get(resourceRole).isEmpty()){
-                                variances = map_resourceRole_roleTimeVariance.get(resourceRole);
-                                variances.add(roleTimeVariance);
-                                map_resourceRole_roleTimeVariance.put(resourceRole, variances);
-                            } else{
-                                variances = new List<FetchRelatedDriveData.DMLRoleTimeVariance>();
-                                variances.add(roleTimeVariance);
-                                map_resourceRole_roleTimeVariance.put(resourceRole, variances);
-                            }
-                        }
-                        else {
+                    List<FetchRelatedDriveData.DMLRoleTimeVariance> variances;
+                    if (map_resourceRoleGroup_roleTimeVariance.containsKey(varianceResourceRoleGroup)) { // HRP-11226 start
+                        if(!map_resourceRoleGroup_roleTimeVariance.get(varianceResourceRoleGroup).isEmpty()){
+                            variances = map_resourceRoleGroup_roleTimeVariance.get(varianceResourceRoleGroup);
+                            variances.add(roleTimeVariance);
+                            map_resourceRoleGroup_roleTimeVariance.put(varianceResourceRoleGroup, variances);
+                        } else{
                             variances = new List<FetchRelatedDriveData.DMLRoleTimeVariance>();
                             variances.add(roleTimeVariance);
-                            map_resourceRole_roleTimeVariance.put(resourceRole, variances);
+                            map_resourceRoleGroup_roleTimeVariance.put(varianceResourceRoleGroup, variances);
                         }
-
-                        //variances.add(roleTimeVariance); // HRP-11226 end
+                    } else {
+                        variances = new List<FetchRelatedDriveData.DMLRoleTimeVariance>();
+                        variances.add(roleTimeVariance);
+                        map_resourceRoleGroup_roleTimeVariance.put(varianceResourceRoleGroup, variances);
                     }
-                }
+                }   
             }
         }
-        return map_resourceRole_roleTimeVariance;
+        return map_resourceRoleGroup_roleTimeVariance;
     }
     
     static Map<string, FetchRelatedDriveData.DMLRoleTimeDetail> reduceMapRoleTimeDetailByDrive(FetchRelatedDriveData.DMLData data, FetchRelatedDriveData.DMLDrive drive) {
-        Map<string, FetchRelatedDriveData.DMLRoleTimeDetail> map_resourceRole_roleTimeDetail = new Map<string, FetchRelatedDriveData.DMLRoleTimeDetail>();
+        Map<string, FetchRelatedDriveData.DMLRoleTimeDetail> map_resourceRoleGroup_roleTimeDetail = new Map<string, FetchRelatedDriveData.DMLRoleTimeDetail>();
         for (FetchRelatedDriveData.DMLRoleTimeDetail roleTimeDetail : data.roleTimeDetails) {
             boolean isValid = roleTimeDetail.driveType == drive.typeOfDrive
                 && roleTimeDetail.mobileType == drive.driveSite.physicalLocationType
@@ -1011,17 +1096,16 @@ public class CreateSkedDrive
                 && (drive.typeOfDrive != 'Fixed Site' || roleTimeDetail.fixedSiteOperationType == drive.driveSite.siteOperationType); // HRP - 9901
             if (isValid) {
                 for (string detailResourceRoleGroup : roleTimeDetail.resourceRoleGroups) {
-                    FetchRelatedDriveData.DMLResourceRoleGroup resourceRoleGroup = data.map_group_resourceRoles.get(detailResourceRoleGroup);
-                    for (string resourceRole : resourceRoleGroup.resourceRoles) {
+                    for (string resourceRoleGroup : roleTimeDetail.resourceRoleGroups) {
                         if ((roleTimeDetail.type == 'Collection Operation' && roleTimeDetail.collectionOperationId == drive.collectionOperationId) 
-                            || (roleTimeDetail.type == 'Global' && !map_resourceRole_roleTimeDetail.containsKey(resourceRole))) {
-                                map_resourceRole_roleTimeDetail.put(resourceRole, roleTimeDetail);
+                            || (roleTimeDetail.type == 'Global' && !map_resourceRoleGroup_roleTimeDetail.containsKey(resourceRoleGroup))) {
+                                map_resourceRoleGroup_roleTimeDetail.put(resourceRoleGroup, roleTimeDetail);
                             }
                     }
                 }
             }
         }
-        return map_resourceRole_roleTimeDetail;
+        return map_resourceRoleGroup_roleTimeDetail;
     }
     
     /************ Lunch Break Calculations ************/
@@ -1060,8 +1144,6 @@ public class CreateSkedDrive
                 Decimal durationAfterDrawHours = breakdownTime + wrapUpTime + travelTime2 + siteLogisticsBack; //HRP-11226 // Logic : Duration After Draw Hours = Breakdown Time + Wrap up Time + Travel Time2
                 
                 maxDurationAfter = maxDurationAfter < durationAfterDrawHours ? durationAfterDrawHours : maxDurationAfter;
-                
-                
                 
                 Decimal driveShiftlength = driveShiftDurationV1 + maxDurationBefore + maxDurationAfter ;
                 
@@ -1296,26 +1378,29 @@ public class CreateSkedDrive
     static void populateJobTags(FetchRelatedDriveData.DMLDrive drive)
     {
         Map<Id, FetchRelatedDriveData.DMLJobTag> mapSourceJobTag = new Map<Id, FetchRelatedDriveData.DMLJobTag>();
+        Map<String,Id> uniqueTagName = new Map<String,Id>(); //HRP-12019
         if (drive.account != NULL && drive.account.accountTags != NULL) {
             for (FetchRelatedDriveData.DMLAccountTag accountTag : drive.account.accountTags) {
-                if (accountTag.required == TRUE) {
+                if (accountTag.required == TRUE && (!uniqueTagName.containsKey(accountTag.tagName))) { //HRP-12019
                     FetchRelatedDriveData.DMLJobTag jobTag = new FetchRelatedDriveData.DMLJobTag();
                     jobTag.tagId = accountTag.tagId;
                     jobTag.tagType = accountTag.tagType; // HRP-10169
                     jobTag.resourceType = accountTag.resourceType;
                     mapSourceJobTag.put(jobTag.tagId, jobTag);
+                    uniqueTagName.put(accountTag.tagName,accountTag.tagId); //HRP-12019
                 }
             }
         }
         if (drive.driveSite != NULL && drive.driveSite.locationTags != NULL) {
             for (FetchRelatedDriveData.DMLLocationTag locationTag : drive.driveSite.locationTags) {
-                if (locationTag.required == TRUE) {
+                if (locationTag.required == TRUE && (!uniqueTagName.containsKey(locationTag.tagName))) { //HRP-12019
                     //if (!(drive.typeOfDrive == 'Fixed Site' && locationTag.tagType == 'Physical Location Type')) { HRP-10456
                         FetchRelatedDriveData.DMLJobTag jobTag = new FetchRelatedDriveData.DMLJobTag();
                         jobTag.tagId = locationTag.tagId;
                         jobTag.tagType = locationTag.tagType; // HRP-10169
                         jobTag.resourceType = locationTag.resourceType;
                         mapSourceJobTag.put(jobTag.tagId, jobTag);
+                        uniqueTagName.put(locationTag.tagName,locationTag.tagId); //HRP-12019
                     //}
                 }
             }
@@ -1360,21 +1445,125 @@ public class CreateSkedDrive
                     if (!jobTags.isEmpty())
                     {
                         job.jobTags = jobTags;
-                        //system.debug('job.jobTags '+job.jobTags);
+                        
                     }
                 }
                 }
             }
         }
     }
-    static void populateTravelTime(FetchRelatedDriveData.DMLData data, FetchRelatedDriveData.DMLDrive drive, FetchRelatedDriveData.DMLDriveShift driveShift) {
-        for (FetchRelatedDriveData.DMLJob job : driveShift.jobs) {
-            if (!string.isBlank(job.resourceRole)) {
-                job.travelTime = 0;
-                job.travelTime2 = 0;
+
+    /***************************************************************** Travel Time Calculation *************************************************************************/
+
+    /* HRP - 11908 --> Starts Here
+    @Description : Following methods will help in determining the following: 
+                    1. is travel time needed?
+                    2. If yes, for which resource roles?
+            and get the travel time (if needed) from TTI
+    */
+
+    private static DriveGenerationUtil.TravelTimeSettingModel getTravelTimeSpecificInfo(FetchRelatedDriveData.DMLData data, FetchRelatedDriveData.DMLDrive drive) {
+        DriveGenerationUtil.TravelTimeSettingModel travelTimeModel = new DriveGenerationUtil.TravelTimeSettingModel();
+        Set<String> resourceRoles = new Set<String>();
+        
+        travelTimeModel.isNoTravelTimeChecked = drive.collectionOperation.noTravelTime;
+        if(!travelTimeModel.travelTimeIncludedForFixedSite.equalsIgnorecase(drive.collectionOperation.travelTimeIncludedFixed)) {
+            travelTimeModel.travelTimeIncludedForFixedSite = drive.collectionOperation.travelTimeIncludedFixed;
+        }
+        if(!travelTimeModel.isNoTravelTimeChecked) {
+            if(!String.isBlank(travelTimeModel.travelTimeIncludedForFixedSite)) {
+                travelTimeModel.resourceRoleGroupsNeededTravelTime = data.resourceRoleGroups;
+                if(travelTimeModel.travelTimeIncludedForFixedSite.equalsIgnorecase(Constants.TRAVEL_TIME_INCLUDED_FIXED_SITE_DRIVERS_ONLY)) {
+                    travelTimeModel.resourceRoleGroupsNeededTravelTime = new List<string>{'Driving roles'};
+                }
             }
         }
-    } 
+        return travelTimeModel;
+    }
+
+    public static DriveGenerationUtil.TravelTimeSettingModel getTravelTimeFromTravelTimeIndex(
+        FetchRelatedDriveData.DMLData data, 
+        FetchRelatedDriveData.DMLDrive drive, 
+        FetchRelatedDriveData.DMLDriveShift driveShift,
+        DriveGenerationUtil.TravelTimeSettingModel travelTimeModel,
+        DriveGenerationUtil.TimeConfigurationModel config
+    ) {
+        Decimal travelTimeSiteToCO = 0;
+        Decimal travelTimeCOToSite = 0;
+        Time startTime = driveShift.startTime.addMinutes(- (Integer.valueOf(config.setupTime + config.siteLogisticsTo)));
+        Time endTime = driveShift.endTime.addMinutes(Integer.valueOf(config.breakdownTime + config.siteLogisticsBack));
+        if (drive.siteCollectionOperationId != '') {
+            FetchRelatedDriveData.DMLTravelTimeBreakdown travelTimeBreakdown;
+            Location coStagingLocation = drive.coStagingLocation.sked_Staging_Location__r.sked_GeoLocation__c;
+            Location siteLocation = drive.driveSite.geoLocation;
+            String driveDateWeekday = drive.driveDay;
+            if (data.travelTimeIndexes != null) {
+                for (FetchRelatedDriveData.TravelTimeIndex tti : data.travelTimeIndexes) {
+                    if (tti.fromGeo.latitude == coStagingLocation.latitude
+                            && tti.fromGeo.longitude == coStagingLocation.longitude  
+                            && tti.toGeo.latitude == siteLocation.latitude
+                            && tti.toGeo.longitude == siteLocation.longitude
+                            && !tti.travelTimeBreakdown.isEmpty()) {     
+                        for (FetchRelatedDriveData.DMLTravelTimeBreakdown item : tti.travelTimeBreakdown) {  
+                            if (item.weekday == driveDateWeekday && item.startOfWindow <= startTime && startTime <= item.endOfWindow) {
+                                travelTimeBreakdown = item;
+                                break;
+                            }
+                        }
+                        if (travelTimeBreakdown != NULL && travelTimeBreakdown.travelTime != NULL) {
+                            travelTimeCOToSite = Math.ceil(travelTimeBreakdown.travelTime); 
+                            drive.travelTimeCOtoSite =  tti.id; 
+                        }
+                    }
+                    if (tti.toGeo.latitude == coStagingLocation.latitude 
+                            && tti.toGeo.longitude == coStagingLocation.longitude 
+                            && tti.fromGeo.latitude == siteLocation.latitude 
+                            && tti.fromGeo.longitude == siteLocation.longitude 
+                            && !tti.travelTimeBreakdown.isEmpty()) {
+                        for (FetchRelatedDriveData.DMLTravelTimeBreakdown item : tti.travelTimeBreakdown) {
+                            if (item.weekday == driveDateWeekday && item.startOfWindow <= endTime && endTime <= item.endOfWindow) {
+                                travelTimeBreakdown = item;
+                                break;
+                            }
+                        }
+                        if (travelTimeBreakdown != NULL && travelTimeBreakdown.travelTime != NULL) {
+                            travelTimeSiteToCO = Math.ceil(travelTimeBreakdown.travelTime); 
+                            drive.travelTimeSitetoCO =  tti.id; 
+                        }
+                    }
+                }
+            }
+        }
+        travelTimeModel.travelTimeCOToSite = travelTimeCOToSite;
+        travelTimeModel.travelTimeSiteToCO = travelTimeSiteToCO; 
+        return travelTimeModel;
+    }
+
+    static void populateTravelTimeOnJobs(
+        FetchRelatedDriveData.DMLData data, 
+        FetchRelatedDriveData.DMLDrive drive, 
+        FetchRelatedDriveData.DMLDriveShift driveShift,
+        DriveGenerationUtil.TravelTimeSettingModel travelTimeModel,
+        Map<String, DriveGenerationUtil.TimeConfigurationModel> timeConfig
+    ) {
+            
+        for (FetchRelatedDriveData.DMLJob job : driveShift.jobs) {
+            if (!string.isBlank(job.resourceRole) && timeConfig.containsKey(getResourceRoleGroupUponResourceRole(data, job.resourceRole))) {
+                String currentResourceRoleGroup = getResourceRoleGroupUponResourceRole(data, job.resourceRole);
+                DriveGenerationUtil.TimeConfigurationModel config = timeConfig.get(currentResourceRoleGroup);
+                travelTimeModel = getTravelTimeFromTravelTimeIndex(data, drive, driveShift, travelTimeModel, config);
+                Boolean isTTmandatory = !travelTimeModel.isNoTravelTimeChecked || currentResourceRoleGroup.equalsIgnorecase('Driving roles');
+                job.travelTime = isTTmandatory ? (travelTimeModel.resourceRoleGroupsNeededTravelTime.contains(getResourceRoleGroupUponResourceRole(data, job.resourceRole)) ? 
+                                    travelTimeModel.travelTimeCOToSite + config.travelTime : 
+                                    config.travelTime) : 0;
+                job.travelTime2 = isTTmandatory ? (travelTimeModel.resourceRoleGroupsNeededTravelTime.contains(getResourceRoleGroupUponResourceRole(data, job.resourceRole)) ? 
+                                    travelTimeModel.travelTimeSiteToCO + config.travelTime2 : 
+                                    config.travelTime2) : 0;
+            }
+        }
+    }
+
+    // HRP - 11908 --> Ends Here
     
     /*********************************************************** Generate slot ***********************************************************/
     static void generateShiftSlots(FetchRelatedDriveData.DMLData data, FetchRelatedDriveData.DMLDrive drive, FetchRelatedDriveData.DMLDriveShift driveShift, Decimal noOfDriveShift) {
@@ -1392,13 +1581,19 @@ public class CreateSkedDrive
         boolean has2rbcWb = drive.driveSite.siteOperationType == Constants.INTEGRATED_OPERATION_TYPE;
         
         if (hasPlateletPlasma) {
-            plateletSlots = generatePlateletSlots(data, drive, driveShift);            
+            plateletSlots = generatePlateletSlots(data, drive, driveShift);   
+            driveShift.defaultPlateletSlots = plateletSlots != NULL ? plateletSlots.size() : 0;  
+
             plasmaSlots = generatePlasmaSlots(data, drive, driveShift);
+            driveShift.defaultPlasmaSlots = plasmaSlots != NULL ? plasmaSlots.size() : 0; 
         }
         
         if (has2rbcWb) {
-           // wbSlots = generateWbSlots(data, drive, driveShift, noOfDriveShift);
             x2rbcSlots = generate2rbcSlots(data, drive, driveShift);
+            driveShift.default2rbcSlots = x2rbcSlots != NULL ? x2rbcSlots.size() : 0;
+
+            wbSlots = generateWbSlots(data,drive,driveShift, noOfDriveShift);
+            driveShift.defaultWbSlots = wbslots != NULL ? wbslots.size() : 0;  
         }
         
         driveShift.slots = new List<FetchRelatedDriveData.DMLSlot>();
@@ -1408,7 +1603,7 @@ public class CreateSkedDrive
         }
         if (has2rbcWb) {
             driveShift.slots.addAll(x2rbcSlots);
-           // driveShift.slots.addAll(wbSlots);
+            driveShift.slots.addAll(wbSlots);
         }
     }
     // ***********************************************************Generate Platelet Slots********************************************************************
@@ -1466,7 +1661,7 @@ public class CreateSkedDrive
         Integer groupQuantity = 0;
        
 
-        while (currentRoundIndex < drive.plateletRounds)
+        while (currentRoundIndex < driveShift.plateletRounds)
         {  
                           
             DateTime tempStart = configuration.startTime.addMinutes(configuration.rounds.get(currentRoundIndex));
@@ -1540,6 +1735,7 @@ public class CreateSkedDrive
 
                 remainingNumberOfAssets = remainingNumberOfAssets - groupQuantity;
 
+
                 // HRP - 10456 (4th Change) --> Starts Here
                 if(groupNumberCount == configuration.numberOfGroups+1)
                 {
@@ -1569,22 +1765,26 @@ public class CreateSkedDrive
             excludedSlotss.add(skedDateTimeUtils.switchTimezone(plasmaSlotExcludeTimes,TimeZone.getTimeZone('GMT').getId(),drive.driveSite.timezoneSidId));
         }
 
-        // HRP-10915 --> Starts Here
-
-        DateTime driveShiftStart = driveShift.drawStart;
-        Long startMinutes = driveShiftStart.minute();
-        
-        if (startMinutes > 30)
-        {
+        /* HRP-10915 --> Starts Here
+        if (startMinutes >= 30) { // HRP-12218
             driveShiftStart = DateTime.newInstance(driveShiftStart.getTime() - (startMinutes - 30) * 60000);
-        }
-
-        else if(startMinutes > 0)
-        {
+        } else if(startMinutes > 0) {
             driveShiftStart = DateTime.newInstance(driveShiftStart.getTime() - startMinutes * 60000);
         }
+        // HRP-10915 --> Ends Here*/
 
-        // HRP-10915 --> Ends Here
+        //HRP-13198 --> Starts Here
+        DateTime firstPlasmaSlotStart;
+        DateTime firstPlateletRoundEnd = driveShift.drawStart.addMinutes(60); // end after an hour
+        Long startMinutes = firstPlateletRoundEnd.minute();
+        if(startMinutes > 40) {
+            firstPlasmaSlotStart = DateTime.newInstance(firstPlateletRoundEnd.getTime() - (startMinutes - 40) * 60000).addMinutes(30);
+        } else if(startMinutes > 10) {
+            firstPlasmaSlotStart = DateTime.newInstance(firstPlateletRoundEnd.getTime() - (startMinutes - 10) * 60000).addMinutes(30);
+        } else if(startMinutes >= 0) {
+            firstPlasmaSlotStart = DateTime.newInstance(firstPlateletRoundEnd.getTime() - startMinutes * 60000).addMinutes(10);
+        }
+        //HRP-13198 --> Ends Here
         
         slotGeneratorConfigModel configuration = new slotGeneratorConfigModel();
         configuration.endTime = driveShift.drawEnd;
@@ -1594,11 +1794,10 @@ public class CreateSkedDrive
         configuration.groupInterval = 30;
         configuration.slotType = Constants.PROCEDURE_TYPE_PLASMA;
         configuration.slotDuration = 90;
-        configuration.startTime = driveShiftStart.addMinutes(70); //HRP-10915
+        configuration.startTime = firstPlasmaSlotStart; //HRP-13198
         
         configuration.startTime = skedDateTimeUtils.switchTimezone(configuration.startTime,TimeZone.getTimeZone('GMT').getId(),drive.driveSite.timezoneSidId);
         configuration.endTime = skedDateTimeUtils.switchTimezone(configuration.endTime,TimeZone.getTimeZone('GMT').getId(),drive.driveSite.timezoneSidId);
-        
         return generatePlasmaSlotsByNumberOfAssets(configuration, drive);
         
     }
@@ -1610,13 +1809,13 @@ public class CreateSkedDrive
         Datetime tempStart = configuration.startTime;
         while (tempStart < configuration.endTime) {
             decimal remainingNumberOfAssets = drive.numberOfPlasmaAssets;
-            for (integer i = 0; i < configuration.numberOfGroups; i++) {		// 2
+            for (integer i = 0; i < configuration.numberOfGroups; i++) {
                 Integer groupQuantity = integer.valueOf(Math.Ceil(drive.numberOfPlasmaAssets / configuration.numberOfGroups));
                 if (groupQuantity > remainingNumberOfAssets) {
                     groupQuantity = groupQuantity - 1;
                 }                
-                DateTime slotStart = tempStart.addMinutes(i * configuration.groupInterval);	// 30                
-                DateTime slotEnd = slotStart.addMinutes(configuration.slotDuration);	// 90
+                DateTime slotStart = tempStart.addMinutes(i * configuration.groupInterval);              
+                DateTime slotEnd = slotStart.addMinutes(configuration.slotDuration);
                 if (slotStart <= configuration.endTime.addMinutes(-50) ) {
                     Boolean isSlotTimeRemoval = isPlasmaSlotTimeRemoval(configuration, slotStart);
                     if(!isSlotTimeRemoval){
@@ -1635,7 +1834,7 @@ public class CreateSkedDrive
                 }
                 remainingNumberOfAssets = remainingNumberOfAssets - groupQuantity;
             }
-            tempStart = tempStart.addMinutes(configuration.roundInterval); //next round	// 90
+            tempStart = tempStart.addMinutes(configuration.roundInterval); //next round	after 90 mins
         }        
         return allSlots;
     }
@@ -1663,61 +1862,68 @@ public class CreateSkedDrive
         FetchRelatedDriveData.DMLDriveShift driveShift,
         Decimal noOfDriveShift
     ) {  
-        decimal estimatedWbslots;
-        for (FetchRelatedDriveData.DMLFixedSiteProcedureProjection setting : drive.account.fixedSiteProcedureProjections) {
-            if (setting.procedureType == Constants.PROCEDURE_TYPE_WB) {
-                estimatedWbslots = Math.ceil(Math.ceil((drive.wbProjectedProcedures / (1 - setting.qns / 100) / (1 - setting.deferral / 100))) * 1.4); // HRP - 10456
-                system.debug('estimatedWbslots '+estimatedWbslots); 
-            }
-        }
+        Decimal estimatedWbslots;
+        List<FetchRelatedDriveData.DMLSlot> wholeBloodSlots = new List<FetchRelatedDriveData.DMLSlot>();
+        // HRP-12144 --> Starts Here (Added new configuration for FS drives where slot multiplier remains 140%)
         
-        integer totalSlots = integer.valueOf(estimatedWbslots);
+        slwcSetting.adminSetting skedAdminSetting = new slwcSetting.adminSetting();
+        Decimal paddingPercentage = drive.slotGenerator != NULL ? drive.slotGenerator / 100 : skedAdminSetting.callListRecipientNoneFixedSite / 100; //HRP-12011
+        Map<String, Decimal> fsppTypeAndValuesMap = getFSPPTypeAndDeferalQnsValue(drive);
+
+        // HRP-12480 --> Starts Here (Check if FSPP exist with Deferral and QNS value)
+        Boolean isValidFSPPExist = fsppTypeAndValuesMap != NULL 
+                                && fsppTypeAndValuesMap.containsKey('QNS_'+Constants.PROCEDURE_TYPE_WB+'Staff')
+                                && fsppTypeAndValuesMap.containsKey('Deferral_'+Constants.PROCEDURE_TYPE_WB+'Staff');
+    
+        estimatedWbslots = isValidFSPPExist ? Math.ceil(Math.ceil((drive.wbProjectedProcedures / (1 - fsppTypeAndValuesMap.get('QNS_'+Constants.PROCEDURE_TYPE_WB+'Staff')) / (1 - fsppTypeAndValuesMap.get('Deferral_'+Constants.PROCEDURE_TYPE_WB+'Staff')))) * paddingPercentage) : 0;
+        system.debug('estimatedWbslots '+estimatedWbslots);
+        
+        // HRP-12144 --> Ends Here
+        
+        integer totalSlots = estimatedWbslots > 0 ? integer.valueOf(estimatedWbslots) : 0;
+
+        // HRP-12480 --> Ends Here
         
         // new - 10456
-         Set<DateTime> excludedSlotss = new set<DateTime>();      
-         DateTime plateletSlotExcludeTimes = driveShift.drawStart;
-         excludedSlotss.add(skedDateTimeUtils.switchTimezone(plateletSlotExcludeTimes,TimeZone.getTimeZone('GMT').getId(),drive.driveSite.timezoneSidId));
-         
-         while(plateletSlotExcludeTimes < driveShift.drawEnd ) //HRP-9966
-         {   
-             plateletSlotExcludeTimes = plateletSlotExcludeTimes.addMinutes(180);
-             if(plateletSlotExcludeTimes == driveShift.drawEnd)
-             {
-                 break;
-             }     
-             excludedSlotss.add(skedDateTimeUtils.switchTimezone(plateletSlotExcludeTimes,TimeZone.getTimeZone('GMT').getId(),drive.driveSite.timezoneSidId));
-             
-         }
-        integer wbSlotDuration = 15;
-        slotGeneratorConfigModel configuration = new slotGeneratorConfigModel();
-        configuration.excludedSlots = excludedSlotss;
-        configuration.interval = 60;
-        configuration.lastSlotStart = driveShift.drawEnd;
-        configuration.rounds = new List<integer>();
-        configuration.rounds.add(0);
-        configuration.rounds.add(15);
-        configuration.rounds.add(30);
-        configuration.rounds.add(45);
-        configuration.slotDuration = wbSlotDuration;
-        configuration.slotType = Constants.APPOINTMENT_TYPE_WB;
-        configuration.startTime = driveShift.drawStart;
-        configuration.totalSlots = totalSlots;
-        FetchRelatedDriveData.DMLCollectionOperation coRec = data.mapCollectionOperation.get(drive.collectionOperationId);
-        Boolean skipLastAppointment = !string.isBlank(coRec.skipLastAppointmentFor) && coRec.skipLastAppointmentFor.contains(drive.typeOfDrive);
-        if (skipLastAppointment)
-        {
-            configuration.lastSlotStart = configuration.lastSlotStart.addMinutes(-wbSlotDuration);
-        }
-        List<FetchRelatedDriveData.DMLSlot> gWbSlots = generateWbSlots(configuration, drive, driveShift, noOfDriveShift,skipLastAppointment);
-        
-        // Lunch break slot reduction
-        if(driveShift.lunchBreak)
-        {            
-            applylunchBreakSlotReductionOnWb(gWbSlots,drive,data,driveShift);
+        if(totalSlots > 0) { // HRP-1280
+            Set<DateTime> excludedSlotss = new set<DateTime>();      
+            DateTime plateletSlotExcludeTimes = driveShift.drawStart;
+            excludedSlotss.add(skedDateTimeUtils.switchTimezone(plateletSlotExcludeTimes,TimeZone.getTimeZone('GMT').getId(),drive.driveSite.timezoneSidId));
             
+            while(plateletSlotExcludeTimes < driveShift.drawEnd ) {    
+                plateletSlotExcludeTimes = plateletSlotExcludeTimes.addMinutes(180);
+                if(plateletSlotExcludeTimes == driveShift.drawEnd) {
+                    break;
+                }     
+                excludedSlotss.add(skedDateTimeUtils.switchTimezone(plateletSlotExcludeTimes,TimeZone.getTimeZone('GMT').getId(),drive.driveSite.timezoneSidId));   
+            }
+            integer wbSlotDuration = 15;
+            slotGeneratorConfigModel configuration = new slotGeneratorConfigModel();
+            configuration.excludedSlots = excludedSlotss;
+            configuration.interval = 60;
+            configuration.lastSlotStart = driveShift.drawEnd;
+            configuration.rounds = new List<integer>();
+            configuration.rounds.add(0);
+            configuration.rounds.add(15);
+            configuration.rounds.add(30);
+            configuration.rounds.add(45);
+            configuration.slotDuration = wbSlotDuration;
+            configuration.slotType = Constants.APPOINTMENT_TYPE_WB;
+            configuration.startTime = driveShift.drawStart;
+            configuration.totalSlots = totalSlots;
+            FetchRelatedDriveData.DMLCollectionOperation coRec = data.mapCollectionOperation.get(drive.collectionOperationId);
+            Boolean skipLastAppointment = !string.isBlank(coRec.skipLastAppointmentFor) && coRec.skipLastAppointmentFor.contains(drive.typeOfDrive);
+            if (skipLastAppointment) {
+                configuration.lastSlotStart = configuration.lastSlotStart.addMinutes(-wbSlotDuration);
+            }
+            wholeBloodSlots = generateWbSlots(configuration, drive, driveShift, noOfDriveShift,skipLastAppointment);
+            
+            // Lunch break slot reduction
+            if(driveShift.lunchBreak) {            
+                applyLunchBreakSlotReductionForWbSlots(wholeBloodSlots, drive, data, driveShift);
+            }
         }
-        
-        return gWbSlots;
+        return wholeBloodSlots;
     }
     
     static List<FetchRelatedDriveData.DMLSlot> generateWbSlots(
@@ -1788,7 +1994,7 @@ public class CreateSkedDrive
         return fallsUnderPlateletStartTime;
     }
     
-    static void applylunchBreakSlotReductionOnWb(
+    static void applyLunchBreakSlotReductionForWbSlots(
         List<FetchRelatedDriveData.DMLSlot> wbSlots,
         FetchRelatedDriveData.DMLDrive drive,
         FetchRelatedDriveData.DMLData data,

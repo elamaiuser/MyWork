@@ -10,6 +10,8 @@
     <columns>sked_Drive_Shift_Trade_Request__c</columns>
     <columns>sked_Pending_Action__c</columns>
     <columns>sked_Role_Time_Variance__c</columns>
+    <columns>sked_CM_Role_Time_Variance__c</columns>
+    <columns>sked_DM_Role_Time_Variance__c</columns>
     <filterScope>Everything</filterScope>
     <label>All Settings</label>
     <language>en_US</language>

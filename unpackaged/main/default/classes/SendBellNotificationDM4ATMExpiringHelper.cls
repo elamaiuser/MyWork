@@ -28,7 +28,9 @@ public class SendBellNotificationDM4ATMExpiringHelper {
                             ' will expire in 3 days. Please take necessary actions as per your requirement. Thank you ')
                         .sender(atm.createdById)
                         .target(atm.Id)
+                    	.category('AccountTeamMemberExpiry')
                         .send(sendId);
+                        
                 //HRP-10482 changes ends here
             }
         }

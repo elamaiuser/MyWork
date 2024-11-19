@@ -1,8 +1,10 @@
 global class skedResourceSeniorityRankingBatch implements System.Schedulable, Database.Batchable<sked_Territory__c> {
 
     Set<Id> territoryIds;
-    global skedResourceSeniorityRankingBatch(Set<Id> territoryIds) {
+    Set<Id> skedResourceIds;
+    global skedResourceSeniorityRankingBatch(Set<Id> territoryIds, Set<Id> skedResourceIds) {
         this.territoryIds = territoryIds;
+        this.skedResourceIds = skedResourceIds;
     }
 
     global skedResourceSeniorityRankingBatch() {}
@@ -108,7 +110,19 @@ global class skedResourceSeniorityRankingBatch implements System.Schedulable, Da
         }
     }
     
-    global void finish(Database.BatchableContext BC) {}
+    global void finish(Database.BatchableContext BC) {
+        if(this.skedResourceIds!=null && !this.skedResourceIds.isEmpty()) {
+            List<sked__Resource__c> skedResourcesToUpdate = new List<sked__Resource__c>();
+            for (Id resourceId : this.skedResourceIds) {
+                sked__Resource__c skedResource = new sked__Resource__c(
+                    Id = resourceId,
+                    IsChangedEmploymentStatus__c = false
+                );
+                skedResourcesToUpdate.add(skedResource);
+            }
+            update skedResourcesToUpdate;
+        }
+    }
     
     /*********************************************************** Nested Classes ***********************************************************/
     global class resourceModel implements Comparable {

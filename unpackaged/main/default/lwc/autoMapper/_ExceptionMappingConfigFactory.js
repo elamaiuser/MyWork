@@ -28,6 +28,10 @@ export class ExceptionMappingConfigFactory {
       mappingConfig.addFieldConfig('sked_Drive__r.Name', 'driveName');
       mappingConfig.addFieldConfig('sked_Exception_Code__c', 'exceptionCode');
       mappingConfig.addFieldConfig('sked_Priority__c', 'priority');
+      mappingConfig.addFieldConfig('sked_Linked_Drive__c', 'linkedDriveId');
+      mappingConfig.addFieldConfig('sked_Linked_Drive__r.Name', 'linkedDriveName');
+      mappingConfig.addFieldConfig('sked_Linked_Drive__r.sked_Earliest_Drive_Date__c', 'linkedDriveEarliestDriveDate');
+      mappingConfig.addFieldConfig('sked_Linked_Drive__r.sked_Latest_Drive_Date__c', 'linkedDriveLatestDriveDate');
 
       mappingConfig.addFieldConfig('skedHC__Job__r', 'job', MAPPING_TYPE.related, 'sked__Job__c');
 

@@ -1,0 +1,139 @@
+<template>
+    <template if:true={isLoaded}>
+        <template if:true={noDataFound}>
+            <c-bsf-no-data-found-cmp err_message={errMsg}></c-bsf-no-data-found-cmp>
+        </template>
+        <template if:false={noDataFound}>
+            <lightning-card>
+                <div class="slds-section slds-is-open">
+                    <h3 class="slds-section__title">
+                        <button aria-controls="expando-unique-id" aria-expanded="true"
+                            class="slds-button slds-section__title-action">
+                            <lightning-icon icon-name='utility:switch' alternative-text='switch' size='x-small'
+                                title='switch'></lightning-icon>
+                            <span class="slds-truncate slds-p-left_x-small" title="Checklist"> Checklist</span>
+                        </button>
+                    </h3>
+                    <div class="slds-grid slds-wrap slds-gutters slds-m-around_x-small">
+                        <div class="slds-col slds-large-size_1-of-2 slds-size_1-of-1">
+                            <p><strong>{section1.sectionHeader}</strong></p>
+                            <p class="slds-p-top_x-small slds-p-bottom_x-small">
+                                {staticTextMap.Static_Text_1.label}
+                            </p>
+                            <template for:each={section1.fields} for:item="field">
+                                <fieldset key={field.name} id={field.name} class="slds-form-element">
+                                    <span key={field.name} class="slds-radio slds-m-around_xx-small">
+                                        <lightning-input type="checkbox" label={field.label} name={field.id}
+                                            checked={field.value} disabled={disableEditAccess}
+                                            onchange={handleChecklist}>
+                                        </lightning-input>
+                                    </span>
+                                </fieldset>
+                            </template>
+                            <p class="slds-p-top_x-small slds-p-bottom_small">
+                                <lightning-formatted-rich-text value={staticTextMap.Static_Text_2.label}>
+                                </lightning-formatted-rich-text>
+                            </p>
+                            <div class="slds-box">
+                                <p>
+                                    {staticTextMap.Static_Text_3.label}
+                                </p>
+                            </div>
+                            <p class="slds-p-top_small">
+                                <Strong>{staticTextMap.Static_Text_4.sectionHeader}</Strong><br>
+                                {staticTextMap.Static_Text_4.label}
+                                <br><br>
+                                {staticTextMap.Static_Text_5.label}
+                            </p>
+                            <p class="slds-p-top_x-small slds-p-bottom_x-small slds-text-color_error">
+                                <b>{staticTextMap.Static_Text_6.label}
+                                </b>
+                            </p>
+                        </div>
+                        <div class="slds-col slds-large-size_1-of-2 slds-size_1-of-1">
+                            <p><strong>{section3.sectionHeader}</strong></p>
+                            <template for:each={section3.fields} for:item="field">
+                                <fieldset key={field.name} id={field.name} class="slds-form-element">
+                                    <span key={field.name} class="slds-radio slds-m-around_xx-small">
+                                        <lightning-input type="checkbox" label={field.label} name={field.id}
+                                            checked={field.value} disabled={disableEditAccess}
+                                            onchange={handleChecklist}>
+                                        </lightning-input>
+                                        <template if:true={field.additional_text}>
+                                            <lightning-formatted-rich-text value={field.additional_text}>
+                                            </lightning-formatted-rich-text>
+
+                                        </template>
+                                    </span>
+                                </fieldset>
+                            </template>
+                        </div>
+                        <div class="slds-col slds-large-size_1-of-2 slds-size_1-of-1 slds-p-around_small">
+                            <p><strong>{section4.sectionHeader}</strong></p>
+                            <template for:each={section4.fields} for:item="field">
+                                <fieldset key={field.name} id={field.name} class="slds-form-element">
+                                    <span key={field.name} class="slds-radio slds-m-around_xx-small">
+                                        <lightning-input type="checkbox" label={field.label} name={field.id}
+                                            checked={field.value} disabled={disableEditAccess}
+                                            onchange={handleChecklist}>
+                                        </lightning-input>
+                                    </span>
+                                </fieldset>
+                            </template>
+                            <p class="slds-p-top_small slds-p-bottom_small">
+                                <Strong>{staticTextMap.Static_Text_8.sectionHeader}</Strong><br>
+                                {staticTextMap.Static_Text_8.label}
+                            </p>
+                        </div>
+                        <div class="slds-col slds-large-size_1-of-2 slds-size_1-of-1 slds-p-around_small">
+                            <p><strong>{section5.sectionHeader}</strong></p>
+                            <template for:each={section5.fields} for:item="field">
+                                <fieldset key={field.name} id={field.name} class="slds-form-element">
+                                    <span key={field.name} class="slds-radio slds-m-around_xx-small">
+                                        <lightning-input type="checkbox" label={field.label} name={field.id}
+                                            checked={field.value} disabled={disableEditAccess}
+                                            onchange={handleChecklist}>
+                                        </lightning-input>
+                                    </span>
+                                </fieldset>
+                            </template>
+                            <p class="slds-p-top_small slds-p-bottom_small">
+                                <Strong>{staticTextMap.Static_Text_7.sectionHeader}</Strong><br>
+                                {staticTextMap.Static_Text_7.label}
+                            </p>
+                            <table class="slds-p-top_small">
+                                <tbody>
+                                    <template for:each={tableData} for:item="row">
+                                        <tr key={tableData}>
+                                            <template for:each={row} for:item="cell">
+                                                <td class="slds-border_left slds-border_bottom slds-border_right slds-border_top"
+                                                    key={cell}>
+                                                    <p class="slds-p-around_xxx-small">{cell}</p>
+                                                </td>
+                                            </template>
+                                        </tr>
+                                    </template>
+                                </tbody>
+                            </table>
+                            <template for:each={section6.fields} for:item="field">
+                                <fieldset key={field.name} id={field.name} class="slds-form-element">
+                                    <span key={field.name} class="slds-radio slds-m-around_xx-small">
+                                        <lightning-input type="checkbox" label={field.label} name={field.id}
+                                            checked={field.value} disabled={disableEditAccess}
+                                            onchange={handleChecklist}>
+                                        </lightning-input>
+                                    </span>
+                                </fieldset>
+                            </template>
+                        </div>
+                    </div>
+                </div>
+            </lightning-card>
+        </template>
+    </template>
+    <template if:false={isLoaded}>
+        <div class="exampleHolder">
+            <lightning-spinner alternative-text="Loading" size="x-small"></lightning-spinner>
+        </div>
+    </template>
+</template>

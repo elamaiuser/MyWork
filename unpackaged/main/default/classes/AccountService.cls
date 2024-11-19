@@ -1,21 +1,28 @@
 /* 
- * Modification Log 
- * Date					     Developer Name			     Comments
- * *******************************************************************************************************************************************************************************************************
- * 05/02/2023				  Barnojit Sharma			 Logic for HRP-9818
- * 05/2/2023				  Fitsum Worku			     Logic for HRP-9880. Updated method updateNationalNameStatus to remove the hardcoded "allowed profiles" and "user to exclude" to use custom labels
- * 05/3/2023				  Kishore Das				 Logic for HRP-9816 (Incorrect Address, Please Update" When Converting Leads into Accounts)
- * 5/12/2023				  Balaji N				     Logic for HRP-10005 (populateMarketOnAccount, check for BillingPostalCode field Change on Update)
- * 08/06/2023				  Kishore Das				 Logic for HRP-10085 (It changes all the associated opportunities/templates name when account internal name changes,also changes related drives on calendar name when account name changes.
- * 																	For site, when room name/site building name changes the related opportunity/template/drives on calendar name changes)
- * 06/14/2023				  Balaji N				     Logic for HRP-10099 (Method:createAccountTeamMembers, changes for HRP-10099)
- * 03/08/2023				  Kishore Das		         Users other than System Admin should not have any delete record permissions(Logic for HRP-10572 --> Deleted)
- * 08/08/2023	 	  	      Balaji N				     Logic for HRP-8897 (Method:createAccountTeamMembers, datatype of Map value "accIdUserDate" and related changes)
- * 09/18/2023			      Balaji N				     Logic for HRP-10878 (Method:createAccountTeamMembers,logic for duplicate removal on account portfolio assignment, new method setZipcodeChang)
- * 11/09/2023		          Balaji N				     Logic for HRP-11290((Method:createAccountTeamMembers,logic for Supervisor Date check)) 
- * 12/14/2023			      Balaji N			         Logic for HRP-6028(Method Name:createAccountTeamMembers; method call for  HandleAccountSpecialist)
- * 1/12/2024			      Priti Jana				 Logic for HRP-11418
- *********************************************************************************************************************************************************************************************************
+* Modification Log 
+* Date					     Developer Name			     Comments
+* *******************************************************************************************************************************************************************************************************
+* 05/02/2023				  Barnojit Sharma			 Logic for HRP-9818
+* 05/02/2023				  Fitsum Worku			     Logic for HRP-9880. Updated method updateNationalNameStatus to remove the hardcoded "allowed profiles" and "user to exclude" to use custom labels
+* 05/03/2023				  Kishore Das				 Logic for HRP-9816 (Incorrect Address, Please Update" When Converting Leads into Accounts)
+* 05/12/2023				  Balaji N				     Logic for HRP-10005 (populateMarketOnAccount, check for BillingPostalCode field Change on Update)
+* 08/06/2023				  Kishore Das				 Logic for HRP-10085 (It changes all the associated opportunities/templates name when account internal name changes,also changes related drives on calendar name when account name changes.																For site, when room name/site building name changes the related opportunity/template/drives on calendar name changes)
+* 06/14/2023				  Balaji N				     Logic for HRP-10099 (Method:createAccountTeamMembers, changes for HRP-10099)
+* 03/08/2023				  Kishore Das		         Users other than System Admin should not have any delete record permissions(Logic for HRP-10572 --> Deleted)
+* 08/08/2023	 	  	      Balaji N				     Logic for HRP-8897 (Method:createAccountTeamMembers, datatype of Map value "accIdUserDate" and related changes)
+* 09/18/2023			      Balaji N				     Logic for HRP-10878 (Method:createAccountTeamMembers,logic for duplicate removal on account portfolio assignment, new method setZipcodeChang)
+* 11/09/2023		          Balaji N				     Logic for HRP-11290((Method:createAccountTeamMembers,logic for Supervisor Date check)) 
+* 12/14/2023			      Balaji N			         Logic for HRP-6028(Method Name:createAccountTeamMembers; method call for  HandleAccountSpecialist)
+* 01/04/2024                  Balaji N			         Logic for HRP-10569(Method Name:createAccountTeamMembers;parameter changes on accTeamDateSyncOnAccPortUpdates method call)
+* 01/12/2024			      Priti Jana				 Logic for HRP-11418
+* 02/01/2024			      Venkat & Balaji N          Logic for HRP - 12053 (Method Name:createAccountTeamMembers;Territory assignment logic correction on Zipcode change and after Exception)
+* 02/13/2024		          Balaji N				     Logic for HRP-11138(Method:createAccountTeamMembers;return type account portfolio assignment list)
+* 02/06/2024				  Priti Jana				 Logic for HRP-9520
+* 02/26/2024			      Priti Jana				 Removed existing AuraEnabled methods to a different controller specific to HRP-11936
+* 03/06/2024			      Balaji N		  	         logic for HRP-12136 (Method:getInternalNameChangedAccounts,updateDivesOnCalenderForAccountInternalNameChange;changes in opp name logic)
+* 05/24/2024				  Raktim Ghosal				 Logic for HRP-12757
+* 08/05/2024				  Balaji N					 Logic for HRP-12485(Method:createAccountTeamMembers;removed dependency on Account_AM_Portfolio_Type__c)
+*********************************************************************************************************************************************************************************************************
 */
 
 public  without sharing class AccountService {//with sharing is not needed
@@ -64,7 +71,7 @@ public  without sharing class AccountService {//with sharing is not needed
         }
         if(!evaluateAddressAccountList.isEmpty())
         {
-        AddressUtility.cleanAccountBillingAddress(evaluateAddressAccountList);
+            AddressUtility.cleanAccountBillingAddress(evaluateAddressAccountList);
         }
     }
     /**
@@ -81,15 +88,15 @@ public  without sharing class AccountService {//with sharing is not needed
                 continue;
             }
             if(newAccount.id != null && oldAccountsMap!=null
-            && oldAccountsMap.get(newAccount.id)!=null){ //update scenario
-                // System.debug('Processing oldAccount with account_type_from_lead__c and Id values as ->'+oldAccountsMap.get(newAccount.id).account_type_from_lead__c+','+newAccount.id);
-                if(newAccount.account_type_from_lead__c != oldAccountsMap.get(newAccount.id).account_type_from_lead__c){
-                    newAccount.type=newAccount.account_type_from_lead__c;
-                }
-                if(String.isBlank(newAccount.Type) ==true){
-                    newAccount.type=newAccount.account_type_from_lead__c;
-                }
-            }
+               && oldAccountsMap.get(newAccount.id)!=null){ //update scenario
+                   // System.debug('Processing oldAccount with account_type_from_lead__c and Id values as ->'+oldAccountsMap.get(newAccount.id).account_type_from_lead__c+','+newAccount.id);
+                   if(newAccount.account_type_from_lead__c != oldAccountsMap.get(newAccount.id).account_type_from_lead__c){
+                       newAccount.type=newAccount.account_type_from_lead__c;
+                   }
+                   if(String.isBlank(newAccount.Type) ==true){
+                       newAccount.type=newAccount.account_type_from_lead__c;
+                   }
+               }
         }//end of for loop
     }
     //AS-013046-Account Shipping Address standardization, will be called from before insert and before update
@@ -133,7 +140,7 @@ public  without sharing class AccountService {//with sharing is not needed
         }
         if(!evaluateAddressAccountList.isEmpty())
         {
-         AddressUtility.cleanAccountShippingAddress(evaluateAddressAccountList);
+            AddressUtility.cleanAccountShippingAddress(evaluateAddressAccountList);
         }
     }
     //Create Notes on Account Starategy Change
@@ -163,58 +170,58 @@ public  without sharing class AccountService {//with sharing is not needed
     /* Commented Out for HRP - 10016 --> Start
 * JIRA Ticket: HRP - 795,
 * Description: Designate Drives in the System to Include or Exclude from Future Calendar Build
-    public static void checkRolloverFlagUpdateAccessability( List<Account> oldAccounts, List<Account> newAccounts,Map<Id,Account> oldAccountsMap,Map<Id,Account> newAccountsMap){
-        Map<Id, Id> accIdDistrictmanagerId = new Map<Id, Id>();
-        Map<Id, String> teammemberIdRoleMap = new Map<Id, String>();
-        Map<String, Decimal> roleRankMap = new Map<String, Decimal>();
-        Set<Id> teammemberids = new Set<Id>();
-        Set<Id> accountid = new Set<Id>();
-        List<AccountTeammember> aTeam ;
-        Id runninguserid = userInfo.getUserId();
-        Integer runningUserRank;
-        for( Account acc : newAccounts ){
-            if( !accIdDistrictmanagerId.containsKey( acc.Id ) ){
-                accIdDistrictmanagerId.put( acc.Id, acc.District_Manager__c);
-                accountid.add(acc.Id);
-            }
-        }
-        teammemberids.add( userInfo.getUserId() );
-        for( Id accid : accIdDistrictmanagerId.keySet() ){
-            if( accIdDistrictmanagerId.get( accid ) !=null ){
-                teammemberids.add( accIdDistrictmanagerId.get( accid ) ) ;
-            }
-        }
-        aTeam = [ select AccountId, userId, TeamMemberRole from AccountTeammember where AccountId IN:accountid and userId IN: teammemberids];
-        for( AccountTeammember atm : aTeam ){
-            if( !teammemberIdRoleMap.containsKey( atm.userId ) ){
-                teammemberIdRoleMap.put( atm.userId, atm.TeamMemberRole );
-            }
-        }
-        // System.debug( 'teammemberIdRoleMap is : ' + teammemberIdRoleMap );
-        // Retrieve data from Custom Metadat Type AccountTeamRoleRank__mdt
-        List<AccountTeamRoleRank__mdt> atmrolemdt = [select Rank__c, Team_Role__c from AccountTeamRoleRank__mdt ];
-        for( AccountTeamRoleRank__mdt atmmdt : atmrolemdt ){
-            if( !roleRankMap.containsKey( atmmdt.Team_Role__c ) ){
-                roleRankMap.put( atmmdt.Team_Role__c, atmmdt.Rank__c );
-            }
-        }
-        // System.debug( 'roleRankMap is: ' + roleRankMap );
-        // System.debug( 'running userid is: ' + runninguserid );
-        runningUserRank = Integer.valueOf( roleRankMap.get( teammemberIdRoleMap.get( runninguserid ) )  );
-        // System.debug('runningUserRank is ' + runningUserRank );
-        for( Account acc : newAccounts ){
-            // System.debug( 'old value of Always_Roll__c ' +  oldAccountsMap.get(acc.Id).Always_Roll__c  );
-            // System.debug( 'new value of Always_Roll__c ' +  acc.Always_Roll__c  );
-            if( acc.District_Manager__c != null && ((oldAccountsMap.get(acc.Id).Always_Roll__c != acc.Always_Roll__c)   || (oldAccountsMap.get(acc.Id).Do_Not_Roll__c != acc.Do_Not_Roll__c)) ){
-                Integer dmRank = Integer.valueOf( roleRankMap.get( teammemberIdRoleMap.get( acc.District_Manager__c ) )  );
-                // System.debug('dmRank is ' + dmRank + ' rank of running user ' + runningUserRank  );
-                if( runningUserRank > dmRank ){
-                    acc.addError( 'You are not allowed to modify Always roll or Do not Roll field' );
-                }
-            }
-        }
-    }
-    Commented Out for HRP - 10016 --> End */
+public static void checkRolloverFlagUpdateAccessability( List<Account> oldAccounts, List<Account> newAccounts,Map<Id,Account> oldAccountsMap,Map<Id,Account> newAccountsMap){
+Map<Id, Id> accIdDistrictmanagerId = new Map<Id, Id>();
+Map<Id, String> teammemberIdRoleMap = new Map<Id, String>();
+Map<String, Decimal> roleRankMap = new Map<String, Decimal>();
+Set<Id> teammemberids = new Set<Id>();
+Set<Id> accountid = new Set<Id>();
+List<AccountTeammember> aTeam ;
+Id runninguserid = userInfo.getUserId();
+Integer runningUserRank;
+for( Account acc : newAccounts ){
+if( !accIdDistrictmanagerId.containsKey( acc.Id ) ){
+accIdDistrictmanagerId.put( acc.Id, acc.District_Manager__c);
+accountid.add(acc.Id);
+}
+}
+teammemberids.add( userInfo.getUserId() );
+for( Id accid : accIdDistrictmanagerId.keySet() ){
+if( accIdDistrictmanagerId.get( accid ) !=null ){
+teammemberids.add( accIdDistrictmanagerId.get( accid ) ) ;
+}
+}
+aTeam = [ select AccountId, userId, TeamMemberRole from AccountTeammember where AccountId IN:accountid and userId IN: teammemberids];
+for( AccountTeammember atm : aTeam ){
+if( !teammemberIdRoleMap.containsKey( atm.userId ) ){
+teammemberIdRoleMap.put( atm.userId, atm.TeamMemberRole );
+}
+}
+// System.debug( 'teammemberIdRoleMap is : ' + teammemberIdRoleMap );
+// Retrieve data from Custom Metadat Type AccountTeamRoleRank__mdt
+List<AccountTeamRoleRank__mdt> atmrolemdt = [select Rank__c, Team_Role__c from AccountTeamRoleRank__mdt ];
+for( AccountTeamRoleRank__mdt atmmdt : atmrolemdt ){
+if( !roleRankMap.containsKey( atmmdt.Team_Role__c ) ){
+roleRankMap.put( atmmdt.Team_Role__c, atmmdt.Rank__c );
+}
+}
+// System.debug( 'roleRankMap is: ' + roleRankMap );
+// System.debug( 'running userid is: ' + runninguserid );
+runningUserRank = Integer.valueOf( roleRankMap.get( teammemberIdRoleMap.get( runninguserid ) )  );
+// System.debug('runningUserRank is ' + runningUserRank );
+for( Account acc : newAccounts ){
+// System.debug( 'old value of Always_Roll__c ' +  oldAccountsMap.get(acc.Id).Always_Roll__c  );
+// System.debug( 'new value of Always_Roll__c ' +  acc.Always_Roll__c  );
+if( acc.District_Manager__c != null && ((oldAccountsMap.get(acc.Id).Always_Roll__c != acc.Always_Roll__c)   || (oldAccountsMap.get(acc.Id).Do_Not_Roll__c != acc.Do_Not_Roll__c)) ){
+Integer dmRank = Integer.valueOf( roleRankMap.get( teammemberIdRoleMap.get( acc.District_Manager__c ) )  );
+// System.debug('dmRank is ' + dmRank + ' rank of running user ' + runningUserRank  );
+if( runningUserRank > dmRank ){
+acc.addError( 'You are not allowed to modify Always roll or Do not Roll field' );
+}
+}
+}
+}
+Commented Out for HRP - 10016 --> End */
     /*
 * JIRA Ticket: HRP - 1678,
 * Description: Populate Market field on Account based on Billing Zip code - Market Mapping
@@ -244,10 +251,10 @@ public  without sharing class AccountService {//with sharing is not needed
             for( Account newAccount:beforeUpdateAccList  ){
                 if( newAccount.BillingPostalCode != null && 
                    oldAccountsMap.get(newAccount.id).BillingPostalCode !=newAccount.BillingPostalCode){//HRP-10005
-                    zipcodeset.add( Decimal.valueOf( newAccount.BillingPostalCode ) );
-                    zipCodeStringSet.add(String.valueOf(newAccount.BillingPostalCode));
-                    
-                }
+                       zipcodeset.add( Decimal.valueOf( newAccount.BillingPostalCode ) );
+                       zipCodeStringSet.add(String.valueOf(newAccount.BillingPostalCode));
+                       
+                   }
             }
         }
         if( !zipcodeset.isEmpty() ){
@@ -274,44 +281,7 @@ public  without sharing class AccountService {//with sharing is not needed
             }
         }
     }
-
-    @AuraEnabled
-    public static boolean fetchBloodDrivePendingOpp(String accId,Date selEffectiveDate) {
-        system.debug('----->Inside '+selEffectiveDate);
-        List<Opportunity> oppList =[SELECT Id, AccountId, Name, Description, StageName,Drive_Date__c FROM Opportunity where AccountId =:accId and Drive_Date__c >= :selEffectiveDate];
-        if(oppList.size()>0){
-            return true;
-        }else{
-            return false;
-        }
-    }
-    @AuraEnabled
-    public static string cancelBloodDrivePendingOpp(Id accId,date selEffectiveDate,string closereason) {
-        Database.executeBatch(new Bsf_BatchCancelBloodDrivePendingOpp(accId,selEffectiveDate,closereason),100);
-        return 'Successfully cancelled drives';
-    }
-
-    @AuraEnabled
-    public static string cancelAccount(Id accId,date selEffectiveDate,string closereason) {
-        try{
-            Account acc = new account();
-            acc.id =accId;
-            acc.Defunct_Effective_Date__c = selEffectiveDate;
-            acc.Closure_Reason__c =closereason;
-            acc.Account_Status__c ='Closed';
-            //Schema.DescribeSObjectResult ds = Account.sObjectType.getDescribe();
-            //if( ds.isUpdateable() ){}
-            update acc;
-            return 'Successfully cancelled drives';
-        }catch (Exception ex) {
-            //return ex.getMessage();
-            throw new AuraHandledException(ex.getMessage());
-        }
-    }
-    @AuraEnabled
-    public static Account fetchAccountDetails(String accId) {
-        return [select id,Name,Closure_Reason__c,Defunct_Effective_Date__c from account where id =:accId];
-    }
+    
     public static void updateNationalNameStatus(List<Account> newAccounts, Map<Id,Account> oldAccountsMap, Map<Id,Account> newAccountsMap)
     {
         String profileNameUserInfo;
@@ -320,10 +290,10 @@ public  without sharing class AccountService {//with sharing is not needed
         //List<User> loggedInUser = [ SELECT ID , Profile.Name FROM User Where id = : UserInfo.getUserId() AND Profile.Name IN :allowedProfiles];
         
         //Don't check for profile if the running user is "automated process"
-		if(UserInfo.getName() != System.Label.NationalNameUpdateExcludeUser) { //HRP-9880
-        	profileNameUserInfo = [SELECT Id,Name FROM Profile WHERE Id =: UserInfo.getProfileId()].Name;
+        if(UserInfo.getName() != System.Label.NationalNameUpdateExcludeUser) { //HRP-9880
+            profileNameUserInfo = [SELECT Id,Name FROM Profile WHERE Id =: UserInfo.getProfileId()].Name;
         }//HRP-9880 
- 
+        
         for(Account accObj : newAccounts){
             if( oldAccountsMap.get(accObj.Id).National_Name__c == null && accObj.National_Name__c != null){
                 accObj.Initial_Reviewer__c = UserInfo.getUserId();
@@ -334,13 +304,13 @@ public  without sharing class AccountService {//with sharing is not needed
                 accObj.National_Name_Initial_Review_Date__c = null;
             }else if(accObj.National_Name_Status__c == System.Label.Review_Completed && accObj.National_Name__c != oldAccountsMap.get(accObj.Id).National_Name__c){
                 if(!string.isEmpty(profileNameUserInfo) && !allowedProfiles.contains(profileNameUserInfo))
-                accObj.adderror(System.Label.NationalNameCannotBeUpdatedAfterReview);
+                    accObj.adderror(System.Label.NationalNameCannotBeUpdatedAfterReview);
             }
         }
     }
     //Added for HRP-999
     //Below method will add AccountTeamMembers to the Account when an Account is inserted and also populate the Account_Portfolio_Assignment__c Object based on ZIPCode of Account
-    public static void createAccountTeamMembers(List<Account> newAccounts,Map<Id,Account> newAccountsMap,String calledFromBatch,Map<Id,Account_Portfolio_Assignment__c> accIdAccPortfolioMap,Map<String,AccountTeamMember> teamMemberMap){
+    public static List<Account_Portfolio_Assignment__c> createAccountTeamMembers(List<Account> newAccounts,Map<Id,Account> newAccountsMap,String calledFromBatch,Map<Id,Account_Portfolio_Assignment__c> accIdAccPortfolioMap,Map<String,AccountTeamMember> teamMemberMap){//HRP-11138 return type void --> accountPortfolio Assignment
         //System.debug('createAccountTeamMembers Method entered');
         //System.debug('isMethodExecuted:'+isMethodExecuted);
         BSF_Constants.isTeamMemberCreatedFromBackend = true;
@@ -366,19 +336,22 @@ public  without sharing class AccountService {//with sharing is not needed
             //System.debug('isFuture:'+System.isFuture());
             //System.debug('calledFromBatch:'+calledFromBatch);
             //System.debug('inside isFuture if block');
-            return;
+            return null;//HRP-11138 returning null
         }
+        //add else
+        List<Account_Portfolio_Assignment__c> accPortfolioList = new List<Account_Portfolio_Assignment__c>();
         if(!isMethodExecuted){
-            Map<Id,Account> accountPortfoliosForTheAccount = new Map<Id,Account>([select Id,Name,Account_AM_Portfolio_Type__c ,(select Id, Name from AccountPortfolioAssignments__r Limit 1) from Account where Id IN:newAccounts]);
+            Map<Id,Account> accountPortfoliosForTheAccount = new Map<Id,Account>([select Id,Name,(select Id, Name from AccountPortfolioAssignments__r Limit 1) from Account where Id IN:newAccounts]);
             system.debug('accountPortfoliosForTheAccount## '+accountPortfoliosForTheAccount);
             system.debug('entered isMethodExecuted');
             Set<String> zipCodeSet = new Set<String>();
             system.debug('zipCodeSet'+zipCodeSet);
             Map<String,List<Account>> zipCodeAccListMap = new Map<String,List<Account>>();
+            Map<Id,List<Date>> accIdGapDatesMap= new Map<Id,List<Date>>();
             for(Account acc:newAccounts){
                 if(!accountIdList.contains(acc.id))
                 {
-				 accountIdList.add(acc.id);
+                    accountIdList.add(acc.id);
                 }
                 String zip = String.isBlank(acc.BillingPostalCode) ? acc.ShippingPostalCode :acc.BillingPostalCode;
                 zipCodeSet.add(zip);
@@ -394,6 +367,70 @@ public  without sharing class AccountService {//with sharing is not needed
                 
             }
             
+             //HRP-12053 Start
+            if(calledFromBatch== BSF_constants.DEFAULT_TERRITORY)
+            {
+                set<id> exceptionId = new set<Id>();
+                for(Account_Portfolio_Assignment__c accException : accIdAccPortfolioMap.values())
+                {
+                    exceptionId.add(accException.id);
+                }
+                List<Account_Portfolio_Assignment__c> exAccPortList =[select id,Account__c,BSF_portfolio__c,start_date__c,End_Date__c from Account_Portfolio_Assignment__c where account__c in:accIdAccPortfolioMap.keySet() and bsf_portfolio__r.Taxonomy_type__c in('Bio Recruitment CD','Bio Account Portfolio') and Id not in :exceptionId];
+                Map<Id,List<Account_Portfolio_Assignment__c>> accIdAccPortListMap = new Map<Id,List<Account_Portfolio_Assignment__c>>();
+                for(Account_Portfolio_Assignment__c apa:exAccPortList)
+                {
+                    if(!accIdAccPortListMap.containsKey(apa.Account__c))
+                    {
+                        accIdAccPortListMap.put(apa.Account__c,new List<Account_Portfolio_Assignment__c>());
+                    }
+                    accIdAccPortListMap.get(apa.Account__c).add(apa);
+                    
+                    
+                }
+                date maxDate=Date.newInstance(4000,12,31);
+                for(Id accId : accIdAccPortfolioMap.keySet())
+                {
+                    Integer i = 0;
+                    if(accIdAccPortListMap.containsKey(accId))
+                    {
+                        while(i<accIdAccPortListMap.get(accId).size())
+                        {
+                            Account_Portfolio_Assignment__c apa = new Account_Portfolio_Assignment__c();
+                            apa = accIdAccPortListMap.get(accId)[i];
+                            
+                                system.debug('testing accexception '+accIdAccPortfolioMap.get(apa.Account__c));
+                            system.debug('testing apa '+apa);
+                            if(apa.start_Date__c > accIdAccPortfolioMap.get(apa.Account__c).End_date__c && apa.start_Date__c != accIdAccPortfolioMap.get(apa.Account__c).End_date__c+1)
+                            {
+                                system.debug('Have next to exception');
+                                if(!accIdGapDatesMap.containsKey(apa.Account__c))
+                                {
+                                    accIdGapDatesMap.put(apa.Account__c,new List<Date>{accIdAccPortfolioMap.get(apa.Account__c).End_date__c+1,apa.start_Date__c-1});
+                                }
+                            }
+                            else if(i==accIdAccPortListMap.get(accId).size()-1 && !accIdGapDatesMap.containsKey(apa.Account__c) && apa.End_Date__c!=maxDate)
+                            {
+                                system.debug('doesnt Have next to exception');
+                                accIdGapDatesMap.put(apa.Account__c,new List<Date>{accIdAccPortfolioMap.get(apa.Account__c).End_date__c+1});
+                            }
+                            
+                            i++;
+                        }
+                    }
+                    else
+                    {
+                        system.debug('no existing assignment');
+                        accIdGapDatesMap.put(accId,new List<Date>{accIdAccPortfolioMap.get(accId).End_date__c+1});
+                    }
+                    
+                    
+                    
+                }
+                
+                
+                system.debug('accIdGapDatesMap '+accIdGapDatesMap);
+            }
+             //HRP-12053 End
             List<Taxonomy__c> taxonomyList = [SELECT Id,Zip_Code__c,Zip_Code_Key__c,Zip_Code_Name__c,Division_Code__c,DS_Region_Code__c,Team_Code__c,ABM_Code__c,ABM_Name__c,DRD_Territory_Code__c,DRD_Territory_Name__c,Start_Date__c,End_Date__c,RecordType.Name FROM Taxonomy__c WHERE Zip_Code__c  IN:zipCodeSet AND End_Date__c > TODAY AND RecordType.Name =:BSF_Constants.BIO_RECRUITMENT_RECORD_TYPE ORDER BY Start_Date__c];
             System.debug('taxonomyList: '+taxonomyList.size());
             
@@ -402,7 +439,7 @@ public  without sharing class AccountService {//with sharing is not needed
             Map<String,List<String>> zipExternalKeyMap = new Map<String,List<String>>();
             Map<String,BSF_Portfolio__c> portfolioMap = new Map<String,BSF_Portfolio__c>();
             Map<String,List<Portfolio_Assignment__c>> portfolioUserMap = new Map<String,List<Portfolio_Assignment__c>>();
-            List<Account_Portfolio_Assignment__c> accPortfolioList = new List<Account_Portfolio_Assignment__c>();
+            
             List<AccountTeamMember> allTeamMemberInsertList = new List<AccountTeamMember>();
             for(Taxonomy__c taxonomy:taxonomyList){
                 String externalKey = null;
@@ -424,7 +461,7 @@ public  without sharing class AccountService {//with sharing is not needed
                 zipExternalKeyMap.get(taxonomy.Zip_Code__c).add(externalKey);
                 system.debug('zipExternalKeyMap.get(taxonomy.Zip_Code__c).add(externalKey);'+zipExternalKeyMap.get(taxonomy.Zip_Code__c));
             }
-            List<BSF_Portfolio__c> portfolioList = [SELECT Id,Name,Portfolio_Type__c,External_Key__c,External_Key_BackEnd__c,Portfolio_Code__c,Portfolio_Name__c,Parent_Portfolio__c,Parent_Portfolio__r.Parent_Portfolio__c,End_Date__c,start_Date__c FROM BSF_Portfolio__c WHERE External_Key_BackEnd__c IN:externalKeySet order by createdDate desc];
+            List<BSF_Portfolio__c> portfolioList = [SELECT Id,Name,Portfolio_Type__c,External_Key__c,External_Key_BackEnd__c,Portfolio_Code__c,Portfolio_Name__c,Parent_Portfolio__c,Parent_Portfolio__r.Parent_Portfolio__c,End_Date__c,start_Date__c FROM BSF_Portfolio__c WHERE External_Key_BackEnd__c IN:externalKeySet AND End_Date__c >= TODAY order by createdDate desc];
             Set<Id> portfolioIds = new Set<Id>();
             Set<String> portfolioCodeSet = new Set<String>();
             map<String,BSF_Portfolio__c> amPortfolioMap = new map<String,BSF_Portfolio__c>();//HRP-11290
@@ -439,7 +476,8 @@ public  without sharing class AccountService {//with sharing is not needed
                 portfolioIds.add(portfolio.Parent_Portfolio__r.Parent_Portfolio__c); //DM ID
                 portfolioCodeSet.add(portfolio.Portfolio_Code__c);
             }
-            List<BSF_Portfolio__c> supervisorAMPortfolios = [SELECT Name,Portfolio_Type__c,Taxonomy_Type__c,External_Key__c,
+            //HRP-12053 commented Start
+            /*List<BSF_Portfolio__c> supervisorAMPortfolios = [SELECT Name,Portfolio_Type__c,Taxonomy_Type__c,External_Key__c,
                                                              Portfolio_Code__c,Portfolio_Name__c,Parent_Portfolio__c,
                                                              Parent_Portfolio__r.Parent_Portfolio__c,End_Date__c,start_Date__c FROM BSF_Portfolio__c
                                                              WHERE Portfolio_Code__c IN:portfolioCodeSet
@@ -451,7 +489,7 @@ public  without sharing class AccountService {//with sharing is not needed
             if(supervisorAMPortfolios.size()>0){
                 for(BSF_Portfolio__c supervisorAMPortfolio:supervisorAMPortfolios){
                     if(amPortfolioMap != null && amPortfolioMap.get(supervisorAMPortfolio.portfolio_code__c)!= null && !(supervisorAMPortfolio.end_Date__c < amPortfolioMap.get(supervisorAMPortfolio.portfolio_code__c).start_Date__c || supervisorAMPortfolio.Start_Date__c > amPortfolioMap.get(supervisorAMPortfolio.portfolio_code__c).End_Date__c))//11290 portolio code date check
-                    portfolioCodeIdMap.put(supervisorAMPortfolio.Portfolio_Code__c,supervisorAMPortfolio.Id);
+                        portfolioCodeIdMap.put(supervisorAMPortfolio.Portfolio_Code__c,supervisorAMPortfolio.Id);
                     amSupervisorPortfolioIdMap.put(supervisorAMPortfolio.Id, supervisorAMPortfolio.Parent_Portfolio__c);
                     superIdSuperBsfMap.put(supervisorAMPortfolio.Id,supervisorAMPortfolio);
                     portfolioIds.add(supervisorAMPortfolio.Parent_Portfolio__c);
@@ -470,7 +508,8 @@ public  without sharing class AccountService {//with sharing is not needed
             Map<String,Taxonomy__c> portfolioCodeTaxonomyMap = new Map<String,Taxonomy__c>();
             for(Taxonomy__c supervisorTaxo:supervisorTaxonomoies){
                 portfolioCodeTaxonomyMap.put(supervisorTaxo.Portfolio_Code__c,supervisorTaxo);
-            }
+            }*/
+            //HRP-12053 commented End
             List<Portfolio_Assignment__c> portFolioUsers = [Select Id,Name, User__c ,Start_Date__c ,End_Date__c,BSF_Portfolio__c,BSF_Portfolio__r.Portfolio_Type__c  FROM Portfolio_Assignment__c WHERE BSF_Portfolio__c IN :portfolioIds AND End_Date__c > TODAY ORDER BY Start_Date__c];
             for(Portfolio_Assignment__c portfolioUser:portFolioUsers){
                 if(portfolioUserMap.get(portfolioUser.BSF_Portfolio__c) == null){
@@ -497,17 +536,20 @@ public  without sharing class AccountService {//with sharing is not needed
                         continue; //No Portfolios identified for the given zipcode
                     Account queriedAccount = accountPortfoliosForTheAccount.get(acc.Id);
                     //system.debug('queriedAccount '+queriedAccount);
+                    /*HRP-12485
                     if( queriedAccount.Account_AM_Portfolio_Type__c  ||
                        (queriedAccount.AccountPortfolioAssignments__r != null && queriedAccount.AccountPortfolioAssignments__r.size() > 0)){
                            // system.debug('entered123');
                            //continue;
                        }
+                    HRP-12485*/
                     //system.debug('entered234');
                     List<AccountTeamMember> amList = new List<AccountTeamMember>();
                     List<AccountTeamMember> dmList = new List<AccountTeamMember>();
                     List<AccountTeamMember> abmList = new List<AccountTeamMember>();
                     List<AccountTeamMember> supervisorList = new List<AccountTeamMember>();
-                    Account_Portfolio_Assignment__c prevAccPortAssign = null;
+                    Set<id> exceptionDoneAccIdeSet = new Set<id>();
+                    Account_Portfolio_Assignment__c prevAccPortAssign = new Account_Portfolio_Assignment__c();
                     for(String externalKey:externalKeyList){
                         AccountTeamMember prevAM = null;
                         AccountTeamMember prevDM = null;
@@ -515,7 +557,7 @@ public  without sharing class AccountService {//with sharing is not needed
                         AccountTeamMember prevSupervisor = null;
                         Taxonomy__c taxoRecord = keyTaxoMap.get(externalKey);
                         if(!portfolioMap.keyset().contains(externalKey))//HRP-8897 spot fix
-                        continue;
+                            continue;
                         BSF_Portfolio__c portfolio = portfolioMap.get(externalKey);
                         Account_Portfolio_Assignment__c accPortfolio = new Account_Portfolio_Assignment__c();
                         accPortfolio.Account__c = acc.Id;
@@ -523,23 +565,55 @@ public  without sharing class AccountService {//with sharing is not needed
                         
                         if((calledFromBatch.equalsIgnoreCase('Called from AccountPortfolioAssignmentService'))||
                            (calledFromBatch== BSF_constants.DEFAULT_TERRITORY)){
-                               accPortfolio.Start_Date__c = accIdAccPortfolioMap.get(acc.Id).End_Date__c +1;
+                               //HRP-12053 Start
+                               if(accIdGapDatesMap==null ||(accIdGapDatesMap!=null && !accIdGapDatesMap.containsKey(accPortfolio.Account__c)  ))
+                        {
+                            system.debug('accPortfolioList break '+accPortfolioList);
+                            break;
+                        }
+                               if(taxoRecord.End_Date__c<accIdAccPortfolioMap.get(acc.Id).End_Date__c)
+                                   continue;
+                               if(!exceptionDoneAccIdeSet.contains(accPortfolio.Account__c))
+                               {
+                                   accPortfolio.Start_Date__c = accIdAccPortfolioMap.get(acc.Id).End_Date__c +1;
+                                   exceptionDoneAccIdeSet.add(accPortfolio.Account__c);
+                                   system.debug('exceptionDoneAccIdeSet');
+                               }
+                               else
+                               {
+                                   accPortfolio.Start_Date__c = taxoRecord.Start_Date__c;
+                               }
+                               //HRP-12053 End
                            }
                         else{
                             accPortfolio.Start_Date__c = taxoRecord.Start_Date__c;
                         }
                         accPortfolio.End_Date__c = taxoRecord.End_Date__c;
                         //  accPortfolio.External_Identifier__c = String.valueOf(acc.Id)+ '_' + String.valueOf(portfolio.Id) + '_' + String.valueOf(territoryCodeZipCodeMap.get(portfolio.Portfolio_Code__c).Start_Date__c) +  '_' + String.valueOf(territoryCodeZipCodeMap.get(portfolio.Portfolio_Code__c).End_Date__c);
+                        system.debug('prevAccPortAssign'+prevAccPortAssign);
+                        system.debug('accPortfolio'+accPortfolio);
                         if(prevAccPortAssign != null){
                             if(prevAccPortAssign.BSF_Portfolio__c == accPortfolio.BSF_Portfolio__c){
                                 prevAccPortAssign.End_Date__c = taxoRecord.End_Date__c;
                                 continue;
-                            }else{
+                            }
+                            else
+                            {
                                 prevAccPortAssign.End_Date__c = accPortfolio.Start_Date__c - 1;
                             }
                         }
                         prevAccPortAssign = accPortfolio;
                         accPortfolioList.add(accPortfolio);
+                        //HRP-12053 Start
+                        if(accIdGapDatesMap!=null && accIdGapDatesMap.containsKey(accPortfolio.Account__c) &&  calledFromBatch== BSF_constants.DEFAULT_TERRITORY && accIdGapDatesMap.get(accPortfolio.Account__c).size()==2)
+                        {
+                            system.debug('accPortfolioList break '+accPortfolioList);
+                            break;
+                        }
+                        //HRP-12053 end
+                        
+                        //HRP-12053 commented Start
+                        /*
                         //Check for Supervisor--As part Of HRP-4622--Starts
                         // System.debug('portfolio.Portfolio_Code__c: '+portfolio.Portfolio_Code__c);
                         // System.debug('portfolioCodeIdMap: '+portfolioCodeIdMap);
@@ -569,22 +643,22 @@ public  without sharing class AccountService {//with sharing is not needed
                                 supervisorAccAMPortfolio.End_Date__c = taxoRecord.End_Date__c<=superBsf.End_Date__c?taxoRecord.End_Date__c:superBsf.End_Date__c;//HRP-11290 comparison
                             }
                             System.debug('supervisorAccAMPortfolio: '+supervisorAccAMPortfolio);
-                            accPortfolioList.add(supervisorAccAMPortfolio);
+                            //accPortfolioList.add(supervisorAccAMPortfolio);
                         }
-                    
-                       //Check for Supervisor--As part Of HRP-4622--Ends
+                        
+                        //Check for Supervisor--As part Of HRP-4622--Ends
                         //Start - Populate Team Members
                         //For Supervisor--Added as Part of HRP-4622--Changes Starts
                         List<Portfolio_Assignment__c> supervisorUsers = portfolioUserMap.get(amSupervisorPortfolioIdMap.get(portfolioCodeIdMap.get(portfolio.Portfolio_Code__c)));
                         if( supervisorUsers != null && supervisorUsers.size() > 0){
-                            if(portfolioCodeTaxonomyMap.containsKey(portfolio.Portfolio_Code__c) && portfolioCodeTaxonomyMap.get(portfolio.Portfolio_Code__c).Start_Date__c != null){
-                                Taxonomy__c supervisorTaxoRecord = portfolioCodeTaxonomyMap.get(portfolio.Portfolio_Code__c);
-                                prevSupervisor = populateAccountTeamMembersByPortfolio(acc,supervisorTaxoRecord,BSF_Constants.SUPERVISOR,supervisorUsers,supervisorList,prevSupervisor,calledFromBatch,accIdAccPortfolioMap);
-                            }
-                            else{
-                                prevSupervisor = populateAccountTeamMembersByPortfolio(acc,taxoRecord,BSF_Constants.SUPERVISOR,supervisorUsers,supervisorList,prevSupervisor,calledFromBatch,accIdAccPortfolioMap);
-                            }
-                        }
+if(portfolioCodeTaxonomyMap.containsKey(portfolio.Portfolio_Code__c) && portfolioCodeTaxonomyMap.get(portfolio.Portfolio_Code__c).Start_Date__c != null){
+Taxonomy__c supervisorTaxoRecord = portfolioCodeTaxonomyMap.get(portfolio.Portfolio_Code__c);
+prevSupervisor = populateAccountTeamMembersByPortfolio(acc,supervisorTaxoRecord,BSF_Constants.SUPERVISOR,supervisorUsers,supervisorList,prevSupervisor,calledFromBatch,accIdAccPortfolioMap);
+}
+else{
+prevSupervisor = populateAccountTeamMembersByPortfolio(acc,taxoRecord,BSF_Constants.SUPERVISOR,supervisorUsers,supervisorList,prevSupervisor,calledFromBatch,accIdAccPortfolioMap);
+}
+}
                         //System.debug('prevSupervisor: '+prevSupervisor);
                         //For Supervisor--Added as Part of HRP-4622--Changes Ends
                         List<Portfolio_Assignment__c> amUsers = portfolioUserMap.get(portfolio.Id);
@@ -606,41 +680,42 @@ public  without sharing class AccountService {//with sharing is not needed
                     allTeamMemberInsertList.addAll(dmList);
                     allTeamMemberInsertList.addAll(abmList);
                     allTeamMemberInsertList.addAll(supervisorList);
+                    *///HRP-12053 end
+                    }
+                }
                 
-            }
-            
-            System.debug('accPortfolioList:' +accPortfolioList.size());
-            System.debug('accPortfolioList:' +accPortfolioList);}
+                System.debug('accPortfolioList:' +accPortfolioList.size());
+                System.debug('accPortfolioList:' +accPortfolioList);}
             list<Account_Portfolio_Assignment__c> apInsertListToUpdate = new list<Account_Portfolio_Assignment__c>();
             list<Account_Portfolio_Assignment__c> apInsertList = new list<Account_Portfolio_Assignment__c>();
             for(Account_Portfolio_Assignment__c ap:accPortfolioList)
             {
-                 account acc = new account();
+                account acc = new account();
                 if(newAccountsMap!=null && newAccountsMap.get(ap.Account__c)!=null)
-                 acc =newAccountsMap.get(ap.Account__c);
-                //system.debug('newAccountsMapzip'+newAccountsMap.get(ap.Account__c).Zipcode_change__c);
-                //system.debug('newAccountsMap'+newAccountsMap.get(ap.Account__c).billingpostalcode);
-                if((accIdExAP!= null && accIdExAP.get(ap.Account__c)!= null) && 
-                   ((acc !=null && ((acc.billingpostalcode !=null && acc.Zipcode_change__c !=acc.billingpostalcode) || (acc.billingpostalcode ==null && acc.Zipcode_change__c !=acc.shippingpostalcode))) ||calledFromBatch.equalsIgnoreCase('Called from DefaultTerritoryPortfolioBatchHelper')))//HRP-10878
+                    acc =newAccountsMap.get(ap.Account__c);
+                if(calledFromBatch!= BSF_constants.DEFAULT_TERRITORY && (accIdExAP!= null && accIdExAP.get(ap.Account__c)!= null) && 
+                   ((acc !=null && acc.Zipcode_change__c != null && ((acc.billingpostalcode !=null && acc.Zipcode_change__c !=acc.billingpostalcode) || (acc.billingpostalcode ==null && acc.shippingpostalcode != null && acc.Zipcode_change__c !=acc.shippingpostalcode)))))//HRP-10878;//HRP-12053 acc.Zipcode_change__c != null
                 {
                     system.debug(accIdExAP.get(ap.Account__c));
                     apInsertListToUpdate.add(ap);
                     
                 }
-                else if(accIdExAP==null || accIdExAP.get(ap.Account__c)== null )//HRP-10878
+                else if(accIdExAP==null || accIdExAP.get(ap.Account__c)== null || calledFromBatch== BSF_constants.DEFAULT_TERRITORY)//HRP-10878; //HRP-12053 calledFromBatch check
                 {
                     system.debug('accIdExAP is null');
                     apInsertList.add(ap);
                 }
                 
             }
-            
+            if(calledFromBatch!='AccportDelete')//HRP-11138 doesn't needed when exception delete
+            {
             if(!apInsertListToUpdate.isEmpty())
-            AccountPortfolioAssignmentService.handleTerritoryPortfolioInsert(apInsertListToUpdate);//HRP-10878
+                AccountPortfolioAssignmentService.handleTerritoryPortfolioInsert(apInsertListToUpdate);//HRP-10878
             system.debug('apInsertListToUpdate'+apInsertListToUpdate);
             
             
             BSF_Constants.skipAccountPortfolioAssignmentTrigger = true;
+            triggerHandler.bypass('AccountPortfolioAssignmentTriggerHandler');//HRP-12053 trigger not need specilaist handle below calling HandleAccountSpecialist
             system.debug('insertResults'+apInsertList);
             Database.SaveResult[] insertResults = Database.insert(apInsertList,false);
             BSF_Constants.skipAccountPortfolioAssignmentTrigger = false;
@@ -656,14 +731,14 @@ public  without sharing class AccountService {//with sharing is not needed
             InsertBsfErrorLog.insertBsfErrors(logList);
             //BSF Error log - success log - completed
             /*if(teamMemberMap != null){
-                for(AccountTeamMember teammemberNew:allTeamMemberInsertList){
-                    if(teamMemberMap.containsKey(teammemberNew.AccountId+''+teammemberNew.UserId)){
-                        // System.debug('teammemberNew '+teammemberNew);
-                        AccountTeamMember removedTeamMember = teamMemberMap.remove(teammemberNew.AccountId+''+teammemberNew.UserId);
-                        // System.debug('removedTeamMember '+removedTeamMember);
-                        teammemberNew.Start_Date__c = removedTeamMember.Start_Date__c;
-                    }}
-            }*/
+for(AccountTeamMember teammemberNew:allTeamMemberInsertList){
+if(teamMemberMap.containsKey(teammemberNew.AccountId+''+teammemberNew.UserId)){
+// System.debug('teammemberNew '+teammemberNew);
+AccountTeamMember removedTeamMember = teamMemberMap.remove(teammemberNew.AccountId+''+teammemberNew.UserId);
+// System.debug('removedTeamMember '+removedTeamMember);
+teammemberNew.Start_Date__c = removedTeamMember.Start_Date__c;
+}}
+}*/
             //System.debug('allTeamMemberInsertList: '+allTeamMemberInsertList);
             
             //HRP-10099 && HRP-8897 
@@ -673,63 +748,64 @@ public  without sharing class AccountService {//with sharing is not needed
             {
                 accountIdList.addAll(accIdAccPortfolioMap.keyset());
             }
-                AccountPortfolioAssignmentService.HandleAccountSpecialist(new set<id>(accountIdList));//HRP-6028
-                AccountPortfolioAssignmentService.accTeamDateSyncOnAccPortUpdates(accountIdList,calledFromBatch);
+            AccountPortfolioAssignmentService.HandleAccountSpecialist(new set<id>(accountIdList));//HRP-6028
+            AccountPortfolioAssignmentService.accTeamDateSyncOnAccPortUpdates(accountIdList,null,new set<id>(),new map<id,list<accountTeamMember>> (),new map<id,list<accountTeamMember>> ());//HRP-10569 parameter changes
             //HRP-10099 && HRP-8897 
-            
+            }
             
             /*HRP-8897
-            List<AccountTeamMember> ZipcodeAccTeam = new List<AccountTeamMember> ();
-            if(!apInsertListToUpdate.isEmpty())
-            {
-                system.debug('Zipcode changed');
-                ZipcodeAccTeam = AccountPortfolioAssignmentService.AccZipcodeChangeTeamHandle(apInsertListToUpdate,allTeamMemberInsertList);
-                
-            }
-            if(!ZipcodeAccTeam.isEmpty())
-            {
-                allTeamMemberInsertList.clear();
-                allTeamMemberInsertList.addAll(ZipcodeAccTeam);
-            }
-            
-                //HRP-10099
-                for(AccountTeamMember atm:allTeamMemberInsertList)
-                {
-                    
-                    string Key = atm.AccountId+'_'+atm.userid;
-                    if(accIdUserDate.containsKey(Key))
-                    {
-                        
-                        AccountTeamMember acctm = accIdUserDate.get(key);
-                        system.debug('atm**'+atm);
-                        system.debug('acctm**'+acctm);
-                        if(atm.Start_Date__c != acctm.Start_Date__c)
-                        {
-                            atm.Start_Date__c = acctm.Start_Date__c;
-                        }
-                        if(atm.End_Date__c != acctm.End_Date__c)
-                        {
-                            atm.End_Date__c = acctm.End_Date__c;
-                        }
-                        //HRP-8897
-                        if(atm.BSF_Portfolio__c != acctm.BSF_Portfolio__c)
-                        {
-                            atm.BSF_Portfolio__c = acctm.BSF_Portfolio__c;
-                        }
-                        //HRP-8897
-                    }
-                }
-                //HRP-10099
-                
-                Database.SaveResult[] insertTeamResults = Database.insert(allTeamMemberInsertList,false);
-            logList = BSF_Utilities.createErrorLog(insertTeamResults, 'Populate Account Team','AccountService','CreateAccTeam','Error','Error in upserting accTeam');
-            Database.insert(logList,false);*///HRP-8897
+List<AccountTeamMember> ZipcodeAccTeam = new List<AccountTeamMember> ();
+if(!apInsertListToUpdate.isEmpty())
+{
+system.debug('Zipcode changed');
+ZipcodeAccTeam = AccountPortfolioAssignmentService.AccZipcodeChangeTeamHandle(apInsertListToUpdate,allTeamMemberInsertList);
+
+}
+if(!ZipcodeAccTeam.isEmpty())
+{
+allTeamMemberInsertList.clear();
+allTeamMemberInsertList.addAll(ZipcodeAccTeam);
+}
+
+//HRP-10099
+for(AccountTeamMember atm:allTeamMemberInsertList)
+{
+
+string Key = atm.AccountId+'_'+atm.userid;
+if(accIdUserDate.containsKey(Key))
+{
+
+AccountTeamMember acctm = accIdUserDate.get(key);
+system.debug('atm**'+atm);
+system.debug('acctm**'+acctm);
+if(atm.Start_Date__c != acctm.Start_Date__c)
+{
+atm.Start_Date__c = acctm.Start_Date__c;
+}
+if(atm.End_Date__c != acctm.End_Date__c)
+{
+atm.End_Date__c = acctm.End_Date__c;
+}
+//HRP-8897
+if(atm.BSF_Portfolio__c != acctm.BSF_Portfolio__c)
+{
+atm.BSF_Portfolio__c = acctm.BSF_Portfolio__c;
+}
+//HRP-8897
+}
+}
+//HRP-10099
+
+Database.SaveResult[] insertTeamResults = Database.insert(allTeamMemberInsertList,false);
+logList = BSF_Utilities.createErrorLog(insertTeamResults, 'Populate Account Team','AccountService','CreateAccTeam','Error','Error in upserting accTeam');
+Database.insert(logList,false);*///HRP-8897
             
             
         }
         isMethodExecuted = true;
+        return accPortfolioList;
     }
-
+    
     public static AccountTeamMember populateAccountTeamMembersByPortfolio(Account acc,Taxonomy__c taxoRecord,String portfolioType,List<Portfolio_Assignment__c> portUsers,List<AccountTeamMember> teamMemberList,AccountTeamMember prevMember,String calledFromBatch,Map<Id,Account_Portfolio_Assignment__c> accIdAccPortfolioMap){
         for(Integer index=teamMemberList.size()-1;index>=0;index--){
             if(teamMemberList[index].Start_Date__c > taxoRecord.Start_Date__c){
@@ -749,8 +825,8 @@ public  without sharing class AccountService {//with sharing is not needed
         {
             accidSet.add(acc.id);
         }
-
-
+        
+        
         Map<id,List<id>> accAccTeamListMap =BsfPortfolioSyncHelper.accIdexistingUserIdMap(accidSet);
         
         if(portUsers != null){
@@ -766,41 +842,41 @@ public  without sharing class AccountService {//with sharing is not needed
                 {
                     teamMemStartDate = (accIdAccPortfolioMap.get(acc.Id).End_Date__c +1 >= userAssignStDate?accIdAccPortfolioMap.get(acc.Id).End_Date__c+1:userAssignStDate);
                 }
-
+                
                 if((accAccTeamListMap == null || accAccTeamListMap.get(acc.Id) == Null) || 
                    (accAccTeamListMap != null && accAccTeamListMap.get(acc.Id) != null 
                     && !accAccTeamListMap.get(acc.Id).contains(userAssignment.user__c)))  
                 {
                     system.debug('inside accAccTeamListMap'+accAccTeamListMap.get(acc.Id));
-                if(prevMember == null){
-                    /*if(calledFromBatch.equalsIgnoreCase('Called from DefaultTerritoryPortfolioBatchHelper')){
+                    if(prevMember == null){
+                        /*if(calledFromBatch.equalsIgnoreCase('Called from DefaultTerritoryPortfolioBatchHelper')){
 member1.Start_Date__c = System.Today() +1;
 }*/
-                    if((calledFromBatch.equalsIgnoreCase('Called from AccountPortfolioAssignmentService'))
-                       || (calledFromBatch.equalsIgnoreCase('Called from DefaultTerritoryPortfolioBatchHelper'))) {
-                        
-                                 member1.Start_Date__c = teamMemStartDate;
-                           
-                       }
-                    else
-                    {
-                        member1.Start_Date__c = taxoRecord.Start_Date__c >= userAssignStDate?taxoRecord.Start_Date__c:userAssignStDate;
-                    }
-                }else{
-                    /*if(calledFromBatch.equalsIgnoreCase('Called from DefaultTerritoryPortfolioBatchHelper')){
+                        if((calledFromBatch.equalsIgnoreCase('Called from AccountPortfolioAssignmentService'))
+                           || (calledFromBatch.equalsIgnoreCase('Called from DefaultTerritoryPortfolioBatchHelper'))) {
+                               
+                               member1.Start_Date__c = teamMemStartDate;
+                               
+                           }
+                        else
+                        {
+                            member1.Start_Date__c = taxoRecord.Start_Date__c >= userAssignStDate?taxoRecord.Start_Date__c:userAssignStDate;
+                        }
+                    }else{
+                        /*if(calledFromBatch.equalsIgnoreCase('Called from DefaultTerritoryPortfolioBatchHelper')){
 member1.Start_Date__c = System.Today() +1;
 }*/
-                    if((calledFromBatch.equalsIgnoreCase('Called from AccountPortfolioAssignmentService'))
-                       || (calledFromBatch.equalsIgnoreCase('Called from DefaultTerritoryPortfolioBatchHelper'))) {
-                          
-                        member1.Start_Date__c = teamMemStartDate;
-                        
-                       }
-                    else{
-                        member1.Start_Date__c = userAssignment.Start_Date__c;
+                        if((calledFromBatch.equalsIgnoreCase('Called from AccountPortfolioAssignmentService'))
+                           || (calledFromBatch.equalsIgnoreCase('Called from DefaultTerritoryPortfolioBatchHelper'))) {
+                               
+                               member1.Start_Date__c = teamMemStartDate;
+                               
+                           }
+                        else{
+                            member1.Start_Date__c = userAssignment.Start_Date__c;
+                        }
                     }
                 }
-            }
                 member1.End_Date__c =userAssignment.End_date__c;
                 member1.TeamMemberRole = portfolioType;
                 member1.UserId = userAssignment.User__c;
@@ -810,9 +886,9 @@ member1.Start_Date__c = System.Today() +1;
                 member1.BSF_Portfolio__c = userAssignment.BSF_Portfolio__c;
                 //Commented For Ticket No : HRP-9699 [Start]
                 /*if(accAccTeamListMap == null || accAccTeamListMap.get(acc.Id) == Null) 
-                {
-                 member1.BSF_Portfolio__c = userAssignment.BSF_Portfolio__c;
-                }*/
+{
+member1.BSF_Portfolio__c = userAssignment.BSF_Portfolio__c;
+}*/
                 //Commented For Ticket No : HRP-9699 [End]
                 teamMemberList.add(member1);
                 prevMember = member1;
@@ -825,7 +901,7 @@ member1.Start_Date__c = System.Today() +1;
         Set<Id> accountIds = new Set<Id>();
         for (Account newAccount : newAccountList) {
             Account oldAccount = oldAccountMap?.get(newAccount.Id);
-            if (newAccount.Internal_Name__c != oldAccount?.Internal_Name__c) {
+            if (newAccount.Name != oldAccount?.Name) {//HRP-12136 prev Internal_Name__c--> Name
                 accountIds.add(newAccount.Id);
             }
         }
@@ -882,8 +958,10 @@ member1.Start_Date__c = System.Today() +1;
     }
     // User Story: 1485 :Updates to Account Preference Values
     public static void customNotofocationForDaysOfWeekDeclined(List<Account> newAccountList,Map<Id, Account> oldAccountMap) {
+        System.debug('**DaysOfWeekDeclinedMatchesDrivesDay**');
         Map<Id,List<String>> mapOfdaysOfweekDec=new Map<Id,List<String>>();
         for (Account acctRecord : newAccountList) {
+            System.debug('**DaysOfWeekDeclinedMatchesDrivesDay**');
             if(oldAccountMap.get(acctRecord.id).Days_of_Week_Declined__c!=acctRecord.Days_of_Week_Declined__c && acctRecord.Days_of_Week_Declined__c!=null){
                 Map<String,String> mapOfOldDays=new Map<String,String>();
                 Map<String,String> mapOfnewDays=new Map<String,String>();
@@ -938,23 +1016,40 @@ member1.Start_Date__c = System.Today() +1;
                         }
                         if(mapOfAcctOppties.containsKey(acc.id)){
                             List<Opportunity> listOfOppties= mapOfAcctOppties.get(acc.id);
-                            CustomNotificationType cnotification = [SELECT Id, DeveloperName, MasterLabel FROM CustomNotificationType where DeveloperName='Account_Preference_Custom_Notification'];
+                            // CustomNotificationType cnotification = [SELECT Id, DeveloperName, MasterLabel FROM CustomNotificationType where DeveloperName='Account_Preference_Custom_Notification'];
+                            Id CUstomNotificationTypeId = [SELECT Id, DeveloperName, MasterLabel FROM CustomNotificationType where DeveloperName='Account_Preference_Custom_Notification' LIMIT 1].Id;
+                            List<String> userId = new List<String>();
+                            BSF_CustomNotification notification;
                             for(Opportunity op:listOfOppties){
                                 if(mapOfDays.containsKey(op.Day_of_Week__c)){
-                                    Messaging.CustomNotification notification = new Messaging.CustomNotification();
-                                    notification.setBody('Future blood drive opportunities are scheduled for this day of week');
-                                    notification.setTitle('Future blood drive opportunities are scheduled for this day of week');
-                                    notification.setSenderId(Userinfo.getUserId());
-                                    notification.setNotificationTypeId(cnotification.Id);
-                                    notification.setTargetId(acc.Id); // target object id
-                                    try{
-                                        notification.send(new Set<String> { Userinfo.getUserId() }); // target user id.
-                                        Break;
-                                    }
-                                    catch(Exception e) {
-                                        System.debug('The following exception has occurred: ' + e.getMessage());
-                                        System.debug('Line number: '+e.getLineNumber());
-                                    }      
+                                    // Messaging.CustomNotification notification = new Messaging.CustomNotification();
+                                    // notification.setBody('Future blood drive opportunities are scheduled for this day of week');
+                                    // notification.setTitle('Future blood drive opportunities are scheduled for this day of week');
+                                    // notification.setSenderId(Userinfo.getUserId());
+                                    // notification.setNotificationTypeId(cnotification.Id);
+                                    // notification.setTargetId(acc.Id); // target object id
+                                    // try{
+                                    //     notification.send(new Set<String> { Userinfo.getUserId() }); // target user id.
+                                    //     Break;
+                                    // }
+                                    // catch(Exception e) {
+                                    //     System.debug('The following exception has occurred: ' + e.getMessage());
+                                    //     System.debug('Line number: '+e.getLineNumber());
+                                    // }      
+
+                                    //Send Notification
+                                     //HRP-10482 changes starts here  
+                                     notification = new BSF_CustomNotification()
+                                     .body('Future blood drive opportunities are scheduled for this day of week')
+                                     .title('Future blood drive opportunities are scheduled for this day of week')
+                                     .sender(Userinfo.getUserId())
+                                     .typeId(CUstomNotificationTypeId)
+                                     .target(acc.Id) // target object id
+                                     .category('DaysOfWeekDeclinedMatchesDrivesDay'); //HRP-12757
+
+                                    notification.send(new List<String>{Userinfo.getUserId()});
+                                    //HRP-10482 changes ends here
+                                    System.debug('**notification**'+notification);
                                 }
                             }
                         }
@@ -969,95 +1064,95 @@ member1.Start_Date__c = System.Today() +1;
 * populate whatId, otherwise Task will not create
 * */
     public static void addressUpdationunsucessnotifyByTask(Map<String, Map<Id,String>> accountmanagerids, Map<Id,String> contactIdAccountIdMap ){
-    // create Task
-    Id recTypeId = Schema.SObjectType.task.getRecordTypeInfosByName().get(System.Label.GeneralTask).getRecordTypeId();
-    Task addressUpdationFailedTask = new Task();
-    List<Task> taskList = new List<Task>();
-    Set<Id> allrecIds = new Set<Id>();
-    Set<Id> existingTaskWhatIds = new Set<Id>();
-    for( String objname : accountmanagerids.keySet() ){
-        for( Id recid : accountmanagerids.get(objname).keySet() ){
+        // create Task
+        Id recTypeId = Schema.SObjectType.task.getRecordTypeInfosByName().get(System.Label.GeneralTask).getRecordTypeId();
+        Task addressUpdationFailedTask = new Task();
+        List<Task> taskList = new List<Task>();
+        Set<Id> allrecIds = new Set<Id>();
+        Set<Id> existingTaskWhatIds = new Set<Id>();
+        for( String objname : accountmanagerids.keySet() ){
+            for( Id recid : accountmanagerids.get(objname).keySet() ){
                 allrecIds.add(recid);
-        }
-    }
-    if(!allrecIds.isEmpty()){//***for HRP-9816***Starts here***
-        for (Task t : [SELECT WhatId FROM Task WHERE Subject IN (:System.Label.InvalidAccountAddressTaskSubject, :System.Label.InvalidContactAddressTaskSubject) AND Status = 'Not Started' AND WhatId IN :allrecIds]){ 
-            existingTaskWhatIds.add(t.WhatId); 
-        }
-    }//***for HRP-9816***ends here***
-    for( String objname : accountmanagerids.keySet() ){
-        if(objname == 'Account'){
-            for( Id recid : accountmanagerids.get(objname).keySet() ){
-                if(existingTaskWhatIds.isEmpty() || !existingTaskWhatIds.contains(recid)){
-                    system.debug('entered into incorrect address');
-                    addressUpdationFailedTask.RecordTypeId = recTypeId;
-                    addressUpdationFailedTask.ActivityDate = System.today();
-                    addressUpdationFailedTask.OwnerId = accountmanagerids.get(objname).get(recid) ;
-                    addressUpdationFailedTask.subject = System.Label.InvalidAccountAddressTaskSubject;//***for HRP-9816***
-                    addressUpdationFailedTask.WhatId = recid;
-                    taskList.add(addressUpdationFailedTask.clone()); 
-                }
-            }
-        }else if(objname == 'Contact'){
-            for( Id recid : accountmanagerids.get(objname).keySet() ){
-                if(existingTaskWhatIds.isEmpty() || !existingTaskWhatIds.contains(recid)){
-                    addressUpdationFailedTask.RecordTypeId = recTypeId;
-                    addressUpdationFailedTask.ActivityDate = System.today();
-                    addressUpdationFailedTask.OwnerId = accountmanagerids.get(objname).get(recid) ;
-                    addressUpdationFailedTask.subject = System.Label.InvalidContactAddressTaskSubject;//***for HRP-9816***
-                    addressUpdationFailedTask.WhatId = contactIdAccountIdMap.get(recid);
-                    addressUpdationFailedTask.WhoId = recid;
-                    taskList.add(addressUpdationFailedTask.clone());
-                }
             }
         }
+        if(!allrecIds.isEmpty()){//***for HRP-9816***Starts here***
+            for (Task t : [SELECT WhatId FROM Task WHERE Subject IN (:System.Label.InvalidAccountAddressTaskSubject, :System.Label.InvalidContactAddressTaskSubject) AND Status = 'Not Started' AND WhatId IN :allrecIds]){ 
+                existingTaskWhatIds.add(t.WhatId); 
+            }
+        }//***for HRP-9816***ends here***
+        for( String objname : accountmanagerids.keySet() ){
+            if(objname == 'Account'){
+                for( Id recid : accountmanagerids.get(objname).keySet() ){
+                    if(existingTaskWhatIds.isEmpty() || !existingTaskWhatIds.contains(recid)){
+                        system.debug('entered into incorrect address');
+                        addressUpdationFailedTask.RecordTypeId = recTypeId;
+                        addressUpdationFailedTask.ActivityDate = System.today();
+                        addressUpdationFailedTask.OwnerId = accountmanagerids.get(objname).get(recid) ;
+                        addressUpdationFailedTask.subject = System.Label.InvalidAccountAddressTaskSubject;//***for HRP-9816***
+                        addressUpdationFailedTask.WhatId = recid;
+                        taskList.add(addressUpdationFailedTask.clone()); 
+                    }
+                }
+            }else if(objname == 'Contact'){
+                for( Id recid : accountmanagerids.get(objname).keySet() ){
+                    if(existingTaskWhatIds.isEmpty() || !existingTaskWhatIds.contains(recid)){
+                        addressUpdationFailedTask.RecordTypeId = recTypeId;
+                        addressUpdationFailedTask.ActivityDate = System.today();
+                        addressUpdationFailedTask.OwnerId = accountmanagerids.get(objname).get(recid) ;
+                        addressUpdationFailedTask.subject = System.Label.InvalidContactAddressTaskSubject;//***for HRP-9816***
+                        addressUpdationFailedTask.WhatId = contactIdAccountIdMap.get(recid);
+                        addressUpdationFailedTask.WhoId = recid;
+                        taskList.add(addressUpdationFailedTask.clone());
+                    }
+                }
+            }
+        }
+        if (taskList.size() > 0) {
+            insert taskList;
+        }
     }
-    if (taskList.size() > 0) {
-        insert taskList;
-    }
-}
     /* Related to HRP - 8111
-     * Update the Account Status and Internal Name field on Account based on Record Type
-     * For Fixed Site Account - Account Status -> Active , Internal Name -> Same as Account Name
-     * For Mobile Account - Account Status -> Prospect , Internal Name -> Same as Account Name
-     * This method will work in before insert
-     * */
+* Update the Account Status and Internal Name field on Account based on Record Type
+* For Fixed Site Account - Account Status -> Active , Internal Name -> Same as Account Name
+* For Mobile Account - Account Status -> Prospect , Internal Name -> Same as Account Name
+* This method will work in before insert
+* */
     public static void updateAccStatusAndInternalName(List<Account> newAccounts)
     {
         System.debug('Entered method updateAccStatusAndInternalName');  
         Id fixedAccRecTypeId = Schema.SObjectType.Account.getRecordTypeInfosByName().get('Fixed Site Account').getRecordTypeId();
         Id mobileAccRecTypeId = Schema.SObjectType.Account.getRecordTypeInfosByName().get('Mobile Account').getRecordTypeId();
-      
-      	for(Account newAccount : newAccounts)
-      	{
-         	if(newAccount.Account_Status__c == null) 
-         	{
-             	if(newAccount.RecordTypeId == fixedAccRecTypeId)
-             	{
-                 	newAccount.Account_Status__c = 'Active';
-             	}
-             	if(newAccount.RecordTypeId == mobileAccRecTypeId) 
-         	 	{
-             	 	newAccount.Account_Status__c = 'Prospect';
-         	 	}
-             
-         	}        
-         	if(String.isBlank(newAccount.Internal_Name__c) ==true)
-         	{
+        
+        for(Account newAccount : newAccounts)
+        {
+            if(newAccount.Account_Status__c == null) 
+            {
+                if(newAccount.RecordTypeId == fixedAccRecTypeId)
+                {
+                    newAccount.Account_Status__c = 'Active';
+                }
+                if(newAccount.RecordTypeId == mobileAccRecTypeId) 
+                {
+                    newAccount.Account_Status__c = 'Prospect';
+                }
+                
+            }        
+            if(String.isBlank(newAccount.Internal_Name__c) ==true)
+            {
                 newAccount.Internal_Name__c = newAccount.Name;     	
-         	}
-         	system.debug('Account Status -> '+newAccount.Account_Status__c+' and Internal Name -> '+newAccount.Internal_Name__c);
-       
+            }
+            system.debug('Account Status -> '+newAccount.Account_Status__c+' and Internal Name -> '+newAccount.Internal_Name__c);
+            
         } // end of for loop
         
     }
     
     /* 
-    * HRP-9585 changes starts here
-    * @Description: New Accounts autopopulate "ADD" to National Name field.
-    * @Date: 02/05/2023
-    */
-	public static void updateNationalName(List<Account> newAccounts) 
+* HRP-9585 changes starts here
+* @Description: New Accounts autopopulate "ADD" to National Name field.
+* @Date: 02/05/2023
+*/
+    public static void updateNationalName(List<Account> newAccounts) 
     {
         if(newAccounts != null){
             for(Account acc : newAccounts){
@@ -1068,13 +1163,13 @@ member1.Start_Date__c = System.Today() +1;
         }
     }
     /*
-    * HRP-9585 changes Ends
-    */
+* HRP-9585 changes Ends
+*/
     /* 
-    * HRP-9818 changes starts here
-    * @Description: Check if DRD Users are tring to create Fixed Site Account, then block them.
-    * @Date: 02/05/2023
-    */
+* HRP-9818 changes starts here
+* @Description: Check if DRD Users are tring to create Fixed Site Account, then block them.
+* @Date: 02/05/2023
+*/
     public static void checkUserProfile(List<Account> newAccounts) 
     {
         if(newAccounts != null){
@@ -1084,17 +1179,17 @@ member1.Start_Date__c = System.Today() +1;
             RecordType fixedAccRecType = [SELECT Id FROM RecordType WHERE sObjectType=: acc_Name AND Name =: label.Fixed_Site_Account_Record_Type];
             List<String> pfNames = label.DRD_User_Profile_Names.split(',');
             if(!pfList.isEmpty() && String.isNotBlank(pfList[0].Name) && pfNames.contains(pfList[0].Name)){
-                    for(Account acc : newAccounts){
-                        if(!Test.isRunningTest() && acc.recordTypeId != null && acc.recordTypeId == fixedAccRecType.Id){
-                            acc.addError(label.DRD_Can_t_Create_Fixed_Account_Error_Msg);
-                        }
+                for(Account acc : newAccounts){
+                    if(!Test.isRunningTest() && acc.recordTypeId != null && acc.recordTypeId == fixedAccRecType.Id){
+                        acc.addError(label.DRD_Can_t_Create_Fixed_Account_Error_Msg);
                     }
+                }
             }
         }
     }
     /*
-    * HRP-9818 changes Ends
-    */
+* HRP-9818 changes Ends
+*/
     
     
     //Logic for HRP-10085 for opportunity and Template ***starts here***
@@ -1169,6 +1264,7 @@ member1.Start_Date__c = System.Today() +1;
                                         sked_Account__r.name,
                                         sked_Drive_Site__r.sked_Site_Building_Name__c,
                                         sked_Drive_Site__r.sked_Room_Name__c,
+                                        sked_Drive_Site__r.Name,
                                         sked_Account__r.Internal_Name__c
                                         from sked_Drive__c 
                                         where sked_Account__c 
@@ -1181,16 +1277,28 @@ member1.Start_Date__c = System.Today() +1;
                 
                 
                 drivenameNew = sdc.sked_Account__r.name + ', ';
-                drivenameNew += sdc.sked_Drive_Site__r.sked_Site_Building_Name__c;
-                if(String.isNotBlank(sdc.sked_Drive_Site__r.sked_Room_Name__c)){
+                drivenameNew += sdc.sked_Drive_Site__r.Name;//HRP-12136
+                //commented part of HRP-12136
+                /*if(String.isNotBlank(sdc.sked_Drive_Site__r.sked_Room_Name__c)){
                     drivenameNew = drivenameNew + '-' + sdc.sked_Drive_Site__r.sked_Room_Name__c;
-                }
-                sdc.Name = drivenameNew.length() > 80 ? drivenameNew.substring(0,80) : drivenameNew ;
+                }*/
+                //commented part of HRP-12136
+                sdc.Name = driveNameNew.length() > 80 ? driveNameNew.substring(0, 75) + ' ...' : driveNameNew; //HRP-12136 changed; Prev drivenameNew.length() > 80 ? drivenameNew.substring(0,80) : drivenameNew ;
             }
         }
         if(!DrivesList.isEmpty()){
             skedTriggerUtils.CHANGES_INITIATED_FROM_SERVICE = true; //HRP-11418 (Add check to prevent DOC update failure)
-            List<Database.SaveResult> saveResults = Database.update(DrivesList,false); 
+            //HRP-12136 start
+            TriggerHandler.bypass('DriveTriggerHandler');
+            skedHubBase.BypassInsertTriggers = true;
+        	skedHubBase.BypassUpdateTriggers = true;
+            //HRP-12136 End
+            List<Database.SaveResult> saveResults = Database.update(DrivesList,false);
+            //HRP-12136 start
+            skedHubBase.BypassInsertTriggers = false;
+        	skedHubBase.BypassUpdateTriggers = false;
+            TriggerHandler.clearBypass('OpportunityTriggerHandler');
+            //HRP-12136 End
             for(Database.SaveResult sr : saveResults){ 
                 if (!sr.isSuccess()) {
                     for(Database.Error err : sr.getErrors()) 
@@ -1210,18 +1318,55 @@ member1.Start_Date__c = System.Today() +1;
 * @Date: 09/18/2023
 */
     public static void setZipcodeChange(List<account> newItems,map<id,Account>oldMap)
+    {
+        for(account acc:newItems)
         {
-            for(account acc:newItems)
+            if(acc.BillingPostalCode!=null && acc.BillingPostalCode != oldMap.get(acc.id).BillingPostalCode)
             {
-                if(acc.BillingPostalCode!=null && acc.BillingPostalCode != oldMap.get(acc.id).BillingPostalCode)
-                {
-                    acc.Zipcode_change__c=oldMap.get(acc.id).BillingPostalCode;
-                }
-                else if(acc.ShippingPostalCode!=null && acc.ShippingPostalCode != oldMap.get(acc.id).ShippingPostalCode)
-                {
-                    acc.Zipcode_change__c=oldMap.get(acc.id).ShippingPostalCode;
-                }
+                acc.Zipcode_change__c=oldMap.get(acc.id).BillingPostalCode;
+            }
+            else if(acc.ShippingPostalCode!=null && acc.ShippingPostalCode != oldMap.get(acc.id).ShippingPostalCode)
+            {
+                acc.Zipcode_change__c=oldMap.get(acc.id).ShippingPostalCode;
             }
         }
+    }
     //HRP-10878
+    
+    // HRP-9520 --> Starts Here (New Method Added)
+    // @Description - System will auto-populate date and user lookup fields with the current date and logged-in user's name whenever user checks the business planning completed checkbox
+    
+    public static void setBusinessPlanningDateAndUser(List<Account> newAccList, Map<Id,Account> oldAccMap)
+    {
+        Set<Id> validAccUpdateIds = new Set<Id>();
+        List<Account> updateAccountList = new List<Account>();
+        
+        if(oldAccMap == NULL || newAccList.isEmpty()) {
+            return;
+        }       
+        for(Account newAccObj : newAccList) {
+            Account oldAccObj = oldAccMap.get(newAccObj.Id);
+            if(oldAccObj!= NULL) {
+                if(oldAccObj.Business_Planning_Completed__c != newAccObj.Business_Planning_Completed__c && newAccObj.Business_Planning_Completed__c) {
+                    validAccUpdateIds.add(newAccObj.Id);
+                }
+            }           
+        }
+        
+        if(!validAccUpdateIds.isEmpty()) {
+            Map<Id,Account> updateAccMap = new map<Id,Account>([SELECT Id, Business_Planning_Completed_By__c, Business_Planning_Completed_Date__c FROM Account WHERE ID IN:validAccUpdateIds]);
+            for(Account updateAcc : updateAccMap.Values()) {
+                updateAcc.Business_Planning_Completed_Date__c = System.today();
+                updateAcc.Business_Planning_Completed_By__c = UserInfo.getUserId();
+                updateAccountList.add(updateAcc);
+            }
+        }
+        
+        if(!updateAccountList.isEmpty()) {
+            Database.SaveResult[] updateList = Database.update(updateAccountList, FALSE);
+            List<BSF_Error_Log__c> errorLogList = BSF_Utilities.createErrorLog(updateList, 'Error in updating Business Planning date/completed by field', 'AccountService', 'setBusinessPlanningDateAndUser', 'Error', 'Error during update');
+            Insert errorLogList;
+        }
+    }
+    // HRP-9520 --> Ends Here
 }

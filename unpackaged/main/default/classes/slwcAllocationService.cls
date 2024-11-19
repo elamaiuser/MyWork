@@ -22,6 +22,23 @@ global class slwcAllocationService {
         request.allDates.sort();
         request.minDate = request.allDates[0];
         request.maxDate = request.allDates[request.allDates.size() - 1];
+
+        Set<string> collectionOperationIds = new Set<string>();
+        if (request.collectionOperationIds != NULL && !request.collectionOperationIds.isEmpty()) {
+            collectionOperationIds.addAll(request.collectionOperationIds);
+        }
+        if (request.arcRegionIds != NULL && !request.arcRegionIds.isEmpty()) {
+            for (sked_Territory_Collection_Operation__c territoryCollectionOperation : [
+                SELECT sked_Collection_Operation__c
+                FROM sked_Territory_Collection_Operation__c
+                WHERE sked_Territory__r.sked_Parent__c IN :request.arcRegionIds
+                AND sked_Start_Date__c <= :request.maxDate
+                AND sked_End_Date__c >= :request.minDate
+            ]) {
+                collectionOperationIds.add(territoryCollectionOperation.sked_Collection_Operation__c);
+            }
+        }
+        request.collectionOperationIds = new List<string>(collectionOperationIds);
         
         request.additionalResourceIds = new List<string>();
         if (request.collectionOperationIds != NULL && !request.collectionOperationIds.isEmpty()) {
@@ -108,6 +125,15 @@ global class slwcAllocationService {
                 }
             }
         }
+
+        Set<Id> resourceHoursRecordIds = new Set<Id>();
+        for (sked__Resource__c resource : resources) {
+            if (resource.sked_Resource_Hours_Records__r != NULL && !resource.sked_Resource_Hours_Records__r.isEmpty()) {
+                for (sked_Resource_Hours_Record__c resourceHoursRecord : resource.sked_Resource_Hours_Records__r) {
+                    resourceHoursRecordIds.add(resourceHoursRecord.Id);
+                }
+            }
+        }
         
         resourceDataModel data = new resourceDataModel();
         data.resources = resources;
@@ -138,6 +164,19 @@ global class slwcAllocationService {
                                           AND sked_Call_Out_Type__c = :skedConstants.AVAILABILITY_CALLOUT_TYPE_CALL_OUT
                                           AND sked__Status__c = :skedConstants.JOB_ALLOCATION_STATUS_DELETED];
         }
+        if (request.jobIds != NULL && !request.jobIds.isEmpty()) {
+            data.tradedJobAllocations = [SELECT Id, sked__Job__c, sked__Resource__c
+                                         FROM sked__Job_Allocation__c
+                                         WHERE sked__Job__c IN :request.jobIds
+                                         AND sked_Drive_Shift_Trade__c != NULL
+                                         AND sked__Status__c = :skedConstants.JOB_ALLOCATION_STATUS_DELETED];
+        }
+        if (!resourceHoursRecordIds.isEmpty()) {
+            data.resourceHoursRecordDetails = [SELECT Id, sked_Resource_Hours_Record__c, sked_Start_Date__c, sked_End_Date__c
+                                              FROM sked_Resource_Hours_Record_Detail__c
+                                              WHERE sked_Resource_Hours_Record__c IN :resourceHoursRecordIds];
+        }
+
         if (request.pageNo == 1) {
             data.totalRecords = request.recordIds != NULL ? request.recordIds.size() : (request.getAssetsOnly == TRUE ? numberOfAssets(request) : numberOfResources(request));
         }
@@ -190,10 +229,9 @@ global class slwcAllocationService {
                                              sked__Primary_Region__r.sked_Biomed_Collection_Op_Center__c, sked_Biomed_Collection_Op_Center_Name__c,
                                              sked_CDL__c, sked_DOT__c, sked_Effective_Date__c, sked_Max_Travel_Time__c,
                                              
-                                             (SELECT Id, sked__Tag__c, sked__Tag__r.Name, sked_Start_Date__c, sked_Expiry_Date__c, sked__Tag__r.sked__Type__c, sked_Restriction_Start_Date__c, sked_Restriction_End_Date__c
+                                             (SELECT Id, sked__Tag__c, sked__Tag__r.Name, sked_Start_Date__c, sked__Tag__r.sked__Type__c, sked_Restriction_Start_Date__c, sked_Restriction_End_Date__c
                                               FROM sked__ResourceTags__r
                                               WHERE sked_Start_Date__c <= :request.maxDate),
-                                             //   AND (sked_Expiry_Date__c = NULL OR sked_Expiry_Date__c >= :request.minDate)),
                                              
                                              (SELECT Id, sked_Resource__c, sked_Biomed_Collection_Op_Center__c, sked_Start_Date__c, sked_End_Date__c
                                               FROM sked_Resource_Biomed_Collection_Ops__r
@@ -257,11 +295,11 @@ global class slwcAllocationService {
                                              sked__Primary_Phone__c, sked__Primary_Region__r.sked__Timezone__c, sked_Dedicated_to_Site__c,
                                              sked__Primary_Region__r.sked_Biomed_Collection_Op_Center__c, sked__Primary_Region__r.sked_Biomed_Collection_Op_Center__r.sked_Work_Week_First_Day__c,
                                              sked__Primary_Region__r.sked_Biomed_Collection_Op_Center__r.Staging_Location_Geolocation__Latitude__s, sked__Primary_Region__r.sked_Biomed_Collection_Op_Center__r.Staging_Location_Geolocation__Longitude__s,
-                                             sked_Biomed_Collection_Op_Center_Name__c, 
+                                             sked_Biomed_Collection_Op_Center_Name__c, sked_Daily_Time_Off_Hours__c,
                                              sked_CDL__c, sked_DOT__c, sked_Termination_Date__c, sked_Planned_Termination_Date__c, 
                                              sked_Anticipated_Leave_Return_Date__c, sked__Is_Active__c, sked_Effective_Date__c,
                                              sked_Max_Travel_Time__c, sked_Employment_Status__c,
-                                             sked_Address_Referenced_for_Scheduling__c, Use_CO_Address_for_Scheduling__c,
+                                             sked_Address_Referenced_for_Scheduling__c, Use_CO_Address_for_Scheduling__c, sked_Max_Working_Days_Per_Week__c,
                                              
                                              (SELECT Id, sked__Account__c, sked__Blacklisted__c, sked__Whitelisted__c
                                               FROM sked__Account_Resource_Scores__r
@@ -286,16 +324,15 @@ global class slwcAllocationService {
                                               WHERE (sked_Start_Date__c = NULL OR sked_Start_Date__c <= :request.maxDate) 
                                               AND (sked_End_Date__c = NULL OR sked_End_Date__c  >= :request.minDate)),
                                              
-                                             (SELECT Id, sked__Tag__c, sked__Tag__r.Name, sked_Start_Date__c, sked_Expiry_Date__c, sked__Tag__r.sked__Type__c, sked_Restriction_Start_Date__c, sked_Restriction_End_Date__c
+                                             (SELECT Id, sked__Tag__c, sked__Tag__r.Name, sked_Start_Date__c, sked__Tag__r.sked__Type__c, sked_Restriction_Start_Date__c, sked_Restriction_End_Date__c
                                               FROM sked__ResourceTags__r
                                               WHERE sked_Start_Date__c <= :request.maxDate
-                                              //   AND (sked_Expiry_Date__c = NULL OR sked_Expiry_Date__c >= :request.minDate)
                                               AND (sked_Role_Status__c = NULL OR sked_Role_Status__c = :skedConstants.TAG_ROLE_STATUS_ACTIVE)),
                                              
                                              (SELECT Id, Name, sked__Job__c, sked__Job__r.Name,
                                               sked__Job__r.sked__GeoLocation__Latitude__s, sked__Job__r.sked__GeoLocation__Longitude__s, 
                                               sked__Job__r.sked__Type__c, sked__Status__c,
-                                              sked__Start__c, sked__Set_End__c, sked_Travel_Time_To__c, sked_Travel_Time_Back__c
+                                              sked__Start__c, sked__Set_End__c, sked_Start_Date__c, sked_Set_End_Date__c, sked_Travel_Time_To__c, sked_Travel_Time_Back__c
                                               FROM sked__Job_Allocations__r
                                               WHERE sked__Status__c != :skedConstants.JOB_ALLOCATION_STATUS_DELETED
                                               AND sked__Job__r.sked__Job_Status__c != :skedConstants.JOB_STATUS_CANCELLED
@@ -305,7 +342,7 @@ global class slwcAllocationService {
                                               AND sked__Job__r.sked_Drive__c NOT IN :request.excludedDriveIds
                                               ORDER BY sked__Start__c ASC),
                                              
-                                             (SELECT Id, Name, sked__Start__c, sked__End__c, sked__GeoLocation__Latitude__s, sked__GeoLocation__Longitude__s,
+                                             (SELECT Id, Name, sked__Start__c, sked__End__c, sked_Start_Date__c, sked_End_Date__c, sked__GeoLocation__Latitude__s, sked__GeoLocation__Longitude__s,
                                               sked__Type__c
                                               FROM sked__Activities__r
                                               WHERE sked_Start_Date__c IN :request.allDates
@@ -313,23 +350,24 @@ global class slwcAllocationService {
                                               AND Id NOT IN :request.excludedActivityIds
                                               ORDER BY sked__Start__c ASC),
                                              
-                                             (SELECT Id, Name, sked__Start__c, sked__Finish__c, sked__Is_Available__c, sked__Type__c
+                                             (SELECT Id, Name, sked__Start__c, sked__Finish__c, sked_Start_Date__c, sked_Finish_Date__c, sked__Is_Available__c, sked__Type__c
                                               FROM sked__Availabilities1__r
                                               WHERE sked__Status__c = :skedConstants.AVAILABILITY_STATUS_APPROVED
                                               AND sked_Start_Date__c <= :request.maxDate AND sked_Finish_Date__c >= :request.minDate
                                               ORDER BY sked__Start__c ASC),
                                              
-                                             (SELECT Id, Name, sked_Start__c, sked_Finish__c, sked_Is_Available__c, sked_Type__c
+                                             (SELECT Id, Name, sked_Start__c, sked_Finish__c, sked_Start_Date__c, sked_Finish_Date__c, sked_Is_Available__c, sked_Type__c
                                               FROM sked_Custom_Availabilities__r
-                                              WHERE sked_Start_Date__c <= :request.maxDate AND sked_Finish_Date__c >= :request.minDate
+                                              WHERE sked_Status__c = :skedConstants.AVAILABILITY_STATUS_APPROVED
+                                              AND sked_Start_Date__c <= :request.maxDate AND sked_Finish_Date__c >= :request.minDate
                                               ORDER BY sked_Start__c ASC),
                                              
-                                             (SELECT Id , sked__Start__c, sked__End__c, sked__Availability_Pattern__r.sked__Pattern__c
+                                             (SELECT Id , sked__Start__c, sked__End__c, sked_Start_Date__c, sked_End_Date__c, sked__Availability_Pattern__r.sked__Pattern__c
                                               FROM sked__Availability_Pattern_Resources__r
                                               WHERE sked_Start_Date__c <= :request.maxDate
                                               AND (sked_End_Date__c = NULL OR sked_End_Date__c >= :request.minDate)),
                                              
-                                             (SELECT Id, sked__Activity__c, sked_Start1__c, sked_End__c
+                                             (SELECT Id, sked__Activity__c, sked_Start1__c, sked_End__c, sked_Start_Date__c, sked_End_Date__c
                                               FROM sked__Activity_Resources__r
                                               WHERE sked__Activity__r.sked_Start_Date__c <= :request.maxDate
                                               AND sked__Activity__r.sked_End_Date__c >= :request.minDate
@@ -376,11 +414,11 @@ global class slwcAllocationService {
                                              sked__Primary_Phone__c, sked__Primary_Region__r.sked__Timezone__c, sked_Dedicated_to_Site__c,
                                              sked__Primary_Region__r.sked_Biomed_Collection_Op_Center__c, sked__Primary_Region__r.sked_Biomed_Collection_Op_Center__r.sked_Work_Week_First_Day__c,
                                              sked__Primary_Region__r.sked_Biomed_Collection_Op_Center__r.Staging_Location_Geolocation__Latitude__s, sked__Primary_Region__r.sked_Biomed_Collection_Op_Center__r.Staging_Location_Geolocation__Longitude__s,
-                                             sked_Biomed_Collection_Op_Center_Name__c, 
+                                             sked_Biomed_Collection_Op_Center_Name__c, sked_Daily_Time_Off_Hours__c,
                                              sked_CDL__c, sked_DOT__c, sked_Termination_Date__c, sked_Planned_Termination_Date__c, 
                                              sked_Anticipated_Leave_Return_Date__c, sked__Is_Active__c, sked_Effective_Date__c,
                                              sked_Max_Travel_Time__c, sked_Employment_Status__c,
-                                             sked_Address_Referenced_for_Scheduling__c, Use_CO_Address_for_Scheduling__c,
+                                             sked_Address_Referenced_for_Scheduling__c, Use_CO_Address_for_Scheduling__c, sked_Max_Working_Days_Per_Week__c,
                                              
                                              (SELECT Id, sked__Account__c, sked__Blacklisted__c, sked__Whitelisted__c
                                               FROM sked__Account_Resource_Scores__r
@@ -405,16 +443,15 @@ global class slwcAllocationService {
                                               WHERE (sked_Start_Date__c = NULL OR sked_Start_Date__c <= :request.maxDate) 
                                               AND (sked_End_Date__c = NULL OR sked_End_Date__c  >= :request.minDate)),
                                              
-                                             (SELECT Id, sked__Tag__c, sked__Tag__r.Name, sked_Start_Date__c, sked_Expiry_Date__c, sked__Tag__r.sked__Type__c, sked_Restriction_Start_Date__c, sked_Restriction_End_Date__c
+                                             (SELECT Id, sked__Tag__c, sked__Tag__r.Name, sked_Start_Date__c, sked__Tag__r.sked__Type__c, sked_Restriction_Start_Date__c, sked_Restriction_End_Date__c
                                               FROM sked__ResourceTags__r
                                               WHERE sked_Start_Date__c <= :request.maxDate
-                                              //   AND (sked_Expiry_Date__c = NULL OR sked_Expiry_Date__c >= :request.minDate)
                                               AND (sked_Role_Status__c = NULL OR sked_Role_Status__c = :skedConstants.TAG_ROLE_STATUS_ACTIVE)),
                                              
                                              (SELECT Id, Name, sked__Job__c, sked__Job__r.Name,
                                               sked__Job__r.sked__GeoLocation__Latitude__s, sked__Job__r.sked__GeoLocation__Longitude__s, 
                                               sked__Job__r.sked__Type__c, sked__Status__c,
-                                              sked__Start__c, sked__Set_End__c, sked_Travel_Time_To__c, sked_Travel_Time_Back__c
+                                              sked__Start__c, sked__Set_End__c, sked_Start_Date__c, sked_Set_End_Date__c, sked_Travel_Time_To__c, sked_Travel_Time_Back__c
                                               FROM sked__Job_Allocations__r
                                               WHERE sked__Status__c != :skedConstants.JOB_ALLOCATION_STATUS_DELETED
                                               AND sked__Job__r.sked__Job_Status__c != :skedConstants.JOB_STATUS_CANCELLED
@@ -423,30 +460,30 @@ global class slwcAllocationService {
                                               AND sked__Job__c NOT IN :request.jobIds
                                               ORDER BY sked__Start__c ASC),
                                              
-                                             (SELECT Id, Name, sked__Start__c, sked__End__c, sked__GeoLocation__Latitude__s, sked__GeoLocation__Longitude__s,
+                                             (SELECT Id, Name, sked__Start__c, sked__End__c, sked_Start_Date__c, sked_End_Date__c, sked__GeoLocation__Latitude__s, sked__GeoLocation__Longitude__s,
                                               sked__Type__c
                                               FROM sked__Activities__r
                                               WHERE sked_Start_Date__c IN :request.allDates
                                               AND sked__Type__c != :excludedActivityTypes
                                               ORDER BY sked__Start__c ASC),
                                              
-                                             (SELECT Id, Name, sked__Start__c, sked__Finish__c, sked__Is_Available__c, sked__Type__c
+                                             (SELECT Id, Name, sked__Start__c, sked__Finish__c, sked_Start_Date__c, sked_Finish_Date__c, sked__Is_Available__c, sked__Type__c
                                               FROM sked__Availabilities1__r
                                               WHERE sked__Status__c = :skedConstants.AVAILABILITY_STATUS_APPROVED
                                               AND sked_Start_Date__c <= :request.maxDate AND sked_Finish_Date__c >= :request.minDate
                                               ORDER BY sked__Start__c ASC),
                                              
-                                             (SELECT Id, Name, sked_Start__c, sked_Finish__c, sked_Is_Available__c, sked_Type__c
+                                             (SELECT Id, Name, sked_Start__c, sked_Finish__c, sked_Start_Date__c, sked_Finish_Date__c, sked_Is_Available__c, sked_Type__c
                                               FROM sked_Custom_Availabilities__r
                                               WHERE sked_Start_Date__c <= :request.maxDate AND sked_Finish_Date__c >= :request.minDate
                                               ORDER BY sked_Start__c ASC),
                                              
-                                             (SELECT Id , sked__Start__c, sked__End__c, sked__Availability_Pattern__r.sked__Pattern__c
+                                             (SELECT Id , sked__Start__c, sked__End__c, sked_Start_Date__c, sked_End_Date__c, sked__Availability_Pattern__r.sked__Pattern__c
                                               FROM sked__Availability_Pattern_Resources__r
                                               WHERE sked_Start_Date__c <= :request.maxDate
                                               AND (sked_End_Date__c = NULL OR sked_End_Date__c >= :request.minDate)),
                                              
-                                             (SELECT Id, sked__Activity__c, sked_Start1__c, sked_End__c
+                                             (SELECT Id, sked__Activity__c, sked_Start1__c, sked_End__c,sked_Start_Date__c, sked_End_Date__c
                                               FROM sked__Activity_Resources__r
                                               WHERE sked__Activity__r.sked_Start_Date__c <= :request.maxDate
                                               AND sked__Activity__r.sked_End_Date__c >= :request.minDate
@@ -485,15 +522,14 @@ global class slwcAllocationService {
                                               FROM sked__Resource_Overrides__r
                                               WHERE sked_Start_Date__c <= :request.maxDate AND sked_End_Date__c >= :request.minDate),
                                              
-                                             (SELECT Id, sked__Tag__c, sked__Tag__r.Name, sked_Start_Date__c, sked_Expiry_Date__c, sked__Tag__r.sked__Type__c, sked_Restriction_Start_Date__c, sked_Restriction_End_Date__c
+                                             (SELECT Id, sked__Tag__c, sked__Tag__r.Name, sked_Start_Date__c, sked__Tag__r.sked__Type__c, sked_Restriction_Start_Date__c, sked_Restriction_End_Date__c
                                               FROM sked__ResourceTags__r
                                               WHERE sked_Start_Date__c <= :request.maxDate),
-                                             //   AND (sked_Expiry_Date__c = NULL OR sked_Expiry_Date__c >= :request.minDate)),
                                              
                                              (SELECT Id, Name, sked__Job__c, sked__Job__r.Name, 
                                               sked__Job__r.sked__GeoLocation__Latitude__s, sked__Job__r.sked__GeoLocation__Longitude__s, 
                                               sked__Job__r.sked__Type__c, sked__Status__c,
-                                              sked__Start__c, sked__Set_End__c, sked_Travel_Time_To__c, sked_Travel_Time_Back__c
+                                              sked__Start__c, sked__Set_End__c, sked_Start_Date__c, sked_Set_End_Date__c, sked_Travel_Time_To__c, sked_Travel_Time_Back__c
                                               FROM sked__Job_Allocations__r
                                               WHERE sked__Status__c != :skedConstants.JOB_ALLOCATION_STATUS_DELETED
                                               AND sked__Job__r.sked__Job_Status__c != :skedConstants.JOB_STATUS_CANCELLED
@@ -503,7 +539,7 @@ global class slwcAllocationService {
                                               AND sked__Job__r.sked_Drive__c NOT IN :request.excludedDriveIds
                                               ORDER BY sked__Start__c ASC),
                                              
-                                             (SELECT Id, Name, sked__Start__c, sked__End__c, sked__GeoLocation__Latitude__s, sked__GeoLocation__Longitude__s,
+                                             (SELECT Id, Name, sked__Start__c, sked__End__c, sked_Start_Date__c, sked_End_Date__c, sked__GeoLocation__Latitude__s, sked__GeoLocation__Longitude__s,
                                               sked__Type__c
                                               FROM sked__Activities__r
                                               WHERE sked_Start_Date__c IN :request.allDates
@@ -511,23 +547,23 @@ global class slwcAllocationService {
                                               AND Id NOT IN :request.excludedActivityIds
                                               ORDER BY sked__Start__c ASC),
                                              
-                                             (SELECT Id, Name, sked__Start__c, sked__Finish__c, sked__Is_Available__c, sked__Type__c
+                                             (SELECT Id, Name, sked__Start__c, sked__Finish__c, sked_Start_Date__c, sked_Finish_Date__c, sked__Is_Available__c, sked__Type__c
                                               FROM sked__Availabilities1__r
                                               WHERE sked__Status__c = :skedConstants.AVAILABILITY_STATUS_APPROVED
                                               AND sked_Start_Date__c <= :request.maxDate AND sked_Finish_Date__c >= :request.minDate
                                               ORDER BY sked__Start__c ASC),
                                              
-                                             (SELECT Id, Name, sked_Start__c, sked_Finish__c, sked_Is_Available__c
+                                             (SELECT Id, Name, sked_Start__c, sked_Finish__c, sked_Start_Date__c, sked_Finish_Date__c, sked_Is_Available__c
                                               FROM sked_Custom_Availabilities__r
                                               WHERE sked_Start_Date__c <= :request.maxDate AND sked_Finish_Date__c >= :request.minDate
                                               ORDER BY sked_Start__c ASC),
                                              
-                                             (SELECT Id , sked__Start__c, sked__End__c, sked__Availability_Pattern__r.sked__Pattern__c
+                                             (SELECT Id , sked__Start__c, sked__End__c, sked_Start_Date__c, sked_End_Date__c, sked__Availability_Pattern__r.sked__Pattern__c
                                               FROM sked__Availability_Pattern_Resources__r
                                               WHERE sked_Start_Date__c <= :request.maxDate
                                               AND (sked_End_Date__c = NULL OR sked_End_Date__c >= :request.minDate)),
                                              
-                                             (SELECT Id, sked__Activity__c, sked_Start1__c, sked_End__c
+                                             (SELECT Id, sked__Activity__c, sked_Start1__c, sked_End__c, sked_Start_Date__c, sked_End_Date__c
                                               FROM sked__Activity_Resources__r
                                               WHERE sked__Activity__r.sked_Start_Date__c <= :request.maxDate
                                               AND sked__Activity__r.sked_End_Date__c >= :request.minDate
@@ -607,6 +643,7 @@ global class slwcAllocationService {
     public class getResourceDataRequestModel {
         @AuraEnabled public List<string> accountIds {get;set;}
         @AuraEnabled public List<string> collectionOperationIds {get;set;}
+        @AuraEnabled public List<string> arcRegionIds {get;set;}
         @AuraEnabled public List<string> excludedActivityIds {get;set;}
         @AuraEnabled public List<string> excludedDriveIds {get;set;}
         @AuraEnabled public List<string> locationIds {get;set;}
@@ -635,6 +672,8 @@ global class slwcAllocationService {
         @AuraEnabled public object resources {get;set;}
         @AuraEnabled public object resourceOverrides {get;set;}
         @AuraEnabled public object totalRecords {get;set;}
+        @AuraEnabled public object resourceHoursRecordDetails {get;set;}
+        @AuraEnabled public object tradedJobAllocations {get;set;}
     }
     
 }

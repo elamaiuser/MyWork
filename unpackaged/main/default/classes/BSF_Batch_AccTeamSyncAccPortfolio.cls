@@ -4,7 +4,8 @@
 * Modification Log 
 * Date					     Developer Name			     Comments
 * ***************************************************************************
-* 8/2/2023					 Balaji N					 Logic for HRP-8897 (creation of this class)
+* 08/02/2023				 Balaji N					 Logic for HRP-8897 (creation of this class)
+* 01/04/2024                 Balaji N					 Logic for HRP-10569 (parameter changes on accTeamDateSyncOnAccPortUpdates method call)
 * *
 *****************************************************************************
 */
@@ -56,7 +57,7 @@ global class BSF_Batch_AccTeamSyncAccPortfolio implements Database.Batchable<sOb
             accIdList.add(apa.account__c);
         }
         
-        accountPortfolioassignmentservice.accTeamDateSyncOnAccPortUpdates(accIdList,null);
+        accountPortfolioassignmentservice.accTeamDateSyncOnAccPortUpdates(accIdList,null,new set<id>(),new map<id,list<accountTeamMember>> (),new map<id,list<accountTeamMember>> ());//HRP-10569 parameter changes
         
     }
     global void finish(Database.BatchableContext bc)

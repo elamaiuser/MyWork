@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>sked_Created_Inside_Bidding_Period__c</fullName>
+    <externalId>false</externalId>
+    <formula>sked_Staffing_Budget__r.sked_Bidding_Start_Date__c &lt;= DATEVALUE(CreatedDate) &amp;&amp; DATEVALUE(CreatedDate) &lt;= sked_Staffing_Budget__r.sked_Bidding_End_Date__c</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <label>Created Inside Bidding Period</label>
+    <trackTrending>false</trackTrending>
+    <type>Checkbox</type>
+</CustomField>

@@ -16,23 +16,18 @@
     <filterScope>Everything</filterScope>
     <filters>
         <field>Drive_Date__c</field>
-        <operation>greaterThan</operation>
-        <value>12/30/2024</value>
-    </filters>
-    <filters>
-        <field>Source__c</field>
         <operation>equals</operation>
-        <value>Calendar Build</value>
+        <value>10/31/2024</value>
     </filters>
     <filters>
-        <field>Drive_Status__c</field>
-        <operation>contains</operation>
-        <value>Draft,System Generated,Hold,Pending Action,Tentative</value>
-    </filters>
-    <filters>
-        <field>ARC_Region__c</field>
+        <field>DriveStatus__c</field>
         <operation>equals</operation>
-        <value>Wisconsin</value>
+        <value>Confirmed</value>
+    </filters>
+    <filters>
+        <field>OPPORTUNITY.RECORDTYPE</field>
+        <operation>equals</operation>
+        <value>Opportunity.Fixed_Site_Opp</value>
     </filters>
     <label>Calendar Build Past 9/1/2024</label>
 </ListView>

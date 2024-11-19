@@ -28,7 +28,9 @@ export default class SlwcOpportunityActionWarning extends LightningElement {
     get warningText() {
         if (!this.drive) return null;
         
-        const driveSubmittedForApproval = [DRIVE_APPROVAL_STATUS.SUBMITTED, DRIVE_APPROVAL_STATUS.WAITING_FOR_APS_APPROVAL, DRIVE_APPROVAL_STATUS.WAITING_FOR_DRD_FEEDBACK, DRIVE_APPROVAL_STATUS.WAITING_FOR_DM_APPROVAL].includes(this.drive.approvalStatus); 
+        const driveSubmittedForApproval = [DRIVE_APPROVAL_STATUS.SUBMITTED, DRIVE_APPROVAL_STATUS.WAITING_FOR_APS_APPROVAL, 
+            DRIVE_APPROVAL_STATUS.WAITING_FOR_DM_APPROVAL, DRIVE_APPROVAL_STATUS.DM_WAITING_FOR_DRD_FEEDBACK, 
+            DRIVE_APPROVAL_STATUS.APS_WAITING_FOR_DRD_FEEDBACK].includes(this.drive.approvalStatus); 
         if (this.drive.status === DRIVE_STATUS.DRAFT && 
             this.drive.opportunity.stage !== OPPORTUNITY_STAGE.DISCOVERY &&
             !driveSubmittedForApproval) {

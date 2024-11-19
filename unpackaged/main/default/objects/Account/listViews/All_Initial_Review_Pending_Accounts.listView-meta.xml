@@ -11,6 +11,11 @@
     <columns>National_Name__c</columns>
     <columns>National_Name_Initial_Review_Date__c</columns>
     <filterScope>Everything</filterScope>
+    <filters>
+        <field>National_Name_Status__c</field>
+        <operation>equals</operation>
+        <value>Initial Review Pending</value>
+    </filters>
     <label>National Name_All Initial Rev. Pending</label>
     <sharedTo>
         <group>APS_Users</group>

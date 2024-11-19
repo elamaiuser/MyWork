@@ -16,11 +16,14 @@
  * 11/20/2023                 Krapy Tuli             Logic for HRP-11419
  * 12/11/2023                 Priti Jana             Logic for HRP-11653
  * 12/20/2023                 Krapy Tuli             Logic for HRP-11513
+ * 06/05/2024                 Priti Jana             Logic for HRP-11908
+ * 06/06/2024                 Priti Jana             Logic for HRP-12011
+ * 17/06/2024                 Barnojit Sharma        Logic for HRP-12738
+ * 08/01/2024                 Priti Jana             Logic for HRP-10994
  *****************************************************************************
 */
 public with sharing class MobileDriveGeneratorDMLService {
 
-    
     public static DMLData getDriveGenerationData(driveGeneratorConfig config) {
         List<Opportunity> oppportunities = fetchOpportunities(config.oppIds);
         
@@ -32,18 +35,14 @@ public with sharing class MobileDriveGeneratorDMLService {
         
         Set<Id> siteIds = reduceSiteIdsFromOpportunities(oppportunities);
         List<sked__Location__c> sites = fetchSites(siteIds, schedulingBounds);
-        //System.debug( 'log#4:: sites >>' + sites );
         Set<Id> collectionOperationIds = reduceCollectionOperationIdsFromSites(sites);
-       // System.debug( 'log#3:collectionOperationIds >>' + collectionOperationIds );
         List<Biomed_Collection_Op_Center__c> collectionOperations = fetchCollectionOperations(collectionOperationIds);
         //HRP-10846
         List<sked_Collection_Op_Staging_Location__c> collectionOperationStagingLocations = fetchCollectionOperationStagingLocation(collectionOperationIds, schedulingBounds);
 
         //HRP-10846
         List<sked_Travel_Time_Index_Item__c> travelTimeIndexes = fetchTravelTimeIndexFromCOId(sites);
-        system.debug('travelTimeIndexes:: '+travelTimeIndexes);
-        system.debug('travelTimeIndexes.Size():: '+travelTimeIndexes.size());
-        
+       
         List<sked_Lunch_Break_Setting__c> lunchBreakSettings = fetchLunchBreakSettings();
         
         List<sked_Resource_Role_Group__c> resourceRoleGroups = fetchResourceRoleGroups();
@@ -94,12 +93,10 @@ public with sharing class MobileDriveGeneratorDMLService {
             map_tempId_sObject.put(drive.tempId, skedDrive);
         }
         insert skedDrives;
-       // System.debug( 'log#36:: Drives on calender created >>' + skedDrives );
         List<sked_Drive_Shift__c> skedDriveShifts = new List<sked_Drive_Shift__c>();
         for (DMLDrive drive :drives) {
             sked_Drive__c skedDrive = (sked_Drive__c)map_tempId_sObject.get(drive.tempId);
-            drive.id = skedDrive.Id;
-            
+            drive.id = skedDrive.Id; 
             for (DMLDriveShift driveShift : drive.driveShifts) {
                 driveShift.tempId = skedUtils.getKey();
                 driveShift.driveId = drive.Id;
@@ -110,21 +107,18 @@ public with sharing class MobileDriveGeneratorDMLService {
             }
         }
         insert skedDriveShifts;
-       // System.debug( 'log#37:: Drives Shift created >>' + skedDriveShifts );
         
         List<sked_Drive_Shift_Tag__c> skedDriveShiftTags = new List<sked_Drive_Shift_Tag__c>();
         for (DMLDrive drive :drives) {
             for (DMLDriveShift driveShift : drive.driveShifts) {
                 sked_Drive_Shift__c skedDriveShift = (sked_Drive_Shift__c)map_tempId_sObject.get(driveShift.tempId);
-                driveShift.id = skedDriveShift.Id;
-                
+                driveShift.id = skedDriveShift.Id;  
                 if (driveShift.driveShiftTags != NULL && !driveShift.driveShiftTags.isEmpty()) {
                     for (DMLDriveShiftTag driveShiftTag : driveShift.driveShiftTags) {
                         driveShiftTag.tempId = skedUtils.getKey();
                         driveShiftTag.driveShiftId = driveShift.Id;
                         sked_Drive_Shift_Tag__c skedDriveShiftTag = (sked_Drive_Shift_Tag__c)driveShiftTag.toSObject();
-                        skedDriveShiftTags.add(skedDriveShiftTag);
-                        
+                        skedDriveShiftTags.add(skedDriveShiftTag); 
                         map_tempId_sObject.put(driveShiftTag.tempId, skedDriveShiftTag);
                     }
                 }
@@ -145,7 +139,6 @@ public with sharing class MobileDriveGeneratorDMLService {
                     job.driveShiftId = driveShift.Id;
                     sked__Job__c skedJob = (sked__Job__c)job.toSObject();
                     skedJobs.add(skedJob);
-                   // System.debug('log#35::Job Duration >>' + job.duration );
                     map_tempId_sObject.put(job.tempId, skedJob);
                 }
             }
@@ -157,15 +150,13 @@ public with sharing class MobileDriveGeneratorDMLService {
             for (DMLDriveShift driveShift : drive.driveShifts) {
                 for (DMLJob job : driveShift.jobs) {
                     sked__Job__c skedJob = (sked__Job__c)map_tempId_sObject.get(job.tempId);
-                    job.id = skedJob.Id;
-                    
+                    job.id = skedJob.Id;  
                     if (job.jobTags != NULL && !job.jobTags.isEmpty()) {
                         for (DMLJobTag jobTag : job.jobTags) {
                             jobTag.tempId = skedUtils.getKey();
                             jobTag.jobId = skedJob.Id;
                             sked__Job_Tag__c skedJobTag = (sked__Job_Tag__c)jobTag.toSObject();
-                            skedJobTags.add(skedJobTag);
-                            
+                            skedJobTags.add(skedJobTag);  
                             map_tempId_sObject.put(jobTag.tempId, skedJobTag);
                         }
                     }
@@ -180,8 +171,7 @@ public with sharing class MobileDriveGeneratorDMLService {
         for (DMLDrive drive :drives) {
             for (DMLDriveShift driveShift : drive.driveShifts) {
                 sked_Drive_Shift__c skedDriveShift = (sked_Drive_Shift__c)map_tempId_sObject.get(driveShift.tempId);
-                driveShift.id = skedDriveShift.Id;
-                
+                driveShift.id = skedDriveShift.Id; 
                 for (DMLSlot slot : driveShift.slots) {
                     slot.tempId = skedUtils.getKey();
                     slot.driveId = drive.Id;
@@ -282,8 +272,18 @@ public with sharing class MobileDriveGeneratorDMLService {
         }
         
         data.map_group_resourceRoles = new Map<string, DMLResourceRoleGroup>();
+        data.resourceRoleGroups = new List<String>(); //HRP-11908
+        data.map_resourceRole_resourceRoleGroup = new Map<String, String>(); //HRP-11908
         for (sked_Resource_Role_Group__c resourceRoleGroup : resourceRoleGroups) {
             data.map_group_resourceRoles.put(resourceRoleGroup.sked_Resource_Role_Group__c, new DMLResourceRoleGroup(resourceRoleGroup));
+
+            //HRP-11908 --> Starts Here
+            data.resourceRoleGroups.add(resourceRoleGroup.sked_Resource_Role_Group__c);
+            List<String> resourceRoles = new List<String>(resourceRoleGroup.sked_Resource_Roles__c.split(';'));
+            for(String resourceRole : resourceRoles) {
+                data.map_resourceRole_resourceRoleGroup.put(resourceRole, resourceRoleGroup.sked_Resource_Role_Group__c);
+            }
+            //HRP-11908 --> Ends Here
         }
         
         data.roleTimeDetails = new List<DMLRoleTimeDetail>();
@@ -293,7 +293,6 @@ public with sharing class MobileDriveGeneratorDMLService {
         
         data.roleTimeVariances = new List<DMLRoleTimeVariance>();
         for (sked_Role_Time_Variance__c roleTimeVariance : roleTimeVariances) {
-           // system.debug('#roleTimeVariance#' + roleTimeVariance);
             data.roleTimeVariances.add(new DMLRoleTimeVariance(roleTimeVariance));
         }
         
@@ -363,18 +362,19 @@ public with sharing class MobileDriveGeneratorDMLService {
     }
     
     // HRP - 10478 - added Call_List_Recipient_Exist__c field
-    static List<Opportunity> fetchOpportunities(Set<Id> oppIds) {
+    //HRP-12011 - added Slot_Generator__c field
+    public static List<Opportunity> fetchOpportunities(Set<Id> oppIds) {
         return [SELECT Id, Name, AccountId, Account_Type__c, Anticipated_Registered_Donors__c,
                 Drive_Date__c, Drive_Site__c,Flow_Start_Time_Field__c, Drive_Site__r.sked_Collection_Operation__c, Drive_Site__r.Operation_type__c,
                 End_Time__c, Industry_Code__c, Recruited_By__c, Start_Time__c,
                 Type_of_Drive__c, WB_Projected_Procedures__c, X2RBC_Projected_Procedures__c,
-                Number_of_2RBC_Assets__c, Number_of_Plasma_Assets__c, Number_of_Platelet_Assets__c, Day_of_Week__c,Call_List_Recipient_Exist__c
+                Number_of_2RBC_Assets__c, Number_of_Plasma_Assets__c, Number_of_Platelet_Assets__c, Day_of_Week__c,Call_List_Recipient_Exist__c, Slot_Generator__c 
                 FROM Opportunity
                 WHERE Id IN :oppIds];
     }
 
     // HRP - 9901 - Removed account operation type references
-    static List<Account> fetchAccounts(Set<Id> accountIds) {
+    public static List<Account> fetchAccounts(Set<Id> accountIds) {
         return [SELECT Id, Name, Accepts_Automation2__c, APT_Required__c,
                 (SELECT Id, sked__Account__c, sked__Required__c, sked__Tag__c, sked_Minimum_Quantity__c,
                  sked__Tag__r.sked_Resource_Type__c, sked__Tag__r.Name, sked__Tag__r.sked__Type__c
@@ -386,7 +386,7 @@ public with sharing class MobileDriveGeneratorDMLService {
                 WHERE Id IN :accountIds];
     }
     
-    static List<Biomed_Collection_Op_Center__c> fetchCollectionOperations(Set<Id> collectionOperationIds) {
+    public static List<Biomed_Collection_Op_Center__c> fetchCollectionOperations(Set<Id> collectionOperationIds) {
         return [SELECT Id, sked_Breakdown_Time_Threshold__c, sked_High_Drive_Productivity_Threshold__c,
                 sked_Lunch_Break_Before_Draw_Hours__c, sked_Lunch_Break_Duration_Fixed_Site__c, sked_Lunch_Break_Duration_Mobile__c, 
                 sked_Maximum_Drive_End_Time__c, sked_Maximum_Shift_Length_Threshold__c, sked_Mid_Drive_Productivity_Threshold__c, 
@@ -466,7 +466,8 @@ public with sharing class MobileDriveGeneratorDMLService {
     
     static List<sked_Role_Time_Variance__c> fetchRoleTimeVariances(Set<Id> siteIds, DMLSchedulingBounds schedulingBounds) {
         return [SELECT Id, sked_Buffer_Type__c, sked_Effective_End_Date__c, sked_Effective_Start_Date__c, sked_Location__c,
-                sked_Resource_Role_Group__c, sked_Variance_Applies_to__c, sked_Variation_Amount__c, sked_Variation_Type__c 
+                sked_Resource_Role_Group__c, sked_Variance_Applies_to__c, sked_Variation_Amount__c, sked_Variation_Type__c,
+                sked_Days_Of_Week__c //added for HRP-12738
                 FROM sked_Role_Time_Variance__c
                 WHERE sked_Location__c IN :siteIds
                 AND sked_Effective_Start_Date__c <= :schedulingBounds.endDate
@@ -512,7 +513,6 @@ public with sharing class MobileDriveGeneratorDMLService {
         for (sked_Collection_Operation_SDM__c collectionOperationSdm : collectionOperationSDMs) {
             staffingDecisionMatrixIds.add(collectionOperationSdm.sked_Staffing_Decision_Matrix__c);
         }
-       // System.debug( 'log#26:: staffingDecisionMatrixIds >> ' + staffingDecisionMatrixIds );
         return [SELECT Id, sked_2RBC_Staff_Capacity__c, sked_Charge_Capacity__c, sked_Charge_Threshold__c,
                 sked_Driver_Capacity__c, sked_Driver_Support_Capacity__c, 
                 sked_NR_Volunteer_Fixed_Site_Band_Lower__c, sked_NR_Volunteer_Fixed_Site_Band_Upper__c,
@@ -591,6 +591,8 @@ public with sharing class MobileDriveGeneratorDMLService {
         public Map<Id, List<sked__Resource_Override__c>> map_resourceOverrides;
         public Map<Id, List<sked_Collection_Op_Staging_Location__c>> mapCoIdVsStagingLocations;
         public List<TravelTimeIndex> travelTimeIndexes;
+        public List<String> resourceRoleGroups; //HRP-11908
+        public Map<String, String> map_resourceRole_resourceRoleGroup; //HRP-11908
     }
     
     public virtual class DMLEntityBase {
@@ -768,10 +770,15 @@ public with sharing class MobileDriveGeneratorDMLService {
         public decimal wbProjectedProcedures;
         public decimal x2rbcProjectedProcedures;
         public Boolean isCallListRecipientExist;
+        public Integer noOfDriveShifts;
         public String stagingLocation; // HRP-11653
         public sked_Collection_Op_Staging_Location__c coStagingLocation;
         public String travelTimeSitetoCO; //HRP-11650
         public String travelTimeCOtoSite; //HRP-11650
+        public Decimal slotGenerator; //HRP-12011
+        public Decimal excessStaffCapacity; //HRP-10994
+        public Decimal averageStaffCapacity; //HRP-10994
+        public Decimal totalStaffRequested; //HRP-10994
         
         public DMLAccount account;
         public DMLCollectionOperation collectionOperation;
@@ -781,7 +788,9 @@ public with sharing class MobileDriveGeneratorDMLService {
         public List<DMLDriveShift> driveShifts;
         public Boolean hasError = false;
         public Boolean impactCO = false; //HRP-9945
+        
         public DMLDrive(Opportunity opp) {
+            DMLSchedulingBounds schedulingBounds = reduceSchedulingBoundsFromOpportunities(new List<Opportunity>{opp});
             this.name = opp.Name;
             this.accountId = opp.AccountId;
             this.accountType = opp.Account_Type__c;
@@ -801,6 +810,11 @@ public with sharing class MobileDriveGeneratorDMLService {
             this.wbProjectedProcedures = opp.WB_Projected_Procedures__c != null ? opp.WB_Projected_Procedures__c : 0;
             this.x2rbcProjectedProcedures = opp.X2RBC_Projected_Procedures__c != null ? opp.X2RBC_Projected_Procedures__c : 0;
             this.isCallListRecipientExist = opp.Call_List_Recipient_Exist__c; // HRP - 10478
+            this.slotGenerator = opp.Slot_Generator__c; //HRP-12011
+            this.totalProceduresProjected = this.wbProjectedProcedures + this.x2rbcProjectedProcedures;
+            this.totalProductsProjected = this.wbProjectedProcedures + 2*this.x2rbcProjectedProcedures;
+            this.driveSite = new DMLLocation(fetchSites(new Set<Id>{opp.Drive_Site__c}, schedulingBounds)[0]);
+            this.account = new DMLAccount(fetchAccounts(new Set<Id>{opp.AccountId})[0]);
         }
         
         public override SObject toSObject() {
@@ -832,7 +846,9 @@ public with sharing class MobileDriveGeneratorDMLService {
                 sked_2RBC_Projected_Procedures__c = this.x2rbcProjectedProcedures,
                 sked_Staging_Location__c = this.stagingLocation, // HRP-11653
                 sked_Travel_Time_Site_To_CO__c = this.travelTimeSitetoCO,  //HRP-11650
-                sked_Travel_Time_CO_To_Site__c = this.travelTimeCOtoSite  //HRP-11650
+                sked_Travel_Time_CO_To_Site__c = this.travelTimeCOtoSite,  //HRP-11650
+                Excess_Staff_Capacity__c = this.excessStaffCapacity, //HRP-10994
+                Average_Staff_Capacity__c = this.averageStaffCapacity //HRP-10994
             );
             return skedDrive;
         }
@@ -883,10 +899,30 @@ public with sharing class MobileDriveGeneratorDMLService {
         
         public List<DMLDriveShiftTag> driveShiftTags;
         public List<DMLJob> jobs;
-        public List<TimeConfiguration> timeConfigurations;
+        public List<DriveGenerationUtil.TimeConfigurationModel> timeConfigurations; //HRP-11908
         public List<DMLSlot> slots;
      
         public DMLDriveShift() {}
+        
+         public DMLDriveShift(sked_Drive_Shift__c driveShift) {
+            List<DMLJob> jobList = new List<DMLJob>();
+            this.startTime = driveShift.sked_Start_Time__c;
+            this.endTime = driveShift.sked_End_Time__c;
+            this.drawStart =  skedDateTimeUtils.toTimezone((DateTime.newInstanceGMT(driveShift.sked_Drive_Date__c, this.startTime)), driveShift.sked_Timezone__c);
+            this.drawEnd = skedDateTimeUtils.toTimezone((DateTime.newInstanceGMT(driveShift.sked_Drive_Date__c, this.endTime)), driveShift.sked_Timezone__c);
+            this.drawDuration = skedDateTimeUtils.getDifferentMinutes(this.drawStart, this.drawEnd);
+            this.drawHours = this.drawDuration / 60;
+            this.x2rbcProjectedProcedures = driveShift.sked_2RBC_Projected_Procedures__c;
+            this.wbProjectedProcedures = driveShift.sked_WB_Projected_Procedures__c;
+            this.totalProceduresProjected = driveShift.sked_Total_Procedures_Projected__c;
+            this.totalProductsProjected = driveShift.sked_Total_Products_Projected__c;
+            this.lunchBreak = driveShift.sked_Lunch_Break__c;
+            this.lunchBreakBeforeDrawHours = driveShift.sked_Lunch_Break_Before_Draw_Hours__c;
+            for(sked__Job__c job : driveShift.sked_jobs__r) {
+                jobList.add(new DMLJob(job));
+            }
+            this.jobs = jobList;
+        }
         
         public DMLDriveShift(DMLDriveShift source) {
             this.donorsScheduled = source.donorsScheduled;
@@ -1031,6 +1067,35 @@ public with sharing class MobileDriveGeneratorDMLService {
         public List<DMLJobTag> jobTags;
         
         public DMLJob() {}
+
+        public DMLJob(sked__Job__c job) {
+            this.id = job.Id;
+            this.resourceRole = job.sked_Resource_Role__c;
+            this.aptQuantity = job.sked_APT_Quantity__c;
+            this.assetType = job.sked_Asset_Type__c;
+            this.breakdownTime = job.sked_Breakdown_Time__c;
+            this.driveId = job.sked_Drive__c;
+            this.driveShiftId = job.sked_Drive_Shift__c;
+            this.driveSiteId = job.sked__Location__c;
+            this.duration = job.sked__Duration__c;
+            this.equipmentSubtype = job.sked_Equipment_Subtype__c;
+            this.finish = job.sked__Finish__c;
+            this.leadTime = job.sked_Lead_Time__c;
+            this.procedureType = job.sked_Procedure_Type__c;
+            this.quantity = job.sked__Quantity__c;
+            this.redcrossVolunteerQuantity = job.sked_Redcross_Volunteer_Quantity__c;
+            this.setupTime = job.sked_Setup_Time__c;
+            this.sponsorVolunteerQuantity = job.sked_Sponsor_Volunteer_Quantity__c;
+            this.start = job.sked__Start__c;
+            this.travelTime = job.sked_Travel_Time__c;
+            this.travelTime2 = job.sked_Travel_Time2__c;
+            this.type = job.sked__Type__c;
+            this.volunteerRole = job.sked_Volunteer_Role__c;
+            this.vphhQuantity = job.sked_VPHH_Quantity__c;
+            this.wrapUpTime = job.sked_Wrap_Up_Time__c;
+            this.siteLogisticsBack = job.sked_Site_Logistics_Back__c;
+            this.siteLogisticsTo = job.sked_Site_Logistics_To__c;
+        }
         
         public DMLJob(DMLJob source) {
             this.aptQuantity = source.aptQuantity;
@@ -1294,6 +1359,7 @@ public with sharing class MobileDriveGeneratorDMLService {
         public string varianceType;
         public string driveType; // added by PB
         public string collectionOperationId; // added by PB
+        public List<String> daysOfWeek; //added fo HRP-12738
         public DMLRoleTimeVariance(sked_Role_Time_Variance__c roleTimeVariance) {
             this.id = roleTimeVariance.Id;
             this.bufferType = roleTimeVariance.sked_Buffer_Type__c;
@@ -1307,6 +1373,16 @@ public with sharing class MobileDriveGeneratorDMLService {
             this.varianceAppliesTo = roleTimeVariance.sked_Variance_Applies_to__c;
             this.varianceAmount = roleTimeVariance.sked_Variation_Amount__c;
             this.varianceType = roleTimeVariance.sked_Variation_Type__c;
+            /*
+            * HRP-12738 changes stats here
+            */
+            this.daysOfWeek = new List<String> ();
+            if (String.isNotBlank(roleTimeVariance.sked_Days_Of_Week__c)) {
+                this.daysOfWeek = roleTimeVariance.sked_Days_Of_Week__c.split(';');
+            } 
+            /*
+            * HRP-12738 changes ends here
+            */
         }
     }
     

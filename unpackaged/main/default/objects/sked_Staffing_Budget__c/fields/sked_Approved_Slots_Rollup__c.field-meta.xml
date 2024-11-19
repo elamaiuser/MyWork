@@ -5,8 +5,8 @@
     <label>Approved Slots Rollup</label>
     <summaryFilterItems>
         <field>sked_Staffing_Budget_Availability__c.sked_Availability_Status__c</field>
-        <operation>equals</operation>
-        <value>Approved</value>
+        <operation>contains</operation>
+        <value>Approved, Approved From Waitlist</value>
     </summaryFilterItems>
     <summaryForeignKey>sked_Staffing_Budget_Availability__c.sked_Staffing_Budget__c</summaryForeignKey>
     <summaryOperation>count</summaryOperation>

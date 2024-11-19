@@ -4,12 +4,8 @@
     <name>Virginia Lead Queue</name>
     <queueMembers>
         <users>
-            <user>anita.beasley@redcross.org.biomed</user>
-            <user>donna.wesley2@redcross.org.biomed</user>
-            <user>eric.majette@redcross.org.biomed</user>
             <user>jenny.lawhorne@redcross.org.biomed</user>
             <user>lori.rozecki@redcross.org.biomed</user>
-            <user>todd.cahill@redcross.org.biomed</user>
         </users>
     </queueMembers>
     <queueSobject>

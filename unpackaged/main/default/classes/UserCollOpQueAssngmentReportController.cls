@@ -1,4 +1,12 @@
-public class UserCollOpQueAssngmentReportController {
+/**
+* @description: This class is the controller class for UserCollOppQueueAssigReportVF visualforce page.
+**   Modification Log  ****
+*  Date					Developer Name			Comments
+ * ***************************************************************************************************************************************************************************
+ * 09/17/2024			Barnojit Sharma			Fixed Apex CPU time limit exceeded exception  (HRP-13373)
+ *****************************************************************************************************************************************************************************
+*/
+public without sharing class UserCollOpQueAssngmentReportController {
     
     public  String searchUser{get; set;} // UI user name
     public  String searchCollOpp{get; set;} //UI collection operation name
@@ -72,16 +80,27 @@ public class UserCollOpQueAssngmentReportController {
             errorMsg='No Input found for Filters';
             errorPresent=true;
         }
+        if(String.isNotBlank(searchUser) && searchUser.length() < 3)
+        {
+            errorMsg='User name must be more than 2 characters';
+            errorPresent=true;
+        }
         
-        if(!String.isBlank(searchUser) && String.isBlank(searchCollOpp))
+        if(String.isNotBlank(searchUser) && searchUser.length() >= 3 && String.isBlank(searchCollOpp))
         {
             string s = searchUser;
             condition =  'Name like \'%'+S+'%\'';
         }
         
-        if(!String.isBlank(searchCollOpp) && String.isBlank(searchUser))
+        if(String.isNotBlank(searchCollOpp) && String.isBlank(searchUser))
         {
             condition = 'sked_Collection_Operations__c includes ('+'\''+searchCollOpp+'\''+')';
+        }
+
+        if(String.isNotBlank(searchCollOpp) && searchUser.length() >= 3 && String.isNotBlank(searchUser))
+        {
+            string s = searchUser;
+            condition = 'Name like \'%'+S+'%\' AND sked_Collection_Operations__c includes ('+'\''+searchCollOpp+'\''+')';
         }
         
         if (condition!= null)
@@ -94,18 +113,19 @@ public class UserCollOpQueAssngmentReportController {
         
         if(!errorPresent && condition!=null)
         {
-            userList = Database.query(query);
+            userList = Database.query(query,AccessLevel.SYSTEM_MODE);
             if(userList.isEmpty())
             {
                 errorMsg='No Records found for the Filters';
                 errorPresent=true;
             }
         }
+        //commented for HRP-13373
         //('userList'+userList);
         //system.debug('userList'+userList.size());
         
         //map<id,list<id>>userParentRoleID = new map<id,list<id>>();
-        map<id,id>userRoleID = new map<id,id>();// map user id and UserRoleId
+        /*map<id,id>userRoleID = new map<id,id>();// map user id and UserRoleId
         set<id> userOrg = new set<id>();//set of original users as per the query
         
         for(user u:userList)
@@ -114,7 +134,7 @@ public class UserCollOpQueAssngmentReportController {
             /*if(!userParentRoleID.keyset().contains(u.UserRoleid))
 userParentRoleID.put(u.UserRoleid,new list<id>());
 
-userParentRoleID.get(u.UserRoleid).add(u.id);*/
+userParentRoleID.get(u.UserRoleid).add(u.id);
             
             userRoleID.put(u.id,u.UserRoleid);
             
@@ -122,6 +142,7 @@ userParentRoleID.get(u.UserRoleid).add(u.id);*/
         
         
         list<UserRole> UserRoleList = [SELECT id,ParentRoleId, DeveloperName FROM UserRole];
+        
         
         
         list<user> userList1= new list<user>();
@@ -132,6 +153,7 @@ userParentRoleID.get(u.UserRoleid).add(u.id);*/
             set<user> temSet = new set<user>();
             temSet.addAll(getRoleSubordinateUsers(u.id));
             userList1.addAll(temSet); // adding subordinates to the list
+            
             
             // populating userChildUserMap with user id and subordinates usre id
             list<id> uList =new list<id>();
@@ -149,6 +171,7 @@ userParentRoleID.get(u.UserRoleid).add(u.id);*/
             }
             
         }
+        
         
         set<user> userSet= new set <user>();
         userSet.addAll(userList1);
@@ -441,14 +464,23 @@ userParentRoleID.get(u.UserRoleid).add(u.id);*/
                         UserCollOpQueWrapListPresent=true;
                     }
                 }
-                //system.debug(UserCollOpQueWrapList);
-                if(UserCollOpQueWrapList.isEmpty())
-                {
-                    UserCollOpQueWrapListPresent=false;
-                    errorMsg='The selected User doesn\'t have any Queue/Collection Operation assignment to them';
-                    errorPresent=true;
-                }
-            }
+                //system.debug(UserCollOpQueWrapList);*/
+        /*
+        * HRP-13373 changes starts here
+        */
+        if(!userList.isEmpty()){
+            UserCollOpQueWrapList = getUserWrapper(userList);
+            UserCollOpQueWrapListPresent = true;
+        }
+        /*
+        * HRP-13373 changes ends here
+        */
+
+        if(!errorPresent && UserCollOpQueWrapList.isEmpty())
+        {
+            UserCollOpQueWrapListPresent=false;
+            errorMsg='The selected User doesn\'t have any Queue/Collection Operation assignment to them';
+            errorPresent=true;
         }
     }
     
@@ -544,4 +576,83 @@ userParentRoleID.get(u.UserRoleid).add(u.id);*/
         
         return currentRoleIds;   
     }
+
+    /*
+    * HRP-13373 changes starts here
+    */
+    /*
+    *********************************************************
+    @Method Name    : getAllParentQueueNames
+    @author         : Barnojit Sharma
+    @description    : method to get the parent queue names.
+    ********************************************************
+    */
+    public Map<Id,String> getAllParentQueueNames(Id groupId,Map<Id, List<Id>> groupParentMap, Map<Id,String> queueNameMap, Map<Id,String> queueNames){
+        if(queueNameMap.containsKey(groupId)){
+            queueNames.put(groupId,queueNameMap.get(groupId));
+        }
+        if(groupParentMap.containsKey(groupId)){
+            for(Id parentId : groupParentMap.get(groupId)){
+                queueNames.putAll(getAllParentQueueNames(parentId,groupParentMap,queueNameMap,queueNames));
+            }
+        }
+        return queueNames;
+    }
+    /*
+    *********************************************************
+    @Method Name    : getUserWrapper
+    @author         : Barnojit Sharma
+    @description    : method to get the VF wrapper from user data.
+    ********************************************************
+    */
+    public List<UserCollOpQueWrapper> getUserWrapper(List<User> userList){
+        List<UserCollOpQueWrapper> userCollOpQueWrapList = new List<UserCollOpQueWrapper>();
+        String usrIdPrefix = User.sObjectType.getDescribe().getKeyPrefix();
+        Map<Id, User> userMap = new Map<Id, User>(userList);
+        Map<Id,List<Id>> groupParentMap = new Map<Id,List<Id>>();
+        Map<Id,List<Id>> userGroupMap = new Map<Id,List<Id>>();
+        Map<Id,String> queueNameMap = new Map<Id,String>();
+        List<GroupMember> usrGrpMemList = [SELECT Id,
+                                                GroupId,
+                                                Group.Type,
+                                                Group.Name,
+                                                UserOrGroupId 
+                                            FROM GroupMember 
+                                            WHERE Group.Type IN ('Regular','Queue')
+                                            AND UserOrGroupId != null
+                                          	WITH SYSTEM_MODE];
+        for(GroupMember usrGrpMem : usrGrpMemList){
+            if(usrGrpMem.Group.Type.equals('Queue')){
+                queueNameMap.put(usrGrpMem.GroupId,usrGrpMem.Group.Name);
+            }
+            if(!String.valueOf(usrGrpMem.UserOrGroupId).left(3).equals(usrIdPrefix)){
+                if(!groupParentMap.containsKey(usrGrpMem.UserOrGroupId)){
+                    groupParentMap.put(usrGrpMem.UserOrGroupId, new List<Id>());
+                }
+                groupParentMap.get(usrGrpMem.UserOrGroupId).add(usrGrpMem.GroupId);
+            } else if(userMap.keySet().contains(usrGrpMem.UserOrGroupId)){
+                if(!userGroupMap.containsKey(usrGrpMem.UserOrGroupId)){
+                    userGroupMap.put(usrGrpMem.UserOrGroupId, new List<Id>());
+                }
+                userGroupMap.get(usrGrpMem.UserOrGroupId).add(usrGrpMem.GroupId);
+            }
+        }
+        for(Id userId : userMap.keySet()){
+            Integer collOppSize = 0;
+            Map<Id,String> queueNames = new Map<Id,String>();
+            if(userMap.get(userId).sked_Collection_Operations__c != null){
+                collOppSize = userMap.get(userId).sked_Collection_Operations__c.split(';').size();
+            }
+            if(userGroupMap.containsKey(userId)){
+                for(Id groupId : userGroupMap.get(userId)){
+                    queueNames.putAll(getAllParentQueueNames(groupId,groupParentMap,queueNameMap,queueNames));
+                }
+            }
+            userCollOpQueWrapList.add(new UserCollOpQueWrapper(userMap.get(userId),collOppSize,queueNames.size(),String.join(queueNames.values(),', ')));
+        }
+        return userCollOpQueWrapList;
+    }
+    /*
+    * HRP-13373 changes ends here
+    */
 }

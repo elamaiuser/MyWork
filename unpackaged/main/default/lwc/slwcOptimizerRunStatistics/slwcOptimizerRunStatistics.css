@@ -1,0 +1,26 @@
+article.slds-card {
+    height: 100%;
+}
+.full-height {
+    height: 100%;
+}
+.float-left {
+    float: left;
+    width: 50%;
+}
+.float-right {
+    float: right;
+    width: 50%;
+}
+.float-optStats-left {
+    float: left;
+    width: 80%;
+}
+.float-optStats-right {
+    float: right;
+    width: 20%;
+}
+.optimizer-run-statistics-page {
+    background: #fff;
+    width: 100%;
+}

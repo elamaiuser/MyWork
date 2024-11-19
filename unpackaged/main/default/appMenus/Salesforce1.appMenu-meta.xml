@@ -45,10 +45,6 @@
         <type>StandardAppMenuItem</type>
     </appMenuItems>
     <appMenuItems>
-        <name>ProcessInstanceWorkitem</name>
-        <type>StandardAppMenuItem</type>
-    </appMenuItems>
-    <appMenuItems>
         <name>PendingInterviews</name>
         <type>StandardAppMenuItem</type>
     </appMenuItems>

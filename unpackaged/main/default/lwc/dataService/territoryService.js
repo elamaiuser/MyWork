@@ -1,4 +1,5 @@
 import { dataService, queryModelBase } from './base';
+import { COLLECTION_OPERATION } from 'c/slwcConstants';
 
 class territoryService extends dataService {
   constructor() {
@@ -14,6 +15,8 @@ class territoryService extends dataService {
         queryBuilder.addCondition({template: "(Start_Date__c = NULL OR Start_Date__c <= {0})", value: query.endDate});
         queryBuilder.addCondition({template: "(End_Date__c = NULL OR End_Date__c >= {0})", value: query.startDate});
       }
+      let exludedTerritoryNames = [COLLECTION_OPERATION.NON_COLLECTION_AREA];
+      queryBuilder.addCondition({template: "Name NOT IN {0}", value: exludedTerritoryNames, type: "array_string"});
   }
 }
 

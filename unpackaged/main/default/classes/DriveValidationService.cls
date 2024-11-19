@@ -7,6 +7,7 @@
 * 12/27/2023					 Barnojit Sharma		  Show Banner if Opportunities violating 56 Day Rule. (HRP-11640)
 * 2/1/2024					     Fitsum Worku		      Updated logic for 56 day rule so that 56th day itself is considered eligible (HRP-12034)
 * 2/29/2024						 Venkat Dangeti	          Added recordtype check for BPL validation to exclude fixed sites(HRP-12238)
+* 7/11/2024					     Krapy Tuli		          Update logic so that same component can be use on DOC as well.(HRP-12837)
 ****************************************************************************************************************************************************
 */
 public without sharing class DriveValidationService {
@@ -15,6 +16,7 @@ public without sharing class DriveValidationService {
     public Boolean acceptBlankMilitaryNamePhone = false;
     public Boolean accept56DayRuleViolation = false;
     public Boolean fiftySixDayRuleViolated = false;// added for HRP-11640 
+    public Boolean fiftySixDayRuleViolatedOnDrive = false;//HRP-12837
     public Boolean isFixedSite = false;
     public Boolean isRecurringDrive = false;
     public Id oppId;
@@ -31,6 +33,20 @@ public without sharing class DriveValidationService {
         if(String.isBlank(recordId)){
             return '';
         }
+        Id myId = recordId; //HRP-12837 start
+        Schema.SObjectType sobjectType = myId.getSObjectType();
+        String sobjectName = sobjectType.getDescribe().getName();
+        System.debug(sobjectName);
+        if(sobjectName == 'sked_Drive__c'){
+            List<sked_Drive__c> driveDetails = [SELECT Id, sked_Opportunity__c, sked_Drive_Date__c, sked_Account__c, sked_Type_of_Drive__c FROM sked_Drive__c where Id =: recordId LIMIT 1];
+            if(!driveDetails.isEmpty() && driveDetails[0].sked_Opportunity__c != null){
+                sked_Drive__c drive = driveDetails[0];
+                recordId = driveDetails[0].sked_Opportunity__c;
+                return validateDriveOnBanner(recordId, drive);
+            } else {
+                return '';
+            }
+        } //HRP-12837 end
         try{
             List<Opportunity> OppList = [SELECT Id, 
                                                 AcceptblankMilitaryAuthNamePhone__c,
@@ -174,6 +190,26 @@ public without sharing class DriveValidationService {
         }
         return result;
     }
+    //HRP-12837 this method is created to show error message on banner using drive fields
+    @AuraEnabled
+    public static String validateDriveOnBanner(String recordId, sked_Drive__c drive){
+        DriveValidationService classObj = new DriveValidationService();
+        classObj.oppId = drive.sked_Opportunity__c;
+        List<Account> accList = [SELECT Id FROM Account WHERE Id =: drive.sked_Account__c];
+        classObj.accRec = accList[0];
+        classObj.driveDate = drive.sked_Drive_Date__c;
+        List<Opportunity> OppList = [SELECT Id, Accept_56_Day_Rule_Violation__c FROM Opportunity WHERE Id =: recordId];
+        classObj.accept56DayRuleViolation = OppList.get(0).Accept_56_Day_Rule_Violation__c;
+        if(drive.sked_Type_of_Drive__c == Constants.FIX_SITE_OPP){
+            classObj.isFixedSite = true;
+        }
+        if(classObj.isFixedSite != true){
+            classObj.fiftySixDayRuleViolatedOnDrive = true;
+            classObj.checkAccept56DaysVoilation();// added for HRP-11640 
+        }
+
+        return classObj.getErrorMessageOnBanner();
+    }
 
     public String getErrorMessage(){
         String genericMessage = '';
@@ -235,12 +271,15 @@ public without sharing class DriveValidationService {
         /*
         * HRP-11640 changes starts here
         */
-        if(fiftySixDayRuleViolated){
+        if(fiftySixDayRuleViolated && !(fiftySixDayRuleViolatedOnDrive)){ //HRP-12837
             genericMessage = genericMessage +' '+ Custom_Messages__mdt.getInstance('Opportunity_Banner_Message_56_day_Rule').value__c;
         }
         /*
         * HRP-11640 changes ends here
         */
+        if(fiftySixDayRuleViolated && fiftySixDayRuleViolatedOnDrive){ //HRP-12837 start
+            genericMessage = genericMessage +' '+ Custom_Messages__mdt.getInstance('Drive_Banner_Message_56_day_Rule').value__c;
+        }// HRP-12837 end
         return genericMessage;
     }
 
@@ -375,7 +414,6 @@ public without sharing class DriveValidationService {
                             FROM Opportunity 
                             WHERE StageName != 'Cancelled'
                             AND DriveStatus__c != 'Cancel'
-                            AND Accept_56_Day_Rule_Violation__c = false
                             AND Is_Template__c = false
                             AND Drive_Date__c != null
                             AND AccountId =: accRec.Id
@@ -386,7 +424,6 @@ public without sharing class DriveValidationService {
                             FROM Opportunity 
                             WHERE StageName != 'Cancelled'
                             AND DriveStatus__c != 'Cancel'
-                            AND Accept_56_Day_Rule_Violation__c = false
                             AND Is_Template__c = false
                             AND Drive_Date__c != null
                             AND AccountId =: accRec.Id

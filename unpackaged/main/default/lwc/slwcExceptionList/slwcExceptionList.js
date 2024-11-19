@@ -165,7 +165,7 @@ export default class SlwcExceptionList extends LightningElement {
         }
         else if (this.exceptionType === "resource") {
             query.exceptionType = "resource";
-            exceptionCodes.push("RESOURCE_DUPLICATE_SENIORITY_RANKING", "MINIMUM_WEEKLY_WORK_DAYS_VIOLATION", "MAXIMUM_WEEKLY_WORK_DAYS_VIOLATION");
+            exceptionCodes.push("RESOURCE_DUPLICATE_SENIORITY_RANKING");
         }
 
         query.exceptionCodes = exceptionCodes;

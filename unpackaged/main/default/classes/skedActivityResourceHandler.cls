@@ -1,4 +1,4 @@
-public class skedActivityResourceHandler extends skedTriggerHub {
+public class skedActivityResourceHandler extends skedTriggerHub implements Callable {
     
     public override void onBeforeInsert() {
         skedTriggerUtils.validateServiceEntry(this.context.newRecords, skedConstants.AVAILABILITY_CRUD_MUST_COME_FROM_RAC);
@@ -37,9 +37,30 @@ public class skedActivityResourceHandler extends skedTriggerHub {
         	removeExceptionLogs((Map<Id, sked__Activity_Resource__c>)this.context.oldMap);
         	removeResourceHoursRecord(this.context.oldMap.values());
         }
-        deleteAvailabilityForOnCallResources(this.context.oldMap.values());
+        skedFutureCallEventHandler.publishFutureCallEvent(
+            skedActivityResourceHandler.class.getName(),
+            'deleteAvailabilityForOnCallResources',
+            this.context.oldMap.keySet()
+        );
     }
-    
+    /*********************************************************** Callable Interface ***********************************************************/
+    public static Object call(String methodName, Map<String, Object> params) {
+        skedProcessEventResult result = new skedProcessEventResult();
+        try {
+            switch on methodName {
+                when 'deleteAvailabilityForOnCallResources' {
+                    deleteAvailabilityForOnCallResources((Set<Id>) JSON.deserialize((String) params.get('param1'), Set<Id>.class));
+                }
+                when else {
+                    throw new skedException('Unable to locate Method: ' + methodName + ' in Class: ' + skedBiomedCollectionOpHandler.class.getName());
+                }
+            }
+        } catch (skedException ex) {
+            result.addError(ex);
+        }
+
+        return result;
+    }
     /*********************************************************** Private methods ***********************************************************/
     private void captureExceptionLogs(List<sked__Activity_Resource__c> newRecords) {
         Set<Id> activityIds = new Set<Id>();
@@ -446,18 +467,16 @@ public class skedActivityResourceHandler extends skedTriggerHub {
         }
     }
 
-    private void deleteAvailabilityForOnCallResources(List<sked__Activity_Resource__c> oldRecords) {
-        List<sked__Availability__c> availabilityRecords = new List<sked__Availability__c>();
-
-        oldRecords = [
+    private static void deleteAvailabilityForOnCallResources(Set<Id> recordIds) {
+        List<sked__Activity_Resource__c> activityResources = [
             SELECT Id, sked__Resource__c, sked_Start1__c, sked_End__c, sked__Activity__r.sked__Type__c
             FROM sked__Activity_Resource__c
-            WHERE Id IN :oldRecords
+            WHERE Id IN :recordIds
             AND sked__Activity__r.sked__Type__c = :skedConstants.AVAILABILITY_TYPE_ON_CALL
         ];
 
-        if (oldRecords != null && !oldRecords.isEmpty()) {
-            delete skedActivityResourceUtils.GetAvailabilityRecordsForOnCalls(oldRecords);
+        if (activityResources != null && !activityResources.isEmpty()) {
+            delete skedActivityResourceUtils.GetAvailabilityRecordsForOnCalls(activityResources);
         }
     }
 

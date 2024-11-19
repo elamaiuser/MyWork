@@ -25,6 +25,10 @@
             </layoutItems>
             <layoutItems>
                 <behavior>Edit</behavior>
+                <field>sked_Auto_Approval_Cutoff_Days__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
                 <field>sked_Restricts_to_Full_day_PTO__c</field>
             </layoutItems>
             <layoutItems>
@@ -45,7 +49,43 @@
             </layoutItems>
             <layoutItems>
                 <behavior>Edit</behavior>
+                <field>FS_Web_Scheduling_Start_Date_Offset__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>FS_Web_Scheduling_Start_Time__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>FS_Web_Scheduling_End_Date_Offset__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>FS_Web_Scheduling_End_Time_Offset__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>Mobile_Web_Scheduling_Start_Date_Offset__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>Mobile_Web_Scheduling_Start_Time__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>Mobile_Web_Scheduling_End_Date_Offset__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>Mobile_Web_Scheduling_End_Time_Offset__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
                 <field>External_Id__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>sked_Regulated_Medi_Screener_Drive_Types__c</field>
             </layoutItems>
         </layoutColumns>
         <layoutColumns>
@@ -56,6 +96,14 @@
             <layoutItems>
                 <behavior>Edit</behavior>
                 <field>sked_Is_Deactivated__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>sked_Waitlist_Enabled__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>sked_Available_Day_Trade_Window__c</field>
             </layoutItems>
         </layoutColumns>
         <style>TwoColumnsTopToBottom</style>
@@ -253,12 +301,39 @@
     </layoutSections>
     <layoutSections>
         <customLabel>true</customLabel>
+        <detailHeading>true</detailHeading>
+        <editHeading>true</editHeading>
+        <label>Meal &amp; Rest Break Settings</label>
+        <layoutColumns>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>sked_Require_Number_of_Meal_Breaks__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>sked_Require_Start_End_Times_Meal_Break__c</field>
+            </layoutItems>
+        </layoutColumns>
+        <layoutColumns>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>sked_Require_Number_of_Rest_Breaks__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>sked_Require_Start_End_Times_Rest_Break__c</field>
+            </layoutItems>
+        </layoutColumns>
+        <style>TwoColumnsLeftToRight</style>
+    </layoutSections>
+    <layoutSections>
+        <customLabel>true</customLabel>
         <detailHeading>false</detailHeading>
         <editHeading>true</editHeading>
         <label>Custom Links</label>
-        <layoutColumns/>
-        <layoutColumns/>
-        <layoutColumns/>
+        <layoutColumns />
+        <layoutColumns />
+        <layoutColumns />
         <style>CustomLinks</style>
     </layoutSections>
     <platformActionList>
@@ -295,14 +370,6 @@
         <fields>sked_Start_Date__c</fields>
         <fields>sked_End_Date__c</fields>
         <relatedList>Collections_Territory__c.Collection_Operation__c</relatedList>
-    </relatedLists>
-    <relatedLists>
-        <fields>NAME</fields>
-        <fields>sked_Staging_Location__c.NAME</fields>
-        <fields>sked_Staging_Location__c.sked_Address__c</fields>
-        <fields>sked_Start_Date__c</fields>
-        <fields>sked_End_Date__c</fields>
-        <relatedList>sked_Collection_Op_Staging_Location__c.sked_Collection_Operation__c</relatedList>
     </relatedLists>
     <relatedLists>
         <relatedList>RelatedNoteList</relatedList>
@@ -362,6 +429,10 @@
         <fields>sked_Start_Date__c</fields>
         <fields>sked_End_Date__c</fields>
         <relatedList>sked_Territory_Collection_Operation__c.sked_Collection_Operation__c</relatedList>
+    </relatedLists>
+    <relatedLists>
+        <fields>NAME</fields>
+        <relatedList>sked_CollectionOperationOptimizerSetting__c.sked_Collection_Operation__c</relatedList>
     </relatedLists>
     <showEmailCheckbox>false</showEmailCheckbox>
     <showHighlightsPanel>false</showHighlightsPanel>

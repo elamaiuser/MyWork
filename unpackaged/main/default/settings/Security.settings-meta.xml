@@ -6,10 +6,14 @@
     <enableAuraSecureEvalPref>true</enableAuraSecureEvalPref>
     <enableCoepHeader>false</enableCoepHeader>
     <enableCoopHeader>false</enableCoopHeader>
-    <enableCrossOrgRedirects>true</enableCrossOrgRedirects>
+    <enableCrossOrgRedirects>false</enableCrossOrgRedirects>
     <enablePermissionsPolicy>false</enablePermissionsPolicy>
     <enableRequireHttpsConnection>true</enableRequireHttpsConnection>
     <networkAccess>
+        <ipRanges>
+            <end>70.123.32.169</end>
+            <start>70.123.32.169</start>
+        </ipRanges>
         <ipRanges>
             <description>elaine</description>
             <end>47.187.79.230</end>
@@ -64,7 +68,7 @@
         <hasRetainedLoginHints>false</hasRetainedLoginHints>
         <hasUserSwitching>true</hasUserSwitching>
         <identityConfirmationOnEmailChange>false</identityConfirmationOnEmailChange>
-        <identityConfirmationOnTwoFactorRegistrationEnabled>true</identityConfirmationOnTwoFactorRegistrationEnabled>
+        <identityConfirmationOnTwoFactorRegistrationEnabled>false</identityConfirmationOnTwoFactorRegistrationEnabled>
         <lockSessionsToDomain>false</lockSessionsToDomain>
         <lockSessionsToIp>false</lockSessionsToIp>
         <lockerServiceCSP>true</lockerServiceCSP>
@@ -84,9 +88,10 @@
     </sessionSettings>
     <singleSignOnSettings>
         <enableCaseInsensitiveFederationID>true</enableCaseInsensitiveFederationID>
+        <enableForceDelegatedCallout>false</enableForceDelegatedCallout>
         <enableMultipleSamlConfigs>true</enableMultipleSamlConfigs>
         <enableSamlJitProvisioning>false</enableSamlJitProvisioning>
         <enableSamlLogin>true</enableSamlLogin>
-        <isLoginWithSalesforceCredentialsDisabled>false</isLoginWithSalesforceCredentialsDisabled>
+        <isLoginWithSalesforceCredentialsDisabled>true</isLoginWithSalesforceCredentialsDisabled>
     </singleSignOnSettings>
 </SecuritySettings>

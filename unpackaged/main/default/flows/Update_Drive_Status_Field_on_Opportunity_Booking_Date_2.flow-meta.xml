@@ -131,7 +131,7 @@
         <locationX>50</locationX>
         <locationY>0</locationY>
         <defaultConnector>
-            <targetReference>myDecision8</targetReference>
+            <targetReference>myDecision6</targetReference>
         </defaultConnector>
         <defaultConnectorLabel>default</defaultConnectorLabel>
         <rules>
@@ -157,23 +157,23 @@
                 <numberValue>2.0</numberValue>
             </value>
         </processMetadataValues>
-        <name>myDecision8</name>
-        <label>myDecision8</label>
+        <name>myDecision6</name>
+        <label>myDecision6</label>
         <locationX>50</locationX>
         <locationY>0</locationY>
         <defaultConnectorLabel>default</defaultConnectorLabel>
         <rules>
-            <name>myRule_9</name>
+            <name>myRule_7</name>
             <conditionLogic>and</conditionLogic>
             <conditions>
-                <leftValueReference>formula_myRule_9</leftValueReference>
+                <leftValueReference>formula_myRule_7</leftValueReference>
                 <operator>EqualTo</operator>
                 <rightValue>
                     <booleanValue>true</booleanValue>
                 </rightValue>
             </conditions>
             <connector>
-                <targetReference>myRule_9_A1</targetReference>
+                <targetReference>myRule_7_A1</targetReference>
             </connector>
             <label>Drive Status is Cancelled</label>
         </rules>
@@ -186,49 +186,9 @@
                 <stringValue>TODAY()</stringValue>
             </value>
         </processMetadataValues>
-        <name>formula_3_myRule_1_A1_9716536467</name>
+        <name>formula_3_myRule_1_A1_3946347220</name>
         <dataType>Date</dataType>
         <expression>TODAY()</expression>
-    </formulas>
-    <formulas>
-        <processMetadataValues>
-            <name>originalFormula</name>
-            <value>
-                <stringValue>CASE(
-MOD(([Opportunity].Drive_Date__c - 85) - DATE(1900, 1, 6), 7),
-0, (([Opportunity].Drive_Date__c  - 85) - 1),
-1, (([Opportunity].Drive_Date__c - 85)  + 1),
-[Opportunity].Drive_Date__c-85)
-
-</stringValue>
-            </value>
-        </processMetadataValues>
-        <name>formula_6_myRule_5_A2_0362745417</name>
-        <dataType>Date</dataType>
-        <expression>CASE(
-MOD(({!myVariable_current.Drive_Date__c} - 85) - DATE(1900, 1, 6), 7),
-0, (({!myVariable_current.Drive_Date__c}  - 85) - 1),
-1, (({!myVariable_current.Drive_Date__c} - 85)  + 1),
-{!myVariable_current.Drive_Date__c}-85)</expression>
-    </formulas>
-    <formulas>
-        <processMetadataValues>
-            <name>originalFormula</name>
-            <value>
-                <stringValue>CASE(
-MOD(([Opportunity].Drive_Date__c - $CustomMetadata.Opportunity_Date_Setting__mdt.Targeted_Ask_Date.Days_from_Drive_Date__c) - DATE(1900, 1, 6), 7),
-0, (([Opportunity].Drive_Date__c  - $CustomMetadata.Opportunity_Date_Setting__mdt.Targeted_Ask_Date.Days_from_Drive_Date__c) - 1),
-1, (([Opportunity].Drive_Date__c - $CustomMetadata.Opportunity_Date_Setting__mdt.Targeted_Ask_Date.Days_from_Drive_Date__c) + 1),
-[Opportunity].Drive_Date__c-$CustomMetadata.Opportunity_Date_Setting__mdt.Targeted_Ask_Date.Days_from_Drive_Date__c)</stringValue>
-            </value>
-        </processMetadataValues>
-        <name>formula_7_myRule_5_A2_8005136251</name>
-        <dataType>Date</dataType>
-        <expression>CASE(
-MOD(({!myVariable_current.Drive_Date__c} - {!$CustomMetadata.Opportunity_Date_Setting__mdt.Targeted_Ask_Date.Days_from_Drive_Date__c}) - DATE(1900, 1, 6), 7),
-0, (({!myVariable_current.Drive_Date__c}  - {!$CustomMetadata.Opportunity_Date_Setting__mdt.Targeted_Ask_Date.Days_from_Drive_Date__c}) - 1),
-1, (({!myVariable_current.Drive_Date__c} - {!$CustomMetadata.Opportunity_Date_Setting__mdt.Targeted_Ask_Date.Days_from_Drive_Date__c}) + 1),
-{!myVariable_current.Drive_Date__c}-{!$CustomMetadata.Opportunity_Date_Setting__mdt.Targeted_Ask_Date.Days_from_Drive_Date__c})</expression>
     </formulas>
     <formulas>
         <processMetadataValues>
@@ -258,13 +218,13 @@ Text([Opportunity].Drive_Status__c ) = &quot;Cancel&quot;
 )</stringValue>
             </value>
         </processMetadataValues>
-        <name>formula_myRule_9</name>
+        <name>formula_myRule_7</name>
         <dataType>Boolean</dataType>
         <expression>AND(ISCHANGED({!myVariable_current.Drive_Status__c} ),
 Text({!myVariable_current.Drive_Status__c} ) = &quot;Cancel&quot;
 )</expression>
     </formulas>
-    <interviewLabel>Update_Drive_Status_Field_on_Opportunity_Booking_Date_2-3_InterviewLabel</interviewLabel>
+    <interviewLabel>Update_Drive_Status_Field_on_Opportunity_Booking_Date_2-4_InterviewLabel</interviewLabel>
     <label>Update Drive Status Field on Opportunity &amp; Booking Date 2</label>
     <processMetadataValues>
         <name>ObjectType</name>
@@ -370,7 +330,7 @@ Text({!myVariable_current.Drive_Status__c} ) = &quot;Cancel&quot;
             </processMetadataValues>
             <field>Booking_Date__c</field>
             <value>
-                <elementReference>formula_3_myRule_1_A1_9716536467</elementReference>
+                <elementReference>formula_3_myRule_1_A1_3946347220</elementReference>
             </value>
         </inputAssignments>
         <object>Opportunity</object>
@@ -485,131 +445,11 @@ Text({!myVariable_current.Drive_Status__c} ) = &quot;Cancel&quot;
             <name>referenceTargetField</name>
         </processMetadataValues>
         <name>myRule_5_A2</name>
-        <label>Update Targeted Ask Date</label>
+        <label>Set Bypass Validation Rule to False</label>
         <locationX>500</locationX>
         <locationY>300</locationY>
         <connector>
-            <targetReference>myRule_5_A3</targetReference>
-        </connector>
-        <filterLogic>and</filterLogic>
-        <filters>
-            <processMetadataValues>
-                <name>implicit</name>
-                <value>
-                    <booleanValue>true</booleanValue>
-                </value>
-            </processMetadataValues>
-            <field>Id</field>
-            <operator>EqualTo</operator>
-            <value>
-                <elementReference>myVariable_current.Id</elementReference>
-            </value>
-        </filters>
-        <inputAssignments>
-            <processMetadataValues>
-                <name>dataType</name>
-                <value>
-                    <stringValue>Date</stringValue>
-                </value>
-            </processMetadataValues>
-            <processMetadataValues>
-                <name>isRequired</name>
-                <value>
-                    <booleanValue>false</booleanValue>
-                </value>
-            </processMetadataValues>
-            <processMetadataValues>
-                <name>leftHandSideLabel</name>
-                <value>
-                    <stringValue>Close Date</stringValue>
-                </value>
-            </processMetadataValues>
-            <processMetadataValues>
-                <name>leftHandSideReferenceTo</name>
-                <value>
-                    <stringValue></stringValue>
-                </value>
-            </processMetadataValues>
-            <processMetadataValues>
-                <name>rightHandSideType</name>
-                <value>
-                    <stringValue>Formula</stringValue>
-                </value>
-            </processMetadataValues>
-            <field>CloseDate</field>
-            <value>
-                <elementReference>formula_6_myRule_5_A2_0362745417</elementReference>
-            </value>
-        </inputAssignments>
-        <inputAssignments>
-            <processMetadataValues>
-                <name>dataType</name>
-                <value>
-                    <stringValue>Date</stringValue>
-                </value>
-            </processMetadataValues>
-            <processMetadataValues>
-                <name>isRequired</name>
-                <value>
-                    <booleanValue>false</booleanValue>
-                </value>
-            </processMetadataValues>
-            <processMetadataValues>
-                <name>leftHandSideLabel</name>
-                <value>
-                    <stringValue>Targeted Ask Date</stringValue>
-                </value>
-            </processMetadataValues>
-            <processMetadataValues>
-                <name>leftHandSideReferenceTo</name>
-                <value>
-                    <stringValue></stringValue>
-                </value>
-            </processMetadataValues>
-            <processMetadataValues>
-                <name>rightHandSideType</name>
-                <value>
-                    <stringValue>Formula</stringValue>
-                </value>
-            </processMetadataValues>
-            <field>Targeted_Ask_Date__c</field>
-            <value>
-                <elementReference>formula_7_myRule_5_A2_8005136251</elementReference>
-            </value>
-        </inputAssignments>
-        <object>Opportunity</object>
-    </recordUpdates>
-    <recordUpdates>
-        <processMetadataValues>
-            <name>evaluationType</name>
-            <value>
-                <stringValue>always</stringValue>
-            </value>
-        </processMetadataValues>
-        <processMetadataValues>
-            <name>extraTypeInfo</name>
-        </processMetadataValues>
-        <processMetadataValues>
-            <name>isChildRelationship</name>
-            <value>
-                <booleanValue>false</booleanValue>
-            </value>
-        </processMetadataValues>
-        <processMetadataValues>
-            <name>reference</name>
-            <value>
-                <stringValue>[Opportunity]</stringValue>
-            </value>
-        </processMetadataValues>
-        <processMetadataValues>
-            <name>referenceTargetField</name>
-        </processMetadataValues>
-        <name>myRule_5_A3</name>
-        <label>Set Bypass Validation Rule to False</label>
-        <locationX>500</locationX>
-        <locationY>400</locationY>
-        <connector>
-            <targetReference>myDecision8</targetReference>
+            <targetReference>myDecision6</targetReference>
         </connector>
         <filterLogic>and</filterLogic>
         <filters>
@@ -688,9 +528,9 @@ Text({!myVariable_current.Drive_Status__c} ) = &quot;Cancel&quot;
         <processMetadataValues>
             <name>referenceTargetField</name>
         </processMetadataValues>
-        <name>myRule_9_A1</name>
+        <name>myRule_7_A1</name>
         <label>Tur on Do Not Roll</label>
-        <locationX>900</locationX>
+        <locationX>700</locationX>
         <locationY>200</locationY>
         <filterLogic>and</filterLogic>
         <filters>

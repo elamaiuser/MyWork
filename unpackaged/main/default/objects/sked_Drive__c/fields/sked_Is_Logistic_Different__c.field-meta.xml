@@ -10,7 +10,12 @@
 || sked_2RBC_Projected_Procedures__c != sked_Opportunity__r.X2RBC_Projected_Procedures__c
 || sked_Plasma_Projected_Procedures__c != sked_Opportunity__r.Plasma_Pheresis_Projected_Procedures__c
 || sked_Platelet_Projected_Procedures__c != sked_Opportunity__r.Platelet_Projected_Procedures__c
-|| sked_WB_Projected_Procedures__c != sked_Opportunity__r.WB_Projected_Procedures__c)</formula>
+|| sked_WB_Projected_Procedures__c != sked_Opportunity__r.WB_Projected_Procedures__c
+|| sked_Drive_Site__c != sked_Opportunity__r.Drive_Site__c
+|| IF(ISPICKVAL(sked_Type_of_Drive__c , &#39;Mobile&#39;) || sked_Operation_Type__c == &#39;Non Integrated WB&#39;, false,
+sked_Number_of_2RBC_Assets__c != sked_Opportunity__r.Number_of_2RBC_Assets__c
+|| sked_Number_of_Plasma_Assets__c != sked_Opportunity__r.Number_of_Plasma_Assets__c
+|| sked_Number_of_Platelet_Assets__c != sked_Opportunity__r.Number_of_Platelet_Assets__c) )</formula>
     <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
     <label>Is Logistic Different</label>
     <trackHistory>false</trackHistory>

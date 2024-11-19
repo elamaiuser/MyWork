@@ -40,6 +40,15 @@
     <columns>
         <field>sked__Location__c.Operation_Type__c</field>
     </columns>
+    <columns>
+        <field>sked__Location__c.sked_Site_Contact__c</field>
+    </columns>
+    <columns>
+        <field>sked__Location__c.sked_Site_Contact_Email__c</field>
+    </columns>
+    <columns>
+        <field>sked__Location__c.sked_Site_Contact_Phone__c</field>
+    </columns>
     <description>A listing of all sites of type Fixed Site</description>
     <filter>
         <booleanFilter>1 AND 2</booleanFilter>
