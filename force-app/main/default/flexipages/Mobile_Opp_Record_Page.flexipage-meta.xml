@@ -42,6 +42,16 @@
                         <valueListItems>
                             <value>PrintableView</value>
                         </valueListItems>
+                        <valueListItems>
+                            <value>Opportunity.Drive_Work_Sheet</value>
+                            <visibilityRule>
+                                <criteria>
+                                    <leftValue>{!Record.DriveStatus__c}</leftValue>
+                                    <operator>EQUAL</operator>
+                                    <rightValue>Confirmed</rightValue>
+                                </criteria>
+                            </visibilityRule>
+                        </valueListItems>
                     </valueList>
                 </componentInstanceProperties>
                 <componentInstanceProperties>
@@ -192,7 +202,7 @@
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>richTextValue</name>
-                    <value>&lt;p&gt;&lt;span style=&quot;color: rgb(250, 2, 2);&quot;&gt;The Drive Date is less than 180 business days from Today or Targeted Ask Date isn&#39;t set, please enter a Targeted Ask Date .&lt;/span&gt;&lt;/p&gt;</value>
+                    <value>&lt;p&gt;&lt;span style=&quot;color: rgb(250, 2, 2);&quot;&gt;The Drive Date is less than 180 business days from Today or Targeted Ask Date isn&apos;t set, please enter a Targeted Ask Date .&lt;/span&gt;&lt;/p&gt;</value>
                 </componentInstanceProperties>
                 <componentName>flexipage:richText</componentName>
                 <identifier>flexipage_richText2</identifier>
@@ -466,7 +476,7 @@
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>relatedListLabel</name>
-                    <value>Template Order</value>
+                    <value>Template Orders</value>
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>showActionBar</name>
@@ -803,6 +813,23 @@
     <flexiPageRegions>
         <itemInstances>
             <componentInstance>
+                <componentName>bsfTaskChecklist</componentName>
+                <identifier>c_bsfTaskChecklist</identifier>
+                <visibilityRule>
+                    <criteria>
+                        <leftValue>{!Record.Is_Template__c}</leftValue>
+                        <operator>EQUAL</operator>
+                        <rightValue>false</rightValue>
+                    </criteria>
+                </visibilityRule>
+            </componentInstance>
+        </itemInstances>
+        <name>Facet-98eec615-bebc-48ac-b321-10bb273eb9ab</name>
+        <type>Facet</type>
+    </flexiPageRegions>
+    <flexiPageRegions>
+        <itemInstances>
+            <componentInstance>
                 <componentInstanceProperties>
                     <name>active</name>
                     <value>true</value>
@@ -919,6 +946,27 @@
                 </componentInstanceProperties>
                 <componentName>flexipage:tab</componentName>
                 <identifier>customTab7</identifier>
+            </componentInstance>
+        </itemInstances>
+        <itemInstances>
+            <componentInstance>
+                <componentInstanceProperties>
+                    <name>body</name>
+                    <value>Facet-98eec615-bebc-48ac-b321-10bb273eb9ab</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>title</name>
+                    <value>Recruitment Planning Task Checklist</value>
+                </componentInstanceProperties>
+                <componentName>flexipage:tab</componentName>
+                <identifier>flexipage_tab2</identifier>
+                <visibilityRule>
+                    <criteria>
+                        <leftValue>{!Record.Is_Template__c}</leftValue>
+                        <operator>EQUAL</operator>
+                        <rightValue>false</rightValue>
+                    </criteria>
+                </visibilityRule>
             </componentInstance>
         </itemInstances>
         <name>Facet-3938d1e4-a1ce-404d-b9aa-dc4ec99d0fe0</name>
