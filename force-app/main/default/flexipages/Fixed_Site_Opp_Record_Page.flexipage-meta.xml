@@ -57,10 +57,7 @@
                         </valueListItems>
                         <valueListItems>
                             <value>Opportunity.sked_Generate_Drive</value>
-                        </valueListItems>
-                        <valueListItems>
-                            <value>Clone</value>
-                        </valueListItems>
+                        </valueListItems>                        
                         <valueListItems>
                             <value>Opportunity.Drive_Work_Sheet</value>
                             <visibilityRule>
