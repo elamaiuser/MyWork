@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomMetadata xmlns="http://soap.sforce.com/2006/04/metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <label>Drive Worksheet Report</label>
+    <protected>false</protected>
+    <values>
+        <field>Active__c</field>
+        <value xsi:type="xsd:boolean">true</value>
+    </values>
+    <values>
+        <field>Report_Link__c</field>
+        <value xsi:type="xsd:string">https://biosf--releaseqa--c.sandbox.vf.force.com/apex/generateDriveWorksheetPdf?id={{driveId}}</value>
+    </values>
+    <values>
+        <field>Report_Name__c</field>
+        <value xsi:type="xsd:string">Drive Worksheet</value>
+    </values>
+    <values>
+        <field>Task_Subject__c</field>
+        <value xsi:type="xsd:string">72 Hour Check-In</value>
+    </values>
+    <values>
+        <field>Task_Type__c</field>
+        <value xsi:nil="true"/>
+    </values>
+</CustomMetadata>
