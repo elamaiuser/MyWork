@@ -1,0 +1,724 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<RecordType xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>sked_Collection_Operation</fullName>
+    <active>true</active>
+    <label>Collection Operation</label>
+    <picklistValues>
+        <picklist>sked_Collection_Operations_To_Refresh__c</picklist>
+        <values>
+            <fullName>Adrian MI</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Alameda CA</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Albany NY</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Altoona PA</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Anaheim CA</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Arlington TX</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Asheville NC</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Athens GA</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Atlanta GA</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Austin TX</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Baltimore MD</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Bangor ME</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Beaver PA</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Beckley WV</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Bend OR</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Binghamton NY</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Birmingham AL</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Bloomington IL</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Boise ID</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Bozeman MT</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Buffalo NY</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Burbank CA</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Burlington VT</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Camden NJ</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Cape Girardeau MO</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Charleston SC</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Charlotte NC</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Chicago IL</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Cleveland OH East</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Cleveland OH Metro</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Cleveland OH West</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Coffeyville KS</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Columbia MO</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Columbia SC</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Columbus GA</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Columbus OH Franklin</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Columbus OH North</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Columbus OH South</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Culver City CA</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Danvers MA</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Dedham MA</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Dedham MA North</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Dedham MA South</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Denver CO</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Detroit MI</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Douglasville GA</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Dubuque IA</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Durham NC</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Earlysville VA</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Eau Claire WI</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Effingham IL</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Evansville IN</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Farmington CT East</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Farmington CT West</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Flint MI</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Fort Wayne IN</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Ft Wayne IN</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Garden City KS</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Gilbert AZ</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Grand Island NE</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Great Falls MT</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Green Bay WI</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Greenville NC</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Hampton VA</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Hays KS</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Helena MT</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Holland MI</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Huntington WV</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Idaho Falls ID</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Indianapolis IN</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Indianapolis IN %28RVR%29</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Irvine CA</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Johnstown PA</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Jonesboro AR</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Kalamazoo MI</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Kalispell MT</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Kansas City MO</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>La Crosse WI</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Lansing MI</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Las Vegas NV</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Lawrence KS</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Layton UT</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Lewiston ID</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Liverpool NY</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Los Angeles CA</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Louisville KY</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Macomb MI</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Madison WI</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Manchester NH</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Manhattan KS</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Mankato MN</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Medford OR</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Merrillville IN</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Missoula MT</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Mobile AL</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Montgomery AL</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Morgantown WV</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Muskegon MI</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Myrtle Beach SC</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>NJ Philly PA North</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>NJ Philly PA South</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Nashville TN</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Nashville TN East</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Nashville TN West</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Newark NJ</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Newburgh NY</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Non-Collection Area</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Norfolk VA</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>North Platte NE</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Norwich CT</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Novi MI</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>OBI Arkansas</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Oakland MI</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Omaha NE</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Orem UT</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Paducah KY</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Parkersburg WV</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Peoria IL</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Peru IL</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Philadelphia PA North</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Philadelphia PA South</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Pocatello ID</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Pomona CA</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Portland ME</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Portland OR</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Quincy IL</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Richland WA</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Richmond VA</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Roanoke VA</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Rochester NY</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Rome GA</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Roseburg OR</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>SEPA Philly PA North</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>SEPA Philly PA South</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Salem OR</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Salina KS</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Salt Lake City UT</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>San Diego CA</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>San Jose CA</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>San Juan PR</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Savannah GA</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Seattle WA</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Springfield Fixed Site</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Springfield MA</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Springfield MO</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>St Clair MI</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>St Cloud MN</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>St George UT</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>St Louis MO</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>St Paul MN</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Stevens Point WI</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Stockton CA</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Syracuse NY</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Toledo OH</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Tucson AZ</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Tulsa OK</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Twin Falls ID</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Valdosta GA</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Valid address Two</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Vancouver WA</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Warner Robbins GA</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Washington DC</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Washtenaw MI</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Waterloo IA</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Watertown NY</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Waukesha WI</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Wheeling WV</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Wichita KS</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Wilkes Barre PA</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Wilmington NC</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Winchester VA</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Winston Salem NC</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Worcester Fixed Site</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Yakima WA</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>sked_Status__c</picklist>
+        <values>
+            <fullName>Completed</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Generating Refresh Request</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Pending</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Processing</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+</RecordType>
