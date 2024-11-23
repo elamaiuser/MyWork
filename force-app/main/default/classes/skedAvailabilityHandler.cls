@@ -333,9 +333,15 @@ public class skedAvailabilityHandler extends skedTriggerHub {
             }
 
             if (isInserted || isStatusChanged) {
+                Id userId = UserInfo.getUserId();
+                Id autoProcessUserId = skedTriggerHub_Cache.getAutoProcessUserFromCache().Id;
                 newRecord.sked_Last_Modified_By__c = newRecord.sked_Approved_Via_Automation__c ?
-                    skedTriggerHub_Cache.getAutoProcessUserFromCache().Id : UserInfo.getUserId();
+                autoProcessUserId : userId;
                 newRecord.sked_Approved_Via_Automation__c = false;
+                if(userId != autoProcessUserId) {
+                    newRecord.sked_Dispositioned_By_User__c = userId;
+                    newRecord.sked_Disposition_Date__c = System.now();
+                }
             }
 
             if (isInserted) {
