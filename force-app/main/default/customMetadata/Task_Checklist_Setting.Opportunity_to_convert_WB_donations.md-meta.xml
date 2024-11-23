@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomMetadata xmlns="http://soap.sforce.com/2006/04/metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <label>Opportunity to convert WB donations</label>
+    <protected>false</protected>
+    <values>
+        <field>Column__c</field>
+        <value xsi:type="xsd:double">1.0</value>
+    </values>
+    <values>
+        <field>Help_Text__c</field>
+        <value xsi:type="xsd:string">Determine if there are appointments in the wrong procedure type, consider pre-recruiting donors to Power Red time slots.
+
+Ensure the first Power Red appointment spot is filled with an eligible donor. If not, discuss options to fill it.</value>
+    </values>
+    <values>
+        <field>Hyperlink__c</field>
+        <value xsi:nil="true"/>
+    </values>
+    <values>
+        <field>Input_API_Name__c</field>
+        <value xsi:type="xsd:string">Input_Checkbox__c</value>
+    </values>
+    <values>
+        <field>Input_Type__c</field>
+        <value xsi:type="xsd:string">Checkbox</value>
+    </values>
+    <values>
+        <field>Is_Dynamic__c</field>
+        <value xsi:type="xsd:boolean">true</value>
+    </values>
+    <values>
+        <field>Order__c</field>
+        <value xsi:type="xsd:double">13.0</value>
+    </values>
+    <values>
+        <field>Parent__c</field>
+        <value xsi:nil="true"/>
+    </values>
+    <values>
+        <field>Picklist_Input_1__c</field>
+        <value xsi:nil="true"/>
+    </values>
+    <values>
+        <field>Section_Header__c</field>
+        <value xsi:type="xsd:string">Donor Appointment Tracking</value>
+    </values>
+    <values>
+        <field>Subject__c</field>
+        <value xsi:type="xsd:string">72 Hour Check-In</value>
+    </values>
+    <values>
+        <field>Subtype__c</field>
+        <value xsi:nil="true"/>
+    </values>
+    <values>
+        <field>UI_Text__c</field>
+        <value xsi:type="xsd:string">Discuss opportunity to convert whole blood donations to Power Red.</value>
+    </values>
+    <values>
+        <field>Unique_Name__c</field>
+        <value xsi:type="xsd:string">Opportunity_to_convert_WB_donations</value>
+    </values>
+</CustomMetadata>

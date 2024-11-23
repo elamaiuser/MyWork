@@ -55,6 +55,7 @@
 * 10/25/2024				 	 Balaji N				  Logic for HRP-13489 syncTemplateOrdertoOpportunity Raktim's Changes
 * 10/29/2024                     Barnojit Sharma          HRP-12142 Added sync Do Not Roll Fields
 * 10/24/2024				     Barnojit Sharma		  Template Order products not cascading to Opportunity Order (Logic for HRP-13521)
+* 11/07/2024			         Barnojit Sharma		  Update Task: 72 Hour Check in - System Generated/Details/Checklist. (Logic for HRP-12627)
 * 11/11/2024					 Priti Jana				  Logic for HRP-13743
 * 11/12/2024				     Barnojit Sharma		  Unable to create Mobile Drive when the Template has an over-budget template order (Logic for HRP-13716)
 ************************************************************************************************************************************************
@@ -3434,16 +3435,33 @@ opp.StageName = 'Closed';
             oppTeamMembersMap.get(oppteamem.OpportunityId).add(oppteamem);
         }
         //part of ticket HRP-9562***ends here***
-        
+        //HRP-12627 changes starts
+        Map<Id,Boolean> checkOppHas72hourTask = new  Map<Id,Boolean>();
+        if(!oppIds.isEmpty()){
+            List<Task> taskList = [SELECT Id, 
+                                        WhatId, 
+                                        Subject 
+                                    FROM Task 
+                                    WHERE Subject =: Task_Reassignment_Matrix__mdt.getInstance('X72_Hour').Task_Subject__c
+                                    AND WhatId IN :oppIds];
+            for(Task t : taskList){
+                checkOppHas72hourTask.put(t.WhatId,true);
+            }
+        }
+        Integer creationDateOffset= Task_Reassignment_Matrix__mdt.getInstance('X72_Hour').Creation_Date_Offset__c != null 
+                                    ? Integer.valueOf(Task_Reassignment_Matrix__mdt.getInstance('X72_Hour').Creation_Date_Offset__c)
+                                    : 0;
+        //HRP-12627 changes ends
         for(opportunity opp: oppNewList)
         {
             //only creating the task for mobile opps (HRP-7781)
             if (opp.RecordTypeId == MOBILE_OPP_RECTYPEID) {
-                if(oppOldMap == NULL ? opp.StageName == 'Closed' : (opp.StageName == 'Closed' && opp.StageName != oppOldMap.get(opp.id).stageName))
+                if(opp.Is_Template__c == false && opp.Drive_Date__c != NULL && opp.Drive_Date__c <= Date.Today().addDays(creationDateOffset) && opp.Drive_Date__c >= Date.Today() //HRP-12627
+                    && (checkOppHas72hourTask.isEmpty() || !checkOppHas72hourTask.containsKey(opp.Id) || !checkOppHas72hourTask.get(opp.Id)))//HRP-12627
                 {
                     Task newTask = new task();
                     newTask.RecordTypeId = recTypeId;
-                    newTask.subject ='72 Hour Check in - System Generated';
+                    newTask.subject =Task_Reassignment_Matrix__mdt.getInstance('X72_Hour').Task_Subject__c;//HRP-12627
                     newTask.ActivityDate = Helper.AddBusinessDays(opp.Drive_Date__c,-3);
                     newTask.Drive_Date__c = opp.Drive_Date__c; //HRP-12700
                     newTask.WhatId = opp.id;
