@@ -1251,7 +1251,11 @@ global virtual class skedRacController extends skedBaseController {
                  WHERE sked__Tag__r.sked__Type__c = :skedConstants.TAG_TYPE_ROLE
                  AND sked_Role_Status__c = :skedConstants.TAG_ROLE_STATUS_ACTIVE
                  ORDER BY sked__Tag__r.sked_Priority__c ASC NULLS LAST
-                LIMIT 1)
+                LIMIT 1),
+                (SELECT Id, sked__Location__c, sked_Location_Resource_Relationship__c
+                 FROM sked__Location_Resource_Scores__r
+                 WHERE sked_Location_Resource_Relationship__c = 'Preferred'
+                 AND sked__Location__r.RecordType.Name = 'Fixed Site')
                 FROM sked__Resource__c 
                 WHERE Id = :request.event.resourceId
             ];
@@ -1615,6 +1619,8 @@ global virtual class skedRacController extends skedBaseController {
             string timezoneSidId = UserInfo.getTimeZone().getID();
 
             Boolean isBiddingPeriodRequest = request.requestTypes != null && request.requestTypes.contains(skedConstants.STAFFING_BUDGET_REQUEST_TYPE_OPEN_ENROLLMENT);
+            
+            //get staffing budget COs
             skedStaffingBudgetCollectionOpService.queryModel sbCoQuery = new skedStaffingBudgetCollectionOpService.queryModel();
             sbCoQuery.collectionOpIds = request.biomedCollectionOpIds;
             sbCoQuery.requestTypes = request.requestTypes;
@@ -1624,15 +1630,27 @@ global virtual class skedRacController extends skedBaseController {
 
             skedStaffingBudgetCollectionOpService sbCoService = (skedStaffingBudgetCollectionOpService) skedServiceFactory.instance.resolve('sked_Staffing_Budget_Collection_Op__c');
             List<sObject> sbCoQueryResult = sbCoService.query(sbCoQuery);
-            List<sked_Staffing_Budget_Collection_Op__c> sbCos = new List<sked_Staffing_Budget_Collection_Op__c>();
-            if (sbCoQueryResult != null && !sbCoQueryResult.isEmpty()) {
-                sbCos.addAll((List<sked_Staffing_Budget_Collection_Op__c>) sbCoQueryResult);
-            }
+            
+            //get staffing budget sites
+            skedStaffingBudgetSiteService.queryModel sbSiteQuery = new skedStaffingBudgetSiteService.queryModel();
+            sbSiteQuery.siteCoIds = request.biomedCollectionOpIds;
+            sbSiteQuery.requestTypes = request.requestTypes;
+            sbSiteQuery.endDate = request.endDate;
+            sbSiteQuery.startDate = request.startDate;
+            sbSiteQuery.isBiddingPeriodRequest = isBiddingPeriodRequest;
+
+            skedStaffingBudgetSiteService sbSiteService = (skedStaffingBudgetSiteService) skedServiceFactory.instance.resolve('sked_Staffing_Budget_Site__c');
+            List<sObject> sbSiteQueryResult = sbSiteService.query(sbSiteQuery);
+
+            List<sObject> relatedListResult = new List<sObject>();
+            relatedListResult.addAll(sbCoQueryResult);
+            relatedListResult.addAll(sbSiteQueryResult);
 
             Set<String> staffingBudgetIds = new Set<String>();
-            for (sked_Staffing_Budget_Collection_Op__c sbCo : sbCos) {
-                staffingBudgetIds.add(sbCo.sked_Staffing_Budget__c);
+            for (sObject sbRelated : relatedListResult) {
+                staffingBudgetIds.add((String) sbRelated.get('sked_Staffing_Budget__c'));
             }
+
             List<String> staffingBudgetIdsList = new List<String>();
             staffingBudgetIdsList.addAll(staffingBudgetIds);
             
@@ -1648,10 +1666,10 @@ global virtual class skedRacController extends skedBaseController {
                 query.pageSize = request.pageSize;
                 query.orderBy = skedAutoMapper.instance.mapToSObjectFieldPath('staffingBudget', request.orderBy);
                 query.orderAscending = request.orderDirection == 1 ? 'ASC' : 'DESC';
-                query.subQueryIndicator = skedSObjectType.STAFFING_BUDGET_COLLECTION_OP;
+                query.subQueryIndicator = skedSObjectType.STAFFING_BUDGET_COLLECTION_OP | skedSObjectType.STAFFING_BUDGET_SITE;
 
                 if (isBiddingPeriodRequest) {
-                    query.subQueryIndicator = skedSObjectType.STAFFING_BUDGET_COLLECTION_OP | skedSObjectType.STAFFING_BUDGET_AVAILABILITY;
+                    query.subQueryIndicator = skedSObjectType.STAFFING_BUDGET_SITE | skedSObjectType.STAFFING_BUDGET_COLLECTION_OP | skedSObjectType.STAFFING_BUDGET_AVAILABILITY;
                 }
                 
                 skedStaffingBudgetService service = (skedStaffingBudgetService)skedServiceFactory.instance.resolve('sked_Staffing_Budget__c');
@@ -1685,7 +1703,7 @@ global virtual class skedRacController extends skedBaseController {
             skedStaffingBudgetService.queryModel query = new skedStaffingBudgetService.queryModel();
             query.recordIds = new List<string>();
             query.recordIds.add(request.recordId);
-            query.subQueryIndicator =  skedSObjectType.STAFFING_BUDGET_COLLECTION_OP | skedSObjectType.STAFFING_BUDGET_AVAILABILITY;
+            query.subQueryIndicator = skedSObjectType.STAFFING_BUDGET_SITE | skedSObjectType.STAFFING_BUDGET_COLLECTION_OP | skedSObjectType.STAFFING_BUDGET_AVAILABILITY;
             
             skedStaffingBudgetService service = (skedStaffingBudgetService)skedServiceFactory.instance.resolve('sked_Staffing_Budget__c');
             sked_Staffing_Budget__c skedStaffingBudget = (sked_Staffing_Budget__c)service.query(query).get(0);
@@ -1716,7 +1734,7 @@ global virtual class skedRacController extends skedBaseController {
             skedStaffingBudgetService.queryModel query = new skedStaffingBudgetService.queryModel();
             query.recurringScheduleIds = new List<string>();
             query.recurringScheduleIds.add(request.recordId);
-            query.subQueryIndicator = skedSObjectType.AVAILABILITY | skedSObjectType.STAFFING_BUDGET_COLLECTION_OP;
+            query.subQueryIndicator = skedSObjectType.AVAILABILITY | skedSObjectType.STAFFING_BUDGET_COLLECTION_OP | skedSObjectType.STAFFING_BUDGET_SITE;
             
             skedStaffingBudgetService service = (skedStaffingBudgetService)skedServiceFactory.instance.resolve('sked_Staffing_Budget__c');
             List<sked_Staffing_Budget__c> skedStaffingBudgets = (List<sked_Staffing_Budget__c>)service.query(query);
@@ -1831,6 +1849,98 @@ global virtual class skedRacController extends skedBaseController {
         catch (Exception ex) {
             result.getError(ex);
             Database.rollback(sp);
+        }
+        return result;
+    }
+
+    @remoteAction
+    global static skedRemoteResultModel getFixedSitesRelatedToCo(getSitesRequestModel request) {
+        skedRemoteResultModel result = new skedRemoteResultModel(request.viewData);
+        SavePoint sp = Database.setSavepoint();
+        try {
+            skedDataService siteCoService = (skedDataService)skedServiceFactory.instance.resolve('sked_Site_Collection_Operation__c');
+            skedDataService.queryModelBase siteCoQuery = new skedDataService.queryModelBase();
+            skedQueryBuilder siteCoQueryBuilder = siteCoQuery.getQueryBuilder('sked_Site_Collection_Operation__c');
+            siteCoQueryBuilder.addCondition('sked_Site__r.sked_Active__c = TRUE');
+            siteCoQueryBuilder.addCondition('sked_Site__r.RecordType.Name = \'Fixed Site\'');
+            siteCoQueryBuilder.addCondition('sked_Collection_Operation__c IN {0}', request.biomedCollectionOpIds);
+            if(request.staffingBudgetDate != NULL) {
+                Date startDate = skedDateTimeUtils.getDateFromIsoString(request.staffingBudgetDate);
+                siteCoQueryBuilder.addCondition('sked_Start_Date__c <= {0}', startDate);
+                siteCoQueryBuilder.addCondition('sked_End_Date__c >= {0}', startDate);
+            }
+                
+            List<skedModels.siteCollectionOperation> siteCos = (List<skedModels.siteCollectionOperation>) siteCoService.getList(siteCoQuery);
+            Map<Id, object> map_siteId_siteInfo = new Map<Id, object>();
+            for(skedModels.siteCollectionOperation siteCo : siteCos) {
+                if(!map_siteId_siteInfo.containsKey((Id) siteCo.siteId)) {
+                    skedModels.serviceLocation site = siteCo.site;
+                    map_siteId_siteInfo.put((Id) siteCo.siteId, (object) site);
+                }
+            }
+            result.data = map_siteId_siteInfo.values();
+        }
+        catch (Exception ex) {
+            result.getError(ex);
+            Database.rollback(sp);
+        }
+        return result;
+    }
+
+    @remoteAction
+    global static skedRemoteResultModel validateBulkStaffingBudgetsAgainstSiteCos(validateBulkStaffingBudget request) {
+        skedRemoteResultModel result = new skedRemoteResultModel(request.viewData);
+        SavePoint sp = Database.setSavepoint();
+        if(request.siteIds != NULL && !request.siteIds.isEmpty()) {
+            try {
+                skedDataService siteCoService = (skedDataService)skedServiceFactory.instance.resolve('sked_Site_Collection_Operation__c');
+                skedDataService.queryModelBase siteCoQuery = new skedDataService.queryModelBase();
+                skedQueryBuilder siteCoQueryBuilder = siteCoQuery.getQueryBuilder('sked_Site_Collection_Operation__c');
+                siteCoQueryBuilder.addCondition('sked_Site__c IN {0}', request.siteIds);
+                siteCoQuery.orderBy = skedAutoMapper.instance.mapToSObjectFieldPath('siteCollectionOperation', 'startDate');
+                siteCoQuery.orderAscending = 'ASC';
+    
+                List<skedModels.siteCollectionOperation> siteCoList = (List<skedModels.siteCollectionOperation>) siteCoService.getList(siteCoQuery);
+                Map<String, List<skedModels.siteCollectionOperation>> map_siteId_siteInfo = new Map<String, List<skedModels.siteCollectionOperation>>();
+                for(skedModels.siteCollectionOperation siteCo : siteCoList) {
+                    if(!map_siteId_siteInfo.containsKey(siteCo.siteId)) {
+                        map_siteId_siteInfo.put(siteCo.siteId, new List<skedModels.siteCollectionOperation>());
+                    }
+                    map_siteId_siteInfo.get(siteCo.siteId).add(siteCo);
+                }
+    
+                for(String siteId : map_siteId_siteInfo.keySet()) {
+                    Integer count = 0;
+                    List<skedModels.siteCollectionOperation> siteCos = map_siteId_siteInfo.get(siteId);
+                    for(skedModels.siteCollectionOperation siteCo : siteCos) {
+                        count++;
+                        Date siteCoStartDate = skedDateTimeUtils.getDateFromIsoString(siteCo.startDate);
+                        Date siteCoEndDate = skedDateTimeUtils.getDateFromIsoString(siteCo.endDate);
+                        skedModels.siteCollectionOperation nextSiteCo = siteCos.size() != count ? siteCos[count] : NULL;
+                        for(String staffingBudgetDateString : request.staffingBudgetDates) {
+                            Date staffingBudgetDate = skedDateTimeUtils.getDateFromIsoString(staffingBudgetDateString);
+                            if(siteCoStartDate <= staffingBudgetDate && siteCoEndDate >= staffingBudgetDate) {
+                                if(!request.biomedCollectionOpIds.contains(siteCo.biomedCollectionOpId)) {
+                                    result.success = FALSE;
+                                    if(siteCo.site.biomedCollectionOpName.equalsIgnoreCase(siteCo.biomedCollectionOpName)) {
+                                        result.errorMessage = siteCo.site.name +' is currently associated with '+siteCo.site.biomedCollectionOpName+' till '+siteCo.endDate+'. Please adjust your selection.';
+                                    } else {
+                                        result.errorMessage = siteCo.site.name +' is no longer associated with '+siteCo.site.biomedCollectionOpName+' as of '+siteCo.startDate+'. Please adjust your selection.';
+                                    }
+                                }
+                            } else if(siteCoEndDate < staffingBudgetDate && nextSiteCo == NULL) {
+                                DateTime newStartDate = DateTime.newInstance(siteCoEndDate.year(), siteCoEndDate.month(), siteCoEndDate.day() + 1, 0, 0, 0);
+                                String dateIsoString = newStartDate.format('yyyy-MM-dd');
+                                result.success = FALSE;
+                                result.errorMessage = siteCo.site.name +' is no longer associated with any collection operation as of '+dateIsoString+'. Please adjust your selection.';
+                            }
+                        }
+                    }
+                }
+    
+            } catch (Exception ex) {
+                result.getError(ex, sp);
+            }
         }
         return result;
     }
@@ -2371,4 +2481,14 @@ global virtual class skedRacController extends skedBaseController {
         public integer totalRecords;
     }
 
+    global class getSitesRequestModel extends getDataRequestModel {
+        public List<string> biomedCollectionOpIds;
+        public string staffingBudgetDate;
+    }
+
+    global class validateBulkStaffingBudget extends getDataRequestModel {
+        public List<string> biomedCollectionOpIds;
+        public List<string> siteIds;
+        public List<String> staffingBudgetDates;
+    }
 }
