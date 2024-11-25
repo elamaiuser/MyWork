@@ -2,12 +2,12 @@
 <Package xmlns="http://soap.sforce.com/2006/04/metadata">
     <types>
 		<members>OrderTrigger_Test</members>
-		<members>orderService</members>
+		<members>OrderService</members>
 		<name>ApexClass</name>
 	</types>
     <types>
-        <members>Order_Record_Page<members>
-        <name>FlexiPage<name>
+        <members>Order_Record_Page</members>
+        <name>FlexiPage</name>
     </types>
     <version>59.0</version>
 </Package>
