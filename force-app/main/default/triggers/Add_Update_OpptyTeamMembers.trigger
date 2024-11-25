@@ -4,6 +4,7 @@
 * Date					     Developer Name			     Comments
 * ***********************************************************************************************************************************************
 * 01/03/2024                 Balaji N					 Logic for HRP-10569 (Method call AccountPortfolioAssignmentService.accTeamDateSyncOnAccPortUpdates to get the future team info)
+* 08/28/2024				 Balaji N					 Logic for HRP-13340
 ************************************************************************************************************************************************
 */
 trigger Add_Update_OpptyTeamMembers on UpdateOpptyTeamEvent__e (After Insert) {
@@ -12,9 +13,22 @@ trigger Add_Update_OpptyTeamMembers on UpdateOpptyTeamEvent__e (After Insert) {
     Set<Id> setOfacctTeamMemberIdsUpdate = new Set<Id>();
     Set<string> accountIds = new Set<string>();
     Map<Id,List<AccountTeamMember>> mapOfAcctsWithTeamMembers=new Map<Id,List<AccountTeamMember>>();    
-    
-    for (UpdateOpptyTeamEvent__e event : Trigger.New) {
+    Date startDate;
+    Date endDate;
+    for (UpdateOpptyTeamEvent__e event : Trigger.New) 
+    {
         accountIds.add(string.valueof(event.AcctTeamMemberId__c));
+        //HRP-13340 start
+        if(startDate == null || (startDate != null && event.Start_Date__c < startDate))
+            {
+                startDate = event.Start_Date__c;
+            }
+            
+            if(endDate == null || (endDate != null && event.End_Date__c > endDate))
+            {
+                endDate = event.End_Date__c;
+            }
+        //HRP-13340 end
     }
     
     if(!accountIds.isEmpty()){        
@@ -57,7 +71,7 @@ trigger Add_Update_OpptyTeamMembers on UpdateOpptyTeamEvent__e (After Insert) {
             }
         }
         //HRP-10569 End
-        Database.executeBatch(new BSF_Batch_OpportunityTeamSync(mapOfAcctsWithTeamMembers,Trigger.New.size()),100);
+        Database.executeBatch(new BSF_Batch_OpportunityTeamSync(mapOfAcctsWithTeamMembers,Trigger.New.size(),startDate,endDate),Integer.Valueof(System.Label.OpportunityTeamSyncTriggerSize));//HRP-13340
     } 
         
     }
