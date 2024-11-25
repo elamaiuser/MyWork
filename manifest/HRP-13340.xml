@@ -12,5 +12,14 @@
     <members>Add_Update_OpptyTeamMembers</members>
     <name>ApexTrigger</name>
     </types>
+	<types>
+        <members>UpdateOpptyTeamEvent__e.AcctTeamMemberId__c</members>
+        <members>UpdateOpptyTeamEvent__e.UpdateAcctTeam__c</members>
+        <name>CustomField</name>
+    </types>
+    <types>
+        <members>UpdateOpptyTeamEvent__e</members>
+        <name>CustomObject</name>
+    </types>
     <version>59.0</version>
 </Package>
