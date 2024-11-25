@@ -7,6 +7,7 @@
  * 04/25/2024				 Barnojit Sharma			 Restrict to one (Publicity) Order per opportunity(HRP-11307)
  * 08/07/2024				 Barnojit Sharma			 Publicity Material Ordering at template level(HRP-12664)
  * 12/07/2024                Ankit Kundu                 Publicity Material Ordering at template level(HRP-12664)
+ * 11/06/2024				 Balaji N					 Stop order approval without any orderitems (HRP-12752)
  *********************************************************************************************************************************************************************
 **/
 public without sharing class OrderService {
@@ -359,11 +360,20 @@ public without sharing class OrderService {
         }
     } 
     public static void setPublicityApproved( List<Order> oldOrders, List<Order> newOrders,
-                                            Map<Id,Order> oldOrdersMap,Map<Id,Order> newOrdersMap){
+                                            Map<Id,Order> oldOrdersMap,Map<Id,Order> newOrdersMap)
+    {
+      Map<Id,Order> OrderIdMap =new Map<Id,Order>([SELECT Id,Opportunity.No_Publicity_Needed__c,(SELECT Id from OrderItems) from Order where Id IN:oldOrdersMap.KeySet()]);//HRP-12752
                                                 
-                                                
-                                                for( Order od : newOrders ){
-                                                    if( oldOrdersMap.get(od.Id).Publicity_Approved__c != newOrdersMap.get(od.Id).Publicity_Approved__c  ){
+        for( Order od : newOrders )
+        {
+            if( oldOrdersMap.get(od.Id).Publicity_Approved__c != newOrdersMap.get(od.Id).Publicity_Approved__c  && newOrdersMap.get(od.Id).Publicity_Approved__c)//HRP-12752 Publicity_Approved__c value true
+            {
+                //HRP-12752
+                if(!OrderIdMap.get(od.Id).Opportunity.No_Publicity_Needed__c && OrderIdMap.get(od.Id).OrderItems.isEmpty())
+                {
+                    od.addError('Products have not been added to the Order. Please add Products before approving the Order or select \'No Publicity Needed\'');
+                }
+                //HRP-12752
                                                         od.Publicity_Approved_Date__c = System.today();
                                                         od.Publicity_Approved_By__c = userInfo.getUserId();
                                                     }
