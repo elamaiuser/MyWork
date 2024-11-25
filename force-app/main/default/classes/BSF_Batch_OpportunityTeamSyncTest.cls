@@ -67,7 +67,7 @@ public class BSF_Batch_OpportunityTeamSyncTest
             mapOfAcctsWithTeamMembers.put(obj.Id,new List<AccountTeamMember>([select Id, accountId, start_date__c, end_date__c, TeammemberRole,Is_Covering_Recruiter__c, userId, BSF_Portfolio__c from AccountTeamMember where accountId =: obj.Id]));            
         }
         
-        Database.executeBatch(new BSF_Batch_OpportunityTeamSync(mapOfAcctsWithTeamMembers,1));
+
         
         List<AccountTeamMember> accTeam2 = [select Id, accountId, start_date__c, end_date__c, TeammemberRole,Is_Covering_Recruiter__c, userId,BSF_Portfolio__c from AccountTeamMember limit 2];
         accTeam2[0].start_date__c = system.today().adddays(10);

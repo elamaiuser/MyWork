@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+    <types>
+		<members>AccountTeamMemberService</members>
+		<members>AccountTeamMemberTriggerHandler</members>
+		<members>BSF_Batch_OpportunityTeamSync</members>
+		<members>BSF_Batch_OpportunityTeamSyncTest</members>
+		<members>AccountTeamMemberService_Test</members>
+		<name>ApexClass</name>
+	</types>
+    <types>
+    <members>Add_Update_OpptyTeamMembers</members>
+    <name>ApexTrigger</name>
+    </types>
+    <version>59.0</version>
+</Package>
