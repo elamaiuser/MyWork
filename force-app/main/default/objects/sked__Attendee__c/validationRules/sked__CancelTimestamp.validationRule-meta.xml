@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>sked__CancelTimestamp</fullName>
+    <active>true</active>
+    <description>A cancelled Attendee must have a cancellation timestamp.</description>
+    <errorConditionFormula>AND( ISPICKVAL(sked__Status__c, &quot;Cancelled&quot;), ISNULL(sked__Time_Cancelled__c) )</errorConditionFormula>
+    <errorDisplayField>sked__Time_Cancelled__c</errorDisplayField>
+    <errorMessage>Time Cancelled must be set if Status is Cancelled.</errorMessage>
+</ValidationRule>

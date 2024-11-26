@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>sked__RRBelongsSameJob</fullName>
+    <active>true</active>
+    <description>Ensures that the resource requirement this job offer points to, if exists, belongs to the same job that this offer points to.</description>
+    <errorConditionFormula>AND( NOT( ISBLANK( sked__Resource_Requirement__c ) ) , NOT( ISPICKVAL( sked__Resource_Requirement__r.sked__Job_Status__c , &#39;Cancelled&#39;) ) , NOT( ISPICKVAL(  sked__Job__r.sked__Job_Status__c , &#39;Cancelled&#39;) ) , sked__Resource_Requirement__r.sked__Job__c  &lt;&gt;  sked__Job__c )</errorConditionFormula>
+    <errorMessage>Resource requirement, if specified, must belong to the same job.</errorMessage>
+</ValidationRule>

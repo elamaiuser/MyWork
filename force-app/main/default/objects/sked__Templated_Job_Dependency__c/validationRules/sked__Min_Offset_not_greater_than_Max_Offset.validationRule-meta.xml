@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>sked__Min_Offset_not_greater_than_Max_Offset</fullName>
+    <active>true</active>
+    <description>ToAnchorMinOffsetMinutes cannot be greater than ToAnchorMaxOffsetMinutes.</description>
+    <errorConditionFormula>sked__To_Anchor_Min_Offset_Minutes__c &gt; sked__To_Anchor_Max_Offset_Minutes__c</errorConditionFormula>
+    <errorMessage>ToAnchorMinOffsetMinutes cannot be greater than ToAnchorMaxOffsetMinutes.</errorMessage>
+</ValidationRule>

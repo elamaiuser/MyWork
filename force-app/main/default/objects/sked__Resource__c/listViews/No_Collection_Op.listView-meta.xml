@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>No_Collection_Op</fullName>
+    <columns>NAME</columns>
+    <columns>sked__Resource_Type__c</columns>
+    <columns>sked__User__c</columns>
+    <columns>sked__Category__c</columns>
+    <columns>sked__Primary_Region__c</columns>
+    <columns>sked_Biomed_Collection_Op_Center_Name__c</columns>
+    <columns>sked_Job_Code__c</columns>
+    <columns>sked_Satellite_Zip_Code__c</columns>
+    <columns>sked_Work_Zip_Code__c</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>sked__Resource_Type__c</field>
+        <operation>equals</operation>
+        <value>Person</value>
+    </filters>
+    <filters>
+        <field>sked_Biomed_Collection_Op_Center_Name__c</field>
+        <operation>equals</operation>
+    </filters>
+    <filters>
+        <field>sked__Is_Active__c</field>
+        <operation>equals</operation>
+        <value>1</value>
+    </filters>
+    <label>No Collection Op</label>
+</ListView>

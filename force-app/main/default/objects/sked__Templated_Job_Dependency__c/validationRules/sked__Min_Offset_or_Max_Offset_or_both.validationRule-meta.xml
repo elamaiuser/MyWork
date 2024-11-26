@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>sked__Min_Offset_or_Max_Offset_or_both</fullName>
+    <active>true</active>
+    <description>Either ToAnchorMinOffsetMinutes or ToAnchorMaxOffsetMinutes must be specified, or both.</description>
+    <errorConditionFormula>AND(
+  ISBLANK(sked__To_Anchor_Min_Offset_Minutes__c),
+  ISBLANK(sked__To_Anchor_Max_Offset_Minutes__c)
+)</errorConditionFormula>
+    <errorMessage>ToAnchorMinOffsetMinutes and ToAnchorMaxOffsetMinutes cannot be both unspecified.</errorMessage>
+</ValidationRule>

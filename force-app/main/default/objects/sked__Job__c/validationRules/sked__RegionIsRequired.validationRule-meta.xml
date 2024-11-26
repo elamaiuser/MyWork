@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>sked__RegionIsRequired</fullName>
+    <active>true</active>
+    <description>Region is a required field. However, it is made optional to fix a row locking issue for Bio Reference Lab. So this validation rule is put in to ensure that it is still required.</description>
+    <errorConditionFormula>ISBLANK( sked__Region__c )</errorConditionFormula>
+    <errorDisplayField>sked__Region__c</errorDisplayField>
+    <errorMessage>Region is required.</errorMessage>
+</ValidationRule>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>sked__Weighting__c</fullName>
+    <deprecated>false</deprecated>
+    <description>Weighting to determine how important this Tag is on the account. Ignored if the tag is marked as Mandatory.</description>
+    <externalId>false</externalId>
+    <label>Weighting</label>
+    <precision>4</precision>
+    <required>false</required>
+    <scale>0</scale>
+    <trackTrending>false</trackTrending>
+    <type>Number</type>
+    <unique>false</unique>
+</CustomField>

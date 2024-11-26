@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>sked_Inherited_From_Drive__c</fullName>
+    <defaultValue>false</defaultValue>
+    <description>Checkbox used to mark Activity Resources that are created because of a drive link</description>
+    <externalId>false</externalId>
+    <label>Inherited From Drive</label>
+    <trackTrending>false</trackTrending>
+    <type>Checkbox</type>
+</CustomField>

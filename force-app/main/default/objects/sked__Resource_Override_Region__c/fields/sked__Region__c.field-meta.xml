@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>sked__Region__c</fullName>
+    <deprecated>false</deprecated>
+    <externalId>false</externalId>
+    <label>Region</label>
+    <referenceTo>sked__Region__c</referenceTo>
+    <relationshipLabel>Resource Override Regions</relationshipLabel>
+    <relationshipName>Resource_Override_Regions</relationshipName>
+    <relationshipOrder>1</relationshipOrder>
+    <reparentableMasterDetail>false</reparentableMasterDetail>
+    <trackTrending>false</trackTrending>
+    <type>MasterDetail</type>
+    <writeRequiresMasterRead>true</writeRequiresMasterRead>
+</CustomField>

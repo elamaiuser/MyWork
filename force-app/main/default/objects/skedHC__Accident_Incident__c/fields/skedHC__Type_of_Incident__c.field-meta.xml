@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>skedHC__Type_of_Incident__c</fullName>
+    <deprecated>false</deprecated>
+    <externalId>false</externalId>
+    <label>Type of Incident</label>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Burns</fullName>
+                <default>false</default>
+                <label>Burns</label>
+            </value>
+            <value>
+                <fullName>Damage to property</fullName>
+                <default>false</default>
+                <label>Damage to property</label>
+            </value>
+            <value>
+                <fullName>Death</fullName>
+                <default>false</default>
+                <label>Death</label>
+            </value>
+            <value>
+                <fullName>Deterioration in mental health</fullName>
+                <default>false</default>
+                <label>Deterioration in mental health</label>
+            </value>
+            <value>
+                <fullName>Deterioration in physical health</fullName>
+                <default>false</default>
+                <label>Deterioration in physical health</label>
+            </value>
+            <value>
+                <fullName>Distress/behaviour</fullName>
+                <default>false</default>
+                <label>Distress/behaviour</label>
+            </value>
+            <value>
+                <fullName>Fall or trip</fullName>
+                <default>false</default>
+                <label>Fall or trip</label>
+            </value>
+            <value>
+                <fullName>Fire or Alarm activation</fullName>
+                <default>false</default>
+                <label>Fire or Alarm activation</label>
+            </value>
+            <value>
+                <fullName>Hospital admission</fullName>
+                <default>false</default>
+                <label>Hospital admission</label>
+            </value>
+            <value>
+                <fullName>Injury</fullName>
+                <default>false</default>
+                <label>Injury</label>
+            </value>
+            <value>
+                <fullName>Missed medication</fullName>
+                <default>false</default>
+                <label>Missed medication</label>
+            </value>
+            <value>
+                <fullName>Missed visit</fullName>
+                <default>false</default>
+                <label>Missed visit</label>
+            </value>
+            <value>
+                <fullName>Missing person</fullName>
+                <default>false</default>
+                <label>Missing person</label>
+            </value>
+            <value>
+                <fullName>Other</fullName>
+                <default>false</default>
+                <label>Other</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

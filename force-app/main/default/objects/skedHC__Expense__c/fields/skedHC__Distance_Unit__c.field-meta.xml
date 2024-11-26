@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>skedHC__Distance_Unit__c</fullName>
+    <deprecated>false</deprecated>
+    <externalId>false</externalId>
+    <label>Distance Unit</label>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>KM</fullName>
+                <default>false</default>
+                <label>KM</label>
+            </value>
+            <value>
+                <fullName>MI</fullName>
+                <default>false</default>
+                <label>MI</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>
