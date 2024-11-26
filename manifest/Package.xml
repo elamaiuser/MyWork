@@ -40,6 +40,7 @@
 		<members>skedTravelTimeIndexRefreshGroupHandler</members>
 		<members>skedTravelTimeIndexRefreshRequestHandler</members>
 		<members>skedUserHandler</members>
+		<members>skedWorkdayApiManager</members>
 		<name>ApexClass</name>
 	</types>
 	<types>
