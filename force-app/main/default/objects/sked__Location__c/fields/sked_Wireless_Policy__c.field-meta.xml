@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>sked_Wireless_Policy__c</fullName>
+    <externalId>false</externalId>
+    <inlineHelpText>Accepted  
+Connectivity Wired Only: allowed but not functional 
+Sponsor Wired Only: wireless not allowed to be used  
+Prohibited: not allowed on site</inlineHelpText>
+    <label>Wireless Policy</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Accepted</fullName>
+                <default>true</default>
+                <label>Accepted</label>
+            </value>
+            <value>
+                <fullName>Prohibited</fullName>
+                <default>false</default>
+                <label>Prohibited</label>
+            </value>
+            <value>
+                <fullName>Connectivity Wired Only</fullName>
+                <default>false</default>
+                <label>Connectivity Wired Only</label>
+            </value>
+            <value>
+                <fullName>Sponsor Wired Only</fullName>
+                <default>false</default>
+                <label>Sponsor Wired Only</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

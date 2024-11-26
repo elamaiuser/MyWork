@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>sked__Weighting_mutex_not_required</fullName>
+    <active>false</active>
+    <description>An Account tag must have a weighting if it&#39;s marked as not &#39;required&#39;</description>
+    <errorConditionFormula>AND(ISNULL(sked__Weighting__c), NOT(sked__Required__c))</errorConditionFormula>
+    <errorDisplayField>sked__Weighting__c</errorDisplayField>
+    <errorMessage>An Account tag must have a weighting if it&#39;s marked as not &#39;required&#39;</errorMessage>
+</ValidationRule>

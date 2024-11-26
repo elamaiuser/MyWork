@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>sked__Is_In_Violation__c</fullName>
+    <deprecated>false</deprecated>
+    <externalId>false</externalId>
+    <formula>(sked__Job__r.sked__Start__c  &gt; sked__Start_Before__c) || 
+(sked__Job__r.sked__Start__c  &lt; sked__Start_After__c ) ||
+(sked__Job__r.sked__Finish__c &gt; sked__End_Before__c)</formula>
+    <label>Is In Violation</label>
+    <trackTrending>false</trackTrending>
+    <type>Checkbox</type>
+</CustomField>

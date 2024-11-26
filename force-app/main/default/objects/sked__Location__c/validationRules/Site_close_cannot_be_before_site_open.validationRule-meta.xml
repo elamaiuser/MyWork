@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Site_close_cannot_be_before_site_open</fullName>
+    <active>true</active>
+    <errorConditionFormula>(IsChanged(sked_Site_Open__c)|| IsChanged(sked_Site_Close__c))&amp;&amp; sked_Site_Close__c&lt;sked_Site_Open__c</errorConditionFormula>
+    <errorMessage>Site close cannot be prior to site open</errorMessage>
+</ValidationRule>

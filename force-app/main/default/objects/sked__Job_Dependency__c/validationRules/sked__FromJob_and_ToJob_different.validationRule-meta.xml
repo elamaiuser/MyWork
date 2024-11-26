@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>sked__FromJob_and_ToJob_different</fullName>
+    <active>true</active>
+    <description>FromJob and ToJob must reference two different jobs.</description>
+    <errorConditionFormula>sked__From_Job__r.Id  = sked__To_Job__r.Id</errorConditionFormula>
+    <errorMessage>FromJob and ToJob must reference two different jobs.</errorMessage>
+</ValidationRule>

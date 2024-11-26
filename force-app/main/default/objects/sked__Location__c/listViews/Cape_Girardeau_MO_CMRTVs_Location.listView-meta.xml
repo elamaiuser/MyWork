@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Cape_Girardeau_MO_CMRTVs_Location</fullName>
+    <filterScope>Queue</filterScope>
+    <label>Cape Girardeau MO: CMRTVs</label>
+    <queue>Cape_Girardeau_MO_CMRTVs</queue>
+    <sharedTo>
+        <allInternalUsers />
+    </sharedTo>
+</ListView>

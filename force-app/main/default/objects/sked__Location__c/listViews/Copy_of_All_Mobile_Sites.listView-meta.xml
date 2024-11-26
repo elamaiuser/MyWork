@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Copy_of_All_Mobile_Sites</fullName>
+    <columns>NAME</columns>
+    <columns>sked_Site_Inspection_Completed_By__c</columns>
+    <columns>sked_Site_Inspection_Comments__c</columns>
+    <columns>sked_City__c</columns>
+    <columns>sked_State__c</columns>
+    <columns>sked_Physical_Location_Type__c</columns>
+    <columns>sked_Collection_Operation__c</columns>
+    <columns>sked__Region__c</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>RECORDTYPE</field>
+        <operation>equals</operation>
+        <value>sked__Location__c.sked_Mobile_Site</value>
+    </filters>
+    <filters>
+        <field>sked_Site_Inspection_Completed_By__c</field>
+        <operation>equals</operation>
+    </filters>
+    <filters>
+        <field>sked_Active__c</field>
+        <operation>equals</operation>
+        <value>1</value>
+    </filters>
+    <label>All Mobile Sites_Site Inspection Missing</label>
+</ListView>

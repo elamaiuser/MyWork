@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>sked__Team_Leader__c</fullName>
+    <defaultValue>false</defaultValue>
+    <deprecated>false</deprecated>
+    <description>Is the Resource attached to the Job Allocation a team leader on the job</description>
+    <externalId>false</externalId>
+    <inlineHelpText>Is the Resource attached to the Job Allocation a team leader on the job</inlineHelpText>
+    <label>Team Leader</label>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Checkbox</type>
+</CustomField>

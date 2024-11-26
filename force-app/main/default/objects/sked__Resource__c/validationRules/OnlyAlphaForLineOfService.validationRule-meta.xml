@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>OnlyAlphaForLineOfService</fullName>
+    <active>true</active>
+    <errorConditionFormula>NOT(REGEX(sked_Line_of_Service__c, &quot;([a-zA-Z ])*&quot;))</errorConditionFormula>
+    <errorMessage>Line of Service accepts only alphabetic characters.</errorMessage>
+</ValidationRule>

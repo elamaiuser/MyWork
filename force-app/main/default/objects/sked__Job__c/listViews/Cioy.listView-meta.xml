@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Cioy</fullName>
+    <columns>sked__Region__c</columns>
+    <columns>sked_Start_Date__c</columns>
+    <columns>sked__Account__c</columns>
+    <columns>sked_Drive__c</columns>
+    <columns>sked__Location__c</columns>
+    <columns>sked_Resource_Role__c</columns>
+    <columns>NAME</columns>
+    <columns>sked_Lead_Time__c</columns>
+    <columns>sked_Site_Logistics_To__c</columns>
+    <columns>sked_Travel_Time__c</columns>
+    <columns>sked_Setup_Time__c</columns>
+    <columns>sked_Breakdown_Time__c</columns>
+    <columns>sked_Site_Logistics_Back__c</columns>
+    <columns>sked_Travel_Time2__c</columns>
+    <columns>sked_Wrap_up_Time__c</columns>
+    <filterScope>Everything</filterScope>
+    <label>Role Time Detail</label>
+</ListView>

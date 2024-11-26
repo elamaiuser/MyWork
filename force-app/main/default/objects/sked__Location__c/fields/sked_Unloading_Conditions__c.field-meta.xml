@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>sked_Unloading_Conditions__c</fullName>
+    <externalId>false</externalId>
+    <inlineHelpText>Consider Role Time Variance if Unloading Conditions required additional set up or breakdown time.</inlineHelpText>
+    <label>Unloading Conditions</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>MultiselectPicklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Single vehicle unload​</fullName>
+                <default>false</default>
+                <label>Single Vehicle Unload</label>
+            </value>
+            <value>
+                <fullName>Dock Available​</fullName>
+                <default>false</default>
+                <label>Dock Available​</label>
+            </value>
+            <value>
+                <fullName>Dock Required</fullName>
+                <default>false</default>
+                <label>Dock Required</label>
+            </value>
+            <value>
+                <fullName>Street Unload​</fullName>
+                <default>false</default>
+                <label>Street Unload​</label>
+            </value>
+            <value>
+                <fullName>Forklift Needed​</fullName>
+                <default>false</default>
+                <label>Forklift Needed​</label>
+            </value>
+            <value>
+                <fullName>Security​</fullName>
+                <default>false</default>
+                <label>Security​</label>
+            </value>
+            <value>
+                <fullName>Distance to donation Area &gt;200ft</fullName>
+                <default>false</default>
+                <label>Distance to Donation Area &gt;200ft</label>
+            </value>
+            <value>
+                <fullName>Unpaved​</fullName>
+                <default>false</default>
+                <label>Unpaved​</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+    <visibleLines>4</visibleLines>
+</CustomField>

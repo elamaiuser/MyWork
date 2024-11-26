@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>sked__notify_period_requires_start_date_time</fullName>
+    <active>false</active>
+    <description>when user enters NotifyPeriod, they must also enter Start</description>
+    <errorConditionFormula>ISBLANK(sked__Start__c)  &amp;&amp;  (ISBLANK( sked__NotifyPeriod__c )  &lt;&gt; true)</errorConditionFormula>
+    <errorDisplayField>sked__Start__c</errorDisplayField>
+    <errorMessage>Notify Period requires a valid Start</errorMessage>
+</ValidationRule>

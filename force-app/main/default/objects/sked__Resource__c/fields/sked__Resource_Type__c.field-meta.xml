@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>sked__Resource_Type__c</fullName>
+    <deprecated>false</deprecated>
+    <description>Is the resource a human or otherwise</description>
+    <externalId>false</externalId>
+    <label>Resource Type</label>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Person</fullName>
+                <default>false</default>
+                <label>Person</label>
+            </value>
+            <value>
+                <fullName>Asset</fullName>
+                <default>false</default>
+                <label>Asset</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

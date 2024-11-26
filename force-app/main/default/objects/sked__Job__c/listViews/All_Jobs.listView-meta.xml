@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>All_Jobs</fullName>
+    <columns>sked__Region__c</columns>
+    <columns>NAME</columns>
+    <columns>sked__Job_Status__c</columns>
+    <columns>sked__Type__c</columns>
+    <columns>sked_Resource_Role__c</columns>
+    <columns>sked__Start__c</columns>
+    <columns>sked__Finish__c</columns>
+    <columns>sked_Start_Date__c</columns>
+    <columns>sked_Start_Time__c</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>sked_Resource_Role__c</field>
+        <operation>equals</operation>
+        <value>Driver,Driver Support</value>
+    </filters>
+    <filters>
+        <field>sked_Start_Date__c</field>
+        <operation>equals</operation>
+        <value>2/23/2024</value>
+    </filters>
+    <label>All Jobs</label>
+</ListView>

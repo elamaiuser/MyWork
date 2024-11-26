@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>sked__Set_End__c</fullName>
+    <deprecated>false</deprecated>
+    <description>An editable version of the End field. This may be null for historical records. For new records, there are triggers in place to ensure that this will always have the same value as the formula End field.</description>
+    <externalId>false</externalId>
+    <label>Set End</label>
+    <required>false</required>
+    <trackHistory>true</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>DateTime</type>
+</CustomField>

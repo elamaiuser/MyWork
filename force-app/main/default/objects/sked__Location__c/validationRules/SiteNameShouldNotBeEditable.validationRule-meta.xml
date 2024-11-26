@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>SiteNameShouldNotBeEditable</fullName>
+    <active>true</active>
+    <description>Site Name should not be editable for DRD Profile and DRD Manager and All APS // HRP-7910</description>
+    <errorConditionFormula>AND(
+    OR(
+        ISCHANGED(sked_Site_Building_Name__c),
+        ISCHANGED(sked_Room_Name__c)
+    ),
+    OR(
+        $Profile.Name = &#39;DRD Profile&#39;,
+        $Profile.Name = &#39;DRD Manager&#39;,
+        $Profile.Name = &#39;APS Admin&#39;,
+        $Profile.Name = &#39;APS Management&#39;,
+        $Profile.Name = &#39;APS Planner&#39;,
+        $Profile.Name = &#39;APS Scheduler&#39;
+    )
+)</errorConditionFormula>
+    <errorMessage>DRD or APS User cannot edit Site/Building Name Or Room Name</errorMessage>
+</ValidationRule>

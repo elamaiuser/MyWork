@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>sked__QuantityNullOrPositive</fullName>
+    <active>true</active>
+    <errorConditionFormula>AND( NOT( ISNULL( sked__Quantity__c ) ) , sked__Quantity__c  &lt;= 0 )</errorConditionFormula>
+    <errorDisplayField>sked__Quantity__c</errorDisplayField>
+    <errorMessage>Quantity must be null or greater than 0</errorMessage>
+</ValidationRule>

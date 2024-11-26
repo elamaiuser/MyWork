@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>skedHC__Support_Plan__c</fullName>
+    <deprecated>false</deprecated>
+    <externalId>false</externalId>
+    <label>Support Plan</label>
+    <referenceTo>skedHC__Support_Plan__c</referenceTo>
+    <relationshipLabel>Support Guidance</relationshipLabel>
+    <relationshipName>Support_Guidance</relationshipName>
+    <relationshipOrder>0</relationshipOrder>
+    <reparentableMasterDetail>false</reparentableMasterDetail>
+    <trackTrending>false</trackTrending>
+    <type>MasterDetail</type>
+    <writeRequiresMasterRead>false</writeRequiresMasterRead>
+</CustomField>
