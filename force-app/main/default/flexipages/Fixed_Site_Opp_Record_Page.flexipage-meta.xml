@@ -57,6 +57,16 @@
                         </valueListItems>
                         <valueListItems>
                             <value>Opportunity.sked_Generate_Drive</value>
+                        </valueListItems>                        
+                        <valueListItems>
+                            <value>Opportunity.Drive_Work_Sheet</value>
+                            <visibilityRule>
+                                <criteria>
+                                    <leftValue>{!Record.DriveStatus__c}</leftValue>
+                                    <operator>EQUAL</operator>
+                                    <rightValue>Confirmed</rightValue>
+                                </criteria>
+                            </visibilityRule>
                         </valueListItems>
                     </valueList>
                 </componentInstanceProperties>

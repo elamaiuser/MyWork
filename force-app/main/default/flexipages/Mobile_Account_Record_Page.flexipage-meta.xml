@@ -359,7 +359,7 @@
                             <value>Is_Template__c|EQUALS|false</value>
                         </valueListItems>
                         <valueListItems>
-                            <value>Drive_Date__c|GREATER_THAN|TODAY</value>
+                            <value>Drive_Date__c|GREATER_OR_EQUAL|TODAY</value>
                         </valueListItems>
                         <valueListItems>
                             <value>OPPORTUNITY.STAGE_NAME|NOT_EQUAL|[&quot;Cancelled&quot;]</value>
@@ -1446,7 +1446,7 @@
                     <valueList>
                         <valueListItems>
                             <value>sked_Location__c</value>
-                        </valueListItems>
+                        </valueListItems>                        
                     </valueList>
                 </componentInstanceProperties>
                 <componentInstanceProperties>

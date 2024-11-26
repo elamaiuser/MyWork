@@ -1,4 +1,15 @@
 global virtual class skedNotificationBatchBase {
+    private static string NOTIFICATION_TYPE_EMAIL = 'email';
+    private static string NOTIFICATION_TYPE_CUSTOM_SMS = 'customsms';
+    private static string NOTIFICATION_TYPE_ONEOFF = 'oneoff';
+    private static string NOTIFICATION_TYPE_SALESFORCE_PUSH = 'salesforcepush';
+
+    private static Map<String, String> mapNotificationTypeToBreakLine = new Map<String, String>{
+        NOTIFICATION_TYPE_EMAIL => '<br />',
+        NOTIFICATION_TYPE_CUSTOM_SMS => '\n',
+        NOTIFICATION_TYPE_ONEOFF => '\n',
+        NOTIFICATION_TYPE_SALESFORCE_PUSH => '\n'
+    };
 
     protected Set<Id> recordIds;
     protected notificationSettingModel notificationSetting;
@@ -115,11 +126,11 @@ global virtual class skedNotificationBatchBase {
         skedUtils.concactString(fields, this.notificationSetting.destinationField);
         skedUtils.concactString(fields, this.notificationSetting.expiryDateTimeField);
 
-        if (this.notificationSetting.notificationType == 'email') {
+        if (this.notificationSetting.notificationType == NOTIFICATION_TYPE_EMAIL) {
             skedUtils.concactString(fields, this.notificationSetting.notificationTargetField);
             skedUtils.concactString(fields, this.notificationSetting.emailFromAddressField);
         }
-        else if (this.notificationSetting.notificationType == 'oneoff') {
+        else if (this.notificationSetting.notificationType == NOTIFICATION_TYPE_ONEOFF) {
             skedUtils.concactString(fields, this.notificationSetting.oneoffProtocolField);
         }
         skedUtils.concactString(fields, 'Id');
@@ -142,16 +153,16 @@ global virtual class skedNotificationBatchBase {
         String notificationType = this.notificationSetting.notificationType;
         for (sObject record : records) {
             List<BSF_Custom_Notification__c> generatedNotifications = new List<BSF_Custom_Notification__c>();
-            if (notificationType == 'email') {
+            if (notificationType == NOTIFICATION_TYPE_EMAIL) {
                 generatedNotifications = this.generateEmailNotification(record);
             }
-            else if (notificationType == 'customsms') {
+            else if (notificationType == NOTIFICATION_TYPE_CUSTOM_SMS) {
                 generatedNotifications = this.generateCustomSms(record);
             }
-            else if (notificationType == 'oneoff') {
+            else if (notificationType == NOTIFICATION_TYPE_ONEOFF) {
                 generatedNotifications = this.generateOneOffNotification(record);
             }
-            else if (notificationType == 'salesforcepush') {
+            else if (notificationType == NOTIFICATION_TYPE_SALESFORCE_PUSH) {
                 generatedNotifications = this.generateSalesforcePushNotification(record);
             }
 
@@ -185,7 +196,7 @@ global virtual class skedNotificationBatchBase {
 
         if (!destinations.isEmpty()) {
             Set<Id> targetUserIds = checkToConvertQueueIdsToUserIds(destinations);
-            string content = getContent(record);
+            string content = getContent(record, NOTIFICATION_TYPE_EMAIL);
             string subject = getSubject(record); 
             content = applyFormat(record, content);
             subject = applyFormat(record, subject);
@@ -228,7 +239,7 @@ global virtual class skedNotificationBatchBase {
 
         if (!destinations.isEmpty()) {
             Set<Id> targetUserIds = checkToConvertQueueIdsToUserIds(destinations);
-            string content = getContent(record);
+            string content = getContent(record, NOTIFICATION_TYPE_CUSTOM_SMS);
             content = applyFormat(record, content);
             for (Id targetUserId : targetUserIds) {
                 customNotifications.add(new BSF_Custom_Notification__c(
@@ -267,7 +278,7 @@ global virtual class skedNotificationBatchBase {
             for (Id destinationId : protocolByDestinationId.keySet()) {
                 String protocol = protocolByDestinationId.get(destinationId);
                 protocol =  String.isBlank(protocol) ? 'push' : protocol;
-                String content = getCOntent(record);
+                String content = getCOntent(record, NOTIFICATION_TYPE_ONEOFF);
                 content = applyFormat(record, content);
                 customNotifications.add(new BSF_Custom_Notification__c(
                     Target_Record_Id__c = record.Id,
@@ -305,7 +316,7 @@ global virtual class skedNotificationBatchBase {
                 targetObjectIds.add(Id.valueOf(string.valueOf(skedUtils.getSourceFieldValue(record, this.notificationSetting.notificationTargetField))));
             }
     
-            string content = getContent(record);
+            string content = getContent(record, NOTIFICATION_TYPE_SALESFORCE_PUSH);
             string subject = getSubject(record); 
             content = applyFormat(record, content);
             subject = applyFormat(record, subject);
@@ -334,8 +345,7 @@ global virtual class skedNotificationBatchBase {
 
         return customNotifications;
     }
-    
-    protected virtual string getContent(sObject record) {
+        protected virtual string getContent(sObject record, String notificationType) {
         string content;
         if (string.isNotBlank(this.notificationSetting.contentRenderer)) {
             content = this.contentRenderer.mapContent.get(record.Id);
@@ -356,6 +366,10 @@ global virtual class skedNotificationBatchBase {
                 string templateSiteName = '!$' + siteName + '$';
                 content = content.replace(templateSiteName, siteUrl);
             }
+        }
+
+        if (mapNotificationTypeToBreakLine.containsKey(notificationType)) {
+            content = content.replace('[breakLine]', mapNotificationTypeToBreakLine.get(notificationType));
         }
 
         return content;
@@ -1054,6 +1068,93 @@ global virtual class skedNotificationBatchBase {
             }
         }
     }
+
+    global class jobInfoChangedOneOffTargetDestination extends customTargetDestinationBase {
+        public override void process(Set<Id> recordIds, List<SObject> newRecords) {
+            mapTarget = new Map<Id, Set<Id>>();
+            mapDestination = new Map<Id, Set<Id>>();
+            mapDestinationToProtocol = new Map<Id, String>();
+
+            List<sked__Job_Allocation__c> allJobAllocations = [
+                SELECT Id, sked__Resource__c, sked__Resource__r.sked__Notification_Type__c, sked__Job__c
+                FROM sked__Job_Allocation__c 
+                WHERE sked__Job__c IN :recordIds
+                AND sked__Resource__r.sked__Resource_Type__c = :skedConstants.RESOURCE_TYPE_PERSON
+                AND sked__Status__c != :skedConstants.JOB_ALLOCATION_STATUS_PENDING_DISPATCH
+                AND sked__Status__c != :skedConstants.JOB_ALLOCATION_STATUS_DELETED
+                AND sked__Status__c != :skedConstants.JOB_ALLOCATION_STATUS_DECLINED
+            ];
+
+            Map<Id, List<sked__Job_Allocation__c>> jobAllocationsByJobId = new Map<Id, List<sked__Job_Allocation__c>>();
+            for (sked__Job_Allocation__c jobAllocation : allJobAllocations) {
+                if (!jobAllocationsByJobId.containsKey(jobAllocation.sked__Job__c)) {
+                    jobAllocationsByJobId.put(jobAllocation.sked__Job__c, new List<sked__Job_Allocation__c>());
+                }
+                jobAllocationsByJobId.get(jobAllocation.sked__Job__c).add(jobAllocation);
+            }
+
+            for (Id recordId : recordIds) {
+                Set<Id> targets = new Set<Id>();
+                if (jobAllocationsByJobId.containsKey(recordId)) {
+                    List<sked__Job_Allocation__c> jobAllocations = jobAllocationsByJobId.get(recordId);
+                    if (jobAllocations != null && !jobAllocations.isEmpty()) {
+                        for (sked__Job_Allocation__c jobAllocation : jobAllocations) {
+                            targets.add(jobAllocation.sked__Resource__c);
+                            mapDestinationToProtocol.put(jobAllocation.sked__Resource__c, jobAllocation.sked__Resource__r.sked__Notification_Type__c);
+                        }
+                    }
+                }
+
+                if (!targets.isEmpty()) {
+                    mapTarget.put(recordId, targets);
+                    mapDestination.put(recordId, targets);
+                }
+            }
+        }
+    }
+
+    global class jobInfoChangedOtherTargetDestination extends customTargetDestinationBase {
+        public override void process(Set<Id> recordIds, List<SObject> newRecords) {
+            mapTarget = new Map<Id, Set<Id>>();
+            mapDestination = new Map<Id, Set<Id>>();
+            mapDestinationToProtocol = new Map<Id, String>();
+
+            List<sked__Job_Allocation__c> allJobAllocations = [
+                SELECT Id, sked__Resource__r.sked__User__c, sked__Resource__r.sked__Notification_Type__c, sked__Job__c
+                FROM sked__Job_Allocation__c 
+                WHERE sked__Job__c IN :recordIds
+                AND sked__Resource__r.sked__Resource_Type__c = :skedConstants.RESOURCE_TYPE_PERSON
+                AND sked__Status__c != :skedConstants.JOB_ALLOCATION_STATUS_PENDING_DISPATCH
+                AND sked__Status__c != :skedConstants.JOB_ALLOCATION_STATUS_DELETED
+                AND sked__Status__c != :skedConstants.JOB_ALLOCATION_STATUS_DECLINED
+            ];
+
+            Map<Id, List<sked__Job_Allocation__c>> jobAllocationsByJobId = new Map<Id, List<sked__Job_Allocation__c>>();
+            for (sked__Job_Allocation__c jobAllocation : allJobAllocations) {
+                if (!jobAllocationsByJobId.containsKey(jobAllocation.sked__Job__c)) {
+                    jobAllocationsByJobId.put(jobAllocation.sked__Job__c, new List<sked__Job_Allocation__c>());
+                }
+                jobAllocationsByJobId.get(jobAllocation.sked__Job__c).add(jobAllocation);
+            }
+
+            for (Id recordId : recordIds) {
+                Set<Id> targets = new Set<Id>();
+                if (jobAllocationsByJobId.containsKey(recordId)) {
+                    List<sked__Job_Allocation__c> jobAllocations = jobAllocationsByJobId.get(recordId);
+                    if (jobAllocations != null && !jobAllocations.isEmpty()) {
+                        for (sked__Job_Allocation__c jobAllocation : jobAllocations) {
+                            targets.add(jobAllocation.sked__Resource__r.sked__User__c);
+                        }
+                    }
+                }
+
+                if (!targets.isEmpty()) {
+                    mapTarget.put(recordId, targets);
+                    mapDestination.put(recordId, targets);
+                }
+            }
+        }
+    }
     
     /************************************************* Content Renderer *******************************************************/
     global virtual class contentRendererBase {
@@ -1154,6 +1255,109 @@ global virtual class skedNotificationBatchBase {
                     }
                 }
                 
+                mapContent.put(recordId, content);
+            }
+        }
+    }
+
+    global class jobInfoChangeRender extends contentRendererBase {
+        public override void registerFieldsForRenderer() {
+            this.fieldsForRenderer = new List<String> {
+                'Id',
+                'sked__Address__c'
+            };
+        }
+
+        public override void process(Set<Id> recordIds, List<SObject> newRecords, Map<Id, SObject> oldMap) {
+            Map<Id, SObject> mapNewRecords = new Map<Id, SObject>(newRecords);
+
+            Map<Id, sked__Job__c> mapSkedJob = new Map<Id, sked__Job__c>([
+                SELECT Id, sked__Address__c,
+                    sked_Drive__r.Name, sked_Drive__r.sked_Drive_Date_Text__c, sked_Drive__r.sked_Timezone__c
+                FROM sked__Job__c
+                WHERE Id IN :recordIds
+            ]);
+            
+            mapContent = new Map<Id, string>();
+            for (Id recordId : recordIds) {
+                sked__Job__c job = (sked__Job__c)mapNewRecords.get(recordId);
+                sked__Job__c oldData = (sked__Job__c)oldMap.get(recordId);
+                sked__Job__c skedJob = mapSkedJob.get(recordId);
+
+                string content = '[DriveName] for [DriveDate] has changed from: [breakLine] [old] to: [breakLine] [new] [breakLine] Please review your schedule.';
+                content = content.replace('[DriveName]', skedJob.sked_Drive__r.Name);
+                content = content.replace('[DriveDate]', skedJob.sked_Drive__r.sked_Drive_Date_Text__c);
+                
+                string oldInfo = '';
+                string newInfo = '';
+                String driveTimezone = skedJob.sked_Drive__r.sked_Timezone__c;
+                if (job.sked__Address__c != oldData.sked__Address__c) {
+                    oldInfo += 'Address: ' + oldData.sked__Address__c + '[breakLine]';
+                    newInfo += 'Address: ' + job.sked__Address__c + '[breakLine]';
+                }
+                content = content.replace('[old]', oldInfo);
+                content = content.replace('[new]', newInfo);
+                
+                mapContent.put(recordId, content);
+            }
+        }
+    }
+
+    global class jobAllocationInfoChangeRender extends contentRendererBase {
+        public override void registerFieldsForRenderer() {
+            this.fieldsForRenderer = new List<String> {
+                'Id',
+                'sked_Start_Time__c',
+                'sked_Set_End_Time__c'
+            };
+        }
+
+        public override void process(Set<Id> recordIds, List<SObject> newRecords, Map<Id, SObject> oldMap) {
+            Map<Id, SObject> mapNewRecords = new Map<Id, SObject>(newRecords);
+            
+            Map<String, Schema.SObjectField> mapSObjectJobAllocationField = Schema.SObjectType.sked__Job_Allocation__c.fields.getMap();
+            
+            Map<string, string> jobAllocationChangeFieldMap = new Map<string, string>();
+            jobAllocationChangeFieldMap.put('sked_Start_Time__c', 'Start Time');
+            jobAllocationChangeFieldMap.put('sked_Set_End_Time__c', 'End Time');
+
+            Map<Id, sked__Job_Allocation__c> mapSkedJobAllocation = new Map<Id, sked__Job_Allocation__c>([
+                SELECT Id, sked__Job__r.sked_Drive__r.Name, sked__Job__r.sked_Drive__r.sked_Drive_Date_Text__c, sked__Job__r.sked_Drive__r.sked_Timezone__c
+                FROM sked__Job_Allocation__c
+                WHERE Id IN :recordIds
+            ]);
+            
+            mapContent = new Map<Id, string>();
+            for (Id recordId : recordIds) {
+                sked__Job_Allocation__c newRecord = (sked__Job_Allocation__c)mapNewRecords.get(recordId);
+                sked__Job_Allocation__c oldData = (sked__Job_Allocation__c)oldMap.get(recordId);
+                sked__Job_Allocation__c skedJobAllocation = mapSkedJobAllocation.get(recordId);
+
+                string content = '[DriveName] for [DriveDate] has changed from: [breakLine] [old] to: [breakLine] [new] [breakLine] Please review your schedule.';
+                content = content.replace('[DriveName]', skedJobAllocation.sked__Job__r.sked_Drive__r.Name);
+                content = content.replace('[DriveDate]', skedJobAllocation.sked__Job__r.sked_Drive__r.sked_Drive_Date_Text__c);
+                
+                String oldInfo = '';
+                String newInfo = '';
+                for (String jaChangeField : jobAllocationChangeFieldMap.keySet()) {
+                    string newValue = string.valueOf(newRecord.get(jaChangeField));
+                    string oldValue = string.valueOf(oldData.get(jaChangeField));
+                    if (newValue != oldValue) {
+                        Schema.SObjectField sObjectField = mapSObjectJobAllocationField.get(jaChangeField);
+                        DescribeFieldResult sObjectFieldResult = sObjectField.getDescribe();
+                        
+                        string fieldType = string.valueOf(sObjectFieldResult.getType()).toLowerCase();
+                        
+                        newValue = skedUtils.formatFieldValue(newValue, fieldType);
+                        oldValue = skedUtils.formatFieldValue(oldValue, fieldType);
+                        
+                        oldInfo += jobAllocationChangeFieldMap.get(jaChangeField) + ': ' + oldValue + '[breakLine]';
+                        newInfo += jobAllocationChangeFieldMap.get(jaChangeField) + ': ' + newValue + '[breakLine]';
+                    }
+                }
+
+                content = content.replace('[old]', oldInfo);
+                content = content.replace('[new]', newInfo);
                 mapContent.put(recordId, content);
             }
         }
