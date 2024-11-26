@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>RequireAssetType</fullName>
+    <active>true</active>
+    <errorConditionFormula>ISPICKVAL(sked__Resource_Type__c,&#39;Asset&#39;) 
+&amp;&amp; ISPICKVAL(sked_Asset_Type__c,&#39;&#39;)</errorConditionFormula>
+    <errorMessage>Asset Type is required.</errorMessage>
+</ValidationRule>

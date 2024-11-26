@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>SatelliteAddressNotBlank</fullName>
+    <active>true</active>
+    <errorConditionFormula>ISPICKVAL(sked_Address_Referenced_for_Scheduling__c, &#39;Satellite&#39;) &amp;&amp; (ISBLANK(sked_Satellite_Address__c) || ISNULL(sked_Satellite_Address_Geolocation__c))</errorConditionFormula>
+    <errorMessage>Satellite Address/GeoLocation cannot be blank.</errorMessage>
+</ValidationRule>

@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>sked__Type__c</fullName>
+    <deprecated>false</deprecated>
+    <externalId>false</externalId>
+    <label>Type</label>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Administrative</fullName>
+                <default>false</default>
+                <label>Administrative</label>
+            </value>
+            <value>
+                <fullName>Blood Drive Support</fullName>
+                <default>false</default>
+                <label>Blood Drive Support</label>
+            </value>
+            <value>
+                <fullName>Equipment</fullName>
+                <default>false</default>
+                <label>Equipment</label>
+            </value>
+            <value>
+                <fullName>Logistics Support</fullName>
+                <default>false</default>
+                <label>Logistics Support</label>
+            </value>
+            <value>
+                <fullName>Other</fullName>
+                <default>false</default>
+                <label>Other</label>
+            </value>
+            <value>
+                <fullName>Scheduling</fullName>
+                <default>false</default>
+                <label>Scheduling</label>
+            </value>
+            <value>
+                <fullName>Special Events</fullName>
+                <default>false</default>
+                <label>Special Events</label>
+            </value>
+            <value>
+                <fullName>After Hours Call Out Management</fullName>
+                <default>false</default>
+                <label>After Hours Call Out Management</label>
+            </value>
+            <value>
+                <fullName>Training</fullName>
+                <default>false</default>
+                <label>Training</label>
+            </value>
+            <value>
+                <fullName>Travel To</fullName>
+                <default>false</default>
+                <label>Travel To</label>
+            </value>
+            <value>
+                <fullName>Travel Back</fullName>
+                <default>false</default>
+                <label>Travel Back</label>
+            </value>
+            <value>
+                <fullName>On Call</fullName>
+                <default>false</default>
+                <label>On Call</label>
+            </value>
+            <value>
+                <fullName>Overnight</fullName>
+                <default>false</default>
+                <label>Overnight</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

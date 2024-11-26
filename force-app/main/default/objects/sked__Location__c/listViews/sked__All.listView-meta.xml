@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>sked__All</fullName>
+    <columns>NAME</columns>
+    <columns>Emergency_Contact__c</columns>
+    <columns>sked_Emergency_Contact__c</columns>
+    <columns>sked_City__c</columns>
+    <columns>sked_State__c</columns>
+    <columns>sked_Timezone__c</columns>
+    <columns>sked_Collection_Operation__c</columns>
+    <columns>sked__Region__c</columns>
+    <columns>sked_Fixed_Site_Appointment_Pattern__c</columns>
+    <columns>Operation_Type__c</columns>
+    <columns>CREATED_DATE</columns>
+    <columns>sked_Active__c</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>RECORDTYPE</field>
+        <operation>equals</operation>
+        <value>sked__Location__c.sked_Fixed_Site</value>
+    </filters>
+    <label>All Fixed Sites</label>
+</ListView>

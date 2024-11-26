@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>sked_Approval_Reason__c</fullName>
+    <externalId>false</externalId>
+    <label>Approval Reason</label>
+    <required>false</required>
+    <trackHistory>true</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Out of slot</fullName>
+                <default>false</default>
+                <label>Out of slot</label>
+            </value>
+            <value>
+                <fullName>Outside Auto Approval Window</fullName>
+                <default>false</default>
+                <label>Outside Auto Approval Window</label>
+            </value>
+            <value>
+                <fullName>Partial day balance request</fullName>
+                <default>false</default>
+                <label>Partial day balance request</label>
+            </value>
+            <value>
+                <fullName>Bidding Period</fullName>
+                <default>false</default>
+                <label>Bidding Period</label>
+            </value>
+            <value>
+                <fullName>Outside Bid Submission Window</fullName>
+                <default>false</default>
+                <label>Outside Bid Submission Window</label>
+            </value>
+            <value>
+                <fullName>After Bid Submission Window</fullName>
+                <default>false</default>
+                <label>After Bid Submission Window</label>
+            </value>
+            <value>
+                <fullName>Requested Date(s) overlap with scheduled Blood Drive</fullName>
+                <default>false</default>
+                <label>Requested Date(s) overlap with scheduled Blood Drive</label>
+            </value>
+            <value>
+                <fullName>Workday Sync Failure</fullName>
+                <default>false</default>
+                <label>Workday Sync Failure</label>
+            </value>
+            <value>
+                <fullName>Insufficient Sick Balance for this request. Approval Required.</fullName>
+                <default>false</default>
+                <label>Insufficient Sick Balance for this request. Approval Required.</label>
+            </value>
+            <value>
+                <fullName>Manual Workday adjustment required</fullName>
+                <default>false</default>
+                <label>Manual Workday adjustment required</label>
+            </value>
+            <value>
+                <fullName>Manual Workday cancellation required</fullName>
+                <default>false</default>
+                <label>Manual Workday cancellation required</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

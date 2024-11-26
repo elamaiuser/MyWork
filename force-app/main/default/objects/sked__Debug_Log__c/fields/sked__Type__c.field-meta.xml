@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>sked__Type__c</fullName>
+    <deprecated>false</deprecated>
+    <externalId>false</externalId>
+    <label>Type</label>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Debug Log</fullName>
+                <default>false</default>
+                <label>Debug Log</label>
+            </value>
+            <value>
+                <fullName>Error Log</fullName>
+                <default>false</default>
+                <label>Error Log</label>
+            </value>
+            <value>
+                <fullName>Alert Log</fullName>
+                <default>false</default>
+                <label>Alert Log</label>
+            </value>
+            <value>
+                <fullName>Activity Deleted</fullName>
+                <default>false</default>
+                <label>Activity Deleted</label>
+            </value>
+            <value>
+                <fullName>Operation Record Submission</fullName>
+                <default>false</default>
+                <label>Operation Record Submission</label>
+            </value>
+            <value>
+                <fullName>Collections Territory Upsert Failed</fullName>
+                <default>false</default>
+                <label>Collections Territory Upsert Failed</label>
+            </value>
+            <value>
+                <fullName>Collections Territory Delete Failed</fullName>
+                <default>false</default>
+                <label>Collections Territory Delete Failed</label>
+            </value>
+            <value>
+                <fullName>Site Collection Operation Upsert Failed</fullName>
+                <default>false</default>
+                <label>Site Collection Operation Upsert Failed</label>
+            </value>
+            <value>
+                <fullName>Site Collection Operation Delete Failed</fullName>
+                <default>false</default>
+                <label>Site Collection Operation Delete Failed</label>
+            </value>
+            <value>
+                <fullName>Workday API Request</fullName>
+                <default>false</default>
+                <label>Workday API Request</label>
+            </value>
+            <value>
+                <fullName>Optimizer</fullName>
+                <default>false</default>
+                <label>Optimizer</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

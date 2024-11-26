@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>sked_Integrate_With_Workday__c</fullName>
+    <externalId>false</externalId>
+    <formula>AND(TEXT(sked__Resource__r.sked__Resource_Type__c) = &#39;Person&#39;, TEXT(sked_Workday_Sync_Status__c) != &#39;Manual&#39;, TEXT(sked_Workday_Sync_Status__c) != &#39;Not Applicable&#39;, NOT(ISNULL(sked_Time_Off_Reason_Code__c)), TEXT(sked__Type__c) != &#39;Unavailable&#39;)</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <label>Integrate With Workday</label>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Checkbox</type>
+</CustomField>

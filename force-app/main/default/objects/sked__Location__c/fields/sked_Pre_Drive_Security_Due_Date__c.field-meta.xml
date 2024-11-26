@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>sked_Pre_Drive_Security_Due_Date__c</fullName>
+    <externalId>false</externalId>
+    <inlineHelpText>Date which Security Information, Staff List or Sponsor Security Form is required by.  If required pre-drive, the form/list will be sent to the Security Contact on the Blood Drive Opportunity record.</inlineHelpText>
+    <label>Pre-Drive Security Due Date</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>7</fullName>
+                <default>false</default>
+                <label>7</label>
+            </value>
+            <value>
+                <fullName>14</fullName>
+                <default>false</default>
+                <label>14</label>
+            </value>
+            <value>
+                <fullName>21</fullName>
+                <default>false</default>
+                <label>21</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

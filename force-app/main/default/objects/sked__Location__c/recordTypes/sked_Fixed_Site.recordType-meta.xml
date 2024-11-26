@@ -1,0 +1,573 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<RecordType xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>sked_Fixed_Site</fullName>
+    <active>true</active>
+    <compactLayoutAssignment>Site_Compact_Layout</compactLayoutAssignment>
+    <label>Fixed Site</label>
+    <picklistValues>
+        <picklist>AED_Available__c</picklist>
+        <values>
+            <fullName>No</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Undetermined</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Yes</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>EAP_Map_Available__c</picklist>
+        <values>
+            <fullName>No</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Undetermined</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Yes</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>National_Name_Status__c</picklist>
+        <values>
+            <fullName>Initial Review Completed</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Initial Review Pending</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Review Completed</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Second Review Completed</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Second Review Pending</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Operation_Type__c</picklist>
+        <values>
+            <fullName>Integrated</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Non Integrated APH</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Non Integrated WB</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Site_Smoking_Policy__c</picklist>
+        <values>
+            <fullName>Designated Areas Only</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Smoking Prohibited on Grounds</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Source__c</picklist>
+        <values>
+            <fullName>Custom New Form</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Standard New Form</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Sponsor_Security_Form_Required__c</picklist>
+        <values>
+            <fullName>Day of Drive</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Pre-Drive</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>sked_Automation_Suitability__c</picklist>
+        <values>
+            <fullName>Suitable</fullName>
+            <default>true</default>
+        </values>
+        <values>
+            <fullName>Unsuitable</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>sked_Canteen_Conditions__c</picklist>
+        <values>
+            <fullName>Kosher Only</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>No Caffeine</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>No Off-Site Food</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Other</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Peanut Free</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Vendor Only Food</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>sked_Canteen_Requirements__c</picklist>
+        <values>
+            <fullName>Kosher Only</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>No Caffeine</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>No Off-Site Food</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Other</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Peanut Free</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Vendor Only Food</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>sked_Days_of_Week_Declined__c</picklist>
+        <values>
+            <fullName>Friday</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Monday</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Saturday</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Sunday</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Thursday</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Tuesday</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Wednesday</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>sked_Days_of_Week_Preferred__c</picklist>
+        <values>
+            <fullName>Friday</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Monday</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Saturday</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Sunday</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Thursday</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Tuesday</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Wednesday</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>sked_Elevator_Type__c</picklist>
+        <values>
+            <fullName>Freight</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Passenger</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>sked_Fixed_Site_Appointment_Pattern__c</picklist>
+        <values>
+            <fullName>Even</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Even - 4 Interval</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Grouped</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>sked_Floor_Covering_Requirement__c</picklist>
+        <values>
+            <fullName>Plastic floor covering provided by ARC</fullName>
+            <default>true</default>
+        </values>
+        <values>
+            <fullName>Sponsor provided floor covering</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>sked_On_Site_Food_Canteen_Requirements__c</picklist>
+        <values>
+            <fullName>Kosher Only</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>No Caffeine</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>No Off-Site Food</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Other</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Peanut Free</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Vendor Only Food</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>sked_On_Site_Food_Conditions__c</picklist>
+        <values>
+            <fullName>Kosher Only</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>No Caffeine</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>No Off-Site Food</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Other</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Peanut Free</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Vendor Only Food</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>sked_Pay_for_Parking__c</picklist>
+        <values>
+            <fullName>Capped Meters%E2%80%8B</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>None Required %E2%80%93 Open parking%E2%80%8B</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Other</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Prepaid Parking Voucher%E2%80%8B</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Staff Responsible%E2%80%8B</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Validated by Sponsor%E2%80%8B</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>sked_Physical_Location_Type__c</picklist>
+        <values>
+            <fullName>Inside</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Outside</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>sked_Pre_Drive_Security_Due_Date__c</picklist>
+        <values>
+            <fullName>14</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>21</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>7</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>sked_Room_Size__c</picklist>
+        <values>
+            <fullName>%3C800 Sq%2E Ft%2E</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>%3E5000 Sq%2E Ft%2E</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>1201-1600 Sq%2E Ft%2E</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>1601-2000 Sq%2E Ft%2E</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>2001-2400 Sq%2E Ft%2E</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>2401-2800 Sq%2E Ft%2E</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>2801-3200 Sq%2E Ft%2E</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>3201-3600 Sq%2E Ft%2E</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>3601-4000 Sq%2E Ft%2E</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>4001-4500 Sq%2E Ft%2E</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>4501-5000 Sq%2E Ft%2E</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>801-1200 Sq%2E Ft%2E</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Bus</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Unknown</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>sked_Security_Information_Needed__c</picklist>
+        <values>
+            <fullName>Date of Birth</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Drivers Licenses %23</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Real ID</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>SSN</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Safety Video</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Staff Full Names</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>US Citizen</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Vehicle License %23</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>sked_Staff_List__c</picklist>
+        <values>
+            <fullName>Date of Birth</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Drivers Licenses %23</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Real ID</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>SSN</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Safety Video</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Staff Full Names</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>US Citizen</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Vehicle License %23</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>sked_Unloading_Conditions__c</picklist>
+        <values>
+            <fullName>Distance to donation Area %3E200ft</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Dock Available%E2%80%8B</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Dock Required</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Forklift Needed%E2%80%8B</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Security%E2%80%8B</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Single vehicle unload%E2%80%8B</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Street Unload%E2%80%8B</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Unpaved%E2%80%8B</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>sked_Wireless_Policy__c</picklist>
+        <values>
+            <fullName>Accepted</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Connectivity Wired Only</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Prohibited</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Sponsor Wired Only</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>sked__Type__c</picklist>
+        <values>
+            <fullName>Fixed Site</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Mobile Site</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+</RecordType>

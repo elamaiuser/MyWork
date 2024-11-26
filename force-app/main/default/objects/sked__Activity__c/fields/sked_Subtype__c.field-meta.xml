@@ -1,0 +1,439 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>sked_Subtype__c</fullName>
+    <externalId>false</externalId>
+    <label>Subtype</label>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <controllingField>sked__Type__c</controllingField>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>In-Service</fullName>
+                <default>false</default>
+                <label>In-Service</label>
+            </value>
+            <value>
+                <fullName>Labor Relations</fullName>
+                <default>false</default>
+                <label>Labor Relations</label>
+            </value>
+            <value>
+                <fullName>Meeting</fullName>
+                <default>false</default>
+                <label>Meeting</label>
+            </value>
+            <value>
+                <fullName>Modified Duty</fullName>
+                <default>false</default>
+                <label>Modified Duty</label>
+            </value>
+            <value>
+                <fullName>National Bargaining</fullName>
+                <default>false</default>
+                <label>National Bargaining</label>
+            </value>
+            <value>
+                <fullName>Organizational Day</fullName>
+                <default>false</default>
+                <label>Organizational Day</label>
+            </value>
+            <value>
+                <fullName>Physicals</fullName>
+                <default>false</default>
+                <label>Physicals</label>
+            </value>
+            <value>
+                <fullName>Problem Management</fullName>
+                <default>false</default>
+                <label>Problem Management</label>
+            </value>
+            <value>
+                <fullName>Post-Drive Breakdown</fullName>
+                <default>false</default>
+                <label>Post-Drive Breakdown</label>
+            </value>
+            <value>
+                <fullName>Pre-Drive Setup</fullName>
+                <default>false</default>
+                <label>Pre-Drive Setup</label>
+            </value>
+            <value>
+                <fullName>Travel</fullName>
+                <default>false</default>
+                <label>Travel</label>
+            </value>
+            <value>
+                <fullName>Inspection</fullName>
+                <default>false</default>
+                <label>Inspection</label>
+            </value>
+            <value>
+                <fullName>Maintenance</fullName>
+                <default>false</default>
+                <label>Maintenance</label>
+            </value>
+            <value>
+                <fullName>Reservation</fullName>
+                <default>false</default>
+                <label>Reservation</label>
+            </value>
+            <value>
+                <fullName>Transfer</fullName>
+                <default>false</default>
+                <label>Transfer</label>
+            </value>
+            <value>
+                <fullName>Blood Run</fullName>
+                <default>false</default>
+                <label>Blood Run</label>
+            </value>
+            <value>
+                <fullName>eBDR</fullName>
+                <default>false</default>
+                <label>eBDR</label>
+            </value>
+            <value>
+                <fullName>Inter-Region Support</fullName>
+                <default>false</default>
+                <label>Inter-Region Support</label>
+            </value>
+            <value>
+                <fullName>Operations</fullName>
+                <default>false</default>
+                <label>Operations</label>
+            </value>
+            <value>
+                <fullName>ORC Beta</fullName>
+                <default>false</default>
+                <label>ORC Beta</label>
+            </value>
+            <value>
+                <fullName>After Hours Call Out Management</fullName>
+                <default>false</default>
+                <label>After Hours Call Out Management</label>
+            </value>
+            <value>
+                <fullName>Holiday Day Off</fullName>
+                <default>false</default>
+                <label>Holiday Day Off</label>
+            </value>
+            <value>
+                <fullName>Donor Outreach</fullName>
+                <default>false</default>
+                <label>Donor Outreach</label>
+            </value>
+            <value>
+                <fullName>Health Fair</fullName>
+                <default>false</default>
+                <label>Health Fair</label>
+            </value>
+            <value>
+                <fullName>Media</fullName>
+                <default>false</default>
+                <label>Media</label>
+            </value>
+            <value>
+                <fullName>Parade</fullName>
+                <default>false</default>
+                <label>Parade</label>
+            </value>
+            <value>
+                <fullName>BHQ - Annual</fullName>
+                <default>false</default>
+                <label>BHQ - Annual</label>
+            </value>
+            <value>
+                <fullName>BHQ - BioArch R1</fullName>
+                <default>false</default>
+                <label>BHQ - BioArch R1</label>
+            </value>
+            <value>
+                <fullName>BHQ - BioArch R2</fullName>
+                <default>false</default>
+                <label>BHQ - BioArch R2</label>
+            </value>
+            <value>
+                <fullName>BHQ - CERP</fullName>
+                <default>false</default>
+                <label>BHQ - CERP</label>
+            </value>
+            <value>
+                <fullName>BHQ - New Hire</fullName>
+                <default>false</default>
+                <label>BHQ - New Hire</label>
+            </value>
+            <value>
+                <fullName>BHQ - Other</fullName>
+                <default>false</default>
+                <label>BHQ - Other</label>
+            </value>
+            <value>
+                <fullName>Divisional - Other</fullName>
+                <default>false</default>
+                <label>Divisional - Other</label>
+            </value>
+            <value>
+                <fullName>ISP - BHQ</fullName>
+                <default>false</default>
+                <label>ISP - BHQ</label>
+            </value>
+            <value>
+                <fullName>ISP - BHQ Academy</fullName>
+                <default>false</default>
+                <label>ISP - BHQ Academy</label>
+            </value>
+            <value>
+                <fullName>ISP - Regional</fullName>
+                <default>false</default>
+                <label>ISP - Regional</label>
+            </value>
+            <value>
+                <fullName>ISP - Regional Academy</fullName>
+                <default>false</default>
+                <label>ISP - Regional Academy</label>
+            </value>
+            <value>
+                <fullName>Regional - Other</fullName>
+                <default>false</default>
+                <label>Regional - Other</label>
+            </value>
+            <value>
+                <fullName>Other</fullName>
+                <default>false</default>
+                <label>Other</label>
+            </value>
+            <value>
+                <fullName>On Call</fullName>
+                <default>false</default>
+                <label>On Call</label>
+            </value>
+            <value>
+                <fullName>Overnight</fullName>
+                <default>false</default>
+                <label>Overnight</label>
+            </value>
+            <value>
+                <fullName>BHQ – Annual</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>BHQ – Annual</label>
+            </value>
+            <value>
+                <fullName>BHQ – BioArch R1</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>BHQ – BioArch R1</label>
+            </value>
+            <value>
+                <fullName>BHQ – BioArch R2</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>BHQ – BioArch R2</label>
+            </value>
+            <value>
+                <fullName>BHQ – New Hire</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>BHQ – New Hire</label>
+            </value>
+            <value>
+                <fullName>BHQ – Other</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>BHQ – Other</label>
+            </value>
+            <value>
+                <fullName>Divisional – Other</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Divisional – Other</label>
+            </value>
+            <value>
+                <fullName>Regional – Other</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Regional – Other</label>
+            </value>
+            <value>
+                <fullName>Staff Pool</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Staff Pool</label>
+            </value>
+        </valueSetDefinition>
+        <valueSettings>
+            <controllingFieldValue>Special Events</controllingFieldValue>
+            <valueName>Donor Outreach</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Special Events</controllingFieldValue>
+            <valueName>Health Fair</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Special Events</controllingFieldValue>
+            <valueName>Media</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Special Events</controllingFieldValue>
+            <valueName>Parade</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Special Events</controllingFieldValue>
+            <controllingFieldValue>Administrative</controllingFieldValue>
+            <controllingFieldValue>Blood Drive Support</controllingFieldValue>
+            <controllingFieldValue>Equipment</controllingFieldValue>
+            <controllingFieldValue>Logistics Support</controllingFieldValue>
+            <controllingFieldValue>Other</controllingFieldValue>
+            <controllingFieldValue>Scheduling</controllingFieldValue>
+            <valueName>Other</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>After Hours Call Out Management</controllingFieldValue>
+            <valueName>After Hours Call Out Management</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Training</controllingFieldValue>
+            <valueName>BHQ - Annual</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Training</controllingFieldValue>
+            <valueName>BHQ - BioArch R1</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Training</controllingFieldValue>
+            <valueName>BHQ - BioArch R2</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Training</controllingFieldValue>
+            <valueName>BHQ - CERP</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Training</controllingFieldValue>
+            <valueName>BHQ - New Hire</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Training</controllingFieldValue>
+            <valueName>BHQ - Other</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Training</controllingFieldValue>
+            <valueName>Divisional - Other</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Training</controllingFieldValue>
+            <valueName>ISP - BHQ</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Training</controllingFieldValue>
+            <valueName>ISP - BHQ Academy</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Training</controllingFieldValue>
+            <valueName>ISP - Regional</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Training</controllingFieldValue>
+            <valueName>ISP - Regional Academy</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Training</controllingFieldValue>
+            <valueName>Regional - Other</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>On Call</controllingFieldValue>
+            <valueName>On Call</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Overnight</controllingFieldValue>
+            <valueName>Overnight</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Administrative</controllingFieldValue>
+            <valueName>In-Service</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Administrative</controllingFieldValue>
+            <valueName>Labor Relations</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Administrative</controllingFieldValue>
+            <valueName>Meeting</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Administrative</controllingFieldValue>
+            <valueName>Modified Duty</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Administrative</controllingFieldValue>
+            <valueName>National Bargaining</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Administrative</controllingFieldValue>
+            <valueName>Organizational Day</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Administrative</controllingFieldValue>
+            <valueName>Physicals</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Administrative</controllingFieldValue>
+            <valueName>Problem Management</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Blood Drive Support</controllingFieldValue>
+            <valueName>Post-Drive Breakdown</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Blood Drive Support</controllingFieldValue>
+            <valueName>Pre-Drive Setup</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Blood Drive Support</controllingFieldValue>
+            <valueName>Travel</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Equipment</controllingFieldValue>
+            <valueName>Inspection</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Equipment</controllingFieldValue>
+            <valueName>Maintenance</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Equipment</controllingFieldValue>
+            <valueName>Reservation</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Equipment</controllingFieldValue>
+            <valueName>Transfer</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Logistics Support</controllingFieldValue>
+            <valueName>Blood Run</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Logistics Support</controllingFieldValue>
+            <valueName>eBDR</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Logistics Support</controllingFieldValue>
+            <valueName>Inter-Region Support</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Logistics Support</controllingFieldValue>
+            <valueName>Operations</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Logistics Support</controllingFieldValue>
+            <valueName>ORC Beta</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Scheduling</controllingFieldValue>
+            <valueName>Holiday Day Off</valueName>
+        </valueSettings>
+    </valueSet>
+</CustomField>

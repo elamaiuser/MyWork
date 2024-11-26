@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>sked__MaxAttendeesNotGreaterThanMin</fullName>
+    <active>true</active>
+    <errorConditionFormula>AND (
+  NOT(ISNULL(sked__Min_Attendees__c)),
+  NOT(ISNULL(sked__Min_Attendees__c)), 
+  sked__Min_Attendees__c &gt; sked__Max_Attendees__c
+)</errorConditionFormula>
+    <errorDisplayField>sked__Min_Attendees__c</errorDisplayField>
+    <errorMessage>If Min and Max Attendees are set, Min must not be more than Max.</errorMessage>
+</ValidationRule>

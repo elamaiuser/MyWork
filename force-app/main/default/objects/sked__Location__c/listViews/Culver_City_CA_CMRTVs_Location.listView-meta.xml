@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Culver_City_CA_CMRTVs_Location</fullName>
+    <filterScope>Queue</filterScope>
+    <label>Culver City CA: CMRTVs</label>
+    <queue>Culver_City_CA_CMRTVs</queue>
+    <sharedTo>
+        <allInternalUsers />
+    </sharedTo>
+</ListView>

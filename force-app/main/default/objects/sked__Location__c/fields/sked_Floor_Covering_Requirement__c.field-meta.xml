@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>sked_Floor_Covering_Requirement__c</fullName>
+    <externalId>false</externalId>
+    <inlineHelpText>Plastic floor covering is part of the standard set up.  If required, sponsor provided covering should be set up prior to staff arrival and is at the responsibility of Donor Recruitment to coordinate.</inlineHelpText>
+    <label>Floor Covering Requirement</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Plastic floor covering provided by ARC</fullName>
+                <default>true</default>
+                <label>Plastic floor covering provided by ARC</label>
+            </value>
+            <value>
+                <fullName>Sponsor provided floor covering</fullName>
+                <default>false</default>
+                <label>Sponsor provided floor covering</label>
+            </value>
+            <value>
+                <fullName>No floor covering required</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>No floor covering required</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

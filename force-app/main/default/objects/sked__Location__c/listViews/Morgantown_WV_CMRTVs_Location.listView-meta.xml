@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Morgantown_WV_CMRTVs_Location</fullName>
+    <filterScope>Queue</filterScope>
+    <label>Morgantown WV: CMRTVs</label>
+    <queue>Morgantown_WV_CMRTVs</queue>
+    <sharedTo>
+        <allInternalUsers />
+    </sharedTo>
+</ListView>

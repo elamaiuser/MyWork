@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>sked__Preferred_Start_within_avail_window</fullName>
+    <active>true</active>
+    <description>If IsAvailable, the start of the preferred time window must be &gt;= Start and &lt; End</description>
+    <errorConditionFormula>AND( sked__Is_Available__c , NOT( ISBLANK( sked__Preferred_Start__c ) ) , OR( sked__Preferred_Start__c  &lt;  sked__Start__c , sked__Preferred_Start__c  &gt;=  sked__End__c ) )</errorConditionFormula>
+    <errorDisplayField>sked__Preferred_Start__c</errorDisplayField>
+    <errorMessage>If IsAvailable, the start of the preferred time window must be &gt;= Start and &lt; End</errorMessage>
+</ValidationRule>
