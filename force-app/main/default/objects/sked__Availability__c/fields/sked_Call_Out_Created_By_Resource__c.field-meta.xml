@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>sked_Call_Out_Created_By_Resource__c</fullName>
+    <externalId>false</externalId>
+    <formula>AND(TEXT(sked__Type__c) == &#39;Call Out&#39;, CreatedById == sked__Resource__r.sked__User__c)</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <label>Call Out Created By Resource</label>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Checkbox</type>
+</CustomField>

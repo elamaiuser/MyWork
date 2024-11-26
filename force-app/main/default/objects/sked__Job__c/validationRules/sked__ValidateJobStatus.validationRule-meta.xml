@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>sked__ValidateJobStatus</fullName>
+    <active>true</active>
+    <errorConditionFormula>NOT( ISPICKVAL( sked__Job_Status__c , &#39;Queued&#39;) || ISPICKVAL( sked__Job_Status__c , &#39;Pending Allocation&#39;) || ISPICKVAL( sked__Job_Status__c , &#39;Pending Dispatch&#39;) || ISPICKVAL( sked__Job_Status__c , &#39;Dispatched&#39;) || ISPICKVAL( sked__Job_Status__c , &#39;Ready&#39;) || ISPICKVAL( sked__Job_Status__c , &#39;En Route&#39;) || ISPICKVAL( sked__Job_Status__c , &#39;On Site&#39;) || ISPICKVAL( sked__Job_Status__c , &#39;In Progress&#39;) || ISPICKVAL( sked__Job_Status__c , &#39;Complete&#39;) || ISPICKVAL( sked__Job_Status__c , &#39;Cancelled&#39;) || ISPICKVAL( sked__Job_Status__c , &#39;On Hold&#39;) || ISPICKVAL( sked__Job_Status__c , &#39;Rejected&#39;) )</errorConditionFormula>
+    <errorDisplayField>sked__Job_Status__c</errorDisplayField>
+    <errorMessage>Invalid Job Status value</errorMessage>
+</ValidationRule>

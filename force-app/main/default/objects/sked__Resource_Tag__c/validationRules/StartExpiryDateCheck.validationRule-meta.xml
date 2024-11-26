@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>StartExpiryDateCheck</fullName>
+    <active>false</active>
+    <errorConditionFormula>sked_Start_Date__c &gt; sked_Expiry_Date__c</errorConditionFormula>
+    <errorMessage>Start Date cannot be after the Expiry Date</errorMessage>
+</ValidationRule>

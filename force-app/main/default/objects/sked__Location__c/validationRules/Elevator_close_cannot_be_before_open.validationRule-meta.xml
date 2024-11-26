@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Elevator_close_cannot_be_before_open</fullName>
+    <active>true</active>
+    <description>Elevator close cannot be before Elevator open</description>
+    <errorConditionFormula>(IsChanged(sked_Elevator_Open__c)|| IsChanged(sked_Elevator_Close__c))&amp;&amp; sked_Elevator_Close__c&lt;sked_Elevator_Open__c</errorConditionFormula>
+    <errorMessage>Elevator Close cannot be prior to Elevator Open</errorMessage>
+</ValidationRule>

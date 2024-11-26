@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>sked__StartEndDateCheck</fullName>
+    <active>true</active>
+    <errorConditionFormula>sked__Start__c &gt; sked__Finish__c</errorConditionFormula>
+    <errorDisplayField>sked__Start__c</errorDisplayField>
+    <errorMessage>Start Date cannot be after the End Date</errorMessage>
+</ValidationRule>

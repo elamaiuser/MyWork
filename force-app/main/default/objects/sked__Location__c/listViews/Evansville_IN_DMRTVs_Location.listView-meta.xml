@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Evansville_IN_DMRTVs_Location</fullName>
+    <filterScope>Queue</filterScope>
+    <label>Evansville IN: DMRTVs</label>
+    <queue>Evansville_IN_DMRTVs</queue>
+    <sharedTo>
+        <allInternalUsers />
+    </sharedTo>
+</ListView>

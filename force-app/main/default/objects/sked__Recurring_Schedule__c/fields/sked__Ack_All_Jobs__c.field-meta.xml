@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>sked__Ack_All_Jobs__c</fullName>
+    <defaultValue>false</defaultValue>
+    <deprecated>false</deprecated>
+    <description>Check to force assigned resources to acknowledge all jobs in the series. Otherwise, acknowledging the first job in the series will auto acknowledge the rest.</description>
+    <externalId>false</externalId>
+    <label>Acknowledge all jobs</label>
+    <trackTrending>false</trackTrending>
+    <type>Checkbox</type>
+</CustomField>

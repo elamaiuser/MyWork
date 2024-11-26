@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>sked__Status__c</fullName>
+    <deprecated>false</deprecated>
+    <description>The status of the offer in relation to this resource</description>
+    <externalId>false</externalId>
+    <label>Status</label>
+    <required>true</required>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Pending</fullName>
+                <default>true</default>
+                <label>Pending</label>
+            </value>
+            <value>
+                <fullName>Declined</fullName>
+                <default>false</default>
+                <label>Declined</label>
+            </value>
+            <value>
+                <fullName>OfferFilled</fullName>
+                <default>false</default>
+                <label>OfferFilled</label>
+            </value>
+            <value>
+                <fullName>OfferCancelled</fullName>
+                <default>false</default>
+                <label>OfferCancelled</label>
+            </value>
+            <value>
+                <fullName>ResourceOfferCancelled</fullName>
+                <default>false</default>
+                <label>ResourceOfferCancelled</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

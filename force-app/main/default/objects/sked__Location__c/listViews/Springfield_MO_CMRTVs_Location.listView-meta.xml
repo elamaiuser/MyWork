@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Springfield_MO_CMRTVs_Location</fullName>
+    <filterScope>Queue</filterScope>
+    <label>Springfield MO: CMRTVs</label>
+    <queue>Springfield_MO_CMRTVs</queue>
+    <sharedTo>
+        <allInternalUsers />
+    </sharedTo>
+</ListView>

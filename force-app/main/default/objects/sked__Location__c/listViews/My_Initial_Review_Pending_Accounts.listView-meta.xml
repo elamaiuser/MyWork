@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>My_Initial_Review_Pending_Accounts</fullName>
+    <columns>NAME</columns>
+    <columns>sked_Collection_Operation_Name__c</columns>
+    <columns>sked_National_Name__c</columns>
+    <columns>Initial_Reviewer__c</columns>
+    <columns>National_Name_Initial_Review_Date__c</columns>
+    <columns>National_Name_Status__c</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>National_Name_Status__c</field>
+        <operation>equals</operation>
+        <value>Initial Review Pending</value>
+    </filters>
+    <filters>
+        <field>Logged_In_User_Initial_Reviewer__c</field>
+        <operation>equals</operation>
+        <value>1</value>
+    </filters>
+    <label>National Name_My Initial Review Pending</label>
+    <sharedTo>
+        <group>APS_Users</group>
+    </sharedTo>
+</ListView>

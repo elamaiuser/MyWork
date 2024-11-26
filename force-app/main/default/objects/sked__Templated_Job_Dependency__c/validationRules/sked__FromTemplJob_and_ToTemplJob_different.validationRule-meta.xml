@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>sked__FromTemplJob_and_ToTemplJob_different</fullName>
+    <active>true</active>
+    <description>FromTemplatedJob and ToTemplatedJob must reference two different templated jobs</description>
+    <errorConditionFormula>sked__From_Templated_Job__r.Id = sked__To_Templated_Job__r.Id</errorConditionFormula>
+    <errorMessage>FromTemplatedJob and ToTemplatedJob must reference two different templated jobs.</errorMessage>
+</ValidationRule>

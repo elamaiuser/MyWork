@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>sked__StartOffsetDaysNonNegative</fullName>
+    <active>false</active>
+    <errorConditionFormula>false</errorConditionFormula>
+    <errorMessage>Start Offset Days must be null or non-negative</errorMessage>
+</ValidationRule>

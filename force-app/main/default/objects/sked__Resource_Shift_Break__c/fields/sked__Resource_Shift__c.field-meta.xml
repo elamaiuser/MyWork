@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>sked__Resource_Shift__c</fullName>
+    <deleteConstraint>Cascade</deleteConstraint>
+    <deprecated>false</deprecated>
+    <externalId>false</externalId>
+    <label>Resource Shift</label>
+    <referenceTo>sked__Resource_Shift__c</referenceTo>
+    <relationshipLabel>Resource Shift Breaks</relationshipLabel>
+    <relationshipName>Resource_Shift_Breaks</relationshipName>
+    <required>true</required>
+    <trackTrending>false</trackTrending>
+    <type>Lookup</type>
+</CustomField>

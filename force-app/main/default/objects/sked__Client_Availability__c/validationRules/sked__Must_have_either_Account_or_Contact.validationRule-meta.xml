@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>sked__Must_have_either_Account_or_Contact</fullName>
+    <active>true</active>
+    <description>Account and Contact fields must not both be empty</description>
+    <errorConditionFormula>AND( ISBLANK( sked__Account__c ) , ISBLANK( sked__Contact__c ) )</errorConditionFormula>
+    <errorMessage>Account and Contact fields must not both be empty</errorMessage>
+</ValidationRule>

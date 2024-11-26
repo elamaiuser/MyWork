@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>PremiumPayForRoleCheck</fullName>
+    <active>true</active>
+    <errorConditionFormula>ISPICKVAL(sked__Tag__r.sked__Type__c, &#39;Role&#39;) 
+&amp;&amp; sked_Premium_Pay__c == TRUE 
+&amp;&amp; (sked__Tag__r.Name != &#39;2RBC&#39; 
+    &amp;&amp; sked__Tag__r.Name != &#39;2RBC Sign-off&#39; 
+    &amp;&amp; sked__Tag__r.Name != &#39;Apheresis Charge&#39; 
+    &amp;&amp; sked__Tag__r.Name != &#39;Charge&#39; 
+    &amp;&amp; sked__Tag__r.Name != &#39;Charge - 2RBC&#39; 
+    &amp;&amp; sked__Tag__r.Name != &#39;Charge - Special Collections&#39; 
+    &amp;&amp; sked__Tag__r.Name != &#39;Charge Mentor&#39; 
+    &amp;&amp; sked__Tag__r.Name != &#39;Competent Driver&#39;
+    &amp;&amp; sked__Tag__r.Name != &#39;Drive Lead&#39;
+    &amp;&amp; sked__Tag__r.Name != &#39;Driver&#39;
+    &amp;&amp; sked__Tag__r.Name != &#39;Driver CDL A&#39;
+    &amp;&amp; sked__Tag__r.Name != &#39;Driver CDL B&#39;
+    &amp;&amp; sked__Tag__r.Name != &#39;Driver - DOT&#39;
+    &amp;&amp; sked__Tag__r.Name != &#39;Licensed Nurse&#39;
+    &amp;&amp; sked__Tag__r.Name != &#39;OJI&#39;
+    &amp;&amp; sked__Tag__r.Name != &#39;Special Collections Charge&#39;
+    &amp;&amp; sked__Tag__r.Name != &#39;Translator&#39;)</errorConditionFormula>
+    <errorMessage>This role is not eligible for Premium Pay.</errorMessage>
+</ValidationRule>

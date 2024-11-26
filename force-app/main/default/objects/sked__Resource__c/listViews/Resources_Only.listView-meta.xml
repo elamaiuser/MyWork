@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Resources_Only</fullName>
+    <columns>NAME</columns>
+    <columns>sked_Employee_ID__c</columns>
+    <columns>sked_Biomed_Collection_Op_Center_Name__c</columns>
+    <columns>sked_Employment_Status__c</columns>
+    <columns>sked_Premium_Pay_Roles__c</columns>
+    <columns>sked__Email__c</columns>
+    <columns>sked_Hire_Date__c</columns>
+    <columns>sked__Primary_Phone__c</columns>
+    <columns>sked_Roles__c</columns>
+    <columns>sked_Job_Code__c</columns>
+    <columns>sked_FCC_Code__c</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>sked__Resource_Type__c</field>
+        <operation>equals</operation>
+        <value>Person</value>
+    </filters>
+    <filters>
+        <field>sked_Employment_Status__c</field>
+        <operation>equals</operation>
+        <value>Active</value>
+    </filters>
+    <filters>
+        <field>sked__Primary_Region__c</field>
+        <operation>notEqual</operation>
+    </filters>
+    <label>Resources Only</label>
+</ListView>

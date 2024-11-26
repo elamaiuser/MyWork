@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>sked__EndBeforeOffsetDaysNonNegative</fullName>
+    <active>true</active>
+    <errorConditionFormula>AND( NOT( ISNULL( sked__End_Before_Offset_Days__c ) ) , sked__End_Before_Offset_Days__c &lt; 0 )</errorConditionFormula>
+    <errorDisplayField>sked__End_Before_Offset_Days__c</errorDisplayField>
+    <errorMessage>End Before Offset Days must be null or non-negative</errorMessage>
+</ValidationRule>
