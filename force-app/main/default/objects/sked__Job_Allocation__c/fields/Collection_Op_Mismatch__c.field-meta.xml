@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Collection_Op_Mismatch__c</fullName>
+    <description>Field to Track if the Primary Collection Operation for the Resource Does not match with Collection Operation on the Drive</description>
+    <externalId>false</externalId>
+    <formula>sked__Job__r.sked_Drive__r.sked_Collection_Operation__r.Name  &lt;&gt;  sked__Resource__r.sked__Primary_Region__r.sked_Biomed_Collection_Op_Center__r.Name</formula>
+    <inlineHelpText>Field to Track if the Primary Collection Operation for the Resource Does not match with Collection Operation on the Drive</inlineHelpText>
+    <label>Collection Op Mismatch</label>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Checkbox</type>
+</CustomField>

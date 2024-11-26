@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>sked__MinAttendeesNonNegative</fullName>
+    <active>true</active>
+    <errorConditionFormula>AND (NOT(ISNULL(sked__Min_Attendees__c)), sked__Min_Attendees__c &lt; 0)</errorConditionFormula>
+    <errorDisplayField>sked__Min_Attendees__c</errorDisplayField>
+    <errorMessage>If Min Attendees is set it must not be negative.</errorMessage>
+</ValidationRule>

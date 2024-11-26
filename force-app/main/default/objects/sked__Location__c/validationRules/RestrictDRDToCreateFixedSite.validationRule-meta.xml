@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>RestrictDRDToCreateFixedSite</fullName>
+    <active>true</active>
+    <errorConditionFormula>AND( OR( $Profile.Name = &quot;DRD Profile&quot;,$Profile.Name = &quot;DRD Manager&quot;) , RecordType.Name = &quot;Fixed Site&quot;, ISNEW())</errorConditionFormula>
+    <errorMessage>Selected profile is not allowed to create Fixed Site.</errorMessage>
+</ValidationRule>

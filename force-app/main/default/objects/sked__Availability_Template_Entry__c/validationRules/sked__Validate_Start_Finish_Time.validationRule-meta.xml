@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>sked__Validate_Start_Finish_Time</fullName>
+    <active>true</active>
+    <errorConditionFormula>sked__Start_Time__c  &gt;=  sked__Finish_Time__c</errorConditionFormula>
+    <errorMessage>Finish time must be after Start time</errorMessage>
+</ValidationRule>

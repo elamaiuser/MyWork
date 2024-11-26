@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>sked__AllActivities</fullName>
+    <columns>sked_Activity_Title__c</columns>
+    <columns>sked_Collection_Operation__c</columns>
+    <columns>NAME</columns>
+    <columns>sked__Resource__c</columns>
+    <columns>sked__Type__c</columns>
+    <columns>sked__Start__c</columns>
+    <columns>sked__End__c</columns>
+    <columns>sked__Address__c</columns>
+    <columns>CREATED_DATE</columns>
+    <columns>LAST_UPDATE</columns>
+    <columns>UPDATEDBY_USER</columns>
+    <columns>CREATEDBY_USER</columns>
+    <filterScope>Everything</filterScope>
+    <label>All</label>
+</ListView>

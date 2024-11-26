@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>sked_SBA_Count__c</fullName>
+    <externalId>false</externalId>
+    <label>SBA Count</label>
+    <summaryForeignKey>sked_Staffing_Budget_Availability__c.sked_Availability__c</summaryForeignKey>
+    <summaryOperation>count</summaryOperation>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Summary</type>
+</CustomField>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>RequiresOnSiteFoodCanteenOther</fullName>
+    <active>true</active>
+    <errorConditionFormula>INCLUDES(sked_On_Site_Food_Canteen_Requirements__c, &quot;Other&quot;) &amp;&amp; ISBLANK(sked_On_Site_Food_Canteen_Other__c)</errorConditionFormula>
+    <errorMessage>On-Site Food/Canteen Other is required.</errorMessage>
+</ValidationRule>

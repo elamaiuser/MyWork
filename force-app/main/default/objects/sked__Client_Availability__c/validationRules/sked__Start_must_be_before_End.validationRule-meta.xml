@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>sked__Start_must_be_before_End</fullName>
+    <active>true</active>
+    <errorConditionFormula>sked__Start__c  &gt;=  sked__End__c</errorConditionFormula>
+    <errorMessage>Start must be before End</errorMessage>
+</ValidationRule>

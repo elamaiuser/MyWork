@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>TimezoneDetailsRequired</fullName>
+    <active>false</active>
+    <description>Resources need to be created with a way of detecting timezone, this can either be through primary region, or collection op staging name + timezone</description>
+    <errorConditionFormula>AND(ISBLANK(sked__Primary_Region__c), OR(ISBLANK(sked_Collection_Operation_Name_Staging__c), ISBLANK(sked_Timezone__c)))</errorConditionFormula>
+    <errorMessage>Resources require either &quot;Collection Operation timezone&quot; OR &quot;Collection Operation Staging Name&quot; and &quot;Timezone&quot; to be populated</errorMessage>
+</ValidationRule>

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>sked__QuantityGreaterThanZero</fullName>
+    <active>true</active>
+    <errorConditionFormula>sked__Quantity__c &lt;= 0</errorConditionFormula>
+    <errorDisplayField>sked__Quantity__c</errorDisplayField>
+    <errorMessage>Quantity must be greater than 0</errorMessage>
+</ValidationRule>

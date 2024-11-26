@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Block_National_Name_EditAcces_To_Non_APS</fullName>
+    <active>true</active>
+    <description>HRP-4954DRD user cannot edit National Name field
+HRP-5715. non APS user should not edit national name</description>
+    <errorConditionFormula>AND(
+   NOT (CONTAINS($Profile.Name,&quot;APS&quot;)),
+   ISChanged( sked_National_Name__c ),  
+   NOT($Profile.Name = &quot;System Administrator&quot;),
+   NOT($Profile.Name = &quot;Global Admin&quot;) 
+)</errorConditionFormula>
+    <errorMessage>DRD user cannot have editAccess National Name field</errorMessage>
+</ValidationRule>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>sked__notify_period_must_be_24_hours_or_more</fullName>
+    <active>true</active>
+    <description>Must be greater than 24 hours</description>
+    <errorConditionFormula>sked__NotifyPeriod__c &lt; 1</errorConditionFormula>
+    <errorDisplayField>sked__NotifyPeriod__c</errorDisplayField>
+    <errorMessage>Notify Period must be 24 hours or more</errorMessage>
+</ValidationRule>
