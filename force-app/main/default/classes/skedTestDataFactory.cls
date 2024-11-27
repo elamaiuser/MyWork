@@ -771,16 +771,6 @@ public class skedTestDataFactory {
         );
         secondList.add(testStaffingBudget1);
         this.mapTestData.put('testStaffingBudget1', testStaffingBudget1);
-        
-        sked_Staffing_Budget__c testStaffingBudget2 = new sked_Staffing_Budget__c(
-            sked_Roles__c = '2RBC',
-            sked_Drive_Types__c = 'Mobile;Fixed Site',
-            sked_Staffing_Budget_Date__c = this.summary.startDate,
-            sked_Total_Slots__c = 10,
-            sked_Request_Type__c = 'Standard'
-        );
-        secondList.add(testStaffingBudget2);
-        this.mapTestData.put('testStaffingBudget_nonRecurring', testStaffingBudget2);
 
         insert secondList;
 
