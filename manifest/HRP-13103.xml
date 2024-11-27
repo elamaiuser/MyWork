@@ -9,7 +9,6 @@
         <members>skedStaffingBudgetSiteService</members>
 		<members>skedStaffingBudgetService</members>
 		<members>skedRacController</members>
-		<members>skedPtoRequestController</members>
 		<members>skedAvailabilityHandler</members>
         <members>skedModels_Test</members>
 		<members>skedMappingConfigController_Test</members>
@@ -17,7 +16,6 @@
         <members>skedStaffingBudgetSiteService_Test</members>
 		<members>skedStaffingBudgetService_Test</members>
 		<members>skedRacStory_Test</members>
-		<members>skedPtoRequestController_Test</members>
 		<members>skedAvailabilityTrigger_Test</members>
         <members>skedTestDataFactory</members>
 		<name>ApexClass</name>
