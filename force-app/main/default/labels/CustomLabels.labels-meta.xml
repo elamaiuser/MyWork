@@ -312,6 +312,13 @@
         <value>https://app.powerbi.com/groups/me/apps/1bf85886-e730-4e80-9ea2-4330448f7aa5/rdlreports/dc0404a3-5cb2-4fb2-9573-3fd49c9532d8?ctid=dd5b5d42-c0d3-4ad2-b5f1-60edb3af2771&amp;experience=power-bi</value>
     </labels>
     <labels>
+        <fullName>NO_SBPM_ABM</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>NO_SBPM/ABM</shortDescription>
+        <value>No ABM</value>
+    </labels>
+    <labels>
         <fullName>NationalNameAllowedProfiles</fullName>
         <language>en_US</language>
         <protected>false</protected>
