@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Washington_DC_CMRTVs_Location</fullName>
+    <filterScope>Queue</filterScope>
+    <label>Washington DC: CMRTVs</label>
+    <queue>Washington_DC_CMRTVs</queue>
+    <sharedTo>
+        <allInternalUsers />
+    </sharedTo>
+</ListView>

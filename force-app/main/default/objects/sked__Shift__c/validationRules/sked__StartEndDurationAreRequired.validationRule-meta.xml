@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>sked__StartEndDurationAreRequired</fullName>
+    <active>true</active>
+    <errorConditionFormula>OR( ISNULL( sked__Start__c ) , ISNULL( sked__End1__c ) , ISNULL( sked__Duration__c ) )</errorConditionFormula>
+    <errorMessage>Start, End and Duration are required</errorMessage>
+</ValidationRule>

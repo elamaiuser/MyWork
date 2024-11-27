@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>sked__NoRRWithQuantityPresent</fullName>
+    <active>true</active>
+    <errorConditionFormula>AND( sked__Resource_Requirement_Count__c  &gt; 0 , NOT( ISNULL( sked__Quantity__c ) ) )</errorConditionFormula>
+    <errorDisplayField>sked__Quantity__c</errorDisplayField>
+    <errorMessage>Job quantity must be null to have resource requirement</errorMessage>
+</ValidationRule>

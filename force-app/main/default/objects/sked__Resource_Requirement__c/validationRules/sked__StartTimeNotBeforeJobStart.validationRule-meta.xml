@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>sked__StartTimeNotBeforeJobStart</fullName>
+    <active>true</active>
+    <errorConditionFormula>AND( NOT( ISNULL( sked__Scheduled_Start1__c ) ) , NOT( ISNULL( sked__Job__r.sked__Start__c ) ), sked__Scheduled_Start1__c &lt; sked__Job__r.sked__Start__c )</errorConditionFormula>
+    <errorMessage>Start time cannot be before job start time</errorMessage>
+</ValidationRule>

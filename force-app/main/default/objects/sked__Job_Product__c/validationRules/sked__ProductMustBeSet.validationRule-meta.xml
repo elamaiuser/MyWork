@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>sked__ProductMustBeSet</fullName>
+    <active>true</active>
+    <description>Product must always be set on a JobProduct. This is implemented as a validation rule as we cannot create MasterDetail or contrained Lookups to a Product Object</description>
+    <errorConditionFormula>ISNULL( sked__Product__c )</errorConditionFormula>
+    <errorDisplayField>sked__Product__c</errorDisplayField>
+    <errorMessage>Product must be set</errorMessage>
+</ValidationRule>

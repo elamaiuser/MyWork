@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>sked__Start_must_be_before_End_preferred</fullName>
+    <active>true</active>
+    <errorConditionFormula>AND( NOT( ISBLANK(sked__Preferred_Start__c) ) , NOT( ISBLANK(sked__Preferred_End__c) ) , sked__Preferred_Start__c  &gt;=  sked__Preferred_End__c )</errorConditionFormula>
+    <errorMessage>Preferred Start must be before Preferred End</errorMessage>
+</ValidationRule>

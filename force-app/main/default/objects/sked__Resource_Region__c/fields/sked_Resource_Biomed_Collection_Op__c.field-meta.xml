@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>sked_Resource_Biomed_Collection_Op__c</fullName>
+    <deleteConstraint>SetNull</deleteConstraint>
+    <externalId>false</externalId>
+    <label>Resource Biomed Collection Op</label>
+    <referenceTo>sked_Resource_Biomed_Collection_Op__c</referenceTo>
+    <relationshipLabel>Resource Regions</relationshipLabel>
+    <relationshipName>sked_Resource_Regions</relationshipName>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>Lookup</type>
+</CustomField>

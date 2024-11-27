@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>skedHC__Date_of_Incident__c</fullName>
+    <deprecated>false</deprecated>
+    <externalId>false</externalId>
+    <formula>skedHC__Accident_Incident_Report__r.skedHC__Date_Time_of_Incident__c</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <label>Date of Incident</label>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>Date</type>
+</CustomField>

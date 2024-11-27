@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>UnableToSetMaxHoursForAsset</fullName>
+    <active>true</active>
+    <errorConditionFormula>AND(ISPICKVAL(sked__Resource_Type__c, &#39;Asset&#39;), NOT(ISNULL(sked_Max_Hours_Per_Week__c)))</errorConditionFormula>
+    <errorMessage>Unable to populate Maximum Weekly Hours for Asset Resources</errorMessage>
+</ValidationRule>

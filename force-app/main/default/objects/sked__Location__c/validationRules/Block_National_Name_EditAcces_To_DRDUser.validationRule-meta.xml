@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Block_National_Name_EditAcces_To_DRDUser</fullName>
+    <active>true</active>
+    <description>HRP-4954DRD user cannot edit National Name field</description>
+    <errorConditionFormula>AND(
+   $Profile.Name = &quot;DRD Profile&quot;,  
+   ISChanged( sked_National_Name__c ) 
+)</errorConditionFormula>
+    <errorMessage>DRD user cannot have editAccess National Name field</errorMessage>
+</ValidationRule>

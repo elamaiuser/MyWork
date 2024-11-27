@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>sked__StartMustProvidedIfFinishProvided</fullName>
+    <active>true</active>
+    <description>Either both Start and End are set, or both are blank.</description>
+    <errorConditionFormula>AND (
+  ISNULL( sked__Start__c ),NOT ISNULL( sked__Finish__c )
+
+)</errorConditionFormula>
+    <errorMessage>Both Start and Finish date must be provided or they both must be blank</errorMessage>
+</ValidationRule>

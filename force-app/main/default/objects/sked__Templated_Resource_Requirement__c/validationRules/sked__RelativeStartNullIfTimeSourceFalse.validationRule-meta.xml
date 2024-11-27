@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>sked__RelativeStartNullIfTimeSourceFalse</fullName>
+    <active>true</active>
+    <errorConditionFormula>AND( sked__Job_Allocation_Time_Source__c = false, NOT( ISNULL( sked__Relative_Start__c ) ) )</errorConditionFormula>
+    <errorDisplayField>sked__Relative_Start__c</errorDisplayField>
+    <errorMessage>Relative Start must be null if Job Allocation Time Source is false</errorMessage>
+</ValidationRule>

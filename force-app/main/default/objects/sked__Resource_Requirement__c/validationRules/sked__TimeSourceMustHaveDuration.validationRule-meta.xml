@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>sked__TimeSourceMustHaveDuration</fullName>
+    <active>true</active>
+    <errorConditionFormula>AND( sked__Job_Allocation_Time_Source__c  = true , ISNULL( sked__Duration__c ) )</errorConditionFormula>
+    <errorDisplayField>sked__Duration__c</errorDisplayField>
+    <errorMessage>Duration must be set if Job Allocation Time Source is true</errorMessage>
+</ValidationRule>

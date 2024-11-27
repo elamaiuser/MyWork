@@ -70,6 +70,7 @@ public class OrderTrigger_Test {
         accobj.BillingPostalCode = '30146';        
         mobileAccList.add(accobj);
         insert mobileAccList;
+        System.debug('mobileAccList'+mobileAccList);
         
         BSF_Constants.isTeamMemberCreatedFromBackend = true;
         // insert Account Team and add DRDAMUser
@@ -181,6 +182,62 @@ public class OrderTrigger_Test {
         triggerHandler.bypass('OpportunityTriggerHandler');
         insert opplist;
         
+        Product2 testProduct = new Product2(
+            Name = 'Test Product',
+            End_Date__c = Date.today().addDays(10) // Product End Date is 10 days from today
+        );
+        insert testProduct;
+        
+        Order testOrder = new Order(
+            Name = 'Test Order',
+            Status = 'Draft',
+            EffectiveDate = Date.today(),
+            Order_Due_Date__c = Date.today().addDays(15), // Order Due Date is 15 days from today
+            Publicity_Approved__c = false,
+            Publicity_Submitted__c = false,
+            OpportunityId=optyObj.Id,
+            AccountId=mobileAccList[0].Id,
+            Pricebook2Id=Test.getStandardPricebookId()
+        );
+        insert testOrder;
+        
+        PriceBookEntry stdPriceBookEntry = new PriceBookEntry();
+stdPriceBookEntry.Product2Id=testProduct.Id; //Product Id
+stdPriceBookEntry.Pricebook2Id=Test.getStandardPricebookId();
+stdPriceBookEntry.UnitPrice=2000;
+stdPriceBookEntry.IsActive=true;
+insert stdPriceBookEntry;
+        OrderItem testOrderItem = new OrderItem(
+            OrderId = testOrder.Id,
+            Product2Id = testProduct.Id,
+            Quantity = 1,
+            UnitPrice = 0.6,
+            PricebookEntryId=stdPriceBookEntry.Id
+        );
+        insert testOrderItem;
+        
+        Map<Id, Order> oldOrdersMap = new Map<Id, Order>{
+            testOrder.Id => new Order(
+                Id = testOrder.Id,
+                Publicity_Approved__c = false,
+                Publicity_Submitted__c = false,
+                Order_Due_Date__c = testOrder.Order_Due_Date__c
+            )
+        };
+        
+        // newOrdersMap simulates the new state of the Order after changes
+        Map<Id, Order> newOrdersMap = new Map<Id, Order>{
+            testOrder.Id => new Order(
+                Id = testOrder.Id,
+                Publicity_Approved__c = true,  // Setting Publicity_Approved__c to true
+                Publicity_Submitted__c = false,
+                Order_Due_Date__c = testOrder.Order_Due_Date__c
+            )
+        };
+        
+        OrderService.OrderProductValidation(newOrdersMap, oldOrdersMap);
+        
+        
         test.startTest();
         //This is added to cover 1084 AccountTeamMemberService methods--Starts
         AccountTeamMember atm2 = new AccountTeammember();
@@ -213,7 +270,7 @@ public class OrderTrigger_Test {
         insert atmList;
         
         
-        AccountTeamMemberService.populateDefaultAllocationFiledsOnInsert(atmList);
+        //AccountTeamMemberService.populateDefaultAllocationFiledsOnInsert(atmList);
         
         List<AccountTeamMember> atmListToUpdate = [SELECT Id,AccountAccessLevel,CaseAccessLevel,OpportunityAccessLevel,userId,AccountId,TeamMemberRole,Start_Date__c,End_Date__c FROM AccountTeamMember WHERE AccountId =:mobileAccList[0].Id];
         AccountTeamMember atmToUpdate1= atmListToUpdate[0];

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>OnlyAlphanumericForJobCode</fullName>
+    <active>true</active>
+    <errorConditionFormula>!ISBLANK(sked_Job_Code__c) &amp;&amp;
+NOT( REGEX( sked_Job_Code__c , &quot;[a-zA-Z0-9_+-]+&quot;))</errorConditionFormula>
+    <errorMessage>Job Code accepts only alphanumeric characters.</errorMessage>
+</ValidationRule>

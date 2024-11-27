@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>skedHC__Accident_Incident_Report__c</fullName>
+    <deprecated>false</deprecated>
+    <externalId>false</externalId>
+    <label>Accident &amp; Incident Report</label>
+    <referenceTo>skedHC__Accident_Incident__c</referenceTo>
+    <relationshipLabel>Involved Individuals</relationshipLabel>
+    <relationshipName>Involved_Individuals</relationshipName>
+    <relationshipOrder>0</relationshipOrder>
+    <reparentableMasterDetail>false</reparentableMasterDetail>
+    <trackTrending>false</trackTrending>
+    <type>MasterDetail</type>
+    <writeRequiresMasterRead>false</writeRequiresMasterRead>
+</CustomField>
