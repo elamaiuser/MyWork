@@ -12,7 +12,7 @@
     </values>
     <values>
         <field>sked_Custom_Filter__c</field>
-        <value xsi:nil="true"/>
+        <value xsi:nil="true" />
     </values>
     <values>
         <field>sked_Custom_Target_Destination__c</field>
@@ -20,23 +20,23 @@
     </values>
     <values>
         <field>sked_Destination_Field__c</field>
-        <value xsi:nil="true"/>
+        <value xsi:nil="true" />
     </values>
     <values>
         <field>sked_Email_From_Address_Field__c</field>
-        <value xsi:nil="true"/>
+        <value xsi:nil="true" />
     </values>
     <values>
         <field>sked_Email_Target_Field__c</field>
-        <value xsi:nil="true"/>
+        <value xsi:nil="true" />
     </values>
     <values>
         <field>sked_Expiry_DateTime_Field__c</field>
-        <value xsi:nil="true"/>
+        <value xsi:nil="true" />
     </values>
     <values>
         <field>sked_Filter__c</field>
-        <value xsi:nil="true"/>
+        <value xsi:nil="true" />
     </values>
     <values>
         <field>sked_Notification_Target_Field__c</field>
@@ -48,35 +48,31 @@
     </values>
     <values>
         <field>sked_Oneoff_Protocol_Field__c</field>
-        <value xsi:nil="true"/>
+        <value xsi:nil="true" />
     </values>
     <values>
         <field>sked_Priority__c</field>
-        <value xsi:nil="true"/>
+        <value xsi:nil="true" />
     </values>
     <values>
         <field>sked_Sending_From_Email_Address__c</field>
-        <value xsi:nil="true"/>
+        <value xsi:nil="true" />
     </values>
     <values>
         <field>sked_Subject__c</field>
         <value xsi:type="xsd:string">{{sked_Drive__r.Name}} for {{sked_Drive__r.sked_Drive_Date_Text__c}} has changed. Please review your schedule</value>
     </values>
     <values>
-        <field>sked_Target_Field_Prev_Value__c</field>
-        <value xsi:nil="true"/>
-    </values>
-    <values>
         <field>sked_Target_Field_Value__c</field>
-        <value xsi:nil="true"/>
+        <value xsi:nil="true" />
     </values>
     <values>
         <field>sked_Target_Field_Values__c</field>
-        <value xsi:nil="true"/>
+        <value xsi:nil="true" />
     </values>
     <values>
         <field>sked_Target_Field__c</field>
-        <value xsi:nil="true"/>
+        <value xsi:nil="true" />
     </values>
     <values>
         <field>sked_Target_SObject__c</field>
@@ -84,7 +80,7 @@
     </values>
     <values>
         <field>sked_Template__c</field>
-        <value xsi:nil="true"/>
+        <value xsi:nil="true" />
     </values>
     <values>
         <field>sked_Trigger__c</field>

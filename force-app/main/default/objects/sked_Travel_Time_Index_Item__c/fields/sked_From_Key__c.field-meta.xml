@@ -3,7 +3,7 @@
     <fullName>sked_From_Key__c</fullName>
     <externalId>false</externalId>
     <formula>IF(ISBLANK(sked_Key__c), NULL, 
-LEFT(sked_Key__c, FIND(&#39;:&#39;, sked_Key__c) - 1))</formula>
+LEFT(sked_Key__c, FIND(&apos;:&apos;, sked_Key__c) - 1))</formula>
     <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
     <label>From Key</label>
     <required>false</required>
