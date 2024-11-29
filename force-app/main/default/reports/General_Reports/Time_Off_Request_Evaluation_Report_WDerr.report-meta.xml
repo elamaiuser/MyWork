@@ -79,9 +79,6 @@
     <columns>
         <field>sked__Resource__c$sked_Roles__c</field>
     </columns>
-    <columns>
-        <field>sked__Resource__c.sked__Availabilities1__r$sked_Disposition_Date__c</field>
-    </columns>
     <description>Time Off Request Evaluation Report - filter for WD sync errors</description>
     <filter>
         <criteriaItems>
