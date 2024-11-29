@@ -73,9 +73,6 @@
     <columns>
         <field>sked__Resource__c.sked__Availabilities1__r$sked_Workday_Sync_Status__c</field>
     </columns>
-    <columns>
-        <field>sked__Resource__c.sked__Availabilities1__r$sked_Disposition_Date__c</field>
-    </columns>
     <description>Time Off Request Evaluation Report</description>
     <filter>
         <criteriaItems>
