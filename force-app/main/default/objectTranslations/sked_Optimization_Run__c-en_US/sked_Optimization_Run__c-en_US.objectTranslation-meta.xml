@@ -18,10 +18,6 @@
             <label><!-- Optimization Result --></label>
             <section>Optimization Result</section>
         </sections>
-        <sections>
-            <label><!-- Optimization Settings --></label>
-            <section>Optimization Settings</section>
-        </sections>
     </layouts>
     
     
