@@ -29,10 +29,6 @@
         <type>CustomApplication</type>
     </appMenuItems>
     <appMenuItems>
-        <name>Power_of_Us_Hub</name>
-        <type>ConnectedApp</type>
-    </appMenuItems>
-    <appMenuItems>
         <name>BIO_Med_Sales</name>
         <type>CustomApplication</type>
     </appMenuItems>
