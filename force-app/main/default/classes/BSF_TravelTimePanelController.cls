@@ -311,7 +311,7 @@ public without sharing class BSF_TravelTimePanelController {
                 wrapper.overrideComment = String.isBlank(ttRec.Override_Comment__c) ? '' : ttRec.Override_Comment__c;
                 wrapper.direction = ttIndex_DirectionMap.get(ttRec.Id);
                 wrapper.travelTimeBreakdownData = new List<TravelTimeBreakdownData>();
-                if(ttRec.sked_Travel_Time_Breakdown_JSON__c != null){
+                if(ttRec.sked_Travel_Time_Breakdown_JSON__c != null && ttRec.sked_Travel_Time_Breakdown_JSON__c != 'NO DATA'){
                     List<TravelTimeBreakdownJSON> jsonData = (List<TravelTimeBreakdownJSON>) JSON.deserialize(ttRec.sked_Travel_Time_Breakdown_JSON__c, List<TravelTimeBreakdownJSON>.class);
                     for(TravelTimeBreakdownJSON ttData : jsonData){
                         TravelTimeBreakdownData dataWrap = new TravelTimeBreakdownData(); 
@@ -323,6 +323,23 @@ public without sharing class BSF_TravelTimePanelController {
                         dataWrap.travelTimeKey = wrapper.indexId.right(10)+dataWrap.weekday.left(4).toLowerCase()+ttData.startOfWindow.left(2)+ttData.endOfWindow.left(2);
                         System.debug('dataWrap.travelTimeKey : '+dataWrap.travelTimeKey);
                         wrapper.travelTimeBreakdownData.add(dataWrap);
+                    }
+                }
+                else{
+                    List<String> weekdays = new List<String>{'Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'};
+                    List<String> startTimes = new List<String>{'12:00AM', '8:00AM', '4:00PM'};
+                    List<String> endTimes = new List<String>{'8:00AM', '4:00PM', '11:59PM'};
+                    for(String weekday : weekdays){
+                        for(Integer i = 0; i < startTimes.size(); i++){
+                            TravelTimeBreakdownData dataWrap = new TravelTimeBreakdownData();
+                                dataWrap.weekday = weekday;
+                                dataWrap.travelTime = 0;
+                                dataWrap.travelDistance = 0;
+                                dataWrap.startTime = startTimes[i];
+                                dataWrap.endTime = endTimes[i];
+                                dataWrap.travelTimeKey = wrapper.indexId.right(10) + weekday.left(4).toLowerCase() + startTimes[i].left(2) + endTimes[i].left(2);
+                                wrapper.travelTimeBreakdownData.add(dataWrap);                            
+                        }
                     }
                 }
                 travelTimeDataWrap.add(wrapper);

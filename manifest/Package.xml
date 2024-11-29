@@ -41,6 +41,8 @@
 		<members>skedTravelTimeIndexRefreshRequestHandler</members>
 		<members>skedUserHandler</members>
 		<members>skedWorkdayApiManager</members>
+		<members>BSF_TravelTimePanelController</members>
+		<members>BSF_TravelTimePanelControllerTest</members>
 		<name>ApexClass</name>
 	</types>
 	<types>
@@ -132,6 +134,7 @@
 	</types>
 	<types>
 		<members>blwcDriveWorkSheetComponent</members>
+		<members>travelTimeBreakdown</members>
 		<name>LightningComponentBundle</name>
 	</types>
 	<types>
