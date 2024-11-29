@@ -29,6 +29,10 @@
         <type>CustomApplication</type>
     </appMenuItems>
     <appMenuItems>
+        <name>Power_of_Us_Hub</name>
+        <type>ConnectedApp</type>
+    </appMenuItems>
+    <appMenuItems>
         <name>BIO_Med_Sales</name>
         <type>CustomApplication</type>
     </appMenuItems>
@@ -137,10 +141,6 @@
         <type>ConnectedApp</type>
     </appMenuItems>
     <appMenuItems>
-        <name>standard__LightningInstrumentation</name>
-        <type>CustomApplication</type>
-    </appMenuItems>
-    <appMenuItems>
         <name>MobileAdmin_Android</name>
         <type>ConnectedApp</type>
     </appMenuItems>
@@ -209,11 +209,23 @@
         <type>CustomApplication</type>
     </appMenuItems>
     <appMenuItems>
+        <name>EDWInformaticaApp</name>
+        <type>ConnectedApp</type>
+    </appMenuItems>
+    <appMenuItems>
         <name>Copy_Storm_User</name>
         <type>ConnectedApp</type>
     </appMenuItems>
     <appMenuItems>
-        <name>EDW_Informatica_User</name>
+        <name>ProvarConnectedApp</name>
+        <type>ConnectedApp</type>
+    </appMenuItems>
+    <appMenuItems>
+        <name>ProvarConnectedAppForOauth</name>
+        <type>ConnectedApp</type>
+    </appMenuItems>
+    <appMenuItems>
+        <name>EDA_Service_User</name>
         <type>ConnectedApp</type>
     </appMenuItems>
 </AppMenu>
