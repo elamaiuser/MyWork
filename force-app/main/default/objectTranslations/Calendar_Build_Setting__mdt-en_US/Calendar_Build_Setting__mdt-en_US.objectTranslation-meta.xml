@@ -14,14 +14,6 @@
             <label><!-- Custom Links --></label>
             <section>Custom Links</section>
         </sections>
-        <sections>
-            <label><!-- Draft Drives --></label>
-            <section>Draft Drives</section>
-        </sections>
-        <sections>
-            <label><!-- System Generate Drives --></label>
-            <section>System Generate Drives</section>
-        </sections>
     </layouts>
     <startsWith>Consonant</startsWith>
     <validationRules>
