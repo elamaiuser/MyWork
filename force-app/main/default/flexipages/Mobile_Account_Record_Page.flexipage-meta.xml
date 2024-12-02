@@ -47,6 +47,9 @@
                             <value>CustomButton.Account.View_Drive_Detail</value>
                         </valueListItems>
                         <valueListItems>
+                            <value>CustomButton.Account.View_Account_Overview</value>
+                        </valueListItems>
+                        <valueListItems>
                             <value>Account.Add_Affiliation</value>
                         </valueListItems>
                         <valueListItems>
@@ -1446,7 +1449,7 @@
                     <valueList>
                         <valueListItems>
                             <value>sked_Location__c</value>
-                        </valueListItems>                        
+                        </valueListItems>
                     </valueList>
                 </componentInstanceProperties>
                 <componentInstanceProperties>
