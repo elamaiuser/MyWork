@@ -35,7 +35,7 @@ export default class TravelTimeBreakdown extends LightningElement {
     
                     newRecord.timeSlots = Object.keys(slots).map(key => ({
                         timeRange: key,
-                        travelTimes: this.daysOfWeek.map(day => slots[key][day] || '-')
+                        travelTimes: this.daysOfWeek.map(day => slots[key][day] || '')
                     }));
                 } else {
                     console.error('travelTimeBreakdownData is not an array for record:', record);
@@ -271,7 +271,7 @@ export default class TravelTimeBreakdown extends LightningElement {
             this.dispatchEvent(
                 new ShowToastEvent({
                     title: 'Error',
-                    message: 'All travel times must be positive numbers.',
+                    message: 'All time-blocks must be completed with positive values.',
                     variant: 'error'
                 })
             );

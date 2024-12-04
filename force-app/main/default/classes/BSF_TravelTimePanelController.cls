@@ -249,7 +249,7 @@ public without sharing class BSF_TravelTimePanelController {
 
         System.debug('Index Item SOQL : '+indexItemQuerry+indexItemWhereCl);  
         List<sked_Travel_Time_Index_Item__c> indexItemList = Database.query(indexItemQuerry+indexItemWhereCl,AccessLevel.SYSTEM_MODE);      
-        System.debug('Index Item SOQL Data: '+indexItemList.size());  
+        System.debug('Index Item SOQL Data: '+indexItemList.size());         
         if(indexItemList.isEmpty()) {
             return travelTimeDataWrap;
         }
@@ -338,8 +338,8 @@ public without sharing class BSF_TravelTimePanelController {
                         dataWrap.weekday = ttData.weekday;
                         dataWrap.travelTime = ttData.travelTime;
                         dataWrap.travelDistance = ttData.travelDistance;
-                        dataWrap.startTime = ttData.startOfWindow;
-                        dataWrap.endTime = ttData.endOfWindow;
+                        dataWrap.startTime = String.isBlank(ttData.startOfWindow) ? null : getTime(ttData.startOfWindow);
+                        dataWrap.endTime = String.isBlank(ttData.endOfWindow) ? null : getTime(ttData.endOfWindow);
                         dataWrap.travelTimeKey = wrapper.indexId.right(10) + ttData.weekday.left(4).toLowerCase() + ttData.startOfWindow.left(2) + ttData.endOfWindow.left(2);
                         wrapper.travelTimeBreakdownData.add(dataWrap);
                     }
@@ -354,8 +354,8 @@ public without sharing class BSF_TravelTimePanelController {
     private static List<TravelTimeBreakdownJSON> generateEmptyTravelTimeData() {
         List<TravelTimeBreakdownJSON> travelTimeBreakdownJSON = new List<TravelTimeBreakdownJSON>();
         List<String> weekdays = new List<String>{'Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'};
-        List<String> startTimes = new List<String>{'12:00AM', '8:00AM', '4:00PM'};
-        List<String> endTimes = new List<String>{'8:00AM', '4:00PM', '11:59PM'};
+        List<String> startTimes = new List<String>{'00:00:00.000Z', '08:00:00.000Z', '16:00:00.000Z'};
+        List<String> endTimes = new List<String>{'08:00:00.000Z', '16:00:00.000Z', '23:59:00.000Z'};
         for(String weekday : weekdays) { 
             for(Integer i = 0; i < startTimes.size(); i++) {
                 TravelTimeBreakdownJSON ttData = new TravelTimeBreakdownJSON();
