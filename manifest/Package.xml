@@ -111,6 +111,7 @@
 		<name>CustomObject</name>
 	</types>
 	<types>
+		<members>Fixed_Site_Account_Record_Page</members>
 		<members>Fixed_Site_Opp_Record_Page</members>
 		<members>Mobile_Account_Record_Page</members>
 		<members>Mobile_Opp_Record_Page</members>
@@ -145,6 +146,10 @@
 		<members>General_Reports/Time_Off_Request_Evaluation_Report_JBj</members>
 		<members>General_Reports/Time_Off_Request_Evaluation_Report_WDerr</members>
 		<name>Report</name>
+	</types>
+	<types>
+		<members>Account.View_Account_Overview</members>
+		<name>WebLink</name>
 	</types>
 	<version>60.0</version>
 </Package>
