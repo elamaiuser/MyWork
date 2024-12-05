@@ -123,6 +123,8 @@
 		<members>sked_Staffing_Budget__c-Staffing Budget Layout</members>
 		<members>sked_Travel_Time_Index_Refresh_Group__c-Travel Time Index Refresh CO Group Layout</members>
 		<members>sked_Travel_Time_Index_Refresh_Group__c-Travel Time Index Refresh Group Layout</members>
+		<members>sked__Location__c-Fixed Site Layout</members>
+		<members>sked__Location__c-Mobile Site Layout</members>
 		<name>Layout</name>
 	</types>
 	<types>
@@ -149,6 +151,7 @@
 	</types>
 	<types>
 		<members>Account.View_Account_Overview</members>
+		<members>sked__Location__c.Site_Audit</members>
 		<name>WebLink</name>
 	</types>
 	<version>60.0</version>

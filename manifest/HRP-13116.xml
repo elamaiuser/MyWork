@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+    <types>
+		<members>sked__Location__c-Fixed Site Layout</members>
+		<members>sked__Location__c-Mobile Site Layout</members>
+		<name>Layout</name>
+	</types>		
+	<types>
+		<members>sked__Location__c.Site_Audit</members>
+		<name>WebLink</name>
+	</types>
+	<version>60.0</version>
+</Package>
