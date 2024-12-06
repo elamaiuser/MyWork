@@ -140,6 +140,7 @@
 		<members>blwcDriveWorkSheetComponent</members>
 		<members>slwcApprovalHistoryConsole</members>
 		<members>slwcDriveChangeRequestApproval</members>
+		<members>slwcLinkedDriveStaffingDetails</members>
 		<members>travelTimeBreakdown</members>
 		<name>LightningComponentBundle</name>
 	</types>
