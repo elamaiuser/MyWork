@@ -43,6 +43,10 @@
 		<members>skedWorkdayApiManager</members>
 		<members>BSF_TravelTimePanelController</members>
 		<members>BSF_TravelTimePanelControllerTest</members>
+		<members>skedActivityHandler</members>
+		<members>skedActivityResourceHandler</members>
+		<members>skedActivityResourceUtils</members>
+		<members>skedActivityResourceUtils_Test</members>
 		<name>ApexClass</name>
 	</types>
 	<types>
@@ -58,6 +62,7 @@
 		<members>sked_Travel_Time_Index_Refresh_Group__c.sked_Collection_Operations_To_Refresh__c</members>
 		<members>sked_Travel_Time_Index_Refresh_Group__c.sked_Status__c</members>
 		<members>sked_Travel_Time_Index_Refresh_Request__c.sked_Travel_Time_Index_Refresh_Group__c</members>
+		<members>sked__Availability__c.sked_Activity_Resource__c</members>
 		<members>sked__Availability__c.sked_Disposition_Date__c</members>
 		<members>sked__Availability__c.sked_Dispositioned_By_User__c</members>
 		<members>Task_Checklist_Setting__mdt.Subject__c</members>
@@ -126,6 +131,7 @@
 		<members>sked__Location__c-DRD Profiles Site Layout</members>
 		<members>sked__Location__c-Fixed Site Layout</members>
 		<members>sked__Location__c-Mobile Site Layout</members>
+		<members>sked__Activity_Resource__c-Sked Activity Resource Layout</members>
 		<name>Layout</name>
 	</types>
 	<types>
