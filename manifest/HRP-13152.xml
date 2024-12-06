@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+    <types>
+		<members>skedActivityHandler</members>
+		<members>skedActivityResourceHandler</members>
+		<members>skedActivityResourceUtils</members>
+		<members>skedActivityResourceUtils_Test</members>
+		<name>ApexClass</name>
+	</types>	
+	<types>
+		<members>sked__Availability__c.sked_Activity_Resource__c</members>
+		<name>CustomField</name>
+	</types>
+    <types>
+		<members>sked__Activity_Resource__c-Sked Activity Resource Layout</members>
+		<name>Layout</name>
+	</types>		
+	<version>60.0</version>
+</Package>
