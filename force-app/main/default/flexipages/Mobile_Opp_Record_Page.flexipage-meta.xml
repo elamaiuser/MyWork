@@ -52,6 +52,9 @@
                                 </criteria>
                             </visibilityRule>
                         </valueListItems>
+                        <valueListItems>
+                            <value>Opportunity.Mass_Drive_Service_Role_Add</value>
+                        </valueListItems>
                     </valueList>
                 </componentInstanceProperties>
                 <componentInstanceProperties>
@@ -809,7 +812,7 @@
         </itemInstances>
         <name>Facet-4f62c8e7-5b5e-41d7-9ed0-28ed5030fa59</name>
         <type>Facet</type>
-    </flexiPageRegions>    
+    </flexiPageRegions>
     <flexiPageRegions>
         <itemInstances>
             <componentInstance>
@@ -930,7 +933,7 @@
                 <componentName>flexipage:tab</componentName>
                 <identifier>customTab7</identifier>
             </componentInstance>
-        </itemInstances>        
+        </itemInstances>
         <name>Facet-3938d1e4-a1ce-404d-b9aa-dc4ec99d0fe0</name>
         <type>Facet</type>
     </flexiPageRegions>

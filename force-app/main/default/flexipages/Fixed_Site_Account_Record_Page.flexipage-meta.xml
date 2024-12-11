@@ -97,6 +97,9 @@
                         <valueListItems>
                             <value>Account.sked_Check_for_Impacted_Drives</value>
                         </valueListItems>
+                        <valueListItems>
+                            <value>Account.Mass_Account_Service_Role_Add</value>
+                        </valueListItems>
                     </valueList>
                 </componentInstanceProperties>
                 <componentInstanceProperties>
