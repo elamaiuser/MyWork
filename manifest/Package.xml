@@ -73,6 +73,14 @@
 		<name>CustomField</name>
 	</types>
 	<types>
+		<members>BSF_Mass_Account_Service_Role_Warning_Message</members>
+		<members>BSF_Mass_Drive_Service_Role_After_Hours_Contact_Warning_Message</members>
+		<members>BSF_Mass_Drive_Service_Role_Call_List_Recipient_Warning_Message</members>
+		<members>BSF_Mass_Drive_Service_Role_Primary_Contact_Warning_Message</members>
+		<members>BSF_Mass_Drive_Service_Role_Warning_Message</members>
+		<name>CustomLabel</name>
+	</types>
+	<types>
 		<members>sked_Notification_Setting.sked_Job_Allocation_Info_Changed_Email</members>
 		<members>sked_Notification_Setting.sked_Job_Allocation_Info_Changed_OneOff</members>
 		<members>sked_Notification_Setting.sked_Job_Allocation_Info_Changed_SFPush</members>
@@ -124,6 +132,11 @@
 		<name>FlexiPage</name>
 	</types>
 	<types>
+		<members>Mass_Account_Service_Role_Add</members>
+		<members>Mass_Drive_Service_Role_Add</members>
+		<name>Flow</name>
+	</types>
+	<types>
 		<members>sked_Staffing_Budget_Site__c-Staffing Budget Site Layout</members>
 		<members>sked_Staffing_Budget__c-Staffing Budget Layout</members>
 		<members>sked_Travel_Time_Index_Refresh_Group__c-Travel Time Index Refresh CO Group Layout</members>
@@ -151,7 +164,9 @@
 		<name>LightningComponentBundle</name>
 	</types>
 	<types>
+		<members>Account.Mass_Account_Service_Role_Add</members>		
 		<members>Opportunity.Drive_Work_Sheet</members>
+		<members>Opportunity.Mass_Drive_Service_Role_Add</members>
 		<name>QuickAction</name>
 	</types>
 	<types>
