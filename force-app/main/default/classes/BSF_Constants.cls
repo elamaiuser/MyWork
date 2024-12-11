@@ -324,4 +324,7 @@ public class BSF_Constants {
     public static final String POST_DRIVE_ANALYSIS_TASK = 'Post Drive Analysis Task';
     public static final String RECRUITMENT_PLANNING_TASK = 'Recruitment Planning Meeting';
     public static final String OPP_TYPE_Mobile = 'Mobile Opp';
+
+    public static final String FEEDER_ONLY_ACCOUNT = 'Feeder Only';
+    public static final String FEEDER_PLUS_ACCOUNT = 'Feeder Plus';
 }
