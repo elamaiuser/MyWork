@@ -2,11 +2,15 @@
 <CustomLabels xmlns="http://soap.sforce.com/2006/04/metadata">
     <labels>
         <fullName>AccPortfolioAssignmentException</fullName>
-        <fullName>Potential_Feeder_Group_Lead_Status</fullName>
         <language>en_US</language>
         <protected>false</protected>
         <shortDescription>AccPortfolioAssignmentException</shortDescription>
         <value>System Administrator,Global Admin,Recruitment Admin,APS Admin</value>
+    </labels>
+    <labels>
+        <fullName>Potential_Feeder_Group_Lead_Status</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
         <shortDescription>Potential Feeder Group Lead Status</shortDescription>
         <value>Potential Feeder Group,Future Outreach,Feeder Group - Qualified,Feeder Group - Unqualified</value>
     </labels>
