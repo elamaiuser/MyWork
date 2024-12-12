@@ -85,6 +85,7 @@ public class skedOpportunityHandler extends skedTriggerHub {
         fieldsToCheck.add('Number_of_Plasma_Assets__c');
         fieldsToCheck.add('Number_of_Platelet_Assets__c');
         fieldsToCheck.add('Slot_Generator__c');
+        fieldsToCheck.add('APT_Required__c'); //HRP-13190
         return fieldsToCheck;
     }
     

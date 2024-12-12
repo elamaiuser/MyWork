@@ -28,7 +28,9 @@ public class skedDriveHandler extends skedTriggerHub {
         'sked_Number_of_Plasma_Assets__c' => 'Number_of_Plasma_Assets__c',
         'sked_Number_of_Platelet_Assets__c' => 'Number_of_Platelet_Assets__c',
         'sked_Cancellation_Reason__c' => 'sked_Cancellation_Reason__c',
-        'sked_Initiated_By__c' => 'Initiated_By__c'
+        'sked_Initiated_By__c' => 'Initiated_By__c',
+        'sked_APT_Required__c' => 'APT_Required__c',
+        'sked_APT_Quantity__c' => 'APT_Quantity__c'
     };
     
     public override void onBeforeInsert() {
@@ -1079,17 +1081,16 @@ public class skedDriveHandler extends skedTriggerHub {
             }
         }
         if (!driveIdsToRevalidate.isEmpty()) {
-            Map<Id, sked__Job_Allocation__c> mapJobAllocation = new Map<Id, sked__Job_Allocation__c>([
-                SELECT Id
+            List<sked__Job_Allocation__c> jobAllocations = new List<sked__Job_Allocation__c>([
+                SELECT Id, sked_Completed_Post_Processes__c
                 FROM sked__Job_Allocation__c
                 WHERE sked__Job__r.sked_Drive__c IN :driveIdsToRevalidate
                 AND sked__Status__c != :skedConstants.JOB_ALLOCATION_STATUS_DELETED
             ]);
-            if (!mapJobAllocation.isEmpty()) {
-                if (!System.isBatch() || !Test.isRunningTest()) {
-                    skedJobAllocationPostProcessBatch.batchSetting batchSetting = new skedJobAllocationPostProcessBatch.batchSetting();
-                    Database.executeBatch(new skedJobAllocationPostProcessBatch(batchSetting, mapJobAllocation.keyset()), 200);
-                }
+
+            skedTriggerUtils.removePostProcessFromJobAllocations(jobAllocations, skedConstants.JOB_ALLOCATION_POST_PROCESS_MAIN_PROCESS);
+            if (!jobAllocations.isEmpty()) {
+                skedJobAllocationPostProcessBatch.schedule();
             }
         }
     }

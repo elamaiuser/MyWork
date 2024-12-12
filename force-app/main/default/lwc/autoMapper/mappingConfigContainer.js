@@ -130,7 +130,6 @@ class mappingConfigContainer {
         let mappingConfig;
         if (!this.mapConfig.has(sObjectType)) {
             let className = sObjectType + 'MappingConfigFactory';
-            console.log('init factoryInstance: ' + className);
             //implement cache class mapping
             let factoryInstance = new this.classesMapping[className]();
             mappingConfig = factoryInstance.process();

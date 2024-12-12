@@ -142,6 +142,15 @@ trigger updateEventTrigger on Update_Event__e (After Insert) {
                     recOpp.Slot_Generator_Change_Reason__c = oppFields.Slot_Generator_Change_Reason;
                 }
                 // HRP-12011 --> Ends here
+                
+                // HRP-13190 --> Starts here
+                if(oppFields.updatedDataKeys.contains('APT_Required__c')) { 
+                    recOpp.APT_Required__c = oppFields.APT_Required;
+                }
+                if(oppFields.updatedDataKeys.contains('APT_Quantity__c')) { 
+                    recOpp.APT_Quantity__c = oppFields.APT_Quantity;
+                }
+                // HRP-13190 --> Starts here
                 System.debug('recOpp being updated->'+recOpp);
                 
                 mapOfOppToUpdate.put(recOpp.Id,recOpp);//HRP-12422
