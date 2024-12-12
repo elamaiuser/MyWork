@@ -32,6 +32,13 @@
                         </valueListItems>
                         <valueListItems>
                             <value>Account.Create_a_Template</value>
+                            <visibilityRule>
+                                <criteria>
+                                    <leftValue>{!Record.Feeder_Account_Type__c}</leftValue>
+                                    <operator>NE</operator>
+                                    <rightValue>Feeder Only</rightValue>
+                                </criteria>
+                            </visibilityRule>
                         </valueListItems>
                         <valueListItems>
                             <value>Account.Plan_a_Mobile_Drive</value>
@@ -45,6 +52,13 @@
                         </valueListItems>
                         <valueListItems>
                             <value>CustomButton.Account.View_Drive_Detail</value>
+                            <visibilityRule>
+                                <criteria>
+                                    <leftValue>{!Record.Feeder_Account_Type__c}</leftValue>
+                                    <operator>NE</operator>
+                                    <rightValue>Feeder Only</rightValue>
+                                </criteria>
+                            </visibilityRule>
                         </valueListItems>
                         <valueListItems>
                             <value>CustomButton.Account.View_Account_Overview</value>
@@ -55,7 +69,7 @@
                         <valueListItems>
                             <value>Account.Account_Based_Portfolio_Assignment</value>
                             <visibilityRule>
-                                <booleanFilter>1 OR 2 OR 3</booleanFilter>
+                                <booleanFilter>(1 OR 2 OR 3) AND 4</booleanFilter>
                                 <criteria>
                                     <leftValue>{!$User.Profile.Name}</leftValue>
                                     <operator>EQUAL</operator>
@@ -71,6 +85,11 @@
                                     <operator>EQUAL</operator>
                                     <rightValue>Global Admin</rightValue>
                                 </criteria>
+                                <criteria>
+                                    <leftValue>{!Record.Feeder_Account_Type__c}</leftValue>
+                                    <operator>NE</operator>
+                                    <rightValue>Feeder Only</rightValue>
+                                </criteria>
                             </visibilityRule>
                         </valueListItems>
                         <valueListItems>
@@ -81,9 +100,26 @@
                         </valueListItems>
                         <valueListItems>
                             <value>Account.sked_Check_for_Impacted_Drives</value>
+                            <visibilityRule>
+                                <criteria>
+                                    <leftValue>{!Record.Feeder_Account_Type__c}</leftValue>
+                                    <operator>NE</operator>
+                                    <rightValue>Feeder Only</rightValue>
+                                </criteria>
+                            </visibilityRule>
                         </valueListItems>
                         <valueListItems>
                             <value>Account.Update_Sponsor_Keyword</value>
+                        </valueListItems>
+                        <valueListItems>
+                            <value>Account.Upgrade_Account</value>
+                            <visibilityRule>
+                                <criteria>
+                                    <leftValue>{!Record.Feeder_Account_Type__c}</leftValue>
+                                    <operator>EQUAL</operator>
+                                    <rightValue>Feeder Only</rightValue>
+                                </criteria>
+                            </visibilityRule>
                         </valueListItems>
                         <valueListItems>
                             <value>Account.Mass_Account_Service_Role_Add</value>
@@ -195,6 +231,13 @@
                 </componentInstanceProperties>
                 <componentName>GenericRelatedList</componentName>
                 <identifier>c_GenericRelatedList</identifier>
+                <visibilityRule>
+                    <criteria>
+                        <leftValue>{!Record.Feeder_Account_Type__c}</leftValue>
+                        <operator>NE</operator>
+                        <rightValue>Feeder Only</rightValue>
+                    </criteria>
+                </visibilityRule>
             </componentInstance>
         </itemInstances>
         <itemInstances>
@@ -307,10 +350,16 @@
                 <componentName>lst:dynamicRelatedList</componentName>
                 <identifier>lst_dynamicRelatedList</identifier>
                 <visibilityRule>
+                    <booleanFilter>1 AND 2</booleanFilter>
                     <criteria>
                         <leftValue>{!$Client.formFactor}</leftValue>
                         <operator>EQUAL</operator>
                         <rightValue>Large</rightValue>
+                    </criteria>
+                    <criteria>
+                        <leftValue>{!Record.Feeder_Account_Type__c}</leftValue>
+                        <operator>NE</operator>
+                        <rightValue>Feeder Only</rightValue>
                     </criteria>
                 </visibilityRule>
             </componentInstance>
@@ -323,7 +372,7 @@
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>SOQLQuery</name>
-                    <value>Select Name, Drive_Date__c,  StageName, DriveStatus__c,Flow_Start_Time_Label_Text__c,Flow_End_Time_Label_Text__c,Total_Projected_Procedures__c,Total_Products_Projected__c,Parent_Template_Id__c from opportunity  where Is_Template__c=false and (Drive_Status__c =null OR Drive_Status__c=&apos;Draft&apos;) and Drive_Date__c&gt;=today and AccountId IN:</value>
+                    <value>Select Name, Drive_Date__c,  StageName, DriveStatus__c,Flow_Start_Time_Label_Text__c,Flow_End_Time_Label_Text__c,Total_Projected_Procedures__c,Total_Products_Projected__c,Parent_Template_Id__c from opportunity  where Is_Template__c=false and (Drive_Status__c =null OR Drive_Status__c=&#39;Draft&#39;) and Drive_Date__c&gt;=today and AccountId IN:</value>
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>dateFormatType</name>
@@ -352,10 +401,16 @@
                 <componentName>GenericRelatedList</componentName>
                 <identifier>c_GenericRelatedList3</identifier>
                 <visibilityRule>
+                    <booleanFilter>1 AND 2</booleanFilter>
                     <criteria>
                         <leftValue>{!$Client.formFactor}</leftValue>
                         <operator>EQUAL</operator>
                         <rightValue>Small</rightValue>
+                    </criteria>
+                    <criteria>
+                        <leftValue>{!Record.Feeder_Account_Type__c}</leftValue>
+                        <operator>NE</operator>
+                        <rightValue>Feeder Only</rightValue>
                     </criteria>
                 </visibilityRule>
             </componentInstance>
@@ -464,10 +519,16 @@
                 <componentName>lst:dynamicRelatedList</componentName>
                 <identifier>lst_dynamicRelatedList3</identifier>
                 <visibilityRule>
+                    <booleanFilter>1 AND 2</booleanFilter>
                     <criteria>
                         <leftValue>{!$Client.formFactor}</leftValue>
                         <operator>EQUAL</operator>
                         <rightValue>Large</rightValue>
+                    </criteria>
+                    <criteria>
+                        <leftValue>{!Record.Feeder_Account_Type__c}</leftValue>
+                        <operator>NE</operator>
+                        <rightValue>Feeder Only</rightValue>
                     </criteria>
                 </visibilityRule>
             </componentInstance>
@@ -480,7 +541,7 @@
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>SOQLQuery</name>
-                    <value>select Name, Drive_Date__c,  StageName, DriveStatus__c from opportunity where Is_Template__c=false and Drive_Date__c&gt;=today and  StageName != &apos;Cancelled&apos; AND  Drive_Status__c in (&apos;Hold&apos;,&apos;System Generated&apos;,&apos;Tentative&apos;,&apos;Confirmed&apos;)  and AccountId IN:</value>
+                    <value>select Name, Drive_Date__c,  StageName, DriveStatus__c from opportunity where Is_Template__c=false and Drive_Date__c&gt;=today and  StageName != &#39;Cancelled&#39; AND  Drive_Status__c in (&#39;Hold&#39;,&#39;System Generated&#39;,&#39;Tentative&#39;,&#39;Confirmed&#39;)  and AccountId IN:</value>
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>dateFormatType</name>
@@ -509,10 +570,16 @@
                 <componentName>GenericRelatedList</componentName>
                 <identifier>c_GenericRelatedList5</identifier>
                 <visibilityRule>
+                    <booleanFilter>1 AND 2</booleanFilter>
                     <criteria>
                         <leftValue>{!$Client.formFactor}</leftValue>
                         <operator>EQUAL</operator>
                         <rightValue>Small</rightValue>
+                    </criteria>
+                    <criteria>
+                        <leftValue>{!Record.Feeder_Account_Type__c}</leftValue>
+                        <operator>NE</operator>
+                        <rightValue>Feeder Only</rightValue>
                     </criteria>
                 </visibilityRule>
             </componentInstance>
@@ -597,10 +664,16 @@
                 <componentName>lst:dynamicRelatedList</componentName>
                 <identifier>lst_dynamicRelatedList4</identifier>
                 <visibilityRule>
+                    <booleanFilter>1 AND 2</booleanFilter>
                     <criteria>
                         <leftValue>{!$Client.formFactor}</leftValue>
                         <operator>EQUAL</operator>
                         <rightValue>Large</rightValue>
+                    </criteria>
+                    <criteria>
+                        <leftValue>{!Record.Feeder_Account_Type__c}</leftValue>
+                        <operator>NE</operator>
+                        <rightValue>Feeder Only</rightValue>
                     </criteria>
                 </visibilityRule>
             </componentInstance>
@@ -613,7 +686,7 @@
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>SOQLQuery</name>
-                    <value>select Name,Drive_Date__c,   StageName, DriveStatus__c  from opportunity where Drive_Status__c=&apos;Complete&apos; AND AccountId IN:</value>
+                    <value>select Name,Drive_Date__c,   StageName, DriveStatus__c  from opportunity where Drive_Status__c=&#39;Complete&#39; AND AccountId IN:</value>
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>dateFormatType</name>
@@ -642,10 +715,55 @@
                 <componentName>GenericRelatedList</componentName>
                 <identifier>c_GenericRelatedList7</identifier>
                 <visibilityRule>
+                    <booleanFilter>1 AND 2</booleanFilter>
                     <criteria>
                         <leftValue>{!$Client.formFactor}</leftValue>
                         <operator>EQUAL</operator>
                         <rightValue>Small</rightValue>
+                    </criteria>
+                    <criteria>
+                        <leftValue>{!Record.Feeder_Account_Type__c}</leftValue>
+                        <operator>NE</operator>
+                        <rightValue>Feeder Only</rightValue>
+                    </criteria>
+                </visibilityRule>
+            </componentInstance>
+        </itemInstances>
+        <itemInstances>
+            <componentInstance>
+                <componentInstanceProperties>
+                    <name>parentFieldApiName</name>
+                    <value>Account.Id</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>relatedListApiName</name>
+                    <value>Feeder_Account_Opportunities__r</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>relatedListComponentOverride</name>
+                    <value>ADVGRID</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>rowsToDisplay</name>
+                    <value>5</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>showActionBar</name>
+                    <value>false</value>
+                </componentInstanceProperties>
+                <componentName>force:relatedListSingleContainer</componentName>
+                <identifier>force_relatedListSingleContainer</identifier>
+                <visibilityRule>
+                    <booleanFilter>1 OR 2</booleanFilter>
+                    <criteria>
+                        <leftValue>{!Record.Feeder_Account_Type__c}</leftValue>
+                        <operator>EQUAL</operator>
+                        <rightValue>Feeder Only</rightValue>
+                    </criteria>
+                    <criteria>
+                        <leftValue>{!Record.Feeder_Account_Type__c}</leftValue>
+                        <operator>EQUAL</operator>
+                        <rightValue>Feeder Plus</rightValue>
                     </criteria>
                 </visibilityRule>
             </componentInstance>
@@ -730,10 +848,16 @@
                 <componentName>lst:dynamicRelatedList</componentName>
                 <identifier>lst_dynamicRelatedList10</identifier>
                 <visibilityRule>
+                    <booleanFilter>1 AND 2</booleanFilter>
                     <criteria>
                         <leftValue>{!$Client.formFactor}</leftValue>
                         <operator>EQUAL</operator>
                         <rightValue>Large</rightValue>
+                    </criteria>
+                    <criteria>
+                        <leftValue>{!Record.Feeder_Account_Type__c}</leftValue>
+                        <operator>NE</operator>
+                        <rightValue>Feeder Only</rightValue>
                     </criteria>
                 </visibilityRule>
             </componentInstance>
@@ -746,7 +870,7 @@
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>SOQLQuery</name>
-                    <value>select Name, Drive_Date__c,StageName, DriveStatus__c from Opportunity where StageName= &apos;Cancelled&apos; AND AccountId IN:</value>
+                    <value>select Name, Drive_Date__c,StageName, DriveStatus__c from Opportunity where StageName= &#39;Cancelled&#39; AND AccountId IN:</value>
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>dateFormatType</name>
@@ -775,10 +899,16 @@
                 <componentName>GenericRelatedList</componentName>
                 <identifier>c_GenericRelatedList8</identifier>
                 <visibilityRule>
+                    <booleanFilter>1 AND 2</booleanFilter>
                     <criteria>
                         <leftValue>{!$Client.formFactor}</leftValue>
                         <operator>EQUAL</operator>
                         <rightValue>Small</rightValue>
+                    </criteria>
+                    <criteria>
+                        <leftValue>{!Record.Feeder_Account_Type__c}</leftValue>
+                        <operator>NE</operator>
+                        <rightValue>Feeder Only</rightValue>
                     </criteria>
                 </visibilityRule>
             </componentInstance>
@@ -1256,6 +1386,13 @@
                 </componentInstanceProperties>
                 <componentName>flexipage:tab</componentName>
                 <identifier>flexipage_tab2</identifier>
+                <visibilityRule>
+                    <criteria>
+                        <leftValue>{!Record.Feeder_Account_Type__c}</leftValue>
+                        <operator>NE</operator>
+                        <rightValue>Feeder Only</rightValue>
+                    </criteria>
+                </visibilityRule>
             </componentInstance>
         </itemInstances>
         <name>Facet-656872d1-84d0-43b3-87ad-ba5d3d871506</name>
