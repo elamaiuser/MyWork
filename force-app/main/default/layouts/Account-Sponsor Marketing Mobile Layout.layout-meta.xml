@@ -178,10 +178,6 @@
                 <behavior>Edit</behavior>
                 <field>Sponsor_Declines_Online_Scheduling__c</field>
             </layoutItems>
-            <layoutItems>
-                <behavior>Edit</behavior>
-                <field>APT_Required__c</field>
-            </layoutItems>
         </layoutColumns>
         <layoutColumns>
             <layoutItems>

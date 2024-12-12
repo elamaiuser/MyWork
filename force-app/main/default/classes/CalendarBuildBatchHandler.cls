@@ -15,6 +15,7 @@
  * 06/07/24	    Priti Jana		    Logic for HRP-12011
  * 08/06/24     Priti Jana          Logic for HRP-12706
  * 09/09/24		Balaji N			Logic for HRP-13265
+ * 12/10/24     Priti Jana          Logic for HRP-13190
  **************************************************************************************************************************************/
 
  public with sharing class CalendarBuildBatchHandler {
@@ -59,7 +60,8 @@
                                                            No_Publicity_Needed__c, Open_to_Public__c, Drive_Keyword__c, Publish_to_Call_Center__c, Web_Scheduling_Enabled__c,
                                                            Send_Emails__c, Send_Mailers__c, Web_Scheduling_End_Date_Offset__c, Web_Scheduling_End_Time_Offset__c, 
                                                            Web_Scheduling_Start_Date_Offset__c, Platelet_Projected_Procedures__c, Plasma_Pheresis_Projected_Procedures__c,
-                                                           Flow_End_Time_Field__c, Flow_Start_Time_Field__c, Type //HRP=11814
+                                                           Flow_End_Time_Field__c, Flow_Start_Time_Field__c, Type, //HRP=11814
+                                                           APT_Quantity__c, APT_Required__c //HRP-13190
                                                            FROM Opportunity WHERE Id in :parentTemplateIdsSet];
         
         Map<Id, Opportunity> oppWithParentTemplateMap = new Map<Id, Opportunity>();
@@ -105,6 +107,8 @@
                 clonedOpp.Web_Scheduling_End_Time_Offset__c = oppWithParentTemplateMap.get(origOpp.Parent_Template_Id__c).Web_Scheduling_End_Time_Offset__c;
                 clonedOpp.Web_Scheduling_Start_Date_Offset__c = oppWithParentTemplateMap.get(origOpp.Parent_Template_Id__c).Web_Scheduling_Start_Date_Offset__c;
                 clonedOpp.Web_Scheduling_Start_Date_Offset__c = oppWithParentTemplateMap.get(origOpp.Parent_Template_Id__c).Web_Scheduling_Start_Date_Offset__c;
+            	clonedOpp.APT_Required__c = oppWithParentTemplateMap.get(origOpp.Parent_Template_Id__c).APT_Required__c; //HRP-13190
+                clonedOpp.APT_Quantity__c = oppWithParentTemplateMap.get(origOpp.Parent_Template_Id__c).APT_Quantity__c; //HRP-13190
             }
             //HRP-12011 --> Starts Here
             if(origOpp.Slot_Generator__c != NULL) {

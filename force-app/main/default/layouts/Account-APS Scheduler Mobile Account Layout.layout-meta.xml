@@ -185,10 +185,6 @@
                 <behavior>Required</behavior>
                 <field>Accepts_Automation2__c</field>
             </layoutItems>
-            <layoutItems>
-                <behavior>Edit</behavior>
-                <field>APT_Required__c</field>
-            </layoutItems>
         </layoutColumns>
         <layoutColumns>
             <layoutItems>
