@@ -636,7 +636,7 @@
                     <inputParameters>
                         <name>fieldApiName</name>
                         <value>
-                            <stringValue>Contact__c</stringValue>
+                            <stringValue>ContactId</stringValue>
                         </value>
                     </inputParameters>
                     <inputParameters>
@@ -648,7 +648,7 @@
                     <inputParameters>
                         <name>objectApiName</name>
                         <value>
-                            <stringValue>Account_Service_Role__c</stringValue>
+                            <stringValue>OpportunityContactRole</stringValue>
                         </value>
                     </inputParameters>
                     <inputParameters>
