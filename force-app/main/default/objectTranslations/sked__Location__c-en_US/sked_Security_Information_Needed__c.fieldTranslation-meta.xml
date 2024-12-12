@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+        <help><!-- Information provided by staff day of drive upon arrival at blood drive. --></help>
+        <label><!-- Security Information Needed --></label>
+        <name>sked_Security_Information_Needed__c</name>
+        <picklistValues>
+            <masterLabel>Date of Birth</masterLabel>
+            <translation><!-- Date of Birth --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Drivers Licenses #</masterLabel>
+            <translation><!-- Drivers Licenses # --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Real ID</masterLabel>
+            <translation><!-- Real ID --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>SSN</masterLabel>
+            <translation><!-- SSN --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Safety Video</masterLabel>
+            <translation><!-- Safety Video --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Staff Full Names</masterLabel>
+            <translation><!-- Staff Full Names --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>US Citizen</masterLabel>
+            <translation><!-- US Citizen --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Vehicle License #</masterLabel>
+            <translation><!-- Vehicle License # --></translation>
+        </picklistValues>
+    </CustomFieldTranslation>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+        <help><!-- Indicates if the Site is Suitable or Unsuitable for Double Red Blood Cells. --></help>
+        <label><!-- Automation Suitability --></label>
+        <name>sked_Automation_Suitability__c</name>
+        <picklistValues>
+            <masterLabel>Suitable</masterLabel>
+            <translation><!-- Suitable --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Unsuitable</masterLabel>
+            <translation><!-- Unsuitable --></translation>
+        </picklistValues>
+    </CustomFieldTranslation>

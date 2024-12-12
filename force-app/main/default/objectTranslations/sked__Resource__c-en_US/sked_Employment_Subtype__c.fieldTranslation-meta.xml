@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+        <label><!-- Employment Subtype --></label>
+        <name>sked_Employment_Subtype__c</name>
+        <picklistValues>
+            <masterLabel>Employment Subtype 1</masterLabel>
+            <translation><!-- Employment Subtype 1 --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Employment Subtype 2</masterLabel>
+            <translation><!-- Employment Subtype 2 --></translation>
+        </picklistValues>
+    </CustomFieldTranslation>

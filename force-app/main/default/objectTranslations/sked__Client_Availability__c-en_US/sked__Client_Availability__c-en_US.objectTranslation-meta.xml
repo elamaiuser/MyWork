@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObjectTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <layouts>
+        <layout>Client Availability Layout</layout>
+        <sections>
+            <label><!-- Custom Links --></label>
+            <section>Custom Links</section>
+        </sections>
+    </layouts>
+    <layouts>
+        <layout>Sked Client Availability Layout</layout>
+        <sections>
+            <label><!-- Custom Links --></label>
+            <section>Custom Links</section>
+        </sections>
+    </layouts>
+    <validationRules>
+        <errorMessage><!-- Account and Contact fields must not both be empty --></errorMessage>
+        <name>sked__Must_have_either_Account_or_Contact</name>
+    </validationRules>
+    <validationRules>
+        <errorMessage><!-- If IsAvailable, the end of the preferred time window must be &gt; Start and &lt;= End --></errorMessage>
+        <name>sked__Preferred_End_within_avail_window</name>
+    </validationRules>
+    <validationRules>
+        <errorMessage><!-- If IsAvailable, the start of the preferred time window must be &gt;= Start and &lt; End --></errorMessage>
+        <name>sked__Preferred_Start_within_avail_window</name>
+    </validationRules>
+    <validationRules>
+        <errorMessage><!-- Start must be before End --></errorMessage>
+        <name>sked__Start_must_be_before_End</name>
+    </validationRules>
+    <validationRules>
+        <errorMessage><!-- Preferred Start must be before Preferred End --></errorMessage>
+        <name>sked__Start_must_be_before_End_preferred</name>
+    </validationRules>
+</CustomObjectTranslation>

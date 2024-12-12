@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+        <help><!-- If enabled in your Skedulo configuration, this will trigger Skedulo to auto-allocate and schedule this job to an appropriate timeslot and resource automatically. --></help>
+        <label><!-- Auto Schedule --></label>
+        <name>sked__Auto_Schedule__c</name>
+    </CustomFieldTranslation>

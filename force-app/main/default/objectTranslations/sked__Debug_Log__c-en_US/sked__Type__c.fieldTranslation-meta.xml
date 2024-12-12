@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+        <label><!-- Type --></label>
+        <name>sked__Type__c</name>
+        <picklistValues>
+            <masterLabel>Activity Deleted</masterLabel>
+            <translation><!-- Activity Deleted --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Alert Log</masterLabel>
+            <translation><!-- Alert Log --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Collections Territory Delete Failed</masterLabel>
+            <translation><!-- Collections Territory Delete Failed --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Collections Territory Upsert Failed</masterLabel>
+            <translation><!-- Collections Territory Upsert Failed --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Debug Log</masterLabel>
+            <translation><!-- Debug Log --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Error Log</masterLabel>
+            <translation><!-- Error Log --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Operation Record Submission</masterLabel>
+            <translation><!-- Operation Record Submission --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Optimizer</masterLabel>
+            <translation><!-- Optimizer --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Site Collection Operation Delete Failed</masterLabel>
+            <translation><!-- Site Collection Operation Delete Failed --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Site Collection Operation Upsert Failed</masterLabel>
+            <translation><!-- Site Collection Operation Upsert Failed --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Workday API Request</masterLabel>
+            <translation><!-- Workday API Request --></translation>
+        </picklistValues>
+    </CustomFieldTranslation>

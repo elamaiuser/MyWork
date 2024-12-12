@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+        <label><!-- FCC Code --></label>
+        <name>sked_FCC_Code__c</name>
+        <picklistValues>
+            <masterLabel>83140</masterLabel>
+            <translation><!-- 83140 --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>83340</masterLabel>
+            <translation><!-- 83340 --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>83347</masterLabel>
+            <translation><!-- 83347 --></translation>
+        </picklistValues>
+    </CustomFieldTranslation>

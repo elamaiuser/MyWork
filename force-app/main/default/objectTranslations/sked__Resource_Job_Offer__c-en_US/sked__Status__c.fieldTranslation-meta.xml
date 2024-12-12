@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+        <label><!-- Status --></label>
+        <name>sked__Status__c</name>
+        <picklistValues>
+            <masterLabel>Declined</masterLabel>
+            <translation><!-- Declined --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>OfferCancelled</masterLabel>
+            <translation><!-- OfferCancelled --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>OfferFilled</masterLabel>
+            <translation><!-- OfferFilled --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Pending</masterLabel>
+            <translation><!-- Pending --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>ResourceOfferCancelled</masterLabel>
+            <translation><!-- ResourceOfferCancelled --></translation>
+        </picklistValues>
+    </CustomFieldTranslation>

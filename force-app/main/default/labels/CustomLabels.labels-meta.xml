@@ -686,7 +686,7 @@ Withdrawn/Excluded-&gt; Cancelled, Closed</value>
         <language>en_US</language>
         <protected>false</protected>
         <shortDescription>TravelTimeEditableProfiles</shortDescription>
-        <value>APS Admin,System Administrator,Global Admin</value>
+        <value>APS Admin,System Administrator,Global Admin,APS Management,APS Planner</value>
     </labels>
     <labels>
         <fullName>WeeklyStaffingRoleReportURL</fullName>

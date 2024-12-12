@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObjectTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <layouts>
+        <layout>Templated Job Layout</layout>
+        <sections>
+            <label><!-- Custom Links --></label>
+            <section>Custom Links</section>
+        </sections>
+    </layouts>
+    <validationRules>
+        <errorMessage><!-- A Templated Job&apos;s duration must be greater than 0 minutes --></errorMessage>
+        <name>sked__DurationMustBeGreaterThanZero</name>
+    </validationRules>
+    <validationRules>
+        <errorMessage><!-- If Min and Max Attendees are set, Min must not be more than Max. --></errorMessage>
+        <name>sked__MaxAttendeesNotGreaterThanMin</name>
+    </validationRules>
+    <validationRules>
+        <errorMessage><!-- If Max Attendees is set it must be positive. --></errorMessage>
+        <name>sked__MaxAttendeesPositive</name>
+    </validationRules>
+    <validationRules>
+        <errorMessage><!-- If Min Attendees is set it must not be negative. --></errorMessage>
+        <name>sked__MinAttendeesNonNegative</name>
+    </validationRules>
+    <validationRules>
+        <errorMessage><!-- Quantity must be null or greater than 0 --></errorMessage>
+        <name>sked__QuantityNullOrPositive</name>
+    </validationRules>
+    <validationRules>
+        <errorMessage><!-- Start Offset Days Must be non-negative --></errorMessage>
+        <name>sked__StartOffsetDaysNonNegative</name>
+    </validationRules>
+</CustomObjectTranslation>

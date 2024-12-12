@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+        <label><!-- Self Call Out --></label>
+        <name>sked_Is_Self_Call_Out__c</name>
+    </CustomFieldTranslation>

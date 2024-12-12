@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+        <help><!-- Plastic floor covering is part of the standard set up.  If required, sponsor provided covering should be set up prior to staff arrival and is at the responsibility of Donor Recruitment to coordinate. --></help>
+        <label><!-- Floor Covering Requirement --></label>
+        <name>sked_Floor_Covering_Requirement__c</name>
+        <picklistValues>
+            <masterLabel>Plastic floor covering provided by ARC</masterLabel>
+            <translation><!-- Plastic floor covering provided by ARC --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Sponsor provided floor covering</masterLabel>
+            <translation><!-- Sponsor provided floor covering --></translation>
+        </picklistValues>
+    </CustomFieldTranslation>

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObjectTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <validationRules>
+        <errorMessage><!-- End time cannot be after job end time --></errorMessage>
+        <name>sked__EndTimeNotAfterJobFinish</name>
+    </validationRules>
+    <validationRules>
+        <errorMessage><!-- Quantity must be greater than 0 --></errorMessage>
+        <name>sked__QuantityGreaterThanZero</name>
+    </validationRules>
+    <validationRules>
+        <errorMessage><!-- Relative Start must be null if Job Allocation Time Source is false --></errorMessage>
+        <name>sked__RelativeStartNullIfTimeSourceFalse</name>
+    </validationRules>
+    <validationRules>
+        <errorMessage><!-- Start time cannot be before job start time --></errorMessage>
+        <name>sked__StartTimeNotBeforeJobStart</name>
+    </validationRules>
+    <validationRules>
+        <errorMessage><!-- Duration must be set if Job Allocation Time Source is true --></errorMessage>
+        <name>sked__TimeSourceMustHaveDuration</name>
+    </validationRules>
+</CustomObjectTranslation>

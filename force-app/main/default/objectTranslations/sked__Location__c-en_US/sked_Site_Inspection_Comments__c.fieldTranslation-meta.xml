@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+        <help><!-- If applicable, enter suitability concerns and document approver --></help>
+        <label><!-- Site Inspection Comments --></label>
+        <name>sked_Site_Inspection_Comments__c</name>
+    </CustomFieldTranslation>

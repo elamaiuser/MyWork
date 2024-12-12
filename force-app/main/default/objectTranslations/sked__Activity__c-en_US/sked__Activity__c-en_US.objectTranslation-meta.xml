@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObjectTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <layouts>
+        <layout>Sked Activity Layout</layout>
+        <sections>
+            <label><!-- Call Out --></label>
+            <section>Call Out</section>
+        </sections>
+        <sections>
+            <label><!-- Custom Links --></label>
+            <section>Custom Links</section>
+        </sections>
+        <sections>
+            <label><!-- Linked Drive --></label>
+            <section>Linked Drive</section>
+        </sections>
+        <sections>
+            <label><!-- System fields --></label>
+            <section>System fields</section>
+        </sections>
+    </layouts>
+    <validationRules>
+        <errorMessage><!-- Activity date range must be greater than zero but no greater than 24 hrs --></errorMessage>
+        <name>sked__DateRangeValidation</name>
+    </validationRules>
+    <validationRules>
+        <errorMessage><!-- Quantity of Resources required must be null or greater than 0 --></errorMessage>
+        <name>sked__QuantityNullOrPositive</name>
+    </validationRules>
+</CustomObjectTranslation>

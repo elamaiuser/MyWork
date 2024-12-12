@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObjectTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+    
+    
+    
+    
+    
+    
+    
+    <validationRules>
+        <errorMessage><!-- FromJob and ToJob must reference two different jobs. --></errorMessage>
+        <name>sked__FromJob_and_ToJob_different</name>
+    </validationRules>
+    <validationRules>
+        <errorMessage><!-- ToAnchorMinOffsetMinutes cannot be greater than ToAnchorMaxOffsetMinutes. --></errorMessage>
+        <name>sked__Min_Offset_not_greater_than_Max_Offset</name>
+    </validationRules>
+    <validationRules>
+        <errorMessage><!-- ToAnchorMinOffsetMinutes and ToAnchorMaxOffsetMinutes cannot be both unspecified. --></errorMessage>
+        <name>sked__Min_Offset_or_Max_Offset_or_both</name>
+    </validationRules>
+</CustomObjectTranslation>

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+        <help><!-- Staff members are required to have escort at facility.  Note name or position of escort via the Blood Drive Opportunity record. --></help>
+        <label><!-- Escort Required --></label>
+        <name>sked_Escort_Required__c</name>
+    </CustomFieldTranslation>

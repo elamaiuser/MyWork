@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+        <label><!-- Call Out for Job Allocation --></label>
+        <name>sked_Call_Out_for_Job_Allocation__c</name>
+        <relationshipLabel><!-- Availabilities --></relationshipLabel>
+    </CustomFieldTranslation>

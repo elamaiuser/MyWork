@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+        <help><!-- Consider Role Time Variance if Unloading Conditions required additional set up or breakdown time. --></help>
+        <label><!-- Unloading Conditions --></label>
+        <name>sked_Unloading_Conditions__c</name>
+        <picklistValues>
+            <masterLabel>Distance to Donation Area &gt;200ft</masterLabel>
+            <translation><!-- Distance to Donation Area &gt;200ft --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Dock Available​</masterLabel>
+            <translation><!-- Dock Available​ --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Dock Required</masterLabel>
+            <translation><!-- Dock Required --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Forklift Needed​</masterLabel>
+            <translation><!-- Forklift Needed​ --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Security​</masterLabel>
+            <translation><!-- Security​ --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Single Vehicle Unload</masterLabel>
+            <translation><!-- Single Vehicle Unload --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Street Unload​</masterLabel>
+            <translation><!-- Street Unload​ --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Unpaved​</masterLabel>
+            <translation><!-- Unpaved​ --></translation>
+        </picklistValues>
+    </CustomFieldTranslation>

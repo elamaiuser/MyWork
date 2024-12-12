@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+        <label><!-- Collection Operation ID (Staging) --></label>
+        <name>sked_Collection_Operation_ID_Staging__c</name>
+    </CustomFieldTranslation>

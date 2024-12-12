@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+        <label><!-- Resource Override --></label>
+        <name>sked__Resource_Override__c</name>
+        <relationshipLabel><!-- Resource Override Regions --></relationshipLabel>
+    </CustomFieldTranslation>

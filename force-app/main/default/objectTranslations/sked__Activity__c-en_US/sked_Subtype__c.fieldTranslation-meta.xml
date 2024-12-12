@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+        <label><!-- Subtype --></label>
+        <name>sked_Subtype__c</name>
+        <picklistValues>
+            <masterLabel>After Hours Call Out Management</masterLabel>
+            <translation><!-- After Hours Call Out Management --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>BHQ - Annual</masterLabel>
+            <translation><!-- BHQ - Annual --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>BHQ - BioArch R1</masterLabel>
+            <translation><!-- BHQ - BioArch R1 --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>BHQ - BioArch R2</masterLabel>
+            <translation><!-- BHQ - BioArch R2 --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>BHQ - CERP</masterLabel>
+            <translation><!-- BHQ - CERP --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>BHQ - New Hire</masterLabel>
+            <translation><!-- BHQ - New Hire --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>BHQ - Other</masterLabel>
+            <translation><!-- BHQ - Other --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Blood Run</masterLabel>
+            <translation><!-- Blood Run --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Divisional - Other</masterLabel>
+            <translation><!-- Divisional - Other --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Donor Outreach</masterLabel>
+            <translation><!-- Donor Outreach --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Health Fair</masterLabel>
+            <translation><!-- Health Fair --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Holiday Day Off</masterLabel>
+            <translation><!-- Holiday Day Off --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>ISP - BHQ</masterLabel>
+            <translation><!-- ISP - BHQ --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>ISP - BHQ Academy</masterLabel>
+            <translation><!-- ISP - BHQ Academy --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>ISP - Regional</masterLabel>
+            <translation><!-- ISP - Regional --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>ISP - Regional Academy</masterLabel>
+            <translation><!-- ISP - Regional Academy --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>In-Service</masterLabel>
+            <translation><!-- In-Service --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Inspection</masterLabel>
+            <translation><!-- Inspection --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Inter-Region Support</masterLabel>
+            <translation><!-- Inter-Region Support --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Labor Relations</masterLabel>
+            <translation><!-- Labor Relations --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Maintenance</masterLabel>
+            <translation><!-- Maintenance --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Media</masterLabel>
+            <translation><!-- Media --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Meeting</masterLabel>
+            <translation><!-- Meeting --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Modified Duty</masterLabel>
+            <translation><!-- Modified Duty --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>National Bargaining</masterLabel>
+            <translation><!-- National Bargaining --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>ORC Beta</masterLabel>
+            <translation><!-- ORC Beta --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>On Call</masterLabel>
+            <translation><!-- On Call --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Operations</masterLabel>
+            <translation><!-- Operations --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Organizational Day</masterLabel>
+            <translation><!-- Organizational Day --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Other</masterLabel>
+            <translation><!-- Other --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Overnight</masterLabel>
+            <translation><!-- Overnight --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Parade</masterLabel>
+            <translation><!-- Parade --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Physicals</masterLabel>
+            <translation><!-- Physicals --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Post-Drive Breakdown</masterLabel>
+            <translation><!-- Post-Drive Breakdown --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Pre-Drive Setup</masterLabel>
+            <translation><!-- Pre-Drive Setup --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Problem Management</masterLabel>
+            <translation><!-- Problem Management --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Regional - Other</masterLabel>
+            <translation><!-- Regional - Other --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Reservation</masterLabel>
+            <translation><!-- Reservation --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Transfer</masterLabel>
+            <translation><!-- Transfer --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Travel</masterLabel>
+            <translation><!-- Travel --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>eBDR</masterLabel>
+            <translation><!-- eBDR --></translation>
+        </picklistValues>
+    </CustomFieldTranslation>

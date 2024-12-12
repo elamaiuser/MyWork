@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+        <help><!-- The start time in 24 hour numeric format (i.e. 2230) --></help>
+        <label><!-- Start Time --></label>
+        <name>sked__Start_Time__c</name>
+    </CustomFieldTranslation>

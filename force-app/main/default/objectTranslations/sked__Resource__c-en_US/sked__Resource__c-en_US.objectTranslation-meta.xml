@@ -1,0 +1,271 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObjectTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <layouts>
+        <layout>Asset Layout</layout>
+        <sections>
+            <label><!-- Custom Links --></label>
+            <section>Custom Links</section>
+        </sections>
+    </layouts>
+    <layouts>
+        <layout>Resource Layout</layout>
+        <sections>
+            <label><!-- Custom Links --></label>
+            <section>Custom Links</section>
+        </sections>
+    </layouts>
+    <layouts>
+        <layout>Staff Layout</layout>
+        <sections>
+            <label><!-- Address Information --></label>
+            <section>Address Information</section>
+        </sections>
+        <sections>
+            <label><!-- Contact Information --></label>
+            <section>Contact Information</section>
+        </sections>
+        <sections>
+            <label><!-- Custom Links --></label>
+            <section>Custom Links</section>
+        </sections>
+        <sections>
+            <label><!-- Employment Details --></label>
+            <section>Employment Details</section>
+        </sections>
+        <sections>
+            <label><!-- Red Cross Information --></label>
+            <section>Red Cross Information</section>
+        </sections>
+        <sections>
+            <label><!-- Scheduling Parameters --></label>
+            <section>Scheduling Parameters</section>
+        </sections>
+        <sections>
+            <label><!-- Supervisor Information --></label>
+            <section>Supervisor Information</section>
+        </sections>
+        <sections>
+            <label><!-- System Information --></label>
+            <section>System Information</section>
+        </sections>
+    </layouts>
+    <recordTypes>
+        <label><!-- Asset --></label>
+        <name>sked_Asset</name>
+    </recordTypes>
+    <recordTypes>
+        <label><!-- Staff --></label>
+        <name>sked_Staff</name>
+    </recordTypes>
+    <validationRules>
+        <errorMessage><!-- Field can be checked only if the Address Referenced for Scheduling is Work. --></errorMessage>
+        <name>ARFSvalidation</name>
+    </validationRules>
+    <validationRules>
+        <errorMessage><!-- Only APS Users, Global Admin and System Admin can edit Work Address when WFH/Virtual Field is set. --></errorMessage>
+        <name>AllowWorkAddressEditForWHF</name>
+    </validationRules>
+    <validationRules>
+        <errorMessage><!-- The Maximum Number of Workdays per Week must be greater than or equal to the Minimum Number of Workdays per Week. --></errorMessage>
+        <name>MinAndMaxWorkDaysPerWeekMustBeValid</name>
+    </validationRules>
+    <validationRules>
+        <errorMessage><!-- Line of Service accepts only alphabetic characters. --></errorMessage>
+        <name>OnlyAlphaForLineOfService</name>
+    </validationRules>
+    <validationRules>
+        <errorMessage><!-- Job Code accepts only alphanumeric characters. --></errorMessage>
+        <name>OnlyAlphanumericForJobCode</name>
+    </validationRules>
+    <validationRules>
+        <errorMessage><!-- Daily Time Off Hours is required --></errorMessage>
+        <name>PersonDailyTimeOffHoursIsRequired</name>
+    </validationRules>
+    <validationRules>
+        <errorMessage><!-- Employee ID is required. --></errorMessage>
+        <name>PersonEmployeeIdIsRequired</name>
+    </validationRules>
+    <validationRules>
+        <errorMessage><!-- First Name is required --></errorMessage>
+        <name>PersonFirstNameIsRequired</name>
+    </validationRules>
+    <validationRules>
+        <errorMessage><!-- Last Name is required. --></errorMessage>
+        <name>PersonLastNameIsRequired</name>
+    </validationRules>
+    <validationRules>
+        <errorMessage><!-- Max Hours Per Week is required. --></errorMessage>
+        <name>PersonMaxHoursPerWeekIsRequired</name>
+    </validationRules>
+    <validationRules>
+        <errorMessage><!-- Min Hours Per Week is requried. --></errorMessage>
+        <name>PersonMinHoursPerWeekIsRequired</name>
+    </validationRules>
+    <validationRules>
+        <errorMessage><!-- Turnaround Time is required --></errorMessage>
+        <name>PersonTurnaroundTimeIsRequired</name>
+    </validationRules>
+    <validationRules>
+        <errorMessage><!-- ULID (A #) is required. --></errorMessage>
+        <name>PersonUlidIsRequired</name>
+    </validationRules>
+    <validationRules>
+        <errorMessage><!-- Asset Type is required. --></errorMessage>
+        <name>RequireAssetType</name>
+    </validationRules>
+    <validationRules>
+        <errorMessage><!-- Satellite Address/GeoLocation cannot be blank. --></errorMessage>
+        <name>SatelliteAddressNotBlank</name>
+    </validationRules>
+    <validationRules>
+        <errorMessage><!-- Resources require either &quot;Collection Operation timezone&quot; OR &quot;Collection Operation Staging Name&quot; and &quot;Timezone&quot; to be populated --></errorMessage>
+        <name>TimezoneDetailsRequired</name>
+    </validationRules>
+    <validationRules>
+        <errorMessage><!-- Unable to populate Maximum Weekly Hours for Asset Resources --></errorMessage>
+        <name>UnableToSetMaxHoursForAsset</name>
+    </validationRules>
+    <validationRules>
+        <errorMessage><!-- Only system admin can edit the Virtual/WFH field --></errorMessage>
+        <name>only_System_Admin_can_edit_Virtual_WFH</name>
+    </validationRules>
+</CustomObjectTranslation>

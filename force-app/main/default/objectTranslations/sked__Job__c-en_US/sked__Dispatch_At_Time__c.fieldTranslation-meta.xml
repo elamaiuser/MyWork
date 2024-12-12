@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+        <help><!-- If specified, this job will be automatically be dispatched within 5 minutes of the time specified. If set to a value in the past, will dispatch immediately. --></help>
+        <label><!-- Dispatch At Time --></label>
+        <name>sked__Dispatch_At_Time__c</name>
+    </CustomFieldTranslation>
