@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>sked_On_Site_Food_Canteen_Requirements__c</fullName>
+    <externalId>false</externalId>
+    <label>On-Site Food Requirements</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>MultiselectPicklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Kosher Only</fullName>
+                <default>false</default>
+                <label>Kosher Only</label>
+            </value>
+            <value>
+                <fullName>Peanut Free</fullName>
+                <default>false</default>
+                <label>Peanut Free</label>
+            </value>
+            <value>
+                <fullName>No Caffeine</fullName>
+                <default>false</default>
+                <label>No Caffeine</label>
+            </value>
+            <value>
+                <fullName>No Off-Site Food</fullName>
+                <default>false</default>
+                <label>No Off-Site Food</label>
+            </value>
+            <value>
+                <fullName>Vendor Only Food</fullName>
+                <default>false</default>
+                <label>Vendor Only Food</label>
+            </value>
+            <value>
+                <fullName>Other</fullName>
+                <default>false</default>
+                <label>Other</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+    <visibleLines>4</visibleLines>
+</CustomField>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>TraineeTagMustHaveValidStatus</fullName>
+    <active>true</active>
+    <description>Trainee Tag must have a status of either Active or Pending.</description>
+    <errorConditionFormula>AND(sked__Tag__r.Name == &#39;Trainee&#39;,  NOT(OR(ISPICKVAL( sked_Role_Status__c , &#39;Active&#39;), ISPICKVAL(sked_Role_Status__c , &#39;Pending&#39;))))</errorConditionFormula>
+    <errorDisplayField>sked_Role_Status__c</errorDisplayField>
+    <errorMessage>Trainee Tag must have a status of either Active or Pending.</errorMessage>
+</ValidationRule>

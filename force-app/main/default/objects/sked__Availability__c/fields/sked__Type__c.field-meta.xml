@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>sked__Type__c</fullName>
+    <deprecated>false</deprecated>
+    <description>What type of availability/unavailability</description>
+    <externalId>false</externalId>
+    <label>Type</label>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <controllingField>sked_Resource_Type__c</controllingField>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Sick</fullName>
+                <default>false</default>
+                <label>Sick</label>
+            </value>
+            <value>
+                <fullName>Overtime</fullName>
+                <default>false</default>
+                <label>Overtime</label>
+            </value>
+            <value>
+                <fullName>Weekend Shift</fullName>
+                <default>false</default>
+                <label>Weekend Shift</label>
+            </value>
+            <value>
+                <fullName>Available</fullName>
+                <default>false</default>
+                <label>Available</label>
+            </value>
+            <value>
+                <fullName>PTO</fullName>
+                <default>false</default>
+                <label>PTO</label>
+            </value>
+            <value>
+                <fullName>Maintenance</fullName>
+                <default>false</default>
+                <label>Maintenance</label>
+            </value>
+            <value>
+                <fullName>Activity</fullName>
+                <default>false</default>
+                <label>Activity</label>
+            </value>
+            <value>
+                <fullName>Break down</fullName>
+                <default>false</default>
+                <label>Break down</label>
+            </value>
+            <value>
+                <fullName>Availability Template Override</fullName>
+                <default>false</default>
+                <label>Availability Template Override</label>
+            </value>
+            <value>
+                <fullName>Unavailable</fullName>
+                <default>false</default>
+                <label>Unavailable</label>
+            </value>
+            <value>
+                <fullName>Call Out</fullName>
+                <default>false</default>
+                <label>Call Out</label>
+            </value>
+            <value>
+                <fullName>Floating Holiday</fullName>
+                <default>false</default>
+                <label>Floating Holiday</label>
+            </value>
+            <value>
+                <fullName>Bereavement</fullName>
+                <default>false</default>
+                <label>Bereavement</label>
+            </value>
+            <value>
+                <fullName>On Call</fullName>
+                <default>false</default>
+                <label>On Call</label>
+            </value>
+            <value>
+                <fullName>Personal</fullName>
+                <default>false</default>
+                <label>Personal</label>
+            </value>
+        </valueSetDefinition>
+        <valueSettings>
+            <controllingFieldValue>Person</controllingFieldValue>
+            <valueName>Sick</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Person</controllingFieldValue>
+            <valueName>Overtime</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Person</controllingFieldValue>
+            <valueName>Weekend Shift</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Person</controllingFieldValue>
+            <valueName>Available</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Person</controllingFieldValue>
+            <valueName>PTO</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Person</controllingFieldValue>
+            <valueName>Unavailable</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Person</controllingFieldValue>
+            <valueName>Floating Holiday</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Person</controllingFieldValue>
+            <valueName>Bereavement</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Person</controllingFieldValue>
+            <valueName>Personal</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Asset</controllingFieldValue>
+            <valueName>Maintenance</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Asset</controllingFieldValue>
+            <valueName>Activity</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Asset</controllingFieldValue>
+            <valueName>Break down</valueName>
+        </valueSettings>
+    </valueSet>
+</CustomField>

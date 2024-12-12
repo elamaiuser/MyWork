@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>sked__MaxAttendeesPositive</fullName>
+    <active>true</active>
+    <errorConditionFormula>AND (NOT(ISNULL(sked__Max_Attendees__c)), sked__Max_Attendees__c &lt;= 0)</errorConditionFormula>
+    <errorDisplayField>sked__Max_Attendees__c</errorDisplayField>
+    <errorMessage>If Max Attendees is set it must be positive.</errorMessage>
+</ValidationRule>

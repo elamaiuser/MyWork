@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>sked_Fixed_Site_Lock_Reason__c</fullName>
+    <externalId>false</externalId>
+    <label>Fixed Site Lock Reason</label>
+    <required>false</required>
+    <trackHistory>true</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <controllingField>sked_Type__c</controllingField>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Staffing</fullName>
+                <default>false</default>
+                <label>Staffing</label>
+            </value>
+            <value>
+                <fullName>Machines</fullName>
+                <default>false</default>
+                <label>Machines</label>
+            </value>
+            <value>
+                <fullName>Weather</fullName>
+                <default>false</default>
+                <label>Weather</label>
+            </value>
+            <value>
+                <fullName>Site Issue</fullName>
+                <default>false</default>
+                <label>Site Issue</label>
+            </value>
+            <value>
+                <fullName>BSF</fullName>
+                <default>false</default>
+                <label>BSF</label>
+            </value>
+            <value>
+                <fullName>Freezing</fullName>
+                <default>false</default>
+                <label>Freezing</label>
+            </value>
+            <value>
+                <fullName>Inventory Management</fullName>
+                <default>false</default>
+                <label>Inventory Management</label>
+            </value>
+        </valueSetDefinition>
+        <valueSettings>
+            <controllingFieldValue>2RBC</controllingFieldValue>
+            <controllingFieldValue>Whole Blood</controllingFieldValue>
+            <controllingFieldValue>Plasma</controllingFieldValue>
+            <controllingFieldValue>Platelet</controllingFieldValue>
+            <valueName>Staffing</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>2RBC</controllingFieldValue>
+            <controllingFieldValue>Whole Blood</controllingFieldValue>
+            <controllingFieldValue>Plasma</controllingFieldValue>
+            <controllingFieldValue>Platelet</controllingFieldValue>
+            <valueName>Machines</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>2RBC</controllingFieldValue>
+            <controllingFieldValue>Whole Blood</controllingFieldValue>
+            <controllingFieldValue>Plasma</controllingFieldValue>
+            <controllingFieldValue>Platelet</controllingFieldValue>
+            <valueName>Weather</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>2RBC</controllingFieldValue>
+            <controllingFieldValue>Whole Blood</controllingFieldValue>
+            <controllingFieldValue>Plasma</controllingFieldValue>
+            <controllingFieldValue>Platelet</controllingFieldValue>
+            <valueName>Site Issue</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>2RBC</controllingFieldValue>
+            <controllingFieldValue>Whole Blood</controllingFieldValue>
+            <controllingFieldValue>Plasma</controllingFieldValue>
+            <controllingFieldValue>Platelet</controllingFieldValue>
+            <valueName>BSF</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>2RBC</controllingFieldValue>
+            <controllingFieldValue>Whole Blood</controllingFieldValue>
+            <controllingFieldValue>Plasma</controllingFieldValue>
+            <controllingFieldValue>Platelet</controllingFieldValue>
+            <valueName>Freezing</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Plasma</controllingFieldValue>
+            <valueName>Inventory Management</valueName>
+        </valueSettings>
+    </valueSet>
+</CustomField>

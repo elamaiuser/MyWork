@@ -110,86 +110,6 @@ global class skedPtoRequestController extends skedBaseController {
     }
     
     @remoteAction
-    global static skedRemoteResultModel getStaffingBudget(getStaffingBudgetRequest request) {
-        skedRemoteResultModel result = new skedRemoteResultModel(request.viewData);
-        try {
-            string timezoneSidId = (string)request.viewData.get('timezoneSidId');
-            skedSetting.instance.App.setTimezoneSidId(timezoneSidId);
-            
-            List<string> recordIds = new List<string>();
-            recordIds.add(request.resourceId);
-            skedResourceService.queryModel resourceQuery = new skedResourceService.queryModel();
-            resourceQuery.recordIds = recordIds;
-            resourceQuery.locationResourceRelationShip = 'Preferred';
-            resourceQuery.subQueryIndicator = skedSObjectType.LOCATION_RESOURCE_SCORE;
-            
-            skedResourceService resourceService = (skedResourceService)skedServiceFactory.instance.resolve('sked__Resource__c');
-            skedModels.resource resource = ((List<skedModels.resource>)resourceService.getList(resourceQuery)).get(0);
-            Set<String> preferredFixedSiteIds = new Set<String>();
-            if(resource.locationResourceScores != NULL && !resource.locationResourceScores.isEmpty()) {
-                for(skedModels.locationResourceScore locationResourceScore : resource.locationResourceScores) {
-                    if(locationResourceScore.locationType != NULL && locationResourceScore.locationType.equalsIgnoreCase('Fixed Site')) {
-                        preferredFixedSiteIds.add(locationResourceScore.locationId);
-                    }
-                }
-            }
-
-            List<String> staffingBudgetIds = new List<String>();
-            if(preferredFixedSiteIds != NULL && !preferredFixedSiteIds.isEmpty()) {
-                skedStaffingBudgetSiteService.queryModel staffingBudgetSiteQuery = new skedStaffingBudgetSiteService.queryModel();
-                staffingBudgetSiteQuery.siteIds = new List<String>(preferredFixedSiteIds);
-                staffingBudgetSiteQuery.startDate = request.startDate;
-
-                skedStaffingBudgetSiteService staffingBudgetSiteService = (skedStaffingBudgetSiteService)skedServiceFactory.instance.resolve('sked_Staffing_Budget_Site__c');
-                List<skedModels.staffingBudgetSite> staffingBudgetSites = (List<skedModels.staffingBudgetSite>)staffingBudgetSiteService.getList(staffingBudgetSiteQuery);
-                if(!staffingBudgetSites.isEmpty()) {
-                    for(skedModels.staffingBudgetSite staffingBudgetSite : staffingBudgetSites) {
-                        staffingBudgetIds.add(staffingBudgetSite.staffingBudgetId);
-                    }
-                }       
-            }
-            
-            skedStaffingBudgetService.queryModel staffingBudgetQuery = new skedStaffingBudgetService.queryModel();
-            if(staffingBudgetIds != NULL && !staffingBudgetIds.isEmpty()) {
-                staffingBudgetQuery.recordIds = staffingBudgetIds;
-            } else {
-                staffingBudgetQuery.biomedCollectionOpIds = new List<string>();
-                staffingBudgetQuery.biomedCollectionOpIds.add(resource.biomedCollectionOpId);
-            }
-            staffingBudgetQuery.roles = resource.roles.split(';');
-            staffingBudgetQuery.startDate = request.startDate;
-            
-            skedStaffingBudgetService staffingBudgetService = (skedStaffingBudgetService)skedServiceFactory.instance.resolve('sked_Staffing_Budget__c');
-            List<skedModels.staffingBudget> staffingBudgets = (List<skedModels.staffingBudget>)staffingBudgetService.getList(staffingBudgetQuery);
-            
-            Map<string, integer> map_type_priority = new Map<string, integer>();
-            map_type_priority.put(skedConstants.STAFFING_BUDGET_REQUEST_TYPE_STANDARD, 1);
-            map_type_priority.put(skedConstants.STAFFING_BUDGET_REQUEST_TYPE_OPEN_ENROLLMENT, 2);
-            map_type_priority.put(skedConstants.STAFFING_BUDGET_REQUEST_TYPE_ALL_HANDS_ON_DECK, 3);
-                
-            Map<string, skedModels.staffingBudget> mapStaffingBudget = new Map<string, skedModels.staffingBudget>();
-            for (skedModels.staffingBudget staffingBudget : staffingBudgets) {
-                if (!mapStaffingBudget.containsKey(staffingBudget.staffingBudgetDate)) {
-                    mapStaffingBudget.put(staffingBudget.staffingBudgetDate, staffingBudget);
-                }
-                else {
-                    skedModels.staffingBudget existingStaffingBudget = mapStaffingBudget.get(staffingBudget.staffingBudgetDate);
-                    integer existingStaffingBudgetPriority = map_type_priority.get(existingStaffingBudget.requestType);
-                    integer staffingBudgetPriority = map_type_priority.get(staffingBudget.requestType);
-                    if (staffingBudgetPriority > existingStaffingBudgetPriority) {
-                        mapStaffingBudget.put(staffingBudget.staffingBudgetDate, staffingBudget);
-                    }
-                }
-            }
-            result.data = mapStaffingBudget.values();
-        }
-        catch (Exception ex) {
-            result.getError(ex);
-        }
-        return result;
-    }
-    
-    @remoteAction
     global static skedRemoteResultModel getUnavailabilityStatistic(getUnavailabilityStatisticRequest request) {
         skedRemoteResultModel result = new skedRemoteResultModel(request.viewData);
         try {
@@ -660,12 +580,6 @@ global class skedPtoRequestController extends skedBaseController {
     }
 
     global class getPendingAvailabilityRequest extends getDataRequestModel {
-        public string endDate;
-        public string resourceId;
-        public string startDate;
-    }
-    
-    global class getStaffingBudgetRequest extends getDataRequestModel {
         public string endDate;
         public string resourceId;
         public string startDate;

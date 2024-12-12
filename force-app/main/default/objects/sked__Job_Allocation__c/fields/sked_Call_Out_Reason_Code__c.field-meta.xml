@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>sked_Call_Out_Reason_Code__c</fullName>
+    <externalId>false</externalId>
+    <label>Call Out Reason Code</label>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <controllingField>sked_Call_Out_Type__c</controllingField>
+        <valueSetDefinition>
+            <sorted>true</sorted>
+            <value>
+                <fullName>Management Decision</fullName>
+                <default>false</default>
+                <label>Management Decision</label>
+            </value>
+            <value>
+                <fullName>Personal</fullName>
+                <default>false</default>
+                <label>Personal</label>
+            </value>
+            <value>
+                <fullName>Turnaround Time</fullName>
+                <default>false</default>
+                <label>Turnaround Time</label>
+            </value>
+        </valueSetDefinition>
+        <valueSettings>
+            <controllingFieldValue>Call Out</controllingFieldValue>
+            <controllingFieldValue>Late Arrival</controllingFieldValue>
+            <controllingFieldValue>Early Departure</controllingFieldValue>
+            <valueName>Management Decision</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Call Out</controllingFieldValue>
+            <controllingFieldValue>Late Arrival</controllingFieldValue>
+            <controllingFieldValue>Early Departure</controllingFieldValue>
+            <valueName>Personal</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Late Arrival</controllingFieldValue>
+            <controllingFieldValue>Early Departure</controllingFieldValue>
+            <valueName>Turnaround Time</valueName>
+        </valueSettings>
+    </valueSet>
+</CustomField>

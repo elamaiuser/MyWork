@@ -354,3 +354,7 @@ export const OPTIMIZER_SETTING_DISPLAY_TYPE = {
   PICKLIST: 'Picklist',
   CHECKBOX: 'Checkbox'
 }
+
+export const VOLUNTEER_COUNTS_ADJUSTMENT_REASON = {
+  OTHER: 'Other'
+}

@@ -444,7 +444,13 @@ public class skedActivityHandler extends skedTriggerHub {
         ];
 
         if (activityResources != null && !activityResources.isEmpty()) {
-            delete skedActivityResourceUtils.getAvailabilityRecordsForOnCalls(activityResources);
+            List<sked__Availability__c> availabilities = [SELECT Id
+                                                          FROM sked__Availability__c
+                                                          WHERE sked_Activity_Resource__c IN :activityResources];
+            if (!availabilities.isEmpty()) {
+                delete availabilities;
         }
     }
+}
+    
 }

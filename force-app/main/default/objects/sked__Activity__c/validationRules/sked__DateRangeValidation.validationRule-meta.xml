@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>sked__DateRangeValidation</fullName>
+    <active>false</active>
+    <description>Minutes from start to end must be longer than 0 but no greater than 24 hrs</description>
+    <errorConditionFormula>OR(
+   ROUND(((sked__End__c - sked__Start__c) * 1440),0) &gt; 1440,
+   ROUND(((sked__End__c - sked__Start__c) * 1440),0) &lt;= 0.0
+)</errorConditionFormula>
+    <errorMessage>Activity date range must be greater than zero but no greater than 24 hrs</errorMessage>
+</ValidationRule>

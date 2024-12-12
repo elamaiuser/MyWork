@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Peru_IL_DMRTVs_Location</fullName>
+    <filterScope>Queue</filterScope>
+    <label>Peru IL: DMRTVs</label>
+    <queue>Peru_IL_DMRTVs</queue>
+    <sharedTo>
+        <allInternalUsers />
+    </sharedTo>
+</ListView>

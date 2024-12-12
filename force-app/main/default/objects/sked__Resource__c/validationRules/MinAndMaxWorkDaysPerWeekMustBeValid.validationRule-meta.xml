@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>MinAndMaxWorkDaysPerWeekMustBeValid</fullName>
+    <active>true</active>
+    <description>Validation to make sure Maximum Number of Workdays per Week is greater or equal Minimum Number of Workdays per Week.</description>
+    <errorConditionFormula>NOT(ISBLANK(TEXT(sked_Max_Working_Days_Per_Week__c))) &amp;&amp; NOT(ISBLANK(TEXT(sked_Min_Working_Days_Per_Week__c))) &amp;&amp; VALUE(TEXT(sked_Max_Working_Days_Per_Week__c)) &lt; VALUE(TEXT(sked_Min_Working_Days_Per_Week__c))</errorConditionFormula>
+    <errorMessage>The Maximum Number of Workdays per Week must be greater than or equal to the Minimum Number of Workdays per Week.</errorMessage>
+</ValidationRule>

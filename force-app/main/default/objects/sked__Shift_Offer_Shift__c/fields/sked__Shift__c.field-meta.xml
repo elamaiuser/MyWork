@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>sked__Shift__c</fullName>
+    <deprecated>false</deprecated>
+    <description>The shift</description>
+    <externalId>false</externalId>
+    <label>Shift</label>
+    <referenceTo>sked__Shift__c</referenceTo>
+    <relationshipLabel>Shift Offer Shifts</relationshipLabel>
+    <relationshipName>Shift_Offer_Shifts</relationshipName>
+    <relationshipOrder>0</relationshipOrder>
+    <reparentableMasterDetail>false</reparentableMasterDetail>
+    <trackTrending>false</trackTrending>
+    <type>MasterDetail</type>
+    <writeRequiresMasterRead>false</writeRequiresMasterRead>
+</CustomField>

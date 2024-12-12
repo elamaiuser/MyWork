@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>National_Name_Status__c</fullName>
+    <externalId>false</externalId>
+    <label>National Name Status</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Initial Review Pending</fullName>
+                <default>false</default>
+                <label>Initial Review Pending</label>
+            </value>
+            <value>
+                <fullName>Second Review Pending</fullName>
+                <default>false</default>
+                <label>Second Review Pending</label>
+            </value>
+            <value>
+                <fullName>Review Completed</fullName>
+                <default>false</default>
+                <label>Review Completed</label>
+            </value>
+            <value>
+                <fullName>Initial Review Completed</fullName>
+                <default>false</default>
+                <label>Initial Review Completed</label>
+            </value>
+            <value>
+                <fullName>Second Review Completed</fullName>
+                <default>false</default>
+                <label>Second Review Completed</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>
