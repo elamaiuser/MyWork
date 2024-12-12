@@ -8,6 +8,13 @@
         <value>System Administrator,Global Admin,Recruitment Admin,APS Admin</value>
     </labels>
     <labels>
+        <fullName>Potential_Feeder_Group_Lead_Status</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Potential Feeder Group Lead Status</shortDescription>
+        <value>Potential Feeder Group,Future Outreach,Feeder Group - Qualified,Feeder Group - Unqualified</value>
+    </labels>
+    <labels>
         <fullName>AccountMergePermissionMessage</fullName>
         <language>en_US</language>
         <protected>false</protected>
@@ -158,7 +165,7 @@
         <fullName>DRD_Can_t_Create_Fixed_Account_Error_Msg</fullName>
         <language>en_US</language>
         <protected>false</protected>
-        <shortDescription>DRD Can&#39;t Create Fixed Account Error Msg</shortDescription>
+        <shortDescription>DRD Can&apos;t Create Fixed Account Error Msg</shortDescription>
         <value>DRD Users Can Not Create a Fixed Site Account.</value>
     </labels>
     <labels>
@@ -215,7 +222,7 @@
         <language>en_US</language>
         <protected>false</protected>
         <shortDescription>Drive Worksheet Report Drive Status</shortDescription>
-        <value>&#39;Confirmed&#39;</value>
+        <value>&apos;Confirmed&apos;</value>
     </labels>
     <labels>
         <fullName>Eligible_Account_Statuses_for_HandOff_Tasks</fullName>
@@ -431,7 +438,7 @@
         <language>en_US</language>
         <protected>false</protected>
         <shortDescription>OpportunitySplitErrorMsg</shortDescription>
-        <value>The user\&#39;s current profile is not allowed to modify the opportunity split</value>
+        <value>The user\&apos;s current profile is not allowed to modify the opportunity split</value>
     </labels>
     <labels>
         <fullName>OpportunitySplitService</fullName>
@@ -650,7 +657,7 @@ Withdrawn/Excluded-&gt; Cancelled, Closed</value>
         <language>en_US</language>
         <protected>false</protected>
         <shortDescription>Restrict_Operation_Type_Change_Error_Msg</shortDescription>
-        <value>You can&#39;t change operation type as drives have already been generated. Please create a new fixed site with the desired operation type.</value>
+        <value>You can&apos;t change operation type as drives have already been generated. Please create a new fixed site with the desired operation type.</value>
     </labels>
     <labels>
         <fullName>Restrict_Theme_Product_Add_Error_Msg</fullName>
@@ -779,5 +786,5 @@ Withdrawn/Excluded-&gt; Cancelled, Closed</value>
         <protected>false</protected>
         <shortDescription>storeProfileToCreateBsfPortfolioTask</shortDescription>
         <value>System Administrator</value>
-    </labels>    
+    </labels>
 </CustomLabels>
