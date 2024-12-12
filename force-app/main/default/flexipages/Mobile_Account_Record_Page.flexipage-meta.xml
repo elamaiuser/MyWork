@@ -436,10 +436,7 @@
                         </valueListItems>
                         <valueListItems>
                             <value>DriveStatus__c|NOT_EQUAL|Cancel</value>
-                        </valueListItems>
-                        <valueListItems>
-                            <value>DriveStatus__c|NOT_EQUAL|</value>
-                        </valueListItems>
+                        </valueListItems>                        
                     </valueList>
                 </componentInstanceProperties>
                 <componentInstanceProperties>

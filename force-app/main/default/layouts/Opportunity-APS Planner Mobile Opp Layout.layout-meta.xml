@@ -80,7 +80,12 @@
                 <field>sked_Cancellation_Reason__c</field>
             </layoutItems>
             <layoutItems>
-                <emptySpace>true</emptySpace>
+                <behavior>Edit</behavior>
+                <field>APT_Required__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Readonly</behavior>
+                <field>APT_Quantity__c</field>
             </layoutItems>
             <layoutItems>
                 <behavior>Readonly</behavior>
