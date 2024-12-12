@@ -69,6 +69,10 @@
                 <field>Chapter__c</field>
             </layoutItems>
             <layoutItems>
+                <behavior>Readonly</behavior>
+                <field>Feeder_Account_Type__c</field>
+            </layoutItems>
+            <layoutItems>
                 <emptySpace>true</emptySpace>
             </layoutItems>
         </layoutColumns>
@@ -644,6 +648,13 @@
         <fields>region_id__c</fields>
         <fields>DisplayUrl</fields>
         <relatedList>AccountBridgeAPI__x.guid__c</relatedList>
+    </relatedLists>
+    <relatedLists>
+        <excludeButtons>MassChangeOwner</excludeButtons>
+        <excludeButtons>New</excludeButtons>
+        <fields>Opportunity.NAME</fields>
+        <fields>Notes__c</fields>
+        <relatedList>Feeder_Account_Opportunity__c.Account__c</relatedList>
     </relatedLists>
     <relatedObjects>ParentId</relatedObjects>
     <showEmailCheckbox>false</showEmailCheckbox>

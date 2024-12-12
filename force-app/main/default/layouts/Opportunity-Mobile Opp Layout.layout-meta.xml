@@ -895,6 +895,12 @@
         <sortField>Drive_Date__c</sortField>
         <sortOrder>Desc</sortOrder>
     </relatedLists>
+    <relatedLists>
+        <excludeButtons>MassChangeOwner</excludeButtons>
+        <fields>Account.NAME</fields>
+        <fields>Notes__c</fields>
+        <relatedList>Feeder_Account_Opportunity__c.Opportunity__c</relatedList>
+    </relatedLists>
     <relatedObjects>AccountId</relatedObjects>
     <showEmailCheckbox>false</showEmailCheckbox>
     <showHighlightsPanel>false</showHighlightsPanel>
