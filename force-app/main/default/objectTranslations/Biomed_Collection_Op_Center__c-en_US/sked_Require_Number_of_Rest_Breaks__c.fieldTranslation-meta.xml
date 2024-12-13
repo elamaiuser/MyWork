@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
-        <label><!-- Require Number of Rest Breaks --></label>
-        <name>sked_Require_Number_of_Rest_Breaks__c</name>
-    </CustomFieldTranslation>

@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
-        <help><!-- The default hours per week that a human resource works --></help>
-        <label><!-- Weekly Hours --></label>
-        <name>sked__Weekly_Hours__c</name>
-    </CustomFieldTranslation>

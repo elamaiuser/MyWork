@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
-        <label><!-- Dedicated to Site --></label>
-        <name>sked_Dedicated_to_Site__c</name>
-        <relationshipLabel><!-- Resources --></relationshipLabel>
-    </CustomFieldTranslation>

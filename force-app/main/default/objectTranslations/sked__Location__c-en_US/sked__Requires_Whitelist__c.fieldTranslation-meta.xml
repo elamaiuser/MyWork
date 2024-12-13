@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
-        <help><!-- Does this location require resources to be whitelisted before they can be allocated? (i.e. for site inductions) --></help>
-        <label><!-- Requires Whitelist --></label>
-        <name>sked__Requires_Whitelist__c</name>
-    </CustomFieldTranslation>

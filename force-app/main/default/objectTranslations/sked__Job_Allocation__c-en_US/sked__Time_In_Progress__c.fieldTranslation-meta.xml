@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
-        <help><!-- Time user progressed status to &quot;In Progress&quot; --></help>
-        <label><!-- Time In Progress --></label>
-        <name>sked__Time_In_Progress__c</name>
-    </CustomFieldTranslation>

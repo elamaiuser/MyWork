@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
-        <label><!-- Max Hours Per Weekend --></label>
-        <name>sked_Max_Hours_Per_Weekend__c</name>
-    </CustomFieldTranslation>

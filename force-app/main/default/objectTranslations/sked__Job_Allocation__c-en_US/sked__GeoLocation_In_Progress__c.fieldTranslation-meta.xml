@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
-        <label><!-- GeoLocation In Progress --></label>
-        <name>sked__GeoLocation_In_Progress__c</name>
-    </CustomFieldTranslation>

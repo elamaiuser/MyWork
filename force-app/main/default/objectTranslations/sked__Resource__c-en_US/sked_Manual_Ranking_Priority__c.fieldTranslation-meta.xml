@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
-        <help><!-- This value will be referenced in the case where this resource has the same hire date as another resource in the same role. --></help>
-        <label><!-- Manual Ranking Priority --></label>
-        <name>sked_Manual_Ranking_Priority__c</name>
-    </CustomFieldTranslation>

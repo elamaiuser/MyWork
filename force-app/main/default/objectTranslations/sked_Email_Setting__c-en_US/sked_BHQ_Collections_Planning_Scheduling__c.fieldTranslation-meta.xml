@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
-        <label><!-- BHQ Collections Planning &amp; Scheduling --></label>
-        <name>sked_BHQ_Collections_Planning_Scheduling__c</name>
-    </CustomFieldTranslation>

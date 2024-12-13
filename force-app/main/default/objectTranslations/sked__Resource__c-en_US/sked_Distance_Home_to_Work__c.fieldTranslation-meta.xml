@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
-        <label><!-- Home to Work Distance (Miles) --></label>
-        <name>sked_Distance_Home_to_Work__c</name>
-    </CustomFieldTranslation>

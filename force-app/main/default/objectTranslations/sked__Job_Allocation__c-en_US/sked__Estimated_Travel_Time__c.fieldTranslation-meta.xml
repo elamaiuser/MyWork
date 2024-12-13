@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
-        <help><!-- Estimated travel time to this job, from the resources previous location, in minutes. --></help>
-        <label><!-- Estimated Travel Time --></label>
-        <name>sked__Estimated_Travel_Time__c</name>
-    </CustomFieldTranslation>

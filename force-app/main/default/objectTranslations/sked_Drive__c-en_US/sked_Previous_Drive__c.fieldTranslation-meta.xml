@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
-        <label><!-- Previous Drive --></label>
-        <name>sked_Previous_Drive__c</name>
-        <relationshipLabel><!-- Drives on Calendar (Previous Drive) --></relationshipLabel>
-    </CustomFieldTranslation>

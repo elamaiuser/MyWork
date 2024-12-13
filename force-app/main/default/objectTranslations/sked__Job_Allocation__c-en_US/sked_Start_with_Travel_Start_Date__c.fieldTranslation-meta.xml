@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
-        <label><!-- Start with Travel Start Date --></label>
-        <name>sked_Start_with_Travel_Start_Date__c</name>
-    </CustomFieldTranslation>

@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
-        <help><!-- System field to enforce that tag names are unique. Do not use for other purposes. --></help>
-        <label><!-- UniqueKey --></label>
-        <name>sked__UniqueKey__c</name>
-    </CustomFieldTranslation>

@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
-        <label><!-- Customer Job No. --></label>
-        <name>sked__Customer_Job_No__c</name>
-    </CustomFieldTranslation>

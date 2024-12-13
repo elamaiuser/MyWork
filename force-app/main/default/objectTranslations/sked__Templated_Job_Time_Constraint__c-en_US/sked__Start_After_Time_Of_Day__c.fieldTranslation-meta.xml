@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
-        <label><!-- Start After Time Of Day --></label>
-        <name>sked__Start_After_Time_Of_Day__c</name>
-    </CustomFieldTranslation>

@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
-        <help><!-- Restroom should be on the same floor as the blood drive and must have running water, soap and hand drying. --></help>
-        <label><!-- Restroom Location --></label>
-        <name>sked_Restroom_Location__c</name>
-    </CustomFieldTranslation>

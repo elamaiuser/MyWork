@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
-        <help><!-- If checked, this availability template will apply to all users --></help>
-        <label><!-- Global --></label>
-        <name>sked__Global__c</name>
-    </CustomFieldTranslation>

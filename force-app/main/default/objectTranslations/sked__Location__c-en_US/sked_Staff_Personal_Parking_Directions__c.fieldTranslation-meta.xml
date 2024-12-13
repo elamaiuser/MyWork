@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
-        <help><!-- Provide more details if &quot;Other&quot; was selected for ARC Vehicle Parking Directions. --></help>
-        <label><!-- Staff Personal Parking Directions --></label>
-        <name>sked_Staff_Personal_Parking_Directions__c</name>
-    </CustomFieldTranslation>

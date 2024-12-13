@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
-        <help><!-- Number of days after drive completion (excluding Complete/Cancel Drives) --></help>
-        <label><!-- No. of Days for Status Correction Batch --></label>
-        <name>No_of_Days_for_Status_Correction_Batch__c</name>
-    </CustomFieldTranslation>

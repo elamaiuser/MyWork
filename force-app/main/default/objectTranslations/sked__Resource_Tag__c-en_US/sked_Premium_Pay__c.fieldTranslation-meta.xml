@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
-        <help><!-- Eligible premium roles: 2RBC, 2RBC Sign-off, Apheresis Charge, Charge, Charge - 2RBC, Charge - Special Collections, Charge Mentor, Competent Driver, Drive Lead, Driver, Driver - DOT, Driver CDL A, Driver CDL B, Licensed Nurse, OJI, Special Collections Charge and Translator --></help>
-        <label><!-- Premium Pay --></label>
-        <name>sked_Premium_Pay__c</name>
-    </CustomFieldTranslation>

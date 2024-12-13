@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
-        <help><!-- Is the Resource attached to the Job Allocation a team leader on the job --></help>
-        <label><!-- Team Leader --></label>
-        <name>sked__Team_Leader__c</name>
-    </CustomFieldTranslation>
