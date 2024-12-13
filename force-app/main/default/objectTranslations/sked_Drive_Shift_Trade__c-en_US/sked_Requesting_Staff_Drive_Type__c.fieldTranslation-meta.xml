@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
-        <label><!-- Requesting Staff Drive Type --></label>
-        <name>sked_Requesting_Staff_Drive_Type__c</name>
-    </CustomFieldTranslation>

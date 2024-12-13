@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
-        <label><!-- Admin Enable Resource Call Out --></label>
-        <name>sked_Admin_Enable_Resource_Call_Out__c</name>
-    </CustomFieldTranslation>

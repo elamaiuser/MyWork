@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
-        <label><!-- RAC Auto Approval Cutoff Days --></label>
-        <name>sked_RAC_Auto_Approval_Cutoff_Days__c</name>
-    </CustomFieldTranslation>

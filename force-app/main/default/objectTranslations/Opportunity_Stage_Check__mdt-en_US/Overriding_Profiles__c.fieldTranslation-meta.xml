@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
-        <help><!-- Profiles that can override stage validation checks in csv format --></help>
-        <label><!-- Overriding Profiles --></label>
-        <name>Overriding_Profiles__c</name>
-    </CustomFieldTranslation>

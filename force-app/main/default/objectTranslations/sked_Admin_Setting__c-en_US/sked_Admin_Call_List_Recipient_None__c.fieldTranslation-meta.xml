@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
-        <label><!-- Admin Call List Recipient-None --></label>
-        <name>sked_Admin_Call_List_Recipient_None__c</name>
-    </CustomFieldTranslation>

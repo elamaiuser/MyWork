@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
-        <label><!-- Hire Date --></label>
-        <name>sked_Opt_Parm_Hire_Date_Skills__c</name>
-    </CustomFieldTranslation>
