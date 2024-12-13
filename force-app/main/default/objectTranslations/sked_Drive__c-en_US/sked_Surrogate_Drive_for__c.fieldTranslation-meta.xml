@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
-        <label><!-- Surrogate Drive for --></label>
-        <name>sked_Surrogate_Drive_for__c</name>
-        <relationshipLabel><!-- Surrogate Drives --></relationshipLabel>
-    </CustomFieldTranslation>
