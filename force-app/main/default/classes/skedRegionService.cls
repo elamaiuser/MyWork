@@ -11,6 +11,9 @@ global class skedRegionService extends skedEventService {
         if (!string.isBlank(query.biomedCollectionOpId)) {
             queryBuilder.addCondition('sked_Biomed_Collection_Op_Center__c = {0}', query.biomedCollectionOpId);
         }
+        if (query.biomedCollectionOpIds != NULL && !query.biomedCollectionOpIds.isEmpty()) {
+            queryBuilder.addCondition('sked_Biomed_Collection_Op_Center__c IN {0}', query.biomedCollectionOpIds);
+        }
         if (!string.isBlank(query.timezoneSidId)) {
             queryBuilder.addCondition('sked__Timezone__c = {0}', query.timezoneSidId);
         }
@@ -66,6 +69,7 @@ global class skedRegionService extends skedEventService {
     public class queryModel extends skedDataService.queryModelBase {
         public string biomedCollectionOpId;
         public string timezoneSidId;
+        public List<string> biomedCollectionOpIds;
     }
     
 }

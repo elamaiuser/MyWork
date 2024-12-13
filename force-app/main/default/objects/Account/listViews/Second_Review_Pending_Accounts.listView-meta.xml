@@ -16,6 +16,10 @@
         <operation>equals</operation>
         <value>Second Review Pending</value>
     </filters>
+    <filters>
+        <field>Feeder_Account_Type__c</field>
+        <operation>equals</operation>
+    </filters>
     <label>National Name_Second Review Pending</label>
     <sharedTo>
         <group>APS_Users</group>

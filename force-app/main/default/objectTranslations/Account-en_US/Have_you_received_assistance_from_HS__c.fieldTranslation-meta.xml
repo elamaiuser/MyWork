@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
-        <label><!-- Have you received assistance from HS --></label>
-        <name>Have_you_received_assistance_from_HS__c</name>
-    </CustomFieldTranslation>

@@ -2,7 +2,10 @@
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>sked_Territory_Key__c</fullName>
     <externalId>false</externalId>
-    <formula>CASESAFEID(sked_District__c) + &#39;:&#39; + CASESAFEID(sked_Collection_Operation__c)</formula>
+    <formula>IF(
+AND(
+NOT(ISBLANK(sked_District__c)),
+NOT(ISBLANK(sked_Collection_Operation__c))), CASESAFEID(sked_District__c) + &apos;:&apos; + CASESAFEID(sked_Collection_Operation__c), &apos;&apos;)</formula>
     <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
     <label>Territory Key</label>
     <required>false</required>

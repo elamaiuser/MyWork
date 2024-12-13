@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
-        <help><!-- If a rollover Opportunity, this is a reference to the prior (year) Drive on Calendar --></help>
-        <label><!-- Related Scheduled Drive --></label>
-        <name>Related_Scheduled_Drive__c</name>
-        <relationshipLabel><!-- Draft Drives --></relationshipLabel>
-    </CustomFieldTranslation>

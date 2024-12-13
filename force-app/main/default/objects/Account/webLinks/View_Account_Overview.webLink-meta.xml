@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<WebLink xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>View_Account_Overview</fullName>
+    <availability>online</availability>
+    <description>View Account Overview</description>
+    <displayType>button</displayType>
+    <encodingKey>UTF-8</encodingKey>
+    <hasMenubar>false</hasMenubar>
+    <hasScrollbars>true</hasScrollbars>
+    <hasToolbar>false</hasToolbar>
+    <height>600</height>
+    <isResizable>true</isResizable>
+    <linkType>url</linkType>
+    <masterLabel>View Account Overview</masterLabel>
+    <openType>newWindow</openType>
+    <position>none</position>
+    <protected>false</protected>
+    <showsLocation>false</showsLocation>
+    <showsStatus>false</showsStatus>
+    <url>https://app.powerbi.com/groups/me/apps/1bf85886-e730-4e80-9ea2-4330448f7aa5/reports/5ac27f31-040d-471f-863b-506073d91359/ReportSectionadefeb59e9e111f4ac95?experience=power-bi&amp;filter=Sponsor_x0020_Alt_x0020_IDs%2FSFBD_x0020_Sponsor_x0020_UFID%20eq%20%27{!Account.UFID__c}%27</url>
+</WebLink>

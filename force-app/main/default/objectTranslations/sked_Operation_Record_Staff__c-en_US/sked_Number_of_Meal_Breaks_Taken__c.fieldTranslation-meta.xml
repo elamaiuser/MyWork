@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
-        <label><!-- Number of Meal Breaks Taken --></label>
-        <name>sked_Number_of_Meal_Breaks_Taken__c</name>
-    </CustomFieldTranslation>

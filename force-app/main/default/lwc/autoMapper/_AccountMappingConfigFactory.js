@@ -12,9 +12,9 @@ export class AccountMappingConfigFactory {
       mappingConfig.addFieldConfig('Name', 'name', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('Accepts_Automation2__c', 'acceptsAutomation', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('APT_Required__c', 'aptRequired', MAPPING_TYPE.direct);
-      mappingConfig.addFieldConfig('Days_of_Week_Declined__c', 'daysOfWeekDeclined', MAPPING_TYPE.direct);
-      mappingConfig.addFieldConfig('Days_of_Week_Preferred__c', 'daysOfWeekPreferred', MAPPING_TYPE.direct);
+      mappingConfig.addFieldConfig('Industry_Code__c', 'industryCode', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('National_Name__c', 'nationalName', MAPPING_TYPE.direct);
+      mappingConfig.addFieldConfig('Type', 'type', MAPPING_TYPE.direct);
 
       mappingConfig.addFieldConfig('Owner', 'owner', MAPPING_TYPE.related, 'User');
 
