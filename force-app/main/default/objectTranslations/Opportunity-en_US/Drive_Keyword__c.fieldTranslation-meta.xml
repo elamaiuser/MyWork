@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
-        <help><!-- Keywords are used to search for drives on RCB.org. Maximum 50 characters, not required to be unique; not case sensitive; excludes numbers; &apos;and&apos;, &apos;or&apos;, &apos;left&apos;, &apos;right&apos; as standalone words; special characters. --></help>
-        <label><!-- Drive Keyword --></label>
-        <name>Drive_Keyword__c</name>
-    </CustomFieldTranslation>

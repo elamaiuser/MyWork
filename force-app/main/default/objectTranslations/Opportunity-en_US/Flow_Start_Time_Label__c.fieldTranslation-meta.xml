@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
-        <label><!-- Flow Start Time Label --></label>
-        <name>Flow_Start_Time_Label__c</name>
-    </CustomFieldTranslation>

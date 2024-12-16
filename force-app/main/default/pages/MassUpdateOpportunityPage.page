@@ -14,12 +14,13 @@
                                            event: 'force:navigateToSObject',
                                            handler: function(event) {
 											   console.log('Mass Opportunity Update VF - force:navigateToSObject event caught : ' + JSON.stringify(event));
+                                               const key = findMatchingKeys(event);//HRP-13831
                                                if (sforce && sforce.one) {
                                                    // VF page in S1 or Lightning Exp
-                                                   sforce.one.navigateToSObject(event?.fc? event.fc.recordId : (event?.ac? event.ac.recordId : event?.bc?.recordId)); //HRP-12765, 13465 (event.fc)
+                                                   sforce.one.navigateToSObject(event[key[0]]?.recordId);//HRP-13831
                                                } else {
                                                    // VF page in Classic
-                                                   window.location.assign('/'+ event?.fc? event.fc.recordId : (event?.ac? event.ac.recordId : event?.bc?.recordId)); //HRP-12765, 13465 (event.fc)
+                                                   window.location.assign('/'+ event[key[0]]?.recordId);//HRP-13831
                                                }
                                            }
                                        });
@@ -27,13 +28,13 @@
                                        $A.eventService.addHandler({
                                            event: 'force:navigateToObjectHome',
                                            handler: function(event) {
-											   console.log('Mass Opportunity Update VF - force:navigateToObjectHome event caught : ' + JSON.stringify(event));
+											   const key = findMatchingKeys(event);//HRP-13831
                                                if (sforce && sforce.one) {
                                                    // VF page in S1 or Lightning Exp
-                                                   sforce.one.navigateToObjectHome(event?.fc? event.fc.scope : (event?.ac? event.ac.scope : event?.bc?.scope)); //HRP-12765, 13465 (event.fc)
+                                                   sforce.one.navigateToObjectHome(event[key[0]]?.scope);//HRP-13831
                                                } else {
                                                    // VF page in Classic
-                                                   if (event?.fc ? event.fc.scope : (event?.bc? event.bc.scope : event?.ac?.scope) === 'Account') { //HRP-12765, 13465 (event.fc)
+                                                   if (event?.key[0]?.scope === 'Account') {//HRP-13831
                                                        window.location = '{!URLFOR($Action.Account.Tab, $ObjectType.Account)}';
                                                    }
                                                }
@@ -41,6 +42,33 @@
                                        });
                                    });
     });
+    function findMatchingKeys(obj) {//HRP-13831 start
+            let matchingKeys = [];
+            let visitedObjects = new Set();
+            function traverse(obj, currentPath) {
+                if (visitedObjects.has(obj)) return;
+                if (typeof obj === "object" && obj !== null) {
+                    visitedObjects.add(obj);
+                    for (const key in obj) {
+                        if (obj.hasOwnProperty(key)) {
+                            const newPath = currentPath ? `${currentPath}.${key}` : key;
+                            if (obj[key] &&
+                                obj[key]?.recordId &&
+                                obj[key]?.isredirect &&
+                                obj[key]?.isredirect === "true"
+                            ) {
+                                matchingKeys.push(currentPath || key);
+                            } else if(obj[key] &&
+                                      obj[key]?.scope){
+                                        matchingKeys.push(currentPath || key);
+                            }
+                        }
+                    }
+                }
+            }
+            traverse(obj, "");
+            return matchingKeys;
+        } //HRP-13831 end
     </script>
     
 </apex:page>

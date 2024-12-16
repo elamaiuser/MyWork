@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
-        <label><!-- LAC No of Recur Weeks --></label>
-        <name>sked_LAC_No_of_Recur_Weeks__c</name>
-    </CustomFieldTranslation>

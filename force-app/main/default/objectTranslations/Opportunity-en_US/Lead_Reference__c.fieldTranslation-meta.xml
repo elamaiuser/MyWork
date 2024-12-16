@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
-        <help><!-- Lead from which this opportunity is created --></help>
-        <label><!-- Lead Reference --></label>
-        <name>Lead_Reference__c</name>
-        <relationshipLabel><!-- Blood Drive Opportunities --></relationshipLabel>
-    </CustomFieldTranslation>

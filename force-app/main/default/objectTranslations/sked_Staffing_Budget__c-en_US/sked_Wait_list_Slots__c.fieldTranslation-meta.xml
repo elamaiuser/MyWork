@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
-        <label><!-- Wait-list Slots --></label>
-        <name>sked_Wait_list_Slots__c</name>
-    </CustomFieldTranslation>

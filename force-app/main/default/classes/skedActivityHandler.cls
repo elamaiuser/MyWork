@@ -442,9 +442,15 @@ public class skedActivityHandler extends skedTriggerHub {
             WHERE sked__Activity__c IN :deletedRecords
             AND sked__Activity__r.sked__Type__c = :skedConstants.AVAILABILITY_TYPE_ON_CALL
         ];
-
+        
         if (activityResources != null && !activityResources.isEmpty()) {
-            delete skedActivityResourceUtils.getAvailabilityRecordsForOnCalls(activityResources);
+            List<sked__Availability__c> availabilities = [SELECT Id
+                                                          FROM sked__Availability__c
+                                                          WHERE sked_Activity_Resource__c IN :activityResources];
+            if (!availabilities.isEmpty()) {
+                delete availabilities;
+            }
         }
     }
+    
 }
