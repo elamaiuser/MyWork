@@ -3040,6 +3040,13 @@ System.debug('--> \n Exavalu call to generate drives is done. ');
                         }
                     }
                     // HRP-12011 --> Ends Here
+                     
+                    if(data.containsKey('APT_Required__c') == true) {
+                        oppField.APT_Required = oppRec.APT_Required__c;
+                    }
+                    if(data.containsKey('APT_Quantity__c') == true) {
+                        oppField.APT_Quantity = (Decimal)oppRec.APT_Quantity__c;
+                    }
 
                     //HRP-10659 <<-End
                     if(data.containsKey('Drive_Date_Change_Reason__c') == true){//HRP-10312 begin
@@ -4772,4 +4779,26 @@ opp.StageName = 'Closed';
         }
     }
     //HRP-12142 ends
+    
+    //HRP-13190 --> Starts Here
+    public static void captureAPTRequirements(List<Opportunity> newOppList, Map<Id, Opportunity> oldOppMap) {
+        List<Opportunity> oppListToRecalculateAPT = new List<Opportunity>();
+        if (oldOppMap == NULL && newOppList != NULL && !newOppList.isEmpty()) {
+            newOppList = BSF_Utilities.getAPTQuantity(newOppList, 'Insert');
+        } else if (oldOppMap != NULL) {
+            for(Opportunity newOpp : newOppList) {
+                Opportunity oldOpp = oldOppMap.get(newOpp.Id);
+                if (oldOpp != NULL && oldOpp.APT_Required__c != newOpp.APT_Required__c) {
+                    if(!(String.isNotBlank(newOpp.APT_Change_Reason__c) && newOpp.APT_Change_Reason__c.equalsIgnoreCase(BSF_Constants.APT_CHANGE_VIA_TEMPLATE)))
+                    oppListToRecalculateAPT.add(newOpp);
+                } else if(oldOpp != NULL && oldOpp.Total_Projected_Procedures__c != newOpp.Total_Projected_Procedures__c) {
+                    oppListToRecalculateAPT.add(newOpp);
+                }
+            }
+            if(!oppListToRecalculateAPT.isEmpty()) {
+                oppListToRecalculateAPT = BSF_Utilities.getAPTQuantity(oppListToRecalculateAPT, 'Update');
+            }
+        }
+    }
+    //HRP-13190 --> Ends Here
 }

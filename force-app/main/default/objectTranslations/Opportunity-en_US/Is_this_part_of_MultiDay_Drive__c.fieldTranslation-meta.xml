@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
-        <help><!-- Indicates drive is part of a multi-day series for an Account --></help>
-        <label><!-- Multi-Day Drive --></label>
-        <name>Is_this_part_of_MultiDay_Drive__c</name>
-    </CustomFieldTranslation>
