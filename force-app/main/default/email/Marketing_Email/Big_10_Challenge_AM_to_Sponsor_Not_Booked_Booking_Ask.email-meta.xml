@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <EmailTemplate xmlns="http://soap.sforce.com/2006/04/metadata">
-    <available>true</available>
+    <available>false</available>
     <description>Big 10 Challenge_Fall 2024_AM to BPL_Not Booked with Booking Ask</description>
     <encodingKey>ISO-8859-1</encodingKey>
     <letterhead>ARC_Generic_Logo1</letterhead>
