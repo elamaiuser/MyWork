@@ -354,3 +354,16 @@ export const OPTIMIZER_SETTING_DISPLAY_TYPE = {
   PICKLIST: 'Picklist',
   CHECKBOX: 'Checkbox'
 }
+
+export const VOLUNTEER_COUNTS_ADJUSTMENT_REASON = {
+  OTHER: 'Other'
+}
+
+export const ACCOUNT_TYPE = {
+  EDUCATION: 'Education'
+}
+
+export const ACCOUNT_INDUSTRY_CODE = {
+  MIDDLE_SCHOOL: 'Middle School',
+  ELEMENTARY_SCHOOL: 'Elementary School'
+}

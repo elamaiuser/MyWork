@@ -385,6 +385,7 @@ export default class SlwcLinkedDriveStaffingDetails extends LightningElement {
             let leftOverJobAllocations = [];
             driverJob.quantity = driverJob.originalQuantity || 0;
             
+            if(dotDriverJob) {
             if(noOfDotVehicles > 0) {
                 driverJob.quantity = driverJob.quantity - noOfDotVehicles;
                 dotDriverJob.quantity = noOfDotVehicles;
@@ -398,7 +399,9 @@ export default class SlwcLinkedDriveStaffingDetails extends LightningElement {
                     childJob.jobAllocations = [];
                 });
             }
+            }
 
+            if(cdlDriverJob) {
             if(noOfCdlVehicles > 0) {
                 driverJob.quantity = driverJob.quantity - noOfCdlVehicles;
                 cdlDriverJob.quantity = noOfCdlVehicles;
@@ -411,6 +414,7 @@ export default class SlwcLinkedDriveStaffingDetails extends LightningElement {
                     leftOverJobAllocations = leftOverJobAllocations.concat(cloneDeep(childJob.jobAllocations || []));
                     childJob.jobAllocations = [];
                 });
+            }
             }
 
             if(driverJob.quantity < 0) {

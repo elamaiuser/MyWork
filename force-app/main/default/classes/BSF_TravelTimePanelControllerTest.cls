@@ -164,7 +164,7 @@ private class BSF_TravelTimePanelControllerTest {
             sked_Travel_Time_Breakdown_JSON__c = '[{"weekday":"Wednesday","travelTime":99,"travelDistance":119213,"startOfWindow":"12:00:00.000Z","siteId":null,"endOfWindow":"20:00:00.000Z","direction":null}]'
         );
         testTtiList.add(testTtii2);
-
+        
         skedHubBase.BypassInsertTriggers = true;
         TriggerHandler.bypass('TravelTimeIndexItemTriggerHandler');
         insert testTtiList;
@@ -237,6 +237,29 @@ private class BSF_TravelTimePanelControllerTest {
             System.runAs(drduser){
                 Boolean result = BSF_TravelTimePanelController.isEditable();
             }
+            classRef = BSF_TravelTimePanelController.getData(siteCO.Id);
+        Test.stopTest();
+        Assert.isNotNull(classRef);
+    }
+    
+     @isTest
+    private static void testMethodfour(){
+
+        Date startDate = System.today().addDays(-100);
+        String siteToCoKey = skedConstants.TTII_DIRECTION_SITE_TO_CO + 36.7450046 + ':' + -120.4816244;
+        String cOToSiteKey = skedConstants.TTII_DIRECTION_CO_TO_SITE + 38.7450046 + ':' + -122.4816244;
+        sked_Site_Collection_Operation__c siteCO = [SELECT Id FROM sked_Site_Collection_Operation__c WHERE sked_Start_Date__c =: startDate LIMIT 1];
+        Assert.isNotNull(siteCO.Id);
+        sked_Travel_Time_Index_Item__c tti = [SELECT Id, sked_Travel_Time_Breakdown_JSON__c FROM sked_Travel_Time_Index_Item__c WHERE sked_Ordering_Key__c =: siteToCoKey LIMIT 1 ];
+        tti.sked_Travel_Time_Breakdown_JSON__c = 'NO DATA';
+        update tti;
+        sked_Travel_Time_Index_Item__c tti1 = [SELECT Id, sked_Travel_Time_Breakdown_JSON__c FROM sked_Travel_Time_Index_Item__c WHERE sked_Ordering_Key__c =: cOToSiteKey LIMIT 1 ];
+        tti1.sked_Travel_Time_Breakdown_JSON__c = 'NO DATA';
+        update tti1;
+
+        List<BSF_TravelTimePanelController.BSF_TravelTimeDataWrapper> classRef;
+        Test.startTest();
+            Boolean result = BSF_TravelTimePanelController.isEditable();
             classRef = BSF_TravelTimePanelController.getData(siteCO.Id);
         Test.stopTest();
         Assert.isNotNull(classRef);

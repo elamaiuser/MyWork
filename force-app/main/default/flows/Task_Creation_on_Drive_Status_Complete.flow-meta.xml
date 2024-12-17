@@ -4,8 +4,8 @@
     <assignments>
         <name>Assign_other_Task_Fields</name>
         <label>Assign other Task Fields</label>
-        <locationX>446</locationX>
-        <locationY>1379</locationY>
+        <locationX>578</locationX>
+        <locationY>1487</locationY>
         <assignmentItems>
             <assignToReference>New_Task.ActivityDate</assignToReference>
             <operator>Assign</operator>
@@ -53,10 +53,26 @@
         </connector>
     </assignments>
     <assignments>
-        <name>Assign_to_AP</name>
-        <label>Assign to AP</label>
+        <name>Assign_to_ABM</name>
+        <label>Assign to ABM</label>
+        <locationX>314</locationX>
+        <locationY>1295</locationY>
+        <assignmentItems>
+            <assignToReference>New_Task.OwnerId</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>Get_Area_Booking_Manager.UserId</elementReference>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Assign_other_Task_Fields</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <name>Assign_to_AS</name>
+        <label>Assign to AS</label>
         <locationX>578</locationX>
-        <locationY>1187</locationY>
+        <locationY>1295</locationY>
         <assignmentItems>
             <assignToReference>New_Task.OwnerId</assignToReference>
             <operator>Assign</operator>
@@ -71,8 +87,8 @@
     <assignments>
         <name>Assign_to_DM</name>
         <label>Assign to DM</label>
-        <locationX>314</locationX>
-        <locationY>1187</locationY>
+        <locationX>842</locationX>
+        <locationY>1295</locationY>
         <assignmentItems>
             <assignToReference>New_Task.OwnerId</assignToReference>
             <operator>Assign</operator>
@@ -87,8 +103,8 @@
     <assignments>
         <name>Assign_to_Opp_Owner</name>
         <label>Assign to Opp Owner</label>
-        <locationX>842</locationX>
-        <locationY>1187</locationY>
+        <locationX>1106</locationX>
+        <locationY>1295</locationY>
         <assignmentItems>
             <assignToReference>New_Task.OwnerId</assignToReference>
             <operator>Assign</operator>
@@ -104,7 +120,7 @@
         <name>TaskLastAssignment</name>
         <label>TaskLastAssignment</label>
         <locationX>50</locationX>
-        <locationY>1187</locationY>
+        <locationY>1295</locationY>
         <assignmentItems>
             <assignToReference>New_Task.OwnerId</assignToReference>
             <operator>Assign</operator>
@@ -119,8 +135,8 @@
     <decisions>
         <name>Determine_Task_Owner</name>
         <label>Determine Task Owner</label>
-        <locationX>446</locationX>
-        <locationY>1079</locationY>
+        <locationX>578</locationX>
+        <locationY>1187</locationY>
         <defaultConnector>
             <targetReference>Assign_to_Opp_Owner</targetReference>
         </defaultConnector>
@@ -141,6 +157,36 @@
             <label>Account Manager</label>
         </rules>
         <rules>
+            <name>Area_Booking_Manager</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>Get_Area_Booking_Manager.UserId</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Assign_to_ABM</targetReference>
+            </connector>
+            <label>Area Booking Manager</label>
+        </rules>
+        <rules>
+            <name>Account_Specialist</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>Get_Account_Specialist.UserId</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Assign_to_AS</targetReference>
+            </connector>
+            <label>Account Specialist</label>
+        </rules>
+        <rules>
             <name>District_Manager</name>
             <conditionLogic>and</conditionLogic>
             <conditions>
@@ -155,26 +201,11 @@
             </connector>
             <label>District Manager</label>
         </rules>
-        <rules>
-            <name>Account_Specialist</name>
-            <conditionLogic>and</conditionLogic>
-            <conditions>
-                <leftValueReference>Get_Account_Specialist.UserId</leftValueReference>
-                <operator>IsNull</operator>
-                <rightValue>
-                    <booleanValue>false</booleanValue>
-                </rightValue>
-            </conditions>
-            <connector>
-                <targetReference>Assign_to_AP</targetReference>
-            </connector>
-            <label>Account Specialist</label>
-        </rules>
     </decisions>
     <decisions>
         <name>whether_task_present</name>
         <label>whether task present</label>
-        <locationX>776</locationX>
+        <locationX>974</locationX>
         <locationY>647</locationY>
         <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
         <rules>
@@ -194,7 +225,8 @@
         </rules>
     </decisions>
     <description>This flow will be triggered whenever a DOC will get completed and create Post Drive Analysis task with a due date of drive date+4 days
-Latest Modification: HRP-12700 Add Drive Date to task list</description>
+Latest Modification: HRP-12142
+Post Drive Analysis Task Enhancements</description>
     <environments>Default</environments>
     <formulas>
         <description>Assign the task to the opp&#39;s account manager if present. Else it will go straight to the opportunity owner</description>
@@ -245,14 +277,14 @@ IF({!forAS}&lt;&gt; NULL, {!forAS},
         <description>Post Drive Analysis Task Creation upon drive status complete and assigining it to the AM of the related  opp if present else go straight to the related  opp&#39;s owner. The due date will be 4 days after the drive date of the related opp</description>
         <name>Post_Drive_Analysis_Task_Creation</name>
         <label>Post Drive Analysis Task Creation</label>
-        <locationX>446</locationX>
-        <locationY>1487</locationY>
+        <locationX>578</locationX>
+        <locationY>1595</locationY>
         <inputReference>New_Task</inputReference>
     </recordCreates>
     <recordLookups>
         <name>check_for_existing_task</name>
         <label>check for existing task</label>
-        <locationX>776</locationX>
+        <locationX>974</locationX>
         <locationY>539</locationY>
         <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
         <connector>
@@ -280,8 +312,8 @@ IF({!forAS}&lt;&gt; NULL, {!forAS},
     <recordLookups>
         <name>Get_Account_Specialist</name>
         <label>Get Account Specialist</label>
-        <locationX>446</locationX>
-        <locationY>971</locationY>
+        <locationX>578</locationX>
+        <locationY>1079</locationY>
         <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
         <connector>
             <targetReference>Determine_Task_Owner</targetReference>
@@ -306,10 +338,38 @@ IF({!forAS}&lt;&gt; NULL, {!forAS},
         <storeOutputAutomatically>true</storeOutputAutomatically>
     </recordLookups>
     <recordLookups>
+        <name>Get_Area_Booking_Manager</name>
+        <label>Get Area Booking Manager</label>
+        <locationX>578</locationX>
+        <locationY>863</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Get_District_Manager</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>OpportunityId</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>Get_Opportunity.Id</elementReference>
+            </value>
+        </filters>
+        <filters>
+            <field>TeamMemberRole</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>Area Booking Manager</stringValue>
+            </value>
+        </filters>
+        <getFirstRecordOnly>true</getFirstRecordOnly>
+        <object>OpportunityTeamMember</object>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+    <recordLookups>
         <name>Get_District_Manager</name>
         <label>Get District Manager</label>
-        <locationX>446</locationX>
-        <locationY>863</locationY>
+        <locationX>578</locationX>
+        <locationY>971</locationY>
         <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
         <connector>
             <targetReference>Get_Account_Specialist</targetReference>
@@ -336,11 +396,11 @@ IF({!forAS}&lt;&gt; NULL, {!forAS},
     <recordLookups>
         <name>Get_Opportunity</name>
         <label>Get Opportunity</label>
-        <locationX>446</locationX>
+        <locationX>578</locationX>
         <locationY>755</locationY>
         <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
         <connector>
-            <targetReference>Get_District_Manager</targetReference>
+            <targetReference>Get_Area_Booking_Manager</targetReference>
         </connector>
         <filterLogic>and</filterLogic>
         <filters>
@@ -357,7 +417,7 @@ IF({!forAS}&lt;&gt; NULL, {!forAS},
     <recordLookups>
         <name>Get_Task_RecordType</name>
         <label>Get Task RecordType</label>
-        <locationX>776</locationX>
+        <locationX>974</locationX>
         <locationY>431</locationY>
         <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
         <connector>
@@ -380,7 +440,7 @@ IF({!forAS}&lt;&gt; NULL, {!forAS},
     <recordLookups>
         <name>oppteam</name>
         <label>oppteam</label>
-        <locationX>776</locationX>
+        <locationX>974</locationX>
         <locationY>323</locationY>
         <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
         <connector>
@@ -414,7 +474,7 @@ IF({!forAS}&lt;&gt; NULL, {!forAS},
         <queriedFields>TeamMemberRole</queriedFields>
     </recordLookups>
     <start>
-        <locationX>650</locationX>
+        <locationX>848</locationX>
         <locationY>0</locationY>
         <connector>
             <targetReference>oppteam</targetReference>
@@ -428,6 +488,13 @@ IF({!forAS}&lt;&gt; NULL, {!forAS},
                 <stringValue>Complete</stringValue>
             </value>
         </filters>
+        <filters>
+            <field>sked_Type_of_Drive__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>Mobile</stringValue>
+            </value>
+        </filters>
         <object>sked_Drive__c</object>
         <recordTriggerType>CreateAndUpdate</recordTriggerType>
         <triggerType>RecordAfterSave</triggerType>
@@ -435,8 +502,8 @@ IF({!forAS}&lt;&gt; NULL, {!forAS},
     <status>Active</status>
     <textTemplates>
         <name>SubjectTask</name>
-        <isViewedAsPlainText>false</isViewedAsPlainText>
-        <text>Post Drive Analysis</text>
+        <isViewedAsPlainText>true</isViewedAsPlainText>
+        <text>Post Drive Analysis Task</text>
     </textTemplates>
     <variables>
         <name>New_Task</name>

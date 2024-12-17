@@ -57,7 +57,7 @@
                         </valueListItems>
                         <valueListItems>
                             <value>Opportunity.sked_Generate_Drive</value>
-                        </valueListItems>                        
+                        </valueListItems>
                         <valueListItems>
                             <value>Opportunity.Drive_Work_Sheet</value>
                             <visibilityRule>
@@ -67,6 +67,9 @@
                                     <rightValue>Confirmed</rightValue>
                                 </criteria>
                             </visibilityRule>
+                        </valueListItems>
+                        <valueListItems>
+                            <value>Opportunity.Mass_Drive_Service_Role_Add</value>
                         </valueListItems>
                     </valueList>
                 </componentInstanceProperties>
