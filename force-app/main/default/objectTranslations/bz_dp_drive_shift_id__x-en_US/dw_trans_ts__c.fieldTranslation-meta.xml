@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
-        <label><!-- dw_trans_ts --></label>
-        <name>dw_trans_ts__c</name>
-    </CustomFieldTranslation>

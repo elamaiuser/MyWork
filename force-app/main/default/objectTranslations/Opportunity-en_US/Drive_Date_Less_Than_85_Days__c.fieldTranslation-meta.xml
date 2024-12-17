@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
-        <label><!-- Drive Date Less Than 85 Days --></label>
-        <name>Drive_Date_Less_Than_85_Days__c</name>
-    </CustomFieldTranslation>

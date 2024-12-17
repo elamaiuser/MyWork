@@ -7,7 +7,7 @@ import { isNullOrEmpty, generateUUID } from 'c/slwcUtils';
 import { DateTime } from 'c/luxon';
 import { cloneDeep, difference, uniqueId, extend } from 'c/lodash';
 import { Fetch } from './fetch';
-import { PROCEDURE_TYPE, DRIVE_STATUS, ASSET_TYPE, PENDING_ACTION, DRIVE_APPROVAL_STATUS, RESOURCE_TYPE, DRIVE_TYPE, DRIVE_CONTENTION, JOB_ALLOCATION_STATUS } from 'c/slwcConstants';
+import { ACCOUNT_TYPE, ACCOUNT_INDUSTRY_CODE, PROCEDURE_TYPE, DRIVE_STATUS, ASSET_TYPE, PENDING_ACTION, DRIVE_APPROVAL_STATUS, RESOURCE_TYPE, DRIVE_TYPE, DRIVE_CONTENTION, JOB_ALLOCATION_STATUS } from 'c/slwcConstants';
 
 const DEFAULT_CALENDAR_SETTINGS = {
   timezone: TIME_ZONE,
@@ -277,6 +277,15 @@ const DRIVE_SHIFT_FIELD_CHANGE_MAPPING = {
     groups: [
       { actions: [] },
       { actions: ['changeLunchBreakStartTime', 'updateDriveStaffCapacity', 'updateDriveAverageStaffCapacity', 'updateDriveExcessStaffCapacity', 'generateShiftSlots', 'updateDriveTotalSlots'] },
+    ]
+  },
+
+  'APTSetup': {
+    groups: [
+      { actions: [] },
+      { actions: [] },
+      { actions: ['handleDriveShiftsMetadataChanged'] },
+      { actions: [] }
     ]
   }
 }
@@ -830,6 +839,7 @@ class MobileGenerator extends BaseGenerator {
       projectedRegisteredDonors: this.drive.projectedRegisteredDonors || 0,
       x2rbcProjectedProcedures: this.drive.x2rbcProjectedProcedures || 0,
       wbProjectedProcedures: this.drive.wbProjectedProcedures || 0,
+      APTSetup: this.drive.aptQuantity || 0,
       numberOfDriveShifts: 0,
       driveShifts: [],
       resourceRoleGroupRoleTimeDataMap: this.helper.calculateDriveRoleTimeData(this.drive, this.masterData)
@@ -846,7 +856,8 @@ class MobileGenerator extends BaseGenerator {
         endTime: driveShift.endTime,
         x2rbcProjectedProcedures: driveShift.x2rbcProjectedProcedures,
         wbProjectedProcedures: driveShift.wbProjectedProcedures,
-        donorsScheduled: driveShift.donorsScheduled
+        donorsScheduled: driveShift.donorsScheduled,
+        APTSetup: driveShift.APTSetup
       }
 
       driveShift.driveShiftMetadata = temp;
@@ -966,11 +977,34 @@ class MobileGenerator extends BaseGenerator {
     if (!record && !this.drive) return;
     if (!record) {
       record = this.drive;
+      if(!record.id) this.masterData.skipAPTCalculation = true;
+    } else {
+      this.drive.aptQuantity = record.APTSetup;
     }
     let x2rbcProjectedProcedures = record.x2rbcProjectedProcedures || 0;
     let wbProjectedProcedures = record.wbProjectedProcedures || 0;
     record.totalProceduresProjected = x2rbcProjectedProcedures + wbProjectedProcedures;
     record.totalProductsProjected = x2rbcProjectedProcedures * 2 + wbProjectedProcedures;
+    if(!this.masterData.skipAPTCalculation) {
+      this.recalculateAPTSettings(this.drive);
+    }
+  }
+
+  recalculateAPTSettings(drive) {
+    if(!drive) return;
+    
+    let aptQuantity = 0;
+    const isEducationDrive = drive.account?.type === ACCOUNT_TYPE.EDUCATION;
+    const isMiddleOrElemenentaryIndustryCode = drive.account?.industryCode === ACCOUNT_INDUSTRY_CODE.MIDDLE_SCHOOL || drive.account?.industryCode === ACCOUNT_INDUSTRY_CODE.ELEMENTARY_SCHOOL;
+    if(isEducationDrive) {
+      if(!isMiddleOrElemenentaryIndustryCode) {
+        aptQuantity = Math.floor(drive.totalProceduresProjected / 40);
+      }
+    } else {
+      if(drive.totalProceduresProjected >= 40) aptQuantity = 1;
+    }
+    drive.aptQuantity = aptQuantity;
+    drive.aptRequired = aptQuantity > 0 ? true : false;
   }
 
   /** Drive Shifts metadata */
@@ -980,6 +1014,7 @@ class MobileGenerator extends BaseGenerator {
       projectedRegisteredDonors: this.drive.projectedRegisteredDonors || 0,
       x2rbcProjectedProcedures: this.drive.x2rbcProjectedProcedures || 0,
       wbProjectedProcedures: this.drive.wbProjectedProcedures || 0,
+      APTSetup: this.drive.aptQuantity || 0,
       numberOfDriveShifts: 0,
       driveShifts: [],
       resourceRoleGroupRoleTimeDataMap: this.helper.calculateDriveRoleTimeData(this.drive, this.masterData)
@@ -1026,6 +1061,7 @@ class MobileGenerator extends BaseGenerator {
         driveShift.finish = drawHoursEnd;
         driveShift.startTime = this.helper.dateJSToTimeIso(drawHoursStart, this.masterData.timezoneSidId);
         driveShift.endTime = this.helper.dateJSToTimeIso(drawHoursEnd, this.masterData.timezoneSidId);
+        driveShift.APTSetup = this.drive.aptQuantity || 0;
 
         driveShiftsMetadata.driveShifts.push(driveShift);
       }
@@ -1367,16 +1403,11 @@ class MobileGenerator extends BaseGenerator {
       const drawHours = this.helper.calculateDrawHours(driveShiftMetadata, this.masterData, driveShiftMetadata.lunchBreakSettings);
 
       let noOfVpHhStaffs = Math.ceil(totalVpHhCapacity / vpHhCapacity / drawHours);;
-      let noOfAptStaffs = 0;
-
-      if(this.drive.aptRequired) {
-        noOfAptStaffs = 1;
-      }
 
       let resourceQuantityMap = this.mapResourceQuantity.get(driveShiftMetadata.key);
       resourceQuantityMap.set('VP/HH', {
         vphhQuantity: noOfVpHhStaffs,
-        aptQuantity: noOfAptStaffs
+        aptQuantity: driveShiftMetadata.APTSetup
       });
     });
   }
@@ -1533,7 +1564,8 @@ class MobileGenerator extends BaseGenerator {
         endTime: driveShiftMetadata.endTime,
         x2rbcProjectedProcedures: driveShiftMetadata.x2rbcProjectedProcedures,
         wbProjectedProcedures: driveShiftMetadata.wbProjectedProcedures,
-        donorsScheduled: driveShiftMetadata.donorsScheduled
+        donorsScheduled: driveShiftMetadata.donorsScheduled,
+        APTSetup: driveShiftMetadata.APTSetup
       };
 
       this.populateDriveShiftTags(proposedDriveShift);
@@ -2061,10 +2093,11 @@ class MobileGenerator extends BaseGenerator {
   }
 
   /** Change handlers */
-  handleDriveShiftsMetadataChanged() {
+  handleDriveShiftsMetadataChanged(driveShift = {}) {
     if (this.drive.driveShiftsMetadata) {
       this.calculateTotalProceduresProjected(this.drive.driveShiftsMetadata);
       this.drive.driveShiftsMetadata.driveShifts.forEach((driveShiftMetadata) => {
+        if(!isNullOrEmpty(driveShift)) driveShiftMetadata.APTSetup = driveShift.APTSetup;
         this.calculateTotalProceduresProjected(driveShiftMetadata);
         driveShiftMetadata.resourceRoleGroupRoleTimeDataMap = this.helper.calculateDriveShiftRoleTimeData(
           this.masterData, 
@@ -2084,6 +2117,11 @@ class MobileGenerator extends BaseGenerator {
     this.proposeDriveShifts();
     this.calculateTotalProceduresProjected();
     this.calculateDriveProductivityPlanned();
+    this.updateDriveAptSettings();
+  }
+
+  updateDriveAptSettings() {
+    this.drive.aptRequired = this.drive.aptQuantity > 0;
   }
 
   handleTotalVehicleRequestedChanged() {
