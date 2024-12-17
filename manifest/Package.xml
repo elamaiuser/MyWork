@@ -18,6 +18,8 @@
 		<members>OrderTrigger_Test</members>
 		<members>TaskGenerationBatch</members>
 		<members>TaskService</members>
+		<members>skedActivityService</members>
+		<members>skedActivityService_Test</members>
 		<members>TaskTriggerHandler</members>
 		<members>skedAvailabilityHandler</members>
 		<members>skedAvailabilityTrigger_Test</members>
@@ -28,10 +30,15 @@
 		<members>skedMappingConfigContainer</members>
 		<members>skedMappingConfigController_Test</members>
 		<members>skedModels</members>
+		<members>skedModels_Test</members>
 		<members>skedNotificationBatchBase</members>
 		<members>skedPtoRequestController</members>
 		<members>skedRacController</members>
+		<members>skedRacStory_Test</members>
+		<members>skedRecurringFactory</members>
 		<members>skedRefreshTravelTimeIndexBatchBase</members>
+		<members>skedRegionService</members>
+		<members>skedRegionService_Test</members>
 		<members>skedSObjectType</members>
 		<members>skedScheduleChangeNotificationBatch</members>
 		<members>skedScheduleChangeNotificationBatch_Test</members>
@@ -64,6 +71,13 @@
 	</types>
 	<types>
 		<members>Account.Feeder_Account_Type__c</members>
+		<members>sked_Activity_Collection_Operation__c.sked_Activity__c</members>
+        <members>sked_Activity_Collection_Operation__c.sked_Biomed_Collection_Operation__c</members>
+        <members>sked_Activity_Collection_Operation__c.sked_District__c</members>
+        <members>sked_Activity_Collection_Operation__c.sked_Territory_Key__c</members>
+		<members>sked__Activity__c.sked_ARC_Region__c</members>
+        <members>sked__Activity__c.sked_Drive_Types__c</members>
+        <members>sked__Activity__c.sked_Territory_Key__c</members>
 		<members>sked_Staffing_Budget_Site__c.sked_Location__c</members>
 		<members>sked_Staffing_Budget_Site__c.sked_Specific_Collection_Operation__c</members>
 		<members>sked_Staffing_Budget_Site__c.sked_Staffing_Budget__c</members>
@@ -128,6 +142,7 @@
 		<name>CustomMetadata</name>
 	</types>
 	<types>
+		<members>sked_Activity_Collection_Operation__c</members>
 		<members>sked_Travel_Time_Index_Refresh_Group__c</members>
 		<members>sked_Staffing_Budget_Site__c</members>
 		<members>UpdateOpptyTeamEvent__e</members>
@@ -147,6 +162,8 @@
 		<name>Flow</name>
 	</types>
 	<types>
+		<members>sked__Activity__c-Sked Activity Layout</members>
+        <members>sked_Activity_Collection_Operation__c-Activity Collection Operation Layout</members>
 		<members>sked_Staffing_Budget_Site__c-Staffing Budget Site Layout</members>
 		<members>sked_Staffing_Budget__c-Staffing Budget Layout</members>
 		<members>sked_Travel_Time_Index_Refresh_Group__c-Travel Time Index Refresh CO Group Layout</members>
