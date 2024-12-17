@@ -3,9 +3,16 @@
 	<types>
 		<members>AccountTeamMemberService</members>
 		<members>AccountTeamMemberTriggerHandler</members>
+		<members>AccountTriggerHandler</members>
+		<members>AccountTriggerTest</members>
 		<members>BSF_Batch_OpportunityTeamSync</members>
 		<members>BSF_Batch_OpportunityTeamSyncTest</members>
+		<members>BSF_Constants</members>
 		<members>BSF_TaskCreationBatch</members>
+		<members>checkRecursive</members>
+		<members>LeadService</members>
+		<members>LeadServiceTests</members>
+		<members>LeadTriggerHandler</members>
 		<members>OpportunityService</members>
 		<members>OrderService</members>
 		<members>OrderTrigger_Test</members>
@@ -56,6 +63,7 @@
 		<name>ApexTrigger</name>
 	</types>
 	<types>
+		<members>Account.Feeder_Account_Type__c</members>
 		<members>sked_Staffing_Budget_Site__c.sked_Location__c</members>
 		<members>sked_Staffing_Budget_Site__c.sked_Specific_Collection_Operation__c</members>
 		<members>sked_Staffing_Budget_Site__c.sked_Staffing_Budget__c</members>
@@ -78,9 +86,11 @@
 		<members>BSF_Mass_Drive_Service_Role_Call_List_Recipient_Warning_Message</members>
 		<members>BSF_Mass_Drive_Service_Role_Primary_Contact_Warning_Message</members>
 		<members>BSF_Mass_Drive_Service_Role_Warning_Message</members>
+		<members>Potential_Feeder_Group_Lead_Status</members>
 		<name>CustomLabel</name>
 	</types>
 	<types>
+		<members>Custom_Messages.Non_Feeder_Acc_Convert_Validation</members>
 		<members>sked_Notification_Setting.sked_Job_Allocation_Info_Changed_Email</members>
 		<members>sked_Notification_Setting.sked_Job_Allocation_Info_Changed_OneOff</members>
 		<members>sked_Notification_Setting.sked_Job_Allocation_Info_Changed_SFPush</members>
