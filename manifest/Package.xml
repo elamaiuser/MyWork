@@ -12,16 +12,19 @@
 		<members>BSF_Utilities</members>
 		<members>BSF_UtilitiesTest</members>
 		<members>CalendarBuildBatchHandler</members>
+		<members>CalendarBuildEvaluateDrivesBatch_Test</members>
 		<members>checkRecursive</members>
 		<members>FieldIdentifiers</members>
 		<members>FutureDrivesController</members>
 		<members>GenerateMobileDrive</members>
+		<members>GenerateMobileDriveTest</members>
 		<members>LeadService</members>
 		<members>LeadServiceTests</members>
 		<members>LeadTriggerHandler</members>
 		<members>MobileDriveGeneratorDMLService</members>
 		<members>OpportunityService</members>
 		<members>OpportunityTriggerHandler</members>
+		<members>OpportunityTriggerTest</members>
 		<members>OrderService</members>
 		<members>OrderTrigger_Test</members>
 		<members>TaskGenerationBatch</members>
