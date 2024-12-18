@@ -894,7 +894,7 @@ public class skedMappingConfigContainer {
             mappingConfig.addFieldConfig('sked__Employment_Type__c', 'employmentType', 'direct');
             mappingConfig.addFieldConfig('sked__Mobile_Phone__c', 'mobilePhone', 'direct');
             mappingConfig.addFieldConfig('sked__Primary_Region__c', 'regionId', 'direct');
-            mappingConfig.addFieldConfig('sked_Timezone__c', 'timezoneSidId', 'direct');
+            mappingConfig.addFieldConfig('sked__Primary_Region__r.sked__Timezone__c', 'timezoneSidId', 'direct');
             mappingConfig.addFieldConfig('sked__Primary_Region__r.sked_Biomed_Collection_Op_Center__c', 'biomedCollectionOpId', 'direct');
             mappingConfig.addFieldConfig('sked__Primary_Region__r.sked_Biomed_Collection_Op_Center__r.sked_Restricts_to_Full_day_PTO__c', 'restrictsToFullDayPto', 'direct');
             mappingConfig.addFieldConfig('sked__Primary_Region__r.sked_Biomed_Collection_Op_Center__r.sked_Work_Week_First_Day__c', 'workWeekFirstDay', 'direct');
