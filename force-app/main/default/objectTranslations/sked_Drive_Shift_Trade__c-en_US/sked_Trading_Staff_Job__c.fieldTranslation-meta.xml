@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
-        <label><!-- Trading Staff Job --></label>
-        <name>sked_Trading_Staff_Job__c</name>
-        <relationshipLabel><!-- Drive Shift Trades (Trading Staff Job) --></relationshipLabel>
-    </CustomFieldTranslation>

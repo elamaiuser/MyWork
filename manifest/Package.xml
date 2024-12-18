@@ -3,28 +3,52 @@
 	<types>
 		<members>AccountTeamMemberService</members>
 		<members>AccountTeamMemberTriggerHandler</members>
+		<members>AccountTriggerHandler</members>
+		<members>AccountTriggerTest</members>
 		<members>BSF_Batch_OpportunityTeamSync</members>
 		<members>BSF_Batch_OpportunityTeamSyncTest</members>
+		<members>BSF_Constants</members>
 		<members>BSF_TaskCreationBatch</members>
+		<members>BSF_Utilities</members>
+		<members>BSF_UtilitiesTest</members>
+		<members>CalendarBuildBatchHandler</members>
+		<members>checkRecursive</members>
+		<members>FieldIdentifiers</members>
+		<members>FutureDrivesController</members>
+		<members>GenerateMobileDrive</members>
+		<members>LeadService</members>
+		<members>LeadServiceTests</members>
+		<members>LeadTriggerHandler</members>
+		<members>MobileDriveGeneratorDMLService</members>
 		<members>OpportunityService</members>
+		<members>OpportunityTriggerHandler</members>
 		<members>OrderService</members>
 		<members>OrderTrigger_Test</members>
 		<members>TaskGenerationBatch</members>
 		<members>TaskService</members>
+		<members>skedActivityService</members>
+		<members>skedActivityService_Test</members>
 		<members>TaskTriggerHandler</members>
 		<members>skedAvailabilityHandler</members>
 		<members>skedAvailabilityTrigger_Test</members>
 		<members>skedCOGroupTravelTimeIndexRefreshBatch</members>
 		<members>skedConstants</members>
+		<members>skedDriveHandler</members>
 		<members>skedJobAllocationHandler</members>
 		<members>skedJobHandler</members>
 		<members>skedMappingConfigContainer</members>
 		<members>skedMappingConfigController_Test</members>
 		<members>skedModels</members>
+		<members>skedModels_Test</members>
 		<members>skedNotificationBatchBase</members>
+		<members>skedOpportunityHandler</members>
 		<members>skedPtoRequestController</members>
 		<members>skedRacController</members>
+		<members>skedRacStory_Test</members>
+		<members>skedRecurringFactory</members>
 		<members>skedRefreshTravelTimeIndexBatchBase</members>
+		<members>skedRegionService</members>
+		<members>skedRegionService_Test</members>
 		<members>skedSObjectType</members>
 		<members>skedScheduleChangeNotificationBatch</members>
 		<members>skedScheduleChangeNotificationBatch_Test</members>
@@ -41,6 +65,7 @@
 		<members>skedTravelTimeIndexRefreshRequestHandler</members>
 		<members>skedUserHandler</members>
 		<members>skedWorkdayApiManager</members>
+		<members>slwcDriveService</members>
 		<members>BSF_TravelTimePanelController</members>
 		<members>BSF_TravelTimePanelControllerTest</members>
 		<members>skedActivityHandler</members>
@@ -53,9 +78,22 @@
 		<members>Add_Update_OpptyTeamMembers</members>
 		<members>skedTravelTimeIndexRefreshGroupTrigger</members>
 		<members>skedTravelTimeIndexRefreshRequestTrigger</members>
+		<members>updateEventTrigger</members>
 		<name>ApexTrigger</name>
 	</types>
 	<types>
+		<members>Account.Feeder_Account_Type__c</members>
+		<members>Opportunity.APT_Required__c</members>
+        <members>Opportunity.APT_Quantity__c</members>
+        <members>Opportunity.APT_Change_Reason__c</members>
+		<members>sked_Activity_Collection_Operation__c.sked_Activity__c</members>
+        <members>sked_Activity_Collection_Operation__c.sked_Biomed_Collection_Operation__c</members>
+        <members>sked_Activity_Collection_Operation__c.sked_District__c</members>
+        <members>sked_Activity_Collection_Operation__c.sked_Territory_Key__c</members>
+		<members>sked__Activity__c.sked_ARC_Region__c</members>
+        <members>sked__Activity__c.sked_Drive_Types__c</members>
+        <members>sked__Activity__c.sked_Territory_Key__c</members>
+		<members>sked_Drive__c.sked_APT_Quantity__c</members>
 		<members>sked_Staffing_Budget_Site__c.sked_Location__c</members>
 		<members>sked_Staffing_Budget_Site__c.sked_Specific_Collection_Operation__c</members>
 		<members>sked_Staffing_Budget_Site__c.sked_Staffing_Budget__c</members>
@@ -73,6 +111,16 @@
 		<name>CustomField</name>
 	</types>
 	<types>
+		<members>BSF_Mass_Account_Service_Role_Warning_Message</members>
+		<members>BSF_Mass_Drive_Service_Role_After_Hours_Contact_Warning_Message</members>
+		<members>BSF_Mass_Drive_Service_Role_Call_List_Recipient_Warning_Message</members>
+		<members>BSF_Mass_Drive_Service_Role_Primary_Contact_Warning_Message</members>
+		<members>BSF_Mass_Drive_Service_Role_Warning_Message</members>
+		<members>Potential_Feeder_Group_Lead_Status</members>
+		<name>CustomLabel</name>
+	</types>
+	<types>
+		<members>Custom_Messages.Non_Feeder_Acc_Convert_Validation</members>
 		<members>sked_Notification_Setting.sked_Job_Allocation_Info_Changed_Email</members>
 		<members>sked_Notification_Setting.sked_Job_Allocation_Info_Changed_OneOff</members>
 		<members>sked_Notification_Setting.sked_Job_Allocation_Info_Changed_SFPush</members>
@@ -110,10 +158,15 @@
 		<name>CustomMetadata</name>
 	</types>
 	<types>
+		<members>sked_Activity_Collection_Operation__c</members>
 		<members>sked_Travel_Time_Index_Refresh_Group__c</members>
 		<members>sked_Staffing_Budget_Site__c</members>
 		<members>UpdateOpptyTeamEvent__e</members>
 		<name>CustomObject</name>
+	</types>
+	<types>
+		<members>Opportunity.FieldsApplytoDrives</members>
+		<name>FieldSet</name>
 	</types>
 	<types>
 		<members>Fixed_Site_Account_Record_Page</members>
@@ -124,6 +177,26 @@
 		<name>FlexiPage</name>
 	</types>
 	<types>
+		<members>Mass_Account_Service_Role_Add</members>
+		<members>Mass_Drive_Service_Role_Add</members>
+		<name>Flow</name>
+	</types>
+	<types>
+		<members>Account-APS Planner Mobile Account Layout</members>
+		<members>Account-APS Scheduler Mobile Account Layout</members>
+		<members>Account-Biomed Read Only Mobile Account Layout</members>
+        <members>Account-BioSponsor Account</members>
+		<members>Account-DRD Mobile Account Layout</members>
+		<members>Account-Sponsor Marketing Mobile Layout</members>
+		<members>Account-System Admin Mobile Account Layout</members>
+		<members>Opportunity-APS Planner Mobile Opp Layout</members>
+		<members>Opportunity-APS Scheduler Mobile Opp Layout</members>
+		<members>Opportunity-DRD Mobile Opp Layout</members>
+		<members>Opportunity-Mobile Opp Layout</members>
+		<members>Opportunity-Opportunity Layout</members>
+		<members>Opportunity-Sponsor Marketing Mobile Opp Layout</members>
+		<members>sked__Activity__c-Sked Activity Layout</members>
+        <members>sked_Activity_Collection_Operation__c-Activity Collection Operation Layout</members>
 		<members>sked_Staffing_Budget_Site__c-Staffing Budget Site Layout</members>
 		<members>sked_Staffing_Budget__c-Staffing Budget Layout</members>
 		<members>sked_Travel_Time_Index_Refresh_Group__c-Travel Time Index Refresh CO Group Layout</members>
@@ -143,6 +216,10 @@
 		<name>RecordType</name>
 	</types>
 	<types>
+		<members>autoMapper</members>
+        <members>slwcConstants</members>
+        <members>slwcDriveGenerator</members>
+        <members>slwcDriveShift</members>
 		<members>blwcDriveWorkSheetComponent</members>
 		<members>slwcApprovalHistoryConsole</members>
 		<members>slwcDriveChangeRequestApproval</members>
@@ -151,7 +228,10 @@
 		<name>LightningComponentBundle</name>
 	</types>
 	<types>
+		<members>Account.Mass_Account_Service_Role_Add</members>		
 		<members>Opportunity.Drive_Work_Sheet</members>
+		<members>Opportunity.Mass_Drive_Service_Role_Add</members>
+		<members>Opportunity.Template_Opportunity</members>
 		<name>QuickAction</name>
 	</types>
 	<types>

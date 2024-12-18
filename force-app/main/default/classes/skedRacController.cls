@@ -324,38 +324,73 @@ global virtual class skedRacController extends skedBaseController {
     global static skedRemoteResultModel getGroupActivities(getGroupActivitiesRequestModel request) {
         skedRemoteResultModel result = new skedRemoteResultModel(request.viewData);
         try {
+            //Get all activities through normal query
             skedActivityService.queryModel query = new skedActivityService.queryModel();
             query.activityTypes = request.activityTypes;
             query.biomedCollectionOpIds = request.biomedCollectionOpIds;
-            query.territoryKeys = request.territoryKeys;
             query.endDate = request.endDate;
             query.isGroupActivity = true;
             query.orderBy = skedAutoMapper.instance.mapToSObjectFieldPath('activity', request.orderBy);
             query.orderAscending = request.orderDirection == 1 ? 'ASC' : 'DESC';
-            query.pageNo = request.pageNo;
-            query.pageSize = request.pageSize;
             query.queryText = request.queryText;
             query.regionIds = request.regionIds;
             query.startDate = request.startDate;
             query.subTypes = request.subTypes;
-            query.subQueryIndicator = skedSObjectType.ACTIVITY_RESOURCE;
+            query.subQueryIndicator = skedSObjectType.ACTIVITY_RESOURCE | skedSObjectType.ACTIVITY_COLLECTION_OPERATION;
             
             skedActivityService service = (skedActivityService)skedServiceFactory.instance.resolve('sked__Activity__c');
-            skedDataService.paginationQueryModel paginationResult = service.doPaginationQuery(query);
+            List<sObject> activityRecords = service.query(query);
+            List<String> activityRecordIds = new List<String>();
 
-            List<skedModels.activity> activities = new List<skedModels.activity>();
-            skedAutoMapper autoMapper = skedAutoMapper.instance;
-            for (sked__Activity__c record : (List<sked__Activity__c>)paginationResult.records) {
-                autoMapper.setTimezoneSidId(record.sked__Timezone__c);
-                skedModels.activity activity = (skedModels.activity)skedAutoMapper.instance.mapTo(record, skedModels.activity.class);
-                activity.timezone = record.sked__Start__c.format('z', record.sked__Timezone__c);
-                activities.add(activity);
-            } 
+            for(sked__Activity__c activity : (List<sked__Activity__c>)activityRecords) {
+                Boolean hasCorrectTerritoryKey = FALSE;
+                if(activity.sked_Territory_Key__c != NULL && request.territoryKeys.contains(activity.sked_Territory_Key__c)) {
+                    hasCorrectTerritoryKey = TRUE;
+                } else if(activity.sked_Activity_Collection_Operations__r != NULL && !activity.sked_Activity_Collection_Operations__r.isEmpty()) {
+                    for(sked_Activity_Collection_Operation__c activityCo : activity.sked_Activity_Collection_Operations__r) {
+                        if(activityCo.sked_Territory_Key__c != NULL && request.territoryKeys.contains(activityCo.sked_Territory_Key__c)) {
+                            hasCorrectTerritoryKey = TRUE;
+                            break;
+                        }
+                    }
+                }
+                if(hasCorrectTerritoryKey) {
+                    activityRecordIds.add(activity.Id);
+                }
+            }
             
+            // Do Pagination Query to show group activities on RAC
+            List<skedModels.activity> activities = new List<skedModels.activity>();
+            skedDataService.paginationQueryModel paginationResult;
+            
+            if(activityRecordIds != NULL && !activityRecordIds.isEmpty()) {
+                skedActivityService.queryModel reformedQuery = new skedActivityService.queryModel();
+                reformedQuery.recordIds = activityRecordIds;
+                reformedQuery.orderBy = skedAutoMapper.instance.mapToSObjectFieldPath('activity', request.orderBy);
+                reformedQuery.orderAscending = request.orderDirection == 1 ? 'ASC' : 'DESC';
+                reformedQuery.pageNo = request.pageNo;
+                reformedQuery.pageSize = request.pageSize;
+                reformedQuery.subQueryIndicator = skedSObjectType.ACTIVITY_RESOURCE | skedSObjectType.ACTIVITY_COLLECTION_OPERATION;
+                skedActivityService reformedService = (skedActivityService)skedServiceFactory.instance.resolve('sked__Activity__c');
+                paginationResult = reformedService.doPaginationQuery(reformedQuery);
+                   
+                skedAutoMapper autoMapper = skedAutoMapper.instance;
+                for (sked__Activity__c record : (List<sked__Activity__c>)paginationResult.records) {
+                    system.debug('record '+record);
+                    autoMapper.setTimezoneSidId(record.sked__Timezone__c);
+                    skedModels.activity activity = (skedModels.activity)skedAutoMapper.instance.mapTo(record, skedModels.activity.class);
+                    activity.timezone = record.sked__Start__c.format('z', record.sked__Timezone__c);
+                    activities.add(activity);
+                } 
+                system.debug('activities last '+activities.size());
+            }
+
             groupActivityDataModel data = new groupActivityDataModel();
             data.groupActivities = activities;
-            data.totalRecords = paginationResult.totalRecords;
-            data.totalPages = (integer)Math.ceil(decimal.valueOf(data.totalRecords) / request.pageSize);
+            data.totalRecords = paginationResult != NULL ? paginationResult.totalRecords : 0;
+            if(data.totalRecords != NULL) {
+            	data.totalPages = (integer)Math.ceil(decimal.valueOf(data.totalRecords) / request.pageSize);
+            }
             
             result.data = data;
         }
@@ -682,20 +717,39 @@ global virtual class skedRacController extends skedBaseController {
         try {
             string timezoneSidId = request.event.timezoneSidId;
             skedSetting.instance.App.setTimezoneSidId(timezoneSidId);
+            
+            skedRegionService regionService = (skedRegionService)skedServiceFactory.instance.resolve('sked__Region__c');
+            skedRegionService.queryModel regionQuery = new skedRegionService.queryModel();
+            regionQuery.timezoneSidId = timezoneSidId;
 			
-            string regionId;
             if (!string.isBlank(request.event.biomedCollectionOpId)) {
-                skedRegionService regionService = (skedRegionService)skedServiceFactory.instance.resolve('sked__Region__c');
-                skedRegionService.queryModel regionQuery = new skedRegionService.queryModel();
                 regionQuery.biomedCollectionOpId = request.event.biomedCollectionOpId;
-                regionQuery.timezoneSidId = timezoneSidId;
-                List<sObject> queryResults = regionService.query(regionQuery);
-                if (queryResults == NULL || queryResults.isEmpty()) {
-                    throw new skedException('Cannot find Skedulo region that matches the address timezone.');
+            } else if(request.event.biomedCollectionOpIds != NULL && !request.event.biomedCollectionOpIds.isEmpty()) {
+                regionQuery.biomedCollectionOpIds = request.event.biomedCollectionOpIds;
+            }
+            List<sObject> queryResults = regionService.query(regionQuery);
+            
+            // Region check for single-select collection operation
+            if (queryResults == NULL || queryResults.isEmpty()) {
+                throw new skedException('Cannot find Skedulo region that matches the address timezone.');
+            }
+            Map<String, String> map_colOpId_regionId = new Map<String, String>();
+            for(sked__Region__c region : (List<sked__Region__c>)queryResults) {
+                map_colOpId_regionId.put(region.sked_Biomed_Collection_Op_Center__c, region.Id);
+            }
+            
+            // Region check for multi-select collection operation
+            if(request.event.biomedCollectionOpIds != NULL && !request.event.biomedCollectionOpIds.isEmpty()) {
+                for(String colOpId : request.event.biomedCollectionOpIds) {
+                    if(!map_colOpId_regionId.containsKey(colOpId)) {
+                        throw new skedException('Cannot find Skedulo region that matches the address timezone.');
+                    }
                 }
-                regionId = queryResults.get(0).Id;
-                request.event.regionId = regionId;
-                
+            } else {
+                request.event.regionId = map_colOpId_regionId.get(request.event.biomedCollectionOpId); //Populate region for single select co activity
+            }
+            
+            if (!string.isBlank(request.event.biomedCollectionOpId)) {    
                 //validate staffing constraint
                 if (request.event.reduceFromStaffingConstraint) {
                     Date selectedDate = skedDateTimeUtils.getDateFromIsoString(request.event.startDate);
@@ -772,7 +826,7 @@ global virtual class skedRacController extends skedBaseController {
             request.objectType = 'activity';
             request.model = request.event;
             if (request.recurringOptions != NULL) {
-                request.recurringOptions.regionId = regionId;
+                request.recurringOptions.regionIds = map_colOpId_regionId.values();
                 if (request.recurringOptions.selectedDates != NULL && !request.recurringOptions.selectedDates.isEmpty()) {
                     request.recurringOptions.dateValues = new Set<Date>();
                     for (string selectedDate : request.recurringOptions.selectedDates) {
@@ -791,7 +845,6 @@ global virtual class skedRacController extends skedBaseController {
 
             skedTriggerUtils.CHANGES_INITIATED_FROM_SERVICE = true;
             skedDataService.saveResult saveResult = saveEvent(request);
-          
             if (saveResult.message != null && saveResult.message == skedConstants.ACTIVITY_INSERT_BATCH_STARTED) {
                 result.message = saveResult.message;
             }

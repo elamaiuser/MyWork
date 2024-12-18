@@ -58,6 +58,8 @@
 * 11/07/2024			         Barnojit Sharma		  Update Task: 72 Hour Check in - System Generated/Details/Checklist. (Logic for HRP-12627)
 * 11/11/2024					 Priti Jana				  Logic for HRP-13743
 * 11/12/2024				     Barnojit Sharma		  Unable to create Mobile Drive when the Template has an over-budget template order (Logic for HRP-13716)
+* 12/02/2024					 Barnojit Sharma		  Tasks being assigned for cancelled drives and for fixed sites(Logic for HRP-13850)
+* 12/10/2024					 Priti Jana				  Logic for HRP-13190
 ************************************************************************************************************************************************
 */
 
@@ -422,7 +424,7 @@ if(ds.isCreateable()){}*/
             return;
         set<id> oppIds = new set<id>();
         for (Opportunity opp : newItems) {
-            if(opp.Is_Template__c == true){ //if its template, don't bother further checks
+            if(opp.Is_Template__c == true || opp.RecordTypeId != MOBILE_OPP_RECTYPEID){ //if its template, don't bother further checks //Changes for HRP-13850
                 continue;
             }
             oppIds.add(opp.Id);
@@ -458,7 +460,7 @@ if(ds.isCreateable()){}*/
         for (Opportunity opp : newItems) {
             //HRP-10788 earlier the below if condition was only checking stageName change. added check change in Call_List_Recipient_Exist__c
             //if (!oppidTaskMap.containskey(opp.id) && (oldMap == NULL ? (opp.StageName == 'Closed' && opp.Call_List_Recipient_Exist__c) : (((opp.StageName == 'Closed' && opp.StageName != oldMap.get(opp.id).stageName) && opp.Call_List_Recipient_Exist__c) || (opp.Call_List_Recipient_Exist__c && opp.Call_List_Recipient_Exist__c != oldMap.get(opp.id).Call_List_Recipient_Exist__c) && opp.StageName == 'Closed'))) {
-            if (!oppidTaskMap.containskey(opp.id) && (oldMap == NULL ? opp.StageName == 'Closed' : (opp.StageName == 'Closed' && opp.StageName != oldMap.get(opp.id).stageName))) // HRP-12284 
+            if (!oppidTaskMap.containskey(opp.id) && !opp.StageName.equalsIgnoreCase('Cancelled') && (oldMap == NULL ? opp.StageName == 'Closed' : (opp.StageName == 'Closed' && opp.StageName != oldMap.get(opp.id).stageName))) // HRP-12284  //Changes for HRP-13850
               {
                 task recruitmentTask = new task();
                 recruitmentTask.RecordTypeId = recTypeId;
@@ -566,6 +568,7 @@ if(ds.isCreateable()){}*/
         
         for (Opportunity opp : newItems) {
             if (opp.RecordTypeId == MOBILE_OPP_RECTYPEID && 
+                !opp.StageName.equalsIgnoreCase('Cancelled') && //Changes for HRP-13850
                 opp.Is_Template__c == false && 
                 //(oldMap == null ? (opp.StageName == 'Closed' || opp.StageName == 'Committed') : ((opp.StageName == 'Closed' || opp.StageName == 'Committed') && opp.StageName != oldMap.get(opp.id).StageName)) &&//Commented for HRP-5337
                 (Date.Today().daysBetween(opp.Drive_Date__c) <= Integer.ValueOf(label.SponsorPlanningMeetingTaskThresholdDays)) && //added for HRP-5337
@@ -3038,6 +3041,13 @@ System.debug('--> \n Exavalu call to generate drives is done. ');
                         }
                     }
                     // HRP-12011 --> Ends Here
+                     
+                    if(data.containsKey('APT_Required__c') == true) {
+                        oppField.APT_Required = oppRec.APT_Required__c;
+                    }
+                    if(data.containsKey('APT_Quantity__c') == true) {
+                        oppField.APT_Quantity = (Decimal)oppRec.APT_Quantity__c;
+                    }
 
                     //HRP-10659 <<-End
                     if(data.containsKey('Drive_Date_Change_Reason__c') == true){//HRP-10312 begin
@@ -3455,7 +3465,7 @@ opp.StageName = 'Closed';
         for(opportunity opp: oppNewList)
         {
             //only creating the task for mobile opps (HRP-7781)
-            if (opp.RecordTypeId == MOBILE_OPP_RECTYPEID) {
+            if (opp.RecordTypeId == MOBILE_OPP_RECTYPEID && !opp.StageName.equalsIgnoreCase('Cancelled')) {//Changes for HRP-13850
                 if(opp.Is_Template__c == false && opp.Drive_Date__c != NULL && opp.Drive_Date__c <= Date.Today().addDays(creationDateOffset) && opp.Drive_Date__c >= Date.Today() //HRP-12627
                     && (checkOppHas72hourTask.isEmpty() || !checkOppHas72hourTask.containsKey(opp.Id) || !checkOppHas72hourTask.get(opp.Id)))//HRP-12627
                 {
@@ -4770,4 +4780,24 @@ opp.StageName = 'Closed';
         }
     }
     //HRP-12142 ends
+    
+    //HRP-13190 --> Starts Here
+    public static void captureAPTRequirements(List<Opportunity> newOppList, Map<Id, Opportunity> oldOppMap) {
+        List<Opportunity> oppListToRecalculateAPT = new List<Opportunity>();
+        if (oldOppMap == NULL && newOppList != NULL && !newOppList.isEmpty()) {
+            newOppList = BSF_Utilities.getAPTQuantity(newOppList, 'Insert');
+        } else if (oldOppMap != NULL) {
+            for(Opportunity newOpp : newOppList) {
+                Opportunity oldOpp = oldOppMap.get(newOpp.Id);
+                if (oldOpp != NULL) {
+                    Boolean recalculateAptRule1 = oldOpp.APT_Required__c != newOpp.APT_Required__c;
+                    Boolean recalculateAptRule2 = oldOpp.Total_Projected_Procedures__c != newOpp.Total_Projected_Procedures__c;
+                    Boolean recalculateAptRule3 = oldOpp.APT_Quantity__c == newOpp.APT_Quantity__c; //During DOC -> OPP Sync
+                }
+            }
+                oppListToRecalculateAPT = BSF_Utilities.getAPTQuantity(oppListToRecalculateAPT, 'Update');
+            }
+        }
+    }
+    //HRP-13190 --> Ends Here
 }

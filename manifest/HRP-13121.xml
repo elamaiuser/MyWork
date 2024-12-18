@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+    <types>
+        <members>skedActivityService</members>
+        <members>skedMappingConfigContainer</members>
+        <members>skedModels</members>
+        <members>skedRacController</members>
+        <members>skedRecurringFactory</members>
+        <members>skedRegionService</members>
+        <members>skedSObjectType</members>
+        <members>skedActivityService_Test</members>
+        <members>skedMappingConfigContainer_Test</members>
+        <members>skedModels_Test</members>
+        <members>skedRacStory_Test</members>
+        <members>skedRegionService_Test</members>
+        <name>ApexClass</name>
+    </types>
+    <types>
+        <members>sked_Activity_Collection_Operation__c</members>
+        <name>CustomObject</name>
+    </types>
+    <types>
+        <members>sked__Activity__c.sked_ARC_Region__c</members>
+        <members>sked__Activity__c.sked_Drive_Types__c</members>
+        <members>sked__Activity__c.sked_Territory_Key__c</members>
+        <members>sked_Activity_Collection_Operation__c.sked_Activity__c</members>
+        <members>sked_Activity_Collection_Operation__c.sked_Biomed_Collection_Operation__c</members>
+        <members>sked_Activity_Collection_Operation__c.sked_District__c</members>
+        <members>sked_Activity_Collection_Operation__c.sked_Territory_Key__c</members>
+        <name>CustomField</name>
+    </types>
+    <types>
+        <members>sked__Activity__c-Sked Activity Layout</members>
+        <members>sked_Activity_Collection_Operation__c-Activity Collection Operation Layout</members>
+        <name>Layout</name>
+    </types>
+    <version>59.0</version>
+</Package>

@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
-        <label><!-- Trading Staff Overnight --></label>
-        <name>sked_Trading_Staff_Overnight__c</name>
-    </CustomFieldTranslation>
