@@ -4485,6 +4485,9 @@
     <layoutAssignments>
         <layout>sked_Workday_XML_Template__mdt-Workday XML Template Layout</layout>
     </layoutAssignments>
+    <layoutAssignments>
+        <layout>sked__Admin_Setting__mdt-sked__Admin Setting Layout</layout>
+    </layoutAssignments>
     <objectPermissions>
         <allowCreate>true</allowCreate>
         <allowDelete>false</allowDelete>

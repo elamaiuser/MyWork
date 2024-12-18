@@ -9,6 +9,7 @@
 *  Date                          Developer Name                 Comments
 * ***********************************************************************************************************************************************
 * 10/07/2024					 Balaji N				  	    HRP-12583 Created
+* 12/02/2024					 Barnojit Sharma		        Tasks being assigned for cancelled drives and for fixed sites(Logic for HRP-13850)
 **********************************************************************************************/
 global class BSF_Batch_CreatePublicityTasks implements Database.Batchable<Sobject>,Schedulable
 {
@@ -19,7 +20,7 @@ global class BSF_Batch_CreatePublicityTasks implements Database.Batchable<Sobjec
     public static Database.queryLocator Start(Database.BatchableContext bc)
     {
         String query = 'SELECT Id,Drive_Date__c,Account_Manager__c,OwnerId from Opportunity '+
-                       'WHERE Drive_Date__c >= Today AND Drive_Date__c<=:dateUntil AND is_template__c=false AND Opportunity.StageName = \'Closed\'';
+                       'WHERE RecordType.Name = \'Mobile Opp\' AND Drive_Date__c >= Today AND Drive_Date__c<=:dateUntil AND is_template__c=false AND Opportunity.StageName = \'Closed\'';//HRP-13850
         return Database.getQueryLocator(query);
     }
     

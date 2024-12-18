@@ -52,6 +52,7 @@ class BaseGenerator {
     waitingDriveChangeRequest : null,
     pendingDriveChangeRequest : null,
     staffSetupExcludedRoles: [],
+    skipAPTCalculation: false,
     
     //fixed site
     fixedSiteProcedureProjections: [],
@@ -717,6 +718,8 @@ class BaseGenerator {
       }
       if (property.targetName === 'aptRequired') {
         this.drive[property.targetName] = (/^(true|1)$/i).test(this.drive[property.targetName]);
+        this.drive['aptQuantity'] = this.drive.opportunity.aptQuantity;
+        this.masterData.skipAPTCalculation = true;
       }
     })
 
@@ -737,6 +740,9 @@ class BaseGenerator {
 
     properties.forEach(property => {
       driveShift[property.targetName] = property.targetValue;
+      if (property.targetName === 'APTSetup') {
+        this.masterData.skipAPTCalculation = true;
+      }
     })
 
     let actionGroups = this.mergeFieldChanged(properties, this.DRIVE_SHIFT_FIELD_CHANGE_MAPPING);

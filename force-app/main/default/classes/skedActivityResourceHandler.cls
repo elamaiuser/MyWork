@@ -424,7 +424,8 @@ public class skedActivityResourceHandler extends skedTriggerHub implements Calla
                     sked__Is_Available__c = TRUE,
                     sked__Start__c = activityResource.sked_Start1__c,
                     sked__Finish__c = activityResource.sked_End__c,
-                    sked__Status__c = skedConstants.AVAILABILITY_STATUS_APPROVED
+                    sked__Status__c = skedConstants.AVAILABILITY_STATUS_APPROVED,
+                    sked_Activity_Resource__c = activityResource.Id
                 ));
             }
         }
@@ -435,48 +436,43 @@ public class skedActivityResourceHandler extends skedTriggerHub implements Calla
     }
 
     private void syncOnCallAvailabilities(List<sked__Activity_Resource__c> newRecords, Map<Id, sked__Activity_Resource__c> oldMap) {
-        List<sked__Activity_Resource__c> updatedActivityResources = new List<sked__Activity_Resource__c>();
-        Map<Id, sked__Activity_Resource__c> newActivityResourceById = new Map<Id, sked__Activity_Resource__c>();
+        Map<Id, sked__Activity_Resource__c> mapActivityResource = new Map<Id, sked__Activity_Resource__c>();
         for (sked__Activity_Resource__c activityResource : newRecords) {
-            newActivityResourceById.put(activityResource.Id, activityResource);
             sked__Activity_Resource__c oldRecord = oldMap.get(activityResource.Id);
             if (activityResource.sked_Start1__c != oldRecord.sked_Start1__c 
                 || activityResource.sked_End__c != oldRecord.sked_End__c
                 || activityResource.sked_Start_Date__c != oldRecord.sked_Start_Date__c
                 || activityResource.sked_End_Date__c != oldRecord.sked_End_Date__c) {
-                    updatedActivityResources.add(oldRecord);
+            		mapActivityResource.put(activityResource.Id, activityResource);
             }
         }
 
-        if (!updatedActivityResources.isEmpty()) {
-            List<sked__Availability__c> availabilities = skedActivityResourceUtils.getAvailabilityRecordsForOnCalls(updatedActivityResources);
-            if (availabilities != null && !availabilities.isEmpty()) {
+        if (!mapActivityResource.isEmpty()) {
+            List<sked__Availability__c> availabilities = [SELECT Id, sked__Resource__c, sked__Start__c, sked__Finish__c, sked_Activity_Resource__c
+                                                          FROM sked__Availability__c
+                                                          WHERE sked_Activity_Resource__c IN :mapActivityResource.keySet()];
+            List<sked__Availability__c> availabilitiesToUpdate = new List<sked__Availability__c>();
                 for (sked__Availability__c availability : availabilities) {
-                    for (sked__Activity_Resource__c activityResource : updatedActivityResources) {
-                        if (availability.sked__Resource__c == activityResource.sked__Resource__c
-                            && availability.sked__Start__c == activityResource.sked_Start1__c
-                            && availability.sked__Finish__c == activityResource.sked_End__c) {
-                                sked__Activity_Resource__c newActivityResource = newActivityResourceById.get(activityResource.Id);
-                                availability.sked__Start__c = newActivityResource.sked_Start1__c;
-                                availability.sked__Finish__c = newActivityResource.sked_End__c;
-                        }
+                if (mapActivityResource.containsKey(availability.sked_Activity_Resource__c)) {
+                    sked__Activity_Resource__c activityResource = mapActivityResource.get(availability.sked_Activity_Resource__c);
+                    availability.sked__Start__c = activityResource.sked_Start1__c;
+                    availability.sked__Finish__c = activityResource.sked_End__c;
+                    availabilitiesToUpdate.add(availability);
                     }
                 }
-                update availabilities;
+            if (!availabilitiesToUpdate.isEmpty()) {
+                update availabilitiesToUpdate;
             }
         }
     }
 
     private static void deleteAvailabilityForOnCallResources(Set<Id> recordIds) {
-        List<sked__Activity_Resource__c> activityResources = [
-            SELECT Id, sked__Resource__c, sked_Start1__c, sked_End__c, sked__Activity__r.sked__Type__c
-            FROM sked__Activity_Resource__c
-            WHERE Id IN :recordIds
-            AND sked__Activity__r.sked__Type__c = :skedConstants.AVAILABILITY_TYPE_ON_CALL
-        ];
+        List<sked__Availability__c> availabilities = [SELECT Id
+                                                      FROM sked__Availability__c
+                                                      WHERE sked_Activity_Resource__c IN :recordIds];
 
-        if (activityResources != null && !activityResources.isEmpty()) {
-            delete skedActivityResourceUtils.GetAvailabilityRecordsForOnCalls(activityResources);
+        if (!availabilities.isEmpty()) {
+            delete availabilities;
         }
     }
 

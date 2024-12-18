@@ -430,6 +430,7 @@ global class slwcDriveService {
         map_oppField_driveField.put('Number_of_2RBC_Assets__c', 'sked_Number_of_2RBC_Assets__c');
         map_oppField_driveField.put('Number_of_Plasma_Assets__c', 'sked_Number_of_Plasma_Assets__c');
         map_oppField_driveField.put('Number_of_Platelet_Assets__c', 'sked_Number_of_Platelet_Assets__c');
+        map_oppField_driveField.put('APT_Required__c', 'sked_APT_Required__c');
         
         List<driveChangeRequestModel> filteredRequests = new List<driveChangeRequestModel>();
         

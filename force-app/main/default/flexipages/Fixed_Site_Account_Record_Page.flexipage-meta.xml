@@ -9,7 +9,7 @@
                         <valueListItems>
                             <value>Account.Review_Complete</value>
                             <visibilityRule>
-                                <booleanFilter>1 OR 2 OR 3</booleanFilter>
+                                <booleanFilter>1 OR 2 OR 3 OR 4</booleanFilter>
                                 <criteria>
                                     <leftValue>{!$User.Profile.Name}</leftValue>
                                     <operator>CONTAINS</operator>
@@ -24,6 +24,11 @@
                                     <leftValue>{!$User.Profile.Name}</leftValue>
                                     <operator>EQUAL</operator>
                                     <rightValue>System Administrator</rightValue>
+                                </criteria>
+                                <criteria>
+                                    <leftValue>{!$User.Profile.Name}</leftValue>
+                                    <operator>EQUAL</operator>
+                                    <rightValue>Global Admin</rightValue>
                                 </criteria>
                             </visibilityRule>
                         </valueListItems>
@@ -96,6 +101,16 @@
                         </valueListItems>
                         <valueListItems>
                             <value>Account.sked_Check_for_Impacted_Drives</value>
+                        </valueListItems>
+                        <valueListItems>
+                            <value>Account.Mass_Account_Service_Role_Add</value>
+                            <visibilityRule>
+                                <criteria>
+                                    <leftValue>{!$User.Profile.Name}</leftValue>
+                                    <operator>NE</operator>
+                                    <rightValue>Recruitment Admin</rightValue>
+                                </criteria>
+                            </visibilityRule>
                         </valueListItems>
                     </valueList>
                 </componentInstanceProperties>
@@ -215,7 +230,7 @@
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>SOQLQuery</name>
-                    <value>select Name, Drive_Date__c,CloseDate,StageName, Drive_Status__c, Drive_Name__c, Total_Projections__c from Opportunity where Drive_Status__c != &apos;Cancel&apos; AND StageName != &apos;Cancelled&apos; AND Drive_Date__c  &gt;= today AND AccountId IN:</value>
+                    <value>select Name, Drive_Date__c,CloseDate,StageName, Drive_Status__c, Drive_Name__c, Total_Projections__c from Opportunity where Drive_Status__c != &#39;Cancel&#39; AND StageName != &#39;Cancelled&#39; AND Drive_Date__c  &gt;= today AND AccountId IN:</value>
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>dateFormatType</name>
@@ -339,7 +354,7 @@
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>SOQLQuery</name>
-                    <value>select Name, Drive_Date__c,CloseDate,StageName, DriveStatus__c, Drive_Name__c, Total_Projections__c from Opportunity where StageName = &apos;Cancelled&apos; AND AccountId IN:</value>
+                    <value>select Name, Drive_Date__c,CloseDate,StageName, DriveStatus__c, Drive_Name__c, Total_Projections__c from Opportunity where StageName = &#39;Cancelled&#39; AND AccountId IN:</value>
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>dateFormatType</name>

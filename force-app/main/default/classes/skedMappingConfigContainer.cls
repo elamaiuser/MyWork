@@ -165,10 +165,16 @@ public class skedMappingConfigContainer {
             mappingConfig.addFieldConfig('sked_Region__r.sked_Biomed_Collection_Op_Center__c', 'biomedCollectionOpId', 'direct');
             mappingConfig.addFieldConfig('sked_Resource_Override__c', 'resourceOverrideId', 'direct');
             mappingConfig.addFieldConfig('sked_Show_On_Calendar__c', 'showOnCalendar', 'direct');
+            mappingConfig.addFieldConfig('sked_Drive_Types__c', 'driveTypes', 'multiPicklist');
             mappingConfig.addFieldConfig('sked_Subtype__c', 'subtype', 'direct');
+            mappingConfig.addFieldConfig('sked_Territory_Key__c', 'territoryKey', 'direct');
+            mappingConfig.addFieldConfig('sked_ARC_Region__c', 'arcRegionId', 'direct');
+            mappingConfig.addFieldConfig('sked_ARC_Region__r', 'arcRegion', 'related', skedModels.territory.class, 'sked_Territory__c');
             mappingConfig.addFieldConfig('activity', 'objectType', 'value');
             
+            
             mappingConfig.addFieldConfig('sked__Activity_Resources__r', 'activityResources', 'relatedList', 'sked__Activity_Resource__c');
+            mappingConfig.addFieldConfig('sked_Activity_Collection_Operations__r', 'activityCollectionOperations', 'relatedList', 'sked_Activity_Collection_Operation__c');
             
             mappingConfig.readonlyFields = new Set<string>();
             mappingConfig.readonlyFields.add('Name');
@@ -204,6 +210,32 @@ public class skedMappingConfigContainer {
             mappingConfig.masterDetailFields = new Set<String>();
             mappingConfig.masterDetailFields.add('sked__Activity__c');
             mappingConfig.masterDetailFields.add('sked__Resource__c');
+            return mappingConfig;
+        }
+    }
+
+    public class activityCollectionOperationMappingConfigFactory extends mappingConfigFactory {
+        public override mappingConfigModel process() {
+            mappingConfigModel mappingConfig = new mappingConfigModel();
+            mappingConfig.sObjectName = 'sked_Activity_Collection_Operation__c';
+            mappingConfig.objectType = 'activityCollectionOperation';
+            
+            mappingConfig.addFieldConfig('Id', 'id', 'direct');
+            mappingConfig.addFieldConfig('Name', 'name', 'direct');
+            mappingConfig.addFieldConfig('sked_Activity__c', 'activityId', 'direct');
+            mappingConfig.addFieldConfig('sked_Activity__r', 'activity', 'related', skedModels.activity.class, 'sked__Activity__c');
+            mappingConfig.addFieldConfig('sked_Biomed_Collection_Operation__c', 'biomedCollectionOpId', 'direct');
+            mappingConfig.addFieldConfig('sked_Biomed_Collection_Operation__r', 'biomedCollectionOp', 'related', skedModels.biomedCollectionOp.class, 'Biomed_Collection_Op_Center__c');
+            mappingConfig.addFieldConfig('sked_District__c', 'districtId', 'direct');
+            mappingConfig.addFieldConfig('sked_Territory_Key__c', 'territoryKey', 'direct');
+
+            mappingConfig.readonlyFields = new Set<string>();
+            mappingConfig.readonlyFields.add('Name');
+            mappingConfig.readonlyFields.add('sked_Territory_Key__c');
+            
+            mappingConfig.masterDetailFields = new Set<String>();
+            mappingConfig.masterDetailFields.add('sked_Activity__c');
+            mappingConfig.masterDetailFields.add('sked_Biomed_Collection_Operation__c');
             return mappingConfig;
         }
     }
@@ -862,7 +894,7 @@ public class skedMappingConfigContainer {
             mappingConfig.addFieldConfig('sked__Employment_Type__c', 'employmentType', 'direct');
             mappingConfig.addFieldConfig('sked__Mobile_Phone__c', 'mobilePhone', 'direct');
             mappingConfig.addFieldConfig('sked__Primary_Region__c', 'regionId', 'direct');
-            mappingConfig.addFieldConfig('sked__Primary_Region__r.sked__Timezone__c', 'timezoneSidId', 'direct');
+            mappingConfig.addFieldConfig('sked_Timezone__c', 'timezoneSidId', 'direct');
             mappingConfig.addFieldConfig('sked__Primary_Region__r.sked_Biomed_Collection_Op_Center__c', 'biomedCollectionOpId', 'direct');
             mappingConfig.addFieldConfig('sked__Primary_Region__r.sked_Biomed_Collection_Op_Center__r.sked_Restricts_to_Full_day_PTO__c', 'restrictsToFullDayPto', 'direct');
             mappingConfig.addFieldConfig('sked__Primary_Region__r.sked_Biomed_Collection_Op_Center__r.sked_Work_Week_First_Day__c', 'workWeekFirstDay', 'direct');
