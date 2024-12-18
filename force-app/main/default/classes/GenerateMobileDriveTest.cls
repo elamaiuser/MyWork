@@ -13,10 +13,9 @@
 -------------------------
 Current Code Coverage :  
 -------------------------
-** CreateSkedDrive : 90%
+** CreateSkedDrive : 92%
 ** GenerateMobileDrive : 91%
 ** DriveGeneratorService : 92%
-** FetchRelatedDriveData : 86%
 ** JobTriggerHandler : 83%
 *******************************************************************************
 */
