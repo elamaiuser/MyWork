@@ -60,6 +60,7 @@
 * 11/12/2024				     Barnojit Sharma		  Unable to create Mobile Drive when the Template has an over-budget template order (Logic for HRP-13716)
 * 12/02/2024					 Barnojit Sharma		  Tasks being assigned for cancelled drives and for fixed sites(Logic for HRP-13850)
 * 12/10/2024					 Priti Jana				  Logic for HRP-13190
+* 12/10/2024                     Satyendra Vishwakarma    HRP-6051 - Anticipated Registered Donors validation when changing procedure projections
 ************************************************************************************************************************************************
 */
 
@@ -4793,11 +4794,62 @@ opp.StageName = 'Closed';
                     Boolean recalculateAptRule1 = oldOpp.APT_Required__c != newOpp.APT_Required__c;
                     Boolean recalculateAptRule2 = oldOpp.Total_Projected_Procedures__c != newOpp.Total_Projected_Procedures__c;
                     Boolean recalculateAptRule3 = oldOpp.APT_Quantity__c == newOpp.APT_Quantity__c; //During DOC -> OPP Sync
+                    if((recalculateAptRule1 || recalculateAptRule2) && recalculateAptRule3) oppListToRecalculateAPT.add(newOpp);
                 }
             }
+
+            if(oppListToRecalculateAPT != NULL && !oppListToRecalculateAPT.isEmpty()) {
                 oppListToRecalculateAPT = BSF_Utilities.getAPTQuantity(oppListToRecalculateAPT, 'Update');
             }
         }
     }
     //HRP-13190 --> Ends Here
+
+    //HRP-6051 Starts Here
+    public static void validateTheARD(List<Opportunity> newOppList, Map<Id, Opportunity> oldOppMap){
+        //user profile checking
+        Map<String, ARD_Alert_Profiles__mdt> profilesToAlert = ARD_Alert_Profiles__mdt.getAll();
+        Set<String> relevantProfiles = new Set<String>();
+        for (ARD_Alert_Profiles__mdt profile : profilesToAlert.values()) {
+            //System.debug('HRP-6051 profile : '+profile);
+            relevantProfiles.add(profile.Label);
+        }
+        // Check the current user's profile
+        Profile profile;
+        String currentProfileName;
+        //System.debug('HRP-6051 profile : '+profile+' currentProfileName:'+currentProfileName);
+        try {
+            profile = [SELECT Name FROM Profile WHERE Id = :UserInfo.getProfileId() LIMIT 1];
+            System.debug('profile : '+profile);
+            currentProfileName = profile.Name;
+            // You can now safely use `profile.Name`
+        } catch (QueryException e) {
+            // Handle the case where no profile is found
+            System.debug('QueryException: No profile found for the logged-in user. Error: ' + e.getMessage()+ 'Stack Trace: ' + e.getStackTraceString());
+            currentProfileName = 'NA';
+        } catch (Exception ex) {
+            // Handle any other unexpected exceptions
+            System.debug('Unexpected exception occurred. Error: ' + ex.getMessage()+' Stack Trace: ' + ex.getStackTraceString());
+            currentProfileName = 'NA';
+        }
+
+        System.debug('HRP-6051 currentProfileName :'+currentProfileName);
+        if (currentProfileName != 'NA' && relevantProfiles.contains(currentProfileName)) {
+            //System.debug('HRP-6051 relevantProfiles  :'+currentProfileName);
+            Map<String, Object> changedFields = new Map<String, Object>();
+            for (Opportunity opp : newOppList) {
+                Opportunity oldOpp = oldOppMap.get(opp.Id);
+                // Condition: WB/DR projection changed, ARD not updated
+                
+                if ((opp.WB_Projected_Procedures__c != oldOpp.WB_Projected_Procedures__c || 
+                    opp.X2RBC_Projected_Procedures__c != oldOpp.X2RBC_Projected_Procedures__c) &&
+                    opp.Anticipated_Registered_Donors__c == oldOpp.Anticipated_Registered_Donors__c) {
+                        opp.Pending_ARD_Confirmation__c = true; 
+                }else if(opp.Anticipated_Registered_Donors__c != oldOpp.Anticipated_Registered_Donors__c){
+                        opp.Pending_ARD_Confirmation__c = false;
+                } 
+            }
+        }    
+    }
+    //HRP-6051 Ends Here
 }

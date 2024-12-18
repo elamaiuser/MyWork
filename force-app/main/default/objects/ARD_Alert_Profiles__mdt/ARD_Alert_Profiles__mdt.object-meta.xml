@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <description>This metadata contains the list of profiles who should be seeing the ARD validation alert.</description>
+    <label>ARD Alert Profile</label>
+    <pluralLabel>ARD Alert Profiles</pluralLabel>
+    <visibility>Public</visibility>
+</CustomObject>

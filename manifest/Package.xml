@@ -72,6 +72,10 @@
 		<members>skedActivityResourceHandler</members>
 		<members>skedActivityResourceUtils</members>
 		<members>skedActivityResourceUtils_Test</members>
+		<members>OpportunityTriggerHandler</members>
+		<members>OpportunityControllerHelperTest</members>
+		<members>OpportunityControllerHelper</members>
+		<members>OpportunityService</members>
 		<name>ApexClass</name>
 	</types>
 	<types>
@@ -110,6 +114,7 @@
 		<members>sked_Travel_Time_Manager__c.sked_CO_Group_Index_Refresh_Priority__c</members>
 		<members>UpdateOpptyTeamEvent__e.AcctTeamMemberId__c</members>
         <members>UpdateOpptyTeamEvent__e.UpdateAcctTeam__c</members>
+		 <members>Opportunity.Pending_ARD_Confirmation__c</members>
 		<name>CustomField</name>
 	</types>
 	<types>
@@ -157,6 +162,7 @@
 		<members>Task_Reassignment_Matrix.X72_Hour</members>
 		<members>Task_Report_Link.Drive_Worksheet_Report</members>
 		<members>Task_Report_Link.Managing_Donor_Appointments_Playbook_72</members>
+		<members>ARD_Alert_Profiles__mdt</members>
 		<name>CustomMetadata</name>
 	</types>
 	<types>
@@ -230,6 +236,8 @@
 		<members>slwcDriveChangeRequestApproval</members>
 		<members>slwcLinkedDriveStaffingDetails</members>
 		<members>travelTimeBreakdown</members>
+		<members>slwcListenDriveChange</members>
+        <members>slwcGenerateDriveModal</members>
 		<name>LightningComponentBundle</name>
 	</types>
 	<types>
