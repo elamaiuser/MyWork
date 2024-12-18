@@ -9,7 +9,8 @@ public class skedDriveHandler extends skedTriggerHub {
         'Anticipated_Registered_Donors__c' => 'AnticipatedRegisterDonorChangeReason__c',
         'WB_Projected_Procedures__c' => 'WholeBloodProcedureProjectedChangeReason__c',
         'X2RBC_Projected_Procedures__c' => 'DoubleRedProceduresProjectedChangeReason__c',
-        'Slot_Generator__c' => 'Slot_Generator_Change_Reason__c'
+        'Slot_Generator__c' => 'Slot_Generator_Change_Reason__c',
+        'APT_Quantity__c' => 'APT_Change_Reason__c'
     };
 
     private static final Map<String, String> DRIVE_GEN_OPP_FIELD_BY_DRIVE_FIELD = new Map<String, String>{
