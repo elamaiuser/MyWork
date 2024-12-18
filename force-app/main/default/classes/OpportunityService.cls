@@ -59,6 +59,7 @@
 * 11/11/2024					 Priti Jana				  Logic for HRP-13743
 * 11/12/2024				     Barnojit Sharma		  Unable to create Mobile Drive when the Template has an over-budget template order (Logic for HRP-13716)
 * 12/02/2024					 Barnojit Sharma		  Tasks being assigned for cancelled drives and for fixed sites(Logic for HRP-13850)
+* 12/10/2024					 Priti Jana				  Logic for HRP-13190
 ************************************************************************************************************************************************
 */
 
@@ -4788,14 +4789,12 @@ opp.StageName = 'Closed';
         } else if (oldOppMap != NULL) {
             for(Opportunity newOpp : newOppList) {
                 Opportunity oldOpp = oldOppMap.get(newOpp.Id);
-                if (oldOpp != NULL && oldOpp.APT_Required__c != newOpp.APT_Required__c) {
-                    if(!(String.isNotBlank(newOpp.APT_Change_Reason__c) && newOpp.APT_Change_Reason__c.equalsIgnoreCase(BSF_Constants.APT_CHANGE_VIA_TEMPLATE)))
-                    oppListToRecalculateAPT.add(newOpp);
-                } else if(oldOpp != NULL && oldOpp.Total_Projected_Procedures__c != newOpp.Total_Projected_Procedures__c) {
-                    oppListToRecalculateAPT.add(newOpp);
+                if (oldOpp != NULL) {
+                    Boolean recalculateAptRule1 = oldOpp.APT_Required__c != newOpp.APT_Required__c;
+                    Boolean recalculateAptRule2 = oldOpp.Total_Projected_Procedures__c != newOpp.Total_Projected_Procedures__c;
+                    Boolean recalculateAptRule3 = oldOpp.APT_Quantity__c == newOpp.APT_Quantity__c; //During DOC -> OPP Sync
                 }
             }
-            if(!oppListToRecalculateAPT.isEmpty()) {
                 oppListToRecalculateAPT = BSF_Utilities.getAPTQuantity(oppListToRecalculateAPT, 'Update');
             }
         }
