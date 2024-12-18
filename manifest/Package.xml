@@ -40,7 +40,6 @@
 		<members>skedJobAllocationHandler</members>
 		<members>skedJobHandler</members>
 		<members>skedMappingConfigContainer</members>
-		<members>skedMappingConfigController_Test</members>
 		<members>skedModels</members>
 		<members>skedModels_Test</members>
 		<members>skedNotificationBatchBase</members>
@@ -67,6 +66,7 @@
 		<members>skedTravelTimeIndexRefreshGroupHandler</members>
 		<members>skedTravelTimeIndexRefreshRequestHandler</members>
 		<members>skedUserHandler</members>
+		<members>skedUserHandler_Test</members>
 		<members>skedWorkdayApiManager</members>
 		<members>slwcDriveService</members>
 		<members>BSF_TravelTimePanelController</members>
@@ -75,10 +75,8 @@
 		<members>skedActivityResourceHandler</members>
 		<members>skedActivityResourceUtils</members>
 		<members>skedActivityResourceUtils_Test</members>
-		<members>OpportunityTriggerHandler</members>
 		<members>OpportunityControllerHelperTest</members>
 		<members>OpportunityControllerHelper</members>
-		<members>OpportunityService</members>
 		<name>ApexClass</name>
 	</types>
 	<types>
