@@ -94,6 +94,8 @@
         <members>sked__Activity__c.sked_Drive_Types__c</members>
         <members>sked__Activity__c.sked_Territory_Key__c</members>
 		<members>sked_Drive__c.sked_APT_Quantity__c</members>
+		<members>sked__Job__c.sked_Volunteer_Adjustment_Reason__c</members>
+        <members>sked__Job__c.sked_Other_Volunteer_Adjustment_Reason__c</members>
 		<members>sked_Staffing_Budget_Site__c.sked_Location__c</members>
 		<members>sked_Staffing_Budget_Site__c.sked_Specific_Collection_Operation__c</members>
 		<members>sked_Staffing_Budget_Site__c.sked_Staffing_Budget__c</members>
@@ -197,6 +199,7 @@
 		<members>Opportunity-Sponsor Marketing Mobile Opp Layout</members>
 		<members>sked__Activity__c-Sked Activity Layout</members>
         <members>sked_Activity_Collection_Operation__c-Activity Collection Operation Layout</members>
+		<members>sked__Job__c-Sked Job Layout</members>
 		<members>sked_Staffing_Budget_Site__c-Staffing Budget Site Layout</members>
 		<members>sked_Staffing_Budget__c-Staffing Budget Layout</members>
 		<members>sked_Travel_Time_Index_Refresh_Group__c-Travel Time Index Refresh CO Group Layout</members>
@@ -220,6 +223,8 @@
         <members>slwcConstants</members>
         <members>slwcDriveGenerator</members>
         <members>slwcDriveShift</members>
+		<members>slwcDriveShiftJobModal</members>
+        <members>slwcDriveShiftJobTable</members>
 		<members>blwcDriveWorkSheetComponent</members>
 		<members>slwcApprovalHistoryConsole</members>
 		<members>slwcDriveChangeRequestApproval</members>
