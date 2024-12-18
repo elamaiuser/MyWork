@@ -37,6 +37,7 @@
 		<members>skedCOGroupTravelTimeIndexRefreshBatch</members>
 		<members>skedConstants</members>
 		<members>skedDriveHandler</members>
+		<members>skedDriveTrigger_Test</members>
 		<members>skedJobAllocationHandler</members>
 		<members>skedJobHandler</members>
 		<members>skedMappingConfigContainer</members>
