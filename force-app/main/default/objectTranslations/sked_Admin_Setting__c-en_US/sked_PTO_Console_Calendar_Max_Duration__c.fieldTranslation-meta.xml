@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
-        <label><!-- PTO Console Calendar Max Duration --></label>
-        <name>sked_PTO_Console_Calendar_Max_Duration__c</name>
-    </CustomFieldTranslation>

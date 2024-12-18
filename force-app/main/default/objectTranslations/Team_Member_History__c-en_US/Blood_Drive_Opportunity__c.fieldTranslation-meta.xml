@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
-        <label><!-- Blood Drive Opportunity --></label>
-        <name>Blood_Drive_Opportunity__c</name>
-        <relationshipLabel><!-- Team Member Histories --></relationshipLabel>
-    </CustomFieldTranslation>

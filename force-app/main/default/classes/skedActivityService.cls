@@ -19,7 +19,6 @@ global class skedActivityService extends skedEventService {
             ]
         );
 		
-        system.debug('existingActivities '+existingActivities);
         List<sked_Activity_Collection_Operation__c> activityCosToDelete = new List<sked_Activity_Collection_Operation__c>();
         if(existingActivities != NULL && !existingActivities.isEmpty()) {
             for(sked__Activity__c existingActivity : existingActivities) {
@@ -53,29 +52,31 @@ global class skedActivityService extends skedEventService {
         }
 
         List<sked_Activity_Collection_Operation__c> skedActivityColOpToInsert = new List<sked_Activity_Collection_Operation__c>();
-        for(skedModels.activity activityModel : activityModels) {
-            for(String coId : activityModel.biomedCollectionOpIds) {
-                String districtId;
-                if(map_coId_coInfo != NULL && map_coId_coInfo.containsKey(coId)) {
-                    Biomed_Collection_Op_Center__c collectionOperation = map_coId_coInfo.get(coId);
-                    for (sked_Territory_Collection_Operation__c territoryCO : collectionOperation.sked_Territory_Collection_Operations__r) {
-                        boolean isStartDateMatched = territoryCO.sked_Start_Date__c == NULL || territoryCO.sked_Start_Date__c <= skedDateTimeUtils.getDateFromIsoString(activityModel.startDate);
-                        boolean isEndDateMatched = territoryCO.sked_End_Date__c == NULL || territoryCO.sked_End_Date__c >= skedDateTimeUtils.getDateFromIsoString(activityModel.startDate);
-                        if (isStartDateMatched && isEndDateMatched) {
-                            districtId = territoryCO.sked_Territory__c;
-                            break;
+        if(map_coId_coInfo != NULL && !map_coId_coInfo.isEmpty()) {
+            for(skedModels.activity activityModel : activityModels) {
+                for(String coId : activityModel.biomedCollectionOpIds) {
+                    String districtId;
+                    if(map_coId_coInfo.containsKey(coId) && map_coId_coInfo.get(coId) != NULL) {
+                        Biomed_Collection_Op_Center__c collectionOperation = map_coId_coInfo.get(coId);
+                        for (sked_Territory_Collection_Operation__c territoryCO : collectionOperation.sked_Territory_Collection_Operations__r) {
+                            boolean isStartDateMatched = territoryCO.sked_Start_Date__c == NULL || territoryCO.sked_Start_Date__c <= skedDateTimeUtils.getDateFromIsoString(activityModel.startDate);
+                            boolean isEndDateMatched = territoryCO.sked_End_Date__c == NULL || territoryCO.sked_End_Date__c >= skedDateTimeUtils.getDateFromIsoString(activityModel.startDate);
+                            if (isStartDateMatched && isEndDateMatched) {
+                                districtId = territoryCO.sked_Territory__c;
+                                break;
+                            }
                         }
                     }
+                    skedActivityColOpToInsert.add(new sked_Activity_Collection_Operation__c(
+                        sked_Activity__c = activityModel.id,
+                        sked_Biomed_Collection_Operation__c = coId,
+                        sked_District__c = districtId
+                    ));
                 }
-                skedActivityColOpToInsert.add(new sked_Activity_Collection_Operation__c(
-                    sked_Activity__c = activityModel.id,
-                    sked_Biomed_Collection_Operation__c = coId,
-                    sked_District__c = districtId
-                ));
             }
         }
         
-        if (!skedActivityColOpToInsert.isEmpty()) {
+        if (skedActivityColOpToInsert != NULL && !skedActivityColOpToInsert.isEmpty()) {
             insert skedActivityColOpToInsert;
         }
     }

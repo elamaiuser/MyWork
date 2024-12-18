@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
-        <label><!-- TAT Time Traded Into (Trading) --></label>
-        <name>sked_TAT_Time_Traded_Into_Trading__c</name>
-    </CustomFieldTranslation>
