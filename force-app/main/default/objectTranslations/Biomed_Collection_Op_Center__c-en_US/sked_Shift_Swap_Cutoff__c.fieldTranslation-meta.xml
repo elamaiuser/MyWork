@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
-        <label><!-- Shift Swap Cutoff (days) --></label>
-        <name>sked_Shift_Swap_Cutoff__c</name>
-    </CustomFieldTranslation>

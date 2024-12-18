@@ -1698,6 +1698,16 @@
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
+        <editable>false</editable>
+        <field>sked_Drive_Shift_Trade__c.Requesting_Staff_Scheduled_Hours_Change__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>sked_Drive_Shift_Trade__c.Trading_Staff_Scheduled_Hours_Change__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
         <editable>true</editable>
         <field>sked_Drive_Shift_Trade__c.sked_APS_Notes__c</field>
         <readable>true</readable>

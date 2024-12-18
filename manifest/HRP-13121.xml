@@ -12,9 +12,7 @@
         <members>skedMappingConfigContainer_Test</members>
         <members>skedModels_Test</members>
         <members>skedRacStory_Test</members>
-        <members>skedRecurringFactory</members>
         <members>skedRegionService_Test</members>
-        <members>skedSObjectType</members>
         <name>ApexClass</name>
     </types>
     <types>

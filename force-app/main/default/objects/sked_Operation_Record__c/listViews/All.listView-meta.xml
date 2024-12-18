@@ -11,14 +11,9 @@
     <columns>LAST_UPDATE</columns>
     <filterScope>Everything</filterScope>
     <filters>
-        <field>sked_Drive_Date__c</field>
+        <field>NAME</field>
         <operation>equals</operation>
-        <value>11/14/2024</value>
-    </filters>
-    <filters>
-        <field>sked_Account_External_ID__c</field>
-        <operation>startsWith</operation>
-        <value>022</value>
+        <value>OR-310981</value>
     </filters>
     <label>All</label>
 </ListView>

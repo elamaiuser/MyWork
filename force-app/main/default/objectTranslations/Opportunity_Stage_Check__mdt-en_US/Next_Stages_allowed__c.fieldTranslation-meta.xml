@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
-        <help><!-- Next stage of opportunity which is being modified (will be coming in as current value in validation rule ) --></help>
-        <label><!-- Next Stages Allowed --></label>
-        <name>Next_Stages_allowed__c</name>
-    </CustomFieldTranslation>
