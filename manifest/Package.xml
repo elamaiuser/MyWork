@@ -78,6 +78,14 @@
 		<members>skedActivityResourceUtils_Test</members>
 		<members>OpportunityControllerHelperTest</members>
 		<members>OpportunityControllerHelper</members>
+		<members>OpportunityService</members>
+		<members>TaskGenerationBatch</members>
+        <members>BSF_Batch_CreatePublicityTasks</members>
+        <members>TaskGenerationBatch_Test</members>
+        <members>OpportunityTriggerTest</members>
+        <members>BSF_Batch_CreatePublicityTasksTest</members>
+		<members>BSF_Batch_RecruitmentTaskCreation</members>
+		<members>BSF_Batch_RecruitmentTaskCreation_Test</members>
 		<name>ApexClass</name>
 	</types>
 	<types>
@@ -258,6 +266,10 @@
 		<members>Account.View_Account_Overview</members>
 		<members>sked__Location__c.Site_Audit</members>
 		<name>WebLink</name>
+	</types>
+	<types>
+		<members>Task_Creation_on_Drive_Status_Complete</members>
+		<name>Flow</name>
 	</types>
 	<version>60.0</version>
 </Package>
