@@ -106,6 +106,11 @@ export default class SlwcDriveChangeRequestApproval extends LightningElement {
       return;
     };
   }
+
+  handleCanApproveRefreshed(event) {
+    const { canApproveReject } = event.detail;
+    this.canApproveReject = canApproveReject;
+  }
   
   showGenerateDriveModal(dcrId) {
     this.generateDriveModalData = {
