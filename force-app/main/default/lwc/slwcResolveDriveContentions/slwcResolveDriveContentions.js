@@ -100,7 +100,7 @@ export default class SlwcResolveDriveContentions extends LightningElement {
 
       return {
         drive: this.drive,
-        contentionResolution: this.drive.contentionResolutions.join(';'),
+        contentionResolution: [...this.drive.contentionResolutions],
         driveContentions: this.driveContentions,
         equipmentJob,
         vehicleJob
@@ -151,7 +151,7 @@ export default class SlwcResolveDriveContentions extends LightningElement {
         
         this.drive.contentionResolutions = [];
         if(this.drive.contentionResolution) {
-          this.drive.contentionResolutions = this.drive.contentionResolution.split(';');
+          this.drive.contentionResolutions = cloneDeep(this.drive.contentionResolution);
         }
       }
     })
@@ -171,7 +171,7 @@ export default class SlwcResolveDriveContentions extends LightningElement {
       driveType: null
     });
 
-    const backupContentionResolution = this.drive ? (this.drive.contentionResolutions || []).join(';') : '';
+    const backupContentionResolution = this.drive ? this.drive.contentionResolutions : [];
     let equipmentJob = null;
     let vehicleJob = null;
     if (this.drive && this.drive.driveShifts && this.drive.driveShifts.length) {
@@ -276,18 +276,18 @@ export default class SlwcResolveDriveContentions extends LightningElement {
       this.drive = this.driveGeneratorInstance.drive;
 
       if(restoreContentionResolution) {
-        this.drive.contentionResolution = backupContentionResolution;
+        this.drive.contentionResolution = [...backupContentionResolution];
       }
 
       this.drive.contentionResolutions = [];
       if(this.drive.contentionResolution) {
-        this.drive.contentionResolutions = this.drive.contentionResolution.split(';');
+        this.drive.contentionResolutions = cloneDeep(this.drive.contentionResolution);
       }
     });
   }
 
   fetchDriveChangeRequestAndDrive = (recordId, restoreContentionResolution = false, validateAssets = false) => {
-    const backupContentionResolution = this.drive ? (this.drive.contentionResolutions || []).join(';') : '';
+    const backupContentionResolution = this.drive ? this.drive.contentionResolutions : [];
     
     let equipmentJob = null;
     let vehicleJob = null;
@@ -417,12 +417,12 @@ export default class SlwcResolveDriveContentions extends LightningElement {
       this.drive = this.driveGeneratorInstance.drive;
 
       if(restoreContentionResolution) {
-        this.drive.contentionResolution = backupContentionResolution;
+        this.drive.contentionResolution = [...backupContentionResolution];
       }
 
       this.drive.contentionResolutions = [];
       if(this.drive.contentionResolution) {
-        this.drive.contentionResolutions = this.drive.contentionResolution.split(';');
+        this.drive.contentionResolutions = cloneDeep(this.drive.contentionResolution);
       }
     });
   }
@@ -980,9 +980,9 @@ export default class SlwcResolveDriveContentions extends LightningElement {
         
         let originalContentions = [];
         if(this.mode === MODE.DRIVE_SUBMISSION) {
-          originalContentions = this.drive.pendingActionReasonCode ? this.drive.pendingActionReasonCode.split(';') : [];
+          originalContentions = this.drive.pendingActionReasonCode || [];
         } else {
-          originalContentions = this.driveChangeRequest ? this.driveChangeRequest.driveContention.split(';') : [];
+          originalContentions = this.driveChangeRequest?.driveContention || [];
         }
         
         let {
@@ -990,7 +990,7 @@ export default class SlwcResolveDriveContentions extends LightningElement {
           contentions,
         } = helper.validateDrive({
           ...this.drive,
-          contentionResolution: this.drive.contentionResolutions.join(';')
+          contentionResolution: this.drive.contentionResolutions
         }, {
           ...this.masterData,
           backupDrive: this.driveGeneratorInstance.masterData.backupDrive
@@ -1043,9 +1043,9 @@ export default class SlwcResolveDriveContentions extends LightningElement {
 
         let originalContentions = [];
         if(this.mode === MODE.DRIVE_SUBMISSION) {
-          originalContentions = this.drive.pendingActionReasonCode ? this.drive.pendingActionReasonCode.split(';') : [];
+          originalContentions = this.drive.pendingActionReasonCode || [];
         } else {
-          originalContentions = this.driveChangeRequest ? this.driveChangeRequest.driveContention.split(';') : [];
+          originalContentions = this.driveChangeRequest?.driveContention || [];
         }
         
         let {
@@ -1053,7 +1053,7 @@ export default class SlwcResolveDriveContentions extends LightningElement {
           contentions,
         } = helper.validateDrive({
           ...this.drive,
-          contentionResolution: this.drive.contentionResolutions.join(';')
+          contentionResolution: this.drive.contentionResolutions
         }, {
           ...this.masterData,
           backupDrive: this.driveGeneratorInstance.masterData.backupDrive,
@@ -1172,7 +1172,7 @@ export default class SlwcResolveDriveContentions extends LightningElement {
 
       this.drive.contentionResolutions = [];
       if(this.drive.contentionResolution) {
-        this.drive.contentionResolutions = this.drive.contentionResolution.split(';');
+        this.drive.contentionResolutions = cloneDeep(this.drive.contentionResolution);
       }
       return this.validateDriveContentions();
     })
@@ -1193,7 +1193,7 @@ export default class SlwcResolveDriveContentions extends LightningElement {
 
   handleValidateBtn = () => {
     const driveHelper = new DriveHelper();
-    const backupContentionResolution = this.drive ? (this.drive.contentionResolutions || []).join(';') : '';
+    const backupContentionResolution = this.drive ? this.drive.contentionResolutions : [];
 
     this.showLoading()
     return Promise.resolve()
@@ -1290,11 +1290,11 @@ export default class SlwcResolveDriveContentions extends LightningElement {
     })
     .then(() => {
       this.drive = this.driveGeneratorInstance.drive;
-      this.drive.contentionResolution = backupContentionResolution;
+      this.drive.contentionResolution = [...backupContentionResolution];
 
       this.drive.contentionResolutions = [];
       if(this.drive.contentionResolution) {
-        this.drive.contentionResolutions = this.drive.contentionResolution.split(';');
+        this.drive.contentionResolutions = cloneDeep(this.drive.contentionResolution);
       }
       return this.validateDriveContentions()
     })
