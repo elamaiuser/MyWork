@@ -9,14 +9,18 @@
 global class BSF_Batch_OpportunityTeamSync implements Database.Batchable<sObject>{ 
 	global Map<Id,List<AccountTeamMember>> mapOfAcctsWithTeamMembers;
     global Integer countAccounts;
+    global Date leastStartDate;
+    global Date maxEndDate;
     //HRP-10889
-    global String STAGE_CANCELLED = 'Cancelled';
+    global String STAGE_CANCELLED = BSF_constants.STAGE_CANCELLED;
     global DateTime teamMemberModifiedStart;
     global DateTime teamMemberModifiedEnd;
     //HRP-10889
-    global BSF_Batch_OpportunityTeamSync(Map<Id,List<AccountTeamMember>> mapOfAcctsWithTeamMembers,Integer countAccounts){
+    global BSF_Batch_OpportunityTeamSync(Map<Id,List<AccountTeamMember>> mapOfAcctsWithTeamMembers,Integer countAccounts,Date startDate,Date endDate){
         this.mapOfAcctsWithTeamMembers = mapOfAcctsWithTeamMembers;
         this.countAccounts = countAccounts;
+        this.leastStartDate = startDate;
+        this.maxEndDate = endDate;
     }
     //HRP-10889
     global BSF_Batch_OpportunityTeamSync(DateTime teamMemberModifiedStart,DateTime teamMemberModifiedEnd){
@@ -30,9 +34,9 @@ global class BSF_Batch_OpportunityTeamSync implements Database.Batchable<sObject
     global Database.QueryLocator start(Database.BatchableContext BC)
   	{ 
         Set<Id> accountIds = mapOfAcctsWithTeamMembers.keySet();
-        Date leastStartDate = null;
-        Date maxEndDate = null;
-        for(Id acctId : mapOfAcctsWithTeamMembers.keySet()){
+        //Date leastStartDate = null;
+        //Date maxEndDate = null;
+        /*for(Id acctId : mapOfAcctsWithTeamMembers.keySet()){
             for(AccountTeamMember actTeamMember :mapOfAcctsWithTeamMembers.get(acctId)){
                 if(leastStartDate == null || leastStartDate > actTeamMember.Start_Date__c){
                     leastStartDate = actTeamMember.Start_Date__c;
@@ -41,15 +45,15 @@ global class BSF_Batch_OpportunityTeamSync implements Database.Batchable<sObject
                     maxEndDate = actTeamMember.End_Date__c;
                 }
             }
-        }
+        }*/
         
-        String query = 'SELECT Id, ownerId, AccountId, Drive_Date__c, Account_Manager__c, Account_Manager_Portfolio__c ,Covering_Recruiter__c,District_Manager__c, District_Manager_Portfolio__c FROM Opportunity WHERE AccountId IN :accountIds AND Drive_Date__c != null AND Drive_Date__c >= TODAY AND StageName != :STAGE_CANCELLED AND Drive_Date__c >= :leastStartDate AND Drive_Date__c <= :maxEndDate';
+        String query = 'SELECT Id, ownerId, AccountId, Drive_Date__c, Account_Manager__c, Account_Manager_Portfolio__c ,Covering_Recruiter__c,District_Manager__c, District_Manager_Portfolio__c FROM Opportunity WHERE AccountId IN :accountIds AND Drive_Date__c != null AND StageName != :STAGE_CANCELLED AND Drive_Date__c >= :leastStartDate AND Drive_Date__c <= :maxEndDate';//HRP-13340
         //HRP-10889  //HRP-10359
         if(mapOfAcctsWithTeamMembers.isEmpty()){
             query = 'SELECT Id, ownerId, AccountId, Drive_Date__c, Account_Manager__c,Covering_Recruiter__c,District_Manager__c, Account_Manager_Portfolio__c, District_Manager_Portfolio__c FROM Opportunity WHERE AccountId IN (SELECT AccountId FROM AccountTeamMember WHERE Lastmodifieddate >=:teamMemberModifiedStart AND Lastmodifieddate <= :teamMemberModifiedEnd) AND Drive_Date__c != null AND Drive_Date__c >= TODAY AND StageName != :STAGE_CANCELLED ';
         }
         //HRP-10889 //HRP-10359
-        //System.debug( ' query is '+query);
+       
         return Database.getQueryLocator(query); 
   	}
 	

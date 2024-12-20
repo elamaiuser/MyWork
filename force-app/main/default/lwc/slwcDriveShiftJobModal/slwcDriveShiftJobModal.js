@@ -252,7 +252,6 @@ export default class SlwcDriveShiftJobModal extends LightningElement {
                 collectionOperation: siteCollectionOperation.collectionOperation,
                 driveSite
             }, masterData)
-            
             let driveShiftResourceRoleGroupRoleTimeDataMap = helper.calculateDriveShiftRoleTimeData(
                 masterData, {
                 ...this.drive,
@@ -265,7 +264,7 @@ export default class SlwcDriveShiftJobModal extends LightningElement {
                     }),
                     resourceRoleGroupRoleTimeDataMap: driveResourceRoleGroupRoleTimeDataMap
                 },
-                collectionOperation: this.drive.collectionOperation
+                collectionOperation: siteCollectionOperation.collectionOperation
             }, {
                 ...this.driveShift,
                 key: this.driveShift.id || this.driveShift.key

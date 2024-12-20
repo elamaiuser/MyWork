@@ -156,11 +156,20 @@ global class skedModels {
         public boolean whitelisted;
         public boolean blacklisted;
     }
+
+    global virtual class locationResourceScore {
+        public string locationId;
+        public string locationResourceRelationship;
+        public string locationType;
+        public string resourceId;
+    }
     
     global virtual class activity extends event {
         public decimal activityResourceCount;
         public string activityTitle;
         public address address;
+        public string arcRegionId;
+        public territory arcRegion;
         public string biomedCollectionOpId;
         public string districtId;
         public string driveId;
@@ -182,7 +191,20 @@ global class skedModels {
         public string subtype;
         public string timezoneSidId;
         public string timezone;
-        public List<activityResource> activityResources;
+        public List<String> biomedCollectionOpIds;
+        public List<string> driveTypes;
+        public List<string> districtIds;
+        public List<activityCollectionOperation> activityCollectionOperations;
+        public List<activityResource> activityResources;  
+    }
+
+    global virtual class activityCollectionOperation extends event {
+        public string activityId;
+        public string biomedCollectionOpId;
+        public string districtId;
+        public string territoryKey;
+        public activity activity;
+        public biomedCollectionOp biomedCollectionOp;
     }
     
     global virtual class activityResource extends event {
@@ -407,6 +429,7 @@ global class skedModels {
         public List<resourceTag> resourceTags;
         public List<resourceOverride> resourceOverrides;
         public List<resourceRegion> resourceRegions;
+        public List<locationResourceScore> locationResourceScores;
         
         public integer noOfAvailableJobs;
         public integer noOfJobs;
@@ -517,12 +540,27 @@ global class skedModels {
     
     global virtual class serviceLocation extends eventOwner {
         public string accountId;
+        public string name;
         public address address;
         public string description;
         public string regionId;
+        public string biomedCollectionOpId;
+        public string biomedCollectionOpName;
+        public string timezoneSidId;
         public region region;
+        public biomedCollectionOp biomedCollectionOp;
         public List<locationAvailability> locationAvailabilities;
         public List<job> jobs;
+    }
+
+    global virtual class siteCollectionOperation extends modelBase {
+        public biomedCollectionOp biomedCollectionOp;
+        public serviceLocation site;
+        public string biomedCollectionOpId;
+        public string biomedCollectionOpName;
+        public string endDate;
+        public string startDate;
+        public string siteId;
     }
     
     global virtual class tag extends modelBase {
@@ -552,6 +590,7 @@ global class skedModels {
         public string territoryId;
         public List<region> regions;
         public boolean waitlistEnabled;
+        public string name;
     }
     
     global virtual class clientAvailability extends event {
@@ -733,7 +772,9 @@ global class skedModels {
         public List<staffingBudgetAvailability> staffingBudgetAvailabilities;
         public List<availability> availabilities;
         public List<String> collectionOperationIds;
+        public List<String> siteIds;
         public List<staffingBudgetCollectionOp> staffingBudgetCollectionOps;
+        public List<staffingBudgetSite> staffingBudgetSites;
     }
 
     global virtual class staffingBudgetCollectionOp extends modelBase {
@@ -741,6 +782,16 @@ global class skedModels {
         public staffingBudget staffingBudget;
         public string biomedCollectionOpId;
         public string staffingBudgetId;
+    }
+
+    global virtual class staffingBudgetSite extends modelBase {
+        public serviceLocation site;
+        public staffingBudget staffingBudget;
+        public biomedCollectionOp biomedCollectionOp;
+        public string siteId;
+        public string staffingBudgetId;
+        public string biomedCollectionOpId;
+        public string biomedCollectionOpName;
     }
     
     global virtual class supportNote extends modelBase {

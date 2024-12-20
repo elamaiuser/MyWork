@@ -452,25 +452,25 @@ public class skedActivityResourceHandler extends skedTriggerHub implements Calla
                                                           FROM sked__Availability__c
                                                           WHERE sked_Activity_Resource__c IN :mapActivityResource.keySet()];
             List<sked__Availability__c> availabilitiesToUpdate = new List<sked__Availability__c>();
-            for (sked__Availability__c availability : availabilities) {
+                for (sked__Availability__c availability : availabilities) {
                 if (mapActivityResource.containsKey(availability.sked_Activity_Resource__c)) {
                     sked__Activity_Resource__c activityResource = mapActivityResource.get(availability.sked_Activity_Resource__c);
                     availability.sked__Start__c = activityResource.sked_Start1__c;
                     availability.sked__Finish__c = activityResource.sked_End__c;
                     availabilitiesToUpdate.add(availability);
+                    }
                 }
-            }
             if (!availabilitiesToUpdate.isEmpty()) {
                 update availabilitiesToUpdate;
             }
         }
     }
-    
+
     private static void deleteAvailabilityForOnCallResources(Set<Id> recordIds) {
         List<sked__Availability__c> availabilities = [SELECT Id
                                                       FROM sked__Availability__c
                                                       WHERE sked_Activity_Resource__c IN :recordIds];
-        
+
         if (!availabilities.isEmpty()) {
             delete availabilities;
         }

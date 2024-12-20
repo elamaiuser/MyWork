@@ -93,7 +93,8 @@
                 <field>sked__Timezone__c</field>
             </layoutItems>
             <layoutItems>
-                <emptySpace>true</emptySpace>
+                <behavior>Edit</behavior>
+                <field>sked_Drive_Types__c</field>
             </layoutItems>
             <layoutItems>
                 <behavior>Edit</behavior>
@@ -161,8 +162,8 @@
         <detailHeading>true</detailHeading>
         <editHeading>true</editHeading>
         <label>Call Out</label>
-        <layoutColumns/>
-        <layoutColumns/>
+        <layoutColumns />
+        <layoutColumns />
         <style>TwoColumnsLeftToRight</style>
     </layoutSections>
     <layoutSections>
@@ -184,7 +185,7 @@
                 <field>sked__End__c</field>
             </layoutItems>
         </layoutColumns>
-        <layoutColumns/>
+        <layoutColumns />
         <style>TwoColumnsLeftToRight</style>
     </layoutSections>
     <layoutSections>
@@ -192,9 +193,9 @@
         <detailHeading>false</detailHeading>
         <editHeading>true</editHeading>
         <label>Custom Links</label>
-        <layoutColumns/>
-        <layoutColumns/>
-        <layoutColumns/>
+        <layoutColumns />
+        <layoutColumns />
+        <layoutColumns />
         <style>CustomLinks</style>
     </layoutSections>
     <relatedLists>
@@ -202,6 +203,12 @@
         <fields>NAME</fields>
         <fields>sked__Resource__c.NAME</fields>
         <relatedList>sked__Activity_Resource__c.sked__Activity__c</relatedList>
+    </relatedLists>
+    <relatedLists>
+        <fields>NAME</fields>
+        <fields>sked_District__c</fields>
+        <fields>Biomed_Collection_Op_Center__c.NAME</fields>
+        <relatedList>sked_Activity_Collection_Operation__c.sked_Activity__c</relatedList>
     </relatedLists>
     <relatedLists>
         <excludeButtons>New</excludeButtons>

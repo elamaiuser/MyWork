@@ -567,12 +567,8 @@ public class skedJobHandler extends skedTriggerHub {
     }
 
     private void sendNotification(List<sked__Job__c> newRecords, Map<Id, sked__Job__c> oldMap) {
-        List<string> logisticsFields = new List<string>();
-        logisticsFields.add('sked__Start__c');
-        logisticsFields.add('sked__Finish__c');
-        logisticsFields.add('sked__Address__c');
-        Set<Id> jobIdsLogisticChange = new Set<Id>();
-        Map<Id, sked__Job__c> mapImpactedJobs = new Map<Id, sked__Job__c>();
+        List<sked__Job__c> impactedJobs = new List<sked__Job__c>();
+        Map<Id, sked__Job__c> oldImpactedJobMap = new Map<Id, sked__Job__c>();
 
         Set<Id> newRecordIds = new Set<Id>();
         for (sked__Job__c job : newRecords) {
@@ -592,19 +588,20 @@ public class skedJobHandler extends skedTriggerHub {
 			sked__Job__c oldData = oldMap.get(newRecord.Id);
             sked__Job__c skedJob = mapJobs.get(newRecord.Id);
             if (skedJob.sked__Job_Allocations__r != NULL && !skedJob.sked__Job_Allocations__r.isEmpty()) {
-                for (string logisticsField : logisticsFields) {
-                    if (newRecord.get(logisticsField) != oldData.get(logisticsField)) {
-                        jobIdsLogisticChange.add(newRecord.Id);
-                        mapImpactedJobs.put(newRecord.Id, newRecord);
-                    }
+                if (newRecord.sked__Address__c != oldData.sked__Address__c) {
+                    impactedJobs.add(newRecord);
+                    oldImpactedJobMap.put(newRecord.Id, oldData);
                 }
             }
         }
-        if (!jobIdsLogisticChange.isEmpty()) {
-            if (!Test.isRunningTest() && !System.isBatch()) {
-                Database.executeBatch(new skedScheduleChangeNotificationBatch(jobIdsLogisticChange, mapImpactedJobs, oldMap));
+        if (!impactedJobs.isEmpty()) {
+            new skedCustomNotificationService(
+                new List<string> {
+                    'sked_Job_Info_Changed_OneOff',
+                    'sked_Job_Info_Changed_Email',
+                    'sked_Job_Info_Changed_SFPush'
+                }
+            ).generateNotifications(impactedJobs, oldImpactedJobMap);
             }
         }
     }
-
-}
