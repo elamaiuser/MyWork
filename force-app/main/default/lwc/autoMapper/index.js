@@ -5,6 +5,7 @@ export { AccountBridgeApiMappingConfigFactory } from './_AccountBridgeApiMapping
 export { AccountResourceScoreMappingConfigFactory } from './_AccountResourceScoreMappingConfigFactory.js';
 export { AccountTagMappingConfigFactory } from './_AccountTagMappingConfigFactory.js';
 export { ActivityMappingConfigFactory } from './_ActivityMappingConfigFactory.js';
+export { ActivityCollectionOperationMappingConfigFactory } from './_ActivityCollectionOperationMappingConfigFactory.js';
 export { ActivityResourceMappingConfigFactory } from './_ActivityResourceMappingConfigFactory.js';
 export { AvailabilityMappingConfigFactory } from './_AvailabilityMappingConfigFactory.js';
 export { AvailabilityPatternMappingConfigFactory } from './_AvailabilityPatternMappingConfigFactory.js';
