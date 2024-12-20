@@ -34,5 +34,10 @@
         <members>sked_Activity_Collection_Operation__c-Activity Collection Operation Layout</members>
         <name>Layout</name>
     </types>
+    <types>
+		<members>autoMapper</members>
+		<name>dataService</name>
+        <name>slwcDriveCalendarActivityList</name>
+	</types>
     <version>59.0</version>
 </Package>

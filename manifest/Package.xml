@@ -228,6 +228,7 @@
 	</types>
 	<types>
 		<members>autoMapper</members>
+		<name>dataService</name>
         <members>slwcConstants</members>
         <members>slwcDriveGenerator</members>
         <members>slwcDriveShift</members>
@@ -235,6 +236,7 @@
         <members>slwcDriveShiftJobTable</members>
 		<members>blwcDriveWorkSheetComponent</members>
 		<members>slwcApprovalHistoryConsole</members>
+		<name>slwcDriveCalendarActivityList</name>
 		<members>slwcDriveChangeRequestApproval</members>
 		<members>slwcLinkedDriveStaffingDetails</members>
 		<members>travelTimeBreakdown</members>
