@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <deploymentStatus>Deployed</deploymentStatus>
+    <description>Platform Event for Template Order Creation / Sync to Opportunity when Opportunity is created or Template is assigned / changed on opportunity</description>
+    <eventType>HighVolume</eventType>
+    <label>Opportunity Template Order Sync Event</label>
+    <pluralLabel>Opportunity Template Order Sync Event</pluralLabel>
+    <publishBehavior>PublishAfterCommit</publishBehavior>
+</CustomObject>

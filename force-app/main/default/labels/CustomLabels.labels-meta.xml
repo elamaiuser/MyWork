@@ -134,6 +134,20 @@
         <value>You do not have permission to delete this record.</value>
     </labels>
     <labels>
+        <fullName>ChunkHandlerUpdateAMAndDMPortfolioDailyBatch</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>ChunkHandlerUpdateAMAndDMPortfolioDailyBatch</shortDescription>
+        <value>100</value>
+    </labels>
+    <labels>
+        <fullName>ChunkHandlerUpdateAMandDMPortfOnOppAndDOCDailyBatch</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>ChunkHandlerUpdateAMandDMPortfOnOppAndDOCDailyBatch</shortDescription>
+        <value>100</value>
+    </labels>
+    <labels>
         <fullName>ContactError</fullName>
         <language>en_US</language>
         <protected>false</protected>

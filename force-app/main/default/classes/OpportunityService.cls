@@ -51,8 +51,8 @@
 * 08/14/2024                     Apurba Bhattacharjee     HRP-12700 Add Drive Date to task list
 * 08/30/2024                     Barnojit Sharma          Within the Sponsor Planning Report task, populate the referencing Opp/Drive Sponsor Planning Report. (Logic for HRP-5337)
 * 10/14/2024                     Souvik Mukherjee         HRP-13568 Added OpportunityId to Order SELECT SOQL
-* 10/18/2024					 Balaji N				  HRP-13489 Methods populateSlotGeneratorOnOpportunity,getSlotMultiplierGlobalValue
-* 10/25/2024				 	 Balaji N				  Logic for HRP-13489 syncTemplateOrdertoOpportunity Raktim's Changes
+* 10/18/2024           Balaji N          HRP-13489 Methods populateSlotGeneratorOnOpportunity,getSlotMultiplierGlobalValue
+* 10/25/2024            Balaji N          Logic for HRP-13489 syncTemplateOrdertoOpportunity Raktim's Changes
 * 10/29/2024                     Barnojit Sharma          HRP-12142 Added sync Do Not Roll Fields
 * 10/24/2024				     Barnojit Sharma		  Template Order products not cascading to Opportunity Order (Logic for HRP-13521)
 * 11/07/2024			         Barnojit Sharma		  Update Task: 72 Hour Check in - System Generated/Details/Checklist. (Logic for HRP-12627)
@@ -808,9 +808,9 @@ if(ds.isCreateable()){}*/
                 List<OrderItem> odrItemList = [SELECT Id,
                                                         OrderId,
                                                         Order.OpportunityId,
-                                               			Order.Opportunity.Name,
-                                               			Order.Opportunity.AccountId,
-                                               			Order.Opportunity.Account.Account_Manager__c,
+                                                     Order.Opportunity.Name,
+                                                     Order.Opportunity.AccountId,
+                                                     Order.Opportunity.Account.Account_Manager__c,
                                                         Product2Id,
                                                         Product2.Name,
                                                         Product2.Description,
@@ -4601,6 +4601,7 @@ opp.StageName = 'Closed';
         List<Opportunity> newOpportunityList = new List<Opportunity>();
         Map<Id, Opportunity> map_oldOppId_oldOpportunity = new Map<Id, Opportunity>();
         List<String> oppIds = new List<String>();//HRP-13716 changes
+		List<Opportunity_Template_Order_Sync_Event__e> oppoOrderSyncEvents = new List<Opportunity_Template_Order_Sync_Event__e>(); //HRP-13891 changes
         for(Opportunity newOpp : listOfnewOppties) {
             if(newOpp.Id != null && mapOfOfOldOppties != null && !mapOfOfOldOppties.isEmpty() && mapOfOfOldOppties.containskey(newOpp.Id)) {//HRP-13716 Changes
                 Opportunity oldOpp = mapOfOfOldOppties.get(newOpp.Id);
@@ -4608,14 +4609,33 @@ opp.StageName = 'Closed';
                         newOpportunityList.add(newOpp);
                         map_oldOppId_oldOpportunity.put(oldOpp.Id, oldOpp);
                         oppIds.add(newOpp.Id);//HRP-13716 changes
+						//Start HRP-13891 changes
+						Opportunity_Template_Order_Sync_Event__e oppoOrderSyncEvent = new Opportunity_Template_Order_Sync_Event__e();
+						oppoOrderSyncEvent.OpportunityId__c = newOpp.Id;
+						oppoOrderSyncEvents.add(oppoOrderSyncEvent);
+						//End HRP-13891 changes
                     }
             }else if(newOpp.Id != null && newOpp.Parent_Template_Id__c != null && (mapOfOfOldOppties == null || mapOfOfOldOppties.isEmpty())){//HRP-13716 Changes
                 newOpportunityList.add(newOpp);
                 oppIds.add(newOpp.Id);//HRP-13716 changes
+				//Start HRP-13891 changes
+				Opportunity_Template_Order_Sync_Event__e oppoOrderSyncEvent = new Opportunity_Template_Order_Sync_Event__e();
+				oppoOrderSyncEvent.OpportunityId__c = newOpp.Id;
+				oppoOrderSyncEvents.add(oppoOrderSyncEvent);
+				//End HRP-13891 changes
             }
        }
-        OrderCloningService.cloneTemplateOrder(oppIds);//HRP-13716 changes
+	   //Commented for HRP-13891
+       //OrderCloningService.cloneTemplateOrder(oppIds);//HRP-13716 changes
        //HRP-13743 --> Ends Here
+	   
+	   //Start HRP-13891 changes
+	   //Publish platform event to create Order record for each new opportunity based on the template
+        if(oppoOrderSyncEvents.size() > 0) {
+            System.debug('### before publishing Opportunity_Template_Order_Sync_Event__e event ' + oppoOrderSyncEvents.size());
+            EventBus.publish(oppoOrderSyncEvents);
+        }
+	   //End HRP-13891 changes
     }
     
     /*public static void cloneTemplateOrder(List<Opportunity> listOfOpportunities, Map<Id, Opportunity> mapOfOfOldOppties) {
@@ -4642,8 +4662,8 @@ opp.StageName = 'Closed';
                                         Local_Recruitment_Request_Need_by_Date__c,
                                         (
                                             SELECT Id, OrderID, Product2Id, TotalPrice, ListPrice, 
-                                         	Quantity, UnitPrice, PricebookEntryId 
-                                         	FROM OrderItems
+                                           Quantity, UnitPrice, PricebookEntryId 
+                                           FROM OrderItems
                                         )
                                         FROM Order 
                                         WHERE OpportunityId IN :templateToOppIDMap.keySet()];
@@ -4684,7 +4704,7 @@ opp.StageName = 'Closed';
                     }
                 }
                 //HRP-13743--> Ends Here
-    		}
+        }
          
             for(Order cloneOrder: getTemplateOrder) {
                 for(Id opp: templateToOppIDMap.get(cloneOrder.OpportunityId)) {

@@ -10,5 +10,10 @@
     <columns>Start_Date__c</columns>
     <columns>End_Date__c</columns>
     <filterScope>Everything</filterScope>
+    <filters>
+        <field>BSF_Portfolio__c</field>
+        <operation>contains</operation>
+        <value>Maine</value>
+    </filters>
     <label>All</label>
 </ListView>

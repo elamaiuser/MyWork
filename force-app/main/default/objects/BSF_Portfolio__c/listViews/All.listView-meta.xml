@@ -13,11 +13,6 @@
     <columns>End_Date__c</columns>
     <filterScope>Everything</filterScope>
     <filters>
-        <field>Portfolio_Type__c</field>
-        <operation>equals</operation>
-        <value>Account Specialist</value>
-    </filters>
-    <filters>
         <field>End_Date__c</field>
         <operation>equals</operation>
         <value>12/31/4000</value>

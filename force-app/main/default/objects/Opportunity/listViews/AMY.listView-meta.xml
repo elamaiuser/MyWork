@@ -15,19 +15,14 @@
     <columns>DriveStatus__c</columns>
     <filterScope>Everything</filterScope>
     <filters>
-        <field>Drive_Date__c</field>
+        <field>Do_Not_Roll__c</field>
         <operation>equals</operation>
-        <value>10/31/2024</value>
+        <value>1</value>
     </filters>
     <filters>
-        <field>DriveStatus__c</field>
+        <field>Source__c</field>
         <operation>equals</operation>
-        <value>Confirmed</value>
-    </filters>
-    <filters>
-        <field>OPPORTUNITY.RECORDTYPE</field>
-        <operation>equals</operation>
-        <value>Opportunity.Fixed_Site_Opp</value>
+        <value>Calendar Build</value>
     </filters>
     <label>Calendar Build Past 9/1/2024</label>
 </ListView>
