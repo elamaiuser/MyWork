@@ -229,6 +229,7 @@
 		<members>sked__Location__c-Fixed Site Layout</members>
 		<members>sked__Location__c-Mobile Site Layout</members>
 		<members>sked__Activity_Resource__c-Sked Activity Resource Layout</members>
+		<members>Task-Task 72hrs Layout</members>
 		<name>Layout</name>
 	</types>
 	<types>

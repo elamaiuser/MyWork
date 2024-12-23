@@ -31,8 +31,7 @@
 		<members>Task_Checklist_Setting.Reminder_plan_has_been_initiated</members>
 		<members>Task_Checklist_Setting.Review_plan_on_mode_of_communication</members>
 		<members>Task_Checklist_Setting.Review_scheduled_appointments</members>
-		<members>Task_Checklist_Setting.Review_scheduled_volunteers</members>
-		<members>Task_Checklist_Setting.Review_with_Sponsor_any_volunteers</members>
+		<members>Task_Checklist_Setting.Review_scheduled_volunteers</members>		
 		<members>Task_Checklist_Setting.Schedule_Post_Drive_Analysis_for_BPL</members>
 		<members>Task_Checklist_Setting.Site_has_a_large_trashcan_available</members>
 		<members>Task_Checklist_Setting.Special_protocols_on_the_site</members>
@@ -42,6 +41,10 @@
 		<members>Task_Report_Link.Drive_Worksheet_Report</members>
 		<members>Task_Report_Link.Managing_Donor_Appointments_Playbook_72</members>
 		<name>CustomMetadata</name>
+	</types>
+	<types>
+		<members>Task-Task 72hrs Layout</members>
+		<name>Layout</name>
 	</types>
 	<version>60.0</version>
 </Package>
