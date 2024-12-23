@@ -17,5 +17,10 @@
     <columns>Collection_Operation_Key__c</columns>
     <columns>Portfolio_Name__c</columns>
     <filterScope>Everything</filterScope>
+    <filters>
+        <field>Zip_Code__c</field>
+        <operation>equals</operation>
+        <value>43537</value>
+    </filters>
     <label>All</label>
 </ListView>

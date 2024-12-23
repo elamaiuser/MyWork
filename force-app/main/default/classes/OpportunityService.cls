@@ -51,14 +51,16 @@
 * 08/14/2024                     Apurba Bhattacharjee     HRP-12700 Add Drive Date to task list
 * 08/30/2024                     Barnojit Sharma          Within the Sponsor Planning Report task, populate the referencing Opp/Drive Sponsor Planning Report. (Logic for HRP-5337)
 * 10/14/2024                     Souvik Mukherjee         HRP-13568 Added OpportunityId to Order SELECT SOQL
-* 10/18/2024           Balaji N          HRP-13489 Methods populateSlotGeneratorOnOpportunity,getSlotMultiplierGlobalValue
-* 10/25/2024            Balaji N          Logic for HRP-13489 syncTemplateOrdertoOpportunity Raktim's Changes
+* 10/18/2024					 Balaji N				  HRP-13489 Methods populateSlotGeneratorOnOpportunity,getSlotMultiplierGlobalValue
+* 10/25/2024				 	 Balaji N				  Logic for HRP-13489 syncTemplateOrdertoOpportunity Raktim's Changes
 * 10/29/2024                     Barnojit Sharma          HRP-12142 Added sync Do Not Roll Fields
 * 10/24/2024				     Barnojit Sharma		  Template Order products not cascading to Opportunity Order (Logic for HRP-13521)
 * 11/07/2024			         Barnojit Sharma		  Update Task: 72 Hour Check in - System Generated/Details/Checklist. (Logic for HRP-12627)
 * 11/11/2024					 Priti Jana				  Logic for HRP-13743
 * 11/12/2024				     Barnojit Sharma		  Unable to create Mobile Drive when the Template has an over-budget template order (Logic for HRP-13716)
 * 12/02/2024					 Barnojit Sharma		  Tasks being assigned for cancelled drives and for fixed sites(Logic for HRP-13850)
+* 12/10/2024					 Priti Jana				  Logic for HRP-13190
+* 12/10/2024                     Satyendra Vishwakarma    HRP-6051 - Anticipated Registered Donors validation when changing procedure projections
 ************************************************************************************************************************************************
 */
 
@@ -808,9 +810,9 @@ if(ds.isCreateable()){}*/
                 List<OrderItem> odrItemList = [SELECT Id,
                                                         OrderId,
                                                         Order.OpportunityId,
-                                                     Order.Opportunity.Name,
-                                                     Order.Opportunity.AccountId,
-                                                     Order.Opportunity.Account.Account_Manager__c,
+                                               			Order.Opportunity.Name,
+                                               			Order.Opportunity.AccountId,
+                                               			Order.Opportunity.Account.Account_Manager__c,
                                                         Product2Id,
                                                         Product2.Name,
                                                         Product2.Description,
@@ -2676,24 +2678,18 @@ if(ds.isDeletable()){}*/
                         }
                         else if(newOpportunity.StageName == 'Cancelled'){
                              //HRP-11524 --> Continues
-                             System.debug('entering here line 2578');
-                            system.debug('stageChecksForCurrentStage '+stageChecksForCurrentStage);
-                             System.debug('stagename new'+newOpportunity.StageName+'old'+oldOpportunity.StageName+
-                                        'drive status'+oldOpportunity.DriveStatus__c+
-                                        'stageChecksForCurrentStage.Overriding_Profiles__c'+stageChecksForCurrentStage.Overriding_Profiles__c+
-                                        'stageChecksForCurrentStage.Overriding_user__c'+stageChecksForCurrentStage.Overriding_user__c+
-                                        'newOpportunity.sked_Cancellation_Reason__c'+newOpportunity.sked_Cancellation_Reason__c);
+                             
                                 if(oldOpportunity.StageName == BSF_Constants.STAGE_CLOSED 
                                    && oldOpportunity.DriveStatus__c == BSF_Constants.DOC_STATUS_COMPLETE 
                                    && (!(String.isBlank(profileName)) && (!(stageChecksForCurrentStage.Overriding_Profiles__c).contains(profileName))) 
                                    && !(String.isBlank(newOpportunity.sked_Cancellation_Reason__c))
                                    && !(stageChecksForCurrentStage.Overriding_user__c).contains(runningUser))
                                      {   
-                                        System.debug('entering here line 2585');
+                                        
                                         newOpportunity.addError(Label.Drive_Change_Restriction_Message);
                                      }
                                 //HRP-11524 --> Ends Here
-                                system.debug('###FWO: Inside updateDrivesOnCalendarStatus 3');
+                               
                                 for(sked_Drive__c skedDr: allDrivesMatchingOpp){ //HRP 11393- propogate cancelled status to all drives associated with opportunity, not just one picked
                                     slwcDriveService.driveModel driveModelRecTemp = new slwcDriveService.driveModel();
 
@@ -2835,10 +2831,11 @@ System.debug('--> \n Exavalu call to generate drives is done. ');
         try{
             //HRP-10514 : added Platelet_Projected_Procedures__c for 'DriveSync' issue.
             Map<Id, Opportunity> mapOfOpportunity = new Map<Id, Opportunity>([SELECT Id, Drive_Status__c,Drive_Date_Change_Reason__c, Initiated_By__c, StageName,Platelet_Projected_Procedures__c,Plasma_Pheresis_Projected_Procedures__c, Anticipated_Registered_Donors__c, 
-                                                                              WB_Projected_Procedures__c, X2RBC_Projected_Procedures__c, Accepts_Automation__c, Automation_Suitability__c   FROM Opportunity WHERE Id In :lstOpps]);//HRP-12063
+                                                                              WB_Projected_Procedures__c, X2RBC_Projected_Procedures__c, Accepts_Automation__c, Automation_Suitability__c, APT_Quantity__c, APT_Required__c, APT_Change_Reason__c FROM Opportunity WHERE Id In :lstOpps]);//HRP-12063
             //HRP-10515-Query latest values on DOC for changed fields and update on Opportunity, when request comes from DOC update
             List<sked_Drive__c> docList = [select sked_Drive_Date__c,sked_Status__c,sked_Start_Time__c,sked_End_Time__c,sked_Drive_Site__c,sked_Replacement_Drive__c,sked_Projected_Registered_Donors__c,sked_WB_Projected_Procedures__c,sked_2RBC_Projected_Procedures__c,sked_Platelet_Projected_Procedures__c,sked_Plasma_Projected_Procedures__c,sked_Number_of_2RBC_Assets__c,
-                                           sked_Number_of_Plasma_Assets__c,sked_Number_of_Platelet_Assets__c,sked_Cancellation_Reason__c,sked_Opportunity__c from sked_Drive__c 
+                                           sked_Number_of_Plasma_Assets__c,sked_Number_of_Platelet_Assets__c,sked_Cancellation_Reason__c,sked_Opportunity__c,
+                                           sked_APT_Required__c, sked_APT_Quantity__c from sked_Drive__c 
                                            where sked_Opportunity__c in : lstOpps and sked_Is_Surrogate__c = false];
             if(Test.isRunningTest()){
                 sked_Drive__c skedDr =  new sked_Drive__c(sked_Opportunity__c=lstOpps.get(0).id,sked_WB_Projected_Procedures__c=2,sked_Status__c='Draft',sked_Drive_Date__c=system.today().addDays(55));
@@ -3041,12 +3038,17 @@ System.debug('--> \n Exavalu call to generate drives is done. ');
                     }
                     // HRP-12011 --> Ends Here
                      
+                    //HRP-13190 --> Starts Here
                     if(data.containsKey('APT_Required__c') == true) {
                         oppField.APT_Required = oppRec.APT_Required__c;
                     }
                     if(data.containsKey('APT_Quantity__c') == true) {
                         oppField.APT_Quantity = (Decimal)oppRec.APT_Quantity__c;
                     }
+                    if(data.containsKey('APT_Change_Reason__c') == true) {
+                        oppField.APT_Change_Reason = oppRec.APT_Change_Reason__c;
+                    }
+                    //HRP-13190 --> Ends Here
 
                     //HRP-10659 <<-End
                     if(data.containsKey('Drive_Date_Change_Reason__c') == true){//HRP-10312 begin
@@ -4601,7 +4603,7 @@ opp.StageName = 'Closed';
         List<Opportunity> newOpportunityList = new List<Opportunity>();
         Map<Id, Opportunity> map_oldOppId_oldOpportunity = new Map<Id, Opportunity>();
         List<String> oppIds = new List<String>();//HRP-13716 changes
-		List<Opportunity_Template_Order_Sync_Event__e> oppoOrderSyncEvents = new List<Opportunity_Template_Order_Sync_Event__e>(); //HRP-13891 changes
+    List<Opportunity_Template_Order_Sync_Event__e> oppoOrderSyncEvents = new List<Opportunity_Template_Order_Sync_Event__e>(); //HRP-13891 changes
         for(Opportunity newOpp : listOfnewOppties) {
             if(newOpp.Id != null && mapOfOfOldOppties != null && !mapOfOfOldOppties.isEmpty() && mapOfOfOldOppties.containskey(newOpp.Id)) {//HRP-13716 Changes
                 Opportunity oldOpp = mapOfOfOldOppties.get(newOpp.Id);
@@ -4609,33 +4611,33 @@ opp.StageName = 'Closed';
                         newOpportunityList.add(newOpp);
                         map_oldOppId_oldOpportunity.put(oldOpp.Id, oldOpp);
                         oppIds.add(newOpp.Id);//HRP-13716 changes
-						//Start HRP-13891 changes
-						Opportunity_Template_Order_Sync_Event__e oppoOrderSyncEvent = new Opportunity_Template_Order_Sync_Event__e();
-						oppoOrderSyncEvent.OpportunityId__c = newOpp.Id;
-						oppoOrderSyncEvents.add(oppoOrderSyncEvent);
-						//End HRP-13891 changes
+            //Start HRP-13891 changes
+            Opportunity_Template_Order_Sync_Event__e oppoOrderSyncEvent = new Opportunity_Template_Order_Sync_Event__e();
+            oppoOrderSyncEvent.OpportunityId__c = newOpp.Id;
+            oppoOrderSyncEvents.add(oppoOrderSyncEvent);
+            //End HRP-13891 changes
                     }
             }else if(newOpp.Id != null && newOpp.Parent_Template_Id__c != null && (mapOfOfOldOppties == null || mapOfOfOldOppties.isEmpty())){//HRP-13716 Changes
                 newOpportunityList.add(newOpp);
                 oppIds.add(newOpp.Id);//HRP-13716 changes
-				//Start HRP-13891 changes
-				Opportunity_Template_Order_Sync_Event__e oppoOrderSyncEvent = new Opportunity_Template_Order_Sync_Event__e();
-				oppoOrderSyncEvent.OpportunityId__c = newOpp.Id;
-				oppoOrderSyncEvents.add(oppoOrderSyncEvent);
-				//End HRP-13891 changes
+        //Start HRP-13891 changes
+        Opportunity_Template_Order_Sync_Event__e oppoOrderSyncEvent = new Opportunity_Template_Order_Sync_Event__e();
+        oppoOrderSyncEvent.OpportunityId__c = newOpp.Id;
+        oppoOrderSyncEvents.add(oppoOrderSyncEvent);
+        //End HRP-13891 changes
             }
        }
-	   //Commented for HRP-13891
+     //Commented for HRP-13891
        //OrderCloningService.cloneTemplateOrder(oppIds);//HRP-13716 changes
        //HRP-13743 --> Ends Here
-	   
-	   //Start HRP-13891 changes
-	   //Publish platform event to create Order record for each new opportunity based on the template
+     
+     //Start HRP-13891 changes
+     //Publish platform event to create Order record for each new opportunity based on the template
         if(oppoOrderSyncEvents.size() > 0) {
             System.debug('### before publishing Opportunity_Template_Order_Sync_Event__e event ' + oppoOrderSyncEvents.size());
             EventBus.publish(oppoOrderSyncEvents);
         }
-	   //End HRP-13891 changes
+     //End HRP-13891 changes
     }
     
     /*public static void cloneTemplateOrder(List<Opportunity> listOfOpportunities, Map<Id, Opportunity> mapOfOfOldOppties) {
@@ -4662,8 +4664,8 @@ opp.StageName = 'Closed';
                                         Local_Recruitment_Request_Need_by_Date__c,
                                         (
                                             SELECT Id, OrderID, Product2Id, TotalPrice, ListPrice, 
-                                           Quantity, UnitPrice, PricebookEntryId 
-                                           FROM OrderItems
+                                         	Quantity, UnitPrice, PricebookEntryId 
+                                         	FROM OrderItems
                                         )
                                         FROM Order 
                                         WHERE OpportunityId IN :templateToOppIDMap.keySet()];
@@ -4704,7 +4706,7 @@ opp.StageName = 'Closed';
                     }
                 }
                 //HRP-13743--> Ends Here
-        }
+    		}
          
             for(Order cloneOrder: getTemplateOrder) {
                 for(Id opp: templateToOppIDMap.get(cloneOrder.OpportunityId)) {
@@ -4808,17 +4810,65 @@ opp.StageName = 'Closed';
         } else if (oldOppMap != NULL) {
             for(Opportunity newOpp : newOppList) {
                 Opportunity oldOpp = oldOppMap.get(newOpp.Id);
-                if (oldOpp != NULL && oldOpp.APT_Required__c != newOpp.APT_Required__c) {
-                    if(!(String.isNotBlank(newOpp.APT_Change_Reason__c) && newOpp.APT_Change_Reason__c.equalsIgnoreCase(BSF_Constants.APT_CHANGE_VIA_TEMPLATE)))
-                    oppListToRecalculateAPT.add(newOpp);
-                } else if(oldOpp != NULL && oldOpp.Total_Projected_Procedures__c != newOpp.Total_Projected_Procedures__c) {
-                    oppListToRecalculateAPT.add(newOpp);
+                if (oldOpp != NULL) {
+                    Boolean recalculateAptRule1 = oldOpp.APT_Required__c != newOpp.APT_Required__c;
+                    Boolean recalculateAptRule2 = oldOpp.Total_Projected_Procedures__c != newOpp.Total_Projected_Procedures__c;
+                    Boolean recalculateAptRule3 = !checkRecursive.skipAptRecalculation; //During DOC -> OPP Sync
+                    if((recalculateAptRule1 || recalculateAptRule2) && recalculateAptRule3) oppListToRecalculateAPT.add(newOpp);
                 }
             }
-            if(!oppListToRecalculateAPT.isEmpty()) {
+            if(oppListToRecalculateAPT != NULL && !oppListToRecalculateAPT.isEmpty()) {
                 oppListToRecalculateAPT = BSF_Utilities.getAPTQuantity(oppListToRecalculateAPT, 'Update');
             }
         }
     }
     //HRP-13190 --> Ends Here
+
+    //HRP-6051 Starts Here
+    public static void validateTheARD(List<Opportunity> newOppList, Map<Id, Opportunity> oldOppMap){
+        //user profile checking
+        Map<String, ARD_Alert_Profiles__mdt> profilesToAlert = ARD_Alert_Profiles__mdt.getAll();
+        Set<String> relevantProfiles = new Set<String>();
+        for (ARD_Alert_Profiles__mdt profile : profilesToAlert.values()) {
+            //System.debug('HRP-6051 profile : '+profile);
+            relevantProfiles.add(profile.Label);
+        }
+        // Check the current user's profile
+        Profile profile;
+        String currentProfileName;
+        //System.debug('HRP-6051 profile : '+profile+' currentProfileName:'+currentProfileName);
+        try {
+            profile = [SELECT Name FROM Profile WHERE Id = :UserInfo.getProfileId() LIMIT 1];
+            System.debug('profile : '+profile);
+            currentProfileName = profile.Name;
+            // You can now safely use `profile.Name`
+        } catch (QueryException e) {
+            // Handle the case where no profile is found
+            System.debug('QueryException: No profile found for the logged-in user. Error: ' + e.getMessage()+ 'Stack Trace: ' + e.getStackTraceString());
+            currentProfileName = 'NA';
+        } catch (Exception ex) {
+            // Handle any other unexpected exceptions
+            System.debug('Unexpected exception occurred. Error: ' + ex.getMessage()+' Stack Trace: ' + ex.getStackTraceString());
+            currentProfileName = 'NA';
+        }
+
+        System.debug('HRP-6051 currentProfileName :'+currentProfileName);
+        if (currentProfileName != 'NA' && relevantProfiles.contains(currentProfileName)) {
+            //System.debug('HRP-6051 relevantProfiles  :'+currentProfileName);
+            Map<String, Object> changedFields = new Map<String, Object>();
+            for (Opportunity opp : newOppList) {
+                Opportunity oldOpp = oldOppMap.get(opp.Id);
+                // Condition: WB/DR projection changed, ARD not updated
+                
+                if ((opp.WB_Projected_Procedures__c != oldOpp.WB_Projected_Procedures__c || 
+                    opp.X2RBC_Projected_Procedures__c != oldOpp.X2RBC_Projected_Procedures__c) &&
+                    opp.Anticipated_Registered_Donors__c == oldOpp.Anticipated_Registered_Donors__c) {
+                        opp.Pending_ARD_Confirmation__c = true; 
+                }else if(opp.Anticipated_Registered_Donors__c != oldOpp.Anticipated_Registered_Donors__c){
+                        opp.Pending_ARD_Confirmation__c = false;
+                } 
+            }
+        }    
+    }
+    //HRP-6051 Ends Here
 }

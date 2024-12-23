@@ -6,7 +6,7 @@
     <columns>sked__Type__c</columns>
     <columns>sked__Param__c</columns>
     <columns>sked__Message__c</columns>
-    <columns>sked_Run_Id__c</columns>
+    <columns>CREATED_DATE</columns>
     <filterScope>Everything</filterScope>
     <label>All</label>
 </ListView>

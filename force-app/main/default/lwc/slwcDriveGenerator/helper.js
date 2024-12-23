@@ -2986,8 +2986,8 @@ class DriveHelper {
               return;
             }
 
-            const currentJobVphhSystemQuantity = Math.max(job.systemQuantity - (currentDrive.aptRequired ? 1 : 0), 0);
-            const backupJobVphhSystemQuantity = Math.max(backupJob.systemQuantity - (backupDrive.aptRequired ? 1 : 0), 0);
+            const currentJobVphhSystemQuantity = Math.max(job.systemQuantity - (currentDrive.aptQuantity || 0), 0);
+            const backupJobVphhSystemQuantity = Math.max(backupJob.systemQuantity - (backupDrive.aptQuantity || 0), 0);
             if(currentJobVphhSystemQuantity !== backupJobVphhSystemQuantity || isDriveGettingRegenerated) {
               mapResult(job, backupJob, driveShift, driveShiftIndex, result.changedJobs);
             }

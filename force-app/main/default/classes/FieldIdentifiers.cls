@@ -113,6 +113,9 @@ global class FieldIdentifiers {
 
     @AuraEnabled 
     global Decimal APT_Quantity;
+
+    @AuraEnabled 
+    global String APT_Change_Reason;
     // HRP-13190 --> Ends Here
     
     global Set<String> updatedDataKeys = new Set<string>();

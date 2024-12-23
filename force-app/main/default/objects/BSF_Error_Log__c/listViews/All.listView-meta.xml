@@ -3,16 +3,15 @@
     <fullName>All</fullName>
     <columns>NAME</columns>
     <columns>CREATED_DATE</columns>
-    <columns>Type__c</columns>
     <columns>ApexClass__c</columns>
     <columns>Method__c</columns>
     <columns>Error_Description__c</columns>
     <columns>Error_Description_Long__c</columns>
     <filterScope>Everything</filterScope>
     <filters>
-        <field>CREATED_DATE</field>
+        <field>ApexClass__c</field>
         <operation>equals</operation>
-        <value>TODAY</value>
+        <value>OrderCloningService</value>
     </filters>
     <label>All</label>
 </ListView>

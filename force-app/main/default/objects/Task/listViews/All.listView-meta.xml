@@ -6,17 +6,23 @@
     <columns>WHAT_NAME</columns>
     <columns>Drive_Date__c</columns>
     <columns>DUE_DATE</columns>
-    <columns>Status_Visual__c</columns>
     <columns>LAST_UPDATE</columns>
     <columns>CORE.USERS.ALIAS</columns>
     <columns>PRIORITY</columns>
     <columns>STATUS</columns>
     <columns>UPDATEDBY_USER.ALIAS</columns>
+    <columns>Status_Visual__c</columns>
+    <columns>CREATED_DATE</columns>
     <filterScope>Everything</filterScope>
     <filters>
         <field>SUBJECT</field>
         <operation>contains</operation>
-        <value>sponsor introduction</value>
+        <value>72</value>
+    </filters>
+    <filters>
+        <field>SUBJECT</field>
+        <operation>notContain</operation>
+        <value>1 week</value>
     </filters>
     <label>All</label>
 </ListView>

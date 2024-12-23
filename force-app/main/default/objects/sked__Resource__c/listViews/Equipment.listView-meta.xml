@@ -22,7 +22,12 @@
     <filters>
         <field>sked_ARC_Region_Name__c</field>
         <operation>contains</operation>
-        <value>Greater Car</value>
+        <value>greater penn</value>
+    </filters>
+    <filters>
+        <field>RECORDTYPE</field>
+        <operation>equals</operation>
+        <value>sked__Resource__c.sked_Asset</value>
     </filters>
     <label>Equipment</label>
 </ListView>

@@ -12,6 +12,7 @@
     <columns>sked_Roles__c</columns>
     <columns>sked_Job_Code__c</columns>
     <columns>sked_FCC_Code__c</columns>
+    <columns>sked__User__c</columns>
     <filterScope>Everything</filterScope>
     <filters>
         <field>sked__Resource_Type__c</field>
@@ -22,10 +23,6 @@
         <field>sked_Employment_Status__c</field>
         <operation>equals</operation>
         <value>Active</value>
-    </filters>
-    <filters>
-        <field>sked__Primary_Region__c</field>
-        <operation>notEqual</operation>
     </filters>
     <label>Resources Only</label>
 </ListView>

@@ -4,7 +4,6 @@
     <columns>NAME</columns>
     <columns>Notification_Type__c</columns>
     <columns>Oneoff_Protocol__c</columns>
-    <columns>Phone_Number__c</columns>
     <columns>Category__c</columns>
     <columns>Status__c</columns>
     <columns>Subject__c</columns>
@@ -15,10 +14,8 @@
     <columns>Sender_Email__c</columns>
     <columns>Expiry_TimeStamp__c</columns>
     <columns>sked_Notification_Setting_Id__c</columns>
+    <columns>CREATEDBY_USER</columns>
+    <columns>CREATED_DATE</columns>
     <filterScope>Everything</filterScope>
-    <filters>
-        <field>Oneoff_Protocol__c</field>
-        <operation>notEqual</operation>
-    </filters>
     <label>All</label>
 </ListView>
