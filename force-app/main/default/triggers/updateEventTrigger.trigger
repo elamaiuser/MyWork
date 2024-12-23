@@ -146,9 +146,14 @@ trigger updateEventTrigger on Update_Event__e (After Insert) {
                 // HRP-13190 --> Starts here
                 if(oppFields.updatedDataKeys.contains('APT_Required__c')) { 
                     recOpp.APT_Required__c = oppFields.APT_Required;
+                    checkRecursive.skipAptRecalculation = true;
                 }
                 if(oppFields.updatedDataKeys.contains('APT_Quantity__c')) { 
                     recOpp.APT_Quantity__c = oppFields.APT_Quantity;
+                    checkRecursive.skipAptRecalculation = true;
+                }
+                if(oppFields.updatedDataKeys.contains('APT_Change_Reason__c')) { 
+                    recOpp.APT_Change_Reason__c = oppFields.APT_Change_Reason;
                 }
                 // HRP-13190 --> Starts here
                 System.debug('recOpp being updated->'+recOpp);

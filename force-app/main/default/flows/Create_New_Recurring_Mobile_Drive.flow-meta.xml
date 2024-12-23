@@ -390,10 +390,38 @@
                 <elementReference>varSelectedTemplateWebschedulingEnabled</elementReference>
             </value>
         </assignmentItems>
+        <assignmentItems>
+            <assignToReference>MobileOpp.APT_Required__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>varSelectedAptRequired</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>MobileOpp.APT_Quantity__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>varSelectedAptQuantity</elementReference>
+            </value>
+        </assignmentItems>
         <connector>
             <targetReference>AddToCollection</targetReference>
         </connector>
     </assignments>
+        <assignmentItems>
+            <assignToReference>MobileOpp.APT_Required__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>varSelectedAptRequired</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>MobileOpp.APT_Quantity__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>varSelectedAptQuantity</elementReference>
+            </value>
+        </assignmentItems>
     <assignments>
         <name>Assign_Selected_Start_and_End_Times</name>
         <label>Assign Selected Start and End Times</label>
@@ -661,6 +689,20 @@
             <operator>Assign</operator>
             <value>
                 <elementReference>getSelectedTemplateProperties.Type</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>varTemplateAptRequired</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>getSelectedTemplateProperties.APT_Required__c</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>varTemplateAptQuantity</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>getSelectedTemplateProperties.APT_Quantity__c</elementReference>
             </value>
         </assignmentItems>
         <connector>
@@ -2058,6 +2100,17 @@ MOD(({!For_Each_Date_in_Recurring_Series} - 85) - DATE(1900, 1, 6), 7),
         <expression>IF(ISBLANK({!varDriveTypeLocation}), {!varLocationType}, {!varDriveTypeLocation})</expression>
     </formulas>
     <formulas>
+        <name>varSelectedAptQuantity</name>
+        <dataType>Number</dataType>
+        <expression>IF(ISNULL({!varTemplateAptQuantity}), 0, {!varTemplateAptQuantity})</expression>
+        <scale>0</scale>
+    </formulas>
+    <formulas>
+        <name>varSelectedAptRequired</name>
+        <dataType>Boolean</dataType>
+        <expression>!{!Site_TBD}</expression>
+    </formulas>
+    <formulas>
         <name>varSelectedEndTimeNumber</name>
         <dataType>Number</dataType>
         <expression>VALUE({!varSelectedEndTime})</expression>
@@ -2202,6 +2255,18 @@ MOD(({!Drive_Date} - {!Get_Opportunity_Date_MetaData.Days_from_Drive_Date__c}) -
         <faultConnector>
             <targetReference>Exception_Handler</targetReference>
         </faultConnector>
+        <inputAssignments>
+            <field>APT_Quantity__c</field>
+            <value>
+                <elementReference>varSelectedAptQuantity</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>APT_Required__c</field>
+            <value>
+                <elementReference>varSelectedAptRequired</elementReference>
+            </value>
+        </inputAssignments>
         <inputAssignments>
             <field>Accept_56_Day_Rule_Violation__c</field>
             <value>
@@ -4174,5 +4239,23 @@ REGEX( {!Drive_Keyword}, &quot;[a-zA-Z0-9 ]+&quot;)</formulaExpression>
         <isCollection>false</isCollection>
         <isInput>false</isInput>
         <isOutput>false</isOutput>
+    </variables>
+    <variables>
+        <name>varTemplateAptQuantity</name>
+        <dataType>Number</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+        <scale>0</scale>
+    </variables>
+    <variables>
+        <name>varTemplateAptRequired</name>
+        <dataType>Boolean</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+        <value>
+            <booleanValue>false</booleanValue>
+        </value>
     </variables>
 </Flow>
