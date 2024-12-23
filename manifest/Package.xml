@@ -9,6 +9,7 @@
 		<members>BSF_Batch_OpportunityTeamSyncTest</members>
 		<members>BSF_Constants</members>
 		<members>BSF_TaskCreationBatch</members>
+		<members>BSF_TaskCreationBatch_Test</members>
 		<members>BSF_Utilities</members>
 		<members>BSF_UtilitiesTest</members>
 		<members>CalendarBuildBatchHandler</members>
@@ -32,6 +33,7 @@
 		<members>skedActivityService</members>
 		<members>skedActivityService_Test</members>
 		<members>TaskTriggerHandler</members>
+		<members>TaskTriggerTest</members>
 		<members>skedAvailabilityHandler</members>
 		<members>skedAvailabilityTrigger_Test</members>
 		<members>skedCOGroupTravelTimeIndexRefreshBatch</members>
@@ -58,6 +60,7 @@
 		<members>skedScheduleChangeNotificationBatch</members>
 		<members>skedScheduleChangeNotificationBatch_Test</members>
 		<members>skedSetting</members>
+		<members>skedSetting_Test</members>
 		<members>skedStaffingBudgetService</members>
 		<members>skedStaffingBudgetService_Test</members>
 		<members>skedStaffingBudgetSiteService</members>
@@ -67,6 +70,7 @@
 		<members>skedStaffingBudgetWrapper</members>
 		<members>skedTestDataFactory</members>
 		<members>skedTravelTimeIndexRefreshGroupHandler</members>
+		<members>skedTTIRefreshGroupTrigger_Test</members>
 		<members>skedTravelTimeIndexRefreshRequestHandler</members>
 		<members>skedUserHandler</members>
 		<members>skedUserHandler_Test</members>

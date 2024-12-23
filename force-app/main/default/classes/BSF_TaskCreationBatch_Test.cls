@@ -1,10 +1,11 @@
 /* Description : This test class covers BSF_TaskCreationBatch 
- * Current Test Coverage : 100%
+ * Current Test Coverage : 88%
    
  * Modification Log 
  * Date					     Developer Name			     Comments
  * ***********************************************************************************************************************************************
  * 10/30/2024				  Priti Jana				Created for HRP-5337
+ * 12/19/2024				  Priti Jana				Fixed errors, increased code coverage
  *************************************************************************************************************************************************
 */
 
@@ -55,7 +56,7 @@ public class BSF_TaskCreationBatch_Test {
     static testMethod void testBatchExecutionForAllOpps() {
         Test.startTest();
         Opportunity mobileOpp = [SELECT Id, Name, Drive_Date__c, WB_Projected_Procedures__c, Source__c FROM Opportunity WHERE Is_Template__c = FALSE LIMIT 1];
-        BSF_TaskCreationBatch taskCreationBatchInstance = new BSF_TaskCreationBatch(TRUE);
+        BSF_TaskCreationBatch taskCreationBatchInstance = new BSF_TaskCreationBatch();
         Database.executeBatch(taskCreationBatchInstance);
         Test.stopTest();
         
