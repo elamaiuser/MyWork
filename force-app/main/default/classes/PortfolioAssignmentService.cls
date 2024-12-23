@@ -11,6 +11,7 @@
 * 11/07/2023				Balaji N			Logic for HRP-11290(Method:publishPlarformEventsOnAfterInsert; Handles account Team on Portfolio Insert/Update/Delete earlier Insert only)
 * 11/08/2023				Balaji N			Logic for HRP-11290 Commented createAccountTeamMembers,createAMandDM,createABMRecords,createDMRecords,createSingleLevelPortfolioRecords,updateEndDateOfAccountTeamMembers,updateacctTeammembers,deleteAccountTeamMembers,deletePortfolioAssignedMembersfromAccountTeam)
 * 08/05/2024				Balaji N     		Logic for HRP-13028 (Method:publishPlarformEventsOnAfterInsert,AccTeamUpdatePortfolioAssignQueue limit check)
+* 08/16/2024				Balaji N			Logic for HRP-13270 (Method:manageUserAssignemntForPortfolioInOtherTaxo; updates in supervisor taxonomy doesn't go to Bio Recruitment/Bio Account)
 * */
 public with sharing class PortfolioAssignmentService {
     public static Boolean isExecuted = false;
@@ -123,20 +124,28 @@ return false;
         List<Portfolio_Assignment__c> listOfPortAssrecordsToInsert = new List<Portfolio_Assignment__c>();
         List<Portfolio_Assignment__c> listOfPortAssrecordsToUpdate = new List<Portfolio_Assignment__c>();
         List<Portfolio_Assignment__c> listTodeletePfa = new List<Portfolio_Assignment__c>();
-        system.debug('currentPortAssRecordMap ##'+currentPortAssRecordMap);
+        List<String> amPortfolioList = new List<String>{BSF_constants.BIO_RECRUITMENT_RECORD_TYPE,BSF_constants.TAXO_ACCOUNT_RECORD_TYPE};
+            system.debug('currentPortAssRecordMap ##'+currentPortAssRecordMap);
         system.debug('oldPortfolioAssignmentMap##'+oldPortfolioAssignmentMap);
         for(Portfolio_Assignment__c pfAssignment:portfolioAssignmentList){
-            if(pfAssignment.User__c != null ){
+            if(pfAssignment.User__c != null){
                 bsfPortRecordsId.add(pfAssignment.BSF_Portfolio__c);
             }
         }
-        Map<Id,BSF_Portfolio__c> listOfBSFWithPfAssignment=new Map<Id,BSF_Portfolio__c>([select Id,Portfolio_Code__c from BSF_Portfolio__c where Id IN:bsfPortRecordsId  and
-                                                                                         Portfolio_Code__c!=null]); //getting all
-        system.debug('listOfBSFWithPfAssignment ##'+listOfBSFWithPfAssignment);
+        Map<Id,BSF_Portfolio__c> portfolioIdPortfolioMap =new Map<Id,BSF_Portfolio__c>([select Id,Portfolio_Code__c,Portfolio_type__c,Taxonomy_type__c from BSF_Portfolio__c where Id IN:bsfPortRecordsId  and
+                                                                                        Portfolio_Code__c!=null AND Taxonomy_type__c IN:amPortfolioList]); //getting all  //HRP-13270
+        system.debug('listOfBSFWithPfAssignment ##'+portfolioIdPortfolioMap);
         for(Portfolio_Assignment__c pfAssignment:portfolioAssignmentList){
-            if(pfAssignment.User__c!=null ){
+            if(pfAssignment.User__c!=null && portfolioIdPortfolioMap != null && portfolioIdPortfolioMap.containsKey(pfAssignment.bsf_portfolio__c))//HRP-13270
+            {
                 mapOfBsfandPortFolio.put(pfAssignment.BSF_Portfolio__c,pfAssignment);
             }
+            //HRP-13270
+            else
+            {
+                Continue;
+            }
+            //HRP-13270
             if(oldPortfolioAssignmentMap != null &&
                ((oldPortfolioAssignmentMap.get(pfAssignment.Id).User__c != pfAssignment.User__c && pfAssignment.User__c!=null )||
                 (oldPortfolioAssignmentMap.get(pfAssignment.Id).Start_Date__c != pfAssignment.Start_Date__c)||
@@ -144,26 +153,28 @@ return false;
                 operation == 'Delete')
               ){
                   system.debug('user 1##'+oldPortfolioAssignmentMap.get(pfAssignment.Id).User__c);
-                  system.debug('portfolio code ##'+listOfBSFWithPfAssignment.get(pfAssignment.BSF_Portfolio__c).Portfolio_Code__c);
+                  system.debug('portfolio code ##'+portfolioIdPortfolioMap.get(pfAssignment.BSF_Portfolio__c).Portfolio_Code__c);
                   system.debug('start date##'+oldPortfolioAssignmentMap.get(pfAssignment.Id).Start_Date__c);
-                  currentPortAssRecordMap.put(oldPortfolioAssignmentMap.get(pfAssignment.Id).User__c+listOfBSFWithPfAssignment.get(pfAssignment.BSF_Portfolio__c).Portfolio_Code__c+oldPortfolioAssignmentMap.get(pfAssignment.Id).Start_Date__c,pfAssignment);
+                  currentPortAssRecordMap.put(oldPortfolioAssignmentMap.get(pfAssignment.Id).User__c+portfolioIdPortfolioMap.get(pfAssignment.BSF_Portfolio__c).Portfolio_Code__c+oldPortfolioAssignmentMap.get(pfAssignment.Id).Start_Date__c,pfAssignment);
               }
         }
         if(!bsfPortRecordsId.isEmpty()){
             System.debug('currentPortAssRecordMap is - > '+currentPortAssRecordMap);
             Map<String,Portfolio_Assignment__c> portfolioCodeAssignmentMap = new Map<String,Portfolio_Assignment__c>();
             Set<String>  setofPortfolioCodes = new Set<String>();
-            if(!listOfBSFWithPfAssignment.values().isEmpty()){
-                for(BSF_Portfolio__c bsfRecord:listOfBSFWithPfAssignment.values()){
+            if(!portfolioIdPortfolioMap.values().isEmpty()){
+                for(BSF_Portfolio__c bsfRecord:portfolioIdPortfolioMap.values())
+                {
                     setofPortfolioCodes.add(bsfRecord.Portfolio_Code__c);
                     Portfolio_Assignment__c pfAssignment1=MapOfBsfandPortFolio.get(bsfRecord.id);
                     portfolioCodeAssignmentMap.put(bsfRecord.Portfolio_Code__c,pfAssignment1);
                 }
                 if(!setofPortfolioCodes.isEmpty()){
+                    amPortfolioList.add(BSF_constants.TAXO_SUPERVISOR_RECORD_TYPE);//HRP-13270
                     Map<Id,BSF_Portfolio__c> mapOfAllBsfwithoutAssignment = new Map<Id,BSF_Portfolio__c>(
-                        [select Id,Portfolio_Code__c,Start_Date__c,End_Date__c,(Select id,Name,Start_Date__c,End_Date__c, Assignment_Type__c,User__c from PortfolioAssignments__r)
+                        [select Id,Portfolio_Code__c,Start_Date__c,End_Date__c,Portfolio_Type__c,Taxonomy_Type__c,(Select id,Name,Start_Date__c,End_Date__c, Assignment_Type__c,User__c from PortfolioAssignments__r)
                          FROM BSF_Portfolio__c WHERE Portfolio_Code__c IN:setofPortfolioCodes
-                         AND  Id NOT IN:listOfBSFWithPfAssignment.keySet()]);
+                         AND  Id NOT IN:portfolioIdPortfolioMap.keySet() AND Taxonomy_type__c IN:amPortfolioList AND Is_Expired__c=false]);//HRP-13270
                     system.debug('mapOfPortfolioCodes '+mapOfAllBsfwithoutAssignment);
                     for(BSF_Portfolio__c bsfPortRec:mapOfAllBsfwithoutAssignment.values()){
                         if(operation == 'Insert'){
@@ -179,12 +190,22 @@ return false;
                                 listOfPortAssrecordsToInsert.add(ps);
                             }
                         }else{
-                            for(Portfolio_Assignment__c existingPortfolioAssignment:bsfPortRec.PortfolioAssignments__r){
+                            for(Portfolio_Assignment__c existingPortfolioAssignment:bsfPortRec.PortfolioAssignments__r)
+                            {
                                 Portfolio_Assignment__c updatedOrDeletedPortfolio = currentPortAssRecordMap.get(existingPortfolioAssignment.User__c+bsfPortRec.Portfolio_Code__c+existingPortfolioAssignment.Start_Date__c);
                                 system.debug('updatedOrDeletedPortfolio -> '+updatedOrDeletedPortfolio);
-                                if(operation == 'Delete' && updatedOrDeletedPortfolio != null){
+                                if(operation == 'Delete' && updatedOrDeletedPortfolio != null)
+                                {
                                     listTodeletePfa.add(existingPortfolioAssignment);
-                                }else if(operation == 'Update' && updatedOrDeletedPortfolio != null){
+                                }
+                                else if(operation == 'Update' && updatedOrDeletedPortfolio != null)
+                                {
+                                    //HRP-13270
+                                    if(bsfPortRec.Taxonomy_Type__c == BSF_constants.TAXO_SUPERVISOR_RECORD_TYPE && existingPortfolioAssignment.End_Date__c < BSF_constants.CURRENT_DATE)
+                                    {
+                                        Continue;
+                                    }
+                                    //HRP-13270
                                     existingPortfolioAssignment.User__c = updatedOrDeletedPortfolio.User__c;
                                     existingPortfolioAssignment.Start_Date__c = updatedOrDeletedPortfolio.Start_Date__c;
                                     existingPortfolioAssignment.End_Date__c = updatedOrDeletedPortfolio.End_Date__c;

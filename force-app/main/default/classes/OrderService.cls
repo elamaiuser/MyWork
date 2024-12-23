@@ -371,7 +371,7 @@ public without sharing class OrderService {
                 //HRP-12752
                 if(!OrderIdMap.get(od.Id).Opportunity.No_Publicity_Needed__c && OrderIdMap.get(od.Id).OrderItems.isEmpty())
                 {
-                    od.addError('Products have not been added to the Order. Please add Products before approving the Order or select \'No Publicity Needed\'');
+                    od.addError('Products have not been added to Order. Please add Products before approving Order or select \'No Publicity Needed\' on Opportunity Details tab.');
                 }
                 //HRP-12752
                                                         od.Publicity_Approved_Date__c = System.today();

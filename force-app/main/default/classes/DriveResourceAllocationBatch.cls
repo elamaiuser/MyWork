@@ -347,6 +347,7 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
             Boolean passingRuleOne = isFixedSiteDrive(drive) && jobAllocationList.isEmpty();
             Boolean passingSubRuleTwo = remainingStaff >= totalNoOfStaffRequired && jobAllocationList.isEmpty();
             Boolean passingRuleTwo = passingSubRuleTwo && (map_operationDriveLimitId_operationDriveLimit.isEmpty() || resourceModel.total2RBCLimit == NULL || xrbcJobCount == 0 || xrbcJobCount <= resourceModel.remainingNoOf2RBC);    
+            system.debug('passingSubRuleTwo '+passingSubRuleTwo+' and passingRuleTwo '+passingRuleTwo);
             if(passingRuleOne || passingRuleTwo) {
                 evaluateResourceEligibilityAndAllocateResources(resList, drive, resourceModel);
             }

@@ -132,11 +132,14 @@ global class skedSetting {
         }
 
         public skedAppSetting() {
+            system.debug('skedAppSetting ');
+            system.debug('UserInfo.getTimeZone().getID() '+UserInfo.getTimeZone().getID());
             this.timezoneSidId = UserInfo.getTimeZone().getID();
             this.daylightSavingDetected = true;
         }
 
         public void setTimezoneSidId(string inputTimezoneSidId) {
+            system.debug('setTimezoneSidId '+inputTimezoneSidId);
             this.timezoneSidId = inputTimezoneSidId;
         }
 

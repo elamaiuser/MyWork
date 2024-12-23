@@ -52,7 +52,7 @@ class BaseGenerator {
     waitingDriveChangeRequest : null,
     pendingDriveChangeRequest : null,
     staffSetupExcludedRoles: [],
-    skipAPTCalculation: false,
+    skipAPTCalculation: true,
     
     //fixed site
     fixedSiteProcedureProjections: [],
@@ -719,7 +719,9 @@ class BaseGenerator {
       if (property.targetName === 'aptRequired') {
         this.drive[property.targetName] = (/^(true|1)$/i).test(this.drive[property.targetName]);
         this.drive['aptQuantity'] = this.drive.opportunity.aptQuantity;
-        this.masterData.skipAPTCalculation = true;
+      }
+      if (property.targetName === 'driveShiftsMetadata') {
+        this.masterData.skipAPTCalculation = false;
       }
     })
 

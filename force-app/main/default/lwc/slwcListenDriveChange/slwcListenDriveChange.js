@@ -18,7 +18,7 @@ export default class SlwcListenDriveChange extends NavigationMixin(LightningElem
     }
 
     connectedCallback() {
-        console.log("connectedCallback");
+        console.log("connectedCallback recordId::"+this.recordId);
         subscribe("/topic/DriveChangeRequestUpserts", -1, this.messageCallback).then(
             (response) => {
                 console.log(

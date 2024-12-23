@@ -8,20 +8,8 @@
     <columns>sked__Primary_Region__c</columns>
     <columns>sked_Biomed_Collection_Op_Center_Name__c</columns>
     <columns>sked_Job_Code__c</columns>
+    <columns>sked__Is_Active__c</columns>
+    <columns>sked_Line_of_Service__c</columns>
     <filterScope>Everything</filterScope>
-    <filters>
-        <field>sked_Collection_Operation_Name_Staging__c</field>
-        <operation>contains</operation>
-    </filters>
-    <filters>
-        <field>sked_District_Name__c</field>
-        <operation>contains</operation>
-        <value>Roch</value>
-    </filters>
-    <filters>
-        <field>sked_Asset_Type__c</field>
-        <operation>contains</operation>
-        <value>Equipment</value>
-    </filters>
     <label>All</label>
 </ListView>

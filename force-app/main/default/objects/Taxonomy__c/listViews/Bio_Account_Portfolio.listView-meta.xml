@@ -21,9 +21,29 @@
         <value>Taxonomy__c.Bio_Account_Portfolio</value>
     </filters>
     <filters>
-        <field>DRD_Territory_Name__c</field>
-        <operation>contains</operation>
-        <value>Maine</value>
+        <field>Version_Key__c</field>
+        <operation>equals</operation>
+        <value>293</value>
+    </filters>
+    <filters>
+        <field>Division_Code__c</field>
+        <operation>equals</operation>
+        <value>BD31</value>
+    </filters>
+    <filters>
+        <field>DS_Region_Code__c</field>
+        <operation>equals</operation>
+        <value>001</value>
+    </filters>
+    <filters>
+        <field>Team_Code__c</field>
+        <operation>equals</operation>
+        <value>1244</value>
+    </filters>
+    <filters>
+        <field>ABM_Code__c</field>
+        <operation>equals</operation>
+        <value>Binghamton ABM B</value>
     </filters>
     <label>Bio Account Portfolio</label>
 </ListView>

@@ -7,6 +7,7 @@
     <columns>OPPORTUNITY.STAGE_NAME</columns>
     <columns>Anticipated_Registered_Donors__c</columns>
     <columns>DriveStatus__c</columns>
+    <columns>Calendar_Build_Generated_For__c</columns>
     <columns>Calendar_Build_Parent_Opportunity__c</columns>
     <columns>Calendar_Build_Status__c</columns>
     <columns>OPPORTUNITY.CREATED_DATE</columns>
@@ -19,14 +20,9 @@
         <value>0</value>
     </filters>
     <filters>
-        <field>OPPORTUNITY.RECORDTYPE</field>
-        <operation>equals</operation>
-        <value>Opportunity.Mobile_Opp</value>
-    </filters>
-    <filters>
-        <field>DriveStatus__c</field>
-        <operation>equals</operation>
-        <value>Complete</value>
+        <field>Drive_Date__c</field>
+        <operation>greaterThan</operation>
+        <value>1/1/2024</value>
     </filters>
     <label>All Opportunities_Completed</label>
 </ListView>

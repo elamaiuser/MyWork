@@ -17,6 +17,7 @@ export default class SlwcPicklist extends LightningElement {
     @api label;
     @api variant;
     @api uniqueKey;
+    @api dropdownAlignment;
     @api allowedValues = [];
     @api excludedValues = [];
     @track value;
