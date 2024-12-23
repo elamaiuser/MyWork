@@ -48,7 +48,7 @@ public without sharing class WeeklyStaffScheduleReportController {
         } 
     }
     
-    @AuraEnabled
+    @AuraEnabled(cacheable=true)
     public static DatableConfigWrapper searchReport(Date startDate, Date endDate, String drivedispatch, String collOpIdList, String driveType){
 
         DatableConfigWrapper data = new DatableConfigWrapper();

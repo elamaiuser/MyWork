@@ -53,6 +53,7 @@ Public class UpdateDrivesVehicleAllocationSchedulable implements Schedulable {
         this.whichconstructorRun = 'second';
     }
     Public void execute(SchedulableContext SC) {
+        String constructorType = Label.ToHandleConstructorOfUpdateDrivesVehicleAllocationSchedulable;
         
         if (this.whichconstructorRun == 'first') { // this is use to call first constructor of UpdateDrivesVehicleAllocationFieldsBatch
             UpdateDrivesVehicleAllocationFieldsBatch batch1 = new UpdateDrivesVehicleAllocationFieldsBatch(this.typeOfDrive);

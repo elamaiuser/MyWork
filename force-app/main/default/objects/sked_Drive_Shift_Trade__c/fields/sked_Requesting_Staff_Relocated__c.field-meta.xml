@@ -2,7 +2,6 @@
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>sked_Requesting_Staff_Relocated__c</fullName>
     <defaultValue>false</defaultValue>
-    <description>.</description>
     <externalId>false</externalId>
     <label>Requesting Staff Relocated</label>
     <trackHistory>false</trackHistory>

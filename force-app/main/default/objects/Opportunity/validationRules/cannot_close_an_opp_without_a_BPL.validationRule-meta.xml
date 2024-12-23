@@ -8,6 +8,5 @@ ISCHANGED(StageName),
 ISBLANK(Account.Contact_BPL__c),
 RecordType.DeveloperName = &#39;Mobile_Opp&#39;
 )</errorConditionFormula>
-    <errorDisplayField>Number_of_2RBC_Assets__c</errorDisplayField>
     <errorMessage>We have hit a snag. An Active BPL is required to move this Drive to Closed Stage.</errorMessage>
 </ValidationRule>

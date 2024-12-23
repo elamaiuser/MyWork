@@ -4,12 +4,12 @@
  * ***************************************************************************
  * 5/05/2023                  Ankit Kundu            Logic for HRP-6231
  * 15/01/2024                 Barnojit Sharma        Need ability to mass update the Keyword on a FS Account(HRP-10420)
- * 08/05/2024				  Priti Jana			 Logic for HRP-12112
+ * 07/19/2024                 Priti Jana             Logic for HRP-12112
  * ****************************************************************************/
 
 public class MassUpdateOpportunity {
     @InvocableMethod(label='updateOppUsingApexandBatch' description='return list of Opportunity' category='Opportunity')
-    public static void updateSelectedRecords(List<oppVariable> oppWrapper) { 
+    public static void updateSelectedRecords(List<oppVariable> oppWrapper) {  
         Integer batchSize = Integer.valueOf(Custom_Messages__mdt.getInstance('Batch_Size_for_MassUpdateOpportunity').value__c); //HRP-12112
         MassUpdateOpportunityBatch objbatch = new MassUpdateOpportunityBatch(oppWrapper);
         Database.executeBatch(objbatch, batchSize); //HRP-12112
@@ -31,8 +31,6 @@ public class MassUpdateOpportunity {
 
         String accountId = (String)filterWrapper.get('accountId');
         String driveName  = (string)filterWrapper.get('driveName');
-        String sortBy = (String)filterWrapper.get('sortBy');
-        String sortDirection = (String)filterWrapper.get('sortDirection');
         Integer recordsLimit = Integer.valueOf(filterWrapper.get('recordLimit'));
         Integer recordOffset = Integer.valueOf(filterWrapper.get('rowOffset'));
         List<String> driveStatus = filterWrapper.get('driveStatus') != NULL ? convertObjectListToStringList((List<object>)filterWrapper.get('driveStatus')) : new List<String>();
@@ -80,8 +78,8 @@ public class MassUpdateOpportunity {
         return stringList;
     }
     // HRP-12112 --> Ends Here
-    
-    public class oppVariable {
+
+    public class oppVariable{
         @InvocableVariable
         public List<Opportunity> oppToUpdate;
         @InvocableVariable

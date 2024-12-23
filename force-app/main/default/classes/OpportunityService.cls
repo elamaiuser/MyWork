@@ -51,15 +51,15 @@
 * 08/14/2024                     Apurba Bhattacharjee     HRP-12700 Add Drive Date to task list
 * 08/30/2024                     Barnojit Sharma          Within the Sponsor Planning Report task, populate the referencing Opp/Drive Sponsor Planning Report. (Logic for HRP-5337)
 * 10/14/2024                     Souvik Mukherjee         HRP-13568 Added OpportunityId to Order SELECT SOQL
-* 10/18/2024					 Balaji N				  HRP-13489 Methods populateSlotGeneratorOnOpportunity,getSlotMultiplierGlobalValue
-* 10/25/2024				 	 Balaji N				  Logic for HRP-13489 syncTemplateOrdertoOpportunity Raktim's Changes
+* 10/18/2024           Balaji N          HRP-13489 Methods populateSlotGeneratorOnOpportunity,getSlotMultiplierGlobalValue
+* 10/25/2024            Balaji N          Logic for HRP-13489 syncTemplateOrdertoOpportunity Raktim's Changes
 * 10/29/2024                     Barnojit Sharma          HRP-12142 Added sync Do Not Roll Fields
-* 10/24/2024				     Barnojit Sharma		  Template Order products not cascading to Opportunity Order (Logic for HRP-13521)
-* 11/07/2024			         Barnojit Sharma		  Update Task: 72 Hour Check in - System Generated/Details/Checklist. (Logic for HRP-12627)
-* 11/11/2024					 Priti Jana				  Logic for HRP-13743
-* 11/12/2024				     Barnojit Sharma		  Unable to create Mobile Drive when the Template has an over-budget template order (Logic for HRP-13716)
-* 12/02/2024					 Barnojit Sharma		  Tasks being assigned for cancelled drives and for fixed sites(Logic for HRP-13850)
-* 12/10/2024					 Priti Jana				  Logic for HRP-13190
+* 10/24/2024             Barnojit Sharma      Template Order products not cascading to Opportunity Order (Logic for HRP-13521)
+* 11/07/2024               Barnojit Sharma      Update Task: 72 Hour Check in - System Generated/Details/Checklist. (Logic for HRP-12627)
+* 11/11/2024           Priti Jana          Logic for HRP-13743
+* 11/12/2024             Barnojit Sharma      Unable to create Mobile Drive when the Template has an over-budget template order (Logic for HRP-13716)
+* 12/02/2024           Barnojit Sharma      Tasks being assigned for cancelled drives and for fixed sites(Logic for HRP-13850)
+* 12/10/2024           Priti Jana          Logic for HRP-13190
 * 12/10/2024                     Satyendra Vishwakarma    HRP-6051 - Anticipated Registered Donors validation when changing procedure projections
 ************************************************************************************************************************************************
 */
@@ -810,9 +810,9 @@ if(ds.isCreateable()){}*/
                 List<OrderItem> odrItemList = [SELECT Id,
                                                         OrderId,
                                                         Order.OpportunityId,
-                                               			Order.Opportunity.Name,
-                                               			Order.Opportunity.AccountId,
-                                               			Order.Opportunity.Account.Account_Manager__c,
+                                                     Order.Opportunity.Name,
+                                                     Order.Opportunity.AccountId,
+                                                     Order.Opportunity.Account.Account_Manager__c,
                                                         Product2Id,
                                                         Product2.Name,
                                                         Product2.Description,
@@ -4664,8 +4664,8 @@ opp.StageName = 'Closed';
                                         Local_Recruitment_Request_Need_by_Date__c,
                                         (
                                             SELECT Id, OrderID, Product2Id, TotalPrice, ListPrice, 
-                                         	Quantity, UnitPrice, PricebookEntryId 
-                                         	FROM OrderItems
+                                           Quantity, UnitPrice, PricebookEntryId 
+                                           FROM OrderItems
                                         )
                                         FROM Order 
                                         WHERE OpportunityId IN :templateToOppIDMap.keySet()];
@@ -4706,7 +4706,7 @@ opp.StageName = 'Closed';
                     }
                 }
                 //HRP-13743--> Ends Here
-    		}
+        }
          
             for(Order cloneOrder: getTemplateOrder) {
                 for(Id opp: templateToOppIDMap.get(cloneOrder.OpportunityId)) {
@@ -4814,6 +4814,7 @@ opp.StageName = 'Closed';
                     Boolean recalculateAptRule1 = oldOpp.APT_Required__c != newOpp.APT_Required__c;
                     Boolean recalculateAptRule2 = oldOpp.Total_Projected_Procedures__c != newOpp.Total_Projected_Procedures__c;
                     Boolean recalculateAptRule3 = !checkRecursive.skipAptRecalculation; //During DOC -> OPP Sync
+                    system.debug('recalculateAptRule1 '+recalculateAptRule1+' and recalculateAptRule2 '+recalculateAptRule2+' and recalculateAptRule3 '+recalculateAptRule3);
                     if((recalculateAptRule1 || recalculateAptRule2) && recalculateAptRule3) oppListToRecalculateAPT.add(newOpp);
                 }
             }

@@ -64,6 +64,14 @@
             <fullName>Suboptimal</fullName>
             <default>false</default>
         </values>
+        <values>
+            <fullName>TestDelete</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>TestValue3</fullName>
+            <default>false</default>
+        </values>
     </picklistValues>
     <picklistValues>
         <picklist>Account_Status__c</picklist>
@@ -88,6 +96,10 @@
         </values>
         <values>
             <fullName>Sunset</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Test2</fullName>
             <default>false</default>
         </values>
         <values>
@@ -323,6 +335,17 @@
         </values>
         <values>
             <fullName>Wednesday</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Feeder_Account_Type__c</picklist>
+        <values>
+            <fullName>Feeder Only</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Feeder Plus</fullName>
             <default>false</default>
         </values>
     </picklistValues>

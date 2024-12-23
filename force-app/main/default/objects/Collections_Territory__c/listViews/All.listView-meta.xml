@@ -10,9 +10,19 @@
     <columns>District__c</columns>
     <columns>Region__c</columns>
     <columns>Service_Area__c</columns>
+    <columns>Time_Zone__c</columns>
     <columns>OBJECT_ID</columns>
     <columns>CREATED_DATE</columns>
     <columns>CREATEDBY_USER</columns>
     <filterScope>Everything</filterScope>
+    <filters>
+        <field>Collection_Operation__c</field>
+        <operation>notEqual</operation>
+        <value>Non-Collection Area</value>
+    </filters>
+    <filters>
+        <field>Collection_Operation__c</field>
+        <operation>notEqual</operation>
+    </filters>
     <label>All</label>
 </ListView>

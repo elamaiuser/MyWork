@@ -21,6 +21,7 @@
  * 06/07/2024                  Priti Jana                HRP-12760
  * 08/09/2024                  Priti Jana                HRP-11634
  * 08/09/2024				   Raktim Ghosal			 HRP-12706
+ * 09/23/2024                  Krapy Tuli                HRP-13347
  *****************************************************************************
 */
 
@@ -118,6 +119,7 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
                 }
             }
             cbLogWrapper.draftDriveListToBeProcessed = Database.Query(createDriveQuery());
+            system.debug('cbLogWrapper.draftDriveListToBeProcessed '+cbLogWrapper.draftDriveListToBeProcessed.size());
             if(this.typeOfDrive != NULL) {
                 if(this.typeOfDrive.equalsIgnoreCase(BSF_Constants.FIXED_SITE_DRIVE)) {
                     fsSysGenCount = cbLogWrapper.draftDriveListToBeProcessed != NULL ? (Decimal)cbLogWrapper.draftDriveListToBeProcessed.size() : 0;
@@ -151,6 +153,7 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
     }
 
     public void execute(Database.BatchableContext bc, List<sked_Drive__c> driveList) {
+        Savepoint sp = Database.setSavepoint(); //HRP-13347
         try{
             skedTriggerUtils.CHANGES_INITIATED_FROM_SERVICE = true;   
             Set<Id> driveJobIds = new Set<Id>();
@@ -343,17 +346,15 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
                                                                     AND sked_Collection_Operation__c =: drive.sked_Collection_Operation__c 
                                                                     AND sked_Date_of_Constraint__c =: drive.sked_Drive_Date__c LIMIT 1];
             remainingStaff = staffConstraintList != NULL && staffConstraintList.size() > 0 && staffConstraintList[0].sked_Total_Staff_Constraints__c != NULL ? (staffConstraintList[0].sked_Total_Staff_Constraints__c - noOfStaffsAllocated) : 0; // HRP-10523 // HRP-11224
-            // HRP-12760 --> Starts Here
             Boolean passingRuleOne = isFixedSiteDrive(drive) && jobAllocationList.isEmpty();
             Boolean passingSubRuleTwo = remainingStaff >= totalNoOfStaffRequired && jobAllocationList.isEmpty();
             Boolean passingRuleTwo = passingSubRuleTwo && (map_operationDriveLimitId_operationDriveLimit.isEmpty() || resourceModel.total2RBCLimit == NULL || xrbcJobCount == 0 || xrbcJobCount <= resourceModel.remainingNoOf2RBC);    
             if(passingRuleOne || passingRuleTwo) {
                 evaluateResourceEligibilityAndAllocateResources(resList, drive, resourceModel);
             }
-            //fsSysGenCount = passingRuleOne ? fsSysGenCount + 1 : fsSysGenCount;
-            //mobileSysGenCount = passingRuleTwo ? mobileSysGenCount + 1 : mobileSysGenCount;
-            // HRP-12760 --> ends Here
+            sp = Database.setSavepoint(); //HRP-13347
     	} catch(Exception ex) {
+            Database.rollback(sp); //HRP-13347
             List<BSF_Error_Log__c> bsfErrorLogToInsertList = new List<BSF_Error_Log__c>{BSF_Utilities.createBsfErrorLogForExceptions(ex, 'DriveResourceAllocationBatch', 'Execute Method', BSF_Constants.MAP_DRIVETYPE_BATCHTYPE.get(typeOfDrive), BSF_Constants.MAP_DRIVETYPE_BATCHTYPE.get(typeOfDrive), String.valueOf(drive.Id.getSobjectType()), String.valueOf(drive.Id))};
             if(!map_driveType_failureLogDetails.containsKey(drive.sked_Type_of_Drive__c)) {
                 map_driveType_failureLogDetails.put(drive.sked_Type_of_Drive__c, new List<BSF_Error_Log__c>());
@@ -361,6 +362,7 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
             map_driveType_failureLogDetails.get(drive.sked_Type_of_Drive__c).add(bsfErrorLogToInsertList[0]);
             Database.SaveResult[] logInsertResult = Database.insert(bsfErrorLogToInsertList, FALSE);
             errorLogIdsCreatedDuringBatchRun.addAll(BSF_Utilities.getSuccessfullySavedRecordIds(logInsertResult));
+            sp = Database.setSavepoint(); //HRP-13347
         }
     }
     
@@ -399,11 +401,11 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
 
         //HRP-12706 --> Starts Here
         if(driveIdSet != NULL && !driveIdSet.isEmpty()) {
-            system.debug('driveIdSet '+driveIdSet);
+            system.debug('driveIdSet '+driveIdSet.size());
 			queryString += ' AND Id IN: driveIdSet';            
         }
         if(driveSource != NULL && !String.isBlank(driveSource)) {
-            system.debug('driveSource '+driveSource);
+             system.debug('driveSource '+driveSource);
 			queryString += ' AND sked_Opportunity__r.Source__c = :driveSource';            
         }
         if(typeOfDrive != NULL && !String.isBlank(typeOfDrive) && typeOfDrive.equalsIgnoreCase(BSF_Constants.MOBILE_DRIVE)) {
@@ -496,7 +498,6 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
             List<sked__Resource__c> availableResourceListPassedCheckFour = filterLocationBlacklist(availableResourceListPassedCheckThree, drive);
             List<sked__Resource__c> resourceListNeededForCOCheck = filterResourceDedicatedToSite(availableResourceListPassedCheckFour, successfullyEvaluatedResourceMap);
             filterResourceAvailabilityInJobCollectionOperation(resourceListNeededForCOCheck, drive, successfullyEvaluatedResourceMap);
-            system.debug('successfullyEvaluatedResourceMap '+successfullyEvaluatedResourceMap.size());
             filterTagsAndAllocateResources(successfullyEvaluatedResourceMap, drive, resourceModel);     
         }
     }
@@ -772,29 +773,20 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
         Map<Id,Set<Id>> map_jobId_ResourceIds = new Map<Id,Set<Id>>();
         Map<Id,Set<Id>> jobVsResourceAllocations = new Map<Id,Set<Id>>();
         Set<Id> assignedResourceId = new  Set<Id>();
-        system.debug('vehicleTypeResource '+vehicleTypeResource);
         for(sked__Job__c vehicleJob : vehicleTypeJob) { // HRP-10212 start
-            system.debug('jobVsJobTagMap.get(vehicleJob.Id) '+jobVsJobTagMap.get(vehicleJob.Id).size());
             if(!vehicleTypeResourceForCDL.isEmpty()) {
                 for(sked__Resource__c vehicleResource : vehicleTypeResourceForCDL) {
-                    system.debug('vehicleResource '+vehicleResource);
                     if(!resourceVsResourceTagMap.get(vehicleResource.Id).isEmpty() && jobVsJobTagMap.containskey(vehicleJob.Id) && !assignedResourceId.contains(vehicleResource.Id)) {
                         Integer count = 0;
                         for(sked__Resource_Tag__c resTag : resourceVsResourceTagMap.get(vehicleResource.Id)) {
-                            system.debug('resTag '+resTag);
                             if(resTag.sked_Start_Date__c  <= driveDate && (resTag.sked_Expiry_Date__c == NULL || (resTag.sked_Expiry_Date__c != NULL || driveDate <= resTag.sked_Expiry_Date__c))) {
                                 for(sked__Job_Tag__c jobTag : jobVsJobTagMap.get(vehicleJob.Id)) {
-                                    system.debug('jobTag '+jobTag);
-                                   
                                     if(jobTag.sked__Tag__c == resTag.sked__Tag__c) {
-                                        
                                         count++;
                                     }
                                 }
                             }  
                         }
-                        system.debug('count in batch '+count);
-                        system.debug('jobVsJobTagMap.get(vehicleJob.Id).size() '+jobVsJobTagMap.get(vehicleJob.Id).size());
                         if(count == jobVsJobTagMap.get(vehicleJob.Id).size()){
                             if (!map_jobId_ResourceIds.containsKey(vehicleJob.Id)) {
                                 map_jobId_ResourceIds.put(vehicleJob.Id, new Set<Id>{vehicleResource.Id});
@@ -874,7 +866,6 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
                 }
             }
         }
-		system.debug('map_operationDriveLimitId_operationDriveLimit '+map_operationDriveLimitId_operationDriveLimit.size());
         Integer maxNoOfVehicles = 0;
         for (Id jobId : map_jobId_ResourceIds.keySet()) {
             Decimal pdC = 0;
@@ -882,7 +873,6 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
             for (Id resId : map_jobId_ResourceIds.get(jobId)) { // HRP-10212 and HRP-10213 start
                 if(resourceIdVsCapacity.get(resId) != NULL) {
                     if(map_operationDriveLimitId_operationDriveLimit.isEmpty()) {
-                        system.debug('here');
                         pdC += resourceIdVsCapacity.get(resId);
                         resourceIds.add(resId);
                     } else if(resourceIdVsResourceDetails.containsKey(resId) && resourceIdVsResourceDetails.get(resId).sked_DOT__c == True && (resourceModel.remainingNoOfDOT > 0 || resourceModel.remainingNoOfDOT == NULL)) {
@@ -909,7 +899,6 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
             }
         }
         noOfVehicles = maxNoOfVehicles;
-        system.debug('jobVsResourceAllocations '+jobVsResourceAllocations);
         return jobVsResourceAllocations;
     }
 
@@ -944,7 +933,6 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
                 }
           }
         }
-        system.debug('jobAlocList '+jobAlocList);
         List<sked__Job__c> combinedJobList = new List<sked__Job__c>();
         List<sked_Drive_Shift__c> driveshifts = getDriveShifts(drive.Id);
         if(!jobAlocList.isEmpty() && (noOfVehicleAllocations > 0 || (noOfVehicleAllocations == 0 && vehicleTypeJob.size() == 0)) && (noOfEquipmentAllocations > 0 || (noOfEquipmentAllocations == 0 && equipmentTypeJob.size() == 0))) {
@@ -961,7 +949,6 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
                     GenerateMobileDrive.DriveStaffingComplementModel staffingComplement = new GenerateMobileDrive.DriveStaffingComplementModel(); //HRP-11634
                     for(sked__Job__c job : shift.sked_Jobs__r) { // HRP-11001 start
                         if ( (job.sked_Asset_Type__c != null) && (job.sked_Asset_Type__c == Constants.JOB_TYPE_VEHICLE && job.sked__Quantity__c != noOfVehicles)) {
-                            system.debug('here in reclaculation');
                             recalculationFlag = true;
                         }
                     }
@@ -994,10 +981,8 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
                     drive.Average_Staff_Capacity__c = dmlDrive?.averageStaffCapacity;
                     drive.Excess_Staff_Capacity__c = reCalculateDriveExcessStaffCapacity(dmlDrive);
                 }
-                system.debug('remainingStaff '+remainingStaff+' reCalTotalNoOfStaffRequired '+reCalTotalNoOfStaffRequired);
                 //HRP-11634 --> Ends Here
                 if (remainingStaff >= reCalTotalNoOfStaffRequired) { // HRP-11001 start
-                    system.debug('remainingStaff '+remainingStaff+' reCalTotalNoOfStaffRequired '+reCalTotalNoOfStaffRequired);
                     if(recalculationFlag) {
                         update combinedJobList;
                         Decimal driveProductivity = 0;
@@ -1034,11 +1019,10 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
                 }
             }
             if (remainingStaff >= reCalTotalNoOfStaffRequired) {
-                system.debug('remainingStaff '+remainingStaff+' reCalTotalNoOfStaffRequired '+reCalTotalNoOfStaffRequired);
                 insert jobAlocList;
            	    update drive;   
                 processedDrive.add(drive.Id);
-                 //HRP-12706 --> Continues (Capturing Number Drives with Allocated Resources
+                //HRP-12706 -> Capturing drives with resource allocation as per tyoe of drive --> Starts here
                 if(!typeOfDriveVsdriveIDSet.containsKey(drive.sked_Type_of_Drive__c)){
                 	typeOfDriveVsdriveIDSet.put(drive.sked_Type_of_Drive__c, new Set<ID>());
             	}
@@ -1051,7 +1035,7 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
                 	typeOfDriveVsdriveIDSet.put(drive.sked_Type_of_Drive__c, new Set<ID>());
             	}
             	typeOfDriveVsdriveIDSet.get(drive.sked_Type_of_Drive__c).add(drive.ID);
-            	//HRP-12706 --> Ends Here
+                //HRP-12706 --> Ends Here
             } // HRP-11001 end
            	
         }//HRP-10009 Start 

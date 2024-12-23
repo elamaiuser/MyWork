@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>OBI_Arkansas_DCRs2_sked_Drive_Change_Request</fullName>
+    <filterScope>Queue</filterScope>
+    <label>OBI Arkansas: DCRs</label>
+    <queue>OBI_Arkansas_DCRs2</queue>
+    <sharedTo>
+        <allInternalUsers />
+    </sharedTo>
+</ListView>

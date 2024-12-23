@@ -111,7 +111,7 @@ global class skedResourceSeniorityRankingBatch implements System.Schedulable, Da
     }
     
     global void finish(Database.BatchableContext BC) {
-        if(this.skedResourceIds!=null && !this.skedResourceIds.isEmpty()) {
+        if(this.skedResourceIds!=null && !this.skedResourceIds.isEmpty()){
             List<sked__Resource__c> skedResourcesToUpdate = new List<sked__Resource__c>();
             for (Id resourceId : this.skedResourceIds) {
                 sked__Resource__c skedResource = new sked__Resource__c(

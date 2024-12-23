@@ -63,6 +63,10 @@
         <value xsi:type="xsd:string">Your call out has been recorded</value>
     </values>
     <values>
+        <field>sked_Target_Field_Prev_Value__c</field>
+        <value xsi:nil="true" />
+    </values>
+    <values>
         <field>sked_Target_Field_Value__c</field>
         <value xsi:type="xsd:string">Approved</value>
     </values>

@@ -141,12 +141,12 @@ public class GenerateDriveTestData {
         firstList.add(personTag);
         mapTestData.put('personTag', personTag);
         
-        /*sked__Tag__c vehicleTag = new sked__Tag__c(
+        sked__Tag__c vehicleTag = new sked__Tag__c(
             Name = 'Sample Vehicle Tag',
             sked_Resource_Type__c = 'Vehicle'
         );
         firstList.add(vehicleTag);
-        mapTestData.put('vehicleTag', vehicleTag);*/
+        mapTestData.put('vehicleTag', vehicleTag);
         
         sked__Tag__c equipmentTag = new sked__Tag__c(
             Name = 'Sample Equipment Tag',
@@ -303,7 +303,7 @@ public class GenerateDriveTestData {
         );
         secondList.add(fixedSiteAccountTag2);*/
         
-        /*sked__Account_Tag__c fixedSiteAccountTag3 = new sked__Account_Tag__c(
+        sked__Account_Tag__c fixedSiteAccountTag3 = new sked__Account_Tag__c(
             sked__Account__c = fixedSiteAccount.Id,
             sked__Tag__c = vehicleTag.Id,
             sked__Required__c = false,
@@ -311,7 +311,7 @@ public class GenerateDriveTestData {
             sked__Weighting__c = 10
            // ,sked_Minimum_Quantity__c = 1
         );
-        secondList.add(fixedSiteAccountTag3);*/
+        secondList.add(fixedSiteAccountTag3);
         insert secondList;
         
         sked__Account_Tag__c fixedSiteAccountTag2 = new sked__Account_Tag__c(
@@ -672,7 +672,7 @@ public class GenerateDriveTestData {
         return mapTestData;
     }
 
-    /*@isTest
+    @isTest
     public static Map<string, sObject> testSetupForElseCondition()
     {
         Triggerhandler.bypass('OpportunitySplitTriggerHandler');
@@ -683,7 +683,7 @@ public class GenerateDriveTestData {
         List<sObject> predefinedData = testDataFactory.setupPredefinedData();
         insert predefinedData;
         
-        /***** First list 
+        /***** First list ****/
         List<sObject> firstList = new List<sObject>();
         
         Biomed_Collection_Op_Center__c testCollectionOperation1 = new Biomed_Collection_Op_Center__c(
@@ -742,7 +742,7 @@ sked_Charge_Threshold__c = 36,
 sked_Driver_Capacity__c = 2.2,
 sked_Driver_Support_Capacity__c = 2.2,
 sked_Team_Supervisor_Threshold__c = 36,
-sked_VP_HH_Capacity__c = 2.2,
+sked_VP_HH_Capacity__c = 2.2,*/
             RecordTypeId = Schema.SObjectType.sked_Staffing_Decision_Matrix__c.getRecordTypeInfosByDeveloperName().get('sked_Fixed_Site').getRecordTypeId()
         );
         firstList.add(staffingDecisionMatrix2);
@@ -847,7 +847,7 @@ sked_VP_HH_Capacity__c = 2.2,
         atmList.add(atm);
         insert atmList;
         
-        /***** Second list
+        /***** Second list ****/
         List<sObject> secondList = new List<sObject>();
         
         Opportunity parentOpp = new Opportunity(
@@ -920,7 +920,7 @@ sked_Max_Number_of_Staff__c = 8,
 sked_Min_Number_of_Staff__c = 4,
 sked_Slot_Reduction__c = 5
 );
-secondList.add(setting30definition3); 
+secondList.add(setting30definition3); */
         
         sked_Lunch_Break_Definition__c setting30definition4 = new sked_Lunch_Break_Definition__c(
             sked_Lunch_Break_Duration__c = 15,
@@ -1019,7 +1019,7 @@ secondList.add(setting30definition3);
             sked__Weighting__c = 10,
             sked_Minimum_Quantity__c = 1
         );
-        secondList.add(fixedSiteAccountTag2);
+        secondList.add(fixedSiteAccountTag2);*/
         
         sked__Account_Tag__c fixedSiteAccountTag3 = new sked__Account_Tag__c(
             sked__Account__c = fixedSiteAccount.Id,
@@ -1044,7 +1044,7 @@ secondList.add(setting30definition3);
 
         insert secondList;
         
-        /*Chapter for Site
+        /*Chapter for Site*/
         Chapter__c testChapter = new Chapter__c(
             Chapter_Code__c='AB299',
             Division_Code__c='D21',
@@ -1056,7 +1056,7 @@ secondList.add(setting30definition3);
         );
         insert testChapter;
         
-        /***** Third list
+        /***** Third list ****/
         List<sObject> thirdList = new List<sObject>();
         
         sked__Location__c testLocation1 = new sked__Location__c(
@@ -1177,7 +1177,7 @@ secondList.add(setting30definition3);
             sked_Region__c = testRegion1.Id);
         insert siteCollectionOperationForMobile;
         
-        /***** Fifth list
+        /***** Fifth list ****/
         List<sObject> fifthList = new List<sObject>();
         
         sked_Staging_Location__c stagingLocation = new sked_Staging_Location__c(Name = 'Test Staging Location 1', sked_Timezone__c = 'America/New_York', sked_Zip_Code__c = '18411',
@@ -1235,7 +1235,7 @@ secondList.add(setting30definition3);
         }
         insert skdBioCollectionList;
      
-        /***** Forth list 
+        /***** Forth list ****/
         List<sObject> forthList = new List<sObject>();
         
         
@@ -1358,7 +1358,7 @@ secondList.add(setting30definition3);
         
         
         
-        /***** Sixth list 
+        /***** Sixth list ****/
         List<sObject> sixthList = new List<sObject>();
         
         // Mobile Opp
@@ -1419,7 +1419,7 @@ secondList.add(setting30definition3);
         insert sixthList;
         
         return mapTestData;
-    }*/
+    }
 
     @isTest
     public static Map<string, sObject> testSetupForErrorMessage()
@@ -2190,12 +2190,12 @@ sked_VP_HH_Capacity__c = 2.2,*/
         firstList.add(personTag);
         mapTestData.put('personTag', personTag);
         
-        /*sked__Tag__c vehicleTag = new sked__Tag__c(
+        sked__Tag__c vehicleTag = new sked__Tag__c(
             Name = 'Sample Vehicle Tag',
             sked_Resource_Type__c = 'Vehicle'
         );
         firstList.add(vehicleTag);
-        mapTestData.put('vehicleTag', vehicleTag);*/
+        mapTestData.put('vehicleTag', vehicleTag);
         
         sked__Tag__c equipmentTag = new sked__Tag__c(
             Name = 'Sample Equipment Tag',
@@ -2430,14 +2430,14 @@ sked_VP_HH_Capacity__c = 2.2,*/
         );
         secondList.add(mobileAccountTag2);*/
         
-       /* sked__Account_Tag__c mobileAccountTag3 = new sked__Account_Tag__c(
+        sked__Account_Tag__c mobileAccountTag3 = new sked__Account_Tag__c(
             sked__Account__c = mobileAccount.Id,
             sked__Tag__c = vehicleTag.Id,
             sked__Required__c = true,
             sked__Weighting__c = 10
            // ,sked_Minimum_Quantity__c = 1
         );
-        secondList.add(mobileAccountTag3);*/
+        secondList.add(mobileAccountTag3);
         
         insert secondList;
         
@@ -2456,14 +2456,14 @@ sked_VP_HH_Capacity__c = 2.2,*/
         /***** Third list ****/
         List<sObject> thirdList = new List<sObject>();
         
-       /* sked__Account_Tag__c mobileAccountTag2 = new sked__Account_Tag__c(
+        sked__Account_Tag__c mobileAccountTag2 = new sked__Account_Tag__c(
             sked__Account__c = mobileAccount.Id,
             sked__Tag__c = vehicleTag.Id,
             sked__Required__c = false,
             sked__Weighting__c = 10,
            sked_Minimum_Quantity__c = 1
         );
-        thirdList.add(mobileAccountTag2);*/
+        thirdList.add(mobileAccountTag2);
         
         sked__Location__c testLocation1 = new sked__Location__c(
             Name = 'Test Location 1',
@@ -3852,9 +3852,9 @@ sked_VP_HH_Capacity__c = 2.2,*/
             sked_Resource_Role_Group__c = 'Driving roles', 
             sked_Variance_Applies_to__c = 'Setup Time;Site Logistics Back;Site Logistics To', 
             sked_Variation_Amount__c = 15, 
-            sked_Variation_Type__c = 'Safety Video',
-            sked_Days_of_Week__c = 'Monday;Tuesday;Wednesday;Thursday;Friday;Saturday;Sunday'
-            //sked_Roles__c = '2RBC;Apheresis;Drive Lead;Charge;Volunteer Donor Ambassador',    
+            sked_Variation_Type__c = 'Safety Video'
+            //sked_Roles__c = '2RBC;Apheresis;Drive Lead;Charge;Volunteer Donor Ambassador',
+            
         );
         finalList.add(driverVariance);
         
@@ -3866,10 +3866,11 @@ sked_VP_HH_Capacity__c = 2.2,*/
             sked_Resource_Role_Group__c = 'Staff roles;Supervisory roles', 
             sked_Variance_Applies_to__c = 'Setup Time;Breakdown Time;Travel Time To;Travel Time From;Site Logistics Back;Site Logistics To;Lead Time;Wrap-up Time;', 
             sked_Variation_Amount__c = 25,
-            sked_Variation_Type__c = 'Loading/ unloading area',
-            sked_Days_of_Week__c = 'Monday;Tuesday;Wednesday;Thursday;Friday;Saturday;Sunday'
-            //sked_Roles__c = '2RBC;Apheresis;Drive Lead;Charge;Volunteer Donor Ambassador',        
-        );       
+            sked_Variation_Type__c = 'Loading/ unloading area'
+            //sked_Roles__c = '2RBC;Apheresis;Drive Lead;Charge;Volunteer Donor Ambassador',
+            
+        ); 
+        
         finalList.add(fixSiteVariance1);
         
         sked_Role_Time_Variance__c fixSiteVariance2 = new sked_Role_Time_Variance__c(
@@ -3880,12 +3881,14 @@ sked_VP_HH_Capacity__c = 2.2,*/
             sked_Resource_Role_Group__c = 'Supervisory roles', 
             sked_Variance_Applies_to__c = 'Setup Time;Breakdown Time;Travel Time To;Travel Time From;Lead Time;Wrap-up Time;Site Logistics Back;Site Logistics To', 
             sked_Variation_Amount__c = 5,
-            sked_Variation_Type__c = 'Loading/ unloading area',
-            sked_Days_of_Week__c = 'Monday;Tuesday;Wednesday;Thursday;Friday;Saturday;Sunday'
-            //sked_Roles__c = '2RBC;Apheresis;Drive Lead;Charge;Volunteer Donor Ambassador',    
-        );     
+            sked_Variation_Type__c = 'Loading/ unloading area'
+            //sked_Roles__c = '2RBC;Apheresis;Drive Lead;Charge;Volunteer Donor Ambassador',
+            
+        ); 
+        
         finalList.add(fixSiteVariance2);
        
+        
         sked_Role_Time_Detail__c fixSiteRoleTime2 = new sked_Role_Time_Detail__c(
             sked_Type__c = 'Collection Operation',
             sked_Drive_Type__c = 'Mobile',

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>X72_Hour_Check_In_Task_Metadata</fullName>
+    <columns>MasterLabel</columns>
+    <columns>DeveloperName</columns>
+    <columns>NamespacePrefix</columns>
+    <columns>Column__c</columns>
+    <columns>Order__c</columns>
+    <columns>UI_Text__c</columns>
+    <columns>Help_Text__c</columns>
+    <columns>Unique_Name__c</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>Subject__c</field>
+        <operation>equals</operation>
+        <value>72 Hour Check-In</value>
+    </filters>
+    <label>72 Hour Check-In Task Metadata</label>
+    <language>en_US</language>
+</ListView>

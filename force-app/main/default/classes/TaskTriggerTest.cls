@@ -1,6 +1,6 @@
 /*
  * This Test class covering following classes and trigger 
- * TaskService (92%),
+ * TaskService (100%),
  * TaskTriggerHandler(89%),
  * TaskTrigger (100%)
  */

@@ -16,8 +16,8 @@
     <filterScope>Everything</filterScope>
     <filters>
         <field>sked_Drive_Date__c</field>
-        <operation>greaterOrEqual</operation>
-        <value>7/1/2024</value>
+        <operation>lessOrEqual</operation>
+        <value>12/5/2024</value>
     </filters>
     <label>All</label>
 </ListView>

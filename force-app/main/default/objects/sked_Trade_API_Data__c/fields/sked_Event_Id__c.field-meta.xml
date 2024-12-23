@@ -5,7 +5,7 @@
     <inlineHelpText>Id of the traded-into JobAllocation/Activity this relates to</inlineHelpText>
     <label>Event Id</label>
     <length>18</length>
-    <required>true</required>
+    <required>false</required>
     <trackTrending>false</trackTrending>
     <type>Text</type>
     <unique>false</unique>

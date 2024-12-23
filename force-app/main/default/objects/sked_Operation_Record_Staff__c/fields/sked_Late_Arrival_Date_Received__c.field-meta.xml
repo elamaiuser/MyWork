@@ -2,7 +2,7 @@
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>sked_Late_Arrival_Date_Received__c</fullName>
     <externalId>false</externalId>
-    <label>Late Arrival Date Received</label>
+    <label>Date Late Arrival Received</label>
     <required>false</required>
     <trackHistory>false</trackHistory>
     <trackTrending>false</trackTrending>

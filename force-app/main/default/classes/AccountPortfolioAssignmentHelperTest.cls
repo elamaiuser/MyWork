@@ -881,7 +881,7 @@ insert portAssigment;
             Online_Scheduling_Enabled__c = 'No',
             //Drive_Site__c = mobileSite.id,
             accountid= account.id);
-         triggerHandler.bypass('OpportunityTriggerHandler');
+         
         System.runAs( DRDUser ){
         insert opp;
         }
@@ -1207,7 +1207,6 @@ insert portAssigment;
              oppList.add(opp1);
          }
          system.debug('10 opp insert'+oppList);
-        triggerHandler.bypass('OpportunityTriggerHandler');
          insert oppList;
         
          
@@ -1735,7 +1734,7 @@ insert portAssigment;
          system.debug('accPortAssignment '+accPortAssignment);
          Database.DeleteResult[] drList = Database.Delete(accPortAssignment,false);
          AccountPortfolioAssignmentHelper helper = new AccountPortfolioAssignmentHelper();
-         helper.insertErrors(drList , 'Error during deleteting default territory portfolio', 'test class');
+        helper.insertErrors(drList , 'Error during deleteting default territory portfolio', 'test class');
          Test.stopTest();
           
     }

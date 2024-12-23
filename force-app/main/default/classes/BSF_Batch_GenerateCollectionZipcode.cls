@@ -53,7 +53,8 @@ global class BSF_Batch_GenerateCollectionZipcode implements Database.Batchable<S
         }
         
         Map<String, Collections_Territory__c> extIdcollTerrMap = new Map<String, Collections_Territory__c>();
-        List<Collections_Territory__c> collectionTerrList =[Select id,External_Id_BackEnd__c,External_Id__c,sked_Start_Date__c,sked_End_Date__c from Collections_Territory__c WHERE External_Id_BackEnd__c IN:externalKeySet AND sked_End_Date__c>=Today ORDER BY sked_Start_Date__c];
+        Date endDate=Date.newInstance(2024,10,30);
+        List<Collections_Territory__c> collectionTerrList =[Select id,External_Id_BackEnd__c,External_Id__c,sked_Start_Date__c,sked_End_Date__c from Collections_Territory__c WHERE External_Id_BackEnd__c IN:externalKeySet AND sked_End_Date__c>=:endDate ORDER BY sked_Start_Date__c];
         for (Collections_Territory__c collTerr : collectionTerrList) 
         {
             system.debug('collTerr'+collTerr);
@@ -99,6 +100,10 @@ global class BSF_Batch_GenerateCollectionZipcode implements Database.Batchable<S
                 if(extIdcollTerrMap.containsKey(key)&& !(tx.Start_Date__c>extIdcollTerrMap.get(key).sked_End_Date__c+1))
                 {
                     collTerr=extIdcollTerrMap.get(key);
+                    if(collTerr.sked_End_Date__c!=tx.End_Date__C)
+                    {
+                        collTerr.sked_End_Date__c=tx.End_Date__C;
+                    }
                 }
                 else
                 {
@@ -108,14 +113,16 @@ global class BSF_Batch_GenerateCollectionZipcode implements Database.Batchable<S
                     collTerr.sked_End_Date__c = tx.End_Date__c;
                     collTerr.External_Id_BackEnd__c=key;
                     collTerr.External_Id__c=key+'_'+tx.Start_Date__c;
-                    extIdCollectionZipUpsertListMap.put('Bio_Collection_BSF_CollZip_'+tx.Collection_Operation_Code__c+'_'+tx.Zip_Code__c,collTerr);
+                    
                 }
+                extIdCollectionZipUpsertListMap.put('Bio_Collection_BSF_CollZip_'+tx.Collection_Operation_Code__c+'_'+tx.Zip_Code__c,collTerr);
                 zipCollZipMap.put(tx.Zip_Code__c,collTerr);
                 zipTaxoMap.put(tx.Zip_Code__c,tx);
                 //collTerrExternalId=collTerr.External_Id__c;
                 //extIdCollectionZipUpsertListMap.put('Bio_Collection_BSF_CollZip_'+tx.Collection_Operation_Code__c+'_'+tx.Zip_Code__c,collTerr);
                 System.debug('collTerrExternalId'+collTerrExternalId);
                 System.debug('collTerr'+collTerr);
+                System.debug('collTerr##'+extIdCollectionZipUpsertListMap.get('Bio_Collection_BSF_CollZip_'+tx.Collection_Operation_Code__c+'_'+tx.Zip_Code__c));
                 
                 
                 /* //SiteCo
@@ -173,7 +180,7 @@ extIdSiteCollZipUpsertListMap.put('Bio_Collection_BSF_SiteCo_'+tx.Collection_Ope
                         );
                     
                     if(!extIdSiteCollMap.containsKey(key)
-                       || (extIdSiteCollMap.containsKey(key) && newSiteCO.sked_Start_Date__c>extIdSiteCollMap.get(key).sked_End_Date__c+1))
+                       || (extIdSiteCollMap.containsKey(key) && (newSiteCO.sked_Start_Date__c>extIdSiteCollMap.get(key).sked_End_Date__c+1 || newSiteCO.sked_End_Date__c != extIdSiteCollMap.get(key).sked_End_Date__c) ))
                     {
                         extIdSiteCollZipUpsertListMap.put('Bio_Collection_BSF_SiteCo_'+tx.Collection_Operation_Code__c+'_'+site.Id,newSiteCO);
                     }
@@ -199,7 +206,7 @@ extIdSiteCollZipUpsertListMap.put('Bio_Collection_BSF_SiteCo_'+tx.Collection_Ope
     global void Finish(Database.BatchableContext bc)
     {
         BSF_Batch_EndCollectionZip batch = new BSF_Batch_EndCollectionZip(taxVer,this.upsertedSiteCollectionOperationIds);
-        Database.executeBatch(batch,50);
+        //Database.executeBatch(batch,50);
     }
     
 }

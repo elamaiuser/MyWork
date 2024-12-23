@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Calendar_Build_Candidates_FS</fullName>
+    <columns>Drive_Date__c</columns>
+    <columns>OPPORTUNITY.NAME</columns>
+    <columns>ACCOUNT.NAME</columns>
+    <columns>Drive_Site_Name__c</columns>
+    <columns>DriveStatus__c</columns>
+    <columns>Calendar_Build_Status__c</columns>
+    <columns>Type_of_Drive__c</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>Drive_Date__c</field>
+        <operation>equals</operation>
+        <value>9/12/2024</value>
+    </filters>
+    <filters>
+        <field>Rollover_Consideration__c</field>
+        <operation>notEqual</operation>
+        <value>Do Not Roll</value>
+    </filters>
+    <filters>
+        <field>DriveStatus__c</field>
+        <operation>equals</operation>
+        <value>Complete,Cancel,Confirmed</value>
+    </filters>
+    <filters>
+        <field>OPPORTUNITY.RECORDTYPE</field>
+        <operation>equals</operation>
+        <value>Opportunity.Fixed_Site_Opp</value>
+    </filters>
+    <label>Calendar Build Candidates_FS</label>
+</ListView>

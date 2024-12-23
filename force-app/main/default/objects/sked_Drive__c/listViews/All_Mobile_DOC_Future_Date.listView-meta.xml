@@ -24,7 +24,12 @@
     <filters>
         <field>sked_Status__c</field>
         <operation>equals</operation>
-        <value>Draft</value>
+        <value>Confirmed</value>
+    </filters>
+    <filters>
+        <field>sked_Type_of_Drive__c</field>
+        <operation>equals</operation>
+        <value>Mobile</value>
     </filters>
     <label>All Mobile DOC_Future Date</label>
 </ListView>

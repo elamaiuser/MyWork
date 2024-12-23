@@ -4,7 +4,7 @@
     <externalId>false</externalId>
     <label>Approval Reason</label>
     <required>false</required>
-    <trackHistory>true</trackHistory>
+    <trackHistory>false</trackHistory>
     <trackTrending>false</trackTrending>
     <type>Picklist</type>
     <valueSet>
@@ -52,11 +52,6 @@
                 <label>Workday Sync Failure</label>
             </value>
             <value>
-                <fullName>Insufficient Sick Balance for this request. Approval Required.</fullName>
-                <default>false</default>
-                <label>Insufficient Sick Balance for this request. Approval Required.</label>
-            </value>
-            <value>
                 <fullName>Manual Workday adjustment required</fullName>
                 <default>false</default>
                 <label>Manual Workday adjustment required</label>
@@ -65,6 +60,12 @@
                 <fullName>Manual Workday cancellation required</fullName>
                 <default>false</default>
                 <label>Manual Workday cancellation required</label>
+            </value>
+            <value>
+                <fullName>Insufficient Sick Balance for this request. Approval Required.</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Insufficient Sick Balance for this request. Approval Required.</label>
             </value>
         </valueSetDefinition>
     </valueSet>

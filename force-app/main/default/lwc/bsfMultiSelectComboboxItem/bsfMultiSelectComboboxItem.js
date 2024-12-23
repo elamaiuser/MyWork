@@ -6,8 +6,6 @@ export default class BsfMultiSelectComboboxItem extends LightningElement {
 
   get itemClass() {
     let itemdata;
-    console.log("this.resetSelection "+this.resetselection);
-    console.log("this.resetSelection condition "+(this.resetselection===true));
     if(this.resetselection && this.selecteditem === '-Select-'){
       this.resetselection = false;
       itemdata = `slds-listbox__item ${''}`;

@@ -14,10 +14,5 @@
         <operation>equals</operation>
         <value>TODAY</value>
     </filters>
-    <filters>
-        <field>CREATEDBY_USER</field>
-        <operation>equals</operation>
-        <value>kata manishreddy</value>
-    </filters>
     <label>Copy of All</label>
 </ListView>

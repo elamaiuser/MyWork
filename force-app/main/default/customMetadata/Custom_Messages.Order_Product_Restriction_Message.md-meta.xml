@@ -12,6 +12,6 @@
     </values>
     <values>
         <field>Value__c</field>
-        <value xsi:type="xsd:string">The order cannot be approved or/and submitted because order product is expiring</value>
+        <value xsi:type="xsd:string">Order cannot be approved or/and Submitted.Because, order product is expiring.</value>
     </values>
 </CustomMetadata>
