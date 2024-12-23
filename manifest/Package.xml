@@ -5,8 +5,12 @@
 		<members>AccountTeamMemberTriggerHandler</members>
 		<members>AccountTriggerHandler</members>
 		<members>AccountTriggerTest</members>
+		<members>BSF_Batch_CreatePublicityTasks</members>
+		<members>BSF_Batch_CreatePublicityTasksTest</members>
 		<members>BSF_Batch_OpportunityTeamSync</members>
 		<members>BSF_Batch_OpportunityTeamSyncTest</members>
+		<members>BSF_Batch_RecruitmentTaskCreation</members>
+		<members>BSF_Batch_RecruitmentTaskCreation_Test</members>
 		<members>BSF_Constants</members>
 		<members>BSF_TaskCreationBatch</members>
 		<members>BSF_TaskCreationBatch_Test</members>
@@ -29,6 +33,7 @@
 		<members>OrderService</members>
 		<members>OrderTrigger_Test</members>
 		<members>TaskGenerationBatch</members>
+		<members>TaskGenerationBatch_Test</members>
 		<members>TaskService</members>
 		<members>skedActivityService</members>
 		<members>skedActivityService_Test</members>
@@ -196,6 +201,7 @@
 		<members>Create_New_Recurring_Mobile_Drive</members>
 		<members>Mass_Account_Service_Role_Add</members>
 		<members>Mass_Drive_Service_Role_Add</members>
+		<members>Task_Creation_on_Drive_Status_Complete</members>
 		<name>Flow</name>
 	</types>
 	<types>
