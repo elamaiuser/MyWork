@@ -19,10 +19,5 @@
         <operation>greaterOrEqual</operation>
         <value>YESTERDAY</value>
     </filters>
-    <filters>
-        <field>ApexClass__c</field>
-        <operation>notEqual</operation>
-        <value>OpportunityService</value>
-    </filters>
     <label>Drive Generation Failure</label>
 </ListView>

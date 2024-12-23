@@ -394,12 +394,14 @@ global virtual class skedRacController extends skedBaseController {
             query.searchColumns.add('sked__Resource__r.Name');
             query.startDate = request.startDate;
             query.submissionEndDate = request.submissionEndDate;
+            system.debug('request.submissionEndDate :: '+request.submissionEndDate);
+            system.debug('request.submissionStartDate :: '+request.submissionStartDate);
             query.submissionStartDate = request.submissionStartDate;
             query.subQueryIndicator = skedSObjectType.EXCEPTION_LOG | skedSObjectType.STAFFING_BUDGET_AVAILABILITY;
             
             skedAvailabilityService service = (skedAvailabilityService)skedServiceFactory.instance.resolve('sked__Availability__c');
             skedDataService.paginationQueryModel paginationResult = service.doPaginationQuery(query);
-
+            system.debug('paginationResult :: '+JSON.serialize(paginationResult));
             Set<string> resourceIds = new Set<string>();
             Set<String> staffingBudgetIds = new Set<String>();
             for (sked__Availability__c record : (List<sked__Availability__c>) paginationResult.records) {

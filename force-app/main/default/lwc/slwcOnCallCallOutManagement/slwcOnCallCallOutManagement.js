@@ -616,7 +616,7 @@ export default class SlwcOnCallCallOutManagement extends LightningElement {
     this.selectResourceFilters = {
       searchText: ''
     };
-
+    console.log('initStepReplaceResource :: 619');
     const isDrive = this.selectedEvent.isDrive;
     const collectionOperationIds = isDrive ? [this.selectedAllocationData.job.collectionOperationId] : [this.selectedAllocationData.activity.collectionOperationId];
     const jobs = [isDrive ? this.selectedAllocationData.job : {

@@ -4,6 +4,7 @@
  * Date					     Developer Name			     Comments
  * ***********************************************************************************************************************************************
  * 02/21/2024                Barnojit Sharma	      DOC does not pull up AM and DM portfolio according to drive date. (HRP-11849)
+ * 12/06/2024				 Krapy Tuli				  Increase code coverage for HRP-13362.
  ************************************************************************************************************************************************
 */
 @isTest
@@ -276,6 +277,55 @@ private class UpdateAMAndDMPortfolioDailyBatchTest {
         optyObj1.Anticipated_Registered_Donors__c = 1;
         
         oppsobjlist.add( optyObj1 );
+
+        // insert Account Team and add DRDAMUser
+        List<AccountTeammember> atmList = new List<AccountTeammember>();
+        AccountTeammember atm;
+        atm = new AccountTeammember();
+        atm.AccountAccessLevel = 'Edit';
+        atm.CaseAccessLevel = 'Edit';
+        atm.OpportunityAccessLevel = 'Edit';
+        atm.userId = DRDAMUser.Id ;
+        atm.AccountId = mobileAccList[0].Id ;
+        atm.TeamMemberRole = 'Account Manager';
+        atm.Coverage_Reason__c = 'Leave of Absence (LOA)';
+        atm.Start_Date__c = System.today();
+        atm.Is_Covering_Recruiter__c = TRUE;
+        atm.End_Date__c = System.today().AddDays(2);
+        
+        
+        atmList.add(atm);
+        
+        atm = new AccountTeammember();
+        atm.AccountAccessLevel = 'Edit';
+        atm.CaseAccessLevel = 'Edit';
+        atm.OpportunityAccessLevel = 'Edit';
+        atm.userId = DRDAMUser.Id ;
+        atm.AccountId = mobileAccList[1].Id ;
+        atm.TeamMemberRole = 'Account Manager';
+        atm.Coverage_Reason__c = 'Leave of Absence (LOA)';
+        atm.Start_Date__c = System.today();
+        atm.End_Date__c = System.today().AddDays(2);
+        atm.Is_Covering_Recruiter__c = TRUE;
+        
+        atmList.add(atm);
+
+        atm = new AccountTeammember();
+        atm.AccountAccessLevel = 'Edit';
+        atm.CaseAccessLevel = 'Edit';
+        atm.OpportunityAccessLevel = 'Edit';
+        atm.userId = DRDAMUser.Id ;
+        atm.AccountId = mobileAccList[1].Id ;
+        atm.TeamMemberRole = 'District Manager';
+        atm.BSF_Portfolio__c = bParentportfolioList[0].Id;
+        atm.Start_Date__c = System.today();
+        atm.End_Date__c = System.today().AddDays(2);
+        atm.Is_Covering_Recruiter__c = FALSE;
+        
+        atmList.add(atm);
+        
+        
+        insert atmList;
         
         skedHubBase.BypassInsertTriggers = true;
         triggerHandler.bypass('OpportunityTriggerHandler');
@@ -303,6 +353,41 @@ private class UpdateAMAndDMPortfolioDailyBatchTest {
             Database.executeBatch(batchObject,2);
         Test.stopTest();
     }
+
+    @isTest
+    private static void updateAMandDMPortfOnOppAndDOCDailyBatch_Test(){
+        Test.startTest();
+            UpdateAMAndDMPortfolioDailyBatch batchObject = new UpdateAMAndDMPortfolioDailyBatch();
+            Database.executeBatch(batchObject,2);
+        Test.stopTest();
+    }
+    
+    @isTest
+    private static void updateAMandDMPortfOnOppAndDOCDailyBatchConstructor1_Test(){
+        Test.startTest();
+            UpdateAMandDMPortfOnOppAndDOCDailyBatch batchObject = new UpdateAMandDMPortfOnOppAndDOCDailyBatch();
+            Database.executeBatch(batchObject,2);
+        Test.stopTest();
+    }
+    
+    @isTest
+    private static void updateAMandDMPortfOnOppAndDOCDailyBatchConstructor2_Test(){
+        Date todayDate = Date.today();
+		Date futureDate  = todayDate.addDays(5);
+        Test.startTest();
+            UpdateAMandDMPortfOnOppAndDOCDailyBatch batchObject = new UpdateAMandDMPortfOnOppAndDOCDailyBatch(todayDate,futureDate);
+            Database.executeBatch(batchObject,2);
+        Test.stopTest();
+    }
+    
+    @isTest
+    private static void UpdateAMAndDMPortfDailyBatchScheduler_Test(){
+        Test.startTest();
+        System.schedule('UpdateAMAndDMPortfDailyBatchScheduler' + String.valueOf(Datetime.now()), 
+            '0 0 0 * * ?', new UpdateAMAndDMPortfDailyBatchScheduler());
+        Test.stopTest();
+    }
+
     private static Map<String,Id> recordTypeMap(string obj){
         Map<String,Id> recTypeNameWithIdMap = new Map<String,Id>();
         if(obj!= null){

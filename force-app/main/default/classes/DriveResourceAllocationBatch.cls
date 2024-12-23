@@ -168,7 +168,7 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
             String operationType = typeOfDrive == Constants.FIX_SITE_OPP ? drive.sked_Operation_Type__c : '';
             Boolean isCalendarBuildDrive = drive.sked_Opportunity__r.Source__c == Constants.SOURCE_CALENDAR_BUILD;
             String prevDriveStatus = drive.sked_Status__c;
-            List<sked__Resource__c> resList = Database.Query(getResourcesToAllocate(drive)); 
+            List<sked__Resource__c> resList = getResourcesToAllocate(drive); 
 
             for(sked__Job__c job : drive.sked_Jobs__r) {	
                 if(job.sked_Asset_Type__c == Constants.JOB_TYPE_VEHICLE) {	
@@ -364,28 +364,57 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
         }
     }
     
-    private static String getResourcesToAllocate (sked_Drive__c drive) {	
-        String queryString = 'SELECT Id,sked_DOT__c, sked_CDL__c,sked_Dedicated_to_Site__c,sked_Equipment_Subtype__c,sked_Asset_Type__c,sked_Pres_Donor_Capacity__c,sked__Is_Active__c,sked__Primary_Region__c,	'+
-            ' sked__Primary_Region__r.sked_Biomed_Collection_Op_Center__c,(SELECT sked_Biomed_Collection_Op_Center__c,sked_Start_Date__c,sked_End_Date__c,sked_Resource__c '+
-            ' FROM sked_Resource_Biomed_Collection_Ops__r),(SELECT sked__Blacklisted__c,sked__Account__c FROM sked__Account_Resource_Scores__r where sked__Blacklisted__c = true AND sked__Account__c = :driveAccount), '+
-            ' (SELECT sked_Collection_Operation__r.Name,sked_Collection_Operation__c,sked__Resource__c,sked_Start_Date__c,sked_End_Date__c,sked_Start_Time__c, sked_End_Time__c, sked__Start__c, sked__End__c FROM sked__Resource_Overrides__r Where sked_Start_Date__c <=: driveDate AND sked_End_Date__c >=: driveDate), '+
-            ' (SELECT sked__Blacklisted__c,sked__Location__c FROM sked__Location_Resource_Scores__r where sked__Blacklisted__c = true AND sked__Location__c = :driveSite), '+
-            ' (SELECT Id, Name,sked_Start_Date__c, sked__Status__c,sked_Finish_Date__c, sked__Resource__c,sked__Type__c,sked_Start_Time__c, sked_Finish_Time__c, sked__Start__c, sked__Finish__c FROM sked__Availabilities1__r where sked__Status__c = \'Approved\' AND sked__Is_Available__c = false AND sked_Start_Date__c <=: driveDate AND sked_Finish_Date__c >=: driveDate), '+	
-            ' (SELECT sked__Status__c ,sked__Resource__c,sked_Start_Date__c,sked_Set_End_Date__c,sked_Start_Time__c, sked_Set_End_Time__c, sked__Start__c, sked__Set_End__c FROM sked__Job_Allocations__r Where sked__Status__c  != \'Deleted\' AND sked_Start_Date__c <= :driveDate AND sked_Set_End_Date__c >= :driveDate), '+
-            ' (SELECT sked__Resource__c,sked_Start_Date__c,sked_End_Date__c,sked_Start_Time__c, sked_End_Time__c, sked__Start__c, sked__End__c FROM sked__Activities__r where sked_Start_Date__c <=: driveDate AND sked_End_Date__c >=: driveDate), '+
-            ' (SELECT Id, Name,sked__Activity__r.sked_Start_Date__c, sked__Activity__r.sked_End_Date__c,  sked__Resource__c,sked_Start_Time__c, sked_End_Time__c, sked_Start1__c, sked_End__c FROM sked__Activity_Resources__r Where sked__Activity__r.sked_Start_Date__c <= :driveDate AND sked__Activity__r.sked_End_Date__c>= :driveDate), '+
-            ' (SELECT sked__Resource__c ,sked_Start_Date__c,sked_Expiry_Date__c, sked__Tag__c,sked_Tag_Type__c FROM sked__ResourceTags__r WHERE sked_Start_Date__c <= :driveDate AND (sked_Expiry_Date__c = NULL OR sked_Expiry_Date__c >= :driveDate)) '+
-            ' FROM sked__Resource__c WHERE sked__Is_Active__c = true AND (sked_Dedicated_to_Site__c = null OR sked_Dedicated_to_Site__c = :driveSite)' ; // HRP-11001
+    private static List<sked__Resource__c> getResourcesToAllocate (sked_Drive__c drive) {	
+        List<sked__Resource__c> resourceList = new List<sked__Resource__c>();
+        if(isFixedSiteDrive(drive)) {
+            resourceList = [
+            SELECT Id,sked_DOT__c, sked_CDL__c,sked_Dedicated_to_Site__c,sked_Equipment_Subtype__c,sked_Asset_Type__c,sked_Pres_Donor_Capacity__c,sked__Is_Active__c,sked__Primary_Region__c,
+            sked__Primary_Region__r.sked_Biomed_Collection_Op_Center__c,
+            (SELECT sked_Biomed_Collection_Op_Center__c,sked_Start_Date__c,sked_End_Date__c,sked_Resource__c FROM sked_Resource_Biomed_Collection_Ops__r),
+            (SELECT sked__Blacklisted__c,sked__Account__c FROM sked__Account_Resource_Scores__r where sked__Blacklisted__c = true AND sked__Account__c = :driveAccount), 
+            (SELECT sked_Collection_Operation__r.Name,sked_Collection_Operation__c,sked__Resource__c,sked_Start_Date__c,sked_End_Date__c,sked_Start_Time__c, sked_End_Time__c, sked__Start__c, sked__End__c FROM sked__Resource_Overrides__r Where sked_Start_Date__c <=: driveDate AND sked_End_Date__c >=: driveDate), 
+            (SELECT sked__Blacklisted__c,sked__Location__c FROM sked__Location_Resource_Scores__r where sked__Blacklisted__c = true AND sked__Location__c = :driveSite), 
+            (SELECT Id, Name,sked_Start_Date__c, sked__Status__c,sked_Finish_Date__c, sked__Resource__c,sked__Type__c,sked_Start_Time__c, sked_Finish_Time__c, sked__Start__c, sked__Finish__c FROM sked__Availabilities1__r where sked__Status__c = 'Approved' AND sked__Is_Available__c = false AND sked_Start_Date__c <=: driveDate AND sked_Finish_Date__c >=: driveDate), 	
+            (SELECT sked__Status__c ,sked__Resource__c,sked_Start_Date__c,sked_Set_End_Date__c,sked_Start_Time__c, sked_Set_End_Time__c, sked__Start__c, sked__Set_End__c FROM sked__Job_Allocations__r Where sked__Status__c  != 'Deleted' AND sked_Start_Date__c <= :driveDate AND sked_Set_End_Date__c >= :driveDate),
+            (SELECT sked__Resource__c,sked_Start_Date__c,sked_End_Date__c,sked_Start_Time__c, sked_End_Time__c, sked__Start__c, sked__End__c FROM sked__Activities__r where sked_Start_Date__c <=: driveDate AND sked_End_Date__c >=: driveDate), 
+            (SELECT Id, Name,sked__Activity__r.sked_Start_Date__c, sked__Activity__r.sked_End_Date__c,  sked__Resource__c,sked_Start_Time__c, sked_End_Time__c, sked_Start1__c, sked_End__c FROM sked__Activity_Resources__r Where sked__Activity__r.sked_Start_Date__c <= :driveDate AND sked__Activity__r.sked_End_Date__c>= :driveDate),
+            (SELECT sked__Resource__c ,sked_Start_Date__c,sked_Expiry_Date__c, sked__Tag__c,sked_Tag_Type__c FROM sked__ResourceTags__r WHERE sked_Start_Date__c <= :driveDate AND (sked_Expiry_Date__c = NULL OR sked_Expiry_Date__c >= :driveDate))
+            FROM sked__Resource__c 
+            WHERE sked__Is_Active__c = TRUE 
+            AND (sked_Dedicated_to_Site__c = :driveSite OR sked_Dedicated_to_Site__c = null)
+            AND sked_Asset_Type__c IN ('Equipment','2RBC')
+            ]; // HRP-11001
+        } else {
+            resourceList = [
+            SELECT Id,sked_DOT__c, sked_CDL__c,sked_Dedicated_to_Site__c,sked_Equipment_Subtype__c,sked_Asset_Type__c,sked_Pres_Donor_Capacity__c,sked__Is_Active__c,sked__Primary_Region__c,
+            sked__Primary_Region__r.sked_Biomed_Collection_Op_Center__c,
+            (SELECT sked_Biomed_Collection_Op_Center__c,sked_Start_Date__c,sked_End_Date__c,sked_Resource__c FROM sked_Resource_Biomed_Collection_Ops__r),
+            (SELECT sked__Blacklisted__c,sked__Account__c FROM sked__Account_Resource_Scores__r where sked__Blacklisted__c = true AND sked__Account__c = :driveAccount), 
+            (SELECT sked_Collection_Operation__r.Name,sked_Collection_Operation__c,sked__Resource__c,sked_Start_Date__c,sked_End_Date__c,sked_Start_Time__c, sked_End_Time__c, sked__Start__c, sked__End__c FROM sked__Resource_Overrides__r Where sked_Start_Date__c <=: driveDate AND sked_End_Date__c >=: driveDate), 
+            (SELECT sked__Blacklisted__c,sked__Location__c FROM sked__Location_Resource_Scores__r where sked__Blacklisted__c = true AND sked__Location__c = :driveSite), 
+            (SELECT Id, Name,sked_Start_Date__c, sked__Status__c,sked_Finish_Date__c, sked__Resource__c,sked__Type__c,sked_Start_Time__c, sked_Finish_Time__c, sked__Start__c, sked__Finish__c FROM sked__Availabilities1__r where sked__Status__c = 'Approved' AND sked__Is_Available__c = false AND sked_Start_Date__c <=: driveDate AND sked_Finish_Date__c >=: driveDate), 	
+            (SELECT sked__Status__c ,sked__Resource__c,sked_Start_Date__c,sked_Set_End_Date__c,sked_Start_Time__c, sked_Set_End_Time__c, sked__Start__c, sked__Set_End__c FROM sked__Job_Allocations__r Where sked__Status__c  != 'Deleted' AND sked_Start_Date__c <= :driveDate AND sked_Set_End_Date__c >= :driveDate),
+            (SELECT sked__Resource__c,sked_Start_Date__c,sked_End_Date__c,sked_Start_Time__c, sked_End_Time__c, sked__Start__c, sked__End__c FROM sked__Activities__r where sked_Start_Date__c <=: driveDate AND sked_End_Date__c >=: driveDate), 
+            (SELECT Id, Name,sked__Activity__r.sked_Start_Date__c, sked__Activity__r.sked_End_Date__c,  sked__Resource__c,sked_Start_Time__c, sked_End_Time__c, sked_Start1__c, sked_End__c FROM sked__Activity_Resources__r Where sked__Activity__r.sked_Start_Date__c <= :driveDate AND sked__Activity__r.sked_End_Date__c>= :driveDate),
+            (SELECT sked__Resource__c ,sked_Start_Date__c,sked_Expiry_Date__c, sked__Tag__c,sked_Tag_Type__c FROM sked__ResourceTags__r WHERE sked_Start_Date__c <= :driveDate AND (sked_Expiry_Date__c = NULL OR sked_Expiry_Date__c >= :driveDate))
+            FROM sked__Resource__c 
+            WHERE sked__Is_Active__c = TRUE 
+            AND (sked_Dedicated_to_Site__c = :driveSite OR sked_Dedicated_to_Site__c = null)
+            AND sked_Asset_Type__c IN ('Vehicle','Equipment','2RBC')
+            ORDER BY sked_Pres_Donor_Capacity__c DESC NULLS LAST
+            ]; // HRP-11001
+        }
 
         // HRP-11908 --> Starts Here
-        if(isFixedSiteDrive(drive)) {
+        /*if(isFixedSiteDrive(drive)) {
             queryString += ' AND (sked_Asset_Type__c = \'Equipment\' OR sked_Asset_Type__c = \'2RBC\')';
         } else {
             queryString += ' AND (sked_Asset_Type__c = \'Vehicle\' OR sked_Asset_Type__c = \'Equipment\' OR sked_Asset_Type__c = \'2RBC\')' +
                             ' ORDER BY sked_Pres_Donor_Capacity__c DESC NULLS LAST';
         }
+        system.debug('queryString '+queryString);*/
         // HRP-11908 --> Ends Here
-        return queryString;
+        return resourceList;
     }
 
     private String createDriveQuery () {

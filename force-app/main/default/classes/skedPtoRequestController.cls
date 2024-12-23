@@ -87,8 +87,15 @@ global class skedPtoRequestController extends skedBaseController {
             
             skedAvailabilityService.queryModel query = new skedAvailabilityService.queryModel();
             if (!string.isBlank(request.endDate)) {
-                Date endDate = skedDateTimeUtils.getDateFromIsoString(request.endDate);
+                //Date.newInstance(4000,12,31);
+                // system.debug('request.endDate :: '+request.endDate);
+                // system.debug('Date.newInstance(4000,12,31) :: '+Date.newInstance(4000,12,31));
+                String endDateString = '4000-12-31';
+                request.endDate = '4000-12-31';
+                Date endDate = skedDateTimeUtils.getDateFromIsoString(endDateString);
+                system.debug('endDate :: '+endDate);
                 query.endTime = skedDateTimeUtils.getEndOfDate(endDate, timezoneSidId);
+                system.debug('query.endTime :: '+query.endTime);
             }
 
             query.resourceIds = new List<string>();

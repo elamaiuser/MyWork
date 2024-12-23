@@ -16,12 +16,17 @@
     <filters>
         <field>RECORDTYPE</field>
         <operation>equals</operation>
-        <value>Taxonomy__c.Bio_Account_Portfolio</value>
+        <value>Taxonomy__c.Bio_Recruitment_CD</value>
     </filters>
     <filters>
         <field>DRD_Territory_Name__c</field>
         <operation>equals</operation>
-        <value>St Louis AM 05</value>
+        <value>AR South MO AM 07</value>
+    </filters>
+    <filters>
+        <field>Zip_Code__c</field>
+        <operation>equals</operation>
+        <value>65625</value>
     </filters>
     <label>Bio Recruitment CD</label>
 </ListView>

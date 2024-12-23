@@ -3,7 +3,7 @@ global class slwcAllocationService {
     @AuraEnabled
     public static slwcAuraResult getResourceData(getResourceDataRequestModel request) {
         slwcAuraResult result = new slwcAuraResult();
-        
+        system.debug('request :: '+json.serialize(request));//json.serialize(
         string timezoneSidId = !string.isBlank(request.timezoneSidId) ? request.timezoneSidId : UserInfo.getTimeZone().getID();
         
         List<Date> inputDates = new List<Date>();
@@ -38,6 +38,7 @@ global class slwcAllocationService {
                 collectionOperationIds.add(territoryCollectionOperation.sked_Collection_Operation__c);
             }
         }
+        system.debug('collectionOperationIds :: '+collectionOperationIds);
         request.collectionOperationIds = new List<string>(collectionOperationIds);
         
         request.additionalResourceIds = new List<string>();
@@ -94,14 +95,17 @@ global class slwcAllocationService {
         List<sked__Resource__c> resources;
         if (request.getAssetsOnly == TRUE) {
             resources = getAssets(request);
+            system.debug('resources get 98 :: '+resources);
         }
         else if (request.recordIds == NULL || request.recordIds.isEmpty()) {
             resources = getResources(request);
+            system.debug('resources get 102 :: '+resources);
         }
         else {
             resources = getResourcesByIds(request);
+            system.debug('resources get 106 :: '+resources);
         }
-        
+        system.debug('resources :: '+resources);
         Set<Id> resourceOverrideIds = new Set<Id>();
         for (sked__Resource__c resource : resources) {
             if (resource.sked__Resource_Overrides__r != NULL && !resource.sked__Resource_Overrides__r.isEmpty()) {

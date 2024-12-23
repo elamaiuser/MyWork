@@ -10,7 +10,6 @@
     <columns>Anticipated_Registered_Donors__c</columns>
     <columns>Account_Manager_Portfolio__c</columns>
     <columns>Account_Manager__c</columns>
-    <columns>Total_Projected_Procedures__c</columns>
     <columns>WB_Projected_Procedures__c</columns>
     <columns>X2RBC_Projected_Procedures__c</columns>
     <filterScope>Everything</filterScope>
@@ -32,7 +31,7 @@
     <filters>
         <field>DriveStatus__c</field>
         <operation>notEqual</operation>
-        <value>Complete,Cancel</value>
+        <value>Cancel,Complete</value>
     </filters>
     <label>All Mobile Opportunities_Future Date</label>
 </ListView>

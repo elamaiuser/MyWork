@@ -265,7 +265,8 @@ export default class SlwcDriveShiftJobModal extends LightningElement {
                     }),
                     resourceRoleGroupRoleTimeDataMap: driveResourceRoleGroupRoleTimeDataMap
                 },
-                collectionOperation: this.drive.collectionOperation
+                //collectionOperation: this.drive.collectionOperation
+                collectionOperation: siteCollectionOperation.collectionOperation //HRP-13514
             }, {
                 ...this.driveShift,
                 key: this.driveShift.id || this.driveShift.key

@@ -385,34 +385,38 @@ export default class SlwcLinkedDriveStaffingDetails extends LightningElement {
             let leftOverJobAllocations = [];
             driverJob.quantity = driverJob.originalQuantity || 0;
             
-            if(noOfDotVehicles > 0) {
-                driverJob.quantity = driverJob.quantity - noOfDotVehicles;
-                dotDriverJob.quantity = noOfDotVehicles;
-                dotDriverJob.isShown = driverJob.isShown && true;
-            } else {
-                dotDriverJob.quantity = null;
-                dotDriverJob.isShown = false;
-                dotDriverJob.jobAllocations = [];
-                dotDriverJob.childJobs.forEach(childJob => {
-                    leftOverJobAllocations = leftOverJobAllocations.concat(cloneDeep(dotDriverJob.jobAllocations || []));
-                    childJob.jobAllocations = [];
-                });
+            if(dotDriverJob) {
+                if(noOfDotVehicles > 0) {
+                    driverJob.quantity = driverJob.quantity - noOfDotVehicles;
+                    dotDriverJob.quantity = noOfDotVehicles;
+                    dotDriverJob.isShown = driverJob.isShown && true;
+                } else {
+                    dotDriverJob.quantity = null;
+                    dotDriverJob.isShown = false;
+                    dotDriverJob.jobAllocations = [];
+                    dotDriverJob.childJobs.forEach(childJob => {
+                        leftOverJobAllocations = leftOverJobAllocations.concat(cloneDeep(dotDriverJob.jobAllocations || []));
+                        childJob.jobAllocations = [];
+                    });
+                }
             }
-
-            if(noOfCdlVehicles > 0) {
-                driverJob.quantity = driverJob.quantity - noOfCdlVehicles;
-                cdlDriverJob.quantity = noOfCdlVehicles;
-                cdlDriverJob.isShown = driverJob.isShown && true;
-            } else {
-                cdlDriverJob.quantity = null;
-                cdlDriverJob.isShown = false;
-                cdlDriverJob.jobAllocations = [];
-                cdlDriverJob.childJobs.forEach(childJob => {
-                    leftOverJobAllocations = leftOverJobAllocations.concat(cloneDeep(childJob.jobAllocations || []));
-                    childJob.jobAllocations = [];
-                });
+            
+            if(cdlDriverJob) {
+                if(noOfCdlVehicles > 0) {
+                    driverJob.quantity = driverJob.quantity - noOfCdlVehicles;
+                    cdlDriverJob.quantity = noOfCdlVehicles;
+                    cdlDriverJob.isShown = driverJob.isShown && true;
+                } else {
+                    cdlDriverJob.quantity = null;
+                    cdlDriverJob.isShown = false;
+                    cdlDriverJob.jobAllocations = [];
+                    cdlDriverJob.childJobs.forEach(childJob => {
+                        leftOverJobAllocations = leftOverJobAllocations.concat(cloneDeep(childJob.jobAllocations || []));
+                        childJob.jobAllocations = [];
+                    });
+                }    
             }
-
+            
             if(driverJob.quantity < 0) {
                 driverJob.quantity = 0;
             }

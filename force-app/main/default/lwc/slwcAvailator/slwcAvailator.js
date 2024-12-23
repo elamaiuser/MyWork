@@ -461,9 +461,11 @@ class SlwcAvailator {
         request.recordIds = additionalFilters.recordIds;
       }
     }
+    console.log('request :: ',request);
     let service = new jobAllocationService();
     return service.getResourceData({request : request})
       .then((result) => {
+        console.log('result :: ',result);
         if (!result) {
           throw Error('Cannot fetch resources');
         }

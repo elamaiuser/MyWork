@@ -126,6 +126,7 @@ public class GenerateMobileDriveTest {
         
         // Coverage for JobTriggerhandler AfterDelete() --> HRP-13522
         List<sked__Job__c> jobsCreated = [SELECT Id FROM sked__Job__c where sked_Drive__c = :mobileDriveCreated[0].Id];
+        system.debug('jobsCreated :: '+jobsCreated.size());
         delete jobsCreated;
         //HRP-13522 --> Ends Here
         
@@ -199,6 +200,38 @@ public class GenerateMobileDriveTest {
         Triggerhandler.clearAllBypasses();
         Test.stopTest();
         Assert.areEqual(1, mobileDriveCreated.size()); // NEW Assert Class
+        
+    }
+
+    @istest
+    public static void updateDriveShiftResourceAllocatedWhenJobDeletedTest(){        
+        Map<string, sObject> mapTestData = GenerateDriveTestData.testSetupForMobileDriveV2();
+        Opportunity mobileOpportunity = (Opportunity)mapTestData.get('mobileOpportunity');
+        
+        MobileDriveGeneratorDMLService.driveGeneratorConfig config = new MobileDriveGeneratorDMLService.driveGeneratorConfig();
+        config.oppIds = new Set<Id>();
+        config.oppIds.add(mobileOpportunity.Id);
+        
+        Test.startTest();
+        
+        AccountTeamMemberHelper.skipAccountTrigger = true;
+        TriggerHandler.bypass('AccountTriggerHandler');
+        TriggerHandler.bypass('OpportunityTriggerHandler');
+        TriggerHandler.bypass('OpportunitySplitTriggerHandler');
+        GenerateMobileDrive.generateDrives(config);
+        
+        List<sked_Drive__c> mobileDriveCreated = [Select Id , sked_Opportunity__c from sked_Drive__c where sked_Opportunity__c IN :config.oppIds];
+        
+        // Coverage for JobTriggerhandler AfterDelete() --> HRP-13522
+        List<sked__Job__c> jobsCreated = [SELECT Id FROM sked__Job__c where sked_Drive__c = :mobileDriveCreated[0].Id];
+        system.debug('jobsCreated :: '+jobsCreated.size());
+        delete jobsCreated[0];
+        //HRP-13522 --> Ends Here
+        
+        Triggerhandler.clearAllBypasses();
+        AccountTeamMemberHelper.skipAccountTrigger = false;
+        Test.stopTest();
+       	Assert.areEqual(1, mobileDriveCreated.size()); // NEW Assert Class  
         
     }
     

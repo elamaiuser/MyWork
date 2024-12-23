@@ -120,9 +120,11 @@ export default class SlwcApprovalConsoleSiteFeedbackList extends LightningElemen
 
   get collectionOperationDateRange() {
     const today = DateTime.fromJSDate(new Date()).toISODate();
+    const maxDate = DateTime.fromJSDate(new Date("4000-12-31")).toISODate();
+    console.log('collectionOperationDateRange.maxDate :: ',maxDate);
     return {
       startDate: today,
-      endDate: today
+      endDate: maxDate
     }
   }
 

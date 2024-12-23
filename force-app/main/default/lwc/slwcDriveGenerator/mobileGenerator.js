@@ -929,6 +929,10 @@ class MobileGenerator extends BaseGenerator {
     } else {
       this.drive.excessStaffCapacity = 0;
     }
+    console.log('(this.drive.staffCapacity 932 :: ',this.drive.staffCapacity);
+    console.log('(this.drive.projectedRegisteredDonors 932 :: ',this.drive.projectedRegisteredDonors);
+    console.log('(this.drive.averageStaffCapacity 932 :: ',this.drive.averageStaffCapacity);
+    console.log('(this.drive.excessStaffCapacity 932 :: ',this.drive.excessStaffCapacity);
   }
   
   calculateNumberOf2rbcAssets() {

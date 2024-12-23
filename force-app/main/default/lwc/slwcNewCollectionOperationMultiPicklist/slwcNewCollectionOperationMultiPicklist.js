@@ -189,6 +189,7 @@ export default class SlwcNewCollectionOperationMultiPicklist extends LightningEl
 
     this.showLoading();
     let service = new collectionOperationService();
+    console.log('this.dateRange.endDate :: ',this.dateRange.endDate);
     service.getCollectionOperationDataNew({
       startDate: this.dateRange.startDate,
       endDate: this.dateRange.endDate 

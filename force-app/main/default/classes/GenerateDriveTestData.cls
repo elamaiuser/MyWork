@@ -2767,6 +2767,59 @@ sked_VP_HH_Capacity__c = 2.2,*/
         mapTestData.put('fixedSiteOpportunity', fixedSiteOpportunity);
         
         insert forthList;
+
+        List<sked_Staff_Setup_Excluded_Role__c> skedStaffSetupExcludedRole = new List<sked_Staff_Setup_Excluded_Role__c>();
+
+        skedStaffSetupExcludedRole.add(new sked_Staff_Setup_Excluded_Role__c(
+            Name = 'Charge Mentor',
+            sked_Resource_Role__c = 'Charge Mentor',
+            sked_Excluded_For_Staff_Allocated__c = true,
+            sked_Excluded_for_Assigned_Staff_Count__c = true
+        ));
+        skedStaffSetupExcludedRole.add(new sked_Staff_Setup_Excluded_Role__c(
+            Name = 'OJI',
+            sked_Resource_Role__c = 'OJI',
+            sked_Excluded_For_Staff_Allocated__c = false,
+            sked_Excluded_for_Assigned_Staff_Count__c = true
+        ));
+        skedStaffSetupExcludedRole.add(new sked_Staff_Setup_Excluded_Role__c(
+            Name = 'Trainee',
+            sked_Resource_Role__c = 'Trainee',
+            sked_Excluded_For_Staff_Allocated__c = true,
+            sked_Excluded_for_Assigned_Staff_Count__c = true
+        ));
+        skedStaffSetupExcludedRole.add(new sked_Staff_Setup_Excluded_Role__c(
+            Name = 'Work Restriction',
+            sked_Resource_Role__c = 'Work Restriction',
+            sked_Excluded_For_Staff_Allocated__c = true,
+            sked_Excluded_for_Assigned_Staff_Count__c = true
+        ));
+        skedStaffSetupExcludedRole.add(new sked_Staff_Setup_Excluded_Role__c(
+            Name = 'TRN HH',
+            sked_Resource_Role__c = 'TRN HH',
+            sked_Excluded_For_Staff_Allocated__c = false,
+            sked_Excluded_for_Assigned_Staff_Count__c = true
+        ));
+        skedStaffSetupExcludedRole.add(new sked_Staff_Setup_Excluded_Role__c(
+            Name = 'TRN VP',
+            sked_Resource_Role__c = 'TRN VP',
+            sked_Excluded_For_Staff_Allocated__c = false,
+            sked_Excluded_for_Assigned_Staff_Count__c = true
+        ));
+        skedStaffSetupExcludedRole.add(new sked_Staff_Setup_Excluded_Role__c(
+            Name = 'Regulated - Medical Screeners',
+            sked_Resource_Role__c = 'Regulated - Medical Screeners',
+            sked_Excluded_For_Staff_Allocated__c = true,
+            sked_Excluded_for_Assigned_Staff_Count__c = false
+        ));
+        skedStaffSetupExcludedRole.add(new sked_Staff_Setup_Excluded_Role__c(
+            Name = 'VOL Limited HH',
+            sked_Resource_Role__c = 'VOL Limited HH',
+            sked_Excluded_For_Staff_Allocated__c = true,
+            sked_Excluded_for_Assigned_Staff_Count__c = false
+        ));
+
+        insert skedStaffSetupExcludedRole;
         
         TriggerHandler.clearAllBypasses();
         return mapTestData;
