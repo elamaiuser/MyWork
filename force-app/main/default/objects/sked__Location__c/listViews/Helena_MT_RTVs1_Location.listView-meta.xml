@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Helena_MT_RTVs1_Location</fullName>
+    <filterScope>Queue</filterScope>
+    <label>Helena MT: RTVs</label>
+    <queue>Helena_MT_RTVs1</queue>
+    <sharedTo>
+        <allInternalUsers />
+    </sharedTo>
+</ListView>

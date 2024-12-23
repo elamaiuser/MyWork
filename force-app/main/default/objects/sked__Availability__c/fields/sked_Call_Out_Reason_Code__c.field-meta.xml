@@ -12,6 +12,16 @@
         <valueSetDefinition>
             <sorted>true</sorted>
             <value>
+                <fullName>Bereavement</fullName>
+                <default>false</default>
+                <label>Bereavement</label>
+            </value>
+            <value>
+                <fullName>FMLA</fullName>
+                <default>false</default>
+                <label>FMLA</label>
+            </value>
+            <value>
                 <fullName>Management Decision</fullName>
                 <default>false</default>
                 <label>Management Decision</label>
@@ -22,11 +32,24 @@
                 <label>Personal</label>
             </value>
             <value>
+                <fullName>Testing</fullName>
+                <default>false</default>
+                <label>Testing</label>
+            </value>
+            <value>
                 <fullName>Turnaround Time</fullName>
                 <default>false</default>
                 <label>Turnaround Time</label>
             </value>
         </valueSetDefinition>
+        <valueSettings>
+            <controllingFieldValue>Call Out</controllingFieldValue>
+            <valueName>Bereavement</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Call Out</controllingFieldValue>
+            <valueName>FMLA</valueName>
+        </valueSettings>
         <valueSettings>
             <controllingFieldValue>Call Out</controllingFieldValue>
             <controllingFieldValue>Late Arrival</controllingFieldValue>

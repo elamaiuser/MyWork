@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Douglasville_GA_DSTs1_sked_Drive_Shift_Trade</fullName>
+    <filterScope>Queue</filterScope>
+    <label>Douglasville GA: DSTs</label>
+    <queue>Douglasville_GA_DSTs1</queue>
+    <sharedTo>
+        <allInternalUsers />
+    </sharedTo>
+</ListView>

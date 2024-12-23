@@ -9,7 +9,6 @@
     <columns>Input_Type__c</columns>
     <columns>Unique_Name__c</columns>
     <columns>Input_API_Name__c</columns>
-    <columns>Subject__c</columns>
     <filterScope>Everything</filterScope>
     <filters>
         <field>Subject__c</field>

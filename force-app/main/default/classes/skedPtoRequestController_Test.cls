@@ -277,6 +277,40 @@ private class skedPtoRequestController_Test {
         Test.stopTest();
     }
     
+    @isTest
+    static void skedPtoRequestController_Test() {
+        Test.startTest();
+        skedPtoRequestController controllerInstance = new skedPtoRequestController();
+        Assert.isTrue(controllerInstance.resourceId != NULL);
+        Test.stopTest();
+    }
+    
+    @isTest
+    static void cancelCustomAvailability_Test() {
+        sked__Resource__c testResource = [SELECT Id FROM sked__Resource__c LIMIT 1][0];
+        
+        Date testDate = System.today().addDays(10);
+        skedPtoRequestController.saveCustomAvailabilityRequestModel model = new skedPtoRequestController.saveCustomAvailabilityRequestModel();
+        model.viewData = new Map<string, object>();
+        model.viewData.put('timezoneSidId', UserInfo.getTimeZone().getID());
+        model.event = new skedModels.customAvailability();
+        model.event.isAvailable = TRUE;
+        model.event.notes = 'test';
+        model.event.resourceId = testResource.Id;
+        model.event.startDate = '' + testDate.year() + '-' + testDate.month() + '-' + testDate.day();
+        model.event.startTime = 900;
+        model.event.endDate = '' + testDate.year() + '-' + testDate.month() + '-' + testDate.day();
+        model.event.endTime = 1700;
+        model.event.eventType = 'Volunteer';
+        
+        Test.startTest();
+
+        skedRemoteResultModel saveCustomAvailabilityResult = skedPtoRequestController.saveCustomAvailability(model);
+        skedRemoteResultModel cancelCustomAvailabilityResult = skedPtoRequestController.cancelCustomAvailability(model);
+
+        Test.stopTest();
+    }
+    
     @TestSetup
     static void makeData() {
         skedTestDataFactory testDataFactory = new skedTestDataFactory('us', 14);

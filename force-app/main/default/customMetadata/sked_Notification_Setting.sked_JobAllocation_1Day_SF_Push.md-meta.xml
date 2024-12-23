@@ -64,6 +64,10 @@ AND skedHC__Job_Allocation__r.sked__Status__c NOT IN (&#39;Pending Dispatch&#39;
         <value xsi:type="xsd:string">Drive Exception</value>
     </values>
     <values>
+        <field>sked_Target_Field_Prev_Value__c</field>
+        <value xsi:nil="true" />
+    </values>
+    <values>
         <field>sked_Target_Field_Value__c</field>
         <value xsi:nil="true" />
     </values>

@@ -3,7 +3,7 @@
     <fullName>No_of_Days_for_Calendar_Build_Batch__c</fullName>
     <externalId>false</externalId>
     <fieldManageability>DeveloperControlled</fieldManageability>
-    <inlineHelpText>Number of days after drive completion (Complete/Cancel/Confirmed)</inlineHelpText>
+    <inlineHelpText>Configured number of days after drive completion for Calendar Build batch</inlineHelpText>
     <label>No. of Days for Calendar Build Batch</label>
     <precision>18</precision>
     <required>false</required>

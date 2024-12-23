@@ -8,7 +8,7 @@
     </values>
     <values>
         <field>Report_Link__c</field>
-        <value xsi:type="xsd:string">https://biosf.my.salesforce.com/apex/SponsorPlanningReportPdf?renderas=pdf&amp;opportunityids={{opportunityId}}</value>
+        <value xsi:type="xsd:string">https://biosf--releaseqa--c.sandbox.vf.force.com/apex/generatePdfWithData?ids={{opportunityId}}</value>
     </values>
     <values>
         <field>Report_Name__c</field>

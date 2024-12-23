@@ -53,13 +53,15 @@ class BaseGenerator {
     pendingDriveChangeRequest : null,
     staffSetupExcludedRoles: [],
     skipAPTCalculation: true,
-    
+    aptQuantity: null,
+
     //fixed site
     fixedSiteProcedureProjections: [],
   };
   mapSlotRecurrenceDates = {};
   errorMessages = [];
   isRegenerateDriveChange = false;
+  processingDCRs = false;
 
   constructor({
     fetch,
@@ -119,12 +121,12 @@ class BaseGenerator {
     if (this.drive.driveSite) {
       masterData.timezoneSidId = this.drive.driveSite.timezoneSidId;
     }
-    
     if (masterData.activeDriveChangeRequest && masterData.activeDriveChangeRequest.status === DRIVE_REQUEST_CHANGE_STATUS.PENDING && masterData.activeDriveChangeRequest.type.includes(DRIVE_CHANGE_REQUEST_TYPE.USER_CHANGE)) {
       masterData.pendingDriveChangeRequest = masterData.activeDriveChangeRequest;
     }  else if(masterData.activeDriveChangeRequest && masterData.activeDriveChangeRequest.status !== DRIVE_REQUEST_CHANGE_STATUS.PENDING){
       masterData.waitingDriveChangeRequest = masterData.activeDriveChangeRequest;
     }
+    
     masterData.adminSetting.callListRecipientNone = masterData.adminSetting.callListRecipientNone / 100;
     masterData.adminSetting.callListRecipient = masterData.adminSetting.callListRecipient / 100;
     masterData.adminSetting.callListRecipientNoneFixedSite = masterData.adminSetting.callListRecipientNoneFixedSite / 100;
@@ -218,7 +220,7 @@ class BaseGenerator {
       if (matchedSiteCO) {
         this.drive.collectionOperation = matchedSiteCO.collectionOperation;
       }
-
+      console.log('this.drive.collectionOperation ',this.drive.collectionOperation);
       this.drive.IMPACT = false;
       if (this.drive.collectionOperation.IMPACT === true) { 
         if (this.drive.collectionOperation.IMPACTStartDate || this.drive.collectionOperation.IMPACTEndDate) {
@@ -562,7 +564,7 @@ class BaseGenerator {
     driveShift.volunteerSetup = 0;
     driveShift.vehiclesNeeded = 0;
     driveShift.equipment = 0;
-
+    console.log('driveShift in updateShiftMobileSetup ',driveShift);
     const jobs = this.helper.getDriveShiftJobs(driveShift, {
       excludeManuallyCreatedFromStaffingModal: true
     })
@@ -652,7 +654,7 @@ class BaseGenerator {
   resetElectContentions() {
     const backupDrive = this.masterData.backupDrive;
     const currentDrive = this.drive;
-    let currentContentionResolutions = currentDrive.contentionResolution ? currentDrive.contentionResolution.split(';') : [];
+    let currentContentionResolutions = currentDrive.contentionResolution || [];
     remove(currentContentionResolutions, item => item === DRIVE_CONTENTION_RESOLUTION.ELECT_DUAL_ROLE_REMOVAL);
     remove(currentContentionResolutions, item => item === DRIVE_CONTENTION_RESOLUTION.ELECT_WITHIN_42_DAYS);
     remove(currentContentionResolutions, item => item === DRIVE_CONTENTION_RESOLUTION.ELECT_STAFFING_COMPLEMENT_CHANGED_ACCEPT_NEW_CHANGE);
@@ -701,7 +703,7 @@ class BaseGenerator {
       }
     }
 
-    this.drive.contentionResolution = currentContentionResolutions.join(';');
+    this.drive.contentionResolution = [...currentContentionResolutions];
   }
 
   onDriveDataChanged(properties, {
@@ -720,7 +722,7 @@ class BaseGenerator {
         this.drive[property.targetName] = (/^(true|1)$/i).test(this.drive[property.targetName]);
         this.drive['aptQuantity'] = this.drive.opportunity.aptQuantity;
       }
-      if (property.targetName === 'driveShiftsMetadata') {
+      if (property.targetName === 'driveShiftsMetadata' || property.targetName === 'wbProjectedProcedures' || property.targetName === 'x2rbcProjectedProcedures') {
         this.masterData.skipAPTCalculation = false;
       }
     })

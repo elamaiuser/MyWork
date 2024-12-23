@@ -4,7 +4,6 @@
     <excludeButtons>ChangeRecordType</excludeButtons>
     <excludeButtons>Clone</excludeButtons>
     <excludeButtons>Delete</excludeButtons>
-    <excludeButtons>IsotopeSubscription</excludeButtons>
     <excludeButtons>PrintableView</excludeButtons>
     <excludeButtons>RecordShareHierarchy</excludeButtons>
     <excludeButtons>Share</excludeButtons>
@@ -93,10 +92,6 @@
                 <behavior>Edit</behavior>
                 <field>sked_Dedicated_to_Site__c</field>
             </layoutItems>
-            <layoutItems>
-                <behavior>Edit</behavior>
-                <field>sked_Drive_Type__c</field>
-            </layoutItems>
         </layoutColumns>
         <style>TwoColumnsTopToBottom</style>
     </layoutSections>
@@ -130,10 +125,6 @@
             </layoutItems>
             <layoutItems>
                 <behavior>Edit</behavior>
-                <field>sked_Maximum_Travel_Radius__c</field>
-            </layoutItems>
-            <layoutItems>
-                <behavior>Edit</behavior>
                 <field>sked_Max_Consecutive_Days_per_week__c</field>
             </layoutItems>
             <layoutItems>
@@ -143,6 +134,10 @@
             <layoutItems>
                 <behavior>Edit</behavior>
                 <field>sked_Average_Travel_Time_Per_Drive__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>sked_Daily_Time_Off_Hours__c</field>
             </layoutItems>
         </layoutColumns>
         <layoutColumns>
@@ -169,10 +164,6 @@
             <layoutItems>
                 <behavior>Edit</behavior>
                 <field>sked_Max_Working_Days_Per_Week__c</field>
-            </layoutItems>
-            <layoutItems>
-                <behavior>Edit</behavior>
-                <field>sked_Daily_Time_Off_Hours__c</field>
             </layoutItems>
         </layoutColumns>
         <style>TwoColumnsLeftToRight</style>
@@ -240,10 +231,6 @@
             <layoutItems>
                 <behavior>Readonly</behavior>
                 <field>sked_Supervisor_Name__c</field>
-            </layoutItems>
-            <layoutItems>
-                <behavior>Edit</behavior>
-                <field>sked_Supervisor__c</field>
             </layoutItems>
         </layoutColumns>
         <layoutColumns>

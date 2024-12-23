@@ -2,9 +2,9 @@
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>Drive_Date__c</fullName>
     <externalId>false</externalId>
+    <formula>Parent_Calendar_Build_Log__r.Drive_Date__c</formula>
     <label>Drive Date</label>
     <required>false</required>
-    <trackFeedHistory>false</trackFeedHistory>
     <trackTrending>false</trackTrending>
     <type>Date</type>
 </CustomField>

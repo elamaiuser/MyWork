@@ -46,7 +46,7 @@ public class skedNightlyTradeProcessBatch implements Database.Batchable<sObject>
         debugLog.sked_Response__c = response.response;
         debugLog.sked__Message__c = response.message;
         if (response.statusCode != 200) {
-            debugLog.sked_Category__c = response.statusCode >= 500 ? skedConstants.DEBUG_LOG_CATEGORY_SYSTEM_ERROR : skedConstants.DEBUG_LOG_CATEGORY_VALIDATION_ERROR;
+            debugLog.sked_Category__c = response.statusCode >= 500 ? skedConstants.DEBUG_LOG_CATEGORY_VALIDATION_ERROR : skedConstants.DEBUG_LOG_CATEGORY_SYSTEM_ERROR;
         }
         insert debugLog;
         

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Workflow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fieldUpdates>
+        <fullName>sked_Clear_Initial_Evaluation</fullName>
+        <field>sked_Initial_Evaluation__c</field>
+        <literalValue>0</literalValue>
+        <name>Clear Initial Evaluation</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>sked_Clear_Secondary_Evaluation</fullName>
+        <field>sked_Secondary_Evaluation__c</field>
+        <literalValue>0</literalValue>
+        <name>Clear Secondary Evaluation</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <rules>
+        <fullName>SiteName is Edited</fullName>
+        <actions>
+            <name>sked_Clear_Initial_Evaluation</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <actions>
+            <name>sked_Clear_Secondary_Evaluation</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <description>The National Name field be reviewed and potentially modified any time that the Site Name field (standard Name field) is edited. Thus, we need some type of automation to uncheck these two checkboxes whenever the Site Name field is edited.</description>
+        <formula>ISCHANGED(Name)</formula>
+        <triggerType>onAllChanges</triggerType>
+    </rules>
+</Workflow>

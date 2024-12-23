@@ -9,7 +9,7 @@ public class skedTriggerActionNotificationService extends skedNotificationServic
     
     protected override List<String> getAdditionalFieldsToFetchNotificationSettings() {
         return new List<String> {
-            'sked_Target_Field__c', 'sked_Target_Field_Value__c', 'sked_Target_Field_Values__c'
+            'sked_Target_Field__c', 'sked_Target_Field_Value__c', 'sked_Target_Field_Prev_Value__c', 'sked_Target_Field_Values__c'
         };
     }
 

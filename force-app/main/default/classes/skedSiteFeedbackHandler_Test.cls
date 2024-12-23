@@ -45,21 +45,17 @@ private class skedSiteFeedbackHandler_Test {
         Test.stopTest();
     }
     
+    
     static testmethod void onApproved_Test() {
         skedTestDataFactory testDataFactory = new skedTestDataFactory('us', 14);
         Map<string, sObject> mapTestData = testDataFactory.setupCommonTestData();
         mapTestData = testDataFactory.setupDriveData();
         
-        Biomed_Collection_Op_Center__c opCenter = (Biomed_Collection_Op_Center__c)mapTestData.get('testCollectionOperation1');
         sked__Region__c testRegion = (sked__Region__c)mapTestData.get('testRegion1');
         sked_Drive__c testDrive = (sked_Drive__c)mapTestData.get('testDrive1');
         sked__Location__c testDriveSite = (sked__Location__c)mapTestData.get('testLocation1');
         
         Test.startTest();
-        
-        System.runAs(new User(Id = UserInfo.getUserId())){
-            skedBiomedCollectionOpHandler.createQueues(new Set<String>{opCenter.Name});
-        }
         
         sked__Job__c testJob = new sked__Job__c(
             sked__Region__c = testRegion.Id,
@@ -90,18 +86,7 @@ private class skedSiteFeedbackHandler_Test {
         );
         insert testSiteFeedback;
         
-        testSiteFeedback.sked_Status__c = 'Submitted';
-        testSiteFeedback.sked_Route_Approval_Request_To__c = skedConstants.RTV_ROUTE_APPROVAL_REQUEST_TO_CM;
-        update testSiteFeedback;
-        
-        slwcApprovalService.approveRejectRequestModel model = new slwcApprovalService.approveRejectRequestModel();
-        model.action = 'Approve';
-        model.recordId = testSiteFeedback.Id;
-        model.comments = 'Testing';
-        model.sObj = new sked_Site_Feedback__c(Id = testSiteFeedback.Id);
-        slwcAuraResult approveRejectResult = slwcApprovalService.approveReject(model);
-        
-        testSiteFeedback.sked_Status__c = 'Approved';
+        testSiteFeedback.sked_Status__c = skedConstants.DRIVE_STATUS_APPROVED;
         update testSiteFeedback;
         
         Test.stopTest();

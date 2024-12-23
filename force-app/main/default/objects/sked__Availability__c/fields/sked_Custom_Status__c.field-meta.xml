@@ -76,6 +76,12 @@
                 <default>false</default>
                 <label>Processing Cancellation</label>
             </value>
+            <value>
+                <fullName>Processing</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Processing</label>
+            </value>
         </valueSetDefinition>
     </valueSet>
 </CustomField>

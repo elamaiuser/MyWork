@@ -10,16 +10,8 @@
     <columns>sked__Finish__c</columns>
     <columns>sked_Start_Date__c</columns>
     <columns>sked_Start_Time__c</columns>
+    <columns>sked_Drive__c</columns>
+    <columns>CREATED_DATE</columns>
     <filterScope>Everything</filterScope>
-    <filters>
-        <field>sked_Resource_Role__c</field>
-        <operation>equals</operation>
-        <value>Driver,Driver Support</value>
-    </filters>
-    <filters>
-        <field>sked_Start_Date__c</field>
-        <operation>equals</operation>
-        <value>2/23/2024</value>
-    </filters>
     <label>All Jobs</label>
 </ListView>

@@ -279,4 +279,8 @@ public class skedDateTimeUtils {
     public static Date getValueOrMinDate(Date input) {
         return input != NULL ? input : MIN_DATE;
     }
+
+    public static String getDateStringFromDate(Date dateValue) {
+        return dateValue.year() + '-' + dateValue.month() + '-' + dateValue.day();
+    }
 }

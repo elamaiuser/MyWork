@@ -1,6 +1,6 @@
 global class TaskForMigratedDrivesBatch implements Database.Batchable<sObject >{
     global static final String  SPONSOR_PLANNING_TASK = 'Sponsor Planning Meeting - System Generated';
-    global static final String  RECRUITMENT_TASK = 'Recruitment Planning Meeting';
+    global static final String  RECRUITMENT_TASK = 'Recruitment Planning Meeting';//HRP-7123
     global static final String  SEVENTYTWO_HOUR_TASK = '72 Hour Check in - System Generated';
     global static final String  STAGE_CLOSED = 'Closed';
     global static final String  STAGE_COMMITTED = 'Committed';

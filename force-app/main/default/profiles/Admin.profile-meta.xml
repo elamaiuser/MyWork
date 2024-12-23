@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Profile xmlns="http://soap.sforce.com/2006/04/metadata">
     <custom>false</custom>
     <userLicense>Salesforce</userLicense>
@@ -347,10 +347,6 @@
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
-        <apexClass>BSFTaskChecklistTrigger_Test</apexClass>
-        <enabled>true</enabled>
-    </classAccesses>
-    <classAccesses>
         <apexClass>BSFVehiclePlanningController</apexClass>
         <enabled>true</enabled>
     </classAccesses>
@@ -399,10 +395,6 @@
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
-        <apexClass>BSF_BatchFutureDriveUpdateTest</apexClass>
-        <enabled>true</enabled>
-    </classAccesses>
-    <classAccesses>
         <apexClass>BSF_BatchOnDocForDriveStatusLookUp</apexClass>
         <enabled>true</enabled>
     </classAccesses>
@@ -424,10 +416,6 @@
     </classAccesses>
     <classAccesses>
         <apexClass>BSF_BatchSendNotificationToDM</apexClass>
-        <enabled>true</enabled>
-    </classAccesses>
-    <classAccesses>
-        <apexClass>BSF_BatchSendNotificationToDM_Test</apexClass>
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
@@ -631,10 +619,6 @@
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
-        <apexClass>BSF_Batch_TaskRename_Test</apexClass>
-        <enabled>true</enabled>
-    </classAccesses>
-    <classAccesses>
         <apexClass>BSF_Batch_TaxonomyEndDateHandler</apexClass>
         <enabled>true</enabled>
     </classAccesses>
@@ -747,10 +731,6 @@
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
-        <apexClass>BSF_TaskTestBatch</apexClass>
-        <enabled>true</enabled>
-    </classAccesses>
-    <classAccesses>
         <apexClass>BSF_TemplateCDA_FutureOpportunity_Batch</apexClass>
         <enabled>true</enabled>
     </classAccesses>
@@ -780,10 +760,6 @@
     </classAccesses>
     <classAccesses>
         <apexClass>BSF_UpdateDriveExcessStaffCapacityBatch</apexClass>
-        <enabled>true</enabled>
-    </classAccesses>
-    <classAccesses>
-        <apexClass>BSF_UpdateDriveExcessStaffCapacityTest</apexClass>
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
@@ -860,10 +836,6 @@
     </classAccesses>
     <classAccesses>
         <apexClass>CalendarBuildBatchOnDemandController</apexClass>
-        <enabled>true</enabled>
-    </classAccesses>
-    <classAccesses>
-        <apexClass>CalendarBuildBatchOnDemandControllerTest</apexClass>
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
@@ -1327,18 +1299,6 @@
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
-        <apexClass>LicenseUsageHelper</apexClass>
-        <enabled>true</enabled>
-    </classAccesses>
-    <classAccesses>
-        <apexClass>LicenseUsageHelperTest</apexClass>
-        <enabled>true</enabled>
-    </classAccesses>
-    <classAccesses>
-        <apexClass>LicenseUsageSchedulable</apexClass>
-        <enabled>true</enabled>
-    </classAccesses>
-    <classAccesses>
         <apexClass>Lookup</apexClass>
         <enabled>true</enabled>
     </classAccesses>
@@ -1468,10 +1428,6 @@
     </classAccesses>
     <classAccesses>
         <apexClass>OneTimeUserUpdateBatch</apexClass>
-        <enabled>true</enabled>
-    </classAccesses>
-    <classAccesses>
-        <apexClass>OpRecordStatusCorrectionTest</apexClass>
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
@@ -1883,10 +1839,6 @@
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
-        <apexClass>SiteSuitabilityController_Test</apexClass>
-        <enabled>true</enabled>
-    </classAccesses>
-    <classAccesses>
         <apexClass>SiteTriggerHandler</apexClass>
         <enabled>true</enabled>
     </classAccesses>
@@ -1908,10 +1860,6 @@
     </classAccesses>
     <classAccesses>
         <apexClass>TaskChecklistController</apexClass>
-        <enabled>true</enabled>
-    </classAccesses>
-    <classAccesses>
-        <apexClass>TaskChecklistController_Test</apexClass>
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
@@ -2975,10 +2923,6 @@
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
-        <apexClass>skedJobAllocTravelTimeUpdate_Test</apexClass>
-        <enabled>true</enabled>
-    </classAccesses>
-    <classAccesses>
         <apexClass>skedJobAllocationBatchTemp</apexClass>
         <enabled>true</enabled>
     </classAccesses>
@@ -3772,10 +3716,6 @@
     </classAccesses>
     <classAccesses>
         <apexClass>skedScheduleChangeNotificationBatch_Test</apexClass>
-        <enabled>true</enabled>
-    </classAccesses>
-    <classAccesses>
-        <apexClass>skedScheduledJobAllocTravelTimeUpdate</apexClass>
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
@@ -9847,61 +9787,6 @@
     <fieldPermissions>
         <editable>false</editable>
         <field>Lead_Email_Phone__e.SysModStamp__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>License_Usage__c.Expiration_Date__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>License_Usage__c.License_Definition_Key__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>License_Usage__c.License_Snapshot_Date_Time__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>License_Usage__c.Licenses_Remaining__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>License_Usage__c.Name__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>License_Usage__c.Namespace_Prefix__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>License_Usage__c.Package_Id__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>License_Usage__c.Record_Type_Name__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>License_Usage__c.Status__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>License_Usage__c.Total_Licenses__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>License_Usage__c.Used_Licenses__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -17041,11 +16926,6 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>sked_Trade_API_Data__c.sked_From_Employee_Id__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
         <field>sked_Trade_API_Data__c.sked_From_Resource__c</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -18252,16 +18132,6 @@
     <fieldPermissions>
         <editable>true</editable>
         <field>sked__Job_Allocation__c.sked_Travel_Time_To__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>sked__Job_Allocation__c.sked_Workday_Sync_Message__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>sked__Job_Allocation__c.sked_Workday_Sync_Status__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -21584,17 +21454,6 @@
         <recordType>Lead.Market_Manager</recordType>
     </layoutAssignments>
     <layoutAssignments>
-        <layout>License_Usage__c-License Usage Layout</layout>
-    </layoutAssignments>
-    <layoutAssignments>
-        <layout>License_Usage__c-License Usage Layout</layout>
-        <recordType>License_Usage__c.Managed_Package</recordType>
-    </layoutAssignments>
-    <layoutAssignments>
-        <layout>License_Usage__c-License Usage Layout</layout>
-        <recordType>License_Usage__c.Salesforce_License</recordType>
-    </layoutAssignments>
-    <layoutAssignments>
         <layout>Linked_Opportunity_Drives__c-Linked Opportunity Drives Layout</layout>
     </layoutAssignments>
     <layoutAssignments>
@@ -21690,9 +21549,6 @@
     </layoutAssignments>
     <layoutAssignments>
         <layout>OrderItem-Order Product Layout</layout>
-    </layoutAssignments>
-    <layoutAssignments>
-        <layout>Package_Name__mdt-Package Name Layout</layout>
     </layoutAssignments>
     <layoutAssignments>
         <layout>PartyConsent-Party Consent Layout</layout>
@@ -22583,10 +22439,6 @@
         <visibility>DefaultOn</visibility>
     </tabVisibilities>
     <tabVisibilities>
-        <tab>License_Usage__c</tab>
-        <visibility>DefaultOn</visibility>
-    </tabVisibilities>
-    <tabVisibilities>
         <tab>Linked_Opportunity_Drives__c</tab>
         <visibility>Hidden</visibility>
     </tabVisibilities>
@@ -22929,10 +22781,6 @@
     <tabVisibilities>
         <tab>slwc_Drive_Shift_Trade_Submission</tab>
         <visibility>Hidden</visibility>
-    </tabVisibilities>
-    <tabVisibilities>
-        <tab>slwc_On_Call_Call_Out_Management</tab>
-        <visibility>DefaultOn</visibility>
     </tabVisibilities>
     <tabVisibilities>
         <tab>slwc_Resource_Calendar</tab>
@@ -24030,10 +23878,6 @@
         <enabled>true</enabled>
         <name>ViewUserPII</name>
     </userPermissions>
-    <customMetadataTypeAccesses>
-        <enabled>true</enabled>
-        <name>Package_Name__mdt</name>
-    </customMetadataTypeAccesses>
     <customMetadataTypeAccesses>
         <enabled>true</enabled>
         <name>sked__Admin_Setting__mdt</name>

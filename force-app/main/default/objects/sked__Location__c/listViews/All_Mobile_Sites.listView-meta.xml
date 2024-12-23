@@ -9,17 +9,11 @@
     <columns>sked_Collection_Operation__c</columns>
     <columns>ARC_Region__c</columns>
     <columns>RECORDTYPE</columns>
-    <columns>sked_Active__c</columns>
     <filterScope>Everything</filterScope>
     <filters>
         <field>RECORDTYPE</field>
         <operation>equals</operation>
         <value>sked__Location__c.sked_Mobile_Site</value>
-    </filters>
-    <filters>
-        <field>sked_Collection_Operation__c</field>
-        <operation>contains</operation>
-        <value>Chicago</value>
     </filters>
     <filters>
         <field>sked_Active__c</field>

@@ -10,10 +10,10 @@
  * 
  * Modification Log 
  * 
- * Date					    Developer Name			   Comments
+ * Date					   Developer Name			Comments
  * ***************************************************************************************************************************************************************************
  * 05/05/2023				Fitsum Worku			Logic for HRP-9982. Added logic to exclude the system admin profile from user type assignment/removal.  Also added support for
-  												    license assignment. 
+ * 												    license assignment.
  * 10/18/2024               Priti Jana              Logic for HRP-9815
  *****************************************************************************************************************************************************************************
 */
@@ -347,8 +347,8 @@ public class userService implements Callable {
         //    Database.insert(errorList,false);
         //}
     }
-    
-    /********************************************************************** CALLABLE INTERFACE  *****************************************************************/
+
+    /******************************************************************* CALLABLE INTERFACE  *********************************************************************/
     public static Object call(String methodName, Map<String, Object> params) {
         skedProcessEventResult result = new skedProcessEventResult();
         try {
@@ -376,7 +376,6 @@ public class userService implements Callable {
         if(newUserList != NULL && !newUserList.isEmpty()) {
             for(User newUser : newUserList) {
                 User oldUser = map_oldUserId_oldUserInfo != NULL && map_oldUserId_oldUserInfo.get(newUser.Id) != NULL ? map_oldUserId_oldUserInfo.get(newUser.Id) : new User();
-                system.debug('olduser '+oldUser.WorkPhone__c+' newuser '+newUser.WorkPhone__c);
                 if(oldUser != NULL && newUser.WorkPhone__c != oldUser.WorkPhone__c) {
                     if(!map_DrdRepName_DrdRepContact.containsKey(newUser.FirstName + ' ' + newUser.LastName)) {
                         map_DrdRepName_DrdRepContact.put(newUser.FirstName + ' ' + newUser.LastName, newUser.WorkPhone__c);
@@ -410,16 +409,15 @@ public class userService implements Callable {
         Database.SaveResult[] opRecordUpdateResult = Database.update(opRecordList, FALSE);
         List<BSF_Error_Log__c> errorlogEntry = BSF_Utilities.createErrorLogWithObjectId(
             opRecordUpdateResult,
-            'Op Record DRD Rep Contact # Update',
+            'Op Record DRD Rep # Update',
             'UserService',
             'performOpRecordSync',
             'Error',
-            'DRD Rep Contact # Update'
+            'DRD Rep # Update'
         );
         if(errorlogEntry != NULL && !errorlogEntry.isEmpty()) {
             insert errorlogEntry;
         }
     }
     //HRP-9815 -> Ends Here
-  
 }

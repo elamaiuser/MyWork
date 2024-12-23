@@ -52,8 +52,6 @@ public class BSFVehiclePlanningController {
     public static vehicleResourceDataWrapper getAllResourceDataWithDate(Date startDate, Date endDate, String collOpIdList) {
         vehicleResourceDataWrapper wrapper = new vehicleResourceDataWrapper();
         List<Map<String,String>> ListwrapperMap = new List<Map<String,String>>();
-        Map<ID,Decimal> driveIDvsTravelTimeDate = new Map<ID,Decimal>();
-        Set<ID> driveIds = new Set<ID>();
         Map<Id,sked__Resource__c> resourceMap = new Map<Id,sked__Resource__c>();
         Map<Id,Map<Date,String>> resourceDetailsMap = new  Map<Id,Map<Date,String>>();
         Set<String> collOpIds= new Set<String>(collOpIdList.split(','));
@@ -101,6 +99,7 @@ public class BSFVehiclePlanningController {
                                                         sked__Job__r.sked_Drive__r.sked_Drive_Site__r.sked_County__c,
                                                         sked__Job__r.sked_Drive__r.sked_Drive_Site__r.sked_State__c,
                                                         sked__Job__r.sked_Drive__r.sked_Drive_Site__r.sked_Zip_Code__c,
+            											sked__Job__r.sked_Drive__r.sked_Travel_Time_CO_To_Site__r.sked_Average_Travel_Time__c,
                                                         sked__Job__r.sked_Travel_Time__c,
                                                         sked__Resource__c,
                                                         sked__Resource__r.Name,
@@ -124,7 +123,7 @@ public class BSFVehiclePlanningController {
                                                     AND sked__Job__r.sked_Drive__r.sked_Drive_Date__c != null
                                                     AND sked__Job__r.sked_Drive__r.sked_Drive_Date__c >= :startDate
                                                     AND sked__Job__r.sked_Drive__r.sked_Drive_Date__c <= :endDate];
-               
+        
         List<sked__Activity_Resource__c> activityList = [SELECT Id,
                                                                 sked__Activity__c,
                                                                 sked_Start_Time__c,
@@ -184,25 +183,11 @@ public class BSFVehiclePlanningController {
                                                             ORDER BY sked_Start_Time__c ASC];
         
         for(sked__Job_Allocation__c jba : jobAllocations) {
-            driveIds.add(jba.sked__Job__r.sked_Drive__c);
-        }
-        
-        List<sked__Job__c> getDriverJob = [select Id,sked_Drive__c,sked_Travel_Time__c,sked__Type__c 
-                                           from sked__Job__c where sked_Drive__c IN :driveIds
-                                           AND sked__Type__c = 'Driver' AND sked__Job_Status__c NOT IN ('Cancelled')];
-        
-        for(sked__Job__c jb: getDriverJob){
-            if(!driveIDvsTravelTimeDate.containsKey(jb.sked_Drive__c)){
-                driveIDvsTravelTimeDate.put(jb.sked_Drive__c, jb.sked_Travel_Time__c);
-            }
-        }
-                
-        for(sked__Job_Allocation__c jba : jobAllocations) {
             resourceMap.put(jba.sked__Resource__c,jba.sked__Resource__r);
             if(!resourceDetailsMap.containsKey(jba.sked__Resource__c)){
                 resourceDetailsMap.put(jba.sked__Resource__c, new Map<Date,String>());
             }
-            String detailsForJobAllocation = detailsForJobAllocation(jba, driveIDvsTravelTimeDate);
+            String detailsForJobAllocation = detailsForJobAllocation(jba);
             updateResourceDetailsMap(jba.sked__Resource__c, jba.sked__Job__r.sked_Drive__r.sked_Drive_Date__c, detailsForJobAllocation, resourceDetailsMap);
         }
         
@@ -287,7 +272,7 @@ public class BSFVehiclePlanningController {
         return wrapper;
     }
     
-    public static String detailsForJobAllocation(sked__Job_Allocation__c jba, Map<ID,Decimal> driveIDvsTravelTimeDate){
+    public static String detailsForJobAllocation(sked__Job_Allocation__c jba){
         String details = '';
             details = jba.sked__Job__r.sked_Drive__r.Name;
             String siteAddress = '';
@@ -322,13 +307,14 @@ public class BSFVehiclePlanningController {
             if(String.isNotBlank(jba.sked__Job__r.sked_Drive__r.sked_Status__c)){
                 details += '<b>Status: </b>'+jba.sked__Job__r.sked_Drive__r.sked_Status__c + '\n';
             }
-                details += '<b>Drive Hours: </b>'+getFormattedTime(jba.sked__Job__r.sked_Drive__r.sked_Start_Time__c) + ' - ' +
-                            getFormattedTime(jba.sked__Job__r.sked_Drive__r.sked_End_Time__c) + '\n';
             
-            if(driveIDvsTravelTimeDate.containsKey(jba.sked__Job__r.sked_Drive__c) && String.isNotBlank(String.valueOf(driveIDvsTravelTimeDate.get(jba.sked__Job__r.sked_Drive__c)))){
-                details += '<b>Planned Travel Time: </b>' + String.valueOf(driveIDvsTravelTimeDate.get(jba.sked__Job__r.sked_Drive__c));
+                 
+            details += '<b>Drive Hours: </b>'+getFormattedTime(jba.sked__Job__r.sked_Drive__r.sked_Start_Time__c) + ' - ' +
+                        getFormattedTime(jba.sked__Job__r.sked_Drive__r.sked_End_Time__c) + '\n';
+            
+            if(String.isNotBlank(String.valueOf(jba.sked__Job__r.sked_Drive__r.sked_Travel_Time_CO_To_Site__r.sked_Average_Travel_Time__c))){
+               details += '<b>Planned Travel Time: </b>'+String.valueOf(jba.sked__Job__r.sked_Drive__r.sked_Travel_Time_CO_To_Site__r.sked_Average_Travel_Time__c) + '\n';                
             }
-        	
         return details;
     }
     
