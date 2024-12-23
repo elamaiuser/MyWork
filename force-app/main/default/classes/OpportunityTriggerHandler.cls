@@ -276,11 +276,16 @@ public class OpportunityTriggerHandler extends TriggerHandler{
         }   
         //End HRP-12142 
             
-        System.debug('Exiting method beforeUpdate');
+        
         //HRP-13190
         if(super.getTriggerMethodsToBypass().indexOf('captureAPTRequirements') == -1) {
            OpportunityService.captureAPTRequirements((List<Opportunity>)trigger.new, (Map<Id,Opportunity>)trigger.oldMap);
         }
+        //HRP-6051
+        if(super.getTriggerMethodsToBypass().indexOf('validateTheARD') == -1) {
+            OpportunityService.validateTheARD((List<Opportunity>)trigger.new, (Map<Id,Opportunity>)trigger.oldMap);
+        }
+        System.debug('Exiting method beforeUpdate');
     }
     
     public override void beforeInsert(){

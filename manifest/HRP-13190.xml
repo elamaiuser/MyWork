@@ -3,16 +3,27 @@
     <types>
         <members>BSF_Constants</members>
         <members>BSF_Utilities</members>
+        <members>BSF_UtilitiesTest</members>
         <members>CalendarBuildBatchHandler</members>
+        <members>CalendarBuildEvaluateDrivesBatch_Test</members>
+        <members>checkRecursive</members>
         <members>FieldIdentifiers</members>
         <members>FutureDrivesController</members>
+        <members>FutureDrivesController_Test</members>
         <members>GenerateMobileDrive</members>
+        <members>GenerateMobileDriveTest</members>
         <members>MobileDriveGeneratorDMLService</members>
         <members>OpportunityService</members>
         <members>OpportunityTriggerHandler</members>
+        <members>OpportunityTriggerTest</members>
         <members>skedDriveHandler</members>
+        <members>skedDriveTrigger_Test</members>
+        <members>skedDriveChangeRequestHandler</members>
+        <members>skedDriveChangeRequestTrigger_Test</members>
         <members>skedOpportunityHandler</members>
+        <members>skedOpportunityTrigger_Test</members>
         <members>slwcDriveService</members>
+        <members>slwcDriveService_Test</members>
         <name>ApexClass</name>
     </types>
     <types>

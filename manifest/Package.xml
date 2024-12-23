@@ -12,16 +12,19 @@
 		<members>BSF_Utilities</members>
 		<members>BSF_UtilitiesTest</members>
 		<members>CalendarBuildBatchHandler</members>
+		<members>CalendarBuildEvaluateDrivesBatch_Test</members>
 		<members>checkRecursive</members>
 		<members>FieldIdentifiers</members>
 		<members>FutureDrivesController</members>
 		<members>GenerateMobileDrive</members>
+		<members>GenerateMobileDriveTest</members>
 		<members>LeadService</members>
 		<members>LeadServiceTests</members>
 		<members>LeadTriggerHandler</members>
 		<members>MobileDriveGeneratorDMLService</members>
 		<members>OpportunityService</members>
 		<members>OpportunityTriggerHandler</members>
+		<members>OpportunityTriggerTest</members>
 		<members>OrderService</members>
 		<members>OrderTrigger_Test</members>
 		<members>TaskGenerationBatch</members>
@@ -34,10 +37,12 @@
 		<members>skedCOGroupTravelTimeIndexRefreshBatch</members>
 		<members>skedConstants</members>
 		<members>skedDriveHandler</members>
+		<members>skedDriveTrigger_Test</members>
+		<members>skedDriveChangeRequestHandler</members>
+        <members>skedDriveChangeRequestTrigger_Test</members>
 		<members>skedJobAllocationHandler</members>
 		<members>skedJobHandler</members>
 		<members>skedMappingConfigContainer</members>
-		<members>skedMappingConfigController_Test</members>
 		<members>skedModels</members>
 		<members>skedModels_Test</members>
 		<members>skedNotificationBatchBase</members>
@@ -64,6 +69,7 @@
 		<members>skedTravelTimeIndexRefreshGroupHandler</members>
 		<members>skedTravelTimeIndexRefreshRequestHandler</members>
 		<members>skedUserHandler</members>
+		<members>skedUserHandler_Test</members>
 		<members>skedWorkdayApiManager</members>
 		<members>slwcDriveService</members>
 		<members>BSF_TravelTimePanelController</members>
@@ -72,6 +78,8 @@
 		<members>skedActivityResourceHandler</members>
 		<members>skedActivityResourceUtils</members>
 		<members>skedActivityResourceUtils_Test</members>
+		<members>OpportunityControllerHelperTest</members>
+		<members>OpportunityControllerHelper</members>
 		<name>ApexClass</name>
 	</types>
 	<types>
@@ -94,6 +102,8 @@
         <members>sked__Activity__c.sked_Drive_Types__c</members>
         <members>sked__Activity__c.sked_Territory_Key__c</members>
 		<members>sked_Drive__c.sked_APT_Quantity__c</members>
+		<members>sked__Job__c.sked_Volunteer_Adjustment_Reason__c</members>
+        <members>sked__Job__c.sked_Other_Volunteer_Adjustment_Reason__c</members>
 		<members>sked_Staffing_Budget_Site__c.sked_Location__c</members>
 		<members>sked_Staffing_Budget_Site__c.sked_Specific_Collection_Operation__c</members>
 		<members>sked_Staffing_Budget_Site__c.sked_Staffing_Budget__c</members>
@@ -108,6 +118,7 @@
 		<members>sked_Travel_Time_Manager__c.sked_CO_Group_Index_Refresh_Priority__c</members>
 		<members>UpdateOpptyTeamEvent__e.AcctTeamMemberId__c</members>
         <members>UpdateOpptyTeamEvent__e.UpdateAcctTeam__c</members>
+		 <members>Opportunity.Pending_ARD_Confirmation__c</members>
 		<name>CustomField</name>
 	</types>
 	<types>
@@ -155,6 +166,7 @@
 		<members>Task_Reassignment_Matrix.X72_Hour</members>
 		<members>Task_Report_Link.Drive_Worksheet_Report</members>
 		<members>Task_Report_Link.Managing_Donor_Appointments_Playbook_72</members>
+		<members>ARD_Alert_Profiles__mdt</members>
 		<name>CustomMetadata</name>
 	</types>
 	<types>
@@ -197,6 +209,7 @@
 		<members>Opportunity-Sponsor Marketing Mobile Opp Layout</members>
 		<members>sked__Activity__c-Sked Activity Layout</members>
         <members>sked_Activity_Collection_Operation__c-Activity Collection Operation Layout</members>
+		<members>sked__Job__c-Sked Job Layout</members>
 		<members>sked_Staffing_Budget_Site__c-Staffing Budget Site Layout</members>
 		<members>sked_Staffing_Budget__c-Staffing Budget Layout</members>
 		<members>sked_Travel_Time_Index_Refresh_Group__c-Travel Time Index Refresh CO Group Layout</members>
@@ -217,14 +230,20 @@
 	</types>
 	<types>
 		<members>autoMapper</members>
+		<members>dataService</members> 
         <members>slwcConstants</members>
         <members>slwcDriveGenerator</members>
         <members>slwcDriveShift</members>
+		<members>slwcDriveShiftJobModal</members>
+        <members>slwcDriveShiftJobTable</members>
 		<members>blwcDriveWorkSheetComponent</members>
 		<members>slwcApprovalHistoryConsole</members>
+		<members>slwcDriveCalendarActivityList</members>
 		<members>slwcDriveChangeRequestApproval</members>
 		<members>slwcLinkedDriveStaffingDetails</members>
 		<members>travelTimeBreakdown</members>
+		<members>slwcListenDriveChange</members>
+        <members>slwcGenerateDriveModal</members>
 		<name>LightningComponentBundle</name>
 	</types>
 	<types>

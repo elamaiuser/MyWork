@@ -6,6 +6,19 @@ global class skedActivityService extends skedEventService {
         this.domainType = Type.forName('skedModels.activity');
     }
 
+    protected virtual override skedDataService.saveResult preSaveRecord(List<skedModels.modelBase> models) {
+        List<skedModels.activity> activities = (List<skedModels.activity>)models;
+        for(skedModels.activity activity : activities) {
+            if(activity.driveTypes != NULL && !activity.driveTypes.isEmpty()) {
+                activity.notes = 'Selected Drive Type(s) : '+String.join(activity.driveTypes, ', ')+ '. \n'+activity.notes;
+            }
+        }
+        
+        skedDataService.saveResult result = new skedDataService.saveResult();
+        result.success = true;
+        return result;
+    }
+
     protected virtual override void postSaveRecord(List<skedModels.modelBase> models, List<sObject> records) {
         List<skedModels.activity> activityModels = (List<skedModels.activity>) models;
         Map<Id, sked__Activity__c> map_activityId_activityRecords = new Map<Id, sked__Activity__c>((List<sked__Activity__c>) records);   
@@ -76,7 +89,7 @@ global class skedActivityService extends skedEventService {
             }
         }
         
-        if (skedActivityColOpToInsert != NULL && !skedActivityColOpToInsert.isEmpty()) {
+        if (!skedActivityColOpToInsert.isEmpty()) {
             insert skedActivityColOpToInsert;
         }
     }
