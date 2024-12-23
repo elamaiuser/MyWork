@@ -20,7 +20,7 @@ export class DriveMappingConfigFactory {
       mappingConfig.addFieldConfig('sked_Cancellation_Reason__c', 'cancellationReason', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_Collection_Operation__c', 'collectionOperationId', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_Collection_Operation__r.Name', 'collectionOperationName', MAPPING_TYPE.direct);
-      mappingConfig.addFieldConfig('sked_Contention_Resolution__c', 'contentionResolution', MAPPING_TYPE.direct);
+      mappingConfig.addFieldConfig('sked_Contention_Resolution__c', 'contentionResolution', MAPPING_TYPE.multiPicklist);
       mappingConfig.addFieldConfig('sked_Dispatched_At__c', 'dispatchedAt', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_Dispatched_By__r.Name', 'dispatchedByName', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_Designated_Approver__c', 'designatedApproverId', MAPPING_TYPE.direct);
@@ -72,7 +72,7 @@ export class DriveMappingConfigFactory {
       mappingConfig.addFieldConfig('sked_Optimization_Status__c', 'optimizationStatus', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_Platelet_Rounds__c', 'plateletRounds', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_Pending_Action__c', 'pendingAction', MAPPING_TYPE.direct);
-      mappingConfig.addFieldConfig('sked_Pending_Action_Reason_Code__c', 'pendingActionReasonCode', MAPPING_TYPE.direct);
+      mappingConfig.addFieldConfig('sked_Pending_Action_Reason_Code__c', 'pendingActionReasonCode', MAPPING_TYPE.multiPicklist);
       mappingConfig.addFieldConfig('sked_Plasma_Projected_Procedures__c', 'plasmaProjectedProcedures', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_Platelet_Projected_Procedures__c', 'plateletProjectedProcedures', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_Primary_Contact__c', 'primaryContactId', MAPPING_TYPE.direct);

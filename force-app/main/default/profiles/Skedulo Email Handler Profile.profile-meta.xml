@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Profile xmlns="http://soap.sforce.com/2006/04/metadata">
     <custom>true</custom>
     <userLicense>Guest User License</userLicense>
@@ -2641,17 +2641,6 @@
         <recordType>Lead.Market_Manager</recordType>
     </layoutAssignments>
     <layoutAssignments>
-        <layout>License_Usage__c-License Usage Layout</layout>
-    </layoutAssignments>
-    <layoutAssignments>
-        <layout>License_Usage__c-License Usage Layout</layout>
-        <recordType>License_Usage__c.Managed_Package</recordType>
-    </layoutAssignments>
-    <layoutAssignments>
-        <layout>License_Usage__c-License Usage Layout</layout>
-        <recordType>License_Usage__c.Salesforce_License</recordType>
-    </layoutAssignments>
-    <layoutAssignments>
         <layout>Linked_Opportunity_Drives__c-Linked Opportunity Drives Layout</layout>
     </layoutAssignments>
     <layoutAssignments>
@@ -2747,9 +2736,6 @@
     </layoutAssignments>
     <layoutAssignments>
         <layout>OrderItem-Order Product Layout</layout>
-    </layoutAssignments>
-    <layoutAssignments>
-        <layout>Package_Name__mdt-Package Name Layout</layout>
     </layoutAssignments>
     <layoutAssignments>
         <layout>PartyConsent-Party Consent Layout</layout>
@@ -3559,10 +3545,6 @@
         <visibility>Hidden</visibility>
     </tabVisibilities>
     <tabVisibilities>
-        <tab>License_Usage__c</tab>
-        <visibility>Hidden</visibility>
-    </tabVisibilities>
-    <tabVisibilities>
         <tab>Linked_Opportunity_Drives__c</tab>
         <visibility>Hidden</visibility>
     </tabVisibilities>
@@ -3904,10 +3886,6 @@
     </tabVisibilities>
     <tabVisibilities>
         <tab>slwc_Drive_Shift_Trade_Submission</tab>
-        <visibility>Hidden</visibility>
-    </tabVisibilities>
-    <tabVisibilities>
-        <tab>slwc_On_Call_Call_Out_Management</tab>
         <visibility>Hidden</visibility>
     </tabVisibilities>
     <tabVisibilities>

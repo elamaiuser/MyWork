@@ -99,8 +99,12 @@ public class GenericRelatedListController {
             
             List<String> columList = columnName.split(',');
             Map <String, Schema.SObjectType> schemaMap = Schema.getGlobalDescribe();
+            System.debug('schemaMap '+schemaMap);
+            System.debug('objName[1] '+objName[1]);
+            System.debug('schemaMap.get(objName[1]).getDescribe() '+schemaMap.get(objName[1]).getDescribe());
+            System.debug('schemaMap.get(objName[1]).getDescribe().fields.getMap() '+schemaMap.get(objName[1]).getDescribe().fields.getMap());
             Map <String, Schema.SObjectField> fieldMap = schemaMap.get(objName[1]).getDescribe().fields.getMap();
-            
+            System.debug('schemaMap'+schemaMap);
             String combineColumnName = '';
             for(Integer i = 0 ; i < filtterdArrayList.size(); i++){
                 combineColumnName += filtterdArrayList[i].trim()+',';

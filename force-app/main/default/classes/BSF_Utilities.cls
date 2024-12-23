@@ -595,8 +595,10 @@ public with sharing class BSF_Utilities {
                 }
             }
             if(action == 'Insert') {
-                opp.APT_Quantity__c = aptQuantity;
-                opp.APT_Required__c = aptQuantity > 0 ? TRUE : FALSE;
+                if(opp.Is_Template__c || opp.Site_TBD__c) {
+                    opp.APT_Quantity__c = aptQuantity;
+                    opp.APT_Required__c = aptQuantity > 0 ? TRUE : FALSE;
+                }
             } else {
                 opp.APT_Quantity__c = !opp.APT_Required__c ? 0 : (aptQuantity == 0 ? 1 : aptQuantity);
                 opp.APT_Change_Reason__c = (opp.Is_Template__c ? 'Template' : 'Opportunity') + ' APT changed by ' + userInfo.getName() + ' on '+system.now();

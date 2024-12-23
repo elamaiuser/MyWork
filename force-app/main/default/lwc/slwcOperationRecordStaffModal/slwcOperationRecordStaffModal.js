@@ -191,8 +191,8 @@ export default class SlwcOperationRecordStaffModal extends LightningElement {
     } else {
       this.model = {
         ...this.record,
-        premiumsOpPay: this.record.premiumsOpPay && this.record.premiumsOpPay.split(';') || [],
-        actualRoles: this.record.actualRoles && this.record.actualRoles.split(';') || [],
+        premiumsOpPay: this.record.premiumsOpPay || [],
+        actualRoles: this.record.actualRoles || [],
         addMealBreaksTaken: !slwcUtils.isNullOrEmpty(this.record.noOfMealBreaksTaken),
         addRestBreaksTaken: !slwcUtils.isNullOrEmpty(this.record.noOfRestBreaksTaken),
       }
@@ -465,8 +465,8 @@ export default class SlwcOperationRecordStaffModal extends LightningElement {
         ...newRecord,
         name: 'New',
         key: uniqueId('staff_'),
-        premiumsOpPay: newRecord.premiumsOpPay && newRecord.premiumsOpPay.join(';') || null,
-        actualRoles: newRecord.actualRoles && newRecord.actualRoles.join(';') || null
+        premiumsOpPay: newRecord.premiumsOpPay,
+        actualRoles: newRecord.actualRoles
       }
     }
 
@@ -487,8 +487,8 @@ export default class SlwcOperationRecordStaffModal extends LightningElement {
     if (this.validate(this.isSubmit)) {
       let newRecord = {
         ...this.model,
-        premiumsOpPay: this.model.premiumsOpPay && this.model.premiumsOpPay.join(';') || null,
-        actualRoles: this.model.actualRoles && this.model.actualRoles.join(';') || null
+        premiumsOpPay: this.model.premiumsOpPay,
+        actualRoles: this.model.actualRoles
       }
       if(!this.isEarly) {
         newRecord.earlyDepartureDateTimeReceived = null;

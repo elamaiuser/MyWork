@@ -24,10 +24,5 @@
         <operation>equals</operation>
         <value>Fixed Site</value>
     </filters>
-    <filters>
-        <field>sked_Status__c</field>
-        <operation>notEqual</operation>
-        <value>Confirmed,Complete,Cancel</value>
-    </filters>
     <label>All Fixed Site DOC_Future Date</label>
 </ListView>

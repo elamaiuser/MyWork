@@ -586,7 +586,7 @@ private class skedLocationTrigger_Test {
             update testLocation1;
         Test.stopTest();
     }
-    /*
+    
     @isTest
     static void deactivateSites_Test() {
         skedTestDataFactory testDataFactory = new skedTestDataFactory('us', 14);
@@ -697,6 +697,6 @@ private class skedLocationTrigger_Test {
             update testLocation1;
         skedSetting.instance.Admin.exavaluIntegration = FALSE;
         Test.stopTest();
-    } */
+    }
     
 }

@@ -959,43 +959,39 @@ global class slwcDriveShiftTradeService implements Callable {
         Decimal tradingStaffRecordDurationBeforeTrade = getRecordDuration(request.tradingStaffJobAllocation, request.tradingStaffNCE);
         Decimal tradingStaffRecordDurationAfterTrade = getRecordDuration(request.tradingStaffJATravelDataAfterTrade, request.requestingStaffNCE);  
         
-        if (request.requestingStaffJob != null || request.requestingStaffNCE != null) {
-            request.requestingStaffScheduledHoursBefore = requestingStaffDuration / 60;
-            request.requestingStaffScheduledHoursBefore = request.requestingStaffScheduledHoursBefore.setScale(1);
+        request.requestingStaffScheduledHoursBefore = requestingStaffDuration / 60;
+        request.requestingStaffScheduledHoursBefore = request.requestingStaffScheduledHoursBefore.setScale(1);
 
-            request.requestingStaffScheduledHoursAfter = (requestingStaffDuration - (requestingStaff_isInSameWeek ? requestingStaffRecordDurationBeforeTrade : 0) + requestingStaffRecordDurationAfterTrade) / 60;
-            request.requestingStaffScheduledHoursAfter = request.requestingStaffScheduledHoursAfter.setScale(1);
-            
-            if (request.requestingStaff.sked_Max_Hours_Per_Week__c != null) {
-                if (request.requestingStaffScheduledHoursAfter > request.requestingStaff.sked_Max_Hours_Per_Week__c) {
-                    request.reasonApprovalRequired.add(skedConstants.DRIVE_SHIFT_TRADE_APPROVAL_REASON_REQUESTING_STAFF_EXCEEDS_MAX_HOUR);
-                }
-            }
-            
-            if (request.requestingStaff.sked_Min_Hours_Per_Week__c != null) {
-                if (request.requestingStaffScheduledHoursAfter < request.requestingStaffScheduledHoursBefore) {
-                    request.requestingStaffGuaranteedMinHrsForfeited = TRUE;
-                }
+        request.requestingStaffScheduledHoursAfter = (requestingStaffDuration - (requestingStaff_isInSameWeek ? requestingStaffRecordDurationBeforeTrade : 0) + requestingStaffRecordDurationAfterTrade) / 60;
+        request.requestingStaffScheduledHoursAfter = request.requestingStaffScheduledHoursAfter.setScale(1);
+        
+        if (request.requestingStaff.sked_Max_Hours_Per_Week__c != null) {
+            if (request.requestingStaffScheduledHoursAfter > request.requestingStaff.sked_Max_Hours_Per_Week__c) {
+                request.reasonApprovalRequired.add(skedConstants.DRIVE_SHIFT_TRADE_APPROVAL_REASON_REQUESTING_STAFF_EXCEEDS_MAX_HOUR);
             }
         }
         
-        if (request.requestingStaffJob != null || request.requestingStaffNCE != null) {
-            request.tradingStaffScheduledHoursBefore = tradingStaffDuration / 60;
-            request.tradingStaffScheduledHoursBefore = request.tradingStaffScheduledHoursBefore.setScale(1);
-
-            request.tradingStaffScheduledHoursAfter = (tradingStaffDuration - (tradingStaff_isInSameWeek ? tradingStaffRecordDurationBeforeTrade : 0) + tradingStaffRecordDurationAfterTrade) / 60;
-            request.tradingStaffScheduledHoursAfter = request.tradingStaffScheduledHoursAfter.setScale(1);
-
-            if (request.tradingStaff.sked_Max_Hours_Per_Week__c != null) {
-                if (request.tradingStaffScheduledHoursAfter > request.tradingStaff.sked_Max_Hours_Per_Week__c) {
-                    request.reasonApprovalRequired.add(skedConstants.DRIVE_SHIFT_TRADE_APPROVAL_REASON_TRADING_STAFF_EXCEEDS_MAX_HOUR);
-                }
+        if (request.requestingStaff.sked_Min_Hours_Per_Week__c != null) {
+            if (request.requestingStaffScheduledHoursAfter < request.requestingStaffScheduledHoursBefore) {
+                request.requestingStaffGuaranteedMinHrsForfeited = TRUE;
             }
-            
-            if (request.tradingStaff.sked_Min_Hours_Per_Week__c != null) {
-                if (request.tradingStaffScheduledHoursAfter < request.tradingStaffScheduledHoursBefore) {
-                    request.tradingStaffGuaranteedMinHrsForfeited = TRUE;
-                }
+        }
+    
+        request.tradingStaffScheduledHoursBefore = tradingStaffDuration / 60;
+        request.tradingStaffScheduledHoursBefore = request.tradingStaffScheduledHoursBefore.setScale(1);
+
+        request.tradingStaffScheduledHoursAfter = (tradingStaffDuration - (tradingStaff_isInSameWeek ? tradingStaffRecordDurationBeforeTrade : 0) + tradingStaffRecordDurationAfterTrade) / 60;
+        request.tradingStaffScheduledHoursAfter = request.tradingStaffScheduledHoursAfter.setScale(1);
+
+        if (request.tradingStaff.sked_Max_Hours_Per_Week__c != null) {
+            if (request.tradingStaffScheduledHoursAfter > request.tradingStaff.sked_Max_Hours_Per_Week__c) {
+                request.reasonApprovalRequired.add(skedConstants.DRIVE_SHIFT_TRADE_APPROVAL_REASON_TRADING_STAFF_EXCEEDS_MAX_HOUR);
+            }
+        }
+        
+        if (request.tradingStaff.sked_Min_Hours_Per_Week__c != null) {
+            if (request.tradingStaffScheduledHoursAfter < request.tradingStaffScheduledHoursBefore) {
+                request.tradingStaffGuaranteedMinHrsForfeited = TRUE;
             }
         }
     }
@@ -1034,15 +1030,15 @@ global class slwcDriveShiftTradeService implements Callable {
         boolean isRequestingStaffHasRequiredTags = true;
         boolean isTradingStaffQualified = true;
         boolean isTradingStaffHasRequiredTags = true;
-        boolean isRequestingStaffQualified = true;        
+        boolean isRequestingStaffQualified = true;
 
         if (request.requestingStaffJob != null && request.tradingStaff != null) {    
-            isRequestingStaffHasRequiredTags = requiredTagChecking(request.requestingStaffJobAssignedTagIds, request.requestingStaffJob, request.requestingStaff);            
-            isTradingStaffQualified = requiredTagChecking(request.requestingStaffJobAssignedTagIds, request.requestingStaffJob, request.tradingStaff);            
+            isRequestingStaffHasRequiredTags = requiredTagChecking(request.requestingStaffJobAssignedTagIds, request.requestingStaffJob, request.requestingStaff);                  
+            isTradingStaffQualified = requiredTagChecking(request.requestingStaffJobAssignedTagIds, request.requestingStaffJob, request.tradingStaff);
         }
         if (request.tradingStaffJob != null) {  
-            isTradingStaffHasRequiredTags = requiredTagChecking(request.tradingStaffJobAssignedTagIds, request.tradingStaffJob, request.tradingStaff);            
-            isRequestingStaffQualified = requiredTagChecking(request.tradingStaffJobAssignedTagIds, request.tradingStaffJob, request.requestingStaff);            
+            isTradingStaffHasRequiredTags = requiredTagChecking(request.tradingStaffJobAssignedTagIds, request.tradingStaffJob, request.tradingStaff);                      
+            isRequestingStaffQualified = requiredTagChecking(request.tradingStaffJobAssignedTagIds, request.tradingStaffJob, request.requestingStaff);           
         }
         if(!isRequestingStaffHasRequiredTags || !isRequestingStaffQualified) {
             request.reasonApprovalRequired.add(skedConstants.DRIVE_SHIFT_TRADE_APPROVAL_REASON_REQUESTING_STAFF_MISSING_ROLE);
@@ -1060,13 +1056,13 @@ global class slwcDriveShiftTradeService implements Callable {
                 if (resourceTag.sked_Start_Date__c <= job.sked_Drive__r.sked_Drive_Date__c) {
                     tagIds.add(resourceTag.sked__Tag__c);
                 }                
-            }            
+            }
             
             for (Id jobAssignedTagId : jobAssignedTagIds) {
                 if (!tagIds.contains(jobAssignedTagId)) {
                     isValid = FALSE;
                     break;
-                }                
+                }
             }
         }
         return isValid;

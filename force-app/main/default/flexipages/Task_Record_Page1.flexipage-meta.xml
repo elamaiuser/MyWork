@@ -84,7 +84,7 @@
                 <identifier>c_bsfTaskChecklist</identifier>
             </componentInstance>
         </itemInstances>
-        <name>Facet-40a2bfee-8e10-4ff1-802d-235cb155dccf</name>
+        <name>Facet-0a1ea5c3-10d2-4ca2-a224-b5fc3d2643aa</name>
         <type>Facet</type>
     </flexiPageRegions>
     <flexiPageRegions>
@@ -124,7 +124,7 @@
             <componentInstance>
                 <componentInstanceProperties>
                     <name>body</name>
-                    <value>Facet-40a2bfee-8e10-4ff1-802d-235cb155dccf</value>
+                    <value>Facet-0a1ea5c3-10d2-4ca2-a224-b5fc3d2643aa</value>
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>title</name>

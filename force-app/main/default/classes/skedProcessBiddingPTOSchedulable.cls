@@ -60,7 +60,6 @@ global class skedProcessBiddingPTOSchedulable implements Schedulable {
     public void expireOutdatedRequests() {
         Date dateToAutoExpire = System.today().addDays(-skedSetting.instance.Admin.numAutoExpireDays);
         Set<String> unavailabilityTypes = skedWorkdayUtils.getUnavailabilityTypesToSync();
-        system.debug('unavailabilityTypes '+unavailabilityTypes);
 
         List<sked__Availability__c> availabilitiesToUpdate = [
             SELECT Id, sked_Custom_Status__c

@@ -11,5 +11,15 @@
     <columns>sked_Travel_Time_Breakdown_JSON__c</columns>
     <columns>sked_Travel_Time_Breakdown_JSON_2__c</columns>
     <filterScope>Everything</filterScope>
+    <filters>
+        <field>sked_Collection_Operation__c</field>
+        <operation>contains</operation>
+        <value>Salt Lake</value>
+    </filters>
+    <filters>
+        <field>sked_Post_Migration_Processed__c</field>
+        <operation>equals</operation>
+        <value>0</value>
+    </filters>
     <label>All</label>
 </ListView>

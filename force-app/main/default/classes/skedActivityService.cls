@@ -89,7 +89,7 @@ global class skedActivityService extends skedEventService {
             }
         }
         
-        if (!skedActivityColOpToInsert.isEmpty()) {
+        if (skedActivityColOpToInsert != NULL && !skedActivityColOpToInsert.isEmpty()) {
             insert skedActivityColOpToInsert;
         }
     }

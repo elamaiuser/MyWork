@@ -3,25 +3,16 @@
     <fullName>Workday_API_Requests</fullName>
     <columns>NAME</columns>
     <columns>sked__Summary__c</columns>
-    <columns>sked__Message__c</columns>
     <columns>sked_Resource__c</columns>
+    <columns>sked_Status_Code__c</columns>
+    <columns>sked__Message__c</columns>
+    <columns>sked_Response__c</columns>
     <columns>CREATED_DATE</columns>
-    <columns>CREATEDBY_USER</columns>
     <filterScope>Everything</filterScope>
     <filters>
         <field>sked__Type__c</field>
         <operation>equals</operation>
         <value>Workday API Request</value>
-    </filters>
-    <filters>
-        <field>CREATED_DATE</field>
-        <operation>greaterOrEqual</operation>
-        <value>11/16/2024 12:00 AM</value>
-    </filters>
-    <filters>
-        <field>CREATEDBY_USER</field>
-        <operation>equals</operation>
-        <value>Automated Process</value>
     </filters>
     <label>Workday API Requests</label>
 </ListView>

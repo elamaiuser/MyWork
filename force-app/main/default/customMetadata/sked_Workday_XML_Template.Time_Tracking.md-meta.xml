@@ -8,7 +8,7 @@
     </values>
     <values>
         <field>sked_Endpoint__c</field>
-        <value xsi:type="xsd:string">https://services1.myworkday.com/ccx/service/americanredcross/Time_Tracking/v42.2</value>
+        <value xsi:type="xsd:string">https://wd2-impl-services1.workday.com/ccx/service/americanredcross5/Time_Tracking/</value>
     </values>
     <values>
         <field>sked_Namespace__c</field>
@@ -16,10 +16,14 @@
     </values>
     <values>
         <field>sked_Template__c</field>
-        <value xsi:nil="true"/>
+        <value xsi:type="xsd:string">https://wd2-impl-services1.workday.com/ccx/api/v1/americanredcross5
+
+
+
+https://wd2-impl-services1.workday.com/ccx/service/americanredcross5/Time_Tracking/</value>
     </values>
     <values>
         <field>sked_Version__c</field>
-        <value xsi:type="xsd:string">v36.2</value>
+        <value xsi:type="xsd:string">v42.2</value>
     </values>
 </CustomMetadata>

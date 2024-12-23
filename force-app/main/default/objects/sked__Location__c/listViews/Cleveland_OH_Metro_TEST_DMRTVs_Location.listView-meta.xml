@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Cleveland_OH_Metro_TEST_DMRTVs_Location</fullName>
+    <filterScope>Queue</filterScope>
+    <label>Cleveland OH Metro TEST: DMRTVs</label>
+    <queue>Cleveland_OH_Metro_TEST_DMRTVs</queue>
+    <sharedTo>
+        <allInternalUsers />
+    </sharedTo>
+</ListView>

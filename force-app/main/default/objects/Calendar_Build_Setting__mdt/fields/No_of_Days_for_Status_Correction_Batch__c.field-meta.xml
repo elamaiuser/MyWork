@@ -3,7 +3,7 @@
     <fullName>No_of_Days_for_Status_Correction_Batch__c</fullName>
     <externalId>false</externalId>
     <fieldManageability>DeveloperControlled</fieldManageability>
-    <inlineHelpText>Number of days after drive completion (excluding Complete/Cancel Drives)</inlineHelpText>
+    <inlineHelpText>Configured number of Days after Drive Completion for Drive Status Correction Batch</inlineHelpText>
     <label>No. of Days for Status Correction Batch</label>
     <precision>18</precision>
     <required>false</required>

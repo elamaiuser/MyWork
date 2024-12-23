@@ -314,15 +314,11 @@ private class skedNotificationGenerationBatch_Test {
         model.usePtoForCallOut = false;
         model.hasTimeOffPlans = false;
         slwcResourceService.saveCallOut(model);
-        
-        sked__Availability__c callOutAvailForJA1 = [SELECT Id
-                                                    FROM sked__Availability__c
-                                                    WHERE sked_Call_Out_for_Job_Allocation__c = :testJobAllocation1.Id];
 
         skedNotificationBatchBase.driveLeadCalloutEmailTargetDestination cmp = new skedNotificationBatchBase.driveLeadCalloutEmailTargetDestination();
-        cmp.process(new Set<Id>{callOutAvailForJA1.Id}, null);
+        cmp.process(new Set<Id>{testJobAllocation1.Id}, null);
         skedNotificationBatchBase.driveLeadCalloutOneOffTargetDestination cmp2 = new skedNotificationBatchBase.driveLeadCalloutOneOffTargetDestination();
-        cmp.process(new Set<Id>{callOutAvailForJA1.Id}, null);
+        cmp.process(new Set<Id>{testJobAllocation1.Id}, null);
 
         Test.stopTest();
     }

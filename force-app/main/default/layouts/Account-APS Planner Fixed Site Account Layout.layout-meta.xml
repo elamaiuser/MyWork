@@ -424,6 +424,7 @@
         <sortOrder>Desc</sortOrder>
     </relatedLists>
     <relatedLists>
+        <excludeButtons>New</excludeButtons>
         <fields>Contact__c</fields>
         <fields>Account_Service_Role__c</fields>
         <fields>Start_Date__c</fields>

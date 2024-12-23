@@ -1,0 +1,10 @@
+A new Drive Shift Trade request has been submitted and requires approval.
+
+Details:
+DST Name: {!sked_Drive_Shift_Trade__c.Name}
+Requesting Staff Assignment: {!sked_Drive_Shift_Trade__c.sked_Requesting_Staff_Trading_Event_Name__c}
+Requesting Staff Trading Event Date: {!sked_Drive_Shift_Trade__c.sked_Requesting_Staff_Trading_Event_Date__c}
+Trading Staff Assignment: {!sked_Drive_Shift_Trade__c.sked_Trading_Staff_Trading_Event_Name__c}
+Trading Staff Trading Event Date: {!sked_Drive_Shift_Trade__c.sked_Trading_Staff_Trading_Event_Date__c}
+
+Please go to Scheduling Console to review.

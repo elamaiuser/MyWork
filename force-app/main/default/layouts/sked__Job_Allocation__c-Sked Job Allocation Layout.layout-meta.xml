@@ -107,12 +107,8 @@
                 <field>sked_Travel_Time_Back__c</field>
             </layoutItems>
             <layoutItems>
-                <behavior>Readonly</behavior>
-                <field>JA_Created_Date_Time__c</field>
-            </layoutItems>
-            <layoutItems>
-                <behavior>Readonly</behavior>
-                <field>JA_Last_Modified_Date_Time__c</field>
+                <behavior>Edit</behavior>
+                <field>sked_Completed_Post_Processes__c</field>
             </layoutItems>
         </layoutColumns>
         <layoutColumns>
@@ -196,6 +192,14 @@
             </layoutItems>
             <layoutItems>
                 <behavior>Edit</behavior>
+                <field>sked_Guarded__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Readonly</behavior>
+                <field>sked_Is_Locked__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
                 <field>sked_DOT__c</field>
             </layoutItems>
             <layoutItems>
@@ -276,15 +280,15 @@
             </layoutItems>
             <layoutItems>
                 <behavior>Edit</behavior>
+                <field>sked_Call_Out_Notice__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
                 <field>sked_Date_Call_Out_Received__c</field>
             </layoutItems>
             <layoutItems>
                 <behavior>Edit</behavior>
                 <field>sked_Time_Call_Out_Received__c</field>
-            </layoutItems>
-            <layoutItems>
-                <behavior>Edit</behavior>
-                <field>sked_Call_Out_Notice__c</field>
             </layoutItems>
         </layoutColumns>
         <style>TwoColumnsLeftToRight</style>

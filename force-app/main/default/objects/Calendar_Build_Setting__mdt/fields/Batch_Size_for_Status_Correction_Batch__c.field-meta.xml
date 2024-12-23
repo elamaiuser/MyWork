@@ -3,6 +3,7 @@
     <fullName>Batch_Size_for_Status_Correction_Batch__c</fullName>
     <externalId>false</externalId>
     <fieldManageability>DeveloperControlled</fieldManageability>
+    <inlineHelpText>Configured batch size for drive status correction batch</inlineHelpText>
     <label>Batch Size for Status Correction Batch</label>
     <precision>18</precision>
     <required>false</required>

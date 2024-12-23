@@ -120,7 +120,7 @@ export default [
       {
         label: 'Additional Roles',
         value: (item) => {
-          return item.additionalRoles ? item.additionalRoles.split(';').join(', ') : null
+          return (item.additionalRoles || []).join(', ')
         },
         type: CALENDAR_FIELD_TYPE.TEXT,
         isHeader: false,
@@ -243,7 +243,7 @@ export default [
       },
       {
         value: (item) => {
-          return item.additionalRoles ? item.additionalRoles.split(';').join(', ') : null
+          return (item.additionalRoles || []).join(', ');
         },
         type: CALENDAR_FIELD_TYPE.TEXT,
       },

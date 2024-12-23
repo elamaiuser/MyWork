@@ -1,12 +1,3 @@
-/**
- * @Description:  This class is called for syncing Template Order to Opportunity.
-
- * Modification Log 
- * Date					     Developer Name			     Comments
- ********************************************************************************************************************************************************************
- * 11/13/2024				 Barnojit Sharma		     Unable to create Mobile Drive when the Template has an over-budget template order (Logic for HRP-13716)
- *********************************************************************************************************************************************************************
-**/
 public without sharing class OrderCloningService  implements Callable{
     public static Object call(String methodName, Map<String, Object> params) {
         skedProcessEventResult result = new skedProcessEventResult();
@@ -105,7 +96,7 @@ public without sharing class OrderCloningService  implements Callable{
                                                 AND Publicity_Submitted__c = false
                                                 AND OpportunityId IN :oppIdsHavingOrder];
                 if(!existingOrders.isEmpty()){
-                    TriggerHandler.bypass('OrderService');
+                    TriggerHandler.bypass('OrderTriggerHandler');
                     Database.DeleteResult[] deleteResult = Database.delete(existingOrders,false);
                     TriggerHandler.clearAllBypasses();
                     errorLog.addAll(BSF_Utilities.createErrorLog(
@@ -174,7 +165,6 @@ public without sharing class OrderCloningService  implements Callable{
             result.Publicity_Approved_Date__c = null;
             result.Publicity_Submitted_By__c = null;
             result.Publicity_Submitted_Date__c = null;
-            result.BudgetCurrency__c = null;
             result.OpportunityId = oppId;
             result.Id = null;
         }

@@ -141,10 +141,6 @@
         <type>ConnectedApp</type>
     </appMenuItems>
     <appMenuItems>
-        <name>standard__LightningInstrumentation</name>
-        <type>CustomApplication</type>
-    </appMenuItems>
-    <appMenuItems>
         <name>MobileAdmin_Android</name>
         <type>ConnectedApp</type>
     </appMenuItems>
@@ -211,13 +207,5 @@
     <appMenuItems>
         <name>dlrs__DeclarativeLookupRollupSummaries2</name>
         <type>CustomApplication</type>
-    </appMenuItems>
-    <appMenuItems>
-        <name>Copy_Storm_User</name>
-        <type>ConnectedApp</type>
-    </appMenuItems>
-    <appMenuItems>
-        <name>EDW_Informatica_User</name>
-        <type>ConnectedApp</type>
     </appMenuItems>
 </AppMenu>

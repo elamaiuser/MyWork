@@ -392,12 +392,22 @@ public class skedWorkdayUtils implements Callable {
         debugLog.sked_Response__c = result.response;
         debugLog.sked__Message__c = result.message;
         debugLog.sked_Resource__c = availabilityRecord.sked__Resource__c;
+        debugLog.sked_Status_Code__c = result.statusCode;
 
         if (!result.isSuccess) {
-            debugLog.sked_Category__c = result.statusCode == 500 ? skedConstants.DEBUG_LOG_CATEGORY_VALIDATION_ERROR : skedConstants.DEBUG_LOG_CATEGORY_SYSTEM_ERROR;
+            debugLog.sked_Category__c = getErrorCategory(result.statusCode);
         }
         
         return debugLog;
+    }
+
+    public static String getErrorCategory(Integer statusCode) {
+        if (statusCode >= 500 && statusCode <= 599) {
+            return skedConstants.DEBUG_LOG_CATEGORY_VALIDATION_ERROR;
+        } else if (statusCode >= 400 && statusCode <= 499) {
+            return skedConstants.DEBUG_LOG_CATEGORY_SYSTEM_ERROR;
+        }
+        return null;
     }
 
     public class workdayAdjustmentsContainer {

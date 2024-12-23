@@ -4,8 +4,8 @@
     <assignments>
         <name>Assign_Selected_Start_and_End_Times</name>
         <label>Assign Selected Start and End Times</label>
-        <locationX>1077</locationX>
-        <locationY>287</locationY>
+        <locationX>1106</locationX>
+        <locationY>283</locationY>
         <assignmentItems>
             <assignToReference>varSelectedStartTime</assignToReference>
             <operator>Assign</operator>
@@ -238,8 +238,8 @@
     <decisions>
         <name>Is_End_Time_LessThan_Or_EqualTo_Start_Time</name>
         <label>Is End Time &lt;= Start Time</label>
-        <locationX>1070</locationX>
-        <locationY>443</locationY>
+        <locationX>1071</locationX>
+        <locationY>405</locationY>
         <defaultConnector>
             <targetReference>Final_Confirmation</targetReference>
         </defaultConnector>
@@ -349,7 +349,6 @@
             <label>End Flow</label>
         </rules>
     </decisions>
-    <description>HRP-12639</description>
     <dynamicChoiceSets>
         <name>AcceptsAutomation</name>
         <dataType>Picklist</dataType>
@@ -752,6 +751,11 @@
         <expression>BLANKVALUE({!varSelectedDriveName},&#39;&#39;)</expression>
     </formulas>
     <formulas>
+        <name>varAccountAcceptsAutomation</name>
+        <dataType>String</dataType>
+        <expression>if(OR(ISPICKVAL({!Get_Account.Accepts_Automation2__c}, &#39;No&#39;), ISPICKVAL({!Get_Account.Accepts_Automation2__c}, &#39;&#39;)), &#39;No&#39;, &#39;Yes&#39;)</expression>
+    </formulas>
+    <formulas>
         <description>Ensures to return 0 if double red procedure is null</description>
         <name>varDoubleRedProcedure</name>
         <dataType>Number</dataType>
@@ -951,6 +955,9 @@
             </value>
         </inputAssignments>
         <inputAssignments>
+            <field>Web_Scheduling_Start_Time__c</field>
+        </inputAssignments>
+        <inputAssignments>
             <field>X2RBC_Projected_Procedures__c</field>
             <value>
                 <elementReference>varDoubleRedProcedure</elementReference>
@@ -963,7 +970,7 @@
         <name>Get_Account</name>
         <label>Get Account</label>
         <locationX>266</locationX>
-        <locationY>256</locationY>
+        <locationY>255</locationY>
         <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
         <connector>
             <targetReference>Get_Location_Account</targetReference>
@@ -1073,8 +1080,8 @@
     <recordLookups>
         <name>Get_Site_Physical_Location_Type</name>
         <label>Get Site Physical Location Type</label>
-        <locationX>1387</locationX>
-        <locationY>27</locationY>
+        <locationX>1377</locationX>
+        <locationY>31</locationY>
         <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
         <connector>
             <targetReference>Create_New_Drive</targetReference>
@@ -1097,8 +1104,8 @@
     <screens>
         <name>Create_New_Drive</name>
         <label>Create New Drive</label>
-        <locationX>942</locationX>
-        <locationY>238</locationY>
+        <locationX>941</locationX>
+        <locationY>237</locationY>
         <allowBack>true</allowBack>
         <allowFinish>true</allowFinish>
         <allowPause>false</allowPause>
@@ -1145,7 +1152,7 @@
                 </fields>
                 <fields>
                     <name>Accepts_Automation</name>
-                    <fieldText>&lt;p&gt;&lt;b&gt;Accepts Automation&lt;/b&gt; :{!varAcceptsAutomation}&lt;/p&gt;</fieldText>
+                    <fieldText>&lt;p&gt;&lt;strong&gt;Accepts Automation&lt;/strong&gt; : {!varAccountAcceptsAutomation}&lt;/p&gt;</fieldText>
                     <fieldType>DisplayText</fieldType>
                 </fields>
                 <fields>
@@ -1179,9 +1186,6 @@
                 <fields>
                     <name>Whole_Blood_Procedures1</name>
                     <dataType>Number</dataType>
-                    <defaultValue>
-                        <elementReference>varSelectedTemplateWBProceduresProjected</elementReference>
-                    </defaultValue>
                     <fieldText>Whole Blood Procedures</fieldText>
                     <fieldType>InputField</fieldType>
                     <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
@@ -1202,7 +1206,7 @@
                     <name>Double_Red_Procedures</name>
                     <dataType>Number</dataType>
                     <defaultValue>
-                        <elementReference>varSelectedTemplatedProjectedReds</elementReference>
+                        <numberValue>0.0</numberValue>
                     </defaultValue>
                     <fieldText>Double Red Procedures</fieldText>
                     <fieldType>InputField</fieldType>
@@ -1366,7 +1370,7 @@ REGEX( {!Drive_Keyword}, &quot;[a-zA-Z0-9 ]+&quot;)</formulaExpression>
     <screens>
         <name>Create_New_Mobile_Drive</name>
         <label>Plan New Mobile Drive</label>
-        <locationX>784</locationX>
+        <locationX>773</locationX>
         <locationY>283</locationY>
         <allowBack>true</allowBack>
         <allowFinish>true</allowFinish>
@@ -1435,8 +1439,8 @@ REGEX( {!Drive_Keyword}, &quot;[a-zA-Z0-9 ]+&quot;)</formulaExpression>
     <screens>
         <name>End_Time_Cannot_be_Less_Than_Start_Time</name>
         <label>End Time Cannot be Less Than Start Time</label>
-        <locationX>1076</locationX>
-        <locationY>599</locationY>
+        <locationX>1074</locationX>
+        <locationY>560</locationY>
         <allowBack>true</allowBack>
         <allowFinish>false</allowFinish>
         <allowPause>false</allowPause>
@@ -1549,13 +1553,13 @@ REGEX( {!Drive_Keyword}, &quot;[a-zA-Z0-9 ]+&quot;)</formulaExpression>
         <name>No_Sites_Found_Text</name>
         <label>No Sites Found</label>
         <locationX>683</locationX>
-        <locationY>49</locationY>
+        <locationY>50</locationY>
         <allowBack>true</allowBack>
         <allowFinish>true</allowFinish>
         <allowPause>false</allowPause>
         <fields>
             <name>No_Site_Found_Text</name>
-            <fieldText>&lt;p&gt;&lt;span style=&quot;color: rgb(250, 16, 24); font-family: -apple-system, BlinkMacSystemFont, &amp;quot;Segoe UI&amp;quot;, Roboto, &amp;quot;Noto Sans&amp;quot;, Ubuntu, &amp;quot;Droid Sans&amp;quot;, &amp;quot;Helvetica Neue&amp;quot;, sans-serif; font-size: 14px; background-color: rgb(255, 255, 255);&quot;&gt;There are no active sites found for this account. Please associate an &quot;&lt;/span&gt;&lt;strong style=&quot;color: rgb(250, 16, 24); font-family: -apple-system, BlinkMacSystemFont, &amp;quot;Segoe UI&amp;quot;, Roboto, &amp;quot;Noto Sans&amp;quot;, Ubuntu, &amp;quot;Droid Sans&amp;quot;, &amp;quot;Helvetica Neue&amp;quot;, sans-serif; font-size: 14px; background-color: rgb(255, 255, 255);&quot;&gt;active&lt;/strong&gt;&lt;span style=&quot;color: rgb(250, 16, 24); font-family: -apple-system, BlinkMacSystemFont, &amp;quot;Segoe UI&amp;quot;, Roboto, &amp;quot;Noto Sans&amp;quot;, Ubuntu, &amp;quot;Droid Sans&amp;quot;, &amp;quot;Helvetica Neue&amp;quot;, sans-serif; font-size: 14px; background-color: rgb(255, 255, 255);&quot;&gt;&quot; site in order to proceed.&lt;/span&gt;&lt;/p&gt;</fieldText>
+            <fieldText>&lt;p&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-size: 14px; font-family: -apple-system, BlinkMacSystemFont, &amp;quot;Segoe UI&amp;quot;, Roboto, &amp;quot;Noto Sans&amp;quot;, Ubuntu, &amp;quot;Droid Sans&amp;quot;, &amp;quot;Helvetica Neue&amp;quot;, sans-serif; color: rgb(250, 16, 24);&quot;&gt;There are no active sites found for this account. Please associate an &quot;&lt;/span&gt;&lt;strong style=&quot;background-color: rgb(255, 255, 255); font-size: 14px; font-family: -apple-system, BlinkMacSystemFont, &amp;quot;Segoe UI&amp;quot;, Roboto, &amp;quot;Noto Sans&amp;quot;, Ubuntu, &amp;quot;Droid Sans&amp;quot;, &amp;quot;Helvetica Neue&amp;quot;, sans-serif; color: rgb(250, 16, 24);&quot;&gt;active&lt;/strong&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-size: 14px; font-family: -apple-system, BlinkMacSystemFont, &amp;quot;Segoe UI&amp;quot;, Roboto, &amp;quot;Noto Sans&amp;quot;, Ubuntu, &amp;quot;Droid Sans&amp;quot;, &amp;quot;Helvetica Neue&amp;quot;, sans-serif; color: rgb(250, 16, 24);&quot;&gt;&quot; site in order to proceed.&lt;/span&gt;&lt;/p&gt;</fieldText>
             <fieldType>DisplayText</fieldType>
         </fields>
         <showFooter>true</showFooter>
@@ -1729,9 +1733,12 @@ REGEX( {!Drive_Keyword}, &quot;[a-zA-Z0-9 ]+&quot;)</formulaExpression>
         <name>varSelectedTemplatedProjectedReds</name>
         <dataType>Number</dataType>
         <isCollection>false</isCollection>
-        <isInput>true</isInput>
+        <isInput>false</isInput>
         <isOutput>false</isOutput>
         <scale>8</scale>
+        <value>
+            <numberValue>0.0</numberValue>
+        </value>
     </variables>
     <variables>
         <name>varSelectedTemplateDriveKeyWord</name>
@@ -1800,9 +1807,12 @@ REGEX( {!Drive_Keyword}, &quot;[a-zA-Z0-9 ]+&quot;)</formulaExpression>
         <name>varSelectedTemplateWBProceduresProjected</name>
         <dataType>Number</dataType>
         <isCollection>false</isCollection>
-        <isInput>true</isInput>
+        <isInput>false</isInput>
         <isOutput>false</isOutput>
         <scale>0</scale>
+        <value>
+            <numberValue>0.0</numberValue>
+        </value>
     </variables>
     <variables>
         <description>Indicates whether site address is valid or not</description>

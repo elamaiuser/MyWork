@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Pomona_CA_DCRs1_sked_Drive_Change_Request</fullName>
+    <filterScope>Queue</filterScope>
+    <label>Pomona CA: DCRs</label>
+    <queue>Pomona_CA_DCRs1</queue>
+    <sharedTo>
+        <allInternalUsers />
+    </sharedTo>
+</ListView>

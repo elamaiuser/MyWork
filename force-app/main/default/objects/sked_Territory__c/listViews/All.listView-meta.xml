@@ -10,5 +10,10 @@
     <columns>UPDATEDBY_USER</columns>
     <columns>LAST_UPDATE</columns>
     <filterScope>Everything</filterScope>
+    <filters>
+        <field>NAME</field>
+        <operation>equals</operation>
+        <value>Western PA test</value>
+    </filters>
     <label>All</label>
 </ListView>

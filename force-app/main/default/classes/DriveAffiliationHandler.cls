@@ -101,11 +101,10 @@ public without sharing class DriveAffiliationHandler{
     @TestVisible
     private List<Drive_Marketing_Programs__c> cloneDriveAffiliation(String oppId){
         List<Drive_Marketing_Programs__c> affiliationList = new List<Drive_Marketing_Programs__c>();
-        if(driveAffiliationMap.get(templateMap.get(oppId)) != NULL) {
             for(Drive_Marketing_Programs__c affiliation : driveAffiliationMap.get(templateMap.get(oppId)))
-                affiliationList.add(cloneDriveAffiliation(oppId,affiliation));
-        }   
-        return affiliationList;
+                    affiliationList.add(cloneDriveAffiliation(oppId,affiliation));
+
+            return affiliationList;
     }
 
     @TestVisible

@@ -65,6 +65,10 @@ AND skedHC__Availability__r.sked_Custom_Status__c = &#39;Pending&#39;</value>
         <value xsi:type="xsd:string">NOTIFICATION: Drive {{sked_Drive__r.Name}}</value>
     </values>
     <values>
+        <field>sked_Target_Field_Prev_Value__c</field>
+        <value xsi:nil="true" />
+    </values>
+    <values>
         <field>sked_Target_Field_Value__c</field>
         <value xsi:nil="true" />
     </values>

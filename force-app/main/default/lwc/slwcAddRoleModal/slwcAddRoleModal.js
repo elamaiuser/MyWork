@@ -45,7 +45,7 @@ export default class SlwcAddRoleModal extends LightningElement {
         };
         
         if(this.jobAllocation && this.jobAllocation.additionalRoles) {
-            this.model.rolesSelected = (this.jobAllocation.additionalRoles.split(";") || []).map(this.buildOption);
+            this.model.rolesSelected = (this.jobAllocation.additionalRoles || []).map(this.buildOption);
         }
     }
 
@@ -60,7 +60,7 @@ export default class SlwcAddRoleModal extends LightningElement {
     buildRoleOptions() {
         if(!this.resource || !this.resource.roles) return [];
 
-        return this.resource.roles.split(";")
+        return (this.resource.roles || [])
             .filter(item => item !== this.jobAllocation.resourceRole)
             .map(this.buildOption)
     }
@@ -74,7 +74,6 @@ export default class SlwcAddRoleModal extends LightningElement {
             detail: {
                 roles: this.model.rolesSelected
                     .map(item => item.value)
-                    .join(";")
             }
         }));
         this.closeModal();

@@ -32,10 +32,21 @@
                 <label>Sunset</label>
             </value>
             <value>
+                <fullName>Test2</fullName>
+                <default>false</default>
+                <label>Test2</label>
+            </value>
+            <value>
                 <fullName>Recapture</fullName>
                 <default>false</default>
                 <isActive>false</isActive>
                 <label>Recapture</label>
+            </value>
+            <value>
+                <fullName>Test</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Test</label>
             </value>
         </valueSetDefinition>
     </valueSet>

@@ -1,6 +1,11 @@
 global class BSF_Batch_TaskRename implements Database.Batchable<sObject>{
 	public String query;
     public Map<String,String> subjectRenameMap;
+	/*public List<String> statusToExclude = new List<String>{'Completed','Inactive'};
+	public List<String> whatIds = new List<String>{'123456789012345'};
+	public Map<String,String> renameMap = new Map<String,String>{
+		'123456789012345' => 'New Task Name'
+	};*/
 	global BSF_Batch_TaskRename(List<String> statusToExclude, List<String> whatIds, Map<String,String> renameMap){
 		if(renameMap != null && !renameMap.isEmpty()){
             this.query = 'SELECT Id, Subject FROM Task WHERE Subject IN (\''+String.join(new List<String>(renameMap.keySet()),'\',\'')+'\')';
