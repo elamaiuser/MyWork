@@ -2101,10 +2101,9 @@ class MobileGenerator extends BaseGenerator {
   handleDriveShiftsMetadataChanged(driveShift = {}) {
     if (this.drive.driveShiftsMetadata) {
       this.calculateTotalProceduresProjected(this.drive.driveShiftsMetadata);
-      driveShiftMetadata.APTSetup = !isEmpty(driveShift) ? driveShift.APTSetup : this.drive.aptQuantity;
       this.drive.driveShiftsMetadata.driveShifts.forEach((driveShiftMetadata) => {
-        
         this.calculateTotalProceduresProjected(driveShiftMetadata);
+        driveShiftMetadata.APTSetup = !isEmpty(driveShift) ? driveShift.APTSetup : this.drive.aptQuantity;
         driveShiftMetadata.resourceRoleGroupRoleTimeDataMap = this.helper.calculateDriveShiftRoleTimeData(
           this.masterData, 
           this.drive, 

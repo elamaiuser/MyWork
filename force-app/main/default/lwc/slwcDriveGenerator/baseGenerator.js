@@ -720,7 +720,7 @@ class BaseGenerator {
         this.drive[property.targetName] = (/^(true|1)$/i).test(this.drive[property.targetName]);
         this.drive['aptQuantity'] = this.drive.opportunity.aptQuantity;
       }
-      if (property.targetName === 'driveShiftsMetadata') {
+      if (property.targetName === 'driveShiftsMetadata' || property.targetName === 'wbProjectedProcedures' || property.targetName === 'x2rbcProjectedProcedures') {
         this.masterData.skipAPTCalculation = false;
       }
     })
