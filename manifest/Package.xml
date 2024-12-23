@@ -38,6 +38,8 @@
 		<members>skedConstants</members>
 		<members>skedDriveHandler</members>
 		<members>skedDriveTrigger_Test</members>
+		<members>skedDriveChangeRequestHandler</members>
+        <members>skedDriveChangeRequestTrigger_Test</members>
 		<members>skedJobAllocationHandler</members>
 		<members>skedJobHandler</members>
 		<members>skedMappingConfigContainer</members>
@@ -228,7 +230,7 @@
 	</types>
 	<types>
 		<members>autoMapper</members>
-		<name>dataService</name>
+		<members>dataService</members> 
         <members>slwcConstants</members>
         <members>slwcDriveGenerator</members>
         <members>slwcDriveShift</members>
@@ -236,7 +238,7 @@
         <members>slwcDriveShiftJobTable</members>
 		<members>blwcDriveWorkSheetComponent</members>
 		<members>slwcApprovalHistoryConsole</members>
-		<name>slwcDriveCalendarActivityList</name>
+		<members>slwcDriveCalendarActivityList</members>
 		<members>slwcDriveChangeRequestApproval</members>
 		<members>slwcLinkedDriveStaffingDetails</members>
 		<members>travelTimeBreakdown</members>

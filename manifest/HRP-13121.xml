@@ -36,8 +36,8 @@
     </types>
     <types>
 		<members>autoMapper</members>
-		<name>dataService</name>
-        <name>slwcDriveCalendarActivityList</name>
+		<members>dataService</members>
+        <members>slwcDriveCalendarActivityList</members>
 	</types>
     <version>59.0</version>
 </Package>
