@@ -2108,7 +2108,7 @@ MOD(({!For_Each_Date_in_Recurring_Series} - 85) - DATE(1900, 1, 6), 7),
     <formulas>
         <name>varSelectedAptRequired</name>
         <dataType>Boolean</dataType>
-        <expression>!{!Site_TBD}</expression>
+        <expression>{!varSelectedAptQuantity} &gt; 0</expression>
     </formulas>
     <formulas>
         <name>varSelectedEndTimeNumber</name>

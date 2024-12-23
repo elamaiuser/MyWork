@@ -5,7 +5,7 @@ import { debugLogService, operationDriveLimitService, operationDriveLimitQueryMo
   staffingConstraintService, staffingConstraintQueryModel } from 'c/dataService';
 import { isNullOrEmpty, generateUUID } from 'c/slwcUtils';
 import { DateTime } from 'c/luxon';
-import { cloneDeep, difference, uniqueId, extend } from 'c/lodash';
+import { cloneDeep, difference, isEmpty, uniqueId, extend } from 'c/lodash';
 import { Fetch } from './fetch';
 import { ACCOUNT_TYPE, ACCOUNT_INDUSTRY_CODE, PROCEDURE_TYPE, DRIVE_STATUS, ASSET_TYPE, PENDING_ACTION, DRIVE_APPROVAL_STATUS, RESOURCE_TYPE, DRIVE_TYPE, DRIVE_CONTENTION, JOB_ALLOCATION_STATUS } from 'c/slwcConstants';
 
@@ -975,9 +975,10 @@ class MobileGenerator extends BaseGenerator {
 
   calculateTotalProceduresProjected(record) {
     if (!record && !this.drive) return;
+    let isShift = true;
     if (!record) {
       record = this.drive;
-      if(!record.id) this.masterData.skipAPTCalculation = true;
+      isShift = false;
     } else {
       this.drive.aptQuantity = record.APTSetup;
     }
@@ -985,6 +986,10 @@ class MobileGenerator extends BaseGenerator {
     let wbProjectedProcedures = record.wbProjectedProcedures || 0;
     record.totalProceduresProjected = x2rbcProjectedProcedures + wbProjectedProcedures;
     record.totalProductsProjected = x2rbcProjectedProcedures * 2 + wbProjectedProcedures;
+
+    if(isShift && !isEmpty(this.masterData.backupDrive?.driveShifts)) {
+      this.masterData.skipAPTCalculation = !!this.masterData.backupDrive?.driveShifts?.find(shift => shift.totalProceduresProjected === record.totalProceduresProjected);
+    }
     if(!this.masterData.skipAPTCalculation) {
       this.recalculateAPTSettings(this.drive);
     }
@@ -2096,8 +2101,9 @@ class MobileGenerator extends BaseGenerator {
   handleDriveShiftsMetadataChanged(driveShift = {}) {
     if (this.drive.driveShiftsMetadata) {
       this.calculateTotalProceduresProjected(this.drive.driveShiftsMetadata);
+      driveShiftMetadata.APTSetup = !isEmpty(driveShift) ? driveShift.APTSetup : this.drive.aptQuantity;
       this.drive.driveShiftsMetadata.driveShifts.forEach((driveShiftMetadata) => {
-        if(!isNullOrEmpty(driveShift)) driveShiftMetadata.APTSetup = driveShift.APTSetup;
+        
         this.calculateTotalProceduresProjected(driveShiftMetadata);
         driveShiftMetadata.resourceRoleGroupRoleTimeDataMap = this.helper.calculateDriveShiftRoleTimeData(
           this.masterData, 

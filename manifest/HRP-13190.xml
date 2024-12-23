@@ -42,6 +42,10 @@
 		<name>FieldSet</name>
 	</types>
     <types>
+		<members>Create_New_Recurring_Mobile_Drive</members>
+		<name>Flow</name>
+	</types>
+    <types>
 		<members>Opportunity.Template_Opportunity</members>
 		<name>QuickAction</name>
 	</types>
