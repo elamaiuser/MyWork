@@ -19,5 +19,10 @@
         <operation>equals</operation>
         <value>sked__Location__c.sked_Fixed_Site</value>
     </filters>
+    <filters>
+        <field>sked_Collection_Operation__c</field>
+        <operation>contains</operation>
+        <value>Pomona CA</value>
+    </filters>
     <label>All Fixed Sites</label>
 </ListView>

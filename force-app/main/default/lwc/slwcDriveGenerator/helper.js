@@ -2539,6 +2539,8 @@ class DriveHelper {
     }
 
     const validateExcessStaffCapacity = (drive,masterData) => {
+      console.log('validateExcessStaffCapacity');
+      
       // Excess Staff Capacity
       let result = {
         contention: DRIVE_CONTENTION.EXCESS_STAFF_CAPACITY,
@@ -2552,8 +2554,12 @@ class DriveHelper {
         projRegisteredDonor: drive.projectedRegisteredDonors || 0,
         excessStaff: drive.excessStaffCapacity 
       }
+      console.log('result 2557 :: ',result);
+      console.log('drive.excessStaffCapacity 2557 :: ',drive.excessStaffCapacity);
+      console.log('masterData.adminSetting.excessStaffCapacityThreshold 2557 :: ',masterData.adminSetting.excessStaffCapacityThreshold);
       result.violated = drive.excessStaffCapacity >= masterData.adminSetting.excessStaffCapacityThreshold;
       result.passed = !result.violated || isContentionOverrided(drive, DRIVE_CONTENTION.EXCESS_STAFF_CAPACITY);
+      console.log('result 2560 :: ',result);
       return result;
     }
    

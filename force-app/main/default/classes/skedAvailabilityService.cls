@@ -82,7 +82,8 @@ global class skedAvailabilityService extends skedEventService {
                 queryBuilder.addCondition('sked_Finish_Date__c <= {0}', endDate);
             }
         }
-
+        system.debug('submissionStartDate :: '+submissionStartDate);
+        system.debug('submissionEndDate :: '+submissionEndDate);
         if (submissionStartDate != NULL) {
             queryBuilder.addCondition('DAY_ONLY(CreatedDate) >= {0}', submissionStartDate);
         }
@@ -94,7 +95,7 @@ global class skedAvailabilityService extends skedEventService {
         inputModel.orderBy = string.isBlank(inputModel.orderBy) ? 'sked__Start__c' : inputModel.orderBy;
         inputModel.orderAscending = string.isBlank(inputModel.orderAscending) ? 'ASC' : inputModel.orderAscending;
         queryBuilder.orderClause = 'ORDER BY ' + inputModel.orderBy + ' ' + inputModel.orderAscending;
-        
+        system.debug('queryBuilder :: '+JSON.serialize(queryBuilder));
         if (query.includes(skedSObjectType.EXCEPTION_LOG)) {
             skedQueryBuilder exceptionLogBuilder = query.getQueryBuilder('skedHC__Exception__c');
         }

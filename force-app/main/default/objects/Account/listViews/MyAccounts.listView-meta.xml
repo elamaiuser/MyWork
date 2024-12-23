@@ -22,5 +22,10 @@
         <operation>equals</operation>
         <value>Account.Mobile_Account</value>
     </filters>
+    <filters>
+        <field>Account_Manager_Portfolio__c</field>
+        <operation>equals</operation>
+        <value>South Bay 03,California AM 07,Toledo AM 03</value>
+    </filters>
     <label>All Mobile Accounts</label>
 </ListView>

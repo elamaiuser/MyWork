@@ -12,10 +12,5 @@
     <columns>Start_Date__c</columns>
     <columns>End_Date__c</columns>
     <filterScope>Everything</filterScope>
-    <filters>
-        <field>End_Date__c</field>
-        <operation>equals</operation>
-        <value>12/31/4000</value>
-    </filters>
     <label>All BSF Portfolios</label>
 </ListView>

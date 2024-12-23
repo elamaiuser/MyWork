@@ -597,6 +597,7 @@ public with sharing class GenerateMobileDrive {
             MobileDriveGeneratorDMLService.DMLDrive drive, 
             DriveStaffingComplementModel staffingComplement
         ) {	
+            system.debug('inside vp/hh recalculation');
             staffingComplement.numberOfVphh = 0;	
             staffingComplement.numberOfApt = 0;
             Decimal donorProcessingCapacityWithoutVpHhCharge = 0;	
@@ -614,10 +615,13 @@ public with sharing class GenerateMobileDrive {
                 matrix,
                 false 
             ); // HRP-11634
+            system.debug('driveShift.projectedRegisteredDonors '+driveShift.projectedRegisteredDonors+' and staffCapacity '+staffCapacity);
             if (driveShift.projectedRegisteredDonors > staffCapacity) {
-                staffingComplement.numberOfVphh = Math.ceil((driveShift.projectedRegisteredDonors - staffCapacity) / (matrix.vpHhCapacity * drawHours));	
+                staffingComplement.numberOfVphh = Math.ceil((driveShift.projectedRegisteredDonors - staffCapacity) / (matrix.vpHhCapacity * drawHours));
+                system.debug('staffingComplement.numberOfVphh '+staffingComplement.numberOfVphh);	
             }
             staffingComplement.numberOfApt = drive.account.aptRequired ? 1 : staffingComplement.numberOfApt; //HRP-10474
+            system.debug('staffingComplement inside vp/hh calculation '+staffingComplement);
             return staffingComplement;
         }
 
@@ -658,6 +662,7 @@ public with sharing class GenerateMobileDrive {
             MobileDriveGeneratorDMLService.DMLStaffingDecisionMatrix matrix,
             Boolean isCalculatedForWBSlots // HRP-10667
        ) { 
+        system.debug('inside staff capacity calculation with '+capacityNeededFor);
             Decimal staffCapacity = 0;
             Map<string, decimal> donorCapacityMap = new Map<string, decimal>();
             donorCapacityMap.put(Constants.JOB_TYPE_DRIVER, matrix.driverCapacity != NULL ? matrix.driverCapacity : 0);
@@ -668,6 +673,7 @@ public with sharing class GenerateMobileDrive {
             
             //HRP-10474 Start
             decimal drawHours = driveShift.drawHours;
+            system.debug('drawhours w/o LB '+drawHours);
             if(driveShift.lunchBreak && (!drive.collectionOperation.lunchBreakBeforeDrawHours && isCalculatedForWBSlots == false)) // HRP-10667
             {
                 drawHours = driveShift.drawHourswithLunchBreak != null ? driveShift.drawHourswithLunchBreak : drawHours;
@@ -678,15 +684,20 @@ public with sharing class GenerateMobileDrive {
                 Decimal sdmRoleCapacity = donorCapacityMap.containsKey(role) && donorCapacityMap.get(role) != NULL ? donorCapacityMap.get(role) : 0;
                 Decimal resourceQuantity = staffingComplement.map_role_resourceQuantity.containsKey(role) && staffingComplement.map_role_resourceQuantity.get(role) != NULL ? staffingComplement.map_role_resourceQuantity.get(role) : 0;
                 if (role.equalsIgnorecase(Constants.PROCEDURE_TYPE_2RBC)) {
+                    system.debug('2RBC capacity calculation');
                     Decimal noOf2RBCAssets = driveShift.numberOf2rbcEquipments;
+                    system.debug('noOf2RBCAssets '+noOf2RBCAssets);
                     Decimal noOfResourcesHaveEnough2RBCAssets = Math.min(resourceQuantity, Math.floor(noOf2RBCAssets / 2));
+                    system.debug('noOfResourcesHaveEnough2RBCAssets '+noOfResourcesHaveEnough2RBCAssets);
                     Decimal noOfResourcesNotHaveEnough2RBCAssets = Math.max(resourceQuantity - noOfResourcesHaveEnough2RBCAssets, 0);
+                    system.debug('noOfResourcesNotHaveEnough2RBCAssets '+noOfResourcesNotHaveEnough2RBCAssets);
                     Decimal capacity1 = noOfResourcesHaveEnough2RBCAssets * 2 * driveShift.drawHours;
                     Decimal capacity2 = noOfResourcesNotHaveEnough2RBCAssets * sdmRoleCapacity * driveShift.drawHours;
                     staffCapacity += capacity1 + capacity2;
                 } else {
                     staffCapacity += resourceQuantity * sdmRoleCapacity *  drawHours;
-                }                       
+                }
+                system.debug('staffCapacity inside loop for '+role+' is = '+staffCapacity);                       
             }
             return staffCapacity;
         }

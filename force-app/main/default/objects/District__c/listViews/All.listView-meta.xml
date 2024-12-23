@@ -7,9 +7,9 @@
     <columns>OBJECT_ID</columns>
     <filterScope>Everything</filterScope>
     <filters>
-        <field>NAME</field>
-        <operation>contains</operation>
-        <value>buffalo</value>
+        <field>Collection_Operation__c</field>
+        <operation>equals</operation>
+        <value>Buffalo NY</value>
     </filters>
     <label>All</label>
 </ListView>

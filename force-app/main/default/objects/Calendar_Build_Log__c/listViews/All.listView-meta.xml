@@ -3,11 +3,16 @@
     <fullName>All</fullName>
     <columns>NAME</columns>
     <columns>Drive_Date__c</columns>
-    <columns>CB_Batch_Status__c</columns>
     <columns>Status_Correction_Batch_Status__c</columns>
+    <columns>CB_Batch_Status__c</columns>
     <columns>Drive_Gen_Batch_Status__c</columns>
     <columns>FS_Sys_Gen_Batch_Run_Status__c</columns>
     <columns>Mobile_Sys_Gen_Batch_Run_Status__c</columns>
     <filterScope>Everything</filterScope>
+    <filters>
+        <field>LAST_UPDATE</field>
+        <operation>equals</operation>
+        <value>TODAY</value>
+    </filters>
     <label>All</label>
 </ListView>

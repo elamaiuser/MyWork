@@ -15,5 +15,10 @@
     <columns>UFID__c</columns>
     <columns>UPDATEDBY_USER</columns>
     <filterScope>Everything</filterScope>
+    <filters>
+        <field>Scope__c</field>
+        <operation>includes</operation>
+        <value>Drive</value>
+    </filters>
     <label>All</label>
 </ListView>

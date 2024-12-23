@@ -14,5 +14,10 @@
     <columns>UPDATEDBY_USER</columns>
     <columns>CREATEDBY_USER</columns>
     <filterScope>Everything</filterScope>
+    <filters>
+        <field>sked_Collection_Operation__c</field>
+        <operation>equals</operation>
+        <value>Buffalo NY</value>
+    </filters>
     <label>All</label>
 </ListView>

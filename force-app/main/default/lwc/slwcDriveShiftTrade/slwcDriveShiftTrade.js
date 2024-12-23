@@ -436,6 +436,7 @@ export default class SlwcDriveShiftTrade extends LightningElement {
   }
   
   fetchStep2() {
+    console.log('step 2 run');
     const fetchJobAllocations = () => {
       let query = new jobAllocationQueryModel();
       query.startDate = this.filters.startDate;
@@ -444,7 +445,7 @@ export default class SlwcDriveShiftTrade extends LightningElement {
       query.statuses = [JOB_ALLOCATION_STATUS.DISPATCHED, JOB_ALLOCATION_STATUS.CONFIRMED, JOB_ALLOCATION_STATUS.EN_ROUTE, JOB_ALLOCATION_STATUS.CHECKED_IN, JOB_ALLOCATION_STATUS.IN_PROGRESS];
       query.orderBy = 'startDate';
       query.orderAscending = 'asc';
-
+      console.log('query :: ',query);
       let service = new jobAllocationService();
       return service.query(query).then((res) => {
         return (res || []).map(item => {
@@ -522,7 +523,7 @@ export default class SlwcDriveShiftTrade extends LightningElement {
             mapApis: window.google ? window.google.maps : null,
             considerDateOnly: true
           });
-
+          console.log('requesterCollectionOperationIds :: ',requesterCollectionOperationIds);
           return availator.fetchResourceDataForTrade(jobs, {
             timezoneSidId: TIME_ZONE,
             collectionOperationIds: requesterCollectionOperationIds,
@@ -578,6 +579,7 @@ export default class SlwcDriveShiftTrade extends LightningElement {
   }
   
   fetchStep3() {
+    console.log('fetchStep3 this.model :: ',this.model);
     this.showLoading();
     this.enableInfiniteLoading = false;
     Promise.resolve()
@@ -599,9 +601,11 @@ export default class SlwcDriveShiftTrade extends LightningElement {
       territoryCOQueryModel.startDate = this.dateUtils.dateToStringNative(this.model.requestingStaffRecord.startDate);
       territoryCOQueryModel.endDate = this.dateUtils.dateToStringNative(this.model.requestingStaffRecord.endDate);
       const territoryCOService = new territoryCollectionOperationService();
+      console.log('territoryCOQueryModel :: ',territoryCOQueryModel);
       return territoryCOService.query(territoryCOQueryModel);
     })
     .then((territoryCollectionOperations) => {
+      console.log('territoryCollectionOperations :: ',territoryCollectionOperations);
       const arcRegionIds = (territoryCollectionOperations || [])
                             .filter(territoryCollectionOperation => territoryCollectionOperation.regionId)
                             .map(territoryCollectionOperation => territoryCollectionOperation.regionId);
@@ -648,6 +652,7 @@ export default class SlwcDriveShiftTrade extends LightningElement {
       })
     })
     .then((resources) => {
+      console.log('resources :: ',resources);
       this.listResources = resources;
       this.listResourcesMap = keyBy(this.listResources, "id");
       if (this.model.tradingStaff && this.model.tradingStaff.id) {
@@ -901,6 +906,7 @@ export default class SlwcDriveShiftTrade extends LightningElement {
   handleSelectRecord = (event) => {
     const { id } = event.currentTarget.dataset;
     if (this.isStep2) {
+      console.log('this.listRequestRecordsMap :: ',this.listRequestRecordsMap);
       let recordSelected = this.listRequestRecordsMap[id];
       if (recordSelected.isDisabled) {
         return;

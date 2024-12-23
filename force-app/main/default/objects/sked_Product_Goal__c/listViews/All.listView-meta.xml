@@ -8,10 +8,5 @@
     <columns>sked_Procedure_Type__c</columns>
     <columns>sked_Total_Products__c</columns>
     <filterScope>Everything</filterScope>
-    <filters>
-        <field>sked_Collection_Operation__c</field>
-        <operation>equals</operation>
-        <value>Arlington TX</value>
-    </filters>
     <label>All</label>
 </ListView>

@@ -73,6 +73,7 @@ export default class SlwcDriveShiftTradeList extends LightningElement {
 
     this.showLoading();
     let service = new resourceService();
+    console.log('query :: ',query);
     service.query(query).then((rawData) => {
       if(!rawData || !rawData.length) {
         this.showConfirmModal({

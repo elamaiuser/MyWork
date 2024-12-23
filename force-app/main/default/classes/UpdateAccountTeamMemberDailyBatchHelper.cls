@@ -136,14 +136,27 @@ public with sharing class UpdateAccountTeamMemberDailyBatchHelper {
                             system.debug('entered here4'+acc.Is_Account_Managed__c+' '+acc.Unmanaged__c);
                         }else if(mapOfCoveringTeamMember.get(atm.AccountiD+atm.TeamMemberRole)!=Null && (acc.Account_Manager__c!=mapOfCoveringTeamMember.get(atm.AccountiD+atm.TeamMemberRole).UserId || test.isRunningTest())|| (atmPortfolio.get(atm.TeamMemberRole+'_'+atm.accountId) !=null && ( acc.Account_Manager_Portfolio__c == null || (acc.Account_Manager_Portfolio__c != atmPortfolio.get(atm.TeamMemberRole+'_'+atm.accountId)))))  //HRP-10359
                         {
-                            AmDmLookupUpdatedFlag=True;
-                            acc.Account_Manager__c=mapOfCoveringTeamMember.get(atm.AccountiD+atm.TeamMemberRole).UserId;
-                            acc.Is_Account_Managed__c = False;
-                            acc.Unmanaged__c=mapOfCoveringTeamMember.get(atm.AccountiD+atm.TeamMemberRole).Coverage_Reason__c=='Leave of Absence (LOA)'?'LOA Vacancy':'Vacant Territory';//HRP-11815;
-                            system.debug('entered here5'+acc.Is_Account_Managed__c+' '+acc.Unmanaged__c);
-                            if(atmPortfolio.get(atm.TeamMemberRole+'_'+atm.accountId) != null){ //HRP-10359 start
-                                acc.Account_Manager_Portfolio__c = atmPortfolio.get(atm.TeamMemberRole+'_'+atm.accountId);
-                            } //HRP-10359 end
+                            try{
+                                system.debug('mapOfCoveringTeamMember.get(atm.AccountiD+atm.TeamMemberRole) :: '+mapOfCoveringTeamMember.get(atm.AccountiD+atm.TeamMemberRole));
+                                system.debug('atmPortfolio.get(atm.TeamMemberRole+_+atm.accountId) :: '+atmPortfolio.get(atm.TeamMemberRole+'_'+atm.accountId));
+                                system.debug('acc.Account_Manager_Portfolio__c :: '+acc.Account_Manager_Portfolio__c);
+                                AmDmLookupUpdatedFlag=True;
+                                acc.Account_Manager__c=mapOfCoveringTeamMember.get(atm.AccountiD+atm.TeamMemberRole).UserId;
+                                acc.Is_Account_Managed__c = False;
+                                acc.Unmanaged__c=mapOfCoveringTeamMember.get(atm.AccountiD+atm.TeamMemberRole).Coverage_Reason__c=='Leave of Absence (LOA)'?'LOA Vacancy':'Vacant Territory';//HRP-11815;
+                                system.debug('entered here5'+acc.Is_Account_Managed__c+' '+acc.Unmanaged__c);
+                                if(atmPortfolio.get(atm.TeamMemberRole+'_'+atm.accountId) != null){ //HRP-10359 start
+                                    acc.Account_Manager_Portfolio__c = atmPortfolio.get(atm.TeamMemberRole+'_'+atm.accountId);
+                                } //HRP-10359 end
+                            }catch (Exception ex) {
+                                BSF_Error_Log__c debugLog = new BSF_Error_Log__c();
+                                debugLog.ApexClass__c = 'UpdateAccountTeamMemberDailyBatch';
+                                debugLog.Method__c = 'UpdateAccountTeamMemberDailyBatch';
+                                debugLog.Error_Description__c = String.valueOf(atm.Id); //
+                                debugLog.Error_Description_Long__c = ex.getMessage()+ex.getStackTraceString()+ex.getLineNumber();
+                                insert debugLog;
+                            }
+                            
                         } 
                         
                     } 

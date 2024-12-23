@@ -17,5 +17,10 @@
     <columns>Collection_Operation_Key__c</columns>
     <columns>Portfolio_Name__c</columns>
     <filterScope>Everything</filterScope>
+    <filters>
+        <field>Collection_Operation_Name__c</field>
+        <operation>equals</operation>
+        <value>Buffalo NY</value>
+    </filters>
     <label>All</label>
 </ListView>
