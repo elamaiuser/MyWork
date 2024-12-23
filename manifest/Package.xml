@@ -189,6 +189,7 @@
 		<name>FlexiPage</name>
 	</types>
 	<types>
+		<members>Create_New_Recurring_Mobile_Drive</members>
 		<members>Mass_Account_Service_Role_Add</members>
 		<members>Mass_Drive_Service_Role_Add</members>
 		<name>Flow</name>

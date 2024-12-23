@@ -2831,10 +2831,11 @@ System.debug('--> \n Exavalu call to generate drives is done. ');
         try{
             //HRP-10514 : added Platelet_Projected_Procedures__c for 'DriveSync' issue.
             Map<Id, Opportunity> mapOfOpportunity = new Map<Id, Opportunity>([SELECT Id, Drive_Status__c,Drive_Date_Change_Reason__c, Initiated_By__c, StageName,Platelet_Projected_Procedures__c,Plasma_Pheresis_Projected_Procedures__c, Anticipated_Registered_Donors__c, 
-                                                                              WB_Projected_Procedures__c, X2RBC_Projected_Procedures__c, Accepts_Automation__c, Automation_Suitability__c   FROM Opportunity WHERE Id In :lstOpps]);//HRP-12063
+                                                                              WB_Projected_Procedures__c, X2RBC_Projected_Procedures__c, Accepts_Automation__c, Automation_Suitability__c, APT_Quantity__c, APT_Required__c, APT_Change_Reason__c FROM Opportunity WHERE Id In :lstOpps]);//HRP-12063
             //HRP-10515-Query latest values on DOC for changed fields and update on Opportunity, when request comes from DOC update
             List<sked_Drive__c> docList = [select sked_Drive_Date__c,sked_Status__c,sked_Start_Time__c,sked_End_Time__c,sked_Drive_Site__c,sked_Replacement_Drive__c,sked_Projected_Registered_Donors__c,sked_WB_Projected_Procedures__c,sked_2RBC_Projected_Procedures__c,sked_Platelet_Projected_Procedures__c,sked_Plasma_Projected_Procedures__c,sked_Number_of_2RBC_Assets__c,
-                                           sked_Number_of_Plasma_Assets__c,sked_Number_of_Platelet_Assets__c,sked_Cancellation_Reason__c,sked_Opportunity__c from sked_Drive__c 
+                                           sked_Number_of_Plasma_Assets__c,sked_Number_of_Platelet_Assets__c,sked_Cancellation_Reason__c,sked_Opportunity__c,
+                                           sked_APT_Required__c, sked_APT_Quantity__c from sked_Drive__c 
                                            where sked_Opportunity__c in : lstOpps and sked_Is_Surrogate__c = false];
             if(Test.isRunningTest()){
                 sked_Drive__c skedDr =  new sked_Drive__c(sked_Opportunity__c=lstOpps.get(0).id,sked_WB_Projected_Procedures__c=2,sked_Status__c='Draft',sked_Drive_Date__c=system.today().addDays(55));
@@ -3037,12 +3038,17 @@ System.debug('--> \n Exavalu call to generate drives is done. ');
                     }
                     // HRP-12011 --> Ends Here
                      
+                    //HRP-13190 --> Starts Here
                     if(data.containsKey('APT_Required__c') == true) {
                         oppField.APT_Required = oppRec.APT_Required__c;
                     }
                     if(data.containsKey('APT_Quantity__c') == true) {
                         oppField.APT_Quantity = (Decimal)oppRec.APT_Quantity__c;
                     }
+                    if(data.containsKey('APT_Change_Reason__c') == true) {
+                        oppField.APT_Change_Reason = oppRec.APT_Change_Reason__c;
+                    }
+                    //HRP-13190 --> Ends Here
 
                     //HRP-10659 <<-End
                     if(data.containsKey('Drive_Date_Change_Reason__c') == true){//HRP-10312 begin
@@ -4807,7 +4813,7 @@ opp.StageName = 'Closed';
                 if (oldOpp != NULL) {
                     Boolean recalculateAptRule1 = oldOpp.APT_Required__c != newOpp.APT_Required__c;
                     Boolean recalculateAptRule2 = oldOpp.Total_Projected_Procedures__c != newOpp.Total_Projected_Procedures__c;
-                    Boolean recalculateAptRule3 = oldOpp.APT_Quantity__c == newOpp.APT_Quantity__c; //During DOC -> OPP Sync
+                    Boolean recalculateAptRule3 = !checkRecursive.skipAptRecalculation; //During DOC -> OPP Sync
                     if((recalculateAptRule1 || recalculateAptRule2) && recalculateAptRule3) oppListToRecalculateAPT.add(newOpp);
                 }
             }
