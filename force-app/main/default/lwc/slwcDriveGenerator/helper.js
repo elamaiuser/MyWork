@@ -942,6 +942,7 @@ class DriveHelper {
         'wbProjectedProcedures',
         'x2rbcProjectedProcedures',
         'aptRequired',
+        'aptQuantity',
         'slotGenerator'
       ];
     }
@@ -2981,11 +2982,12 @@ class DriveHelper {
         } else {
           if(job.resourceRole === 'VP/HH') {
             if((!job.aptQuantity && !!backupJob.aptQuantity) ||
-              (!!job.aptQuantity && !backupJob.aptQuantity)) {
+              (!!job.aptQuantity && !backupJob.aptQuantity) ||
+              (!!job.aptQuantity && !!backupJob.aptQuantity && job.aptQuantity !== backupJob.aptQuantity)) {
               mapResult(job, backupJob, driveShift, driveShiftIndex, result.changedJobs);
               return;
             }
-
+            
             const currentJobVphhSystemQuantity = Math.max(job.systemQuantity - (currentDrive.aptQuantity || 0), 0);
             const backupJobVphhSystemQuantity = Math.max(backupJob.systemQuantity - (backupDrive.aptQuantity || 0), 0);
             if(currentJobVphhSystemQuantity !== backupJobVphhSystemQuantity || isDriveGettingRegenerated) {
