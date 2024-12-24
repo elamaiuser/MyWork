@@ -237,6 +237,11 @@ public with sharing class FutureDrivesController {
                                 if(s1=='Web Scheduling Settings' && isWebschedulingSettingsFound == false) {
                                     continue;
                                 }
+
+                                if(s1 == 'APT_Required__c') {
+                                    opp.put('APT_Quantity__c', sourceopp.get(driverecordid).get('APT_Quantity__c'));
+                                    opp.put('APT_Change_Reason__c', 'Apply Changes to Future Drive by '+UserInfo.getName()+' on '+system.now());
+                                }
                                
                                 //these fields need not be stamped on opportunity instead used as a label to filter the calculation of the webschedule dates using offset values
                                 if(!webSchedulingFields.contains(s1) || fieldSetFields.contains(s1)) {

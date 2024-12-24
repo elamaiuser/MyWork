@@ -600,7 +600,8 @@ public with sharing class BSF_Utilities {
                     opp.APT_Required__c = aptQuantity > 0 ? TRUE : FALSE;
                 }
             } else {
-                opp.APT_Quantity__c = !opp.APT_Required__c ? 0 : (aptQuantity == 0 ? 1 : aptQuantity);
+                opp.APT_Quantity__c = aptQuantity == 0 && opp.APT_Required__c ? 1 : aptQuantity;
+                opp.APT_Required__c = opp.APT_Required__c || aptQuantity > 0;
                 opp.APT_Change_Reason__c = (opp.Is_Template__c ? 'Template' : 'Opportunity') + ' APT changed by ' + userInfo.getName() + ' on '+system.now();
             }
         }

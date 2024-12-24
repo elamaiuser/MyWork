@@ -45,8 +45,6 @@
 		<members>skedConstants</members>
 		<members>skedDriveHandler</members>
 		<members>skedDriveTrigger_Test</members>
-		<members>skedDriveChangeRequestHandler</members>
-        <members>skedDriveChangeRequestTrigger_Test</members>
 		<members>skedJobAllocationHandler</members>
 		<members>skedJobHandler</members>
 		<members>skedMappingConfigContainer</members>
@@ -256,6 +254,7 @@
 		<members>travelTimeBreakdown</members>
 		<members>slwcListenDriveChange</members>
         <members>slwcGenerateDriveModal</members>
+		<members>slwcDriveShiftsMetadataModal</members>
 		<name>LightningComponentBundle</name>
 	</types>
 	<types>

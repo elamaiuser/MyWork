@@ -51,15 +51,15 @@
 * 08/14/2024                     Apurba Bhattacharjee     HRP-12700 Add Drive Date to task list
 * 08/30/2024                     Barnojit Sharma          Within the Sponsor Planning Report task, populate the referencing Opp/Drive Sponsor Planning Report. (Logic for HRP-5337)
 * 10/14/2024                     Souvik Mukherjee         HRP-13568 Added OpportunityId to Order SELECT SOQL
-* 10/18/2024           Balaji N          HRP-13489 Methods populateSlotGeneratorOnOpportunity,getSlotMultiplierGlobalValue
-* 10/25/2024            Balaji N          Logic for HRP-13489 syncTemplateOrdertoOpportunity Raktim's Changes
+* 10/18/2024                     Balaji N                 HRP-13489 Methods populateSlotGeneratorOnOpportunity,getSlotMultiplierGlobalValue
+* 10/25/2024                     Balaji N                 Logic for HRP-13489 syncTemplateOrdertoOpportunity Raktim's Changes
 * 10/29/2024                     Barnojit Sharma          HRP-12142 Added sync Do Not Roll Fields
-* 10/24/2024             Barnojit Sharma      Template Order products not cascading to Opportunity Order (Logic for HRP-13521)
-* 11/07/2024               Barnojit Sharma      Update Task: 72 Hour Check in - System Generated/Details/Checklist. (Logic for HRP-12627)
-* 11/11/2024           Priti Jana          Logic for HRP-13743
-* 11/12/2024             Barnojit Sharma      Unable to create Mobile Drive when the Template has an over-budget template order (Logic for HRP-13716)
-* 12/02/2024           Barnojit Sharma      Tasks being assigned for cancelled drives and for fixed sites(Logic for HRP-13850)
-* 12/10/2024           Priti Jana          Logic for HRP-13190
+* 10/24/2024                     Barnojit Sharma          Template Order products not cascading to Opportunity Order (Logic for HRP-13521)
+* 11/07/2024                     Barnojit Sharma          Update Task: 72 Hour Check in - System Generated/Details/Checklist. (Logic for HRP-12627)
+* 11/11/2024                     Priti Jana               Logic for HRP-13743
+* 11/12/2024                     Barnojit Sharma          Unable to create Mobile Drive when the Template has an over-budget template order (Logic for HRP-13716)
+* 12/02/2024                     Barnojit Sharma          Tasks being assigned for cancelled drives and for fixed sites(Logic for HRP-13850)
+* 12/10/2024                     Priti Jana               Logic for HRP-13190
 * 12/10/2024                     Satyendra Vishwakarma    HRP-6051 - Anticipated Registered Donors validation when changing procedure projections
 ************************************************************************************************************************************************
 */
@@ -1259,7 +1259,7 @@ Note : It'll throw error if any sort of consequences happen when projection valu
         }
         
         if (!templateOpportunityIds.isEmpty()) {
-            Map<Id, Opportunity> templateOpportunityMap = new Map<Id, Opportunity>([SELECT Id,X2RBC_Projected_Procedures__c, Anticipated_Registered_Donors__c, Drive_Site__c,Direct_Donors_To__c,Site_TBD__c,Procedure_Projections_Template__c, Projected_Registered_Donors_Template__c, Staffing_Template__c, Volunteers_Template__c, WholeBloodProceduresProjectedTemplate__c, WholeBloodProceduresProjectedOriginal__c, WB_Projected_Procedures__c, Double_Red_Procedures_Projected_Template__c, Anticipated_Registered_Donors_Template__c FROM Opportunity WHERE Id IN:templateOpportunityIds]);
+            Map<Id, Opportunity> templateOpportunityMap = new Map<Id, Opportunity>([SELECT Id,X2RBC_Projected_Procedures__c, Anticipated_Registered_Donors__c, Drive_Site__c,Direct_Donors_To__c,Site_TBD__c,Procedure_Projections_Template__c, Projected_Registered_Donors_Template__c, Staffing_Template__c, Volunteers_Template__c, WholeBloodProceduresProjectedTemplate__c, WholeBloodProceduresProjectedOriginal__c, WB_Projected_Procedures__c, Double_Red_Procedures_Projected_Template__c, Anticipated_Registered_Donors_Template__c, APT_Required__c, APT_Quantity__c FROM Opportunity WHERE Id IN:templateOpportunityIds]);
             for (Opportunity newOpportunity : newOpportunityList) {
                 if (isInsertOrUpdateWithChangeInTemplate(oldOpportunityMap, newOpportunity)) {
                     //System.debug('isInsertOrUpdateWithChangeInTemplate ->true');
@@ -1270,8 +1270,12 @@ Note : It'll throw error if any sort of consequences happen when projection valu
                     newOpportunity.Volunteers_Template__c = templateOpportunity.Volunteers_Template__c;
                     
                     /* added by Satabdi as per HRP-6520 */
+                    checkRecursive.skipAptRecalculation = TRUE; //HRP-13190
                     newOpportunity.Drive_Site__c = templateOpportunity.Drive_Site__c;
                     newOpportunity.Site_TBD__c = false;
+                    newOpportunity.APT_Required__c = templateOpportunity.APT_Required__c; //HRP-13190
+                    newOpportunity.APT_Quantity__c = templateOpportunity.APT_Quantity__c; //HRP-13190
+                    newOpportunity.APT_Change_Reason__c = templateChangedText; //HRP-13190
                     
                     newOpportunity.WholeBloodProceduresProjectedTemplate__c = templateOpportunity.WholeBloodProceduresProjectedTemplate__c;
                     newOpportunity.Double_Red_Procedures_Projected_Template__c = templateOpportunity.Double_Red_Procedures_Projected_Template__c;
@@ -4811,11 +4815,17 @@ opp.StageName = 'Closed';
             for(Opportunity newOpp : newOppList) {
                 Opportunity oldOpp = oldOppMap.get(newOpp.Id);
                 if (oldOpp != NULL) {
-                    Boolean recalculateAptRule1 = oldOpp.APT_Required__c != newOpp.APT_Required__c;
-                    Boolean recalculateAptRule2 = oldOpp.Total_Projected_Procedures__c != newOpp.Total_Projected_Procedures__c;
-                    Boolean recalculateAptRule3 = !checkRecursive.skipAptRecalculation; //During DOC -> OPP Sync
-                    system.debug('recalculateAptRule1 '+recalculateAptRule1+' and recalculateAptRule2 '+recalculateAptRule2+' and recalculateAptRule3 '+recalculateAptRule3);
-                    if((recalculateAptRule1 || recalculateAptRule2) && recalculateAptRule3) oppListToRecalculateAPT.add(newOpp);
+                    Boolean recalculateAptRule1 = !checkRecursive.skipAptRecalculation; //During DOC -> OPP Sync
+                    Boolean recalculateAptRule2 = (oldOpp.APT_Change_Reason__c == newOpp.APT_Change_Reason__c) || ((oldOpp.APT_Change_Reason__c != newOpp.APT_Change_Reason__c) && !newOpp.APT_Change_Reason__c.containsIgnoreCase(BSF_Constants.APT_CHANGE_VIA_TEMPLATE));
+                    Boolean recalculateAptRule3 = oldOpp.APT_Required__c != newOpp.APT_Required__c;
+                    Boolean recalculateAptRule4 = oldOpp.Total_Projected_Procedures__c != newOpp.Total_Projected_Procedures__c;  
+                    
+                    if(recalculateAptRule1 && recalculateAptRule2) {
+                        if(recalculateAptRule3 && !newOpp.APT_Required__c) {
+                            newOpp.APT_Quantity__c = 0;
+                            newOpp.APT_Change_Reason__c = (newOpp.Is_Template__c ? 'Template' : 'Opportunity') + ' APT changed by ' + userInfo.getName() + ' on '+system.now();
+                        } else oppListToRecalculateAPT.add(newOpp);
+                    }
                 }
             }
             if(oppListToRecalculateAPT != NULL && !oppListToRecalculateAPT.isEmpty()) {

@@ -143,6 +143,14 @@ const DRIVE_FIELD_CHANGE_MAPPING = {
       { actions: [] }
     ]
   },
+  'aptQuantity': {
+    groups: [
+      { actions: [] },
+      { actions: [] },
+      { actions: ['calculateDriveShiftsMetadata', 'proposeDriveShifts', 'calculateDriveProductivityPlanned'] },
+      { actions: [] }
+    ]
+  },
   'recruitedBy': {
     groups: [
       { actions: [] },
@@ -986,17 +994,14 @@ class MobileGenerator extends BaseGenerator {
     let wbProjectedProcedures = record.wbProjectedProcedures || 0;
     record.totalProceduresProjected = x2rbcProjectedProcedures + wbProjectedProcedures;
     record.totalProductsProjected = x2rbcProjectedProcedures * 2 + wbProjectedProcedures;
-    if(isShift && !isEmpty(this.masterData.backupDrive?.driveShifts)) {
-      this.masterData.skipAPTCalculation = !!this.masterData.backupDrive?.driveShifts?.find(shift => shift.totalProceduresProjected === record.totalProceduresProjected);
-    }
-    if(!this.masterData.skipAPTCalculation && isNullOrEmpty(this.masterData.aptQuantity)) {
+
+    if(!this.masterData.skipAPTCalculation) {
       this.recalculateAPTSettings();
       this.drive.driveShiftsMetadata.APTSetup = this.drive.aptQuantity;
     }
   }
-
   recalculateAPTSettings() {
-    if (!this.drive) return;
+    if(!this.drive) return;
 
     let aptQuantity = 0;
     const isEducationDrive = this.drive.account?.type === ACCOUNT_TYPE.EDUCATION;
@@ -1078,6 +1083,7 @@ class MobileGenerator extends BaseGenerator {
     this.helper.splitScheduledDonors(this.drive, driveShiftsMetadata.driveShifts, this.masterData.timezoneSidId);
 
     this.calculateTotalProceduresProjected(driveShiftsMetadata);
+    this.drive.driveShiftsMetadata.APTSetup = this.drive.aptQuantity;
     driveShiftsMetadata.driveShifts.forEach(driveShift => {
       this.calculateTotalProceduresProjected(driveShift);
       driveShift.APTSetup = this.drive.aptQuantity;
@@ -2109,7 +2115,7 @@ class MobileGenerator extends BaseGenerator {
   handleDriveShiftsMetadataChanged(driveShift = {}) {
     if (this.drive.driveShiftsMetadata) {
       this.calculateTotalProceduresProjected(this.drive.driveShiftsMetadata);
-      this.drive.driveShiftsMetadata.APTSetup = this.drive.aptQuantity;
+      this.drive.driveShiftsMetadata.APTSetup = !isEmpty(driveShift) ? driveShift.APTSetup : this.drive.aptQuantity;
       this.drive.driveShiftsMetadata.driveShifts.forEach((driveShiftMetadata) => {
         this.calculateTotalProceduresProjected(driveShiftMetadata);
         driveShiftMetadata.APTSetup = !isEmpty(driveShift) ? driveShift.APTSetup : this.drive.aptQuantity;

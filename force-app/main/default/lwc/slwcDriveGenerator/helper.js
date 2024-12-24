@@ -2987,13 +2987,14 @@ class DriveHelper {
         } else {
           if(job.resourceRole === 'VP/HH') {
             if((!job.aptQuantity && !!backupJob.aptQuantity) ||
-              (!!job.aptQuantity && !backupJob.aptQuantity)) {
+              (!!job.aptQuantity && !backupJob.aptQuantity) ||
+              (!!job.aptQuantity && !!backupJob.aptQuantity && job.aptQuantity !== backupJob.aptQuantity)) {
               mapResult(job, backupJob, driveShift, driveShiftIndex, result.changedJobs);
               return;
             }
+
             const currentJobVphhSystemQuantity = Math.max(job.systemQuantity - (currentDrive.aptQuantity || 0), 0);
             const backupJobVphhSystemQuantity = Math.max(backupJob.systemQuantity - (backupDrive.aptQuantity || 0), 0);
-            console.log('isRegenerateDriveChange ',isDriveGettingRegenerated,' and currentJobVphhSystemQuantity ',currentJobVphhSystemQuantity+' and backupJobVphhSystemQuantity ',backupJobVphhSystemQuantity);
             if(currentJobVphhSystemQuantity !== backupJobVphhSystemQuantity || isDriveGettingRegenerated) {
               mapResult(job, backupJob, driveShift, driveShiftIndex, result.changedJobs);
             }

@@ -18,8 +18,6 @@
         <members>OpportunityTriggerTest</members>
         <members>skedDriveHandler</members>
         <members>skedDriveTrigger_Test</members>
-        <members>skedDriveChangeRequestHandler</members>
-        <members>skedDriveChangeRequestTrigger_Test</members>
         <members>skedOpportunityHandler</members>
         <members>skedOpportunityTrigger_Test</members>
         <members>slwcDriveService</members>
@@ -70,6 +68,7 @@
         <members>slwcConstants</members>
         <members>slwcDriveGenerator</members>
         <members>slwcDriveShift</members>
+        <members>slwcDriveShiftsMetadataModal</members>
 		<name>LightningComponentBundle</name>
 	</types>
     <version>58.0</version>
