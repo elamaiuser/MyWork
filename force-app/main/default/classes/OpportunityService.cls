@@ -59,6 +59,7 @@
 * 11/11/2024					 Priti Jana				  Logic for HRP-13743
 * 11/12/2024				     Barnojit Sharma		  Unable to create Mobile Drive when the Template has an over-budget template order (Logic for HRP-13716)
 * 12/02/2024					 Barnojit Sharma		  Tasks being assigned for cancelled drives and for fixed sites(Logic for HRP-13850)
+* 12/10/2024					 Priti Jana				  Logic for HRP-13190
 * 12/10/2024                     Satyendra Vishwakarma    HRP-6051 - Anticipated Registered Donors validation when changing procedure projections
 ************************************************************************************************************************************************
 */
@@ -2677,24 +2678,18 @@ if(ds.isDeletable()){}*/
                         }
                         else if(newOpportunity.StageName == 'Cancelled'){
                              //HRP-11524 --> Continues
-                             System.debug('entering here line 2578');
-                            system.debug('stageChecksForCurrentStage '+stageChecksForCurrentStage);
-                             System.debug('stagename new'+newOpportunity.StageName+'old'+oldOpportunity.StageName+
-                                        'drive status'+oldOpportunity.DriveStatus__c+
-                                        'stageChecksForCurrentStage.Overriding_Profiles__c'+stageChecksForCurrentStage.Overriding_Profiles__c+
-                                        'stageChecksForCurrentStage.Overriding_user__c'+stageChecksForCurrentStage.Overriding_user__c+
-                                        'newOpportunity.sked_Cancellation_Reason__c'+newOpportunity.sked_Cancellation_Reason__c);
+                             
                                 if(oldOpportunity.StageName == BSF_Constants.STAGE_CLOSED 
                                    && oldOpportunity.DriveStatus__c == BSF_Constants.DOC_STATUS_COMPLETE 
                                    && (!(String.isBlank(profileName)) && (!(stageChecksForCurrentStage.Overriding_Profiles__c).contains(profileName))) 
                                    && !(String.isBlank(newOpportunity.sked_Cancellation_Reason__c))
                                    && !(stageChecksForCurrentStage.Overriding_user__c).contains(runningUser))
                                      {   
-                                        System.debug('entering here line 2585');
+                                        
                                         newOpportunity.addError(Label.Drive_Change_Restriction_Message);
                                      }
                                 //HRP-11524 --> Ends Here
-                                system.debug('###FWO: Inside updateDrivesOnCalendarStatus 3');
+                               
                                 for(sked_Drive__c skedDr: allDrivesMatchingOpp){ //HRP 11393- propogate cancelled status to all drives associated with opportunity, not just one picked
                                     slwcDriveService.driveModel driveModelRecTemp = new slwcDriveService.driveModel();
 
@@ -4602,6 +4597,7 @@ opp.StageName = 'Closed';
         List<Opportunity> newOpportunityList = new List<Opportunity>();
         Map<Id, Opportunity> map_oldOppId_oldOpportunity = new Map<Id, Opportunity>();
         List<String> oppIds = new List<String>();//HRP-13716 changes
+    List<Opportunity_Template_Order_Sync_Event__e> oppoOrderSyncEvents = new List<Opportunity_Template_Order_Sync_Event__e>(); //HRP-13891 changes
         for(Opportunity newOpp : listOfnewOppties) {
             if(newOpp.Id != null && mapOfOfOldOppties != null && !mapOfOfOldOppties.isEmpty() && mapOfOfOldOppties.containskey(newOpp.Id)) {//HRP-13716 Changes
                 Opportunity oldOpp = mapOfOfOldOppties.get(newOpp.Id);
@@ -4609,14 +4605,33 @@ opp.StageName = 'Closed';
                         newOpportunityList.add(newOpp);
                         map_oldOppId_oldOpportunity.put(oldOpp.Id, oldOpp);
                         oppIds.add(newOpp.Id);//HRP-13716 changes
+            //Start HRP-13891 changes
+            Opportunity_Template_Order_Sync_Event__e oppoOrderSyncEvent = new Opportunity_Template_Order_Sync_Event__e();
+            oppoOrderSyncEvent.OpportunityId__c = newOpp.Id;
+            oppoOrderSyncEvents.add(oppoOrderSyncEvent);
+            //End HRP-13891 changes
                     }
             }else if(newOpp.Id != null && newOpp.Parent_Template_Id__c != null && (mapOfOfOldOppties == null || mapOfOfOldOppties.isEmpty())){//HRP-13716 Changes
                 newOpportunityList.add(newOpp);
                 oppIds.add(newOpp.Id);//HRP-13716 changes
+        //Start HRP-13891 changes
+        Opportunity_Template_Order_Sync_Event__e oppoOrderSyncEvent = new Opportunity_Template_Order_Sync_Event__e();
+        oppoOrderSyncEvent.OpportunityId__c = newOpp.Id;
+        oppoOrderSyncEvents.add(oppoOrderSyncEvent);
+        //End HRP-13891 changes
             }
        }
-        OrderCloningService.cloneTemplateOrder(oppIds);//HRP-13716 changes
+     //Commented for HRP-13891
+       //OrderCloningService.cloneTemplateOrder(oppIds);//HRP-13716 changes
        //HRP-13743 --> Ends Here
+     
+     //Start HRP-13891 changes
+     //Publish platform event to create Order record for each new opportunity based on the template
+        if(oppoOrderSyncEvents.size() > 0) {
+            System.debug('### before publishing Opportunity_Template_Order_Sync_Event__e event ' + oppoOrderSyncEvents.size());
+            EventBus.publish(oppoOrderSyncEvents);
+        }
+     //End HRP-13891 changes
     }
     
     /*public static void cloneTemplateOrder(List<Opportunity> listOfOpportunities, Map<Id, Opportunity> mapOfOfOldOppties) {

@@ -6,7 +6,8 @@
             cancel-btn-label="Cancel"
             save-btn-label="Save"
             disabled-save={disabledSave}
-            header={modalHeader}>
+            header={modalHeader}
+            overflow-initial>
             <div slot="content">
                 <div class="slds-is-relative">
                     <template if:true={showSpinner}>
@@ -130,7 +131,8 @@
                                     object-api-name="sked__Job__c" 
                                     selected-value={job.volunteerAdjustmentReason}  
                                     pick-listfield-api-name="sked_Volunteer_Adjustment_Reason__c"
-                                    onpicklistchange={handleOnChange}>
+                                    onpicklistchange={handleOnChange}
+                                    dropdown-alignment="auto">
                                 </c-slwc-picklist>
                             </div>
                             <div if:true={isOtherVolunteerAdjustmentReasonSelected} class="slds-col slds-size_1-of-1 slds-m-bottom--small">

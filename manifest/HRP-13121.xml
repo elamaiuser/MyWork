@@ -9,7 +9,7 @@
         <members>skedRegionService</members>
         <members>skedSObjectType</members>
         <members>skedActivityService_Test</members>
-        <members>skedMappingConfigContainer_Test</members>
+        <members>skedMappingConfigController_Test</members>
         <members>skedModels_Test</members>
         <members>skedRacStory_Test</members>
         <members>skedRegionService_Test</members>
@@ -34,5 +34,10 @@
         <members>sked_Activity_Collection_Operation__c-Activity Collection Operation Layout</members>
         <name>Layout</name>
     </types>
+    <types>
+		<members>autoMapper</members>
+		<name>dataService</name>
+        <name>slwcDriveCalendarActivityList</name>
+	</types>
     <version>59.0</version>
 </Package>
