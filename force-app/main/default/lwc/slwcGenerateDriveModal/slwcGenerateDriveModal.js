@@ -13,6 +13,7 @@ import { getRecord } from 'lightning/uiRecordApi';
 import { updateRecord } from 'lightning/uiRecordApi';
 import LightningConfirm from 'lightning/confirm';
 import fetchOpportunityFromDriveChangeRequest from '@salesforce/apex/OpportunityControllerHelper.fetchOpportunityFromDriveChangeRequest';
+import getWarningMessage from '@salesforce/apex/OpportunityControllerHelper.getWarningMessage';
 
 const OPP_ARD_VALIDATION_FLAG = ['Opportunity.Pending_ARD_Confirmation__c'];
 const DCR_FIELDS = [
@@ -445,6 +446,7 @@ export default class SlwcGenerateDriveModal extends NavigationMixin(LightningEle
   @track oppArdValidationFlag;
   @track showARDValidationMessage=false;
   @track declineByUser=false;
+  @track ardWarningMessage;
 
   get submissionNotesRequired() {
     return this.drive && this.drive.routeApprovalRequestTo === 'Request DM evaluation';
@@ -1061,4 +1063,13 @@ export default class SlwcGenerateDriveModal extends NavigationMixin(LightningEle
       }
     });
   }
+    @wire(getWarningMessage)
+    wiredMessage({ error, data }) {
+        if (data) {
+            this.ardWarningMessage = data;
+        } else if (error) {
+            this.message = 'Error fetching message';
+            console.error('Error:', JSON.stringify(error));
+        }
+    }
 }
