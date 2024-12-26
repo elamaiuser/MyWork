@@ -905,7 +905,6 @@ class DriveHelper {
     }
 
     fieldReadonlyMap.aptQuantity = isOnlyAPSUser ? false : true;
-    console.log('fieldReadonlyMap ',fieldReadonlyMap);
 
     return {
       isReadonly,
@@ -1605,7 +1604,6 @@ class DriveHelper {
   }
 
   calculateDriveShiftRoleTimeData(masterData, drive, driveShiftMetadata) {
-    console.log('calculateDriveShiftRoleTimeData');
     const driveShiftsMetadata = drive.driveShiftsMetadata;
     const driveShiftIndex = driveShiftsMetadata.driveShifts.findIndex(item => item.key === driveShiftMetadata.key);
     const breakdownTimeThreshold = drive.collectionOperation.breakdownTimeThreshold;

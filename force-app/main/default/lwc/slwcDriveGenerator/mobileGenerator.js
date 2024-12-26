@@ -983,10 +983,8 @@ class MobileGenerator extends BaseGenerator {
 
   calculateTotalProceduresProjected(record) {
     if (!record && !this.drive) return;
-    let isShift = true;
     if (!record) {
       record = this.drive;
-      isShift = false;
     } else {
       this.drive.aptQuantity = record.APTSetup;
     }
@@ -1000,6 +998,7 @@ class MobileGenerator extends BaseGenerator {
       this.drive.driveShiftsMetadata.APTSetup = this.drive.aptQuantity;
     }
   }
+  
   recalculateAPTSettings() {
     if(!this.drive) return;
 
@@ -1202,11 +1201,9 @@ class MobileGenerator extends BaseGenerator {
         }
       })
     }, this.masterData.backupDrive, { isDriveGettingRegenerated : this.isRegenerateDriveChange });
-    console.log('systemGeneratedStaffingComplementChanges ',systemGeneratedStaffingComplementChanges);
     if(!systemGeneratedStaffingComplementChanges.newJobs.length && 
       !systemGeneratedStaffingComplementChanges.changedJobs.length && 
       !systemGeneratedStaffingComplementChanges.deletedJobs.length) {
-        console.log('job quantity restored');
         this.restoreJobsQuantity(skipCalculateResourceRoles ? this.masterData.backupDrive : this.drive);
     } 
   }
@@ -1416,13 +1413,11 @@ class MobileGenerator extends BaseGenerator {
       const drawHours = this.helper.calculateDrawHours(driveShiftMetadata, this.masterData, driveShiftMetadata.lunchBreakSettings);
 
       let noOfVpHhStaffs = Math.ceil(totalVpHhCapacity / vpHhCapacity / drawHours);;
-     console.log('driveShiftMetadata.key ',driveShiftMetadata.key);
       let resourceQuantityMap = this.mapResourceQuantity.get(driveShiftMetadata.key);
       resourceQuantityMap.set('VP/HH', {
         vphhQuantity: noOfVpHhStaffs,
         aptQuantity: driveShiftsMetadata.APTSetup
       });
-      console.log('resourceQuantityMap in vphh cal ',resourceQuantityMap);
     });
     
   }
@@ -1544,7 +1539,6 @@ class MobileGenerator extends BaseGenerator {
 
       this.initResourceQuantityMap();
       this.calculateResourceQuantity(skipCalculateResourceRoles, skipVehicleCalculation, backupAndRestoreDualRoles);
-      console.log('this.mapResourceQuantity before buildMultiDriveShift ',this.mapResourceQuantity);
       this.drive.driveShifts = this.buildMultiDriveShifts();
       this.populateDriveTime();
       this.updateDriveStaffCapacity();
@@ -1654,8 +1648,6 @@ class MobileGenerator extends BaseGenerator {
   
   populateDriveShiftJobs(driveShift, driveShiftIndex) {
     const driveShiftMetadata = driveShift.driveShiftMetadata;
-    console.log('driveShiftMetadata before jobtemplate ',driveShiftMetadata);
-    console.log('this.mapResourceQuantity ',this.mapResourceQuantity);
     let jobTagsMap = this.helper.calculateJobTagsMap(this.masterData);
     let jobTemplate = {
       driveSiteId: this.drive.driveSiteId,
@@ -1670,7 +1662,6 @@ class MobileGenerator extends BaseGenerator {
 
     let jobs = [];
     const mapResourceQuantity = this.mapResourceQuantity.get(driveShiftMetadata.key);
-    console.log('mapResourceQuantity before jobs processing ',mapResourceQuantity);
     Array.from(mapResourceQuantity.keys()).forEach((resourceRole) => {
       let job = (driveShift.jobs || []).find(driveShiftJob => driveShiftJob.resourceRole == resourceRole);
       if (!job) {
@@ -1760,7 +1751,6 @@ class MobileGenerator extends BaseGenerator {
       });
     });
     driveShift.jobs = jobs.concat(cloneDeep(manuallyCreatedJobs));
-    console.log(' driveShift.jobs ',driveShift.jobs);
   }
 
   /** Lunch break */

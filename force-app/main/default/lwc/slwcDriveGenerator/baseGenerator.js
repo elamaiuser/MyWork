@@ -564,7 +564,6 @@ class BaseGenerator {
     driveShift.volunteerSetup = 0;
     driveShift.vehiclesNeeded = 0;
     driveShift.equipment = 0;
-    console.log('driveShift in updateShiftMobileSetup ',driveShift);
     const jobs = this.helper.getDriveShiftJobs(driveShift, {
       excludeManuallyCreatedFromStaffingModal: true
     })
