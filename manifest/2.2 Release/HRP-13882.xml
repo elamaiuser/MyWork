@@ -1,15 +1,14 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <Package xmlns="http://soap.sforce.com/2006/04/metadata">
-	<types>
-		<members>UserService</members>
+    <types>
+		<members>userService</members>
         <members>UserTriggerHandler</members>
-        <members>UserServiceTest</members>
+        <members>userServiceTest</members>
 		<name>ApexClass</name>
 	</types>
 	<types>
 		<members>Assign_SF_Resources_to_User__mdt.Assignment_Type__c</members>
 		<members>Assign_SF_Resources_to_User__mdt.Role_Name__c</members>
-		<members>sked__Location__c.sked_Unloading_Directions_Details__c</members>		
 		<name>CustomField</name>
 	</types>
 	<types>
@@ -35,5 +34,5 @@
 		<members>Assign_SF_Resources_to_User.Telerecruiter_BSF_User_Role</members>
 		<name>CustomMetadata</name>
 	</types>
-	<version>60.0</version>
+    <version>59.0</version>
 </Package>

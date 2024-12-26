@@ -87,6 +87,9 @@
 		<members>skedActivityResourceUtils_Test</members>
 		<members>OpportunityControllerHelperTest</members>
 		<members>OpportunityControllerHelper</members>
+		<members>UserService</members>
+        <members>UserTriggerHandler</members>
+        <members>UserServiceTest</members>
 		<name>ApexClass</name>
 	</types>
 	<types>
@@ -98,6 +101,8 @@
 	</types>
 	<types>
 		<members>Account.Feeder_Account_Type__c</members>
+		<members>Assign_SF_Resources_to_User__mdt.Assignment_Type__c</members>
+		<members>Assign_SF_Resources_to_User__mdt.Role_Name__c</members>
 		<members>Opportunity.APT_Required__c</members>
         <members>Opportunity.APT_Quantity__c</members>
         <members>Opportunity.APT_Change_Reason__c</members>
@@ -138,6 +143,26 @@
 		<name>CustomLabel</name>
 	</types>
 	<types>
+		<members>Assign_SF_Resources_to_User.APS_Admin_BSF_User_Role</members>
+		<members>Assign_SF_Resources_to_User.APS_Management_BSF_User_Role</members>
+		<members>Assign_SF_Resources_to_User.APS_Planner_BSF_User_Role</members>
+		<members>Assign_SF_Resources_to_User.APS_Scheduler_BSF_User_Role</members>
+		<members>Assign_SF_Resources_to_User.Analytics_BSF_User_Role</members>
+		<members>Assign_SF_Resources_to_User.Biomed_Read_Only_BSF_User_Role</members>
+		<members>Assign_SF_Resources_to_User.Biomed_Sponsor_Mgmnt_BSF_User_Role</members>
+		<members>Assign_SF_Resources_to_User.Collection_Management_BSF_User_Role</members>
+		<members>Assign_SF_Resources_to_User.Collections_BSF_User_Role</members>
+		<members>Assign_SF_Resources_to_User.Customer_Care_BSF_User_Role</members>
+		<members>Assign_SF_Resources_to_User.DRD_Manager_BSF_User_Role</members>
+		<members>Assign_SF_Resources_to_User.DRD_Profile_BSF_User_Role</members>
+		<members>Assign_SF_Resources_to_User.Global_Admin_BSF_User_Role</members>
+		<members>Assign_SF_Resources_to_User.Manufacturing_BSF_User_Role</members>
+		<members>Assign_SF_Resources_to_User.Promotional_Manager_BSF_User_Role</members>
+		<members>Assign_SF_Resources_to_User.Read_Only_BSF_User_Role</members>
+		<members>Assign_SF_Resources_to_User.Recruitment_Admin_BSF_User_Role</members>
+		<members>Assign_SF_Resources_to_User.Sponsor_Marketing_BSF_User_Role</members>
+		<members>Assign_SF_Resources_to_User.Standard_User_BSF_User_Role</members>
+		<members>Assign_SF_Resources_to_User.Telerecruiter_BSF_User_Role</members>
 		<members>Custom_Messages.Non_Feeder_Acc_Convert_Validation</members>
 		<members>sked_Notification_Setting.sked_Job_Allocation_Info_Changed_Email</members>
 		<members>sked_Notification_Setting.sked_Job_Allocation_Info_Changed_OneOff</members>
