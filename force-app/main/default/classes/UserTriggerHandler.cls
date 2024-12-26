@@ -3,6 +3,7 @@
  * Date					   Developer Name			    Comments
  * ****************************************************************************
  * 10/18/2024               Priti Jana              Logic for HRP-9815
+ * 12/26/2024               Priti Jana              Logic for HRP-13882
  ******************************************************************************
 */
 
@@ -16,6 +17,12 @@ public with sharing class UserTriggerHandler extends TriggerHandler{
         } else {
             System.debug('UserTriggerHandler.beforeInsert() - UserTriggerHandler.beforeInsert() Bypassed');
         }
+
+        //HRP-13882 -> Starts Here
+        if(super.getTriggerMethodsToBypass().indexOf('assignRolesToNewUsers') == -1) {
+            userService.assignRolesToNewUsers((List<User>) Trigger.new);
+        }
+        //HRP-13882 -> Ends Here
     }
     
     public override void beforeUpdate() {

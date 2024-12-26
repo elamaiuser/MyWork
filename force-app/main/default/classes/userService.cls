@@ -15,6 +15,7 @@
  * 05/05/2023				Fitsum Worku			Logic for HRP-9982. Added logic to exclude the system admin profile from user type assignment/removal.  Also added support for
  * 												    license assignment.
  * 10/18/2024               Priti Jana              Logic for HRP-9815
+ * 12/26/2024				Priti Jana				Logic for HRP-13882
  *****************************************************************************************************************************************************************************
 */
 
@@ -248,8 +249,22 @@ public class userService implements Callable {
         
         List<Assign_SF_Resources_to_User__mdt> profileUserAssignmentsList = [
             SELECT Active__c, Assignment_Type__c, Permission_Set_Name__c, Profile_Name__c, 
-            Public_Group_Name__c, Queue_Name__c, User_Type_Name__c, Package_License_Name__c
+            Public_Group_Name__c, Queue_Name__c, User_Type_Name__c, Package_License_Name__c, Role_Name__c //HRP-13882, New Field added -> Role_Name__c
             FROM Assign_SF_Resources_to_User__mdt
+        ];
+        
+        return profileUserAssignmentsList;
+    }
+
+    //HRP-13882 -> Get Metadata records for specific assignment Types
+    //Get all assignment configurations from the assignment custom metadata type for specific assignment types
+    public static List<Assign_SF_Resources_to_User__mdt> getAllUserAssignmentsFromMdt(List<String> assignmentTypes) {
+        
+        List<Assign_SF_Resources_to_User__mdt> profileUserAssignmentsList = [
+            SELECT Active__c, Assignment_Type__c, Permission_Set_Name__c, Profile_Name__c, 
+            Public_Group_Name__c, Queue_Name__c, User_Type_Name__c, Package_License_Name__c, Role_Name__c
+            FROM Assign_SF_Resources_to_User__mdt
+            WHERE Assignment_Type__c IN :assignmentTypes
         ];
         
         return profileUserAssignmentsList;
@@ -296,6 +311,13 @@ public class userService implements Callable {
         if(!curPackageLicenseAssignments.isEmpty()) {
             delete curPackageLicenseAssignments;
         }
+    }
+    
+    //Get all user roles
+    public static List<UserRole> getAllUserRoles() {
+        
+        List<UserRole> allUserRolesList = [SELECT Id, Name FROM UserRole];
+        return allUserRolesList;
     }
     
     //Get all permission sets
@@ -420,4 +442,42 @@ public class userService implements Callable {
         }
     }
     //HRP-9815 -> Ends Here
+
+    //HRP-13882 -> Starts Here
+    public static void assignRolesToNewUsers(List<User> newUserList) {
+        Map<Id, Profile> map_profileId_profileInfo = new Map<Id, Profile>();
+        if(newUserList != NULL && !newUserList.isEmpty()) {
+            for(User userRec : newUserList) {
+                if(!map_profileId_profileInfo.containsKey(userRec.profileId)) {
+                    map_profileId_profileInfo.put(userRec.profileId, null);
+                }
+            }
+        }
+
+        map_profileId_profileInfo = new Map<Id, Profile>([SELECT Id, Name FROM Profile WHERE Id IN :map_profileId_profileInfo.keySet()]);
+            
+        // Get Metadata info
+        List<Assign_SF_Resources_to_User__mdt> allUsersAssignmentsFromMdt = getAllUserAssignmentsFromMdt(new List<String>{'Role'});
+        if(allUsersAssignmentsFromMdt != NULL && !allUsersAssignmentsFromMdt.isEmpty()) {
+            Map<String, Id> roleNameToIdMap = new Map<String, Id>();
+
+            //Query all roles and create a map of role name => role Id
+            List<UserRole> userRolesList = getAllUserRoles();
+            if(userRolesList != NULL && !userRolesList.isEmpty()) {
+                for(UserRole role : userRolesList) {
+                    roleNameToIdMap.put(role.Name, role.Id);
+                }
+            }
+
+            for(User userRec : newUserList) {
+                for(Assign_SF_Resources_to_User__mdt userRoleAssignment : allUsersAssignmentsFromMdt) {
+                    if(userRoleAssignment.Active__c && userRoleAssignment.Profile_Name__c.equalsIgnoreCase(map_profileId_profileInfo.get(userRec.profileId).Name)) {
+                        userRec.UserRoleId = roleNameToIdMap.get(userRoleAssignment.Role_Name__c);
+                    }
+                }
+            }
+        }
+    }
+    //HRP-13882 -> Ends Here
+            
 }
