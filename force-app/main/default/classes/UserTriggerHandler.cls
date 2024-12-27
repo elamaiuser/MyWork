@@ -10,6 +10,7 @@
 public with sharing class UserTriggerHandler extends TriggerHandler{
     
     public override void beforeInsert() {
+        checkRecursive.firstCallForRecordCreation = TRUE; //HRP-13882
         if(super.getTriggerMethodsToBypass().indexOf('formatMobilePhone') == -1) {
             System.debug('UserTriggerHandler.beforeInsert() - userService.formatMobilePhone Executing...');
             userService.formatMobilePhone((List<User>) Trigger.new);
@@ -18,11 +19,6 @@ public with sharing class UserTriggerHandler extends TriggerHandler{
             System.debug('UserTriggerHandler.beforeInsert() - UserTriggerHandler.beforeInsert() Bypassed');
         }
 
-        //HRP-13882 -> Starts Here
-        if(super.getTriggerMethodsToBypass().indexOf('assignRolesToNewUsers') == -1) {
-            userService.assignRolesToNewUsers((List<User>) Trigger.new);
-        }
-        //HRP-13882 -> Ends Here
     }
     
     public override void beforeUpdate() {
