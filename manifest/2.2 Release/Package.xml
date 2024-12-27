@@ -1,14 +1,20 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <Package xmlns="http://soap.sforce.com/2006/04/metadata">
 	<types>
+		<members>checkRecursive</members>
 		<members>UserService</members>
         <members>UserTriggerHandler</members>
         <members>UserServiceTest</members>
 		<name>ApexClass</name>
 	</types>
 	<types>
+		<members>assignResourcesToUsersBasedOnConfig</members>
+		<name>ApexTrigger</name>
+	</types>
+	<types>
 		<members>Assign_SF_Resources_to_User__mdt.Assignment_Type__c</members>
 		<members>Assign_SF_Resources_to_User__mdt.Role_Name__c</members>
+		<members>AssignResourcesToUserEvent__e.skipUserRoleUpdate__c</members>
 		<members>sked__Location__c.sked_Unloading_Directions_Details__c</members>		
 		<name>CustomField</name>
 	</types>

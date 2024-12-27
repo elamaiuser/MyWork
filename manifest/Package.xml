@@ -93,6 +93,7 @@
 		<name>ApexClass</name>
 	</types>
 	<types>
+		<members>assignResourcesToUsersBasedOnConfig</members>
 		<members>Add_Update_OpptyTeamMembers</members>
 		<members>skedTravelTimeIndexRefreshGroupTrigger</members>
 		<members>skedTravelTimeIndexRefreshRequestTrigger</members>
@@ -101,6 +102,7 @@
 	</types>
 	<types>
 		<members>Account.Feeder_Account_Type__c</members>
+		<members>AssignResourcesToUserEvent__e.skipUserRoleUpdate__c</members>
 		<members>Assign_SF_Resources_to_User__mdt.Assignment_Type__c</members>
 		<members>Assign_SF_Resources_to_User__mdt.Role_Name__c</members>
 		<members>Opportunity.APT_Required__c</members>
