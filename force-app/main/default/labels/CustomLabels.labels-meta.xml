@@ -476,6 +476,14 @@ Cancelled = No Change Allowed in Stage
 Withdrawn/Excluded-&gt; Cancelled, Closed</value>
     </labels>
     <labels>
+        <fullName>OpportunityTeamSyncTriggerSize</fullName>
+        <categories>Apex constant</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>OpportunityTeam Sync Batch Size Trigger</shortDescription>
+        <value>100</value>
+    </labels>
+    <labels>
         <fullName>PROMOTION_SENDER_EMAIL</fullName>
         <language>en_US</language>
         <protected>false</protected>
