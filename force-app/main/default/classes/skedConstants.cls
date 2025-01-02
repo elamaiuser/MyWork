@@ -369,6 +369,7 @@ public class skedConstants {
 
     public static final string PROFILE_QUEUE_DRIVE_CHANGE_REQUESTS = 'DCRs';
     public static final string PROFILE_QUEUE_PENDING_ACTIONS = 'PAs';
+    public static final string PROFILE_QUEUE_APS_ROLE_TIME_VARIANCES = ': RTVs';
     public static final string PROFILE_QUEUE_ROLE_TIME_VARIANCES = 'RTVs';
     public static final string PROFILE_QUEUE_CM_ROLE_TIME_VARIANCES = 'CMRTVs';
     public static final string PROFILE_QUEUE_DM_ROLE_TIME_VARIANCES = 'DMRTVs';

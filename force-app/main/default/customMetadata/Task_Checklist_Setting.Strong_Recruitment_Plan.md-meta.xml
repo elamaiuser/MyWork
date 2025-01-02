@@ -58,6 +58,6 @@ Provide any new communication or education (if needed).</value>
     </values>
     <values>
         <field>Unique_Name__c</field>
-        <value xsi:type="xsd:string">Strong_Recruitment_Plan</value>
+        <value xsi:type="xsd:string">Strong_Recruitment_Plan_Text</value>
     </values>
 </CustomMetadata>

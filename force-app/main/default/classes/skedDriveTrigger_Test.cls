@@ -105,7 +105,9 @@ private class skedDriveTrigger_Test {
             sked__Job_Status__c = skedConstants.JOB_STATUS_PENDING_ALLOCATION,
             sked_Drive__c = testDrive1.Id,
             sked_Drive_Shift__c = driveShift.Id,
-            sked_Resource_Role__c = 'Driver'
+            sked_Resource_Role__c = 'Driver',
+            sked_Travel_Time__c = 45,
+            sked_Travel_Time2__c = 45
         );
         jobs.add(job);
         
@@ -187,7 +189,9 @@ private class skedDriveTrigger_Test {
             sked__Job_Status__c = skedConstants.JOB_STATUS_PENDING_ALLOCATION,
             sked_Drive__c = testDrive1.Id,
             sked_Drive_Shift__c = driveShift.Id,
-            sked_Resource_Role__c = 'Driver'
+            sked_Resource_Role__c = 'Driver',
+            sked_Travel_Time__c = 45,
+            sked_Travel_Time2__c = 45
         );
         jobs.add(job);
         
