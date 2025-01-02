@@ -144,6 +144,7 @@
 		<members>BSF_Mass_Drive_Service_Role_Primary_Contact_Warning_Message</members>
 		<members>BSF_Mass_Drive_Service_Role_Warning_Message</members>
 		<members>Potential_Feeder_Group_Lead_Status</members>
+		<members>OpportunityTeamSyncTriggerSize</members>
 		<name>CustomLabel</name>
 	</types>
 	<types>
