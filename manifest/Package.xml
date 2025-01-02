@@ -5,6 +5,8 @@
 		<members>AccountTeamMemberTriggerHandler</members>
 		<members>AccountTriggerHandler</members>
 		<members>AccountTriggerTest</members>
+		<members>BSFWeeklyStaffingRoleTimeController</members>
+		<members>WeeklyStaffScheduleReportController</members>
 		<members>BSF_Batch_CreatePublicityTasks</members>
 		<members>BSF_Batch_CreatePublicityTasksTest</members>
 		<members>BSF_Batch_OpportunityTeamSync</members>
@@ -269,6 +271,7 @@
 		<members>autoMapper</members>
 		<members>dataService</members> 
         <members>slwcConstants</members>
+		<members>slwcDriveCalendar</members>
         <members>slwcDriveGenerator</members>
         <members>slwcDriveShift</members>
 		<members>slwcDriveShiftJobModal</members>
