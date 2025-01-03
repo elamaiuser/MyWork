@@ -83,6 +83,7 @@
 		<members>skedTravelTimeIndexRefreshGroupHandler</members>
 		<members>skedTTIRefreshGroupTrigger_Test</members>
 		<members>skedTravelTimeIndexRefreshRequestHandler</members>
+		<members>skedTTIndexRefreshRequestTrigger_Test</members>
 		<members>skedUserHandler</members>
 		<members>skedUserHandler_Test</members>
 		<members>skedWorkdayApiManager</members>
