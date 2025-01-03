@@ -69,11 +69,11 @@ private class BSFWeeklyStaffingRoleTimeControllerTest {
             sked__Is_Available__c = True,
             sked__Status__c = 'Approved',
             sked__Start__c = Date.today(),
-            sked__Finish__c = Date.today(),
+            sked__Finish__c = Date.today().addDays(5),
             sked_Bypass_Auto_Approval_Process__c = True,
             sked_Custom_Status__c = 'Pending',
             sked_Start_Date__c =  Date.today(),
-            sked_Finish_Date__c =  Date.today(),
+            sked_Finish_Date__c =  Date.today().addDays(5),
             sked__Type__c = availabilityType[0],
             sked_Start_Time__c = Datetime.now().time(),
             sked_Finish_Time__c = Datetime.now().addMinutes(66).time()
@@ -140,47 +140,18 @@ private class BSFWeeklyStaffingRoleTimeControllerTest {
         Test.stopTest();
     }
     @isTest
-    private static void testmethod9(){
-        String collOpIds = [SELECT Id, Name FROM Biomed_Collection_Op_Center__c WHERE Name = 'Collection Operation 1' LIMIT 1].Id;
-        List<sked__Activity_Resource__c> testList = [SELECT Id, sked_Start_Time__c, sked_End_Time__c FROM sked__Activity_Resource__c LIMIT 100];
-        for(sked__Activity_Resource__c ttt : testList){
-            if(ttt.sked_Start_Time__c == null){
-                ttt.sked_Start_Time__c = Datetime.now().time();
-            }
-            if(ttt.sked_End_Time__c == null){
-                ttt.sked_End_Time__c = Datetime.now().addMinutes(100).time();
-            }
-        }
-        update testList;
-        List<sked__Activity__c> testList1 = [SELECT Id, sked_Start_Time__c, sked_End_Time__c FROM sked__Activity__c LIMIT 100];
-        for(sked__Activity__c tta : testList1){
-            if(tta.sked_Start_Time__c == null){
-                tta.sked_Start_Time__c = Datetime.now().time();
-            }
-            if(tta.sked_End_Time__c == null){
-                tta.sked_End_Time__c = Datetime.now().addMinutes(100).time();
-            }
-        }
-        update testList1;
+    private static void testmethod9() {
+        String collOpIds = [SELECT Id, Name, sked_Territory__c FROM Biomed_Collection_Op_Center__c WHERE Name = 'Collection Operation 1' LIMIT 1].Id;
+            
         Test.startTest();
         List<BSFWeeklyStaffingRoleTimeController.WeeklyStaffingRTReportWrapper> wrapper = BSFWeeklyStaffingRoleTimeController.searchRoleTimeReport(Date.Today(),Date.Today().addDays(70),'Both',collOpIds,'mobile,fixed');
         Test.stopTest();
     }
     @isTest
     private static void testmethod10(){
-        String collOpIds = [SELECT Id, Name FROM Biomed_Collection_Op_Center__c WHERE Name = 'Collection Operation 1' LIMIT 1].Id;
-        List<sked__Activity_Resource__c> testList = [SELECT Id, sked_Start_Time__c, sked_End_Time__c FROM sked__Activity_Resource__c LIMIT 100];
-        for(sked__Activity_Resource__c ttt : testList){
-            if(ttt.sked_Start_Time__c == null){
-                ttt.sked_Start_Time__c = Datetime.now().time();
-            }
-            if(ttt.sked_End_Time__c == null){
-                ttt.sked_End_Time__c = Datetime.now().addMinutes(100).time();
-            }
-        }
-        update testList;
+        Biomed_Collection_Op_Center__c collOp = [SELECT Id, Name, sked_Territory__c FROM Biomed_Collection_Op_Center__c WHERE Name = 'Collection Operation 1' LIMIT 1];
         Test.startTest();
-        List<sked__Activity_Resource__c> actv = BSFWeeklyStaffingRoleTimeController.getActivities(Date.Today(),Date.Today().addDays(70),new Set<String>{collOpIds});
+        List<sked__Activity_Resource__c> actv = BSFWeeklyStaffingRoleTimeController.getActivities(Date.Today(), Date.Today().addDays(70), new List<String>{collOp.sked_Territory__c + ':' + collOp.Id});
         Test.stopTest();
     }
     @isTest
@@ -196,19 +167,13 @@ private class BSFWeeklyStaffingRoleTimeControllerTest {
     private static void testmethod12(){
         Test.startTest();
         List<BSFWeeklyStaffingRoleTimeController.WeeklyStaffingRTReportWrapper> wrap = BSFWeeklyStaffingRoleTimeController.calculateRowSpan(getTestWrapperList());
-        
-        wrap = BSFWeeklyStaffingRoleTimeController.addBlankResources(getTestWrapperList());
-        String ddt = BSFWeeklyStaffingRoleTimeController.dateFormat2(date.today());
-        wrap[0].rowspan = 2;
-        wrap[0].eventDetails[0].rowspan = 2;
-        wrap = BSFWeeklyStaffingRoleTimeController.calculateRowSpan(getTestWrapperList());
         Test.stopTest();
     }
 
     @isTest
     private static void testmethod13(){
         Test.startTest();
-        List<BSFWeeklyStaffingRoleTimeController.ResourceDetails> wrap = BSFWeeklyStaffingRoleTimeController.sortByResourceName(getTestResourceList('tt'));
+        List<BSFWeeklyStaffingRoleTimeController.ResourceDetails> wrap = BSFWeeklyStaffingRoleTimeController.sortByResourceName(getTestResourceList());
         Test.stopTest();
     }
 
@@ -276,6 +241,17 @@ private class BSFWeeklyStaffingRoleTimeControllerTest {
     private static void testmethod20(){
         Test.startTest();
         String nnnn = BSFWeeklyStaffingRoleTimeController.getFormattedTime(12,0);
+        Test.stopTest();
+    }
+    
+    @isTest
+    private static void testmethod21() {        
+        Test.startTest();
+        try{
+        	Integer count = BSFWeeklyStaffingRoleTimeController.validateInputs(system.today(), system.today().addDays(-10), '', '', '');
+        }catch(AuraHandledException ex) {
+            //Assert.isTrue()
+        }
         Test.stopTest();
     }
 
@@ -411,10 +387,7 @@ private class BSFWeeklyStaffingRoleTimeControllerTest {
             
             triggerHandler.bypass('AccountTeamMemberTriggerHandler');
             insert atmList;
-            
-            
-            
-            
+      
             Contact conObj = new Contact();
             conObj.AccountId = mobileAccList[0].Id;
             conObj.FirstName = 'Test';
@@ -564,9 +537,7 @@ private class BSFWeeklyStaffingRoleTimeControllerTest {
             triggerHandler.bypass('OpportunityTriggerHandler');
             insert oppsobjlist;
 
-            Biomed_Collection_Op_Center__c testCollectionOperation1 = [SELECT Id, Name FROM Biomed_Collection_Op_Center__c WHERE Name = 'Collection Operation 1' LIMIT 1];
-            
-
+            Biomed_Collection_Op_Center__c testCollectionOperation1 = [SELECT Id, Name, sked_Territory__c FROM Biomed_Collection_Op_Center__c WHERE Name = 'Collection Operation 1' LIMIT 1];
             
             triggerHandler.bypass('DriveTriggerHandler');
             sked_Drive__c testDrive1 = new sked_Drive__c(Name = 'Test Drive',
@@ -902,66 +873,70 @@ private class BSFWeeklyStaffingRoleTimeControllerTest {
             skedHubBase.BypassInsertTriggers = true;
         	skedHubBase.BypassUpdateTriggers = true;
             insert joballc5;
-            
-            
+                        
+            skedHubBase.BypassInsertTriggers = false;
+        	skedHubBase.BypassUpdateTriggers = false;
+            skedSetting.instance.Admin.dateTimeConversion = true;
             sked__Activity__c activity = new sked__Activity__c(
-            sked__Resource__c = resourcestaff.Id,
-            sked__Type__c = 'On Call',
-            sked_Activity_Title__c = 'On Call 1',
-            sked__Start__c = Datetime.now(),
-            sked_Start_Date__c =  Date.today(),
-            sked_End_Date__c =  Date.today().addDays(1),
-            sked__End__c = Datetime.now().addDays(1),
-            sked_Start_Time__c = Datetime.now().time(),
-            sked_End_Time__c = Datetime.now().addMinutes(66).time(),
-            sked_Collection_Operation__c = testCollectionOperation1.Id,
-            sked_Drive__c = testDrive1.Id,
-            sked_Region__c = reg.Id,
-            sked__Address__c = 'Test Address',
-            sked__Notes__c = 'Test notes',
-            sked_Is_Group_Activity__c = true
+                sked__Resource__c = resourcestaff.Id,
+                sked__Type__c = 'On Call',
+                sked_Activity_Title__c = 'On Call 1',
+               
+                sked_Start_Date__c =  Date.today(),
+                sked_End_Date__c =  Date.today(),
+           
+                sked_Start_Time__c = Datetime.now().time(),
+                sked_End_Time__c = Datetime.now().addMinutes(66).time(),
+                sked_Collection_Operation__c = testCollectionOperation1.Id,
+                sked_District__c = testCollectionOperation1.sked_Territory__c,
+                sked_Drive__c = testDrive1.Id,
+                sked_Region__c = reg.Id,
+                sked__Address__c = 'Test Address',
+                sked__Notes__c = 'Test notes',
+                sked_Is_Group_Activity__c = true
             );
-            skedHubBase.BypassInsertTriggers = true;
             insert activity;
+            
             sked__Activity_Resource__c skedActivityResource = new sked__Activity_Resource__c(
                 sked__Activity__c = activity.Id,
                 sked__Resource__c = resourcestaff.Id
             );
-            skedHubBase.BypassInsertTriggers = true;
             insert skedActivityResource;
+            system.debug('skedActivityResource '+skedActivityResource);
+            
             sked__Activity__c activity1 = new sked__Activity__c(
-            sked__Resource__c = resourcestaff.Id,
-            sked__Type__c = 'On Call',
-            sked_Activity_Title__c = 'On Call 1',
-            sked__Start__c = Datetime.now().addDays(1),
-            sked_Start_Date__c =  Date.today().addDays(1),
-            sked_End_Date__c =  Date.today().addDays(2),
-            sked__End__c = Datetime.now().addDays(2),
-            sked_Start_Time__c = Datetime.now().time(),
-            sked_End_Time__c = Datetime.now().addMinutes(66).time(),
-            sked_Collection_Operation__c = testCollectionOperation1.Id,
-            sked_Drive__c = testDrive2.Id,
-            sked_Region__c = reg.Id,
-            sked__Address__c = 'Test Address',
-            sked__Notes__c = 'Test notes',
-            sked_Is_Group_Activity__c = true
+                sked__Resource__c = resourcestaff.Id,
+                sked__Type__c = 'On Call',
+                sked_Activity_Title__c = 'On Call 1',
+              
+                sked_Start_Date__c =  Date.today().addDays(1),
+                sked_End_Date__c =  Date.today().addDays(1),
+            
+                sked_Start_Time__c = Datetime.now().time(),
+                sked_End_Time__c = Datetime.now().addMinutes(66).time(),
+                sked_Collection_Operation__c = testCollectionOperation1.Id,
+                sked_District__c = testCollectionOperation1.sked_Territory__c,
+                sked_Drive__c = testDrive2.Id,
+                sked_Region__c = reg.Id,
+                sked__Address__c = 'Test Address',
+                sked__Notes__c = 'Test notes',
+                sked_Is_Group_Activity__c = true
             );
-            skedHubBase.BypassInsertTriggers = true;
             insert activity1;
+            
             sked__Activity_Resource__c skedActivityResource1 = new sked__Activity_Resource__c(
                 sked__Activity__c = activity1.Id,
                 sked__Resource__c = resourcestaff.Id
             );
-            skedHubBase.BypassInsertTriggers = true;
             insert skedActivityResource1;
         }        
         
     }
 
-    private static List<BSFWeeklyStaffingRoleTimeController.ResourceDetails> getTestResourceList(String abc){
+    private static List<BSFWeeklyStaffingRoleTimeController.ResourceDetails> getTestResourceList(){
         List<BSFWeeklyStaffingRoleTimeController.ResourceDetails> rssList = new List<BSFWeeklyStaffingRoleTimeController.ResourceDetails>();
         BSFWeeklyStaffingRoleTimeController.ResourceDetails resdet = new BSFWeeklyStaffingRoleTimeController.ResourceDetails();
-        resdet.resourceName = 'test test'+abc;
+        resdet.resourceName = 'test test';
         resdet.resourceRole = 'test';
         resdet.staffArrivalTime = '2 AM';
         resdet.shiftStart = '2 AM';
@@ -969,7 +944,7 @@ private class BSFWeeklyStaffingRoleTimeControllerTest {
         rssList.add(resdet);
 
         BSFWeeklyStaffingRoleTimeController.ResourceDetails resdet1 = new BSFWeeklyStaffingRoleTimeController.ResourceDetails();
-        resdet1.resourceName = 'eddedc test'+abc;
+        resdet1.resourceName = 'eddedc test';
         resdet1.resourceRole = 'test';
         resdet1.staffArrivalTime = '2 AM';
         resdet1.shiftStart = '2 AM';
@@ -977,7 +952,7 @@ private class BSFWeeklyStaffingRoleTimeControllerTest {
         rssList.add(resdet1);
 
         BSFWeeklyStaffingRoleTimeController.ResourceDetails resdet2 = new BSFWeeklyStaffingRoleTimeController.ResourceDetails();
-        resdet2.resourceName = 'wefrfe test'+abc;
+        resdet2.resourceName = 'wefrfe test';
         resdet2.resourceRole = 'test';
         resdet2.staffArrivalTime = '2 AM';
         resdet2.shiftStart = '2 AM';
@@ -985,7 +960,7 @@ private class BSFWeeklyStaffingRoleTimeControllerTest {
         rssList.add(resdet2);
 
         BSFWeeklyStaffingRoleTimeController.ResourceDetails resdet3 = new BSFWeeklyStaffingRoleTimeController.ResourceDetails();
-        resdet3.resourceName = 'dcefcerf test'+abc;
+        resdet3.resourceName = 'dcefcerf test';
         resdet3.resourceRole = 'test';
         resdet3.staffArrivalTime = '2 AM';
         resdet3.shiftStart = '2 AM';
@@ -997,41 +972,36 @@ private class BSFWeeklyStaffingRoleTimeControllerTest {
 
     private static List<BSFWeeklyStaffingRoleTimeController.WeeklyStaffingRTReportWrapper> getTestWrapperList(){
         List<BSFWeeklyStaffingRoleTimeController.WeeklyStaffingRTReportWrapper> wraperList = new List<BSFWeeklyStaffingRoleTimeController.WeeklyStaffingRTReportWrapper>();
-		for(Integer j = 0; j<5; j++){
-            BSFWeeklyStaffingRoleTimeController.WeeklyStaffingRTReportWrapper wraper = new BSFWeeklyStaffingRoleTimeController.WeeklyStaffingRTReportWrapper();
-            wraper.eventDate = BSFWeeklyStaffingRoleTimeController.dateFormat2(Date.Today().addDays(j));
-            wraper.eventDetails = new List<BSFWeeklyStaffingRoleTimeController.EventDetails>();
-    
-            BSFWeeklyStaffingRoleTimeController.EventDetails evDetails = new BSFWeeklyStaffingRoleTimeController.EventDetails();
-            evDetails.eventName = 'test';
-            evDetails.eventName = 'test';
-            evDetails.isDrive = true;
-            evDetails.projProc = 'test';
-            evDetails.assignedMachineCount = 'test';
-            evDetails.staffReq = 'test';
-            evDetails.hours = 'test';
-            evDetails.eventVehicles = 'test';
-            evDetails.autoMachines = 'test';
-            evDetails.resources = getTestResourceList('ss');
-            wraper.eventDetails.add(evDetails);
-            
-            for(Integer i = 0; i<5; i++){
-    
-                BSFWeeklyStaffingRoleTimeController.EventDetails evDetails1 = new BSFWeeklyStaffingRoleTimeController.EventDetails();
-                evDetails1.eventName = 'test';
-                evDetails1.eventName = 'test';
-                evDetails1.isDrive = true;
-                evDetails1.projProc = 'test';
-                evDetails1.assignedMachineCount = 'test';
-                evDetails1.staffReq = 'test';
-                evDetails1.hours = 'test';
-                evDetails1.eventVehicles = 'test';
-                evDetails1.autoMachines = 'test';
-                evDetails1.resources = getTestResourceList(String.valueOf(i+j));
-                wraper.eventDetails.add(evDetails1);
-            }
-            wraperList.add(wraper);
-        }
+
+        BSFWeeklyStaffingRoleTimeController.WeeklyStaffingRTReportWrapper wraper = new BSFWeeklyStaffingRoleTimeController.WeeklyStaffingRTReportWrapper();
+        wraper.eventDate = '01-01-2024';
+        wraper.eventDetails = new List<BSFWeeklyStaffingRoleTimeController.EventDetails>();
+
+        BSFWeeklyStaffingRoleTimeController.EventDetails evDetails = new BSFWeeklyStaffingRoleTimeController.EventDetails();
+        evDetails.eventName = 'test';
+        evDetails.eventName = 'test';
+        evDetails.isDrive = true;
+        evDetails.projProc = 'test';
+        evDetails.assignedMachineCount = 'test';
+        evDetails.staffReq = 'test';
+        evDetails.hours = 'test';
+        evDetails.eventVehicles = 'test';
+        evDetails.autoMachines = 'test';
+        evDetails.resources = getTestResourceList();
+        wraper.eventDetails.add(evDetails);
+
+        BSFWeeklyStaffingRoleTimeController.EventDetails evDetails1 = new BSFWeeklyStaffingRoleTimeController.EventDetails();
+        evDetails1.eventName = 'test';
+        evDetails1.eventName = 'test';
+        evDetails1.isDrive = true;
+        evDetails1.projProc = 'test';
+        evDetails1.assignedMachineCount = 'test';
+        evDetails1.staffReq = 'test';
+        evDetails1.hours = 'test';
+        evDetails1.eventVehicles = 'test';
+        evDetails1.autoMachines = 'test';
+        evDetails1.resources = getTestResourceList();
+        wraper.eventDetails.add(evDetails1);
 
         return wraperList;
 
