@@ -45,5 +45,9 @@
 		<members>sked__Resource__c-Staff Layout</members>		
 		<name>Layout</name>
 	</types>
+	<types>
+		<members>sked_Resource_Roles</members>
+		<name>GlobalValueSet</name>
+    </types>
 	<version>60.0</version>
 </Package>
