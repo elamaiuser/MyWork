@@ -28,7 +28,7 @@ public class skedJobAllocationHandler extends skedTriggerHub implements Callable
     }
 
     public override void onAfterInsert() {
-        processPostInsert(this.context.newRecords);
+        processPostInsert();
         updateDriveVehicleTypes(this.context.newRecords);
     }
     
@@ -95,13 +95,9 @@ public class skedJobAllocationHandler extends skedTriggerHub implements Callable
     }
 
     /**************************************** PRIVATE METHOD ********************************************/
-    private void processPostInsert(List<sked__Job_Allocation__c> newRecords) {
-        Set<Id> jobAllocationIds = new Set<Id>();
-        for (sked__Job_Allocation__c newRecord : newRecords) {
-            jobAllocationIds.add(newRecord.Id);
-        }
-        if (!Test.isRunningTest() && !System.isBatch() && !skedSetting.instance.Admin.migrationMode) {
-            Database.executeBatch(new skedJobAllocationTravelTimeBatch(jobAllocationIds), 40);
+    private void processPostInsert() {
+        if (!skedSetting.instance.Admin.migrationMode) {
+            skedJobAllocationTravelTimeBatch.schedule();
         }
     }
 
@@ -459,6 +455,10 @@ public class skedJobAllocationHandler extends skedTriggerHub implements Callable
                 newRecord.sked__Time_Published__c = currentTime;
                 newRecord.sked__Status__c = skedConstants.JOB_ALLOCATION_STATUS_CONFIRMED;
                 newRecord.sked_Locked__c = TRUE;
+            }
+
+            if (newRecord.sked_Travel_Time_Back__c != null && newRecord.sked_Travel_Time_To__c != null) {
+                newRecord.sked_Completed_Post_Processes__c = skedUtils.addNewItemToMultiPicklist(newRecord.sked_Completed_Post_Processes__c, skedConstants.JOB_ALLOCATION_POST_PROCESS_TRAVEL_TIME);
             }
         }
     }
