@@ -41,5 +41,9 @@
 		<members>Assign_SF_Resources_to_User.Telerecruiter_BSF_User_Role</members>
 		<name>CustomMetadata</name>
 	</types>
+	<types>		
+		<members>sked__Resource__c-Staff Layout</members>		
+		<name>Layout</name>
+	</types>
 	<version>60.0</version>
 </Package>
