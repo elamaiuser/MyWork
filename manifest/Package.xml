@@ -6,7 +6,9 @@
 		<members>AccountTriggerHandler</members>
 		<members>AccountTriggerTest</members>
 		<members>BSFWeeklyStaffingRoleTimeController</members>
+		<members>BSFWeeklyStaffingRoleTimeControllerTest</members>
 		<members>WeeklyStaffScheduleReportController</members>
+		<members>WeeklyStaffScheduleReportControllerTest</members>
 		<members>BSF_Batch_CreatePublicityTasks</members>
 		<members>BSF_Batch_CreatePublicityTasksTest</members>
 		<members>BSF_Batch_OpportunityTeamSync</members>
@@ -23,6 +25,7 @@
 		<members>checkRecursive</members>
 		<members>FieldIdentifiers</members>
 		<members>FutureDrivesController</members>
+		<members>FutureDrivesController_Test</members>
 		<members>GenerateMobileDrive</members>
 		<members>GenerateMobileDriveTest</members>
 		<members>LeadService</members>
@@ -48,17 +51,20 @@
 		<members>skedDriveHandler</members>
 		<members>skedDriveTrigger_Test</members>
 		<members>skedJobAllocationHandler</members>
+		<members>skedJobAllocationTrigger_Test</members>
 		<members>skedJobHandler</members>
 		<members>skedMappingConfigContainer</members>
 		<members>skedModels</members>
 		<members>skedModels_Test</members>
 		<members>skedNotificationBatchBase</members>
+		<members>skedNotificationGenerationBatch_Test</members>
 		<members>skedOpportunityHandler</members>
 		<members>skedPtoRequestController</members>
 		<members>skedRacController</members>
 		<members>skedRacStory_Test</members>
 		<members>skedRecurringFactory</members>
 		<members>skedRefreshTravelTimeIndexBatchBase</members>
+		<members>skedNightlyRefreshTTIndexBatch_Test</members>
 		<members>skedRegionService</members>
 		<members>skedRegionService_Test</members>
 		<members>skedSObjectType</members>
@@ -80,7 +86,9 @@
 		<members>skedUserHandler</members>
 		<members>skedUserHandler_Test</members>
 		<members>skedWorkdayApiManager</members>
+		<members>skedWorkdayApiManager_Test</members>
 		<members>slwcDriveService</members>
+		<members>slwcDriveService_Test</members>
 		<members>BSF_TravelTimePanelController</members>
 		<members>BSF_TravelTimePanelControllerTest</members>
 		<members>skedActivityHandler</members>
