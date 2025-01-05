@@ -246,6 +246,7 @@
 		<members>Mobile_Account_Record_Page</members>
 		<members>Mobile_Opp_Record_Page</members>
 		<members>Order_Record_Page</members>
+		<members>Travel_Time_Index_Refresh_Group_Record_Page</members>
 		<name>FlexiPage</name>
 	</types>
 	<types>
