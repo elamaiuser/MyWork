@@ -240,6 +240,7 @@
 		<name>FieldSet</name>
 	</types>
 	<types>
+		<members>DRD_HomePage</members>
 		<members>Fixed_Site_Account_Record_Page</members>
 		<members>Fixed_Site_Opp_Record_Page</members>
 		<members>Mobile_Account_Record_Page</members>
