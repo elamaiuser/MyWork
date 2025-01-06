@@ -1259,7 +1259,7 @@ Note : It'll throw error if any sort of consequences happen when projection valu
         }
         
         if (!templateOpportunityIds.isEmpty()) {
-            Map<Id, Opportunity> templateOpportunityMap = new Map<Id, Opportunity>([SELECT Id,X2RBC_Projected_Procedures__c, Anticipated_Registered_Donors__c, Drive_Site__c,Direct_Donors_To__c,Site_TBD__c,Procedure_Projections_Template__c, Projected_Registered_Donors_Template__c, Staffing_Template__c, Volunteers_Template__c, WholeBloodProceduresProjectedTemplate__c, WholeBloodProceduresProjectedOriginal__c, WB_Projected_Procedures__c, Double_Red_Procedures_Projected_Template__c, Anticipated_Registered_Donors_Template__c FROM Opportunity WHERE Id IN:templateOpportunityIds]);
+            Map<Id, Opportunity> templateOpportunityMap = new Map<Id, Opportunity>([SELECT Id,X2RBC_Projected_Procedures__c, Anticipated_Registered_Donors__c, Drive_Site__c,Direct_Donors_To__c,Site_TBD__c,Procedure_Projections_Template__c, Projected_Registered_Donors_Template__c, Staffing_Template__c, Volunteers_Template__c, WholeBloodProceduresProjectedTemplate__c, WholeBloodProceduresProjectedOriginal__c, WB_Projected_Procedures__c, Double_Red_Procedures_Projected_Template__c, Anticipated_Registered_Donors_Template__c, APT_Required__c, APT_Quantity__c FROM Opportunity WHERE Id IN:templateOpportunityIds]);
             for (Opportunity newOpportunity : newOpportunityList) {
                 if (isInsertOrUpdateWithChangeInTemplate(oldOpportunityMap, newOpportunity)) {
                     //System.debug('isInsertOrUpdateWithChangeInTemplate ->true');
@@ -1270,8 +1270,12 @@ Note : It'll throw error if any sort of consequences happen when projection valu
                     newOpportunity.Volunteers_Template__c = templateOpportunity.Volunteers_Template__c;
                     
                     /* added by Satabdi as per HRP-6520 */
+                    checkRecursive.skipAptRecalculation = TRUE; //HRP-13190
                     newOpportunity.Drive_Site__c = templateOpportunity.Drive_Site__c;
                     newOpportunity.Site_TBD__c = false;
+                    newOpportunity.APT_Required__c = templateOpportunity.APT_Required__c; //HRP-13190
+                    newOpportunity.APT_Quantity__c = templateOpportunity.APT_Quantity__c; //HRP-13190
+                    newOpportunity.APT_Change_Reason__c = templateChangedText; //HRP-13190
                     
                     newOpportunity.WholeBloodProceduresProjectedTemplate__c = templateOpportunity.WholeBloodProceduresProjectedTemplate__c;
                     newOpportunity.Double_Red_Procedures_Projected_Template__c = templateOpportunity.Double_Red_Procedures_Projected_Template__c;
@@ -4811,10 +4815,22 @@ opp.StageName = 'Closed';
             for(Opportunity newOpp : newOppList) {
                 Opportunity oldOpp = oldOppMap.get(newOpp.Id);
                 if (oldOpp != NULL) {
-                    Boolean recalculateAptRule1 = oldOpp.APT_Required__c != newOpp.APT_Required__c;
-                    Boolean recalculateAptRule2 = oldOpp.Total_Projected_Procedures__c != newOpp.Total_Projected_Procedures__c;
-                    Boolean recalculateAptRule3 = !checkRecursive.skipAptRecalculation; //During DOC -> OPP Sync
-                    if((recalculateAptRule1 || recalculateAptRule2) && recalculateAptRule3) oppListToRecalculateAPT.add(newOpp);
+                    Boolean recalculateAptRule1 = !checkRecursive.skipAptRecalculation; //During DOC -> OPP Sync
+                    Boolean recalculateAptRule2 = (oldOpp.APT_Change_Reason__c == newOpp.APT_Change_Reason__c) || ((oldOpp.APT_Change_Reason__c != newOpp.APT_Change_Reason__c) && !newOpp.APT_Change_Reason__c.containsIgnoreCase(BSF_Constants.APT_CHANGE_VIA_TEMPLATE));
+                    Boolean recalculateAptRule3 = oldOpp.APT_Required__c != newOpp.APT_Required__c;
+                    Boolean recalculateAptRule4 = oldOpp.Total_Projected_Procedures__c != newOpp.Total_Projected_Procedures__c;  
+                    
+                    if(recalculateAptRule1 && recalculateAptRule2) {
+                        if(recalculateAptRule3 && !newOpp.APT_Required__c) {
+                            newOpp.APT_Quantity__c = 0;
+                            newOpp.APT_Change_Reason__c = (newOpp.Is_Template__c ? 'Template' : 'Opportunity') + ' APT changed by ' + userInfo.getName() + ' on '+system.now();
+                        } else {
+                            if(recalculateAptRule4) {
+                            	newOpp.APT_Required__c = FALSE; //reset value to false and populate it based on formula later
+                            }
+                            oppListToRecalculateAPT.add(newOpp);
+                        }
+                    }
                 }
             }
             if(oppListToRecalculateAPT != NULL && !oppListToRecalculateAPT.isEmpty()) {

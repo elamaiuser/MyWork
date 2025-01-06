@@ -143,6 +143,14 @@ const DRIVE_FIELD_CHANGE_MAPPING = {
       { actions: [] }
     ]
   },
+  'aptQuantity': {
+    groups: [
+      { actions: [] },
+      { actions: [] },
+      { actions: ['calculateDriveShiftsMetadata', 'proposeDriveShifts', 'calculateDriveProductivityPlanned'] },
+      { actions: [] }
+    ]
+  },
   'recruitedBy': {
     groups: [
       { actions: [] },
@@ -975,10 +983,8 @@ class MobileGenerator extends BaseGenerator {
 
   calculateTotalProceduresProjected(record) {
     if (!record && !this.drive) return;
-    let isShift = true;
     if (!record) {
       record = this.drive;
-      isShift = false;
     } else {
       this.drive.aptQuantity = record.APTSetup;
     }
@@ -987,29 +993,27 @@ class MobileGenerator extends BaseGenerator {
     record.totalProceduresProjected = x2rbcProjectedProcedures + wbProjectedProcedures;
     record.totalProductsProjected = x2rbcProjectedProcedures * 2 + wbProjectedProcedures;
 
-    if(isShift && !isEmpty(this.masterData.backupDrive?.driveShifts)) {
-      this.masterData.skipAPTCalculation = !!this.masterData.backupDrive?.driveShifts?.find(shift => shift.totalProceduresProjected === record.totalProceduresProjected);
-    }
     if(!this.masterData.skipAPTCalculation) {
-      this.recalculateAPTSettings(this.drive);
+      this.recalculateAPTSettings();
+      this.drive.driveShiftsMetadata.APTSetup = this.drive.aptQuantity;
     }
   }
 
-  recalculateAPTSettings(drive) {
-    if(!drive) return;
-    
+  recalculateAPTSettings() {
+    if(!this.drive) return;
+
     let aptQuantity = 0;
-    const isEducationDrive = drive.account?.type === ACCOUNT_TYPE.EDUCATION;
-    const isMiddleOrElemenentaryIndustryCode = drive.account?.industryCode === ACCOUNT_INDUSTRY_CODE.MIDDLE_SCHOOL || drive.account?.industryCode === ACCOUNT_INDUSTRY_CODE.ELEMENTARY_SCHOOL;
+    const isEducationDrive = this.drive.account?.type === ACCOUNT_TYPE.EDUCATION;
+    const isMiddleOrElemenentaryIndustryCode = this.drive.account?.industryCode === ACCOUNT_INDUSTRY_CODE.MIDDLE_SCHOOL || this.drive.account?.industryCode === ACCOUNT_INDUSTRY_CODE.ELEMENTARY_SCHOOL;
     if(isEducationDrive) {
       if(!isMiddleOrElemenentaryIndustryCode) {
-        aptQuantity = Math.floor(drive.totalProceduresProjected / 40);
+        aptQuantity = Math.floor(this.drive.driveShiftsMetadata.totalProceduresProjected / 40);
       }
     } else {
-      if(drive.totalProceduresProjected >= 40) aptQuantity = 1;
+      if(this.drive.driveShiftsMetadata.totalProceduresProjected >= 40) aptQuantity = 1;
     }
-    drive.aptQuantity = aptQuantity;
-    drive.aptRequired = aptQuantity > 0 ? true : false;
+    this.drive.aptQuantity = aptQuantity;
+    this.drive.aptRequired = aptQuantity > 0 ? true : false;
   }
 
   /** Drive Shifts metadata */
@@ -1079,8 +1083,10 @@ class MobileGenerator extends BaseGenerator {
     this.helper.splitScheduledDonors(this.drive, driveShiftsMetadata.driveShifts, this.masterData.timezoneSidId);
 
     this.calculateTotalProceduresProjected(driveShiftsMetadata);
+    this.drive.driveShiftsMetadata.APTSetup = this.drive.aptQuantity;
     driveShiftsMetadata.driveShifts.forEach(driveShift => {
       this.calculateTotalProceduresProjected(driveShift);
+      driveShift.APTSetup = this.drive.aptQuantity;
       driveShift.resourceRoleGroupRoleTimeDataMap = this.helper.calculateDriveShiftRoleTimeData(
         this.masterData,
         this.drive, 
@@ -1412,7 +1418,7 @@ class MobileGenerator extends BaseGenerator {
       let resourceQuantityMap = this.mapResourceQuantity.get(driveShiftMetadata.key);
       resourceQuantityMap.set('VP/HH', {
         vphhQuantity: noOfVpHhStaffs,
-        aptQuantity: driveShiftMetadata.APTSetup
+        aptQuantity: driveShiftsMetadata.APTSetup
       });
     });
   }
@@ -1570,7 +1576,7 @@ class MobileGenerator extends BaseGenerator {
         x2rbcProjectedProcedures: driveShiftMetadata.x2rbcProjectedProcedures,
         wbProjectedProcedures: driveShiftMetadata.wbProjectedProcedures,
         donorsScheduled: driveShiftMetadata.donorsScheduled,
-        APTSetup: driveShiftMetadata.APTSetup
+        APTSetup: this.drive.driveShiftsMetadata.APTSetup
       };
 
       this.populateDriveShiftTags(proposedDriveShift);
@@ -2101,6 +2107,7 @@ class MobileGenerator extends BaseGenerator {
   handleDriveShiftsMetadataChanged(driveShift = {}) {
     if (this.drive.driveShiftsMetadata) {
       this.calculateTotalProceduresProjected(this.drive.driveShiftsMetadata);
+      this.drive.driveShiftsMetadata.APTSetup = !isEmpty(driveShift) ? driveShift.APTSetup : this.drive.aptQuantity;
       this.drive.driveShiftsMetadata.driveShifts.forEach((driveShiftMetadata) => {
         this.calculateTotalProceduresProjected(driveShiftMetadata);
         driveShiftMetadata.APTSetup = !isEmpty(driveShift) ? driveShift.APTSetup : this.drive.aptQuantity;

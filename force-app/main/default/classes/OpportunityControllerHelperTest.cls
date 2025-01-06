@@ -49,5 +49,14 @@ public class OpportunityControllerHelperTest {
         // Assertions
         System.assertEquals(testOpportunity.Id, result.Id, 'Expected the Opportunity ID to match');
     }
+    @isTest
+    static void testGetWarningMessage() {
+        Test.startTest();
+        String result = OpportunityControllerHelper.getWarningMessage();
+        Test.stopTest();
+        
+        System.assertNotEquals('Test Warning Message', result, 'Expected warning message to match.');
+  
+    }
 
 }

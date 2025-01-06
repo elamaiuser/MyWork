@@ -61,6 +61,11 @@ private class skedStaffingBudgetUtils_Test {
         );
 
         insert availability;
+        
+        sked_Staffing_Budget_Availability__c staffingBudgetAvail = new sked_Staffing_Budget_Availability__c(
+                sked_Availability__c = availability.Id,
+                sked_Staffing_Budget__c = staffingBudgetList[1].Id);
+        insert staffingBudgetAvail;
                
         // Create sked_Event_Type_Setting__c
         sked_Event_Type_Setting__c eventTypeSetting = new sked_Event_Type_Setting__c(

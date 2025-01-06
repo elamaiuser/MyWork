@@ -1,7 +1,8 @@
 @isTest
 private class skedRefreshTravelTimeIndexBatch_Test {
     @isTest
-    static void skedRefreshTravelTimeIndexBatch_Test() {
-        skedRefreshTravelTimeIndexBatch batch = new skedRefreshTravelTimeIndexBatch();
+    static void skedRefreshTravelTimeIndexBatchBase_Test() {
+        skedRefreshTravelTimeIndexBatchBase batch = new skedRefreshTravelTimeIndexBatchBase();
+        Database.executeBatch(batch, 200);
     }
 }
