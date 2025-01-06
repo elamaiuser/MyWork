@@ -14,6 +14,8 @@
         <members>skedJobAllocationTravelTimeBatch_Test</members>
 		<members>skedTriggerUtils</members>
         <members>skedTriggerUtils_Test</members>
+		<members>skedUpdateJobTimeVarianceBatch</members>
+		<members>skedUpdateJobTimeVarianceBatch_Test</members>
 		<members>skedWeeklyHoursCorrectionBatch</members>
         <members>skedWeeklyHoursCorrection_Test</members>
 		<members>UserService</members>
