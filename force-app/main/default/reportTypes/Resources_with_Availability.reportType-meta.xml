@@ -280,6 +280,16 @@
         </columns>
         <columns>
             <checkedByDefault>false</checkedByDefault>
+            <field>sked_Dispositioned_By_User__c</field>
+            <table>sked__Resource__c.sked__Availabilities1__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>sked_Disposition_Date__c</field>
+            <table>sked__Resource__c.sked__Availabilities1__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
             <field>sked_Unique_Key__c</field>
             <table>sked__Resource__c.sked__Availabilities1__r</table>
         </columns>
