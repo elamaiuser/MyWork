@@ -5,6 +5,19 @@ global class skedActivityService extends skedEventService {
         this.objectTYpe = 'activity';
         this.domainType = Type.forName('skedModels.activity');
     }
+    
+    protected virtual override skedDataService.saveResult preSaveRecord(List<skedModels.modelBase> models) {
+        List<skedModels.activity> activities = (List<skedModels.activity>)models;
+        for(skedModels.activity activity : activities) {
+            if(activity.driveTypes != NULL && !activity.driveTypes.isEmpty()) {
+                activity.notes = 'Selected Drive Type(s) : '+String.join(activity.driveTypes, ', ')+ '. \n'+activity.notes;
+            }
+        }
+        
+        skedDataService.saveResult result = new skedDataService.saveResult();
+        result.success = true;
+        return result;
+    }
 
     protected virtual override void postSaveRecord(List<skedModels.modelBase> models, List<sObject> records) {
         List<skedModels.activity> activityModels = (List<skedModels.activity>) models;
@@ -18,7 +31,7 @@ global class skedActivityService extends skedEventService {
             WHERE Id IN :map_activityId_activityRecords.keySet()
             ]
         );
-		
+
         List<sked_Activity_Collection_Operation__c> activityCosToDelete = new List<sked_Activity_Collection_Operation__c>();
         if(existingActivities != NULL && !existingActivities.isEmpty()) {
             for(sked__Activity__c existingActivity : existingActivities) {

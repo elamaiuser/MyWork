@@ -88,9 +88,11 @@ trigger updateEventTrigger on Update_Event__e (After Insert) {
                 }
                 if(oppFields.updatedDataKeys.contains('WB_Projected_Procedures__c')) { //HRP-10312
                     recOpp.WB_Projected_Procedures__c = oppFields.WB_Projected_Procedures;
+                    checkRecursive.skipAptRecalculation = true;
                 }
                 if(oppFields.updatedDataKeys.contains('X2RBC_Projected_Procedures__c')) { //HRP-10312
                     recOpp.X2RBC_Projected_Procedures__c = oppFields.X2RBC_Projected_Procedures;
+                    checkRecursive.skipAptRecalculation = true;
                 }
                 if(oppFields.updatedDataKeys.contains('AnticipatedRegisterDonorChangeReason__c')) { //HRP-10312
                     recOpp.AnticipatedRegisterDonorChangeReason__c = oppFields.AnticipatedRegisterDonorChangeReason;

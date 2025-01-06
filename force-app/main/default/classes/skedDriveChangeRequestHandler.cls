@@ -278,7 +278,7 @@ public class skedDriveChangeRequestHandler extends skedTriggerHub {
             }
         }
         if (!rejectedDriveChangeRequestIds.isEmpty()) {
-            List<sked_Drive_Change_Request__c> rejectedDCRs = [SELECT Id, sked_Drive__c, sked_Opportunity_Id__c, sked_Drive__r.sked_APT_Quantity__c,
+            List<sked_Drive_Change_Request__c> rejectedDCRs = [SELECT Id, sked_Drive__c, sked_Opportunity_Id__c,
                                                                (SELECT Id, sked_Field_API_Name__c, sked_Field_Type__c, 
                                                                 sked_Old_Value__c
                                                                 FROM sked_Drive_Change_Request_Items__r
@@ -299,11 +299,6 @@ public class skedDriveChangeRequestHandler extends skedTriggerHub {
                         
 						oppRec.put(oppDataField, fieldVal);
 
-                        if(item.sked_Field_API_Name__c == 'APT_Required__c') {
-                            object newFieldVal = skedUtils.getFieldValue(String.valueOf(rejectedDCR.sked_Drive__r.sked_APT_Quantity__c), 'double');
-                            oppRec.put('APT_Quantity__c', newFieldVal);
-                        }
-                        
                         if (skedDriveHandler.mapReasonFields.containsKey(oppDataField)) {
                             string reasonField = skedDriveHandler.mapReasonFields.get(oppDataField);
                             string reason = 'Drive Change Requested is rejected. ' + system.now();

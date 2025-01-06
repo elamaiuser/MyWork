@@ -718,10 +718,9 @@ class BaseGenerator {
       }
       if (property.targetName === 'aptRequired') {
         this.drive[property.targetName] = (/^(true|1)$/i).test(this.drive[property.targetName]);
-        this.drive['aptQuantity'] = this.drive.opportunity.aptQuantity;
       }
       if (property.targetName === 'driveShiftsMetadata') {
-        this.masterData.skipAPTCalculation = false;
+        this.masterData.skipAPTCalculation = property.targetValue?.skipAptCalculation ?? false;
       }
     })
 

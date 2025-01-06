@@ -748,12 +748,12 @@ export default class SlwcDriveCalendar extends LightningElement {
                 driveQuery.daysOfWeek = this.filters.daysOfWeek;
 
                 let activityQuery = new activityQueryModel();
-                activityQuery.territoryKeys = territoryKeys;
+                //activityQuery.territoryKeys = territoryKeys;
                 activityQuery.startDate = startDate;
                 activityQuery.endDate = endDate;
                 activityQuery.isGroupActivity = true;
                 activityQuery.isShowOnCalendarOrReduceFromStaffingConstraints = true;
-                activityQuery.subQueryIndicator = sObjectType.ACTIVITY_RESOURCE;
+                activityQuery.subQueryIndicator = sObjectType.ACTIVITY_RESOURCE | sObjectType.ACTIVITY_COLLECTION_OPERATION;
 
                 const driveLimitQuery = new operationDriveLimitQueryModel();
                 driveLimitQuery.effectiveStartDate = startDate;
@@ -782,7 +782,12 @@ export default class SlwcDriveCalendar extends LightningElement {
                 this.staffingConstraintsMapByDate = groupBy(staffingConstraintResult, 'dateOfConstraint');
                 this.productGoalsByDate = groupBy(productGoalResult, 'dateOfGoal');
                 this.drivesMapByDate = groupBy(driveResult, 'driveDate');
-                let activities = activityResult;
+                let activities = activityResult.filter((activity) => {
+                    return (
+                        territoryKeys.includes(activity.territoryKey) ||
+                        (activity.activityCollectionOperations || []).find((activityCollectionOperation => territoryKeys.includes(activityCollectionOperation.territoryKey)))
+                    );
+                });
                 activities.forEach((activity) => {
                     let activityStart = DateTime.fromISO(activity.start, { zone: activity.timezoneSidId });
                     activity.activityDate = activityStart.toISODate();
