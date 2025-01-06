@@ -6,7 +6,7 @@
 	</types>
 	<types>
 		<members>sked__Availability__c.sked_Disposition_Date__c</members>
-		<members>sked__Availability__c.sked_Dispositioned_By_User__c</members>
+		<members>sked__Availability__c.sked_Dispositioned_By_User__c</members>		
 		<name>CustomField</name>
 	</types>
 	<types>
