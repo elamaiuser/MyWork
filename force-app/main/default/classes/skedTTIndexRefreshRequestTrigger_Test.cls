@@ -1,10 +1,15 @@
-/* Description: This test class covers skedTravelTimeIndexRefreshRequestTrigger and related handler class */
+/* Description: This test class covers the following classes & trigger
+	1. skedCOGroupTravelTimeIndexRefreshBatch
+	2. skedTravelTimeIndexRefreshRequestHandler
+	3. skedTravelTimeIndexRefreshRequestTrigger 
+*/
 
 @isTest
 private class skedTTIndexRefreshRequestTrigger_Test {
     
-    @isTest
-    static void afterInsertUpdateContext_Test() {
+    @testSetup
+    static void prepareTestData() {
+        
         List<sked_Travel_Time_Index_Item__c> testTravelTimeIndexItems = new List<sked_Travel_Time_Index_Item__c>();
         sked_Travel_Time_Index_Item__c testTtii1;
         testTtii1 = new sked_Travel_Time_Index_Item__c(
@@ -12,7 +17,8 @@ private class skedTTIndexRefreshRequestTrigger_Test {
             sked_From__Longitude__s = -120.4816244,
             sked_To__Latitude__s = 38.7450046,
             sked_To__Longitude__s = -122.4816244,
-            sked_Ordering_Key__c = skedConstants.TTII_DIRECTION_SITE_TO_CO + 36.7450046 + ':' + -120.4816244,
+            sked_Ordering_Key__c = skedConstants.TTII_DIRECTION_CO_TO_SITE + 36.7450046 + ':' + -120.4816244,
+            
             sked_Timezone__c = 'America/New_York'
         );
         testTravelTimeIndexItems.add(testTtii1);
@@ -22,17 +28,12 @@ private class skedTTIndexRefreshRequestTrigger_Test {
             sked_From__Longitude__s = -120.4816344,
             sked_To__Latitude__s = 38.7450146,
             sked_To__Longitude__s = -122.4826244,
-            sked_Ordering_Key__c = skedConstants.TTII_DIRECTION_SITE_TO_CO + 36.74500455 + ':' + -120.4816344,
+            sked_Ordering_Key__c = skedConstants.TTII_DIRECTION_CO_TO_SITE + 36.74500455 + ':' + -120.4816344,
+          
             sked_Timezone__c = 'America/New_York'
         );
-        testTravelTimeIndexItems.add(testTtii1);
-        
+        testTravelTimeIndexItems.add(testTtii1);        
         insert testTravelTimeIndexItems;
-
-        Location fromLoc1 = Location.newInstance(testTravelTimeIndexItems[0].sked_From__Latitude__s, testTtii1.sked_From__Longitude__s);
-        Location toLoc1 = Location.newInstance(testTravelTimeIndexItems[0].sked_To__Latitude__s, testTtii1.sked_To__Longitude__s);
-        Location fromLoc2 = Location.newInstance(testTravelTimeIndexItems[1].sked_From__Latitude__s, testTtii1.sked_From__Longitude__s);
-        Location toLoc2 = Location.newInstance(testTravelTimeIndexItems[1].sked_To__Latitude__s, testTtii1.sked_To__Longitude__s);
         
         List<sked_Travel_Time_Index_Refresh_Group__c> testTTIRefreshGroupList = new List<sked_Travel_Time_Index_Refresh_Group__c>();
         
@@ -48,9 +49,52 @@ private class skedTTIndexRefreshRequestTrigger_Test {
         );
         testTTIRefreshGroupList.add(testTTIRefreshGroup);
         insert testTTIRefreshGroupList;
-		
+    }
+    
+    static testmethod void coGroupTTIndexRefreshBatch_Test() {
+
+        List<sked_Travel_Time_Index_Item__c> testTravelTimeIndexItems = [SELECT Id, sked_From__Latitude__s, sked_From__Longitude__s,
+                                                                         sked_To__Latitude__s, sked_To__Longitude__s,
+                                                                         sked_Ordering_Key__c 
+                                                                         FROM sked_Travel_Time_Index_Item__c];
+        List<sked_Travel_Time_Index_Refresh_Group__c> testTTIRefreshGroupList = [SELECT Id FROM sked_Travel_Time_Index_Refresh_Group__c];
+        
+        String key1 = testTravelTimeIndexItems[0].sked_From__Latitude__s + ' ' + testTravelTimeIndexItems[0].sked_From__Longitude__s
+            + ':' + testTravelTimeIndexItems[0].sked_To__Latitude__s + ' ' +  testTravelTimeIndexItems[0].sked_To__Longitude__s;
+        
+        String key2 = testTravelTimeIndexItems[1].sked_From__Latitude__s + ' ' + testTravelTimeIndexItems[1].sked_From__Longitude__s
+            + ':' + testTravelTimeIndexItems[1].sked_To__Latitude__s + ' ' +  testTravelTimeIndexItems[1].sked_To__Longitude__s;
+        
+        testTravelTimeIndexItems[0].sked_Key__c = key1;
+        testTravelTimeIndexItems[1].sked_Key__c = key2;
+        update testTravelTimeIndexItems;
+        
         Test.startTest();
         
+        Database.executeBatch(new skedCOGroupTravelTimeIndexRefreshBatch(
+            new Map<Id, Set<String>>{testTTIRefreshGroupList[0].Id => new Set<String>{key1.substringBefore(':')}, testTTIRefreshGroupList[1].Id => new Set<String>{key2.substringBefore(':')}},
+        	skedSetting.instance.TravelTime.coGroupIndexRefreshPriority,
+        	0
+        ), 200);
+        
+        Test.stopTest();
+    }
+    
+    static testMethod void travelTimeIndexRefreshRequestHandler_Test() {
+        
+        List<sked_Travel_Time_Index_Item__c> testTravelTimeIndexItems = [SELECT Id, sked_From__Latitude__s, sked_From__Longitude__s,
+                                                                         sked_To__Latitude__s, sked_To__Longitude__s,
+                                                                         sked_Ordering_Key__c 
+                                                                         FROM sked_Travel_Time_Index_Item__c];
+		List<sked_Travel_Time_Index_Refresh_Group__c> testTTIRefreshGroupList = [SELECT Id FROM sked_Travel_Time_Index_Refresh_Group__c];
+        
+        Location fromLoc1 = Location.newInstance(testTravelTimeIndexItems[0].sked_From__Latitude__s, testTravelTimeIndexItems[0].sked_From__Longitude__s);
+        Location toLoc1 = Location.newInstance(testTravelTimeIndexItems[0].sked_To__Latitude__s, testTravelTimeIndexItems[0].sked_To__Longitude__s);
+        Location fromLoc2 = Location.newInstance(testTravelTimeIndexItems[1].sked_From__Latitude__s, testTravelTimeIndexItems[1].sked_From__Longitude__s);
+        Location toLoc2 = Location.newInstance(testTravelTimeIndexItems[1].sked_To__Latitude__s, testTravelTimeIndexItems[1].sked_To__Longitude__s);
+        
+        Test.startTest();
+       
         List<sked_Travel_Time_Index_Refresh_Request__c> testItems = new List<sked_Travel_Time_Index_Refresh_Request__c>();
         sked_Travel_Time_Index_Refresh_Request__c testTtirr;
         
