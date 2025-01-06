@@ -101,9 +101,9 @@
 		<members>skedActivityResourceUtils_Test</members>
 		<members>OpportunityControllerHelperTest</members>
 		<members>OpportunityControllerHelper</members>
-		<members>UserService</members>
+		<members>userService</members>
         <members>UserTriggerHandler</members>
-        <members>UserServiceTest</members>
+        <members>userServiceTest</members>
 		<name>ApexClass</name>
 	</types>
 	<types>
@@ -316,7 +316,7 @@
 		<members>slwcGenerateDriveModal</members>	
 		<members>slwcLinkedDriveStaffingDetails</members>		
 		<members>slwcListenDriveChange</members>
-		<members>slwcResolveDriveContention</members>
+		<members>slwcResolveDriveContentions</members>
 		<members>travelTimeBreakdown</members>
 		<name>LightningComponentBundle</name>
 	</types>
