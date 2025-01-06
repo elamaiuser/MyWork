@@ -180,9 +180,13 @@ private class skedNotificationGenerationBatch_Test {
         );
         insert testDriveShift1;
         
+        skedSetting.instance.Admin.dateTimeConversion = TRUE;
         sked__Activity__c testOnCallEvent = new sked__Activity__c(
-            sked__Start__c = testDrive1.sked_Drive_Date__c,
-            sked__End__c = testDrive1.sked_Drive_Date__c,
+            sked_Start_Date__c = testDrive1.sked_Drive_Date__c,
+            sked_End_Date__c = testDrive1.sked_Drive_Date__c,
+            sked_Start_Time__c = Time.newInstance(0,0,0,0),
+            sked_End_Time__c = Time.newInstance(23,59,59,0),
+            sked__Timezone__c = testDrive1.sked_Drive_Site__r.sked_Timezone__c,
             sked__Type__c = skedConstants.ACTIVITY_TYPE_AFTER_HOURS_CALL_OUT_MANAGEMENT,
             sked_Collection_Operation__c = testCollectionOperation1.Id,
             sked__Address__c = 'Retail Unit 2, 2 Regent St, London SW1Y 4PE, United Kingdom',
@@ -200,8 +204,8 @@ private class skedNotificationGenerationBatch_Test {
 
         sked__Job__c testJob1 = new sked__Job__c(
             sked__Region__c = testRegion.Id,
-            sked__Start__c = DateTime.newInstance(System.today(), Time.newInstance(14,0,0,0)),
-            sked__Finish__c = DateTime.newInstance(System.today(), Time.newInstance(20,0,0,0)),
+            sked__Start__c = DateTime.newInstance(testDrive1.sked_Drive_Date__c, Time.newInstance(14,0,0,0)),
+            sked__Finish__c = DateTime.newInstance(testDrive1.sked_Drive_Date__c, Time.newInstance(20,0,0,0)),
             sked__Duration__c = 60,
             sked__Job_Status__c = skedConstants.JOB_STATUS_PENDING_ALLOCATION,
             sked_Drive__c = testDrive1.Id,
@@ -229,14 +233,16 @@ private class skedNotificationGenerationBatch_Test {
         model.usePtoForCallOut = false;
         model.hasTimeOffPlans = false;
         slwcResourceService.saveCallOut(model);
-
+        
+        String testcallOutId = [SELECT Id FROM sked__Availability__c WHERE sked__Resource__c = :testResource1.Id LIMIT 1].Id;
+        
         skedNotificationBatchBase.onCallSupervisorTargetDestination cmp = new skedNotificationBatchBase.onCallSupervisorTargetDestination();
-        cmp.process(new Set<Id>{testJobAllocation1.Id}, null);
+        cmp.process(new Set<Id>{testcallOutId}, null);
 
         Test.stopTest();
     }
 
-    static testmethod void testDriveLeadCalloutTargetDestination() {
+    static testmethod void testDriveLeadCalloutEmailTargetDestination() {
         skedTestDataFactory testDataFactory = new skedTestDataFactory('us', 14);
         Map<string, sObject> mapTestData = testDataFactory.setupCommonTestData();
         mapTestData = testDataFactory.setupDriveData();
@@ -314,11 +320,14 @@ private class skedNotificationGenerationBatch_Test {
         model.usePtoForCallOut = false;
         model.hasTimeOffPlans = false;
         slwcResourceService.saveCallOut(model);
+        
+        String testcallOutId = [SELECT Id FROM sked__Availability__c WHERE sked__Resource__c = :testResource1.Id LIMIT 1].Id;
 
         skedNotificationBatchBase.driveLeadCalloutEmailTargetDestination cmp = new skedNotificationBatchBase.driveLeadCalloutEmailTargetDestination();
-        cmp.process(new Set<Id>{testJobAllocation1.Id}, null);
+        cmp.process(new Set<Id>{testcallOutId}, null);
+        
         skedNotificationBatchBase.driveLeadCalloutOneOffTargetDestination cmp2 = new skedNotificationBatchBase.driveLeadCalloutOneOffTargetDestination();
-        cmp.process(new Set<Id>{testJobAllocation1.Id}, null);
+        cmp2.process(new Set<Id>{testcallOutId}, null);
 
         Test.stopTest();
     }
@@ -411,9 +420,14 @@ private class skedNotificationGenerationBatch_Test {
         model.usePtoForCallOut = false;
         model.hasTimeOffPlans = false;
         slwcResourceService.saveCallOut(model);
+        
+        String testcallOutId = [SELECT Id FROM sked__Availability__c WHERE sked__Resource__c = :testResource1.Id LIMIT 1].Id;
 
         skedNotificationBatchBase.apsSchedulersCallOutTargetDestination cmp = new skedNotificationBatchBase.apsSchedulersCallOutTargetDestination();
-        cmp.process(new Set<Id>{testJobAllocation1.Id}, null);
+        cmp.process(new Set<Id>{testcallOutId}, null);
+        
+        skedNotificationBatchBase.apsSchedulersCancelledATOTargetDestination cmp2 = new skedNotificationBatchBase.apsSchedulersCancelledATOTargetDestination();
+        cmp2.process(new Set<Id>{testcallOutId}, null);
 
         Test.stopTest();
 
@@ -843,5 +857,167 @@ private class skedNotificationGenerationBatch_Test {
         cmp.process(new Set<Id>{testResource1_job1.Id, testResource2_job2.Id}, null, null);
         
         Test.stopTest();
+    }
+    
+    static testmethod void testSiteFeedbackSubmitterNotificationRender() {
+        skedTestDataFactory testDataFactory = new skedTestDataFactory('us', 14);
+        Map<string, sObject> mapTestData = testDataFactory.setupCommonTestData();
+        mapTestData = testDataFactory.setupDriveData();
+        
+        sked__Region__c testRegion = (sked__Region__c)mapTestData.get('testRegion1');
+        sked_Drive__c testDrive = (sked_Drive__c)mapTestData.get('testDrive1');
+        sked__Location__c testDriveSite = (sked__Location__c)mapTestData.get('testLocation1');
+        
+        Test.startTest();
+        
+        sked__Job__c testJob = new sked__Job__c(
+            sked__Region__c = testRegion.Id,
+            sked__Start__c = DateTime.newInstance(System.today(), Time.newInstance(14,0,0,0)),
+            sked__Finish__c = DateTime.newInstance(System.today(), Time.newInstance(20,0,0,0)),
+            sked__Duration__c = 60,
+            sked__Job_Status__c = skedConstants.JOB_STATUS_PENDING_ALLOCATION,
+            sked_Drive__c = testDrive.Id,
+            sked_Resource_Role__c = '2RBC',
+            sked_Volunteer_Role__c = 'Donor Ambassador'
+        );
+        insert testJob;
+        
+        sked_Site_Feedback__c testSiteFeedback = new sked_Site_Feedback__c(
+            sked_Amount__c = 5,
+            sked_Buffer_Type__c = 'Add',
+            sked_Days_Of_Week__c = 'Monday;Tuesday;Wednesday;Thursday;Friday;Saturday;Sunday',
+            sked_Effective_End_Date__c = System.today().addDays(100),
+            sked_Effective_Start_Date__c = System.today().addDays(-10),
+            sked_Job__c = testJob.Id,
+            sked_MigrationID__c = 'test-migration-id',
+            sked_Reason__c = 'testing',
+            sked_Resource_Role_Group__c = 'Staff roles',
+            sked_Site__c = testDriveSite.Id,
+            sked_Status__c = 'Not Submitted',
+            sked_Variance_Applies_To__c = 'Setup Time',
+            sked_Variance_Type__c = 'Parking'
+        );
+        
+        insert testSiteFeedback;
+        
+        testSiteFeedback.sked_Buffer_Type__c = 'Subtract';
+        update testSiteFeedback;
+        
+        List<sked_Site_Feedback__c> updatedSiteFeedback = [SELECT Id, sked_Current_Submitter__c, sked_Resource_Role_Group__c,
+                                                          sked_Days_Of_Week__c, sked_Variance_Applies_to__c, sked_Amount__c,
+                                                          sked_Variance_Type_Other__c, sked_Variance_Type__c, sked_Buffer_Type__c,
+                                                          sked_Effective_Start_Date__c, sked_Effective_End_Date__c, sked_Site_Name__c
+                                                          FROM sked_Site_Feedback__c
+                                                          WHERE Id = :testSiteFeedback.Id];
+        
+        skedNotificationBatchBase.siteFeedbackSubmitterNotificationRender cmp = new skedNotificationBatchBase.siteFeedbackSubmitterNotificationRender();
+        cmp.process(new Set<Id>{testSiteFeedback.Id}, updatedSiteFeedback, new Map<Id, sObject>{testSiteFeedback.Id => testSiteFeedback});
+        
+        Test.stopTest();
+    }
+    
+    static testMethod void workdayTargetDestination() {
+        
+        Test.startTest();
+        
+        skedNotificationBatchBase.workdaySystemGroupTargetDestination cmp = new skedNotificationBatchBase.workdaySystemGroupTargetDestination();
+        cmp.process(new Set<Id>(), null);
+        
+        skedNotificationBatchBase.workdayValidationGroupTargetDestination cmp2 = new skedNotificationBatchBase.workdayValidationGroupTargetDestination();
+        cmp2.process(new Set<Id>(), null);
+        
+        Test.stopTest();
+    }
+    
+    static testmethod void jobInfoChangedTargetDestination() {
+        skedTestDataFactory testDataFactory = new skedTestDataFactory('us', 14);
+        Map<string, sObject> mapTestData = testDataFactory.setupCommonTestData();
+        mapTestData = testDataFactory.setupDriveData();
+
+        sked__Region__c testRegion = (sked__Region__c) mapTestData.get('testRegion1');
+        Biomed_Collection_Op_Center__c testCollectionOperation1 = (Biomed_Collection_Op_Center__c)mapTestData.get('testCollectionOperation1');
+        sked_Drive__c testDrive1 = (sked_Drive__c)mapTestData.get('testDrive1');
+        sked__Resource__c testResource1 = (sked__Resource__c) mapTestData.get('testResource1');
+
+        sked_Drive_Shift__c testDriveShift1 = new sked_Drive_Shift__c(
+            sked_Donors_Scheduled__c = 1,
+            sked_End_Time__c = Time.newInstance(20,0,0,0),
+            sked_Start_Time__c = Time.newInstance(14,0,0,0),
+            sked_Drive__c = testDrive1.Id,
+            sked_Drive_Date__c = testDrive1.sked_Drive_Date__c,
+            sked_Equipment__c = 1,
+            sked_Lunch_Break__c = FALSE,
+            sked_Lunch_Break_Before_Draw_Hours__c = FALSE,
+            sked_Lunch_Break_Duration__c = 0,
+            sked_Lunch_Break_End_Time__c = NULL,
+            sked_Lunch_Break_Start_Time__c = NULL,
+            sked_Finish__c = DateTime.newInstance(System.today(), Time.newInstance(20,0,0,0)),
+            sked_Start__c = DateTime.newInstance(System.today(), Time.newInstance(14,0,0,0)),
+            sked_Order__c = 1,
+            sked_Sign_Up_Reduction__c = 0,
+            sked_Staff_Setup__c = 1,
+            sked_Vehicles_Needed__c = 1,
+            sked_Volunteer_Setup__c = 1
+        );
+        insert testDriveShift1;
+
+        sked__Job__c testJob1 = new sked__Job__c(
+            sked__Region__c = testRegion.Id,
+            sked__Start__c = DateTime.newInstance(System.today(), Time.newInstance(14,0,0,0)),
+            sked__Finish__c = DateTime.newInstance(System.today(), Time.newInstance(20,0,0,0)),
+            sked__Duration__c = 60,
+            sked__Job_Status__c = skedConstants.JOB_STATUS_PENDING_ALLOCATION,
+            sked_Drive__c = testDrive1.Id,
+            sked_Drive_Shift__c = testDriveShift1.Id,
+            sked_Resource_Role__c = '2RBC',
+            sked__Address__c = 'Retail Unit 2, 2 Regent St, London SW1Y 4PE, United Kingdom'
+        );
+        sked__Job__c testJob2 = new sked__Job__c(
+            sked__Region__c = testRegion.Id,
+            sked__Start__c = DateTime.newInstance(System.today(), Time.newInstance(14,0,0,0)),
+            sked__Finish__c = DateTime.newInstance(System.today(), Time.newInstance(20,0,0,0)),
+            sked__Duration__c = 60,
+            sked__Job_Status__c = skedConstants.JOB_STATUS_PENDING_ALLOCATION,
+            sked_Drive__c = testDrive1.Id,
+            sked_Drive_Shift__c = testDriveShift1.Id,
+            sked_Resource_Role__c = 'Drive Lead',
+            sked__Address__c = 'Retail Unit 2, 2 Regent St, London SW1Y 4PE, United Kingdom'
+        );
+        insert new List<sked__Job__c>{testJob1, testJob2};
+
+        sked__Job_Allocation__c testJobAllocation1 = new sked__Job_Allocation__c(
+            sked__Job__c = testJob1.Id,
+            sked__Resource__c = testResource1.Id,
+            sked__Status__c = skedConstants.JOB_ALLOCATION_STATUS_CONFIRMED
+        );
+        sked__Job_Allocation__c testJobAllocation2 = new sked__Job_Allocation__c(
+            sked__Job__c = testJob2.Id,
+            sked__Resource__c = testResource1.Id,
+            sked__Status__c = skedConstants.JOB_ALLOCATION_STATUS_CONFIRMED
+        );
+        insert new List<sked__Job_Allocation__c>{testJobAllocation1, testJobAllocation2};
+
+        Test.startTest();
+        
+        skedNotificationBatchBase.jobInfoChangedOtherTargetDestination cmp = new skedNotificationBatchBase.jobInfoChangedOtherTargetDestination();
+        cmp.process(new Set<Id>{testJob1.Id, testJob2.Id}, null);
+        
+        skedNotificationBatchBase.jobInfoChangedOneOffTargetDestination cmp2 = new skedNotificationBatchBase.jobInfoChangedOneOffTargetDestination();
+        cmp2.process(new Set<Id>{testJob1.Id, testJob2.Id}, null);
+        
+        skedNotificationBatchBase.jobInfoChangeRender cmp3 = new skedNotificationBatchBase.jobInfoChangeRender();
+        cmp3.registerFieldsForRenderer();
+        try{
+            cmp3.process(new Set<Id>{testJob1.Id, testJob2.Id}, new List<SObject>(), new Map<Id, SObject>{testJob1.Id => testJob1, testJob2.Id => testJob2});
+        }catch(Exception ex) {}
+        
+        skedNotificationBatchBase.jobAllocationInfoChangeRender cmp4 = new skedNotificationBatchBase.jobAllocationInfoChangeRender();
+        cmp4.registerFieldsForRenderer();
+        try{
+            cmp4.process(new Set<Id>{testJobAllocation1.Id, testJobAllocation1.Id}, new List<SObject>(), new Map<Id, SObject>{testJobAllocation1.Id => testJobAllocation1, testJobAllocation2.Id => testJobAllocation2});
+        }catch(Exception ex) {}
+        
+        Test.stopTest();
+        
     }
 }
