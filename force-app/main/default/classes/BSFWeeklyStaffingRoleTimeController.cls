@@ -264,7 +264,6 @@ public without sharing class BSFWeeklyStaffingRoleTimeController {
             regionList.sort();
             regionList = renameDuplicates(regionList);
         }
-        System.debug('regionList : '+JSON.serialize(regionList));
         return regionList;
     }
 
@@ -326,7 +325,7 @@ public without sharing class BSFWeeklyStaffingRoleTimeController {
         return result;
     }
     
-    public static Integer validateInputs(Date startDate, Date endDate, String drivedispatch, String collOpIdList, String driveType){
+    public static WeeklyStaffScheduleReportController.StaffInfoWrapper validateInputsAndGetStaffInfo(Date startDate, Date endDate, String drivedispatch, String collOpIdList, String driveType) {
 
         Map<String,String> driveDispatchedMap = new Map<String,String>();
         driveDispatchedMap.put('Yes',Custom_Report_Config__mdt.getInstance('DriveDispatchedYes').Value__c);
@@ -406,7 +405,75 @@ public without sharing class BSFWeeklyStaffingRoleTimeController {
                                                                     
 
         List<String> driveDispatchedStatus= driveDispatchedMap.get(drivedispatch).split(',');
-        Integer jobAllocationsCount =  [SELECT Count()
+        WeeklyStaffScheduleReportController.StaffInfoWrapper staffInfoWrapper = new WeeklyStaffScheduleReportController.StaffInfoWrapper();
+        
+        List<sked__Job_Allocation__c> jobAllocationsRetrieved = getJobAllocations(startDate, endDate, driveDispatchedStatus, collOpIds, driveTypes, driveDispatchedCheckBox);
+        
+        if(jobAllocationsRetrieved.size() >= 50000) {
+            throw new AuraHandledException(Custom_Report_Config__mdt.getInstance('Report_ErrMsg_Large_data').Value__c);
+        }
+        
+        /* HRP-13121 -> Starts Here
+        *  1. Get Territory Collection Operations for the selected collection operations
+        *  2. Form Territory keys using district and CO combination
+        *  3. Use the List of territory keys to get activities / activity COs
+        */
+        
+        List<sked_Territory_Collection_Operation__c> territoryColOpList = [
+            SELECT Id, sked_Territory__c, sked_Collection_Operation__c,
+            sked_Start_Date__c, sked_End_Date__c
+            FROM sked_Territory_Collection_Operation__c
+            WHERE sked_Collection_Operation__c IN :collOpIds
+            AND (sked_Start_Date__c = NULL OR sked_Start_Date__c <= :startDate)
+            AND (sked_End_Date__c = NULL OR sked_End_Date__c >= :endDate)
+        ];
+        
+        if(territoryColOpList.size() >= 50000 || (jobAllocationsRetrieved.size() + territoryColOpList.size() >= 50000)) {
+            throw new AuraHandledException(Custom_Report_Config__mdt.getInstance('Report_ErrMsg_Large_data').Value__c);
+        }
+        
+        Map<Id, List<sked_Territory_Collection_Operation__c>> map_colOpId_territoryCoList = new Map<Id, List<sked_Territory_Collection_Operation__c>>();
+        for(sked_Territory_Collection_Operation__c territoryCO : territoryColOpList) {
+            if(!map_colOpId_territoryCoList.containsKey(territoryCO.sked_Collection_Operation__c)) {
+                map_colOpId_territoryCoList.put(territoryCO.sked_Collection_Operation__c, new List<sked_Territory_Collection_Operation__c>());
+            }
+            map_colOpId_territoryCoList.get(territoryCO.sked_Collection_Operation__c).add(territoryCO);
+        }
+        
+        List<String> territoryKeys = new List<String>();
+        
+        for(Id colOpId : collOpIds) {
+            if(map_colOpId_territoryCoList.containsKey(colOpId) && map_colOpId_territoryCoList.get(colOpId) != NULL) {
+                for(sked_Territory_Collection_Operation__c territoryColOp : map_colOpId_territoryCoList.get(colOpId)) {
+                    if(
+                        (territoryColOp.sked_Start_Date__c == NULL || territoryColOp.sked_Start_Date__c <= startDate) && 
+                        (territoryColOp.sked_End_Date__c == NULL || territoryColOp.sked_End_Date__c >= endDate)
+                    ) {
+                        
+                        territoryKeys.add(territoryColOp.sked_Territory__c + ':' + territoryColOp.sked_Collection_Operation__c);
+                        break;
+                    }
+                }
+            }            
+        }
+        
+        List<sked__Activity_Resource__c> activityResourcesRetrieved = getActivities(startDate, endDate, territoryKeys);
+        
+        if((jobAllocationsRetrieved.size() + activityResourcesRetrieved.size() >= 50000) || activityResourcesRetrieved.size() >= 50000) {
+            throw new AuraHandledException(Custom_Report_Config__mdt.getInstance('Report_ErrMsg_Large_data').Value__c);
+        }
+        
+        List<sked__Availability__c> availabilitiessRetrieved = getavailabilities(startDate, endDate, availabilityType, collOpIds);
+        
+        if(jobAllocationsRetrieved.size() + activityResourcesRetrieved.size() + availabilitiessRetrieved.size() >= 50000) {
+            throw new AuraHandledException(Custom_Report_Config__mdt.getInstance('Report_ErrMsg_Large_data').Value__c);
+        }
+        
+        if((jobAllocationsRetrieved.size() + activityResourcesRetrieved.size() + availabilitiessRetrieved.size()) == 0) {
+            throw new AuraHandledException(Custom_Report_Config__mdt.getInstance('Report_ErrMsg_No_data').Value__c);
+        }
+        
+            /*[SELECT Count()
                                         FROM sked__Job_Allocation__c
                                         WHERE sked__Status__c != 'Deleted' 
                                         AND sked__Status__c IN :driveDispatchedStatus 
@@ -440,22 +507,14 @@ public without sharing class BSFWeeklyStaffingRoleTimeController {
                                         AND sked__Type__c IN :availabilityType
                                         AND sked__Status__c = 'Approved'
                                         AND sked_Start_Date__c >= :startDate 
-                                        AND sked_Start_Date__c <= :endDate];
+                                        AND sked_Start_Date__c <= :endDate];*/
+  
+        staffInfoWrapper.jobAllocationList = jobAllocationsRetrieved;
+        staffInfoWrapper.activityList = activityResourcesRetrieved;
+        staffInfoWrapper.availabilityList = availabilitiessRetrieved;
+        staffInfoWrapper.totalRecords = jobAllocationsRetrieved.size() + activityResourcesRetrieved.size() + availabilitiessRetrieved.size();
         
-        System.debug('jobAllocationsCount : '+ jobAllocationsCount);
-        System.debug('activitiesCount : '+ activitiesCount);
-        System.debug('availabilitiesCount : '+ availabilitiesCount);
-        System.debug('(jobAllocationsCount + activitiesCount + availabilitiesCount) : '+(jobAllocationsCount + activitiesCount + availabilitiesCount));
-
-        if((jobAllocationsCount + activitiesCount + availabilitiesCount) >= 50000){
-            throw new AuraHandledException(Custom_Report_Config__mdt.getInstance('Report_ErrMsg_Large_data').Value__c);
-        }
-        
-        if((jobAllocationsCount + activitiesCount + availabilitiesCount) == 0){
-            throw new AuraHandledException(Custom_Report_Config__mdt.getInstance('Report_ErrMsg_No_data').Value__c);
-        }
-        
-        return (jobAllocationsCount + activitiesCount + availabilitiesCount);
+        return staffInfoWrapper; 
     }
     
     @AuraEnabled
@@ -475,7 +534,8 @@ public without sharing class BSFWeeklyStaffingRoleTimeController {
         Map<Id, List<sked__Activity_Resource__c>> activityMap = new Map<Id, List<sked__Activity_Resource__c>>();
         List<WeeklyStaffingRTReportWrapper> data = new List<WeeklyStaffingRTReportWrapper>();
 
-        Integer recordCount = validateInputs(startDate,endDate,drivedispatch,collOpIdList,driveType);
+        WeeklyStaffScheduleReportController.StaffInfoWrapper staffInfoWrapper = new WeeklyStaffScheduleReportController.StaffInfoWrapper();
+        staffInfoWrapper = validateInputsAndGetStaffInfo(startDate, endDate, drivedispatch, collOpIdList, driveType);
 
         Map<String,String> driveDispatchedMap = new Map<String,String>();
         driveDispatchedMap.put('Yes',Custom_Report_Config__mdt.getInstance('DriveDispatchedYes').Value__c);
@@ -512,9 +572,9 @@ public without sharing class BSFWeeklyStaffingRoleTimeController {
             driveDispatchedCheckBox.add(false);
         }
 
-        List<sked__Job_Allocation__c> jobAllocations =  getJobAllocations(startDate, endDate, driveDispatchedStatus, collOpIds, driveTypes, driveDispatchedCheckBox);
+        //List<sked__Job_Allocation__c> jobAllocations =  getJobAllocations(startDate, endDate, driveDispatchedStatus, collOpIds, driveTypes, driveDispatchedCheckBox);
         
-        for(sked__Job_Allocation__c jba : jobAllocations){
+        for(sked__Job_Allocation__c jba : staffInfoWrapper.jobAllocationList) { //HRP-13121: Using wrapper class info
             if(!driveAllocationMap.containsKey(jba.sked__Job__r.sked_Drive__c)){
                 driveAllocationMap.put(jba.sked__Job__r.sked_Drive__c, new List<sked__Job_Allocation__c>());
                 if(!dateMap.containsKey(jba.sked__Job__r.sked_Drive__r.sked_Drive_Date__c)){
@@ -540,11 +600,11 @@ public without sharing class BSFWeeklyStaffingRoleTimeController {
                                                         AND sked__Job__r.sked__Type__c IN ('Vehicle','Equipment')
                                                         AND sked__Job__r.sked_Drive__c IN :driveAllocationMap.keySet()]; 
         
-        if((recordCount+vehicleAllocations.size()) >= 50000){
+        if((staffInfoWrapper.totalRecords + vehicleAllocations.size()) >= 50000) {
             throw new AuraHandledException(Custom_Report_Config__mdt.getInstance('Report_ErrMsg_Large_data').Value__c);
         }
 
-        for(sked__Job_Allocation__c jba : vehicleAllocations){
+        for(sked__Job_Allocation__c jba : vehicleAllocations) {
             if(jba.sked__Job__r.sked__Type__c == 'Vehicle'){
                 if(!driveVehicleMap.containsKey(jba.sked__Job__r.sked_Drive__c)){
                     driveVehicleMap.put(jba.sked__Job__r.sked_Drive__c, '');
@@ -570,50 +630,9 @@ public without sharing class BSFWeeklyStaffingRoleTimeController {
             }
         }
 
-        /* HRP-13121 -> Starts Here
-        *  1. Get Territory Collection Operations for the selected collection operations
-        *  2. Form Territory keys using district and CO combination
-        *  3. Use the List of territory keys to get activities / activity COs
-        */
+        //List<sked__Activity_Resource__c> activityList = getActivities(startDate, endDate, territoryKeys); //HRP-13121 -> Changed Method Parameter
         
-        List<sked_Territory_Collection_Operation__c> territoryColOpList = [
-            SELECT Id, sked_Territory__c, sked_Collection_Operation__c,
-            sked_Start_Date__c, sked_End_Date__c
-            FROM sked_Territory_Collection_Operation__c
-            WHERE sked_Collection_Operation__c IN :collOpIds
-            AND (sked_Start_Date__c = NULL OR sked_Start_Date__c <= :startDate)
-            AND (sked_End_Date__c = NULL OR sked_End_Date__c >= :endDate)
-        ];
-        
-        Map<Id, List<sked_Territory_Collection_Operation__c>> map_colOpId_territoryCoList = new Map<Id, List<sked_Territory_Collection_Operation__c>>();
-        for(sked_Territory_Collection_Operation__c territoryCO : territoryColOpList) {
-            if(!map_colOpId_territoryCoList.containsKey(territoryCO.sked_Collection_Operation__c)) {
-                map_colOpId_territoryCoList.put(territoryCO.sked_Collection_Operation__c, new List<sked_Territory_Collection_Operation__c>());
-            }
-            map_colOpId_territoryCoList.get(territoryCO.sked_Collection_Operation__c).add(territoryCO);
-        }
-        
-        List<String> territoryKeys = new List<String>();
-        
-        for(Id colOpId : collOpIds) {
-            if(map_colOpId_territoryCoList.containsKey(colOpId) && map_colOpId_territoryCoList.get(colOpId) != NULL) {
-                for(sked_Territory_Collection_Operation__c territoryColOp : map_colOpId_territoryCoList.get(colOpId)) {
-                    if(
-                        (territoryColOp.sked_Start_Date__c == NULL || territoryColOp.sked_Start_Date__c <= startDate) && 
-                        (territoryColOp.sked_End_Date__c == NULL || territoryColOp.sked_End_Date__c >= endDate)
-                    ) {
-                        
-                        territoryKeys.add(territoryColOp.sked_Territory__c + ':' + territoryColOp.sked_Collection_Operation__c);
-                        break;
-                    }
-                }
-            }            
-        }
-        //HRP-13121 -> Ends Here
-
-        List<sked__Activity_Resource__c> activityList = getActivities(startDate, endDate, territoryKeys); //HRP-13121 -> Changed Method Parameter
-        
-        for(sked__Activity_Resource__c act : activityList) {
+        for(sked__Activity_Resource__c act : staffInfoWrapper.activityList) { //HRP-13121: Using wrapper class info
             if(!activityMap.containsKey(act.sked__Activity__c)){
                 activityMap.put(act.sked__Activity__c, new List<sked__Activity_Resource__c>());
                 
@@ -644,9 +663,9 @@ public without sharing class BSFWeeklyStaffingRoleTimeController {
         }
 
         Map<Id, sked__Availability__c> availabilityMap = new Map<Id, sked__Availability__c>();
-        List<sked__Availability__c> availabilityList = getavailabilities(startDate,endDate,availabilityType,collOpIds);
-        if(!availabilityList.isEmpty()){
-            availabilityMap = new Map<Id, sked__Availability__c>(availabilityList);
+        //List<sked__Availability__c> availabilityList = getavailabilities(startDate,endDate,availabilityType,collOpIds);
+        if(!staffInfoWrapper.availabilityList.isEmpty()) { //HRP-13121: Using wrapper class info
+            availabilityMap = new Map<Id, sked__Availability__c>(staffInfoWrapper.availabilityList);
         }
         
         for(Id avlId : availabilityMap.keySet()){
