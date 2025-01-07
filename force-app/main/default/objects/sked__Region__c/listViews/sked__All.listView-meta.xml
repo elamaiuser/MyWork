@@ -5,5 +5,10 @@
     <columns>sked_Biomed_Collection_Op_Center__c</columns>
     <columns>sked__Timezone__c</columns>
     <filterScope>Everything</filterScope>
+    <filters>
+        <field>NAME</field>
+        <operation>contains</operation>
+        <value>Birmingham AL_Central</value>
+    </filters>
     <label>All</label>
 </ListView>

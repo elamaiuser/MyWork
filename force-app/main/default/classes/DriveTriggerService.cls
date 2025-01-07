@@ -8,7 +8,7 @@
  *  11/09/2023               Barnojit Sharma            Validation added to stop referring two DOC to a single BDO. (HRP-11326)
  *  12/27/2023				 Kishore Das		        Logic for HRP-11605(Newly created FS BDO's are reflecting as tentative when the DOC is reflecting as confirmed (out of sync))
  *  12/27/2023				 Barnojit Sharma		    The current 56 day validation rule that triggers when trying to change Drive Date will also be added to the Drive on Calendar. (HRP-11640)
- *  01/09/2024               Priti Jana                 Logic for HRP-10882
+ *  01/09/2024               Priti Jana                 Logic for HRP-10882 
  *  02/01/2024		         Fitsum Worku				Updated logic for 56 day rule so that 56th day itself is considered eligible (HRP-12034); also exculding cancelled drives
  *  12/02/2024				 Barnojit Sharma		    BDO can not be confirmed if DCR or Pending Action is in progress. (HRP-10912)
  *  03/06/2024				 Priti Jana					Logic for HRP-12271
@@ -142,6 +142,7 @@ public without sharing class DriveTriggerService {
     //HRP-10359 Start
     public static void populateAMAndDM(List<sked_Drive__c> newRecords)
     {
+        system.debug('populateAMAndDM');
         try{
           
             if(newRecords == null || !Schema.sObjectType.Opportunity.isAccessible()){
@@ -160,12 +161,16 @@ public without sharing class DriveTriggerService {
                                                             WHERE Id IN:opportunityIds]);
             }
             if(opportunityMap.size() > 0){
+                system.debug('populateAMAndDM inside if');
                 for(sked_Drive__c drv : newRecords){
+                    system.debug('populateAMAndDM inside loop');
                     if(drv.sked_Opportunity__c != null && opportunityMap.containsKey(drv.sked_Opportunity__c)){
-                                drv.Account_Manager__c = opportunityMap.get(drv.sked_Opportunity__c).Account_Manager__c != null ?  opportunityMap.get(drv.sked_Opportunity__c).Account_Manager__c: null;
-                                drv.Account_Manager_Portfolio__c = opportunityMap.get(drv.sked_Opportunity__c).Account_Manager_Portfolio__c != null ?  opportunityMap.get(drv.sked_Opportunity__c).Account_Manager_Portfolio__c: null;
-                                drv.District_Manager__c = opportunityMap.get(drv.sked_Opportunity__c).District_Manager__c != null ?  opportunityMap.get(drv.sked_Opportunity__c).District_Manager__c: null;
-                                drv.District_Manager_Portfolio__c = opportunityMap.get(drv.sked_Opportunity__c).District_Manager_Portfolio__c != null ?  opportunityMap.get(drv.sked_Opportunity__c).District_Manager_Portfolio__c: null;
+                        system.debug('populateAMAndDM inside 2nd if');
+                        drv.Account_Manager__c = opportunityMap.get(drv.sked_Opportunity__c).Account_Manager__c != null ?  opportunityMap.get(drv.sked_Opportunity__c).Account_Manager__c: null;
+                        system.debug('populateAMAndDM drv.Account_Manager__c '+drv.Account_Manager__c);
+                        drv.Account_Manager_Portfolio__c = opportunityMap.get(drv.sked_Opportunity__c).Account_Manager_Portfolio__c != null ?  opportunityMap.get(drv.sked_Opportunity__c).Account_Manager_Portfolio__c: null;
+                        drv.District_Manager__c = opportunityMap.get(drv.sked_Opportunity__c).District_Manager__c != null ?  opportunityMap.get(drv.sked_Opportunity__c).District_Manager__c: null;
+                        drv.District_Manager_Portfolio__c = opportunityMap.get(drv.sked_Opportunity__c).District_Manager_Portfolio__c != null ?  opportunityMap.get(drv.sked_Opportunity__c).District_Manager_Portfolio__c: null;
                     }
                 } 
             }
@@ -227,7 +232,7 @@ public without sharing class DriveTriggerService {
         List<Opportunity> oppListToUpdate = new List<Opportunity>();
         
         for (Opportunity op : [SELECT Id, Related_Scheduled_Drive__c FROM Opportunity
-                               WHERE Related_Scheduled_Drive__c = null AND Id IN :docMap.keySet()]) {
+                               WHERE Id IN :docMap.keySet()]) {
                                    Opportunity oppToUpdate = new Opportunity(Id = op.Id);
                                    oppToUpdate.Related_Scheduled_Drive__c = docMap.get(op.Id).Id;
                                    oppListToUpdate.add(oppToUpdate);
@@ -247,7 +252,9 @@ public without sharing class DriveTriggerService {
                 'Error', 
                 'Error in update'
             );
-            Insert errorLogList;
+            if(errorLogList != NULL && !errorLogList.isEmpty()) {
+                insert errorLogList;
+            }
             //HRP-13056 --> Ends Here
         }
     }
@@ -558,11 +565,11 @@ public without sharing class DriveTriggerService {
         }
     }
     //<<-[End] HRP-12170
-    
-    /*HRP-9815 --> Starts Here
-    @Description : This method will update related op record's DRD Rep and DRD Rep Contact # whenever Drive owner gets changed
-    */
 
+    /*HRP-9815 --> Starts Here
+    @Description : This method will update related op record's DRD Rep and DRD Rep # whenever Drive owner gets changed
+    */
+    
     public static void populateDriveOwnerOnAmUpdate(Map<Id, sked_Drive__c> oldMap , List<sked_Drive__c> newList) {
         if(newList != NULL && !newList.isEmpty()) {
             for(sked_Drive__c newDrive : newList) {
@@ -607,11 +614,11 @@ public without sharing class DriveTriggerService {
                 Database.SaveResult[] opRecordUpdateResult = Database.update(relatedOpRecords, FALSE);
                 List<BSF_Error_Log__c> errorlogEntry = BSF_Utilities.createErrorLogWithObjectId(
                     opRecordUpdateResult,
-                    'Op Record DRD Rep  Contact # Update',
+                    'Op Record DRD Rep # Update',
                     'DriveTriggerService',
                     'updateDrdRepOnOpRecordUponOwnerChange',
                     'Error',
-                    'DRD Rep Contact # Update'
+                    'DRD Rep # Update'
                 );
                 if(errorlogEntry != NULL && !errorlogEntry.isEmpty()) {
                     insert errorlogEntry;
@@ -620,5 +627,4 @@ public without sharing class DriveTriggerService {
         }
     }
     //HRP-9815 --> Ends Here
-    
 }

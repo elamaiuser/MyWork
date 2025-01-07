@@ -518,6 +518,7 @@ private class skedRacStory_Test {
         saveUnavailabilityRequest.availability.add(event1);
         saveUnavailabilityRequest.availability.add(event2);
         skedRemoteResultModel saveUnavailabilityResult = skedRacController.saveUnavailability(saveUnavailabilityRequest);
+        skedRemoteResultModel saveUnavailabilityResultV2 = skedRacController.saveAvailabilityRecords(saveUnavailabilityRequest);
         
         Test.stopTest();
     }
@@ -776,6 +777,21 @@ private class skedRacStory_Test {
         );
         insert avail;
         
+        sked_Staffing_Budget__c staffingBudget = new sked_Staffing_Budget__c(
+            sked_Request_Type__c = skedConstants.STAFFING_BUDGET_REQUEST_TYPE_STANDARD,
+            sked_Roles__c = '2RBC',
+            sked_Drive_Types__c = 'Mobile;Fixed Site',
+            sked_Staffing_Budget_Date__c = testDataFactory.summary.startDate,
+            sked_Total_Slots__c = 5    
+        );
+        insert staffingBudget;
+        
+        sked_Staffing_Budget_Availability__c staffingBudgetAvailability = new sked_Staffing_Budget_Availability__c(
+        	sked_Staffing_Budget__c = staffingBudget.Id,
+        	sked_Availability__c = avail.Id
+        );
+        insert staffingBudgetAvailability;
+        
         Test.startTest();
         
         Test.setCurrentPage(new PageReference('skedRAC'));
@@ -784,15 +800,16 @@ private class skedRacStory_Test {
         skedRacController.getPendingAvailabilityRequestModel getPendingAvailabilityRequest = new skedRacController.getPendingAvailabilityRequestModel();
         getPendingAvailabilityRequest.viewData = new Map<string, object>();
         getPendingAvailabilityRequest.viewData.put('timezoneSidId', testDataFactory.summary.timezoneSidId);
-        getPendingAvailabilityRequest.endDate = testDataFactory.summary.endDateIso;
+        //getPendingAvailabilityRequest.endDate = testDataFactory.summary.endDateIso;
         getPendingAvailabilityRequest.pageNo = 1;
         getPendingAvailabilityRequest.pageSize = 25;
         getPendingAvailabilityRequest.regionIds = new List<string>();
-        getPendingAvailabilityRequest.regionIds.add(testRegion1.Id);
+        getPendingAvailabilityRequest.regionIds.add(testResource1.sked__Primary_Region__c);
         getPendingAvailabilityRequest.resourceCategories = resourceCategories;
-        getPendingAvailabilityRequest.startDate = testDataFactory.summary.startDateIso;
-        getPendingAvailabilityRequest.submissionEndDate = testDataFactory.summary.endDateIso;
-        getPendingAvailabilityRequest.submissionStartDate = testDataFactory.summary.startDateIso;
+        getPendingAvailabilityRequest.resourceId = testResource1.Id;
+        //getPendingAvailabilityRequest.startDate = testDataFactory.summary.startDateIso;
+        //getPendingAvailabilityRequest.submissionEndDate = testDataFactory.summary.endDateIso;
+        //getPendingAvailabilityRequest.submissionStartDate = testDataFactory.summary.startDateIso;
         getPendingAvailabilityRequest.timezoneSidId = testDataFactory.summary.timezoneSidId;
         skedRemoteResultModel getPendingAvailabilityResult = skedRacController.getPendingAvailability(getPendingAvailabilityRequest);
         skedRacController.availabilityDataModel availabilityDataResult = (skedRacController.availabilityDataModel)getPendingAvailabilityResult.data;
@@ -1174,7 +1191,23 @@ private class skedRacStory_Test {
         
         Test.startTest();
         mapTestData = testDataFactory.setupDriveData();
+        
+        sked_Territory__c testRegion = new sked_Territory__c(
+        	Name = 'Test Region 1',
+            RecordTypeId = sked_Territory__c.sObjectType.getDescribe().getRecordTypeInfosByDeveloperName().get('sked_ARC_Region').getRecordTypeId()
+        );
+        insert testRegion;
+        
         Biomed_Collection_Op_Center__c testCollectionOperation1 = (Biomed_Collection_Op_Center__c)mapTestData.get('testCollectionOperation1');
+        sked_Territory__c testDistrict1 = (sked_Territory__c)mapTestData.get('testTerritory1');
+        testDistrict1.sked_Parent__c = testRegion.Id;
+        update testDistrict1;
+        
+        sked_Territory_Collection_Operation__c territoryColOp = new sked_Territory_Collection_Operation__c(
+        	sked_Territory__c = testDistrict1.Id,
+        	sked_Collection_Operation__c = testCollectionOperation1.Id);
+        insert territoryColOp;
+        
         sked__Job_Allocation__c jobAllocation = [SELECT sked__Job__c, sked__Resource__c FROM sked__Job_Allocation__c LIMIT 1];
         
         skedRacController.searchDrivesRequestModel searchDrivesRequest = new skedRacController.searchDrivesRequestModel();
@@ -1298,6 +1331,12 @@ private class skedRacStory_Test {
         sked_Custom_Availability__c customAvailability = [SELECT Id FROM sked_Custom_Availability__c LIMIT 1];
         getCustomAvailabilityDetailsRequest.event.Id = customAvailability.Id;
         skedRemoteResultModel getCustomAvailabilityDetailsResult = skedRacController.getCustomAvailabilityDetails(getCustomAvailabilityDetailsRequest);
+        
+        skedRacController.saveCustomAvailabilityRequestModel cancelCustomAvailabilityRequest = new skedRacController.saveCustomAvailabilityRequestModel();
+        cancelCustomAvailabilityRequest.viewData = new Map<string, object>();
+        cancelCustomAvailabilityRequest.viewData.put('timezoneSidId', testDataFactory.summary.timezoneSidId);
+        cancelCustomAvailabilityRequest.event = getCustomAvailabilityDetailsRequest.event;
+        skedRemoteResultModel cancelCustomAvailabilityResult = skedRacController.cancelCustomAvailability(cancelCustomAvailabilityRequest);
         
         skedRacController.saveCustomAvailabilityRequestModel deleteCustomAvailabilityRequest = new skedRacController.saveCustomAvailabilityRequestModel();
         deleteCustomAvailabilityRequest.viewData = new Map<string, object>();

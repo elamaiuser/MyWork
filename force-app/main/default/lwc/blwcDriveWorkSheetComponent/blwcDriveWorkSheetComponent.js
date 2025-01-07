@@ -12,8 +12,9 @@ export default class RedirectToVF extends LightningElement {
     })
     wiredDrive({error, data}) {
         if (data) {
+            console.log(':::TPE::: Data: ', JSON.stringify(data));
             const driveWorkSheetVfPageUrl = `/apex/generateDriveWorksheetPdf?id=${data.fields.Related_Scheduled_Drive__c.value}`;
-            window.open(driveWorkSheetVfPageUrl, '_blank');
+            window.open(driveWorkSheetVfPageUrl, 'Drive WorkSheet');
             this.closeQuickAction();            
         } else if (error) {
             console.error(error);

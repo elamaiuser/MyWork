@@ -17,9 +17,7 @@ public class BSF_Queueable_CreateRecurringOpp implements Queueable
         system.debug('oppList BSF_Queueable_CreateRecurringOpp'+oppList);
     }
 	public void execute(QueueableContext context)
-    { 
-        List<Opportunity> oppToProcessList = new List<Opportunity>();
-        List<Opportunity> oppToPrcoessNextList = new List<Opportunity>();
+    {
         system.debug('execute'+this.oppList);
         List<BSF_Error_Log__c> logList = BSF_Utilities.createErrorLog(Database.Insert(this.oppList,false), 'Recurring Drive creation','Create New Recurring Mobile Drive','execute','Error','Error in Opportunity Creation');
         InsertBsfErrorLog.insertBsfErrors(logList);

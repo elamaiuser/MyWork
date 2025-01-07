@@ -3,16 +3,25 @@
     <types>
         <members>BSF_Constants</members>
         <members>BSF_Utilities</members>
+        <members>BSF_UtilitiesTest</members>
         <members>CalendarBuildBatchHandler</members>
+        <members>CalendarBuildEvaluateDrivesBatch_Test</members>
+        <members>checkRecursive</members>
         <members>FieldIdentifiers</members>
         <members>FutureDrivesController</members>
+        <members>FutureDrivesController_Test</members>
         <members>GenerateMobileDrive</members>
+        <members>GenerateMobileDriveTest</members>
         <members>MobileDriveGeneratorDMLService</members>
         <members>OpportunityService</members>
         <members>OpportunityTriggerHandler</members>
+        <members>OpportunityTriggerTest</members>
         <members>skedDriveHandler</members>
+        <members>skedDriveTrigger_Test</members>
         <members>skedOpportunityHandler</members>
+        <members>skedOpportunityTrigger_Test</members>
         <members>slwcDriveService</members>
+        <members>slwcDriveService_Test</members>
         <name>ApexClass</name>
     </types>
     <types>
@@ -29,6 +38,10 @@
     <types>
 		<members>Opportunity.FieldsApplytoDrives</members>
 		<name>FieldSet</name>
+	</types>
+    <types>
+		<members>Create_New_Recurring_Mobile_Drive</members>
+		<name>Flow</name>
 	</types>
     <types>
 		<members>Opportunity.Template_Opportunity</members>
@@ -55,6 +68,7 @@
         <members>slwcConstants</members>
         <members>slwcDriveGenerator</members>
         <members>slwcDriveShift</members>
+        <members>slwcDriveShiftsMetadataModal</members>
 		<name>LightningComponentBundle</name>
 	</types>
     <version>58.0</version>

@@ -9,6 +9,7 @@
     <columns>RECORDTYPE</columns>
     <columns>Type__c</columns>
     <columns>OBJECT_ID</columns>
+    <columns>Zipcode__c</columns>
     <filterScope>Everything</filterScope>
     <label>All</label>
 </ListView>

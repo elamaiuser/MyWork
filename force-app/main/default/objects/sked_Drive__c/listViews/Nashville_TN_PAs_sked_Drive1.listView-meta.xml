@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Nashville_TN_PAs_sked_Drive1</fullName>
+    <filterScope>Queue</filterScope>
+    <label>Nashville TN: PAs</label>
+    <queue>Nashville_TN_PAs</queue>
+    <sharedTo>
+        <allInternalUsers />
+    </sharedTo>
+</ListView>

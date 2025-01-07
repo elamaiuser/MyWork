@@ -376,14 +376,10 @@ public without sharing class SponsorPlanningReportPDFController{
             List<sked__Account_Tag__c> accountTags = [SELECT Id, 
                                                                 Name, 
                                                                 sked__Account__c,
-                                                                sked__Tag__c,
-                                                                sked__Tag__r.Name, 
-                                                                sked__Tag__r.sked__Type__c,
+                                                                sked__Account__r.Name, 
                                                                 sked_Minimum_Quantity__c 
                                                         FROM sked__Account_Tag__c 
-                                                        WHERE sked__Account__c IN: accVsTagMap.keySet()
-                                                        AND sked__Tag__c != null
-                                                        AND sked__Tag__r.sked__Type__c = 'Certification'];
+                                                        WHERE sked__Account__c IN: accVsTagMap.keySet()];
             for(sked__Account_Tag__c atags : accountTags) {
                 accVsTagMap.get(atags.sked__Account__c).add(atags);
             }
@@ -392,14 +388,10 @@ public without sharing class SponsorPlanningReportPDFController{
             List<sked_Location_Tag__c> locationTags = [SELECT Id, 
                                                                 Name, 
                                                                 sked_Location__c,
-                                                                sked_Tag__c,
-                                                                sked_Tag__r.Name, 
-                                                                sked_Tag__r.sked__Type__c, 
+                                                                sked_Location__r.name, 
                                                                 sked_Minimum_Quantity__c 
                                                         FROM sked_Location_Tag__c 
-                                                        WHERE sked_Location__c IN: siteVsTagMap.keySet()
-                                                        AND sked_Tag__c != null
-                                                        AND sked_Tag__r.sked__Type__c = 'Certification'];
+                                                        WHERE sked_Location__c IN: siteVsTagMap.keySet()];
             for(sked_Location_Tag__c ltags : locationTags) {
                 siteVsTagMap.get(ltags.sked_Location__c).add(ltags);
             }
@@ -522,12 +514,10 @@ public without sharing class SponsorPlanningReportPDFController{
                                                 '\n' + opportunityMap.get(oppId).Account.Military_Authority_Phone__c : '');
                     if(!accVsOppMap.get(opportunityMap.get(oppId).AccountId).isEmpty()){
                         wrap.futureDrives = new List<FutureDriveWrapper>();
-                        Integer futureOppCounter = 0;
                         for(Opportunity opp : accVsOppMap.get(opportunityMap.get(oppId).AccountId)){
-                            if(oppId != opp.Id && futureOppCounter < 10 
-                                    && opportunityMap.get(oppId).Drive_Date__c != null 
+                            if(oppId != opp.Id && opportunityMap.get(oppId).Drive_Date__c != null 
                                     && opportunityMap.get(oppId).Drive_Date__c <= opp.Drive_Date__c
-                                    /*&& opportunityMap.get(oppId).Drive_Date__c.addDays(365) >= opp.Drive_Date__c*/){
+                                    && opportunityMap.get(oppId).Drive_Date__c.addDays(365) >= opp.Drive_Date__c){
                                         FutureDriveWrapper fdw = new FutureDriveWrapper();
                                         fdw.driveDate = getFormattedDate(opp.Drive_Date__c,false);
                                         fdw.siteName = opp.Drive_Site__c != null ? opp.Drive_Site__r.Name : '';
@@ -537,7 +527,6 @@ public without sharing class SponsorPlanningReportPDFController{
                                         fdw.driveStage = opp.StageName;
                                         fdw.primaryContactName = oppVsPriConMap.get(opp.Id) != null ? oppVsPriConMap.get(opp.Id).Name : '';
                                         wrap.futureDrives.add(fdw);
-                                        futureOppCounter++;
                             }
                         }
                     }
@@ -546,7 +535,7 @@ public without sharing class SponsorPlanningReportPDFController{
                         for(sked__Account_Tag__c acctg : accVsTagMap.get(opportunityMap.get(oppId).AccountId)){
                             Certifications crt = new Certifications();
                             crt.tagType = 'Account';
-                            crt.tagName = acctg.sked__Tag__r.Name;
+                            crt.tagName = acctg.sked__Account__r.Name;
                             crt.minimumQuantity = acctg.sked_Minimum_Quantity__c != null ? String.valueOf(acctg.sked_Minimum_Quantity__c.intValue()) : '';
                             wrap.certificationData.add(crt);
                         }
@@ -623,7 +612,7 @@ public without sharing class SponsorPlanningReportPDFController{
                     for(sked_Location_Tag__c ltags : siteVsTagMap.get(opportunityMap.get(oppId).Drive_Site__c)){
                         Certifications crt = new Certifications();
                         crt.tagType = 'Site';
-                        crt.tagName = ltags.sked_Tag__r.Name;
+                        crt.tagName = ltags.sked_Location__r.Name;
                         crt.minimumQuantity = ltags.sked_Minimum_Quantity__c != null ? String.valueOf(ltags.sked_Minimum_Quantity__c.intValue()) : '';
                         wrap.certificationData.add(crt);
                     }

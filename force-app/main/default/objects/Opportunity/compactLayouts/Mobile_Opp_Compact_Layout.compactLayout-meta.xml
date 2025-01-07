@@ -5,6 +5,9 @@
     <fields>AccountId</fields>
     <fields>Drive_Site__c</fields>
     <fields>Parent_Template_Id__c</fields>
+    <fields>Start_Time__c</fields>
+    <fields>End_Time__c</fields>
+    <fields>Total_Products_Projected__c</fields>
     <fields>Drive_Date__c</fields>
     <fields>DriveStatus__c</fields>
     <fields>Account_Manager__c</fields>

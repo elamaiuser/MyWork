@@ -2,7 +2,7 @@
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>Total_Planned_Units__c</fullName>
     <externalId>false</externalId>
-    <formula>Total_Number_of_Drives_Agreed_Annual__c *  Average_Per_Drive_planned_goal__c</formula>
+    <formula>Double_Red_Projected_Units__c  +  Other_Projected_Units__c + Apheresis_Projected_Units__c + WholeBloodProjectedUnits__c</formula>
     <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
     <inlineHelpText>Number of drives annually * avg per drive</inlineHelpText>
     <label>Total Planned Units</label>

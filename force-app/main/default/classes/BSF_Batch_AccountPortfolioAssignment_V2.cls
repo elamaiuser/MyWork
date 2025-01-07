@@ -17,7 +17,7 @@ global class BSF_Batch_AccountPortfolioAssignment_V2 implements Database.Batchab
       this.bioRecruitmentRecordType = BSF_Constants.BIO_RECRUITMENT_RECORD_TYPE;
       this.taxoVerKey = taxoVerKey;  
       this.postalcodeList = new List<String>();
-        if(accIdList != null && !accIdList.isEmpty() )
+        if(!accIdList.isEmpty())
         this.accIdList=accIdList;
    }
     

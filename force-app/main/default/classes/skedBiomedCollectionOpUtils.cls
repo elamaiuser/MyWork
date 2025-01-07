@@ -6,6 +6,6 @@ public class skedBiomedCollectionOpUtils {
             WHERE Id = :collectionOpId
         ];
 
-        return collectionOp.sked_Waitlist_Enabled__c ? skedConstants.AVAILABILITY_STATUS_WAITLIST : skedConstants.AVAILABILITY_STATUS_DECLINED;
+        return collectionOp.sked_Waitlist_Enabled__c ? skedConstants.AVAILABILITY_STATUS_WAITLIST : skedConstants.AVAILABILITY_STATUS_PENDING;
     }
 }

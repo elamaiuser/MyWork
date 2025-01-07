@@ -10,6 +10,7 @@
  * 									the only way the "From" address can be configured for programatically generated emails
  * 									is via org wide email addresses.
  * 08/05/24    Priti Jana           Added new method to get same day porevious year for HRP-12706
+ * 
  ***********************************************************************************************************************/
 
 public with sharing class Helper {
@@ -677,13 +678,17 @@ public with sharing class Helper {
         DateTime dt = DateTime.newInstance(incomingDate, Time.newInstance(0, 0, 0, 0));
 
         String dayOfWeek = dt.format('EEEE');
+        //system.debug('incoming date is: ' + dt + 'day of week of incoming date is: ' + dayOfWeek);
         DateTime newDate = dt.addYears(1);
         String nextYearDayOfWeek = newDate.format('u');
+        //system.debug('next year date is: ' + newDate + 'new year day of week is: ' + nextYearDayOfWeek);
        
         for(Integer i=1; i<=7; i++){
             DateTime newDates = newDate.addDays(-i);
             String newDayOfWeek = newDates.format('EEEE');
+            //system.debug('newdates ' + newDates + 'new day of week ' + newDayOfWeek);
             if(dayOfWeek == newDayOfWeek){
+                //system.debug('they match: ' + dayOfWeek + '--' + newDayOfWeek);
                 dateNextYear = newDates;
                 break;
             }   
@@ -698,7 +703,7 @@ public with sharing class Helper {
      * @created August 2024
      */
     
-     public static DateTime getSameDayOfPrevYear(Date incomingDate) {
+    public static DateTime getSameDayOfPrevYear(Date incomingDate) {
         
         Datetime datePrevYear;
         DateTime dt = DateTime.newInstance(incomingDate, Time.newInstance(0, 0, 0, 0));
@@ -717,6 +722,29 @@ public with sharing class Helper {
         }
         return datePrevYear;
     }
+	
+    /*public static DateTime getSameDayOfPrevYear(Date incomingDate) {
+    DateTime dt = DateTime.newInstance(incomingDate, Time.newInstance(0, 0, 0, 0));
+    String dayOfWeek = dt.format('EEEE');
+    DateTime prevYearDate = dt.addYears(-1);
+    
+    // Adjust for leap years
+    if (dt.day() == 29 && dt.month() == 2 && !Date.isLeapYear(prevYearDate.year())) {
+        prevYearDate = prevYearDate.addDays(1);
+    }
+    
+    // Find the same day of week in the previous year
+    for (Integer i = -3; i <= 3; i++) {
+        DateTime candidateDate = prevYearDate.addDays(i);
+        if (candidateDate.format('EEEE') == dayOfWeek) {
+            return candidateDate;
+        }
+    }
+    
+    // This should never happen, but just in case
+    return null;
+}*/
+    //HRP-12706 --> Ends Here
     
     public static string getStartEndTimeLabelText(String incomingTimeValue){
         
@@ -1038,7 +1066,7 @@ public with sharing class Helper {
                     
                 if(dml_error_map.size() > 0){
                     for(Id recordId : dml_error_map.keySet()){
-                        emailBody = emailBody + dml_error_map.get(recordId)+ '</td><td>'+recordId;
+                        emailBody = emailBody + dml_error_map.get(recordId);
                     }
                 }
                 if(common_exception_map.size() > 0){
@@ -1059,6 +1087,7 @@ public with sharing class Helper {
                 message.subject = subject;
                 message.setHtmlBody(emailBody);
                 Messaging.SingleEmailMessage[] messages =  new List<Messaging.SingleEmailMessage> {message};
+                //Messaging.SendEmailResult[] results = Messaging.sendEmail(messages);
                 String notificationkey = BSF_Constants.taskSubjectKeyMap.get('Error in CB Drive Creation');
                 BSF_EmailNotification.sendEmails(messages,notificationkey, NULL);
             }

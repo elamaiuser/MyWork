@@ -88,9 +88,11 @@ trigger updateEventTrigger on Update_Event__e (After Insert) {
                 }
                 if(oppFields.updatedDataKeys.contains('WB_Projected_Procedures__c')) { //HRP-10312
                     recOpp.WB_Projected_Procedures__c = oppFields.WB_Projected_Procedures;
+                    checkRecursive.skipAptRecalculation = true;
                 }
                 if(oppFields.updatedDataKeys.contains('X2RBC_Projected_Procedures__c')) { //HRP-10312
                     recOpp.X2RBC_Projected_Procedures__c = oppFields.X2RBC_Projected_Procedures;
+                    checkRecursive.skipAptRecalculation = true;
                 }
                 if(oppFields.updatedDataKeys.contains('AnticipatedRegisterDonorChangeReason__c')) { //HRP-10312
                     recOpp.AnticipatedRegisterDonorChangeReason__c = oppFields.AnticipatedRegisterDonorChangeReason;
@@ -146,9 +148,14 @@ trigger updateEventTrigger on Update_Event__e (After Insert) {
                 // HRP-13190 --> Starts here
                 if(oppFields.updatedDataKeys.contains('APT_Required__c')) { 
                     recOpp.APT_Required__c = oppFields.APT_Required;
+                    checkRecursive.skipAptRecalculation = true;
                 }
                 if(oppFields.updatedDataKeys.contains('APT_Quantity__c')) { 
                     recOpp.APT_Quantity__c = oppFields.APT_Quantity;
+                    checkRecursive.skipAptRecalculation = true;
+                }
+                if(oppFields.updatedDataKeys.contains('APT_Change_Reason__c')) { 
+                    recOpp.APT_Change_Reason__c = oppFields.APT_Change_Reason;
                 }
                 // HRP-13190 --> Starts here
                 System.debug('recOpp being updated->'+recOpp);
@@ -176,6 +183,7 @@ trigger updateEventTrigger on Update_Event__e (After Insert) {
     }
     system.debug('###FWO inside trigger for update event.  final opp list to update.' + mapOfOppToUpdate);
     if(!mapOfOppToUpdate.isEmpty()) {//HRP-12422 start
+        system.debug('checkRecursive.skipAptRecalculation '+checkRecursive.skipAptRecalculation); 
         Database.SaveResult[] lsOpp = Database.update(mapOfOppToUpdate.values(), false);//HRP-12422 end
         System.debug('mapOfOppToUpdate being updated->'+mapOfOppToUpdate);
         //HRP-11296-Begin-Fix for HRP-11296 Capture error logs in case of DB failures and run time exceptions

@@ -18,7 +18,7 @@
     <filters>
         <field>sked_Collection_Operation__c</field>
         <operation>contains</operation>
-        <value>manches</value>
+        <value>Toledo OH</value>
     </filters>
     <filters>
         <field>sked_Type__c</field>

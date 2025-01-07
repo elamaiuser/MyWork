@@ -63,6 +63,10 @@
         <value xsi:type="xsd:string">Resource Call Out</value>
     </values>
     <values>
+        <field>sked_Target_Field_Prev_Value__c</field>
+        <value xsi:nil="true"/>
+    </values>
+    <values>
         <field>sked_Target_Field_Value__c</field>
         <value xsi:type="xsd:string">Call Out</value>
     </values>
@@ -84,6 +88,6 @@
     </values>
     <values>
         <field>sked_Trigger__c</field>
-        <value xsi:type="xsd:string">Insert</value>
+        <value xsi:type="xsd:string">Update</value>
     </values>
 </CustomMetadata>

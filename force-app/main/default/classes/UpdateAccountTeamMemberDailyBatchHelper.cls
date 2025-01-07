@@ -17,6 +17,7 @@ public with sharing class UpdateAccountTeamMemberDailyBatchHelper {
         for(AccountTeamMember atm: accTeamMemberList)
         {
             //HRP-11815 
+            system.debug('atm### '+atm);
                 if(atm.Is_Covering_Recruiter__c)
                 {
                     coveringTeamMemberList.add(atm);

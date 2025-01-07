@@ -130,7 +130,7 @@ public class skedAvailabilityHandler extends skedTriggerHub {
         Set<Id> jobAllocationIdsToDelete = new Set<Id>();
         for (sked__Availability__c newRecord : newRecords) {
             sked__Availability__c oldData = oldMap.get(newRecord.Id);
-            if (newRecord.sked_Custom_Status__c != oldData.sked_Custom_Status__c && newRecord.sked_Custom_Status__c == skedConstants.AVAILABILITY_STATUS_CANCELLED) {
+            if (newRecord.sked_Custom_Status__c != oldData.sked_Custom_Status__c && newRecord.sked_Custom_Status__c == skedConstants.AVAILABILITY_STATUS_CANCELLED && newRecord.sked_Call_Out_Type__c != skedConstants.AVAILABILITY_CALLOUT_TYPE_EARLY_DEPARTURE && newRecord.sked_Call_Out_Type__c != skedConstants.AVAILABILITY_CALLOUT_TYPE_LATE_ARRIVAL) {
                 if (newRecord.sked_Call_Out_for_Job_Allocation__c != NULL) {
                     jobAllocationIdsToDelete.add(newRecord.sked_Call_Out_for_Job_Allocation__c);
                 }

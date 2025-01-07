@@ -8,7 +8,7 @@ HRP-5715. non APS user should not edit national name</description>
    NOT (CONTAINS($Profile.Name,&quot;APS&quot;)),
    ISChanged( sked_National_Name__c ),  
    NOT($Profile.Name = &quot;System Administrator&quot;),
-   NOT($Profile.Name = &quot;Global Admin&quot;) 
+   NOT($Profile.Name = &quot;Global Admin&quot;)  
 )</errorConditionFormula>
     <errorMessage>DRD user cannot have editAccess National Name field</errorMessage>
 </ValidationRule>

@@ -19,6 +19,7 @@
         <label>Step 1</label>
         <name>Step_1</name>
     </approvalStep>
+    <emailTemplate>unfiled$public/sked_Drive_Shift_Trade_Submitted</emailTemplate>
     <enableMobileDeviceAccess>false</enableMobileDeviceAccess>
     <entryCriteria>
         <criteriaItems>

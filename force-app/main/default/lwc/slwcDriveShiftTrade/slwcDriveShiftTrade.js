@@ -396,7 +396,7 @@ export default class SlwcDriveShiftTrade extends LightningElement {
   buildRolesString = (jobAllocation) => {
     const resourceRole = jobAllocation.job.resourceRole;
     const dualRole = jobAllocation.job.dualRole;
-    const additionalRoles = jobAllocation.additionalRoles?.split(";") || [];
+    const additionalRoles = jobAllocation.additionalRoles || [];
     return compact(uniq([resourceRole, dualRole, ...additionalRoles])).join(', ');
   };
 

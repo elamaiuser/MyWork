@@ -69,6 +69,8 @@ public class DriveGenerationUtil {
 	*/
     public static List<sObject> getCalendarBuildLogRecord(CalendarBuildLogWrapper cbLogWrapper) {
         string dateFormatted = cbLogWrapper.externalId;
+        system.debug('dateFormatted in query '+dateFormatted);
+        
         String query = ' SELECT ID, Drive_Date__c, External_Id__c, ';
         if(cbLogWrapper.batchInfo.equalsIgnoreCase('Calendar Build')) {
             query += 'CB_Batch_Status__c, CB_Batch_Execution_Date__c, '+
@@ -170,16 +172,20 @@ public class DriveGenerationUtil {
             }
             
             if(cbLogWrapper.runType.equalsIgnoreCase(BSF_Constants.RUN_TYPE_MANUAL)) {
-                event.put('Parent_Calendar_Build_Log__c', [SELECT ID FROM Calendar_Build_Log__c WHERE External_Id__c = :cbLogWrapper.formattedDate LIMIT 1]?.Id);
-            }
-            event.put('Drive_Date__c', cbLogWrapper.driveDateToEval);       
+                event.put('Parent_Calendar_Build_Log__c', [SELECT ID FROM Calendar_Build_Log__c WHERE External_Id__c = :cbLogWrapper.formattedDate LIMIT 1].Id);
+            } else {
+            	event.put('Drive_Date__c', cbLogWrapper.driveDateToEval);
+            }            
             upsert event;
             
             List<BSF_Error_Log__c> errorLogCreatedDuringBatchRun = [SELECT Id, Error_Description__c, 
                                                                     Object_RecordId__c, Functionality__c
                                                                     FROM BSF_Error_Log__c
                                                                     WHERE Id IN :cbLogWrapper.errorLogIdsCreatedDuringBatchRun];
+        	system.debug('errorLogCreatedDuringBatchRun '+errorLogCreatedDuringBatchRun.size());
             for(BSF_Error_Log__c errorLog : errorLogCreatedDuringBatchRun) {
+                system.debug('inside for loop');
+                system.debug('errorLog '+errorLog);
                 Calendar_Build_Error_Log__c cbErrorLog = new Calendar_Build_Error_Log__c();
                 cbErrorLog.Name = cbLogWrapper.batchInfo+' Error Log_'+cbLogWrapper.driveDateToEval.format();
                 cbErrorLog.BSF_Error_Log__c = errorLog.Id;

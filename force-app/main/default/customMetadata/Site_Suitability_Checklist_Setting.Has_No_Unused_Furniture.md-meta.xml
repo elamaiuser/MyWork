@@ -16,6 +16,6 @@
     </values>
     <values>
         <field>UI_Text__c</field>
-        <value xsi:type="xsd:string">Sponsor will remove unused furniture, tables, and chairs two hours prior to drive start</value>
+        <value xsi:type="xsd:string">Sponsor will remove unused, furniture, tables, and chairs two hours prior to drive start</value>
     </values>
 </CustomMetadata>

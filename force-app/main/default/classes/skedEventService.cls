@@ -41,8 +41,11 @@ public virtual class skedEventService extends skedDataService {
                     model.Id = (Id)map_tempId_sObjectId.get(model.temporaryId);
                 }
             }
-
+            system.debug('Before post save record');
+            system.debug('recurringSchedule.events '+recurringSchedule.events);
+            system.debug('mapEvent.values() '+mapEvent.values());
             postSaveRecord(recurringSchedule.events, mapEvent.values());
+            system.debug('after post save record');
             result.savedObjects = mapEvent.values();
         }
         return result;

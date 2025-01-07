@@ -9,6 +9,8 @@
     <columns>sked__Start__c</columns>
     <columns>sked__End__c</columns>
     <columns>sked__Address__c</columns>
+    <columns>sked_Is_Group_Activity__c</columns>
+    <columns>sked_Linked_Drives__c</columns>
     <columns>CREATED_DATE</columns>
     <columns>LAST_UPDATE</columns>
     <columns>UPDATEDBY_USER</columns>

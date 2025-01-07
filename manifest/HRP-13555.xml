@@ -6,13 +6,17 @@
 	</types>
 	<types>
 		<members>sked__Availability__c.sked_Disposition_Date__c</members>
-		<members>sked__Availability__c.sked_Dispositioned_By_User__c</members>
+		<members>sked__Availability__c.sked_Dispositioned_By_User__c</members>		
 		<name>CustomField</name>
 	</types>
 	<types>
 		<members>General_Reports/Time_Off_Request_Evaluation_Report_JBj</members>
 		<members>General_Reports/Time_Off_Request_Evaluation_Report_WDerr</members>
 		<name>Report</name>
+	</types>
+	<types>
+		<members>Resources_with_Availability</members>
+		<name>ReportType</name>
 	</types>
 	<version>60.0</version>
 </Package>
