@@ -10,14 +10,11 @@
         <members>skedRecurringFactory</members>
         <members>skedRegionService</members>
         <members>skedSObjectType</members>
-        <members>BSFWeeklyStaffingRoleTimeController</members>
-		<members>WeeklyStaffScheduleReportController</members>
         <members>skedActivityService_Test</members>
         <members>skedMappingConfigController_Test</members>
         <members>skedModels_Test</members>
         <members>skedRacStory_Test</members>
         <members>skedRegionService_Test</members>
-        <members>BSFWeeklyStaffingRoleTimeControllerTest</members>
         <name>ApexClass</name>
     </types>
     <types>
