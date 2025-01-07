@@ -69,11 +69,11 @@ private class BSFWeeklyStaffingRoleTimeControllerTest {
             sked__Is_Available__c = True,
             sked__Status__c = 'Approved',
             sked__Start__c = Date.today(),
-            sked__Finish__c = Date.today().addDays(5),
+            sked__Finish__c = Date.today(),
             sked_Bypass_Auto_Approval_Process__c = True,
             sked_Custom_Status__c = 'Pending',
             sked_Start_Date__c =  Date.today(),
-            sked_Finish_Date__c =  Date.today().addDays(5),
+            sked_Finish_Date__c =  Date.today(),
             sked__Type__c = availabilityType[0],
             sked_Start_Time__c = Datetime.now().time(),
             sked_Finish_Time__c = Datetime.now().addMinutes(66).time()
@@ -136,11 +136,12 @@ private class BSFWeeklyStaffingRoleTimeControllerTest {
         String collOpIds = [SELECT Id, Name FROM Biomed_Collection_Op_Center__c WHERE Name = 'Collection Operation 1' LIMIT 1].Id;
             
         Test.startTest();
-        Integer count = BSFWeeklyStaffingRoleTimeController.validateInputs(Date.Today(),Date.Today().addDays(70),'Both',collOpIds,'mobile,fixed');
+        WeeklyStaffScheduleReportController.StaffInfoWrapper staffInfoWrapper = new WeeklyStaffScheduleReportController.StaffInfoWrapper();
+        staffInfoWrapper = BSFWeeklyStaffingRoleTimeController.validateInputsAndGetStaffInfo(Date.Today(),Date.Today().addDays(70),'Both',collOpIds,'mobile,fixed');
         Test.stopTest();
     }
     @isTest
-    private static void testmethod9() {
+    private static void testmethod9(){
         String collOpIds = [SELECT Id, Name, sked_Territory__c FROM Biomed_Collection_Op_Center__c WHERE Name = 'Collection Operation 1' LIMIT 1].Id;
             
         Test.startTest();
@@ -167,13 +168,19 @@ private class BSFWeeklyStaffingRoleTimeControllerTest {
     private static void testmethod12(){
         Test.startTest();
         List<BSFWeeklyStaffingRoleTimeController.WeeklyStaffingRTReportWrapper> wrap = BSFWeeklyStaffingRoleTimeController.calculateRowSpan(getTestWrapperList());
+        
+        wrap = BSFWeeklyStaffingRoleTimeController.addBlankResources(getTestWrapperList());
+        String ddt = BSFWeeklyStaffingRoleTimeController.dateFormat2(date.today());
+        wrap[0].rowspan = 2;
+        wrap[0].eventDetails[0].rowspan = 2;
+        wrap = BSFWeeklyStaffingRoleTimeController.calculateRowSpan(getTestWrapperList());
         Test.stopTest();
     }
 
     @isTest
     private static void testmethod13(){
         Test.startTest();
-        List<BSFWeeklyStaffingRoleTimeController.ResourceDetails> wrap = BSFWeeklyStaffingRoleTimeController.sortByResourceName(getTestResourceList());
+        List<BSFWeeklyStaffingRoleTimeController.ResourceDetails> wrap = BSFWeeklyStaffingRoleTimeController.sortByResourceName(getTestResourceList('tt'));
         Test.stopTest();
     }
 
@@ -248,7 +255,8 @@ private class BSFWeeklyStaffingRoleTimeControllerTest {
     private static void testmethod21() {        
         Test.startTest();
         try{
-        	Integer count = BSFWeeklyStaffingRoleTimeController.validateInputs(system.today(), system.today().addDays(-10), '', '', '');
+            WeeklyStaffScheduleReportController.StaffInfoWrapper staffInfoWrapper = new WeeklyStaffScheduleReportController.StaffInfoWrapper();
+        	staffInfoWrapper = BSFWeeklyStaffingRoleTimeController.validateInputsAndGetStaffInfo(system.today(), system.today().addDays(-10), '', '', '');
         }catch(AuraHandledException ex) {
             //Assert.isTrue()
         }
@@ -387,7 +395,7 @@ private class BSFWeeklyStaffingRoleTimeControllerTest {
             
             triggerHandler.bypass('AccountTeamMemberTriggerHandler');
             insert atmList;
-      
+     
             Contact conObj = new Contact();
             conObj.AccountId = mobileAccList[0].Id;
             conObj.FirstName = 'Test';
@@ -538,6 +546,8 @@ private class BSFWeeklyStaffingRoleTimeControllerTest {
             insert oppsobjlist;
 
             Biomed_Collection_Op_Center__c testCollectionOperation1 = [SELECT Id, Name, sked_Territory__c FROM Biomed_Collection_Op_Center__c WHERE Name = 'Collection Operation 1' LIMIT 1];
+            
+
             
             triggerHandler.bypass('DriveTriggerHandler');
             sked_Drive__c testDrive1 = new sked_Drive__c(Name = 'Test Drive',
@@ -873,18 +883,17 @@ private class BSFWeeklyStaffingRoleTimeControllerTest {
             skedHubBase.BypassInsertTriggers = true;
         	skedHubBase.BypassUpdateTriggers = true;
             insert joballc5;
-                        
-            skedHubBase.BypassInsertTriggers = false;
+            
+			skedHubBase.BypassInsertTriggers = false;
         	skedHubBase.BypassUpdateTriggers = false;
             skedSetting.instance.Admin.dateTimeConversion = true;
+            
             sked__Activity__c activity = new sked__Activity__c(
                 sked__Resource__c = resourcestaff.Id,
                 sked__Type__c = 'On Call',
                 sked_Activity_Title__c = 'On Call 1',
-               
                 sked_Start_Date__c =  Date.today(),
-                sked_End_Date__c =  Date.today(),
-           
+                sked_End_Date__c =  Date.today().addDays(1),
                 sked_Start_Time__c = Datetime.now().time(),
                 sked_End_Time__c = Datetime.now().addMinutes(66).time(),
                 sked_Collection_Operation__c = testCollectionOperation1.Id,
@@ -902,16 +911,13 @@ private class BSFWeeklyStaffingRoleTimeControllerTest {
                 sked__Resource__c = resourcestaff.Id
             );
             insert skedActivityResource;
-            system.debug('skedActivityResource '+skedActivityResource);
             
             sked__Activity__c activity1 = new sked__Activity__c(
                 sked__Resource__c = resourcestaff.Id,
                 sked__Type__c = 'On Call',
                 sked_Activity_Title__c = 'On Call 1',
-              
                 sked_Start_Date__c =  Date.today().addDays(1),
-                sked_End_Date__c =  Date.today().addDays(1),
-            
+                sked_End_Date__c =  Date.today().addDays(2),
                 sked_Start_Time__c = Datetime.now().time(),
                 sked_End_Time__c = Datetime.now().addMinutes(66).time(),
                 sked_Collection_Operation__c = testCollectionOperation1.Id,
@@ -933,10 +939,10 @@ private class BSFWeeklyStaffingRoleTimeControllerTest {
         
     }
 
-    private static List<BSFWeeklyStaffingRoleTimeController.ResourceDetails> getTestResourceList(){
+    private static List<BSFWeeklyStaffingRoleTimeController.ResourceDetails> getTestResourceList(String abc){
         List<BSFWeeklyStaffingRoleTimeController.ResourceDetails> rssList = new List<BSFWeeklyStaffingRoleTimeController.ResourceDetails>();
         BSFWeeklyStaffingRoleTimeController.ResourceDetails resdet = new BSFWeeklyStaffingRoleTimeController.ResourceDetails();
-        resdet.resourceName = 'test test';
+        resdet.resourceName = 'test test'+abc;
         resdet.resourceRole = 'test';
         resdet.staffArrivalTime = '2 AM';
         resdet.shiftStart = '2 AM';
@@ -944,7 +950,7 @@ private class BSFWeeklyStaffingRoleTimeControllerTest {
         rssList.add(resdet);
 
         BSFWeeklyStaffingRoleTimeController.ResourceDetails resdet1 = new BSFWeeklyStaffingRoleTimeController.ResourceDetails();
-        resdet1.resourceName = 'eddedc test';
+        resdet1.resourceName = 'eddedc test'+abc;
         resdet1.resourceRole = 'test';
         resdet1.staffArrivalTime = '2 AM';
         resdet1.shiftStart = '2 AM';
@@ -952,7 +958,7 @@ private class BSFWeeklyStaffingRoleTimeControllerTest {
         rssList.add(resdet1);
 
         BSFWeeklyStaffingRoleTimeController.ResourceDetails resdet2 = new BSFWeeklyStaffingRoleTimeController.ResourceDetails();
-        resdet2.resourceName = 'wefrfe test';
+        resdet2.resourceName = 'wefrfe test'+abc;
         resdet2.resourceRole = 'test';
         resdet2.staffArrivalTime = '2 AM';
         resdet2.shiftStart = '2 AM';
@@ -960,7 +966,7 @@ private class BSFWeeklyStaffingRoleTimeControllerTest {
         rssList.add(resdet2);
 
         BSFWeeklyStaffingRoleTimeController.ResourceDetails resdet3 = new BSFWeeklyStaffingRoleTimeController.ResourceDetails();
-        resdet3.resourceName = 'dcefcerf test';
+        resdet3.resourceName = 'dcefcerf test'+abc;
         resdet3.resourceRole = 'test';
         resdet3.staffArrivalTime = '2 AM';
         resdet3.shiftStart = '2 AM';
@@ -972,36 +978,41 @@ private class BSFWeeklyStaffingRoleTimeControllerTest {
 
     private static List<BSFWeeklyStaffingRoleTimeController.WeeklyStaffingRTReportWrapper> getTestWrapperList(){
         List<BSFWeeklyStaffingRoleTimeController.WeeklyStaffingRTReportWrapper> wraperList = new List<BSFWeeklyStaffingRoleTimeController.WeeklyStaffingRTReportWrapper>();
-
-        BSFWeeklyStaffingRoleTimeController.WeeklyStaffingRTReportWrapper wraper = new BSFWeeklyStaffingRoleTimeController.WeeklyStaffingRTReportWrapper();
-        wraper.eventDate = '01-01-2024';
-        wraper.eventDetails = new List<BSFWeeklyStaffingRoleTimeController.EventDetails>();
-
-        BSFWeeklyStaffingRoleTimeController.EventDetails evDetails = new BSFWeeklyStaffingRoleTimeController.EventDetails();
-        evDetails.eventName = 'test';
-        evDetails.eventName = 'test';
-        evDetails.isDrive = true;
-        evDetails.projProc = 'test';
-        evDetails.assignedMachineCount = 'test';
-        evDetails.staffReq = 'test';
-        evDetails.hours = 'test';
-        evDetails.eventVehicles = 'test';
-        evDetails.autoMachines = 'test';
-        evDetails.resources = getTestResourceList();
-        wraper.eventDetails.add(evDetails);
-
-        BSFWeeklyStaffingRoleTimeController.EventDetails evDetails1 = new BSFWeeklyStaffingRoleTimeController.EventDetails();
-        evDetails1.eventName = 'test';
-        evDetails1.eventName = 'test';
-        evDetails1.isDrive = true;
-        evDetails1.projProc = 'test';
-        evDetails1.assignedMachineCount = 'test';
-        evDetails1.staffReq = 'test';
-        evDetails1.hours = 'test';
-        evDetails1.eventVehicles = 'test';
-        evDetails1.autoMachines = 'test';
-        evDetails1.resources = getTestResourceList();
-        wraper.eventDetails.add(evDetails1);
+		for(Integer j = 0; j<5; j++){
+            BSFWeeklyStaffingRoleTimeController.WeeklyStaffingRTReportWrapper wraper = new BSFWeeklyStaffingRoleTimeController.WeeklyStaffingRTReportWrapper();
+            wraper.eventDate = BSFWeeklyStaffingRoleTimeController.dateFormat2(Date.Today().addDays(j));
+            wraper.eventDetails = new List<BSFWeeklyStaffingRoleTimeController.EventDetails>();
+    
+            BSFWeeklyStaffingRoleTimeController.EventDetails evDetails = new BSFWeeklyStaffingRoleTimeController.EventDetails();
+            evDetails.eventName = 'test';
+            evDetails.eventName = 'test';
+            evDetails.isDrive = true;
+            evDetails.projProc = 'test';
+            evDetails.assignedMachineCount = 'test';
+            evDetails.staffReq = 'test';
+            evDetails.hours = 'test';
+            evDetails.eventVehicles = 'test';
+            evDetails.autoMachines = 'test';
+            evDetails.resources = getTestResourceList('ss');
+            wraper.eventDetails.add(evDetails);
+            
+            for(Integer i = 0; i<5; i++){
+    
+                BSFWeeklyStaffingRoleTimeController.EventDetails evDetails1 = new BSFWeeklyStaffingRoleTimeController.EventDetails();
+                evDetails1.eventName = 'test';
+                evDetails1.eventName = 'test';
+                evDetails1.isDrive = true;
+                evDetails1.projProc = 'test';
+                evDetails1.assignedMachineCount = 'test';
+                evDetails1.staffReq = 'test';
+                evDetails1.hours = 'test';
+                evDetails1.eventVehicles = 'test';
+                evDetails1.autoMachines = 'test';
+                evDetails1.resources = getTestResourceList(String.valueOf(i+j));
+                wraper.eventDetails.add(evDetails1);
+            }
+            wraperList.add(wraper);
+        }
 
         return wraperList;
 
