@@ -145,7 +145,7 @@ private class BSFWeeklyStaffingRoleTimeControllerTest {
         String collOpIds = [SELECT Id, Name, sked_Territory__c FROM Biomed_Collection_Op_Center__c WHERE Name = 'Collection Operation 1' LIMIT 1].Id;
             
         Test.startTest();
-        List<BSFWeeklyStaffingRoleTimeController.WeeklyStaffingRTReportWrapper> wrapper = BSFWeeklyStaffingRoleTimeController.searchRoleTimeReport(Date.Today(),Date.Today().addDays(70),'Both',collOpIds,'mobile,fixed');
+        List<BSFWeeklyStaffingRoleTimeController.WeeklyStaffingRTReportWrapper> wrapper = BSFWeeklyStaffingRoleTimeController.searchRoleTimeReport(Date.Today(),Date.Today().addDays(70),'Both',collOpIds,'mobile,fixed', true);
         Test.stopTest();
     }
     @isTest
@@ -187,7 +187,7 @@ private class BSFWeeklyStaffingRoleTimeControllerTest {
     @isTest
     private static void testmethod14(){
         Test.startTest();
-        String nnnn = BSFWeeklyStaffingRoleTimeController.capitalizeName('EDEDW udhuh 323');
+        String nnnn = BSF_Utilities.capitalizeName('EDEDW udhuh 323',true);
         Test.stopTest();
     }
 
