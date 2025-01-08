@@ -19,6 +19,7 @@
 		<members>UserService</members>
         <members>UserTriggerHandler</members>
         <members>UserServiceTest</members>
+		<members>skedResourceTagHandler</members>
 		<name>ApexClass</name>
 	</types>
 	<types>
