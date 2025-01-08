@@ -49,8 +49,8 @@ public without sharing class WeeklyStaffScheduleReportController {
         } 
     }
     
-    @AuraEnabled
-    public static DatableConfigWrapper searchReport(Date startDate, Date endDate, String drivedispatch, String collOpIdList, String driveType){
+    @AuraEnabled(cacheable=true)
+    public static DatableConfigWrapper searchReport(Date startDate, Date endDate, String drivedispatch, String collOpIdList, String driveType, Boolean isForPDF){
 
         DatableConfigWrapper data = new DatableConfigWrapper();
         data.dataWrapper = new List<Map<String,String>>();
@@ -59,7 +59,7 @@ public without sharing class WeeklyStaffScheduleReportController {
         Map<Id,Map<Date,String>> resourceDetailsMap = new  Map<Id,Map<Date,String>>();
         Map<Id,Decimal> resourceHoursMap = new  Map<Id,Decimal>();
         Map<Id,sked__Resource__c> resourceMap = new Map<Id,sked__Resource__c>();
-
+        
         List<String> driveTypes= new List<String>();
         Set<String> collOpIds= new Set<String>();
         List<String> driveDispatchedStatus= new List<String>();
@@ -279,8 +279,8 @@ public without sharing class WeeklyStaffScheduleReportController {
 
         for(Id resourceId : resourceDetailsMap.keySet()){
             Map<String,String> wrapperMap = new Map<String,String>();
-            wrapperMap.put('Id',resourceId);
-            wrapperMap.put('Name',BSFWeeklyStaffingRoleTimeController.capitalizeName(resourceMap.get(resourceId).Name));
+            wrapperMap.put('Id',resourceId);            
+            wrapperMap.put('Name',BSF_Utilities.capitalizeName(resourceMap.get(resourceId).Name, isForPDF));
             wrapperMap.put('total',String.valueOf(resourceHoursMap.get(resourceId)));
             for(Date dt : dateMap.keySet()){
                 if(resourceDetailsMap.get(resourceId).containsKey(dt)){
@@ -303,7 +303,7 @@ public without sharing class WeeklyStaffScheduleReportController {
         List<Date> dateList = new List<Date>();
         Integer indx = 0;
 
-        DatableConfigWrapper configWrapper = searchReport(startDate,endDate,drivedispatch,collOpIdList,driveType);
+        DatableConfigWrapper configWrapper = searchReport(startDate,endDate,drivedispatch,collOpIdList,driveType, true);
         
         wrapper.headerWrapper = new List<String>();
         wrapper.headerWrapper.add('Resource');
