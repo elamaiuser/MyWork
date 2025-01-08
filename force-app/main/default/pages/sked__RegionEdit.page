@@ -1,0 +1,107 @@
+<apex:page standardController="sked__Region__c">
+  <apex:stylesheet value="{!URLFOR($Resource.sked__select2_v4_0_13, 'select2-4.0.13/dist/css/select2.min.css')}"
+  />
+
+  <apex:includeScript value="{!$Resource.sked__jquery_min_v3_5_1}" />
+  <apex:includeScript value="{!URLFOR($Resource.sked__select2_v4_0_13, 'select2-4.0.13/dist/js/select2.min.js')}"
+  />
+  <apex:includeScript value="{!$Resource.sked__moment_min_v2_28_0}" />
+  <apex:includeScript value="{!$Resource.sked__moment_timezone_with_data_min_v0_5_31}"
+  />
+
+  <script>
+    $(function () {
+      var timezones = [];
+      $.each(moment.tz.names(), function (index, item) {
+        // We only support timezones in "Country/Region" format
+        if (item.includes("/")) {
+          var d = { id: item, text: item };
+          if (item === "{!JSENCODE(HTMLENCODE(sked__Region__c.sked__Timezone__c))}") {
+            d.selected = true;
+          }
+          timezones.push(d);
+        }
+      });
+
+      var tzHidden = $('input[id$=":tzHidden"]');
+      var tzSelect = $('select[id="tzSelect"]');
+
+      tzSelect.select2({
+        placeholder: "Select a Timezone",
+        //minimumInputLength: 1,
+        width: 200,
+        data: timezones
+      });
+
+      tzSelect.on("select2:select", (ev) => {
+        tzHidden.val(ev.params.data.id);
+      });
+
+      //$('select[id$=":countrySelect"]').select2();
+    });
+  </script>
+
+  <apex:sectionHeader title="Region"
+    subtitle="{!sked__Region__c.name}"
+  ></apex:sectionHeader>
+
+  <apex:form >
+    <apex:pageBlock title="Region Edit">
+      <apex:pageMessages />
+
+      <apex:pageBlockSection >
+        <apex:pageBlockSectionItem >
+          <apex:outputLabel >Name</apex:outputLabel>
+          <apex:inputField value="{!sked__Region__c.Name}" required="true" />
+        </apex:pageBlockSectionItem>
+
+        <apex:pageBlockSectionItem >
+          <apex:outputLabel >Description</apex:outputLabel>
+          <apex:inputField value="{!sked__Region__c.sked__Description__c}" />
+        </apex:pageBlockSectionItem>
+
+        <apex:pageBlockSectionItem >
+          <apex:outputLabel >Location (Latitude)</apex:outputLabel>
+          <apex:inputField value="{!sked__Region__c.sked__Location__Latitude__s}" />
+        </apex:pageBlockSectionItem>
+
+        <apex:pageBlockSectionItem >
+          <apex:outputLabel >Location (Longitude)</apex:outputLabel>
+          <apex:inputField value="{!sked__Region__c.sked__Location__Longitude__s}" />
+        </apex:pageBlockSectionItem>
+
+        <apex:pageBlockSectionItem >
+          <apex:outputLabel for="select2">Timezone</apex:outputLabel>
+
+          <apex:outputPanel styleClass="requiredInput" layout="block">
+            <apex:outputPanel styleClass="requiredBlock" layout="block" />
+            <apex:inputHidden id="tzHidden"
+              value="{!sked__Region__c.sked__Timezone__c}"
+              required="true"
+            />
+            <select id="tzSelect" />
+          </apex:outputPanel>
+        </apex:pageBlockSectionItem>
+
+        <apex:pageBlockSectionItem >
+          <apex:outputLabel >Radius</apex:outputLabel>
+          <apex:inputField value="{!sked__Region__c.sked__Radius__c}" />
+        </apex:pageBlockSectionItem>
+
+        <apex:pageBlockSectionItem >
+          <apex:outputLabel >Country Code</apex:outputLabel>
+          <apex:inputField value="{!sked__Region__c.sked__Country_Code__c}"
+            id="countrySelect"
+            style="width: 200px"
+          />
+        </apex:pageBlockSectionItem>
+      </apex:pageBlockSection>
+
+      <apex:pageBlockButtons id="editButtons" location="both" rendered="true">
+        <apex:commandButton id="saveBtn" value="Save" action="{!save}" />
+
+        <apex:commandButton id="cancelBtn" value="Cancel" action="{!cancel}" />
+      </apex:pageBlockButtons>
+    </apex:pageBlock>
+  </apex:form>
+</apex:page>

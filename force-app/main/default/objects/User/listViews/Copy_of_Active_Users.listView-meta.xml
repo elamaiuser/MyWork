@@ -11,4 +11,5 @@
     <columns>CORE.USERS.DEPARTMENT</columns>
     <filterScope>Everything</filterScope>
     <label>Copy of Active Users</label>
+    <language>en_US</language>
 </ListView>

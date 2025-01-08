@@ -1,0 +1,7 @@
+<apex:page showHeader="false"
+  sidebar="false"
+  controller="sked.skedResourceLoginController"
+  action="{!next}"
+>
+  <apex:pageMessages ></apex:pageMessages>
+</apex:page>

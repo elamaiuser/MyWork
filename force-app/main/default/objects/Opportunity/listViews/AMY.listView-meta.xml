@@ -15,14 +15,24 @@
     <columns>DriveStatus__c</columns>
     <filterScope>Everything</filterScope>
     <filters>
-        <field>Do_Not_Roll__c</field>
-        <operation>equals</operation>
-        <value>1</value>
-    </filters>
-    <filters>
         <field>Source__c</field>
         <operation>equals</operation>
         <value>Calendar Build</value>
+    </filters>
+    <filters>
+        <field>DriveStatus__c</field>
+        <operation>contains</operation>
+        <value>System Gen</value>
+    </filters>
+    <filters>
+        <field>Drive_Date__c</field>
+        <operation>lessOrEqual</operation>
+        <value>9/30/2025</value>
+    </filters>
+    <filters>
+        <field>Drive_Date__c</field>
+        <operation>greaterOrEqual</operation>
+        <value>9/1/2025</value>
     </filters>
     <label>Calendar Build Past 9/1/2024</label>
 </ListView>

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<EmailTemplate xmlns="http://soap.sforce.com/2006/04/metadata">
+    <available>true</available>
+    <description>Email to BPLs about how to recruit Type O donors.</description>
+    <encodingKey>ISO-8859-1</encodingKey>
+    <letterhead>ARC_Logo_Test</letterhead>
+    <name>Evergreen_General_Type O Recruitment</name>
+    <style>formalLetter</style>
+    <subject>O So Needed: Help increase type O donations</subject>
+    <textOnly>Dear [BPL Name],
+
+**Add personal introduction**
+
+Thank you for all that you are doing for patients in need! I so appreciate your effects to increase Type O collections.
+
+Did you know that type O blood is most requested by hospitals and is often in short supply? In emergency situations when there’s no time to determine a patient’s blood type or for immune deficient infants, doctors reach for type O blood.
+
+The recruitment actions you take as a Blood Program Leader can directly impact our ability to respond to hospital demand and help ensure patients get the blood they need.
+
+Tips for success at your upcoming blood drive:
+
+Use the attached type O info sheet and donor email template [NOTE: Available on the Type O Field page; ATTACH to email] to recruit eligible type O blood donors.
+
+Before the blood drive, make a personal call to type O donors, reminding them why their appointment is needed and thank them for scheduling an appointment to give blood.
+
+If a Power Red device is assigned to the blood drive, ensure the type O donor is educated on the process and, if eligible, is encouraged to donate Power Red.
+
+Thank you again for your commitment to our lifesaving mission. I am confident that with some additional efforts, you will increase your type O donors. If you have any questions, please do not hesitate to reach out – I’m always here to help!
+
+Best regards,
+
+[Your Name]
+
+[Your Title]
+
+[Your Email]</textOnly>
+    <type>html</type>
+    <uiType>Aloha</uiType>
+</EmailTemplate>

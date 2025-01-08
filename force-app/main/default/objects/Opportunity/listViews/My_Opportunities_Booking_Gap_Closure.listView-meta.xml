@@ -9,6 +9,8 @@
     <columns>Targeted_Ask_Date__c</columns>
     <columns>Anticipated_Registered_Donors__c</columns>
     <columns>Total_Products_Projected__c</columns>
+    <columns>AA_Unit_Projection__c</columns>
+    <columns>Latino_Unit_Projection__c</columns>
     <columns>Call_List_Recipient_Exist__c</columns>
     <columns>DriveStatus__c</columns>
     <filterScope>SalesTeam</filterScope>

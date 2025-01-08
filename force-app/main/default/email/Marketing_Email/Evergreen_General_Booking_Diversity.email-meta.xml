@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<EmailTemplate xmlns="http://soap.sforce.com/2006/04/metadata">
+    <available>true</available>
+    <description>An email to ask BPLs to book during a timeframe recognizing diversity.</description>
+    <encodingKey>ISO-8859-1</encodingKey>
+    <letterhead>ARC_Logo_Test</letterhead>
+    <name>Evergreen_General_Booking Diversity</name>
+    <style>formalLetter</style>
+    <subject>Host a blood drive. Help patients in need.</subject>
+    <textOnly>Dear [BPL Name],
+
+**Add personal introduction**
+
+Thank you so much for your support and commitment to increasing our diverse donor base.
+
+Did you know that your current drive is collecting XX% of diverse collections? Through additional education and focused recruitment, we can work to increase our diversity collections together.
+
+Diverse blood donors play a critical role in helping patients in emergencies or battling diseases like sickle cell to receive the most compatible blood match. It is essential that donor diversity match patient diversity, so we must work to increase the number of blood donors from all ethnic and racial groups.
+
+Answer the call to help save those in need by hosting a Red Cross blood drive to help support patients and families.
+
+Why does donor diversity matter?
+
+The best blood type match for patients with rare blood types often comes from donors of the same race or similar ethnicity. Certain blood types are unique to specific racial and ethnic groups.
+If a patient receives a transfusion that is not a close match, they may form antibodies. Individuals who receive frequent blood transfusions, such as patients with sickle cell disease, need to receive the most compatible match possible to avoid developing complications.
+Diverse populations also play a critical role in meeting the constant need for blood because type O blood is most often in critical supply and most often needed by hospitals. 51% of people who are Black or African American and 57% of people who are Hispanic or Latino are type O.
+
+As a leader in your community, you can make a significant impact by hosting a/another Red Cross blood drive.
+
+
+[Add if January/February]
+
+Encourage donors to give blood in honor of Dr. Martin Luther King Jr. and in celebration of Black History Month. It’s important to emphasis how diverse communities can help support sickle cell patients through blood donation. Many schools, churches, and organizations are already involved in activities and community projects during this time, and incorporating a blood drive is another great way to bring the community together in the spirit of compassion, diversity and unity.
+
+Please consider hosting a Red Cross blood drive this January or February to help bring awareness to the need for diverse donors.
+
+
+[Add if March]
+
+Encourage donors to give blood this month in honor of César Chávez Day, celebrated on March 31. It’s a perfect time to come together as a community in honor of the civil rights and labor movement activist and his championship of helping those in need. Donations from those in the Latino community are especially important in the treatment of trauma patients and others needing emergency blood transfusions because more than half of all Hispanics/Latinos in the U.S. have type O blood. Help fight for those who are suffering by coming together as a community to ensure blood is available for those who need it.
+
+Please consider hosting a Red Cross blood drive this March to help bring awareness to the need for diverse donors.
+
+
+[Add if June/July]
+
+We need you this summer, as donations tend to drop, to host a/another Red Cross blood drive. June is a special time of recognition, with Dr. Charles R. Drew’s birthday on June 3 and World Sickle Cell Awareness Day and Juneteenth on June 19. It’s the perfect time to highlight communities coming together – and what better way to celebrate community than by hosting a blood drive and saving lives? Blood donations from diverse individuals are crucial for meeting the transfusion needs of patients, especially those with sickle cell disease.
+
+Please consider hosting a Red Cross blood drive this June to help bring awareness to the need for diverse donors.
+
+
+[Add if August/September/October]
+
+September is National Sickle Cell Awareness Month and an ideal time to highlight the unique blood needs of individuals living with this genetic disease. Patients with sickle cell disease may rely on regular blood transfusions throughout their lives to prevent sickle cell complications such as organ and tissue damage, severe pain, and strokes. One in 3 African American blood donors are a match for people with sickle cell disease – diverse communities can help support these patients through blood donation.
+
+In addition, National Hispanic Heritage Month is observed Sept. 15-Oct. 15 to celebrate unity and appreciation of the diverse contributions and cultural heritage of Hispanic and Latino Americans. Donations from those in the Latino community are especially important in the treatment of trauma patients and others needing emergency blood transfusions because more than half of all Hispanics/Latinos in the U.S. have type O blood. This is a perfect time to come together as a community by organizing a blood drive to help patients battling blood disorders like sickle cell disease, as well as those needing an organ transplant, suffering from a traumatic injury or a new mom experiencing a complicated childbirth.
+
+Please consider hosting a Red Cross blood drive this September or October to help bring awareness to the need for diverse donors.
+
+Let’s get your drive scheduled and help provide hope to patients in need!
+
+Best regards,
+
+[Your Name]
+
+[Your Title]
+
+
+[Your Email]</textOnly>
+    <type>html</type>
+    <uiType>Aloha</uiType>
+</EmailTemplate>
