@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Salt_Lake_City_UT_DMDCR1_sked_Drive_Change_Request</fullName>
+    <filterScope>Queue</filterScope>
+    <label>Salt Lake City UT: DMDCR</label>
+    <queue>Salt_Lake_City_UT_DMDCR1</queue>
+    <sharedTo>
+        <allInternalUsers />
+    </sharedTo>
+</ListView>

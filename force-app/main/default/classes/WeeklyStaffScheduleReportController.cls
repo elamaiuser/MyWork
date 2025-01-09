@@ -1,7 +1,8 @@
 /*
-* Date					Developer Name			Comments
+*    Date					Developer Name			          Comments
  * ***************************************************************************************************************************************************************************
- * 07/15/2024			Barnojit Sharma				Weekly Staffing Schedule by Employee & Weekly Staffing Role Time Back up Reports shift start and end times are incorrect (HRP-13091)
+ * 07/15/2024				Barnojit Sharma				Weekly Staffing Schedule by Employee & Weekly Staffing Role Time Back up Reports shift start and end times are incorrect (HRP-13091)
+ * 12/30/2024				Priti Jana					Logic for HRP-13121
  *****************************************************************************************************************************************************************************
 */
 public without sharing class WeeklyStaffScheduleReportController {
@@ -48,8 +49,8 @@ public without sharing class WeeklyStaffScheduleReportController {
         } 
     }
     
-    @AuraEnabled
-    public static DatableConfigWrapper searchReport(Date startDate, Date endDate, String drivedispatch, String collOpIdList, String driveType){
+    @AuraEnabled(cacheable=true)
+    public static DatableConfigWrapper searchReport(Date startDate, Date endDate, String drivedispatch, String collOpIdList, String driveType, Boolean isForPDF){
 
         DatableConfigWrapper data = new DatableConfigWrapper();
         data.dataWrapper = new List<Map<String,String>>();
@@ -58,13 +59,16 @@ public without sharing class WeeklyStaffScheduleReportController {
         Map<Id,Map<Date,String>> resourceDetailsMap = new  Map<Id,Map<Date,String>>();
         Map<Id,Decimal> resourceHoursMap = new  Map<Id,Decimal>();
         Map<Id,sked__Resource__c> resourceMap = new Map<Id,sked__Resource__c>();
-
+        
         List<String> driveTypes= new List<String>();
         Set<String> collOpIds= new Set<String>();
         List<String> driveDispatchedStatus= new List<String>();
         List<Boolean> driveDispatchedCheckBox= new List<Boolean>();
         
-        Integer recordCount = BSFWeeklyStaffingRoleTimeController.validateInputs(startDate,endDate,drivedispatch,collOpIdList,driveType);
+        //HRP-13121 -> Starts Here
+        StaffInfoWrapper staffInfoWrapper = new StaffInfoWrapper();
+        staffInfoWrapper = BSFWeeklyStaffingRoleTimeController.validateInputsAndGetStaffInfo(startDate, endDate, drivedispatch, collOpIdList, driveType);
+        //HRP-13121 -> Ends Here
         
         Map<String,String> driveDispatchedMap = new Map<String,String>();
         driveDispatchedMap.put('Yes',Custom_Report_Config__mdt.getInstance('DriveDispatchedYes').Value__c);
@@ -116,11 +120,11 @@ public without sharing class WeeklyStaffScheduleReportController {
 
         data.columnsInfo.add(new Map<String,Object>{'label'=>'Total Hours','fieldName'=>'total','type'=>'text','wrapText'=>true,'hideDefaultActions'=>true});
 
-		List<sked__Job_Allocation__c> jobAllocations =  BSFWeeklyStaffingRoleTimeController.getJobAllocations(startDate, endDate, driveDispatchedStatus, collOpIds, driveTypes, driveDispatchedCheckBox);
+		//List<sked__Job_Allocation__c> jobAllocations =  BSFWeeklyStaffingRoleTimeController.getJobAllocations(startDate, endDate, driveDispatchedStatus, collOpIds, driveTypes, driveDispatchedCheckBox);
 
-        for(sked__Job_Allocation__c jba : jobAllocations){
+        for(sked__Job_Allocation__c jba : staffInfoWrapper.jobAllocationList) { //HRP-13121: Using wrapper class info
             resourceMap.put(jba.sked__Resource__c,jba.sked__Resource__r);
-            if(!resourceDetailsMap.containsKey(jba.sked__Resource__c)){
+            if(!resourceDetailsMap.containsKey(jba.sked__Resource__c)) {
                 resourceDetailsMap.put(jba.sked__Resource__c, new Map<Date,String>());
                 resourceHoursMap.put(jba.sked__Resource__c,0);
             }
@@ -164,10 +168,10 @@ public without sharing class WeeklyStaffScheduleReportController {
             timeDifference = timeDifference + resourceHoursMap.get(jba.sked__Resource__c);
             resourceHoursMap.put(jba.sked__Resource__c,timeDifference);                 
         }
-
-        List<sked__Activity_Resource__c> activityList = BSFWeeklyStaffingRoleTimeController.getActivities(startDate,endDate,collOpIds);
+ 
+        //List<sked__Activity_Resource__c> activityList = BSFWeeklyStaffingRoleTimeController.getActivities(startDate, endDate, territoryKeys); //HRP-13121 -> Changed Method Parameter */
         
-        for(sked__Activity_Resource__c act : activityList){
+        for(sked__Activity_Resource__c act : staffInfoWrapper.activityList) { //HRP-13121: Using wrapper class info
             resourceMap.put(act.sked__Resource__c,act.sked__Resource__r);
             if(!resourceDetailsMap.containsKey(act.sked__Resource__c)){
                 resourceDetailsMap.put(act.sked__Resource__c, new Map<Date,String>());
@@ -224,9 +228,9 @@ public without sharing class WeeklyStaffScheduleReportController {
             //HRP-12921 --> Continues          
         }
         
-        List<sked__Availability__c> availabilityList = BSFWeeklyStaffingRoleTimeController.getavailabilities(startDate,endDate,availabilityType,collOpIds);
+        //List<sked__Availability__c> availabilityList = BSFWeeklyStaffingRoleTimeController.getavailabilities(startDate,endDate,availabilityType,collOpIds);
         
-        for(sked__Availability__c avl : availabilityList){
+        for(sked__Availability__c avl : staffInfoWrapper.availabilityList) { //HRP-13121: Using wrapper class info
             resourceMap.put(avl.sked__Resource__c,avl.sked__Resource__r);
             if(!resourceDetailsMap.containsKey(avl.sked__Resource__c)){
                 resourceDetailsMap.put(avl.sked__Resource__c, new Map<Date,String>());
@@ -275,8 +279,8 @@ public without sharing class WeeklyStaffScheduleReportController {
 
         for(Id resourceId : resourceDetailsMap.keySet()){
             Map<String,String> wrapperMap = new Map<String,String>();
-            wrapperMap.put('Id',resourceId);
-            wrapperMap.put('Name',BSFWeeklyStaffingRoleTimeController.capitalizeName(resourceMap.get(resourceId).Name));
+            wrapperMap.put('Id',resourceId);            
+            wrapperMap.put('Name',BSF_Utilities.capitalizeName(resourceMap.get(resourceId).Name, isForPDF));
             wrapperMap.put('total',String.valueOf(resourceHoursMap.get(resourceId)));
             for(Date dt : dateMap.keySet()){
                 if(resourceDetailsMap.get(resourceId).containsKey(dt)){
@@ -299,7 +303,7 @@ public without sharing class WeeklyStaffScheduleReportController {
         List<Date> dateList = new List<Date>();
         Integer indx = 0;
 
-        DatableConfigWrapper configWrapper = searchReport(startDate,endDate,drivedispatch,collOpIdList,driveType);
+        DatableConfigWrapper configWrapper = searchReport(startDate,endDate,drivedispatch,collOpIdList,driveType, true);
         
         wrapper.headerWrapper = new List<String>();
         wrapper.headerWrapper.add('Resource');
@@ -392,5 +396,19 @@ public without sharing class WeeklyStaffScheduleReportController {
     public class DatablePDFWrapper {
         public List<String> headerWrapper { get; set; }
         public List<List<String>> dataWrapper { get; set; }
+    }
+    
+    public class StaffInfoWrapper {
+        public List<sked__Activity_Resource__c> activityList { get; set; }
+        public List<sked__Job_Allocation__c> jobAllocationList { get; set; }
+        public List<sked__Availability__c> availabilityList { get; set; }
+        public Integer totalRecords { get; set; }
+        
+        public StaffInfoWrapper() {
+            activityList = new List<sked__Activity_Resource__c>();
+            jobAllocationList = new List<sked__Job_Allocation__c>();
+            availabilityList = new List<sked__Availability__c>();
+            totalRecords = 0;
+        }
     }
 }

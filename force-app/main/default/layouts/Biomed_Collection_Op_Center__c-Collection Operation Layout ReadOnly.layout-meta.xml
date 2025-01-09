@@ -5,7 +5,6 @@
     <excludeButtons>Clone</excludeButtons>
     <excludeButtons>Delete</excludeButtons>
     <excludeButtons>Edit</excludeButtons>
-    <excludeButtons>OpenSlackRecordChannel</excludeButtons>
     <excludeButtons>PrintableView</excludeButtons>
     <excludeButtons>RecordShareHierarchy</excludeButtons>
     <excludeButtons>Share</excludeButtons>
@@ -341,7 +340,9 @@
         <fields>NAME</fields>
         <fields>sked_Type__c</fields>
         <fields>sked_Resource_Role_Group__c</fields>
+        <fields>sked_Days_of_Week__c</fields>
         <fields>sked_Drive_Type__c</fields>
+        <fields>sked_Mobile_Type__c</fields>
         <fields>sked_Effective_Start_Date__c</fields>
         <fields>sked_Effective_End_Date__c</fields>
         <fields>sked_Fixed_Site_Operation_Type__c</fields>

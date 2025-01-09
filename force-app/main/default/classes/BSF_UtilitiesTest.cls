@@ -273,7 +273,17 @@
              ''
          );
          Test.stopTest();
-     }   
+     }
+     
+     @isTest
+     static void capitalizeNameTest(){
+        Test.startTest();
+        String result = BSF_Utilities.capitalizeName('Aminata Labor-koroma 526350', true);
+        String result1 = BSF_Utilities.capitalizeName('Aminata Labor-koroma 526350', false);
+        Test.stopTest();
+        System.assertEquals('Aminata Labor-kor oma 526350', result);
+        System.assertEquals('Aminata Labor-koroma 526350', result1);
+     }
      
      @isTest
      static void runtest() {

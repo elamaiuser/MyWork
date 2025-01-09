@@ -168,7 +168,7 @@ public class TaskForMigratedDrivesBatchTest {
         			 task recruitmentTask = new task();
                     recruitmentTask.RecordTypeId = recTypeId;
                     recruitmentTask.ActivityDate = Helper.AddBusinessDays(OppList[0].Drive_Date__c, -50);
-                    recruitmentTask.subject = 'Recruitment Task - System Generated';
+                    recruitmentTask.subject = 'Recruitment Planning Meeting';
                     recruitmentTask.WhatId = OppList[1].id;
         			taskListInsert.add(recruitmentTask);
         			insert taskListInsert;

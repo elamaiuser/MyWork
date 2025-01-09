@@ -73,7 +73,7 @@ export default class SlwcApprovalConsoleSiteFeedbackList extends LightningElemen
   @track sortOption = {
     fieldName: 'createdDate',
     sortDirection: 'asc'
-  };  
+  };
   @track requestDetailModalData = {};
 
   connectedCallback() {
@@ -140,11 +140,16 @@ export default class SlwcApprovalConsoleSiteFeedbackList extends LightningElemen
     if(!this.collectionOperationIds.length) {
         return Promise.resolve([]);
     }
+    console.log('this is run');
     
-    let siteCoService = new siteCollectionOpService;
+    let siteCoService = new siteCollectionOpService; 
+    console.log('this.collectionOperationIds :: ',this.collectionOperationIds);
+    console.log('this.collectionOperationDateRange.startDate :: ',this.collectionOperationDateRange.startDate);
+    console.log('this.collectionOperationDateRange.endDate :: ',this.collectionOperationDateRange.endDate);
     return siteCoService.getRelatedSiteInfo({collectionOperationIds: this.collectionOperationIds, startDate: this.collectionOperationDateRange.startDate, endDate: this.collectionOperationDateRange.endDate})
-    .then(siteCOs => {
-      let siteIds = siteCOs.returnedData.map(siteCO => siteCO.sked_Site__c);
+    .then(siteCOs => {   
+      console.log('this is run 2');   
+      let siteIds = siteCOs.returnedData.map(siteCO => siteCO.sked_Site__c);      
       let query = new siteFeedbackQueryModel();
       query.siteIds = siteIds;
       query.statuses = this.filters.statuses;
@@ -154,15 +159,17 @@ export default class SlwcApprovalConsoleSiteFeedbackList extends LightningElemen
       query.limit = 50;
       query.offset = (this.records || []).length;
       query.orderBy = this.sortOption.sortField || this.sortOption.fieldName;
-      query.orderAscending = this.sortOption.sortDirection;
+      query.orderAscending = this.sortOption.sortDirection;      
 
       let service = new siteFeedbackService();
 
       return Promise.resolve()
       .then(() => {
+        console.log('query :: ',query);
+        
         return service.query(query)
       })
-      .then((result) => {
+      .then((result) => {        
         result.forEach((item) => {
           item.recordUrl = '/' + item.id;
         })
@@ -170,6 +177,7 @@ export default class SlwcApprovalConsoleSiteFeedbackList extends LightningElemen
       });
     })
     .catch((error) => {
+      console.log('error.message :: ',error.message);
       this.dispatchEvent(new ShowToastEvent({
         message: error.message,
         variant: 'error',

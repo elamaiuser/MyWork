@@ -983,10 +983,8 @@ class MobileGenerator extends BaseGenerator {
 
   calculateTotalProceduresProjected(record) {
     if (!record && !this.drive) return;
-    let isShift = true;
     if (!record) {
       record = this.drive;
-      isShift = false;
     } else {
       this.drive.aptQuantity = record.APTSetup;
     }
@@ -1000,19 +998,19 @@ class MobileGenerator extends BaseGenerator {
       this.drive.driveShiftsMetadata.APTSetup = this.drive.aptQuantity;
     }
   }
-
+  
   recalculateAPTSettings() {
     if(!this.drive) return;
-    
+
     let aptQuantity = 0;
     const isEducationDrive = this.drive.account?.type === ACCOUNT_TYPE.EDUCATION;
     const isMiddleOrElemenentaryIndustryCode = this.drive.account?.industryCode === ACCOUNT_INDUSTRY_CODE.MIDDLE_SCHOOL || this.drive.account?.industryCode === ACCOUNT_INDUSTRY_CODE.ELEMENTARY_SCHOOL;
     if(isEducationDrive) {
       if(!isMiddleOrElemenentaryIndustryCode) {
-        aptQuantity = Math.floor(this.drive.totalProceduresProjected / 40);
+        aptQuantity = Math.floor(this.drive.driveShiftsMetadata.totalProceduresProjected / 40);
       }
     } else {
-      if(this.drive.totalProceduresProjected >= 40) aptQuantity = 1;
+      if(this.drive.driveShiftsMetadata.totalProceduresProjected >= 40) aptQuantity = 1;
     }
     this.drive.aptQuantity = aptQuantity;
     this.drive.aptRequired = aptQuantity > 0 ? true : false;
@@ -1073,7 +1071,6 @@ class MobileGenerator extends BaseGenerator {
         driveShift.startTime = this.helper.dateJSToTimeIso(drawHoursStart, this.masterData.timezoneSidId);
         driveShift.endTime = this.helper.dateJSToTimeIso(drawHoursEnd, this.masterData.timezoneSidId);
         driveShift.APTSetup = this.drive.aptQuantity || 0;
-
         driveShiftsMetadata.driveShifts.push(driveShift);
       }
     }
@@ -1416,13 +1413,13 @@ class MobileGenerator extends BaseGenerator {
       const drawHours = this.helper.calculateDrawHours(driveShiftMetadata, this.masterData, driveShiftMetadata.lunchBreakSettings);
 
       let noOfVpHhStaffs = Math.ceil(totalVpHhCapacity / vpHhCapacity / drawHours);;
-
       let resourceQuantityMap = this.mapResourceQuantity.get(driveShiftMetadata.key);
       resourceQuantityMap.set('VP/HH', {
         vphhQuantity: noOfVpHhStaffs,
         aptQuantity: driveShiftsMetadata.APTSetup
       });
     });
+    
   }
 
   calculateChargeQuantity() {
@@ -1580,7 +1577,6 @@ class MobileGenerator extends BaseGenerator {
         donorsScheduled: driveShiftMetadata.donorsScheduled,
         APTSetup: this.drive.driveShiftsMetadata.APTSetup
       };
-
       this.populateDriveShiftTags(proposedDriveShift);
       this.populateDriveShiftJobs(proposedDriveShift, index);
       this.updateShiftMobileSetup(proposedDriveShift);
@@ -2160,7 +2156,6 @@ class MobileGenerator extends BaseGenerator {
       if (!vehicleJob.jobAllocations) {
         vehicleJob.jobAllocations = [];
       }
-
       vehicleJob.jobAllocations.forEach((jobAllocation) => {
         const locked = !!lockedVehicles.find(lockedVehicle => {
           return lockedVehicle.id === jobAllocation.resourceId;

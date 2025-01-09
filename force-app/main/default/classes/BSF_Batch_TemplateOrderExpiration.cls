@@ -1,4 +1,4 @@
-global class BSF_Batch_TemplateOrderExpiration implements Database.Batchable<sObject> {
+global class BSF_Batch_TemplateOrderExpiration implements Schedulable, Database.Batchable<sObject> {
   Date currentDate;
   Date dueDate;
   Task_Reassignment_Matrix__mdt metadata;
@@ -84,8 +84,11 @@ global class BSF_Batch_TemplateOrderExpiration implements Database.Batchable<sOb
             List<BSF_Error_Log__c> logList = BSF_Utilities.createErrorLog(srList, 'Template Order Expiration','BSF_Batch_TemplateOrderExpiration','execute','Error','Error In Template Order Expiration');
             InsertBsfErrorLog.insertBsfErrors(logList);
         }
-
+   
     }
+    global void execute(SchedulableContext scon){
+		Database.executeBatch(new BSF_BatchUpdateSiteCollectionOperation(),50);
+	}
     global void finish(Database.BatchableContext BC) {}
 
     public Id ownerFromHierachy(Map<String,Id> teamMap){

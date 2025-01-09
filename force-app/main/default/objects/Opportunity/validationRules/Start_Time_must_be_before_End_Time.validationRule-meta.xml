@@ -10,7 +10,7 @@ OR(
     ISCHANGED(Start_Time__c) 
   ), 
  TIMEVALUE(End_Time__c)    &lt;=   TIMEVALUE(Start_Time__c),
- NOT(Bypass_Validation_Rule__c) 
+NOT(Bypass_Validation_Rule__c)
 )</errorConditionFormula>
     <errorDisplayField>End_Time__c</errorDisplayField>
     <errorMessage>End Time cannot be prior to Start Time.</errorMessage>

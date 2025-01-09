@@ -46,12 +46,12 @@ class DriveHelper {
       (loginUser.profileName.startsWith('APS'));
   }
 
-  isAPSAdmin(loginUser) {
-    return loginUser && loginUser.profileName && loginUser.profileName.startsWith('APS Admin');
-  }
-
   isOnlyAPSUser(loginUser) {
     return loginUser && loginUser.profileName && loginUser.profileName.startsWith('APS');
+  }
+
+  isAPSAdmin(loginUser) {
+    return loginUser && loginUser.profileName && loginUser.profileName.startsWith('APS Admin');
   }
 
   isAPSManagement(loginUser) {
@@ -97,7 +97,7 @@ class DriveHelper {
         drive.driveOwner = opp.accountManager;
       } else if (prop === 'aptRequired') {
         drive.aptRequired = opp.aptRequired;
-       } else if (prop === 'aptQuantity') {
+      } else if (prop === 'aptQuantity') {
         drive.aptQuantity = opp.aptQuantity;
       } else if (prop === 'anticipatedRegisteredDonorsTemplate') {
         drive.historicalRegisteredDonors = opp.anticipatedRegisteredDonorsTemplate;
@@ -589,7 +589,7 @@ class DriveHelper {
     if (driveTags.accountTags && driveTags.accountTags.length) {
       driveTags.accountTags.forEach((at) => {
         if (at.required) {
-          let resourceTypes = at.tag.resourceType ? at.tag.resourceType.split(';') : [];
+          let resourceTypes = at.tag.resourceType;
           if (resourceTypes.length === 0 || resourceTypes.includes(ASSET_TYPE.VEHICLE)) {
             vehicleTags.push(at.tag);
           }
@@ -599,7 +599,7 @@ class DriveHelper {
     if (driveTags.locationTags && driveTags.locationTags.length) {
       driveTags.locationTags.forEach((lt) => {
         if (lt.required) {
-          let resourceTypes = lt.tag.resourceType ? lt.tag.resourceType.split(';') : [];
+          let resourceTypes = lt.tag.resourceType;
           if (resourceTypes.length === 0 || resourceTypes.includes(ASSET_TYPE.VEHICLE)) {
             vehicleTags.push(lt.tag);
           }
@@ -627,7 +627,7 @@ class DriveHelper {
             item.fixedSiteOperationType !== drive.operationType) return;
           
           if (item.roleTimeDetailType == 'Global') {
-            let resourceRoleGroups = item.resourceRoleGroup.split(';');
+            let resourceRoleGroups = item.resourceRoleGroup;
             resourceRoleGroups.forEach((resourceRoleGroup) => {
               let resourceRoles = allResourceRoleGroups[resourceRoleGroup] || [];
               resourceRoles.forEach((resourceRole) => {
@@ -643,7 +643,7 @@ class DriveHelper {
             item.fixedSiteOperationType !== drive.operationType) return;
             
           if (item.roleTimeDetailType == 'Collection Operation') {
-            let resourceRoleGroups = item.resourceRoleGroup.split(';');
+            let resourceRoleGroups = item.resourceRoleGroup;
             resourceRoleGroups.forEach((resourceRoleGroup) => {
               let resourceRoles = allResourceRoleGroups[resourceRoleGroup] || [];
               resourceRoles.forEach((resourceRole) => {
@@ -657,7 +657,7 @@ class DriveHelper {
 
       if (roleTimeData.roleTimeVariances && roleTimeData.roleTimeVariances.length) {
         roleTimeData.roleTimeVariances.forEach((item) => {
-          let resourceRoleGroups = item.resourceRoleGroup.split(';');
+          let resourceRoleGroups = item.resourceRoleGroup || [];
           resourceRoleGroups.forEach((resourceRoleGroup) => {
             if (!roleGroupTimeVarianceMap[resourceRoleGroup]) {
               roleGroupTimeVarianceMap[resourceRoleGroup] = [];
@@ -748,11 +748,11 @@ class DriveHelper {
     const isDriveSubmittedForCancelApproval = this.isDriveSubmittedForCancelApproval(drive);
     
     const readonlyRule1 = isDriveSubmittedForCancelApproval
-                            || drive.status === DRIVE_STATUS.HOLD 
-                            || (!isAdminUser && !isAPSUser && (
-                                (isDriveSubmittedForDriveChangeRequest) ||
-                                isDriveSubmittedForSubmissionApproval
-                              ));
+                        || drive.status === DRIVE_STATUS.HOLD 
+                        || (!isAdminUser && !isAPSUser && (
+                            (isDriveSubmittedForDriveChangeRequest) ||
+                            isDriveSubmittedForSubmissionApproval
+                          ));
     
     const matchedSiteCO = this.getMatchedSiteCOForDrive(drive);
     const { travelTimeBreakdownsCoToSite, travelTimeBreakdownsSiteToCo} = this.getTravelTimeBreakdownData({
@@ -812,7 +812,7 @@ class DriveHelper {
           }
         }
       } else {
-        return {
+        let fieldPermissionMap = {
           isReadonly: false,
           fieldReadonlyMap: {
             driveDate: false,
@@ -834,6 +834,12 @@ class DriveHelper {
             driveSite: true
           }
         }
+
+        if (isManufacturingUser) {
+          fieldPermissionMap.fieldReadonlyMap.driveDeliveryJobs = true;
+        }
+
+        return fieldPermissionMap;
       }
     }
 
@@ -1740,7 +1746,7 @@ class DriveHelper {
   calculateStaffSetup(resourceRoles = [], driveShift) {
     const mapResourceQuantity = this.getDriveShiftResourceQuantity(driveShift);
     mapResourceQuantity.forEach((value, key) => {
-       if (value.dualRole) {
+      if (value.dualRole) {
         let variable1, variable2;
         if (key.includes('-')) {
           [variable1, variable2] = key.split('-');
@@ -1787,8 +1793,6 @@ class DriveHelper {
 
     let staffCapacity = 0;
     Array.from(resourceQuantity.keys()).forEach(resourceRole => {
-      if(!resourceRole) return;
-      
       const data = resourceQuantity.get(resourceRole);
       let noOfResources = data || 0;
       let dualRole = null;
@@ -1826,7 +1830,6 @@ class DriveHelper {
     const resourceQuantity = mapResourceQuantity.get(driveShiftMetadata.key);
     let staffCount = 0;
     Array.from(resourceQuantity.keys()).forEach(resourceRole => {
-      if(!resourceRole) return;
       const data = resourceQuantity.get(resourceRole);
       let noOfResources = data || 0;
       if(isObject(data)) {
@@ -1910,7 +1913,7 @@ class DriveHelper {
 
     const _setTags = (locationTag) => {
       let tag = locationTag.tag;
-      let resourceTypes = tag.resourceType ? tag.resourceType.split(';') : [];
+      let resourceTypes = tag.resourceType || [];
       let systemCreated = !!locationTag.systemCreated;
       if(!resourceTypes.length) {
         resourceTypes = [ASSET_TYPE.VEHICLE, ASSET_TYPE.EQUIPMENT, RESOURCE_TYPE.PERSON]; //add to all resource type
@@ -2132,7 +2135,7 @@ class DriveHelper {
 
       return limit.type === type;
     }).forEach(item => {
-      const daysOfWeek = (item.daysOfWeek || '').split(';');
+      const daysOfWeek = item.daysOfWeek || [];
       const isDateRangeValid = (!item.effectiveStartDate || item.effectiveStartDate <= dateIso) && (!item.effectiveEndDate || dateIso <= item.effectiveEndDate);
       const isDayOfWeekValid = daysOfWeek.includes(dayOfWeek);
       const isOverrided = (item.operationDriveLimitOverrides || []).find(item => item.date == dateIso);
@@ -2170,7 +2173,7 @@ class DriveHelper {
         [DRIVE_CONTENTION.EXCESS_STAFF_CAPACITY]: [DRIVE_CONTENTION_RESOLUTION.ELECT_EXCESS_STAFF_CAPACITY]
       };
 
-      const driveContentionResolutions = drive.contentionResolution ? drive.contentionResolution.split(';') : [];
+      const driveContentionResolutions = drive.contentionResolution || [];
       const contentionOverrided = contentionResolutionMap[contention].find(contentionResolution => driveContentionResolutions.includes(contentionResolution));
       return !!contentionOverrided;
     }
@@ -2987,7 +2990,7 @@ class DriveHelper {
               mapResult(job, backupJob, driveShift, driveShiftIndex, result.changedJobs);
               return;
             }
-            
+
             const currentJobVphhSystemQuantity = Math.max(job.systemQuantity - (currentDrive.aptQuantity || 0), 0);
             const backupJobVphhSystemQuantity = Math.max(backupJob.systemQuantity - (backupDrive.aptQuantity || 0), 0);
             if(currentJobVphhSystemQuantity !== backupJobVphhSystemQuantity || isDriveGettingRegenerated) {

@@ -15,7 +15,7 @@ export default class SlwcJobDetailsForm extends LightningElement {
 
     get additionalRolesString() {
         if(!this.jobAllocation) return null;
-        return this.jobAllocation.additionalRoles ? this.jobAllocation.additionalRoles.split(';').join(', ') : null;
+        return (this.jobAllocation.additionalRoles || []).join(', ');
     } 
 
     showLoading() {

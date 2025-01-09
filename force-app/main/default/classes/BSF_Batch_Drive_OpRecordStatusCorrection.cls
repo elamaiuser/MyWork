@@ -9,8 +9,6 @@
 * Date					     Developer Name			     Comments
 ***************************************************************************
 * 08/13/2024				  Ankit Kundu		     Created for HRP-13126
-* 09/18/2024				  Priti Jana			 New Custom exception and 
-													 logic to cover catch block during test class run
 ***************************************************************************/
 
 global class BSF_Batch_Drive_OpRecordStatusCorrection implements Database.Batchable<sked_Operation_Record__c>, Database.Stateful, Schedulable {
@@ -30,19 +28,16 @@ global class BSF_Batch_Drive_OpRecordStatusCorrection implements Database.Batcha
     // define constructor for Scheduled Run
     global BSF_Batch_Drive_OpRecordStatusCorrection() {
         try {
-            Calendar_Build_Setting__mdt cbMetadata = Calendar_Build_Setting__mdt.getInstance('Calendar_Build_Drives_Config');
-            Integer numberOfDays = Integer.valueOf(cbMetadata?.No_of_Days_for_Status_Correction_Batch__c);
-            batchSize = Integer.valueOf(cbMetadata?.Batch_Size_for_Status_Correction_Batch__c);
-            if (numberOfDays != NULL) {
-                targetDriveDate = system.today().addDays(-numberOfDays);
-            } else {
-                targetDriveDate = system.today().addDays(-18);
-            }
-            cbLogWrapper = new DriveGenerationUtil.CalendarBuildLogWrapper(targetDriveDate, BSF_Constants.BATCH_DRIVE_STATUS_CORRECTION, BSF_Constants.RUN_TYPE_SCHEDULED);
-            cbLogWrapper = getOpRecordListAndCaptureWrapper(cbLogWrapper); 
-            if(Test.isRunningTest() && BSF_Utilities.IS_SET_TO_GENERATE_EXCEPTION) {
-                throw new customStatusCorrectionException('This is custom exception during scheduled run');
-            }
+        Calendar_Build_Setting__mdt cbMetadata = Calendar_Build_Setting__mdt.getInstance('Calendar_Build_Drives_Config');
+        Integer numberOfDays = Integer.valueOf(cbMetadata?.No_of_Days_for_Status_Correction_Batch__c);
+        batchSize = Integer.valueOf(cbMetadata?.Batch_Size_for_Status_Correction_Batch__c);
+        if (numberOfDays != NULL) {
+            targetDriveDate = system.today().addDays(-numberOfDays);
+        } else {
+            targetDriveDate = system.today().addDays(-18);
+        }
+        cbLogWrapper = new DriveGenerationUtil.CalendarBuildLogWrapper(targetDriveDate, BSF_Constants.BATCH_DRIVE_STATUS_CORRECTION, BSF_Constants.RUN_TYPE_SCHEDULED);
+        cbLogWrapper = getOpRecordListAndCaptureWrapper(cbLogWrapper); 
         } catch(Exception ex) {
             cbLogWrapper = new DriveGenerationUtil.CalendarBuildLogWrapper(
                 BSF_Constants.CURRENT_DATE.addDays(-21), 
@@ -60,12 +55,10 @@ global class BSF_Batch_Drive_OpRecordStatusCorrection implements Database.Batcha
         try {
             this.driveDateToEval = manualRunDate;
             this.runType = BSF_Constants.RUN_TYPE_MANUAL;
-            cbLogWrapper = new DriveGenerationUtil.CalendarBuildLogWrapper(manualRunDate, BSF_Constants.BATCH_DRIVE_STATUS_CORRECTION, BSF_Constants.RUN_TYPE_MANUAL);
-            cbLogWrapper = getOpRecordListAndCaptureWrapper(cbLogWrapper);
-            if(Test.isRunningTest() && BSF_Utilities.IS_SET_TO_GENERATE_EXCEPTION) {
-                throw new customStatusCorrectionException('This is custom exception during manual run');
-            }
-        } catch(Exception ex) {
+        cbLogWrapper = new DriveGenerationUtil.CalendarBuildLogWrapper(manualRunDate, BSF_Constants.BATCH_DRIVE_STATUS_CORRECTION, BSF_Constants.RUN_TYPE_MANUAL);
+        cbLogWrapper = getOpRecordListAndCaptureWrapper(cbLogWrapper);
+            } catch(Exception ex) {
+
             List<BSF_Error_Log__c> errorLogToInsert = new List<BSF_Error_Log__c>{
                 BSF_Utilities.createBsfErrorLogForExceptions(
                     ex,
@@ -77,8 +70,9 @@ global class BSF_Batch_Drive_OpRecordStatusCorrection implements Database.Batcha
                     ''
                 )
             };
-            Database.SaveResult[] logInsertResult = Database.insert(errorLogToInsert, FALSE);          
-            cbLogWrapper = new DriveGenerationUtil.CalendarBuildLogWrapper(
+                Database.SaveResult[] logInsertResult = Database.insert(errorLogToInsert, FALSE);
+          
+                cbLogWrapper = new DriveGenerationUtil.CalendarBuildLogWrapper(
                 manualRunDate, 
                 BSF_Constants.BATCH_DRIVE_STATUS_CORRECTION, 
                 this.runType
@@ -88,7 +82,8 @@ global class BSF_Batch_Drive_OpRecordStatusCorrection implements Database.Batcha
             cbLogWrapper.opRecordListToBeProcessed = new List<sked_Operation_Record__c>();
             cbLogWrapper.errorLogIdsCreatedDuringBatchRun = BSF_Utilities.getSuccessfullySavedRecordIds(logInsertResult);
             DriveGenerationUtil.captureCbLogAndCbErrorLog(cbLogWrapper);
-        }       
+            }
+           
     }
  
     global Iterable<sked_Operation_Record__c> start(Database.BatchableContext bc) {
@@ -157,30 +152,36 @@ global class BSF_Batch_Drive_OpRecordStatusCorrection implements Database.Batcha
     global void finish(Database.BatchableContext BC) {
         try {
             if(cbLogWrapper.batchException == NULL) {
-                cbLogWrapper.opRecordCount = (Decimal)cbLogWrapper.opRecordListToBeProcessed.size(); // total op record count 
-                cbLogWrapper.driveCount = totalDriveIds != NULL ? (Decimal)totalDriveIds.size() : 0; // total drive count
-                cbLogWrapper.openDriveCount = openDriveIds != NULL ? (Decimal)openDriveIds.size() : 0; // total open drive count
-                cbLogWrapper.finalStateDriveCount = cbLogWrapper.driveCount - cbLogWrapper.openDriveCount; // total final state drive count
-                cbLogWrapper.correctedDriveCount = correctedDriveIds != NULL ? (Decimal)correctedDriveIds.size() : 0; // total corrected drive count via batch
-                cbLogWrapper.submittedOpRecordCount = submittedOpRecordIds != NULL ? (Decimal)submittedOpRecordIds.size() : 0; // total submitted ops record count via batch
-                cbLogWrapper.notSubmittedOpRecordCount = nonSubmittedOpRecordList.size() > 0 ? ((Decimal)nonSubmittedOpRecordList.size() - cbLogWrapper.submittedOpRecordCount) : 0; // total non submitted ops record after batch completion
-                cbLogWrapper.errorLogIdsCreatedDuringBatchRun = errorLogIdsCreatedDuringBatchRun != NULL ? errorLogIdsCreatedDuringBatchRun : new Set<Id>(); // error log ids created via batch
-                DriveGenerationUtil.captureCbLogAndCbErrorLog(cbLogWrapper);  
-            }
-        } catch(Exception ex) {
+        cbLogWrapper.opRecordCount = (Decimal)cbLogWrapper.opRecordListToBeProcessed.size(); // total op record count 
+        cbLogWrapper.driveCount = totalDriveIds != NULL ? (Decimal)totalDriveIds.size() : 0; // total drive count
+        cbLogWrapper.openDriveCount = openDriveIds != NULL ? (Decimal)openDriveIds.size() : 0; // total open drive count
+        cbLogWrapper.finalStateDriveCount = cbLogWrapper.driveCount - cbLogWrapper.openDriveCount; // total final state drive count
+        cbLogWrapper.correctedDriveCount = correctedDriveIds != NULL ? (Decimal)correctedDriveIds.size() : 0; // total corrected drive count via batch
+        System.debug('submittedOpRecordIds.size()..................' +submittedOpRecordIds.size());
+        cbLogWrapper.submittedOpRecordCount = submittedOpRecordIds != NULL ? (Decimal)submittedOpRecordIds.size() : 0; // total submitted ops record count via batch
+        System.debug('nonSubmittedOpRecordList.size()..................' +nonSubmittedOpRecordList.size());
+        cbLogWrapper.notSubmittedOpRecordCount = nonSubmittedOpRecordList.size() > 0 ? ((Decimal)nonSubmittedOpRecordList.size() - cbLogWrapper.submittedOpRecordCount) : 0; // total non submitted ops record after batch completion
+        System.debug('notSubmittedOpRecordCount............' + cbLogWrapper.notSubmittedOpRecordCount );
+        cbLogWrapper.errorLogIdsCreatedDuringBatchRun = errorLogIdsCreatedDuringBatchRun != NULL ? errorLogIdsCreatedDuringBatchRun : new Set<Id>(); // error log ids created via batch
+        DriveGenerationUtil.captureCbLogAndCbErrorLog(cbLogWrapper);  
+         }
+        }catch(Exception ex) {
+
             List<BSF_Error_Log__c> errorLogToInsert = new List<BSF_Error_Log__c>{
                 BSF_Utilities.createBsfErrorLogForExceptions(
                     ex,
                     'BSF_Batch_Drive_OpRecordStatusCorrection',
-                    'Finish Method Call',
+                    'Constructor Call',
                     BSF_Constants.BATCH_DRIVE_STATUS_CORRECTION,
                     BSF_Constants.BATCH_DRIVE_STATUS_CORRECTION,
                     'sked_Operation_Record__c',
                     ''
                 )
             };
-            Database.SaveResult[] logInsertResult = Database.insert(errorLogToInsert, FALSE);
-            cbLogWrapper = new DriveGenerationUtil.CalendarBuildLogWrapper(
+                Database.SaveResult[] logInsertResult = Database.insert(errorLogToInsert, FALSE);
+            
+             
+                cbLogWrapper = new DriveGenerationUtil.CalendarBuildLogWrapper(
                 this.driveDateToEval,
                 BSF_Constants.BATCH_DRIVE_STATUS_CORRECTION, 
                 this.runType
@@ -189,7 +190,7 @@ global class BSF_Batch_Drive_OpRecordStatusCorrection implements Database.Batcha
             cbLogWrapper.batchException = ex;
             cbLogWrapper.errorLogIdsCreatedDuringBatchRun = BSF_Utilities.getSuccessfullySavedRecordIds(logInsertResult);
             DriveGenerationUtil.captureCbLogAndCbErrorLog(cbLogWrapper);
-        }
+            }
     }
 
     private static DriveGenerationUtil.CalendarBuildLogWrapper getOpRecordListAndCaptureWrapper(DriveGenerationUtil.CalendarBuildLogWrapper cbLogWrapper ) {
@@ -203,8 +204,7 @@ global class BSF_Batch_Drive_OpRecordStatusCorrection implements Database.Batcha
                                                                                         FROM sked_Operation_Record__c
                                                                                         WHERE sked_Drive_Date__c = :cbLogWrapper.driveDateToEval
                                                                                     ]);
+        system.debug('cbLogWrapper.opRecordListToBeProcessed------->' +cbLogWrapper.opRecordListToBeProcessed.size());
         return cbLogWrapper;
     }
-    
-    private class customStatusCorrectionException extends Exception {}
 }

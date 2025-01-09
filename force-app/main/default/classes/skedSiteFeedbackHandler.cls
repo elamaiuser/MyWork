@@ -55,7 +55,6 @@ public class skedSiteFeedbackHandler extends skedTriggerHub implements Callable 
                 sked_Variation_Type__c = record.sked_Variance_Type__c,
                 sked_Variation_Type_Other__c = record.sked_Variance_Type_Other__c,
                 sked_Days_Of_Week__c = record.sked_Days_Of_Week__c,
-                sked_Note__c = record.sked_Reason__c,
                 Id = record.sked_Role_Time_Variance__c
             );
             roleTimeVariances.add(roleTimeVariance);

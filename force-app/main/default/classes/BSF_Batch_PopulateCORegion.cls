@@ -176,7 +176,7 @@ global class BSF_Batch_PopulateCORegion implements Database.Batchable<sObject>,D
         Taxonomy__c taxFinal =[SELECT Id,CreatedDate FROM Taxonomy__c
                                WHERE RecordType.Name = 'Bio Collection BSF' ORDER BY Id Desc LIMIT 1];
         BSF_Batch_TaxonomyEndDateHandler batch = new BSF_Batch_TaxonomyEndDateHandler(this.taxVer,BSF_Constants.BIO_COLLECTION_RECORD_TYPE,false,null,null);
-           database.executebatch(batch,50);
+          // database.executebatch(batch,50);
         
         /*if(!test.isRunningTest())
         {

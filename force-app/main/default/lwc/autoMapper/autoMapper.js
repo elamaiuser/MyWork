@@ -1,5 +1,5 @@
 import { mappingConfigContainerInstance, MAPPING_TYPE } from './mappingConfigContainer';
-import { get, uniqueId, isEmpty } from 'c/lodash';
+import { get, uniqueId, isEmpty, isString } from 'c/lodash';
 import * as slwcUtils from 'c/slwcUtils';
 
 class autoMapper {
@@ -25,6 +25,14 @@ class autoMapper {
                         if (!slwcUtils.isNullOrEmpty(fieldVal)) {
                             let timeVal = Number(fieldVal);
                             object[element.domainFieldName] = slwcUtils.convertTimeToTimeStr(timeVal);
+                        }
+                        break;
+
+                    case MAPPING_TYPE.multiPicklist:
+                        if (!slwcUtils.isNullOrEmpty(fieldVal)) {
+                            object[element.domainFieldName] = isString(fieldVal) ? fieldVal.split(';') : fieldVal;
+                        } else {
+                            object[element.domainFieldName] = [];
                         }
                         break;
 
@@ -94,6 +102,10 @@ class autoMapper {
                                 sObject[element.sObjectFieldPath] = slwcUtils.convertTimeStrToTime(fieldVal);
                                 break;
             
+                            case MAPPING_TYPE.multiPicklist:
+                                sObject[element.sObjectFieldPath] = isString(fieldVal) ? fieldVal : fieldVal.join(';');
+                                break;
+
                             case MAPPING_TYPE.relatedList:
                                 let childModels = fieldVal;
                                 let relatedListWrapper = {

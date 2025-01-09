@@ -8,6 +8,6 @@
     </values>
     <values>
         <field>sked_Workday_Message__c</field>
-        <value xsi:type="xsd:string">Unpaid time off is not allowed for Sick.</value>
+        <value xsi:type="xsd:string">Unpaid time off is not allowed for Sick</value>
     </values>
 </CustomMetadata>

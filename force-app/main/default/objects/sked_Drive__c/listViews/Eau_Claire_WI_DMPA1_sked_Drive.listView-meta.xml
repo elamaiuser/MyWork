@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Eau_Claire_WI_DMPA1_sked_Drive</fullName>
+    <filterScope>Queue</filterScope>
+    <label>Eau Claire WI: DMPA</label>
+    <queue>Eau_Claire_WI_DMPA1</queue>
+    <sharedTo>
+        <allInternalUsers />
+    </sharedTo>
+</ListView>

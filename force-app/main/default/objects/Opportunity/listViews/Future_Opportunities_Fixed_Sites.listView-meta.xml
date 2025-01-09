@@ -11,7 +11,6 @@
     <columns>Always_Roll__c</columns>
     <columns>Do_Not_Roll__c</columns>
     <columns>Accept_56_Day_Rule_Violation__c</columns>
-    <columns>Flow_Start_Time_Field__c</columns>
     <filterScope>Everything</filterScope>
     <filters>
         <field>Is_Template__c</field>
@@ -21,22 +20,12 @@
     <filters>
         <field>Drive_Date__c</field>
         <operation>greaterOrEqual</operation>
-        <value>1/28/2025</value>
+        <value>TODAY</value>
     </filters>
     <filters>
         <field>OPPORTUNITY.RECORDTYPE</field>
         <operation>equals</operation>
         <value>Opportunity.Fixed_Site_Opp</value>
-    </filters>
-    <filters>
-        <field>DriveStatus__c</field>
-        <operation>notEqual</operation>
-        <value>complete,cancel</value>
-    </filters>
-    <filters>
-        <field>Other_Projected_Units__c</field>
-        <operation>greaterThan</operation>
-        <value>0</value>
     </filters>
     <label>All FS Opportunities_Future Date</label>
 </ListView>

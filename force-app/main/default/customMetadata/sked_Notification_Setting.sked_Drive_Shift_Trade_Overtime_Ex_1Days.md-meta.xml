@@ -4,7 +4,7 @@
     <protected>false</protected>
     <values>
         <field>sked_Active__c</field>
-        <value xsi:type="xsd:boolean">false</value>
+        <value xsi:type="xsd:boolean">true</value>
     </values>
     <values>
         <field>sked_Content_Renderer__c</field>
@@ -61,6 +61,10 @@
     <values>
         <field>sked_Subject__c</field>
         <value xsi:type="xsd:string">Drive Shift Trade Exception</value>
+    </values>
+    <values>
+        <field>sked_Target_Field_Prev_Value__c</field>
+        <value xsi:nil="true" />
     </values>
     <values>
         <field>sked_Target_Field_Value__c</field>

@@ -15,10 +15,12 @@
     <columns>Sender_Email__c</columns>
     <columns>Expiry_TimeStamp__c</columns>
     <columns>sked_Notification_Setting_Id__c</columns>
+    <columns>CREATED_DATE</columns>
     <filterScope>Everything</filterScope>
     <filters>
-        <field>Oneoff_Protocol__c</field>
-        <operation>notEqual</operation>
+        <field>CREATED_DATE</field>
+        <operation>equals</operation>
+        <value>TODAY</value>
     </filters>
     <label>All</label>
 </ListView>

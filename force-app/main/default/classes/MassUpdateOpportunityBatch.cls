@@ -10,27 +10,25 @@
 */
 public class MassUpdateOpportunityBatch implements Database.Batchable<MassUpdateOpportunity.oppVariable>, Database.Stateful{
     public List<MassUpdateOpportunity.oppVariable> oppIdList;
-    public List<BSF_Error_Log__c> errorLogList = new List<BSF_Error_Log__c>();
     public Map<Id, String> dml_error_map = new Map<Id, String>();
-    public Map<Exception, String> common_exception_map = new Map<Exception,String>();
+    public Map<Exception,String> common_exception_map = new Map<Exception,String>();
     public MassUpdateOpportunityBatch(List<MassUpdateOpportunity.oppVariable> oppIds) {
         this.oppIdList = new List<MassUpdateOpportunity.oppVariable>();
         this.oppIdList=oppIds;
     }
-    
     public Iterable<MassUpdateOpportunity.oppVariable> start(Database.BatchableContext BC){
         return this.oppIdList;
     }
-    
-    public void execute(Database.BatchableContext bc, List<object> scope) {
+    public void execute(Database.BatchableContext bc, List<object> scope){
         try{
             List<MassUpdateOpportunity.oppVariable> oppIds = (List<MassUpdateOpportunity.oppVariable>)scope;
             List<Opportunity> oppToUpdate = new List<Opportunity>();
             oppToUpdate = oppIds.get(0).oppToUpdate;
             
             List<Opportunity> storeOppValues = new List<Opportunity>();
-            if(oppToUpdate != null) {
-                for(Opportunity opp : oppToUpdate) {
+            if(oppToUpdate != null){
+                for(Opportunity opp : oppToUpdate){
+                    System.debug(opp);
                     try{
                         Opportunity op = new Opportunity();
                         op.Id = opp.Id;
@@ -133,18 +131,10 @@ public class MassUpdateOpportunityBatch implements Database.Batchable<MassUpdate
                             op.End_Time__c = eTime;
                         }
                         op.Processing_Status__c = 'Mass Update Not Processed';
+                        System.debug(op);
                         storeOppValues.add(op);
-                    }catch(Exception exp) {
-                         errorLogList.add(BSF_Utilities.createBsfErrorLogForExceptions(
-        					exp,
-                            'MassUpdateOpportunity',
-                            'Batch Execute',
-                             'Mass Update Opportunity',
-                             'Opportunity update',
-                            'Opportunity',
-                            String.valueOf(opp.Id)
-                        ));
-                        insert errorLogList;
+                    }catch(Exception exp){
+                        common_exception_map.put(exp,opp.Id);
                         continue;
                     }
                 }        
@@ -157,18 +147,8 @@ public class MassUpdateOpportunityBatch implements Database.Batchable<MassUpdate
             }
             //HRP-12122 --> Ends Here
         }catch(Exception ex) {
-             errorLogList.add(BSF_Utilities.createBsfErrorLogForExceptions(
-        		 ex,
-                 'MassUpdateOpportunity',
-                 'Batch Execute',
-                 'Mass Update Opportunity',
-                 'Opportunity update',
-                 'Opportunity',
-                 ''
-             ));
-            insert errorLogList;
+            common_exception_map.put(ex,'');
         }
-        
     }
     public void finish (Database.BatchableContext bc) {
         

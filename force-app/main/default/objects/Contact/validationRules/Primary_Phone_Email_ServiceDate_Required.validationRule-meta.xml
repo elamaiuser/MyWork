@@ -4,5 +4,5 @@
     <active>true</active>
     <description>Users should not be able to enter new contact without entering primary phone. original Service date is defaulted.</description>
     <errorConditionFormula>AND(OR(ISPICKVAL( Primary_Phone__c , &quot;&quot; ),ISBLANK( Original_Service_Date__c )),ISBLANK( Migration_ID__c  ))</errorConditionFormula>
-    <errorMessage>Please populate Phone Type. Phone type is mandatory to converting a Lead</errorMessage>
+    <errorMessage>Please populate Phone Type. Phone Type is a mandatory field.</errorMessage>
 </ValidationRule>

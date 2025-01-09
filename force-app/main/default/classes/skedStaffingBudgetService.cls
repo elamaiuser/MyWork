@@ -302,6 +302,7 @@ public class skedStaffingBudgetService extends skedEventService {
             availability.remainingSlots = 'Yes';
             
             if (staffingBudgetWrappersByDate.containsKey(availability.availabilityDate) && availabilityRequiresValidation) {
+                system.debug('inside if');
                 List<skedStaffingBudgetWrapper> staffingBudgetsForDate = staffingBudgetWrappersByDate.get(availability.availabilityDate);
                 
                 boolean isAnyBiddingBudget = false;

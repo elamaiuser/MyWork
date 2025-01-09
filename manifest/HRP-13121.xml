@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Package xmlns="http://soap.sforce.com/2006/04/metadata">
     <types>
+        <members>BSFWeeklyStaffingRoleTimeController</members>
+		<members>WeeklyStaffScheduleReportController</members>
         <members>skedActivityService</members>
         <members>skedMappingConfigContainer</members>
         <members>skedModels</members>
@@ -8,11 +10,15 @@
         <members>skedRecurringFactory</members>
         <members>skedRegionService</members>
         <members>skedSObjectType</members>
+        <members>BSFWeeklyStaffingRoleTimeController</members>
+		<members>WeeklyStaffScheduleReportController</members>
         <members>skedActivityService_Test</members>
         <members>skedMappingConfigController_Test</members>
         <members>skedModels_Test</members>
         <members>skedRacStory_Test</members>
         <members>skedRegionService_Test</members>
+        <members>BSFWeeklyStaffingRoleTimeControllerTest</members>
+        <members>WeeklyStaffScheduleReportControllerTest</members>
         <name>ApexClass</name>
     </types>
     <types>
@@ -37,6 +43,7 @@
     <types>
 		<members>autoMapper</members>
 		<members>dataService</members>
+        <members>slwcDriveCalendar</members>
         <members>slwcDriveCalendarActivityList</members>
 	</types>
     <version>59.0</version>

@@ -20,11 +20,11 @@
             </layoutItems>
             <layoutItems>
                 <behavior>Edit</behavior>
-                <field>sked_Type__c</field>
+                <field>sked_Inherit_Result_From__c</field>
             </layoutItems>
             <layoutItems>
                 <behavior>Edit</behavior>
-                <field>sked_Inherit_Result_From__c</field>
+                <field>sked_Type__c</field>
             </layoutItems>
         </layoutColumns>
         <layoutColumns />

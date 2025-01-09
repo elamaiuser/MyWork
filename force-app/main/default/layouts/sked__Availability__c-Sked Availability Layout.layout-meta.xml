@@ -47,6 +47,14 @@
                 <behavior>Readonly</behavior>
                 <field>sked_Date_ISO_Format__c</field>
             </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>sked_Dispositioned_By_User__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>sked_Disposition_Date__c</field>
+            </layoutItems>
         </layoutColumns>
         <layoutColumns>
             <layoutItems>

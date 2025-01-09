@@ -3,7 +3,7 @@
     <fullName>sked_Request__c</fullName>
     <externalId>false</externalId>
     <label>Request</label>
-    <length>32768</length>
+    <length>131072</length>
     <trackTrending>false</trackTrending>
     <type>LongTextArea</type>
     <visibleLines>12</visibleLines>

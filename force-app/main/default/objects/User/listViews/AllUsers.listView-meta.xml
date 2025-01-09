@@ -12,9 +12,9 @@
     <columns>CORE.USERS.TITLE</columns>
     <filterScope>Everything</filterScope>
     <filters>
-        <field>CORE.USERS.EMAIL</field>
+        <field>CORE.USERS.FIRST_NAME</field>
         <operation>contains</operation>
-        <value>Skedulo</value>
+        <value>Subhadeep</value>
     </filters>
     <label>Find User</label>
     <language>en_US</language>

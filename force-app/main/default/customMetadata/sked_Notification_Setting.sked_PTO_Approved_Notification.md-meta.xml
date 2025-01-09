@@ -36,7 +36,7 @@
     </values>
     <values>
         <field>sked_Filter__c</field>
-        <value xsi:type="xsd:string">sked__Is_Available__c = FALSE AND sked__Type__c != &#39;Call Out&#39;</value>
+        <value xsi:type="xsd:string">sked__Is_Available__c = FALSE AND sked__Type__c != &#39;Call Out&#39; AND sked_Workday_Sync_Status__c = &#39;Approved&#39;</value>
     </values>
     <values>
         <field>sked_Notification_Target_Field__c</field>
@@ -61,6 +61,10 @@
     <values>
         <field>sked_Subject__c</field>
         <value xsi:type="xsd:string">Your Time Off Request has been approved.</value>
+    </values>
+    <values>
+        <field>sked_Target_Field_Prev_Value__c</field>
+        <value xsi:nil="true" />
     </values>
     <values>
         <field>sked_Target_Field_Value__c</field>

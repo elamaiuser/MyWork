@@ -38,5 +38,4 @@ pre-commit
 .prettierignore
 .prettierrc
 package.json
-.forceignore
 jsconfig.json

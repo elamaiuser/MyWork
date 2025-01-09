@@ -6,7 +6,8 @@
     <columns>OPPORTUNITY.NAME</columns>
     <columns>ACCOUNT.NAME</columns>
     <columns>OPPORTUNITY.STAGE_NAME</columns>
-    <columns>Drive_Status__c</columns>
+    <columns>DriveStatus__c</columns>
+    <columns>Source__c</columns>
     <columns>Targeted_Ask_Date__c</columns>
     <columns>OPPORTUNITY.CLOSE_DATE</columns>
     <columns>Anticipated_Registered_Donors__c</columns>

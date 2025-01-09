@@ -1,12 +1,22 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <Package xmlns="http://soap.sforce.com/2006/04/metadata">
-	<types>
-        <members>Pending_ARD_Confirmation__c</members>
+    <types>
+        <members>Opportunity.Pending_ARD_Confirmation__c</members>
         <name>CustomField</name>
     </types>
     <types>
-        <members>ARD_Alert_Profiles__mdt</members>
+        <members>ARD_Alert_Profiles.APS_Management</members>
+        <members>ARD_Alert_Profiles.APS_Planner</members>
+        <members>ARD_Alert_Profiles.DRD_Manager</members>
+        <members>ARD_Alert_Profiles.DRD_Profile</members>
+        <members>ARD_Alert_Profiles.Global_Admin</members>
+        <members>ARD_Alert_Profiles.System_Administrator</members>
+        <members>Custom_Messages.ARD_Warning_Message</members>
         <name>CustomMetadata</name>
+    </types>
+    <types>
+        <members>ARD_Alert_Profiles__mdt</members>      
+        <name>CustomObject</name>
     </types>
     <types>
         <members>OpportunityTriggerHandler</members>
@@ -20,5 +30,5 @@
         <members>slwcGenerateDriveModal</members>
         <name>LightningComponentBundle</name>
     </types>
-	<version>60.0</version>
+    <version>60.0</version>
 </Package>

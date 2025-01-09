@@ -48,5 +48,17 @@ public with sharing class OpportunityControllerHelper {
         // If no Opportunity found, return null
         return null;
     }
+
+    @AuraEnabled(cacheable=true)
+    public static String getWarningMessage() {
+        System.debug('getWarningMessage called.');
+        Custom_Messages__mdt message = [
+            SELECT Value__c FROM Custom_Messages__mdt 
+            WHERE DeveloperName = 'ARD_Warning_Message'
+            LIMIT 1
+        ];
+        System.debug('Msg: '+message.Value__c);
+        return message.Value__c;
+    }
     
 }

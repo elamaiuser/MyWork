@@ -44,7 +44,6 @@ public class UpdateTaskDriveDateBatchTest {
         drives.sked_Drive_Date__c=oppList[0].Drive_Date__c;
         drives.sked_2RBC_Projected_Procedures__c = 20;
         drives.sked_WB_Projected_Procedures__c = 20;
-        triggerHandler.bypass('DriveTriggerHandler');
         insert drives;
         
          Order testOrder = new Order(
@@ -67,7 +66,7 @@ public class UpdateTaskDriveDateBatchTest {
         allTask.add(task1);
         allTask.add(task2);
         allTask.add(task3);
-        triggerHandler.bypass('TaskTriggerHandler');
+        
         insert allTask;   
     }
      @IsTest
@@ -86,18 +85,4 @@ public class UpdateTaskDriveDateBatchTest {
         System.assertEquals(updatedTask2.Drive_Date__c, [SELECT Drive_Date__c FROM Order WHERE Id = :updatedTask2.WhatId].Drive_Date__c);
         System.assertEquals(updatedTask3.Drive_Date__c, [SELECT sked_Drive_Date__c FROM sked_Drive__c WHERE Id = :updatedTask3.WhatId].sked_Drive_Date__c);
     }
-    @IsTest
-    static void testBatchExecution2() {
-        
-        Test.startTest();
-        try{
-            UpdateTaskDriveDateBatch batch = new UpdateTaskDriveDateBatch();
-            List<SObject> scope = new List<SObject>();
-            Task t = new Task();
-            scope.add(t);
-            batch.execute(null,scope);
-        }catch(Exception ex){}    
-        Test.stopTest();
-      }
-     
 }

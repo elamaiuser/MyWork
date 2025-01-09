@@ -16,6 +16,6 @@
     </values>
     <values>
         <field>UI_Text__c</field>
-        <value xsi:type="xsd:string">1. The following information should be captured on the Site Details Tab:</value>
+        <value xsi:type="xsd:string">1. Complete Site record in Salesforce, the following Site Suitability items will be captured on record:</value>
     </values>
 </CustomMetadata>
