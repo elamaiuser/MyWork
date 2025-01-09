@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <Package xmlns="http://soap.sforce.com/2006/04/metadata">
 	<types>
+		<members>BSF_Utilities</members>
+        <members>BSF_UtilitiesTest</members>
+		<members>BSFStagingSheetController</members>
+        <members>BSFWeeklyStaffingRoleTimeController</members>
+        <members>BSFWeeklyStaffingRoleTimeControllerTest</members>
+        <members>BSFWeeklyStaffingRTReportController</members>
+		<members>CalendarBuildBatchHandler</members>
+        <members>CalendarBuildEvaluateDrivesBatch_Test</members>
 		<members>checkRecursive</members>
 		<members>skedCaptureJobIMPACTBatch</members>
         <members>skedCaptureJobIMPACTBatch_Test</members>        
@@ -14,12 +22,16 @@
         <members>skedJobAllocationTravelTimeBatch_Test</members>
 		<members>skedTriggerUtils</members>
         <members>skedTriggerUtils_Test</members>
+		<members>skedUpdateJobTimeVarianceBatch</members>
+		<members>skedUpdateJobTimeVarianceBatch_Test</members>
 		<members>skedWeeklyHoursCorrectionBatch</members>
         <members>skedWeeklyHoursCorrection_Test</members>
 		<members>UserService</members>
         <members>UserTriggerHandler</members>
         <members>UserServiceTest</members>
-		<members>skedResourceTagHandler</members>
+		<members>skedResourceHandler</members>
+		<members>WeeklyStaffScheduleReportController</members>
+        <members>WeeklyStaffScheduleReportControllerTest</members>
 		<name>ApexClass</name>
 	</types>
 	<types>
@@ -55,7 +67,13 @@
 		<members>Assign_SF_Resources_to_User.Sponsor_Marketing_BSF_User_Role</members>
 		<members>Assign_SF_Resources_to_User.Standard_User_BSF_User_Role</members>
 		<members>Assign_SF_Resources_to_User.Telerecruiter_BSF_User_Role</members>
+		<members>Custom_Report_Config.RoleTimeReportCharacterSplit</members>
 		<name>CustomMetadata</name>
+	</types>
+	<types>
+		<members>bsfWeeklyStaffingRoleTimeReport</members>
+		<members>bsfWeeklyStaffScheduleReportlwc</members>		
+		<name>LightningComponentBundle</name>
 	</types>
 	<types>		
 		<members>sked__Resource__c-Staff Layout</members>		

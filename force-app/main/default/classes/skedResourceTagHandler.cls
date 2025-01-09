@@ -1,17 +1,8 @@
-/* 
- * @description: This class is called from Resource Tag trigger.
- * Modification Log 
- * Date					     Developer Name			     Comments
- * ***********************************************************************************************************************************************
- * 1/7/2025			         Satyendra Vishwakarma	     Logic for HRP-8802
- ************************************************************************************************************************************************
-*/
 public class skedResourceTagHandler extends skedTriggerHub {
     public override void onBeforeInsert() {
         populateData(this.context.newRecords);
         populateExpiryData(this.context.newRecords);
         trackResourceHighestPriorityRole(this.context.newRecords);
-        this.context.newRecords = addResourceTagsStatusBasedOnFCC(this.context.newRecords);
     }
     
     public override void onAfterInsert() {
@@ -634,54 +625,5 @@ public class skedResourceTagHandler extends skedTriggerHub {
 
         skedTriggerUtils.CHANGES_INITIATED_FROM_SERVICE = true;
         update impactedAvailabilities;
-    }
-
-    //HRP-8802 : RAC Filter does not work for tags with no Status
-    private List<sked__Resource_Tag__c> addResourceTagsStatusBasedOnFCC(List<sked__Resource_Tag__c> newRecords){
-        List<sked__Resource_Tag__c> resTagList = new List<sked__Resource_Tag__c>();
-        string fccCodesFixedSite = skedSetting.instance.Admin.fccCodeFixedSite;
-        string fccCodesMobile = skedSetting.instance.Admin.fccCodeMobile;
-        Set<String> fccCodesSet = new Set<String>();
-        // Parsing fccCodesFixedSite
-        if (!String.isBlank(fccCodesFixedSite)) {
-            if (fccCodesFixedSite.contains(';')) {
-                fccCodesSet.addAll(fccCodesFixedSite.split(';'));
-            } else {
-                fccCodesSet.add(fccCodesFixedSite);
-            }
-        }
-        // Parsing fccCodesMobile
-        if (!String.isBlank(fccCodesMobile)) {
-            if (fccCodesMobile.contains(';')) {
-                fccCodesSet.addAll(fccCodesMobile.split(';'));
-            } else {
-                fccCodesSet.add(fccCodesMobile);
-            }
-        }
-        System.debug('fccCodesSet :'+fccCodesSet);
-        // Fetch related Resources
-        Set<Id> resourceIds = new Set<Id>();
-        for (sked__Resource_Tag__c record : newRecords) {
-            resourceIds.add(record.sked__Resource__c);
-        }
-
-        Map<Id, sked__Resource__c> resourceMap = new Map<Id, sked__Resource__c>([SELECT Id, sked_FCC_Code__c FROM sked__Resource__c WHERE Id IN :resourceIds]);
-        System.debug('resourceMap : '+resourceMap);
-        // Iterate and update sked_Role_Status__c
-        for (sked__Resource_Tag__c record : newRecords) {
-            sked__Resource__c relatedResource = resourceMap.get(record.sked__Resource__c);
-            if (relatedResource != null && !String.isBlank(relatedResource.sked_FCC_Code__c)) {
-                List<String> resourceFccCodes = relatedResource.sked_FCC_Code__c.contains(';') ? relatedResource.sked_FCC_Code__c.split(';') : new List<String>{relatedResource.sked_FCC_Code__c};
-                System.debug('resourceFccCodes : '+resourceFccCodes);
-                for (String fccCode : resourceFccCodes) {
-                    if (fccCodesSet.contains(fccCode)) {
-                        record.sked_Role_Status__c = 'Active';
-                    }
-                }
-            }
-            resTagList.add(record);
-        }
-        System.debug('resTagList :'+resTagList);
-        return resTagList;
     }
 }
