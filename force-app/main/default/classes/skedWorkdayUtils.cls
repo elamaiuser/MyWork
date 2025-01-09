@@ -93,7 +93,7 @@ public class skedWorkdayUtils implements Callable {
                 result.noOfAvailableHours = 0;
                 result.hasEnoughHours = false;
                 if (availableHoursResponse.timeOffPlansByLabel.containsKey(timeOffType)) {
-                    Decimal totalBalance = availableHoursResponse.timeOffPlansByLabel.get(timeOffType).balance;
+                    Decimal totalBalance = availableHoursResponse.timeOffPlansByLabel.get(timeOffType).balance + getApprovedTimeOffHours(res, availDate, timeOffType);
                     result.hasEnoughHours = totalBalance >= result.noOfRequestedHours;
                     result.noOfAvailableHours = totalBalance;
                 }
@@ -382,6 +382,21 @@ public class skedWorkdayUtils implements Callable {
     public static String getWorkdayTimeOffType(sked__Availability__c record) {
         return record.sked__Type__c == skedConstants.AVAILABILITY_TYPE_CALL_OUT ?
             record.sked_Time_Off_Plan__c : record.sked__Type__c;
+    }
+
+    public static Decimal getApprovedTimeOffHours(sked__Resource__c resource, Date availDate, String timeOffType) {
+        Decimal approvedTimeOff = 0;
+        sked__Availability__c approvedAvailability = [SELECT Id, sked__Start__c, sked__Finish__c, sked_Is_All_Day__c 
+                                                      FROM sked__Availability__c
+                                                      WHERE sked__Resource__c = :resource.Id
+                                                      AND sked_Start_Date__c = :availDate
+                                                      AND sked__Type__c = :timeOffType
+                                                      AND sked_Custom_Status__c = :skedConstants.AVAILABILITY_STATUS_APPROVED
+                                                      LIMIT 1];
+        if (approvedAvailability != null) {
+            approvedTimeOff = getWorkdayPtoHours(approvedAvailability, resource);
+        }
+        return approvedTimeOff;
     }
 
     public static sked__Debug_Log__c getDebugLogFromResponse(String operation, sked__Availability__c availabilityRecord, skedWorkdayApiResponse result) {
