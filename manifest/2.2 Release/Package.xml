@@ -29,6 +29,7 @@
 		<members>UserService</members>
         <members>UserTriggerHandler</members>
         <members>UserServiceTest</members>
+		<members>skedResourceHandler</members>
 		<members>WeeklyStaffScheduleReportController</members>
         <members>WeeklyStaffScheduleReportControllerTest</members>
 		<name>ApexClass</name>
