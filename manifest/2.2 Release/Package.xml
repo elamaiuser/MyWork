@@ -7,6 +7,8 @@
         <members>BSFWeeklyStaffingRoleTimeController</members>
         <members>BSFWeeklyStaffingRoleTimeControllerTest</members>
         <members>BSFWeeklyStaffingRTReportController</members>
+		<members>CalendarBuildBatchHandler</members>
+        <members>CalendarBuildEvaluateDrivesBatch_Test</members>
 		<members>checkRecursive</members>
 		<members>skedCaptureJobIMPACTBatch</members>
         <members>skedCaptureJobIMPACTBatch_Test</members>        

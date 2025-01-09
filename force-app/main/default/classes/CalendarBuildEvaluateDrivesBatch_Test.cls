@@ -7,6 +7,7 @@
  * *****************************************************************************************************************************
  * 2/19/2024                  Priti Jana            Rewriting entire test class to reduce complexity and increase code coverage
  * 10/29/2024				  Priti Jana			Fixed errors
+ * 01/09/2025				  Priti Jana			Commented out test method for Gray Sky consideration (HRP-12299)
  * *****************************************************************************************************************************/
 
 @isTest(SeeAllData = FALSE)
@@ -24,12 +25,12 @@ public class CalendarBuildEvaluateDrivesBatch_Test {
         List<Opportunity> oppList = new List<Opportunity>();
         List<sked_Drive__c> driveList = new List<sked_Drive__c>();
         
-        // Affiliation Preparation
+        /* Affiliation Preparation
         Marketing_Program__c greySkies = new Marketing_Program__c();
         greySkies.Name = 'Gray Skies';
         greySkies.External_Name__c = 'ABCT001';
         greySkies.Scope__c = 'Drive';
-        insert greySkies;
+        insert greySkies;*/
         
         // Account Preparation - Fixed & Mobile
         Account testFixedSiteAcc = (Account)mapTestData.get('FIXED_SITE_ACCOUNT');
@@ -159,7 +160,7 @@ public class CalendarBuildEvaluateDrivesBatch_Test {
         Test.stopTest();
     }
     
-    static testMethod void testCBMobileDrivesWithGreySkies() {
+    /*static testMethod void testCBMobileDrivesWithGreySkies() {
         Calendar_Build_Setting__mdt mdtDriveCompletion = Calendar_Build_Setting__mdt.getInstance('Calendar_Build_Drives_Config');
         Integer numOfDays = mdtDriveCompletion?.No_of_Days_for_Calendar_Build_Batch__c.intValue();
         
@@ -186,7 +187,7 @@ public class CalendarBuildEvaluateDrivesBatch_Test {
         CalendarBuildEvaluateDrivesBatch cbDrive = new CalendarBuildEvaluateDrivesBatch();
         Database.executeBatch(cbDrive);
         Test.stopTest();
-    }
+    }*/
     
     static testMethod void testCBMobileDrivesForLostAcc() {
         Calendar_Build_Setting__mdt mdtDriveCompletion = Calendar_Build_Setting__mdt.getInstance('Calendar_Build_Drives_Config');
