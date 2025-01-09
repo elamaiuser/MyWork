@@ -386,15 +386,15 @@ public class skedWorkdayUtils implements Callable {
 
     public static Decimal getApprovedTimeOffHours(sked__Resource__c resource, Date availDate, String timeOffType) {
         Decimal approvedTimeOff = 0;
-        sked__Availability__c approvedAvailability = [SELECT Id, sked__Start__c, sked__Finish__c, sked_Is_All_Day__c 
+        sked__Availability__c[] approvedAvailability = [SELECT Id, sked__Start__c, sked__Finish__c, sked_Is_All_Day__c 
                                                       FROM sked__Availability__c
                                                       WHERE sked__Resource__c = :resource.Id
                                                       AND sked_Start_Date__c = :availDate
                                                       AND sked__Type__c = :timeOffType
                                                       AND sked_Custom_Status__c = :skedConstants.AVAILABILITY_STATUS_APPROVED
                                                       LIMIT 1];
-        if (approvedAvailability != null) {
-            approvedTimeOff = getWorkdayPtoHours(approvedAvailability, resource);
+        if (approvedAvailability.size() > 0) {
+            approvedTimeOff = getWorkdayPtoHours(approvedAvailability[0], resource);
         }
         return approvedTimeOff;
     }
