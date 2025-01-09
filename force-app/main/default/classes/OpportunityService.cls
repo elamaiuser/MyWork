@@ -4815,16 +4815,22 @@ opp.StageName = 'Closed';
             for(Opportunity newOpp : newOppList) {
                 Opportunity oldOpp = oldOppMap.get(newOpp.Id);
                 if (oldOpp != NULL) {
-                    Boolean recalculateAptRule1 = !checkRecursive.skipAptRecalculation; //During DOC -> OPP Sync
-                    Boolean recalculateAptRule2 = (oldOpp.APT_Change_Reason__c == newOpp.APT_Change_Reason__c) || ((oldOpp.APT_Change_Reason__c != newOpp.APT_Change_Reason__c) && !newOpp.APT_Change_Reason__c.containsIgnoreCase(BSF_Constants.APT_CHANGE_VIA_TEMPLATE));
-                    Boolean recalculateAptRule3 = oldOpp.APT_Required__c != newOpp.APT_Required__c;
-                    Boolean recalculateAptRule4 = oldOpp.Total_Projected_Procedures__c != newOpp.Total_Projected_Procedures__c;  
+                    if(oldOpp.APT_Change_Reason__c != newOpp.APT_Change_Reason__c && newOpp.APT_Change_Reason__c.equalsIgnoreCase(BSF_Constants.APT_CHANGE_VIA_TEMPLATE)) continue;
                     
-                    if(recalculateAptRule1 && recalculateAptRule2) {
-                        if(recalculateAptRule3 && !newOpp.APT_Required__c) {
-                            newOpp.APT_Quantity__c = 0;
-                            newOpp.APT_Change_Reason__c = (newOpp.Is_Template__c ? 'Template' : 'Opportunity') + ' APT changed by ' + userInfo.getName() + ' on '+system.now();
-                        } else oppListToRecalculateAPT.add(newOpp);
+                    Boolean recalculateAptRule1 = !checkRecursive.skipAptRecalculation; //During DOC -> OPP Sync
+                    Boolean recalculateAptRule2 = oldOpp.APT_Required__c != newOpp.APT_Required__c;
+                    Boolean recalculateAptRule3 = oldOpp.Total_Projected_Procedures__c != newOpp.Total_Projected_Procedures__c;  
+                    
+                    if(recalculateAptRule1) {
+                        if(recalculateAptRule2) {
+                            if(!newOpp.APT_Required__c) {
+                                newOpp.APT_Quantity__c = 0;
+                                newOpp.APT_Change_Reason__c = (newOpp.Is_Template__c ? 'Template' : 'Opportunity') + ' APT changed by ' + userInfo.getName() + ' on '+system.now();
+                            } else oppListToRecalculateAPT.add(newOpp);
+                        } else if(recalculateAptRule3) {
+                            newOpp.APT_Required__c = FALSE; //reset value to false and populate it based on formula later
+                            oppListToRecalculateAPT.add(newOpp);
+                        }    
                     }
                 }
             }
