@@ -15,6 +15,7 @@
  * 06/06/2024                Barnojit Sharma          Post Drive Analysis task Enhancements (Logic for HRP-12142)
  * 06/20/2024				 Raktim Ghosal			  Sync Publicity Ordering Material from template to Opportunity (HRP-12664) 
  * 10/24/2024				 Barnojit Sharma		  Template Order products not cascading to Opportunity Order (Logic for HRP-13521)
+ * 12/10/2024			     Priti Jana			      Logic for HRP-13190
  ************************************************************************************************************************************************
 */
 
@@ -275,6 +276,15 @@ public class OpportunityTriggerHandler extends TriggerHandler{
         }   
         //End HRP-12142 
             
+        
+        //HRP-13190
+        if(super.getTriggerMethodsToBypass().indexOf('captureAPTRequirements') == -1) {
+           OpportunityService.captureAPTRequirements((List<Opportunity>)trigger.new, (Map<Id,Opportunity>)trigger.oldMap);
+        }
+        //HRP-6051
+        if(super.getTriggerMethodsToBypass().indexOf('validateTheARD') == -1) {
+            OpportunityService.validateTheARD((List<Opportunity>)trigger.new, (Map<Id,Opportunity>)trigger.oldMap);
+        }
         System.debug('Exiting method beforeUpdate');
     }
     
@@ -441,6 +451,12 @@ public class OpportunityTriggerHandler extends TriggerHandler{
             OpportunityService.syncDoNotRollFields((List<Opportunity>)trigger.new, null);
         }   
         //End HRP-12142
+        
+        //HRP-13190
+         if(super.getTriggerMethodsToBypass().indexOf('captureAPTRequirements') == -1) {
+           OpportunityService.captureAPTRequirements((List<Opportunity>)trigger.new, NULL);
+        }
+        
         System.debug('Exiting method beforeInsert');
         System.debug('getCpuTime()'+limits.getCpuTime());
     }

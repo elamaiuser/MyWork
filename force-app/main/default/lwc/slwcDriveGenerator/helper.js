@@ -50,6 +50,10 @@ class DriveHelper {
     return loginUser && loginUser.profileName && loginUser.profileName.startsWith('APS Admin');
   }
 
+  isOnlyAPSUser(loginUser) {
+    return loginUser && loginUser.profileName && loginUser.profileName.startsWith('APS');
+  }
+
   isAPSManagement(loginUser) {
     return loginUser && loginUser.profileName && loginUser.profileName.startsWith('APS Management');
   }
@@ -91,8 +95,10 @@ class DriveHelper {
       } else if (prop === 'accountManagerId') {
         drive.driveOwnerId = opp.accountManagerId;
         drive.driveOwner = opp.accountManager;
-      } else if (prop === 'accountAptRequired') {
-        drive.aptRequired = opp.accountAptRequired;
+      } else if (prop === 'aptRequired') {
+        drive.aptRequired = opp.aptRequired;
+       } else if (prop === 'aptQuantity') {
+        drive.aptQuantity = opp.aptQuantity;
       } else if (prop === 'anticipatedRegisteredDonorsTemplate') {
         drive.historicalRegisteredDonors = opp.anticipatedRegisteredDonorsTemplate;
       } else {
@@ -693,7 +699,8 @@ class DriveHelper {
         'totalProceduresProjected',
         'totalProductsProjected',
         'driveProductivityPlanned',
-        'totalSlots'
+        'totalSlots',
+        'aptQuantity'
     ]
     
     let driveChanges = [];
@@ -730,6 +737,7 @@ class DriveHelper {
   }) {
     const isAdminUser = this.isAdminUser(loginUser);
     const isAPSUser = this.isAPSUser(loginUser);
+    const isOnlyAPSUser = this.isOnlyAPSUser(loginUser);
     const isDRDUser = this.isDRDUser(loginUser);
     const isManufacturingUser = this.isManufacturingUser(loginUser);
     const isTelerecuiterUser = this.isTelerecuiterUser(loginUser);
@@ -796,7 +804,8 @@ class DriveHelper {
             driveDeliveryJobs: true,
             volunteerJobs: false,
             operationNotes: false,
-            linkedDrives: true
+            linkedDrives: true,
+            aptQuantity: true
           },
           fieldChangeRestrictionMap: {
             driveSite: true
@@ -818,7 +827,8 @@ class DriveHelper {
             driveDeliveryJobs: false,
             volunteerJobs: false,
             operationNotes: false,
-            linkedDrives: false
+            linkedDrives: false,
+            aptQuantity: isOnlyAPSUser ? false : true
           },
           fieldChangeRestrictionMap: {
             driveSite: true
@@ -841,7 +851,8 @@ class DriveHelper {
       driveDeliveryJobs: isReadonly,
       volunteerJobs: isReadonly,
       operationNotes: isReadonly,
-      linkedDrives: isReadonly
+      linkedDrives: isReadonly,
+      aptQuantity: isReadonly
     }
     let fieldChangeRestrictionMap = {
       driveSite: true
@@ -887,6 +898,8 @@ class DriveHelper {
       fieldReadonlyMap.operationNotes = false;
     }
 
+    fieldReadonlyMap.aptQuantity = isOnlyAPSUser ? false : true;
+
     return {
       isReadonly,
       fieldReadonlyMap,
@@ -929,6 +942,7 @@ class DriveHelper {
         'wbProjectedProcedures',
         'x2rbcProjectedProcedures',
         'aptRequired',
+        'aptQuantity',
         'slotGenerator'
       ];
     }
@@ -966,7 +980,7 @@ class DriveHelper {
       if (targetName == 'aptRequired') {
         return {
           targetName: 'aptRequired',
-          targetValue: opportunity.account[targetName]
+          targetValue: opportunity[targetName]
         }
       }
       return {
@@ -2968,13 +2982,14 @@ class DriveHelper {
         } else {
           if(job.resourceRole === 'VP/HH') {
             if((!job.aptQuantity && !!backupJob.aptQuantity) ||
-              (!!job.aptQuantity && !backupJob.aptQuantity)) {
+              (!!job.aptQuantity && !backupJob.aptQuantity) ||
+              (!!job.aptQuantity && !!backupJob.aptQuantity && job.aptQuantity !== backupJob.aptQuantity)) {
               mapResult(job, backupJob, driveShift, driveShiftIndex, result.changedJobs);
               return;
             }
 
-            const currentJobVphhSystemQuantity = Math.max(job.systemQuantity - (currentDrive.aptRequired ? 1 : 0), 0);
-            const backupJobVphhSystemQuantity = Math.max(backupJob.systemQuantity - (backupDrive.aptRequired ? 1 : 0), 0);
+            const currentJobVphhSystemQuantity = Math.max(job.systemQuantity - (currentDrive.aptQuantity || 0), 0);
+            const backupJobVphhSystemQuantity = Math.max(backupJob.systemQuantity - (backupDrive.aptQuantity || 0), 0);
             if(currentJobVphhSystemQuantity !== backupJobVphhSystemQuantity || isDriveGettingRegenerated) {
               mapResult(job, backupJob, driveShift, driveShiftIndex, result.changedJobs);
             }

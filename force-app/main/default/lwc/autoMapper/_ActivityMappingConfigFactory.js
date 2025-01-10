@@ -42,6 +42,7 @@ export class ActivityMappingConfigFactory {
       mappingConfig.addFieldConfig('sked_Vehicles_Allocated__c', 'vehiclesAllocated', MAPPING_TYPE.direct);
 
       mappingConfig.addFieldConfigWithRelatedList('sked__Activity_Resources__r', 'activityResources', 'sked__Activity_Resource__c', 'sked__Activity__c');
+      mappingConfig.addFieldConfigWithRelatedList('sked_Activity_Collection_Operations__r', 'activityCollectionOperations', 'sked_Activity_Collection_Operation__c', 'sked_Activity__c');
 
       mappingConfig.readonlyFields.push('Name');
       mappingConfig.readonlyFields.push('sked_Start_Date__c');

@@ -21,6 +21,9 @@ class activityService extends dataService {
         if (query.selectedDates && query.selectedDates.length) {
             queryBuilder.addCondition({ template: "sked_Start_Date__c IN {0}", value: query.selectedDates, type: "array" });
         }
+        if (query.driveTypes && query.driveTypes.length) {
+            queryBuilder.addCondition({ template: "sked_Drive_Types__c IN {0}", value: query.driveTypes, type: "array_string" });
+        }
         if (query.resourceIds && query.resourceIds.length) {
             queryBuilder.addCondition({ template: "sked__Resource__c IN {0}", value: query.resourceIds, type: "array_string" });
         }
@@ -44,6 +47,9 @@ class activityService extends dataService {
             let subQueryBuilder = query.getQueryBuilder("sked__Activity_Resource__c");
             subQueryBuilder.orderClause = 'ORDER BY sked__Resource__r.Name ASC';
         }
+        if (query.includes(sObjectType.ACTIVITY_COLLECTION_OPERATION)) {
+            let subQueryBuilder = query.getQueryBuilder("sked_Activity_Collection_Operation__c");
+        }
     }
 }
 
@@ -57,6 +63,7 @@ class activityQueryModel extends queryModelBase {
     startDate;
     showOnlyLinkedEvents;
     isShowOnCalendarOrReduceFromStaffingConstraints;
+    driveTypes;
 }
 
 export {

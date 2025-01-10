@@ -40,8 +40,10 @@ export class JobMappingConfigFactory {
       mappingConfig.addFieldConfig('sked_Lead_Time__c', 'leadTime', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked__Location__c', 'driveSiteId', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked__Location__r.Name', 'driveSiteName', MAPPING_TYPE.direct);
+      mappingConfig.addFieldConfig('sked__Locked__c', 'isLocked', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked__Quantity__c', 'quantity', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_System_Quantity__c', 'systemQuantity', MAPPING_TYPE.direct);
+      mappingConfig.addFieldConfig('sked_Other_Volunteer_Adjustment_Reason__c', 'otherVolunteerAdjustmentReason', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_Primary_Scheduler__c', 'primarySchedulerId', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_Primary_Scheduler__r.Name', 'primarySchedulerName', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_Primary_Scheduler__r.MobilePhone', 'primarySchedulerMobilePhone', MAPPING_TYPE.direct);
@@ -59,6 +61,7 @@ export class JobMappingConfigFactory {
       mappingConfig.addFieldConfig('sked__GeoLocation__Longitude__s', 'longitude', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked__GeoLocation__Latitude__s', 'latitude', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked__Type__c', 'eventType', MAPPING_TYPE.direct);
+      mappingConfig.addFieldConfig('sked_Volunteer_Adjustment_Reason__c', 'volunteerAdjustmentReason', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_Volunteer_Role__c', 'volunteerRole', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_VPHH_Quantity__c', 'vphhQuantity', MAPPING_TYPE.direct);
       
