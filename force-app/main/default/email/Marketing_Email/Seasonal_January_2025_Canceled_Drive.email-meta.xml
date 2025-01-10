@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<EmailTemplate xmlns="http://soap.sforce.com/2006/04/metadata">
+    <available>true</available>
+    <description>An email to BPLs with a drive canceling due to weather.</description>
+    <encodingKey>ISO-8859-1</encodingKey>
+    <letterhead>ARC_Logo_Test</letterhead>
+    <name>Seasonal_January 2025_Canceled Drive</name>
+    <style>formalLetter</style>
+    <subject>A Message of Support</subject>
+    <textOnly>Dear Blood Program Leader,
+
+Our hearts go out to you and everyone impacted by the devastating wildfires and winter storms.
+
+Where it&#39;s safe to do so, donors across the country are asked to make an appointment to give blood or platelets now to help keep the blood supply on track as communities recover from catastrophic damage.
+
+Since your blood drive has been canceled, here’s how else you can help:
+
+Share the need for blood with your network and on social media. Encourage people to donate to ensure enough blood is available to support patients impacted by the severe weather.
+
+Schedule your next blood drive. As a valued partner in collecting blood, we hope you will reschedule your blood drive when able.
+
+American Red Cross disaster relief efforts and lifesaving blood products go hand in hand as we work with communities like yours to offer help and hope. Thank you for your partnership in our mission as a valued Blood Program Leader.
+
+Sincerely,
+[Account Representative Name]
+[Contact Information]</textOnly>
+    <type>html</type>
+    <uiType>Aloha</uiType>
+</EmailTemplate>

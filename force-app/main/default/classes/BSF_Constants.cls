@@ -321,7 +321,7 @@ public class BSF_Constants {
     };
       
     //HRP-7123 --> 
-    public static final String POST_DRIVE_ANALYSIS_TASK = 'Post Drive Analysis Task';
+    public static final String POST_DRIVE_ANALYSIS_TASK = 'Post Drive Analysis';
     public static final String RECRUITMENT_PLANNING_TASK = 'Recruitment Planning Meeting';
     public static final String OPP_TYPE_Mobile = 'Mobile Opp';
 }
