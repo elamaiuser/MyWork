@@ -1822,6 +1822,53 @@ class DriveHelper {
 
     return staffCapacity;
   }
+  calculateMaximumStaffCapacity(resourceRoles = [], drive, driveShiftMetadata, mapResourceQuantity, {
+    staffingDecisionMatrix,
+    timezoneSidId 
+  }, ignoreLunchBreak = false) {
+    const resourceRoleCapacityFieldMap = {
+      'Driver': 'driverCapacity',
+      'Driver Support': 'driverSupportCapacity',
+      '2RBC': 'x2RbcStaffCapacity',
+      'Charge': 'chargeCapacity',
+      'VP/HH': 'vpHhCapacity'
+    }
+
+    const resourceQuantity = mapResourceQuantity.get(driveShiftMetadata.key);
+    let drawHours = this.calculateDrawHours(driveShiftMetadata, {
+      timezoneSidId
+    }, driveShiftMetadata.lunchBreakSettings);
+
+    const drawHoursWithoutLunchBreak = this.calculateDrawHours(driveShiftMetadata, {
+      timezoneSidId
+    });
+
+    if(ignoreLunchBreak) {
+      drawHours = drawHoursWithoutLunchBreak;
+    }
+
+    let maxStaffCapacity = 0;
+    Array.from(resourceQuantity.keys()).forEach(resourceRole => {
+      const data = resourceQuantity.get(resourceRole);
+      let noOfResources = data || 0;
+      let dualRole = null;
+      if(isObject(data)) {
+        noOfResources = data.quantity || 0;
+        dualRole = data.dualRole;
+      }
+
+      let role = resourceRole.split('-')[0];;
+      let roleCapacity = staffingDecisionMatrix[resourceRoleCapacityFieldMap[role]] || 0;
+      if(resourceRoles.includes(role)) {
+        let roleCapacitywithDrawHours = roleCapacity * drawHours;
+        if(roleCapacitywithDrawHours > maxStaffCapacity){
+          maxStaffCapacity = roleCapacitywithDrawHours;
+        }
+      }
+    });
+
+    return maxStaffCapacity;
+  }
 
   countDriveStaffs(resourceRoles = [], drive, driveShiftMetadata, mapResourceQuantity, {
     staffingDecisionMatrix,
