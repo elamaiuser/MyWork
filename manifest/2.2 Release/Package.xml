@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <Package xmlns="http://soap.sforce.com/2006/04/metadata">
 	<types>
+		<members>BSF_UpdateDriveExcessStaffCapacityBatch</members>
 		<members>BSF_Utilities</members>
         <members>BSF_UtilitiesTest</members>
 		<members>BSFStagingSheetController</members>
@@ -10,6 +11,8 @@
 		<members>CalendarBuildBatchHandler</members>
         <members>CalendarBuildEvaluateDrivesBatch_Test</members>
 		<members>checkRecursive</members>
+		<members>GenerateMobileDrive</members>
+		<members>MobileDriveGeneratorDMLService</members>
 		<members>skedCaptureJobIMPACTBatch</members>
         <members>skedCaptureJobIMPACTBatch_Test</members>        
         <members>skedDriveHandler</members>
@@ -43,7 +46,8 @@
 		<members>Assign_SF_Resources_to_User__mdt.Role_Name__c</members>
 		<members>AssignResourcesToUserEvent__e.skipUserRoleUpdate__c</members>
 		<members>sked__Job_Allocation__c.sked_Completed_Post_Processes__c</members>
-		<members>sked__Location__c.sked_Unloading_Directions_Details__c</members>		
+		<members>sked__Location__c.sked_Unloading_Directions_Details__c</members>
+		<members>sked_Drive__c.Max_Role_Capacity__c</members>		
 		<name>CustomField</name>
 	</types>
 	<types>
@@ -71,8 +75,12 @@
 		<name>CustomMetadata</name>
 	</types>
 	<types>
+		<members>autoMapper</members>
 		<members>bsfWeeklyStaffingRoleTimeReport</members>
-		<members>bsfWeeklyStaffScheduleReportlwc</members>		
+		<members>bsfWeeklyStaffScheduleReportlwc</members>
+		<members>slwcDriveCompactView</members>
+		<members>slwcDriveGenerator</members>
+		<members>slwcDriveManagement</members>		
 		<name>LightningComponentBundle</name>
 	</types>
 	<types>		
@@ -83,5 +91,13 @@
 		<members>sked_Resource_Roles</members>
 		<name>GlobalValueSet</name>
     </types>
+	<types>
+		<members>General_Reports/Excess_Staff_Capacity_Audit_6N2</members>
+		<name>Report</name>
+	</types>
+	<types>
+		<members>Drives_with_Account_and_Site</members>
+		<name>ReportType</name>
+	</types>
 	<version>60.0</version>
 </Package>
