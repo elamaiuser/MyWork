@@ -48,6 +48,9 @@
     <tabs>sked_Staging_Location__c</tabs>
     <tabs>sked_Collection_Op_Staging_Location__c</tabs>
     <tabs>sked_Travel_Time_Index_Item__c</tabs>
+    <tabs>sked_Travel_Time_Breakdown_Refresh_Item__c</tabs>
+    <tabs>sked_Travel_Time_Index_Refresh_Request__c</tabs>
+    <tabs>sked_Travel_Time_Index_Refresh_Group__c</tabs>
     <uiType>Lightning</uiType>
     <utilityBar>LightningSales_UtilityBar</utilityBar>
 </CustomApplication>

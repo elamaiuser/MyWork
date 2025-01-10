@@ -17,5 +17,15 @@
     <columns>CREATEDBY_USER</columns>
     <columns>CREATED_DATE</columns>
     <filterScope>Everything</filterScope>
+    <filters>
+        <field>Notification_Type__c</field>
+        <operation>equals</operation>
+        <value>SalesforcePush</value>
+    </filters>
+    <filters>
+        <field>Category__c</field>
+        <operation>contains</operation>
+        <value>72</value>
+    </filters>
     <label>All</label>
 </ListView>

@@ -14,5 +14,8 @@
     <tabs>standard-SalesforceContract</tabs>
     <tabs>standard-SalesforceInvoice</tabs>
     <tabs>standard-SalesforceProductCatalog</tabs>
+    <tabs>sked_Travel_Time_Breakdown_Refresh_Item__c</tabs>
+    <tabs>sked_Travel_Time_Index_Refresh_Request__c</tabs>
+    <tabs>sked_Travel_Time_Index_Refresh_Group__c</tabs>
     <uiType>Lightning</uiType>
 </CustomApplication>

@@ -16,7 +16,7 @@
     <filters>
         <field>CREATED_DATE</field>
         <operation>greaterOrEqual</operation>
-        <value>12/19/2024 12:00 AM</value>
+        <value>12/27/2024 12:00 AM</value>
     </filters>
     <filters>
         <field>sked_Type__c</field>

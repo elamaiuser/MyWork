@@ -14,5 +14,10 @@
         <operation>equals</operation>
         <value>TODAY</value>
     </filters>
+    <filters>
+        <field>CREATEDBY_USER</field>
+        <operation>equals</operation>
+        <value>Priti Jana</value>
+    </filters>
     <label>SyncOppsWithDrives</label>
 </ListView>

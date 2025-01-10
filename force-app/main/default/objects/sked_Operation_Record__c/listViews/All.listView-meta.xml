@@ -10,5 +10,10 @@
     <columns>sked_Status__c</columns>
     <columns>LAST_UPDATE</columns>
     <filterScope>Everything</filterScope>
+    <filters>
+        <field>sked_Actual_Drive_Start_Date__c</field>
+        <operation>equals</operation>
+        <value>11/18/2024</value>
+    </filters>
     <label>All</label>
 </ListView>

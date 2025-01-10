@@ -993,6 +993,7 @@ class MobileGenerator extends BaseGenerator {
     record.totalProceduresProjected = x2rbcProjectedProcedures + wbProjectedProcedures;
     record.totalProductsProjected = x2rbcProjectedProcedures * 2 + wbProjectedProcedures;
 
+    console.log('this.masterData.skipAPTCalculation ',this.masterData.skipAPTCalculation);
     if(!this.masterData.skipAPTCalculation) {
       this.recalculateAPTSettings();
       this.drive.driveShiftsMetadata.APTSetup = this.drive.aptQuantity;

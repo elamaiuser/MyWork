@@ -136,7 +136,8 @@ private class BSFWeeklyStaffingRoleTimeControllerTest {
         String collOpIds = [SELECT Id, Name FROM Biomed_Collection_Op_Center__c WHERE Name = 'Collection Operation 1' LIMIT 1].Id;
             
         Test.startTest();
-        Integer count = BSFWeeklyStaffingRoleTimeController.validateInputs(Date.Today(),Date.Today().addDays(70),'Both',collOpIds,'mobile,fixed');
+        WeeklyStaffScheduleReportController.StaffInfoWrapper staffInfoWrapper = new WeeklyStaffScheduleReportController.StaffInfoWrapper();
+        staffInfoWrapper = BSFWeeklyStaffingRoleTimeController.validateInputsAndGetStaffInfo(Date.Today(),Date.Today().addDays(70),'Both',collOpIds,'mobile,fixed');
         Test.stopTest();
     }
     @isTest
@@ -254,7 +255,8 @@ private class BSFWeeklyStaffingRoleTimeControllerTest {
     private static void testmethod21() {        
         Test.startTest();
         try{
-        	Integer count = BSFWeeklyStaffingRoleTimeController.validateInputs(system.today(), system.today().addDays(-10), '', '', '');
+            WeeklyStaffScheduleReportController.StaffInfoWrapper staffInfoWrapper = new WeeklyStaffScheduleReportController.StaffInfoWrapper();
+        	staffInfoWrapper = BSFWeeklyStaffingRoleTimeController.validateInputsAndGetStaffInfo(system.today(), system.today().addDays(-10), '', '', '');
         }catch(AuraHandledException ex) {
             //Assert.isTrue()
         }
