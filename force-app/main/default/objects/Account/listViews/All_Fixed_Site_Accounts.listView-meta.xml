@@ -11,6 +11,7 @@
     <columns>ACCOUNT.CREATED_DATE</columns>
     <columns>ACCOUNT.TYPE</columns>
     <columns>ACCOUNT.RECORDTYPE</columns>
+    <columns>CFY_Drives__c</columns>
     <filterScope>Everything</filterScope>
     <filters>
         <field>ACCOUNT.RECORDTYPE</field>
