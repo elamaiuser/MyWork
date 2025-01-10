@@ -779,6 +779,7 @@ public with sharing class MobileDriveGeneratorDMLService {
         public Decimal slotGenerator; //HRP-12011
         public Decimal excessStaffCapacity; //HRP-10994
         public Decimal averageStaffCapacity; //HRP-10994
+        public Decimal maxRoleCapacity; //HRP-13864
         public Decimal totalStaffRequested; //HRP-10994
         public Boolean aptRequired; //HRP-13190
         public Decimal aptQuantity; //HRP-13190
@@ -854,6 +855,7 @@ public with sharing class MobileDriveGeneratorDMLService {
                 sked_Travel_Time_CO_To_Site__c = this.travelTimeCOtoSite,  //HRP-11650
                 Excess_Staff_Capacity__c = this.excessStaffCapacity, //HRP-10994
                 Average_Staff_Capacity__c = this.averageStaffCapacity, //HRP-10994
+                Max_Role_Capacity__c = this.maxRoleCapacity, //HRP-13864
                 sked_APT_Required__c = this.aptRequired, //HRP-13190
                 sked_APT_Quantity__c = this.aptQuantity //HRP-13190
             );
@@ -903,6 +905,7 @@ public with sharing class MobileDriveGeneratorDMLService {
         public decimal drawHourswithLunchBreak;
         public decimal numberOf2rbcEquipments;
         public Boolean noTravelTime; //HRP-11419
+        public Decimal maxRoleCapacity; //HRP-13864
         
         public List<DMLDriveShiftTag> driveShiftTags;
         public List<DMLJob> jobs;
