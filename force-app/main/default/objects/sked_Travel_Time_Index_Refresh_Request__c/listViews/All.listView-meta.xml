@@ -10,7 +10,7 @@
     <filters>
         <field>CREATED_DATE</field>
         <operation>greaterOrEqual</operation>
-        <value>12/15/2024 12:00 AM</value>
+        <value>TODAY</value>
     </filters>
     <label>All</label>
 </ListView>

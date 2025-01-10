@@ -24,14 +24,14 @@
         <value>Opportunity.Mobile_Opp</value>
     </filters>
     <filters>
-        <field>DriveStatus__c</field>
-        <operation>notEqual</operation>
-        <value>Complete,Cancel</value>
-    </filters>
-    <filters>
         <field>OPPORTUNITY.STAGE_NAME</field>
         <operation>equals</operation>
-        <value>Closed</value>
+        <value>Discovery,Solicitation,Committed,Closed,Withdrawn,Excluded</value>
+    </filters>
+    <filters>
+        <field>Drive_Date__c</field>
+        <operation>greaterOrEqual</operation>
+        <value>12/31/2024</value>
     </filters>
     <label>All Mobile Opportunities_Future Date</label>
 </ListView>

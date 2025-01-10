@@ -15,7 +15,12 @@
     <filters>
         <field>Portfolio_Type__c</field>
         <operation>equals</operation>
-        <value>Relationship Manager</value>
+        <value>Account Manager</value>
+    </filters>
+    <filters>
+        <field>Taxonomy_Type__c</field>
+        <operation>equals</operation>
+        <value>Bio Recruitment Supervisor</value>
     </filters>
     <label>All BSF Portfolios</label>
 </ListView>
