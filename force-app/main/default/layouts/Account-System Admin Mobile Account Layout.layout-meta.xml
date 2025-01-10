@@ -174,7 +174,7 @@
                 <field>Chapter__c</field>
             </layoutItems>
             <layoutItems>
-                <behavior>Edit</behavior>
+                <behavior>Readonly</behavior>
                 <field>Feeder_Account_Type__c</field>
             </layoutItems>
         </layoutColumns>

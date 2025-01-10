@@ -12,7 +12,7 @@
     </values>
     <values>
         <field>sked_Default_Weight__c</field>
-        <value xsi:type="xsd:string">Low</value>
+        <value xsi:type="xsd:string">Medium</value>
     </values>
     <values>
         <field>sked_Display_Order__c</field>

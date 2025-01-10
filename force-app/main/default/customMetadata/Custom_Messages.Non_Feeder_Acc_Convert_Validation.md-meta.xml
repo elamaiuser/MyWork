@@ -12,6 +12,6 @@
     </values>
     <values>
         <field>Value__c</field>
-        <value xsi:type="xsd:string">You are attempting to convert into a Non-Feeder Group Account. &quot;Potential Feeders&quot; (this includes Potential Feeder Group, Future Outreach, Feeder-Qualified, Feeder -Unqualified statuses) Feeder can only convert into established Feeder Accounts.</value>
+        <value xsi:type="xsd:string">You are attempting to convert into a Non-Feeder Group Account. &quot;Potential Feeders&quot; (this includes Potential Feeder Group, Future Outreach, Feeder Group - Qualified, &amp; Feeder Group - Unqualified statuses) can only convert into established Feeder Accounts.</value>
     </values>
 </CustomMetadata>

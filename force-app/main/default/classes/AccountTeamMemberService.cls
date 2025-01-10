@@ -1349,6 +1349,8 @@ insert optyTeamMemberListToInsert;
         map<String,AccountTeamMember> accIdAccTeam4SplitMap = new map<String,AccountTeamMember>();
         set<id> accIdSet = new set<id>();
         set<id> userIdSet = new set<id>();
+        Date startDate;
+        Date endDate;
         for(AccountTeamMember atm:atmList)
         {
             accIdSet.add(atm.accountId);
@@ -1366,6 +1368,19 @@ insert optyTeamMemberListToInsert;
             
             	userIdSet.add(atm.UserId);
             }
+            
+            Date atmStartDate = oldMap == null || atm.Start_Date__c <= oldMap.get(atm.id).Start_Date__c? atm.Start_Date__c:oldMap.get(atm.id).Start_Date__c;
+            Date atmEndDate =  oldMap == null || atm.End_Date__c >= oldMap.get(atm.id).End_Date__c? atm.End_Date__c:oldMap.get(atm.id).End_Date__c;
+            
+            if(startDate == null || (startDate != null && atmStartDate < startDate))
+            {
+                startDate = atmStartDate;
+            }
+            
+            if(endDate == null || (endDate != null && atmEndDate > endDate))
+            {
+                endDate = atmEndDate;
+            }
                 
         }
         
@@ -1382,7 +1397,7 @@ insert optyTeamMemberListToInsert;
         }
         
         
-        list<opportunity> oppList =[Select id,Drive_Date__c,Account_Manager__c,accountId,ownerId from opportunity where AccountId in:accIdSet and Is_Template__c=false];
+        list<opportunity> oppList =[Select id,Drive_Date__c,Account_Manager__c,accountId,ownerId from opportunity where AccountId in:accIdSet AND Is_Template__c=false AND Drive_date__c < Today AND Drive_Date__c >= :startDate  AND Drive_Date__c <= :endDate];//HRP-13174
         map<string,opportunityTeamMember> opptyTeamMap = new map<string,opportunityTeamMember>();
         list<opportunityTeamMember> opptyTeamMemberList = [Select id,UserId,OpportunityID,TeamMemberRole from opportunityTeamMember where opportunity.AccountId in:accIdSet and is_AccountTeammember__c=true];
         for(opportunityTeamMember otm :opptyTeamMemberList)

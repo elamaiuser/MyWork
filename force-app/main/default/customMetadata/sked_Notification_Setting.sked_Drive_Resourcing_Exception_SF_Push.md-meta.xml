@@ -64,6 +64,10 @@ AND skedHC__Resource__r.sked_Asset_Type__c != NULL</value>
         <value xsi:type="xsd:string">Drive {{sked_drive__r.sked_ufid__c}} has asset resourcing exception.</value>
     </values>
     <values>
+        <field>sked_Target_Field_Prev_Value__c</field>
+        <value xsi:nil="true"/>
+    </values>
+    <values>
         <field>sked_Target_Field_Value__c</field>
         <value xsi:nil="true"/>
     </values>

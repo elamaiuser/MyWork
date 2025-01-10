@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
-        <help><!-- Indicates whether the lunch break durations are populated by default for drives in this Collection Operation --></help>
-        <label><!-- Lunch Break --></label>
-        <name>sked_Lunch_Break__c</name>
-    </CustomFieldTranslation>

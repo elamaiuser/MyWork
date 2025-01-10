@@ -27,12 +27,26 @@
         <itemInstances>
             <componentInstance>
                 <componentInstanceProperties>
+                    <name>dashboardName</name>
+                    <value>FludNYjToDHeJPJkRkLTLpXJyWeDZH2</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>hideOnError</name>
+                    <value>true</value>
+                </componentInstanceProperties>
+                <componentName>desktopDashboards:embeddedDashboard</componentName>
+                <identifier>desktopDashboards_embeddedDashboard2</identifier>
+            </componentInstance>
+        </itemInstances>
+        <itemInstances>
+            <componentInstance>
+                <componentInstanceProperties>
                     <name>ColumnName</name>
-                    <value>Subject,Due Date,Related Record,Account Link,Type</value>
+                    <value>Subject,Due Date,Related Record,Account Link,Type,Status Visual</value>
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>SOQLQuery</name>
-                    <value>Select Subject,ActivityDate,Related_Record_Link__c,Account_Link__c,Type from Task where Status != &#39;Completed&#39; AND (OwnerId in:</value>
+                    <value>Select Subject,ActivityDate,Related_Record_Link__c,Account_Link__c,Type,Status_Visual__c from Task where Status != &#39;Completed&#39; AND (OwnerId in:</value>
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>dateFormatType</name>
@@ -44,7 +58,7 @@
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>hyperLinkColumn</name>
-                    <value>Subject,Related Record,Account Link</value>
+                    <value>Subject,Related Record,Account Link,Status Visual</value>
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>iconName</name>

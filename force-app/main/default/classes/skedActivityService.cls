@@ -9,7 +9,9 @@ global class skedActivityService extends skedEventService {
     protected virtual override skedDataService.saveResult preSaveRecord(List<skedModels.modelBase> models) {
         List<skedModels.activity> activities = (List<skedModels.activity>)models;
         for(skedModels.activity activity : activities) {
-            activity.notes = 'Selected Drive Type(s) : '+String.join(activity.driveTypes, ', ')+ '. \n'+activity.notes;
+            if(activity.driveTypes != NULL && !activity.driveTypes.isEmpty()) {
+                activity.notes = 'Selected Drive Type(s) : '+String.join(activity.driveTypes, ', ')+ '. \n'+activity.notes;
+            }
         }
         
         skedDataService.saveResult result = new skedDataService.saveResult();
@@ -19,24 +21,37 @@ global class skedActivityService extends skedEventService {
 
     protected virtual override void postSaveRecord(List<skedModels.modelBase> models, List<sObject> records) {
         List<skedModels.activity> activityModels = (List<skedModels.activity>) models;
-        List<sked__Activity__c> activityRecords = (List<sked__Activity__c>) records;
+        Map<Id, sked__Activity__c> map_activityId_activityRecords = new Map<Id, sked__Activity__c>((List<sked__Activity__c>) records);   
+        
+        //Query existing activity Ids in case of edit and delete existing activity COs
+        List<sked__Activity__c> existingActivities = new List<sked__Activity__c>(
+            [SELECT Id, 
+            (SELECT Id FROM sked_Activity_Collection_Operations__r)
+            FROM sked__Activity__c
+            WHERE Id IN :map_activityId_activityRecords.keySet()
+            ]
+        );
+		
+        List<sked_Activity_Collection_Operation__c> activityCosToDelete = new List<sked_Activity_Collection_Operation__c>();
+        if(existingActivities != NULL && !existingActivities.isEmpty()) {
+            for(sked__Activity__c existingActivity : existingActivities) {
+                if(existingActivity.sked_Activity_Collection_Operations__r != NULL && !existingActivity.sked_Activity_Collection_Operations__r.isEmpty())
+                activityCosToDelete.addAll(existingActivity.sked_Activity_Collection_Operations__r);
+            }  
+        }
+
+        if(!activityCosToDelete.isEmpty()) {
+            delete activityCosToDelete;
+        }
 
         List<Id> collectionOperationIds = new List<Id>();
-        List<sked_Activity_Collection_Operation__c> skedActivityColOpToInsert = new List<sked_Activity_Collection_Operation__c>();
-        Map<Id, Biomed_Collection_Op_Center__c> map_coId_coInfo = new Map<Id, Biomed_Collection_Op_Center__c>();
-
         for(skedModels.activity activityModel : activityModels) {
             if(activityModel.biomedCollectionOpIds != NULL && !activityModel.biomedCollectionOpIds.isEmpty()) {
                 collectionOperationIds.addAll(activityModel.biomedCollectionOpIds);
-                for(String coId : activityModel.biomedCollectionOpIds) {
-                    skedActivityColOpToInsert.add(new sked_Activity_Collection_Operation__c(
-                        sked_Activity__c = activityModel.id,
-                        sked_Biomed_Collection_Operation__c = coId
-                    ));
-                }
             }
         }
 
+        Map<Id, Biomed_Collection_Op_Center__c> map_coId_coInfo = new Map<Id, Biomed_Collection_Op_Center__c>();
         if (!collectionOperationIds.isEmpty()) {
             map_coId_coInfo = new Map<Id, Biomed_Collection_Op_Center__c>(
                 [SELECT Id,
@@ -49,21 +64,32 @@ global class skedActivityService extends skedEventService {
             );
         }
 
-        for(sked_Activity_Collection_Operation__c newActivityColOp : skedActivityColOpToInsert) {
-            if(map_coId_coInfo != NULL && map_coId_coInfo.containsKey(newActivityColOp.sked_Biomed_Collection_Operation__c)) {
-                Biomed_Collection_Op_Center__c collectionOperation = map_coId_coInfo.get(newActivityColOp.sked_Biomed_Collection_Operation__c);
-                for (sked_Territory_Collection_Operation__c territoryCO : collectionOperation.sked_Territory_Collection_Operations__r) {
-                    boolean isStartDateMatched = territoryCO.sked_Start_Date__c == NULL || territoryCO.sked_Start_Date__c <= newActivityColOp.sked_Activity__r.sked_Start_Date__c;
-                    boolean isEndDateMatched = territoryCO.sked_End_Date__c == NULL || territoryCO.sked_End_Date__c >= newActivityColOp.sked_Activity__r.sked_Start_Date__c;
-                    if (isStartDateMatched && isEndDateMatched) {
-                        newActivityColOp.sked_District__c = territoryCO.sked_Territory__c;
-                        break;
+        List<sked_Activity_Collection_Operation__c> skedActivityColOpToInsert = new List<sked_Activity_Collection_Operation__c>();
+        if(map_coId_coInfo != NULL && !map_coId_coInfo.isEmpty()) {
+            for(skedModels.activity activityModel : activityModels) {
+                for(String coId : activityModel.biomedCollectionOpIds) {
+                    String districtId;
+                    if(map_coId_coInfo.containsKey(coId) && map_coId_coInfo.get(coId) != NULL) {
+                        Biomed_Collection_Op_Center__c collectionOperation = map_coId_coInfo.get(coId);
+                        for (sked_Territory_Collection_Operation__c territoryCO : collectionOperation.sked_Territory_Collection_Operations__r) {
+                            boolean isStartDateMatched = territoryCO.sked_Start_Date__c == NULL || territoryCO.sked_Start_Date__c <= skedDateTimeUtils.getDateFromIsoString(activityModel.startDate);
+                            boolean isEndDateMatched = territoryCO.sked_End_Date__c == NULL || territoryCO.sked_End_Date__c >= skedDateTimeUtils.getDateFromIsoString(activityModel.startDate);
+                            if (isStartDateMatched && isEndDateMatched) {
+                                districtId = territoryCO.sked_Territory__c;
+                                break;
+                            }
+                        }
                     }
+                    skedActivityColOpToInsert.add(new sked_Activity_Collection_Operation__c(
+                        sked_Activity__c = activityModel.id,
+                        sked_Biomed_Collection_Operation__c = coId,
+                        sked_District__c = districtId
+                    ));
                 }
             }
         }
-
-        if (!skedActivityColOpToInsert.isEmpty()) {
+        
+        if (skedActivityColOpToInsert != NULL && !skedActivityColOpToInsert.isEmpty()) {
             insert skedActivityColOpToInsert;
         }
     }
@@ -138,8 +164,8 @@ global class skedActivityService extends skedEventService {
             }
         }
         if (startDate != NULL && endDate != NULL) {
-            queryBuilder.addCondition('sked_Start_Date__c <= {0}', endDate);
-            queryBuilder.addCondition('sked_End_Date__c >= {0}', startDate);
+            queryBuilder.addCondition('sked_Start_Date__c >= {0}', startDate);
+            queryBuilder.addCondition('sked_End_Date__c <= {0}', endDate);
         }
         else {
             if (startDate != NULL) {
@@ -152,6 +178,9 @@ global class skedActivityService extends skedEventService {
         if (query.includes(skedSObjectType.ACTIVITY_RESOURCE)) {
             skedQueryBuilder activityResourceBuilder = query.getQueryBuilder('sked__Activity_Resource__c');
             activityResourceBuilder.orderClause = 'ORDER BY sked__Resource__r.Name ASC';
+        }
+        if (query.includes(skedSObjectType.ACTIVITY_COLLECTION_OPERATION)) {
+            skedQueryBuilder activityColOpBuilder = query.getQueryBuilder('sked_Activity_Collection_Operation__c');
         }
 
         queryBuilder = query.getQueryBuilder('sked__Activity__c');

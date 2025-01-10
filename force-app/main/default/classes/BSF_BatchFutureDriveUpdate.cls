@@ -2,10 +2,6 @@
 * ***************************************************************************************************************************************************************************
 * @Description: As part of HRP-4878 this Batch has been created
 * @developer:   Apurba Bhattacharjee
-* Modification Log 
-* Date					     Developer Name			     Comments
-* ***************************************************************************
-* 10/28/2024				  Barnojit Sharma			 Template Order products not cascading to Opportunity Order. (Logic for HRP-13521)
 * ***************************************************************************************************************************************************************************
 **/
 global class BSF_BatchFutureDriveUpdate implements Database.Batchable<String>, Database.Stateful{

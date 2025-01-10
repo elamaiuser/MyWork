@@ -10,5 +10,10 @@
     <columns>Start_Date__c</columns>
     <columns>End_Date__c</columns>
     <filterScope>Everything</filterScope>
+    <filters>
+        <field>Assignment_Type__c</field>
+        <operation>equals</operation>
+        <value>Area Booking Manager</value>
+    </filters>
     <label>All</label>
 </ListView>

@@ -5,8 +5,8 @@
     <externalId>false</externalId>
     <label>Resource</label>
     <referenceTo>sked__Resource__c</referenceTo>
-    <relationshipLabel>Trade API Records To</relationshipLabel>
-    <relationshipName>sked_Trade_API_Data_To</relationshipName>
+    <relationshipLabel>Trade API Records</relationshipLabel>
+    <relationshipName>sked_Trade_API_Data</relationshipName>
     <required>false</required>
     <trackTrending>false</trackTrending>
     <type>Lookup</type>

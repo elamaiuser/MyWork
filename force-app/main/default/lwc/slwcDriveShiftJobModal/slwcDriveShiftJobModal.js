@@ -303,8 +303,8 @@ export default class SlwcDriveShiftJobModal extends LightningElement {
             this.resourceType = detail.resourceType;
             this.type = detail.type;
             this.driveShift = detail.driveShift;
-            this.drive = detail.drive;  
-            this.isVolunteerQuantityChanged = detail.isVolunteerQuantityChanged;
+            this.drive = detail.drive;
+            this.isVolunteerQuantityChanged = detail.isVolunteerQuantityChanged;  
             
             this.isPersonResource = this.resourceType == 'Person';
             this.isVolunteerResource = this.resourceType == 'Volunteer';

@@ -74,7 +74,7 @@
                 <field>Next_Scheduled_Drive_Updated__c</field>
             </layoutItems>
             <layoutItems>
-                <behavior>Edit</behavior>
+                <behavior>Readonly</behavior>
                 <field>Feeder_Account_Type__c</field>
             </layoutItems>
         </layoutColumns>
@@ -623,6 +623,7 @@
     </relatedLists>
     <relatedLists>
         <excludeButtons>MassChangeOwner</excludeButtons>
+        <excludeButtons>New</excludeButtons>
         <fields>Opportunity.NAME</fields>
         <fields>Notes__c</fields>
         <relatedList>Feeder_Account_Opportunity__c.Account__c</relatedList>

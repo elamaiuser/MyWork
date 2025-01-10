@@ -143,6 +143,14 @@ const DRIVE_FIELD_CHANGE_MAPPING = {
       { actions: [] }
     ]
   },
+  'aptQuantity': {
+    groups: [
+      { actions: [] },
+      { actions: [] },
+      { actions: ['calculateDriveShiftsMetadata', 'proposeDriveShifts', 'calculateDriveProductivityPlanned'] },
+      { actions: [] }
+    ]
+  },
   'recruitedBy': {
     groups: [
       { actions: [] },
@@ -975,11 +983,8 @@ class MobileGenerator extends BaseGenerator {
 
   calculateTotalProceduresProjected(record) {
     if (!record && !this.drive) return;
-    let isShift = true;
     if (!record) {
       record = this.drive;
-      isShift = false;
-      //if(this.processingDCRs) record.aptQuantity = this.drive.opportunity.aptQuantity;
     } else {
       this.drive.aptQuantity = record.APTSetup;
     }
@@ -987,37 +992,32 @@ class MobileGenerator extends BaseGenerator {
     let wbProjectedProcedures = record.wbProjectedProcedures || 0;
     record.totalProceduresProjected = x2rbcProjectedProcedures + wbProjectedProcedures;
     record.totalProductsProjected = x2rbcProjectedProcedures * 2 + wbProjectedProcedures;
-    if(isShift && !isEmpty(this.masterData.backupDrive?.driveShifts)) {
-      this.masterData.skipAPTCalculation = !!this.masterData.backupDrive?.driveShifts?.find(shift => shift.totalProceduresProjected === record.totalProceduresProjected);
-    }
-    if(!this.masterData.skipAPTCalculation) {
-      
-      this.recalculateAPTSettings(this.drive);
-    }
-    console.log('this.drive ',this.drive.aptQuantity);
-  }
 
-  recalculateAPTSettings(drive) {
-    if (!drive) return;
+    if(!this.masterData.skipAPTCalculation) {
+      this.recalculateAPTSettings();
+      this.drive.driveShiftsMetadata.APTSetup = this.drive.aptQuantity;
+    }
+  }
   
+  recalculateAPTSettings() {
+    if(!this.drive) return;
+
     let aptQuantity = 0;
-    const isEducationDrive = drive.account?.type === ACCOUNT_TYPE.EDUCATION;
-    const isMiddleOrElemenentaryIndustryCode = drive.account?.industryCode === ACCOUNT_INDUSTRY_CODE.MIDDLE_SCHOOL || drive.account?.industryCode === ACCOUNT_INDUSTRY_CODE.ELEMENTARY_SCHOOL;
+    const isEducationDrive = this.drive.account?.type === ACCOUNT_TYPE.EDUCATION;
+    const isMiddleOrElemenentaryIndustryCode = this.drive.account?.industryCode === ACCOUNT_INDUSTRY_CODE.MIDDLE_SCHOOL || this.drive.account?.industryCode === ACCOUNT_INDUSTRY_CODE.ELEMENTARY_SCHOOL;
     if(isEducationDrive) {
       if(!isMiddleOrElemenentaryIndustryCode) {
-        aptQuantity = Math.floor(drive.driveShiftsMetadata.totalProceduresProjected / 40);
+        aptQuantity = Math.floor(this.drive.driveShiftsMetadata.totalProceduresProjected / 40);
       }
     } else {
-      if(drive.driveShiftsMetadata.totalProceduresProjected >= 40) aptQuantity = 1;
+      if(this.drive.driveShiftsMetadata.totalProceduresProjected >= 40) aptQuantity = 1;
     }
-      drive.aptQuantity = aptQuantity;
-      drive.aptRequired = aptQuantity > 0 ? true : false;
-    
+    this.drive.aptQuantity = aptQuantity;
+    this.drive.aptRequired = aptQuantity > 0 ? true : false;
   }
 
   /** Drive Shifts metadata */
   calculateDriveShiftsMetadata() {
-    console.log('this.drive ',this.drive.aptQuantity);
     //reset values
     let driveShiftsMetadata = {
       projectedRegisteredDonors: this.drive.projectedRegisteredDonors || 0,
@@ -1028,9 +1028,7 @@ class MobileGenerator extends BaseGenerator {
       driveShifts: [],
       resourceRoleGroupRoleTimeDataMap: this.helper.calculateDriveRoleTimeData(this.drive, this.masterData)
     };
-    console.log('before asignment driveShiftsMetadata ',driveShiftsMetadata);
     this.drive.driveShiftsMetadata = driveShiftsMetadata;
-    console.log('this.drive.driveShiftsMetadata in calculateDriveShiftsMetadata',this.drive.driveShiftsMetadata);
 
     if (this.drive.driveDate && this.drive.startTime && this.drive.endTime) {
       const driveStart = this.helper.newDateTime(this.drive.driveDate, this.drive.startTime, this.masterData.timezoneSidId);
@@ -1084,8 +1082,10 @@ class MobileGenerator extends BaseGenerator {
     this.helper.splitScheduledDonors(this.drive, driveShiftsMetadata.driveShifts, this.masterData.timezoneSidId);
 
     this.calculateTotalProceduresProjected(driveShiftsMetadata);
+    this.drive.driveShiftsMetadata.APTSetup = this.drive.aptQuantity;
     driveShiftsMetadata.driveShifts.forEach(driveShift => {
       this.calculateTotalProceduresProjected(driveShift);
+      driveShift.APTSetup = this.drive.aptQuantity;
       driveShift.resourceRoleGroupRoleTimeDataMap = this.helper.calculateDriveShiftRoleTimeData(
         this.masterData,
         this.drive, 
@@ -1413,11 +1413,10 @@ class MobileGenerator extends BaseGenerator {
       const drawHours = this.helper.calculateDrawHours(driveShiftMetadata, this.masterData, driveShiftMetadata.lunchBreakSettings);
 
       let noOfVpHhStaffs = Math.ceil(totalVpHhCapacity / vpHhCapacity / drawHours);;
-     
       let resourceQuantityMap = this.mapResourceQuantity.get(driveShiftMetadata.key);
       resourceQuantityMap.set('VP/HH', {
         vphhQuantity: noOfVpHhStaffs,
-        aptQuantity: driveShiftMetadata.APTSetup
+        aptQuantity: driveShiftsMetadata.APTSetup
       });
     });
     
@@ -1558,11 +1557,9 @@ class MobileGenerator extends BaseGenerator {
 
   buildMultiDriveShifts() {
     let driveShiftsMetadata = this.drive.driveShiftsMetadata;
-    console.log('this.drive.driveShiftsMetadata in buildMultiDriveShifts ',this.drive.driveShiftsMetadata);
     let driveShifts = [];
 
     driveShiftsMetadata.driveShifts.forEach((driveShiftMetadata, index) => {
-      console.log('driveShiftMetadata in buildMultiDriveShifts ',driveShiftMetadata.APTSetup);
       const originalDriveShift = this.drive.driveShifts[index];
       let proposedDriveShift = {
         ...autoMapper.autoMapperInstance.initiateModel('sked_Drive_Shift__c'),
@@ -1577,11 +1574,9 @@ class MobileGenerator extends BaseGenerator {
         endTime: driveShiftMetadata.endTime,
         x2rbcProjectedProcedures: driveShiftMetadata.x2rbcProjectedProcedures,
         wbProjectedProcedures: driveShiftMetadata.wbProjectedProcedures,
-        donorsScheduled: driveShiftMetadata.donorsScheduled
+        donorsScheduled: driveShiftMetadata.donorsScheduled,
+        APTSetup: this.drive.driveShiftsMetadata.APTSetup
       };
-      console.log('proposedDriveShift ',proposedDriveShift.driveShiftMetadata.APTSetup);
-      proposedDriveShift.APTSetup = proposedDriveShift.driveShiftMetadata.APTSetup;
-      console.log('proposedDriveShift ',proposedDriveShift);
       this.populateDriveShiftTags(proposedDriveShift);
       this.populateDriveShiftJobs(proposedDriveShift, index);
       this.updateShiftMobileSetup(proposedDriveShift);
@@ -1652,9 +1647,7 @@ class MobileGenerator extends BaseGenerator {
   }
   
   populateDriveShiftJobs(driveShift, driveShiftIndex) {
-    console.log('driveShift ',driveShift);
     const driveShiftMetadata = driveShift.driveShiftMetadata;
-    console.log('driveShiftMetadata before jobtemplate ',driveShiftMetadata);
     let jobTagsMap = this.helper.calculateJobTagsMap(this.masterData);
     let jobTemplate = {
       driveSiteId: this.drive.driveSiteId,
@@ -1669,7 +1662,6 @@ class MobileGenerator extends BaseGenerator {
 
     let jobs = [];
     const mapResourceQuantity = this.mapResourceQuantity.get(driveShiftMetadata.key);
-    console.log('mapResourceQuantity before jobs processing ',mapResourceQuantity);
     Array.from(mapResourceQuantity.keys()).forEach((resourceRole) => {
       let job = (driveShift.jobs || []).find(driveShiftJob => driveShiftJob.resourceRole == resourceRole);
       if (!job) {
@@ -1681,7 +1673,6 @@ class MobileGenerator extends BaseGenerator {
 
       if (resourceRole === 'VP/HH') {
         let { vphhQuantity, aptQuantity, dualRole, systemQuantity, isManuallyCreated, manuallyCreatedFrom } = mapResourceQuantity.get(resourceRole);
-        console.log('aptQuantity ',aptQuantity);
         if (vphhQuantity > 0 || aptQuantity > 0) {
           job.dualRole = dualRole || '';
           job.vphhQuantity = vphhQuantity;
@@ -1760,7 +1751,6 @@ class MobileGenerator extends BaseGenerator {
       });
     });
     driveShift.jobs = jobs.concat(cloneDeep(manuallyCreatedJobs));
-    console.log(' driveShift.jobs ',driveShift.jobs);
   }
 
   /** Lunch break */
@@ -2115,8 +2105,7 @@ class MobileGenerator extends BaseGenerator {
   handleDriveShiftsMetadataChanged(driveShift = {}) {
     if (this.drive.driveShiftsMetadata) {
       this.calculateTotalProceduresProjected(this.drive.driveShiftsMetadata);
-      console.log('this.drive.driveShiftsMetadata before loop ',this.drive.driveShiftsMetadata);
-      this.drive.driveShiftsMetadata.APTSetup = this.drive.aptQuantity;
+      this.drive.driveShiftsMetadata.APTSetup = !isEmpty(driveShift) ? driveShift.APTSetup : this.drive.aptQuantity;
       this.drive.driveShiftsMetadata.driveShifts.forEach((driveShiftMetadata) => {
         this.calculateTotalProceduresProjected(driveShiftMetadata);
         driveShiftMetadata.APTSetup = !isEmpty(driveShift) ? driveShift.APTSetup : this.drive.aptQuantity;
@@ -2146,9 +2135,6 @@ class MobileGenerator extends BaseGenerator {
   }
 
   handleTotalVehicleRequestedChanged() {
-    console.log("13773 handleTotalVehicleRequestedChanged start");
-    console.log("13773 this.drive.projectedRegisteredDonors: " + this.drive.projectedRegisteredDonors);
-    console.log("13773 this.drive.totalVehicleRequestedChanged: " + this.drive.totalVehicleRequestedChanged);
     if (!this.drive.projectedRegisteredDonors || !this.drive.totalVehicleRequestedChanged) return;
 
     const { vehicles, lockedVehicles = [] } = this.drive.totalVehicleRequestedChanged;
@@ -2170,15 +2156,11 @@ class MobileGenerator extends BaseGenerator {
       if (!vehicleJob.jobAllocations) {
         vehicleJob.jobAllocations = [];
       }
-      console.log("13773 lockedVehicles: " + lockedVehicles);
-      console.log("13773 vehicleJob.jobAllocations: " + vehicleJob.jobAllocations);
       vehicleJob.jobAllocations.forEach((jobAllocation) => {
         const locked = !!lockedVehicles.find(lockedVehicle => {
           return lockedVehicle.id === jobAllocation.resourceId;
         });
         if(locked) return;
-
-        console.log("13773 locked: " + locked);
 
         let newVehicle = vehicles.find(vehicle => vehicle.id === jobAllocation.resourceId);
         if (!newVehicle) {

@@ -1,0 +1,22 @@
+<template>
+    <template lwc:if={isVisible}>
+        <lightning-accordion allow-multiple-sections-open active-section-name={activeSection}>
+            <lightning-accordion-section name="A" label="Highlights and Feedback">
+                <div class="slds-grid slds-gutters slds-p-horizontal_medium slds-p-top_medium">
+                    <div class="slds-col slds-size_1-of-2">
+                        <lightning-input type="text" name="input1" label="Highlights and Feedback" value={highlights} field-level-help="Was your Recruitment Plan successful? Document what went well and what could be improved"></lightning-input>
+                    </div>
+                    <div class="slds-col slds-size_1-of-2">
+                        <lightning-input type="text" name="input2" label="Customer Service Issues" value={serviceIssue}></lightning-input>
+                    </div>
+                    
+               </div>
+               <div class="slds-grid slds-gutters slds-p-horizontal_medium slds-p-top_medium">
+                <div class="slds-col slds-size_1-of-1">
+                    <lightning-button variant="brand" label="Update Highlights and Feedback" title="Update Highlights and Feedback" name="update" onclick={handleUpdate} class="slds-align_absolute-center"></lightning-button>
+                </div>
+               </div>
+            </lightning-accordion-section>
+        </lightning-accordion>
+    </template>
+</template>

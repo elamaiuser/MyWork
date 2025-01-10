@@ -1,0 +1,83 @@
+<template>
+    <template if:false={isLoaded}>
+        <lightning-spinner alternative-text="Loading" size="small"></lightning-spinner>
+    </template>
+    <template if:true={isLoaded}>
+        <template if:true={notARecruitmenttask}>
+            <c-bsf-no-data-found-cmp err_message={showMessage}></c-bsf-no-data-found-cmp>
+        </template>
+        <template if:false={notARecruitmenttask}>
+            <div class="slds-grid slds-wrap slds-gutters slds-m-around_x-small">
+                <div class="slds-col slds-large-size_1-of-2 slds-size_1-of-1">
+                    <p><strong>{section1.sectionHeader}</strong></p>                    
+                    <template for:each={section1.fields} for:item="field">
+                        <fieldset key={field.name} id={field.name} class="slds-form-element">
+                            <span key={field.name} class="slds-radio slds-m-around_xx-small">
+                                <div class="slds-grid slds-gutters slds-wrap">
+                                    <div class="slds-col slds-size_3-of-4 slds-truncate" title={field.label}>
+                                        <span>{field.label}</span>
+                                        <lightning-helptext content={field.tooltip}></lightning-helptext>
+                                    </div>
+                                    <div class="slds-col slds-size_1-of-4 slds-text-align_right">
+                                        <lightning-input type="checkbox" name={field.id}
+                                            checked={field.value} onchange={onCheckboxClick}>
+                                        </lightning-input>
+                                    </div>
+                                </div>
+                                <div class="slds-m-top_x-small">
+                                    <lightning-input type="text" name={field.id} onchange={onType} value={field.details} ></lightning-input>
+                                </div>
+                            </span>
+                        </fieldset>
+                    </template>
+                </div>
+                <div class="slds-col slds-large-size_1-of-2 slds-size_1-of-1">
+                    <p><strong>{section2.sectionHeader}</strong></p>                    
+                    <template for:each={section2.fields} for:item="field">
+                        <fieldset key={field.name} id={field.name} class="slds-form-element">
+                            <span key={field.name} class="slds-radio slds-m-around_xx-small">
+                                <div class="slds-grid slds-gutters slds-wrap">
+                                    <div class="slds-col slds-size_3-of-4 slds-truncate" title={field.label}>
+                                        <span>{field.label}</span>
+                                    </div>
+                                    <div class="slds-col slds-size_1-of-4 slds-text-align_right">
+                                        <lightning-input type="checkbox" name={field.id}
+                                            checked={field.value} onchange={onCheckboxClick}>
+                                        </lightning-input>
+                                    </div>
+                                </div>
+                                <div class="slds-grid slds-gutters slds-m-top_x-small">
+                                    <div class="slds-col slds-size_1-of-2">
+                                        <lightning-input type="text" name={field.id} onchange={onTypeDualBox} value={field.AA} label="AA"></lightning-input>
+                                    </div>
+                                    <div class="slds-col slds-size_1-of-2">
+                                        <lightning-input type="text" name={field.id} onchange={onTypeDualBox} value={field.latino} label="Latino"></lightning-input>
+                                    </div>
+                                </div>
+                            </span>
+                        </fieldset>
+                    </template>
+                </div>
+                <div class="slds-col slds-large-size_1-of-2 slds-size_1-of-1">
+                    <p><strong>{section3.sectionHeader}</strong></p>                    
+                    <template for:each={section3.fields} for:item="field">
+                        <fieldset key={field.name} id={field.name} class="slds-form-element">
+                            <span key={field.name} class="slds-radio slds-m-around_xx-small">
+                                <div class="slds-grid slds-gutters slds-wrap">
+                                    <div class="slds-col slds-size_3-of-4 slds-truncate" title={field.label}>
+                                        <lightning-formatted-url value={field.url} target="_blank" label={field.label}></lightning-formatted-url>
+                                    </div>
+                                    <div class="slds-col slds-size_1-of-4 slds-text-align_right">
+                                        <lightning-input type="checkbox" name={field.id}
+                                            checked={field.value} onchange={onCheckboxClick}>
+                                        </lightning-input>
+                                    </div>
+                                </div>                                
+                            </span>
+                        </fieldset>
+                    </template>
+                </div>
+            </div>            
+        </template>
+    </template>   
+</template>

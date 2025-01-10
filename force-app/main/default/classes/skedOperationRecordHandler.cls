@@ -36,6 +36,7 @@ public class skedOperationRecordHandler extends skedTriggerHub implements Callab
                 }
             }
         } catch (skedException ex) {
+            system.debug('exception '+ex);
             result.addError(ex);
         }
 
@@ -99,7 +100,7 @@ public class skedOperationRecordHandler extends skedTriggerHub implements Callab
         }
     }
 
-    private void captureCallOuts(Set<Id> operationRecordIds) {
+    public static void captureCallOuts(Set<Id> operationRecordIds) {
         if (operationRecordIds != NULL && !operationRecordIds.isEmpty()) {
             List<sked_Operation_Record_Staff__c> opRecordStaffs = [
                 SELECT Id, sked_Resource__c, sked_Timezone__c, 
@@ -250,7 +251,6 @@ public class skedOperationRecordHandler extends skedTriggerHub implements Callab
                 workdayApiData.add(requestingStaffData);
             }
         }
-
         insert workdayApiData;
     }
 

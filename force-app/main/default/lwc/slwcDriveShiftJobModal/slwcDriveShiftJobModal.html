@@ -122,11 +122,11 @@
                             <lightning-input name="sponsorVolunteerQuantity" label="Sponsor Volunteer Quantity" type="number" value={job.sponsorVolunteerQuantity} onchange={handleOnChange} readonly={job.isLocked} autocomplete="off"></lightning-input>
                         </div>
                         <template if:true={isFixedSiteDrive}>
-                                <div class="slds-col slds-size_1-of-1 slds-p-horizontal_small">
+                            <div class="slds-col slds-size_1-of-1 slds-m-bottom--small">
                                 <c-slwc-picklist
                                     required={isVolunteerQuantityChanged}
                                     name="volunteerAdjustmentReason"
-                                    label="Volunteer Adjustment Reasons"
+                                    label="Volunteer Adjustment Reason"
                                     unique-key={job.volunteerAdjustmentReason} 
                                     object-api-name="sked__Job__c" 
                                     selected-value={job.volunteerAdjustmentReason}  
@@ -134,9 +134,7 @@
                                     onpicklistchange={handleOnChange}
                                     dropdown-alignment="auto">
                                 </c-slwc-picklist>
-                                </div>
-                                
-                           
+                            </div>
                             <div if:true={isOtherVolunteerAdjustmentReasonSelected} class="slds-col slds-size_1-of-1 slds-m-bottom--small">
                                 <lightning-input name="otherVolunteerAdjustmentReason" label="Other Reason" type="text" value={job.otherVolunteerAdjustmentReason} onchange={handleOnChange} autocomplete="off" required={isOtherVolunteerAdjustmentReasonNeeded}></lightning-input>
                             </div>

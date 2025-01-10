@@ -12,23 +12,13 @@
     <filterScope>Everything</filterScope>
     <filters>
         <field>sked_Staffing_Budget_Date__c</field>
-        <operation>greaterOrEqual</operation>
-        <value>3/7/2022</value>
-    </filters>
-    <filters>
-        <field>sked_Staffing_Budget_Date__c</field>
-        <operation>lessOrEqual</operation>
-        <value>3/11/2022</value>
-    </filters>
-    <filters>
-        <field>sked_Roles__c</field>
         <operation>equals</operation>
-        <value>Team Supervisor</value>
+        <value>11/5/2024</value>
     </filters>
     <filters>
-        <field>sked_Biomed_Collection_Op_Center__c</field>
+        <field>sked_Request_Type__c</field>
         <operation>equals</operation>
-        <value>Cleveland OH Metro</value>
+        <value>Bidding Period</value>
     </filters>
     <label>All</label>
 </ListView>

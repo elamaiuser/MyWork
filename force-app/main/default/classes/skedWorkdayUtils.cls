@@ -93,7 +93,7 @@ public class skedWorkdayUtils implements Callable {
                 result.noOfAvailableHours = 0;
                 result.hasEnoughHours = false;
                 if (availableHoursResponse.timeOffPlansByLabel.containsKey(timeOffType)) {
-                    Decimal totalBalance = availableHoursResponse.timeOffPlansByLabel.get(timeOffType).balance;
+                    Decimal totalBalance = availableHoursResponse.timeOffPlansByLabel.get(timeOffType).balance + getApprovedTimeOffHours(res, availDate, timeOffType);
                     result.hasEnoughHours = totalBalance >= result.noOfRequestedHours;
                     result.noOfAvailableHours = totalBalance;
                 }
@@ -384,6 +384,21 @@ public class skedWorkdayUtils implements Callable {
             record.sked_Time_Off_Plan__c : record.sked__Type__c;
     }
 
+    public static Decimal getApprovedTimeOffHours(sked__Resource__c resource, Date availDate, String timeOffType) {
+        Decimal approvedTimeOff = 0;
+        sked__Availability__c[] approvedAvailability = [SELECT Id, sked__Start__c, sked__Finish__c, sked_Is_All_Day__c 
+                                                      FROM sked__Availability__c
+                                                      WHERE sked__Resource__c = :resource.Id
+                                                      AND sked_Start_Date__c = :availDate
+                                                      AND sked__Type__c = :timeOffType
+                                                      AND sked_Custom_Status__c = :skedConstants.AVAILABILITY_STATUS_APPROVED
+                                                      LIMIT 1];
+        if (approvedAvailability.size() > 0) {
+            approvedTimeOff = getWorkdayPtoHours(approvedAvailability[0], resource);
+        }
+        return approvedTimeOff;
+    }
+
     public static sked__Debug_Log__c getDebugLogFromResponse(String operation, sked__Availability__c availabilityRecord, skedWorkdayApiResponse result) {
         sked__Debug_Log__c debugLog = new sked__Debug_Log__c();
         debugLog.sked__Type__c = skedConstants.DEBUG_LOG_TYPE_WORKDAY_API;
@@ -392,12 +407,22 @@ public class skedWorkdayUtils implements Callable {
         debugLog.sked_Response__c = result.response;
         debugLog.sked__Message__c = result.message;
         debugLog.sked_Resource__c = availabilityRecord.sked__Resource__c;
+        debugLog.sked_Status_Code__c = result.statusCode;
 
         if (!result.isSuccess) {
-            debugLog.sked_Category__c = result.statusCode == 500 ? skedConstants.DEBUG_LOG_CATEGORY_VALIDATION_ERROR : skedConstants.DEBUG_LOG_CATEGORY_SYSTEM_ERROR;
+            debugLog.sked_Category__c = getErrorCategory(result.statusCode);
         }
         
         return debugLog;
+    }
+
+    public static String getErrorCategory(Integer statusCode) {
+        if (statusCode >= 500 && statusCode <= 599) {
+            return skedConstants.DEBUG_LOG_CATEGORY_VALIDATION_ERROR;
+        } else if (statusCode >= 400 && statusCode <= 499) {
+            return skedConstants.DEBUG_LOG_CATEGORY_SYSTEM_ERROR;
+        }
+        return null;
     }
 
     public class workdayAdjustmentsContainer {

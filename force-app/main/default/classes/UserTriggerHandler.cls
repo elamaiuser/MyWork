@@ -13,12 +13,19 @@ public with sharing class UserTriggerHandler extends TriggerHandler{
         checkRecursive.firstCallForRecordCreation = TRUE; //HRP-13882
         if(super.getTriggerMethodsToBypass().indexOf('formatMobilePhone') == -1) {
             userService.formatMobilePhone((List<User>) Trigger.new);
-        } 
+            System.debug('Number of Queries used in this apex code so far: ' + Limits.getQueries());
+        } else {
+            System.debug('UserTriggerHandler.beforeInsert() - UserTriggerHandler.beforeInsert() Bypassed');
+        }
+
     }
     
     public override void beforeUpdate() {
         if(super.getTriggerMethodsToBypass().indexOf('formatMobilePhone') == -1) {
             userService.formatMobilePhone((List<User>) Trigger.new);
+            System.debug('Number of Queries used in this apex code so far: ' + Limits.getQueries());
+        } else {
+            System.debug('UserTriggerHandler.beforeUpadte() - userService.formatMobilePhone Bypassed');
         }
     }
     
@@ -26,6 +33,9 @@ public with sharing class UserTriggerHandler extends TriggerHandler{
         if(!checkRecursive.firstcall) {
             if(super.getTriggerMethodsToBypass().indexOf('PublishEventForAssigningResourcesToUsers') == -1) {
                 userService.PublishEventForAssigningResourcesToUsers((List<User>) Trigger.new);
+            }
+            else {
+                System.debug('UserTriggerHandler.afterUpdate() - userService.PublishEventForAssigningResourcesToUsers() Bypassed');
             }
 
             //HRP-9815 --> Starts Here

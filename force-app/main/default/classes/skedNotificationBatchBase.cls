@@ -70,7 +70,7 @@ global virtual class skedNotificationBatchBase {
     public static contentRendererBase getContentRendererInstance(string contentRenderer) {
         string className = 'skedNotificationBatchBase.' + contentRenderer;
         Type contentRendererType = Type.forName(className);
-        return (contentRendererBase)contentRendererType.newInstance();
+        return contentRendererType != NULL ? (contentRendererBase)contentRendererType.newInstance() : new contentRendererBase();
     }
     
     protected virtual void baseInitialize() {

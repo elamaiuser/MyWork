@@ -122,6 +122,7 @@ public abstract class skedDataService {
     }
     
     public paginationQueryModel doPaginationQuery(queryModelBase query) {
+        
         paginationQueryModel result = new paginationQueryModel();
         
         skedQueryBuilder queryBuilder = query.getQueryBuilder(this.sObjectApiName);
@@ -153,7 +154,7 @@ public abstract class skedDataService {
                 countQueryBuilder.conditions.add(finalSearchCondition);
             }
         }
-        
+        //system.debug('query in skedDataService '+query);
         result.totalRecords = Database.countQuery(countQueryBuilder.toString());
         
         queryBuilder.limitRecords = query.pageSize;
@@ -350,6 +351,7 @@ public abstract class skedDataService {
 
     /*********************************************************** Private ***********************************************************/
     private void addRelatedObjectFields(skedQueryBuilder queryBuilder, string sObjectName, string relatedFieldAnchor) {
+        system.debug('sObjectName in skedDataService '+sObjectName);
         skedMappingConfigContainer.mappingConfigModel relatedObjConfig = skedMappingConfigContainer.instance.getMappingConfig(sObjectName);
         for (skedMappingConfigContainer.fieldConfigModel relatedObjFieldConfig : relatedObjConfig.fieldConfigs) {
             if (relatedObjFieldConfig.mappingType != 'value' && relatedObjFieldConfig.mappingType != 'relatedList' && relatedObjFieldConfig.mappingType != 'related') {

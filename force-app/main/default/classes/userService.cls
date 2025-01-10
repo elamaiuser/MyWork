@@ -57,7 +57,6 @@ public class userService implements Callable {
         Map<Id, Boolean> map_userId_skipRoleAssignment = userObject != NULL && userObject.containsKey('skipUserRoleAssignment') 
                                                         ? (Map<Id, Boolean>) userObject.get('skipUserRoleAssignment') 
                                                         : new Map<Id, Boolean>();
-        system.debug('map_userId_skipRoleAssignment '+map_userId_skipRoleAssignment);
 
         system.debug('### Inside assign resources to user...start assigning ' + userIds.size());
         

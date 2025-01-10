@@ -1,10 +1,3 @@
-//@ts-check
-
-/**
- * @description computes the classes for the tooltip text
- * @param {"top-right"|"top-left"} align
- * @returns {string}
- */
 export function tooltipTextClasses(align = "top-right") {
     const BASE_CLASSES = ["tooltip", "slds-popover", "slds-popover_tooltip"];
   
@@ -24,11 +17,6 @@ export function tooltipTextClasses(align = "top-right") {
     return BASE_CLASSES.join(" ");
   }
   
-  /**
-   * @description computes the styles for the tooltip text
-   * @param {string} content
-   * @returns {string}
-   */
   export function tooltipTextStyles(content) {
     if (typeof content === "string" && content?.length < 60) {
       return `min-width: ${content.length + 1}ch`;

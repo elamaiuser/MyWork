@@ -12,6 +12,7 @@ public class OrderItemTriggerHandler extends TriggerHandler{
     }
     
     public override void beforeInsert(){
+        system.debug('SOQL'+Limits.getQueries());
         OrderItemTriggerService.validateProductMaterialRecipient((List<OrderItem>)Trigger.old, (List<OrderItem>)Trigger.new,(Map<Id,OrderItem>)trigger.oldMap, (Map<Id,OrderItem>)Trigger.newMap);
         OrderItemTriggerService.calculateBudgetforProductsProjected((List<OrderItem>)Trigger.old, (List<OrderItem>)Trigger.new,(Map<Id,OrderItem>)trigger.oldMap, (Map<Id,OrderItem>)Trigger.newMap);
         OrderItemTriggerService.checkZipCodeOnOppToAddProduct((List<OrderItem>)Trigger.New);   
@@ -31,6 +32,7 @@ public class OrderItemTriggerHandler extends TriggerHandler{
         // HRP-12664 Start -->
         if(super.getTriggerMethodsToBypass().indexOf('validateProductEndDate') == -1)
         {
+            system.debug('SOQL'+Limits.getQueries());
             System.debug('OrderItemTriggerService.beforeInsert() - OrderItemTriggerService.validateProductEndDate() Executing...');
             OrderItemTriggerService.validateProductEndDate((List<OrderItem>)Trigger.New);            
         }

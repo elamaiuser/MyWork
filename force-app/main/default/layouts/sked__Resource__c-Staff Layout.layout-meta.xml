@@ -4,6 +4,7 @@
     <excludeButtons>ChangeRecordType</excludeButtons>
     <excludeButtons>Clone</excludeButtons>
     <excludeButtons>Delete</excludeButtons>
+    <excludeButtons>IsotopeSubscription</excludeButtons>
     <excludeButtons>PrintableView</excludeButtons>
     <excludeButtons>RecordShareHierarchy</excludeButtons>
     <excludeButtons>Share</excludeButtons>
@@ -92,10 +93,6 @@
                 <behavior>Edit</behavior>
                 <field>sked_Dedicated_to_Site__c</field>
             </layoutItems>
-            <layoutItems>
-                <behavior>Edit</behavior>
-                <field>sked_Drive_Type__c</field>
-            </layoutItems>
         </layoutColumns>
         <style>TwoColumnsTopToBottom</style>
     </layoutSections>
@@ -110,7 +107,7 @@
                 <field>sked_MigrationID__c</field>
             </layoutItems>
         </layoutColumns>
-        <layoutColumns />
+        <layoutColumns/>
         <style>TwoColumnsTopToBottom</style>
     </layoutSections>
     <layoutSections>
@@ -129,10 +126,6 @@
             </layoutItems>
             <layoutItems>
                 <behavior>Edit</behavior>
-                <field>sked_Maximum_Travel_Radius__c</field>
-            </layoutItems>
-            <layoutItems>
-                <behavior>Edit</behavior>
                 <field>sked_Max_Consecutive_Days_per_week__c</field>
             </layoutItems>
             <layoutItems>
@@ -142,6 +135,10 @@
             <layoutItems>
                 <behavior>Edit</behavior>
                 <field>sked_Average_Travel_Time_Per_Drive__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>sked_Daily_Time_Off_Hours__c</field>
             </layoutItems>
         </layoutColumns>
         <layoutColumns>
@@ -168,10 +165,6 @@
             <layoutItems>
                 <behavior>Edit</behavior>
                 <field>sked_Max_Working_Days_Per_Week__c</field>
-            </layoutItems>
-            <layoutItems>
-                <behavior>Edit</behavior>
-                <field>sked_Daily_Time_Off_Hours__c</field>
             </layoutItems>
         </layoutColumns>
         <style>TwoColumnsLeftToRight</style>
@@ -239,10 +232,6 @@
             <layoutItems>
                 <behavior>Readonly</behavior>
                 <field>sked_Supervisor_Name__c</field>
-            </layoutItems>
-            <layoutItems>
-                <behavior>Edit</behavior>
-                <field>sked_Supervisor__c</field>
             </layoutItems>
         </layoutColumns>
         <layoutColumns>
@@ -522,9 +511,9 @@
         <detailHeading>false</detailHeading>
         <editHeading>true</editHeading>
         <label>Custom Links</label>
-        <layoutColumns />
-        <layoutColumns />
-        <layoutColumns />
+        <layoutColumns/>
+        <layoutColumns/>
+        <layoutColumns/>
         <style>CustomLinks</style>
     </layoutSections>
     <platformActionList>

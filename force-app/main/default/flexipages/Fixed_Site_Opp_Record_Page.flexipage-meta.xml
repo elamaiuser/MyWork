@@ -58,6 +58,9 @@
                         <valueListItems>
                             <value>Opportunity.sked_Generate_Drive</value>
                         </valueListItems>
+                        <valueListItems>
+                            <value>Opportunity.Mass_Drive_Service_Role_Add</value>
+                        </valueListItems>
                     </valueList>
                 </componentInstanceProperties>
                 <componentInstanceProperties>

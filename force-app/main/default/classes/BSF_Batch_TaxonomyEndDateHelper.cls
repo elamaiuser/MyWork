@@ -1,3 +1,10 @@
+/* 
+* Modification Log 
+* Date					     Developer Name			     Comments
+* *******************************************************************************************************************************************************************************************************
+* 11/26/2024                  Balaji N                   Logic for HRP-13866 Method:getexternalKeyTaxonomyMap System.Label.NO_SBPM_ABM in place of hard coded value
+*********************************************************************************************************************************************************************************************************
+*/
 public class BSF_Batch_TaxonomyEndDateHelper 
 {
     public static void endDateTaxonomy(list<taxonomy__c> newVerTax,list<taxonomy__c> oldVerTax)
@@ -82,8 +89,8 @@ public class BSF_Batch_TaxonomyEndDateHelper
             }
         }
         
-        List<sked_Territory__c> skedTerrList = [select id,Start_Date__c, End_Date__c,External_Id__c,External_Id_BackEnd__c from sked_Territory__c where External_Id_BackEnd__c IN :externalKeySet order by createdDate desc];
-        //system.debug('skedTerrList'+skedTerrList);
+        List<sked_Territory__c> skedTerrList = [select id,Start_Date__c, End_Date__c,External_Id__c,External_Id_BackEnd__c from sked_Territory__c where External_Id_BackEnd__c IN :externalKeySet  order by createdDate desc];
+        system.debug('skedTerrList'+skedTerrList);
         if(!skedTerrList.isEmpty())
         {
             map<string,sked_Territory__c> terrIdTerrMap = new map<string,sked_Territory__c>();
@@ -105,11 +112,11 @@ public class BSF_Batch_TaxonomyEndDateHelper
                 tx = taxIdExternalKeysMap.get(exKey);
                 if(!externalKeySetNew.contains(exKey))
                 {
-                    //system.debug('exKey '+exKey);
+                    system.debug('exKey '+exKey);
                     sked_Territory__c terr = new sked_Territory__c ();
                     terr = terrIdTerrMap.get(exKey);
                     
-                    if( terr != null && tx.End_Date__c != terr.End_Date__c && terr.Start_Date__c < tx.End_Date__c)
+                    if( terr != null && tx.End_Date__c != terr.End_Date__c && tx.Start_Date__c < tx.End_Date__c)
                     {
                         terr.End_Date__c = tx.End_Date__c;
                         BSF_Error_Log__c log1 = BSF_Utilities.getErrorLog('Create Portfolio', 'endaate', 'endate helper', 'Debug Log','No Error - Platform Event log', 'BSFId: '+ string.valueof(terr.id)+'_'+terr.End_Date__c+' '+ 'TX id: '+ string.valueof(tx.id)+'_'+tx.End_Date__c);
@@ -120,7 +127,7 @@ public class BSF_Batch_TaxonomyEndDateHelper
                 }
             }
             
-            
+            system.debug('terrToUpdateMap.values() '+terrToUpdateMap.values());
             List<BSF_Error_Log__c> successList= BSF_Utilities.platformSuccessLog(terrIdSet,'Create Oppty Team','createOpptyTeamMembersBasedOnOppties','EndDateBatch','Success','territoriesd updated are');
             if(!successList.isEmpty())
              {
@@ -136,7 +143,7 @@ public class BSF_Batch_TaxonomyEndDateHelper
             {
                 
                 Database.saveResult [] results = database.update(terrToUpdateMap.values(),false);
-                List<BSF_Error_Log__c> logList1 = BSF_Utilities.createErrorLog(results, 'Populate Account Team','endDateTaxonomy','Endate_Territory','Error','Error in Endate_Territory');
+                List<BSF_Error_Log__c> logList1 = BSF_Utilities.createErrorLog(results, 'Taxo Processing','endDateTaxonomy','Endate_Territory','Error','Error in Endate_Territory');
                 InsertBsfErrorLog.insertBsfErrors(logList1);
 				
             }
@@ -155,7 +162,7 @@ public class BSF_Batch_TaxonomyEndDateHelper
             if(recordtypename == BSF_Constants.BIO_RECRUITMENT_RECORD_TYPE || recordtypename == BSF_Constants.TAXO_ACCOUNT_RECORD_TYPE)
             {
                 
-                if(tx.ABM_Name__c != null && tx.ABM_Name__c != 'NA' && !tx.ABM_Name__c.containsIgnoreCase('No ABM'))
+                if(tx.ABM_Name__c != null && tx.ABM_Name__c != 'NA' && !tx.ABM_Name__c.containsIgnoreCase(System.Label.NO_SBPM_ABM))//HRP-13866 System.Label.NO_SBPM_ABM in place of hard coded value
                 {
                     externalKeyfinder(recordtypename,taxIdExternalKeysMap,tx,new List<string>{'_'+tx.Division_Code__c,'_'+tx.DS_Region_Code__c,'_'+tx.Team_Code__c,'_'+tx.ABM_Code__c,'_'+tx.DRD_Territory_Code__c});
                 }

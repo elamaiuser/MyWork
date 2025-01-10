@@ -274,8 +274,8 @@
         <searchResultsAdditionalFields>ACCOUNT.ADDRESS1_CITY</searchResultsAdditionalFields>
         <searchResultsAdditionalFields>ACCOUNT.ADDRESS1_STATE_CODE</searchResultsAdditionalFields>
         <searchResultsAdditionalFields>ACCOUNT.ADDRESS1_ZIP</searchResultsAdditionalFields>
-        <searchResultsAdditionalFields>Next_Scheduled_Drive_Updated__c</searchResultsAdditionalFields>
         <searchResultsAdditionalFields>ACCOUNT.RECORDTYPE</searchResultsAdditionalFields>
+        <searchResultsAdditionalFields>Next_Scheduled_Drive_Updated__c</searchResultsAdditionalFields>
         <searchResultsAdditionalFields>UFID__c</searchResultsAdditionalFields>
         <searchResultsCustomButtons>Mass_Asign_Account_Based_Portfolio</searchResultsCustomButtons>
         <searchResultsCustomButtons>Assign_User</searchResultsCustomButtons>

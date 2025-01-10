@@ -168,6 +168,8 @@ global class skedModels {
         public decimal activityResourceCount;
         public string activityTitle;
         public address address;
+        public string arcRegionId;
+        public territory arcRegion;
         public string biomedCollectionOpId;
         public string districtId;
         public string driveId;
@@ -189,18 +191,20 @@ global class skedModels {
         public string subtype;
         public string timezoneSidId;
         public string timezone;
-        public List<string> driveTypes;
         public List<String> biomedCollectionOpIds;
-        public List<activityResource> activityResources;
-        public List<activityCollectionOp> activityCollectionOperations;
+        public List<string> driveTypes;
+        public List<string> districtIds;
+        public List<activityCollectionOperation> activityCollectionOperations;
+        public List<activityResource> activityResources;  
     }
 
-    global virtual class activityCollectionOp extends event {
+    global virtual class activityCollectionOperation extends event {
         public string activityId;
-        public activity activity;
-        public biomedCollectionOp biomedCollectionOp;
         public string biomedCollectionOpId;
         public string districtId;
+        public string territoryKey;
+        public activity activity;
+        public biomedCollectionOp biomedCollectionOp;
     }
     
     global virtual class activityResource extends event {

@@ -151,7 +151,6 @@ public without sharing class BSFTaskChecklistTriggerHandler extends TriggerHandl
                 if(((String)task.WhatId).startsWith(oppPrefix)){
                     for(BSF_Task_Checklist__c checklist : taskvsChecklistMap.get(task.Id)){
                         String fieldName = metadataMap.get(BSF_Constants.POST_DRIVE_ANALYSIS_TASK).get(checklist.Unique_Name__c).Input_API_Name__c;
-                        system.debug('oldMap.get(checklist.Id).get(fieldName) '+oldMap.get(checklist.Id).get(fieldName)+' and checklist.get(fieldName) '+checklist.get(fieldName));
                         if(oldMap.get(checklist.Id).get(fieldName) != checklist.get(fieldName)){
                             checklistsToProcess.add(checklist);
                             taskVsOppMap.put(task.Id,task.WhatId);

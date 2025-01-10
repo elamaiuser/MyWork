@@ -112,7 +112,7 @@ public class skedWorkdayApiManager {
             result.response = res.getBody();
             result.statusCode = res.getStatusCode();
 
-            if (res.getStatusCode() != 200) {
+            if (res.getStatusCode() < 200 || res.getStatusCode() >= 300) {
                 Dom.XmlNode bodyNode = rootNode.getChildElement('Body', 'http://schemas.xmlsoap.org/soap/envelope/');
                 Dom.XmlNode faultNode = bodyNode.getChildElement('Fault', 'http://schemas.xmlsoap.org/soap/envelope/');
                 Dom.XmlNode faultStringNode = faultNode.getChildElement('faultstring', null);
@@ -172,7 +172,7 @@ public class skedWorkdayApiManager {
             result.response = res.getBody();
             result.statusCode = res.getStatusCode();
 
-            if (res.getStatusCode() != 200) {
+            if (res.getStatusCode() < 200 || res.getStatusCode() >= 300) {
                 Dom.XmlNode bodyNode = rootNode.getChildElement('Body', 'http://schemas.xmlsoap.org/soap/envelope/');
                 Dom.XmlNode faultNode = bodyNode.getChildElement('Fault', 'http://schemas.xmlsoap.org/soap/envelope/');
                 Dom.XmlNode faultStringNode = faultNode.getChildElement('faultstring', null);
@@ -185,6 +185,50 @@ public class skedWorkdayApiManager {
             result.message = exc.getMessage();
 		}
 
+        return result;
+    }
+
+    public static skedWorkdayGetTimeOffReportResponse getTimeOffReport(skedWorkdayGetTimeOffReportRequest timeOffReportRequest) {
+        sked_Workday_XML_Template__mdt xml = [
+            SELECT Id, sked_Endpoint__c, sked_Namespace__c
+            FROM sked_Workday_XML_Template__mdt
+            WHERE DeveloperName = 'Get_Time_Off_Report'
+        ];
+
+        String endpoint = xml.sked_Endpoint__c.replace('%EMPLOYEE_ID%', timeOffReportRequest.employeeId);
+        endpoint = endpoint.replace('%START_DATE%', String.valueOf(timeOffReportRequest.startDate));
+        endpoint = endpoint.replace('%END_DATE%', String.valueOf(timeOffReportRequest.endDate));
+
+        HttpRequest req = getHttpRequest(endpoint, HTTP_METHOD_GET);
+        System.debug(req);
+        System.debug(req.getEndpoint());
+        skedWorkdayGetTimeOffReportResponse result = new skedWorkdayGetTimeOffReportResponse(req.getEndpoint());
+        try {
+            Http h = new Http();
+            HttpResponse res = h.send(req);
+            String response = res.getBody();
+            result.response = response;
+            result.statusCode = res.getStatusCode();
+            System.debug('RESPONSE :: ' + response);
+        } catch (Exception exc) {
+            System.debug('EXCEPTION :: ' + exc);
+        }
+
+        if (skedSetting.instance.admin.enableWorkdayLogging) {
+            sked__Debug_Log__c debugLog = new sked__Debug_Log__c();
+            debugLog.sked__Type__c = skedConstants.DEBUG_LOG_TYPE_WORKDAY_API;
+            debugLog.sked__Summary__c = 'Get Time Off Report';
+            debugLog.sked__Message__c = result.toString();
+            debugLog.sked_Request__c = req.getEndpoint();
+            debugLog.sked_Response__c = result.response;
+            debugLog.sked_Resource__c = timeOffReportRequest.resourceId;
+            debugLog.sked_Status_Code__c = result.statusCode;
+            // if (logCategory != null) {
+            //     debugLog.sked_Category__c = logCategory;
+            // }
+
+            insert debugLog;
+        }
         return result;
     }
 
@@ -207,9 +251,10 @@ public class skedWorkdayApiManager {
             string response = res.getBody();
             integer statusCode = res.getStatusCode();
             result.response = response;
+            result.statusCode = statusCode;
     
-            if (statusCode == 200) {
-                DOM.Document docx = new DOM.Document();
+            if (res.getStatusCode() >= 200 && res.getStatusCode() <= 299) {
+                /*DOM.Document docx = new DOM.Document();
                 docx.load(response);
                 skedXMLUtils utils = new skedXMLUtils(xml.sked_Namespace__c);
                 Dom.XmlNode xreportData = docx.getRootElement();
@@ -250,6 +295,18 @@ public class skedWorkdayApiManager {
                             }
                         }
                     }
+                }*/
+                
+                XmlStreamReader reader = new XmlStreamReader(response);
+                while(reader.hasNext()) {
+                    if (reader.getEventType() == XmlTag.START_ELEMENT) {
+                        if (reader.getLocalName() == 'Eligible_Time_Off_Plans_for_Worker_group') {
+                            parseTimeOffPlan(reader, result);
+                        } else if (reader.getLocalName() == 'All_Eligible_Time_Offs_for_Worker_group') {
+                            parseTimeOffReasons(reader, result);
+                        }
+                    }
+                    reader.next();
                 }
 
                 // If they don't have a sick plan - add a clone of PTO to their sick bank.
@@ -261,7 +318,7 @@ public class skedWorkdayApiManager {
                     result.timeOffPlansByLabel.put(skedConstants.UNAVAILABILITY_TYPE_SICK, sickPlan);
                 }
             } else {
-                logCategory = statusCode >= 500 ? skedConstants.DEBUG_LOG_CATEGORY_SYSTEM_ERROR : skedConstants.DEBUG_LOG_CATEGORY_VALIDATION_ERROR;
+                logCategory = skedWorkdayUtils.getErrorCategory(result.statusCode);
                 result.isSuccess = false;
                 result.message = res.getBody();
             }
@@ -279,11 +336,13 @@ public class skedWorkdayApiManager {
             debugLog.sked_Request__c = req.getEndpoint();
             debugLog.sked_Response__c = result.response;
             debugLog.sked_Resource__c = ptoPlanBalanceRequest.resourceId;
+            debugLog.sked_Status_Code__c = result.statusCode;
             if (logCategory != null) {
                 debugLog.sked_Category__c = logCategory;
             }
 
             insert debugLog;
+            System.debug(':::TPE::: DebugLog Id: ' + debugLog.Id);
         }
 
         return result;
@@ -330,7 +389,7 @@ public class skedWorkdayApiManager {
             result.response = res.getBody();
             result.statusCode = res.getStatusCode();
 
-            if (res.getStatusCode() != 200) {
+            if (res.getStatusCode() < 200 || res.getStatusCode() >= 300) {
                 Dom.XmlNode bodyNode = rootNode.getChildElement('Body', 'http://schemas.xmlsoap.org/soap/envelope/');
                 Dom.XmlNode faultNode = bodyNode.getChildElement('Fault', 'http://schemas.xmlsoap.org/soap/envelope/');
                 Dom.XmlNode faultString = faultNode.getChildElement('faultstring', null);
@@ -386,5 +445,90 @@ public class skedWorkdayApiManager {
         }
 
         return workdayMessage;
+    }   
+    
+    private static void parseTimeOffPlan(XmlStreamReader reader, skedWorkdayGetPlanBalanceResponse result) {
+        String planLabel;
+        Decimal planBalance;
+        
+        while(reader.hasNext()) {
+            if (reader.getEventType() == XmlTag.START_ELEMENT) {
+                if (reader.getLocalName() == 'time_off_plan') {
+                    planLabel = getPlanLabel(reader.getAttributeValue(null, 'Descriptor'));
+                } else if (reader.getLocalName() == 'balance') {
+                    reader.next();
+                    if (reader.getEventType() == XmlTag.CHARACTERS) {
+                        planBalance = Decimal.valueOf(reader.getText());
+                    }
+                }
+            } else if (reader.getEventType() == XmlTag.END_ELEMENT && 
+                       reader.getLocalName() == 'Eligible_Time_Off_Plans_for_Worker_group') {
+                           break;
+                       }
+            reader.next();
+        }
+        
+        if (result.timeOffPlansByLabel.containsKey(planLabel)) {
+            result.timeOffPlansByLabel.put(planLabel, new skedWorkdayGetPlanBalanceResponse.timeOffPlan(planLabel, planBalance));
+        }
+    }
+
+    private static void parseTimeOffReasons(XmlStreamReader reader, skedWorkdayGetPlanBalanceResponse result) {
+        String planName;
+        
+        while(reader.hasNext()) {
+            if (reader.getEventType() == XmlTag.START_ELEMENT) {
+                if (reader.getLocalName() == 'plan') {
+                    planName = getPlanLabel(reader.getAttributeValue(null, 'Descriptor'));
+                    if (result.timeOffPlansByLabel.containsKey(planName) && result.timeOffPlansByLabel.get(planName) != null) {
+                        parseTimeOffReasonsForPlan(reader, result, planName);
+                    }
+                }
+            } else if (reader.getEventType() == XmlTag.END_ELEMENT && 
+                       reader.getLocalName() == 'All_Eligible_Time_Offs_for_Worker_group') {
+                           break;
+                       }
+            reader.next();
+        }
+    }
+
+    private static void parseTimeOffReasonsForPlan(XmlStreamReader reader, skedWorkdayGetPlanBalanceResponse result, String planName) {
+        while(reader.hasNext()) {
+            if (reader.getEventType() == XmlTag.START_ELEMENT) {
+                if (reader.getLocalName() == 'Time_Off_Reasons') {
+                    String timeOffReasonLabel = reader.getAttributeValue(null, 'Descriptor');
+                    if (timeOffReasonLabel.toLowerCase().contains('planned')) {
+                        parseTimeOffReason(reader, result, planName, timeOffReasonLabel);
+                    }
+                }
+            } else if (reader.getEventType() == XmlTag.END_ELEMENT && 
+                       reader.getLocalName() == 'All_Eligible_Time_Offs_for_Worker_group') {
+                           break;
+                       }
+            reader.next();
+        }
+    }
+    
+    private static void parseTimeOffReason(XmlStreamReader reader, skedWorkdayGetPlanBalanceResponse result, String planName, String timeOffReasonLabel) {
+        Boolean isDefault = getIsDefaultTimeOffReasonCode(timeOffReasonLabel);
+        skedWorkdayGetPlanBalanceResponse.timeOffPlan plan = result.timeOffPlansByLabel.get(planName);
+        
+        while(reader.hasNext()) {
+            if (reader.getEventType() == XmlTag.START_ELEMENT) {
+                if (reader.getLocalName() == 'ID' && 
+                    reader.getAttributeValue(null, 'type') == 'Time_Off_Reason_ID') {
+                        reader.next();
+                        if (reader.getEventType() == XmlTag.CHARACTERS) {
+                            String timeOffReasonCode = reader.getText();
+                            plan.timeOffReasons.add(new skedWorkdayGetPlanBalanceResponse.timeOffReason(
+                                timeOffReasonLabel, timeOffReasonCode, isDefault));
+                        }
+                    }
+            } else if (reader.getEventType() == XmlTag.END_ELEMENT && 
+                       reader.getLocalName() == 'Time_Off_Reasons') {
+                           break;
+                       }
+            reader.next();
+        }
     }
 }

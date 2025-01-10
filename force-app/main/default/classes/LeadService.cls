@@ -10,7 +10,7 @@
  *  03/27/2024               Apurba Bhattacgarjee       Modified logic for HRP-12321
  *  03/27/2024               Apurba Bhattacgarjee       Changes for  HRP-11347
  *  08/14/2024               Priti Jana                 Logic for HRP-12190
- *  10/22/2024				 Balaji N				  	Logic for HRP-13603 handleLeadStageStatus method creation
+ *  10/22/2024				 Balaji N				  	Logic for HRP-13603 handleLeadStageStatus method call
  *  12/09/2024               Priti Jana                 Logic for HRP-13602
  *************************************************************************************************************************************************
 */
@@ -26,7 +26,8 @@ public class LeadService {
      * date: 1/31/2017
      */ 
 
-     public static void setAccountRecordType(List<Lead> newLeads, Map<Id,Lead> oldMap){
+    // HRP-13602 -> Restructured method to incorporate changes for Account.Feeder_Account_Type__c
+    public static void setAccountRecordType(List<Lead> newLeads, Map<Id,Lead> oldMap){
         Map<Id, Boolean> map_convertedAccountId_isFeederLead = new Map<Id, Boolean>();
         List<String> feederGroupLeadStatus = System.Label.Potential_Feeder_Group_Lead_Status.split(',');
         for (Lead objLead : newLeads) {
@@ -42,10 +43,10 @@ public class LeadService {
 
         if (map_convertedAccountId_isFeederLead != NULL && !map_convertedAccountId_isFeederLead.isEmpty()) {
             Id mobileRecordTypeId = Schema.SObjectType.Account.getRecordTypeInfosByName().get('Mobile Account').getRecordTypeId();
-            List<Account> listAcctForUpdate = [ SELECT Id, RecordTypeId, Feeder_Account_Type__c FROM Account WHERE Id IN :map_convertedAccountId_isFeederLead.keySet()];
+            List<Account> listAcctForUpdate = [SELECT Id, RecordTypeId, Feeder_Account_Type__c FROM Account WHERE Id IN :map_convertedAccountId_isFeederLead.keySet()];
             for (Account objAccount :  listAcctForUpdate) {
                 objAccount.RecordTypeId = mobileRecordTypeId; //Updating account record type to "Mobile"
-                if(map_convertedAccountId_isFeederLead.get(objAccount.Id)) {
+                if(map_convertedAccountId_isFeederLead.get(objAccount.Id) && String.isBlank(objAccount.Feeder_Account_Type__c)) {
                     objAccount.Feeder_Account_Type__c = BSF_Constants.FEEDER_ONLY_ACCOUNT; //Updating feeder account type to "Feeder Only" if a feeder lead is converted
                 }
             }
@@ -873,7 +874,6 @@ public class LeadService {
     }
     //HRP-13603 End
 
-    
     /*HRP-13602 - Starts Here
     @Description : The following validation will restrict users to convert potential feeders into Non-Feeder accounts
     */
@@ -902,5 +902,4 @@ public class LeadService {
         }
     }
     //HRP-13602 - Ends Here
-    
 }

@@ -1,3 +1,12 @@
+/* @Description: Batch to update District on Drive Shift Trade post Taxo Processing
+
+* **********************************************************************************************************************************************
+* Modification Log 
+*  Date                          Developer Name                 Comments
+* ***********************************************************************************************************************************************
+11/19/2024                      Souvik Mukherjee                HRP-13713 - Added Code to save modifed Drive Shift Trade Records
+* ***********************************************************************************************************************************************/
+
 global class skedDriveShiftTradeDistrictBatch implements Database.Batchable<sObject>, Database.AllowsCallouts, Database.Stateful {
     
     global Database.QueryLocator start(Database.BatchableContext BC) {
@@ -39,6 +48,9 @@ global class skedDriveShiftTradeDistrictBatch implements Database.Batchable<sObj
                     }
                 }
             }
+            //11/19/2024 - Added Save Logic with Error handling for HRP-13713
+            List<BSF_Error_Log__c> logList = BSF_Utilities.createErrorLog(Database.update(recordsToPopulate, false), 'Shift Trade District Correction','skedDriveShiftTradeDistrictBatch','Execute','Error','Error during Drive Shift Trade District Correction');
+            InsertBsfErrorLog.insertBsfErrors(logList);
         }
     }
     

@@ -31,7 +31,7 @@ public class skedXMLUtils {
         return node.getAttribute(key, this.namespace);
     }
 
-    private Boolean hasChildNode(Dom.XmlNode node, String key) {
+    public Boolean hasChildNode(Dom.XmlNode node, String key) {
         Boolean hasChild = false;
 
         for (Dom.XmlNode child : node.getChildren()) {

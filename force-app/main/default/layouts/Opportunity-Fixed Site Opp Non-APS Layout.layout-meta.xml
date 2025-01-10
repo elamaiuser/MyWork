@@ -153,18 +153,6 @@
                 <behavior>Edit</behavior>
                 <field>DoubleRedProceduresProjectedChangeReason__c</field>
             </layoutItems>
-            <layoutItems>
-                <behavior>Readonly</behavior>
-                <field>Total_Planned_Units__c</field>
-            </layoutItems>
-            <layoutItems>
-                <behavior>Edit</behavior>
-                <field>Total_Number_of_Drives_Agreed_Annual__c</field>
-            </layoutItems>
-            <layoutItems>
-                <behavior>Edit</behavior>
-                <field>Average_Per_Drive_planned_goal__c</field>
-            </layoutItems>
         </layoutColumns>
         <style>TwoColumnsLeftToRight</style>
     </layoutSections>
@@ -713,10 +701,13 @@
         <relatedList>RelatedContentNoteList</relatedList>
     </relatedLists>
     <relatedLists>
+        <excludeButtons>AddContactRole</excludeButtons>
+        <excludeButtons>OppContactRoleMultiAdd</excludeButtons>
+        <excludeButtons>OppContactRoleMultiEdit</excludeButtons>
         <fields>ContactName</fields>
         <fields>Role</fields>
+        <fields>Assigned_Date__c</fields>
         <fields>ContactEmail</fields>
-        <fields>ContactPhone</fields>
         <relatedList>RelatedContactRoleList</relatedList>
     </relatedLists>
     <relatedLists>

@@ -432,6 +432,9 @@
         <relatedList>RelatedEntityHistoryList</relatedList>
     </relatedLists>
     <relatedLists>
+        <excludeButtons>AddContactRole</excludeButtons>
+        <excludeButtons>OppContactRoleMultiAdd</excludeButtons>
+        <excludeButtons>OppContactRoleMultiEdit</excludeButtons>
         <fields>ContactName</fields>
         <fields>Role</fields>
         <fields>ContactTitle</fields>

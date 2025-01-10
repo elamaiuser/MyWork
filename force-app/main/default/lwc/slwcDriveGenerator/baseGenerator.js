@@ -53,6 +53,7 @@ class BaseGenerator {
     pendingDriveChangeRequest : null,
     staffSetupExcludedRoles: [],
     skipAPTCalculation: true,
+    aptQuantity: null,
 
     //fixed site
     fixedSiteProcedureProjections: [],
@@ -563,7 +564,6 @@ class BaseGenerator {
     driveShift.volunteerSetup = 0;
     driveShift.vehiclesNeeded = 0;
     driveShift.equipment = 0;
-    console.log('driveShift in updateShiftMobileSetup ',driveShift);
     const jobs = this.helper.getDriveShiftJobs(driveShift, {
       excludeManuallyCreatedFromStaffingModal: true
     })
@@ -711,7 +711,6 @@ class BaseGenerator {
     isCalledFromDCRProcessingModal = false
   } = {}) {
     this.isRegenerateDriveChange = isCalledFromDCRProcessingModal && properties.filter(record => record.targetName === 'regenerateDrive').length > 0 ;
-    this.processingDCRs = changedFromApplyingDCRs;
     properties.forEach(property => {
       this.drive[property.targetName] = property.targetValue;
 
@@ -720,10 +719,9 @@ class BaseGenerator {
       }
       if (property.targetName === 'aptRequired') {
         this.drive[property.targetName] = (/^(true|1)$/i).test(this.drive[property.targetName]);
-        this.drive['aptQuantity'] = this.drive.opportunity.aptQuantity;
       }
-      if (property.targetName === 'driveShiftsMetadata' || property.targetName === 'wbProjectedProcedures' || property.targetName === 'x2rbcProjectedProcedures') {
-        this.masterData.skipAPTCalculation = false;
+      if (property.targetName === 'driveShiftsMetadata') {
+        this.masterData.skipAPTCalculation = property.targetValue?.skipAptCalculation ?? false;
       }
     })
 

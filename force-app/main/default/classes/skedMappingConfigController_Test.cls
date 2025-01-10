@@ -4,6 +4,7 @@ private class skedMappingConfigController_Test {
     static void mappingConfigController_Test() {
         skedMappingConfigContainer.mappingConfigModel accountModel = new skedMappingConfigContainer.accountMappingConfigFactory().process();
         skedMappingConfigContainer.mappingConfigModel activityModel = new skedMappingConfigContainer.activityMappingConfigFactory().process();
+        skedMappingConfigContainer.mappingConfigModel activityCOModel = new skedMappingConfigContainer.activityCollectionOperationMappingConfigFactory().process();
         skedMappingConfigContainer.mappingConfigModel activityResourceModel = new skedMappingConfigContainer.activityResourceMappingConfigFactory().process();
         skedMappingConfigContainer.mappingConfigModel availabilityModel = new skedMappingConfigContainer.availabilityMappingConfigFactory().process();
         skedMappingConfigContainer.mappingConfigModel availabilityPatternModel = new skedMappingConfigContainer.availabilityPatternMappingConfigFactory().process();
@@ -17,6 +18,7 @@ private class skedMappingConfigController_Test {
         skedMappingConfigContainer.mappingConfigModel contactModel = new skedMappingConfigContainer.contactMappingConfigFactory().process();
         skedMappingConfigContainer.mappingConfigModel customAvailabilityModel = new skedMappingConfigContainer.customAvailabilityMappingConfigFactory().process();
         skedMappingConfigContainer.mappingConfigModel driveModel = new skedMappingConfigContainer.driveMappingConfigFactory().process();
+        skedMappingConfigContainer.mappingConfigModel driveShiftTradeModel = new skedMappingConfigContainer.driveShiftTradeMappingConfigFactory().process();
         skedMappingConfigContainer.mappingConfigModel exceptionModel = new skedMappingConfigContainer.exceptionMappingConfigFactory().process();
         skedMappingConfigContainer.mappingConfigModel holidayModel = new skedMappingConfigContainer.holidayMappingConfigFactory().process();
         skedMappingConfigContainer.mappingConfigModel holidayRegionModel = new skedMappingConfigContainer.holidayRegionMappingConfigFactory().process();
@@ -39,6 +41,7 @@ private class skedMappingConfigController_Test {
         skedMappingConfigContainer.mappingConfigModel staffingBudgetCollectionOpModel = new skedMappingConfigContainer.staffingBudgetCollectionOpMappingConfigFactory().process();
         skedMappingConfigContainer.mappingConfigModel tagModel = new skedMappingConfigContainer.tagMappingConfigFactory().process();
         skedMappingConfigContainer.mappingConfigModel territoryModel = new skedMappingConfigContainer.territoryMappingConfigFactory().process();
+        skedMappingConfigContainer.mappingConfigModel territoryCOModel = new skedMappingConfigContainer.territoryCollectionOperationMappingConfigFactory().process();
         skedMappingConfigContainer.mappingConfigModel userModel = new skedMappingConfigContainer.userMappingConfigFactory().process();
         skedMappingConfigContainer.mappingConfigModel userFilterModel = new skedMappingConfigContainer.userFilterMappingConfigFactory().process();
     }

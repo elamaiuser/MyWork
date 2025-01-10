@@ -4,7 +4,7 @@
     <protected>false</protected>
     <values>
         <field>sked_Default_Value__c</field>
-        <value xsi:type="xsd:double">20.0</value>
+        <value xsi:type="xsd:double">10.0</value>
     </values>
     <values>
         <field>sked_Level__c</field>

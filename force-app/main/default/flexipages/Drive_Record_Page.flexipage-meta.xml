@@ -77,6 +77,12 @@
         </itemInstances>
         <itemInstances>
             <componentInstance>
+                <componentName>ErrorBanner</componentName>
+                <identifier>c_ErrorBanner</identifier>
+            </componentInstance>
+        </itemInstances>
+        <itemInstances>
+            <componentInstance>
                 <componentName>nonCollectionAreaSiteCollectionOpCheck</componentName>
                 <identifier>c_nonCollectionAreaSiteCollectionOpCheck</identifier>
             </componentInstance>
@@ -91,12 +97,6 @@
             <componentInstance>
                 <componentName>pendingDCRBannerForOppOrDOC</componentName>
                 <identifier>c_pendingDCRBannerForOppOrDOC</identifier>
-            </componentInstance>
-        </itemInstances>
-        <itemInstances>
-            <componentInstance>
-                <componentName>ErrorBanner</componentName>
-                <identifier>c_ErrorBanner</identifier>
             </componentInstance>
         </itemInstances>
         <name>header</name>

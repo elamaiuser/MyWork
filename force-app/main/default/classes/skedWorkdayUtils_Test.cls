@@ -21,7 +21,7 @@ private class skedWorkdayUtils_Test {
         insert testAvailability;
 
         Test.startTest();
-            testAvailability.sked_Custom_Status__c = skedConstants.AVAILABILITY_STATUS_PROCESSING_APPROVAL;
+            testAvailability.sked_Custom_Status__c = skedConstants.AVAILABILITY_STATUS_APPROVED;
             update testAvailability;
         Test.stopTest();
     }
@@ -42,14 +42,12 @@ private class skedWorkdayUtils_Test {
             sked__Start__c = testDataFactory.summary.startTime,
             sked__Finish__c = testDataFactory.summary.startTime.addHours(2),
             sked_Bypass_Auto_Approval_Process__c = FALSE,
-            sked_Time_Off_Reason_Code__c = 'pto-test',
-            sked_Workday_Sync_Status__c = skedConstants.AVAILABILITY_WORKDAY_SYNC_STATUS_SUCCESS
+            sked_Time_Off_Reason_Code__c = 'pto-test'
         );
         insert testAvailability;
 
         Test.startTest();
             testAvailability.sked__Finish__c = testDataFactory.summary.startTime.addHours(4);
-            testAvailability.sked_Custom_Status__c = skedConstants.AVAILABILITY_STATUS_PROCESSING_ADJUSTMENT;
             update testAvailability;
         Test.stopTest();
     }
@@ -70,13 +68,12 @@ private class skedWorkdayUtils_Test {
             sked__Start__c = testDataFactory.summary.startTime,
             sked__Finish__c = testDataFactory.summary.startTime.addHours(2),
             sked_Bypass_Auto_Approval_Process__c = FALSE,
-            sked_Time_Off_Reason_Code__c = 'pto-test',
-            sked_Workday_Sync_Status__c = skedConstants.AVAILABILITY_WORKDAY_SYNC_STATUS_SUCCESS
+            sked_Time_Off_Reason_Code__c = 'pto-test'
         );
         insert testAvailability;
 
         Test.startTest();
-            testAvailability.sked_Custom_Status__c = skedConstants.AVAILABILITY_STATUS_PROCESSING_CANCELLATION;
+            testAvailability.sked_Custom_Status__c = skedConstants.AVAILABILITY_STATUS_CANCELLED;
             update testAvailability;
         Test.stopTest();
     }
@@ -97,8 +94,7 @@ private class skedWorkdayUtils_Test {
             sked__Start__c = testDataFactory.summary.startTime,
             sked__Finish__c = testDataFactory.summary.startTime.addHours(2),
             sked_Bypass_Auto_Approval_Process__c = FALSE,
-            sked_Time_Off_Reason_Code__c = 'pto-test',
-            sked_Workday_Sync_Status__c = skedConstants.AVAILABILITY_WORKDAY_SYNC_STATUS_SUCCESS
+            sked_Time_Off_Reason_Code__c = 'pto-test'
         );
         insert testAvailability;
 

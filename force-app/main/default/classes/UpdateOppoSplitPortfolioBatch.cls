@@ -72,7 +72,7 @@ global class UpdateOppoSplitPortfolioBatch implements Database.Batchable<sObject
                     }
                 }
                 System.debug('>>>>UpdateOppoSplitPortfolioBatch.execute() errorMsgMap : ' + JSON.serialize(errorMsgMap));
-                Map<Id,opportunitySplit> oppoSplitMap = new Map<Id,opportunitySplit>([select Id, OpportunityId, Opportunity.AccountId, Opportunity.Account.District_Manager__c, Opportunity.Drive_Date__c, BSF_Portfolio__c, SplitOwnerId, SplitOwner.Name FROM OpportunitySplit WHERE Id IN: errorMsgMap.keySet()]);
+                Map<Id,opportunitySplit> oppoSplitMap = new Map<Id,opportunitySplit>([select Id, OpportunityId, Opportunity.AccountId, Opportunity.Account.District_Manager__c, BSF_Portfolio__c, SplitOwnerId, SplitOwner.Name FROM OpportunitySplit WHERE Id IN: errorMsgMap.keySet()]);
                 
                 //create task for Errors
                 List<task> taskList = new list<task>();

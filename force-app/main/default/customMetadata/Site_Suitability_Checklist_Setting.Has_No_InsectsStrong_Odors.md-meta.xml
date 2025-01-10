@@ -16,6 +16,6 @@
     </values>
     <values>
         <field>UI_Text__c</field>
-        <value xsi:type="xsd:string">There are no signs of insects, animals, debris, or strong odors</value>
+        <value xsi:type="xsd:string">There are no signs of insects, animals, debris, &amp; strong odors</value>
     </values>
 </CustomMetadata>

@@ -18,5 +18,10 @@
         <operation>equals</operation>
         <value>Vehicle</value>
     </filters>
+    <filters>
+        <field>sked_Biomed_Collection_Op_Center_Name__c</field>
+        <operation>equals</operation>
+        <value>Toledo OH</value>
+    </filters>
     <label>Vehicles</label>
 </ListView>

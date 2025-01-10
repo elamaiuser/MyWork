@@ -378,12 +378,12 @@ public class FetchRelatedDriveData {
             sked_Drive__c skedDrive = (sked_Drive__c)drive.toSObject();
             skedDrive.sked_Opportunity__c = drive.opportunityId;
             skedDrive.sked_Drive_Site__c = drive.driveSiteId;
-            skedDrive.sked_Status__c = Constants.DRIVE_STATUS_DRAFT; //HRP-10009
+            skedDrive.sked_Status__c = opp.Source__c == 'Calendar Build' ? skedConstants.DRIVE_STATUS_CONFIRMED : skedConstants.DRIVE_STATUS_TENTATIVE;
             skedDrive.sked_Drive_Date__c = drive.driveDate;
             skedDrive.sked_Total_Procedures_Projected__c = drive.totalProceduresProjected;
             skedDrive.sked_Total_Products_Projected__c = drive.totalProductsProjected;
             skedDrive.sked_Drive_Owner__c = skedDrive.sked_Drive_Owner__c == null ? opp.Account_Manager__c : skedDrive.sked_Drive_Owner__c; //HRP-9815
-            skedDrives.add(skedDrive);    
+            skedDrives.add(skedDrive);
             map_tempId_sObject.put(drive.tempId, skedDrive);
         }
         insert skedDrives;

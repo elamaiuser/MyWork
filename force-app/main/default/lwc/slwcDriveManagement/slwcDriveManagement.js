@@ -14,7 +14,7 @@ import driveManagementTabTemplate from './driveManagementTab.html';
 import surrogateDriveTemplate from './surrogateDrive.html';
 // import opportunityDriveShiftsTemplate from './opportunityDriveShifts.html';
 
-import { driveService, driveChangeRequestService, driveQueryModel, approvalService, slotService, debugLogService } from 'c/dataService';
+import { dataService, driveService, driveChangeRequestService, driveQueryModel, approvalService, slotService, debugLogService } from 'c/dataService';
 import { DateTime } from 'c/luxon';
 import { chunk, isEqual } from 'c/lodash';
 import { DRIVE_STATUS, DRIVE_APPROVAL_STATUS, PENDING_ACTION, ASSET_TYPE, OPPORTUNITY_STAGE, DRIVE_REQUEST_CHANGE_STATUS, DRIVE_CHANGE_REQUEST_TYPE } from 'c/slwcConstants';
@@ -93,6 +93,7 @@ export default class SlwcDriveManagement extends NavigationMixin(LightningElemen
     @track isDriveNotScheduled = false;
     @track driveSideMenuData = {};
     @track driveShiftsMetadataModalData = {};
+    @track adminSettings = {};
 
     tabDetailsValidationFields = [];
     driveHelper = new DriveHelper();
@@ -299,6 +300,7 @@ export default class SlwcDriveManagement extends NavigationMixin(LightningElemen
         }
 
         this.tabDetailsValidationFields = ['driveDate', 'projectedRegisteredDonors', 'name', 'startTime'];
+        //this.tabDetailsValidationFields = ['driveDate', 'projectedRegisteredDonors', 'name', 'startTime','accountType','militaryAuthorityName','militaryAuthorityPhone','industryCode','acceptsAutomation','internalName','physicalLocationType','roomName','siteBuildingName','directionsFromCollectionOperation','floorDescription','automationSuitability','siteContactId','operationType'];
         
         this.bindHandleDriveChanged = this.handleDriveChanged.bind(this);
         
@@ -355,6 +357,7 @@ export default class SlwcDriveManagement extends NavigationMixin(LightningElemen
     }
     
     exceptionHandler = (error) => {
+        console.log('error :: ',error);
         new debugLogService().captureDebugLog(error, this.drive?.id);
         if(error && error.message) {
             this.dispatchEvent(new ShowToastEvent({
@@ -412,7 +415,9 @@ export default class SlwcDriveManagement extends NavigationMixin(LightningElemen
                     if(drive.isSurrogate) {
                         throw 'Surrogate drive';
                     }
+                    console.log('this.drive ',this.drive);
                 })
+                
             } else {
                 let _driveService = new driveService();
                 let query = new driveQueryModel();
@@ -440,6 +445,11 @@ export default class SlwcDriveManagement extends NavigationMixin(LightningElemen
         .then((drive) => {
             this.drive = drive;
             return driveGeneratorInstance.checkAndApplyDriveChangeRequest();
+        })
+        .then(() => {
+            return Promise.all([
+                this.retrieveCustomSettings()
+            ]);
         })
         .then(() => {
             this.initialized = true;
@@ -803,7 +813,7 @@ export default class SlwcDriveManagement extends NavigationMixin(LightningElemen
         return driveGeneratorInstance.validateDrive()
         .then((newDrive) => {
             this.drive = newDrive;
-            let pendingActionReasonCodes = this.drive.pendingActionReasonCode ? this.drive.pendingActionReasonCode.split(';') : [];
+            let pendingActionReasonCodes = this.drive.pendingActionReasonCode || [];
             if(pendingActionReasonCodes.length > 0) {
                 this.showPendingActionDriveConfirmModal();
             } else {
@@ -941,7 +951,7 @@ export default class SlwcDriveManagement extends NavigationMixin(LightningElemen
             return driveGeneratorInstance.validateDrive()
             .then((newDrive) => {
                 this.drive = newDrive;
-                let pendingActionReasonCodes = this.drive.pendingActionReasonCode ? this.drive.pendingActionReasonCode.split(';') : [];
+                let pendingActionReasonCodes = this.drive.pendingActionReasonCode || [];
                 const contentionsPreventHold = [
                     'Insufficient Resources',
                     'Lacking of vehicles',
@@ -1020,7 +1030,6 @@ export default class SlwcDriveManagement extends NavigationMixin(LightningElemen
         }
         const detail = event.detail;
 
-        console.log('on drive data changed' + detail.cmpName);
         if (this.isDirty === false && location.href.includes('sked_Drive__c') && this.isSetUnsavedChangesDone === false) {
             this.isDirty = true;
             this.isSetUnsavedChangesDone = true;
@@ -1298,7 +1307,7 @@ export default class SlwcDriveManagement extends NavigationMixin(LightningElemen
         if(status) {
             this.drive.status = status;
         }
-        this.drive.contentionResolution = contentionResolution;
+        this.drive.contentionResolution = [...contentionResolution];
 
         if(this.drive.status === DRIVE_STATUS.DRAFT) {
             this.drive = driveGeneratorInstance.releaseAllAssetAllocations();
@@ -1351,5 +1360,17 @@ export default class SlwcDriveManagement extends NavigationMixin(LightningElemen
             return '';
         }
         return DateTime.fromFormat(time, 'HH:mm:ss.SSS').toFormat('h:mm a');
+    }
+
+    retrieveCustomSettings() {
+        let settingKeys = ["adminSetting"];
+        return Promise.resolve()
+        .then(() => {
+            let service = new dataService();
+            return service.getCustomSettings({ settingKeys: settingKeys })
+            .then((result) => {
+                this.adminSettings = result.returnedData.adminSetting;
+            })
+        });        
     }
 }

@@ -116,19 +116,10 @@ export default class SlwcSiteFeedbackDetail extends LightningElement {
                   ...this.record
                 }
             }
-    
-            if(this.model.resourceRoleGroup && isString(this.model.resourceRoleGroup)) {
-                this.model.resourceRoleGroup = this.model.resourceRoleGroup.split(';');
-            }
-            if(this.model.varianceAppliesTo && isString(this.model.varianceAppliesTo)) {
-                this.model.varianceAppliesTo = this.model.varianceAppliesTo.split(';');
-            }
-
-            this.model.daysOfWeek = this.model.daysOfWeek || [];
-            if(this.model.daysOfWeek && isString(this.model.daysOfWeek)) {
-                this.model.daysOfWeek = this.model.daysOfWeek.split(';');
-            }
             
+            this.model.resourceRoleGroup = this.model.resourceRoleGroup || [];
+            this.model.varianceAppliesTo = this.model.varianceAppliesTo || [];
+            this.model.daysOfWeek = this.model.daysOfWeek || [];
             this.model.varianceTypeControllingFieldValues = this.model.varianceType ? [this.model.varianceType] : [];
         })
         .catch(err => this.exceptionHandler(err))

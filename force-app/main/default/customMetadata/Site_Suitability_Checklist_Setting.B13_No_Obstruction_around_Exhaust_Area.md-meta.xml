@@ -16,6 +16,6 @@
     </values>
     <values>
         <field>UI_Text__c</field>
-        <value xsi:type="xsd:string">No exhaust fumes facing entry/exits, break, or lunch areas</value>
+        <value xsi:type="xsd:string">Exhaust fumes does not face entry/exits, break, or lunch areas</value>
     </values>
 </CustomMetadata>

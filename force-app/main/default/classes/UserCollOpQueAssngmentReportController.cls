@@ -6,7 +6,7 @@
  * 09/17/2024			Barnojit Sharma			Fixed Apex CPU time limit exceeded exception  (HRP-13373)
  *****************************************************************************************************************************************************************************
 */
-public without sharing class UserCollOpQueAssngmentReportController {
+public class UserCollOpQueAssngmentReportController {
     
     public  String searchUser{get; set;} // UI user name
     public  String searchCollOpp{get; set;} //UI collection operation name
@@ -113,7 +113,7 @@ public without sharing class UserCollOpQueAssngmentReportController {
         
         if(!errorPresent && condition!=null)
         {
-            userList = Database.query(query,AccessLevel.SYSTEM_MODE);
+            userList = Database.query(query);
             if(userList.isEmpty())
             {
                 errorMsg='No Records found for the Filters';
@@ -619,8 +619,7 @@ userParentRoleID.get(u.UserRoleid).add(u.id);
                                                 UserOrGroupId 
                                             FROM GroupMember 
                                             WHERE Group.Type IN ('Regular','Queue')
-                                            AND UserOrGroupId != null
-                                          	WITH SYSTEM_MODE];
+                                            AND UserOrGroupId != null];
         for(GroupMember usrGrpMem : usrGrpMemList){
             if(usrGrpMem.Group.Type.equals('Queue')){
                 queueNameMap.put(usrGrpMem.GroupId,usrGrpMem.Group.Name);

@@ -36,7 +36,7 @@
     </values>
     <values>
         <field>dlrs__Description__c</field>
-        <value xsi:nil="true"/>
+        <value xsi:type="xsd:string">Calculates average productivity on account using future drives</value>
     </values>
     <values>
         <field>dlrs__FieldToAggregate__c</field>

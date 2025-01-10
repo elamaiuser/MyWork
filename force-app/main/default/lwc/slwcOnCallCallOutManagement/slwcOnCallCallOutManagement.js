@@ -237,7 +237,7 @@ export default class SlwcOnCallCallOutManagement extends LightningElement {
     if(!resource || !resourceRoleGroups) return [];
 
     const teamSupervisorRoles = resourceRoleGroups['Supervisory roles'] || [];
-    const resourceRoles = resource.roles ? resource.roles.split(';') : [];
+    const resourceRoles = resource.roles || [];
 
     const hasAnyTeamSupervisorRole = resourceRoles.find(resourceRole => teamSupervisorRoles.includes(resourceRole));
     return !!hasAnyTeamSupervisorRole;
