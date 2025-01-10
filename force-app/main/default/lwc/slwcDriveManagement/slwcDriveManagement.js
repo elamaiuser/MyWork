@@ -1137,6 +1137,7 @@ export default class SlwcDriveManagement extends NavigationMixin(LightningElemen
                 .finally(this.hideLoading);
         }
         else if (detail.cmpName == 'slwcDriveShifts') {
+            console.log('here in slwcDriveShifts');
             let driveShiftChanges = [];
             detail.properties.forEach((property) => {
                 let targetValue = property.targetValue;
@@ -1153,6 +1154,23 @@ export default class SlwcDriveManagement extends NavigationMixin(LightningElemen
                 .catch(error => this.exceptionHandler(error))
                 .finally(this.hideLoading);
         }
+        /*else if (detail.cmpName == 'slwcDriveShifts') {
+            let driveShiftChanges = [];
+            detail.properties.forEach((property) => {
+                let targetValue = property.targetValue;
+                driveShiftChanges.push(
+                    {
+                        targetName: property.targetName,
+                        targetValue: targetValue
+                    }
+                )
+            });
+
+            this.showLoading();
+            return driveGeneratorInstance.onDriveShiftDataChanged(detail.key, driveShiftChanges)
+                .catch(error => this.exceptionHandler(error))
+                .finally(this.hideLoading);
+        }*/
     }
 
     /* Drive Staffings **/

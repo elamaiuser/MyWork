@@ -31,15 +31,11 @@ public class skedAvailabilityHandler extends skedTriggerHub {
                         SELECT Id, sked__Primary_Region__c, sked_FCC_Code__c,
                         sked__Primary_Region__r.sked_Biomed_Collection_Op_Center__c,
                         sked__Primary_Region__r.sked__Timezone__c,
-                            (SELECT Id, sked__Tag__c, sked__Tag__r.Name, sked__Tag__r.sked_Priority__c
-                            FROM sked__ResourceTags__r
-                            WHERE sked__Tag__r.sked__Type__c = :skedConstants.TAG_TYPE_ROLE
-                            AND sked_Role_Status__c = :skedConstants.TAG_ROLE_STATUS_ACTIVE
-                            ORDER BY sked__Tag__r.sked_Priority__c ASC NULLS LAST),
-                            (SELECT Id, sked__Location__c, sked_Location_Resource_Relationship__c
-                            FROM sked__Location_Resource_Scores__r
-                            WHERE sked_Location_Resource_Relationship__c = 'Preferred'
-                            AND sked__Location__r.RecordType.Name = 'Fixed Site')
+                        (SELECT Id, sked__Tag__c, sked__Tag__r.Name, sked__Tag__r.sked_Priority__c
+                        FROM sked__ResourceTags__r
+                        WHERE sked__Tag__r.sked__Type__c = :skedConstants.TAG_TYPE_ROLE
+                        AND sked_Role_Status__c = :skedConstants.TAG_ROLE_STATUS_ACTIVE
+                        ORDER BY sked__Tag__r.sked_Priority__c ASC NULLS LAST)
                         FROM sked__Resource__c
                         WHERE Id IN :resourceIds
                     ]);
@@ -55,7 +51,6 @@ public class skedAvailabilityHandler extends skedTriggerHub {
                             wrapper.unavailabilityDate = skedDateTimeUtils.getDate(unavailability.sked__Start__c, wrapper.timezoneSidId);
                             wrapper.key = wrapper.biomedCollectionOpId + ':' + unavailability.sked__Start__c.format(skedDateTimeUtils.DATE_ISO_FORMAT, wrapper.timezoneSidId);
                             wrapper.resource = skedResource;
-                            wrapper.isResourcePreferredToFixedSites = skedResource.sked__Location_Resource_Scores__r != NULL && !skedResource.sked__Location_Resource_Scores__r.isEmpty();
                             mUnavailabilityWrappers.add(wrapper);
                         }
                     }
@@ -338,15 +333,9 @@ public class skedAvailabilityHandler extends skedTriggerHub {
             }
 
             if (isInserted || isStatusChanged) {
-                Id userId = UserInfo.getUserId();
-                Id autoProcessUserId = skedTriggerHub_Cache.getAutoProcessUserFromCache().Id;
                 newRecord.sked_Last_Modified_By__c = newRecord.sked_Approved_Via_Automation__c ?
-                autoProcessUserId : userId;
+                    skedTriggerHub_Cache.getAutoProcessUserFromCache().Id : UserInfo.getUserId();
                 newRecord.sked_Approved_Via_Automation__c = false;
-                if(userId != autoProcessUserId) {
-                    newRecord.sked_Dispositioned_By_User__c = userId;
-                    newRecord.sked_Disposition_Date__c = System.now();
-                }
             }
 
             if (isInserted) {
@@ -443,7 +432,7 @@ public class skedAvailabilityHandler extends skedTriggerHub {
                     if (!staffingBudgetWrappersForDate.isEmpty()) {
                         for (skedStaffingBudgetWrapper staffingBudgetWrapper : staffingBudgetWrappersForDate) {
                             List<String> staffingBudgetRoles = staffingBudgetWrapper.staffingBudget.sked_Roles__c.split(';');
-                            if ((wrapper.isResourcePreferredToFixedSites && !staffingBudgetWrapper.siteById.isEmpty()) || (!wrapper.isResourcePreferredToFixedSites && staffingBudgetWrapper.collectionOpById.keySet().contains(wrapper.resource.sked__Primary_Region__r.sked_Biomed_Collection_Op_Center__c))) {
+                            if (staffingBudgetWrapper.collectionOpById.keySet().contains(wrapper.resource.sked__Primary_Region__r.sked_Biomed_Collection_Op_Center__c)) {
                                 if (staffingBudgetRoles.contains(wrapper.role)) {
                                     hasMatchingStaffingBudgetSlot = true;
                                     staffingBudgetAvailabilities.add(new sked_Staffing_Budget_Availability__c(
@@ -900,7 +889,6 @@ public class skedAvailabilityHandler extends skedTriggerHub {
         public string biomedCollectionOpId {get;set;}
         public Date unavailabilityDate {get;set;}
         public string timezoneSidId {get;set;}
-        public Boolean isResourcePreferredToFixedSites {get;set;}
     }
     
     public class availabilityModel {

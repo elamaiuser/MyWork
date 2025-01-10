@@ -6,6 +6,68 @@ global class skedActivityService extends skedEventService {
         this.domainType = Type.forName('skedModels.activity');
     }
 
+    protected virtual override skedDataService.saveResult preSaveRecord(List<skedModels.modelBase> models) {
+        List<skedModels.activity> activities = (List<skedModels.activity>)models;
+        for(skedModels.activity activity : activities) {
+            activity.notes = 'Selected Drive Type(s) : '+String.join(activity.driveTypes, ', ')+ '. \n'+activity.notes;
+        }
+        
+        skedDataService.saveResult result = new skedDataService.saveResult();
+        result.success = true;
+        return result;
+    }
+
+    protected virtual override void postSaveRecord(List<skedModels.modelBase> models, List<sObject> records) {
+        List<skedModels.activity> activityModels = (List<skedModels.activity>) models;
+        List<sked__Activity__c> activityRecords = (List<sked__Activity__c>) records;
+
+        List<Id> collectionOperationIds = new List<Id>();
+        List<sked_Activity_Collection_Operation__c> skedActivityColOpToInsert = new List<sked_Activity_Collection_Operation__c>();
+        Map<Id, Biomed_Collection_Op_Center__c> map_coId_coInfo = new Map<Id, Biomed_Collection_Op_Center__c>();
+
+        for(skedModels.activity activityModel : activityModels) {
+            if(activityModel.biomedCollectionOpIds != NULL && !activityModel.biomedCollectionOpIds.isEmpty()) {
+                collectionOperationIds.addAll(activityModel.biomedCollectionOpIds);
+                for(String coId : activityModel.biomedCollectionOpIds) {
+                    skedActivityColOpToInsert.add(new sked_Activity_Collection_Operation__c(
+                        sked_Activity__c = activityModel.id,
+                        sked_Biomed_Collection_Operation__c = coId
+                    ));
+                }
+            }
+        }
+
+        if (!collectionOperationIds.isEmpty()) {
+            map_coId_coInfo = new Map<Id, Biomed_Collection_Op_Center__c>(
+                [SELECT Id,
+                (
+                    SELECT Id, sked_End_Date__c, sked_Start_Date__c, sked_Territory__c
+                    FROM sked_Territory_Collection_Operations__r
+                )
+                FROM Biomed_Collection_Op_Center__c
+                WHERE Id IN :collectionOperationIds]
+            );
+        }
+
+        for(sked_Activity_Collection_Operation__c newActivityColOp : skedActivityColOpToInsert) {
+            if(map_coId_coInfo != NULL && map_coId_coInfo.containsKey(newActivityColOp.sked_Biomed_Collection_Operation__c)) {
+                Biomed_Collection_Op_Center__c collectionOperation = map_coId_coInfo.get(newActivityColOp.sked_Biomed_Collection_Operation__c);
+                for (sked_Territory_Collection_Operation__c territoryCO : collectionOperation.sked_Territory_Collection_Operations__r) {
+                    boolean isStartDateMatched = territoryCO.sked_Start_Date__c == NULL || territoryCO.sked_Start_Date__c <= newActivityColOp.sked_Activity__r.sked_Start_Date__c;
+                    boolean isEndDateMatched = territoryCO.sked_End_Date__c == NULL || territoryCO.sked_End_Date__c >= newActivityColOp.sked_Activity__r.sked_Start_Date__c;
+                    if (isStartDateMatched && isEndDateMatched) {
+                        newActivityColOp.sked_District__c = territoryCO.sked_Territory__c;
+                        break;
+                    }
+                }
+            }
+        }
+
+        if (!skedActivityColOpToInsert.isEmpty()) {
+            insert skedActivityColOpToInsert;
+        }
+    }
+
     protected override void doAdditionalMap(sObject sObj, skedModels.modelBase model) {
         sked__Activity__c skedActivity = (sked__Activity__c)sObj;
         skedModels.activity activity = (skedModels.activity)model;

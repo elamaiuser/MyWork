@@ -31,8 +31,9 @@ public class skedMappingConfigContainer {
             className = className.endsWith('Model') ? className.remove('Model') : className;
             className = className.remove('_');
             className = 'skedMappingConfigContainer.' + className + 'MappingConfigFactory';
+            system.debug('className '+className);
             Type mappingConfigFactoryType = Type.forName(className);
-            
+            system.debug('mappingConfigFactoryType '+mappingConfigFactoryType);
             mappingConfigFactory factoryInstance = (mappingConfigFactory)mappingConfigFactoryType.newInstance();
             mappingConfig = factoryInstance.process();
             this.mapConfig.put(sObjectType, mappingConfig);
@@ -165,8 +166,10 @@ public class skedMappingConfigContainer {
             mappingConfig.addFieldConfig('sked_Region__r.sked_Biomed_Collection_Op_Center__c', 'biomedCollectionOpId', 'direct');
             mappingConfig.addFieldConfig('sked_Resource_Override__c', 'resourceOverrideId', 'direct');
             mappingConfig.addFieldConfig('sked_Show_On_Calendar__c', 'showOnCalendar', 'direct');
+            mappingConfig.addFieldConfig('sked_Drive_Types__c', 'driveTypes', 'direct');
             mappingConfig.addFieldConfig('sked_Subtype__c', 'subtype', 'direct');
             mappingConfig.addFieldConfig('activity', 'objectType', 'value');
+            
             
             mappingConfig.addFieldConfig('sked__Activity_Resources__r', 'activityResources', 'relatedList', 'sked__Activity_Resource__c');
             
@@ -258,6 +261,7 @@ public class skedMappingConfigContainer {
             mappingConfig.addFieldConfig('sked_Recurring_Schedule__r.sked__Description__c', 'scheduleDescription', 'direct');
             mappingConfig.addFieldConfig('sked_Approved_Via_Automation__c', 'approvedViaAutomation', 'direct');
             mappingConfig.addFieldConfig('sked_Bidding_Type__c', 'biddingType', 'direct');
+            mappingConfig.addFieldConfig('sked_Time_Off_Plan__c', 'timeOffPlan', 'direct');
             mappingConfig.addFieldConfig('sked_Time_Off_Reason_Code__c', 'timeOffReasonCode', 'direct');
             mappingConfig.addFieldConfig('sked_Workday_Sync_Message__c', 'workdaySyncMessage', 'direct');
             mappingConfig.addFieldConfig('sked_Workday_Sync_Status__c', 'workdaySyncStatus', 'direct');
@@ -839,7 +843,6 @@ public class skedMappingConfigContainer {
             mappingConfig.addFieldConfig('Name', 'name', 'direct');
             mappingConfig.addFieldConfig('sked__Timezone__c', 'timezoneSidId', 'direct');
             mappingConfig.addFieldConfig('sked_Biomed_Collection_Op_Center__c', 'collectionOperationId', 'direct');
-            mappingConfig.addFieldConfig('sked_Biomed_Collection_Op_Center__r.Name', 'collectionOperationName', 'direct');
             mappingConfig.addFieldConfig('sked_Territory__c', 'territoryId', 'direct');
             
             mappingConfig.readonlyFields = new Set<string>();

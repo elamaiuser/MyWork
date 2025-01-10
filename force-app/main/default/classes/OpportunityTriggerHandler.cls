@@ -240,10 +240,7 @@ public class OpportunityTriggerHandler extends TriggerHandler{
             OpportunityService.checkForSiteChangeOnOpportunity((List<Opportunity>)trigger.new, (Map<Id,Opportunity>)trigger.oldMap);
         }else{
             System.debug('#### OpportunityTriggerHandler.beforeUpdate() - OpportunityService.checkForSiteChangeOnOpportunity() Bypassed');
-        }
-        
-       
-        
+        }  
 
         if(super.getTriggerMethodsToBypass().indexOf('SetAPHWebScheduling') == -1) {
             System.debug('#### OpportunityTriggerHandler.beforeUpdate() - OpportunityService.SetAPHWebScheduling() Executing...');
@@ -274,6 +271,10 @@ public class OpportunityTriggerHandler extends TriggerHandler{
             OpportunityService.syncDoNotRollFields((List<Opportunity>)trigger.new, (Map<Id,Opportunity>)trigger.oldMap);
         }   
         //End HRP-12142 
+
+        if(super.getTriggerMethodsToBypass().indexOf('captureAPTRequirements') == -1) {
+           OpportunityService.captureAPTRequirements((List<Opportunity>)trigger.new, (Map<Id,Opportunity>)trigger.oldMap);
+        }
             
         System.debug('Exiting method beforeUpdate');
     }
@@ -441,6 +442,11 @@ public class OpportunityTriggerHandler extends TriggerHandler{
             OpportunityService.syncDoNotRollFields((List<Opportunity>)trigger.new, null);
         }   
         //End HRP-12142
+
+        if(super.getTriggerMethodsToBypass().indexOf('captureAPTRequirements') == -1) {
+           OpportunityService.captureAPTRequirements((List<Opportunity>)trigger.new, NULL);
+        }
+
         System.debug('Exiting method beforeInsert');
         System.debug('getCpuTime()'+limits.getCpuTime());
     }
@@ -677,6 +683,7 @@ System.debug('getCpuTime()'+limits.getCpuTime());
             	BSFTaskChecklistTriggerHandler.updateTaskChecklist((List<Opportunity>)trigger.new,(Map<Id,Opportunity>)trigger.oldMap); 
             }
             // HRP- 12142 --> Ends Here
+
             System.debug('Exiting method AfterUpdate');
         }
         

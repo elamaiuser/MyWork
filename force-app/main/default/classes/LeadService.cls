@@ -5,13 +5,13 @@
  * ***********************************************************************************************************************************************
  * 
  *  03/08/2023               Kishore Das                Users other than System Admin should not have any delete record permissions(Logic for HRP-10572)(Deleted)
-
  *  20/10/2023               Krapy Tuli                 Logic for HRP-10880 (Update Leads to consume New Taxonomy - Geo Realignment)
  *  02/19/2024               Anil K                     HRP-12024-> Check Future Taxonomy records if a particular zip code is falling in non collection area
  *  03/27/2024               Apurba Bhattacgarjee       Modified logic for HRP-12321
  *  03/27/2024               Apurba Bhattacgarjee       Changes for  HRP-11347
  *  08/14/2024               Priti Jana                 Logic for HRP-12190
  *  10/22/2024				 Balaji N				  	Logic for HRP-13603 handleLeadStageStatus method creation
+ *  12/09/2024               Priti Jana                 Logic for HRP-13602
  *************************************************************************************************************************************************
 */
 
@@ -25,36 +25,37 @@ public class LeadService {
      * author: mike.demeglio@redcross.org
      * date: 1/31/2017
      */ 
+
      public static void setAccountRecordType(List<Lead> newLeads, Map<Id,Lead> oldMap){
-          Set < Id > setAccountIds = new Set < Id >();
+        Map<Id, Boolean> map_convertedAccountId_isFeederLead = new Map<Id, Boolean>();
+        List<String> feederGroupLeadStatus = System.Label.Potential_Feeder_Group_Lead_Status.split(',');
+        for (Lead objLead : newLeads) {
 
-        for ( Lead objLead :newLeads) {
-
-        /* Getting Account Ids from the Lead after conversion .
-           ConvertedAccountId in Lead contains the Account Id to which the Lead is converted.
-        */
-        if ( objLead.IsConverted && objLead.IsConverted != oldMap.get( objLead.Id ).IsConverted )
-            setAccountIds.add( objLead.ConvertedAccountId );
-
-    }
-    if ( setAccountIds.size() > 0 ) {
-
-        Id extRecordTypeId = Schema.SObjectType.Account.getRecordTypeInfosByName().get( 'Mobile Account' ).getRecordTypeId();
-        List < Account > listAcctForUpdate = new List < Account >();
-
-        /* Fetching the accounts which are created as part of lead conversion and record type is not External */
-        for ( Account objAccount : [ SELECT Id, RecordTypeId FROM Account WHERE Id IN: setAccountIds  ] ) {
-
-            /* Setting the Record Type Id to Account's External Record Type Id */
-            listAcctForUpdate.add( new Account( Id = objAccount.Id, RecordTypeId = extRecordTypeId ) );
-
+            /* Getting Account Ids from the Lead after conversion .
+            ConvertedAccountId in Lead contains the Account Id to which the Lead is converted.
+            */
+            if (objLead.IsConverted && objLead.IsConverted != oldMap.get( objLead.Id ).IsConverted) {
+                Boolean isFeederLeadConverted = feederGroupLeadStatus.contains(oldMap.get(objLead.Id).Status);
+                map_convertedAccountId_isFeederLead.put(objLead.ConvertedAccountId, isFeederLeadConverted);
+            }
         }
 
-        if ( listAcctForUpdate.size() > 0 ) {
-            update listAcctForUpdate;//dml for security             
-        }     
+        if (map_convertedAccountId_isFeederLead != NULL && !map_convertedAccountId_isFeederLead.isEmpty()) {
+            Id mobileRecordTypeId = Schema.SObjectType.Account.getRecordTypeInfosByName().get('Mobile Account').getRecordTypeId();
+            List<Account> listAcctForUpdate = [ SELECT Id, RecordTypeId, Feeder_Account_Type__c FROM Account WHERE Id IN :map_convertedAccountId_isFeederLead.keySet()];
+            for (Account objAccount :  listAcctForUpdate) {
+                objAccount.RecordTypeId = mobileRecordTypeId; //Updating account record type to "Mobile"
+                if(map_convertedAccountId_isFeederLead.get(objAccount.Id)) {
+                    objAccount.Feeder_Account_Type__c = BSF_Constants.FEEDER_ONLY_ACCOUNT; //Updating feeder account type to "Feeder Only" if a feeder lead is converted
+                }
+            }
+
+            if (listAcctForUpdate.size() > 0) {
+                update listAcctForUpdate;       
+            }     
+        }
     }
-}
+
     public static void setLeadTerritory(List<Lead> newLeads, Map<Id,Lead> oldMap) {
         
         final string logTag = '[LeadService:setLeadTerritory]';
@@ -871,4 +872,35 @@ public class LeadService {
         }
     }
     //HRP-13603 End
+
+    
+    /*HRP-13602 - Starts Here
+    @Description : The following validation will restrict users to convert potential feeders into Non-Feeder accounts
+    */
+    public static void restrictPotentionFeedersToGetConvertedToNonFeederAccounts(List<Lead> newLeads, Map<Id,Lead> oldLeadsMap) {
+        List<String> feederGroupLeadStatus = System.Label.Potential_Feeder_Group_Lead_Status.split(',');
+        String restrictionMsg = Custom_Messages__mdt.getInstance('Non_Feeder_Acc_Convert_Validation').Value__c;
+        Set<Id> accountIdsToValidate = new Set<Id>();
+        if(newLeads != NULL && !newLeads.isEmpty()) {
+            for(Lead objLead : newLeads) {
+                if(feederGroupLeadStatus.contains(oldLeadsMap.get(objLead.Id).Status) && objLead.IsConverted && objLead.IsConverted != oldLeadsMap.get(objLead.Id).IsConverted) {
+                    accountIdsToValidate.add(objLead.convertedAccountId);
+                }
+            }
+        }
+
+        if(accountIdsToValidate != NULL && !accountIdsToValidate.isEmpty()) {
+            Map<Id, Account> map_accountId_accountInfo = new Map<Id, Account>([SELECT Id, Feeder_Account_Type__c, RecordTypeId, CreatedDate FROM Account WHERE ID IN :accountIdsToValidate]);
+            for(Lead objLead : newLeads) {
+                if(map_accountId_accountInfo.containsKey(objLead.convertedAccountId)) {
+                    Account associatedAccount =  map_accountId_accountInfo.get(objLead.convertedAccountId);
+                    if(!checkRecursive.isNewlyCreatedAccount && String.isBlank(associatedAccount.Feeder_Account_Type__c)) {
+                        objLead.addError(restrictionMsg);
+                    }
+                }
+            }
+        }
+    }
+    //HRP-13602 - Ends Here
+    
 }

@@ -10,11 +10,12 @@
  * 
  * Modification Log 
  * 
- * Date					    Developer Name			   Comments
+ * Date					   Developer Name			Comments
  * ***************************************************************************************************************************************************************************
  * 05/05/2023				Fitsum Worku			Logic for HRP-9982. Added logic to exclude the system admin profile from user type assignment/removal.  Also added support for
-  												    license assignment. 
+ * 												    license assignment.
  * 10/18/2024               Priti Jana              Logic for HRP-9815
+ * 12/26/2024				Priti Jana				Logic for HRP-13882
  *****************************************************************************************************************************************************************************
 */
 
@@ -37,48 +38,54 @@ public class userService implements Callable {
     public static void PublishEventForAssigningResourcesToUsers(List<User> usersLst) {
         
         List<AssignResourcesToUserEvent__e> asrEvents = new List<AssignResourcesToUserEvent__e>();
-        system.debug('#### inside PublishEventForAssigningResourcesToUsers ' + usersLst.size());
         For(User u : usersLst) {
             AssignResourcesToUserEvent__e asrEvent = new AssignResourcesToUserEvent__e();
             asrEvent.UserId__c = u.Id;
+            asrEvent.skipUserRoleUpdate__c = !checkRecursive.firstCallForRecordCreation;
             asrEvents.add(asrEvent);
         }
         if(asrEvents != null && asrEvents.size() > 0) {
             EventBus.publish(asrEvents);
-            system.debug('### event for assigning user resource published');
         }
     }
     
-    public static void AssignResourcesToUser(Set<Id> userIds) {
+    public static void AssignResourcesToUser(Map<String, Object> userObject) {
+        Set<Id> userIds = userObject != NULL && userObject.containsKey('userIds') && !((Set<Id>) userObject.get('userIds')).isEmpty() 
+                        ? (Set<Id>) userObject.get('userIds') 
+                        : new Set<Id>();
         
-        system.debug('### Inside assign resources to user...start assigning' + userIds.size());
+        Map<Id, Boolean> map_userId_skipRoleAssignment = userObject != NULL && userObject.containsKey('skipUserRoleAssignment') 
+                                                        ? (Map<Id, Boolean>) userObject.get('skipUserRoleAssignment') 
+                                                        : new Map<Id, Boolean>();
+        system.debug('map_userId_skipRoleAssignment '+map_userId_skipRoleAssignment);
+
+        system.debug('### Inside assign resources to user...start assigning ' + userIds.size());
         
         List<String> userPermissionSetAssignmentList = new List<String>(); 
         List<String> userPublicGroupAssignmentList = new List<String>(); 
         List<String> userPackageLicenseAssignmentList = new List<String>();
         List<String> userTypeList = new List<String>();
+        List<String> userRoleList = new List<String>(); //HRP-13882
         
         string userTypeAssignment = '';
         Map<Id, List<String>> userPermissionSetAssignmentMap = new Map<Id, List<String>>();
         Map<Id, List<String>> userPublicGroupAssignmentMap = new Map<Id, List<String>>();
         Map<Id, List<String>> userPackageLicenseAssignmentMap = new Map<Id, List<String>>();
         Map<Id, List<String>> userTypeAssignmentMap = new Map<Id, List<String>>();
+        Map<Id, List<String>> userRoleAssignmentMap = new Map<Id, List<String>>(); //HRP-13882
         
         Map<String, Id> permissionSetNameToIdMap = new Map<String, Id>();
         Map<String, Id> publicGroupNameToIdMap = new Map<String, Id>();
         Map<String, Id> packageLicenseNameToIdMap = new Map<String, Id>();
-        
-   
+        Map<String, Id> userRoleNameToIdMap = new Map<String, Id>(); //HRP-13882
             
-        List<User> newUserList = [SELECT Id, Name, sked__skeduloUserType__c, IsActive, Profile.Name FROM User WHERE Id in:userIds];
-        system.debug('### list of users ' + newUserList.size());
+        List<User> newUserList = [SELECT Id, Name, sked__skeduloUserType__c, IsActive, Profile.Name, UserRoleId FROM User WHERE Id in:userIds]; //HRP-13882 : Added "UserRoleId" field
         
         //Get all user assignments from the Custom Metadata config
         List<Assign_SF_Resources_to_User__mdt> allUsersAssignmentsFromMdt = getAllUserAssignmentsFromMdt();
         
         //Get AssignUserLicenses flag from a custom label
         String customLabelInfo = Label.AssignUserLicenses;
-        //system.debug('### customLabelInfo ' + customLabelInfo);
         
         if(!allUsersAssignmentsFromMdt.isEmpty()) {
             
@@ -107,12 +114,20 @@ public class userService implements Callable {
                     }
                 }
             }
+
+            //HRP-13882 => Get all roles and create a map of role name => role Id
+            List<UserRole> userRolesList = getAllUserRoles();
+            if(userRolesList != NULL && !userRolesList.isEmpty()) {
+                for(UserRole role : userRolesList){
+                    userRoleNameToIdMap.put(role.Name, role.Id);
+                }
+            }
             
-            For(User userRec : newUserList) {
+            for(User userRec : newUserList) {
                 if(userRec.IsActive == true) {
-                    For(Assign_SF_Resources_to_User__mdt ura : allUsersAssignmentsFromMdt) {
+                    for(Assign_SF_Resources_to_User__mdt ura : allUsersAssignmentsFromMdt) {
                         if(ura.Active__c && userRec.Profile.Name == ura.Profile_Name__c) {
-                            //For each user, build a list of permission set ids, public group ids, usertypes, and package license ids 
+                            //For each user, build a list of permission set ids, public group ids, usertypes, roles and package license ids 
                             //based on the custom metadata type assignment of user profile to a resource i.e. get the name of the resource from the 
                             //mdt and save its Id only if a matching resource is found in the org. 
                             if(ura.Assignment_Type__c == 'Permission Set') {
@@ -135,11 +150,20 @@ public class userService implements Callable {
                             if(!String.isEmpty(customLabelInfo) && customLabelInfo == 'Yes' && ura.Assignment_Type__c == 'Package License' &&
                                !userPackageLicenseAssignmentList.contains(packageLicenseNameToIdMap.get(ura.Package_License_Name__c))) {
                                    userPackageLicenseAssignmentList.add(packageLicenseNameToIdMap.get(ura.Package_License_Name__c));
-                               }
+                            }
+                            
+                            //HRP-13882 -> Starts Here
+                            if(ura.Assignment_Type__c == 'Role') {
+                                if(userRoleNameToIdMap.containsKey(ura.Role_Name__c) && 
+                                   !userRoleList.contains(userRoleNameToIdMap.get(ura.Role_Name__c))) {
+                                    userRoleList.add(userRoleNameToIdMap.get(ura.Role_Name__c));
+                                   }
+                            }
+                            //HRP-13882 -> Ends Here
                         }
                     }
                     
-                    //for each user, create a map of userid => list of (permission set ids, public group ids, user types, and package license ids)
+                    //for each user, create a map of userid => list of (permission set ids, public group ids, user types, roles and package license ids)
                     if(!userPermissionSetAssignmentList.isEmpty()) {
                         userPermissionSetAssignmentMap.put(userRec.Id, userPermissionSetAssignmentList);
                     }
@@ -151,6 +175,9 @@ public class userService implements Callable {
                     }
                     if(!userTypeList.isEmpty()) {
                         userTypeAssignmentMap.put(userRec.Id, userTypeList);
+                    }
+                    if(!userRoleList.isEmpty()) {
+                        userRoleAssignmentMap.put(userRec.Id, userRoleList); //HRP-13882
                     }
                 }
             }
@@ -196,9 +223,20 @@ public class userService implements Callable {
                 Database.Insert(userPublicGroupMembersToInsert, false);
             }
             
-            //#3 Handle user type
-            if(!userTypeAssignmentMap.isEmpty()) {
-                for(User userRec : newUserList) {
+            //#3 Handle user type & user role together => HRP-13882
+            for(User userRec : newUserList) {
+
+                //Check if the record is inserted and perform Role Assignment
+                if(map_userId_skipRoleAssignment.containsKey(userRec.Id) && !map_userId_skipRoleAssignment.get(userRec.Id)) {
+                    if(userRoleAssignmentMap != NULL && !userRoleAssignmentMap.isEmpty() && userRoleAssignmentMap.containsKey(userRec.Id)) {
+                        for(String userRoleId : userRoleAssignmentMap.get(userRec.Id)) {
+                            userRec.UserRoleId = userRoleId;
+                        }
+                    }
+                }
+
+                // Perform User Type Assignment
+                if(!userTypeAssignmentMap.isEmpty()) {
                     if(userTypeAssignmentMap.containsKey(userRec.Id)) {
                         for(string uType : userTypeAssignmentMap.get(userRec.Id)) {
                             userTypeAssignment += uType + ';';
@@ -206,18 +244,13 @@ public class userService implements Callable {
                     }
                     userRec.sked__skeduloUserType__c = userTypeAssignment;
                     userTypeAssignment = '';
-                }
-                Database.update(newUserList, false);
-            }           
-            else
-            {
-                for(User userRec : newUserList) {
+                } else {
                     if(userRec.Profile.Name != System.Label.AssignResourceProfileToExclude) { //HRP-9982
                         userRec.sked__skeduloUserType__c = '';
                     }
                 }
-                Database.update(newUserList, false);
             }
+            Database.update(newUserList, false); //Update UserRole and skeduloUserType together        
             
             //#4 Handle Pakcage Licenses
             if(!String.isEmpty(customLabelInfo) && customLabelInfo == 'Yes') {
@@ -248,7 +281,7 @@ public class userService implements Callable {
         
         List<Assign_SF_Resources_to_User__mdt> profileUserAssignmentsList = [
             SELECT Active__c, Assignment_Type__c, Permission_Set_Name__c, Profile_Name__c, 
-            Public_Group_Name__c, Queue_Name__c, User_Type_Name__c, Package_License_Name__c
+            Public_Group_Name__c, Queue_Name__c, User_Type_Name__c, Package_License_Name__c, Role_Name__c //HRP-13882, New Field added -> Role_Name__c
             FROM Assign_SF_Resources_to_User__mdt
         ];
         
@@ -296,6 +329,13 @@ public class userService implements Callable {
         if(!curPackageLicenseAssignments.isEmpty()) {
             delete curPackageLicenseAssignments;
         }
+    }
+    
+    //Get all user roles
+    public static List<UserRole> getAllUserRoles() {
+        
+        List<UserRole> allUserRolesList = [SELECT Id, Name FROM UserRole];
+        return allUserRolesList;
     }
     
     //Get all permission sets
@@ -347,8 +387,8 @@ public class userService implements Callable {
         //    Database.insert(errorList,false);
         //}
     }
-    
-    /********************************************************************** CALLABLE INTERFACE  *****************************************************************/
+
+    /******************************************************************* CALLABLE INTERFACE  *********************************************************************/
     public static Object call(String methodName, Map<String, Object> params) {
         skedProcessEventResult result = new skedProcessEventResult();
         try {
@@ -376,7 +416,6 @@ public class userService implements Callable {
         if(newUserList != NULL && !newUserList.isEmpty()) {
             for(User newUser : newUserList) {
                 User oldUser = map_oldUserId_oldUserInfo != NULL && map_oldUserId_oldUserInfo.get(newUser.Id) != NULL ? map_oldUserId_oldUserInfo.get(newUser.Id) : new User();
-                system.debug('olduser '+oldUser.WorkPhone__c+' newuser '+newUser.WorkPhone__c);
                 if(oldUser != NULL && newUser.WorkPhone__c != oldUser.WorkPhone__c) {
                     if(!map_DrdRepName_DrdRepContact.containsKey(newUser.FirstName + ' ' + newUser.LastName)) {
                         map_DrdRepName_DrdRepContact.put(newUser.FirstName + ' ' + newUser.LastName, newUser.WorkPhone__c);
@@ -410,16 +449,16 @@ public class userService implements Callable {
         Database.SaveResult[] opRecordUpdateResult = Database.update(opRecordList, FALSE);
         List<BSF_Error_Log__c> errorlogEntry = BSF_Utilities.createErrorLogWithObjectId(
             opRecordUpdateResult,
-            'Op Record DRD Rep Contact # Update',
+            'Op Record DRD Rep # Update',
             'UserService',
             'performOpRecordSync',
             'Error',
-            'DRD Rep Contact # Update'
+            'DRD Rep # Update'
         );
         if(errorlogEntry != NULL && !errorlogEntry.isEmpty()) {
             insert errorlogEntry;
         }
     }
     //HRP-9815 -> Ends Here
-  
+
 }

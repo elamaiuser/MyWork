@@ -33,10 +33,5 @@
         <operation>notEqual</operation>
         <value>complete,cancel</value>
     </filters>
-    <filters>
-        <field>Other_Projected_Units__c</field>
-        <operation>greaterThan</operation>
-        <value>0</value>
-    </filters>
     <label>All FS Opportunities_Future Date</label>
 </ListView>

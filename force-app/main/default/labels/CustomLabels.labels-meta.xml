@@ -469,6 +469,13 @@ Withdrawn/Excluded-&gt; Cancelled, Closed</value>
         <value>BSF_Batch_OpportunityTeamMember,BSF_Batch_OpportunityTeamSync</value>
     </labels>
     <labels>
+        <fullName>Potential_Feeder_Group_Lead_Status</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Potential Feeder Group Lead Status</shortDescription>
+        <value>Potential Feeder Group, Future Outreach, Feeder Group - Qualified, Feeder Group - Unqualified</value>
+    </labels>
+    <labels>
         <fullName>PremierCurrent</fullName>
         <language>en_US</language>
         <protected>false</protected>

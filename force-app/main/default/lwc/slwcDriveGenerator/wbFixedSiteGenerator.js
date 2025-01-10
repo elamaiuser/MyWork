@@ -1308,6 +1308,18 @@ class WbFixedSiteGenerator extends BaseGenerator {
     }
 
     let jobs = [];
+
+    // Retain Locked Jobs
+    let lockedBackupJobs = ((this.masterData.backupDrive?.driveShifts || [])[driveShiftIndex]?.jobs || []).filter(job => job.isLocked)
+    .map(job => {
+      let updatedJob = extend({}, job, jobTemplate);
+      return extend(updatedJob, {
+        isManuallyCreated: job.isManuallyCreated, 
+        manuallyCreatedFrom: job.manuallyCreatedFrom
+      });
+    });
+    if(!lockedBackupJobs) jobs = [...lockedBackupJobs];
+
     const mapResourceQuantity = this.mapResourceQuantity.get(driveShiftMetadata.key);
     Array.from(mapResourceQuantity.keys()).forEach((resourceRole) => {
       let job = (driveShift.jobs || []).find(driveShiftJob => driveShiftJob.resourceRole == resourceRole);
@@ -1325,14 +1337,14 @@ class WbFixedSiteGenerator extends BaseGenerator {
           job.aptQuantity = aptQuantity;
           job.quantity = vphhQuantity + (aptQuantity || 0);
           job.systemQuantity = systemQuantity || job.quantity;
-          jobs.push(job);
+          if(!jobs.find(job => job.resourceRole === resourceRole)) jobs.push(job);
         }
       } else {
         let { quantity, systemQuantity } = mapResourceQuantity.get(resourceRole);
         if (quantity > 0) {
           job.quantity = quantity;
           job.systemQuantity = systemQuantity || job.quantity;
-          jobs.push(job);
+          if(!jobs.find(job => job.resourceRole === resourceRole)) jobs.push(job);
         }
       }
     });
@@ -1353,7 +1365,7 @@ class WbFixedSiteGenerator extends BaseGenerator {
         job.quantity = (job.redcrossVolunteerQuantity || 0) + (job.sponsorVolunteerQuantity || 0);
       }
       if (quantity > 0) {
-        jobs.push(job);
+        if(!jobs.find(job => job.volunteerRole === 'Donor Ambassador')) jobs.push(job);
       }
     });
 

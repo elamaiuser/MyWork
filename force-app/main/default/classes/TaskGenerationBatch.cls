@@ -18,14 +18,14 @@ global class TaskGenerationBatch implements Database.Batchable<sObject> {
         List<Opportunity> oppsForSponsorTasks = new List<Opportunity>();
         List<Opportunity> oppsForRecruitmentTasks = new List<Opportunity>();
         List<Opportunity> oppsFor72CheckInTasks = new List<Opportunity>();
-        List<task> tasks = [SELECT WhatId, Subject, Type FROM Task WHERE (Subject = 'Recruitment Planning Meeting' OR Type = 'Sponsor Planning Meeting' OR Subject = '72 Hour Check-In') AND WhatId IN: oppIdSet];//HRP-7123//HRP-12627
+        List<task> tasks = [SELECT WhatId, Subject, Type FROM Task WHERE (Subject = 'Recruitment Planning Meeting' OR Type = 'Sponsor Planning Meeting' OR Subject = '72 Hour Check in - System Generated') AND WhatId IN: oppIdSet];
         if (!tasks.isEmpty()) {
             for (Task tsk : tasks) {
-                if(tsk.Subject == 'Recruitment Planning Meeting'){//HRP-7123
+                if(tsk.Subject == 'Recruitment Planning Meeting'){
                     oppIdsWithRecruitmentTask.add(tsk.WhatId);
                 }else if(tsk.type == 'Sponsor Planning Meeting'){
                     oppIdsWithSponsorTask.add(tsk.WhatId);
-                }else if(tsk.Subject == '72 Hour Check-In'){//HRP-12627
+                }else if(tsk.Subject == '72 Hour Check in - System Generated'){
                     oppIdsWith72CheckInTask.add(tsk.WhatId);
                 }
             }
@@ -45,8 +45,6 @@ global class TaskGenerationBatch implements Database.Batchable<sObject> {
                     }
                 }else if (opp.StageName == 'Committed' && !hasSponsorTask) {
                     oppsForSponsorTasks.add(opp);
-                }else if(opp.StageName == 'Committed' && !has72CheckInTask) {//HRP-12627
-                    oppsFor72CheckInTasks.add(opp);//HRP-12627
                 }
             }
         }else{

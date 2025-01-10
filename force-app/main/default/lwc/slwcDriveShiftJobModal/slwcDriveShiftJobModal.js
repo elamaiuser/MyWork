@@ -6,7 +6,7 @@ import * as slwcUtils from 'c/slwcUtils';
 import { debugLogService, tagService, tagQueryModel } from 'c/dataService';
 import { DriveHelper, DriveFetch } from 'c/slwcDriveGenerator';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent'
-import { MANUALLY_CREATED_FROM, RESOURCE_TYPE } from 'c/slwcConstants';
+import { DRIVE_TYPE, MANUALLY_CREATED_FROM, RESOURCE_TYPE, VOLUNTEER_COUNTS_ADJUSTMENT_REASON } from 'c/slwcConstants';
 
 export default class SlwcDriveShiftJobModal extends LightningElement {
     /* api */
@@ -20,6 +20,8 @@ export default class SlwcDriveShiftJobModal extends LightningElement {
  
     @track showModal = false;
     @track showSpinner = false;
+    @track isVolunteerQuantityChanged = false;
+    @track isOtherVolunteerAdjustmentReasonNeeded = false;
 
     @track isPersonResource;
     @track isVolunteerResource;
@@ -74,6 +76,14 @@ export default class SlwcDriveShiftJobModal extends LightningElement {
 
     get isEditMode() {
         return this.job && this.job.id;
+    }
+
+    get isFixedSiteDrive() {
+        return this.drive && this.drive.typeOfDrive === DRIVE_TYPE.FIXED_SITE;
+    }
+
+    get isOtherVolunteerAdjustmentReasonSelected() {
+        return this.job && this.job.volunteerAdjustmentReason === VOLUNTEER_COUNTS_ADJUSTMENT_REASON.OTHER;
     }
     
     connectedCallback() {
@@ -148,12 +158,19 @@ export default class SlwcDriveShiftJobModal extends LightningElement {
         const name = event.target.name
         let jobClone = {...this.job}
         jobClone[name] = slwcUtils.getValueFromEvent(event);
+        console.log('jobClone[name] ',jobClone[name]);
         if (name === 'redcrossVolunteerQuantity' || name === 'sponsorVolunteerQuantity') {
+            console.log('jobClone[name] in if ',name);
             jobClone.quantity = (jobClone.redcrossVolunteerQuantity || 0) + (jobClone.sponsorVolunteerQuantity || 0);
+            this.isVolunteerQuantityChanged = true;
         }
 
         if (name === 'vphhQuantity' || name === 'aptQuantity') {
             jobClone.quantity = (jobClone.vphhQuantity || 0) + (jobClone.aptQuantity || 0);
+        }
+
+        if(name === 'volunteerAdjustmentReason' && jobClone[name] === VOLUNTEER_COUNTS_ADJUSTMENT_REASON.OTHER) {
+            this.isOtherVolunteerAdjustmentReasonNeeded = true;
         }
 
         this.job = jobClone;
@@ -252,7 +269,6 @@ export default class SlwcDriveShiftJobModal extends LightningElement {
                 collectionOperation: siteCollectionOperation.collectionOperation,
                 driveSite
             }, masterData)
-            
             let driveShiftResourceRoleGroupRoleTimeDataMap = helper.calculateDriveShiftRoleTimeData(
                 masterData, {
                 ...this.drive,
@@ -278,6 +294,7 @@ export default class SlwcDriveShiftJobModal extends LightningElement {
 
     handleShowJobModal(detail) {
         this.showLoading();
+        console.log('detail ',detail);
         Promise.resolve()
         .then(() => {
             this.showModal = true;
@@ -287,6 +304,7 @@ export default class SlwcDriveShiftJobModal extends LightningElement {
             this.type = detail.type;
             this.driveShift = detail.driveShift;
             this.drive = detail.drive;  
+            this.isVolunteerQuantityChanged = detail.isVolunteerQuantityChanged;
             
             this.isPersonResource = this.resourceType == 'Person';
             this.isVolunteerResource = this.resourceType == 'Volunteer';
@@ -315,6 +333,7 @@ export default class SlwcDriveShiftJobModal extends LightningElement {
                     break;
                 case "edit":
                     this.job = detail.job;
+                    //this.isVolunteerQuantityChanged = false;
                     break;
             }
     
@@ -381,7 +400,7 @@ export default class SlwcDriveShiftJobModal extends LightningElement {
                 this.dispatchEvent(
                     new ShowToastEvent({
                         title: 'Success',
-                        message: 'Volunteer complement quantity has been updated!',
+                        message: `Volunteer complement ${this.isVolunteerQuantityChanged ? 'quantity ': ''} has been updated!`,
                         variant: 'success'
                     })
                 );

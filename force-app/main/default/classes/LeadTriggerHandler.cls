@@ -7,6 +7,7 @@
  * 10/03/2023                Priti Jana               Restricting non-admin users from Portfolio deletion (Part of HRP-HRP-10115)
  * 20/10/2023                Krapy Tuli                Logic for HRP-10880 (Update Leads to consume New Taxonomy - Geo Realignment)
  * 10/22/2024				 Balaji N				  Logic for HRP-13603 handleLeadStageStatus method call
+ * 12/08/2024                Priti Jana               Logic for HRP-13602
  ************************************************************************************************************************************************
 */
 
@@ -15,7 +16,7 @@ public class LeadTriggerHandler extends TriggerHandler{
     
     private final string logTag = '[LeadTriggerHandler]';
     
-    public override void beforeUpdate(){
+    public override void beforeUpdate() {
         LeadService.setLeadTerritory((List<Lead>)trigger.new,(Map<Id,Lead>)trigger.oldMap);
         //HRP-13603 Start
         if(super.getTriggerMethodsToBypass().indexOf('handleLeadStageStatus') == -1) 
@@ -27,6 +28,12 @@ public class LeadTriggerHandler extends TriggerHandler{
             System.debug('LeadService.beforeUpdate() - LeadService.handleLeadStageStatus() Bypassed');
         }
 		//HRP-13603 End
+
+        //HRP-13602 -> Starts Here
+        if(super.getTriggerMethodsToBypass().indexOf('restrictPotentionFeedersToGetConvertedToNonFeederAccounts') == -1)  {
+			LeadService.restrictPotentionFeedersToGetConvertedToNonFeederAccounts((List<Lead>)trigger.new, (Map<Id,Lead>)trigger.oldMap);
+        }
+        //HRP-13602 -> Ends Here
     }
      
     public override void beforeInsert(){

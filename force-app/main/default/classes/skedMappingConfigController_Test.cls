@@ -26,7 +26,6 @@ private class skedMappingConfigController_Test {
         skedMappingConfigContainer.mappingConfigModel linkedDrivesModel = new skedMappingConfigContainer.linkedDrivesMappingConfigFactory().process();
         skedMappingConfigContainer.mappingConfigModel locationModel = new skedMappingConfigContainer.locationMappingConfigFactory().process();
         skedMappingConfigContainer.mappingConfigModel locationAvailabilityModel = new skedMappingConfigContainer.locationAvailabilityMappingConfigFactory().process();
-        skedMappingConfigContainer.mappingConfigModel locationResourceScoreModel = new skedMappingConfigContainer.locationResourceScoreMappingConfigFactory().process();
         skedMappingConfigContainer.mappingConfigModel recurringScheduleModel = new skedMappingConfigContainer.recurringScheduleMappingConfigFactory().process();
         skedMappingConfigContainer.mappingConfigModel regionModel = new skedMappingConfigContainer.regionMappingConfigFactory().process();
         skedMappingConfigContainer.mappingConfigModel resourceModel = new skedMappingConfigContainer.resourceMappingConfigFactory().process();
@@ -35,11 +34,9 @@ private class skedMappingConfigController_Test {
         skedMappingConfigContainer.mappingConfigModel resourceOverrideModel = new skedMappingConfigContainer.resourceOverrideMappingConfigFactory().process();
         skedMappingConfigContainer.mappingConfigModel resourceRegionModel = new skedMappingConfigContainer.resourceRegionMappingConfigFactory().process();
         skedMappingConfigContainer.mappingConfigModel resourceTagModel = new skedMappingConfigContainer.resourceTagMappingConfigFactory().process();
-        skedMappingConfigContainer.mappingConfigModel siteCollectionOpModel = new skedMappingConfigContainer.siteCollectionOperationMappingConfigFactory().process();
         skedMappingConfigContainer.mappingConfigModel staffingBudgetAvailabilityModel = new skedMappingConfigContainer.staffingBudgetAvailabilityMappingConfigFactory().process();
         skedMappingConfigContainer.mappingConfigModel staffingBudgetModel = new skedMappingConfigContainer.staffingBudgetMappingConfigFactory().process();
         skedMappingConfigContainer.mappingConfigModel staffingBudgetCollectionOpModel = new skedMappingConfigContainer.staffingBudgetCollectionOpMappingConfigFactory().process();
-        skedMappingConfigContainer.mappingConfigModel staffingBudgetSiteModel = new skedMappingConfigContainer.staffingBudgetSiteMappingConfigFactory().process();
         skedMappingConfigContainer.mappingConfigModel tagModel = new skedMappingConfigContainer.tagMappingConfigFactory().process();
         skedMappingConfigContainer.mappingConfigModel territoryModel = new skedMappingConfigContainer.territoryMappingConfigFactory().process();
         skedMappingConfigContainer.mappingConfigModel userModel = new skedMappingConfigContainer.userMappingConfigFactory().process();

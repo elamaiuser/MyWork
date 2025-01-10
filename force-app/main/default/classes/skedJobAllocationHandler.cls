@@ -48,7 +48,6 @@ public class skedJobAllocationHandler extends skedTriggerHub implements Callable
             removeResourceForLinkedActivities(this.context.newRecords, (Map<Id, sked__Job_Allocation__c>)this.context.oldMap);
             syncToResourceHoursRecord(this.context.newRecords, (Map<Id, sked__Job_Allocation__c>)this.context.oldMap);
             syncToOperationRecordStaffRecords(this.context.newRecords, (Map<Id, sked__Job_Allocation__c>)this.context.oldMap);
-            sendNotifications(this.context.newRecords, (Map<Id, sked__Job_Allocation__c>)this.context.oldMap);
         }
     }
 
@@ -1106,55 +1105,6 @@ public class skedJobAllocationHandler extends skedTriggerHub implements Callable
         return skedJobAllocationPostProcessBatch.captureLinkedDriveMismatchedAssetExceptionLog(master);
     }
     
-    private void sendNotifications(List<sked__Job_Allocation__c> newRecords, Map<Id, sked__Job_Allocation__c> oldMap) {
-        List<sked__Job_Allocation__c> impactedJobAllocations = new List<sked__Job_Allocation__c>();
-        Map<Id, sked__Job_Allocation__c> oldImpactedJobAllocationMap = new Map<Id, sked__Job_Allocation__c>();
-        Map<Id, sked__Job_Allocation__c> skedJobAllocationMap = new Map<Id, sked__Job_Allocation__c>([
-            SELECT Id, sked__Resource__r.sked__Resource_Type__c
-            FROM sked__Job_Allocation__c
-            WHERE Id IN :newRecords
-        ]);
-
-        Set<Id> newRecordIds = new Set<Id>();
-        for (sked__Job_Allocation__c job : newRecords) {
-            newRecordIds.add(job.Id);
-        }
-
-        List<String> detectChangeFields = new List<String> {
-            'sked__Start__c',
-            'sked__Set_End__c'
-        };
-        List<String> excludedStatuses = new List<String> {
-            skedConstants.JOB_ALLOCATION_STATUS_PENDING_DISPATCH,
-            skedConstants.JOB_ALLOCATION_STATUS_DECLINED,
-            skedConstants.JOB_ALLOCATION_STATUS_DELETED
-        };
-
-        for (sked__Job_Allocation__c newRecord : newRecords) {
-            sked__Job_Allocation__c skedJobAllocation = skedJobAllocationMap.get(newRecord.Id);
-            if (!excludedStatuses.contains(newRecord.sked__Status__c) && skedJobAllocation.sked__Resource__r.sked__Resource_Type__c == skedConstants.RESOURCE_TYPE_PERSON) {
-                sked__Job_Allocation__c oldData = oldMap.get(newRecord.Id);
-                for (String detectChangeField : detectChangeFields) {
-                    if (newRecord.get(detectChangeField) != oldData.get(detectChangeField)) {
-                        impactedJobAllocations.add(newRecord);
-                        oldImpactedJobAllocationMap.put(newRecord.Id, oldData);
-                        break;
-                    }
-                }
-            }
-            
-        }
-        if (!impactedJobAllocations.isEmpty()) {
-            new skedCustomNotificationService(
-                new List<string> {
-                    'sked_Job_Allocation_Info_Changed_OneOff',
-                    'sked_Job_Allocation_Info_Changed_Email',
-                    'sked_Job_Allocation_Info_Changed_SFPush'
-                }
-            ).generateNotifications(impactedJobAllocations, oldImpactedJobAllocationMap);
-        }
-    }
-
     /**************************************** NESTED CLASS ********************************************/
     public class jobAllocationModel {
         public Boolean hasKey;

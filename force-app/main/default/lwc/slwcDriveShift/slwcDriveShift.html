@@ -20,11 +20,11 @@
                 </div>
                 <template if:false={isFixedSiteDrive}>
                     <div class="slds-col slds-medium-size_1-of-2 slds-large-size_3-of-12 slds-size_1-of-1 slds-p-left_small">
-                        <template if:false={masterData.fieldReadonlyMap.driveShifts}>
-                            <lightning-input type="number" name="APTSetup" label="APT Quantity" value={shift.APTSetup} readonly>
+                        <template if:false={masterData.fieldReadonlyMap.aptQuantity}>
+                            <lightning-input type="number" name="APTSetup" label="APT Quantity" value={shift.APTSetup} onchange={handleOnChange}>
                             </lightning-input>
                         </template>
-                        <template if:true={masterData.fieldReadonlyMap.driveShifts}>
+                        <template if:true={masterData.fieldReadonlyMap.aptQuantity}>
                             <div class="slds-form-element slds-form-element_readonly">
                                 <span class="slds-form-element__label">APT Quantity</span>
                                 <div class="slds-form-element__control">
@@ -34,7 +34,7 @@
                         </template>
                     </div>
                 </template>
-                <div class="slds-col slds-medium-size_1-of-2 slds-large-size_3-of-12 slds-size_1-of-1 slds-p-left_small">
+                <div class="slds-col slds-medium-size_1-of-2 slds-large-size_3-of-12 slds-size_1-of-1 slds-p-left_xx-large">
                     <template if:false={masterData.fieldReadonlyMap.driveShifts}>
                         <lightning-input type="number" name="vehiclesNeeded" label="Vehicles Needed" value={shift.vehiclesNeeded} readonly max="99" min="1">
                         </lightning-input>

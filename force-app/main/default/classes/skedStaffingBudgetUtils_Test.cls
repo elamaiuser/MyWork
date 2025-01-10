@@ -9,7 +9,6 @@ private class skedStaffingBudgetUtils_Test {
         
         Biomed_Collection_Op_Center__c testCollectionOperation1 = (Biomed_Collection_Op_Center__c)mapTestData.get('testCollectionOperation1');
         sked__Resource__c testResource1 = (sked__Resource__c)mapTestData.get('testResource1');
-        sked__Location__c testLocation1 = (sked__Location__c)mapTestData.get('testLocation2');
   
         List<sked_Staffing_Budget__c> staffingBudgetList = new List<sked_Staffing_Budget__c>();
         sked_Staffing_Budget__c staffingBudget;
@@ -34,19 +33,14 @@ private class skedStaffingBudgetUtils_Test {
                 sked_Total_Slots__c = 5
         );
         staffingBudgetList.add(staffingBudget);
+        
         insert staffingBudgetList;
 
         sked_Staffing_Budget_Collection_Op__c testStaffingBudgetCo1 = new sked_Staffing_Budget_Collection_Op__c(
-            sked_Staffing_Budget__c = staffingBudgetList[0].Id,
+            sked_Staffing_Budget__c = staffingBudget.Id,
             sked_Biomed_Collection_Operation__c = testCollectionOperation1.Id
         );
         insert testStaffingBudgetCo1;
-        
-        sked_Staffing_Budget_Site__c testStaffingBudgetSite1 = new sked_Staffing_Budget_Site__c(
-            sked_Staffing_Budget__c = staffingBudgetList[1].Id,
-            sked_Location__c = testLocation1.Id
-        );
-        insert testStaffingBudgetSite1; 
 
         sked__Availability__c availability = new sked__Availability__c(
         	sked__Resource__c = testResource1.Id,
@@ -102,38 +96,5 @@ private class skedStaffingBudgetUtils_Test {
         skedStaffingBudgetUtils.updateAvailabilityBiddingTypeByStaffingBudgets(new Set<Id>{results[0].Id});
         
         Test.stopTest();
-    }
-    
-    static testMethod void skedStaffingBudgetSiteFunctionality_Test() {
-        Test.startTest();
-        skedTestDataFactory testDataFactory = new skedTestDataFactory('us', 14);
-        List<sked__Location__c> testLocation1 = [SELECT Id, Name FROM sked__Location__c];
-        sked__Resource__c testResource1 = [SELECT Id FROM sked__Resource__c LIMIT 1];
-        
-        // Preferred LRS
-        sked__Location_Resource_Score__c testLocationResourceScore = new sked__Location_Resource_Score__c(
-        	sked__Location__c = testLocation1[1].Id,
-        	sked__Resource__c = testResource1.Id,
-        	sked_Location_Resource_Relationship__c = 'Preferred'
-        );
-        
-        insert testLocationResourceScore;
-     
-        testResource1 = [SELECT Id, sked__Primary_Region__r.sked_Biomed_Collection_Op_Center__c, 
-                                           sked_FCC_Code__c,
-                                           (SELECT Id, sked__Location__c, sked__Resource__c, sked_Location_Resource_Relationship__c
-                                            FROM sked__Location_Resource_Scores__r),
-                         				   (SELECT Id, sked__Tag__r.Name 
-                                            FROM sked__ResourceTags__r)
-                                           FROM sked__Resource__c 
-                                           LIMIT 1];
-        Map<Date, List<skedStaffingBudgetWrapper>> map_date_staffingBudgetWrapper = skedStaffingBudgetUtils.getSkedStaffingBudgetWrappersByDate(
-            new Map<Id, Set<Date>>{testResource1.Id => new Set<Date>{testDataFactory.summary.startDate}},
-            new Map<Id, sked__Resource__c>{testResource1.Id => testResource1}
-        );
-        
-        Assert.isTrue(map_date_staffingBudgetWrapper != NULL);
-        Test.stopTest();
-        
     }
 }

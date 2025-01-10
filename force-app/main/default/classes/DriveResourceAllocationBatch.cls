@@ -90,7 +90,7 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
             this.driveDateToEval = (driveDateToEval != NULL) ? driveDateToEval : NULL ;
             this.typeOfDrive = (!String.isBlank(typeOfDrive)) ? typeOfDrive : NULL ;
             this.runType = (!String.isBlank(runType) && runType.equalsIgnoreCase(BSF_Constants.RUN_TYPE_MANUAL)) ? BSF_Constants.RUN_TYPE_MANUAL : BSF_Constants.RUN_TYPE_SCHEDULED;
-            this.driveSource = source.equalsIgnoreCase(BSF_Constants.BATCH_CALENDAR_BUILD) ? BSF_Constants.BATCH_CALENDAR_BUILD : source;
+            this.driveSource = source != NULL && source.equalsIgnoreCase(BSF_Constants.BATCH_CALENDAR_BUILD) ? BSF_Constants.BATCH_CALENDAR_BUILD : source;
             Decimal daysAfterCbRollDate;
             if(BSF_Constants.MAP_DRIVETYPE_BATCHTYPE.containsKey(typeOfDrive)) {
                 cbLogWrapper = new DriveGenerationUtil.CalendarBuildLogWrapper(
@@ -100,7 +100,7 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
                 );
             }
             Calendar_Build_Setting__mdt cbMetadata = Calendar_Build_Setting__mdt.getInstance('Calendar_Build_Drives_Config');
-            if(this.driveSource.equalsIgnoreCase(BSF_Constants.BATCH_CALENDAR_BUILD) && this.runType.equalsIgnoreCase(BSF_Constants.RUN_TYPE_SCHEDULED)) {
+            if(this.driveSource.equalsIgnoreCase(BSF_Constants.BATCH_CALENDAR_BUILD) && this.runType.equalsIgnoreCase(BSF_Constants.RUN_TYPE_SCHEDULED) && this.driveDateToEval == NULL) {
                 if(typeOfDrive.equalsIgnoreCase(BSF_Constants.FIXED_SITE_DRIVE)) {
                     daysAfterCbRollDate = cbMetadata?.No_of_Days_for_Sys_Gen_Batch_FS__c;
                 } else {
@@ -132,7 +132,6 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
             }        
         } 
         catch(Exception ex) {
-            system.debug('ex '+ex.getMessage()+'staclTracing '+ex.getStackTraceString()); 
             DateTime dt = Helper.getSameDayOfPrevYear(this.driveDateToEval);
             this.driveDateToEval = Date.newInstance(dT.year(), dT.month(), dT.day());
             cbLogWrapper = new DriveGenerationUtil.CalendarBuildLogWrapper(
@@ -168,7 +167,7 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
             String operationType = typeOfDrive == Constants.FIX_SITE_OPP ? drive.sked_Operation_Type__c : '';
             Boolean isCalendarBuildDrive = drive.sked_Opportunity__r.Source__c == Constants.SOURCE_CALENDAR_BUILD;
             String prevDriveStatus = drive.sked_Status__c;
-            List<sked__Resource__c> resList = Database.Query(getResourcesToAllocate(drive)); 
+            
 
             for(sked__Job__c job : drive.sked_Jobs__r) {	
                 if(job.sked_Asset_Type__c == Constants.JOB_TYPE_VEHICLE) {	
@@ -294,7 +293,6 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
             Decimal noOfCDLAllocated = 0; 
             Decimal noOfDOTAllocated = 0; 
             Set<Id> storeJobIdOfVehicle = new Set<Id>(); // HRP-10212 and HRP 10213
-            system.debug('Pre-Existing Drive List Size:: '+preExistingDriveList.size());
             if (!preExistingDriveList.isEmpty()) {
                 for(sked_Drive__c drive : preExistingDriveList) {
                     if(drive.sked_Jobs__r != NULL || !drive.sked_Jobs__r.isEmpty()) {
@@ -343,15 +341,30 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
                                                                     AND sked_Collection_Operation__c =: drive.sked_Collection_Operation__c 
                                                                     AND sked_Date_of_Constraint__c =: drive.sked_Drive_Date__c LIMIT 1];
             remainingStaff = staffConstraintList != NULL && staffConstraintList.size() > 0 && staffConstraintList[0].sked_Total_Staff_Constraints__c != NULL ? (staffConstraintList[0].sked_Total_Staff_Constraints__c - noOfStaffsAllocated) : 0; // HRP-10523 // HRP-11224
+            
+            List<String> assetTypes = new List<String>{'Equipment', '2RBC'};
+            if(!isFixedSiteDrive(drive)) {
+                assetTypes.add('Vehicle');
+            }
             // HRP-12760 --> Starts Here
             Boolean passingRuleOne = isFixedSiteDrive(drive) && jobAllocationList.isEmpty();
             Boolean passingSubRuleTwo = remainingStaff >= totalNoOfStaffRequired && jobAllocationList.isEmpty();
             Boolean passingRuleTwo = passingSubRuleTwo && (map_operationDriveLimitId_operationDriveLimit.isEmpty() || resourceModel.total2RBCLimit == NULL || xrbcJobCount == 0 || xrbcJobCount <= resourceModel.remainingNoOf2RBC);    
             if(passingRuleOne || passingRuleTwo) {
+                system.debug('Inside passing rules');
+                system.debug('CPU limit before resource query '+limits.getCpuTime());
+                List<sked__Resource__c> resList = [SELECT Id, sked_DOT__c, sked_CDL__c, sked_Dedicated_to_Site__c, sked_Asset_Type__c, sked_Pres_Donor_Capacity__c,
+                                                    sked__Primary_Region__r.sked_Biomed_Collection_Op_Center__c
+                                                    FROM sked__Resource__c 
+                                                    WHERE sked__Is_Active__c = TRUE 
+                                                    AND ID NOT IN :processedResource
+                                                    AND (sked_Dedicated_to_Site__c = :driveSite OR sked_Dedicated_to_Site__c = NULL)
+                                                    AND sked_Asset_Type__c IN :assetTypes
+                                                    ORDER BY sked_Pres_Donor_Capacity__c DESC NULLS LAST
+                                                    ];
+                system.debug('CPU limit after resource query '+limits.getCpuTime()+' and counts '+resList.size());
                 evaluateResourceEligibilityAndAllocateResources(resList, drive, resourceModel);
             }
-            //fsSysGenCount = passingRuleOne ? fsSysGenCount + 1 : fsSysGenCount;
-            //mobileSysGenCount = passingRuleTwo ? mobileSysGenCount + 1 : mobileSysGenCount;
             // HRP-12760 --> ends Here
     	} catch(Exception ex) {
             List<BSF_Error_Log__c> bsfErrorLogToInsertList = new List<BSF_Error_Log__c>{BSF_Utilities.createBsfErrorLogForExceptions(ex, 'DriveResourceAllocationBatch', 'Execute Method', BSF_Constants.MAP_DRIVETYPE_BATCHTYPE.get(typeOfDrive), BSF_Constants.MAP_DRIVETYPE_BATCHTYPE.get(typeOfDrive), String.valueOf(drive.Id.getSobjectType()), String.valueOf(drive.Id))};
@@ -364,7 +377,7 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
         }
     }
     
-    private static String getResourcesToAllocate (sked_Drive__c drive) {	
+    /*private static String getResourcesToAllocate (sked_Drive__c drive) {	
         String queryString = 'SELECT Id,sked_DOT__c, sked_CDL__c,sked_Dedicated_to_Site__c,sked_Equipment_Subtype__c,sked_Asset_Type__c,sked_Pres_Donor_Capacity__c,sked__Is_Active__c,sked__Primary_Region__c,	'+
             ' sked__Primary_Region__r.sked_Biomed_Collection_Op_Center__c,(SELECT sked_Biomed_Collection_Op_Center__c,sked_Start_Date__c,sked_End_Date__c,sked_Resource__c '+
             ' FROM sked_Resource_Biomed_Collection_Ops__r),(SELECT sked__Blacklisted__c,sked__Account__c FROM sked__Account_Resource_Scores__r where sked__Blacklisted__c = true AND sked__Account__c = :driveAccount), '+
@@ -373,9 +386,9 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
             ' (SELECT Id, Name,sked_Start_Date__c, sked__Status__c,sked_Finish_Date__c, sked__Resource__c,sked__Type__c,sked_Start_Time__c, sked_Finish_Time__c, sked__Start__c, sked__Finish__c FROM sked__Availabilities1__r where sked__Status__c = \'Approved\' AND sked__Is_Available__c = false AND sked_Start_Date__c <=: driveDate AND sked_Finish_Date__c >=: driveDate), '+	
             ' (SELECT sked__Status__c ,sked__Resource__c,sked_Start_Date__c,sked_Set_End_Date__c,sked_Start_Time__c, sked_Set_End_Time__c, sked__Start__c, sked__Set_End__c FROM sked__Job_Allocations__r Where sked__Status__c  != \'Deleted\' AND sked_Start_Date__c <= :driveDate AND sked_Set_End_Date__c >= :driveDate), '+
             ' (SELECT sked__Resource__c,sked_Start_Date__c,sked_End_Date__c,sked_Start_Time__c, sked_End_Time__c, sked__Start__c, sked__End__c FROM sked__Activities__r where sked_Start_Date__c <=: driveDate AND sked_End_Date__c >=: driveDate), '+
-            ' (SELECT Id, Name,sked__Activity__r.sked_Start_Date__c, sked__Activity__r.sked_End_Date__c,  sked__Resource__c,sked_Start_Time__c, sked_End_Time__c, sked_Start1__c, sked_End__c FROM sked__Activity_Resources__r Where sked__Activity__r.sked_Start_Date__c <= :driveDate AND sked__Activity__r.sked_End_Date__c>= :driveDate), '+
-            ' (SELECT sked__Resource__c ,sked_Start_Date__c,sked_Expiry_Date__c, sked__Tag__c,sked_Tag_Type__c FROM sked__ResourceTags__r WHERE sked_Start_Date__c <= :driveDate AND (sked_Expiry_Date__c = NULL OR sked_Expiry_Date__c >= :driveDate)) '+
-            ' FROM sked__Resource__c WHERE sked__Is_Active__c = true AND (sked_Dedicated_to_Site__c = null OR sked_Dedicated_to_Site__c = :driveSite)' ; // HRP-11001
+            ' (SELECT Id, Name,sked__Activity__r.sked_Start_Date__c, sked__Activity__r.sked_End_Date__c,  sked__Resource__c,sked_Start_Time__c, sked_End_Time__c, sked_Start1__c, sked_End__c FROM sked__Activity_Resources__r Where sked__Activity__r.sked_Start_Date__c <= :driveDate AND sked__Activity__r.sked_End_Date__c>= :driveDate) '+
+            ' FROM sked__Resource__c WHERE sked__Is_Active__c = true AND (sked_Dedicated_to_Site__c = null OR sked_Dedicated_to_Site__c = :driveSite)' +
+            ' AND ID IN (SELECT sked__Resource__c FROM sked__Resource_Tag__c WHERE sked_Start_Date__c <= :driveDate AND (sked_Expiry_Date__c = NULL OR sked_Expiry_Date__c >= :driveDate))' ; // HRP-11001
 
         // HRP-11908 --> Starts Here
         if(isFixedSiteDrive(drive)) {
@@ -386,7 +399,7 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
         }
         // HRP-11908 --> Ends Here
         return queryString;
-    }
+    }*/
 
     private String createDriveQuery () {
         String queryString = 'SELECT Id, sked_Staff_Capacity__c, Excess_Staff_Capacity__c, Average_Staff_Capacity__c, Name,sked_Status__c, sked_Drive_Shift_Count__c, sked_Day_of_Week__c, sked_2RBC_Projected_Procedures__c, sked_Operation_Type__c,' +
@@ -399,23 +412,18 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
 
         //HRP-12706 --> Starts Here
         if(driveIdSet != NULL && !driveIdSet.isEmpty()) {
-            system.debug('driveIdSet '+driveIdSet);
 			queryString += ' AND Id IN: driveIdSet';            
         }
         if(driveSource != NULL && !String.isBlank(driveSource)) {
-            system.debug('driveSource '+driveSource);
 			queryString += ' AND sked_Opportunity__r.Source__c = :driveSource';            
         }
         if(typeOfDrive != NULL && !String.isBlank(typeOfDrive) && typeOfDrive.equalsIgnoreCase(BSF_Constants.MOBILE_DRIVE)) {
-            system.debug('typeOfDrive '+typeOfDrive);
             queryString += ' AND sked_Status__c = \'Draft\'';
         }
         if(driveDateToEval != NULL) {
-            system.debug('driveDateToEval '+driveDateToEval);
             queryString += ' AND sked_Drive_Date__c =: driveDateToEval';
         }
         if(targetCreatedDate != NULL) {
-            system.debug('targetCreatedDate '+targetCreatedDate);
             queryString += ' AND CreatedDate >= :targetCreatedDateFrom AND CreatedDate <= :targetCreatedDateTo' ;
         }
         queryString += ' AND sked_Type_of_Drive__c =: typeOfDrive ORDER BY sked_Drive_Date__c DESC, sked_Rank__c';
@@ -491,12 +499,13 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
         Map<Id,sked__Resource__c> successfullyEvaluatedResourceMap = new Map<Id,sked__Resource__c>();
         if(!resourceList.isEmpty()) {
             List<sked__Resource__c> availableResourceListPassedCheckOne = filterResourceAvailability(resourceList, drive);
-            List<sked__Resource__c> availableResourceListPassedCheckTwo = filterResourceNotBelongsToDriveCO(availableResourceListPassedCheckOne, drive);
+            List<sked__Resource__c> availableResourceListPassedCheck_JA = filterResourceWithNoOverlappingJA(availableResourceListPassedCheckOne, drive);
+            List<sked__Resource__c> availableResourceListPassedCheck_Activity = filterResourceWithNoOverlappingActivities(availableResourceListPassedCheck_JA, drive);
+            List<sked__Resource__c> availableResourceListPassedCheckTwo = filterResourceWithNoOverlappingGroupActivities(availableResourceListPassedCheck_Activity, drive);
             List<sked__Resource__c> availableResourceListPassedCheckThree = filterAccountBlacklist(availableResourceListPassedCheckTwo, drive);
             List<sked__Resource__c> availableResourceListPassedCheckFour = filterLocationBlacklist(availableResourceListPassedCheckThree, drive);
             List<sked__Resource__c> resourceListNeededForCOCheck = filterResourceDedicatedToSite(availableResourceListPassedCheckFour, successfullyEvaluatedResourceMap);
             filterResourceAvailabilityInJobCollectionOperation(resourceListNeededForCOCheck, drive, successfullyEvaluatedResourceMap);
-            system.debug('successfullyEvaluatedResourceMap '+successfullyEvaluatedResourceMap.size());
             filterTagsAndAllocateResources(successfullyEvaluatedResourceMap, drive, resourceModel);     
         }
     }
@@ -538,42 +547,163 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
     //1. Check for Resource Availability
     @testVisible  private static List<sked__Resource__c> filterResourceAvailability(List<sked__Resource__c> resourceList, sked_Drive__c drive) {
         List<sked__Resource__c> resourceListToReturn = new List<sked__Resource__c>();
+        Set<Id> resourceIds = new Set<Id>();
         List<String> unavailabilityTypes = new List<String>{'Maintenance','Activity','Break down'};
         for(sked__Resource__c res : resourceList) {
-            Boolean isResourceAvailable = TRUE;
-
-            //a. Check for Unavailability
-            if(!res.sked__Availabilities1__r.isEmpty()) {
-                for(sked__Availability__c unavailablity : res.sked__Availabilities1__r) {
-                    if(unavailabilityTypes.contains(unavailablity.sked__Type__c)) {
-                        isResourceAvailable = isResourceAvailableDuringJob(res.sked__Availabilities1__r, drive, res); //HRP-12760
-                    }
+            resourceIds.add(res.Id);
+        }
+        Map<Id, List<sked__Availability__c>> map_resourceId_resourceUnavailability = new Map<Id, List<sked__Availability__c>>();
+        List<sked__Availability__c> unavailabilities = [SELECT Id, Name,sked_Start_Date__c, sked__Status__c,sked_Finish_Date__c, 
+                                                        sked__Resource__c, sked__Type__c,sked_Start_Time__c, sked_Finish_Time__c, sked__Start__c, sked__Finish__c 
+                                                        FROM sked__Availability__c
+                                                        WHERE sked__Status__c = 'Approved' 
+                                                        AND sked__Is_Available__c = false 
+                                                        AND sked_Start_Date__c <= :driveDate 
+                                                        AND sked_Finish_Date__c >= :driveDate
+                                                        AND sked__Type__c IN :unavailabilityTypes
+                                                        AND sked__Resource__c IN :resourceIds];
+        if(unavailabilities != NULL && !unavailabilities.isEmpty()) {
+            for(sked__Availability__c unavailablity : unavailabilities) {
+                if(!map_resourceId_resourceUnavailability.containsKey(unavailablity.sked__Resource__c)) {
+                    map_resourceId_resourceUnavailability.put(unavailablity.sked__Resource__c, new List<sked__Availability__c>());
                 }
+                map_resourceId_resourceUnavailability.get(unavailablity.sked__Resource__c).add(unavailablity);
             }
+        }
 
-            //b. Check for Overlapping Job Allocations
-            if(!res.sked__Job_Allocations__r.isEmpty() && isResourceAvailable) {
-                isResourceAvailable = isResourceAvailableDuringJob(res.sked__Job_Allocations__r, drive, res); //HRP-12760
+        for(sked__Resource__c res : resourceList) {
+            if(!map_resourceId_resourceUnavailability.containsKey(res.Id)) resourceListToReturn.add(res);
+            else {
+                if(map_resourceId_resourceUnavailability != NULL && !map_resourceId_resourceUnavailability.isEmpty()) {
+                    Boolean isResourceAvailable = isResourceAvailableDuringJob(map_resourceId_resourceUnavailability.get(res.Id), drive, res); //HRP-12760
+                    if(isResourceAvailable) {
+                        resourceListToReturn.add(res);
+                    }
+                } 
             }
-
-            //c. Check for Overlapping Activities
-            if(!res.sked__Activities__r.isEmpty() && isResourceAvailable) {
-                isResourceAvailable = isResourceAvailableDuringJob(res.sked__Activities__r, drive, res); //HRP-12760  
-            }
-
-            //d. Check for Overlapping Group Activities
-            if(!res.sked__Activity_Resources__r.isEmpty() && isResourceAvailable) {
-                isResourceAvailable = isResourceAvailableDuringJob(res.sked__Activity_Resources__r, drive, res); //HRP-12760  
-            }
-
-            if(isResourceAvailable) {
-                resourceListToReturn.add(res);
-            }            
         }
         return resourceListToReturn;
     }
 
-    //2. Check for Resource Override - Not in Drive CO
+    //2. Check for Overlapping Job Allocations
+    @testVisible  private static List<sked__Resource__c> filterResourceWithNoOverlappingJA(List<sked__Resource__c> resourceList, sked_Drive__c drive) {
+        List<sked__Resource__c> resourceListToReturn = new List<sked__Resource__c>();
+        Set<Id> resourceIds = new Set<Id>();
+        for(sked__Resource__c res : resourceList) {
+            resourceIds.add(res.Id);
+        }
+
+        Map<Id, List<sked__Job_Allocation__c>> map_resourceId_resourceJobAllocation = new Map<Id, List<sked__Job_Allocation__c>>();
+        List<sked__Job_Allocation__c> jobAllocations = [SELECT Id, sked__Status__c ,sked__Resource__c,sked_Start_Date__c,sked_Set_End_Date__c,
+                                                        sked_Start_Time__c, sked_Set_End_Time__c, sked__Start__c, sked__Set_End__c 
+                                                        FROM sked__Job_Allocation__c 
+                                                        Where sked__Status__c  != 'Deleted'
+                                                        AND sked_Start_Date__c <= :driveDate 
+                                                        AND sked_Set_End_Date__c >= :driveDate
+                                                        AND sked__Resource__c IN :resourceIds];
+
+        if(jobAllocations != NULL && !jobAllocations.isEmpty()) {
+            for(sked__Job_Allocation__c jobAlloc : jobAllocations) {
+                if(!map_resourceId_resourceJobAllocation.containsKey(jobAlloc.sked__Resource__c)) {
+                    map_resourceId_resourceJobAllocation.put(jobAlloc.sked__Resource__c, new List<sked__Job_Allocation__c>());
+                }
+                map_resourceId_resourceJobAllocation.get(jobAlloc.sked__Resource__c).add(jobAlloc);
+            }
+        }
+
+        for(sked__Resource__c res : resourceList) {
+            if(!map_resourceId_resourceJobAllocation.containsKey(res.Id)) resourceListToReturn.add(res);
+            else {
+                if(map_resourceId_resourceJobAllocation != NULL && !map_resourceId_resourceJobAllocation.isEmpty()) {
+                    Boolean isResourceAvailable = isResourceAvailableDuringJob(map_resourceId_resourceJobAllocation.get(res.Id), drive, res); //HRP-12760
+                    if(isResourceAvailable) {
+                        resourceListToReturn.add(res);
+                    }
+                } 
+            }
+        }
+        return resourceListToReturn;
+    }
+
+    //3. Check for Overlapping Activities
+    @testVisible  private static List<sked__Resource__c> filterResourceWithNoOverlappingActivities(List<sked__Resource__c> resourceList, sked_Drive__c drive) {
+        List<sked__Resource__c> resourceListToReturn = new List<sked__Resource__c>();
+        Set<Id> resourceIds = new Set<Id>();
+        for(sked__Resource__c res : resourceList) {
+            resourceIds.add(res.Id);
+        }
+
+        Map<Id, List<sked__Activity__c>> map_resourceId_resourceActivities = new Map<Id, List<sked__Activity__c>>();
+        List<sked__Activity__c> activities = [SELECT sked__Resource__c,sked_Start_Date__c,sked_End_Date__c,
+                                                sked_Start_Time__c, sked_End_Time__c, sked__Start__c, sked__End__c 
+                                                FROM sked__Activity__c 
+                                                WHERE sked_Start_Date__c <= :driveDate
+                                                AND sked_End_Date__c >= :driveDate
+                                                AND sked__Resource__c IN :resourceIds];
+
+        if(activities != NULL && !activities.isEmpty()) {
+            for(sked__Activity__c activity : activities) {
+                if(!map_resourceId_resourceActivities.containsKey(activity.sked__Resource__c)) {
+                    map_resourceId_resourceActivities.put(activity.sked__Resource__c, new List<sked__Activity__c>());
+                }
+                map_resourceId_resourceActivities.get(activity.sked__Resource__c).add(activity);
+            }
+        }
+
+        for(sked__Resource__c res : resourceList) {
+            if(!map_resourceId_resourceActivities.containsKey(res.Id)) resourceListToReturn.add(res);
+            else {
+                if(map_resourceId_resourceActivities != NULL && !map_resourceId_resourceActivities.isEmpty()) {
+                    Boolean isResourceAvailable = isResourceAvailableDuringJob(map_resourceId_resourceActivities.get(res.Id), drive, res); //HRP-12760
+                    if(isResourceAvailable) {
+                        resourceListToReturn.add(res);
+                    }
+                } 
+            }
+        }
+        return resourceListToReturn;
+    }
+
+    //4. Check for Overlapping Group Activities
+    @testVisible  private static List<sked__Resource__c> filterResourceWithNoOverlappingGroupActivities(List<sked__Resource__c> resourceList, sked_Drive__c drive) {
+        List<sked__Resource__c> resourceListToReturn = new List<sked__Resource__c>();
+        Set<Id> resourceIds = new Set<Id>();
+        for(sked__Resource__c res : resourceList) {
+            resourceIds.add(res.Id);
+        }
+
+        Map<Id, List<sked__Activity_Resource__c>> map_resourceId_resourceGroupActivities = new Map<Id, List<sked__Activity_Resource__c>>();
+        List<sked__Activity_Resource__c> activitiyResources = [SELECT Id, Name,sked__Activity__r.sked_Start_Date__c, sked__Activity__r.sked_End_Date__c,  
+                                                                sked__Resource__c,sked_Start_Time__c, sked_End_Time__c, sked_Start1__c, sked_End__c 
+                                                                FROM sked__Activity_Resource__c
+                                                                WHERE sked__Activity__r.sked_Start_Date__c <= :driveDate
+                                                                AND sked__Activity__r.sked_End_Date__c >= :driveDate
+                                                                AND sked__Resource__c IN :resourceIds];
+
+        if(activitiyResources != NULL && !activitiyResources.isEmpty()) {
+            for(sked__Activity_Resource__c activityResource : activitiyResources) {
+                if(!map_resourceId_resourceGroupActivities.containsKey(activityResource.sked__Resource__c)) {
+                    map_resourceId_resourceGroupActivities.put(activityResource.sked__Resource__c, new List<sked__Activity_Resource__c>());
+                }
+                map_resourceId_resourceGroupActivities.get(activityResource.sked__Resource__c).add(activityResource);
+            }
+        }
+
+        for(sked__Resource__c res : resourceList) {
+            if(!map_resourceId_resourceGroupActivities.containsKey(res.Id)) resourceListToReturn.add(res);
+            else {
+                if(map_resourceId_resourceGroupActivities != NULL && !map_resourceId_resourceGroupActivities.isEmpty()) {
+                    Boolean isResourceAvailable = isResourceAvailableDuringJob(map_resourceId_resourceGroupActivities.get(res.Id), drive, res); //HRP-12760
+                    if(isResourceAvailable) {
+                        resourceListToReturn.add(res);
+                    }
+                } 
+            }
+        }
+        return resourceListToReturn;
+    }
+
+    /*2. Check for Resource Override - Not in Drive CO
     private static List<sked__Resource__c> filterResourceNotBelongsToDriveCO(List<sked__Resource__c> resourceList, sked_Drive__c drive){
         List<sked__Resource__c> reourceListToReturn = new List<sked__Resource__c>();
         for(sked__Resource__c resource : resourceList) {
@@ -589,31 +719,76 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
         }  
         
         return reourceListToReturn;
-    }
+    }*/
 
-    //3. Check Account Blacklist     
+    //5. Check Account Blacklist     
     private static List<sked__Resource__c> filterAccountBlacklist(List<sked__Resource__c> resourceList, sked_Drive__c drive) {
         List<sked__Resource__c> reourceListToReturn = new List<sked__Resource__c>();
+        Set<Id> resourceIds = new Set<Id>();
+        Map<Id, List<sked__Account_Resource_Score__c>> map_resourceId_accountResourceScore = new Map<Id, List<sked__Account_Resource_Score__c>>();
+
         for(sked__Resource__c resource : resourceList) {
-            if(resource.sked__Account_Resource_Scores__r.isEmpty()) {
+            resourceIds.add(resource.Id);
+        }
+
+        List<sked__Account_Resource_Score__c> accountResourceScore = [SELECT sked__Resource__c, sked__Blacklisted__c,sked__Account__c 
+                                                                      FROM sked__Account_Resource_Score__c 
+                                                                      WHERE sked__Resource__c IN :resourceIds
+                                                                      AND sked__Blacklisted__c = true 
+                                                                      AND sked__Account__c = :driveAccount];
+        
+        if(accountResourceScore != NULL && !accountResourceScore.isEmpty()) {
+            for(sked__Account_Resource_Score__c accountResScore : accountResourceScore) {
+                if(!map_resourceId_accountResourceScore.containsKey(accountResScore.sked__Resource__c)) {
+                    map_resourceId_accountResourceScore.put(accountResScore.sked__Resource__c, new List<sked__Account_Resource_Score__c>());
+                }
+                map_resourceId_accountResourceScore.get(accountResScore.sked__Resource__c).add(accountResScore);
+            }
+        }
+        for(sked__Resource__c resource : resourceList) {
+            if(map_resourceId_accountResourceScore == NULL || !map_resourceId_accountResourceScore.containsKey(resource.Id)) {
                 reourceListToReturn.add(resource);
             }
         }
         return reourceListToReturn;
     }
     
-    //4. Check Location Blacklist     
+    //6. Check Location Blacklist     
     private static List<sked__Resource__c> filterLocationBlacklist(List<sked__Resource__c> resourceList, sked_Drive__c drive) {
         List<sked__Resource__c> reourceListToReturn = new List<sked__Resource__c>();
+        Set<Id> resourceIds = new Set<Id>();
+        Map<Id, List<sked__Location_Resource_Score__c>> map_resourceId_locationResourceScore = new Map<Id, List<sked__Location_Resource_Score__c>>();
+
         for(sked__Resource__c resource : resourceList) {
-            if(resource.sked__Location_Resource_Scores__r.isEmpty()) {
+            resourceIds.add(resource.Id);
+        }
+
+        List<sked__Location_Resource_Score__c> locationResourceScore = [SELECT sked__Resource__c, sked__Blacklisted__c, sked__Location__c 
+                                                                        FROM sked__Location_Resource_Score__c 
+                                                                        WHERE sked__Resource__c IN :resourceIds
+                                                                        AND sked__Blacklisted__c = TRUE 
+                                                                        AND sked__Location__c = :driveSite
+                                                                        ];
+        
+        if(locationResourceScore != NULL && !locationResourceScore.isEmpty()) {
+            for(sked__Location_Resource_Score__c locationResScore : locationResourceScore) {
+                if(!map_resourceId_locationResourceScore.containsKey(locationResScore.sked__Resource__c)) {
+                    map_resourceId_locationResourceScore.put(locationResScore.sked__Resource__c, new List<sked__Location_Resource_Score__c>());
+                }
+                map_resourceId_locationResourceScore.get(locationResScore.sked__Resource__c).add(locationResScore);
+            }
+        }
+
+        for(sked__Resource__c resource : resourceList) {
+            if(map_resourceId_locationResourceScore == NULL || !map_resourceId_locationResourceScore.containsKey(resource.Id)) {
                 reourceListToReturn.add(resource);
             }
         }
+    
         return reourceListToReturn;
     }
     
-    //5. Check Resource Dedicated to Site
+    //7. Check Resource Dedicated to Site
     private static List<sked__Resource__c> filterResourceDedicatedToSite(List<sked__Resource__c> resourceList, Map<Id,sked__Resource__c> successfullyEvaluatedResourceMap) {
         List<sked__Resource__c> reourceListToReturn = new List<sked__Resource__c>();
         for(sked__Resource__c resource : resourceList) {
@@ -626,47 +801,131 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
         return reourceListToReturn;
     }
     
-    //6. Check Resource Availability in Job Collection Operation
+    //8. Check Resource Availability in Job Collection Operation
     private static void filterResourceAvailabilityInJobCollectionOperation(List<sked__Resource__c> resourceList, sked_Drive__c drive, Map<Id,sked__Resource__c> successfullyEvaluatedResourceMap) {
-        List<sked__Resource_Override__c> resourceOverrideList = new List<sked__Resource_Override__c>();
+        Set<Id> resourceIds = new Set<Id>();
+        Map<Id, List<sked_Resource_Biomed_Collection_Op__c>> map_resourceId_resourceSecondaryColOp = new Map<Id, List<sked_Resource_Biomed_Collection_Op__c>>();
+        Map<Id, List<sked__Resource_Override__c>> map_resourceId_resourceOverride = new Map<Id, List<sked__Resource_Override__c>>();
+
         for(sked__Resource__c resource : resourceList) {
             // 1. Check for Primary CO
             if(resource.sked__Primary_Region__r.sked_Biomed_Collection_Op_Center__c == drive.sked_Collection_Operation__c) {
                 if(!successfullyEvaluatedResourceMap.containsKey(resource.Id)) {
                     successfullyEvaluatedResourceMap.put(resource.Id, resource);
+                } else {
+                    resourceIds.add(resource.Id);
                 }  
             }
-            
+        }
+
+        if(!resourceIds.isEmpty()) {
+            List<sked_Resource_Biomed_Collection_Op__c> secondaryColOps = [SELECT sked_Biomed_Collection_Op_Center__c,sked_Start_Date__c,sked_End_Date__c,sked_Resource__c
+                                                                        FROM sked_Resource_Biomed_Collection_Op__c 
+                                                                        WHERE ID IN :resourceIds
+                                                                        AND sked_Biomed_Collection_Op_Center__c = :driveCO
+                                                                        AND (sked_Start_Date__c = NULL OR sked_Start_Date__c <= :driveDate)
+                                                                        AND (sked_End_Date__c = NULL OR sked_End_Date__c >= :driveDate)
+                                                                        ];
+                
             // 2. Check for Secondary CO
-            if(!resource.sked_Resource_Biomed_Collection_Ops__r.isEmpty()) {
-                for(sked_Resource_Biomed_Collection_Op__c secColOpr : resource.sked_Resource_Biomed_Collection_Ops__r) {
-                    if(secColOpr.sked_Biomed_Collection_Op_Center__c == drive.sked_Collection_Operation__c 
-                            && secColOpr.sked_Resource__c == resource.Id 
-                            && (secColOpr.sked_Start_Date__c == NULL || secColOpr.sked_Start_Date__c <= drive.sked_Drive_Date__c) 
-                            && (secColOpr.sked_End_Date__c == NULL || secColOpr.sked_End_Date__c >= drive.sked_Drive_Date__c)) {
-                        if(!successfullyEvaluatedResourceMap.containsKey(resource.Id)) {            
-                            successfullyEvaluatedResourceMap.put(resource.Id, resource);
-                        }
-                    }    
-                }  
+            if(secondaryColOps != NULL && !secondaryColOps.isEmpty()) {
+                for(sked_Resource_Biomed_Collection_Op__c secondaryColOp : secondaryColOps) {
+                    if(!map_resourceId_resourceSecondaryColOp.containsKey(secondaryColOp.sked_Resource__c)) {
+                        map_resourceId_resourceSecondaryColOp.put(secondaryColOp.sked_Resource__c, new List<sked_Resource_Biomed_Collection_Op__c>());
+                    }
+                    map_resourceId_resourceSecondaryColOp.get(secondaryColOp.sked_Resource__c).add(secondaryColOp);
+                }
             }
-    
-            // 3. Check for Resource Override in Job CO
-            if(!resource.sked__Resource_Overrides__r.isEmpty()) {
-                for(sked__Resource_Override__c resOveride : resource.sked__Resource_Overrides__r) {
-                    if(resOveride.sked_Collection_Operation__c == drive.sked_Collection_Operation__c) {
-                        resourceOverrideList.add(resOveride);
-                    }
+        }
+
+        resourceIds = new Set<Id>();
+
+        for(sked__Resource__c resource : resourceList) {
+            if(map_resourceId_resourceSecondaryColOp != NULL && map_resourceId_resourceSecondaryColOp.containsKey(resource.Id)) {
+                if(!successfullyEvaluatedResourceMap.containsKey(resource.Id)) {            
+                    successfullyEvaluatedResourceMap.put(resource.Id, resource);
                 }
-                Boolean isResourceAvailable = isResourceAvailableDuringJob(resourceOverrideList, drive, resource); //HRP-12760
+            } else {
+                resourceIds.add(resource.Id);
+            }
+        }
+
+        // 3. Check for Resource Override in Job CO
+        if(!resourceIds.isEmpty()) {
+            List<sked__Resource_Override__c> resourceOverides = [SELECT sked_Collection_Operation__r.Name,sked_Collection_Operation__c,sked__Resource__c,sked_Start_Date__c,sked_End_Date__c,sked_Start_Time__c, sked_End_Time__c, sked__Start__c, sked__End__c 
+                                                                FROM sked__Resource_Override__c 
+                                                                WHERE sked_Collection_Operation__c = :driveCO
+                                                                AND sked_Start_Date__c <= :driveDate
+                                                                AND sked_End_Date__c >= :driveDate
+                                                                AND sked__Resource__c IN :resourceIds
+                                                                ];
+
+            if(resourceOverides != NULL && !resourceOverides.isEmpty()) {
+                for(sked__Resource_Override__c resourceOveride : resourceOverides) {
+                    if(!map_resourceId_resourceOverride.containsKey(resourceOveride.sked__Resource__c)) {
+                        map_resourceId_resourceOverride.put(resourceOveride.sked__Resource__c, new List<sked__Resource_Override__c>());
+                    }
+                    map_resourceId_resourceOverride.get(resourceOveride.sked__Resource__c).add(resourceOveride);
+                }
+            }
+        }
+
+        for(sked__Resource__c res : resourceList) {
+            if(map_resourceId_resourceOverride != NULL && map_resourceId_resourceOverride.containsKey(res.Id)) {
+                Boolean isResourceAvailable = isResourceAvailableDuringJob(map_resourceId_resourceOverride.get(res.Id), drive, res); //HRP-12760
                 if(isResourceAvailable) {
-                    if(!successfullyEvaluatedResourceMap.containsKey(resource.Id)) {
-                        successfullyEvaluatedResourceMap.put(resource.Id, resource);
+                    if(!successfullyEvaluatedResourceMap.containsKey(res.Id)) {
+                        successfullyEvaluatedResourceMap.put(res.Id, res);
                     }
-                }
+                } 
             }
         }     
     }
+
+    /*6. Check Resource Availability in Job Collection Operation
+    private static void filterResourceOverride(List<sked__Resource__c> resourceList, sked_Drive__c drive, Map<Id,sked__Resource__c> successfullyEvaluatedResourceMap) {
+        Map<Id, List<sked__Resource_Override__c>> map_resourceId_resourceOverride = new Map<Id, List<sked__Resource_Override__c>>();
+        Map<Id, sked__Resource__c> map_resourceId_resourceCheck = new Map<Id, sked__Resource__c>();
+        for(sked__Resource__c resource : resourceList) {
+            if(!successfullyEvaluatedResourceMap.containsKey(resource.Id)) {
+                map_resourceId_resourceCheck.put(resource.Id, resource);
+            }  
+        }
+
+        // 3. Check for Resource Override in Job CO
+        if(map_resourceId_resourceCheck != NULL && !map_resourceId_resourceCheck.isEmpty()) {
+            List<sked__Resource_Override__c> resourceOverides = [SELECT sked_Collection_Operation__r.Name,sked_Collection_Operation__c,sked__Resource__c,sked_Start_Date__c,sked_End_Date__c,sked_Start_Time__c, sked_End_Time__c, sked__Start__c, sked__End__c 
+                                                                FROM sked__Resource_Override__c 
+                                                                WHERE sked_Start_Date__c <= :driveDate
+                                                                AND sked_End_Date__c >= :driveDate
+                                                                AND sked__Resource__c IN :map_resourceId_resourceCheck.keySet()
+                                                                AND sked_Collection_Operation__c = :driveCO];
+
+            if(resourceOverides != NULL && !resourceOverides.isEmpty()) {
+                for(sked__Resource_Override__c resourceOveride : resourceOverides) {
+                    if(!map_resourceId_resourceOverride.containsKey(resourceOveride.sked__Resource__c)) {
+                        map_resourceId_resourceOverride.put(resourceOveride.sked__Resource__c, new List<sked__Resource_Override__c>());
+                    }
+                    map_resourceId_resourceOverride.get(resourceOveride.sked__Resource__c).add(resourceOveride);
+                }
+            }
+        }
+
+        for(sked__Resource__c res : resourceList) {
+            if(!map_resourceId_resourceOverride.containsKey(res.Id)) {
+                if(!successfullyEvaluatedResourceMap.containsKey(res.Id)) {
+                    successfullyEvaluatedResourceMap.put(res.Id, res);
+                }
+            } else { 
+                Boolean isResourceAvailable = isResourceAvailableDuringJob(map_resourceId_resourceOverride.get(res.Id), drive, res); //HRP-12760
+                if(isResourceAvailable) {
+                    if(!successfullyEvaluatedResourceMap.containsKey(res.Id)) {
+                        successfullyEvaluatedResourceMap.put(res.Id, res);
+                    }
+                } 
+            }
+        }        
+    }*/
     
     @testVisible  private void filterTagsAndAllocateResources(Map<Id,sked__Resource__c> resourceMap, sked_Drive__c drive, ResourceModel resourceModel) {
         List<sked__Job_Tag__c> jobTagList = new  List<sked__Job_Tag__c>();
@@ -687,7 +946,7 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
                 }
             }
         }
-		system.debug('jobVsJobTagMap '+jobVsJobTagMap);
+
         // Separate Out Vehicle and Equipment Type resources from successfully evaluated resource map
         if(resourceMap!= NULL && !resourceMap.isEmpty()) {
             for(sked__Resource__c res : resourceMap.values()) {  
@@ -707,7 +966,19 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
                 } else if(res.sked_Asset_Type__c == Constants.JOB_TYPE_EQUIPMENT) {
                     equipmentTypeResource.add(res);
                 }
-                resourceVsResourceTagMap.put(res.Id,res.sked__ResourceTags__r);
+                //resourceVsResourceTagMap.put(res.Id,res.sked__ResourceTags__r);
+                List<sked__Resource_Tag__c> resourceTags = [SELECT Id, sked__Resource__c ,sked_Start_Date__c,sked_Expiry_Date__c, sked__Tag__c, sked_Tag_Type__c 
+                                                            FROM sked__Resource_Tag__c 
+                                                            WHERE sked__Resource__c IN :resourceMap.keySet() 
+                                                            AND sked_Start_Date__c <= :drive.sked_Drive_Date__c 
+                                                            AND (sked_Expiry_Date__c = NULL OR sked_Expiry_Date__c >= :drive.sked_Drive_Date__c)];
+
+                for(sked__Resource_Tag__c resTag : resourceTags) {
+                    if(!resourceVsResourceTagMap.containsKey(resTag.sked__Resource__c)) {
+                        resourceVsResourceTagMap.put(resTag.sked__Resource__c, new List<sked__Resource_Tag__c>());
+                    }
+                    resourceVsResourceTagMap.get(resTag.sked__Resource__c).add(resTag);
+                }
             }
         }
         
@@ -772,20 +1043,14 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
         Map<Id,Set<Id>> map_jobId_ResourceIds = new Map<Id,Set<Id>>();
         Map<Id,Set<Id>> jobVsResourceAllocations = new Map<Id,Set<Id>>();
         Set<Id> assignedResourceId = new  Set<Id>();
-        system.debug('vehicleTypeResource '+vehicleTypeResource);
         for(sked__Job__c vehicleJob : vehicleTypeJob) { // HRP-10212 start
-            system.debug('jobVsJobTagMap.get(vehicleJob.Id) '+jobVsJobTagMap.get(vehicleJob.Id).size());
             if(!vehicleTypeResourceForCDL.isEmpty()) {
                 for(sked__Resource__c vehicleResource : vehicleTypeResourceForCDL) {
-                    system.debug('vehicleResource '+vehicleResource);
                     if(!resourceVsResourceTagMap.get(vehicleResource.Id).isEmpty() && jobVsJobTagMap.containskey(vehicleJob.Id) && !assignedResourceId.contains(vehicleResource.Id)) {
                         Integer count = 0;
                         for(sked__Resource_Tag__c resTag : resourceVsResourceTagMap.get(vehicleResource.Id)) {
-                            system.debug('resTag '+resTag);
                             if(resTag.sked_Start_Date__c  <= driveDate && (resTag.sked_Expiry_Date__c == NULL || (resTag.sked_Expiry_Date__c != NULL || driveDate <= resTag.sked_Expiry_Date__c))) {
-                                for(sked__Job_Tag__c jobTag : jobVsJobTagMap.get(vehicleJob.Id)) {
-                                    system.debug('jobTag '+jobTag);
-                                   
+                                for(sked__Job_Tag__c jobTag : jobVsJobTagMap.get(vehicleJob.Id)) { 
                                     if(jobTag.sked__Tag__c == resTag.sked__Tag__c) {
                                         
                                         count++;
@@ -793,8 +1058,6 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
                                 }
                             }  
                         }
-                        system.debug('count in batch '+count);
-                        system.debug('jobVsJobTagMap.get(vehicleJob.Id).size() '+jobVsJobTagMap.get(vehicleJob.Id).size());
                         if(count == jobVsJobTagMap.get(vehicleJob.Id).size()){
                             if (!map_jobId_ResourceIds.containsKey(vehicleJob.Id)) {
                                 map_jobId_ResourceIds.put(vehicleJob.Id, new Set<Id>{vehicleResource.Id});
@@ -874,7 +1137,6 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
                 }
             }
         }
-		system.debug('map_operationDriveLimitId_operationDriveLimit '+map_operationDriveLimitId_operationDriveLimit.size());
         Integer maxNoOfVehicles = 0;
         for (Id jobId : map_jobId_ResourceIds.keySet()) {
             Decimal pdC = 0;
@@ -882,7 +1144,6 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
             for (Id resId : map_jobId_ResourceIds.get(jobId)) { // HRP-10212 and HRP-10213 start
                 if(resourceIdVsCapacity.get(resId) != NULL) {
                     if(map_operationDriveLimitId_operationDriveLimit.isEmpty()) {
-                        system.debug('here');
                         pdC += resourceIdVsCapacity.get(resId);
                         resourceIds.add(resId);
                     } else if(resourceIdVsResourceDetails.containsKey(resId) && resourceIdVsResourceDetails.get(resId).sked_DOT__c == True && (resourceModel.remainingNoOfDOT > 0 || resourceModel.remainingNoOfDOT == NULL)) {
@@ -909,7 +1170,6 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
             }
         }
         noOfVehicles = maxNoOfVehicles;
-        system.debug('jobVsResourceAllocations '+jobVsResourceAllocations);
         return jobVsResourceAllocations;
     }
 
@@ -944,14 +1204,12 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
                 }
           }
         }
-        system.debug('jobAlocList '+jobAlocList);
         List<sked__Job__c> combinedJobList = new List<sked__Job__c>();
         List<sked_Drive_Shift__c> driveshifts = getDriveShifts(drive.Id);
         if(!jobAlocList.isEmpty() && (noOfVehicleAllocations > 0 || (noOfVehicleAllocations == 0 && vehicleTypeJob.size() == 0)) && (noOfEquipmentAllocations > 0 || (noOfEquipmentAllocations == 0 && equipmentTypeJob.size() == 0))) {
             drive.sked_Status__c = drive.sked_Type_of_Drive__c == Constants.FIX_SITE_OPP ? (drive.sked_Opportunity__r.Source__c == Constants.SOURCE_CALENDAR_BUILD ? Constants.DRIVE_STATUS_CONFIRMED : Constants.DRIVE_STATUS_TENTATIVE) : Constants.DRIVE_STATUS_SYSTEM_GENERATED; //HRP-10009
             Boolean recalculationFlag = false;
             if (!jobAllocations.vehicleAllocations.isEmpty() && drive.sked_Type_of_Drive__c != Constants.FIX_SITE_OPP) {
-                system.debug('here ');
                 Decimal shiftTotalStaffCapacity = 0;
                 Decimal shiftStaffCapacity = 0;
                 Decimal staffPrimaryCount = 0;
@@ -961,7 +1219,6 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
                     GenerateMobileDrive.DriveStaffingComplementModel staffingComplement = new GenerateMobileDrive.DriveStaffingComplementModel(); //HRP-11634
                     for(sked__Job__c job : shift.sked_Jobs__r) { // HRP-11001 start
                         if ( (job.sked_Asset_Type__c != null) && (job.sked_Asset_Type__c == Constants.JOB_TYPE_VEHICLE && job.sked__Quantity__c != noOfVehicles)) {
-                            system.debug('here in reclaculation');
                             recalculationFlag = true;
                         }
                     }
@@ -985,7 +1242,6 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
                         shiftTotalStaffCapacity += shiftStaffCapacity;
                         staffPrimaryCount += getShiftPrimaryStaffCount(staffingComplement);
                     } else{
-                        system.debug('Drive recalculationFlag is false');
                     }
                 }
                 if(recalculationFlag) {
@@ -994,10 +1250,8 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
                     drive.Average_Staff_Capacity__c = dmlDrive?.averageStaffCapacity;
                     drive.Excess_Staff_Capacity__c = reCalculateDriveExcessStaffCapacity(dmlDrive);
                 }
-                system.debug('remainingStaff '+remainingStaff+' reCalTotalNoOfStaffRequired '+reCalTotalNoOfStaffRequired);
                 //HRP-11634 --> Ends Here
                 if (remainingStaff >= reCalTotalNoOfStaffRequired) { // HRP-11001 start
-                    system.debug('remainingStaff '+remainingStaff+' reCalTotalNoOfStaffRequired '+reCalTotalNoOfStaffRequired);
                     if(recalculationFlag) {
                         update combinedJobList;
                         Decimal driveProductivity = 0;
@@ -1034,7 +1288,6 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
                 }
             }
             if (remainingStaff >= reCalTotalNoOfStaffRequired) {
-                system.debug('remainingStaff '+remainingStaff+' reCalTotalNoOfStaffRequired '+reCalTotalNoOfStaffRequired);
                 insert jobAlocList;
            	    update drive;   
                 processedDrive.add(drive.Id);

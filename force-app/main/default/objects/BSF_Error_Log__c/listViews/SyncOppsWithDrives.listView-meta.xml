@@ -11,18 +11,8 @@
     <filterScope>Everything</filterScope>
     <filters>
         <field>CREATED_DATE</field>
-        <operation>equals</operation>
-        <value>11/15/2024 10:05 AM</value>
-    </filters>
-    <filters>
-        <field>Error_Description__c</field>
-        <operation>contains</operation>
-        <value>Sync Request</value>
-    </filters>
-    <filters>
-        <field>CREATEDBY_USER</field>
-        <operation>contains</operation>
-        <value>Elizabeth Ruch,Automated process</value>
+        <operation>greaterOrEqual</operation>
+        <value>TODAY</value>
     </filters>
     <label>SyncOppsWithDrives</label>
 </ListView>

@@ -2,7 +2,7 @@ import {
     MAPPING_TYPE,
     AccountAvailabilityPreferenceMappingConfigFactory, AccountBridgeApiMappingConfigFactory,
     AccountMappingConfigFactory, AccountResourceScoreMappingConfigFactory, AccountTagMappingConfigFactory,
-    ActivityMappingConfigFactory, ActivityResourceMappingConfigFactory,
+    ActivityMappingConfigFactory, ActivityCollectionOperationMappingConfigFactory, ActivityResourceMappingConfigFactory,
     AvailabilityMappingConfigFactory, AvailabilityPatternMappingConfigFactory, AvailabilityPatternResourceMappingConfigFactory,
     CalendarMessageCollectionOperationMappingConfigFactory, CalendarMessageMappingConfigFactory,
     ClientAvailabilityMappingConfigFactory, CollectionOperationSdmMappingConfigFactory, CollectionOpMappingConfigFactory, CollectionOpStagingLocationMappingConfigFactory,
@@ -51,6 +51,7 @@ class mappingConfigContainer {
             'UserMappingConfigFactory' : UserMappingConfigFactory,
             'sked_Account_Availability_Preference__cMappingConfigFactory' : AccountAvailabilityPreferenceMappingConfigFactory,
             'sked__Activity__cMappingConfigFactory' : ActivityMappingConfigFactory,
+            'sked_Activity_Collection_Operation__cMappingConfigFactory' : ActivityCollectionOperationMappingConfigFactory,
             'sked__Activity_Resource__cMappingConfigFactory' : ActivityResourceMappingConfigFactory,
             'sked__Account_Tag__cMappingConfigFactory' : AccountTagMappingConfigFactory,
             'sked__Account_Resource_Score__cMappingConfigFactory' : AccountResourceScoreMappingConfigFactory,
@@ -130,7 +131,6 @@ class mappingConfigContainer {
         let mappingConfig;
         if (!this.mapConfig.has(sObjectType)) {
             let className = sObjectType + 'MappingConfigFactory';
-            console.log('init factoryInstance: ' + className);
             //implement cache class mapping
             let factoryInstance = new this.classesMapping[className]();
             mappingConfig = factoryInstance.process();

@@ -5,9 +5,9 @@ import { debugLogService, operationDriveLimitService, operationDriveLimitQueryMo
   staffingConstraintService, staffingConstraintQueryModel } from 'c/dataService';
 import { isNullOrEmpty, generateUUID } from 'c/slwcUtils';
 import { DateTime } from 'c/luxon';
-import { cloneDeep, difference, uniqueId, extend } from 'c/lodash';
+import { cloneDeep, difference, isEmpty, uniqueId, extend } from 'c/lodash';
 import { Fetch } from './fetch';
-import { PROCEDURE_TYPE, DRIVE_STATUS, ASSET_TYPE, PENDING_ACTION, DRIVE_APPROVAL_STATUS, RESOURCE_TYPE, DRIVE_TYPE, DRIVE_CONTENTION, JOB_ALLOCATION_STATUS } from 'c/slwcConstants';
+import { ACCOUNT_TYPE, ACCOUNT_INDUSTRY_CODE, PROCEDURE_TYPE, DRIVE_STATUS, ASSET_TYPE, PENDING_ACTION, DRIVE_APPROVAL_STATUS, RESOURCE_TYPE, DRIVE_TYPE, DRIVE_CONTENTION, JOB_ALLOCATION_STATUS } from 'c/slwcConstants';
 
 const DEFAULT_CALENDAR_SETTINGS = {
   timezone: TIME_ZONE,
@@ -277,6 +277,15 @@ const DRIVE_SHIFT_FIELD_CHANGE_MAPPING = {
     groups: [
       { actions: [] },
       { actions: ['changeLunchBreakStartTime', 'updateDriveStaffCapacity', 'updateDriveAverageStaffCapacity', 'updateDriveExcessStaffCapacity', 'generateShiftSlots', 'updateDriveTotalSlots'] },
+    ]
+  },
+
+  'APTSetup': {
+    groups: [
+      { actions: [] },
+      { actions: [] },
+      { actions: ['handleDriveShiftsMetadataChanged'] },
+      { actions: [] }
     ]
   }
 }
@@ -830,6 +839,7 @@ class MobileGenerator extends BaseGenerator {
       projectedRegisteredDonors: this.drive.projectedRegisteredDonors || 0,
       x2rbcProjectedProcedures: this.drive.x2rbcProjectedProcedures || 0,
       wbProjectedProcedures: this.drive.wbProjectedProcedures || 0,
+      APTSetup: this.drive.aptQuantity || 0,
       numberOfDriveShifts: 0,
       driveShifts: [],
       resourceRoleGroupRoleTimeDataMap: this.helper.calculateDriveRoleTimeData(this.drive, this.masterData)
@@ -846,7 +856,8 @@ class MobileGenerator extends BaseGenerator {
         endTime: driveShift.endTime,
         x2rbcProjectedProcedures: driveShift.x2rbcProjectedProcedures,
         wbProjectedProcedures: driveShift.wbProjectedProcedures,
-        donorsScheduled: driveShift.donorsScheduled
+        donorsScheduled: driveShift.donorsScheduled,
+        APTSetup: driveShift.APTSetup
       }
 
       driveShift.driveShiftMetadata = temp;
@@ -964,27 +975,62 @@ class MobileGenerator extends BaseGenerator {
 
   calculateTotalProceduresProjected(record) {
     if (!record && !this.drive) return;
+    let isShift = true;
     if (!record) {
       record = this.drive;
+      isShift = false;
+      //if(this.processingDCRs) record.aptQuantity = this.drive.opportunity.aptQuantity;
+    } else {
+      this.drive.aptQuantity = record.APTSetup;
     }
     let x2rbcProjectedProcedures = record.x2rbcProjectedProcedures || 0;
     let wbProjectedProcedures = record.wbProjectedProcedures || 0;
     record.totalProceduresProjected = x2rbcProjectedProcedures + wbProjectedProcedures;
     record.totalProductsProjected = x2rbcProjectedProcedures * 2 + wbProjectedProcedures;
+    if(isShift && !isEmpty(this.masterData.backupDrive?.driveShifts)) {
+      this.masterData.skipAPTCalculation = !!this.masterData.backupDrive?.driveShifts?.find(shift => shift.totalProceduresProjected === record.totalProceduresProjected);
+    }
+    if(!this.masterData.skipAPTCalculation) {
+      
+      this.recalculateAPTSettings(this.drive);
+    }
+    console.log('this.drive ',this.drive.aptQuantity);
+  }
+
+  recalculateAPTSettings(drive) {
+    if (!drive) return;
+  
+    let aptQuantity = 0;
+    const isEducationDrive = drive.account?.type === ACCOUNT_TYPE.EDUCATION;
+    const isMiddleOrElemenentaryIndustryCode = drive.account?.industryCode === ACCOUNT_INDUSTRY_CODE.MIDDLE_SCHOOL || drive.account?.industryCode === ACCOUNT_INDUSTRY_CODE.ELEMENTARY_SCHOOL;
+    if(isEducationDrive) {
+      if(!isMiddleOrElemenentaryIndustryCode) {
+        aptQuantity = Math.floor(drive.driveShiftsMetadata.totalProceduresProjected / 40);
+      }
+    } else {
+      if(drive.driveShiftsMetadata.totalProceduresProjected >= 40) aptQuantity = 1;
+    }
+      drive.aptQuantity = aptQuantity;
+      drive.aptRequired = aptQuantity > 0 ? true : false;
+    
   }
 
   /** Drive Shifts metadata */
   calculateDriveShiftsMetadata() {
+    console.log('this.drive ',this.drive.aptQuantity);
     //reset values
     let driveShiftsMetadata = {
       projectedRegisteredDonors: this.drive.projectedRegisteredDonors || 0,
       x2rbcProjectedProcedures: this.drive.x2rbcProjectedProcedures || 0,
       wbProjectedProcedures: this.drive.wbProjectedProcedures || 0,
+      APTSetup: this.drive.aptQuantity || 0,
       numberOfDriveShifts: 0,
       driveShifts: [],
       resourceRoleGroupRoleTimeDataMap: this.helper.calculateDriveRoleTimeData(this.drive, this.masterData)
     };
+    console.log('before asignment driveShiftsMetadata ',driveShiftsMetadata);
     this.drive.driveShiftsMetadata = driveShiftsMetadata;
+    console.log('this.drive.driveShiftsMetadata in calculateDriveShiftsMetadata',this.drive.driveShiftsMetadata);
 
     if (this.drive.driveDate && this.drive.startTime && this.drive.endTime) {
       const driveStart = this.helper.newDateTime(this.drive.driveDate, this.drive.startTime, this.masterData.timezoneSidId);
@@ -1026,7 +1072,7 @@ class MobileGenerator extends BaseGenerator {
         driveShift.finish = drawHoursEnd;
         driveShift.startTime = this.helper.dateJSToTimeIso(drawHoursStart, this.masterData.timezoneSidId);
         driveShift.endTime = this.helper.dateJSToTimeIso(drawHoursEnd, this.masterData.timezoneSidId);
-
+        driveShift.APTSetup = this.drive.aptQuantity || 0;
         driveShiftsMetadata.driveShifts.push(driveShift);
       }
     }
@@ -1367,18 +1413,14 @@ class MobileGenerator extends BaseGenerator {
       const drawHours = this.helper.calculateDrawHours(driveShiftMetadata, this.masterData, driveShiftMetadata.lunchBreakSettings);
 
       let noOfVpHhStaffs = Math.ceil(totalVpHhCapacity / vpHhCapacity / drawHours);;
-      let noOfAptStaffs = 0;
-
-      if(this.drive.aptRequired) {
-        noOfAptStaffs = 1;
-      }
-
+     
       let resourceQuantityMap = this.mapResourceQuantity.get(driveShiftMetadata.key);
       resourceQuantityMap.set('VP/HH', {
         vphhQuantity: noOfVpHhStaffs,
-        aptQuantity: noOfAptStaffs
+        aptQuantity: driveShiftMetadata.APTSetup
       });
     });
+    
   }
 
   calculateChargeQuantity() {
@@ -1516,9 +1558,11 @@ class MobileGenerator extends BaseGenerator {
 
   buildMultiDriveShifts() {
     let driveShiftsMetadata = this.drive.driveShiftsMetadata;
+    console.log('this.drive.driveShiftsMetadata in buildMultiDriveShifts ',this.drive.driveShiftsMetadata);
     let driveShifts = [];
 
     driveShiftsMetadata.driveShifts.forEach((driveShiftMetadata, index) => {
+      console.log('driveShiftMetadata in buildMultiDriveShifts ',driveShiftMetadata.APTSetup);
       const originalDriveShift = this.drive.driveShifts[index];
       let proposedDriveShift = {
         ...autoMapper.autoMapperInstance.initiateModel('sked_Drive_Shift__c'),
@@ -1535,7 +1579,9 @@ class MobileGenerator extends BaseGenerator {
         wbProjectedProcedures: driveShiftMetadata.wbProjectedProcedures,
         donorsScheduled: driveShiftMetadata.donorsScheduled
       };
-
+      console.log('proposedDriveShift ',proposedDriveShift.driveShiftMetadata.APTSetup);
+      proposedDriveShift.APTSetup = proposedDriveShift.driveShiftMetadata.APTSetup;
+      console.log('proposedDriveShift ',proposedDriveShift);
       this.populateDriveShiftTags(proposedDriveShift);
       this.populateDriveShiftJobs(proposedDriveShift, index);
       this.updateShiftMobileSetup(proposedDriveShift);
@@ -1606,7 +1652,9 @@ class MobileGenerator extends BaseGenerator {
   }
   
   populateDriveShiftJobs(driveShift, driveShiftIndex) {
+    console.log('driveShift ',driveShift);
     const driveShiftMetadata = driveShift.driveShiftMetadata;
+    console.log('driveShiftMetadata before jobtemplate ',driveShiftMetadata);
     let jobTagsMap = this.helper.calculateJobTagsMap(this.masterData);
     let jobTemplate = {
       driveSiteId: this.drive.driveSiteId,
@@ -1621,6 +1669,7 @@ class MobileGenerator extends BaseGenerator {
 
     let jobs = [];
     const mapResourceQuantity = this.mapResourceQuantity.get(driveShiftMetadata.key);
+    console.log('mapResourceQuantity before jobs processing ',mapResourceQuantity);
     Array.from(mapResourceQuantity.keys()).forEach((resourceRole) => {
       let job = (driveShift.jobs || []).find(driveShiftJob => driveShiftJob.resourceRole == resourceRole);
       if (!job) {
@@ -1632,6 +1681,7 @@ class MobileGenerator extends BaseGenerator {
 
       if (resourceRole === 'VP/HH') {
         let { vphhQuantity, aptQuantity, dualRole, systemQuantity, isManuallyCreated, manuallyCreatedFrom } = mapResourceQuantity.get(resourceRole);
+        console.log('aptQuantity ',aptQuantity);
         if (vphhQuantity > 0 || aptQuantity > 0) {
           job.dualRole = dualRole || '';
           job.vphhQuantity = vphhQuantity;
@@ -1710,6 +1760,7 @@ class MobileGenerator extends BaseGenerator {
       });
     });
     driveShift.jobs = jobs.concat(cloneDeep(manuallyCreatedJobs));
+    console.log(' driveShift.jobs ',driveShift.jobs);
   }
 
   /** Lunch break */
@@ -2061,11 +2112,14 @@ class MobileGenerator extends BaseGenerator {
   }
 
   /** Change handlers */
-  handleDriveShiftsMetadataChanged() {
+  handleDriveShiftsMetadataChanged(driveShift = {}) {
     if (this.drive.driveShiftsMetadata) {
       this.calculateTotalProceduresProjected(this.drive.driveShiftsMetadata);
+      console.log('this.drive.driveShiftsMetadata before loop ',this.drive.driveShiftsMetadata);
+      this.drive.driveShiftsMetadata.APTSetup = this.drive.aptQuantity;
       this.drive.driveShiftsMetadata.driveShifts.forEach((driveShiftMetadata) => {
         this.calculateTotalProceduresProjected(driveShiftMetadata);
+        driveShiftMetadata.APTSetup = !isEmpty(driveShift) ? driveShift.APTSetup : this.drive.aptQuantity;
         driveShiftMetadata.resourceRoleGroupRoleTimeDataMap = this.helper.calculateDriveShiftRoleTimeData(
           this.masterData, 
           this.drive, 
@@ -2084,9 +2138,17 @@ class MobileGenerator extends BaseGenerator {
     this.proposeDriveShifts();
     this.calculateTotalProceduresProjected();
     this.calculateDriveProductivityPlanned();
+    this.updateDriveAptSettings();
+  }
+
+  updateDriveAptSettings() {
+    this.drive.aptRequired = this.drive.aptQuantity > 0;
   }
 
   handleTotalVehicleRequestedChanged() {
+    console.log("13773 handleTotalVehicleRequestedChanged start");
+    console.log("13773 this.drive.projectedRegisteredDonors: " + this.drive.projectedRegisteredDonors);
+    console.log("13773 this.drive.totalVehicleRequestedChanged: " + this.drive.totalVehicleRequestedChanged);
     if (!this.drive.projectedRegisteredDonors || !this.drive.totalVehicleRequestedChanged) return;
 
     const { vehicles, lockedVehicles = [] } = this.drive.totalVehicleRequestedChanged;
@@ -2108,12 +2170,15 @@ class MobileGenerator extends BaseGenerator {
       if (!vehicleJob.jobAllocations) {
         vehicleJob.jobAllocations = [];
       }
-
+      console.log("13773 lockedVehicles: " + lockedVehicles);
+      console.log("13773 vehicleJob.jobAllocations: " + vehicleJob.jobAllocations);
       vehicleJob.jobAllocations.forEach((jobAllocation) => {
         const locked = !!lockedVehicles.find(lockedVehicle => {
           return lockedVehicle.id === jobAllocation.resourceId;
         });
         if(locked) return;
+
+        console.log("13773 locked: " + locked);
 
         let newVehicle = vehicles.find(vehicle => vehicle.id === jobAllocation.resourceId);
         if (!newVehicle) {

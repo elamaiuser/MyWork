@@ -17,10 +17,5 @@
     <columns>Blood_Region__c</columns>
     <columns>Campaign_Name__c</columns>
     <filterScope>Everything</filterScope>
-    <filters>
-        <field>LEAD.RECORDTYPE</field>
-        <operation>equals</operation>
-        <value>Lead.Lead</value>
-    </filters>
     <label>*All Leads</label>
 </ListView>

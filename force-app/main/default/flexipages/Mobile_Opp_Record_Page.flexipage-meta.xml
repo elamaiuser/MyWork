@@ -42,16 +42,6 @@
                         <valueListItems>
                             <value>PrintableView</value>
                         </valueListItems>
-                        <valueListItems>
-                            <value>Opportunity.Drive_Work_Sheet</value>
-                            <visibilityRule>
-                                <criteria>
-                                    <leftValue>{!Record.DriveStatus__c}</leftValue>
-                                    <operator>EQUAL</operator>
-                                    <rightValue>Confirmed</rightValue>
-                                </criteria>
-                            </visibilityRule>
-                        </valueListItems>
                     </valueList>
                 </componentInstanceProperties>
                 <componentInstanceProperties>
@@ -202,7 +192,7 @@
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>richTextValue</name>
-                    <value>&lt;p&gt;&lt;span style=&quot;color: rgb(250, 2, 2);&quot;&gt;The Drive Date is less than 180 business days from Today or Targeted Ask Date isn&apos;t set, please enter a Targeted Ask Date .&lt;/span&gt;&lt;/p&gt;</value>
+                    <value>&lt;p&gt;&lt;span style=&quot;color: rgb(250, 2, 2);&quot;&gt;The Drive Date is less than 180 business days from Today or Targeted Ask Date isn&#39;t set, please enter a Targeted Ask Date .&lt;/span&gt;&lt;/p&gt;</value>
                 </componentInstanceProperties>
                 <componentName>flexipage:richText</componentName>
                 <identifier>flexipage_richText2</identifier>
@@ -809,7 +799,7 @@
         </itemInstances>
         <name>Facet-4f62c8e7-5b5e-41d7-9ed0-28ed5030fa59</name>
         <type>Facet</type>
-    </flexiPageRegions>    
+    </flexiPageRegions>
     <flexiPageRegions>
         <itemInstances>
             <componentInstance>
@@ -930,7 +920,7 @@
                 <componentName>flexipage:tab</componentName>
                 <identifier>customTab7</identifier>
             </componentInstance>
-        </itemInstances>        
+        </itemInstances>
         <name>Facet-3938d1e4-a1ce-404d-b9aa-dc4ec99d0fe0</name>
         <type>Facet</type>
     </flexiPageRegions>
@@ -1082,6 +1072,32 @@
                         <rightValue>false</rightValue>
                     </criteria>
                 </visibilityRule>
+            </componentInstance>
+        </itemInstances>
+        <itemInstances>
+            <componentInstance>
+                <componentInstanceProperties>
+                    <name>parentFieldApiName</name>
+                    <value>Opportunity.Id</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>relatedListApiName</name>
+                    <value>Feeder_Account_Opportunities__r</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>relatedListComponentOverride</name>
+                    <value>CARD</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>rowsToDisplay</name>
+                    <value>10</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>showActionBar</name>
+                    <value>true</value>
+                </componentInstanceProperties>
+                <componentName>force:relatedListSingleContainer</componentName>
+                <identifier>force_relatedListSingleContainer2</identifier>
             </componentInstance>
         </itemInstances>
         <itemInstances>

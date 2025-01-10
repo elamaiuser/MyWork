@@ -189,7 +189,18 @@ global class skedModels {
         public string subtype;
         public string timezoneSidId;
         public string timezone;
+        public List<string> driveTypes;
+        public List<String> biomedCollectionOpIds;
         public List<activityResource> activityResources;
+        public List<activityCollectionOp> activityCollectionOperations;
+    }
+
+    global virtual class activityCollectionOp extends event {
+        public string activityId;
+        public activity activity;
+        public biomedCollectionOp biomedCollectionOp;
+        public string biomedCollectionOpId;
+        public string districtId;
     }
     
     global virtual class activityResource extends event {
@@ -202,6 +213,8 @@ global class skedModels {
     
     global virtual class availability extends event {
         public string approvalReason;
+        public boolean approvedViaAutomation;
+        public string biddingType;
         public boolean bypassAutoApprovalProcess;
         public string callOutForActivityId;
         public activity callOutForActivity;
@@ -214,22 +227,21 @@ global class skedModels {
         public string callOutType;
         public string declineReason;
         public string exceptionCode;
+        public List<exceptionLog> exceptionLogs;
         public boolean integrateWithWorkday;
         public boolean isAvailable;
         public boolean isException;
+        public string lastModifiedById;
         public string notes;
         public string otherDeclineReason;
+        public Decimal ranking;
         public string remainingSlots;
         public resource resource;
         public string resourceId;
-        public boolean waitlistConfirmed;
-        public Decimal ranking;
         public staffingBudget staffingBudget;
-        public string lastModifiedById;
-        public boolean approvedViaAutomation;
-        public string biddingType;
         public List<staffingBudgetAvailability> staffingBudgetAvailabilities;
-        public List<exceptionLog> exceptionLogs;
+        public boolean waitlistConfirmed;
+        public string timeOffPlan;
         public string timeOffReasonCode;
         public string workdaySyncMessage;
         public string workdaySyncStatus;

@@ -15,6 +15,8 @@
  * 06/07/24	    Priti Jana		    Logic for HRP-12011
  * 08/06/24     Priti Jana          Logic for HRP-12706
  * 09/09/24		Balaji N			Logic for HRP-13265
+ * 12/10/24     Priti Jana          Logic for HRP-13190
+ * 01/08/2025   Priti Jana          Commented out Gray Skies logic for HRP-12299
  **************************************************************************************************************************************/
 
  public with sharing class CalendarBuildBatchHandler {
@@ -43,12 +45,13 @@
         Opportunity_Date_Setting__mdt mdtOppDateSetting = Opportunity_Date_Setting__mdt.getInstance('Targeted_Ask_Date');
         Integer numNumOfAskDays = mdtOppDateSetting?.Days_from_Drive_Date__c.intValue();
         
+        /* Commented out for HRP-12299
         List<Drive_Marketing_Programs__c> graySkiesAffiliationList = [SELECT Id, Marketing_Program__c, Blood_Drive_Opportunity__c FROM Drive_Marketing_Programs__c 
                                                                       WHERE Marketing_Program__r.Name = 'Gray Skies' AND Blood_Drive_Opportunity__c in :oppIdsSet];
         Map<Id, Id> oppWithGraySkiesMap = new Map<Id, Id>();
         For(Drive_Marketing_Programs__c dmp : graySkiesAffiliationList) {
             oppWithGraySkiesMap.put(dmp.Blood_Drive_Opportunity__c, dmp.Id);
-        }
+        }*/
         
         // Get the related site's physical location type - HRP-11814
         Map<Id,sked__Location__c> driveSiteMap = new Map<Id,sked__Location__c>([SELECT Id, sked_Physical_location_type__c FROM sked__Location__c WHERE ID IN :driveSiteIds]);
@@ -59,7 +62,8 @@
                                                            No_Publicity_Needed__c, Open_to_Public__c, Drive_Keyword__c, Publish_to_Call_Center__c, Web_Scheduling_Enabled__c,
                                                            Send_Emails__c, Send_Mailers__c, Web_Scheduling_End_Date_Offset__c, Web_Scheduling_End_Time_Offset__c, 
                                                            Web_Scheduling_Start_Date_Offset__c, Platelet_Projected_Procedures__c, Plasma_Pheresis_Projected_Procedures__c,
-                                                           Flow_End_Time_Field__c, Flow_Start_Time_Field__c, Type //HRP=11814
+                                                           Flow_End_Time_Field__c, Flow_Start_Time_Field__c, Type, //HRP=11814
+                                                           APT_Quantity__c, APT_Required__c //HRP-13190
                                                            FROM Opportunity WHERE Id in :parentTemplateIdsSet];
         
         Map<Id, Opportunity> oppWithParentTemplateMap = new Map<Id, Opportunity>();
@@ -105,6 +109,8 @@
                 clonedOpp.Web_Scheduling_End_Time_Offset__c = oppWithParentTemplateMap.get(origOpp.Parent_Template_Id__c).Web_Scheduling_End_Time_Offset__c;
                 clonedOpp.Web_Scheduling_Start_Date_Offset__c = oppWithParentTemplateMap.get(origOpp.Parent_Template_Id__c).Web_Scheduling_Start_Date_Offset__c;
                 clonedOpp.Web_Scheduling_Start_Date_Offset__c = oppWithParentTemplateMap.get(origOpp.Parent_Template_Id__c).Web_Scheduling_Start_Date_Offset__c;
+            	clonedOpp.APT_Required__c = oppWithParentTemplateMap.get(origOpp.Parent_Template_Id__c).APT_Required__c; //HRP-13190
+                clonedOpp.APT_Quantity__c = oppWithParentTemplateMap.get(origOpp.Parent_Template_Id__c).APT_Quantity__c; //HRP-13190
             }
             //HRP-12011 --> Starts Here
             if(origOpp.Slot_Generator__c != NULL) {
@@ -136,7 +142,7 @@
                               oppWithParentTemplateMap.get(origOpp.Parent_Template_Id__c).type :
                     		  driveSiteMap.get(oppIdVsDriveSiteIdMap.get(origOpp.Parent_Template_Id__c)).sked_Physical_Location_Type__c; //HRP-11814
                 }
-                cbWrapper = runRolloverEvaluation(origOpp, oppWithGraySkiesMap);
+                cbWrapper = runRolloverEvaluation(origOpp); //HRP-12299: Removed extra param containing "gray skies" info
                 if(cbWrapper.IsQualified != null) {
                     clonedOpp.Calendar_Build_Status__c = cbWrapper.IsQualified ? 'Qualified' : 'Unqualified';
                 }
@@ -174,7 +180,7 @@
 
     //Method used for determining if opportunities meet the rollover evaluation criteria
     //Details of the criteria is document on HRP-3442
-    public static CalendarBuildWrapper runRolloverEvaluation(Opportunity incomingOrigOpp,  Map<Id, Id> graySkiesMap) {
+    public static CalendarBuildWrapper runRolloverEvaluation(Opportunity incomingOrigOpp) {
         CalendarBuildWrapper cbWrapper = new CalendarBuildWrapper();
         //Don't clone opps that are cancelled with a reson of 'system need'
         if(!(incomingOrigOpp.DriveStatus__c == 'Cancelled' && incomingOrigOpp.sked_Cancellation_Reason__c == 'System Need')) {
@@ -184,12 +190,15 @@
                     cbWrapper.UnqualifiedReasons = 'Always Roll On, Account Strategy is Sunset';
                 }
             }
-            //If opportunity has drive affiliation with Designation = "Gray Skies", mark as "Unqualified"
+
+            /* Commented out for HRP-12299
+            If opportunity has drive affiliation with Designation = "Gray Skies", mark as "Unqualified"
             else if(!graySkiesMap.isEmpty() && graySkiesMap.containsKey(incomingOrigOpp.Id)){ //incomingOrigOpp.Drive_Designations__c != null && incomingOrigOpp.Drive_Designations__c.split(';').contains('Gray Skies')) {
                 cbWrapper.IsQualified = false;
                 cbWrapper.UnqualifiedReasons = 'Drive Designation is Gray Skies';
                 cbWrapper.RolloverConsideration = 'Do Not Roll';
-            }
+            }*/
+            
             //If Account Strategy = "Sunset", mark as "Unqualified"
             else if(incomingOrigOpp.Account.Account_Strategy__c != null && incomingOrigOpp.Account.Account_Strategy__c == 'Sunset') {
                 cbWrapper.IsQualified = false;

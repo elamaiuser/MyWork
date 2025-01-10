@@ -13,6 +13,7 @@
 * 09/18/2024				 Priti Jana				 Added an utility boolean to forcibly generate exceptions, especially during test class run (HRP-12706)
 * 09/24/2024				 Fitsum Worku			 Fix for HRP-13435
 * 10/18/2024				 Balaji N				 HRP-13489 Methods isWbFixedSiteOpportunity
+* 12/10/2024				 Priti Jana				 Logic for HRP-13190
  *********************************************************************************************************************************************************************
 */
 
@@ -558,7 +559,91 @@ public with sharing class BSF_Utilities {
                 'Number_of_2RBC_Assets__c, Number_of_Plasma_Assets__c, Number_of_Platelet_Assets__c,Direct_Donors_To__c, '+
                 'No_Publicity_Needed__c, Publish_to_Call_Center__c, Web_Scheduling_Enabled__c, Send_Emails__c, Send_Mailers__c, '+
                 'Web_Scheduling_End_Date_Offset__c, Web_Scheduling_End_Time_Offset__c, Web_Scheduling_Start_Date_Offset__c, Platelet_Projected_Procedures__c, '+
-                'Plasma_Pheresis_Projected_Procedures__c, Calendar_Build_Parent_Opportunity__c, Type, DriveStatus__c, Slot_Generator__c, Related_Scheduled_Drive__c '+ //HRP-12011 
-                'FROM Opportunity';
+                'Plasma_Pheresis_Projected_Procedures__c, Calendar_Build_Parent_Opportunity__c, Type, DriveStatus__c, Slot_Generator__c, Related_Scheduled_Drive__c, '+ //HRP-12011 
+                //'FROM Opportunity';
+                'APT_Quantity__c, APT_Required__c FROM Opportunity'; //Added APT fields HRP-13190
+    }
+    
+    /* HRP-13190 -> Starts Here
+     * @Description -> This method will calculate the APT Quantity based on action performed and Total procedures value
+    */
+    
+    public static List<Opportunity> getAPTQuantity(List<Opportunity> oppList, String action) {
+        Set<String> excludedAccindustryCodes = new Set<String>{BSF_Constants.ACCOUNT_INDUSTRY_CODE_MIDDLE_SCHOOL, BSF_Constants.ACCOUNT_INDUSTRY_CODE_ELEMENTARY_SCHOOL};
+        Set<Id> accountIds = new Set<Id>();
+        
+        for(Opportunity opp : oppList) {
+            accountIds.add(opp.AccountId);
+        }
+        
+        Map<Id, Account> map_accountId_accountInfo = new Map<Id, Account>([SELECT Id, Industry_Code__c FROM Account WHERE ID IN: accountIds]);
+        
+        for(Opportunity opp : oppList) {
+            Boolean isAptNotNeededRule1 = !String.isBlank(opp.Type_of_Drive__c) && opp.Type_of_Drive__c.equalsIgnoreCase(BSF_Constants.FIXED_SITE);
+            Boolean isAptNotNeededRule2 = !String.isBlank(opp.Source__c) && opp.Source__c.equalsIgnoreCase(BSF_Constants.BATCH_CALENDAR_BUILD);
+            if (isAptNotNeededRule1 || isAptNotNeededRule2) continue;
+            Decimal aptQuantity = 0;
+            if(!String.isBlank(opp.Account_Type__c) && opp.Account_Type__c.equalsIgnoreCase(BSF_Constants.ACCOUNT_TYPE_EDUCATION)) {
+                if(map_accountId_accountInfo.get(opp.AccountId) != NULL && !String.isBlank(map_accountId_accountInfo.get(opp.AccountId).Industry_Code__c)) {
+                    if(!excludedAccindustryCodes.contains(map_accountId_accountInfo.get(opp.AccountId).Industry_Code__c)) {
+                        aptQuantity = Math.floor(opp.Total_Projected_Procedures__c / 40);
+                    }
+                }
+            } else {
+                if(opp.Total_Projected_Procedures__c >= 40) {
+                    aptQuantity = 1;
+                }
+            }
+            if(action == 'Insert') {
+                if(opp.Is_Template__c || opp.Site_TBD__c) {
+                    opp.APT_Quantity__c = aptQuantity;
+                    opp.APT_Required__c = aptQuantity > 0 ? TRUE : FALSE;
+                }
+            } else {
+                opp.APT_Quantity__c = aptQuantity == 0 && opp.APT_Required__c ? 1 : aptQuantity;
+                opp.APT_Required__c = opp.APT_Required__c || aptQuantity > 0;
+                opp.APT_Change_Reason__c = (opp.Is_Template__c ? 'Template' : 'Opportunity') + ' APT changed by ' + userInfo.getName() + ' on '+system.now();
+            }
+        }
+        return oppList;
+    }
+    //HRP-13190 -> Ends Here
+
+    public static String capitalizeName(String unformatedName, Boolean isForPDF){
+        String formatedName = '';        
+        if(String.isNotBlank(unformatedName)){
+            List<String> words = unformatedName.split(' ');
+            for(String word : words){
+                if(String.isNotBlank(word)){
+                    if(String.isNotBlank(formatedName)){
+                        String lastChar = formatedName.substring(formatedName.length()-1);
+                        if(lastChar != ' '){
+                            formatedName += ' ';
+                        }
+                    }
+                    if(!word.isNumeric()){
+                        Integer str_len = word.length();
+                        word = word.left(1).toUpperCase() + word.right(str_len - 1).toLowerCase();
+                    }
+                    if(isForPDF){
+                        formatedName += String.join(getTextParts(word,Integer.valueOf(Custom_Report_Config__mdt.getInstance('RoleTimeReportCharacterSplit').Value__c)),' ');
+                    }
+                    else {
+                        formatedName += word;
+                    }
+                }
+            }
+            formatedName = formatedName.trim(); 
+        } 
+        return formatedName;
+    }
+    public static List<String> getTextParts(String text, Integer partitionSize) {
+        List<String> parts = new List<String>();
+        Integer len = text.length();
+        for (Integer i=0; i<len; i+=partitionSize)
+        {
+            parts.add(text.substring(i, Math.min(len, i + partitionSize)));
+        }
+        return parts;
     }
 }

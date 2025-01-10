@@ -617,7 +617,8 @@ public with sharing class GenerateMobileDrive {
             if (driveShift.projectedRegisteredDonors > staffCapacity) {
                 staffingComplement.numberOfVphh = Math.ceil((driveShift.projectedRegisteredDonors - staffCapacity) / (matrix.vpHhCapacity * drawHours));	
             }
-            staffingComplement.numberOfApt = drive.account.aptRequired ? 1 : staffingComplement.numberOfApt; //HRP-10474
+            //staffingComplement.numberOfApt = drive.account.aptRequired ? 1 : staffingComplement.numberOfApt; //HRP-10474
+            staffingComplement.numberOfApt = drive.aptRequired ? drive.aptQuantity : staffingComplement.numberOfApt; //HRP-13190
             return staffingComplement;
         }
 

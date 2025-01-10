@@ -55,7 +55,6 @@
 * 10/25/2024				 	 Balaji N				  Logic for HRP-13489 syncTemplateOrdertoOpportunity Raktim's Changes
 * 10/29/2024                     Barnojit Sharma          HRP-12142 Added sync Do Not Roll Fields
 * 10/24/2024				     Barnojit Sharma		  Template Order products not cascading to Opportunity Order (Logic for HRP-13521)
-* 11/07/2024			         Barnojit Sharma		  Update Task: 72 Hour Check in - System Generated/Details/Checklist. (Logic for HRP-12627)
 * 11/11/2024					 Priti Jana				  Logic for HRP-13743
 * 11/12/2024				     Barnojit Sharma		  Unable to create Mobile Drive when the Template has an over-budget template order (Logic for HRP-13716)
 ************************************************************************************************************************************************
@@ -1255,7 +1254,7 @@ Note : It'll throw error if any sort of consequences happen when projection valu
         }
         
         if (!templateOpportunityIds.isEmpty()) {
-            Map<Id, Opportunity> templateOpportunityMap = new Map<Id, Opportunity>([SELECT Id,X2RBC_Projected_Procedures__c, Anticipated_Registered_Donors__c, Drive_Site__c,Direct_Donors_To__c,Site_TBD__c,Procedure_Projections_Template__c, Projected_Registered_Donors_Template__c, Staffing_Template__c, Volunteers_Template__c, WholeBloodProceduresProjectedTemplate__c, WholeBloodProceduresProjectedOriginal__c, WB_Projected_Procedures__c, Double_Red_Procedures_Projected_Template__c, Anticipated_Registered_Donors_Template__c FROM Opportunity WHERE Id IN:templateOpportunityIds]);
+            Map<Id, Opportunity> templateOpportunityMap = new Map<Id, Opportunity>([SELECT Id,X2RBC_Projected_Procedures__c, Anticipated_Registered_Donors__c, Drive_Site__c,Direct_Donors_To__c,Site_TBD__c,Procedure_Projections_Template__c, Projected_Registered_Donors_Template__c, Staffing_Template__c, Volunteers_Template__c, WholeBloodProceduresProjectedTemplate__c, WholeBloodProceduresProjectedOriginal__c, WB_Projected_Procedures__c, Double_Red_Procedures_Projected_Template__c, Anticipated_Registered_Donors_Template__c, APT_Required__c, APT_Quantity__c, APT_Change_Reason__c FROM Opportunity WHERE Id IN:templateOpportunityIds]);
             for (Opportunity newOpportunity : newOpportunityList) {
                 if (isInsertOrUpdateWithChangeInTemplate(oldOpportunityMap, newOpportunity)) {
                     //System.debug('isInsertOrUpdateWithChangeInTemplate ->true');
@@ -1265,9 +1264,12 @@ Note : It'll throw error if any sort of consequences happen when projection valu
                     newOpportunity.Staffing_Template__c = templateOpportunity.Staffing_Template__c;
                     newOpportunity.Volunteers_Template__c = templateOpportunity.Volunteers_Template__c;
                     
-                    /* added by Satabdi as per HRP-6520 */
+                    checkRecursive.skipAptRecalculation = TRUE; //HRP-13190
                     newOpportunity.Drive_Site__c = templateOpportunity.Drive_Site__c;
                     newOpportunity.Site_TBD__c = false;
+                    newOpportunity.APT_Required__c = templateOpportunity.APT_Required__c; //HRP-13190
+                    newOpportunity.APT_Quantity__c = templateOpportunity.APT_Quantity__c; //HRP-13190
+                    newOpportunity.APT_Change_Reason__c = templateChangedText; //HRP-13190
                     
                     newOpportunity.WholeBloodProceduresProjectedTemplate__c = templateOpportunity.WholeBloodProceduresProjectedTemplate__c;
                     newOpportunity.Double_Red_Procedures_Projected_Template__c = templateOpportunity.Double_Red_Procedures_Projected_Template__c;
@@ -2833,10 +2835,11 @@ System.debug('--> \n Exavalu call to generate drives is done. ');
         try{
             //HRP-10514 : added Platelet_Projected_Procedures__c for 'DriveSync' issue.
             Map<Id, Opportunity> mapOfOpportunity = new Map<Id, Opportunity>([SELECT Id, Drive_Status__c,Drive_Date_Change_Reason__c, Initiated_By__c, StageName,Platelet_Projected_Procedures__c,Plasma_Pheresis_Projected_Procedures__c, Anticipated_Registered_Donors__c, 
-                                                                              WB_Projected_Procedures__c, X2RBC_Projected_Procedures__c, Accepts_Automation__c, Automation_Suitability__c   FROM Opportunity WHERE Id In :lstOpps]);//HRP-12063
+                                                                              WB_Projected_Procedures__c, X2RBC_Projected_Procedures__c, Accepts_Automation__c, Automation_Suitability__c, APT_Quantity__c, APT_Required__c, APT_Change_Reason__c FROM Opportunity WHERE Id In :lstOpps]);//HRP-12063
             //HRP-10515-Query latest values on DOC for changed fields and update on Opportunity, when request comes from DOC update
             List<sked_Drive__c> docList = [select sked_Drive_Date__c,sked_Status__c,sked_Start_Time__c,sked_End_Time__c,sked_Drive_Site__c,sked_Replacement_Drive__c,sked_Projected_Registered_Donors__c,sked_WB_Projected_Procedures__c,sked_2RBC_Projected_Procedures__c,sked_Platelet_Projected_Procedures__c,sked_Plasma_Projected_Procedures__c,sked_Number_of_2RBC_Assets__c,
-                                           sked_Number_of_Plasma_Assets__c,sked_Number_of_Platelet_Assets__c,sked_Cancellation_Reason__c,sked_Opportunity__c from sked_Drive__c 
+                                           sked_Number_of_Plasma_Assets__c,sked_Number_of_Platelet_Assets__c,sked_Cancellation_Reason__c,sked_Opportunity__c, 
+                                           sked_APT_Required__c, sked_APT_Quantity__c from sked_Drive__c 
                                            where sked_Opportunity__c in : lstOpps and sked_Is_Surrogate__c = false];
             if(Test.isRunningTest()){
                 sked_Drive__c skedDr =  new sked_Drive__c(sked_Opportunity__c=lstOpps.get(0).id,sked_WB_Projected_Procedures__c=2,sked_Status__c='Draft',sked_Drive_Date__c=system.today().addDays(55));
@@ -2849,7 +2852,6 @@ System.debug('--> \n Exavalu call to generate drives is done. ');
             if (lstOpps <> null && lstOpps.size() > 0) {
                 
                 string valueToLog = Json.Serialize(lstOpps);
-                system.debug('###FWO... valueToLog ' + valueToLog);
                 BSF_Error_Log__c log = new BSF_Error_Log__c (
                     Process_Name__c = 'Sync Opps With Drives',
                     ApexClass__c = 'OpportunityService',
@@ -3037,7 +3039,19 @@ System.debug('--> \n Exavalu call to generate drives is done. ');
                             oppField.Slot_Generator_Change_Reason = NULL;
                         }
                     }
-                    // HRP-12011 --> Ends Here
+                    // HRP-12011 --> Ends Here 
+
+                    //HRP-13190 --> Starts Here
+                    if(data.containsKey('APT_Required__c') == true) {
+                        oppField.APT_Required = oppRec.APT_Required__c;
+                    }
+                    if(data.containsKey('APT_Quantity__c') == true) {
+                        oppField.APT_Quantity = (Decimal)oppRec.APT_Quantity__c;
+                    }
+                    if(data.containsKey('APT_Change_Reason__c') == true) {
+                        oppField.APT_Change_Reason = oppRec.APT_Change_Reason__c;
+                    }
+                    //HRP-13190 --> Ends Here
 
                     //HRP-10659 <<-End
                     if(data.containsKey('Drive_Date_Change_Reason__c') == true){//HRP-10312 begin
@@ -3435,33 +3449,16 @@ opp.StageName = 'Closed';
             oppTeamMembersMap.get(oppteamem.OpportunityId).add(oppteamem);
         }
         //part of ticket HRP-9562***ends here***
-        //HRP-12627 changes starts
-        Map<Id,Boolean> checkOppHas72hourTask = new  Map<Id,Boolean>();
-        if(!oppIds.isEmpty()){
-            List<Task> taskList = [SELECT Id, 
-                                        WhatId, 
-                                        Subject 
-                                    FROM Task 
-                                    WHERE Subject =: Task_Reassignment_Matrix__mdt.getInstance('X72_Hour').Task_Subject__c
-                                    AND WhatId IN :oppIds];
-            for(Task t : taskList){
-                checkOppHas72hourTask.put(t.WhatId,true);
-            }
-        }
-        Integer creationDateOffset= Task_Reassignment_Matrix__mdt.getInstance('X72_Hour').Creation_Date_Offset__c != null 
-                                    ? Integer.valueOf(Task_Reassignment_Matrix__mdt.getInstance('X72_Hour').Creation_Date_Offset__c)
-                                    : 0;
-        //HRP-12627 changes ends
+        
         for(opportunity opp: oppNewList)
         {
             //only creating the task for mobile opps (HRP-7781)
             if (opp.RecordTypeId == MOBILE_OPP_RECTYPEID) {
-                if(opp.Is_Template__c == false && opp.Drive_Date__c != NULL && opp.Drive_Date__c <= Date.Today().addDays(creationDateOffset) && opp.Drive_Date__c >= Date.Today() //HRP-12627
-                    && (checkOppHas72hourTask.isEmpty() || !checkOppHas72hourTask.containsKey(opp.Id) || !checkOppHas72hourTask.get(opp.Id)))//HRP-12627
+                if(oppOldMap == NULL ? opp.StageName == 'Closed' : (opp.StageName == 'Closed' && opp.StageName != oppOldMap.get(opp.id).stageName))
                 {
                     Task newTask = new task();
                     newTask.RecordTypeId = recTypeId;
-                    newTask.subject =Task_Reassignment_Matrix__mdt.getInstance('X72_Hour').Task_Subject__c;//HRP-12627
+                    newTask.subject ='72 Hour Check in - System Generated';
                     newTask.ActivityDate = Helper.AddBusinessDays(opp.Drive_Date__c,-3);
                     newTask.Drive_Date__c = opp.Drive_Date__c; //HRP-12700
                     newTask.WhatId = opp.id;
@@ -4770,4 +4767,40 @@ opp.StageName = 'Closed';
         }
     }
     //HRP-12142 ends
+
+    //HRP-13190 --> Starts Here
+    public static void captureAPTRequirements(List<Opportunity> newOppList, Map<Id, Opportunity> oldOppMap) {
+        List<Opportunity> oppListToRecalculateAPT = new List<Opportunity>();
+        if (oldOppMap == NULL && newOppList != NULL && !newOppList.isEmpty()) {
+            newOppList = BSF_Utilities.getAPTQuantity(newOppList, 'Insert');
+        } else if (oldOppMap != NULL) {
+            for(Opportunity newOpp : newOppList) {
+                Opportunity oldOpp = oldOppMap.get(newOpp.Id);
+                if (oldOpp != NULL) {
+                    if(oldOpp.APT_Change_Reason__c != newOpp.APT_Change_Reason__c && newOpp.APT_Change_Reason__c.equalsIgnoreCase(BSF_Constants.APT_CHANGE_VIA_TEMPLATE)) continue;
+                    
+                    Boolean recalculateAptRule1 = !checkRecursive.skipAptRecalculation; //During DOC -> OPP Sync
+                    Boolean recalculateAptRule2 = oldOpp.APT_Required__c != newOpp.APT_Required__c;
+                    Boolean recalculateAptRule3 = oldOpp.Total_Projected_Procedures__c != newOpp.Total_Projected_Procedures__c;  
+                    
+                    if(recalculateAptRule1) {
+                        if(recalculateAptRule2) {
+                            if(!newOpp.APT_Required__c) {
+                                newOpp.APT_Quantity__c = 0;
+                                newOpp.APT_Change_Reason__c = (newOpp.Is_Template__c ? 'Template' : 'Opportunity') + ' APT changed by ' + userInfo.getName() + ' on '+system.now();
+                            } else oppListToRecalculateAPT.add(newOpp);
+                        } else if(recalculateAptRule3) {
+                            newOpp.APT_Required__c = FALSE; //reset value to false and populate it based on formula later
+                            oppListToRecalculateAPT.add(newOpp);
+                        }    
+                    }
+                }
+            }
+            if(oppListToRecalculateAPT != NULL && !oppListToRecalculateAPT.isEmpty()) {
+                oppListToRecalculateAPT = BSF_Utilities.getAPTQuantity(oppListToRecalculateAPT, 'Update');
+            }
+        }
+    }
+    //HRP-13190 --> Ends Here
+
 }
