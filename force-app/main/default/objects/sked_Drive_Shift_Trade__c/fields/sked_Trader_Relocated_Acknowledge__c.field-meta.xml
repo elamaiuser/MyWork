@@ -2,7 +2,6 @@
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>sked_Trader_Relocated_Acknowledge__c</fullName>
     <defaultValue>false</defaultValue>
-    <description>.</description>
     <externalId>false</externalId>
     <label>Trader Relocated Acknowledge</label>
     <trackHistory>false</trackHistory>

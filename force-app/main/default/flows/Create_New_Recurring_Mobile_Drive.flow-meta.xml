@@ -18,7 +18,6 @@
             </value>
         </inputParameters>
         <nameSegment>PlanADriveUtilityClass</nameSegment>
-        <versionSegment>1</versionSegment>
     </actionCalls>
     <actionCalls>
         <name>Validate_Account</name>
@@ -45,7 +44,6 @@
             <assignToReference>Account_Validation_Error_Message</assignToReference>
             <name>output</name>
         </outputParameters>
-        <versionSegment>1</versionSegment>
     </actionCalls>
     <actionCalls>
         <name>Validate_Plan_A_Drive_Apex_Action</name>
@@ -96,7 +94,6 @@
             <assignToReference>Error_Msg_Test2</assignToReference>
             <name>output</name>
         </outputParameters>
-        <versionSegment>1</versionSegment>
     </actionCalls>
     <actionCalls>
         <name>Validate_Planned_Drive</name>
@@ -147,7 +144,6 @@
             <assignToReference>Error_Msg_Test1</assignToReference>
             <name>output</name>
         </outputParameters>
-        <versionSegment>1</versionSegment>
     </actionCalls>
     <apiVersion>62.0</apiVersion>
     <assignments>
@@ -390,9 +386,455 @@
                 <elementReference>varSelectedTemplateWebschedulingEnabled</elementReference>
             </value>
         </assignmentItems>
+        <assignmentItems>
+            <assignToReference>MobileOpp.APT_Required__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>varSelectedAptRequired</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>MobileOpp.APT_Quantity__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>varSelectedAptQuantity</elementReference>
+            </value>
+        </assignmentItems>
         <connector>
             <targetReference>AddToCollection</targetReference>
         </connector>
+    </assignments>
+    <assignments>
+        <name>Assign_Opp_0</name>
+        <label>Assign Opp</label>
+        <locationX>1879</locationX>
+        <locationY>487</locationY>
+        <assignmentItems>
+            <assignToReference>MobileOpp.Accept_56_Day_Rule_Violation__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>Is56DayRuleViolationAccepted</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>MobileOpp.Drive_Date__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>For_Each_Date_in_Recurring_Series</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>MobileOpp.AccountId</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>recordId</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>MobileOpp.Additional_Description__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>varSelectedTemplateAdditionalDesc</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>MobileOpp.Anticipated_Registered_Donors__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>Anticipated_Registered_Donors</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>MobileOpp.CloseDate</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>varCloseDateInLoop</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>MobileOpp.Drive_Keyword__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>Drive_Keyword</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>MobileOpp.Drive_Site__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>varSiteId</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>MobileOpp.Flow_End_Time_Field__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>FlowEndTimePicklist</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>MobileOpp.Name</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>OpportunityNameFormula</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>MobileOpp.Online_Scheduling_Enabled__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>OnlineSchedulingEnabled2</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>MobileOpp.Open_to_Public__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>Open_To_Public_Updated</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>MobileOpp.RecordTypeId</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>Get_Blood_Drive_Opp_Record_Type.Id</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>MobileOpp.Source__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>Source</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>MobileOpp.StageName</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <stringValue>Discovery</stringValue>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>MobileOpp.Targeted_Ask_Date__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>varTargetAskDateInLoop</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>MobileOpp.Type</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>varLocationTypeFormula</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>MobileOpp.Type_of_Drive__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <stringValue>Mobile</stringValue>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>MobileOpp.WB_Projected_Procedures__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>varFinalWholeBloodProcedure</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>MobileOpp.X2RBC_Projected_Procedures__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>varFinalDoubleRedProcedure</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>MobileOpp.Flow_Start_Time_Field__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>FlowStartTimePicklist</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>MobileOpp.Site_TBD__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>Site_TBD</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>MobileOpp.Parent_Template_Id__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>Matching_Templates</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>MobileOpp.Data_Source__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <stringValue>BSFApplication</stringValue>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>MobileOpp.Publish_to_Call_Center__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>VarSelectedTemplatePublishToCallCenter</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>MobileOpp.Send_Emails__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>varSelectedTemplateSendEmails</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>MobileOpp.Send_Mailers__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>varSelectedTemplateSendMailers</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>MobileOpp.Web_Scheduling_Enabled__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>varSelectedTemplateWebschedulingEnabled</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>MobileOpp.APT_Required__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>varSelectedAptRequired</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>MobileOpp.APT_Quantity__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>varSelectedAptQuantity</elementReference>
+            </value>
+        </assignmentItems>
+    </assignments>
+    <assignments>
+        <name>Assign_Opp_0_0</name>
+        <label>Assign Opp</label>
+        <locationX>1954</locationX>
+        <locationY>562</locationY>
+        <assignmentItems>
+            <assignToReference>MobileOpp.Accept_56_Day_Rule_Violation__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>Is56DayRuleViolationAccepted</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>MobileOpp.Drive_Date__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>For_Each_Date_in_Recurring_Series</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>MobileOpp.AccountId</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>recordId</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>MobileOpp.Additional_Description__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>varSelectedTemplateAdditionalDesc</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>MobileOpp.Anticipated_Registered_Donors__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>Anticipated_Registered_Donors</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>MobileOpp.CloseDate</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>varCloseDateInLoop</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>MobileOpp.Drive_Keyword__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>Drive_Keyword</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>MobileOpp.Drive_Site__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>varSiteId</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>MobileOpp.Flow_End_Time_Field__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>FlowEndTimePicklist</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>MobileOpp.Name</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>OpportunityNameFormula</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>MobileOpp.Online_Scheduling_Enabled__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>OnlineSchedulingEnabled2</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>MobileOpp.Open_to_Public__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>Open_To_Public_Updated</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>MobileOpp.RecordTypeId</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>Get_Blood_Drive_Opp_Record_Type.Id</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>MobileOpp.Source__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>Source</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>MobileOpp.StageName</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <stringValue>Discovery</stringValue>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>MobileOpp.Targeted_Ask_Date__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>varTargetAskDateInLoop</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>MobileOpp.Type</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>varLocationTypeFormula</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>MobileOpp.Type_of_Drive__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <stringValue>Mobile</stringValue>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>MobileOpp.WB_Projected_Procedures__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>varFinalWholeBloodProcedure</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>MobileOpp.X2RBC_Projected_Procedures__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>varFinalDoubleRedProcedure</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>MobileOpp.Flow_Start_Time_Field__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>FlowStartTimePicklist</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>MobileOpp.Site_TBD__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>Site_TBD</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>MobileOpp.Parent_Template_Id__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>Matching_Templates</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>MobileOpp.Data_Source__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <stringValue>BSFApplication</stringValue>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>MobileOpp.Publish_to_Call_Center__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>VarSelectedTemplatePublishToCallCenter</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>MobileOpp.Send_Emails__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>varSelectedTemplateSendEmails</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>MobileOpp.Send_Mailers__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>varSelectedTemplateSendMailers</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>MobileOpp.Web_Scheduling_Enabled__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>varSelectedTemplateWebschedulingEnabled</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>MobileOpp.APT_Required__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>varSelectedAptRequired</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>MobileOpp.APT_Quantity__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>varSelectedAptQuantity</elementReference>
+            </value>
+        </assignmentItems>
     </assignments>
     <assignments>
         <name>Assign_Selected_Start_and_End_Times</name>
@@ -663,6 +1105,20 @@
                 <elementReference>getSelectedTemplateProperties.Type</elementReference>
             </value>
         </assignmentItems>
+        <assignmentItems>
+            <assignToReference>varTemplateAptRequired</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>getSelectedTemplateProperties.APT_Required__c</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>varTemplateAptQuantity</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>getSelectedTemplateProperties.APT_Quantity__c</elementReference>
+            </value>
+        </assignmentItems>
         <connector>
             <targetReference>Create_New_Drive</targetReference>
         </connector>
@@ -779,7 +1235,7 @@
     </choices>
     <choices>
         <name>Opportunity_Source_Business_Planning</name>
-        <choiceText>&lt;span style=&quot;background-color: rgb(255, 255, 255); color: rgb(68, 68, 68);&quot;&gt;Business Planning&lt;/span&gt;</choiceText>
+        <choiceText>&lt;span style=&quot;color: rgb(68, 68, 68); background-color: rgb(255, 255, 255);&quot;&gt;Business Planning&lt;/span&gt;</choiceText>
         <dataType>String</dataType>
         <value>
             <stringValue>Business Planning</stringValue>
@@ -1381,7 +1837,7 @@
         <name>Is_Site_TBD</name>
         <label>Is Site TBD</label>
         <locationX>1309</locationX>
-        <locationY>1005</locationY>
+        <locationY>1004</locationY>
         <defaultConnector>
             <targetReference>Get_Site_Collection_Operation_Records</targetReference>
         </defaultConnector>
@@ -1611,7 +2067,7 @@
             <label>End Flow</label>
         </rules>
     </decisions>
-    <description>HRP-13690 Source field is not getting populated during plan a drive V3</description>
+    <description>HRP-13190 Populating APT Requirements from Template</description>
     <dynamicChoiceSets>
         <name>AcceptsAutomation</name>
         <dataType>Picklist</dataType>
@@ -2058,6 +2514,17 @@ MOD(({!For_Each_Date_in_Recurring_Series} - 85) - DATE(1900, 1, 6), 7),
         <expression>IF(ISBLANK({!varDriveTypeLocation}), {!varLocationType}, {!varDriveTypeLocation})</expression>
     </formulas>
     <formulas>
+        <name>varSelectedAptQuantity</name>
+        <dataType>Number</dataType>
+        <expression>IF(ISNULL({!varTemplateAptQuantity}), 0, {!varTemplateAptQuantity})</expression>
+        <scale>0</scale>
+    </formulas>
+    <formulas>
+        <name>varSelectedAptRequired</name>
+        <dataType>Boolean</dataType>
+        <expression>{!varSelectedAptQuantity} &gt; 0</expression>
+    </formulas>
+    <formulas>
         <name>varSelectedEndTimeNumber</name>
         <dataType>Number</dataType>
         <expression>VALUE({!varSelectedEndTime})</expression>
@@ -2202,6 +2669,18 @@ MOD(({!Drive_Date} - {!Get_Opportunity_Date_MetaData.Days_from_Drive_Date__c}) -
         <faultConnector>
             <targetReference>Exception_Handler</targetReference>
         </faultConnector>
+        <inputAssignments>
+            <field>APT_Quantity__c</field>
+            <value>
+                <elementReference>varSelectedAptQuantity</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>APT_Required__c</field>
+            <value>
+                <elementReference>varSelectedAptRequired</elementReference>
+            </value>
+        </inputAssignments>
         <inputAssignments>
             <field>Accept_56_Day_Rule_Violation__c</field>
             <value>
@@ -2637,8 +3116,8 @@ MOD(({!Drive_Date} - {!Get_Opportunity_Date_MetaData.Days_from_Drive_Date__c}) -
         <description>getSiteCollectionOpRecords for Recurring series</description>
         <name>getSiteCollectionOpRecordsRecurring</name>
         <label>getSiteCollectionOpRecordsRecurring</label>
-        <locationX>1567</locationX>
-        <locationY>642</locationY>
+        <locationX>1620</locationX>
+        <locationY>620</locationY>
         <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
         <connector>
             <targetReference>NoSiteCollectionOpRecordsFound</targetReference>
@@ -3451,8 +3930,8 @@ REGEX( {!Drive_Keyword}, &quot;[a-zA-Z0-9 ]+&quot;)</formulaExpression>
     <screens>
         <name>Pick_Template</name>
         <label>Pick Template</label>
-        <locationX>1208</locationX>
-        <locationY>457</locationY>
+        <locationX>1197</locationX>
+        <locationY>499</locationY>
         <allowBack>true</allowBack>
         <allowFinish>true</allowFinish>
         <allowPause>false</allowPause>
@@ -4174,5 +4653,23 @@ REGEX( {!Drive_Keyword}, &quot;[a-zA-Z0-9 ]+&quot;)</formulaExpression>
         <isCollection>false</isCollection>
         <isInput>false</isInput>
         <isOutput>false</isOutput>
+    </variables>
+    <variables>
+        <name>varTemplateAptQuantity</name>
+        <dataType>Number</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+        <scale>0</scale>
+    </variables>
+    <variables>
+        <name>varTemplateAptRequired</name>
+        <dataType>Boolean</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+        <value>
+            <booleanValue>false</booleanValue>
+        </value>
     </variables>
 </Flow>

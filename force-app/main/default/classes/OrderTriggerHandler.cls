@@ -5,8 +5,6 @@
  * Date					     Developer Name			     Comments
  ********************************************************************************************************************************************************************
  * 04/25/2024				 Barnojit Sharma			 Restrict to one (Publicity) Order per opportunity(HRP-11307)
- * 08/07/2024				 Barnojit Sharma			 Publicity Material Ordering at template level(HRP-12664)
- * 12/07/2024                Ankit Kundu                 Publicity Material Ordering at template level(HRP-12664)
  *********************************************************************************************************************************************************************
 **/
 public with sharing class OrderTriggerHandler extends TriggerHandler {
@@ -55,8 +53,9 @@ public with sharing class OrderTriggerHandler extends TriggerHandler {
         }
         /*
         * HRP-11307 changes ends here
+        * 
         */
-         /*
+        /*
         * HRP-12664 changes starts here
         */
         if(super.getTriggerMethodsToBypass().indexOf('templateOrderValidation') == -1) {

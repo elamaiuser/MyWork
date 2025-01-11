@@ -63,6 +63,10 @@
         <value xsi:type="xsd:string">Resource Time Off within 7 days</value>
     </values>
     <values>
+        <field>sked_Target_Field_Prev_Value__c</field>
+        <value xsi:nil="true"/>
+    </values>
+    <values>
         <field>sked_Target_Field_Value__c</field>
         <value xsi:nil="true"/>
     </values>

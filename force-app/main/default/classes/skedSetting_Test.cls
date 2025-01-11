@@ -12,6 +12,9 @@ private class skedSetting_Test {
         skedSetting.skedEmailSetting emailSetting = skedSetting.instance.Email;
         skedSetting.skedTravelTimeManager travelTimeSetting = skedSetting.instance.TravelTime;
         Map<String, Set<Date>> holidays = appSetting.mapHoliday;
+        appSetting.setTimezoneSidId(UserInfo.getTimeZone().getID());
+        appSetting.detectDaylightSaving(system.today(), system.today().addDays(10));
+        appSetting.detectDaylightSaving(system.now(), system.now().addHours(10));
     }
 
     @TestSetup
@@ -65,5 +68,12 @@ private class skedSetting_Test {
         	sked_Manual_Refresh_Priority__c = 10
         );
         insert testTravelTimeManager;
+        
+        sked_User_Filter__c testUserFilter = new sked_User_Filter__c(
+        	sked_User__c = UserInfo.getUserId(),
+        	sked_Category__c = 'RAC',
+        	sked_JSON_Data__c = ''
+        );
+        insert testUserFilter;
     }
 }

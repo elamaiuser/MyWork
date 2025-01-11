@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomMetadata xmlns="http://soap.sforce.com/2006/04/metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <label>test4</label>
+    <protected>false</protected>
+    <values>
+        <field>Category__c</field>
+        <value xsi:type="xsd:string">url data</value>
+    </values>
+    <values>
+        <field>Help_Text__c</field>
+        <value xsi:nil="true"/>
+    </values>
+    <values>
+        <field>IsCheckbox__c</field>
+        <value xsi:type="xsd:boolean">true</value>
+    </values>
+    <values>
+        <field>UI_Text__c</field>
+        <value xsi:type="xsd:string">URL Link</value>
+    </values>
+    <values>
+        <field>URL_Link__c</field>
+        <value xsi:type="xsd:string">https://americanredcross.sharepoint.com/teams/TheField/Donor%20Recruitment/Forms/AllItems.aspx?id=%2Fteams%2FTheField%2FDonor%20Recruitment%2FSystems%20%26%20Apps%2FBlood%20Drive%20Management%20Portal%2FAM%20Tools%2FManaging%20Donor%20Appointments%20Playbook%2Epdf&amp;parent=%2Fteams%2FTheField%2FDonor%20Recruitment%2FSystems%20%26%20Apps%2FBlood%20Drive%20Management%20Portal%2FAM%20Tools</value>
+    </values>
+</CustomMetadata>

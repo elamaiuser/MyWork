@@ -771,6 +771,7 @@ class SlwcAvailator {
       return service.query(queryModel);
     })
     .then((collectionOperations = []) => {
+      console.log('collectionOperations in slwcAvailator ',collectionOperations);
       this.collectionOperationDataMap = keyBy(collectionOperations, 'id');
     });
   }
@@ -990,7 +991,7 @@ class SlwcAvailator {
       return () => {
         const origins = originsDestinationsChunk.origins;
         const destinations = originsDestinationsChunk.destinations;
-        return service.calculateDistanceMatrix({
+        const request = {
           origins: origins.map(item => {
             return {
               lat: item.latitude,
@@ -1004,8 +1005,11 @@ class SlwcAvailator {
             }
           }),
           departureTime: this.drive.minShiftStart
-        })
+        };
+        console.log('@@@calculateDistanceMatrix request: ', request);
+        return service.calculateDistanceMatrix(request)
         .then(result => {
+          console.log('@@@calculateDistanceMatrix result: ', result);
           const matrixData = result?.returnedData?.result?.matrix || [];
           mapResult(origins, destinations, matrixData);
         })

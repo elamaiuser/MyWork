@@ -19,7 +19,7 @@ export class DriveChangeRequestMappingConfigFactory {
       mappingConfig.addFieldConfig('sked_Designated_Approver__c', 'designatedApproverId', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_Designated_Approver__r.Name', 'designatedApproverName', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_Drive__c', 'driveId', MAPPING_TYPE.direct);
-      mappingConfig.addFieldConfig('sked_Drive_Contention__c', 'driveContention', MAPPING_TYPE.direct);
+      mappingConfig.addFieldConfig('sked_Drive_Contention__c', 'driveContention', MAPPING_TYPE.multiPicklist);
       mappingConfig.addFieldConfig('sked_Drive__r.sked_Drive_Date__c', 'driveDate', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_Drive__r.sked_End_Time__c', 'driveEndTime', MAPPING_TYPE.time);
       mappingConfig.addFieldConfig('sked_Drive__r.Name', 'driveName', MAPPING_TYPE.direct);

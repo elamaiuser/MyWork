@@ -1,6 +1,5 @@
 import { LightningElement, api, track } from 'lwc';
 import { getValueFromEvent } from 'c/slwcUtils';
-import { orderBy } from 'c/lodash';
 import { DateTime } from 'c/luxon';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import getFilteredOpportunities from '@salesforce/apex/MassUpdateOpportunity.getFilteredOpportunities';
@@ -29,7 +28,7 @@ export default class BsfMassUpdateOpportunityFilteringModal extends LightningEle
     @track showSpinner = false;
     @track errorMessage = '';
     @track dayOfDriveList = [];
-    @track driveStatusList = []
+    @track driveStatusList = [];
     @track siteOperationTypeList = [];
 
     get opportunityColumns() {
@@ -40,18 +39,16 @@ export default class BsfMassUpdateOpportunityFilteringModal extends LightningEle
                 month: "numeric", 
                 year: "numeric" 
                 },
-                initialWidth: 110,
-                sortable: true,
                 cellAttributes: { alignment: 'left' } 
             },
-            { label: 'Drive Date Day', fieldName: 'Drive_Date_Day__c', type: 'text', initialWidth: 140, sortable: true, cellAttributes: { alignment: 'left' } },
-            { label: 'Start Time', fieldName: 'driveStartTime', initialWidth: 110, sortable: true, cellAttributes: { alignment: 'left' } },
-            { label: 'End Time', fieldName: 'driveEndTime', initialWidth: 100, sortable: true, cellAttributes: { alignment: 'left' } },
-            { label: 'Drive Status', fieldName: 'DriveStatus__c', type: 'text', initialWidth: 120, sortable: true, cellAttributes: { alignment: 'left' } },
-            { label: 'WB Procedures', fieldName: 'WB_Projected_Procedures__c', type: 'number', sortable: true, cellAttributes: { alignment: 'left' } },
-            { label: '2RBC Procedures', fieldName: 'X2RBC_Projected_Procedures__c', type: 'number', sortable: true, cellAttributes: { alignment: 'left' } },
-            { label: 'Plasma Procedures', fieldName: 'Plasma_Pheresis_Projected_Procedures__c', type: 'number', sortable: true, cellAttributes: { alignment: 'left' } },
-            { label: 'Platelet Procedures', fieldName: 'Platelet_Projected_Procedures__c', type: 'number', sortable: true, cellAttributes: { alignment: 'left' } }
+            { label: 'Drive Date Day', fieldName: 'Drive_Date_Day__c', type: 'text', initialWidth: 150, cellAttributes: { alignment: 'left' } },
+            { label: 'Start Time', fieldName: 'driveStartTime', initialWidth: 110, cellAttributes: { alignment: 'left' } },
+            { label: 'End Time', fieldName: 'driveEndTime', initialWidth: 100, cellAttributes: { alignment: 'left' } },
+            { label: 'Drive Status', fieldName: 'DriveStatus__c', type: 'text', cellAttributes: { alignment: 'left' } },
+            { label: 'WB Procedures', fieldName: 'WB_Projected_Procedures__c', type: 'number', initialWidth: 90, cellAttributes: { alignment: 'left' } },
+            { label: '2RBC Procedures', fieldName: 'X2RBC_Projected_Procedures__c', type: 'number', cellAttributes: { alignment: 'left' } },
+            { label: 'Plasma Procedures', fieldName: 'Plasma_Pheresis_Projected_Procedures__c', type: 'number', cellAttributes: { alignment: 'left' } },
+            { label: 'Platelet Procedures', fieldName: 'Platelet_Projected_Procedures__c', type: 'number', cellAttributes: { alignment: 'left' } }
         ]
     }
 
@@ -192,6 +189,7 @@ export default class BsfMassUpdateOpportunityFilteringModal extends LightningEle
                 .forEach((item) => (item.selected = true));
         } else if(fieldName === 'driveStatus') {
             this.tempDriveStatus = this.getValuesForMultiSelectPicklist(event.detail);
+            console.log('this.tempDriveStatus ',this.tempDriveStatus);
             this.driveStatusList
                 .filter((item) => this.tempDriveStatus.find(x => x === item.value))
                 .forEach((item) => (item.selected = true));
@@ -213,12 +211,6 @@ export default class BsfMassUpdateOpportunityFilteringModal extends LightningEle
             }
         }
         return selectedOptionList;
-    }
-
-    handleSortChanged(event) {
-        this.filterWrapper.sortBy = event.detail.fieldName;
-        this.filterWrapper.sortDirection = event.detail.sortDirection;
-        this.opportunityRecords = orderBy(this.opportunityRecords, [this.filterWrapper.sortBy], [this.filterWrapper.sortDirection]);
     }
 
     handleSearch() {
@@ -255,6 +247,7 @@ export default class BsfMassUpdateOpportunityFilteringModal extends LightningEle
             driveDateStart: this.tempDriveDateStart,
             driveDateEnd: this.tempDriveDateEnd,
         };
+        console.log('this.filterWrapper ',this.filterWrapper);
     }
 
     fetchData() {
@@ -265,7 +258,6 @@ export default class BsfMassUpdateOpportunityFilteringModal extends LightningEle
             })
             .then((result) => {
                 this.showSpinner = false;
-                //this.enableInfiniteLoading = false;
                 const oppData = result.map((item) => Object.assign({}, item, {
                     driveNameUrl: '/' + item.Id,
                     driveStartTime: this.convertTimePerTimeZone(item.Start_Time__c, item.Drive_Date__c, item.Drive_Site__r.sked_Timezone__c),
@@ -339,7 +331,7 @@ export default class BsfMassUpdateOpportunityFilteringModal extends LightningEle
                     this.enableInfiniteLoading = false;
                 }
                 else {
-                    this.enableInfiniteLoading = result.length < DEFAULT_RECORD_LIMIT ? false : true;
+                    this.enableInfiniteLoading = true;
                     this.opportunityRecords = result;
                 }
             })

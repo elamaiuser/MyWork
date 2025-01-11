@@ -16,6 +16,8 @@ export class OpportunityMappingConfigFactory {
       mappingConfig.addFieldConfig('Account_Manager__c', 'accountManagerId', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('Anticipated_Registered_Donors__c', 'anticipatedRegisteredDonors', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('Anticipated_Registered_Donors_Template__c', 'anticipatedRegisteredDonorsTemplate', MAPPING_TYPE.direct);
+      mappingConfig.addFieldConfig('APT_Required__c', 'aptRequired', MAPPING_TYPE.direct);
+      mappingConfig.addFieldConfig('APT_Quantity__c', 'aptQuantity', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('Call_List_Recipient_Exist__c', 'callListRecipientExist', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('Drive_Date__c', 'driveDate', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('Drive_Date_Change_Reason__c', 'driveDateChangeReason', MAPPING_TYPE.direct);

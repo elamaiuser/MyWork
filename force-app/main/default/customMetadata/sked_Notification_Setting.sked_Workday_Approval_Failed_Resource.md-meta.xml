@@ -63,6 +63,10 @@
         <value xsi:type="xsd:string">Time-off request submitted with errors - Scheduler has been notified</value>
     </values>
     <values>
+        <field>sked_Target_Field_Prev_Value__c</field>
+        <value xsi:nil="true"/>
+    </values>
+    <values>
         <field>sked_Target_Field_Value__c</field>
         <value xsi:nil="true"/>
     </values>
@@ -80,7 +84,7 @@
     </values>
     <values>
         <field>sked_Template__c</field>
-        <value xsi:type="xsd:string">The following time-off adjustment submitted with errors - Scheduler has been notified &lt;br/&gt;
+        <value xsi:type="xsd:string">The following time-off request did not complete successfully.  Please contact your Scheduler for assistance &lt;br/&gt;
 Time off date requested: &lt;br/&gt;{{sked_Start_Date__c}}&lt;br/&gt;
 Time off type requested: {{sked__Type__c}}&lt;br/&gt;
 Availability Number: {{Name}}&lt;br/&gt;

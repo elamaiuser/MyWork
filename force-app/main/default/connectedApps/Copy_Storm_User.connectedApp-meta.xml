@@ -14,7 +14,7 @@
         <isIntrospectAllTokens>false</isIntrospectAllTokens>
         <isNamedUserJwtEnabled>false</isNamedUserJwtEnabled>
         <isPkceRequired>false</isPkceRequired>
-        <isSecretRequiredForRefreshToken>true</isSecretRequiredForRefreshToken>
+        <isSecretRequiredForRefreshToken>false</isSecretRequiredForRefreshToken>
         <scopes>Api</scopes>
         <scopes>Web</scopes>
         <scopes>RefreshToken</scopes>

@@ -249,7 +249,7 @@ public without sharing class sponsorPlanningReportController {
         WB_Projected_Procedures__c,Publish_to_Call_Center__c, Online_Scheduling_Enabled__c,Anticipated_Registered_Donors__c,
         Account.Name, Account.Military_Authority_Name__c,Send_Emails__c,Send_Mailers__c, Account.Contact_BPL__c,Account.Contact_BPL__r.Name,
         Drive_Site__r.sked_Site_Contact_Email__c, Parent_Template_Id__c, Parent_Template_Id__r.Additional_Description__c,
-        Account.Next_Scheduled_Drive__c,Account.Sponsor_Declines_Online_Scheduling__c, Drive_Site__r.sked_No_Cell_Phones__c,
+        Account.Next_Scheduled_Drive_Updated__c,Account.Sponsor_Declines_Online_Scheduling__c, Drive_Site__r.sked_No_Cell_Phones__c,
         Drive_Site__r.Id, Drive_Site__r.Name, Drive_Site__r.sked_Room_Name__c, Drive_Site__r.sked_Site_Contact__c,Drive_Site__r.sked_Site_Contact__r.Name,
         Drive_Site__r.sked__Address__c,Drive_Site__r.sked_Site_Contact_Phone__c, Drive_Site__r.sked_Site_Inspection_Completed_By__r.Name,
         Drive_Site__r.sked_Wireless_Policy__c,Drive_Site__r.sked_Directions_From_CollectionOperation__c,
@@ -930,13 +930,12 @@ public without sharing class sponsorPlanningReportController {
       //  list<Opportunity> oppListResult = new list<Opportunity>();
         if(whereCondition != null){
             errorMsg = null;
-            whereCondition = whereCondition + ' AND StageName !=\'Cancelled\'';
         	String q = 'select Id,Name,Account_Manager__c,AccountId,Drive_Name__c,Additional_Description__c,'+
             'Additional_Drive_Logistics__c, Drive_Date__c, Call_List_Recipient_Exist__c,Start_Time__c,'+
             'End_Time__c,Web_Schedule_Start_Date__c, Web_Schedule_End_Date__c,Online_Donor_Message__c,Drive_Keyword__c,'+                                          
             'WB_Projected_Procedures__c,Publish_to_Call_Center__c, Online_Scheduling_Enabled__c,Anticipated_Registered_Donors__c,'+
             'Account.Name, Account.Military_Authority_Name__c,Send_Emails__c,Send_Mailers__c,'+  
-            'Account.Next_Scheduled_Drive__c,Account.Sponsor_Declines_Online_Scheduling__c,'+
+            'Account.Next_Scheduled_Drive_Updated__c,Account.Sponsor_Declines_Online_Scheduling__c,'+
             'Drive_Site__r.Id, Drive_Site__r.sked_Room_Name__c, Drive_Site__r.sked_Site_Contact__c,'+
             'Drive_Site__r.sked__Address__c,Drive_Site__r.sked_Site_Contact_Phone__c,'+
             'Drive_Site__r.sked_Wireless_Policy__c,Drive_Site__r.sked_Directions_From_CollectionOperation__c,'+
@@ -956,7 +955,9 @@ public without sharing class sponsorPlanningReportController {
             for(opportunity opp: oppListResult) {
                 records.add(new ReportDataWrapper(opp)); 
             }
-        }     
+        } 
+        System.debug('Return result1 : '+oppListResult);   
+        System.debug('Return result2 : '+records);    
         return oppListResult;
     }
 }

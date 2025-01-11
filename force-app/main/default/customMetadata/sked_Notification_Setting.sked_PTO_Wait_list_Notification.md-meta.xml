@@ -63,6 +63,10 @@
         <value xsi:type="xsd:string">Your Time Off Request has been moved to Wait-list.</value>
     </values>
     <values>
+        <field>sked_Target_Field_Prev_Value__c</field>
+        <value xsi:nil="true" />
+    </values>
+    <values>
         <field>sked_Target_Field_Value__c</field>
         <value xsi:type="xsd:string">Waitlist</value>
     </values>

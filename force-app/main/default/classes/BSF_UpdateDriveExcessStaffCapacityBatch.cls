@@ -27,10 +27,7 @@ public class BSF_UpdateDriveExcessStaffCapacityBatch implements Database.Batchab
                                         ' AND sked_Drive_Date__c <= '+this.endDate.format('yyyy-MM-dd')+
                                         ' AND sked_Status__c IN (\''+String.join(this.statusList, '\',\'')+'\')'+
                                         ' AND sked_Staff_Capacity__c != null'+
-                                        ' AND sked_Projected_Registered_Donors__c != null'+
-                                        ' AND (sked_Type_of_Drive__c = \'Mobile\''+
-                                        ' OR (sked_Type_of_Drive__c = \'Fixed Site\''+
-                                        ' AND  sked_Operation_Type__c = \'Non Integrated WB\'))');
+                                        ' AND sked_Projected_Registered_Donors__c != null');
     }
 
 	public void execute(Database.BatchableContext BC, List<sked_Drive__c> scope){

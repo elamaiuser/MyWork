@@ -17,7 +17,8 @@
     <values>
         <field>UI_Text__c</field>
         <value xsi:type="xsd:string">2. Review additional consideration is proceeding checklist&lt;br&gt;
-3. Escalate concerns and document outcome on Site Inspection Comments fields on Site Details Tab.&lt;br&gt;
-4. Mark Complete on the Site Inspection By &amp; Site Inspection Date on Site Details Tab.</value>
+3. Escalate concerns and document outcome on Site Inspection Comments fields on Site the
+record in Salesforce&lt;br&gt;
+4. Mark Complete on the Site Inspection By &amp; Site Inspection Date on Site record in Salesforce</value>
     </values>
 </CustomMetadata>

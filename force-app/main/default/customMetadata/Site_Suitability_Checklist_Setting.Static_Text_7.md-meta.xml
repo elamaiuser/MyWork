@@ -16,6 +16,7 @@
     </values>
     <values>
         <field>UI_Text__c</field>
-        <value xsi:type="xsd:string">The Red Cross will provide the tables for health history and the donation area and Sponsor will need to provide the following:</value>
+        <value xsi:type="xsd:string">The Red Cross will provide the tables for health
+history and the donationn area and Sponsor will need to provide the followings:</value>
     </values>
 </CustomMetadata>

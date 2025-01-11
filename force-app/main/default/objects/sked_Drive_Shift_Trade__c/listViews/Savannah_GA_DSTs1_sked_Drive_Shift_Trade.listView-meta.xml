@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Savannah_GA_DSTs1_sked_Drive_Shift_Trade</fullName>
+    <filterScope>Queue</filterScope>
+    <label>Savannah GA: DSTs</label>
+    <queue>Savannah_GA_DSTs1</queue>
+    <sharedTo>
+        <allInternalUsers />
+    </sharedTo>
+</ListView>

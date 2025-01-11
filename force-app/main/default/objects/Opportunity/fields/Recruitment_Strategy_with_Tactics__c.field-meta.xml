@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>Recruitment_Strategy_with_Tactics__c</fullName>
+    <description>Includes Direct Recruitment, Promotion, Social Media, Communications, Education, and Presentations</description>
     <externalId>false</externalId>
-    <inlineHelpText>Includes Direct Recruitment, Promotion, Social Media, Communications, Education, and Presentations</inlineHelpText>
     <label>Recruitment Strategy with Tactics</label>
     <length>131072</length>
     <trackFeedHistory>false</trackFeedHistory>

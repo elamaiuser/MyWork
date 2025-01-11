@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>POC_Rule</fullName>
+    <active>false</active>
+    <description>Needs to be deleted</description>
+    <errorConditionFormula>ISCHANGED( WB_Projected_Procedures__c )</errorConditionFormula>
+    <errorMessage>Drive Logistic Fields have been modified without Checking Out the DOC. Please check out the DOC before modifying Drive Logistic Fields.</errorMessage>
+</ValidationRule>

@@ -107,5 +107,16 @@ global class FieldIdentifiers {
     global String Slot_Generator_Change_Reason;
     // HRP-12011 --> Ends Here
     
+    // HRP-13190 --> Starts Here
+    @AuraEnabled 
+    global Boolean APT_Required; 
+
+    @AuraEnabled 
+    global Decimal APT_Quantity;
+
+    @AuraEnabled 
+    global String APT_Change_Reason;
+    // HRP-13190 --> Ends Here
+    
     global Set<String> updatedDataKeys = new Set<string>();
 }

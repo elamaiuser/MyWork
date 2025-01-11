@@ -79,13 +79,13 @@ export default class SlwcActivityCalendarActivityList extends LightningElement {
         }
 
         let activityQuery = new activityQueryModel();
-        activityQuery.territoryKeys = territoryKeys;
+        //activityQuery.territoryKeys = territoryKeys;
         activityQuery.startDate = startDate;
         activityQuery.endDate = endDate;
         activityQuery.isGroupActivity = true;
         activityQuery.isShowOnCalendar = true;
         activityQuery.showOnlyLinkedEvents = this.filters.showOnlyLinkedEvents;
-        activityQuery.subQueryIndicator = sObjectType.ACTIVITY_RESOURCE;
+        activityQuery.subQueryIndicator = sObjectType.ACTIVITY_RESOURCE | sObjectType.ACTIVITY_COLLECTION_OPERATION;
 
         let service = new activityService();
         service.query(activityQuery)
@@ -93,10 +93,15 @@ export default class SlwcActivityCalendarActivityList extends LightningElement {
                 let activities = [];
                 if (result && result.length) {
                     result.forEach((activity) => {
+                        let isValidActivity = territoryKeys.includes(activity.territoryKey);
+                        if(!isValidActivity) {
+                            isValidActivity = (activity.activityCollectionOperations || []).find(activityCollectionOperation => territoryKeys.includes(activityCollectionOperation.territoryKey));
+                        }
+                        if(!isValidActivity) return;
                         activity.recordPageUrl = '/' + activity.id;
                         activity.driveUrl = activity.driveId ? '/' + activity.driveId : null;
                         activity.linkedDrivesUrl = activity.linkedDrivesId ? '/' + activity.linkedDrivesId : null;
-                        activity.quantityText = [(activity.activityResources || []).length, activity.quantity || ''].join('/');
+                        activity.quantityText = [(activity.activityResources || []).length, activity.quantity || '0'].join('/');
                         activity.activityDate = DateTime.fromISO(activity.start).toISODate();
                         activity.startTimeStr = this.formatTime(activity.startTime);
                         activity.endTimeStr = this.formatTime(activity.endTime);

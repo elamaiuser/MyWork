@@ -35,12 +35,12 @@ export class ResourceMappingConfigFactory {
       mappingConfig.addFieldConfig('sked_Max_Hours_Per_Week__c', 'maxHoursPerWeek', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_Max_Travel_Time__c', 'maxTravelTime', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_Maximum_Travel_Radius__c', 'maximumTravelRadius', MAPPING_TYPE.direct);
-      mappingConfig.addFieldConfig('sked_Mobile_Type__c', 'mobileType', MAPPING_TYPE.direct);
+      mappingConfig.addFieldConfig('sked_Mobile_Type__c', 'mobileType', MAPPING_TYPE.multiPicklist);
       mappingConfig.addFieldConfig('sked_Planned_Termination_Date__c', 'plannedTerminationDate', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_Pres_Donor_Capacity__c', 'presDonorCapacity', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_Quantity__c', 'quantity', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked__Resource_Type__c', 'resourceType', MAPPING_TYPE.direct);
-      mappingConfig.addFieldConfig('sked_Roles__c', 'roles', MAPPING_TYPE.direct);
+      mappingConfig.addFieldConfig('sked_Roles__c', 'roles', MAPPING_TYPE.multiPicklist);
       mappingConfig.addFieldConfig('sked_Satellite_Address__c', 'satelliteAddress', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_Satellite_Address_1__c', 'satelliteAddress1', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_Satellite_City__c', 'satelliteCity', MAPPING_TYPE.direct);

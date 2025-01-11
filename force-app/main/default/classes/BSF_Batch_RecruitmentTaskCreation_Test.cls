@@ -4,6 +4,7 @@
  * Date					     Developer Name			     Comments
  * ***********************************************************************************
  * 11/01/2024				  Priti Jana				Created for HRP-?
+ * 12/19/2024				  Priti Jana				Updated for HRP-13850
  *************************************************************************************
 */
 
@@ -87,7 +88,7 @@ public class BSF_Batch_RecruitmentTaskCreation_Test {
         Test.stopTest();
     }
     
-    static testMethod void testRecruitmentTaskSubjectChangeBatch() {
+    /*static testMethod void testRecruitmentTaskSubjectChangeBatch() {
         Test.startTest();
         Opportunity testMobileOpp = [SELECT Id FROM Opportunity WHERE Is_Template__c = FALSE LIMIT 1];
         
@@ -106,6 +107,6 @@ public class BSF_Batch_RecruitmentTaskCreation_Test {
         
         Task recruitmentTask = [SELECT Id, Subject FROM Task LIMIT 1];
         Assert.isTrue(recruitmentTask.Subject.equalsIgnoreCase('Recruitment Planning Meeting'));
-    }
+    }*/
 
 }

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Roanoke_VA_DMDCR1_sked_Drive_Change_Request</fullName>
+    <filterScope>Queue</filterScope>
+    <label>Roanoke VA: DMDCR</label>
+    <queue>Roanoke_VA_DMDCR1</queue>
+    <sharedTo>
+        <allInternalUsers />
+    </sharedTo>
+</ListView>

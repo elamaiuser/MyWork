@@ -486,6 +486,87 @@ public class TaskTriggerTest {
         
         pdaTask.Status = 'Completed';
         update pdaTask;
+        
+        TaskService.updateRelatedAccountAndOpportunity(new List<Task>{pdaTask});
+        
+        Map<String,String> map_highlightFeedBackInfo = TaskService.getHighlightAndFeedBacks(pdaTask.Id);
+        Map<String, String> map_highlightFeedBackUpdateInfo = TaskService.updateHighlightAndFeedBacks(pdaTask.Id, 'Test Hightlights', 'Test Feedback');
+        Assert.isTrue(map_highlightFeedBackInfo != NULL && !map_highlightFeedBackInfo.isEmpty());
+        Assert.isTrue(map_highlightFeedBackUpdateInfo != NULL && map_highlightFeedBackUpdateInfo.get('isSuccess') == 'true');
+        
+        Test.stopTest();
+    }
+    
+    static testMethod void validate72HourTaskCompletion_Test() {
+        TriggerHandler.Bypass('AccountTriggerHandler');
+        TriggerHandler.Bypass('OpportunityTriggerHandler');
+        TriggerHandler.Bypass('SiteTriggerHandler');
+        
+        BSF_TestDataSetup testDataSetup = new BSF_TestDataSetup(false);
+        Map<string, sObject> mapTestData =  testDataSetup.createAndInsertCommonObjects(); 
+        
+        // insert DRD User
+        User drdUser = (User)mapTestData.get('DRD_USER');
+        System.runAs( new User(Id = UserInfo.getUserId())) {
+            insert drdUser;
+        }
+               
+        //insert mobile account
+        Account testMobileAccount = (Account)mapTestData.get('MOBILE_ACCOUNT');
+        testMobileAccount.Internal_Name__c = 'Test Account';
+        insert testMobileAccount;
+        
+        // insert mobile site
+        sked__Location__c testMobileSite = (sked__Location__c)mapTestData.get('MOBILE_SITE');
+    	insert testMobileSite;
+        
+        // insert template
+        Opportunity testTemplate = (Opportunity)mapTestData.get('MOBILE_TEMPLATE_OPP');
+        testTemplate.AccountId = testMobileAccount.Id;
+        testTemplate.Drive_Site__c = testMobileSite.Id;
+        insert testTemplate;
+        
+        //insert opportunity
+		opportunity testMobileOpp =new opportunity();
+		testMobileOpp.RecordTypeId = Opportunity.sObjectType.getDescribe().getRecordTypeInfosByName().get('Mobile Opp').getRecordTypeId();        
+        testMobileOpp.AccountId=testMobileAccount.Id;
+        testMobileOpp.name='testOpp1';
+        testMobileOpp.StageName= 'Closed';
+        testMobileOpp.Parent_Template_Id__c=testTemplate.id;
+        testMobileOpp.CloseDate= system.today().addDays(1); 
+        testMobileOpp.Drive_Date__c = system.today();
+        testMobileOpp.Accept_56_Day_Rule_Violation__c = true;
+        testMobileOpp.Account_Manager__c = UserInfo.getUserId();
+        testMobileOpp.Start_Time__c = System.now().Time();
+		testMobileOpp.End_Time__c = System.now().Time()+1;
+		testMobileOpp.Anticipated_Registered_Donors__c = 1;	
+        insert testMobileOpp;
+        
+        Test.startTest();
+        //insert Publicity Task
+        Task x72HourTask = new Task(
+        	Subject = Task_Reassignment_Matrix__mdt.getInstance('X72_Hour').Task_Subject__c,
+            OwnerId = drdUser.Id,
+            Priority = 'Normal',
+            Status = 'Not Started',
+            WhatId = testMobileOpp.Id
+        );
+        insert x72HourTask;
+        
+        BSF_Task_Checklist__c taskCheckList = new BSF_Task_Checklist__c(
+            TaskLookup__c = (String) x72HourTask.Id,
+            TaskType__c = Task_Reassignment_Matrix__mdt.getInstance('X72_Hour').Task_Subject__c,
+            Unique_Name__c = 'Any_changes_to_location_or_construction'
+        );
+        insert taskCheckList;
+        
+        x72HourTask.Status = 'Completed';
+        try{
+            update x72HourTask;
+        }catch(Exception ex) {
+            Assert.isTrue(ex.getMessage().contains('Please ensure each item is checked before marking task as complete.'));
+        }
+        
         Test.stopTest();
     }
 }

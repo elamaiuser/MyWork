@@ -52,7 +52,7 @@
     </values>
     <values>
         <field>sked_Priority__c</field>
-        <value xsi:nil="true" />
+        <value xsi:type="xsd:double">1.0</value>
     </values>
     <values>
         <field>sked_Sending_From_Email_Address__c</field>
@@ -61,6 +61,10 @@
     <values>
         <field>sked_Subject__c</field>
         <value xsi:type="xsd:string">Validation error(s) in BSF Workday API</value>
+    </values>
+    <values>
+        <field>sked_Target_Field_Prev_Value__c</field>
+        <value xsi:nil="true" />
     </values>
     <values>
         <field>sked_Target_Field_Value__c</field>

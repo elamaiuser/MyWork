@@ -1,3 +1,9 @@
+/* Modification Log 
+*  Date                          Developer Name                 Comments
+* ***********************************************************************************************************************************************
+* 12/02/2024					 Barnojit Sharma		  Tasks being assigned for cancelled drives and for fixed sites(Logic for HRP-13850)
+************************************************************************************************************************************************
+*/
 global class BSF_Batch_RecruitmentTaskCreation implements Schedulable ,Database.Batchable<sObject> {
   Date currentDate;
   Date dueDate;
@@ -14,7 +20,7 @@ global class BSF_Batch_RecruitmentTaskCreation implements Schedulable ,Database.
     global Database.QueryLocator start(Database.BatchableContext BC)
     {
         String oppType = 'Mobile Opp';
-      String query = 'SELECT ID ,Account_Manager__c,OwnerId, Drive_Date__c ,Is_Template__c, RecordType.Name From Opportunity where RecordType.Name =: oppType AND Drive_Date__c <= :dueDate AND Drive_Date__c >= TODAY ';
+      String query = 'SELECT ID ,Account_Manager__c,OwnerId, Drive_Date__c ,Is_Template__c, RecordType.Name From Opportunity where RecordType.Name =: oppType AND Drive_Date__c <= :dueDate AND Drive_Date__c >= TODAY AND StageName != \'Cancelled\'';//HRP-13850
      
         return Database.getQueryLocator(query);
     }

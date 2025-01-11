@@ -100,106 +100,95 @@ public without sharing class OrderService {
 * JIRA Ticket: HRP - 1613, 
 * Description: 1.1 User: Managing Publicity Order Budgets
 */
-    public static void setOrderBudget( 
-        List<Order> oldOrders, 
-        List<Order> newOrders,
-        Map<Id,Order> oldOrdersMap,
-        Map<Id,Order> newOrdersMap
-    ) {
+    public static void setOrderBudget( List<Order> oldOrders, List<Order> newOrders,
+                                      Map<Id,Order> oldOrdersMap,Map<Id,Order> newOrdersMap){
                                           
-        Set<Id> accountids    = new Set<Id>();                                                    
-        Set<Id> opportunityids    = new Set<Id>();
-        Set<Id> marketingProgramId = new Set<Id>();
+                                          Set<Id> accountids    = new Set<Id>();                                                    
+                                          Set<Id> opportunityids    = new Set<Id>();
+                                          Set<Id> marketingProgramId = new Set<Id>();
                                           
-        List<Account> accountList = new List<Account>();
-        List<Marketing_Program__c> marketProgram = new List<Marketing_Program__c>();
-        List<Drive_Marketing_Programs__c> driveMarket = new List<Drive_Marketing_Programs__c>();
-        List<Budget_Matrix__mdt> budgetMatrix = new List<Budget_Matrix__mdt>();
+                                          List<Account> accountList = new List<Account>();
+                                          List<Marketing_Program__c> marketProgram = new List<Marketing_Program__c>();
+                                          List<Drive_Marketing_Programs__c> driveMarket = new List<Drive_Marketing_Programs__c>();
+                                          List<Budget_Matrix__mdt> budgetMatrix = new List<Budget_Matrix__mdt>();
                                           
-        Map<Id, Account> accountIdAccount = new Map<Id, Account>();
-        Map<Order, Id> orderAccountid = new Map<Order, Id>();
-        Map<Order, Id> orderOpportunityid = new Map<Order, Id>();
-        Map<Id, Id> driveMarketIdandMarketprogramId = new Map<Id, Id>();
-        Map<Id, Marketing_Program__c> marketIdMarketProgram = new Map<Id, Marketing_Program__c>();
-        Map<Id, List<Drive_Marketing_Programs__c>> opportunityIdDrivePrograms = new Map<Id, List<Drive_Marketing_Programs__c>>();
-        Map<String, List<Budget_Matrix__mdt>> map_budgetMatrixType_budgetMatrixList = new Map<String, List<Budget_Matrix__mdt>>();
-
-        Map<String, Budget_Matrix__mdt> bm = Budget_Matrix__mdt.getAll();											
-        for(String bmobj : bm.keySet()) {   
-            Budget_Matrix__mdt bmx = bm.get(bmobj);
-            if(!map_budgetMatrixType_budgetMatrixList.containsKey( bmx.Type__c)) {
-                map_budgetMatrixType_budgetMatrixList.put(bmx.Type__c, new List<Budget_Matrix__mdt>());
-            }
-            map_budgetMatrixType_budgetMatrixList.get(bmx.Type__c).add(bmx);                
-        }
-          List<Opportunity> oppList = new List<Opportunity>();                                
-        for( Order od : newOrders ) {
-            accountids.add(od.accountId);
-            opportunityids.add(od.OpportunityId);
-            orderAccountid.put( od, od.accountId );
-            orderOpportunityid.put( od, od.OpportunityId);
-        }
-        system.debug('opportunityids '+opportunityids);
-        // Budget Matrix
-        /*budgetMatrix = [ select Id, Type__c, Marketing_Program_Type__c, Account_Type__c, Industry_Code__c, Unit_Price__c from Budget_Matrix__mdt WITH SECURITY_ENFORCED];
-        
-        if( !budgetMatrix.isEmpty() ){
-            for( Budget_Matrix__mdt bmx : budgetMatrix){              
-                if( !map_budgetMatrixType_budgetMatrixList.containsKey( bmx.Type__c ) ){
-                    map_budgetMatrixType_budgetMatrixList.put(bmx.Type__c, new List<Budget_Matrix__mdt>());
-                }
-                map_budgetMatrixType_budgetMatrixList.get(bmx.Type__c).add(bmx);                
-            }
-        } */
-        // HRP-6470
-       
-        // Query related opp
-        Map<Id, Opportunity> oppIdObject = new Map<Id, Opportunity>([SELECT Id, Total_Products_Projected__c, Is_Template__c 
-                                                                    FROM Opportunity 
-                                                                    WHERE Id IN :opportunityids 
-                                                                    AND Is_Template__c = FALSE
-                                                                    WITH SYSTEM_MODE]); //HRP-12664
-        system.debug('oppIdObject '+oppIdObject);
-
-        // Drive Marketing Program
-        driveMarket = [select Id, Blood_Drive_Opportunity__c, Marketing_Program__c from Drive_Marketing_Programs__c where Blood_Drive_Opportunity__c IN:oppIdObject.keySet() WITH SYSTEM_MODE];//HRP-12664
-        system.debug('driveMarket '+driveMarket);
-        if(!driveMarket.isEmpty() ){
-        system.debug('driveMarket '+driveMarket);
-            for( Drive_Marketing_Programs__c dmp : driveMarket ){
-                driveMarketIdandMarketprogramId.put( dmp.Id, dmp.Marketing_Program__c);               
-                marketingProgramId.add(  dmp.Marketing_Program__c );
-                
-                if( !opportunityIdDrivePrograms.containsKey( dmp.Blood_Drive_Opportunity__c ) ){
-                    opportunityIdDrivePrograms.put( dmp.Blood_Drive_Opportunity__c, new List<Drive_Marketing_Programs__c>() );
-                }
-                opportunityIdDrivePrograms.get( dmp.Blood_Drive_Opportunity__c ).add(dmp);
-            }
-        }
-        system.debug('opportunityIdDrivePrograms '+opportunityIdDrivePrograms);
-        // Marketing Program
-        if( !marketingProgramId.isEmpty() ){
-            marketProgram = [ select Id, Name from Marketing_Program__c where Id IN:marketingProgramId WITH SYSTEM_MODE];         
-            if( !marketProgram.isEmpty() ){
-                for( Marketing_Program__c mp : marketProgram ){
-                    if( !marketIdMarketProgram.containsKey( mp.Id ) ){
-                        marketIdMarketProgram.put( mp.Id, mp );
-                    }
-                }
-            }
-        }
-        
-        // Account
-        accountList = [ select Id, Type, Industry_Code__c from Account where Id IN:accountids WITH SYSTEM_MODE];
-        if( !accountList.isEmpty() ){
-            for( Account acc : accountList ){
-                accountIdAccount.put( acc.Id, acc );
-            }
-        }
+                                          Map<Id, Account> accountIdAccount = new Map<Id, Account>();
+                                          Map<Order, Id> orderAccountid = new Map<Order, Id>();
+                                          Map<Order, Id> orderOpportunityid = new Map<Order, Id>();
+                                          Map<Id, Id> driveMarketIdandMarketprogramId = new Map<Id, Id>();
+                                          Map<Id, Marketing_Program__c> marketIdMarketProgram = new Map<Id, Marketing_Program__c>();
+                                          Map<Id, List<Drive_Marketing_Programs__c>> opportunityIdDrivePrograms = new Map<Id, List<Drive_Marketing_Programs__c>>();
+                                          Map<String, List<Budget_Matrix__mdt>> accountBudgetmatrix = new Map<String, List<Budget_Matrix__mdt>>();
+                                          Map<Id, Opportunity> oppIdObject;
+                                          
+                                          for( Order od : newOrders ){
+                                              accountids.add(od.accountId);
+                                              opportunityids.add(od.OpportunityId);
+                                              
+                                              orderAccountid.put( od, od.accountId );
+                                              orderOpportunityid.put( od, od.OpportunityId);
+                                          }
+                                          
+                                          // Budget Matrix
+                                          /*budgetMatrix = [ select Id, Type__c, Marketing_Program_Type__c, Account_Type__c, Industry_Code__c, Unit_Price__c from Budget_Matrix__mdt WITH SECURITY_ENFORCED];
+                                          
+                                          if( !budgetMatrix.isEmpty() ){
+                                              for( Budget_Matrix__mdt bmx : budgetMatrix){              
+                                                  if( !accountBudgetmatrix.containsKey( bmx.Type__c ) ){
+                                                      accountBudgetmatrix.put(bmx.Type__c, new List<Budget_Matrix__mdt>());
+                                                  }
+                                                  accountBudgetmatrix.get(bmx.Type__c).add(bmx);                
+                                              }
+                                          } */
+                                          // HRP-6470
+											Map<String, Budget_Matrix__mdt> bm = Budget_Matrix__mdt.getAll();											
+											for( String bmobj : bm.keySet()){   
+												Budget_Matrix__mdt bmx = bm.get(bmobj);
+												if( !accountBudgetmatrix.containsKey( bmx.Type__c ) ){
+													accountBudgetmatrix.put(bmx.Type__c, new List<Budget_Matrix__mdt>());
+												}
+												accountBudgetmatrix.get(bmx.Type__c).add(bmx);                
+											}
+                                          // Opportunity / Blood Drive Opportunity
+                                          oppIdObject = new Map<Id, Opportunity>([Select Id, Total_Products_Projected__c  From Opportunity where Id IN:opportunityids AND is_template__c = false WITH SYSTEM_MODE]); //HRP-12664
+                                          
+                                          // Drive Marketing Program
+                                          driveMarket = [ select Id, Blood_Drive_Opportunity__c, Marketing_Program__c from Drive_Marketing_Programs__c where Blood_Drive_Opportunity__c IN:oppIdObject.keySet() WITH SYSTEM_MODE];//HRP-12664
+                                          if( !driveMarket.isEmpty() ){
+                                              for( Drive_Marketing_Programs__c dmp : driveMarket ){
+                                                  driveMarketIdandMarketprogramId.put( dmp.Id, dmp.Marketing_Program__c);               
+                                                  marketingProgramId.add(  dmp.Marketing_Program__c );
+                                                  
+                                                  if( !opportunityIdDrivePrograms.containsKey( dmp.Blood_Drive_Opportunity__c ) ){
+                                                      opportunityIdDrivePrograms.put( dmp.Blood_Drive_Opportunity__c, new List<Drive_Marketing_Programs__c>() );
+                                                  }
+                                                  opportunityIdDrivePrograms.get( dmp.Blood_Drive_Opportunity__c ).add(dmp);
+                                              }
+                                          }
+                                          
+                                          // Marketing Program
+                                          if( !marketingProgramId.isEmpty() ){
+                                              marketProgram = [ select Id, Name from Marketing_Program__c where Id IN:marketingProgramId WITH SYSTEM_MODE];         
+                                              if( !marketProgram.isEmpty() ){
+                                                  for( Marketing_Program__c mp : marketProgram ){
+                                                      if( !marketIdMarketProgram.containsKey( mp.Id ) ){
+                                                          marketIdMarketProgram.put( mp.Id, mp );
+                                                      }
+                                                  }
+                                              }
+                                          }
+                                          
+                                          // Account
+                                          system.debug('accountids'+accountids);
+                                          accountList = [ select Id, Type, Industry_Code__c from Account where Id IN:accountids WITH SYSTEM_MODE];
+                                          if( !accountList.isEmpty() ){
+                                              for( Account acc : accountList ){
+                                                  accountIdAccount.put( acc.Id, acc );
+                                              }
+                                          }
                                           
                                           // Order Budget Calculation
                                           for( Order od : newOrders ){
-                                            system.debug('orderService : ');
                                               Id oppid = orderOpportunityid.get(od);
                                               
                                               // Reset Budget to null, because if Order created using Salesforce Clone functionality
@@ -207,17 +196,14 @@ public without sharing class OrderService {
                                               
                                               // Priority #1 : Marketing Program
                                               if( opportunityIdDrivePrograms.containsKey(oppid) ){
-                                                system.debug('orderService : '+opportunityIdDrivePrograms);
                                                   for( Drive_Marketing_Programs__c dmp : opportunityIdDrivePrograms.get(oppid) ){ // Iterate over the List of Drive Marketing Program
                                                       Id marketProgId= driveMarketIdandMarketprogramId.get(dmp.Id);
                                                       
                                                       Marketing_Program__c mprog = marketIdMarketProgram.get(marketProgId);
                                                       
-                                                      if( map_budgetMatrixType_budgetMatrixList.containsKey( 'Marketing Program' ) ){
-                                                        system.debug('orderService : inside map_budgetMatrixType_budgetMatrixList');
-                                                          for( Budget_Matrix__mdt bmx : map_budgetMatrixType_budgetMatrixList.get('Marketing Program') ){
+                                                      if( accountBudgetmatrix.containsKey( 'Marketing Program' ) ){
+                                                          for( Budget_Matrix__mdt bmx : accountBudgetmatrix.get('Marketing Program') ){
                                                               if( bmx.Marketing_Program_Type__c == mprog.Name && oppIdObject.containsKey(od.OpportunityId)){//HRP-12664
-                                                                system.debug('orderService : inside map_budgetMatrixType_budgetMatrixList 2');
                                                                   // Formulla to calculate Order Budget
                                                                   // System.debug( 'Order => Opportunity => OpportunityId: ' + od.OpportunityId );
                                                                   // System.debug( 'Order => Opportunity => Total_Products_Projected__c: ' + oppIdObject.get(od.OpportunityId).Total_Products_Projected__c );
@@ -226,7 +212,6 @@ public without sharing class OrderService {
                                                                   Decimal unitprice = bmx.Unit_Price__c;
                                                                   Decimal totalBudget = productProjected * unitprice;
                                                                   od.BudgetCurrency__c = totalBudget;
-                                                                  system.debug('orderService : inside map_budgetMatrixType_budgetMatrixList 3 '+od.BudgetCurrency__c);
                                                               }
                                                           }                     
                                                       }                 
@@ -236,8 +221,13 @@ public without sharing class OrderService {
                                               if( od.BudgetCurrency__c == null ){
                                                   // Priority #2 : Account Type, Industry Code
                                                   Account acc = accountIdAccount.get(od.AccountId);
-                                                  if( map_budgetMatrixType_budgetMatrixList.containsKey( 'Account' ) ){
-                                                      for( Budget_Matrix__mdt bmx : map_budgetMatrixType_budgetMatrixList.get('Account') ){
+                                                  system.debug('accountIdAccount.get(od.AccountId) '+accountIdAccount.get(od.AccountId));
+                                                  if( accountBudgetmatrix.containsKey( 'Account' ) ){
+                                                      for( Budget_Matrix__mdt bmx : accountBudgetmatrix.get('Account') ){
+                                                          system.debug('bmx '+bmx);
+                                                          system.debug('acc '+acc);
+                                                          system.debug('oppIdObject '+oppIdObject);
+                                                          system.debug('oppIdObject '+oppIdObject.get(od.OpportunityId));
                                                           if( bmx.Account_Type__c == acc.Type && bmx.Industry_Code__c == acc.Industry_Code__c && oppIdObject.containsKey(od.OpportunityId)){//added for HRP-12664
                                                               // Formulla to calculate Order Budget
                                                               // System.debug( 'Order => Opportunity => OpportunityId: ' + od.OpportunityId );
@@ -254,11 +244,9 @@ public without sharing class OrderService {
                                               }
                                               
                                               if( od.BudgetCurrency__c == null ){
-                                                  system.debug('here to set other');
                                                   // Priority #3 : Other
-                                                  if( map_budgetMatrixType_budgetMatrixList.containsKey( 'Other' ) ){
-                                                      system.debug('inside');
-                                                      for( Budget_Matrix__mdt bmx : map_budgetMatrixType_budgetMatrixList.get('Other') ){
+                                                  if( accountBudgetmatrix.containsKey( 'Other' ) ){
+                                                      for( Budget_Matrix__mdt bmx : accountBudgetmatrix.get('Other') ){
                                                           // Formulla to calculate Order Budget
                                                            if(oppIdObject.containsKey(od.OpportunityId)) //HRP-12664
                                                            {
@@ -299,12 +287,14 @@ public without sharing class OrderService {
                                                            } 
                                                            
                                                            Decimal totalProductBudget = 0.0;
-                                                           for( OrderItem oit : oitems ){
+                                                           for( OrderItem oit : oitems )
+                                                           {
                                                                Decimal eachProductBudget = oit.Quantity * oit.UnitPrice;
                                                                totalProductBudget = totalProductBudget + eachProductBudget;
                                                            }
                                                            
-                                                           for( Order od : newOrders){
+                                                           for( Order od : newOrders)
+                                                           {
                                                                if( totalProductBudget > od.BudgetCurrency__c ){
                                                                    Decimal budgetdiff = totalProductBudget - od.BudgetCurrency__c ;
                                                                    od.addError('Total Budget is exceeding,exceeding amount is ' + budgetdiff );
@@ -371,13 +361,13 @@ public without sharing class OrderService {
                 //HRP-12752
                 if(!OrderIdMap.get(od.Id).Opportunity.No_Publicity_Needed__c && OrderIdMap.get(od.Id).OrderItems.isEmpty())
                 {
-                    od.addError('Products have not been added to the Order. Please add Products before approving the Order or select \'No Publicity Needed\'');
+                    od.addError('Products have not been added to Order. Please add Products before approving Order or select \'No Publicity Needed\' on Opportunity Details tab.');
                 }
                 //HRP-12752
-                                                        od.Publicity_Approved_Date__c = System.today();
-                                                        od.Publicity_Approved_By__c = userInfo.getUserId();
-                                                    }
-                                                }                                                   
+                od.Publicity_Approved_Date__c = System.today();
+                od.Publicity_Approved_By__c = userInfo.getUserId();
+            }
+        }                                                   
                                                 
                                             }   
     /*
@@ -402,29 +392,30 @@ public without sharing class OrderService {
                 }
             }
         }
+        System.debug('isAllowedUser value :'+isAllowedUser );
         if( !oppVsOrderMap.isEmpty()){//HRP-12664
             List<Order> existingOrders = [SELECT Id, 
-                                            OpportunityId,
+                                                OpportunityId,
                                             Opportunity.is_template__c
                                             FROM Order 
-                                            WHERE OpportunityId IN :oppVsOrderMap.KeySet()];
-            for(Order ord : existingOrders) {
-                if(ord.OpportunityId != null) {
+                                            WHERE OpportunityId IN :oppVsOrderMap.KeySet()
+                                            AND isDeleted = false];
+            for(Order ord : existingOrders){
+                if(ord.OpportunityId != null){
                     oppVsOrderMap.put(ord.OpportunityId, true);
-                    if(ord.Opportunity.is_template__c) { // added for HRP-12664 
+                    if(ord.Opportunity.is_template__c){ // added for HRP-12664 
+
                         templateIdswithOrder.add(ord.OpportunityId);
+
                     }
                 }
             }
         }
-        if(orderList != null && !orderList.isEmpty()) {//HRP-12664
-            for(Order ord : orderList) {
-                if(ord.OpportunityId != null 
-                   && oppVsOrderMap.containsKey(ord.OpportunityId) 
-                   &&  oppVsOrderMap.get(ord.OpportunityId)
-                   &&(!isAllowedUser 
-                      || (!templateIdswithOrder.isEmpty() && templateIdswithOrder.contains(ord.OpportunityId)))
-                  ) {//HRP-12664
+        if(orderList != null && !orderList.isEmpty()){//HRP-12664
+            for(Order ord : orderList){
+                if(ord.OpportunityId != null && oppVsOrderMap.containsKey(ord.OpportunityId) &&  oppVsOrderMap.get(ord.OpportunityId)
+
+                        &&(!isAllowedUser || (!templateIdswithOrder.isEmpty() && templateIdswithOrder.contains(ord.OpportunityId)))){//HRP-12664
                     ord.addError(Custom_Messages__mdt.getInstance('Order_Restriction_Message').value__c);
                 }
             }

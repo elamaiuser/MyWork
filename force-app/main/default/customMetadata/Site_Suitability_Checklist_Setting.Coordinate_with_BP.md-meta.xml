@@ -16,6 +16,6 @@
     </values>
     <values>
         <field>UI_Text__c</field>
-        <value xsi:type="xsd:string">Coordinate with the BPL to secure/lock space for blood drive for multiple days (including overnight).</value>
+        <value xsi:type="xsd:string">Coordinate with the BPL to secure/locked space for blood drive for multiple days (including overnight).</value>
     </values>
 </CustomMetadata>

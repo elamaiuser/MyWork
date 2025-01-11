@@ -1,7 +1,8 @@
 /*
-* Date					Developer Name			Comments
+*    Date					Developer Name			          Comments
  * ***************************************************************************************************************************************************************************
- * 07/15/2024			Barnojit Sharma				Weekly Staffing Schedule by Employee & Weekly Staffing Role Time Back up Reports shift start and end times are incorrect (HRP-13091)
+ * 07/15/2024				Barnojit Sharma				Weekly Staffing Schedule by Employee & Weekly Staffing Role Time Back up Reports shift start and end times are incorrect (HRP-13091)
+ * 12/30/2024				Priti Jana					Logic for HRP-13121
  *****************************************************************************************************************************************************************************
 */
 public without sharing class WeeklyStaffScheduleReportController {
@@ -48,7 +49,7 @@ public without sharing class WeeklyStaffScheduleReportController {
         } 
     }
     
-    @AuraEnabled
+    @AuraEnabled(cacheable=true)
     public static DatableConfigWrapper searchReport(Date startDate, Date endDate, String drivedispatch, String collOpIdList, String driveType){
 
         DatableConfigWrapper data = new DatableConfigWrapper();
@@ -164,8 +165,49 @@ public without sharing class WeeklyStaffScheduleReportController {
             timeDifference = timeDifference + resourceHoursMap.get(jba.sked__Resource__c);
             resourceHoursMap.put(jba.sked__Resource__c,timeDifference);                 
         }
+        
+        /* HRP-13121 -> Starts Here
+        *  1. Get Territory Collection Operations for the selected collection operations
+        *  2. Form Territory keys using district and CO combination
+        *  3. Use the List of territory keys to get activities / activity COs
+        */
+        
+        List<sked_Territory_Collection_Operation__c> territoryColOpList = [
+            SELECT Id, sked_Territory__c, sked_Collection_Operation__c,
+            sked_Start_Date__c, sked_End_Date__c
+            FROM sked_Territory_Collection_Operation__c
+            WHERE sked_Collection_Operation__c IN :collOpIds
+            AND (sked_Start_Date__c = NULL OR sked_Start_Date__c <= :startDate)
+            AND (sked_End_Date__c = NULL OR sked_End_Date__c >= :endDate)
+        ];
+        
+        Map<Id, List<sked_Territory_Collection_Operation__c>> map_colOpId_territoryCoList = new Map<Id, List<sked_Territory_Collection_Operation__c>>();
+        for(sked_Territory_Collection_Operation__c territoryCO : territoryColOpList) {
+            if(!map_colOpId_territoryCoList.containsKey(territoryCO.sked_Collection_Operation__c)) {
+                map_colOpId_territoryCoList.put(territoryCO.sked_Collection_Operation__c, new List<sked_Territory_Collection_Operation__c>());
+            }
+            map_colOpId_territoryCoList.get(territoryCO.sked_Collection_Operation__c).add(territoryCO);
+        }
+        
+        List<String> territoryKeys = new List<String>();
+        
+        for(Id colOpId : collOpIds) {
+            if(map_colOpId_territoryCoList.containsKey(colOpId) && map_colOpId_territoryCoList.get(colOpId) != NULL) {
+                for(sked_Territory_Collection_Operation__c territoryColOp : map_colOpId_territoryCoList.get(colOpId)) {
+                    if(
+                        (territoryColOp.sked_Start_Date__c == NULL || territoryColOp.sked_Start_Date__c <= startDate) && 
+                        (territoryColOp.sked_End_Date__c == NULL || territoryColOp.sked_End_Date__c >= endDate)
+                    ) {
+                        
+                        territoryKeys.add(territoryColOp.sked_Territory__c + ':' + territoryColOp.sked_Collection_Operation__c);
+                        break;
+                    }
+                }
+            }            
+        }
+        //HRP-13121 -> Ends Here
 
-        List<sked__Activity_Resource__c> activityList = BSFWeeklyStaffingRoleTimeController.getActivities(startDate,endDate,collOpIds);
+        List<sked__Activity_Resource__c> activityList = BSFWeeklyStaffingRoleTimeController.getActivities(startDate, endDate, territoryKeys); //HRP-13121 -> Changed Method Parameter
         
         for(sked__Activity_Resource__c act : activityList){
             resourceMap.put(act.sked__Resource__c,act.sked__Resource__r);

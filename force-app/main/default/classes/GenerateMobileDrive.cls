@@ -33,6 +33,7 @@
  * 17/06/2024                 Barnojit Sharma        Logic for HRP-12738
  * 08/01/2024                 Priti Jana             Logic for HRP-10994
  * 08/09/2024                 Priti Jana             Logic for HRP-11634
+ * 12/10/2024				  Priti Jana			 Logic for HRP-13190
  *******************************************************************************
 */
 public with sharing class GenerateMobileDrive {
@@ -617,7 +618,7 @@ public with sharing class GenerateMobileDrive {
             if (driveShift.projectedRegisteredDonors > staffCapacity) {
                 staffingComplement.numberOfVphh = Math.ceil((driveShift.projectedRegisteredDonors - staffCapacity) / (matrix.vpHhCapacity * drawHours));	
             }
-            staffingComplement.numberOfApt = drive.account.aptRequired ? 1 : staffingComplement.numberOfApt; //HRP-10474
+            staffingComplement.numberOfApt = drive.aptRequired ? drive.aptQuantity : 0; //HRP-10474, HRP-13190
             return staffingComplement;
         }
 

@@ -306,16 +306,12 @@ export default class SlwcResourceCalendar extends NavigationMixin(LightningEleme
       service.saveCallOut({
         request: params
       }).then(res => {
-        let message = 'Call out Captured Sucessfully.';
-        if (!usePtoForCallOut) {
-            message += ' No associated Time-Off created.';
-        }
-
         this.dispatchEvent(new ShowToastEvent({
-            message: message,
-            variant: 'success',
-            mode: 'dismissable',
+          message: 'Call out successfully.',
+          variant: 'success',
+          mode: 'dismissable',
         }));
+
         this.handleCloseCallOutModal();
 
         return this.refresh();

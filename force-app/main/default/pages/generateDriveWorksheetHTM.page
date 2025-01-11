@@ -3,6 +3,7 @@
  * ***************************************************************************************************************************************************************************
  * 05/25/2023			Barnojit Sharma			Add Site Smoking Policy field in Drive Worksheet (HRP-10052)
  * 10/26/2023			Barnojit Sharma			Add Military Fields & Additional Drive Logistics to the Drive Worksheet (HRP-9954)
+ * 07/16/2024			Apurba Bhattacharjee	HRP-12166 - Add Dropdown for EAP Map Available and AED Dropdown to Site/Details/Security and Drive Worksheet-Additional Site Information.
  **************************************************************************************************************************************************************************************************-->
 <apex:page controller="GenerateDriveWorksheetPdfController" action="{!doRedirectToSearch}" renderAs="html" showHeader="false"
     sidebar="false" standardStylesheets="false" docType="html-5.0">

@@ -1,8 +1,14 @@
+/* Modification Log 
+*  Date                          Developer Name                 Comments
+* ***********************************************************************************************************************************************
+* 12/02/2024					 Barnojit Sharma		  Tasks being assigned for cancelled drives and for fixed sites(Logic for HRP-13850)
+************************************************************************************************************************************************
+*/ 
 global class TaskGenerationBatch implements Database.Batchable<sObject> {
     
     global Database.QueryLocator start(Database.BatchableContext bc) {
         return Database.getQueryLocator(
-            'SELECT Id, Name, StageName, Account_Manager__c, OwnerId, Is_Template__c, Call_List_Recipient_Exist__c, RecordTypeId, Drive_Date__c, AccountId, Account.Account_Manager__c, IsClosed, CloseDate FROM Opportunity WHERE StageName = \'Committed\' OR StageName = \'Closed\''
+            'SELECT Id, Name, StageName, Account_Manager__c, OwnerId, Is_Template__c, Call_List_Recipient_Exist__c, RecordTypeId, Drive_Date__c, AccountId, Account.Account_Manager__c, IsClosed, CloseDate FROM Opportunity WHERE RecordType.Name = \'Mobile Opp\' AND (StageName = \'Committed\' OR StageName = \'Closed\')' //Changes for HRP-13850
         );
     }
     

@@ -170,7 +170,7 @@ export default class SlwcDriveChangeRequestTab extends NavigationMixin(Lightning
         this.driveChangeRequests = (result || []).map((dcr => {
           return {
             ...dcr,
-            driveContentions: dcr.driveContention ? dcr.driveContention.split(';') : [],
+            driveContentions: dcr.driveContention || [],
             driveChangeRequestItems: (dcr.driveChangeRequestItems || [])
           }
         }));

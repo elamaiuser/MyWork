@@ -50,6 +50,41 @@
         <value>SELECT Id, sked_Collection_Operation__c, sked__Region__c,sked_Timezone__c FROM sked__Location__c WHERE sked_Active__c = true</value>
     </labels>
     <labels>
+        <fullName>BSF_Mass_Account_Service_Role_Warning_Message</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>BSF Mass Account Service Role Warning Message</shortDescription>
+        <value>An active Blood Program Leader Role is already associated to this account. When you click Proceed, the Blood Program Leader Role will be removed form your selections.</value>
+    </labels>
+    <labels>
+        <fullName>BSF_Mass_Drive_Service_Role_After_Hours_Contact_Warning_Message</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>BSF Mass Drive Service Role After Hours Contact Warning Message</shortDescription>
+        <value>The After Hours Contact must have an after hours phone number selected on their contact record.</value>
+    </labels>
+    <labels>
+        <fullName>BSF_Mass_Drive_Service_Role_Call_List_Recipient_Warning_Message</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>BSF Mass Drive Service Role Call List Recipient Warning Message</shortDescription>
+        <value>No call list will be generated due to request within 4.5 weeks</value>
+    </labels>
+    <labels>
+        <fullName>BSF_Mass_Drive_Service_Role_Primary_Contact_Warning_Message</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>BSF Mass Drive Service Role Primary Contact Warning Message</shortDescription>
+        <value>A Primary Contact Role already exist for this drive.</value>
+    </labels>
+    <labels>
+        <fullName>BSF_Mass_Drive_Service_Role_Warning_Message</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>BSF Mass Drive Service Role Warning Message</shortDescription>
+        <value>The selected Roles related to the above warning will not be created if you proceed.</value>
+    </labels>
+    <labels>
         <fullName>BSF_OWEA_SENDER</fullName>
         <language>en_US</language>
         <protected>false</protected>
@@ -61,7 +96,7 @@
         <language>en_US</language>
         <protected>false</protected>
         <shortDescription>BSF_SUPPORT_EMAIL_ID</shortDescription>
-        <value>subhajit.bose@exavalu.com,barnojit.sharma@exavalu.com,fitsum.worku@redcross.org</value>
+        <value>subhajit.bose@exavalu.com,barnojit.sharma@exavalu.com,fitsum.worku@redcross.org,neyti.blome@redcross.org,testingarcbsfcust@gmail.com,soumojit.sur@redcross.org</value>
     </labels>
     <labels>
         <fullName>Block_ZipCode_Update_On_Site</fullName>
@@ -97,6 +132,27 @@
         <protected>false</protected>
         <shortDescription>CannotDeleteRecordExceptSystemAdmin</shortDescription>
         <value>You do not have permission to delete this record.</value>
+    </labels>
+    <labels>
+        <fullName>ChunkHandlerUpdateAMAndDMPortfolioDailyBatch</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>ChunkHandlerUpdateAMAndDMPortfolioDailyBatch</shortDescription>
+        <value>100</value>
+    </labels>
+    <labels>
+        <fullName>ChunkHandlerUpdateAMandDMPortfOnOppAndDOCDailyBatch</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>ChunkHandlerUpdateAMandDMPortfOnOppAndDOCDailyBatch</shortDescription>
+        <value>100</value>
+    </labels>
+    <labels>
+        <fullName>ColorCodeJson</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>ColorCodeJson</shortDescription>
+        <value>{&quot;Blue&quot;:&quot;#0077d8&quot;,&quot;Amber&quot;:&quot;#efb009&quot;,&quot;Green&quot;:&quot;#369a4c&quot;,&quot;Red&quot;:&quot;#c12f24&quot;}</value>
     </labels>
     <labels>
         <fullName>ContactError</fullName>
@@ -312,6 +368,13 @@
         <value>https://app.powerbi.com/groups/me/apps/1bf85886-e730-4e80-9ea2-4330448f7aa5/rdlreports/dc0404a3-5cb2-4fb2-9573-3fd49c9532d8?ctid=dd5b5d42-c0d3-4ad2-b5f1-60edb3af2771&amp;experience=power-bi</value>
     </labels>
     <labels>
+        <fullName>NO_SBPM_ABM</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>NO_SBPM/ABM</shortDescription>
+        <value>No SBPM</value>
+    </labels>
+    <labels>
         <fullName>NationalNameAllowedProfiles</fullName>
         <language>en_US</language>
         <protected>false</protected>
@@ -427,6 +490,14 @@ Cancelled = No Change Allowed in Stage
 Withdrawn/Excluded-&gt; Cancelled, Closed</value>
     </labels>
     <labels>
+        <fullName>OpportunityTeamSyncTriggerSize</fullName>
+        <categories>Apex constant</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>OpportunityTeam Sync Batch Size Trigger</shortDescription>
+        <value>100</value>
+    </labels>
+    <labels>
         <fullName>PROMOTION_SENDER_EMAIL</fullName>
         <language>en_US</language>
         <protected>false</protected>
@@ -467,6 +538,13 @@ Withdrawn/Excluded-&gt; Cancelled, Closed</value>
         <protected>false</protected>
         <shortDescription>PortfolioAssignmentBatchNames</shortDescription>
         <value>BSF_Batch_OpportunityTeamMember,BSF_Batch_OpportunityTeamSync</value>
+    </labels>
+    <labels>
+        <fullName>Potential_Feeder_Group_Lead_Status</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Potential Feeder Group Lead Status</shortDescription>
+        <value>Potential Feeder Group,Future Outreach,Feeder Group - Qualified,Feeder Group - Unqualified</value>
     </labels>
     <labels>
         <fullName>PremierCurrent</fullName>
@@ -566,6 +644,14 @@ Withdrawn/Excluded-&gt; Cancelled, Closed</value>
         <protected>false</protected>
         <shortDescription>Recurring Drive Limit</shortDescription>
         <value>200</value>
+    </labels>
+    <labels>
+        <fullName>Recurring_Mobile_Limit</fullName>
+        <categories>BSF Limits</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Recurring Drive Limit</shortDescription>
+        <value>400</value>
     </labels>
     <labels>
         <fullName>ResetPortfolioAssignmentTime</fullName>
@@ -680,6 +766,13 @@ Withdrawn/Excluded-&gt; Cancelled, Closed</value>
         <protected>false</protected>
         <shortDescription>Team Supervisor Job Code</shortDescription>
         <value>CO1004,CO7001,CO1002,CO1045</value>
+    </labels>
+    <labels>
+        <fullName>ToHandleConstructorOfUpdateDrivesVehicleAllocationSchedulable</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>ToHandleConstructorOfUpdateDrivesVehicleAllocationSchedulable</shortDescription>
+        <value>2</value>
     </labels>
     <labels>
         <fullName>TravelTimeEditableProfiles</fullName>

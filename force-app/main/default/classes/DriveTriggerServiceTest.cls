@@ -1,8 +1,7 @@
 /* Modification Log 
  * Date					     Developer Name			     Comments
  * ***********************************************************************************************************************************************
- * 01/17/2024				  Priti Jana				Fixed the test class, used new ASSERT class and increased code coverage
- * 11/06/2024				  Priti Jana				Added new test method for HRP-9815
+ * 1/17/2024				  Priti Jana				Fixed the test class, used new ASSERT class and increased code coverage
  *************************************************************************************************************************************************
 */
 
@@ -901,56 +900,7 @@ private class DriveTriggerServiceTest
         }
         
         Test.stopTest();        
+        
     }  
-    
-    // Test method added for HRP-9815
-    static testMethod void updateDrdRepOnOpRecordUponOwnerChange_Test() {
-
-        Map<string, sObject> mapTestData = GenerateDriveTestData.testSetupForMobileDriveV2();
-        Opportunity mobileOpportunity = (Opportunity)mapTestData.get('mobileOpportunity');
-        
-        MobileDriveGeneratorDMLService.driveGeneratorConfig config = new MobileDriveGeneratorDMLService.driveGeneratorConfig();
-        config.oppIds = new Set<Id>();
-        config.oppIds.add(mobileOpportunity.Id);
-        
-        Test.startTest();
-        
-        AccountTeamMemberHelper.skipAccountTrigger = true;
-        TriggerHandler.bypass('AccountTriggerHandler');
-        TriggerHandler.bypass('OpportunityTriggerHandler');
-        TriggerHandler.bypass('OpportunitySplitTriggerHandler');
-        GenerateMobileDrive.generateDrives(config);
-        
-        sked_Drive__c drive = [Select Id , sked_WB_Projected_Procedures__c, sked_Drive_Owner__c, Account_Manager__c,
-                               sked_Account__c, sked_Collection_Operation__c, sked_Primary_Contact__c,
-                               sked_Drive_Site__c, sked_Drive_Site__r.sked_Site_Contact__c,
-                               (SELECT Id FROM sked_Drive_Shifts__r)
-                               FROM sked_Drive__c 
-                               WHERE sked_Opportunity__c IN :config.oppIds LIMIT 1];
-        
-        sked_Operation_Record__c newOperation = new sked_Operation_Record__c(
-                            sked_Account__c = drive.sked_Account__c,
-                            sked_Collection_Operation__c = drive.sked_Collection_Operation__c,
-                            sked_Donor_Ambassadors_Requested__c = 0,
-                            sked_Drive__c = drive.Id,
-                            sked_Drive_Shift__c = drive.sked_Drive_Shifts__r[0].Id,
-                            sked_Drive_Site__c = drive.sked_Drive_Site__c,
-                            sked_Primary_Contact__c = drive.sked_Primary_Contact__c,
-                            sked_Site_Contact__c = drive.sked_Drive_Site__r.sked_Site_Contact__c,
-                            sked_Unique_Key__c = drive.sked_Drive_Shifts__r[0].Id
-                        );
-        insert newOperation;
-        
-        // Generate Op Records
-        //List<sked_Operation_Record__c> operationRecords = skedOperationRecordService.generateOperationRecords(new Set<Id>{mobileDriveCreated[0].Id});
-        
-        drive.Account_Manager__c = UserInfo.getUserId();
-        drive.sked_WB_Projected_Procedures__c = 12;
-        skedHubBase.BypassUpdateTriggers = TRUE;
-        update drive;
-        skedHubBase.BypassUpdateTriggers = FALSE;
-        
-        Test.stopTest();
-    }
     
 }

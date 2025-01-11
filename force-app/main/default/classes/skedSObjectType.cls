@@ -24,6 +24,7 @@ global class skedSObjectType {
     public static final Integer STAFFING_BUDGET_COLLECTION_OP = 2097152;
     public static final Integer STAFFING_BUDGET_SITE = 4194304;
     public static final Integer LOCATION_RESOURCE_SCORE = 8388608;
+    public static final Integer ACTIVITY_COLLECTION_OPERATION = 16777216; 
 
     public static final Integer ACCOUNT_ALL_RELATED = JOB | CLIENT_AVAILABILITY;
     public static final Integer AVAILABILITY_TEMPLATE_ALL_RELATED = AVAILABILITY_TEMPLATE_ENTRY | AVAILABILITY_TEMPLATE_RESOURCE;

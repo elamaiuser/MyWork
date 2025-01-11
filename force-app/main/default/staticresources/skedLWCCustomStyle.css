@@ -133,3 +133,7 @@
   color: #808080;
   font-weight: bold;
 }
+
+.slds-modal__header .slds-modal__close.slds-button_icon-inverse {
+  background: transparent;
+}

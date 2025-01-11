@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomMetadata xmlns="http://soap.sforce.com/2006/04/metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <label>After Hours Call Out OneOff</label>
+    <protected>false</protected>
+    <values>
+        <field>sked_Active__c</field>
+        <value xsi:type="xsd:boolean">true</value>
+    </values>
+    <values>
+        <field>sked_Content_Renderer__c</field>
+        <value xsi:type="xsd:string">afterHrsCallOutOneOffNotificationRender</value>
+    </values>
+    <values>
+        <field>sked_Custom_Filter__c</field>
+        <value xsi:nil="true"/>
+    </values>
+    <values>
+        <field>sked_Custom_Target_Destination__c</field>
+        <value xsi:nil="true"/>
+    </values>
+    <values>
+        <field>sked_Destination_Field__c</field>
+        <value xsi:type="xsd:string">sked__Resource__c</value>
+    </values>
+    <values>
+        <field>sked_Email_From_Address_Field__c</field>
+        <value xsi:nil="true"/>
+    </values>
+    <values>
+        <field>sked_Email_Target_Field__c</field>
+        <value xsi:nil="true"/>
+    </values>
+    <values>
+        <field>sked_Expiry_DateTime_Field__c</field>
+        <value xsi:nil="true"/>
+    </values>
+    <values>
+        <field>sked_Filter__c</field>
+        <value xsi:nil="true"/>
+    </values>
+    <values>
+        <field>sked_Notification_Target_Field__c</field>
+        <value xsi:nil="true"/>
+    </values>
+    <values>
+        <field>sked_Notification_Type__c</field>
+        <value xsi:type="xsd:string">oneoff</value>
+    </values>
+    <values>
+        <field>sked_Oneoff_Protocol_Field__c</field>
+        <value xsi:nil="true"/>
+    </values>
+    <values>
+        <field>sked_Priority__c</field>
+        <value xsi:nil="true"/>
+    </values>
+    <values>
+        <field>sked_Sending_From_Email_Address__c</field>
+        <value xsi:nil="true"/>
+    </values>
+    <values>
+        <field>sked_Subject__c</field>
+        <value xsi:type="xsd:string">Push Notification to After Hours Call Out Management Resource</value>
+    </values>
+    <values>
+        <field>sked_Target_Field_Prev_Value__c</field>
+        <value xsi:nil="true"/>
+    </values>
+    <values>
+        <field>sked_Target_Field_Value__c</field>
+        <value xsi:nil="true"/>
+    </values>
+    <values>
+        <field>sked_Target_Field_Values__c</field>
+        <value xsi:nil="true"/>
+    </values>
+    <values>
+        <field>sked_Target_Field__c</field>
+        <value xsi:nil="true"/>
+    </values>
+    <values>
+        <field>sked_Target_SObject__c</field>
+        <value xsi:type="xsd:string">sked__Availability__c</value>
+    </values>
+    <values>
+        <field>sked_Template__c</field>
+        <value xsi:type="xsd:string">A {{sked_Call_Out_Type__c}} submission has been received for {{sked__Resource__r.Name}}
+&lt;br/&gt;
+&lt;br/&gt;
+Drive Date: {{sked_Call_Out_for_Job_Allocation__r.sked__Job__r.sked_Drive__r.sked_Drive_Date__c}}&lt;br/&gt;
+Name of Drive: {{sked_Call_Out_for_Job_Allocation__r.sked__Job__r.sked_Drive__r.Name}}&lt;br/&gt;
+Drive Hours: {{sked_Call_Out_for_Job_Allocation__r.sked__Job__r.sked_Drive__r.sked_Start_Time__c}} - {{sked_Call_Out_for_Job_Allocation__r.sked__Job__r.sked_Drive__r.sked_End_Time__c}} &lt;br/&gt;
+Active Roles: [[activeRoles]]</value>
+    </values>
+    <values>
+        <field>sked_Trigger__c</field>
+        <value xsi:type="xsd:string">Insert</value>
+    </values>
+</CustomMetadata>

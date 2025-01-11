@@ -15,8 +15,7 @@
     <filterScope>Everything</filterScope>
     <filters>
         <field>sked_Key__c</field>
-        <operation>contains</operation>
-        <value>34.689408,-118.171294</value>
+        <operation>notEqual</operation>
     </filters>
     <label>All</label>
 </ListView>

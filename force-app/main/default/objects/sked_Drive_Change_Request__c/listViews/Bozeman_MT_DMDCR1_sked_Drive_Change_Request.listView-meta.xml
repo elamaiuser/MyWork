@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Bozeman_MT_DMDCR1_sked_Drive_Change_Request</fullName>
+    <filterScope>Queue</filterScope>
+    <label>Bozeman MT: DMDCR</label>
+    <queue>Bozeman_MT_DMDCR1</queue>
+    <sharedTo>
+        <allInternalUsers />
+    </sharedTo>
+</ListView>

@@ -102,6 +102,7 @@ export default class FilteredDriveTable extends LightningElement {
                 if (error.body.message) {
                     errorMessage = error.body.message;
                 }
+                console.log( 'error in updating Future Drives ', errorMessage);
                 this.showToast('error in updating Future Drives', errorMessage, 'error');
             })
     }

@@ -13,6 +13,7 @@
  * 09/12/2024				  Priti Jana			     Logic for HRP-13275, 13367
  * 10/28/2024				  Barnojit Sharma			 Template Order products not cascading to Opportunity Order. (Logic for HRP-13521)
  * 11/13/2024				  Barnojit Sharma		     Unable to create Mobile Drive when the Template has an over-budget template order (Logic for HRP-13716)
+ * 10/12/2024				  Priti Jana				 Logic for HRP-13190
  *****************************************************************************
 */
 public with sharing class FutureDrivesController {
@@ -166,7 +167,7 @@ public with sharing class FutureDrivesController {
             String sourcequery = '';
             if(fieldstoberetrieved.length()>0){
                 //quering offset fields for calculation of webschedule dates
-                     sourcequery = ' select Id,Web_Scheduling_Start_Date_Offset__c,Web_Scheduling_Start_Time__c,Web_Scheduling_End_Date_Offset__c,Web_Scheduling_End_Time_Offset__c, ' + fieldstoberetrieved + ' from Opportunity where Id =:driverecordid' ;
+                     sourcequery = ' select Id,Web_Scheduling_Start_Date_Offset__c,Web_Scheduling_Start_Time__c,Web_Scheduling_End_Date_Offset__c,Web_Scheduling_End_Time_Offset__c, APT_Quantity__c, APT_Change_Reason__c, ' + fieldstoberetrieved + ' from Opportunity where Id =:driverecordid' ;
                 sourceopplist = Database.query( sourcequery );
             }
             else if(fieldstoberetrieved.length()==0 && (isDriveAffiliationFound == true || isDriveServiceRolesFound == true)){
@@ -179,7 +180,7 @@ public with sharing class FutureDrivesController {
             String targetquery = '';
             
             if(fieldstoberetrieved.length()>0){
-                targetquery = ' select Id,Drive_date__c,Drive_Site__c,' + fieldstoberetrieved + ' from Opportunity where Id IN:driveidset' ;
+                targetquery = ' select Id,Drive_date__c,Drive_Site__c, APT_Quantity__c, APT_Change_Reason__c, ' + fieldstoberetrieved + ' from Opportunity where Id IN:driveidset' ;
                 updateopplist = Database.query( targetquery );
             }
             else if(fieldstoberetrieved.length()==0 && (isDriveAffiliationFound == true || isDriveServiceRolesFound == true)){
@@ -236,6 +237,13 @@ public with sharing class FutureDrivesController {
                                 if(s1=='Web Scheduling Settings' && isWebschedulingSettingsFound == false) {
                                     continue;
                                 }
+
+                                //HRP-13190 -> Starts Here
+                                if(s1 == 'APT_Required__c') {
+                                    opp.put('APT_Quantity__c', sourceopp.get(driverecordid).get('APT_Quantity__c'));
+                                    opp.put('APT_Change_Reason__c', 'Apply Changes to Future Drive by '+UserInfo.getName()+' on '+system.now());
+                                }
+                                //HRP-13190 -> Ends Here
                                
                                 //these fields need not be stamped on opportunity instead used as a label to filter the calculation of the webschedule dates using offset values
                                 if(!webSchedulingFields.contains(s1) || fieldSetFields.contains(s1)) {

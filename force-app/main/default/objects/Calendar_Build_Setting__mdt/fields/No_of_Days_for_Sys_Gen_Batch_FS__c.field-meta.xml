@@ -3,7 +3,6 @@
     <fullName>No_of_Days_for_Sys_Gen_Batch_FS__c</fullName>
     <externalId>false</externalId>
     <fieldManageability>DeveloperControlled</fieldManageability>
-    <inlineHelpText>Number of days after drive creation for Fixed Site Drives</inlineHelpText>
     <label>No. of Days for Sys Gen Batch - FS</label>
     <precision>18</precision>
     <required>false</required>
