@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Profile xmlns="http://soap.sforce.com/2006/04/metadata">
     <custom>false</custom>
     <userLicense>Chatter External</userLicense>
@@ -573,7 +573,17 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
+        <field>Contact.BuyerAttributes</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>Contact.Department</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Contact.DepartmentGroup</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -639,6 +649,11 @@
     <fieldPermissions>
         <editable>true</editable>
         <field>Contact.Title</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Contact.TitleType</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -2071,6 +2086,101 @@
         <field>Task.WhoId</field>
         <readable>true</readable>
     </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>sked__Location__c.sked_Automation_Suitability__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>sked__Location__c.sked_End_Date__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>sked__Location__c.sked_Floor_Description__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>sked__Location__c.sked_Outside_stairs__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>sked__Location__c.sked_Site_Main_Phone__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>sked__Location__c.sked_Start_Date__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>sked__Location__c.sked_Wireless_Policy__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>sked__Resource_Override__c.sked_Travel_Back_End_Date__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>sked__Resource_Override__c.sked_Travel_Back_End_Time__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>sked__Resource_Override__c.sked_Travel_Back_End__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>sked__Resource_Override__c.sked_Travel_Back_Start_Date__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>sked__Resource_Override__c.sked_Travel_Back_Start_Time__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>sked__Resource_Override__c.sked_Travel_Back_Start__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>sked__Resource_Override__c.sked_Travel_To_End_Date__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>sked__Resource_Override__c.sked_Travel_To_End_Time__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>sked__Resource_Override__c.sked_Travel_To_End__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>sked__Resource_Override__c.sked_Travel_To_Start_Date__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>sked__Resource_Override__c.sked_Travel_To_Start_Time__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>sked__Resource_Override__c.sked_Travel_To_Start__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
     <layoutAssignments>
         <layout>ARCFileContentTypeMatrix__mdt-ARCFileContentTypeMatrix Layout</layout>
     </layoutAssignments>
@@ -2398,17 +2508,6 @@
         <recordType>Lead.Market_Manager</recordType>
     </layoutAssignments>
     <layoutAssignments>
-        <layout>License_Usage__c-License Usage Layout</layout>
-    </layoutAssignments>
-    <layoutAssignments>
-        <layout>License_Usage__c-License Usage Layout</layout>
-        <recordType>License_Usage__c.Managed_Package</recordType>
-    </layoutAssignments>
-    <layoutAssignments>
-        <layout>License_Usage__c-License Usage Layout</layout>
-        <recordType>License_Usage__c.Salesforce_License</recordType>
-    </layoutAssignments>
-    <layoutAssignments>
         <layout>Linked_Opportunity_Drives__c-Linked Opportunity Drives Layout</layout>
     </layoutAssignments>
     <layoutAssignments>
@@ -2504,9 +2603,6 @@
     </layoutAssignments>
     <layoutAssignments>
         <layout>OrderItem-Order Product Layout</layout>
-    </layoutAssignments>
-    <layoutAssignments>
-        <layout>Package_Name__mdt-Package Name Layout</layout>
     </layoutAssignments>
     <layoutAssignments>
         <layout>PartyConsent-Party Consent Layout</layout>
@@ -2972,6 +3068,84 @@
     <layoutAssignments>
         <layout>sked_Workday_XML_Template__mdt-Workday XML Template Layout</layout>
     </layoutAssignments>
+    <layoutAssignments>
+        <layout>sked__Account_Resource_Score__c-Sked Account Resource Score Layout</layout>
+    </layoutAssignments>
+    <layoutAssignments>
+        <layout>sked__Account_Tag__c-Sked Account Tag Layout</layout>
+    </layoutAssignments>
+    <layoutAssignments>
+        <layout>sked__Activity_Resource__c-Sked Activity Resource Layout</layout>
+    </layoutAssignments>
+    <layoutAssignments>
+        <layout>sked__Activity__c-Sked Activity Layout</layout>
+    </layoutAssignments>
+    <layoutAssignments>
+        <layout>sked__Admin_Setting__mdt-sked__Admin Setting Layout</layout>
+    </layoutAssignments>
+    <layoutAssignments>
+        <layout>sked__Availability_Pattern_Resource__c-Sked Availability Pattern Resource Layout</layout>
+    </layoutAssignments>
+    <layoutAssignments>
+        <layout>sked__Availability_Pattern__c-Sked Availability Pattern Layout</layout>
+    </layoutAssignments>
+    <layoutAssignments>
+        <layout>sked__Availability__c-Sked Availability Layout</layout>
+    </layoutAssignments>
+    <layoutAssignments>
+        <layout>sked__Client_Availability__c-Sked Client Availability Layout</layout>
+    </layoutAssignments>
+    <layoutAssignments>
+        <layout>sked__Holiday__c-Sked Holiday Layout</layout>
+    </layoutAssignments>
+    <layoutAssignments>
+        <layout>sked__Job_Allocation__c-Sked Job Allocation Layout</layout>
+    </layoutAssignments>
+    <layoutAssignments>
+        <layout>sked__Job_Tag__c-Sked JobTag Layout</layout>
+    </layoutAssignments>
+    <layoutAssignments>
+        <layout>sked__Job__c-Sked Job Layout</layout>
+    </layoutAssignments>
+    <layoutAssignments>
+        <layout>sked__Location__c-Fixed Site Layout</layout>
+        <recordType>sked__Location__c.sked_Fixed_Site</recordType>
+    </layoutAssignments>
+    <layoutAssignments>
+        <layout>sked__Location__c-Mobile Site Layout</layout>
+        <recordType>sked__Location__c.sked_Mobile_Site</recordType>
+    </layoutAssignments>
+    <layoutAssignments>
+        <layout>sked__Region__c-Sked Region Layout</layout>
+    </layoutAssignments>
+    <layoutAssignments>
+        <layout>sked__Resource_Override__c-Sked Resource Override Layout</layout>
+    </layoutAssignments>
+    <layoutAssignments>
+        <layout>sked__Resource_Tag__c-Sked ResourceTag Layout</layout>
+    </layoutAssignments>
+    <layoutAssignments>
+        <layout>sked__Resource_Tag__c-Sked ResourceTag Layout</layout>
+        <recordType>sked__Resource_Tag__c.Standard</recordType>
+    </layoutAssignments>
+    <layoutAssignments>
+        <layout>sked__Resource_Tag__c-Sked Gatekeeper Resource Tag Layout</layout>
+        <recordType>sked__Resource_Tag__c.sked_Gatekeeper</recordType>
+    </layoutAssignments>
+    <layoutAssignments>
+        <layout>sked__Resource__c-Asset Layout</layout>
+        <recordType>sked__Resource__c.sked_Asset</recordType>
+    </layoutAssignments>
+    <layoutAssignments>
+        <layout>sked__Resource__c-Staff Layout</layout>
+        <recordType>sked__Resource__c.sked_Staff</recordType>
+    </layoutAssignments>
+    <layoutAssignments>
+        <layout>sked__Slot__c-Sked Slot Layout</layout>
+    </layoutAssignments>
+    <layoutAssignments>
+        <layout>sked__Tag__c-Sked Tag Layout</layout>
+    </layoutAssignments>
     <recordTypeVisibilities>
         <default>false</default>
         <recordType>Account.Fixed_Site_Account</recordType>
@@ -3162,6 +3336,36 @@
         <recordType>sked_Territory__c.sked_Division</recordType>
         <visible>false</visible>
     </recordTypeVisibilities>
+    <recordTypeVisibilities>
+        <default>false</default>
+        <recordType>sked__Location__c.sked_Fixed_Site</recordType>
+        <visible>false</visible>
+    </recordTypeVisibilities>
+    <recordTypeVisibilities>
+        <default>false</default>
+        <recordType>sked__Location__c.sked_Mobile_Site</recordType>
+        <visible>false</visible>
+    </recordTypeVisibilities>
+    <recordTypeVisibilities>
+        <default>false</default>
+        <recordType>sked__Resource_Tag__c.Standard</recordType>
+        <visible>false</visible>
+    </recordTypeVisibilities>
+    <recordTypeVisibilities>
+        <default>false</default>
+        <recordType>sked__Resource_Tag__c.sked_Gatekeeper</recordType>
+        <visible>false</visible>
+    </recordTypeVisibilities>
+    <recordTypeVisibilities>
+        <default>false</default>
+        <recordType>sked__Resource__c.sked_Asset</recordType>
+        <visible>false</visible>
+    </recordTypeVisibilities>
+    <recordTypeVisibilities>
+        <default>false</default>
+        <recordType>sked__Resource__c.sked_Staff</recordType>
+        <visible>false</visible>
+    </recordTypeVisibilities>
     <tabVisibilities>
         <tab>AccountProgram__c</tab>
         <visibility>Hidden</visibility>
@@ -3280,10 +3484,6 @@
     </tabVisibilities>
     <tabVisibilities>
         <tab>Lead_Form_LSL</tab>
-        <visibility>Hidden</visibility>
-    </tabVisibilities>
-    <tabVisibilities>
-        <tab>License_Usage__c</tab>
         <visibility>Hidden</visibility>
     </tabVisibilities>
     <tabVisibilities>
@@ -3587,6 +3787,38 @@
         <visibility>Hidden</visibility>
     </tabVisibilities>
     <tabVisibilities>
+        <tab>sked__Account_Tag__c</tab>
+        <visibility>Hidden</visibility>
+    </tabVisibilities>
+    <tabVisibilities>
+        <tab>sked__Activity_Resource__c</tab>
+        <visibility>Hidden</visibility>
+    </tabVisibilities>
+    <tabVisibilities>
+        <tab>sked__Availability_Pattern__c</tab>
+        <visibility>Hidden</visibility>
+    </tabVisibilities>
+    <tabVisibilities>
+        <tab>sked__Availability_Template__c</tab>
+        <visibility>Hidden</visibility>
+    </tabVisibilities>
+    <tabVisibilities>
+        <tab>sked__Availability__c</tab>
+        <visibility>Hidden</visibility>
+    </tabVisibilities>
+    <tabVisibilities>
+        <tab>sked__Job_Tag__c</tab>
+        <visibility>Hidden</visibility>
+    </tabVisibilities>
+    <tabVisibilities>
+        <tab>sked__Resource_Override__c</tab>
+        <visibility>Hidden</visibility>
+    </tabVisibilities>
+    <tabVisibilities>
+        <tab>sked__Slot__c</tab>
+        <visibility>Hidden</visibility>
+    </tabVisibilities>
+    <tabVisibilities>
         <tab>slwc_Admin_Console_Tab</tab>
         <visibility>Hidden</visibility>
     </tabVisibilities>
@@ -3596,10 +3828,6 @@
     </tabVisibilities>
     <tabVisibilities>
         <tab>slwc_Drive_Shift_Trade_Submission</tab>
-        <visibility>Hidden</visibility>
-    </tabVisibilities>
-    <tabVisibilities>
-        <tab>slwc_On_Call_Call_Out_Management</tab>
         <visibility>Hidden</visibility>
     </tabVisibilities>
     <tabVisibilities>

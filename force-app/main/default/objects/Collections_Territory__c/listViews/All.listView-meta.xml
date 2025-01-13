@@ -16,9 +16,13 @@
     <columns>CREATEDBY_USER</columns>
     <filterScope>Everything</filterScope>
     <filters>
-        <field>Zip__c</field>
-        <operation>equals</operation>
-        <value>59851</value>
+        <field>Collection_Operation__c</field>
+        <operation>notEqual</operation>
+        <value>Non-Collection Area</value>
+    </filters>
+    <filters>
+        <field>Collection_Operation__c</field>
+        <operation>notEqual</operation>
     </filters>
     <label>All</label>
 </ListView>

@@ -21,18 +21,13 @@
     </filters>
     <filters>
         <field>Drive_Date__c</field>
-        <operation>greaterThan</operation>
+        <operation>lessOrEqual</operation>
         <value>TODAY</value>
     </filters>
     <filters>
         <field>OPPORTUNITY.RECORDTYPE</field>
         <operation>equals</operation>
         <value>Opportunity.Mobile_Opp</value>
-    </filters>
-    <filters>
-        <field>DriveStatus__c</field>
-        <operation>notEqual</operation>
-        <value>Complete,Cancel</value>
     </filters>
     <label>All Mobile Opportunities_Future Date</label>
 </ListView>

@@ -11,17 +11,12 @@
     <filters>
         <field>sked_Collection_Operation__c</field>
         <operation>contains</operation>
-        <value>NY</value>
+        <value>Toledo OH</value>
     </filters>
     <filters>
         <field>sked_Date_of_Constraint__c</field>
-        <operation>greaterOrEqual</operation>
-        <value>4/1/2024</value>
-    </filters>
-    <filters>
-        <field>sked_Date_of_Constraint__c</field>
-        <operation>lessOrEqual</operation>
-        <value>4/7/2024</value>
+        <operation>equals</operation>
+        <value>8/31/2025</value>
     </filters>
     <filters>
         <field>sked_Drive_Type__c</field>

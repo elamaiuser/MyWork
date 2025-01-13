@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
-        <help><!-- This must be User, Contact or Lead, required by Salesforce. --></help>
-        <label><!-- Notification Target Field --></label>
-        <name>sked_Notification_Target_Field__c</name>
-    </CustomFieldTranslation>

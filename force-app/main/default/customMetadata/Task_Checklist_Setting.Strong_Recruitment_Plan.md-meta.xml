@@ -14,7 +14,7 @@ Provide any new communication or education (if needed).</value>
     </values>
     <values>
         <field>Hyperlink__c</field>
-        <value xsi:nil="true"/>
+        <value xsi:nil="true" />
     </values>
     <values>
         <field>Input_API_Name__c</field>
@@ -34,15 +34,15 @@ Provide any new communication or education (if needed).</value>
     </values>
     <values>
         <field>Parent__c</field>
-        <value xsi:nil="true"/>
+        <value xsi:nil="true" />
     </values>
     <values>
         <field>Picklist_Input_1__c</field>
-        <value xsi:nil="true"/>
+        <value xsi:nil="true" />
     </values>
     <values>
         <field>Section_Header__c</field>
-        <value xsi:nil="true"/>
+        <value xsi:nil="true" />
     </values>
     <values>
         <field>Subject__c</field>
@@ -50,7 +50,7 @@ Provide any new communication or education (if needed).</value>
     </values>
     <values>
         <field>Subtype__c</field>
-        <value xsi:nil="true"/>
+        <value xsi:nil="true" />
     </values>
     <values>
         <field>UI_Text__c</field>

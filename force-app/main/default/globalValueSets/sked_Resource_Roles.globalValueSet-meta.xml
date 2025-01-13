@@ -221,6 +221,18 @@
         <label>Work Restriction</label>
     </customValue>
     <customValue>
+        <fullName>Redcross Volunteer Donor Ambassador</fullName>
+        <default>false</default>
+        <isActive>false</isActive>
+        <label>Redcross Volunteer Donor Ambassador</label>
+    </customValue>
+    <customValue>
+        <fullName>Lead Donor Ambassador</fullName>
+        <default>false</default>
+        <isActive>false</isActive>
+        <label>Lead Donor Ambassador</label>
+    </customValue>
+    <customValue>
         <fullName>Redcross Translator</fullName>
         <default>false</default>
         <isActive>false</isActive>
@@ -249,18 +261,6 @@
         <default>false</default>
         <isActive>false</isActive>
         <label>Sponsor Volunteer Donor Ambassador</label>
-    </customValue>
-    <customValue>
-        <fullName>Lead Donor Ambassador</fullName>
-        <default>false</default>
-        <isActive>false</isActive>
-        <label>Lead Donor Ambassador</label>
-    </customValue>
-    <customValue>
-        <fullName>Redcross Volunteer Donor Ambassador</fullName>
-        <default>false</default>
-        <isActive>false</isActive>
-        <label>Redcross Volunteer Donor Ambassador</label>
     </customValue>
     <masterLabel>Resource Roles</masterLabel>
     <sorted>true</sorted>

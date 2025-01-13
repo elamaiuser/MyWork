@@ -18,7 +18,7 @@
         </value>
     </choices>
     <decisions>
-        <description>Update the account&#39;s feeder account type field value to &quot;Feeder Plus&quot;</description>
+        <description>Update the account&apos;s feeder account type field value to &quot;Feeder Plus&quot;</description>
         <name>Update_Needed_to_Feeder_Plus</name>
         <label>Update Needed to Feeder Plus</label>
         <locationX>176</locationX>

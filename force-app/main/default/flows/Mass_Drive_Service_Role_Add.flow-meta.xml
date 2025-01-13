@@ -391,8 +391,8 @@
     <dynamicChoiceSets>
         <name>DriveServiceRoleChoiceSet</name>
         <dataType>Picklist</dataType>
-        <displayField xsi:nil="true" />
-        <object xsi:nil="true" />
+        <displayField xsi:nil="true"/>
+        <object xsi:nil="true"/>
         <picklistField>Role</picklistField>
         <picklistObject>OpportunityContactRole</picklistObject>
         <sortOrder>Asc</sortOrder>
@@ -401,7 +401,7 @@
     <formulas>
         <name>forAppendSemicolonToSelectedRoles</name>
         <dataType>String</dataType>
-        <expression>{!varSelectedRoles}+&#39;;&#39;</expression>
+        <expression>{!varSelectedRoles}+&apos;;&apos;</expression>
     </formulas>
     <formulas>
         <name>forCheckAfterHoursContact</name>
@@ -436,12 +436,12 @@
     <formulas>
         <name>forRemoveAfterHoursContactRoleIfSelected</name>
         <dataType>String</dataType>
-        <expression>IF({!forCheckAfterHoursContact}, SUBSTITUTE(SUBSTITUTE({!varAdjustedPrimaryContactRole}, &#39;After Hours Contact;&#39;, null),&#39;After Hours Contact&#39;, &#39;&#39;), {!varAdjustedPrimaryContactRole})</expression>
+        <expression>IF({!forCheckAfterHoursContact}, SUBSTITUTE(SUBSTITUTE({!varAdjustedPrimaryContactRole}, &apos;After Hours Contact;&apos;, null),&apos;After Hours Contact&apos;, &apos;&apos;), {!varAdjustedPrimaryContactRole})</expression>
     </formulas>
     <formulas>
         <name>forRemoveCallListRecipientRoleIfSelected</name>
         <dataType>String</dataType>
-        <expression>IF({!forCheckCallListGenerate}, SUBSTITUTE(SUBSTITUTE({!varAdjustedAfterHoursContactRole}, &#39;Call List Recipient;&#39;, null),&#39;Call List Recipient&#39;, &#39;&#39;), {!varAdjustedAfterHoursContactRole})</expression>
+        <expression>IF({!forCheckCallListGenerate}, SUBSTITUTE(SUBSTITUTE({!varAdjustedAfterHoursContactRole}, &apos;Call List Recipient;&apos;, null),&apos;Call List Recipient&apos;, &apos;&apos;), {!varAdjustedAfterHoursContactRole})</expression>
     </formulas>
     <formulas>
         <name>forRemoveParsedRoleOfMultiPicklistValue</name>
@@ -451,7 +451,7 @@
     <formulas>
         <name>forRemovePrimaryContactRoleIfExist</name>
         <dataType>String</dataType>
-        <expression>IF({!varOpportunityContactRoleId}&lt;&gt; null, SUBSTITUTE(SUBSTITUTE({!forAppendSemicolonToSelectedRoles}, &#39;Primary Contact;&#39;, null),&#39;Primary Contact&#39;, &#39;&#39;), {!forAppendSemicolonToSelectedRoles})</expression>
+        <expression>IF({!varOpportunityContactRoleId}&lt;&gt; null, SUBSTITUTE(SUBSTITUTE({!forAppendSemicolonToSelectedRoles}, &apos;Primary Contact;&apos;, null),&apos;Primary Contact&apos;, &apos;&apos;), {!forAppendSemicolonToSelectedRoles})</expression>
     </formulas>
     <formulas>
         <name>forSizeOfRemoveAdjustedRoles</name>

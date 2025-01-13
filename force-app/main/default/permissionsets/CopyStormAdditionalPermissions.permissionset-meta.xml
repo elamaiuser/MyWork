@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <PermissionSet xmlns="http://soap.sforce.com/2006/04/metadata">
     <description>AdditionalPermissions needed for CopyStorm user</description>
     <hasActivationRequired>false</hasActivationRequired>
@@ -111,6 +111,16 @@
     <fieldPermissions>
         <editable>true</editable>
         <field>sked_CollectionOperationOptimizerSetting__c.sked_Optimizer_Mapped_Weight__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>sked_Drive_Shift_Trade__c.Requesting_Staff_Scheduled_Hours_Change__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>sked_Drive_Shift_Trade__c.Trading_Staff_Scheduled_Hours_Change__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -1246,15 +1256,6 @@
         <modifyAllRecords>false</modifyAllRecords>
         <object>Lead_Email_Phone__e</object>
         <viewAllRecords>false</viewAllRecords>
-    </objectPermissions>
-    <objectPermissions>
-        <allowCreate>false</allowCreate>
-        <allowDelete>false</allowDelete>
-        <allowEdit>false</allowEdit>
-        <allowRead>true</allowRead>
-        <modifyAllRecords>false</modifyAllRecords>
-        <object>License_Usage__c</object>
-        <viewAllRecords>true</viewAllRecords>
     </objectPermissions>
     <objectPermissions>
         <allowCreate>false</allowCreate>

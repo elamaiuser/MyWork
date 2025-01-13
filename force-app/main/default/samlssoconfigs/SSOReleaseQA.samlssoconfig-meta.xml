@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SamlSsoConfig xmlns="http://soap.sforce.com/2006/04/metadata">
+    <identityLocation>SubjectNameId</identityLocation>
+    <identityMapping>FederationId</identityMapping>
+    <issuer>https://crossnet.redcross.org</issuer>
+    <loginUrl>https://sso.redcross.org/idp/SSO.saml2</loginUrl>
+    <name>SSO ReleaseQA</name>
+    <oauthTokenEndpoint>https://biosf--releaseqa.sandbox.my.salesforce.com/services/oauth2/token?so=00DVB000001Wusv</oauthTokenEndpoint>
+    <redirectBinding>true</redirectBinding>
+    <requestSignatureMethod>1</requestSignatureMethod>
+    <requestSigningCertId>0P1VB0000000FIP</requestSigningCertId>
+    <salesforceLoginUrl>https://biosf--releaseqa.sandbox.my.salesforce.com?so=00DVB000001Wusv</salesforceLoginUrl>
+    <samlEntityId>https://biosf--releaseqa.sandbox.my.salesforce.com</samlEntityId>
+    <samlVersion>SAML2_0</samlVersion>
+    <useConfigRequestMethod>false</useConfigRequestMethod>
+    <useSameDigestAlgoForSigning>true</useSameDigestAlgoForSigning>
+    <userProvisioning>false</userProvisioning>
+    <validationCert>MIIDjDCCAnSgAwIBAgIGAZCT+Q7sMA0GCSqGSIb3DQEBCwUAMIGGMQswCQYDVQQGEwJVUzELMAkGA1UECBMCREMxEzARBgNVBAcTCldhc2hpbmd0b24xHTAbBgNVBAoTFEluZm9ybWF0aW9uIFNlY3VyaXR5MRswGQYDVQQLExJBbWVyaWNhbiBSZWQgQ3Jvc3MxGTAXBgNVBAMMEFNTTy1TaWduaW5nXzIwMjkwHhcNMjQwNzA4MjAxMTMxWhcNMjkwNzA3MjAxMTMxWjCBhjELMAkGA1UEBhMCVVMxCzAJBgNVBAgTAkRDMRMwEQYDVQQHEwpXYXNoaW5ndG9uMR0wGwYDVQQKExRJbmZvcm1hdGlvbiBTZWN1cml0eTEbMBkGA1UECxMSQW1lcmljYW4gUmVkIENyb3NzMRkwFwYDVQQDDBBTU08tU2lnbmluZ18yMDI5MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAuVJj+xqwEwCUvevqrrC9tEgpOcuUQ/LGfKIvwkf87XRBDFgduzyIZKo/1jOhGyk7ldKBRpxx715Zibm0KAPKO8lnO4Sj8Cf9p2zIpd5ccJCZ9l0EPL9dLiGik7qfQOkoK8QdHTXC5cRM9sdvc4aXT0ATWXNd0u91NkzjWQybiOpuK18aDtlE4QSGO5n9SfLLE8L+SltctnAdPZMxWNTXJh9Kps4GseHhrQDJDenI4EoIdReqBb2j7gLqNIAumrsj+R4pe0sZUQ2RQiW6MPeQgE+kB5xzcbht7vJdBAMqVHdrjF3NozWNYrxORibz9wDA+vthsAWhCQhvigsuCJ7IWwIDAQABMA0GCSqGSIb3DQEBCwUAA4IBAQBFbyG7fXW9VPd1UIuvrb9IMOnuy8aUKyy7qO2SPiqyhL/Gd3CxTsG5fH7akPTx5bvk2MsnfElXZFCie/ReDA79JXMJZ4II97G6NUZ/lWIx2R+wsAEMSm3e6uvkLqgehKNn3Kv4/XsQ6RgrnyZz+DeWBJ1EFW82wj5YjV4U48XF5fIjI8aSt17oQatJ5aAyuBnIXqy+Omp3djMttrXSu/T/Gxr9SB3ep/h0FNBTyYrOLuRM+xi8xNvderr3khoZuFz52eQt/qJhoMc257NOHorUFZQrT/b8ZhzRRCztgUDkSXKvpBMXxi16g5oK1YJFuEbZuaGN5CvfjiGzsvZuD2ch</validationCert>
+</SamlSsoConfig>

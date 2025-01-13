@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
-        <label><!-- Requesting Staff NCE --></label>
-        <name>sked_Requesting_Staff_NCE__c</name>
-        <relationshipLabel><!-- Drive Shift Trades --></relationshipLabel>
-    </CustomFieldTranslation>

@@ -17,6 +17,7 @@
         <backgroundColor>#FFFFFF</backgroundColor>
         <height>0</height>
         <horizontalAlignment>Left</horizontalAlignment>
+        <logo>SharedDocuments/ARC_Generic_Logo.png</logo>
         <verticalAlignment>Top</verticalAlignment>
     </header>
     <middleLine>

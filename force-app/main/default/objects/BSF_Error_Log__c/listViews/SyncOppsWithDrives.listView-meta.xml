@@ -10,14 +10,9 @@
     <columns>OBJECT_ID</columns>
     <filterScope>Everything</filterScope>
     <filters>
-        <field>CREATEDBY_USER</field>
-        <operation>contains</operation>
-        <value>Automated process,Gail Kirby</value>
-    </filters>
-    <filters>
         <field>CREATED_DATE</field>
         <operation>equals</operation>
-        <value>11/18/2024 10:37 AM</value>
+        <value>TODAY</value>
     </filters>
     <label>SyncOppsWithDrives</label>
 </ListView>
