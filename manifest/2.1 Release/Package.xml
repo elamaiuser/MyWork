@@ -62,7 +62,6 @@
 		<members>skedNotificationGenerationBatch_Test</members>
 		<members>skedOpportunityHandler</members>
 		<members>skedOpportunityTrigger_Test</members>
-		<members>skedPtoRequestController</members>
 		<members>skedRacController</members>
 		<members>skedRacStory_Test</members>
 		<members>skedRecurringFactory</members>
