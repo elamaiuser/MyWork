@@ -76,6 +76,7 @@ export default class SlwcCallOutsSchedulingConsole extends LightningElement {
   }
   @track enableInfiniteLoading = true;
   @track records = [];
+  @track offset = 0;
 
   @track sortOption = {
     fieldName: 'createdDate',
@@ -161,6 +162,7 @@ export default class SlwcCallOutsSchedulingConsole extends LightningElement {
   }
 
   fetchData() {
+    this.offset = (this.records || []).length;
     const territoryKeys = this.territoryKeys;
     if (!territoryKeys.length) {
       return Promise.resolve([]);
@@ -185,7 +187,7 @@ export default class SlwcCallOutsSchedulingConsole extends LightningElement {
       query.endDate = this.filters.endDate;
     }
 
-    query.offset = (this.records || []).length;
+    query.offset = this.offset;
     query.orderBy = this.sortOption.sortField;
     query.orderAscending = this.sortOption.sortDirection;
 
@@ -329,12 +331,13 @@ export default class SlwcCallOutsSchedulingConsole extends LightningElement {
 
   handleLoadMoreData(event) {
     //Display a spinner to signal that data is being loaded
-    event.target.isLoading = true;
+    event.target.isLoading = this.records.length === (this.offset + 20);
+    if(!event.target.isLoading) return;
 
     let target = event.target;
     this.fetchData()
       .then((result) => {
-        if (result.length == 0) {
+        if (!result || result.length == 0) {
           this.enableInfiniteLoading = false;
         }
         else {
