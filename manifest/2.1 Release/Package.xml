@@ -280,6 +280,7 @@
 		<members>dataService</members>
 		<members>blwcDriveWorkSheetComponent</members>
 		<members>slwcApprovalHistoryConsole</members> 
+		<members>slwcCallOutsSchedulingConsole</members>
         <members>slwcConstants</members>
 		<members>slwcDriveCalendar</members>
 		<members>slwcDriveCalendarActivityList</members>

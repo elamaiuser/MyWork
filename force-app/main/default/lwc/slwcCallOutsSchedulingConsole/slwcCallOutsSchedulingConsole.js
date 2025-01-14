@@ -1,8 +1,11 @@
 import { LightningElement, track, api, wire } from 'lwc';
 import { CurrentPageReference } from 'lightning/navigation';
 import {
+  activityService,
+  activityQueryModel,
   availabilityService,
-  availabilityQueryModel
+  availabilityQueryModel,
+  sObjectType
 } from 'c/dataService';
 import * as slwcUtils from 'c/slwcUtils';
 import * as slwcDateUtils from 'c/slwcDateUtils';
@@ -172,16 +175,16 @@ export default class SlwcCallOutsSchedulingConsole extends LightningElement {
       query.territoryKeys = territoryKeys;
       query.startDate = this.filters.startDate;
       query.endDate = this.filters.endDate;
+      query.limit = 20;
     } else {
       service = new availabilityService();
       query = new availabilityQueryModel();
       query.callOutForActivity = true;
-      query.territoryKeys = territoryKeys;
+      //query.territoryKeys = territoryKeys;
       query.startDate = this.filters.startDate;
       query.endDate = this.filters.endDate;
     }
 
-    query.limit = 20;
     query.offset = (this.records || []).length;
     query.orderBy = this.sortOption.sortField;
     query.orderAscending = this.sortOption.sortDirection;
@@ -203,22 +206,48 @@ export default class SlwcCallOutsSchedulingConsole extends LightningElement {
         return service.query(query)
       })
       .then((result) => {
-        result.forEach((item) => {
-          if(this.currentTab === this.TABS.ACTIVITY) {
-            const record = item.callOutForActivity;
-            item.recordUrl = '/' + record.id;
-            item.resourceRecordUrl = '/' + item.resourceId;
-          } else {
-            const record = item.callOutForJobAllocation;
-            item.recordUrl = '/' + record.driveId;
-            item.resourceRecordUrl = '/' + item.resourceId;
-          }
-        })
-        return result;
-      })
-      .catch((error) => {
+        let filteredResult;
+    
+        if (this.currentTab === this.TABS.ACTIVITY) {
+          service = new activityService();
+          query = new activityQueryModel();
+          query.recordIds = result.map(record => record.callOutForActivityId);
+          query.subQueryIndicator = sObjectType.ACTIVITY_COLLECTION_OPERATION
+          return service.query(query).then((queryResult) => {
+              filteredResult = result
+                  .filter((item) => {
+                      let isValidActivity = territoryKeys.includes(item.callOutForActivity.territoryKey);
+                      if (!isValidActivity) {
+                          let activities = queryResult.filter(activity => activity.id === item.callOutForActivityId);
+                          isValidActivity = activities.find(activity => 
+                              (activity.activityCollectionOperations || []).find(activityCo =>
+                                  territoryKeys.includes(activityCo.territoryKey)
+                              )
+                          );
+                      }
+
+                      if (!isValidActivity) return;
+
+                      const record = item.callOutForActivity;
+                      item.recordUrl = '/' + record.id;
+                      item.resourceRecordUrl = '/' + item.resourceId;
+                      return true;
+                  }).slice(0, 20);
+                  return filteredResult;
+          })
+      } else {
+            filteredResult = result.map((item) => {
+                const record = item.callOutForJobAllocation;
+                item.recordUrl = '/' + record.driveId;
+                item.resourceRecordUrl = '/' + item.resourceId;
+                return item;
+            });
+        }
+        return filteredResult;
+    })
+    .catch((error) => {
         console.log(error);
-      });
+    });
   }
 
   handleSortChanged(event) {
@@ -275,7 +304,6 @@ export default class SlwcCallOutsSchedulingConsole extends LightningElement {
     detail: {}
   }) {
     this.validateFilters();
-    console.log('handling search :: event detail :: ' + JSON.stringify(event.detail, null, 4));
     const { filters } = event.detail;
     this.filters = {
         ...this.filters,
@@ -283,7 +311,6 @@ export default class SlwcCallOutsSchedulingConsole extends LightningElement {
         territoryKeys: this.territoryKeys
     };
 
-    console.log('filters :: ' + JSON.stringify(this.filters, null, 4));
     if (!this.isValidQueryModel) return;
     this.showSpinner = true;
     this.enableInfiniteLoading = false;
