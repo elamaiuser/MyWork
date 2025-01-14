@@ -245,7 +245,7 @@ const DRIVE_SHIFT_FIELD_CHANGE_MAPPING = {
   'lunchBreak': {
     groups: [
       { actions: [] },
-      { actions: ['updateLunchBreakSettings', 'populateLunchBreakTime', 'populateShiftTime', 'populateDriveTime', 'updateDriveStaffCapacity', 'updateDriveAverageStaffCapacity', 'updateDriveExcessStaffCapacity', 'generateShiftSlots', 'updateDriveTotalSlots'] },
+      { actions: ['updateLunchBreakSettings', 'populateLunchBreakTime', 'populateShiftTime', 'populateDriveTime', 'updateDriveStaffCapacity', 'updateDriveAverageStaffCapacity', 'updateDriveMaxRoleCapacity','updateDriveExcessStaffCapacity', 'generateShiftSlots', 'updateDriveTotalSlots'] },
     ]
   },
   'lunchBreakBeforeDrawHours': {
@@ -263,6 +263,7 @@ const DRIVE_SHIFT_FIELD_CHANGE_MAPPING = {
             $this.populateDriveTime();
             $this.updateDriveStaffCapacity();
             $this.updateDriveAverageStaffCapacity();
+            $this.updateDriveMaxRoleCapacity();
             $this.updateDriveExcessStaffCapacity();
             $this.generateShiftSlots(driveShift);
             $this.updateDriveTotalSlots()
@@ -273,6 +274,7 @@ const DRIVE_SHIFT_FIELD_CHANGE_MAPPING = {
             $this.populateDriveTime();
             $this.updateDriveStaffCapacity();
             $this.updateDriveAverageStaffCapacity();
+            $this.updateDriveMaxRoleCapacity();
             $this.updateDriveExcessStaffCapacity();
             $this.generateShiftSlots(driveShift);
             $this.updateDriveTotalSlots();
@@ -284,7 +286,7 @@ const DRIVE_SHIFT_FIELD_CHANGE_MAPPING = {
   'lunchBreakStartTime': {
     groups: [
       { actions: [] },
-      { actions: ['changeLunchBreakStartTime', 'updateDriveStaffCapacity', 'updateDriveAverageStaffCapacity', 'updateDriveExcessStaffCapacity', 'generateShiftSlots', 'updateDriveTotalSlots'] },
+      { actions: ['changeLunchBreakStartTime', 'updateDriveStaffCapacity', 'updateDriveAverageStaffCapacity', 'updateDriveMaxRoleCapacity', 'updateDriveExcessStaffCapacity', 'generateShiftSlots', 'updateDriveTotalSlots'] },
     ]
   },
 
@@ -897,6 +899,17 @@ class MobileGenerator extends BaseGenerator {
     return driveShiftStaffCapacity;
   }
 
+  calculateDriveShiftMaxStaffCapacity(driveShift, ignoreLunchBreak = false) {
+    const driveShiftStaffCapacity = Math.floor(this.helper.calculateMaximumStaffCapacity([
+      'Driver', 'Driver Support', '2RBC', 'VP/HH', 'Charge'
+    ], this.drive, driveShift.driveShiftMetadata, 
+      new Map()
+        .set(driveShift.driveShiftMetadata.key, this.helper.getDriveShiftResourceQuantity(driveShift))
+    , this.masterData, ignoreLunchBreak));
+
+    return driveShiftStaffCapacity;
+  }
+
   countDriveShiftStaffs(driveShift, ignoreLunchBreak = false) {
     const driveShiftStaffs = Math.floor(this.helper.countDriveStaffs([
       'Driver', 'Driver Support', '2RBC', 'VP/HH', 'Charge'
@@ -937,12 +950,25 @@ class MobileGenerator extends BaseGenerator {
     
   }
 
+  updateDriveMaxRoleCapacity() {
+    let driveMaxStaffCapacity = 0;
+    if (this.masterData && this.masterData.staffingDecisionMatrix) {
+      this.drive.driveShifts.forEach((driveShift) => {
+        const driveShiftMaxStaffCapacity = this.calculateDriveShiftMaxStaffCapacity(driveShift);
+        if(driveShiftMaxStaffCapacity && driveShiftMaxStaffCapacity > driveMaxStaffCapacity){
+          driveMaxStaffCapacity = driveShiftMaxStaffCapacity;
+        }
+      });
+    }
+    this.drive.maxRoleCapacity = driveMaxStaffCapacity.toFixed(1);
+  }
+
   updateDriveExcessStaffCapacity() {
-    if(this.drive.staffCapacity && this.drive.staffCapacity > 0 && this.drive.averageStaffCapacity && this.drive.averageStaffCapacity > 0) {
+    if(this.drive.staffCapacity && this.drive.staffCapacity > 0 && this.drive.maxRoleCapacity && this.drive.maxRoleCapacity > 0) {
       if(this.drive.projectedRegisteredDonors) {
-        this.drive.excessStaffCapacity = (this.drive.staffCapacity - this.drive.projectedRegisteredDonors) / this.drive.averageStaffCapacity;
+        this.drive.excessStaffCapacity = (this.drive.staffCapacity - this.drive.projectedRegisteredDonors) / this.drive.maxRoleCapacity;
       } else {
-        this.drive.excessStaffCapacity = this.drive.staffCapacity / this.drive.averageStaffCapacity;
+        this.drive.excessStaffCapacity = this.drive.staffCapacity / this.drive.maxRoleCapacity;
       }
       this.drive.excessStaffCapacity = this.drive.excessStaffCapacity.toFixed(1);
     } else {
@@ -1543,6 +1569,7 @@ class MobileGenerator extends BaseGenerator {
       this.populateDriveTime();
       this.updateDriveStaffCapacity();
       this.updateDriveAverageStaffCapacity();
+      this.updateDriveMaxRoleCapacity();
       this.updateDriveExcessStaffCapacity();
       this.updateDriveRequestedResources();
 
@@ -2279,6 +2306,7 @@ class MobileGenerator extends BaseGenerator {
       this.populateDriveTime();
       this.updateDriveStaffCapacity();
       this.updateDriveAverageStaffCapacity();
+      this.updateDriveMaxRoleCapacity();
       this.updateDriveExcessStaffCapacity();
       this.updateDriveRequestedResources();
       this.calculateDriveProductivityPlanned();

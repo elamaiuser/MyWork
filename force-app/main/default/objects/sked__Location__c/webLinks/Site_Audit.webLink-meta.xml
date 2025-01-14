@@ -16,5 +16,5 @@
     <protected>false</protected>
     <showsLocation>false</showsLocation>
     <showsStatus>false</showsStatus>
-    <url>https://app.powerbi.com/groups/me/apps/1bf85886-e730-4e80-9ea2-4330448f7aa5/reports/b12b3725-1949-497e-a5ae-dc13fb62819b/ReportSection5c1afde0da10ddcab3b7?ctid=dd5b5d42-c0d3-4ad2-b5f1-60edb3af2771&amp;experience=power-bi&amp;filter=Drive_x0020_Alt_x0020_IDs%2FSFBD_x0020_Drive_x0020_UFID%20eq%20%27D06JV4{!sked_Drive__c.sked_UFID__c}%27</url>
+    <url>https://app.powerbi.com/groups/me/apps/1bf85886-e730-4e80-9ea2-4330448f7aa5/reports/b12b3725-1949-497e-a5ae-dc13fb62819b/ReportSection5c1afde0da10ddcab3b7?ctid=dd5b5d42-c0d3-4ad2-b5f1-60edb3af2771&amp;experience=power-bi&amp;filter=Drive_x0020_Site_x0020_Alt_x0020_IDs%2FSFBD_x0020_Drive_x0020_Site_x0020_UFID%20eq%20%27{!sked__Location__c.sked_UFID__c}%27</url>
 </WebLink>

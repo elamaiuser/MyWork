@@ -62,7 +62,6 @@
 		<members>skedNotificationGenerationBatch_Test</members>
 		<members>skedOpportunityHandler</members>
 		<members>skedOpportunityTrigger_Test</members>
-		<members>skedPtoRequestController</members>
 		<members>skedRacController</members>
 		<members>skedRacStory_Test</members>
 		<members>skedRecurringFactory</members>
@@ -91,6 +90,8 @@
 		<members>skedUserHandler_Test</members>
 		<members>skedWorkdayApiManager</members>
 		<members>skedWorkdayApiManager_Test</members>
+		<members>skedWorkdayUtils</members>
+		<members>skedWorkdayUtils_Test</members>
 		<members>slwcDriveService</members>
 		<members>slwcDriveService_Test</members>
 		<members>BSF_TravelTimePanelController</members>
@@ -102,7 +103,7 @@
 		<members>OpportunityControllerHelperTest</members>
 		<members>OpportunityControllerHelper</members>
 		<members>userService</members>
-        <members>userServiceTest</members>
+        <members>userServiceTest</members>		
 		<name>ApexClass</name>
 	</types>
 	<types>
