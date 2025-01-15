@@ -8,7 +8,8 @@ export default class SlwcRefreshTravelTimeBanner extends LightningElement {
     @api recordId;
     isManualRefreshInProgress = false;
     hasInvalidTravelTimeData = false;
-    travelTimeSettings = {};
+    isSCOUserOverrideEnabled = false;
+    travelTimeSettings = {};    
 
     get bannerClass() {
         let bannerCls = 'slds-card slds-notify slds-notify_alert ';
@@ -46,16 +47,22 @@ export default class SlwcRefreshTravelTimeBanner extends LightningElement {
         return !isNullOrEmpty(this.travelTimeSettings) && this.travelTimeSettings.enableManualRefreshBanner;
     }
 
+    get isNotUserOverrideChecked() {
+        return !this.isSCOUserOverrideEnabled;
+    }
+
     connectedCallback() {
         let _scoSvc = new siteCollectionOpService();
         Promise.all([
             _scoSvc.isManualRefreshInProgress({ siteCollectionOperationId: this.recordId }),
             _scoSvc.hasInvalidTravelTimeData({ siteCollectionOperationId: this.recordId }),
-            _scoSvc.getCustomSettings({ settingKeys: ['travelTimeManager']})
+            _scoSvc.isSCOUserOverrideEnabled({ siteCollectionOperationId: this.recordId }),
+            _scoSvc.getCustomSettings({ settingKeys: ['travelTimeManager']})            
         ])
-        .then(([isManualRefreshInProgress, hasInvalidTravelTimeData, travelTimeSettings]) => {
+        .then(([isManualRefreshInProgress, hasInvalidTravelTimeData, isSCOUserOverrideEnabled, travelTimeSettings]) => {
             this.isManualRefreshInProgress = isManualRefreshInProgress;
             this.hasInvalidTravelTimeData = hasInvalidTravelTimeData;
+            this.isSCOUserOverrideEnabled = isSCOUserOverrideEnabled;
             this.travelTimeSettings = travelTimeSettings.returnedData.travelTimeManager;
         })
         .catch(e => console.debug(e))

@@ -291,6 +291,7 @@ export default class TravelTimeBreakdown extends LightningElement {
                         variant: 'success'
                     })
                 );
+                window.location.reload();                
             })
             .catch(error => {
                 //this.exitEditMode();

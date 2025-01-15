@@ -7,6 +7,7 @@ public class slwcSiteCollectionOperationService {
         if (!ttiis.isEmpty()) {
             Set<Id> ttiiIds = skedSObjectUtils.getRecordIds(ttiis);
             for (sked_Travel_Time_Index_Item__c ttii : ttiis) {
+                ttii.sked_Travel_Time_Breakdown_JSON_Backup__c = ttii.sked_Travel_Time_Breakdown_JSON__c;
                 ttii.sked_Travel_Distance__c = null;
                 ttii.sked_Travel_Time_Breakdown_JSON__c = null;
             }
@@ -49,7 +50,21 @@ public class slwcSiteCollectionOperationService {
         }
 
         return isManualRefreshInProgress; 
-    }   
+    }
+    
+    @AuraEnabled    
+    public static Boolean isSCOUserOverrideEnabled(String siteCollectionOperationId) {
+        Boolean isSCOUserOverrideEnabled = false;
+        List<sked_Site_Collection_Operation__c> scos = [
+            SELECT Id, User_Override__c
+            FROM sked_Site_Collection_Operation__c
+            WHERE Id = :siteCollectionOperationId
+        ];
+        if (!scos.isEmpty()) {
+            isSCOUserOverrideEnabled = scos[0].User_Override__c;
+        }
+        return isSCOUserOverrideEnabled;
+    }
 
     @AuraEnabled
     public static slwcAuraResult getRelatedSiteInfo(List<Id> collectionOperationIds, Date startDate, Date endDate){
