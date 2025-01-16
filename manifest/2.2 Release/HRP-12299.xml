@@ -3,6 +3,8 @@
     <types>
         <members>CalendarBuildBatchHandler</members>
         <members>CalendarBuildEvaluateDrivesBatch_Test</members>
+        <members>MobileDriveGeneratorDMLService</members>
+        <members>GenerateMobileDriveTest</members>
         <name>ApexClass</name>
     </types>
     <version>59.0</version>
