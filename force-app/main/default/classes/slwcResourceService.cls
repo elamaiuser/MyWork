@@ -240,9 +240,10 @@ global class slwcResourceService {
 
         if (request.calloutType == skedConstants.AVAILABILITY_CALLOUT_TYPE_CALL_OUT) {
             Date callOutDate = unavailabilityStart.date();
+            DateTime callOutFinish = skedDateTimeUtils.getEndOfDate(callOutDate, unavailabilityTimezone);
             callOutAvailability.sked_Is_All_Day__c = true;
             callOutAvailability.sked__Start__c = skedDateTimeUtils.getStartOfDate(callOutDate, unavailabilityTimezone);
-            callOutAvailability.sked__Finish__c = skedDateTimeUtils.getEndOfDate(callOutDate, unavailabilityTimezone);
+            callOutAvailability.sked__Finish__c = callOutFinish.addMinutes(-1);
         }
 
         if (request.usePtoForCallOut == false || request.usePtoForCallOut == null) {
