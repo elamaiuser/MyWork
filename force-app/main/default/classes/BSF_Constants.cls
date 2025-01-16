@@ -33,6 +33,10 @@ public class BSF_Constants {
     
     //Affiliation Record Types
     public static final String AFFILIATION_RECORD_TYPE = 'Sponsor Recognition';
+
+    //Account Record Types
+    public static final String FIXED_SITE_ACCOUNT_RECORD_TYPE = 'Fixed_Site_Account';
+    public static final String MOBILE_ACCOUNT_RECORD_TYPE = 'Mobile_Account';
     
     public static final String STRING_NO = 'No';
     public static final String STRING_YES = 'Yes';
@@ -197,8 +201,9 @@ public class BSF_Constants {
         'Current ABM Account/Portfolio Review Meeting' => 'CurrentABMAccPortfolioReviewMeeting',
         'New AM Account/Portfolio Review Meeting' => 'NewAMAccPortfolioReviewMeeting',
         'New SBPM Account/Portfolio Review Meeting' => 'NewSBPMAccPortfolioReviewMeeting',
-        'Template Order Task' => 'TemplateOrderExpiry'//HRP-12664
+        'Template Order Task' => 'TemplateOrderExpiry',//HRP-12664
         //HRP-11784
+        'Renew Military MoA' => 'RenewMilitaryMoA'
         }; 
 
     // Initiated By picklist Values
