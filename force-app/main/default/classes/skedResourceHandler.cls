@@ -1,3 +1,11 @@
+/* 
+ * @description: This class is called from Resource Tag trigger.
+ * Modification Log 
+ * Date					     Developer Name			     Comments
+ * ***********************************************************************************************************************************************
+ * 1/8/2025			         Satyendra Vishwakarma	     Logic for HRP-8802
+ ************************************************************************************************************************************************
+*/
 public class skedResourceHandler extends skedTriggerHub {
     
     public static boolean canUpdateResourceRole = false;
@@ -99,7 +107,8 @@ public class skedResourceHandler extends skedTriggerHub {
                         sked__Resource_Tag__c newResourceTag = new sked__Resource_Tag__c(
                             sked__Resource__c = assetResource.Id,
                             sked__Tag__c = assetTypeTag.Id,
-                            sked_Start_Date__c = startDate
+                            sked_Start_Date__c = startDate,
+                            sked_Role_Status__c = 'Active'
                         );
                         newResourceTags.add(newResourceTag);
                     }
@@ -108,7 +117,8 @@ public class skedResourceHandler extends skedTriggerHub {
                         sked__Resource_Tag__c newResourceTag = new sked__Resource_Tag__c(
                             sked__Resource__c = assetResource.Id,
                             sked__Tag__c = equipmentSubTypeTag.Id,
-                            sked_Start_Date__c = startDate
+                            sked_Start_Date__c = startDate,
+                            sked_Role_Status__c = 'Active'
                         );
                         newResourceTags.add(newResourceTag);
                     }
@@ -143,7 +153,8 @@ public class skedResourceHandler extends skedTriggerHub {
                     sked__Resource_Tag__c newResourceTag = new sked__Resource_Tag__c(
                         sked__Resource__c = newRecord.Id,
                         sked__Tag__c = skedTag.Id,
-                        sked_Start_Date__c = startDate
+                        sked_Start_Date__c = startDate,
+                        sked_Role_Status__c = 'Active'
                     );
                     newResourceTags.add(newResourceTag);
                 }
@@ -177,7 +188,8 @@ public class skedResourceHandler extends skedTriggerHub {
                     sked__Resource_Tag__c newResourceTag = new sked__Resource_Tag__c(
                         sked__Resource__c = newRecord.Id,
                         sked__Tag__c = skedTag.Id,
-                        sked_Start_Date__c = startDate
+                        sked_Start_Date__c = startDate,
+                        sked_Role_Status__c = 'Active'
                     );
                     newResourceTags.add(newResourceTag);
                 }
@@ -230,7 +242,8 @@ public class skedResourceHandler extends skedTriggerHub {
                         sked__Resource_Tag__c newResourceTag = new sked__Resource_Tag__c(
                             sked__Resource__c = skedResource.Id,
                             sked__Tag__c = driveTypeTagId,
-                            sked_Start_Date__c = startDate
+                            sked_Start_Date__c = startDate,
+                            sked_Role_Status__c = 'Active'
                         );
                         newResourceTags.add(newResourceTag);
                     }
@@ -1023,7 +1036,8 @@ public class skedResourceHandler extends skedTriggerHub {
                             sked__Resource_Tag__c newResourceTag = new sked__Resource_Tag__c(
                                 sked__Resource__c = skedResource.Id,
                                 sked__Tag__c = skedTag.Id,
-                                sked_Start_Date__c = startDate
+                                sked_Start_Date__c = startDate,
+                                sked_Role_Status__c = 'Active'
                             );
                             recordsToInsert.add(newResourceTag);
                         }
@@ -1104,7 +1118,8 @@ public class skedResourceHandler extends skedTriggerHub {
                             sked__Resource_Tag__c newResourceTag = new sked__Resource_Tag__c(
                                 sked__Resource__c = skedResource.Id,
                                 sked__Tag__c = driveTypeTagId,
-                                sked_Start_Date__c = startDate
+                                sked_Start_Date__c = startDate,
+                                sked_Role_Status__c = 'Active'
                             );
                             recordsToInsert.add(newResourceTag);
                         }
@@ -1175,7 +1190,8 @@ public class skedResourceHandler extends skedTriggerHub {
                             sked__Resource_Tag__c newResourceTag = new sked__Resource_Tag__c(
                                 sked__Resource__c = skedResource.Id,
                                 sked__Tag__c = skedTag.Id,
-                                sked_Start_Date__c = startDate
+                                sked_Start_Date__c = startDate,
+                                sked_Role_Status__c = 'Active'
                             );
                             recordsToInsert.add(newResourceTag);
                         }
