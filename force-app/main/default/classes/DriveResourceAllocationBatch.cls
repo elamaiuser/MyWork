@@ -987,7 +987,7 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
                     }
                 }
                 if(recalculationFlag) {
-                    drive.sked_Staff_Capacity__c = shiftStaffCapacity;
+                    drive.sked_Staff_Capacity__c = shiftTotalStaffCapacity;
                     drive.Max_Role_Capacity__c = driveMaxRoleCapacity;
                     MobileDriveGeneratorDMLService.DMLDrive dmlDrive = reCalculateDriveAverageStaffCapacity(drive, staffPrimaryCount);
                     drive.Average_Staff_Capacity__c = dmlDrive?.averageStaffCapacity;

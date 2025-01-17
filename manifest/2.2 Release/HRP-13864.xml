@@ -4,6 +4,7 @@
 		<members>GenerateMobileDrive</members>
 		<members>MobileDriveGeneratorDMLService</members>
 		<members>BSF_UpdateDriveExcessStaffCapacityBatch</members>
+		<members>DriveResourceAllocationBatch</members>
 		<name>ApexClass</name>
 	</types>
 	<types>
