@@ -11,6 +11,7 @@
 		<members>CalendarBuildBatchHandler</members>
         <members>CalendarBuildEvaluateDrivesBatch_Test</members>
 		<members>checkRecursive</members>
+		<members>DriveResourceAllocationBatch</members>
 		<members>GenerateMobileDrive</members>
 		<members>GenerateMobileDriveTest</members>
 		<members>MobileDriveGeneratorDMLService</members>
