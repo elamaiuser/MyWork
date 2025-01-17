@@ -1,3 +1,10 @@
+/* 
+* Modification Log 
+* Date					     Developer Name			     Comments
+* *******************************************************************************************************************************************************************************************************
+* 11/26/2024                  Balaji N                   Logic for HRP-13866 Method:getexternalKeyTaxonomyMap System.Label.NO_SBPM_ABM in place of hard coded value
+*********************************************************************************************************************************************************************************************************
+*/
 public class BSF_Batch_TaxonomyEndDateHelper 
 {
     public static void endDateTaxonomy(list<taxonomy__c> newVerTax,list<taxonomy__c> oldVerTax)
@@ -155,7 +162,7 @@ public class BSF_Batch_TaxonomyEndDateHelper
             if(recordtypename == BSF_Constants.BIO_RECRUITMENT_RECORD_TYPE || recordtypename == BSF_Constants.TAXO_ACCOUNT_RECORD_TYPE)
             {
                 
-                if(tx.ABM_Name__c != null && tx.ABM_Name__c != 'NA' && !tx.ABM_Name__c.containsIgnoreCase('No ABM'))
+                if(tx.ABM_Name__c != null && tx.ABM_Name__c != 'NA' && !tx.ABM_Name__c.containsIgnoreCase(System.Label.NO_SBPM_ABM))//HRP-13866 System.Label.NO_SBPM_ABM in place of hard coded value
                 {
                     externalKeyfinder(recordtypename,taxIdExternalKeysMap,tx,new List<string>{'_'+tx.Division_Code__c,'_'+tx.DS_Region_Code__c,'_'+tx.Team_Code__c,'_'+tx.ABM_Code__c,'_'+tx.DRD_Territory_Code__c});
                 }
