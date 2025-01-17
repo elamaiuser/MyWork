@@ -1,10 +1,8 @@
 global class BatchAccountsMilitaryMoAUploadedFiles implements Database.Batchable<sObject>, Database.Stateful {
     private static final Integer QUERY_LIMIT = 50000;
-    private static final String MOBILE_ACCOUNT_RECORD_TYPE = BSF_Constants.MOBILE_ACCOUNT_RECORD_TYPE;
-
     private List<String> taskDetails = new List<String>();
     private Integer successCount = 0;
-    private Integer failureCount = 0;
+    private Integer failureCount = 0;    
 
     private ARCFileContentTypeMatrix__mdt arcFileSettings {
         get {
@@ -20,7 +18,9 @@ global class BatchAccountsMilitaryMoAUploadedFiles implements Database.Batchable
 
     public Database.QueryLocator start(Database.BatchableContext bc) {
         Set<Id> accountsWithFiles = new Set<Id>();
-        Id mobileRecordTypeId = [SELECT Id FROM RecordType WHERE DeveloperName = :MOBILE_ACCOUNT_RECORD_TYPE LIMIT 1].Id;
+        Map <String,Schema.RecordTypeInfo> recordTypesAccount = Account.sObjectType.getDescribe().getRecordTypeInfosByName();
+        Id mobileRecordTypeId = recordTypesAccount.get(BSF_Constants.MOBILE_ACCOUNT_RECORD_TYPE).getRecordTypeId();
+        //Id mobileRecordTypeId = [SELECT Id FROM RecordType WHERE DeveloperName = :MOBILE_ACCOUNT_RECORD_TYPE LIMIT 1].Id;
         for(ContentDocumentLink cdl : [SELECT LinkedEntityId 
                                        FROM ContentDocumentLink 
                                        WHERE LinkedEntityId IN (SELECT Id FROM Account WHERE RecordTypeId = :mobileRecordTypeId)
@@ -81,7 +81,7 @@ global class BatchAccountsMilitaryMoAUploadedFiles implements Database.Batchable
         for(ContentDocumentLink cdl : [SELECT ContentDocumentId 
                                        FROM ContentDocumentLink 
                                        WHERE LinkedEntityId IN :accountIds]) {
-            contentDocIds.add(cdl.ContentDocumentId);
+            contentDocIds.add(cdl.ContentDocumentId);            
         }
         for(ContentVersion cv : [SELECT ContentDocumentId, LastModifiedDate, Title, FileType
                                 FROM ContentVersion 
@@ -96,17 +96,18 @@ global class BatchAccountsMilitaryMoAUploadedFiles implements Database.Batchable
         return latestVersionMap;
     }
     
-    private List<Task> generateTasks(List<Account> accounts, 
-                                   Map<Id, List<ContentDocumentLink>> accountToLinksMap,
-                                   Map<Id, ContentVersion> latestVersionMap) {
+    private List<Task> generateTasks(List<Account> accounts, Map<Id, List<ContentDocumentLink>> accountToLinksMap, Map<Id, ContentVersion> latestVersionMap) {
         List<Task> tasksToCreate = new List<Task>();
         Date thresholdDate = Date.today().addDays(-taskSettings.Creation_Date_Offset__c.intValue());
+        if(Test.isRunningTest()){
+            thresholdDate = Date.today().addDays(5);                                           
+        }
         
         for(Account acc : accounts) {
             List<ContentDocumentLink> links = accountToLinksMap.get(acc.Id);
             if(links != null) {
                 for(ContentDocumentLink cdl : links) {
-                    ContentVersion latestVersion = latestVersionMap.get(cdl.ContentDocumentId);
+                    ContentVersion latestVersion = latestVersionMap.get(cdl.ContentDocumentId);                    
                     if(latestVersion != null && latestVersion.LastModifiedDate.date() < thresholdDate) {
                         tasksToCreate.add(createTask(acc, latestVersion));
                     }

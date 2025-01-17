@@ -35,8 +35,8 @@ public class BSF_Constants {
     public static final String AFFILIATION_RECORD_TYPE = 'Sponsor Recognition';
 
     //Account Record Types
-    public static final String FIXED_SITE_ACCOUNT_RECORD_TYPE = 'Fixed_Site_Account';
-    public static final String MOBILE_ACCOUNT_RECORD_TYPE = 'Mobile_Account';
+    public static final String FIXED_SITE_ACCOUNT_RECORD_TYPE = 'Fixed Site Account';
+    public static final String MOBILE_ACCOUNT_RECORD_TYPE = 'Mobile Account';
     
     public static final String STRING_NO = 'No';
     public static final String STRING_YES = 'Yes';
