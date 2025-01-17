@@ -18,12 +18,12 @@
     <filters>
         <field>RECORDTYPE</field>
         <operation>equals</operation>
-        <value>Taxonomy__c.Bio_Account_Portfolio</value>
+        <value>Taxonomy__c.Bio_Recruitment_Supervisor</value>
     </filters>
     <filters>
         <field>DRD_Territory_Name__c</field>
         <operation>contains</operation>
-        <value>Maine</value>
+        <value>Texas</value>
     </filters>
     <label>Bio Account Portfolio</label>
 </ListView>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ListView xmlns="http://soap.sforce.com/2006/04/metadata">
-    <fullName>CB_Manual_Run_11_1_11_30</fullName>
+    <fullName>CB_Manual_Run_12_1_12_31</fullName>
     <columns>NAME</columns>
     <columns>Drive_Date__c</columns>
     <columns>CB_Batch_Status__c</columns>
@@ -19,17 +19,17 @@
     <filters>
         <field>Drive_Date__c</field>
         <operation>greaterOrEqual</operation>
-        <value>11/1/2024</value>
+        <value>12/1/2024</value>
     </filters>
     <filters>
         <field>Drive_Date__c</field>
         <operation>lessOrEqual</operation>
-        <value>11/30/2024</value>
+        <value>12/31/2024</value>
     </filters>
     <filters>
         <field>CB_Batch_Status__c</field>
         <operation>equals</operation>
         <value>Completed</value>
     </filters>
-    <label>CB Manual Run 11/1_11/30</label>
+    <label>CB Manual Run 12/1_12/31</label>
 </ListView>

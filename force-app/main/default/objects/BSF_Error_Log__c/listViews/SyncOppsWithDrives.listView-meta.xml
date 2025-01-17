@@ -12,12 +12,12 @@
     <filters>
         <field>CREATEDBY_USER</field>
         <operation>contains</operation>
-        <value>Automated Process,Steven Chung</value>
+        <value>Automated Process,Amanda MacPherson,Theresa Benfer</value>
     </filters>
     <filters>
         <field>CREATED_DATE</field>
         <operation>equals</operation>
-        <value>1/3/2025 2:10 PM</value>
+        <value>1/6/2025 10:54 AM</value>
     </filters>
     <label>SyncOppsWithDrives</label>
 </ListView>
