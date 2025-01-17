@@ -22,6 +22,7 @@
 * 03/06/2024			      Balaji N		  	         logic for HRP-12136 (Method:getInternalNameChangedAccounts,updateDivesOnCalenderForAccountInternalNameChange;changes in opp name logic)
 * 05/24/2024				  Raktim Ghosal				 Logic for HRP-12757
 * 08/05/2024				  Balaji N					 Logic for HRP-12485(Method:createAccountTeamMembers;removed dependency on Account_AM_Portfolio_Type__c)
+* 11/26/2024                  Balaji N                   Logic for HRP-13866 Method:createAccountTeamMembers System.Label.NO_SBPM_ABM in place of hard coded value
 *********************************************************************************************************************************************************************************************************
 */
 
@@ -443,7 +444,7 @@ Commented Out for HRP - 10016 --> End */
             List<AccountTeamMember> allTeamMemberInsertList = new List<AccountTeamMember>();
             for(Taxonomy__c taxonomy:taxonomyList){
                 String externalKey = null;
-                if(taxonomy.ABM_Name__c != null && taxonomy.ABM_Name__c != 'NA' && !taxonomy.ABM_Name__c.containsIgnoreCase('No ABM')){
+                if(taxonomy.ABM_Name__c != null && taxonomy.ABM_Name__c != 'NA' && !taxonomy.ABM_Name__c.containsIgnoreCase(System.Label.NO_SBPM_ABM)){//HRP-13866 System.Label.NO_SBPM_ABM in place of hard coded value
                     externalKey = taxonomy.RecordType.Name+'_'+taxonomy.Division_Code__c +'_'+taxonomy.DS_Region_Code__c+'_'+taxonomy.Team_Code__c+'_'+taxonomy.ABM_Code__c+'_'+taxonomy.DRD_Territory_Code__c;
                 }else{
                     externalKey = taxonomy.RecordType.Name+'_'+taxonomy.Division_Code__c +'_'+taxonomy.DS_Region_Code__c+'_'+taxonomy.Team_Code__c+'_'+taxonomy.DRD_Territory_Code__c;

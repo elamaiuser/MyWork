@@ -370,6 +370,13 @@
         <value>/lightning/o/sked__Resource__c/list?filterName=00B5c000008b41cEAA</value>
     </labels>
     <labels>
+        <fullName>NO_SBPM_ABM</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>NO_SBPM/ABM</shortDescription>
+        <value>No SBPM</value>
+    </labels>
+    <labels>
         <fullName>NonCollectionArea</fullName>
         <language>en_US</language>
         <protected>false</protected>
