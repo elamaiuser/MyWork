@@ -1,18 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <Package xmlns="http://soap.sforce.com/2006/04/metadata">
 	<types>
-		<members>AccountPortfolioAssignmentHelper</members>
-		<members>AccountService</members>
-		<members>BSFPortfolioHelper</members>
-		<members>BSF_Batch_TaxonomyEndDateHelper</members>
 		<members>BSFPortfolioHelperTest</members>
 		<members>BsfPortfolioService</members>
 		<members>PortfolioAssignmentService</members>
 		<name>ApexClass</name>
-	</types>
-	<types>
-		<members>NO_SBPM_ABM</members>
-		<name>CustomLabel</name>
 	</types>
 	<version>62.0</version>
 </Package>
