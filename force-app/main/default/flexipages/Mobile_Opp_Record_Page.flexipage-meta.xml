@@ -243,6 +243,9 @@
                         <valueListItems>
                             <value>Opportunity.Add_Affiliation</value>
                         </valueListItems>
+                        <valueListItems>
+                            <value>Opportunity.Mass_Drive_Service_Role_Add</value>
+                        </valueListItems>
                     </valueList>
                 </componentInstanceProperties>
                 <componentInstanceProperties>

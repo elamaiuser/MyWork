@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <GlobalValueSet xmlns="http://soap.sforce.com/2006/04/metadata">
     <customValue>
+        <fullName>San Jose CA cloned</fullName>
+        <default>false</default>
+        <label>San Jose CA cloned</label>
+    </customValue>
+    <customValue>
         <fullName>Adrian MI</fullName>
         <default>false</default>
         <label>Adrian MI</label>
@@ -896,53 +901,6 @@
         <label>Yakima WA</label>
     </customValue>
     <customValue>
-        <fullName>ZS TEST WA</fullName>
-        <default>false</default>
-        <label>ZS TEST WA</label>
-    </customValue>
-    <customValue>
-        <fullName>&#39;Springfield MA&#39;</fullName>
-        <default>false</default>
-        <isActive>false</isActive>
-        <label>&#39;Springfield MA&#39;</label>
-    </customValue>
-    <customValue>
-        <fullName>&#39;Helena MT&#39;</fullName>
-        <default>false</default>
-        <isActive>false</isActive>
-        <label>&#39;Helena MT&#39;</label>
-    </customValue>
-    <customValue>
-        <fullName>&#39;Great Falls MT&#39;</fullName>
-        <default>false</default>
-        <isActive>false</isActive>
-        <label>&#39;Great Falls MT&#39;</label>
-    </customValue>
-    <customValue>
-        <fullName>&#39;Bozeman MT&#39;</fullName>
-        <default>false</default>
-        <isActive>false</isActive>
-        <label>&#39;Bozeman MT&#39;</label>
-    </customValue>
-    <customValue>
-        <fullName>&#39;Pocatello ID&#39;</fullName>
-        <default>false</default>
-        <isActive>false</isActive>
-        <label>&#39;Pocatello ID&#39;</label>
-    </customValue>
-    <customValue>
-        <fullName>&#39;Lewiston ID&#39;</fullName>
-        <default>false</default>
-        <isActive>false</isActive>
-        <label>&#39;Lewiston ID&#39;</label>
-    </customValue>
-    <customValue>
-        <fullName>&#39;Idaho Falls ID&#39;</fullName>
-        <default>false</default>
-        <isActive>false</isActive>
-        <label>&#39;Idaho Falls ID&#39;</label>
-    </customValue>
-    <customValue>
         <fullName>&#39;Boise ID&#39;</fullName>
         <default>false</default>
         <isActive>false</isActive>
@@ -1363,10 +1321,10 @@
         <label>&#39;Kalamazoo MI&#39;</label>
     </customValue>
     <customValue>
-        <fullName>&#39;Huntington WV&#39;</fullName>
+        <fullName>&#39;Holland MI&#39;</fullName>
         <default>false</default>
         <isActive>false</isActive>
-        <label>&#39;Huntington WV&#39;</label>
+        <label>&#39;Holland MI&#39;</label>
     </customValue>
     <customValue>
         <fullName>&#39;Myrtle Beach SC&#39;</fullName>
@@ -1375,10 +1333,10 @@
         <label>&#39;Myrtle Beach SC&#39;</label>
     </customValue>
     <customValue>
-        <fullName>&#39;Effingham IL&#39;</fullName>
+        <fullName>&#39;Baltimore MD&#39;</fullName>
         <default>false</default>
         <isActive>false</isActive>
-        <label>&#39;Effingham IL&#39;</label>
+        <label>&#39;Baltimore MD&#39;</label>
     </customValue>
     <customValue>
         <fullName>&#39;St George UT&#39;</fullName>
@@ -1415,6 +1373,12 @@
         <default>false</default>
         <isActive>false</isActive>
         <label>&#39;Flint MI&#39;</label>
+    </customValue>
+    <customValue>
+        <fullName>Neeraja-CO</fullName>
+        <default>false</default>
+        <isActive>false</isActive>
+        <label>Neeraja-CO</label>
     </customValue>
     <customValue>
         <fullName>&#39;Lansing MI&#39;</fullName>
@@ -1477,10 +1441,52 @@
         <label>&#39;Jonesboro AR&#39;</label>
     </customValue>
     <customValue>
-        <fullName>&#39;Holland MI&#39;</fullName>
+        <fullName>&#39;Effingham IL&#39;</fullName>
         <default>false</default>
         <isActive>false</isActive>
-        <label>&#39;Holland MI&#39;</label>
+        <label>&#39;Effingham IL&#39;</label>
+    </customValue>
+    <customValue>
+        <fullName>&#39;Kalispell MT&#39;</fullName>
+        <default>false</default>
+        <isActive>false</isActive>
+        <label>&#39;Kalispell MT&#39;</label>
+    </customValue>
+    <customValue>
+        <fullName>&#39;Missoula MT&#39;</fullName>
+        <default>false</default>
+        <isActive>false</isActive>
+        <label>&#39;Missoula MT&#39;</label>
+    </customValue>
+    <customValue>
+        <fullName>&#39;Bend OR&#39;</fullName>
+        <default>false</default>
+        <isActive>false</isActive>
+        <label>&#39;Bend OR&#39;</label>
+    </customValue>
+    <customValue>
+        <fullName>&#39;Richland WA&#39;</fullName>
+        <default>false</default>
+        <isActive>false</isActive>
+        <label>&#39;Richland WA&#39;</label>
+    </customValue>
+    <customValue>
+        <fullName>&#39;Washington DC&#39;</fullName>
+        <default>false</default>
+        <isActive>false</isActive>
+        <label>&#39;Washington DC&#39;</label>
+    </customValue>
+    <customValue>
+        <fullName>&#39;Beckley WV&#39;</fullName>
+        <default>false</default>
+        <isActive>false</isActive>
+        <label>&#39;Beckley WV&#39;</label>
+    </customValue>
+    <customValue>
+        <fullName>&#39;Huntington WV&#39;</fullName>
+        <default>false</default>
+        <isActive>false</isActive>
+        <label>&#39;Huntington WV&#39;</label>
     </customValue>
     <customValue>
         <fullName>&#39;Parkersburg WV&#39;</fullName>
@@ -1879,59 +1885,59 @@
         <label>ZS - Yakima WA</label>
     </customValue>
     <customValue>
+        <fullName>ZS TEST WA</fullName>
+        <default>false</default>
+        <isActive>false</isActive>
+        <label>ZS TEST WA</label>
+    </customValue>
+    <customValue>
         <fullName>San Jose CA clone test</fullName>
         <default>false</default>
         <isActive>false</isActive>
         <label>San Jose CA clone test</label>
     </customValue>
     <customValue>
-        <fullName>&#39;Beckley WV&#39;</fullName>
+        <fullName>&#39;Springfield MA&#39;</fullName>
         <default>false</default>
         <isActive>false</isActive>
-        <label>&#39;Beckley WV&#39;</label>
+        <label>&#39;Springfield MA&#39;</label>
     </customValue>
     <customValue>
-        <fullName>&#39;Washington DC&#39;</fullName>
+        <fullName>&#39;Helena MT&#39;</fullName>
         <default>false</default>
         <isActive>false</isActive>
-        <label>&#39;Washington DC&#39;</label>
+        <label>&#39;Helena MT&#39;</label>
     </customValue>
     <customValue>
-        <fullName>&#39;Richland WA&#39;</fullName>
+        <fullName>&#39;Great Falls MT&#39;</fullName>
         <default>false</default>
         <isActive>false</isActive>
-        <label>&#39;Richland WA&#39;</label>
+        <label>&#39;Great Falls MT&#39;</label>
     </customValue>
     <customValue>
-        <fullName>Neeraja-CO</fullName>
+        <fullName>&#39;Bozeman MT&#39;</fullName>
         <default>false</default>
         <isActive>false</isActive>
-        <label>Neeraja-CO</label>
+        <label>&#39;Bozeman MT&#39;</label>
     </customValue>
     <customValue>
-        <fullName>&#39;Bend OR&#39;</fullName>
+        <fullName>&#39;Pocatello ID&#39;</fullName>
         <default>false</default>
         <isActive>false</isActive>
-        <label>&#39;Bend OR&#39;</label>
+        <label>&#39;Pocatello ID&#39;</label>
     </customValue>
     <customValue>
-        <fullName>&#39;Missoula MT&#39;</fullName>
+        <fullName>&#39;Lewiston ID&#39;</fullName>
         <default>false</default>
         <isActive>false</isActive>
-        <label>&#39;Missoula MT&#39;</label>
+        <label>&#39;Lewiston ID&#39;</label>
     </customValue>
     <customValue>
-        <fullName>&#39;Kalispell MT&#39;</fullName>
+        <fullName>&#39;Idaho Falls ID&#39;</fullName>
         <default>false</default>
         <isActive>false</isActive>
-        <label>&#39;Kalispell MT&#39;</label>
-    </customValue>
-    <customValue>
-        <fullName>&#39;Baltimore MD&#39;</fullName>
-        <default>false</default>
-        <isActive>false</isActive>
-        <label>&#39;Baltimore MD&#39;</label>
+        <label>&#39;Idaho Falls ID&#39;</label>
     </customValue>
     <masterLabel>Collection Operations</masterLabel>
-    <sorted>true</sorted>
+    <sorted>false</sorted>
 </GlobalValueSet>

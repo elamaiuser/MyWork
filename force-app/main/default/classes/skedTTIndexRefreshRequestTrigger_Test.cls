@@ -1,7 +1,8 @@
 /* Description: This test class covers the following classes & trigger
 	1. skedCOGroupTravelTimeIndexRefreshBatch
 	2. skedTravelTimeIndexRefreshRequestHandler
-	3. skedTravelTimeIndexRefreshRequestTrigger 
+	3. skedTravelTimeIndexRefreshRequestTrigger
+	4. skedRefreshTravelTimeIndexBatchBase
 */
 
 @isTest

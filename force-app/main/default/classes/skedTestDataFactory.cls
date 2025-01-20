@@ -163,6 +163,7 @@ public class skedTestDataFactory {
             LastName = 'Test',
             FirstName = 'BPL',
             Primary_Phone__c = 'Work Phone',
+            OtherPhone = '999-999-9987',
             Original_Service_Date__c = this.summary.startDate,
             AccountId = accountBPL.Id
         );
@@ -693,10 +694,12 @@ public class skedTestDataFactory {
             sked__Availability_Template__c = testTemplate1.Id
         );
         forthList.add(testResource1_testTemplate1);
-
+        
+		TriggerHandler.bypass('SiteTriggerHandler');
         insert forthList;
 
         skedHubBase.setBypassAllTriggers(false);
+        TriggerHandler.clearBypass('SiteTriggerHandler');
         return this.mapTestData;
     }
 
