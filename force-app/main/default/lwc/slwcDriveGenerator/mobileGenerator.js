@@ -900,23 +900,23 @@ class MobileGenerator extends BaseGenerator {
   }
 
   calculateDriveShiftMaxStaffCapacityWithDrawHours(driveShift, ignoreLunchBreak = false) {
-    const driveShiftStaffCapacity = Math.floor(this.helper.calculateMaximumStaffCapacityWithDrawHours([
+    const driveShiftStaffCapacity = this.helper.calculateMaximumStaffCapacityWithDrawHours([
       'Driver', 'Driver Support', '2RBC', 'VP/HH', 'Charge'
     ], this.drive, driveShift.driveShiftMetadata, 
       new Map()
         .set(driveShift.driveShiftMetadata.key, this.helper.getDriveShiftResourceQuantity(driveShift))
-    , this.masterData, ignoreLunchBreak));
+    , this.masterData, ignoreLunchBreak);
 
     return driveShiftStaffCapacity;
   }
 
   calculateDriveShiftMaxStaffCapacity(driveShift, ignoreLunchBreak = false) {
-    const driveShiftStaffCapacity = Math.floor(this.helper.calculateMaximumStaffCapacity([
+    const driveShiftStaffCapacity = this.helper.calculateMaximumStaffCapacity([
       'Driver', 'Driver Support', '2RBC', 'VP/HH', 'Charge'
     ], this.drive, driveShift.driveShiftMetadata, 
       new Map()
         .set(driveShift.driveShiftMetadata.key, this.helper.getDriveShiftResourceQuantity(driveShift))
-    , this.masterData, ignoreLunchBreak));
+    , this.masterData, ignoreLunchBreak);
 
     return driveShiftStaffCapacity;
   }
@@ -976,8 +976,12 @@ class MobileGenerator extends BaseGenerator {
         }
       });
     }
+    console.log("#13864 updateDriveMaxRoleCapacity driveMaxStaffCapacity ",driveMaxStaffCapacity);
+    console.log("#13864 updateDriveMaxRoleCapacity driveMaxStaffCapacityWithDrawHours ",driveMaxStaffCapacityWithDrawHours);
     this.drive.maxRoleCapacity = driveMaxStaffCapacity.toFixed(2);
     this.drive.maxRoleCapacityWithDrawHours = driveMaxStaffCapacityWithDrawHours.toFixed(2);
+    console.log("#13864 updateDriveMaxRoleCapacity this.drive.maxRoleCapacity ",this.drive.maxRoleCapacity);
+    console.log("#13864 updateDriveMaxRoleCapacity this.drive.maxRoleCapacityWithDrawHours ",this.drive.maxRoleCapacityWithDrawHours);
   }
 
   updateDriveExcessStaffCapacity() {
