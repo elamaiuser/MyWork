@@ -478,7 +478,21 @@ public class TaskTriggerTest {
         taskCheckList = new BSF_Task_Checklist__c(
                             TaskLookup__c = (String) pdaTask.Id,
                             TaskType__c = BSF_Constants.POST_DRIVE_ANALYSIS_TASK,
-                            Unique_Name__c = 'Rollover_Consideration__c'
+                            Unique_Name__c = 'Account_Strategy__c'
+        );
+        taskCheckListToInsert.add(taskCheckList);
+
+        taskCheckList = new BSF_Task_Checklist__c(
+                            TaskLookup__c = (String) pdaTask.Id,
+                            TaskType__c = BSF_Constants.POST_DRIVE_ANALYSIS_TASK,
+                            Unique_Name__c = 'Gray_Sky_Account__c'
+        );
+        taskCheckListToInsert.add(taskCheckList);
+
+        taskCheckList = new BSF_Task_Checklist__c(
+                TaskLookup__c = (String) pdaTask.Id,
+                TaskType__c = BSF_Constants.POST_DRIVE_ANALYSIS_TASK,
+                Unique_Name__c = 'Rollover_Consideration__c'
         );
         taskCheckListToInsert.add(taskCheckList);
         
