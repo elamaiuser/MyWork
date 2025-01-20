@@ -503,7 +503,7 @@ IF({!forAS}&lt;&gt; NULL, {!forAS},
     <textTemplates>
         <name>SubjectTask</name>
         <isViewedAsPlainText>true</isViewedAsPlainText>
-        <text>Post Drive Analysis Task</text>
+        <text>Post Drive Analysis</text>
     </textTemplates>
     <variables>
         <name>New_Task</name>

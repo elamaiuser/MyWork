@@ -4,14 +4,14 @@
     <protected>false</protected>
     <values>
         <field>Active__c</field>
-        <value xsi:type="xsd:boolean">false</value>
+        <value xsi:type="xsd:boolean">true</value>
     </values>
     <values>
         <field>Live_date__c</field>
-        <value xsi:type="xsd:date">2025-01-01</value>
+        <value xsi:type="xsd:date">2025-02-13</value>
     </values>
     <values>
         <field>Region_Name__c</field>
-        <value xsi:type="xsd:string">South Carolina,Missouri Arkansas,Utah Nevada,North Texas,Northern New England,Southern California,Los Angeles,Western New York,Arizona New Mexico,Northwest,Greater Pennsylvania</value>
+        <value xsi:type="xsd:string">Western New York</value>
     </values>
 </CustomMetadata>

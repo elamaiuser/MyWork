@@ -96,7 +96,7 @@
         <language>en_US</language>
         <protected>false</protected>
         <shortDescription>BSF_SUPPORT_EMAIL_ID</shortDescription>
-        <value>subhajit.bose@exavalu.com,barnojit.sharma@exavalu.com,fitsum.worku@redcross.org</value>
+        <value>subhajit.bose@exavalu.com,barnojit.sharma@exavalu.com,fitsum.worku@redcross.org,neyti.blome@redcross.org,testingarcbsfcust@gmail.com,soumojit.sur@redcross.org</value>
     </labels>
     <labels>
         <fullName>Block_ZipCode_Update_On_Site</fullName>

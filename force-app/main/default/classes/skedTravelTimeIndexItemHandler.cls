@@ -34,17 +34,20 @@ public class skedTravelTimeIndexItemHandler extends skedTriggerHub  {
             sked_Travel_Time_Index_Item__c oldData = oldMap.get(newRecord.Id);
             if (newRecord.User_Override__c == false
                 && newRecord.sked_Average_Travel_Time__c != oldData.sked_Average_Travel_Time__c
-               	&& newRecord.sked_Average_Travel_Time__c!= NULL) {
+                && newRecord.sked_Average_Travel_Time__c!= NULL) {
                     if(oldData.sked_Average_Travel_Time__c == NULL) {
                         impactedIndexIds.add(newRecord.Id);
                     }else {
                         decimal beforeAfterGap = Math.abs(oldData.sked_Average_Travel_Time__c - newRecord.sked_Average_Travel_Time__c);
                         if (beforeAfterGap >= skedSetting.instance.TravelTime.driveImpactThreshold) {
-                            impactedIndexIds.add(newRecord.Id);
+                            impactedIndexIds.add(newRecord.Id);                         
+                        }else {
+                            system.debug('### Travel Time Index Item [' + newRecord.Id + '] skipped for beforeAfterGap : '+ beforeAfterGap);
                         }
                     }
                 }
             }
+        system.debug('### Impacted Travel Time Index Item : '+ impactedIndexIds.toString());
         if (!impactedIndexIds.isEmpty()) {
             if (!System.isBatch() && !Test.isRunningTest()) {
                 Database.executeBatch(new skedCreateDCRForTravelTimeChangeBatch(impactedIndexIds, new Set<Id>()), 200);

@@ -355,6 +355,17 @@
         </values>
     </picklistValues>
     <picklistValues>
+        <picklist>Feeder_Account_Type__c</picklist>
+        <values>
+            <fullName>Feeder Only</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Feeder Plus</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
         <picklist>Has_Personal_Story__c</picklist>
         <values>
             <fullName>No</fullName>
