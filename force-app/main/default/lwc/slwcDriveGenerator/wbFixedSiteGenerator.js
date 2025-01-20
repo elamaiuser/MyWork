@@ -810,23 +810,29 @@ class WbFixedSiteGenerator extends BaseGenerator {
 
   updateDriveMaxRoleCapacity() {
     let driveMaxStaffCapacity = 0;
+    let driveMaxStaffCapacityWithDrawHours = 0;
     if (this.masterData && this.masterData.staffingDecisionMatrix) {
       this.drive.driveShifts.forEach((driveShift) => {
         const driveShiftMaxStaffCapacity = this.calculateDriveShiftMaxStaffCapacity(driveShift);
         if(driveShiftMaxStaffCapacity && driveShiftMaxStaffCapacity > driveMaxStaffCapacity){
           driveMaxStaffCapacity = driveShiftMaxStaffCapacity;
         }
+        const driveShiftMaxStaffCapacityWithDrawHours = this.calculateDriveShiftMaxStaffCapacityWithDrawHours(driveShift);
+        if(driveShiftMaxStaffCapacityWithDrawHours && driveShiftMaxStaffCapacityWithDrawHours > driveMaxStaffCapacityWithDrawHours){
+          driveMaxStaffCapacityWithDrawHours = driveShiftMaxStaffCapacityWithDrawHours;
+        }
       });
     }
-    this.drive.maxRoleCapacity = driveMaxStaffCapacity.toFixed(1);
+    this.drive.maxRoleCapacity = driveMaxStaffCapacity.toFixed(2);
+    this.drive.maxRoleCapacityWithDrawHours = driveMaxStaffCapacityWithDrawHours.toFixed(2);
   }
 
   updateDriveExcessStaffCapacity() {
-    if(this.drive.staffCapacity && this.drive.staffCapacity > 0 && this.drive.maxRoleCapacity && this.drive.maxRoleCapacity > 0) {
+    if(this.drive.staffCapacity && this.drive.staffCapacity > 0 && this.drive.maxRoleCapacityWithDrawHours && this.drive.maxRoleCapacityWithDrawHours > 0) {
       if(this.drive.projectedRegisteredDonors) {
-        this.drive.excessStaffCapacity = (this.drive.staffCapacity - this.drive.projectedRegisteredDonors) / this.drive.maxRoleCapacity;
+        this.drive.excessStaffCapacity = (this.drive.staffCapacity - this.drive.projectedRegisteredDonors) / this.drive.maxRoleCapacityWithDrawHours;
       } else {
-        this.drive.excessStaffCapacity = this.drive.staffCapacity / this.drive.maxRoleCapacity;
+        this.drive.excessStaffCapacity = this.drive.staffCapacity / this.drive.maxRoleCapacityWithDrawHours;
       }
       this.drive.excessStaffCapacity = this.drive.excessStaffCapacity.toFixed(1);
     } else {

@@ -680,7 +680,7 @@ class BaseGenerator {
       if(
         currentDrive.projectedRegisteredDonors !== backupDrive.projectedRegisteredDonors ||
         currentDrive.staffCapacity !== backupDrive.staffCapacity ||
-        currentDrive.maxRoleCapacity !== backupDrive.maxRoleCapacity ||
+        currentDrive.maxRoleCapacityWithDrawHours !== backupDrive.maxRoleCapacityWithDrawHours ||
         currentDrive.excessStaffCapacity !== backupDrive.excessStaffCapacity
       ) {
         remove(currentContentionResolutions, item => item === DRIVE_CONTENTION_RESOLUTION.ELECT_EXCESS_STAFF_CAPACITY);
