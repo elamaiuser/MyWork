@@ -1822,7 +1822,7 @@ class DriveHelper {
 
     return staffCapacity;
   }
-  calculateMaximumStaffCapacity(resourceRoles = [], drive, driveShiftMetadata, mapResourceQuantity, {
+  calculateMaximumStaffCapacityWithDrawHours(resourceRoles = [], drive, driveShiftMetadata, mapResourceQuantity, {
     staffingDecisionMatrix,
     timezoneSidId 
   }, ignoreLunchBreak = false) {
@@ -1844,9 +1844,8 @@ class DriveHelper {
     });
 
     if(ignoreLunchBreak) {
-      drawHours = drawHoursWithoutLunchBreak;
+      //drawHours = drawHoursWithoutLunchBreak;
     }
-
     let maxStaffCapacity = 0;
     Array.from(resourceQuantity.keys()).forEach(resourceRole => {
       const data = resourceQuantity.get(resourceRole);
@@ -1866,7 +1865,41 @@ class DriveHelper {
         }
       }
     });
+    return maxStaffCapacity;
+  }
 
+  calculateMaximumStaffCapacity(resourceRoles = [], drive, driveShiftMetadata, mapResourceQuantity, {
+    staffingDecisionMatrix,
+    timezoneSidId 
+  }, ignoreLunchBreak = false) {
+    const resourceRoleCapacityFieldMap = {
+      'Driver': 'driverCapacity',
+      'Driver Support': 'driverSupportCapacity',
+      '2RBC': 'x2RbcStaffCapacity',
+      'Charge': 'chargeCapacity',
+      'VP/HH': 'vpHhCapacity'
+    }
+
+    const resourceQuantity = mapResourceQuantity.get(driveShiftMetadata.key);
+
+    let maxStaffCapacity = 0;
+    Array.from(resourceQuantity.keys()).forEach(resourceRole => {
+      const data = resourceQuantity.get(resourceRole);
+      let noOfResources = data || 0;
+      let dualRole = null;
+      if(isObject(data)) {
+        noOfResources = data.quantity || 0;
+        dualRole = data.dualRole;
+      }
+
+      let role = resourceRole.split('-')[0];;
+      let roleCapacity = staffingDecisionMatrix[resourceRoleCapacityFieldMap[role]] || 0;
+      if(resourceRoles.includes(role)) {
+        if(roleCapacity > maxStaffCapacity){
+          maxStaffCapacity = roleCapacity;
+        }
+      }
+    });
     return maxStaffCapacity;
   }
 
@@ -2139,6 +2172,32 @@ class DriveHelper {
     return requiresAssetValidation;
   }
 
+  isJobsSameRoles(job1, job2) {
+    if(job1.resourceRole) {
+      const job1Role = `${job1.resourceRole}-${job1.dualRole || ''}`;
+      const job2Role = `${job2.resourceRole}-${job2.dualRole || ''}`;
+      return job1Role === job2Role;
+    }
+
+    const sameAssetType = job1.assetType == job2.assetType;
+    return sameAssetType;
+  }
+
+  generateJobKey(job) {
+    if(job.volunteerRole) return job.volunteerRole;
+    if(job.assetType) return job.assetType;
+    if(job.dualRole) return `${job.resourceRole}-${job.dualRole}`;
+    return job.resourceRole;
+  }
+  
+  parseJobKey(jobKey) {
+    const [resourceRole, dualRole = ''] = jobKey.split('-');
+    return {
+      resourceRole,
+      dualRole
+    }
+  }
+
   checkForChangesToDriveJobs(drive, backupDrive) {
     if (drive.driveShifts.length !== backupDrive.driveShifts.length) {
       return true;
@@ -2155,8 +2214,7 @@ class DriveHelper {
       for (let j = 0; j < validJobs.length; j++) {
         let job = validJobs[j];
         let backupJob = validBackupJobs.find(function(item) {
-          if (item.assetType == job.assetType && item.resourceRole == job.resourceRole &&
-              item.quantity == job.quantity) {
+          if (this.isJobsSameRoles(item, job) && item.quantity == job.quantity) {
             return true;
           }
         });
@@ -2669,7 +2727,7 @@ class DriveHelper {
 
         const dualRoleJobsRemoved = beforeDualRoleJobs.filter(beforeJob => {
           const stillExisted = !!afterDualRoleJobs.find(afterJob => {
-            return afterJob.resourceRole === beforeJob.resourceRole && afterJob.dualRole === beforeJob.dualRole;
+            return this.isJobsSameRoles(afterJob, beforeJob);
           });
           return !stillExisted;
         });
@@ -3021,7 +3079,7 @@ class DriveHelper {
         }
 
         const backupJob = backupDriveShift.jobs?.find(_job => {
-          const sameRole = _job.resourceRole === job.resourceRole && (!job.dualRole ||  _job.dualRole === job.dualRole);
+          const sameRole = this.isJobsSameRoles(_job, job);
           return sameRole;
         })
 
@@ -3064,7 +3122,7 @@ class DriveHelper {
         }
 
         const job = driveShift.jobs?.find(_job => {
-          const sameRole = _job.resourceRole === backupJob.resourceRole && (!backupJob.dualRole || _job.dualRole === backupJob.dualRole);
+          const sameRole = this.isJobsSameRoles(_job, backupJob);
           return sameRole;
         })
 
@@ -3202,10 +3260,10 @@ class DriveHelper {
     let jobFound = null;
     if (job.resourceRole) {
       if (job.procedureType) {
-        jobFound = allJobs.find(item => item.resourceRole == job.resourceRole && item.procedureType === job.procedureType);
+        jobFound = allJobs.find(item => this.isJobsSameRoles(item, job) && item.procedureType === job.procedureType);
       }
       else {
-        jobFound = allJobs.find(item => item.resourceRole == job.resourceRole);
+        jobFound = allJobs.find(item => this.isJobsSameRoles(item, job));
       }
     } else if (job.assetType) {
       if (job.assetType === ASSET_TYPE.EQUIPMENT) {

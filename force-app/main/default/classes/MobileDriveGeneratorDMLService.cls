@@ -20,6 +20,8 @@
  * 06/06/2024                 Priti Jana             Logic for HRP-12011
  * 17/06/2024                 Barnojit Sharma        Logic for HRP-12738
  * 08/01/2024                 Priti Jana             Logic for HRP-10994
+ * 01/15/2025				  Priti Jana			 Logic for HRP-12299
+ * 01/15/2025				  Barnojit Sharma		 Logic for HRP-13864
  *****************************************************************************
 */
 public with sharing class MobileDriveGeneratorDMLService {
@@ -214,6 +216,7 @@ public with sharing class MobileDriveGeneratorDMLService {
                                                                                     : skedConstants.CALENDAR_BUILD_STATUS_UNQUALIFIED;
                         if (!unqualifiedReasons.isEmpty()) {
                             opp.Calendar_Build_Reasons_For_Unqualified__c = string.join(unqualifiedReasons, ';');
+                            opp.Rollover_Consideration__c = BSF_Constants.ROLLOVER_CONSIDERATION_DO_NOT_ROLL; //HRP-12299
                         }
                         
                         opportunitiesToUpdate.add(opp);
@@ -780,6 +783,7 @@ public with sharing class MobileDriveGeneratorDMLService {
         public Decimal excessStaffCapacity; //HRP-10994
         public Decimal averageStaffCapacity; //HRP-10994
         public Decimal maxRoleCapacity; //HRP-13864
+        public Decimal maxRoleCapacityWithDrawHours; //HRP-13864
         public Decimal totalStaffRequested; //HRP-10994
         public Boolean aptRequired; //HRP-13190
         public Decimal aptQuantity; //HRP-13190
@@ -856,6 +860,7 @@ public with sharing class MobileDriveGeneratorDMLService {
                 Excess_Staff_Capacity__c = this.excessStaffCapacity, //HRP-10994
                 Average_Staff_Capacity__c = this.averageStaffCapacity, //HRP-10994
                 Max_Role_Capacity__c = this.maxRoleCapacity, //HRP-13864
+                Max_Role_Capacity_With_Draw_Hours__c = this.maxRoleCapacityWithDrawHours, //HRP-13864
                 sked_APT_Required__c = this.aptRequired, //HRP-13190
                 sked_APT_Quantity__c = this.aptQuantity //HRP-13190
             );
@@ -906,6 +911,7 @@ public with sharing class MobileDriveGeneratorDMLService {
         public decimal numberOf2rbcEquipments;
         public Boolean noTravelTime; //HRP-11419
         public Decimal maxRoleCapacity; //HRP-13864
+        public Decimal maxRoleCapacityWithDrawHours; //HRP-13864
         
         public List<DMLDriveShiftTag> driveShiftTags;
         public List<DMLJob> jobs;
