@@ -900,7 +900,7 @@ class MobileGenerator extends BaseGenerator {
   }
 
   calculateDriveShiftMaxStaffCapacityWithDrawHours(driveShift, ignoreLunchBreak = false) {
-    const driveShiftStaffCapacity = Math.floor(this.helper.calculateMaximumStaffCapacity([
+    const driveShiftStaffCapacity = Math.floor(this.helper.calculateMaximumStaffCapacityWithDrawHours([
       'Driver', 'Driver Support', '2RBC', 'VP/HH', 'Charge'
     ], this.drive, driveShift.driveShiftMetadata, 
       new Map()
