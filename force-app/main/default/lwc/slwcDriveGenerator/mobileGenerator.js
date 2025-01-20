@@ -970,7 +970,7 @@ class MobileGenerator extends BaseGenerator {
         if(driveShiftMaxStaffCapacity && driveShiftMaxStaffCapacity > driveMaxStaffCapacity){
           driveMaxStaffCapacity = driveShiftMaxStaffCapacity;
         }
-        const driveMaxStaffCapacityWithDrawHours = this.calculateDriveShiftMaxStaffCapacityWithDrawHours(driveShift);
+        const driveShiftMaxStaffCapacityWithDrawHours = this.calculateDriveShiftMaxStaffCapacityWithDrawHours(driveShift);
         if(driveShiftMaxStaffCapacityWithDrawHours && driveShiftMaxStaffCapacityWithDrawHours > driveMaxStaffCapacityWithDrawHours){
           driveMaxStaffCapacityWithDrawHours = driveShiftMaxStaffCapacityWithDrawHours;
         }
