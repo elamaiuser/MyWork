@@ -758,23 +758,23 @@ class WbFixedSiteGenerator extends BaseGenerator {
   }
   
   calculateDriveShiftMaxStaffCapacityWithDrawHours(driveShift, ignoreLunchBreak = false) {
-    const driveShiftStaffCapacity = Math.floor(this.helper.calculateMaximumStaffCapacityWithDrawHours([
+    const driveShiftStaffCapacity = this.helper.calculateMaximumStaffCapacityWithDrawHours([
       'Driver', 'Driver Support', '2RBC', 'VP/HH', 'Charge'
     ], this.drive, driveShift.driveShiftMetadata, 
       new Map()
         .set(driveShift.driveShiftMetadata.key, this.helper.getDriveShiftResourceQuantity(driveShift))
-    , this.masterData, ignoreLunchBreak));
+    , this.masterData, ignoreLunchBreak);
 
     return driveShiftStaffCapacity;
   }
-  
+
   calculateDriveShiftMaxStaffCapacity(driveShift, ignoreLunchBreak = false) {
-    const driveShiftStaffCapacity = Math.floor(this.helper.calculateMaximumStaffCapacity([
+    const driveShiftStaffCapacity = this.helper.calculateMaximumStaffCapacity([
       'Driver', 'Driver Support', '2RBC', 'VP/HH', 'Charge'
     ], this.drive, driveShift.driveShiftMetadata, 
       new Map()
         .set(driveShift.driveShiftMetadata.key, this.helper.getDriveShiftResourceQuantity(driveShift))
-    , this.masterData, ignoreLunchBreak));
+    , this.masterData, ignoreLunchBreak);
 
     return driveShiftStaffCapacity;
   }
