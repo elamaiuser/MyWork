@@ -1844,9 +1844,9 @@ class DriveHelper {
     });
 
     if(ignoreLunchBreak) {
-      drawHours = drawHoursWithoutLunchBreak;
+      //drawHours = drawHoursWithoutLunchBreak;
     }
-
+    console.log("#13864 calculateMaximumStaffCapacityWithDrawHours drawHours ",drawHours);
     let maxStaffCapacity = 0;
     Array.from(resourceQuantity.keys()).forEach(resourceRole => {
       const data = resourceQuantity.get(resourceRole);
@@ -1859,6 +1859,9 @@ class DriveHelper {
 
       let role = resourceRole.split('-')[0];;
       let roleCapacity = staffingDecisionMatrix[resourceRoleCapacityFieldMap[role]] || 0;
+      console.log("#13864 calculateMaximumStaffCapacityWithDrawHours role ",role);
+      console.log("#13864 calculateMaximumStaffCapacityWithDrawHours roleCapacity ",roleCapacity);
+      console.log("#13864 calculateMaximumStaffCapacityWithDrawHours resourceRoles ",resourceRoles);
       if(resourceRoles.includes(role)) {
         let roleCapacitywithDrawHours = roleCapacity * drawHours;
         if(roleCapacitywithDrawHours > maxStaffCapacity){
@@ -1866,7 +1869,7 @@ class DriveHelper {
         }
       }
     });
-
+    console.log("#13864 calculateMaximumStaffCapacityWithDrawHours maxStaffCapacity ",maxStaffCapacity);
     return maxStaffCapacity;
   }
 
@@ -1902,7 +1905,7 @@ class DriveHelper {
         }
       }
     });
-
+    console.log("#13864 calculateMaximumStaffCapacity maxStaffCapacity ",maxStaffCapacity);
     return maxStaffCapacity;
   }
 
