@@ -12,6 +12,7 @@
         <members>CalendarBuildEvaluateDrivesBatch_Test</members>
 		<members>checkRecursive</members>
 		<members>DriveResourceAllocationBatch</members>
+		<members>DriveResourceAllocationBatchTest</members>
 		<members>GenerateMobileDrive</members>
 		<members>GenerateMobileDriveTest</members>
 		<members>MobileDriveGeneratorDMLService</members>
@@ -50,6 +51,7 @@
 		<members>sked__Job_Allocation__c.sked_Completed_Post_Processes__c</members>
 		<members>sked__Location__c.sked_Unloading_Directions_Details__c</members>
 		<members>sked_Drive__c.Max_Role_Capacity__c</members>		
+		<members>sked_Drive__c.Max_Role_Capacity_With_Draw_Hours__c</members>		
 		<name>CustomField</name>
 	</types>
 	<types>

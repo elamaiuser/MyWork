@@ -2,13 +2,15 @@
 <Package xmlns="http://soap.sforce.com/2006/04/metadata">
 	<types>
 		<members>GenerateMobileDrive</members>
+		<members>GenerateMobileDriveTest</members>
 		<members>MobileDriveGeneratorDMLService</members>
-		<members>BSF_UpdateDriveExcessStaffCapacityBatch</members>
 		<members>DriveResourceAllocationBatch</members>
+		<members>DriveResourceAllocationBatchTest</members>
 		<name>ApexClass</name>
 	</types>
 	<types>
 		<members>sked_Drive__c.Max_Role_Capacity__c</members>
+		<members>sked_Drive__c.Max_Role_Capacity_With_Draw_Hours__c</members>
 		<name>CustomField</name>
 	</types>
 	<types>
