@@ -4,8 +4,7 @@ import * as autoMapper from 'c/autoMapper';
 import { debugLogService, operationDriveLimitService, operationDriveLimitQueryModel, 
   staffingConstraintService, staffingConstraintQueryModel } from 'c/dataService';
 import { isNullOrEmpty, generateUUID } from 'c/slwcUtils';
-import { DateTime } from 'c/luxon';
-import { cloneDeep, difference, isEmpty, uniqueId, extend } from 'c/lodash';
+import { cloneDeep, difference, isEmpty, uniqueId, extend, orderBy } from 'c/lodash';
 import { Fetch } from './fetch';
 import { ACCOUNT_TYPE, ACCOUNT_INDUSTRY_CODE, PROCEDURE_TYPE, DRIVE_STATUS, ASSET_TYPE, PENDING_ACTION, DRIVE_APPROVAL_STATUS, RESOURCE_TYPE, DRIVE_TYPE, DRIVE_CONTENTION, JOB_ALLOCATION_STATUS } from 'c/slwcConstants';
 
@@ -1189,8 +1188,9 @@ class MobileGenerator extends BaseGenerator {
       driveShiftsMetadata.driveShifts.forEach((driveShift, driveShiftIndex) => {
         let resourceQuantityMap = this.mapResourceQuantity.get(driveShift.key);
         const staffingComplement = staffingComplementChanged[driveShiftIndex];
-        Object.keys(staffingComplement).forEach(resourceRole => {
-          const { quantity, systemQuantity, vphhQuantity, aptQuantity, dualRole, isManuallyCreated, manuallyCreatedFrom } = staffingComplement[resourceRole]; //preserve properties for manually created jobs
+        Object.keys(staffingComplement).forEach(jobKey => {
+          const { resourceRole } = this.helper.parseJobKey(jobKey);
+          const { quantity, systemQuantity, vphhQuantity, aptQuantity, dualRole, isManuallyCreated, manuallyCreatedFrom } = staffingComplement[jobKey]; //preserve properties for manually created jobs
           if(resourceRole === 'VP/HH') {
             resourceQuantityMap.set('VP/HH', {
               vphhQuantity: vphhQuantity,
@@ -1201,7 +1201,7 @@ class MobileGenerator extends BaseGenerator {
               manuallyCreatedFrom: manuallyCreatedFrom
             });
           } else {
-            resourceQuantityMap.set(resourceRole, {
+            resourceQuantityMap.set(jobKey, {
               quantity: quantity,
               systemQuantity: systemQuantity,
               dualRole: dualRole,
@@ -1260,7 +1260,7 @@ class MobileGenerator extends BaseGenerator {
 
       let tempResourceQuantityMap = cloneDeep(resourceQuantityMap);
       let tempManuallyCreatedQuantityMap = new Map();
-      let backupDualRoles = backupDualRolesMap[driveShiftIndex];
+      let backupDualRoles = orderBy(backupDualRolesMap[driveShiftIndex], [item => item.isManuallyCreated], ['asc']);
       backupDualRoles.forEach(item => {
         if(item.isManuallyCreated) return;
 
@@ -1279,21 +1279,44 @@ class MobileGenerator extends BaseGenerator {
           resourceRoleQuantityAfterRegenreted.dualRole = dualRole;
           resourceRoleQuantityAfterRegenreted.quantity = quantity;
           tempResourceQuantityMap.delete(dualRole); 
+          tempResourceQuantityMap.delete(resourceRole);
+          tempResourceQuantityMap.set(this.helper.generateJobKey({
+            dualRole,
+            resourceRole
+          }), cloneDeep(resourceRoleQuantityAfterRegenreted));
         }
       });
 
       backupDualRoles.forEach(item => {
         if(!item.isManuallyCreated) return;
 
-        const { resourceRole, quantity, vphhQuantity, aptQuantity, isManuallyCreated, manuallyCreatedFrom } = item;
-        tempManuallyCreatedQuantityMap.set(resourceRole, {
-          isManuallyCreated,
-          manuallyCreatedFrom,
-          resourceRole,
-          quantity,
-          vphhQuantity,
-          aptQuantity
-        })
+        const { resourceRole, dualRole, quantity, vphhQuantity, aptQuantity, isManuallyCreated, manuallyCreatedFrom } = item;
+        if(dualRole) {
+          tempResourceQuantityMap.delete(dualRole);
+          tempResourceQuantityMap.delete(resourceRole);
+          tempManuallyCreatedQuantityMap.set(this.helper.generateJobKey({
+            resourceRole,
+            dualRole
+          }), {
+            isManuallyCreated,
+            manuallyCreatedFrom,
+            resourceRole,
+            dualRole,
+            quantity,
+            vphhQuantity,
+            aptQuantity
+          })
+        } else {
+          tempManuallyCreatedQuantityMap.set(resourceRole, {
+            isManuallyCreated,
+            manuallyCreatedFrom,
+            resourceRole,
+            dualRole,
+            quantity,
+            vphhQuantity,
+            aptQuantity
+          })
+        }
       });
 
       tempResourceQuantityMap.forEach((item, resourceRole) => {
@@ -1561,20 +1584,21 @@ class MobileGenerator extends BaseGenerator {
             if(this.helper.isManuallyCreatedJob(job, this.drive)) {
               this.backupDualRolesMap[driveShiftIndex].push({
                 resourceRole: job.resourceRole,
+                dualRole: job.dualRole,
                 quantity: job.quantity,
                 vphhQuantity: job.vphhQuantity,
                 aptQuantity: job.aptQuantity,
                 isManuallyCreated: true,
                 manuallyCreatedFrom: job.manuallyCreatedFrom 
               })
-            }
-
-            if(job.resourceRole && job.dualRole) {
-              this.backupDualRolesMap[driveShiftIndex].push({
-                resourceRole: job.resourceRole,
-                dualRole: job.dualRole,
-                quantity: job.quantity
-              })
+            } else {
+              if(job.resourceRole && job.dualRole) {
+                this.backupDualRolesMap[driveShiftIndex].push({
+                  resourceRole: job.resourceRole,
+                  dualRole: job.dualRole,
+                  quantity: job.quantity
+                })
+              }
             }
           });
         });
@@ -1706,8 +1730,15 @@ class MobileGenerator extends BaseGenerator {
 
     let jobs = [];
     const mapResourceQuantity = this.mapResourceQuantity.get(driveShiftMetadata.key);
-    Array.from(mapResourceQuantity.keys()).forEach((resourceRole) => {
-      let job = (driveShift.jobs || []).find(driveShiftJob => driveShiftJob.resourceRole == resourceRole);
+    Array.from(mapResourceQuantity.keys()).forEach((jobKey) => {
+      const {
+        resourceRole,
+        dualRole
+      } = this.helper.parseJobKey(jobKey);
+      let job = (driveShift.jobs || []).find(driveShiftJob => this.helper.isJobsSameRoles(driveShiftJob, {
+        resourceROle,
+        dualRole
+      }));
       if (!job) {
         job = cloneDeep(jobTemplate);
         job.key = generateUUID();
@@ -1716,7 +1747,7 @@ class MobileGenerator extends BaseGenerator {
       job.resourceRole = resourceRole;
 
       if (resourceRole === 'VP/HH') {
-        let { vphhQuantity, aptQuantity, dualRole, systemQuantity, isManuallyCreated, manuallyCreatedFrom } = mapResourceQuantity.get(resourceRole);
+        let { vphhQuantity, aptQuantity, dualRole, systemQuantity, isManuallyCreated, manuallyCreatedFrom } = mapResourceQuantity.get(jobKey);
         if (vphhQuantity > 0 || aptQuantity > 0) {
           job.dualRole = dualRole || '';
           job.vphhQuantity = vphhQuantity;
@@ -1728,7 +1759,7 @@ class MobileGenerator extends BaseGenerator {
           jobs.push(job);
         }
       } else {
-        let { quantity, dualRole, systemQuantity, isManuallyCreated, manuallyCreatedFrom } = mapResourceQuantity.get(resourceRole);
+        let { quantity, dualRole, systemQuantity, isManuallyCreated, manuallyCreatedFrom } = mapResourceQuantity.get(jobKey);
         if (quantity > 0) {
           job.quantity = quantity;
           job.dualRole = dualRole || '';
