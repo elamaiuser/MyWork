@@ -976,12 +976,8 @@ class MobileGenerator extends BaseGenerator {
         }
       });
     }
-    console.log("#13864 updateDriveMaxRoleCapacity driveMaxStaffCapacity ",driveMaxStaffCapacity);
-    console.log("#13864 updateDriveMaxRoleCapacity driveMaxStaffCapacityWithDrawHours ",driveMaxStaffCapacityWithDrawHours);
     this.drive.maxRoleCapacity = driveMaxStaffCapacity.toFixed(2);
     this.drive.maxRoleCapacityWithDrawHours = driveMaxStaffCapacityWithDrawHours.toFixed(2);
-    console.log("#13864 updateDriveMaxRoleCapacity this.drive.maxRoleCapacity ",this.drive.maxRoleCapacity);
-    console.log("#13864 updateDriveMaxRoleCapacity this.drive.maxRoleCapacityWithDrawHours ",this.drive.maxRoleCapacityWithDrawHours);
   }
 
   updateDriveExcessStaffCapacity() {
