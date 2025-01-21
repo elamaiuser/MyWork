@@ -1,8 +1,6 @@
 global class BatchAccountsMilitaryMoAUploadedFiles implements Database.Batchable<sObject>, Database.Stateful {
     private static final Integer QUERY_LIMIT = 50000;
-    private List<String> taskDetails = new List<String>();
-    private Integer successCount = 0;
-    private Integer failureCount = 0;    
+    private List<String> taskDetails = new List<String>();        
 
     private ARCFileContentTypeMatrix__mdt arcFileSettings {
         get {
@@ -53,8 +51,7 @@ global class BatchAccountsMilitaryMoAUploadedFiles implements Database.Batchable
             }
             
         } catch(Exception e) {
-            taskDetails.add('Batch execution error: ' + e.getMessage());
-            failureCount++;
+            taskDetails.add('Batch execution error: ' + e.getMessage());            
         }
     }
     
@@ -118,41 +115,80 @@ global class BatchAccountsMilitaryMoAUploadedFiles implements Database.Batchable
     }
     
     private Task createTask(Account acc, ContentVersion version) {
+        Id taskOwnerId = determineTaskOwner(acc.Id, acc.Account_Manager__c);
         String baseUrl = System.URL.getOrgDomainUrl().toExternalForm();
         String fileUrl = baseUrl + '/lightning/r/ContentDocument/' + version.ContentDocumentId + '/view';
 
-        String description = String.format(taskSettings.Description__c, new List<String>{version.Title, version.FileType, String.valueOf(taskSettings.Creation_Date_Offset__c)})
+        String description = String.format(taskSettings.Description__c, new List<String>{version.Title, version.FileType})
                              + '\n\n' + 'View file here: ' + fileUrl;
+        if(taskOwnerId == null) {
+            taskOwnerId = UserInfo.getUserId();
+        }
+
         return new Task(
             WhatId = acc.Id,
-            OwnerId = acc.Account_Manager__c,
+            OwnerId = taskOwnerId,
             Subject = taskSettings.Task_Subject__c,
             Description = description,            
             Status = 'Not Started',
             ActivityDate = Date.today().addDays(taskSettings.Due_Date_Offset__c.intValue())
         );
     }
+
+    private Id determineTaskOwner(Id accountId, Id userId) {
+        Date today = Date.today();
+        List<AccountTeamMember> accountTeamMembers = [SELECT UserId, TeamMemberRole, Start_Date__c, End_Date__c, Is_Covering_Recruiter__c
+                                                      FROM AccountTeamMember 
+                                                      WHERE AccountId = :accountId
+                                                      AND Start_Date__c <= :today AND End_Date__c >= :today
+                                                      ORDER BY TeamMemberRole ASC, Is_Covering_Recruiter__c DESC
+                                                      ];
+        Map<String, List<AccountTeamMember>> roleToMembersMap = new Map<String, List<AccountTeamMember>>();
+
+        if(accountTeamMembers != null && !accountTeamMembers.isEmpty()) {
+            for(AccountTeamMember member : accountTeamMembers) {
+                if(!roleToMembersMap.containsKey(member.TeamMemberRole)) {
+                    roleToMembersMap.put(member.TeamMemberRole, new List<AccountTeamMember>());
+                }
+                roleToMembersMap.get(member.TeamMemberRole).add(member);
+            }
+        }
+
+        List<String> roleHierarchy = new List<String>{BSF_Constants.ACCOUNT_MANAGER, BSF_Constants.ACCOUNT_SPECIALIST, BSF_Constants.DISTRICT_MANAGER};
+
+        for(String role : roleHierarchy) {
+            List<AccountTeamMember> membersInRole = roleToMembersMap.get(role);
+            if(membersInRole != null && !membersInRole.isEmpty()) { 
+                for(AccountTeamMember member : membersInRole) {
+                    if(member.Is_Covering_Recruiter__c) {
+                        return member.UserId;
+                    }
+                }
+                return membersInRole[0].UserId;
+            }
+        }
+        return userId;        
+    }
     
     private void processResults(Database.SaveResult[] results, List<Task> tasks) {
         for(Integer i = 0; i < results.size(); i++) {
             if(results[i].isSuccess()) {
-                taskDetails.add('Task: ' + results[i].getId() + ' for Account: ' + tasks[i].WhatId);
-                successCount++;
+                taskDetails.add('Task: ' + results[i].getId() + ' for Account: ' + tasks[i].WhatId);                
             } else {
                 taskDetails.add('Failed to create task for Account: ' + tasks[i].WhatId + 
-                              ' Error: ' + results[i].getErrors()[0].getMessage());
-                failureCount++;
+                              ' Error: ' + results[i].getErrors()[0].getMessage());                
             }
         }
     }
     
     private void createDebugLog(Database.BatchableContext bc) {
-        BSF_Error_Log__c batchLog = new BSF_Error_Log__c(
+        if(taskDetails.size() > 0) {
+            BSF_Error_Log__c batchLog = new BSF_Error_Log__c(
             ApexClass__c = 'BatchAccountsMilitaryMoAUploadedFiles',
             Object_RecordId__c = bc.getJobId(),
-            Error_Description_Long__c = String.join(taskDetails, '\n'),
-            Error_Description__c = 'Total Record Counts : ' + successCount + failureCount            
-        );        
+            Error_Description_Long__c = String.join(taskDetails, '\n')            
+            );        
         insert batchLog;
+        }
     }
 }
