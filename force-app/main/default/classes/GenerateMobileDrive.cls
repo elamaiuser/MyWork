@@ -855,7 +855,7 @@ public with sharing class GenerateMobileDrive {
             Integer noOfShifts = Integer.valueOf(noOfDriveShifts);
             List<MobileDriveGeneratorDMLService.DMLJob> jobList = new List<MobileDriveGeneratorDMLService.DMLJob>();
             // HRP-11295 --> Ends Here
-
+            Decimal totalDrawHoursIncludingLunchBreak = 0;// HRP-13864
             for (MobileDriveGeneratorDMLService.DMLDriveShift driveShift :  driveShifts) {
                 DriveStaffingComplementModel staffingComplement = new DriveStaffingComplementModel();
                 staffingComplement.numberOfVehicles = suggestedVehicles.size() > 0 ? suggestedVehicles.size() : 1; //HRP-11749
@@ -891,34 +891,27 @@ public with sharing class GenerateMobileDrive {
                 drive.totalStaffRequested = drive.totalStaffRequested != NULL ? drive.totalStaffRequested + driveShift.staffSetup : driveShift.staffSetup; //HRP-10994
 
                 // HRP-13864 --> Starts Here
-			    driveShift.maxRoleCapacity = Math.floor(calculateMaxRoleCapacity (
+			    driveShift.maxRoleCapacity = calculateMaxRoleCapacity (
                     new List<String>{'Driver', 'Driver Support', '2RBC', 'VP/HH', 'Charge'},
                     staffingComplement,
                     drive, 
                     driveShift, 
                     matrix,
                     false
-                ));
+                );
                 if(drive.maxRoleCapacity == null){
                     drive.maxRoleCapacity = driveShift.maxRoleCapacity;
                 }
                 if(driveShift.maxRoleCapacity > drive.maxRoleCapacity){
                     drive.maxRoleCapacity = driveShift.maxRoleCapacity;
                 }
-                driveShift.maxRoleCapacityWithDrawHours = Math.floor(calculateMaxRoleCapacityWithDrawHours (
-                    new List<String>{'Driver', 'Driver Support', '2RBC', 'VP/HH', 'Charge'},
-                    staffingComplement,
-                    drive, 
-                    driveShift, 
-                    matrix,
-                    false
-                ));
-                if(drive.maxRoleCapacityWithDrawHours == null){
-                    drive.maxRoleCapacityWithDrawHours = driveShift.maxRoleCapacityWithDrawHours;
+                decimal shiftDrawHours = driveShift.drawHours;
+                if(driveShift.lunchBreak && !drive.collectionOperation.lunchBreakBeforeDrawHours)
+                {
+                    shiftDrawHours = driveShift.drawHourswithLunchBreak != null ? driveShift.drawHourswithLunchBreak : shiftDrawHours;
                 }
-                if(driveShift.maxRoleCapacityWithDrawHours > drive.maxRoleCapacityWithDrawHours){
-                    drive.maxRoleCapacityWithDrawHours = driveShift.maxRoleCapacityWithDrawHours;
-                }
+                totalDrawHoursIncludingLunchBreak = totalDrawHoursIncludingLunchBreak + shiftDrawHours;
+                driveShift.maxRoleCapacityWithDrawHours = driveShift.maxRoleCapacity * shiftDrawHours;
                 // HRP-13864 --> Ends Here
 
                 // HRP-10667 --> Starts here
@@ -935,6 +928,9 @@ public with sharing class GenerateMobileDrive {
                 driveShift = generateShiftSlots (data, drive, driveShift, shiftCount == noOfDriveShifts - 1 ? true : false, staffCapacityForWBSlotsCalc);
                 shiftCount++;
             }
+            drive.maxRoleCapacityWithDrawHours = drive.maxRoleCapacity * totalDrawHoursIncludingLunchBreak;// HRP-13864
+            drive.maxRoleCapacityWithDrawHours = drive.maxRoleCapacityWithDrawHours.setScale(2);// HRP-13864
+            drive.maxRoleCapacity = drive.maxRoleCapacity.setScale(2);// HRP-13864
             drive.driveShifts = driveShifts;
             drive = calculateAverageStaffCapacity(drive); //HRP-10994
             drive = calculateExcessStaffCapacity(drive); //HRP-10994
@@ -948,7 +944,7 @@ public with sharing class GenerateMobileDrive {
         }
         
         protected virtual MobileDriveGeneratorDMLService.DMLDrive calculateExcessStaffCapacity(MobileDriveGeneratorDMLService.DMLDrive drive) {
-            drive.excessStaffCapacity = ((drive.staffCapacity - drive.projectedRegisteredDonors) / drive.maxRoleCapacityWithDrawHours).setScale(1);
+            drive.excessStaffCapacity = ((drive.staffCapacity - drive.projectedRegisteredDonors) / drive.maxRoleCapacityWithDrawHours).setScale(1);// HRP-13864
             return drive;
         }
         // HRP-10994 --> Ends Here

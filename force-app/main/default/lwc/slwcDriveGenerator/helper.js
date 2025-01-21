@@ -1844,7 +1844,7 @@ class DriveHelper {
     });
 
     if(ignoreLunchBreak) {
-      //drawHours = drawHoursWithoutLunchBreak;
+      drawHours = drawHoursWithoutLunchBreak;
     }
     let maxStaffCapacity = 0;
     Array.from(resourceQuantity.keys()).forEach(resourceRole => {
