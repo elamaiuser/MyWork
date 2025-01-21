@@ -30,8 +30,32 @@ public class BatchAcctsMilitaryMoAUploadedFiles_Test {
             ContentDocumentId = cv.ContentDocumentId,
             ShareType = 'V'
         );
-        insert cdl;        
-    }
+        insert cdl;
+        
+        Profile p = [SELECT Id FROM Profile WHERE Name='Standard User'];
+    
+        User accountManager = new User(
+            ProfileId = p.Id,
+            LastName = 'Account Manager',
+            Email = 'test1@test.com',
+            Username = 'test1@test.com' + System.currentTimeMillis(),
+            Alias = 'test1',
+            EmailEncodingKey='UTF-8',
+            LanguageLocaleKey='en_US',
+            LocaleSidKey='en_US',
+            TimeZoneSidKey='America/Los_Angeles'
+        );
+        insert accountManager;
+
+        AccountTeamMember atm = new AccountTeamMember(
+        AccountId = acc.Id,
+        UserId = accountManager.Id,
+        TeamMemberRole = 'Account Manager',
+        Start_Date__c = Date.today().addDays(-10),
+        End_Date__c = Date.today().addDays(90)
+    );
+    insert atm;
+    }    
 
     @isTest
     static void testBatchWithOldFiles() {
@@ -45,11 +69,11 @@ public class BatchAcctsMilitaryMoAUploadedFiles_Test {
         Test.stopTest();
         
         // Verify task creation
-        List<Task> tasks = [SELECT Id, WhatId, Description FROM Task];
+        List<Task> tasks = [SELECT Id, WhatId, Description FROM Task WHERE Subject = 'Renew Military MoA'];
         System.assertEquals(1, tasks.size(), 'One task should be created');
         
         // Verify debug log creation
-        List<BSF_Error_Log__c> logs = [SELECT Id FROM BSF_Error_Log__c];
-        System.assertEquals(2, logs.size(), 'Two debug log should be created');        
+        List<BSF_Error_Log__c> logs = [SELECT Id FROM BSF_Error_Log__c WHERE ApexClass__c = 'BatchAccountsMilitaryMoAUploadedFiles'];
+        System.assertEquals(1, logs.size(), 'One debug log should be created');        
     }    
 }

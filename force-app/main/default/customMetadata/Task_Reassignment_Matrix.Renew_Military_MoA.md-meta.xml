@@ -16,11 +16,11 @@
     </values>
     <values>
         <field>Description__c</field>
-        <value xsi:type="xsd:string">Document &apos;{0}&apos; requires review as it has not been updated in over 335 days.</value>
+        <value xsi:type="xsd:string">Document {0}.{1} requires review as it will be expiring in 30 days.</value>
     </values>
     <values>
         <field>Due_Date_Offset__c</field>
-        <value xsi:type="xsd:double">2.0</value>
+        <value xsi:type="xsd:double">14.0</value>
     </values>
     <values>
         <field>Task_Subject__c</field>
