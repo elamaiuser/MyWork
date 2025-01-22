@@ -26,7 +26,7 @@ global class BatchAccountsMilitaryMoAUploadedFiles implements Database.Batchable
             accountsWithFiles.add(cdl.LinkedEntityId);
         }
         return Database.getQueryLocator([
-            SELECT Id, Name, Account_Manager__c 
+            SELECT Id, Name, Account_Manager__c, OwnerId 
             FROM Account 
             WHERE Id IN :accountsWithFiles
             LIMIT :QUERY_LIMIT
@@ -95,6 +95,7 @@ global class BatchAccountsMilitaryMoAUploadedFiles implements Database.Batchable
     
     private List<Task> generateTasks(List<Account> accounts, Map<Id, List<ContentDocumentLink>> accountToLinksMap, Map<Id, ContentVersion> latestVersionMap) {
         List<Task> tasksToCreate = new List<Task>();
+        Set<String> existingTaskKeys = getExistingTaskKeys();
         Date thresholdDate = Date.today().addDays(-taskSettings.Creation_Date_Offset__c.intValue());
         if(Test.isRunningTest()){
             thresholdDate = Date.today().addDays(5);                                           
@@ -104,8 +105,9 @@ global class BatchAccountsMilitaryMoAUploadedFiles implements Database.Batchable
             List<ContentDocumentLink> links = accountToLinksMap.get(acc.Id);
             if(links != null) {
                 for(ContentDocumentLink cdl : links) {
-                    ContentVersion latestVersion = latestVersionMap.get(cdl.ContentDocumentId);                    
-                    if(latestVersion != null && latestVersion.LastModifiedDate.date() < thresholdDate) {
+                    ContentVersion latestVersion = latestVersionMap.get(cdl.ContentDocumentId);  
+                    String taskKey = acc.Id + '-' + cdl.ContentDocumentId;                  
+                    if(latestVersion != null && latestVersion.LastModifiedDate.date() < thresholdDate && !existingTaskKeys.contains(taskKey)) {
                         tasksToCreate.add(createTask(acc, latestVersion));
                     }
                 }
@@ -113,17 +115,26 @@ global class BatchAccountsMilitaryMoAUploadedFiles implements Database.Batchable
         }
         return tasksToCreate;
     }
+
+    private Set<String> getExistingTaskKeys() {
+        Set<String> existingTaskKeys = new Set<String>();
+        for(Task t : [SELECT WhatId, CallObject 
+                      FROM Task 
+                      WHERE Subject = :taskSettings.Task_Subject__c                      
+                      AND CallObject != null]) {
+            existingTaskKeys.add(t.WhatId + '-' + t.CallObject);
+        }
+        return existingTaskKeys;
+    }
     
     private Task createTask(Account acc, ContentVersion version) {
-        Id taskOwnerId = determineTaskOwner(acc.Id, acc.Account_Manager__c);
+        Id newTaskOwnerId = acc.Account_Manager__c != null ? acc.Account_Manager__c : acc.OwnerId;
+        Id taskOwnerId = AccountTeamMemberHelper.determineTaskOwner(acc.Id, newTaskOwnerId);
         String baseUrl = System.URL.getOrgDomainUrl().toExternalForm();
         String fileUrl = baseUrl + '/lightning/r/ContentDocument/' + version.ContentDocumentId + '/view';
 
         String description = String.format(taskSettings.Description__c, new List<String>{version.Title, version.FileType})
-                             + '\n\n' + 'View file here: ' + fileUrl;
-        if(taskOwnerId == null) {
-            taskOwnerId = UserInfo.getUserId();
-        }
+                             + '\n\n' + 'View file here: ' + fileUrl;        
 
         return new Task(
             WhatId = acc.Id,
@@ -131,44 +142,10 @@ global class BatchAccountsMilitaryMoAUploadedFiles implements Database.Batchable
             Subject = taskSettings.Task_Subject__c,
             Description = description,            
             Status = 'Not Started',
-            ActivityDate = Date.today().addDays(taskSettings.Due_Date_Offset__c.intValue())
+            ActivityDate = Date.today().addDays(taskSettings.Due_Date_Offset__c.intValue()),
+            CallObject = version.ContentDocumentId
         );
-    }
-
-    private Id determineTaskOwner(Id accountId, Id userId) {
-        Date today = Date.today();
-        List<AccountTeamMember> accountTeamMembers = [SELECT UserId, TeamMemberRole, Start_Date__c, End_Date__c, Is_Covering_Recruiter__c
-                                                      FROM AccountTeamMember 
-                                                      WHERE AccountId = :accountId
-                                                      AND Start_Date__c <= :today AND End_Date__c >= :today
-                                                      ORDER BY TeamMemberRole ASC, Is_Covering_Recruiter__c DESC
-                                                      ];
-        Map<String, List<AccountTeamMember>> roleToMembersMap = new Map<String, List<AccountTeamMember>>();
-
-        if(accountTeamMembers != null && !accountTeamMembers.isEmpty()) {
-            for(AccountTeamMember member : accountTeamMembers) {
-                if(!roleToMembersMap.containsKey(member.TeamMemberRole)) {
-                    roleToMembersMap.put(member.TeamMemberRole, new List<AccountTeamMember>());
-                }
-                roleToMembersMap.get(member.TeamMemberRole).add(member);
-            }
-        }
-
-        List<String> roleHierarchy = new List<String>{BSF_Constants.ACCOUNT_MANAGER, BSF_Constants.ACCOUNT_SPECIALIST, BSF_Constants.DISTRICT_MANAGER};
-
-        for(String role : roleHierarchy) {
-            List<AccountTeamMember> membersInRole = roleToMembersMap.get(role);
-            if(membersInRole != null && !membersInRole.isEmpty()) { 
-                for(AccountTeamMember member : membersInRole) {
-                    if(member.Is_Covering_Recruiter__c) {
-                        return member.UserId;
-                    }
-                }
-                return membersInRole[0].UserId;
-            }
-        }
-        return userId;        
-    }
+    }    
     
     private void processResults(Database.SaveResult[] results, List<Task> tasks) {
         for(Integer i = 0; i < results.size(); i++) {
