@@ -12,6 +12,73 @@
 public  with sharing  class AccountTeamMemberHelper {
     public static Boolean firstRun = true;
     public static Boolean skipAccountTrigger = false;
+
+    public static void handleMilitaryMoATaskReassignment(List<AccountTeamMember> accntTeamMembers) {
+        Set<Id> accountIds = new Set<Id>();
+        for(AccountTeamMember atm : accntTeamMembers) {
+            accountIds.add(atm.AccountId);
+        }
+
+        Map<Id, Account> accountMap = new Map<Id, Account>([
+            SELECT Id, Account_Manager__c, OwnerId 
+            FROM Account 
+            WHERE Id IN :accountIds
+        ]);
+
+        List<Task> tasksToUpdate = [
+            SELECT Id, WhatId, OwnerId 
+            FROM Task 
+            WHERE WhatId IN :accountIds 
+            AND Subject = :Task_Reassignment_Matrix__mdt.getInstance('Renew_Military_MoA').Task_Subject__c            
+        ];
+
+        if(!tasksToUpdate.isEmpty()) {
+            for(Task t : tasksToUpdate) {
+                Account acc = accountMap.get(t.WhatId);
+                Id taskOwnerId = acc.Account_Manager__c != null ? acc.Account_Manager__c : acc.OwnerId;
+                Id newOwnerId = determineTaskOwner(t.WhatId, taskOwnerId);
+                if(newOwnerId != t.OwnerId && newOwnerId != null) {
+                    t.OwnerId = newOwnerId;
+                }
+            }
+            update tasksToUpdate;
+        }
+    }
+
+    public static Id determineTaskOwner(Id accountId, Id ownerId) {
+        Date today = Date.today();
+        List<AccountTeamMember> accountTeamMembers = [SELECT UserId, TeamMemberRole, Start_Date__c, End_Date__c, Is_Covering_Recruiter__c
+                                                      FROM AccountTeamMember 
+                                                      WHERE AccountId = :accountId
+                                                      AND Start_Date__c <= :today AND End_Date__c >= :today
+                                                      ORDER BY TeamMemberRole ASC, Is_Covering_Recruiter__c DESC
+                                                      ];
+        Map<String, List<AccountTeamMember>> roleToMembersMap = new Map<String, List<AccountTeamMember>>();
+
+        if(accountTeamMembers != null && !accountTeamMembers.isEmpty()) {
+            for(AccountTeamMember member : accountTeamMembers) {
+                if(!roleToMembersMap.containsKey(member.TeamMemberRole)) {
+                    roleToMembersMap.put(member.TeamMemberRole, new List<AccountTeamMember>());
+                }
+                roleToMembersMap.get(member.TeamMemberRole).add(member);
+            }
+        }
+
+        List<String> roleHierarchy = new List<String>{BSF_Constants.ACCOUNT_MANAGER, BSF_Constants.ACCOUNT_SPECIALIST, BSF_Constants.DISTRICT_MANAGER};
+
+        for(String role : roleHierarchy) {
+            List<AccountTeamMember> membersInRole = roleToMembersMap.get(role);
+            if(membersInRole != null && !membersInRole.isEmpty()) { 
+                for(AccountTeamMember member : membersInRole) {
+                    if(member.Is_Covering_Recruiter__c) {
+                        return member.UserId;
+                    }
+                }
+                return membersInRole[0].UserId;
+            }
+        }
+        return ownerId;        
+    }
     
     @InvocableMethod(label='Get Account Team Members' description='Get all the Account Team Members' category='AccountTeamMember')
     public static void getAccountTeamMembers(List<ID> ids) {
