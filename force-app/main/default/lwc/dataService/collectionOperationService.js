@@ -97,19 +97,19 @@ class collectionOperationService extends dataService {
     territoryQuery.startDate = startDate;
     territoryQuery.endDate = endDate;
     let territoryQueryStr = territorySvc.buildQuery(territoryQuery);
-    console.log('territoryQueryStr :: ',territoryQueryStr);
+
     let territoryCollectionOperationSvc = new territoryCollectionOperationService();
     let territoryCollectionOperationQuery = new territoryCollectionOperationQueryModel();
     territoryCollectionOperationQuery.startDate = startDate;
     territoryCollectionOperationQuery.endDate = endDate;
     let territoryCollectionOperationQueryStr = territoryCollectionOperationSvc.buildQuery(territoryCollectionOperationQuery);
-    console.log('territoryCollectionOperationQueryStr :: ',territoryCollectionOperationQueryStr);
+
     let request = [
         { 'key': 'collectionOperation', 'query': collectionOpQueryStr },
         { 'key': 'territory', 'query': territoryQueryStr },
         { 'key': 'territoryCollectionOperation', 'query': territoryCollectionOperationQueryStr },
     ];
-    console.log('request :: ',request);
+
     return this.queryDataByQueries(request).then((data) => {
       let collectionOperationData = data.find(element => element.key == 'collectionOperation');
       let collectionOperations = autoMapper.autoMapperInstance.mapToArray('Biomed_Collection_Op_Center__c', collectionOperationData.result);
@@ -136,6 +136,10 @@ class collectionOperationService extends dataService {
   getSkedRegionId(query) {
     return auraProxy.getInstance().getSkedRegionId(query);
   }
+
+  getSkedRegionIdUsingTaxonomy(query) {//HRP-13791 start
+    return auraProxy.getInstance().getSkedRegionIdUsingTaxonomy(query);
+  }//HRP-13791 end
 }
 
 class collectionOperationQueryModel extends queryModelBase { 
