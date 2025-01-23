@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
-        <help><!-- Number of drives annually * avg per drive --></help>
-        <label><!-- Total Planned Units --></label>
-        <name>Total_Planned_Units__c</name>
-    </CustomFieldTranslation>

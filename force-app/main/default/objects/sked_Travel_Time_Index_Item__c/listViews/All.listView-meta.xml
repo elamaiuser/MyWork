@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ListView xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>All</fullName>
+    <booleanFilter>1 AND 2 AND 3 AND 4 AND 5</booleanFilter>
     <columns>NAME</columns>
     <columns>sked_Key__c</columns>
     <columns>sked_From__Latitude__s</columns>
@@ -16,6 +17,26 @@
     <filters>
         <field>sked_Key__c</field>
         <operation>notEqual</operation>
+    </filters>
+    <filters>
+        <field>sked_From__Latitude__s</field>
+        <operation>equals</operation>
+        <value>46.617927</value>
+    </filters>
+    <filters>
+        <field>sked_From__Longitude__s</field>
+        <operation>equals</operation>
+        <value>-112.022006</value>
+    </filters>
+    <filters>
+        <field>sked_To__Latitude__s</field>
+        <operation>equals</operation>
+        <value>-112.0220062</value>
+    </filters>
+    <filters>
+        <field>sked_To__Longitude__s</field>
+        <operation>equals</operation>
+        <value>46.6179265</value>
     </filters>
     <label>All</label>
 </ListView>

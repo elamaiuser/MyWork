@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
-        <help><!-- Tag Weighting of Resource&apos;s Temporary Collection Operation (1 - 1000) --></help>
-        <label><!-- Temporary CO Tag Weighting --></label>
-        <name>sked_Temporary_CO_Tag_Weighting__c</name>
-    </CustomFieldTranslation>

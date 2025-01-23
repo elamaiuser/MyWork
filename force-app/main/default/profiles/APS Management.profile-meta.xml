@@ -51,6 +51,10 @@
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
+        <apexClass>BSF_TravelTimePanelController</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
         <apexClass>BSF_Utilities</apexClass>
         <enabled>true</enabled>
     </classAccesses>

@@ -26,5 +26,10 @@
         <operation>lessOrEqual</operation>
         <value>10/31/2024</value>
     </filters>
+    <filters>
+        <field>CB_Batch_Status__c</field>
+        <operation>equals</operation>
+        <value>Completed</value>
+    </filters>
     <label>CB Manual Run 10/1_10/31</label>
 </ListView>
