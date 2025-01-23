@@ -30,6 +30,7 @@ public static String rolename = 'West_BDM';
     @isTest static void testPortfolioGeneration1(){
         
         Test.startTest();
+        TriggerHandler.bypass('TaskTriggerHandler');
         
         /*BSFPortfolioHelper.processTaxonomyData(1000,BSF_Constants.BIO_RECRUITMENT_RECORD_TYPE);
         BSFPortfolioHelper.processTaxonomyData(1001,BSF_Constants.BIO_RECRUITMENT_RECORD_TYPE);
