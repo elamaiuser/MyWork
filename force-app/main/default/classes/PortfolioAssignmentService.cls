@@ -117,6 +117,7 @@ return false;
         if(BSF_Constants.skipPortfolioAssignmentTrigger){
             return;
         }
+        system.debug('opertation '+operation);
         BSF_Constants.skipPortfolioAssignmentTrigger = true;
         Set<Id> bsfPortRecordsId=new Set<Id>();
         Map<Id,Portfolio_Assignment__c> mapOfBsfandPortFolio = new Map<Id,Portfolio_Assignment__c>();
@@ -1245,6 +1246,11 @@ Database.DeleteResult[] deleteResults = Database.delete(listOfAcctTeamMembers,fa
                (pa.Start_Date__c > bsfMap.get(pa.BSF_Portfolio__c).end_date__c || pa.Start_Date__c < bsfMap.get(pa.BSF_Portfolio__c).Start_date__c ||
                 pa.End_Date__c < bsfMap.get(pa.BSF_Portfolio__c).Start_date__c || pa.End_Date__c > bsfMap.get(pa.BSF_Portfolio__c).End_date__c))
             {
+                system.debug('111pa.Assignment_Type__c '+pa.Assignment_Type__c);
+                system.debug('111pa.Start_Date__c '+pa.Start_Date__c);
+                system.debug('111pa.End_Date__c '+pa.End_Date__c);
+                system.debug('111bsfMap.get(pa.BSF_Portfolio__c).Start_date__c '+bsfMap.get(pa.BSF_Portfolio__c).Start_date__c);
+                system.debug('111bsfMap.get(pa.BSF_Portfolio__c).end_date__c '+bsfMap.get(pa.BSF_Portfolio__c).end_date__c);
                 pa.addError('Invalid Assignment-The Portfolio Assignment dates are out of related BSF Portfolio Dates');
             }
             //HRP-11290
