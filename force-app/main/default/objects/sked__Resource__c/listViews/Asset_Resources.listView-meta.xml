@@ -2,6 +2,7 @@
 <ListView xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>Asset_Resources</fullName>
     <columns>NAME</columns>
+    <columns>sked_Long_Desc__c</columns>
     <columns>sked_ARC_Region_Name__c</columns>
     <columns>sked_Biomed_Collection_Op_Center_Name__c</columns>
     <columns>sked__Resource_Type__c</columns>
@@ -22,11 +23,6 @@
         <field>sked__Is_Active__c</field>
         <operation>equals</operation>
         <value>1</value>
-    </filters>
-    <filters>
-        <field>sked_Biomed_Collection_Op_Center_Name__c</field>
-        <operation>equals</operation>
-        <value>Baltimore MD</value>
     </filters>
     <label>Vehicles</label>
 </ListView>
