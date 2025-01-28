@@ -22,6 +22,7 @@
  * 08/01/2024                 Priti Jana             Logic for HRP-10994
  * 01/15/2025				  Priti Jana			 Logic for HRP-12299
  * 01/15/2025				  Barnojit Sharma		 Logic for HRP-13864
+ * 01/27/2025                 Priti Jana             Logic for HRP-14065
  *****************************************************************************
 */
 public with sharing class MobileDriveGeneratorDMLService {
@@ -1424,8 +1425,10 @@ public with sharing class MobileDriveGeneratorDMLService {
             this.id = travelTimeIndex.Id;
             this.fromGeo = travelTimeIndex.sked_From__c;
             this.toGeo = travelTimeIndex.sked_To__c;
-            if (!string.isBlank(travelTimeIndex.sked_Travel_Time_Breakdown_JSON__c)) {
+            if (!string.isBlank(travelTimeIndex.sked_Travel_Time_Breakdown_JSON__c) && !travelTimeIndex.sked_Travel_Time_Breakdown_JSON__c.startsWithIgnoreCase('NO')) { //HRP-14065
                 this.travelTimeBreakdown = (List<DMLTravelTimeBreakdown>)JSON.deserialize(travelTimeIndex.sked_Travel_Time_Breakdown_JSON__c, List<DMLTravelTimeBreakdown>.class);
+            } else {
+                this.travelTimeBreakdown = new List<DMLTravelTimeBreakdown>(); //HRP-14065
             }
         }
     }
@@ -1446,12 +1449,14 @@ public with sharing class MobileDriveGeneratorDMLService {
             this.endDate = siteCollectionOperation.sked_End_Date__c;
             this.siteId = siteCollectionOperation.sked_Site__c;
             this.startDate = siteCollectionOperation.sked_Start_Date__c;
+
+            /* HRP-14065: JSON is no longer needed to be retrieved from Site CO. It will be retrieved from TTII 
             if (!string.isBlank(siteCollectionOperation.sked_Travel_Time_Breakdown_JSON__c)) {
                 this.travelTimeBreakdownsCoToSite = (List<DMLTravelTimeBreakdown>)JSON.deserialize(siteCollectionOperation.sked_Travel_Time_Breakdown_JSON__c, List<DMLTravelTimeBreakdown>.class);
             }
             if (!string.isBlank(siteCollectionOperation.sked_Travel_Time_Breakdown_JSON_2__c)) {
                 this.travelTimeBreakdownsSiteToCo = (List<DMLTravelTimeBreakdown>)JSON.deserialize(siteCollectionOperation.sked_Travel_Time_Breakdown_JSON_2__c, List<DMLTravelTimeBreakdown>.class);
-            }
+            }*/
         }
     }
     
