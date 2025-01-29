@@ -10,6 +10,7 @@
  * 06/22/2023                  Krapy Tuli                HRP-10212
  * 06/22/2023                  Krapy Tuli                HRP-10213
  * 09/03/2024				   Priti Jana				 Restrutured to remove redundant complexity and increase code coverage
+ * 01/23/2025				   Priti Jana				 Fixed errors for 2.1 Rel
  *****************************************************************************
 */
 
@@ -213,6 +214,7 @@ private class DriveResourceAllocationBatchTest {
         TriggerHandler.bypass('AccountTriggerHandler');
         TriggerHandler.bypass('OpportunityTriggerHandler');
         TriggerHandler.bypass('OpportunitySplitTriggerHandler');
+        TriggerHandler.bypass('DriveTriggerHandler');
         
         GenerateMobileDrive.generateDrives(config);
         
