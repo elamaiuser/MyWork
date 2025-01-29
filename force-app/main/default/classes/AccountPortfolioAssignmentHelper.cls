@@ -11,6 +11,7 @@
 * 11/09/2023				  Balaji N					 Logic for HRP-11290(Method Name: assignAccountToPortfolio;Supervisor Date check)
 * 02/13/2024                  Priti Jana                 Logic for HRP-12087
 * 08/01/2024				  Balaji N					 Logic for HRP-12485(Method:assignAccountToPortfolio,Accounts coverd by exception)
+* 11/26/2024                  Balaji N                   Logic for HRP-13866 Method:assignAccountToPortfolio System.Label.NO_SBPM_ABM in place of hard coded value
 *****************************************************************************
 */
 public with sharing class AccountPortfolioAssignmentHelper {
@@ -47,7 +48,7 @@ public with sharing class AccountPortfolioAssignmentHelper {
         for(Taxonomy__c taxoRecord:taxonomyRecords){
             zipCodes.add(taxoRecord.Zip_Code__c);
             zipTaxonomyMap.put(taxoRecord.Zip_Code__c,taxoRecord);
-            if(taxoRecord.ABM_Name__c != null && taxoRecord.ABM_Name__c != 'NA' && !taxoRecord.ABM_Name__c.containsIgnoreCase('No ABM')){
+            if(taxoRecord.ABM_Name__c != null && taxoRecord.ABM_Name__c != 'NA' && !taxoRecord.ABM_Name__c.containsIgnoreCase(System.Label.NO_SBPM_ABM)){//HRP-13866 System.Label.NO_SBPM_ABM in place of hard coded value
             	zipPortfolioKeyMap.put(taxoRecord.Zip_Code__c,taxoRecord.RecordType.Name+'_'+taxoRecord.Division_Code__c +'_'+taxoRecord.DS_Region_Code__c+'_'+taxoRecord.Team_Code__c+'_'+taxoRecord.ABM_Code__c+'_'+taxoRecord.DRD_Territory_Code__c);
             }else{
                 zipPortfolioKeyMap.put(taxoRecord.Zip_Code__c,taxoRecord.RecordType.Name+'_'+taxoRecord.Division_Code__c +'_'+taxoRecord.DS_Region_Code__c+'_'+taxoRecord.Team_Code__c+'_'+taxoRecord.DRD_Territory_Code__c);
@@ -146,7 +147,7 @@ public with sharing class AccountPortfolioAssignmentHelper {
             if(portfolio == null || taxoRecord == null || taxoRecord.Start_Date__c == null){
                 //log error in BSF_Error_Log__c , no portfolio for the account zipcode
             }else{
-                if(taxoRecord.ABM_Name__c != null && taxoRecord.ABM_Name__c != 'NA' && !taxoRecord.ABM_Name__c.containsIgnoreCase('No ABM')){
+                if(taxoRecord.ABM_Name__c != null && taxoRecord.ABM_Name__c != 'NA' && !taxoRecord.ABM_Name__c.containsIgnoreCase(System.Label.NO_SBPM_ABM)){//HRP-13866 System.Label.NO_SBPM_ABM in place of hard coded value
             		isABMAvaialable = true;
             	}
                 

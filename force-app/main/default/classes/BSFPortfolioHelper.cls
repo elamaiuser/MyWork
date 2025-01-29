@@ -4,7 +4,13 @@
 *  BSF Portfolio records for each new unique node in data taxonomy data and updates labels if there is any change.
 *  This does not delete the old portfolio(territory/AM) records if the portfolio is moved to  new team/DM, it creates new record with same attributes under new team/DM.
 */
-
+/* 
+* Modification Log 
+* Date					     Developer Name			     Comments
+* *******************************************************************************************************************************************************************************************************
+* 11/26/2024                  Balaji N                   Logic for HRP-13866 Method:createOrUpdatePortfolio System.Label.NO_SBPM_ABM in place of hard coded value
+*********************************************************************************************************************************************************************************************************
+*/
 public with sharing class BSFPortfolioHelper {
     
     /* HRP-1707 */
@@ -103,7 +109,7 @@ public with sharing class BSFPortfolioHelper {
             }
             
             if(taxoNodes.contains('ABM_Code__c')){
-                if(taxoRecord.ABM_Name__c != null && taxoRecord.ABM_Name__c != 'NA' && !taxoRecord.ABM_Name__c.containsIgnoreCase('No ABM')){
+                if(taxoRecord.ABM_Name__c != null && taxoRecord.ABM_Name__c != 'NA' && !taxoRecord.ABM_Name__c.containsIgnoreCase(System.Label.NO_SBPM_ABM)){//HRP-13866 System.Label.NO_SBPM_ABM in place of hard coded value
                     if(!externalKeySet.contains(keyValue+'_'+taxoRecord.ABM_Code__c)){
                         keyValue = createPortfolioRecord(taxoRecord,taxoRecord.ABM_Code__c,taxoRecord.ABM_Name__c,keyValue,keyValue,BSF_Constants.AREA_BOOKING_MANAGER,abmPortfolioMap,externalKeySet);
                     }else{
