@@ -8,6 +8,7 @@
  * 08/03/2023			Priti Jana				Logic for HRP-10307
  * 14/07/2024           Ankit Kundu             Publicity Material Ordering at template level(HRP-12664)
  * 10/25/2024			Balaji N				Logic for HRP-13489 calculateBudgetforProductsProjected error for Budget exceeding
+ * 01/21/2024			Krapy Tuli				Logic for HRP-14063 update logic to handle unexpacted addition of order items twice which triggered the trigger logic
  *****************************************************************************************************************************************************************************
 */
 
@@ -148,12 +149,13 @@ public with sharing class OrderItemTriggerService {
                                                                
                                                                //HRP-13489 Start
                                                                Map<Id,List<OrderItem>> orderIdOrderItemListMap = new Map<Id,List<OrderItem>>();
-                                                               
+                                                               Set<Id>beingEditedOrderItems = new Set<Id>();//HRP-14063
                                                                for( OrderItem oit : newOrderItems )
                                                                {				
                                                                    if(!orderIdOrderItemListMap.containsKey(oit.OrderId))
                                                                        orderIdOrderItemListMap.put(oit.OrderId, new List<OrderItem>());
                                                                        orderIdOrderItemListMap.get(oit.OrderId).add(oit);
+                                                                       beingEditedOrderItems.add(oit.Id);//HRP-14063
                                                                }
                                                                
                                                                Map<Id, Order> orderIdOrdermap = new Map<Id, Order>([ select Id, BudgetCurrency__c from Order where Id IN: orderIdOrderItemListMap.KeySet() ]);
@@ -165,7 +167,7 @@ orderIdOrdermap.put( ord.Id, ord );
 }
 }*/
                                                                
-                                                               List<OrderItem> oitemlist = [select Id, Quantity, UnitPrice,OrderId from OrderItem where orderid in:orderIdOrdermap.KeySet()];                                            
+                                                               List<OrderItem> oitemlist = [select Id, Quantity, UnitPrice,OrderId from OrderItem where orderid in:orderIdOrdermap.KeySet() AND Id NOT IN :beingEditedOrderItems];//HRP-14063
                                                                if( !oitemlist.isEmpty() ){
                                                                    for( OrderItem oitem : oitemlist )
                                                                    {        
