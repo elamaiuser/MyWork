@@ -54,7 +54,6 @@ public static String rolename = 'West_BDM';
         update portfolios[0];
         
         delete portfolios[0];
-        
         Test.stopTest();
     }
     
