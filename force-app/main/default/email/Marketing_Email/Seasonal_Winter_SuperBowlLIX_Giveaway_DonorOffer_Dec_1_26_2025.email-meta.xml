@@ -8,7 +8,7 @@
     <description>Email to promote January 1-26, 2025 Donor Offer</description>
     <encodingKey>ISO-8859-1</encodingKey>
     <letterhead>ARC_Logo_Test</letterhead>
-    <name>Seasonal_Winter_SuperBowlLIX_Giveaway_DonorOffer_Dec. 1-26, 2025</name>
+    <name>Seasonal_Winter_SuperBowlLIX_Giveaway_DonorOffer_Jan. 1-26, 2025</name>
     <style>formalLetter</style>
     <subject>Exciting Chance for Donors to Win BIG!</subject>
     <textOnly>Hello {!Contact.FirstName},

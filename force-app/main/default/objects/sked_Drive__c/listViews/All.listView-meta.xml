@@ -13,6 +13,7 @@
     <columns>CREATED_DATE</columns>
     <columns>sked_Type_of_Drive__c</columns>
     <columns>Site_Building_Name__c</columns>
+    <columns>sked_Zip_Code__c</columns>
     <filterScope>Everything</filterScope>
     <filters>
         <field>sked_Drive_Date__c</field>
