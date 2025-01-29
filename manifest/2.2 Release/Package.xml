@@ -50,6 +50,7 @@
 		<name>ApexTrigger</name>
 	</types>
 	<types>
+		<members>Account.Special_Partnership_Level__c</members>
 		<members>Assign_SF_Resources_to_User__mdt.Assignment_Type__c</members>
 		<members>Assign_SF_Resources_to_User__mdt.Role_Name__c</members>
 		<members>AssignResourcesToUserEvent__e.skipUserRoleUpdate__c</members>
@@ -95,7 +96,11 @@
 		<members>slwcDriveManagement</members>		
 		<name>LightningComponentBundle</name>
 	</types>
-	<types>		
+	<types>
+		<members>Account-DRD Fixed Site Layout</members>
+		<members>Account-DRD Mobile Account Layout</members>
+		<members>Account-System Admin Fixed Site Account Layout</members>
+		<members>Account-System Admin Mobile Account Layout</members>		
 		<members>sked__Resource__c-Staff Layout</members>		
 		<name>Layout</name>
 	</types>
