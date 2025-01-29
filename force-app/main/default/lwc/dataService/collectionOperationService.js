@@ -136,6 +136,10 @@ class collectionOperationService extends dataService {
   getSkedRegionId(query) {
     return auraProxy.getInstance().getSkedRegionId(query);
   }
+
+  getSkedRegionIdUsingTaxonomy(query) {//HRP-13791 start
+    return auraProxy.getInstance().getSkedRegionIdUsingTaxonomy(query);
+  }//HRP-13791 end
 }
 
 class collectionOperationQueryModel extends queryModelBase { 

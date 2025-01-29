@@ -22,6 +22,7 @@ public class skedPopulateTravelTimeForDrives implements Database.Batchable<sObje
 
             keys.add(coToSiteKey);
             keys.add(siteToCoKey);
+            system.debug('keys '+keys);
         }
         Map<String, sked_Travel_Time_Index_Item__c> ttiisByKey = skedTravelTimeIndexItemUtils.getTravelTimeIndexItemsByKey(keys);
 

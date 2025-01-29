@@ -1442,17 +1442,26 @@ class DriveHelper {
   }, {
     travelTimeIndexItemMap = {}
   }) {
+    console.log('getTravelTimeIndexData');
     let travelTimeCoToSiteIndex = null;
     let travelTimeSiteToCoIndex = null;
     const collectionOperationStagingLocation = (collectionOperation.collectionOpStagingLocations || []).find(item => (!item.startDate || item.startDate <= driveDate) && (!item.endDate || driveDate <= item.endDate));
     if(collectionOperationStagingLocation) {
+      console.log('driveSite ',driveSite.geoLocationLatitude,' and ',driveSite.geoLocationLongitude);
       const { geoLocationLatitude: driveSiteGeoLocationLatitude, geoLocationLongitude: driveSiteGeoLocationLongitude } = driveSite;
       const { geoLocationLatitude: stagingLocationGeoLocationLatitude, geoLocationLongitude: stagingLocationGeoLocationLongitude } = collectionOperationStagingLocation.stagingLocation;
+      console.log('driveSiteGeoLocationLatitude ',driveSiteGeoLocationLatitude,' and driveSiteGeoLocationLongitude ',driveSiteGeoLocationLongitude);
+      console.log('stagingLocationGeoLocationLatitude ',stagingLocationGeoLocationLatitude,' and stagingLocationGeoLocationLongitude ',stagingLocationGeoLocationLongitude);
       const siteToCOKey = getTravelTimeIndexKey(driveSiteGeoLocationLatitude, driveSiteGeoLocationLongitude, stagingLocationGeoLocationLatitude, stagingLocationGeoLocationLongitude);
       const coToSiteKey = getTravelTimeIndexKey(stagingLocationGeoLocationLatitude, stagingLocationGeoLocationLongitude, driveSiteGeoLocationLatitude, driveSiteGeoLocationLongitude);
 
+      console.log('siteToCOKey ',siteToCOKey);
+      console.log('coToSiteKey ',coToSiteKey);
+      //console.log('travelTimeIndexItemMap ',JSON.stringify(travelTimeIndexItemMap));
       const siteToCOTravelTimeIndex = travelTimeIndexItemMap[siteToCOKey];
       const coToSiteTravelTimeIndex = travelTimeIndexItemMap[coToSiteKey];
+      console.log('siteToCOTravelTimeIndex ',siteToCOTravelTimeIndex);
+      console.log('coToSiteTravelTimeIndex ',coToSiteTravelTimeIndex);
 
       if(siteToCOTravelTimeIndex) {
         travelTimeSiteToCoIndex = siteToCOTravelTimeIndex;
