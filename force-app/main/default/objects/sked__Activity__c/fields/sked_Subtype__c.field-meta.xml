@@ -12,6 +12,11 @@
         <valueSetDefinition>
             <sorted>false</sorted>
             <value>
+                <fullName>Culture Initiative</fullName>
+                <default>false</default>
+                <label>Culture Initiative</label>
+            </value>
+            <value>
                 <fullName>In-Service</fullName>
                 <default>false</default>
                 <label>In-Service</label>
@@ -350,6 +355,10 @@
         <valueSettings>
             <controllingFieldValue>Overnight</controllingFieldValue>
             <valueName>Overnight</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Administrative</controllingFieldValue>
+            <valueName>Culture Initiative</valueName>
         </valueSettings>
         <valueSettings>
             <controllingFieldValue>Administrative</controllingFieldValue>

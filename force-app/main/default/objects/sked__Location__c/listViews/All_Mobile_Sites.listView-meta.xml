@@ -20,5 +20,10 @@
         <operation>equals</operation>
         <value>1</value>
     </filters>
+    <filters>
+        <field>sked_Collection_Operation__c</field>
+        <operation>contains</operation>
+        <value>Los</value>
+    </filters>
     <label>All Mobile Sites</label>
 </ListView>
