@@ -116,6 +116,7 @@ public class BSF_Constants {
      public static final String OPP_SOURCE_PLAN_A_DRIVE = 'Plan a Drive';
      public static final String OPP_SOURCE_ADHOC = 'Adhoc';
      public static final String OPP_SOURCE_BUSINESS_PLANNING = 'Business Planning';
+     public static final String OPP_SOURCE_ADHOC_CALENDAR_BUILD = 'Adhoc Calendar Build'; //HRP-11368
 
 
     // Opportunity Contact Roles

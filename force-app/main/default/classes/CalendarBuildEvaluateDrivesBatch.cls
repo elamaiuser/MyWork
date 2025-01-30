@@ -18,6 +18,7 @@
  * 02/05/24		        Priti Jana		       Added Type,DriveStatus__c fields in the initial query (HRP-11814)
  * 06/07/24             Priti Jana             Added Slot_Generator__c field in the initial query (HRP-12011)
  * 08/06/24             Priti Jana             Logic for HRP-12706 (Restructured)
+ * 01/29/25             Priti Jana             Logic for HRP-11368
  ************************************************************************************************************************************/
 
  global class CalendarBuildEvaluateDrivesBatch implements Database.Batchable<Opportunity>, Database.Stateful, Schedulable {
@@ -28,7 +29,69 @@
     private DriveGenerationUtil.CalendarBuildLogWrapper cbLogWrapper;
     private String runType = '';
     private Date driveDateToEval;
+    private String opportunitySource;
+    private String bookingStrategy;
     private Boolean byPassDriveGeneration = false; 
+
+    /* @Reference : 
+     		* CreatedBy : Priti Jana
+			* CreatedDate : 1/29/2025
+			* CreatedFor : HRP-11368
+    * @Description : 
+     		* This constructor will be used for running Adhoc CB Batch by Sys Admin/ Global Admin/ Specific Users
+            * It can be used for both the type of drives
+    *  @Parameters : 
+            * CalendarBuildBatchOnDemandController.AdhocCalendarBuildInput : User inputs containing booking strategy, list of opps and Source as Adhoc Calendar Build
+    *   @Error Handling : 
+            * Log the issue in BSF Error Log
+            * Send error notification to BSF Support Team
+            * Log the same issue in CB Error log with Parent CB Log record where CB Batch Status = Error
+	*/
+
+    public CalendarBuildEvaluateDrivesBatch(CalendarBuildBatchOnDemandController.AdhocCalendarBuildInput input) {
+        try {
+            this.runType = BSF_Constants.RUN_TYPE_MANUAL;
+            this.bookingStrategy = input.bookingStrategy;
+            this.opportunitySource = input.opportunitySource; //Adhoc Calendar Build
+            cbLogWrapper = new DriveGenerationUtil.CalendarBuildLogWrapper(NULL, BSF_Constants.BATCH_CALENDAR_BUILD, this.runType);
+            cbLogWrapper.opportunitySource = this.opportunitySource;
+            Map<Id, Opportunity> map_eligibleOppsId_oppDetails = new Map<Id, Opportunity>(input.selectedOpportunities);
+            List<Opportunity> lstOppsWithParentCB = new List<Opportunity>([SELECT Id, Calendar_Build_Parent_Opportunity__c 
+                                                                            FROM Opportunity 
+                                                                            WHERE Calendar_Build_Parent_Opportunity__c IN :map_eligibleOppsId_oppDetails.keySet()
+                                                                            AND StageName NOT IN (:BSF_Constants.STAGE_CANCELLED)
+                                                                        ]);
+            Set<Id> parentCbIds = new Set<Id>();
+            if(lstOppsWithParentCB != null && lstOppsWithParentCB.size() > 0) {
+                for(Opportunity oppWithParentCB : lstOppsWithParentCB) {
+                    parentCbIds.add(oppWithParentCB.Calendar_Build_Parent_Opportunity__c);
+                }
+            }
+
+            cbLogWrapper.eligibleOpportunityForCbList = new List<Opportunity>();
+            cbLogWrapper.map_driveType_eligibleOppList = new Map<String, List<Opportunity>>();
+            for(Opportunity opp : map_eligibleOppsId_oppDetails.values()) {
+                if(!parentCbIds.contains(opp.Id)) { 
+                    cbLogWrapper.eligibleOpportunityForCbList.add(opp);
+                    if(!cbLogWrapper.map_driveType_eligibleOppList.containsKey(opp.Type_of_Drive__c)) {
+                        cbLogWrapper.map_driveType_eligibleOppList.put(opp.Type_of_Drive__c, new List<Opportunity>());
+                    }
+                    cbLogWrapper.map_driveType_eligibleOppList.get(opp.Type_of_Drive__c).add(opp);
+                }
+            }
+        } catch(Exception ex) {
+            sendErrorNotification(new Map<Exception, String>{ex => ''}, new Map<Id, String>());
+            cbLogWrapper = new DriveGenerationUtil.CalendarBuildLogWrapper(
+                NULL, 
+                BSF_Constants.BATCH_CALENDAR_BUILD, 
+                BSF_Constants.RUN_TYPE_MANUAL
+            );
+            cbLogWrapper.apexMethodName = 'Constructor Call for Manual Adhoc CB Run';
+            cbLogWrapper.opportunitySource = input.opportunitySource;
+            cbLogWrapper.eligibleOpportunityForCbList = new List<Opportunity>();
+            DriveGenerationUtil.captureErrorLoggingForException(ex, cbLogWrapper);    
+        }
+    }
 
     /* @Reference : 
      		* CreatedBy : Priti Jana
@@ -49,7 +112,9 @@
         try {
             this.driveDateToEval = manualRunDate;
             this.runType = BSF_Constants.RUN_TYPE_MANUAL;
+            this.opportunitySource = BSF_Constants.OPP_SOURCE_CALENDAR_BUILD;
             cbLogWrapper = new DriveGenerationUtil.CalendarBuildLogWrapper(manualRunDate, BSF_Constants.BATCH_CALENDAR_BUILD, this.runType);
+            cbLogWrapper.opportunitySource = this.opportunitySource;
             cbLogWrapper = CalendarBuildBatchHandler.getEligibleOppsToRunCb(cbLogWrapper);
         } catch(Exception ex) {
             sendErrorNotification(new Map<Exception, String>{ex => ''}, new Map<Id, String>());
@@ -59,8 +124,9 @@
                 BSF_Constants.RUN_TYPE_MANUAL
             );
             cbLogWrapper.apexMethodName = 'Constructor Call for Manual Run';
+            cbLogWrapper.opportunitySource = BSF_Constants.OPP_SOURCE_CALENDAR_BUILD;
             cbLogWrapper.eligibleOpportunityForCbList = new List<Opportunity>();
-            DriveGenerationUtil.captureErrorLoggingForException(BSF_Constants.BATCH_CALENDAR_BUILD, ex, cbLogWrapper);    
+            DriveGenerationUtil.captureErrorLoggingForException(ex, cbLogWrapper);    
         }
     }
 
@@ -85,12 +151,14 @@
             Decimal daysAfterDriveCompletion = cbMetadata?.No_of_Days_for_Calendar_Build_Batch__c;
             this.byPassDriveGeneration = cbMetadata?.Bypass_Auto_Drive_Generation__c;
             this.runType = BSF_Constants.RUN_TYPE_SCHEDULED;
+            this.opportunitySource = BSF_Constants.OPP_SOURCE_CALENDAR_BUILD;
             if(daysAfterDriveCompletion != null) {
                 this.driveDateToEval = BSF_Constants.CURRENT_DATE.addDays(-daysAfterDriveCompletion.intValue()); 
             } else {
                 this.driveDateToEval = BSF_Constants.CURRENT_DATE.addDays(-21); 
             }
             cbLogWrapper = new DriveGenerationUtil.CalendarBuildLogWrapper(this.driveDateToEval, BSF_Constants.BATCH_CALENDAR_BUILD, this.runType);
+            cbLogWrapper.opportunitySource = this.opportunitySource;
             cbLogWrapper = CalendarBuildBatchHandler.getEligibleOppsToRunCb(cbLogWrapper);
         } catch(Exception ex) {
             sendErrorNotification(new Map<Exception, String>{ex => ''}, new Map<Id, String>());
@@ -100,8 +168,9 @@
                 BSF_Constants.RUN_TYPE_SCHEDULED
             );
             cbLogWrapper.apexMethodName = 'Constructor Call for Scheduled Run';
+            cbLogWrapper.opportunitySource = BSF_Constants.OPP_SOURCE_CALENDAR_BUILD;
             cbLogWrapper.eligibleOpportunityForCbList = new List<Opportunity>();
-            DriveGenerationUtil.captureErrorLoggingForException(BSF_Constants.BATCH_CALENDAR_BUILD, ex, cbLogWrapper);           
+            DriveGenerationUtil.captureErrorLoggingForException(ex, cbLogWrapper);           
         }
     }
 
@@ -116,6 +185,10 @@
         List<BSF_Error_Log__c> bsfErrorLogToInsertList = new List<BSF_Error_Log__c>();
 
         try {
+            for(Opportunity opp : eligibleOppList) {
+                opp.Booking_Strategy__c = this.bookingStrategy;
+                opp.Source__c = this.opportunitySource;
+            }
             List<Opportunity> lstOpps = CalendarBuildBatchHandler.cloneDrives(eligibleOppList);
             lstCBOpps.add(lstOpps[0].Calendar_Build_Parent_Opportunity__c);
             if(lstOpps != NULL && lstOpps.size() > 0 ) {
@@ -191,18 +264,20 @@
                     cbLogWrapper.errorLogIdsCreatedDuringBatchRun = errorLogIdsCreatedDuringBatchRun != NULL ? errorLogIdsCreatedDuringBatchRun : new Set<Id>();
                     DriveGenerationUtil.captureCbLogAndCbErrorLog(cbLogWrapper);
                 }
-                DateTime dt = Helper.getSameDayOfNextYear(cbLogWrapper.driveDateToEval);
-                driveDateToEval = Date.newInstance(dT.year(), dT.month(), dT.day());
+                if(cbLogWrapper.opportunitySource.equalsIgnoreCase(BSF_Constants.OPP_SOURCE_CALENDAR_BUILD)) {
+                    DateTime dt = Helper.getSameDayOfNextYear(cbLogWrapper.driveDateToEval);
+                    driveDateToEval = Date.newInstance(dT.year(), dT.month(), dT.day());
+                }
                 
                 if(!this.byPassDriveGeneration) {
                     List<Opportunity> oppListToGenerateDrivesFor = CalendarBuildBatchHandler.getEligibleDrivesToRunCb(
-                        BSF_Constants.BATCH_CALENDAR_BUILD, 
+                        opportunitySource, 
                         driveDateToEval, 
                         lstCBOpps
                     );
                     CreateSkedDrivesBatch driveGenBatchInstance = new CreateSkedDrivesBatch(
                         cbLogWrapper.runType, 
-                        BSF_Constants.BATCH_CALENDAR_BUILD,
+                        opportunitySource,
                         driveDateToEval, 
                         oppListToGenerateDrivesFor
                     );
@@ -217,7 +292,8 @@
                 this.runType
             );
             cbLogWrapper.apexMethodName = 'Finish Method Call';
-            DriveGenerationUtil.captureErrorLoggingForException(BSF_Constants.BATCH_CALENDAR_BUILD, ex, cbLogWrapper);  
+            cbLogWrapper.opportunitySource = this.opportunitySource;
+            DriveGenerationUtil.captureErrorLoggingForException(ex, cbLogWrapper);  
         }
         //HRP-12706 --> Ends Here
     }
