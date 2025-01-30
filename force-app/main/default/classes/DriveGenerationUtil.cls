@@ -148,7 +148,7 @@ public class DriveGenerationUtil {
                 //HRP-11368: When FS Sys gen completes, set Mobile sys gen status as Not Needed for Adhoc CB
                 if(cbLogWrapper.batchInfo.equalsIgnoreCase(BSF_Constants.BATCH_SYS_GEN_FS) && cbLogWrapper.opportunitySource.equalsIgnoreCase(BSF_Constants.OPP_SOURCE_ADHOC_CALENDAR_BUILD)) {
                     fieldsToUpdate.addAll(BSF_Constants.MAP_BATCHINFO_FIELDSTOUPDATE.get(BSF_Constants.BATCH_SYS_GEN_MOBILE));
-                    event.put(fieldsToUpdate[2], BSF_Constants.BATCH_STATUS_NOT_NNEDED);
+                    event.put(fieldsToUpdate[2], BSF_Constants.BATCH_STATUS_NOT_NEEDED);
                     event.put(fieldsToUpdate[3], BSF_Constants.CURRENT_DATE_TIME);
                 }
             }

@@ -303,6 +303,7 @@ public class BSF_Constants {
     public static final String BATCH_STATUS_COMPLETED = 'Completed';
     public static final String BATCH_STATUS_PENDING = 'Pending';
     public static final String BATCH_STATUS_ERROR = 'Error';
+    public static final String BATCH_STATUS_NOT_NEEDED = 'Not Needed'; //HRP-11368
 
     //CB Batches
     public static final String BATCH_CALENDAR_BUILD = 'Calendar Build';
