@@ -17,7 +17,14 @@
 		<members>DriveResourceAllocationBatchTest</members>
 		<name>ApexClass</name>
 	</types>
+	<types>
+		<members>AdhocCalendarBuildRunEvent</members>
+		<name>ApexTrigger</name>
+	</types>
     <types>
+		<members>Adhoc_Calendar_Build_Run__e.Booking_Strategy__c</members>
+		<members>Adhoc_Calendar_Build_Run__e.Opportunity_Ids__c</members>
+		<members>Adhoc_Calendar_Build_Run__e.Opportunity_Source__c</members>
 		<members>Calendar_Build_Log_Manual_Run__c.Source__c</members>
         <members>Opportunity.Booking_Strategy__c</members>
         <members>Opportunity.Source__c</members>
@@ -31,6 +38,7 @@
 		<name>CustomMetadata</name>
 	</types>
 	<types>
+		<members>Adhoc_Calendar_Build_Run__e</members>
 		<members>Profile_Specific_Functionality_Access__mdt</members>
 		<name>CustomObject</name>
 	</types>
