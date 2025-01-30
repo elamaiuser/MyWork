@@ -338,7 +338,7 @@
         <allowPause>false</allowPause>
         <fields>
             <name>NoOppsSelectedText</name>
-            <fieldText>&lt;p&gt;&lt;strong style=&quot;color: rgb(247, 0, 0); font-size: 14px;&quot;&gt;You have not selected any opportunities for this process. Please selected at least one opportunity and run this process again!&lt;/strong&gt;&lt;/p&gt;</fieldText>
+            <fieldText>&lt;p&gt;&lt;strong style=&quot;color: rgb(247, 0, 0); font-size: 16px;&quot;&gt;You have not selected any opportunities for this process. Please select at least one opportunity and run this process again!&lt;/strong&gt;&lt;/p&gt;</fieldText>
             <fieldType>DisplayText</fieldType>
         </fields>
         <showFooter>true</showFooter>
