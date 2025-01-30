@@ -116,13 +116,11 @@ global class skedDriveRankingBatch implements Database.Batchable<sked_Drive__c>,
                 Database.executeBatch(new skedDriveRankingBatch(inputKeySet), 1);
             }
         }
-        if(skedFixedSiteDrives != null) {
-        	Database.executeBatch(new DriveResourceAllocationBatch(runType, 
-                                                                   driveSource, 
-                                                                   skedConstants.DRIVE_TYPE_FIXED_SITE,
-                                                                   this.driveDate,  
-                                                                   driveSource.equalsIgnoreCase('Calendar Build') ? new Set<Id>() : skedFixedSiteDrives), 1);
-        }
+        Database.executeBatch(new DriveResourceAllocationBatch(runType, 
+                                                                driveSource, 
+                                                                skedConstants.DRIVE_TYPE_FIXED_SITE,
+                                                                this.driveDate,  
+                                                                driveSource.equalsIgnoreCase('Calendar Build') ? new Set<Id>() : skedFixedSiteDrives), 1); 
     }
     
     /*********************************************************** Nested Classes ***********************************************************/
