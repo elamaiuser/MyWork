@@ -10,6 +10,7 @@
 		<members>CalendarBuildEvaluateDrivesBatch</members>
 		<members>CalendarBuildEvaluateDrivesBatch_Test</members>
 		<members>CreateSkedDrivesBatch</members>
+		<members>skedDriveRankingBatch</members>
 		<members>DriveGenerationUtil</members>
 		<members>DriveGenerationUtilTest</members>
 		<members>DriveResourceAllocationBatch</members>
