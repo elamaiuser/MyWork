@@ -74,7 +74,8 @@
         for(Opportunity origOpp : lstOpportunities) {
             //Clone the opportunity and update some fields; by default preserveId is false i.e the ID is cleared for the new record.  isDeepClone is set to true
             Opportunity clonedOpp = origOpp.clone(false, true);
-            clonedOpp.source__c = BSF_Constants.BATCH_CALENDAR_BUILD;
+            clonedOpp.source__c = origOpp.Source__c;
+            clonedOpp.Booking_Strategy__c = origOpp.Booking_Strategy__c;
             clonedOpp.Calendar_Build_Parent_Opportunity__c = origOpp.id;
             DateTime dT = Helper.getSameDayOfNextYear(origOpp.drive_date__c);
             clonedOpp.drive_date__c = Date.newInstance(dT.year(), dT.month(), dT.day());
@@ -280,7 +281,10 @@
         if(parentCbIds != NULL && !parentCbIds.isEmpty()) {
             queryString += 'Calendar_Build_Parent_Opportunity__c IN :parentCbIds AND ';
         }
-        queryString += 'Drive_Date__c = :driveDateToEval AND Related_Scheduled_Drive__c = NULL';
+        if(source != NULL && !String.isBlank(source) && source.equalsIgnoreCase(BSF_Constants.OPP_SOURCE_CALENDAR_BUILD)) { // No need of this check for Adhoc CB
+            queryString += 'Drive_Date__c = :driveDateToEval AND ';
+        }
+        queryString += 'Related_Scheduled_Drive__c = NULL';
         List<Opportunity> eligibleOpps = Database.query(queryString);
         return eligibleOpps;
     }

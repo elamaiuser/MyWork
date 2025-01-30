@@ -5,6 +5,7 @@
  * 05/11/2023				  Krapy Tuli			 Logic for HRP-10009
  * 10/5/2023                  Priti Jana             Logic for HRP-11027
  * 08/09/2024				  Raktim Ghosal			 Logic for HRP-12706
+ * 01/31/2025                 Priti Jana             Logic for HRP-11368 
  *****************************************************************************
 */
 global class CreateSkedDrivesBatch implements Database.Batchable<sObject>, Database.Stateful {
@@ -26,7 +27,7 @@ global class CreateSkedDrivesBatch implements Database.Batchable<sObject>, Datab
             * This constructor is called from CB Batch
     *  @Parameters : 
             * runType: Scheduled/Manual
-            * Source : Calendar Build / Adhoc / Business Planning / NULL
+            * Source : Calendar Build / Adhoc / Business Planning / Adhoc Calendar Build / NULL
             * driveDateToEval : Drive Date For newly created CB Drives
             * incomingOpportunities : List of Opportunities for Scheduled and manual run with a specific drive date
     *   @Error Handling : 
@@ -43,24 +44,30 @@ global class CreateSkedDrivesBatch implements Database.Batchable<sObject>, Datab
             cbLogWrapper.eligibleOpportunityForDriveGenList = (incomingOpportunities != NULL && incomingOpportunities.size() > 0) ?
                     											incomingOpportunities :
             													CalendarBuildBatchHandler.getEligibleDrivesToRunCb(this.driveSource, this.driveDateToEval, NULL);
-            if(this.driveSource != NULL && !String.isBlank(this.driveSource) && this.driveSource.equalsIgnoreCase(BSF_Constants.BATCH_CALENDAR_BUILD)) {
-                if(this.driveDateToEval == NULL) {
-                    this.driveDateToEval = cbLogWrapper.eligibleOpportunityForDriveGenList[0].Drive_Date__c;
-                }
-                DateTime dt = Helper.getSameDayOfPrevYear(this.driveDateToEval);
-                cbLogWrapper.driveDateToEval = Date.newInstance(dT.year(), dT.month(), dT.day());
-            }
+            if(this.driveSource != NULL && !String.isBlank(this.driveSource)) {
+                cbLogWrapper.opportunitySource = this.driveSource;
+                if(this.driveSource.equalsIgnoreCase(BSF_Constants.OPP_SOURCE_CALENDAR_BUILD)) {
+                    if(this.driveDateToEval == NULL) {
+                        this.driveDateToEval = cbLogWrapper.eligibleOpportunityForDriveGenList[0].Drive_Date__c;
+                    }
+                    DateTime dt = Helper.getSameDayOfPrevYear(this.driveDateToEval);
+                    cbLogWrapper.driveDateToEval = Date.newInstance(dT.year(), dT.month(), dT.day());
+                } 
+            } 
     	} catch(Exception ex) {
-            DateTime dt = Helper.getSameDayOfPrevYear(driveDateToEval);
-            this.driveDateToEval = Date.newInstance(dT.year(), dT.month(), dT.day());
+            if(source != NULL && !String.isBlank(source) && source.equalsIgnoreCase(BSF_Constants.OPP_SOURCE_CALENDAR_BUILD)) { //No need for Adhoc CB drives
+                DateTime dt = Helper.getSameDayOfPrevYear(driveDateToEval);
+                this.driveDateToEval = Date.newInstance(dT.year(), dT.month(), dT.day());
+            }
             cbLogWrapper = new DriveGenerationUtil.CalendarBuildLogWrapper(
                 this.driveDateToEval, 
                 BSF_Constants.BATCH_DRIVE_GENERATION, 
                 runType
             );
             cbLogWrapper.apexMethodName = 'Constructor Call for Scheduled Run';
+            cbLogWrapper.opportunitySource = source;
             cbLogWrapper.eligibleOpportunityForDriveGenList = new List<Opportunity>();
-            DriveGenerationUtil.captureErrorLoggingForException(BSF_Constants.BATCH_DRIVE_GENERATION, ex, cbLogWrapper);    
+            DriveGenerationUtil.captureErrorLoggingForException(ex, cbLogWrapper);    
         }
     }
 
@@ -178,7 +185,9 @@ global class CreateSkedDrivesBatch implements Database.Batchable<sObject>, Datab
             }
         
             //HRP-12706 --> Continues (Capturing the necessary info of the fields to log in the Calendar build Log Object)
-            if(!String.isBlank(this.driveSource) && this.driveSource.equalsIgnoreCase(BSF_Constants.BATCH_CALENDAR_BUILD)) {
+            if(!String.isBlank(this.driveSource) 
+                && (this.driveSource.equalsIgnoreCase(BSF_Constants.OPP_SOURCE_CALENDAR_BUILD) || this.driveSource.equalsIgnoreCase(BSF_Constants.OPP_SOURCE_ADHOC_CALENDAR_BUILD))
+             ) {
                 cbLogWrapper.fsDriveGenerationCount = skedFixedDrives != NULL ? skedFixedDrives.size() : 0;
                 cbLogWrapper.mobileDriveGenerationCount = skedMobileDrives!= NULL ? skedMobileDrives.size() : 0;
                 cbLogWrapper.fsDriveGenerationFailureCount = fsDriveGenerationFailure!= NULL ? fsDriveGenerationFailure.size() : 0;
@@ -193,7 +202,8 @@ global class CreateSkedDrivesBatch implements Database.Batchable<sObject>, Datab
                 this.runType
             );
             cbLogWrapper.apexMethodName = 'Finish Method Call';
-            DriveGenerationUtil.captureErrorLoggingForException(BSF_Constants.BATCH_DRIVE_GENERATION, ex, cbLogWrapper);  
+            cbLogWrapper.opportunitySource = driveSource;
+            DriveGenerationUtil.captureErrorLoggingForException(ex, cbLogWrapper);  
         }
         //HRP-12706 --> Ends Here
     }

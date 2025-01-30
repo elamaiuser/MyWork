@@ -55,4 +55,21 @@ public with sharing class CalendarBuildBatchOnDemandController {
         Integer batchSize = mdtSytemGenerateDraftDrives?.System_Gen_Drives_Batch_Size__c.intValue();
         return batchSize;
     }
+
+    @InvocableMethod(label='Run Adhoc Calendar Build')
+    public static List<ID> triggerAdhocCBRunAndGetJobId(List<AdhocCalendarBuildInput> adhocCBInput) {
+        Id batchJobId = Database.executeBatch(new CalendarBuildEvaluateDrivesBatch(adhocCBInput[0]), 1);
+        return new List<ID>{batchJobId};
+    }
+
+    public class AdhocCalendarBuildInput {
+        @InvocableVariable(label='Booking Strategy')
+        public String bookingStrategy;
+
+        @InvocableVariable(label='Opportunity Source')
+        public String opportunitySource;
+
+        @InvocableVariable(label='Selected opportunities')
+        public List<Opportunity> selectedOpportunities;
+    }
 }
