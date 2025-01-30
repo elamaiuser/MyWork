@@ -57,9 +57,16 @@ public with sharing class CalendarBuildBatchOnDemandController {
     }
 
     @InvocableMethod(label='Run Adhoc Calendar Build')
-    public static List<ID> triggerAdhocCBRunAndGetJobId(List<AdhocCalendarBuildInput> adhocCBInput) {
-        Id batchJobId = Database.executeBatch(new CalendarBuildEvaluateDrivesBatch(adhocCBInput[0]), 1);
-        return new List<ID>{batchJobId};
+    public static void triggerAdhocCBRunAndGetJobId(List<AdhocCalendarBuildInput> adhocCBInput) {
+        Adhoc_Calendar_Build_Run__e adhocCbRunEvent = new Adhoc_Calendar_Build_Run__e();
+        Map<Id, Opportunity> map_oppId_opportunity = new Map<Id, Opportunity>(adhocCBInput[0].selectedOpportunities);
+        adhocCbRunEvent.Booking_Strategy__c = adhocCBInput[0].bookingStrategy;
+        adhocCbRunEvent.Opportunity_Source__c = adhocCBInput[0].opportunitySource;
+        adhocCbRunEvent.Opportunity_Ids__c = JSON.serialize(map_oppId_opportunity.keySet());
+        
+        if(adhocCbRunEvent != null) {
+            EventBus.publish(adhocCbRunEvent);
+        }
     }
 
     public class AdhocCalendarBuildInput {
