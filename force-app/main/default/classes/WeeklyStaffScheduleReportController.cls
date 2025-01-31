@@ -366,6 +366,9 @@ public without sharing class WeeklyStaffScheduleReportController {
             System.debug('startHour --> '+startHour);
             Decimal endHour = endTime.hour() + (endTime.minute()/60.0);
             System.debug('endHour --> '+endHour);
+            if(endHour < startHour){
+                endHour += 24;
+            }
             timeDifference = endHour - startHour;
             System.debug('timeDifference --> '+timeDifference);
         }
