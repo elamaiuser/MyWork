@@ -6,16 +6,13 @@
     <columns>Drive_Keyword__c</columns>
     <columns>Calendar_Build_Parent_Opportunity__c</columns>
     <columns>Calendar_Build_Status__c</columns>
+    <columns>Rollover_Consideration__c</columns>
     <columns>ACCOUNT.NAME</columns>
-    <columns>Drive_Site_Name__c</columns>
-    <columns>DriveStatus__c</columns>
-    <columns>Type_of_Drive__c</columns>
-    <columns>OPPORTUNITY.CREATED_DATE</columns>
     <filterScope>Everything</filterScope>
     <filters>
-        <field>Drive_Date__c</field>
+        <field>OPPORTUNITY.CREATED_DATE</field>
         <operation>equals</operation>
-        <value>9/19/2025</value>
+        <value>TODAY</value>
     </filters>
     <filters>
         <field>OPPORTUNITY.RECORDTYPE</field>

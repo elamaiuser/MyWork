@@ -8,6 +8,7 @@ import _getPicklistOptions from '@salesforce/apex/slwcDataService.getPicklistOpt
 import _getMapDependentOptions from '@salesforce/apex/slwcDataService.getMapDependentOptions';
 
 import _getSkedRegionId from '@salesforce/apex/slwcCollectionOperationService.getSkedRegionId';
+import _getSkedRegionIdUsingTaxonomy from '@salesforce/apex/slwcCollectionOperationService.getSkedRegionIdUsingTaxonomy';//HRP-13791
 
 import _getAddressPredictions from '@salesforce/apex/slwcSkedApiService.getAddressPredictions';
 import _getGeocode from '@salesforce/apex/slwcSkedApiService.getGeocode';
@@ -99,6 +100,7 @@ class auraService {
   getPicklistOptions = (params) => this.execute(_getPicklistOptions, params);
   getMapDependentOptions = (params) => this.execute(_getMapDependentOptions, params);
   getSkedRegionId = (params) => this.execute(_getSkedRegionId, params);
+  getSkedRegionIdUsingTaxonomy = (params) => this.execute(_getSkedRegionIdUsingTaxonomy, params);//HRP-13791
   getAddressPredictions = (params) => this.execute(_getAddressPredictions, params);
   getGeocode = (params) => this.execute(_getGeocode, params);
   getPlaceDetails = (params) => this.execute(_getPlaceDetails, params);

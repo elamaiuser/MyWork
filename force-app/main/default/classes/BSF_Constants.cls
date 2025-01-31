@@ -33,6 +33,10 @@ public class BSF_Constants {
     
     //Affiliation Record Types
     public static final String AFFILIATION_RECORD_TYPE = 'Sponsor Recognition';
+
+    //Account Record Types
+    public static final String FIXED_SITE_ACCOUNT_RECORD_TYPE = 'Fixed Site Account';
+    public static final String MOBILE_ACCOUNT_RECORD_TYPE = 'Mobile Account';
     
     public static final String STRING_NO = 'No';
     public static final String STRING_YES = 'Yes';
@@ -112,6 +116,7 @@ public class BSF_Constants {
      public static final String OPP_SOURCE_PLAN_A_DRIVE = 'Plan a Drive';
      public static final String OPP_SOURCE_ADHOC = 'Adhoc';
      public static final String OPP_SOURCE_BUSINESS_PLANNING = 'Business Planning';
+     public static final String OPP_SOURCE_ADHOC_CALENDAR_BUILD = 'Adhoc Calendar Build'; //HRP-11368
 
 
     // Opportunity Contact Roles
@@ -197,8 +202,9 @@ public class BSF_Constants {
         'Current ABM Account/Portfolio Review Meeting' => 'CurrentABMAccPortfolioReviewMeeting',
         'New AM Account/Portfolio Review Meeting' => 'NewAMAccPortfolioReviewMeeting',
         'New SBPM Account/Portfolio Review Meeting' => 'NewSBPMAccPortfolioReviewMeeting',
-        'Template Order Task' => 'TemplateOrderExpiry'//HRP-12664
+        'Template Order Task' => 'TemplateOrderExpiry',//HRP-12664
         //HRP-11784
+        'Renew Military MoA' => 'RenewMilitaryMoA'
         }; 
 
     // Initiated By picklist Values
@@ -297,6 +303,7 @@ public class BSF_Constants {
     public static final String BATCH_STATUS_COMPLETED = 'Completed';
     public static final String BATCH_STATUS_PENDING = 'Pending';
     public static final String BATCH_STATUS_ERROR = 'Error';
+    public static final String BATCH_STATUS_NOT_NEEDED = 'Not Needed'; //HRP-11368
 
     //CB Batches
     public static final String BATCH_CALENDAR_BUILD = 'Calendar Build';
@@ -321,7 +328,7 @@ public class BSF_Constants {
     };
       
     //HRP-7123 --> 
-    public static final String POST_DRIVE_ANALYSIS_TASK = 'Post Drive Analysis Task';
+    public static final String POST_DRIVE_ANALYSIS_TASK = 'Post Drive Analysis';
     public static final String RECRUITMENT_PLANNING_TASK = 'Recruitment Planning Meeting';
     public static final String OPP_TYPE_Mobile = 'Mobile Opp';
     

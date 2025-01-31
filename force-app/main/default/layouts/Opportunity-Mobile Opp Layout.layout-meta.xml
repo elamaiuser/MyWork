@@ -375,6 +375,10 @@
                 <behavior>Readonly</behavior>
                 <field>Calendar_Build_Parent_Opportunity__c</field>
             </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>Booking_Strategy__c</field>
+            </layoutItems>
         </layoutColumns>
         <layoutColumns>
             <layoutItems>

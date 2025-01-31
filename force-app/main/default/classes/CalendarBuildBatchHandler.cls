@@ -16,7 +16,7 @@
  * 08/06/24     Priti Jana          Logic for HRP-12706
  * 09/09/24		Balaji N			Logic for HRP-13265
  * 12/10/24     Priti Jana          Logic for HRP-13190
- * 01/08/2025   Priti Jana          Commented out Gray Skies logic for HRP-12299
+ * 01/08/2025   Priti Jana          Logic for HRP-12299
  **************************************************************************************************************************************/
 
  public with sharing class CalendarBuildBatchHandler {
@@ -45,13 +45,12 @@
         Opportunity_Date_Setting__mdt mdtOppDateSetting = Opportunity_Date_Setting__mdt.getInstance('Targeted_Ask_Date');
         Integer numNumOfAskDays = mdtOppDateSetting?.Days_from_Drive_Date__c.intValue();
         
-        /* Commented out for HRP-12299
         List<Drive_Marketing_Programs__c> graySkiesAffiliationList = [SELECT Id, Marketing_Program__c, Blood_Drive_Opportunity__c FROM Drive_Marketing_Programs__c 
                                                                       WHERE Marketing_Program__r.Name = 'Gray Skies' AND Blood_Drive_Opportunity__c in :oppIdsSet];
         Map<Id, Id> oppWithGraySkiesMap = new Map<Id, Id>();
         For(Drive_Marketing_Programs__c dmp : graySkiesAffiliationList) {
             oppWithGraySkiesMap.put(dmp.Blood_Drive_Opportunity__c, dmp.Id);
-        }*/
+        }
         
         // Get the related site's physical location type - HRP-11814
         Map<Id,sked__Location__c> driveSiteMap = new Map<Id,sked__Location__c>([SELECT Id, sked_Physical_location_type__c FROM sked__Location__c WHERE ID IN :driveSiteIds]);
@@ -75,7 +74,8 @@
         for(Opportunity origOpp : lstOpportunities) {
             //Clone the opportunity and update some fields; by default preserveId is false i.e the ID is cleared for the new record.  isDeepClone is set to true
             Opportunity clonedOpp = origOpp.clone(false, true);
-            clonedOpp.source__c = BSF_Constants.BATCH_CALENDAR_BUILD;
+            clonedOpp.source__c = origOpp.Source__c;
+            clonedOpp.Booking_Strategy__c = origOpp.Booking_Strategy__c;
             clonedOpp.Calendar_Build_Parent_Opportunity__c = origOpp.id;
             DateTime dT = Helper.getSameDayOfNextYear(origOpp.drive_date__c);
             clonedOpp.drive_date__c = Date.newInstance(dT.year(), dT.month(), dT.day());
@@ -142,7 +142,7 @@
                               oppWithParentTemplateMap.get(origOpp.Parent_Template_Id__c).type :
                     		  driveSiteMap.get(oppIdVsDriveSiteIdMap.get(origOpp.Parent_Template_Id__c)).sked_Physical_Location_Type__c; //HRP-11814
                 }
-                cbWrapper = runRolloverEvaluation(origOpp); //HRP-12299: Removed extra param containing "gray skies" info
+                cbWrapper = runRolloverEvaluation(origOpp, oppWithGraySkiesMap);
                 if(cbWrapper.IsQualified != null) {
                     clonedOpp.Calendar_Build_Status__c = cbWrapper.IsQualified ? 'Qualified' : 'Unqualified';
                 }
@@ -180,7 +180,7 @@
 
     //Method used for determining if opportunities meet the rollover evaluation criteria
     //Details of the criteria is document on HRP-3442
-    public static CalendarBuildWrapper runRolloverEvaluation(Opportunity incomingOrigOpp) {
+    public static CalendarBuildWrapper runRolloverEvaluation(Opportunity incomingOrigOpp, Map<Id, Id> graySkiesMap) {
         CalendarBuildWrapper cbWrapper = new CalendarBuildWrapper();
         //Don't clone opps that are cancelled with a reson of 'system need'
         if(!(incomingOrigOpp.DriveStatus__c == 'Cancelled' && incomingOrigOpp.sked_Cancellation_Reason__c == 'System Need')) {
@@ -191,13 +191,14 @@
                 }
             }
 
-            /* Commented out for HRP-12299
-            If opportunity has drive affiliation with Designation = "Gray Skies", mark as "Unqualified"
+            /* Logic for HRP-12299
+            	If opportunity has drive affiliation with Designation = "Gray Skies", mark as "Qualified"
+			*/
             else if(!graySkiesMap.isEmpty() && graySkiesMap.containsKey(incomingOrigOpp.Id)){ //incomingOrigOpp.Drive_Designations__c != null && incomingOrigOpp.Drive_Designations__c.split(';').contains('Gray Skies')) {
-                cbWrapper.IsQualified = false;
-                cbWrapper.UnqualifiedReasons = 'Drive Designation is Gray Skies';
-                cbWrapper.RolloverConsideration = 'Do Not Roll';
-            }*/
+                cbWrapper.IsQualified = true;
+                //cbWrapper.UnqualifiedReasons = 'Drive Designation is Gray Skies';
+                //cbWrapper.RolloverConsideration = 'Do Not Roll';
+            }
             
             //If Account Strategy = "Sunset", mark as "Unqualified"
             else if(incomingOrigOpp.Account.Account_Strategy__c != null && incomingOrigOpp.Account.Account_Strategy__c == 'Sunset') {
@@ -280,7 +281,10 @@
         if(parentCbIds != NULL && !parentCbIds.isEmpty()) {
             queryString += 'Calendar_Build_Parent_Opportunity__c IN :parentCbIds AND ';
         }
-        queryString += 'Drive_Date__c = :driveDateToEval AND Related_Scheduled_Drive__c = NULL';
+        if(source != NULL && !String.isBlank(source) && source.equalsIgnoreCase(BSF_Constants.OPP_SOURCE_CALENDAR_BUILD)) { // No need of this check for Adhoc CB
+            queryString += 'Drive_Date__c = :driveDateToEval AND ';
+        }
+        queryString += 'Related_Scheduled_Drive__c = NULL';
         List<Opportunity> eligibleOpps = Database.query(queryString);
         return eligibleOpps;
     }

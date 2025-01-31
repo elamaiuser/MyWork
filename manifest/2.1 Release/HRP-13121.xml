@@ -43,6 +43,7 @@
     <types>
 		<members>autoMapper</members>
 		<members>dataService</members>
+        <members>slwcCallOutsSchedulingConsole</members>
         <members>slwcDriveCalendar</members>
         <members>slwcDriveCalendarActivityList</members>
 	</types>
