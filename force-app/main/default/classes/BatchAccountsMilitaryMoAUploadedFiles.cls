@@ -1,4 +1,4 @@
-global class BatchAccountsMilitaryMoAUploadedFiles implements Database.Batchable<sObject>, Database.Stateful {
+global class BatchAccountsMilitaryMoAUploadedFiles implements Database.Batchable<sObject>, Database.Stateful, Schedulable {
     private static final Integer QUERY_LIMIT = 50000;
     private List<String> taskDetails = new List<String>();        
 
@@ -12,6 +12,10 @@ global class BatchAccountsMilitaryMoAUploadedFiles implements Database.Batchable
         get {
             return Task_Reassignment_Matrix__mdt.getInstance('Renew_Military_MoA');            
         }
+    }
+
+    global void execute(SchedulableContext sc) {
+        Database.executeBatch(new BatchAccountsMilitaryMoAUploadedFiles());
     }
 
     public Database.QueryLocator start(Database.BatchableContext bc) {
