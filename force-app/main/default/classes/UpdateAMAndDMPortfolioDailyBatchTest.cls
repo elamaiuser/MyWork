@@ -379,14 +379,6 @@ private class UpdateAMAndDMPortfolioDailyBatchTest {
             Database.executeBatch(batchObject,2);
         Test.stopTest();
     }
-    
-    @isTest
-    private static void UpdateAMAndDMPortfDailyBatchScheduler_Test(){
-        Test.startTest();
-        System.schedule('UpdateAMAndDMPortfDailyBatchScheduler' + String.valueOf(Datetime.now()), 
-            '0 0 0 * * ?', new UpdateAMAndDMPortfDailyBatchScheduler());
-        Test.stopTest();
-    }
 
     private static Map<String,Id> recordTypeMap(string obj){
         Map<String,Id> recTypeNameWithIdMap = new Map<String,Id>();

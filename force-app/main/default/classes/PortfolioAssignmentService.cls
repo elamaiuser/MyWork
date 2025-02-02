@@ -117,6 +117,7 @@ return false;
         if(BSF_Constants.skipPortfolioAssignmentTrigger){
             return;
         }
+        system.debug('opertation '+operation);
         BSF_Constants.skipPortfolioAssignmentTrigger = true;
         Set<Id> bsfPortRecordsId=new Set<Id>();
         Map<Id,Portfolio_Assignment__c> mapOfBsfandPortFolio = new Map<Id,Portfolio_Assignment__c>();
@@ -125,7 +126,7 @@ return false;
         List<Portfolio_Assignment__c> listOfPortAssrecordsToUpdate = new List<Portfolio_Assignment__c>();
         List<Portfolio_Assignment__c> listTodeletePfa = new List<Portfolio_Assignment__c>();
         List<String> amPortfolioList = new List<String>{BSF_constants.BIO_RECRUITMENT_RECORD_TYPE,BSF_constants.TAXO_ACCOUNT_RECORD_TYPE};
-        system.debug('currentPortAssRecordMap ##'+currentPortAssRecordMap);
+            system.debug('currentPortAssRecordMap ##'+currentPortAssRecordMap);
         system.debug('oldPortfolioAssignmentMap##'+oldPortfolioAssignmentMap);
         for(Portfolio_Assignment__c pfAssignment:portfolioAssignmentList){
             if(pfAssignment.User__c != null){
@@ -133,7 +134,7 @@ return false;
             }
         }
         Map<Id,BSF_Portfolio__c> portfolioIdPortfolioMap =new Map<Id,BSF_Portfolio__c>([select Id,Portfolio_Code__c,Portfolio_type__c,Taxonomy_type__c from BSF_Portfolio__c where Id IN:bsfPortRecordsId  and
-                                                                                         Portfolio_Code__c!=null AND Taxonomy_type__c IN:amPortfolioList]); //getting all  //HRP-13270
+                                                                                        Portfolio_Code__c!=null AND Taxonomy_type__c IN:amPortfolioList]); //getting all  //HRP-13270
         system.debug('listOfBSFWithPfAssignment ##'+portfolioIdPortfolioMap);
         for(Portfolio_Assignment__c pfAssignment:portfolioAssignmentList){
             if(pfAssignment.User__c!=null && portfolioIdPortfolioMap != null && portfolioIdPortfolioMap.containsKey(pfAssignment.bsf_portfolio__c))//HRP-13270
@@ -201,11 +202,11 @@ return false;
                                 else if(operation == 'Update' && updatedOrDeletedPortfolio != null)
                                 {
                                     //HRP-13270
-                                if(bsfPortRec.Taxonomy_Type__c == BSF_constants.TAXO_SUPERVISOR_RECORD_TYPE && existingPortfolioAssignment.End_Date__c < BSF_constants.CURRENT_DATE)
-                                {
-                                    Continue;
-                                }
-                                //HRP-13270
+                                    if(bsfPortRec.Taxonomy_Type__c == BSF_constants.TAXO_SUPERVISOR_RECORD_TYPE && existingPortfolioAssignment.End_Date__c < BSF_constants.CURRENT_DATE)
+                                    {
+                                        Continue;
+                                    }
+                                    //HRP-13270
                                     existingPortfolioAssignment.User__c = updatedOrDeletedPortfolio.User__c;
                                     existingPortfolioAssignment.Start_Date__c = updatedOrDeletedPortfolio.Start_Date__c;
                                     existingPortfolioAssignment.End_Date__c = updatedOrDeletedPortfolio.End_Date__c;
@@ -1245,6 +1246,11 @@ Database.DeleteResult[] deleteResults = Database.delete(listOfAcctTeamMembers,fa
                (pa.Start_Date__c > bsfMap.get(pa.BSF_Portfolio__c).end_date__c || pa.Start_Date__c < bsfMap.get(pa.BSF_Portfolio__c).Start_date__c ||
                 pa.End_Date__c < bsfMap.get(pa.BSF_Portfolio__c).Start_date__c || pa.End_Date__c > bsfMap.get(pa.BSF_Portfolio__c).End_date__c))
             {
+                system.debug('111pa.Assignment_Type__c '+pa.Assignment_Type__c);
+                system.debug('111pa.Start_Date__c '+pa.Start_Date__c);
+                system.debug('111pa.End_Date__c '+pa.End_Date__c);
+                system.debug('111bsfMap.get(pa.BSF_Portfolio__c).Start_date__c '+bsfMap.get(pa.BSF_Portfolio__c).Start_date__c);
+                system.debug('111bsfMap.get(pa.BSF_Portfolio__c).end_date__c '+bsfMap.get(pa.BSF_Portfolio__c).end_date__c);
                 pa.addError('Invalid Assignment-The Portfolio Assignment dates are out of related BSF Portfolio Dates');
             }
             //HRP-11290

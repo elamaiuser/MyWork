@@ -107,10 +107,13 @@ public virtual class skedRefreshTravelTimeIndexBatchBase implements System.Sched
     }
 
     public void finish(Database.BatchableContext BC) {
+        postProcess();
         if (!Test.isRunningTest()) {
             skedAsyncJobHandler.processTravelTimeRefreshRequest();
         }
     }
+
+    protected virtual void postProcess() {}
 
     protected virtual sked_Travel_Time_Index_Refresh_Request__c createNewTravelTimeIndexRefreshRequest(Set<Id> indexItemIds,
              Set<String> origins, Set<String> destinations, String requestType) {

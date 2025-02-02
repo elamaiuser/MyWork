@@ -14,7 +14,12 @@
     <columns>Calendar_Build_Parent_Opportunity__c</columns>
     <columns>OPPORTUNITY.CREATED_DATE</columns>
     <columns>DriveStatus__c</columns>
-    <filterScope>Mine</filterScope>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>Type_of_Drive__c</field>
+        <operation>equals</operation>
+        <value>Mobile</value>
+    </filters>
     <filters>
         <field>Source__c</field>
         <operation>equals</operation>
@@ -23,7 +28,12 @@
     <filters>
         <field>DriveStatus__c</field>
         <operation>contains</operation>
-        <value>Draft,System Generated,Confirmed</value>
+        <value>Draft</value>
+    </filters>
+    <filters>
+        <field>OPPORTUNITY.CREATED_DATE</field>
+        <operation>equals</operation>
+        <value>TODAY</value>
     </filters>
     <label>Draft Calendar Build_Initial Review</label>
 </ListView>

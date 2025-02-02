@@ -34,7 +34,7 @@ public class BSF_Batch_PopulateCORegion_Test
         territory.Start_Date__c = Date.newInstance(2022,11,27);
         territory.End_Date__c = system.today().addDays(100);  
         insert territory;
-        
+
         Test.startTest();
         BSF_Batch_PopulateCORegion batch = new BSF_Batch_PopulateCORegion(null, taxo_1.version_Key__c);
         id jobid = database.executeBatch(batch,200);
@@ -103,7 +103,7 @@ BSF_Batch_PopulateCORegion batch1 = new BSF_Batch_PopulateCORegion();
         territory.Name = 'name';
         territory.RecordTypeId  = recordTypeId;
         territory.Start_Date__c = system.today();
-        territory.End_Date__c = system.today().addDays(100);
+        territory.End_Date__c = system.today().addDays(100);  
         insert territory;
         
         Biomed_Collection_Op_Center__c co = new Biomed_Collection_Op_Center__c();
@@ -114,7 +114,7 @@ BSF_Batch_PopulateCORegion batch1 = new BSF_Batch_PopulateCORegion();
         co.sked_Territory__c=territory.id;
         co.sked_Lunch_Break_Duration_Fixed_Site__c='30';
         co.sked_Lunch_Break_Duration_Mobile__c='30';
-         insert co;
+        insert co;
         
          sked_Territory_Collection_Operation__c terrCollOpp = new sked_Territory_Collection_Operation__c();
         terrCollOpp.sked_Start_Date__c = territory.Start_Date__c;

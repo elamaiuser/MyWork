@@ -163,7 +163,7 @@ public class skedTestDataFactory {
             LastName = 'Test',
             FirstName = 'BPL',
             Primary_Phone__c = 'Work Phone',
-            OtherPhone = '1234567899',
+            OtherPhone = '999-999-9987',
             Original_Service_Date__c = this.summary.startDate,
             AccountId = accountBPL.Id
         );
@@ -481,11 +481,50 @@ public class skedTestDataFactory {
             sked_Timezone__c = this.summary.timezoneSidId,
             sked_MigrationID__c = 'migration-id',
             Source__c = 'Custom New Form',
-            Operation_Type__c = 'Integrated',
-            RecordTypeId = sked__Location__c.sObjectType.getDescribe().getRecordTypeInfosByName().get('Fixed Site').getRecordTypeId()
+            Operation_Type__c = 'Integrated'
         );
         thirdList.add(testLocation1);
         this.mapTestData.put('testLocation1', testLocation1);
+        
+        sked__Location__c testLocation2 = new sked__Location__c(
+            Name = 'Test Location 2',
+            sked__Address__c = 'Inner Parkside, San Francisco, CA, USA',
+            sked_Address_1__c = 'Inner Parkside', 
+            sked_City__c = 'San Francisco', 
+            sked_State__c = 'CA', 
+            sked_Zip_Code__c = '94117', 
+            sked_County__c = 'USA',
+            sked__GeoLocation__Latitude__s = 37.7450046,
+            sked__GeoLocation__Longitude__s = -122.4816244,
+            sked__Region__c = testRegion1.Id,
+            sked_ARC_Vehicle_Parking_Directions__c = 'ARC Vehicle Parking Directions',
+            sked_Automation_Suitability__c = 'Suitable',
+            sked_Base_Description__c = 'Base Description',
+            sked_Collection_Operation__c = testCollectionOperation1.Id,
+            sked_Directions_From_CollectionOperation__c = 'Directions from Collection Operation',
+            sked_Date_Site_Inspection_Completed__c = this.summary.startDate,
+            sked_Floor_Description__c = 'Floor Description',
+            sked_National_Name__c = 'USA',
+            sked_Outside_stairs__c = 3,
+            sked_Pay_for_Parking__c = 'Other',
+            sked_Pay_for_Parking_Details__c = 'Pay for parking details',
+            sked_Physical_Location_Type__c = 'Inside',
+            sked_Room_Name__c = 'Room 2',
+            sked_Room_Size__c = '2001-2400 Sq. Ft.',
+            sked_Site_Building_Name__c = 'Building Name 2',
+            sked_Site_Inspection_Completed_By__c = UserInfo.getUserId(),
+            sked_Site_Main_Phone__c = '098-765-4321',
+            sked_Staff_Personal_Parking_Directions__c = 'Staff Personal Parking Directions',
+            sked_Travel_Time_to_Staging_Location__c = 15,
+            sked_Wireless_Policy__c = 'Accepted',
+            sked_Timezone__c = this.summary.timezoneSidId,
+            sked_MigrationID__c = 'migration-id',
+            Source__c = 'Custom New Form',
+            Operation_Type__c = 'Integrated',
+            RecordTypeId = sked__Location__c.sObjectType.getDescribe().getRecordTypeInfosByName().get('Fixed Site').getRecordTypeId()
+        );
+        thirdList.add(testLocation2);
+        this.mapTestData.put('testLocation2', testLocation2);
 
         sked__Resource__c testResource1 = new sked__Resource__c(
             Name = 'Test Resource 1',
@@ -615,16 +654,7 @@ public class skedTestDataFactory {
         );
         forthList.add(testLocation1_testCollectionOperation1);
         this.mapTestData.put('testLocation1_testCollectionOperation1', testLocation1_testCollectionOperation1);
-
-        sked__Resource_Tag__c testResource1_testTag1 = new sked__Resource_Tag__c(
-            sked__Resource__c = testResource1.Id,
-            sked__Tag__c = testTag1.Id,
-            sked_Expiry_Date__c = system.today().addYears(1),
-            sked_Start_Date__c = system.today(),
-            sked_Role_Status__c = skedConstants.TAG_ROLE_STATUS_PENDING
-        );
-        forthList.add(testResource1_testTag1);
-
+        
         sked__Tag__c tag2RBC;
         for (sObject record : predefinedData) {
             if (record.get('Name') == '2RBC') {
@@ -644,6 +674,15 @@ public class skedTestDataFactory {
         forthList.add(testResource1_testTag2RBC);
         this.mapTestData.put('testResource1_testTag2RBC', testResource1_testTag2RBC);
 
+        sked__Resource_Tag__c testResource1_testTag1 = new sked__Resource_Tag__c(
+            sked__Resource__c = testResource1.Id,
+            sked__Tag__c = testTag1.Id,
+            sked_Expiry_Date__c = system.today().addYears(1),
+            sked_Start_Date__c = system.today(),
+            sked_Role_Status__c = skedConstants.TAG_ROLE_STATUS_PENDING
+        );
+        forthList.add(testResource1_testTag1);
+
         sked__Resource_Region__c testResource1_testRegion2 = new sked__Resource_Region__c(
             sked__Resource__c = testResource1.Id,
             sked__Region__c = testRegion2.Id
@@ -655,10 +694,12 @@ public class skedTestDataFactory {
             sked__Availability_Template__c = testTemplate1.Id
         );
         forthList.add(testResource1_testTemplate1);
-
+        
+		TriggerHandler.bypass('SiteTriggerHandler');
         insert forthList;
 
         skedHubBase.setBypassAllTriggers(false);
+        TriggerHandler.clearBypass('SiteTriggerHandler');
         return this.mapTestData;
     }
 
@@ -733,6 +774,16 @@ public class skedTestDataFactory {
         );
         secondList.add(testStaffingBudget1);
         this.mapTestData.put('testStaffingBudget1', testStaffingBudget1);
+        
+        sked_Staffing_Budget__c testStaffingBudget2 = new sked_Staffing_Budget__c(
+            sked_Roles__c = '2RBC',
+            sked_Drive_Types__c = 'Mobile;Fixed Site',
+            sked_Staffing_Budget_Date__c = this.summary.startDate,
+            sked_Total_Slots__c = 10,
+            sked_Request_Type__c = 'Standard'
+        );
+        secondList.add(testStaffingBudget2);
+        this.mapTestData.put('testStaffingBudget_nonRecurring', testStaffingBudget2);
 
         insert secondList;
 

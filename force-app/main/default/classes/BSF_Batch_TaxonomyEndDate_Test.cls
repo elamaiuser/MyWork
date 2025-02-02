@@ -21,7 +21,7 @@ public class BSF_Batch_TaxonomyEndDate_Test
         
         Test.startTest();
         BSF_Batch_TaxonomyEndDateHandler batch = new BSF_Batch_TaxonomyEndDateHandler(4321,'Bio Recruitment CD',true,null,null);
-           database.executeBatch(batch,25);
+        database.executeBatch(batch,25);
         Test.StopTest();
     }
 }

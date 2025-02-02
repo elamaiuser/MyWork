@@ -6,6 +6,7 @@
 * 09/06/2024			Apurba Bhattacharjee	HRP-12459 Lead Research Fields on the Record
 * 10/07/2024			Balaji N				HRP-12583 new method call stopPublicityOrderTaskCompletionWithoutOrder
 * 10/29/2024			Barnojit Sharma		    Post Drive Analysis task Enhancements. (Logic for HRP-12142)
+* 11/07/2024			Barnojit Sharma		    Update Task: 72 Hour Check in - System Generated/Details/Checklist. (Logic for HRP-12627)
 * ***************************************************************************************************************************************************************************
 **/
 public with sharing class TaskTriggerHandler extends TriggerHandler {
@@ -28,14 +29,13 @@ public with sharing class TaskTriggerHandler extends TriggerHandler {
         	TaskService.stopPublicityOrderTaskCompletionWithoutOrder((List<Task>)Trigger.new,(Map<Id,Task>)Trigger.OldMap);
         }
         //HRP-12583 end
+        //HRP-12627 start
+        if(super.getTriggerMethodsToBypass().indexOf('check72hourCheckInTaskCompletion') == -1) {
+        	TaskService.check72hourCheckInTaskCompletion((List<Task>)Trigger.new,(Map<Id,Task>)Trigger.OldMap);
     }
-    //HRP-12142 --> Start
-    public override void afterUpdate(){
-        if(super.getTriggerMethodsToBypass().indexOf('updateRelatedAccountAndOpportunity') == -1) { 
-            TaskService.updateRelatedAccountAndOpportunity((List<Task>)Trigger.new,(Map<Id,Task>)Trigger.oldMap);
-        }
+        //HRP-12627 end
     }
-    //HRP-12142 --> end 
+    
     public override void beforeInsert(){
         // Using this method to populate Account Name , Account Id, Relatd Record Name, Related Record link to use them on My Assigned Task and My Delegated Task widget
         if(super.getTriggerMethodsToBypass().indexOf('populateAccountNameOnTask') == -1) { 
@@ -46,6 +46,17 @@ public with sharing class TaskTriggerHandler extends TriggerHandler {
         }
         if(super.getTriggerMethodsToBypass().indexOf('validateTaskRecordTypeForFixSite') == -1) { 
             TaskService.validateTaskRecordTypeForFixSite((List<Task>)Trigger.new);
+        }
+    }
+    
+    /*public override void afterInsert(){
+        
+    }*/
+    
+    
+    public override void afterUpdate(){
+        if(super.getTriggerMethodsToBypass().indexOf('updateRelatedAccountAndOpportunity') == -1) { 
+            TaskService.updateRelatedAccountAndOpportunity((List<Task>)Trigger.new,(Map<Id,Task>)Trigger.oldMap);
         }
     }
     //HRP-12459 --> start
@@ -61,6 +72,7 @@ public with sharing class TaskTriggerHandler extends TriggerHandler {
                     Boolean isOpportunity = (String.valueOf((task.WhatId).getSObjectType())).equalsIgnoreCase('Opportunity');
                     Boolean isOrder = (String.valueOf((task.WhatId).getSObjectType())).equalsIgnoreCase('Opportunity');
                     Boolean isDrive = (String.valueOf((task.WhatId).getSObjectType())).equalsIgnoreCase('sked_Drive__c');
+                    System.debug('Object: '+String.valueOf((task.WhatId).getSObjectType()));
                     if (isOpportunity) {
                         oppId.add(task.WhatId);
                     } else if (isOrder) {
@@ -93,7 +105,7 @@ public with sharing class TaskTriggerHandler extends TriggerHandler {
         } catch( Exception ex){
             String taskIds = '';
             for (Task task : taskList) {
-                taskIds+= task.Id;
+                taskIds+= task.Id+'; ';
             }
             List<BSF_Error_Log__c> errorLogToInsert = new List<BSF_Error_Log__c>{
                 BSF_Utilities.createBsfErrorLogForExceptions( ex, 'TaskTriggerHandler', 'populateDriveDateOnTask', 'Error', 'Drive Date update on Task failed', 'Task', taskIds )};
@@ -108,7 +120,9 @@ public with sharing class TaskTriggerHandler extends TriggerHandler {
             Set<Id> driveIds = new Set<id>();
             Set<Id> taskIds = new Set<Id>();
             for(Task t : taskList){
+                system.debug('whatId is '+t.whatId);
                 if(t.WhatId != null && (String.valueOf(t.WhatId).contains(skedDrivePrefix)) && t.Related_Account_Name__c == null){
+                    system.debug('its drive');
                     driveIds.add(t.whatId);
                 }
                 if(t.whatId != null){
@@ -136,7 +150,7 @@ public with sharing class TaskTriggerHandler extends TriggerHandler {
         catch( Exception ex){
             String taskIds = '';
             for (Task task : taskList) {
-                taskIds+= task.Id;
+                taskIds+= task.Id+'; ';
             }
             List<BSF_Error_Log__c> errorLogToInsert = new List<BSF_Error_Log__c>{
                 BSF_Utilities.createBsfErrorLogForExceptions( ex, 'TaskTriggerHandler', 'populateAccountNameOnTask', 'Error', 'Account Name update on Task failed', 'Task', taskIds )};

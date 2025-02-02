@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>sked_Volunteer_Adjustment_Reason__c</fullName>
+    <description>Created this field as part of HRP-13119</description>
+    <externalId>false</externalId>
+    <label>Volunteer Adjustment Reason</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Site Configuration</fullName>
+                <default>false</default>
+                <label>Site Configuration</label>
+            </value>
+            <value>
+                <fullName>Below Procedure Projection of 17</fullName>
+                <default>false</default>
+                <label>Below Procedure Projection of 17</label>
+            </value>
+            <value>
+                <fullName>Appeal</fullName>
+                <default>false</default>
+                <label>Appeal</label>
+            </value>
+            <value>
+                <fullName>Additional Volunteers</fullName>
+                <default>false</default>
+                <label>Additional Volunteers</label>
+            </value>
+            <value>
+                <fullName>Event Drives (High Profile Drives)</fullName>
+                <default>false</default>
+                <label>Event Drives (High Profile Drives)</label>
+            </value>
+            <value>
+                <fullName>High Donor Presentation</fullName>
+                <default>false</default>
+                <label>High Donor Presentation</label>
+            </value>
+            <value>
+                <fullName>Holiday</fullName>
+                <default>false</default>
+                <label>Holiday</label>
+            </value>
+            <value>
+                <fullName>Request after 6-week calendar lock</fullName>
+                <default>false</default>
+                <label>Request after 6-week calendar lock</label>
+            </value>
+            <value>
+                <fullName>Volunteer not needed (Removal of volunteer)</fullName>
+                <default>false</default>
+                <label>Volunteer not needed (Removal of volunteer)</label>
+            </value>
+            <value>
+                <fullName>Other</fullName>
+                <default>false</default>
+                <label>Other</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

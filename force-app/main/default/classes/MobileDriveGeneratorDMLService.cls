@@ -368,7 +368,8 @@ public with sharing class MobileDriveGeneratorDMLService {
                 Drive_Date__c, Drive_Site__c,Flow_Start_Time_Field__c, Drive_Site__r.sked_Collection_Operation__c, Drive_Site__r.Operation_type__c,
                 End_Time__c, Industry_Code__c, Recruited_By__c, Start_Time__c,
                 Type_of_Drive__c, WB_Projected_Procedures__c, X2RBC_Projected_Procedures__c,
-                Number_of_2RBC_Assets__c, Number_of_Plasma_Assets__c, Number_of_Platelet_Assets__c, Day_of_Week__c,Call_List_Recipient_Exist__c, Slot_Generator__c 
+                Number_of_2RBC_Assets__c, Number_of_Plasma_Assets__c, Number_of_Platelet_Assets__c, Day_of_Week__c,Call_List_Recipient_Exist__c, Slot_Generator__c, 
+                APT_Required__c, APT_Quantity__c //HRP-13190 
                 FROM Opportunity
                 WHERE Id IN :oppIds];
     }
@@ -779,6 +780,8 @@ public with sharing class MobileDriveGeneratorDMLService {
         public Decimal excessStaffCapacity; //HRP-10994
         public Decimal averageStaffCapacity; //HRP-10994
         public Decimal totalStaffRequested; //HRP-10994
+        public Boolean aptRequired; //HRP-13190
+        public Decimal aptQuantity; //HRP-13190
         
         public DMLAccount account;
         public DMLCollectionOperation collectionOperation;
@@ -811,6 +814,8 @@ public with sharing class MobileDriveGeneratorDMLService {
             this.x2rbcProjectedProcedures = opp.X2RBC_Projected_Procedures__c != null ? opp.X2RBC_Projected_Procedures__c : 0;
             this.isCallListRecipientExist = opp.Call_List_Recipient_Exist__c; // HRP - 10478
             this.slotGenerator = opp.Slot_Generator__c; //HRP-12011
+            this.aptRequired = opp.APT_Required__c; //HRP-13190
+            this.aptQuantity = opp.APT_Quantity__c; //HRP-13190
             this.totalProceduresProjected = this.wbProjectedProcedures + this.x2rbcProjectedProcedures;
             this.totalProductsProjected = this.wbProjectedProcedures + 2*this.x2rbcProjectedProcedures;
             this.driveSite = new DMLLocation(fetchSites(new Set<Id>{opp.Drive_Site__c}, schedulingBounds)[0]);
@@ -848,7 +853,9 @@ public with sharing class MobileDriveGeneratorDMLService {
                 sked_Travel_Time_Site_To_CO__c = this.travelTimeSitetoCO,  //HRP-11650
                 sked_Travel_Time_CO_To_Site__c = this.travelTimeCOtoSite,  //HRP-11650
                 Excess_Staff_Capacity__c = this.excessStaffCapacity, //HRP-10994
-                Average_Staff_Capacity__c = this.averageStaffCapacity //HRP-10994
+                Average_Staff_Capacity__c = this.averageStaffCapacity, //HRP-10994
+                sked_APT_Required__c = this.aptRequired, //HRP-13190
+                sked_APT_Quantity__c = this.aptQuantity //HRP-13190
             );
             return skedDrive;
         }

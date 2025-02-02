@@ -6,8 +6,10 @@
 * 08/30/2024			         Barnojit Sharma		  Within the Sponsor Planning Report task, populate the referencing Opp/Drive Sponsor Planning Report. (Logic for HRP-5337)
 * 10/07/2024					 Balaji N				  HRP-12583 new method stopPublicityOrderTaskCompletionWithoutOrder
 * 10/29/2024			         Barnojit Sharma		  Post Drive Analysis task Enhancements. (Logic for HRP-12142)
+* 11/07/2024			         Barnojit Sharma		  Update Task: 72 Hour Check in - System Generated/Details/Checklist. (Logic for HRP-12627)
 ************************************************************************************************************************************************
 */
+
 public with sharing class TaskService {
     
     /* HRP-5763
@@ -72,6 +74,19 @@ public with sharing class TaskService {
                                         FROM Task 
                                         WHERE Id = :taskId];
             if(!taskList.isEmpty() && taskList[0].Subject != null){
+                Map<Id,Id> oppVsDocMap = new Map<Id,Id>();
+                //HRP-12627 changes starts
+                if(taskList[0].WhatId != null){
+                    List<Sked_Drive__c> docList = [SELECT Id,
+                                                            sked_Opportunity__c
+                                                    FROM Sked_Drive__c 
+                                                    WHERE sked_Opportunity__c = :taskList[0].WhatId
+                                                    AND sked_Is_Surrogate__c = false];
+                    for(Sked_Drive__c drv : docList){
+                        oppVsDocMap.put(drv.sked_Opportunity__c, drv.Id);
+                    }
+                }
+                //HRP-12627 changes ends
                 for(Task_Report_Link__mdt metadata : [SELECT Report_Link__c, 
                                                                 Report_Name__c,
                                                                 DeveloperName
@@ -82,7 +97,14 @@ public with sharing class TaskService {
                 
                     Map<String,String> tempMap = new Map<String,String>();
                     tempMap.put('name', metadata.Report_Name__c);
-                    tempMap.put('link', metadata.Report_Link__c.replace('{{opportunityId}}',taskList[0].WhatId));
+                    //HRP-12627 changes starts
+                    String reportLink = metadata.Report_Link__c;
+                    reportLink = reportLink.replace('{{opportunityId}}',taskList[0].WhatId);
+                    if(!oppVsDocMap.isEmpty() && oppVsDocMap.containsKey(taskList[0].WhatId)){
+                        reportLink = reportLink.replace('{{driveId}}',oppVsDocMap.get(taskList[0].WhatId));
+                    }
+                    tempMap.put('link', reportLink);
+                    //HRP-12627 changes ends
                     tempMap.put('id', metadata.DeveloperName);
                     result.add(tempMap);
                 }
@@ -225,4 +247,46 @@ public with sharing class TaskService {
         }
     }
     //HRP-12142 End
+    //HRP-12627 --> Start
+    public static void check72hourCheckInTaskCompletion(List<Task> newList, Map<Id, Task> oldMap){
+        System.debug('check72hourCheckInTaskCompletion entrie');
+        String taskSubject = Task_Reassignment_Matrix__mdt.getInstance('X72_Hour').Task_Subject__c;
+        Map<String, Task_Checklist_Setting__mdt> metadataMap = BSFTaskChecklistTriggerHandler.getMetaDataMap().get(taskSubject);
+        Map<Id, Boolean> taskMap = new Map<Id, Boolean>();
+        if(newList != null && !newList.isEmpty() && oldMap != null && !oldMap.isEmpty()){
+            for(Task tsk : newList){
+                System.debug('tsk.Subject.equals(taskSubject) : '+tsk.Subject.equals(taskSubject));
+                System.debug('oldMap.get(tsk.Id).Status != tsk.Status : '+ (oldMap.get(tsk.Id).Status != tsk.Status));
+                if(tsk.Id != null
+                        && String.isNotBlank(tsk.Subject) && tsk.Subject.equals(taskSubject) 
+                        && String.isNotBlank(tsk.Status) && tsk.Status.equals(BSF_Constants.STATUS_COMPLETED)
+                        && oldMap.containsKey(tsk.Id) && oldMap.get(tsk.Id).Status != tsk.Status){
+                            taskMap.put(tsk.Id,false);
+                }
+            }
+        }
+        if(!taskMap.isEmpty() && metadataMap != null && !metadataMap.isEmpty()){
+            List<BSF_Task_Checklist__c> checklists = [SELECT Id,
+                                                            Input_Checkbox__c,  
+                                                            TaskLookup__c, 
+                                                            Unique_Name__c
+                                                        FROM BSF_Task_Checklist__c
+                                                        WHERE TaskLookup__c IN : taskMap.keySet()
+                                                        AND Unique_Name__c IN : metadataMap.keySet()
+                                                        WITH SYSTEM_MODE];
+            for(BSF_Task_Checklist__c ckList : checklists){
+                if(metadataMap.get(ckList.Unique_Name__c).Input_API_Name__c.equalsIgnoreCase('Input_Checkbox__c') && !ckList.Input_Checkbox__c){
+                    taskMap.put(ckList.TaskLookup__c,true);
+                }
+            }
+        }
+        if(newList != null && !newList.isEmpty() && !taskMap.isEmpty()){
+            for(Task tsk : newList){
+                if(tsk.Id != null && taskMap.containsKey(tsk.Id) && taskMap.get(tsk.Id)){
+                    tsk.addError('Please ensure each item is checked before marking task as complete.');
+                }
+            }
+        }
+    }
+    // HRP-12627 --> end
 }

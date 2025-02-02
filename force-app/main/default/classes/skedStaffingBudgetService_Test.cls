@@ -23,6 +23,7 @@ private class skedStaffingBudgetService_Test {
         testStaffingBudgetModel.driveTypes.add('Fixed Site');
         testStaffingBudgetModel.collectionOperationIds = new List<String>();
         testStaffingBudgetModel.collectionOperationIds.add(testCollectionOperation.Id);
+        testStaffingBudgetModel.siteIds = new List<String>();
         testStaffingBudgetModel.requestType = skedConstants.STAFFING_BUDGET_REQUEST_TYPE_OPEN_ENROLLMENT;
         testStaffingBudgetModel.biddingStartDate = System.today().year() + '-' + System.today().month() + '-' + System.today().day();
         testStaffingBudgetModel.biddingEndDate = System.today().year() + '-' + System.today().month() + '-' + System.today().day();
@@ -48,6 +49,7 @@ private class skedStaffingBudgetService_Test {
         query.excludeEmptySlots = true;
         query.requestTypes = new List<String>();
         query.requestTypes.add(skedConstants.STAFFING_BUDGET_REQUEST_TYPE_OPEN_ENROLLMENT);
+        query.subQueryIndicator = skedSObjectType.AVAILABILITY | skedSObjectType.STAFFING_BUDGET_AVAILABILITY;
         
         Test.startTest();
         
@@ -166,5 +168,39 @@ private class skedStaffingBudgetService_Test {
             sked_Biomed_Collection_Operation__c = testCollectionOperation.id
         );
         insert testStaffingBudgetCollectionOp;
+    }
+    
+    @isTest
+    static void postSaveRecord_Test() {
+        sked__Resource__c testResource = [SELECT Id FROM sked__Resource__c LIMIT 1][0];
+        Biomed_Collection_Op_Center__c testCollectionOperation = [SELECT Id FROM Biomed_Collection_Op_Center__c LIMIT 1][0];
+        sked__Location__c testLocation = [SELECT Id FROM sked__Location__c LIMIT 1];
+        
+        sked_Staffing_Budget__c testStaffingBudget = [
+            SELECT Id, sked_Approved_Slots_Rollup__c, sked_Bidding_End_Date__c, sked_Bidding_Start_Date__c, 
+            sked_Biomed_Collection_Op_Center__c, sked_Pending_Slots_Rollup__c, sked_Request_Type__c, 
+            sked_Roles__c, sked_Staffing_Budget_Date__c, sked_Total_Slots__c, sked_Wait_List_Slots_Rollup__c
+            FROM sked_Staffing_Budget__c LIMIT 1
+        ][0];
+        
+        skedModels.staffingBudget testStaffingBudgetModel = new skedModels.staffingBudget();
+        testStaffingBudgetModel.id = testStaffingBudget.Id;
+        testStaffingBudgetModel.totalSlots = 100;
+        testStaffingBudgetModel.staffingBudgetDate = System.today().year() + '-' + System.today().month() + '-' + System.today().day();
+        testStaffingBudgetModel.roles = new List<String>();
+        testStaffingBudgetModel.roles.add('2RBC');
+        testStaffingBudgetModel.driveTypes = new List<String>();
+        testStaffingBudgetModel.driveTypes.add('Mobile');
+        testStaffingBudgetModel.driveTypes.add('Fixed Site');
+        testStaffingBudgetModel.collectionOperationIds = new List<String>();
+        testStaffingBudgetModel.siteIds = new List<String>{testLocation.Id};
+        testStaffingBudgetModel.requestType = skedConstants.STAFFING_BUDGET_REQUEST_TYPE_OPEN_ENROLLMENT;
+        testStaffingBudgetModel.biddingStartDate = System.today().year() + '-' + System.today().month() + '-' + System.today().day();
+        testStaffingBudgetModel.biddingEndDate = System.today().year() + '-' + System.today().month() + '-' + System.today().day();
+        
+        Test.startTest();
+        skedStaffingBudgetService service = new skedStaffingBudgetService();
+        service.saveRecords(new List<skedModels.staffingBudget>{testStaffingBudgetModel});
+        Test.stopTest();
     }
 }

@@ -2451,11 +2451,6 @@ public class OpportunityTriggerTest
         
         skedHubBase.BypassInsertTriggers = true;
         skedHubBase.BypassUpdateTriggers = true;
-        TriggerHandler.bypass('AccountTriggerHandler');
-            TriggerHandler.bypass('OpportunitySplitTriggerHandler');
-            TriggerHandler.bypass('AccountTeamMemberTriggerHandler');
-            TriggerHandler.bypass('SiteTriggerHandler');
-            TriggerHandler.bypass('OpportunityTriggerHandler');
         Map<string, sObject> mapTestData = GenerateDriveTestData.testSetupForMobileDriveV2();
         Opportunity mobileOpportunity = (Opportunity)mapTestData.get('mobileOpportunity');
     
@@ -2464,7 +2459,9 @@ public class OpportunityTriggerTest
         config.oppIds.add(mobileOpportunity.Id);
        
             AccountTeamMemberHelper.skipAccountTrigger = true;
-            Test.startTest();
+            TriggerHandler.bypass('AccountTriggerHandler');
+            TriggerHandler.bypass('OpportunitySplitTriggerHandler');
+         Test.startTest();
          try{
             GenerateMobileDrive.generateDrives(config);
          }catch(Exception ex){}

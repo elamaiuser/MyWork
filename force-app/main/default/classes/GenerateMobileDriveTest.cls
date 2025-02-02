@@ -13,10 +13,9 @@
 -------------------------
 Current Code Coverage :  
 -------------------------
-** CreateSkedDrive : 90%
+** CreateSkedDrive : 92%
 ** GenerateMobileDrive : 91%
 ** DriveGeneratorService : 92%
-** FetchRelatedDriveData : 86%
 ** JobTriggerHandler : 83%
 *******************************************************************************
 */
@@ -106,20 +105,24 @@ public class GenerateMobileDriveTest {
     }
     
     @istest
-    public static void conditionForMobileDriveTest(){        
+    public static void conditionForMobileDriveTest() {   
+
         Map<string, sObject> mapTestData = GenerateDriveTestData.testSetupForMobileDriveV2();
         Opportunity mobileOpportunity = (Opportunity)mapTestData.get('mobileOpportunity');
         
         MobileDriveGeneratorDMLService.driveGeneratorConfig config = new MobileDriveGeneratorDMLService.driveGeneratorConfig();
         config.oppIds = new Set<Id>();
         config.oppIds.add(mobileOpportunity.Id);
-        
-        Test.startTest();
-        
+
         AccountTeamMemberHelper.skipAccountTrigger = true;
+        skedHubBase.BypassUpdateTriggers = TRUE;
         TriggerHandler.bypass('AccountTriggerHandler');
+        TriggerHandler.bypass('DriveTriggerHandler');
+        TriggerHandler.bypass('SiteTriggerHandler');
+        TriggerHandler.bypass('BSFTaskChecklistTriggerHandler');
         TriggerHandler.bypass('OpportunityTriggerHandler');
         TriggerHandler.bypass('OpportunitySplitTriggerHandler');
+        Test.startTest();
         GenerateMobileDrive.generateDrives(config);
         
         List<sked_Drive__c> mobileDriveCreated = [Select Id , sked_Opportunity__c from sked_Drive__c where sked_Opportunity__c IN :config.oppIds];
@@ -190,8 +193,16 @@ public class GenerateMobileDriveTest {
         Map<string, sObject> mapTestData = GenerateDriveTestData.testSetupForMobileDriveV2();
         Opportunity mobileOpportunity = (Opportunity)mapTestData.get('mobileOpportunity');
         
+        skedHubBase.BypassUpdateTriggers = TRUE;
+        TriggerHandler.bypass('AccountTriggerHandler');
+        TriggerHandler.bypass('OpportunityTriggerHandler');
+        TriggerHandler.bypass('DriveTriggerHandler');
+        TriggerHandler.bypass('SiteTriggerHandler');
+        TriggerHandler.bypass('BSFTaskChecklistTriggerHandler');
+        TriggerHandler.bypass('OpportunitySplitTriggerHandler');
+        
         Test.startTest();
-        Triggerhandler.bypass('OpportunityTriggerHandler');
+        
         DriveGeneratorService.generateDrivesOnOppInsert(new List<Opportunity>{mobileOpportunity});
         
         List<sked_Drive__c> mobileDriveCreated = [Select Id , sked_Opportunity__c from sked_Drive__c where sked_Opportunity__c =:mobileOpportunity.Id];

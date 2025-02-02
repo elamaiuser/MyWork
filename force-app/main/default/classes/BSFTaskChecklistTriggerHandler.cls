@@ -244,6 +244,8 @@ public without sharing class BSFTaskChecklistTriggerHandler extends TriggerHandl
                 if(String.isNotBlank(taskChecklist.TaskLookup__c) && String.isNotBlank(taskChecklist.Unique_Name__c)
                         && fieldVsObjectMap.containsKey(taskChecklist.Unique_Name__c) && fieldVsObjectMap.get(taskChecklist.Unique_Name__c).equals('Account')
                         && taskVsAccountMap != null && taskVsAccountMap.containsKey(taskChecklist.TaskLookup__c)){
+                            system.debug('metadataMap '+metadataMap);
+                            system.debug('metadataMap.get(BSF_Constants.POST_DRIVE_ANALYSIS_TASK) '+metadataMap.get(BSF_Constants.POST_DRIVE_ANALYSIS_TASK));
                             String fieldName = metadataMap.get(BSF_Constants.POST_DRIVE_ANALYSIS_TASK).get(taskChecklist.Unique_Name__c).Input_API_Name__c;
                             Object fieldValue = taskChecklist.get(fieldName);
                             if(fieldValue instanceof String && (String.isBlank((String) fieldValue) || (String)fieldValue == '--none--')){
