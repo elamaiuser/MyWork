@@ -8,6 +8,7 @@ import _getPicklistOptions from '@salesforce/apex/slwcDataService.getPicklistOpt
 import _getMapDependentOptions from '@salesforce/apex/slwcDataService.getMapDependentOptions';
 
 import _getSkedRegionId from '@salesforce/apex/slwcCollectionOperationService.getSkedRegionId';
+import _getSkedRegionIdUsingTaxonomy from '@salesforce/apex/slwcCollectionOperationService.getSkedRegionIdUsingTaxonomy';//HRP-13791
 
 import _getAddressPredictions from '@salesforce/apex/slwcSkedApiService.getAddressPredictions';
 import _getGeocode from '@salesforce/apex/slwcSkedApiService.getGeocode';
@@ -68,6 +69,7 @@ import _manualRefreshTravelTimeIndexes from '@salesforce/apex/slwcSiteCollection
 import _isManualRefreshInProgress from '@salesforce/apex/slwcSiteCollectionOperationService.isManualRefreshInProgress';
 import _hasInvalidTravelTimeData from '@salesforce/apex/slwcSiteCollectionOperationService.hasInvalidTravelTimeData';
 import _getRelatedSiteInfo from '@salesforce/apex/slwcSiteCollectionOperationService.getRelatedSiteInfo';
+import _isSCOUserOverrideEnabled from '@salesforce/apex/slwcSiteCollectionOperationService.isSCOUserOverrideEnabled';
 
 import _getUnavailabilityStatistic from '@salesforce/apex/slwcAvailabilityService.getUnavailabilityStatistic';
 
@@ -98,6 +100,7 @@ class auraService {
   getPicklistOptions = (params) => this.execute(_getPicklistOptions, params);
   getMapDependentOptions = (params) => this.execute(_getMapDependentOptions, params);
   getSkedRegionId = (params) => this.execute(_getSkedRegionId, params);
+  getSkedRegionIdUsingTaxonomy = (params) => this.execute(_getSkedRegionIdUsingTaxonomy, params);//HRP-13791
   getAddressPredictions = (params) => this.execute(_getAddressPredictions, params);
   getGeocode = (params) => this.execute(_getGeocode, params);
   getPlaceDetails = (params) => this.execute(_getPlaceDetails, params);
@@ -142,6 +145,7 @@ class auraService {
   isManualRefreshInProgress = (params) => this.execute(_isManualRefreshInProgress, params);
   hasInvalidTravelTimeData = (params) => this.execute(_hasInvalidTravelTimeData, params);
   getRelatedSiteInfo = (params) => this.execute(_getRelatedSiteInfo, params);
+  isSCOUserOverrideEnabled = (params) => this.execute(_isSCOUserOverrideEnabled, params);
   getUnavailabilityStatistic = (params) => this.execute(_getUnavailabilityStatistic, params);
 }
 

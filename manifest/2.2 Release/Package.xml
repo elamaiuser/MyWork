@@ -14,8 +14,12 @@
         <members>BSFWeeklyStaffingRoleTimeControllerTest</members>
         <members>BSFWeeklyStaffingRTReportController</members>
 		<members>CalendarBuildBatchHandler</members>
+		<members>CalendarBuildBatchOnDemandController</members>
+		<members>CalendarBuildEvaluateDrivesBatch</members>
         <members>CalendarBuildEvaluateDrivesBatch_Test</members>
+		<members>CreateSkedDrivesBatch</members>
 		<members>checkRecursive</members>
+		<members>DriveGenerationUtil</members>
 		<members>DriveResourceAllocationBatch</members>
 		<members>DriveResourceAllocationBatchTest</members>
 		<members>GenerateMobileDrive</members>
@@ -25,6 +29,7 @@
         <members>skedCaptureJobIMPACTBatch_Test</members>        
         <members>skedDriveHandler</members>
         <members>skedDriveTrigger_Test</members>
+		<members>skedDriveRankingBatch</members>
         <members>skedJobAllocationHandler</members>
         <members>skedJobAllocationTrigger_Test</members>
 		<members>skedJobAllocationPostProcessBatch</members>
@@ -46,13 +51,24 @@
 		<name>ApexClass</name>
 	</types>
 	<types>
+		<members>AdhocCalendarBuildRunEvent</members>
 		<members>assignResourcesToUsersBasedOnConfig</members>
 		<name>ApexTrigger</name>
 	</types>
 	<types>
+		<members>Account.Special_Partnership_Level__c</members>
+		<members>Adhoc_Calendar_Build_Run__e.Booking_Strategy__c</members>
+		<members>Adhoc_Calendar_Build_Run__e.Opportunity_Ids__c</members>
+		<members>Adhoc_Calendar_Build_Run__e.Opportunity_Source__c</members>
 		<members>Assign_SF_Resources_to_User__mdt.Assignment_Type__c</members>
 		<members>Assign_SF_Resources_to_User__mdt.Role_Name__c</members>
 		<members>AssignResourcesToUserEvent__e.skipUserRoleUpdate__c</members>
+		<members>Calendar_Build_Log_Manual_Run__c.Source__c</members>
+        <members>Opportunity.Booking_Strategy__c</members>
+        <members>Opportunity.Source__c</members>
+		<members>Profile_Specific_Functionality_Access__mdt.Allowed_Assignments__c</members>
+		<members>Profile_Specific_Functionality_Access__mdt.Assignment_Type__c</members>
+		<members>Profile_Specific_Functionality_Access__mdt.Process_Functionality_Name__c</members>
 		<members>sked__Job_Allocation__c.sked_Completed_Post_Processes__c</members>
 		<members>sked__Location__c.sked_Unloading_Directions_Details__c</members>
 		<members>sked_Drive__c.Max_Role_Capacity__c</members>		
@@ -83,8 +99,26 @@
 		<members>Assign_SF_Resources_to_User.Telerecruiter_BSF_User_Role</members>
 		<members>Custom_Notification_Setting.RenewMilitaryMoA</members>		
 		<members>Custom_Report_Config.RoleTimeReportCharacterSplit</members>
+		<members>Profile_Specific_Functionality_Access.Adhoc_Calendar_Build_Setting</members>
 		<members>Task_Reassignment_Matrix.Renew_Military_MoA</members>
 		<name>CustomMetadata</name>
+	</types>
+	<types>
+		<members>Adhoc_Calendar_Build_Run__e</members>
+		<members>Profile_Specific_Functionality_Access__mdt</members>
+		<name>CustomObject</name>
+	</types>
+	<types>
+		<members>Calendar_Build_Log_Manual_Run_Record_Page</members>
+		<name>FlexiPage</name>
+	</types>
+	<types>
+		<members>Run_Adhoc_Calendar_Build</members>
+		<name>Flow</name>
+	</types>
+	 <types>
+		<members>Drive_Marketing_Programs__c.All</members>
+		<name>ListView</name>
 	</types>
 	<types>
 		<members>autoMapper</members>
@@ -95,14 +129,30 @@
 		<members>slwcDriveManagement</members>		
 		<name>LightningComponentBundle</name>
 	</types>
-	<types>		
+	<types>
+		<members>Account-DRD Fixed Site Layout</members>
+		<members>Account-DRD Mobile Account Layout</members>
+		<members>Account-System Admin Fixed Site Account Layout</members>
+		<members>Account-System Admin Mobile Account Layout</members>	
+		<members>Calendar_Build_Log_Manual_Run__c-Calendar Build Log Manual Run Layout</members>
+		<members>Opportunity-APS Planner Mobile Opp Layout</members>
+		<members>Opportunity-APS Scheduler Mobile Opp Layout</members>
+		<members>Opportunity-DRD Mobile Opp Layout</members>
+		<members>Opportunity-Mobile Opp Layout</members>
+		<members>Opportunity-Sponsor Marketing Mobile Opp Layout</members>
+        <members>Profile_Specific_Functionality_Access__mdt-Profile Specific Functionality Setting Layout</members>	
 		<members>sked__Resource__c-Staff Layout</members>		
 		<name>Layout</name>
 	</types>
 	<types>
+		<members>Batch_Processing_Status</members>
 		<members>sked_Resource_Roles</members>
 		<name>GlobalValueSet</name>
     </types>
+	<types>
+		<members>Adhoc_CB_Users</members>
+		<name>Group</name>
+	</types>
 	<types>
 		<members>General_Reports/Excess_Staff_Capacity_Audit_6N2</members>
 		<name>Report</name>
@@ -110,6 +160,10 @@
 	<types>
 		<members>Drives_with_Account_and_Site</members>
 		<name>ReportType</name>
+	</types>
+	<types>
+		<members>Opportunity.Run_Adhoc_Calendar_Build</members>
+		<name>WebLink</name>
 	</types>
 	<version>60.0</version>
 </Package>

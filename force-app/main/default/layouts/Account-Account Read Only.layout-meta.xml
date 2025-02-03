@@ -43,6 +43,10 @@
                 <behavior>Edit</behavior>
                 <field>Next_Scheduled_Drive_Updated__c</field>
             </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>Special_Partnership_Level__c</field>
+            </layoutItems>
         </layoutColumns>
         <layoutColumns>
             <layoutItems>
