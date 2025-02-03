@@ -7,6 +7,10 @@
         <value xsi:type="xsd:double">2.0</value>
     </values>
     <values>
+        <field>Field_Mapping_Object__c</field>
+        <value xsi:type="xsd:string">Account</value>
+    </values>
+    <values>
         <field>Help_Text__c</field>
         <value xsi:type="xsd:string">Updating the Account Strategy Notes will update Account Strategy on the Account Record.</value>
     </values>
@@ -44,7 +48,7 @@
     </values>
     <values>
         <field>Subject__c</field>
-        <value xsi:type="xsd:string">Post Drive Analysis Task</value>
+        <value xsi:type="xsd:string">Post Drive Analysis</value>
     </values>
     <values>
         <field>Subtype__c</field>

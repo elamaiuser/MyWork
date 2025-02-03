@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomMetadata xmlns="http://soap.sforce.com/2006/04/metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-    <label>Contingency Worksheet</label>
+    <label>Diverse Donor Recruitment Strategy</label>
     <protected>false</protected>
     <values>
         <field>Column__c</field>
@@ -12,11 +12,11 @@
     </values>
     <values>
         <field>Help_Text__c</field>
-        <value xsi:type="xsd:string">If a Contingency Plan does not exist, formulate one as well as a recruitment contingency plan using the Contingency Plan Worksheet in Important Links.</value>
+        <value xsi:nil="true"/>
     </values>
     <values>
         <field>Hyperlink__c</field>
-        <value xsi:type="xsd:string">https://americanredcross.sharepoint.com/teams/TheField/Donor%20Recruitment/Forms/AllItems.aspx?id=%2Fteams%2FTheField%2FDonor%20Recruitment%2FDrive%20Planning%2FPlanning%20Support%20Tools%2FContingency%20Planning%20Worksheet%2Epdf&amp;parent=%2Fteams%2FTheField%2FDonor%20Recruitment%2FDrive%20Planning%2FPlanning%20Support%20Tools</value>
+        <value xsi:nil="true"/>
     </values>
     <values>
         <field>Input_API_Name__c</field>
@@ -32,7 +32,7 @@
     </values>
     <values>
         <field>Order__c</field>
-        <value xsi:type="xsd:double">13.0</value>
+        <value xsi:type="xsd:double">7.0</value>
     </values>
     <values>
         <field>Parent__c</field>
@@ -44,7 +44,7 @@
     </values>
     <values>
         <field>Section_Header__c</field>
-        <value xsi:type="xsd:string">Review, Discuss, and Plan the Following</value>
+        <value xsi:type="xsd:string">Checklist</value>
     </values>
     <values>
         <field>Subject__c</field>
@@ -56,10 +56,10 @@
     </values>
     <values>
         <field>UI_Text__c</field>
-        <value xsi:type="xsd:string">Contingency Plan Worksheet</value>
+        <value xsi:type="xsd:string">Diverse Donor Recruitment Strategy</value>
     </values>
     <values>
         <field>Unique_Name__c</field>
-        <value xsi:type="xsd:string">Contingency_Plan_Worksheet</value>
+        <value xsi:type="xsd:string">Diverse_Donor_Recruitment_Strategy</value>
     </values>
 </CustomMetadata>
