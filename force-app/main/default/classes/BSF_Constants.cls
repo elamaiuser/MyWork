@@ -33,6 +33,10 @@ public class BSF_Constants {
     
     //Affiliation Record Types
     public static final String AFFILIATION_RECORD_TYPE = 'Sponsor Recognition';
+    public static final String AFFILIATION_RECORD_TYPE2 = 'Organization Partnership';
+
+    //Affiliation Names
+    public static final String HOSPITAL_CONTRACT_PARTNER = 'Hospital Contract Partner';
 
     //Account Record Types
     public static final String FIXED_SITE_ACCOUNT_RECORD_TYPE = 'Fixed Site Account';
