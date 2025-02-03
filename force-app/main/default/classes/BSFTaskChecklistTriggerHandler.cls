@@ -1,10 +1,7 @@
 public without sharing class BSFTaskChecklistTriggerHandler extends TriggerHandler {
     public static String oppPrefix = Opportunity.sObjectType.getDescribe().getKeyPrefix();
     public static Map<String, Map<String, Task_Checklist_Setting__mdt>> metadataMap = getMetaDataMap();
-    public static Map<String,String> fieldVsObjectMap = new Map<String,String>{'Account_Strategy_Notes__c' => 'Account',
-                                                                        'Account_Strategy__c' => 'Account',
-                                                                        'Gray_Sky_Account__c' => 'Account',
-                                                                        'Rollover_Consideration__c' => 'Opportunity'};
+    public static Map<String, Map<String,String>> taskVsFieldVsObjectMap = getFieldVsObjectMap(metadataMap);
 
     public override void afterUpdate() {
         //processChecklistUpdates((List<BSF_Task_Checklist__c>)Trigger.new, (Map<Id, BSF_Task_Checklist__c>)Trigger.oldMap);
@@ -17,7 +14,15 @@ public without sharing class BSFTaskChecklistTriggerHandler extends TriggerHandl
         Map<String,Id> taskVsOppMap = new Map<String,Id>();
         Map<String,Opportunity> taskVsOpportunityMap = new Map<String,Opportunity>();
         Map<String,Account> taskVsAccountMap = new Map<String,Account>();
-        if(newList != null && !newList.isEmpty() && metadataMap.containsKey(BSF_Constants.POST_DRIVE_ANALYSIS_TASK) && !fieldVsObjectMap.isEmpty()){
+        Map<Id,String> taskVsSubjectMap = new Map<Id,String>();
+        Map<String,String> fieldVsObjectMap = new Map<String,String>();
+        if(!taskVsFieldVsObjectMap.isEmpty() && taskVsFieldVsObjectMap.containsKey(BSF_Constants.POST_DRIVE_ANALYSIS_TASK)){
+            fieldVsObjectMap = taskVsFieldVsObjectMap.get(BSF_Constants.POST_DRIVE_ANALYSIS_TASK);
+        }
+        if(!taskVsFieldVsObjectMap.isEmpty() && taskVsFieldVsObjectMap.containsKey(BSF_Constants.RECRUITMENT_PLANNING_TASK)){
+            fieldVsObjectMap.putAll(taskVsFieldVsObjectMap.get(BSF_Constants.RECRUITMENT_PLANNING_TASK));
+        }
+        if(newList != null && !newList.isEmpty() && !fieldVsObjectMap.isEmpty()){
             for(BSF_Task_Checklist__c taskChecklist: newList){
                 if(String.isNotBlank(taskChecklist.TaskLookup__c) && String.isNotBlank(taskChecklist.Unique_Name__c) 
                         && fieldVsObjectMap.containsKey(taskChecklist.Unique_Name__c)){
@@ -32,12 +37,13 @@ public without sharing class BSFTaskChecklistTriggerHandler extends TriggerHandl
                                             Status 
                                     FROM Task 
                                     WHERE Id IN: taskIds
-                                    AND Subject = :BSF_Constants.POST_DRIVE_ANALYSIS_TASK
+                                    AND Subject IN (:BSF_Constants.POST_DRIVE_ANALYSIS_TASK,:BSF_Constants.RECRUITMENT_PLANNING_TASK)
                                     AND WhatId != null
                                     WITH SYSTEM_MODE];
             for(Task task : taskList){
                 if(((String)task.WhatId).startsWith(oppPrefix)){
                     taskVsOppMap.put(task.Id,task.WhatId);
+                    taskVsSubjectMap.put(task.Id,task.Subject);
                 }
             }
         }
@@ -104,13 +110,13 @@ public without sharing class BSFTaskChecklistTriggerHandler extends TriggerHandl
                                     && taskVsAccountMap.containsKey(taskChecklist.TaskLookup__c) 
                                     && taskVsAccountMap.get(taskChecklist.TaskLookup__c).get(taskChecklist.Unique_Name__c) != null){
                                         Object value = taskVsAccountMap.get(taskChecklist.TaskLookup__c).get(taskChecklist.Unique_Name__c);
-                                        String fieldName = metadataMap.get(BSF_Constants.POST_DRIVE_ANALYSIS_TASK).get(taskChecklist.Unique_Name__c).Input_API_Name__c;
+                                        String fieldName = metadataMap.get(taskVsSubjectMap.get(taskChecklist.TaskLookup__c)).get(taskChecklist.Unique_Name__c).Input_API_Name__c;
                                         taskChecklist.put(fieldName,UpdateTaskChecklistEventHandler.getFieldValue(fieldName,String.valueOf(value)));
                             }else if(fieldVsObjectMap.get(taskChecklist.Unique_Name__c).equals('Opportunity') && !taskVsOpportunityMap.isEmpty()
                                     && taskVsOpportunityMap.containsKey(taskChecklist.TaskLookup__c) 
                                     && taskVsOpportunityMap.get(taskChecklist.TaskLookup__c).get(taskChecklist.Unique_Name__c) != null){
                                         Object value = taskVsOpportunityMap.get(taskChecklist.TaskLookup__c).get(taskChecklist.Unique_Name__c);
-                                        String fieldName = metadataMap.get(BSF_Constants.POST_DRIVE_ANALYSIS_TASK).get(taskChecklist.Unique_Name__c).Input_API_Name__c;
+                                        String fieldName = metadataMap.get(taskVsSubjectMap.get(taskChecklist.TaskLookup__c)).get(taskChecklist.Unique_Name__c).Input_API_Name__c;
                                         taskChecklist.put(fieldName,UpdateTaskChecklistEventHandler.getFieldValue(fieldName,String.valueOf(value)));
                             }
                 }
@@ -123,6 +129,10 @@ public without sharing class BSFTaskChecklistTriggerHandler extends TriggerHandl
         Map<String,Opportunity> taskVsOpportunityMap = new Map<String,Opportunity>();
         Map<String,Account> taskVsAccountMap = new Map<String,Account>();
         List<BSF_Task_Checklist__c> checklistsToProcess = new List<BSF_Task_Checklist__c>();
+        Map<String,String> fieldVsObjectMap = new Map<String,String>();
+        if(!taskVsFieldVsObjectMap.isEmpty() && taskVsFieldVsObjectMap.containsKey(BSF_Constants.POST_DRIVE_ANALYSIS_TASK)){
+            fieldVsObjectMap = taskVsFieldVsObjectMap.get(BSF_Constants.POST_DRIVE_ANALYSIS_TASK);
+        }
         if(newList != null && !newList.isEmpty() && oldMap != null && !oldMap.isEmpty() 
                 && metadataMap.containsKey(BSF_Constants.POST_DRIVE_ANALYSIS_TASK) && !fieldVsObjectMap.isEmpty()){
                     for(BSF_Task_Checklist__c taskChecklist: newList) {
@@ -217,7 +227,7 @@ public without sharing class BSFTaskChecklistTriggerHandler extends TriggerHandl
         System.debug('taskVsOpportunityMap : '+taskVsOpportunityMap);
         System.debug('taskVsAccountMap : '+taskVsAccountMap);
         if(!checklistsToProcess.isEmpty()){
-            updateAccountAndOpportunity(checklistsToProcess,taskVsOpportunityMap,taskVsAccountMap);
+            updateAccountAndOpportunity(checklistsToProcess,taskVsOpportunityMap,taskVsAccountMap,BSF_Constants.POST_DRIVE_ANALYSIS_TASK);
         }
     }
     public static Map<String, Map<String, Task_Checklist_Setting__mdt>> getMetaDataMap() {
@@ -235,15 +245,37 @@ public without sharing class BSFTaskChecklistTriggerHandler extends TriggerHandl
         }
         return metadataMap;
     }
-    public static void updateAccountAndOpportunity(List<BSF_Task_Checklist__c> newList,Map<String,Opportunity> taskVsOpportunityMap,Map<String,Account> taskVsAccountMap){
+    public static Map<String, Map<String,String>> getFieldVsObjectMap(Map<String, Map<String, Task_Checklist_Setting__mdt>> metaDataMap) {
+        Map<String, Map<String,String>> fieldVsObjectMap = new Map<String, Map<String,String>>();
+        if(metaDataMap != null && !metaDataMap.isEmpty()){
+            for(String subject: metaDataMap.keySet()){
+                Map<String,String> fieldMap = new Map<String,String>();
+                for(String uniqueName: metaDataMap.get(subject).keySet()){
+                    if(String.isNotBlank(uniqueName) && uniqueName.endsWith('__c') 
+                            && String.isNotBlank(metaDataMap.get(subject).get(uniqueName).Field_Mapping_Object__c)){
+                                fieldMap.put(uniqueName,metaDataMap.get(subject).get(uniqueName).Field_Mapping_Object__c);
+                    }
+                }
+                if(!fieldMap.isEmpty()){
+                    fieldVsObjectMap.put(subject,fieldMap);
+                }
+            }
+        }
+        return fieldVsObjectMap;
+    }
+    public static void updateAccountAndOpportunity(List<BSF_Task_Checklist__c> newList,Map<String,Opportunity> taskVsOpportunityMap,Map<String,Account> taskVsAccountMap, String subject){
         Map<Id,Account> accountsToUpdate = new Map<Id,Account>();
         Map<Id,Opportunity> oppsToUpdate = new Map<Id,Opportunity>();
-        if(newList != null && !newList.isEmpty()){
+        Map<String,String> fieldVsObjectMap = new Map<String,String>();
+        if(String.isNotBlank(subject) && !taskVsFieldVsObjectMap.isEmpty() && taskVsFieldVsObjectMap.containsKey(subject)){
+            fieldVsObjectMap = taskVsFieldVsObjectMap.get(subject);
+        }
+        if(newList != null && !newList.isEmpty() && String.isNotBlank(subject)){
             for(BSF_Task_Checklist__c taskChecklist : newList){
                 if(String.isNotBlank(taskChecklist.TaskLookup__c) && String.isNotBlank(taskChecklist.Unique_Name__c)
                         && fieldVsObjectMap.containsKey(taskChecklist.Unique_Name__c) && fieldVsObjectMap.get(taskChecklist.Unique_Name__c).equals('Account')
                         && taskVsAccountMap != null && taskVsAccountMap.containsKey(taskChecklist.TaskLookup__c)){
-                            String fieldName = metadataMap.get(BSF_Constants.POST_DRIVE_ANALYSIS_TASK).get(taskChecklist.Unique_Name__c).Input_API_Name__c;
+                            String fieldName = metadataMap.get(subject).get(taskChecklist.Unique_Name__c).Input_API_Name__c;
                             Object fieldValue = taskChecklist.get(fieldName);
                             if(fieldValue instanceof String && (String.isBlank((String) fieldValue) || (String)fieldValue == '--none--')){
                                 fieldValue = null;
@@ -261,7 +293,7 @@ public without sharing class BSFTaskChecklistTriggerHandler extends TriggerHandl
                 }else if(String.isNotBlank(taskChecklist.TaskLookup__c) && String.isNotBlank(taskChecklist.Unique_Name__c)
                         && fieldVsObjectMap.containsKey(taskChecklist.Unique_Name__c) && fieldVsObjectMap.get(taskChecklist.Unique_Name__c).equals('Opportunity')
                         && taskVsOpportunityMap != null && taskVsOpportunityMap.containsKey(taskChecklist.TaskLookup__c)){
-                            String fieldName = metadataMap.get(BSF_Constants.POST_DRIVE_ANALYSIS_TASK).get(taskChecklist.Unique_Name__c).Input_API_Name__c;
+                            String fieldName = metadataMap.get(subject).get(taskChecklist.Unique_Name__c).Input_API_Name__c;
                             Object fieldValue = taskChecklist.get(fieldName);
                             if(fieldValue instanceof String && (String.isBlank((String) fieldValue) || (String)fieldValue == '--none--')){
                                 fieldValue = null;
@@ -321,6 +353,10 @@ public without sharing class BSFTaskChecklistTriggerHandler extends TriggerHandl
         Map<Id,Account> accMap = new Map<Id,Account>();
         Map<Id,List<String>> fieldChangedMap = new Map<Id,List<String>>();
         Map<Id,Opportunity> oppMap = new Map<Id,Opportunity>();
+        Map<String,String> fieldVsObjectMap = new Map<String,String>();
+        if(!taskVsFieldVsObjectMap.isEmpty() && taskVsFieldVsObjectMap.containsKey(BSF_Constants.POST_DRIVE_ANALYSIS_TASK)){
+            fieldVsObjectMap = taskVsFieldVsObjectMap.get(BSF_Constants.POST_DRIVE_ANALYSIS_TASK);
+        }
         if(newList != null && !newList.isEmpty() && metadataMap.containsKey(BSF_Constants.POST_DRIVE_ANALYSIS_TASK) 
                 && !fieldVsObjectMap.isEmpty()){
                     List<String> oppFields = new List<String>();
