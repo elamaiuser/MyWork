@@ -53,6 +53,10 @@
                 <behavior>Edit</behavior>
                 <field>Calendar_Description__c</field>
             </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>Calendar_Build_Alert_Reviewed__c</field>
+            </layoutItems>
         </layoutColumns>
         <layoutColumns>
             <layoutItems>
