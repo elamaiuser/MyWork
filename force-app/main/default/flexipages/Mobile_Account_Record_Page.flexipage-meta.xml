@@ -1538,7 +1538,7 @@
                 <componentName>showingLogoWhenPumpItUp</componentName>
                 <identifier>showingLogoWhenPumpItUp</identifier>
                 <visibilityRule>
-                    <booleanFilter>1 OR 2</booleanFilter>
+                    <booleanFilter>1 OR 2 OR 3</booleanFilter>
                     <criteria>
                         <leftValue>{!Record.IsPumpedItUpCurrent__c}</leftValue>
                         <operator>EQUAL</operator>
@@ -1546,6 +1546,11 @@
                     </criteria>
                     <criteria>
                         <leftValue>{!Record.IsPremierCurrent__c}</leftValue>
+                        <operator>EQUAL</operator>
+                        <rightValue>true</rightValue>
+                    </criteria>
+                    <criteria>
+                        <leftValue>{!Record.Is_Hospital_Contract_Partner__c}</leftValue>
                         <operator>EQUAL</operator>
                         <rightValue>true</rightValue>
                     </criteria>
