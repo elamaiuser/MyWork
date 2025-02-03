@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <Package xmlns="http://soap.sforce.com/2006/04/metadata">
 	<types>
+		<members>AccountAffiliationService</members>
+		<members>AccountAffiliationServiceTest</members>
+		<members>AccountAffiliationTriggerHandler</members>
 		<members>AccountTeamMemberHelper</members>
 		<members>AccountTeamMemberService</members>
 		<members>BatchAccountsMilitaryMoAUploadedFiles</members>
@@ -56,6 +59,11 @@
 		<name>ApexTrigger</name>
 	</types>
 	<types>
+		<members>showingLogoWhenPumpItUp</members>
+		<name>AuraDefinitionBundle</name>
+	</types>
+	<types>
+		<members>Account.Is_Hospital_Contract_Partner__c</members>
 		<members>Account.Special_Partnership_Level__c</members>
 		<members>Adhoc_Calendar_Build_Run__e.Booking_Strategy__c</members>
 		<members>Adhoc_Calendar_Build_Run__e.Opportunity_Ids__c</members>
@@ -110,6 +118,7 @@
 	</types>
 	<types>
 		<members>Calendar_Build_Log_Manual_Run_Record_Page</members>
+		<members>Mobile_Account_Record_Page</members>
 		<name>FlexiPage</name>
 	</types>
 	<types>
@@ -160,6 +169,10 @@
 	<types>
 		<members>Drives_with_Account_and_Site</members>
 		<name>ReportType</name>
+	</types>
+	<types>
+		<members>hospitalContractPartnerBadgeLogo</members>
+		<name>StaticResource</name>
 	</types>
 	<types>
 		<members>Opportunity.Run_Adhoc_Calendar_Build</members>
