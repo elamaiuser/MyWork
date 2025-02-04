@@ -205,6 +205,7 @@
 	</types>
 	<types>
 		<members>hospitalContractPartnerBadgeLogo</members>
+		<members>sked_HLT_Dist</members>
 		<name>StaticResource</name>
 	</types>
 	<types>
