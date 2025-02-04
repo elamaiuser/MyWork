@@ -340,7 +340,6 @@ class MobileGenerator extends BaseGenerator {
                     staffSetupExcludedRoles
                   }]) => {
                     this.populateDriveCollectionOperation();
-                    this.populateCollectionOperationData();
 
                     return Promise.all([
                       driveSite,
@@ -376,6 +375,7 @@ class MobileGenerator extends BaseGenerator {
                       staffSetupExcludedRoles
                     })
 
+                    this.populateCollectionOperationData();
                     this.calculateTotalProceduresProjected();
                     this.calculateDriveShiftsMetadata();
                     this.calculateNumberOf2rbcAssets();
@@ -909,6 +909,11 @@ class MobileGenerator extends BaseGenerator {
     return driveShiftStaffCapacity;
   }
 
+  calculateDriveShiftDrawHours(driveShift, ignoreLunchBreak = false) {
+    const drawHours = this.helper.calculateDrawHours(driveShift.driveShiftMetadata, this.masterData, driveShift.driveShiftMetadata.lunchBreakSettings);
+    return drawHours;
+  }
+
   calculateDriveShiftMaxStaffCapacity(driveShift, ignoreLunchBreak = false) {
     const driveShiftStaffCapacity = this.helper.calculateMaximumStaffCapacity([
       'Driver', 'Driver Support', '2RBC', 'VP/HH', 'Charge'
@@ -963,17 +968,21 @@ class MobileGenerator extends BaseGenerator {
   updateDriveMaxRoleCapacity() {
     let driveMaxStaffCapacity = 0;
     let driveMaxStaffCapacityWithDrawHours = 0;
+    let totalDrawHours = 0;
     if (this.masterData && this.masterData.staffingDecisionMatrix) {
       this.drive.driveShifts.forEach((driveShift) => {
         const driveShiftMaxStaffCapacity = this.calculateDriveShiftMaxStaffCapacity(driveShift);
         if(driveShiftMaxStaffCapacity && driveShiftMaxStaffCapacity > driveMaxStaffCapacity){
           driveMaxStaffCapacity = driveShiftMaxStaffCapacity;
         }
-        const driveShiftMaxStaffCapacityWithDrawHours = this.calculateDriveShiftMaxStaffCapacityWithDrawHours(driveShift);
-        if(driveShiftMaxStaffCapacityWithDrawHours && driveShiftMaxStaffCapacityWithDrawHours > driveMaxStaffCapacityWithDrawHours){
-          driveMaxStaffCapacityWithDrawHours = driveShiftMaxStaffCapacityWithDrawHours;
+        const shiftDrawHours = this.calculateDriveShiftDrawHours(driveShift);
+        if(shiftDrawHours){
+          totalDrawHours = totalDrawHours + shiftDrawHours;
         }
       });
+      if(totalDrawHours > 0){
+        driveMaxStaffCapacityWithDrawHours = driveMaxStaffCapacity * totalDrawHours;
+      }
     }
     this.drive.maxRoleCapacity = driveMaxStaffCapacity.toFixed(2);
     this.drive.maxRoleCapacityWithDrawHours = driveMaxStaffCapacityWithDrawHours.toFixed(2);

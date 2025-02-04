@@ -7,12 +7,12 @@
     <columns>ACCOUNT.NAME</columns>
     <columns>Drive_Site_Name__c</columns>
     <columns>DriveStatus__c</columns>
-    <columns>Type_of_Drive__c</columns>
+    <columns>Rollover_Consideration__c</columns>
     <filterScope>Everything</filterScope>
     <filters>
         <field>Drive_Date__c</field>
         <operation>equals</operation>
-        <value>9/20/2024</value>
+        <value>12/9/2024</value>
     </filters>
     <filters>
         <field>Rollover_Consideration__c</field>
@@ -28,6 +28,11 @@
         <field>OPPORTUNITY.RECORDTYPE</field>
         <operation>equals</operation>
         <value>Opportunity.Mobile_Opp</value>
+    </filters>
+    <filters>
+        <field>ACCOUNT.NAME</field>
+        <operation>equals</operation>
+        <value>#11Together</value>
     </filters>
     <label>Calendar Build Candidates_Mobile</label>
 </ListView>
