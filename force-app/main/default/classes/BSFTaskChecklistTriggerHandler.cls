@@ -123,7 +123,7 @@ public without sharing class BSFTaskChecklistTriggerHandler extends TriggerHandl
             }
         }
     }
-    public static void processChecklistUpdates(List<BSF_Task_Checklist__c> newList, Map<Id, BSF_Task_Checklist__c> oldMap) {
+    /*public static void processChecklistUpdates(List<BSF_Task_Checklist__c> newList, Map<Id, BSF_Task_Checklist__c> oldMap) {
         Map<String,List<BSF_Task_Checklist__c>> taskvsChecklistMap = new Map<String,List<BSF_Task_Checklist__c>>();
         Map<String,Id> taskVsOppMap = new Map<String,Id>();
         Map<String,Opportunity> taskVsOpportunityMap = new Map<String,Opportunity>();
@@ -229,7 +229,7 @@ public without sharing class BSFTaskChecklistTriggerHandler extends TriggerHandl
         if(!checklistsToProcess.isEmpty()){
             updateAccountAndOpportunity(checklistsToProcess,taskVsOpportunityMap,taskVsAccountMap,BSF_Constants.POST_DRIVE_ANALYSIS_TASK);
         }
-    }
+    }*/
     public static Map<String, Map<String, Task_Checklist_Setting__mdt>> getMetaDataMap() {
         Map<String, Map<String, Task_Checklist_Setting__mdt>> metadataMap = new Map<String, Map<String, Task_Checklist_Setting__mdt>>();
         Map<String, Task_Checklist_Setting__mdt> checklistSettings = Task_Checklist_Setting__mdt.getAll();

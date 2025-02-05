@@ -188,8 +188,7 @@
 		<members>Opportunity-Mobile Opp Layout</members>
 		<members>Opportunity-Sponsor Marketing Mobile Opp Layout</members>
         <members>Profile_Specific_Functionality_Access__mdt-Profile Specific Functionality Setting Layout</members>	
-		<members>sked__Resource__c-Staff Layout</members>	
-			
+		<members>sked__Resource__c-Staff Layout</members>		
 		<name>Layout</name>
 	</types>
 	<types>

@@ -994,23 +994,18 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
                         if(shiftMaxRoleCapacity > driveMaxRoleCapacity){
                             driveMaxRoleCapacity = shiftMaxRoleCapacity;
                         }
-                        shiftMaxRoleCapacityWithDrawHours = 0;
-                        shiftMaxRoleCapacityWithDrawHours = Math.floor(reCalculateMaxRoleCapacityWithDrawHours(
-                            drive,
-                            shift,
-                            staffingComplement
-                        ));
-                        if(shiftMaxRoleCapacityWithDrawHours > driveMaxRoleCapacityWithDrawHours){
-                            driveMaxRoleCapacityWithDrawHours = shiftMaxRoleCapacityWithDrawHours;
-                        }
                     } else{
                         system.debug('Drive recalculationFlag is false');
                     }
                 }
                 if(recalculationFlag) {
                     drive.sked_Staff_Capacity__c = shiftTotalStaffCapacity;
-                    drive.Max_Role_Capacity__c = driveMaxRoleCapacity;
-                    drive.Max_Role_Capacity_With_Draw_Hours__c = driveMaxRoleCapacityWithDrawHours;
+                    drive.Max_Role_Capacity__c = driveMaxRoleCapacity.setScale(2);
+                    drive.Max_Role_Capacity_With_Draw_Hours__c = reCalculateMaxRoleCapacityWithDrawHours(
+                        drive,
+                        driveshifts,
+                        driveMaxRoleCapacity
+                    );
                     MobileDriveGeneratorDMLService.DMLDrive dmlDrive = reCalculateDriveAverageStaffCapacity(drive, staffPrimaryCount);
                     drive.Average_Staff_Capacity__c = dmlDrive?.averageStaffCapacity;
                     drive.Excess_Staff_Capacity__c = reCalculateDriveExcessStaffCapacity(dmlDrive);
@@ -1133,26 +1128,26 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
     //HRP-13864 starts here
     @testVisible private static Decimal reCalculateMaxRoleCapacityWithDrawHours(
         sked_Drive__c driveSingle,
-        sked_Drive_Shift__c driveShiftSingle,
-        GenerateMobileDrive.DriveStaffingComplementModel staffingComplement
+        List<sked_Drive_Shift__c> driveshifts,
+        Decimal driveMaxRoleCapacity
     ) {
-        Decimal maxRoleCapacity = 0;
-        GenerateMobileDrive.mobileDriveGenerator driveGenInstance = new GenerateMobileDrive.mobileDriveGenerator();
-        sked_Staffing_Decision_Matrix__c matrix =  getStaffingDecisionMatrix(driveSingle.sked_Collection_Operation__c, driveSingle);
-        MobileDriveGeneratorDMLService.DMLDrive drive = new MobileDriveGeneratorDMLService.DMLDrive(MobileDriveGeneratorDMLService.fetchOpportunities(new Set<Id>{driveSingle.sked_Opportunity__c})[0]);  
-        drive.collectionOperation = new MobileDriveGeneratorDMLService.DMLCollectionOperation(MobileDriveGeneratorDMLService.fetchCollectionOperations(new Set<Id>{driveSingle.sked_Collection_Operation__c})[0]);
-        MobileDriveGeneratorDMLService.DMLDriveShift driveShift = new MobileDriveGeneratorDMLService.DMLDriveShift(driveShiftSingle);
-        driveShift.drawHourswithLunchBreak = getDrawHoursWithLunchBreak(driveSingle, driveShiftSingle);
-        driveShift.numberOf2rbcEquipments = staffingComplement.numberOf2rbcEquipments ; 
-        maxRoleCapacity = driveGenInstance.calculateMaxRoleCapacityWithDrawHours(
-            new List<String>{'Driver', 'Driver Support', '2RBC', 'VP/HH', 'Charge'},
-            staffingComplement,
-            drive,
-            driveShift,
-            new MobileDriveGeneratorDMLService.DMLStaffingDecisionMatrix(matrix),
-            false
-        );
-        return maxRoleCapacity;
+        Decimal maxRoleCapacityWithDrawHours = 0;
+        if(driveMaxRoleCapacity > 0){
+            GenerateMobileDrive.mobileDriveGenerator driveGenInstance = new GenerateMobileDrive.mobileDriveGenerator();
+            sked_Staffing_Decision_Matrix__c matrix =  getStaffingDecisionMatrix(driveSingle.sked_Collection_Operation__c, driveSingle);
+            MobileDriveGeneratorDMLService.DMLDrive drive = new MobileDriveGeneratorDMLService.DMLDrive(MobileDriveGeneratorDMLService.fetchOpportunities(new Set<Id>{driveSingle.sked_Opportunity__c})[0]);  
+            drive.collectionOperation = new MobileDriveGeneratorDMLService.DMLCollectionOperation(MobileDriveGeneratorDMLService.fetchCollectionOperations(new Set<Id>{driveSingle.sked_Collection_Operation__c})[0]);
+            Decimal driveDrawHourswithLunchBreak = 0;
+            for(sked_Drive_Shift__c driveShiftSingle : driveshifts){
+                MobileDriveGeneratorDMLService.DMLDriveShift driveShift = new MobileDriveGeneratorDMLService.DMLDriveShift(driveShiftSingle);
+                driveShift.drawHourswithLunchBreak = getDrawHoursWithLunchBreak(driveSingle, driveShiftSingle);
+                driveDrawHourswithLunchBreak += driveShift.drawHourswithLunchBreak;
+            }
+            if(driveDrawHourswithLunchBreak > 0){
+                maxRoleCapacityWithDrawHours = driveMaxRoleCapacity * driveDrawHourswithLunchBreak;
+            }
+        }
+        return maxRoleCapacityWithDrawHours.setScale(2);
     }
     @testVisible private static Decimal reCalculateMaxRoleCapacity(
         sked_Drive__c driveSingle,
