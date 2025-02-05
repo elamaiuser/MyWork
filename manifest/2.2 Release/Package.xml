@@ -50,6 +50,8 @@
         <members>WeeklyStaffScheduleReportControllerTest</members>
 		<members>BSFTaskChecklistTriggerHandler</members>
         <members>TaskService</members>
+		<members>TaskTriggerTest</members>
+        <members>BSFTaskChecklistTriggerTest</members>
 		<name>ApexClass</name>
 	</types>
 	<types>
