@@ -53,6 +53,8 @@
         <members>WeeklyStaffScheduleReportControllerTest</members>
 		<members>BSFTaskChecklistTriggerHandler</members>
         <members>TaskService</members>
+		<members>CalendarBuildEvaluateDrivesBatch_Test</members>
+        <members>OpportunityService</members>
 		<name>ApexClass</name>
 	</types>
 	<types>
@@ -84,7 +86,9 @@
 		<members>sked_Drive__c.Max_Role_Capacity__c</members>		
 		<members>sked_Drive__c.Max_Role_Capacity_With_Draw_Hours__c</members>
 		<members>Task_Checklist_Setting__mdt.Field_Mapping_Object__c</members>
-        <members>BSF_Task_Checklist__c.Input_Number__c</members>		
+        <members>BSF_Task_Checklist__c.Input_Number__c</members>
+		<members>Opportunity.Calendar_Build_Reasons_For_Unqualified__c</members>
+        <members>Opportunity.Calendar_Build_Alert_Reviewed__c</members>		
 		<name>CustomField</name>
 	</types>
 	<types>
@@ -184,7 +188,8 @@
 		<members>Opportunity-Mobile Opp Layout</members>
 		<members>Opportunity-Sponsor Marketing Mobile Opp Layout</members>
         <members>Profile_Specific_Functionality_Access__mdt-Profile Specific Functionality Setting Layout</members>	
-		<members>sked__Resource__c-Staff Layout</members>		
+		<members>sked__Resource__c-Staff Layout</members>	
+			
 		<name>Layout</name>
 	</types>
 	<types>
