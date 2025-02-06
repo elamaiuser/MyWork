@@ -1,0 +1,12 @@
+.direction-ltr {
+    direction: ltr;
+  }
+
+  .direction-rtl {
+    direction: rtl;
+  }
+
+  .drive-shift-resource-allocation-popover .table-wrapper {
+    width: 100%;
+    padding-bottom: 8px;
+  }  
