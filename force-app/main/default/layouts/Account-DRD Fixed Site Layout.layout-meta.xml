@@ -121,10 +121,6 @@
                 <behavior>Edit</behavior>
                 <field>Chapter__c</field>
             </layoutItems>
-            <layoutItems>
-                <behavior>Edit</behavior>
-                <field>Special_Partnership_Level__c</field>
-            </layoutItems>
         </layoutColumns>
         <style>TwoColumnsLeftToRight</style>
     </layoutSections>
