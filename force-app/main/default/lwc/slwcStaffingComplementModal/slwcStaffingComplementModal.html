@@ -1,0 +1,33 @@
+<template>
+    <section role="dialog" tabindex="-1" class={customClass.modalClass} style="z-index: 9003;">
+        <div class="slds-modal__container" style="width: 32rem;">
+            <header class={customClass.headerClass}>
+                <lightning-button-icon onclick={handleCancel} class="slds-button slds-button_icon slds-modal__close" size="large"
+                    icon-name="utility:close" variant="bare-inverse" title="Close"></lightning-button-icon>
+
+                <h2 class="slds-modal__title slds-hyphenate">Staff Complement</h2>
+            </header>
+            <div class="slds-modal__content">
+                <div class="slds-is-relative">
+                    <template if:true={showSpinner}>
+                        <lightning-spinner class="spins" size="medium"></lightning-spinner>
+                    </template>
+    
+                    <template for:each={staffingComplement} for:item="item">
+                        <div class="slds-m_vertical_small" key={item.key}>
+                            <div class="slds-grid slds-wrap slds-p-top_small slds-m-bottom_small">{item.name}</div>
+                            <c-slwc-shift-jobs drive={drive} shift={item.driveShift} jobs={item.personJobs} resource-type="Person"
+                                is-creatable is-deletable is-editable style="width:100%">
+                            </c-slwc-shift-jobs>
+                        </div>
+                    </template>            
+                </div>
+            </div>
+            <footer class={customClass.footerClass}>
+                <button class="slds-button slds-button_neutral" onclick={handleClose}>Close</button>
+                <button class="slds-button slds-button_brand" onclick={handleSave}>Save</button>
+            </footer>
+        </div>
+    </section>
+    <div class={customClass.backdropClass} style="z-index: 9002;"></div>
+</template>
