@@ -22,6 +22,8 @@
         <members>CalendarBuildEvaluateDrivesBatch_Test</members>
 		<members>CreateSkedDrivesBatch</members>
 		<members>checkRecursive</members>
+		<members>DateUtility</members>
+		<members>DateUtilityTestClass</members>
 		<members>DriveGenerationUtil</members>
 		<members>DriveResourceAllocationBatch</members>
 		<members>DriveResourceAllocationBatchTest</members>
@@ -75,6 +77,8 @@
 		<members>Assign_SF_Resources_to_User__mdt.Assignment_Type__c</members>
 		<members>Assign_SF_Resources_to_User__mdt.Role_Name__c</members>
 		<members>AssignResourcesToUserEvent__e.skipUserRoleUpdate__c</members>
+		<members>BSF_setting__c.Donor_Eligibility_Day_for_2RBC__c</members>
+		<members>BSF_setting__c.Donor_Eligibility_Day_for_WB__c</members>
 		<members>Calendar_Build_Log_Manual_Run__c.Source__c</members>
         <members>Opportunity.Booking_Strategy__c</members>
         <members>Opportunity.Source__c</members>
@@ -158,6 +162,8 @@
 		<name>FlexiPage</name>
 	</types>
 	<types>
+		<members>Create_New_Fixed_Site_Drive</members>
+		<members>Create_New_Recurring_Mobile_Drive</members>
 		<members>Run_Adhoc_Calendar_Build</members>
 		<name>Flow</name>
 	</types>
@@ -169,6 +175,7 @@
 		<members>autoMapper</members>
 		<members>bsfWeeklyStaffingRoleTimeReport</members>
 		<members>bsfWeeklyStaffScheduleReportlwc</members>
+		<members>recurringPatternScheduler</members>
 		<members>slwcDriveCompactView</members>
 		<members>slwcDriveGenerator</members>
 		<members>slwcDriveManagement</members>
