@@ -31,6 +31,8 @@
         <members>Task_Checklist_Setting.Strong_Recruitment_Text</members>
         <members>Task_Checklist_Setting.Type_A_BPL</members>
         <members>Task_Report_Link.DRMS_Audit_report</members>
+        <members>Task_Report_Link.Contingency_Worksheet_Recruitment_Task</members>
+        <members>Task_Report_Link.Donor_Appointments_Recruitment_Task</members>
         <members>Task_Checklist_Setting.Gray_Sky_Account</members>
         <members>Task_Checklist_Setting.Account_Strategy_Notes</members>
         <members>Task_Checklist_Setting.Annual_Account_Strategy</members>
