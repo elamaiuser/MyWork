@@ -79,4 +79,12 @@ export default class SlwcStaffingComplementModal extends LightningElement {
     this.dispatchEvent(closeEvent);
     this.isOpen = false;
   }
+
+  handleSave = () => {
+    const closeEvent = new CustomEvent('save', {
+        detail: {}
+    });
+    this.dispatchEvent(closeEvent);
+    this.isOpen = false;
+  }
 }

@@ -1370,4 +1370,17 @@ export default class SlwcResolveDriveContentions extends LightningElement {
       isOpen: false,
     } 
   }
+
+  saveStaffingComplementModal() {
+    this.handleActionChanged({
+      target: {
+        name: DRIVE_CONTENTION_RESOLUTION.ELECT_EXCESS_STAFF_CAPACITY,
+        type: 'checkbox',
+        checked: true,
+        dataset: {
+          contention: DRIVE_CONTENTION.EXCESS_STAFF_CAPACITY
+        }
+      }
+    })
+  }
 }
