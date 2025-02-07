@@ -50,6 +50,7 @@ export default class SlwcResolveDriveContentions extends LightningElement {
   @track holdDrivesSummaryData = {};
   @track driveContentions = [];
   @track driveStaffingDetailsData = {};
+  @track staffingComplementModalData = {};
 
   get driveContentionsGroup1() {
     return this.driveStaffingChangedContention ? [this.driveStaffingChangedContention] : [];
@@ -785,6 +786,12 @@ export default class SlwcResolveDriveContentions extends LightningElement {
       return [{
         label: DRIVE_CONTENTION_RESOLUTION.ELECT_EXCESS_STAFF_CAPACITY,
         value: isContentionOverride(DRIVE_CONTENTION_RESOLUTION.ELECT_EXCESS_STAFF_CAPACITY)
+      }, {
+        isLink: true,
+        label: 'Staffing Complement',
+        onclick: () => {
+          this.openStaffingComplementModal(this.drive);
+        }
       }]
     }
 
@@ -1348,5 +1355,19 @@ export default class SlwcResolveDriveContentions extends LightningElement {
     })
     .catch(error => this.exceptionHandler(error))
     .finally(this.hideLoading);
+  }
+
+  //staffing details
+  openStaffingComplementModal(drive) {
+    this.staffingComplementModalData = {
+      isOpen: true,
+      drive: drive
+    }
+  }
+
+  closeStaffingComplementModal() {
+    this.staffingComplementModalData = {
+      isOpen: false,
+    } 
   }
 }

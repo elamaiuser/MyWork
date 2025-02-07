@@ -22,10 +22,11 @@ export default class SlwcStaffingComplementModal extends LightningElement {
   @track showSpinner = false;
   
   get staffingComplement() {
-    return this.drive.driveShifts?.map(driveShift => {
+    return this.drive?.driveShifts?.map((driveShift, driveShiftIndex) => {
+        console.log(driveShift)
         return {
             key: driveShift.key,
-            name: driveShift.name,
+            name: driveShift.name ?? `Drive Shift ${driveShiftIndex + 1}`,
             driveShift,
             personJobs: driveShift.jobs?.filter(job => job.resourceRole) || []
         }
