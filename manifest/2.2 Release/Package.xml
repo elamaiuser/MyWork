@@ -93,6 +93,7 @@
         <members>BSF_Task_Checklist__c.Input_Number__c</members>
 		<members>Opportunity.Calendar_Build_Reasons_For_Unqualified__c</members>
         <members>Opportunity.Calendar_Build_Alert_Reviewed__c</members>		
+		<members>Task_Checklist_Setting__mdt.Subject__c</members>
 		<name>CustomField</name>
 	</types>
 	<types>
@@ -150,6 +151,19 @@
         <members>Task_Checklist_Setting.Account_Strategy_Notes</members>
         <members>Task_Checklist_Setting.Annual_Account_Strategy</members>
         <members>Task_Checklist_Setting.Update_Rollover_Consideration</members>
+		<members>Task_Checklist_Setting.BPL_has_access_to_BDMP_Sponsor</members>
+        <members>Task_Checklist_Setting.Confirm_blood_drive_logistics_sponsor</members>
+        <members>Task_Checklist_Setting.Discuss_security_needs_Sponsor</members>
+        <members>Task_Checklist_Setting.Discuss_volunteer_needs_sponsor</members>
+        <members>Task_Checklist_Setting.Recruitment_Planning_Meeting_Schedule_Sp</members>
+        <members>Task_Checklist_Setting.Review_blood_drive_productivity_sponsor</members>
+        <members>Task_Checklist_Setting.Review_publicity_materials_Sponsor</members>
+        <members>Task_Checklist_Setting.Sponsor_Applicable_drive_affiliations</members>
+        <members>Task_Checklist_Setting.Sponsor_Confirmed_all_dates_calendar</members>
+        <members>Task_Checklist_Setting.Sponsor_Discuss_ARC_Weapons_Policy</members>
+        <members>Task_Checklist_Setting.Sponsor_Managing_Donor_Appointments</members>
+        <members>Task_Checklist_Setting.Sponsor_marketing_and_communications</members>
+        <members>Task_Checklist_Setting.Sponsor_table_and_chairs_ready_sponsor</members>
 		<name>CustomMetadata</name>
 	</types>
 	<types>
