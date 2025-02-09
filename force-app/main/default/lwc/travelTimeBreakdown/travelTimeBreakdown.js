@@ -46,12 +46,40 @@ export default class TravelTimeBreakdown extends LightningElement {
                 
             });
             this.initialRecords = JSON.parse(JSON.stringify(this.records));
+
+            const systemOverrideRecordsToUpdate = data.filter(record => record.systemOverride === true);                     
+            if(systemOverrideRecordsToUpdate.length > 0){
+                saveUpdatedRecords({ updatedRecords: systemOverrideRecordsToUpdate })
+                .then(result => {
+                    console.log('Records updated successfully');
+                    /*this.exitEditMode();
+                    this.dispatchEvent(
+                        new ShowToastEvent({
+                            title: 'Success',
+                            message: 'Records updated successfully',
+                            variant: 'success'
+                        })
+                    );*/
+                    //window.location.reload();                
+                })
+                .catch(error => {
+                    //this.exitEditMode();
+                    console.error('Error in updating records:', error);
+                    this.dispatchEvent(
+                        new ShowToastEvent({
+                            title: 'Error',
+                            message: 'Error updating records',
+                            variant: 'error'
+                        })
+                    );
+                });
+            }
+            
         } else if (error) {
             console.error('Error fetching data:', error);
         }
     }
 
-    
     extractTimeSlots(data) {
         let slots = {};
         data.forEach(item => {
@@ -245,7 +273,6 @@ export default class TravelTimeBreakdown extends LightningElement {
                         endTime: ttbd.endTime, 
                         travelDistance: ttbd.travelDistance,
                         travelTimeKey:ttbd.travelTimeKey,
-
                     };
                     //console.log('Updated Travel Time Data:', JSON.stringify(timeData, null, 2));
                     return timeData;
