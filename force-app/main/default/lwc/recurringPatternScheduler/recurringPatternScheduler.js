@@ -5,6 +5,8 @@ import { FlowAttributeChangeEvent, FlowNavigationNextEvent, FlowNavigationBackEv
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import fnGetRecurrenceDate from '@salesforce/apex/DateUtility.getRecurrenceDate';
 import fnGetDonorEligibilityDay from '@salesforce/apex/DateUtility.getDonorEligibilityDay';
+import * as slwcDateUtils from "c/slwcDateUtils";
+import TIME_ZONE from "@salesforce/i18n/timeZone";
 
 export default class RecurringPatternScheduler extends LightningElement {
 
@@ -214,6 +216,12 @@ export default class RecurringPatternScheduler extends LightningElement {
 
     get otherSelectedRecTypeName() {
         return this.otherRecTypes.find(item=> item.value === (this.selectedDonorEligibilityFor || [])[0])?.label;
+    }
+
+    get dateUtils() {
+        return slwcDateUtils.getInstance({
+          timezone: TIME_ZONE
+        });
     }
 
     connectedCallback() {
@@ -578,9 +586,10 @@ export default class RecurringPatternScheduler extends LightningElement {
     //Converts String Value in [YYYY-MM-DD] Format to JS Date Obj
     getDateValuefromString(strDate) {
         console.log('****RecurringPatternScheduler.getDateValuefromString() Input Date String: ' + strDate);
-        let result = strDate.split('-');
+        /*let result = strDate.split('-');
         let month = parseInt(result[1]) - 1;
-        return new Date(result[0], month, result[2], 0, 0, 0);
+        let newDate = new Date(result[0], month, result[2], 0, 0, 0);*/
+        return this.dateUtils.date2dateIso(strDate);
     }
 
     //Converts String Array with Date Value in [YYYY-MM-DD] Format to JS Date [] Obj
