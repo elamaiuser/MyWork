@@ -8,6 +8,8 @@
 		<members>BSFPortfolioHelperTest</members>
 		<members>BsfPortfolioService</members>
 		<members>PortfolioAssignmentService</members>
+		<members>skedResourceHandler</members>
+		<members>skedResourceTrigger_Test</members>
 		<name>ApexClass</name>
 	</types>
 	<types>
