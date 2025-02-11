@@ -1,3 +1,7 @@
+/*
+* 02/10/2025                     Satyendra Vishwakarma                   HRP-10970 - Resource Tag Restriction with no End Date does not restrict resource from role
+*******************************************************************************************************************************************************************
+*/
 public class skedResourceTagHandler extends skedTriggerHub {
     public override void onBeforeInsert() {
         populateData(this.context.newRecords);
@@ -397,7 +401,13 @@ public class skedResourceTagHandler extends skedTriggerHub {
 
     private void manageRoleRestrictedExceptions(List<skedHC__Exception__c> exceptionsToUpsert, sked__Tag__c tag, sked__Resource_Tag__c resourceTag, sked__Resource_Tag__c oldResourceTag, sked__Resource__c resource) {
         if (resourceTag.sked_Restriction_Start_Date__c != oldResourceTag.sked_Restriction_Start_Date__c || resourceTag.sked_Restriction_End_Date__c != oldResourceTag.sked_Restriction_End_Date__c) {
-            Boolean isRestrictionEnded = resourceTag.sked_Restriction_Start_Date__c == null && resourceTag.sked_Restriction_End_Date__c == null;
+            //HRP-10970 Start
+            //Boolean isRestrictionEnded = resourceTag.sked_Restriction_Start_Date__c == null && resourceTag.sked_Restriction_End_Date__c == null;
+            Boolean isRestrictionEnded = 
+            resourceTag.sked_Restriction_Start_Date__c == null || 
+            (resourceTag.sked_Restriction_End_Date__c != null && resourceTag.sked_Restriction_End_Date__c < System.today());
+            //HRP-10970 Ended
+
             if (resource.sked__Job_Allocations__r != NULL && !resource.sked__Job_Allocations__r.isEmpty()) {
                 for (sked__Job_Allocation__c impactedAllocation : resource.sked__Job_Allocations__r) {
                     List<String> performedRoles = new List<String>();
@@ -407,10 +417,16 @@ public class skedResourceTagHandler extends skedTriggerHub {
                     }
                     if (performedRoles.contains(tag.Name)) {
                         Date driveDate = impactedAllocation.sked__Job__r.sked_Drive__r.sked_Drive_Date__c;
+                        //HRP-10970 Start
+                        // Boolean requiresException = 
+                        //     !isRestrictionEnded && 
+                        //     resourceTag.sked_Restriction_Start_Date__c <= driveDate &&
+                        //     (resourceTag.sked_Restriction_End_Date__c == null || resourceTag.sked_Restriction_End_Date__c >= driveDate);
                         Boolean requiresException = 
-                            !isRestrictionEnded && 
-                            resourceTag.sked_Restriction_Start_Date__c <= driveDate &&
-                            (resourceTag.sked_Restriction_End_Date__c == null || resourceTag.sked_Restriction_End_Date__c >= driveDate);
+                                !isRestrictionEnded && 
+                                (resourceTag.sked_Restriction_Start_Date__c == null || resourceTag.sked_Restriction_Start_Date__c <= driveDate) &&
+                                (resourceTag.sked_Restriction_End_Date__c == null || resourceTag.sked_Restriction_End_Date__c >= driveDate);
+                        //Ended End
                             
                         skedHC__Exception__c exceptionToUpsert;
                         if (resource.skedHC__Exception_Log__r != null && !resource.skedHC__Exception_Log__r.isEmpty()) {
