@@ -16,7 +16,7 @@ public class skedTravelTimeIndexItemUtils {
     public static Map<String, sked_Travel_Time_Index_Item__c> getTravelTimeIndexItemsByKey(Set<String> keys) {
         Map<String, sked_Travel_Time_Index_Item__c> ttiiByKey = new Map<String, sked_Travel_Time_Index_Item__c>();
         for(sked_Travel_Time_Index_Item__c ttii : [
-            SELECT Id, sked_Key__c, sked_Travel_Distance__c, sked_Travel_Time_Breakdown_JSON__c, sked_Travel_Time_Breakdown_JSON_Backup__c
+            SELECT Id, sked_Key__c, sked_Travel_Distance__c, sked_Travel_Time_Breakdown_JSON__c, sked_Travel_Time_Breakdown_JSON_Backup__c, User_Override__c
             FROM sked_Travel_Time_Index_Item__c
             WHERE sked_Key__c IN :keys
         ]) {
