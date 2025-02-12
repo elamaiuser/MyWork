@@ -34,10 +34,7 @@
  * 08/01/2024                 Priti Jana             Logic for HRP-10994
  * 08/09/2024                 Priti Jana             Logic for HRP-11634
  * 12/10/2024				  Priti Jana			 Logic for HRP-13190
-<<<<<<< HEAD
-=======
  * 01/15/2025				  Barnojit Sharma		 Logic for HRP-13864
->>>>>>> origin/2.2Development/HRP-13864
  *******************************************************************************
 */
 public with sharing class GenerateMobileDrive {
