@@ -66,5 +66,9 @@
 		<members>Drives_with_Account_and_Site</members>
 		<name>ReportType</name>
 	</types>
+    <types>
+		<members>sked_HLT_Dist</members>
+		<name>StaticResource</name>
+	</types>
 	<version>60.0</version>
 </Package>
