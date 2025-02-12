@@ -3,6 +3,7 @@
  * ***************************************************************************************************************************************************************************
  * 07/15/2024			Barnojit Sharma				Weekly Staffing Schedule by Employee & Weekly Staffing Role Time Back up Reports shift start and end times are incorrect (HRP-13091)
  * 12/30/2024			Priti Jana					Logic for HRP-13121
+ * 02/04/2025           Krapy Tuli                  Displaying incorrect arrival time bug fix for HRP-14197
  *****************************************************************************************************************************************************************************
 */
 public without sharing class BSFWeeklyStaffingRoleTimeController {
@@ -111,6 +112,7 @@ public without sharing class BSFWeeklyStaffingRoleTimeController {
                         sked__Job__r.sked_Drive_Shift__r.sked_Max_Shift_End_Time__c,
                         sked__Job__r.sked_Drive_Shift__r.sked_Lunch_Break_Before_Draw_Hours__c,
                         sked__Job__r.sked_Drive_Shift__r.sked_Lunch_Break_Duration__c,
+                 		sked__Job__r.sked_Drive_Shift__r.sked_Lunch_Break__c,//HRP-14197
                         sked__Resource__c,
                         sked__Resource__r.Name,
                         sked__Resource__r.sked__Resource_Type__c,
@@ -773,8 +775,9 @@ public without sharing class BSFWeeklyStaffingRoleTimeController {
                         if(jba.sked__Job__r.sked_Setup_Time__c != null){
                             arrivalTimeInMinutes += Integer.valueOf(jba.sked__Job__r.sked_Setup_Time__c);
                         }
-                        if(jba.sked__Job__r.sked_Drive_Shift__r.sked_Lunch_Break_Before_Draw_Hours__c == true
-                                &&jba.sked__Job__r.sked_Drive_Shift__r.sked_Lunch_Break_Duration__c != null){
+                        if(jba.sked__Job__r.sked_Drive_Shift__r.sked_Lunch_Break__c && //HRP-14197
+                           jba.sked__Job__r.sked_Drive_Shift__r.sked_Lunch_Break_Before_Draw_Hours__c == true &&
+                           jba.sked__Job__r.sked_Drive_Shift__r.sked_Lunch_Break_Duration__c != null){
                                     arrivalTimeInMinutes += Integer.valueOf(jba.sked__Job__r.sked_Drive_Shift__r.sked_Lunch_Break_Duration__c);
                         }
 
