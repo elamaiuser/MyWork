@@ -56,14 +56,14 @@ export default class SlwcRefreshTravelTimeBanner extends LightningElement {
         Promise.all([
             _scoSvc.isManualRefreshInProgress({ siteCollectionOperationId: this.recordId }),
             _scoSvc.hasInvalidTravelTimeData({ siteCollectionOperationId: this.recordId }),
-            _scoSvc.isUserOverrideEnabled({ siteCollectionOperationId: this.recordId }),
+           _scoSvc.isUserOverrideEnabled({ siteCollectionOperationId: this.recordId }),
             _scoSvc.getCustomSettings({ settingKeys: ['travelTimeManager']})
         ])
         .then(([isManualRefreshInProgress, hasInvalidTravelTimeData, isUserOverrideEnabled, travelTimeSettings]) => {
             this.isManualRefreshInProgress = isManualRefreshInProgress;
             this.hasInvalidTravelTimeData = hasInvalidTravelTimeData;
             this.isUserOverrideEnabled = isUserOverrideEnabled;
-            this.travelTimeSettings = travelTimeSettings.returnedData.travelTimeManager;
+            this.travelTimeSettings = travelTimeSettings.returnedData.travelTimeManager;            
         })
         .catch(e => console.debug(e))
         .finally()
@@ -73,7 +73,7 @@ export default class SlwcRefreshTravelTimeBanner extends LightningElement {
         let _scoSvc = new siteCollectionOpService();
         _scoSvc.manualRefreshTravelTimeIndexes({
             siteCollectionOperationId: this.recordId
-        }).then(res => {
+        }).then(res => {            
             this.dispatchEvent(new ShowToastEvent({
                 title: 'Success!',
                 message: 'Successfully initiated manual refresh for Travel Time Indexes related to this Site Collection Operation.',
