@@ -3,7 +3,7 @@
  * ***************************************************************************************************************************************************************************
  * 07/15/2024			Barnojit Sharma				Weekly Staffing Schedule by Employee & Weekly Staffing Role Time Back up Reports shift start and end times are incorrect (HRP-13091)
  * 12/30/2024			Priti Jana					Logic for HRP-13121
- * 02/04/2025           Krapy Tuli                  Displaying incorrect arrival time bug fix for HRP-14197
+ * 02/04/2025           Krapy Tuli                  Displaying incorrect arrival time bug fix for HRP-14197 
  *****************************************************************************************************************************************************************************
 */
 public without sharing class BSFWeeklyStaffingRoleTimeController {
