@@ -22,7 +22,6 @@
             <assignToReference>formattedDateTime1</assignToReference>
             <name>output</name>
         </outputParameters>
-        <versionSegment>1</versionSegment>
     </actionCalls>
     <actionCalls>
         <name>Update_Opportunity_using_Apex_and_Batch</name>
@@ -171,7 +170,6 @@
             </value>
         </inputParameters>
         <nameSegment>MassUpdateOpportunity</nameSegment>
-        <versionSegment>1</versionSegment>
     </actionCalls>
     <apiVersion>52.0</apiVersion>
     <assignments>

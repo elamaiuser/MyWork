@@ -68,6 +68,7 @@ public class BSF_Batch_TaxonomyEndDateHelper
                 InsertBsfErrorLog.insertBsfErrors(logList1);
             }
         }
+        system.debug('externalKeySet '+externalKeySet);
         List<sked_Territory__c> skedTerrList = [select id,Start_Date__c, End_Date__c,External_Id__c,External_Id_BackEnd__c from sked_Territory__c where External_Id_BackEnd__c IN :externalKeySet order by createdDate desc];
         //system.debug('skedTerrList'+skedTerrList);
         if(!skedTerrList.isEmpty())
@@ -88,9 +89,13 @@ public class BSF_Batch_TaxonomyEndDateHelper
                 tx = taxIdExternalKeysMap.get(exKey);
                 if(!externalKeySetNew.contains(exKey))
                 {
-                    //system.debug('exKey '+exKey);
+                    system.debug('exKey '+exKey);
+                    system.debug('tx '+tx);
+                    system.debug('terrIdTerrMap '+terrIdTerrMap);
                     sked_Territory__c terr = new sked_Territory__c ();
                     terr = terrIdTerrMap.get(exKey);
+                    system.debug('terr '+terr);
+                    //system.debug('terr '+terr+' and end date terr '+terr.End_Date__c+' and tax end '+tx.End_Date__c+' and terr start date '+terr.Start_Date__c);
                     if( terr != null && tx.End_Date__c != terr.End_Date__c && terr.Start_Date__c < tx.End_Date__c)
                     {
                         terr.End_Date__c = tx.End_Date__c;

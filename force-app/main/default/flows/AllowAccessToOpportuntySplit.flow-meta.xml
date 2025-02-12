@@ -18,7 +18,6 @@
             </value>
         </inputParameters>
         <nameSegment>activateSessionPermSet</nameSegment>
-        <versionSegment>1</versionSegment>
     </actionCalls>
     <apiVersion>53.0</apiVersion>
     <interviewLabel>AllowAccessToOpportuntySplit {!$Flow.CurrentDateTime}</interviewLabel>

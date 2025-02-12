@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Workflow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fieldUpdates>
+        <fullName>sked_ResourceTagExpiryNotificationSent</fullName>
+        <field>sked_Expiry_Notification_Sent__c</field>
+        <literalValue>1</literalValue>
+        <name>Resource Tag Expiry Notification Sent</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <rules>
+        <fullName>Skedulo Resource Tag Expiry Notification</fullName>
+        <active>true</active>
+        <criteriaItems>
+            <field>sked__Resource_Tag__c.sked_Expiry_Alert_Time__c</field>
+            <operation>notEqual</operation>
+        </criteriaItems>
+        <criteriaItems>
+            <field>sked__Resource_Tag__c.sked_Expiry_Notification_Sent__c</field>
+            <operation>equals</operation>
+            <value>False</value>
+        </criteriaItems>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+        <workflowTimeTriggers>
+            <actions>
+                <name>sked_ResourceTagExpiryNotificationSent</name>
+                <type>FieldUpdate</type>
+            </actions>
+            <offsetFromField>sked__Resource_Tag__c.sked_Expiry_Alert_Time__c</offsetFromField>
+            <timeLength>0</timeLength>
+            <workflowTimeTriggerUnit>Hours</workflowTimeTriggerUnit>
+        </workflowTimeTriggers>
+    </rules>
+</Workflow>

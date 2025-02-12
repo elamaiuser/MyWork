@@ -20,16 +20,6 @@
                 <default>false</default>
                 <label>2RBC</label>
             </value>
-            <value>
-                <fullName>APH</fullName>
-                <default>false</default>
-                <label>APH</label>
-            </value>
-            <value>
-                <fullName>OAPH</fullName>
-                <default>false</default>
-                <label>OAPH</label>
-            </value>
         </valueSetDefinition>
     </valueSet>
 </CustomField>

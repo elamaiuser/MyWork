@@ -209,23 +209,27 @@
         <type>CustomApplication</type>
     </appMenuItems>
     <appMenuItems>
-        <name>EDWInformaticaApp</name>
-        <type>ConnectedApp</type>
-    </appMenuItems>
-    <appMenuItems>
         <name>Copy_Storm_User</name>
         <type>ConnectedApp</type>
     </appMenuItems>
     <appMenuItems>
-        <name>ProvarConnectedApp</name>
-        <type>ConnectedApp</type>
-    </appMenuItems>
-    <appMenuItems>
-        <name>ProvarConnectedAppForOauth</name>
+        <name>EDW_Informatica_User</name>
         <type>ConnectedApp</type>
     </appMenuItems>
     <appMenuItems>
         <name>EDA_Service_User</name>
         <type>ConnectedApp</type>
+    </appMenuItems>
+    <appMenuItems>
+        <name>standard__Approvals</name>
+        <type>CustomApplication</type>
+    </appMenuItems>
+    <appMenuItems>
+        <name>standard__MSJApp</name>
+        <type>CustomApplication</type>
+    </appMenuItems>
+    <appMenuItems>
+        <name>standard__DataGovernanceConsole</name>
+        <type>CustomApplication</type>
     </appMenuItems>
 </AppMenu>
