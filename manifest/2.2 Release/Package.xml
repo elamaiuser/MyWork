@@ -78,7 +78,7 @@
 	</types>
 	<types>
 		<members>Account.Is_Hospital_Contract_Partner__c</members>
-		<members>Account.Special_Partnership_Level__c</members>
+		<members>Account.Service_Level_Agreement__c</members>
 		<members>Adhoc_Calendar_Build_Run__e.Booking_Strategy__c</members>
 		<members>Adhoc_Calendar_Build_Run__e.Opportunity_Ids__c</members>
 		<members>Adhoc_Calendar_Build_Run__e.Opportunity_Source__c</members>
