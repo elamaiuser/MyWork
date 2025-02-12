@@ -1,13 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">	
 	<types>
 		<members>Account.Special_Partnership_Level__c</members>
 		<name>CustomField</name>
 	</types>
-	<types>
-		<members>Account-DRD Fixed Site Layout</members>
-		<members>Account-DRD Mobile Account Layout</members>
-		<members>Account-System Admin Fixed Site Account Layout</members>
+	<types>				
+		<members>Account-DRD Mobile Account Layout</members>				
 		<members>Account-System Admin Mobile Account Layout</members>
 		<name>Layout</name>
 	</types>

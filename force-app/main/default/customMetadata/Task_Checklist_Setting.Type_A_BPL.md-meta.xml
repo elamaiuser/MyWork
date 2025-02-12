@@ -7,6 +7,10 @@
         <value xsi:type="xsd:double">2.0</value>
     </values>
     <values>
+        <field>Field_Mapping_Object__c</field>
+        <value xsi:nil="true"/>
+    </values>
+    <values>
         <field>Help_Text__c</field>
         <value xsi:type="xsd:string">Prepare BPL (or designee) to receive the Sponsor List 4.5 weeks from the date of the drive. Remind the BPL that printed copies of the Sponsor List need to be destroyed due to their confidential nature.</value>
     </values>
@@ -28,7 +32,7 @@
     </values>
     <values>
         <field>Order__c</field>
-        <value xsi:type="xsd:double">18.0</value>
+        <value xsi:type="xsd:double">20.0</value>
     </values>
     <values>
         <field>Parent__c</field>

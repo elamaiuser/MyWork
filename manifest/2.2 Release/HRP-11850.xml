@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+    <types>
+        <members>Opportunity.Calendar_Build_Reasons_For_Unqualified__c</members>
+        <members>Opportunity.Calendar_Build_Alert_Reviewed__c</members>
+        <name>CustomField</name>
+    </types>
+    <types>
+        <members>Opportunity-APS Planner Mobile Opp Layout</members>
+        <members>Opportunity-APS Scheduler Mobile Opp Layout</members>
+        <members>Opportunity-DRD Mobile Opp Layout</members>
+        <members>Opportunity-Mobile Opp Layout</members>
+        <members>Opportunity-Sponsor Marketing Mobile Opp Layout</members>
+        <name>Layout</name>
+    </types>
+    <types>
+        <members>CalendarBuildEvaluateDrivesBatch_Test</members>
+        <members>OpportunityService</members>
+        <name>ApexClass</name>
+    </types>
+    <version>62.0</version>
+</Package>
