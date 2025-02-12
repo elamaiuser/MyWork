@@ -383,7 +383,7 @@
             <targetReference>Get_Profile_Specific_Functionality_Metadata_Records</targetReference>
         </connector>
     </start>
-    <status>Draft</status>
+    <status>Active</status>
     <variables>
         <name>Allowed_Assignement_Types</name>
         <dataType>String</dataType>
