@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Layout xmlns="http://soap.sforce.com/2006/04/metadata">
     <excludeButtons>Clone</excludeButtons>
+    <excludeButtons>OpenSlackRecordChannel</excludeButtons>
     <excludeButtons>Submit</excludeButtons>
     <layoutSections>
         <customLabel>true</customLabel>
@@ -51,6 +52,10 @@
             <layoutItems>
                 <behavior>Edit</behavior>
                 <field>Calendar_Description__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>Calendar_Build_Alert_Reviewed__c</field>
             </layoutItems>
         </layoutColumns>
         <layoutColumns>
@@ -792,6 +797,8 @@
         <relatedList>RelatedContentNoteList</relatedList>
     </relatedLists>
     <relatedLists>
+        <excludeButtons>AddContactRole</excludeButtons>
+        <excludeButtons>OppContactRoleMultiAdd</excludeButtons>
         <excludeButtons>OppContactRoleMultiEdit</excludeButtons>
         <fields>ContactName</fields>
         <fields>Role</fields>
