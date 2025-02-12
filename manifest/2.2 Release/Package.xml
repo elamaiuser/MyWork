@@ -28,6 +28,7 @@
 		<members>DriveGenerationUtil</members>
 		<members>DriveResourceAllocationBatch</members>
 		<members>DriveResourceAllocationBatchTest</members>
+		<members>FetchRelatedDriveData</members>
 		<members>GenerateMobileDrive</members>
 		<members>GenerateMobileDriveTest</members>
 		<members>MobileDriveGeneratorDMLService</members>

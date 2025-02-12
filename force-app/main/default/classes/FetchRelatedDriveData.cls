@@ -17,6 +17,7 @@
  * 06/05/2024                 Priti Jana             Logic for HRP-11908
  * 06/06/2024                 Priti Jana             Logic for HRP-12011
  * 17/06/2024                 Barnojit Sharma        Logic for HRP-12738
+ * 02/12/2025                 Priti Jana             Logic for HRP-14065
  ***************************************************************************
 */
 
@@ -897,8 +898,10 @@ this.travelTimeBreakdownsSiteToCo = (List<DMLTravelTimeBreakdown>)JSON.deseriali
             this.id = travelTimeIndex.Id;
             this.fromGeo = travelTimeIndex.sked_From__c;
             this.toGeo = travelTimeIndex.sked_To__c;
-            if (!string.isBlank(travelTimeIndex.sked_Travel_Time_Breakdown_JSON__c)) {
+            if (!string.isBlank(travelTimeIndex.sked_Travel_Time_Breakdown_JSON__c) && !travelTimeIndex.sked_Travel_Time_Breakdown_JSON__c.startsWithIgnoreCase('NO')) { //HRP-14065
                 this.travelTimeBreakdown = (List<DMLTravelTimeBreakdown>)JSON.deserialize(travelTimeIndex.sked_Travel_Time_Breakdown_JSON__c, List<DMLTravelTimeBreakdown>.class);
+            } else {
+                this.travelTimeBreakdown = new List<DMLTravelTimeBreakdown>(); //HRP-14065
             }
         }
     }
