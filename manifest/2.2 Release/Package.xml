@@ -130,6 +130,7 @@
 		<members>Custom_Notification_Setting.RenewMilitaryMoA</members>		
 		<members>Custom_Report_Config.RoleTimeReportCharacterSplit</members>
 		<members>Profile_Specific_Functionality_Access.Adhoc_Calendar_Build_Setting</members>
+		<members>Profile_Specific_Functionality_Access.Adhoc_Calendar_Build_Group_Setting</members>
 		<members>Task_Reassignment_Matrix.Renew_Military_MoA</members>
 		<members>Task_Checklist_Setting.AA_Unit_Projection</members>
         <members>Task_Checklist_Setting.AAandLatinoProjection</members>
