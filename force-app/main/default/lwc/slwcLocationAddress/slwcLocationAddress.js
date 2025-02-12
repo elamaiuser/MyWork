@@ -28,6 +28,7 @@ export default class SlwcLocationAddress extends LightningElement {
     
     handleSelectAddress(event) {
         this.placeDetails = event.detail.placeDetails;
+        console.log('this.placeDetails ',JSON.stringify(this.placeDetails));
         this.validate(this.placeDetails);
     }
 
@@ -42,7 +43,8 @@ export default class SlwcLocationAddress extends LightningElement {
         }
 
         this.showSpinner = true;
-
+        console.log('this.placeDetails before save ',JSON.stringify(this.placeDetails));
+        
         let service = new locationService();
         let model = { 
             id: this.recordId,

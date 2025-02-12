@@ -16,9 +16,9 @@
                 <label>72 Hour Check-In</label>
             </value>
             <value>
-                <fullName>Post Drive Analysis Task</fullName>
+                <fullName>Post Drive Analysis</fullName>
                 <default>true</default>
-                <label>Post Drive Analysis Task</label>
+                <label>Post Drive Analysis</label>
             </value>
             <value>
                 <fullName>Post Drive FollowUp</fullName>
@@ -29,6 +29,11 @@
                 <fullName>Recruitment Planning Meeting</fullName>
                 <default>false</default>
                 <label>Recruitment Planning Meeting</label>
+            </value>
+            <value>
+                <fullName>Sponsor Planning Meeting</fullName>
+                <default>false</default>
+                <label>Sponsor Planning Meeting</label>
             </value>
         </valueSetDefinition>
     </valueSet>

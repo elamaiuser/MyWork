@@ -561,7 +561,7 @@ public with sharing class BSF_Utilities {
                 'Web_Scheduling_End_Date_Offset__c, Web_Scheduling_End_Time_Offset__c, Web_Scheduling_Start_Date_Offset__c, Platelet_Projected_Procedures__c, '+
                 'Plasma_Pheresis_Projected_Procedures__c, Calendar_Build_Parent_Opportunity__c, Type, DriveStatus__c, Slot_Generator__c, Related_Scheduled_Drive__c, '+ //HRP-12011 
                 //'FROM Opportunity';
-                'APT_Quantity__c, APT_Required__c FROM Opportunity'; //Added APT fields HRP-13190
+                'APT_Quantity__c, APT_Required__c, Booking_Strategy__c FROM Opportunity'; //Added APT fields HRP-13190
     }
     
     /* HRP-13190 -> Starts Here

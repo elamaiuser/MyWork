@@ -7,6 +7,10 @@
         <value xsi:type="xsd:double">2.0</value>
     </values>
     <values>
+        <field>Field_Mapping_Object__c</field>
+        <value xsi:nil="true"/>
+    </values>
+    <values>
         <field>Help_Text__c</field>
         <value xsi:nil="true"/>
     </values>
@@ -28,7 +32,7 @@
     </values>
     <values>
         <field>Order__c</field>
-        <value xsi:type="xsd:double">19.0</value>
+        <value xsi:type="xsd:double">21.0</value>
     </values>
     <values>
         <field>Parent__c</field>

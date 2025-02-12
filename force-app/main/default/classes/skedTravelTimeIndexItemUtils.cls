@@ -16,7 +16,7 @@ public class skedTravelTimeIndexItemUtils {
     public static Map<String, sked_Travel_Time_Index_Item__c> getTravelTimeIndexItemsByKey(Set<String> keys) {
         Map<String, sked_Travel_Time_Index_Item__c> ttiiByKey = new Map<String, sked_Travel_Time_Index_Item__c>();
         for(sked_Travel_Time_Index_Item__c ttii : [
-            SELECT Id, sked_Key__c, sked_Travel_Distance__c, sked_Travel_Time_Breakdown_JSON__c
+            SELECT Id, sked_Key__c, sked_Travel_Distance__c, sked_Travel_Time_Breakdown_JSON__c, sked_Travel_Time_Breakdown_JSON_Backup__c
             FROM sked_Travel_Time_Index_Item__c
             WHERE sked_Key__c IN :keys
         ]) {
@@ -59,6 +59,31 @@ public class skedTravelTimeIndexItemUtils {
         }
     }
 
+    public static void updateTravelTimeBreakdownJSONBackup(List<sked_Travel_Time_Index_Item__c> ttiis) {
+        List<sked_Travel_Time_Index_Item__c> ttiisToUpdate = new List<sked_Travel_Time_Index_Item__c>();
+        List<String> reversedDirectionKeys = new List<String>();
+        String noData = skedConstants.NO_TRAVEL_TIME_DATA;
+        for (sked_Travel_Time_Index_Item__c ttii : ttiis) {
+            String reversedDirectionKey = getKey(ttii.sked_To__c, ttii.sked_From__c);
+            reversedDirectionKeys.add(reversedDirectionKey);
+            if(ttii.sked_Travel_Time_Breakdown_JSON__c != null && ttii.sked_Travel_Time_Breakdown_JSON__c != noData) {
+                ttii.sked_Travel_Time_Breakdown_JSON_Backup__c = ttii.sked_Travel_Time_Breakdown_JSON__c;
+                ttiisToUpdate.add(ttii);
+            }
+        }
+        for (sked_Travel_Time_Index_Item__c reversedTtii : [
+            SELECT Id, sked_Travel_Time_Breakdown_JSON__c, sked_Travel_Time_Breakdown_JSON_Backup__c
+            FROM sked_Travel_Time_Index_Item__c
+            WHERE sked_Key__c IN :reversedDirectionKeys
+        ]) {
+            if(reversedTtii.sked_Travel_Time_Breakdown_JSON__c != null && reversedTtii.sked_Travel_Time_Breakdown_JSON__c != noData) {
+                reversedTtii.sked_Travel_Time_Breakdown_JSON_Backup__c = reversedTtii.sked_Travel_Time_Breakdown_JSON__c;
+                ttiisToUpdate.add(reversedTtii);
+            }   
+        }
+        update ttiisToUpdate;
+     }
+     
     private static List<TravelTimeIndexItem> addFromToItems(List<TravelTimeIndexItem> ttiis) {
         List<TravelTimeIndexItem> newItems = new List<TravelTimeIndexItem>();
         for (TravelTimeIndexItem ttii : ttiis) {

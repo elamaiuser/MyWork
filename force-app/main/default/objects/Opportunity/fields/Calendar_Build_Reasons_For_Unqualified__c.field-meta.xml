@@ -3,7 +3,7 @@
     <fullName>Calendar_Build_Reasons_For_Unqualified__c</fullName>
     <description>Reasons why the drive was marked as unqualified</description>
     <externalId>false</externalId>
-    <label>Reasons For Unqualified</label>
+    <label>Calendar Build Alert</label>
     <length>255</length>
     <required>false</required>
     <trackFeedHistory>false</trackFeedHistory>

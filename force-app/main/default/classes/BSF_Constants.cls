@@ -33,6 +33,10 @@ public class BSF_Constants {
     
     //Affiliation Record Types
     public static final String AFFILIATION_RECORD_TYPE = 'Sponsor Recognition';
+    public static final String AFFILIATION_RECORD_TYPE2 = 'Organization Partnership';
+
+    //Affiliation Names
+    public static final String HOSPITAL_CONTRACT_PARTNER = 'Hospital Contract Partner';
 
     //Account Record Types
     public static final String FIXED_SITE_ACCOUNT_RECORD_TYPE = 'Fixed Site Account';
@@ -116,6 +120,7 @@ public class BSF_Constants {
      public static final String OPP_SOURCE_PLAN_A_DRIVE = 'Plan a Drive';
      public static final String OPP_SOURCE_ADHOC = 'Adhoc';
      public static final String OPP_SOURCE_BUSINESS_PLANNING = 'Business Planning';
+     public static final String OPP_SOURCE_ADHOC_CALENDAR_BUILD = 'Adhoc Calendar Build'; //HRP-11368
 
 
     // Opportunity Contact Roles
@@ -302,6 +307,7 @@ public class BSF_Constants {
     public static final String BATCH_STATUS_COMPLETED = 'Completed';
     public static final String BATCH_STATUS_PENDING = 'Pending';
     public static final String BATCH_STATUS_ERROR = 'Error';
+    public static final String BATCH_STATUS_NOT_NEEDED = 'Not Needed'; //HRP-11368
 
     //CB Batches
     public static final String BATCH_CALENDAR_BUILD = 'Calendar Build';
