@@ -55,6 +55,7 @@ public with sharing class CalendarBuildBatchOnDemandController {
 		Calendar_Build_Setting__mdt mdtSytemGenerateDraftDrives = Calendar_Build_Setting__mdt.getInstance('Calendar_Build_Drives_Config');
         Integer batchSize = mdtSytemGenerateDraftDrives?.System_Gen_Drives_Batch_Size__c.intValue();
         return batchSize;
+    }
 
     @InvocableMethod(label='Run Adhoc Calendar Build')
     public static void triggerAdhocCBRunAndGetJobId(List<AdhocCalendarBuildInput> adhocCBInput) {
