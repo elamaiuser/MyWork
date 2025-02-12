@@ -14,6 +14,8 @@ const MODE = {
 }
 
 export default class SlwcResolveDriveContentions extends LightningElement {
+  driveHelper = new DriveHelper();
+
   @api mode;
   @api recordId;
   @api isReadonly = false;
@@ -71,13 +73,12 @@ export default class SlwcResolveDriveContentions extends LightningElement {
 
   get vehicleAndDriverMismatchedWarning() {
     if(!this.drive || !this.drive.driveShifts || !this.drive.driveShifts.length) return null;
-    const driveHelper = new DriveHelper();
 
     const vehicleJob = this.drive.driveShifts[0].jobs.find(job => job.assetType === ASSET_TYPE.VEHICLE);
     const numberOfAllocatedVehicles = (vehicleJob.jobAllocations || []).filter(jobAllocation => jobAllocation.status !== JOB_ALLOCATION_STATUS.DELETED).length;
 
     const driveShiftsNotEnoughDrivers = this.drive.driveShifts.filter(driveShift => {
-      const driverJob = driveShift.jobs.find(job => driveHelper.isDriverJob(job));
+      const driverJob = driveShift.jobs.find(job => this.driveHelper.isDriverJob(job));
       const numberOfDrivers = driverJob.quantity || 0;
 
       return numberOfDrivers < numberOfAllocatedVehicles;
@@ -331,8 +332,7 @@ export default class SlwcResolveDriveContentions extends LightningElement {
       this.drive = this.driveGeneratorInstance.drive;
     })
     .then(() => {
-      let driveHelper = new DriveHelper();
-      let driveChanges = driveHelper.generateDriveChangesFromDCR(this.drive, this.driveChangeRequest);
+      let driveChanges = this.driveHelper.generateDriveChangesFromDCR(this.drive, this.driveChangeRequest);
       return this.driveGeneratorInstance.onDriveDataChanged(driveChanges)
     })
     .then(() => {
@@ -457,8 +457,7 @@ export default class SlwcResolveDriveContentions extends LightningElement {
   }
 
   fetchMasterData = () => {
-    const helper = new DriveHelper();
-    const driveType = helper.isFixedSiteDrive(this.drive) ? DRIVE_TYPE.FIXED_SITE : DRIVE_TYPE.MOBILE;
+    const driveType = this.driveHelper.isFixedSiteDrive(this.drive) ? DRIVE_TYPE.FIXED_SITE : DRIVE_TYPE.MOBILE;
     
     let fetch = new DriveFetch({
       driveType: driveType
@@ -543,7 +542,6 @@ export default class SlwcResolveDriveContentions extends LightningElement {
     availableEquipments = [],
     availableVehicles = []
   }) => {
-    const helper = new DriveHelper();
     const contention = item.contention;
     const data = item.data;
     if(contention === DRIVE_CONTENTION.INSUFFICIENT_RESOURCES) {
@@ -679,7 +677,7 @@ export default class SlwcResolveDriveContentions extends LightningElement {
               return `
                 Drive Shift #${driveShiftIndex + 1} 
                 ${dualRoleJobsRemovedData.newJobs.map(newJob => {
-                  return `${newJob.resourceRole}: ${newJob.quantity}`
+                  return `${compact([newJob.resourceRole, newJob.dualRole]).join('/')}: ${newJob.quantity}`
                 }).join('\n')}
               `
             }).join('\n')
@@ -693,7 +691,7 @@ export default class SlwcResolveDriveContentions extends LightningElement {
               return `
                 Drive Shift #${driveShiftIndex + 1}
                 ${dualRoleJobsRemovedData.dualRoleJobsRemoved.map(removedJob => {
-                  return `${removedJob.resourceRole}/${removedJob.dualRole}: ${removedJob.quantity}`
+                  return `${compact([removeJob.resourceRole, removeJob.dualRole]).join('/')}: ${removedJob.quantity}`
                 }).join('\n')}
               `
             }).join('\n')
@@ -713,8 +711,8 @@ export default class SlwcResolveDriveContentions extends LightningElement {
               const {backupJobs, backupDrive} = mapSystemGeneratedRoleJobsRemovedByDriveShiftId[driveShiftId];
               if(!backupJobs?.length) return null;
 
-              const systemGeneratedJobs = backupJobs.filter(item => !helper.isManuallyCreatedJob(item, backupDrive));
-              const otherJobs = backupJobs.filter(item => helper.isManuallyCreatedJob(item, backupDrive));
+              const systemGeneratedJobs = backupJobs.filter(item => !this.driveHelper.isManuallyCreatedJob(item, backupDrive));
+              const otherJobs = backupJobs.filter(item => this.driveHelper.isManuallyCreatedJob(item, backupDrive));
 
               return `
                 Drive Shift #${driveShiftIndex + 1} 
@@ -735,8 +733,8 @@ export default class SlwcResolveDriveContentions extends LightningElement {
               const {newJobs, drive} = mapSystemGeneratedRoleJobsRemovedByDriveShiftId[driveShiftId];
               if(!newJobs?.length) return null;
 
-              const systemGeneratedJobs = newJobs.filter(item => !helper.isManuallyCreatedJob(item, drive));
-              const otherJobs = newJobs.filter(item => helper.isManuallyCreatedJob(item, drive));
+              const systemGeneratedJobs = newJobs.filter(item => !this.driveHelper.isManuallyCreatedJob(item, drive));
+              const otherJobs = newJobs.filter(item => this.driveHelper.isManuallyCreatedJob(item, drive));
 
               return `
                 Drive Shift #${driveShiftIndex + 1}
@@ -970,8 +968,6 @@ export default class SlwcResolveDriveContentions extends LightningElement {
   }
 
   validateDriveStaffingChangedContention = () => {
-    const helper = new DriveHelper();
-
     return this.fetchMasterData()
       .then(() => {
         let contentionsToValidate = [
@@ -988,7 +984,7 @@ export default class SlwcResolveDriveContentions extends LightningElement {
         let {
           passed,
           contentions,
-        } = helper.validateDrive({
+        } = this.driveHelper.validateDrive({
           ...this.drive,
           contentionResolution: this.drive.contentionResolutions.join(';')
         }, {
@@ -1013,11 +1009,9 @@ export default class SlwcResolveDriveContentions extends LightningElement {
   }
 
   validateDriveContentions = () => {
-    const helper = new DriveHelper();
-
     return this.fetchMasterData()
       .then(() => {
-        return helper.getAvailableAssets(this.masterData.vehicles, this.drive, true);
+        return this.driveHelper.getAvailableAssets(this.masterData.vehicles, this.drive, true);
       })
       .then(({ availableVehicles = [], availableEquipments = [], availableButNotSharedAssetIds = [] }) => {
         let contentionsToValidate = [
@@ -1051,7 +1045,7 @@ export default class SlwcResolveDriveContentions extends LightningElement {
         let {
           passed,
           contentions,
-        } = helper.validateDrive({
+        } = this.driveHelper.validateDrive({
           ...this.drive,
           contentionResolution: this.drive.contentionResolutions.join(';')
         }, {
@@ -1107,7 +1101,6 @@ export default class SlwcResolveDriveContentions extends LightningElement {
   }
 
   handleActionStaffingComplementChanged = (event) => {
-    const driveHelper = new DriveHelper();
     const value = getValueFromEvent(event);
     const targetName = event.target.name;
 
@@ -1141,7 +1134,7 @@ export default class SlwcResolveDriveContentions extends LightningElement {
               if(job.resourceRole) {
                 return {
                   ...staffingComplement,
-                  [job.resourceRole]: job
+                  [this.driveHelper.generateJobKey(job)]: job
                 }
               }
 
@@ -1157,7 +1150,7 @@ export default class SlwcResolveDriveContentions extends LightningElement {
               if(job.resourceRole) {
                 return {
                   ...staffingComplement,
-                  [job.resourceRole]: job
+                  [this.driveHelper.generateJobKey(job)]: job
                 }
               }
 
@@ -1192,7 +1185,6 @@ export default class SlwcResolveDriveContentions extends LightningElement {
   }
 
   handleValidateBtn = () => {
-    const driveHelper = new DriveHelper();
     const backupContentionResolution = this.drive ? (this.drive.contentionResolutions || []).join(';') : '';
 
     this.showLoading()
@@ -1262,7 +1254,7 @@ export default class SlwcResolveDriveContentions extends LightningElement {
               if(job.resourceRole) {
                 return {
                   ...staffingComplement,
-                  [job.resourceRole]: job
+                  [this.driveHelper.generateJobKey(job)]: job
                 }
               }
 
@@ -1278,7 +1270,7 @@ export default class SlwcResolveDriveContentions extends LightningElement {
               if(job.resourceRole) {
                 return {
                   ...staffingComplement,
-                  [job.resourceRole]: job
+                  [this.driveHelper.generateJobKey(job)]: job
                 }
               }
 
@@ -1320,8 +1312,6 @@ export default class SlwcResolveDriveContentions extends LightningElement {
   }
 
   saveDriveStaffingDetails(event) {
-    const driveHelper = new DriveHelper();
-
     this.closeDriveStaffingDetails();
 
     this.showLoading();

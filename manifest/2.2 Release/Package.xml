@@ -56,6 +56,8 @@
 		<members>slwcDriveCompactView</members>
 		<members>slwcDriveGenerator</members>
 		<members>slwcDriveManagement</members>
+		<members>slwcOptimizationQueueSummary</members>
+		<members>slwcResolveDriveContentions</members>	
 		<name>LightningComponentBundle</name>
 	</types>
 	<types>
