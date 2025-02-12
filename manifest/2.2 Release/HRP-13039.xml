@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+    <types>
+		<members>DateUtility</members>
+		<members>DateUtilityTestClass</members>
+		<name>ApexClass</name>
+	</types>
+    <types>
+		<members>BSF_setting__c.Donor_Eligibility_Day_for_2RBC__c</members>
+		<members>BSF_setting__c.Donor_Eligibility_Day_for_WB__c</members>
+		<name>CustomField</name>
+	</types>
+	<types>
+		<members>Create_New_Fixed_Site_Drive</members>
+		<members>Create_New_Recurring_Mobile_Drive</members>
+		<name>Flow</name>
+	</types>
+	<types>
+		<members>recurringPatternScheduler</members>
+		<name>LightningComponentBundle</name>
+	</types>
+    <version>59.0</version>
+</Package>

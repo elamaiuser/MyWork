@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomMetadata xmlns="http://soap.sforce.com/2006/04/metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <label>Recruitment Planning Meeting Scheduled</label>
+    <protected>false</protected>
+    <values>
+        <field>Column__c</field>
+        <value xsi:type="xsd:double">2.0</value>
+    </values>
+    <values>
+        <field>Field_Mapping_Object__c</field>
+        <value xsi:nil="true"/>
+    </values>
+    <values>
+        <field>Help_Text__c</field>
+        <value xsi:type="xsd:string">Recruitment Meeting should include committee members, other volunteers, senior leadership, or other influencers. 
+
+To prepare for the Recruitment Meeting, the BPL can brainstorm recruitment ideas, develop a social media plan, determine how to communicate to donors, and formulate ideas for new donors. 
+
+Also, use this meeting to schedule dates for presentations, etc., and review expectations for the next steps, including internal marketing and sponsor recruitment strategies.</value>
+    </values>
+    <values>
+        <field>Hyperlink__c</field>
+        <value xsi:nil="true"/>
+    </values>
+    <values>
+        <field>Input_API_Name__c</field>
+        <value xsi:type="xsd:string">Input_Checkbox__c</value>
+    </values>
+    <values>
+        <field>Input_Type__c</field>
+        <value xsi:type="xsd:string">Checkbox</value>
+    </values>
+    <values>
+        <field>Is_Dynamic__c</field>
+        <value xsi:type="xsd:boolean">true</value>
+    </values>
+    <values>
+        <field>Order__c</field>
+        <value xsi:type="xsd:double">8.0</value>
+    </values>
+    <values>
+        <field>Parent__c</field>
+        <value xsi:nil="true"/>
+    </values>
+    <values>
+        <field>Picklist_Input_1__c</field>
+        <value xsi:nil="true"/>
+    </values>
+    <values>
+        <field>Section_Header__c</field>
+        <value xsi:nil="true"/>
+    </values>
+    <values>
+        <field>Subject__c</field>
+        <value xsi:type="xsd:string">Sponsor Planning Meeting</value>
+    </values>
+    <values>
+        <field>Subtype__c</field>
+        <value xsi:nil="true"/>
+    </values>
+    <values>
+        <field>UI_Text__c</field>
+        <value xsi:type="xsd:string">Recruitment Planning Meeting Scheduled</value>
+    </values>
+    <values>
+        <field>Unique_Name__c</field>
+        <value xsi:type="xsd:string">Recruitment_Planning_Meeting_Scheduled</value>
+    </values>
+</CustomMetadata>

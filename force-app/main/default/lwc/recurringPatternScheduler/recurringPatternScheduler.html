@@ -33,6 +33,22 @@
                             type="button"></lightning-radio-group>
             </div>
             <div class="slds-size_1-of-1 slds-p-bottom_medium">
+                <template if:true={showTabOther}>
+                    <div>
+                        <lightning-checkbox-group
+                            name="otherRecTypes"
+                            label="Calculate Donor Eligibility For:"
+                            options={otherRecTypes}
+                            value={selectedDonorEligibilityFor}
+                            onchange={handleCheckBoxChange}
+                            required
+                        >
+                        </lightning-checkbox-group>
+                    </div>
+                    <template if:true={otherSelectedRecTypeName}>
+                        <div class="slds-m-top_small" >{userInfoMessage}</div>
+                    </template>
+                </template>
                 <template if:true={showTabWeekly}>
                     <div>
                         <div class="slds-grid slds-wrap">

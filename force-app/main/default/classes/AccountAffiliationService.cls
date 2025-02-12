@@ -217,14 +217,17 @@ public with sharing class AccountAffiliationService {
 
     public static void RemovalOfAffiliationList(list<Account_Marketing_Program__c> accAffiliationList, String programName){
         Set<Id> accountIds = new Set<Id>();
+        Set<Id> otherAccountIds = new Set<Id>();
         List<Account> accountsToUpdate = new List<Account>();
         List<Marketing_Program__c> marketingPgms = [SELECT Id FROM Marketing_Program__c WHERE Name = :programName AND RecordType.Name = :BSF_Constants.AFFILIATION_RECORD_TYPE2 LIMIT 1];
 
         for(Account_Marketing_Program__c amp : accAffiliationList){
             if(amp.Date_Removed__c != null && 
-               amp.Date_Removed__c < System.today() && 
+               amp.Date_Removed__c <= System.today() && 
                amp.Marketing_Program__c == marketingPgms[0].Id){
                 accountIds.add(amp.Account__c);
+            }else if(amp.Marketing_Program__c == marketingPgms[0].Id && (amp.Date_Removed__c == null || amp.Date_Removed__c > System.today())){
+                otherAccountIds.add(amp.Account__c);
             }
         }       
 
@@ -235,7 +238,16 @@ public with sharing class AccountAffiliationService {
                     Is_Hospital_Contract_Partner__c = false
                 ));
             }
-        }        
+        }
+        
+        if(!otherAccountIds.isEmpty()){            
+            for(Id accId : otherAccountIds){
+                accountsToUpdate.add(new Account(
+                    Id = accId,
+                    Is_Hospital_Contract_Partner__c = true
+                ));
+            }
+        }
 
         AccountTeamMemberHelper.skipAccountTrigger=true;
         update accountsToUpdate;
