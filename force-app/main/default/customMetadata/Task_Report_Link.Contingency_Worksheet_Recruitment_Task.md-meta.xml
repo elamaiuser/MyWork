@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomMetadata xmlns="http://soap.sforce.com/2006/04/metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <label>Contingency Worksheet Recruitment Task</label>
+    <protected>false</protected>
+    <values>
+        <field>Active__c</field>
+        <value xsi:type="xsd:boolean">true</value>
+    </values>
+    <values>
+        <field>Report_Link__c</field>
+        <value xsi:type="xsd:string">https://americanredcross.sharepoint.com/teams/TheField/Donor%20Recruitment/Forms/AllItems.aspx?id=%2Fteams%2FTheField%2FDonor%20Recruitment%2FDrive%20Planning%2FPlanning%20Support%20Tools%2FContingency%20Planning%20Worksheet%2Epdf&amp;parent=%2Fteams%2FTheField%2FDonor%20Recruitment%2FDrive%20Planning%2FPlanning%20Support%20Tools</value>
+    </values>
+    <values>
+        <field>Report_Name__c</field>
+        <value xsi:type="xsd:string">Contingency Plan Worksheet</value>
+    </values>
+    <values>
+        <field>Task_Subject__c</field>
+        <value xsi:type="xsd:string">Recruitment Planning Meeting</value>
+    </values>
+    <values>
+        <field>Task_Type__c</field>
+        <value xsi:type="xsd:string">Recruitment Planning Meeting</value>
+    </values>
+</CustomMetadata>

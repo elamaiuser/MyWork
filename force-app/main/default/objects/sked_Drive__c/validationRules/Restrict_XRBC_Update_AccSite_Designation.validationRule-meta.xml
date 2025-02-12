@@ -37,6 +37,5 @@ sked_Opportunity__r.Automation_Suitability__c !=&quot;Suitable&quot;
 )
 )
 )</errorConditionFormula>
-    <errorDisplayField>sked_No_of_Allocated_Buses__c</errorDisplayField>
     <errorMessage>Drive is NOT able to project Double Red Procedures because either the Account does not accept automation or the Site isn&#39;t suitable for automation.</errorMessage>
 </ValidationRule>

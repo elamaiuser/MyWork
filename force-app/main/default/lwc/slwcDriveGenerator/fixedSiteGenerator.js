@@ -326,7 +326,6 @@ class FixedSiteGenerator extends BaseGenerator {
                 ])
                   .then(([driveSite]) => {
                     this.populateDriveCollectionOperation();
-                    this.populateCollectionOperationData();
 
                     return Promise.all([
                       driveSite,
@@ -358,6 +357,7 @@ class FixedSiteGenerator extends BaseGenerator {
                       staffSetupExcludedRoles
                     });
 
+                    this.populateCollectionOperationData();
                     this.calculateTotalProceduresProjected();
                     this.calculateDriveShiftsMetadata();
                     this.proposeDriveShifts();

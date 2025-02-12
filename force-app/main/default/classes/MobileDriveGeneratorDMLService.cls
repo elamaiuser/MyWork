@@ -20,6 +20,9 @@
  * 06/06/2024                 Priti Jana             Logic for HRP-12011
  * 17/06/2024                 Barnojit Sharma        Logic for HRP-12738
  * 08/01/2024                 Priti Jana             Logic for HRP-10994
+ * 01/15/2025				  Priti Jana			 Logic for HRP-12299
+ * 01/15/2025				  Barnojit Sharma		 Logic for HRP-13864
+ * 01/27/2025                 Priti Jana             Logic for HRP-14065
  *****************************************************************************
 */
 public with sharing class MobileDriveGeneratorDMLService {
@@ -214,6 +217,7 @@ public with sharing class MobileDriveGeneratorDMLService {
                                                                                     : skedConstants.CALENDAR_BUILD_STATUS_UNQUALIFIED;
                         if (!unqualifiedReasons.isEmpty()) {
                             opp.Calendar_Build_Reasons_For_Unqualified__c = string.join(unqualifiedReasons, ';');
+                            opp.Rollover_Consideration__c = BSF_Constants.ROLLOVER_CONSIDERATION_DO_NOT_ROLL; //HRP-12299
                         }
                         
                         opportunitiesToUpdate.add(opp);
@@ -779,6 +783,8 @@ public with sharing class MobileDriveGeneratorDMLService {
         public Decimal slotGenerator; //HRP-12011
         public Decimal excessStaffCapacity; //HRP-10994
         public Decimal averageStaffCapacity; //HRP-10994
+        public Decimal maxRoleCapacity; //HRP-13864
+        public Decimal maxRoleCapacityWithDrawHours; //HRP-13864
         public Decimal totalStaffRequested; //HRP-10994
         public Boolean aptRequired; //HRP-13190
         public Decimal aptQuantity; //HRP-13190
@@ -854,6 +860,8 @@ public with sharing class MobileDriveGeneratorDMLService {
                 sked_Travel_Time_CO_To_Site__c = this.travelTimeCOtoSite,  //HRP-11650
                 Excess_Staff_Capacity__c = this.excessStaffCapacity, //HRP-10994
                 Average_Staff_Capacity__c = this.averageStaffCapacity, //HRP-10994
+                Max_Role_Capacity__c = this.maxRoleCapacity, //HRP-13864
+                Max_Role_Capacity_With_Draw_Hours__c = this.maxRoleCapacityWithDrawHours, //HRP-13864
                 sked_APT_Required__c = this.aptRequired, //HRP-13190
                 sked_APT_Quantity__c = this.aptQuantity //HRP-13190
             );
@@ -903,6 +911,8 @@ public with sharing class MobileDriveGeneratorDMLService {
         public decimal drawHourswithLunchBreak;
         public decimal numberOf2rbcEquipments;
         public Boolean noTravelTime; //HRP-11419
+        public Decimal maxRoleCapacity; //HRP-13864
+        public Decimal maxRoleCapacityWithDrawHours; //HRP-13864
         
         public List<DMLDriveShiftTag> driveShiftTags;
         public List<DMLJob> jobs;
@@ -1415,8 +1425,10 @@ public with sharing class MobileDriveGeneratorDMLService {
             this.id = travelTimeIndex.Id;
             this.fromGeo = travelTimeIndex.sked_From__c;
             this.toGeo = travelTimeIndex.sked_To__c;
-            if (!string.isBlank(travelTimeIndex.sked_Travel_Time_Breakdown_JSON__c)) {
+            if (!string.isBlank(travelTimeIndex.sked_Travel_Time_Breakdown_JSON__c) && !travelTimeIndex.sked_Travel_Time_Breakdown_JSON__c.startsWithIgnoreCase('NO')) { //HRP-14065
                 this.travelTimeBreakdown = (List<DMLTravelTimeBreakdown>)JSON.deserialize(travelTimeIndex.sked_Travel_Time_Breakdown_JSON__c, List<DMLTravelTimeBreakdown>.class);
+            } else {
+                this.travelTimeBreakdown = new List<DMLTravelTimeBreakdown>(); //HRP-14065
             }
         }
     }
@@ -1437,12 +1449,14 @@ public with sharing class MobileDriveGeneratorDMLService {
             this.endDate = siteCollectionOperation.sked_End_Date__c;
             this.siteId = siteCollectionOperation.sked_Site__c;
             this.startDate = siteCollectionOperation.sked_Start_Date__c;
+
+            /* HRP-14065: JSON is no longer needed to be retrieved from Site CO. It will be retrieved from TTII 
             if (!string.isBlank(siteCollectionOperation.sked_Travel_Time_Breakdown_JSON__c)) {
                 this.travelTimeBreakdownsCoToSite = (List<DMLTravelTimeBreakdown>)JSON.deserialize(siteCollectionOperation.sked_Travel_Time_Breakdown_JSON__c, List<DMLTravelTimeBreakdown>.class);
             }
             if (!string.isBlank(siteCollectionOperation.sked_Travel_Time_Breakdown_JSON_2__c)) {
                 this.travelTimeBreakdownsSiteToCo = (List<DMLTravelTimeBreakdown>)JSON.deserialize(siteCollectionOperation.sked_Travel_Time_Breakdown_JSON_2__c, List<DMLTravelTimeBreakdown>.class);
-            }
+            }*/
         }
     }
     

@@ -55,5 +55,28 @@ public with sharing class CalendarBuildBatchOnDemandController {
 		Calendar_Build_Setting__mdt mdtSytemGenerateDraftDrives = Calendar_Build_Setting__mdt.getInstance('Calendar_Build_Drives_Config');
         Integer batchSize = mdtSytemGenerateDraftDrives?.System_Gen_Drives_Batch_Size__c.intValue();
         return batchSize;
+
+    @InvocableMethod(label='Run Adhoc Calendar Build')
+    public static void triggerAdhocCBRunAndGetJobId(List<AdhocCalendarBuildInput> adhocCBInput) {
+        Adhoc_Calendar_Build_Run__e adhocCbRunEvent = new Adhoc_Calendar_Build_Run__e();
+        Map<Id, Opportunity> map_oppId_opportunity = new Map<Id, Opportunity>(adhocCBInput[0].selectedOpportunities);
+        adhocCbRunEvent.Booking_Strategy__c = adhocCBInput[0].bookingStrategy;
+        adhocCbRunEvent.Opportunity_Source__c = adhocCBInput[0].opportunitySource;
+        adhocCbRunEvent.Opportunity_Ids__c = JSON.serialize(map_oppId_opportunity.keySet());
+        
+        if(adhocCbRunEvent != null) {
+            EventBus.publish(adhocCbRunEvent);
+        }
+    }
+
+    public class AdhocCalendarBuildInput {
+        @InvocableVariable(label='Booking Strategy')
+        public String bookingStrategy;
+
+        @InvocableVariable(label='Opportunity Source')
+        public String opportunitySource;
+
+        @InvocableVariable(label='Selected opportunities')
+        public List<Opportunity> selectedOpportunities;
     }
 }

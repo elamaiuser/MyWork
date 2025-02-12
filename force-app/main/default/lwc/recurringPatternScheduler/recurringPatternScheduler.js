@@ -4,7 +4,9 @@ import { FlowAttributeChangeEvent, FlowNavigationNextEvent, FlowNavigationBackEv
 // import standard toast event
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import fnGetRecurrenceDate from '@salesforce/apex/DateUtility.getRecurrenceDate';
-
+import fnGetDonorEligibilityDay from '@salesforce/apex/DateUtility.getDonorEligibilityDay';
+import * as slwcDateUtils from "c/slwcDateUtils";
+import TIME_ZONE from "@salesforce/i18n/timeZone";
 
 export default class RecurringPatternScheduler extends LightningElement {
 
@@ -17,7 +19,6 @@ export default class RecurringPatternScheduler extends LightningElement {
     @api OutputDateValues = [];
     @api OutputDates = '';
 
-
     //Rules
     @api InputStartDateOffset;
     @api InputEndtDateOffset;
@@ -27,6 +28,8 @@ export default class RecurringPatternScheduler extends LightningElement {
     @api OutputStartDateValue;
     @api OutputEndDateValue;
     @api OutputRecurTypeValue;
+    @api OutputDonorEligibilityNeededFor; //needed for other recurrance type
+    @api OutputDonorEligibilityDay;
 
     //Monthly Scheule Settings User Input Exposed as Output
     @api OutputMonthDayValue;
@@ -136,10 +139,12 @@ export default class RecurringPatternScheduler extends LightningElement {
 
     driveTypeValue = '';
     recurTypeValue = '';
+    donorEligibilityDay = '';
     startDateValue;
     endDateValue;
     showTabWeekly = false;
     showTabMonthly = false;
+    showTabOther = false;
     
     monthDayValue = '';
     monthDayOccuranceValue = '';
@@ -153,6 +158,9 @@ export default class RecurringPatternScheduler extends LightningElement {
     weeklyFreqFri = true;
     weeklyFreqSat = false;
     weeklyFreqSun = false;
+
+    selectedDonorEligibilityFor = [];
+    previouslySelectedValue;
     
     /*
     get driveTypeOptions() {
@@ -166,6 +174,7 @@ export default class RecurringPatternScheduler extends LightningElement {
         return [
             { label: 'Weekly', value: 'weekly' },
             { label: 'Monthly', value: 'monthly' },
+            { label: 'Other', value: 'other' }
         ];
     }
 
@@ -194,9 +203,28 @@ export default class RecurringPatternScheduler extends LightningElement {
         ];
     }
 
-    
+    get otherRecTypes() {
+        return [
+            { label: 'Power Red', value: 'powerRed', checked: false },
+            { label: 'Whole Blood', value: 'wholeBlood', checked: false }
+        ];
+    }
 
-    connectedCallback(){
+    get userInfoMessage() {
+        return `** System will calculate drive dates based on donor eligibility for ${this.otherSelectedRecTypeName} on the ${this.donorEligibilityDay}th day`;
+    }
+
+    get otherSelectedRecTypeName() {
+        return this.otherRecTypes.find(item=> item.value === (this.selectedDonorEligibilityFor || [])[0])?.label;
+    }
+
+    get dateUtils() {
+        return slwcDateUtils.getInstance({
+          timezone: TIME_ZONE
+        });
+    }
+
+    connectedCallback() {
         console.log('***connectedCallback() this.OutputStartDateValue: ' + this.OutputStartDateValue);
         console.log('***connectedCallback() this.OutputEndDateValue: ' + this.OutputEndDateValue);
         console.log('***connectedCallback() this.OutputRecurTypeValue: ' + this.OutputRecurTypeValue);
@@ -248,15 +276,16 @@ export default class RecurringPatternScheduler extends LightningElement {
         if(this.OutputRecurTypeValue !== '' && this.OutputRecurTypeValue !== null && this.OutputRecurTypeValue !== undefined){
             this.recurTypeValue = this.OutputRecurTypeValue;
             console.log('***connectedCallback() Setting this.recurTypeValue from Previous value: ' + this.OutputRecurTypeValue);
-            if(this.recurTypeValue === 'weekly'){
+            if(this.recurTypeValue === 'weekly') {
                 this.showTabWeekly = true;
                 this.showTabMonthly = false;
-            } else if (this.recurTypeValue === 'monthly'){
+            } else if (this.recurTypeValue === 'monthly') {
                 this.showTabMonthly = true;
                 this.showTabWeekly = false;
             } else {
                 this.showTabMonthly = false;
                 this.showTabWeekly = false;
+                this.showTabOther = true;
             }
         }
 
@@ -298,6 +327,12 @@ export default class RecurringPatternScheduler extends LightningElement {
             this.InputEnableFlowButtons = true;
             console.log('***connectedCallback() Defaulting this.InputEnableFlowButtons: ' + this.InputEnableFlowButtons);
         }
+
+        if(this.OutputDonorEligibilityNeededFor !== null && this.OutputDonorEligibilityNeededFor !== undefined && this.OutputDonorEligibilityNeededFor.length) {
+            this.selectedDonorEligibilityFor = this.OutputDonorEligibilityNeededFor;
+            this.previouslySelectedValue = this.OutputDonorEligibilityNeededFor[0];
+            this.donorEligibilityDay = this.OutputDonorEligibilityDay;
+        }
     }
 
     handleCheckBoxChange(event) {
@@ -326,15 +361,30 @@ export default class RecurringPatternScheduler extends LightningElement {
         }else if (event.target.name === 'chkSun') {
             this.weeklyFreqSun = event.detail.checked;
             console.log('***handleCheckBoxChange() weeklyFreqSun: ' + this.weeklyFreqSun);
+        } else if(event.target.name === 'otherRecTypes') {
+            let selectedValue = event.target.value;
+
+            //Keep only the latest selected value
+            if (selectedValue && selectedValue.length > 1) {
+                selectedValue = selectedValue.filter(item => item !== this.previouslySelectedValue);
+            }
+            this.previouslySelectedValue = selectedValue[0];
+
+            this.selectedDonorEligibilityFor = selectedValue;
+            return new Promise(async (resolve, reject) =>{
+                var result = await fnGetDonorEligibilityDay({ 
+                    donorEligibilityNeededFor: this.selectedDonorEligibilityFor[0]   
+                });
+                this.donorEligibilityDay = result.donorEligibilityDay;
+                resolve(result);
+            });
         }
-
-
-    }
 
     /*
     handleDriveTypeChange(event) {
         this.driveTypeValue = event.detail.value;
     }*/
+    }
 
     handleMonthDayOccuranceChange(event) {
         this.monthDayOccuranceValue = event.detail.value;
@@ -346,13 +396,18 @@ export default class RecurringPatternScheduler extends LightningElement {
 
     handleRecurTypeChange(event) {
         this.recurTypeValue = event.detail.value;
-        console.log('****RecurringPatternScheduler.handleRecurTypeChange() Option selected with value: ' + this.recurTypeValue);
-        if(this.recurTypeValue === 'weekly'){
+        if(this.recurTypeValue === 'weekly') {
             this.showTabWeekly = true;
             this.showTabMonthly = false;
+            this.showTabOther = false;
+        } else if (this.recurTypeValue === 'monthly') {
+            this.showTabWeekly = false;
+            this.showTabOther = false;
+            this.showTabMonthly = true;
         } else {
             this.showTabWeekly = false;
-            this.showTabMonthly = true;
+            this.showTabMonthly = false;
+            this.showTabOther = true;
         }
     }
 
@@ -376,7 +431,7 @@ export default class RecurringPatternScheduler extends LightningElement {
             let finalResultsObj = JSON.parse(JSON.stringify(finalResults));
             
             console.log('****RecurringPatternScheduler.handleProceedClick() finalResultsObj.operationStatus: ' + finalResultsObj.operationStatus);
-            if(finalResultsObj.operationStatus){
+            if(finalResultsObj.operationStatus) {
                 console.log('****RecurringPatternScheduler.handleProceedClick() finalResultsObj.returnValue: ' + finalResultsObj.returnValue);
                 //setting output to public exposed params via Design file, so that flow can get the same.
                 this.OutputDateList = JSON.parse(JSON.stringify(finalResultsObj.returnValue));
@@ -385,6 +440,12 @@ export default class RecurringPatternScheduler extends LightningElement {
                 console.log('****RecurringPatternScheduler.handleProceedClick() this.OutputDateList: ' + this.OutputDateList);
                 console.log('****RecurringPatternScheduler.handleProceedClick() this.OutputDateValues: ' + this.OutputDateValues);
                 console.log('****RecurringPatternScheduler.handleProceedClick() this.OutputDates: ' + this.OutputDates);
+
+                if(this.OutputDateValues.length === 0) {
+                    this.errorMessage = 'No dates found for the given range. Please adjust the date range and try again!';
+                    this.showNotification(); 
+                    return;
+                }
                 //dispatching flow event for Navigation based on button clicked.
                 if (buttonName === 'btnNext' && this.availableActions.find(action => action === 'NEXT')) {
                     const navigateNextEvent = new FlowNavigationNextEvent();
@@ -500,6 +561,8 @@ export default class RecurringPatternScheduler extends LightningElement {
         this.OutputStartDateValue = this.startDateValue;
         this.OutputEndDateValue = this.endDateValue;
         this.OutputRecurTypeValue = this.recurTypeValue;
+        this.OutputDonorEligibilityNeededFor = this.selectedDonorEligibilityFor;
+        this.OutputDonorEligibilityDay = this.donorEligibilityDay;
         this.OutputWeeklyFrequencyValue = this.weeklyFrequencyValue;
         this.OutputStartDate = this.getDateValuefromString(this.startDateValue);
 
@@ -523,9 +586,10 @@ export default class RecurringPatternScheduler extends LightningElement {
     //Converts String Value in [YYYY-MM-DD] Format to JS Date Obj
     getDateValuefromString(strDate) {
         console.log('****RecurringPatternScheduler.getDateValuefromString() Input Date String: ' + strDate);
-        let result = strDate.split('-');
+        /*let result = strDate.split('-');
         let month = parseInt(result[1]) - 1;
-        return new Date(result[0], month, result[2], 0, 0, 0);
+        let newDate = new Date(result[0], month, result[2], 0, 0, 0);*/
+        return this.dateUtils.date2dateIso(strDate);
     }
 
     //Converts String Array with Date Value in [YYYY-MM-DD] Format to JS Date [] Obj
@@ -631,6 +695,9 @@ export default class RecurringPatternScheduler extends LightningElement {
             this.hasError = true;
             this.errorMessage = 'Please enter numeric value in Monthly Frequency';
             
+        } else if(this.recurTypeValue === 'other' && !this.selectedDonorEligibilityFor.length) {
+            this.hasError = true;
+            this.errorMessage = 'Please select one of the checkboxes to calculate donor eligibility';
         } else {
             this.hasError = false;
             this.errorMessage = '';
@@ -664,7 +731,8 @@ export default class RecurringPatternScheduler extends LightningElement {
             daysOfWeek: this.OutputWeeklyFreqDay,
             occurance: this.OutputMonthDayOccuranceValue,
             monthlyRecurrence: this.monthlyFrequencyValue,
-            dayOfMonth: this.OutputMonthDayValue,            
+            dayOfMonth: this.OutputMonthDayValue, 
+            donorEligibilityFor: this.OutputDonorEligibilityNeededFor            
         });
         
         console.log('****RecurringPatternScheduler.calculateDates() Completed result: ' + JSON.stringify(result));
@@ -697,7 +765,8 @@ export default class RecurringPatternScheduler extends LightningElement {
                     daysOfWeek: this.OutputWeeklyFreqDay,
                     occurance: this.OutputMonthDayOccuranceValue,
                     monthlyRecurrence: this.monthlyFrequencyValue,
-                    dayOfMonth: this.OutputMonthDayValue,      
+                    dayOfMonth: this.OutputMonthDayValue, 
+                    donorEligibilityFor: this.OutputDonorEligibilityNeededFor     
                 });
                 console.log('****RecurringPatternScheduler.calculateDatesAsync() Calling Server Complete');
                 resolve(result);

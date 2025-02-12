@@ -21,6 +21,9 @@
  * 06/07/2024                  Priti Jana                HRP-12760
  * 08/09/2024                  Priti Jana                HRP-11634
  * 08/09/2024				   Raktim Ghosal			 HRP-12706
+ * 09/23/2024                  Krapy Tuli                HRP-13347
+ * 01/15/2025				   Barnojit Sharma		     HRP-13864
+ * 01/31/2025                  Priti Jana                HRP-11368 
  *****************************************************************************
 */
 
@@ -75,22 +78,22 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
 			* CreatedDate : 8/20/2024
 			* CreatedFor : HRP-12706
     * @Description : 
-     		* This overloaded constructor will run for manusl run - System Generation batch
+     		* This overloaded constructor will run for scheduled / manual run - System Generation batch
             * It can be used for both the type of drives
     *  @Parameters : 
     		* runType : Manual/Scheduled
-     		* Source : Calendar Build / Adhoc / Business Planning / ''
+     		* Source : Calendar Build / Adhoc / Business Planning / Adhoc Calendar Build / ''
             * typeOfDrive : Fixed Site / Mobile
             * driveDateToEval : optional
             * setOfDriveID : Set of drive Ids to process (Optional)
 	*/
     public DriveResourceAllocationBatch(String runType, String source, String typeOfDrive, Date driveDateToEval, Set<ID> setOfDriveID) {
         try{
-            this.driveIdSet = (setOfDriveID != NULL && !setOfDriveID.isEmpty()) ? setOfDriveID : new Set<ID>() ;
+            this.driveIdSet = (setOfDriveID != NULL && !setOfDriveID.isEmpty()) ? setOfDriveID : new Set<Id>() ;
             this.driveDateToEval = (driveDateToEval != NULL) ? driveDateToEval : NULL ;
             this.typeOfDrive = (!String.isBlank(typeOfDrive)) ? typeOfDrive : NULL ;
             this.runType = (!String.isBlank(runType) && runType.equalsIgnoreCase(BSF_Constants.RUN_TYPE_MANUAL)) ? BSF_Constants.RUN_TYPE_MANUAL : BSF_Constants.RUN_TYPE_SCHEDULED;
-            this.driveSource = source.equalsIgnoreCase(BSF_Constants.BATCH_CALENDAR_BUILD) ? BSF_Constants.BATCH_CALENDAR_BUILD : source;
+            this.driveSource = source;
             Decimal daysAfterCbRollDate;
             if(BSF_Constants.MAP_DRIVETYPE_BATCHTYPE.containsKey(typeOfDrive)) {
                 cbLogWrapper = new DriveGenerationUtil.CalendarBuildLogWrapper(
@@ -98,6 +101,7 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
                     BSF_Constants.MAP_DRIVETYPE_BATCHTYPE.get(typeOfDrive),
                     this.runType
                 );
+                cbLogWrapper.opportunitySource = this.driveSource;
             }
             Calendar_Build_Setting__mdt cbMetadata = Calendar_Build_Setting__mdt.getInstance('Calendar_Build_Drives_Config');
             if(this.driveSource.equalsIgnoreCase(BSF_Constants.BATCH_CALENDAR_BUILD) && this.runType.equalsIgnoreCase(BSF_Constants.RUN_TYPE_SCHEDULED)) {
@@ -125,24 +129,29 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
                     mobileSysGenCount = cbLogWrapper.draftDriveListToBeProcessed != NULL ? (Decimal)cbLogWrapper.draftDriveListToBeProcessed.size() : 0;
                 }
             }
-            if(this.driveSource != NULL && this.driveSource.equalsIgnoreCase(BSF_Constants.BATCH_CALENDAR_BUILD) && cbLogWrapper.draftDriveListToBeProcessed != NULL && !cbLogWrapper.draftDriveListToBeProcessed.isEmpty()) {
-                DateTime dt = Helper.getSameDayOfPrevYear(cbLogWrapper.draftDriveListToBeProcessed[0].sked_Drive_Date__c);
-                this.driveDateToEval = Date.newInstance(dT.year(), dT.month(), dT.day());
-                cbLogWrapper.driveDateToEval = this.driveDateToEval;    
+            if(this.driveSource != NULL && !String.isBlank(this.driveSource)) {
+                cbLogWrapper.opportunitySource = this.driveSource;
+                if(this.driveSource.equalsIgnoreCase(BSF_Constants.OPP_SOURCE_CALENDAR_BUILD) && cbLogWrapper.draftDriveListToBeProcessed != NULL && !cbLogWrapper.draftDriveListToBeProcessed.isEmpty()) {
+                    DateTime dt = Helper.getSameDayOfPrevYear(cbLogWrapper.draftDriveListToBeProcessed[0].sked_Drive_Date__c);
+                    this.driveDateToEval = Date.newInstance(dT.year(), dT.month(), dT.day());
+                    cbLogWrapper.driveDateToEval = this.driveDateToEval;
+                }
             }        
         } 
         catch(Exception ex) {
-            system.debug('ex '+ex.getMessage()+'staclTracing '+ex.getStackTraceString()); 
-            DateTime dt = Helper.getSameDayOfPrevYear(this.driveDateToEval);
-            this.driveDateToEval = Date.newInstance(dT.year(), dT.month(), dT.day());
+            if(source != NULL && !String.isBlank(source) && source.equalsIgnoreCase(BSF_Constants.OPP_SOURCE_CALENDAR_BUILD)) { //No need for Adhoc CB drives HRP-11368
+                DateTime dt = Helper.getSameDayOfPrevYear(this.driveDateToEval);
+                this.driveDateToEval = Date.newInstance(dT.year(), dT.month(), dT.day());
+            }
             cbLogWrapper = new DriveGenerationUtil.CalendarBuildLogWrapper(
                 this.driveDateToEval, 
                 BSF_Constants.MAP_DRIVETYPE_BATCHTYPE.get(typeOfDrive), 
                 runType
             );
             cbLogWrapper.apexMethodName = 'Constructor Call';
+            cbLogWrapper.opportunitySource = source;
             cbLogWrapper.draftDriveListToBeProcessed = new List<sked_Drive__c>();
-            DriveGenerationUtil.captureErrorLoggingForException(BSF_Constants.MAP_DRIVETYPE_BATCHTYPE.get(typeOfDrive), ex, cbLogWrapper);  
+            DriveGenerationUtil.captureErrorLoggingForException(ex, cbLogWrapper);  
         }
     }
     
@@ -151,6 +160,7 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
     }
 
     public void execute(Database.BatchableContext bc, List<sked_Drive__c> driveList) {
+        Savepoint sp = Database.setSavepoint(); //HRP-13347
         try{
             skedTriggerUtils.CHANGES_INITIATED_FROM_SERVICE = true;   
             Set<Id> driveJobIds = new Set<Id>();
@@ -343,17 +353,12 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
                                                                     AND sked_Collection_Operation__c =: drive.sked_Collection_Operation__c 
                                                                     AND sked_Date_of_Constraint__c =: drive.sked_Drive_Date__c LIMIT 1];
             remainingStaff = staffConstraintList != NULL && staffConstraintList.size() > 0 && staffConstraintList[0].sked_Total_Staff_Constraints__c != NULL ? (staffConstraintList[0].sked_Total_Staff_Constraints__c - noOfStaffsAllocated) : 0; // HRP-10523 // HRP-11224
-            // HRP-12760 --> Starts Here
             Boolean passingRuleOne = isFixedSiteDrive(drive) && jobAllocationList.isEmpty();
             Boolean passingSubRuleTwo = remainingStaff >= totalNoOfStaffRequired && jobAllocationList.isEmpty();
             Boolean passingRuleTwo = passingSubRuleTwo && (map_operationDriveLimitId_operationDriveLimit.isEmpty() || resourceModel.total2RBCLimit == NULL || xrbcJobCount == 0 || xrbcJobCount <= resourceModel.remainingNoOf2RBC);    
-            system.debug('passingSubRuleTwo '+passingSubRuleTwo+' and passingRuleTwo '+passingRuleTwo);
             if(passingRuleOne || passingRuleTwo) {
                 evaluateResourceEligibilityAndAllocateResources(resList, drive, resourceModel);
             }
-            //fsSysGenCount = passingRuleOne ? fsSysGenCount + 1 : fsSysGenCount;
-            //mobileSysGenCount = passingRuleTwo ? mobileSysGenCount + 1 : mobileSysGenCount;
-            // HRP-12760 --> ends Here
     	} catch(Exception ex) {
             List<BSF_Error_Log__c> bsfErrorLogToInsertList = new List<BSF_Error_Log__c>{BSF_Utilities.createBsfErrorLogForExceptions(ex, 'DriveResourceAllocationBatch', 'Execute Method', BSF_Constants.MAP_DRIVETYPE_BATCHTYPE.get(typeOfDrive), BSF_Constants.MAP_DRIVETYPE_BATCHTYPE.get(typeOfDrive), String.valueOf(drive.Id.getSobjectType()), String.valueOf(drive.Id))};
             if(!map_driveType_failureLogDetails.containsKey(drive.sked_Type_of_Drive__c)) {
@@ -400,11 +405,9 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
 
         //HRP-12706 --> Starts Here
         if(driveIdSet != NULL && !driveIdSet.isEmpty()) {
-            system.debug('driveIdSet '+driveIdSet);
 			queryString += ' AND Id IN: driveIdSet';            
         }
         if(driveSource != NULL && !String.isBlank(driveSource)) {
-            system.debug('driveSource '+driveSource);
 			queryString += ' AND sked_Opportunity__r.Source__c = :driveSource';            
         }
         if(typeOfDrive != NULL && !String.isBlank(typeOfDrive) && typeOfDrive.equalsIgnoreCase(BSF_Constants.MOBILE_DRIVE)) {
@@ -443,30 +446,31 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
     public void finish(Database.BatchableContext bc) {
         //HRP-12706 --> Continues (Capturing the necessary info of the fields to log in the Calendar build Log Object)
         try{
-            if (fsSysGenCount > 0) {
+            if (this.typeOfDrive.equalsIgnoreCase(BSF_Constants.FIXED_SITE_DRIVE)) {
                 noOfDriveErrorLog = (map_driveType_failureLogDetails != Null && map_driveType_failureLogDetails.containsKey(Constants.FIX_SITE_OPP) && map_driveType_failureLogDetails.get(Constants.FIX_SITE_OPP).size() > 0) ? map_driveType_failureLogDetails.get(Constants.FIX_SITE_OPP).size() :0;
                 noOfDriveWithAllocatedResource = (typeOfDriveVsdriveIDSet != NULL && typeOfDriveVsdriveIDSet.containsKey(Constants.FIX_SITE_OPP) && typeOfDriveVsdriveIDSet.get(Constants.FIX_SITE_OPP).size() >0) ? typeOfDriveVsdriveIDSet.get(Constants.FIX_SITE_OPP).size() : 0;
-                cbLogWrapper.fsSysGenCount = fsSysGenCount;
-                cbLogWrapper.fsSysGenDrivesWOAllocResourceCount = fsSysGenCount - (noOfDriveErrorLog + noOfDriveWithAllocatedResource);
+                cbLogWrapper.fsSysGenCount = fsSysGenCount != NULL && fsSysGenCount > 0 ? fsSysGenCount : 0;
+                cbLogWrapper.fsSysGenDrivesWOAllocResourceCount = cbLogWrapper.fsSysGenCount > 0 ? (fsSysGenCount - (noOfDriveErrorLog + noOfDriveWithAllocatedResource)) : 0;
                 cbLogWrapper.fsSysGenDrivesWithAllocResourceCount = noOfDriveWithAllocatedResource;
                 cbLogWrapper.fsSysGenFailureCount = noOfDriveErrorLog;
                 
-            }
-            if(mobileSysGenCount > 0) {
+            } else {
                 noOfDriveErrorLog = (map_driveType_failureLogDetails != Null && map_driveType_failureLogDetails.containsKey(Constants.MOBILE_SITE_OPP) && map_driveType_failureLogDetails.get(Constants.MOBILE_SITE_OPP).size() > 0) ? map_driveType_failureLogDetails.get(Constants.MOBILE_SITE_OPP).size() :0;
                 noOfDriveWithAllocatedResource = (typeOfDriveVsdriveIDSet != NULL && typeOfDriveVsdriveIDSet.containsKey(Constants.MOBILE_SITE_OPP) && typeOfDriveVsdriveIDSet.get(Constants.MOBILE_SITE_OPP).size() >0) ? typeOfDriveVsdriveIDSet.get(Constants.MOBILE_SITE_OPP).size() : 0;
-                cbLogWrapper.mobileSysGenCount = mobileSysGenCount;
-                cbLogWrapper.mobileSysGenDrivesWOAllocResourceCount = mobileSysGenCount - (noOfDriveErrorLog + noOfDriveWithAllocatedResource);
+                cbLogWrapper.mobileSysGenCount = mobileSysGenCount != NULL && mobileSysGenCount > 0 ? mobileSysGenCount : 0;
+                cbLogWrapper.mobileSysGenDrivesWOAllocResourceCount = cbLogWrapper.mobileSysGenCount > 0 ? (mobileSysGenCount - (noOfDriveErrorLog + noOfDriveWithAllocatedResource)) : 0;
                 cbLogWrapper.mobileSysGenDrivesWithAllocResourceCount = noOfDriveWithAllocatedResource;
                 cbLogWrapper.mobileSysGenFailureCount = noOfDriveErrorLog;
             }
             cbLogWrapper.errorLogIdsCreatedDuringBatchRun = errorLogIdsCreatedDuringBatchRun != NULL ? errorLogIdsCreatedDuringBatchRun : new Set<Id>();
-            if(!String.isBlank(driveSource) && driveSource.equalsIgnoreCase(BSF_Constants.BATCH_CALENDAR_BUILD)) {
+            if(!String.isBlank(driveSource) 
+                && (driveSource.equalsIgnoreCase(BSF_Constants.OPP_SOURCE_CALENDAR_BUILD) || driveSource.equalsIgnoreCase(BSF_Constants.OPP_SOURCE_ADHOC_CALENDAR_BUILD)) //HRP-11368
+            ) {
                 DriveGenerationUtil.captureCbLogAndCbErrorLog(cbLogWrapper);
 
                 // Call Resource Allocation Batch for Mobile Drives only for Calendar Build Process
                 if(!String.isBlank(driveSource) && !String.isBlank(typeOfDrive) && !String.isBlank(runType) &&
-                   driveSource.equalsIgnoreCase(BSF_Constants.BATCH_CALENDAR_BUILD) &&
+                   driveSource.equalsIgnoreCase(BSF_Constants.OPP_SOURCE_CALENDAR_BUILD) &&
                    runType.equalsIgnoreCase(BSF_Constants.RUN_TYPE_SCHEDULED) &&
                    typeOfDrive.equalsIgnoreCase(BSF_Constants.FIXED_SITE_DRIVE)
                 ) {
@@ -480,8 +484,10 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
                 this.runType
             );
             cbLogWrapper.apexMethodName = 'Finish Method Call';
+            cbLogWrapper.opportunitySource = this.driveSource;
             cbLogWrapper.draftDriveListToBeProcessed = new List<sked_Drive__c>();
-            DriveGenerationUtil.captureErrorLoggingForException(BSF_Constants.MAP_DRIVETYPE_BATCHTYPE.get(typeOfDrive), ex, cbLogWrapper);    
+            
+            DriveGenerationUtil.captureErrorLoggingForException(ex, cbLogWrapper);    
         }
         //HRP-12706 --> Continues
     } 
@@ -497,7 +503,6 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
             List<sked__Resource__c> availableResourceListPassedCheckFour = filterLocationBlacklist(availableResourceListPassedCheckThree, drive);
             List<sked__Resource__c> resourceListNeededForCOCheck = filterResourceDedicatedToSite(availableResourceListPassedCheckFour, successfullyEvaluatedResourceMap);
             filterResourceAvailabilityInJobCollectionOperation(resourceListNeededForCOCheck, drive, successfullyEvaluatedResourceMap);
-            system.debug('successfullyEvaluatedResourceMap '+successfullyEvaluatedResourceMap.size());
             filterTagsAndAllocateResources(successfullyEvaluatedResourceMap, drive, resourceModel);     
         }
     }
@@ -773,29 +778,20 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
         Map<Id,Set<Id>> map_jobId_ResourceIds = new Map<Id,Set<Id>>();
         Map<Id,Set<Id>> jobVsResourceAllocations = new Map<Id,Set<Id>>();
         Set<Id> assignedResourceId = new  Set<Id>();
-        system.debug('vehicleTypeResource '+vehicleTypeResource);
         for(sked__Job__c vehicleJob : vehicleTypeJob) { // HRP-10212 start
-            system.debug('jobVsJobTagMap.get(vehicleJob.Id) '+jobVsJobTagMap.get(vehicleJob.Id).size());
             if(!vehicleTypeResourceForCDL.isEmpty()) {
                 for(sked__Resource__c vehicleResource : vehicleTypeResourceForCDL) {
-                    system.debug('vehicleResource '+vehicleResource);
                     if(!resourceVsResourceTagMap.get(vehicleResource.Id).isEmpty() && jobVsJobTagMap.containskey(vehicleJob.Id) && !assignedResourceId.contains(vehicleResource.Id)) {
                         Integer count = 0;
                         for(sked__Resource_Tag__c resTag : resourceVsResourceTagMap.get(vehicleResource.Id)) {
-                            system.debug('resTag '+resTag);
                             if(resTag.sked_Start_Date__c  <= driveDate && (resTag.sked_Expiry_Date__c == NULL || (resTag.sked_Expiry_Date__c != NULL || driveDate <= resTag.sked_Expiry_Date__c))) {
                                 for(sked__Job_Tag__c jobTag : jobVsJobTagMap.get(vehicleJob.Id)) {
-                                    system.debug('jobTag '+jobTag);
-                                   
                                     if(jobTag.sked__Tag__c == resTag.sked__Tag__c) {
-                                        
                                         count++;
                                     }
                                 }
                             }  
                         }
-                        system.debug('count in batch '+count);
-                        system.debug('jobVsJobTagMap.get(vehicleJob.Id).size() '+jobVsJobTagMap.get(vehicleJob.Id).size());
                         if(count == jobVsJobTagMap.get(vehicleJob.Id).size()){
                             if (!map_jobId_ResourceIds.containsKey(vehicleJob.Id)) {
                                 map_jobId_ResourceIds.put(vehicleJob.Id, new Set<Id>{vehicleResource.Id});
@@ -875,7 +871,6 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
                 }
             }
         }
-		system.debug('map_operationDriveLimitId_operationDriveLimit '+map_operationDriveLimitId_operationDriveLimit.size());
         Integer maxNoOfVehicles = 0;
         for (Id jobId : map_jobId_ResourceIds.keySet()) {
             Decimal pdC = 0;
@@ -883,7 +878,6 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
             for (Id resId : map_jobId_ResourceIds.get(jobId)) { // HRP-10212 and HRP-10213 start
                 if(resourceIdVsCapacity.get(resId) != NULL) {
                     if(map_operationDriveLimitId_operationDriveLimit.isEmpty()) {
-                        system.debug('here');
                         pdC += resourceIdVsCapacity.get(resId);
                         resourceIds.add(resId);
                     } else if(resourceIdVsResourceDetails.containsKey(resId) && resourceIdVsResourceDetails.get(resId).sked_DOT__c == True && (resourceModel.remainingNoOfDOT > 0 || resourceModel.remainingNoOfDOT == NULL)) {
@@ -910,7 +904,6 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
             }
         }
         noOfVehicles = maxNoOfVehicles;
-        system.debug('jobVsResourceAllocations '+jobVsResourceAllocations);
         return jobVsResourceAllocations;
     }
 
@@ -945,7 +938,6 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
                 }
           }
         }
-        system.debug('jobAlocList '+jobAlocList);
         List<sked__Job__c> combinedJobList = new List<sked__Job__c>();
         List<sked_Drive_Shift__c> driveshifts = getDriveShifts(drive.Id);
         if(!jobAlocList.isEmpty() && (noOfVehicleAllocations > 0 || (noOfVehicleAllocations == 0 && vehicleTypeJob.size() == 0)) && (noOfEquipmentAllocations > 0 || (noOfEquipmentAllocations == 0 && equipmentTypeJob.size() == 0))) {
@@ -955,6 +947,10 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
                 system.debug('here ');
                 Decimal shiftTotalStaffCapacity = 0;
                 Decimal shiftStaffCapacity = 0;
+                Decimal shiftMaxRoleCapacity = 0; //HRP-13864
+                Decimal driveMaxRoleCapacity = 0; //HRP-13864
+                Decimal shiftMaxRoleCapacityWithDrawHours = 0; //HRP-13864
+                Decimal driveMaxRoleCapacityWithDrawHours = 0; //HRP-13864
                 Decimal staffPrimaryCount = 0;
                 reCalTotalNoOfStaffRequired = 0;
                 Map<String, Decimal> map_driveShiftId_driveShiftStaffCapacity = new Map<String, Decimal>();
@@ -962,7 +958,6 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
                     GenerateMobileDrive.DriveStaffingComplementModel staffingComplement = new GenerateMobileDrive.DriveStaffingComplementModel(); //HRP-11634
                     for(sked__Job__c job : shift.sked_Jobs__r) { // HRP-11001 start
                         if ( (job.sked_Asset_Type__c != null) && (job.sked_Asset_Type__c == Constants.JOB_TYPE_VEHICLE && job.sked__Quantity__c != noOfVehicles)) {
-                            system.debug('here in reclaculation');
                             recalculationFlag = true;
                         }
                     }
@@ -985,20 +980,33 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
                         map_driveShiftId_driveShiftStaffCapacity.put(shift.Id, shiftStaffCapacity);
                         shiftTotalStaffCapacity += shiftStaffCapacity;
                         staffPrimaryCount += getShiftPrimaryStaffCount(staffingComplement);
+                        shiftMaxRoleCapacity = 0;
+                        shiftMaxRoleCapacity = Math.floor(reCalculateMaxRoleCapacity(
+                            drive,
+                            shift,
+                            staffingComplement
+                        ));
+                        if(shiftMaxRoleCapacity > driveMaxRoleCapacity){
+                            driveMaxRoleCapacity = shiftMaxRoleCapacity;
+                        }
                     } else{
                         system.debug('Drive recalculationFlag is false');
                     }
                 }
                 if(recalculationFlag) {
-                    drive.sked_Staff_Capacity__c = shiftStaffCapacity;
+                    drive.sked_Staff_Capacity__c = shiftTotalStaffCapacity;
+                    drive.Max_Role_Capacity__c = driveMaxRoleCapacity.setScale(2);
+                    drive.Max_Role_Capacity_With_Draw_Hours__c = reCalculateMaxRoleCapacityWithDrawHours(
+                        drive,
+                        driveshifts,
+                        driveMaxRoleCapacity
+                    );
                     MobileDriveGeneratorDMLService.DMLDrive dmlDrive = reCalculateDriveAverageStaffCapacity(drive, staffPrimaryCount);
                     drive.Average_Staff_Capacity__c = dmlDrive?.averageStaffCapacity;
                     drive.Excess_Staff_Capacity__c = reCalculateDriveExcessStaffCapacity(dmlDrive);
                 }
-                system.debug('remainingStaff '+remainingStaff+' reCalTotalNoOfStaffRequired '+reCalTotalNoOfStaffRequired);
                 //HRP-11634 --> Ends Here
                 if (remainingStaff >= reCalTotalNoOfStaffRequired) { // HRP-11001 start
-                    system.debug('remainingStaff '+remainingStaff+' reCalTotalNoOfStaffRequired '+reCalTotalNoOfStaffRequired);
                     if(recalculationFlag) {
                         update combinedJobList;
                         Decimal driveProductivity = 0;
@@ -1035,7 +1043,6 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
                 }
             }
             if (remainingStaff >= reCalTotalNoOfStaffRequired) {
-                system.debug('remainingStaff '+remainingStaff+' reCalTotalNoOfStaffRequired '+reCalTotalNoOfStaffRequired);
                 insert jobAlocList;
            	    update drive;   
                 processedDrive.add(drive.Id);
@@ -1112,6 +1119,55 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
         );
         return staffCapacity;
     }
+
+    //HRP-13864 starts here
+    @testVisible private static Decimal reCalculateMaxRoleCapacityWithDrawHours(
+        sked_Drive__c driveSingle,
+        List<sked_Drive_Shift__c> driveshifts,
+        Decimal driveMaxRoleCapacity
+    ) {
+        Decimal maxRoleCapacityWithDrawHours = 0;
+        if(driveMaxRoleCapacity > 0){
+            GenerateMobileDrive.mobileDriveGenerator driveGenInstance = new GenerateMobileDrive.mobileDriveGenerator();
+            sked_Staffing_Decision_Matrix__c matrix =  getStaffingDecisionMatrix(driveSingle.sked_Collection_Operation__c, driveSingle);
+            MobileDriveGeneratorDMLService.DMLDrive drive = new MobileDriveGeneratorDMLService.DMLDrive(MobileDriveGeneratorDMLService.fetchOpportunities(new Set<Id>{driveSingle.sked_Opportunity__c})[0]);  
+            drive.collectionOperation = new MobileDriveGeneratorDMLService.DMLCollectionOperation(MobileDriveGeneratorDMLService.fetchCollectionOperations(new Set<Id>{driveSingle.sked_Collection_Operation__c})[0]);
+            Decimal driveDrawHourswithLunchBreak = 0;
+            for(sked_Drive_Shift__c driveShiftSingle : driveshifts){
+                MobileDriveGeneratorDMLService.DMLDriveShift driveShift = new MobileDriveGeneratorDMLService.DMLDriveShift(driveShiftSingle);
+                driveShift.drawHourswithLunchBreak = getDrawHoursWithLunchBreak(driveSingle, driveShiftSingle);
+                driveDrawHourswithLunchBreak += driveShift.drawHourswithLunchBreak;
+            }
+            if(driveDrawHourswithLunchBreak > 0){
+                maxRoleCapacityWithDrawHours = driveMaxRoleCapacity * driveDrawHourswithLunchBreak;
+            }
+        }
+        return maxRoleCapacityWithDrawHours.setScale(2);
+    }
+    @testVisible private static Decimal reCalculateMaxRoleCapacity(
+        sked_Drive__c driveSingle,
+        sked_Drive_Shift__c driveShiftSingle,
+        GenerateMobileDrive.DriveStaffingComplementModel staffingComplement
+    ) {
+        Decimal maxRoleCapacity = 0;
+        GenerateMobileDrive.mobileDriveGenerator driveGenInstance = new GenerateMobileDrive.mobileDriveGenerator();
+        sked_Staffing_Decision_Matrix__c matrix =  getStaffingDecisionMatrix(driveSingle.sked_Collection_Operation__c, driveSingle);
+        MobileDriveGeneratorDMLService.DMLDrive drive = new MobileDriveGeneratorDMLService.DMLDrive(MobileDriveGeneratorDMLService.fetchOpportunities(new Set<Id>{driveSingle.sked_Opportunity__c})[0]);  
+        drive.collectionOperation = new MobileDriveGeneratorDMLService.DMLCollectionOperation(MobileDriveGeneratorDMLService.fetchCollectionOperations(new Set<Id>{driveSingle.sked_Collection_Operation__c})[0]);
+        MobileDriveGeneratorDMLService.DMLDriveShift driveShift = new MobileDriveGeneratorDMLService.DMLDriveShift(driveShiftSingle);
+        driveShift.drawHourswithLunchBreak = getDrawHoursWithLunchBreak(driveSingle, driveShiftSingle);
+        driveShift.numberOf2rbcEquipments = staffingComplement.numberOf2rbcEquipments ; 
+        maxRoleCapacity = driveGenInstance.calculateMaxRoleCapacity(
+            new List<String>{'Driver', 'Driver Support', '2RBC', 'VP/HH', 'Charge'},
+            staffingComplement,
+            drive,
+            driveShift,
+            new MobileDriveGeneratorDMLService.DMLStaffingDecisionMatrix(matrix),
+            false
+        );
+        return maxRoleCapacity;
+    }
+    //HRP-13864 ends here
     
     @testVisible  private static List<sked__Job__c> reCalculateStaffingComplement(
         List<sked__Job__c> jobsToReCalculate,

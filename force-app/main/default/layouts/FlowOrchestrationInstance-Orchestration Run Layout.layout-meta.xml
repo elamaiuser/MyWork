@@ -26,10 +26,6 @@
                 <behavior>Readonly</behavior>
                 <field>OrchestrationDeveloperName</field>
             </layoutItems>
-            <layoutItems>
-                <behavior>Readonly</behavior>
-                <field>OrchestrationLabel</field>
-            </layoutItems>
         </layoutColumns>
         <style>OneColumn</style>
     </layoutSections>
@@ -42,7 +38,6 @@
     </layoutSections>
     <miniLayout>
         <fields>OrchestrationDeveloperName</fields>
-        <fields>OrchestrationLabel</fields>
     </miniLayout>
     <relatedLists>
         <fields>StageName</fields>

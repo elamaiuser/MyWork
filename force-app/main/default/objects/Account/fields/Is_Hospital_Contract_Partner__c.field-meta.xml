@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Is_Hospital_Contract_Partner__c</fullName>
+    <defaultValue>false</defaultValue>
+    <description>HRP-12788</description>
+    <label>Is Hospital Contract Partner</label>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <type>Checkbox</type>
+</CustomField>

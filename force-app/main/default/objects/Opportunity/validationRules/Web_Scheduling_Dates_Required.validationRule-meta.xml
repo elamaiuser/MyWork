@@ -20,6 +20,5 @@ NOT(ISPICKVAL(Web_Scheduling_Start_Time__c,&quot;&quot;)) ||
 NOT(ISBLANK(Web_Scheduling_End_Time_Offset__c)) ||
 NOT(ISBLANK(Web_Scheduling_End_Date_Offset__c))
 ))</errorConditionFormula>
-    <errorDisplayField>Number_of_2RBC_Assets__c</errorDisplayField>
     <errorMessage>Please either check the checkbox ‘Web Scheduling Offset from CO/Global Setting’ or enter Web Scheduling Offset values on the Template.</errorMessage>
 </ValidationRule>
