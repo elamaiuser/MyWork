@@ -127,11 +127,7 @@
             <layoutItems>
                 <behavior>Edit</behavior>
                 <field>sked__Weekly_Hours__c</field>
-            </layoutItems>
-            <layoutItems>
-                <behavior>Edit</behavior>
-                <field>sked_Maximum_Travel_Radius__c</field>
-            </layoutItems>
+            </layoutItems>            
             <layoutItems>
                 <behavior>Edit</behavior>
                 <field>sked_Max_Consecutive_Days_per_week__c</field>
