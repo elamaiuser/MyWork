@@ -359,7 +359,9 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
             if(passingRuleOne || passingRuleTwo) {
                 evaluateResourceEligibilityAndAllocateResources(resList, drive, resourceModel);
             }
+            sp = Database.setSavepoint(); //HRP-13347
     	} catch(Exception ex) {
+            Database.rollback(sp); //HRP-13347
             List<BSF_Error_Log__c> bsfErrorLogToInsertList = new List<BSF_Error_Log__c>{BSF_Utilities.createBsfErrorLogForExceptions(ex, 'DriveResourceAllocationBatch', 'Execute Method', BSF_Constants.MAP_DRIVETYPE_BATCHTYPE.get(typeOfDrive), BSF_Constants.MAP_DRIVETYPE_BATCHTYPE.get(typeOfDrive), String.valueOf(drive.Id.getSobjectType()), String.valueOf(drive.Id))};
             if(!map_driveType_failureLogDetails.containsKey(drive.sked_Type_of_Drive__c)) {
                 map_driveType_failureLogDetails.put(drive.sked_Type_of_Drive__c, new List<BSF_Error_Log__c>());
@@ -367,6 +369,7 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
             map_driveType_failureLogDetails.get(drive.sked_Type_of_Drive__c).add(bsfErrorLogToInsertList[0]);
             Database.SaveResult[] logInsertResult = Database.insert(bsfErrorLogToInsertList, FALSE);
             errorLogIdsCreatedDuringBatchRun.addAll(BSF_Utilities.getSuccessfullySavedRecordIds(logInsertResult));
+            sp = Database.setSavepoint(); //HRP-13347
         }
     }
     
@@ -405,9 +408,11 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
 
         //HRP-12706 --> Starts Here
         if(driveIdSet != NULL && !driveIdSet.isEmpty()) {
+            system.debug('driveIdSet '+driveIdSet.size());
 			queryString += ' AND Id IN: driveIdSet';            
         }
         if(driveSource != NULL && !String.isBlank(driveSource)) {
+             system.debug('driveSource '+driveSource);
 			queryString += ' AND sked_Opportunity__r.Source__c = :driveSource';            
         }
         if(typeOfDrive != NULL && !String.isBlank(typeOfDrive) && typeOfDrive.equalsIgnoreCase(BSF_Constants.MOBILE_DRIVE)) {
@@ -1046,7 +1051,7 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
                 insert jobAlocList;
            	    update drive;   
                 processedDrive.add(drive.Id);
-                 //HRP-12706 --> Continues (Capturing Number Drives with Allocated Resources
+                //HRP-12706 -> Capturing drives with resource allocation as per tyoe of drive --> Starts here
                 if(!typeOfDriveVsdriveIDSet.containsKey(drive.sked_Type_of_Drive__c)){
                 	typeOfDriveVsdriveIDSet.put(drive.sked_Type_of_Drive__c, new Set<ID>());
             	}
