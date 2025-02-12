@@ -341,7 +341,6 @@ class MobileGenerator extends BaseGenerator {
                     staffSetupExcludedRoles
                   }]) => {
                     this.populateDriveCollectionOperation();
-                    this.populateCollectionOperationData();
 
                     return Promise.all([
                       driveSite,
@@ -377,6 +376,7 @@ class MobileGenerator extends BaseGenerator {
                       staffSetupExcludedRoles
                     })
 
+                    this.populateCollectionOperationData();
                     this.calculateTotalProceduresProjected();
                     this.calculateDriveShiftsMetadata();
                     this.calculateNumberOf2rbcAssets();
