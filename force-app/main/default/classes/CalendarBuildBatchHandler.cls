@@ -16,6 +16,7 @@
  * 08/06/24     Priti Jana          Logic for HRP-12706
  * 09/09/24		Balaji N			Logic for HRP-13265
  * 12/10/24     Priti Jana          Logic for HRP-13190
+ * 01/08/2025   Priti Jana          Logic for HRP-12299
  **************************************************************************************************************************************/
 
  public with sharing class CalendarBuildBatchHandler {
@@ -178,7 +179,7 @@
 
     //Method used for determining if opportunities meet the rollover evaluation criteria
     //Details of the criteria is document on HRP-3442
-    public static CalendarBuildWrapper runRolloverEvaluation(Opportunity incomingOrigOpp,  Map<Id, Id> graySkiesMap) {
+    public static CalendarBuildWrapper runRolloverEvaluation(Opportunity incomingOrigOpp, Map<Id, Id> graySkiesMap) {
         CalendarBuildWrapper cbWrapper = new CalendarBuildWrapper();
         //Don't clone opps that are cancelled with a reson of 'system need'
         if(!(incomingOrigOpp.DriveStatus__c == 'Cancelled' && incomingOrigOpp.sked_Cancellation_Reason__c == 'System Need')) {
@@ -188,12 +189,16 @@
                     cbWrapper.UnqualifiedReasons = 'Always Roll On, Account Strategy is Sunset';
                 }
             }
-            //If opportunity has drive affiliation with Designation = "Gray Skies", mark as "Unqualified"
+
+            /* Logic for HRP-12299
+            	If opportunity has drive affiliation with Designation = "Gray Skies", mark as "Qualified"
+			*/
             else if(!graySkiesMap.isEmpty() && graySkiesMap.containsKey(incomingOrigOpp.Id)){ //incomingOrigOpp.Drive_Designations__c != null && incomingOrigOpp.Drive_Designations__c.split(';').contains('Gray Skies')) {
-                cbWrapper.IsQualified = false;
-                cbWrapper.UnqualifiedReasons = 'Drive Designation is Gray Skies';
-                cbWrapper.RolloverConsideration = 'Do Not Roll';
+                cbWrapper.IsQualified = true;
+                //cbWrapper.UnqualifiedReasons = 'Drive Designation is Gray Skies';
+                //cbWrapper.RolloverConsideration = 'Do Not Roll';
             }
+            
             //If Account Strategy = "Sunset", mark as "Unqualified"
             else if(incomingOrigOpp.Account.Account_Strategy__c != null && incomingOrigOpp.Account.Account_Strategy__c == 'Sunset') {
                 cbWrapper.IsQualified = false;
