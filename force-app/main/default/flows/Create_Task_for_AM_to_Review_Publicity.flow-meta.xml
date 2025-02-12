@@ -186,7 +186,6 @@
             </value>
         </inputParameters>
         <nameSegment>createPublicityTask</nameSegment>
-        <versionSegment>1</versionSegment>
     </actionCalls>
     <apiVersion>51.0</apiVersion>
     <assignments>

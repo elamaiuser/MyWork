@@ -714,8 +714,8 @@
         <excludeButtons>OppContactRoleMultiEdit</excludeButtons>
         <fields>ContactName</fields>
         <fields>Role</fields>
+        <fields>Assigned_Date__c</fields>
         <fields>ContactEmail</fields>
-        <fields>ContactPhone</fields>
         <relatedList>RelatedContactRoleList</relatedList>
     </relatedLists>
     <relatedLists>

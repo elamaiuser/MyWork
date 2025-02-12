@@ -26,7 +26,6 @@
             <assignToReference>WebStartDateTime</assignToReference>
             <name>webStartDate</name>
         </outputParameters>
-        <versionSegment>1</versionSegment>
     </actionCalls>
     <apiVersion>50.0</apiVersion>
     <assignments>

@@ -16,9 +16,6 @@
     <tabs>sked_Staging_Location__c</tabs>
     <tabs>sked_Collection_Op_Staging_Location__c</tabs>
     <tabs>sked_Travel_Time_Index_Item__c</tabs>
-    <tabs>sked_Travel_Time_Breakdown_Refresh_Item__c</tabs>
-    <tabs>sked_Travel_Time_Index_Refresh_Request__c</tabs>
-    <tabs>sked_Travel_Time_Index_Refresh_Group__c</tabs>
     <uiType>Lightning</uiType>
     <workspaceConfig>
         <mappings>
@@ -37,16 +34,7 @@
             <tab>sked_Staging_Location__c</tab>
         </mappings>
         <mappings>
-            <tab>sked_Travel_Time_Breakdown_Refresh_Item__c</tab>
-        </mappings>
-        <mappings>
             <tab>sked_Travel_Time_Index_Item__c</tab>
-        </mappings>
-        <mappings>
-            <tab>sked_Travel_Time_Index_Refresh_Group__c</tab>
-        </mappings>
-        <mappings>
-            <tab>sked_Travel_Time_Index_Refresh_Request__c</tab>
         </mappings>
         <mappings>
             <tab>standard-CmsAuthorHome</tab>

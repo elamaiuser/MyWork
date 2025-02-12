@@ -23,7 +23,6 @@
             <assignToReference>driveAffiliationApexReturned</assignToReference>
             <name>output</name>
         </outputParameters>
-        <versionSegment>1</versionSegment>
     </actionCalls>
     <apiVersion>55.0</apiVersion>
     <assignments>

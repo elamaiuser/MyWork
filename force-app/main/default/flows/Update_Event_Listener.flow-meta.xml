@@ -19,7 +19,6 @@
         </inputParameters>
         <nameSegment>RetrieveUpdateEventDetails</nameSegment>
         <storeOutputAutomatically>true</storeOutputAutomatically>
-        <versionSegment>1</versionSegment>
     </actionCalls>
     <apiVersion>53.0</apiVersion>
     <assignments>

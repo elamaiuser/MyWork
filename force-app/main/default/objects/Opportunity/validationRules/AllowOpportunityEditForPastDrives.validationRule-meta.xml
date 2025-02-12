@@ -31,5 +31,6 @@
       ($Profile.Name = &#39;Analytics&#39;)
    )
 )</errorConditionFormula>
+    <errorDisplayField>Number_of_2RBC_Assets__c</errorDisplayField>
     <errorMessage>Drive Date, Hours, Template, and Site are not editable for Past Drives</errorMessage>
 </ValidationRule>

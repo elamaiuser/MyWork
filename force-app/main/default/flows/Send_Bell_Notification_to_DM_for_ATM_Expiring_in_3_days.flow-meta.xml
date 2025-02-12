@@ -105,7 +105,6 @@ Thank you</stringValue>
             </value>
         </inputParameters>
         <nameSegment>customNotificationAction</nameSegment>
-        <versionSegment>1</versionSegment>
     </actionCalls>
     <apiVersion>51.0</apiVersion>
     <assignments>
