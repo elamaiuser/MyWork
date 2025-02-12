@@ -1,17 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <Package xmlns="http://soap.sforce.com/2006/04/metadata">
-	<types>
-		<members>GenerateMobileDrive</members>
-		<members>GenerateMobileDriveTest</members>
-		<members>MobileDriveGeneratorDMLService</members>
-		<members>DriveResourceAllocationBatch</members>
-		<members>DriveResourceAllocationBatchTest</members>
-		<members>BSFTaskChecklistTriggerHandler</members>
+    <types>
+        <members>BSFTaskChecklistTriggerHandler</members>
         <members>TaskService</members>
         <members>TaskTriggerTest</members>
         <members>BSFTaskChecklistTriggerTest</members>
-		<name>ApexClass</name>
-	</types>
+        <name>ApexClass</name>
+    </types>
 	<types>
         <members>Task_Checklist_Setting.AA_Unit_Projection</members>
         <members>Task_Checklist_Setting.AAandLatinoProjection</members>
@@ -44,27 +39,10 @@
         <members>Task_Checklist_Setting.Update_Rollover_Consideration</members>
         <name>CustomMetadata</name>
     </types>
-	<types>
-		<members>sked_Drive__c.Max_Role_Capacity__c</members>
-		<members>sked_Drive__c.Max_Role_Capacity_With_Draw_Hours__c</members>
-		<members>Task_Checklist_Setting__mdt.Field_Mapping_Object__c</members>
+    <types>
+        <members>Task_Checklist_Setting__mdt.Field_Mapping_Object__c</members>
         <members>BSF_Task_Checklist__c.Input_Number__c</members>
-		<name>CustomField</name>
-	</types>
-	<types>
-		<members>autoMapper</members>
-		<members>slwcDriveCompactView</members>
-		<members>slwcDriveGenerator</members>
-		<members>slwcDriveManagement</members>
-		<name>LightningComponentBundle</name>
-	</types>
-	<types>
-		<members>General_Reports/Excess_Staff_Capacity_Audit_6N2</members>
-		<name>Report</name>
-	</types>
-	<types>
-		<members>Drives_with_Account_and_Site</members>
-		<name>ReportType</name>
-	</types>
+        <name>CustomField</name>
+    </types>
 	<version>60.0</version>
 </Package>

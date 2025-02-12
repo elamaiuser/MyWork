@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomMetadata xmlns="http://soap.sforce.com/2006/04/metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-    <label>DRMS Audit report</label>
+    <label>Donor Appointments Recruitment Task</label>
     <protected>false</protected>
     <values>
         <field>Active__c</field>
@@ -8,11 +8,11 @@
     </values>
     <values>
         <field>Report_Link__c</field>
-        <value xsi:type="xsd:string">https://app.powerbi.com/groups/me/apps/1bf85886-e730-4e80-9ea2-4330448f7aa5/reports/b12b3725-1949-497e-a5ae-dc13fb62819b/ReportSection8743326fe0f71f3317cc?experience=power-bi</value>
+        <value xsi:type="xsd:string">https://americanredcross.sharepoint.com/teams/TheField/Donor%20Recruitment/Forms/AllItems.aspx?id=%2Fteams%2FTheField%2FDonor%20Recruitment%2FSystems%20%26%20Apps%2FBlood%20Drive%20Management%20Portal%2FAM%20Tools%2FManaging%20Donor%20Appointments%20Playbook%2Epdf&amp;parent=%2Fteams%2FTheField%2FDonor%20Recruitment%2FSystems%20%26%20Apps%2FBlood%20Drive%20Management%20Portal%2FAM%20Tools</value>
     </values>
     <values>
         <field>Report_Name__c</field>
-        <value xsi:type="xsd:string">DRMS Audit report</value>
+        <value xsi:type="xsd:string">Managing Donor Appointments Playbook</value>
     </values>
     <values>
         <field>Task_Subject__c</field>
