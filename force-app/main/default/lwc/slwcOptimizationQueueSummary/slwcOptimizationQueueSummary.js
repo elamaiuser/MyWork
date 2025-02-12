@@ -1,6 +1,7 @@
 import { LightningElement, track, api } from 'lwc';
 import { classNames, camelize } from 'c/slwcUtils';
 import { uniqBy, each, orderBy, uniqueId, get } from 'c/lodash';
+import { DriveHelper } from "c/slwcDriveGenerator";
 
 const TABS = {
     ALL_DRIVES: 'allDrives',
@@ -13,6 +14,8 @@ const actions = [
 ];
 
 export default class SlwcOptimizationQueueSummary extends LightningElement {
+    driveHelper = new DriveHelper();
+
     @track _optimizationQueue;
     @track _dataGrouped;
 
@@ -115,7 +118,7 @@ export default class SlwcOptimizationQueueSummary extends LightningElement {
                     };
 
                     (driveShiftItem.jobs || []).forEach((job) => {
-                        if (!(job.resourceRole || job.assetType)) return;
+                        if (!(this.driveHelper.generateJobKey(job) || job.assetType)) return;
                         if (!!job.quantity
                             && (this.currentTab === TABS.ALLOCATED_DRIVES && (job.jobAllocationCount < job.quantity)
                                 || this.currentTab === TABS.UNALLOCATED_DRIVES && (job.jobAllocationCount >= job.quantity))) {
@@ -123,7 +126,7 @@ export default class SlwcOptimizationQueueSummary extends LightningElement {
                         }
 
                         driveShiftItemRecord.hasJobs = true;
-                        const fieldName = camelize(job.resourceRole || job.assetType);
+                        const fieldName = camelize(this.driveHelper.generateJobKey(job));
 
                         driveShiftItemRecord[fieldName + 'Class'] = this.setCssDriveShift()
                         driveShiftItemRecord["hasExceptionClass"] = 'hide-exception';
@@ -143,13 +146,13 @@ export default class SlwcOptimizationQueueSummary extends LightningElement {
                         }
 
                         let roleTag = (job.jobTags || []).find(jobTag => {
-                            return jobTag.tag && jobTag.tag.name === (job.resourceRole || job.assetType);
+                            return jobTag.tag && jobTag.tag.name === this.driveHelper.generateJobKey(job);
                         })
                         let rolePriority = roleTag ? roleTag.tag.priority : Number.MAX_SAFE_INTEGER;
                         
                         roleList.push({
                             priority: rolePriority,
-                            role: job.resourceRole || job.assetType
+                            role: this.driveHelper.generateJobKey(job)
                         });
                     })
                     
@@ -272,7 +275,7 @@ export default class SlwcOptimizationQueueSummary extends LightningElement {
             })
         });
 
-        let job = driveShift?.jobs?.find(job => camelize(job.resourceRole || job.assetType || "") === role);
+        let job = driveShift?.jobs?.find(job => camelize(this.driveHelper.generateJobKey(job)) === role);
         return job?.id;
     }
 }
