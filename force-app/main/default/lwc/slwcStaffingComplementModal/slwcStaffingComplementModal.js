@@ -1,10 +1,10 @@
 import { classNames } from 'c/slwcUtils';
 import { LightningElement, api, track } from 'lwc';
-import { uniqueId } from 'c/lodash';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
+import { cloneDeep } from 'c/lodash';
 
 export default class SlwcStaffingComplementModal extends LightningElement {
-  _isOpen = true;
+  _isOpen = false;
   @api
   get isOpen() {
     return this._isOpen;
@@ -17,13 +17,39 @@ export default class SlwcStaffingComplementModal extends LightningElement {
     }
   }
 
-  @api drive = null;
+  @api driveGeneratorInstance = {
+    drive: null,
+    masterData: {
+        driveTags: {
+        accountTags: [],
+        locationTags: []
+        },
+        isReadonly: false,
+        lunchBreakSettings: [],
+        resourceRoleGroups: null,
+        roleTimeData: null,
+        roleTimeDetailMap: null,
+        roleTimeVarianceMap: {},
+        sameDateActivities: [],
+        sameDateDrives: [],
+        staffingDecisionMatrix: null,
+        timezoneSidId: null,
+        vehicles: [],
+        backupDriveShiftMap: {},
+        adminSetting: {}
+    },
+    errorMessages: []
+  };
 
   @track showSpinner = false;
-  
+  @track dualRoleAssignmentModalData = {};
+
+  get drive() {
+    return this.driveGeneratorInstance ? this.driveGeneratorInstance.drive : null;
+  }
+
   get staffingComplement() {
     return this.drive?.driveShifts?.map((driveShift, driveShiftIndex) => {
-        console.log(driveShift)
         return {
             key: driveShift.key,
             name: driveShift.name ?? `Drive Shift ${driveShiftIndex + 1}`,
@@ -47,7 +73,6 @@ export default class SlwcStaffingComplementModal extends LightningElement {
   }
 
   connectedCallback() {
-    this.init();
   } 
 
   showLoading = () => {
@@ -69,7 +94,6 @@ export default class SlwcStaffingComplementModal extends LightningElement {
   }
 
   init = () => {
-    
   }
   
   handleClose = () => {
@@ -82,9 +106,36 @@ export default class SlwcStaffingComplementModal extends LightningElement {
 
   handleSave = () => {
     const closeEvent = new CustomEvent('save', {
-        detail: {}
+        detail: {
+            driveGeneratorInstance: this.driveGeneratorInstance,
+            drive: this.drive
+        }
     });
     this.dispatchEvent(closeEvent);
     this.isOpen = false;
+  }
+
+  showDualRoleAssignmentModal = (event) => {
+    const {key} = event.currentTarget.dataset;
+    const staffingDetails = this.staffingComplement.find(item => item.key === key);
+
+    this.dualRoleAssignmentModalData = {
+        isOpen: true,
+        drive: this.drive,
+        driveShift: staffingDetails.driveShift
+    }
+  }
+
+  closeDualRoleAssignmentModal = () => {
+    this.dualRoleAssignmentModalData = {
+        isOpen: false
+    }
+  }
+
+  saveDualRoleAssignmentModal = (event) => {
+    const { newJob, driveShift } = event.detail;    
+    this.driveGeneratorInstance.saveJobDualRole(driveShift.key, newJob);
+
+    this.closeDualRoleAssignmentModal();
   }
 }

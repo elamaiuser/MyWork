@@ -5,11 +5,29 @@ import { registerListener, unregisterAllListeners } from 'c/pubsub';
 import { fireEvent } from 'c/pubsub';
 import { MANUALLY_CREATED_FROM } from 'c/slwcConstants';
 
+const MODE = {
+  DEFAULT: 'default',
+  RESOLVE_DRIVE_CONTENTION: 'resolveDriveContention',
+}
+
 export default class SlwcDualRoleAssignmentModal extends LightningElement {
+  @api mode = MODE.DEFAULT;
   @api drive = null;
   @api driveShift = null;
 
-  @track showModal = false;
+  _isOpen = false;
+  @api
+  get isOpen() {
+    return this._isOpen;
+  };
+  set isOpen(value) {
+    this._isOpen = value;
+
+    if(this._isOpen) {
+      this.init();
+    }
+  }
+
   @track model = {};
   @track showSpinner = false;
   @track errorMessages = [];
@@ -19,12 +37,12 @@ export default class SlwcDualRoleAssignmentModal extends LightningElement {
   get customClass() {
     return {
       modalClass: classNames('slds-modal slds-modal_x-small', {
-        'slds-fade-in-open': this.showModal
+        'slds-fade-in-open': this.isOpen
       }),
       headerClass: classNames('slds-modal__header'),
       footerClass: classNames('slds-modal__footer'),
       backdropClass: classNames('slds-backdrop', {
-        'slds-backdrop_open': this.showModal
+        'slds-backdrop_open': this.isOpen
       })
     }
   }
@@ -77,11 +95,13 @@ export default class SlwcDualRoleAssignmentModal extends LightningElement {
   }
 
   init = (detail) => {
-    const { drive, driveShift } = detail;
-    this.drive = drive;
-    this.driveShift = driveShift;
-    this.showModal = true;
-
+    if(this.mode === MODE.DEFAULT) {
+      const { drive, driveShift } = detail;
+      this.drive = drive;
+      this.driveShift = driveShift;
+      this.isOpen = true;  
+    }
+  
     this.errorMessages = [];
     this.resetModel(); 
   }
@@ -101,11 +121,6 @@ export default class SlwcDualRoleAssignmentModal extends LightningElement {
     if(event.currentTarget.name === 'primaryRole') {
       this.model.secondaryRole = null;
     }
-  }
-
-  handleCancel = () => {
-    fireEvent(this.pageRef, 'closeDualRoleAssignmentModal');
-    this.showModal = false;
   }
 
   getJobsToMerge = () => {
@@ -169,15 +184,36 @@ export default class SlwcDualRoleAssignmentModal extends LightningElement {
     return allValid && !this.errorMessages.length;
   }
 
+  handleCancel = () => {
+    if(this.mode === MODE.DEFAULT) {
+      fireEvent(this.pageRef, 'closeDualRoleAssignmentModal');
+    } else {
+      this.dispatchEvent(new CustomEvent('close', {
+        detail: {
+        }
+      }));
+    }
+    this.isOpen = false;
+  }
+
   handleSave = () => {
     if(!this.validate()) return;
 
     const {primaryRoleJob, secondaryRoleJob} = this.getJobsToMerge();
     const newJob = this.mergeSecondaryRoleJobToPrimaryRoleJob(primaryRoleJob, secondaryRoleJob);
     
-    const eventValues = { drive: this.drive, driveShift: this.driveShift, newJob: newJob };
-    fireEvent(this.pageRef, 'saveDualRoleAssignmentModal', eventValues);
-
-    this.handleCancel();
+    if(this.mode === MODE.DEFAULT) {
+      const eventValues = { drive: this.drive, driveShift: this.driveShift, newJob: newJob };
+      fireEvent(this.pageRef, 'saveDualRoleAssignmentModal', eventValues); 
+      this.handleCancel();
+    } else {
+      this.dispatchEvent(new CustomEvent('save', {
+        detail: {
+          drive: this.drive,
+          driveShift: this.driveShift,
+          newJob: newJob,
+        }
+      }));
+    }
   }
 }

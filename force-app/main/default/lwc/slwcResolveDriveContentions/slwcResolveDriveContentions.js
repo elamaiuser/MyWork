@@ -5,7 +5,7 @@ import { DRIVE_STATUS, DRIVE_CONTENTION, DRIVE_TYPE, DRIVE_CONTENTION_RESOLUTION
 import { slwcDriveGeneratorHelper, DriveHelper, DriveFetch } from 'c/slwcDriveGenerator';
 import { DateTime } from 'c/luxon';
 import { getValueFromEvent } from 'c/slwcUtils';
-import { remove, keyBy, cloneDeep, compact } from 'c/lodash';
+import { remove, keyBy, cloneDeep, cloneDeepWith, isMap, compact } from 'c/lodash';
 
 const MODE = {
   DRIVE_SUBMISSION: 'driveSubmission',
@@ -1357,11 +1357,19 @@ export default class SlwcResolveDriveContentions extends LightningElement {
     .finally(this.hideLoading);
   }
 
-  //staffing details
-  openStaffingComplementModal(drive) {
+  //staffing complement modal
+  cloneDeepWithMaps(value) {
+    return cloneDeepWith(value, (val) => {
+      if (isMap(val)) {
+        return new Map(Array.from(val.entries()));
+      }
+    });
+  }
+
+  openStaffingComplementModal() {
     this.staffingComplementModalData = {
+      driveGeneratorInstance: this.cloneDeepWithMaps(this.driveGeneratorInstance),
       isOpen: true,
-      drive: drive
     }
   }
 
@@ -1371,16 +1379,51 @@ export default class SlwcResolveDriveContentions extends LightningElement {
     } 
   }
 
-  saveStaffingComplementModal() {
-    this.handleActionChanged({
-      target: {
-        name: DRIVE_CONTENTION_RESOLUTION.ELECT_EXCESS_STAFF_CAPACITY,
-        type: 'checkbox',
-        checked: true,
-        dataset: {
-          contention: DRIVE_CONTENTION.EXCESS_STAFF_CAPACITY
-        }
-      }
+  saveStaffingComplementModal(event) {
+    const { driveGeneratorInstance } = event.detail;
+
+    this.showLoading()
+    Promise.resolve()
+    .then(() => {
+      const newDrive = driveGeneratorInstance.drive;
+      return this.driveGeneratorInstance.onDriveDataChanged([{
+        targetName: 'staffingComplementChanged',
+        targetValue: newDrive.driveShifts.map(driveShift => {
+          return driveShift.jobs.reduce((staffingComplement, job) => {
+            if(job.resourceRole) {
+              return {
+                ...staffingComplement,
+                [this.driveHelper.generateJobKey(job)]: job
+              }
+            }
+
+            return staffingComplement;
+          }, {});
+        })
+      }])
     })
+    .then(() => {
+      this.drive = this.driveGeneratorInstance.drive;
+      this.drive.contentionResolutions = [];
+      if(this.drive.contentionResolution) {
+        this.drive.contentionResolutions = cloneDeep(this.drive.contentionResolution);
+      }
+
+      this.handleActionChanged({
+        target: {
+          name: DRIVE_CONTENTION_RESOLUTION.ELECT_EXCESS_STAFF_CAPACITY,
+          type: 'checkbox',
+          checked: true,
+          dataset: {
+            contention: DRIVE_CONTENTION.EXCESS_STAFF_CAPACITY
+          }
+        }
+      })
+      
+      this.closeStaffingComplementModal();
+      return this.validateDriveContentions();
+    })
+    .catch(error => this.exceptionHandler(error))
+    .finally(this.hideLoading);
   }
 }

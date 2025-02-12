@@ -16,8 +16,15 @@
                     <template for:each={staffingComplement} for:item="item">
                         <div class="slds-m_vertical_small" key={item.key}>
                             <div class="slds-section-title--divider slds-m-bottom_small">{item.name}</div>
-                            <c-slwc-shift-jobs drive={drive} shift={item.driveShift} jobs={item.personJobs} resource-type="Person" style="width:100%">
-                            </c-slwc-shift-jobs>
+                            <lightning-card style="width:100%">
+                                <lightning-button-group slot="actions">
+                                    <lightning-button label="Dual Role Assignment" data-key={item.key} onclick={showDualRoleAssignmentModal}></lightning-button>
+                                </lightning-button-group>
+                                <div class="slds-scrollable_x slds-p-bottom_x-small">
+                                    <c-slwc-drive-shift-job-table drive={drive} resource-type="Person" shift={item.driveShift} jobs={item.personJobs}>
+                                    </c-slwc-drive-shift-job-table>
+                                </div>
+                            </lightning-card>
                         </div>
                     </template>            
                 </div>
@@ -29,4 +36,14 @@
         </div>
     </section>
     <div class={customClass.backdropClass} style="z-index: 9002;"></div>
+
+    <c-slwc-dual-role-assignment-modal
+        mode="resolveDriveContention"
+        is-open={dualRoleAssignmentModalData.isOpen}
+        drive={dualRoleAssignmentModalData.drive}
+        drive-shift={dualRoleAssignmentModalData.driveShift}
+        onsave={saveDualRoleAssignmentModal}
+        onclose={closeDualRoleAssignmentModal}
+    >
+    </c-slwc-dual-role-assignment-modal>
 </template>
