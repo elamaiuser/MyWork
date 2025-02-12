@@ -21,6 +21,9 @@
  * 06/07/2024                  Priti Jana                HRP-12760
  * 08/09/2024                  Priti Jana                HRP-11634
  * 08/09/2024				   Raktim Ghosal			 HRP-12706
+ * 09/23/2024                  Krapy Tuli                HRP-13347
+ * 01/15/2025				   Barnojit Sharma		     HRP-13864
+ * 01/31/2025                  Priti Jana                HRP-11368 
  *****************************************************************************
 */
 
@@ -955,6 +958,10 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
                 system.debug('here ');
                 Decimal shiftTotalStaffCapacity = 0;
                 Decimal shiftStaffCapacity = 0;
+                Decimal shiftMaxRoleCapacity = 0; //HRP-13864
+                Decimal driveMaxRoleCapacity = 0; //HRP-13864
+                Decimal shiftMaxRoleCapacityWithDrawHours = 0; //HRP-13864
+                Decimal driveMaxRoleCapacityWithDrawHours = 0; //HRP-13864
                 Decimal staffPrimaryCount = 0;
                 reCalTotalNoOfStaffRequired = 0;
                 Map<String, Decimal> map_driveShiftId_driveShiftStaffCapacity = new Map<String, Decimal>();
@@ -985,12 +992,27 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
                         map_driveShiftId_driveShiftStaffCapacity.put(shift.Id, shiftStaffCapacity);
                         shiftTotalStaffCapacity += shiftStaffCapacity;
                         staffPrimaryCount += getShiftPrimaryStaffCount(staffingComplement);
+                        shiftMaxRoleCapacity = 0;
+                        shiftMaxRoleCapacity = Math.floor(reCalculateMaxRoleCapacity(
+                            drive,
+                            shift,
+                            staffingComplement
+                        ));
+                        if(shiftMaxRoleCapacity > driveMaxRoleCapacity){
+                            driveMaxRoleCapacity = shiftMaxRoleCapacity;
+                        }
                     } else{
                         system.debug('Drive recalculationFlag is false');
                     }
                 }
                 if(recalculationFlag) {
-                    drive.sked_Staff_Capacity__c = shiftStaffCapacity;
+                    drive.sked_Staff_Capacity__c = shiftTotalStaffCapacity;
+                    drive.Max_Role_Capacity__c = driveMaxRoleCapacity.setScale(2);
+                    drive.Max_Role_Capacity_With_Draw_Hours__c = reCalculateMaxRoleCapacityWithDrawHours(
+                        drive,
+                        driveshifts,
+                        driveMaxRoleCapacity
+                    );
                     MobileDriveGeneratorDMLService.DMLDrive dmlDrive = reCalculateDriveAverageStaffCapacity(drive, staffPrimaryCount);
                     drive.Average_Staff_Capacity__c = dmlDrive?.averageStaffCapacity;
                     drive.Excess_Staff_Capacity__c = reCalculateDriveExcessStaffCapacity(dmlDrive);
@@ -1112,6 +1134,55 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
         );
         return staffCapacity;
     }
+
+    //HRP-13864 starts here
+    @testVisible private static Decimal reCalculateMaxRoleCapacityWithDrawHours(
+        sked_Drive__c driveSingle,
+        List<sked_Drive_Shift__c> driveshifts,
+        Decimal driveMaxRoleCapacity
+    ) {
+        Decimal maxRoleCapacityWithDrawHours = 0;
+        if(driveMaxRoleCapacity > 0){
+            GenerateMobileDrive.mobileDriveGenerator driveGenInstance = new GenerateMobileDrive.mobileDriveGenerator();
+            sked_Staffing_Decision_Matrix__c matrix =  getStaffingDecisionMatrix(driveSingle.sked_Collection_Operation__c, driveSingle);
+            MobileDriveGeneratorDMLService.DMLDrive drive = new MobileDriveGeneratorDMLService.DMLDrive(MobileDriveGeneratorDMLService.fetchOpportunities(new Set<Id>{driveSingle.sked_Opportunity__c})[0]);  
+            drive.collectionOperation = new MobileDriveGeneratorDMLService.DMLCollectionOperation(MobileDriveGeneratorDMLService.fetchCollectionOperations(new Set<Id>{driveSingle.sked_Collection_Operation__c})[0]);
+            Decimal driveDrawHourswithLunchBreak = 0;
+            for(sked_Drive_Shift__c driveShiftSingle : driveshifts){
+                MobileDriveGeneratorDMLService.DMLDriveShift driveShift = new MobileDriveGeneratorDMLService.DMLDriveShift(driveShiftSingle);
+                driveShift.drawHourswithLunchBreak = getDrawHoursWithLunchBreak(driveSingle, driveShiftSingle);
+                driveDrawHourswithLunchBreak += driveShift.drawHourswithLunchBreak;
+            }
+            if(driveDrawHourswithLunchBreak > 0){
+                maxRoleCapacityWithDrawHours = driveMaxRoleCapacity * driveDrawHourswithLunchBreak;
+            }
+        }
+        return maxRoleCapacityWithDrawHours.setScale(2);
+    }
+    @testVisible private static Decimal reCalculateMaxRoleCapacity(
+        sked_Drive__c driveSingle,
+        sked_Drive_Shift__c driveShiftSingle,
+        GenerateMobileDrive.DriveStaffingComplementModel staffingComplement
+    ) {
+        Decimal maxRoleCapacity = 0;
+        GenerateMobileDrive.mobileDriveGenerator driveGenInstance = new GenerateMobileDrive.mobileDriveGenerator();
+        sked_Staffing_Decision_Matrix__c matrix =  getStaffingDecisionMatrix(driveSingle.sked_Collection_Operation__c, driveSingle);
+        MobileDriveGeneratorDMLService.DMLDrive drive = new MobileDriveGeneratorDMLService.DMLDrive(MobileDriveGeneratorDMLService.fetchOpportunities(new Set<Id>{driveSingle.sked_Opportunity__c})[0]);  
+        drive.collectionOperation = new MobileDriveGeneratorDMLService.DMLCollectionOperation(MobileDriveGeneratorDMLService.fetchCollectionOperations(new Set<Id>{driveSingle.sked_Collection_Operation__c})[0]);
+        MobileDriveGeneratorDMLService.DMLDriveShift driveShift = new MobileDriveGeneratorDMLService.DMLDriveShift(driveShiftSingle);
+        driveShift.drawHourswithLunchBreak = getDrawHoursWithLunchBreak(driveSingle, driveShiftSingle);
+        driveShift.numberOf2rbcEquipments = staffingComplement.numberOf2rbcEquipments ; 
+        maxRoleCapacity = driveGenInstance.calculateMaxRoleCapacity(
+            new List<String>{'Driver', 'Driver Support', '2RBC', 'VP/HH', 'Charge'},
+            staffingComplement,
+            drive,
+            driveShift,
+            new MobileDriveGeneratorDMLService.DMLStaffingDecisionMatrix(matrix),
+            false
+        );
+        return maxRoleCapacity;
+    }
+    //HRP-13864 ends here
     
     @testVisible  private static List<sked__Job__c> reCalculateStaffingComplement(
         List<sked__Job__c> jobsToReCalculate,
