@@ -518,7 +518,7 @@ public without sharing class BSFWeeklyStaffingRoleTimeController {
     }
     
     @AuraEnabled
-    public static List<WeeklyStaffingRTReportWrapper> searchRoleTimeReport(Date startDate, Date endDate, String drivedispatch, String collOpIdList, String driveType){
+    public static List<WeeklyStaffingRTReportWrapper> searchRoleTimeReport(Date startDate, Date endDate, String drivedispatch, String collOpIdList, String driveType, Boolean isForPDF){
         System.debug('startDate : '+startDate);
         System.debug('endDate : '+endDate);
         System.debug('drivedispatch : '+drivedispatch);
@@ -752,7 +752,7 @@ public without sharing class BSFWeeklyStaffingRoleTimeController {
                     for(sked__Job_Allocation__c jba : driveAllocationMap.get(sobjectId)){
                         ResourceDetails rsDetails = new ResourceDetails();
 
-                        rsDetails.resourceName = capitalizeName(jba.sked__Resource__r.Name);
+                        rsDetails.resourceName = BSF_Utilities.capitalizeName(jba.sked__Resource__r.Name, isForPDF);
 
                         rsDetails.shiftStart = jba.sked_Start_Time__c != null ? getFormattedTime(jba.sked_Start_Time__c.hour(),jba.sked_Start_Time__c.minute()) : '';//Changed for HRP-13091
                         rsDetails.shiftEnd = jba.sked_Set_End_Time__c != null ? getFormattedTime(jba.sked_Set_End_Time__c.hour(),jba.sked_Set_End_Time__c.minute()) : '';//Changed for HRP-13091
@@ -800,7 +800,7 @@ public without sharing class BSFWeeklyStaffingRoleTimeController {
                     evDetails.autoMachines = '';
 
                     ResourceDetails rsDetails = new ResourceDetails();
-                    rsDetails.resourceName = capitalizeName(availabilityMap.get(sobjectId).sked__Resource__r.Name);
+                    rsDetails.resourceName = BSF_Utilities.capitalizeName(availabilityMap.get(sobjectId).sked__Resource__r.Name, isForPDF);
                     rsDetails.resourceRole = '';
                     rsDetails.staffArrivalTime = '';
                     rsDetails.shiftStart = getFormattedTime(availabilityMap.get(sobjectId).sked_Start_Time__c.hour(),availabilityMap.get(sobjectId).sked_Start_Time__c.minute());
@@ -833,7 +833,7 @@ public without sharing class BSFWeeklyStaffingRoleTimeController {
                         }
 
                         ResourceDetails rsDetails = new ResourceDetails();
-                        rsDetails.resourceName = capitalizeName(actr.sked__Resource__r.Name);
+                        rsDetails.resourceName = BSF_Utilities.capitalizeName(actr.sked__Resource__r.Name, isForPDF);
                         rsDetails.resourceRole = '';
                         rsDetails.staffArrivalTime = '';
                         if(actr.sked_Start_Time__c != NULL && actr.sked_End_Time__c != NULL){
@@ -919,8 +919,8 @@ public without sharing class BSFWeeklyStaffingRoleTimeController {
         return sortedList;
     }
 
-     public static String capitalizeName(String unformatedName){
-        String formatedName = '';
+     /*public static String capitalizeName(String unformatedName, Boolean isForPDF){
+        String formatedName = '';        
         if(String.isNotBlank(unformatedName)){
             List<String> words = unformatedName.split(' ');
             for(String word : words){
@@ -935,7 +935,12 @@ public without sharing class BSFWeeklyStaffingRoleTimeController {
                         Integer str_len = word.length();
                         word = word.left(1).toUpperCase() + word.right(str_len - 1).toLowerCase();
                     }
-                    formatedName += String.join(getTextParts(word,Integer.valueOf(Custom_Report_Config__mdt.getInstance('RoleTimeReportCharacterSplit').Value__c)),' ');
+                    if(isForPDF){
+                        formatedName += String.join(getTextParts(word,Integer.valueOf(Custom_Report_Config__mdt.getInstance('RoleTimeReportCharacterSplit').Value__c)),' ');
+                    }
+                    else {
+                        formatedName += word;
+                    }
                 }
             }
             formatedName = formatedName.trim(); 
@@ -950,7 +955,7 @@ public without sharing class BSFWeeklyStaffingRoleTimeController {
             parts.add(text.substring(i, Math.min(len, i + partitionSize)));
         }
         return parts;
-    }
+    }*/
 
     public static String dateFormat(date preDate){
         String result = '';

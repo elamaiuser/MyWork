@@ -7,6 +7,10 @@
         <value xsi:type="xsd:double">1.0</value>
     </values>
     <values>
+        <field>Field_Mapping_Object__c</field>
+        <value xsi:type="xsd:string">Opportunity</value>
+    </values>
+    <values>
         <field>Help_Text__c</field>
         <value xsi:type="xsd:string">Updating to &quot;Do Not Roll&quot; will update Rollover Consideration on the Opportunity and drive will not be rolled over to the next year during the calendar build process.</value>
     </values>

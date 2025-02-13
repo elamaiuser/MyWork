@@ -18,6 +18,7 @@
             </value>
         </inputParameters>
         <nameSegment>NewFixedSiteDrive</nameSegment>
+        <versionSegment>1</versionSegment>
     </actionCalls>
     <apiVersion>62.0</apiVersion>
     <assignments>
@@ -1567,6 +1568,18 @@ REGEX( {!Drive_Keyword_Required}, &quot;[a-zA-Z0-9 ]+&quot;)</formulaExpression>
                     <elementReference>outWeeklyFrequency</elementReference>
                 </value>
             </inputParameters>
+            <inputParameters>
+                <name>OutputDonorEligibilityNeededFor</name>
+                <value>
+                    <elementReference>outputDonorEligibilityNeededFor</elementReference>
+                </value>
+            </inputParameters>
+            <inputParameters>
+                <name>OutputDonorEligibilityDay</name>
+                <value>
+                    <elementReference>outputDonorEligibilityDay</elementReference>
+                </value>
+            </inputParameters>
             <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
             <isRequired>true</isRequired>
             <outputParameters>
@@ -1612,6 +1625,14 @@ REGEX( {!Drive_Keyword_Required}, &quot;[a-zA-Z0-9 ]+&quot;)</formulaExpression>
             <outputParameters>
                 <assignToReference>outWeeklyFrequency</assignToReference>
                 <name>OutputWeeklyFrequencyValue</name>
+            </outputParameters>
+            <outputParameters>
+                <assignToReference>outputDonorEligibilityNeededFor</assignToReference>
+                <name>OutputDonorEligibilityNeededFor</name>
+            </outputParameters>
+            <outputParameters>
+                <assignToReference>outputDonorEligibilityDay</assignToReference>
+                <name>OutputDonorEligibilityDay</name>
             </outputParameters>
         </fields>
         <showFooter>false</showFooter>
@@ -1832,6 +1853,20 @@ REGEX( {!Drive_Keyword_Required}, &quot;[a-zA-Z0-9 ]+&quot;)</formulaExpression>
         <isInput>false</isInput>
         <isOutput>false</isOutput>
         <scale>0</scale>
+    </variables>
+    <variables>
+        <name>outputDonorEligibilityDay</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+    </variables>
+    <variables>
+        <name>outputDonorEligibilityNeededFor</name>
+        <dataType>String</dataType>
+        <isCollection>true</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
     </variables>
     <variables>
         <name>outRecurrenceType</name>

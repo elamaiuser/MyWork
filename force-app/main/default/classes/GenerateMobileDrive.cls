@@ -34,6 +34,7 @@
  * 08/01/2024                 Priti Jana             Logic for HRP-10994
  * 08/09/2024                 Priti Jana             Logic for HRP-11634
  * 12/10/2024				  Priti Jana			 Logic for HRP-13190
+ * 01/15/2025				  Barnojit Sharma		 Logic for HRP-13864
  *******************************************************************************
 */
 public with sharing class GenerateMobileDrive {
@@ -693,6 +694,63 @@ public with sharing class GenerateMobileDrive {
         }
         // HRP-11634 --> Ends Here
 
+        // HRP-13864 --> Starts Here
+        protected Decimal calculateMaxRoleCapacityWithDrawHours(
+            List<String> capacityNeededFor,
+            DriveStaffingComplementModel staffingComplement,
+            MobileDriveGeneratorDMLService.DMLDrive drive, 
+            MobileDriveGeneratorDMLService.DMLDriveShift driveShift, 
+            MobileDriveGeneratorDMLService.DMLStaffingDecisionMatrix matrix,
+            Boolean isCalculatedForWBSlots
+       ) { 
+            Decimal maxRoleCapacity = 0;
+            Map<string, decimal> donorCapacityMap = new Map<string, decimal>();
+            donorCapacityMap.put(Constants.JOB_TYPE_DRIVER, matrix.driverCapacity != NULL ? matrix.driverCapacity : 0);
+            donorCapacityMap.put(Constants.JOB_TYPE_DRIVER_SUPPORT, matrix.driverSupportCapacity != NULL ? matrix.driverSupportCapacity : 0);
+            donorCapacityMap.put(Constants.PROCEDURE_TYPE_2RBC, matrix.x2RbcStaffCapacity != NULL ? matrix.x2RbcStaffCapacity : 0);
+            donorCapacityMap.put(Constants.JOB_TYPE_VP_HH, matrix.vpHhCapacity != NULL ? matrix.vpHhCapacity : 0);
+            donorCapacityMap.put(Constants.JOB_TYPE_CHARGE, matrix.chargeCapacity != NULL ? matrix.chargeCapacity : 0);
+            
+            decimal drawHours = driveShift.drawHours;
+            if(driveShift.lunchBreak && (!drive.collectionOperation.lunchBreakBeforeDrawHours && isCalculatedForWBSlots == false)) // HRP-10667
+            {
+                drawHours = driveShift.drawHourswithLunchBreak != null ? driveShift.drawHourswithLunchBreak : drawHours;
+            }
+            
+            for (String role : capacityNeededFor) {
+                Decimal sdmRoleCapacity = donorCapacityMap.containsKey(role) && donorCapacityMap.get(role) != NULL ? donorCapacityMap.get(role) : 0;
+                if(sdmRoleCapacity > maxRoleCapacity){
+                    maxRoleCapacity = sdmRoleCapacity *  drawHours;
+                }                    
+            }
+            return maxRoleCapacity;
+        }
+        protected Decimal calculateMaxRoleCapacity(
+            List<String> capacityNeededFor,
+            DriveStaffingComplementModel staffingComplement,
+            MobileDriveGeneratorDMLService.DMLDrive drive, 
+            MobileDriveGeneratorDMLService.DMLDriveShift driveShift, 
+            MobileDriveGeneratorDMLService.DMLStaffingDecisionMatrix matrix,
+            Boolean isCalculatedForWBSlots
+       ) { 
+            Decimal maxRoleCapacity = 0;
+            Map<string, decimal> donorCapacityMap = new Map<string, decimal>();
+            donorCapacityMap.put(Constants.JOB_TYPE_DRIVER, matrix.driverCapacity != NULL ? matrix.driverCapacity : 0);
+            donorCapacityMap.put(Constants.JOB_TYPE_DRIVER_SUPPORT, matrix.driverSupportCapacity != NULL ? matrix.driverSupportCapacity : 0);
+            donorCapacityMap.put(Constants.PROCEDURE_TYPE_2RBC, matrix.x2RbcStaffCapacity != NULL ? matrix.x2RbcStaffCapacity : 0);
+            donorCapacityMap.put(Constants.JOB_TYPE_VP_HH, matrix.vpHhCapacity != NULL ? matrix.vpHhCapacity : 0);
+            donorCapacityMap.put(Constants.JOB_TYPE_CHARGE, matrix.chargeCapacity != NULL ? matrix.chargeCapacity : 0);
+            
+            for (String role : capacityNeededFor) {
+                Decimal sdmRoleCapacity = donorCapacityMap.containsKey(role) && donorCapacityMap.get(role) != NULL ? donorCapacityMap.get(role) : 0;
+                if(sdmRoleCapacity > maxRoleCapacity){
+                    maxRoleCapacity = sdmRoleCapacity;
+                }                    
+            }
+            return maxRoleCapacity;
+        }
+        // HRP-13864 --> Ends Here
+
         protected virtual void calculateDriveShifts(
             MobileDriveGeneratorDMLService.DMLData data, 
             MobileDriveGeneratorDMLService.DMLDrive drive, 
@@ -797,7 +855,7 @@ public with sharing class GenerateMobileDrive {
             Integer noOfShifts = Integer.valueOf(noOfDriveShifts);
             List<MobileDriveGeneratorDMLService.DMLJob> jobList = new List<MobileDriveGeneratorDMLService.DMLJob>();
             // HRP-11295 --> Ends Here
-
+            Decimal totalDrawHoursIncludingLunchBreak = 0;// HRP-13864
             for (MobileDriveGeneratorDMLService.DMLDriveShift driveShift :  driveShifts) {
                 DriveStaffingComplementModel staffingComplement = new DriveStaffingComplementModel();
                 staffingComplement.numberOfVehicles = suggestedVehicles.size() > 0 ? suggestedVehicles.size() : 1; //HRP-11749
@@ -832,6 +890,30 @@ public with sharing class GenerateMobileDrive {
                 drive.staffCapacity += driveShift.staffCapacity;
                 drive.totalStaffRequested = drive.totalStaffRequested != NULL ? drive.totalStaffRequested + driveShift.staffSetup : driveShift.staffSetup; //HRP-10994
 
+                // HRP-13864 --> Starts Here
+			    driveShift.maxRoleCapacity = calculateMaxRoleCapacity (
+                    new List<String>{'Driver', 'Driver Support', '2RBC', 'VP/HH', 'Charge'},
+                    staffingComplement,
+                    drive, 
+                    driveShift, 
+                    matrix,
+                    false
+                );
+                if(drive.maxRoleCapacity == null){
+                    drive.maxRoleCapacity = driveShift.maxRoleCapacity;
+                }
+                if(driveShift.maxRoleCapacity > drive.maxRoleCapacity){
+                    drive.maxRoleCapacity = driveShift.maxRoleCapacity;
+                }
+                decimal shiftDrawHours = driveShift.drawHours;
+                if(driveShift.lunchBreak && !drive.collectionOperation.lunchBreakBeforeDrawHours)
+                {
+                    shiftDrawHours = driveShift.drawHourswithLunchBreak != null ? driveShift.drawHourswithLunchBreak : shiftDrawHours;
+                }
+                totalDrawHoursIncludingLunchBreak = totalDrawHoursIncludingLunchBreak + shiftDrawHours;
+                driveShift.maxRoleCapacityWithDrawHours = driveShift.maxRoleCapacity * shiftDrawHours;
+                // HRP-13864 --> Ends Here
+
                 // HRP-10667 --> Starts here
                 staffCapacityForWBSlotsCalc = Math.floor(calculateStaffCapacity (
                     new List<String>{'Driver', 'Driver Support', '2RBC', 'VP/HH', 'Charge'},
@@ -846,6 +928,9 @@ public with sharing class GenerateMobileDrive {
                 driveShift = generateShiftSlots (data, drive, driveShift, shiftCount == noOfDriveShifts - 1 ? true : false, staffCapacityForWBSlotsCalc);
                 shiftCount++;
             }
+            drive.maxRoleCapacityWithDrawHours = drive.maxRoleCapacity * totalDrawHoursIncludingLunchBreak;// HRP-13864
+            drive.maxRoleCapacityWithDrawHours = drive.maxRoleCapacityWithDrawHours.setScale(2);// HRP-13864
+            drive.maxRoleCapacity = drive.maxRoleCapacity.setScale(2);// HRP-13864
             drive.driveShifts = driveShifts;
             drive = calculateAverageStaffCapacity(drive); //HRP-10994
             drive = calculateExcessStaffCapacity(drive); //HRP-10994
@@ -857,9 +942,9 @@ public with sharing class GenerateMobileDrive {
             drive.averageStaffCapacity = (drive.staffCapacity / drive.totalStaffRequested).setScale(1);
             return drive;
         }
-
+        
         protected virtual MobileDriveGeneratorDMLService.DMLDrive calculateExcessStaffCapacity(MobileDriveGeneratorDMLService.DMLDrive drive) {
-            drive.excessStaffCapacity = ((drive.staffCapacity - drive.projectedRegisteredDonors) / drive.averageStaffCapacity).setScale(1);
+            drive.excessStaffCapacity = ((drive.staffCapacity - drive.projectedRegisteredDonors) / drive.maxRoleCapacityWithDrawHours).setScale(1);// HRP-13864
             return drive;
         }
         // HRP-10994 --> Ends Here

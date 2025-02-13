@@ -149,7 +149,18 @@ public with sharing class TaskService {
     //HRP-12142 Start
     public static void updateRelatedAccountAndOpportunity(List<Task> newList, Map<Id, Task> oldMap){
         System.debug('updateRelatedAccountAndOpportunity entrie');
-        Map<String,String> fieldVsObjectMap = BSFTaskChecklistTriggerHandler.fieldVsObjectMap;
+        Map<String, Map<String,String>> taskVsFieldVsObjectMap = BSFTaskChecklistTriggerHandler.taskVsFieldVsObjectMap;
+        Map<String,String> fieldVsObjectMap = new Map<String,String>();
+        if(!taskVsFieldVsObjectMap.isEmpty() && taskVsFieldVsObjectMap.containsKey(BSF_Constants.POST_DRIVE_ANALYSIS_TASK)){
+            fieldVsObjectMap = taskVsFieldVsObjectMap.get(BSF_Constants.POST_DRIVE_ANALYSIS_TASK);
+        }
+        if(!taskVsFieldVsObjectMap.isEmpty() && taskVsFieldVsObjectMap.containsKey(BSF_Constants.RECRUITMENT_PLANNING_TASK)){
+            fieldVsObjectMap.putAll(taskVsFieldVsObjectMap.get(BSF_Constants.RECRUITMENT_PLANNING_TASK));
+        }
+        List<BSF_Task_Checklist__c> postDriveAnalysisTaskchecklists = new List<BSF_Task_Checklist__c>();
+        List<BSF_Task_Checklist__c> RecruitmentTaskchecklists = new List<BSF_Task_Checklist__c>();
+        Map<Id,String> taskVsSubjectMap = new Map<Id,String>();
+        
         List<BSF_Task_Checklist__c> checklists = new List<BSF_Task_Checklist__c>();
         Map<String,Id> taskVsOppMap = new Map<String,Id>();
         Map<String,Opportunity> taskVsOpportunityMap = new Map<String,Opportunity>();
@@ -160,10 +171,11 @@ public with sharing class TaskService {
                 System.debug('tsk.Subject.equals(BSF_Constants.POST_DRIVE_ANALYSIS_TASK) : '+tsk.Subject.equals(BSF_Constants.POST_DRIVE_ANALYSIS_TASK));
                  System.debug('oldMap.get(tsk.Id).Status != tsk.Status : '+ (oldMap.get(tsk.Id).Status != tsk.Status));
                 if(tsk.Id != null && tsk.WhatId != null //&& String.valueOf(task.WhatId).startsWith(BSFTaskChecklistTriggerHandler.oppPrefix)
-                        && String.isNotBlank(tsk.Subject) && tsk.Subject.equals(BSF_Constants.POST_DRIVE_ANALYSIS_TASK) 
+                        && String.isNotBlank(tsk.Subject) && (tsk.Subject.equals(BSF_Constants.POST_DRIVE_ANALYSIS_TASK) || tsk.Subject.equals(BSF_Constants.RECRUITMENT_PLANNING_TASK))
                         && String.isNotBlank(tsk.Status) && tsk.Status.equals(BSF_Constants.STATUS_COMPLETED)
                         && (oldMap == null || oldMap.isEmpty() || (oldMap.containsKey(tsk.Id) && oldMap.get(tsk.Id).Status != tsk.Status))){
                             taskVsOppMap.put(tsk.Id,tsk.WhatId);
+                            taskVsSubjectMap.put(tsk.Id,tsk.Subject);
                 }
             }
         }
@@ -179,6 +191,7 @@ public with sharing class TaskService {
                                 Input_Checkbox__c, 
                                 Picklist_Input_1__c, 
                                 Picklist_Input_2__c, 
+                                Input_Number__c, 
                                 TaskLookup__c, 
                                 TaskType__c, 
                                 OpportunityLookup__c 
@@ -186,6 +199,17 @@ public with sharing class TaskService {
                             WHERE TaskLookup__c IN : taskVsOppMap.keySet()
                             AND Unique_Name__c IN : fieldVsObjectMap.keySet()
                             WITH SYSTEM_MODE];
+            if(!checklists.isEmpty()){
+                for(BSF_Task_Checklist__c taskChecklist : checklists){
+                    if(taskVsSubjectMap.containsKey(taskChecklist.TaskLookup__c) 
+                            && taskVsSubjectMap.get(taskChecklist.TaskLookup__c).equals(BSF_Constants.POST_DRIVE_ANALYSIS_TASK)){
+                                postDriveAnalysisTaskchecklists.add(taskChecklist);
+                    }else if(taskVsSubjectMap.containsKey(taskChecklist.TaskLookup__c) 
+                            && taskVsSubjectMap.get(taskChecklist.TaskLookup__c).equals(BSF_Constants.RECRUITMENT_PLANNING_TASK)){
+                                RecruitmentTaskchecklists.add(taskChecklist);
+                    }
+                }
+            }
         }
         System.debug('checklists : '+checklists);
         if(!checklists.isEmpty() && !taskVsOppMap.isEmpty()){
@@ -243,7 +267,12 @@ public with sharing class TaskService {
             }
             System.debug('taskVsOpportunityMap : '+taskVsOpportunityMap);
             System.debug('taskVsAccountMap : '+taskVsAccountMap);
-            BSFTaskChecklistTriggerHandler.updateAccountAndOpportunity(checklists,taskVsOpportunityMap,taskVsAccountMap);
+            if(!postDriveAnalysisTaskchecklists.isEmpty()){
+                BSFTaskChecklistTriggerHandler.updateAccountAndOpportunity(postDriveAnalysisTaskchecklists,taskVsOpportunityMap,taskVsAccountMap,BSF_Constants.POST_DRIVE_ANALYSIS_TASK);
+            }
+            if(!RecruitmentTaskchecklists.isEmpty()){
+                BSFTaskChecklistTriggerHandler.updateAccountAndOpportunity(RecruitmentTaskchecklists,taskVsOpportunityMap,taskVsAccountMap,BSF_Constants.RECRUITMENT_PLANNING_TASK);
+            }
         }
     }
     //HRP-12142 End

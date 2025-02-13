@@ -43,7 +43,7 @@ global class skedUpdateJobTimeVarianceBatch implements Database.Batchable<sObjec
                         Id, sked_Setup_Time__c, sked_Lead_Time__c, sked_Travel_Time__c, sked_Site_Logistics_To__c,
                         sked_Wrap_Up_Time__c, sked_Breakdown_Time__c, sked_Travel_Time2__c, sked_Site_Logistics_Back__c,
                         sked__Start__c, sked_Start_Time__c, sked__Finish__c, sked_Finish_Time__c, sked_Start_Date__c, sked_Finish_Date__c,
-                        sked_Resource_Role__c, sked_Asset_Type__c, sked_Drive_Shift__c
+                        sked_Resource_Role__c, sked_Dual_Role__c, sked_Asset_Type__c, sked_Drive_Shift__c
                     FROM sked_Jobs__r
                 ),
                 (
@@ -83,7 +83,7 @@ global class skedUpdateJobTimeVarianceBatch implements Database.Batchable<sObjec
                             for (sked__Job__c job : jobs) {
                                 if (job.sked_Asset_Type__c != null) {
                                     assetJobIds.add(job.Id);
-                                } else if (affectedResourceRoles.contains(job.sked_Resource_Role__c)
+                                } else if ((affectedResourceRoles.contains(job.sked_Resource_Role__c) || affectedResourceRoles.contains(job.sked_Dual_Role__c))
                                     && job.sked_Start_Date__c >= rtvAdjustment.startDate && job.sked_Finish_Date__c <= rtvAdjustment.endDate
                                 ) {
                                     List<String> affectedFields = getAffectedFields(rtvAdjustment.varianceApplyTo);

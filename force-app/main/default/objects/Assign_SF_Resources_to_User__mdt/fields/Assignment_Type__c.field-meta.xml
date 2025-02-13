@@ -36,6 +36,11 @@
                 <default>false</default>
                 <label>Package License</label>
             </value>
+            <value>
+                <fullName>Role</fullName>
+                <default>false</default>
+                <label>Role</label>
+            </value>
         </valueSetDefinition>
     </valueSet>
 </CustomField>

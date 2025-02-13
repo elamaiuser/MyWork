@@ -22,6 +22,7 @@
             </value>
         </inputParameters>
         <nameSegment>ResetBusinessPlanningStatusHelper</nameSegment>
+        <versionSegment>1</versionSegment>
     </actionCalls>
     <apiVersion>60.0</apiVersion>
     <assignments>

@@ -60,6 +60,7 @@
             </value>
         </inputParameters>
         <nameSegment>MarketingExceptionInvokable</nameSegment>
+        <versionSegment>1</versionSegment>
     </actionCalls>
     <actionCalls>
         <processMetadataValues>
@@ -331,6 +332,7 @@
             </value>
         </inputParameters>
         <nameSegment>BSF_CustomNotification</nameSegment>
+        <versionSegment>1</versionSegment>
     </actionCalls>
     <actionCalls>
         <processMetadataValues>
@@ -389,6 +391,7 @@
             </value>
         </inputParameters>
         <nameSegment>BSF_EmailNotification</nameSegment>
+        <versionSegment>1</versionSegment>
     </actionCalls>
     <actionCalls>
         <processMetadataValues>
@@ -660,6 +663,7 @@
             </value>
         </inputParameters>
         <nameSegment>BSF_CustomNotification</nameSegment>
+        <versionSegment>1</versionSegment>
     </actionCalls>
     <actionCalls>
         <processMetadataValues>
@@ -718,6 +722,7 @@
             </value>
         </inputParameters>
         <nameSegment>BSF_EmailNotification</nameSegment>
+        <versionSegment>1</versionSegment>
     </actionCalls>
     <apiVersion>51.0</apiVersion>
     <decisions>

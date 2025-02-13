@@ -30,6 +30,11 @@
                 <default>false</default>
                 <label>Recruitment Planning Meeting</label>
             </value>
+            <value>
+                <fullName>Sponsor Planning Meeting</fullName>
+                <default>false</default>
+                <label>Sponsor Planning Meeting</label>
+            </value>
         </valueSetDefinition>
     </valueSet>
 </CustomField>

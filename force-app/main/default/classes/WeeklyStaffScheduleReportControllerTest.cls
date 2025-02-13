@@ -108,8 +108,7 @@ private class WeeklyStaffScheduleReportControllerTest {
     private static void testmethod1() {
         String collOpIds = [SELECT Id, Name, sked_Territory__c FROM Biomed_Collection_Op_Center__c WHERE Name = 'Collection Operation 1' LIMIT 1].Id;
         Test.startTest();
-        WeeklyStaffScheduleReportController.DatableConfigWrapper wrapper = WeeklyStaffScheduleReportController.searchReport(Date.Today(),Date.Today().addDays(70),'Both',collOpIds,'mobile,fixed');
-        //BSFVehiclePlanningController.vehicleResourceDataWrapper vpcWrapper = BSFVehiclePlanningController.getAllResourceDataWithDate(Date.Today(),Date.Today().addDays(6),collOpIds);        
+        WeeklyStaffScheduleReportController.DatableConfigWrapper wrapper = WeeklyStaffScheduleReportController.searchReport(Date.Today(),Date.Today().addDays(70),'Both',collOpIds,'mobile,fixed', true);
         Test.stopTest();
     }
     
