@@ -343,4 +343,8 @@ public class BSF_Constants {
 
     public static final String FEEDER_ONLY_ACCOUNT = 'Feeder Only';
     public static final String FEEDER_PLUS_ACCOUNT = 'Feeder Plus';
+    
+    //HRP-13426 --> 
+    public static final String POST_DRIVE_ANALYSIS_TASK_AM = 'Post Drive Analysis AM';
+    public static final String POST_DRIVE_ANALYSIS_TASK_SBPM = 'Post Drive Analysis SBPM';
 }

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+    <types>
+        <members>TaskService</members>
+        <members>BSF_Constants</members>
+        <members>BSFTaskChecklistTriggerHandler</members>
+        <members>TaskChecklistController</members>
+        <members>TaskTriggerHandler</members>
+        <name>ApexClass</name>
+    </types>
+    <types>
+        <members>Task_Checklist_Setting__mdt.Subject__c</members>
+        <name>CustomField</name>
+    </types>
+    <types>
+        <members>Task_Report_Link.After_Drive_Analysis_SBPM</members>
+        <members>Task_Report_Link.BPL_Thank_You_Flyer_SBPM</members>
+        <members>Task_Report_Link.Ferritin_Deferrals_SBPM</members>
+        <members>Task_Report_Link.Same_Day_Rebooking_Results_SBPM</members>
+        <members>Task_Report_Link.After_Drive_Analysis_AM</members>
+        <members>Task_Report_Link.BPL_Thank_You_Flyer_AM</members>
+        <members>Task_Report_Link.Ferritin_Deferrals_AM</members>
+        <members>Task_Report_Link.Same_Day_Rebooking_Results_AM</members>
+        <members>Task_Reassignment_Matrix.Post_Drive_Analysis_AM</members>
+        <members>Task_Reassignment_Matrix.Post_Drive_Analysis_SBPM</members>
+        <name>CustomMetadata</name>
+    </types>
+	<version>60.0</version>
+</Package>
