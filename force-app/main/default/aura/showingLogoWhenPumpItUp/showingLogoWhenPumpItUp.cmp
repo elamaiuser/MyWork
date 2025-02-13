@@ -5,7 +5,7 @@
     
     <force:recordData aura:id="recordLoader"
       layoutType="FULL"
-      fields="IsPumpedItUpCurrent__c,IsPremierCurrent__c"
+      fields="IsPumpedItUpCurrent__c,IsPremierCurrent__c,Is_Hospital_Contract_Partner__c"
       recordId="{!v.recordId}"
       targetFields="{!v.simpleRecord}"
       targetError="{!v.recordError}"
@@ -21,6 +21,11 @@
         <aura:if isTrue="{!v.simpleRecord.IsPremierCurrent__c}">
         <div class="slds-align_absolute-center" style="width: 15%;height: 40%;">
             <img src="{!$Resource.ShowingLogowhenPremierCurrent}" />
+        </div>
+        </aura:if>
+        <aura:if isTrue="{!v.simpleRecord.Is_Hospital_Contract_Partner__c}">
+        <div class="slds-align_absolute-center" style="width: 15%;height: 40%;">
+            <img src="{!$Resource.hospitalContractPartnerBadgeLogo}" />
         </div>
         </aura:if>
     </div>
