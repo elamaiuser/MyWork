@@ -211,7 +211,7 @@ export default class RecurringPatternScheduler extends LightningElement {
     }
 
     get userInfoMessage() {
-        return `** System will calculate drive dates based on donor eligibility for ${this.otherSelectedRecTypeName} on the ${this.donorEligibilityDay}th day`;
+        return this.donorEligibilityDay ? `** System will calculate drive dates based on donor eligibility for ${this.otherSelectedRecTypeName} on the ${this.donorEligibilityDay}th day` : '';
     }
 
     get otherSelectedRecTypeName() {
@@ -371,6 +371,7 @@ export default class RecurringPatternScheduler extends LightningElement {
             this.previouslySelectedValue = selectedValue[0];
 
             this.selectedDonorEligibilityFor = selectedValue;
+            this.donorEligibilityDay = '';
             return new Promise(async (resolve, reject) =>{
                 var result = await fnGetDonorEligibilityDay({ 
                     donorEligibilityNeededFor: this.selectedDonorEligibilityFor[0]   
