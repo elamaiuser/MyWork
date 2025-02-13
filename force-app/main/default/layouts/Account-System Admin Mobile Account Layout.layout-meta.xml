@@ -176,6 +176,10 @@
                 <field>Chapter__c</field>
             </layoutItems>
             <layoutItems>
+                <behavior>Edit</behavior>
+                <field>Service_Level_Agreement__c</field>
+            </layoutItems>
+            <layoutItems>
                 <behavior>Readonly</behavior>
                 <field>Feeder_Account_Type__c</field>
             </layoutItems>
