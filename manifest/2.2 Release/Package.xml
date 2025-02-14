@@ -47,11 +47,14 @@
         <members>skedJobAllocationTravelTimeBatch_Test</members>
 		<members>skedNightlyRefreshTravelTimeIndexBatch</members>
 		<members>skedRefreshTravelTimeIndexBatchBase</members>
+		<members>skedTravelTimeIndexItemHandler</members>
 		<members>skedTravelTimeIndexItemUtils</members>
 		<members>skedTriggerUtils</members>
         <members>skedTriggerUtils_Test</members>
 		<members>skedUpdateJobTimeVarianceBatch</members>
 		<members>skedUpdateJobTimeVarianceBatch_Test</members>
+		<members>skedUpdateTTILookupFieldsOnSiteCOBatch</members>
+        <members>skedUpdateTTILookupFieldsOnSiteCO_Test</members>
 		<members>skedWeeklyHoursCorrectionBatch</members>
         <members>skedWeeklyHoursCorrection_Test</members>
 		<members>slwcSiteCollectionOperationService</members>
@@ -93,6 +96,8 @@
 		<members>Profile_Specific_Functionality_Access__mdt.Allowed_Assignments__c</members>
 		<members>Profile_Specific_Functionality_Access__mdt.Assignment_Type__c</members>
 		<members>Profile_Specific_Functionality_Access__mdt.Process_Functionality_Name__c</members>
+		<members>sked_Site_Collection_Operation__c.sked_Travel_Time_Index_CO2Site__c</members>
+        <members>sked_Site_Collection_Operation__c.sked_Travel_Time_Index_Site2CO__c</members>
 		<members>sked_Travel_Time_Index_Item__c.sked_Travel_Time_Breakdown_JSON_Backup__c</members>
 		<members>sked__Job_Allocation__c.sked_Completed_Post_Processes__c</members>
 		<members>sked__Location__c.sked_Unloading_Directions_Details__c</members>
@@ -227,7 +232,9 @@
 		<members>Opportunity-DRD Mobile Opp Layout</members>
 		<members>Opportunity-Mobile Opp Layout</members>
 		<members>Opportunity-Sponsor Marketing Mobile Opp Layout</members>
-        <members>Profile_Specific_Functionality_Access__mdt-Profile Specific Functionality Setting Layout</members>	
+        <members>Profile_Specific_Functionality_Access__mdt-Profile Specific Functionality Setting Layout</members>
+		<members>sked_Site_Collection_Operation__c-DRD Site Collection Operation Layout</members>
+        <members>sked_Site_Collection_Operation__c-Site Collection Operation Layout</members>	
 		<members>sked__Resource__c-Staff Layout</members>		
 		<name>Layout</name>
 	</types>
