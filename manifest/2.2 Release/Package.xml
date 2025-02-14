@@ -90,6 +90,8 @@
 		<members>AssignResourcesToUserEvent__e.skipUserRoleUpdate__c</members>
 		<members>BSF_setting__c.Donor_Eligibility_Day_for_2RBC__c</members>
 		<members>BSF_setting__c.Donor_Eligibility_Day_for_WB__c</members>
+		<members>BSF_setting__c.Is_Donor_Eligibility_Msg_Needed__c</members>
+		<members>BSF_setting__c.Donor_Eligibility_Msg__c</members>
 		<members>Calendar_Build_Log_Manual_Run__c.Source__c</members>
         <members>Opportunity.Booking_Strategy__c</members>
         <members>Opportunity.Source__c</members>
