@@ -46,6 +46,7 @@ public class DateUtility {
 
         finalResults.operationStatus = true;
         finalResults.donorEligibilityDay = donorEligibilityDay;
+        finalResults.donorEligibilityMsg = donorEligibilityMsg;
         return finalResults;
     }
 
