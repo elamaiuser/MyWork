@@ -717,7 +717,7 @@ export default class RecurringPatternScheduler extends LightningElement {
             occurance: this.OutputMonthDayOccuranceValue,
             monthlyRecurrence: this.monthlyFrequencyValue,
             dayOfMonth: this.OutputMonthDayValue, 
-            donorEligibilityFor: this.OutputDonorEligibilityType            
+            donorEligibilityFor: this.otherRecTypes.find(item => item.value === (this.OutputDonorEligibilityType || ''))?.label              
         });
         
         console.log('****RecurringPatternScheduler.calculateDates() Completed result: ' + JSON.stringify(result));
@@ -751,7 +751,7 @@ export default class RecurringPatternScheduler extends LightningElement {
                     occurance: this.OutputMonthDayOccuranceValue,
                     monthlyRecurrence: this.monthlyFrequencyValue,
                     dayOfMonth: this.OutputMonthDayValue, 
-                    donorEligibilityFor: this.OutputDonorEligibilityType     
+                    donorEligibilityFor: this.otherRecTypes.find(item => item.value === (this.OutputDonorEligibilityType || ''))?.label       
                 });
                 console.log('****RecurringPatternScheduler.calculateDatesAsync() Calling Server Complete');
                 resolve(result);
