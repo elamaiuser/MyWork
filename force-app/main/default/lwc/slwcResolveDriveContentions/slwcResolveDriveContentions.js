@@ -1380,6 +1380,7 @@ export default class SlwcResolveDriveContentions extends LightningElement {
   }
 
   saveStaffingComplementModal(event) {
+    const backupContentionResolution = this.drive ? this.drive.contentionResolutions : [];
     const { driveGeneratorInstance } = event.detail;
 
     this.showLoading()
@@ -1404,6 +1405,8 @@ export default class SlwcResolveDriveContentions extends LightningElement {
     })
     .then(() => {
       this.drive = this.driveGeneratorInstance.drive;
+      this.drive.contentionResolution = [...backupContentionResolution];
+
       this.drive.contentionResolutions = [];
       if(this.drive.contentionResolution) {
         this.drive.contentionResolutions = cloneDeep(this.drive.contentionResolution);
