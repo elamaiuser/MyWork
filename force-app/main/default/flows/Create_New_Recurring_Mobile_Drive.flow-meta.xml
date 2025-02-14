@@ -3608,15 +3608,15 @@ REGEX( {!Drive_Keyword}, &quot;[a-zA-Z0-9 ]+&quot;)</formulaExpression>
                 </value>
             </inputParameters>
             <inputParameters>
-                <name>OutputDonorEligibilityNeededFor</name>
-                <value>
-                    <elementReference>outputDonorEligibilityNeededFor</elementReference>
-                </value>
-            </inputParameters>
-            <inputParameters>
                 <name>OutputDonorEligibilityDay</name>
                 <value>
                     <elementReference>outputDonorEligibilityDay</elementReference>
+                </value>
+            </inputParameters>
+            <inputParameters>
+                <name>OutputDonorEligibilityType</name>
+                <value>
+                    <elementReference>OutputEligibilityNeededFor</elementReference>
                 </value>
             </inputParameters>
             <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
@@ -3666,12 +3666,12 @@ REGEX( {!Drive_Keyword}, &quot;[a-zA-Z0-9 ]+&quot;)</formulaExpression>
                 <name>OutputStartDate</name>
             </outputParameters>
             <outputParameters>
-                <assignToReference>outputDonorEligibilityNeededFor</assignToReference>
-                <name>OutputDonorEligibilityNeededFor</name>
-            </outputParameters>
-            <outputParameters>
                 <assignToReference>outputDonorEligibilityDay</assignToReference>
                 <name>OutputDonorEligibilityDay</name>
+            </outputParameters>
+            <outputParameters>
+                <assignToReference>OutputEligibilityNeededFor</assignToReference>
+                <name>OutputDonorEligibilityType</name>
             </outputParameters>
         </fields>
         <showFooter>false</showFooter>
@@ -3823,11 +3823,11 @@ REGEX( {!Drive_Keyword}, &quot;[a-zA-Z0-9 ]+&quot;)</formulaExpression>
         <isOutput>false</isOutput>
     </variables>
     <variables>
-        <name>outputDonorEligibilityNeededFor</name>
+        <name>OutputEligibilityNeededFor</name>
         <dataType>String</dataType>
-        <isCollection>true</isCollection>
-        <isInput>true</isInput>
-        <isOutput>true</isOutput>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
     </variables>
     <variables>
         <name>outRecurrenceType</name>
