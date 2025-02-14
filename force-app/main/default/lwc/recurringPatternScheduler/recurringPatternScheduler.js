@@ -682,7 +682,7 @@ export default class RecurringPatternScheduler extends LightningElement {
             
         } else if(this.recurTypeValue === 'other' && !this.selectedDonorEligibilityFor) {
             this.hasError = true;
-            this.errorMessage = 'Please select one of the checkboxes to calculate donor eligibility for other recurrence type';
+            this.errorMessage = 'Please select one of the options to calculate donor eligibility for other recurrence type';
         } else {
             this.hasError = false;
             this.errorMessage = '';
