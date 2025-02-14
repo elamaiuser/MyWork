@@ -51,19 +51,10 @@ export default class TravelTimeBreakdown extends LightningElement {
             if(systemOverrideRecordsToUpdate.length > 0){
                 saveUpdatedRecords({ updatedRecords: systemOverrideRecordsToUpdate })
                 .then(result => {
-                    console.log('Records updated successfully');
-                    /*this.exitEditMode();
-                    this.dispatchEvent(
-                        new ShowToastEvent({
-                            title: 'Success',
-                            message: 'Records updated successfully',
-                            variant: 'success'
-                        })
-                    );*/
-                    //window.location.reload();                
+                    console.log('Records updated successfully');                    
+                    window.location.reload();               
                 })
-                .catch(error => {
-                    //this.exitEditMode();
+                .catch(error => {                    
                     console.error('Error in updating records:', error);
                     this.dispatchEvent(
                         new ShowToastEvent({
