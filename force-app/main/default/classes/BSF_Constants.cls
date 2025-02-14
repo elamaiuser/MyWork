@@ -343,4 +343,6 @@ public class BSF_Constants {
 
     public static final String FEEDER_ONLY_ACCOUNT = 'Feeder Only';
     public static final String FEEDER_PLUS_ACCOUNT = 'Feeder Plus';
+
+    public static final String SYSTEM_TTBD_OVERRIDE_COMMENT = 'As of {0} System has failed to return valid Travel Time values. Manual override values are required. Re-attempt refresh by unchecking User Override checkbox and selecting banner option to manually refresh.';
 }

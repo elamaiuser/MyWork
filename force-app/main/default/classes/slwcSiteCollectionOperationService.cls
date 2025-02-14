@@ -3,7 +3,7 @@ public class slwcSiteCollectionOperationService {
     public static slwcAuraResult manualRefreshTravelTimeIndexes(String siteCollectionOperationId) {
         slwcAuraResult result = new slwcAuraResult();
 
-        List<sked_Travel_Time_Index_Item__c> ttiis = getRelatedTravelTimeItems(siteCollectionOperationId);
+        List<sked_Travel_Time_Index_Item__c> ttiis = getRelatedTravelTimeItems(siteCollectionOperationId);        
         if (!ttiis.isEmpty()) {
             Set<Id> ttiiIds = skedSObjectUtils.getRecordIds(ttiis);
             for (sked_Travel_Time_Index_Item__c ttii : ttiis) {

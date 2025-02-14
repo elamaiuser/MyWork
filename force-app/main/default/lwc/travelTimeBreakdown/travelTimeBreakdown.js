@@ -14,7 +14,7 @@ export default class TravelTimeBreakdown extends LightningElement {
     initialRecords = [];
     @track modifiedRecordIds = [];
     @track errorMessage = '';
-    
+
 
     @wire(getData, { siteCO_Id: '$recordId' })
     wiredData({ error, data }) {
@@ -51,19 +51,10 @@ export default class TravelTimeBreakdown extends LightningElement {
             if(systemOverrideRecordsToUpdate.length > 0){
                 saveUpdatedRecords({ updatedRecords: systemOverrideRecordsToUpdate })
                 .then(result => {
-                    console.log('Records updated successfully');
-                    /*this.exitEditMode();
-                    this.dispatchEvent(
-                        new ShowToastEvent({
-                            title: 'Success',
-                            message: 'Records updated successfully',
-                            variant: 'success'
-                        })
-                    );*/
-                    //window.location.reload();                
+                    console.log('Records updated successfully');                    
+                    window.location.reload();               
                 })
-                .catch(error => {
-                    //this.exitEditMode();
+                .catch(error => {                    
                     console.error('Error in updating records:', error);
                     this.dispatchEvent(
                         new ShowToastEvent({
@@ -241,13 +232,15 @@ export default class TravelTimeBreakdown extends LightningElement {
         const updatedUserOverride = event.target.checked;
         console.log('recordIndexId:', recordIndexId);
         console.log('updatedUserOverride:', updatedUserOverride);
-    
+
         this.records = this.records.map(record => {
             console.log('record.indexId:', record.indexId);
             if (record.indexId === recordIndexId) {
                 console.log('Entering the if block');
                 console.log('updatedUserOverride1:', updatedUserOverride);
-                const updatedRecord = { ...record, userOverride: updatedUserOverride };
+                const updatedRecord = { ...record, userOverride: updatedUserOverride,
+                    overrideComment: updatedUserOverride ? record.overrideComment : null
+                 };
                 console.log('Updated Record with userOverride:', JSON.stringify(updatedRecord));
                 return updatedRecord;
             }
@@ -259,6 +252,21 @@ export default class TravelTimeBreakdown extends LightningElement {
         let updatedRecords = this.records.filter(record => record.isEditMode);
         console.log('Updated Records:', JSON.stringify(updatedRecords));
         let hasNegativeValues = false;
+
+        const missingComments = updatedRecords.some(record =>
+            record.userOverride && (!record.overrideComment || record.overrideComment.trim() === '')
+        );
+
+        if (missingComments) {
+            this.dispatchEvent(
+                new ShowToastEvent({
+                    title: 'Error',
+                    message: 'Please provide a comment for all user overrides.',
+                    variant: 'error'
+                })
+            );
+            return;
+        }
         
         let updatedDataWrappers = updatedRecords.map(record => {
             //console.log(`ROriginal Travel Time Data:`, JSON.stringify(record.travelTimeBreakdownData, null, 2));
@@ -318,7 +326,7 @@ export default class TravelTimeBreakdown extends LightningElement {
                         variant: 'success'
                     })
                 );
-                //window.location.reload();                
+                window.location.reload();                
             })
             .catch(error => {
                 //this.exitEditMode();
