@@ -328,7 +328,7 @@ public without sharing class BSF_TravelTimePanelController {
                 wrapper.direction = ttIndex_DirectionMap.get(ttRec.Id);
                 wrapper.systemOverride = false;
                 wrapper.travelTimeBreakdownData = new List<TravelTimeBreakdownData>();
-                if(ttRec.sked_Travel_Time_Breakdown_JSON__c != null && ttRec.sked_Travel_Time_Breakdown_JSON__c != 'NO DATA') {
+                if(ttRec.sked_Travel_Time_Breakdown_JSON__c != 'NO DATA') {
                     List<TravelTimeBreakdownJSON> jsonData = (List<TravelTimeBreakdownJSON>) JSON.deserialize(ttRec.sked_Travel_Time_Breakdown_JSON__c, List<TravelTimeBreakdownJSON>.class);
                     for(TravelTimeBreakdownJSON ttData : jsonData) {
                         wrapper.travelTimeBreakdownData.add(transformTTBDataToDataWrapper(ttData, wrapper.indexId));
