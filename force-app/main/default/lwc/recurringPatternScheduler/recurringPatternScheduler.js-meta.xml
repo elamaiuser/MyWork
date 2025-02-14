@@ -18,7 +18,8 @@
              <property name="OutputStartDateValue" label="Start Date" type="String"/>
              <property name="OutputEndDateValue" label="End Date" type="String"/>
              <property name="OutputRecurTypeValue" label="Recurrence Type" type="String"/>
-             <property name="OutputDonorEligibilityNeededFor" label="Donor Eligibility calculation needed for which type(s)?" type="String[]"/>
+             <property name="OutputDonorEligibilityNeededFor" label="Donor Eligibility (Depricated)" type="String[]"/>
+             <property name="OutputDonorEligibilityType" label="Donor Eligibility calculation needed for which type?" type="String"/>
              <property name="OutputDonorEligibilityDay" label="Donor Eligibility Day" type="String"/>
 
              <property name="OutputMonthlyFrequencyValue" label="Monthly Frequency" type="Integer"/>
