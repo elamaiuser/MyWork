@@ -94,15 +94,11 @@ export default class SlwcPopoverContent extends LightningElement {
     }
     get driveShiftResourceAllocationColumns() {
       return [
-        { label: 'Resource Name', fieldName: 'resourceName', type: 'text' },
-        { label: 'Resource Role', fieldName: 'resourceRole', type: 'text' },        
-        { label: 'Start Time', fieldName: 'startTime', type: 'text' },
-        { label: 'End Time', fieldName: 'endTime', type: 'text' }
+        { label: 'Resource Name', fieldName: 'resourceName', type: 'text' },        
+        { label: 'Resource Role', fieldName: 'resourceRole', type: 'text' }
       ];
     }
-    get resourceAllocations() {
-      console.log(':::TPE::: this.popoverData', JSON.stringify(this.popoverData));
-      console.log(':::TPE::: this.popoverData.jobs', JSON.stringify(this.popoverData.jobs));
+    get resourceAllocations() {      
       let allocations = [];
       if (this.popoverData && this.popoverData.jobs && this.popoverData.jobs.length > 0) {
         this.popoverData.jobs.forEach(job => {
@@ -112,10 +108,8 @@ export default class SlwcPopoverContent extends LightningElement {
             if (allocation.status != JOB_ALLOCATION_STATUS.DELETED) {
               allocations.push({
                 id: allocation.id,
-                resourceName: allocation.resourceName,
-                resourceRole: job.resourceRole,
-                startTime: job.start,
-                endTime: job.finish
+                resourceName: allocation.resourceName,                
+                resourceRole: job.resourceRole || job.assetType                
               });
             }
           });
