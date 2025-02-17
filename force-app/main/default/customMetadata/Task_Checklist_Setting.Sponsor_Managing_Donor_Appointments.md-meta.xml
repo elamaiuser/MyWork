@@ -16,9 +16,9 @@
     </values>
     <values>
         <field>Hyperlink__c</field>
-        <value xsi:type="xsd:string">&quot;https://americanredcross.sharepoint.com/teams/TheField/Donor%20Recruitment/Forms/AllItems.aspx?id=%2Fteams%2FTheField%2FDonor%20Recruitment%2FSystems%20%26%20Apps%2FBlood%20Drive%20Management%20Portal%2FAM%20Tools%2FManaging%20Donor%20Appointments%20Playbook%2Epdf&amp;parent=%2Fteams%2FTheField%2FDonor%20Recruitment%2FSystems%20%26%20Apps%2FBlood%20Drive%20Management%20Portal%2FAM%20Tools
+        <value xsi:type="xsd:string">https://americanredcross.sharepoint.com/teams/TheField/Donor%20Recruitment/Forms/AllItems.aspx?id=%2Fteams%2FTheField%2FDonor%20Recruitment%2FSystems%20%26%20Apps%2FBlood%20Drive%20Management%20Portal%2FAM%20Tools%2FManaging%20Donor%20Appointments%20Playbook%2Epdf&amp;parent=%2Fteams%2FTheField%2FDonor%20Recruitment%2FSystems%20%26%20Apps%2FBlood%20Drive%20Management%20Portal%2FAM%20Tools
 
-https://americanredcross.sharepoint.com/teams/TheField/Donor%20Recruitment/Forms/AllItems.aspx?id=%2Fteams%2FTheField%2FDonor%20Recruitment%2FDrive%20Planning%2FPlanning%20Support%20Tools%2FSite%20Tools%20%28found%20within%20playbook%29%2FSite%20Playbook%2Epdf&amp;parent=%2Fteams%2FTheField%2FDonor%20Recruitment%2FDrive%20Planning%2FPlanning%20Support%20Tools%2FSite%20Tools%20%28found%20within%20playbook%29&quot;</value>
+https://americanredcross.sharepoint.com/teams/TheField/Donor%20Recruitment/Forms/AllItems.aspx?id=%2Fteams%2FTheField%2FDonor%20Recruitment%2FDrive%20Planning%2FPlanning%20Support%20Tools%2FSite%20Tools%20%28found%20within%20playbook%29%2FSite%20Playbook%2Epdf&amp;parent=%2Fteams%2FTheField%2FDonor%20Recruitment%2FDrive%20Planning%2FPlanning%20Support%20Tools%2FSite%20Tools%20%28found%20within%20playbook%29</value>
     </values>
     <values>
         <field>Input_API_Name__c</field>
