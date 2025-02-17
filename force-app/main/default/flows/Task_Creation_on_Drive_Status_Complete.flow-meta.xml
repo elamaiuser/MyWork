@@ -2,47 +2,47 @@
 <Flow xmlns="http://soap.sforce.com/2006/04/metadata">
     <apiVersion>55.0</apiVersion>
     <assignments>
-        <name>Assign_other_Task_Fields</name>
-        <label>Assign other Task Fields</label>
-        <locationX>446</locationX>
-        <locationY>1379</locationY>
+        <name>Assign_AM_Task_Fields1</name>
+        <label>Assign AM Task Fields</label>
+        <locationX>314</locationX>
+        <locationY>863</locationY>
         <assignmentItems>
-            <assignToReference>New_Task.ActivityDate</assignToReference>
+            <assignToReference>New_Post_Drive_Analysis_AM_Task.ActivityDate</assignToReference>
             <operator>Assign</operator>
             <value>
                 <elementReference>DueDateTask</elementReference>
             </value>
         </assignmentItems>
         <assignmentItems>
-            <assignToReference>New_Task.Priority</assignToReference>
+            <assignToReference>New_Post_Drive_Analysis_AM_Task.Priority</assignToReference>
             <operator>Assign</operator>
             <value>
                 <stringValue>High</stringValue>
             </value>
         </assignmentItems>
         <assignmentItems>
-            <assignToReference>New_Task.RecordTypeId</assignToReference>
+            <assignToReference>New_Post_Drive_Analysis_AM_Task.RecordTypeId</assignToReference>
             <operator>Assign</operator>
             <value>
                 <elementReference>varRecTypeId</elementReference>
             </value>
         </assignmentItems>
         <assignmentItems>
-            <assignToReference>New_Task.Subject</assignToReference>
+            <assignToReference>New_Post_Drive_Analysis_AM_Task.Subject</assignToReference>
             <operator>Assign</operator>
             <value>
-                <elementReference>SubjectTask</elementReference>
+                <elementReference>SubjectTask1</elementReference>
             </value>
         </assignmentItems>
         <assignmentItems>
-            <assignToReference>New_Task.WhatId</assignToReference>
+            <assignToReference>New_Post_Drive_Analysis_AM_Task.WhatId</assignToReference>
             <operator>Assign</operator>
             <value>
                 <elementReference>Get_Opportunity.Id</elementReference>
             </value>
         </assignmentItems>
         <assignmentItems>
-            <assignToReference>New_Task.Drive_Date__c</assignToReference>
+            <assignToReference>New_Post_Drive_Analysis_AM_Task.Drive_Date__c</assignToReference>
             <operator>Assign</operator>
             <value>
                 <elementReference>Get_Opportunity.Drive_Date__c</elementReference>
@@ -53,148 +53,218 @@
         </connector>
     </assignments>
     <assignments>
-        <name>Assign_to_AP</name>
-        <label>Assign to AP</label>
-        <locationX>578</locationX>
-        <locationY>1187</locationY>
-        <assignmentItems>
-            <assignToReference>New_Task.OwnerId</assignToReference>
-            <operator>Assign</operator>
-            <value>
-                <elementReference>Get_Account_Specialist.UserId</elementReference>
-            </value>
-        </assignmentItems>
-        <connector>
-            <targetReference>Assign_other_Task_Fields</targetReference>
-        </connector>
-    </assignments>
-    <assignments>
-        <name>Assign_to_DM</name>
-        <label>Assign to DM</label>
-        <locationX>314</locationX>
-        <locationY>1187</locationY>
-        <assignmentItems>
-            <assignToReference>New_Task.OwnerId</assignToReference>
-            <operator>Assign</operator>
-            <value>
-                <elementReference>Get_District_Manager.UserId</elementReference>
-            </value>
-        </assignmentItems>
-        <connector>
-            <targetReference>Assign_other_Task_Fields</targetReference>
-        </connector>
-    </assignments>
-    <assignments>
-        <name>Assign_to_Opp_Owner</name>
-        <label>Assign to Opp Owner</label>
-        <locationX>842</locationX>
-        <locationY>1187</locationY>
-        <assignmentItems>
-            <assignToReference>New_Task.OwnerId</assignToReference>
-            <operator>Assign</operator>
-            <value>
-                <elementReference>Get_Opportunity.OwnerId</elementReference>
-            </value>
-        </assignmentItems>
-        <connector>
-            <targetReference>Assign_other_Task_Fields</targetReference>
-        </connector>
-    </assignments>
-    <assignments>
-        <name>TaskLastAssignment</name>
-        <label>TaskLastAssignment</label>
+        <name>Assign_AM_Task_Fields2</name>
+        <label>Assign AM Task Fields</label>
         <locationX>50</locationX>
-        <locationY>1187</locationY>
+        <locationY>863</locationY>
         <assignmentItems>
-            <assignToReference>New_Task.OwnerId</assignToReference>
+            <assignToReference>New_Post_Drive_Analysis_AM_Task.ActivityDate</assignToReference>
             <operator>Assign</operator>
             <value>
-                <elementReference>Get_Opportunity.Account_Manager__c</elementReference>
+                <elementReference>DueDateTask</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>New_Post_Drive_Analysis_AM_Task.Priority</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <stringValue>High</stringValue>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>New_Post_Drive_Analysis_AM_Task.RecordTypeId</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>varRecTypeId</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>New_Post_Drive_Analysis_AM_Task.Subject</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>SubjectTask1</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>New_Post_Drive_Analysis_AM_Task.WhatId</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>Get_Opportunity.Id</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>New_Post_Drive_Analysis_AM_Task.Drive_Date__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>Get_Opportunity.Drive_Date__c</elementReference>
             </value>
         </assignmentItems>
         <connector>
-            <targetReference>Assign_other_Task_Fields</targetReference>
+            <targetReference>Assign_SBPM_Task_Fields2</targetReference>
         </connector>
     </assignments>
-    <decisions>
-        <name>Determine_Task_Owner</name>
-        <label>Determine Task Owner</label>
-        <locationX>446</locationX>
-        <locationY>1079</locationY>
-        <defaultConnector>
-            <targetReference>Assign_to_Opp_Owner</targetReference>
-        </defaultConnector>
-        <defaultConnectorLabel>Opportunity Owner</defaultConnectorLabel>
-        <rules>
-            <name>Account_Manager</name>
-            <conditionLogic>and</conditionLogic>
-            <conditions>
-                <leftValueReference>Get_Opportunity.Account_Manager__c</leftValueReference>
-                <operator>IsNull</operator>
-                <rightValue>
-                    <booleanValue>false</booleanValue>
-                </rightValue>
-            </conditions>
-            <connector>
-                <targetReference>TaskLastAssignment</targetReference>
-            </connector>
-            <label>Account Manager</label>
-        </rules>
-        <rules>
-            <name>District_Manager</name>
-            <conditionLogic>and</conditionLogic>
-            <conditions>
-                <leftValueReference>Get_District_Manager.UserId</leftValueReference>
-                <operator>IsNull</operator>
-                <rightValue>
-                    <booleanValue>false</booleanValue>
-                </rightValue>
-            </conditions>
-            <connector>
-                <targetReference>Assign_to_DM</targetReference>
-            </connector>
-            <label>District Manager</label>
-        </rules>
-        <rules>
-            <name>Account_Specialist</name>
-            <conditionLogic>and</conditionLogic>
-            <conditions>
-                <leftValueReference>Get_Account_Specialist.UserId</leftValueReference>
-                <operator>IsNull</operator>
-                <rightValue>
-                    <booleanValue>false</booleanValue>
-                </rightValue>
-            </conditions>
-            <connector>
-                <targetReference>Assign_to_AP</targetReference>
-            </connector>
-            <label>Account Specialist</label>
-        </rules>
-    </decisions>
+    <assignments>
+        <name>Assign_SBPM_Task_Fields</name>
+        <label>Assign SBPM Task Fields</label>
+        <locationX>578</locationX>
+        <locationY>863</locationY>
+        <assignmentItems>
+            <assignToReference>New_Post_Drive_Analysis_SBPM_task.ActivityDate</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>DueDateTask</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>New_Post_Drive_Analysis_SBPM_task.Priority</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <stringValue>High</stringValue>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>New_Post_Drive_Analysis_SBPM_task.RecordTypeId</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>varRecTypeId</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>New_Post_Drive_Analysis_SBPM_task.Subject</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>SubjectTask2</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>New_Post_Drive_Analysis_SBPM_task.WhatId</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>Get_Opportunity.Id</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>New_Post_Drive_Analysis_SBPM_task.Drive_Date__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>Get_Opportunity.Drive_Date__c</elementReference>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Post_Drive_Analysis_SBPM_Task_Creation1</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <name>Assign_SBPM_Task_Fields2</name>
+        <label>Assign SBPM Task Fields</label>
+        <locationX>50</locationX>
+        <locationY>971</locationY>
+        <assignmentItems>
+            <assignToReference>New_Post_Drive_Analysis_SBPM_task.ActivityDate</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>DueDateTask</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>New_Post_Drive_Analysis_SBPM_task.Priority</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <stringValue>High</stringValue>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>New_Post_Drive_Analysis_SBPM_task.RecordTypeId</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>varRecTypeId</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>New_Post_Drive_Analysis_SBPM_task.Subject</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>SubjectTask2</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>New_Post_Drive_Analysis_SBPM_task.WhatId</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>Get_Opportunity.Id</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>New_Post_Drive_Analysis_SBPM_task.Drive_Date__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>Get_Opportunity.Drive_Date__c</elementReference>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Post_Drive_Analysis_Task_Creation2</targetReference>
+        </connector>
+    </assignments>
     <decisions>
         <name>whether_task_present</name>
         <label>whether task present</label>
-        <locationX>776</locationX>
-        <locationY>647</locationY>
+        <locationX>446</locationX>
+        <locationY>755</locationY>
         <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
         <rules>
-            <name>task_Not_present</name>
+            <name>Both_Task_Not_Present</name>
             <conditionLogic>and</conditionLogic>
             <conditions>
-                <leftValueReference>check_for_existing_task</leftValueReference>
+                <leftValueReference>check_for_existing_AM_task</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>check_for_existing_SBPM_task</leftValueReference>
                 <operator>IsNull</operator>
                 <rightValue>
                     <booleanValue>true</booleanValue>
                 </rightValue>
             </conditions>
             <connector>
-                <targetReference>Get_Opportunity</targetReference>
+                <targetReference>Assign_AM_Task_Fields2</targetReference>
             </connector>
-            <label>task Not present</label>
+            <label>Both Task Not Present</label>
+        </rules>
+        <rules>
+            <name>task_Not_present</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>check_for_existing_AM_task</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Assign_AM_Task_Fields1</targetReference>
+            </connector>
+            <label>AM task Not present</label>
+        </rules>
+        <rules>
+            <name>SBPM_task_Not_present</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>check_for_existing_SBPM_task</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Assign_SBPM_Task_Fields</targetReference>
+            </connector>
+            <label>SBPM task Not present</label>
         </rules>
     </decisions>
-    <description>This flow will be triggered whenever a DOC will get completed and create Post Drive Analysis task with a due date of drive date+4 days
-Latest Modification: HRP-12700 Add Drive Date to task list</description>
+    <description>HRP-13426</description>
     <environments>Default</environments>
     <formulas>
         <description>Assign the task to the opp&apos;s account manager if present. Else it will go straight to the opportunity owner</description>
@@ -243,17 +313,72 @@ IF({!forAS}&lt;&gt; NULL, {!forAS},
     <processType>AutoLaunchedFlow</processType>
     <recordCreates>
         <description>Post Drive Analysis Task Creation upon drive status complete and assigining it to the AM of the related  opp if present else go straight to the related  opp&apos;s owner. The due date will be 4 days after the drive date of the related opp</description>
+        <name>Post_Drive_Analysis_SBPM_Task_Creation1</name>
+        <label>Post Drive Analysis SBPM Task Creation</label>
+        <locationX>578</locationX>
+        <locationY>971</locationY>
+        <inputReference>New_Post_Drive_Analysis_SBPM_task</inputReference>
+    </recordCreates>
+    <recordCreates>
+        <description>Post Drive Analysis Task Creation upon drive status complete and assigining it to the AM of the related  opp if present else go straight to the related  opp&apos;s owner. The due date will be 4 days after the drive date of the related opp</description>
+        <name>Post_Drive_Analysis_SBPM_Task_Creation2</name>
+        <label>Post Drive Analysis SBPM Task Creation</label>
+        <locationX>50</locationX>
+        <locationY>1187</locationY>
+        <inputReference>New_Post_Drive_Analysis_SBPM_task</inputReference>
+    </recordCreates>
+    <recordCreates>
+        <description>Post Drive Analysis Task Creation upon drive status complete and assigining it to the AM of the related  opp if present else go straight to the related  opp&apos;s owner. The due date will be 4 days after the drive date of the related opp</description>
         <name>Post_Drive_Analysis_Task_Creation</name>
         <label>Post Drive Analysis Task Creation</label>
-        <locationX>446</locationX>
-        <locationY>1487</locationY>
-        <inputReference>New_Task</inputReference>
+        <locationX>314</locationX>
+        <locationY>971</locationY>
+        <inputReference>New_Post_Drive_Analysis_AM_Task</inputReference>
+    </recordCreates>
+    <recordCreates>
+        <description>Post Drive Analysis Task Creation upon drive status complete and assigining it to the AM of the related  opp if present else go straight to the related  opp&apos;s owner. The due date will be 4 days after the drive date of the related opp</description>
+        <name>Post_Drive_Analysis_Task_Creation2</name>
+        <label>Post Drive Analysis Task Creation</label>
+        <locationX>50</locationX>
+        <locationY>1079</locationY>
+        <connector>
+            <targetReference>Post_Drive_Analysis_SBPM_Task_Creation2</targetReference>
+        </connector>
+        <inputReference>New_Post_Drive_Analysis_AM_Task</inputReference>
     </recordCreates>
     <recordLookups>
-        <name>check_for_existing_task</name>
-        <label>check for existing task</label>
-        <locationX>776</locationX>
+        <name>check_for_existing_AM_task</name>
+        <label>check for existing AM task</label>
+        <locationX>446</locationX>
         <locationY>539</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>check_for_existing_SBPM_task</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>WhatId</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>$Record.sked_Opportunity__r.Id</elementReference>
+            </value>
+        </filters>
+        <filters>
+            <field>Subject</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>SubjectTask1</elementReference>
+            </value>
+        </filters>
+        <getFirstRecordOnly>false</getFirstRecordOnly>
+        <object>Task</object>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+    <recordLookups>
+        <name>check_for_existing_SBPM_task</name>
+        <label>check for existing SBPM task</label>
+        <locationX>446</locationX>
+        <locationY>647</locationY>
         <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
         <connector>
             <targetReference>whether_task_present</targetReference>
@@ -270,7 +395,7 @@ IF({!forAS}&lt;&gt; NULL, {!forAS},
             <field>Subject</field>
             <operator>EqualTo</operator>
             <value>
-                <elementReference>SubjectTask</elementReference>
+                <elementReference>SubjectTask2</elementReference>
             </value>
         </filters>
         <getFirstRecordOnly>false</getFirstRecordOnly>
@@ -278,69 +403,13 @@ IF({!forAS}&lt;&gt; NULL, {!forAS},
         <storeOutputAutomatically>true</storeOutputAutomatically>
     </recordLookups>
     <recordLookups>
-        <name>Get_Account_Specialist</name>
-        <label>Get Account Specialist</label>
-        <locationX>446</locationX>
-        <locationY>971</locationY>
-        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
-        <connector>
-            <targetReference>Determine_Task_Owner</targetReference>
-        </connector>
-        <filterLogic>and</filterLogic>
-        <filters>
-            <field>OpportunityId</field>
-            <operator>EqualTo</operator>
-            <value>
-                <elementReference>Get_Opportunity.Id</elementReference>
-            </value>
-        </filters>
-        <filters>
-            <field>TeamMemberRole</field>
-            <operator>EqualTo</operator>
-            <value>
-                <stringValue>Account Specialist</stringValue>
-            </value>
-        </filters>
-        <getFirstRecordOnly>true</getFirstRecordOnly>
-        <object>OpportunityTeamMember</object>
-        <storeOutputAutomatically>true</storeOutputAutomatically>
-    </recordLookups>
-    <recordLookups>
-        <name>Get_District_Manager</name>
-        <label>Get District Manager</label>
-        <locationX>446</locationX>
-        <locationY>863</locationY>
-        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
-        <connector>
-            <targetReference>Get_Account_Specialist</targetReference>
-        </connector>
-        <filterLogic>and</filterLogic>
-        <filters>
-            <field>OpportunityId</field>
-            <operator>EqualTo</operator>
-            <value>
-                <elementReference>Get_Opportunity.Id</elementReference>
-            </value>
-        </filters>
-        <filters>
-            <field>TeamMemberRole</field>
-            <operator>EqualTo</operator>
-            <value>
-                <stringValue>District Manager</stringValue>
-            </value>
-        </filters>
-        <getFirstRecordOnly>true</getFirstRecordOnly>
-        <object>OpportunityTeamMember</object>
-        <storeOutputAutomatically>true</storeOutputAutomatically>
-    </recordLookups>
-    <recordLookups>
         <name>Get_Opportunity</name>
         <label>Get Opportunity</label>
         <locationX>446</locationX>
-        <locationY>755</locationY>
+        <locationY>431</locationY>
         <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
         <connector>
-            <targetReference>Get_District_Manager</targetReference>
+            <targetReference>check_for_existing_AM_task</targetReference>
         </connector>
         <filterLogic>and</filterLogic>
         <filters>
@@ -357,11 +426,11 @@ IF({!forAS}&lt;&gt; NULL, {!forAS},
     <recordLookups>
         <name>Get_Task_RecordType</name>
         <label>Get Task RecordType</label>
-        <locationX>776</locationX>
-        <locationY>431</locationY>
+        <locationX>446</locationX>
+        <locationY>323</locationY>
         <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
         <connector>
-            <targetReference>check_for_existing_task</targetReference>
+            <targetReference>Get_Opportunity</targetReference>
         </connector>
         <filterLogic>and</filterLogic>
         <filters>
@@ -377,49 +446,12 @@ IF({!forAS}&lt;&gt; NULL, {!forAS},
             <field>Id</field>
         </outputAssignments>
     </recordLookups>
-    <recordLookups>
-        <name>oppteam</name>
-        <label>oppteam</label>
-        <locationX>776</locationX>
-        <locationY>323</locationY>
-        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+    <start>
+        <locationX>320</locationX>
+        <locationY>0</locationY>
         <connector>
             <targetReference>Get_Task_RecordType</targetReference>
         </connector>
-        <filterLogic>1 AND ( 2 OR 3)</filterLogic>
-        <filters>
-            <field>OpportunityId</field>
-            <operator>EqualTo</operator>
-            <value>
-                <elementReference>$Record.sked_Opportunity__c</elementReference>
-            </value>
-        </filters>
-        <filters>
-            <field>TeamMemberRole</field>
-            <operator>EqualTo</operator>
-            <value>
-                <stringValue>District Manager</stringValue>
-            </value>
-        </filters>
-        <filters>
-            <field>TeamMemberRole</field>
-            <operator>EqualTo</operator>
-            <value>
-                <stringValue>Account Specialist</stringValue>
-            </value>
-        </filters>
-        <object>OpportunityTeamMember</object>
-        <outputReference>opportunityTeamMembers</outputReference>
-        <queriedFields>Id</queriedFields>
-        <queriedFields>TeamMemberRole</queriedFields>
-    </recordLookups>
-    <start>
-        <locationX>650</locationX>
-        <locationY>0</locationY>
-        <connector>
-            <targetReference>oppteam</targetReference>
-        </connector>
-        <doesRequireRecordChangedToMeetCriteria>true</doesRequireRecordChangedToMeetCriteria>
         <filterLogic>and</filterLogic>
         <filters>
             <field>sked_Status__c</field>
@@ -428,18 +460,45 @@ IF({!forAS}&lt;&gt; NULL, {!forAS},
                 <stringValue>Complete</stringValue>
             </value>
         </filters>
+        <filters>
+            <field>sked_Status__c</field>
+            <operator>IsChanged</operator>
+            <value>
+                <booleanValue>true</booleanValue>
+            </value>
+        </filters>
+        <filters>
+            <field>sked_Type_of_Drive__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>Mobile</stringValue>
+            </value>
+        </filters>
         <object>sked_Drive__c</object>
         <recordTriggerType>CreateAndUpdate</recordTriggerType>
         <triggerType>RecordAfterSave</triggerType>
     </start>
     <status>Active</status>
     <textTemplates>
-        <name>SubjectTask</name>
-        <isViewedAsPlainText>false</isViewedAsPlainText>
-        <text>Post Drive Analysis</text>
+        <name>SubjectTask1</name>
+        <isViewedAsPlainText>true</isViewedAsPlainText>
+        <text>Post Drive Analysis AM</text>
+    </textTemplates>
+    <textTemplates>
+        <name>SubjectTask2</name>
+        <isViewedAsPlainText>true</isViewedAsPlainText>
+        <text>Post Drive Analysis SBPM</text>
     </textTemplates>
     <variables>
-        <name>New_Task</name>
+        <name>New_Post_Drive_Analysis_AM_Task</name>
+        <dataType>SObject</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>true</isOutput>
+        <objectType>Task</objectType>
+    </variables>
+    <variables>
+        <name>New_Post_Drive_Analysis_SBPM_task</name>
         <dataType>SObject</dataType>
         <isCollection>false</isCollection>
         <isInput>true</isInput>
