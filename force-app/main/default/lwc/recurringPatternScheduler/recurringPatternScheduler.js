@@ -28,7 +28,8 @@ export default class RecurringPatternScheduler extends LightningElement {
     @api OutputStartDateValue;
     @api OutputEndDateValue;
     @api OutputRecurTypeValue;
-    @api OutputDonorEligibilityNeededFor; //needed for other recurrance type
+    @api OutputDonorEligibilityNeededFor;
+    @api OutputDonorEligibilityType; //needed for other recurrance type
     @api OutputDonorEligibilityDay;
 
     //Monthly Scheule Settings User Input Exposed as Output
@@ -140,6 +141,7 @@ export default class RecurringPatternScheduler extends LightningElement {
     driveTypeValue = '';
     recurTypeValue = '';
     donorEligibilityDay = '';
+    donorEligibilityMsg = '';
     startDateValue;
     endDateValue;
     showTabWeekly = false;
@@ -159,8 +161,7 @@ export default class RecurringPatternScheduler extends LightningElement {
     weeklyFreqSat = false;
     weeklyFreqSun = false;
 
-    selectedDonorEligibilityFor = [];
-    previouslySelectedValue;
+    selectedDonorEligibilityFor;
     
     /*
     get driveTypeOptions() {
@@ -208,14 +209,6 @@ export default class RecurringPatternScheduler extends LightningElement {
             { label: 'Power Red', value: 'powerRed', checked: false },
             { label: 'Whole Blood', value: 'wholeBlood', checked: false }
         ];
-    }
-
-    get userInfoMessage() {
-        return `** System will calculate drive dates based on donor eligibility for ${this.otherSelectedRecTypeName} on the ${this.donorEligibilityDay}th day`;
-    }
-
-    get otherSelectedRecTypeName() {
-        return this.otherRecTypes.find(item=> item.value === (this.selectedDonorEligibilityFor || [])[0])?.label;
     }
 
     get dateUtils() {
@@ -328,9 +321,8 @@ export default class RecurringPatternScheduler extends LightningElement {
             console.log('***connectedCallback() Defaulting this.InputEnableFlowButtons: ' + this.InputEnableFlowButtons);
         }
 
-        if(this.OutputDonorEligibilityNeededFor !== null && this.OutputDonorEligibilityNeededFor !== undefined && this.OutputDonorEligibilityNeededFor.length) {
-            this.selectedDonorEligibilityFor = this.OutputDonorEligibilityNeededFor;
-            this.previouslySelectedValue = this.OutputDonorEligibilityNeededFor[0];
+        if(this.OutputDonorEligibilityType !== null && this.OutputDonorEligibilityType !== undefined) {
+            this.selectedDonorEligibilityFor = this.OutputDonorEligibilityType;
             this.donorEligibilityDay = this.OutputDonorEligibilityDay;
         }
     }
@@ -362,20 +354,13 @@ export default class RecurringPatternScheduler extends LightningElement {
             this.weeklyFreqSun = event.detail.checked;
             console.log('***handleCheckBoxChange() weeklyFreqSun: ' + this.weeklyFreqSun);
         } else if(event.target.name === 'otherRecTypes') {
-            let selectedValue = event.target.value;
-
-            //Keep only the latest selected value
-            if (selectedValue && selectedValue.length > 1) {
-                selectedValue = selectedValue.filter(item => item !== this.previouslySelectedValue);
-            }
-            this.previouslySelectedValue = selectedValue[0];
-
-            this.selectedDonorEligibilityFor = selectedValue;
+            this.selectedDonorEligibilityFor = event.detail.value;
             return new Promise(async (resolve, reject) =>{
                 var result = await fnGetDonorEligibilityDay({ 
-                    donorEligibilityNeededFor: this.selectedDonorEligibilityFor[0]   
+                    donorEligibilityNeededFor: this.otherRecTypes.find(item => item.value === (this.selectedDonorEligibilityFor || ''))?.label  
                 });
                 this.donorEligibilityDay = result.donorEligibilityDay;
+                this.donorEligibilityMsg = result.donorEligibilityMsg;
                 resolve(result);
             });
         }
@@ -561,7 +546,7 @@ export default class RecurringPatternScheduler extends LightningElement {
         this.OutputStartDateValue = this.startDateValue;
         this.OutputEndDateValue = this.endDateValue;
         this.OutputRecurTypeValue = this.recurTypeValue;
-        this.OutputDonorEligibilityNeededFor = this.selectedDonorEligibilityFor;
+        this.OutputDonorEligibilityType = this.selectedDonorEligibilityFor;
         this.OutputDonorEligibilityDay = this.donorEligibilityDay;
         this.OutputWeeklyFrequencyValue = this.weeklyFrequencyValue;
         this.OutputStartDate = this.getDateValuefromString(this.startDateValue);
@@ -695,9 +680,9 @@ export default class RecurringPatternScheduler extends LightningElement {
             this.hasError = true;
             this.errorMessage = 'Please enter numeric value in Monthly Frequency';
             
-        } else if(this.recurTypeValue === 'other' && !this.selectedDonorEligibilityFor.length) {
+        } else if(this.recurTypeValue === 'other' && !this.selectedDonorEligibilityFor) {
             this.hasError = true;
-            this.errorMessage = 'Please select one of the checkboxes to calculate donor eligibility';
+            this.errorMessage = 'Please select one of the options to calculate donor eligibility for other recurrence type';
         } else {
             this.hasError = false;
             this.errorMessage = '';
@@ -732,7 +717,7 @@ export default class RecurringPatternScheduler extends LightningElement {
             occurance: this.OutputMonthDayOccuranceValue,
             monthlyRecurrence: this.monthlyFrequencyValue,
             dayOfMonth: this.OutputMonthDayValue, 
-            donorEligibilityFor: this.OutputDonorEligibilityNeededFor            
+            donorEligibilityFor: this.otherRecTypes.find(item => item.value === (this.OutputDonorEligibilityType || ''))?.label              
         });
         
         console.log('****RecurringPatternScheduler.calculateDates() Completed result: ' + JSON.stringify(result));
@@ -766,7 +751,7 @@ export default class RecurringPatternScheduler extends LightningElement {
                     occurance: this.OutputMonthDayOccuranceValue,
                     monthlyRecurrence: this.monthlyFrequencyValue,
                     dayOfMonth: this.OutputMonthDayValue, 
-                    donorEligibilityFor: this.OutputDonorEligibilityNeededFor     
+                    donorEligibilityFor: this.otherRecTypes.find(item => item.value === (this.OutputDonorEligibilityType || ''))?.label       
                 });
                 console.log('****RecurringPatternScheduler.calculateDatesAsync() Calling Server Complete');
                 resolve(result);
