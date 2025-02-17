@@ -463,19 +463,20 @@ public with sharing class TaskService {
     */
     public static void assignDefaultTaskOwner(List<Task> newList){
         final List<String> subjectList = new List<String>{BSF_Constants.POST_DRIVE_ANALYSIS_TASK_AM,BSF_Constants.POST_DRIVE_ANALYSIS_TASK_SBPM};
-        final Map<String, Id> dataSet = new Map<String,Id>{BSF_Constants.AREA_BOOKING_MANAGER => null, BSF_Constants.ACCOUNT_MANAGER => null, BSF_Constants.ACCOUNT_SPECIALIST => null, BSF_Constants.DISTRICT_MANAGER => null, BSF_Constants.OPPORTUNITY_OWNER => null};
-        final List<String> hierarchy = new List<String>{BSF_Constants.AREA_BOOKING_MANAGER, BSF_Constants.ACCOUNT_MANAGER, BSF_Constants.ACCOUNT_SPECIALIST, BSF_Constants.DISTRICT_MANAGER,BSF_Constants.OPPORTUNITY_OWNER};
+        final Map<String, Id> dataSet = new Map<String,Id>{BSF_Constants.AREA_BOOKING_MANAGER => null, BSF_Constants.ACCOUNT_MANAGER => null, BSF_Constants.ACCOUNT_SPECIALIST => null, BSF_Constants.DISTRICT_MANAGER => null, 
+                                                            BSF_Constants.OPPORTUNITY_OWNER => null, BSF_Constants.DRD_SYSTEM_USER => getDRDSystemUser()};
+        final List<String> hierarchy = new List<String>{BSF_Constants.AREA_BOOKING_MANAGER, BSF_Constants.ACCOUNT_MANAGER, BSF_Constants.ACCOUNT_SPECIALIST, BSF_Constants.DISTRICT_MANAGER,BSF_Constants.DRD_SYSTEM_USER};
         Map<Id, Map<String, Id>> opportunityRolesMap =  new Map<Id, Map<String, Id>>();
         Map<String, String> metadataMap = new Map<String, String>();
         for(Task_Reassignment_Matrix__mdt mtdt : Task_Reassignment_Matrix__mdt.getAll().values()){
             if(String.isNotBlank(mtdt.Task_Subject__c) && subjectList.contains(mtdt.Task_Subject__c)
-                    && String.isNotBlank(mtdt.Assigned_To__c) && dataSet.containsKey(mtdt.Assigned_To__c.trim())){
+                    && String.isNotBlank(mtdt.Assigned_To__c) && hierarchy.contains(mtdt.Assigned_To__c.trim())){
                         metadataMap.put(mtdt.Task_Subject__c, mtdt.Assigned_To__c.trim());
             }  
         }
         for(Task tsk : newList){
             if(String.isNotBlank(tsk.Subject) && metadataMap.containsKey(tsk.Subject)
-                && tsk.WhatId != null && tsk.OwnerId == null 
+                && tsk.WhatId != null //&& tsk.OwnerId == null 
                 && tsk.WhatId.getSObjectType() == Schema.Opportunity.SObjectType){
                     opportunityRolesMap.put(tsk.WhatId,new Map<String,Id>(dataSet));
             }
@@ -491,7 +492,6 @@ public with sharing class TaskService {
                                                     FROM OpportunityTeamMembers) 
                                             FROM Opportunity 
                                             WHERE Id IN: opportunityRolesMap.keySet()];
-            
             for(Opportunity opp : oppList){
                 if(opp.Account_Manager__c != null){
                     opportunityRolesMap.get(opp.Id).put(BSF_Constants.ACCOUNT_MANAGER,opp.Account_Manager__c);
@@ -513,7 +513,7 @@ public with sharing class TaskService {
             }
             for(Task tsk : newList){
                 if(String.isNotBlank(tsk.Subject) && metadataMap.containsKey(tsk.Subject)
-                    && tsk.WhatId != null && tsk.OwnerId == null 
+                    && tsk.WhatId != null //&& tsk.OwnerId == null 
                     && opportunityRolesMap.containsKey(tsk.WhatId)){
                         Boolean cascade = false;
                         for(String role : hierarchy){
@@ -528,6 +528,15 @@ public with sharing class TaskService {
                 }
             }
         }
+    }
+    public static Id getDRDSystemUser(){
+        Id drdSystemUserId;
+        if(String.isNotBlank(System.label.DRD_System_User_Name)){
+            for(User u : [SELECT Id FROM User WHERE Name = :System.label.DRD_System_User_Name LIMIT 1]){
+                drdSystemUserId = u.Id;
+            }
+        }
+        return drdSystemUserId;
     }
     // HRP-13426 --> end
 }
