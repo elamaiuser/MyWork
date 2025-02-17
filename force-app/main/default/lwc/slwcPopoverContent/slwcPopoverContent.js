@@ -101,25 +101,21 @@ export default class SlwcPopoverContent extends LightningElement {
     get resourceAllocations() {      
       let allocations = [];
       if (this.popoverData && this.popoverData.jobs && this.popoverData.jobs.length > 0) {
-        this.popoverData.jobs.forEach(job => {
-          console.log(':::TPE::: job.jobAllocations', JSON.stringify(job.jobAllocations));
-          job.jobAllocations.forEach(allocation => {
-            console.log(':::TPE::: allocation.status', JSON.stringify(allocation.status));
+        this.popoverData.jobs.forEach(job => {          
+          job.jobAllocations.forEach(allocation => {            
             if (allocation.status != JOB_ALLOCATION_STATUS.DELETED) {
               allocations.push({
-                id: allocation.id,
-                resourceName: allocation.resourceName,                
+                id: allocation.id || allocation.key,
+                resourceName: allocation.resourceName || allocation.resource.name,                
                 resourceRole: job.resourceRole || job.assetType                
               });
             }
           });
         });        
-      }
-      console.log(':::TPE::: allocations', JSON.stringify(allocations));
+      }      
       return allocations;
     }
-    render() {
-      console.log(':::TPE::: this.popoverContentMap[this.name]', JSON.stringify(this.popoverContentMap[this.name]));
+    render() {      
       return this.popoverContentMap[this.name];
     }
 
