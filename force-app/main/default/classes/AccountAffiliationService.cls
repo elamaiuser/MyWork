@@ -1,3 +1,13 @@
+/* 
+ * @Description: This class is used to serve different Account affiliation object related functionalities and is called from AccountAffiliationTriggerHandler.
+ 
+ * Modification Log 
+ * Date					     Developer Name			     Comments
+ * *********************************************************************************
+ * 02/15/2025				   Priti Jana		      Logic for HRP-14275
+ ***********************************************************************************
+ */ 
+
 public with sharing class AccountAffiliationService {
     
      public static void createHistoryOnAccAffiliation( list<Account_Marketing_Program__c> accAffiliatonCreatedList, String triggerContext){
@@ -217,14 +227,17 @@ public with sharing class AccountAffiliationService {
 
     public static void RemovalOfAffiliationList(list<Account_Marketing_Program__c> accAffiliationList, String programName){
         Set<Id> accountIds = new Set<Id>();
+        Set<Id> otherAccountIds = new Set<Id>();
         List<Account> accountsToUpdate = new List<Account>();
         List<Marketing_Program__c> marketingPgms = [SELECT Id FROM Marketing_Program__c WHERE Name = :programName AND RecordType.Name = :BSF_Constants.AFFILIATION_RECORD_TYPE2 LIMIT 1];
 
         for(Account_Marketing_Program__c amp : accAffiliationList){
             if(amp.Date_Removed__c != null && 
-               amp.Date_Removed__c < System.today() && 
+               amp.Date_Removed__c <= System.today() && 
                amp.Marketing_Program__c == marketingPgms[0].Id){
                 accountIds.add(amp.Account__c);
+            }else if(amp.Marketing_Program__c == marketingPgms[0].Id && (amp.Date_Removed__c == null || amp.Date_Removed__c > System.today())){
+                otherAccountIds.add(amp.Account__c);
             }
         }       
 
@@ -235,7 +248,16 @@ public with sharing class AccountAffiliationService {
                     Is_Hospital_Contract_Partner__c = false
                 ));
             }
-        }        
+        }
+        
+        if(!otherAccountIds.isEmpty()){            
+            for(Id accId : otherAccountIds){
+                accountsToUpdate.add(new Account(
+                    Id = accId,
+                    Is_Hospital_Contract_Partner__c = true
+                ));
+            }
+        }
 
         AccountTeamMemberHelper.skipAccountTrigger=true;
         update accountsToUpdate;
@@ -269,7 +291,6 @@ public with sharing class AccountAffiliationService {
     }
    public static void AccountAffiliationDateValidation(list<Account_Marketing_Program__c> accAffiliatonCreatedList)
     {
-        system.debug('Its here');
         set<String> affKeySet = new set<String>();
         for(Account_Marketing_Program__c amp : accAffiliatonCreatedList)
         {
@@ -282,7 +303,6 @@ public with sharing class AccountAffiliationService {
         map<String,Account_Marketing_Program__c> affKeyAffiliationMap = new map<string,Account_Marketing_Program__c>();
         for(Account_Marketing_Program__c amp : existingAffiliationList)
         {
-             system.debug('Its here 138');
             affKeyAffiliationMap.put(amp.Account_Affiliation_External_Key__c,amp);
         }
         
@@ -290,52 +310,47 @@ public with sharing class AccountAffiliationService {
         list<Account_Marketing_Program__c> updatedAffList = new list<Account_Marketing_Program__c>();
         for(Account_Marketing_Program__c amp : accAffiliatonCreatedList)
         {
-            if(affKeyAffiliationMap!=null){
-                   Account_Marketing_Program__c accMp = new Account_Marketing_Program__c();
-                   accMp = affKeyAffiliationMap.get(amp.Account_Affiliation_External_Key__c);
-                   system.debug('Its here 146:'+accMp);
-                   Date oldDassign = accMp.Date_Assigned__c;
-                   Date newDassign = amp.Date_Assigned__c;
-                   Date oldDremove = accMp.Date_Removed__c;
-                   Date newDremove = amp.Date_Removed__c;
-                   boolean isupdate = false;
+            if(affKeyAffiliationMap!=null) {
+                Account_Marketing_Program__c accMp = new Account_Marketing_Program__c();
+                accMp = affKeyAffiliationMap.get(amp.Account_Affiliation_External_Key__c);
+                Date oldDassign = accMp.Date_Assigned__c;
+                Date newDassign = amp.Date_Assigned__c;
+                Date oldDremove = accMp.Date_Removed__c;
+                Date newDremove = amp.Date_Removed__c;
+                boolean isupdate = false;
+            
+                amp.Date_Assigned__c = oldDassign;
+                amp.Date_Removed__c  = oldDremove;
+
+                if(oldDassign != newDassign) {
+
+                    if(oldDassign > system.today() || oldDassign == NULL) { //HRP-14275
+                        amp.Date_Assigned__c = newDassign;
+                        isupdate = true;
+                    }
+                }
                 
-                   amp.Date_Assigned__c = oldDassign;
-                   amp.Date_Removed__c  = oldDremove;
-                   if(oldDassign != newDassign)
-                   {
-                     if((oldDassign > system.today()))
-                     {
-                         system.debug('Its here 138');
-                       amp.Date_Assigned__c = newDassign;
-                       isupdate = true;
-                     }
-                   }
-                   
-                   if(oldDremove != newDremove)
-                   {
-                       system.debug('Its here 138');
-                       amp.Date_Removed__c = newDremove;
-                       isupdate = true;
-                   }
-                   if(oldDremove < system.today())
-                   {
-                       system.debug('Its here 138');
-                     amp.Date_Assigned__c =  newDassign;
-                     amp.Date_Removed__c  =  newDremove; 
-                     isupdate = true;
-                   }
-                   if(isupdate)
+                if(oldDremove != newDremove)
+                {
+                    amp.Date_Removed__c = newDremove;
+                    isupdate = true;
+                }
+                if(oldDremove < system.today())
+                {
+                    amp.Date_Assigned__c =  newDassign;
+                    amp.Date_Removed__c  =  newDremove; 
+                    isupdate = true;
+                }
+                if(isupdate)
                 {
                     updatedAffList.add(amp);
                 }
-                }
-            system.Debug(amp);
-              }
+            }
+        }
         
         if(!updatedAffList.isEmpty())
         {
             createHistoryOnAccAffiliation(updatedAffList, 'Update'); 
         }
-        }
+    }
 }

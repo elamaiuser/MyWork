@@ -8,6 +8,8 @@
     <types>
 		<members>BSF_setting__c.Donor_Eligibility_Day_for_2RBC__c</members>
 		<members>BSF_setting__c.Donor_Eligibility_Day_for_WB__c</members>
+		<members>BSF_setting__c.Is_Donor_Eligibility_Msg_Needed__c</members>
+		<members>BSF_setting__c.Donor_Eligibility_Msg__c</members>
 		<name>CustomField</name>
 	</types>
 	<types>
