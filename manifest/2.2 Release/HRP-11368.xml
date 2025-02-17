@@ -35,6 +35,7 @@
 	</types>
     <types>
 		<members>Profile_Specific_Functionality_Access.Adhoc_Calendar_Build_Setting</members>
+        <members>Profile_Specific_Functionality_Access.Adhoc_Calendar_Build_Group_Setting</members>
 		<name>CustomMetadata</name>
 	</types>
 	<types>
