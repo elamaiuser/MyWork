@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomMetadata xmlns="http://soap.sforce.com/2006/04/metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-    <label>BPL Donors</label>
+    <label>Recruitment Planning Meeting Scheduled</label>
     <protected>false</protected>
     <values>
         <field>Column__c</field>
@@ -12,8 +12,11 @@
     </values>
     <values>
         <field>Help_Text__c</field>
-        <value xsi:type="xsd:string">DS Recruitment is responsible for entering paper appointment names into the BDMP.
-Discuss use of Book Now app or continued need for a paper schedule for the future drive.</value>
+        <value xsi:type="xsd:string">Recruitment Meeting should include committee members, other volunteers, senior leadership, or other influencers. 
+
+To prepare for the Recruitment Meeting, the BPL can brainstorm recruitment ideas, develop a social media plan, determine how to communicate to donors, and formulate ideas for new donors. 
+
+Also, use this meeting to schedule dates for presentations, etc., and review expectations for the next steps, including internal marketing and sponsor recruitment strategies.</value>
     </values>
     <values>
         <field>Hyperlink__c</field>
@@ -33,7 +36,7 @@ Discuss use of Book Now app or continued need for a paper schedule for the futur
     </values>
     <values>
         <field>Order__c</field>
-        <value xsi:type="xsd:double">16.0</value>
+        <value xsi:type="xsd:double">8.0</value>
     </values>
     <values>
         <field>Parent__c</field>
@@ -49,7 +52,7 @@ Discuss use of Book Now app or continued need for a paper schedule for the futur
     </values>
     <values>
         <field>Subject__c</field>
-        <value xsi:type="xsd:string">Recruitment Planning Meeting</value>
+        <value xsi:type="xsd:string">Sponsor Planning Meeting</value>
     </values>
     <values>
         <field>Subtype__c</field>
@@ -57,10 +60,10 @@ Discuss use of Book Now app or continued need for a paper schedule for the futur
     </values>
     <values>
         <field>UI_Text__c</field>
-        <value xsi:type="xsd:string">If BPL declines to add donors online, provide paper schedule (pulled from BDMP) for donor appointments, including donors already scheduled online.</value>
+        <value xsi:type="xsd:string">Recruitment Planning Meeting Scheduled</value>
     </values>
     <values>
         <field>Unique_Name__c</field>
-        <value xsi:type="xsd:string">BPL_Donors_Online</value>
+        <value xsi:type="xsd:string">Recruitment_Planning_Meeting_Scheduled</value>
     </values>
 </CustomMetadata>

@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomMetadata xmlns="http://soap.sforce.com/2006/04/metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-    <label>BPL Donors</label>
+    <label>Confirm blood drive logistics sponsor</label>
     <protected>false</protected>
     <values>
         <field>Column__c</field>
-        <value xsi:type="xsd:double">2.0</value>
+        <value xsi:type="xsd:double">1.0</value>
     </values>
     <values>
         <field>Field_Mapping_Object__c</field>
@@ -12,12 +12,17 @@
     </values>
     <values>
         <field>Help_Text__c</field>
-        <value xsi:type="xsd:string">DS Recruitment is responsible for entering paper appointment names into the BDMP.
-Discuss use of Book Now app or continued need for a paper schedule for the future drive.</value>
+        <value xsi:type="xsd:string">If applicable, confirm RTV and/or APS requests.
+
+If new site change occurs, ensure proper site verification is completed, reference the Site Playbook.
+
+Ensure that room is reserved for two hours prior to drive start time and two hours after the drive end time.
+
+If Sponsor requests a legal agreement, reference the Red Cross approved Temporary License Agreement.</value>
     </values>
     <values>
         <field>Hyperlink__c</field>
-        <value xsi:nil="true"/>
+        <value xsi:type="xsd:string">https://americanredcross.sharepoint.com/teams/TheField/Donor%20Recruitment/Forms/AllItems.aspx?id=%2Fteams%2FTheField%2FDonor%20Recruitment%2FDrive%20Planning%2FPlanning%20Support%20Tools%2FSite%20Tools%20%28found%20within%20playbook%29%2FRevocable%20Temporary%20License%20Agreement%2Epdf&amp;parent=%2Fteams%2FTheField%2FDonor%20Recruitment%2FDrive%20Planning%2FPlanning%20Support%20Tools%2FSite%20Tools%20%28found%20within%20playbook%29</value>
     </values>
     <values>
         <field>Input_API_Name__c</field>
@@ -33,7 +38,7 @@ Discuss use of Book Now app or continued need for a paper schedule for the futur
     </values>
     <values>
         <field>Order__c</field>
-        <value xsi:type="xsd:double">16.0</value>
+        <value xsi:type="xsd:double">3.0</value>
     </values>
     <values>
         <field>Parent__c</field>
@@ -49,7 +54,7 @@ Discuss use of Book Now app or continued need for a paper schedule for the futur
     </values>
     <values>
         <field>Subject__c</field>
-        <value xsi:type="xsd:string">Recruitment Planning Meeting</value>
+        <value xsi:type="xsd:string">Sponsor Planning Meeting</value>
     </values>
     <values>
         <field>Subtype__c</field>
@@ -57,10 +62,10 @@ Discuss use of Book Now app or continued need for a paper schedule for the futur
     </values>
     <values>
         <field>UI_Text__c</field>
-        <value xsi:type="xsd:string">If BPL declines to add donors online, provide paper schedule (pulled from BDMP) for donor appointments, including donors already scheduled online.</value>
+        <value xsi:type="xsd:string">Confirm blood drive logistics</value>
     </values>
     <values>
         <field>Unique_Name__c</field>
-        <value xsi:type="xsd:string">BPL_Donors_Online</value>
+        <value xsi:type="xsd:string">Confirm_blood_drive_logistics</value>
     </values>
 </CustomMetadata>
