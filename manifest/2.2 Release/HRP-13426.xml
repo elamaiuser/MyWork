@@ -6,6 +6,8 @@
         <members>BSFTaskChecklistTriggerHandler</members>
         <members>TaskChecklistController</members>
         <members>TaskTriggerHandler</members>
+        <members>TaskTriggerTest</members>
+        <members>BSFTaskChecklistTriggerTest</members>
         <name>ApexClass</name>
     </types>
     <types>
@@ -23,7 +25,31 @@
         <members>Task_Report_Link.Same_Day_Rebooking_Results_AM</members>
         <members>Task_Reassignment_Matrix.Post_Drive_Analysis_AM</members>
         <members>Task_Reassignment_Matrix.Post_Drive_Analysis_SBPM</members>
+        <members>Task_Checklist_Setting.After_Drive_Analysis1</members>
+        <members>Task_Checklist_Setting.Updated_Anticipated_Donors1</members>
+        <members>Task_Checklist_Setting.Annual_Account_Strategy1</members>
+        <members>Task_Checklist_Setting.Account_Strategy_Notes1</members>
+        <members>Task_Checklist_Setting.Gray_Sky_Account1</members>
+        <members>Task_Checklist_Setting.Future_dates_confirmed_by_BPL1</members>
+        <members>Task_Checklist_Setting.Dates_need_to_confirmed_moved_cancelled1</members>
+        <members>Task_Checklist_Setting.Update_Rollover_Consideration1</members>
+        <members>Task_Checklist_Setting.After_Drive_Analysis2</members>
+        <members>Task_Checklist_Setting.Contacted_sponsor_provided_drive_result2</members>
+        <members>Task_Checklist_Setting.Early_Close_affiliation_drive2</members>
+        <members>Task_Checklist_Setting.Sponsor_Satisfaction_Survey_with_BPL2</members>
+        <members>Task_Checklist_Setting.What_can_be_improved_for_future_drives2</members>
+        <members>Task_Checklist_Setting.Customer_service_issues_addressed2</members>
+        <members>Task_Checklist_Setting.Customer_Service_Issues2</members>
+        <members>Task_Checklist_Setting.Highlights_and_Feedback2</members>
         <name>CustomMetadata</name>
     </types>
+    <types>
+		<members>Task_Creation_on_Drive_Status_Complete</members>
+		<name>Flow</name>
+	</types>
+    <types>
+		<members>DRD_System_User_Name</members>
+		<name>CustomLabel</name>
+	</types>
 	<version>60.0</version>
 </Package>
