@@ -154,6 +154,9 @@ export default class SlwcExceptionList extends LightningElement {
         let query = new exceptionQueryModel();
 
         let exceptionCodes = [];
+        let driveTypes = [];
+        let operationTypes = [];
+        let resourceDriveTypes = [];
         if (this.exceptionType === "drive") {
             query.exceptionType = "drive";
             const territoryKeys = this.territoryKeys;
@@ -162,14 +165,20 @@ export default class SlwcExceptionList extends LightningElement {
             }
             query.territoryKeys = territoryKeys;
             exceptionCodes = this.filters.exceptionCodes;
+            driveTypes = this.filters.driveTypes;
+            operationTypes = this.filters.operationTypes;
         }
         else if (this.exceptionType === "resource") {
+            resourceDriveTypes = this.filters.resourceDriveTypes;
             query.exceptionType = "resource";
             exceptionCodes.push("RESOURCE_DUPLICATE_SENIORITY_RANKING");
         }
 
         query.exceptionCodes = exceptionCodes;
         query.priorities = this.filters.priorities;
+        query.driveTypes = driveTypes;
+        query.operationTypes = operationTypes;
+        query.resourceDriveTypes = resourceDriveTypes;
         query.statuses = this.filters.statuses;
         query.startDate  = this.filters.startDate;
         query.endDate = this.filters.endDate;
