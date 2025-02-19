@@ -300,8 +300,13 @@ class SlwcAvailator {
       });
 
       resource.jobAllocations = (resource.jobAllocations || []).map((item) => {
+        console.log(' item.job->'+JSON.stringify(item.job));
+
         item.latitude = item.job.latitude;
         item.longitude = item.job.longitude;
+        item.driveName = item.job.driveName;
+
+        console.log(' item.driveName2->'+item.job.driveName);
         if (item.startWithTravelTime) {
           item.start = item.startWithTravelTime;
         }
@@ -366,6 +371,7 @@ class SlwcAvailator {
     let jobAllocations = (data || []).map((skedJobAllocation) => {
       let jobAllocation = autoMapper.autoMapperInstance.mapTo('sked__Job_Allocation__c', skedJobAllocation);
       this.populateDateTime(jobAllocation);
+      console.log('jobAllocation->'+jobAllocation);
       return jobAllocation;
     });
     jobAllocations = orderBy(jobAllocations, ['start'], ['asc']);
@@ -461,6 +467,7 @@ class SlwcAvailator {
         request.recordIds = additionalFilters.recordIds;
       }
     }
+    console.log('request->'+JSON.stringify(request));
     let service = new jobAllocationService();
     return service.getResourceData({request : request})
       .then((result) => {
@@ -1563,7 +1570,8 @@ class SlwcAvailator {
       console.log('>>> Start building data', new Date());
 
       let resourcesMap = keyBy(this.resources, "id");
-      
+      console.log('>>> resourcesMap'+JSON.stringify(resourcesMap));
+
       let inputDates = compact(uniqBy(
         this.jobs.map((item) => {
           return item.startDate;
@@ -1800,7 +1808,7 @@ class SlwcAvailator {
                     restrictedTagNames.push(resourceTag.tag.name);
                   }
                 }
-                //console.log('slwc Availator => tagStartDateValid =>',tagStartDateValid,' validTagNames=>',validTagNames,' restrictedTagNames=>',restrictedTagNames);
+                //console.log('slwc Availator ==> tagStartDateValid =>',tagStartDateValid,' validTagNames=>',validTagNames,' restrictedTagNames=>',restrictedTagNames);
               });
               (job.jobTags || []).forEach((jobTag) => {
                 if (!jobTag.tag) return;
@@ -1879,7 +1887,8 @@ class SlwcAvailator {
                     jobId: job.id,
                     resourceId: resource.id,
                     exception: "",
-                    exceptionCode: "RESOURCE_TIME_CONFLICT"
+                    exceptionCode: "RESOURCE_TIME_CONFLICT",
+                    eventURL:""
                   };
                   if (event.objectType === OBJECT_TYPE.NON_WORKING) {
                     isResourceQualified = false;
@@ -1892,9 +1901,24 @@ class SlwcAvailator {
                       exception.exception = event.eventType;
                     }
                     else if (event.objectType == OBJECT_TYPE.ACTIVITY) {
+                      exception.exception = "Conflict with " + event.activityTitle;//HRP-12840
+
                       exception.activityId = event.id;
                     }
                     else if (event.objectType == OBJECT_TYPE.JOB_ALLOCATION) {
+                      //alert(event);
+                      //alert('event.driveName:'+event.driveName);
+                      console.log('Anil2-> '+JSON.stringify(event));
+                      let baseUrl = window.location.origin;
+                      console.log(baseUrl);
+                      let fullUrl=baseUrl+'/lightning/r/sked_Drive__c/'+event.driveId+'/view';
+                      exception.eventURL=fullUrl;
+                     // <a id="baseUrl" href="fullUrl" target="_blank">event.driveName</a>
+                      let fullUrlDisplay="<a href="+fullUrl+" target=_blank>"+event.driveName+"</a>";
+                      exception.exception = "Conflict with "+event.driveName;//HRP-12840
+                      //prompt(fullUrlDisplay);
+                    
+                      console.log('Full URL->'+baseUrl+'/lightning/r/sked_Drive__c/'+event.driveId+'/view');
                       exception.conflictedJobAllocationId = event.id;
                     }
                   }
