@@ -1,3 +1,10 @@
+/** **********************************************************************************************************************************************
+* Modification Log 
+*  Date                          Developer Name                 Comments
+* ***********************************************************************************************************************************************
+* 02/18/2025                     Satyendra Vishwakarma          Logic for HRP-13589 (Replaced the platform event from sked_Future_Call_Event__e to sked_DriveVehicle_Type_Sync_Event__e)
+* ***********************************************************************************************************************************************
+*/
 public class skedJobAllocationHandler extends skedTriggerHub implements Callable {
     private static final List<String> PERMITTED_INSERT_EDIT_PROFILES = new List<String>{
         'Global Admin', 'System Administrator', 'APS Admin', 'Collections', 'Collection Management'
@@ -516,7 +523,8 @@ public class skedJobAllocationHandler extends skedTriggerHub implements Callable
             jobAllocationIds.add(newRecord.Id);
         }
         if (!System.isBatch() && !jobAllocationIds.isEmpty()) {
-            skedFutureCallEventHandler.publishFutureCallEvent(
+            //HRP-13589 : Replaced the platform event from sked_Future_Call_Event__e to sked_DriveVehicle_Type_Sync_Event__e
+            skedDriveVehicleTypeSyncEventTrigHandler.publishFutureCallEvent(
                 skedJobAllocationHandler.class.getName(),
                 'performDriveVehicleTypeSync',
                 jobAllocationIds
@@ -537,7 +545,8 @@ public class skedJobAllocationHandler extends skedTriggerHub implements Callable
             }
         }
         if (!System.isBatch() && !jobAllocationIds.isEmpty()) {
-            skedFutureCallEventHandler.publishFutureCallEvent(
+            //HRP-13589 : Replaced the platform event from sked_Future_Call_Event__e to sked_DriveVehicle_Type_Sync_Event__e
+            skedDriveVehicleTypeSyncEventTrigHandler.publishFutureCallEvent(
                 skedJobAllocationHandler.class.getName(),
                 'performDriveVehicleTypeSync',
                 jobAllocationIds
@@ -548,15 +557,20 @@ public class skedJobAllocationHandler extends skedTriggerHub implements Callable
     }
     
     public static void performDriveVehicleTypeSync(Set<Id> jobAllocationIds) {
-        List<sked__Job_Allocation__c> inputJobAllocations = [SELECT Id, sked__Job__r.sked_Drive__c
+        List<sked__Job_Allocation__c> inputJobAllocations = [SELECT Id, sked__Job__r.sked_Drive__c,sked__Status__c,
+                                                            sked__Job__r.sked_Drive__r.sked_Vehicle_Types__c
                                                              FROM sked__Job_Allocation__c
                                                              WHERE Id IN :jobAllocationIds
                                                              AND sked__Job__r.sked_Drive__c != NULL
                                                              AND sked__Job__r.sked_Asset_Type__c = 'Vehicle'];
         Set<Id> driveIds = new Set<Id>();
+        Map<String,String> jobAllocationDriveIdVsStatusMap = new Map<String,String>();
         for (sked__Job_Allocation__c inputJobAllocation : inputJobAllocations) {
             driveIds.add(inputJobAllocation.sked__Job__r.sked_Drive__c);
+            jobAllocationDriveIdVsStatusMap.put(inputJobAllocation.sked__Job__r.sked_Drive__c,inputJobAllocation.sked__Job__r.sked_Drive__r.sked_Vehicle_Types__c);
         }
+        System.debug('driveIds =>'+driveIds);
+        System.debug('jobAllocationDriveIdVsStatusMap =>'+jobAllocationDriveIdVsStatusMap);
         if (!driveIds.isEmpty()) {
             List<sked__Job_Allocation__c> skedJobAllocations = [SELECT Id, sked__Job__r.sked_Drive__c, sked__Resource__r.sked__Category__c,
                                                                 sked__Resource__r.sked_Pres_Donor_Capacity__c,
@@ -577,7 +591,7 @@ public class skedJobAllocationHandler extends skedTriggerHub implements Callable
                 }
                 vehicleAllocations.add(skedJobAllocation);
             }
-            
+            System.debug('map_driveId_vehicleAllocations =>'+map_driveId_vehicleAllocations);
             if (!map_driveId_vehicleAllocations.isEmpty()) {
                 List<sked_Drive__c> drivesToUpdate = new List<sked_Drive__c>();
                 for (string driveId : map_driveId_vehicleAllocations.keySet()) {
@@ -617,6 +631,23 @@ public class skedJobAllocationHandler extends skedTriggerHub implements Callable
                     drivesToUpdate.add(skedDrive);
                 }
                 update drivesToUpdate;
+            }else{
+                System.debug('Drive Vehicle Type update jobAllocationDriveIdVsStatusMap =>'+jobAllocationDriveIdVsStatusMap);
+                List<sked_Drive__c> drivesToUpdate = new List<sked_Drive__c>();
+                for(String driveId : driveIds){
+                    if(jobAllocationDriveIdVsStatusMap !=null && jobAllocationDriveIdVsStatusMap.containsKey(driveId) && jobAllocationDriveIdVsStatusMap.get(driveId)!=''){
+                        sked_Drive__c skedDrive = new sked_Drive__c(
+                            Id = driveId,
+                            sked_Vehicle_Types__c = ''
+                        );
+                        drivesToUpdate.add(skedDrive);
+                    }
+                }
+                System.debug('drivesToUpdate : '+drivesToUpdate);
+                if(drivesToUpdate != null && !drivesToUpdate.isEmpty() ){
+                    update drivesToUpdate;
+                    System.debug('Drive Vehicle Type update with blank');
+                } 
             }
         }
     }
