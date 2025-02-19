@@ -1,6 +1,6 @@
 global class BSF_Batch_UserEmailVerificationFollowup implements Database.Batchable<SObject> {
 
-	global String queryClause = 'HasUserVerifiedEmailAddress = false AND User.IsActive = true';
+	global String queryClause = 'HasUserVerifiedEmailAddress = false';
 	
     global BSF_Batch_UserEmailVerificationFollowup(){}
         
