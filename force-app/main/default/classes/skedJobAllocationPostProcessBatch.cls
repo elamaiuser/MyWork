@@ -460,7 +460,7 @@ global class skedJobAllocationPostProcessBatch implements Schedulable, Database.
             SELECT Id, Name, sked__Start__c, sked__Finish__c, sked__GeoLocation__c, sked__Type__c, sked__Duration__c,
             sked_Drive__c, sked_Drive__r.sked_Account__c, sked_Drive__r.sked_Drive_Site__c, sked_Drive_Shift__c,
             sked_Start_Date__c, sked_Finish_Date__c, sked_Drive__r.sked_Drive_Date__c, sked_Drive__r.sked_Collection_Operation__c,
-            sked_Drive__r.sked_Linked_Drives__c, sked_Asset_Type__c,
+            sked_Drive__r.sked_Linked_Drives__c, sked_Asset_Type__c,sked_Drive__r.Name,//HRP-12840
             (SELECT Id, sked__Tag__c, sked__Tag__r.Name
             FROM sked__JobTags__r)
             FROM sked__Job__c
@@ -839,7 +839,7 @@ global class skedJobAllocationPostProcessBatch implements Schedulable, Database.
             unavailability.startTime = skedAllocation.sked__Start__c;
             unavailability.endTime = skedAllocation.sked__Set_End__c;
             unavailability.exceptionCode = skedConstants.EXCEPTION_CODE_RESOURCE_TIME_CONFLICT;
-            unavailability.exceptionText = 'Conflict with ' + skedAllocation.Name;
+            unavailability.exceptionText = 'Conflict with ' + skedAllocation.sked__Job__r.sked_Drive__r.Name; //HRP-12840
             unavailability.relatedEventFieldApi = 'skedHC__Job_Allocation__c';
             unavailability.recordId = skedAllocation.Id;
             unavailability.jobId = skedAllocation.sked__Job__c;
