@@ -38,6 +38,7 @@
         <members>skedDriveHandler</members>
         <members>skedDriveTrigger_Test</members>
 		<members>skedDriveRankingBatch</members>
+		<members>skedFutureCallPostCommitEventHandler</members>
 		<members>skedImmediateRefreshTravelTimeIndexBatch</members>
         <members>skedJobAllocationHandler</members>
         <members>skedJobAllocationTrigger_Test</members>
@@ -77,6 +78,7 @@
 	<types>
 		<members>AdhocCalendarBuildRunEvent</members>
 		<members>assignResourcesToUsersBasedOnConfig</members>
+		<members>skedFutureCallPostCommitEventTrigger</members>
 		<name>ApexTrigger</name>
 	</types>
 	<types>
@@ -109,6 +111,9 @@
 		<members>sked__Location__c.sked_Unloading_Directions_Details__c</members>
 		<members>sked_Drive__c.Max_Role_Capacity__c</members>		
 		<members>sked_Drive__c.Max_Role_Capacity_With_Draw_Hours__c</members>
+		<members>sked_Future_Call_Post_Commit_Event__e.sked_Class_Name__c</members>
+		<members>sked_Future_Call_Post_Commit_Event__e.sked_Method_Name__c</members>
+		<members>sked_Future_Call_Post_Commit_Event__e.sked_Parameter_1_Data__c</members>
 		<members>Task_Checklist_Setting__mdt.Field_Mapping_Object__c</members>
         <members>BSF_Task_Checklist__c.Input_Number__c</members>
 		<members>Opportunity.Calendar_Build_Reasons_For_Unqualified__c</members>
@@ -217,6 +222,7 @@
 	<types>
 		<members>Adhoc_Calendar_Build_Run__e</members>
 		<members>Profile_Specific_Functionality_Access__mdt</members>
+		<members>sked_Future_Call_Post_Commit_Event__e</members>
 		<name>CustomObject</name>
 	</types>
 	<types>
