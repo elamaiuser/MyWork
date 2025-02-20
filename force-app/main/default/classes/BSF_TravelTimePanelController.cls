@@ -161,6 +161,9 @@ public without sharing class BSF_TravelTimePanelController {
         Map<Id,Location> stagingGeoLocationMap = new Map<Id,Location>();
         List<Id> stopDuplicateEnty_SC = new List<Id>();
 
+        String todayStr = Date.today().format();
+        String systemOverrideComment = BSF_Constants.SYSTEM_TTBD_OVERRIDE_COMMENT.replace('{0}',todayStr);
+
         List<sked_Site_Collection_Operation__c> siteCollectionOpData = [SELECT Id,
                                                                                 sked_Collection_Operation__c,
                                                                                 sked_Collection_Operation__r.Name,
@@ -325,7 +328,7 @@ public without sharing class BSF_TravelTimePanelController {
                 wrapper.direction = ttIndex_DirectionMap.get(ttRec.Id);
                 wrapper.systemOverride = false;
                 wrapper.travelTimeBreakdownData = new List<TravelTimeBreakdownData>();
-                if(ttRec.sked_Travel_Time_Breakdown_JSON__c != null && ttRec.sked_Travel_Time_Breakdown_JSON__c != 'NO DATA') {
+                if(ttRec.sked_Travel_Time_Breakdown_JSON__c != 'NO DATA') {
                     List<TravelTimeBreakdownJSON> jsonData = (List<TravelTimeBreakdownJSON>) JSON.deserialize(ttRec.sked_Travel_Time_Breakdown_JSON__c, List<TravelTimeBreakdownJSON>.class);
                     for(TravelTimeBreakdownJSON ttData : jsonData) {
                         wrapper.travelTimeBreakdownData.add(transformTTBDataToDataWrapper(ttData, wrapper.indexId));
@@ -337,7 +340,7 @@ public without sharing class BSF_TravelTimePanelController {
                         wrapper.travelTimeBreakdownData.add(transformTTBDataToDataWrapper(ttData, wrapper.indexId));
                         wrapper.userOverride = true;
                         wrapper.systemOverride = true;
-                        wrapper.overrideComment = 'Testing Comments for Backup JSON Data';
+                        wrapper.overrideComment = systemOverrideComment;
                     }
                 }
                 else {
@@ -346,7 +349,7 @@ public without sharing class BSF_TravelTimePanelController {
                         wrapper.travelTimeBreakdownData.add(transformTTBDataToDataWrapper(ttData, wrapper.indexId));
                         wrapper.userOverride = true;
                         wrapper.systemOverride = true;
-                        wrapper.overrideComment = 'Testing Comments for Empty Grid';
+                        wrapper.overrideComment = systemOverrideComment;
                     }
                 }
                 travelTimeDataWrap.add(wrapper);
