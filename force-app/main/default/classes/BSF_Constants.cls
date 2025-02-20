@@ -343,4 +343,11 @@ public class BSF_Constants {
 
     public static final String FEEDER_ONLY_ACCOUNT = 'Feeder Only';
     public static final String FEEDER_PLUS_ACCOUNT = 'Feeder Plus';
+
+    public static final String SYSTEM_TTBD_OVERRIDE_COMMENT = 'As of {0} System has failed to return valid Travel Time values. Manual override values are required. Re-attempt refresh by unchecking User Override checkbox and selecting banner option to manually refresh.';
+
+    //HRP-13426 --> 
+    public static final String POST_DRIVE_ANALYSIS_TASK_AM = 'Post Drive Analysis AM';
+    public static final String POST_DRIVE_ANALYSIS_TASK_SBPM = 'Post Drive Analysis SBPM';
+    public static final String DRD_SYSTEM_USER = 'DRD System UserM';
 }

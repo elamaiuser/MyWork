@@ -31,6 +31,10 @@
                 <behavior>Edit</behavior>
                 <field>sked_Travel_Distance_1__c</field>
             </layoutItems>
+            <layoutItems>
+                <behavior>Readonly</behavior>
+                <field>sked_Travel_Time_Index_CO2Site__c</field>
+            </layoutItems>
         </layoutColumns>
         <layoutColumns>
             <layoutItems>
@@ -56,6 +60,10 @@
             <layoutItems>
                 <behavior>Edit</behavior>
                 <field>sked_External_ID__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Readonly</behavior>
+                <field>sked_Travel_Time_Index_Site2CO__c</field>
             </layoutItems>
         </layoutColumns>
         <style>TwoColumnsTopToBottom</style>
