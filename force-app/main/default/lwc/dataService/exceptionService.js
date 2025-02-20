@@ -33,7 +33,7 @@ class exceptionService extends dataService {
         queryBuilder.addCondition({template: "sked_Drive__r.sked_Operation_Type__c IN {0}", value: query.operationTypes, type: "array_string"});
       }
       if (query.resourceDriveTypes && query.resourceDriveTypes.length) {
-        queryBuilder.addCondition({template: "skedHC__Resource__r.sked_Drive_Type__c IN {0}", value: query.resourceDriveTypes, type: "array_string"});
+        queryBuilder.addCondition({template: "skedHC__Resource__r.sked_Drive_Type__c INCLUDES {0}", value: query.resourceDriveTypes, type: "array_string"});
       }
       if (query.driveIds && query.driveIds.length) {
           queryBuilder.addCondition({template: "sked_Drive__c IN {0}", value: query.driveIds, type: "array_string"});
