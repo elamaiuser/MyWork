@@ -27,5 +27,6 @@
         <members>sked_Site_Collection_Operation__c-DRD Site Collection Operation Layout</members>
         <members>sked_Site_Collection_Operation__c-Site Collection Operation Layout</members>
         <name>Layout</name>
+    </types>
     <version>59.0</version>
 </Package>
