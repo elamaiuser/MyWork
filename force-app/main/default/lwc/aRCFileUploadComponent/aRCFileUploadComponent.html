@@ -1,73 +1,94 @@
 <template>
     <lightning-card>
-        <div id="parentdiv" style="padding: 10px;">
-            <div style="display: grid;">
-                <div style="display: inline-flex;">
-                    <div style="padding: 5px;padding-top: 8px;">
+        <div class="slds-p-around_medium">
+            <div class="slds-grid slds-gutters slds-wrap">
+                <!-- Type Selection Section -->
+                <div class="slds-col slds-size_1-of-4">
+                    <div class="slds-form-element slds-p-around_x-small">
                         <template if:true={typeoptions}>
                             <lightning-combobox
-                            name="availabletypes"
-                            label="Available Types"
-                            value={value}
-                            placeholder="Available Types"
-                            options={typeoptions}
-                            onchange={handleChange}
-                            required=true
-                            disabled={disableTypeselection}>
+                                name="availabletypes"
+                                label="Available Types"
+                                value={value}
+                                placeholder="Available Types"
+                                options={typeoptions}
+                                onchange={handleChange}
+                                required=true
+                                disabled={disableTypeselection}
+                                class="slds-form-element__control">
                             </lightning-combobox>
-                            <template for:each={showFileNames} for:item="fileName">
-                                <div key={fileName} style="max-width: 250px;">
-                                    <span style="color:red;">{fileName}</span>
-                                </div> 
-                            </template>                          
+                            <div class="slds-p-top_x-small">
+                                <template for:each={showFileNames} for:item="fileName">
+                                    <div key={fileName} class="slds-text-color_error slds-truncate" title={fileName}>
+                                        {fileName}
+                                    </div> 
+                                </template>
+                            </div>                          
                         </template>
-
-
-
                     </div>
+                </div>
 
-                    <div style="padding: 5px;">
-                        
+                <!-- Expiry Date Section -->
+                <div class="slds-col slds-size_1-of-4">
+                    <div class="slds-form-element slds-p-around_x-small">
+                        <lightning-input 
+                            type="date" 
+                            name="expiryDate"
+                            label="Expiry Date"
+                            value={expiryDate}
+                            onchange={handleExpiryDateChange}
+                            required
+                            class="slds-form-element__control">
+                        </lightning-input>
+                    </div>
+                </div>
 
+                <!-- File Upload Section -->
+                <div class="slds-col slds-size_1-of-4">
+                    <div class="slds-form-element slds-p-around_x-small">
                         <lightning-file-upload
-                        label="Upload files"
-                        name="fileUploader"
-                        accept={acceptedFormats}
-                        record-id={recordId}
-                        onuploadfinished={handleUploadFinished}
-                        disabled={disableUploadFile}
-                        multiple>
+                            label="Upload files"
+                            name="fileUploader"
+                            accept={acceptedFormats}
+                            record-id={recordId}
+                            onuploadfinished={handleUploadFinished}
+                            disabled={disableUploadFile}
+                            multiple
+                            class="slds-form-element__control">
                         </lightning-file-upload>
-
-
                     </div>
+                </div>
 
-                    <div style="padding: 5px;">
-                        <div class="lgc-bg" style="padding-top: 25px;">                            
-                                <lightning-button-icon icon-name="utility:add"  
+                <!-- Action Buttons Section -->
+                <div class="slds-col slds-size_1-of-4">
+                    <div class="slds-grid slds-grid_vertical-align-center slds-p-top_large">
+                        <div class="slds-p-horizontal_x-small">
+                            <lightning-button-icon 
+                                icon-name="utility:add"
+                                variant="brand"
+                                size="medium"
                                 alternative-text="add" 
-                                title="add" onclick={addRows}
-                                disabled={displayAddIcon}></lightning-button-icon>                          
-                                       
+                                title="Add Row"
+                                onclick={addRows}
+                                disabled={displayAddIcon}>
+                            </lightning-button-icon>
                         </div>
-                    </div>
-
-                    <div style="padding: 5px;">
-                        <div class="lgc-bg" style="padding-top: 25px;" >
-                            
+                        
+                        <div class="slds-p-horizontal_x-small">
                             <template if:true={displayDeleteIcon}>
-                                    <lightning-button-icon 
-                                    icon-name="utility:delete"  alternative-text="delete" 
-                                    title="delete" onclick={deleteRows}></lightning-button-icon> 
-                            </template>           
+                                <lightning-button-icon 
+                                    icon-name="utility:delete"
+                                    variant="destructive"
+                                    size="medium"
+                                    alternative-text="delete" 
+                                    title="Delete Row"
+                                    onclick={deleteRows}>
+                                </lightning-button-icon>
+                            </template>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        
-        
-
-        
     </lightning-card>
 </template>
