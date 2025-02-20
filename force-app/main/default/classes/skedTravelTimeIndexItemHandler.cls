@@ -14,6 +14,33 @@ public class skedTravelTimeIndexItemHandler extends skedTriggerHub  {
         if (!skedSetting.instance.Admin.migrationMode) {
             refreshTravelTimeIndexData(this.context.newMap.keySet());
         }
+
+        skedFutureCallPostCommitEventHandler.publishFutureCallEvent(
+            skedTravelTimeIndexItemHandler.class.getName(),
+            'populateTTILokkupFieldsOnSiteCO',
+            skedSObjectUtils.getRecordIds(this.context.newRecords)   
+        );
+
+    }
+
+    /******************************************** Callable Interface ********************************************/
+    public static Object call(String methodName, Map<String, Object> params) {
+        skedProcessEventResult result = new skedProcessEventResult();
+        try {
+            switch on methodName {
+                when 'populateTTILokkupFieldsOnSiteCO' {
+                    populateTTILokkupFieldsOnSiteCO((Set<Id>) JSON.deserialize((String) params.get('param1'), Set<Id>.class));
+
+                }
+                when else {
+                    throw new skedException('Unable to locate Method: ' + methodName + ' in Class: ' + skedTravelTimeIndexItemHandler.class.getName());
+                }
+            }
+        } catch (skedException ex) {
+            result.addError(ex);
+        }
+
+        return result;
     }
     
     /*********************************************************** Privated Methods ***********************************************************/
