@@ -404,7 +404,7 @@ export default class bsfStaffingReportSearchPanel extends LightningElement {
         if(this.disableenddate === 'true' && event.target.dataset.id === 'startDate'){
             console.log("this.wrapper.startDate "+this.wrapper.startDate);
             let edate = new Date(this.wrapper.startDate);
-            edate.setDate(edate.getDate() + 6);
+            edate.setUTCDate(edate.getUTCDate() + 6); //changed for HRP-14311
             this.wrapper.endDate = edate.toISOString().slice(0, 10);
             console.log("this.wrapper.endDate "+this.wrapper.endDate);
         }
