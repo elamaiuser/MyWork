@@ -38,6 +38,7 @@
         <members>skedDriveHandler</members>
         <members>skedDriveTrigger_Test</members>
 		<members>skedDriveRankingBatch</members>
+		<members>skedFutureCallPostCommitEventHandler</members>
 		<members>skedImmediateRefreshTravelTimeIndexBatch</members>
         <members>skedJobAllocationHandler</members>
         <members>skedJobAllocationTrigger_Test</members>
@@ -47,11 +48,14 @@
         <members>skedJobAllocationTravelTimeBatch_Test</members>
 		<members>skedNightlyRefreshTravelTimeIndexBatch</members>
 		<members>skedRefreshTravelTimeIndexBatchBase</members>
+		<members>skedTravelTimeIndexItemHandler</members>
 		<members>skedTravelTimeIndexItemUtils</members>
 		<members>skedTriggerUtils</members>
         <members>skedTriggerUtils_Test</members>
 		<members>skedUpdateJobTimeVarianceBatch</members>
 		<members>skedUpdateJobTimeVarianceBatch_Test</members>
+		<members>skedUpdateTTILookupFieldsOnSiteCOBatch</members>
+        <members>skedUpdateTTILookupFieldsOnSiteCO_Test</members>
 		<members>skedWeeklyHoursCorrectionBatch</members>
         <members>skedWeeklyHoursCorrection_Test</members>
 		<members>slwcSiteCollectionOperationService</members>
@@ -65,11 +69,16 @@
         <members>TaskService</members>
 		<members>CalendarBuildEvaluateDrivesBatch_Test</members>
         <members>OpportunityService</members>
+		<members>TaskChecklistController</members>
+		<members>TaskTriggerHandler</members>
+		<members>TaskTriggerTest</members>
+		<members>BSFTaskChecklistTriggerTest</members>
 		<name>ApexClass</name>
 	</types>
 	<types>
 		<members>AdhocCalendarBuildRunEvent</members>
 		<members>assignResourcesToUsersBasedOnConfig</members>
+		<members>skedFutureCallPostCommitEventTrigger</members>
 		<name>ApexTrigger</name>
 	</types>
 	<types>
@@ -78,7 +87,7 @@
 	</types>
 	<types>
 		<members>Account.Is_Hospital_Contract_Partner__c</members>
-		<members>Account.Special_Partnership_Level__c</members>
+		<members>Account.Service_Level_Agreement__c</members>
 		<members>Adhoc_Calendar_Build_Run__e.Booking_Strategy__c</members>
 		<members>Adhoc_Calendar_Build_Run__e.Opportunity_Ids__c</members>
 		<members>Adhoc_Calendar_Build_Run__e.Opportunity_Source__c</members>
@@ -87,17 +96,24 @@
 		<members>AssignResourcesToUserEvent__e.skipUserRoleUpdate__c</members>
 		<members>BSF_setting__c.Donor_Eligibility_Day_for_2RBC__c</members>
 		<members>BSF_setting__c.Donor_Eligibility_Day_for_WB__c</members>
+		<members>BSF_setting__c.Is_Donor_Eligibility_Msg_Needed__c</members>
+		<members>BSF_setting__c.Donor_Eligibility_Msg__c</members>
 		<members>Calendar_Build_Log_Manual_Run__c.Source__c</members>
         <members>Opportunity.Booking_Strategy__c</members>
         <members>Opportunity.Source__c</members>
 		<members>Profile_Specific_Functionality_Access__mdt.Allowed_Assignments__c</members>
 		<members>Profile_Specific_Functionality_Access__mdt.Assignment_Type__c</members>
 		<members>Profile_Specific_Functionality_Access__mdt.Process_Functionality_Name__c</members>
+		<members>sked_Site_Collection_Operation__c.sked_Travel_Time_Index_CO2Site__c</members>
+        <members>sked_Site_Collection_Operation__c.sked_Travel_Time_Index_Site2CO__c</members>
 		<members>sked_Travel_Time_Index_Item__c.sked_Travel_Time_Breakdown_JSON_Backup__c</members>
 		<members>sked__Job_Allocation__c.sked_Completed_Post_Processes__c</members>
 		<members>sked__Location__c.sked_Unloading_Directions_Details__c</members>
 		<members>sked_Drive__c.Max_Role_Capacity__c</members>		
 		<members>sked_Drive__c.Max_Role_Capacity_With_Draw_Hours__c</members>
+		<members>sked_Future_Call_Post_Commit_Event__e.sked_Class_Name__c</members>
+		<members>sked_Future_Call_Post_Commit_Event__e.sked_Method_Name__c</members>
+		<members>sked_Future_Call_Post_Commit_Event__e.sked_Parameter_1_Data__c</members>
 		<members>Task_Checklist_Setting__mdt.Field_Mapping_Object__c</members>
         <members>BSF_Task_Checklist__c.Input_Number__c</members>
 		<members>Opportunity.Calendar_Build_Reasons_For_Unqualified__c</members>
@@ -129,6 +145,7 @@
 		<members>Assign_SF_Resources_to_User.Telerecruiter_BSF_User_Role</members>
 		<members>Custom_Notification_Setting.RenewMilitaryMoA</members>		
 		<members>Custom_Report_Config.RoleTimeReportCharacterSplit</members>
+		<members>Object_Specific_Setting.Account_Affiliation_Settings</members>
 		<members>Profile_Specific_Functionality_Access.Adhoc_Calendar_Build_Setting</members>
 		<members>Profile_Specific_Functionality_Access.Adhoc_Calendar_Build_Group_Setting</members>
 		<members>Task_Reassignment_Matrix.Renew_Military_MoA</members>
@@ -174,11 +191,38 @@
         <members>Task_Checklist_Setting.Sponsor_Managing_Donor_Appointments</members>
         <members>Task_Checklist_Setting.Sponsor_marketing_and_communications</members>
         <members>Task_Checklist_Setting.Sponsor_table_and_chairs_ready_sponsor</members>
+		<members>Task_Report_Link.After_Drive_Analysis_SBPM</members>
+        <members>Task_Report_Link.BPL_Thank_You_Flyer_SBPM</members>
+        <members>Task_Report_Link.Ferritin_Deferrals_SBPM</members>
+        <members>Task_Report_Link.Same_Day_Rebooking_Results_SBPM</members>
+        <members>Task_Report_Link.After_Drive_Analysis_AM</members>
+        <members>Task_Report_Link.BPL_Thank_You_Flyer_AM</members>
+        <members>Task_Report_Link.Ferritin_Deferrals_AM</members>
+        <members>Task_Report_Link.Same_Day_Rebooking_Results_AM</members>
+        <members>Task_Reassignment_Matrix.Post_Drive_Analysis_AM</members>
+        <members>Task_Reassignment_Matrix.Post_Drive_Analysis_SBPM</members>
+        <members>Task_Checklist_Setting.After_Drive_Analysis1</members>
+        <members>Task_Checklist_Setting.Updated_Anticipated_Donors1</members>
+        <members>Task_Checklist_Setting.Annual_Account_Strategy1</members>
+        <members>Task_Checklist_Setting.Account_Strategy_Notes1</members>
+        <members>Task_Checklist_Setting.Gray_Sky_Account1</members>
+        <members>Task_Checklist_Setting.Future_dates_confirmed_by_BPL1</members>
+        <members>Task_Checklist_Setting.Dates_need_to_confirmed_moved_cancelled1</members>
+        <members>Task_Checklist_Setting.Update_Rollover_Consideration1</members>
+        <members>Task_Checklist_Setting.After_Drive_Analysis2</members>
+        <members>Task_Checklist_Setting.Contacted_sponsor_provided_drive_result2</members>
+        <members>Task_Checklist_Setting.Early_Close_affiliation_drive2</members>
+        <members>Task_Checklist_Setting.Sponsor_Satisfaction_Survey_with_BPL2</members>
+        <members>Task_Checklist_Setting.What_can_be_improved_for_future_drives2</members>
+        <members>Task_Checklist_Setting.Customer_service_issues_addressed2</members>
+        <members>Task_Checklist_Setting.Customer_Service_Issues2</members>
+        <members>Task_Checklist_Setting.Highlights_and_Feedback2</members>
 		<name>CustomMetadata</name>
 	</types>
 	<types>
 		<members>Adhoc_Calendar_Build_Run__e</members>
 		<members>Profile_Specific_Functionality_Access__mdt</members>
+		<members>sked_Future_Call_Post_Commit_Event__e</members>
 		<name>CustomObject</name>
 	</types>
 	<types>
@@ -191,6 +235,7 @@
 		<members>Create_New_Fixed_Site_Drive</members>
 		<members>Create_New_Recurring_Mobile_Drive</members>
 		<members>Run_Adhoc_Calendar_Build</members>
+		<members>Task_Creation_on_Drive_Status_Complete</members>
 		<name>Flow</name>
 	</types>
 	 <types>
@@ -207,9 +252,12 @@
 		<members>slwcDriveCompactView</members>
 		<members>slwcDriveGenerator</members>
 		<members>slwcDriveManagement</members>
+		<members>slwcDualRoleAssignmentModal</members>
 		<members>slwcOptimizationQueueSummary</members>
 		<members>slwcRefreshTravelTimeBanner</members>
 		<members>slwcResolveDriveContentions</members>
+		<members>slwcShiftJobs</members>
+		<members>slwcStaffingComplementModal</members>
 		<members>travelTimeBreakdown</members>		
 		<name>LightningComponentBundle</name>
 	</types>
@@ -224,7 +272,9 @@
 		<members>Opportunity-DRD Mobile Opp Layout</members>
 		<members>Opportunity-Mobile Opp Layout</members>
 		<members>Opportunity-Sponsor Marketing Mobile Opp Layout</members>
-        <members>Profile_Specific_Functionality_Access__mdt-Profile Specific Functionality Setting Layout</members>	
+        <members>Profile_Specific_Functionality_Access__mdt-Profile Specific Functionality Setting Layout</members>
+		<members>sked_Site_Collection_Operation__c-DRD Site Collection Operation Layout</members>
+        <members>sked_Site_Collection_Operation__c-Site Collection Operation Layout</members>	
 		<members>sked__Resource__c-Staff Layout</members>		
 		<name>Layout</name>
 	</types>
@@ -253,6 +303,10 @@
 	<types>
 		<members>Opportunity.Run_Adhoc_Calendar_Build</members>
 		<name>WebLink</name>
+	</types>
+	<types>
+		<members>DRD_System_User_Name</members>
+		<name>CustomLabel</name>
 	</types>
 	<version>60.0</version>
 </Package>

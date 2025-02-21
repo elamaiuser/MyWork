@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+    <types>
+        <members>AccountAffiliationService</members>
+        <members>AccountAffiliationTriggerHandler</members>
+        <members>AccountAffiliationServiceTest</members>
+        <name>ApexClass</name>
+    </types>
+    <types>
+        <members>Object_Specific_Setting.Account_Affiliation_Settings</members>
+        <name>CustomMetadata</name>
+    </types>
+    <version>59.0</version>
+</Package>
