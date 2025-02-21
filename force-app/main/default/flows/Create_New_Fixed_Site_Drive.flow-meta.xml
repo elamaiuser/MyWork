@@ -395,6 +395,13 @@
         </value>
     </choices>
     <constants>
+        <name>DRIVE_TYPE_FIXED_SITE</name>
+        <dataType>String</dataType>
+        <value>
+            <stringValue>Fixed Site</stringValue>
+        </value>
+    </constants>
+    <constants>
         <name>TBD</name>
         <dataType>String</dataType>
         <value>
@@ -1578,6 +1585,12 @@ REGEX( {!Drive_Keyword_Required}, &quot;[a-zA-Z0-9 ]+&quot;)</formulaExpression>
                 <name>OutputDonorEligibilityType</name>
                 <value>
                     <elementReference>OutputEligibilityNeededFor</elementReference>
+                </value>
+            </inputParameters>
+            <inputParameters>
+                <name>InputDriveType</name>
+                <value>
+                    <elementReference>DRIVE_TYPE_FIXED_SITE</elementReference>
                 </value>
             </inputParameters>
             <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
