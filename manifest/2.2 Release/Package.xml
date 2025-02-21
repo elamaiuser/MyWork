@@ -8,6 +8,7 @@
 		<members>AccountTeamMemberService</members>
 		<members>BatchAccountsMilitaryMoAUploadedFiles</members>
 		<members>BatchAcctsMilitaryMoAUploadedFiles_Test</members>
+		<members>BSF_Batch_Drive_OpRecordStatusCorrection</members>
 		<members>BSF_UpdateDriveExcessStaffCapacityBatch</members>
 		<members>BSF_Constants</members>
 		<members>BSF_TravelTimePanelController</members>
