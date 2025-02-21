@@ -1786,13 +1786,9 @@ class SlwcAvailator {
                 if(!resourceTag.tag) return;
 
                 const tagStartDateValid = resourceTag.startDate <= job.driveDate;
-                //HRP-10970 - Updated tagRestricted logic to check only restrictionStartDate is defined before comparing dates
-                //const tagRestricted = resourceTag.restrictionStartDate && resourceTag.restrictionEndDate && 
-                //  resourceTag.restrictionStartDate <= job.driveDate && resourceTag.restrictionEndDate >= job.driveDate;
                 const tagRestricted = resourceTag.restrictionStartDate && 
                       resourceTag.restrictionStartDate <= job.driveDate && 
                       (slwcUtils.isNullOrEmpty(resourceTag.restrictionEndDate)  || resourceTag.restrictionEndDate >= job.driveDate);
-                //HRP-10970 ended
                 if (tagStartDateValid && !tagRestricted) {
                   validTagNames.push(resourceTag.tag.name);
                 } else {
