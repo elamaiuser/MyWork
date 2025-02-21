@@ -2208,7 +2208,7 @@ class DriveHelper {
       if (validJobs.length !== validBackupJobs.length) return true;
       for (let j = 0; j < validJobs.length; j++) {
         let job = validJobs[j];
-        let backupJob = validBackupJobs.find(function(item) {
+        let backupJob = validBackupJobs.find((item) => {
           if (this.isJobsSameRoles(item, job) && item.quantity == job.quantity) {
             return true;
           }
