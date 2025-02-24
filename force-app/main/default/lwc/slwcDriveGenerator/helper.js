@@ -2177,10 +2177,10 @@ class DriveHelper {
       const job1Role = `${job1.resourceRole}-${job1.dualRole || ''}`;
       const job2Role = `${job2.resourceRole}-${job2.dualRole || ''}`;
       return job1Role === job2Role;
-    }
+    } else if(job1.assetType) return job1.assetType == job2.assetType;
 
-    const sameAssetType = job1.assetType == job2.assetType;
-    return sameAssetType;
+    const sameVolunteerType = job1.volunteerRole == job2.volunteerRole;
+    return sameVolunteerType;
   }
 
   generateJobKey(job) {
