@@ -61,13 +61,13 @@ public class skedTravelTimeIndexItemHandler extends skedTriggerHub implements ca
             sked_Travel_Time_Index_Item__c oldData = oldMap.get(newRecord.Id);
             if (newRecord.User_Override__c == false
                 && newRecord.sked_Average_Travel_Time__c != oldData.sked_Average_Travel_Time__c
-                && newRecord.sked_Average_Travel_Time__c!= NULL) {
+               	&& newRecord.sked_Average_Travel_Time__c!= NULL) {
                     if(oldData.sked_Average_Travel_Time__c == NULL) {
                         impactedIndexIds.add(newRecord.Id);
                     }else {
                         decimal beforeAfterGap = Math.abs(oldData.sked_Average_Travel_Time__c - newRecord.sked_Average_Travel_Time__c);
                         if (beforeAfterGap >= skedSetting.instance.TravelTime.driveImpactThreshold) {
-                            impactedIndexIds.add(newRecord.Id);                         
+                            impactedIndexIds.add(newRecord.Id);
                         }
                     }
                 }
