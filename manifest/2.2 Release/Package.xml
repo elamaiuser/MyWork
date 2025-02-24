@@ -253,13 +253,15 @@
 		<members>slwcDriveCompactView</members>
 		<members>slwcDriveGenerator</members>
 		<members>slwcDriveManagement</members>
+		<members>slwcDriveStaffingDetails</members>
 		<members>slwcDualRoleAssignmentModal</members>
 		<members>slwcOptimizationQueueSummary</members>
+		<members>slwcPopoverContent</members>
 		<members>slwcRefreshTravelTimeBanner</members>
 		<members>slwcResolveDriveContentions</members>
 		<members>slwcShiftJobs</members>
 		<members>slwcStaffingComplementModal</members>
-		<members>travelTimeBreakdown</members>		
+		<members>travelTimeBreakdown</members>
 		<name>LightningComponentBundle</name>
 	</types>
 	<types>
