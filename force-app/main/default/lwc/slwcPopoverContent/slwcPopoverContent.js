@@ -11,6 +11,7 @@ import planDriveValidationPopover from './planDriveValidationPopover.html';
 import driveShiftStaffComplementPopover from './driveShiftStaffComplementPopover.html';
 import linkedDrivePopover from './linkedDrivePopover.html';
 import driveShiftTagExceptionPopover from './driveShiftTagExceptionPopover.html';
+import driveShiftResourceAllocationPopover from './driveShiftResourceAllocationPopover.html';
 import { fireEvent } from 'c/pubsub';
 import { JOB_ALLOCATION_STATUS, MANUALLY_CREATED_FROM } from 'c/slwcConstants';
 import { DateTime } from 'c/luxon';
@@ -38,7 +39,8 @@ export default class SlwcPopoverContent extends LightningElement {
       'planDriveValidationPopover': planDriveValidationPopover,
       'driveShiftStaffComplementPopover': driveShiftStaffComplementPopover,
       'linkedDrivePopover': linkedDrivePopover,
-      'driveShiftTagExceptionPopover': driveShiftTagExceptionPopover
+      'driveShiftTagExceptionPopover': driveShiftTagExceptionPopover,
+      'driveShiftResourceAllocationPopover': driveShiftResourceAllocationPopover
     }
     get isShowCallOut(){
       return ![
@@ -89,6 +91,29 @@ export default class SlwcPopoverContent extends LightningElement {
     get jobAllocationEndWithTravelTime() {
       if(!this.popoverData) return null;
       return this.popoverData.end;
+    }
+    get driveShiftResourceAllocationColumns() {
+      return [
+        { label: 'Resource Name', fieldName: 'resourceName', type: 'text' },        
+        { label: 'Resource Role', fieldName: 'resourceRole', type: 'text' }
+      ];
+    }
+    get resourceAllocations() {      
+      let allocations = [];
+      if (this.popoverData && this.popoverData.jobs && this.popoverData.jobs.length > 0) {
+        this.popoverData.jobs.forEach(job => {
+          job.jobAllocations.forEach(allocation => {
+            if (allocation.status != JOB_ALLOCATION_STATUS.DELETED) {
+              allocations.push({
+                id: allocation.id || allocation.key,
+                resourceName: allocation.resourceName || allocation.resource.name,                
+                resourceRole: job.resourceRole || job.assetType                
+              });
+            }
+          });
+        });        
+      }
+      return allocations;
     }
     render() {
       return this.popoverContentMap[this.name];
