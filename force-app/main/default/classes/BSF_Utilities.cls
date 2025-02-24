@@ -561,7 +561,7 @@ public with sharing class BSF_Utilities {
                 'Web_Scheduling_End_Date_Offset__c, Web_Scheduling_End_Time_Offset__c, Web_Scheduling_Start_Date_Offset__c, Platelet_Projected_Procedures__c, '+
                 'Plasma_Pheresis_Projected_Procedures__c, Calendar_Build_Parent_Opportunity__c, Type, DriveStatus__c, Slot_Generator__c, Related_Scheduled_Drive__c, '+ //HRP-12011 
                 //'FROM Opportunity';
-                'APT_Quantity__c, APT_Required__c FROM Opportunity'; //Added APT fields HRP-13190
+                'APT_Quantity__c, APT_Required__c, Booking_Strategy__c FROM Opportunity'; //Added APT fields HRP-13190
     }
     
     /* HRP-13190 -> Starts Here
@@ -608,4 +608,42 @@ public with sharing class BSF_Utilities {
         return oppList;
     }
     //HRP-13190 -> Ends Here
+
+    public static String capitalizeName(String unformatedName, Boolean isForPDF){
+        String formatedName = '';        
+        if(String.isNotBlank(unformatedName)){
+            List<String> words = unformatedName.split(' ');
+            for(String word : words){
+                if(String.isNotBlank(word)){
+                    if(String.isNotBlank(formatedName)){
+                        String lastChar = formatedName.substring(formatedName.length()-1);
+                        if(lastChar != ' '){
+                            formatedName += ' ';
+                        }
+                    }
+                    if(!word.isNumeric()){
+                        Integer str_len = word.length();
+                        word = word.left(1).toUpperCase() + word.right(str_len - 1).toLowerCase();
+                    }
+                    if(isForPDF){
+                        formatedName += String.join(getTextParts(word,Integer.valueOf(Custom_Report_Config__mdt.getInstance('RoleTimeReportCharacterSplit').Value__c)),' ');
+                    }
+                    else {
+                        formatedName += word;
+                    }
+                }
+            }
+            formatedName = formatedName.trim(); 
+        } 
+        return formatedName;
+    }
+    public static List<String> getTextParts(String text, Integer partitionSize) {
+        List<String> parts = new List<String>();
+        Integer len = text.length();
+        for (Integer i=0; i<len; i+=partitionSize)
+        {
+            parts.add(text.substring(i, Math.min(len, i + partitionSize)));
+        }
+        return parts;
+    }
 }

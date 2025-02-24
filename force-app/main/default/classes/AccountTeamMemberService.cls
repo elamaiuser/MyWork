@@ -1414,6 +1414,7 @@ insert optyTeamMemberListToInsert;
         }
         
         AccountTeamMemberHelper.getAccountTeamMembers(accId);
+        AccountTeamMemberHelper.handleMilitaryMoATaskReassignment(newAccountTeamMembers);
     }
     
     //HRP-8897 New Method

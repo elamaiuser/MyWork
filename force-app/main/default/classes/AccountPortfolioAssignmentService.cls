@@ -1099,12 +1099,13 @@ return supervisorTeamMemberListToUpdate;
                 String key;
                 if(ap.BSF_Portfolio__r.Taxonomy_Type__c!=BSF_Constants.TAXO_SUPERVISOR_RECORD_TYPE)
                 {
+                    lastEndDate =ap.End_Date__c;//HRP-13898 moved this to handle null pointer exception
                     //HRP-12053 start
                     //Expired - No action needed
                     if(ap.End_Date__c < currentDate){
                         continue;
                     }
-                    lastEndDate =ap.End_Date__c;
+                    //lastEndDate =ap.End_Date__c;//HRP-13898 commented this to handle null pointer exception
                     Boolean isPortfolioSame = false;
                     if(ap.BSF_Portfolio__r.Taxonomy_Type__c ==BSF_Constants.BIO_RECRUITMENT_RECORD_TYPE)
                     {

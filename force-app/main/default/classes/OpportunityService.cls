@@ -61,6 +61,7 @@
 * 12/02/2024                     Barnojit Sharma          Tasks being assigned for cancelled drives and for fixed sites(Logic for HRP-13850)
 * 12/10/2024                     Priti Jana               Logic for HRP-13190
 * 12/10/2024                     Satyendra Vishwakarma    HRP-6051 - Anticipated Registered Donors validation when changing procedure projections
+* 01/30/2024                     Anil K                   HRP-11850 - Add 56 Drive validation logic for calendar build drives
 ************************************************************************************************************************************************
 */
 
@@ -171,6 +172,7 @@ public with sharing class OpportunityService{
         if(isAutomatedProcess) {
             return ;
         }//HRP-12837 end
+        List<Opportunity> calendarBuildOppsList = new List<Opportunity>();//HRP-11850
         Map<Id, Date> driveDatesBackByAccId = new Map<Id, Date>();
         Map<Id, Date> driveDatesForwardByAccId = new Map<Id, Date>();
         Map<Id, List<Opportunity>> opportuniesByAccId = new Map<Id, List<Opportunity>>();
@@ -185,7 +187,8 @@ public with sharing class OpportunityService{
             */
             if(Trigger.isExecuting && Trigger.isInsert && opportunity.RecordTypeId == mobileRecTypeId 
                     && String.isNotBlank(opportunity.Source__c) && opportunity.Source__c.equalsIgnoreCase('Calendar Build')){
-                continue;
+                        calendarBuildOppsList.add(opportunity);//HRP-11850
+                        continue;
             }
             /*
             * HRP-11640 changes ends here
@@ -230,7 +233,10 @@ opty.addError('This drive date violates the 56 day rule.Please acknowledge.');
         Map<Id,Opportunity> oppqueryResultMap = new Map<Id,Opportunity>( [ SELECT Id,Drive_Date__c,AccountId, Accept_56_Day_Rule_Violation__c FROM Opportunity WHERE AccountId IN:opportuniesByAccId.keySet() 
                                                                           AND StageName != 'Cancelled' 
                                                                           AND RecordTypeId = :mobileRecTypeId 
-                                                                          AND Id NOT IN:newItems ] );
+                                                                          AND Id NOT IN:newItems //-> HRP-11850, Pick Calendar build Opps as well for 56day validation 
+                                                                          ] );
+        System.debug('oppqueryResultMap size->'+oppqueryResultMap.size());
+        
         
         Map<Id,Opportunity> oppqueryResultFilteredMap = new Map<Id,Opportunity>();
         Map<Id,Id> oppIdAccId = new Map<Id,Id>();
@@ -273,9 +279,80 @@ opty.addError('This drive date violates the 56 day rule.Please acknowledge.');
                 isExecuted = true;
             }
         }
-        
+        if(calendarBuildOppsList.size()>0){ //HRP-11850, add 56 day validation logic for calendar build opps
+            validate56DayLogicForCalendarBuildOpps(calendarBuildOppsList);
+        }
         
     }
+
+    //HRP-11850
+    public static Map<Id, List<Opportunity>> buildOppsByAccountIdMap(List<Opportunity> opps){
+        
+        Map<Id, List<Opportunity>> oppMap = new Map<Id, List<Opportunity>>();//Account Id as key, and opportunities as value
+        if(opps==null || opps.size()<1){
+            return oppMap;
+        }
+        for (Opportunity opp : opps) {
+            if (opp.AccountId != null) {
+                if (!oppMap.containsKey(opp.AccountId)) {
+                    oppMap.put(opp.AccountId, new List<Opportunity>());
+                }
+                oppMap.get(opp.AccountId).add(opp);
+            }
+        }
+        
+        return oppMap;
+
+    }
+    
+    
+    //HRP-11850-Add Calendar build Alert for 56 days violation of calendar build opps
+    
+    public static void validate56DayLogicForCalendarBuildOpps(List<Opportunity> calendarBuildOpps){
+     
+      Id mobileRecTypeId = Schema.SObjectType.Opportunity.getRecordTypeInfosByDeveloperName()
+            .get('Mobile_Opp').getRecordTypeId();   
+      Map<Id, List<Opportunity>> calendarBuildOppsMap = buildOppsByAccountIdMap(calendarBuildOpps);//Account Id as key, and opportunities as value
+  
+      //get All Opps by Account Id
+     List<Opportunity> allOppsList = [ SELECT Id,Drive_Date__c,AccountId, Accept_56_Day_Rule_Violation__c FROM Opportunity WHERE AccountId IN:calendarBuildOppsMap.keySet() 
+                                                                          AND StageName != 'Cancelled' 
+                                                                          AND RecordTypeId = :mobileRecTypeId and Is_Template__c =false
+                                                                          //-> HRP-11850, Pick Calendar build Opps as well for 56day validation 
+                                                                          ] ;
+     if(allOppsList.size() ==0){
+        return;
+     }
+      //build Account Id-> All Opps map 
+      Map<Id, List<Opportunity>> allOppsByAccount = buildOppsByAccountIdMap(allOppsList);//Account Id as key, and opportunities as value
+     for(Id accountId: calendarBuildOppsMap.keySet()){
+        for(Opportunity calendarBuildOpp:calendarBuildOppsMap.get(accountId)){
+             System.debug('calendarBuildOpp->'+calendarBuildOpp);
+            //For each calendar build Opp, go thru all opportunities of the account to see, if any other drive on account falling with in 56 days of this
+             for(Opportunity  otherOppOnAccount:allOppsByAccount.get(accountId)){ //get other opps on this account
+                if(calendarBuildOpp.id == otherOppOnAccount.id || calendarBuildOpp.Accept_56_Day_Rule_Violation__c ==true){ //if we hit, same opp, no need to compare
+                    continue;
+                }
+                System.debug('otherOppOnAccount->'+otherOppOnAccount);
+                System.debug('otherOppOnAccount drive date->'+otherOppOnAccount.Drive_Date__c);
+
+                //check if calendar build opp drive date is within 56 days of other opp on this account
+                if(calendarBuildOpp.Drive_Date__c >  otherOppOnAccount.Drive_Date__c.addDays(-56)
+                    && calendarBuildOpp.Drive_Date__c < otherOppOnAccount.Drive_Date__c.addDays(56)
+                   ){
+
+                        calendarBuildOpp.Calendar_Build_Reasons_For_Unqualified__c='Violates Accepts 56 day selection';
+                        //once a calendar build drive is marked for 56 days, no need to compare with other opps on account
+                        break;
+                    }
+             }//end of for loop for comparing one calendar build opp with other opps on account
+
+        }//for loop, to go to next calendar opp on account
+
+     }//for loop, go to next account
+        
+ }
+    
     
     //This method updates the Drive Date Day field with the Day of Week value from Drive Date (if not null)
     public static void updateDriveDateDay(List<Opportunity> newItems) {
@@ -4815,16 +4892,22 @@ opp.StageName = 'Closed';
             for(Opportunity newOpp : newOppList) {
                 Opportunity oldOpp = oldOppMap.get(newOpp.Id);
                 if (oldOpp != NULL) {
-                    Boolean recalculateAptRule1 = !checkRecursive.skipAptRecalculation; //During DOC -> OPP Sync
-                    Boolean recalculateAptRule2 = (oldOpp.APT_Change_Reason__c == newOpp.APT_Change_Reason__c) || ((oldOpp.APT_Change_Reason__c != newOpp.APT_Change_Reason__c) && !newOpp.APT_Change_Reason__c.containsIgnoreCase(BSF_Constants.APT_CHANGE_VIA_TEMPLATE));
-                    Boolean recalculateAptRule3 = oldOpp.APT_Required__c != newOpp.APT_Required__c;
-                    Boolean recalculateAptRule4 = oldOpp.Total_Projected_Procedures__c != newOpp.Total_Projected_Procedures__c;  
+                    if(oldOpp.APT_Change_Reason__c != newOpp.APT_Change_Reason__c && newOpp.APT_Change_Reason__c.equalsIgnoreCase(BSF_Constants.APT_CHANGE_VIA_TEMPLATE)) continue;
                     
-                    if(recalculateAptRule1 && recalculateAptRule2) {
-                        if(recalculateAptRule3 && !newOpp.APT_Required__c) {
-                            newOpp.APT_Quantity__c = 0;
-                            newOpp.APT_Change_Reason__c = (newOpp.Is_Template__c ? 'Template' : 'Opportunity') + ' APT changed by ' + userInfo.getName() + ' on '+system.now();
-                        } else oppListToRecalculateAPT.add(newOpp);
+                    Boolean recalculateAptRule1 = !checkRecursive.skipAptRecalculation; //During DOC -> OPP Sync
+                    Boolean recalculateAptRule2 = oldOpp.APT_Required__c != newOpp.APT_Required__c;
+                    Boolean recalculateAptRule3 = oldOpp.Total_Projected_Procedures__c != newOpp.Total_Projected_Procedures__c;  
+                    
+                    if(recalculateAptRule1) {
+                        if(recalculateAptRule2) {
+                            if(!newOpp.APT_Required__c) {
+                                newOpp.APT_Quantity__c = 0;
+                                newOpp.APT_Change_Reason__c = (newOpp.Is_Template__c ? 'Template' : 'Opportunity') + ' APT changed by ' + userInfo.getName() + ' on '+system.now();
+                            } else oppListToRecalculateAPT.add(newOpp);
+                        } else if(recalculateAptRule3) {
+                            newOpp.APT_Required__c = FALSE; //reset value to false and populate it based on formula later
+                            oppListToRecalculateAPT.add(newOpp);
+                        }    
                     }
                 }
             }

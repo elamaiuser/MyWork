@@ -457,35 +457,64 @@ public class TaskTriggerTest {
         Test.startTest();
         //insert Publicity Task
         Task pdaTask = new Task(
-        	Subject = BSF_Constants.POST_DRIVE_ANALYSIS_TASK,
-            OwnerId = drdUser.Id,
+        	Subject = BSF_Constants.POST_DRIVE_ANALYSIS_TASK_SBPM,
+            //OwnerId = drdUser.Id,
             Priority = 'Normal',
             Status = 'Not Started',
             WhatId = testMobileOpp.Id
         );
         insert pdaTask;
+
+        Task rmTask = new Task(
+        	Subject = BSF_Constants.RECRUITMENT_PLANNING_TASK,
+            OwnerId = drdUser.Id,
+            Priority = 'Normal',
+            Status = 'Not Started',
+            WhatId = testMobileOpp.Id
+        );
+        insert rmTask;
         
         // insert BSF Task Checklist
         List<BSF_Task_Checklist__c> taskCheckListToInsert = new List<BSF_Task_Checklist__c>();
         BSF_Task_Checklist__c taskCheckList;
         taskCheckList = new BSF_Task_Checklist__c(
                             TaskLookup__c = (String) pdaTask.Id,
-                            TaskType__c = BSF_Constants.POST_DRIVE_ANALYSIS_TASK,
+                            TaskType__c = BSF_Constants.POST_DRIVE_ANALYSIS_TASK_SBPM,
                             Unique_Name__c = 'Account_Strategy_Notes__c'
         );
         taskCheckListToInsert.add(taskCheckList);
         
         taskCheckList = new BSF_Task_Checklist__c(
                             TaskLookup__c = (String) pdaTask.Id,
-                            TaskType__c = BSF_Constants.POST_DRIVE_ANALYSIS_TASK,
+                            TaskType__c = BSF_Constants.POST_DRIVE_ANALYSIS_TASK_SBPM,
                             Unique_Name__c = 'Rollover_Consideration__c'
+        );
+        taskCheckListToInsert.add(taskCheckList);
+
+        taskCheckList = new BSF_Task_Checklist__c(
+                            TaskLookup__c = (String) rmTask.Id,
+                            TaskType__c = BSF_Constants.RECRUITMENT_PLANNING_TASK,
+                            Unique_Name__c = 'Recruitment_Committee_Exists__c'
+        );
+        taskCheckListToInsert.add(taskCheckList);
+
+        taskCheckList = new BSF_Task_Checklist__c(
+                            TaskLookup__c = (String) rmTask.Id,
+                            TaskType__c = BSF_Constants.RECRUITMENT_PLANNING_TASK,
+                            Unique_Name__c = 'Diverse_Donor_Recruitment_Strategy__c'
         );
         taskCheckListToInsert.add(taskCheckList);
         
         insert taskCheckListToInsert;
         
+        List<Task> updateTaskList = new List<Task>();
         pdaTask.Status = 'Completed';
-        update pdaTask;
+        updateTaskList.add(pdaTask);
+
+        rmTask.Status = 'Completed';
+        updateTaskList.add(rmTask);
+
+        update updateTaskList;
         
         TaskService.updateRelatedAccountAndOpportunity(new List<Task>{pdaTask});
         

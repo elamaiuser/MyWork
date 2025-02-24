@@ -7,6 +7,10 @@
         <value xsi:type="xsd:double">1.0</value>
     </values>
     <values>
+        <field>Field_Mapping_Object__c</field>
+        <value xsi:nil="true"/>
+    </values>
+    <values>
         <field>Help_Text__c</field>
         <value xsi:type="xsd:string">Plan includes communications and social media activities.
 Provide details of the recruitment plan in the text box below.
@@ -42,7 +46,7 @@ Provide any new communication or education (if needed).</value>
     </values>
     <values>
         <field>Section_Header__c</field>
-        <value xsi:nil="true"/>
+        <value xsi:type="xsd:string">Checklist</value>
     </values>
     <values>
         <field>Subject__c</field>
