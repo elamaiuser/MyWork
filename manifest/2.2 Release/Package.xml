@@ -120,6 +120,9 @@
 		<members>Opportunity.Calendar_Build_Reasons_For_Unqualified__c</members>
         <members>Opportunity.Calendar_Build_Alert_Reviewed__c</members>		
 		<members>Task_Checklist_Setting__mdt.Subject__c</members>
+		<members>Account.HS_Relationship_Manager__c</members>
+		<members>Account.HS_Relationship_Manager_Notes__c</members>
+		<members>Opportunity.HS_Relationship_Manager__c</members>
 		<name>CustomField</name>
 	</types>
 	<types>
