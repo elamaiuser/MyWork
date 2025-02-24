@@ -1782,9 +1782,9 @@ class SlwcAvailator {
                 if(!resourceTag.tag) return;
 
                 const tagStartDateValid = resourceTag.startDate <= job.driveDate;
-                const tagRestricted = resourceTag.restrictionStartDate && resourceTag.restrictionEndDate && 
-                  resourceTag.restrictionStartDate <= job.driveDate && resourceTag.restrictionEndDate >= job.driveDate;
-
+                const tagRestricted = resourceTag.restrictionStartDate && 
+                      resourceTag.restrictionStartDate <= job.driveDate && 
+                      (slwcUtils.isNullOrEmpty(resourceTag.restrictionEndDate)  || resourceTag.restrictionEndDate >= job.driveDate);
                 if (tagStartDateValid && !tagRestricted) {
                   validTagNames.push(resourceTag.tag.name);
                 } else {
@@ -1792,8 +1792,8 @@ class SlwcAvailator {
                     restrictedTagNames.push(resourceTag.tag.name);
                   }
                 }
+                //console.log('slwc Availator => tagStartDateValid =>',tagStartDateValid,' validTagNames=>',validTagNames,' restrictedTagNames=>',restrictedTagNames);
               });
-      
               (job.jobTags || []).forEach((jobTag) => {
                 if (!jobTag.tag) return;
 
