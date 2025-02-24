@@ -839,7 +839,9 @@ global class skedJobAllocationPostProcessBatch implements Schedulable, Database.
             unavailability.startTime = skedAllocation.sked__Start__c;
             unavailability.endTime = skedAllocation.sked__Set_End__c;
             unavailability.exceptionCode = skedConstants.EXCEPTION_CODE_RESOURCE_TIME_CONFLICT;
-            unavailability.exceptionText = 'Conflict with ' + skedAllocation.sked__Job__r.sked_Drive__r.Name; //HRP-12840
+            System.debug('skedAllocation->'+JSON.serialize(skedAllocation));
+            //System.debug('skedAllocation.sked__Job__r.sked_Drive__r.name'+skedAllocation.sked__Job__r.sked_Drive__r.name); 
+            unavailability.exceptionText = 'Conflict with ' +  skedAllocation.sked__Job__r.sked_Drive__r.name; //HRP-12840
             unavailability.relatedEventFieldApi = 'skedHC__Job_Allocation__c';
             unavailability.recordId = skedAllocation.Id;
             unavailability.jobId = skedAllocation.sked__Job__c;
@@ -1089,7 +1091,7 @@ global class skedJobAllocationPostProcessBatch implements Schedulable, Database.
                 sked_Geoservice_Travel_Time_To__c, sked_Geoservice_Travel_Time_Back__c, 
                 sked_Is_Handled_Exception_from_Client__c, sked_Exclude_TAT_Exception__c, sked_Resource_Role__c, 
                 sked__Job__r.sked_Drive__c, sked__Job__r.sked_Drive__r.sked_Drive_Date__c, sked_Premium_Pay__c,
-                sked_DOT__c, sked_CDL__c, sked_Additional_Roles__c, sked_Completed_Post_Processes__c
+                sked_DOT__c, sked_CDL__c, sked_Additional_Roles__c, sked_Completed_Post_Processes__c,sked__Job__r.sked_Drive__r.name //HRP-12840
             FROM sked__Job_Allocation__c
             WHERE sked__Status__c NOT IN ('Deleted', 'Declined', 'Complete')
             AND sked__Job__r.sked_Drive__r.sked_Drive_Date__c  >= TODAY

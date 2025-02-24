@@ -139,7 +139,7 @@ global class slwcAllocationService {
         data.resources = resources;
         if (!groupActivityIds.isEmpty()) {
             data.groupActivities = [SELECT Id, Name, sked__Start__c, sked__End__c, sked__GeoLocation__Latitude__s, sked__GeoLocation__Longitude__s,
-                                    sked__Type__c
+                                    sked__Type__c,sked_Activity_Title__c //HRP-12840
                                     FROM sked__Activity__c
                                     WHERE Id IN :groupActivityIds];  
         }

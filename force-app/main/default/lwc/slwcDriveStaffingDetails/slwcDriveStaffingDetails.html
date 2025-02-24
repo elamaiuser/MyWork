@@ -891,8 +891,7 @@
                                                     <div for:each={resource.exceptionLog} for:item="exception" key={exception.exception}
                                                         class="slds-text-body_small slds-grid_vertical-align-center slds-has-flexi-truncate">
                                                         <p class="color-default-text slds-m-vertical_xx-small color-error" style="white-space: normal;">
-                                                            {exception.exception}
-                                                        </p>
+                                                            {exception.eventURL}                                                        </p>
                                                     </div>
                                                 </div>
                                             </div>
@@ -1003,6 +1002,7 @@
                                                                                 checked={exception.isSelected}>
                                                                             </lightning-input> -->
                                                                             <span
+
                                                                                 class="color-error slds-truncate width200">{exception.exception}</span>
                                                                         </p>
                                                                     </div>
@@ -1068,9 +1068,9 @@
                                                                                                     type="checkbox"
                                                                                                     checked={exceptionSub.isSelected}
                                                                                                     onchange={handleOnChange}>
-                                                                                                </lightning-input> -->
+                                                                                                </lightning-input>-->
                                                                                                 <span
-                                                                                                    class="color-error">{exceptionSub.exception}</span>
+                                                                                                    class="color-error"><a href={exceptionSub.eventURL} target="blank">{exceptionSub.exception}</a></span>
                                                                                             </p>
                                                                                         </div>
 

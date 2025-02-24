@@ -306,7 +306,6 @@ class SlwcAvailator {
         item.longitude = item.job.longitude;
         item.driveName = item.job.driveName;
 
-        console.log(' item.driveName2->'+item.job.driveName);
         if (item.startWithTravelTime) {
           item.start = item.startWithTravelTime;
         }
@@ -1902,23 +1901,18 @@ class SlwcAvailator {
                     }
                     else if (event.objectType == OBJECT_TYPE.ACTIVITY) {
                       exception.exception = "Conflict with " + event.activityTitle;//HRP-12840
-
+                      let baseUrl = window.location.origin;
+                      console.log(baseUrl);
+                      let fullUrl=baseUrl+'/lightning/r/sked__Activity__c/'+event.id+'/view';
+                      exception.eventURL=fullUrl;
                       exception.activityId = event.id;
                     }
                     else if (event.objectType == OBJECT_TYPE.JOB_ALLOCATION) {
-                      //alert(event);
-                      //alert('event.driveName:'+event.driveName);
-                      console.log('Anil2-> '+JSON.stringify(event));
                       let baseUrl = window.location.origin;
                       console.log(baseUrl);
                       let fullUrl=baseUrl+'/lightning/r/sked_Drive__c/'+event.driveId+'/view';
                       exception.eventURL=fullUrl;
-                     // <a id="baseUrl" href="fullUrl" target="_blank">event.driveName</a>
-                      let fullUrlDisplay="<a href="+fullUrl+" target=_blank>"+event.driveName+"</a>";
                       exception.exception = "Conflict with "+event.driveName;//HRP-12840
-                      //prompt(fullUrlDisplay);
-                    
-                      console.log('Full URL->'+baseUrl+'/lightning/r/sked_Drive__c/'+event.driveId+'/view');
                       exception.conflictedJobAllocationId = event.id;
                     }
                   }
