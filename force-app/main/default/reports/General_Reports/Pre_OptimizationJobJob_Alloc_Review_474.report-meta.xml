@@ -28,10 +28,10 @@
         <field>sked__Job__c.sked__Job_Allocations__r$sked_Guarded__c</field>
     </columns>
     <columns>
-        <field>sked__Job__c.sked__Job_Allocations__r$CreatedDate</field>
+        <field>sked__Job__c.sked__Job_Allocations__r$CreatedBy</field>
     </columns>
     <columns>
-        <field>sked__Job__c.sked__Job_Allocations__r$LastModifiedDate</field>
+        <field>sked__Job__c.sked__Job_Allocations__r$LastModifiedBy</field>
     </columns>
     <filter>
         <criteriaItems>
