@@ -692,7 +692,7 @@ export default class SlwcResolveDriveContentions extends LightningElement {
               return `
                 Drive Shift #${driveShiftIndex + 1}
                 ${dualRoleJobsRemovedData.dualRoleJobsRemoved.map(removedJob => {
-                  return `${compact([removeJob.resourceRole, removeJob.dualRole]).join('/')}: ${removedJob.quantity}`
+                  return `${compact([removedJob.resourceRole, removedJob.dualRole]).join('/')}: ${removedJob.quantity}`
                 }).join('\n')}
               `
             }).join('\n')
