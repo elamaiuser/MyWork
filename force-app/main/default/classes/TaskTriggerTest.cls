@@ -1,6 +1,6 @@
 /*
  * This Test class covering following classes and trigger 
- * TaskService (98%),
+ * TaskService (100%),
  * TaskTriggerHandler(89%),
  * TaskTrigger (100%)
  */
@@ -457,8 +457,8 @@ public class TaskTriggerTest {
         Test.startTest();
         //insert Publicity Task
         Task pdaTask = new Task(
-        	Subject = BSF_Constants.POST_DRIVE_ANALYSIS_TASK,
-            OwnerId = drdUser.Id,
+        	Subject = BSF_Constants.POST_DRIVE_ANALYSIS_TASK_SBPM,
+            //OwnerId = drdUser.Id,
             Priority = 'Normal',
             Status = 'Not Started',
             WhatId = testMobileOpp.Id
@@ -479,29 +479,15 @@ public class TaskTriggerTest {
         BSF_Task_Checklist__c taskCheckList;
         taskCheckList = new BSF_Task_Checklist__c(
                             TaskLookup__c = (String) pdaTask.Id,
-                            TaskType__c = BSF_Constants.POST_DRIVE_ANALYSIS_TASK,
+                            TaskType__c = BSF_Constants.POST_DRIVE_ANALYSIS_TASK_SBPM,
                             Unique_Name__c = 'Account_Strategy_Notes__c'
         );
         taskCheckListToInsert.add(taskCheckList);
         
         taskCheckList = new BSF_Task_Checklist__c(
                             TaskLookup__c = (String) pdaTask.Id,
-                            TaskType__c = BSF_Constants.POST_DRIVE_ANALYSIS_TASK,
-                            Unique_Name__c = 'Account_Strategy__c'
-        );
-        taskCheckListToInsert.add(taskCheckList);
-
-        taskCheckList = new BSF_Task_Checklist__c(
-                            TaskLookup__c = (String) pdaTask.Id,
-                            TaskType__c = BSF_Constants.POST_DRIVE_ANALYSIS_TASK,
-                            Unique_Name__c = 'Gray_Sky_Account__c'
-        );
-        taskCheckListToInsert.add(taskCheckList);
-
-        taskCheckList = new BSF_Task_Checklist__c(
-                TaskLookup__c = (String) pdaTask.Id,
-                TaskType__c = BSF_Constants.POST_DRIVE_ANALYSIS_TASK,
-                Unique_Name__c = 'Rollover_Consideration__c'
+                            TaskType__c = BSF_Constants.POST_DRIVE_ANALYSIS_TASK_SBPM,
+                            Unique_Name__c = 'Rollover_Consideration__c'
         );
         taskCheckListToInsert.add(taskCheckList);
 
@@ -530,12 +516,12 @@ public class TaskTriggerTest {
 
         update updateTaskList;
         
-        /*TaskService.updateRelatedAccountAndOpportunity(new List<Task>{pdaTask});
+        TaskService.updateRelatedAccountAndOpportunity(new List<Task>{pdaTask});
         
         Map<String,String> map_highlightFeedBackInfo = TaskService.getHighlightAndFeedBacks(pdaTask.Id);
         Map<String, String> map_highlightFeedBackUpdateInfo = TaskService.updateHighlightAndFeedBacks(pdaTask.Id, 'Test Hightlights', 'Test Feedback');
         Assert.isTrue(map_highlightFeedBackInfo != NULL && !map_highlightFeedBackInfo.isEmpty());
-        Assert.isTrue(map_highlightFeedBackUpdateInfo != NULL && map_highlightFeedBackUpdateInfo.get('isSuccess') == 'true');*/
+        Assert.isTrue(map_highlightFeedBackUpdateInfo != NULL && map_highlightFeedBackUpdateInfo.get('isSuccess') == 'true');
         
         Test.stopTest();
     }
