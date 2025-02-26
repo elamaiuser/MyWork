@@ -102,19 +102,23 @@ export default class SlwcPopoverContent extends LightningElement {
       let allocations = [];
       if (this.popoverData && this.popoverData.jobs && this.popoverData.jobs.length > 0) {
         this.popoverData.jobs.forEach(job => {
+          const resAllocations = [];
           job.jobAllocations.forEach(allocation => {
             if (allocation.status != JOB_ALLOCATION_STATUS.DELETED) {
-              allocations.push({
+              resAllocations.push({
                 id: allocation.id || allocation.key,
                 resourceName: allocation.resourceName || allocation.resource.name,                
                 resourceRole: job.resourceRole || job.assetType                
               });
             }
           });
-        });        
+          resAllocations.sort((a, b) => a.resourceName.localeCompare(b.resourceName));
+          allocations = allocations.concat(resAllocations);
+        });
       }
       return allocations;
     }
+
     render() {
       return this.popoverContentMap[this.name];
     }
