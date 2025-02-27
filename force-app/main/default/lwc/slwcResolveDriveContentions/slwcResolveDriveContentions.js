@@ -982,7 +982,7 @@ export default class SlwcResolveDriveContentions extends LightningElement {
         ];
         
         let originalContentions = [];
-        if(this.mode === MODE.DRIVE_SUBMISSION) {
+        if(this.mode === MODE.DRIVE_SUBMISSION || this.mode === MODE.UPDATE_DRIVE) {
           originalContentions = this.drive.pendingActionReasonCode || [];
         } else {
           originalContentions = this.driveChangeRequest?.driveContention || [];
@@ -1043,7 +1043,7 @@ export default class SlwcResolveDriveContentions extends LightningElement {
         }
 
         let originalContentions = [];
-        if(this.mode === MODE.DRIVE_SUBMISSION) {
+        if(this.mode === MODE.DRIVE_SUBMISSION || this.mode === MODE.UPDATE_DRIVE) {
           originalContentions = this.drive.pendingActionReasonCode || [];
         } else {
           originalContentions = this.driveChangeRequest?.driveContention || [];

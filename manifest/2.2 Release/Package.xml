@@ -256,8 +256,10 @@
 		<members>slwcDriveCompactView</members>
 		<members>slwcDriveGenerator</members>
 		<members>slwcDriveManagement</members>
+		<members>slwcDriveStaffingDetails</members>
 		<members>slwcDualRoleAssignmentModal</members>
 		<members>slwcOptimizationQueueSummary</members>
+		<members>slwcPopoverContent</members>
 		<members>slwcRefreshTravelTimeBanner</members>
 		<members>slwcResolveDriveContentions</members>
 		<members>slwcShiftJobs</members>
@@ -293,10 +295,12 @@
 	</types>
 	<types>
 		<members>General_Reports/Excess_Staff_Capacity_Audit_6N2</members>
+		<members>General_Reports/Pre_OptimizationJobJob_Alloc_Review_474</members>
 		<name>Report</name>
 	</types>
 	<types>
 		<members>Drives_with_Account_and_Site</members>
+		<members>Jobs_with_Job_Allocation</members>
 		<name>ReportType</name>
 	</types>
 	<types>
