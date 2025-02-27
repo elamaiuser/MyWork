@@ -188,8 +188,8 @@ public class DriveGenerationUtil {
             
             if(cbLogWrapper.runType.equalsIgnoreCase(BSF_Constants.RUN_TYPE_MANUAL)) {
                 event.put('Parent_Calendar_Build_Log__c', [SELECT ID FROM Calendar_Build_Log__c WHERE External_Id__c = :cbLogWrapper.formattedDate LIMIT 1]?.Id);
+                event.put('Source__c', cbLogWrapper.opportunitySource);
             }
-            event.put('Source__c', cbLogWrapper.opportunitySource);
             event.put('Drive_Date__c', cbLogWrapper.driveDateToEval);         
             upsert event;
             
