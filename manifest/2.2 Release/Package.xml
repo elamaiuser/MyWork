@@ -256,6 +256,7 @@
 		<members>slwcDriveCompactView</members>
 		<members>slwcDriveGenerator</members>
 		<members>slwcDriveManagement</members>
+		<members>slwcDriveShiftJobModal</members>
 		<members>slwcDriveStaffingDetails</members>
 		<members>slwcDualRoleAssignmentModal</members>
 		<members>slwcOptimizationQueueSummary</members>
