@@ -192,13 +192,14 @@
             }
 
             /* Logic for HRP-12299
-            	If opportunity has drive affiliation with Designation = "Gray Skies", mark as "Qualified"
-			*/
+            	If opportunity has drive affiliation with Designation = "Gray Skies", 
+                    leave the CB status blank so that it can go for other unqualifying condition check
+			
             else if(!graySkiesMap.isEmpty() && graySkiesMap.containsKey(incomingOrigOpp.Id)){ //incomingOrigOpp.Drive_Designations__c != null && incomingOrigOpp.Drive_Designations__c.split(';').contains('Gray Skies')) {
                 cbWrapper.IsQualified = true;
                 //cbWrapper.UnqualifiedReasons = 'Drive Designation is Gray Skies';
                 //cbWrapper.RolloverConsideration = 'Do Not Roll';
-            }
+            }*/
             
             //If Account Strategy = "Sunset", mark as "Unqualified"
             else if(incomingOrigOpp.Account.Account_Strategy__c != null && incomingOrigOpp.Account.Account_Strategy__c == 'Sunset') {
