@@ -810,6 +810,7 @@ class BaseGenerator {
     let shift = this.drive.driveShifts.find((e) => e.key == shiftKey);
     let newList = [...shift.jobs];
     let target = job;
+    let jobToBeGenerated = {};
     let backupDriveShift = this.masterData.backupDriveShiftMap[shiftKey];
     
     //Run this block only if dual role is changed
