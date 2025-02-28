@@ -103,7 +103,20 @@
 		<members>OpportunityControllerHelperTest</members>
 		<members>OpportunityControllerHelper</members>
 		<members>userService</members>
-        <members>userServiceTest</members>		
+        <members>userServiceTest</members>	
+        <members>UpdateAMAndDMPortfolioDailyBatchTest</members>
+        <members>PortfolioAssignmentService</members>
+        <members>DriveAffiliationHandler</members>
+        <members>skedDateTimeUtils</members>
+        <members>skedRefreshTravelTimeIndexBatch_Test</members>
+        <members>DriveResourceAllocationBatchTest</members>
+        <members>BSF_Batch_TaxonomyEndDateHelper</members>
+        <members>skedPtoRequestController</members>
+        <members>BSFTaskChecklistTriggerHandler</members>
+        <members>OrderTriggerHandler</members>
+        <members>skedTravelTimeIndexItemHandler</members>
+        <members>skedDataService</members>
+        <members>DriveResourceAllocationBatch</members>	
 		<name>ApexClass</name>
 	</types>
 	<types>
@@ -145,7 +158,13 @@
 		<members>sked_Travel_Time_Manager__c.sked_CO_Group_Index_Refresh_Priority__c</members>
 		<members>UpdateOpptyTeamEvent__e.AcctTeamMemberId__c</members>
         <members>UpdateOpptyTeamEvent__e.UpdateAcctTeam__c</members>
-		 <members>Opportunity.Pending_ARD_Confirmation__c</members>
+		<members>Opportunity.Pending_ARD_Confirmation__c</members>
+        <members>sked__Availability__c.sked__Resource__c</members>
+        <members>UpdateOpptyTeamEvent__e.End_Date__c</members>
+        <members>UpdateOpptyTeamEvent__e.Start_Date__c</members>
+        <members>sked__Job__c.sked__Address__c</members>
+        <members>sked_Product_Goal__c.sked_Procedure_Type__c</members>
+        <members>Account_Handoff_Settings__mdt.Region_Name__c</members>
 		<name>CustomField</name>
 	</types>
 	<types>
@@ -155,7 +174,8 @@
 		<members>BSF_Mass_Drive_Service_Role_Primary_Contact_Warning_Message</members>
 		<members>BSF_Mass_Drive_Service_Role_Warning_Message</members>
 		<members>OpportunityTeamSyncTriggerSize</members>
-		<members>Potential_Feeder_Group_Lead_Status</members>		
+		<members>Potential_Feeder_Group_Lead_Status</members>
+        <members>BSF_SUPPORT_EMAIL_ID</members>	
 		<name>CustomLabel</name>
 	</types>
 	<types>
@@ -199,9 +219,33 @@
 		<members>Task_Checklist_Setting.space_for_blood_drive_is_reserved</members>
 		<members>Task_Reassignment_Matrix.X72_Hour</members>
 		<members>Task_Report_Link.Drive_Worksheet_Report</members>
-		<members>Task_Report_Link.Managing_Donor_Appointments_Playbook_72</members>		
+		<members>Task_Report_Link.Managing_Donor_Appointments_Playbook_72</members>
+        <members>Task_Report_Link.DRMS_Audit_report</members>
+        <members>sked_Workday_XML_Template.Get_Time_Off_Plan_Balances</members>
+        <members>BatchByPassSettings.Opportunity_Team_Sync_Batch</members>
+        <members>sked_Workday_XML_Template.Push_Vacation_Approval</members>
+        <members>sked_Workday_XML_Template.Time_Tracking</members>
+        <members>Task_Checklist_Setting.Strong_Recruitment_Plan</members>
+        <members>sked_Workday_XML_Template.Absence_Management</members>
+        <members>sked_Workday_XML_Template.Get_Time_Off_Report</members>
+        <members>Admin_Profile_Setting.Order</members>
+        <members>Task_Report_Link.After_Drive_Analysis</members>
+        <members>Custom_Notification_Setting.ClosedOpportunity72HourTask</members>
+        <members>sked_Workday_XML_Template.Push_Vacation_Approval_Bereavement</members>
+        <members>Task_Report_Link.Ferritin_Deferrals</members>
+        <members>Account_Handoff_Settings.Jan2025</members>
+        <members>Object_Specific_Setting.Opportunity_Settings</members>
+        <members>Task_Report_Link.Sponsor_Planning_Report</members>
+        <members>sked_Workday_XML_Template.Adjust_Time_Off_Request</members>
+        <members>Task_Report_Link.Same_Day_Rebooking_Results</members>
+        <members>Calendar_Build_Setting.Calendar_Build_Drives_Config</members>
+        <members>sked__Admin_Setting.Skedulo_API_Token</members>	
 		<name>CustomMetadata</name>
 	</types>
+    <types>
+        <members>sked_Collection_Operations__gvs</members>
+        <name>GlobalValueSet</name>
+    </types>
 	<types>
 		<members>ARD_Alert_Profiles__mdt</members>
 		<members>Feeder_Account_Opportunity__c</members>
@@ -261,6 +305,14 @@
 		<members>sked__Location__c-Mobile Site Layout</members>
 		<members>sked__Activity_Resource__c-Sked Activity Resource Layout</members>
 		<members>Task-Task 72hrs Layout</members>
+        <members>ARD_Alert_Profiles__mdt-ARD Alert Profile Layout</members>
+        <members>Opportunity-Fixed Site Opp APS Layout</members>
+        <members>Opportunity-APS Planner Fixed Site Opp Layout</members>
+        <members>Opportunity-Fixed Site Opp Non-APS Layout</members>
+        <members>Opportunity-Sponsor Marketing Fixed Site Opp Layout</members>
+        <members>Opportunity-DRD Fixed Site Opp Layout</members>
+        <members>Opportunity-APS Scheduler Fixed Site Opp Layout</members>
+        <members>sked__Availability__c-Sked Availability Layout</members>
 		<name>Layout</name>
 	</types>
 	<types>
@@ -273,6 +325,8 @@
 	</types>
 	<types>
 		<members>sked_Travel_Time_Index_Refresh_Group__c.sked_Collection_Operation</members>
+        <members>Account.Mobile_Account</members>
+        <members>Account.Fixed_Site_Account</members>
 		<name>RecordType</name>
 	</types>
 	<types>
@@ -295,6 +349,8 @@
 		<members>slwcListenDriveChange</members>
 		<members>slwcResolveDriveContentions</members>
 		<members>travelTimeBreakdown</members>
+        <members>slwcPicklist</members>
+        <members>slwcDriveManagement</members>
 		<name>LightningComponentBundle</name>
 	</types>
 	<types>

@@ -68,10 +68,9 @@ public class DriveGenerationUtil {
      		* Wrapper class instance
 	*/
     public static List<sObject> getCalendarBuildLogRecord(CalendarBuildLogWrapper cbLogWrapper) {
-        string dateFormatted = cbLogWrapper.externalId;
-        system.debug('dateFormatted in query '+dateFormatted);
+        string externalId = cbLogWrapper.externalId;
         
-        String query = ' SELECT ID, Drive_Date__c, External_Id__c, ';
+        String query = ' SELECT Id, Drive_Date__c, External_Id__c, ';
         if(cbLogWrapper.batchInfo.equalsIgnoreCase('Calendar Build')) {
             query += 'CB_Batch_Status__c, CB_Batch_Execution_Date__c, '+
                       'CB_FS_Eligible_Opportunity_Count__c, CB_FS_Opportunities_Created__c, CB_FS_Opportunities_Failure_Count__c, '+
@@ -91,8 +90,8 @@ public class DriveGenerationUtil {
             query += 'Mobile_Sys_Gen_Batch_Run_Status__c, Mobile_Sys_Gen_Batch_Run_Date__c, '+
                       'Mobile_Drives_with_Resource_Allocation__c, Mobile_Drives_wo_Resource_Allocation__c, Mobile_Drives_Failed_Processing__c ';
         }
-        query += cbLogWrapper.runType.equalsIgnoreCase(BSF_Constants.RUN_TYPE_MANUAL) ? 'FROM Calendar_Build_Log_Manual_Run__c ' : 'FROM Calendar_Build_Log__c ';
-        query += 'WHERE External_Id__c = :dateFormatted LIMIT 1';
+        query += cbLogWrapper.runType.equalsIgnoreCase(BSF_Constants.RUN_TYPE_MANUAL) ? ', Source__c FROM Calendar_Build_Log_Manual_Run__c ' : 'FROM Calendar_Build_Log__c ';
+        query += 'WHERE External_Id__c = :externalId LIMIT 1';
         return Database.query(query);
     }
 	
@@ -101,7 +100,7 @@ public class DriveGenerationUtil {
 			* CreatedDate : 8/5/2024
 			* CreatedFor : HRP-12706
      * @Description : 
-     		* This utility method will capture CB Logs, CB Manual Logs (manual run) and CB Error Logs
+     		* This utility method will capture CB Logs, CB Manual Logs (manual run / adhoc CB run) and CB Error Logs
      		* Method can be called from finish method of every related CB batch
      * @Method Parameters : 
      		* Wrapper class instance
@@ -113,13 +112,22 @@ public class DriveGenerationUtil {
     public static void captureCbLogAndCbErrorLog(CalendarBuildLogWrapper cbLogWrapper) {
         List<Calendar_Build_Error_Log__c> cbErrorLogListToInsert = new List<Calendar_Build_Error_Log__c>();
         try {
-            String driveDateToEvalString = cbLogWrapper.driveDateToEval.format();
-            DateTime sameDateTimeNextYear = Helper.getSameDayOfNextYear(cbLogWrapper.driveDateToEval);
-            Date newDate = Date.newInstance(sameDateTimeNextYear.year(), sameDateTimeNextYear.month(), sameDateTimeNextYear.day());
-            cbLogWrapper.formattedDate = newDate.format();
-            cbLogWrapper.name = cbLogWrapper.runType.equalsIgnoreCase(BSF_Constants.RUN_TYPE_MANUAL) ? 'Calendar Build Log Manual Run - ' : 'Calendar Build Log - ';
-            cbLogWrapper.name = cbLogWrapper.name + driveDateToEvalString;
-            cbLogWrapper.externalId = cbLogWrapper.runType.equalsIgnoreCase(BSF_Constants.RUN_TYPE_MANUAL) ? BSF_Constants.CURRENT_DATE+'_'+cbLogWrapper.driveDateToEval+'_'+UserInfo.getUserName() : cbLogWrapper.formattedDate;
+            if(cbLogWrapper.batchInfo.equalsIgnoreCase(BSF_Constants.BATCH_DRIVE_STATUS_CORRECTION)
+                || (cbLogWrapper.opportunitySource != NULL 
+                    && !String.isBlank(cbLogWrapper.opportunitySource) 
+                    && cbLogWrapper.opportunitySource.equalsIgnoreCase(BSF_Constants.OPP_SOURCE_CALENDAR_BUILD)) //Ignore below assignments for Adhoc CB drives
+            ) {
+                String driveDateToEvalString = cbLogWrapper.driveDateToEval.format();
+                DateTime sameDateTimeNextYear = Helper.getSameDayOfNextYear(cbLogWrapper.driveDateToEval);
+                Date newDate = Date.newInstance(sameDateTimeNextYear.year(), sameDateTimeNextYear.month(), sameDateTimeNextYear.day());
+                cbLogWrapper.formattedDate = newDate.format();
+                cbLogWrapper.name = cbLogWrapper.runType.equalsIgnoreCase(BSF_Constants.RUN_TYPE_MANUAL) ? 'Calendar Build Log Manual Run - ' : 'Calendar Build Log - ';
+                cbLogWrapper.name = cbLogWrapper.name + driveDateToEvalString;
+                cbLogWrapper.externalId = cbLogWrapper.runType.equalsIgnoreCase(BSF_Constants.RUN_TYPE_MANUAL) ? BSF_Constants.CURRENT_DATE+'_'+cbLogWrapper.driveDateToEval+'_'+UserInfo.getUserName() : cbLogWrapper.formattedDate;
+            } else {
+                cbLogWrapper.name = 'Calendar Build Log Adhoc_Run Date- '+System.today().format();
+                cbLogWrapper.externalId = 'Adhoc CB_Run Date- '+System.today().format();
+            }
             
             sObject event;
             List<sObject> sObjectList = getCalendarBuildLogRecord(cbLogWrapper);
@@ -137,6 +145,13 @@ public class DriveGenerationUtil {
                 List<String> fieldsToUpdate = BSF_Constants.MAP_BATCHINFO_FIELDSTOUPDATE.get(cbLogWrapper.batchInfo);
                 event.put(fieldsToUpdate[0], cbLogWrapper.batchException != NULL ? BSF_Constants.BATCH_STATUS_ERROR : BSF_Constants.BATCH_STATUS_COMPLETED);
                 event.put(fieldsToUpdate[1], BSF_Constants.CURRENT_DATE_TIME);
+
+                //HRP-11368: When FS Sys gen completes, set Mobile sys gen status as Not Needed for Adhoc CB
+                if(cbLogWrapper.batchInfo.equalsIgnoreCase(BSF_Constants.BATCH_SYS_GEN_FS) && cbLogWrapper.opportunitySource.equalsIgnoreCase(BSF_Constants.OPP_SOURCE_ADHOC_CALENDAR_BUILD)) {
+                    fieldsToUpdate.addAll(BSF_Constants.MAP_BATCHINFO_FIELDSTOUPDATE.get(BSF_Constants.BATCH_SYS_GEN_MOBILE));
+                    event.put(fieldsToUpdate[2], BSF_Constants.BATCH_STATUS_NOT_NEEDED);
+                    event.put(fieldsToUpdate[3], BSF_Constants.CURRENT_DATE_TIME);
+                }
             }
             
             if(cbLogWrapper.batchException == NULL) {
@@ -172,22 +187,20 @@ public class DriveGenerationUtil {
             }
             
             if(cbLogWrapper.runType.equalsIgnoreCase(BSF_Constants.RUN_TYPE_MANUAL)) {
-                event.put('Parent_Calendar_Build_Log__c', [SELECT ID FROM Calendar_Build_Log__c WHERE External_Id__c = :cbLogWrapper.formattedDate LIMIT 1].Id);
-            } else {
-            	event.put('Drive_Date__c', cbLogWrapper.driveDateToEval);
-            }            
+                event.put('Parent_Calendar_Build_Log__c', [SELECT ID FROM Calendar_Build_Log__c WHERE External_Id__c = :cbLogWrapper.formattedDate LIMIT 1]?.Id);
+                event.put('Source__c', cbLogWrapper.opportunitySource);
+            }
+            event.put('Drive_Date__c', cbLogWrapper.driveDateToEval);         
             upsert event;
             
             List<BSF_Error_Log__c> errorLogCreatedDuringBatchRun = [SELECT Id, Error_Description__c, 
                                                                     Object_RecordId__c, Functionality__c
                                                                     FROM BSF_Error_Log__c
                                                                     WHERE Id IN :cbLogWrapper.errorLogIdsCreatedDuringBatchRun];
-        	system.debug('errorLogCreatedDuringBatchRun '+errorLogCreatedDuringBatchRun.size());
+
             for(BSF_Error_Log__c errorLog : errorLogCreatedDuringBatchRun) {
-                system.debug('inside for loop');
-                system.debug('errorLog '+errorLog);
                 Calendar_Build_Error_Log__c cbErrorLog = new Calendar_Build_Error_Log__c();
-                cbErrorLog.Name = cbLogWrapper.batchInfo+' Error Log_'+cbLogWrapper.driveDateToEval.format();
+                cbErrorLog.Name = cbLogWrapper.batchInfo+' Error Log_'+(cbLogWrapper.driveDateToEval != NULL ? cbLogWrapper.driveDateToEval.format() : System.today().format()); //for Adhoc CB errors, add the run date in the error log name HRP-11368
                 cbErrorLog.BSF_Error_Log__c = errorLog.Id;
                 if(cbLogWrapper.runType.equalsIgnoreCase(BSF_Constants.RUN_TYPE_MANUAL)) {
                     cbErrorLog.Calendar_Build_Log_Manual_Run__c = (Id) event.get('Id');
@@ -231,6 +244,7 @@ public class DriveGenerationUtil {
     @testVisible
     public class CalendarBuildLogWrapper {
         public String name {get; set;}
+        public String opportunitySource {get; set;} //HRP-11368
         public Date driveDateToEval {get; set;}
         public String formattedDate {get; set;}
         public String batchInfo {get; set;}
@@ -298,7 +312,7 @@ public class DriveGenerationUtil {
         } 
     }
 
-    public static void captureErrorLoggingForException(String source, Exception ex, CalendarBuildLogWrapper cbLogWrapper) {
+    public static void captureErrorLoggingForException(Exception ex, CalendarBuildLogWrapper cbLogWrapper) {
         List<BSF_Error_Log__c> errorLogToInsert = new List<BSF_Error_Log__c>{
             BSF_Utilities.createBsfErrorLogForExceptions(
                 ex,
@@ -311,10 +325,8 @@ public class DriveGenerationUtil {
             )
         };
         Database.SaveResult[] logInsertResult = Database.insert(errorLogToInsert, FALSE);
-        if(source != NULL && source.equalsIgnoreCase(BSF_Constants.BATCH_CALENDAR_BUILD)) {
-            cbLogWrapper.batchException = ex;
-            cbLogWrapper.errorLogIdsCreatedDuringBatchRun = BSF_Utilities.getSuccessfullySavedRecordIds(logInsertResult);
-            DriveGenerationUtil.captureCbLogAndCbErrorLog(cbLogWrapper);
-        }
+        cbLogWrapper.batchException = ex;
+        cbLogWrapper.errorLogIdsCreatedDuringBatchRun = BSF_Utilities.getSuccessfullySavedRecordIds(logInsertResult);
+        DriveGenerationUtil.captureCbLogAndCbErrorLog(cbLogWrapper);
     }
 }

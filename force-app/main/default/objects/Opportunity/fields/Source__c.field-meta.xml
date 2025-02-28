@@ -27,6 +27,11 @@
                 <default>false</default>
                 <label>Business Planning</label>
             </value>
+            <value>
+                <fullName>Adhoc Calendar Build</fullName>
+                <default>false</default>
+                <label>Adhoc Calendar Build</label>
+            </value>
         </valueSetDefinition>
     </valueSet>
 </CustomField>

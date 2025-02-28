@@ -61,6 +61,7 @@ export default class SlwcAddressInput extends LightningElement {
         service.getPlaceDetails({placeId: event.detail.selection.id, sessionId: this.sessionId})
             .then((result) => {
                 let apiResult = JSON.parse(result);
+                console.log('apiResult.result ',result);
                 const selectionChangeEvent = new CustomEvent('selectionchange', {
                     detail: {
                         placeDetails: apiResult.result

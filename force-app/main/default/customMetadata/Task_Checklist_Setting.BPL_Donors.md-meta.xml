@@ -7,6 +7,10 @@
         <value xsi:type="xsd:double">2.0</value>
     </values>
     <values>
+        <field>Field_Mapping_Object__c</field>
+        <value xsi:nil="true"/>
+    </values>
+    <values>
         <field>Help_Text__c</field>
         <value xsi:type="xsd:string">DS Recruitment is responsible for entering paper appointment names into the BDMP.
 Discuss use of Book Now app or continued need for a paper schedule for the future drive.</value>
@@ -29,7 +33,7 @@ Discuss use of Book Now app or continued need for a paper schedule for the futur
     </values>
     <values>
         <field>Order__c</field>
-        <value xsi:type="xsd:double">14.0</value>
+        <value xsi:type="xsd:double">16.0</value>
     </values>
     <values>
         <field>Parent__c</field>
@@ -53,7 +57,7 @@ Discuss use of Book Now app or continued need for a paper schedule for the futur
     </values>
     <values>
         <field>UI_Text__c</field>
-        <value xsi:type="xsd:string">If BPL declines to add donors online, provide paper schedule (pulled from BDMP) for donor appointments, including donors already scheduled online.</value>
+        <value xsi:type="xsd:string">If BPL declines to add donors online, provide paper schedule (pulled from BDMP) for donor appointments, including donors already scheduled online</value>
     </values>
     <values>
         <field>Unique_Name__c</field>

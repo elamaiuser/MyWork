@@ -8,6 +8,7 @@
  * 2/19/2024                  Priti Jana            Rewriting entire test class to reduce complexity and increase code coverage
  * 10/29/2024				  Priti Jana			Fixed errors
  * 01/09/2025				  Priti Jana			Commented out test method for Gray Sky consideration (HRP-12299)
+ * 02/04/2025                 Anil Kallu            Generate Exception if a calendar build opp falls with in 56 days range of another opp on account(if 56 day accept flag is false) 
  * *****************************************************************************************************************************/
 
 @isTest(SeeAllData = FALSE)
@@ -71,11 +72,27 @@ public class CalendarBuildEvaluateDrivesBatch_Test {
                 
          // Opportunity Preparation - Mobile
          Opportunity testMobileOpp = (Opportunity)mapTestData.get('MOBILE_OPP');
+         //HRP-11850 -Begin this is the opp calendar build opp clones
+         testMobileOpp.Name='Mobile1';
+         testMobileOpp.Drive_date__c=System.today();
+         testMobileOpp.CloseDate=System.today().addDays(-15);//HRP-11850-End
+
          testMobileOpp.accountId = accList[1].Id;
          testMobileOpp.Drive_Site__c = siteList[0].Id;
          testMobileOpp.Parent_Template_Id__c = oppList[1].Id;
          testMobileOpp.stageName = 'Discovery';
          insert testMobileOpp;
+        
+        //HRP-11850 -Begin, this is the opp that will be with in 56 days of calendar clone of opportunity above
+        Opportunity mobileOpp2 = testMobileOpp.clone(false, true, false, false);
+        mobileOpp2.Accept_56_Day_Rule_Violation__c=true;
+        mobileOpp2.bypass_validation_rule__c = true;
+        mobileOpp2.Name='MobileOpp2';
+     
+        mobileOpp2.CloseDate=System.today().addDays(300);
+        //make this with in 56 days of calendar build opp (which will be generated with 20 days prior to today+1year, based on custom metadata config)
+        mobileOpp2.Drive_date__c= System.today().addDays(325);
+        insert mobileOpp2;//HRP-11850-End
         
          // Drive Preparation - Fixed & Mobile
          sked_Drive__c testFixedSiteDrive = new sked_Drive__c();
@@ -158,6 +175,36 @@ public class CalendarBuildEvaluateDrivesBatch_Test {
         dml_error_map.put(mobileOpp.id, 'test class');
         CalendarBuildEvaluateDrivesBatch.sendErrorNotification(null, dml_error_map);
         Test.stopTest();
+    }
+
+    //HRP-11850
+    static testMethod void testCBMobileDrivesFor56DaysViolation() {
+        Calendar_Build_Setting__mdt mdtDriveCompletion = Calendar_Build_Setting__mdt.getInstance('Calendar_Build_Drives_Config');
+        Integer numOfDays = mdtDriveCompletion?.No_of_Days_for_Calendar_Build_Batch__c.intValue();
+        Test.startTest();
+        TriggerHandler.bypass('AccountPortfolioAssignmentTriggerHandler');
+        TriggerHandler.bypass('AccountTriggerHandler');
+        TriggerHandler.bypass('OpportunitySplitTriggerHandler');
+        TriggerHandler.bypass('DriveAffiliationHandler');
+
+        Opportunity mobileOpp = [select id, stageName, Drive_date__c from Opportunity where type_of_drive__c = 'Mobile' and Name='Mobile1' AND Is_Template__c = FALSE LIMIT 1];
+        mobileOpp.bypass_validation_rule__c = TRUE;
+        mobileOpp.Drive_Date__c = System.today().addDays(-numOfDays);
+        mobileOpp.Drive_Date_Change_Reason__c = 'TEST';
+        mobileOpp.StageName = 'Cancelled';
+        mobileOpp.Initiated_By__c = 'ARC_Initiated_Mobile';
+        mobileOpp.sked_Cancellation_Reason__c = 'System Need';
+        update mobileOpp;
+        //update template accept 56 day flag to false, so calendar build opp will not have it
+        Opportunity templateMobileOpp = [select id, Accept_56_Day_Rule_Violation__c from Opportunity where type_of_drive__c = 'Mobile' AND Is_Template__c = true LIMIT 1];
+        templateMobileOpp.Accept_56_Day_Rule_Violation__c=false;//set accept to false;
+        update templateMobileOpp;
+        // Call the batch
+        CalendarBuildEvaluateDrivesBatch cbDrive = new CalendarBuildEvaluateDrivesBatch();
+        Database.executeBatch(cbDrive);
+        Test.stopTest();
+        List<Opportunity> oppListWithError = [select id from Opportunity where Calendar_Build_Reasons_For_Unqualified__c='Violates Accepts 56 day selection'];
+        Assert.areEqual(true,oppListWithError.size()>0,'There should be atleast one opportunity with Calendar_Build_Reasons_For_Unqualified__c populated for Violates Accepts 56 day selection');  
     }
     
     /*static testMethod void testCBMobileDrivesWithGreySkies() {
@@ -275,7 +322,9 @@ public class CalendarBuildEvaluateDrivesBatch_Test {
         update fsOpp;
 
         // Call the batch
-        new CalendarBuildEvaluateDrivesBatch(null).execute(null, null);
+        CalendarBuildEvaluateDrivesBatch cbDrive = new CalendarBuildEvaluateDrivesBatch();
+        Database.executeBatch(cbDrive);
+        //new CalendarBuildEvaluateDrivesBatch(null).execute(null, null);
         Test.stopTest();
     }
     
@@ -301,9 +350,9 @@ public class CalendarBuildEvaluateDrivesBatch_Test {
         Test.stopTest();
     }
     
-    static testMethod void testCBRunForFinishException() {
+   /* static testMethod void testCBRunForFinishException() {
         new CalendarBuildEvaluateDrivesBatch(null).finish(null);
-    }
+    }*/
     
     static testMethod void testCreateSkedFsDrivesBatch() {
         Test.startTest();

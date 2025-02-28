@@ -395,6 +395,13 @@
         </value>
     </choices>
     <constants>
+        <name>DRIVE_TYPE_FIXED_SITE</name>
+        <dataType>String</dataType>
+        <value>
+            <stringValue>Fixed Site</stringValue>
+        </value>
+    </constants>
+    <constants>
         <name>TBD</name>
         <dataType>String</dataType>
         <value>
@@ -1568,6 +1575,24 @@ REGEX( {!Drive_Keyword_Required}, &quot;[a-zA-Z0-9 ]+&quot;)</formulaExpression>
                     <elementReference>outWeeklyFrequency</elementReference>
                 </value>
             </inputParameters>
+            <inputParameters>
+                <name>OutputDonorEligibilityDay</name>
+                <value>
+                    <elementReference>outputDonorEligibilityDay</elementReference>
+                </value>
+            </inputParameters>
+            <inputParameters>
+                <name>OutputDonorEligibilityType</name>
+                <value>
+                    <elementReference>OutputEligibilityNeededFor</elementReference>
+                </value>
+            </inputParameters>
+            <inputParameters>
+                <name>InputDriveType</name>
+                <value>
+                    <elementReference>DRIVE_TYPE_FIXED_SITE</elementReference>
+                </value>
+            </inputParameters>
             <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
             <isRequired>true</isRequired>
             <outputParameters>
@@ -1613,6 +1638,14 @@ REGEX( {!Drive_Keyword_Required}, &quot;[a-zA-Z0-9 ]+&quot;)</formulaExpression>
             <outputParameters>
                 <assignToReference>outWeeklyFrequency</assignToReference>
                 <name>OutputWeeklyFrequencyValue</name>
+            </outputParameters>
+            <outputParameters>
+                <assignToReference>outputDonorEligibilityDay</assignToReference>
+                <name>OutputDonorEligibilityDay</name>
+            </outputParameters>
+            <outputParameters>
+                <assignToReference>OutputEligibilityNeededFor</assignToReference>
+                <name>OutputDonorEligibilityType</name>
             </outputParameters>
         </fields>
         <showFooter>false</showFooter>
@@ -1833,6 +1866,20 @@ REGEX( {!Drive_Keyword_Required}, &quot;[a-zA-Z0-9 ]+&quot;)</formulaExpression>
         <isInput>false</isInput>
         <isOutput>false</isOutput>
         <scale>0</scale>
+    </variables>
+    <variables>
+        <name>outputDonorEligibilityDay</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+    </variables>
+    <variables>
+        <name>OutputEligibilityNeededFor</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
     </variables>
     <variables>
         <name>outRecurrenceType</name>
