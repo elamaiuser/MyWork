@@ -12,7 +12,7 @@
     </values>
     <values>
         <field>Help_Text__c</field>
-        <value xsi:type="xsd:string">Submit the required forms on the Field for specialty marketing and communications support. For IHO.IMO drives, complete In Memory of/In Honor of Resource Support Process. 
+        <value xsi:type="xsd:string">Submit the required forms on the Field for specialty marketing and communications support. For IHO/IMO drives, complete In Memory of/In Honor of Resource Support Process. 
 
 If BPL would like to include a non-Red Cross donor incentive, submit an APL Material Review and Approval form.</value>
     </values>
