@@ -34,6 +34,7 @@
  * 08/01/2024                 Priti Jana             Logic for HRP-10994
  * 08/09/2024                 Priti Jana             Logic for HRP-11634
  * 12/10/2024				  Priti Jana			 Logic for HRP-13190
+ * 13/02/2025				  Krapy Tuli			 Fix for average staff capacity did not considering APT quantity for HRP-14128
  *******************************************************************************
 */
 public with sharing class GenerateMobileDrive {
@@ -830,8 +831,9 @@ public with sharing class GenerateMobileDrive {
                 ));
                 drive.staffCapacity = drive.staffCapacity != null ?  drive.staffCapacity : 0;
                 drive.staffCapacity += driveShift.staffCapacity;
-                drive.totalStaffRequested = drive.totalStaffRequested != NULL ? drive.totalStaffRequested + driveShift.staffSetup : driveShift.staffSetup; //HRP-10994
-
+                Decimal driveStaffCount = getStaffQuntity(driveShift, new Set<String>{'Driver', 'Driver Support', '2RBC', 'VP/HH', 'Charge'}); //HRP-14128
+                // call method which will count and get the quantity of all the job which are in Drive, Drive Support, 2RBC, VP/HH, Charge
+                drive.totalStaffRequested = drive.totalStaffRequested != NULL ? drive.totalStaffRequested + driveStaffCount : driveStaffCount; //HRP-10994 //HRP-14128
                 // HRP-10667 --> Starts here
                 staffCapacityForWBSlotsCalc = Math.floor(calculateStaffCapacity (
                     new List<String>{'Driver', 'Driver Support', '2RBC', 'VP/HH', 'Charge'},
@@ -854,12 +856,12 @@ public with sharing class GenerateMobileDrive {
         
         // HRP-10994 --> Starts Here
         protected virtual MobileDriveGeneratorDMLService.DMLDrive calculateAverageStaffCapacity(MobileDriveGeneratorDMLService.DMLDrive drive) {
-            drive.averageStaffCapacity = (drive.staffCapacity / drive.totalStaffRequested).setScale(1);
+            drive.averageStaffCapacity = (drive.staffCapacity / drive.totalStaffRequested).setScale(1, System.RoundingMode.HALF_UP); //HRP-14128
             return drive;
         }
 
         protected virtual MobileDriveGeneratorDMLService.DMLDrive calculateExcessStaffCapacity(MobileDriveGeneratorDMLService.DMLDrive drive) {
-            drive.excessStaffCapacity = ((drive.staffCapacity - drive.projectedRegisteredDonors) / drive.averageStaffCapacity).setScale(1);
+            drive.excessStaffCapacity = ((drive.staffCapacity - drive.projectedRegisteredDonors) / drive.averageStaffCapacity).setScale(1, System.RoundingMode.HALF_UP);//HRP-14128
             return drive;
         }
         // HRP-10994 --> Ends Here
@@ -1763,6 +1765,20 @@ public with sharing class GenerateMobileDrive {
             }
             drive.totalSlots = totalSlots;
             return drive;
+        }
+        //HRP-14128
+        protected Decimal getStaffQuntity(MobileDriveGeneratorDMLService.DMLDriveShift driveShift, Set<String> staffQuantityNeededFor) {
+            Decimal staffQunatity = 0;
+            for (MobileDriveGeneratorDMLService.DMLJob job : driveShift.jobs) {
+                if (!string.isBlank(job.resourceRole) && (staffQuantityNeededFor.contains(job.resourceRole ))) {
+                    if (job.resourceRole == 'VP/HH') {
+                        staffQunatity += job.vphhQuantity;
+                    } else {
+                        staffQunatity += job.quantity;
+                    }
+                }
+            }
+            return staffQunatity;
         }
         
     }
