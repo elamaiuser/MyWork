@@ -297,6 +297,7 @@ export default class SlwcDriveShiftJobModal extends LightningElement {
         .then(() => {
             this.showModal = true;
             this.enableAddress = !!detail.enableAddress;
+            this.disableQuantity = !!detail.disableQuantity;
             this.action = detail.action;
             this.resourceType = detail.resourceType;
             this.type = detail.type;

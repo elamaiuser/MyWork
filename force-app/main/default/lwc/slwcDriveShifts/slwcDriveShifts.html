@@ -142,12 +142,12 @@
                                         </template>
                                     </div>
                                     <div class="slds-col slds-size_1-of-4 slds-p-left_small">
-                                        <template if:false={masterData.fieldReadonlyMap.driveShiftsMetadata}>
+                                        <template if:false={masterData.fieldReadonlyMap.mobileDriveVehicesInput}>
                                             <div class="slds-form-element__label slds-no-flex" title="Do Not Use Vehicle">Do Not Use Vehicle</div>
                                             <lightning-input type="checkbox" name="doNotUseVehicle" label="Do Not Use Vehicle" variant="label-hidden" value={drive.doNotUseVehicle} 
                                                             checked={drive.doNotUseVehicle} onchange={handleOnChange}></lightning-input>
                                         </template>
-                                        <template if:true={masterData.fieldReadonlyMap.driveShiftsMetadata}>
+                                        <template if:true={masterData.fieldReadonlyMap.mobileDriveVehicesInput}>
                                             <div class="slds-form-element slds-form-element_readonly">
                                                 <span class="slds-form-element__label">Do Not Use Vehicle</span>
                                                 <div class="slds-form-element__control">
@@ -163,6 +163,51 @@
                                             </div>
                                         </template>
                                     </div>
+                                    <template if:false={drive.doNotUseVehicle}>
+                                        <div class="slds-col slds-size_1-of-4 slds-p-left_small">
+                                            <template if:false={masterData.fieldReadonlyMap.mobileDriveVehicesInput}>
+                                                <div class="slds-form-element__label slds-no-flex" title="Prefer system generated vehicles">Prefer system generated vehicles</div>
+                                                <lightning-input type="checkbox" name="preferSystemGeneratedVehicles" label="Prefer system generated vehicles" variant="label-hidden" value={drive.preferSystemGeneratedVehicles} 
+                                                                checked={drive.preferSystemGeneratedVehicles} onchange={handleOnChange}></lightning-input>
+                                            </template>
+                                            <template if:true={masterData.fieldReadonlyMap.mobileDriveVehicesInput}>
+                                                <div class="slds-form-element slds-form-element_readonly">
+                                                    <span class="slds-form-element__label">Prefer system generated vehicles</span>
+                                                    <div class="slds-form-element__control">
+                                                        <div class="slds-form-element__static slds-truncate">
+                                                            <template if:true={drive.preferSystemGeneratedVehicles}>
+                                                                <lightning-icon icon-name="utility:check" size="x-small"></lightning-icon>
+                                                            </template>
+                                                            <template if:false={drive.preferSystemGeneratedVehicles}>
+                                                                <lightning-icon icon-name="utility:steps" size="x-small"></lightning-icon>
+                                                            </template>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </template>
+                                        </div>
+
+                                        <div class="slds-col slds-size_1-of-4 slds-p-left_small">
+                                            <template if:false={masterData.fieldReadonlyMap.mobileDriveVehicesInput}>
+                                                <lightning-input 
+                                                    type="number" autocomplete="off" 
+                                                    name="numberOfVehicles" 
+                                                    label="Number of Vehicles" 
+                                                    value={drive.numberOfVehicles} 
+                                                    disabled={drive.preferSystemGeneratedVehicles}
+                                                    onchange={handleOnChange}>
+                                                </lightning-input>
+                                            </template>
+                                            <template if:true={masterData.fieldReadonlyMap.mobileDriveVehicesInput}>
+                                                <div class="slds-form-element slds-form-element_readonly">
+                                                    <span class="slds-form-element__label">Number of Vehicles</span>
+                                                    <div class="slds-form-element__control">
+                                                        <div class="slds-form-element__static slds-truncate">{drive.numberOfVehicles}</div>
+                                                    </div>
+                                                </div>
+                                            </template>
+                                        </div>
+                                    </template>
                                 </div>
                             </div>
                             
