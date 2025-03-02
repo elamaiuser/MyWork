@@ -115,6 +115,7 @@ class DriveHelper {
     drive.opportunity = opp;
     drive.opportunityId = opp.id;
     drive.status = DRIVE_STATUS.DRAFT;
+    drive.preferSystemGeneratedVehicles = true;
     if(this.isFixedSiteDrive(drive)) {
       drive.status = DRIVE_STATUS.TENTATIVE;
     }
@@ -902,11 +903,11 @@ class DriveHelper {
           fieldReadonlyMap.linkedDrives = false;
         }
       }     
-    } else {
-      if (drive.driveDate >= today) {
-        if(isAPSUser) {
-          fieldReadonlyMap.mobileDriveVehicesInput = false;
-        }
+    }
+      
+    if (drive.driveDate >= today) {
+      if(isAPSUser) {
+        fieldReadonlyMap.mobileDriveVehicesInput = false;
       }
     }
 

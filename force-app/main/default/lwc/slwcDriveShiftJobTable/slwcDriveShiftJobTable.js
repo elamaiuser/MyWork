@@ -95,7 +95,7 @@ export default class SlwcDriveShiftJobTable extends LightningElement {
     }
 
     editJob(job) {
-        let eventValues = {action: "edit", drive: this.drive, driveShift: this.shift, resourceType: this.resourceType, job: job, disableQuantity: this.resourceType === ASSET_TYPE.VEHICLE};
+        let eventValues = {action: "edit", drive: this.drive, driveShift: this.shift, resourceType: this.resourceType, job: job};
         fireEvent(this.pageRef, 'showJobModal', eventValues);
     }
     

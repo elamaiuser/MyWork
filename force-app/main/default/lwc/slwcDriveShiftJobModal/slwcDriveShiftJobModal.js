@@ -64,7 +64,7 @@ export default class SlwcDriveShiftJobModal extends LightningElement {
 
     get quantityDisabled() {
         if(this.isVehicleResource) {
-            return this.drive.doNotUseVehicle;
+            return true;
         }
 
         return this.isVolunteerResource || this.showAptQuantityFields;
@@ -297,7 +297,6 @@ export default class SlwcDriveShiftJobModal extends LightningElement {
         .then(() => {
             this.showModal = true;
             this.enableAddress = !!detail.enableAddress;
-            this.disableQuantity = !!detail.disableQuantity;
             this.action = detail.action;
             this.resourceType = detail.resourceType;
             this.type = detail.type;

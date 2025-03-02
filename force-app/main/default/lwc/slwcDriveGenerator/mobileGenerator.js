@@ -17,7 +17,7 @@ const DRIVE_ACTION_GROUPS_ORDER = [
   ['retrieveDriveSiteAndPopulateCollectionOperation', 'populateSiteCollectionOperation', 'populateDriveCollectionOperation', 'populateCollectionOperationData'],
   ['retrieveVehicles', 'retrieveSameDateDrives', 'retrieveSameDateActivities', 'retrieveCollectionOperationSDM', 'retrieveRoleTimeData', 'retrieveDefaultTags'],
   ['calculateNumberOf2rbcAssets', 'calculate2rbcProjectedProcedures', 'splitScheduledDonors', 'split2rbcProjectedProcedures', 'calculateTotalProceduresProjected', 'calculateDriveShiftsMetadata',
-     'applyStaffingComplementAndProposeDriveShifts', 'proposeDriveShifts', 'proposeDriveShiftSlots', 'updateDriveTotalSlots', 'calculateDriveProductivityPlanned',
+     'applyStaffingComplementAndProposeDriveShifts', 'handlePreferSystemGeneratedVehiclesChanged', 'proposeDriveShifts', 'proposeDriveShiftSlots', 'updateDriveTotalSlots', 'calculateDriveProductivityPlanned',
     'handleTotalVehicleRequestedChanged', 'handleEquipmentRequestedChanged', 'handleDriveShiftsMetadataChanged', 'correctJobAllocationTimes']
 ]
 
@@ -199,6 +199,22 @@ const DRIVE_FIELD_CHANGE_MAPPING = {
     ]
   },
   'doNotUseVehicle': {
+    groups: [
+      { actions: [] },
+      { actions: [] },
+      { actions: ['proposeDriveShifts', 'calculateDriveProductivityPlanned'] },
+      { actions: [] }
+    ]
+  },
+  'preferSystemGeneratedVehicles': {
+    groups: [
+      { actions: [] },
+      { actions: [] },
+      { actions: ['handlePreferSystemGeneratedVehiclesChanged'] },
+      { actions: [] }
+    ]
+  },
+  'numberOfVehicles': {
     groups: [
       { actions: [] },
       { actions: [] },
@@ -634,7 +650,7 @@ class MobileGenerator extends BaseGenerator {
       allAssignedVehiclesValid: true,
       canHandleDriveProjectedRegisteredDonors: true
     });
-    const fieldsToCheckChange = ['driveDate', 'doNotUseVehicle'];
+    const fieldsToCheckChange = ['driveDate', 'doNotUseVehicle', 'preferSystemGeneratedVehicles', 'numberOfVehicles'];
     const anyField = properties.find(property => {
       return fieldsToCheckChange.includes(property.targetName);
     })
@@ -646,10 +662,14 @@ class MobileGenerator extends BaseGenerator {
 
     const driveDateChanged = properties.find(property => property.targetName === 'driveDate');
     const doNotUseVehicleChanged = properties.find(property => property.targetName === 'doNotUseVehicle');
+    const preferSystemGeneratedVehiclesChaged = properties.find(property => property.targetName === 'preferSystemGeneratedVehicles');
+    const numberOfVehiclesChanged = properties.find(property => property.targetName === 'numberOfVehicles');
     const newDrive = {
       ...this.drive,
       driveDate: driveDateChanged ? driveDateChanged.targetValue : this.drive.driveDate,
-      doNotUseVehicle: doNotUseVehicleChanged ? !!doNotUseVehicleChanged.targetValue : this.drive.doNotUseVehicle
+      doNotUseVehicle: doNotUseVehicleChanged ? !!doNotUseVehicleChanged.targetValue : this.drive.doNotUseVehicle,
+      preferSystemGeneratedVehicles: preferSystemGeneratedVehiclesChaged ? !!preferSystemGeneratedVehiclesChaged.targetValue : this.drive.preferSystemGeneratedVehicles,
+      numberOfVehicles: numberOfVehiclesChanged ? !!numberOfVehiclesChanged.targetValue : this.drive.numberOfVehicles
     };
     return Promise.all([
       this.fetch.retrieveOperationDriveLimit(newDrive),
@@ -1359,7 +1379,11 @@ class MobileGenerator extends BaseGenerator {
       if (this.drive.doNotUseVehicle) {
         this.drive.totalVehicleRequested = 0;
       } else {
-        this.drive.totalVehicleRequested = totalVehicleRequested;
+        if(this.drive.preferSystemGeneratedVehicles) {
+          this.drive.totalVehicleRequested = totalVehicleRequested;
+        } else {
+          this.drive.totalVehicleRequested = this.drive.numberOfVehicles;
+        }
       }
       return;
     }
@@ -1370,6 +1394,12 @@ class MobileGenerator extends BaseGenerator {
 
     if (this.drive.doNotUseVehicle) {
       this.drive.totalVehicleRequested = 0;
+      return;
+    }
+
+    if (!this.drive.preferSystemGeneratedVehicles) {
+      this.drive.totalVehicleRequested = this.drive.numberOfVehicles;
+      return;
     }
     
     //validate tags
@@ -1398,14 +1428,20 @@ class MobileGenerator extends BaseGenerator {
       let currentDrive = this.drivesWithVehicles.find(drive => drive.driveKey == this.drive.key);
       let noOfVehicles = currentDrive.vehicles.length;
       this.drive.totalVehicleRequested = noOfVehicles;
+      this.drive.numberOfVehicles = noOfVehicles;
     }
     else {
       this.drive.totalVehicleRequested = 1;
+      this.drive.numberOfVehicles = 1;
     }
   }
 
   calculateVehicleQuantity() {
-    this.mapAssetQuantity.set('Vehicle', this.drive.doNotUseVehicle ? 0 : this.drive.totalVehicleRequested);
+    this.mapAssetQuantity.set('Vehicle', this.drive.doNotUseVehicle ? 
+      0 : 
+      this.drive.preferSystemGeneratedVehicles ? 
+        this.drive.totalVehicleRequested : 
+        this.drive.numberOfVehicles);
   }
 
   calculateEquipmentQuantity() {
@@ -2217,6 +2253,17 @@ class MobileGenerator extends BaseGenerator {
 
   updateDriveAptSettings() {
     this.drive.aptRequired = this.drive.aptQuantity > 0;
+  }
+
+  handlePreferSystemGeneratedVehiclesChanged() {
+    if(this.drive.totalVehicleRequested === this.drive.numberOfVehicles) return;
+
+    if (this.drive.preferSystemGeneratedVehicles) {
+      this.drive.numberOfVehicles = this.drive.totalVehicleRequested;
+
+      this.proposeDriveShifts();
+      this.calculateDriveProductivityPlanned();
+    }
   }
 
   handleTotalVehicleRequestedChanged() {
