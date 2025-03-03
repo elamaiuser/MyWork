@@ -306,6 +306,7 @@ class SlwcAvailator {
         item.longitude = item.job.longitude;
         item.driveName = item.job.driveName;
 
+        console.log(' item.driveName2->'+item.job.driveName);
         if (item.startWithTravelTime) {
           item.start = item.startWithTravelTime;
         }
@@ -1887,7 +1888,7 @@ class SlwcAvailator {
                     resourceId: resource.id,
                     exception: "",
                     exceptionCode: "RESOURCE_TIME_CONFLICT",
-                    eventURL:""
+                    eventURL:"" //HRP-12840
                   };
                   if (event.objectType === OBJECT_TYPE.NON_WORKING) {
                     isResourceQualified = false;
