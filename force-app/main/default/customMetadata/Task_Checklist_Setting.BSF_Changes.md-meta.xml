@@ -12,7 +12,7 @@
     </values>
     <values>
         <field>Help_Text__c</field>
-        <value xsi:type="xsd:string">If logistics for the drive are impacted or if the drive is cancelled, DS Recruitment should follow Notifying Donors of Drive Changes and Cancellations Policy in the Managing Donor Appointments Playbook - found in Important Links.</value>
+        <value xsi:type="xsd:string">If logistics for the drive are impacted or if the drive is cancelled, DS Recruitment should follow Notifying Donors of Drive Changes and Cancellations Policy in the Managing Donor Appointments Playbook</value>
     </values>
     <values>
         <field>Hyperlink__c</field>
