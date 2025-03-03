@@ -26,7 +26,9 @@ export default class SlwcDriveShifts extends LightningElement {
     get isFixedSiteDrive() {
         return this.driveHelper.isFixedSiteDrive(this.drive);
     }
-
+    get isMobileDrive() {
+        return this.driveHelper.isMobileDrive(this.drive);
+    }
     get show2RBCAssetsField() {
         return this.driveHelper.show2RBCField(this.drive);
     }

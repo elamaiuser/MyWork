@@ -115,6 +115,7 @@ class DriveHelper {
     drive.opportunity = opp;
     drive.opportunityId = opp.id;
     drive.status = DRIVE_STATUS.DRAFT;
+    drive.preferSystemGeneratedVehicles = true;
     if(this.isFixedSiteDrive(drive)) {
       drive.status = DRIVE_STATUS.TENTATIVE;
     }
@@ -778,7 +779,8 @@ class DriveHelper {
           driveDeliveryJobs: true,
           volunteerJobs: true,
           operationNotes: true,
-          linkedDrives: true
+          linkedDrives: true,
+          mobileDriveVehicesInput: true
         },
         fieldChangeRestrictionMap: {
           driveSite: true
@@ -805,7 +807,8 @@ class DriveHelper {
             volunteerJobs: false,
             operationNotes: false,
             linkedDrives: true,
-            aptQuantity: true
+            aptQuantity: true,
+            mobileDriveVehicesInput: true
           },
           fieldChangeRestrictionMap: {
             driveSite: true
@@ -828,7 +831,8 @@ class DriveHelper {
             volunteerJobs: false,
             operationNotes: false,
             linkedDrives: false,
-            aptQuantity: isOnlyAPSUser ? false : true
+            aptQuantity: isOnlyAPSUser ? false : true,
+            mobileDriveVehicesInput: false,
           },
           fieldChangeRestrictionMap: {
             driveSite: true
@@ -852,6 +856,7 @@ class DriveHelper {
       projectedRegisteredDonors: isReadonly,
       driveShiftsMetadata: isReadonly,
       driveShiftsConfiguration: isReadonly,
+      mobileDriveVehicesInput: isReadonly,
       driveShifts: isReadonly,
       driveShiftSlots: isReadonly,
       driveDeliveryJobs: isReadonly,
@@ -898,6 +903,12 @@ class DriveHelper {
           fieldReadonlyMap.linkedDrives = false;
         }
       }     
+    }
+      
+    if (drive.driveDate >= today) {
+      if(isAPSUser) {
+        fieldReadonlyMap.mobileDriveVehicesInput = false;
+      }
     }
 
     if(isAPSUser || isDRDUser) {
