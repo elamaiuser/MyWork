@@ -2713,7 +2713,7 @@ class DriveHelper {
         data: null
       }
 
-      let mapDualRoleJobsRemovedByDriveShiftId = {}; 
+      /*let mapDualRoleJobsRemovedByDriveShiftId = {}; 
       backupDrive.driveShifts.forEach((backupDriveShift, driveShiftIndex) => {
         const currentDriveShift = drive.driveShifts[driveShiftIndex];
         if(!currentDriveShift) return;
@@ -2754,7 +2754,7 @@ class DriveHelper {
         mapDualRoleJobsRemovedByDriveShiftId,
       }
       result.violated = hasDualRoleJobsRemoved;
-      result.passed = !result.violated || isContentionOverrided(drive, DRIVE_CONTENTION.DUAL_ROLE_REMOVAL);
+      result.passed = !result.violated || isContentionOverrided(drive, DRIVE_CONTENTION.DUAL_ROLE_REMOVAL);*/
       return result;
     }
 
