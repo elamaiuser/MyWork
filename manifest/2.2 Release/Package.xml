@@ -72,6 +72,8 @@
 		<members>TaskTriggerHandler</members>
 		<members>TaskTriggerTest</members>
 		<members>BSFTaskChecklistTriggerTest</members>
+		<members>skedExceptionLogService</members>
+		<members>slwcAllocationService</members>
 		<name>ApexClass</name>
 	</types>
 	<types>
@@ -252,7 +254,10 @@
 		<members>slwcResolveDriveContentions</members>
 		<members>slwcShiftJobs</members>
 		<members>slwcStaffingComplementModal</members>
-		<members>travelTimeBreakdown</members>		
+		<members>travelTimeBreakdown</members>
+		<members>slwcAvailator</members>
+	    <members>slwcDriveStaffingDetails</members>
+		<members>slwcExceptionList</members>		
 		<name>LightningComponentBundle</name>
 	</types>
 	<types>
@@ -269,7 +274,8 @@
         <members>Profile_Specific_Functionality_Access__mdt-Profile Specific Functionality Setting Layout</members>
 		<members>sked_Site_Collection_Operation__c-DRD Site Collection Operation Layout</members>
         <members>sked_Site_Collection_Operation__c-Site Collection Operation Layout</members>	
-		<members>sked__Resource__c-Staff Layout</members>		
+		<members>sked__Resource__c-Staff Layout</members>
+		<members>sked_Drive__c-Drive Layout</members>		
 		<name>Layout</name>
 	</types>
 	<types>
