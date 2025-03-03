@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+	<types>
+		<members>skedExceptionLogService</members>
+		<members>skedJobAllocationPostProcessBatch</members>
+		<members>slwcAllocationService</members>
+		<name>ApexClass</name>
+	</types>
+	
+	<types>
+		<members>slwcAvailator</members>
+	    <members>slwcDriveStaffingDetails</members>
+		<members>slwcExceptionList</members>
+        <members>autoMapper</members>
+		<name>LightningComponentBundle</name>
+	</types>
+	<types>
+		<members>sked_Drive__c-Drive Layout</members>		
+		<name>Layout</name>
+	</types>
+	
+	<version>60.0</version>
+</Package>
