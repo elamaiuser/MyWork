@@ -2256,11 +2256,15 @@ class MobileGenerator extends BaseGenerator {
   }
 
   handlePreferSystemGeneratedVehiclesChanged() {
-    if(this.drive.totalVehicleRequested === this.drive.numberOfVehicles) return;
+    const backupDrive = this.masterData.backupDrive;
+    if(!backupDrive) return;
+
+    if(this.drive.totalVehicleRequested === backupDrive.totalVehicleRequested) return;
 
     if (this.drive.preferSystemGeneratedVehicles) {
-      this.drive.numberOfVehicles = this.drive.totalVehicleRequested;
-
+      this.drive.numberOfVehicles = backupDrive.totalVehicleRequested;
+      this.drive.totalVehicleRequested = backupDrive.totalVehicleRequested;
+      
       this.proposeDriveShifts();
       this.calculateDriveProductivityPlanned();
     }
