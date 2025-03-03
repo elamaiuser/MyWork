@@ -157,6 +157,11 @@ class BaseGenerator {
       drive.driveShifts = [];
     }
 
+    if (this.helper.isMobileDrive(drive) && isNullOrEmpty(drive.numberOfVehicles)) {
+      drive.numberOfVehicles = drive.totalVehicleRequested;
+      drive.preferSystemGeneratedVehicles = true;
+    }
+    
     return drive;
   }
 
