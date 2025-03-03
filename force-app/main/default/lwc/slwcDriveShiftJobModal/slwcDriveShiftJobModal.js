@@ -1,4 +1,5 @@
 import { LightningElement, track, api, wire } from 'lwc';
+import { max } from 'c/lodash';
 import { CurrentPageReference } from 'lightning/navigation';
 import { registerListener, unregisterAllListeners } from 'c/pubsub';
 import { fireEvent } from 'c/pubsub';
@@ -85,6 +86,31 @@ export default class SlwcDriveShiftJobModal extends LightningElement {
     get isOtherVolunteerAdjustmentReasonSelected() {
         return this.job && this.job.volunteerAdjustmentReason === VOLUNTEER_COUNTS_ADJUSTMENT_REASON.OTHER;
     }
+    get isDualRoleEditMode() {
+        return this.job && this.job.id && this.job.dualRole;
+    }
+
+    get secondaryRoleOptions() {
+        const roleMap = {
+            '2RBC': ['Driver', 'Driver Support', 'OJI', 'None'],
+            'Charge': ['Driver', 'Driver Support', 'None'],
+            'Trainee': ['Driver Support', 'None'],
+            'Driver': ['Competent Driver', 'OJI', 'None'],
+            'Driver Support': ['OJI', 'None'],
+            'VP/HH': ['OJI', 'None'],
+            'Apheresis': ['OJI', 'None'],
+            'Plasma': ['OJI', 'None']
+          }
+  
+        return (roleMap[this.job.resourceRole] || [])
+            .filter(role => role === 'None' || this.driveShift.jobs?.find(_job => _job.resourceRole === role) || this.driveShift.jobs?.find(_job => _job.resourceRole === this.job.resourceRole && _job.dualRole === role))
+            .map(role => {
+                return {
+                    label: role,
+                    value: role
+                }
+        });
+    }
     
     connectedCallback() {
         registerListener('showJobModal', this.handleShowJobModal, this);
@@ -128,15 +154,21 @@ export default class SlwcDriveShiftJobModal extends LightningElement {
         this.showModal = false;
     }
 
+    getRoleTimeData(role) {
+        const helper = new DriveHelper();
+        const resourceRoleGroup = helper.getResourceRoleGroup(role, this.masterData);
+        return  this.resourceRoleGroupRoleTimeDataMap[resourceRoleGroup];  
+    }
+
     handleResourceRoleChange(event) {
         const name = event.target.name;
-        const helper = new DriveHelper();
         const resourceRole = slwcUtils.getValueFromEvent(event);
-        const resourceRoleGroup = helper.getResourceRoleGroup(resourceRole, this.masterData);
-        const roleTimeData = this.resourceRoleGroupRoleTimeDataMap[resourceRoleGroup];
+        const roleTimeData = this.getRoleTimeData(resourceRole);
+
         let newJob = {
             [name]: resourceRole
-        }
+        };
+
         if(roleTimeData) {
             newJob.leadTime = roleTimeData.leadTime || 0;
             newJob.travelTime = roleTimeData.travelTime || 0;
@@ -147,6 +179,48 @@ export default class SlwcDriveShiftJobModal extends LightningElement {
             newJob.wrapUpTime = roleTimeData.wrapUpTime || 0;
             newJob.siteLogisticsBack = roleTimeData.siteLogisticsBack || 0;
         }
+
+        this.job = {
+            ...this.job,
+            ...newJob
+        };
+    }
+
+    handleDualRoleChange(event) {
+        const name = event.target.name;
+        const dualRole = slwcUtils.getValueFromEvent(event);
+    
+        const compareAndGetValue = (fieldName, resourceRoleTimeData, dualRoleTimeData) => {
+            if(!fieldName) return 0;
+            if(!dualRoleTimeData) return resourceRoleTimeData[fieldName] || 0;
+            
+            const value1 = resourceRoleTimeData[fieldName] || 0;
+            const value2 = dualRoleTimeData[fieldName] || 0;
+            return max([value1, value2]);
+        }
+
+        const roleTimeData = this.getRoleTimeData(this.job.resourceRole);
+        let newJob = {
+            [name]: dualRole
+        };
+        let dualRoleTimeData;
+        if(newJob.dualRole !== 'None') {
+            dualRoleTimeData = this.getRoleTimeData(dualRole);
+            if((this.driveShift.jobs?.find(_job => _job.resourceRole === this.job.resourceRole)?.quantity) < (this.driveShift.jobs?.find(_job => _job.resourceRole === newJob.dualRole)?.quantity)) {
+                newJob.quantity = this.driveShift.jobs?.find(_job => _job.resourceRole === newJob.dualRole)?.quantity; //Update the quantity if secondary role has higher qunatity
+            }
+        }
+        newJob.leadTime = compareAndGetValue('leadTime', roleTimeData, dualRoleTimeData);
+        newJob.travelTime = compareAndGetValue('travelTime', roleTimeData, dualRoleTimeData) || 0;
+        newJob.siteLogisticsTo = compareAndGetValue('siteLogisticsTo', roleTimeData, dualRoleTimeData) || 0;
+        newJob.setupTime = compareAndGetValue('setupTime', roleTimeData, dualRoleTimeData) || 0;
+        newJob.breakdownTime = compareAndGetValue('breakdownTime', roleTimeData, dualRoleTimeData) || 0;
+        newJob.travelTime2 = compareAndGetValue('travelTime2', roleTimeData, dualRoleTimeData) || 0;
+        newJob.siteLogisticsBack = compareAndGetValue('siteLogisticsBack', roleTimeData, dualRoleTimeData) || 0;
+        newJob.wrapUpTime = compareAndGetValue('wrapUpTime', roleTimeData, dualRoleTimeData) || 0;
+         
+
+        newJob.jobTags = this.job.jobTags.filter(jobTag => jobTag.tag.name !== this.job.dualRole);
 
         this.job = {
             ...this.job,
@@ -403,6 +477,12 @@ export default class SlwcDriveShiftJobModal extends LightningElement {
                 );
             }
         }
+        
+        const isDualRoleModified = this.isDualRoleEditMode && this.driveShift.jobs?.find(_job => _job.resourceRole === this.job.resourceRole)?.dualRole !== this.job.dualRole;
+        this.job = {
+            ...this.job,
+            isDualRoleModified: isDualRoleModified
+        };
 
         let eventValues = {action: this.action, shiftKey: this.driveShift.key, job: this.job};
         if(this.type != "allocationModal"){

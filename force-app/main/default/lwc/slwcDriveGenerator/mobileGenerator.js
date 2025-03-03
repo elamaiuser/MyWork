@@ -1219,7 +1219,7 @@ class MobileGenerator extends BaseGenerator {
         const staffingComplement = staffingComplementChanged[driveShiftIndex];
         Object.keys(staffingComplement).forEach(jobKey => {
           const { resourceRole } = this.helper.parseJobKey(jobKey);
-          const { quantity, systemQuantity, vphhQuantity, aptQuantity, dualRole, isManuallyCreated, manuallyCreatedFrom } = staffingComplement[jobKey]; //preserve properties for manually created jobs
+          const { quantity, systemQuantity, vphhQuantity, aptQuantity, dualRole, isManuallyCreated, manuallyCreatedFrom, isCreatedOrUpdatedViaDualRoleChange } = staffingComplement[jobKey]; //preserve properties for manually created jobs
           if(resourceRole === 'VP/HH') {
             resourceQuantityMap.set('VP/HH', {
               vphhQuantity: vphhQuantity,
@@ -1227,7 +1227,8 @@ class MobileGenerator extends BaseGenerator {
               systemQuantity: systemQuantity,
               dualRole: dualRole,
               isManuallyCreated: isManuallyCreated,
-              manuallyCreatedFrom: manuallyCreatedFrom
+              manuallyCreatedFrom: manuallyCreatedFrom,
+              isCreatedOrUpdatedViaDualRoleChange: isCreatedOrUpdatedViaDualRoleChange
             });
           } else {
             resourceQuantityMap.set(jobKey, {
@@ -1235,7 +1236,8 @@ class MobileGenerator extends BaseGenerator {
               systemQuantity: systemQuantity,
               dualRole: dualRole,
               isManuallyCreated: isManuallyCreated,
-              manuallyCreatedFrom: manuallyCreatedFrom
+              manuallyCreatedFrom: manuallyCreatedFrom,
+              isCreatedOrUpdatedViaDualRoleChange: isCreatedOrUpdatedViaDualRoleChange
             });
           }
         })
@@ -1293,7 +1295,7 @@ class MobileGenerator extends BaseGenerator {
       backupDualRoles.forEach(item => {
         if(item.isManuallyCreated) return;
 
-        const { resourceRole, dualRole, quantity } = item;
+        const { resourceRole, dualRole, quantity, isCreatedOrUpdatedViaDualRoleChange } = item;
         //after
         const hasResourceRoleAfterRegenerated = tempResourceQuantityMap.has(resourceRole);
         let hasDualRoleAfterRegenerated = tempResourceQuantityMap.has(dualRole);
@@ -1304,6 +1306,15 @@ class MobileGenerator extends BaseGenerator {
         //   tempResourceQuantityMap.get(dualRole)?.quantity >= quantity
         // );
         const canRestore = hasResourceRoleAfterRegenerated && hasDualRoleAfterRegenerated;
+
+        if(isCreatedOrUpdatedViaDualRoleChange) {
+          tempResourceQuantityMap.delete(resourceRole);
+          tempResourceQuantityMap.set(item.resourceRole, cloneDeep({
+            ...resourceRoleQuantityAfterRegenreted,
+            quantity: quantity,
+            isCreatedOrUpdatedViaDualRoleChange: true
+          }));
+        }
 
         if(canRestore) {
           resourceRoleQuantityAfterRegenreted.dualRole = dualRole;
@@ -1620,6 +1631,7 @@ class MobileGenerator extends BaseGenerator {
       this.backupDualRolesMap = {};
       if(backupAndRestoreDualRoles) {
         this.drive.driveShifts.forEach((driveShift, driveShiftIndex) => {
+          const backupDriveShift = this.masterData.backupDriveShiftMap[driveShift.key];
           if(!this.backupDualRolesMap[driveShiftIndex]) {
             this.backupDualRolesMap[driveShiftIndex] = [];
           }
@@ -1643,6 +1655,15 @@ class MobileGenerator extends BaseGenerator {
                   resourceRole: job.resourceRole,
                   dualRole: job.dualRole,
                   quantity: job.quantity
+                })
+              } else if(job.isCreatedOrUpdatedViaDualRoleChange) {
+                this.backupDualRolesMap[driveShiftIndex].push({
+                  resourceRole: job.resourceRole,
+                  dualRole: job.dualRole,
+                  quantity: job.quantity,
+                  vphhQuantity: job.vphhQuantity,
+                  aptQuantity: job.aptQuantity,
+                  isCreatedOrUpdatedViaDualRoleChange: true
                 })
               }
             }
@@ -1782,7 +1803,7 @@ class MobileGenerator extends BaseGenerator {
         dualRole
       } = this.helper.parseJobKey(jobKey);
       let job = (driveShift.jobs || []).find(driveShiftJob => this.helper.isJobsSameRoles(driveShiftJob, {
-        resourceROle,
+        resourceRole,
         dualRole
       }));
       if (!job) {
@@ -1792,29 +1813,32 @@ class MobileGenerator extends BaseGenerator {
       job.jobTags = cloneDeep(jobTagsMap[RESOURCE_TYPE.PERSON]);
       job.resourceRole = resourceRole;
 
-      if (resourceRole === 'VP/HH') {
-        let { vphhQuantity, aptQuantity, dualRole, systemQuantity, isManuallyCreated, manuallyCreatedFrom } = mapResourceQuantity.get(jobKey);
-        if (vphhQuantity > 0 || aptQuantity > 0) {
-          job.dualRole = dualRole || '';
-          job.vphhQuantity = vphhQuantity;
-          job.aptQuantity = aptQuantity;
-          job.quantity = vphhQuantity + (aptQuantity || 0);
-          job.systemQuantity = systemQuantity || job.quantity;
-          job.isManuallyCreated = !!isManuallyCreated;
-          job.manuallyCreatedFrom = manuallyCreatedFrom;
-          jobs.push(job);
+        if (resourceRole === 'VP/HH') {
+          let { vphhQuantity, aptQuantity, dualRole, systemQuantity, isManuallyCreated, manuallyCreatedFrom, isCreatedOrUpdatedViaDualRoleChange } = mapResourceQuantity.get(jobKey);
+          if (vphhQuantity > 0 || aptQuantity > 0) {
+            job.dualRole = dualRole || '';
+            job.vphhQuantity = vphhQuantity;
+            job.aptQuantity = aptQuantity;
+            job.quantity = vphhQuantity + (aptQuantity || 0);
+            job.systemQuantity = systemQuantity || job.quantity;
+            job.isManuallyCreated = !!isManuallyCreated;
+            job.manuallyCreatedFrom = manuallyCreatedFrom;
+            job.isCreatedOrUpdatedViaDualRoleChange = isCreatedOrUpdatedViaDualRoleChange;
+            jobs.push(job);
+          }
+        } else {
+          let { quantity, dualRole, systemQuantity, isManuallyCreated, manuallyCreatedFrom, isCreatedOrUpdatedViaDualRoleChange } = mapResourceQuantity.get(jobKey);
+          if (quantity > 0) {
+            job.quantity = quantity;
+            job.dualRole = dualRole || '';
+            job.systemQuantity = systemQuantity || job.quantity;
+            job.isManuallyCreated = !!isManuallyCreated;
+            job.manuallyCreatedFrom = manuallyCreatedFrom;
+            job.isCreatedOrUpdatedViaDualRoleChange = isCreatedOrUpdatedViaDualRoleChange;
+            jobs.push(job);
+          }
         }
-      } else {
-        let { quantity, dualRole, systemQuantity, isManuallyCreated, manuallyCreatedFrom } = mapResourceQuantity.get(jobKey);
-        if (quantity > 0) {
-          job.quantity = quantity;
-          job.dualRole = dualRole || '';
-          job.systemQuantity = systemQuantity || job.quantity;
-          job.isManuallyCreated = !!isManuallyCreated;
-          job.manuallyCreatedFrom = manuallyCreatedFrom;
-          jobs.push(job);
-        }
-      }
+      
     });
 
     this.mapVolunteerQuantity.forEach((quantity, volunteerRole) => {
@@ -1872,6 +1896,65 @@ class MobileGenerator extends BaseGenerator {
       });
     });
     driveShift.jobs = jobs.concat(cloneDeep(manuallyCreatedJobs));
+  }
+
+  // To create new jobs /update existing jobs after dual role modification
+  repopulateJobsAfterDualRoleModification(driveShift, job) {
+    let newJob;
+    let existingJob = driveShift.jobs?.find(item => item.resourceRole && !item.dualRole && item.resourceRole === job.dualRole);
+    if(existingJob) {
+      newJob = {
+        ...existingJob,
+        quantity: existingJob.quantity + job.quantity,
+        isCreatedOrUpdatedViaDualRoleChange: true
+      };
+      const index = driveShift.jobs?.findIndex(item => item.resourceRole && !item.dualRole && item.resourceRole === job.dualRole);
+      driveShift.jobs[index] = newJob;
+    } else {
+      let jobTagsMap = this.helper.calculateJobTagsMap(this.masterData);
+      let jobTemplate = {
+        driveSiteId: this.drive.driveSiteId,
+        collectionOperationId: this.drive.collectionOperationId,
+        address: this.drive.driveSite?.address,
+        latitude: this.drive.driveSite?.geoLocationLatitude,
+        longitude: this.drive.driveSite?.geoLocationLongitude,
+        jobAllocationTimeSource: false,
+        isCreatedOrUpdatedViaDualRoleChange: true,
+        isManuallyCreated: false,
+        manuallyCreatedFrom: ''
+      };
+      newJob = cloneDeep(jobTemplate);
+      newJob.key = generateUUID();
+      newJob.jobTags = cloneDeep(jobTagsMap[RESOURCE_TYPE.PERSON]);
+      newJob.resourceRole = job.dualRole;
+      newJob.dualRole = '';
+
+      if (newJob.resourceRole === 'VP/HH') {
+        if (job.quantity > 0) {
+          newJob.vphhQuantity = job.quantity;
+          newJob.aptQuantity = 0
+          newJob.quantity = newJob.vphhQuantity + (newJob.aptQuantity || 0);
+          newJob.systemQuantity = job.quantity;
+        }
+      } else {
+        if (job.quantity > 0) {
+          newJob.quantity = job.quantity;
+          newJob.systemQuantity = job.quantity;
+        }
+      }
+
+      if (newJob.jobTags && newJob.jobTags.length) {
+        let tagNameArr = newJob.jobTags.reduce((result, item) => {
+          return result.concat(item.tag.name);
+        }, []);
+        newJob.tagNames = orderBy(tagNameArr, [item => item], ['asc']).join(", ");
+        newJob.isCreatedOrUpdatedViaDualRoleChange = true;
+      }
+      driveShift.jobs.push(newJob);
+    }
+
+    this.applyRoleTimeForSingleJob(driveShift, newJob);
+    this.onJobChanged(driveShift, newJob, null);
   }
 
   /** Lunch break */

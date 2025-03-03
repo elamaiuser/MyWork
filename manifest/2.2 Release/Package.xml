@@ -120,6 +120,9 @@
 		<members>Opportunity.Calendar_Build_Reasons_For_Unqualified__c</members>
         <members>Opportunity.Calendar_Build_Alert_Reviewed__c</members>		
 		<members>Task_Checklist_Setting__mdt.Subject__c</members>
+		<members>Account.HS_Relationship_Manager__c</members>
+		<members>Account.HS_Relationship_Manager_Notes__c</members>
+		<members>Opportunity.HS_Relationship_Manager__c</members>
 		<name>CustomField</name>
 	</types>
 	<types>
@@ -159,7 +162,6 @@
         <members>Task_Checklist_Setting.Contingency_Worksheet</members>
         <members>Task_Checklist_Setting.Discuss_Appointments</members>
         <members>Task_Checklist_Setting.Discuss_Opportunity</members>
-        <members>Task_Checklist_Setting.Diverse_Donor_Recruitment_Strategy</members>
         <members>Task_Checklist_Setting.Diverse_Donor_Recruitment_Strategy_Text</members>
         <members>Task_Checklist_Setting.Donor_Appointments</members>
         <members>Task_Checklist_Setting.Donor_Guidelines</members>
@@ -169,7 +171,6 @@
         <members>Task_Checklist_Setting.Recruitment_Committee_Exists</members>
         <members>Task_Checklist_Setting.Routine_Appointment</members>
         <members>Task_Checklist_Setting.Schedule_Follow_Up</members>
-        <members>Task_Checklist_Setting.Strong_Recruitment_Plan</members>
         <members>Task_Checklist_Setting.Strong_Recruitment_Text</members>
         <members>Task_Checklist_Setting.Type_A_BPL</members>
         <members>Task_Report_Link.DRMS_Audit_report</members>
@@ -253,6 +254,7 @@
 		<members>slwcDriveCompactView</members>
 		<members>slwcDriveGenerator</members>
 		<members>slwcDriveManagement</members>
+		<members>slwcDriveShiftJobModal</members>
 		<members>slwcDriveStaffingDetails</members>
 		<members>slwcDualRoleAssignmentModal</members>
 		<members>slwcOptimizationQueueSummary</members>
@@ -261,7 +263,7 @@
 		<members>slwcResolveDriveContentions</members>
 		<members>slwcShiftJobs</members>
 		<members>slwcStaffingComplementModal</members>
-		<members>travelTimeBreakdown</members>
+		<members>travelTimeBreakdown</members>		
 		<name>LightningComponentBundle</name>
 	</types>
 	<types>

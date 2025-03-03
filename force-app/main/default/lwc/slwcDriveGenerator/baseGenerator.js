@@ -815,14 +815,32 @@ class BaseGenerator {
     let shift = this.drive.driveShifts.find((e) => e.key == shiftKey);
     let newList = [...shift.jobs];
     let target = job;
+    let jobToBeGenerated = {};
+    let backupDriveShift = this.masterData.backupDriveShiftMap[shiftKey];
+    
+    //Run this block only if dual role is changed
+    if(target.isDualRoleModified) {
+      if(target.dualRole === 'None') {
+        target.dualRole = '';
+      }
+
+      const primaryRoleJobIndex = newList.findIndex((item) => item.resourceRole && item.resourceRole === target.resourceRole);
+      const dualRoleJobIndex = newList.findIndex((item) => item.resourceRole && item.resourceRole === target.dualRole);
+      if(primaryRoleJobIndex === -1) return;
+
+      newList[primaryRoleJobIndex] = target;
+
+      if(dualRoleJobIndex !== -1) {
+        newList.splice(dualRoleJobIndex, 1);
+      }
+
+      jobToBeGenerated = backupDriveShift.jobs?.find((item) => item.resourceRole && item.resourceRole === target.resourceRole); //will use the dual role as the primary role for the new job
+    }
 
     target.tagNames = '';
     if (target.jobTags && target.jobTags.length) {
 
       let tagNameArr = job.jobTags.reduce((result, item) => {
-        // if (!item.systemCreated) {
-        //   result.push(item.tag.name);
-        // }
         return result.concat(item.tag.name);
       }, []);
       target.tagNames = orderBy(tagNameArr, [item => item], ['asc']).join(", ");
@@ -838,6 +856,10 @@ class BaseGenerator {
       newList[index] = target;
     }
     shift.jobs = newList;
+
+    if(job.isDualRoleModified) {
+      this.repopulateJobsAfterDualRoleModification(shift, jobToBeGenerated);
+    }
 
     this.onJobChanged(shift, job, originalJob);
 
