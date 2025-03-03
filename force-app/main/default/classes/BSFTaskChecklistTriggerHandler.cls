@@ -10,17 +10,19 @@ public without sharing class BSFTaskChecklistTriggerHandler extends TriggerHandl
         prepopulateValues((List<BSF_Task_Checklist__c>)Trigger.new);
     }
     public static void prepopulateValues(List<BSF_Task_Checklist__c> newList) {
+        final List<String> subjectList = new List<String>{BSF_Constants.POST_DRIVE_ANALYSIS_TASK,BSF_Constants.POST_DRIVE_ANALYSIS_TASK_SBPM,BSF_Constants.RECRUITMENT_PLANNING_TASK};
         Set<String> taskIds = new Set<String>();
         Map<String,Id> taskVsOppMap = new Map<String,Id>();
         Map<String,Opportunity> taskVsOpportunityMap = new Map<String,Opportunity>();
         Map<String,Account> taskVsAccountMap = new Map<String,Account>();
         Map<Id,String> taskVsSubjectMap = new Map<Id,String>();
         Map<String,String> fieldVsObjectMap = new Map<String,String>();
-        if(!taskVsFieldVsObjectMap.isEmpty() && taskVsFieldVsObjectMap.containsKey(BSF_Constants.POST_DRIVE_ANALYSIS_TASK)){
-            fieldVsObjectMap = taskVsFieldVsObjectMap.get(BSF_Constants.POST_DRIVE_ANALYSIS_TASK);
-        }
-        if(!taskVsFieldVsObjectMap.isEmpty() && taskVsFieldVsObjectMap.containsKey(BSF_Constants.RECRUITMENT_PLANNING_TASK)){
-            fieldVsObjectMap.putAll(taskVsFieldVsObjectMap.get(BSF_Constants.RECRUITMENT_PLANNING_TASK));
+        if(taskVsFieldVsObjectMap != null){
+            for(String subject : subjectList){
+                if(taskVsFieldVsObjectMap.containsKey(subject)){
+                    fieldVsObjectMap.putAll(taskVsFieldVsObjectMap.get(subject));
+                }
+            }
         }
         if(newList != null && !newList.isEmpty() && !fieldVsObjectMap.isEmpty()){
             for(BSF_Task_Checklist__c taskChecklist: newList){
@@ -37,7 +39,7 @@ public without sharing class BSFTaskChecklistTriggerHandler extends TriggerHandl
                                             Status 
                                     FROM Task 
                                     WHERE Id IN: taskIds
-                                    AND Subject IN (:BSF_Constants.POST_DRIVE_ANALYSIS_TASK,:BSF_Constants.RECRUITMENT_PLANNING_TASK)
+                                    AND Subject IN :subjectList
                                     AND WhatId != null
                                     WITH SYSTEM_MODE];
             for(Task task : taskList){

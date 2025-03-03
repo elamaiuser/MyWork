@@ -9,7 +9,6 @@
     </types>
 	<types>
         <members>Task_Checklist_Setting.AA_Unit_Projection</members>
-        <members>Task_Checklist_Setting.AAandLatinoProjection</members>
         <members>Task_Checklist_Setting.All_actions</members>
         <members>Task_Checklist_Setting.Available_Campaigns</members>
         <members>Task_Checklist_Setting.BPL_Donors</members>
