@@ -75,6 +75,7 @@ export class DriveMappingConfigFactory {
       mappingConfig.addFieldConfig('sked_Pending_Action_Reason_Code__c', 'pendingActionReasonCode', MAPPING_TYPE.multiPicklist);
       mappingConfig.addFieldConfig('sked_Plasma_Projected_Procedures__c', 'plasmaProjectedProcedures', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_Platelet_Projected_Procedures__c', 'plateletProjectedProcedures', MAPPING_TYPE.direct);
+      mappingConfig.addFieldConfig('sked_Prefer_System_Generated_Vehicles__c', 'preferSystemGeneratedVehicles', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_Primary_Contact__c', 'primaryContactId', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_Procedure_Capacity__c', 'procedureCapacity', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_Procedures_Projected__c', 'proceduresProjected', MAPPING_TYPE.direct);
