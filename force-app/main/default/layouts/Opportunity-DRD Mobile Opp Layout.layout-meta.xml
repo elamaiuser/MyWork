@@ -43,10 +43,6 @@
                 <behavior>Edit</behavior>
                 <field>AcceptblankMilitaryAuthNamePhone__c</field>
             </layoutItems>
-            <layoutItems>
-                <behavior>Edit</behavior>
-                <field>Calendar_Build_Alert_Reviewed__c</field>
-            </layoutItems>
         </layoutColumns>
         <layoutColumns>
             <layoutItems>
@@ -518,8 +514,12 @@
                 <field>Calendar_Build_Parent_Opportunity__c</field>
             </layoutItems>
             <layoutItems>
+                <behavior>Readonly</behavior>
+                <field>Calendar_Build_Reasons_For_Unqualified__c</field>
+            </layoutItems>
+            <layoutItems>
                 <behavior>Edit</behavior>
-                <field>Booking_Strategy__c</field>
+                <field>Calendar_Build_Alert_Reviewed__c</field>
             </layoutItems>
         </layoutColumns>
         <layoutColumns>
@@ -532,8 +532,8 @@
                 <field>Calendar_Build_Status__c</field>
             </layoutItems>
             <layoutItems>
-                <behavior>Readonly</behavior>
-                <field>Calendar_Build_Reasons_For_Unqualified__c</field>
+                <behavior>Edit</behavior>
+                <field>Booking_Strategy__c</field>
             </layoutItems>
         </layoutColumns>
         <style>TwoColumnsLeftToRight</style>
