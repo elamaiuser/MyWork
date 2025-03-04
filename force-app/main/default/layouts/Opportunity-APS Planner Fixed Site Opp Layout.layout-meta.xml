@@ -358,8 +358,6 @@
                 <behavior>Readonly</behavior>
                 <field>Calendar_Build_Status__c</field>
             </layoutItems>
-            <layoutItems>
-            </layoutItems>
         </layoutColumns>
         <style>TwoColumnsLeftToRight</style>
     </layoutSections>
