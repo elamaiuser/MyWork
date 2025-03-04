@@ -340,8 +340,11 @@ opty.addError('This drive date violates the 56 day rule.Please acknowledge.');
                 if(calendarBuildOpp.Drive_Date__c >  otherOppOnAccount.Drive_Date__c.addDays(-56)
                     && calendarBuildOpp.Drive_Date__c < otherOppOnAccount.Drive_Date__c.addDays(56)
                    ){
-
-                        calendarBuildOpp.Calendar_Build_Reasons_For_Unqualified__c='Violates Accepts 56 day selection';
+                        String existingUnqualifyingReasons = calendarBuildOpp.Calendar_Build_Reasons_For_Unqualified__c;
+                        if(existingUnqualifyingReasons != NULL && String.isNotBlank(existingUnqualifyingReasons)) {
+                            existingUnqualifyingReasons = existingUnqualifyingReasons +';';
+                        }
+                        calendarBuildOpp.Calendar_Build_Reasons_For_Unqualified__c = BSF_Utilities.getStringWithinLimit((existingUnqualifyingReasons + 'Violates Accepts 56 day selection'), 255);
                         //once a calendar build drive is marked for 56 days, no need to compare with other opps on account
                         break;
                     }

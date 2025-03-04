@@ -70,6 +70,7 @@
         <members>TaskService</members>
 		<members>CalendarBuildEvaluateDrivesBatch_Test</members>
         <members>OpportunityService</members>
+		<members>OpportunityTriggerTest</members>
 		<members>TaskChecklistController</members>
 		<members>TaskTriggerHandler</members>
 		<members>TaskTriggerTest</members>
@@ -276,6 +277,12 @@
 		<members>Opportunity-DRD Mobile Opp Layout</members>
 		<members>Opportunity-Mobile Opp Layout</members>
 		<members>Opportunity-Sponsor Marketing Mobile Opp Layout</members>
+		<members>Opportunity-APS Planner Fixed Site Opp Layout</members>
+        <members>Opportunity-APS Scheduler Fixed Site Opp Layout</members>
+        <members>Opportunity-DRD Fixed Site Opp Layout</members>
+        <members>Opportunity-Fixed Site Opp APS Layout</members>
+        <members>Opportunity-Fixed Site Opp Non-APS Layout</members>
+        <members>Opportunity-Sponsor Marketing Fixed Site Opp Layout</members>
         <members>Profile_Specific_Functionality_Access__mdt-Profile Specific Functionality Setting Layout</members>
 		<members>sked_Site_Collection_Operation__c-DRD Site Collection Operation Layout</members>
         <members>sked_Site_Collection_Operation__c-Site Collection Operation Layout</members>	

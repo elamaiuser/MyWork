@@ -23,6 +23,7 @@
  * 01/15/2025				  Priti Jana			 Logic for HRP-12299
  * 01/15/2025				  Barnojit Sharma		 Logic for HRP-13864
  * 01/27/2025                 Priti Jana             Logic for HRP-14065
+ * 03/04/2025                 Priti Jana             Logic for HRP-11850
  *****************************************************************************
 */
 public with sharing class MobileDriveGeneratorDMLService {
@@ -189,7 +190,11 @@ public with sharing class MobileDriveGeneratorDMLService {
         insert skedSlots;
     }
     
-    public static void updateDriveGenerationStatus(List<DMLDrive> drives) {
+    /*HRRP-11850
+        1. Add unqualifying reasons on top of the existing reasons for CB drives only
+        2. Limit the reason field to 255 characters
+    */
+    public static void updateCalendarBuildStatusForCbDrives(List<DMLDrive> drives) {
         if (drives != NULL && !drives.isEmpty()) {
             Set<Id> oppIds = new Set<Id>();
             for (DMLDrive drive : drives) {
@@ -199,31 +204,33 @@ public with sharing class MobileDriveGeneratorDMLService {
             Map<Id, Opportunity> mapOpp = new Map<Id, Opportunity>([SELECT Id, Calendar_Build_Status__c, Calendar_Build_Reasons_For_Unqualified__c,
                                                                     Source__c
                                                                     FROM Opportunity
-                                                                    WHERE Id IN :oppIds]);
+                                                                    WHERE Id IN :oppIds
+                                                                    AND (Source__c = :BSF_Constants.OPP_SOURCE_CALENDAR_BUILD 
+                                                                        OR Source__c = :BSF_Constants.OPP_SOURCE_ADHOC_CALENDAR_BUILD)]);
             
             List<Opportunity> opportunitiesToUpdate = new List<Opportunity>();
             for (DMLDrive drive : drives) {
                 if (mapOpp.containsKey(drive.opportunityId)) {
                     Opportunity opp = mapOpp.get(drive.opportunityId);
-                    if (opp.Source__c == 'Calendar Build' && string.isBlank(opp.Calendar_Build_Status__c)) {
-                        List<string> unqualifiedReasons = new List<string>();
-                        if (drive.driveProductivityPlanned < 0.5) {
-                            unqualifiedReasons.add('productivity < .5');
+                    List<string> unqualifiedReasons = new List<string>();
+                    if (drive.driveProductivityPlanned < 0.5) unqualifiedReasons.add('Productivity < .5');
+                    if (drive.totalProductsProjected < 25) unqualifiedReasons.add('Products Projected < 25');
+                    
+                    if (!unqualifiedReasons.isEmpty()) {
+                        String existingUnqualifyingReasons = opp.Calendar_Build_Reasons_For_Unqualified__c;
+                        if(existingUnqualifyingReasons != NULL && String.isNotBlank(existingUnqualifyingReasons)) {
+                            existingUnqualifyingReasons = existingUnqualifyingReasons +';';
                         }
-                        if (drive.totalProductsProjected < 25) {
-                            unqualifiedReasons.add('products projected < 25');
-                        }
-                        opp.Calendar_Build_Status__c = unqualifiedReasons.isEmpty() ? skedConstants.CALENDAR_BUILD_STATUS_QUALIFIED 
-                                                                                    : skedConstants.CALENDAR_BUILD_STATUS_UNQUALIFIED;
-                        if (!unqualifiedReasons.isEmpty()) {
-                            opp.Calendar_Build_Reasons_For_Unqualified__c = string.join(unqualifiedReasons, ';');
-                            opp.Rollover_Consideration__c = BSF_Constants.ROLLOVER_CONSIDERATION_DO_NOT_ROLL; //HRP-12299
-                        }
-                        
-                        opportunitiesToUpdate.add(opp);
+                        opp.Calendar_Build_Reasons_For_Unqualified__c = BSF_Utilities.getStringWithinLimit((existingUnqualifyingReasons + string.join(unqualifiedReasons, ';')), 255);
+                        opp.Calendar_Build_Status__c = skedConstants.CALENDAR_BUILD_STATUS_UNQUALIFIED;
+                        opp.Rollover_Consideration__c = BSF_Constants.ROLLOVER_CONSIDERATION_DO_NOT_ROLL; //HRP-12299
+                    } else if(opp.Calendar_Build_Reasons_For_Unqualified__c == NULL || String.isBlank(opp.Calendar_Build_Reasons_For_Unqualified__c)) {
+                        opp.Calendar_Build_Status__c = skedConstants.CALENDAR_BUILD_STATUS_QUALIFIED;
                     }
-                }
+                    opportunitiesToUpdate.add(opp);
+                } 
             }
+
             if (!opportunitiesToUpdate.isEmpty()) {
                 update opportunitiesToUpdate;
             }
