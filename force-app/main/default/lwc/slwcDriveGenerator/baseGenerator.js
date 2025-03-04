@@ -1305,13 +1305,16 @@ class BaseGenerator {
         const isSystemGeneratedResourceRole = this.helper.isSystemRole(job, this.drive) && job.resourceRole;
         if(!isSystemGeneratedResourceRole) return;
 
+        const isDriverJob = this.helper.isDriverJob(job) || this.helper.isDriverSupport(job);
+        if(isDriverJob) return;
+
         const backupDriveShift = backupDrive.driveShifts?.[driveShiftIndex];
         if(!backupDriveShift) {
           return;
         }
 
         const backupJob = backupDriveShift.jobs?.find(_job => {
-          const sameRole = _job.resourceRole === job.resourceRole && (!job.dualRole || _job.dualRole === job.dualRole);
+          const sameRole = this.helper.isJobsSameRoles(_job, job);
           return sameRole;
         })
 
