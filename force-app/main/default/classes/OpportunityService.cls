@@ -235,8 +235,6 @@ opty.addError('This drive date violates the 56 day rule.Please acknowledge.');
                                                                           AND RecordTypeId = :mobileRecTypeId 
                                                                           AND Id NOT IN:newItems //-> HRP-11850, Pick Calendar build Opps as well for 56day validation 
                                                                           ] );
-        System.debug('oppqueryResultMap size->'+oppqueryResultMap.size());
-        
         
         Map<Id,Opportunity> oppqueryResultFilteredMap = new Map<Id,Opportunity>();
         Map<Id,Id> oppIdAccId = new Map<Id,Id>();
@@ -327,24 +325,29 @@ opty.addError('This drive date violates the 56 day rule.Please acknowledge.');
       Map<Id, List<Opportunity>> allOppsByAccount = buildOppsByAccountIdMap(allOppsList);//Account Id as key, and opportunities as value
      for(Id accountId: calendarBuildOppsMap.keySet()){
         for(Opportunity calendarBuildOpp:calendarBuildOppsMap.get(accountId)){
-             System.debug('calendarBuildOpp->'+calendarBuildOpp);
+
             //For each calendar build Opp, go thru all opportunities of the account to see, if any other drive on account falling with in 56 days of this
              for(Opportunity  otherOppOnAccount:allOppsByAccount.get(accountId)){ //get other opps on this account
                 if(calendarBuildOpp.id == otherOppOnAccount.id || calendarBuildOpp.Accept_56_Day_Rule_Violation__c ==true){ //if we hit, same opp, no need to compare
                     continue;
                 }
-                System.debug('otherOppOnAccount->'+otherOppOnAccount);
-                System.debug('otherOppOnAccount drive date->'+otherOppOnAccount.Drive_Date__c);
 
                 //check if calendar build opp drive date is within 56 days of other opp on this account
                 if(calendarBuildOpp.Drive_Date__c >  otherOppOnAccount.Drive_Date__c.addDays(-56)
                     && calendarBuildOpp.Drive_Date__c < otherOppOnAccount.Drive_Date__c.addDays(56)
-                   ){
+                   ) {
                         String existingUnqualifyingReasons = calendarBuildOpp.Calendar_Build_Reasons_For_Unqualified__c;
                         if(existingUnqualifyingReasons != NULL && String.isNotBlank(existingUnqualifyingReasons)) {
                             existingUnqualifyingReasons = existingUnqualifyingReasons +';';
                         }
                         calendarBuildOpp.Calendar_Build_Reasons_For_Unqualified__c = BSF_Utilities.getStringWithinLimit((existingUnqualifyingReasons + 'Violates Accepts 56 day selection'), 255);
+                        
+                        //If CB drive is not set to "Unqualified", set CB Status = Unqualified and Rollover Consideration = Do Not Roll
+                        if(calendarBuildOpp.Calendar_Build_Status__c == skedConstants.CALENDAR_BUILD_STATUS_UNQUALIFIED) {
+                            calendarBuildOpp.Calendar_Build_Status__c = skedConstants.CALENDAR_BUILD_STATUS_UNQUALIFIED;
+                            calendarBuildOpp.Rollover_Consideration__c = BSF_Constants.ROLLOVER_CONSIDERATION_DO_NOT_ROLL;
+                        } 
+                        
                         //once a calendar build drive is marked for 56 days, no need to compare with other opps on account
                         break;
                     }
