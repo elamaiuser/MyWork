@@ -80,7 +80,7 @@ public with sharing class GenerateMobileDrive {
             skedTriggerUtils.CHANGES_INITIATED_FROM_SERVICE = true; //HRP-11418
             
             MobileDriveGeneratorDMLService.saveDrives(drivesToSave);
-            MobileDriveGeneratorDMLService.updateDriveGenerationStatus(drivesToSave);
+            MobileDriveGeneratorDMLService.updateCalendarBuildStatusForCbDrives(drivesToSave);
         }
     }
     
