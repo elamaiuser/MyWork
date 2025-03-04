@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomMetadata xmlns="http://soap.sforce.com/2006/04/metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-    <label>Strong Recruitment Plan</label>
+    <label>BPL has access to BDMP Sponsor</label>
     <protected>false</protected>
     <values>
         <field>Column__c</field>
@@ -12,9 +12,7 @@
     </values>
     <values>
         <field>Help_Text__c</field>
-        <value xsi:type="xsd:string">Plan includes communications and social media activities.
-Provide details of the recruitment plan in the text box below.
-Provide any new communication or education (if needed).</value>
+        <value xsi:type="xsd:string">Make sure BPL has Blood Donor Ambassador Playbook and Volunteer Quick Guide.</value>
     </values>
     <values>
         <field>Hyperlink__c</field>
@@ -34,7 +32,7 @@ Provide any new communication or education (if needed).</value>
     </values>
     <values>
         <field>Order__c</field>
-        <value xsi:type="xsd:double">1.0</value>
+        <value xsi:type="xsd:double">5.0</value>
     </values>
     <values>
         <field>Parent__c</field>
@@ -46,11 +44,11 @@ Provide any new communication or education (if needed).</value>
     </values>
     <values>
         <field>Section_Header__c</field>
-        <value xsi:type="xsd:string">Checklist</value>
+        <value xsi:nil="true"/>
     </values>
     <values>
         <field>Subject__c</field>
-        <value xsi:type="xsd:string">Recruitment Planning Meeting</value>
+        <value xsi:type="xsd:string">Sponsor Planning Meeting</value>
     </values>
     <values>
         <field>Subtype__c</field>
@@ -58,10 +56,10 @@ Provide any new communication or education (if needed).</value>
     </values>
     <values>
         <field>UI_Text__c</field>
-        <value xsi:type="xsd:string">Develop a strong recruitment plan with specific target goals.</value>
+        <value xsi:type="xsd:string">BPL has access to BDMP and is educated on its use</value>
     </values>
     <values>
         <field>Unique_Name__c</field>
-        <value xsi:type="xsd:string">Strong_Recruitment_Plan_Text</value>
+        <value xsi:type="xsd:string">BPL_has_access_to_BDMP</value>
     </values>
 </CustomMetadata>

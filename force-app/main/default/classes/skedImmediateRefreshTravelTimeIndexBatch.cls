@@ -16,7 +16,9 @@ public class skedImmediateRefreshTravelTimeIndexBatch extends skedRefreshTravelT
     protected override Database.QueryLocator getQueryLocator() {        
         return Database.getQueryLocator([
             SELECT Id, sked_Timezone__c, sked_Ordering_Key__c,
-            sked_From__c, sked_To__c, User_Override__c
+            sked_From__c, sked_To__c, User_Override__c,
+            sked_Travel_Time_Breakdown_JSON__c,
+            sked_Travel_Time_Breakdown_JSON_Backup__c
             FROM sked_Travel_Time_Index_Item__c
             WHERE Id IN :travelTimeIndexIds
             ORDER BY sked_Ordering_Key__c ASC, Id ASC

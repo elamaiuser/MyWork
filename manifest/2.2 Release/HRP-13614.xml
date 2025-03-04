@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+    <types>
+        <members>sked_Drive__c.sked_Prefer_System_Generated_Vehicles__c</members>
+        <name>CustomField</name>
+    </types>
+    <types>
+		<members>autoMapper</members>
+		<members>slwcDriveGenerator</members>
+		<members>slwcDriveManagement</members>
+        <members>slwcDriveShiftJobModal</members>
+        <members>slwcDriveShifts</members>
+		<name>LightningComponentBundle</name>
+	</types>
+	<version>60.0</version>
+</Package>

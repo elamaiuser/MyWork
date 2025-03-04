@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Package xmlns="http://soap.sforce.com/2006/04/metadata">
     <types>
+		<members>BSF_Batch_Drive_OpRecordStatusCorrection</members>
 		<members>BSF_Constants</members>
 		<members>BSF_Utilities</members>
 		<members>BSF_UtilitiesTest</members>
@@ -35,6 +36,7 @@
 	</types>
     <types>
 		<members>Profile_Specific_Functionality_Access.Adhoc_Calendar_Build_Setting</members>
+        <members>Profile_Specific_Functionality_Access.Adhoc_Calendar_Build_Group_Setting</members>
 		<name>CustomMetadata</name>
 	</types>
 	<types>

@@ -326,7 +326,6 @@ class FixedSiteGenerator extends BaseGenerator {
                 ])
                   .then(([driveSite]) => {
                     this.populateDriveCollectionOperation();
-                    this.populateCollectionOperationData();
 
                     return Promise.all([
                       driveSite,
@@ -358,6 +357,7 @@ class FixedSiteGenerator extends BaseGenerator {
                       staffSetupExcludedRoles
                     });
 
+                    this.populateCollectionOperationData();
                     this.calculateTotalProceduresProjected();
                     this.calculateDriveShiftsMetadata();
                     this.proposeDriveShifts();
@@ -907,7 +907,7 @@ class FixedSiteGenerator extends BaseGenerator {
     });
   }
 
-  calculateResourceQuantity(skipCalculateResourceRoles = false) {
+  calculateResourceQuantity(skipCalculateResourceRoles = false, jobsUpdatedViaDualRoleChangeMap = {}) {
     this.calculateVehicleRelatedQuantity();
     this.calculateEquipmentQuantity();
 
@@ -932,6 +932,10 @@ class FixedSiteGenerator extends BaseGenerator {
 
     this.calculateVolunteerDonorAmbassadors();
 
+    if(jobsUpdatedViaDualRoleChangeMap) {
+      this.restoreDualRoleModification(jobsUpdatedViaDualRoleChangeMap);
+    }
+
     const systemGeneratedStaffingComplementChanges = this.helper.getDriveSystemGeneratedStaffingComplementChanges({
       ...this.drive,
       driveShifts: Array.from(this.mapResourceQuantity.values()).map(mapResourceQuantity => {
@@ -955,6 +959,30 @@ class FixedSiteGenerator extends BaseGenerator {
       !systemGeneratedStaffingComplementChanges.deletedJobs.length) {
         this.restoreJobsQuantity(skipCalculateResourceRoles ? this.masterData.backupDrive : this.drive);
     } 
+  }
+
+  //Will work at the time of dual role modification save
+  restoreDualRoleModification(jobsUpdatedViaDualRoleChangeMap = {}) {
+    if(jobsUpdatedViaDualRoleChangeMap) {
+      const driveShiftsMetadata = this.drive.driveShiftsMetadata;
+      Object.keys(jobsUpdatedViaDualRoleChangeMap).forEach(driveShiftIndex => {
+        const driveShiftMetadata =  driveShiftsMetadata?.driveShifts?.[driveShiftIndex];
+        let resourceQuantityMap = this.mapResourceQuantity.get(driveShiftMetadata?.key);
+        if(!resourceQuantityMap) return;
+
+        let tempResourceQuantityMap = cloneDeep(resourceQuantityMap);
+        let roles = orderBy(jobsUpdatedViaDualRoleChangeMap[driveShiftIndex], [item => item.isManuallyCreated], ['asc']);
+        roles.forEach(item => {
+          tempResourceQuantityMap.delete(item.resourceRole);
+          tempResourceQuantityMap.set(item.resourceRole, cloneDeep({
+            ...resourceRoleQuantityAfterRegenreted,
+            quantity: quantity,
+            isCreatedOrUpdatedViaDualRoleChange: true
+          }));
+        });
+        this.mapResourceQuantity.set(driveShiftMetadata?.key, new Map([...tempResourceQuantityMap]));
+      });
+    }
   }
 
   calculateVehicleRelatedQuantity() {
@@ -1074,8 +1102,22 @@ class FixedSiteGenerator extends BaseGenerator {
     skipCalculateResourceRoles = false,
     skipGenerateSlots = false
   } = {}) {
+
+    let jobsUpdatedViaDualRoleChangeMap = {};
+    this.drive.driveShifts.forEach((driveShift, driveShiftIndex) => {
+      if(!jobsUpdatedViaDualRoleChangeMap[driveShiftIndex]) {
+        jobsUpdatedViaDualRoleChangeMap[driveShiftIndex] = [];
+      }
+
+      driveShift.jobs.forEach(job => {
+        if(job.resourceRole && job.isCreatedOrUpdatedViaDualRoleChange) {
+          jobsUpdatedViaDualRoleChangeMap[driveShiftIndex].push(cloneDeep(job));
+        }
+      })
+    });
+
     this.initResourceQuantityMap();
-    this.calculateResourceQuantity(skipCalculateResourceRoles);
+    this.calculateResourceQuantity(skipCalculateResourceRoles, jobsUpdatedViaDualRoleChangeMap);
 
     this.drive.driveShifts = this.buildMultiDriveShifts();
 
@@ -1302,6 +1344,64 @@ class FixedSiteGenerator extends BaseGenerator {
       });
     });
     driveShift.jobs = jobs.concat(cloneDeep(manuallyCreatedJobs));
+  }
+
+  // To create new jobs /update existing jobs after dual role modification
+  repopulateJobsAfterDualRoleModification(driveShift, job) {
+    let newJob;
+    let existingJob = driveShift.jobs?.find(item => item.resourceRole && !item.dualRole && item.resourceRole === job.dualRole);
+    if(existingJob) {
+      newJob = {
+        ...existingJob,
+        quantity: existingJob.quantity + job.quantity,
+        isCreatedOrUpdatedViaDualRoleChange: true
+      };
+      const index = driveShift.jobs?.findIndex(item => item.resourceRole && !item.dualRole && item.resourceRole === job.dualRole);
+      driveShift.jobs[index] = newJob;
+    } else {
+      let jobTagsMap = this.helper.calculateJobTagsMap(this.masterData);
+      let jobTemplate = {
+        driveSiteId: this.drive.driveSiteId,
+        collectionOperationId: this.drive.collectionOperationId,
+        address: this.drive.driveSite?.address,
+        latitude: this.drive.driveSite?.geoLocationLatitude,
+        longitude: this.drive.driveSite?.geoLocationLongitude,
+        jobAllocationTimeSource: false,
+        isCreatedOrUpdatedViaDualRoleChange: true,
+        isManuallyCreated: false,
+        manuallyCreatedFrom: ''
+      };
+      newJob = cloneDeep(jobTemplate);
+      newJob.key = generateUUID();
+      newJob.jobTags = cloneDeep(jobTagsMap[RESOURCE_TYPE.PERSON]);
+      newJob.resourceRole = job.dualRole;
+      newJob.dualRole = '';
+
+      if (newJob.resourceRole === 'VP/HH') {
+        if (job.quantity > 0) {
+          newJob.vphhQuantity = job.quantity;
+          newJob.aptQuantity = 0
+          newJob.quantity = newJob.vphhQuantity + (newJob.aptQuantity || 0);
+          newJob.systemQuantity = job.quantity;
+        }
+      } else {
+        if (job.quantity > 0) {
+          newJob.quantity = job.quantity;
+          newJob.systemQuantity = job.quantity;
+        }
+      }
+
+      if (newJob.jobTags && newJob.jobTags.length) {
+        let tagNameArr = newJob.jobTags.reduce((result, item) => {
+          return result.concat(item.tag.name);
+        }, []);
+        newJob.tagNames = orderBy(tagNameArr, [item => item], ['asc']).join(", ");
+      }
+      driveShift.jobs.push(newJob);
+    }
+
+    this.applyRoleTimeForSingleJob(driveShift, newJob);
+    this.onJobChanged(driveShift, newJob);
   }
 
   generateDriveShiftRounds(driveShift, numberOfRounds = 1) {

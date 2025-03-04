@@ -300,8 +300,13 @@ class SlwcAvailator {
       });
 
       resource.jobAllocations = (resource.jobAllocations || []).map((item) => {
+        console.log(' item.job->'+JSON.stringify(item.job));
+
         item.latitude = item.job.latitude;
         item.longitude = item.job.longitude;
+        item.driveName = item.job.driveName;
+
+        console.log(' item.driveName2->'+item.job.driveName);
         if (item.startWithTravelTime) {
           item.start = item.startWithTravelTime;
         }
@@ -366,6 +371,7 @@ class SlwcAvailator {
     let jobAllocations = (data || []).map((skedJobAllocation) => {
       let jobAllocation = autoMapper.autoMapperInstance.mapTo('sked__Job_Allocation__c', skedJobAllocation);
       this.populateDateTime(jobAllocation);
+      console.log('jobAllocation->'+jobAllocation);
       return jobAllocation;
     });
     jobAllocations = orderBy(jobAllocations, ['start'], ['asc']);
@@ -461,6 +467,7 @@ class SlwcAvailator {
         request.recordIds = additionalFilters.recordIds;
       }
     }
+    console.log('request->'+JSON.stringify(request));
     let service = new jobAllocationService();
     return service.getResourceData({request : request})
       .then((result) => {
@@ -1563,7 +1570,6 @@ class SlwcAvailator {
       console.log('>>> Start building data', new Date());
 
       let resourcesMap = keyBy(this.resources, "id");
-      
       let inputDates = compact(uniqBy(
         this.jobs.map((item) => {
           return item.startDate;
@@ -1786,9 +1792,13 @@ class SlwcAvailator {
                 if(!resourceTag.tag) return;
 
                 const tagStartDateValid = resourceTag.startDate <= job.driveDate;
-                const tagRestricted = resourceTag.restrictionStartDate && resourceTag.restrictionEndDate && 
-                  resourceTag.restrictionStartDate <= job.driveDate && resourceTag.restrictionEndDate >= job.driveDate;
-
+                //HRP-10970 - Updated tagRestricted logic to check only restrictionStartDate is defined before comparing dates
+                //const tagRestricted = resourceTag.restrictionStartDate && resourceTag.restrictionEndDate && 
+                //  resourceTag.restrictionStartDate <= job.driveDate && resourceTag.restrictionEndDate >= job.driveDate;
+                const tagRestricted = resourceTag.restrictionStartDate && 
+                      resourceTag.restrictionStartDate <= job.driveDate && 
+                      (slwcUtils.isNullOrEmpty(resourceTag.restrictionEndDate)  || resourceTag.restrictionEndDate >= job.driveDate);
+                //HRP-10970 ended
                 if (tagStartDateValid && !tagRestricted) {
                   validTagNames.push(resourceTag.tag.name);
                 } else {
@@ -1796,8 +1806,8 @@ class SlwcAvailator {
                     restrictedTagNames.push(resourceTag.tag.name);
                   }
                 }
+
               });
-      
               (job.jobTags || []).forEach((jobTag) => {
                 if (!jobTag.tag) return;
 
@@ -1875,7 +1885,8 @@ class SlwcAvailator {
                     jobId: job.id,
                     resourceId: resource.id,
                     exception: "",
-                    exceptionCode: "RESOURCE_TIME_CONFLICT"
+                    exceptionCode: "RESOURCE_TIME_CONFLICT",
+                    eventURL:"" //HRP-12840
                   };
                   if (event.objectType === OBJECT_TYPE.NON_WORKING) {
                     isResourceQualified = false;
@@ -1888,9 +1899,19 @@ class SlwcAvailator {
                       exception.exception = event.eventType;
                     }
                     else if (event.objectType == OBJECT_TYPE.ACTIVITY) {
+                      exception.exception = "Conflict with " + event.activityTitle;//HRP-12840
+                      let baseUrl = window.location.origin;
+                      console.log(baseUrl);
+                      let fullUrl=baseUrl+'/lightning/r/sked__Activity__c/'+event.id+'/view';
+                      exception.eventURL=fullUrl;
                       exception.activityId = event.id;
                     }
                     else if (event.objectType == OBJECT_TYPE.JOB_ALLOCATION) {
+                      let baseUrl = window.location.origin;
+                      console.log(baseUrl);
+                      let fullUrl=baseUrl+'/lightning/r/sked_Drive__c/'+event.driveId+'/view';
+                      exception.eventURL=fullUrl;
+                      exception.exception = "Conflict with "+event.driveName;//HRP-12840
                       exception.conflictedJobAllocationId = event.id;
                     }
                   }

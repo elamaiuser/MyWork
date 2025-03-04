@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomMetadata xmlns="http://soap.sforce.com/2006/04/metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-    <label>Diverse Donor Recruitment Strategy</label>
+    <label>Review publicity materials Sponsor</label>
     <protected>false</protected>
     <values>
         <field>Column__c</field>
-        <value xsi:type="xsd:double">1.0</value>
+        <value xsi:type="xsd:double">2.0</value>
     </values>
     <values>
         <field>Field_Mapping_Object__c</field>
@@ -12,7 +12,11 @@
     </values>
     <values>
         <field>Help_Text__c</field>
-        <value xsi:nil="true"/>
+        <value xsi:type="xsd:string">Request publicity (promotional) materials at this time.
+
+Once publicity materials are ordered, complete the Publicity Order approved task in BSF. 
+
+Recommended completion time is no later than 9 weeks.</value>
     </values>
     <values>
         <field>Hyperlink__c</field>
@@ -32,7 +36,7 @@
     </values>
     <values>
         <field>Order__c</field>
-        <value xsi:type="xsd:double">7.0</value>
+        <value xsi:type="xsd:double">10.0</value>
     </values>
     <values>
         <field>Parent__c</field>
@@ -44,11 +48,11 @@
     </values>
     <values>
         <field>Section_Header__c</field>
-        <value xsi:type="xsd:string">Checklist</value>
+        <value xsi:nil="true"/>
     </values>
     <values>
         <field>Subject__c</field>
-        <value xsi:type="xsd:string">Recruitment Planning Meeting</value>
+        <value xsi:type="xsd:string">Sponsor Planning Meeting</value>
     </values>
     <values>
         <field>Subtype__c</field>
@@ -56,10 +60,10 @@
     </values>
     <values>
         <field>UI_Text__c</field>
-        <value xsi:type="xsd:string">Diverse Donor Recruitment Strategy</value>
+        <value xsi:type="xsd:string">Review publicity materials, promotional items, and incentives with BPL</value>
     </values>
     <values>
         <field>Unique_Name__c</field>
-        <value xsi:type="xsd:string">Diverse_Donor_Recruitment_Strategy</value>
+        <value xsi:type="xsd:string">Review_publicity_materials_Sponsor</value>
     </values>
 </CustomMetadata>

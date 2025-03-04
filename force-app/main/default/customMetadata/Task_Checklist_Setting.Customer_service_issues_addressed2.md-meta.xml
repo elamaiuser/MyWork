@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomMetadata xmlns="http://soap.sforce.com/2006/04/metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-    <label>AAandLatinoProjection</label>
+    <label>Customer service issues addressed</label>
     <protected>false</protected>
     <values>
         <field>Column__c</field>
@@ -20,11 +20,11 @@
     </values>
     <values>
         <field>Input_API_Name__c</field>
-        <value xsi:type="xsd:string">Input_Checkbox__c</value>
+        <value xsi:type="xsd:string">Input_Long_Text_Area__c</value>
     </values>
     <values>
         <field>Input_Type__c</field>
-        <value xsi:type="xsd:string">Checkbox</value>
+        <value xsi:type="xsd:string">Text</value>
     </values>
     <values>
         <field>Is_Dynamic__c</field>
@@ -32,7 +32,7 @@
     </values>
     <values>
         <field>Order__c</field>
-        <value xsi:type="xsd:double">4.0</value>
+        <value xsi:type="xsd:double">6.0</value>
     </values>
     <values>
         <field>Parent__c</field>
@@ -44,11 +44,11 @@
     </values>
     <values>
         <field>Section_Header__c</field>
-        <value xsi:type="xsd:string">Checklist</value>
+        <value xsi:type="xsd:string">Drive Information</value>
     </values>
     <values>
         <field>Subject__c</field>
-        <value xsi:type="xsd:string">Recruitment Planning Meeting</value>
+        <value xsi:type="xsd:string">Post Drive Analysis AM</value>
     </values>
     <values>
         <field>Subtype__c</field>
@@ -56,10 +56,10 @@
     </values>
     <values>
         <field>UI_Text__c</field>
-        <value xsi:type="xsd:string">Review African American and Latino Unit Projections</value>
+        <value xsi:type="xsd:string">Were there any customer service issues and were they addressed?</value>
     </values>
     <values>
         <field>Unique_Name__c</field>
-        <value xsi:type="xsd:string">AAandLatinoProjection</value>
+        <value xsi:type="xsd:string">Customer_service_issues_addressed</value>
     </values>
 </CustomMetadata>

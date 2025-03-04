@@ -190,6 +190,13 @@
         <value>DRD Users Can Not Create a Fixed Site Account.</value>
     </labels>
     <labels>
+        <fullName>DRD_System_User_Name</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>DRD System User Name</shortDescription>
+        <value>DRD System User</value>
+    </labels>
+    <labels>
         <fullName>DRD_User_Profile_Names</fullName>
         <language>en_US</language>
         <protected>false</protected>

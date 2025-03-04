@@ -13,12 +13,17 @@ const DRIVE_EXCEPTION_COLUMNS = [
     { label: 'Drive', fieldName: 'driveUrl', type: 'url', hideDefaultActions: false, wrapText: true, typeAttributes:{label: { fieldName: 'driveName' }, target: '_blank'}},
     { label: 'Drive ID', fieldName: 'ufid', type: 'text', hideDefaultActions: true, initialWidth: 100, wrapText: true },
     { label: 'Drive Date', fieldName: 'driveDate', type: 'date-local', initialWidth: 125, typeAttributes: { year: "numeric", month: "short", day: "2-digit" }, hideDefaultActions: true },
-    { label: 'Job', fieldName: 'jobUrl', type: 'url', hideDefaultActions: false, wrapText: true, initialWidth: 125, typeAttributes:{label: { fieldName: 'jobName' }, target: '_blank'}},
     { label: 'Job Type', fieldName: 'jobType', type: 'text', hideDefaultActions: false, wrapText: true, initialWidth: 125 },
     { label: 'Resource', fieldName: 'resourceName', type: 'text', hideDefaultActions: true, initialWidth: 200, wrapText: true },
     { label: 'Exception', fieldName: 'exception', type: 'text', hideDefaultActions: true, wrapText: true, cellAttributes: {wrapText: true} },
-    { label: 'Priority', fieldName: 'priority', type: 'text', hideDefaultActions: true, initialWidth: 100, wrapText: true },
-    { label: 'Status', fieldName: 'status', type: 'text', hideDefaultActions: true, initialWidth: 100, wrapText: true }
+    //HRP-12840- Begin 
+    { label: 'Conflicted Drive', fieldName: 'conflictedDriveUrl', type: 'url', hideDefaultActions: false, wrapText: true, typeAttributes:{label: { fieldName: 'conflictedDriveName' }, target: '_blank'}},
+    { label: 'Conflicted Activity', fieldName: 'conflictedActivityUrl', type: 'url', hideDefaultActions: false, wrapText: true, typeAttributes:{label: { fieldName: 'activityTitle' }, target: '_blank'}},
+    { label: 'Priority', fieldName: 'priority', type: 'text', hideDefaultActions: true, initialWidth: 100, wrapText: true }
+    /*{
+    { label: 'Status', fieldName: 'status', type: 'text', hideDefaultActions: true, initialWidth: 100, wrapText: true } 
+         { label: 'Job', fieldName: 'jobUrl', type: 'url', hideDefaultActions: false, wrapText: true, initialWidth: 125, typeAttributes:{label: { fieldName: 'jobName' }, target: '_blank'}},
+HRP-12840 end*/
 ];
 
 const RESOURCE_EXCEPTION_COLUMNS = [
@@ -154,6 +159,9 @@ export default class SlwcExceptionList extends LightningElement {
         let query = new exceptionQueryModel();
 
         let exceptionCodes = [];
+        let driveTypes = [];
+        let operationTypes = [];
+        let resourceDriveTypes = [];
         if (this.exceptionType === "drive") {
             query.exceptionType = "drive";
             const territoryKeys = this.territoryKeys;
@@ -162,14 +170,20 @@ export default class SlwcExceptionList extends LightningElement {
             }
             query.territoryKeys = territoryKeys;
             exceptionCodes = this.filters.exceptionCodes;
+            driveTypes = this.filters.driveTypes;
+            operationTypes = this.filters.operationTypes;
         }
         else if (this.exceptionType === "resource") {
+            resourceDriveTypes = this.filters.resourceDriveTypes;
             query.exceptionType = "resource";
             exceptionCodes.push("RESOURCE_DUPLICATE_SENIORITY_RANKING");
         }
 
         query.exceptionCodes = exceptionCodes;
         query.priorities = this.filters.priorities;
+        query.driveTypes = driveTypes;
+        query.operationTypes = operationTypes;
+        query.resourceDriveTypes = resourceDriveTypes;
         query.statuses = this.filters.statuses;
         query.startDate  = this.filters.startDate;
         query.endDate = this.filters.endDate;
@@ -206,6 +220,21 @@ export default class SlwcExceptionList extends LightningElement {
                     if (exception.resourceId) {
                         exception.resourceUrl = '/' + exception.resourceId;
                     }
+                  
+                    //HRP-12840 Begin
+                    if (exception.conflictedDrive) {
+                        exception.conflictedDriveUrl = '/' + exception.conflictedDrive;
+                    }
+                    else {
+                        exception.conflictedDriveUrl = '';
+                    }
+                    if (exception.activityId) {
+                        exception.conflictedActivityUrl = '/' + exception.activityId;
+                    }
+                    else {
+                        exception.conflictedActivityUrl = '';
+                    } //End HRP-12480
+
                 })
                 return result;
             })
