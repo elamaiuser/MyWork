@@ -1888,7 +1888,7 @@ class SlwcAvailator {
                     resourceId: resource.id,
                     exception: "",
                     exceptionCode: "RESOURCE_TIME_CONFLICT",
-                    eventURL:"" //HRP-12840
+                    eventURL:""
                   };
                   if (event.objectType === OBJECT_TYPE.NON_WORKING) {
                     isResourceQualified = false;
@@ -1901,7 +1901,7 @@ class SlwcAvailator {
                       exception.exception = event.eventType;
                     }
                     else if (event.objectType == OBJECT_TYPE.ACTIVITY) {
-                      exception.exception = "Conflict with " + event.activityTitle;//HRP-12840
+                      exception.exception = "Conflict with " + event.activityTitle;
                       let baseUrl = window.location.origin;
                       console.log(baseUrl);
                       let fullUrl=baseUrl+'/lightning/r/sked__Activity__c/'+event.id+'/view';
@@ -1913,7 +1913,7 @@ class SlwcAvailator {
                       console.log(baseUrl);
                       let fullUrl=baseUrl+'/lightning/r/sked_Drive__c/'+event.driveId+'/view';
                       exception.eventURL=fullUrl;
-                      exception.exception = "Conflict with "+event.driveName;//HRP-12840
+                      exception.exception = "Conflict with "+event.driveName;
                       exception.conflictedJobAllocationId = event.id;
                     }
                   }

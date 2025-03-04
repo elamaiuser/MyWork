@@ -1087,7 +1087,6 @@
                                                                                                     checked={exceptionSub.isSelected}
                                                                                                     onchange={handleOnChange}>
                                                                                                 </lightning-input>-->
-                                                                                                  <!-- HRP-12840 begin -->
                                                                                                 <template if:true={exceptionSub.eventURL} >
                                                                                                     <span class="color-error"><a href={exceptionSub.eventURL} target="blank" class="color-error">{exceptionSub.exception}</a></span>
                                                                                                 </template>
@@ -1096,7 +1095,6 @@
                                                                                                 <template if:false={exceptionSub.eventURL} >
                                                                                                     <span class="color-error">{exceptionSub.exception}</span>
                                                                                                 </template>
-                                                                                                <!-- HRP-12840 end -->
 
                                                                                                 
                                                                                             </p>

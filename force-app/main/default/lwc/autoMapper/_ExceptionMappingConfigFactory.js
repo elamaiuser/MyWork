@@ -28,9 +28,9 @@ export class ExceptionMappingConfigFactory {
       mappingConfig.addFieldConfig('sked_Drive__r.Name', 'driveName');
       mappingConfig.addFieldConfig('sked_Exception_Code__c', 'exceptionCode');
       mappingConfig.addFieldConfig('sked_Priority__c', 'priority');
-      mappingConfig.addFieldConfig('sked_Conflicted_Drive__c', 'conflictedDrive');//HRP-12840
-      mappingConfig.addFieldConfig('sked_Conflicted_Drive__r.Name', 'conflictedDriveName');//HRP-12840
-      mappingConfig.addFieldConfig('skedHC__Activity__r.sked_Activity_Title__c', 'activityTitle');//HRP-12840
+      mappingConfig.addFieldConfig('sked_Conflicted_Drive__c', 'conflictedDrive');
+      mappingConfig.addFieldConfig('sked_Conflicted_Drive__r.Name', 'conflictedDriveName');
+      mappingConfig.addFieldConfig('skedHC__Activity__r.sked_Activity_Title__c', 'activityTitle');
 
 
 

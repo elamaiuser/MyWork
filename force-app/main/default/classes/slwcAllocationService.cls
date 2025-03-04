@@ -139,7 +139,7 @@ global class slwcAllocationService {
         data.resources = resources;
         if (!groupActivityIds.isEmpty()) {
             data.groupActivities = [SELECT Id, Name, sked__Start__c, sked__End__c, sked__GeoLocation__Latitude__s, sked__GeoLocation__Longitude__s,
-                                    sked__Type__c,sked_Activity_Title__c //HRP-12840
+                                    sked__Type__c,sked_Activity_Title__c
                                     FROM sked__Activity__c
                                     WHERE Id IN :groupActivityIds];  
         }
@@ -333,7 +333,7 @@ global class slwcAllocationService {
                                               sked__Job__r.sked__GeoLocation__Latitude__s, sked__Job__r.sked__GeoLocation__Longitude__s, 
                                               sked__Job__r.sked__Type__c, sked__Status__c,
                                               sked__Start__c, sked__Set_End__c, sked_Start_Date__c, sked_Set_End_Date__c, sked_Travel_Time_To__c, sked_Travel_Time_Back__c,
-                                              sked__Job__r.sked_Drive__r.Name, sked__Job__r.sked_Drive__r.Id //HRP-12840
+                                              sked__Job__r.sked_Drive__r.Name, sked__Job__r.sked_Drive__r.Id 
                                               FROM sked__Job_Allocations__r
                                               WHERE sked__Status__c != :skedConstants.JOB_ALLOCATION_STATUS_DELETED
                                               AND sked__Job__r.sked__Job_Status__c != :skedConstants.JOB_STATUS_CANCELLED
@@ -343,7 +343,7 @@ global class slwcAllocationService {
                                               AND sked__Job__r.sked_Drive__c NOT IN :request.excludedDriveIds
                                               ORDER BY sked__Start__c ASC),
                                              
-                                             (SELECT Id, Name, sked__Start__c, sked__End__c, sked_Start_Date__c, sked_End_Date__c, sked__GeoLocation__Latitude__s, sked__GeoLocation__Longitude__s,sked_Activity_Title__c, //HRP-12840
+                                             (SELECT Id, Name, sked__Start__c, sked__End__c, sked_Start_Date__c, sked_End_Date__c, sked__GeoLocation__Latitude__s, sked__GeoLocation__Longitude__s,sked_Activity_Title__c,
                                               sked__Type__c
                                               FROM sked__Activities__r
                                               WHERE sked_Start_Date__c IN :request.allDates
