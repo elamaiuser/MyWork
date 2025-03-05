@@ -12,8 +12,13 @@
 		<name>LightningComponentBundle</name>
 	</types>
     <types>
-		<members>Expiry_Date__c</members>		
-		<name>ContentVersion</name>
+		<members>ContentVersion.Expiry_Date__c</members>		
+		<name>CustomField</name>
 	</types>
+	<types>
+        <members>Mobile_Account_Record_Page</members>  
+		<members>Location_Record_Page</members>        
+        <name>FlexiPage</name>
+    </types>
     <version>60.0</version>
 </Package>
