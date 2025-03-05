@@ -72,6 +72,8 @@
 		<members>TaskTriggerHandler</members>
 		<members>TaskTriggerTest</members>
 		<members>BSFTaskChecklistTriggerTest</members>
+		<members>ARCFileUploadController</members>
+		<members>ARCFileUploadControllerTest</members>
 		<name>ApexClass</name>
 	</types>
 	<types>
@@ -114,6 +116,7 @@
 		<members>Opportunity.Calendar_Build_Reasons_For_Unqualified__c</members>
         <members>Opportunity.Calendar_Build_Alert_Reviewed__c</members>		
 		<members>Task_Checklist_Setting__mdt.Subject__c</members>
+		<members>ContentVersion.Expiry_Date__c</members>
 		<name>CustomField</name>
 	</types>
 	<types>
@@ -223,6 +226,7 @@
 		<members>Calendar_Build_Log_Manual_Run_Record_Page</members>
 		<members>Fixed_Site_Account_Record_Page</members>
 		<members>Mobile_Account_Record_Page</members>
+		<members>Location_Record_Page</members>  
 		<name>FlexiPage</name>
 	</types>
 	<types>
@@ -252,7 +256,8 @@
 		<members>slwcResolveDriveContentions</members>
 		<members>slwcShiftJobs</members>
 		<members>slwcStaffingComplementModal</members>
-		<members>travelTimeBreakdown</members>		
+		<members>travelTimeBreakdown</members>	
+		<members>aRCFileUploadComponent</members>	
 		<name>LightningComponentBundle</name>
 	</types>
 	<types>
