@@ -68,7 +68,7 @@ public inherited sharing class ARCFileUploadController {
     
     @AuraEnabled(cacheable=false)
     public static List<String> getFileTypeAndInsert(String fileName,Date expiryDate,List<String> uploadedFileIds){
-        System.debug('File Name: ' + fileName);
+        System.debug('File Name:: ' + fileName);
         System.debug('uploadedFileIds: '+uploadedFileIds);
         List<String> fileTitleListToReturnList = new List<String>();
         
@@ -104,7 +104,6 @@ public inherited sharing class ARCFileUploadController {
         
         return fileTitleListToReturnList;
     }
-    
     
     @AuraEnabled(cacheable=false)
     public static List<String> getContentDocumentId( String recordid){

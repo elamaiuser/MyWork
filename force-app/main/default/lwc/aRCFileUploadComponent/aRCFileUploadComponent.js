@@ -27,7 +27,7 @@ export default class ARCFileUploadComponent extends LightningElement {
     @api cmpInstanceId=null;
 
     connectedCallback(event) {
-        //console.log( "constructor called here");
+        console.log( "connectedCallback called here",this.recordId);
         //this.displayAddIcon = true;
     }
 
@@ -59,17 +59,17 @@ export default class ARCFileUploadComponent extends LightningElement {
     handleChange(event) {
         this.fileName = event.detail.value;
         console.log('File Name:',this.fileName);
-        if(this.fileName) {
-              this.disableUploadFile = false;  
-        }
+        this.enableFileUpload(); // Call a function to check both conditions
     }
 
     handleExpiryDateChange(event) {
         this.expiryDate = event.target.value;
+        console.log('Expiry Date:', this.expiryDate);
+        this.enableFileUpload(); // Call a function to check both conditions
     }
 
     handleUploadFinished(event) {
-        console.log("expiryDate: ",this.expiryDate);
+        console.log("handleUploadFinished expiryDate:=> ",this.expiryDate,' recordId:',this.recordId);
         if (!this.expiryDate) {
             this.dispatchEvent(
                 new ShowToastEvent({
@@ -128,6 +128,13 @@ export default class ARCFileUploadComponent extends LightningElement {
                     
                 };
                 this.dispatchEvent(new CustomEvent('rowstodelete', { detail : rowsToDelete} ));
+        }
+    }
+    enableFileUpload() {
+        if (this.fileName && this.expiryDate) {
+            this.disableUploadFile = false; // Enable Upload
+        } else {
+            this.disableUploadFile = true; // Keep Disabled
         }
     }
 }
