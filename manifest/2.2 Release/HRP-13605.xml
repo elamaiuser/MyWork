@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+    <types>
+		<members>BatchAcctsMilitaryMoAUploadedFiles_Test</members>
+        <members>BatchAccountsMilitaryMoAUploadedFiles</members>
+		<members>ARCFileUploadControllerTest</members>
+        <members>ARCFileUploadController</members>
+		<name>ApexClass</name>
+	</types>
+    <types>
+		<members>aRCFileUploadComponent</members>		
+		<name>LightningComponentBundle</name>
+	</types>
+    <types>
+		<members>Expiry_Date__c</members>		
+		<name>ContentVersion</name>
+	</types>
+    <version>60.0</version>
+</Package>
