@@ -1,12 +1,14 @@
 /*
 * This Test class covering the following Classes
-* CalendarBuildBatchOnDemandController (82%)
+* CalendarBuildBatchOnDemandController (87%)
+* AdhocCalendarBuildRunEvent (PE Trigger) (92%)
 * */
 /* 
  * Modification Log 
  * Date					     Developer Name			     Comments
  * ***************************************************************************
  * 09/16/2024                 Priti Jana                HRP-12706
+ * 02/27/2025				  Priti Jana				HRP-11368 (New test method added)
  *****************************************************************************
 */
 
@@ -46,6 +48,17 @@ public class CalendarBuildBatchOnDemandControllerTest {
         Test.startTest();
         Integer testBatchSize = CalendarBuildBatchOnDemandController.getSysGenDrivesBatchSize();
         Assert.areEqual(1, testBatchSize);
+        Test.stopTest();
+    }
+    
+    //HRP-11368: New Test Method added
+    static testMethod void testMethod6() {
+        Test.startTest();
+        CalendarBuildBatchOnDemandController.AdhocCalendarBuildInput adhocCbInput = new CalendarBuildBatchOnDemandController.AdhocCalendarBuildInput();
+        adhocCbInput.bookingStrategy = 'Test';
+        adhocCbInput.opportunitySource = 'Adhoc Calendar Build';
+        adhocCbInput.selectedOpportunities = new List<Opportunity>();
+        CalendarBuildBatchOnDemandController.triggerAdhocCBRunAndGetJobId(new List<CalendarBuildBatchOnDemandController.AdhocCalendarBuildInput>{adhocCbInput});
         Test.stopTest();
     }
 
