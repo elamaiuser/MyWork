@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+    <types>
+		<members>BatchAcctsMilitaryMoAUploadedFiles_Test</members>
+        <members>BatchAccountsMilitaryMoAUploadedFiles</members>
+		<members>ARCFileUploadControllerTest</members>
+        <members>ARCFileUploadController</members>
+		<name>ApexClass</name>
+	</types>
+    <types>
+		<members>aRCFileUploadComponent</members>		
+		<name>LightningComponentBundle</name>
+	</types>
+    <types>
+		<members>ContentVersion.Expiry_Date__c</members>		
+		<name>CustomField</name>
+	</types>
+	<types>
+        <members>Mobile_Account_Record_Page</members>  
+		<members>Location_Record_Page</members>        
+        <name>FlexiPage</name>
+    </types>
+	<types> 
+		<members>ContentVersion-Content Version Layout</members>        
+        <name>Layout</name>
+    </types>
+	<types>
+		<members>ARCFileContentTypeMatrix.Military_MoA_Local</members>
+		<!--This is for Account -->
+		<members>Task_Reassignment_Matrix.Blood_Partner_Agreement</members>
+		<members>Task_Reassignment_Matrix.Community_Agreements</members>
+		<members>Task_Reassignment_Matrix.Military_MoA_Local</members>
+		<members>Task_Reassignment_Matrix.Other</members>
+		<!--This is for Site -->
+		<members>Task_Reassignment_Matrix.Community_Agreements_Site</members>
+		<members>Task_Reassignment_Matrix.Emergency_Action_Plan</members>
+		<members>Task_Reassignment_Matrix.Other_Site</members>
+		<members>Task_Reassignment_Matrix.Security_Form</members>
+		<members>Task_Reassignment_Matrix.Weapons_Policy</members>
+		<name>CustomMetadata</name>
+	</types>
+    <version>60.0</version>
+</Package>

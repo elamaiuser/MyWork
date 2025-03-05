@@ -1236,11 +1236,11 @@
             <componentInstance>
                 <componentInstanceProperties>
                     <name>ColumnName</name>
-                    <value>File Title, File Type</value>
+                    <value>File Title, File Type, Expiry Date</value>
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>SOQLQuery</name>
-                    <value>SELECT Title, Description FROM ContentVersion</value>
+                    <value>SELECT Title, Description, Expiry_Date__c FROM ContentVersion</value>
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>dateFormatType</name>
