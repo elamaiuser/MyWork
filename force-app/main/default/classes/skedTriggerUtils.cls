@@ -65,7 +65,7 @@ public class skedTriggerUtils {
     public static void updateJobAllocations(Set<Id> jobIds, Set<Id> driveShiftIds) {
         if (!skedSetting.instance.Admin.migrationMode) {
             List<sked__Job_Allocation__c> jobAllocations = [
-                SELECT Id, Name
+                SELECT Id, Name, sked_Completed_Post_Processes__c
                 FROM sked__Job_Allocation__c
                 WHERE (sked__Job__c IN :jobIds OR sked__Job__r.sked_Drive_Shift__c IN :driveShiftIds)
                 AND sked__Status__c NOT IN :new List<String>{
