@@ -87,7 +87,7 @@
                 BSF_Constants.RUN_TYPE_MANUAL
             );
             cbLogWrapper.apexMethodName = 'Constructor Call for Manual Adhoc CB Run';
-            cbLogWrapper.opportunitySource = input.opportunitySource;
+            cbLogWrapper.opportunitySource = BSF_Constants.OPP_SOURCE_ADHOC_CALENDAR_BUILD;
             cbLogWrapper.eligibleOpportunityForCbList = new List<Opportunity>();
             DriveGenerationUtil.captureErrorLoggingForException(ex, cbLogWrapper);    
         }
@@ -116,6 +116,9 @@
             cbLogWrapper = new DriveGenerationUtil.CalendarBuildLogWrapper(manualRunDate, BSF_Constants.BATCH_CALENDAR_BUILD, this.runType);
             cbLogWrapper.opportunitySource = this.opportunitySource;
             cbLogWrapper = CalendarBuildBatchHandler.getEligibleOppsToRunCb(cbLogWrapper);
+            if(Test.isRunningTest() && BSF_Utilities.IS_SET_TO_GENERATE_EXCEPTION) {
+                throw new CBBatchCustomException('This is custom exception during manual run');
+            }
         } catch(Exception ex) {
             sendErrorNotification(new Map<Exception, String>{ex => ''}, new Map<Id, String>());
             cbLogWrapper = new DriveGenerationUtil.CalendarBuildLogWrapper(
@@ -161,6 +164,9 @@
             cbLogWrapper = new DriveGenerationUtil.CalendarBuildLogWrapper(this.driveDateToEval, BSF_Constants.BATCH_CALENDAR_BUILD, this.runType);
             cbLogWrapper.opportunitySource = this.opportunitySource;
             cbLogWrapper = CalendarBuildBatchHandler.getEligibleOppsToRunCb(cbLogWrapper);
+            if(Test.isRunningTest() && BSF_Utilities.IS_SET_TO_GENERATE_EXCEPTION) {
+                throw new CBBatchCustomException('This is custom exception during scheduled run');
+            }
         } catch(Exception ex) {
             sendErrorNotification(new Map<Exception, String>{ex => ''}, new Map<Id, String>());
             cbLogWrapper = new DriveGenerationUtil.CalendarBuildLogWrapper(
@@ -311,4 +317,6 @@
             Helper.sendEmail(commonExMap, dmlErrMap, emailIds, owea[0].Id, true, 'Error in CB Drive Creation');
         }
     }
+
+    private class CBBatchCustomException extends Exception {}
 }

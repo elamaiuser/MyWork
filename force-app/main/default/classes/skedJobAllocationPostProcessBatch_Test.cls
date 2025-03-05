@@ -107,7 +107,7 @@ private class skedJobAllocationPostProcessBatch_Test {
         
         skedJobAllocationPostProcessBatch.batchSetting batchSetting = new skedJobAllocationPostProcessBatch.batchSetting();
         batchSetting.geographicException = false;
-        Database.executeBatch(new skedJobAllocationPostProcessBatch(batchSetting, jobAllocationIds));
+        Database.executeBatch(new skedJobAllocationPostProcessBatch(batchSetting));
         
         Test.stopTest();
     }
@@ -219,7 +219,7 @@ private class skedJobAllocationPostProcessBatch_Test {
         
         skedJobAllocationPostProcessBatch.batchSetting batchSetting = new skedJobAllocationPostProcessBatch.batchSetting();
         batchSetting.geographicException = false;
-        Database.executeBatch(new skedJobAllocationPostProcessBatch(batchSetting, jobAllocationIds));
+        Database.executeBatch(new skedJobAllocationPostProcessBatch(batchSetting));
         
         Test.stopTest();
     }
@@ -349,7 +349,7 @@ private class skedJobAllocationPostProcessBatch_Test {
             
         skedJobAllocationPostProcessBatch.batchSetting batchSetting = new skedJobAllocationPostProcessBatch.batchSetting();
         batchSetting.geographicException = false;
-        Database.executeBatch(new skedJobAllocationPostProcessBatch(batchSetting, jobAllocationIds));
+        Database.executeBatch(new skedJobAllocationPostProcessBatch(batchSetting));
         
         Test.stopTest();
     }
@@ -469,7 +469,7 @@ private class skedJobAllocationPostProcessBatch_Test {
         
         skedJobAllocationPostProcessBatch.batchSetting batchSetting = new skedJobAllocationPostProcessBatch.batchSetting();
         batchSetting.geographicException = false;
-        Database.executeBatch(new skedJobAllocationPostProcessBatch(batchSetting, jobAllocationIds));
+        Database.executeBatch(new skedJobAllocationPostProcessBatch(batchSetting));
         
         Test.stopTest();
     }
@@ -568,7 +568,7 @@ private class skedJobAllocationPostProcessBatch_Test {
 
         skedJobAllocationPostProcessBatch.batchSetting batchSetting = new skedJobAllocationPostProcessBatch.batchSetting();
         batchSetting.geographicException = false;
-        Database.executeBatch(new skedJobAllocationPostProcessBatch(batchSetting, jobAllocationIds));
+        Database.executeBatch(new skedJobAllocationPostProcessBatch(batchSetting));
         
         Test.stopTest();
     }
@@ -677,7 +677,7 @@ private class skedJobAllocationPostProcessBatch_Test {
 
         skedJobAllocationPostProcessBatch.batchSetting batchSetting = new skedJobAllocationPostProcessBatch.batchSetting();
         batchSetting.geographicException = false;
-        Database.executeBatch(new skedJobAllocationPostProcessBatch(batchSetting, jobAllocationIds));
+        Database.executeBatch(new skedJobAllocationPostProcessBatch(batchSetting));
         
         Test.stopTest();
     }
@@ -746,7 +746,7 @@ private class skedJobAllocationPostProcessBatch_Test {
 
         skedJobAllocationPostProcessBatch.batchSetting batchSetting = new skedJobAllocationPostProcessBatch.batchSetting();
         batchSetting.geographicException = false;
-        Database.executeBatch(new skedJobAllocationPostProcessBatch(batchSetting, new Set<Id>{testResourceJobAllocation.Id}));
+        Database.executeBatch(new skedJobAllocationPostProcessBatch(batchSetting));
         
         Test.stopTest();
     }
@@ -852,7 +852,7 @@ private class skedJobAllocationPostProcessBatch_Test {
 
         skedJobAllocationPostProcessBatch.batchSetting batchSetting = new skedJobAllocationPostProcessBatch.batchSetting();
         batchSetting.geographicException = false;
-        Database.executeBatch(new skedJobAllocationPostProcessBatch(batchSetting, new Set<Id>{testAssetJobAllocation.Id}));
+        Database.executeBatch(new skedJobAllocationPostProcessBatch(batchSetting));
         
         Test.stopTest();
     }
