@@ -24,9 +24,20 @@
 
 
 
-                    </div>
-
-                    <div style="padding: 5px;">
+                <!-- Action Buttons  Section -->
+                <div class="slds-col slds-size_1-of-4">
+                    <div class="slds-grid slds-grid_vertical-align-center slds-p-top_large">
+                        <div class="slds-p-horizontal_x-small">
+                            <lightning-button-icon 
+                                icon-name="utility:add"
+                                variant="brand"
+                                size="medium"
+                                alternative-text="add" 
+                                title="Add Row"
+                                onclick={addRows}
+                                disabled={displayAddIcon}>
+                            </lightning-button-icon>
+                        </div>
                         
 
                         <lightning-file-upload

@@ -32,8 +32,13 @@ public class ARCFileUploadControllerTest {
             LocaleSidKey = 'en_US'
             
         );
+        UserRole urole = new UserRole(
+            Name = 'West BDM',
+            DeveloperName = 'West_BDM'
+        );
+        insert urole;
         
-        UserRole urole  = [select id from userrole where developername =: rolename ];
+        //UserRole urole  = [select id from userrole where developername =: rolename ];
         
         User DRDAMUser = new User(
             ProfileId = [SELECT Id FROM Profile WHERE Name = 'DRD Profile'].Id,
@@ -80,12 +85,13 @@ public class ARCFileUploadControllerTest {
                 Title = 'Test',
                 PathOnClient = 'Test.jpg',
                 VersionData = Blob.valueOf('Test Content Data'),
+                Expiry_Date__c = Date.today().addDays(20),
                 IsMajorVersion = true
             );
             insert contentVersionInsert;
             
             
-            ContentVersion contentVersionSelect = [SELECT Id, Title, ContentDocumentId FROM ContentVersion WHERE Id = :contentVersionInsert.Id LIMIT 1];
+            ContentVersion contentVersionSelect = [SELECT Id, Title, ContentDocumentId,Expiry_Date__c FROM ContentVersion WHERE Id = :contentVersionInsert.Id LIMIT 1];
             //System.debug( 'filesUploaded is##' + contentVersionSelect.ContentDocumentId  );
             List<ContentDocument> documents = [SELECT Id, Title, LatestPublishedVersionId FROM ContentDocument];
             System.assertEquals(documents.size(), 1);
@@ -113,7 +119,7 @@ public class ARCFileUploadControllerTest {
                              WHERE ContentDocumentId IN :uploadedFileIds];
             
             
-            ARCFileUploadController.getFileTypeAndInsert( 'Community Agreements', uploadedFileIds);
+            ARCFileUploadController.getFileTypeAndInsert( 'Community Agreements',contentVersionSelect.Expiry_Date__c, uploadedFileIds);
             ARCFileUploadController.getContentDocumentId(mobileAccList[0].Id);
             
             List<String> fileIds = new List<String>();
