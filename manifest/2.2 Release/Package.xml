@@ -237,6 +237,15 @@
         <members>Task_Checklist_Setting.Customer_service_issues_addressed2</members>
         <members>Task_Checklist_Setting.Customer_Service_Issues2</members>
         <members>Task_Checklist_Setting.Highlights_and_Feedback2</members>
+		<members>Task_Reassignment_Matrix.Blood_Partner_Agreement</members>
+		<members>Task_Reassignment_Matrix.Community_Agreements</members>
+		<members>Task_Reassignment_Matrix.Military_MoA_Local</members>
+		<members>Task_Reassignment_Matrix.Other</members>
+		<members>Task_Reassignment_Matrix.Community_Agreements_Site</members>
+		<members>Task_Reassignment_Matrix.Emergency_Action_Plan</members>
+		<members>Task_Reassignment_Matrix.Other_Site</members>
+		<members>Task_Reassignment_Matrix.Security_Form</members>
+		<members>Task_Reassignment_Matrix.Weapons_Policy</members>
 		<name>CustomMetadata</name>
 	</types>
 	<types>
