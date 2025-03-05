@@ -63,7 +63,7 @@ public class TaskChecklistController_Test {
         oppTasks.add(recruitmentTask);
         
         Task pdaTask = new Task(
-        	Subject = 'Post Drive Analysis Task',
+        	Subject = BSF_Constants.POST_DRIVE_ANALYSIS_TASK,
         	WhatId = mobileOpportunityRecord.Id,
         	ActivityDate = System.Today(),
         	Status = 'Not Started',

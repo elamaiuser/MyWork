@@ -1,8 +1,7 @@
 @isTest
 private class BSFTaskChecklistTriggerTest {
-
-    @isTest
-    private static void testmethod1() {
+    
+    @testSetup static void setup() {
         TriggerHandler.Bypass('AccountTriggerHandler');
         TriggerHandler.Bypass('OpportunityTriggerHandler');
         TriggerHandler.Bypass('SiteTriggerHandler');
@@ -45,9 +44,8 @@ private class BSFTaskChecklistTriggerTest {
         testMobileOpp.Start_Time__c = System.now().Time();
 		testMobileOpp.End_Time__c = System.now().Time()+1;
 		testMobileOpp.Anticipated_Registered_Donors__c = 1;	
-        insert testMobileOpp;
+        insert testMobileOpp;   
         
-        Test.startTest();
         //insert Publicity Task
         Set<Id> taskIds = new Set<Id>();
         Task pdaTask = new Task(
@@ -69,6 +67,16 @@ private class BSFTaskChecklistTriggerTest {
             WhatId = testMobileOpp.Id
         );
         insert rmTask;
+    }
+
+    @isTest
+    private static void testmethod1() {
+        TriggerHandler.Bypass('OpportunityTriggerHandler');
+        Task pdaTask = [SELECT Id FROM Task WHERE Subject =: BSF_Constants.POST_DRIVE_ANALYSIS_TASK LIMIT 1];
+        Task rmTask = [SELECT Id FROM Task WHERE Subject =: BSF_Constants.RECRUITMENT_PLANNING_TASK LIMIT 1];
+        
+        Test.startTest();
+        
         TaskChecklistController.getRelatedCheckistRecords(rmTask.Id);
         List<BSF_Task_Checklist__c> checklists = [SELECT Id, 
                                                             Name, 
@@ -105,5 +113,12 @@ private class BSFTaskChecklistTriggerTest {
         update updateTaskList;
         
         Test.stopTest();
+        
+        Task pdaTaskPostUpdate = [SELECT Id, Status FROM Task WHERE Subject =: BSF_Constants.POST_DRIVE_ANALYSIS_TASK LIMIT 1];
+        
+        Assert.areEqual(pdaTask.Status, pdaTaskPostUpdate.Status);
     }
+    
+    
+    
 }

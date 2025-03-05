@@ -108,7 +108,7 @@ export default class SlwcPopoverContent extends LightningElement {
               resAllocations.push({
                 id: allocation.id || allocation.key,
                 resourceName: allocation.resourceName || allocation.resource.name,                
-                resourceRole: job.resourceRole || job.assetType                
+                resourceRole: job.resourceRoleText || job.assetType                
               });
             }
           });
