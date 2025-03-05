@@ -1,17 +1,16 @@
 import { LightningElement, track, api, wire } from 'lwc';
+import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import getAvailableFileTypes from '@salesforce/apex/ARCFileUploadController.getAvailableFileTypes';
 import getAvailableFileFormats from '@salesforce/apex/ARCFileUploadController.getAvailableFileFormats';
 import getFileTypeAndInsert from '@salesforce/apex/ARCFileUploadController.getFileTypeAndInsert';
 import getFilesAndDelete from '@salesforce/apex/ARCFileUploadController.getFilesAndDelete';
-
-
-
 
 export default class ARCFileUploadComponent extends LightningElement {
     @api recordId;
     acceptedFormats;
     acceptedTypes;
     @track errorMsg;
+    @track expiryDate;
 
     fileName ;
     typeoptions;
@@ -33,35 +32,28 @@ export default class ARCFileUploadComponent extends LightningElement {
     }
 
     @wire(getAvailableFileTypes, { recordid: '$recordId' })
-    availabledata(value){
+    availabledata(value) {
         const {data, error}  = value ;
         //console.log( "#wire called 1" , data);
-        if( data ){
+        if(data) {
             this.acceptedTypes = [...data];
             //console.log( "#acceptedTypes is" , this.acceptedTypes);
-
             this.typeoptions = [];
-            this.acceptedTypes.sort().forEach((elem)=>{
+            this.acceptedTypes.sort().forEach((elem)=> {
                 //console.log( "element is " , elem);
                 this.typeoptions.push( { label: elem, value: elem } );
             });
-
-
         }
-        
-
     }
 
     @wire(getAvailableFileFormats)
-    availabledataformat(value){
+    availabledataformat(value) {
         const {data, error}  = value ;
         //console.log( "#wire called 2" , data);
-        if( data ){
+        if(data) {
             this.acceptedFormats = [...data];
             //console.log( "#acceptedFormats is" , this.acceptedFormats);
         }
-        
-
     }
 
     handleChange(event) {
@@ -89,26 +81,24 @@ export default class ARCFileUploadComponent extends LightningElement {
             return;
         }
         // Get the list of uploaded files
-        const uploadedFiles = event.detail.files;
-        
+        const uploadedFiles = event.detail.files;        
         //this.uploadedFileIds = [];
         for(let i = 0; i < uploadedFiles.length; i++) {
            this.uploadedFileIds.push(uploadedFiles[i].documentId);
         }
-        console.log("documentIds: ",this.uploadedFileIds);
-        
-        getFileTypeAndInsert( { fileName:this.fileName, uploadedFileIds:this.uploadedFileIds })
-        .then(result =>{
+        console.log("documentIds: ",this.uploadedFileIds);        
+        getFileTypeAndInsert( { fileName:this.fileName, expiryDate: this.expiryDate, uploadedFileIds:this.uploadedFileIds })
+        .then(result => {
            console.log("Result: ",result);
            this.showFileNames = result;
            this.disableTypeselection = true;
         })
-        .catch(error =>{
+        .catch(error => {
             this.errorMsg = error;
         })
     }
 
-    addRows(event){
+    addRows(event) {
         console.log( 'add event fires here');
         let rowsToAdd = {
             instanceid: this.cmpInstanceId,
@@ -118,30 +108,27 @@ export default class ARCFileUploadComponent extends LightningElement {
         this.dispatchEvent(new CustomEvent('addrowsclick', { detail : rowsToAdd} ));
     }
 
-    deleteRows(event){
-        //console.log( 'delet event fires here');        
-
+    deleteRows(event) {
+        //console.log( 'delet event fires here');
         if(this.uploadedFileIds.length > 0){
             //console.log( "debug#1 ", JSON.stringify(this.uploadedFileIds));
             getFilesAndDelete( { fileIds:this.uploadedFileIds })
-            .then(result =>{
+            .then(result => {
                 let rowsToDelete = {
-                    instanceid: this.cmpInstanceId
-                    
+                    instanceid: this.cmpInstanceId                    
                 };
                 this.dispatchEvent(new CustomEvent('rowstodelete', { detail : rowsToDelete} ));
             })
-            .catch(error =>{
+            .catch(error => {
                 this.errorMsg = error;
             })
-        }else if( this.uploadedFileIds.length === 0 ){
+        }else if(this.uploadedFileIds.length === 0) {
                 let rowsToDelete = {
                     instanceid: this.cmpInstanceId
                     
                 };
                 this.dispatchEvent(new CustomEvent('rowstodelete', { detail : rowsToDelete} ));
         }
-
     }
     enableFileUpload() {
         if (this.fileName && this.expiryDate) {
