@@ -84,7 +84,8 @@ public inherited sharing class ARCFileUploadController {
                          ContentDocumentId,
                          FileExtension,
                          FileType,
-                         Description 
+                         Description,
+                         Expiry_Date__c 
                          FROM ContentVersion 
                          WHERE ContentDocumentId IN :fileIdSet ];
         
@@ -92,7 +93,7 @@ public inherited sharing class ARCFileUploadController {
         if(!filesUploaded.isEmpty()){                          
             for(ContentVersion file:filesUploaded) {
                 file.Description = fileName;
-                
+                file.Expiry_Date__c = expiryDate;                
                 String fileTitleAndExtension = file.Title+'.'+file.FileExtension;
                 fileTitleListToReturnList.add(fileTitleAndExtension);
             } 
