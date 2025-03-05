@@ -337,10 +337,8 @@ opty.addError('This drive date violates the 56 day rule.Please acknowledge.');
                     && calendarBuildOpp.Drive_Date__c < otherOppOnAccount.Drive_Date__c.addDays(56)
                    ) {
                         String existingUnqualifyingReasons = calendarBuildOpp.Calendar_Build_Reasons_For_Unqualified__c;
-                        if(existingUnqualifyingReasons != NULL && String.isNotBlank(existingUnqualifyingReasons)) {
-                            existingUnqualifyingReasons = existingUnqualifyingReasons +';';
-                        }
-                        calendarBuildOpp.Calendar_Build_Reasons_For_Unqualified__c = BSF_Utilities.getStringWithinLimit((existingUnqualifyingReasons + 'Violates Accepts 56 day selection'), 255);
+                        existingUnqualifyingReasons = (existingUnqualifyingReasons != null ? existingUnqualifyingReasons : '') + (String.isNotBlank(existingUnqualifyingReasons) ? ';' : '') + 'Violates Accepts 56 day selection';
+                        calendarBuildOpp.Calendar_Build_Reasons_For_Unqualified__c = BSF_Utilities.getStringWithinLimit(existingUnqualifyingReasons, 255);
                         
                         //If CB drive is not set to "Unqualified", set CB Status = Unqualified and Rollover Consideration = Do Not Roll
                         if(calendarBuildOpp.Calendar_Build_Status__c != skedConstants.CALENDAR_BUILD_STATUS_UNQUALIFIED) {
