@@ -177,6 +177,41 @@
         <members>Task_Checklist_Setting.Sponsor_Managing_Donor_Appointments</members>
         <members>Task_Checklist_Setting.Sponsor_marketing_and_communications</members>
         <members>Task_Checklist_Setting.Sponsor_table_and_chairs_ready_sponsor</members>
+		<members>Task_Report_Link.After_Drive_Analysis_SBPM</members>
+        <members>Task_Report_Link.BPL_Thank_You_Flyer_SBPM</members>
+        <members>Task_Report_Link.Ferritin_Deferrals_SBPM</members>
+        <members>Task_Report_Link.Same_Day_Rebooking_Results_SBPM</members>
+        <members>Task_Report_Link.After_Drive_Analysis_AM</members>
+        <members>Task_Report_Link.BPL_Thank_You_Flyer_AM</members>
+        <members>Task_Report_Link.Ferritin_Deferrals_AM</members>
+        <members>Task_Report_Link.Same_Day_Rebooking_Results_AM</members>
+        <members>Task_Reassignment_Matrix.Post_Drive_Analysis_AM</members>
+        <members>Task_Reassignment_Matrix.Post_Drive_Analysis_SBPM</members>
+        <members>Task_Checklist_Setting.After_Drive_Analysis1</members>
+        <members>Task_Checklist_Setting.Updated_Anticipated_Donors1</members>
+        <members>Task_Checklist_Setting.Annual_Account_Strategy1</members>
+        <members>Task_Checklist_Setting.Account_Strategy_Notes1</members>
+        <members>Task_Checklist_Setting.Gray_Sky_Account1</members>
+        <members>Task_Checklist_Setting.Future_dates_confirmed_by_BPL1</members>
+        <members>Task_Checklist_Setting.Dates_need_to_confirmed_moved_cancelled1</members>
+        <members>Task_Checklist_Setting.Update_Rollover_Consideration1</members>
+        <members>Task_Checklist_Setting.After_Drive_Analysis2</members>
+        <members>Task_Checklist_Setting.Contacted_sponsor_provided_drive_result2</members>
+        <members>Task_Checklist_Setting.Early_Close_affiliation_drive2</members>
+        <members>Task_Checklist_Setting.Sponsor_Satisfaction_Survey_with_BPL2</members>
+        <members>Task_Checklist_Setting.What_can_be_improved_for_future_drives2</members>
+        <members>Task_Checklist_Setting.Customer_service_issues_addressed2</members>
+        <members>Task_Checklist_Setting.Customer_Service_Issues2</members>
+        <members>Task_Checklist_Setting.Highlights_and_Feedback2</members>
+		<members>Task_Reassignment_Matrix.Blood_Partner_Agreement</members>
+		<members>Task_Reassignment_Matrix.Community_Agreements</members>
+		<members>Task_Reassignment_Matrix.Military_MoA_Local</members>
+		<members>Task_Reassignment_Matrix.Other</members>
+		<members>Task_Reassignment_Matrix.Community_Agreements_Site</members>
+		<members>Task_Reassignment_Matrix.Emergency_Action_Plan</members>
+		<members>Task_Reassignment_Matrix.Other_Site</members>
+		<members>Task_Reassignment_Matrix.Security_Form</members>
+		<members>Task_Reassignment_Matrix.Weapons_Policy</members>
 		<name>CustomMetadata</name>
 	</types>
 	<types>
