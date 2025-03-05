@@ -60,11 +60,13 @@
         <members>UserServiceTest</members>
 		<members>skedResourceHandler</members>
 		<members>WeeklyStaffScheduleReportController</members>
-        <members>WeeklyStaffScheduleReportControllerTest</members>
-		<members>BSFTaskChecklistTriggerHandler</members>
-        <members>TaskService</members>
+		<members>WeeklyStaffScheduleReportControllerTest</members>
+		<members>BSFTaskChecklistTriggerTest</members>
+		<members>TaskService</members>
 		<members>CalendarBuildEvaluateDrivesBatch_Test</members>
         <members>OpportunityService</members>
+		<members>ARCFileUploadController</members>
+		<members>ARCFileUploadControllerTest</members>
 		<name>ApexClass</name>
 	</types>
 	<types>
@@ -106,6 +108,7 @@
 		<members>Account.HS_Relationship_Manager__c</members>
 		<members>Account.HS_Relationship_Manager_Notes__c</members>
 		<members>Opportunity.HS_Relationship_Manager__c</members>
+		<members>ContentVersion.Expiry_Date__c</members>
 		<name>CustomField</name>
 	</types>
 	<types>
@@ -185,6 +188,7 @@
 		<members>Calendar_Build_Log_Manual_Run_Record_Page</members>
 		<members>Fixed_Site_Account_Record_Page</members>
 		<members>Mobile_Account_Record_Page</members>
+		<members>Location_Record_Page</members>  
 		<name>FlexiPage</name>
 	</types>
 	<types>
@@ -215,7 +219,8 @@
 		<members>slwcResolveDriveContentions</members>
 		<members>slwcShiftJobs</members>
 		<members>slwcStaffingComplementModal</members>
-		<members>travelTimeBreakdown</members>
+		<members>travelTimeBreakdown</members>	
+		<members>aRCFileUploadComponent</members>	
 		<name>LightningComponentBundle</name>
 	</types>
 	<types>
