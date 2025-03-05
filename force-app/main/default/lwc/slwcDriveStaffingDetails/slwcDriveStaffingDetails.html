@@ -1086,9 +1086,17 @@
                                                                                                     type="checkbox"
                                                                                                     checked={exceptionSub.isSelected}
                                                                                                     onchange={handleOnChange}>
-                                                                                                </lightning-input> -->
-                                                                                                <span
-                                                                                                    class="color-error">{exceptionSub.exception}</span>
+                                                                                                </lightning-input>-->
+                                                                                                <template if:true={exceptionSub.eventURL} >
+                                                                                                    <span class="color-error"><a href={exceptionSub.eventURL} target="blank" class="color-error">{exceptionSub.exception}</a></span>
+                                                                                                </template>
+                                                                                            
+                                                                                                <!-- Using if:false to render content when isVisible is false -->
+                                                                                                <template if:false={exceptionSub.eventURL} >
+                                                                                                    <span class="color-error">{exceptionSub.exception}</span>
+                                                                                                </template>
+
+                                                                                                
                                                                                             </p>
                                                                                         </div>
 

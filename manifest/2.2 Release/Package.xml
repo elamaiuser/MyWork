@@ -60,11 +60,13 @@
         <members>UserServiceTest</members>
 		<members>skedResourceHandler</members>
 		<members>WeeklyStaffScheduleReportController</members>
-        <members>WeeklyStaffScheduleReportControllerTest</members>
-		<members>BSFTaskChecklistTriggerHandler</members>
-        <members>TaskService</members>
+		<members>WeeklyStaffScheduleReportControllerTest</members>
+		<members>BSFTaskChecklistTriggerTest</members>
+		<members>TaskService</members>
 		<members>CalendarBuildEvaluateDrivesBatch_Test</members>
         <members>OpportunityService</members>
+		<members>ARCFileUploadController</members>
+		<members>ARCFileUploadControllerTest</members>
 		<name>ApexClass</name>
 	</types>
 	<types>
@@ -106,6 +108,7 @@
 		<members>Account.HS_Relationship_Manager__c</members>
 		<members>Account.HS_Relationship_Manager_Notes__c</members>
 		<members>Opportunity.HS_Relationship_Manager__c</members>
+		<members>ContentVersion.Expiry_Date__c</members>
 		<name>CustomField</name>
 	</types>
 	<types>
@@ -174,6 +177,41 @@
         <members>Task_Checklist_Setting.Sponsor_Managing_Donor_Appointments</members>
         <members>Task_Checklist_Setting.Sponsor_marketing_and_communications</members>
         <members>Task_Checklist_Setting.Sponsor_table_and_chairs_ready_sponsor</members>
+		<members>Task_Report_Link.After_Drive_Analysis_SBPM</members>
+        <members>Task_Report_Link.BPL_Thank_You_Flyer_SBPM</members>
+        <members>Task_Report_Link.Ferritin_Deferrals_SBPM</members>
+        <members>Task_Report_Link.Same_Day_Rebooking_Results_SBPM</members>
+        <members>Task_Report_Link.After_Drive_Analysis_AM</members>
+        <members>Task_Report_Link.BPL_Thank_You_Flyer_AM</members>
+        <members>Task_Report_Link.Ferritin_Deferrals_AM</members>
+        <members>Task_Report_Link.Same_Day_Rebooking_Results_AM</members>
+        <members>Task_Reassignment_Matrix.Post_Drive_Analysis_AM</members>
+        <members>Task_Reassignment_Matrix.Post_Drive_Analysis_SBPM</members>
+        <members>Task_Checklist_Setting.After_Drive_Analysis1</members>
+        <members>Task_Checklist_Setting.Updated_Anticipated_Donors1</members>
+        <members>Task_Checklist_Setting.Annual_Account_Strategy1</members>
+        <members>Task_Checklist_Setting.Account_Strategy_Notes1</members>
+        <members>Task_Checklist_Setting.Gray_Sky_Account1</members>
+        <members>Task_Checklist_Setting.Future_dates_confirmed_by_BPL1</members>
+        <members>Task_Checklist_Setting.Dates_need_to_confirmed_moved_cancelled1</members>
+        <members>Task_Checklist_Setting.Update_Rollover_Consideration1</members>
+        <members>Task_Checklist_Setting.After_Drive_Analysis2</members>
+        <members>Task_Checklist_Setting.Contacted_sponsor_provided_drive_result2</members>
+        <members>Task_Checklist_Setting.Early_Close_affiliation_drive2</members>
+        <members>Task_Checklist_Setting.Sponsor_Satisfaction_Survey_with_BPL2</members>
+        <members>Task_Checklist_Setting.What_can_be_improved_for_future_drives2</members>
+        <members>Task_Checklist_Setting.Customer_service_issues_addressed2</members>
+        <members>Task_Checklist_Setting.Customer_Service_Issues2</members>
+        <members>Task_Checklist_Setting.Highlights_and_Feedback2</members>
+		<members>Task_Reassignment_Matrix.Blood_Partner_Agreement</members>
+		<members>Task_Reassignment_Matrix.Community_Agreements</members>
+		<members>Task_Reassignment_Matrix.Military_MoA_Local</members>
+		<members>Task_Reassignment_Matrix.Other</members>
+		<members>Task_Reassignment_Matrix.Community_Agreements_Site</members>
+		<members>Task_Reassignment_Matrix.Emergency_Action_Plan</members>
+		<members>Task_Reassignment_Matrix.Other_Site</members>
+		<members>Task_Reassignment_Matrix.Security_Form</members>
+		<members>Task_Reassignment_Matrix.Weapons_Policy</members>
 		<name>CustomMetadata</name>
 	</types>
 	<types>
@@ -185,6 +223,7 @@
 		<members>Calendar_Build_Log_Manual_Run_Record_Page</members>
 		<members>Fixed_Site_Account_Record_Page</members>
 		<members>Mobile_Account_Record_Page</members>
+		<members>Location_Record_Page</members>  
 		<name>FlexiPage</name>
 	</types>
 	<types>
@@ -215,7 +254,8 @@
 		<members>slwcResolveDriveContentions</members>
 		<members>slwcShiftJobs</members>
 		<members>slwcStaffingComplementModal</members>
-		<members>travelTimeBreakdown</members>
+		<members>travelTimeBreakdown</members>	
+		<members>aRCFileUploadComponent</members>	
 		<name>LightningComponentBundle</name>
 	</types>
 	<types>
@@ -229,8 +269,17 @@
 		<members>Opportunity-DRD Mobile Opp Layout</members>
 		<members>Opportunity-Mobile Opp Layout</members>
 		<members>Opportunity-Sponsor Marketing Mobile Opp Layout</members>
-        <members>Profile_Specific_Functionality_Access__mdt-Profile Specific Functionality Setting Layout</members>	
-		<members>sked__Resource__c-Staff Layout</members>		
+		<members>Opportunity-APS Planner Fixed Site Opp Layout</members>
+        <members>Opportunity-APS Scheduler Fixed Site Opp Layout</members>
+        <members>Opportunity-DRD Fixed Site Opp Layout</members>
+        <members>Opportunity-Fixed Site Opp APS Layout</members>
+        <members>Opportunity-Fixed Site Opp Non-APS Layout</members>
+        <members>Opportunity-Sponsor Marketing Fixed Site Opp Layout</members>
+        <members>Profile_Specific_Functionality_Access__mdt-Profile Specific Functionality Setting Layout</members>
+		<members>sked_Site_Collection_Operation__c-DRD Site Collection Operation Layout</members>
+        <members>sked_Site_Collection_Operation__c-Site Collection Operation Layout</members>	
+		<members>sked__Resource__c-Staff Layout</members>
+		<members>ContentVersion-Content Version Layout</members>  		
 		<name>Layout</name>
 	</types>
 	<types>
