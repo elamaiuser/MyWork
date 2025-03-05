@@ -20,5 +20,9 @@
 		<members>Location_Record_Page</members>        
         <name>FlexiPage</name>
     </types>
+	<types> 
+		<members>ContentVersion-Content Version Layout</members>        
+        <name>Layout</name>
+    </types>
     <version>60.0</version>
 </Package>
