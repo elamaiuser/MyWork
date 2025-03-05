@@ -1,6 +1,8 @@
 @isTest
 private class skedImmediateRefreshTTIIndexBatch_Test {
-    static testmethod void mainTest() {
+    
+    @testSetup
+    static void prepareDataSetup() {
         List<sked_Travel_Time_Index_Item__c> items = new List<sked_Travel_Time_Index_Item__c>();
         
         sked_Travel_Time_Index_Item__c item1 = new sked_Travel_Time_Index_Item__c (
@@ -19,17 +21,30 @@ private class skedImmediateRefreshTTIIndexBatch_Test {
         	sked_To__Longitude__s = -68.416157,
             sked_Timezone__c = 'America/New_York'
         );
-        items.add(item2);
-        
+        items.add(item2);      
         insert items;
-        
+    }
+    
+    static testmethod void mainTest_withoutSiteCOId() {
         Test.startTest();
-        
+        List<sked_Travel_Time_Index_Item__c> items = [SELECT Id FROM sked_Travel_Time_Index_Item__c];
         List<Id> itemIds = new List<Id>();
         for (sked_Travel_Time_Index_Item__c item : items) {
             itemIds.add(item.Id);
         }
         Database.executeBatch(new skedImmediateRefreshTravelTimeIndexBatch(itemIds, skedSetting.instance.TravelTime.newIndexPriority), 200);
+        
+        Test.stopTest();
+    }
+    
+    static testmethod void mainTest_withSiteCOId() {
+        Test.startTest();
+        List<sked_Travel_Time_Index_Item__c> items = [SELECT Id FROM sked_Travel_Time_Index_Item__c];
+        List<Id> itemIds = new List<Id>();
+        for (sked_Travel_Time_Index_Item__c item : items) {
+            itemIds.add(item.Id);
+        }
+        Database.executeBatch(new skedImmediateRefreshTravelTimeIndexBatch(itemIds, skedSetting.instance.TravelTime.newIndexPriority, NULL), 200);
         
         Test.stopTest();
     }

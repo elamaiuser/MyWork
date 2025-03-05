@@ -1,6 +1,7 @@
 /* The following test class is covering the below apex class
- * CalendarBuildEvaluateDrivesBatch (77%)
+ * CalendarBuildEvaluateDrivesBatch (82%)
  * CalendarBuildBatchHandler (95%)
+ * CreateSkedDrivesBatch(84%)
  * 
  * Modification Log 
  * Date					     Developer Name			     Comments
@@ -9,6 +10,7 @@
  * 10/29/2024				  Priti Jana			Fixed errors
  * 01/09/2025				  Priti Jana			Commented out test method for Gray Sky consideration (HRP-12299)
  * 02/04/2025                 Anil Kallu            Generate Exception if a calendar build opp falls with in 56 days range of another opp on account(if 56 day accept flag is false) 
+ * 03/04/2025				  Priti Jana			Added test methods to increase coverage (HRP-11368)
  * *****************************************************************************************************************************/
 
 @isTest(SeeAllData = FALSE)
@@ -187,7 +189,7 @@ public class CalendarBuildEvaluateDrivesBatch_Test {
         TriggerHandler.bypass('OpportunitySplitTriggerHandler');
         TriggerHandler.bypass('DriveAffiliationHandler');
 
-        Opportunity mobileOpp = [select id, stageName, Drive_date__c from Opportunity where type_of_drive__c = 'Mobile' and Name='Mobile1' AND Is_Template__c = FALSE LIMIT 1];
+        Opportunity mobileOpp = [select id, stageName, Drive_date__c, Parent_Template_Id__c from Opportunity where type_of_drive__c = 'Mobile' and Name='Mobile1' AND Is_Template__c = FALSE LIMIT 1];
         mobileOpp.bypass_validation_rule__c = TRUE;
         mobileOpp.Drive_Date__c = System.today().addDays(-numOfDays);
         mobileOpp.Drive_Date_Change_Reason__c = 'TEST';
@@ -196,15 +198,15 @@ public class CalendarBuildEvaluateDrivesBatch_Test {
         mobileOpp.sked_Cancellation_Reason__c = 'System Need';
         update mobileOpp;
         //update template accept 56 day flag to false, so calendar build opp will not have it
-        Opportunity templateMobileOpp = [select id, Accept_56_Day_Rule_Violation__c from Opportunity where type_of_drive__c = 'Mobile' AND Is_Template__c = true LIMIT 1];
-        templateMobileOpp.Accept_56_Day_Rule_Violation__c=false;//set accept to false;
+        Opportunity templateMobileOpp = [select id, Accept_56_Day_Rule_Violation__c from Opportunity where Id = :mobileOpp.Parent_Template_Id__c AND Is_Template__c = TRUE LIMIT 1];
+        templateMobileOpp.Accept_56_Day_Rule_Violation__c = false;//set accept to false;
         update templateMobileOpp;
         // Call the batch
         CalendarBuildEvaluateDrivesBatch cbDrive = new CalendarBuildEvaluateDrivesBatch();
         Database.executeBatch(cbDrive);
         Test.stopTest();
-        List<Opportunity> oppListWithError = [select id from Opportunity where Calendar_Build_Reasons_For_Unqualified__c='Violates Accepts 56 day selection'];
-        Assert.areEqual(true,oppListWithError.size()>0,'There should be atleast one opportunity with Calendar_Build_Reasons_For_Unqualified__c populated for Violates Accepts 56 day selection');  
+        Opportunity oppWithError = [select id, Calendar_Build_Reasons_For_Unqualified__c from Opportunity WHERE Source__c = 'Calendar Build' LIMIT 1];
+        Assert.areEqual(true, oppWithError.Calendar_Build_Reasons_For_Unqualified__c.contains('Violates Accepts 56 day selection'), 'There should be atleast one opportunity with Calendar_Build_Reasons_For_Unqualified__c populated for Violates Accepts 56 day selection');  
     }
     
     /*static testMethod void testCBMobileDrivesWithGreySkies() {
@@ -349,14 +351,60 @@ public class CalendarBuildEvaluateDrivesBatch_Test {
         Database.executeBatch(cbDrive);
         Test.stopTest();
     }
-    
-   /* static testMethod void testCBRunForFinishException() {
-        new CalendarBuildEvaluateDrivesBatch(null).finish(null);
-    }*/
-    
+
     static testMethod void testCreateSkedFsDrivesBatch() {
         Test.startTest();
         new CreateSkedDrivesBatch(null, 'Calendar Build', Date.newInstance(2025, 01, 01), null);
+        Test.stopTest();
+    }
+    
+    static testMethod void testCreateSkedFsDrivesBatch_Exception() {
+        Test.startTest();
+        new CreateSkedDrivesBatch(null);
+        Test.stopTest();
+    }
+    
+    //HRP-11368: New testmethod for Adhoc CB run batch
+    static testMethod void testAdhocCbBatchRun() {
+        Test.startTest();
+        TriggerHandler.bypass('AccountPortfolioAssignmentTriggerHandler');
+        TriggerHandler.bypass('AccountTriggerHandler');
+        Opportunity mobileOpp = [select id, stageName, Drive_date__c from Opportunity where type_of_drive__c = 'Mobile' AND Is_Template__c = FALSE LIMIT 1];
+       
+        CalendarBuildBatchOnDemandController.AdhocCalendarBuildInput input = new CalendarBuildBatchOnDemandController.AdhocCalendarBuildInput();
+        input.bookingStrategy = 'TEST RUN';
+        input.opportunitySource = 'Adhoc Calendar Build';
+        input.selectedOpportunities = new List<Opportunity>{mobileOpp};
+            
+        // Call the batch
+        CalendarBuildEvaluateDrivesBatch cbDrive = new CalendarBuildEvaluateDrivesBatch(input);
+        Database.executeBatch(cbDrive);
+        Test.stopTest();   
+    }
+    
+    //New cystom exception test to increase coverage
+    static testMethod void testAdhocCbBatchException() {
+        
+        // Call the batch
+        Test.startTest();
+        CalendarBuildBatchOnDemandController.AdhocCalendarBuildInput input;
+        CalendarBuildEvaluateDrivesBatch cbDrive = new CalendarBuildEvaluateDrivesBatch(input);
+        Database.executeBatch(cbDrive);
+        Test.stopTest();
+    }
+    
+    static testMethod void testManualRunException() {
+        Test.startTest();
+        Date manualRunDate;
+        BSF_Utilities.IS_SET_TO_GENERATE_EXCEPTION = TRUE;
+        CalendarBuildEvaluateDrivesBatch cbDrive = new CalendarBuildEvaluateDrivesBatch(manualRunDate);
+        Test.stopTest();
+    }
+    
+    static testMethod void testScheduledRunException() {
+        Test.startTest();
+        BSF_Utilities.IS_SET_TO_GENERATE_EXCEPTION = TRUE;
+        CalendarBuildEvaluateDrivesBatch cbDrive = new CalendarBuildEvaluateDrivesBatch();
         Test.stopTest();
     }
     
