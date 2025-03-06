@@ -799,7 +799,12 @@ class MobileGenerator extends BaseGenerator {
         }
 
         //vehicles
-        let currentNoOfVehicles = this.drive.totalVehicleRequested;
+        let currentNoOfVehicles = this.drive.doNotUseVehicle ? 
+          0 : 
+          this.drive.preferSystemGeneratedVehicles ? 
+            this.drive.totalVehicleRequested : 
+            this.drive.numberOfVehicles;
+
         this.drivesWithVehicles = this.helper.calculateNumberOfVehiclesForDrive(this.drive, availableVehicles, {
           maxDOT,
           maxCDL
@@ -818,7 +823,7 @@ class MobileGenerator extends BaseGenerator {
 
           return this.onDriveDataChanged(driveChanges)
             .then(() => {
-              if (currentNoOfVehicles === noOfVehicles) {
+              if (currentNoOfVehicles === noOfVehicles || !this.drive.preferSystemGeneratedVehicles || this.drive.doNotUseVehicle) {
                 //case 1, new no of Vehicles = current no of Vehicles 
                 //proess validate and save drive
                 return {
