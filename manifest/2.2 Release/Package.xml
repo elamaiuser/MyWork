@@ -142,6 +142,7 @@
 		<members>Account.HS_Relationship_Manager_Notes__c</members>
 		<members>Opportunity.HS_Relationship_Manager__c</members>
 		<members>ContentVersion.Expiry_Date__c</members>
+		<members>Task_Reassignment_Matrix__mdt.Task_Creation_Threshold_In_Days__c</members>
 		<name>CustomField</name>
 	</types>
 	<types>
@@ -246,6 +247,7 @@
 		<members>Task_Reassignment_Matrix.Other_Site</members>
 		<members>Task_Reassignment_Matrix.Security_Form</members>
 		<members>Task_Reassignment_Matrix.Weapons_Policy</members>
+		<members>Task_Reassignment_Matrix__mdt.Renew_File</members>
 		<name>CustomMetadata</name>
 	</types>
 	<types>
@@ -316,7 +318,8 @@
 		<members>sked_Site_Collection_Operation__c-DRD Site Collection Operation Layout</members>
         <members>sked_Site_Collection_Operation__c-Site Collection Operation Layout</members>	
 		<members>sked__Resource__c-Staff Layout</members>
-		<members>ContentVersion-Content Version Layout</members>  		
+		<members>ContentVersion-Content Version Layout</members> 
+		<members>Task_Reassignment_Matrix__mdt-Task Reassignment Matrix Layout</members>  		
 		<name>Layout</name>
 	</types>
 	<types>
