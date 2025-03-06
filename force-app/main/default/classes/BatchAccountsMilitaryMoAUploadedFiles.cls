@@ -1,12 +1,27 @@
+/*@Description: 
+* This Batch will run on a daily basis and check for the files uploaded for 
+* Account & Site whose Expiry is less than 30 days then create Task for the Account Team Member.
+* Modification Log 
+
+*   Date					Developer Name			    Comments
+* **********************************************************************
+* 03/06/2025			     Satyendra Vishwakarma	    Logic for HRP-13605/13351
+* **********************************************************************/
+
 global class BatchAccountsMilitaryMoAUploadedFiles implements Database.Batchable<sObject>, Database.Stateful, Schedulable {
     private static final Integer QUERY_LIMIT = 50000;
     private List<String> taskDetails = new List<String>();        
-
-    private Map<String, Task_Reassignment_Matrix__mdt> taskMetadataMap; 
     private Set<String> taskSubjects = new Set<String>();
     Set<String> allowedfileTypesForTaskCreation = new Set<String>();
-    
-
+    private String runType; // Determines whether this run is for Account or Site
+    public BatchAccountsMilitaryMoAUploadedFiles(String runType) {
+        this.runType = runType;
+    }
+    private Task_Reassignment_Matrix__mdt taskSettings {
+        get {
+            return Task_Reassignment_Matrix__mdt.getInstance('Renew_File');            
+        }
+    }
     public static Set<String> getValidFileTypes() {
         Set<String> fileTypes = new Set<String>();
         for(ARCFileContentTypeMatrix__mdt arcFile : [
@@ -20,92 +35,61 @@ global class BatchAccountsMilitaryMoAUploadedFiles implements Database.Batchable
         System.debug('fileTypes :'+fileTypes);
         return fileTypes;
     }
-    
-    
-    public static Map<String, Task_Reassignment_Matrix__mdt> getTaskReassignmentMetadata() {
-    
-        Map<String, Task_Reassignment_Matrix__mdt> taskMetadataMap = new Map<String, Task_Reassignment_Matrix__mdt>();
-        List<Task_Reassignment_Matrix__mdt> metadataRecords = [
-            SELECT DeveloperName, Label, Assigned_To__c, Category__c, Creation_Date_Offset__c, 
-                   Description__c, Due_Date_Offset__c, Task_Subject__c 
-            FROM Task_Reassignment_Matrix__mdt 
-            WHERE Category__c IN ('Site Task', 'Account Task')
-        ];
-        for (Task_Reassignment_Matrix__mdt record : metadataRecords) {
-            taskMetadataMap.put(record.Label, record);
-        }
-    
-        return taskMetadataMap;
-    }
 
     global void execute(SchedulableContext sc) {
-        System.debug('Batch execute 1');
-        Database.executeBatch(new BatchAccountsMilitaryMoAUploadedFiles());
+        System.debug('Batch execute 1 runType:'+runType);
+        Database.executeBatch(new BatchAccountsMilitaryMoAUploadedFiles(runType));
     }
 
-    public Iterable<sObject> start(Database.BatchableContext bc) {
-        System.debug('Batch start');
+    public Database.QueryLocator start(Database.BatchableContext bc) {
+        System.debug('Batch start runType:'+runType);
         Set<Id> recordsWithFiles = new Set<Id>();
         allowedfileTypesForTaskCreation = getValidFileTypes();
-        taskMetadataMap = getTaskReassignmentMetadata();
-        for (Task_Reassignment_Matrix__mdt record : taskMetadataMap.values()) {
-            taskSubjects.add(record.Task_Subject__c);
-        }
-        System.debug('taskSubjects===>'+taskSubjects);
-        //taskSubjects = new Set<String>(taskMetadataMap.keySet());
+        
         Map <String,Schema.RecordTypeInfo> recordTypesAccount = Account.sObjectType.getDescribe().getRecordTypeInfosByName();
         Id mobileRecordTypeId = recordTypesAccount.get(BSF_Constants.MOBILE_ACCOUNT_RECORD_TYPE).getRecordTypeId();
 
         Map <String,Schema.RecordTypeInfo> recordTypesSite = sked__Location__c.sObjectType.getDescribe().getRecordTypeInfosByName();
         Id siteMobileRecordTypeId = recordTypesSite.get(BSF_Constants.MOBILE_SITE_RECORD_TYPE).getRecordTypeId();
+        if (runType == 'Account') {
+            for (ContentDocumentLink cdl : [
+                SELECT LinkedEntityId FROM ContentDocumentLink 
+                WHERE LinkedEntityId IN (SELECT Id FROM Account WHERE RecordTypeId = :mobileRecordTypeId)]) {
 
+                    recordsWithFiles.add(cdl.LinkedEntityId);
+            }
+            System.debug('Account recordsWithFiles:'+recordsWithFiles.size());
+            // Query Accounts
+            return Database.getQueryLocator([
+                SELECT Id, Name, Account_Manager__c, OwnerId 
+                FROM Account 
+                WHERE Id IN :recordsWithFiles]);
 
-        // Query for Accounts with files
-        for (ContentDocumentLink cdl : [
-            SELECT LinkedEntityId FROM ContentDocumentLink 
-            WHERE LinkedEntityId IN (SELECT Id FROM Account WHERE RecordTypeId = :mobileRecordTypeId)]) {
-
-            recordsWithFiles.add(cdl.LinkedEntityId);
+        }else if (runType == 'sked__Location__c') {
+            // Query for Sites (sked__Location__c) with files
+            for (ContentDocumentLink cdl : [
+                SELECT LinkedEntityId,ContentDocumentId FROM ContentDocumentLink 
+                WHERE LinkedEntityId IN (SELECT Id FROM sked__Location__c WHERE RecordTypeId = :siteMobileRecordTypeId)
+            ]) {
+                recordsWithFiles.add(cdl.LinkedEntityId);
+            }
+            System.debug('Batch ==> recordsWithFiles =====>'+recordsWithFiles.size());
+            // Process Sites
+            return Database.getQueryLocator([
+                SELECT Id, Name, sked__Account__c, OwnerId 
+                FROM sked__Location__c
+                WHERE Id IN :recordsWithFiles
+            ]);
         }
-        // Query for Sites (sked__Location__c) with files
-        for (ContentDocumentLink cdl : [
-            SELECT LinkedEntityId,ContentDocumentId FROM ContentDocumentLink 
-            WHERE LinkedEntityId IN (SELECT Id FROM sked__Location__c WHERE RecordTypeId = :siteMobileRecordTypeId)
-        ]) {
-            recordsWithFiles.add(cdl.LinkedEntityId);
-        }
-        System.debug('Batch ==> recordsWithFiles =====>'+recordsWithFiles);
-        // Query Accounts
-        List<SObject> recordsToProcess = new List<SObject>();
-        for (Account acc : [
-            SELECT Id, Name, Account_Manager__c, OwnerId 
-            FROM Account 
-            WHERE Id IN :recordsWithFiles
-            LIMIT 50000
-        ]) {
-            recordsToProcess.add(acc);
-        }
-
-
-        // Query Sites (`sked__Location__c`)
-        for (sked__Location__c site : [
-            SELECT Id, Name,sked__Account__c, OwnerId 
-            FROM sked__Location__c
-            WHERE Id IN :recordsWithFiles
-            LIMIT 50000
-        ]) {
-            
-            recordsToProcess.add(site);
-        }
-        System.debug('Batch ==>  recordsToProcess :'+recordsToProcess);
-        return recordsToProcess;
+        // If runType is invalid, return an empty query
+        return Database.getQueryLocator([SELECT Id FROM Account WHERE Id = null]);
     }
 
-    public void execute(Database.BatchableContext bc, List<Account> scope) {
+    public void execute(Database.BatchableContext bc, List<SObject> scope) {
         System.debug('Batch execute 2');
         try {
             Set<Id> recordIds = new Set<Id>();
-            for (sObject record : scope) {
+            for (SObject record : scope) {
                 recordIds.add((Id) record.get('Id'));
             }
             System.debug('Batch ==> recordIds :'+recordIds);
@@ -126,8 +110,15 @@ global class BatchAccountsMilitaryMoAUploadedFiles implements Database.Batchable
     }
     
     public void finish(Database.BatchableContext bc) {
-        System.debug('Batch ==>  finish !!!');
+        System.debug('Batch Finish - Completed: ' + runType);
         createDebugLog(bc);
+        // If we completed the "Account" run, schedule the "sked__Location__c" run
+        if (runType == 'Account') {
+            System.debug('Scheduling next batch for Site Processing...');
+            Database.executeBatch(new BatchAccountsMilitaryMoAUploadedFiles('sked__Location__c'));
+            //System.schedule('Batch Site Processing', System.now().addMinutes(2), new BatchAccountsMilitaryMoAUploadedFiles('sked__Location__c'));
+        }
+        
     }
     
     private List<Task> generateTasks(List<sObject> records, 
@@ -143,13 +134,8 @@ global class BatchAccountsMilitaryMoAUploadedFiles implements Database.Batchable
 
             if (links != null) {
                 for (ContentDocumentLink cdl : links) {
-                    
                     ContentVersion expiringFile = (expiringFilesMap.containsKey(cdl.ContentDocumentId)) ? expiringFilesMap.get(cdl.ContentDocumentId) : null; 
-                    // Date thresholdDate = Date.today().addDays(-taskMetadataMap.get(expiringFile.Description).Creation_Date_Offset__c.intValue());
-                    // if(Test.isRunningTest()){
-                    //     thresholdDate = Date.today().addDays(5);                                           
-                    // }
-                    if (expiringFile != null ) {// && expiringFile.LastModifiedDate.date() < thresholdDate
+                    if (expiringFile != null ) {
                         if (record.getSObjectType() == Account.SObjectType) {
                             //Standard Account Task Assignment
                             String taskKey = record.get('Id') + '-' + cdl.ContentDocumentId;
@@ -186,7 +172,6 @@ global class BatchAccountsMilitaryMoAUploadedFiles implements Database.Batchable
                                 System.debug('uniqueAccountManagers ===>'+uniqueAccountManagers);
                                 //Create task only for distinct Account Managers
                                 for (Id amId : uniqueAccountManagers.keySet()) {
-                                    //String taskKey = uniqueAccountManagers.get(amId) + '-' + cdl.ContentDocumentId;
                                     String taskKey = taskWhatId + '-' + cdl.ContentDocumentId;
                                     if (!existingTaskKeys.contains(taskKey)) {
                                         System.debug('Create new task for Site '+taskWhatId+' ===='+taskKey);  
@@ -229,7 +214,7 @@ global class BatchAccountsMilitaryMoAUploadedFiles implements Database.Batchable
             contentDocIds.add(cdl.ContentDocumentId);            
         }
         System.debug('Batch== :'+contentDocIds);
-        Date expirationThreshold = Date.today().addDays(30);
+        Date expirationThreshold = Date.today().addDays(taskSettings.Task_Creation_Threshold_In_Days__c.intValue());
         for(ContentVersion cv : [SELECT ContentDocumentId,Description, LastModifiedDate, Title, FileType,Expiry_Date__c
                                 FROM ContentVersion 
                                 WHERE ContentDocumentId IN :contentDocIds
@@ -266,14 +251,12 @@ global class BatchAccountsMilitaryMoAUploadedFiles implements Database.Batchable
         return locationToAccountsMap;
     }
     
-    
-
     private Set<String> getExistingTaskKeys() {
         System.debug('Batch==>  getExistingTaskKeys :');
         Set<String> existingTaskKeys = new Set<String>();
         for(Task t : [SELECT WhatId, CallObject 
                       FROM Task 
-                      WHERE Subject = :taskSubjects                     
+                      WHERE Subject = :taskSettings.Task_Subject__c                     
                       AND CallObject != null]) {
             //System.debug('keys=======>'+t.WhatId + '-' + t.CallObject);
             existingTaskKeys.add(t.WhatId + '-' + t.CallObject);
@@ -286,20 +269,19 @@ global class BatchAccountsMilitaryMoAUploadedFiles implements Database.Batchable
         Id accountId = acc.id;
         Id ownerId = acc.Account_Manager__c != null ? acc.Account_Manager__c : acc.OwnerId;
         Id taskOwnerId = AccountTeamMemberHelper.determineTaskOwner(accountId, ownerId);
-        System.debug('taskOwnerId =>'+taskOwnerId);
         Date contentExpiryDate = version.Expiry_Date__c;
-        Date taskDueDate = (contentExpiryDate != null) ? contentExpiryDate.addDays(-taskMetadataMap.get(version.Description).Due_Date_Offset__c.intValue()) : null; 
-        System.debug('contentExpiryDate ::'+contentExpiryDate+' taskDueDate:'+taskDueDate+' offset:'+taskMetadataMap.get(version.Description).Due_Date_Offset__c);
+        Date taskDueDate = (contentExpiryDate != null) ? contentExpiryDate.addDays(-taskSettings.Due_Date_Offset__c.intValue()) : null; 
+        System.debug('contentExpiryDate ::'+contentExpiryDate+' taskDueDate:'+taskDueDate+' offset:'+taskSettings.Due_Date_Offset__c);
         String baseUrl = System.URL.getOrgDomainUrl().toExternalForm();
         String fileUrl = baseUrl + '/lightning/r/ContentDocument/' + version.ContentDocumentId + '/view';
 
-        String description = String.format(taskMetadataMap.get(version.Description).Description__c, new List<String>{version.Title, version.FileType})
+        String description = String.format(taskSettings.Description__c, new List<String>{version.Title, version.FileType})
                              + '\n\n' + 'View file here: ' + fileUrl;
 
         return new Task(
             WhatId = taskWhatId,  
             OwnerId = taskOwnerId,  
-            Subject = taskMetadataMap.get(version.Description).Task_Subject__c,
+            Subject = taskSettings.Task_Subject__c,
             Description = description,
             Status = 'Not Started',
             ActivityDate =  taskDueDate,
