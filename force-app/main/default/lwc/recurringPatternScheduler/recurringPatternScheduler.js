@@ -23,6 +23,7 @@ export default class RecurringPatternScheduler extends LightningElement {
     @api InputStartDateOffset;
     @api InputEndtDateOffset;
     @api InputEnableFlowButtons;
+    @api InputDriveType;
 
     //Date Range Settings User Input Exposed as Output - Needed to Retain Input Value on Flow
     @api OutputStartDateValue;
@@ -172,11 +173,14 @@ export default class RecurringPatternScheduler extends LightningElement {
     }*/
 
     get recurTypeOptions() {
-        return [
+        let options = [
             { label: 'Weekly', value: 'weekly' },
-            { label: 'Monthly', value: 'monthly' },
-            { label: 'Other', value: 'other' }
+            { label: 'Monthly', value: 'monthly' }
         ];
+        if(this.InputDriveType === 'Mobile') {
+            options.push({ label: 'Other', value: 'other' });
+        }
+        return options;
     }
 
     get cbMonthDayOccuranceOption() {

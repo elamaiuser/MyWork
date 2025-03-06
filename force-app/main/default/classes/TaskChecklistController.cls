@@ -80,7 +80,7 @@ public with sharing class TaskChecklistController {
                     checklistWrapper.column = (Integer)mdt.Column__c;
                     inputWrapper.inputLabel = mdt.UI_Text__c;
                     inputWrapper.helpText = mdt.Help_Text__c;
-                    inputWrapper.helpTextAlign = ((Integer)mdt.Order__c == 2) ? 'top-right' : ((String.isBlank(inputWrapper.inputLabel) || inputWrapper.inputLabel.length() < 40) ? 'top-left' : 'top-right');
+                    inputWrapper.helpTextAlign = ((Integer)mdt.Column__c == 2) ? 'top-right' : 'top-left';
                     inputWrapper.hyperlink = mdt.Hyperlink__c;
                     inputWrapper.parent = mdt.Parent__c;
                     inputWrapper.order = (Integer)mdt.Order__c;
@@ -96,7 +96,7 @@ public with sharing class TaskChecklistController {
                 } else {
                     inputWrapper.inputLabel = mdt.UI_Text__c;
                     inputWrapper.helpText = mdt.Help_Text__c;
-                    inputWrapper.helpTextAlign = ((Integer)mdt.Order__c == 2) ? 'top-right' : ((String.isBlank(inputWrapper.inputLabel) || inputWrapper.inputLabel.length() < 40) ? 'top-left' : 'top-right');
+                    inputWrapper.helpTextAlign = ((Integer)mdt.Column__c == 2) ? 'top-right' : 'top-left';
                     inputWrapper.hyperlink = mdt.Hyperlink__c;
                     inputWrapper.parent = mdt.Parent__c;
                     inputWrapper.order = (Integer)mdt.Order__c;
