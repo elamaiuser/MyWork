@@ -137,12 +137,12 @@
         <members>BSF_Task_Checklist__c.Input_Number__c</members>
 		<members>Opportunity.Calendar_Build_Reasons_For_Unqualified__c</members>
         <members>Opportunity.Calendar_Build_Alert_Reviewed__c</members>		
-		<members>Task_Checklist_Setting__mdt.Subject__c</members>		
-		<members>Task_Reassignment_Matrix__mdt.Task_Creation_Threshold_In_Days__c</members>
+		<members>Task_Checklist_Setting__mdt.Subject__c</members>
 		<members>Account.HS_Relationship_Manager__c</members>
 		<members>Account.HS_Relationship_Manager_Notes__c</members>
 		<members>Opportunity.HS_Relationship_Manager__c</members>
 		<members>ContentVersion.Expiry_Date__c</members>
+		<members>Task_Reassignment_Matrix__mdt.Task_Creation_Threshold_In_Days__c</members>
 		<name>CustomField</name>
 	</types>
 	<types>
