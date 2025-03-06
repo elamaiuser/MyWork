@@ -117,7 +117,7 @@ public class BatchAcctsMilitaryMoAUploadedFiles_Test {
     static void testBatchExecution() {
         Test.startTest();
         // Run the batch
-        BatchAccountsMilitaryMoAUploadedFiles batch = new BatchAccountsMilitaryMoAUploadedFiles();
+        BatchAccountsMilitaryMoAUploadedFiles batch = new BatchAccountsMilitaryMoAUploadedFiles('Account');
         Database.executeBatch(batch, 10);
         Test.stopTest();
 

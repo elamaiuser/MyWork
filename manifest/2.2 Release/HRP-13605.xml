@@ -12,6 +12,7 @@
 		<name>LightningComponentBundle</name>
 	</types>
     <types>
+		<members>Task_Reassignment_Matrix__mdt.Task_Creation_Threshold_In_Days__c</members>
 		<members>ContentVersion.Expiry_Date__c</members>		
 		<name>CustomField</name>
 	</types>
@@ -21,10 +22,12 @@
         <name>FlexiPage</name>
     </types>
 	<types> 
+		<members>Task_Reassignment_Matrix__mdt-Task Reassignment Matrix Layout</members>  
 		<members>ContentVersion-Content Version Layout</members>        
         <name>Layout</name>
     </types>
 	<types>
+		<members>Task_Reassignment_Matrix__mdt.Renew_File</members>
 		<members>ARCFileContentTypeMatrix.Military_MoA_Local</members>
 		<!--This is for Account -->
 		<members>Task_Reassignment_Matrix.Blood_Partner_Agreement</members>
