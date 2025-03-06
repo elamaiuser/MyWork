@@ -16,7 +16,8 @@
  * 08/06/24     Priti Jana          Logic for HRP-12706
  * 09/09/24		Balaji N			Logic for HRP-13265
  * 12/10/24     Priti Jana          Logic for HRP-13190
- * 01/08/2025   Priti Jana          Logic for HRP-12299
+ * 01/08/25     Priti Jana          Logic for HRP-12299
+ * 03/04/25     Priti Jana          Logic for HRP-11850
  **************************************************************************************************************************************/
 
  public with sharing class CalendarBuildBatchHandler {
@@ -146,8 +147,9 @@
                 if(cbWrapper.IsQualified != null) {
                     clonedOpp.Calendar_Build_Status__c = cbWrapper.IsQualified ? 'Qualified' : 'Unqualified';
                 }
-                if(cbWrapper.UnqualifiedReasons != null) {
-                    clonedOpp.Calendar_Build_Reasons_For_Unqualified__c = cbWrapper.UnqualifiedReasons;
+                // HRP-11850 : Add all the unqualifying reason with a limit of 255 characters to Calendar Build Alert field
+                if(cbWrapper.UnqualifiedReasons != null && !cbWrapper.UnqualifiedReasons.isEmpty())  {
+                    clonedOpp.Calendar_Build_Reasons_For_Unqualified__c = BSF_Utilities.getStringWithinLimit(string.join(cbWrapper.UnqualifiedReasons, ';'), 255);
                 }
                 if(cbWrapper.RolloverConsideration != null) {
                     clonedOpp.Rollover_Consideration__c = cbWrapper.RolloverConsideration;
@@ -187,31 +189,33 @@
             if(incomingOrigOpp.rollover_consideration__c != null && incomingOrigOpp.rollover_consideration__c == 'Alwyas Roll') {
                 if(incomingOrigOpp.Account.Account_Strategy__c != null && incomingOrigOpp.Account.Account_Strategy__c == 'Sunset') {
                     cbWrapper.IsQualified = false;
-                    cbWrapper.UnqualifiedReasons = 'Always Roll On, Account Strategy is Sunset';
+                    cbWrapper.UnqualifiedReasons.add('Always Roll On, Account Strategy is Sunset');
                 }
             }
 
             /* Logic for HRP-12299
-            	If opportunity has drive affiliation with Designation = "Gray Skies", mark as "Qualified"
-			*/
+            	If opportunity has drive affiliation with Designation = "Gray Skies", 
+                    leave the CB status blank so that it can go for other unqualifying condition check
+			
             else if(!graySkiesMap.isEmpty() && graySkiesMap.containsKey(incomingOrigOpp.Id)){ //incomingOrigOpp.Drive_Designations__c != null && incomingOrigOpp.Drive_Designations__c.split(';').contains('Gray Skies')) {
                 cbWrapper.IsQualified = true;
                 //cbWrapper.UnqualifiedReasons = 'Drive Designation is Gray Skies';
                 //cbWrapper.RolloverConsideration = 'Do Not Roll';
-            }
+            }*/
             
-            //If Account Strategy = "Sunset", mark as "Unqualified"
-            else if(incomingOrigOpp.Account.Account_Strategy__c != null && incomingOrigOpp.Account.Account_Strategy__c == 'Sunset') {
+            //If Account Strategy = "Sunset", mark as "Unqualified" and add reason to Calendar Build Alert field
+            if(incomingOrigOpp.Account.Account_Strategy__c != null && incomingOrigOpp.Account.Account_Strategy__c == 'Sunset') {
                 cbWrapper.IsQualified = false;
-                cbWrapper.UnqualifiedReasons = 'Account Strategy is Sunset';
+                cbWrapper.UnqualifiedReasons.add('Account Strategy is Sunset');
                 cbWrapper.RolloverConsideration = 'Do Not Roll';
             }
-            //If Account Status = "Lost or Defunct", mark as "Unqualified"
-            else if(incomingOrigOpp.Account.Account_Status__c != null  && 
-                    (incomingOrigOpp.Account.Account_Status__c == 'Lost' || incomingOrigOpp.Account.Account_Status__c == 'Defunct')) {
-                        cbWrapper.IsQualified = false;
-                        cbWrapper.RolloverConsideration = 'Do Not Roll';
-                        cbWrapper.UnqualifiedReasons = 'Account Status is Lost/Defunct';
+
+            //If Account Status = "Lost or Defunct", mark as "Unqualified" and add reason to Calendar Build Alert field
+            if(incomingOrigOpp.Account.Account_Status__c != null  && 
+                (incomingOrigOpp.Account.Account_Status__c == 'Lost' || incomingOrigOpp.Account.Account_Status__c == 'Defunct')) {
+                    cbWrapper.IsQualified = false;
+                    cbWrapper.RolloverConsideration = 'Do Not Roll';
+                    cbWrapper.UnqualifiedReasons.add('Account Status is Lost/Defunct');
             }
         }   
         return cbWrapper; 
@@ -292,9 +296,11 @@
     
     public class CalendarBuildWrapper {
         public boolean IsQualified {get; set;}
-        public string UnqualifiedReasons {get; set;}
+        public List<String> UnqualifiedReasons {get; set;} //HRP-11850: Changed wrapper variable data type from String to List<String> to capture all unqualifying conditions
         public string RolloverConsideration {get; set;}
         
-        public CalendarBuildWrapper () {}
+        public CalendarBuildWrapper () {
+            this.UnqualifiedReasons = new List<String>();
+        }
     }
 }

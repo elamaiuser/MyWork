@@ -15,7 +15,7 @@ public class skedTravelTimeIndexItemHandler extends skedTriggerHub implements ca
             refreshTravelTimeIndexData(this.context.newMap.keySet());
         }
 
-        skedFutureCallEventHandler.publishFutureCallEvent(
+        skedFutureCallPostCommitEventHandler.publishFutureCallEvent(
             skedTravelTimeIndexItemHandler.class.getName(),
             'populateTTILokkupFieldsOnSiteCO',
             skedSObjectUtils.getRecordIds(this.context.newRecords)   

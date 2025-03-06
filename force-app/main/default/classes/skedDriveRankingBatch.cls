@@ -5,7 +5,7 @@ global class skedDriveRankingBatch implements Database.Batchable<sked_Drive__c>,
     Set<Id> driveIds;
     List<String> inputKeys;
     Set<string> processedKey;
-    String driveSource ;
+    String driveSource = '';
     String runType;
     Date driveDate;
 
