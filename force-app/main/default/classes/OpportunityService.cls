@@ -341,7 +341,7 @@ opty.addError('This drive date violates the 56 day rule.Please acknowledge.');
                         calendarBuildOpp.Calendar_Build_Reasons_For_Unqualified__c = BSF_Utilities.getStringWithinLimit(existingUnqualifyingReasons, 255);
                         
                         //If CB drive is not set to "Unqualified", set CB Status = Unqualified and Rollover Consideration = Do Not Roll
-                        if(calendarBuildOpp.Calendar_Build_Status__c != skedConstants.CALENDAR_BUILD_STATUS_UNQUALIFIED) {
+                        if(existingUnqualifyingReasons != NULL && !existingUnqualifyingReasons.equalsIgnoreCase('Violates Accepts 56 day selection')) {
                             calendarBuildOpp.Calendar_Build_Status__c = skedConstants.CALENDAR_BUILD_STATUS_UNQUALIFIED;
                             calendarBuildOpp.Rollover_Consideration__c = BSF_Constants.ROLLOVER_CONSIDERATION_DO_NOT_ROLL;
                         } 
