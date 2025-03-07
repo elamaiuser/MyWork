@@ -1389,7 +1389,11 @@ class MobileGenerator extends BaseGenerator {
     if (skipVehicleCalculation) {
       let totalVehicleRequested = this.drive.totalVehicleRequestedChanged.totalVehicleRequested;
       if (isNullOrEmpty(totalVehicleRequested) || totalVehicleRequested < 1) {
-        totalVehicleRequested = 1;
+        if(this.drive.numberOfVehicles > 0) {
+          totalVehicleRequested = this.drive.numberOfVehicles;
+        } else {
+          totalVehicleRequested = 1;
+        }
       }
 
       if (this.drive.doNotUseVehicle) {
