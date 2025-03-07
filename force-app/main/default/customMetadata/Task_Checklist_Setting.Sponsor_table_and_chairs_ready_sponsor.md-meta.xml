@@ -58,7 +58,7 @@ Note: Proper room cleaning of tables/chairs, furniture should be done prior to t
     </values>
     <values>
         <field>UI_Text__c</field>
-        <value xsi:type="xsd:string">Confirm that Sponsor will have table and chairs ready in room for use</value>
+        <value xsi:type="xsd:string">Confirm that Sponsor will have tables and chairs ready in room for use</value>
     </values>
     <values>
         <field>Unique_Name__c</field>

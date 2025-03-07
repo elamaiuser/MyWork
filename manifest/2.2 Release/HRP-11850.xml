@@ -11,11 +11,24 @@
         <members>Opportunity-DRD Mobile Opp Layout</members>
         <members>Opportunity-Mobile Opp Layout</members>
         <members>Opportunity-Sponsor Marketing Mobile Opp Layout</members>
+        <members>Opportunity-APS Planner Fixed Site Opp Layout</members>
+        <members>Opportunity-APS Scheduler Fixed Site Opp Layout</members>
+        <members>Opportunity-DRD Fixed Site Opp Layout</members>
+        <members>Opportunity-Fixed Site Opp APS Layout</members>
+        <members>Opportunity-Fixed Site Opp Non-APS Layout</members>
+        <members>Opportunity-Sponsor Marketing Fixed Site Opp Layout</members>
         <name>Layout</name>
     </types>
     <types>
+        <members>BSF_Utilities</members>
+        <members>BSF_UtilitiesTest</members>
+        <members>CalendarBuildBatchHandler</members>
         <members>CalendarBuildEvaluateDrivesBatch_Test</members>
+        <members>GenerateMobileDrive</members>
+        <members>GenerateMobileDriveTest</members>
+        <members>MobileDriveGeneratorDMLService</members>
         <members>OpportunityService</members>
+        <members>OpportunityTriggerTest</members>
         <name>ApexClass</name>
     </types>
     <version>62.0</version>

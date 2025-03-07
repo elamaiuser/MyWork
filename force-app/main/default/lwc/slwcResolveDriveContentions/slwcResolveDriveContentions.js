@@ -666,7 +666,7 @@ export default class SlwcResolveDriveContentions extends LightningElement {
       }
     }
 
-    if(contention === DRIVE_CONTENTION.DUAL_ROLE_REMOVAL) {
+    /*if(contention === DRIVE_CONTENTION.DUAL_ROLE_REMOVAL) {
       const { mapDualRoleJobsRemovedByDriveShiftId } = data;
       return {
         requested: ``,
@@ -699,7 +699,7 @@ export default class SlwcResolveDriveContentions extends LightningElement {
           }
         `
       }
-    }
+    }*/
 
     if(contention === DRIVE_CONTENTION.STAFFING_COMPLEMENT_CHANGED) {
       const { mapSystemGeneratedRoleJobsRemovedByDriveShiftId } = data;
@@ -853,12 +853,12 @@ export default class SlwcResolveDriveContentions extends LightningElement {
       }]
     }
 
-    if (contention === DRIVE_CONTENTION.DUAL_ROLE_REMOVAL) {
+    /*if (contention === DRIVE_CONTENTION.DUAL_ROLE_REMOVAL) {
       return [{
         label: DRIVE_CONTENTION_RESOLUTION.ELECT_DUAL_ROLE_REMOVAL,
         value: isContentionOverride(DRIVE_CONTENTION_RESOLUTION.ELECT_DUAL_ROLE_REMOVAL)
       }]
-    }
+    }*/
 
     if (contention === DRIVE_CONTENTION.PART_OF_LINKED_DRIVE) {
       return [{
@@ -982,7 +982,7 @@ export default class SlwcResolveDriveContentions extends LightningElement {
         ];
         
         let originalContentions = [];
-        if(this.mode === MODE.DRIVE_SUBMISSION) {
+        if(this.mode === MODE.DRIVE_SUBMISSION || this.mode === MODE.UPDATE_DRIVE) {
           originalContentions = this.drive.pendingActionReasonCode || [];
         } else {
           originalContentions = this.driveChangeRequest?.driveContention || [];
@@ -1037,13 +1037,13 @@ export default class SlwcResolveDriveContentions extends LightningElement {
         ];
         if(this.drive.typeOfDrive === DRIVE_TYPE.MOBILE) {
           contentionsToValidate.push(DRIVE_CONTENTION.LACKING_VEHICLE);
-          contentionsToValidate.push(DRIVE_CONTENTION.DUAL_ROLE_REMOVAL);
+          //contentionsToValidate.push(DRIVE_CONTENTION.DUAL_ROLE_REMOVAL);
           contentionsToValidate.push(DRIVE_CONTENTION.CO_CHANGED_CROSS_REGIONS);
           contentionsToValidate.push(DRIVE_CONTENTION.ASSETS_NOT_SHARED_WITH_NEW_CO);
         }
 
         let originalContentions = [];
-        if(this.mode === MODE.DRIVE_SUBMISSION) {
+        if(this.mode === MODE.DRIVE_SUBMISSION || this.mode === MODE.UPDATE_DRIVE) {
           originalContentions = this.drive.pendingActionReasonCode || [];
         } else {
           originalContentions = this.driveChangeRequest?.driveContention || [];
@@ -1380,6 +1380,7 @@ export default class SlwcResolveDriveContentions extends LightningElement {
   }
 
   saveStaffingComplementModal(event) {
+    const backupContentionResolution = this.drive ? this.drive.contentionResolutions : [];
     const { driveGeneratorInstance } = event.detail;
 
     this.showLoading()
@@ -1404,6 +1405,8 @@ export default class SlwcResolveDriveContentions extends LightningElement {
     })
     .then(() => {
       this.drive = this.driveGeneratorInstance.drive;
+      this.drive.contentionResolution = [...backupContentionResolution];
+
       this.drive.contentionResolutions = [];
       if(this.drive.contentionResolution) {
         this.drive.contentionResolutions = cloneDeep(this.drive.contentionResolution);

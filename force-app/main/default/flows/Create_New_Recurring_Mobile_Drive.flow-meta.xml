@@ -1396,6 +1396,13 @@
         </value>
     </choices>
     <constants>
+        <name>DRIVE_TYPE_MOBILE</name>
+        <dataType>String</dataType>
+        <value>
+            <stringValue>Mobile</stringValue>
+        </value>
+    </constants>
+    <constants>
         <name>noAdditionalDesc</name>
         <dataType>String</dataType>
     </constants>
@@ -4049,6 +4056,12 @@ REGEX( {!Drive_Keyword}, &quot;[a-zA-Z0-9 ]+&quot;)</formulaExpression>
                 <name>OutputDonorEligibilityType</name>
                 <value>
                     <elementReference>OutputEligibilityNeededFor</elementReference>
+                </value>
+            </inputParameters>
+            <inputParameters>
+                <name>InputDriveType</name>
+                <value>
+                    <elementReference>DRIVE_TYPE_MOBILE</elementReference>
                 </value>
             </inputParameters>
             <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>

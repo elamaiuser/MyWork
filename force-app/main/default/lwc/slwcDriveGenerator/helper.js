@@ -115,6 +115,7 @@ class DriveHelper {
     drive.opportunity = opp;
     drive.opportunityId = opp.id;
     drive.status = DRIVE_STATUS.DRAFT;
+    drive.preferSystemGeneratedVehicles = true;
     if(this.isFixedSiteDrive(drive)) {
       drive.status = DRIVE_STATUS.TENTATIVE;
     }
@@ -778,7 +779,8 @@ class DriveHelper {
           driveDeliveryJobs: true,
           volunteerJobs: true,
           operationNotes: true,
-          linkedDrives: true
+          linkedDrives: true,
+          mobileDriveVehicesInput: true
         },
         fieldChangeRestrictionMap: {
           driveSite: true
@@ -805,7 +807,8 @@ class DriveHelper {
             volunteerJobs: false,
             operationNotes: false,
             linkedDrives: true,
-            aptQuantity: true
+            aptQuantity: true,
+            mobileDriveVehicesInput: true
           },
           fieldChangeRestrictionMap: {
             driveSite: true
@@ -828,7 +831,8 @@ class DriveHelper {
             volunteerJobs: false,
             operationNotes: false,
             linkedDrives: false,
-            aptQuantity: isOnlyAPSUser ? false : true
+            aptQuantity: isOnlyAPSUser ? false : true,
+            mobileDriveVehicesInput: false,
           },
           fieldChangeRestrictionMap: {
             driveSite: true
@@ -852,6 +856,7 @@ class DriveHelper {
       projectedRegisteredDonors: isReadonly,
       driveShiftsMetadata: isReadonly,
       driveShiftsConfiguration: isReadonly,
+      mobileDriveVehicesInput: isReadonly,
       driveShifts: isReadonly,
       driveShiftSlots: isReadonly,
       driveDeliveryJobs: isReadonly,
@@ -898,6 +903,12 @@ class DriveHelper {
           fieldReadonlyMap.linkedDrives = false;
         }
       }     
+    }
+      
+    if (drive.driveDate >= today) {
+      if(isAPSUser) {
+        fieldReadonlyMap.mobileDriveVehicesInput = false;
+      }
     }
 
     if(isAPSUser || isDRDUser) {
@@ -2177,10 +2188,10 @@ class DriveHelper {
       const job1Role = `${job1.resourceRole}-${job1.dualRole || ''}`;
       const job2Role = `${job2.resourceRole}-${job2.dualRole || ''}`;
       return job1Role === job2Role;
-    }
+    } else if(job1.assetType) return job1.assetType == job2.assetType;
 
-    const sameAssetType = job1.assetType == job2.assetType;
-    return sameAssetType;
+    const sameVolunteerType = job1.volunteerRole == job2.volunteerRole;
+    return sameVolunteerType;
   }
 
   generateJobKey(job) {
@@ -2213,7 +2224,7 @@ class DriveHelper {
       if (validJobs.length !== validBackupJobs.length) return true;
       for (let j = 0; j < validJobs.length; j++) {
         let job = validJobs[j];
-        let backupJob = validBackupJobs.find(function(item) {
+        let backupJob = validBackupJobs.find((item) => {
           if (this.isJobsSameRoles(item, job) && item.quantity == job.quantity) {
             return true;
           }
@@ -2713,7 +2724,7 @@ class DriveHelper {
         data: null
       }
 
-      let mapDualRoleJobsRemovedByDriveShiftId = {}; 
+      /*let mapDualRoleJobsRemovedByDriveShiftId = {}; 
       backupDrive.driveShifts.forEach((backupDriveShift, driveShiftIndex) => {
         const currentDriveShift = drive.driveShifts[driveShiftIndex];
         if(!currentDriveShift) return;
@@ -2754,7 +2765,7 @@ class DriveHelper {
         mapDualRoleJobsRemovedByDriveShiftId,
       }
       result.violated = hasDualRoleJobsRemoved;
-      result.passed = !result.violated || isContentionOverrided(drive, DRIVE_CONTENTION.DUAL_ROLE_REMOVAL);
+      result.passed = !result.violated || isContentionOverrided(drive, DRIVE_CONTENTION.DUAL_ROLE_REMOVAL);*/
       return result;
     }
 
@@ -2978,6 +2989,11 @@ class DriveHelper {
     const isNotCdlDriverJob = job.id && !job.id.startsWith('drivercdl');
     const isNotDotDriverJob = job.id && !job.id.startsWith('driverdot');
     return isNotCdlDriverJob && isNotDotDriverJob && (job.resourceRole === 'Driver' || job.dualRole === 'Driver')
+  }
+
+  isDriverSupport(job) {
+    if(!job) return false;
+    return job.resourceRole === 'Driver Support';
   }
 
   /*
