@@ -224,7 +224,7 @@ public with sharing class MobileDriveGeneratorDMLService {
                         opp.Calendar_Build_Reasons_For_Unqualified__c = BSF_Utilities.getStringWithinLimit((existingUnqualifyingReasons + string.join(unqualifiedReasons, ';')), 255);
                         opp.Calendar_Build_Status__c = skedConstants.CALENDAR_BUILD_STATUS_UNQUALIFIED;
                         opp.Rollover_Consideration__c = BSF_Constants.ROLLOVER_CONSIDERATION_DO_NOT_ROLL; //HRP-12299
-                    } else if(opp.Calendar_Build_Reasons_For_Unqualified__c == NULL || String.isBlank(opp.Calendar_Build_Reasons_For_Unqualified__c)) {
+                    } else if(opp.Calendar_Build_Status__c == NULL || String.isBlank(opp.Calendar_Build_Status__c)) {
                         opp.Calendar_Build_Status__c = skedConstants.CALENDAR_BUILD_STATUS_QUALIFIED;
                     }
                     opportunitiesToUpdate.add(opp);
