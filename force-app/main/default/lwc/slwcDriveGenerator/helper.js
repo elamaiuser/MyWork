@@ -1,5 +1,5 @@
 import { get, cloneDeep, orderBy, isEqual, sum, compact, uniqBy, isObject, isDate, max } from 'c/lodash';
-import { RESOURCE_TYPE, MANUALLY_CREATED_FROM, DRIVE_CHANGE_REQUEST_TYPE , ASSET_TYPE, PROCEDURE_TYPE, DRIVE_TYPE, OPERATION_TYPE, RESOURCE_ROLE_GROUP, PENDING_ACTION, DRIVE_STATUS, RESOURCE_ROLE, DRIVE_CHANGE_REQUEST_ITEM_TYPE, DRIVE_CONTENTION, DRIVE_CONTENTION_RESOLUTION, JOB_ALLOCATION_STATUS, DRIVE_APPROVAL_STATUS, OPERATION_DRIVE_LIMIT_TYPE, DRIVE_REQUEST_CHANGE_STATUS} from 'c/slwcConstants';
+import { LINK_DRIVE_TYPE, RESOURCE_TYPE, MANUALLY_CREATED_FROM, DRIVE_CHANGE_REQUEST_TYPE , ASSET_TYPE, PROCEDURE_TYPE, DRIVE_TYPE, OPERATION_TYPE, RESOURCE_ROLE_GROUP, PENDING_ACTION, DRIVE_STATUS, RESOURCE_ROLE, DRIVE_CHANGE_REQUEST_ITEM_TYPE, DRIVE_CONTENTION, DRIVE_CONTENTION_RESOLUTION, JOB_ALLOCATION_STATUS, DRIVE_APPROVAL_STATUS, OPERATION_DRIVE_LIMIT_TYPE, DRIVE_REQUEST_CHANGE_STATUS} from 'c/slwcConstants';
 import { DateTime } from 'c/luxon';
 import { isNullOrEmpty, parseJSON, getTravelTimeIndexKey } from 'c/slwcUtils';
 import { territoryCollectionOperationQueryModel, territoryCollectionOperationService } from 'c/dataService';
@@ -197,6 +197,11 @@ class DriveHelper {
   isDriveInPathOfLinkedDrive(drive) {
     if(!drive) return null;
     return drive.linkedDriveId;
+  }
+
+  isDriveAPartOfMultiDaysLinkedDrive(drive) {
+    if(!this.isDriveInPathOfLinkedDrive(drive)) return;
+    return drive.linkedDriveType === LINK_DRIVE_TYPE.MULTI_DAY
   }
 
   cancelDrive(drive, {
@@ -3385,6 +3390,46 @@ class DriveHelper {
 
     return dateTimeObj.toJSDate();
   }
+
+  countDriveShiftStaffs(driveShift, ignoreLunchBreak = false) {
+    const driveShiftStaffs = Math.floor(this.helper.countDriveStaffs([
+      'Driver', 'Driver Support', '2RBC', 'VP/HH', 'Charge'
+    ], this.drive, driveShift.driveShiftMetadata, 
+      new Map()
+        .set(driveShift.driveShiftMetadata.key, this.helper.getDriveShiftResourceQuantity(driveShift))
+    , this.masterData, ignoreLunchBreak));
+
+    return driveShiftStaffs;
+  }
+
+  calculateDriveAverageStaffCapacity(drive) {
+    let driveStaffCount = 0;
+    if (this.masterData && this.masterData.staffingDecisionMatrix) {
+      drive.driveShifts.forEach((driveShift) => {
+        const driveShiftStaffCount = this.countDriveShiftStaffs(driveShift);
+        driveStaffCount += driveShiftStaffCount;
+      });
+    }
+    if(drive.staffCapacity && drive.staffCapacity > 0 && driveStaffCount > 0) {
+      let averageStaffCapacity = drive.staffCapacity / driveStaffCount;
+      averageStaffCapacity = drive.averageStaffCapacity.toFixed(1);
+      return averageStaffCapacity;
+    } else {
+      return 0;
+    }
+  }
+
+  calculateExcessStaffCapacity(drive) {
+    if(drive.staffCapacity && drive.staffCapacity > 0 && drive.maxRoleCapacityWithDrawHours && drive.maxRoleCapacityWithDrawHours > 0) {
+      if(drive.projectedRegisteredDonors) {
+        return (drive.staffCapacity - drive.projectedRegisteredDonors) / drive.maxRoleCapacityWithDrawHours;
+      } else {
+        return drive.staffCapacity / drive.maxRoleCapacityWithDrawHours;
+      }
+    } else {
+      return 0;
+    }
+  } 
 }
 
 export {

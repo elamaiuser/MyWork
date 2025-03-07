@@ -808,20 +808,7 @@ class WbFixedSiteGenerator extends BaseGenerator {
   }
 
   updateDriveAverageStaffCapacity() {
-    let driveStaffCount = 0;
-    if (this.masterData && this.masterData.staffingDecisionMatrix) {
-      this.drive.driveShifts.forEach((driveShift) => {
-        const driveShiftStaffCount = this.countDriveShiftStaffs(driveShift);
-        driveStaffCount += driveShiftStaffCount;
-      });
-    }
-    if(this.drive.staffCapacity && this.drive.staffCapacity > 0 && driveStaffCount > 0) {
-      this.drive.averageStaffCapacity = this.drive.staffCapacity / driveStaffCount;
-      this.drive.averageStaffCapacity = this.drive.averageStaffCapacity.toFixed(1);
-    } else {
-      this.drive.averageStaffCapacity = 0;
-    }
-    
+    this.drive.averageStaffCapacity = this.helper.updateDriveAverageStaffCapacity(this.drive);
   }
 
   updateDriveMaxRoleCapacity() {
@@ -848,16 +835,7 @@ class WbFixedSiteGenerator extends BaseGenerator {
   }
 
   updateDriveExcessStaffCapacity() {
-    if(this.drive.staffCapacity && this.drive.staffCapacity > 0 && this.drive.maxRoleCapacityWithDrawHours && this.drive.maxRoleCapacityWithDrawHours > 0) {
-      if(this.drive.projectedRegisteredDonors) {
-        this.drive.excessStaffCapacity = (this.drive.staffCapacity - this.drive.projectedRegisteredDonors) / this.drive.maxRoleCapacityWithDrawHours;
-      } else {
-        this.drive.excessStaffCapacity = this.drive.staffCapacity / this.drive.maxRoleCapacityWithDrawHours;
-      }
-      this.drive.excessStaffCapacity = this.drive.excessStaffCapacity.toFixed(1);
-    } else {
-      this.drive.excessStaffCapacity = 0;
-    }
+    this.drive.excessStaffCapacity = this.helper.calculateExcessStaffCapacity(this.drive);
   }
 
   calculateNumberOf2rbcAssets() {
