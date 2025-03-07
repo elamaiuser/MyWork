@@ -17,6 +17,9 @@ global class BatchAccountsMilitaryMoAUploadedFiles implements Database.Batchable
     public BatchAccountsMilitaryMoAUploadedFiles(String runType) {
         this.runType = runType;
     }
+    public BatchAccountsMilitaryMoAUploadedFiles() {
+        this.runType ='Account';
+    }
     private Task_Reassignment_Matrix__mdt taskSettings {
         get {
             return Task_Reassignment_Matrix__mdt.getInstance('Renew_File');            
