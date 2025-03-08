@@ -143,6 +143,9 @@
 		<members>Opportunity.HS_Relationship_Manager__c</members>
 		<members>ContentVersion.Expiry_Date__c</members>
 		<members>Task_Reassignment_Matrix__mdt.Task_Creation_Threshold_In_Days__c</members>
+		<members>Biomed_Collection_Op_Center__c.sked_Auto_Generate_Dual_Role__c</members>
+		<members>Biomed_Collection_Op_Center__c.sked_Only_Generate_Dual_If_1_Machine__c</members>
+		<members>sked_Drive__c.sked_Dual_Roles_Auto_Generated__c</members>
 		<name>CustomField</name>
 	</types>
 	<types>
