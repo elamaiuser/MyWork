@@ -41,7 +41,7 @@ global class BatchAccountsMilitaryMoAUploadedFiles implements Database.Batchable
 
     global void execute(SchedulableContext sc) {
         System.debug('Batch execute 1 runType:'+runType);
-        Database.executeBatch(new BatchAccountsMilitaryMoAUploadedFiles(runType));
+        Database.executeBatch(new BatchAccountsMilitaryMoAUploadedFiles());
     }
 
     public Database.QueryLocator start(Database.BatchableContext bc) {
