@@ -17,6 +17,9 @@ global class BatchAccountsMilitaryMoAUploadedFiles implements Database.Batchable
     public BatchAccountsMilitaryMoAUploadedFiles(String runType) {
         this.runType = runType;
     }
+    public BatchAccountsMilitaryMoAUploadedFiles() {
+        this.runType ='Account';
+    }
     private Task_Reassignment_Matrix__mdt taskSettings {
         get {
             return Task_Reassignment_Matrix__mdt.getInstance('Renew_File');            
@@ -38,7 +41,7 @@ global class BatchAccountsMilitaryMoAUploadedFiles implements Database.Batchable
 
     global void execute(SchedulableContext sc) {
         System.debug('Batch execute 1 runType:'+runType);
-        Database.executeBatch(new BatchAccountsMilitaryMoAUploadedFiles(runType));
+        Database.executeBatch(new BatchAccountsMilitaryMoAUploadedFiles());
     }
 
     public Database.QueryLocator start(Database.BatchableContext bc) {
