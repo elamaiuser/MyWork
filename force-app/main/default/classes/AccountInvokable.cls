@@ -46,7 +46,8 @@ set custom notification
                            System.debug('==notification=='+notification);                        
                            userId.add(acc.District_Manager__c);
                            try{
-                                notification.send(userId);  
+                                notification.send(userId);
+                                break;//Needed once per account, not per opp
                            }
                            catch(Exception e) {
                                System.debug('The following exception has occurred: ' + e.getMessage());
