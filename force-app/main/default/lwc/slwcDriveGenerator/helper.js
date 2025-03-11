@@ -3392,11 +3392,11 @@ class DriveHelper {
   }
 
   countDriveShiftStaffs(driveShift, ignoreLunchBreak = false) {
-    const driveShiftStaffs = Math.floor(this.helper.countDriveStaffs([
+    const driveShiftStaffs = Math.floor(this.countDriveStaffs([
       'Driver', 'Driver Support', '2RBC', 'VP/HH', 'Charge'
     ], this.drive, driveShift.driveShiftMetadata, 
       new Map()
-        .set(driveShift.driveShiftMetadata.key, this.helper.getDriveShiftResourceQuantity(driveShift))
+        .set(driveShift.driveShiftMetadata.key, this.getDriveShiftResourceQuantity(driveShift))
     , this.masterData, ignoreLunchBreak));
 
     return driveShiftStaffs;
@@ -3430,6 +3430,68 @@ class DriveHelper {
       return 0;
     }
   } 
+  
+  calculateDriveShiftMaxStaffCapacity(driveShift, ignoreLunchBreak = false) {
+    const driveShiftStaffCapacity = this.calculateMaximumStaffCapacity([
+      'Driver', 'Driver Support', '2RBC', 'VP/HH', 'Charge'
+    ], this.drive, driveShift.driveShiftMetadata, 
+      new Map()
+        .set(driveShift.driveShiftMetadata.key, this.getDriveShiftResourceQuantity(driveShift))
+    , this.masterData, ignoreLunchBreak);
+
+    return driveShiftStaffCapacity;
+  }
+
+  calculateDriveShiftDrawHours(driveShift, ignoreLunchBreak = false) {
+    const drawHours = this.calculateDrawHours(driveShift.driveShiftMetadata, this.masterData, driveShift.driveShiftMetadata.lunchBreakSettings);
+    return drawHours;
+  }
+
+  calculateDriveMaxRoleCapacity(drive, masterData) {
+    let driveMaxStaffCapacity = 0;
+    let driveMaxStaffCapacityWithDrawHours = 0;
+    let totalDrawHours = 0;
+    if (masterData && masterData.staffingDecisionMatrix) {
+      drive.driveShifts.forEach((driveShift) => {
+        const driveShiftMaxStaffCapacity = this.calculateDriveShiftMaxStaffCapacity(driveShift);
+        if(driveShiftMaxStaffCapacity && driveShiftMaxStaffCapacity > driveMaxStaffCapacity){
+          driveMaxStaffCapacity = driveShiftMaxStaffCapacity;
+        }
+        const shiftDrawHours = this.calculateDriveShiftDrawHours(driveShift);
+        if(shiftDrawHours){
+          totalDrawHours = totalDrawHours + shiftDrawHours;
+        }
+      });
+      if(totalDrawHours > 0){
+        driveMaxStaffCapacityWithDrawHours = driveMaxStaffCapacity * totalDrawHours;
+      }
+    }
+
+    return {
+      maxRoleCapacity: driveMaxStaffCapacity.toFixed(2),
+      maxRoleCapacityWithDrawHours: driveMaxStaffCapacityWithDrawHours.toFixed(2)
+    }
+  }
+
+  checkResourceQuantityMapContainsRoles(resourceQuantityMap, roles = []) {
+    if(!resourceQuantityMap) return false;
+    if(!roles.length) return true;
+
+    let validRoles = [];
+    resourceQuantityMap.forEach((item, resourceRole) => {
+      const quantityValid = resourceRole === 'VP/HH' ? item.vphhQuantity > 0 : item.quantity > 0;
+      if(!quantityValid) return;
+
+      if(roles.includes(resourceRole)) {
+        validRoles.push(resourceRole);
+      }
+    });
+
+    const allRolesValid = validRoles.length === roles.length;
+    return allRolesValid;
+  }
+
+  mergeDualRoleJobs = 
 }
 
 export {
