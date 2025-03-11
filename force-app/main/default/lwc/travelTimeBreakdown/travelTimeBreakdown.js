@@ -325,8 +325,7 @@ export default class TravelTimeBreakdown extends LightningElement {
                         message: 'Records updated successfully',
                         variant: 'success'
                     })
-                );
-                window.location.reload();                
+                );         
             })
             .catch(error => {
                 //this.exitEditMode();
