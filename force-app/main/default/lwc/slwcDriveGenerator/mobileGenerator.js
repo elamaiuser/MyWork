@@ -940,7 +940,7 @@ class MobileGenerator extends BaseGenerator {
   }
 
   updateDriveMaxRoleCapacity() {
-    const { maxRoleCapacity, maxRoleCapacityWithDrawHours } = this.helper.calculateDriveMaxRoleCapacity(this.drive)
+    const { maxRoleCapacity, maxRoleCapacityWithDrawHours } = this.helper.calculateDriveMaxRoleCapacity(this.drive, this.masterData)
 
     this.drive.maxRoleCapacity = maxRoleCapacity;
     this.drive.maxRoleCapacityWithDrawHours = maxRoleCapacityWithDrawHours;
@@ -1253,7 +1253,7 @@ class MobileGenerator extends BaseGenerator {
         })
       };
 
-      const { maxRoleCapacity, maxRoleCapacityWithDrawHours } = this.helper.calculateDriveMaxRoleCapacity(tempDrive);
+      const { maxRoleCapacity, maxRoleCapacityWithDrawHours } = this.helper.calculateDriveMaxRoleCapacity(tempDrive, this.masterData);
       const excessStaffCapacity = this.helper.calculateExcessStaffCapacity({
         ...tempDrive,
         maxRoleCapacity,
@@ -1281,36 +1281,39 @@ class MobileGenerator extends BaseGenerator {
       if(!areCurrentRolesValid) return;
       const backupDriveShift = this.masterData.backupDriveShiftMap[driveShift.key];
       const any2RBCAllocations = backupDriveShift?.jobs
-        ?.find(job => job.resourceRole === '2RBC')
+        ?.find(job => job.resourceRole === '2RBC' || job.dualRole === '2RBC')
         ?.jobAllocations?.find(jobAllocation => jobAllocation.status !== JOB_ALLOCATION_STATUS.DELETED);
       const anyDriverSuppoerAllocations = backupDriveShift?.jobs
-        ?.find(job => job.resourceRole === 'Driver Support')
+        ?.find(job => job.resourceRole === 'Driver Support' || job.dualRole === 'Driver Support')
         ?.jobAllocations?.find(jobAllocation => jobAllocation.status !== JOB_ALLOCATION_STATUS.DELETED);;
       if(any2RBCAllocations || anyDriverSuppoerAllocations) return;
 
       const { jobsToCreate, jobsToUpdate, jobsToDelete } = this.helper.generateDualRoleJob({
-        ...driveShift.jobs.find(job => job.resourceRole === '2RBC'),
+        resourceRole: '2RBC',
         quantity: resourceQuantityMap.get('2RBC').quantity
       }, {
-        ...driveShift.jobs.find(job => job.resourceRole === 'Driver Support'),
+        resourceRole: 'Driver Support',
         quantity: resourceQuantityMap.get('Driver Support').quantity
       });
       if(!jobsToCreate.length && !jobsToUpdate.length && !jobsToDelete.length) return;
 
-      jobsToDelete.forEach(job => {
-        resourceQuantityMap.delete(job.resourceRole);
+      jobsToDelete.forEach(({previousJob}) => {
+        const jobKey = this.helper.generateJobKey(previousJob);
+        resourceQuantityMap.delete(jobKey);
       })
 
-      jobsToUpdate.forEach(job => {
-        resourceQuantityMap.set(job.resourceRole, {
-          ...resourceQuantityMap.get(job.resourceRole),
-          ...job
+      jobsToUpdate.forEach(({previousJob, newJob}) => {
+        const jobKey = this.helper.generateJobKey(previousJob);
+        resourceQuantityMap.set(jobKey, {
+          ...resourceQuantityMap.get(jobKey),
+          ...newJob
         });
       })
 
-      jobsToCreate.forEach(job => {
-        resourceQuantityMap.set(job.resourceRole, {
-          ...job
+      jobsToCreate.forEach(({newJob}) => {
+        const jobKey = this.helper.generateJobKey(newJob);
+        resourceQuantityMap.set(jobKey, {
+          ...newJob
         });
       })
       
@@ -1340,16 +1343,10 @@ class MobileGenerator extends BaseGenerator {
         if(item.isManuallyCreated) return;
 
         const { resourceRole, dualRole, quantity, isCreatedOrUpdatedViaDualRoleChange } = item;
-        //after
         const hasResourceRoleAfterRegenerated = tempResourceQuantityMap.has(resourceRole);
-        let hasDualRoleAfterRegenerated = tempResourceQuantityMap.has(dualRole);
+        let dualRoleQuantityAfterRegenerated = tempResourceQuantityMap.get(dualRole);
         let resourceRoleQuantityAfterRegenreted = tempResourceQuantityMap.get(resourceRole);
-
-        // const canRestore = hasResourceRoleAfterRegenerated && hasDualRoleAfterRegenerated && (
-        //   tempResourceQuantityMap.get(resourceRole)?.quantity >= quantity && 
-        //   tempResourceQuantityMap.get(dualRole)?.quantity >= quantity
-        // );
-        const canRestore = hasResourceRoleAfterRegenerated && hasDualRoleAfterRegenerated;
+        const canRestore = hasResourceRoleAfterRegenerated && dualRoleQuantityAfterRegenerated;
 
         if(isCreatedOrUpdatedViaDualRoleChange) {
           tempResourceQuantityMap.delete(resourceRole);
@@ -1361,14 +1358,35 @@ class MobileGenerator extends BaseGenerator {
         }
 
         if(canRestore) {
-          resourceRoleQuantityAfterRegenreted.dualRole = dualRole;
-          resourceRoleQuantityAfterRegenreted.quantity = quantity;
-          tempResourceQuantityMap.delete(dualRole); 
-          tempResourceQuantityMap.delete(resourceRole);
-          tempResourceQuantityMap.set(this.helper.generateJobKey({
-            dualRole,
-            resourceRole
-          }), cloneDeep(resourceRoleQuantityAfterRegenreted));
+          const { jobsToCreate, jobsToUpdate, jobsToDelete } = this.helper.generateDualRoleJob({
+            resourceRole: resourceRole,
+            ...resourceRoleQuantityAfterRegenreted
+          }, {
+            resourceRole: dualRole,
+            ...resourceRoleQuantityAfterRegenreted
+          });
+          
+          if(!jobsToCreate.length && !jobsToUpdate.length && !jobsToDelete.length) return;
+
+          jobsToDelete.forEach(({previousJob}) => {
+            const jobKey = this.helper.generateJobKey(previousJob);
+            tempResourceQuantityMap.delete(jobKey);
+          })
+    
+          jobsToUpdate.forEach(({previousJob, newJob}) => {
+            const jobKey = this.helper.generateJobKey(previousJob);
+            tempResourceQuantityMap.set(jobKey, {
+              ...tempResourceQuantityMap.get(jobKey),
+              ...newJob
+            });
+          })
+    
+          jobsToCreate.forEach(({newJob}) => {
+            const jobKey = this.helper.generateJobKey(newJob);
+            tempResourceQuantityMap.set(jobKey, {
+              ...newJob
+            });
+          })
         }
       });
 
@@ -1680,7 +1698,6 @@ class MobileGenerator extends BaseGenerator {
       this.backupDualRolesMap = {};
       if(backupAndRestoreDualRoles) {
         this.drive.driveShifts.forEach((driveShift, driveShiftIndex) => {
-          const backupDriveShift = this.masterData.backupDriveShiftMap[driveShift.key];
           if(!this.backupDualRolesMap[driveShiftIndex]) {
             this.backupDualRolesMap[driveShiftIndex] = [];
           }
@@ -1736,7 +1753,7 @@ class MobileGenerator extends BaseGenerator {
         })
         this.updateDriveTotalSlots();
       }
-    }
+    }    
   }
 
   buildMultiDriveShifts() {
