@@ -54,6 +54,8 @@
 		<members>skedFutureCallPostCommitEventHandler</members>
 		<members>skedImmediateRefreshTravelTimeIndexBatch</members>
 		<members>skedImmediateRefreshTTIIndexBatch_Test</members>
+		<members>skedJobHandler</members>
+		<members>skedJobTrigger_Test</members>
 		<members>skedJobAllocationHandler</members>
 		<members>skedJobAllocationPostProcessBatch</members>
 		<members>skedJobAllocationPostProcessBatch_Test</members>
