@@ -143,6 +143,7 @@
 		<members>Opportunity.HS_Relationship_Manager__c</members>
 		<members>ContentVersion.Expiry_Date__c</members>
 		<members>Task_Reassignment_Matrix__mdt.Task_Creation_Threshold_In_Days__c</members>
+		<members>sked__Resource__c.sked_REAL_ID_Compliant_indicator__c</members>
 		<members>Biomed_Collection_Op_Center__c.sked_Auto_Generate_Dual_Role__c</members>
 		<members>Biomed_Collection_Op_Center__c.sked_Only_Generate_Dual_If_1_Machine__c</members>
 		<members>sked_Drive__c.sked_Dual_Roles_Auto_Generated__c</members>
@@ -323,6 +324,7 @@
 		<members>sked__Resource__c-Staff Layout</members>
 		<members>ContentVersion-Content Version Layout</members> 
 		<members>Task_Reassignment_Matrix__mdt-Task Reassignment Matrix Layout</members>  		
+		<members>sked__Resource__c-Staff Layout</members>
 		<name>Layout</name>
 	</types>
 	<types>
@@ -342,6 +344,14 @@
 	<types>
 		<members>Drives_with_Account_and_Site</members>
 		<members>Jobs_with_Job_Allocation</members>
+		<members>Resource_Tag_with_Sked_Region_and_Territory</members>
+		<members>Resources_with_Activity</members>
+		<members>Resources_with_Availability</members>
+		<members>Resources_with_Collection_Op</members>
+		<members>Resources_with_Job_Allocation</members>
+		<members>Resources_with_ResourceTag_and_CollectionOp</members>
+		<members>Resources_with_Users</members>
+		<members>Resources_with_or_without_Users</members>
 		<name>ReportType</name>
 	</types>
 	<types>

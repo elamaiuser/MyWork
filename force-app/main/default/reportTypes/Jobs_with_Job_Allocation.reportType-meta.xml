@@ -210,7 +210,7 @@
         </columns>
         <columns>
             <checkedByDefault>false</checkedByDefault>
-            <displayNameOverride>Locked</displayNameOverride>
+            <displayNameOverride>Job Locked</displayNameOverride>
             <field>sked__Locked__c</field>
             <table>sked__Job__c</table>
         </columns>
@@ -630,17 +630,26 @@
         </columns>
         <columns>
             <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Job : Drive : Drive Date</displayNameOverride>
             <field>sked_Drive__c.sked_Drive_Date__c</field>
             <table>sked__Job__c</table>
         </columns>
         <columns>
             <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Job : Drive : Drive Name</displayNameOverride>
             <field>sked_Drive__c.Name</field>
             <table>sked__Job__c</table>
         </columns>
         <columns>
             <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Job : Drive : Collection Operation</displayNameOverride>
             <field>sked_Drive__c.sked_Collection_Operation__c</field>
+            <table>sked__Job__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Drive Status</displayNameOverride>
+            <field>sked_Drive__c.sked_Status__c</field>
             <table>sked__Job__c</table>
         </columns>
         <masterLabel>Jobs</masterLabel>
@@ -990,7 +999,7 @@
         </columns>
         <columns>
             <checkedByDefault>false</checkedByDefault>
-            <displayNameOverride>Locked</displayNameOverride>
+            <displayNameOverride>Job Allocation Locked</displayNameOverride>
             <field>sked_Locked__c</field>
             <table>sked__Job__c.sked__Job_Allocations__r</table>
         </columns>
