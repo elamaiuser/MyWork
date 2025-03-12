@@ -1346,8 +1346,8 @@ export default class SlwcDriveManagement extends NavigationMixin(LightningElemen
 
     /** Dual Role Assignment Modal */
     handleSaveDualRoleAssignmentModal(detail) {
-        const { drive, driveShift, newJob } = detail;
-        driveGeneratorInstance.saveJobDualRole(driveShift.key, newJob);
+        const { driveShift, jobsToUpdate, jobsToDelete } = detail;
+        driveGeneratorInstance.saveJobDualRole(driveShift.key, jobsToUpdate, jobsToDelete);
     }
 
     formatTime(time) {

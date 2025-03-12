@@ -790,17 +790,26 @@ class BaseGenerator {
   }
 
   /** Job actions */
-  saveJobDualRole(shiftKey, job) {
-    if (!shiftKey || !job) return;
+  saveJobDualRole(shiftKey, jobsToUpdate = [], jobsToDelete = []) {
+    if (!shiftKey || (!jobsToUpdate.length && !jobsToDelete.length)) return;
     let shift = this.drive.driveShifts.find((e) => e.key == shiftKey);
     let newList = [...shift.jobs];
 
-    const primaryRoleJobIndex = newList.findIndex((item) => item.resourceRole && !item.dualRole && item.resourceRole === job.resourceRole);
-    const dualRoleJobIndex = newList.findIndex((item) => item.resourceRole && !item.dualRole && item.resourceRole === job.dualRole);
-    if(primaryRoleJobIndex === -1 || dualRoleJobIndex === -1) return;
+    jobsToDelete.forEach(job => {
+      const jobIndex = newList.findIndex((item) => item.key === job.key);
+      if(jobIndex !== 0) {
+        newList.splice(jobIndex, 1);
+      }
+    })
 
-    newList[primaryRoleJobIndex] = job;
-    newList.splice(dualRoleJobIndex, 1);
+    jobsToUpdate.forEach(job => {
+      const jobIndex = newList.findIndex((item) => item.key === job.key);
+      newList[jobIndex] = {
+        ...newList[jobIndex],
+        ...job
+      }
+    })
+
     shift.jobs = newList;
 
     this.applyRoleTimeForSingleJob(shift, job);

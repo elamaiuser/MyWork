@@ -3491,7 +3491,56 @@ class DriveHelper {
     return allRolesValid;
   }
 
-  mergeDualRoleJobs = 
+  generateDualRoleJob = (job1, job2) => {
+    const { quantity: quantity1 } = job1;
+    const { quantity: quantity2 } = job2;
+    
+    const jobsToUpdate = [];
+    const jobsToDelete = [];
+
+    if(quantity2 === quantity1) {
+      jobsToUpdate.push({
+        ...job1,
+        dualRole: job2.resourceRole,
+      })
+      jobsToDelete.push(job2);
+      return {
+        jobsToUpdate,
+        jobsToDelete
+      }
+    }
+
+    if(quantity1 < quantity2) {
+      jobsToUpdate.push({
+        ...job1,
+        dualRole: job2.resourceRole,
+        quantity: job1.quantity
+      })
+      jobsToUpdate.push({
+        ...job2,
+        dualRole: '',
+        quantity: job2.quantity - job1.quantity
+      })
+    }
+
+    if(quantity1 > quantity2) {
+      jobsToUpdate.push({
+        ...job1,
+        dualRole: job2.resourceRole,
+        quantity: job1.quantity - job2.quantity
+      })
+      jobsToUpdate.push({
+        ...job2,
+        dualRole: '',
+        quantity: job2.quantity
+      })
+    }
+
+    return {
+      jobsToUpdate,
+      jobsToDelete
+    }
+  }
 }
 
 export {
