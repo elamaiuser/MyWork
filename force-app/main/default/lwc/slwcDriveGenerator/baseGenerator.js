@@ -790,8 +790,8 @@ class BaseGenerator {
   }
 
   /** Job actions */
-  saveJobDualRole(shiftKey, jobsToUpdate = [], jobsToDelete = []) {
-    if (!shiftKey || (!jobsToUpdate.length && !jobsToDelete.length)) return;
+  saveJobDualRole(shiftKey, jobsToCreate = [], jobsToUpdate = [], jobsToDelete = []) {
+    if (!shiftKey || (!jobsToCreate.length && !jobsToUpdate.length && !jobsToDelete.length)) return;
     let shift = this.drive.driveShifts.find((e) => e.key == shiftKey);
     let newList = [...shift.jobs];
 
@@ -804,14 +804,21 @@ class BaseGenerator {
 
     jobsToUpdate.forEach(job => {
       const jobIndex = newList.findIndex((item) => item.key === job.key);
-      newList[jobIndex] = job;
+      if(jobIndex !== -1) {
+        extend(newList[jobIndex], job);
+        this.applyRoleTimeForSingleJob(shift, newList[jobIndex]);
+        this.onJobChanged(shift, newList[jobIndex]);
+      }
+    })
+
+    jobsToCreate.forEach(job => {
+      this.applyRoleTimeForSingleJob(shift, job);
+      this.onJobChanged(shift, job);    
+      newList.push(job);
     })
 
     shift.jobs = newList;
 
-    this.applyRoleTimeForSingleJob(shift, job);
-    this.onJobChanged(shift, job);
-    
     return this.notifyDriveChanged();
   }
 
