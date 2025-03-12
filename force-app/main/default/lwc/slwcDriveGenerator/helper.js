@@ -2986,6 +2986,11 @@ class DriveHelper {
     return isNotCdlDriverJob && isNotDotDriverJob && (job.resourceRole === 'Driver' || job.dualRole === 'Driver')
   }
 
+  isDriverSupport(job) {
+    if(!job) return false;
+    return job.resourceRole === 'Driver Support';
+  }
+  
   /*
     HRP-10428
     Any drive up to 3 hours would default to 1 round,

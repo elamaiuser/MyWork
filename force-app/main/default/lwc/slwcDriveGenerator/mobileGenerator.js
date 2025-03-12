@@ -799,7 +799,12 @@ class MobileGenerator extends BaseGenerator {
         }
 
         //vehicles
-        let currentNoOfVehicles = this.drive.totalVehicleRequested;
+        let currentNoOfVehicles = this.drive.doNotUseVehicle ? 
+          0 : 
+          this.drive.preferSystemGeneratedVehicles ? 
+            this.drive.totalVehicleRequested : 
+            this.drive.numberOfVehicles;
+
         this.drivesWithVehicles = this.helper.calculateNumberOfVehiclesForDrive(this.drive, availableVehicles, {
           maxDOT,
           maxCDL
@@ -818,7 +823,7 @@ class MobileGenerator extends BaseGenerator {
 
           return this.onDriveDataChanged(driveChanges)
             .then(() => {
-              if (currentNoOfVehicles === noOfVehicles) {
+              if (currentNoOfVehicles === noOfVehicles || !this.drive.preferSystemGeneratedVehicles || this.drive.doNotUseVehicle) {
                 //case 1, new no of Vehicles = current no of Vehicles 
                 //proess validate and save drive
                 return {
@@ -1384,7 +1389,11 @@ class MobileGenerator extends BaseGenerator {
     if (skipVehicleCalculation) {
       let totalVehicleRequested = this.drive.totalVehicleRequestedChanged.totalVehicleRequested;
       if (isNullOrEmpty(totalVehicleRequested) || totalVehicleRequested < 1) {
-        totalVehicleRequested = 1;
+        if(this.drive.numberOfVehicles > 0) {
+          totalVehicleRequested = this.drive.numberOfVehicles;
+        } else {
+          totalVehicleRequested = 1;
+        }
       }
 
       if (this.drive.doNotUseVehicle) {
@@ -1392,6 +1401,7 @@ class MobileGenerator extends BaseGenerator {
       } else {
         if(this.drive.preferSystemGeneratedVehicles) {
           this.drive.totalVehicleRequested = totalVehicleRequested;
+          this.drive.nnumberOfVehicles = totalVehicleRequested;
         } else {
           this.drive.totalVehicleRequested = this.drive.numberOfVehicles;
         }
