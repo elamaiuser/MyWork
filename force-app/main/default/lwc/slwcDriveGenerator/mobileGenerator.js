@@ -1215,18 +1215,22 @@ class MobileGenerator extends BaseGenerator {
 
   generateDualRoles() {
     const calculateExcessStaffCapacity = (drive, mapResourceQuantity) => {
+      const driveShiftsMetadata = this.drive.driveShiftsMetadata;
+
       let staffCapacity = 0;
-      drive.driveShifts.forEach((driveShift) => {
+      drive.driveShifts.forEach((driveShift, driveShiftIndex) => {
+        const driveShiftMetadata =  driveShiftsMetadata?.driveShifts?.[driveShiftIndex];
         const driveShiftStaffCapacity = Math.floor(this.helper.calculateStaffCapacity([
           'Driver', 'Driver Support', '2RBC', 'VP/HH', 'Charge'
-        ], drive, driveShift.driveShiftMetadata, mapResourceQuantity, this.masterData));
+        ], drive, driveShiftMetadata, mapResourceQuantity, this.masterData));
         staffCapacity += driveShiftStaffCapacity;
       });
 
       let tempDrive = {
         projectedRegisteredDonors: drive.projectedRegisteredDonors,
         staffCapacity: staffCapacity,
-        driveShifts: drive.driveShifts.map(driveShift => {
+        driveShifts: drive.driveShifts.map((driveShift, driveShiftIndex) => {
+          const driveShiftMetadata =  driveShiftsMetadata?.driveShifts?.[driveShiftIndex];
           const resourceQuantityMap = mapResourceQuantity.get(driveShiftMetadata?.key);
           const jobs = [];
           Array.from(resourceQuantityMap.keys()).forEach((jobKey) => {
@@ -1234,7 +1238,7 @@ class MobileGenerator extends BaseGenerator {
               resourceRole,
               dualRole
             } = this.helper.parseJobKey(jobKey);
-            let { quantity, vphhQuantity, aptQuantity, isManuallyCreated, manuallyCreatedFrom } = mapResourceQuantity.get(jobKey);
+            let { quantity, vphhQuantity, aptQuantity, isManuallyCreated, manuallyCreatedFrom } = resourceQuantityMap.get(jobKey);
 
             jobs.push({
               resourceRole,
@@ -1274,7 +1278,7 @@ class MobileGenerator extends BaseGenerator {
     if(excessStaffCapacity < this.masterData.adminSetting.excessStaffCapacityThreshold) return;
 
     const driveShiftsMetadata = this.drive.driveShiftsMetadata;
-    this.drive.driveShifts.forEach(driveShift => {
+    this.drive.driveShifts.forEach((driveShift, driveShiftIndex) => {
       const driveShiftMetadata =  driveShiftsMetadata?.driveShifts?.[driveShiftIndex];
       const resourceQuantityMap = tempMapResourceQuantity.get(driveShiftMetadata?.key);
       const areCurrentRolesValid = this.helper.checkResourceQuantityMapContainsRoles(resourceQuantityMap, ['2RBC', 'Charge', 'Driver', 'Driver Support']);
