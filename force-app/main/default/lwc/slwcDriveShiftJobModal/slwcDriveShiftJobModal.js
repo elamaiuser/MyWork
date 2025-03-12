@@ -65,7 +65,7 @@ export default class SlwcDriveShiftJobModal extends LightningElement {
 
     get quantityDisabled() {
         if(this.isVehicleResource) {
-            return this.drive.doNotUseVehicle;
+            return true;
         }
 
         return this.isVolunteerResource || this.showAptQuantityFields;
