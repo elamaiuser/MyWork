@@ -3391,28 +3391,28 @@ class DriveHelper {
     return dateTimeObj.toJSDate();
   }
 
-  countDriveShiftStaffs(driveShift, ignoreLunchBreak = false) {
+  countDriveShiftStaffs(drive, driveShift, masterData, ignoreLunchBreak = false) {
     const driveShiftStaffs = Math.floor(this.countDriveStaffs([
       'Driver', 'Driver Support', '2RBC', 'VP/HH', 'Charge'
-    ], this.drive, driveShift.driveShiftMetadata, 
+    ], drive, driveShift.driveShiftMetadata, 
       new Map()
         .set(driveShift.driveShiftMetadata.key, this.getDriveShiftResourceQuantity(driveShift))
-    , this.masterData, ignoreLunchBreak));
+    , masterData, ignoreLunchBreak));
 
     return driveShiftStaffs;
   }
 
-  calculateDriveAverageStaffCapacity(drive) {
+  calculateDriveAverageStaffCapacity(drive, masterData) {
     let driveStaffCount = 0;
-    if (this.masterData && this.masterData.staffingDecisionMatrix) {
+    if (masterData && masterData.staffingDecisionMatrix) {
       drive.driveShifts.forEach((driveShift) => {
-        const driveShiftStaffCount = this.countDriveShiftStaffs(driveShift);
+        const driveShiftStaffCount = this.countDriveShiftStaffs(drive, driveShift, masterData);
         driveStaffCount += driveShiftStaffCount;
       });
     }
     if(drive.staffCapacity && drive.staffCapacity > 0 && driveStaffCount > 0) {
       let averageStaffCapacity = drive.staffCapacity / driveStaffCount;
-      averageStaffCapacity = drive.averageStaffCapacity.toFixed(1);
+      averageStaffCapacity = +drive.averageStaffCapacity.toFixed(1);
       return averageStaffCapacity;
     } else {
       return 0;
@@ -3422,28 +3422,28 @@ class DriveHelper {
   calculateExcessStaffCapacity(drive) {
     if(drive.staffCapacity && drive.staffCapacity > 0 && drive.maxRoleCapacityWithDrawHours && drive.maxRoleCapacityWithDrawHours > 0) {
       if(drive.projectedRegisteredDonors) {
-        return (drive.staffCapacity - drive.projectedRegisteredDonors) / drive.maxRoleCapacityWithDrawHours;
+        return +((drive.staffCapacity - drive.projectedRegisteredDonors) / drive.maxRoleCapacityWithDrawHours).toFixed(1);
       } else {
-        return drive.staffCapacity / drive.maxRoleCapacityWithDrawHours;
+        return +(drive.staffCapacity / drive.maxRoleCapacityWithDrawHours).toFixed(1);;
       }
     } else {
       return 0;
     }
   } 
   
-  calculateDriveShiftMaxStaffCapacity(driveShift, ignoreLunchBreak = false) {
+  calculateDriveShiftMaxStaffCapacity (drive, driveShift, masterData, ignoreLunchBreak = false) {
     const driveShiftStaffCapacity = this.calculateMaximumStaffCapacity([
       'Driver', 'Driver Support', '2RBC', 'VP/HH', 'Charge'
-    ], this.drive, driveShift.driveShiftMetadata, 
+    ], drive, driveShift.driveShiftMetadata, 
       new Map()
         .set(driveShift.driveShiftMetadata.key, this.getDriveShiftResourceQuantity(driveShift))
-    , this.masterData, ignoreLunchBreak);
+    , masterData, ignoreLunchBreak);
 
     return driveShiftStaffCapacity;
   }
 
-  calculateDriveShiftDrawHours(driveShift, ignoreLunchBreak = false) {
-    const drawHours = this.calculateDrawHours(driveShift.driveShiftMetadata, this.masterData, driveShift.driveShiftMetadata.lunchBreakSettings);
+  calculateDriveShiftDrawHours(driveShift, masterData, ignoreLunchBreak = false) {
+    const drawHours = this.calculateDrawHours(driveShift.driveShiftMetadata, masterData, driveShift.driveShiftMetadata.lunchBreakSettings);
     return drawHours;
   }
 
@@ -3453,11 +3453,11 @@ class DriveHelper {
     let totalDrawHours = 0;
     if (masterData && masterData.staffingDecisionMatrix) {
       drive.driveShifts.forEach((driveShift) => {
-        const driveShiftMaxStaffCapacity = this.calculateDriveShiftMaxStaffCapacity(driveShift);
+        const driveShiftMaxStaffCapacity = this.calculateDriveShiftMaxStaffCapacity(drive, driveShift, masterData);
         if(driveShiftMaxStaffCapacity && driveShiftMaxStaffCapacity > driveMaxStaffCapacity){
           driveMaxStaffCapacity = driveShiftMaxStaffCapacity;
         }
-        const shiftDrawHours = this.calculateDriveShiftDrawHours(driveShift);
+        const shiftDrawHours = this.calculateDriveShiftDrawHours(driveShift, masterData);
         if(shiftDrawHours){
           totalDrawHours = totalDrawHours + shiftDrawHours;
         }
@@ -3468,8 +3468,8 @@ class DriveHelper {
     }
 
     return {
-      maxRoleCapacity: driveMaxStaffCapacity.toFixed(2),
-      maxRoleCapacityWithDrawHours: driveMaxStaffCapacityWithDrawHours.toFixed(2)
+      maxRoleCapacity: +driveMaxStaffCapacity.toFixed(2),
+      maxRoleCapacityWithDrawHours: +driveMaxStaffCapacityWithDrawHours.toFixed(2)
     }
   }
 
@@ -3501,12 +3501,19 @@ class DriveHelper {
 
     if(quantity1 === quantity2) {
       jobsToUpdate.push({
-        ...job1,
-        dualRole: job2.resourceRole,
-        quantity: job1.quantity
+        previousJob: job1,
+        newJob: {
+          ...job1,
+          dualRole: job2.resourceRole,
+          quantity: job1.quantity,
+          backupJob: job1
+        }
       })
-      jobsToDelete.push(job2);
+      jobsToDelete.push({
+        previousJob: job2
+      });
       return {
+        jobsToCreate,
         jobsToUpdate,
         jobsToDelete
       }
@@ -3514,29 +3521,42 @@ class DriveHelper {
 
     if(quantity1 < quantity2) {
       jobsToUpdate.push({
-        ...job1,
-        dualRole: job2.resourceRole,
-        quantity: job1.quantity
+        previousJob: job1,
+        newJob: {
+          ...job1,
+          dualRole: job2.resourceRole,
+          quantity: job1.quantity
+        }
       })
       jobsToUpdate.push({
-        ...job2,
-        dualRole: '',
-        quantity: job2.quantity - job1.quantity
+        previousJob: job2,
+        newJob: {
+          ...job2,
+          dualRole: '',
+          quantity: job2.quantity - job1.quantity
+        }
       })
     }
 
     if(quantity1 > quantity2) {
       jobsToUpdate.push({
-        ...job1,
-        dualRole: job2.resourceRole,
-        quantity: job2.quantity
+        previousJob: job1,
+        newJob: {
+          ...job1,
+          dualRole: job2.resourceRole,
+          quantity: job2.quantity
+        }
       })
-      jobsToDelete.push(job2)
+      jobsToDelete.push({
+        previousJob: job2
+      })
       jobsToCreate.push({
-        ...job1,
-        id: '',
-        key: generateUUID(),
-        quantity: job1.quantity - job2.quantity
+        newJob: {
+          ...job1,
+          id: '',
+          key: generateUUID(),
+          quantity: job1.quantity - job2.quantity
+        }
       })
     }
 
