@@ -299,6 +299,8 @@
 		<members>slwcStaffingComplementModal</members>
 		<members>travelTimeBreakdown</members>	
 		<members>aRCFileUploadComponent</members>	
+		<members>slwcDriveCalendarDriveList</members>
+		<members>slwcDriveSchedulingFilters</members>
 		<name>LightningComponentBundle</name>
 	</types>
 	<types>
