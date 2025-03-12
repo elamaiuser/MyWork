@@ -1,7 +1,7 @@
 import { get, cloneDeep, orderBy, isEqual, sum, compact, uniqBy, isObject, isDate, max } from 'c/lodash';
 import { LINK_DRIVE_TYPE, RESOURCE_TYPE, MANUALLY_CREATED_FROM, DRIVE_CHANGE_REQUEST_TYPE , ASSET_TYPE, PROCEDURE_TYPE, DRIVE_TYPE, OPERATION_TYPE, RESOURCE_ROLE_GROUP, PENDING_ACTION, DRIVE_STATUS, RESOURCE_ROLE, DRIVE_CHANGE_REQUEST_ITEM_TYPE, DRIVE_CONTENTION, DRIVE_CONTENTION_RESOLUTION, JOB_ALLOCATION_STATUS, DRIVE_APPROVAL_STATUS, OPERATION_DRIVE_LIMIT_TYPE, DRIVE_REQUEST_CHANGE_STATUS} from 'c/slwcConstants';
 import { DateTime } from 'c/luxon';
-import { isNullOrEmpty, parseJSON, getTravelTimeIndexKey } from 'c/slwcUtils';
+import { isNullOrEmpty, parseJSON, getTravelTimeIndexKey, generateUUID } from 'c/slwcUtils';
 import { territoryCollectionOperationQueryModel, territoryCollectionOperationService } from 'c/dataService';
 import * as autoMapper from 'c/autoMapper';
 import * as slwcAvailator from 'c/slwcAvailator';
@@ -3495,13 +3495,15 @@ class DriveHelper {
     const { quantity: quantity1 } = job1;
     const { quantity: quantity2 } = job2;
     
+    const jobsToCreate = [];
     const jobsToUpdate = [];
     const jobsToDelete = [];
 
-    if(quantity2 === quantity1) {
+    if(quantity1 === quantity2) {
       jobsToUpdate.push({
         ...job1,
         dualRole: job2.resourceRole,
+        quantity: job1.quantity
       })
       jobsToDelete.push(job2);
       return {
@@ -3527,16 +3529,19 @@ class DriveHelper {
       jobsToUpdate.push({
         ...job1,
         dualRole: job2.resourceRole,
-        quantity: job1.quantity - job2.quantity
-      })
-      jobsToUpdate.push({
-        ...job2,
-        dualRole: '',
         quantity: job2.quantity
+      })
+      jobsToDelete.push(job2)
+      jobsToCreate.push({
+        ...job1,
+        id: '',
+        key: generateUUID(),
+        quantity: job1.quantity - job2.quantity
       })
     }
 
     return {
+      jobsToCreate,
       jobsToUpdate,
       jobsToDelete
     }

@@ -98,15 +98,15 @@ export default class SlwcDualRoleAssignmentModal extends LightningElement {
   }
 
   init = (detail) => {
+    this.errorMessages = [];
+    this.resetModel(); 
+
     if(this.mode === MODE.DEFAULT) {
       const { drive, driveShift } = detail;
       this.drive = drive;
       this.driveShift = driveShift;
       this.isOpen = true;  
     }
-  
-    this.errorMessages = [];
-    this.resetModel(); 
   }
 
   resetModel = () => {
@@ -150,12 +150,7 @@ export default class SlwcDualRoleAssignmentModal extends LightningElement {
     if(!primaryRoleJob) return null;
     if(!secondaryRoleJob) return primaryRoleJob;
 
-    const { jobsToUpdate, jobsToDelete} = this.driveHelper.generateDualRoleJob(primaryRoleJob, secondaryRoleJob);
-    
-    return {
-      jobsToUpdate,
-      jobsToDelete
-    }
+    return this.driveHelper.generateDualRoleJob(primaryRoleJob, secondaryRoleJob);
   }
 
   validate() {
@@ -199,10 +194,11 @@ export default class SlwcDualRoleAssignmentModal extends LightningElement {
     if(!this.validate()) return;
 
     const {primaryRoleJob, secondaryRoleJob} = this.getJobsToMerge();
-    const {jobsToUpdate, jobsToDelete} = this.mergeSecondaryRoleJobToPrimaryRoleJob(primaryRoleJob, secondaryRoleJob);
+    const {jobsToCreate, jobsToUpdate, jobsToDelete} = this.mergeSecondaryRoleJobToPrimaryRoleJob(primaryRoleJob, secondaryRoleJob);
     const eventValues = { 
       drive: this.drive, 
-      driveShift: this.driveShift, 
+      driveShift: this.driveShift,
+      jobsToCreate,
       jobsToUpdate,
       jobsToDelete
     };

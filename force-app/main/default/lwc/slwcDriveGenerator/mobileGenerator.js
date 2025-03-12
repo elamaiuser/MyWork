@@ -936,7 +936,7 @@ class MobileGenerator extends BaseGenerator {
   }
 
   updateDriveAverageStaffCapacity() {
-    this.drive.averageStaffCapacity = this.helper.updateDriveAverageStaffCapacity(this.drive);
+    this.drive.averageStaffCapacity = this.helper.calculateDriveAverageStaffCapacity(this.drive);
   }
 
   updateDriveMaxRoleCapacity() {
@@ -1288,14 +1288,14 @@ class MobileGenerator extends BaseGenerator {
         ?.jobAllocations?.find(jobAllocation => jobAllocation.status !== JOB_ALLOCATION_STATUS.DELETED);;
       if(any2RBCAllocations || anyDriverSuppoerAllocations) return;
 
-      const { jobsToUpdate, jobsToDelete } = this.helper.generateDualRoleJob({
+      const { jobsToCreate, jobsToUpdate, jobsToDelete } = this.helper.generateDualRoleJob({
         ...driveShift.jobs.find(job => job.resourceRole === '2RBC'),
         quantity: resourceQuantityMap.get('2RBC').quantity
       }, {
         ...driveShift.jobs.find(job => job.resourceRole === 'Driver Support'),
         quantity: resourceQuantityMap.get('Driver Support').quantity
       });
-      if(!jobsToUpdate.length && !jobsToDelete.length) return;
+      if(!jobsToCreate.length && !jobsToUpdate.length && !jobsToDelete.length) return;
 
       jobsToDelete.forEach(job => {
         resourceQuantityMap.delete(job.resourceRole);
@@ -1304,6 +1304,12 @@ class MobileGenerator extends BaseGenerator {
       jobsToUpdate.forEach(job => {
         resourceQuantityMap.set(job.resourceRole, {
           ...resourceQuantityMap.get(job.resourceRole),
+          ...job
+        });
+      })
+
+      jobsToCreate.forEach(job => {
+        resourceQuantityMap.set(job.resourceRole, {
           ...job
         });
       })

@@ -133,8 +133,8 @@ export default class SlwcStaffingComplementModal extends LightningElement {
   }
 
   saveDualRoleAssignmentModal = (event) => {
-    const { driveShift, jobsToUpdates, jobsToDelete } = event.detail;    
-    this.driveGeneratorInstance.saveJobDualRole(driveShift.key, jobsToUpdates, jobsToDelete);
+    const { driveShift, jobsToCreate, jobsToUpdates, jobsToDelete } = event.detail;    
+    this.driveGeneratorInstance.saveJobDualRole(driveShift.key, jobsToCreate, jobsToUpdates, jobsToDelete);
 
     this.closeDualRoleAssignmentModal();
   }
