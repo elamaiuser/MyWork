@@ -24,7 +24,7 @@
     </values>
     <values>
         <field>Input_Type__c</field>
-        <value xsi:type="xsd:string">Text</value>
+        <value xsi:type="xsd:string">TextArea</value>
     </values>
     <values>
         <field>Is_Dynamic__c</field>
