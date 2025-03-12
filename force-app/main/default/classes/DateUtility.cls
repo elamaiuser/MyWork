@@ -79,6 +79,8 @@ public class DateUtility {
         List<Date> intermediateDates = new List<Date>();
 
         Date dtStartDate = Date.valueOf(startDate);
+        intermediateDates.add(dtStartDate); //Adding the start date in the list as the first drive date
+
         Date dtEndDate = Date.valueOf(endDate);
         Date nextDate = dtStartDate.addDays(Integer.valueOf(finalResults.donorEligibilityDay));
         while (nextDate <= dtEndDate) {
