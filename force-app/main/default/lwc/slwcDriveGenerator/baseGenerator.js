@@ -797,17 +797,14 @@ class BaseGenerator {
 
     jobsToDelete.forEach(job => {
       const jobIndex = newList.findIndex((item) => item.key === job.key);
-      if(jobIndex !== 0) {
+      if(jobIndex !== -1) {
         newList.splice(jobIndex, 1);
       }
     })
 
     jobsToUpdate.forEach(job => {
       const jobIndex = newList.findIndex((item) => item.key === job.key);
-      newList[jobIndex] = {
-        ...newList[jobIndex],
-        ...job
-      }
+      newList[jobIndex] = job;
     })
 
     shift.jobs = newList;

@@ -150,11 +150,11 @@ export default class SlwcDualRoleAssignmentModal extends LightningElement {
     if(!primaryRoleJob) return null;
     if(!secondaryRoleJob) return primaryRoleJob;
 
-    const { jobsToUpdate, jobToDelete} = this.driveHelper.generateDualRoleJob(primaryRoleJob, secondaryRoleJob);
+    const { jobsToUpdate, jobsToDelete} = this.driveHelper.generateDualRoleJob(primaryRoleJob, secondaryRoleJob);
     
     return {
       jobsToUpdate,
-      jobToDelete
+      jobsToDelete
     }
   }
 
@@ -199,12 +199,12 @@ export default class SlwcDualRoleAssignmentModal extends LightningElement {
     if(!this.validate()) return;
 
     const {primaryRoleJob, secondaryRoleJob} = this.getJobsToMerge();
-    const {jobsToUpdate, jobToDelete} = this.mergeSecondaryRoleJobToPrimaryRoleJob(primaryRoleJob, secondaryRoleJob);
+    const {jobsToUpdate, jobsToDelete} = this.mergeSecondaryRoleJobToPrimaryRoleJob(primaryRoleJob, secondaryRoleJob);
     const eventValues = { 
       drive: this.drive, 
       driveShift: this.driveShift, 
       jobsToUpdate,
-      jobToDelete
+      jobsToDelete
     };
 
     if(this.mode === MODE.DEFAULT) {
