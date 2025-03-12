@@ -1223,7 +1223,7 @@ class MobileGenerator extends BaseGenerator {
         staffCapacity += driveShiftStaffCapacity;
       });
 
-      let drive = {
+      let tempDrive = {
         projectedRegisteredDonors: drive.projectedRegisteredDonors,
         staffCapacity: staffCapacity,
         driveShifts: drive.driveShifts.map(driveShift => {
@@ -1253,9 +1253,9 @@ class MobileGenerator extends BaseGenerator {
         })
       };
 
-      const { maxRoleCapacity, maxRoleCapacityWithDrawHours } = this.helper.calculateDriveMaxRoleCapacity(drive);
+      const { maxRoleCapacity, maxRoleCapacityWithDrawHours } = this.helper.calculateDriveMaxRoleCapacity(tempDrive);
       const excessStaffCapacity = this.helper.calculateExcessStaffCapacity({
-        ...drive,
+        ...tempDrive,
         maxRoleCapacity,
         maxRoleCapacityWithDrawHours
       });
@@ -1271,7 +1271,7 @@ class MobileGenerator extends BaseGenerator {
 
     let tempMapResourceQuantity = cloneDeep(this.mapResourceQuantity);
     const excessStaffCapacity = calculateExcessStaffCapacity(this.drive, tempMapResourceQuantity);
-    if(excessStaffCapacity > this.masterData.adminSetting.excessStaffCapacityThreshold) return;
+    if(excessStaffCapacity < this.masterData.adminSetting.excessStaffCapacityThreshold) return;
 
     const driveShiftsMetadata = this.drive.driveShiftsMetadata;
     this.drive.driveShifts.forEach(driveShift => {
