@@ -35,6 +35,18 @@ public class DriveGenerationUtil {
             this.travelTimeCoToSiteVariance = 0;
             this.travelTimeSiteToCoVariance = 0;
         }
+
+        public Object get(String fieldName) {
+            if(fieldName.equalsIgnoreCase('leadTime')) return this.leadTime;
+            if(fieldName.equalsIgnoreCase('setupTime')) return this.setupTime;
+            if(fieldName.equalsIgnoreCase('breakdownTime')) return this.breakdownTime;
+            if(fieldName.equalsIgnoreCase('wrapUpTime')) return this.wrapUpTime;
+            if(fieldName.equalsIgnoreCase('siteLogisticsTo')) return this.siteLogisticsTo;
+            if(fieldName.equalsIgnoreCase('siteLogisticsBack')) return this.siteLogisticsBack;
+            if(fieldName.equalsIgnoreCase('travelTime')) return this.travelTime;
+            if(fieldName.equalsIgnoreCase('travelTime2')) return this.travelTime2;
+            return null;
+        }
     }
 
     public class TravelTimeSettingModel {
