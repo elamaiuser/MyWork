@@ -790,22 +790,35 @@ class BaseGenerator {
   }
 
   /** Job actions */
-  saveJobDualRole(shiftKey, job) {
-    if (!shiftKey || !job) return;
+  saveJobDualRole(shiftKey, jobsToCreate = [], jobsToUpdate = [], jobsToDelete = []) {
+    if (!shiftKey || (!jobsToCreate.length && !jobsToUpdate.length && !jobsToDelete.length)) return;
     let shift = this.drive.driveShifts.find((e) => e.key == shiftKey);
     let newList = [...shift.jobs];
 
-    const primaryRoleJobIndex = newList.findIndex((item) => item.resourceRole && !item.dualRole && item.resourceRole === job.resourceRole);
-    const dualRoleJobIndex = newList.findIndex((item) => item.resourceRole && !item.dualRole && item.resourceRole === job.dualRole);
-    if(primaryRoleJobIndex === -1 || dualRoleJobIndex === -1) return;
+    jobsToDelete.forEach(({previousJob}) => {
+      const jobIndex = newList.findIndex((item) => item.key === previousJob.key);
+      if(jobIndex !== -1) {
+        newList.splice(jobIndex, 1);
+      }
+    })
 
-    newList[primaryRoleJobIndex] = job;
-    newList.splice(dualRoleJobIndex, 1);
+    jobsToUpdate.forEach(({previousJob, newJob}) => {
+      const jobIndex = newList.findIndex((item) => item.key === previousJob.key);
+      if(jobIndex !== -1) {
+        extend(newList[jobIndex], newJob);
+        this.applyRoleTimeForSingleJob(shift, newList[jobIndex]);
+        this.onJobChanged(shift, newList[jobIndex]);
+      }
+    })
+
+    jobsToCreate.forEach(({newJob}) => {
+      this.applyRoleTimeForSingleJob(shift, newJob);
+      this.onJobChanged(shift, newJob);    
+      newList.push(newJob);
+    })
+
     shift.jobs = newList;
 
-    this.applyRoleTimeForSingleJob(shift, job);
-    this.onJobChanged(shift, job);
-    
     return this.notifyDriveChanged();
   }
 

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+	<types>
+		<members>Biomed_Collection_Op_Center__c.sked_Auto_Generate_Dual_Role__c</members>
+		<members>Biomed_Collection_Op_Center__c.sked_Only_Generate_Dual_If_1_Machine__c</members>
+		<members>sked_Drive__c.sked_Dual_Roles_Auto_Generated__c</members>
+		<name>CustomField</name>
+	</types>
+	<types>
+		<members>autoMapper</members>
+		<members>dataService</members>
+		<members>slwcDriveCalendarDriveList</members>
+		<members>slwcDriveGenerator</members>
+		<members>slwcDriveManagement</members>
+		<members>slwcDriveSchedulingFilters</members>
+		<members>slwcDualRoleAssignmentModal</members>
+		<members>slwcStaffingComplementModal</members>
+		<name>LightningComponentBundle</name>
+	</types>
+	<version>63.0</version>
+</Package>
