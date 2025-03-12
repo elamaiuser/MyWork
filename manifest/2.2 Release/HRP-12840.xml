@@ -4,6 +4,8 @@
 		<members>skedExceptionLogService</members>
 		<members>skedJobAllocationPostProcessBatch</members>
 		<members>slwcAllocationService</members>
+		<members>skedActivityHandler</members>
+		<members>skedActivityResourceHandler</members>
 		<name>ApexClass</name>
 	</types>
 	

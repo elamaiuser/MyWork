@@ -74,6 +74,8 @@
 		<members>BSFTaskChecklistTriggerTest</members>
 		<members>skedExceptionLogService</members>
 		<members>slwcAllocationService</members>
+		<members>skedActivityHandler</members>
+		<members>skedActivityResourceHandler</members>
 		<name>ApexClass</name>
 	</types>
 	<types>
