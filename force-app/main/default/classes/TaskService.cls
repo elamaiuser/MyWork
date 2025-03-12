@@ -71,6 +71,7 @@ public with sharing class TaskService {
         String opportunityId = '';
         String driveId = '';
         String driveExternalId = '';
+        String driveUFID = '';
         if(taskId != null){
             List<Task> taskList = [SELECT Subject,
                                             WhatId
@@ -83,7 +84,8 @@ public with sharing class TaskService {
                     opportunityId = taskList[0].WhatId;
                     List<Sked_Drive__c> docList = [SELECT Id,
                                                             sked_Opportunity__c,
-                                                            sked_Drive_External_Id__c
+                                                            sked_Drive_External_Id__c,
+                                                            sked_UFID__c
                                                     FROM Sked_Drive__c 
                                                     WHERE sked_Opportunity__c = :taskList[0].WhatId
                                                     AND sked_Is_Surrogate__c = false
@@ -91,6 +93,7 @@ public with sharing class TaskService {
                     if(!docList.isEmpty()){
                         driveId = docList[0].Id;
                         driveExternalId = docList[0].sked_Drive_External_Id__c != null ? docList[0].sked_Drive_External_Id__c : '';
+                        driveUFID = docList[0].sked_UFID__c != null ? docList[0].sked_UFID__c : '';
                     }
                 }
                 //HRP-12627 changes ends
@@ -109,6 +112,7 @@ public with sharing class TaskService {
                     reportLink = reportLink.replace('{{opportunityId}}',opportunityId);
                     reportLink = reportLink.replace('{{driveId}}',driveId);
                     reportLink = reportLink.replace('{{driveExternalId}}',driveExternalId);
+                    reportLink = reportLink.replace('{{driveUFID}}',driveUFID);
                     tempMap.put('link', reportLink);
                     //HRP-12627 changes ends
                     tempMap.put('id', metadata.DeveloperName);
