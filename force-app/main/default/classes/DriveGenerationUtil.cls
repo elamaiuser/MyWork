@@ -146,11 +146,14 @@ public class DriveGenerationUtil {
                 event.put(fieldsToUpdate[0], cbLogWrapper.batchException != NULL ? BSF_Constants.BATCH_STATUS_ERROR : BSF_Constants.BATCH_STATUS_COMPLETED);
                 event.put(fieldsToUpdate[1], BSF_Constants.CURRENT_DATE_TIME);
 
-                //HRP-11368: When FS Sys gen completes, set Mobile sys gen status as Not Needed for Adhoc CB
-                if(cbLogWrapper.batchInfo.equalsIgnoreCase(BSF_Constants.BATCH_SYS_GEN_FS) && cbLogWrapper.opportunitySource.equalsIgnoreCase(BSF_Constants.OPP_SOURCE_ADHOC_CALENDAR_BUILD)) {
+                //HRP-11368: When Drive Gen Batch completes, set FS & Mobile sys gen status as Not Needed for Adhoc CB
+                if(cbLogWrapper.batchInfo.equalsIgnoreCase(BSF_Constants.BATCH_DRIVE_GENERATION) && cbLogWrapper.opportunitySource.equalsIgnoreCase(BSF_Constants.OPP_SOURCE_ADHOC_CALENDAR_BUILD)) {
+                    fieldsToUpdate.addAll(BSF_Constants.MAP_BATCHINFO_FIELDSTOUPDATE.get(BSF_Constants.BATCH_SYS_GEN_FS));
                     fieldsToUpdate.addAll(BSF_Constants.MAP_BATCHINFO_FIELDSTOUPDATE.get(BSF_Constants.BATCH_SYS_GEN_MOBILE));
                     event.put(fieldsToUpdate[2], BSF_Constants.BATCH_STATUS_NOT_NEEDED);
                     event.put(fieldsToUpdate[3], BSF_Constants.CURRENT_DATE_TIME);
+                    event.put(fieldsToUpdate[4], BSF_Constants.BATCH_STATUS_NOT_NEEDED);
+                    event.put(fieldsToUpdate[5], BSF_Constants.CURRENT_DATE_TIME);
                 }
             }
             
