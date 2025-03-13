@@ -324,14 +324,13 @@
             map_nextYearDriveDate_oppList.get(nextYearDate).add(opp);
         }
 
-        List<Opportunity> existingAdhocDrives = [SELECT Id, AccountId, Drive_Date__c 
+        List<Opportunity> preExistingDrives = [SELECT Id, AccountId, Drive_Date__c 
                                                 FROM Opportunity
-                                                WHERE Source__c = :BSF_Constants.OPP_SOURCE_ADHOC_CALENDAR_BUILD
-                                                AND AccountId IN :accountIds
+                                                WHERE AccountId IN :accountIds
                                                 AND Drive_Date__c IN :map_nextYearDriveDate_oppList.keySet()
                                                 AND StageName NOT IN (:BSF_Constants.STAGE_CANCELLED)];
         
-        for(Opportunity opp : existingAdhocDrives) {
+        for(Opportunity opp : preExistingDrives) {
             String key = opp.Drive_Date__c + '_' + opp.AccountId;
             if(!map_driveDateAndAccountIdKey_oppList.containsKey(key)) {
                 map_driveDateAndAccountIdKey_oppList.put(key, new List<Opportunity>());
