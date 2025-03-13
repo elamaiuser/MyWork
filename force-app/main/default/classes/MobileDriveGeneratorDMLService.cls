@@ -218,7 +218,7 @@ public with sharing class MobileDriveGeneratorDMLService {
                     if (drive.totalProductsProjected < 25) unqualifiedReasons.add('Products Projected < 25');
                     
                     if (!unqualifiedReasons.isEmpty()) {
-                        String existingUnqualifyingReasons = opp.Calendar_Build_Reasons_For_Unqualified__c;
+                        String existingUnqualifyingReasons = opp.Calendar_Build_Reasons_For_Unqualified__c ?? '';
                         if(existingUnqualifyingReasons != NULL && String.isNotBlank(existingUnqualifyingReasons)) {
                             existingUnqualifyingReasons = existingUnqualifyingReasons +';';
                         }
