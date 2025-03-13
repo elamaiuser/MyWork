@@ -1218,8 +1218,7 @@ class MobileGenerator extends BaseGenerator {
       const driveShiftsMetadata = this.drive.driveShiftsMetadata;
 
       let staffCapacity = 0;
-      drive.driveShifts.forEach((driveShift, driveShiftIndex) => {
-        const driveShiftMetadata =  driveShiftsMetadata?.driveShifts?.[driveShiftIndex];
+      driveShiftsMetadata.driveShifts.forEach((driveShiftMetadata) => {
         const driveShiftStaffCapacity = Math.floor(this.helper.calculateStaffCapacity([
           'Driver', 'Driver Support', '2RBC', 'VP/HH', 'Charge'
         ], drive, driveShiftMetadata, mapResourceQuantity, this.masterData));
@@ -1229,8 +1228,7 @@ class MobileGenerator extends BaseGenerator {
       let tempDrive = {
         projectedRegisteredDonors: drive.projectedRegisteredDonors,
         staffCapacity: staffCapacity,
-        driveShifts: drive.driveShifts.map((driveShift, driveShiftIndex) => {
-          const driveShiftMetadata =  driveShiftsMetadata?.driveShifts?.[driveShiftIndex];
+        driveShifts: driveShiftsMetadata.driveShifts.map((driveShiftMetadata) => {
           const resourceQuantityMap = mapResourceQuantity.get(driveShiftMetadata?.key);
           const jobs = [];
           Array.from(resourceQuantityMap.keys()).forEach((jobKey) => {
@@ -1251,7 +1249,10 @@ class MobileGenerator extends BaseGenerator {
             })
           })          
           return {
-            ...driveShift,
+            ...{
+              ...driveShiftMetadata,
+              driveShiftMetadata: driveShiftMetadata
+            },
             jobs: jobs
           }
         })
@@ -1277,12 +1278,12 @@ class MobileGenerator extends BaseGenerator {
     if(excessStaffCapacity < this.masterData.adminSetting.excessStaffCapacityThreshold) return;
 
     const driveShiftsMetadata = this.drive.driveShiftsMetadata;
-    this.drive.driveShifts.forEach((driveShift, driveShiftIndex) => {
-      const driveShiftMetadata =  driveShiftsMetadata?.driveShifts?.[driveShiftIndex];
+    driveShiftsMetadata.driveShifts.forEach((driveShiftMetadata, driveShiftIndex) => {
       const resourceQuantityMap = tempMapResourceQuantity.get(driveShiftMetadata?.key);
       const areCurrentRolesValid = this.helper.checkResourceQuantityMapContainsRoles(resourceQuantityMap, ['2RBC', 'Charge', 'Driver', 'Driver Support']);
       if(!areCurrentRolesValid) return;
-      const backupDriveShift = this.masterData.backupDriveShiftMap[driveShift.key];
+      const driveShift = this.drive.driveShifts[driveShiftIndex];
+      const backupDriveShift = this.masterData.backupDriveShiftMap[driveShift?.key];
       const any2RBCAllocations = backupDriveShift?.jobs
         ?.find(job => job.resourceRole === '2RBC' || job.dualRole === '2RBC')
         ?.jobAllocations?.find(jobAllocation => jobAllocation.status !== JOB_ALLOCATION_STATUS.DELETED);
@@ -1306,11 +1307,13 @@ class MobileGenerator extends BaseGenerator {
       })
 
       jobsToUpdate.forEach(({previousJob, newJob}) => {
-        const jobKey = this.helper.generateJobKey(previousJob);
+        const previousJobKey = this.helper.generateJobKey(previousJob);
+        const jobKey = this.helper.generateJobKey(newJob);
         resourceQuantityMap.set(jobKey, {
-          ...resourceQuantityMap.get(jobKey),
+          ...resourceQuantityMap.get(previousJobKey),
           ...newJob
         });
+        resourceQuantityMap.delete(previousJobKey);
       })
 
       jobsToCreate.forEach(({newJob}) => {
@@ -1366,7 +1369,7 @@ class MobileGenerator extends BaseGenerator {
             ...resourceRoleQuantityAfterRegenreted
           }, {
             resourceRole: dualRole,
-            ...resourceRoleQuantityAfterRegenreted
+            ...dualRoleQuantityAfterRegenerated
           });
           
           if(!jobsToCreate.length && !jobsToUpdate.length && !jobsToDelete.length) return;
@@ -1377,11 +1380,13 @@ class MobileGenerator extends BaseGenerator {
           })
     
           jobsToUpdate.forEach(({previousJob, newJob}) => {
-            const jobKey = this.helper.generateJobKey(previousJob);
+            const previousJobKey = this.helper.generateJobKey(previousJob);
+            const jobKey = this.helper.generateJobKey(newJob);
             tempResourceQuantityMap.set(jobKey, {
-              ...tempResourceQuantityMap.get(jobKey),
+              ...tempResourceQuantityMap.get(previousJobKey),
               ...newJob
             });
+            resourceQuantityMap.delete(previousJobKey);
           })
     
           jobsToCreate.forEach(({newJob}) => {
