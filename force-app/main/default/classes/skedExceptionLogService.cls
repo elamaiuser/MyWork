@@ -108,7 +108,7 @@ global class skedExceptionLogService extends skedDataService {
                     skedHC__Status__c = skedConstants.EXCEPTION_LOG_STATUS_OPEN
                 );
                 if (!string.isBlank(unavailability.exceptionText)) {
-                    newExceptionLog.skedHC__Exception__c = unavailability.exceptionText.contains('Conflict') ? unavailability.exceptionText: ('Conflict With '+conflictedAllocation.name);
+                    newExceptionLog.skedHC__Exception__c = 'Conflict with ' + conflictedAllocation.sked__Job__r.sked_Drive__r.Name;
                 }
 
                 if (!string.isBlank(unavailability.relatedEventFieldApi)) { 
@@ -284,7 +284,8 @@ global class skedExceptionLogService extends skedDataService {
         jobAllocationBuilder.addField('sked__Set_End__c');
         jobAllocationBuilder.addField('sked__Job__r.sked__Type__c');
         jobAllocationBuilder.addField('sked__Job__r.sked_Drive__c');
-        
+        jobAllocationBuilder.addField('sked__Job__r.sked_Drive__r.Name');
+
         jobAllocationBuilder.addCondition('sked__Resource__c IN {0}', resourceIds);
         if (startTime != NULL && endTime != NULL) {
             jobAllocationBuilder.addCondition('sked__Start__c < {0}', endTime);
