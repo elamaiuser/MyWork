@@ -1,23 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Report xmlns="http://soap.sforce.com/2006/04/metadata">
     <columns>
-        <field>sked__Job__c$Name</field>
+        <field>sked__Job__c$sked_Drive__c.sked_Status__c</field>
     </columns>
     <columns>
-        <aggregateTypes>Sum</aggregateTypes>
-        <field>sked__Job__c$sked__Locked__c</field>
+        <field>sked__Job__c.sked__Job_Allocations__r$sked__Resource__c</field>
     </columns>
     <columns>
-        <field>sked__Job__c$sked_Resource_Role__c</field>
+        <field>sked__Job__c$sked__Type__c</field>
     </columns>
     <columns>
         <field>sked__Job__c$sked_Dual_Role__c</field>
     </columns>
     <columns>
-        <field>sked__Job__c.sked__Job_Allocations__r$Name</field>
+        <field>sked__Job__c.sked__Job_Allocations__r$sked_Additional_Roles__c</field>
     </columns>
     <columns>
-        <field>sked__Job__c.sked__Job_Allocations__r$sked_Additional_Roles__c</field>
+        <aggregateTypes>Sum</aggregateTypes>
+        <field>sked__Job__c$sked_Exclude_from_Optimizer__c</field>
     </columns>
     <columns>
         <aggregateTypes>Sum</aggregateTypes>
@@ -28,25 +28,32 @@
         <field>sked__Job__c.sked__Job_Allocations__r$sked_Guarded__c</field>
     </columns>
     <columns>
-        <field>sked__Job__c.sked__Job_Allocations__r$CreatedDate</field>
+        <field>sked__Job__c.sked__Job_Allocations__r$CreatedBy</field>
     </columns>
     <columns>
-        <field>sked__Job__c.sked__Job_Allocations__r$LastModifiedDate</field>
+        <field>sked__Job__c.sked__Job_Allocations__r$LastModifiedBy</field>
     </columns>
     <filter>
         <criteriaItems>
             <column>sked__Job__c$sked_Drive__c.sked_Collection_Operation__c</column>
             <columnToColumn>false</columnToColumn>
             <isUnlocked>true</isUnlocked>
-            <operator>notEqual</operator>
-            <value></value>
+            <operator>equals</operator>
+            <value>Adrian MI</value>
         </criteriaItems>
         <criteriaItems>
-            <column>sked__Job__c$sked__Locked__c</column>
+            <column>sked__Job__c$sked_Drive__c.sked_Status__c</column>
+            <columnToColumn>false</columnToColumn>
+            <isUnlocked>true</isUnlocked>
+            <operator>notEqual</operator>
+            <value>Complete,Cancel</value>
+        </criteriaItems>
+        <criteriaItems>
+            <column>sked__Job__c$sked_Exclude_from_Optimizer__c</column>
             <columnToColumn>false</columnToColumn>
             <isUnlocked>true</isUnlocked>
             <operator>equals</operator>
-            <value>1</value>
+            <value>0</value>
         </criteriaItems>
         <criteriaItems>
             <column>sked__Job__c.sked__Job_Allocations__r$sked_Locked__c</column>
@@ -63,11 +70,18 @@
             <value>0</value>
         </criteriaItems>
         <criteriaItems>
-            <column>sked__Job__c$sked_Resource_Role__c</column>
+            <column>sked__Job__c$sked__Type__c</column>
             <columnToColumn>false</columnToColumn>
             <isUnlocked>true</isUnlocked>
             <operator>equals</operator>
-            <value>,2RBC,2RBC Sign-off,Apheresis,Apheresis Charge,Charge,Charge - 2RBC,Charge Mentor,Charge - Special Collections,Competent Driver,Drive Lead,Driver,Driver CDL A,Driver CDL B,Driver - DOT,Driver Prestaff,Driver Support,Driver Tech Trainee,Float,FS Supplies,HH,Licensed Nurse,Limited HH,Limited Ship,NCE Staff,OJI,Pickup Driver,Plasma,Post Collections,Regulated - Medical Screeners,Regulated - RNOR,Special Collections,Special Collections Charge,Staff Shuttle,Team Supervisor,Trainee,Translator,TRN HH,TRN VP,VOL Licensed Nurse,VOL Limited HH,Volunteer Donor Ambassador,VP,VP/HH,Work Restriction</value>
+            <value>,Drive,2RBC,2RBC Sign-off,Apheresis,Apheresis Charge,Charge,Charge - 2RBC,Charge Mentor,Charge - Special Collections,Competent Driver,Drive Lead,Driver,Driver CDL A,Driver CDL B,Driver - DOT,Driver Prestaff,Driver Support,Driver Tech Trainee,Float,HH,Lead Donor Ambassador,Licensed Nurse,Limited HH,Limited Ship,NCE Staff,OJI,Pickup Driver,Plasma,Post Collections,Regulated - Medical Screeners,Regulated - RNOR,Special Collections,Special Collections Charge,Staff Shuttle,Team Supervisor,Trainee,Translator,TRN HH,TRN VP,VOL Licensed Nurse,VOL Limited HH,Volunteer Donor Ambassador,VP,VP/HH,Work Restriction,Vehicle,Equipment,Donor Ambassador</value>
+        </criteriaItems>
+        <criteriaItems>
+            <column>sked__Job__c.sked__Job_Allocations__r$sked__Status__c</column>
+            <columnToColumn>false</columnToColumn>
+            <isUnlocked>false</isUnlocked>
+            <operator>equals</operator>
+            <value>Pending Dispatch,Dispatched,Confirmed,En Route,Checked In,In Progress,Complete</value>
         </criteriaItems>
         <language>en_US</language>
     </filter>
