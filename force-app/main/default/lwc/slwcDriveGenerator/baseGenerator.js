@@ -657,7 +657,7 @@ class BaseGenerator {
   resetElectContentions() {
     const backupDrive = this.masterData.backupDrive;
     const currentDrive = this.drive;
-    let currentContentionResolutions = currentDrive.contentionResolution ? currentDrive.contentionResolution.split(';') : [];
+    let currentContentionResolutions = Array.isArray(currentDrive.contentionResolution) ? [...currentDrive.contentionResolution] : (currentDrive.contentionResolution ? currentDrive.contentionResolution.split(';') : []);
     remove(currentContentionResolutions, item => item === DRIVE_CONTENTION_RESOLUTION.ELECT_DUAL_ROLE_REMOVAL);
     remove(currentContentionResolutions, item => item === DRIVE_CONTENTION_RESOLUTION.ELECT_WITHIN_42_DAYS);
     remove(currentContentionResolutions, item => item === DRIVE_CONTENTION_RESOLUTION.ELECT_STAFFING_COMPLEMENT_CHANGED_ACCEPT_NEW_CHANGE);
