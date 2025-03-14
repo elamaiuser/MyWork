@@ -1315,7 +1315,8 @@ class BaseGenerator {
       if(!resourceQuantityMap) return;
 
       driveShift.jobs?.forEach(job => {
-        const isSystemGeneratedResourceRole = this.helper.isSystemRole(job, this.drive) && job.resourceRole;
+        const jobKey = this.helper.generateJobKey(job);
+        const isSystemGeneratedResourceRole = this.helper.isSystemRole(job, this.drive) && job.resourceRole && !job.dualRole;
         if(!isSystemGeneratedResourceRole) return;
 
         const isDriverJob = this.helper.isDriverJob(job) || this.helper.isDriverSupport(job);
@@ -1333,17 +1334,17 @@ class BaseGenerator {
 
         if(!backupJob) return;
         
-        if(job.resourceRole === 'VP/HH') {
-          resourceQuantityMap.set(job.resourceRole, {
-            ...(resourceQuantityMap.get(job.resourceRole) ?? {}),
+        if(jobKey === 'VP/HH') {
+          resourceQuantityMap.set(jobKey, {
+            ...(resourceQuantityMap.get(jobKey) ?? {}),
             quantity: backupJob.quantity,
             vphhQuantity: backupJob.vphhQuantity,
             aptQuantity: backupJob.aptQuantity,
             systemQuantity: backupJob.systemQuantity,
           })
         } else {
-          resourceQuantityMap.set(job.resourceRole, {
-            ...(resourceQuantityMap.get(job.resourceRole) ?? {}),
+          resourceQuantityMap.set(jobKey, {
+            ...(resourceQuantityMap.get(jobKey) ?? {}),
             quantity: backupJob.quantity,
             systemQuantity: backupJob.systemQuantity,
           })
