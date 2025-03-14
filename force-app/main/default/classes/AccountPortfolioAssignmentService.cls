@@ -20,6 +20,7 @@
 * 07/12/2024				  Balaji N 				 logic for HRP-13028(Method:HandleAccExceptionDelete, null check; zipTerrForException,Error log event)
 * 07/29/2024				  Balaji N 				 logic for HRP-13174(Method:accTeamDateSyncOnAccPortUpdates, Skip DML for account team with End dates in past)
 * 08/12/2024				  Balaji N				 logic for HRP-12485(Method:handleTerritoryPortfolioInsert,logic for adding territory portfolio)
+* 03/06/2025                  Krapy Tuli             logic for HRP-14322 to handle ATM bsf portfolio change if the same user present in future as well as past BSF portfolio
 * *
 *************************************************************************************************************************************************
 */
@@ -221,6 +222,7 @@ commented part of HRP-12053*/
                                 atm.start_date__c = startDate;
                                 atm.End_Date__c = endDate;
                                 atm.TeamMemberRole = pa.Assignment_Type__c;
+                                atm.BSF_Portfolio__c=pa.BSF_Portfolio__c;//HRP-14322
                             }
                             //HRP-10569 start
                             //The Acc Team inside this else if are future teams coming part of portfolio assignment
