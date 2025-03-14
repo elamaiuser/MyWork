@@ -4,9 +4,6 @@
         <field>sked__Job__c$sked_Drive__c.sked_Status__c</field>
     </columns>
     <columns>
-        <field>sked__Job__c$Name</field>
-    </columns>
-    <columns>
         <field>sked__Job__c.sked__Job_Allocations__r$sked__Resource__c</field>
     </columns>
     <columns>
@@ -17,9 +14,6 @@
     </columns>
     <columns>
         <field>sked__Job__c.sked__Job_Allocations__r$sked_Additional_Roles__c</field>
-    </columns>
-    <columns>
-        <field>sked__Job__c.sked__Job_Allocations__r$Name</field>
     </columns>
     <columns>
         <aggregateTypes>Sum</aggregateTypes>
