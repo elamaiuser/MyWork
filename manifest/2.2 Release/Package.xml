@@ -309,7 +309,9 @@
 		<members>Account-DRD Fixed Site Layout</members>
 		<members>Account-DRD Mobile Account Layout</members>
 		<members>Account-System Admin Fixed Site Account Layout</members>
-		<members>Account-System Admin Mobile Account Layout</members>	
+		<members>Account-System Admin Mobile Account Layout</members>
+		<members>Biomed_Collection_Op_Center__c-Biomed Collection Op %28Center%29 Layout</members>
+		<members>Biomed_Collection_Op_Center__c-Collection Operation Layout ReadOnly</members>	
 		<members>Calendar_Build_Log_Manual_Run__c-Calendar Build Log Manual Run Layout</members>
 		<members>Opportunity-APS Planner Mobile Opp Layout</members>
 		<members>Opportunity-APS Scheduler Mobile Opp Layout</members>
