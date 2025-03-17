@@ -41,7 +41,6 @@
         <nameSegment>UFIDGenerator</nameSegment>
     </actionCalls>
     <apiVersion>63.0</apiVersion>
-    <areMetricsLoggedToDataCloud>false</areMetricsLoggedToDataCloud>
     <description>HRP-14498</description>
     <environments>Default</environments>
     <formulas>
