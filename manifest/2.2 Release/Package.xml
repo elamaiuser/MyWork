@@ -39,8 +39,10 @@
         <members>skedDriveTrigger_Test</members>
 		<members>skedDriveRankingBatch</members>
 		<members>skedImmediateRefreshTravelTimeIndexBatch</members>
-        <members>skedJobAllocationHandler</members>
-        <members>skedJobAllocationTrigger_Test</members>
+		<members>skedImmediateRefreshTTIIndexBatch_Test</members>
+		<members>skedJobHandler</members>
+		<members>skedJobTrigger_Test</members>
+		<members>skedJobAllocationHandler</members>
 		<members>skedJobAllocationPostProcessBatch</members>
         <members>skedJobAllocationPostProcessBatch_Test</members>        
 		<members>skedJobAllocationTravelTimeBatch</members>
