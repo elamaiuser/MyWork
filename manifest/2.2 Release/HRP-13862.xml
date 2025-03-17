@@ -15,6 +15,11 @@
 		<name>CustomField</name>
 	</types>
 	<types>
+		<members>Biomed_Collection_Op_Center__c-Biomed Collection Op %28Center%29 Layout</members>
+		<members>Biomed_Collection_Op_Center__c-Collection Operation Layout ReadOnly</members>
+		<name>Layout</name>
+	</types>
+	<types>
 		<members>autoMapper</members>
 		<members>dataService</members>
 		<members>slwcDriveCalendarDriveList</members>
