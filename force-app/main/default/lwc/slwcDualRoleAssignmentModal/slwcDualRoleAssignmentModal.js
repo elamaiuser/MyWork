@@ -4,6 +4,7 @@ import { CurrentPageReference } from 'lightning/navigation';
 import { registerListener, unregisterAllListeners } from 'c/pubsub';
 import { fireEvent } from 'c/pubsub';
 import { MANUALLY_CREATED_FROM } from 'c/slwcConstants';
+import { DriveHelper } from 'c/slwcDriveGenerator';
 
 const MODE = {
   DEFAULT: 'default',
@@ -11,6 +12,8 @@ const MODE = {
 }
 
 export default class SlwcDualRoleAssignmentModal extends LightningElement {
+  driveHelper = new DriveHelper();
+
   @api mode = MODE.DEFAULT;
   @api drive = null;
   @api driveShift = null;
@@ -95,15 +98,15 @@ export default class SlwcDualRoleAssignmentModal extends LightningElement {
   }
 
   init = (detail) => {
+    this.errorMessages = [];
+    this.resetModel(); 
+
     if(this.mode === MODE.DEFAULT) {
       const { drive, driveShift } = detail;
       this.drive = drive;
       this.driveShift = driveShift;
       this.isOpen = true;  
     }
-  
-    this.errorMessages = [];
-    this.resetModel(); 
   }
 
   resetModel = () => {
@@ -147,16 +150,7 @@ export default class SlwcDualRoleAssignmentModal extends LightningElement {
     if(!primaryRoleJob) return null;
     if(!secondaryRoleJob) return primaryRoleJob;
 
-    let newJob = {
-      ...primaryRoleJob,
-      dualRole: secondaryRoleJob.resourceRole,
-    };
-
-    if(newJob.quantity < secondaryRoleJob.quantity) {
-      newJob.quantity = secondaryRoleJob.quantity;
-    }
-    
-    return newJob;
+    return this.driveHelper.generateDualRoleJob(primaryRoleJob, secondaryRoleJob);
   }
 
   validate() {
@@ -200,19 +194,21 @@ export default class SlwcDualRoleAssignmentModal extends LightningElement {
     if(!this.validate()) return;
 
     const {primaryRoleJob, secondaryRoleJob} = this.getJobsToMerge();
-    const newJob = this.mergeSecondaryRoleJobToPrimaryRoleJob(primaryRoleJob, secondaryRoleJob);
-    
+    const {jobsToCreate, jobsToUpdate, jobsToDelete} = this.mergeSecondaryRoleJobToPrimaryRoleJob(primaryRoleJob, secondaryRoleJob);
+    const eventValues = { 
+      drive: this.drive, 
+      driveShift: this.driveShift,
+      jobsToCreate,
+      jobsToUpdate,
+      jobsToDelete
+    };
+
     if(this.mode === MODE.DEFAULT) {
-      const eventValues = { drive: this.drive, driveShift: this.driveShift, newJob: newJob };
       fireEvent(this.pageRef, 'saveDualRoleAssignmentModal', eventValues); 
       this.handleCancel();
     } else {
       this.dispatchEvent(new CustomEvent('save', {
-        detail: {
-          drive: this.drive,
-          driveShift: this.driveShift,
-          newJob: newJob,
-        }
+        detail: eventValues
       }));
     }
   }
