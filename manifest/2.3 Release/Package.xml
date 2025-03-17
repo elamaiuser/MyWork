@@ -14,6 +14,7 @@
 	</types>
       <types>
 		<members>Send_Bell_Notification_To_District_Manager_1</members>
+        <members>Set_UFID_for_Marketing_Program</members>
 		<name>Flow</name>
 	</types>
     <version>59.0</version>
