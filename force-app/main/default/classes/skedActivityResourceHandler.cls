@@ -69,7 +69,7 @@ public class skedActivityResourceHandler extends skedTriggerHub implements Calla
             activityIds.add(newRecord.sked__Activity__c);
         }
         Map<Id, sked__Activity__c> mapActivity = new Map<Id, sked__Activity__c>([
-            SELECT Id, Name, sked__Start__c, sked__End__c, sked__Type__c, sked_Is_Group_Activity__c
+            SELECT Id, Name, sked__Start__c, sked__End__c, sked__Type__c, sked_Is_Group_Activity__c,sked_Activity_Title__c
             FROM sked__Activity__c
             WHERE Id IN :activityIds
         ]);
@@ -82,7 +82,7 @@ public class skedActivityResourceHandler extends skedTriggerHub implements Calla
             unavailability.startTime = newRecord.sked_Start1__c;
             unavailability.endTime = newRecord.sked_End__c;
             unavailability.exceptionCode = skedConstants.EXCEPTION_CODE_RESOURCE_TIME_CONFLICT;
-            unavailability.exceptionText = 'Conflict with ' + activity.Name;
+            unavailability.exceptionText = 'Conflict with ' + activity.sked_Activity_Title__c;
             unavailability.relatedEventFieldApi = 'skedHC__Activity__c';
             unavailability.recordId = activity.Id;
             unavailabilityList.add(unavailability);
