@@ -1314,7 +1314,9 @@ class MobileGenerator extends BaseGenerator {
           ...resourceQuantityMap.get(previousJobKey),
           ...newJob
         });
-        resourceQuantityMap.delete(previousJobKey);
+        if(previousJobKey !== jobKey) {
+          resourceQuantityMap.delete(previousJobKey);
+        }
       })
 
       jobsToCreate.forEach(({newJob}) => {
@@ -1388,7 +1390,9 @@ class MobileGenerator extends BaseGenerator {
               ...tempResourceQuantityMap.get(previousJobKey),
               ...newJob
             });
-            tempResourceQuantityMap.delete(previousJobKey);
+            if(previousJobKey !== jobKey) {
+              tempResourceQuantityMap.delete(previousJobKey);
+            }
           })
     
           jobsToCreate.forEach(({newJob}) => {
