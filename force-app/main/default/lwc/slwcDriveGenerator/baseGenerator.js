@@ -789,21 +789,34 @@ class BaseGenerator {
   }
 
   /** Job actions */
-  saveJobDualRole(shiftKey, job) {
-    if (!shiftKey || !job) return;
+  saveJobDualRole(shiftKey, jobsToCreate = [], jobsToUpdate = [], jobsToDelete = []) {
+    if (!shiftKey || (!jobsToCreate.length && !jobsToUpdate.length && !jobsToDelete.length)) return;
     let shift = this.drive.driveShifts.find((e) => e.key == shiftKey);
     let newList = [...shift.jobs];
 
-    const primaryRoleJobIndex = newList.findIndex((item) => item.resourceRole && !item.dualRole && item.resourceRole === job.resourceRole);
-    const dualRoleJobIndex = newList.findIndex((item) => item.resourceRole && !item.dualRole && item.resourceRole === job.dualRole);
-    if(primaryRoleJobIndex === -1 || dualRoleJobIndex === -1) return;
+    jobsToDelete.forEach(({previousJob}) => {
+      const jobIndex = newList.findIndex((item) => item.key === previousJob.key);
+      if(jobIndex !== -1) {
+        newList.splice(jobIndex, 1);
+      }
+    })
 
-    newList[primaryRoleJobIndex] = job;
-    newList.splice(dualRoleJobIndex, 1);
+    jobsToUpdate.forEach(({previousJob, newJob}) => {
+      const jobIndex = newList.findIndex((item) => item.key === previousJob.key);
+      if(jobIndex !== -1) {
+        extend(newList[jobIndex], newJob);
+        this.applyRoleTimeForSingleJob(shift, newList[jobIndex]);
+        this.onJobChanged(shift, newList[jobIndex]);
+      }
+    })
+
+    jobsToCreate.forEach(({newJob}) => {
+      this.applyRoleTimeForSingleJob(shift, newJob);
+      this.onJobChanged(shift, newJob);    
+      newList.push(newJob);
+    })
+
     shift.jobs = newList;
-
-    this.applyRoleTimeForSingleJob(shift, job);
-    this.onJobChanged(shift, job);
     
     return this.notifyDriveChanged();
   }
@@ -1301,7 +1314,8 @@ class BaseGenerator {
       if(!resourceQuantityMap) return;
 
       driveShift.jobs?.forEach(job => {
-        const isSystemGeneratedResourceRole = this.helper.isSystemRole(job, this.drive) && job.resourceRole;
+        const jobKey = this.helper.generateJobKey(job);
+        const isSystemGeneratedResourceRole = this.helper.isSystemRole(job, this.drive) && job.resourceRole && !job.dualRole;
         if(!isSystemGeneratedResourceRole) return;
 
         const isDriverJob = this.helper.isDriverJob(job) || this.helper.isDriverSupport(job);
@@ -1319,17 +1333,17 @@ class BaseGenerator {
 
         if(!backupJob) return;
         
-        if(job.resourceRole === 'VP/HH') {
-          resourceQuantityMap.set(job.resourceRole, {
-            ...(resourceQuantityMap.get(job.resourceRole) ?? {}),
+        if(jobKey === 'VP/HH') {
+          resourceQuantityMap.set(jobKey, {
+            ...(resourceQuantityMap.get(jobKey) ?? {}),
             quantity: backupJob.quantity,
             vphhQuantity: backupJob.vphhQuantity,
             aptQuantity: backupJob.aptQuantity,
             systemQuantity: backupJob.systemQuantity,
           })
         } else {
-          resourceQuantityMap.set(job.resourceRole, {
-            ...(resourceQuantityMap.get(job.resourceRole) ?? {}),
+          resourceQuantityMap.set(jobKey, {
+            ...(resourceQuantityMap.get(jobKey) ?? {}),
             quantity: backupJob.quantity,
             systemQuantity: backupJob.systemQuantity,
           })
