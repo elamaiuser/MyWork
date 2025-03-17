@@ -39,7 +39,7 @@ public class DateUtility {
             donorEligibilityMsg = setting.Is_Donor_Eligibility_Msg_Needed__c 
                                     ? setting.Donor_Eligibility_Msg__c
                                         .replace('{donorEligibilityType}', donorEligibilityNeededFor.equalsIgnoreCase('Power Red') ? (donorEligibilityNeededFor + 's') : donorEligibilityNeededFor)
-                                        .replace('{donorEligibilityDay}', String.valueOf(donorEligibilityDay))
+                                        .replace('{donorEligibilityDay}', donorEligibilityDay)
                                     : '';
         }
 
