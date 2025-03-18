@@ -339,27 +339,40 @@ public with sharing class GenerateMobileDrive {
                 job.resourceRole = Constants.PROCEDURE_TYPE_2RBC;
                 job.dualRole = Constants.JOB_TYPE_DRIVER_SUPPORT;
                 job.type = Constants.PROCEDURE_TYPE_2RBC;
-                job.quantity = Math.max(
-                    staffingComplement.map_role_resourceQuantity.get(Constants.JOB_TYPE_DRIVER_SUPPORT),
-                    staffingComplement.map_role_resourceQuantity.get(Constants.PROCEDURE_TYPE_2RBC)
-                );
-                staffingComplement.jobs.add(job);
-                staffingComplement.isDualRoleGenerated = true;
-
-                //Update staffingComplement.map_role_resourceQuantity to include dual role
-                staffingComplement.map_role_resourceQuantity.remove(job.resourceRole);
-                staffingComplement.map_role_resourceQuantity.remove(job.dualRole);
-                staffingComplement.map_role_resourceQuantity.put(job.resourceRole + '-' + job.dualRole, job.quantity);
+                staffingComplement = updateJobsAfterGeneratingDualRole(job, staffingComplement);
             
-                List<String> jobsToBeRemoved = new List<String>{Constants.JOB_TYPE_DRIVER_SUPPORT, Constants.PROCEDURE_TYPE_2RBC};
                 for(MobileDriveGeneratorDMLService.DMLJob driveShiftJob : driveShift.jobs) {
-                    if(!jobsToBeRemoved.contains(driveShiftJob.resourceRole)) staffingComplement.jobs.add(driveShiftJob);
+                    if(staffingComplement.map_role_resourceQuantity.containsKey(driveShiftJob.resourceRole)) {
+                        driveShiftJob.quantity = staffingComplement.map_role_resourceQuantity.get(driveShiftJob.resourceRole);
+                        if(driveShiftJob.quantity > 0) staffingComplement.jobs.add(driveShiftJob);
+                    }
                 }
             } else {
                 staffingComplement.isDualRoleGenerated = false;
                 staffingComplement.jobs = driveShift.jobs;
             }
             return staffingComplement;
+        }
+
+        protected DriveStaffingComplementModel updateJobsAfterGeneratingDualRole(
+            MobileDriveGeneratorDMLService.DMLJob job,
+            DriveStaffingComplementModel staffingComplement
+        ) {
+            Decimal primaryRoleQuantity = staffingComplement.map_role_resourceQuantity.get(job.resourceRole);
+            Decimal secondaryRoleQuantity = staffingComplement.map_role_resourceQuantity.get(job.dualRole);
+            if(primaryRoleQuantity == secondaryRoleQuantity) job.quantity = primaryRoleQuantity;
+            else job.quantity = Math.min(primaryRoleQuantity, secondaryRoleQuantity);
+
+            staffingComplement.jobs.add(job);
+            staffingComplement.isDualRoleGenerated = true;
+            staffingComplement.map_role_resourceQuantity.remove(job.resourceRole);
+            staffingComplement.map_role_resourceQuantity.remove(job.dualRole);
+            staffingComplement.map_role_resourceQuantity.put(job.resourceRole + '-' + job.dualRole, job.quantity);
+            String newJobRole = primaryRoleQuantity > secondaryRoleQuantity ? job.resourceRole : job.dualRole;
+            Decimal newJobQuantity = Math.abs(primaryRoleQuantity - secondaryRoleQuantity);
+            staffingComplement.map_role_resourceQuantity.put(newJobRole, newJobQuantity);
+            
+           return staffingComplement;
         }
         //HRP-13862: Ends Here ->
 
