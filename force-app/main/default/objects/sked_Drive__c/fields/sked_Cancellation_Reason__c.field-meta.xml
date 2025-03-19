@@ -28,6 +28,11 @@
                 <label>ARC Staff Strike</label>
             </value>
             <value>
+                <fullName>Block Scheduling-Deny</fullName>
+                <default>false</default>
+                <label>Block Scheduling-Deny</label>
+            </value>
+            <value>
                 <fullName>Budgeted FTE Reduction</fullName>
                 <default>false</default>
                 <label>Budgeted FTE Reduction</label>
@@ -137,6 +142,11 @@
             <controllingFieldValue>ARC_Initiated_Mobile</controllingFieldValue>
             <controllingFieldValue>Sponsor_Initiated_Mobile</controllingFieldValue>
             <valueName>ARC Staff Strike</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>ARC_Initiated_Mobile</controllingFieldValue>
+            <controllingFieldValue>Sponsor_Initiated_Mobile</controllingFieldValue>
+            <valueName>Block Scheduling-Deny</valueName>
         </valueSettings>
         <valueSettings>
             <controllingFieldValue>ARC_Initiated_Mobile</controllingFieldValue>
