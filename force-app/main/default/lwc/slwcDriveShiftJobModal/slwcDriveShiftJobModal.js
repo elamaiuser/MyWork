@@ -456,7 +456,7 @@ export default class SlwcDriveShiftJobModal extends LightningElement {
             const existed = this.driveShift.jobs?.find(job => this.helper.isJobsSameRoles(job, this.job));
             if(existed) {
                 this.errorMessages.push({
-                    message: `${this.job.resourceRole} role is already existed.`
+                    message: `${this.job.resourceRole} role already exists.`
                 })
                 return false;
             }
