@@ -5,7 +5,9 @@
         <name>Layout</name>
     </types>
     <types>
-        <members>sked_Location_Account__c.sked_Location__c</members>	
+        <members>Opportunity.StageName</members>
+        <members>sked_Location_Account__c.sked_Location__c</members>        
+        <members>sked_Drive__c.sked_Stage_Options__c</members>	
         <name>CustomField</name>
     </types>
     <types>
@@ -24,5 +26,5 @@
 		<members>DRD_HomePage</members>
 		<name>FlexiPage</name>
 	</types>
-    <version>60.0</version>
+    <version>63.0</version>
 </Package>
