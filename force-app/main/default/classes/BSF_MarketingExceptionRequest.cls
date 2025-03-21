@@ -10,17 +10,17 @@ public with sharing class BSF_MarketingExceptionRequest {
         
         List<Task> tasks = [SELECT Id, OwnerId FROM Task WHERE Id IN :taskIds];
 
-        Map<Id, Id> taskVsQueueMap = new Map<Id, Id>();
+        // Map<Id, Id> taskVsQueueMap = new Map<Id, Id>();
         Map<Id, Id> queueVsTaskMap = new Map<Id, Id>();
 
         for (Task task : tasks) {
-            taskVsQueueMap.put(task.Id, task.OwnerId);
+            // taskVsQueueMap.put(task.Id, task.OwnerId);
             queueVsTaskMap.put(task.OwnerId, task.Id);
         }
 
         // Id queueId = [SELECT Id, OwnerId, Subject FROM Task WHERE Id = :taskId LIMIT 1].OwnerId;
 
-        List<GroupMember> queueMembers = [SELECT Id, GroupId, Group.Name, UserOrGroupId FROM GroupMember WHERE GroupId IN :taskVsQueueMap.values()];
+        List<GroupMember> queueMembers = [SELECT Id, GroupId, Group.Name, UserOrGroupId FROM GroupMember WHERE GroupId IN :queueVsTaskMap.keySet()];
 
         Map<Id, List<GroupMember>> taskVsQueueMemberMap = new Map<Id, List<GroupMember>>();
 
@@ -59,10 +59,18 @@ public with sharing class BSF_MarketingExceptionRequest {
                 emailList.add(email);
                 userIds.add(queueMember.UserOrGroupId);
             }
-            system.debug('emailList##' + emailList);
-            BSF_EmailNotification.sendEmails(emailList,'MarketingException',null);
+            
+        }
 
-            Id CUstomNotificationTypeId = [SELECT Id, DeveloperName, MasterLabel FROM CustomNotificationType where DeveloperName='Task_Custom_Notification' LIMIT 1].Id;
+        System.debug('emailList##' + emailList);
+        if (!emailList.isEmpty()) {
+            BSF_EmailNotification.sendEmails(emailList, 'MarketingException', null);
+        }
+
+        
+        Id CUstomNotificationTypeId = [SELECT Id, DeveloperName, MasterLabel FROM CustomNotificationType where DeveloperName='Task_Custom_Notification' LIMIT 1].Id;
+        Map<Id, BSF_CustomNotification> taskVsNotificationMap = new Map<Id, BSF_CustomNotification>();
+        for (Id taskId : taskVsQueueMemberMap.keySet()) {
             BSF_CustomNotification notification = new BSF_CustomNotification()
                                                     .body('Marketing Exception has been requested. Please review and take action.')
                                                     .title('Request for Marketing Exception Approval')
@@ -70,13 +78,19 @@ public with sharing class BSF_MarketingExceptionRequest {
                                                     .typeId(CUstomNotificationTypeId )
                                                     .target(taskId) // target object id
                                                     .category('MarketingException');
-                
-            try{
-                notification.send(userIds);  
-            }
-            catch(Exception e) {
-                System.debug('The following exception has occurred: ' + e.getMessage());
-                System.debug('Line number: '+e.getLineNumber());
+            taskVsNotificationMap.put(taskId, notification);
+            
+        }
+
+        for (Id notif : taskVsNotificationMap.keySet()) {
+            List<String> userIds = new List<String>();
+            try {
+                for (GroupMember member : taskVsQueueMemberMap.get(notif)) {
+                    userIds.add(member.UserOrGroupId);
+                }
+                taskVsNotificationMap.get(notif).send(userIds);
+            } catch (Exception e) {
+                System.debug('Notification Error: ' + e.getMessage());
             }
         }
         
