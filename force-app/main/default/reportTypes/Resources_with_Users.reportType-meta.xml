@@ -726,6 +726,11 @@
             <field>sked_Work_Zip_Code__c</field>
             <table>sked__Resource__c</table>
         </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>sked_REAL_ID_Compliant_indicator__c</field>
+            <table>sked__Resource__c</table>
+        </columns>
         <masterLabel>Resources</masterLabel>
     </sections>
     <sections>
