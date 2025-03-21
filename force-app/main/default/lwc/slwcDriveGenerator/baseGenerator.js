@@ -1,4 +1,4 @@
-import { serial, generateUUID, parseJSON, isNullOrEmpty } from 'c/slwcUtils';
+import { serial, generateUUID, parseJSON, isNullOrEmpty, cloneDeep as cloneDeepUtil } from 'c/slwcUtils';
 import { DateTime } from 'c/luxon';
 import { cloneDeep, orderBy, extend, remove, max, compact, groupBy, uniq, pick } from 'c/lodash';
 import { DriveHelper } from './helper';
@@ -199,7 +199,7 @@ class BaseGenerator {
   backupDriveShift(driveShift) {
     if (!driveShift) return;
 
-    this.masterData.backupDriveShiftMap[driveShift.key] = cloneDeep(driveShift);
+    this.masterData.backupDriveShiftMap[driveShift.key] = cloneDeepUtil(driveShift);
   }
 
   populateSiteCollectionOperation() {
@@ -805,7 +805,10 @@ class BaseGenerator {
     jobsToUpdate.forEach(({previousJob, newJob}) => {
       const jobIndex = newList.findIndex((item) => item.key === previousJob.key);
       if(jobIndex !== -1) {
-        extend(newList[jobIndex], newJob);
+        newList[jobIndex] = {
+          ...newList[jobIndex],
+          ...newJob
+        }
         this.applyRoleTimeForSingleJob(shift, newList[jobIndex]);
         this.onJobChanged(shift, newList[jobIndex]);
       }
