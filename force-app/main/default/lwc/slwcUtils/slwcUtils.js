@@ -487,6 +487,10 @@ const isGeolocationValid = (placeDetails) => {
     return placeDetails && placeDetails.geometry && placeDetails.geometry.lat && placeDetails.geometry.lng;
 }
 
+const cloneDeep = (value) => {
+    return JSON.parse(JSON.stringify(value));
+}
+
 export {
     isNullOrEmpty,
     generateUUID,
@@ -510,5 +514,6 @@ export {
     jsonFriendlyErrorReplacer,
     getTravelTimeIndexKey,
     waitUntil,
-    isGeolocationValid
+    isGeolocationValid,
+    cloneDeep
 }
