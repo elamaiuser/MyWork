@@ -3548,9 +3548,10 @@ class DriveHelper {
       jobsToCreate.push({
         newJob: {
           ...job1,
-          id: '',
+          id: uniqueId('temp_job_'),
           key: generateUUID(),
-          quantity: job1.quantity - job2.quantity
+          quantity: job1.quantity - job2.quantity,
+          jobTags: []
         }
       })
     }
