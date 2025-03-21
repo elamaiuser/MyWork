@@ -61,6 +61,7 @@
 * 12/02/2024					 Barnojit Sharma		  Tasks being assigned for cancelled drives and for fixed sites(Logic for HRP-13850)
 * 12/10/2024					 Priti Jana				  Logic for HRP-13190
 * 12/10/2024                     Satyendra Vishwakarma    HRP-6051 - Anticipated Registered Donors validation when changing procedure projections
+* 02/26/2025                     Krapy Tuli               HRP-14286 - logic update
 ************************************************************************************************************************************************
 */
 
@@ -4828,7 +4829,7 @@ opp.StageName = 'Closed';
                                 newOpp.APT_Change_Reason__c = (newOpp.Is_Template__c ? 'Template' : 'Opportunity') + ' APT changed by ' + userInfo.getName() + ' on '+system.now();
                             } else oppListToRecalculateAPT.add(newOpp);
                         } else if(recalculateAptRule3) {
-                            newOpp.APT_Required__c = FALSE; //reset value to false and populate it based on formula later
+                            //newOpp.APT_Required__c = FALSE; //reset value to false and populate it based on formula later//HRP-14286
                             oppListToRecalculateAPT.add(newOpp);
                         }    
                     }
