@@ -795,6 +795,7 @@ class BaseGenerator {
     let shift = this.drive.driveShifts.find((e) => e.key == shiftKey);
     let newList = [...shift.jobs];
 
+    const jobsChangedKeys = [];
     jobsToDelete.forEach(({previousJob}) => {
       const jobIndex = newList.findIndex((item) => item.key === previousJob.key);
       if(jobIndex !== -1) {
@@ -805,19 +806,26 @@ class BaseGenerator {
     jobsToUpdate.forEach(({previousJob, newJob}) => {
       const jobIndex = newList.findIndex((item) => item.key === previousJob.key);
       if(jobIndex !== -1) {
-        extend(newList[jobIndex], newJob);
-        this.applyRoleTimeForSingleJob(shift, newList[jobIndex]);
-        this.onJobChanged(shift, newList[jobIndex]);
+        newList[jobIndex] = {
+          ...newList[jobIndex],
+          ...newJob
+        }
+        jobsChangedKeys.push(newList[jobIndex].key)
       }
     })
 
-    jobsToCreate.forEach(({newJob}) => {
-      this.applyRoleTimeForSingleJob(shift, newJob);
-      this.onJobChanged(shift, newJob);    
+    jobsToCreate.forEach(({newJob}) => { 
       newList.push(newJob);
+      jobsChangedKeys.push(newJob.key)
     })
 
     shift.jobs = newList;
+    shift.jobs.forEach(job => {
+      if(jobsChangedKeys.includes(job.key)) {
+        this.applyRoleTimeForSingleJob(shift, job);
+        this.onJobChanged(shift, job);   
+      }
+    });
 
     return this.notifyDriveChanged();
   }
