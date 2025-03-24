@@ -27,5 +27,11 @@
 		<members>DRD_HomePage</members>
 		<name>FlexiPage</name>
 	</types>
+    <types>
+		<members>dataService</members>
+        <members>slwcDriveCalendar</members>
+		<members>slwcDriveCalendarActivityList</members>
+		<name>LightningComponentBundle</name>
+	</types>
     <version>63.0</version>
 </Package>
