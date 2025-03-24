@@ -1597,7 +1597,7 @@ class MobileGenerator extends BaseGenerator {
     })
   }
 
-  calculateVpHhQuantity(resourceRoles = ['Driver', 'Driver Support', '2RBC']) {
+  calculateVpHhQuantity(resourceRoles = ['Driver', 'Driver Support', '2RBC', 'Charge']) {
     if (!this.masterData.staffingDecisionMatrix || isNullOrEmpty(this.masterData.staffingDecisionMatrix.vpHhCapacity)) return;
 
     const driveShiftsMetadata = this.drive.driveShiftsMetadata;
@@ -2570,6 +2570,9 @@ class MobileGenerator extends BaseGenerator {
       }
     }
     this.correctJobTime(job, driveShift);
+    this.initResourceQuantityMap();
+    this.calculateResourceQuantity();
+    this.populateDriveShiftJobs(driveShift, this.drive.driveShifts.findIndex(item => item.key === driveShift.key));
     this.updateShiftMobileSetup(driveShift);
 
     if(!job.volunteerRole) {
