@@ -716,7 +716,7 @@ export default class SlwcDriveManagement extends NavigationMixin(LightningElemen
                         if(!allAssignedVehiclesValid && canHandleDriveProjectedRegisteredDonors) {
                             let currentNoOfVehicles = this.drive.totalVehicleRequested;
                             if(!this.drive.preferSystemGeneratedVehicles) {
-                                driveGeneratorInstance.onDriveDataChanged([...event.detail.properties, {
+                                driveGeneratorInstance.onDriveDataChanged([{
                                     targetName: 'totalVehicleRequestedChanged',
                                     targetValue: {
                                         totalVehicleRequested: newVehicles.length + lockedVehicles.length,
@@ -724,6 +724,9 @@ export default class SlwcDriveManagement extends NavigationMixin(LightningElemen
                                         lockedVehicles: lockedVehicles
                                     }
                                 }])
+                                .then(() => {
+                                    return this.handleValidate();
+                                })
 
                                 throw 'break';
                             }
