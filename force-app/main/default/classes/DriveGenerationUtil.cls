@@ -35,6 +35,18 @@ public class DriveGenerationUtil {
             this.travelTimeCoToSiteVariance = 0;
             this.travelTimeSiteToCoVariance = 0;
         }
+
+        public Object get(String fieldName) {
+            if(fieldName.equalsIgnoreCase('leadTime')) return this.leadTime;
+            if(fieldName.equalsIgnoreCase('setupTime')) return this.setupTime;
+            if(fieldName.equalsIgnoreCase('breakdownTime')) return this.breakdownTime;
+            if(fieldName.equalsIgnoreCase('wrapUpTime')) return this.wrapUpTime;
+            if(fieldName.equalsIgnoreCase('siteLogisticsTo')) return this.siteLogisticsTo;
+            if(fieldName.equalsIgnoreCase('siteLogisticsBack')) return this.siteLogisticsBack;
+            if(fieldName.equalsIgnoreCase('travelTime')) return this.travelTime;
+            if(fieldName.equalsIgnoreCase('travelTime2')) return this.travelTime2;
+            return null;
+        }
     }
 
     public class TravelTimeSettingModel {
@@ -112,9 +124,10 @@ public class DriveGenerationUtil {
     public static void captureCbLogAndCbErrorLog(CalendarBuildLogWrapper cbLogWrapper) {
         List<Calendar_Build_Error_Log__c> cbErrorLogListToInsert = new List<Calendar_Build_Error_Log__c>();
         try {
-            if(cbLogWrapper.opportunitySource != NULL 
-                && !String.isBlank(cbLogWrapper.opportunitySource) 
-                && cbLogWrapper.opportunitySource.equalsIgnoreCase(BSF_Constants.OPP_SOURCE_CALENDAR_BUILD) //Ignore below assignments for Adhoc CB drives
+            if(cbLogWrapper.batchInfo.equalsIgnoreCase(BSF_Constants.BATCH_DRIVE_STATUS_CORRECTION)
+                || (cbLogWrapper.opportunitySource != NULL 
+                    && !String.isBlank(cbLogWrapper.opportunitySource) 
+                    && cbLogWrapper.opportunitySource.equalsIgnoreCase(BSF_Constants.OPP_SOURCE_CALENDAR_BUILD)) //Ignore below assignments for Adhoc CB drives
             ) {
                 String driveDateToEvalString = cbLogWrapper.driveDateToEval.format();
                 DateTime sameDateTimeNextYear = Helper.getSameDayOfNextYear(cbLogWrapper.driveDateToEval);
@@ -145,11 +158,14 @@ public class DriveGenerationUtil {
                 event.put(fieldsToUpdate[0], cbLogWrapper.batchException != NULL ? BSF_Constants.BATCH_STATUS_ERROR : BSF_Constants.BATCH_STATUS_COMPLETED);
                 event.put(fieldsToUpdate[1], BSF_Constants.CURRENT_DATE_TIME);
 
-                //HRP-11368: When FS Sys gen completes, set Mobile sys gen status as Not Needed for Adhoc CB
-                if(cbLogWrapper.batchInfo.equalsIgnoreCase(BSF_Constants.BATCH_SYS_GEN_FS) && cbLogWrapper.opportunitySource.equalsIgnoreCase(BSF_Constants.OPP_SOURCE_ADHOC_CALENDAR_BUILD)) {
+                //HRP-11368: When Drive Gen Batch completes, set FS & Mobile sys gen status as Not Needed for Adhoc CB
+                if(cbLogWrapper.batchInfo.equalsIgnoreCase(BSF_Constants.BATCH_DRIVE_GENERATION) && cbLogWrapper.opportunitySource.equalsIgnoreCase(BSF_Constants.OPP_SOURCE_ADHOC_CALENDAR_BUILD)) {
+                    fieldsToUpdate.addAll(BSF_Constants.MAP_BATCHINFO_FIELDSTOUPDATE.get(BSF_Constants.BATCH_SYS_GEN_FS));
                     fieldsToUpdate.addAll(BSF_Constants.MAP_BATCHINFO_FIELDSTOUPDATE.get(BSF_Constants.BATCH_SYS_GEN_MOBILE));
                     event.put(fieldsToUpdate[2], BSF_Constants.BATCH_STATUS_NOT_NEEDED);
                     event.put(fieldsToUpdate[3], BSF_Constants.CURRENT_DATE_TIME);
+                    event.put(fieldsToUpdate[4], BSF_Constants.BATCH_STATUS_NOT_NEEDED);
+                    event.put(fieldsToUpdate[5], BSF_Constants.CURRENT_DATE_TIME);
                 }
             }
             
@@ -188,9 +204,8 @@ public class DriveGenerationUtil {
             if(cbLogWrapper.runType.equalsIgnoreCase(BSF_Constants.RUN_TYPE_MANUAL)) {
                 event.put('Parent_Calendar_Build_Log__c', [SELECT ID FROM Calendar_Build_Log__c WHERE External_Id__c = :cbLogWrapper.formattedDate LIMIT 1]?.Id);
                 event.put('Source__c', cbLogWrapper.opportunitySource);
-            } else {
-            	event.put('Drive_Date__c', cbLogWrapper.driveDateToEval);
-            }            
+            }
+            event.put('Drive_Date__c', cbLogWrapper.driveDateToEval);         
             upsert event;
             
             List<BSF_Error_Log__c> errorLogCreatedDuringBatchRun = [SELECT Id, Error_Description__c, 
@@ -325,13 +340,8 @@ public class DriveGenerationUtil {
             )
         };
         Database.SaveResult[] logInsertResult = Database.insert(errorLogToInsert, FALSE);
-        String source = cbLogWrapper.opportunitySource;
-        if(source != NULL 
-            && (source.equalsIgnoreCase(BSF_Constants.OPP_SOURCE_CALENDAR_BUILD) || (source.equalsIgnoreCase(BSF_Constants.OPP_SOURCE_ADHOC_CALENDAR_BUILD)))
-        ) {
-            cbLogWrapper.batchException = ex;
-            cbLogWrapper.errorLogIdsCreatedDuringBatchRun = BSF_Utilities.getSuccessfullySavedRecordIds(logInsertResult);
-            DriveGenerationUtil.captureCbLogAndCbErrorLog(cbLogWrapper);
-        }
+        cbLogWrapper.batchException = ex;
+        cbLogWrapper.errorLogIdsCreatedDuringBatchRun = BSF_Utilities.getSuccessfullySavedRecordIds(logInsertResult);
+        DriveGenerationUtil.captureCbLogAndCbErrorLog(cbLogWrapper);
     }
 }

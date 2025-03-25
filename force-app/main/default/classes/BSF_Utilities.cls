@@ -646,4 +646,8 @@ public with sharing class BSF_Utilities {
         }
         return parts;
     }
+
+    public static String getStringWithinLimit(String text, Integer charLimit) {
+        return (text != NULL && String.isNotBlank(text) && text.length() > charLimit) ? text.subString(0, charLimit) : (text == NULL ? '' : text);
+    }
 }

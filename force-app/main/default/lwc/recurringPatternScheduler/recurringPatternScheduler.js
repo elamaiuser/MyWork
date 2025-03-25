@@ -632,6 +632,9 @@ export default class RecurringPatternScheduler extends LightningElement {
         }
         console.log('****RecurringPatternScheduler.validateUserInput() offsetEndDate: ' + offsetEndDate);
 
+        offsetStartDate = this.getDateValuefromString(offsetStartDate);
+        offsetEndDate = this.getDateValuefromString(offsetEndDate);
+
         if(this.startDateValue === '' || this.startDateValue === null){
             this.hasError = true;
             this.errorMessage = 'Please enter Start Date';

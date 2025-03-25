@@ -1,4 +1,4 @@
-import { serial, generateUUID, parseJSON, isNullOrEmpty } from 'c/slwcUtils';
+import { serial, generateUUID, parseJSON, isNullOrEmpty, cloneDeep as cloneDeepUtil } from 'c/slwcUtils';
 import { DateTime } from 'c/luxon';
 import { cloneDeep, orderBy, extend, remove, max, compact, groupBy, uniq, pick } from 'c/lodash';
 import { DriveHelper } from './helper';
@@ -158,6 +158,11 @@ class BaseGenerator {
     } else {
       drive.driveShifts = [];
     }
+    
+    if (this.helper.isMobileDrive(drive) && isNullOrEmpty(drive.numberOfVehicles)) {
+      drive.numberOfVehicles = drive.totalVehicleRequested;
+      drive.preferSystemGeneratedVehicles = true;
+    }
 
     return drive;
   }
@@ -194,7 +199,7 @@ class BaseGenerator {
   backupDriveShift(driveShift) {
     if (!driveShift) return;
 
-    this.masterData.backupDriveShiftMap[driveShift.key] = cloneDeep(driveShift);
+    this.masterData.backupDriveShiftMap[driveShift.key] = cloneDeepUtil(driveShift);
   }
 
   populateSiteCollectionOperation() {
@@ -785,22 +790,43 @@ class BaseGenerator {
   }
 
   /** Job actions */
-  saveJobDualRole(shiftKey, job) {
-    if (!shiftKey || !job) return;
+  saveJobDualRole(shiftKey, jobsToCreate = [], jobsToUpdate = [], jobsToDelete = []) {
+    if (!shiftKey || (!jobsToCreate.length && !jobsToUpdate.length && !jobsToDelete.length)) return;
     let shift = this.drive.driveShifts.find((e) => e.key == shiftKey);
     let newList = [...shift.jobs];
 
-    const primaryRoleJobIndex = newList.findIndex((item) => item.resourceRole && !item.dualRole && item.resourceRole === job.resourceRole);
-    const dualRoleJobIndex = newList.findIndex((item) => item.resourceRole && !item.dualRole && item.resourceRole === job.dualRole);
-    if(primaryRoleJobIndex === -1 || dualRoleJobIndex === -1) return;
+    const jobsChangedKeys = [];
+    jobsToDelete.forEach(({previousJob}) => {
+      const jobIndex = newList.findIndex((item) => item.key === previousJob.key);
+      if(jobIndex !== -1) {
+        newList.splice(jobIndex, 1);
+      }
+    })
 
-    newList[primaryRoleJobIndex] = job;
-    newList.splice(dualRoleJobIndex, 1);
+    jobsToUpdate.forEach(({previousJob, newJob}) => {
+      const jobIndex = newList.findIndex((item) => item.key === previousJob.key);
+      if(jobIndex !== -1) {
+        newList[jobIndex] = {
+          ...newList[jobIndex],
+          ...newJob
+        }
+        jobsChangedKeys.push(newList[jobIndex].key)
+      }
+    })
+
+    jobsToCreate.forEach(({newJob}) => { 
+      newList.push(newJob);
+      jobsChangedKeys.push(newJob.key)
+    })
+
     shift.jobs = newList;
+    shift.jobs.forEach(job => {
+      if(jobsChangedKeys.includes(job.key)) {
+        this.applyRoleTimeForSingleJob(shift, job);
+        this.onJobChanged(shift, job);   
+      }
+    });
 
-    this.applyRoleTimeForSingleJob(shift, job);
-    this.onJobChanged(shift, job);
-    
     return this.notifyDriveChanged();
   }
 
@@ -810,14 +836,61 @@ class BaseGenerator {
     let shift = this.drive.driveShifts.find((e) => e.key == shiftKey);
     let newList = [...shift.jobs];
     let target = job;
+    let jobToBeGenerated = {};
+    let backupDriveShift = this.masterData.backupDriveShiftMap[shiftKey];
+    
+    //Run this block only if dual role is changed
+    if(target.isDualRoleModified) {
+
+      const primaryRoleJobIndex = newList.findIndex((item) => 
+        item.resourceRole && 
+        item.resourceRole === target.resourceRole && 
+        item.id === target.id
+      );
+      if(primaryRoleJobIndex === -1) return;
+
+      if(target.dualRole === 'None') {
+        target.dualRole = '';
+
+        const otherPrimaryRoleJobIndexes = newList
+          .map((item, index) =>
+            item.resourceRole === target.resourceRole &&
+            !item.dualRole &&
+            !item.isManuallyCreated &&
+            item.id !== target.id
+              ? index
+              : -1
+          )
+          .filter((index) => index !== -1);
+
+        let totalQuantity = 0;
+        if(otherPrimaryRoleJobIndexes.length > 0) {
+          totalQuantity = otherPrimaryRoleJobIndexes.reduce(
+            (sum, index) => sum + (newList[index].quantity || 0),
+            0
+          );
+          target.quantity += totalQuantity;
+
+          for (let i = 0; i < otherPrimaryRoleJobIndexes.length; i++) {
+            newList.splice(otherPrimaryRoleJobIndexes[i], 1); 
+          }
+        }
+      }
+
+      newList[primaryRoleJobIndex] = target;
+
+      const dualRoleJobIndex = newList.findIndex((item) => item.resourceRole && item.resourceRole === target.dualRole);
+      if(dualRoleJobIndex !== -1) {
+        newList.splice(dualRoleJobIndex, 1);
+      }
+
+      jobToBeGenerated = backupDriveShift.jobs?.find((item) => item.resourceRole && item.resourceRole === target.resourceRole); //will use the dual role as the primary role for the new job
+    }
 
     target.tagNames = '';
     if (target.jobTags && target.jobTags.length) {
 
       let tagNameArr = job.jobTags.reduce((result, item) => {
-        // if (!item.systemCreated) {
-        //   result.push(item.tag.name);
-        // }
         return result.concat(item.tag.name);
       }, []);
       target.tagNames = orderBy(tagNameArr, [item => item], ['asc']).join(", ");
@@ -833,6 +906,10 @@ class BaseGenerator {
       newList[index] = target;
     }
     shift.jobs = newList;
+
+    if(job.isDualRoleModified) {
+      this.repopulateJobsAfterDualRoleModification(shift, jobToBeGenerated);
+    }
 
     this.onJobChanged(shift, job, originalJob);
 
@@ -1275,8 +1352,12 @@ class BaseGenerator {
       if(!resourceQuantityMap) return;
 
       driveShift.jobs?.forEach(job => {
-        const isSystemGeneratedResourceRole = this.helper.isSystemRole(job, this.drive) && job.resourceRole;
+        const jobKey = this.helper.generateJobKey(job);
+        const isSystemGeneratedResourceRole = this.helper.isSystemRole(job, this.drive) && job.resourceRole && !job.dualRole;
         if(!isSystemGeneratedResourceRole) return;
+
+        const isDriverJob = this.helper.isDriverJob(job) || this.helper.isDriverSupport(job);
+        if(isDriverJob) return;
 
         const backupDriveShift = backupDrive.driveShifts?.[driveShiftIndex];
         if(!backupDriveShift) {
@@ -1284,23 +1365,23 @@ class BaseGenerator {
         }
 
         const backupJob = backupDriveShift.jobs?.find(_job => {
-          const sameRole = _job.resourceRole === job.resourceRole && (!job.dualRole || _job.dualRole === job.dualRole);
+          const sameRole = this.helper.isJobsSameRoles(_job, job);
           return sameRole;
         })
 
         if(!backupJob) return;
         
-        if(job.resourceRole === 'VP/HH') {
-          resourceQuantityMap.set(job.resourceRole, {
-            ...(resourceQuantityMap.get(job.resourceRole) ?? {}),
+        if(jobKey === 'VP/HH') {
+          resourceQuantityMap.set(jobKey, {
+            ...(resourceQuantityMap.get(jobKey) ?? {}),
             quantity: backupJob.quantity,
             vphhQuantity: backupJob.vphhQuantity,
             aptQuantity: backupJob.aptQuantity,
             systemQuantity: backupJob.systemQuantity,
           })
         } else {
-          resourceQuantityMap.set(job.resourceRole, {
-            ...(resourceQuantityMap.get(job.resourceRole) ?? {}),
+          resourceQuantityMap.set(jobKey, {
+            ...(resourceQuantityMap.get(jobKey) ?? {}),
             quantity: backupJob.quantity,
             systemQuantity: backupJob.systemQuantity,
           })

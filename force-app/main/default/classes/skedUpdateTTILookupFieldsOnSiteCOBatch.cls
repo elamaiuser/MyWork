@@ -32,7 +32,6 @@ global class skedUpdateTTILookupFieldsOnSiteCOBatch implements Database.Batchabl
     }
 
     global void execute(Database.BatchableContext BC, List<sObject> listToBeProcessed) {
-        system.debug('this.isRunningForSiteCO '+this.isRunningForSiteCO);
         if(!this.isRunningForSiteCO) {
             skedTravelTimeIndexItemHandler.populateTTILokkupFieldsOnSiteCO(skedSObjectUtils.getRecordIds(listToBeProcessed));
         } else {
@@ -52,6 +51,7 @@ global class skedUpdateTTILookupFieldsOnSiteCOBatch implements Database.Batchabl
                     sked_Staging_Location__r.sked_GeoLocation__longitude__s 
                     FROM sked_Collection_Op_Staging_Location__c 
                     WHERE sked_Collection_Operation__c IN :collectionOperationIds
+                    AND sked_Staging_Location__r.sked_GeoLocation__latitude__s != NULL
                 ];
             if(coslList != NULL && !coslList.isEmpty()) {
                 for(sked_Site_Collection_Operation__c siteCO : siteCOToBeUpdatedList) {

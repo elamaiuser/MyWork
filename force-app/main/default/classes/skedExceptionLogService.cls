@@ -108,7 +108,7 @@ global class skedExceptionLogService extends skedDataService {
                     skedHC__Status__c = skedConstants.EXCEPTION_LOG_STATUS_OPEN
                 );
                 if (!string.isBlank(unavailability.exceptionText)) {
-                    newExceptionLog.skedHC__Exception__c = 'Conflict with ' + conflictedAllocation.Name;
+                    newExceptionLog.skedHC__Exception__c = 'Conflict with ' + conflictedAllocation.sked__Job__r.sked_Drive__r.Name;
                 }
 
                 if (!string.isBlank(unavailability.relatedEventFieldApi)) { 

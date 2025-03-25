@@ -67,8 +67,8 @@ public inherited sharing class ARCFileUploadController {
     }
     
     @AuraEnabled(cacheable=false)
-    public static List<String> getFileTypeAndInsert(String fileName,List<String> uploadedFileIds){
-        System.debug('File Name: ' + fileName);
+    public static List<String> getFileTypeAndInsert(String fileName,Date expiryDate,List<String> uploadedFileIds){
+        System.debug('File Name:: ' + fileName);
         System.debug('uploadedFileIds: '+uploadedFileIds);
         List<String> fileTitleListToReturnList = new List<String>();
         
@@ -84,7 +84,8 @@ public inherited sharing class ARCFileUploadController {
                          ContentDocumentId,
                          FileExtension,
                          FileType,
-                         Description 
+                         Description,
+                         Expiry_Date__c 
                          FROM ContentVersion 
                          WHERE ContentDocumentId IN :fileIdSet ];
         
@@ -92,7 +93,7 @@ public inherited sharing class ARCFileUploadController {
         if(!filesUploaded.isEmpty()){                          
             for(ContentVersion file:filesUploaded) {
                 file.Description = fileName;
-                
+                file.Expiry_Date__c = expiryDate;                
                 String fileTitleAndExtension = file.Title+'.'+file.FileExtension;
                 fileTitleListToReturnList.add(fileTitleAndExtension);
             } 
@@ -103,7 +104,6 @@ public inherited sharing class ARCFileUploadController {
         
         return fileTitleListToReturnList;
     }
-    
     
     @AuraEnabled(cacheable=false)
     public static List<String> getContentDocumentId( String recordid){

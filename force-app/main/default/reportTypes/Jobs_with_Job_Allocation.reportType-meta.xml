@@ -1,0 +1,1295 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ReportType xmlns="http://soap.sforce.com/2006/04/metadata">
+    <baseObject>sked__Job__c</baseObject>
+    <category>other</category>
+    <deployed>true</deployed>
+    <description>Jobs with Job Allocation</description>
+    <join>
+        <outerJoin>false</outerJoin>
+        <relationship>sked__Job_Allocations__r</relationship>
+    </join>
+    <label>Jobs with Job Allocation</label>
+    <sections>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Abort Reason</displayNameOverride>
+            <field>sked__Abort_Reason__c</field>
+            <table>sked__Job__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Account</displayNameOverride>
+            <field>sked__Account__c</field>
+            <table>sked__Job__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Actual End</displayNameOverride>
+            <field>sked__Actual_End__c</field>
+            <table>sked__Job__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Actual End Date</displayNameOverride>
+            <field>sked_Actual_End_Date__c</field>
+            <table>sked__Job__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Actual End Time</displayNameOverride>
+            <field>sked_Actual_End_Time__c</field>
+            <table>sked__Job__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Actual Start</displayNameOverride>
+            <field>sked__Actual_Start__c</field>
+            <table>sked__Job__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Actual Start Date</displayNameOverride>
+            <field>sked_Actual_Start_Date__c</field>
+            <table>sked__Job__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Actual Start Time</displayNameOverride>
+            <field>sked_Actual_Start_Time__c</field>
+            <table>sked__Job__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Address</displayNameOverride>
+            <field>sked__Address__c</field>
+            <table>sked__Job__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Address Postal Code</displayNameOverride>
+            <field>sked_Address_Postal_Code__c</field>
+            <table>sked__Job__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Alert!</displayNameOverride>
+            <field>Alert__c</field>
+            <table>sked__Job__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>API Error</displayNameOverride>
+            <field>sked_API_Error__c</field>
+            <table>sked__Job__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>API Error Message</displayNameOverride>
+            <field>sked_API_Error_Message__c</field>
+            <table>sked__Job__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>APT Quantity</displayNameOverride>
+            <field>sked_APT_Quantity__c</field>
+            <table>sked__Job__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Asset Type</displayNameOverride>
+            <field>sked_Asset_Type__c</field>
+            <table>sked__Job__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Auto Schedule</displayNameOverride>
+            <field>sked__Auto_Schedule__c</field>
+            <table>sked__Job__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Breakdown Time</displayNameOverride>
+            <field>sked_Breakdown_Time__c</field>
+            <table>sked__Job__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Can Be Declined</displayNameOverride>
+            <field>sked__Can_Be_Declined__c</field>
+            <table>sked__Job__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Cancellation Reason</displayNameOverride>
+            <field>sked_Cancellation_Reason__c</field>
+            <table>sked__Job__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Cancellation Reason Notes</displayNameOverride>
+            <field>sked_Cancellation_Reason_Notes__c</field>
+            <table>sked__Job__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Job : Drive : Collection Operation</displayNameOverride>
+            <field>sked_Drive__c.sked_Collection_Operation__c</field>
+            <table>sked__Job__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Collections Manager</displayNameOverride>
+            <field>sked_Collections_Manager__c</field>
+            <table>sked__Job__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Collections Team Supervisor</displayNameOverride>
+            <field>sked_Collections_Team_Supervisor__c</field>
+            <table>sked__Job__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Completion Notes</displayNameOverride>
+            <field>sked__Completion_Notes__c</field>
+            <table>sked__Job__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Contact</displayNameOverride>
+            <field>sked__Contact__c</field>
+            <table>sked__Job__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Copied From Id</displayNameOverride>
+            <field>sked__Copied_From_Id__c</field>
+            <table>sked__Job__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Created By</displayNameOverride>
+            <field>CreatedBy</field>
+            <table>sked__Job__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Created Date</displayNameOverride>
+            <field>CreatedDate</field>
+            <table>sked__Job__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Customer Confirmation Status</displayNameOverride>
+            <field>sked__Customer_Confirmation_Status__c</field>
+            <table>sked__Job__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Customer Job No.</displayNameOverride>
+            <field>sked__Customer_Job_No__c</field>
+            <table>sked__Job__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Description</displayNameOverride>
+            <field>sked__Description__c</field>
+            <table>sked__Job__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Dispatch At Time</displayNameOverride>
+            <field>sked__Dispatch_At_Time__c</field>
+            <table>sked__Job__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Drive</displayNameOverride>
+            <field>sked_Drive__c</field>
+            <table>sked__Job__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Job : Drive : Drive Date</displayNameOverride>
+            <field>sked_Drive__c.sked_Drive_Date__c</field>
+            <table>sked__Job__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Job : Drive : Drive Name</displayNameOverride>
+            <field>sked_Drive__c.Name</field>
+            <table>sked__Job__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Drive Shift</displayNameOverride>
+            <field>sked_Drive_Shift__c</field>
+            <table>sked__Job__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Dual Role</displayNameOverride>
+            <field>sked_Dual_Role__c</field>
+            <table>sked__Job__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Duration</displayNameOverride>
+            <field>sked__Duration__c</field>
+            <table>sked__Job__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Equipment Subtype</displayNameOverride>
+            <field>sked_Equipment_Subtype__c</field>
+            <table>sked__Job__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Estimated End</displayNameOverride>
+            <field>sked__Estimated_End__c</field>
+            <table>sked__Job__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Estimated Start</displayNameOverride>
+            <field>sked__Estimated_Start__c</field>
+            <table>sked__Job__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>sked_Exclude_from_Optimizer__c</field>
+            <table>sked__Job__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Finish</displayNameOverride>
+            <field>sked__Finish__c</field>
+            <table>sked__Job__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Finish Date</displayNameOverride>
+            <field>sked_Finish_Date__c</field>
+            <table>sked__Job__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Finish Time</displayNameOverride>
+            <field>sked_Finish_Time__c</field>
+            <table>sked__Job__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Follow up Reason</displayNameOverride>
+            <field>sked__Follow_up_Reason__c</field>
+            <table>sked__Job__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>GeoLocation (Latitude)</displayNameOverride>
+            <field>sked__GeoLocation__Latitude__s</field>
+            <table>sked__Job__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>GeoLocation (Longitude)</displayNameOverride>
+            <field>sked__GeoLocation__Longitude__s</field>
+            <table>sked__Job__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Is GeoLocation Mismatched</displayNameOverride>
+            <field>sked_Is_GeoLocation_Mismatched__c</field>
+            <table>sked__Job__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Is Group Event</displayNameOverride>
+            <field>sked__Is_Group_Event__c</field>
+            <table>sked__Job__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Is Manually Created</displayNameOverride>
+            <field>sked_Is_Manually_Created__c</field>
+            <table>sked__Job__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Job Allocation Count</displayNameOverride>
+            <field>sked__Job_Allocation_Count__c</field>
+            <table>sked__Job__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Job Allocation Time Source</displayNameOverride>
+            <field>sked__Job_Allocation_Time_Source__c</field>
+            <table>sked__Job__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Job ID</displayNameOverride>
+            <field>Id</field>
+            <table>sked__Job__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>true</checkedByDefault>
+            <displayNameOverride>Job Name</displayNameOverride>
+            <field>Name</field>
+            <table>sked__Job__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Job Status</displayNameOverride>
+            <field>sked__Job_Status__c</field>
+            <table>sked__Job__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Last Activity Date</displayNameOverride>
+            <field>LastActivityDate</field>
+            <table>sked__Job__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Last Modified By</displayNameOverride>
+            <field>LastModifiedBy</field>
+            <table>sked__Job__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Last Modified Date</displayNameOverride>
+            <field>LastModifiedDate</field>
+            <table>sked__Job__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Lead Time</displayNameOverride>
+            <field>sked_Lead_Time__c</field>
+            <table>sked__Job__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Location</displayNameOverride>
+            <field>sked__Location__c</field>
+            <table>sked__Job__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Job Locked</displayNameOverride>
+            <field>sked__Locked__c</field>
+            <table>sked__Job__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Manually Created From</displayNameOverride>
+            <field>sked_Manually_Created_From__c</field>
+            <table>sked__Job__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Max Attendees</displayNameOverride>
+            <field>sked__Max_Attendees__c</field>
+            <table>sked__Job__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>MigrationID</displayNameOverride>
+            <field>sked_MigrationID__c</field>
+            <table>sked__Job__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Min Attendees</displayNameOverride>
+            <field>sked__Min_Attendees__c</field>
+            <table>sked__Job__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Notes and Comments</displayNameOverride>
+            <field>sked__Notes_Comments__c</field>
+            <table>sked__Job__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Notify By</displayNameOverride>
+            <field>sked__Notify_By__c</field>
+            <table>sked__Job__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Notify Period</displayNameOverride>
+            <field>sked__NotifyPeriod__c</field>
+            <table>sked__Job__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Other Volunteer Adjustment Reason</displayNameOverride>
+            <field>sked_Other_Volunteer_Adjustment_Reason__c</field>
+            <table>sked__Job__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Owner</displayNameOverride>
+            <field>Owner</field>
+            <table>sked__Job__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Parent</displayNameOverride>
+            <field>sked__Parent__c</field>
+            <table>sked__Job__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Post Migration Processed</displayNameOverride>
+            <field>sked_Post_Migration_Processed__c</field>
+            <table>sked__Job__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Primary Scheduler</displayNameOverride>
+            <field>sked_Primary_Scheduler__c</field>
+            <table>sked__Job__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Procedure Type</displayNameOverride>
+            <field>sked_Procedure_Type__c</field>
+            <table>sked__Job__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Quantity</displayNameOverride>
+            <field>sked__Quantity__c</field>
+            <table>sked__Job__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Recurring Schedule</displayNameOverride>
+            <field>sked__Recurring_Schedule__c</field>
+            <table>sked__Job__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Redcross Volunteer Quantity</displayNameOverride>
+            <field>sked_Redcross_Volunteer_Quantity__c</field>
+            <table>sked__Job__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Region</displayNameOverride>
+            <field>sked__Region__c</field>
+            <table>sked__Job__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Resource Hours Worked</displayNameOverride>
+            <field>sked__Resource_Hours_Worked__c</field>
+            <table>sked__Job__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Resource Requirement Count</displayNameOverride>
+            <field>sked__Resource_Requirement_Count__c</field>
+            <table>sked__Job__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Resource Role</displayNameOverride>
+            <field>sked_Resource_Role__c</field>
+            <table>sked__Job__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Role/Certifications</displayNameOverride>
+            <field>sked_Role_Certifications__c</field>
+            <table>sked__Job__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Schedule Template</displayNameOverride>
+            <field>sked__Schedule_Template__c</field>
+            <table>sked__Job__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Setup Time</displayNameOverride>
+            <field>sked_Setup_Time__c</field>
+            <table>sked__Job__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Shadow Job</displayNameOverride>
+            <field>sked_Shadow_Job__c</field>
+            <table>sked__Job__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Site Logistics Back</displayNameOverride>
+            <field>sked_Site_Logistics_Back__c</field>
+            <table>sked__Job__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Site Logistics To</displayNameOverride>
+            <field>sked_Site_Logistics_To__c</field>
+            <table>sked__Job__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Sponsor Volunteer Quantity</displayNameOverride>
+            <field>sked_Sponsor_Volunteer_Quantity__c</field>
+            <table>sked__Job__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Start</displayNameOverride>
+            <field>sked__Start__c</field>
+            <table>sked__Job__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Start Date</displayNameOverride>
+            <field>sked_Start_Date__c</field>
+            <table>sked__Job__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Start Time</displayNameOverride>
+            <field>sked_Start_Time__c</field>
+            <table>sked__Job__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Drive Status</displayNameOverride>
+            <field>sked_Drive__c.sked_Status__c</field>
+            <table>sked__Job__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>System Quantity</displayNameOverride>
+            <field>sked_System_Quantity__c</field>
+            <table>sked__Job__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Templated Job</displayNameOverride>
+            <field>sked__Templated_Job__c</field>
+            <table>sked__Job__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Timezone</displayNameOverride>
+            <field>sked__Timezone__c</field>
+            <table>sked__Job__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Travel Time</displayNameOverride>
+            <field>sked_Travel_Time__c</field>
+            <table>sked__Job__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Travel Time 2</displayNameOverride>
+            <field>sked_Travel_Time2__c</field>
+            <table>sked__Job__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Type</displayNameOverride>
+            <field>sked__Type__c</field>
+            <table>sked__Job__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Urgency</displayNameOverride>
+            <field>sked__Urgency__c</field>
+            <table>sked__Job__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Virtual Meeting Id</displayNameOverride>
+            <field>sked__Virtual_Meeting_Id__c</field>
+            <table>sked__Job__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Virtual Meeting Info</displayNameOverride>
+            <field>sked__Virtual_Meeting_Info__c</field>
+            <table>sked__Job__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Virtual Meeting URL</displayNameOverride>
+            <field>sked__Virtual_Meeting_URL__c</field>
+            <table>sked__Job__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Volunteer Adjustment Reason</displayNameOverride>
+            <field>sked_Volunteer_Adjustment_Reason__c</field>
+            <table>sked__Job__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Volunteer Role</displayNameOverride>
+            <field>sked_Volunteer_Role__c</field>
+            <table>sked__Job__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>VPHH Quantity</displayNameOverride>
+            <field>sked_VPHH_Quantity__c</field>
+            <table>sked__Job__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Wrap-up Time</displayNameOverride>
+            <field>sked_Wrap_up_Time__c</field>
+            <table>sked__Job__c</table>
+        </columns>
+        <masterLabel>Jobs</masterLabel>
+    </sections>
+    <sections>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Job Allocation ID</displayNameOverride>
+            <field>Id</field>
+            <table>sked__Job__c.sked__Job_Allocations__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>true</checkedByDefault>
+            <displayNameOverride>Job Allocation Name</displayNameOverride>
+            <field>Name</field>
+            <table>sked__Job__c.sked__Job_Allocations__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Created Date</displayNameOverride>
+            <field>CreatedDate</field>
+            <table>sked__Job__c.sked__Job_Allocations__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Created By</displayNameOverride>
+            <field>CreatedBy</field>
+            <table>sked__Job__c.sked__Job_Allocations__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Last Modified Date</displayNameOverride>
+            <field>LastModifiedDate</field>
+            <table>sked__Job__c.sked__Job_Allocations__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Last Modified By</displayNameOverride>
+            <field>LastModifiedBy</field>
+            <table>sked__Job__c.sked__Job_Allocations__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Resource</displayNameOverride>
+            <field>sked__Resource__c</field>
+            <table>sked__Job__c.sked__Job_Allocations__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Assigned To</displayNameOverride>
+            <field>sked__Assigned_To__c</field>
+            <table>sked__Job__c.sked__Job_Allocations__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Auto Schedule</displayNameOverride>
+            <field>sked__Auto_Schedule__c</field>
+            <table>sked__Job__c.sked__Job_Allocations__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Decline Description</displayNameOverride>
+            <field>sked__Decline_Description__c</field>
+            <table>sked__Job__c.sked__Job_Allocations__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Decline Reason</displayNameOverride>
+            <field>sked__Decline_Reason__c</field>
+            <table>sked__Job__c.sked__Job_Allocations__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Duration</displayNameOverride>
+            <field>sked__Duration__c</field>
+            <table>sked__Job__c.sked__Job_Allocations__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Estimated Travel Distance</displayNameOverride>
+            <field>sked__Estimated_Travel_Distance__c</field>
+            <table>sked__Job__c.sked__Job_Allocations__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Estimated Travel Time</displayNameOverride>
+            <field>sked__Estimated_Travel_Time__c</field>
+            <table>sked__Job__c.sked__Job_Allocations__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>GeoLocation Checked In (Latitude)</displayNameOverride>
+            <field>sked__GeoLocation_Checked_In__Latitude__s</field>
+            <table>sked__Job__c.sked__Job_Allocations__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>GeoLocation Checked In (Longitude)</displayNameOverride>
+            <field>sked__GeoLocation_Checked_In__Longitude__s</field>
+            <table>sked__Job__c.sked__Job_Allocations__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>GeoLocation Completed (Latitude)</displayNameOverride>
+            <field>sked__GeoLocation_Completed__Latitude__s</field>
+            <table>sked__Job__c.sked__Job_Allocations__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>GeoLocation Completed (Longitude)</displayNameOverride>
+            <field>sked__GeoLocation_Completed__Longitude__s</field>
+            <table>sked__Job__c.sked__Job_Allocations__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>GeoLocation In Progress (Latitude)</displayNameOverride>
+            <field>sked__GeoLocation_In_Progress__Latitude__s</field>
+            <table>sked__Job__c.sked__Job_Allocations__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>GeoLocation In Progress (Longitude)</displayNameOverride>
+            <field>sked__GeoLocation_In_Progress__Longitude__s</field>
+            <table>sked__Job__c.sked__Job_Allocations__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>GeoLocation Start Travel (Latitude)</displayNameOverride>
+            <field>sked__GeoLocation_Start_Travel__Latitude__s</field>
+            <table>sked__Job__c.sked__Job_Allocations__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>GeoLocation Start Travel (Longitude)</displayNameOverride>
+            <field>sked__GeoLocation_Start_Travel__Longitude__s</field>
+            <table>sked__Job__c.sked__Job_Allocations__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Hours</displayNameOverride>
+            <field>sked__Hours__c</field>
+            <table>sked__Job__c.sked__Job_Allocations__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Notification Type</displayNameOverride>
+            <field>sked__Notification_Type__c</field>
+            <table>sked__Job__c.sked__Job_Allocations__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Phone Response</displayNameOverride>
+            <field>sked__Phone_Response__c</field>
+            <table>sked__Job__c.sked__Job_Allocations__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Resource Requirement</displayNameOverride>
+            <field>sked__Resource_Requirement__c</field>
+            <table>sked__Job__c.sked__Job_Allocations__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Set End</displayNameOverride>
+            <field>sked__Set_End__c</field>
+            <table>sked__Job__c.sked__Job_Allocations__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Slot</displayNameOverride>
+            <field>sked__Slot__c</field>
+            <table>sked__Job__c.sked__Job_Allocations__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Start</displayNameOverride>
+            <field>sked__Start__c</field>
+            <table>sked__Job__c.sked__Job_Allocations__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Status</displayNameOverride>
+            <field>sked__Status__c</field>
+            <table>sked__Job__c.sked__Job_Allocations__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Team Leader</displayNameOverride>
+            <field>sked__Team_Leader__c</field>
+            <table>sked__Job__c.sked__Job_Allocations__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Time Checked In</displayNameOverride>
+            <field>sked__Time_Checked_In__c</field>
+            <table>sked__Job__c.sked__Job_Allocations__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Time Completed</displayNameOverride>
+            <field>sked__Time_Completed__c</field>
+            <table>sked__Job__c.sked__Job_Allocations__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Time In Progress</displayNameOverride>
+            <field>sked__Time_In_Progress__c</field>
+            <table>sked__Job__c.sked__Job_Allocations__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Time Published</displayNameOverride>
+            <field>sked__Time_Published__c</field>
+            <table>sked__Job__c.sked__Job_Allocations__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Time Responded</displayNameOverride>
+            <field>sked__Time_Responded__c</field>
+            <table>sked__Job__c.sked__Job_Allocations__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Time Start Travel</displayNameOverride>
+            <field>sked__Time_Start_Travel__c</field>
+            <table>sked__Job__c.sked__Job_Allocations__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Travel Distance</displayNameOverride>
+            <field>sked__Travel_Distance__c</field>
+            <table>sked__Job__c.sked__Job_Allocations__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Travel Time</displayNameOverride>
+            <field>sked__Travel_Time__c</field>
+            <table>sked__Job__c.sked__Job_Allocations__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>UniqueKey</displayNameOverride>
+            <field>sked__UniqueKey__c</field>
+            <table>sked__Job__c.sked__Job_Allocations__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>End</displayNameOverride>
+            <field>sked__End1__c</field>
+            <table>sked__Job__c.sked__Job_Allocations__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>API Error Message</displayNameOverride>
+            <field>sked_API_Error_Message__c</field>
+            <table>sked__Job__c.sked__Job_Allocations__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>API Error</displayNameOverride>
+            <field>sked_API_Error__c</field>
+            <table>sked__Job__c.sked__Job_Allocations__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Additional Roles</displayNameOverride>
+            <field>sked_Additional_Roles__c</field>
+            <table>sked__Job__c.sked__Job_Allocations__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>CDL</displayNameOverride>
+            <field>sked_CDL__c</field>
+            <table>sked__Job__c.sked__Job_Allocations__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Call Out Notes</displayNameOverride>
+            <field>sked_Call_Out_Notes__c</field>
+            <table>sked__Job__c.sked__Job_Allocations__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Call Out Notice</displayNameOverride>
+            <field>sked_Call_Out_Notice__c</field>
+            <table>sked__Job__c.sked__Job_Allocations__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Call Out Reported</displayNameOverride>
+            <field>sked_Call_Out_Reported__c</field>
+            <table>sked__Job__c.sked__Job_Allocations__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Call Out Type</displayNameOverride>
+            <field>sked_Call_Out_Type__c</field>
+            <table>sked__Job__c.sked__Job_Allocations__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Created From Operation Record</displayNameOverride>
+            <field>sked_Created_From_Operation_Record__c</field>
+            <table>sked__Job__c.sked__Job_Allocations__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>DOT</displayNameOverride>
+            <field>sked_DOT__c</field>
+            <table>sked__Job__c.sked__Job_Allocations__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>DateTime of Call Out</displayNameOverride>
+            <field>sked_DateTime_of_Call_Out__c</field>
+            <table>sked__Job__c.sked__Job_Allocations__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Geoservice Travel Time</displayNameOverride>
+            <field>sked_Geoservice_Travel_Time__c</field>
+            <table>sked__Job__c.sked__Job_Allocations__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Drive Shift Trade</displayNameOverride>
+            <field>sked_Drive_Shift_Trade__c</field>
+            <table>sked__Job__c.sked__Job_Allocations__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Duration with Travel Time</displayNameOverride>
+            <field>sked_Duration_with_Travel_Time__c</field>
+            <table>sked__Job__c.sked__Job_Allocations__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Is Handled Exception from Client</displayNameOverride>
+            <field>sked_Is_Handled_Exception_from_Client__c</field>
+            <table>sked__Job__c.sked__Job_Allocations__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Job Timezone</displayNameOverride>
+            <field>sked_Job_Timezone__c</field>
+            <table>sked__Job__c.sked__Job_Allocations__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Job Allocation Locked</displayNameOverride>
+            <field>sked_Locked__c</field>
+            <table>sked__Job__c.sked__Job_Allocations__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>MigrationID</displayNameOverride>
+            <field>sked_MigrationID__c</field>
+            <table>sked__Job__c.sked__Job_Allocations__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Optimization Run</displayNameOverride>
+            <field>sked_Optimization_Run__c</field>
+            <table>sked__Job__c.sked__Job_Allocations__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Premium Pay</displayNameOverride>
+            <field>sked_Premium_Pay__c</field>
+            <table>sked__Job__c.sked__Job_Allocations__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Roles Assignment</displayNameOverride>
+            <field>sked_Roles_Assignment_Str__c</field>
+            <table>sked__Job__c.sked__Job_Allocations__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Set End Date</displayNameOverride>
+            <field>sked_Set_End_Date__c</field>
+            <table>sked__Job__c.sked__Job_Allocations__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Set End Time</displayNameOverride>
+            <field>sked_Set_End_Time__c</field>
+            <table>sked__Job__c.sked__Job_Allocations__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Start Date</displayNameOverride>
+            <field>sked_Start_Date__c</field>
+            <table>sked__Job__c.sked__Job_Allocations__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Start Time</displayNameOverride>
+            <field>sked_Start_Time__c</field>
+            <table>sked__Job__c.sked__Job_Allocations__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Start With Travel Time</displayNameOverride>
+            <field>sked_Start_With_Travel_Time__c</field>
+            <table>sked__Job__c.sked__Job_Allocations__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Time Checked In Date</displayNameOverride>
+            <field>sked_Time_Checked_In_Date__c</field>
+            <table>sked__Job__c.sked__Job_Allocations__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Time Checked In Time</displayNameOverride>
+            <field>sked_Time_Checked_In_Time__c</field>
+            <table>sked__Job__c.sked__Job_Allocations__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Time Completed Date</displayNameOverride>
+            <field>sked_Time_Completed_Date__c</field>
+            <table>sked__Job__c.sked__Job_Allocations__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Time Completed Time</displayNameOverride>
+            <field>sked_Time_Completed_Time__c</field>
+            <table>sked__Job__c.sked__Job_Allocations__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Time In Progress Date</displayNameOverride>
+            <field>sked_Time_In_Progress_Date__c</field>
+            <table>sked__Job__c.sked__Job_Allocations__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Time In Progress Time</displayNameOverride>
+            <field>sked_Time_In_Progress_Time__c</field>
+            <table>sked__Job__c.sked__Job_Allocations__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Time Published Date</displayNameOverride>
+            <field>sked_Time_Published_Date__c</field>
+            <table>sked__Job__c.sked__Job_Allocations__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Time Published Time</displayNameOverride>
+            <field>sked_Time_Published_Time__c</field>
+            <table>sked__Job__c.sked__Job_Allocations__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Time Responded Date</displayNameOverride>
+            <field>sked_Time_Responded_Date__c</field>
+            <table>sked__Job__c.sked__Job_Allocations__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Time Responded Time</displayNameOverride>
+            <field>sked_Time_Responded_Time__c</field>
+            <table>sked__Job__c.sked__Job_Allocations__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Time Start Travel Date</displayNameOverride>
+            <field>sked_Time_Start_Travel_Date__c</field>
+            <table>sked__Job__c.sked__Job_Allocations__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Time Start Travel Time</displayNameOverride>
+            <field>sked_Time_Start_Travel_Time__c</field>
+            <table>sked__Job__c.sked__Job_Allocations__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Time Call Out Submitted</displayNameOverride>
+            <field>sked_Time_of_Call_Out__c</field>
+            <table>sked__Job__c.sked__Job_Allocations__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Call Out Reason Code</displayNameOverride>
+            <field>sked_Call_Out_Reason_Code__c</field>
+            <table>sked__Job__c.sked__Job_Allocations__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Dual Role</displayNameOverride>
+            <field>sked_Dual_Role__c</field>
+            <table>sked__Job__c.sked__Job_Allocations__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Exclude TAT Exception</displayNameOverride>
+            <field>sked_Exclude_TAT_Exception__c</field>
+            <table>sked__Job__c.sked__Job_Allocations__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Resource Role</displayNameOverride>
+            <field>sked_Resource_Role__c</field>
+            <table>sked__Job__c.sked__Job_Allocations__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Date Call Out Submitted</displayNameOverride>
+            <field>sked_Date_of_Call_Out__c</field>
+            <table>sked__Job__c.sked__Job_Allocations__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Start with Travel Start Date</displayNameOverride>
+            <field>sked_Start_with_Travel_Start_Date__c</field>
+            <table>sked__Job__c.sked__Job_Allocations__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Start with Travel Start Time</displayNameOverride>
+            <field>sked_Start_with_Travel_Start_Time__c</field>
+            <table>sked__Job__c.sked__Job_Allocations__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Collection Op Mismatch</displayNameOverride>
+            <field>Collection_Op_Mismatch__c</field>
+            <table>sked__Job__c.sked__Job_Allocations__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Geoservice Travel Distance Back</displayNameOverride>
+            <field>sked_Geoservice_Travel_Distance_Back__c</field>
+            <table>sked__Job__c.sked__Job_Allocations__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Geoservice Travel Distance To</displayNameOverride>
+            <field>sked_Geoservice_Travel_Distance_To__c</field>
+            <table>sked__Job__c.sked__Job_Allocations__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Geoservice Travel Time Back</displayNameOverride>
+            <field>sked_Geoservice_Travel_Time_Back__c</field>
+            <table>sked__Job__c.sked__Job_Allocations__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Geoservice Travel Time To</displayNameOverride>
+            <field>sked_Geoservice_Travel_Time_To__c</field>
+            <table>sked__Job__c.sked__Job_Allocations__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Is Relocated Resource</displayNameOverride>
+            <field>sked_Is_Relocated_Resource__c</field>
+            <table>sked__Job__c.sked__Job_Allocations__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Travel Time Back</displayNameOverride>
+            <field>sked_Travel_Time_Back__c</field>
+            <table>sked__Job__c.sked__Job_Allocations__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Travel Time  To</displayNameOverride>
+            <field>sked_Travel_Time_To__c</field>
+            <table>sked__Job__c.sked__Job_Allocations__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>JA Created Date</displayNameOverride>
+            <field>JA_Created_Date_Time__c</field>
+            <table>sked__Job__c.sked__Job_Allocations__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>JA Last Modified Date</displayNameOverride>
+            <field>JA_Last_Modified_Date_Time__c</field>
+            <table>sked__Job__c.sked__Job_Allocations__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>DateTime Call Out Received</displayNameOverride>
+            <field>sked_DateTime_Call_Out_Received__c</field>
+            <table>sked__Job__c.sked__Job_Allocations__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Date Call Out Received</displayNameOverride>
+            <field>sked_Date_Call_Out_Received__c</field>
+            <table>sked__Job__c.sked__Job_Allocations__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Drive Date Text</displayNameOverride>
+            <field>sked_Drive_Date_Text__c</field>
+            <table>sked__Job__c.sked__Job_Allocations__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Drive Date</displayNameOverride>
+            <field>sked_Drive_Date__c</field>
+            <table>sked__Job__c.sked__Job_Allocations__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Drive Name</displayNameOverride>
+            <field>sked_Drive_Name__c</field>
+            <table>sked__Job__c.sked__Job_Allocations__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Time Call Out Received</displayNameOverride>
+            <field>sked_Time_Call_Out_Received__c</field>
+            <table>sked__Job__c.sked__Job_Allocations__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Guarded</displayNameOverride>
+            <field>sked_Guarded__c</field>
+            <table>sked__Job__c.sked__Job_Allocations__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Is Locked</displayNameOverride>
+            <field>sked_Is_Locked__c</field>
+            <table>sked__Job__c.sked__Job_Allocations__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Completed Post Processes</displayNameOverride>
+            <field>sked_Completed_Post_Processes__c</field>
+            <table>sked__Job__c.sked__Job_Allocations__r</table>
+        </columns>
+        <masterLabel>Job Allocations</masterLabel>
+    </sections>
+</ReportType>

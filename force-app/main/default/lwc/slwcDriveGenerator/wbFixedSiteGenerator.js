@@ -5,7 +5,7 @@ import { debugLogService, operationDriveLimitService, operationDriveLimitQueryMo
   staffingConstraintService, staffingConstraintQueryModel } from 'c/dataService';
 import { isNullOrEmpty, generateUUID } from 'c/slwcUtils';
 import { DateTime } from 'c/luxon';
-import { cloneDeep, difference, uniqueId, extend } from 'c/lodash';
+import { cloneDeep, difference, uniqueId, extend, orderBy } from 'c/lodash';
 import { Fetch } from './fetch';
 import { PROCEDURE_TYPE, DRIVE_STATUS, ASSET_TYPE, PENDING_ACTION, DRIVE_APPROVAL_STATUS, RESOURCE_TYPE, DRIVE_TYPE, RESOURCE_ROLE_GROUP, DRIVE_CONTENTION, JOB_ALLOCATION_STATUS } from 'c/slwcConstants';
 
@@ -756,17 +756,6 @@ class WbFixedSiteGenerator extends BaseGenerator {
 
     return driveShiftStaffCapacity;
   }
-  
-  calculateDriveShiftMaxStaffCapacityWithDrawHours(driveShift, ignoreLunchBreak = false) {
-    const driveShiftStaffCapacity = this.helper.calculateMaximumStaffCapacityWithDrawHours([
-      'Driver', 'Driver Support', '2RBC', 'VP/HH', 'Charge'
-    ], this.drive, driveShift.driveShiftMetadata, 
-      new Map()
-        .set(driveShift.driveShiftMetadata.key, this.helper.getDriveShiftResourceQuantity(driveShift))
-    , this.masterData, ignoreLunchBreak);
-
-    return driveShiftStaffCapacity;
-  }
 
   calculateDriveShiftDrawHours(driveShift, ignoreLunchBreak = false) {
     const drawHours = this.helper.calculateDrawHours(driveShift.driveShiftMetadata, this.masterData, driveShift.driveShiftMetadata.lunchBreakSettings);
@@ -808,20 +797,7 @@ class WbFixedSiteGenerator extends BaseGenerator {
   }
 
   updateDriveAverageStaffCapacity() {
-    let driveStaffCount = 0;
-    if (this.masterData && this.masterData.staffingDecisionMatrix) {
-      this.drive.driveShifts.forEach((driveShift) => {
-        const driveShiftStaffCount = this.countDriveShiftStaffs(driveShift);
-        driveStaffCount += driveShiftStaffCount;
-      });
-    }
-    if(this.drive.staffCapacity && this.drive.staffCapacity > 0 && driveStaffCount > 0) {
-      this.drive.averageStaffCapacity = this.drive.staffCapacity / driveStaffCount;
-      this.drive.averageStaffCapacity = this.drive.averageStaffCapacity.toFixed(1);
-    } else {
-      this.drive.averageStaffCapacity = 0;
-    }
-    
+    this.drive.averageStaffCapacity = this.helper.calculateDriveAverageStaffCapacity(this.drive);
   }
 
   updateDriveMaxRoleCapacity() {
@@ -848,16 +824,7 @@ class WbFixedSiteGenerator extends BaseGenerator {
   }
 
   updateDriveExcessStaffCapacity() {
-    if(this.drive.staffCapacity && this.drive.staffCapacity > 0 && this.drive.maxRoleCapacityWithDrawHours && this.drive.maxRoleCapacityWithDrawHours > 0) {
-      if(this.drive.projectedRegisteredDonors) {
-        this.drive.excessStaffCapacity = (this.drive.staffCapacity - this.drive.projectedRegisteredDonors) / this.drive.maxRoleCapacityWithDrawHours;
-      } else {
-        this.drive.excessStaffCapacity = this.drive.staffCapacity / this.drive.maxRoleCapacityWithDrawHours;
-      }
-      this.drive.excessStaffCapacity = this.drive.excessStaffCapacity.toFixed(1);
-    } else {
-      this.drive.excessStaffCapacity = 0;
-    }
+    this.drive.excessStaffCapacity = this.helper.calculateExcessStaffCapacity(this.drive);
   }
 
   calculateNumberOf2rbcAssets() {
@@ -1021,7 +988,7 @@ class WbFixedSiteGenerator extends BaseGenerator {
     });
   }
 
-  calculateResourceQuantity(skipCalculateResourceRoles = false) {
+  calculateResourceQuantity(skipCalculateResourceRoles = false, jobsUpdatedViaDualRoleChangeMap = {}) {
     //assets
     this.calculateEquipmentQuantity();
 
@@ -1058,6 +1025,10 @@ class WbFixedSiteGenerator extends BaseGenerator {
     // HRP-10652: WB Fixed Site Drive Generation Code - Volunteer Jobs Generated
     // this.calculateVolunteerDonorAmbassadors();    
 
+    if(jobsUpdatedViaDualRoleChangeMap) {
+      this.restoreDualRoleModification(jobsUpdatedViaDualRoleChangeMap);
+    }
+
     const systemGeneratedStaffingComplementChanges = this.helper.getDriveSystemGeneratedStaffingComplementChanges({
       ...this.drive,
       driveShifts: Array.from(this.mapResourceQuantity.values()).map(mapResourceQuantity => {
@@ -1083,6 +1054,30 @@ class WbFixedSiteGenerator extends BaseGenerator {
     } 
 
     return true;
+  }
+
+  //Will work at the time of dual role modification save
+  restoreDualRoleModification(jobsUpdatedViaDualRoleChangeMap = {}) {
+    if(jobsUpdatedViaDualRoleChangeMap) {
+      const driveShiftsMetadata = this.drive.driveShiftsMetadata;
+      Object.keys(jobsUpdatedViaDualRoleChangeMap).forEach(driveShiftIndex => {
+        const driveShiftMetadata =  driveShiftsMetadata?.driveShifts?.[driveShiftIndex];
+        let resourceQuantityMap = this.mapResourceQuantity.get(driveShiftMetadata?.key);
+        if(!resourceQuantityMap) return;
+
+        let tempResourceQuantityMap = cloneDeep(resourceQuantityMap);
+        let roles = orderBy(jobsUpdatedViaDualRoleChangeMap[driveShiftIndex], [item => item.isManuallyCreated], ['asc']);
+        roles.forEach(item => {
+          tempResourceQuantityMap.delete(item.resourceRole);
+          tempResourceQuantityMap.set(item.resourceRole, cloneDeep({
+            ...resourceRoleQuantityAfterRegenreted,
+            quantity: quantity,
+            isCreatedOrUpdatedViaDualRoleChange: true
+          }));
+        });
+        this.mapResourceQuantity.set(driveShiftMetadata?.key, new Map([...tempResourceQuantityMap]));
+      });
+    }
   }
 
   calculateEquipmentQuantity() {
@@ -1235,8 +1230,22 @@ class WbFixedSiteGenerator extends BaseGenerator {
     skipGenerateSlots = false
   } = {}) {
     if (this.drive.projectedRegisteredDonors) {
+
+      let jobsUpdatedViaDualRoleChangeMap = {};
+      this.drive.driveShifts.forEach((driveShift, driveShiftIndex) => {
+        if(!jobsUpdatedViaDualRoleChangeMap[driveShiftIndex]) {
+          jobsUpdatedViaDualRoleChangeMap[driveShiftIndex] = [];
+        }
+
+        driveShift.jobs.forEach(job => {
+          if(job.resourceRole && job.isCreatedOrUpdatedViaDualRoleChange) {
+            jobsUpdatedViaDualRoleChangeMap[driveShiftIndex].push(cloneDeep(job));
+          }
+        })
+      });
+
       this.initResourceQuantityMap();
-      this.calculateResourceQuantity(skipCalculateResourceRoles);
+      this.calculateResourceQuantity(skipCalculateResourceRoles, jobsUpdatedViaDualRoleChangeMap);
 
       this.drive.driveShifts = this.buildMultiDriveShifts();
       this.populateDriveTime();
@@ -1454,6 +1463,64 @@ class WbFixedSiteGenerator extends BaseGenerator {
       });
     });
     driveShift.jobs = jobs.concat(cloneDeep(manuallyCreatedJobs));
+  }
+
+  // To create new jobs /update existing jobs after dual role modification
+  repopulateJobsAfterDualRoleModification(driveShift, job) {
+    let newJob;
+    let existingJob = driveShift.jobs?.find(item => item.resourceRole && !item.dualRole && item.resourceRole === job.dualRole);
+    if(existingJob) {
+      newJob = {
+        ...existingJob,
+        quantity: existingJob.quantity + job.quantity,
+        isCreatedOrUpdatedViaDualRoleChange: true
+      };
+      const index = driveShift.jobs?.findIndex(item => item.resourceRole && !item.dualRole && item.resourceRole === job.dualRole);
+      driveShift.jobs[index] = newJob;
+    } else {
+      let jobTagsMap = this.helper.calculateJobTagsMap(this.masterData);
+      let jobTemplate = {
+        driveSiteId: this.drive.driveSiteId,
+        collectionOperationId: this.drive.collectionOperationId,
+        address: this.drive.driveSite?.address,
+        latitude: this.drive.driveSite?.geoLocationLatitude,
+        longitude: this.drive.driveSite?.geoLocationLongitude,
+        jobAllocationTimeSource: false,
+        isCreatedOrUpdatedViaDualRoleChange: true,
+        isManuallyCreated: false,
+        manuallyCreatedFrom: ''
+      };
+      newJob = cloneDeep(jobTemplate);
+      newJob.key = generateUUID();
+      newJob.jobTags = cloneDeep(jobTagsMap[RESOURCE_TYPE.PERSON]);
+      newJob.resourceRole = job.dualRole;
+      newJob.dualRole = '';
+
+      if (newJob.resourceRole === 'VP/HH') {
+        if (job.quantity > 0) {
+          newJob.vphhQuantity = job.quantity;
+          newJob.aptQuantity = 0
+          newJob.quantity = newJob.vphhQuantity + (newJob.aptQuantity || 0);
+          newJob.systemQuantity = job.quantity;
+        }
+      } else {
+        if (job.quantity > 0) {
+          newJob.quantity = job.quantity;
+          newJob.systemQuantity = job.quantity;
+        }
+      }
+
+      if (newJob.jobTags && newJob.jobTags.length) {
+        let tagNameArr = newJob.jobTags.reduce((result, item) => {
+          return result.concat(item.tag.name);
+        }, []);
+        newJob.tagNames = orderBy(tagNameArr, [item => item], ['asc']).join(", ");
+      }
+      driveShift.jobs.push(newJob);
+    }
+
+    this.applyRoleTimeForSingleJob(driveShift, newJob);
+    this.onJobChanged(driveShift, newJob);
   }
 
   /** Lunch break */
