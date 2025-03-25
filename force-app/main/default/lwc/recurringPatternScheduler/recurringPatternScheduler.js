@@ -647,7 +647,7 @@ export default class RecurringPatternScheduler extends LightningElement {
             this.hasError = true;
             this.errorMessage = 'End Date Must be After Start Date';
             
-        } else if (tempStartDate <= todaysDate) {
+        } else if (tempStartDate < todaysDate) {
             this.hasError = true;
             this.errorMessage = 'Start Date must be greater or equal to current date';
             
