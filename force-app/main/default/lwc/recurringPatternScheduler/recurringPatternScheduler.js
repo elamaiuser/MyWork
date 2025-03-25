@@ -604,7 +604,7 @@ export default class RecurringPatternScheduler extends LightningElement {
         //getting current date with time factor as 0.
         let offsetStartDate = new Date(currentDate.getFullYear(),currentDate.getMonth(), currentDate.getDate(),0,0,0);
         let offsetEndDate = new Date(currentDate.getFullYear(),currentDate.getMonth(), currentDate.getDate(),0,0,0);
-        
+        const todaysDate = this.getDateValuefromString(currentDate);
 
         console.log('****RecurringPatternScheduler.validateUserInput() recurTypeValue: ' + this.recurTypeValue);
         console.log('****RecurringPatternScheduler.validateUserInput() startDateValue: ' + this.getDateValuefromString(this.startDateValue));
@@ -646,6 +646,10 @@ export default class RecurringPatternScheduler extends LightningElement {
         } else if (tempEndDate <= tempStartDate) {
             this.hasError = true;
             this.errorMessage = 'End Date Must be After Start Date';
+            
+        } else if (tempStartDate <= todaysDate) {
+            this.hasError = true;
+            this.errorMessage = 'Start Date must be greater or equal to current date';
             
         } else if (this.recurTypeValue === '' || this.recurTypeValue === null) {
             this.hasError = true;
