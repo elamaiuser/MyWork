@@ -647,7 +647,7 @@ export default class RecurringPatternScheduler extends LightningElement {
             this.hasError = true;
             this.errorMessage = 'End Date Must be After Start Date';
             
-        } else if ((this.InputStartDateOffset !== undefined && this.InputStartDateOffset !== -1) && offsetStartDate !== undefined && offsetStartDate > tempStartDate) {
+        } else if ((this.InputStartDateOffset !== undefined && this.InputStartDateOffset !== -1) && offsetStartDate !== undefined && offsetStartDate > tempStartDate && this.recurTypeValue !== 'other') {
             this.hasError = true;
             this.errorMessage = 'Start Date must be ' + this.InputStartDateOffset + ' Day(s) in future from Today';
             
