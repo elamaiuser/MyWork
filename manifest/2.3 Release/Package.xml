@@ -13,6 +13,7 @@
     <types>
 		<members>AccountInvokable</members>
 		<members>BSF_MarketingExceptionRequest</members>
+        <members>skedActivityService</members>
         <members>skedResourceHandler</members>
 		<members>TriggerHandler</members>
 		<name>ApexClass</name>
