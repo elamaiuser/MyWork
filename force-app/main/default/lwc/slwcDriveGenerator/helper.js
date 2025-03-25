@@ -3472,18 +3472,23 @@ class DriveHelper {
     if(!resourceQuantityMap) return false;
     if(!roles.length) return true;
 
+    const validRoles = this.getValidRolesInResourceQuantityMap(resourceQuantityMap);
+    const allRolesValid = roles.every(role => validRoles.includes(role));
+    return allRolesValid;
+  }
+
+  getValidRolesInResourceQuantityMap(resourceQuantityMap) {
+    if(!resourceQuantityMap) return false;
+
     let validRoles = [];
     resourceQuantityMap.forEach((item, resourceRole) => {
       const quantityValid = resourceRole === 'VP/HH' ? item.vphhQuantity > 0 : item.quantity > 0;
       if(!quantityValid) return;
 
-      if(roles.includes(resourceRole)) {
-        validRoles.push(resourceRole);
-      }
+      validRoles.push(resourceRole);
     });
 
-    const allRolesValid = validRoles.length === roles.length;
-    return allRolesValid;
+    return validRoles;
   }
 
   generateDualRoleJob = (job1, job2) => {
