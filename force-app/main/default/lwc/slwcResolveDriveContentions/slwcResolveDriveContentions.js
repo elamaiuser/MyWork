@@ -1409,7 +1409,7 @@ export default class SlwcResolveDriveContentions extends LightningElement {
 
       this.drive.contentionResolutions = [];
       if(this.drive.contentionResolution) {
-        this.drive.contentionResolutions = this.drive.contentionResolution.split(';');
+        this.drive.contentionResolutions = cloneDeep(this.drive.contentionResolution);
       }
 
       this.handleActionChanged({
