@@ -3482,6 +3482,24 @@ class DriveHelper {
     return allRolesValid;
   }
 
+  checkResourceQuantityMapContainsAnyManuallyChangedDualRole(resourceQuantityMap) {
+    if (!resourceQuantityMap) return false;
+
+    let found = false;
+    resourceQuantityMap.forEach((item, resourceRole) => {
+        if (found) return; // Exit early if already found
+
+        const quantityValid = resourceRole === 'VP/HH' ? item.vphhQuantity > 0 : item.quantity > 0;
+        if (!quantityValid) return;
+
+        if (item.isCreatedOrUpdatedViaDualRoleChange) {
+            found = true;
+        }
+    });
+
+    return found;
+  }
+
   getValidRolesInResourceQuantityMap(resourceQuantityMap) {
     if(!resourceQuantityMap) return false;
 
