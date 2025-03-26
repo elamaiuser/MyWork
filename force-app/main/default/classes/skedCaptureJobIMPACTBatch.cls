@@ -95,16 +95,17 @@ global class skedCaptureJobIMPACTBatch implements Database.Batchable<sObject>, D
     
     global void finish(Database.BatchableContext BC) {
         if (!this.affectedJobIds.isEmpty()) {
-            Map<Id, sked__Job_Allocation__c> jobAllocations = new Map<Id, sked__Job_Allocation__c>([
-                SELECT Id, Name
+            List<sked__Job_Allocation__c> jobAllocations = new List<sked__Job_Allocation__c>([
+                SELECT Id, Name, sked_Completed_Post_Processes__c
                 FROM sked__Job_Allocation__c
                 WHERE sked__Job__c IN :this.affectedJobIds
                 AND sked__Status__c != :skedConstants.JOB_ALLOCATION_STATUS_DELETED
             ]);
 
-            if (jobAllocations != null && !jobAllocations.keySet().isEmpty()) {
-                skedJobAllocationPostProcessBatch.batchSetting batchSetting = new skedJobAllocationPostProcessBatch.batchSetting();
-                Database.executeBatch(new skedJobAllocationPostProcessBatch(batchSetting, jobAllocations.keyset()), 200);
+            skedTriggerUtils.removePostProcessFromJobAllocations(jobAllocations, skedConstants.JOB_ALLOCATION_POST_PROCESS_MAIN_PROCESS);
+
+            if (jobAllocations != null && !jobAllocations.isEmpty()) {
+                skedJobAllocationPostProcessBatch.schedule();
             }
         }
         this.coImpactChanges.remove(0);

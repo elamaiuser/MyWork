@@ -7,8 +7,12 @@
         <value xsi:type="xsd:double">1.0</value>
     </values>
     <values>
+        <field>Field_Mapping_Object__c</field>
+        <value xsi:nil="true"/>
+    </values>
+    <values>
         <field>Help_Text__c</field>
-        <value xsi:type="xsd:string">If a Contingency Plan does not exist, formulate one as well as a recruitment contingency plan using the Contingency Plan Worksheet in Important Links.</value>
+        <value xsi:type="xsd:string">If a Contingency Plan does not exist, formulate one using the Contingency Planning Worksheet</value>
     </values>
     <values>
         <field>Hyperlink__c</field>
@@ -28,7 +32,7 @@
     </values>
     <values>
         <field>Order__c</field>
-        <value xsi:type="xsd:double">11.0</value>
+        <value xsi:type="xsd:double">13.0</value>
     </values>
     <values>
         <field>Parent__c</field>
@@ -40,7 +44,7 @@
     </values>
     <values>
         <field>Section_Header__c</field>
-        <value xsi:type="xsd:string">Review Following Items</value>
+        <value xsi:type="xsd:string">Review, Discuss, and Plan the Following</value>
     </values>
     <values>
         <field>Subject__c</field>

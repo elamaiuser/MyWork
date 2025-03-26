@@ -715,6 +715,22 @@ export default class SlwcDriveManagement extends NavigationMixin(LightningElemen
 
                         if(!allAssignedVehiclesValid && canHandleDriveProjectedRegisteredDonors) {
                             let currentNoOfVehicles = this.drive.totalVehicleRequested;
+                            if(!this.drive.preferSystemGeneratedVehicles) {
+                                driveGeneratorInstance.onDriveDataChanged([{
+                                    targetName: 'totalVehicleRequestedChanged',
+                                    targetValue: {
+                                        totalVehicleRequested: newVehicles.length + lockedVehicles.length,
+                                        vehicles: newVehicles,
+                                        lockedVehicles: lockedVehicles
+                                    }
+                                }])
+                                .then(() => {
+                                    return this.handleValidate();
+                                })
+
+                                throw 'break';
+                            }
+                            
                             if(currentNoOfVehicles !== (newVehicles.length + lockedVehicles.length)) {
                                 this.showConfirmModal({
                                     title: 'Drive Confirmation',
@@ -724,6 +740,9 @@ export default class SlwcDriveManagement extends NavigationMixin(LightningElemen
                                     onClose: () => {
                                         this.hideConfirmModal();
                                         driveGeneratorInstance.onDriveDataChanged([{
+                                            targetName: 'numberOfVehicles',
+                                            targetValue: newVehicles.length + lockedVehicles.length
+                                        }, {
                                             targetName: 'totalVehicleRequestedChanged',
                                             targetValue: {
                                                 totalVehicleRequested: newVehicles.length + lockedVehicles.length,
@@ -1093,6 +1112,19 @@ export default class SlwcDriveManagement extends NavigationMixin(LightningElemen
 
                         if(!allAssignedVehiclesValid && canHandleDriveProjectedRegisteredDonors) {
                             let currentNoOfVehicles = this.drive.totalVehicleRequested;
+                            if(!this.drive.preferSystemGeneratedVehicles) {
+                                driveGeneratorInstance.onDriveDataChanged([...event.detail.properties, {
+                                    targetName: 'totalVehicleRequestedChanged',
+                                    targetValue: {
+                                        totalVehicleRequested: newVehicles.length + lockedVehicles.length,
+                                        vehicles: newVehicles,
+                                        lockedVehicles: lockedVehicles
+                                    }
+                                }])
+
+                                throw 'break';
+                            }
+
                             if(currentNoOfVehicles !== (newVehicles.length + lockedVehicles.length)) {
                                 this.showConfirmModal({
                                     title: 'Drive Confirmation',
@@ -1102,6 +1134,9 @@ export default class SlwcDriveManagement extends NavigationMixin(LightningElemen
                                     onClose: () => {
                                         this.hideConfirmModal();
                                         driveGeneratorInstance.onDriveDataChanged([...event.detail.properties, {
+                                            targetName: 'numberOfVehicles',
+                                            targetValue: newVehicles.length + lockedVehicles.length
+                                        }, {
                                             targetName: 'totalVehicleRequestedChanged',
                                             targetValue: {
                                                 totalVehicleRequested: newVehicles.length + lockedVehicles.length,
@@ -1326,8 +1361,8 @@ export default class SlwcDriveManagement extends NavigationMixin(LightningElemen
 
     /** Dual Role Assignment Modal */
     handleSaveDualRoleAssignmentModal(detail) {
-        const { drive, driveShift, newJob } = detail;
-        driveGeneratorInstance.saveJobDualRole(driveShift.key, newJob);
+        const { driveShift, jobsToCreate, jobsToUpdate, jobsToDelete } = detail;
+        driveGeneratorInstance.saveJobDualRole(driveShift.key, jobsToCreate, jobsToUpdate, jobsToDelete);
     }
 
     formatTime(time) {

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomMetadata xmlns="http://soap.sforce.com/2006/04/metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <label>Ferritin Deferrals</label>
+    <protected>false</protected>
+    <values>
+        <field>Active__c</field>
+        <value xsi:type="xsd:boolean">true</value>
+    </values>
+    <values>
+        <field>Report_Link__c</field>
+        <value xsi:type="xsd:string">https://americanredcross.sharepoint.com/sites/BHQAnalyticsBusinessIntelligence/Shared%20Documents/Forms/AllItems.aspx?FolderCTID=0x012000AEEF70749BB51144B27107021E27686F&amp;id=%2Fsites%2FBHQAnalyticsBusinessIntelligence%2FShared%20Documents%2FDrive%20Management%2FFerritin%20Deferrals&amp;viewid=c325aa53%2D682e%2D497e%2Db939%2D1b3805f199a2</value>
+    </values>
+    <values>
+        <field>Report_Name__c</field>
+        <value xsi:type="xsd:string">Ferritin Deferrals</value>
+    </values>
+    <values>
+        <field>Task_Subject__c</field>
+        <value xsi:type="xsd:string">Post Drive Analysis AM</value>
+    </values>
+    <values>
+        <field>Task_Type__c</field>
+        <value xsi:type="xsd:string">Post Drive Analysis Task</value>
+    </values>
+</CustomMetadata>

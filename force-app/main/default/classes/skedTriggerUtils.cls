@@ -65,7 +65,7 @@ public class skedTriggerUtils {
     public static void updateJobAllocations(Set<Id> jobIds, Set<Id> driveShiftIds) {
         if (!skedSetting.instance.Admin.migrationMode) {
             List<sked__Job_Allocation__c> jobAllocations = [
-                SELECT Id, Name
+                SELECT Id, Name, sked_Completed_Post_Processes__c
                 FROM sked__Job_Allocation__c
                 WHERE (sked__Job__c IN :jobIds OR sked__Job__r.sked_Drive_Shift__c IN :driveShiftIds)
                 AND sked__Status__c NOT IN :new List<String>{
@@ -74,17 +74,8 @@ public class skedTriggerUtils {
                 }
             ];
                 
-            Set<Id> jobAllocationIds = new Set<Id>();
-            for (sked__Job_Allocation__c ja : jobAllocations) {
-                jobAllocationIds.add(ja.Id);
-            }
-    
-            if (!Test.isRunningTest()) {
-                Database.executeBatch(new skedJobAllocationPostProcessBatch(
-                    new skedJobAllocationPostProcessBatch.batchSetting(),
-                    jobAllocationIds
-                ));
-            }
+            removePostProcessFromJobAllocations(jobAllocations, skedConstants.JOB_ALLOCATION_POST_PROCESS_MAIN_PROCESS);
+            skedJobAllocationPostProcessBatch.schedule();
         }
     }
 
@@ -182,5 +173,15 @@ public class skedTriggerUtils {
             newRecord.addError(errorMessage);
             }
         }
+    }
+
+    public static void removePostProcessFromJobAllocations(List<sked__Job_Allocation__c> jobAllocations, string postProcess) {
+        for (sked__Job_Allocation__c jobAllocation : jobAllocations) {
+            jobAllocation.sked_Completed_Post_Processes__c = skedUtils.removeItemFromMultiPicklist(jobAllocation.sked_Completed_Post_Processes__c, postProcess);
+        }
+
+        skedHubBase.setBypassAllTriggers(true);
+        update jobAllocations;
+        skedHubBase.setBypassAllTriggers(false);
     }
 }

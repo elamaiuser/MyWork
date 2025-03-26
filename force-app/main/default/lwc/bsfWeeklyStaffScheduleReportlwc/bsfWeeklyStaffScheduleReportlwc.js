@@ -158,7 +158,7 @@ export default class BSFWeeklyStaffingRoleTimeReport extends LightningElement {
       if(this.wrapper.drivedispatchyes === false && this.wrapper.drivedispatchno === true){
         drvdisp = 'No';
       }
-      searchReport({startDate : start, endDate: end, drivedispatch: drvdisp, collOpIdList: `${this.wrapper.collectionop}`, driveType: `${this.wrapper.drivetype}`})
+      searchReport({startDate: start, endDate: end, drivedispatch: drvdisp, collOpIdList: `${this.wrapper.collectionop}`, driveType: `${this.wrapper.drivetype}`, isForPDF: false})
           .then(result => {
               console.log('result:-'+JSON.stringify(result));
               this.loaded = false;

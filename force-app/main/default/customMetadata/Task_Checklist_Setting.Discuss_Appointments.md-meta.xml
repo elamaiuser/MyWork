@@ -7,6 +7,10 @@
         <value xsi:type="xsd:double">1.0</value>
     </values>
     <values>
+        <field>Field_Mapping_Object__c</field>
+        <value xsi:nil="true"/>
+    </values>
+    <values>
         <field>Help_Text__c</field>
         <value xsi:type="xsd:string">Discuss no-show rate and stress the importance of reminder calls to assist in identifying possible no-shows/appointment cancellations. Discuss utilization of a back-up list for interested donors, if necessary.</value>
     </values>
@@ -28,7 +32,7 @@
     </values>
     <values>
         <field>Order__c</field>
-        <value xsi:type="xsd:double">12.0</value>
+        <value xsi:type="xsd:double">14.0</value>
     </values>
     <values>
         <field>Parent__c</field>
@@ -40,7 +44,7 @@
     </values>
     <values>
         <field>Section_Header__c</field>
-        <value xsi:type="xsd:string">Review Following Items</value>
+        <value xsi:type="xsd:string">Review, Discuss, and Plan the Following</value>
     </values>
     <values>
         <field>Subject__c</field>
@@ -52,7 +56,7 @@
     </values>
     <values>
         <field>UI_Text__c</field>
-        <value xsi:type="xsd:string">Discuss plan to remind donors of their appointments.</value>
+        <value xsi:type="xsd:string">Discuss plan to remind donors of their appointments</value>
     </values>
     <values>
         <field>Unique_Name__c</field>

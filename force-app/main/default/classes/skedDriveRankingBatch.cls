@@ -5,15 +5,15 @@ global class skedDriveRankingBatch implements Database.Batchable<sked_Drive__c>,
     Set<Id> driveIds;
     List<String> inputKeys;
     Set<string> processedKey;
-    String driveSource;
+    String driveSource = '';
     String runType;
     Date driveDate;
 
     global skedDriveRankingBatch(String runType, String Source, Date driveDate, List<sked_Drive__c> inputDrives) {
         this.runType = runType;
         this.driveSource = source;
-        this.driveIds = new Set<Id>();
         this.driveDate = driveDate;
+        this.driveIds = new Set<Id>();
         this.processedKey = new Set<string>();
         for (sked_Drive__c inputDrive : inputDrives) {
             this.driveIds.add(inputDrive.Id);
@@ -116,13 +116,13 @@ global class skedDriveRankingBatch implements Database.Batchable<sked_Drive__c>,
                 Database.executeBatch(new skedDriveRankingBatch(inputKeySet), 1);
             }
         }
-        if(this.skedFixedSiteDrives != null) {
-        	Database.executeBatch(new DriveResourceAllocationBatch(runType, 
-                                                                   driveSource, 
-                                                                   skedConstants.DRIVE_TYPE_FIXED_SITE,
-                                                                   this.driveDate,
-                                                                   driveSource.equalsIgnoreCase('Calendar Build') ? new Set<Id>() : this.skedFixedSiteDrives), 1);
-        }
+        if(this.driveSource != NULL && !String.isBlank(this.driveSource) && !this.driveSource.equalsIgnoreCase(BSF_Constants.OPP_SOURCE_ADHOC_CALENDAR_BUILD)) {
+            Database.executeBatch(new DriveResourceAllocationBatch(runType, 
+                                                                    driveSource, 
+                                                                    skedConstants.DRIVE_TYPE_FIXED_SITE,
+                                                                    this.driveDate,  
+                                                                    driveSource.equalsIgnoreCase('Calendar Build') ? new Set<Id>() : skedFixedSiteDrives), 1);
+        } 
     }
     
     /*********************************************************** Nested Classes ***********************************************************/
