@@ -2572,9 +2572,6 @@ class MobileGenerator extends BaseGenerator {
       }
     }
     this.correctJobTime(job, driveShift);
-    this.initResourceQuantityMap();
-    this.calculateResourceQuantity();
-    this.populateDriveShiftJobs(driveShift, this.drive.driveShifts.findIndex(item => item.key === driveShift.key));
     this.updateShiftMobileSetup(driveShift);
 
     if(!job.volunteerRole) {
