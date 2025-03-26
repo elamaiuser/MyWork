@@ -1610,6 +1610,10 @@
             <default>false</default>
         </values>
         <values>
+            <fullName>Block Scheduling-Deny</fullName>
+            <default>false</default>
+        </values>
+        <values>
             <fullName>Budgeted FTE Reduction</fullName>
             <default>false</default>
         </values>
