@@ -2424,8 +2424,6 @@ class MobileGenerator extends BaseGenerator {
     const backupDrive = this.masterData.backupDrive;
     if(!backupDrive) return;
 
-    if(this.drive.totalVehicleRequested === backupDrive.totalVehicleRequested) return;
-
     if (this.drive.preferSystemGeneratedVehicles) {
       this.drive.numberOfVehicles = backupDrive.totalVehicleRequested;
       this.drive.totalVehicleRequested = backupDrive.totalVehicleRequested;
