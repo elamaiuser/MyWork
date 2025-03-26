@@ -22,7 +22,7 @@ global class skedJobAllocationPostProcessBatch implements Database.Batchable<sOb
                 sked__Start__c, sked__Duration__c, sked__Set_End__c, sked_Job_Timezone__c,
                 sked_Geoservice_Travel_Time_To__c, sked_Geoservice_Travel_Time_Back__c, 
                 sked_Is_Handled_Exception_from_Client__c, sked_Exclude_TAT_Exception__c, sked_Resource_Role__c, 
-                sked__Job__r.sked_Drive__c, sked__Job__r.sked_Drive__r.sked_Drive_Date__c, sked_Premium_Pay__c,
+                sked__Job__r.sked_Drive__c, sked__Job__r.sked_Drive__r.sked_Drive_Date__c, sked__Job__r.sked_Drive__r.Name, sked_Premium_Pay__c,
                 sked_DOT__c, sked_CDL__c, sked_Additional_Roles__c
             FROM sked__Job_Allocation__c
             WHERE Id IN :this.jobAllocationIds
