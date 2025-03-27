@@ -3,6 +3,10 @@ public class skedTravelTimeIndexItemHandler extends skedTriggerHub implements ca
     public override void onBeforeInsert() {
         setKey(this.context.newRecords);
     }
+
+    public override void onBeforeUpdate() {
+        updateTravelTimeBreakdownJSONData(this.context.newRecords, (Map<Id, sked_Travel_Time_Index_Item__c>)this.context.oldMap);    
+    }
     
     public override void onAfterUpdate() {
         if (!skedSetting.instance.Admin.migrationMode) {
@@ -51,6 +55,21 @@ public class skedTravelTimeIndexItemHandler extends skedTriggerHub implements ca
                 Location toLoc = Location.newInstance(ttii.sked_To__Latitude__s, ttii.sked_To__Longitude__s);
                 
                 ttii.sked_Key__c = skedTravelTimeIndexItemUtils.getKey(fromLoc, toLoc);
+            }
+        }
+    }
+
+    private void updateTravelTimeBreakdownJSONData(List<sked_Travel_Time_Index_Item__c> newRecords, Map<Id, sked_Travel_Time_Index_Item__c> oldMap) {        
+        String todayStr = Date.today().format();
+        String systemOverrideComment = skedConstants.SYSTEM_TTBD_OVERRIDE_COMMENT.replace('{0}',todayStr);
+        for (sked_Travel_Time_Index_Item__c newRecord : newRecords) {
+            sked_Travel_Time_Index_Item__c oldData = oldMap.get(newRecord.Id);            
+            if (newRecord.sked_Travel_Time_Breakdown_JSON__c != oldData.sked_Travel_Time_Breakdown_JSON__c 
+            && newRecord.sked_Travel_Time_Breakdown_JSON__c == skedConstants.NO_TRAVEL_TIME_DATA
+            && newRecord.sked_Travel_Time_Breakdown_JSON_Backup__c != NULL && String.isNotBlank(newRecord.sked_Travel_Time_Breakdown_JSON_Backup__c)) {
+                newRecord.sked_Travel_Time_Breakdown_JSON__c = newRecord.sked_Travel_Time_Breakdown_JSON_Backup__c;
+                newRecord.User_Override__c = true;
+                newRecord.Override_Comment__c = systemOverrideComment;
             }
         }
     }

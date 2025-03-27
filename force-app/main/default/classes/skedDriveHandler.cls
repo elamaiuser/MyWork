@@ -1082,16 +1082,17 @@ public class skedDriveHandler extends skedTriggerHub {
             }
         }
         if (!driveIdsToRevalidate.isEmpty()) {
-            List<sked__Job_Allocation__c> jobAllocations = new List<sked__Job_Allocation__c>([
-                SELECT Id, sked_Completed_Post_Processes__c
+            Map<Id, sked__Job_Allocation__c> mapJobAllocation = new Map<Id, sked__Job_Allocation__c>([
+                SELECT Id
                 FROM sked__Job_Allocation__c
                 WHERE sked__Job__r.sked_Drive__c IN :driveIdsToRevalidate
                 AND sked__Status__c != :skedConstants.JOB_ALLOCATION_STATUS_DELETED
             ]);
-
-            skedTriggerUtils.removePostProcessFromJobAllocations(jobAllocations, skedConstants.JOB_ALLOCATION_POST_PROCESS_MAIN_PROCESS);
-            if (!jobAllocations.isEmpty()) {
-                skedJobAllocationPostProcessBatch.schedule();
+            if (!mapJobAllocation.isEmpty()) {
+                if (!System.isBatch() || !Test.isRunningTest()) {
+                    skedJobAllocationPostProcessBatch.batchSetting batchSetting = new skedJobAllocationPostProcessBatch.batchSetting();
+                    Database.executeBatch(new skedJobAllocationPostProcessBatch(batchSetting, mapJobAllocation.keyset()), 200);
+                }
             }
         }
     }
