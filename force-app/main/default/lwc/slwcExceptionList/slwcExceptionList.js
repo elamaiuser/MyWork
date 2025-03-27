@@ -230,7 +230,11 @@ export default class SlwcExceptionList extends LightningElement {
                     }
                     else {
                         exception.conflictedActivityUrl = '';
-                    } 
+                    }
+                    //12840-when drive and conflicted drive are same, activity is present, use conflict with Activity title instead
+                    if (exception.conflictedDrive === exception.driveId && (exception.activityTitle || '').trim() !== '') {
+                        exception.exception = 'Conflict with '+exception.activityTitle;
+                    }
 
                 })
                 return result;
@@ -239,6 +243,8 @@ export default class SlwcExceptionList extends LightningElement {
                 console.log(error);
             });
     }
+
+
 
     handleOnChange(event) {
         if (event.type === 'daterangechange') {

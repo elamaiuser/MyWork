@@ -843,7 +843,8 @@ class BaseGenerator {
       const primaryRoleJobIndex = newList.findIndex((item) => 
         item.resourceRole && 
         item.resourceRole === target.resourceRole && 
-        item.id === target.id
+        item.dualRole &&
+        item.key === target.key
       );
       if(primaryRoleJobIndex === -1) return;
 
@@ -855,7 +856,7 @@ class BaseGenerator {
             item.resourceRole === target.resourceRole &&
             !item.dualRole &&
             !item.isManuallyCreated &&
-            item.id !== target.id
+            item.key !== target.key
               ? index
               : -1
           )
@@ -875,14 +876,12 @@ class BaseGenerator {
         }
       }
 
-      newList[primaryRoleJobIndex] = target;
-
       const dualRoleJobIndex = newList.findIndex((item) => item.resourceRole && item.resourceRole === target.dualRole);
       if(dualRoleJobIndex !== -1) {
         newList.splice(dualRoleJobIndex, 1);
       }
 
-      jobToBeGenerated = backupDriveShift.jobs?.find((item) => item.resourceRole && item.resourceRole === target.resourceRole); //will use the dual role as the primary role for the new job
+      jobToBeGenerated = backupDriveShift.jobs?.find((item) => item.resourceRole && item.resourceRole === target.resourceRole && item.dualRole); //will use the dual role as the primary role for the new job
     }
 
     target.tagNames = '';
