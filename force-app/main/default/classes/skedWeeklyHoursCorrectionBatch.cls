@@ -14,7 +14,7 @@ global class skedWeeklyHoursCorrectionBatch implements Database.Batchable<sked__
     }
     
     global List<sked__Job_Allocation__c> start(Database.BatchableContext BC) {
-        return [SELECT Id, sked_Completed_Post_Processes__c,
+        return [SELECT Id,
                 (SELECT Id
                  FROM sked_Resource_Hours_Record_Details__r
                  LIMIT 1)
@@ -28,21 +28,19 @@ global class skedWeeklyHoursCorrectionBatch implements Database.Batchable<sked__
     }
     
     global void execute(Database.BatchableContext BC, List<sked__Job_Allocation__c> records) {
-        List<sked__Job_Allocation__c> recordsToUpdate = new List<sked__Job_Allocation__c>();
         for (sked__Job_Allocation__c record : records) {
             if (record.sked_Resource_Hours_Record_Details__r == NULL || record.sked_Resource_Hours_Record_Details__r.isEmpty()) {
-                recordsToUpdate.add(record);
                 this.idsToProcess.add(record.Id);
             }            
         }
         
-        skedTriggerUtils.removePostProcessFromJobAllocations(recordsToUpdate, skedConstants.JOB_ALLOCATION_POST_PROCESS_MAIN_PROCESS);
         this.lastId = records.get(records.size() - 1).Id;
     }
     
     global void finish(Database.BatchableContext BC) { 
         if (!this.idsToProcess.isEmpty()) {
-            skedJobAllocationPostProcessBatch.schedule();
+            skedJobAllocationPostProcessBatch.batchSetting batchSetting = new skedJobAllocationPostProcessBatch.batchSetting();
+            Database.executeBatch(new skedJobAllocationPostProcessBatch(batchSetting, this.idsToProcess), 100);
         }
         
         List<sked__Job_Allocation__c> remainRecordQuery = [
