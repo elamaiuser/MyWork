@@ -1532,11 +1532,7 @@ class MobileGenerator extends BaseGenerator {
   }
 
   calculateVehicleQuantity() {
-    this.mapAssetQuantity.set('Vehicle', this.drive.doNotUseVehicle ? 
-      0 : 
-      this.drive.preferSystemGeneratedVehicles ? 
-        this.drive.totalVehicleRequested : 
-        this.drive.numberOfVehicles);
+    this.mapAssetQuantity.set('Vehicle', this.drive.doNotUseVehicle ?  0 : (this.drive.numberOfVehicles ?? this.drive.totalVehicleRequested))
   }
 
   calculateEquipmentQuantity() {
