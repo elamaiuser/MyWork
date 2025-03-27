@@ -342,10 +342,13 @@ public with sharing class GenerateMobileDrive {
                 staffingComplement = updateJobsAfterGeneratingDualRole(job, staffingComplement);
             
                 for(MobileDriveGeneratorDMLService.DMLJob driveShiftJob : driveShift.jobs) {
-                    if(staffingComplement.map_role_resourceQuantity.containsKey(driveShiftJob.resourceRole)) {
+                    Boolean isJobNeedsToGetGenerated = false;
+                    if(!String.isBlank(driveShiftJob.assetType)) isJobNeedsToGetGenerated = true;
+                    else if(staffingComplement.map_role_resourceQuantity.containsKey(driveShiftJob.resourceRole)) {
                         driveShiftJob.quantity = staffingComplement.map_role_resourceQuantity.get(driveShiftJob.resourceRole);
-                        if(driveShiftJob.quantity > 0) staffingComplement.jobs.add(driveShiftJob);
+                        if(driveShiftJob.quantity > 0) isJobNeedsToGetGenerated = true;
                     }
+                    if(isJobNeedsToGetGenerated) staffingComplement.jobs.add(driveShiftJob);
                 }
             } else {
                 staffingComplement.isDualRoleGenerated = false;
@@ -370,7 +373,7 @@ public with sharing class GenerateMobileDrive {
             staffingComplement.map_role_resourceQuantity.put(job.resourceRole + '-' + job.dualRole, job.quantity);
             String newJobRole = primaryRoleQuantity > secondaryRoleQuantity ? job.resourceRole : job.dualRole;
             Decimal newJobQuantity = Math.abs(primaryRoleQuantity - secondaryRoleQuantity);
-            staffingComplement.map_role_resourceQuantity.put(newJobRole, newJobQuantity);
+            if(newJobQuantity > 0) staffingComplement.map_role_resourceQuantity.put(newJobRole, newJobQuantity);
             
            return staffingComplement;
         }
@@ -961,7 +964,7 @@ public with sharing class GenerateMobileDrive {
 
             shiftCount = 0;
             for (MobileDriveGeneratorDMLService.DMLDriveShift driveShift :  driveShifts) {
-                if(drive.excessStaffCapacity <= 0) { //HRP-13862: AC#4
+                if(drive.excessStaffCapacity < 0) { //HRP-13862: AC#4
                     driveShift.jobs = driveShift.tempJobs;
                     DriveStaffingComplementModel staffingComplement = new DriveStaffingComplementModel();
                     staffingComplement = repopulateStaffingComplement(driveShift);
@@ -985,9 +988,9 @@ public with sharing class GenerateMobileDrive {
                 DriveStaffingComplementModel staffingComplement = new DriveStaffingComplementModel();
                 staffingComplement = repopulateStaffingComplement(driveShift);
 
-               // HRP-10667 --> Starts here
-               staffCapacityForWBSlotsCalc = Math.floor(calculateStaffCapacity (
-                    new List<String>{'Driver', 'Driver Support', '2RBC', 'VP/HH', 'Charge'},
+                // HRP-10667 --> Starts here
+                staffCapacityForWBSlotsCalc = Math.floor(calculateStaffCapacity (
+                    new List<String>(new Set<String>(staffingComplement.map_role_resourceQuantity.keySet())),
                     staffingComplement,
                     drive, 
                     driveShift, 
