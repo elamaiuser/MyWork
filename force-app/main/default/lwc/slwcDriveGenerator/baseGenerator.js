@@ -871,7 +871,8 @@ class BaseGenerator {
             0
           );
           target.quantity += totalQuantity;
-
+          target.systemQuantity = target.quantity;
+          
           for (let i = 0; i < otherPrimaryRoleJobIndexes.length; i++) {
             newList.splice(otherPrimaryRoleJobIndexes[i], 1); 
           }
