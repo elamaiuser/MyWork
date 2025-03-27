@@ -49,6 +49,7 @@
 		<members>skedCaptureJobIMPACTBatch</members>
 		<members>skedCaptureJobIMPACTBatch_Test</members>
 		<members>skedCOGroupTravelTimeIndexRefreshBatch</members>
+		<members>skedConstants</members>
 		<members>skedDriveHandler</members>
 		<members>skedDriveRankingBatch</members>
 		<members>skedDriveRankingBatch_Test</members>
@@ -90,8 +91,8 @@
 		<members>TaskService</members>
 		<members>TaskTriggerHandler</members>
 		<members>TaskTriggerTest</members>
-		<members>UserService</members>
-		<members>UserServiceTest</members>
+		<members>userService</members>
+		<members>userServiceTest</members>
 		<members>UserTriggerHandler</members>
 		<members>WeeklyStaffScheduleReportController</members>
 		<members>WeeklyStaffScheduleReportControllerTest</members>
@@ -104,6 +105,7 @@
 		<members>AdhocCalendarBuildRunEvent</members>
 		<members>assignResourcesToUsersBasedOnConfig</members>
 		<members>skedFutureCallPostCommitEventTrigger</members>
+		<members>skedTravelTimeIndexItemTrigger</members>
 		<name>ApexTrigger</name>
 	</types>
 	<types>
