@@ -884,7 +884,13 @@ class BaseGenerator {
         newList.splice(dualRoleJobIndex, 1);
       }
 
-      jobToBeGenerated = backupDriveShift.jobs?.find((item) => item.resourceRole && item.resourceRole === target.resourceRole && item.dualRole); //will use the dual role as the primary role for the new job
+      jobToBeGenerated = backupDriveShift.jobs?.find(
+        (item) =>
+          item.key === target.key &&
+          item.resourceRole &&
+          item.resourceRole === target.resourceRole &&
+          item.dualRole
+      ); //will use the dual role as the primary role for the new job
     }
 
     target.tagNames = '';
