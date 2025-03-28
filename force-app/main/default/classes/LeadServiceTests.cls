@@ -9,6 +9,7 @@
 * 10/20/2023                  Krapy Tuli                To increase Code coverage for HRP-10880
 * 09/17/2024				  Priti Jana			    Increase code coverage
 * 12/11/2024				  Priti Jana				Added test method for HRP-13602
+* 03/10/2025                  Souvik Mukherjee          Logic for HRP-14331 - only consider Leads of Record Type Marketing Manager for conversion to Feeder Group
 *****************************************************************************
 */
 
@@ -881,6 +882,7 @@ public class LeadServiceTests {
         testLead.Phone_Type__c ='Mobile Phone';
         testLead.Phone = '123-456-7890';
         testLead.Status = 'Potential Feeder Group';
+        testLead.RecordTypeId = Schema.SObjectType.Lead.getRecordTypeInfosByName().get('Market Manager').getRecordTypeId();        //Changed for HRP-14331
         TriggerHandler.bypass('LeadTriggerHandler');
         insert testLead;
         Triggerhandler.clearAllBypasses();
@@ -899,7 +901,7 @@ public class LeadServiceTests {
 	    Database.LeadConvert lc = new database.LeadConvert();
         lc.setLeadId(testLead.Id);
         lc.setAccountId(testAccount.Id);
-        lc.setConvertedStatus('Converted');
+        lc.setConvertedStatus('Active Feeder Group');				//Changed for HRP-14331
         lc.setDoNotCreateOpportunity(true);
         try{
         	Database.LeadConvertResult lcr = Database.convertLead(lc);

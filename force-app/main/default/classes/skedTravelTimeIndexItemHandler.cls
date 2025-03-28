@@ -64,7 +64,8 @@ public class skedTravelTimeIndexItemHandler extends skedTriggerHub implements ca
         String systemOverrideComment = skedConstants.SYSTEM_TTBD_OVERRIDE_COMMENT.replace('{0}',todayStr);
         for (sked_Travel_Time_Index_Item__c newRecord : newRecords) {
             sked_Travel_Time_Index_Item__c oldData = oldMap.get(newRecord.Id);            
-            if (newRecord.sked_Travel_Time_Breakdown_JSON__c != oldData.sked_Travel_Time_Breakdown_JSON__c 
+            if (newRecord.sked_Travel_Time_Breakdown_JSON__c != oldData.sked_Travel_Time_Breakdown_JSON__c
+            && newRecord.sked_Travel_Time_Breakdown_JSON__c != NULL && String.isNotBlank(newRecord.sked_Travel_Time_Breakdown_JSON__c)
             && newRecord.sked_Travel_Time_Breakdown_JSON__c == skedConstants.NO_TRAVEL_TIME_DATA
             && newRecord.sked_Travel_Time_Breakdown_JSON_Backup__c != NULL && String.isNotBlank(newRecord.sked_Travel_Time_Breakdown_JSON_Backup__c)) {
                 newRecord.sked_Travel_Time_Breakdown_JSON__c = newRecord.sked_Travel_Time_Breakdown_JSON_Backup__c;
