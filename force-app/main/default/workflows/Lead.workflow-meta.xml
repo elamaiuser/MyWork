@@ -43,7 +43,7 @@
         <criteriaItems>
             <field>Lead.RecordTypeId</field>
             <operation>equals</operation>
-            <value>Lead,LSL</value>
+            <value>Lead,LSL,Biomed Recruitment</value>
         </criteriaItems>
         <triggerType>onCreateOrTriggeringUpdate</triggerType>
     </rules>
