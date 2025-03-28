@@ -105,7 +105,7 @@ export default class SlwcDriveShiftJobModal extends LightningElement {
           }
   
         return (roleMap[this.job.resourceRole] || [])
-            .filter(role => role === 'None' || this.driveShift.jobs?.find(_job => _job.resourceRole === role) || this.driveShift.jobs?.find(_job => _job.resourceRole === this.job.resourceRole && _job.dualRole === role))
+            .filter(role => role === 'None' || this.driveShift.jobs?.find(_job => _job.resourceRole === role) || this.driveShift.jobs?.find(_job => _job.key === this.job.key && _job.resourceRole === this.job.resourceRole && _job.dualRole === role))
             .map(role => {
                 return {
                     label: role,
@@ -492,7 +492,7 @@ export default class SlwcDriveShiftJobModal extends LightningElement {
             ...this.job,
             isDualRoleModified: isDualRoleModified
         };
-        console.log('this.driveShift ',this.driveShift);
+
         let eventValues = {action: this.action, shiftKey: this.driveShift.key, job: this.job};
         if(this.type != "allocationModal"){
             fireEvent(this.pageRef, 'saveJob', eventValues);
