@@ -165,6 +165,7 @@ private class BSF_UpdateDriveExcessStaffCapacityTest {
             siteObj.Source__c = 'Custom New Form';
             siteObj.sked_Date_Site_Inspection_Completed__c = Date.today();
             siteObj.Operation_Type__c = 'Non Integrated WB';
+            siteObj.sked_Timezone__c = 'America/Los_Angeles';
             skedHubBase.BypassInsertTriggers = true;
             TriggerHandler.bypass('SiteTriggerHandler');
             insert siteObj;
