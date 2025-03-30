@@ -840,17 +840,16 @@ class BaseGenerator {
     
     //Run this block only if dual role is changed
     if(target.isDualRoleModified) {
-      const primaryRoleJobIndex = newList.findIndex(
-        (item) =>
-          item.resourceRole &&
-          item.resourceRole === target.resourceRole &&
-          item.dualRole &&
-          item.key === target.key
+      const primaryRoleJobIndex = newList.findIndex((item) => 
+        item.resourceRole && 
+        item.resourceRole === target.resourceRole && 
+        item.dualRole &&
+        item.key === target.key
       );
-      if (primaryRoleJobIndex === -1) return;
+      if(primaryRoleJobIndex === -1) return;
 
-      if (target.dualRole === "None") {
-        target.dualRole = "";
+      if(target.dualRole === 'None') {
+        target.dualRole = '';
 
         const otherPrimaryRoleJobIndexes = newList
           .map((item, index) =>
@@ -864,7 +863,7 @@ class BaseGenerator {
           .filter((index) => index !== -1);
 
         let totalQuantity = 0;
-        if (otherPrimaryRoleJobIndexes.length > 0) {
+        if(otherPrimaryRoleJobIndexes.length > 0) {
           totalQuantity = otherPrimaryRoleJobIndexes.reduce(
             (sum, index) => sum + (newList[index].quantity || 0),
             0
@@ -872,15 +871,13 @@ class BaseGenerator {
           target.quantity += totalQuantity;
 
           for (let i = 0; i < otherPrimaryRoleJobIndexes.length; i++) {
-            newList.splice(otherPrimaryRoleJobIndexes[i], 1);
+            newList.splice(otherPrimaryRoleJobIndexes[i], 1); 
           }
         }
       }
 
-      const dualRoleJobIndex = newList.findIndex(
-        (item) => item.resourceRole && item.resourceRole === target.dualRole
-      );
-      if (dualRoleJobIndex !== -1) {
+      const dualRoleJobIndex = newList.findIndex((item) => item.resourceRole && item.resourceRole === target.dualRole);
+      if(dualRoleJobIndex !== -1) {
         newList.splice(dualRoleJobIndex, 1);
       }
 

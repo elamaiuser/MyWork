@@ -165,6 +165,7 @@ private class BSF_UpdateDriveExcessStaffCapacityTest {
             siteObj.Source__c = 'Custom New Form';
             siteObj.sked_Date_Site_Inspection_Completed__c = Date.today();
             siteObj.Operation_Type__c = 'Non Integrated WB';
+            siteObj.sked_Timezone__c = 'America/Los_Angeles';
             skedHubBase.BypassInsertTriggers = true;
             TriggerHandler.bypass('SiteTriggerHandler');
             insert siteObj;
@@ -283,7 +284,8 @@ private class BSF_UpdateDriveExcessStaffCapacityTest {
                                                         sked_Status__c = skedConstants.DRIVE_STATUS_DRAFT,
                                                         sked_Staff_Capacity__c = 25,
                                                         sked_Projected_Registered_Donors__c = 40,
-                                                         sked_2RBC_Projected_Procedures__c = 2);
+                                                        sked_2RBC_Projected_Procedures__c = 2
+                                                        );
             insert testDrive1;
             sked_Drive__c testDrive2 = new sked_Drive__c(Name = 'Testtwo Drive',
                                                         sked_Collection_Operation__c = testCollectionOperation1.Id,
