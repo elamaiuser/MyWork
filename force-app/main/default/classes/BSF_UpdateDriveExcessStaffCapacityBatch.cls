@@ -81,7 +81,7 @@ public class BSF_UpdateDriveExcessStaffCapacityBatch implements Database.Batchab
                 }
             }
 
-            if(collectionOperationSDMs.isEmpty()){
+            if(!collectionOperationSDMs.isEmpty()){
                 for(sked_Collection_Operation_SDM__c coSDM : collectionOperationSDMs){
                     if(coSDM.sked_Collection_Operation__c == driveMap.get(driveId).sked_Collection_Operation__c
                             && coSDM.sked_Effective_Start_Date__c <= driveMap.get(driveId).sked_Drive_Date__c  
