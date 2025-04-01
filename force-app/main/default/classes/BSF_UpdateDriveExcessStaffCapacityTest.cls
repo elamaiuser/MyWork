@@ -7,7 +7,8 @@ private class BSF_UpdateDriveExcessStaffCapacityTest {
         String rolename = 'West_BDM';
         String mobileOppRecType = 'Mobile Opp';
         String mobileAccRecType = 'Mobile Account';
-        String mobileSiteRecType = 'Mobile Site';    
+        String mobileSiteRecType = 'Mobile Site';
+        String mobileSdmRecType = 'Mobile';    
         Map<String,Id> recordTypeMap  = new Map<String,Id>();
         recordTypeMap = recordTypeMap( 'Opportunity' );
         System.debug( '#debug#1 is ' + recordTypeMap );
@@ -20,6 +21,9 @@ private class BSF_UpdateDriveExcessStaffCapacityTest {
         recordTypeMap = recordTypeMap( 'sked__Location__c' );
         System.debug( '#debug#1 is ' + recordTypeMap );
         Id siteRecTypeId = recordTypeMap.get(mobileSiteRecType);
+        
+        recordTypeMap = recordTypeMap('sked_Staffing_Decision_Matrix__c');
+        Id staffingDecisionMatrixRecTypeId = recordTypeMap.get(mobileSdmRecType);
         
         User AdminUser = new User(
             ProfileId = [SELECT Id FROM Profile WHERE Name = 'System Administrator'].Id,
@@ -105,9 +109,6 @@ private class BSF_UpdateDriveExcessStaffCapacityTest {
             
             triggerHandler.bypass('AccountTeamMemberTriggerHandler');
             insert atmList;
-            
-            
-            
             
             Contact conObj = new Contact();
             conObj.AccountId = mobileAccList[0].Id;
@@ -255,10 +256,9 @@ private class BSF_UpdateDriveExcessStaffCapacityTest {
             optyObj1.Anticipated_Registered_Donors__c = 1;
             
             oppsobjlist.add( optyObj1 );
-            
-              
             triggerHandler.bypass('OpportunityTriggerHandler');
             insert oppsobjlist;
+            
 
             Biomed_Collection_Op_Center__c testCollectionOperation1 = new Biomed_Collection_Op_Center__c(Name = 'Collection Operation 1',
                                                                                                         sked_Lunch_Break_Duration_Fixed_Site__c = '30',
@@ -269,7 +269,7 @@ private class BSF_UpdateDriveExcessStaffCapacityTest {
                                                                                                         sked_Work_Week_First_Day__c = 'Sunday');
             insert testCollectionOperation1;
 
-            
+      
             triggerHandler.bypass('DriveTriggerHandler');
             sked_Drive__c testDrive1 = new sked_Drive__c(Name = 'Test Drive',
                                                         sked_Collection_Operation__c = testCollectionOperation1.Id,
@@ -284,7 +284,8 @@ private class BSF_UpdateDriveExcessStaffCapacityTest {
                                                         sked_Status__c = skedConstants.DRIVE_STATUS_DRAFT,
                                                         sked_Staff_Capacity__c = 25,
                                                         sked_Projected_Registered_Donors__c = 40,
-                                                         sked_2RBC_Projected_Procedures__c = 2);
+                                                        sked_2RBC_Projected_Procedures__c = 2
+                                                        );
             insert testDrive1;
             sked_Drive__c testDrive2 = new sked_Drive__c(Name = 'Testtwo Drive',
                                                         sked_Collection_Operation__c = testCollectionOperation1.Id,
@@ -307,6 +308,7 @@ private class BSF_UpdateDriveExcessStaffCapacityTest {
                                                                     sked_WB_Projected_Procedures__c = 6,
                                                                     sked_Staff_Setup__c = 15,
                                                                     sked_Equipment_Allocated__c = 4,
+                                                                    sked_Lunch_Break__c = true,
                                                                     sked_Lunch_Break_Start_Time__c = Time.newInstance(8, 0, 0, 0),
                                                                     sked_Lunch_Break_End_Time__c = Time.newInstance(9, 0, 0, 0),
                                                                     sked_Drive__c = testDrive1.Id,
@@ -469,6 +471,25 @@ private class BSF_UpdateDriveExcessStaffCapacityTest {
             /*
             * HRP-10127 Changes ends here 
             */
+            
+            sked_Staffing_Decision_Matrix__c testStaffingDecisionMatrix = new sked_Staffing_Decision_Matrix__c(
+            	sked_2RBC_Staff_Capacity__c = 1.60,
+            	sked_Charge_Capacity__c = 1.10,
+            	sked_Driver_Capacity__c = 2.20,
+            	sked_Driver_Support_Capacity__c = 2.20,
+            	sked_VP_HH_Capacity__c = 1.10,
+            	sked_Team_Supervisor_Threshold__c = 36,
+            	RecordTypeId = staffingDecisionMatrixRecTypeId
+            );
+            insert testStaffingDecisionMatrix;
+            
+            sked_Collection_Operation_SDM__c testColOppSdm = new sked_Collection_Operation_SDM__c(
+            	sked_Collection_Operation__c = testCollectionOperation1.Id,
+            	sked_Effective_Start_Date__c = System.today().addDays(-100),
+            	sked_Effective_End_Date__c = Date.newInstance(4000,12,31),
+            	sked_Staffing_Decision_Matrix__c = testStaffingDecisionMatrix.Id
+            );
+            insert testColOppSdm;
         }        
         
     }
