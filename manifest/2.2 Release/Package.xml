@@ -45,7 +45,9 @@
 		<members>OpportunityTriggerTest</members>
 		<members>OpRecordStatusCorrectionTest</members>
 		<members>skedActivityHandler</members>
+		<members>skedActivityTrigger_Test</members>
 		<members>skedActivityResourceHandler</members>
+		<members>skedActivityResourceTrigger_Test</members>
 		<members>skedCaptureJobIMPACTBatch</members>
 		<members>skedCaptureJobIMPACTBatch_Test</members>
 		<members>skedCOGroupTravelTimeIndexRefreshBatch</members>
