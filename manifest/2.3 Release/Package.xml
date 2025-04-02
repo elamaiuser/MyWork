@@ -7,7 +7,8 @@
     <types>
         <members>Opportunity.StageName</members>
         <members>sked_Location_Account__c.sked_Location__c</members>        
-        <members>sked_Drive__c.sked_Stage_Options__c</members>	
+        <members>sked_Drive__c.sked_Stage_Options__c</members>	      
+        <members>sked__Slot__c.sked_Fixed_Site_Lock_Reason__c</members>	
         <name>CustomField</name>
     </types>
     <types>
