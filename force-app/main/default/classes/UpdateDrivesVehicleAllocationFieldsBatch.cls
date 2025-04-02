@@ -1,3 +1,11 @@
+/* 
+ * @description: This batch corrects # of Bus, # of DOT, # of CDL, Vehicle Type and Vehicle Capacity on the Drive
+ * Modification Log 
+ * Date					     Developer Name			     Comments
+ * ***********************************************************************************************************************************************
+ * 04/02/2025                Souvik Mukherjee	          Corrected issue with String Size too long with making debug log entries (HRP-14448)
+ ************************************************************************************************************************************************
+*/
 public class UpdateDrivesVehicleAllocationFieldsBatch implements Database.Batchable<sObject>{
     /*
     // To run for specific date
@@ -21,6 +29,7 @@ public class UpdateDrivesVehicleAllocationFieldsBatch implements Database.Batcha
     Date toDate;
     Date fromDate;
     String typeOfDrive;
+    Integer maxErrorMessageSize = 32000;                            //Change for HRP-14448
     
     public UpdateDrivesVehicleAllocationFieldsBatch(String typeOfDrive){
         this.typeOfDrive = typeOfDrive;
@@ -176,6 +185,10 @@ public class UpdateDrivesVehicleAllocationFieldsBatch implements Database.Batcha
                             debugLog.ApexClass__c = 'UpdateDrivesResourceRelatedField';
                             debugLog.Method__c = 'UpdateDrivesResourceRelatedField';
                             debugLog.Error_Description__c = failedRecordId;
+                            //added for HRP-14448
+                            if(errorDetails.length() > maxErrorMessageSize ){
+                                errorDetails = errorDetails.substring(0, maxErrorMessageSize);
+                            }
                             debugLog.Error_Description_Long__c = errorDetails;
                             
                             errorLogs.add(debugLog);
@@ -190,6 +203,10 @@ public class UpdateDrivesVehicleAllocationFieldsBatch implements Database.Batcha
                         debugLog.ApexClass__c = 'UpdateDrivesResourceRelatedField';
                         debugLog.Method__c = 'UpdateDrivesResourceRelatedField';
                         debugLog.Error_Description__c = String.valueOf(drivesToUpdate.size());
+                        //added for HRP-14448
+                        if(ErrorLogMessage.length() > maxErrorMessageSize ){
+                            ErrorLogMessage = ErrorLogMessage.substring(0, maxErrorMessageSize);
+                        }
                         debugLog.Error_Description_Long__c = ErrorLogMessage;
                         insert debugLog;
                     }
@@ -201,7 +218,7 @@ public class UpdateDrivesVehicleAllocationFieldsBatch implements Database.Batcha
             BSF_Error_Log__c debugLog = new BSF_Error_Log__c();
             debugLog.ApexClass__c = 'UpdateDrivesResourceRelatedFieldBatch';
             debugLog.Method__c = String.valueOf(e.getLineNumber());
-            debugLog.Error_Description__c = 'The Exception is covered :: '+e.getMessage(); //
+            debugLog.Error_Description__c = 'Exception Caught. Please check Long Description for Details '; //changed for HRP-14448
             debugLog.Error_Description_Long__c = e.getMessage();
             insert debugLog;
         }
