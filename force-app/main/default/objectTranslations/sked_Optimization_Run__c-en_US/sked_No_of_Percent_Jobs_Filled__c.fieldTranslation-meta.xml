@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
-        <label><!-- % Jobs Filled --></label>
-        <name>sked_No_of_Percent_Jobs_Filled__c</name>
-    </CustomFieldTranslation>

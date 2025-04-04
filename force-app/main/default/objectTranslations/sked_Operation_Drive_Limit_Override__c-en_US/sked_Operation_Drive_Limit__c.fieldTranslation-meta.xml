@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
-        <label><!-- Operation Drive Limit --></label>
-        <name>sked_Operation_Drive_Limit__c</name>
-        <relationshipLabel><!-- Operation Drive Limit Overrides --></relationshipLabel>
-    </CustomFieldTranslation>

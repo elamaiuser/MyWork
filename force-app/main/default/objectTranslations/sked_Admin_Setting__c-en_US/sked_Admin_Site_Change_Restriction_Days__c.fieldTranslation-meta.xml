@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
-        <help><!-- The system does not allow a change to Drive Site for a confirmed drive within a specified configurable time period. --></help>
-        <label><!-- Admin Site Change Restriction Days --></label>
-        <name>sked_Admin_Site_Change_Restriction_Days__c</name>
-    </CustomFieldTranslation>

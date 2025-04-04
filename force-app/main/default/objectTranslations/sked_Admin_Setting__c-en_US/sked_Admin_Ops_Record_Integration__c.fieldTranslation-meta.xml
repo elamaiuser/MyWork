@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
-        <label><!-- Admin Ops Record Integration --></label>
-        <name>sked_Admin_Ops_Record_Integration__c</name>
-    </CustomFieldTranslation>

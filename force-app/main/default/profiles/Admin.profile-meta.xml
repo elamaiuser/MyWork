@@ -2411,6 +2411,10 @@
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
+        <apexClass>skedActivityResourceUtils_Test</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
         <apexClass>skedActivityService</apexClass>
         <enabled>true</enabled>
     </classAccesses>
@@ -7922,6 +7926,11 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
+        <field>Contact.BuyerAttributes</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>Contact.Campaign_Name__c</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -7963,6 +7972,11 @@
     <fieldPermissions>
         <editable>true</editable>
         <field>Contact.Department</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Contact.DepartmentGroup</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -8213,6 +8227,11 @@
     <fieldPermissions>
         <editable>true</editable>
         <field>Contact.Title</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Contact.TitleType</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -23630,6 +23649,10 @@
     <userPermissions>
         <enabled>true</enabled>
         <name>ManageExchangeConfig</name>
+    </userPermissions>
+    <userPermissions>
+        <enabled>true</enabled>
+        <name>ManageFilesAndAttachments</name>
     </userPermissions>
     <userPermissions>
         <enabled>true</enabled>

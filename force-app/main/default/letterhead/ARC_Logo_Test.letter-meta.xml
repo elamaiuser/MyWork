@@ -17,6 +17,7 @@
         <backgroundColor>#FFFFFF</backgroundColor>
         <height>100</height>
         <horizontalAlignment>Left</horizontalAlignment>
+        <logo>Logos/Red_Cross_Logo.png</logo>
         <verticalAlignment>Top</verticalAlignment>
     </header>
     <middleLine>

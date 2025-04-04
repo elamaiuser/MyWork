@@ -12,12 +12,12 @@
     <filters>
         <field>CREATEDBY_USER</field>
         <operation>contains</operation>
-        <value>Automated process,Gail Kirby</value>
+        <value>Ann Beal,Automated Process</value>
     </filters>
     <filters>
         <field>CREATED_DATE</field>
         <operation>equals</operation>
-        <value>11/18/2024 10:37 AM</value>
+        <value>12/3/2024 2:42 PM</value>
     </filters>
     <label>SyncOppsWithDrives</label>
 </ListView>
