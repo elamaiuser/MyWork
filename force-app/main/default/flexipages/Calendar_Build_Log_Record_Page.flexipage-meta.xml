@@ -466,6 +466,16 @@
                     <name>uiBehavior</name>
                     <value>none</value>
                 </fieldInstanceProperties>
+                <fieldItem>Record.FS_Drives_wo_Resource_Requested__c</fieldItem>
+                <identifier>RecordFS_Drives_wo_Resource_Requested_cField</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
                 <fieldItem>Record.FS_Drives_with_Resource_Allocation__c</fieldItem>
                 <identifier>RecordFS_Drives_with_Resource_Allocation_cField</identifier>
             </fieldInstance>
@@ -512,6 +522,16 @@
                 </fieldInstanceProperties>
                 <fieldItem>Record.Mobile_Sys_Gen_Batch_Run_Date__c</fieldItem>
                 <identifier>RecordMobile_Sys_Gen_Batch_Run_Date_cField</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.Mobile_Drives_wo_Resource_Requested__c</fieldItem>
+                <identifier>RecordMobile_Drives_wo_Resource_Requested_cField</identifier>
             </fieldInstance>
         </itemInstances>
         <itemInstances>
@@ -775,6 +795,21 @@
                         <valueListItems>
                             <value>NAME</value>
                         </valueListItems>
+                        <valueListItems>
+                            <value>Category__c</value>
+                        </valueListItems>
+                        <valueListItems>
+                            <value>BSF_Error_Log__c</value>
+                        </valueListItems>
+                        <valueListItems>
+                            <value>Opportunity__c</value>
+                        </valueListItems>
+                        <valueListItems>
+                            <value>Drive__c</value>
+                        </valueListItems>
+                        <valueListItems>
+                            <value>Operation_Record__c</value>
+                        </valueListItems>
                     </valueList>
                 </componentInstanceProperties>
                 <componentInstanceProperties>
@@ -861,21 +896,6 @@
         <itemInstances>
             <componentInstance>
                 <componentInstanceProperties>
-                    <name>showLegacyActivityComposer</name>
-                    <value>false</value>
-                </componentInstanceProperties>
-                <componentName>runtime_sales_activities:activityPanel</componentName>
-                <identifier>runtime_sales_activities_activityPanel</identifier>
-            </componentInstance>
-        </itemInstances>
-        <mode>Replace</mode>
-        <name>activityTabContent</name>
-        <type>Facet</type>
-    </flexiPageRegions>
-    <flexiPageRegions>
-        <itemInstances>
-            <componentInstance>
-                <componentInstanceProperties>
                     <name>active</name>
                     <value>true</value>
                 </componentInstanceProperties>
@@ -903,20 +923,6 @@
                 </componentInstanceProperties>
                 <componentName>flexipage:tab</componentName>
                 <identifier>flexipage_tab</identifier>
-            </componentInstance>
-        </itemInstances>
-        <itemInstances>
-            <componentInstance>
-                <componentInstanceProperties>
-                    <name>body</name>
-                    <value>activityTabContent</value>
-                </componentInstanceProperties>
-                <componentInstanceProperties>
-                    <name>title</name>
-                    <value>Standard.Tab.activity</value>
-                </componentInstanceProperties>
-                <componentName>flexipage:tab</componentName>
-                <identifier>activityTab</identifier>
             </componentInstance>
         </itemInstances>
         <mode>Replace</mode>
