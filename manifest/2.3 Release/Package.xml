@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Package xmlns="http://soap.sforce.com/2006/04/metadata">
     <types>
-        <members>Account-System Admin Fixed Site Account Layout</members>	
+        <members>Account-System Admin Fixed Site Account Layout</members>
+        <members>Calendar_Build_Log_Manual_Run__c-Calendar Build Log Manual Run Layout</members>
+		<members>Calendar_Build_Log__c-Calendar Build Log Layout</members>	
         <name>Layout</name>
     </types>
     <types>
@@ -9,6 +11,10 @@
         <members>sked_Location_Account__c.sked_Location__c</members>        
         <members>sked_Drive__c.sked_Stage_Options__c</members>	      
         <members>sked__Slot__c.sked_Fixed_Site_Lock_Reason__c</members>	
+        <members>Calendar_Build_Log__c.FS_Drives_wo_Resource_Requested__c</members>	
+        <members>Calendar_Build_Log__c.Mobile_Drives_wo_Resource_Requested__c</members>	
+        <members>Calendar_Build_Log_Manual_Run__c.FS_Drives_wo_Resource_Requested__c</members>	
+        <members>Calendar_Build_Log_Manual_Run__c.Mobile_Drives_wo_Resource_Requested__c</members>	
         <name>CustomField</name>
     </types>
     <types>
@@ -17,6 +23,11 @@
         <members>skedActivityService</members>
         <members>skedResourceHandler</members>
 		<members>TriggerHandler</members>
+        <members>BSF_Constants</members>
+		<members>DriveGenerationUtil</members>
+        <members>DriveResourceAllocationBatch</members>
+        <members>DriveResourceAllocationBatchTest</members>
+        <members>GenerateMobileDriveTest</members>
 		<name>ApexClass</name>
 	</types>
     <types>
@@ -29,6 +40,8 @@
 	</types>
     <types>
 		<members>DRD_HomePage</members>
+        <members>Calendar_Build_Log_Record_Page</members>
+		<members>Calendar_Build_Log_Manual_Run_Record_Page</members>
 		<name>FlexiPage</name>
 	</types>
     <types>
