@@ -259,4 +259,23 @@ public with sharing class AccountServiceRoleService {
             Database.update(updateableAccounts,false);
         }
     }
+    public static void markContactAsInactive(Map<Id,Account_Service_Role__c> oldMap, List<Account_Service_Role__c> newList){
+        System.debug('AccountServiceRole markContactAsInactive');
+        Set<Id> contactIdsToUpdate = new Set<Id>();
+        for(Account_Service_Role__c newAsr : newList){
+            Account_Service_Role__c oldAsr = oldMap.get(newAsr.Id);
+            // Only act if End Date is newly populated and End Reason is Deceased
+            if (oldAsr.End_Date__c == null && newAsr.End_Date__c != null && newAsr.Account_Service_End_Reason__c.equalsIgnoreCase('Deceased') && newAsr.Contact__c != null) {
+                contactIdsToUpdate.add(newAsr.Contact__c);
+            }
+        }
+        if (!contactIdsToUpdate.isEmpty()) {
+            List<Contact> contactsToUpdate = [SELECT Id, Active__c FROM Contact WHERE Id IN :contactIdsToUpdate];
+            for (Contact con : contactsToUpdate) {
+                con.Active__c = false;
+            }
+            update contactsToUpdate;
+            System.debug('Updated Contact as Inactive');
+        }
+    }
 }

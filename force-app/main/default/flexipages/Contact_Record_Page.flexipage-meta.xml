@@ -94,6 +94,9 @@
                         <valueListItems>
                             <value>End_Date__c</value>
                         </valueListItems>
+                        <valueListItems>
+                            <value>Account_Service_End_Reason__c</value>
+                        </valueListItems>
                     </valueList>
                 </componentInstanceProperties>
                 <componentInstanceProperties>
