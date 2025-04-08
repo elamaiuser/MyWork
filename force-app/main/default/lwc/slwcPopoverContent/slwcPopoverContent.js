@@ -11,6 +11,7 @@ import planDriveValidationPopover from './planDriveValidationPopover.html';
 import driveShiftStaffComplementPopover from './driveShiftStaffComplementPopover.html';
 import linkedDrivePopover from './linkedDrivePopover.html';
 import driveShiftTagExceptionPopover from './driveShiftTagExceptionPopover.html';
+import driveShiftResourceAllocationPopover from './driveShiftResourceAllocationPopover.html';
 import { fireEvent } from 'c/pubsub';
 import { JOB_ALLOCATION_STATUS, MANUALLY_CREATED_FROM } from 'c/slwcConstants';
 import { DateTime } from 'c/luxon';
@@ -38,7 +39,8 @@ export default class SlwcPopoverContent extends LightningElement {
       'planDriveValidationPopover': planDriveValidationPopover,
       'driveShiftStaffComplementPopover': driveShiftStaffComplementPopover,
       'linkedDrivePopover': linkedDrivePopover,
-      'driveShiftTagExceptionPopover': driveShiftTagExceptionPopover
+      'driveShiftTagExceptionPopover': driveShiftTagExceptionPopover,
+      'driveShiftResourceAllocationPopover': driveShiftResourceAllocationPopover
     }
     get isShowCallOut(){
       return ![
@@ -90,7 +92,40 @@ export default class SlwcPopoverContent extends LightningElement {
       if(!this.popoverData) return null;
       return this.popoverData.end;
     }
+    get driveShiftResourceAllocationColumns() {
+      return [
+        { label: 'Resource Name', fieldName: 'resourceName', type: 'text' },
+        { label: 'Resource Role', fieldName: 'resourceRole', type: 'text' },        
+        { label: 'Start Time', fieldName: 'startTime', type: 'text' },
+        { label: 'End Time', fieldName: 'endTime', type: 'text' }
+      ];
+    }
+    get resourceAllocations() {
+      console.log(':::TPE::: this.popoverData', JSON.stringify(this.popoverData));
+      console.log(':::TPE::: this.popoverData.jobs', JSON.stringify(this.popoverData.jobs));
+      let allocations = [];
+      if (this.popoverData && this.popoverData.jobs && this.popoverData.jobs.length > 0) {
+        this.popoverData.jobs.forEach(job => {
+          console.log(':::TPE::: job.jobAllocations', JSON.stringify(job.jobAllocations));
+          job.jobAllocations.forEach(allocation => {
+            console.log(':::TPE::: allocation.status', JSON.stringify(allocation.status));
+            if (allocation.status != JOB_ALLOCATION_STATUS.DELETED) {
+              allocations.push({
+                id: allocation.id,
+                resourceName: allocation.resourceName,
+                resourceRole: job.resourceRole,
+                startTime: job.start,
+                endTime: job.finish
+              });
+            }
+          });
+        });        
+      }
+      console.log(':::TPE::: allocations', JSON.stringify(allocations));
+      return allocations;
+    }
     render() {
+      console.log(':::TPE::: this.popoverContentMap[this.name]', JSON.stringify(this.popoverContentMap[this.name]));
       return this.popoverContentMap[this.name];
     }
 

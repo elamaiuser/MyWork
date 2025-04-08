@@ -235,8 +235,6 @@ opty.addError('This drive date violates the 56 day rule.Please acknowledge.');
                                                                           AND RecordTypeId = :mobileRecTypeId 
                                                                           AND Id NOT IN:newItems //-> HRP-11850, Pick Calendar build Opps as well for 56day validation 
                                                                           ] );
-        System.debug('oppqueryResultMap size->'+oppqueryResultMap.size());
-        
         
         Map<Id,Opportunity> oppqueryResultFilteredMap = new Map<Id,Opportunity>();
         Map<Id,Id> oppIdAccId = new Map<Id,Id>();
@@ -328,6 +326,7 @@ opty.addError('This drive date violates the 56 day rule.Please acknowledge.');
      for(Id accountId: calendarBuildOppsMap.keySet()){
         for(Opportunity calendarBuildOpp:calendarBuildOppsMap.get(accountId)){
              System.debug('calendarBuildOpp->'+calendarBuildOpp);
+
             //For each calendar build Opp, go thru all opportunities of the account to see, if any other drive on account falling with in 56 days of this
              for(Opportunity  otherOppOnAccount:allOppsByAccount.get(accountId)){ //get other opps on this account
                 if(calendarBuildOpp.id == otherOppOnAccount.id || calendarBuildOpp.Accept_56_Day_Rule_Violation__c ==true){ //if we hit, same opp, no need to compare
