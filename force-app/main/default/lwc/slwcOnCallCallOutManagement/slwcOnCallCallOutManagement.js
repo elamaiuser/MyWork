@@ -730,9 +730,11 @@ export default class SlwcOnCallCallOutManagement extends LightningElement {
           resourceId: this.selectedResource.id,
           status: JOB_ALLOCATION_STATUS.PENDING_DISPATCH
         })
-        .then(() => {
+        .then((result) => {
+          if(!result.success) throw result;
+
           let driveSvc = new driveService();
-          driveSvc.dispatchDrives({
+          return driveSvc.dispatchDrives({
             request: {
               driveIds: [this.selectedAllocationData.job.driveId],
               resend: false
