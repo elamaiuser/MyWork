@@ -740,7 +740,12 @@ export default class SlwcOnCallCallOutManagement extends LightningElement {
               resend: false
             }
           });
-        });
+        })
+        .then(() => {
+          return {
+            success: true
+          }
+        })
       } else {
         const service = new activityResourceService();
         return service.save({
