@@ -15,6 +15,7 @@
         <members>Calendar_Build_Log__c.Mobile_Drives_wo_Resource_Requested__c</members>	
         <members>Calendar_Build_Log_Manual_Run__c.FS_Drives_wo_Resource_Requested__c</members>	
         <members>Calendar_Build_Log_Manual_Run__c.Mobile_Drives_wo_Resource_Requested__c</members>	
+        <members>sked__Location__c.sked_Site_Contact_Phone__c</members>
         <name>CustomField</name>
     </types>
     <types>
@@ -28,6 +29,8 @@
         <members>DriveResourceAllocationBatch</members>
         <members>DriveResourceAllocationBatchTest</members>
         <members>GenerateMobileDriveTest</members>
+        <members>contactService_Test</members>
+        <members>ContactTriggerHandler</members>
 		<name>ApexClass</name>
 	</types>
     <types>
