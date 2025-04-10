@@ -37,7 +37,16 @@ global class BSF_Batch_DriveStatusCorrection implements Schedulable, Database.Ba
             drivesToUpdate.add(drive);
         }
         if(!drivesToUpdate.isEmpty()){
-            Database.update(drivesToUpdate,true);
+            Database.saveResult[] drivesUpdateResultList = Database.update(drivesToUpdate,false);
+            List<BSF_Error_Log__c> logListForDriveStatusUpdate = BSF_Utilities.createErrorLogWithObjectId(
+                drivesUpdateResultList, 
+                BSF_Constants.BATCH_DRIVE_STATUS_CORRECTION,
+                'BSF_Batch_DriveStatusCorrection',
+                'execute',
+                'Error',
+                'Error in Drive Status update to Cancel'
+            );
+            Database.SaveResult[] logResultList = Database.Insert(logListForDriveStatusUpdate, false);
         }
 	}
 	global void execute(SchedulableContext scon){
