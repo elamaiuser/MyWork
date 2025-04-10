@@ -29,5 +29,9 @@
 		<members>Account_Service_Role_End_Reason__mdt.Deceased</members>
 		<name>CustomMetadata</name>
 	</types>
+	<types>
+        <members>Account_Service_Role_End_Reason__mdt</members>      
+        <name>CustomObject</name>
+    </types>
 	<version>63.0</version>
 </Package>
