@@ -505,6 +505,7 @@ public with sharing class TaskService {
             }
             if(!accountSpecialistMap.isEmpty()){
                 List<AccountTeamMember> accountteamList = [SELECT Id,
+                                                                    AccountId,
                                                                     UserId,
                                                                     Is_Covering_Recruiter__c 
                                                             FROM AccountTeamMember 
