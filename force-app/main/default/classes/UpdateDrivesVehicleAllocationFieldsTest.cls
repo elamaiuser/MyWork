@@ -8,17 +8,18 @@ public class UpdateDrivesVehicleAllocationFieldsTest {
         MobileDriveGeneratorDMLService.driveGeneratorConfig config = new MobileDriveGeneratorDMLService.driveGeneratorConfig();
         config.oppIds = new Set<Id>();
         config.oppIds.add(mobileOpportunity.Id);
-        
-        Test.startTest();
-        
+
         AccountTeamMemberHelper.skipAccountTrigger = true;
+        skedHubBase.BypassUpdateTriggers = TRUE;
         TriggerHandler.bypass('AccountTriggerHandler');
+        TriggerHandler.bypass('DriveTriggerHandler');
+        TriggerHandler.bypass('SiteTriggerHandler');
+        TriggerHandler.bypass('BSFTaskChecklistTriggerHandler');
         TriggerHandler.bypass('OpportunityTriggerHandler');
         TriggerHandler.bypass('OpportunitySplitTriggerHandler');
+        Test.startTest();
         GenerateMobileDrive.generateDrives(config);
-        skedSetting.instance.Admin.migrationMode = true;
-        skedHubBase.BypassInsertTriggers = TRUE;
-        skedHubBase.BypassUpdateTriggers = TRUE;
+        
         List<sked_Drive__c> driveList = [SELECT Id, sked_Drive_Date__c, sked_Type_of_Drive__c, sked_No_of_Allocated_Buses__c, sked_No_of_Allocated_CDL__c, sked_No_of_Allocated_DOT__c, sked_Vehicle_Types__c, sked_Vehicle_Capacity__c, (SELECT Id, sked_Drive__c,sked__Type__c,sked__Quantity__c, sked_Resource_Role__c, sked_Asset_Type__c FROM sked_Jobs__r where sked__Type__c = 'Vehicle') FROM sked_Drive__c WHERE sked_Opportunity__c IN: config.oppIds];
         sked__Region__c testRegion1 = (sked__Region__c)mapTestData.get('testRegion1');
         sked__Resource__c testVehicle = new sked__Resource__c(
@@ -39,15 +40,6 @@ public class UpdateDrivesVehicleAllocationFieldsTest {
         );
         insert jobAllocation;
         
-        system.debug('driveList sked_Drive_Date__c :: '+driveList[0].sked_Drive_Date__c);
-        system.debug('driveList :: '+driveList[0].sked_No_of_Allocated_Buses__c);
-        system.debug('driveList :: '+driveList[0].sked_No_of_Allocated_Buses__c);
-        system.debug('driveList :: '+driveList[0].sked_No_of_Allocated_CDL__c);
-        system.debug('driveList :: '+driveList[0].sked_No_of_Allocated_DOT__c);
-        system.debug('driveList :: '+driveList[0].sked_Vehicle_Types__c);
-        system.debug('driveList :: '+driveList[0].sked_Vehicle_Capacity__c);
-        system.debug('driveList :: '+driveList[0].sked_Jobs__r);
-        
         UpdateDrivesVehicleAllocationFieldsBatch batch1 = new UpdateDrivesVehicleAllocationFieldsBatch('Mobile');
         Database.executeBatch(batch1, 100);
         
@@ -66,17 +58,19 @@ public class UpdateDrivesVehicleAllocationFieldsTest {
         MobileDriveGeneratorDMLService.driveGeneratorConfig config = new MobileDriveGeneratorDMLService.driveGeneratorConfig();
         config.oppIds = new Set<Id>();
         config.oppIds.add(mobileOpportunity.Id);
-        
-        Test.startTest();
-        
+
         AccountTeamMemberHelper.skipAccountTrigger = true;
+        skedHubBase.BypassUpdateTriggers = TRUE;
         TriggerHandler.bypass('AccountTriggerHandler');
+        TriggerHandler.bypass('DriveTriggerHandler');
+        TriggerHandler.bypass('SiteTriggerHandler');
+        TriggerHandler.bypass('BSFTaskChecklistTriggerHandler');
         TriggerHandler.bypass('OpportunityTriggerHandler');
         TriggerHandler.bypass('OpportunitySplitTriggerHandler');
+        Test.startTest();
         GenerateMobileDrive.generateDrives(config);
-        skedSetting.instance.Admin.migrationMode = true;
-        skedHubBase.BypassInsertTriggers = TRUE;
-        skedHubBase.BypassUpdateTriggers = TRUE;
+        
+        
         List<sked_Drive__c> driveList = [SELECT Id, sked_Drive_Date__c, sked_Type_of_Drive__c, sked_No_of_Allocated_Buses__c, sked_No_of_Allocated_CDL__c, sked_No_of_Allocated_DOT__c, sked_Vehicle_Types__c, sked_Vehicle_Capacity__c, (SELECT Id, sked_Drive__c,sked__Type__c,sked__Quantity__c, sked_Resource_Role__c, sked_Asset_Type__c FROM sked_Jobs__r where sked__Type__c = 'Vehicle') FROM sked_Drive__c WHERE sked_Opportunity__c IN: config.oppIds];
         sked__Region__c testRegion1 = (sked__Region__c)mapTestData.get('testRegion1');
         sked__Resource__c testVehicle = new sked__Resource__c(
@@ -119,15 +113,6 @@ public class UpdateDrivesVehicleAllocationFieldsTest {
         
         insert jobAllocationList;
         
-        system.debug('driveList sked_Drive_Date__c :: '+driveList[0].sked_Drive_Date__c);
-        system.debug('driveList :: '+driveList[0].sked_No_of_Allocated_Buses__c);
-        system.debug('driveList :: '+driveList[0].sked_No_of_Allocated_Buses__c);
-        system.debug('driveList :: '+driveList[0].sked_No_of_Allocated_CDL__c);
-        system.debug('driveList :: '+driveList[0].sked_No_of_Allocated_DOT__c);
-        system.debug('driveList :: '+driveList[0].sked_Vehicle_Types__c);
-        system.debug('driveList :: '+driveList[0].sked_Vehicle_Capacity__c);
-        system.debug('driveList :: '+driveList[0].sked_Jobs__r);
-        
         UpdateDrivesVehicleAllocationFieldsBatch batch1 = new UpdateDrivesVehicleAllocationFieldsBatch('Mobile');
         Database.executeBatch(batch1, 100);
         
@@ -146,17 +131,17 @@ public class UpdateDrivesVehicleAllocationFieldsTest {
         MobileDriveGeneratorDMLService.driveGeneratorConfig config = new MobileDriveGeneratorDMLService.driveGeneratorConfig();
         config.oppIds = new Set<Id>();
         config.oppIds.add(mobileOpportunity.Id);
-        
-        Test.startTest();
-        
+
         AccountTeamMemberHelper.skipAccountTrigger = true;
+        skedHubBase.BypassUpdateTriggers = TRUE;
         TriggerHandler.bypass('AccountTriggerHandler');
+        TriggerHandler.bypass('DriveTriggerHandler');
+        TriggerHandler.bypass('SiteTriggerHandler');
+        TriggerHandler.bypass('BSFTaskChecklistTriggerHandler');
         TriggerHandler.bypass('OpportunityTriggerHandler');
         TriggerHandler.bypass('OpportunitySplitTriggerHandler');
+        Test.startTest();
         GenerateMobileDrive.generateDrives(config);
-        skedSetting.instance.Admin.migrationMode = true;
-        skedHubBase.BypassInsertTriggers = TRUE;
-        skedHubBase.BypassUpdateTriggers = TRUE;
         List<sked_Drive__c> driveList = [SELECT Id, sked_Drive_Date__c, sked_Type_of_Drive__c, sked_No_of_Allocated_Buses__c, sked_No_of_Allocated_CDL__c, sked_No_of_Allocated_DOT__c, sked_Vehicle_Types__c, sked_Vehicle_Capacity__c, (SELECT Id, sked_Drive__c,sked__Type__c,sked__Quantity__c, sked_Resource_Role__c, sked_Asset_Type__c FROM sked_Jobs__r where sked__Type__c = 'Vehicle') FROM sked_Drive__c WHERE sked_Opportunity__c IN: config.oppIds];
         sked__Region__c testRegion1 = (sked__Region__c)mapTestData.get('testRegion1');
         sked__Resource__c testVehicle = new sked__Resource__c(
@@ -179,14 +164,6 @@ public class UpdateDrivesVehicleAllocationFieldsTest {
         jobAllocationList.add(jobAllocation);
         
         insert jobAllocationList;
-        
-        system.debug('driveList sked_Drive_Date__c :: '+driveList[0].sked_Drive_Date__c);
-        system.debug('driveList :: '+driveList[0].sked_No_of_Allocated_Buses__c);
-        system.debug('driveList :: '+driveList[0].sked_No_of_Allocated_CDL__c);
-        system.debug('driveList :: '+driveList[0].sked_No_of_Allocated_DOT__c);
-        system.debug('driveList :: '+driveList[0].sked_Vehicle_Types__c);
-        system.debug('driveList :: '+driveList[0].sked_Vehicle_Capacity__c);
-        system.debug('driveList :: '+driveList[0].sked_Jobs__r);
         
         Integer month = Date.today().month(); 
         Integer year = Date.today().year(); 
@@ -214,17 +191,17 @@ public class UpdateDrivesVehicleAllocationFieldsTest {
         MobileDriveGeneratorDMLService.driveGeneratorConfig config = new MobileDriveGeneratorDMLService.driveGeneratorConfig();
         config.oppIds = new Set<Id>();
         config.oppIds.add(mobileOpportunity.Id);
-        
-        Test.startTest();
-        
+
         AccountTeamMemberHelper.skipAccountTrigger = true;
+        skedHubBase.BypassUpdateTriggers = TRUE;
         TriggerHandler.bypass('AccountTriggerHandler');
+        TriggerHandler.bypass('DriveTriggerHandler');
+        TriggerHandler.bypass('SiteTriggerHandler');
+        TriggerHandler.bypass('BSFTaskChecklistTriggerHandler');
         TriggerHandler.bypass('OpportunityTriggerHandler');
         TriggerHandler.bypass('OpportunitySplitTriggerHandler');
+        Test.startTest();
         GenerateMobileDrive.generateDrives(config);
-        skedSetting.instance.Admin.migrationMode = true;
-        skedHubBase.BypassInsertTriggers = TRUE;
-        skedHubBase.BypassUpdateTriggers = TRUE;
         List<sked_Drive__c> driveList = [SELECT Id, sked_Drive_Date__c, sked_Type_of_Drive__c, sked_No_of_Allocated_Buses__c, sked_No_of_Allocated_CDL__c, sked_No_of_Allocated_DOT__c, sked_Vehicle_Types__c, sked_Vehicle_Capacity__c, (SELECT Id, sked_Drive__c,sked__Type__c,sked__Quantity__c, sked_Resource_Role__c, sked_Asset_Type__c FROM sked_Jobs__r where sked__Type__c = 'Vehicle') FROM sked_Drive__c WHERE sked_Opportunity__c IN: config.oppIds];
         sked__Region__c testRegion1 = (sked__Region__c)mapTestData.get('testRegion1');
         sked__Resource__c testVehicle = new sked__Resource__c(
@@ -266,15 +243,6 @@ public class UpdateDrivesVehicleAllocationFieldsTest {
         jobAllocationList.add(jobAllocation1);
         
         insert jobAllocationList;
-        
-        system.debug('driveList sked_Drive_Date__c :: '+driveList[0].sked_Drive_Date__c);
-        system.debug('driveList :: '+driveList[0].sked_No_of_Allocated_Buses__c);
-        system.debug('driveList :: '+driveList[0].sked_No_of_Allocated_Buses__c);
-        system.debug('driveList :: '+driveList[0].sked_No_of_Allocated_CDL__c);
-        system.debug('driveList :: '+driveList[0].sked_No_of_Allocated_DOT__c);
-        system.debug('driveList :: '+driveList[0].sked_Vehicle_Types__c);
-        system.debug('driveList :: '+driveList[0].sked_Vehicle_Capacity__c);
-        system.debug('driveList :: '+driveList[0].sked_Jobs__r);
         
         Datetime now = Datetime.now().addMinutes(1); // Get the time 1 minute from now
         Integer second = now.second();
@@ -302,17 +270,17 @@ public class UpdateDrivesVehicleAllocationFieldsTest {
         MobileDriveGeneratorDMLService.driveGeneratorConfig config = new MobileDriveGeneratorDMLService.driveGeneratorConfig();
         config.oppIds = new Set<Id>();
         config.oppIds.add(mobileOpportunity.Id);
-        
-        Test.startTest();
-        
+
         AccountTeamMemberHelper.skipAccountTrigger = true;
+        skedHubBase.BypassUpdateTriggers = TRUE;
         TriggerHandler.bypass('AccountTriggerHandler');
+        TriggerHandler.bypass('DriveTriggerHandler');
+        TriggerHandler.bypass('SiteTriggerHandler');
+        TriggerHandler.bypass('BSFTaskChecklistTriggerHandler');
         TriggerHandler.bypass('OpportunityTriggerHandler');
         TriggerHandler.bypass('OpportunitySplitTriggerHandler');
+        Test.startTest();
         GenerateMobileDrive.generateDrives(config);
-        skedSetting.instance.Admin.migrationMode = true;
-        skedHubBase.BypassInsertTriggers = TRUE;
-        skedHubBase.BypassUpdateTriggers = TRUE;
         List<sked_Drive__c> driveList = [SELECT Id, sked_Drive_Date__c, sked_Type_of_Drive__c, sked_No_of_Allocated_Buses__c, sked_No_of_Allocated_CDL__c, sked_No_of_Allocated_DOT__c, sked_Vehicle_Types__c, sked_Vehicle_Capacity__c, (SELECT Id, sked_Drive__c,sked__Type__c,sked__Quantity__c, sked_Resource_Role__c, sked_Asset_Type__c FROM sked_Jobs__r where sked__Type__c = 'Vehicle') FROM sked_Drive__c WHERE sked_Opportunity__c IN: config.oppIds];
         sked__Region__c testRegion1 = (sked__Region__c)mapTestData.get('testRegion1');
         sked__Resource__c testVehicle = new sked__Resource__c(
@@ -354,15 +322,6 @@ public class UpdateDrivesVehicleAllocationFieldsTest {
         jobAllocationList.add(jobAllocation1);
         
         insert jobAllocationList;
-        
-        system.debug('driveList sked_Drive_Date__c :: '+driveList[0].sked_Drive_Date__c);
-        system.debug('driveList :: '+driveList[0].sked_No_of_Allocated_Buses__c);
-        system.debug('driveList :: '+driveList[0].sked_No_of_Allocated_Buses__c);
-        system.debug('driveList :: '+driveList[0].sked_No_of_Allocated_CDL__c);
-        system.debug('driveList :: '+driveList[0].sked_No_of_Allocated_DOT__c);
-        system.debug('driveList :: '+driveList[0].sked_Vehicle_Types__c);
-        system.debug('driveList :: '+driveList[0].sked_Vehicle_Capacity__c);
-        system.debug('driveList :: '+driveList[0].sked_Jobs__r);
         
         Datetime now = Datetime.now().addMinutes(1); // Get the time 1 minute from now
         Integer second = now.second();
