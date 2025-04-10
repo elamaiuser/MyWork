@@ -3,6 +3,8 @@
     <types>
 		<members>BSF_Batch_Drive_OpRecordStatusCorrection</members>
         <members>BSF_Batch_DriveStatusCorrection</members>
+        <members>skedDriveHandler</members>
+        <members>skedDriveChangeRequestHandler</members>
 		<name>ApexClass</name>
 	</types>
     <version>59.0</version>
