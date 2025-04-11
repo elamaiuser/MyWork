@@ -45,7 +45,9 @@
 		<members>OpportunityTriggerTest</members>
 		<members>OpRecordStatusCorrectionTest</members>
 		<members>skedActivityHandler</members>
+		<members>skedActivityTrigger_Test</members>
 		<members>skedActivityResourceHandler</members>
+		<members>skedActivityResourceTrigger_Test</members>
 		<members>skedCaptureJobIMPACTBatch</members>
 		<members>skedCaptureJobIMPACTBatch_Test</members>
 		<members>skedCOGroupTravelTimeIndexRefreshBatch</members>
@@ -312,7 +314,7 @@
 		<members>travelTimeBreakdown</members>	
 		<members>aRCFileUploadComponent</members>	
 		<members>slwcDriveCalendarDriveList</members>
-		<members>slwcDriveSchedulingFilters</members>
+		<members>slwcDriveShifts</members>
 		<name>LightningComponentBundle</name>
 	</types>
 	<types>
@@ -339,8 +341,7 @@
         <members>sked_Site_Collection_Operation__c-Site Collection Operation Layout</members>	
 		<members>sked__Resource__c-Staff Layout</members>
 		<members>ContentVersion-Content Version Layout</members> 
-		<members>Task_Reassignment_Matrix__mdt-Task Reassignment Matrix Layout</members>  		
-		<members>sked__Resource__c-Staff Layout</members>
+		<members>Task_Reassignment_Matrix__mdt-Task Reassignment Matrix Layout</members>		
 		<name>Layout</name>
 	</types>
 	<types>
