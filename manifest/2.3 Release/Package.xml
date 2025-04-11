@@ -4,7 +4,7 @@
         <members>Account-System Admin Fixed Site Account Layout</members>
         <members>Calendar_Build_Log_Manual_Run__c-Calendar Build Log Manual Run Layout</members>
 		<members>Calendar_Build_Log__c-Calendar Build Log Layout</members>	
-        <members>Opportunity-Fixed Site Opp Non-APS Layout</members>
+        <members>Opportunity-Fixed Site Opp Non-APS Layout</members>	
         <name>Layout</name>
     </types>
     <types>
@@ -24,7 +24,7 @@
 		<members>BSF_MarketingExceptionRequest</members>
         <members>skedActivityService</members>
         <members>skedResourceHandler</members>
-		<members>TriggerHandler</members>
+		<members>TaskTriggerHandler</members>
         <members>BSF_Constants</members>
 		<members>DriveGenerationUtil</members>
         <members>DriveResourceAllocationBatch</members>
@@ -38,7 +38,7 @@
         <members>AccountContactHistoryService</members>
 		<name>ApexClass</name>
 	</types>
-    <types>
+      <types>
 		<members>Send_Bell_Notification_To_District_Manager_1</members>
         <members>Set_UFID_for_Marketing_Program</members>
         <members>Initiate_Marketing_Exception_Request</members>
