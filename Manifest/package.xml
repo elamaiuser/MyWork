@@ -15,7 +15,7 @@
 		<members>BSF_TravelTimePanelControllerTest</members>
 		<members>BSF_UpdateDriveExcessStaffCapacityBatch</members>
 		<members>BSF_UpdateDriveExcessStaffCapacityTest</members>
-        <members>slwcConstants</members>
+		<members>slwcConstants</members>
 		<members>OpRecordStatusCorrectionTest</members>
 		<members>skedActivityHandler</members>
 		<members>skedActivityResourceHandler</members>
@@ -152,6 +152,7 @@
 		<members>Biomed_Collection_Op_Center__c.sked_Auto_Generate_Dual_Role__c</members>
 		<members>Biomed_Collection_Op_Center__c.sked_Only_Generate_Dual_If_1_Machine__c</members>
 		<members>sked_Drive__c.sked_Dual_Roles_Auto_Generated__c</members>
+		<members>sked_Drive__c.sked_Prefer_System_Generated_Vehicles__c</members>
 		<name>CustomField</name>
 	</types>
 	<types>
