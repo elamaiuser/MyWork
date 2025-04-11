@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Package xmlns="http://soap.sforce.com/2006/04/metadata">
 	<types>
+		<members>slwcDriveGenerator</members>
 		<members>AccountAffiliationService</members>
 		<members>AccountAffiliationServiceTest</members>
 		<members>AccountAffiliationTriggerHandler</members>
@@ -10,39 +11,11 @@
 		<members>BatchAccountsMilitaryMoAUploadedFiles</members>
 		<members>BatchAcctsMilitaryMoAUploadedFiles_Test</members>
 		<members>BSF_Batch_Drive_OpRecordStatusCorrection</members>
-		<members>BSF_Constants</members>
 		<members>BSF_TravelTimePanelController</members>
 		<members>BSF_TravelTimePanelControllerTest</members>
 		<members>BSF_UpdateDriveExcessStaffCapacityBatch</members>
 		<members>BSF_UpdateDriveExcessStaffCapacityTest</members>
-		<members>BSF_Utilities</members>
-		<members>BSF_UtilitiesTest</members>
-		<members>BSFStagingSheetController</members>
-		<members>BSFStagingSheetControllerTest</members>
-		<members>BSFTaskChecklistTriggerHandler</members>
-		<members>BSFTaskChecklistTriggerTest</members>
-		<members>BSFWeeklyStaffingRoleTimeController</members>
-		<members>BSFWeeklyStaffingRoleTimeControllerTest</members>
-		<members>BSFWeeklyStaffingRTReportController</members>
-		<members>BSFWeeklyStaffingRTReportControllerTest</members>
-		<members>CalendarBuildBatchHandler</members>
-		<members>CalendarBuildBatchOnDemandController</members>
-		<members>CalendarBuildBatchOnDemandControllerTest</members>
-		<members>CalendarBuildEvaluateDrivesBatch</members>
-		<members>CalendarBuildEvaluateDrivesBatch_Test</members>
-		<members>checkRecursive</members>
-		<members>CreateSkedDrivesBatch</members>
-		<members>DateUtility</members>
-		<members>DateUtilityTestClass</members>
-		<members>DriveGenerationUtil</members>
-		<members>DriveResourceAllocationBatch</members>
-		<members>DriveResourceAllocationBatchTest</members>
-		<members>FetchRelatedDriveData</members>
-		<members>GenerateMobileDrive</members>
-		<members>GenerateMobileDriveTest</members>
-		<members>MobileDriveGeneratorDMLService</members>
-		<members>OpportunityService</members>
-		<members>OpportunityTriggerTest</members>
+        <members>slwcConstants</members>
 		<members>OpRecordStatusCorrectionTest</members>
 		<members>skedActivityHandler</members>
 		<members>skedActivityResourceHandler</members>
@@ -99,7 +72,31 @@
 		<members>BSFTaskChecklistTriggerTest</members>
 		<members>ARCFileUploadController</members>
 		<members>ARCFileUploadControllerTest</members>
-		<name>ApexClass</name>
+		<members>BSFStagingSheetController</members>
+		<members>BSFStagingSheetControllerTest</members>
+		<members>BSFTaskChecklistTriggerHandler</members>
+		<members>BSFTaskChecklistTriggerTest</members>
+		<members>BSFWeeklyStaffingRoleTimeController</members>
+		<members>BSFWeeklyStaffingRoleTimeControllerTest</members>
+		<members>BSFWeeklyStaffingRTReportController</members>
+		<members>BSFWeeklyStaffingRTReportControllerTest</members>
+		<members>CalendarBuildBatchHandler</members>
+		<members>CalendarBuildBatchOnDemandController</members>
+		<members>CalendarBuildBatchOnDemandControllerTest</members>
+		<members>CalendarBuildEvaluateDrivesBatch</members>
+		<members>CalendarBuildEvaluateDrivesBatch_Test</members>
+		<members>checkRecursive</members>
+		<members>CreateSkedDrivesBatch</members>
+		<members>DateUtility</members>
+		<members>DateUtilityTestClass</members>
+		<members>DriveGenerationUtil</members>
+		<members>DriveResourceAllocationBatch</members>
+		<members>DriveResourceAllocationBatchTest</members>
+		<members>FetchRelatedDriveData</members>
+		<members>GenerateMobileDrive</members>
+		<members>GenerateMobileDriveTest</members>
+		<members>MobileDriveGeneratorDMLService</members>
+		<name>LightningComponentBundle</name>
 	</types>
 	<types>
 		<members>AdhocCalendarBuildRunEvent</members>
