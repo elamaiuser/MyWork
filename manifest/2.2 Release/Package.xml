@@ -157,6 +157,7 @@
 		<members>Biomed_Collection_Op_Center__c.sked_Auto_Generate_Dual_Role__c</members>
 		<members>Biomed_Collection_Op_Center__c.sked_Only_Generate_Dual_If_1_Machine__c</members>
 		<members>sked_Drive__c.sked_Dual_Roles_Auto_Generated__c</members>
+		<members>sked_Drive__c.sked_Prefer_System_Generated_Vehicles__c</members>
 		<name>CustomField</name>
 	</types>
 	<types>
