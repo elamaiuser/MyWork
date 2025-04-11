@@ -6,7 +6,7 @@
 	</types>
     <types>
 		<members>BSF_MarketingExceptionRequest</members>
-		<members>TriggerHandler</members>
+		<members>TaskTriggerHandler</members>
 		<name>ApexClass</name>
 	</types>
     <version>59.0</version>

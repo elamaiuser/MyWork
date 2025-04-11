@@ -11,7 +11,7 @@
     <types>
 		<members>AccountInvokable</members>
 		<members>BSF_MarketingExceptionRequest</members>
-		<members>TriggerHandler</members>
+		<members>TaskTriggerHandler</members>
 		<name>ApexClass</name>
 	</types>
       <types>
