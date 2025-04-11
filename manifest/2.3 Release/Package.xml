@@ -1,24 +1,81 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Package xmlns="http://soap.sforce.com/2006/04/metadata">
     <types>
-        <members>Account-System Admin Fixed Site Account Layout</members>	
+        <members>Account-System Admin Fixed Site Account Layout</members>
+        <members>Calendar_Build_Log_Manual_Run__c-Calendar Build Log Manual Run Layout</members>
+		<members>Calendar_Build_Log__c-Calendar Build Log Layout</members>	
+        <members>Opportunity-Fixed Site Opp Non-APS Layout</members>	
         <name>Layout</name>
     </types>
     <types>
-        <members>sked_Location_Account__c.sked_Location__c</members>	
+        <members>Opportunity.StageName</members>
+        <members>sked_Location_Account__c.sked_Location__c</members>        
+        <members>sked_Drive__c.sked_Stage_Options__c</members>	      
+        <members>sked__Slot__c.sked_Fixed_Site_Lock_Reason__c</members>	
+        <members>Calendar_Build_Log__c.FS_Drives_wo_Resource_Requested__c</members>	
+        <members>Calendar_Build_Log__c.Mobile_Drives_wo_Resource_Requested__c</members>	
+        <members>Calendar_Build_Error_Log__c.Category__c</members>	
+        <members>Calendar_Build_Log_Manual_Run__c.FS_Drives_wo_Resource_Requested__c</members>	
+        <members>Calendar_Build_Log_Manual_Run__c.Mobile_Drives_wo_Resource_Requested__c</members>	
         <name>CustomField</name>
     </types>
     <types>
 		<members>AccountInvokable</members>
 		<members>BSF_MarketingExceptionRequest</members>
+        <members>skedActivityService</members>
+        <members>skedResourceHandler</members>
 		<members>TaskTriggerHandler</members>
+        <members>BSF_Constants</members>
+		<members>DriveGenerationUtil</members>
+        <members>DriveResourceAllocationBatch</members>
+        <members>DriveResourceAllocationBatchTest</members>
+        <members>GenerateMobileDriveTest</members>
+        <members>AccountServiceRoleTriggerHandler</members>
+        <members>AccountServiceRoleService</members>
+        <members>ContactService</members>
+		<members>contactService_Test</members>
+		<members>AccountServiceRoleTrigger_Test</members>
+        <members>AccountContactHistoryService</members>
 		<name>ApexClass</name>
 	</types>
       <types>
 		<members>Send_Bell_Notification_To_District_Manager_1</members>
         <members>Set_UFID_for_Marketing_Program</members>
         <members>Initiate_Marketing_Exception_Request</members>
+		<members>Set_Account_UFID_on_Record_Creation</members>
+		<members>Account_Before_Insert_Update_Flow</members>
+        <members>Handle_Do_Not_Contact_Updates_On_Contact</members>
+        <members>Sync_ASR_with_Contact_Changes</members>
 		<name>Flow</name>
 	</types>
-    <version>60.0</version>
+    <types>
+		<members>DRD_HomePage</members>
+        <members>Calendar_Build_Log_Record_Page</members>
+		<members>Calendar_Build_Log_Manual_Run_Record_Page</members>
+        <members>Contact_Record_Page</members>
+        <members>Fixed_Site_Account_Record_Page</members>
+        <members>Mobile_Account_Record_Page</members>
+        <members>Fixed_Site_Opp_Record_Page</members>
+		<name>FlexiPage</name>
+	</types>
+    <types>
+		<members>dataService</members>
+        <members>slwcDriveCalendar</members>
+		<members>slwcDriveCalendarActivityList</members>
+		<name>LightningComponentBundle</name>
+	</types>
+    <types>
+		<members>Mobile_Account_Record_Type</members>
+        <members>Sync_Contact_To_ASR_EndReason</members>
+		<name>CustomLabel</name>
+	</types>
+    <types>
+		<members>Account_Service_Role_End_Reason__mdt.Deceased</members>
+		<name>CustomMetadata</name>
+	</types>
+    <types>
+        <members>Account_Service_Role_End_Reason__mdt</members>      
+        <name>CustomObject</name>
+    </types>
+    <version>63.0</version>
 </Package>

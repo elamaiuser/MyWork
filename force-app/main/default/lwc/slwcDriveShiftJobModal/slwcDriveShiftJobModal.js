@@ -105,7 +105,7 @@ export default class SlwcDriveShiftJobModal extends LightningElement {
           }
   
         return (roleMap[this.job.resourceRole] || [])
-            .filter(role => role === 'None' || this.driveShift.jobs?.find(_job => _job.resourceRole === role) || this.driveShift.jobs?.find(_job => _job.resourceRole === this.job.resourceRole && _job.dualRole === role))
+            .filter(role => role === 'None' || this.driveShift.jobs?.find(_job => _job.resourceRole === role) || this.driveShift.jobs?.find(_job => _job.key === this.job.key && _job.resourceRole === this.job.resourceRole && _job.dualRole === role))
             .map(role => {
                 return {
                     label: role,
@@ -456,7 +456,7 @@ export default class SlwcDriveShiftJobModal extends LightningElement {
             const existed = this.driveShift.jobs?.find(job => this.helper.isJobsSameRoles(job, this.job));
             if(existed) {
                 this.errorMessages.push({
-                    message: `${this.job.resourceRole} role is already existed.`
+                    message: `${this.job.resourceRole} role already exists.`
                 })
                 return false;
             }

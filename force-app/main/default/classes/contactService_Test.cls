@@ -13,7 +13,7 @@ public class contactService_Test
         insert acc1;
         
         list<contact> cList = new list<Contact>();
-        Contact contact1 = new Contact (firstname='Test Contact First 1',lastname='Test Contact Last 1');
+        Contact contact1 = new Contact (firstname='Test Contact First 1',lastname='TestContactLast1');
         contact1.Active__c = TRUE;
         contact1.MailingStreet = '2204 Westcrt ln, Apt 213'; 
         contact1.MailingCity = 'Herndon';
@@ -25,7 +25,7 @@ public class contactService_Test
         contact1.Original_Service_Date__c=Date.newInstance(2022, 09, 01);
         cList.add( contact1);
         
-        Contact contact2 = new Contact (firstname='Test Contact First 2',lastname='Test Contact Last 2');
+        Contact contact2 = new Contact (firstname='Test Contact First 2',lastname='TestContactLast2');
         contact2.Active__c = TRUE;
         contact2.MailingStreet = '2204 Westcrt ln, Apt 213'; 
         contact2.MailingCity = 'Herndon';
@@ -58,7 +58,7 @@ public class contactService_Test
     }
     public static void testContactService()
     {
-        Contact contact1 = new Contact (firstname='Test Contact First 3',lastname='Test Contact Last 3');
+        Contact contact1 = new Contact (firstname='Test Contact First 3',lastname='TestContactLast3');
         contact1.Active__c = TRUE;
         contact1.MailingStreet = '2204 Westcrt ln, Apt 213'; 
         contact1.MailingCity = 'Herndon';

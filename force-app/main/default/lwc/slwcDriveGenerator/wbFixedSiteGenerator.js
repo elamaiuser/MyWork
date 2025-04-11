@@ -797,7 +797,7 @@ class WbFixedSiteGenerator extends BaseGenerator {
   }
 
   updateDriveAverageStaffCapacity() {
-    this.drive.averageStaffCapacity = this.helper.updateDriveAverageStaffCapacity(this.drive);
+    this.drive.averageStaffCapacity = this.helper.calculateDriveAverageStaffCapacity(this.drive);
   }
 
   updateDriveMaxRoleCapacity() {

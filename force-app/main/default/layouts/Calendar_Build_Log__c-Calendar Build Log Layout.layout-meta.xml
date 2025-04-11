@@ -165,6 +165,10 @@
             </layoutItems>
             <layoutItems>
                 <behavior>Edit</behavior>
+                <field>FS_Drives_wo_Resource_Requested__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
                 <field>FS_Drives_with_Resource_Allocation__c</field>
             </layoutItems>
             <layoutItems>
@@ -184,6 +188,10 @@
             <layoutItems>
                 <behavior>Edit</behavior>
                 <field>Mobile_Sys_Gen_Batch_Run_Date__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>Mobile_Drives_wo_Resource_Requested__c</field>
             </layoutItems>
             <layoutItems>
                 <behavior>Edit</behavior>
@@ -224,15 +232,18 @@
         <detailHeading>false</detailHeading>
         <editHeading>true</editHeading>
         <label>Custom Links</label>
-        <layoutColumns />
-        <layoutColumns />
-        <layoutColumns />
+        <layoutColumns/>
+        <layoutColumns/>
+        <layoutColumns/>
         <style>CustomLinks</style>
     </layoutSections>
     <relatedLists>
         <fields>NAME</fields>
-        <fields>BSF_Error_Log__c</fields>
         <fields>Category__c</fields>
+        <fields>BSF_Error_Log__c</fields>
+        <fields>Opportunity__c</fields>
+        <fields>Drive__c</fields>
+        <fields>Operation_Record__c</fields>
         <relatedList>Calendar_Build_Error_Log__c.Calendar_Build_Log__c</relatedList>
     </relatedLists>
     <relatedLists>

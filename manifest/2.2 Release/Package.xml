@@ -44,13 +44,19 @@
 		<members>OpportunityService</members>
 		<members>OpportunityTriggerTest</members>
 		<members>OpRecordStatusCorrectionTest</members>
+		<members>skedActivityHandler</members>
+		<members>skedActivityTrigger_Test</members>
+		<members>skedActivityResourceHandler</members>
+		<members>skedActivityResourceTrigger_Test</members>
 		<members>skedCaptureJobIMPACTBatch</members>
 		<members>skedCaptureJobIMPACTBatch_Test</members>
 		<members>skedCOGroupTravelTimeIndexRefreshBatch</members>
+		<members>skedConstants</members>
 		<members>skedDriveHandler</members>
 		<members>skedDriveRankingBatch</members>
 		<members>skedDriveRankingBatch_Test</members>
 		<members>skedDriveTrigger_Test</members>
+		<members>skedExceptionLogService</members>
 		<members>skedFutureCallPostCommitEventHandler</members>
 		<members>skedImmediateRefreshTravelTimeIndexBatch</members>
 		<members>skedImmediateRefreshTTIIndexBatch_Test</members>
@@ -79,6 +85,7 @@
 		<members>skedUpdateTTILookupFieldsOnSiteCOBatch</members>
 		<members>skedWeeklyHoursCorrection_Test</members>
 		<members>skedWeeklyHoursCorrectionBatch</members>
+		<members>slwcAllocationService</members>
 		<members>slwcSiteCollectionOperationService</members>
 		<members>slwcSiteCollectionOperationService_Test</members>
 		<members>TaskChecklistController</members>
@@ -86,8 +93,8 @@
 		<members>TaskService</members>
 		<members>TaskTriggerHandler</members>
 		<members>TaskTriggerTest</members>
-		<members>UserService</members>
-		<members>UserServiceTest</members>
+		<members>userService</members>
+		<members>userServiceTest</members>
 		<members>UserTriggerHandler</members>
 		<members>WeeklyStaffScheduleReportController</members>
 		<members>WeeklyStaffScheduleReportControllerTest</members>
@@ -100,6 +107,7 @@
 		<members>AdhocCalendarBuildRunEvent</members>
 		<members>assignResourcesToUsersBasedOnConfig</members>
 		<members>skedFutureCallPostCommitEventTrigger</members>
+		<members>skedTravelTimeIndexItemTrigger</members>
 		<name>ApexTrigger</name>
 	</types>
 	<types>
@@ -287,12 +295,15 @@
 		<members>bsfWeeklyStaffScheduleReportlwc</members>
 		<members>dataService</members>
 		<members>recurringPatternScheduler</members>
+		<members>slwcAvailator</members>
 		<members>slwcDriveCompactView</members>
 		<members>slwcDriveGenerator</members>
 		<members>slwcDriveManagement</members>
+		<members>slwcDriveSchedulingFilters</members>
 		<members>slwcDriveShiftJobModal</members>
 		<members>slwcDriveStaffingDetails</members>
 		<members>slwcDualRoleAssignmentModal</members>
+		<members>slwcExceptionList</members>
 		<members>slwcOptimizationQueueSummary</members>
 		<members>slwcPopoverContent</members>
 		<members>slwcRefreshTravelTimeBanner</members>

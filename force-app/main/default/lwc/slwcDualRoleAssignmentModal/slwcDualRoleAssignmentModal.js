@@ -153,7 +153,7 @@ export default class SlwcDualRoleAssignmentModal extends LightningElement {
     return this.driveHelper.generateDualRoleJob(primaryRoleJob, secondaryRoleJob);
   }
 
-  validate() {
+  validate = () =>{
     this.errorMessages = [];
 
     const allValid = [
