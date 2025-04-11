@@ -1,5 +1,5 @@
 import { get, cloneDeep, orderBy, isEqual, sum, compact, uniqBy, isObject, isDate, max, uniqueId } from 'c/lodash';
-import { LINK_DRIVE_TYPE, RESOURCE_TYPE, MANUALLY_CREATED_FROM, DRIVE_CHANGE_REQUEST_TYPE , ASSET_TYPE, PROCEDURE_TYPE, DRIVE_TYPE, OPERATION_TYPE, RESOURCE_ROLE_GROUP, PENDING_ACTION, DRIVE_STATUS, RESOURCE_ROLE, DRIVE_CHANGE_REQUEST_ITEM_TYPE, DRIVE_CONTENTION, DRIVE_CONTENTION_RESOLUTION, JOB_ALLOCATION_STATUS, DRIVE_APPROVAL_STATUS, OPERATION_DRIVE_LIMIT_TYPE, DRIVE_REQUEST_CHANGE_STATUS} from 'c/slwcConstants';
+import { LINK_DRIVE_TYPE, RESOURCE_TYPE, MANUALLY_CREATED_FROM, DRIVE_CHANGE_REQUEST_TYPE , ASSET_TYPE, PROCEDURE_TYPE, DRIVE_TYPE, OPERATION_TYPE, RESOURCE_ROLE_GROUP, PENDING_ACTION, DRIVE_STATUS, RESOURCE_ROLE, DRIVE_CHANGE_REQUEST_ITEM_TYPE, DRIVE_CONTENTION, DRIVE_CONTENTION_RESOLUTION, JOB_ALLOCATION_STATUS, DRIVE_APPROVAL_STATUS, OPERATION_DRIVE_LIMIT_TYPE, DRIVE_REQUEST_CHANGE_STATUS, SKIP_BEST_VEHICLE_CALCULATION} from 'c/slwcConstants';
 import { DateTime } from 'c/luxon';
 import { isNullOrEmpty, parseJSON, getTravelTimeIndexKey, generateUUID } from 'c/slwcUtils';
 import { territoryCollectionOperationQueryModel, territoryCollectionOperationService } from 'c/dataService';
@@ -1357,7 +1357,11 @@ class DriveHelper {
         nextArray.push(vehicleSet);
       }
     }
-    this.processNextArray(requiredCap, vehicles, results, nextArray);
+    if(requiredCap > SKIP_BEST_VEHICLE_CALCULATION.ANTICIPATED_REGISTERED_DONOR_GREATER_THEN){
+      this.findVehicleForAllocation(requiredCap, vehicles, results);
+    } else{
+      this.processNextArray(requiredCap, vehicles, results, nextArray);
+    }
   }
 
   processNextArray(requiredCap, vehicles, results, nextArray) {
@@ -1381,6 +1385,26 @@ class DriveHelper {
     }
     if (newNextArray.length > 0) {
       this.processNextArray(requiredCap, vehicles, results, newNextArray);
+    }
+  }
+
+  findVehicleForAllocation(requiredCap, vehicles, results) {
+    vehicles.sort((a, b) => b.presDonorCapacity - a.presDonorCapacity);
+    
+    let totalCap = 0;
+    let selectedVehicles = [];
+
+    for (let i = 0; i < vehicles.length; i++) {
+        totalCap += vehicles[i].presDonorCapacity;
+        selectedVehicles.push(i);
+
+        if (totalCap >= requiredCap) {
+            results.push({
+                totalCap,
+                vehicleIndexes: selectedVehicles
+            });
+            break;
+        }
     }
   }
 
