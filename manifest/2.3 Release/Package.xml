@@ -91,5 +91,13 @@
         <members>sked_TTIRR_Stuck_Job_Config_Setting__c</members>  
         <name>CustomObject</name>
     </types>
+    <types>
+		<members>General_Reports/FSPP_Audit_Report_sNN</members>
+		<name>Report</name>
+	</types>
+	<types>
+		<members>Accounts_with_Fixed_Site_Procedure_Projections</members>
+		<name>ReportType</name>
+	</types>
     <version>63.0</version>
 </Package>
