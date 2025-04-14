@@ -1,9 +1,7 @@
-global with sharing class skedReprocessStuckTTIRequestBatch implements Database.Batchable<sObject>, Database.AllowsCallouts, Database.Stateful, System.Schedulable {
+global with sharing class skedReprocessStuckTTIRequestBatch implements Database.Batchable<sObject>, Database.Stateful, System.Schedulable {
     
     private List<Id> idsToResubmit;
     private Boolean foundStuckRecords;
-    private DateTime thresholdTime;
-    private Decimal rescheduleIntervalMins;
     private skedSetting.skedTTIRRStuckJobConfigSetting stuckTTIRRJobSetting;
 
     global void execute(SchedulableContext SC) {
@@ -13,20 +11,20 @@ global with sharing class skedReprocessStuckTTIRequestBatch implements Database.
     global skedReprocessStuckTTIRequestBatch() {
         this.idsToResubmit = new List<Id>();
         this.foundStuckRecords = false;
-
         this.stuckTTIRRJobSetting = new skedSetting.skedTTIRRStuckJobConfigSetting();
-        this.thresholdTime = System.now().addMinutes(- Integer.valueOf(this.stuckTTIRRJobSetting.stuckThresholdMins));
-        this.rescheduleIntervalMins = stuckTTIRRJobSetting.rescheduleIntervalMins;
     }
 
     global Database.QueryLocator start(Database.BatchableContext BC) {
+        DateTime thresholdTime = System.now().addMinutes(- Integer.valueOf(this.stuckTTIRRJobSetting.stuckThresholdMins));
+        system.debug('this.thresholdTime '+thresholdTime);
+
         return Database.getQueryLocator([
             SELECT Id, sked_Run_Id__c, sked_Status__c, sked_Error_Message__c,
             sked_Stuck_Retry_Count__c, sked_Last_Stuck_Detection_Time__c
             FROM sked_Travel_Time_Index_Refresh_Request__c
             WHERE sked_Run_Id__c = NULL
             AND sked_Status__c = :skedConstants.TTIRR_STATUS_IN_PROGRESS
-            AND LastModifiedDate <= :this.thresholdTime
+            AND LastModifiedDate <= :thresholdTime
         ]);
     }
 
@@ -49,7 +47,6 @@ global with sharing class skedReprocessStuckTTIRequestBatch implements Database.
             }
         }
         if(this.idsToResubmit != NULL && !this.idsToResubmit.isEmpty()) this.foundStuckRecords = true;
-        system.debug('stuckTTIRequests '+stuckTTIRequests);
         update stuckTTIRequests;
     }
 
@@ -60,18 +57,25 @@ global with sharing class skedReprocessStuckTTIRequestBatch implements Database.
             }
         }
 
-        List<AsyncApexJob> batchJobsProcessing = [SELECT Id
-                                                  FROM AsyncApexJob 
-                                                  WHERE ApexClass.Name = :skedReprocessStuckTTIRequestBatch.class.getName()
-                                                  AND Status IN ('Holding','Queued','Preparing','Processing')
-                                                  AND JobType IN ('BatchApex', 'ScheduledApex')];
+        List<String> jobPendingStatus = new List<String>{skedConstants.CRON_TRIGGER_WAITING, 
+                                                        skedConstants.CRON_TRIGGER_ACQUIRED, 
+                                                        skedConstants.CRON_TRIGGER_EXECUTING, 
+                                                        skedConstants.CRON_TRIGGER_PAUSED};
 
-        if((batchJobsProcessing == NULL || batchJobsProcessing.isEmpty()) && 
+        List<CronTrigger> pendingScheduledRun = [SELECT Id, CronJobDetailId, CronJobDetail.Name,
+                                                  NextFireTime, CronExpression, State
+                                                  FROM CronTrigger 
+                                                  WHERE State IN :jobPendingStatus
+                                                  AND CronJobDetail.Name = 'Reprocess Stuck TTIRR Records'
+                                                  AND CronExpression = 'SimpleTrigger'];
+
+        if((pendingScheduledRun == NULL || pendingScheduledRun.isEmpty()) && 
             this.foundStuckRecords && 
             this.stuckTTIRRJobSetting.enableAutoReschedule && 
             this.stuckTTIRRJobSetting.isActive
         ) {
-            System.scheduleBatch(new skedReprocessStuckTTIRequestBatch(), 'Reprocess Stuck TTIRR Records', Integer.valueOf(this.stuckTTIRRJobSetting.rescheduleIntervalMins));
+            Decimal rescheduleIntervalMins = this.stuckTTIRRJobSetting.rescheduleIntervalMins;
+            System.scheduleBatch(new skedReprocessStuckTTIRequestBatch(), 'Reprocess Stuck TTIRR Records', Integer.valueOf(rescheduleIntervalMins));
         }
     }
 }
