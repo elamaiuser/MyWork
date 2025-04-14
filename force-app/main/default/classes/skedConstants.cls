@@ -477,4 +477,10 @@ public class skedConstants {
     public static final string TTIRR_STATUS_IN_PROGRESS = 'In Progress';
     public static final string TTIRR_STATUS_ERROR = 'Error';
 
+    /* CronTrigger States */
+    public static final string CRON_TRIGGER_WAITING = 'WAITING';
+    public static final string CRON_TRIGGER_ACQUIRED = 'ACQUIRED';
+    public static final string CRON_TRIGGER_EXECUTING = 'EXECUTING';
+    public static final string CRON_TRIGGER_PAUSED = 'PAUSED';
+
 }
