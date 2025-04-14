@@ -5,6 +5,7 @@
         <members>Calendar_Build_Log_Manual_Run__c-Calendar Build Log Manual Run Layout</members>
 		<members>Calendar_Build_Log__c-Calendar Build Log Layout</members>	
         <members>Opportunity-Fixed Site Opp Non-APS Layout</members>	
+        <members>sked_Travel_Time_Index_Refresh_Request__c-Travel Time Index Refresh Request Layout</members>
         <name>Layout</name>
     </types>
     <types>
@@ -16,7 +17,14 @@
         <members>Calendar_Build_Log__c.Mobile_Drives_wo_Resource_Requested__c</members>	
         <members>Calendar_Build_Error_Log__c.Category__c</members>	
         <members>Calendar_Build_Log_Manual_Run__c.FS_Drives_wo_Resource_Requested__c</members>	
-        <members>Calendar_Build_Log_Manual_Run__c.Mobile_Drives_wo_Resource_Requested__c</members>	
+        <members>Calendar_Build_Log_Manual_Run__c.Mobile_Drives_wo_Resource_Requested__c</members>
+        <members>sked_Travel_Time_Index_Refresh_Request__c.sked_Last_Stuck_Detection_Time__c</members>
+		<members>sked_Travel_Time_Index_Refresh_Request__c.sked_Stuck_Retry_Count__c</members>
+        <members>sked_TTIRR_Stuck_Job_Config_Setting__c.sked_Enable_Auto_Reschedule__c</members>
+		<members>sked_TTIRR_Stuck_Job_Config_Setting__c.sked_Is_Active__c</members>
+		<members>sked_TTIRR_Stuck_Job_Config_Setting__c.sked_Maximum_Retries__c</members>
+		<members>sked_TTIRR_Stuck_Job_Config_Setting__c.sked_Reschedule_Interval_Minutes__c</members>
+		<members>sked_TTIRR_Stuck_Job_Config_Setting__c.sked_Stuck_Threshold_Minutes__c</members>	
         <name>CustomField</name>
     </types>
     <types>
@@ -36,6 +44,11 @@
 		<members>contactService_Test</members>
 		<members>AccountServiceRoleTrigger_Test</members>
         <members>AccountContactHistoryService</members>
+        <members>skedConstants</members>
+        <members>skedReprocessStuckTTIRequestBatch</members>
+        <members>skedReprocessStuckTTIRequestBatch_Test</members>
+        <members>skedSetting</members>
+        <members>skedSetting_Test</members>
 		<name>ApexClass</name>
 	</types>
       <types>
@@ -74,7 +87,8 @@
 		<name>CustomMetadata</name>
 	</types>
     <types>
-        <members>Account_Service_Role_End_Reason__mdt</members>      
+        <members>Account_Service_Role_End_Reason__mdt</members>    
+        <members>sked_TTIRR_Stuck_Job_Config_Setting__c</members>  
         <name>CustomObject</name>
     </types>
     <version>63.0</version>
