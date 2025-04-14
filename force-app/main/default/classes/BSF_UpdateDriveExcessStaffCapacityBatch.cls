@@ -10,30 +10,36 @@
 public class BSF_UpdateDriveExcessStaffCapacityBatch implements Database.Batchable<sObject>{
     DateTime startDate;
     DateTime endDate;
+    Boolean recalculateStaffCapacity;
     List<String> statusList;
     List<String> jobRoles = new List<String>{'Driver', 'Driver Support', '2RBC', 'VP/HH', 'Charge'};
 
 
-    public BSF_UpdateDriveExcessStaffCapacityBatch(Date sDate, Date edate, List<String> sList){
+    public BSF_UpdateDriveExcessStaffCapacityBatch(Date sDate, Date edate, List<String> sList, Boolean recalculate){
         this.startDate = DateTime.newInstance(sDate.year(),sDate.month(),sDate.day());
         this.endDate = DateTime.newInstance(edate.year(),edate.month(),edate.day());
         this.statusList = sList;
+        this.recalculateStaffCapacity = recalculate;
     }
 
     public Database.QueryLocator start(Database.BatchableContext bc) {
-        return Database.getQueryLocator('SELECT Id, sked_Staff_Capacity__c, sked_Projected_Registered_Donors__c,'+
-                                        ' Max_Role_Capacity__c, Max_Role_Capacity_With_Draw_Hours__c,'+
-                                        ' sked_Maximum_Lunch_Break_Duration__c, sked_Collection_Operation__c,'+ 
-                                        ' sked_Collection_Operation__r.sked_Lunch_Break_Before_Draw_Hours__c,sked_Drive_Date__c,'+
-                                        ' sked_Timezone__c, Average_Staff_Capacity__c, Excess_Staff_Capacity__c,'+ 
-                                        ' (SELECT Id, sked_Start_Time__c,sked_End_Time__c, sked_Lunch_Break__c'+
-                                        ' FROM sked_Drive_Shifts__r) FROM sked_Drive__c WHERE'+
-                                        ' sked_Drive_Date__c >= '+this.startDate.format('yyyy-MM-dd')+
-                                        ' AND sked_Drive_Date__c <= '+this.endDate.format('yyyy-MM-dd')+
-                                        ' AND sked_Status__c IN (\''+String.join(this.statusList, '\',\'')+'\')'+
-                                        ' AND sked_Staff_Capacity__c != null'+
-                                        ' AND sked_Projected_Registered_Donors__c != null'+
-                                        ' AND sked_Collection_Operation__c != null');
+        String query = 'SELECT Id, sked_Staff_Capacity__c, sked_Projected_Registered_Donors__c,'+
+                        ' Max_Role_Capacity__c, Max_Role_Capacity_With_Draw_Hours__c,'+
+                        ' sked_Maximum_Lunch_Break_Duration__c, sked_Collection_Operation__c,'+ 
+                        ' sked_Collection_Operation__r.sked_Lunch_Break_Before_Draw_Hours__c,sked_Drive_Date__c,'+
+                        ' sked_Timezone__c, Average_Staff_Capacity__c, Excess_Staff_Capacity__c,'+ 
+                        ' (SELECT Id, sked_Start_Time__c,sked_End_Time__c, sked_Lunch_Break__c'+
+                        ' FROM sked_Drive_Shifts__r) FROM sked_Drive__c WHERE'+
+                        ' sked_Drive_Date__c >= '+this.startDate.format('yyyy-MM-dd')+
+                        ' AND sked_Drive_Date__c <= '+this.endDate.format('yyyy-MM-dd')+
+                        ' AND sked_Status__c IN (\''+String.join(this.statusList, '\',\'')+'\')'+
+                        ' AND sked_Staff_Capacity__c != null'+
+                        ' AND sked_Projected_Registered_Donors__c != null'+
+                        ' AND sked_Collection_Operation__c != null';
+        if(this.recalculateStaffCapacity != true){
+            query += ' AND Excess_Staff_Capacity__c = null';
+        }
+        return Database.getQueryLocator(query);
     }
 
 	public void execute(Database.BatchableContext BC, List<sked_Drive__c> scope){
@@ -159,7 +165,16 @@ public class BSF_UpdateDriveExcessStaffCapacityBatch implements Database.Batchab
         if(!drivesToUpdate.isEmpty()){
             skedHubBase.BypassUpdateTriggers = true;
             TriggerHandler.bypass('DriveTriggerHandler');
-            Database.update(drivesToUpdate,false);
+            Database.saveResult[] drivesUpdateResultList = Database.update(drivesToUpdate,false);
+            List<BSF_Error_Log__c> logListForDriveStatusUpdate = BSF_Utilities.createErrorLogWithObjectId(
+                drivesUpdateResultList, 
+                'UpdateDriveExcessStaffCapacity',
+                'BSF_UpdateDriveExcessStaffCapacityBatch',
+                'execute',
+                'Error',
+                'Error in Updating Drive Excess Staff Capacity'
+            );
+            Database.SaveResult[] logResultList = Database.Insert(logListForDriveStatusUpdate, false);
         }
 	}
 	public void finish(Database.BatchableContext BC){}
