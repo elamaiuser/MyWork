@@ -32,11 +32,11 @@
                 <field>sked_Travel_Time_Index_Refresh_Group__c</field>
             </layoutItems>
             <layoutItems>
-                <behavior>Edit</behavior>
+                <behavior>Readonly</behavior>
                 <field>sked_Stuck_Retry_Count__c</field>
             </layoutItems>
             <layoutItems>
-                <behavior>Edit</behavior>
+                <behavior>Readonly</behavior>
                 <field>sked_Last_Stuck_Detection_Time__c</field>
             </layoutItems>
         </layoutColumns>
