@@ -91,5 +91,10 @@
         <members>sked_TTIRR_Stuck_Job_Config_Setting__c</members>  
         <name>CustomObject</name>
     </types>
+    <types>
+		<members>sked__Resource__c.only_System_Admin_can_edit_Virtual_WFH</members>
+		<members>sked__Resource__c.AllowWorkAddressEditForWHF</members>
+		<name>ValidationRule</name>
+	</types>
     <version>63.0</version>
 </Package>
