@@ -2,7 +2,6 @@ global with sharing class skedReprocessStuckTTIRequestBatch implements Database.
     
     private List<Id> idsToResubmit;
     private Boolean foundStuckRecords;
-    private skedSetting.skedTTIRRStuckJobConfigSetting stuckTTIRRJobSetting;
 
     global void execute(SchedulableContext SC) {
         Database.executeBatch(new skedReprocessStuckTTIRequestBatch(), 200);
@@ -11,12 +10,10 @@ global with sharing class skedReprocessStuckTTIRequestBatch implements Database.
     global skedReprocessStuckTTIRequestBatch() {
         this.idsToResubmit = new List<Id>();
         this.foundStuckRecords = false;
-        this.stuckTTIRRJobSetting = new skedSetting.skedTTIRRStuckJobConfigSetting();
     }
 
     global Database.QueryLocator start(Database.BatchableContext BC) {
-        DateTime thresholdTime = System.now().addMinutes(- Integer.valueOf(this.stuckTTIRRJobSetting.stuckThresholdMins));
-        system.debug('this.thresholdTime '+thresholdTime);
+        DateTime thresholdTime = System.now().addMinutes(- Integer.valueOf(skedSetting.instance.stuckTTIRR.stuckThresholdMins));
 
         return Database.getQueryLocator([
             SELECT Id, sked_Run_Id__c, sked_Status__c, sked_Error_Message__c,
@@ -29,14 +26,15 @@ global with sharing class skedReprocessStuckTTIRequestBatch implements Database.
     }
 
     global void execute(Database.BatchableContext BC, List<sked_Travel_Time_Index_Refresh_Request__c> stuckTTIRequests) {
+        Decimal maximumRetries = skedSetting.instance.stuckTTIRR.maxRetries;
         for(sked_Travel_Time_Index_Refresh_Request__c ttirr : stuckTTIRequests) {
             Decimal currentRetry = ttirr.sked_Stuck_Retry_Count__c != NULL ? ttirr.sked_Stuck_Retry_Count__c : 0;
             currentRetry++;
-            if (currentRetry > this.stuckTTIRRJobSetting.maxRetries) {
+            if (currentRetry > maximumRetries) {
                 ttirr.sked_Status__c = skedConstants.TTIRR_STATUS_ERROR;
                 ttirr.sked_Error_Message__c = 'Request remained In Progress without RunId for too long. '+
                                               'Process failed after exceeding max retries. Potential invalid data.';
-                ttirr.sked_Stuck_Retry_Count__c = this.stuckTTIRRJobSetting.maxRetries;
+                ttirr.sked_Stuck_Retry_Count__c = maximumRetries;
             }
             else {
                 ttirr.sked_Status__c = skedConstants.TTIRR_STATUS_PENDING;
@@ -71,10 +69,10 @@ global with sharing class skedReprocessStuckTTIRequestBatch implements Database.
 
         if((pendingScheduledRun == NULL || pendingScheduledRun.isEmpty()) && 
             this.foundStuckRecords && 
-            this.stuckTTIRRJobSetting.enableAutoReschedule && 
-            this.stuckTTIRRJobSetting.isActive
+            skedSetting.instance.stuckTTIRR.enableAutoReschedule && 
+            skedSetting.instance.stuckTTIRR.isActive
         ) {
-            Decimal rescheduleIntervalMins = this.stuckTTIRRJobSetting.rescheduleIntervalMins;
+            Decimal rescheduleIntervalMins = skedSetting.instance.stuckTTIRR.rescheduleIntervalMins;
             System.scheduleBatch(new skedReprocessStuckTTIRequestBatch(), 'Reprocess Stuck TTIRR Records', Integer.valueOf(rescheduleIntervalMins));
         }
     }
