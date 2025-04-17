@@ -496,7 +496,7 @@ private class BSF_UpdateDriveExcessStaffCapacityTest {
     @isTest
     private static void BSF_UpdateDriveExcessStaffCapacityBatchTestBatchProcess(){
 		Test.startTest();
-		BSF_UpdateDriveExcessStaffCapacityBatch b = new BSF_UpdateDriveExcessStaffCapacityBatch(System.today().addDays(-1),System.today().addDays(100),new List<String>{skedConstants.DRIVE_STATUS_DRAFT});
+		BSF_UpdateDriveExcessStaffCapacityBatch b = new BSF_UpdateDriveExcessStaffCapacityBatch(System.today().addDays(-1),System.today().addDays(100),new List<String>{skedConstants.DRIVE_STATUS_DRAFT},false);
 		database.executebatch(b,200);
 		Test.stopTest();
 	}
