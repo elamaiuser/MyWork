@@ -44,9 +44,13 @@
 		<members>contactService_Test</members>
 		<members>AccountServiceRoleTrigger_Test</members>
         <members>AccountContactHistoryService</members>
+        <members>GenerateMobileDrive</members>
+		<members>GenerateMobileDriveTest</members>
         <members>skedConstants</members>
         <members>skedReprocessStuckTTIRequestBatch</members>
         <members>skedReprocessStuckTTIRequestBatch_Test</members>
+        <members>skedUpdateJobTimeVarianceBatch</members>
+		<members>skedUpdateJobTimeVarianceBatch_Test</members>
         <members>skedSetting</members>
         <members>skedSetting_Test</members>
 		<name>ApexClass</name>
@@ -75,6 +79,7 @@
 		<members>dataService</members>
         <members>slwcDriveCalendar</members>
 		<members>slwcDriveCalendarActivityList</members>
+        <members>slwcDriveGenerator</members>
 		<name>LightningComponentBundle</name>
 	</types>
     <types>
