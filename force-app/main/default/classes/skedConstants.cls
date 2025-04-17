@@ -348,6 +348,7 @@ public class skedConstants {
     public static final string TAG_DRIVE_LEAD = 'Drive Lead';
     public static final string TAG_FIXED_SITE = 'Fixed Site';
     public static final string TAG_MOBILE = 'Mobile';
+    public static final string TAG_REAL_ID = 'REAL ID';
 
 
     public static final string TAG_ROLE_STATUS_ACTIVE = 'Active';
