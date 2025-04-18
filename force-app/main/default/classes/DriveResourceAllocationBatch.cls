@@ -112,9 +112,9 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
                 }
             
                 if(daysAfterCbRollDate != NULL) {
-                    this.targetCreatedDate = BSF_Constants.CURRENT_DATE.addDays(-daysAfterCbRollDate.intValue()); 
+                    this.targetCreatedDate = DateTime.now().addDays(-daysAfterCbRollDate.intValue()).dateGMT(); 
                 } else {
-                    this.targetCreatedDate = typeOfDrive.equalsIgnoreCase(BSF_Constants.FIXED_SITE_DRIVE) ? BSF_Constants.CURRENT_DATE.addDays(-0) : NULL; 
+                    this.targetCreatedDate = typeOfDrive.equalsIgnoreCase(BSF_Constants.FIXED_SITE_DRIVE) ? DateTime.now().addDays(-0).dateGMT() : NULL; 
                 }
                 if(targetCreatedDate != NULL) {
                     targetCreatedDateTo = datetime.newInstanceGMT(this.targetCreatedDate, Time.newInstance(23,59,59,59));
@@ -408,7 +408,6 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
 
         //HRP-12706 --> Starts Here
         if(driveIdSet != NULL && !driveIdSet.isEmpty()) {
-            system.debug('driveIdSet '+driveIdSet.size());
 			queryString += ' AND Id IN: driveIdSet';            
         }
         if(driveSource != NULL && !String.isBlank(driveSource)) {
