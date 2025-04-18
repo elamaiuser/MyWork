@@ -18,13 +18,14 @@
         <members>Calendar_Build_Error_Log__c.Category__c</members>	
         <members>Calendar_Build_Log_Manual_Run__c.FS_Drives_wo_Resource_Requested__c</members>	
         <members>Calendar_Build_Log_Manual_Run__c.Mobile_Drives_wo_Resource_Requested__c</members>
+        <members>sked__Location__c.sked_Real_ID_Required__c</members>
         <members>sked_Travel_Time_Index_Refresh_Request__c.sked_Last_Stuck_Detection_Time__c</members>
 		<members>sked_Travel_Time_Index_Refresh_Request__c.sked_Stuck_Retry_Count__c</members>
         <members>sked_TTIRR_Stuck_Job_Config_Setting__c.sked_Enable_Auto_Reschedule__c</members>
 		<members>sked_TTIRR_Stuck_Job_Config_Setting__c.sked_Is_Active__c</members>
 		<members>sked_TTIRR_Stuck_Job_Config_Setting__c.sked_Maximum_Retries__c</members>
 		<members>sked_TTIRR_Stuck_Job_Config_Setting__c.sked_Reschedule_Interval_Minutes__c</members>
-		<members>sked_TTIRR_Stuck_Job_Config_Setting__c.sked_Stuck_Threshold_Minutes__c</members>	
+		<members>sked_TTIRR_Stuck_Job_Config_Setting__c.sked_Stuck_Threshold_Minutes__c</members>
         <name>CustomField</name>
     </types>
     <types>
@@ -45,6 +46,7 @@
 		<members>AccountServiceRoleTrigger_Test</members>
         <members>AccountContactHistoryService</members>
         <members>skedConstants</members>
+        <members>skedLocationTagHandler</members>
         <members>skedReprocessStuckTTIRequestBatch</members>
         <members>skedReprocessStuckTTIRequestBatch_Test</members>
         <members>skedSetting</members>
