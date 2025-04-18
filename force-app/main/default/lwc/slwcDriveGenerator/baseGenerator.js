@@ -369,7 +369,7 @@ class BaseGenerator {
       if(resourceRoleGroup !== RESOURCE_ROLE_GROUP.DRIVING_ROLES && job.dualRole) {
         dualRoleGroup = this.helper.getResourceRoleGroup(job.dualRole, this.masterData);
         dualRoleTimeData = resourceRoleGroupRoleTimeDataMap[dualRoleGroup];
-        if(dualRoleGroup === RESOURCE_ROLE_GROUP.DRIVING_ROLES) roleTimeData = dualRoleTimeData;
+        if(dualRoleGroup === RESOURCE_ROLE_GROUP.DRIVING_ROLES) roleTimeData = cloneDeep(dualRoleTimeData);
       }
     
       job.leadTime = compareAndGetValue('leadTime', roleTimeData, dualRoleTimeData) || job.leadTime;
