@@ -8,5 +8,13 @@
         <members>sked_Location_Account__c.sked_Location__c</members>	
         <name>CustomField</name>
     </types>
+	<types>
+		<members>Account_Marketing_Program__c.setMarketingProgramActiveToFalse</members>
+		<name>WorkflowFieldUpdate</name>
+	</types>
+	<types>
+		<members>Account_Marketing_Program__c.hasEndDate</members>
+		<name>WorkflowRule</name>
+	</types>
     <version>59.0</version>
 </Package>
