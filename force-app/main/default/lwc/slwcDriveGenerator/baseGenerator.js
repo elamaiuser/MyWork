@@ -2,7 +2,7 @@ import { serial, generateUUID, parseJSON, isNullOrEmpty, cloneDeep as cloneDeepU
 import { DateTime } from 'c/luxon';
 import { cloneDeep, orderBy, extend, remove, max, compact, groupBy, uniq, pick } from 'c/lodash';
 import { DriveHelper } from './helper';
-import { DRIVE_STATUS, ASSET_TYPE, PENDING_ACTION, JOB_ALLOCATION_STATUS, DRIVE_TYPE, DRIVE_REQUEST_CHANGE_STATUS, MANUALLY_CREATED_FROM, OPERATION_TYPE, DRIVE_CONTENTION_RESOLUTION, DRIVE_CHANGE_REQUEST_TYPE } from 'c/slwcConstants';
+import { DRIVE_STATUS, ASSET_TYPE, PENDING_ACTION, JOB_ALLOCATION_STATUS, DRIVE_TYPE, DRIVE_REQUEST_CHANGE_STATUS, MANUALLY_CREATED_FROM, OPERATION_TYPE, DRIVE_CONTENTION_RESOLUTION, DRIVE_CHANGE_REQUEST_TYPE, RESOURCE_ROLE_GROUP } from 'c/slwcConstants';
 import {
   sObjectType,
   driveQueryModel,
@@ -362,13 +362,14 @@ class BaseGenerator {
       job.siteLogisticsBack = 0;
 
       const resourceRoleGroup = this.helper.getResourceRoleGroup(job.resourceRole, this.masterData);
-      const roleTimeData = resourceRoleGroupRoleTimeDataMap[resourceRoleGroup];
+      let roleTimeData = resourceRoleGroupRoleTimeDataMap[resourceRoleGroup];
      
       let dualRoleGroup;
       let dualRoleTimeData;
-      if(job.dualRole) {
+      if(resourceRoleGroup !== RESOURCE_ROLE_GROUP.DRIVING_ROLES && job.dualRole) {
         dualRoleGroup = this.helper.getResourceRoleGroup(job.dualRole, this.masterData);
         dualRoleTimeData = resourceRoleGroupRoleTimeDataMap[dualRoleGroup];
+        if(dualRoleGroup === RESOURCE_ROLE_GROUP.DRIVING_ROLES) roleTimeData = cloneDeep(dualRoleTimeData);
       }
     
       job.leadTime = compareAndGetValue('leadTime', roleTimeData, dualRoleTimeData) || job.leadTime;
