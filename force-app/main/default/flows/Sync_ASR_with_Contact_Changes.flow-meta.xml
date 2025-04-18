@@ -35,7 +35,7 @@
             </value>
         </assignmentItems>
         <connector>
-            <targetReference>Loop_over_Matching_Reasons</targetReference>
+            <targetReference>Check_Do_Not_Contact_Reason</targetReference>
         </connector>
     </assignments>
     <assignments>
@@ -72,16 +72,103 @@
             </value>
         </assignmentItems>
         <connector>
+            <targetReference>Check_Do_Not_Contact_Reason</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <name>Mark_Contact_As_In_Active</name>
+        <label>Mark Contact As In Active</label>
+        <locationX>2558</locationX>
+        <locationY>1271</locationY>
+        <assignmentItems>
+            <assignToReference>$Record.Active__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <booleanValue>false</booleanValue>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>ListOfContactToSetAsInActive</assignToReference>
+            <operator>Add</operator>
+            <value>
+                <elementReference>$Record</elementReference>
+            </value>
+        </assignmentItems>
+        <connector>
             <targetReference>Loop_over_Matching_Reasons</targetReference>
         </connector>
     </assignments>
+    <decisions>
+        <description>If Do Not Contact reason is Deceased then mark the Contact as InActive.</description>
+        <name>Check_Do_Not_Contact_Reason</name>
+        <label>Check Do Not Contact Reason</label>
+        <locationX>2690</locationX>
+        <locationY>1163</locationY>
+        <defaultConnector>
+            <targetReference>Loop_over_Matching_Reasons</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Reason_Is_Deceased</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Do_Not_Contact_Reason__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Deceased</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Mark_Contact_As_In_Active</targetReference>
+            </connector>
+            <doesRequireRecordChangedToMeetCriteria>true</doesRequireRecordChangedToMeetCriteria>
+            <label>Reason Is Deceased</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>Contact_Action_Insert_Or_Update</name>
+        <label>Contact Action Insert Or Update</label>
+        <locationX>974</locationX>
+        <locationY>323</locationY>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Contact_Insert</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record__Prior.Id</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Create_Account_Service_Role</targetReference>
+            </connector>
+            <label>Contact Insert</label>
+        </rules>
+        <rules>
+            <name>Contact_Update_with_Do_Not_Contact_as_True</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Do_Not_Contact__c</leftValueReference>
+                <operator>IsChanged</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Get_Active_Account_Service_Roles</targetReference>
+            </connector>
+            <label>Contact Updated with Do Not Contact as True</label>
+        </rules>
+    </decisions>
     <decisions>
         <name>Is_Do_Not_Contact_Reason_Picklist_Value_Matching</name>
         <label>Is Do Not Contact Reason Picklist Value Matching</label>
         <locationX>2690</locationX>
         <locationY>863</locationY>
         <defaultConnector>
-            <targetReference>Loop_over_Matching_Reasons</targetReference>
+            <targetReference>Check_Do_Not_Contact_Reason</targetReference>
         </defaultConnector>
         <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
         <rules>
@@ -115,50 +202,6 @@
             <label>Not Matching</label>
         </rules>
     </decisions>
-    <decisions>
-        <name>Is_New_Contact</name>
-        <label>Is New Contact</label>
-        <locationX>974</locationX>
-        <locationY>323</locationY>
-        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
-        <rules>
-            <name>New_Contact</name>
-            <conditionLogic>and</conditionLogic>
-            <conditions>
-                <leftValueReference>$Record__Prior.Id</leftValueReference>
-                <operator>IsNull</operator>
-                <rightValue>
-                    <booleanValue>true</booleanValue>
-                </rightValue>
-            </conditions>
-            <connector>
-                <targetReference>Create_Account_Service_Role</targetReference>
-            </connector>
-            <label>New Contact</label>
-        </rules>
-        <rules>
-            <name>Contact_Update_with_Do_Not_Contact_as_True</name>
-            <conditionLogic>and</conditionLogic>
-            <conditions>
-                <leftValueReference>$Record__Prior.Do_Not_Contact__c</leftValueReference>
-                <operator>EqualTo</operator>
-                <rightValue>
-                    <booleanValue>false</booleanValue>
-                </rightValue>
-            </conditions>
-            <conditions>
-                <leftValueReference>$Record.Do_Not_Contact__c</leftValueReference>
-                <operator>EqualTo</operator>
-                <rightValue>
-                    <booleanValue>true</booleanValue>
-                </rightValue>
-            </conditions>
-            <connector>
-                <targetReference>Get_Active_Account_Service_Roles</targetReference>
-            </connector>
-            <label>Contact Updated with Do Not Contact as True</label>
-        </rules>
-    </decisions>
     <description>This flow handles the creation and update of Account Service Role (ASR) records based on Contact-related changes.
 1. On Contact creation, it creates an ASR record linking the Contact to the related Account.
 2. On update, if &quot;Do Not Contact&quot; is set to true, it updates the ASR with an End Date and End Reason.
@@ -177,7 +220,7 @@ The flow ensures ASR records stay in sync with the Contact.</description>
         <label>Loop over Matching Reasons</label>
         <locationX>2338</locationX>
         <locationY>755</locationY>
-        <collectionReference>Get_Matching_ASR_End_Reasons</collectionReference>
+        <collectionReference>Read_End_Reason_From_MetaData</collectionReference>
         <iterationOrder>Asc</iterationOrder>
         <nextValueConnector>
             <targetReference>Is_Do_Not_Contact_Reason_Picklist_Value_Matching</targetReference>
@@ -258,7 +301,7 @@ The flow ensures ASR records stay in sync with the Contact.</description>
         <locationY>431</locationY>
         <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
         <connector>
-            <targetReference>Get_Matching_ASR_End_Reasons</targetReference>
+            <targetReference>Read_End_Reason_From_MetaData</targetReference>
         </connector>
         <filterLogic>and</filterLogic>
         <filters>
@@ -288,8 +331,8 @@ The flow ensures ASR records stay in sync with the Contact.</description>
     </recordLookups>
     <recordLookups>
         <description>Read From Account_Service_Role_End_Reason__mdt</description>
-        <name>Get_Matching_ASR_End_Reasons</name>
-        <label>Get Matching ASR End Reasons</label>
+        <name>Read_End_Reason_From_MetaData</name>
+        <label>Read End Reason From MetaData</label>
         <locationX>1634</locationX>
         <locationY>539</locationY>
         <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
@@ -301,23 +344,41 @@ The flow ensures ASR records stay in sync with the Contact.</description>
         <storeOutputAutomatically>true</storeOutputAutomatically>
     </recordLookups>
     <recordUpdates>
+        <name>Mark_Deceased_Contact_As_In_Active</name>
+        <label>Mark Deceased  Contact As In Active</label>
+        <locationX>1634</locationX>
+        <locationY>1739</locationY>
+        <inputReference>ListOfContactToSetAsInActive</inputReference>
+    </recordUpdates>
+    <recordUpdates>
         <name>Update_ASRs_With_End_Info</name>
         <label>Update ASRs With End Info</label>
         <locationX>1634</locationX>
-        <locationY>1331</locationY>
+        <locationY>1631</locationY>
+        <connector>
+            <targetReference>Mark_Deceased_Contact_As_In_Active</targetReference>
+        </connector>
         <inputReference>UpdatedASRs</inputReference>
     </recordUpdates>
     <start>
         <locationX>848</locationX>
         <locationY>0</locationY>
         <connector>
-            <targetReference>Is_New_Contact</targetReference>
+            <targetReference>Contact_Action_Insert_Or_Update</targetReference>
         </connector>
         <object>Contact</object>
         <recordTriggerType>CreateAndUpdate</recordTriggerType>
         <triggerType>RecordAfterSave</triggerType>
     </start>
     <status>Active</status>
+    <variables>
+        <name>CollectionOfASR_EndReasonFromMetadat</name>
+        <dataType>SObject</dataType>
+        <isCollection>true</isCollection>
+        <isInput>true</isInput>
+        <isOutput>false</isOutput>
+        <objectType>Account_Service_Role_End_Reason__mdt</objectType>
+    </variables>
     <variables>
         <name>FoundMatchingReason</name>
         <dataType>Boolean</dataType>
@@ -327,6 +388,14 @@ The flow ensures ASR records stay in sync with the Contact.</description>
         <value>
             <booleanValue>false</booleanValue>
         </value>
+    </variables>
+    <variables>
+        <name>ListOfContactToSetAsInActive</name>
+        <dataType>SObject</dataType>
+        <isCollection>true</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+        <objectType>Contact</objectType>
     </variables>
     <variables>
         <name>UpdatedASRs</name>
