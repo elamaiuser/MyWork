@@ -65,6 +65,7 @@
 		<members>Account_Before_Insert_Update_Flow</members>
         <members>Handle_Do_Not_Contact_Updates_On_Contact</members>
         <members>Sync_ASR_with_Contact_Changes</members>
+        <members>Handle_Site_Name_Room_Name_update</members>
 		<name>Flow</name>
 	</types>
     <types>
