@@ -134,6 +134,8 @@
 	<types>
 		<members>Opportunity.Template_Opportunity</members>
 		<name>QuickAction</name>
+    </types>
+    <types>
 		<members>Account_Marketing_Program__c</members>
 		<name>Workflow</name>
 	</types>
