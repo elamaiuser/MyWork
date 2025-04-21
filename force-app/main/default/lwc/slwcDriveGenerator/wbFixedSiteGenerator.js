@@ -5,7 +5,7 @@ import { debugLogService, operationDriveLimitService, operationDriveLimitQueryMo
   staffingConstraintService, staffingConstraintQueryModel } from 'c/dataService';
 import { isNullOrEmpty, generateUUID } from 'c/slwcUtils';
 import { DateTime } from 'c/luxon';
-import { cloneDeep, difference, uniqueId, extend } from 'c/lodash';
+import { cloneDeep, difference, uniqueId, extend, orderBy } from 'c/lodash';
 import { Fetch } from './fetch';
 import { PROCEDURE_TYPE, DRIVE_STATUS, ASSET_TYPE, PENDING_ACTION, DRIVE_APPROVAL_STATUS, RESOURCE_TYPE, DRIVE_TYPE, RESOURCE_ROLE_GROUP, DRIVE_CONTENTION, JOB_ALLOCATION_STATUS } from 'c/slwcConstants';
 
@@ -756,17 +756,6 @@ class WbFixedSiteGenerator extends BaseGenerator {
 
     return driveShiftStaffCapacity;
   }
-  
-  calculateDriveShiftMaxStaffCapacityWithDrawHours(driveShift, ignoreLunchBreak = false) {
-    const driveShiftStaffCapacity = this.helper.calculateMaximumStaffCapacityWithDrawHours([
-      'Driver', 'Driver Support', '2RBC', 'VP/HH', 'Charge'
-    ], this.drive, driveShift.driveShiftMetadata, 
-      new Map()
-        .set(driveShift.driveShiftMetadata.key, this.helper.getDriveShiftResourceQuantity(driveShift))
-    , this.masterData, ignoreLunchBreak);
-
-    return driveShiftStaffCapacity;
-  }
 
   calculateDriveShiftDrawHours(driveShift, ignoreLunchBreak = false) {
     const drawHours = this.helper.calculateDrawHours(driveShift.driveShiftMetadata, this.masterData, driveShift.driveShiftMetadata.lunchBreakSettings);
@@ -808,20 +797,7 @@ class WbFixedSiteGenerator extends BaseGenerator {
   }
 
   updateDriveAverageStaffCapacity() {
-    let driveStaffCount = 0;
-    if (this.masterData && this.masterData.staffingDecisionMatrix) {
-      this.drive.driveShifts.forEach((driveShift) => {
-        const driveShiftStaffCount = this.countDriveShiftStaffs(driveShift);
-        driveStaffCount += driveShiftStaffCount;
-      });
-    }
-    if(this.drive.staffCapacity && this.drive.staffCapacity > 0 && driveStaffCount > 0) {
-      this.drive.averageStaffCapacity = this.drive.staffCapacity / driveStaffCount;
-      this.drive.averageStaffCapacity = this.drive.averageStaffCapacity.toFixed(1);
-    } else {
-      this.drive.averageStaffCapacity = 0;
-    }
-    
+    this.drive.averageStaffCapacity = this.helper.calculateDriveAverageStaffCapacity(this.drive);
   }
 
   updateDriveMaxRoleCapacity() {
@@ -848,16 +824,7 @@ class WbFixedSiteGenerator extends BaseGenerator {
   }
 
   updateDriveExcessStaffCapacity() {
-    if(this.drive.staffCapacity && this.drive.staffCapacity > 0 && this.drive.maxRoleCapacityWithDrawHours && this.drive.maxRoleCapacityWithDrawHours > 0) {
-      if(this.drive.projectedRegisteredDonors) {
-        this.drive.excessStaffCapacity = (this.drive.staffCapacity - this.drive.projectedRegisteredDonors) / this.drive.maxRoleCapacityWithDrawHours;
-      } else {
-        this.drive.excessStaffCapacity = this.drive.staffCapacity / this.drive.maxRoleCapacityWithDrawHours;
-      }
-      this.drive.excessStaffCapacity = this.drive.excessStaffCapacity.toFixed(1);
-    } else {
-      this.drive.excessStaffCapacity = 0;
-    }
+    this.drive.excessStaffCapacity = this.helper.calculateExcessStaffCapacity(this.drive);
   }
 
   calculateNumberOf2rbcAssets() {

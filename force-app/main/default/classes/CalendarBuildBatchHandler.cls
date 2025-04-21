@@ -303,4 +303,48 @@
             this.UnqualifiedReasons = new List<String>();
         }
     }
+
+    //HRP-11368: Starts Here -->
+    public static List<Opportunity> filterOpportunitiesToCloneForAdhocRun(List<Opportunity> selectedOpps) {
+
+        //Containers needed
+        Set<Id> accountIds = new set<Id>();
+        List<Opportunity> filteredOpps = new List<Opportunity>();
+        Map<Date, List<Opportunity>> map_nextYearDriveDate_oppList = new Map<Date, List<Opportunity>>();
+        Map<String, List<Opportunity>> map_driveDateAndAccountIdKey_oppList = new Map<String, List<Opportunity>>();
+        
+        for(Opportunity opp : selectedOpps) {
+            if(opp.Type_of_Drive__c.equalsIgnoreCase(BSF_Constants.FIXED_SITE_DRIVE)) continue;
+            accountIds.add(opp.AccountId);
+            DateTime dT = Helper.getSameDayOfNextYear(opp.Drive_Date__c);
+            Date nextYearDate = Date.newInstance(dT.year(), dT.month(), dT.day());
+            if(!map_nextYearDriveDate_oppList.containsKey(nextYearDate)) {
+                map_nextYearDriveDate_oppList.put(nextYearDate, new List<Opportunity>());
+            }
+            map_nextYearDriveDate_oppList.get(nextYearDate).add(opp);
+        }
+
+        List<Opportunity> preExistingDrives = [SELECT Id, AccountId, Drive_Date__c 
+                                                FROM Opportunity
+                                                WHERE AccountId IN :accountIds
+                                                AND Drive_Date__c IN :map_nextYearDriveDate_oppList.keySet()
+                                                AND StageName NOT IN (:BSF_Constants.STAGE_CANCELLED)];
+        
+        for(Opportunity opp : preExistingDrives) {
+            String key = opp.Drive_Date__c + '_' + opp.AccountId;
+            if(!map_driveDateAndAccountIdKey_oppList.containsKey(key)) {
+                map_driveDateAndAccountIdKey_oppList.put(key, new List<Opportunity>());
+            }
+            map_driveDateAndAccountIdKey_oppList.get(key).add(opp);
+        }
+
+        for(Date nextYearDate : map_nextYearDriveDate_oppList.keySet()) {
+            for(Opportunity opp : map_nextYearDriveDate_oppList.get(nextYearDate)) {
+                String key = nextYearDate + '_' + opp.AccountId;
+                if(!map_driveDateAndAccountIdKey_oppList.containsKey(key)) filteredOpps.add(opp);
+            }
+        }
+        return filteredOpps;
+    }
+    //HRP-11368: Ends Here -->
 }

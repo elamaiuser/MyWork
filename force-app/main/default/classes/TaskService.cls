@@ -71,6 +71,7 @@ public with sharing class TaskService {
         String opportunityId = '';
         String driveId = '';
         String driveExternalId = '';
+        String driveUFID = '';
         if(taskId != null){
             List<Task> taskList = [SELECT Subject,
                                             WhatId
@@ -83,7 +84,8 @@ public with sharing class TaskService {
                     opportunityId = taskList[0].WhatId;
                     List<Sked_Drive__c> docList = [SELECT Id,
                                                             sked_Opportunity__c,
-                                                            sked_Drive_External_Id__c
+                                                            sked_Drive_External_Id__c,
+                                                            sked_UFID__c
                                                     FROM Sked_Drive__c 
                                                     WHERE sked_Opportunity__c = :taskList[0].WhatId
                                                     AND sked_Is_Surrogate__c = false
@@ -91,6 +93,7 @@ public with sharing class TaskService {
                     if(!docList.isEmpty()){
                         driveId = docList[0].Id;
                         driveExternalId = docList[0].sked_Drive_External_Id__c != null ? docList[0].sked_Drive_External_Id__c : '';
+                        driveUFID = docList[0].sked_UFID__c != null ? docList[0].sked_UFID__c : '';
                     }
                 }
                 //HRP-12627 changes ends
@@ -109,6 +112,7 @@ public with sharing class TaskService {
                     reportLink = reportLink.replace('{{opportunityId}}',opportunityId);
                     reportLink = reportLink.replace('{{driveId}}',driveId);
                     reportLink = reportLink.replace('{{driveExternalId}}',driveExternalId);
+                    reportLink = reportLink.replace('{{driveUFID}}',driveUFID);
                     tempMap.put('link', reportLink);
                     //HRP-12627 changes ends
                     tempMap.put('id', metadata.DeveloperName);
@@ -468,6 +472,7 @@ public with sharing class TaskService {
         final List<String> hierarchy = new List<String>{BSF_Constants.AREA_BOOKING_MANAGER, BSF_Constants.ACCOUNT_MANAGER, BSF_Constants.ACCOUNT_SPECIALIST, BSF_Constants.DISTRICT_MANAGER,BSF_Constants.DRD_SYSTEM_USER};
         Map<Id, Map<String, Id>> opportunityRolesMap =  new Map<Id, Map<String, Id>>();
         Map<String, String> metadataMap = new Map<String, String>();
+        Map<Id, Id> accountSpecialistMap = new Map<Id, Id>();
         for(Task_Reassignment_Matrix__mdt mtdt : Task_Reassignment_Matrix__mdt.getAll().values()){
             if(String.isNotBlank(mtdt.Task_Subject__c) && subjectList.contains(mtdt.Task_Subject__c)
                     && String.isNotBlank(mtdt.Assigned_To__c) && hierarchy.contains(mtdt.Assigned_To__c.trim())){
@@ -482,7 +487,8 @@ public with sharing class TaskService {
             }
         }
         if(!opportunityRolesMap.isEmpty()){
-            List<Opportunity> oppList = [SELECT Id, 
+            List<Opportunity> oppList = [SELECT Id,
+                                                AccountId, 
                                                 Account_Manager__c, 
                                                 OwnerId,
                                                 (SELECT Id,
@@ -492,6 +498,28 @@ public with sharing class TaskService {
                                                     FROM OpportunityTeamMembers) 
                                             FROM Opportunity 
                                             WHERE Id IN: opportunityRolesMap.keySet()];
+            for(Opportunity opp : oppList){
+                if(opp.AccountId != null){
+                    accountSpecialistMap.put(opp.AccountId,null);
+                }
+            }
+            if(!accountSpecialistMap.isEmpty()){
+                List<AccountTeamMember> accountteamList = [SELECT Id,
+                                                                    AccountId,
+                                                                    UserId,
+                                                                    Is_Covering_Recruiter__c 
+                                                            FROM AccountTeamMember 
+                                                            WHERE AccountId IN: accountSpecialistMap.keySet()
+                                                            AND TeamMemberRole =: BSF_Constants.ACCOUNT_SPECIALIST
+                                                            ORDER BY CreatedDate DESC];
+                for(AccountTeamMember acctm : accountteamList){
+                    if(accountSpecialistMap.get(acctm.AccountId) == null){
+                        accountSpecialistMap.put(acctm.AccountId,acctm.UserId);
+                    }else if(acctm.Is_Covering_Recruiter__c == true){
+                        accountSpecialistMap.put(acctm.AccountId,acctm.UserId);
+                    }
+                }
+            }
             for(Opportunity opp : oppList){
                 if(opp.Account_Manager__c != null){
                     opportunityRolesMap.get(opp.Id).put(BSF_Constants.ACCOUNT_MANAGER,opp.Account_Manager__c);
@@ -509,6 +537,9 @@ public with sharing class TaskService {
                                 opportunityRolesMap.get(opp.Id).put(BSF_Constants.AREA_BOOKING_MANAGER,oppTeam.UserId);
                         }
                     }
+                }
+                if(opp.AccountId != null && accountSpecialistMap.containsKey(opp.AccountId) && accountSpecialistMap.get(opp.AccountId) != null){
+                    opportunityRolesMap.get(opp.Id).put(BSF_Constants.ACCOUNT_SPECIALIST,accountSpecialistMap.get(opp.AccountId));
                 }
             }
             for(Task tsk : newList){

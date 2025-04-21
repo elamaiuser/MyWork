@@ -10,6 +10,8 @@ import { ShowToastEvent } from 'lightning/platformShowToastEvent'
 import { DRIVE_TYPE, MANUALLY_CREATED_FROM, RESOURCE_TYPE, VOLUNTEER_COUNTS_ADJUSTMENT_REASON } from 'c/slwcConstants';
 
 export default class SlwcDriveShiftJobModal extends LightningElement {
+    helper = new DriveHelper();
+
     /* api */
     @api job;
     @api enableAddress = false;
@@ -103,7 +105,7 @@ export default class SlwcDriveShiftJobModal extends LightningElement {
           }
   
         return (roleMap[this.job.resourceRole] || [])
-            .filter(role => role === 'None' || this.driveShift.jobs?.find(_job => _job.resourceRole === role) || this.driveShift.jobs?.find(_job => _job.resourceRole === this.job.resourceRole && _job.dualRole === role))
+            .filter(role => role === 'None' || this.driveShift.jobs?.find(_job => _job.resourceRole === role) || this.driveShift.jobs?.find(_job => _job.key === this.job.key && _job.resourceRole === this.job.resourceRole && _job.dualRole === role))
             .map(role => {
                 return {
                     label: role,
@@ -155,8 +157,7 @@ export default class SlwcDriveShiftJobModal extends LightningElement {
     }
 
     getRoleTimeData(role) {
-        const helper = new DriveHelper();
-        const resourceRoleGroup = helper.getResourceRoleGroup(role, this.masterData);
+        const resourceRoleGroup = this.helper.getResourceRoleGroup(role, this.masterData);
         return  this.resourceRoleGroupRoleTimeDataMap[resourceRoleGroup];  
     }
 
@@ -272,13 +273,12 @@ export default class SlwcDriveShiftJobModal extends LightningElement {
         let fetch = new DriveFetch({
             driveType: this.drive.typeOfDrive
         })
-        let helper = new DriveHelper();
 
         return Promise.all([
             fetch.retrieveDefaultTags(this.drive),
         ])
         .then(([driveTags]) => {
-            const jobTagsMap = helper.calculateJobTagsMap({
+            const jobTagsMap = this.helper.calculateJobTagsMap({
                 driveTags
             });
             const personTags = jobTagsMap[RESOURCE_TYPE.PERSON] || [];
@@ -295,7 +295,6 @@ export default class SlwcDriveShiftJobModal extends LightningElement {
         let fetch = new DriveFetch({
             driveType: this.drive.typeOfDrive
         })
-        let helper = new DriveHelper();
 
         return Promise.all([
             fetch.retrieveDriveSite(this.drive),
@@ -320,7 +319,7 @@ export default class SlwcDriveShiftJobModal extends LightningElement {
                 return item.startDate <= this.drive.driveDate && this.drive.driveDate <= item.endDate;
             });
 
-            let { roleTimeDetailMap, roleTimeVarianceMap, roleGroupTimeDetailMap, roleGroupTimeVarianceMap } = helper.buildRoleTimeDetailMap(this.drive, {
+            let { roleTimeDetailMap, roleTimeVarianceMap, roleGroupTimeDetailMap, roleGroupTimeVarianceMap } = this.helper.buildRoleTimeDetailMap(this.drive, {
                 roleTimeData: roleTimeData,
                 resourceRoleGroups: resourceRoleGroups
             });
@@ -335,14 +334,13 @@ export default class SlwcDriveShiftJobModal extends LightningElement {
                 roleGroupTimeVarianceMap
             };
 
-            let driveResourceRoleGroupRoleTimeDataMap = helper.calculateDriveRoleTimeData({
+            let driveResourceRoleGroupRoleTimeDataMap = this.helper.calculateDriveRoleTimeData({
                 ...this.drive,
                 siteCollectionOperation,
                 collectionOperation: siteCollectionOperation.collectionOperation,
                 driveSite
             }, masterData)
-            
-            let driveShiftResourceRoleGroupRoleTimeDataMap = helper.calculateDriveShiftRoleTimeData(
+            let driveShiftResourceRoleGroupRoleTimeDataMap = this.helper.calculateDriveShiftRoleTimeData(
                 masterData, {
                 ...this.drive,
                 driveShiftsMetadata: {
@@ -375,8 +373,9 @@ export default class SlwcDriveShiftJobModal extends LightningElement {
             this.resourceType = detail.resourceType;
             this.type = detail.type;
             this.driveShift = detail.driveShift;
-            this.drive = detail.drive;
+            this.drive = detail.drive;  
             this.isVolunteerQuantityChanged = detail.isVolunteerQuantityChanged;  
+            this.errorMessages = [];
             
             this.isPersonResource = this.resourceType == 'Person';
             this.isVolunteerResource = this.resourceType == 'Volunteer';
@@ -452,7 +451,17 @@ export default class SlwcDriveShiftJobModal extends LightningElement {
                 message: 'Quantity must be greater than 0.'
             })
         }
-      
+
+        if(this.isPersonResource && this.action === 'create') {
+            const existed = this.driveShift.jobs?.find(job => this.helper.isJobsSameRoles(job, this.job));
+            if(existed) {
+                this.errorMessages.push({
+                    message: `${this.job.resourceRole} role already exists.`
+                })
+                return false;
+            }
+        }
+        
         return allValid && !this.errorMessages.length;
     }
 

@@ -15,6 +15,7 @@ public class skedJobHandler extends skedTriggerHub {
         }
         autoCorrectDuration(this.context.newRecords);
         populateScheduler(this.context.newRecords);
+        updateVARLastModifiedBy(this.context.newRecords,null);
     }
     
     public override void onAfterInsert() {
@@ -28,6 +29,7 @@ public class skedJobHandler extends skedTriggerHub {
             doDateTimeConversion(this.context.newRecords, (Map<Id, sked__Job__c>)this.context.oldMap);
         }
         autoCorrectDuration(this.context.newRecords, (Map<Id, sked__Job__c>)this.context.oldMap);
+        updateVARLastModifiedBy(this.context.newRecords,(Map<Id, sked__Job__c>)this.context.oldMap);
     }
     
     public override void onAfterUpdate() {
@@ -358,10 +360,28 @@ public class skedJobHandler extends skedTriggerHub {
             }
             
             for (sked__Job__c newRecord : newRecords) {
-                if (!string.isBlank(newRecord.sked_Resource_Role__c) || !string.isBlank(newRecord.sked_Asset_Type__c)) {
-                    sked__Tag__c skedTag;
-                    skedTag = mapRole.containsKey(newRecord.sked_Resource_Role__c) ? 
-                        mapRole.get(newRecord.sked_Resource_Role__c) : mapRole.get(newRecord.sked_Asset_Type__c);
+                if (!string.isBlank(newRecord.sked_Resource_Role__c)) {
+                    List<sked__Tag__c> skedTags = new List<sked__Tag__c>();
+                    if(mapRole.containsKey(newRecord.sked_Resource_Role__c)) {
+                        skedTags.add(mapRole.get(newRecord.sked_Resource_Role__c));
+                    }
+                    if(mapRole.containsKey(newRecord.sked_Dual_Role__c)) {
+                        skedTags.add(mapRole.get(newRecord.sked_Dual_Role__c));
+                    }
+                    
+                    if (!skedTags.isEmpty()) {
+                        for(sked__Tag__c skedTag : skedTags) {
+                            sked__Job_Tag__c skedJobTag = new sked__Job_Tag__c(
+                                sked__Job__c = newRecord.Id,
+                                sked__Tag__c = skedTag.Id,
+                                sked_SystemCreated__c = TRUE
+                            );
+                            skedJobTags.add(skedJobTag);
+                        }
+                    }
+                }
+                if (!string.isBlank(newRecord.sked_Asset_Type__c)) {
+                    sked__Tag__c skedTag = mapRole.get(newRecord.sked_Asset_Type__c);
                     if (skedTag != NULL) {
                         sked__Job_Tag__c skedJobTag = new sked__Job_Tag__c(
                         	sked__Job__c = newRecord.Id,
@@ -602,6 +622,18 @@ public class skedJobHandler extends skedTriggerHub {
                     'sked_Job_Info_Changed_SFPush'
                 }
             ).generateNotifications(impactedJobs, oldImpactedJobMap);
+        }
+    }
+    private void updateVARLastModifiedBy(List<sked__Job__c> newRecords, Map<Id, sked__Job__c> oldMap) {
+        for (sked__Job__c newRecord : newRecords) {
+            if((newRecord.Id == null || oldMap == null || !oldMap.containsKey(newRecord.Id)) 
+                        && String.isNotBlank(newRecord.sked_Volunteer_Adjustment_Reason__c)) {
+                            newRecord.sked_VAR_Last_Modified_By__c = UserInfo.getUserId();
+            }else if(newRecord.Id != null && oldMap != null && oldMap.containsKey(newRecord.Id) 
+                    && oldMap.get(newRecord.Id).sked_Volunteer_Adjustment_Reason__c 
+                    != newRecord.sked_Volunteer_Adjustment_Reason__c) {
+                        newRecord.sked_VAR_Last_Modified_By__c = UserInfo.getUserId();
             }
         }
     }
+}

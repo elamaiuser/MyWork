@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+    <types>
+		<members>sked__Job__c.sked_VAR_Last_Modified_By__c</members>
+		<name>CustomField</name>
+	</types>
+    <types>
+		<members>skedJobHandler</members>
+		<name>ApexClass</name>
+	</types>
+    <version>59.0</version>
+</Package>

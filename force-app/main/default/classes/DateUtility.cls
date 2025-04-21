@@ -39,7 +39,7 @@ public class DateUtility {
             donorEligibilityMsg = setting.Is_Donor_Eligibility_Msg_Needed__c 
                                     ? setting.Donor_Eligibility_Msg__c
                                         .replace('{donorEligibilityType}', donorEligibilityNeededFor.equalsIgnoreCase('Power Red') ? (donorEligibilityNeededFor + 's') : donorEligibilityNeededFor)
-                                        .replace('{donorEligibilityDay}', String.valueOf((Integer.valueOf(donorEligibilityDay) - 1)))
+                                        .replace('{donorEligibilityDay}', donorEligibilityDay)
                                     : '';
         }
 
@@ -79,6 +79,8 @@ public class DateUtility {
         List<Date> intermediateDates = new List<Date>();
 
         Date dtStartDate = Date.valueOf(startDate);
+        intermediateDates.add(dtStartDate); //Adding the start date in the list as the first drive date
+
         Date dtEndDate = Date.valueOf(endDate);
         Date nextDate = dtStartDate.addDays(Integer.valueOf(finalResults.donorEligibilityDay));
         while (nextDate <= dtEndDate) {
