@@ -68,6 +68,7 @@
         <members>Handle_Do_Not_Contact_Updates_On_Contact</members>
         <members>Sync_ASR_with_Contact_Changes</members>
         <members>Handle_Site_Name_Room_Name_update</members>
+        <members>Drive_Hold_Status_Expires</members>
 		<name>Flow</name>
 	</types>
     <types>
@@ -133,6 +134,8 @@
 	<types>
 		<members>Opportunity.Template_Opportunity</members>
 		<name>QuickAction</name>
+		<members>Account_Marketing_Program__c</members>
+		<name>Workflow</name>
 	</types>
     <version>63.0</version>
 </Package>
