@@ -108,12 +108,8 @@
 		<name>ReportType</name>
 	</types>
 	<types>
-		<members>Account_Marketing_Program__c.setMarketingProgramActiveToFalse</members>
-		<name>WorkflowFieldUpdate</name>
-	</types>
-	<types>
-		<members>Account_Marketing_Program__c.hasEndDate</members>
-		<name>WorkflowRule</name>
+		<members>Account_Marketing_Program__c</members>
+		<name>Workflow</name>
 	</types>
     <version>63.0</version>
 </Package>
