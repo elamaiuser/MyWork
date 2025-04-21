@@ -107,5 +107,9 @@
 		<members>Accounts_with_Fixed_Site_Procedure_Projections</members>
 		<name>ReportType</name>
 	</types>
+	<types>
+		<members>Account_Marketing_Program__c</members>
+		<name>Workflow</name>
+	</types>
     <version>63.0</version>
 </Package>
