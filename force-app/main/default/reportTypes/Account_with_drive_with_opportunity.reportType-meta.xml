@@ -927,4 +927,17 @@
         </columns>
         <masterLabel>Drives on Calendar</masterLabel>
     </sections>
+    <sections>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>Redcross_Volunteer_Required__c</field>
+            <table>Account.Opportunities</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>Redcross_Volunteer_Quantity__c</field>
+            <table>Account.Opportunities</table>
+        </columns>
+        <masterLabel>Blood Drive Opportunities</masterLabel>
+    </sections>
 </ReportType>
