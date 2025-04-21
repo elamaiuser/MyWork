@@ -8,34 +8,6 @@
         <value>System Administrator,Global Admin,Recruitment Admin,APS Admin</value>
     </labels>
     <labels>
-        <fullName>ChunkHandlerUpdateAMAndDMPortfolioDailyBatch</fullName>
-        <language>en_US</language>
-        <protected>false</protected>
-        <shortDescription>ChunkHandlerUpdateAMAndDMPortfolioDailyBatch</shortDescription>
-        <value>100</value>
-    </labels>
-    <labels>
-        <fullName>ChunkHandlerUpdateAMandDMPortfOnOppAndDOCDailyBatch</fullName>
-        <language>en_US</language>
-        <protected>false</protected>
-        <shortDescription>ChunkHandlerUpdateAMandDMPortfOnOppAndDOCDailyBatch</shortDescription>
-        <value>100</value>
-    </labels>
-    <labels>
-        <fullName>ColorCodeJson</fullName>
-        <language>en_US</language>
-        <protected>false</protected>
-        <shortDescription>ColorCodeJson</shortDescription>
-        <value>{&quot;Blue&quot;:&quot;#0077d8&quot;,&quot;Amber&quot;:&quot;#efb009&quot;,&quot;Green&quot;:&quot;#369a4c&quot;,&quot;Red&quot;:&quot;#c12f24&quot;}</value>
-    </labels>
-    <labels>
-        <fullName>Potential_Feeder_Group_Lead_Status</fullName>
-        <language>en_US</language>
-        <protected>false</protected>
-        <shortDescription>Potential Feeder Group Lead Status</shortDescription>
-        <value>Potential Feeder Group,Future Outreach,Feeder Group - Qualified,Feeder Group - Unqualified</value>
-    </labels>
-    <labels>
         <fullName>AccountMergePermissionMessage</fullName>
         <language>en_US</language>
         <protected>false</protected>
@@ -162,6 +134,27 @@
         <value>You do not have permission to delete this record.</value>
     </labels>
     <labels>
+        <fullName>ChunkHandlerUpdateAMAndDMPortfolioDailyBatch</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>ChunkHandlerUpdateAMAndDMPortfolioDailyBatch</shortDescription>
+        <value>100</value>
+    </labels>
+    <labels>
+        <fullName>ChunkHandlerUpdateAMandDMPortfOnOppAndDOCDailyBatch</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>ChunkHandlerUpdateAMandDMPortfOnOppAndDOCDailyBatch</shortDescription>
+        <value>100</value>
+    </labels>
+    <labels>
+        <fullName>ColorCodeJson</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>ColorCodeJson</shortDescription>
+        <value>{&quot;Blue&quot;:&quot;#0077d8&quot;,&quot;Amber&quot;:&quot;#efb009&quot;,&quot;Green&quot;:&quot;#369a4c&quot;,&quot;Red&quot;:&quot;#c12f24&quot;}</value>
+    </labels>
+    <labels>
         <fullName>ContactError</fullName>
         <language>en_US</language>
         <protected>false</protected>
@@ -186,15 +179,8 @@
         <fullName>DRD_Can_t_Create_Fixed_Account_Error_Msg</fullName>
         <language>en_US</language>
         <protected>false</protected>
-        <shortDescription>DRD Can&#39;t Create Fixed Account Error Msg</shortDescription>
+        <shortDescription>DRD Can&apos;t Create Fixed Account Error Msg</shortDescription>
         <value>DRD Users Can Not Create a Fixed Site Account.</value>
-    </labels>
-    <labels>
-        <fullName>DRD_System_User_Name</fullName>
-        <language>en_US</language>
-        <protected>false</protected>
-        <shortDescription>DRD System User Name</shortDescription>
-        <value>DRD System User</value>
     </labels>
     <labels>
         <fullName>DRD_User_Profile_Names</fullName>
@@ -250,7 +236,7 @@
         <language>en_US</language>
         <protected>false</protected>
         <shortDescription>Drive Worksheet Report Drive Status</shortDescription>
-        <value>&#39;Confirmed&#39;</value>
+        <value>&apos;Confirmed&apos;</value>
     </labels>
     <labels>
         <fullName>Eligible_Account_Statuses_for_HandOff_Tasks</fullName>
@@ -466,7 +452,7 @@
         <language>en_US</language>
         <protected>false</protected>
         <shortDescription>OpportunitySplitErrorMsg</shortDescription>
-        <value>The user\&#39;s current profile is not allowed to modify the opportunity split</value>
+        <value>The user\&apos;s current profile is not allowed to modify the opportunity split</value>
     </labels>
     <labels>
         <fullName>OpportunitySplitService</fullName>
@@ -552,6 +538,13 @@ Withdrawn/Excluded-&gt; Cancelled, Closed</value>
         <protected>false</protected>
         <shortDescription>PortfolioAssignmentBatchNames</shortDescription>
         <value>BSF_Batch_OpportunityTeamMember,BSF_Batch_OpportunityTeamSync</value>
+    </labels>
+    <labels>
+        <fullName>Potential_Feeder_Group_Lead_Status</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Potential Feeder Group Lead Status</shortDescription>
+        <value>Potential Feeder Group,Future Outreach,Feeder Group - Qualified,Feeder Group - Unqualified</value>
     </labels>
     <labels>
         <fullName>PremierCurrent</fullName>
@@ -686,7 +679,7 @@ Withdrawn/Excluded-&gt; Cancelled, Closed</value>
         <language>en_US</language>
         <protected>false</protected>
         <shortDescription>Restrict_Operation_Type_Change_Error_Msg</shortDescription>
-        <value>You can&#39;t change operation type as drives have already been generated. Please create a new fixed site with the desired operation type.</value>
+        <value>You can&apos;t change operation type as drives have already been generated. Please create a new fixed site with the desired operation type.</value>
     </labels>
     <labels>
         <fullName>Restrict_Theme_Product_Add_Error_Msg</fullName>
@@ -766,6 +759,13 @@ Withdrawn/Excluded-&gt; Cancelled, Closed</value>
         <protected>false</protected>
         <shortDescription>Super Admin User</shortDescription>
         <value>System Administrator,Recruitment Admin,Global Admin</value>
+    </labels>
+    <labels>
+        <fullName>Sync_Contact_To_ASR_EndReason</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Sync Contact To ASR EndReason</shortDescription>
+        <value>Other</value>
     </labels>
     <labels>
         <fullName>Team_Supervisor_Job_Code</fullName>

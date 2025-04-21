@@ -604,7 +604,7 @@ export default class RecurringPatternScheduler extends LightningElement {
         //getting current date with time factor as 0.
         let offsetStartDate = new Date(currentDate.getFullYear(),currentDate.getMonth(), currentDate.getDate(),0,0,0);
         let offsetEndDate = new Date(currentDate.getFullYear(),currentDate.getMonth(), currentDate.getDate(),0,0,0);
-        
+        const todaysDate = this.getDateValuefromString(currentDate);
 
         console.log('****RecurringPatternScheduler.validateUserInput() recurTypeValue: ' + this.recurTypeValue);
         console.log('****RecurringPatternScheduler.validateUserInput() startDateValue: ' + this.getDateValuefromString(this.startDateValue));
@@ -632,6 +632,9 @@ export default class RecurringPatternScheduler extends LightningElement {
         }
         console.log('****RecurringPatternScheduler.validateUserInput() offsetEndDate: ' + offsetEndDate);
 
+        offsetStartDate = this.getDateValuefromString(offsetStartDate);
+        offsetEndDate = this.getDateValuefromString(offsetEndDate);
+
         if(this.startDateValue === '' || this.startDateValue === null){
             this.hasError = true;
             this.errorMessage = 'Please enter Start Date';
@@ -644,7 +647,15 @@ export default class RecurringPatternScheduler extends LightningElement {
             this.hasError = true;
             this.errorMessage = 'End Date Must be After Start Date';
             
-        } else if ((this.InputStartDateOffset !== undefined && this.InputStartDateOffset !== -1) && offsetStartDate !== undefined && offsetStartDate > tempStartDate) {
+        } else if (tempStartDate < todaysDate) {
+            this.hasError = true;
+            this.errorMessage = 'Start Date must be greater or equal to current date';
+            
+        } else if (this.recurTypeValue === '' || this.recurTypeValue === null) {
+            this.hasError = true;
+            this.errorMessage = 'Please select Recurrence Type';
+            
+        } else if ((this.InputStartDateOffset !== undefined && this.InputStartDateOffset !== -1) && offsetStartDate !== undefined && offsetStartDate > tempStartDate && this.recurTypeValue !== 'other') {
             this.hasError = true;
             this.errorMessage = 'Start Date must be ' + this.InputStartDateOffset + ' Day(s) in future from Today';
             
@@ -652,11 +663,7 @@ export default class RecurringPatternScheduler extends LightningElement {
             this.hasError = true;
             this.errorMessage = 'End Date must be ' + this.InputEndtDateOffset+ ' Day(s) in future from Today';
             
-        } else if (this.recurTypeValue === '' || this.recurTypeValue === null) {
-            this.hasError = true;
-            this.errorMessage = 'Please select Recurrence Type';
-            
-        } else if (this.recurTypeValue === 'weekly' && this.weeklyFrequencyValue === '') {
+        }  else if (this.recurTypeValue === 'weekly' && this.weeklyFrequencyValue === '') {
             this.hasError = true;
             this.errorMessage = 'Please enter Week Frequency';
             

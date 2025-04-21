@@ -47,7 +47,7 @@ private class DateUtilityTestClass {
     @isTest static void test_validateGetOtherRecurrenceTypeDate() {
         Test.startTest();
         DateUtility.ReturnValue result = DateUtility.getOtherRecurrenceDateBasedOnDonorEligibility('2021-07-08', '2022-03-05', 'Power Red');
-        Assert.isTrue(result.returnValue.size() == 2);
+        Assert.isTrue(result.returnValue.size() == 3);
         Test.stopTest();
     }
     

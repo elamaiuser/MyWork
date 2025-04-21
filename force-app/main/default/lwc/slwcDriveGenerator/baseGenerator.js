@@ -1,8 +1,8 @@
-import { serial, generateUUID, parseJSON, isNullOrEmpty } from 'c/slwcUtils';
+import { serial, generateUUID, parseJSON, isNullOrEmpty, cloneDeep as cloneDeepUtil } from 'c/slwcUtils';
 import { DateTime } from 'c/luxon';
 import { cloneDeep, orderBy, extend, remove, max, compact, groupBy, uniq, pick } from 'c/lodash';
 import { DriveHelper } from './helper';
-import { DRIVE_STATUS, ASSET_TYPE, PENDING_ACTION, JOB_ALLOCATION_STATUS, DRIVE_TYPE, DRIVE_REQUEST_CHANGE_STATUS, MANUALLY_CREATED_FROM, OPERATION_TYPE, DRIVE_CONTENTION_RESOLUTION, DRIVE_CHANGE_REQUEST_TYPE } from 'c/slwcConstants';
+import { DRIVE_STATUS, ASSET_TYPE, PENDING_ACTION, JOB_ALLOCATION_STATUS, DRIVE_TYPE, DRIVE_REQUEST_CHANGE_STATUS, MANUALLY_CREATED_FROM, OPERATION_TYPE, DRIVE_CONTENTION_RESOLUTION, DRIVE_CHANGE_REQUEST_TYPE, RESOURCE_ROLE_GROUP } from 'c/slwcConstants';
 import {
   sObjectType,
   driveQueryModel,
@@ -199,7 +199,7 @@ class BaseGenerator {
   backupDriveShift(driveShift) {
     if (!driveShift) return;
 
-    this.masterData.backupDriveShiftMap[driveShift.key] = cloneDeep(driveShift);
+    this.masterData.backupDriveShiftMap[driveShift.key] = cloneDeepUtil(driveShift);
   }
 
   populateSiteCollectionOperation() {
@@ -362,13 +362,14 @@ class BaseGenerator {
       job.siteLogisticsBack = 0;
 
       const resourceRoleGroup = this.helper.getResourceRoleGroup(job.resourceRole, this.masterData);
-      const roleTimeData = resourceRoleGroupRoleTimeDataMap[resourceRoleGroup];
+      let roleTimeData = resourceRoleGroupRoleTimeDataMap[resourceRoleGroup];
      
       let dualRoleGroup;
       let dualRoleTimeData;
-      if(job.dualRole) {
+      if(resourceRoleGroup !== RESOURCE_ROLE_GROUP.DRIVING_ROLES && job.dualRole) {
         dualRoleGroup = this.helper.getResourceRoleGroup(job.dualRole, this.masterData);
         dualRoleTimeData = resourceRoleGroupRoleTimeDataMap[dualRoleGroup];
+        if(dualRoleGroup === RESOURCE_ROLE_GROUP.DRIVING_ROLES) roleTimeData = cloneDeep(dualRoleTimeData);
       }
     
       job.leadTime = compareAndGetValue('leadTime', roleTimeData, dualRoleTimeData) || job.leadTime;
@@ -795,6 +796,7 @@ class BaseGenerator {
     let shift = this.drive.driveShifts.find((e) => e.key == shiftKey);
     let newList = [...shift.jobs];
 
+    const jobsChangedKeys = [];
     jobsToDelete.forEach(({previousJob}) => {
       const jobIndex = newList.findIndex((item) => item.key === previousJob.key);
       if(jobIndex !== -1) {
@@ -805,19 +807,26 @@ class BaseGenerator {
     jobsToUpdate.forEach(({previousJob, newJob}) => {
       const jobIndex = newList.findIndex((item) => item.key === previousJob.key);
       if(jobIndex !== -1) {
-        extend(newList[jobIndex], newJob);
-        this.applyRoleTimeForSingleJob(shift, newList[jobIndex]);
-        this.onJobChanged(shift, newList[jobIndex]);
+        newList[jobIndex] = {
+          ...newList[jobIndex],
+          ...newJob
+        }
+        jobsChangedKeys.push(newList[jobIndex].key)
       }
     })
 
-    jobsToCreate.forEach(({newJob}) => {
-      this.applyRoleTimeForSingleJob(shift, newJob);
-      this.onJobChanged(shift, newJob);    
+    jobsToCreate.forEach(({newJob}) => { 
       newList.push(newJob);
+      jobsChangedKeys.push(newJob.key)
     })
 
     shift.jobs = newList;
+    shift.jobs.forEach(job => {
+      if(jobsChangedKeys.includes(job.key)) {
+        this.applyRoleTimeForSingleJob(shift, job);
+        this.onJobChanged(shift, job);   
+      }
+    });
 
     return this.notifyDriveChanged();
   }
@@ -833,21 +842,56 @@ class BaseGenerator {
     
     //Run this block only if dual role is changed
     if(target.isDualRoleModified) {
-      if(target.dualRole === 'None') {
-        target.dualRole = '';
-      }
 
-      const primaryRoleJobIndex = newList.findIndex((item) => item.resourceRole && item.resourceRole === target.resourceRole);
-      const dualRoleJobIndex = newList.findIndex((item) => item.resourceRole && item.resourceRole === target.dualRole);
+      const primaryRoleJobIndex = newList.findIndex((item) => 
+        item.resourceRole && 
+        item.resourceRole === target.resourceRole && 
+        item.dualRole &&
+        item.key === target.key
+      );
       if(primaryRoleJobIndex === -1) return;
 
-      newList[primaryRoleJobIndex] = target;
+      if(target.dualRole === 'None') {
+        target.dualRole = '';
 
+        const otherPrimaryRoleJobIndexes = newList
+          .map((item, index) =>
+            item.resourceRole === target.resourceRole &&
+            !item.dualRole &&
+            !item.isManuallyCreated &&
+            item.key !== target.key
+              ? index
+              : -1
+          )
+          .filter((index) => index !== -1);
+
+        let totalQuantity = 0;
+        if(otherPrimaryRoleJobIndexes.length > 0) {
+          totalQuantity = otherPrimaryRoleJobIndexes.reduce(
+            (sum, index) => sum + (newList[index].quantity || 0),
+            0
+          );
+          target.quantity += totalQuantity;
+          target.systemQuantity = target.quantity;
+          
+          for (let i = 0; i < otherPrimaryRoleJobIndexes.length; i++) {
+            newList.splice(otherPrimaryRoleJobIndexes[i], 1); 
+          }
+        }
+      }
+
+      const dualRoleJobIndex = newList.findIndex((item) => item.resourceRole && item.resourceRole === target.dualRole);
       if(dualRoleJobIndex !== -1) {
         newList.splice(dualRoleJobIndex, 1);
       }
 
-      jobToBeGenerated = backupDriveShift.jobs?.find((item) => item.resourceRole && item.resourceRole === target.resourceRole); //will use the dual role as the primary role for the new job
+      jobToBeGenerated = backupDriveShift.jobs?.find(
+        (item) =>
+          item.key === target.key &&
+          item.resourceRole &&
+          item.resourceRole === target.resourceRole &&
+          item.dualRole
+      ); //will use the dual role as the primary role for the new job
     }
 
     target.tagNames = '';

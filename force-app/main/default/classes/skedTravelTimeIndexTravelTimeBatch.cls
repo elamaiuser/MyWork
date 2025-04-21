@@ -20,9 +20,14 @@ public class skedTravelTimeIndexTravelTimeBatch implements Database.Batchable<sk
     
     public void execute(Database.BatchableContext BC, List<sked_Travel_Time_Index_Refresh_Request__c> requests) {
         Set<Id> allIndexItemIds = new Set<Id>();
+        Map<Id, String> map_refreshRequestId_errorMessage = new Map<Id, String>();
         for (sked_Travel_Time_Index_Refresh_Request__c request : requests) {
-            List<Id> indexItemIds = request.sked_Record_Ids__c.split(';');
-            allIndexItemIds.addAll(indexItemIds);
+            try{
+                List<Id> indexItemIds = request.sked_Record_Ids__c.split(';');
+                allIndexItemIds.addAll(indexItemIds);
+            }catch(Exception ex) {
+                map_refreshRequestId_errorMessage.put(request.Id, ex.getMessage() + ' ---- ' + ex.getStackTraceString());
+            }
         }
         
         Map<Id, sked_Travel_Time_Index_Item__c> mapIndexItem = new Map<Id, sked_Travel_Time_Index_Item__c>([
@@ -34,19 +39,28 @@ public class skedTravelTimeIndexTravelTimeBatch implements Database.Batchable<sk
         
         Map<Id, List<sked_Travel_Time_Index_Item__c>> map_requestId_indexItems = new Map<Id, List<sked_Travel_Time_Index_Item__c>>();
         for (sked_Travel_Time_Index_Refresh_Request__c request : requests) {
-            List<sked_Travel_Time_Index_Item__c> indexItems = new List<sked_Travel_Time_Index_Item__c>();
-            
-            List<Id> indexItemIds = request.sked_Record_Ids__c.split(';');
-            for (Id indexItemId : indexItemIds) {
-                sked_Travel_Time_Index_Item__c indexItem = mapIndexItem.get(indexItemId);
-                indexItems.add(indexItem);
+            try{
+                List<sked_Travel_Time_Index_Item__c> indexItems = new List<sked_Travel_Time_Index_Item__c>();
+
+                List<Id> indexItemIds = request.sked_Record_Ids__c.split(';');
+                for (Id indexItemId : indexItemIds) {
+                    sked_Travel_Time_Index_Item__c indexItem = mapIndexItem.get(indexItemId);
+                    indexItems.add(indexItem);
+                }
+                
+                map_requestId_indexItems.put(request.Id, indexItems);
+            }catch(Exception ex) {
+                map_refreshRequestId_errorMessage.put(request.Id, ex.getMessage() + ' ---- ' + ex.getStackTraceString());
             }
-            
-            map_requestId_indexItems.put(request.Id, indexItems);
         }
         
         for (sked_Travel_Time_Index_Refresh_Request__c request : requests) {
             try {
+                if(!map_requestId_indexItems.containsKey(request.Id)) {
+                    request.sked_Status__c = 'Error';
+                    request.sked_Error_Message__c = map_refreshRequestId_errorMessage.containsKey(request.Id) ? map_refreshRequestId_errorMessage.get(request.Id) : '';
+                    continue;
+                }
                 List<sked_Travel_Time_Index_Item__c> indexItems = map_requestId_indexItems.get(request.Id);
                 
                 skedSkeduloApiManager apiManager = new skedSkeduloApiManager();

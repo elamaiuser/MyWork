@@ -2384,7 +2384,7 @@ export default class SlwcLinkedDriveStaffingDetails extends LightningElement {
     handleSaveAddRoleModal(event) {
         let { jobId, jobAllocation } = this.addRoleModalData;
         let [ job ] = this.getJobById(jobId);
-        let ja =  find(job.jobAllocations, item => item.id == jobAllocation.id)
+        let ja = find(job.jobAllocations, item => item.key == jobAllocation.key)
         ja.additionalRoles = event.detail.roles
         ja.additionalRolesString = (ja.additionalRoles || []).join(', ');
     }
