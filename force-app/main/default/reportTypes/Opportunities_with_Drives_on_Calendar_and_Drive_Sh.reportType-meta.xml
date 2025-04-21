@@ -2152,4 +2152,17 @@
         </columns>
         <masterLabel>Drive Shifts</masterLabel>
     </sections>
+    <sections>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>Redcross_Volunteer_Required__c</field>
+            <table>Opportunity</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>Redcross_Volunteer_Quantity__c</field>
+            <table>Opportunity</table>
+        </columns>
+        <masterLabel>Blood Drive Opportunities</masterLabel>
+    </sections>
 </ReportType>
