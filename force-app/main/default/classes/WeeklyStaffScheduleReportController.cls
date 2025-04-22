@@ -141,7 +141,7 @@ public without sharing class WeeklyStaffScheduleReportController {
                 allRoles = String.join(roleListNoDupes,', ');
             }
             Decimal timeDifference = getTimeDifference(jba.sked_Start_Time__c,jba.sked_Set_End_Time__c);//Changed for HRP-13091
-            String details = jba.sked__Job__r.sked_Drive__r.sked_Account__r.Name;
+            String details = addLineBreaks(jba.sked__Job__r.sked_Drive__r.sked_Account__r.Name,20);
             String siteAddress = '';
             if(String.isNotBlank(jba.sked__Job__r.sked_Drive__r.sked_Drive_Site__r.sked_City__c)){
                 siteAddress = jba.sked__Job__r.sked_Drive__r.sked_Drive_Site__r.sked_City__c;
@@ -413,5 +413,25 @@ public without sharing class WeeklyStaffScheduleReportController {
             availabilityList = new List<sked__Availability__c>();
             totalRecords = 0;
         }
+    }
+
+    public static String addLineBreaks(String input, Integer maxLineLength) {
+        String result = '';
+        if(String.isNotBlank(input)){
+            List<String> words = input.split(' ');
+            Integer currentLineLength = 0;
+            for (String word : words) {
+                if((currentLineLength + word.length()) > maxLineLength) {
+                    result = result + '\n';
+                    currentLineLength = 0;
+                }else if (currentLineLength != 0) {
+                    result = result + ' ';
+                    currentLineLength += 1;
+                }
+                result = result + word;
+                currentLineLength += word.length();
+            }
+        }
+        return result;
     }
 }
