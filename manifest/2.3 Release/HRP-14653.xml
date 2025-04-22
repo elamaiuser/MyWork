@@ -6,6 +6,14 @@
 		<name>CustomField</name>
 	</types>
 	<types>
+		<members>Opportunity-APS Planner Mobile Opp Layout</members>
+		<members>Opportunity-APS Scheduler Mobile Opp Layout</members>
+		<members>Opportunity-DRD Mobile Opp Layout</members>
+		<members>Opportunity-Mobile Opp Layout</members>
+		<members>Opportunity-Sponsor Marketing Mobile Opp Layout</members>
+		<name>Layout</name>
+	</types>
+	<types>
 		<members>Opportunity.MyOpportunities</members>
 		<name>ListView</name>
 	</types>
