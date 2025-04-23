@@ -84,6 +84,7 @@
 	</types>
     <types>
         <members>slwcDriveGenerator</members>
+		<members>slwcDriveStaffingDetails</members>
 		<name>LightningComponentBundle</name>
 	</types>
     <types>
