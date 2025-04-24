@@ -58,6 +58,9 @@
 		<members>skedUpdateJobTimeVarianceBatch_Test</members>
         <members>skedSetting</members>
         <members>skedSetting_Test</members>
+		<members>skedJobAllocationPostProcessBatch</members>
+        <members>skedJobAllocationPostProcessBatch_Test</members>
+        <members>skedExceptionLogService</members>
 		<name>ApexClass</name>
 	</types>
       <types>
@@ -86,6 +89,7 @@
     <types>
         <members>slwcDriveGenerator</members>
 		<members>slwcDriveStaffingDetails</members>
+		<members>slwcExceptionList</members>
 		<name>LightningComponentBundle</name>
 	</types>
     <types>
