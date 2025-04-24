@@ -138,5 +138,10 @@
 		<members>Account_Marketing_Program__c</members>
 		<name>Workflow</name>
 	</types>
+    <types>
+		<members>sked__Resource__c.only_System_Admin_can_edit_Virtual_WFH</members>
+		<members>sked__Resource__c.AllowWorkAddressEditForWHF</members>
+		<name>ValidationRule</name>
+	</types>
     <version>63.0</version>
 </Package>
