@@ -348,6 +348,7 @@ public class skedConstants {
     public static final string TAG_DRIVE_LEAD = 'Drive Lead';
     public static final string TAG_FIXED_SITE = 'Fixed Site';
     public static final string TAG_MOBILE = 'Mobile';
+    public static final string TAG_REAL_ID = 'REAL ID';
 
 
     public static final string TAG_ROLE_STATUS_ACTIVE = 'Active';
@@ -476,5 +477,11 @@ public class skedConstants {
     public static final string TTIRR_STATUS_PENDING = 'Pending';
     public static final string TTIRR_STATUS_IN_PROGRESS = 'In Progress';
     public static final string TTIRR_STATUS_ERROR = 'Error';
+
+    /* CronTrigger States */
+    public static final string CRON_TRIGGER_WAITING = 'WAITING';
+    public static final string CRON_TRIGGER_ACQUIRED = 'ACQUIRED';
+    public static final string CRON_TRIGGER_EXECUTING = 'EXECUTING';
+    public static final string CRON_TRIGGER_PAUSED = 'PAUSED';
 
 }

@@ -21,7 +21,7 @@ global class BSF_Batch_DriveStatusCorrection implements Schedulable, Database.Ba
         }
 	}
 	global Database.QueryLocator start(Database.BatchableContext BC){
-		return Database.getQueryLocator('SELECT Id, sked_Status__c, sked_Drive_Date__c'+
+		return Database.getQueryLocator('SELECT Id, sked_Status__c, sked_Drive_Date__c, sked_Type_of_Drive__c'+
                                         ' FROM sked_Drive__c WHERE'+
                                         ' sked_Drive_Date__c >= '+this.presetDate.format('yyyy-MM-dd')+
                                         ' AND sked_Drive_Date__c <= '+this.targetDriveDate.format('yyyy-MM-dd')+
@@ -34,6 +34,12 @@ global class BSF_Batch_DriveStatusCorrection implements Schedulable, Database.Ba
         for(Id driveId : driveMap.keySet()){
             sked_Drive__c drive = new sked_Drive__c(Id = driveId);
             drive.sked_Status__c = 'Cancel';
+            drive.sked_Cancellation_Reason__c = 'System Need';
+            if(driveMap.get(driveId).sked_Type_of_Drive__c == 'Fixed Site'){
+                drive.sked_Initiated_By__c = 'ARC Initiated-Fixed';
+            }else{
+                drive.sked_Initiated_By__c = 'ARC_Initiated_Mobile';
+            }
             drivesToUpdate.add(drive);
         }
         if(!drivesToUpdate.isEmpty()){
