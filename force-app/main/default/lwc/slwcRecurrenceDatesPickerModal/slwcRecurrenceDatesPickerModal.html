@@ -7,19 +7,71 @@
                     <lightning-icon icon-name="utility:close" alternative-text="close" variant="inverse" size="small" ></lightning-icon>
                 </button>
                 
-                <h2 class="slds-text-heading_medium slds-hyphenate">Select Dates</h2>
+                <h2 class="slds-text-heading_medium slds-hyphenate" if:true={isSelectDatesStep}>Select Dates</h2>
+                <h2 class="slds-text-heading_medium slds-hyphenate" if:true={isConfirmStep}>Confirm</h2>
             </header>
 
-            <div class="slds-modal__content slds-p-around_medium">
+            <div if:true={isSelectDatesStep} class="slds-modal__content slds-p-around_medium">
+                <lightning-spinner if:true={showSpinner} class="spins" size="medium"></lightning-spinner>
+
                 <c-slwc-recurrence-dates-picker
                     default-selected-days={model.selectedDays}
                     onchange={handleOnChange}>
                 </c-slwc-recurrence-dates-picker>
             </div>
 
+            <div if:true={isConfirmStep} class="slds-modal__content slds-p-around_medium">
+                <lightning-spinner if:true={showSpinner} class="spins" size="medium"></lightning-spinner>
+
+                <div class="slds-p-horizontal_medium slds-p-vertical_small slds-scrollable_y slds-grow">
+                    <div class="job-allocation-table">
+                        <div class="header">
+                            <div class="row">
+                                <div class="col-drive-name">Drive Name</div>
+                                <div class="col-drive-status">Drive Status</div>
+                                <div class="col-drive-type">Drive Type</div>
+                                <div class="col-drive-issue">Issue</div>
+                            </div>
+                        </div>
+
+                        <div class="body">
+                            <template for:each={model.daysWithDrives} for:item="day">
+                                <div key={day.dateIso}>
+                                    <div class="row sub-header">
+                                        <lightning-formatted-date-time value={day.dateIso} year="numeric" month="numeric" day="numeric" time-zone="GMT"></lightning-formatted-date-time>
+                                    </div>
+                                    <div if:false={day.drives.length} class="row slds-text-color_error slds-p-around_small">No drives</div>
+                                    <template for:each={day.drives} for:item="drive">
+                                        <div class="row" key={drive.id}>
+                                            <div class="col-drive-name">
+                                                <lightning-formatted-url value={drive.recordUrl} label={drive.name} target="_blank" ></lightning-formatted-url>
+                                            </div>
+                                            <div class="col-drive-status">{drive.status}</div>
+                                            <div class="col-drive-type">{drive.typeOfDrive}</div>
+                                            <div class="col-drive-issue">
+                                                <template for:each={drive.errorMessages} for:item="errorMessage">
+                                                    <div
+                                                        key={errorMessage}
+                                                        class="slds-text-color_error slds-m-right_xx-small slds-m-bottom_xxx-small slds-m-top_xxx-small">
+                                                        {errorMessage}
+                                                    </div>
+                                                </template>
+                                            </div>
+                                        </div>
+                                    </template>
+                                </div>
+                                
+                            </template>
+                        </div>
+                    </div>  
+                </div>
+            </div>
+
             <footer class="slds-modal__footer">
-                <lightning-button label="Cancel" title="Cancel" onclick={closeModal} class="slds-m-right_xx-small"></lightning-button>
-                <lightning-button class="slds-m-top_small" onclick={handleSave} variant="brand" type="submit" name="update" label="Select"></lightning-button>
+                <lightning-button if:true={isConfirmStep} label="Back" title="Back" onclick={handleBack} class="slds-m-right_xx-small"></lightning-button>
+                <lightning-button if:true={isSelectDatesStep} class="slds-m-top_small" onclick={handleNext} variant="brand" type="submit" name="next" label="Next"></lightning-button>
+                <lightning-button if:true={isSelectDatesStep} label="Cancel" title="Cancel" onclick={closeModal} class="slds-m-right_xx-small"></lightning-button>
+                <lightning-button if:true={isConfirmStep} class="slds-m-top_small" onclick={handleSave} variant="brand" type="submit" name="update" label="Confirm"></lightning-button>
             </footer>
         </div>
         </section>
