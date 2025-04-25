@@ -827,6 +827,7 @@ global class skedJobAllocationPostProcessBatch implements Database.Batchable<sOb
             unavailability.jobId = skedAllocation.sked__Job__c;
             unavailability.jobAllocationId = skedAllocation.Id;
             unavailability.driveId = skedAllocation.sked__Job__r.sked_Drive__c;
+            unavailability.driveName = skedAllocation.sked__Job__r.sked_Drive__r.Name;
             unavailabilityList.add(unavailability);
         }
         if (!unavailabilityList.isEmpty()) {
