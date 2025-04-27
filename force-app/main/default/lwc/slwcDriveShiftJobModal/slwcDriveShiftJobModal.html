@@ -37,7 +37,19 @@
                         </div>
                         <div if:true={isPersonResource} class="slds-col slds-medium-size_1-of-2 slds-large-size_1-of-2 slds-size_1-of-1 slds-m-bottom--small">
                             <template if:true={isEditMode}>
-                                <lightning-input type="text" label="Dual Role" value={job.dualRole} readonly></lightning-input>
+                                <template if:false={isDualRoleEditMode}>
+                                    <lightning-input type="text" label="Dual Role" value={job.dualRole} readonly></lightning-input>
+                                </template>
+                            </template>
+
+                            <template if:true={isDualRoleEditMode}>
+                                <lightning-combobox
+                                    name="dualRole"
+                                    label="Dual Role" 
+                                    value={job.dualRole}
+                                    options={secondaryRoleOptions}
+                                    onchange={handleDualRoleChange}>
+                                </lightning-combobox>
                             </template>
                         </div>
                         <div if:true={isVehicleResource} class="slds-col slds-medium-size_1-of-2 slds-large-size_1-of-2 slds-size_1-of-1 slds-m-bottom--small">

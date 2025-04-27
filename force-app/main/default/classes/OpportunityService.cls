@@ -51,16 +51,17 @@
 * 08/14/2024                     Apurba Bhattacharjee     HRP-12700 Add Drive Date to task list
 * 08/30/2024                     Barnojit Sharma          Within the Sponsor Planning Report task, populate the referencing Opp/Drive Sponsor Planning Report. (Logic for HRP-5337)
 * 10/14/2024                     Souvik Mukherjee         HRP-13568 Added OpportunityId to Order SELECT SOQL
-* 10/18/2024					 Balaji N				  HRP-13489 Methods populateSlotGeneratorOnOpportunity,getSlotMultiplierGlobalValue
-* 10/25/2024				 	 Balaji N				  Logic for HRP-13489 syncTemplateOrdertoOpportunity Raktim's Changes
+* 10/18/2024                     Balaji N                 HRP-13489 Methods populateSlotGeneratorOnOpportunity,getSlotMultiplierGlobalValue
+* 10/25/2024                     Balaji N                 Logic for HRP-13489 syncTemplateOrdertoOpportunity Raktim's Changes
 * 10/29/2024                     Barnojit Sharma          HRP-12142 Added sync Do Not Roll Fields
-* 10/24/2024				     Barnojit Sharma		  Template Order products not cascading to Opportunity Order (Logic for HRP-13521)
-* 11/07/2024			         Barnojit Sharma		  Update Task: 72 Hour Check in - System Generated/Details/Checklist. (Logic for HRP-12627)
-* 11/11/2024					 Priti Jana				  Logic for HRP-13743
-* 11/12/2024				     Barnojit Sharma		  Unable to create Mobile Drive when the Template has an over-budget template order (Logic for HRP-13716)
-* 12/02/2024					 Barnojit Sharma		  Tasks being assigned for cancelled drives and for fixed sites(Logic for HRP-13850)
-* 12/10/2024					 Priti Jana				  Logic for HRP-13190
+* 10/24/2024                     Barnojit Sharma          Template Order products not cascading to Opportunity Order (Logic for HRP-13521)
+* 11/07/2024                     Barnojit Sharma          Update Task: 72 Hour Check in - System Generated/Details/Checklist. (Logic for HRP-12627)
+* 11/11/2024                     Priti Jana               Logic for HRP-13743
+* 11/12/2024                     Barnojit Sharma          Unable to create Mobile Drive when the Template has an over-budget template order (Logic for HRP-13716)
+* 12/02/2024                     Barnojit Sharma          Tasks being assigned for cancelled drives and for fixed sites(Logic for HRP-13850)
+* 12/10/2024                     Priti Jana               Logic for HRP-13190
 * 12/10/2024                     Satyendra Vishwakarma    HRP-6051 - Anticipated Registered Donors validation when changing procedure projections
+* 01/30/2024                     Anil K                   HRP-11850 - Add 56 Drive validation logic for calendar build drives
 * 02/26/2025                     Krapy Tuli               HRP-14286 - logic update
 ************************************************************************************************************************************************
 */
@@ -172,6 +173,7 @@ public with sharing class OpportunityService{
         if(isAutomatedProcess) {
             return ;
         }//HRP-12837 end
+        List<Opportunity> calendarBuildOppsList = new List<Opportunity>();//HRP-11850
         Map<Id, Date> driveDatesBackByAccId = new Map<Id, Date>();
         Map<Id, Date> driveDatesForwardByAccId = new Map<Id, Date>();
         Map<Id, List<Opportunity>> opportuniesByAccId = new Map<Id, List<Opportunity>>();
@@ -186,7 +188,8 @@ public with sharing class OpportunityService{
             */
             if(Trigger.isExecuting && Trigger.isInsert && opportunity.RecordTypeId == mobileRecTypeId 
                     && String.isNotBlank(opportunity.Source__c) && opportunity.Source__c.equalsIgnoreCase('Calendar Build')){
-                continue;
+                        calendarBuildOppsList.add(opportunity);//HRP-11850
+                        continue;
             }
             /*
             * HRP-11640 changes ends here
@@ -231,7 +234,8 @@ opty.addError('This drive date violates the 56 day rule.Please acknowledge.');
         Map<Id,Opportunity> oppqueryResultMap = new Map<Id,Opportunity>( [ SELECT Id,Drive_Date__c,AccountId, Accept_56_Day_Rule_Violation__c FROM Opportunity WHERE AccountId IN:opportuniesByAccId.keySet() 
                                                                           AND StageName != 'Cancelled' 
                                                                           AND RecordTypeId = :mobileRecTypeId 
-                                                                          AND Id NOT IN:newItems ] );
+                                                                          AND Id NOT IN:newItems //-> HRP-11850, Pick Calendar build Opps as well for 56day validation 
+                                                                          ] );
         
         Map<Id,Opportunity> oppqueryResultFilteredMap = new Map<Id,Opportunity>();
         Map<Id,Id> oppIdAccId = new Map<Id,Id>();
@@ -274,9 +278,86 @@ opty.addError('This drive date violates the 56 day rule.Please acknowledge.');
                 isExecuted = true;
             }
         }
-        
+        if(calendarBuildOppsList.size()>0){ //HRP-11850, add 56 day validation logic for calendar build opps
+            validate56DayLogicForCalendarBuildOpps(calendarBuildOppsList);
+        }
         
     }
+
+    //HRP-11850
+    public static Map<Id, List<Opportunity>> buildOppsByAccountIdMap(List<Opportunity> opps){
+        
+        Map<Id, List<Opportunity>> oppMap = new Map<Id, List<Opportunity>>();//Account Id as key, and opportunities as value
+        if(opps==null || opps.size()<1){
+            return oppMap;
+        }
+        for (Opportunity opp : opps) {
+            if (opp.AccountId != null) {
+                if (!oppMap.containsKey(opp.AccountId)) {
+                    oppMap.put(opp.AccountId, new List<Opportunity>());
+                }
+                oppMap.get(opp.AccountId).add(opp);
+            }
+        }
+        
+        return oppMap;
+
+    }
+    
+    
+    //HRP-11850-Add Calendar build Alert for 56 days violation of calendar build opps
+    
+    public static void validate56DayLogicForCalendarBuildOpps(List<Opportunity> calendarBuildOpps){
+     
+      Id mobileRecTypeId = Schema.SObjectType.Opportunity.getRecordTypeInfosByDeveloperName()
+            .get('Mobile_Opp').getRecordTypeId();   
+      Map<Id, List<Opportunity>> calendarBuildOppsMap = buildOppsByAccountIdMap(calendarBuildOpps);//Account Id as key, and opportunities as value
+  
+      //get All Opps by Account Id
+     List<Opportunity> allOppsList = [ SELECT Id,Drive_Date__c,AccountId, Accept_56_Day_Rule_Violation__c FROM Opportunity WHERE AccountId IN:calendarBuildOppsMap.keySet() 
+                                                                          AND StageName != 'Cancelled' 
+                                                                          AND RecordTypeId = :mobileRecTypeId and Is_Template__c =false
+                                                                          //-> HRP-11850, Pick Calendar build Opps as well for 56day validation 
+                                                                          ] ;
+     if(allOppsList.size() ==0){
+        return;
+     }
+      //build Account Id-> All Opps map 
+      Map<Id, List<Opportunity>> allOppsByAccount = buildOppsByAccountIdMap(allOppsList);//Account Id as key, and opportunities as value
+     for(Id accountId: calendarBuildOppsMap.keySet()){
+        for(Opportunity calendarBuildOpp:calendarBuildOppsMap.get(accountId)){
+
+            //For each calendar build Opp, go thru all opportunities of the account to see, if any other drive on account falling with in 56 days of this
+             for(Opportunity  otherOppOnAccount:allOppsByAccount.get(accountId)){ //get other opps on this account
+                if(calendarBuildOpp.id == otherOppOnAccount.id || calendarBuildOpp.Accept_56_Day_Rule_Violation__c ==true){ //if we hit, same opp, no need to compare
+                    continue;
+                }
+
+                //check if calendar build opp drive date is within 56 days of other opp on this account
+                if(calendarBuildOpp.Drive_Date__c >  otherOppOnAccount.Drive_Date__c.addDays(-56)
+                    && calendarBuildOpp.Drive_Date__c < otherOppOnAccount.Drive_Date__c.addDays(56)
+                   ) {
+                        String existingUnqualifyingReasons = calendarBuildOpp.Calendar_Build_Reasons_For_Unqualified__c;
+                        existingUnqualifyingReasons = (existingUnqualifyingReasons != null ? existingUnqualifyingReasons : '') + (String.isNotBlank(existingUnqualifyingReasons) ? ';' : '') + 'Violates Accepts 56 day selection';
+                        calendarBuildOpp.Calendar_Build_Reasons_For_Unqualified__c = BSF_Utilities.getStringWithinLimit(existingUnqualifyingReasons, 255);
+                        
+                        //If CB drive is not set to "Unqualified", set CB Status = Unqualified and Rollover Consideration = Do Not Roll
+                        if(existingUnqualifyingReasons != NULL && !existingUnqualifyingReasons.equalsIgnoreCase('Violates Accepts 56 day selection')) {
+                            calendarBuildOpp.Calendar_Build_Status__c = skedConstants.CALENDAR_BUILD_STATUS_UNQUALIFIED;
+                            calendarBuildOpp.Rollover_Consideration__c = BSF_Constants.ROLLOVER_CONSIDERATION_DO_NOT_ROLL;
+                        } 
+                        
+                        //once a calendar build drive is marked for 56 days, no need to compare with other opps on account
+                        break;
+                    }
+             }//end of for loop for comparing one calendar build opp with other opps on account
+
+        }//for loop, to go to next calendar opp on account
+
+     }//for loop, go to next account
+        
+ }
+    
     
     //This method updates the Drive Date Day field with the Day of Week value from Drive Date (if not null)
     public static void updateDriveDateDay(List<Opportunity> newItems) {
@@ -811,9 +892,9 @@ if(ds.isCreateable()){}*/
                 List<OrderItem> odrItemList = [SELECT Id,
                                                         OrderId,
                                                         Order.OpportunityId,
-                                               			Order.Opportunity.Name,
-                                               			Order.Opportunity.AccountId,
-                                               			Order.Opportunity.Account.Account_Manager__c,
+                                                     Order.Opportunity.Name,
+                                                     Order.Opportunity.AccountId,
+                                                     Order.Opportunity.Account.Account_Manager__c,
                                                         Product2Id,
                                                         Product2.Name,
                                                         Product2.Description,
@@ -4669,8 +4750,8 @@ opp.StageName = 'Closed';
                                         Local_Recruitment_Request_Need_by_Date__c,
                                         (
                                             SELECT Id, OrderID, Product2Id, TotalPrice, ListPrice, 
-                                         	Quantity, UnitPrice, PricebookEntryId 
-                                         	FROM OrderItems
+                                           Quantity, UnitPrice, PricebookEntryId 
+                                           FROM OrderItems
                                         )
                                         FROM Order 
                                         WHERE OpportunityId IN :templateToOppIDMap.keySet()];
@@ -4711,7 +4792,7 @@ opp.StageName = 'Closed';
                     }
                 }
                 //HRP-13743--> Ends Here
-    		}
+        }
          
             for(Order cloneOrder: getTemplateOrder) {
                 for(Id opp: templateToOppIDMap.get(cloneOrder.OpportunityId)) {

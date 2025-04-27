@@ -1,5 +1,5 @@
 @isTest
-private class skedTravelTimeIndexItemUtils_Test { 
+private class skedTravelTimeIndexItemUtils_Test {
     
     static testmethod void getKey_Test() {
         Location loc1 = Location.newInstance(44.797734, -68.806554);

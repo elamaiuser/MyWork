@@ -177,7 +177,7 @@ public class skedActivityHandler extends skedTriggerHub {
                 unavailability.startTime = newRecord.sked__Start__c;
                 unavailability.endTime = newRecord.sked__End__c;
                 unavailability.exceptionCode = skedConstants.EXCEPTION_CODE_RESOURCE_TIME_CONFLICT;
-                unavailability.exceptionText = 'Conflict with ' + newRecord.Name;
+                unavailability.exceptionText = 'Conflict with ' + newRecord.sked_Activity_Title__c;
                 unavailability.relatedEventFieldApi = 'skedHC__Activity__c';
                 unavailability.recordId = newRecord.Id;
                 unavailabilityList.add(unavailability);
@@ -200,7 +200,7 @@ public class skedActivityHandler extends skedTriggerHub {
         List<sked__Activity_Resource__c> groupActivities = new List<sked__Activity_Resource__c>();
         if (!groupActivityIds.isEmpty()) {
             groupActivities = [SELECT Id, sked__Resource__c, sked__Activity__c, sked__Activity__r.Name,
-                               sked__Activity__r.sked__Start__c, sked__Activity__r.sked__End__c, sked__Activity__r.sked__Type__c
+                               sked__Activity__r.sked__Start__c, sked__Activity__r.sked__End__c, sked__Activity__r.sked__Type__c,sked__Activity__r.sked_Activity_Title__c
                                FROM sked__Activity_Resource__c
                                WHERE sked__Activity__c IN :groupActivityIds];
         }
@@ -213,7 +213,7 @@ public class skedActivityHandler extends skedTriggerHub {
                     unavailability.startTime = record.sked__Start__c;
                     unavailability.endTime = record.sked__End__c;
                     unavailability.exceptionCode = skedConstants.EXCEPTION_CODE_RESOURCE_TIME_CONFLICT;
-                    unavailability.exceptionText = 'Conflict with ' + record.Name;
+                    unavailability.exceptionText = 'Conflict with ' + record.sked_Activity_Title__c;
                     unavailability.relatedEventFieldApi = 'skedHC__Activity__c';
                     unavailability.recordId = record.Id;
                     unavailabilityList.add(unavailability);
@@ -227,7 +227,7 @@ public class skedActivityHandler extends skedTriggerHub {
                 unavailability.startTime = item.sked__Activity__r.sked__Start__c;
                 unavailability.endTime = item.sked__Activity__r.sked__End__c;
                 unavailability.exceptionCode = skedConstants.EXCEPTION_CODE_RESOURCE_TIME_CONFLICT;
-                unavailability.exceptionText = 'Conflict with ' + item.sked__Activity__r.Name;
+                unavailability.exceptionText = 'Conflict with ' + item.sked__Activity__r.sked_Activity_Title__c;
                 unavailability.relatedEventFieldApi = 'skedHC__Activity__c';
                 unavailability.recordId = item.sked__Activity__c;
                 unavailabilityList.add(unavailability);
@@ -442,15 +442,15 @@ public class skedActivityHandler extends skedTriggerHub {
             WHERE sked__Activity__c IN :deletedRecords
             AND sked__Activity__r.sked__Type__c = :skedConstants.AVAILABILITY_TYPE_ON_CALL
         ];
-        
+
         if (activityResources != null && !activityResources.isEmpty()) {
             List<sked__Availability__c> availabilities = [SELECT Id
                                                           FROM sked__Availability__c
                                                           WHERE sked_Activity_Resource__c IN :activityResources];
             if (!availabilities.isEmpty()) {
                 delete availabilities;
-            }
         }
     }
+}
     
 }

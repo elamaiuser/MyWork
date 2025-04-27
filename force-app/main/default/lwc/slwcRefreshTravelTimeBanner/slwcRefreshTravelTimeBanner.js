@@ -8,6 +8,7 @@ export default class SlwcRefreshTravelTimeBanner extends LightningElement {
     @api recordId;
     isManualRefreshInProgress = false;
     hasInvalidTravelTimeData = false;
+    isUserOverrideEnabled = false;
     travelTimeSettings = {};
 
     get bannerClass() {
@@ -46,17 +47,23 @@ export default class SlwcRefreshTravelTimeBanner extends LightningElement {
         return !isNullOrEmpty(this.travelTimeSettings) && this.travelTimeSettings.enableManualRefreshBanner;
     }
 
+    get isNotUserOverrideEnabled() {
+        return !this.isUserOverrideEnabled;
+    }
+
     connectedCallback() {
         let _scoSvc = new siteCollectionOpService();
         Promise.all([
             _scoSvc.isManualRefreshInProgress({ siteCollectionOperationId: this.recordId }),
             _scoSvc.hasInvalidTravelTimeData({ siteCollectionOperationId: this.recordId }),
+           _scoSvc.isUserOverrideEnabled({ siteCollectionOperationId: this.recordId }),
             _scoSvc.getCustomSettings({ settingKeys: ['travelTimeManager']})
         ])
-        .then(([isManualRefreshInProgress, hasInvalidTravelTimeData, travelTimeSettings]) => {
+        .then(([isManualRefreshInProgress, hasInvalidTravelTimeData, isUserOverrideEnabled, travelTimeSettings]) => {
             this.isManualRefreshInProgress = isManualRefreshInProgress;
             this.hasInvalidTravelTimeData = hasInvalidTravelTimeData;
-            this.travelTimeSettings = travelTimeSettings.returnedData.travelTimeManager;
+            this.isUserOverrideEnabled = isUserOverrideEnabled;
+            this.travelTimeSettings = travelTimeSettings.returnedData.travelTimeManager;            
         })
         .catch(e => console.debug(e))
         .finally()
@@ -66,7 +73,7 @@ export default class SlwcRefreshTravelTimeBanner extends LightningElement {
         let _scoSvc = new siteCollectionOpService();
         _scoSvc.manualRefreshTravelTimeIndexes({
             siteCollectionOperationId: this.recordId
-        }).then(res => {
+        }).then(res => {            
             this.dispatchEvent(new ShowToastEvent({
                 title: 'Success!',
                 message: 'Successfully initiated manual refresh for Travel Time Indexes related to this Site Collection Operation.',

@@ -1782,9 +1782,9 @@ class SlwcAvailator {
                 if(!resourceTag.tag) return;
 
                 const tagStartDateValid = resourceTag.startDate <= job.driveDate;
-                const tagRestricted = resourceTag.restrictionStartDate && resourceTag.restrictionEndDate && 
-                  resourceTag.restrictionStartDate <= job.driveDate && resourceTag.restrictionEndDate >= job.driveDate;
-
+                const tagRestricted = resourceTag.restrictionStartDate && 
+                      resourceTag.restrictionStartDate <= job.driveDate && 
+                      (slwcUtils.isNullOrEmpty(resourceTag.restrictionEndDate)  || resourceTag.restrictionEndDate >= job.driveDate);
                 if (tagStartDateValid && !tagRestricted) {
                   validTagNames.push(resourceTag.tag.name);
                 } else {
@@ -1792,8 +1792,8 @@ class SlwcAvailator {
                     restrictedTagNames.push(resourceTag.tag.name);
                   }
                 }
+                //console.log('slwc Availator => tagStartDateValid =>',tagStartDateValid,' validTagNames=>',validTagNames,' restrictedTagNames=>',restrictedTagNames);
               });
-      
               (job.jobTags || []).forEach((jobTag) => {
                 if (!jobTag.tag) return;
 
@@ -1871,7 +1871,8 @@ class SlwcAvailator {
                     jobId: job.id,
                     resourceId: resource.id,
                     exception: "",
-                    exceptionCode: "RESOURCE_TIME_CONFLICT"
+                    exceptionCode: "RESOURCE_TIME_CONFLICT",
+                    eventURL:""
                   };
                   if (event.objectType === OBJECT_TYPE.NON_WORKING) {
                     isResourceQualified = false;
@@ -1884,9 +1885,19 @@ class SlwcAvailator {
                       exception.exception = event.eventType;
                     }
                     else if (event.objectType == OBJECT_TYPE.ACTIVITY) {
+                      exception.exception = "Conflict with " + event.activityTitle;
+                      let baseUrl = window.location.origin;
+                      console.log(baseUrl);
+                      let fullUrl=baseUrl+'/lightning/r/sked__Activity__c/'+event.id+'/view';
+                      exception.eventURL=fullUrl;
                       exception.activityId = event.id;
                     }
                     else if (event.objectType == OBJECT_TYPE.JOB_ALLOCATION) {
+                      let baseUrl = window.location.origin;
+                      console.log(baseUrl);
+                      let fullUrl=baseUrl+'/lightning/r/sked_Drive__c/'+event.driveId+'/view';
+                      exception.eventURL=fullUrl;
+                      exception.exception = "Conflict with "+event.driveName;
                       exception.conflictedJobAllocationId = event.id;
                     }
                   }

@@ -20,6 +20,7 @@ public without sharing class BSF_TravelTimePanelController {
         @AuraEnabled public String collectionOpName {get; set;}
         @AuraEnabled public String address {get; set;}
         @AuraEnabled public List<TravelTimeBreakdownData> travelTimeBreakdownData {get; set;}
+        @AuraEnabled public Boolean systemOverride {get; set;}
     }
 
     public class TravelTimeBreakdownData {
@@ -69,14 +70,18 @@ public without sharing class BSF_TravelTimePanelController {
                     System.debug('indexItemMap.get(indexRecId) --> '+indexItemMap.get(indexRecId));
                     sked_Travel_Time_Index_Item__c indexRec = indexItemMap.get(indexRecId);
                     Map<String, TravelTimeBreakdownJSON> ttJSONMap = new Map<String, TravelTimeBreakdownJSON>();
+                    
                     if(wrapper.userOverride!= null &&  indexRec.User_Override__c != wrapper.userOverride){
                         updateFlag = true;
                         indexRec.User_Override__c = wrapper.userOverride;
+                        indexRec.Override_Comment__c = String.isNotBlank(wrapper.overrideComment) ? wrapper.overrideComment.left(255) : '';
                     }
+                    
                     if(wrapper.userOverride== true) {
                         updateFlag = true;
                         indexRec.Override_Comment__c = String.isNotBlank(wrapper.overrideComment) ? wrapper.overrideComment.left(255) : '';
                     }
+                    
                     if(indexRec.sked_Travel_Time_Breakdown_JSON__c != null && indexRec.sked_Travel_Time_Breakdown_JSON__c != 'NO DATA') {
                         System.debug('indexRec.sked_Travel_Time_Breakdown_JSON__c --> '+indexRec.sked_Travel_Time_Breakdown_JSON__c);
                         List<TravelTimeBreakdownJSON> jsonData = (List<TravelTimeBreakdownJSON>) JSON.deserialize(indexRec.sked_Travel_Time_Breakdown_JSON__c, 
@@ -86,7 +91,7 @@ public without sharing class BSF_TravelTimePanelController {
                             ttJSONMap.put(key,ttData);
                         }
                     } else {
-                        List<TravelTimeBreakdownJSON> jsonData = generateEmptyTravelTimeData();
+                        List<TravelTimeBreakdownJSON> jsonData = generateEmptyTravelTimeData(1);
                         for(TravelTimeBreakdownJSON ttData : jsonData) {
                             String key = String.valueOf(indexRecId).right(10)+ttData.weekday.left(4).toLowerCase()+ttData.startOfWindow.left(2)+ttData.endOfWindow.left(2);
                             ttJSONMap.put(key,ttData);
@@ -96,6 +101,8 @@ public without sharing class BSF_TravelTimePanelController {
                         for(TravelTimeBreakdownData wrap : ttWrapData) {
                             if(String.isNotBlank(wrap.travelTimeKey)) {
                                 TravelTimeBreakdownJSON jsondata = ttJSONMap.get(wrap.travelTimeKey);
+                                System.debug('jsondata: '+jsondata);
+                                System.debug('wrap: '+wrap);
                                 travelTimeSet.add(wrap.travelTime);
                                 if(wrap.travelTime == null) {
                                     throw new AuraHandledException('TravelTime is Null.');
@@ -154,6 +161,9 @@ public without sharing class BSF_TravelTimePanelController {
         Map<Id,Location> stagingGeoLocationMap = new Map<Id,Location>();
         List<Id> stopDuplicateEnty_SC = new List<Id>();
 
+        String todayStr = Date.today().format();
+        String systemOverrideComment = BSF_Constants.SYSTEM_TTBD_OVERRIDE_COMMENT.replace('{0}',todayStr);
+
         List<sked_Site_Collection_Operation__c> siteCollectionOpData = [SELECT Id,
                                                                                 sked_Collection_Operation__c,
                                                                                 sked_Collection_Operation__r.Name,
@@ -209,7 +219,7 @@ public without sharing class BSF_TravelTimePanelController {
             return travelTimeDataWrap;
         }
         String indexItemQuerry = 'SELECT Id, sked_From__latitude__s, sked_From__longitude__s, sked_To__latitude__s, sked_To__longitude__s, '
-                                        +'Override_Comment__c, User_Override__c, sked_Travel_Time_Breakdown_JSON__c FROM sked_Travel_Time_Index_Item__c WHERE ';
+                                        +'Override_Comment__c, User_Override__c, sked_Travel_Time_Breakdown_JSON__c, sked_Travel_Time_Breakdown_JSON_Backup__c FROM sked_Travel_Time_Index_Item__c WHERE ';
         String indexItemWhereCl_COtoSite = ' sked_To__latitude__s = '+site_Location.getLatitude()
                                             +' AND sked_To__longitude__s = '+site_Location.getLongitude();
         String indexItemWhereCl_SitetoCO = ' sked_From__latitude__s = '+site_Location.getLatitude()
@@ -316,32 +326,30 @@ public without sharing class BSF_TravelTimePanelController {
                 wrapper.userOverride = ttRec.User_Override__c;
                 wrapper.overrideComment = String.isBlank(ttRec.Override_Comment__c) ? '' : ttRec.Override_Comment__c;
                 wrapper.direction = ttIndex_DirectionMap.get(ttRec.Id);
+                wrapper.systemOverride = false;
                 wrapper.travelTimeBreakdownData = new List<TravelTimeBreakdownData>();
-                if(ttRec.sked_Travel_Time_Breakdown_JSON__c != null && ttRec.sked_Travel_Time_Breakdown_JSON__c != 'NO DATA') {
+                if(ttRec.sked_Travel_Time_Breakdown_JSON__c != 'NO DATA') {
                     List<TravelTimeBreakdownJSON> jsonData = (List<TravelTimeBreakdownJSON>) JSON.deserialize(ttRec.sked_Travel_Time_Breakdown_JSON__c, List<TravelTimeBreakdownJSON>.class);
                     for(TravelTimeBreakdownJSON ttData : jsonData) {
-                        TravelTimeBreakdownData dataWrap = new TravelTimeBreakdownData(); 
-                        dataWrap.weekday = ttData.weekday;
-                        dataWrap.travelTime = ttData.travelTime;
-                        dataWrap.travelDistance = ttData.travelDistance;
-                        dataWrap.startTime = String.isBlank(ttData.startOfWindow) ? null : getTime(ttData.startOfWindow);
-                        dataWrap.endTime = String.isBlank(ttData.endOfWindow) ? null : getTime(ttData.endOfWindow);
-                        dataWrap.travelTimeKey = wrapper.indexId.right(10)+dataWrap.weekday.left(4).toLowerCase()+ttData.startOfWindow.left(2)+ttData.endOfWindow.left(2);
-                        System.debug('dataWrap.travelTimeKey : '+dataWrap.travelTimeKey);
-                        wrapper.travelTimeBreakdownData.add(dataWrap);
+                        wrapper.travelTimeBreakdownData.add(transformTTBDataToDataWrapper(ttData, wrapper.indexId));
+                    }
+                }
+                else if(ttRec.sked_Travel_Time_Breakdown_JSON_Backup__c != null) {                    
+                    List<TravelTimeBreakdownJSON> jsonData = (List<TravelTimeBreakdownJSON>) JSON.deserialize(ttRec.sked_Travel_Time_Breakdown_JSON_Backup__c, List<TravelTimeBreakdownJSON>.class);
+                    for(TravelTimeBreakdownJSON ttData : jsonData) {
+                        wrapper.travelTimeBreakdownData.add(transformTTBDataToDataWrapper(ttData, wrapper.indexId));
+                        wrapper.userOverride = true;
+                        wrapper.systemOverride = true;
+                        wrapper.overrideComment = systemOverrideComment;
                     }
                 }
                 else {
-                    List<TravelTimeBreakdownJSON> emptyJsonData = generateEmptyTravelTimeData();
+                    List<TravelTimeBreakdownJSON> emptyJsonData = generateEmptyTravelTimeData(0);
                     for(TravelTimeBreakdownJSON ttData : emptyJsonData) {
-                        TravelTimeBreakdownData dataWrap = new TravelTimeBreakdownData();                        
-                        dataWrap.weekday = ttData.weekday;
-                        dataWrap.travelTime = ttData.travelTime;
-                        dataWrap.travelDistance = ttData.travelDistance;
-                        dataWrap.startTime = String.isBlank(ttData.startOfWindow) ? null : getTime(ttData.startOfWindow);
-                        dataWrap.endTime = String.isBlank(ttData.endOfWindow) ? null : getTime(ttData.endOfWindow);
-                        dataWrap.travelTimeKey = wrapper.indexId.right(10) + ttData.weekday.left(4).toLowerCase() + ttData.startOfWindow.left(2) + ttData.endOfWindow.left(2);
-                        wrapper.travelTimeBreakdownData.add(dataWrap);
+                        wrapper.travelTimeBreakdownData.add(transformTTBDataToDataWrapper(ttData, wrapper.indexId));
+                        wrapper.userOverride = true;
+                        wrapper.systemOverride = true;
+                        wrapper.overrideComment = systemOverrideComment;
                     }
                 }
                 travelTimeDataWrap.add(wrapper);
@@ -351,7 +359,7 @@ public without sharing class BSF_TravelTimePanelController {
         return travelTimeDataWrap;
     }
 
-    private static List<TravelTimeBreakdownJSON> generateEmptyTravelTimeData() {
+    private static List<TravelTimeBreakdownJSON> generateEmptyTravelTimeData(Integer travelTime) {
         List<TravelTimeBreakdownJSON> travelTimeBreakdownJSON = new List<TravelTimeBreakdownJSON>();
         List<String> weekdays = new List<String>{'Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'};
         List<String> startTimes = new List<String>{'00:00:00.000Z', '08:00:00.000Z', '16:00:00.000Z'};
@@ -360,7 +368,7 @@ public without sharing class BSF_TravelTimePanelController {
             for(Integer i = 0; i < startTimes.size(); i++) {
                 TravelTimeBreakdownJSON ttData = new TravelTimeBreakdownJSON();
                 ttData.weekday = weekday;
-                ttData.travelTime = 0;
+                ttData.travelTime = travelTime;
                 ttData.travelDistance = 0;
                 ttData.startOfWindow = startTimes[i];
                 ttData.endOfWindow = endTimes[i];
@@ -368,6 +376,17 @@ public without sharing class BSF_TravelTimePanelController {
             }
         }
         return travelTimeBreakdownJSON;
+    }
+
+    private static TravelTimeBreakdownData transformTTBDataToDataWrapper(TravelTimeBreakdownJSON ttData, String indexId) {
+        TravelTimeBreakdownData dataWrap = new TravelTimeBreakdownData();
+        dataWrap.weekday = ttData.weekday;
+        dataWrap.travelTime = ttData.travelTime;
+        dataWrap.travelDistance = ttData.travelDistance;
+        dataWrap.startTime = String.isBlank(ttData.startOfWindow) ? null : getTime(ttData.startOfWindow);
+        dataWrap.endTime = String.isBlank(ttData.endOfWindow) ? null : getTime(ttData.endOfWindow);
+        dataWrap.travelTimeKey = indexId.right(10) + ttData.weekday.left(4).toLowerCase() + ttData.startOfWindow.left(2) + ttData.endOfWindow.left(2);        
+        return dataWrap;
     }
 
     private static String getTime(String timeStr) {

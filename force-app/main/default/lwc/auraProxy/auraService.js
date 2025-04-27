@@ -69,6 +69,7 @@ import _manualRefreshTravelTimeIndexes from '@salesforce/apex/slwcSiteCollection
 import _isManualRefreshInProgress from '@salesforce/apex/slwcSiteCollectionOperationService.isManualRefreshInProgress';
 import _hasInvalidTravelTimeData from '@salesforce/apex/slwcSiteCollectionOperationService.hasInvalidTravelTimeData';
 import _getRelatedSiteInfo from '@salesforce/apex/slwcSiteCollectionOperationService.getRelatedSiteInfo';
+import _isUserOverrideEnabled from '@salesforce/apex/slwcSiteCollectionOperationService.isUserOverrideEnabled';
 
 import _getUnavailabilityStatistic from '@salesforce/apex/slwcAvailabilityService.getUnavailabilityStatistic';
 
@@ -144,6 +145,7 @@ class auraService {
   isManualRefreshInProgress = (params) => this.execute(_isManualRefreshInProgress, params);
   hasInvalidTravelTimeData = (params) => this.execute(_hasInvalidTravelTimeData, params);
   getRelatedSiteInfo = (params) => this.execute(_getRelatedSiteInfo, params);
+  isUserOverrideEnabled = (params) => this.execute(_isUserOverrideEnabled, params);
   getUnavailabilityStatistic = (params) => this.execute(_getUnavailabilityStatistic, params);
 }
 

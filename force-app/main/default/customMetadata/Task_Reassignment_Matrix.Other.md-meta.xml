@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomMetadata xmlns="http://soap.sforce.com/2006/04/metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <label>Other</label>
+    <protected>false</protected>
+    <values>
+        <field>Assigned_To__c</field>
+        <value xsi:type="xsd:string">Account Manager</value>
+    </values>
+    <values>
+        <field>Category__c</field>
+        <value xsi:type="xsd:string">Account Task</value>
+    </values>
+    <values>
+        <field>Creation_Date_Offset__c</field>
+        <value xsi:type="xsd:double">-1.0</value>
+    </values>
+    <values>
+        <field>Description__c</field>
+        <value xsi:type="xsd:string">Document {0}.{1} requires review as it will be expiring in 30 days.</value>
+    </values>
+    <values>
+        <field>Due_Date_Offset__c</field>
+        <value xsi:type="xsd:double">14.0</value>
+    </values>
+    <values>
+        <field>Task_Creation_Threshold_In_Days__c</field>
+        <value xsi:nil="true"/>
+    </values>
+    <values>
+        <field>Task_Subject__c</field>
+        <value xsi:type="xsd:string">Renew File</value>
+    </values>
+</CustomMetadata>
