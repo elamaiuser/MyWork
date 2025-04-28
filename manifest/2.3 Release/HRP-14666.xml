@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Package xmlns="http://soap.sforce.com/2006/04/metadata">
-	<types>
-		<members>skedActivityService</members>
+    <types>
+		<members>skedJobAllocationPostProcessBatch</members>
+        <members>skedJobAllocationPostProcessBatch_Test</members>
+        <members>skedExceptionLogService</members>
 		<name>ApexClass</name>
 	</types>
     <types>
-		<members>dataService</members>
-        <members>slwcDriveCalendar</members>
-		<members>slwcDriveCalendarActivityList</members>
+		<members>slwcExceptionList</members>
 		<name>LightningComponentBundle</name>
 	</types>
     <version>59.0</version>

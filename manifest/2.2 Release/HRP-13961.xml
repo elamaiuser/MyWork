@@ -3,12 +3,18 @@
 	<types>
 		<members>BSF_TravelTimePanelController</members>
 		<members>skedCOGroupTravelTimeIndexRefreshBatch</members>
+		<members>skedConstants</members>
 		<members>skedImmediateRefreshTravelTimeIndexBatch</members>
 		<members>skedNightlyRefreshTravelTimeIndexBatch</members>
 		<members>skedRefreshTravelTimeIndexBatchBase</members>
+		<members>skedTravelTimeIndexItemHandler</members>
 		<members>skedTravelTimeIndexItemUtils</members>
 		<members>slwcSiteCollectionOperationService</members>
 		<name>ApexClass</name>
+	</types>
+	<types>		
+		<members>skedTravelTimeIndexItemTrigger</members>
+		<name>ApexTrigger</name>
 	</types>
 	<types>
 		<members>sked_Travel_Time_Index_Item__c.sked_Travel_Time_Breakdown_JSON_Backup__c</members>
