@@ -58,6 +58,9 @@
 		<members>skedUpdateJobTimeVarianceBatch_Test</members>
         <members>skedSetting</members>
         <members>skedSetting_Test</members>
+		<members>skedJobAllocationPostProcessBatch</members>
+        <members>skedJobAllocationPostProcessBatch_Test</members>
+        <members>skedExceptionLogService</members>
 		<name>ApexClass</name>
 	</types>
       <types>
@@ -71,6 +74,7 @@
         <members>Handle_Site_Name_Room_Name_update</members>
         <members>Drive_Hold_Status_Expires</members>
         <members>Update_Drive_Status_Field_on_Opportunity_Booking_Date_2_1</members>
+        <members>Send_Bell_Notification_For_Drive_2</members>
 		<name>Flow</name>
 	</types>
     <types>
@@ -86,6 +90,7 @@
     <types>
         <members>slwcDriveGenerator</members>
 		<members>slwcDriveStaffingDetails</members>
+		<members>slwcExceptionList</members>
 		<name>LightningComponentBundle</name>
 	</types>
     <types>
