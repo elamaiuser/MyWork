@@ -66,6 +66,7 @@
       <types>
 		<members>Send_Bell_Notification_To_District_Manager_1</members>
         <members>Set_UFID_for_Marketing_Program</members>
+		<members>Set_Marketing_Program_UFID</members>
         <members>Initiate_Marketing_Exception_Request</members>
 		<members>Set_Account_UFID_on_Record_Creation</members>
 		<members>Account_Before_Insert_Update_Flow</members>
