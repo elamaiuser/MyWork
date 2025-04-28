@@ -3,11 +3,21 @@
     <types>
 		<members>Set_Account_UFID_on_Record_Creation</members>
 		<members>Account_Before_Insert_Update_Flow</members>
+		<members>Set_Account_UFID</members>
+		<members>Uncheck_Use_this_as_mailing_address_field</members>
+		<members>Update_Account_Status_Field_and_Marketing_Strategy_as_Text_fields_on_Account</members>
 		<name>Flow</name>
 	</types>
     <types>
 		<members>Mobile_Account_Record_Type</members>
 		<name>CustomLabel</name>
+	</types>
+	<types>
+		<members>Account.Use this as mailing address automation</members>
+		<members>Account.Default Status Active</members>
+		<members>Account.Default Status Prospect</members>
+		<members>Account.Capitalize National Name Field</members>
+		<name>WorkflowRule</name>
 	</types>
     <version>59.0</version>
 </Package>
