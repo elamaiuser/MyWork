@@ -1,186 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Workflow xmlns="http://soap.sforce.com/2006/04/metadata">
-    <fieldUpdates>
-        <fullName>Capitalize_National_Name_Field</fullName>
-        <description>Updates the &quot;National_Name__c&quot; field on the Account to all capital letters.</description>
-        <field>National_Name__c</field>
-        <formula>UPPER(National_Name__c)</formula>
-        <name>Capitalize National Name Field</name>
-        <notifyAssignee>false</notifyAssignee>
-        <operation>Formula</operation>
-        <protected>false</protected>
-        <reevaluateOnChange>false</reevaluateOnChange>
-    </fieldUpdates>
-    <fieldUpdates>
-        <fullName>Clear_Initial_Reviewer</fullName>
-        <field>Initial_Reviewer__c</field>
-        <name>Clear Initial Reviewer</name>
-        <notifyAssignee>false</notifyAssignee>
-        <operation>LookupValue</operation>
-        <protected>false</protected>
-        <reevaluateOnChange>false</reevaluateOnChange>
-    </fieldUpdates>
-    <fieldUpdates>
-        <fullName>Clear_Secondary_Reviewer</fullName>
-        <field>Secondary_Reviewer__c</field>
-        <name>Clear Secondary Reviewer</name>
-        <notifyAssignee>false</notifyAssignee>
-        <operation>LookupValue</operation>
-        <protected>false</protected>
-        <reevaluateOnChange>false</reevaluateOnChange>
-    </fieldUpdates>
-    <fieldUpdates>
-        <fullName>Default_Account_Status_Active</fullName>
-        <description>When a new Account is created, the Account Status field should populate with &quot;Active.&quot;</description>
-        <field>Account_Status__c</field>
-        <literalValue>Active</literalValue>
-        <name>Default Account Status Active</name>
-        <notifyAssignee>false</notifyAssignee>
-        <operation>Literal</operation>
-        <protected>false</protected>
-        <reevaluateOnChange>false</reevaluateOnChange>
-    </fieldUpdates>
-    <fieldUpdates>
-        <fullName>Update_Account_Status_to_Prospect</fullName>
-        <field>Account_Status__c</field>
-        <literalValue>Prospect</literalValue>
-        <name>Update  Account Status to Prospect</name>
-        <notifyAssignee>false</notifyAssignee>
-        <operation>Literal</operation>
-        <protected>false</protected>
-        <reevaluateOnChange>false</reevaluateOnChange>
-    </fieldUpdates>
-    <fieldUpdates>
-        <fullName>Update_Internal_Name_field_with_Name</fullName>
-        <description>If there is no value in the Internal Name field upon creation, default to Account Name.</description>
-        <field>Internal_Name__c</field>
-        <formula>Name</formula>
-        <name>Update Internal Name field with Name</name>
-        <notifyAssignee>false</notifyAssignee>
-        <operation>Formula</operation>
-        <protected>false</protected>
-        <reevaluateOnChange>false</reevaluateOnChange>
-    </fieldUpdates>
-    <fieldUpdates>
-        <fullName>Update_Mailing_City</fullName>
-        <field>ShippingCity</field>
-        <formula>BillingCity</formula>
-        <name>Update Mailing City</name>
-        <notifyAssignee>false</notifyAssignee>
-        <operation>Formula</operation>
-        <protected>false</protected>
-        <reevaluateOnChange>false</reevaluateOnChange>
-    </fieldUpdates>
-    <fieldUpdates>
-        <fullName>Update_Mailing_Country</fullName>
-        <field>ShippingCountry</field>
-        <formula>&quot;United States&quot;</formula>
-        <name>Update Mailing Country</name>
-        <notifyAssignee>false</notifyAssignee>
-        <operation>Formula</operation>
-        <protected>false</protected>
-        <reevaluateOnChange>false</reevaluateOnChange>
-    </fieldUpdates>
-    <fieldUpdates>
-        <fullName>Update_Mailing_Country_Code</fullName>
-        <field>ShippingCountryCode</field>
-        <literalValue>US</literalValue>
-        <name>Update Mailing Country Code</name>
-        <notifyAssignee>false</notifyAssignee>
-        <operation>Literal</operation>
-        <protected>false</protected>
-        <reevaluateOnChange>false</reevaluateOnChange>
-    </fieldUpdates>
-    <fieldUpdates>
-        <fullName>Update_Mailing_State</fullName>
-        <field>ShippingState</field>
-        <formula>BillingState</formula>
-        <name>Update Mailing State</name>
-        <notifyAssignee>false</notifyAssignee>
-        <operation>Formula</operation>
-        <protected>false</protected>
-        <reevaluateOnChange>false</reevaluateOnChange>
-    </fieldUpdates>
-    <fieldUpdates>
-        <fullName>Update_Mailing_Street</fullName>
-        <field>ShippingStreet</field>
-        <formula>BillingStreet</formula>
-        <name>Update Mailing Street</name>
-        <notifyAssignee>false</notifyAssignee>
-        <operation>Formula</operation>
-        <protected>false</protected>
-        <reevaluateOnChange>false</reevaluateOnChange>
-    </fieldUpdates>
-    <fieldUpdates>
-        <fullName>Update_Mailing_Zip</fullName>
-        <field>ShippingPostalCode</field>
-        <formula>BillingPostalCode</formula>
-        <name>Update Mailing Zip</name>
-        <notifyAssignee>false</notifyAssignee>
-        <operation>Formula</operation>
-        <protected>false</protected>
-        <reevaluateOnChange>false</reevaluateOnChange>
-    </fieldUpdates>
-    <rules>
-        <fullName>Account Type From Lead is populated</fullName>
-        <active>false</active>
-        <description>Check if Account Type From Lead is populated, then set Account type field on account</description>
-        <formula>ISCHANGED(Account_Type_From_Lead__c) &amp;&amp;  (ISBLANK(Account_Type_From_Lead__c)== false)</formula>
-        <triggerType>onAllChanges</triggerType>
-    </rules>
     <rules>
         <fullName>Capitalize National Name Field</fullName>
         <actions>
             <name>Capitalize_National_Name_Field</name>
             <type>FieldUpdate</type>
         </actions>
-        <active>true</active>
+        <active>false</active>
         <description>Capitalizes all letters in the Account &quot;National_Name__c&quot; field for new and modified accounts.</description>
         <formula>ISNEW() || ISCHANGED(National_Name__c)</formula>
         <triggerType>onAllChanges</triggerType>
-    </rules>
-    <rules>
-        <fullName>Default Status Active %26 Internal Name for FS</fullName>
-        <actions>
-            <name>Default_Account_Status_Active</name>
-            <type>FieldUpdate</type>
-        </actions>
-        <actions>
-            <name>Update_Internal_Name_field_with_Name</name>
-            <type>FieldUpdate</type>
-        </actions>
-        <active>true</active>
-        <criteriaItems>
-            <field>Account.Account_Status__c</field>
-            <operation>notEqual</operation>
-            <value>Active</value>
-        </criteriaItems>
-        <criteriaItems>
-            <field>Account.RecordTypeId</field>
-            <operation>equals</operation>
-            <value>Fixed Site Account</value>
-        </criteriaItems>
-        <description>When a new Account is created, the Account Status field should populate with &quot;Active.&quot; If no &quot;Internal Name&quot; value is populated, default to the Account Name.</description>
-        <triggerType>onCreateOnly</triggerType>
-    </rules>
-    <rules>
-        <fullName>Default Status Prospect %26 Internal Name for Mobile Account</fullName>
-        <actions>
-            <name>Update_Account_Status_to_Prospect</name>
-            <type>FieldUpdate</type>
-        </actions>
-        <actions>
-            <name>Update_Internal_Name_field_with_Name</name>
-            <type>FieldUpdate</type>
-        </actions>
-        <active>true</active>
-        <criteriaItems>
-            <field>Account.RecordTypeId</field>
-            <operation>equals</operation>
-            <value>Mobile Account</value>
-        </criteriaItems>
-        <description>When a new Account (recordtype = mobile) is created, the Account Status field should populate with &quot;Prospect,&quot; and Internal Name field will populate with Account Name field.</description>
-        <triggerType>onCreateOnly</triggerType>
     </rules>
     <rules>
         <fullName>Use this as mailing address automation</fullName>
@@ -208,7 +37,7 @@
             <name>Update_Mailing_Zip</name>
             <type>FieldUpdate</type>
         </actions>
-        <active>true</active>
+        <active>false</active>
         <criteriaItems>
             <field>Account.Use_this_as_mailing_address__c</field>
             <operation>equals</operation>
