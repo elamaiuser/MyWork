@@ -302,6 +302,11 @@ public class BSF_Constants {
         'Fixed Site' => 'Sys Gen Run - FS',
         'Mobile' => 'Sys Gen Run - Mobile'   
     };
+
+    public static Map<String, String> MAP_DRIVETYPE_ERRORCATEGORY = new Map<String, String>{
+        'Fixed Site' => 'Sys Gen Run - FS Business Error',
+        'Mobile' => 'Sys Gen Run - Mobile Business Error'   
+    };
     
     // Batch Status
     public static final String BATCH_STATUS_COMPLETED = 'Completed';
@@ -339,6 +344,9 @@ public class BSF_Constants {
     public static final String ACCOUNT_TYPE_EDUCATION = 'Education';
     public static final String ACCOUNT_INDUSTRY_CODE_MIDDLE_SCHOOL = 'Middle School';
     public static final String ACCOUNT_INDUSTRY_CODE_ELEMENTARY_SCHOOL = 'Elementary School';   
+    public static final String ACCOUNT_INDUSTRY_CODE_COLLEGE_OR_UNIVERSITY = 'College / University';//HRP-14286
+    public static final String ACCOUNT_INDUSTRY_CODE_COMMUNITY_OR_JUNIOR_COLLEGE = 'Community / Junior College';//HRP-14286
+    public static final String ACCOUNT_INDUSTRY_CODE_HIGH_SCHOOL = 'High School';//HRP-14286
     public static final String APT_CHANGE_VIA_TEMPLATE = 'Apply Changes to Future Drive';  
 
     public static final String FEEDER_ONLY_ACCOUNT = 'Feeder Only';
