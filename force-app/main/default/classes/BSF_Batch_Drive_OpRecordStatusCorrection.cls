@@ -51,7 +51,7 @@ global class BSF_Batch_Drive_OpRecordStatusCorrection implements Database.Batcha
             );
             cbLogWrapper.apexMethodName = 'Constructor Call for Scheduled Run';
             cbLogWrapper.eligibleOpportunityForCbList = new List<Opportunity>();
-            DriveGenerationUtil.captureErrorLoggingForException(BSF_Constants.BATCH_DRIVE_STATUS_CORRECTION, ex, cbLogWrapper);           
+            DriveGenerationUtil.captureErrorLoggingForException(ex, cbLogWrapper);           
         }
     }
 

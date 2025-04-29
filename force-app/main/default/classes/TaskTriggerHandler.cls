@@ -5,8 +5,8 @@
 * ***************************************************************************************************************************************************************************
 * 09/06/2024			Apurba Bhattacharjee	HRP-12459 Lead Research Fields on the Record
 * 10/07/2024			Balaji N				HRP-12583 new method call stopPublicityOrderTaskCompletionWithoutOrder
-* 10/29/2024			Barnojit Sharma		    Post Drive Analysis task Enhancements. (Logic for HRP-12142)
 * 11/07/2024			Barnojit Sharma		    Update Task: 72 Hour Check in - System Generated/Details/Checklist. (Logic for HRP-12627)
+* 13/02/2025			Barnojit Sharma		    Checklist for Post Drive Analysis task Enhancements. (Logic for HRP-13426)
 * ***************************************************************************************************************************************************************************
 **/
 public with sharing class TaskTriggerHandler extends TriggerHandler {
@@ -18,7 +18,7 @@ public with sharing class TaskTriggerHandler extends TriggerHandler {
         if(super.getTriggerMethodsToBypass().indexOf('populateAccountNameOnTask') == -1) { 
             populateAccountNameOnTask((List<Task>)Trigger.new,(Map<Id,Task>)Trigger.newMap);
         }
-        if(super.getTriggerMethodsToBypass().indexOf('populateDriveDateOnTask') == -1) {  
+        if(super.getTriggerMethodsToBypass().indexOf('populateDriveDateOnTask') == -1) { 
             populateDriveDateOnTask((List<Task>)Trigger.new,(Map<Id,Task>)Trigger.newMap); //HRP-12459
         }
         if(super.getTriggerMethodsToBypass().indexOf('validateTaskRecordTypeForFixSite') == -1) { 
@@ -32,7 +32,7 @@ public with sharing class TaskTriggerHandler extends TriggerHandler {
         //HRP-12627 start
         if(super.getTriggerMethodsToBypass().indexOf('check72hourCheckInTaskCompletion') == -1) {
         	TaskService.check72hourCheckInTaskCompletion((List<Task>)Trigger.new,(Map<Id,Task>)Trigger.OldMap);
-    }
+        }
         //HRP-12627 end
     }
     
@@ -47,6 +47,11 @@ public with sharing class TaskTriggerHandler extends TriggerHandler {
         if(super.getTriggerMethodsToBypass().indexOf('validateTaskRecordTypeForFixSite') == -1) { 
             TaskService.validateTaskRecordTypeForFixSite((List<Task>)Trigger.new);
         }
+        //HRP-12627 start
+        if(super.getTriggerMethodsToBypass().indexOf('assignDefaultTaskOwner') == -1) { 
+            TaskService.assignDefaultTaskOwner((List<Task>)Trigger.new);
+        }
+        //HRP-12627 end
     }
     
     /*public override void afterInsert(){

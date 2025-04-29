@@ -26,6 +26,15 @@ class exceptionService extends dataService {
       if (query.priorities && query.priorities.length) {
           queryBuilder.addCondition({template: "sked_Priority__c IN {0}", value: query.priorities, type: "array_string"});
       }
+      if (query.driveTypes && query.driveTypes.length) {
+        queryBuilder.addCondition({template: "sked_Drive__r.sked_Type_of_Drive__c IN {0}", value: query.driveTypes, type: "array_string"});
+      }
+      if (query.operationTypes && query.operationTypes.length) {
+        queryBuilder.addCondition({template: "sked_Drive__r.sked_Operation_Type__c IN {0}", value: query.operationTypes, type: "array_string"});
+      }
+      if (query.resourceDriveTypes && query.resourceDriveTypes.length) {
+        queryBuilder.addCondition({template: "skedHC__Resource__r.sked_Drive_Type__c INCLUDES {0}", value: query.resourceDriveTypes, type: "array_string"});
+      }
       if (query.driveIds && query.driveIds.length) {
           queryBuilder.addCondition({template: "sked_Drive__c IN {0}", value: query.driveIds, type: "array_string"});
       }
@@ -64,6 +73,9 @@ class exceptionQueryModel extends queryModelBase {
   endDate;
   exceptionCodes;
   priorities;
+  driveTypes;
+  operationTypes;
+  resourceDriveTypes;
   startDate;
   statuses;
   exceptionType;

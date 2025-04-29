@@ -91,6 +91,15 @@
                                             popover-data={driveShift} slot="content">
                                         </c-slwc-popover-content>
                                     </c-slwc-popover>
+                                    <c-slwc-popover
+                                        container=".drive-details-side-menu"
+                                        position="bottom" trigger="click" width="40rem;">
+                                            <span slot="reference" class="slds-text-link cursor_pointer">View Staff Allocations</span>
+                                        <c-slwc-popover-content
+                                            name="driveShiftResourceAllocationPopover"
+                                            popover-data={driveShift} slot="content">
+                                        </c-slwc-popover-content>
+                                    </c-slwc-popover>                                    
                                 </h3>
                             </div>
                             <ul class="hco-job-list">
@@ -429,6 +438,15 @@
                                             popover-data={driveShift} slot="content">
                                         </c-slwc-popover-content>
                                     </c-slwc-popover>
+                                    <c-slwc-popover
+                                        container=".drive-details-side-menu"
+                                        position="bottom" trigger="click" width="40rem;">
+                                            <span slot="reference" class="slds-text-link cursor_pointer">View Staff Allocations</span>
+                                        <c-slwc-popover-content
+                                            name="driveShiftResourceAllocationPopover"
+                                            popover-data={driveShift} slot="content">
+                                        </c-slwc-popover-content>
+                                    </c-slwc-popover>                                    
                                 </h3>
                             </div>
                             <ul class="hco-job-list">
@@ -1068,9 +1086,17 @@
                                                                                                     type="checkbox"
                                                                                                     checked={exceptionSub.isSelected}
                                                                                                     onchange={handleOnChange}>
-                                                                                                </lightning-input> -->
-                                                                                                <span
-                                                                                                    class="color-error">{exceptionSub.exception}</span>
+                                                                                                </lightning-input>-->
+                                                                                                <template if:true={exceptionSub.eventURL} >
+                                                                                                    <span class="color-error"><a href={exceptionSub.eventURL} target="blank" class="color-error">{exceptionSub.exception}</a></span>
+                                                                                                </template>
+                                                                                            
+                                                                                                <!-- Using if:false to render content when isVisible is false -->
+                                                                                                <template if:false={exceptionSub.eventURL} >
+                                                                                                    <span class="color-error">{exceptionSub.exception}</span>
+                                                                                                </template>
+
+                                                                                                
                                                                                             </p>
                                                                                         </div>
 

@@ -1371,6 +1371,7 @@ export default class SlwcDriveStaffingDetails extends LightningElement {
                         exceptionLogList = exceptionLogList.concat((jaItem.exceptionLog || []).filter(ex => ex.status != 'Resolved').map(exception => ({
                             exception: exception.exception,
                             exceptionCode: exception.exceptionCode,
+                            eventURL: exception.eventURL,
                             id: exception.id,
                             key: uniqueId('exception_ja'),
                             resource: jaItem.resource,

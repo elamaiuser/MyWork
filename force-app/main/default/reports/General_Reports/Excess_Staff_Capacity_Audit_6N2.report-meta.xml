@@ -17,18 +17,7 @@
     </columns>
     <columns>
         <aggregateTypes>Sum</aggregateTypes>
-        <field>sked_Drive__c$Average_Staff_Capacity__c</field>
-    </columns>
-    <columns>
-        <aggregateTypes>Sum</aggregateTypes>
         <field>sked_Drive__c$Excess_Staff_Capacity__c</field>
-    </columns>
-    <columns>
-        <aggregateTypes>Sum</aggregateTypes>
-        <field>sked_Drive__c$sked_Drive_Productivity_Planned__c</field>
-    </columns>
-    <columns>
-        <field>sked_Drive__c$sked_Drive_Productivity_Banding__c</field>
     </columns>
     <columns>
         <aggregateTypes>Sum</aggregateTypes>
@@ -40,6 +29,17 @@
     </columns>
     <columns>
         <aggregateTypes>Sum</aggregateTypes>
+        <field>sked_Drive__c$Max_Role_Capacity__c</field>
+    </columns>
+    <columns>
+        <aggregateTypes>Sum</aggregateTypes>
+        <field>sked_Drive__c$sked_Drive_Productivity_Planned__c</field>
+    </columns>
+    <columns>
+        <field>sked_Drive__c$sked_Drive_Productivity_Banding__c</field>
+    </columns>
+    <columns>
+        <aggregateTypes>Sum</aggregateTypes>
         <field>sked_Drive__c$sked_Number_of_2RBC_Assets__c</field>
     </columns>
     <columns>
@@ -48,7 +48,7 @@
     </columns>
     <description>Report to Audit Drives with Excess Staff Capacity</description>
     <filter>
-        <booleanFilter>1 AND 2 AND 3 AND 4 AND 5 AND 6 AND 7</booleanFilter>
+        <booleanFilter>1 AND 2 AND 3 AND 4 AND 5 AND 6</booleanFilter>
         <criteriaItems>
             <column>sked_Drive__c$Excess_Staff_Capacity__c</column>
             <columnToColumn>false</columnToColumn>
@@ -90,13 +90,6 @@
             <isUnlocked>true</isUnlocked>
             <operator>equals</operator>
             <value></value>
-        </criteriaItems>
-        <criteriaItems>
-            <column>sked_Drive__c$sked_Collection_Operation__c</column>
-            <columnToColumn>false</columnToColumn>
-            <isUnlocked>true</isUnlocked>
-            <operator>contains</operator>
-            <value>Albany</value>
         </criteriaItems>
         <language>en_US</language>
     </filter>

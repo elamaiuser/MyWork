@@ -358,10 +358,28 @@ public class skedJobHandler extends skedTriggerHub {
             }
             
             for (sked__Job__c newRecord : newRecords) {
-                if (!string.isBlank(newRecord.sked_Resource_Role__c) || !string.isBlank(newRecord.sked_Asset_Type__c)) {
-                    sked__Tag__c skedTag;
-                    skedTag = mapRole.containsKey(newRecord.sked_Resource_Role__c) ? 
-                        mapRole.get(newRecord.sked_Resource_Role__c) : mapRole.get(newRecord.sked_Asset_Type__c);
+                if (!string.isBlank(newRecord.sked_Resource_Role__c)) {
+                    List<sked__Tag__c> skedTags = new List<sked__Tag__c>();
+                    if(mapRole.containsKey(newRecord.sked_Resource_Role__c)) {
+                        skedTags.add(mapRole.get(newRecord.sked_Resource_Role__c));
+                    }
+                    if(mapRole.containsKey(newRecord.sked_Dual_Role__c)) {
+                        skedTags.add(mapRole.get(newRecord.sked_Dual_Role__c));
+                    }
+                    
+                    if (!skedTags.isEmpty()) {
+                        for(sked__Tag__c skedTag : skedTags) {
+                            sked__Job_Tag__c skedJobTag = new sked__Job_Tag__c(
+                                sked__Job__c = newRecord.Id,
+                                sked__Tag__c = skedTag.Id,
+                                sked_SystemCreated__c = TRUE
+                            );
+                            skedJobTags.add(skedJobTag);
+                        }
+                    }
+                }
+                if (!string.isBlank(newRecord.sked_Asset_Type__c)) {
+                    sked__Tag__c skedTag = mapRole.get(newRecord.sked_Asset_Type__c);
                     if (skedTag != NULL) {
                         sked__Job_Tag__c skedJobTag = new sked__Job_Tag__c(
                         	sked__Job__c = newRecord.Id,

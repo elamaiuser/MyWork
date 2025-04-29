@@ -928,6 +928,11 @@
             <field>sked_Collection_Operation__c.sked_Territory__c.Name</field>
             <table>sked_Drive__c</table>
         </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>Max_Role_Capacity__c</field>
+            <table>sked_Drive__c</table>
+        </columns>
         <masterLabel>Drives on Calendar</masterLabel>
     </sections>
     <sections>
