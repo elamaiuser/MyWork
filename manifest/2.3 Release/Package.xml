@@ -6,6 +6,11 @@
 		<members>Calendar_Build_Log__c-Calendar Build Log Layout</members>
         <members>Opportunity-Fixed Site Opp Non-APS Layout</members>	
         <members>sked_Travel_Time_Index_Refresh_Request__c-Travel Time Index Refresh Request Layout</members>
+		<members>Opportunity-APS Planner Mobile Opp Layout</members>
+		<members>Opportunity-APS Scheduler Mobile Opp Layout</members>
+		<members>Opportunity-DRD Mobile Opp Layout</members>
+		<members>Opportunity-Mobile Opp Layout</members>
+		<members>Opportunity-Sponsor Marketing Mobile Opp Layout</members>
         <name>Layout</name>
     </types>
     <types>
