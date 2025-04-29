@@ -1955,7 +1955,7 @@ export default class SlwcDriveStaffingDetails extends LightningElement {
             selectedResourceEmploymentTypes: [],
             weeklyHoursRange: {
                 start: 0,
-                end: 40
+                end: 100
             },
             queryText: ''
         }
