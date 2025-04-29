@@ -9,6 +9,6 @@ trigger assignResourcesToUsersBasedOnConfig on AssignResourcesToUserEvent__e (Af
             'userIds' => map_userId_skipRoleAssignment.keySet(),
             'skipUserRoleAssignment' => map_userId_skipRoleAssignment
         };
-        userService.assignResourcesToUser(userObject);
+        userService.AssignResourcesToUser(userObject);
     }
 }

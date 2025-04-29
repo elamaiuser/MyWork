@@ -428,7 +428,7 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
         }
         queryString += ' AND sked_Type_of_Drive__c =: typeOfDrive ORDER BY sked_Drive_Date__c DESC, sked_Rank__c';
         //HRP-12706 --> Ends Here
-
+        
         return queryString; //HRP-11793
     }
 

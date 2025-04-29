@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <PermissionSet xmlns="http://soap.sforce.com/2006/04/metadata">
     <hasActivationRequired>false</hasActivationRequired>
     <label>ODS Permission</label>
@@ -6566,11 +6566,6 @@
     <fieldPermissions>
         <editable>false</editable>
         <field>sked_Site_Collection_Operation__c.sked_Travel_Time_Breakdown_JSON__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>false</editable>
-        <field>sked_Site_Collection_Operation__c.sked_Travel_Time_Index_Item__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
