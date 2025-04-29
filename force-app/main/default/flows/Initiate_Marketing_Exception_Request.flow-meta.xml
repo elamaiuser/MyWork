@@ -23,7 +23,6 @@
         <nameSegment>updateOpportunitiesInvocable</nameSegment>
     </actionCalls>
     <apiVersion>51.0</apiVersion>
-    <areMetricsLoggedToDataCloud>false</areMetricsLoggedToDataCloud>
     <assignments>
         <name>Assign_Opportunity_values_from_screen</name>
         <label>Assign Opportunity values from screen</label>
