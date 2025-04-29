@@ -1,16 +1,37 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Flow xmlns="http://soap.sforce.com/2006/04/metadata">
     <actionCalls>
+        <name>Send_Marketing_Exception_Approval_Request</name>
+        <label>Send Marketing Exception Approval Request</label>
+        <locationX>666</locationX>
+        <locationY>1646</locationY>
+        <actionName>BSF_MarketingExceptionRequest</actionName>
+        <actionType>apex</actionType>
+        <connector>
+            <targetReference>Success_Screen</targetReference>
+        </connector>
+        <flowTransactionModel>Automatic</flowTransactionModel>
+        <inputParameters>
+            <name>taskId</name>
+            <value>
+                <elementReference>Create_task_on_opportunity</elementReference>
+            </value>
+        </inputParameters>
+        <nameSegment>BSF_MarketingExceptionRequest</nameSegment>
+        <offset>0</offset>
+    </actionCalls>
+    <actionCalls>
         <name>update_opportunities1</name>
         <label>update opportunities1</label>
-        <locationX>1416</locationX>
-        <locationY>796</locationY>
+        <locationX>1018</locationX>
+        <locationY>2270</locationY>
         <actionName>updateOpportunitiesInvocable</actionName>
         <actionType>apex</actionType>
         <connector>
             <targetReference>Update_Success_display</targetReference>
         </connector>
         <faultConnector>
+            <isGoTo>true</isGoTo>
             <targetReference>ErrorFooter</targetReference>
         </faultConnector>
         <flowTransactionModel>Automatic</flowTransactionModel>
@@ -21,13 +42,15 @@
             </value>
         </inputParameters>
         <nameSegment>updateOpportunitiesInvocable</nameSegment>
+        <offset>0</offset>
     </actionCalls>
     <apiVersion>51.0</apiVersion>
+    <areMetricsLoggedToDataCloud>false</areMetricsLoggedToDataCloud>
     <assignments>
         <name>Assign_Opportunity_values_from_screen</name>
         <label>Assign Opportunity values from screen</label>
-        <locationX>1219</locationX>
-        <locationY>569</locationY>
+        <locationX>1018</locationX>
+        <locationY>2054</locationY>
         <assignmentItems>
             <assignToReference>Get_Initiate_Request_Values.Web_Scheduling_Enabled__c</assignToReference>
             <operator>Assign</operator>
@@ -63,8 +86,8 @@
     <assignments>
         <name>Construct_Queue_Name</name>
         <label>Construct Queue Name</label>
-        <locationX>721</locationX>
-        <locationY>339</locationY>
+        <locationX>1546</locationX>
+        <locationY>998</locationY>
         <assignmentItems>
             <assignToReference>varQueueName</assignToReference>
             <operator>Assign</operator>
@@ -79,8 +102,8 @@
     <decisions>
         <name>Check_Is_having_site</name>
         <label>Check Is having site</label>
-        <locationX>97</locationX>
-        <locationY>597</locationY>
+        <locationX>1128</locationX>
+        <locationY>458</locationY>
         <defaultConnector>
             <targetReference>Get_Site_Collection_Operation_Record</targetReference>
         </defaultConnector>
@@ -108,8 +131,8 @@
     <decisions>
         <name>Check_Queue_ID</name>
         <label>Check Queue ID</label>
-        <locationX>1014</locationX>
-        <locationY>578</locationY>
+        <locationX>1546</locationX>
+        <locationY>1214</locationY>
         <defaultConnector>
             <targetReference>Queue_Not_Found_Screen</targetReference>
         </defaultConnector>
@@ -137,8 +160,8 @@
     <decisions>
         <name>determine_action</name>
         <label>determine action</label>
-        <locationX>1208</locationX>
-        <locationY>289</locationY>
+        <locationX>1018</locationX>
+        <locationY>1430</locationY>
         <defaultConnector>
             <targetReference>Assign_Opportunity_values_from_screen</targetReference>
         </defaultConnector>
@@ -275,8 +298,8 @@
     <decisions>
         <name>is_Collection_Op_Name_blank</name>
         <label>is Collection Op Name blank</label>
-        <locationX>646</locationX>
-        <locationY>610</locationY>
+        <locationX>1018</locationX>
+        <locationY>890</locationY>
         <defaultConnector>
             <targetReference>Construct_Queue_Name</targetReference>
         </defaultConnector>
@@ -304,8 +327,8 @@
     <decisions>
         <name>Is_Site_Collection_Op_Found</name>
         <label>Is Site Collection Op Found</label>
-        <locationX>385</locationX>
-        <locationY>854</locationY>
+        <locationX>1942</locationX>
+        <locationY>674</locationY>
         <defaultConnector>
             <targetReference>Error_No_Collection_Operation_Found</targetReference>
         </defaultConnector>
@@ -333,8 +356,8 @@
     <decisions>
         <name>Is_Template_and_Site_TBD</name>
         <label>Is Template and Site TBD</label>
-        <locationX>106</locationX>
-        <locationY>333</locationY>
+        <locationX>589</locationX>
+        <locationY>350</locationY>
         <defaultConnector>
             <targetReference>Check_Is_having_site</targetReference>
         </defaultConnector>
@@ -380,7 +403,7 @@
     <processMetadataValues>
         <name>CanvasMode</name>
         <value>
-            <stringValue>FREE_FORM_CANVAS</stringValue>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
         </value>
     </processMetadataValues>
     <processMetadataValues>
@@ -394,10 +417,10 @@
         <description>Create task on opportunity if AM initiate request to DM</description>
         <name>Create_task_on_opportunity</name>
         <label>Create task on opportunity</label>
-        <locationX>1595</locationX>
-        <locationY>279</locationY>
+        <locationX>666</locationX>
+        <locationY>1538</locationY>
         <connector>
-            <targetReference>Success_Screen</targetReference>
+            <targetReference>Send_Marketing_Exception_Approval_Request</targetReference>
         </connector>
         <faultConnector>
             <targetReference>ErrorFooter</targetReference>
@@ -462,13 +485,14 @@
     <recordLookups>
         <name>Get_Collection_Op_name2</name>
         <label>Get Collection Op name</label>
-        <locationX>653</locationX>
-        <locationY>854</locationY>
+        <locationX>1018</locationX>
+        <locationY>782</locationY>
         <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
         <connector>
             <targetReference>is_Collection_Op_Name_blank</targetReference>
         </connector>
         <faultConnector>
+            <isGoTo>true</isGoTo>
             <targetReference>ErrorFooter</targetReference>
         </faultConnector>
         <filterLogic>and</filterLogic>
@@ -489,13 +513,14 @@
         <description>Get Initiate Request Values from Opportunity</description>
         <name>Get_Initiate_Request_Values</name>
         <label>Get Initiate Request Values</label>
-        <locationX>338</locationX>
-        <locationY>330</locationY>
+        <locationX>589</locationX>
+        <locationY>242</locationY>
         <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
         <connector>
             <targetReference>Is_Template_and_Site_TBD</targetReference>
         </connector>
         <faultConnector>
+            <isGoTo>true</isGoTo>
             <targetReference>ErrorFooter</targetReference>
         </faultConnector>
         <filterLogic>and</filterLogic>
@@ -523,13 +548,14 @@
     <recordLookups>
         <name>Get_Queue_ID</name>
         <label>Get Queue ID</label>
-        <locationX>803</locationX>
-        <locationY>567</locationY>
+        <locationX>1546</locationX>
+        <locationY>1106</locationY>
         <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
         <connector>
             <targetReference>Check_Queue_ID</targetReference>
         </connector>
         <faultConnector>
+            <isGoTo>true</isGoTo>
             <targetReference>ErrorFooter</targetReference>
         </faultConnector>
         <filterLogic>and</filterLogic>
@@ -556,13 +582,14 @@
     <recordLookups>
         <name>Get_RecordType_Id</name>
         <label>Get RecordType Id</label>
-        <locationX>506</locationX>
-        <locationY>339</locationY>
+        <locationX>589</locationX>
+        <locationY>134</locationY>
         <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
         <connector>
             <targetReference>Get_Initiate_Request_Values</targetReference>
         </connector>
         <faultConnector>
+            <isGoTo>true</isGoTo>
             <targetReference>ErrorFooter</targetReference>
         </faultConnector>
         <filterLogic>and</filterLogic>
@@ -589,13 +616,14 @@
     <recordLookups>
         <name>Get_Site_Collection_Operation_Record</name>
         <label>Get Site Collection Operation Record</label>
-        <locationX>107</locationX>
-        <locationY>844</locationY>
+        <locationX>1942</locationX>
+        <locationY>566</locationY>
         <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
         <connector>
             <targetReference>Is_Site_Collection_Op_Found</targetReference>
         </connector>
         <faultConnector>
+            <isGoTo>true</isGoTo>
             <targetReference>ErrorFooter</targetReference>
         </faultConnector>
         <filterLogic>1 AND 2 AND 3 AND (4 OR 5)</filterLogic>
@@ -643,12 +671,13 @@
     <recordUpdates>
         <name>Update_Current_Opportunities</name>
         <label>Update Current Opportunities</label>
-        <locationX>1408</locationX>
-        <locationY>568</locationY>
+        <locationX>1018</locationX>
+        <locationY>2162</locationY>
         <connector>
             <targetReference>update_opportunities1</targetReference>
         </connector>
         <faultConnector>
+            <isGoTo>true</isGoTo>
             <targetReference>ErrorFooter</targetReference>
         </faultConnector>
         <inputReference>Get_Initiate_Request_Values</inputReference>
@@ -657,8 +686,8 @@
         <description>Iniate Request Checkboxes will be displayed with values</description>
         <name>Display_Initiate_Request_Values</name>
         <label>Display Initiate Request Values</label>
-        <locationX>1014</locationX>
-        <locationY>287</locationY>
+        <locationX>1018</locationX>
+        <locationY>1322</locationY>
         <allowBack>true</allowBack>
         <allowFinish>true</allowFinish>
         <allowPause>true</allowPause>
@@ -723,8 +752,8 @@
     <screens>
         <name>Error_No_Collection_Operation_Found</name>
         <label>Error No Collection Operation Found</label>
-        <locationX>389</locationX>
-        <locationY>590</locationY>
+        <locationX>1128</locationX>
+        <locationY>2930</locationY>
         <allowBack>true</allowBack>
         <allowFinish>true</allowFinish>
         <allowPause>true</allowPause>
@@ -739,8 +768,8 @@
     <screens>
         <name>ErrorFooter</name>
         <label>ErrorFooter</label>
-        <locationX>1600</locationX>
-        <locationY>136</locationY>
+        <locationX>930</locationX>
+        <locationY>1646</locationY>
         <allowBack>false</allowBack>
         <allowFinish>true</allowFinish>
         <allowPause>false</allowPause>
@@ -760,8 +789,8 @@
     <screens>
         <name>Queue_Not_Found_Screen</name>
         <label>Queue Not Found Screen</label>
-        <locationX>1022</locationX>
-        <locationY>795</locationY>
+        <locationX>2074</locationX>
+        <locationY>1322</locationY>
         <allowBack>true</allowBack>
         <allowFinish>true</allowFinish>
         <allowPause>true</allowPause>
@@ -776,8 +805,8 @@
     <screens>
         <name>SIte_TBD_Error</name>
         <label>SIte TBD Error</label>
-        <locationX>114</locationX>
-        <locationY>156</locationY>
+        <locationX>50</locationX>
+        <locationY>458</locationY>
         <allowBack>true</allowBack>
         <allowFinish>true</allowFinish>
         <allowPause>true</allowPause>
@@ -793,8 +822,8 @@
         <description>Show this screen when task created successfully.</description>
         <name>Success_Screen</name>
         <label>Success Screen</label>
-        <locationX>1595</locationX>
-        <locationY>565</locationY>
+        <locationX>666</locationX>
+        <locationY>1754</locationY>
         <allowBack>true</allowBack>
         <allowFinish>true</allowFinish>
         <allowPause>true</allowPause>
@@ -809,8 +838,8 @@
     <screens>
         <name>Update_Success_display</name>
         <label>Update_Success_display</label>
-        <locationX>1604</locationX>
-        <locationY>796</locationY>
+        <locationX>1018</locationX>
+        <locationY>2378</locationY>
         <allowBack>true</allowBack>
         <allowFinish>true</allowFinish>
         <allowPause>true</allowPause>
@@ -823,8 +852,8 @@
         <showHeader>true</showHeader>
     </screens>
     <start>
-        <locationX>380</locationX>
-        <locationY>133</locationY>
+        <locationX>463</locationX>
+        <locationY>0</locationY>
         <connector>
             <targetReference>Get_RecordType_Id</targetReference>
         </connector>

@@ -91,6 +91,7 @@
 		<name>FlexiPage</name>
 	</types>
     <types>
+		<members>slwcAvailator</members>
         <members>slwcDriveGenerator</members>
 		<members>slwcDriveStaffingDetails</members>
 		<members>slwcExceptionList</members>

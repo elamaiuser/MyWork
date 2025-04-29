@@ -1757,9 +1757,10 @@ public with sharing class GenerateMobileDrive {
                     DriveGenerationUtil.TimeConfigurationModel roleTimeData = map_resourceRoleGroup_timeConfig.get(currentResourceRoleGroup);
                     String dualRoleGroup;
                     DriveGenerationUtil.TimeConfigurationModel dualRoleTimeData;
-                    if(!String.isBlank(job.resourceRole)) {
+                    if(!currentResourceRoleGroup.equalsIgnorecase(skedConstants.RESOURCE_ROLE_GROUP_DRIVING_ROLES) && job.dualRole != NULL && !String.isBlank(job.dualRole)) { //HRP-12733
                         dualRoleGroup = getResourceRoleGroupUponResourceRole(data, job.dualRole);
                         dualRoleTimeData = map_resourceRoleGroup_timeConfig.get(dualRoleGroup);
+                        if(dualRoleGroup.equalsIgnorecase(skedConstants.RESOURCE_ROLE_GROUP_DRIVING_ROLES)) roleTimeData = dualRoleTimeData; //HRP-12733
                     }
                     if (map_resourceRoleGroup_timeConfig.containsKey(currentResourceRoleGroup) || map_resourceRoleGroup_timeConfig.containsKey(dualRoleGroup)) {
                         DriveGenerationUtil.TimeConfigurationModel driveShiftJobRoleTimeDetail = map_resourceRoleGroup_timeConfig.get(currentResourceRoleGroup);

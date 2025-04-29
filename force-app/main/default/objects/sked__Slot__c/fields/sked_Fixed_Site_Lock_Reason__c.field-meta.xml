@@ -10,27 +10,7 @@
         <controllingField>sked_Type__c</controllingField>
         <restricted>true</restricted>
         <valueSetDefinition>
-            <sorted>false</sorted>
-            <value>
-                <fullName>Staffing</fullName>
-                <default>false</default>
-                <label>Staffing</label>
-            </value>
-            <value>
-                <fullName>Machines</fullName>
-                <default>false</default>
-                <label>Machines</label>
-            </value>
-            <value>
-                <fullName>Weather</fullName>
-                <default>false</default>
-                <label>Weather</label>
-            </value>
-            <value>
-                <fullName>Site Issue</fullName>
-                <default>false</default>
-                <label>Site Issue</label>
-            </value>
+            <sorted>true</sorted>
             <value>
                 <fullName>BSF</fullName>
                 <default>false</default>
@@ -46,35 +26,32 @@
                 <default>false</default>
                 <label>Inventory Management</label>
             </value>
+            <value>
+                <fullName>Machines</fullName>
+                <default>false</default>
+                <label>Machines</label>
+            </value>
+            <value>
+                <fullName>Manufacturing Constraint</fullName>
+                <default>false</default>
+                <label>Manufacturing Constraint</label>
+            </value>
+            <value>
+                <fullName>Site Issue</fullName>
+                <default>false</default>
+                <label>Site Issue</label>
+            </value>
+            <value>
+                <fullName>Staffing</fullName>
+                <default>false</default>
+                <label>Staffing</label>
+            </value>
+            <value>
+                <fullName>Weather</fullName>
+                <default>false</default>
+                <label>Weather</label>
+            </value>
         </valueSetDefinition>
-        <valueSettings>
-            <controllingFieldValue>2RBC</controllingFieldValue>
-            <controllingFieldValue>Whole Blood</controllingFieldValue>
-            <controllingFieldValue>Plasma</controllingFieldValue>
-            <controllingFieldValue>Platelet</controllingFieldValue>
-            <valueName>Staffing</valueName>
-        </valueSettings>
-        <valueSettings>
-            <controllingFieldValue>2RBC</controllingFieldValue>
-            <controllingFieldValue>Whole Blood</controllingFieldValue>
-            <controllingFieldValue>Plasma</controllingFieldValue>
-            <controllingFieldValue>Platelet</controllingFieldValue>
-            <valueName>Machines</valueName>
-        </valueSettings>
-        <valueSettings>
-            <controllingFieldValue>2RBC</controllingFieldValue>
-            <controllingFieldValue>Whole Blood</controllingFieldValue>
-            <controllingFieldValue>Plasma</controllingFieldValue>
-            <controllingFieldValue>Platelet</controllingFieldValue>
-            <valueName>Weather</valueName>
-        </valueSettings>
-        <valueSettings>
-            <controllingFieldValue>2RBC</controllingFieldValue>
-            <controllingFieldValue>Whole Blood</controllingFieldValue>
-            <controllingFieldValue>Plasma</controllingFieldValue>
-            <controllingFieldValue>Platelet</controllingFieldValue>
-            <valueName>Site Issue</valueName>
-        </valueSettings>
         <valueSettings>
             <controllingFieldValue>2RBC</controllingFieldValue>
             <controllingFieldValue>Whole Blood</controllingFieldValue>
@@ -88,6 +65,41 @@
             <controllingFieldValue>Plasma</controllingFieldValue>
             <controllingFieldValue>Platelet</controllingFieldValue>
             <valueName>Freezing</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>2RBC</controllingFieldValue>
+            <controllingFieldValue>Whole Blood</controllingFieldValue>
+            <controllingFieldValue>Plasma</controllingFieldValue>
+            <controllingFieldValue>Platelet</controllingFieldValue>
+            <valueName>Machines</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>2RBC</controllingFieldValue>
+            <controllingFieldValue>Whole Blood</controllingFieldValue>
+            <controllingFieldValue>Plasma</controllingFieldValue>
+            <controllingFieldValue>Platelet</controllingFieldValue>
+            <valueName>Manufacturing Constraint</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>2RBC</controllingFieldValue>
+            <controllingFieldValue>Whole Blood</controllingFieldValue>
+            <controllingFieldValue>Plasma</controllingFieldValue>
+            <controllingFieldValue>Platelet</controllingFieldValue>
+            <valueName>Site Issue</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>2RBC</controllingFieldValue>
+            <controllingFieldValue>Whole Blood</controllingFieldValue>
+            <controllingFieldValue>Plasma</controllingFieldValue>
+            <controllingFieldValue>Platelet</controllingFieldValue>
+            <valueName>Staffing</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>2RBC</controllingFieldValue>
+            <controllingFieldValue>Whole Blood</controllingFieldValue>
+            <controllingFieldValue>Plasma</controllingFieldValue>
+            <controllingFieldValue>Platelet</controllingFieldValue>
+            <valueName>Weather</valueName>
         </valueSettings>
         <valueSettings>
             <controllingFieldValue>Plasma</controllingFieldValue>

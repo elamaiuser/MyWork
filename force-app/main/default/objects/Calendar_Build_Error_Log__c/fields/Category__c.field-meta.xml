@@ -35,6 +35,16 @@
                 <default>false</default>
                 <label>Sys Gen Run - Mobile</label>
             </value>
+            <value>
+                <fullName>Sys Gen Run - FS Business Error</fullName>
+                <default>false</default>
+                <label>Sys Gen Run - FS Business Error</label>
+            </value>
+            <value>
+                <fullName>Sys Gen Run - Mobile Business Error</fullName>
+                <default>false</default>
+                <label>Sys Gen Run - Mobile Business Error</label>
+            </value>
         </valueSetDefinition>
     </valueSet>
 </CustomField>

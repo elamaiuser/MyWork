@@ -130,7 +130,7 @@ public class ContactService {
             List<Account_Service_Role__c> accountServiceRoles = [SELECT Id, Contact__c
                                                                  FROM Account_Service_Role__c
                                                                  WHERE Contact__c IN :contactIdsToCheck
-                                                                 AND (End_Date__c >= TODAY OR End_Date__c=null)];
+                                                                 AND (End_Date__c > TODAY OR End_Date__c=null)];
     
             Set<Id> contactsToDisassociate = new Set<Id>();
     
