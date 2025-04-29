@@ -76,64 +76,66 @@ global class skedExceptionLogService extends skedDataService {
         List<skedHC__Exception__c> newExceptionLogs = new List<skedHC__Exception__c>();
         for (resourceUnavailabilityModel unavailability : unavailabilityList) {
             for (sked__Job_Allocation__c conflictedAllocation : conflictedAllocations) {
-               if (conflictedAllocation.sked__Resource__c != unavailability.resourceId
-                    || conflictedAllocation.sked__Set_End__c < unavailability.startTime) {
-                        continue;
-                    }
+                if (unavailability.relatedEventFieldApi == 'skedHC__Job_Allocation__c' && unavailability.recordId == conflictedAllocation.Id) continue;
+
+                if (conflictedAllocation.sked__Resource__c != unavailability.resourceId
+                        || conflictedAllocation.sked__Set_End__c < unavailability.startTime) {
+                            continue;
+                }
                 if (unavailability.endTime != NULL && unavailability.endTime <= conflictedAllocation.sked__Start__c) {
                     break;
                 }
                 string key = conflictedAllocation.Id + ':' + unavailability.exceptionText;
+
                 if (mapExistingExceptionLog.containsKey(key)) {
                     continue;
                 }
 
-                if (unavailability.relatedEventFieldApi == 'skedHC__Job_Allocation__c' && unavailability.recordId == conflictedAllocation.Id) {
-                    for (sked__Job_Allocation__c skedAllocation : conflictedAllocations) {
-                        if(unavailability.recordId == skedAllocation.Id) continue;
-                        resourceUnavailabilityModel unavailabilityModel = new resourceUnavailabilityModel();
-                        unavailabilityModel.resourceId = skedAllocation.sked__Resource__c;
-                        unavailabilityModel.exceptionCode = skedConstants.EXCEPTION_CODE_RESOURCE_TIME_CONFLICT;
-                        unavailabilityModel.exceptionText = 'Conflict with ' +  unavailability.driveName;
-                        unavailabilityModel.relatedEventFieldApi = 'skedHC__Job_Allocation__c';
-                        unavailabilityModel.recordId = unavailability.recordId;
-                        unavailabilityModel.jobId = skedAllocation.sked__Job__c; 
-                        unavailabilityModel.jobAllocationId = skedAllocation.Id; 
-                        unavailabilityModel.driveId = skedAllocation.sked__Job__r.sked_Drive__c; 
-                        unavailabilityModel.conflictedJobId = unavailability.jobId;
-                        unavailabilityModel.conflictedJobAllocationId = unavailability.jobAllocationId;
-                        unavailabilityModel.conflictedDriveId = unavailability.driveId;
-                        unavailabilityModel.status = skedConstants.EXCEPTION_LOG_STATUS_OPEN;
-                        newExceptionLogs.add(getExceptionLog(unavailabilityModel));
-                    }
-                } else {
-                    String jobId = unavailability.jobId != null ? unavailability.jobId : conflictedAllocation.sked__Job__c;
-                    String jobAllocationId = unavailability.jobAllocationId != null ? unavailability.jobAllocationId : conflictedAllocation.Id;
-                    String driveId = unavailability.driveId != null ? unavailability.driveId : conflictedAllocation.sked__Job__r.sked_Drive__c;
-                    String exceptionText = unavailability.exceptionText;
-                    if (!string.isBlank(unavailability.exceptionText)) {
-                        if(driveId != conflictedAllocation.sked__Job__r.sked_Drive__c) {
-                            exceptionText = 'Conflict with ' + conflictedAllocation.sked__Job__r.sked_Drive__r.Name;
-                        }
-                    }
-
+                if (unavailability.relatedEventFieldApi == 'skedHC__Job_Allocation__c') {
                     resourceUnavailabilityModel unavailabilityModel = new resourceUnavailabilityModel();
                     unavailabilityModel.resourceId = conflictedAllocation.sked__Resource__c;
                     unavailabilityModel.exceptionCode = skedConstants.EXCEPTION_CODE_RESOURCE_TIME_CONFLICT;
-                    unavailabilityModel.exceptionText = exceptionText;
+                    unavailabilityModel.exceptionText = 'Conflict with ' +  unavailability.driveName;
                     unavailabilityModel.relatedEventFieldApi = unavailability.relatedEventFieldApi;
                     unavailabilityModel.recordId = unavailability.recordId;
-                    unavailabilityModel.jobId = jobId;
-                    unavailabilityModel.jobAllocationId = jobAllocationId;
-                    unavailabilityModel.driveId = driveId;
-                    unavailabilityModel.conflictedJobId = conflictedAllocation.sked__Job__c;
-                    unavailabilityModel.conflictedJobAllocationId = conflictedAllocation.Id;
-                    unavailabilityModel.conflictedDriveId = conflictedAllocation.sked__Job__r.sked_Drive__c;
+                    unavailabilityModel.jobId = conflictedAllocation.sked__Job__c; 
+                    unavailabilityModel.jobAllocationId = conflictedAllocation.Id; 
+                    unavailabilityModel.driveId = conflictedAllocation.sked__Job__r.sked_Drive__c; 
+                    unavailabilityModel.conflictedJobId = unavailability.jobId;
+                    unavailabilityModel.conflictedJobAllocationId = unavailability.jobAllocationId;
+                    unavailabilityModel.conflictedDriveId = unavailability.driveId;
                     unavailabilityModel.status = skedConstants.EXCEPTION_LOG_STATUS_OPEN;
                     newExceptionLogs.add(getExceptionLog(unavailabilityModel));
                 }
+
+                String jobId = unavailability.jobId != null ? unavailability.jobId : conflictedAllocation.sked__Job__c;
+                String jobAllocationId = unavailability.jobAllocationId != null ? unavailability.jobAllocationId : conflictedAllocation.Id;
+                String driveId = unavailability.driveId != null ? unavailability.driveId : conflictedAllocation.sked__Job__r.sked_Drive__c;
+                String exceptionText = unavailability.exceptionText;
+
+                if (!string.isBlank(unavailability.exceptionText)) {
+                    if(driveId != conflictedAllocation.sked__Job__r.sked_Drive__c) {
+                        exceptionText = 'Conflict with ' + conflictedAllocation.sked__Job__r.sked_Drive__r.Name;
+                    }
+                }
+
+                resourceUnavailabilityModel unavailabilityModel = new resourceUnavailabilityModel();
+                unavailabilityModel.resourceId = conflictedAllocation.sked__Resource__c;
+                unavailabilityModel.exceptionCode = skedConstants.EXCEPTION_CODE_RESOURCE_TIME_CONFLICT;
+                unavailabilityModel.exceptionText = exceptionText;
+                unavailabilityModel.relatedEventFieldApi = unavailability.relatedEventFieldApi;
+                unavailabilityModel.recordId = unavailability.recordId;
+                unavailabilityModel.jobId = jobId;
+                unavailabilityModel.jobAllocationId = jobAllocationId;
+                unavailabilityModel.driveId = driveId;
+                unavailabilityModel.conflictedJobId = conflictedAllocation.sked__Job__c;
+                unavailabilityModel.conflictedJobAllocationId = conflictedAllocation.Id;
+                unavailabilityModel.conflictedDriveId = conflictedAllocation.sked__Job__r.sked_Drive__c;
+                unavailabilityModel.status = skedConstants.EXCEPTION_LOG_STATUS_OPEN;
+                newExceptionLogs.add(getExceptionLog(unavailabilityModel));   
             }
         }
+
         if (!newExceptionLogs.isEmpty()) {
             insert newExceptionLogs;
         }
