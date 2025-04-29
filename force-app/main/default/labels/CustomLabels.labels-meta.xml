@@ -7,4 +7,18 @@
         <shortDescription>DRD System User Name</shortDescription>
         <value>DRD System User</value>
     </labels>
+    <labels>
+        <fullName>Recurring_Drive_Async_Limit</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Recurring Drive Async Limit</shortDescription>
+        <value>100</value>
+    </labels>
+    <labels>
+        <fullName>Recurring_Drive_Limit</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Recurring Drive Limit</shortDescription>
+        <value>200</value>
+    </labels>
 </CustomLabels>

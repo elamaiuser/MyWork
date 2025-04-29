@@ -12366,9 +12366,6 @@
         <layout>sked_Trade_API_Data__c-Trade API Data Layout</layout>
     </layoutAssignments>
     <layoutAssignments>
-        <layout>sked_Travel_Time_Breakdown_Refresh_Item__c-Travel Time Breakdown Refresh Queue Item Layout</layout>
-    </layoutAssignments>
-    <layoutAssignments>
         <layout>sked_Travel_Time_Breakdown_Refresh_Queue__c-Travel Time Breakdown Refresh Queue Layout</layout>
     </layoutAssignments>
     <layoutAssignments>
