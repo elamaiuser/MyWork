@@ -7,7 +7,7 @@
 	<!-- Deactivated WorkFlow Rule fot this Ticekt -->
 	<types>
     	<members>sked_Drive__c.Drive Hold Status Expires</members>
-    	<name>Workflow</name>
+    	<name>WorkflowRule</name>
 	</types>
 	<!-- End -->
     <version>63.0</version>
