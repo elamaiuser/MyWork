@@ -18,7 +18,6 @@
             </value>
         </inputParameters>
         <nameSegment>NewFixedSiteDrive</nameSegment>
-        <versionSegment>1</versionSegment>
     </actionCalls>
     <apiVersion>62.0</apiVersion>
     <assignments>
@@ -395,6 +394,13 @@
         </value>
     </choices>
     <constants>
+        <name>DRIVE_TYPE_FIXED_SITE</name>
+        <dataType>String</dataType>
+        <value>
+            <stringValue>Fixed Site</stringValue>
+        </value>
+    </constants>
+    <constants>
         <name>TBD</name>
         <dataType>String</dataType>
         <value>
@@ -738,72 +744,72 @@
     <dynamicChoiceSets>
         <name>AcceptsAutomation</name>
         <dataType>Picklist</dataType>
-        <displayField xsi:nil="true" />
-        <object xsi:nil="true" />
+        <displayField xsi:nil="true"/>
+        <object xsi:nil="true"/>
         <picklistField>Accepts_Automation2__c</picklistField>
         <picklistObject>Account</picklistObject>
     </dynamicChoiceSets>
     <dynamicChoiceSets>
         <name>Calendar_Description</name>
         <dataType>Picklist</dataType>
-        <displayField xsi:nil="true" />
-        <object xsi:nil="true" />
+        <displayField xsi:nil="true"/>
+        <object xsi:nil="true"/>
         <picklistField>Calendar_Description__c</picklistField>
         <picklistObject>Opportunity</picklistObject>
     </dynamicChoiceSets>
     <dynamicChoiceSets>
         <name>DriveOrigination</name>
         <dataType>Picklist</dataType>
-        <displayField xsi:nil="true" />
-        <object xsi:nil="true" />
+        <displayField xsi:nil="true"/>
+        <object xsi:nil="true"/>
         <picklistField>Drive_Origination__c</picklistField>
         <picklistObject>Opportunity</picklistObject>
     </dynamicChoiceSets>
     <dynamicChoiceSets>
         <name>FlowEndTime</name>
         <dataType>Picklist</dataType>
-        <displayField xsi:nil="true" />
-        <object xsi:nil="true" />
+        <displayField xsi:nil="true"/>
+        <object xsi:nil="true"/>
         <picklistField>Flow_End_Time_Field__c</picklistField>
         <picklistObject>Opportunity</picklistObject>
     </dynamicChoiceSets>
     <dynamicChoiceSets>
         <name>FlowStartTime</name>
         <dataType>Picklist</dataType>
-        <displayField xsi:nil="true" />
-        <object xsi:nil="true" />
+        <displayField xsi:nil="true"/>
+        <object xsi:nil="true"/>
         <picklistField>Flow_Start_Time_Field__c</picklistField>
         <picklistObject>Opportunity</picklistObject>
     </dynamicChoiceSets>
     <dynamicChoiceSets>
         <name>OnlineSchedulingEnabled</name>
         <dataType>Picklist</dataType>
-        <displayField xsi:nil="true" />
-        <object xsi:nil="true" />
+        <displayField xsi:nil="true"/>
+        <object xsi:nil="true"/>
         <picklistField>Online_Scheduling_Enabled__c</picklistField>
         <picklistObject>Opportunity</picklistObject>
     </dynamicChoiceSets>
     <dynamicChoiceSets>
         <name>OpenToPublic</name>
         <dataType>Picklist</dataType>
-        <displayField xsi:nil="true" />
-        <object xsi:nil="true" />
+        <displayField xsi:nil="true"/>
+        <object xsi:nil="true"/>
         <picklistField>Open_to_Public__c</picklistField>
         <picklistObject>Opportunity</picklistObject>
     </dynamicChoiceSets>
     <dynamicChoiceSets>
         <name>Opp_Source</name>
         <dataType>Picklist</dataType>
-        <displayField xsi:nil="true" />
-        <object xsi:nil="true" />
+        <displayField xsi:nil="true"/>
+        <object xsi:nil="true"/>
         <picklistField>Source__c</picklistField>
         <picklistObject>Opportunity</picklistObject>
     </dynamicChoiceSets>
     <dynamicChoiceSets>
         <name>OpportunityStage</name>
         <dataType>Picklist</dataType>
-        <displayField xsi:nil="true" />
-        <object xsi:nil="true" />
+        <displayField xsi:nil="true"/>
+        <object xsi:nil="true"/>
         <picklistField>StageName</picklistField>
         <picklistObject>Opportunity</picklistObject>
     </dynamicChoiceSets>
@@ -851,16 +857,16 @@
     <dynamicChoiceSets>
         <name>Type</name>
         <dataType>Picklist</dataType>
-        <displayField xsi:nil="true" />
-        <object xsi:nil="true" />
+        <displayField xsi:nil="true"/>
+        <object xsi:nil="true"/>
         <picklistField>Type</picklistField>
         <picklistObject>Opportunity</picklistObject>
     </dynamicChoiceSets>
     <dynamicChoiceSets>
         <name>TypeOfDrive</name>
         <dataType>Picklist</dataType>
-        <displayField xsi:nil="true" />
-        <object xsi:nil="true" />
+        <displayField xsi:nil="true"/>
+        <object xsi:nil="true"/>
         <picklistField>Type_of_Drive__c</picklistField>
         <picklistObject>Opportunity</picklistObject>
     </dynamicChoiceSets>
@@ -868,7 +874,7 @@
     <formulas>
         <name>allowedProfilesToEnterPastDriveDate</name>
         <dataType>Boolean</dataType>
-        <expression>CONTAINS({!Get_Profile_Info.Name}, &#39;APS Planner&#39;) || CONTAINS({!Get_Profile_Info.Name}, &#39;APS Management&#39;) || CONTAINS({!Get_Profile_Info.Name}, &#39;APS Scheduler&#39;)</expression>
+        <expression>CONTAINS({!Get_Profile_Info.Name}, &apos;APS Planner&apos;) || CONTAINS({!Get_Profile_Info.Name}, &apos;APS Management&apos;) || CONTAINS({!Get_Profile_Info.Name}, &apos;APS Scheduler&apos;)</expression>
     </formulas>
     <formulas>
         <description>Internal name, Site</description>
@@ -1209,7 +1215,7 @@
         <allowPause>false</allowPause>
         <fields>
             <name>ARDIsRequired</name>
-            <fieldText>&lt;p&gt;&lt;span style=&quot;color: rgb(247, 9, 9);&quot;&gt;The site&#39;s operation type is &quot;Non Integrated WB&quot;.  Please go back and enter a non zero value for Anticipated Registered Donors.&lt;/span&gt;&lt;/p&gt;</fieldText>
+            <fieldText>&lt;p&gt;&lt;span style=&quot;color: rgb(247, 9, 9);&quot;&gt;The site&apos;s operation type is &quot;Non Integrated WB&quot;.  Please go back and enter a non zero value for Anticipated Registered Donors.&lt;/span&gt;&lt;/p&gt;</fieldText>
             <fieldType>DisplayText</fieldType>
         </fields>
         <showFooter>true</showFooter>
@@ -1254,7 +1260,7 @@
             <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
             <isRequired>true</isRequired>
             <validationRule>
-                <errorMessage>&lt;p&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-size: 12px; font-family: Arial, Helvetica, sans-serif; color: rgb(244, 0, 0);&quot;&gt;Drives may not be scheduled for dates prior to today&#39;s date and Drive date cannot be greater than site end date {!varSiteEndDate}&lt;/span&gt;&lt;/p&gt;</errorMessage>
+                <errorMessage>&lt;p&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-size: 12px; font-family: Arial, Helvetica, sans-serif; color: rgb(244, 0, 0);&quot;&gt;Drives may not be scheduled for dates prior to today&apos;s date and Drive date cannot be greater than site end date {!varSiteEndDate}&lt;/span&gt;&lt;/p&gt;</errorMessage>
                 <formulaExpression>({!allowedProfilesToEnterPastDriveDate} == true &amp;&amp; {!Drive_Date} &lt; TODAY()) ||{!Drive_Date} &gt;= TODAY()&amp;&amp;{!Drive_Date} &lt; {!varSiteEndDate}</formulaExpression>
             </validationRule>
             <visibilityRule>
@@ -1398,7 +1404,7 @@
             </defaultValue>
             <fieldText>Drive Keyword</fieldText>
             <fieldType>InputField</fieldType>
-            <helpText>&lt;p&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-size: 14px; font-family: -apple-system, &amp;quot;system-ui&amp;quot;, &amp;quot;Segoe UI&amp;quot;, Roboto, Oxygen, Ubuntu, &amp;quot;Fira Sans&amp;quot;, &amp;quot;Droid Sans&amp;quot;, &amp;quot;Helvetica Neue&amp;quot;, sans-serif; color: rgb(23, 43, 77);&quot;&gt;Keywords are used to search for drives on RCB.org. Maximum 50 characters, not required to be unique; not case sensitive; excludes numbers; &#39;and&#39;, &#39;or&#39;, &#39;left&#39;, &#39;right&#39; as standalone words; special characters.&lt;/span&gt;&lt;/p&gt;</helpText>
+            <helpText>&lt;p&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-size: 14px; font-family: -apple-system, &amp;quot;system-ui&amp;quot;, &amp;quot;Segoe UI&amp;quot;, Roboto, Oxygen, Ubuntu, &amp;quot;Fira Sans&amp;quot;, &amp;quot;Droid Sans&amp;quot;, &amp;quot;Helvetica Neue&amp;quot;, sans-serif; color: rgb(23, 43, 77);&quot;&gt;Keywords are used to search for drives on RCB.org. Maximum 50 characters, not required to be unique; not case sensitive; excludes numbers; &apos;and&apos;, &apos;or&apos;, &apos;left&apos;, &apos;right&apos; as standalone words; special characters.&lt;/span&gt;&lt;/p&gt;</helpText>
             <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
             <isRequired>false</isRequired>
             <validationRule>
@@ -1432,7 +1438,7 @@ REGEX( {!Drive_Keyword_Not_Required}, &quot;[a-zA-Z0-9 ]+&quot;)</formulaExpress
             </defaultValue>
             <fieldText>Drive Keyword</fieldText>
             <fieldType>InputField</fieldType>
-            <helpText>&lt;p&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-size: 14px; font-family: -apple-system, &amp;quot;system-ui&amp;quot;, &amp;quot;Segoe UI&amp;quot;, Roboto, Oxygen, Ubuntu, &amp;quot;Fira Sans&amp;quot;, &amp;quot;Droid Sans&amp;quot;, &amp;quot;Helvetica Neue&amp;quot;, sans-serif; color: rgb(23, 43, 77);&quot;&gt;Keywords are used to search for drives on RCB.org. Maximum 50 characters, not required to be unique; not case sensitive; excludes numbers; &#39;and&#39;, &#39;or&#39;, &#39;left&#39;, &#39;right&#39; as standalone words; special characters.&lt;/span&gt;&lt;/p&gt;</helpText>
+            <helpText>&lt;p&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-size: 14px; font-family: -apple-system, &amp;quot;system-ui&amp;quot;, &amp;quot;Segoe UI&amp;quot;, Roboto, Oxygen, Ubuntu, &amp;quot;Fira Sans&amp;quot;, &amp;quot;Droid Sans&amp;quot;, &amp;quot;Helvetica Neue&amp;quot;, sans-serif; color: rgb(23, 43, 77);&quot;&gt;Keywords are used to search for drives on RCB.org. Maximum 50 characters, not required to be unique; not case sensitive; excludes numbers; &apos;and&apos;, &apos;or&apos;, &apos;left&apos;, &apos;right&apos; as standalone words; special characters.&lt;/span&gt;&lt;/p&gt;</helpText>
             <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
             <isRequired>true</isRequired>
             <validationRule>
@@ -1568,6 +1574,24 @@ REGEX( {!Drive_Keyword_Required}, &quot;[a-zA-Z0-9 ]+&quot;)</formulaExpression>
                     <elementReference>outWeeklyFrequency</elementReference>
                 </value>
             </inputParameters>
+            <inputParameters>
+                <name>OutputDonorEligibilityDay</name>
+                <value>
+                    <elementReference>outputDonorEligibilityDay</elementReference>
+                </value>
+            </inputParameters>
+            <inputParameters>
+                <name>OutputDonorEligibilityType</name>
+                <value>
+                    <elementReference>OutputEligibilityNeededFor</elementReference>
+                </value>
+            </inputParameters>
+            <inputParameters>
+                <name>InputDriveType</name>
+                <value>
+                    <elementReference>DRIVE_TYPE_FIXED_SITE</elementReference>
+                </value>
+            </inputParameters>
             <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
             <isRequired>true</isRequired>
             <outputParameters>
@@ -1613,6 +1637,14 @@ REGEX( {!Drive_Keyword_Required}, &quot;[a-zA-Z0-9 ]+&quot;)</formulaExpression>
             <outputParameters>
                 <assignToReference>outWeeklyFrequency</assignToReference>
                 <name>OutputWeeklyFrequencyValue</name>
+            </outputParameters>
+            <outputParameters>
+                <assignToReference>outputDonorEligibilityDay</assignToReference>
+                <name>OutputDonorEligibilityDay</name>
+            </outputParameters>
+            <outputParameters>
+                <assignToReference>OutputEligibilityNeededFor</assignToReference>
+                <name>OutputDonorEligibilityType</name>
             </outputParameters>
         </fields>
         <showFooter>false</showFooter>
@@ -1833,6 +1865,20 @@ REGEX( {!Drive_Keyword_Required}, &quot;[a-zA-Z0-9 ]+&quot;)</formulaExpression>
         <isInput>false</isInput>
         <isOutput>false</isOutput>
         <scale>0</scale>
+    </variables>
+    <variables>
+        <name>outputDonorEligibilityDay</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+    </variables>
+    <variables>
+        <name>OutputEligibilityNeededFor</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
     </variables>
     <variables>
         <name>outRecurrenceType</name>

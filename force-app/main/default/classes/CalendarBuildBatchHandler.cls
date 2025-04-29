@@ -16,6 +16,8 @@
  * 08/06/24     Priti Jana          Logic for HRP-12706
  * 09/09/24		Balaji N			Logic for HRP-13265
  * 12/10/24     Priti Jana          Logic for HRP-13190
+ * 01/08/25     Priti Jana          Logic for HRP-12299
+ * 03/04/25     Priti Jana          Logic for HRP-11850
  **************************************************************************************************************************************/
 
  public with sharing class CalendarBuildBatchHandler {
@@ -73,7 +75,8 @@
         for(Opportunity origOpp : lstOpportunities) {
             //Clone the opportunity and update some fields; by default preserveId is false i.e the ID is cleared for the new record.  isDeepClone is set to true
             Opportunity clonedOpp = origOpp.clone(false, true);
-            clonedOpp.source__c = BSF_Constants.BATCH_CALENDAR_BUILD;
+            clonedOpp.source__c = origOpp.Source__c;
+            clonedOpp.Booking_Strategy__c = origOpp.Booking_Strategy__c;
             clonedOpp.Calendar_Build_Parent_Opportunity__c = origOpp.id;
             DateTime dT = Helper.getSameDayOfNextYear(origOpp.drive_date__c);
             clonedOpp.drive_date__c = Date.newInstance(dT.year(), dT.month(), dT.day());
@@ -144,8 +147,9 @@
                 if(cbWrapper.IsQualified != null) {
                     clonedOpp.Calendar_Build_Status__c = cbWrapper.IsQualified ? 'Qualified' : 'Unqualified';
                 }
-                if(cbWrapper.UnqualifiedReasons != null) {
-                    clonedOpp.Calendar_Build_Reasons_For_Unqualified__c = cbWrapper.UnqualifiedReasons;
+                // HRP-11850 : Add all the unqualifying reason with a limit of 255 characters to Calendar Build Alert field
+                if(cbWrapper.UnqualifiedReasons != null && !cbWrapper.UnqualifiedReasons.isEmpty())  {
+                    clonedOpp.Calendar_Build_Reasons_For_Unqualified__c = BSF_Utilities.getStringWithinLimit(string.join(cbWrapper.UnqualifiedReasons, ';'), 255);
                 }
                 if(cbWrapper.RolloverConsideration != null) {
                     clonedOpp.Rollover_Consideration__c = cbWrapper.RolloverConsideration;
@@ -178,34 +182,40 @@
 
     //Method used for determining if opportunities meet the rollover evaluation criteria
     //Details of the criteria is document on HRP-3442
-    public static CalendarBuildWrapper runRolloverEvaluation(Opportunity incomingOrigOpp,  Map<Id, Id> graySkiesMap) {
+    public static CalendarBuildWrapper runRolloverEvaluation(Opportunity incomingOrigOpp, Map<Id, Id> graySkiesMap) {
         CalendarBuildWrapper cbWrapper = new CalendarBuildWrapper();
         //Don't clone opps that are cancelled with a reson of 'system need'
         if(!(incomingOrigOpp.DriveStatus__c == 'Cancelled' && incomingOrigOpp.sked_Cancellation_Reason__c == 'System Need')) {
             if(incomingOrigOpp.rollover_consideration__c != null && incomingOrigOpp.rollover_consideration__c == 'Alwyas Roll') {
                 if(incomingOrigOpp.Account.Account_Strategy__c != null && incomingOrigOpp.Account.Account_Strategy__c == 'Sunset') {
                     cbWrapper.IsQualified = false;
-                    cbWrapper.UnqualifiedReasons = 'Always Roll On, Account Strategy is Sunset';
+                    cbWrapper.UnqualifiedReasons.add('Always Roll On, Account Strategy is Sunset');
                 }
             }
-            //If opportunity has drive affiliation with Designation = "Gray Skies", mark as "Unqualified"
+
+            /* Logic for HRP-12299
+            	If opportunity has drive affiliation with Designation = "Gray Skies", 
+                    leave the CB status blank so that it can go for other unqualifying condition check
+			
             else if(!graySkiesMap.isEmpty() && graySkiesMap.containsKey(incomingOrigOpp.Id)){ //incomingOrigOpp.Drive_Designations__c != null && incomingOrigOpp.Drive_Designations__c.split(';').contains('Gray Skies')) {
+                cbWrapper.IsQualified = true;
+                //cbWrapper.UnqualifiedReasons = 'Drive Designation is Gray Skies';
+                //cbWrapper.RolloverConsideration = 'Do Not Roll';
+            }*/
+            
+            //If Account Strategy = "Sunset", mark as "Unqualified" and add reason to Calendar Build Alert field
+            if(incomingOrigOpp.Account.Account_Strategy__c != null && incomingOrigOpp.Account.Account_Strategy__c == 'Sunset') {
                 cbWrapper.IsQualified = false;
-                cbWrapper.UnqualifiedReasons = 'Drive Designation is Gray Skies';
+                cbWrapper.UnqualifiedReasons.add('Account Strategy is Sunset');
                 cbWrapper.RolloverConsideration = 'Do Not Roll';
             }
-            //If Account Strategy = "Sunset", mark as "Unqualified"
-            else if(incomingOrigOpp.Account.Account_Strategy__c != null && incomingOrigOpp.Account.Account_Strategy__c == 'Sunset') {
-                cbWrapper.IsQualified = false;
-                cbWrapper.UnqualifiedReasons = 'Account Strategy is Sunset';
-                cbWrapper.RolloverConsideration = 'Do Not Roll';
-            }
-            //If Account Status = "Lost or Defunct", mark as "Unqualified"
-            else if(incomingOrigOpp.Account.Account_Status__c != null  && 
-                    (incomingOrigOpp.Account.Account_Status__c == 'Lost' || incomingOrigOpp.Account.Account_Status__c == 'Defunct')) {
-                        cbWrapper.IsQualified = false;
-                        cbWrapper.RolloverConsideration = 'Do Not Roll';
-                        cbWrapper.UnqualifiedReasons = 'Account Status is Lost/Defunct';
+
+            //If Account Status = "Lost or Defunct", mark as "Unqualified" and add reason to Calendar Build Alert field
+            if(incomingOrigOpp.Account.Account_Status__c != null  && 
+                (incomingOrigOpp.Account.Account_Status__c == 'Lost' || incomingOrigOpp.Account.Account_Status__c == 'Defunct')) {
+                    cbWrapper.IsQualified = false;
+                    cbWrapper.RolloverConsideration = 'Do Not Roll';
+                    cbWrapper.UnqualifiedReasons.add('Account Status is Lost/Defunct');
             }
         }   
         return cbWrapper; 
@@ -275,7 +285,10 @@
         if(parentCbIds != NULL && !parentCbIds.isEmpty()) {
             queryString += 'Calendar_Build_Parent_Opportunity__c IN :parentCbIds AND ';
         }
-        queryString += 'Drive_Date__c = :driveDateToEval AND Related_Scheduled_Drive__c = NULL';
+        if(source != NULL && !String.isBlank(source) && source.equalsIgnoreCase(BSF_Constants.OPP_SOURCE_CALENDAR_BUILD)) { // No need of this check for Adhoc CB
+            queryString += 'Drive_Date__c = :driveDateToEval AND ';
+        }
+        queryString += 'Related_Scheduled_Drive__c = NULL';
         List<Opportunity> eligibleOpps = Database.query(queryString);
         return eligibleOpps;
     }
@@ -283,9 +296,55 @@
     
     public class CalendarBuildWrapper {
         public boolean IsQualified {get; set;}
-        public string UnqualifiedReasons {get; set;}
+        public List<String> UnqualifiedReasons {get; set;} //HRP-11850: Changed wrapper variable data type from String to List<String> to capture all unqualifying conditions
         public string RolloverConsideration {get; set;}
         
-        public CalendarBuildWrapper () {}
+        public CalendarBuildWrapper () {
+            this.UnqualifiedReasons = new List<String>();
+        }
     }
+
+    //HRP-11368: Starts Here -->
+    public static List<Opportunity> filterOpportunitiesToCloneForAdhocRun(List<Opportunity> selectedOpps) {
+
+        //Containers needed
+        Set<Id> accountIds = new set<Id>();
+        List<Opportunity> filteredOpps = new List<Opportunity>();
+        Map<Date, List<Opportunity>> map_nextYearDriveDate_oppList = new Map<Date, List<Opportunity>>();
+        Map<String, List<Opportunity>> map_driveDateAndAccountIdKey_oppList = new Map<String, List<Opportunity>>();
+        
+        for(Opportunity opp : selectedOpps) {
+            if(opp.Type_of_Drive__c.equalsIgnoreCase(BSF_Constants.FIXED_SITE_DRIVE)) continue;
+            accountIds.add(opp.AccountId);
+            DateTime dT = Helper.getSameDayOfNextYear(opp.Drive_Date__c);
+            Date nextYearDate = Date.newInstance(dT.year(), dT.month(), dT.day());
+            if(!map_nextYearDriveDate_oppList.containsKey(nextYearDate)) {
+                map_nextYearDriveDate_oppList.put(nextYearDate, new List<Opportunity>());
+            }
+            map_nextYearDriveDate_oppList.get(nextYearDate).add(opp);
+        }
+
+        List<Opportunity> preExistingDrives = [SELECT Id, AccountId, Drive_Date__c 
+                                                FROM Opportunity
+                                                WHERE AccountId IN :accountIds
+                                                AND Drive_Date__c IN :map_nextYearDriveDate_oppList.keySet()
+                                                AND StageName NOT IN (:BSF_Constants.STAGE_CANCELLED)];
+        
+        for(Opportunity opp : preExistingDrives) {
+            String key = opp.Drive_Date__c + '_' + opp.AccountId;
+            if(!map_driveDateAndAccountIdKey_oppList.containsKey(key)) {
+                map_driveDateAndAccountIdKey_oppList.put(key, new List<Opportunity>());
+            }
+            map_driveDateAndAccountIdKey_oppList.get(key).add(opp);
+        }
+
+        for(Date nextYearDate : map_nextYearDriveDate_oppList.keySet()) {
+            for(Opportunity opp : map_nextYearDriveDate_oppList.get(nextYearDate)) {
+                String key = nextYearDate + '_' + opp.AccountId;
+                if(!map_driveDateAndAccountIdKey_oppList.containsKey(key)) filteredOpps.add(opp);
+            }
+        }
+        return filteredOpps;
+    }
+    //HRP-11368: Ends Here -->
 }

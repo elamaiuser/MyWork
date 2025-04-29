@@ -1,7 +1,7 @@
-import { get, cloneDeep, orderBy, isEqual, sum, compact, uniqBy, isObject, isDate, max } from 'c/lodash';
-import { RESOURCE_TYPE, MANUALLY_CREATED_FROM, DRIVE_CHANGE_REQUEST_TYPE , ASSET_TYPE, PROCEDURE_TYPE, DRIVE_TYPE, OPERATION_TYPE, RESOURCE_ROLE_GROUP, PENDING_ACTION, DRIVE_STATUS, RESOURCE_ROLE, DRIVE_CHANGE_REQUEST_ITEM_TYPE, DRIVE_CONTENTION, DRIVE_CONTENTION_RESOLUTION, JOB_ALLOCATION_STATUS, DRIVE_APPROVAL_STATUS, OPERATION_DRIVE_LIMIT_TYPE, DRIVE_REQUEST_CHANGE_STATUS, SKIP_BEST_VEHICLE_CALCULATION} from 'c/slwcConstants';
+import { get, cloneDeep, orderBy, isEqual, sum, compact, uniqBy, isObject, isDate, max, uniqueId } from 'c/lodash';
+import { LINK_DRIVE_TYPE, RESOURCE_TYPE, MANUALLY_CREATED_FROM, DRIVE_CHANGE_REQUEST_TYPE , ASSET_TYPE, PROCEDURE_TYPE, DRIVE_TYPE, OPERATION_TYPE, RESOURCE_ROLE_GROUP, PENDING_ACTION, DRIVE_STATUS, RESOURCE_ROLE, DRIVE_CHANGE_REQUEST_ITEM_TYPE, DRIVE_CONTENTION, DRIVE_CONTENTION_RESOLUTION, JOB_ALLOCATION_STATUS, DRIVE_APPROVAL_STATUS, OPERATION_DRIVE_LIMIT_TYPE, DRIVE_REQUEST_CHANGE_STATUS, SKIP_BEST_VEHICLE_CALCULATION} from 'c/slwcConstants';
 import { DateTime } from 'c/luxon';
-import { isNullOrEmpty, parseJSON, getTravelTimeIndexKey } from 'c/slwcUtils';
+import { isNullOrEmpty, parseJSON, getTravelTimeIndexKey, generateUUID } from 'c/slwcUtils';
 import { territoryCollectionOperationQueryModel, territoryCollectionOperationService } from 'c/dataService';
 import * as autoMapper from 'c/autoMapper';
 import * as slwcAvailator from 'c/slwcAvailator';
@@ -115,6 +115,7 @@ class DriveHelper {
     drive.opportunity = opp;
     drive.opportunityId = opp.id;
     drive.status = DRIVE_STATUS.DRAFT;
+    drive.preferSystemGeneratedVehicles = true;
     if(this.isFixedSiteDrive(drive)) {
       drive.status = DRIVE_STATUS.TENTATIVE;
     }
@@ -196,6 +197,11 @@ class DriveHelper {
   isDriveInPathOfLinkedDrive(drive) {
     if(!drive) return null;
     return drive.linkedDriveId;
+  }
+
+  isDriveAPartOfMultiDaysLinkedDrive(drive) {
+    if(!this.isDriveInPathOfLinkedDrive(drive)) return;
+    return drive.linkedDriveType === LINK_DRIVE_TYPE.MULTI_DAY
   }
 
   cancelDrive(drive, {
@@ -778,7 +784,8 @@ class DriveHelper {
           driveDeliveryJobs: true,
           volunteerJobs: true,
           operationNotes: true,
-          linkedDrives: true
+          linkedDrives: true,
+          mobileDriveVehicesInput: true
         },
         fieldChangeRestrictionMap: {
           driveSite: true
@@ -805,7 +812,8 @@ class DriveHelper {
             volunteerJobs: false,
             operationNotes: false,
             linkedDrives: true,
-            aptQuantity: true
+            aptQuantity: true,
+            mobileDriveVehicesInput: true
           },
           fieldChangeRestrictionMap: {
             driveSite: true
@@ -828,7 +836,8 @@ class DriveHelper {
             volunteerJobs: false,
             operationNotes: false,
             linkedDrives: false,
-            aptQuantity: isOnlyAPSUser ? false : true
+            aptQuantity: isOnlyAPSUser ? false : true,
+            mobileDriveVehicesInput: false,
           },
           fieldChangeRestrictionMap: {
             driveSite: true
@@ -846,6 +855,7 @@ class DriveHelper {
       projectedRegisteredDonors: isReadonly,
       driveShiftsMetadata: isReadonly,
       driveShiftsConfiguration: isReadonly,
+      mobileDriveVehicesInput: isReadonly,
       driveShifts: isReadonly,
       driveShiftSlots: isReadonly,
       driveDeliveryJobs: isReadonly,
@@ -894,6 +904,12 @@ class DriveHelper {
       }     
     }
 
+    if (drive.driveDate >= today) {
+      if(isAPSUser) {
+        fieldReadonlyMap.mobileDriveVehicesInput = false;
+      }
+    }
+    
     if(isAPSUser || isDRDUser) {
       fieldReadonlyMap.operationNotes = false;
     }
@@ -1811,8 +1827,6 @@ class DriveHelper {
 
     let staffCapacity = 0;
     Array.from(resourceQuantity.keys()).forEach(resourceRole => {
-      if(!resourceRole) return;
-      
       const data = resourceQuantity.get(resourceRole);
       let noOfResources = data || 0;
       let dualRole = null;
@@ -1841,6 +1855,86 @@ class DriveHelper {
     });
 
     return staffCapacity;
+  }
+  calculateMaximumStaffCapacityWithDrawHours(resourceRoles = [], drive, driveShiftMetadata, mapResourceQuantity, {
+    staffingDecisionMatrix,
+    timezoneSidId 
+  }, ignoreLunchBreak = false) {
+    const resourceRoleCapacityFieldMap = {
+      'Driver': 'driverCapacity',
+      'Driver Support': 'driverSupportCapacity',
+      '2RBC': 'x2RbcStaffCapacity',
+      'Charge': 'chargeCapacity',
+      'VP/HH': 'vpHhCapacity'
+    }
+
+    const resourceQuantity = mapResourceQuantity.get(driveShiftMetadata.key);
+    let drawHours = this.calculateDrawHours(driveShiftMetadata, {
+      timezoneSidId
+    }, driveShiftMetadata.lunchBreakSettings);
+
+    const drawHoursWithoutLunchBreak = this.calculateDrawHours(driveShiftMetadata, {
+      timezoneSidId
+    });
+
+    if(ignoreLunchBreak) {
+      drawHours = drawHoursWithoutLunchBreak;
+    }
+    let maxStaffCapacity = 0;
+    Array.from(resourceQuantity.keys()).forEach(resourceRole => {
+      const data = resourceQuantity.get(resourceRole);
+      let noOfResources = data || 0;
+      let dualRole = null;
+      if(isObject(data)) {
+        noOfResources = data.quantity || 0;
+        dualRole = data.dualRole;
+      }
+
+      let role = resourceRole.split('-')[0];;
+      let roleCapacity = staffingDecisionMatrix[resourceRoleCapacityFieldMap[role]] || 0;
+      if(resourceRoles.includes(role)) {
+        let roleCapacitywithDrawHours = roleCapacity * drawHours;
+        if(roleCapacitywithDrawHours > maxStaffCapacity){
+          maxStaffCapacity = roleCapacitywithDrawHours;
+        }
+      }
+    });
+    return maxStaffCapacity;
+  }
+
+  calculateMaximumStaffCapacity(resourceRoles = [], drive, driveShiftMetadata, mapResourceQuantity, {
+    staffingDecisionMatrix,
+    timezoneSidId 
+  }, ignoreLunchBreak = false) {
+    const resourceRoleCapacityFieldMap = {
+      'Driver': 'driverCapacity',
+      'Driver Support': 'driverSupportCapacity',
+      '2RBC': 'x2RbcStaffCapacity',
+      'Charge': 'chargeCapacity',
+      'VP/HH': 'vpHhCapacity'
+    }
+
+    const resourceQuantity = mapResourceQuantity.get(driveShiftMetadata.key);
+
+    let maxStaffCapacity = 0;
+    Array.from(resourceQuantity.keys()).forEach(resourceRole => {
+      const data = resourceQuantity.get(resourceRole);
+      let noOfResources = data || 0;
+      let dualRole = null;
+      if(isObject(data)) {
+        noOfResources = data.quantity || 0;
+        dualRole = data.dualRole;
+      }
+
+      let role = resourceRole.split('-')[0];;
+      let roleCapacity = staffingDecisionMatrix[resourceRoleCapacityFieldMap[role]] || 0;
+      if(resourceRoles.includes(role)) {
+        if(roleCapacity > maxStaffCapacity){
+          maxStaffCapacity = roleCapacity;
+        }
+      }
+    });
+    return maxStaffCapacity;
   }
 
   countDriveStaffs(resourceRoles = [], drive, driveShiftMetadata, mapResourceQuantity, {
@@ -2113,6 +2207,32 @@ class DriveHelper {
     return requiresAssetValidation;
   }
 
+  isJobsSameRoles(job1, job2) {
+    if(job1.resourceRole) {
+      const job1Role = `${job1.resourceRole}-${job1.dualRole || ''}`;
+      const job2Role = `${job2.resourceRole}-${job2.dualRole || ''}`;
+      return job1Role === job2Role;
+    } else if(job1.assetType) return job1.assetType == job2.assetType;
+
+    const sameVolunteerType = job1.volunteerRole == job2.volunteerRole;
+    return sameVolunteerType;
+  }
+
+  generateJobKey(job) {
+    if(job.volunteerRole) return job.volunteerRole;
+    if(job.assetType) return job.assetType;
+    if(job.dualRole) return `${job.resourceRole}-${job.dualRole}`;
+    return job.resourceRole;
+  }
+  
+  parseJobKey(jobKey) {
+    const [resourceRole, dualRole = ''] = jobKey.split('-');
+    return {
+      resourceRole,
+      dualRole
+    }
+  }
+
   checkForChangesToDriveJobs(drive, backupDrive) {
     if (drive.driveShifts.length !== backupDrive.driveShifts.length) {
       return true;
@@ -2128,9 +2248,8 @@ class DriveHelper {
       if (validJobs.length !== validBackupJobs.length) return true;
       for (let j = 0; j < validJobs.length; j++) {
         let job = validJobs[j];
-        let backupJob = validBackupJobs.find(function(item) {
-          if (item.assetType == job.assetType && item.resourceRole == job.resourceRole &&
-              item.quantity == job.quantity) {
+        let backupJob = validBackupJobs.find((item) => {
+          if (this.isJobsSameRoles(item, job) && item.quantity == job.quantity) {
             return true;
           }
         });
@@ -2629,7 +2748,7 @@ class DriveHelper {
         data: null
       }
 
-      let mapDualRoleJobsRemovedByDriveShiftId = {}; 
+      /*let mapDualRoleJobsRemovedByDriveShiftId = {}; 
       backupDrive.driveShifts.forEach((backupDriveShift, driveShiftIndex) => {
         const currentDriveShift = drive.driveShifts[driveShiftIndex];
         if(!currentDriveShift) return;
@@ -2643,7 +2762,7 @@ class DriveHelper {
 
         const dualRoleJobsRemoved = beforeDualRoleJobs.filter(beforeJob => {
           const stillExisted = !!afterDualRoleJobs.find(afterJob => {
-            return afterJob.resourceRole === beforeJob.resourceRole && afterJob.dualRole === beforeJob.dualRole;
+            return this.isJobsSameRoles(afterJob, beforeJob);
           });
           return !stillExisted;
         });
@@ -2670,7 +2789,7 @@ class DriveHelper {
         mapDualRoleJobsRemovedByDriveShiftId,
       }
       result.violated = hasDualRoleJobsRemoved;
-      result.passed = !result.violated || isContentionOverrided(drive, DRIVE_CONTENTION.DUAL_ROLE_REMOVAL);
+      result.passed = !result.violated || isContentionOverrided(drive, DRIVE_CONTENTION.DUAL_ROLE_REMOVAL);*/
       return result;
     }
 
@@ -2896,6 +3015,11 @@ class DriveHelper {
     return isNotCdlDriverJob && isNotDotDriverJob && (job.resourceRole === 'Driver' || job.dualRole === 'Driver')
   }
 
+  isDriverSupport(job) {
+    if(!job) return false;
+    return job.resourceRole === 'Driver Support';
+  }
+  
   /*
     HRP-10428
     Any drive up to 3 hours would default to 1 round,
@@ -2995,7 +3119,7 @@ class DriveHelper {
         }
 
         const backupJob = backupDriveShift.jobs?.find(_job => {
-          const sameRole = _job.resourceRole === job.resourceRole && (!job.dualRole ||  _job.dualRole === job.dualRole);
+          const sameRole = this.isJobsSameRoles(_job, job);
           return sameRole;
         })
 
@@ -3038,7 +3162,7 @@ class DriveHelper {
         }
 
         const job = driveShift.jobs?.find(_job => {
-          const sameRole = _job.resourceRole === backupJob.resourceRole && (!backupJob.dualRole || _job.dualRole === backupJob.dualRole);
+          const sameRole = this.isJobsSameRoles(_job, backupJob);
           return sameRole;
         })
 
@@ -3176,10 +3300,10 @@ class DriveHelper {
     let jobFound = null;
     if (job.resourceRole) {
       if (job.procedureType) {
-        jobFound = allJobs.find(item => item.resourceRole == job.resourceRole && item.procedureType === job.procedureType);
+        jobFound = allJobs.find(item => this.isJobsSameRoles(item, job) && item.procedureType === job.procedureType);
       }
       else {
-        jobFound = allJobs.find(item => item.resourceRole == job.resourceRole);
+        jobFound = allJobs.find(item => this.isJobsSameRoles(item, job));
       }
     } else if (job.assetType) {
       if (job.assetType === ASSET_TYPE.EQUIPMENT) {
@@ -3284,6 +3408,188 @@ class DriveHelper {
     });
 
     return dateTimeObj.toJSDate();
+  }
+
+  countDriveShiftStaffs(drive, driveShift, masterData, ignoreLunchBreak = false) {
+    const driveShiftStaffs = Math.floor(this.countDriveStaffs([
+      'Driver', 'Driver Support', '2RBC', 'VP/HH', 'Charge'
+    ], drive, driveShift.driveShiftMetadata, 
+      new Map()
+        .set(driveShift.driveShiftMetadata.key, this.getDriveShiftResourceQuantity(driveShift))
+    , masterData, ignoreLunchBreak));
+
+    return driveShiftStaffs;
+  }
+
+  calculateDriveAverageStaffCapacity(drive, masterData) {
+    let driveStaffCount = 0;
+    if (masterData && masterData.staffingDecisionMatrix) {
+      drive.driveShifts.forEach((driveShift) => {
+        const driveShiftStaffCount = this.countDriveShiftStaffs(drive, driveShift, masterData);
+        driveStaffCount += driveShiftStaffCount;
+      });
+    }
+    if(drive.staffCapacity && drive.staffCapacity > 0 && driveStaffCount > 0) {
+      let averageStaffCapacity = drive.staffCapacity / driveStaffCount;
+      averageStaffCapacity = +drive.averageStaffCapacity.toFixed(1);
+      return averageStaffCapacity;
+    } else {
+      return 0;
+    }
+  }
+
+  calculateExcessStaffCapacity(drive) {
+    if(drive.staffCapacity && drive.staffCapacity > 0 && drive.maxRoleCapacityWithDrawHours && drive.maxRoleCapacityWithDrawHours > 0) {
+      if(drive.projectedRegisteredDonors) {
+        return +((drive.staffCapacity - drive.projectedRegisteredDonors) / drive.maxRoleCapacityWithDrawHours).toFixed(1);
+      } else {
+        return +(drive.staffCapacity / drive.maxRoleCapacityWithDrawHours).toFixed(1);;
+      }
+    } else {
+      return 0;
+    }
+  } 
+  
+  calculateDriveShiftMaxStaffCapacity (drive, driveShift, masterData, ignoreLunchBreak = false) {
+    const driveShiftStaffCapacity = this.calculateMaximumStaffCapacity([
+      'Driver', 'Driver Support', '2RBC', 'VP/HH', 'Charge'
+    ], drive, driveShift.driveShiftMetadata, 
+      new Map()
+        .set(driveShift.driveShiftMetadata.key, this.getDriveShiftResourceQuantity(driveShift))
+    , masterData, ignoreLunchBreak);
+
+    return driveShiftStaffCapacity;
+  }
+
+  calculateDriveShiftDrawHours(driveShift, masterData, ignoreLunchBreak = false) {
+    const drawHours = this.calculateDrawHours(driveShift.driveShiftMetadata, masterData, driveShift.driveShiftMetadata.lunchBreakSettings);
+    return drawHours;
+  }
+
+  calculateDriveMaxRoleCapacity(drive, masterData) {
+    let driveMaxStaffCapacity = 0;
+    let driveMaxStaffCapacityWithDrawHours = 0;
+    let totalDrawHours = 0;
+    if (masterData && masterData.staffingDecisionMatrix) {
+      drive.driveShifts.forEach((driveShift) => {
+        const driveShiftMaxStaffCapacity = this.calculateDriveShiftMaxStaffCapacity(drive, driveShift, masterData);
+        if(driveShiftMaxStaffCapacity && driveShiftMaxStaffCapacity > driveMaxStaffCapacity){
+          driveMaxStaffCapacity = driveShiftMaxStaffCapacity;
+        }
+        const shiftDrawHours = this.calculateDriveShiftDrawHours(driveShift, masterData);
+        if(shiftDrawHours){
+          totalDrawHours = totalDrawHours + shiftDrawHours;
+        }
+      });
+      if(totalDrawHours > 0){
+        driveMaxStaffCapacityWithDrawHours = driveMaxStaffCapacity * totalDrawHours;
+      }
+    }
+
+    return {
+      maxRoleCapacity: +driveMaxStaffCapacity.toFixed(2),
+      maxRoleCapacityWithDrawHours: +driveMaxStaffCapacityWithDrawHours.toFixed(2)
+    }
+  }
+
+  checkResourceQuantityMapContainsRoles(resourceQuantityMap, roles = []) {
+    if(!resourceQuantityMap) return false;
+    if(!roles.length) return true;
+
+    const validRoles = this.getValidRolesInResourceQuantityMap(resourceQuantityMap);
+    const allRolesValid = roles.every(role => validRoles.includes(role));
+    return allRolesValid;
+  }
+
+  getValidRolesInResourceQuantityMap(resourceQuantityMap) {
+    if(!resourceQuantityMap) return false;
+
+    let validRoles = [];
+    resourceQuantityMap.forEach((item, resourceRole) => {
+      const quantityValid = resourceRole === 'VP/HH' ? item.vphhQuantity > 0 : item.quantity > 0;
+      if(!quantityValid) return;
+
+      validRoles.push(resourceRole);
+    });
+
+    return validRoles;
+  }
+
+  generateDualRoleJob = (job1, job2) => {
+    const { quantity: quantity1 } = job1;
+    const { quantity: quantity2 } = job2;
+    
+    const jobsToCreate = [];
+    const jobsToUpdate = [];
+    const jobsToDelete = [];
+
+    if(quantity1 === quantity2) {
+      jobsToUpdate.push({
+        previousJob: job1,
+        newJob: {
+          ...job1,
+          dualRole: job2.resourceRole,
+          quantity: job1.quantity,
+          backupJob: job1
+        }
+      })
+      jobsToDelete.push({
+        previousJob: job2
+      });
+      return {
+        jobsToCreate,
+        jobsToUpdate,
+        jobsToDelete
+      }
+    }
+
+    if(quantity1 < quantity2) {
+      jobsToUpdate.push({
+        previousJob: job1,
+        newJob: {
+          ...job1,
+          dualRole: job2.resourceRole,
+          quantity: job1.quantity
+        }
+      })
+      jobsToUpdate.push({
+        previousJob: job2,
+        newJob: {
+          ...job2,
+          dualRole: '',
+          quantity: job2.quantity - job1.quantity
+        }
+      })
+    }
+
+    if(quantity1 > quantity2) {
+      jobsToUpdate.push({
+        previousJob: job1,
+        newJob: {
+          ...job1,
+          dualRole: job2.resourceRole,
+          quantity: job2.quantity
+        }
+      })
+      jobsToDelete.push({
+        previousJob: job2
+      })
+      jobsToCreate.push({
+        newJob: {
+          ...job1,
+          id: uniqueId('temp_job_'),
+          key: generateUUID(),
+          quantity: job1.quantity - job2.quantity,
+          jobTags: []
+        }
+      })
+    }
+
+    return {
+      jobsToCreate,
+      jobsToUpdate,
+      jobsToDelete
+    }
   }
 }
 

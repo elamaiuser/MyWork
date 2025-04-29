@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomMetadata xmlns="http://soap.sforce.com/2006/04/metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <label>Sponsor Managing Donor Appointments</label>
+    <protected>false</protected>
+    <values>
+        <field>Column__c</field>
+        <value xsi:type="xsd:double">1.0</value>
+    </values>
+    <values>
+        <field>Field_Mapping_Object__c</field>
+        <value xsi:nil="true"/>
+    </values>
+    <values>
+        <field>Help_Text__c</field>
+        <value xsi:nil="true"/>
+    </values>
+    <values>
+        <field>Hyperlink__c</field>
+        <value xsi:type="xsd:string">https://americanredcross.sharepoint.com/teams/TheField/Donor%20Recruitment/Forms/AllItems.aspx?id=%2Fteams%2FTheField%2FDonor%20Recruitment%2FSystems%20%26%20Apps%2FBlood%20Drive%20Management%20Portal%2FAM%20Tools%2FManaging%20Donor%20Appointments%20Playbook%2Epdf&amp;parent=%2Fteams%2FTheField%2FDonor%20Recruitment%2FSystems%20%26%20Apps%2FBlood%20Drive%20Management%20Portal%2FAM%20Tools
+
+https://americanredcross.sharepoint.com/teams/TheField/Donor%20Recruitment/Forms/AllItems.aspx?id=%2Fteams%2FTheField%2FDonor%20Recruitment%2FDrive%20Planning%2FPlanning%20Support%20Tools%2FSite%20Tools%20%28found%20within%20playbook%29%2FSite%20Playbook%2Epdf&amp;parent=%2Fteams%2FTheField%2FDonor%20Recruitment%2FDrive%20Planning%2FPlanning%20Support%20Tools%2FSite%20Tools%20%28found%20within%20playbook%29</value>
+    </values>
+    <values>
+        <field>Input_API_Name__c</field>
+        <value xsi:type="xsd:string">Input_Checkbox__c</value>
+    </values>
+    <values>
+        <field>Input_Type__c</field>
+        <value xsi:type="xsd:string">Checkbox</value>
+    </values>
+    <values>
+        <field>Is_Dynamic__c</field>
+        <value xsi:type="xsd:boolean">true</value>
+    </values>
+    <values>
+        <field>Order__c</field>
+        <value xsi:type="xsd:double">6.0</value>
+    </values>
+    <values>
+        <field>Parent__c</field>
+        <value xsi:nil="true"/>
+    </values>
+    <values>
+        <field>Picklist_Input_1__c</field>
+        <value xsi:nil="true"/>
+    </values>
+    <values>
+        <field>Section_Header__c</field>
+        <value xsi:nil="true"/>
+    </values>
+    <values>
+        <field>Subject__c</field>
+        <value xsi:type="xsd:string">Sponsor Planning Meeting</value>
+    </values>
+    <values>
+        <field>Subtype__c</field>
+        <value xsi:nil="true"/>
+    </values>
+    <values>
+        <field>UI_Text__c</field>
+        <value xsi:type="xsd:string">Discuss donor contact guidelines found within Managing Donor Appointments Playbook on use of emailing and texting donors</value>
+    </values>
+    <values>
+        <field>Unique_Name__c</field>
+        <value xsi:type="xsd:string">Sponsor_Managing_Donor_Appointments</value>
+    </values>
+</CustomMetadata>

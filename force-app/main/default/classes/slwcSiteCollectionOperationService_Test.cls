@@ -59,4 +59,26 @@ private class slwcSiteCollectionOperationService_Test {
 
         Assert.isTrue(slwcSiteCollectionOperationService.isManualRefreshInProgress(testSco.Id));
     }
+    
+    @isTest
+    static void isUserOverrideEnabled_Test(){
+        skedTestDataFactory testDataFactory = new skedTestDataFactory('us', 14);
+        Map<string, sObject> mapTestData = testDataFactory.setupCommonTestData();
+
+        sked__Location__c testSite = (sked__Location__c) mapTestData.get('testLocation1');
+        sked_Site_Collection_Operation__c testSco = (sked_Site_Collection_Operation__c) mapTestData.get('testLocation1_testCollectionOperation1');
+        Boolean isUserOverrideEnabled = slwcSiteCollectionOperationService.isUserOverrideEnabled(testSco.Id);
+        Assert.isFalse(isUserOverrideEnabled);
+    }
+    @isTest
+    static void getRelatedSiteInfo_Test(){
+        slwcAuraResult result = new slwcAuraResult();
+        skedTestDataFactory testDataFactory = new skedTestDataFactory('us', 14);
+        Map<string, sObject> mapTestData = testDataFactory.setupCommonTestData();
+
+        sked__Location__c testSite = (sked__Location__c) mapTestData.get('testLocation1');
+        sked_Site_Collection_Operation__c testSco = (sked_Site_Collection_Operation__c) mapTestData.get('testLocation1_testCollectionOperation1');
+        result = slwcSiteCollectionOperationService.getRelatedSiteInfo(new List<Id>{testSco.Id}, System.Today(), System.Today().addDays(30));
+        Assert.isNotNull(result.returnedData);
+    }
 }

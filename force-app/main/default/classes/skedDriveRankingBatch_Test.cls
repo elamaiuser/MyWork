@@ -67,7 +67,7 @@ private class skedDriveRankingBatch_Test {
                                                      WHERE sked_Opportunity__c = :fixOpportunity.Id];
         
         //Call the batch
-        Database.executeBatch(new skedDriveRankingBatch('Manual', '', System.today(), fixedSiteDriveCreated), 1);
+        Database.executeBatch(new skedDriveRankingBatch('Manual', 'Adhoc', System.today(), fixedSiteDriveCreated), 1);
         Test.stopTest();
     }
 }
