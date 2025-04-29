@@ -1876,6 +1876,8 @@ class SlwcAvailator {
 
               for (let i = 0; i < dateSlotEvents.length; i++) {
                 let event = dateSlotEvents[i];
+                if(exceptionLog.find(item => item?.availabilityId === event.id || item?.conflictedJobAllocationId === event.id || item?.activityId === event.id)) continue;
+                
                 if(isEventTransformationNeeded) {
                   let diff = this.dateUtils.diffDays(event.startJS, event.finishJS);
                   if(diff === 0) diff = this.dateUtils.diffDays(job.startJS, job.finishJS);
