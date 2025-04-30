@@ -6,7 +6,7 @@
 	</types>
     <types>
 		<members>skedFixedSiteProcedureProjectionTrigger</members>
-		<name>ApexClass</name>
+		<name>ApexTrigger</name>
 	</types>
     <types>
         <members>sked_Fixed_Site_Procedure_Projection__c.sked_Impact_Drives__c</members>	

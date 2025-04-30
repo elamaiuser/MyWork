@@ -34,6 +34,8 @@
 		<members>sked_TTIRR_Stuck_Job_Config_Setting__c.sked_Reschedule_Interval_Minutes__c</members>
 		<members>sked_TTIRR_Stuck_Job_Config_Setting__c.sked_Stuck_Threshold_Minutes__c</members>
         <members>sked__Location__c.sked_Site_Contact_Phone__c</members>
+		<members>sked__Job__c.sked_VAR_Last_Modified_By__c</members>
+        <members>sked_Fixed_Site_Procedure_Projection__c.sked_Impact_Drives__c</members>	
 	   <name>CustomField</name>
     </types>
     <types>
@@ -70,8 +72,21 @@
 		<members>skedRoleTimeVarianceHandler</members>
 		<members>ContactTriggerHandler</members>
 		<members>contactService_Test</members>
+		<members>BSF_Batch_Drive_OpRecordStatusCorrection</members>
+        <members>BSF_Batch_DriveStatusCorrection</members>
+        <members>skedDriveHandler</members>
+        <members>skedDriveChangeRequestHandler</members>
+        <members>skedJobHandler</members>
+        <members>OrderCloningService</members>
+        <members>WeeklyStaffScheduleReportController</members>
+        <members>WeeklyStaffScheduleReportControllerTest</members>
+        <members>skedFixedSiteProcedureProjectionHandler</members>
 		<name>ApexClass</name>
 	</types>
+	<types>
+        <members>skedFixedSiteProcedureProjectionTrigger</members>
+        <name>ApexTrigger</name>
+    </types>
       <types>
 		<members>Send_Bell_Notification_To_District_Manager_1</members>
         <members>Set_UFID_for_Marketing_Program</members>
@@ -125,6 +140,7 @@
     </types>
     <types>
 		<members>General_Reports/FSPP_Audit_Report_sNN</members>
+		<members>General_Reports/Volunteer_Lock_Reason_Report_13939</members>
 		<name>Report</name>
 	</types>
 	<types>
