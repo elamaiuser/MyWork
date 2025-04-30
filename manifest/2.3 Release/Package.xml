@@ -99,7 +99,13 @@
         <members>Fixed_Site_Opp_Record_Page</members>
 		<name>FlexiPage</name>
 	</types>
-    
+    <types>
+		<members>slwcAvailator</members>
+        <members>slwcDriveGenerator</members>
+		<members>slwcDriveStaffingDetails</members>
+		<members>slwcExceptionList</members>
+		<name>LightningComponentBundle</name>
+	</types>
     <types>
 		<members>Mobile_Account_Record_Type</members>
         <members>Sync_Contact_To_ASR_EndReason</members>
