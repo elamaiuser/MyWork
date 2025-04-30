@@ -14,8 +14,8 @@
         <name>Layout</name>
     </types>
     <types>
-		<members>Opportunity.Redcross_Volunteer_Quantity__c</members>
-		<members>Opportunity.Redcross_Volunteer_Required__c</members>
+		<members>Opportunity.Red_Cross_Volunteer_Quantity__c</members>
+		<members>Opportunity.Red_Cross_Volunteer_Required__c</members>
         <members>Opportunity.StageName</members>
         <members>sked_Location_Account__c.sked_Location__c</members>        
         <members>sked_Drive__c.sked_Stage_Options__c</members>	      

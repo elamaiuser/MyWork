@@ -1905,12 +1905,12 @@
     <sections>
         <columns>
             <checkedByDefault>false</checkedByDefault>
-            <field>Redcross_Volunteer_Required__c</field>
+            <field>Red_Cross_Volunteer_Required__c</field>
             <table>Account.Opportunities</table>
         </columns>
         <columns>
             <checkedByDefault>false</checkedByDefault>
-            <field>Redcross_Volunteer_Quantity__c</field>
+            <field>Red_Cross_Volunteer_Quantity__c</field>
             <table>Account.Opportunities</table>
         </columns>
         <masterLabel>Blood Drive Opportunities</masterLabel>

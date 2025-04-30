@@ -220,12 +220,12 @@
             </quickActionLayoutItems>
             <quickActionLayoutItems>
                 <emptySpace>false</emptySpace>
-                <field>Redcross_Volunteer_Required__c</field>
+                <field>Red_Cross_Volunteer_Required__c</field>
                 <uiBehavior>Edit</uiBehavior>
             </quickActionLayoutItems>
             <quickActionLayoutItems>
                 <emptySpace>false</emptySpace>
-                <field>Redcross_Volunteer_Quantity__c</field>
+                <field>Red_Cross_Volunteer_Quantity__c</field>
                 <uiBehavior>Edit</uiBehavior>
             </quickActionLayoutItems>
             <quickActionLayoutItems>

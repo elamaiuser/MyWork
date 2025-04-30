@@ -88,11 +88,11 @@
             </layoutItems>
             <layoutItems>
                 <behavior>Edit</behavior>
-                <field>Redcross_Volunteer_Required__c</field>
+                <field>Red_Cross_Volunteer_Required__c</field>
             </layoutItems>
             <layoutItems>
                 <behavior>Edit</behavior>
-                <field>Redcross_Volunteer_Quantity__c</field>
+                <field>Red_Cross_Volunteer_Quantity__c</field>
             </layoutItems>
             <layoutItems>
                 <behavior>Readonly</behavior>
