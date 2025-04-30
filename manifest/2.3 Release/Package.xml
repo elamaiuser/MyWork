@@ -33,7 +33,8 @@
 		<members>sked_TTIRR_Stuck_Job_Config_Setting__c.sked_Maximum_Retries__c</members>
 		<members>sked_TTIRR_Stuck_Job_Config_Setting__c.sked_Reschedule_Interval_Minutes__c</members>
 		<members>sked_TTIRR_Stuck_Job_Config_Setting__c.sked_Stuck_Threshold_Minutes__c</members>
-        <name>CustomField</name>
+        <members>sked__Location__c.sked_Site_Contact_Phone__c</members>
+		<name>CustomField</name>
     </types>
     <types>
 		<members>AccountInvokable</members>
@@ -67,6 +68,8 @@
         <members>skedJobAllocationPostProcessBatch_Test</members>
         <members>skedExceptionLogService</members>
 		<members>skedRoleTimeVarianceHandler</members>
+		<members>contactService_Test</members>
+        <members>ContactTriggerHandler</members>
 		<name>ApexClass</name>
 	</types>
       <types>
