@@ -3,6 +3,7 @@
     <version>59.0</version>
     <types>
         <members>Send_Bell_Notification_For_Drive_2</members>
+        <members>Send_Bell_Notification_For_Drive</members>
 		<name>Flow</name>
 	</types>
 </Package>

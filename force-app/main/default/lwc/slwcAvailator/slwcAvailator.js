@@ -576,6 +576,8 @@ class SlwcAvailator {
 
         return this.doTransformJobs([{
           ...job,
+          actualStart: job.start,
+          actualFinish: job.finish,
           driveDate: this.drive.driveDate,
           start: startLuxon.toUTC().toISO(),
           finish: endLuxon.toUTC().toISO()
@@ -1862,8 +1864,31 @@ class SlwcAvailator {
                 return this.dateUtils.compareDateJS(event.startJS, job.startJS) > 0;
               });
 
+              /* In case of assets, if job start and drive date matches, 
+                1. either job actually starts on the drive date
+                2. or it starts the day before and it has been transformed to the drive date (fetchAssetData)
+              In any case, we need to transform the events as well for a consistent comparison */
+              
+              if(!job.actualStart) job.actualStart = job.start;
+              if(!job.actualFinish) job.actualFinish = job.finish;
+
+              const isEventTransformationNeeded = this.dateUtils.compareDateJS(job.start, job.actualStart) !== 0;
+
               for (let i = 0; i < dateSlotEvents.length; i++) {
                 let event = dateSlotEvents[i];
+                if(exceptionLog.find(item => item?.availabilityId === event.id || item?.conflictedJobAllocationId === event.id || item?.activityId === event.id)) continue;
+                
+                if(isEventTransformationNeeded) {
+                  let diff = this.dateUtils.diffDays(event.startJS, event.finishJS);
+                  if(diff === 0) diff = this.dateUtils.diffDays(job.startJS, job.finishJS);
+                  
+                  event = {
+                    ...event, 
+                    startJS: this.dateUtils.addDay(event.startJS, diff), 
+                    finishJS: this.dateUtils.addDay(event.finishJS, diff)
+                  };
+                }
+                
                 if (event.objectType === OBJECT_TYPE.JOB_ALLOCATION) {
                   if (!ignoreExistingAllocations) {
                     if (inputJobIds.indexOf(event.jobId) > -1 || event.status === EVENT_STATUS.DECLINED) {
