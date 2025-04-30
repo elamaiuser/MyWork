@@ -17,7 +17,15 @@
 		<members>Account.Default Status Active</members>
 		<members>Account.Default Status Prospect</members>
 		<members>Account.Capitalize National Name Field</members>
+		<members>Account.Default_Account_Status_Active</members>
+		<members>Account.Default Account Status Active</members>
+		<members>Account.Default Status Active %26 Internal Name for FS</members>
+		<members>Account.Default Status Prospect %26 Internal Name for Mobile Account</members>
 		<name>WorkflowRule</name>
+	</types>
+	<types>
+		<members>Account</members>
+		<name>Workflow</name>
 	</types>
     <version>59.0</version>
 </Package>
