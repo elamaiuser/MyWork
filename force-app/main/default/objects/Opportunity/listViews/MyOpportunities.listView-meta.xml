@@ -9,8 +9,8 @@
     <columns>Anticipated_Registered_Donors__c</columns>
     <columns>Total_Projected_Procedures__c</columns>
     <columns>Total_Products_Projected__c</columns>
-    <columns>Redcross_Volunteer_Required__c</columns>
-    <columns>Redcross_Volunteer_Quantity__c</columns>
+    <columns>Red_Cross_Volunteer_Required__c</columns>
+    <columns>Red_Cross_Volunteer_Quantity__c</columns>
     <filterScope>Everything</filterScope>
     <filters>
         <field>Is_Template__c</field>

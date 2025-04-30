@@ -1,11 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
-    <fullName>Redcross_Volunteer_Required__c</fullName>
-    <defaultValue>false</defaultValue>
+    <fullName>Red_Cross_Volunteer_Quantity__c</fullName>
     <description>Created as part of HRP-14653</description>
-    <label>Redcross Volunteer Required</label>
+    <externalId>false</externalId>
+    <label>Red Cross Volunteer Quantity</label>
+    <precision>18</precision>
+    <required>false</required>
+    <scale>0</scale>
     <trackFeedHistory>false</trackFeedHistory>
     <trackHistory>false</trackHistory>
     <trackTrending>false</trackTrending>
-    <type>Checkbox</type>
+    <type>Number</type>
+    <unique>false</unique>
 </CustomField>
