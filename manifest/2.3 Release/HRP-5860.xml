@@ -18,6 +18,9 @@
     <types>
 		<members>Handle_Do_Not_Contact_Updates_On_Contact</members>
         <members>Sync_ASR_with_Contact_Changes</members>
+		<!-- Deactivated Process Builder fot this Ticekt -->
+		<members>Create_Account_Service_Role_Upon_Contact_Creation</members>
+		<!-- End -->
 		<name>Flow</name>
 	</types>
     <types>
@@ -33,5 +36,12 @@
         <members>Account_Service_Role_End_Reason__mdt</members>      
         <name>CustomObject</name>
     </types>
+	<!-- Deactivated WorkFlow Rule & Process Builder fot this Ticekt -->
+	<types>
+    	<members>Contact.Do Not Contact Reasons Equals to Deceased</members>
+		<members>Contact.Do Not Contact is Selected</members>
+    	<name>WorkflowRule</name>
+	</types>
+	<!-- End -->
 	<version>63.0</version>
 </Package>
