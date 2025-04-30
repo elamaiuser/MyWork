@@ -66,6 +66,7 @@
 		<members>skedJobAllocationPostProcessBatch</members>
         <members>skedJobAllocationPostProcessBatch_Test</members>
         <members>skedExceptionLogService</members>
+		<members>skedRoleTimeVarianceHandler</members>
 		<name>ApexClass</name>
 	</types>
       <types>
