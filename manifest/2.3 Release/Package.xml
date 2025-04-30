@@ -83,6 +83,9 @@
         <members>Send_Bell_Notification_For_Drive_2</members>
         <members>Update_Drive_Status_Field_on_Opportunity_Booking_Date_2</members>
         <members>Send_Bell_Notification_For_Drive</members>
+		<members>Set_Account_UFID</members>
+		<members>Uncheck_Use_this_as_mailing_address_field</members>
+		<members>Update_Account_Status_Field_and_Marketing_Strategy_as_Text_fields_on_Account</members>
 		<name>Flow</name>
 	</types>
     <types>
@@ -151,12 +154,25 @@
     </types>
     <types>
 		<members>Account_Marketing_Program__c</members>
+		<members>Account</members>
 		<name>Workflow</name>
 	</types>
     <types>
 		<members>sked__Resource__c.only_System_Admin_can_edit_Virtual_WFH</members>
 		<members>sked__Resource__c.AllowWorkAddressEditForWHF</members>
 		<name>ValidationRule</name>
+	</types>
+	<types>
+		
+		<members>Account.Use this as mailing address automation</members>
+		<members>Account.Default Status Active</members>
+		<members>Account.Default Status Prospect</members>
+		<members>Account.Capitalize National Name Field</members>
+		<members>Account.Default_Account_Status_Active</members>
+		<members>Account.Default Account Status Active</members>
+		<members>Account.Default Status Active %26 Internal Name for FS</members>
+		<members>Account.Default Status Prospect %26 Internal Name for Mobile Account</members>
+		<name>WorkflowRule</name>
 	</types>
     <version>63.0</version>
 </Package>
