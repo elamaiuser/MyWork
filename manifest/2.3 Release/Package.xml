@@ -118,10 +118,14 @@
 		<name>FlexiPage</name>
 	</types>
     <types>
+		<members>slwcAppointmentModal</members>
 		<members>slwcAvailator</members>
         <members>slwcDriveGenerator</members>
 		<members>slwcDriveStaffingDetails</members>
 		<members>slwcExceptionList</members>
+		<members>slwcLinkedDriveStaffingDetails</members>
+		<members>slwcOnCallCallOutManagement</members>
+		<members>slwcRecurrenceDatesPickerModal</members>
 		<name>LightningComponentBundle</name>
 	</types>
     <types>
