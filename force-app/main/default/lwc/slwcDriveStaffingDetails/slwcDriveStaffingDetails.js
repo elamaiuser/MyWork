@@ -1955,7 +1955,7 @@ export default class SlwcDriveStaffingDetails extends LightningElement {
             selectedResourceEmploymentTypes: [],
             weeklyHoursRange: {
                 start: 0,
-                end: 40
+                end: 100
             },
             queryText: ''
         }
@@ -2869,7 +2869,7 @@ export default class SlwcDriveStaffingDetails extends LightningElement {
     handleSaveAddRoleModal(event) {
         let { jobId, jobAllocation } = this.addRoleModalData;
         let [ job ] = this.getJobById(jobId);
-        let ja =  find(job.jobAllocations, item => item.id == jobAllocation.id)
+        let ja = find(job.jobAllocations, item => item.key == jobAllocation.key)
         ja.additionalRoles = event.detail.roles
         ja.additionalRolesString = ja.additionalRoles ? ja.additionalRoles.split(';').join(', ') : null;
     }

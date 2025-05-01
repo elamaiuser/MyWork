@@ -1089,7 +1089,7 @@ public class skedDriveHandler extends skedTriggerHub {
                 AND sked__Status__c != :skedConstants.JOB_ALLOCATION_STATUS_DELETED
             ]);
             if (!mapJobAllocation.isEmpty()) {
-                if (!System.isBatch() || !Test.isRunningTest()) {
+                if (!System.isBatch() && !Test.isRunningTest()) {
                     skedJobAllocationPostProcessBatch.batchSetting batchSetting = new skedJobAllocationPostProcessBatch.batchSetting();
                     Database.executeBatch(new skedJobAllocationPostProcessBatch(batchSetting, mapJobAllocation.keyset()), 200);
                 }

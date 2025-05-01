@@ -207,7 +207,7 @@ private class DriveResourceAllocationBatchTest {
         MobileDriveGeneratorDMLService.driveGeneratorConfig config = new MobileDriveGeneratorDMLService.driveGeneratorConfig();
         config.oppIds = new Set<Id>();
         config.oppIds.add(mobileOpportunity.Id);
-       
+        
         Test.startTest();
         AccountTeamMemberHelper.skipAccountTrigger = true;
         skedHubBase.BypassInsertTriggers = false;
@@ -220,9 +220,9 @@ private class DriveResourceAllocationBatchTest {
         
         skedHubBase.BypassInsertTriggers = TRUE;
         skedHubBase.BypassUpdateTriggers = TRUE;
-        sked_Drive__c mobileDrive = [SELECT Id, sked_Opportunity__c, sked_Day_of_Week__c, sked_Projected_Registered_Donors__c, sked_Collection_Operation__c, sked_Drive_Date__c FROM sked_Drive__c where sked_Opportunity__c IN :config.oppIds LIMIT 1];
+        sked_Drive__c mobileDrive = [SELECT Id , sked_Opportunity__c, sked_Day_of_Week__c, sked_Projected_Registered_Donors__c, sked_Collection_Operation__c, sked_Drive_Date__c FROM sked_Drive__c where sked_Opportunity__c IN :config.oppIds LIMIT 1];
         sked__Job__c vehicleJob = [SELECT Id, sked__Quantity__c, sked__Start__c, sked__Finish__c, sked__Region__c, sked_Start_Time__c, sked_Finish_Time__c FROM sked__Job__c WHERE sked_Asset_Type__c = 'Vehicle' AND sked_Drive__c =:mobileDrive.Id LIMIT 1];
-        
+		
         sked_Staffing_Constraint__c mobileStaffingConstraint = new sked_Staffing_Constraint__c(
             sked_Collection_Operation__c = mobileDrive.sked_Collection_Operation__c,
             sked_Date_of_Constraint__c = mobileDrive.sked_Drive_Date__c,

@@ -27,16 +27,6 @@
                 <label>Committed</label>
             </value>
             <value>
-                <fullName>Withdrawn</fullName>
-                <default>false</default>
-                <label>Withdrawn</label>
-            </value>
-            <value>
-                <fullName>Excluded</fullName>
-                <default>false</default>
-                <label>Excluded</label>
-            </value>
-            <value>
                 <fullName>Closed</fullName>
                 <default>false</default>
                 <label>Closed</label>
@@ -45,6 +35,18 @@
                 <fullName>Cancelled</fullName>
                 <default>false</default>
                 <label>Cancelled</label>
+            </value>
+            <value>
+                <fullName>Excluded</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Excluded</label>
+            </value>
+            <value>
+                <fullName>Withdrawn</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Withdrawn</label>
             </value>
         </valueSetDefinition>
     </valueSet>

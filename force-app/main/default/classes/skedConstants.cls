@@ -348,6 +348,7 @@ public class skedConstants {
     public static final string TAG_DRIVE_LEAD = 'Drive Lead';
     public static final string TAG_FIXED_SITE = 'Fixed Site';
     public static final string TAG_MOBILE = 'Mobile';
+    public static final string TAG_REAL_ID = 'REAL ID';
 
 
     public static final string TAG_ROLE_STATUS_ACTIVE = 'Active';
@@ -471,4 +472,16 @@ public class skedConstants {
     public static final string TRAVEL_TIME_INDEX_REFRESH_GROUP_STATUS_PROCESSING = 'Processing';
     public static final string TRAVEL_TIME_INDEX_REFRESH_GROUP_STATUS_GENERATING_REFRESH_REQUEST = 'Generating Refresh Request';
     public static final string SYSTEM_TTBD_OVERRIDE_COMMENT = 'As of {0} System has failed to return valid Travel Time values. Manual override values are required. Re-attempt refresh by unchecking User Override checkbox and selecting banner option to manually refresh.';
+
+    /* TTIRR Status */
+    public static final string TTIRR_STATUS_PENDING = 'Pending';
+    public static final string TTIRR_STATUS_IN_PROGRESS = 'In Progress';
+    public static final string TTIRR_STATUS_ERROR = 'Error';
+
+    /* CronTrigger States */
+    public static final string CRON_TRIGGER_WAITING = 'WAITING';
+    public static final string CRON_TRIGGER_ACQUIRED = 'ACQUIRED';
+    public static final string CRON_TRIGGER_EXECUTING = 'EXECUTING';
+    public static final string CRON_TRIGGER_PAUSED = 'PAUSED';
+
 }

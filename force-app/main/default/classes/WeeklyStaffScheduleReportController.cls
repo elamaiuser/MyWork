@@ -1,8 +1,8 @@
 /*
-*    Date					Developer Name			             Comments
+*    Date					Developer Name			          Comments
  * ***************************************************************************************************************************************************************************
  * 07/15/2024				Barnojit Sharma				Weekly Staffing Schedule by Employee & Weekly Staffing Role Time Back up Reports shift start and end times are incorrect (HRP-13091)
- * 12/31/2024				Priti Jana					Logic for HRP-13121
+ * 12/30/2024				Priti Jana					Logic for HRP-13121
  *****************************************************************************************************************************************************************************
 */
 public without sharing class WeeklyStaffScheduleReportController {
@@ -65,7 +65,7 @@ public without sharing class WeeklyStaffScheduleReportController {
         List<String> driveDispatchedStatus= new List<String>();
         List<Boolean> driveDispatchedCheckBox= new List<Boolean>();
         
-       //HRP-13121 -> Starts Here
+        //HRP-13121 -> Starts Here
         StaffInfoWrapper staffInfoWrapper = new StaffInfoWrapper();
         staffInfoWrapper = BSFWeeklyStaffingRoleTimeController.validateInputsAndGetStaffInfo(startDate, endDate, drivedispatch, collOpIdList, driveType);
         //HRP-13121 -> Ends Here
@@ -141,7 +141,7 @@ public without sharing class WeeklyStaffScheduleReportController {
                 allRoles = String.join(roleListNoDupes,', ');
             }
             Decimal timeDifference = getTimeDifference(jba.sked_Start_Time__c,jba.sked_Set_End_Time__c);//Changed for HRP-13091
-            String details = jba.sked__Job__r.sked_Drive__r.sked_Account__r.Name;
+            String details = addLineBreaks(jba.sked__Job__r.sked_Drive__r.sked_Account__r.Name,20);
             String siteAddress = '';
             if(String.isNotBlank(jba.sked__Job__r.sked_Drive__r.sked_Drive_Site__r.sked_City__c)){
                 siteAddress = jba.sked__Job__r.sked_Drive__r.sked_Drive_Site__r.sked_City__c;
@@ -153,7 +153,7 @@ public without sharing class WeeklyStaffScheduleReportController {
                 siteAddress += jba.sked__Job__r.sked_Drive__r.sked_Drive_Site__r.sked_State__c;
             }
             if(String.isNotBlank(siteAddress)){
-                details += '\n' + siteAddress;
+                details += '\n' + addLineBreaks(siteAddress,20);
             }
             details += '\n' + getFormattedTime(jba.sked_Start_Time__c) + ' - ' + //Changed for HRP-13091
                         getFormattedTime(jba.sked_Set_End_Time__c)+'\n'+ //Changed for HRP-13091
@@ -168,8 +168,8 @@ public without sharing class WeeklyStaffScheduleReportController {
             timeDifference = timeDifference + resourceHoursMap.get(jba.sked__Resource__c);
             resourceHoursMap.put(jba.sked__Resource__c,timeDifference);                 
         }
-        
-        //List<sked__Activity_Resource__c> activityList = BSFWeeklyStaffingRoleTimeController.getActivities(startDate, endDate, territoryKeys); //HRP-13121 -> Changed Method Parameter
+ 
+        //List<sked__Activity_Resource__c> activityList = BSFWeeklyStaffingRoleTimeController.getActivities(startDate, endDate, territoryKeys); //HRP-13121 -> Changed Method Parameter */
         
         for(sked__Activity_Resource__c act : staffInfoWrapper.activityList) { //HRP-13121: Using wrapper class info
             resourceMap.put(act.sked__Resource__c,act.sked__Resource__r);
@@ -280,7 +280,7 @@ public without sharing class WeeklyStaffScheduleReportController {
         for(Id resourceId : resourceDetailsMap.keySet()){
             Map<String,String> wrapperMap = new Map<String,String>();
             wrapperMap.put('Id',resourceId);            
-            wrapperMap.put('Name',BSF_Utilities.capitalizeName(resourceMap.get(resourceId).Name, isForPDF));
+            wrapperMap.put('Name',addLineBreaks(capitalizeTexts(resourceMap.get(resourceId).Name),10));
             wrapperMap.put('total',String.valueOf(resourceHoursMap.get(resourceId)));
             for(Date dt : dateMap.keySet()){
                 if(resourceDetailsMap.get(resourceId).containsKey(dt)){
@@ -413,5 +413,71 @@ public without sharing class WeeklyStaffScheduleReportController {
             availabilityList = new List<sked__Availability__c>();
             totalRecords = 0;
         }
+    }
+
+    public static String addLineBreaks(String input, Integer maxLineLength) {
+        String result = '';
+        List<String> words = input.split(' ');
+        Integer currentLineLength = 0;
+
+        for (String word : words) {
+            if (word.length() > maxLineLength && word.contains('-')) {
+                List<String> parts = word.split('(?<=-)');
+                for (String part : parts) {
+                    if (currentLineLength + part.length() > maxLineLength) {
+                        result = result + '\n';
+                        currentLineLength = 0;
+                    } else if (currentLineLength != 0) {
+                        result = result + ' ';
+                        currentLineLength += 1;
+                    }
+                    result = result + part;
+                    currentLineLength += part.length();
+                }
+            }else if (word.length() > maxLineLength) {
+                Integer index = 0;
+                while (index < word.length()) {
+                    Integer endIndex = Math.min(index + maxLineLength, word.length());
+                    if (currentLineLength != 0) {
+                        result = result + '\n';
+                        currentLineLength = 0;
+                    }
+                    result = result + word.substring(index, endIndex) + '\n';
+                    index = endIndex;
+                }
+                currentLineLength = 0;
+            }
+            else {
+                if (currentLineLength + word.length() > maxLineLength) {
+                    result = result + '\n';
+                    currentLineLength = 0;
+                } else if (currentLineLength != 0) {
+                    result = result + ' ';
+                    currentLineLength += 1;
+                }
+                result = result + word;
+                currentLineLength += word.length();
+            }
+        }
+
+        return result;
+    }
+    public static String capitalizeTexts(String input){
+        String result = '';
+        Integer i = 0;
+        List<String> words = input.split('\\s+');
+        for (String word : words) {
+            if(String.isNotBlank(word)){
+                if(word.isAlpha() || (!word.isNumeric() && !word.isAlphanumeric())){
+                    word =  word.capitalize();
+                }
+                if (i > 0) {
+                    result = result + ' ';
+                }
+                result = result + word;
+                i++;
+            }
+        }
+        return result.trim();
     }
 }

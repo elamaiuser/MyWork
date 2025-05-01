@@ -13,7 +13,7 @@
     </fieldUpdates>
     <rules>
         <fullName>hasEndDate</fullName>
-        <active>true</active>
+        <active>false</active>
         <description>hasEndDate present and not empty</description>
         <formula>NOT(ISBLANK(End_Date__c))</formula>
         <triggerType>onCreateOrTriggeringUpdate</triggerType>

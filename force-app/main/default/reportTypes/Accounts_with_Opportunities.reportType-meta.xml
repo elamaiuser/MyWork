@@ -743,6 +743,16 @@
             <field>Site_Zip_Code__c</field>
             <table>Account.Opportunities</table>
         </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>Red_Cross_Volunteer_Required__c</field>
+            <table>Account.Opportunities</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>Red_Cross_Volunteer_Quantity__c</field>
+            <table>Account.Opportunities</table>
+        </columns>
         <masterLabel>Blood Drive Opportunities</masterLabel>
     </sections>
     <sections>

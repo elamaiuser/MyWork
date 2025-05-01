@@ -67,7 +67,7 @@
                     <name>cacheAge</name>
                     <value>1440</value>
                 </componentInstanceProperties>
-                <componentInstanceProperties>
+                <componentInstanceProperties>                    
                     <name>label</name>
                     <value>Missing Key Fields - DRMS Audit</value>
                 </componentInstanceProperties>
@@ -88,9 +88,6 @@
                 <componentInstanceProperties>
                     <name>cacheAge</name>
                     <value>1440</value>
-                </componentInstanceProperties>
-                <componentInstanceProperties>
-                    <name>label</name>
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>reportName</name>
@@ -128,7 +125,7 @@
                     <name>cacheAge</name>
                     <value>1440</value>
                 </componentInstanceProperties>
-                <componentInstanceProperties>
+                <componentInstanceProperties>                    
                     <name>label</name>
                 </componentInstanceProperties>
                 <componentInstanceProperties>
@@ -273,7 +270,7 @@
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>richTextValue</name>
-                    <value>&lt;p&gt;&lt;strong style=&quot;font-family: sans-serif; font-size: 20px; color: rgb(65, 71, 221);&quot;&gt;Frequent In-App Reports&lt;/strong&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;&lt;a href=&quot;https://biosf.lightning.force.com/lightning/n/Drive_Worksheet_Report&quot; rel=&quot;noopener noreferrer&quot; target=&quot;_blank&quot;&gt;Drive Worksheet Report&lt;/a&gt;&lt;/li&gt;&lt;li&gt;&lt;a href=&quot;https://biosf.lightning.force.com/lightning/n/PublicityOrderReport&quot; rel=&quot;noopener noreferrer&quot; target=&quot;_blank&quot;&gt;Publicity Ordering Report&lt;/a&gt;&lt;/li&gt;&lt;li&gt;&lt;a href=&quot;https://biosf.lightning.force.com/lightning/n/Sponsor_Planning_Report&quot; rel=&quot;noopener noreferrer&quot; target=&quot;_blank&quot;&gt;Sponsor Planning Report&lt;/a&gt;&lt;/li&gt;&lt;li&gt;&lt;a href=&quot;https://biosf.lightning.force.com/lightning/r/Folder/00l5c000001iS4ZAAU/view?queryScope=userFolders&quot; rel=&quot;noopener noreferrer&quot; target=&quot;_blank&quot;&gt;DS Recruitment Standard Dashboards&lt;/a&gt;&lt;/li&gt;&lt;li&gt;&lt;a href=&quot;https://biosf.lightning.force.com/lightning/r/Folder/00l5c000001mB7lAAE/view?queryScope=userFolders&quot; rel=&quot;noopener noreferrer&quot; target=&quot;_blank&quot;&gt;DS Recruitment Standard Reports&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt;</value>
+                    <value>&lt;p&gt;&lt;strong style=&quot;color: rgb(65, 71, 221); font-size: 20px; font-family: sans-serif;&quot;&gt;Frequent In-App Reports&lt;/strong&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;&lt;a href=&quot;https://biosf.lightning.force.com/lightning/n/Drive_Worksheet_Report&quot; rel=&quot;noopener noreferrer&quot; target=&quot;_blank&quot;&gt;Drive Worksheet Report&lt;/a&gt;&lt;/li&gt;&lt;li&gt;&lt;a href=&quot;https://biosf.lightning.force.com/lightning/n/Publicity_Order_Report_New_Portfolios&quot; rel=&quot;noopener noreferrer&quot; target=&quot;_blank&quot;&gt;Publicity Ordering Report&lt;/a&gt;&lt;/li&gt;&lt;li&gt;&lt;a href=&quot;https://biosf.lightning.force.com/lightning/n/Sponsor_Planning_Report&quot; rel=&quot;noopener noreferrer&quot; target=&quot;_blank&quot;&gt;Sponsor Planning Report&lt;/a&gt;&lt;/li&gt;&lt;li&gt;&lt;a href=&quot;https://biosf.lightning.force.com/lightning/r/Folder/00l5c000001iS4ZAAU/view?queryScope=userFolders&quot; rel=&quot;noopener noreferrer&quot; target=&quot;_blank&quot;&gt;DS Recruitment Standard Dashboards&lt;/a&gt;&lt;/li&gt;&lt;li&gt;&lt;a href=&quot;https://biosf.lightning.force.com/lightning/r/Folder/00l5c000001mB7lAAE/view?queryScope=userFolders&quot; rel=&quot;noopener noreferrer&quot; target=&quot;_blank&quot;&gt;DS Recruitment Standard Reports&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt;</value>
                 </componentInstanceProperties>
                 <componentName>flexipage:richText</componentName>
                 <identifier>flexipage_richText2</identifier>
@@ -311,7 +308,7 @@
         </itemInstances>
         <itemInstances>
             <componentInstance>
-                <componentInstanceProperties>
+                <componentInstanceProperties>                    
                     <name>tabs</name>
                     <value>Facet-3f6b0d50-3b6c-49e4-b13c-be113a63bf62</value>
                 </componentInstanceProperties>
