@@ -68,6 +68,7 @@
                     <value>1440</value>
                 </componentInstanceProperties>
                 <componentInstanceProperties>                    
+                    <name>label</name>
                     <value>Missing Key Fields - DRMS Audit</value>
                 </componentInstanceProperties>
                 <componentInstanceProperties>
@@ -125,6 +126,7 @@
                     <value>1440</value>
                 </componentInstanceProperties>
                 <componentInstanceProperties>                    
+                    <name>label</name>
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>reportName</name>
@@ -307,9 +309,6 @@
         <itemInstances>
             <componentInstance>
                 <componentInstanceProperties>                    
-                    <value>Tabs</value>
-                </componentInstanceProperties>
-                <componentInstanceProperties>
                     <name>tabs</name>
                     <value>Facet-3f6b0d50-3b6c-49e4-b13c-be113a63bf62</value>
                 </componentInstanceProperties>

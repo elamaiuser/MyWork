@@ -768,9 +768,6 @@
         <itemInstances>
             <componentInstance>
                 <componentInstanceProperties>                    
-                    <value>Tabs</value>
-                </componentInstanceProperties>
-                <componentInstanceProperties>
                     <name>tabs</name>
                     <value>Facet-656872d1-84d0-43b3-87ad-ba5d3d871506</value>
                 </componentInstanceProperties>
@@ -855,9 +852,6 @@
         <itemInstances>
             <componentInstance>
                 <componentInstanceProperties>                    
-                    <value>Tabs</value>
-                </componentInstanceProperties>
-                <componentInstanceProperties>
                     <name>tabs</name>
                     <value>Facet-443a0591-7194-491b-afcc-a637a20ecebe</value>
                 </componentInstanceProperties>
