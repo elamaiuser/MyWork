@@ -17,8 +17,7 @@
                 <elementReference>Create_task_on_opportunity</elementReference>
             </value>
         </inputParameters>
-        <nameSegment>BSF_MarketingExceptionRequest</nameSegment>
-        <offset>0</offset>
+        <nameSegment>BSF_MarketingExceptionRequest</nameSegment>        
     </actionCalls>
     <actionCalls>
         <name>update_opportunities1</name>
@@ -41,11 +40,9 @@
                 <elementReference>Get_Initiate_Request_Values.Id</elementReference>
             </value>
         </inputParameters>
-        <nameSegment>updateOpportunitiesInvocable</nameSegment>
-        <offset>0</offset>
+        <nameSegment>updateOpportunitiesInvocable</nameSegment>        
     </actionCalls>
-    <apiVersion>51.0</apiVersion>
-    <areMetricsLoggedToDataCloud>false</areMetricsLoggedToDataCloud>
+    <apiVersion>51.0</apiVersion>    
     <assignments>
         <name>Assign_Opportunity_values_from_screen</name>
         <label>Assign Opportunity values from screen</label>

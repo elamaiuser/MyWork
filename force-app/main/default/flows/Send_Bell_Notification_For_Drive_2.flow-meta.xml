@@ -14,11 +14,9 @@
                 <elementReference>$Record.Id</elementReference>
             </value>
         </inputParameters>
-        <nameSegment>BloodDriveInvokable</nameSegment>
-        <offset>0</offset>
+        <nameSegment>BloodDriveInvokable</nameSegment>        
     </actionCalls>
-    <apiVersion>63.0</apiVersion>
-    <areMetricsLoggedToDataCloud>false</areMetricsLoggedToDataCloud>
+    <apiVersion>63.0</apiVersion>    
     <decisions>
         <name>Check_filter_conditions</name>
         <label>Check filter conditions</label>

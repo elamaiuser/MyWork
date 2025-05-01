@@ -38,12 +38,10 @@
                 <elementReference>UFID_AN_Formula</elementReference>
             </value>
         </inputParameters>
-        <nameSegment>UFIDGenerator</nameSegment>
-        <offset>0</offset>
+        <nameSegment>UFIDGenerator</nameSegment>        
         <storeOutputAutomatically>true</storeOutputAutomatically>
     </actionCalls>
-    <apiVersion>63.0</apiVersion>
-    <areMetricsLoggedToDataCloud>false</areMetricsLoggedToDataCloud>
+    <apiVersion>63.0</apiVersion>    
     <decisions>
         <name>Insert_or_Update</name>
         <label>Insert or Update?</label>
