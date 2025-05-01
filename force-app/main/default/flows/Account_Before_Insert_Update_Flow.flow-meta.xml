@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Flow xmlns="http://soap.sforce.com/2006/04/metadata">
-    <apiVersion>63.0</apiVersion>
-    <areMetricsLoggedToDataCloud>false</areMetricsLoggedToDataCloud>
+    <apiVersion>63.0</apiVersion>    
     <assignments>
         <name>Capitalize_National_Name_Field_for_Each_Record_Insert</name>
         <label>Capitalize National Name Field for Each Record Insert</label>

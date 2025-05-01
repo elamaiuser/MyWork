@@ -1412,8 +1412,7 @@
     <flexiPageRegions>
         <itemInstances>
             <componentInstance>
-                <componentInstanceProperties>
-                    <name>label</name>
+                <componentInstanceProperties>                    
                     <value>Tabs</value>
                 </componentInstanceProperties>
                 <componentInstanceProperties>
@@ -1572,8 +1571,7 @@
         </itemInstances>
         <itemInstances>
             <componentInstance>
-                <componentInstanceProperties>
-                    <name>label</name>
+                <componentInstanceProperties>                    
                     <value>Tabs</value>
                 </componentInstanceProperties>
                 <componentInstanceProperties>

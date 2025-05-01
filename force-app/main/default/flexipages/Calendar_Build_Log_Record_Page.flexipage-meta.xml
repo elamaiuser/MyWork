@@ -654,8 +654,7 @@
                     <name>horizontalAlignment</name>
                     <value>false</value>
                 </componentInstanceProperties>
-                <componentInstanceProperties>
-                    <name>label</name>
+                <componentInstanceProperties>                    
                     <value>Information</value>
                 </componentInstanceProperties>
                 <componentName>flexipage:fieldSection</componentName>
@@ -672,8 +671,7 @@
                     <name>horizontalAlignment</name>
                     <value>false</value>
                 </componentInstanceProperties>
-                <componentInstanceProperties>
-                    <name>label</name>
+                <componentInstanceProperties>                    
                     <value>Drive Status Correction Batch Stats</value>
                 </componentInstanceProperties>
                 <componentName>flexipage:fieldSection</componentName>
@@ -690,8 +688,7 @@
                     <name>horizontalAlignment</name>
                     <value>false</value>
                 </componentInstanceProperties>
-                <componentInstanceProperties>
-                    <name>label</name>
+                <componentInstanceProperties>                    
                     <value>Calendar Build Batch Stats</value>
                 </componentInstanceProperties>
                 <componentName>flexipage:fieldSection</componentName>
@@ -708,8 +705,7 @@
                     <name>horizontalAlignment</name>
                     <value>false</value>
                 </componentInstanceProperties>
-                <componentInstanceProperties>
-                    <name>label</name>
+                <componentInstanceProperties>                    
                     <value>Drive Generation Stats</value>
                 </componentInstanceProperties>
                 <componentName>flexipage:fieldSection</componentName>
@@ -726,8 +722,7 @@
                     <name>horizontalAlignment</name>
                     <value>false</value>
                 </componentInstanceProperties>
-                <componentInstanceProperties>
-                    <name>label</name>
+                <componentInstanceProperties>                    
                     <value>Sys Gen Run Stats</value>
                 </componentInstanceProperties>
                 <componentName>flexipage:fieldSection</componentName>
@@ -744,8 +739,7 @@
                     <name>horizontalAlignment</name>
                     <value>false</value>
                 </componentInstanceProperties>
-                <componentInstanceProperties>
-                    <name>label</name>
+                <componentInstanceProperties>                    
                     <value>System Information</value>
                 </componentInstanceProperties>
                 <componentName>flexipage:fieldSection</componentName>
@@ -932,8 +926,7 @@
     <flexiPageRegions>
         <itemInstances>
             <componentInstance>
-                <componentInstanceProperties>
-                    <name>label</name>
+                <componentInstanceProperties>                    
                     <value>Tabs</value>
                 </componentInstanceProperties>
                 <componentInstanceProperties>

@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Flow xmlns="http://soap.sforce.com/2006/04/metadata">
     <apiVersion>63.0</apiVersion>
-    <areMetricsLoggedToDataCloud>false</areMetricsLoggedToDataCloud>
     <decisions>
         <description>If Site is created then set the Location Name and if Site/Building Name or Room name changed then update Location Name and then Clear Evaluation</description>
         <name>Check_If_Site_is_Created_or_Updated</name>
