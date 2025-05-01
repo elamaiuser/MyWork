@@ -655,6 +655,7 @@
                     <value>false</value>
                 </componentInstanceProperties>
                 <componentInstanceProperties>                    
+                    <name>label</name>
                     <value>Information</value>
                 </componentInstanceProperties>
                 <componentName>flexipage:fieldSection</componentName>
@@ -672,6 +673,7 @@
                     <value>false</value>
                 </componentInstanceProperties>
                 <componentInstanceProperties>                    
+                    <name>label</name>
                     <value>Drive Status Correction Batch Stats</value>
                 </componentInstanceProperties>
                 <componentName>flexipage:fieldSection</componentName>
@@ -689,6 +691,7 @@
                     <value>false</value>
                 </componentInstanceProperties>
                 <componentInstanceProperties>                    
+                    <name>label</name>
                     <value>Calendar Build Batch Stats</value>
                 </componentInstanceProperties>
                 <componentName>flexipage:fieldSection</componentName>
@@ -706,6 +709,7 @@
                     <value>false</value>
                 </componentInstanceProperties>
                 <componentInstanceProperties>                    
+                    <name>label</name>
                     <value>Drive Generation Stats</value>
                 </componentInstanceProperties>
                 <componentName>flexipage:fieldSection</componentName>
@@ -723,6 +727,7 @@
                     <value>false</value>
                 </componentInstanceProperties>
                 <componentInstanceProperties>                    
+                    <name>label</name>
                     <value>Sys Gen Run Stats</value>
                 </componentInstanceProperties>
                 <componentName>flexipage:fieldSection</componentName>
@@ -740,6 +745,7 @@
                     <value>false</value>
                 </componentInstanceProperties>
                 <componentInstanceProperties>                    
+                    <name>label</name>
                     <value>System Information</value>
                 </componentInstanceProperties>
                 <componentName>flexipage:fieldSection</componentName>
@@ -927,9 +933,6 @@
         <itemInstances>
             <componentInstance>
                 <componentInstanceProperties>                    
-                    <value>Tabs</value>
-                </componentInstanceProperties>
-                <componentInstanceProperties>
                     <name>tabs</name>
                     <value>maintabs</value>
                 </componentInstanceProperties>
