@@ -1132,7 +1132,8 @@ class BaseGenerator {
       originalSlot: originalSlot,
       slot: tempSlot,
       driveShiftIndex: driveShiftIndex,
-      recurrenceDates: tempSlot.recurrenceDates || []
+      recurrenceDates: tempSlot.recurrenceDates || [],
+      recurrenceDriveIds: tempSlot.recurrenceDriveIds || []
     };
     return this.notifyDriveChanged();
   }
@@ -1154,7 +1155,8 @@ class BaseGenerator {
       this.mapSlotRecurrenceDates[slot.key] = {
         action: 'delete',
         slot: deletedSlot,
-        recurrenceDates: slot.recurrenceDates || []
+        recurrenceDates: slot.recurrenceDates || [],
+        recurrenceDriveIds: slot.recurrenceDriveIds || []
       };
     } else {
       delete this.mapSlotRecurrenceDates[slot.key];
@@ -1177,6 +1179,9 @@ class BaseGenerator {
     const recurrenceDates = Object.values(mapSlotRecurrenceDates).reduce((accumulative, current) => {
       return [...accumulative, ...current.recurrenceDates];
     }, []);
+    const recurrenceDriveIds = Object.values(mapSlotRecurrenceDates).reduce((accumulative, current) => {
+      return [...accumulative, ...current.recurrenceDriveIds];
+    }, []);
     const today = DateTime.fromObject({
       zone: this.masterData.timezoneSidId
     }).toISODate();
@@ -1189,6 +1194,7 @@ class BaseGenerator {
     return Promise.resolve()
       .then(() => {
         const driveQuery = new driveQueryModel();
+        driveQuery.recordIds = recurrenceDriveIds;
         driveQuery.selectedDates = validRecurrenceDates;
         driveQuery.eventTypes = [DRIVE_TYPE.FIXED_SITE];
         driveQuery.operationTypes = [OPERATION_TYPE.INTEGRATED, OPERATION_TYPE.NON_INTEGRATED_APH, OPERATION_TYPE.NON_INTEGRATED_WB];
