@@ -176,6 +176,10 @@
 		<members>Opportunity.Template_Opportunity</members>
 		<name>QuickAction</name>
     </types>
+	<types>
+   		<members>OpportunityStage</members>
+   		<name>StandardValueSet</name>
+	</types>
     <types>
 		<members>Account_Marketing_Program__c</members>
 		<members>Account</members>

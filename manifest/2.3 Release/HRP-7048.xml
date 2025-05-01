@@ -6,8 +6,8 @@
 		<name>CustomField</name>
 	</types>
 	<types>
-   <members>OpportunityStage</members>
-   <name>StandardValueSet</name>
-</types>
+   		<members>OpportunityStage</members>
+   		<name>StandardValueSet</name>
+	</types>
 	<version>63.0</version>
 </Package>
