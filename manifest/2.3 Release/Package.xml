@@ -83,6 +83,7 @@
 	</types>	
     <types>
 		<members>Send_Bell_Notification_To_District_Manager_1</members>
+		<members>Send_Bell_Notification_To_District_Manager</members>
         <members>Set_UFID_for_Marketing_Program</members>
 		<members>Set_Marketing_Program_UFID</members>
         <members>Initiate_Marketing_Exception_Request</members>
