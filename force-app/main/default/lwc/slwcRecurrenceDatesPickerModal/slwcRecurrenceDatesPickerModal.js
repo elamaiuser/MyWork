@@ -50,6 +50,14 @@ export default class SlwcRecurrenceDatesPickerModal extends LightningElement {
         return this.step === STEP.CONFIRM
     }
 
+    get appointmentAlertMessage() {
+        return "Appointment updates will only be applied to drives with no issues.";
+    }
+
+    get appointmentAlertInstructionMessage() {
+        return "To update an appointment on a drive with a pending issue, fix the issue and come back to this screen to confirm the update on the drive.";
+    }
+
     connectedCallback() {
     }
 
@@ -98,7 +106,7 @@ export default class SlwcRecurrenceDatesPickerModal extends LightningElement {
                             const errorMessages = [];
                             const hasPendingDCR = !!mapDriveChangeRequestsByDriveId[drive.id]?.length;
                             if(hasPendingDCR) {
-                                errorMessages.push("Having Pending DCR")
+                                errorMessages.push("Pending DCR")
                             }
                             return {
                                 ...drive,
