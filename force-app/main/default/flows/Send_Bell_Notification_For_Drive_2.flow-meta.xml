@@ -3,8 +3,8 @@
     <actionCalls>
         <name>myRule_1_A1</name>
         <label>Send Notification TO DM</label>
-        <locationX>50</locationX>
-        <locationY>431</locationY>
+        <locationX>176</locationX>
+        <locationY>323</locationY>
         <actionName>BloodDriveInvokable</actionName>
         <actionType>apex</actionType>
         <flowTransactionModel>CurrentTransaction</flowTransactionModel>
@@ -17,61 +17,10 @@
         <nameSegment>BloodDriveInvokable</nameSegment>
     </actionCalls>
     <apiVersion>63.0</apiVersion>
-    <decisions>
-        <name>Check_filter_conditions</name>
-        <label>Check filter conditions</label>
-        <locationX>182</locationX>
-        <locationY>323</locationY>
-        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
-        <rules>
-            <name>Matches_criteria</name>
-            <conditionLogic>and</conditionLogic>
-            <conditions>
-                <leftValueReference>$Record.Drive_Date__c</leftValueReference>
-                <operator>GreaterThan</operator>
-                <rightValue>
-                    <elementReference>$Flow.CurrentDate</elementReference>
-                </rightValue>
-            </conditions>
-            <conditions>
-                <leftValueReference>$Record.Account.Is_Account_Managed__c</leftValueReference>
-                <operator>EqualTo</operator>
-                <rightValue>
-                    <booleanValue>false</booleanValue>
-                </rightValue>
-            </conditions>
-            <conditions>
-                <leftValueReference>$Record.Account.District_Manager__c</leftValueReference>
-                <operator>IsNull</operator>
-                <rightValue>
-                    <booleanValue>false</booleanValue>
-                </rightValue>
-            </conditions>
-            <conditions>
-                <leftValueReference>$Record.Account.Account_Manager__c</leftValueReference>
-                <operator>IsNull</operator>
-                <rightValue>
-                    <booleanValue>true</booleanValue>
-                </rightValue>
-            </conditions>
-            <conditions>
-                <leftValueReference>$Record.LastModifiedBy.Username</leftValueReference>
-                <operator>NotEqualTo</operator>
-                <rightValue>
-                    <stringValue>service account</stringValue>
-                </rightValue>
-            </conditions>
-            <connector>
-                <targetReference>myRule_1_A1</targetReference>
-            </connector>
-            <label>Matches criteria</label>
-        </rules>
-    </decisions>
     <description>Migrated from the Send Bell Notification For Drive process using Check if the Drive has Drive date more than current date and the Account is unmanaged criteria.
 Send a bell notification to District Manager of the Account when a Drive is created where the Drive Date is more than current date and the related Account is unmanaged</description>
     <environments>Default</environments>
-    <interviewLabel>Send Bell Notification For Drive {!$Flow.CurrentDateTime}</interviewLabel>
-    <label>Send Bell Notification For Drive</label>
+    <label>Send Bell Notification For Drive_2</label>
     <processMetadataValues>
         <name>BuilderType</name>
         <value>
@@ -86,10 +35,10 @@ Send a bell notification to District Manager of the Account when a Drive is crea
     </processMetadataValues>
     <processType>AutoLaunchedFlow</processType>
     <start>
-        <locationX>56</locationX>
+        <locationX>50</locationX>
         <locationY>0</locationY>
         <connector>
-            <targetReference>Check_filter_conditions</targetReference>
+            <targetReference>myRule_1_A1</targetReference>
         </connector>
         <filterLogic>1 AND (2 OR 3)</filterLogic>
         <filters>
@@ -117,5 +66,5 @@ Send a bell notification to District Manager of the Account when a Drive is crea
         <recordTriggerType>Update</recordTriggerType>
         <triggerType>RecordAfterSave</triggerType>
     </start>
-    <status>Obsolete</status>
+    <status>Active</status>
 </Flow>
