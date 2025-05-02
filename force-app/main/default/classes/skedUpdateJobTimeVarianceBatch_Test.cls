@@ -190,8 +190,10 @@ private class skedUpdateJobTimeVarianceBatch_Test {
                 sked_Volunteer_Setup__c = 1
             );
             insert testDriveShift;
-
-            sked__Job__c testJob = new sked__Job__c(
+			
+        	List<sked__Job__c> testJobList = new List<sked__Job__c>();
+            sked__Job__c testJob;
+        	testJob = new sked__Job__c(
                 sked__Location__c = testDriveSite.Id,
                 sked__Region__c = testRegion.Id,
                 sked__Start__c = DateTime.newInstance(testDrive.sked_Drive_Date__c, Time.newInstance(14,0,0,0)),
@@ -205,7 +207,23 @@ private class skedUpdateJobTimeVarianceBatch_Test {
                 sked_Setup_Time__c = 60,
                 sked_Travel_Time2__c = 60
             );
-            insert testJob;
+        	testJobList.add(testJob);
+        	
+        	testJob = new sked__Job__c(
+                sked__Location__c = testDriveSite.Id,
+                sked__Region__c = testRegion.Id,
+                sked__Start__c = DateTime.newInstance(testDrive.sked_Drive_Date__c, Time.newInstance(14,0,0,0)),
+                sked__Finish__c = DateTime.newInstance(testDrive.sked_Drive_Date__c, Time.newInstance(20,0,0,0)),
+                sked__Duration__c = 60,
+                sked__Job_Status__c = skedConstants.JOB_STATUS_PENDING_ALLOCATION,
+                sked_Drive__c = testDrive.Id,
+                sked_Drive_Shift__c = testDriveShift.Id,
+                sked_Resource_Role__c = 'Driver',
+                sked_Setup_Time__c = 60,
+                sked_Travel_Time2__c = 60
+            );
+        	testJobList.add(testJob);
+            insert testJobList;
 
             DateTime driveDate = DateTime.newInstance(testDrive.sked_Drive_Date__c, testDrive.sked_Start_Time__c);
             driveDate = skedDateTimeUtils.toTimezone(driveDate, testDriveSite.sked_Timezone__c);
@@ -215,7 +233,7 @@ private class skedUpdateJobTimeVarianceBatch_Test {
                 System.today().addDays(100),
                 skedConstants.ROLE_TIME_VARIANCE_APPLIES_TO_TRAVEL_TIME_FROM,
                 15,
-                'Staff roles',
+                'Driving roles',
                 testDriveSite.Id,
                 driveWeekday
             );
@@ -223,7 +241,7 @@ private class skedUpdateJobTimeVarianceBatch_Test {
             Database.executeBatch(new skedUpdateJobTimeVarianceBatch(new List<skedRoleTimeVarianceAdjustment>{adjustment}));
         Test.stopTest();
 
-        testJob = [SELECT Id, sked_Travel_Time2__c FROM sked__Job__c LIMIT 1][0];
+        testJob = [SELECT Id, sked_Travel_Time2__c FROM sked__Job__c WHERE sked_Resource_Role__c = 'Driver' LIMIT 1][0];
         System.assertEquals(75, testJob.sked_Travel_Time2__c);
     }
 }

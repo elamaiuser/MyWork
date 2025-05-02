@@ -3,7 +3,7 @@ import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import TIME_ZONE from "@salesforce/i18n/timeZone";
 import { CurrentPageReference } from "lightning/navigation";
 import { DateTime } from "c/luxon";
-import { flatMap, groupBy, uniqueId, uniq } from 'c/lodash';
+import { groupBy, uniqueId, uniq } from 'c/lodash';
 import { calendarMonthHelper, planDriveDateHelper } from "c/slwcHelpers";
 import { classNames, isNullOrEmpty } from "c/slwcUtils";
 import {
@@ -790,18 +790,9 @@ export default class SlwcDriveCalendar extends LightningElement {
                 });
                 activities.forEach((activity) => {
                     let activityStart = DateTime.fromISO(activity.start, { zone: activity.timezoneSidId });
-                    let activityFinish = DateTime.fromISO(activity.finish, { zone: activity.timezoneSidId });
-                    const activityStartDate = activityStart.toISODate();
-                    const activityFinishDate = activityFinish.toISODate();
-                    activity.activityDates = this.dateUtils.generateDateRange(activityStartDate, activityFinishDate);
+                    activity.activityDate = activityStart.toISODate();
                 });
-                const groupedActivities = flatMap(activities, (activity) => {
-                    return activity.activityDates.map((date) => ({
-                        ...activity,
-                        activityDate: this.dateUtils.date2dateIso(date),
-                    }));
-                });
-                this.activitiesMapByDate = groupBy(groupedActivities, 'activityDate');
+                this.activitiesMapByDate = groupBy(activities, 'activityDate');
                 this.holidays = holidayResult;
                 this.calendarMessages = calendarMessageResult;
                 this.driveLimits = driveLimitResult;

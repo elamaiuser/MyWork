@@ -297,7 +297,8 @@ public class skedDriveChangeRequestHandler extends skedTriggerHub {
 						oppRec.put(oppDataField, fieldVal);
 
                         if(aptQuantityRevertNeededFor.contains(item.sked_Field_API_Name__c)) {
-                            object newFieldVal = skedUtils.getFieldValue(String.valueOf(rejectedDCR.sked_Drive__r.sked_APT_Quantity__c), 'double');
+                            Decimal aptQuantity = rejectedDCR.sked_Drive__r.sked_APT_Quantity__c != null ? rejectedDCR.sked_Drive__r.sked_APT_Quantity__c : 0;
+                            object newFieldVal = skedUtils.getFieldValue(String.valueOf(aptQuantity), 'double');
                             oppRec.put('APT_Quantity__c', newFieldVal);
                             oppRec.put('APT_Change_Reason__c', 'Drive Change Requested is rejected. ' + system.now());
                         }

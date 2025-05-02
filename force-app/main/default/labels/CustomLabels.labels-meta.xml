@@ -1,6 +1,829 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomLabels xmlns="http://soap.sforce.com/2006/04/metadata">
     <labels>
+        <fullName>AccPortfolioAssignmentException</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>AccPortfolioAssignmentException</shortDescription>
+        <value>System Administrator,Global Admin,Recruitment Admin,APS Admin</value>
+    </labels>
+    <labels>
+        <fullName>AccountMergePermissionMessage</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>AccountMergePermissionMessage</shortDescription>
+        <value>You are not authorized to merge the Accounts</value>
+    </labels>
+    <labels>
+        <fullName>Account_Portfolio_Account_team_Delete_Permission</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Account Portfolio &amp; Account team Delete Permission</shortDescription>
+        <value>System Administrator,Global Admin,Recruitment Admin</value>
+    </labels>
+    <labels>
+        <fullName>All_Org_Wide_Addresses</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>All Org Wide Addresses</shortDescription>
+        <value>bsfsystem@redcross.org,customercare@redcross.org</value>
+    </labels>
+    <labels>
+        <fullName>AssignResourceProfileToExclude</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>AssignResourceProfileToExclude</shortDescription>
+        <value>System Administrator</value>
+    </labels>
+    <labels>
+        <fullName>AssignUserLicenses</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>AssignUserLicenses</shortDescription>
+        <value>Yes</value>
+    </labels>
+    <labels>
+        <fullName>BSF_BatchUpdateSiteCollectionOperation_SOQL</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>BSF_BatchUpdateSiteCollectionOperation_SOQL</shortDescription>
+        <value>SELECT Id, sked_Collection_Operation__c, sked__Region__c,sked_Timezone__c FROM sked__Location__c WHERE sked_Active__c = true</value>
+    </labels>
+    <labels>
+        <fullName>BSF_Mass_Account_Service_Role_Warning_Message</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>BSF Mass Account Service Role Warning Message</shortDescription>
+        <value>An active Blood Program Leader Role is already associated to this account. When you click Proceed, the Blood Program Leader Role will be removed form your selections.</value>
+    </labels>
+    <labels>
+        <fullName>BSF_Mass_Drive_Service_Role_After_Hours_Contact_Warning_Message</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>BSF Mass Drive Service Role After Hours Contact Warning Message</shortDescription>
+        <value>The After Hours Contact must have an after hours phone number selected on their contact record.</value>
+    </labels>
+    <labels>
+        <fullName>BSF_Mass_Drive_Service_Role_Call_List_Recipient_Warning_Message</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>BSF Mass Drive Service Role Call List Recipient Warning Message</shortDescription>
+        <value>No call list will be generated due to request within 4.5 weeks</value>
+    </labels>
+    <labels>
+        <fullName>BSF_Mass_Drive_Service_Role_Primary_Contact_Warning_Message</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>BSF Mass Drive Service Role Primary Contact Warning Message</shortDescription>
+        <value>A Primary Contact Role already exist for this drive.</value>
+    </labels>
+    <labels>
+        <fullName>BSF_Mass_Drive_Service_Role_Warning_Message</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>BSF Mass Drive Service Role Warning Message</shortDescription>
+        <value>The selected Roles related to the above warning will not be created if you proceed.</value>
+    </labels>
+    <labels>
+        <fullName>BSF_OWEA_SENDER</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>BSF_OWEA_SENDER</shortDescription>
+        <value>bsfsystem@redcross.org</value>
+    </labels>
+    <labels>
+        <fullName>BSF_SUPPORT_EMAIL_ID</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>BSF_SUPPORT_EMAIL_ID</shortDescription>
+        <value>subhajit.bose@exavalu.com,barnojit.sharma@exavalu.com,fitsum.worku@redcross.org,neyti.blome@redcross.org,testingarcbsfcust@gmail.com,soumojit.sur@redcross.org</value>
+    </labels>
+    <labels>
+        <fullName>Block_ZipCode_Update_On_Site</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>To Block zip code update on site if it is true</shortDescription>
+        <value>true</value>
+    </labels>
+    <labels>
+        <fullName>BloodProgram</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>BloodProgram</shortDescription>
+        <value>Blood Program Leader</value>
+    </labels>
+    <labels>
+        <fullName>Bpl_Error</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Bpl Error</shortDescription>
+        <value>Overlapping dates detected. There can only be one valid BPL at a time for an account.</value>
+    </labels>
+    <labels>
+        <fullName>CB_DRIVE_KEYWORD</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>CB_DRIVE_KEYWORD</shortDescription>
+        <value>Calendar Build System</value>
+    </labels>
+    <labels>
+        <fullName>CannotDeleteRecordExceptSystemAdmin</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>CannotDeleteRecordExceptSystemAdmin</shortDescription>
+        <value>You do not have permission to delete this record.</value>
+    </labels>
+    <labels>
+        <fullName>ChunkHandlerUpdateAMAndDMPortfolioDailyBatch</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>ChunkHandlerUpdateAMAndDMPortfolioDailyBatch</shortDescription>
+        <value>100</value>
+    </labels>
+    <labels>
+        <fullName>ChunkHandlerUpdateAMandDMPortfOnOppAndDOCDailyBatch</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>ChunkHandlerUpdateAMandDMPortfOnOppAndDOCDailyBatch</shortDescription>
+        <value>100</value>
+    </labels>
+    <labels>
+        <fullName>ColorCodeJson</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>ColorCodeJson</shortDescription>
+        <value>{&quot;Blue&quot;:&quot;#0077d8&quot;,&quot;Amber&quot;:&quot;#efb009&quot;,&quot;Green&quot;:&quot;#369a4c&quot;,&quot;Red&quot;:&quot;#c12f24&quot;}</value>
+    </labels>
+    <labels>
+        <fullName>ContactError</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>ContactError</shortDescription>
+        <value>Contact is associated with Active Template, Future Opportunities or Account. Please remove the association before inactivating the contact.</value>
+    </labels>
+    <labels>
+        <fullName>ContactRestrictionAllowedProfiles</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>ContactRestrictionAllowedProfiles</shortDescription>
+        <value>System Administrator,Global Admin,Recruitment Admin,APS Admin,Promotional Manager</value>
+    </labels>
+    <labels>
+        <fullName>Create_Task_New_Portfolio</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Create Task for New Portfolio</shortDescription>
+        <value>Yes</value>
+    </labels>
+    <labels>
+        <fullName>DRD_Can_t_Create_Fixed_Account_Error_Msg</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>DRD Can&apos;t Create Fixed Account Error Msg</shortDescription>
+        <value>DRD Users Can Not Create a Fixed Site Account.</value>
+    </labels>
+    <labels>
+        <fullName>DRD_User_Profile_Names</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>DRD User Profile Names</shortDescription>
+        <value>DRD Manager,DRD Profile</value>
+    </labels>
+    <labels>
+        <fullName>DateOffset_for_WeeklyStaff</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>DateOffset for WeeklyStaff</shortDescription>
+        <value>21</value>
+    </labels>
+    <labels>
+        <fullName>Default_PhoneNumber_Validation_Message</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Default PhoneNumber Validation Message</shortDescription>
+        <value>Invalid {{field_name}} : {{value}} . Please enter a 10 digit {{field_name}} which includes Area Code + 7 digit {{field_name}}.</value>
+    </labels>
+    <labels>
+        <fullName>Default_Primary_Region_Name</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Default Primary Region Name</shortDescription>
+        <value>Skedulo Region</value>
+    </labels>
+    <labels>
+        <fullName>DriveDispatchedCheckBoxEnableProfile</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>DriveDispatchedCheckBoxEnableProfile</shortDescription>
+        <value>APS Admin,System Administrator,APS Management,APS Planner,APS Scheduler,APS Scheduler1</value>
+    </labels>
+    <labels>
+        <fullName>DriveGenerationFailureEmailKey</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>DriveGenerationFailureEmailKey</shortDescription>
+        <value>Drive Generation Failure Email</value>
+    </labels>
+    <labels>
+        <fullName>Drive_Change_Restriction_Message</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Drive Change Restriction Message</shortDescription>
+        <value>Only Global Admin and System Admin can change the Drive Status from Complete to Cancel via selecting Opportunity Stage from Close to Cancel</value>
+    </labels>
+    <labels>
+        <fullName>Drive_Worksheet_Report_Drive_Status</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Drive Worksheet Report Drive Status</shortDescription>
+        <value>&apos;Confirmed&apos;</value>
+    </labels>
+    <labels>
+        <fullName>Eligible_Account_Statuses_for_HandOff_Tasks</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Eligible Account Statuses for HandOff Tasks</shortDescription>
+        <value>Active,Prospect,Reactivate</value>
+    </labels>
+    <labels>
+        <fullName>Else_Error_Message</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Else_Error_Message</shortDescription>
+        <value>Error:- may check your initial reviewer and status</value>
+    </labels>
+    <labels>
+        <fullName>Fixed_Site_Account_Record_Type</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Fixed Site Account Record Type</shortDescription>
+        <value>Fixed Site Account</value>
+    </labels>
+    <labels>
+        <fullName>GeneralTask</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>GeneralTask</shortDescription>
+        <value>General Task</value>
+    </labels>
+    <labels>
+        <fullName>Generate_DCR_For_Drives</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Generate DCR For Drives</shortDescription>
+        <value>No</value>
+    </labels>
+    <labels>
+        <fullName>Generate_DCR_For_Drives_Days_To_Add</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Generate DCR For Drives Days To Add</shortDescription>
+        <value>43</value>
+    </labels>
+    <labels>
+        <fullName>HRP_10083ByPassLabel</fullName>
+        <categories>10083ByPassLabel</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>HRP-10083ByPassLabel</shortDescription>
+        <value>true</value>
+    </labels>
+    <labels>
+        <fullName>InformaticaNamedCredentials</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>InformaticaNamedCredentials</shortDescription>
+        <value>callout:INFORMATICA_USPS</value>
+    </labels>
+    <labels>
+        <fullName>InformeticaNamedCredential</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>InformaticaNamedCredential</shortDescription>
+        <value>callout:INFORMATICA_USPS</value>
+    </labels>
+    <labels>
+        <fullName>Initial_Review_Pending</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Initial_Review_Pending</shortDescription>
+        <value>Initial Review Pending</value>
+    </labels>
+    <labels>
+        <fullName>Integration_User</fullName>
+        <categories>Using Apex Class BloodDriveInvokable</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Integration User</shortDescription>
+        <value>00505000001t6YnAAI,00505000001t6XGAAY</value>
+    </labels>
+    <labels>
+        <fullName>InvalidAccountAddressTaskSubject</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>InvalidAccountAddressTaskSubject</shortDescription>
+        <value>Invalid Account Address (Update Required)</value>
+    </labels>
+    <labels>
+        <fullName>InvalidContactAddressTaskSubject</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>InvalidContactAddressTaskSubject</shortDescription>
+        <value>Invalid Contact Address (Update Required)</value>
+    </labels>
+    <labels>
+        <fullName>IsMigrationEnable</fullName>
+        <categories>Using in Apex class:OpportunityService</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>IsMigrationEnable</shortDescription>
+        <value>FALSE</value>
+    </labels>
+    <labels>
+        <fullName>Lead_Response_Time_In_Days</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Lead Response Time In Days</shortDescription>
+        <value>2</value>
+    </labels>
+    <labels>
+        <fullName>MASK_USER_EMAIL</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>MASK_USER_EMAIL</shortDescription>
+        <value>FALSE</value>
+    </labels>
+    <labels>
+        <fullName>MAX_NO_Of_Resource_To_Sent</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>MAX NO Of Resource To Sent</shortDescription>
+        <value>20</value>
+    </labels>
+    <labels>
+        <fullName>MOEStagingSheetReportURL</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>MOEStagingSheetReportURL</shortDescription>
+        <value>https://app.powerbi.com/groups/me/apps/1bf85886-e730-4e80-9ea2-4330448f7aa5/rdlreports/dc0404a3-5cb2-4fb2-9573-3fd49c9532d8?ctid=dd5b5d42-c0d3-4ad2-b5f1-60edb3af2771&amp;experience=power-bi</value>
+    </labels>
+    <labels>
+        <fullName>NO_SBPM_ABM</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>NO_SBPM/ABM</shortDescription>
+        <value>No SBPM</value>
+    </labels>
+    <labels>
+        <fullName>NationalNameAllowedProfiles</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>NationalNameAllowedProfiles</shortDescription>
+        <value>APS Planner,APS Admin,APS Management</value>
+    </labels>
+    <labels>
+        <fullName>NationalNameCannotBeUpdatedAfterReview</fullName>
+        <categories>Account</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>NationalNameCannotBeUpdatedAfterReview</shortDescription>
+        <value>You cannot update the National name once Review is completed</value>
+    </labels>
+    <labels>
+        <fullName>NationalNameLoggedInUserNotInitialReviewer</fullName>
+        <categories>Account</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>NationalNameLoggedInUserNotInitialReviewer</shortDescription>
+        <value>Error:- You are unable to Review as you are not the initial reviewer</value>
+    </labels>
+    <labels>
+        <fullName>NationalNameSecondReviewNotDoneByInitialReviewer</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>NationalNameSecondReviewNotDoneByInitialReviewer</shortDescription>
+        <value>Error:- You can not submit request you are a initial reviewer and status is Second review pending</value>
+    </labels>
+    <labels>
+        <fullName>NationalNameUpdateExcludeUser</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>NationalNameUpdateExcludeUser</shortDescription>
+        <value>Automated Process</value>
+    </labels>
+    <labels>
+        <fullName>No_Collection_Operation_Filter_Link</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>No Collection Operation Filter Link</shortDescription>
+        <value>/lightning/o/sked__Resource__c/list?filterName=00B5c000008b41cEAA</value>
+    </labels>
+    <labels>
+        <fullName>NonCollectionArea</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>NonCollectionArea</shortDescription>
+        <value>This Drive is currently in a Non-Collection Area. Please take action to change to a site in a valid Collection Operation or Cancel and leverage the Cancelation Reason of Geo Alignment.</value>
+    </labels>
+    <labels>
+        <fullName>NonCollectionArea_Label</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>NonCollectionArea-Label</shortDescription>
+        <value>Non-Collection Area</value>
+    </labels>
+    <labels>
+        <fullName>NotifyAmWeekConfigForBplRecruited</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>NotifyAmWeekConfigForBplRecruited</shortDescription>
+        <value>6</value>
+    </labels>
+    <labels>
+        <fullName>OnlyForMigration</fullName>
+        <categories>Used In OpportunityTriggerHandler</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>OnlyForMigration</shortDescription>
+        <value>FALSE</value>
+    </labels>
+    <labels>
+        <fullName>OpportunitySplitErrorMsg</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>OpportunitySplitErrorMsg</shortDescription>
+        <value>The user\&apos;s current profile is not allowed to modify the opportunity split</value>
+    </labels>
+    <labels>
+        <fullName>OpportunitySplitService</fullName>
+        <categories>Using in Apex class:OpportunitySplitService</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>OpportunitySplitService</shortDescription>
+        <value>System Administrator;DRD Profile;AP&amp;S Management;APS Admin;APS Planner;APS Scheduler;Recruitment Admin;APS Management</value>
+    </labels>
+    <labels>
+        <fullName>OpportunityStageAllowedProfile</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>OpportunityStageAllowedProfile</shortDescription>
+        <value>System Administrator</value>
+    </labels>
+    <labels>
+        <fullName>OpportunityStageAllowedRunningUser</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>OpportunityStageAllowedRunningUser</shortDescription>
+        <value>Automated Process</value>
+    </labels>
+    <labels>
+        <fullName>OpportunityStageErrorMessagee</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>OpportunityStageErrorMessage</shortDescription>
+        <value>Only below stage transition is valid
+Discovery-&gt; Solicitation/Commited/Cancelled,
+Solicitation-&gt; Discovery/Commited/Cancelled,
+Commited-&gt; Closed/Cancelled,
+Closed -&gt; Cancelled,
+Cancelled = No Change Allowed in Stage
+Withdrawn/Excluded-&gt; Cancelled, Closed</value>
+    </labels>
+    <labels>
+        <fullName>OpportunityTeamSyncTriggerSize</fullName>
+        <categories>Apex constant</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>OpportunityTeam Sync Batch Size Trigger</shortDescription>
+        <value>100</value>
+    </labels>
+    <labels>
+        <fullName>PROMOTION_SENDER_EMAIL</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>PROMOTION_SENDER_EMAIL</shortDescription>
+        <value>customercare@redcross.org</value>
+    </labels>
+    <labels>
+        <fullName>Pending_DCR_Banner_Msg</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Pending DCR Banner Msg</shortDescription>
+        <value>Please capture Drive Impacts by processing the Pending Drive Change Request</value>
+    </labels>
+    <labels>
+        <fullName>PerformAddressCleanup</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Flag to toggle Address clean up code</shortDescription>
+        <value>Yes</value>
+    </labels>
+    <labels>
+        <fullName>Personal_Staff_Schedule_Days</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Personal Staff Schedule Days</shortDescription>
+        <value>21</value>
+    </labels>
+    <labels>
+        <fullName>Portal_Account_Id</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Portal Account Id</shortDescription>
+        <value>001x000xxx35tPN</value>
+    </labels>
+    <labels>
+        <fullName>PortfolioAssignmentBatchNames</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>PortfolioAssignmentBatchNames</shortDescription>
+        <value>BSF_Batch_OpportunityTeamMember,BSF_Batch_OpportunityTeamSync</value>
+    </labels>
+    <labels>
+        <fullName>Potential_Feeder_Group_Lead_Status</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Potential Feeder Group Lead Status</shortDescription>
+        <value>Potential Feeder Group,Future Outreach,Feeder Group - Qualified,Feeder Group - Unqualified</value>
+    </labels>
+    <labels>
+        <fullName>PremierCurrent</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>PremierCurrent</shortDescription>
+        <value>Premier Current</value>
+    </labels>
+    <labels>
+        <fullName>PremierPrior</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>PremierPrior</shortDescription>
+        <value>Premier Prior</value>
+    </labels>
+    <labels>
+        <fullName>Premier_Bonus_Current</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Premier Bonus Current</shortDescription>
+        <value>Premier Bonus Current</value>
+    </labels>
+    <labels>
+        <fullName>Premier_Bonus_Prior</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Premier Bonus Prior</shortDescription>
+        <value>Premier Bonus Prior</value>
+    </labels>
+    <labels>
+        <fullName>Publicity_Order_Due_Date_Configuration</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Publicity Order Due Date Configuration</shortDescription>
+        <value>8</value>
+    </labels>
+    <labels>
+        <fullName>Publicity_Review_Days_Configuration</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Publicity Review Days Configuration</shortDescription>
+        <value>63</value>
+    </labels>
+    <labels>
+        <fullName>RESOURCE_NOTIFICATION_SENDER_EMAIL</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>RESOURCE NOTIFICATION SENDER EMAIL</shortDescription>
+        <value>bsfsystem@redcross.org</value>
+    </labels>
+    <labels>
+        <fullName>ReasonUqalifiedProductivity_Planned</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>ReasonUqalifiedProductivity_Planned</shortDescription>
+        <value>productivity &lt; .5</value>
+    </labels>
+    <labels>
+        <fullName>ReasonUqalifiedTotal_Products_Projected</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>ReasonUqalifiedTotal_Products_Projected</shortDescription>
+        <value>products projected &lt; 25</value>
+    </labels>
+    <labels>
+        <fullName>RecaptchaSecretKey</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>RecaptchaSecretKey</shortDescription>
+        <value>6Ldfjz4jAAAAAKPptRtrY4Ie4NI9UlkXRRh9NrKt</value>
+    </labels>
+    <labels>
+        <fullName>RecaptchaSiteKey</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>RecaptchaSiteKey</shortDescription>
+        <value>6Ldfjz4jAAAAAOM_VTVHUd-GjHvKDuAph0FdvXlp</value>
+    </labels>
+    <labels>
+        <fullName>Recruitment_Task_Limit</fullName>
+        <categories>Platform Limit</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Recruitment Task Limit</shortDescription>
+        <value>50</value>
+    </labels>
+    <labels>
+        <fullName>Recurring_Drive_Async_Limit</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Recurring Drive Async Limit</shortDescription>
+        <value>100</value>
+    </labels>
+    <labels>
+        <fullName>Recurring_Drive_Limit</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Recurring Drive Limit</shortDescription>
+        <value>200</value>
+    </labels>
+    <labels>
+        <fullName>Recurring_Mobile_Limit</fullName>
+        <categories>BSF Limits</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Recurring Drive Limit</shortDescription>
+        <value>400</value>
+    </labels>
+    <labels>
+        <fullName>ResetPortfolioAssignmentTime</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>ResetPortfolioAssignmentTime</shortDescription>
+        <value>-15</value>
+    </labels>
+    <labels>
+        <fullName>Resource_Change_Event_Field_List</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Resource Change Event Field List</shortDescription>
+        <value>sked__Is_Active__c,sked_Employment_Status__c,sked_Union_Affiliation__c,sked_Union_Description__c,sked__Employment_Type__c,sked__Primary_Region__c</value>
+    </labels>
+    <labels>
+        <fullName>RestrictOrderForOpportunity</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>RestrictOrderForOpportunity</shortDescription>
+        <value>System Administrator,Recruitment Admin,Global Admin</value>
+    </labels>
+    <labels>
+        <fullName>Restrict_Operation_Type_Change_Error_Msg</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Restrict_Operation_Type_Change_Error_Msg</shortDescription>
+        <value>You can&apos;t change operation type as drives have already been generated. Please create a new fixed site with the desired operation type.</value>
+    </labels>
+    <labels>
+        <fullName>Restrict_Theme_Product_Add_Error_Msg</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Restrict_Theme_Product_Add_Error_Msg</shortDescription>
+        <value>Please select only one theme per order,A theme product already exists for this order</value>
+    </labels>
+    <labels>
+        <fullName>Review_Completed</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Review_Completed</shortDescription>
+        <value>Review Completed</value>
+    </labels>
+    <labels>
+        <fullName>RoleTimeMaxDateDifference</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>RoleTimeMaxDateDifference</shortDescription>
+        <value>365</value>
+    </labels>
+    <labels>
+        <fullName>SYNC_RESOURCE_ADDRESS_AND_PHONE</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>SYNC_RESOURCE_ADDRESS_AND_PHONE</shortDescription>
+        <value>FALSE</value>
+    </labels>
+    <labels>
+        <fullName>Second_Review_Pending</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Second_Review_Pending</shortDescription>
+        <value>Second Review Pending</value>
+    </labels>
+    <labels>
+        <fullName>Split_Credit</fullName>
+        <categories>Opportunity Split</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Split Credit</shortDescription>
+        <value>Split Credit</value>
+    </labels>
+    <labels>
+        <fullName>Split_RSMO_Donation</fullName>
+        <categories>Opportunity Split</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Split RSMO Donation</shortDescription>
+        <value>RSMO Donations</value>
+    </labels>
+    <labels>
+        <fullName>SponsorPlanningMeetingTaskThresholdDays</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>SponsorPlanningMeetingTaskThresholdDays</shortDescription>
+        <value>112</value>
+    </labels>
+    <labels>
+        <fullName>StagingSheetReportURL</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>StagingSheetReportURL</shortDescription>
+        <value>https://app.powerbi.com/groups/me/apps/1bf85886-e730-4e80-9ea2-4330448f7aa5/rdlreports/7ed1ce82-1f15-4528-8e48-e05c48fc0b17?ctid=dd5b5d42-c0d3-4ad2-b5f1-60edb3af2771&amp;experience=power-bi</value>
+    </labels>
+    <labels>
+        <fullName>Success_Message</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Success_Message</shortDescription>
+        <value>Record Review Completed</value>
+    </labels>
+    <labels>
+        <fullName>Super_Admin_User</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Super Admin User</shortDescription>
+        <value>System Administrator,Recruitment Admin,Global Admin</value>
+    </labels>
+    <labels>
+        <fullName>Sync_Contact_To_ASR_EndReason</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Sync Contact To ASR EndReason</shortDescription>
+        <value>Other</value>
+    </labels>
+    <labels>
+        <fullName>Team_Supervisor_Job_Code</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Team Supervisor Job Code</shortDescription>
+        <value>CO1004,CO7001,CO1002,CO1045</value>
+    </labels>
+    <labels>
+        <fullName>ToHandleConstructorOfUpdateDrivesVehicleAllocationSchedulable</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>ToHandleConstructorOfUpdateDrivesVehicleAllocationSchedulable</shortDescription>
+        <value>2</value>
+    </labels>
+    <labels>
+        <fullName>TravelTimeEditableProfiles</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>TravelTimeEditableProfiles</shortDescription>
+        <value>APS Admin,System Administrator,Global Admin</value>
+    </labels>
+    <labels>
+        <fullName>WeeklyStaffingRoleReportURL</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>WeeklyStaffingRoleReportURL</shortDescription>
+        <value>https://app.powerbi.com/groups/me/apps/1bf85886-e730-4e80-9ea2-4330448f7aa5/rdlreports/1eacf224-056a-46ad-baf4-af03654cf447</value>
+    </labels>
+    <labels>
+        <fullName>callListRecipient</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>callListRecipient</shortDescription>
+        <value>Call List Recipient</value>
+    </labels>
+    <labels>
+        <fullName>generatePendingDCRErrorMessages</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>generatePendingDCRErrorMessages</shortDescription>
+        <value>{
+&quot;fromDriveDateError&quot; : &quot;Start date of drive should be less than end date of drive&quot;,
+&quot;startTimeFromError&quot; : &quot;Start time of drive should be less than end time of drive&quot;,
+&quot;endTimeFromError&quot; : &quot;End time of drive should be greater than start time of drive&quot;,
+&quot;toDriveDateError&quot; : &quot;End time of drive should be greater than start time of drive&quot;,
+&quot;startTimeToError&quot; : &quot;Start time of drive should be less than end time of drive&quot;,
+&quot;endTimeToError&quot; : &quot;End time of drive should be greater than start time of drive&quot;
+}</value>
+    </labels>
+    <labels>
+        <fullName>storeProfileToCreateBsfPortfolioTask</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>storeProfileToCreateBsfPortfolioTask</shortDescription>
+        <value>System Administrator</value>
+    </labels>
+    <labels>
         <fullName>Mobile_Account_Record_Type</fullName>
         <language>en_US</language>
         <protected>false</protected>
