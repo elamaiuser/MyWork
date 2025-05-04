@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Time_Block_Names_Must_Be_Unique</fullName>
+    <active>true</active>
+    <errorConditionFormula>AND(
+  CONTAINS(
+      VLOOKUP( 
+        $ObjectType.Time_Block__c.Fields.Name , 
+        $ObjectType.Time_Block__c.Fields.Name, Name
+      ), 
+      Name
+    ), 
+  OR(
+      ISNEW(), ISCHANGED(Name)
+    ) 
+  )</errorConditionFormula>
+    <errorDisplayField>Name</errorDisplayField>
+    <errorMessage>Time Block names must be unique</errorMessage>
+</ValidationRule>

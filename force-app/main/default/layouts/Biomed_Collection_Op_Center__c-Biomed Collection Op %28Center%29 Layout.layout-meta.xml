@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Layout xmlns="http://soap.sforce.com/2006/04/metadata">
+    <excludeButtons>OpenSlackRecordChannel</excludeButtons>
     <excludeButtons>Submit</excludeButtons>
     <layoutSections>
         <customLabel>false</customLabel>
@@ -100,6 +101,22 @@
             <layoutItems>
                 <behavior>Edit</behavior>
                 <field>sked_Waitlist_Enabled__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>sked_Low_Weight__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>sked_High_Weight__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>sked_Medium_Weight__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>sked_Role_Priorities_Weight__c</field>
             </layoutItems>
             <layoutItems>
                 <behavior>Edit</behavior>
@@ -350,13 +367,18 @@
         <detailHeading>false</detailHeading>
         <editHeading>true</editHeading>
         <label>Custom Links</label>
-        <layoutColumns />
-        <layoutColumns />
-        <layoutColumns />
+        <layoutColumns/>
+        <layoutColumns/>
+        <layoutColumns/>
         <style>CustomLinks</style>
     </layoutSections>
     <platformActionList>
         <actionListContext>Record</actionListContext>
+        <platformActionListItems>
+            <actionName>Edit</actionName>
+            <actionType>StandardButton</actionType>
+            <sortOrder>0</sortOrder>
+        </platformActionListItems>
         <platformActionListItems>
             <actionName>Biomed_Collection_Op_Center__c.Update_Web_Scheduling</actionName>
             <actionType>QuickAction</actionType>
@@ -376,11 +398,6 @@
             <actionName>Clone</actionName>
             <actionType>StandardButton</actionType>
             <sortOrder>4</sortOrder>
-        </platformActionListItems>
-        <platformActionListItems>
-            <actionName>Edit</actionName>
-            <actionType>StandardButton</actionType>
-            <sortOrder>0</sortOrder>
         </platformActionListItems>
     </platformActionList>
     <relatedLists>
@@ -405,7 +422,9 @@
         <fields>NAME</fields>
         <fields>sked_Type__c</fields>
         <fields>sked_Resource_Role_Group__c</fields>
+        <fields>sked_Days_of_Week__c</fields>
         <fields>sked_Drive_Type__c</fields>
+        <fields>sked_Mobile_Type__c</fields>
         <fields>sked_Effective_Start_Date__c</fields>
         <fields>sked_Effective_End_Date__c</fields>
         <fields>sked_Fixed_Site_Operation_Type__c</fields>
@@ -452,6 +471,16 @@
     <relatedLists>
         <fields>NAME</fields>
         <relatedList>sked_CollectionOperationOptimizerSetting__c.sked_Collection_Operation__c</relatedList>
+    </relatedLists>
+    <relatedLists>
+        <fields>NAME</fields>
+        <fields>Time_Block__c.NAME</fields>
+        <fields>Days_of_Week__c</fields>
+        <fields>Time_Block__c.Start_Time__c</fields>
+        <fields>Time_Block__c.End_Time__c</fields>
+        <relatedList>Collection_Operation_Time_Block__c.Collection_Operation__c</relatedList>
+        <sortField>Time_Block__c.NAME</sortField>
+        <sortOrder>Desc</sortOrder>
     </relatedLists>
     <showEmailCheckbox>false</showEmailCheckbox>
     <showHighlightsPanel>false</showHighlightsPanel>
