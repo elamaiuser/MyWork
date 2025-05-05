@@ -17,21 +17,16 @@
     </types>
     <types>
 		<members>Handle_Do_Not_Contact_Updates_On_Contact</members>
-        <members>Sync_ASR_with_Contact_Changes</members>
-		<!-- Deactivated Flow fot this Ticekt -->
-		<members>Update_Do_not_Contact</members>
-		<!-- End -->
-		<!-- Deactivated Process Builder fot this Ticekt -->
-		<members>Create_Account_Service_Role_Upon_Contact_Creation</members>
-		<!-- End -->
+        <members>Sync_ASR_with_Contact_Changes</members>		
+		<members>Update_Do_not_Contact</members>		
+		<members>Create_Account_Service_Role_Upon_Contact_Creation</members>		
 		<name>Flow</name>
 	</types>
     <types>
 		<members>Sync_Contact_To_ASR_EndReason</members>
 		<name>CustomLabel</name>
 	</types>
-    <types>
-		
+    <types>		
 		<members>Account_Service_Role_End_Reason__mdt.Deceased</members>
 		<name>CustomMetadata</name>
 	</types>
@@ -42,13 +37,11 @@
 	<types>
         <members>Contact</members>
 		<name>Workflow</name>
-	</types>
-	<!-- Deactivated WorkFlow Rule & Process Builder fot this Ticekt -->
+	</types>	
 	<types>
     	<members>Contact.Do Not Contact Reasons Equals to Deceased</members>
 		<members>Contact.Do Not Contact is Selected</members>
     	<name>WorkflowRule</name>
-	</types>
-	<!-- End -->
+	</types>	
 	<version>63.0</version>
 </Package>
