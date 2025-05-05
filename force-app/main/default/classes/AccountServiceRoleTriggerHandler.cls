@@ -38,8 +38,8 @@ public class AccountServiceRoleTriggerHandler extends TriggerHandler{
             AccountServiceRoleService.updateBPLonAccount((List<Account_Service_Role__c>)trigger.new);
          }
          //Implemented for HRP-5860
-         AccountServiceRoleService.markContactAsInactive((Map<Id,Account_Service_Role__c>)trigger.oldMap,
-                                                       (List<Account_Service_Role__c>)trigger.new);
+         //AccountServiceRoleService.markContactAsInactive((Map<Id,Account_Service_Role__c>)trigger.oldMap,
+          //                                             (List<Account_Service_Role__c>)trigger.new);
     }
     
     public override void afterInsert(){
