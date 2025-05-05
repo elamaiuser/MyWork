@@ -6,6 +6,7 @@
 	</types>
       <types>
 		<members>Send_Bell_Notification_To_District_Manager_1</members>
+		<members>Send_Bell_Notification_To_District_Manager</members>
 		<name>Flow</name>
 	</types>
     <version>59.0</version>

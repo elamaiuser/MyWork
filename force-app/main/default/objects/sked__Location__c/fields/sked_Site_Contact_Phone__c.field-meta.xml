@@ -2,7 +2,7 @@
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>sked_Site_Contact_Phone__c</fullName>
     <externalId>false</externalId>
-    <formula>sked_Site_Contact__r.Phone</formula>
+    <formula>sked_Site_Contact__r.Primary_Phone_Number_New__c</formula>
     <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
     <label>Site Contact Phone</label>
     <required>false</required>

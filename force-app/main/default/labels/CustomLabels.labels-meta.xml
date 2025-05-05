@@ -823,4 +823,11 @@ Withdrawn/Excluded-&gt; Cancelled, Closed</value>
         <shortDescription>storeProfileToCreateBsfPortfolioTask</shortDescription>
         <value>System Administrator</value>
     </labels>
+    <labels>
+        <fullName>Mobile_Account_Record_Type</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Mobile Account Record Type</shortDescription>
+        <value>Mobile Account</value>
+    </labels>
 </CustomLabels>
