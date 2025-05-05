@@ -11,6 +11,9 @@
             <li class={customClass.resourceExceptionTab} role="presentation" data-value={TABS.RESOURCE_EXCEPTION} onclick={handleTabChange}>
                 <a class="slds-tabs_default__link" role="tab">Resource Exception</a>
             </li>
+            <li class={customClass.tbsExceptionTab} role="presentation" data-value={TABS.TBS_EXCEPTION} onclick={handleTabChange}>
+                <a class="slds-tabs_default__link" role="tab">TBS Exception</a>
+            </li>
         </ul>
         <div if:true={showDriveExceptionTab} class="slds-tabs_default__content" style="padding-top: 0">
             <c-slwc-exception-list exception-type="drive"></c-slwc-exception-list>
@@ -20,6 +23,9 @@
         </div>
         <div if:true={showResourceExceptionTab} class="slds-tabs_default__content" style="padding-top: 0">
             <c-slwc-exception-list exception-type="resource"></c-slwc-exception-list>
+        </div>
+        <div if:true={showTBSExceptionTab} class="slds-tabs_default__content" style="padding-top: 0">
+            <c-slwc-exception-list exception-type="tbs"></c-slwc-exception-list>
         </div>
     </div>
     

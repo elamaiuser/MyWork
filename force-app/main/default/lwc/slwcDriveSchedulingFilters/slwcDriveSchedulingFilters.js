@@ -3,6 +3,7 @@ import * as slwcUtils from 'c/slwcUtils';
 import driveSchedulingFiltersTemplate from './driveSchedulingFilters.html';
 import productGoalCalendarFiltersTemplate from './productGoalCalendarFilters.html';
 import driveExceptionLogFiltersTemplate from './driveExceptionLogFilters.html';
+import tbsExceptionLogFiltersTemplate from './tbsExceptionLogFilters.html';
 import linkedDriveExceptionLogFiltersTemplate from './linkedDriveExceptionLogFilters.html';
 import resourceExceptionLogFiltersTemplate from './resourceExceptionLogFilters.html';
 import driveShiftTradeFiltersTemplate from './driveShiftTradeFilters.html';
@@ -46,6 +47,52 @@ const MODE = {
       districtManagerPortfolios: [],
     }
   }, 
+  TBS_EXCEPTION_LOG: {
+    id: 'tbsExceptionLog',
+    template: tbsExceptionLogFiltersTemplate,
+    defaultModel: {
+      priorities: ["High", "Medium", "Low"],
+      driveTypes: [DRIVE_TYPE.MOBILE, DRIVE_TYPE.FIXED_SITE],
+      operationTypes: [OPERATION_TYPE.INTEGRATED, OPERATION_TYPE.NON_INTEGRATED_WB, OPERATION_TYPE.NON_INTEGRATED_APH],
+      statuses: ["Open"],
+      searchText: "",
+      searchField: "sked_Drive__r.Name",
+      exceptionCodes: [
+        "MISSING_TIME_BLOCK",
+        "OUTSIDE_OF_TIME_BLOCK",
+        "FITS_MULTIPLE_TIME_BLOCKS",
+      ],
+      excludedValues: [
+        "CDL_DOT_HOURS_VIOLATION",
+        "DRIVE_COLLECTION_OPERATION_CHANGED",
+        "EQUIPMENT_REDUCED",
+        "MINIMUM_QUANTITY_NOT_MET",
+        "MAXIMUM_TRAVEL_TIME_VIOLATION",
+        "MISSING_REQUIRED_TAG",
+        "EXPIRED_REQUIRED_TAG",
+        "RESOURCE_ACCOUNT_DECLINED",
+        "RESOURCE_DATA_CHANGED",
+        "RESOURCE_IS_INACTIVE",
+        "RESOURCE_OUT_OF_CO",
+        "RESOURCE_NOT_AVAILABLE_FOR_CO",
+        "RESOURCE_PENDING_TERMINATION",
+        "RESOURCE_ROLE_STATUS_CHANGED",
+        "RESOURCE_SITE_DECLINED",
+        "RESOURCE_TIME_CONFLICT",
+        "ROLE_TIME_DETAIL_CHANGED",
+        "ROLE_TIME_VARIANCE_CHANGED",
+        "STAFFING_CONSTRAINT_CHANGED",
+        "TURNAROUND_TIME_VIOLATION",
+        "MAXIMUM_WEEKLY_HOURS_VIOLATION",
+        "RESOURCE_ROLE_RESTRICTED",
+        "MINIMUM_WEEKLY_WORK_DAYS_VIOLATION",
+        "MAXIMUM_WEEKLY_WORK_DAYS_VIOLATION",
+        "RESOURCE_DUPLICATE_SENIORITY_RANKING",
+        "CERT_ADDED_42DAYS",
+        "LINKED_DRIVE_MISMATCHING_ASSETS"
+      ]
+    },
+  },
   DRIVE_EXCEPTION_LOG: {
     id: 'driveExceptionLog',
     template: driveExceptionLogFiltersTemplate,
@@ -84,7 +131,7 @@ const MODE = {
         "MINIMUM_WEEKLY_WORK_DAYS_VIOLATION",
         "MAXIMUM_WEEKLY_WORK_DAYS_VIOLATION"
       ],
-      excludedValues: ['RESOURCE_DUPLICATE_SENIORITY_RANKING', 'LINKED_DRIVE_MISMATCHING_ASSETS']
+      excludedValues: ['RESOURCE_DUPLICATE_SENIORITY_RANKING', 'LINKED_DRIVE_MISMATCHING_ASSETS', 'MISSING_TIME_BLOCK', 'OUTSIDE_OF_TIME_BLOCK', 'FITS_MULTIPLE_TIME_BLOCKS']
     },
   },
   LINKED_DRIVE_EXCEPTION_LOG: {
@@ -122,7 +169,10 @@ const MODE = {
         "MINIMUM_WEEKLY_WORK_DAYS_VIOLATION",
         "MAXIMUM_WEEKLY_WORK_DAYS_VIOLATION",
         "RESOURCE_DUPLICATE_SENIORITY_RANKING",
-        "CERT_ADDED_42DAYS"
+        "CERT_ADDED_42DAYS",
+        "MISSING_TIME_BLOCK",
+        "OUTSIDE_OF_TIME_BLOCK",
+        "FITS_MULTIPLE_TIME_BLOCKS"
       ]
     },
   },

@@ -33,6 +33,18 @@ const RESOURCE_EXCEPTION_COLUMNS = [
     { label: 'Status', fieldName: 'status', type: 'text', hideDefaultActions: true, initialWidth: 150, wrapText: true }
 ];
 
+const TBS_EXCEPTION_COLUMNS = [
+    { label: 'Name', fieldName: 'recordUrl', type: 'url', hideDefaultActions: false, initialWidth: 100, wrapText: true, typeAttributes:{label: { fieldName: 'name' }, target: '_blank'}},
+    { label: 'Drive', fieldName: 'driveUrl', type: 'url', hideDefaultActions: false, wrapText: true, typeAttributes:{label: { fieldName: 'driveName' }, target: '_blank'}},
+    { label: 'Drive ID', fieldName: 'ufid', type: 'text', hideDefaultActions: true, initialWidth: 100, wrapText: true },
+    { label: 'Drive Date', fieldName: 'driveDate', type: 'date-local', initialWidth: 125, typeAttributes: { year: "numeric", month: "short", day: "2-digit" }, hideDefaultActions: true },
+    { label: 'Job Type', fieldName: 'jobType', type: 'text', hideDefaultActions: false, wrapText: true, initialWidth: 125 },
+    { label: 'Drive Shift', fieldName: 'driveShiftName', type: 'text', hideDefaultActions: true, initialWidth: 200, wrapText: true },
+    { label: 'TBS', fieldName: 'driveShiftTBSName', type: 'text', hideDefaultActions: true, initialWidth: 200, wrapText: true },
+    { label: 'Exception', fieldName: 'exception', type: 'text', hideDefaultActions: true, wrapText: true, cellAttributes: {wrapText: true} },
+    { label: 'Priority', fieldName: 'priority', type: 'text', hideDefaultActions: true, initialWidth: 100, wrapText: true }
+];
+
 export default class SlwcExceptionList extends LightningElement {
     initialized = false;
     selectedExceptionLog = [];
@@ -51,6 +63,8 @@ export default class SlwcExceptionList extends LightningElement {
         }
         else if (this.exceptionType === "resource") {
             return  "resourceExceptionLog";
+        } if (this.exceptionType === "tbs") {
+            return  "tbsExceptionLog";
         }
         return null;
     }
@@ -61,6 +75,9 @@ export default class SlwcExceptionList extends LightningElement {
         }
         else if (this.exceptionType === "resource") {
             return  RESOURCE_EXCEPTION_COLUMNS;
+        }
+        else if (this.exceptionType === "tbs") {
+            return  TBS_EXCEPTION_COLUMNS;
         }
         return null;
     }
@@ -176,6 +193,16 @@ export default class SlwcExceptionList extends LightningElement {
             resourceDriveTypes = this.filters.resourceDriveTypes;
             query.exceptionType = "resource";
             exceptionCodes.push("RESOURCE_DUPLICATE_SENIORITY_RANKING");
+        }
+        else if (this.exceptionType === "tbs") {
+            query.exceptionType = "tbs";
+            const territoryKeys = this.territoryKeys;
+            if (!territoryKeys.length) {
+                return Promise.resolve([]);
+            }
+            query.territoryKeys = territoryKeys;
+            exceptionCodes = this.filters.exceptionCodes;
+            operationTypes = this.filters.operationTypes;
         }
 
         query.exceptionCodes = exceptionCodes;
