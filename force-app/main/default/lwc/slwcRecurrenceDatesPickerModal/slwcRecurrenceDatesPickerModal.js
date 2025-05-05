@@ -55,7 +55,7 @@ export default class SlwcRecurrenceDatesPickerModal extends LightningElement {
     }
 
     get appointmentAlertInstructionMessage() {
-        return "To update an appointment on a drive with a pending issue, fix the issue and come back to this screen to confirm the update on the drive.";
+        return "To update an appointment on a drive with a pending issue, resolve the issue and come back to this screen to confirm the update on the drive.";
     }
 
     connectedCallback() {
