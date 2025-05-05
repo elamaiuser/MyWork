@@ -6,6 +6,10 @@
 	</types>
 	<!-- Deactivated WorkFlow Rule fot this Ticekt -->
 	<types>
+        <members>sked__Location__c</members>
+		<name>Workflow</name>
+	</types>
+	<types>
     	<members>sked__Location__c.SiteName is Edited</members>
     	<name>WorkflowRule</name>
 	</types>
