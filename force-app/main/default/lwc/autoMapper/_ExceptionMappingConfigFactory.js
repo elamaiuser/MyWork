@@ -26,13 +26,13 @@ export class ExceptionMappingConfigFactory {
       mappingConfig.addFieldConfig('sked_Drive__r.sked_Drive_Date__c', 'driveDate');
       mappingConfig.addFieldConfig('sked_Drive__r.sked_UFID__c', 'ufid');
       mappingConfig.addFieldConfig('sked_Drive__r.Name', 'driveName');
+      mappingConfig.addFieldConfig('sked_Drive_Shift__r.Name', 'driveShiftName');
+      mappingConfig.addFieldConfig('sked_Drive_Shift__r.sked_Time_Block__r.Name', 'driveShiftTimeBlockName');
       mappingConfig.addFieldConfig('sked_Exception_Code__c', 'exceptionCode');
       mappingConfig.addFieldConfig('sked_Priority__c', 'priority');
       mappingConfig.addFieldConfig('sked_Conflicted_Drive__c', 'conflictedDrive');
       mappingConfig.addFieldConfig('sked_Conflicted_Drive__r.Name', 'conflictedDriveName');
       mappingConfig.addFieldConfig('skedHC__Activity__r.sked_Activity_Title__c', 'activityTitle');
-
-
 
       mappingConfig.addFieldConfig('sked_Linked_Drive__c', 'linkedDriveId');
       mappingConfig.addFieldConfig('sked_Linked_Drive__r.Name', 'linkedDriveName');
