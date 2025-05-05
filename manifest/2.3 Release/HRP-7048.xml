@@ -5,5 +5,9 @@
         <members>sked_Drive__c.sked_Stage_Options__c</members>
 		<name>CustomField</name>
 	</types>
+	<types>
+   		<members>OpportunityStage</members>
+   		<name>StandardValueSet</name>
+	</types>
 	<version>63.0</version>
 </Package>

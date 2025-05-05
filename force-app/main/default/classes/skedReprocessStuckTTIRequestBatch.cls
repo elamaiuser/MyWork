@@ -64,8 +64,7 @@ global with sharing class skedReprocessStuckTTIRequestBatch implements Database.
                                                   NextFireTime, CronExpression, State
                                                   FROM CronTrigger 
                                                   WHERE State IN :jobPendingStatus
-                                                  AND CronJobDetail.Name = 'Reprocess Stuck TTIRR Records'
-                                                  AND CronExpression = 'SimpleTrigger'];
+                                                  AND CronJobDetail.Name = 'Auto Reschedule_Reprocess Stuck TTIRR Records'];
 
         if((pendingScheduledRun == NULL || pendingScheduledRun.isEmpty()) && 
             this.foundStuckRecords && 
@@ -73,7 +72,7 @@ global with sharing class skedReprocessStuckTTIRequestBatch implements Database.
             skedSetting.instance.stuckTTIRR.isActive
         ) {
             Decimal rescheduleIntervalMins = skedSetting.instance.stuckTTIRR.rescheduleIntervalMins;
-            System.scheduleBatch(new skedReprocessStuckTTIRequestBatch(), 'Reprocess Stuck TTIRR Records', Integer.valueOf(rescheduleIntervalMins));
+            System.scheduleBatch(new skedReprocessStuckTTIRequestBatch(), 'Auto Reschedule_Reprocess Stuck TTIRR Records', Integer.valueOf(rescheduleIntervalMins));
         }
     }
 }
