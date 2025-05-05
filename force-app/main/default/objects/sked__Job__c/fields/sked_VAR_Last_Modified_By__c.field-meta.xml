@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>sked_VAR_Last_Modified_By__c</fullName>
+    <deleteConstraint>SetNull</deleteConstraint>
+    <description>FS Recruitment team would need to see a a new field on the Volunteer Lock reason report to view the user who modified the Volunteer Adjustment Reason.</description>
+    <externalId>false</externalId>
+    <label>VAR Last Modified By</label>
+    <referenceTo>User</referenceTo>
+    <relationshipName>Jobs</relationshipName>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Lookup</type>
+</CustomField>

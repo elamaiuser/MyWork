@@ -4,8 +4,7 @@ import {
 } from 'lightning/platformResourceLoader';
 import { sObjectType, activityQueryModel, activityService } from 'c/dataService';
 import { DateTime } from "c/luxon";
-import customLWCStyle from '@salesforce/resourceUrl/skedLWCCustomStyle';
-import * as slwcDateUtils from 'c/slwcDateUtils';
+import customLWCStyle from '@salesforce/resourceUrl/skedLWCCustomStyle'
 import TIME_ZONE from '@salesforce/i18n/timeZone';
 
 export default class SlwcActivityCalendarActivityList extends LightningElement {
@@ -53,12 +52,6 @@ export default class SlwcActivityCalendarActivityList extends LightningElement {
         return results;
     }
 
-    get dateUtils() {
-        return slwcDateUtils.getInstance({
-          timezone: TIME_ZONE
-        })
-    }
-
     renderedCallback() {
         Promise.all([
             loadStyle(this, customLWCStyle)
@@ -87,12 +80,8 @@ export default class SlwcActivityCalendarActivityList extends LightningElement {
 
         let activityQuery = new activityQueryModel();
         //activityQuery.territoryKeys = territoryKeys;
-        if(this.dateUtils.diffDays(startDate, endDate) > 0) {
-            activityQuery.startDate = startDate;
-            activityQuery.endDate = endDate;
-        } else {
-            activityQuery.startDateInBetween = startDate;
-        }
+        activityQuery.startDate = startDate;
+        activityQuery.endDate = endDate;
         activityQuery.isGroupActivity = true;
         activityQuery.isShowOnCalendar = true;
         activityQuery.showOnlyLinkedEvents = this.filters.showOnlyLinkedEvents;

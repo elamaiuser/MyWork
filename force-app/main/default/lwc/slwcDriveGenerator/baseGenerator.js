@@ -2,7 +2,7 @@ import { serial, generateUUID, parseJSON, isNullOrEmpty, cloneDeep as cloneDeepU
 import { DateTime } from 'c/luxon';
 import { cloneDeep, orderBy, extend, remove, max, compact, groupBy, uniq, pick } from 'c/lodash';
 import { DriveHelper } from './helper';
-import { DRIVE_STATUS, ASSET_TYPE, PENDING_ACTION, JOB_ALLOCATION_STATUS, DRIVE_TYPE, DRIVE_REQUEST_CHANGE_STATUS, MANUALLY_CREATED_FROM, OPERATION_TYPE, DRIVE_CONTENTION_RESOLUTION, DRIVE_CHANGE_REQUEST_TYPE } from 'c/slwcConstants';
+import { DRIVE_STATUS, ASSET_TYPE, PENDING_ACTION, JOB_ALLOCATION_STATUS, DRIVE_TYPE, DRIVE_REQUEST_CHANGE_STATUS, MANUALLY_CREATED_FROM, OPERATION_TYPE, DRIVE_CONTENTION_RESOLUTION, DRIVE_CHANGE_REQUEST_TYPE, RESOURCE_ROLE_GROUP } from 'c/slwcConstants';
 import {
   sObjectType,
   driveQueryModel,
@@ -362,13 +362,14 @@ class BaseGenerator {
       job.siteLogisticsBack = 0;
 
       const resourceRoleGroup = this.helper.getResourceRoleGroup(job.resourceRole, this.masterData);
-      const roleTimeData = resourceRoleGroupRoleTimeDataMap[resourceRoleGroup];
+      let roleTimeData = resourceRoleGroupRoleTimeDataMap[resourceRoleGroup];
      
       let dualRoleGroup;
       let dualRoleTimeData;
-      if(job.dualRole) {
+      if(resourceRoleGroup !== RESOURCE_ROLE_GROUP.DRIVING_ROLES && job.dualRole) {
         dualRoleGroup = this.helper.getResourceRoleGroup(job.dualRole, this.masterData);
         dualRoleTimeData = resourceRoleGroupRoleTimeDataMap[dualRoleGroup];
+        if(dualRoleGroup === RESOURCE_ROLE_GROUP.DRIVING_ROLES) roleTimeData = cloneDeep(dualRoleTimeData);
       }
     
       job.leadTime = compareAndGetValue('leadTime', roleTimeData, dualRoleTimeData) || job.leadTime;
@@ -1134,7 +1135,8 @@ class BaseGenerator {
       originalSlot: originalSlot,
       slot: tempSlot,
       driveShiftIndex: driveShiftIndex,
-      recurrenceDates: tempSlot.recurrenceDates || []
+      recurrenceDates: tempSlot.recurrenceDates || [],
+      recurrenceDriveIds: tempSlot.recurrenceDriveIds || []
     };
     return this.notifyDriveChanged();
   }
@@ -1156,7 +1158,8 @@ class BaseGenerator {
       this.mapSlotRecurrenceDates[slot.key] = {
         action: 'delete',
         slot: deletedSlot,
-        recurrenceDates: slot.recurrenceDates || []
+        recurrenceDates: slot.recurrenceDates || [],
+        recurrenceDriveIds: slot.recurrenceDriveIds || []
       };
     } else {
       delete this.mapSlotRecurrenceDates[slot.key];
@@ -1179,6 +1182,9 @@ class BaseGenerator {
     const recurrenceDates = Object.values(mapSlotRecurrenceDates).reduce((accumulative, current) => {
       return [...accumulative, ...current.recurrenceDates];
     }, []);
+    const recurrenceDriveIds = Object.values(mapSlotRecurrenceDates).reduce((accumulative, current) => {
+      return [...accumulative, ...current.recurrenceDriveIds];
+    }, []);
     const today = DateTime.fromObject({
       zone: this.masterData.timezoneSidId
     }).toISODate();
@@ -1191,6 +1197,7 @@ class BaseGenerator {
     return Promise.resolve()
       .then(() => {
         const driveQuery = new driveQueryModel();
+        driveQuery.recordIds = recurrenceDriveIds;
         driveQuery.selectedDates = validRecurrenceDates;
         driveQuery.eventTypes = [DRIVE_TYPE.FIXED_SITE];
         driveQuery.operationTypes = [OPERATION_TYPE.INTEGRATED, OPERATION_TYPE.NON_INTEGRATED_APH, OPERATION_TYPE.NON_INTEGRATED_WB];

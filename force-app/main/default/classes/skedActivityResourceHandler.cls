@@ -11,9 +11,12 @@ public class skedActivityResourceHandler extends skedTriggerHub implements Calla
     }
 
     public override void onAfterInsert() {
+        List<sked__Activity_Resource__c> checkedactivityResources = checkActivityForNotOnCallAfterHours(this.context.newRecords);
         if (!skedSetting.instance.Admin.migrationMode) {
         	captureExceptionLogs(this.context.newRecords);
-        	syncToResourceHoursRecord(this.context.newRecords);
+            if(!checkedactivityResources.isEmpty()) {
+                syncToResourceHoursRecord(checkedactivityResources);
+            }        	
         }
         createAvailabilityForOnCallResources(this.context.newRecords);
     }
@@ -26,8 +29,9 @@ public class skedActivityResourceHandler extends skedTriggerHub implements Calla
     }
     
     public override void onAfterUpdate() {
-        if (!skedSetting.instance.Admin.migrationMode) {
-        	syncToResourceHoursRecord(this.context.newRecords, (Map<Id, sked__Activity_Resource__c>)this.context.oldMap);
+        List<sked__Activity_Resource__c> checkedactivityResources = checkActivityForNotOnCallAfterHours(this.context.newRecords);
+        if (!skedSetting.instance.Admin.migrationMode && !checkedactivityResources.isEmpty()) {
+        	syncToResourceHoursRecord(checkedactivityResources, (Map<Id, sked__Activity_Resource__c>)this.context.oldMap);
         }
         syncOnCallAvailabilities(this.context.newRecords, (Map<Id, sked__Activity_Resource__c>)this.context.oldMap);
     }
@@ -165,6 +169,30 @@ public class skedActivityResourceHandler extends skedTriggerHub implements Calla
             item.skedHC__Status__c = skedConstants.EXCEPTION_LOG_STATUS_CLOSED;
         }
         update exceptions;
+    }
+
+    private List<sked__Activity_Resource__c> checkActivityForNotOnCallAfterHours(List<sked__Activity_Resource__c> activityResources) {
+        Set<Id> activityIds = new Set<Id>();
+        List<sked__Activity_Resource__c> checkedactivityResources = new List<sked__Activity_Resource__c>();
+
+        for (sked__Activity_Resource__c activityResource : activityResources) {
+            activityIds.add(activityResource.sked__Activity__c);
+        }
+
+        Map<Id, sked__Activity__c> mapActivity = new Map<Id, sked__Activity__c>([
+            SELECT Id, sked__Type__c
+            FROM sked__Activity__c
+            WHERE Id IN :activityIds
+        ]);
+
+        for (sked__Activity_Resource__c activityResource : activityResources) {
+            sked__Activity__c activity = mapActivity.get(activityResource.sked__Activity__c);
+            if (activity != null && activity.sked__Type__c != skedConstants.ACTIVITY_TYPE_ON_CALL &&
+                activity.sked__Type__c != skedConstants.ACTIVITY_TYPE_AFTER_HOURS_CALL_OUT_MANAGEMENT) {
+                    checkedactivityResources.add(activityResource);
+            }
+        }
+        return checkedactivityResources;
     }
 
     /**************************************** RESOURCE HOURS RECORD ********************************************/

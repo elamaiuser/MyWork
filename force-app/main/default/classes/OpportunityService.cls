@@ -62,6 +62,8 @@
 * 12/10/2024                     Priti Jana               Logic for HRP-13190
 * 12/10/2024                     Satyendra Vishwakarma    HRP-6051 - Anticipated Registered Donors validation when changing procedure projections
 * 01/30/2024                     Anil K                   HRP-11850 - Add 56 Drive validation logic for calendar build drives
+* 02/26/2025                     Krapy Tuli               HRP-14286 - logic update
+* 04/29/2025                     Satyendra V              HRP-14565 - Logic added to identify the latest closed drive.
 ************************************************************************************************************************************************
 */
 
@@ -4909,7 +4911,7 @@ opp.StageName = 'Closed';
                                 newOpp.APT_Change_Reason__c = (newOpp.Is_Template__c ? 'Template' : 'Opportunity') + ' APT changed by ' + userInfo.getName() + ' on '+system.now();
                             } else oppListToRecalculateAPT.add(newOpp);
                         } else if(recalculateAptRule3) {
-                            newOpp.APT_Required__c = FALSE; //reset value to false and populate it based on formula later
+                            //newOpp.APT_Required__c = FALSE; //reset value to false and populate it based on formula later//HRP-14286
                             oppListToRecalculateAPT.add(newOpp);
                         }    
                     }
@@ -4969,4 +4971,63 @@ opp.StageName = 'Closed';
         }    
     }
     //HRP-6051 Ends Here
+    //HRP-14565 start here
+
+    public static void updateLatestPastClosedDrive(List<Opportunity> newList, List<Opportunity> oldList) {
+        System.debug('updateLatestPastClosedDrive newList==>'+newList+' oldList=>'+oldList);
+        
+        Set<Id> accountIds = new Set<Id>();
+        if (newList != null) {
+            for (Opportunity opp : newList) {
+                if (opp.AccountId != null) {
+                    accountIds.add(opp.AccountId);
+                }
+            }
+        }
+        if (oldList != null) {
+            for (Opportunity opp : oldList) {
+                if (opp.AccountId != null) {
+                    accountIds.add(opp.AccountId);
+                }
+            }
+        }
+        if (accountIds.isEmpty()) return;
+        
+        // STEP 1: Get the latest (MAX) Drive Date for each Account
+        Map<Id, Date> accountIdToMaxDriveDate = new Map<Id, Date>();
+        for (AggregateResult ar : [
+            SELECT AccountId, MAX(Drive_Date__c) maxDriveDate
+            FROM Opportunity
+            WHERE AccountId IN :accountIds
+              AND StageName = 'Closed'
+              AND Drive_Date__c < TODAY
+            GROUP BY AccountId
+        ]) {
+            accountIdToMaxDriveDate.put((Id)ar.get('AccountId'), (Date)ar.get('maxDriveDate'));
+        }
+        
+        if (accountIdToMaxDriveDate.isEmpty()) return;
+        
+        List<Opportunity> oppsToUpdate = new List<Opportunity>();
+        // STEP 2: Fetch only those Opportunities which are the latest drive (MAX drive date) for each Account Mark them
+        for (Opportunity opp : [SELECT Id, AccountId, Drive_Date__c, Is_Latest_Past_Closed_Drive__c
+                                FROM Opportunity
+                                WHERE AccountId IN :accountIds
+                                AND StageName = 'Closed'
+                                AND Drive_Date__c < TODAY]) {
+
+            
+            Date maxDriveDate = accountIdToMaxDriveDate.get(opp.AccountId);
+            Boolean shouldBeTrue = (opp.Drive_Date__c == maxDriveDate);
+            if (opp.Is_Latest_Past_Closed_Drive__c != shouldBeTrue) {
+                opp.Is_Latest_Past_Closed_Drive__c = shouldBeTrue;
+                oppsToUpdate.add(opp);
+            }
+        }
+        if (!oppsToUpdate.isEmpty()) {
+            update oppsToUpdate;
+        }
+    }
+    
+    //HRP-14565 end here
 }
