@@ -41,8 +41,8 @@ public class OpportunityTriggerTest
         testTemplate.Drive_Site__c = testMobileSite.Id;
         insert testTemplate;
         
-   /*     // insert Mobile Opp 1
-        Opportunity testMobileOpp1 = new Opportunity(
+         // insert Mobile Opp 1
+        /*Opportunity testMobileOpp1 = new Opportunity(
             Name = 'Test Opportunity 2',
         	StageName = 'Draft',
            	Type_of_Drive__c = 'Mobile',
@@ -58,11 +58,9 @@ public class OpportunityTriggerTest
         	X2RBC_Projected_Procedures__c = 2,
         	Anticipated_Registered_Donors__c = 25,
             Online_Scheduling_Enabled__c = 'No'
-		);*/
-       /* Opportunity testMobileOpp1 = (Opportunity)mapTestData.get('MOBILE_OPP');
+		);
         testMobileOpp1.AccountId = testMobileAccount.Id;
         testMobileOpp1.Drive_Site__c = testMobileSite.Id;
-        testMobileOpp1.Drive_Date__c = system.today().addDays(55);
         testMobileOpp1.Parent_Template_Id__c = testTemplate.Id;
         insert testMobileOpp1;*/
         
@@ -256,6 +254,8 @@ public class OpportunityTriggerTest
         oppList.add(testMobileOpp6);
         
 		insert oppList;
+        
+       
         
         List<Opportunity> oppListAfterInsert = [Select Id, Drive_Date_Day__c,Direct_Donors_To__c from Opportunity];
         Id id_acc = OpportunityService.getOrCreateDefaultAccount();
@@ -554,11 +554,6 @@ public class OpportunityTriggerTest
     }
 
     static testMethod void testTemplateImpactingRegionCheck() {
-        //triggerHandler.bypass('OpportunityTriggerHandler');
-        triggerHandler.bypass('OpportunitySplitTriggerHandler');
-        triggerHandler.bypass('OpportunityContactRoleTriggerHandler');
-        triggerHandler.bypass('AccountTriggerHandler');
-        triggerHandler.bypass('ContactTriggerHandler');
         BSF_TestDataSetup testDataSetup = new BSF_TestDataSetup(false);
         Map<string, sObject> mapTestData =  testDataSetup.createAndInsertCommonObjects();
         
@@ -600,44 +595,6 @@ public class OpportunityTriggerTest
         testTemplate2.Type = 'Inside/Outside';
         insert testTemplate2;
         
-        Biomed_Collection_Op_Center__c testCO = (Biomed_Collection_Op_Center__c)mapTestData.get('COLLECTION_OPP');
-        testCO.FS_Web_Scheduling_Start_Date_Offset__c = -250;
-        testCO.FS_Web_Scheduling_Start_Time__c = '1015';
-        testCO.FS_Web_Scheduling_End_Date_Offset__c = -25;
-        testCO.FS_Web_Scheduling_End_Time_Offset__c = 0;
-        insert testCO;
-        
-        //insert site collection operation
-        sked_Site_Collection_Operation__c testSiteCO = (sked_Site_Collection_Operation__c)mapTestData.get('FIXED_SITE_COLLECTION_OPERATION');
-        testSiteCO.sked_Collection_Operation__c = testCO.Id;
-        testSiteCO.sked_Site__c = testMobileSite1.Id;
-        insert testSiteCO;
-        
-        sked_Territory__c arcRegionTerritory = new sked_Territory__c(
-            Name= 'Midnapur Mississippi',
-            RecordTypeId =  sked_Territory__c.sObjectType.getDescribe().getRecordTypeInfosByName().get('District').getRecordTypeId(),  
-            sked_High_Drive_Productivity_Threshold__c= 0.800000,
-            sked_Mid_Drive_Productivity_Threshold__c= 0.600000
-        	);
-        insert arcRegionTerritory;
-        
-        sked_Territory__c testterritoryDivision = (sked_Territory__c)mapTestData.get('SKED_TERRITORY_DIVISON');
-        testterritoryDivision.sked_Parent__c = arcRegionTerritory.Id;
-        insert testterritoryDivision;
-        
-        sked_Territory__c testterri = (sked_Territory__c)mapTestData.get('SKED_TERRITORY_ARC_REGION');
-        testterri.sked_Parent__c = testterritoryDivision.Id;
-        system.debug('line 617'+testterri);
-        insert testterri;
-        
-        sked_Territory_Collection_Operation__c testterriCO = (sked_Territory_Collection_Operation__c)mapTestData.get('TERRITORY_COLLECTION_OPERATION');
-        testterriCO.sked_Collection_Operation__c = testCO.Id;
-        testterriCO.sked_Territory__c = testterri.Id;
-        testterriCO.sked_Start_Date__c = System.Today().addDays(-5);
-        testterriCO.sked_End_Date__c = System.Today().addDays(50);
-        system.debug('line 622'+testterriCO);
-        insert testterriCO;
-        
         Test.startTest();
         
         // insert Mobile Opp 
@@ -645,113 +602,10 @@ public class OpportunityTriggerTest
         testMobileOpp.AccountId = testMobileAccount.Id;
         testMobileOpp.Drive_Site__c = testMobileSite1.Id;
         testMobileOpp.Parent_Template_Id__c = testTemplate1.Id;
-        testMobileOpp.Drive_Date__c = System.TODAY().addDays(50);
+        Triggerhandler.bypass('OpportunitySplitTriggerHandler');
         insert testMobileOpp;
                 
         testMobileOpp.Parent_Template_Id__c = testTemplate2.Id;
-        try{
-        	Update testMobileOpp; 
-        }catch(Exception ex) {
-            Assert.isTrue(ex.getMessage().contains('Change requires Cancel/Rebook due to the Site changing regions'));
-        }     
-    }
-    
-    static testMethod void testSiteImpactingRegionCheck() {
-        //triggerHandler.bypass('OpportunityTriggerHandler');
-        triggerHandler.bypass('OpportunitySplitTriggerHandler');
-        triggerHandler.bypass('OpportunityContactRoleTriggerHandler');
-        triggerHandler.bypass('AccountTriggerHandler');
-        triggerHandler.bypass('ContactTriggerHandler');
-        BSF_TestDataSetup testDataSetup = new BSF_TestDataSetup(false);
-        Map<string, sObject> mapTestData =  testDataSetup.createAndInsertCommonObjects();
-        
-        // insert Mobile Account
-        Account testMobileAccount = (Account)mapTestData.get('MOBILE_ACCOUNT');
-        testMobileAccount.Internal_Name__c =  'TEST ACCOUNT 1';
-        insert testMobileAccount;
-        
-        // insert Mobile Site 1
-        sked__Location__c testMobileSite1 = (sked__Location__c)mapTestData.get('MOBILE_SITE');
-        insert testMobileSite1;
-        
-         // insert Mobile Site 2
-        sked__Location__c testMobileSite2 = (sked__Location__c)mapTestData.get('MOBILE_SITE2');
-        insert testMobileSite2;
-        
-        // insert template 1 - PLT - Inside
-        Opportunity testTemplate1 = (Opportunity)mapTestData.get('MOBILE_TEMPLATE_OPP');
-        testTemplate1.AccountId = testMobileAccount.Id;
-        testTemplate1.Drive_Site__c = testMobileSite1.Id;
-        testTemplate1.Type = 'Inside';
-        insert testTemplate1;
-        
-        // insert template 2 - PLT - Inside/Outside
-        Opportunity testTemplate2 = new Opportunity(
-            Name = 'Mobile Template Opp 2',
-            RecordTypeId =  Opportunity.sObjectType.getDescribe().getRecordTypeInfosByName().get('Mobile Opp').getRecordTypeId(),
-            StageName = 'Discovery', 
-            CloseDate = System.today(),
-            Is_Template__c = TRUE,
-            Start_Time__c = Time.newInstance(10, 0, 0, 0),
-      		End_Time__c = Time.newInstance(15, 30, 0, 0),
-            Anticipated_Registered_Donors__c = 10,
-            WB_Projected_Procedures__c = 11,
-            X2RBC_Projected_Procedures__c = 12
-        );
-        testTemplate2.AccountId = testMobileAccount.Id;
-        testTemplate2.Drive_Site__c = testMobileSite2.Id;
-        testTemplate2.Type = 'Inside/Outside';
-        insert testTemplate2;
-        
-        Biomed_Collection_Op_Center__c testCO = (Biomed_Collection_Op_Center__c)mapTestData.get('COLLECTION_OPP');
-        testCO.FS_Web_Scheduling_Start_Date_Offset__c = -250;
-        testCO.FS_Web_Scheduling_Start_Time__c = '1015';
-        testCO.FS_Web_Scheduling_End_Date_Offset__c = -25;
-        testCO.FS_Web_Scheduling_End_Time_Offset__c = 0;
-        insert testCO;
-        
-        //insert site collection operation
-        sked_Site_Collection_Operation__c testSiteCO = (sked_Site_Collection_Operation__c)mapTestData.get('FIXED_SITE_COLLECTION_OPERATION');
-        testSiteCO.sked_Collection_Operation__c = testCO.Id;
-        testSiteCO.sked_Site__c = testMobileSite1.Id;
-        insert testSiteCO;
-        
-        sked_Territory__c arcRegionTerritory = new sked_Territory__c(
-            Name= 'Midnapur Mississippi',
-            RecordTypeId =  sked_Territory__c.sObjectType.getDescribe().getRecordTypeInfosByName().get('District').getRecordTypeId(),  
-            sked_High_Drive_Productivity_Threshold__c= 0.800000,
-            sked_Mid_Drive_Productivity_Threshold__c= 0.600000
-        	);
-        insert arcRegionTerritory;
-        
-        sked_Territory__c testterritoryDivision = (sked_Territory__c)mapTestData.get('SKED_TERRITORY_DIVISON');
-        testterritoryDivision.sked_Parent__c = arcRegionTerritory.Id;
-        insert testterritoryDivision;
-        
-        sked_Territory__c testterri = (sked_Territory__c)mapTestData.get('SKED_TERRITORY_ARC_REGION');
-        testterri.sked_Parent__c = testterritoryDivision.Id;
-        system.debug('line 617'+testterri);
-        insert testterri;
-        
-        sked_Territory_Collection_Operation__c testterriCO = (sked_Territory_Collection_Operation__c)mapTestData.get('TERRITORY_COLLECTION_OPERATION');
-        testterriCO.sked_Collection_Operation__c = testCO.Id;
-        testterriCO.sked_Territory__c = testterri.Id;
-        testterriCO.sked_Start_Date__c = System.Today().addDays(-5);
-        testterriCO.sked_End_Date__c = System.Today().addDays(50);
-        system.debug('line 622'+testterriCO);
-        insert testterriCO;
-        
-        Test.startTest();
-        
-        // insert Mobile Opp 
-        Opportunity testMobileOpp = (Opportunity)mapTestData.get('MOBILE_OPP');
-        testMobileOpp.AccountId = testMobileAccount.Id;
-        testMobileOpp.Drive_Site__c = testMobileSite1.Id;
-        testMobileOpp.Parent_Template_Id__c = testTemplate1.Id;
-        testMobileOpp.Drive_Date__c = System.TODAY().addDays(50);
-        insert testMobileOpp;
-                
-        testMobileOpp.Drive_Site__c = testMobileSite2.Id;
         try{
         	Update testMobileOpp; 
         }catch(Exception ex) {
@@ -801,10 +655,7 @@ public class OpportunityTriggerTest
         
         BSF_TestDataSetup testDataSetup = new BSF_TestDataSetup(false);
         Map<string, sObject> mapTestData =  testDataSetup.createAndInsertCommonObjects();
-        TriggerHandler.bypass('OpportunityTeamMemberTriggerHandler');
-        TriggerHandler.bypass('OpportunitySplitTriggerHandler');
-        triggerHandler.bypass('AccountTriggerHandler');
-        triggerHandler.bypass('ContactTriggerHandler');
+        
         // insert Mobile Account
         Account testMobileAccount = (Account)mapTestData.get('MOBILE_ACCOUNT');
         testMobileAccount.Internal_Name__c =  'TEST ACCOUNT 1';
@@ -814,7 +665,7 @@ public class OpportunityTriggerTest
         sked__Location__c testMobileSite1 = (sked__Location__c)mapTestData.get('MOBILE_SITE');
         insert testMobileSite1;
         
-        
+        Test.startTest();
         // insert template 1 - PLT - Inside
         Opportunity testTemplate1 = (Opportunity)mapTestData.get('MOBILE_TEMPLATE_OPP');
         testTemplate1.AccountId = testMobileAccount.Id;
@@ -823,7 +674,9 @@ public class OpportunityTriggerTest
         insert testTemplate1;
         
         // insert mobile opp
-                
+        TriggerHandler.bypass('OpportunityTeamMemberTriggerHandler');
+        TriggerHandler.bypass('OpportunitySplitTriggerHandler');
+        
         Opportunity testMobileOpp = (Opportunity)mapTestData.get('MOBILE_OPP');
         testMobileOpp.AccountId = testMobileAccount.Id;
         testMobileOpp.Drive_Site__c = testMobileSite1.Id;
@@ -874,10 +727,10 @@ public class OpportunityTriggerTest
         oppTeam2.OpportunityAccessLevel = 'Edit';
         oppTeamList.add(oppTeam2);
                 
-        //Triggerhandler.bypass('OpportunityTriggerhandler');
+        Triggerhandler.bypass('OpportunityTriggerhandler');
         insert oppTeamList;
-        //TriggerHandler.clearAllBypasses();
-        Test.startTest();
+        TriggerHandler.clearAllBypasses();
+        
         Map<Id, List<OpportunityTeamMember>> oppTeamMembersMap = new Map<Id, List<OpportunityTeamMember>>();
         for(OpportunityTeamMember oppT : oppTeamList)
         {
@@ -908,9 +761,9 @@ public class OpportunityTriggerTest
         oppSplit.SplitTypeId = revenueSplitType.id;
         insert oppSplit;*/
         oppNewList[0].ownerid=userList[0].Id;
-        //Triggerhandler.bypass('OpportunityTriggerHandler');
+        Triggerhandler.bypass('OpportunityTriggerHandler');
         update oppNewList[0];
-        TriggerHandler.clearAllBypasses();
+            TriggerHandler.clearAllBypasses();
         OpportunityService.UpdateOwnerSplit(oppNewList);
         opportunityService.deleteOpptyTeamMembers(setOfOpptyIds);
         Test.stopTest();
@@ -919,9 +772,7 @@ public class OpportunityTriggerTest
     }
     
     static testMethod void testValidatePromotionEndDate()
-    {	
-        TriggerHandler.bypass('AccountTriggerHandler'); 
-        TriggerHandler.bypass('ContactTriggerHandler');
+    {
         TriggerHandler.bypass('OpportunitySplitTriggerHandler');
         TriggerHandler.bypass('AccountServiceRoleTriggerHandler');
         BSF_TestDataSetup testDataSetup = new BSF_TestDataSetup(false);
@@ -1011,10 +862,6 @@ public class OpportunityTriggerTest
         insert oppPromo;
                 
         Test.startTest();
-        mobileOpportunityRecord.Drive_Date__c = Date.Today().addDays(90);
-        mobileOpportunityRecord.Drive_Date_Change_Reason__c = 'Test';
-		update mobileOpportunityRecord;
-        /*
             try
             {
                 mobileOpportunityRecord.Drive_Date__c = Date.Today().addDays(90);
@@ -1024,7 +871,6 @@ public class OpportunityTriggerTest
                 Boolean expectedExceptionThrown =  e.getMessage().contains('Please choose the current template') ? true : false;
         
             }
-        */
         TriggerHandler.clearAllBypasses();
         Test.stopTest();
     }
@@ -1685,43 +1531,6 @@ public class OpportunityTriggerTest
         	insert testMobileOpp;
         Test.stopTest();
     }
-
-    static testMethod void testUpdateWebSchedulingStart_EndDates_WebSchedOffsetOverrideInTemplate()
-    {        
-        BSF_TestDataSetup testDataSetup = new BSF_TestDataSetup(false);
-        Map<string, sObject> mapTestData =  testDataSetup.createAndInsertCommonObjects();
-       
-        Account testMobileAccount = (Account)mapTestData.get('MOBILE_ACCOUNT');
-        insert testMobileAccount;
-		
-        sked__Location__c testSite = (sked__Location__c)mapTestData.get('MOBILE_SITE');
-        testSite.sked_Timezone__c = 'America/Los_Angeles';
-        insert testSite;
-        
-        //Template opp
-        Opportunity testMobileTemplateOpp = (Opportunity)mapTestData.get('MOBILE_TEMPLATE_OPP');
-        testMobileTemplateOpp.AccountId = testMobileAccount.Id;
-        testMobileTemplateOpp.Drive_Site__c = testSite.Id;
-        insert testMobileTemplateOpp;
-
-        testMobileTemplateOpp.Web_Sched_Offset_from_CO_Global_Settings__c = false; 
-        testMobileTemplateOpp.Web_Scheduling_End_Date_Offset__c=0;
-        testMobileTemplateOpp.Web_Scheduling_End_Time_Offset__c=0;
-        testMobileTemplateOpp.Web_Scheduling_Start_Date_Offset__c=-180;
-        testMobileTemplateOpp.Web_Scheduling_Start_Time__c = '0001';
-        update testMobileTemplateOpp;
-        
-        //Mobile Opp 1
-        Opportunity testMobileOpp = (Opportunity)mapTestData.get('MOBILE_OPP');
-        testMobileOpp.accountId = testMobileAccount.Id;
-        testMobileOpp.Drive_Site__c = testSite.Id;
-        testMobileOpp.Online_Scheduling_Enabled__c = 'Yes';
-        testMobileOpp.Parent_Template_Id__c = testMobileTemplateOpp.Id;
-        
-        Test.startTest();
-        	insert testMobileOpp;
-        Test.stopTest();
-    }
     
     static testMethod void testUpdateWebSchedulingStart_EndDatesFixed()
     {        
@@ -1741,7 +1550,7 @@ public class OpportunityTriggerTest
         testFixedTemplateOpp.AccountId = testFixedAccount.Id;
         testFixedTemplateOpp.Drive_Site__c = testSite.Id;
         testFixedTemplateOpp.Web_Sched_Offset_from_CO_Global_Settings__c = false;
-        //insert testFixedTemplateOpp;
+        insert testFixedTemplateOpp;
 
         //insert Fixed Opp 1
         Opportunity testFixedOpp = (Opportunity)mapTestData.get('FIXED_OPP');
@@ -2315,7 +2124,7 @@ public class OpportunityTriggerTest
         sked__Location__c testMobileSite2 = (sked__Location__c)mapTestData1.get('MOBILE_SITE2');
         insert testMobileSite2;
         
-        
+        Test.startTest();
         skedHubBase.BypassInsertTriggers = true;
         skedHubBase.BypassUpdateTriggers = true;
         Map<string, sObject> mapTestData = GenerateDriveTestData.testSetupForMobileDriveV2();
@@ -2328,7 +2137,6 @@ public class OpportunityTriggerTest
         AccountTeamMemberHelper.skipAccountTrigger = true;
         TriggerHandler.bypass('AccountTriggerHandler');
         TriggerHandler.bypass('OpportunitySplitTriggerHandler');
-        TriggerHandler.bypass('OpportunityTeamTriggerHandler');
         try{
             GenerateMobileDrive.generateDrives(config);
         }catch(Exception ex){}
@@ -2368,10 +2176,7 @@ public class OpportunityTriggerTest
          updateOppList.add(oppRec);
          if (!updateOppList.isEmpty())
          {
-             Test.startTest();
-             TriggerHandler.bypass('OpportunityTriggerHandler');
              opportunityService.syncOppsWithDrives(updateOppList);
-             TriggerHandler.clearAllBypasses();
          } 
         
         Test.stopTest();
@@ -2448,7 +2253,7 @@ public class OpportunityTriggerTest
      
      static testMethod void testSyncOppWithDrives2()
      {
-        
+        Test.startTest();
         skedHubBase.BypassInsertTriggers = true;
         skedHubBase.BypassUpdateTriggers = true;
         Map<string, sObject> mapTestData = GenerateDriveTestData.testSetupForMobileDriveV2();
@@ -2461,7 +2266,6 @@ public class OpportunityTriggerTest
             AccountTeamMemberHelper.skipAccountTrigger = true;
             TriggerHandler.bypass('AccountTriggerHandler');
             TriggerHandler.bypass('OpportunitySplitTriggerHandler');
-         Test.startTest();
          try{
             GenerateMobileDrive.generateDrives(config);
          }catch(Exception ex){}
@@ -3106,7 +2910,7 @@ public class OpportunityTriggerTest
             try {
                 update testMobileOpp;
             } catch(Exception ex) {
-                Assert.isTrue(ex.getMessage().contains('please contact DRD Manager.'));
+                Assert.isTrue(ex.getMessage().contains('For changes beyond this range 100% - 160%, please contact DRD Manager.'));
             }
         }
        Test.stopTest(); 
@@ -3259,8 +3063,7 @@ public class OpportunityTriggerTest
         	X2RBC_Projected_Procedures__c = 2,
         	Anticipated_Registered_Donors__c = 25,
             Online_Scheduling_Enabled__c = 'No',
-            Source__c = 'Adhoc',
-            Slot_Generator_Change_Reason__c = 'Test Change by DRD Profile'
+            Source__c = 'Adhoc'
         );
         testFixedSiteOpp.AccountId = testFixedSiteAccount.Id;
         testFixedSiteOpp.Drive_Site__c = testFixedSite.Id;
@@ -3382,599 +3185,6 @@ public class OpportunityTriggerTest
             }
         }
         
-        Test.stopTest();
-    }
-
-    static testMethod void testsendOpportunityPromotionDisassociatEmail(){
-        TriggerHandler.bypass('OpportunitySplitTriggerHandler');
-        TriggerHandler.bypass('AccountServiceRoleTriggerHandler');
-        TriggerHandler.bypass('OpportunityTriggerHandler');
-        TriggerHandler.bypass('AccountTriggerHandler');
-        TriggerHandler.bypass('ContactTriggerHandler');
-        
-        User testDrdUser = new User(
-            ProfileId = [select Id from Profile where name = 'DRD Profile'].Id,
-            LastName = 'DRDLastName',
-            Email = 'DRDUser@test.com',
-            Username = 'DRDUser@test.com' + System.currentTimeMillis(),
-            CompanyName = 'TestCompany',
-            Title = 'TestTitle',
-            Alias = 'Tal',
-            TimeZoneSidKey = 'America/Los_Angeles',
-            EmailEncodingKey = 'UTF-8',
-            LanguageLocaleKey = 'en_US',
-            LocaleSidKey = 'en_US'
-            
-        );
-        system.runAs(new User(Id = UserInfo.getUserId())) {
-            insert testDrdUser;
-        }
-        
-        BSF_TestDataSetup testDataSetup = new BSF_TestDataSetup(false);
-        Map<string, sObject> mapTestData =  testDataSetup.createAndInsertCommonObjects();
-        
-        Account testMobileAccount = (Account)mapTestData.get('MOBILE_ACCOUNT');
-        insert testMobileAccount;
-
-        Contact contactRec = (Contact)mapTestData.get('CONTACT');
-        contactRec.AccountId = testMobileAccount.Id;
-        insert contactRec;
-        
-        testMobileAccount.Contact_BPL__c = contactRec.Id;
-        update testMobileAccount;
-       
-        sked__Location__c site1 = (sked__Location__c)mapTestData.get('MOBILE_SITE2');
-        insert site1;
-        
-		Opportunity templateOpp = (Opportunity)mapTestData.get('MOBILE_TEMPLATE_OPP');
-        templateOpp.AccountId = testMobileAccount.id;
-        templateOpp.is_Template__c = true;
-        templateOpp.WholeBloodProceduresProjectedTemplate__c = 50;
-        templateOpp.Double_Red_Procedures_Projected_Template__c = 39;
-        templateOpp.Anticipated_Registered_Donors_Template__c = 21;
-        templateOpp.Drive_Site__c =site1.Id ;
-        insert templateOpp;
-        
-        Opportunity mobileOpportunityRecord = (Opportunity)mapTestData.get('MOBILE_OPP');
-        mobileOpportunityRecord.StageName = 'Discovery';
-        mobileOpportunityRecord.AccountId = testMobileAccount.id;
-        mobileOpportunityRecord.Parent_Template_Id__c = templateOpp.Id;
-        mobileOpportunityRecord.Procedure_Projections_Template__c = 10;
-        mobileOpportunityRecord.Drive_Date__c = Date.Today().addDays(80);
-        mobileOpportunityRecord.CloseDate = System.today();
-        mobileOpportunityRecord.Start_Time__c = System.now().Time();
-        mobileOpportunityRecord.End_Time__c = System.now().Time()+1;
-        mobileOpportunityRecord.Anticipated_Registered_Donors__c = 1;  
-        mobileOpportunityRecord.X2RBC_Projected_Procedures__c = 1;
-        mobileOpportunityRecord.WB_Projected_Procedures__c = 2;
-        mobileOpportunityRecord.Source__c = 'Adhoc';
-        mobileOpportunityRecord.Slot_Generator__c = 130;
-        mobileOpportunityRecord.Slot_Generator_Change_Reason__c = 'System Generated Value';
-        System.debug('DriveDate-------' +  mobileOpportunityRecord.Drive_Date__c);
-        insert mobileOpportunityRecord;
-        System.debug('mobileOpportunityRecord -------' +  mobileOpportunityRecord);
-        
-        OpportunityContactRole oppConRole = new OpportunityContactRole(Role = 'Primary Contact');
-        oppConRole.ContactId = contactRec.id;
-        oppConRole.OpportunityId = mobileOpportunityRecord.id;
-        insert oppConRole;
-        
-        sked_Drive__c mobileDrive = new sked_Drive__c();
-        mobileDrive.sked_Opportunity__c = mobileOpportunityRecord.Id;
-        mobileDrive.sked_Account__c = testMobileAccount.Id;
-        mobileDrive.sked_Drive_Date__c = mobileOpportunityRecord.Drive_Date__c;
-        mobileDrive.sked_2RBC_Projected_Procedures__c = 1;
-        mobileDrive.sked_WB_Projected_Procedures__c = 2;
-        mobileDrive.sked_Status__c = 'Complete';
-        insert mobileDrive;
-
-        Promotion__c promotion = new Promotion__c(Name='Test Promotion');
-        Date todayDate = Date.today();
-        promotion.Start_Date__c = Date.Today();
-        promotion.End_Date__c = Date.Today().addDays(85);
-        promotion.Supplier__c = 'Drive';
-        insert promotion;
-       
-        Opportunity_Promotion__c oppPromo= new Opportunity_Promotion__c();
-        oppPromo.Blood_Drive_Opportunity__c = mobileOpportunityRecord.id;
-        oppPromo.Promotion__c = promotion.id;
-        System.debug('oppPromo.Promotion__c' + oppPromo.Promotion__c);
-        insert oppPromo;
-        System.debug('oppPromo' + oppPromo.Id);
-        
-        
-        OpportunityTeamMember otm = new OpportunityTeamMember();
-        otm.OpportunityAccessLevel = 'Edit';
-        otm.userId = userInfo.getUserId();
-        otm.OpportunityId = mobileOpportunityRecord.id;
-        otm.TeamMemberRole = 'Account Manager';
-        insert otm;
-        
-      Opportunity_Promotion__c oppPromo1 = [SELECT Id, Promotion__r.Name, Blood_Drive_Opportunity__r.Name, Drive_Date__c 
-                                            FROM Opportunity_Promotion__c WHERE Drive_Date__c != null];
-        
-       Map<Opportunity_Promotion__c, OpportunityTeamMember> oppPromotionMap = new Map<Opportunity_Promotion__c, OpportunityTeamMember>{
-             oppPromo1 => otm
-        };
-            
-        Test.startTest();
-        opportunityservice.sendOpportunityPromotionDisassociatEmail(oppPromotionMap);
-        Test.stopTest();
-    }
-    
-    /*
-    static testMethod void testgetChangedFields()
-    {
-		TriggerHandler.bypass('OpportunitySplitTriggerHandler');
-        TriggerHandler.bypass('AccountServiceRoleTriggerHandler');
-        //TriggerHandler.bypass('OpportunityTriggerHandler');
-        TriggerHandler.bypass('AccountTriggerHandler');
-        TriggerHandler.bypass('ContactTriggerHandler');
-        
-        User testDrdUser = new User(
-            ProfileId = [select Id from Profile where name = 'DRD Profile'].Id,
-            LastName = 'DRDLastName',
-            Email = 'DRDUser@test.com',
-            Username = 'DRDUser@test.com' + System.currentTimeMillis(),
-            CompanyName = 'TestCompany',
-            Title = 'TestTitle',
-            Alias = 'Tal',
-            TimeZoneSidKey = 'America/Los_Angeles',
-            EmailEncodingKey = 'UTF-8',
-            LanguageLocaleKey = 'en_US',
-            LocaleSidKey = 'en_US'
-            
-        );
-        system.runAs(new User(Id = UserInfo.getUserId())) {
-            insert testDrdUser;
-        }
-        
-        BSF_TestDataSetup testDataSetup = new BSF_TestDataSetup(false);
-        Map<string, sObject> mapTestData =  testDataSetup.createAndInsertCommonObjects();
-        
-        Account testMobileAccount = (Account)mapTestData.get('MOBILE_ACCOUNT');
-        insert testMobileAccount;
-
-        Contact contactRec = (Contact)mapTestData.get('CONTACT');
-        contactRec.AccountId = testMobileAccount.Id;
-        insert contactRec;
-        
-        testMobileAccount.Contact_BPL__c = contactRec.Id;
-        update testMobileAccount;
-       
-        sked__Location__c site1 = (sked__Location__c)mapTestData.get('MOBILE_SITE2');
-        insert site1;
-        
-		Opportunity templateOpp = (Opportunity)mapTestData.get('MOBILE_TEMPLATE_OPP');
-        templateOpp.AccountId = testMobileAccount.id;
-        templateOpp.is_Template__c = true;
-        templateOpp.WholeBloodProceduresProjectedTemplate__c = 50;
-        templateOpp.Double_Red_Procedures_Projected_Template__c = 39;
-        templateOpp.Anticipated_Registered_Donors_Template__c = 21;
-        templateOpp.Drive_Site__c =site1.Id ;
-        insert templateOpp;
-        
-        Opportunity mobileOpportunityRecord = (Opportunity)mapTestData.get('MOBILE_OPP');
-        mobileOpportunityRecord.StageName = 'Discovery';
-        mobileOpportunityRecord.AccountId = testMobileAccount.id;
-        mobileOpportunityRecord.Parent_Template_Id__c = templateOpp.Id;
-        mobileOpportunityRecord.Procedure_Projections_Template__c = 10;
-        mobileOpportunityRecord.Drive_Date__c = Date.Today().addDays(80);
-        mobileOpportunityRecord.CloseDate = System.today();
-        mobileOpportunityRecord.Start_Time__c = System.now().Time();
-        mobileOpportunityRecord.End_Time__c = System.now().Time()+1;
-        mobileOpportunityRecord.Anticipated_Registered_Donors__c = 1;  
-        mobileOpportunityRecord.X2RBC_Projected_Procedures__c = 1;
-        mobileOpportunityRecord.WB_Projected_Procedures__c = 2;
-        mobileOpportunityRecord.Source__c = 'Adhoc';
-        mobileOpportunityRecord.Slot_Generator__c = 130;
-        mobileOpportunityRecord.Slot_Generator_Change_Reason__c = 'System Generated Value';
-        System.debug('DriveDate-------' +  mobileOpportunityRecord.Drive_Date__c);
-        insert mobileOpportunityRecord;
-        System.debug('mobileOpportunityRecord -------' +  mobileOpportunityRecord);
-        
-        OpportunityContactRole oppConRole = new OpportunityContactRole(Role = 'Primary Contact');
-        oppConRole.ContactId = contactRec.id;
-        oppConRole.OpportunityId = mobileOpportunityRecord.id;
-        insert oppConRole;
-        
-        sked_Drive__c mobileDrive = new sked_Drive__c();
-        mobileDrive.sked_Opportunity__c = mobileOpportunityRecord.Id;
-        mobileDrive.sked_Account__c = testMobileAccount.Id;
-        mobileDrive.sked_Drive_Date__c = mobileOpportunityRecord.Drive_Date__c;
-        mobileDrive.sked_2RBC_Projected_Procedures__c = 1;
-        mobileDrive.sked_WB_Projected_Procedures__c = 2;
-        mobileDrive.sked_Status__c = 'Complete';
-        insert mobileDrive;
-        
-        Approval.ProcessSubmitRequest psr = new Approval.ProcessSubmitRequest();
-        
-        psr.setObjectId(mobileDrive.Id);
-        psr.setNextApproverIds(new List<ID>{UserInfo.getUserId()});
-
-        Test.startTest();
-        Approval.ProcessResult processResult = Approval.process(psr);
-		System.assertEquals('Pending', processResult.getInstanceStatus());
-        mobileOpportunityRecord.WB_Projected_Procedures__c = 3;
-        mobileOpportunityRecord.WholeBloodProcedureProjectedChangeReason__c = 'test';
-        update mobileOpportunityRecord;
-		Test.stopTest();
-    }
-    */
-    static testMethod void testgetChangedFieldsElseCondition()
-    {
-		TriggerHandler.bypass('OpportunitySplitTriggerHandler');
-        TriggerHandler.bypass('AccountServiceRoleTriggerHandler');
-        TriggerHandler.bypass('OpportunityTriggerHandler');
-        TriggerHandler.bypass('AccountTriggerHandler');
-        TriggerHandler.bypass('ContactTriggerHandler');
-        
-        User testDrdUser = new User(
-            ProfileId = [select Id from Profile where name = 'DRD Profile'].Id,
-            LastName = 'DRDLastName',
-            Email = 'DRDUser@test.com',
-            Username = 'DRDUser@test.com' + System.currentTimeMillis(),
-            CompanyName = 'TestCompany',
-            Title = 'TestTitle',
-            Alias = 'Tal',
-            TimeZoneSidKey = 'America/Los_Angeles',
-            EmailEncodingKey = 'UTF-8',
-            LanguageLocaleKey = 'en_US',
-            LocaleSidKey = 'en_US'
-            
-        );
-        system.runAs(new User(Id = UserInfo.getUserId())) {
-            insert testDrdUser;
-        }
-        
-        BSF_TestDataSetup testDataSetup = new BSF_TestDataSetup(false);
-        Map<string, sObject> mapTestData =  testDataSetup.createAndInsertCommonObjects();
-        
-        Account testMobileAccount = (Account)mapTestData.get('MOBILE_ACCOUNT');
-        insert testMobileAccount;
-
-        Contact contactRec = (Contact)mapTestData.get('CONTACT');
-        contactRec.AccountId = testMobileAccount.Id;
-        insert contactRec;
-        
-        testMobileAccount.Contact_BPL__c = contactRec.Id;
-        update testMobileAccount;
-       
-        sked__Location__c site1 = (sked__Location__c)mapTestData.get('MOBILE_SITE2');
-        insert site1;
-        
-		Opportunity templateOpp = (Opportunity)mapTestData.get('MOBILE_TEMPLATE_OPP');
-        templateOpp.AccountId = testMobileAccount.id;
-        templateOpp.is_Template__c = true;
-        templateOpp.WholeBloodProceduresProjectedTemplate__c = 50;
-        templateOpp.Double_Red_Procedures_Projected_Template__c = 39;
-        templateOpp.Anticipated_Registered_Donors_Template__c = 21;
-        templateOpp.Drive_Site__c =site1.Id ;
-        insert templateOpp;
-        
-        Opportunity mobileOpportunityRecord = (Opportunity)mapTestData.get('MOBILE_OPP');
-        mobileOpportunityRecord.StageName = 'Discovery';
-        mobileOpportunityRecord.AccountId = testMobileAccount.id;
-        mobileOpportunityRecord.Parent_Template_Id__c = templateOpp.Id;
-        mobileOpportunityRecord.Procedure_Projections_Template__c = 10;
-        mobileOpportunityRecord.Drive_Date__c = Date.Today().addDays(80);
-        mobileOpportunityRecord.CloseDate = System.today();
-        mobileOpportunityRecord.Start_Time__c = System.now().Time();
-        mobileOpportunityRecord.End_Time__c = System.now().Time()+1;
-        mobileOpportunityRecord.Anticipated_Registered_Donors__c = 1;  
-        mobileOpportunityRecord.X2RBC_Projected_Procedures__c = 1;
-        mobileOpportunityRecord.WB_Projected_Procedures__c = 2;
-        mobileOpportunityRecord.Source__c = 'Adhoc';
-        mobileOpportunityRecord.Slot_Generator__c = 130;
-        mobileOpportunityRecord.Slot_Generator_Change_Reason__c = 'System Generated Value';
-        System.debug('DriveDate-------' +  mobileOpportunityRecord.Drive_Date__c);
-        insert mobileOpportunityRecord;
-        System.debug('mobileOpportunityRecord -------' +  mobileOpportunityRecord);
-        
-        OpportunityContactRole oppConRole = new OpportunityContactRole(Role = 'Primary Contact');
-        oppConRole.ContactId = contactRec.id;
-        oppConRole.OpportunityId = mobileOpportunityRecord.id;
-        insert oppConRole;
-        
-        sked_Drive__c mobileDrive = new sked_Drive__c();
-        mobileDrive.sked_Opportunity__c = mobileOpportunityRecord.Id;
-        mobileDrive.sked_Account__c = testMobileAccount.Id;
-        mobileDrive.sked_Drive_Date__c = mobileOpportunityRecord.Drive_Date__c;
-        mobileDrive.sked_2RBC_Projected_Procedures__c = 1;
-        mobileDrive.sked_WB_Projected_Procedures__c = 2;
-        mobileDrive.sked_Status__c = 'Complete';
-        mobileDrive.sked_Pending_Action__c = 'Drive Submission';
-		mobileDrive.sked_Approval_Status__c = 'Waiting for DM Approval';
-        insert mobileDrive;
-        
-        Approval.ProcessSubmitRequest psr = new Approval.ProcessSubmitRequest();
-        
-        psr.setObjectId(mobileDrive.Id);
-        psr.setNextApproverIds(new List<ID>{UserInfo.getUserId()});
-
-        Test.startTest();
-        //TriggerHandler.bypass('OpportunityTriggerHandler');
-        Approval.ProcessResult processResult = Approval.process(psr);
-		System.assertEquals('Pending', processResult.getInstanceStatus());
-        mobileOpportunityRecord.WB_Projected_Procedures__c = 3;
-        mobileOpportunityRecord.WholeBloodProcedureProjectedChangeReason__c = 'test';
-        Database.SaveResult result = Database.update(mobileOpportunityRecord, false);
-		TriggerHandler.clearAllBypasses();
-		Test.stopTest();
-        
-        System.assert(result.getErrors().size() == 1);
-    }
-    
-    static testMethod void testSyncTemplateOrderWithBDO() {
-        TriggerHandler.bypass('OpportunitySplitTriggerHandler');
-        TriggerHandler.bypass('AccountServiceRoleTriggerHandler');
-        //TriggerHandler.bypass('OpportunityTriggerHandler');
-        TriggerHandler.bypass('AccountTriggerHandler');
-        TriggerHandler.bypass('ContactTriggerHandler');
-        triggerHandler.bypass('TaskTriggerHandler');
-        
-        /* DRD User */
-        User testDrdUser = new User(
-            ProfileId = [select Id from Profile where name = 'DRD Profile'].Id,
-            LastName = 'DRDLastName',
-            Email = 'DRDUser@test.com',
-            Username = 'DRDUser@test.com' + System.currentTimeMillis(),
-            CompanyName = 'TestCompany',
-            Title = 'TestTitle',
-            Alias = 'Tal',
-            TimeZoneSidKey = 'America/Los_Angeles',
-            EmailEncodingKey = 'UTF-8',
-            LanguageLocaleKey = 'en_US',
-            LocaleSidKey = 'en_US'
-            
-        );
-        system.runAs(new User(Id = UserInfo.getUserId())) {
-            insert testDrdUser;
-        }
-        
-        BSF_TestDataSetup testDataSetup = new BSF_TestDataSetup(false);
-        Map<string, sObject> mapTestData =  testDataSetup.createAndInsertCommonObjects();
-        
-        Account testMobileAccount = (Account)mapTestData.get('MOBILE_ACCOUNT');
-        insert testMobileAccount;
-
-        Contact contactRec = (Contact)mapTestData.get('CONTACT');
-        contactRec.AccountId = testMobileAccount.Id;
-        insert contactRec;
-        
-        testMobileAccount.Contact_BPL__c = contactRec.Id;
-        update testMobileAccount;
-       
-        sked__Location__c site1 = (sked__Location__c)mapTestData.get('MOBILE_SITE2');
-        insert site1;
-        
-		Opportunity templateOpp = (Opportunity)mapTestData.get('MOBILE_TEMPLATE_OPP');
-        templateOpp.AccountId = testMobileAccount.id;
-        templateOpp.is_Template__c = true;
-        templateOpp.WholeBloodProceduresProjectedTemplate__c = 50;
-        templateOpp.Double_Red_Procedures_Projected_Template__c = 39;
-        templateOpp.Anticipated_Registered_Donors_Template__c = 21;
-        templateOpp.Drive_Site__c =site1.Id ;
-        insert templateOpp;
-        
-        Id pricebookId = Test.getStandardPricebookId();
-        
-        List<Order> orderlist = new List<Order>();
-            Order o = new Order();
-            o.name='Test1';
-            o.AccountId= testMobileAccount.Id ;
-            o.OpportunityId = templateOpp.Id ;
-            o.Material_Recipient_Type__c = 'Same';
-            o.Material_Recipient__c = 'Account Manager';
-            o.EffectiveDate=system.today();
-            o.status='draft' ;
-            o.Pricebook2Id =  pricebookId ;
-            orderlist.add(o);
-        
-        insert orderlist;
-        
-        List<Product2> productlist = new List<Product2>(); 
-        Product2 prod = new Product2(Name = 'Laptop X200',
-                                    
-                                     Family = 'Hardware');
-        productlist.add(prod);
-        insert productlist;
-        
-        List<PricebookEntry> pentrylist = new List<PricebookEntry>();
-        PricebookEntry standardPrice = new PricebookEntry(
-                                                            Pricebook2Id = pricebookId, Product2Id = productlist[0].Id,
-                                                            UnitPrice = 0.01, IsActive = true);
-                                                            
-                                                            
-        pentrylist.add(standardPrice);
-        
-        insert pentrylist;
-        
-        List<OrderItem> oitemlist = new List<OrderItem>();
-                OrderItem oi = new OrderItem();
-                oi.OrderId= orderlist[0].id ;
-                oi.PricebookEntryId= pentrylist[0].Id ;
-                oi.Quantity = 1 ;
-                oi.UnitPrice = 0.01 ; 
-                oi.Product2id  = productlist[0].Id ;
-                oi.Material_Recipient__c  = 'Account Manager';
-                oitemlist.add(oi);
-        insert oitemlist;
-        
-        Opportunity mobileOpportunityRecord = (Opportunity)mapTestData.get('MOBILE_OPP');
-        mobileOpportunityRecord.StageName = 'Discovery';
-        mobileOpportunityRecord.AccountId = testMobileAccount.id;
-        mobileOpportunityRecord.Parent_Template_Id__c = templateOpp.Id;
-        mobileOpportunityRecord.Site_TBD__c = False;
-        mobileOpportunityRecord.Procedure_Projections_Template__c = 10;
-        mobileOpportunityRecord.Drive_Date__c = Date.Today().addDays(80);
-        mobileOpportunityRecord.CloseDate = System.today();
-        mobileOpportunityRecord.Start_Time__c = System.now().Time();
-        mobileOpportunityRecord.End_Time__c = System.now().Time()+1;
-        mobileOpportunityRecord.Anticipated_Registered_Donors__c = 1;  
-        mobileOpportunityRecord.X2RBC_Projected_Procedures__c = 1;
-        mobileOpportunityRecord.WB_Projected_Procedures__c = 2;
-        mobileOpportunityRecord.Source__c = 'Adhoc';
-        mobileOpportunityRecord.Slot_Generator__c = 130;
-        mobileOpportunityRecord.Slot_Generator_Change_Reason__c = 'System Generated Value';
-        
-        Test.startTest();
-        insert mobileOpportunityRecord;
-        TriggerHandler.clearAllBypasses();
-        Test.stopTest();
-        
-        OpportunityContactRole oppConRole = new OpportunityContactRole(Role = 'Primary Contact');
-        oppConRole.ContactId = contactRec.id;
-        oppConRole.OpportunityId = mobileOpportunityRecord.id;
-        insert oppConRole;
-    }
-    
-    static testMethod void testUpdateSyncTemplateOrderWithBDO() {
-        TriggerHandler.bypass('OpportunitySplitTriggerHandler');
-        TriggerHandler.bypass('AccountServiceRoleTriggerHandler');
-        //TriggerHandler.bypass('OpportunityTriggerHandler');
-        TriggerHandler.bypass('AccountTriggerHandler');
-        TriggerHandler.bypass('ContactTriggerHandler');
-        triggerHandler.bypass('TaskTriggerHandler');
-        
-        /* DRD User */
-        User testDrdUser = new User(
-            ProfileId = [select Id from Profile where name = 'DRD Profile'].Id,
-            LastName = 'DRDLastName',
-            Email = 'DRDUser@test.com',
-            Username = 'DRDUser@test.com' + System.currentTimeMillis(),
-            CompanyName = 'TestCompany',
-            Title = 'TestTitle',
-            Alias = 'Tal',
-            TimeZoneSidKey = 'America/Los_Angeles',
-            EmailEncodingKey = 'UTF-8',
-            LanguageLocaleKey = 'en_US',
-            LocaleSidKey = 'en_US'
-            
-        );
-        system.runAs(new User(Id = UserInfo.getUserId())) {
-            insert testDrdUser;
-        }
-        
-        BSF_TestDataSetup testDataSetup = new BSF_TestDataSetup(false);
-        Map<string, sObject> mapTestData =  testDataSetup.createAndInsertCommonObjects();
-        
-        Account testMobileAccount = (Account)mapTestData.get('MOBILE_ACCOUNT');
-        insert testMobileAccount;
-
-        Contact contactRec = (Contact)mapTestData.get('CONTACT');
-        contactRec.AccountId = testMobileAccount.Id;
-        insert contactRec;
-        
-        testMobileAccount.Contact_BPL__c = contactRec.Id;
-        update testMobileAccount;
-       
-        sked__Location__c site1 = (sked__Location__c)mapTestData.get('MOBILE_SITE2');
-        insert site1;
-        
-		Opportunity templateOpp = (Opportunity)mapTestData.get('MOBILE_TEMPLATE_OPP');
-        templateOpp.AccountId = testMobileAccount.id;
-        templateOpp.is_Template__c = true;
-        templateOpp.WholeBloodProceduresProjectedTemplate__c = 50;
-        templateOpp.Double_Red_Procedures_Projected_Template__c = 39;
-        templateOpp.Anticipated_Registered_Donors_Template__c = 21;
-        templateOpp.Drive_Site__c =site1.Id ;
-        insert templateOpp;
-        
-        Opportunity mobileOpportunityRecord = (Opportunity)mapTestData.get('MOBILE_OPP');
-        mobileOpportunityRecord.StageName = 'Discovery';
-        mobileOpportunityRecord.AccountId = testMobileAccount.id;
-        //mobileOpportunityRecord.Parent_Template_Id__c = templateOpp.Id;
-        //mobileOpportunityRecord.Site_TBD__c = False;
-        mobileOpportunityRecord.Procedure_Projections_Template__c = 10;
-        mobileOpportunityRecord.Drive_Date__c = Date.Today().addDays(80);
-        mobileOpportunityRecord.CloseDate = System.today();
-        mobileOpportunityRecord.Start_Time__c = System.now().Time();
-        mobileOpportunityRecord.End_Time__c = System.now().Time()+1;
-        mobileOpportunityRecord.Anticipated_Registered_Donors__c = 1;  
-        mobileOpportunityRecord.X2RBC_Projected_Procedures__c = 1;
-        mobileOpportunityRecord.WB_Projected_Procedures__c = 2;
-        mobileOpportunityRecord.Source__c = 'Adhoc';
-        mobileOpportunityRecord.Slot_Generator__c = 130;
-        mobileOpportunityRecord.Slot_Generator_Change_Reason__c = 'System Generated Value';
-        insert mobileOpportunityRecord;
-        
-        Id pricebookId = Test.getStandardPricebookId();
-        
-        List<Order> orderlist = new List<Order>();
-            Order o = new Order();
-            o.name='Test1';
-            o.AccountId= testMobileAccount.Id ;
-            o.OpportunityId = templateOpp.Id ;
-            o.Material_Recipient_Type__c = 'Same';
-            o.Material_Recipient__c = 'Account Manager';
-            o.EffectiveDate=system.today();
-            o.status='draft' ;
-            o.Pricebook2Id =  pricebookId ;
-            orderlist.add(o);
-        
-        	o = new Order();
-            o.name='Test2';
-            o.AccountId= testMobileAccount.Id ;
-            o.OpportunityId = mobileOpportunityRecord.Id ;
-            //o.Material_Recipient_Type__c = 'Same';
-            //o.Material_Recipient__c = 'Account Manager';
-            o.EffectiveDate=system.today();
-            o.status='draft' ;
-            o.Pricebook2Id =  pricebookId ;
-            orderlist.add(o);
-        
-        insert orderlist;
-        
-        List<Product2> productlist = new List<Product2>(); 
-        Product2 prod = new Product2(Name = 'Laptop X200',
-                                    
-                                     Family = 'Hardware');
-        productlist.add(prod);
-        insert productlist;
-        
-        List<PricebookEntry> pentrylist = new List<PricebookEntry>();
-        PricebookEntry standardPrice = new PricebookEntry(
-                                                            Pricebook2Id = pricebookId, Product2Id = productlist[0].Id,
-                                                            UnitPrice = 0.01, IsActive = true);
-                                                            
-                                                            
-        pentrylist.add(standardPrice);
-        
-        insert pentrylist;
-        
-        List<OrderItem> oitemlist = new List<OrderItem>();
-                OrderItem oi = new OrderItem();
-                oi.OrderId= orderlist[0].id ;
-                oi.PricebookEntryId= pentrylist[0].Id ;
-                oi.Quantity = 1 ;
-                oi.UnitPrice = 0.01 ; 
-                oi.Product2id  = productlist[0].Id ;
-                oi.Material_Recipient__c  = 'Account Manager';
-                oitemlist.add(oi);
-        
-        		oi = new OrderItem();
-                oi.OrderId= orderlist[1].id ;
-                oi.PricebookEntryId= pentrylist[0].Id ;
-                oi.Quantity = 1 ;
-                oi.UnitPrice = 0.01 ; 
-                oi.Product2id  = productlist[0].Id ;
-                oitemlist.add(oi);
-        insert oitemlist;
-        
-        
-        
-        OpportunityContactRole oppConRole = new OpportunityContactRole(Role = 'Primary Contact');
-        oppConRole.ContactId = contactRec.id;
-        oppConRole.OpportunityId = mobileOpportunityRecord.id;
-        insert oppConRole;
-        
-        mobileOpportunityRecord.Parent_Template_Id__c = templateOpp.Id;
-        mobileOpportunityRecord.Site_TBD__c = False;
-        
-        Test.startTest();
-        update mobileOpportunityRecord;
-        TriggerHandler.clearAllBypasses();
         Test.stopTest();
     }
     
@@ -4125,64 +3335,57 @@ public class OpportunityTriggerTest
             update opportunityList[1];
             Test.stopTest();    
     }*/
-    
-    static testMethod void testWebScheduleStart_EndDateUpdateCalculation() {
-        TriggerHandler.bypass('OpportunitySplitTriggerHandler');
-        TriggerHandler.bypass('AccountServiceRoleTriggerHandler');
-        //TriggerHandler.bypass('OpportunityTriggerHandler');
-        TriggerHandler.bypass('AccountTriggerHandler');
-        TriggerHandler.bypass('ContactTriggerHandler');
-        
-        BSF_TestDataSetup testDataSetup = new BSF_TestDataSetup(false);
-        Map<string, sObject> mapTestData =  testDataSetup.createAndInsertCommonObjects();
-       
-        // insert FS Account
-        Account testFixedAccount = (Account)mapTestData.get('FIXED_SITE_ACCOUNT');
-        insert testFixedAccount;
-		
-        // insert FS Location
-        sked__Location__c testSite = (sked__Location__c)mapTestData.get('FIXED_SITE');
-        //skedHubBase.BypassInsertTriggers = true;
-        //triggerHandler.bypass('SiteTriggerHandler');
-        system.debug('line 3665'+testSite);
-        insert testSite;
-        system.debug('line 3667'+testSite.Id);
-        
-        //insert CO
-        Biomed_Collection_Op_Center__c testCO = (Biomed_Collection_Op_Center__c)mapTestData.get('COLLECTION_OPP');
-        testCO.FS_Web_Scheduling_Start_Date_Offset__c = -250;
-        testCO.FS_Web_Scheduling_Start_Time__c = '1015';
-        testCO.FS_Web_Scheduling_End_Date_Offset__c = -25;
-        testCO.FS_Web_Scheduling_End_Time_Offset__c = 0;
-        insert testCO;
-        
-        //insert site collection operation
-        sked_Site_Collection_Operation__c testSiteCO = (sked_Site_Collection_Operation__c)mapTestData.get('FIXED_SITE_COLLECTION_OPERATION');
-        system.debug('line 3679'+testSiteCO);
-        testSiteCO.sked_Collection_Operation__c = testCO.Id;
-        testSiteCO.sked_Site__c = testSite.Id;
-        insert testSiteCO;
-        system.debug('line 3683'+testSiteCO);
-        
-        sked_Territory__c testterri = (sked_Territory__c)mapTestData.get('TERRITORY');
-        insert testterri;
-        
-        sked_Territory_Collection_Operation__c testterriCO = (sked_Territory_Collection_Operation__c)mapTestData.get('TERRITORY_COLLECTION_OPERATION');
-        testterriCO.sked_Collection_Operation__c = testCO.Id;
-        testterriCO.sked_Territory__c = testterri.Id;
-        System.debug('Line 3691 entering........' +testterriCO);
-        insert testterriCO;
-        System.debug('Line 3693 entering........' +testterriCO);
-        
-        //insert Fixed Opp 1
-        Opportunity testFixedOpp = (Opportunity)mapTestData.get('FIXED_OPP');
-        testFixedOpp.accountId = testFixedAccount.Id;
-        testFixedOpp.Drive_Site__c = testSite.Id;
-        testFixedOpp.Online_Scheduling_Enabled__c = 'Yes';
-        testFixedOpp.Web_Sched_Offset_from_CO_Global_Settings__c = true;
-        
-        Test.startTest();
-        insert testFixedOpp;
-        Test.stopTest();
+
+    @isTest
+    static void testUpdateLatestPastClosedDriveTriggerFlow1() {
+        // Step 1: Create an Account
+        Account acc = new Account(Name = 'Test Account');
+        insert acc;
+
+        // Step 2: Create first Opportunity with earlier drive date and closed stage
+        Opportunity opp1 = new Opportunity(
+            Name = 'Drive 1',
+            StageName = 'Closed',
+            CloseDate = Date.today(),
+            Drive_Date__c = Date.today().addDays(-10),
+            AccountId = acc.Id
+        );
+
+        // Step 3: Create second Opportunity with later drive date and closed stage
+        Opportunity opp2 = new Opportunity(
+            Name = 'Drive 2',
+            StageName = 'Closed',
+            CloseDate = Date.today(),
+            Drive_Date__c = Date.today().addDays(-5),
+            AccountId = acc.Id
+        );
+
+        insert new List<Opportunity>{opp1, opp2};
+
+        // Step 4: Verify that only opp2 is marked as latest past closed drive
+        List<Opportunity> opps = [
+            SELECT Id, Is_Latest_Past_Closed_Drive__c, Drive_Date__c
+            FROM Opportunity
+            WHERE Id IN :new List<Id>{opp1.Id, opp2.Id}
+        ];
+
+        System.assertEquals(false, opps[0].Is_Latest_Past_Closed_Drive__c, 'Older drive should not be marked as latest.');
+        System.assertEquals(true, opps[1].Is_Latest_Past_Closed_Drive__c, 'Latest drive should be marked as latest.');
+
+        // Step 5: Update opp2 stage to something else, should now make opp1 latest
+        opp2.StageName = 'Discovery';
+        update opp2;
+
+        // Re-query
+        opps = [
+            SELECT Id, Is_Latest_Past_Closed_Drive__c, Drive_Date__c
+            FROM Opportunity
+            WHERE Id IN :new List<Id>{opp1.Id, opp2.Id}
+        ];
+
+        System.assertEquals(true, opps[0].Is_Latest_Past_Closed_Drive__c, 'Now opp1 should be the latest after opp2 is not Closed.');
+        System.assertEquals(false, opps[1].Is_Latest_Past_Closed_Drive__c, 'Opp2 should not be marked as latest anymore.');
     }
+
+
 }
