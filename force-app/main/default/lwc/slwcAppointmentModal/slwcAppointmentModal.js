@@ -75,6 +75,9 @@ export default class SlwcAppointmentModal extends LightningElement {
         if(!this.selectedSlot.recurrenceDates) {
             this.selectedSlot.recurrenceDates = [];
         }
+        if(!this.selectedSlot.recurrenceDriveIds) {
+            this.selectedSlot.recurrenceDriveIds = [];
+        }
         this.setupStartTimeMinMaxTime();
     }
 
@@ -153,13 +156,15 @@ export default class SlwcAppointmentModal extends LightningElement {
     openRecurrenceDatesPickerModalData() {
         this.recurrenceDatesPickerModalData = {
             isOpen: true,
-            selectedDays: this.selectedSlot.recurrenceDates
+            selectedDays: this.selectedSlot.recurrenceDates,
+            selectedDriveIds: this.selectedSlot.recurrenceDriveIds
         }
     }
 
     saveRecurrenceDatesPickerModalData(event) {
-        const { selectedDays } = event.detail; 
+        const { selectedDays, selectedDriveIds } = event.detail; 
         this.selectedSlot.recurrenceDates = selectedDays;
+        this.selectedSlot.recurrenceDriveIds = selectedDriveIds
     }
 
     closeRecurrenceDatesPickerModalData() {

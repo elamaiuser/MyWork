@@ -18,10 +18,6 @@ class activityService extends dataService {
             queryBuilder.addCondition({ template: "sked_Start_Date__c >= {0}", value: query.startDate });
             queryBuilder.addCondition({ template: "sked_Start_Date__c <= {0}", value: query.endDate });
         }
-        if (query.startDateInBetween) {
-            queryBuilder.addCondition({ template: "sked_Start_Date__c <= {0}", value: query.startDateInBetween });
-            queryBuilder.addCondition({ template: "sked_End_Date__c >= {0}", value: query.startDateInBetween });
-        }
         if (query.driveTypes && query.driveTypes.length) {
             queryBuilder.addCondition({ template: "sked_Drive_Types__c IN {0}", value: query.driveTypes, type: "array_string" });
         }
@@ -65,7 +61,6 @@ class activityQueryModel extends queryModelBase {
     reduceFromStaffingConstraint;
     selectedDates;
     startDate;
-    startDateInBetween;
     showOnlyLinkedEvents;
     isShowOnCalendarOrReduceFromStaffingConstraints;
     driveTypes;
