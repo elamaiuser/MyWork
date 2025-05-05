@@ -110,6 +110,12 @@
 		<members>Set_Account_UFID</members>
 		<members>Uncheck_Use_this_as_mailing_address_field</members>
 		<members>Update_Account_Status_Field_and_Marketing_Strategy_as_Text_fields_on_Account</members>
+		<!-- Deactivated Flow fot this Ticekt -->
+		<members>Update_Do_not_Contact</members>
+		<!-- End -->
+		<!-- Deactivated Process Builder fot this Ticekt -->
+		<members>Create_Account_Service_Role_Upon_Contact_Creation</members>
+		<!-- End -->
 		<name>Flow</name>
 	</types>
     <types>
@@ -189,6 +195,7 @@
 		<members>Account</members>
         <members>sked_Drive__c</members>
 		 <members>sked__Location__c</members>
+		 <members>Contact</members>
 		<name>Workflow</name>
 	</types>
     <types>
@@ -208,11 +215,9 @@
 		<members>Account.Default Status Prospect %26 Internal Name for Mobile Account</members>
         <members>sked_Drive__c.Drive Hold Status Expires</members>
 		<members>sked__Location__c.SiteName is Edited</members>
+		<members>Contact.Do Not Contact Reasons Equals to Deceased</members>
+		<members>Contact.Do Not Contact is Selected</members>
 		<name>WorkflowRule</name>
-	</types>
-     <types>
-    	<members>sked_Drive__c.Drive Hold Status Expires</members>
-    	<name>WorkflowRule</name>
 	</types>
     <version>63.0</version>
 </Package>
