@@ -36,6 +36,8 @@
         <members>sked__Location__c.sked_Site_Contact_Phone__c</members>
 		<members>sked__Job__c.sked_VAR_Last_Modified_By__c</members>
         <members>sked_Fixed_Site_Procedure_Projection__c.sked_Impact_Drives__c</members>	
+		<members>Opportunity.Is_Latest_Past_Closed_Drive__c</members>
+        <members>Account.Last_Closed_Drive__c</members>
 	   <name>CustomField</name>
     </types>
     <types>
@@ -81,6 +83,9 @@
         <members>WeeklyStaffScheduleReportController</members>
         <members>WeeklyStaffScheduleReportControllerTest</members>
         <members>skedFixedSiteProcedureProjectionHandler</members>
+		<members>OpportunityTriggerTest</members>
+        <members>OpportunityTriggerHandler</members>
+        <members>OpportunityService</members>
 		<name>ApexClass</name>
 	</types>
 	<types>
