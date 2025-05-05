@@ -35,5 +35,10 @@
         <members>Collection_Operation_Time_Block__c.All</members> 
         <name>ListView</name>
     </types>
+    <types>
+        <members>Time_Block__c</members>
+        <members>Collection_Operation_Time_Block__c</members>
+        <name>CustomTab</name>
+    </types>
     <version>59.0</version>
 </Package>
