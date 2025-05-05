@@ -3335,4 +3335,57 @@ public class OpportunityTriggerTest
             update opportunityList[1];
             Test.stopTest();    
     }*/
+
+    @isTest
+    static void testUpdateLatestPastClosedDriveTriggerFlow1() {
+        // Step 1: Create an Account
+        Account acc = new Account(Name = 'Test Account');
+        insert acc;
+
+        // Step 2: Create first Opportunity with earlier drive date and closed stage
+        Opportunity opp1 = new Opportunity(
+            Name = 'Drive 1',
+            StageName = 'Closed',
+            CloseDate = Date.today(),
+            Drive_Date__c = Date.today().addDays(-10),
+            AccountId = acc.Id
+        );
+
+        // Step 3: Create second Opportunity with later drive date and closed stage
+        Opportunity opp2 = new Opportunity(
+            Name = 'Drive 2',
+            StageName = 'Closed',
+            CloseDate = Date.today(),
+            Drive_Date__c = Date.today().addDays(-5),
+            AccountId = acc.Id
+        );
+
+        insert new List<Opportunity>{opp1, opp2};
+
+        // Step 4: Verify that only opp2 is marked as latest past closed drive
+        List<Opportunity> opps = [
+            SELECT Id, Is_Latest_Past_Closed_Drive__c, Drive_Date__c
+            FROM Opportunity
+            WHERE Id IN :new List<Id>{opp1.Id, opp2.Id}
+        ];
+
+        System.assertEquals(false, opps[0].Is_Latest_Past_Closed_Drive__c, 'Older drive should not be marked as latest.');
+        System.assertEquals(true, opps[1].Is_Latest_Past_Closed_Drive__c, 'Latest drive should be marked as latest.');
+
+        // Step 5: Update opp2 stage to something else, should now make opp1 latest
+        opp2.StageName = 'Discovery';
+        update opp2;
+
+        // Re-query
+        opps = [
+            SELECT Id, Is_Latest_Past_Closed_Drive__c, Drive_Date__c
+            FROM Opportunity
+            WHERE Id IN :new List<Id>{opp1.Id, opp2.Id}
+        ];
+
+        System.assertEquals(true, opps[0].Is_Latest_Past_Closed_Drive__c, 'Now opp1 should be the latest after opp2 is not Closed.');
+        System.assertEquals(false, opps[1].Is_Latest_Past_Closed_Drive__c, 'Opp2 should not be marked as latest anymore.');
+    }
+
+
 }

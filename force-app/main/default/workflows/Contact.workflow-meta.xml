@@ -12,7 +12,7 @@
     </fieldUpdates>
     <fieldUpdates>
         <fullName>Update_Do_Not_Contact_Date_Field</fullName>
-        <description>When the &quot;Do Not Contact&quot; checkbox is checked, the &quot;Do Not Contact Date&quot; field populates with the day&#39;s date.</description>
+        <description>When the &quot;Do Not Contact&quot; checkbox is checked, the &quot;Do Not Contact Date&quot; field populates with the day&apos;s date.</description>
         <field>Do_Not_Contact_Date__c</field>
         <formula>TODAY()</formula>
         <name>Update Do Not Contact Date Field</name>
@@ -101,7 +101,7 @@ NULL
             <name>Active_Inactive_is_false</name>
             <type>FieldUpdate</type>
         </actions>
-        <active>true</active>
+        <active>false</active>
         <criteriaItems>
             <field>Contact.Do_Not_Contact_Reason__c</field>
             <operation>equals</operation>
@@ -115,13 +115,13 @@ NULL
             <name>Update_Do_Not_Contact_Date_Field</name>
             <type>FieldUpdate</type>
         </actions>
-        <active>true</active>
+        <active>false</active>
         <criteriaItems>
             <field>Contact.Do_Not_Contact__c</field>
             <operation>equals</operation>
             <value>True</value>
         </criteriaItems>
-        <description>If user checks the &quot;Do Not Contact&quot; checkbox on the Contact, the &quot;Do Not Contact Date&quot; field should auto-populate with that day&#39;s date.</description>
+        <description>If user checks the &quot;Do Not Contact&quot; checkbox on the Contact, the &quot;Do Not Contact Date&quot; field should auto-populate with that day&apos;s date.</description>
         <triggerType>onCreateOrTriggeringUpdate</triggerType>
     </rules>
     <rules>

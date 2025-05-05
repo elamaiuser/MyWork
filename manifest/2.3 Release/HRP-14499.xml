@@ -4,5 +4,15 @@
 		<members>Drive_Hold_Status_Expires</members>
 		<name>Flow</name>
 	</types>
+	<!-- Deactivated WorkFlow fot this Ticekt -->
+	<types>
+        <members>sked_Drive__c</members>
+		<name>Workflow</name>
+	</types>
+	<types>
+    	<members>sked_Drive__c.Drive Hold Status Expires</members>
+    	<name>WorkflowRule</name>
+	</types>
+	<!-- End -->
     <version>63.0</version>
 </Package>

@@ -36,6 +36,8 @@
         <members>sked__Location__c.sked_Site_Contact_Phone__c</members>
 		<members>sked__Job__c.sked_VAR_Last_Modified_By__c</members>
         <members>sked_Fixed_Site_Procedure_Projection__c.sked_Impact_Drives__c</members>	
+		<members>Opportunity.Is_Latest_Past_Closed_Drive__c</members>
+        <members>Account.Last_Closed_Drive__c</members>
 	   <name>CustomField</name>
     </types>
     <types>
@@ -81,6 +83,9 @@
         <members>WeeklyStaffScheduleReportController</members>
         <members>WeeklyStaffScheduleReportControllerTest</members>
         <members>skedFixedSiteProcedureProjectionHandler</members>
+		<members>OpportunityTriggerTest</members>
+        <members>OpportunityTriggerHandler</members>
+        <members>OpportunityService</members>
 		<name>ApexClass</name>
 	</types>
 	<types>
@@ -105,6 +110,12 @@
 		<members>Set_Account_UFID</members>
 		<members>Uncheck_Use_this_as_mailing_address_field</members>
 		<members>Update_Account_Status_Field_and_Marketing_Strategy_as_Text_fields_on_Account</members>
+		<!-- Deactivated Flow fot this Ticekt -->
+		<members>Update_Do_not_Contact</members>
+		<!-- End -->
+		<!-- Deactivated Process Builder fot this Ticekt -->
+		<members>Create_Account_Service_Role_Upon_Contact_Creation</members>
+		<!-- End -->
 		<name>Flow</name>
 	</types>
     <types>
@@ -167,8 +178,7 @@
 		<members>opportunity_with_order_with_ordering_product</members>
 		<members>opportunity_with_promotion_with_opportunity_promo</members>
 		<name>ReportType</name>
-	</types>
-	<types>
+	</types>    
 		<members>Opportunity.MyOpportunities</members>
 		<name>ListView</name>
 	</types>
@@ -183,6 +193,9 @@
     <types>
 		<members>Account_Marketing_Program__c</members>
 		<members>Account</members>
+        <members>sked_Drive__c</members>
+		 <members>sked__Location__c</members>
+		 <members>Contact</members>
 		<name>Workflow</name>
 	</types>
     <types>
@@ -200,6 +213,10 @@
 		<members>Account.Default Account Status Active</members>
 		<members>Account.Default Status Active %26 Internal Name for FS</members>
 		<members>Account.Default Status Prospect %26 Internal Name for Mobile Account</members>
+        <members>sked_Drive__c.Drive Hold Status Expires</members>
+		<members>sked__Location__c.SiteName is Edited</members>
+		<members>Contact.Do Not Contact Reasons Equals to Deceased</members>
+		<members>Contact.Do Not Contact is Selected</members>
 		<name>WorkflowRule</name>
 	</types>
     <version>63.0</version>
