@@ -59,7 +59,7 @@ const MODE = {
       searchField: "sked_Drive__r.Name",
       exceptionCodes: [
         "MISSING_TIME_BLOCK",
-        "OUTSIDE_OF_TIME_BLOCK",
+        "OUT_OF_TIME_BLOCK",
         "FITS_MULTIPLE_TIME_BLOCKS",
         "OUT_OF_OPERATIONAL_HOURS"
       ],
@@ -136,7 +136,7 @@ const MODE = {
         'RESOURCE_DUPLICATE_SENIORITY_RANKING', 
         'LINKED_DRIVE_MISMATCHING_ASSETS', 
         'MISSING_TIME_BLOCK', 
-        'OUTSIDE_OF_TIME_BLOCK', 
+        'OUT_OF_TIME_BLOCK', 
         'FITS_MULTIPLE_TIME_BLOCKS',
         'OUT_OF_OPERATIONAL_HOURS'
       ]
@@ -179,7 +179,7 @@ const MODE = {
         "RESOURCE_DUPLICATE_SENIORITY_RANKING",
         "CERT_ADDED_42DAYS",
         "MISSING_TIME_BLOCK",
-        "OUTSIDE_OF_TIME_BLOCK",
+        "OUT_OF_TIME_BLOCK",
         "FITS_MULTIPLE_TIME_BLOCKS",
         "OUT_OF_OPERATIONAL_HOURS"
       ]
