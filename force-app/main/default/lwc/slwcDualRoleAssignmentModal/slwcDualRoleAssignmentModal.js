@@ -124,22 +124,29 @@ export default class SlwcDualRoleAssignmentModal extends LightningElement {
 
     if(event.currentTarget.name === 'primaryRole') {
       this.model.secondaryRole = null;
+
+      const primaryJob = this.getJobByRole(value);
+      if(primaryJob) {
+        this.model.quantity = primaryJob.quantity;
+      }
     }
   }
 
+  getJobByRole = (role) => {
+    if(!this.driveShift || !this.driveShift.jobs) return null;
+
+    return this.driveShift.jobs.find(job => {
+      return job.resourceRole === role && !job.dualRole && job.manuallyCreatedFrom !== MANUALLY_CREATED_FROM.STAFFING_MODAL;
+    })
+  }
   getJobsToMerge = () => {
     if(!this.driveShift || !this.driveShift.jobs) return {
       primaryRoleJob: null,
       secondaryRoleJob: null
     };
 
-    const primaryRoleJob = this.driveShift.jobs.find(job => {
-      return job.resourceRole === this.model.primaryRole && !job.dualRole && job.manuallyCreatedFrom !== MANUALLY_CREATED_FROM.STAFFING_MODAL;
-    })
-
-    const secondaryRoleJob = this.driveShift.jobs.find(job => {
-      return job.resourceRole === this.model.secondaryRole && !job.dualRole && job.manuallyCreatedFrom !== MANUALLY_CREATED_FROM.STAFFING_MODAL;
-    })
+    const primaryRoleJob = this.getJobByRole(this.model.primaryRole);
+    const secondaryRoleJob = this.getJobByRole(this.model.secondaryRole);
 
     return {
       primaryRoleJob,
@@ -183,7 +190,7 @@ export default class SlwcDualRoleAssignmentModal extends LightningElement {
         this.model.quantity <= 0 || this.model.quantity > maxQuantityOfDualRoleJob
       )) {
         this.errorMessages.push({
-          message: `The quantity of dual role must be greater than 0 and less than or equal to ${maxQuantityOfDualRoleJob}`
+          message: `The quantity of dual roles must be greater than 0 and less than or equal to ${maxQuantityOfDualRoleJob}`
         }) 
       }
     }
