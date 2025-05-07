@@ -866,11 +866,12 @@ class BaseGenerator {
     let shift = this.drive.driveShifts.find((e) => e.key == shiftKey);
     let newList = [...shift.jobs];
     let target = job;
-    let jobToBeGenerated = {};
+    let jobsToBeGenerated = [];
     let backupDriveShift = this.masterData.backupDriveShiftMap[shiftKey];
-    
+    const isDualRoleModified = target.isDualRoleModified || target.reducedDualRoleQuantity;
+
     //Run this block only if dual role is changed
-    if(target.isDualRoleModified) {
+    if(isDualRoleModified) {
       const primaryRoleJobIndex = newList.findIndex((item) => 
         item.resourceRole && 
         item.resourceRole === target.resourceRole && 
@@ -905,20 +906,43 @@ class BaseGenerator {
             newList.splice(otherPrimaryRoleJobIndexes[i], 1); 
           }
         }
-      }
+        const dualRoleJobIndex = newList.findIndex((item) => item.resourceRole && item.resourceRole === target.dualRole);
+        if(dualRoleJobIndex !== -1) {
+          newList.splice(dualRoleJobIndex, 1);
+        }
+  
+        jobsToBeGenerated.push(backupDriveShift.jobs?.find(
+          (item) =>
+            item.key === target.key &&
+            item.resourceRole &&
+            item.resourceRole === target.resourceRole &&
+            item.dualRole
+        )); //will use the dual role as the primary role for the new job
+      } else if (target.reducedDualRoleQuantity) {
+        jobsToBeGenerated.push({
+          ...backupDriveShift.jobs?.find(
+            (item) =>
+              item.key === target.key &&
+              item.resourceRole &&
+              item.resourceRole === target.resourceRole &&
+              item.dualRole
+          ),
+          dualRole: target.resourceRole,
+          quantity: target.reducedDualRoleQuantity
+        });
 
-      const dualRoleJobIndex = newList.findIndex((item) => item.resourceRole && item.resourceRole === target.dualRole);
-      if(dualRoleJobIndex !== -1) {
-        newList.splice(dualRoleJobIndex, 1);
-      }
+        jobsToBeGenerated.push({
+          ...backupDriveShift.jobs?.find(
+            (item) =>
+              item.key === target.key &&
+              item.resourceRole &&
+              item.resourceRole === target.resourceRole &&
+              item.dualRole
+          ),
+          quantity: target.reducedDualRoleQuantity
+        });
 
-      jobToBeGenerated = backupDriveShift.jobs?.find(
-        (item) =>
-          item.key === target.key &&
-          item.resourceRole &&
-          item.resourceRole === target.resourceRole &&
-          item.dualRole
-      ); //will use the dual role as the primary role for the new job
+      }
     }
 
     target.tagNames = '';
@@ -941,8 +965,10 @@ class BaseGenerator {
     }
     shift.jobs = newList;
 
-    if(job.isDualRoleModified) {
-      this.repopulateJobsAfterDualRoleModification(shift, jobToBeGenerated);
+    if(jobsToBeGenerated.length) {
+      jobsToBeGenerated.forEach(job => {
+        this.repopulateJobsAfterDualRoleModification(shift, job);
+      })
     }
 
     this.onJobChanged(shift, job, originalJob);
