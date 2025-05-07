@@ -1,0 +1,20 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+    <types>
+            <members>Taxonomy_Run__c</members>
+            <name>CustomObject</name>
+    </types>
+    <types>
+		<members>Taxonomy_Run__c.Deleted_On__c</members>
+        <members>Taxonomy_Run__c.External_Id__c</members>
+        <members>Taxonomy_Run__c.Future_Version_Number__c</members>
+        <members>Taxonomy_Run__c.Processing_End__c</members>
+        <members>Taxonomy_Run__c.Processing_Start__c</members>
+        <members>Taxonomy_Run__c.Received_On__c</members>
+        <members>Taxonomy_Run__c.Run_Date__c</members>
+        <members>Taxonomy_Run__c.Sequence__c</members>
+        <members>Taxonomy_Run__c.Status__c</members>
+        <members>Taxonomy_Run__c.Taxo_Record_Type__c</members>
+		<name>CustomField</name>
+	</types>
+</Package>

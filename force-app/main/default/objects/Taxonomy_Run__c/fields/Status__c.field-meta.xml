@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Status__c</fullName>
+    <description>This will be populated with the value of Pending when the entry is made. On the run date, Taxo Run Control Batch will change the Status to Processing for the Record with the Lowest Sequence Number for that date and Chain BSF_Batch_BSFPortfolio. When the portfolio creation and subsequent enddating is completed by BSF_Batch_TaxonomyEndDateHandler, it will update the status to Completed and then pick the next &apos;Pending&apos; taxo record type for that run date based on sequence, update it to &apos;Processing&apos; and again Chain BSF_Batch_BSFPortfolio. This will continue till all the Taxo Record Types are processed for the run date. Finally, when a Future Version becomes history because of New Taxo Data being pushed and the end date on the Version becomes &lt; Current Date + 1 month, the Data for that verson is deleted in Taxonomy__c and the subsequent status on this record is set to &apos;Deleted.&apos;</description>
+    <externalId>false</externalId>
+    <label>Status</label>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Pending</fullName>
+                <default>false</default>
+                <label>Pending</label>
+            </value>
+            <value>
+                <fullName>Processing</fullName>
+                <default>false</default>
+                <label>Processing</label>
+            </value>
+            <value>
+                <fullName>Completed</fullName>
+                <default>false</default>
+                <label>Completed</label>
+            </value>
+            <value>
+                <fullName>Deleted</fullName>
+                <default>false</default>
+                <label>Deleted</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>
