@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>63.0</apiVersion>
+    <description>HRP-14506 - Migrated from the: Optimization Run Timeout workflow rule
+Workflow rule description: Handle timeout for Optimization that run too long&quot;</description>
+    <environments>Default</environments>
+    <interviewLabel>Optimization Run Timeout {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>Optimization Run Timeout</label>
+    <migratedFromWorkflowRuleName>Optimization Run Timeout</migratedFromWorkflowRuleName>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <recordUpdates>
+        <name>After_Timeout_At_Update</name>
+        <label>After Timeout At Update</label>
+        <locationX>308</locationX>
+        <locationY>276</locationY>
+        <inputAssignments>
+            <field>sked_Message__c</field>
+            <value>
+                <stringValue>{!$Record.sked_Message__c} -- Timeout</stringValue>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>sked_Status__c</field>
+            <value>
+                <stringValue>Error</stringValue>
+            </value>
+        </inputAssignments>
+        <inputReference>$Record</inputReference>
+    </recordUpdates>
+    <start>
+        <locationX>50</locationX>
+        <locationY>0</locationY>
+        <doesRequireRecordChangedToMeetCriteria>true</doesRequireRecordChangedToMeetCriteria>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>sked_Status__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>In Progress</stringValue>
+            </value>
+        </filters>
+        <object>sked_Optimization_Run__c</object>
+        <recordTriggerType>CreateAndUpdate</recordTriggerType>
+        <scheduledPaths>
+            <name>After_Timeout_At</name>
+            <connector>
+                <targetReference>After_Timeout_At_Update</targetReference>
+            </connector>
+            <label>After Timeout At</label>
+            <offsetNumber>0</offsetNumber>
+            <offsetUnit>Hours</offsetUnit>
+            <recordField>sked_Timeout_At__c</recordField>
+            <timeSource>RecordField</timeSource>
+        </scheduledPaths>
+        <triggerType>RecordAfterSave</triggerType>
+    </start>
+    <status>Active</status>
+</Flow>
