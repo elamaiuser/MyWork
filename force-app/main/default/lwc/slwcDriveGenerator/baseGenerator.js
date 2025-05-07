@@ -892,10 +892,6 @@ class BaseGenerator {
             item.dualRole
         )); //will use the dual role as the primary role for the new job
       } else if (target.reducedDualRoleQuantity) {
-        const primaryRoleJobIndex = newList.findIndex((item) => item.resourceRole && item.resourceRole === target.resourceRole);
-        if(primaryRoleJobIndex !== -1) {
-          newList.splice(primaryRoleJobIndex, 1);
-        }
         jobsToBeGenerated.push({
           ...backupDriveShift.jobs?.find(
             (item) =>
@@ -908,11 +904,6 @@ class BaseGenerator {
           quantity: target.reducedDualRoleQuantity
         });
 
-        const dualRoleJobIndex = newList.findIndex((item) => item.resourceRole && item.resourceRole === target.dualRole);
-        if(dualRoleJobIndex !== -1) {
-          newList.splice(dualRoleJobIndex, 1);
-        }
-  
         jobsToBeGenerated.push({
           ...backupDriveShift.jobs?.find(
             (item) =>
