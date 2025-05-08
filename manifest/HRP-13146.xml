@@ -53,6 +53,7 @@
 		<members>slwcDriveShift</members>
 		<members>slwcDriveShiftsMetadataModal</members>
 		<members>slwcDriveShiftJobModal</members>
+        <members>slwcDriveShiftJobTable</members>
 		<name>LightningComponentBundle</name>
 	</types>
     <version>59.0</version>
