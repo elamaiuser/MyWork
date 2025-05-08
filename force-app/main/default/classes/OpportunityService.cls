@@ -5040,6 +5040,9 @@ opp.StageName = 'Closed';
                     if (anticipatedRegisteredDonors >= record.Min_Anticipated_Registered_Donors__c &&
                         anticipatedRegisteredDonors <= record.Max_Anticipated_Registered_Donors__c) {
                             volunteers = Integer.valueOf(record.Volunteer_Quantity__c);
+                            if(volunteers == 0){
+                                volunteers = 1;
+                            }
                     }
                     if(maxRange < Integer.valueOf(record.Max_Anticipated_Registered_Donors__c)){
                         maxRange = Integer.valueOf(record.Max_Anticipated_Registered_Donors__c);
@@ -5055,11 +5058,32 @@ opp.StageName = 'Closed';
         }
         return Decimal.valueOf(volunteers);
     }
+    public static void handleRedcrossVolunteerRequirementValidation(List<Opportunity> newOppList, Map<Id, Opportunity> map_oldOppId_oldOpp) {}
     public static void calculateVolunteerQuantity(List<Opportunity> newOppList, Map<Id, Opportunity> oldOppMap) {
         if(oldOppMap == null || !checkRecursive.skipVolunteerCalculation){
             Map<Id, Boolean> highSchoolDriveMap = new Map<Id, Boolean>();
             for(Opportunity opp : newOppList){
-                if(opp.AccountId != null && opp.Anticipated_Registered_Donors__c != null && opp.Red_Cross_Volunteer_Required__c
+                if(oldOppMap != null && !oldOppMap.isEmpty() && opp.Id != null && oldOppMap.containsKey(opp.Id)
+                    && !opp.Red_Cross_Volunteer_Required__c && opp.Red_Cross_Volunteer_Quantity__c != null 
+                    && opp.Red_Cross_Volunteer_Quantity__c > 0 
+                    && opp.Red_Cross_Volunteer_Quantity__c != oldOppMap.get(opp.Id).Red_Cross_Volunteer_Quantity__c){
+                        opp.Red_Cross_Volunteer_Required__c = true;
+                }else if(oldOppMap != null && !oldOppMap.isEmpty() && opp.Id != null && oldOppMap.containsKey(opp.Id)
+                    && opp.Red_Cross_Volunteer_Required__c && (opp.Red_Cross_Volunteer_Quantity__c == null 
+                    || opp.Red_Cross_Volunteer_Quantity__c <= 0)
+                    && opp.Red_Cross_Volunteer_Quantity__c != oldOppMap.get(opp.Id).Red_Cross_Volunteer_Quantity__c){
+                        opp.Red_Cross_Volunteer_Required__c = false;
+                }else if(oldOppMap != null && !oldOppMap.isEmpty() && opp.Id != null && oldOppMap.containsKey(opp.Id)
+                    && opp.Red_Cross_Volunteer_Required__c && (opp.Red_Cross_Volunteer_Quantity__c == null 
+                    || opp.Red_Cross_Volunteer_Quantity__c <= 0)
+                    && opp.Red_Cross_Volunteer_Quantity__c != oldOppMap.get(opp.Id).Red_Cross_Volunteer_Quantity__c){
+                        opp.Red_Cross_Volunteer_Required__c = false;
+                }else if(oldOppMap != null && !oldOppMap.isEmpty() && opp.Id != null && oldOppMap.containsKey(opp.Id)
+                    && !opp.Red_Cross_Volunteer_Required__c && opp.Red_Cross_Volunteer_Quantity__c != null 
+                    && opp.Red_Cross_Volunteer_Quantity__c > 0
+                    && opp.Red_Cross_Volunteer_Required__c != oldOppMap.get(opp.Id).Red_Cross_Volunteer_Required__c){
+                        opp.Red_Cross_Volunteer_Quantity__c = 0;
+                }else if(opp.AccountId != null && opp.Anticipated_Registered_Donors__c != null && opp.Red_Cross_Volunteer_Required__c
                     && (oldOppMap == null ||(!oldOppMap.isEmpty() && opp.Id != null && oldOppMap.containsKey(opp.Id)
                     && opp.Anticipated_Registered_Donors__c != oldOppMap.get(opp.Id).Anticipated_Registered_Donors__c))){
                         highSchoolDriveMap.put(opp.AccountId, null);
