@@ -9,14 +9,22 @@
         <members>BSF_Batch_DriveStatusCorrection</members>
         <members>BSF_Batch_Drive_OpRecordStatusCorrection</members>
         <members>BSF_Constants</members>
+        <members>BSF_Utilities</members>
+		<members>BSF_UtilitiesTest</members>
         <members>BSF_MarketingExceptionRequest</members>
+        <members>CalendarBuildBatchHandler</members>
+		<members>CalendarBuildEvaluateDrivesBatch_Test</members>
+		<members>CheckRecursive</members>
         <members>ContactService</members>
         <members>ContactTriggerHandler</members>
         <members>DriveGenerationUtil</members>
         <members>DriveResourceAllocationBatch</members>
         <members>DriveResourceAllocationBatchTest</members>
+        <members>FieldIdentifiers</members>
+		<members>FutureDrivesController</members>
         <members>GenerateMobileDrive</members>
         <members>GenerateMobileDriveTest</members>
+        <members>MobileDriveGeneratorDMLService</members>
         <members>OpportunityService</members>
         <members>OpportunityTriggerHandler</members>
         <members>OpportunityTriggerTest</members>
@@ -44,10 +52,14 @@
         <members>skedSetting_Test</members>
         <members>skedUpdateJobTimeVarianceBatch</members>
         <members>skedUpdateJobTimeVarianceBatch_Test</members>
+        <members>slwcDataService</members>
+		<members>slwcDriveService</members>
+		<members>slwcSetting</members>
         <name>ApexClass</name>
     </types>
     <types>
         <members>skedFixedSiteProcedureProjectionTrigger</members>
+        <members>updateEventTrigger</members>
         <name>ApexTrigger</name>
     </types>
     <types>
@@ -62,6 +74,9 @@
         <members>Opportunity.Red_Cross_Volunteer_Required__c</members>
         <members>Opportunity.StageName</members>
         <members>sked_Drive__c.sked_Stage_Options__c</members>
+        <members>sked_Drive__c.sked_Redcross_Volunteer_Required__c</members>
+		<members>sked_Drive__c.sked_Redcross_Volunteer_Quantity__c</members>		
+        <members>sked__Job__c.sked_Redcross_Volunteer_Quantity__c</members>	
         <members>sked_Fixed_Site_Procedure_Projection__c.sked_Impact_Drives__c</members>
         <members>sked_Location_Account__c.sked_Location__c</members>
         <members>sked_TTIRR_Stuck_Job_Config_Setting__c.sked_Enable_Auto_Reschedule__c</members>
@@ -84,6 +99,9 @@
     </types>
     <types>
         <members>Account_Service_Role_End_Reason__mdt.Deceased</members>
+        <members>Custom_Messages.Red_Cross_Volunteer_Qty_Validation_0</members>
+		<members>Custom_Messages.Red_Cross_Volunteer_Quantity_Validation</members>
+		<members>Profile_Specific_Functionality_Access.Red_Cross_Volunteer_Setting</members>
         <name>CustomMetadata</name>
     </types>
     <types>
@@ -91,6 +109,10 @@
         <members>sked_TTIRR_Stuck_Job_Config_Setting__c</members>
         <name>CustomObject</name>
     </types>
+     <types>
+		<members>Opportunity.FieldsApplytoDrives</members>
+		<name>FieldSet</name>
+	</types>
     <types>
         <members>Calendar_Build_Log_Manual_Run_Record_Page</members>
         <members>Calendar_Build_Log_Record_Page</members>
@@ -104,6 +126,7 @@
     <types>
         <members>Account_Before_Insert_Update_Flow</members>
         <members>Create_Account_Service_Role_Upon_Contact_Creation</members>
+        <members>Create_New_Recurring_Mobile_Drive</members>
         <members>Drive_Hold_Status_Expires</members>
         <members>Handle_Do_Not_Contact_Updates_On_Contact</members>
         <members>Handle_Site_Name_Room_Name_update</members>
@@ -138,10 +161,16 @@
         <name>Layout</name>
     </types>
     <types>
+        <members>autoMapper</members>
+		<members>slwcConstants</members>
         <members>slwcAppointmentModal</members>
         <members>slwcAvailator</members>
         <members>slwcDriveGenerator</members>
         <members>slwcDriveStaffingDetails</members>
+        <members>slwcDriveShift</members>
+		<members>slwcDriveShiftsMetadataModal</members>
+		<members>slwcDriveShiftJobModal</members>
+        <members>slwcDriveShiftJobTable</members>
         <members>slwcExceptionList</members>
         <members>slwcLinkedDriveStaffingDetails</members>
         <members>slwcOnCallCallOutManagement</members>

@@ -794,7 +794,7 @@ class DriveHelper {
     }
 
     if ([DRIVE_STATUS.DRAFT].includes(drive.status)) {
-      //even drive is draft, DRD can only update volunteer jobs, slots, operation notes.
+      //even drive is draft, DRD can only update volunteer jobs, slots, operation notes, redcrossVolunteerRequired.
       if(isDRDUser) {
         return {
           isReadonly: true,
@@ -813,7 +813,8 @@ class DriveHelper {
             operationNotes: false,
             linkedDrives: true,
             aptQuantity: true,
-            mobileDriveVehicesInput: true
+            mobileDriveVehicesInput: true,
+            redcrossVolunteerRequired: false
           },
           fieldChangeRestrictionMap: {
             driveSite: true
@@ -838,6 +839,7 @@ class DriveHelper {
             linkedDrives: false,
             aptQuantity: isOnlyAPSUser ? false : true,
             mobileDriveVehicesInput: false,
+            redcrossVolunteerRequired: isOnlyAPSUser || isAdminUser ? false : true,
           },
           fieldChangeRestrictionMap: {
             driveSite: true
@@ -868,7 +870,8 @@ class DriveHelper {
       volunteerJobs: isReadonly,
       operationNotes: isReadonly,
       linkedDrives: isReadonly,
-      aptQuantity: isReadonly
+      aptQuantity: isReadonly,
+      redcrossVolunteerRequired: isReadonly
     }
     let fieldChangeRestrictionMap = {
       driveSite: true
@@ -965,12 +968,14 @@ class DriveHelper {
         'x2rbcProjectedProcedures',
         'aptRequired',
         'aptQuantity',
-        'slotGenerator'
+        'slotGenerator',
+        'redcrossVolunteerRequired',
+        'redcrossVolunteerQuantity'
       ];
     }
 
     let fieldsToCheckChanges = [];
-    driveChangeRequest.driveChangeRequestItems.find(dcrItem => {
+    driveChangeRequest.driveChangeRequestItems?.find(dcrItem => {
       if(dcrItem.type !== DRIVE_CHANGE_REQUEST_ITEM_TYPE.CHANGE) return;
 
       const mapping = autoMapper.mappingConfigContainerInstance.getMappingConfig(dcrItem.objectApiName);
@@ -3068,11 +3073,7 @@ class DriveHelper {
     } else if (job.assetType) {
       return true;
     } else if (job.volunteerRole) { 
-      if(this.isMobileDrive(drive)) {
-        return false;
-      } else {
-        return ['Donor Ambassador'].includes(job.volunteerRole);
-      }
+      return ['Donor Ambassador'].includes(job.volunteerRole);
     }
 
     return false;

@@ -24,6 +24,7 @@ export default class SlwcDriveShiftJobModal extends LightningElement {
     @track showModal = false;
     @track showSpinner = false;
     @track isVolunteerQuantityChanged = false;
+    @track isRedcrossVolunteerQuantityChangedOnMultiShiftDrive = false;
     @track isOtherVolunteerAdjustmentReasonNeeded = false;
 
     @track isPersonResource;
@@ -236,6 +237,9 @@ export default class SlwcDriveShiftJobModal extends LightningElement {
         if (name === 'redcrossVolunteerQuantity' || name === 'sponsorVolunteerQuantity') {
             jobClone.quantity = (jobClone.redcrossVolunteerQuantity || 0) + (jobClone.sponsorVolunteerQuantity || 0);
             this.isVolunteerQuantityChanged = true;
+            if(name === 'redcrossVolunteerQuantity' && this.drive?.driveShifts?.length  > 1) {
+                this.isRedcrossVolunteerQuantityChangedOnMultiShiftDrive = true;
+            }
         }
 
         if (name === 'vphhQuantity' || name === 'aptQuantity') {
@@ -484,6 +488,16 @@ export default class SlwcDriveShiftJobModal extends LightningElement {
                         variant: 'success'
                     })
                 );
+                console.log('this.driveShift ',this.driveShift);
+                if(this.isRedcrossVolunteerQuantityChangedOnMultiShiftDrive) {
+                    this.dispatchEvent(
+                        new ShowToastEvent({
+                            title: 'Alert!',
+                            message: `Red Cross Volunteer Quantity has been updated on ${this.driveShift.name}. Red Cross Volunteer Quantity will be updated on all shifts.`,
+                            variant: 'warning'
+                        })
+                    );
+                }
             }
         }
         

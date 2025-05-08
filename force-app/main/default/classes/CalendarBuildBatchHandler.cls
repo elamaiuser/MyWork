@@ -63,7 +63,8 @@
                                                            Send_Emails__c, Send_Mailers__c, Web_Scheduling_End_Date_Offset__c, Web_Scheduling_End_Time_Offset__c, 
                                                            Web_Scheduling_Start_Date_Offset__c, Platelet_Projected_Procedures__c, Plasma_Pheresis_Projected_Procedures__c,
                                                            Flow_End_Time_Field__c, Flow_Start_Time_Field__c, Type, //HRP=11814
-                                                           APT_Quantity__c, APT_Required__c //HRP-13190
+                                                           APT_Quantity__c, APT_Required__c, //HRP-13190
+                                                           Redcross_Volunteer_Quantity__c, Redcross_Volunteer_Required__c //HRP-13146
                                                            FROM Opportunity WHERE Id in :parentTemplateIdsSet];
         
         Map<Id, Opportunity> oppWithParentTemplateMap = new Map<Id, Opportunity>();
@@ -136,12 +137,15 @@
                 clonedOpp.StageName = 'Discovery';
                 clonedOpp.drive_status__c = '';  //HRP-10179
                 if(!oppWithParentTemplateMap.isEmpty() && oppWithParentTemplateMap.containsKey(origOpp.Parent_Template_Id__c)) {
-                      clonedOpp.Anticipated_Registered_Donors__c = oppWithParentTemplateMap.get(origOpp.Parent_Template_Id__c).Anticipated_Registered_Donors__c != null ?
-                          											 oppWithParentTemplateMap.get(origOpp.Parent_Template_Id__c).Anticipated_Registered_Donors__c : 0;
+                    clonedOpp.Anticipated_Registered_Donors__c = oppWithParentTemplateMap.get(origOpp.Parent_Template_Id__c).Anticipated_Registered_Donors__c != null ?
+                          											oppWithParentTemplateMap.get(origOpp.Parent_Template_Id__c).Anticipated_Registered_Donors__c : 0;
                     
-                      clonedOpp.type = oppWithParentTemplateMap.get(origOpp.Parent_Template_Id__c).type != NULL ?
-                              oppWithParentTemplateMap.get(origOpp.Parent_Template_Id__c).type :
-                    		  driveSiteMap.get(oppIdVsDriveSiteIdMap.get(origOpp.Parent_Template_Id__c)).sked_Physical_Location_Type__c; //HRP-11814
+                    clonedOpp.type = oppWithParentTemplateMap.get(origOpp.Parent_Template_Id__c).type != NULL ?
+                            oppWithParentTemplateMap.get(origOpp.Parent_Template_Id__c).type :
+                    		driveSiteMap.get(oppIdVsDriveSiteIdMap.get(origOpp.Parent_Template_Id__c)).sked_Physical_Location_Type__c; //HRP-11814
+                    clonedOpp.Redcross_Volunteer_Required__c = oppWithParentTemplateMap.get(origOpp.Parent_Template_Id__c).Redcross_Volunteer_Required__c; //HRP-13146
+                    clonedOpp.Redcross_Volunteer_Quantity__c = oppWithParentTemplateMap.get(origOpp.Parent_Template_Id__c).Redcross_Volunteer_Quantity__c; //HRP-13146
+                    
                 }
                 cbWrapper = runRolloverEvaluation(origOpp, oppWithGraySkiesMap);
                 if(cbWrapper.IsQualified != null) {
