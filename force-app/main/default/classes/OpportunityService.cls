@@ -5058,6 +5058,7 @@ opp.StageName = 'Closed';
         }
         return Decimal.valueOf(volunteers);
     }
+    public static void handleRedcrossVolunteerRequirementValidation(List<Opportunity> newOppList, Map<Id, Opportunity> map_oldOppId_oldOpp) {}
     public static void calculateVolunteerQuantity(List<Opportunity> newOppList, Map<Id, Opportunity> oldOppMap) {
         if(oldOppMap == null || !checkRecursive.skipVolunteerCalculation){
             Map<Id, Boolean> highSchoolDriveMap = new Map<Id, Boolean>();

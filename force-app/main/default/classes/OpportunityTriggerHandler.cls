@@ -288,6 +288,10 @@ public class OpportunityTriggerHandler extends TriggerHandler{
         if(super.getTriggerMethodsToBypass().indexOf('handleRedcrossVolunteerRequirementValidation') == -1) {
             OpportunityService.handleRedcrossVolunteerRequirementValidation((List<Opportunity>)trigger.new, (Map<Id,Opportunity>)trigger.oldMap);
         }
+        //HRP-13146
+        if(super.getTriggerMethodsToBypass().indexOf('calculateVolunteerQuantity') == -1) {
+            OpportunityService.calculateVolunteerQuantity((List<Opportunity>)trigger.new, (Map<Id,Opportunity>)trigger.oldMap);
+        }
 
         //HRP-6051
         if(super.getTriggerMethodsToBypass().indexOf('validateTheARD') == -1) {
@@ -468,6 +472,9 @@ public class OpportunityTriggerHandler extends TriggerHandler{
         //HRP-13146
         if(super.getTriggerMethodsToBypass().indexOf('handleRedcrossVolunteerRequirementValidation') == -1) {
             OpportunityService.handleRedcrossVolunteerRequirementValidation((List<Opportunity>)trigger.new, NULL);
+        }
+        if(super.getTriggerMethodsToBypass().indexOf('calculateVolunteerQuantity') == -1) {
+            OpportunityService.calculateVolunteerQuantity((List<Opportunity>)trigger.new, NULL);
         }
         
         System.debug('Exiting method beforeInsert');
