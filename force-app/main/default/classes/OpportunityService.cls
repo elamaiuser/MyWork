@@ -5030,4 +5030,62 @@ opp.StageName = 'Closed';
     }
     
     //HRP-14565 end here
+    public static Decimal getVolunteerQuantity(Integer anticipatedRegisteredDonors, Boolean highSchool, List<Volunteer_Staffing_Matrix__mdt> matrixRecords) {
+        Integer volunteers = 0;
+        Integer maxRange = 0;
+        Integer baseVolunteers = 0;
+        if(anticipatedRegisteredDonors != null && highSchool != null && matrixRecords != null && !matrixRecords.isEmpty()){
+            for (Volunteer_Staffing_Matrix__mdt record : matrixRecords) {
+                if(record.High_School_Drive__c == highSchool){
+                    if (anticipatedRegisteredDonors >= record.Min_Anticipated_Registered_Donors__c &&
+                        anticipatedRegisteredDonors <= record.Max_Anticipated_Registered_Donors__c) {
+                            volunteers = Integer.valueOf(record.Volunteer_Quantity__c);
+                    }
+                    if(maxRange < Integer.valueOf(record.Max_Anticipated_Registered_Donors__c)){
+                        maxRange = Integer.valueOf(record.Max_Anticipated_Registered_Donors__c);
+                        baseVolunteers = Integer.valueOf(record.Volunteer_Quantity__c);
+                    }
+                }
+            }
+            if(maxRange < anticipatedRegisteredDonors){
+                Integer extraDonors = anticipatedRegisteredDonors - maxRange;
+                Integer extraVolunteers = (Integer)Math.ceil(extraDonors / 40.0);
+                volunteers = baseVolunteers + extraVolunteers;
+            }
+        }
+        return Decimal.valueOf(volunteers);
+    }
+    public static void calculateVolunteerQuantity(List<Opportunity> newOppList, Map<Id, Opportunity> oldOppMap) {
+        if(oldOppMap == null || !checkRecursive.skipVolunteerCalculation){
+            Map<Id, Boolean> highSchoolDriveMap = new Map<Id, Boolean>();
+            for(Opportunity opp : newOppList){
+                if(opp.AccountId != null && opp.Anticipated_Registered_Donors__c != null && opp.Red_Cross_Volunteer_Required__c
+                    && (oldOppMap == null ||(!oldOppMap.isEmpty() && opp.Id != null && oldOppMap.containsKey(opp.Id)
+                    && opp.Anticipated_Registered_Donors__c != oldOppMap.get(opp.Id).Anticipated_Registered_Donors__c))){
+                        highSchoolDriveMap.put(opp.AccountId, null);
+                }
+            }
+            if(!highSchoolDriveMap.isEmpty()){
+                for(Account acc : [SELECT Id, Type, Industry_Code__c 
+                                                        FROM Account 
+                                                        WHERE Id IN : highSchoolDriveMap.keySet()]){
+                    if(String.isNotBlank(acc.Type) && acc.Type.equalsIgnoreCase('Education')
+                        && String.isNotBlank(acc.Industry_Code__c) && acc.Industry_Code__c.equalsIgnoreCase('High School')){
+                            highSchoolDriveMap.put(acc.Id,true);
+                    }else{
+                        highSchoolDriveMap.put(acc.Id,false);
+                    }
+                }
+                List<Volunteer_Staffing_Matrix__mdt> matrixRecords = Volunteer_Staffing_Matrix__mdt.getAll().values();
+                for(Opportunity opp : newOppList){
+                    if(opp.AccountId != null && opp.Anticipated_Registered_Donors__c != null && opp.Red_Cross_Volunteer_Required__c
+                        && (oldOppMap == null ||(!oldOppMap.isEmpty() && opp.Id != null && oldOppMap.containsKey(opp.Id)
+                        && opp.Anticipated_Registered_Donors__c != oldOppMap.get(opp.Id).Anticipated_Registered_Donors__c))){
+                            opp.Red_Cross_Volunteer_Quantity__c = getVolunteerQuantity(Integer.valueOf(opp.Anticipated_Registered_Donors__c), 
+                                                                                highSchoolDriveMap.get(opp.AccountId), matrixRecords);
+                    }
+                }
+            }
+        }
+    }
 }

@@ -3,4 +3,5 @@ public class checkRecursive {
      public static Boolean isNewlyCreatedAccount = false;
      public static Boolean skipAptRecalculation = false;
      public static Boolean firstCallForRecordCreation = false;
+     public static Boolean skipVolunteerCalculation = false;
 }

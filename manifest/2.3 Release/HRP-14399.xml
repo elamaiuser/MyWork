@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <Package xmlns="http://soap.sforce.com/2006/04/metadata">
 	<types>
-		<members>Opportunity.Redcross_Volunteer_Quantity__c</members>
-        <members>Opportunity.Redcross_Volunteer_Required__c</members>
+		<members>Opportunity.Red_Cross_Volunteer_Quantity__c</members>
+        <members>Opportunity.Red_Cross_Volunteer_Required__c</members>
         <members>Volunteer_Staffing_Matrix__mdt.High_School_Drive__c</members>
         <members>Volunteer_Staffing_Matrix__mdt.Max_Anticipated_Registered_Donors__c</members>
         <members>Volunteer_Staffing_Matrix__mdt.Min_Anticipated_Registered_Donors__c</members>
@@ -12,6 +12,11 @@
     <types>
 		<members>Volunteer_Staffing_Matrix__mdt</members>
 		<name>CustomObject</name>
+	</types>
+    <types>
+		<members>OpportunityService</members>
+        <members>checkRecursive</members>
+		<name>ApexClass</name>
 	</types>
     <types>
 		<members>Volunteer_Staffing_Matrix.High_School_0_70</members>
