@@ -46,6 +46,14 @@
 		<members>Create_New_Recurring_Mobile_Drive</members>
 		<name>Flow</name>
 	</types>
+    <types>
+		<members>Opportunity-APS Planner Mobile Opp Layout</members>
+		<members>Opportunity-APS Scheduler Mobile Opp Layout</members>
+		<members>Opportunity-DRD Mobile Opp Layout</members>
+		<members>Opportunity-Mobile Opp Layout</members>
+		<members>Opportunity-Sponsor Marketing Mobile Opp Layout</members>
+		<name>Layout</name>
+	</types>
 	<types>
 		<members>autoMapper</members>
 		<members>slwcConstants</members>
