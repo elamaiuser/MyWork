@@ -136,51 +136,23 @@ private class BSFWeeklyStaffingRoleTimeControllerTest {
         String collOpIds = [SELECT Id, Name FROM Biomed_Collection_Op_Center__c WHERE Name = 'Collection Operation 1' LIMIT 1].Id;
             
         Test.startTest();
-        Integer count = BSFWeeklyStaffingRoleTimeController.validateInputs(Date.Today(),Date.Today().addDays(70),'Both',collOpIds,'mobile,fixed');
+        WeeklyStaffScheduleReportController.StaffInfoWrapper staffInfoWrapper = new WeeklyStaffScheduleReportController.StaffInfoWrapper();
+        staffInfoWrapper = BSFWeeklyStaffingRoleTimeController.validateInputsAndGetStaffInfo(Date.Today(),Date.Today().addDays(70),'Both',collOpIds,'mobile,fixed');
         Test.stopTest();
     }
     @isTest
     private static void testmethod9(){
-        String collOpIds = [SELECT Id, Name FROM Biomed_Collection_Op_Center__c WHERE Name = 'Collection Operation 1' LIMIT 1].Id;
-        List<sked__Activity_Resource__c> testList = [SELECT Id, sked_Start_Time__c, sked_End_Time__c FROM sked__Activity_Resource__c LIMIT 100];
-        for(sked__Activity_Resource__c ttt : testList){
-            if(ttt.sked_Start_Time__c == null){
-                ttt.sked_Start_Time__c = Datetime.now().time();
-            }
-            if(ttt.sked_End_Time__c == null){
-                ttt.sked_End_Time__c = Datetime.now().addMinutes(100).time();
-            }
-        }
-        update testList;
-        List<sked__Activity__c> testList1 = [SELECT Id, sked_Start_Time__c, sked_End_Time__c FROM sked__Activity__c LIMIT 100];
-        for(sked__Activity__c tta : testList1){
-            if(tta.sked_Start_Time__c == null){
-                tta.sked_Start_Time__c = Datetime.now().time();
-            }
-            if(tta.sked_End_Time__c == null){
-                tta.sked_End_Time__c = Datetime.now().addMinutes(100).time();
-            }
-        }
-        update testList1;
+        String collOpIds = [SELECT Id, Name, sked_Territory__c FROM Biomed_Collection_Op_Center__c WHERE Name = 'Collection Operation 1' LIMIT 1].Id;
+            
         Test.startTest();
         List<BSFWeeklyStaffingRoleTimeController.WeeklyStaffingRTReportWrapper> wrapper = BSFWeeklyStaffingRoleTimeController.searchRoleTimeReport(Date.Today(),Date.Today().addDays(70),'Both',collOpIds,'mobile,fixed');
         Test.stopTest();
     }
     @isTest
     private static void testmethod10(){
-        String collOpIds = [SELECT Id, Name FROM Biomed_Collection_Op_Center__c WHERE Name = 'Collection Operation 1' LIMIT 1].Id;
-        List<sked__Activity_Resource__c> testList = [SELECT Id, sked_Start_Time__c, sked_End_Time__c FROM sked__Activity_Resource__c LIMIT 100];
-        for(sked__Activity_Resource__c ttt : testList){
-            if(ttt.sked_Start_Time__c == null){
-                ttt.sked_Start_Time__c = Datetime.now().time();
-            }
-            if(ttt.sked_End_Time__c == null){
-                ttt.sked_End_Time__c = Datetime.now().addMinutes(100).time();
-            }
-        }
-        update testList;
+        Biomed_Collection_Op_Center__c collOp = [SELECT Id, Name, sked_Territory__c FROM Biomed_Collection_Op_Center__c WHERE Name = 'Collection Operation 1' LIMIT 1];
         Test.startTest();
-        List<sked__Activity_Resource__c> actv = BSFWeeklyStaffingRoleTimeController.getActivities(Date.Today(),Date.Today().addDays(70),new Set<String>{collOpIds});
+        List<sked__Activity_Resource__c> actv = BSFWeeklyStaffingRoleTimeController.getActivities(Date.Today(), Date.Today().addDays(70), new List<String>{collOp.sked_Territory__c + ':' + collOp.Id});
         Test.stopTest();
     }
     @isTest
@@ -276,6 +248,18 @@ private class BSFWeeklyStaffingRoleTimeControllerTest {
     private static void testmethod20(){
         Test.startTest();
         String nnnn = BSFWeeklyStaffingRoleTimeController.getFormattedTime(12,0);
+        Test.stopTest();
+    }
+    
+    @isTest
+    private static void testmethod21() {        
+        Test.startTest();
+        try{
+            WeeklyStaffScheduleReportController.StaffInfoWrapper staffInfoWrapper = new WeeklyStaffScheduleReportController.StaffInfoWrapper();
+        	staffInfoWrapper = BSFWeeklyStaffingRoleTimeController.validateInputsAndGetStaffInfo(system.today(), system.today().addDays(-10), '', '', '');
+        }catch(AuraHandledException ex) {
+            //Assert.isTrue()
+        }
         Test.stopTest();
     }
 
@@ -411,10 +395,7 @@ private class BSFWeeklyStaffingRoleTimeControllerTest {
             
             triggerHandler.bypass('AccountTeamMemberTriggerHandler');
             insert atmList;
-            
-            
-            
-            
+     
             Contact conObj = new Contact();
             conObj.AccountId = mobileAccList[0].Id;
             conObj.FirstName = 'Test';
@@ -564,7 +545,7 @@ private class BSFWeeklyStaffingRoleTimeControllerTest {
             triggerHandler.bypass('OpportunityTriggerHandler');
             insert oppsobjlist;
 
-            Biomed_Collection_Op_Center__c testCollectionOperation1 = [SELECT Id, Name FROM Biomed_Collection_Op_Center__c WHERE Name = 'Collection Operation 1' LIMIT 1];
+            Biomed_Collection_Op_Center__c testCollectionOperation1 = [SELECT Id, Name, sked_Territory__c FROM Biomed_Collection_Op_Center__c WHERE Name = 'Collection Operation 1' LIMIT 1];
             
 
             
@@ -903,56 +884,56 @@ private class BSFWeeklyStaffingRoleTimeControllerTest {
         	skedHubBase.BypassUpdateTriggers = true;
             insert joballc5;
             
+			skedHubBase.BypassInsertTriggers = false;
+        	skedHubBase.BypassUpdateTriggers = false;
+            skedSetting.instance.Admin.dateTimeConversion = true;
             
             sked__Activity__c activity = new sked__Activity__c(
-            sked__Resource__c = resourcestaff.Id,
-            sked__Type__c = 'On Call',
-            sked_Activity_Title__c = 'On Call 1',
-            sked__Start__c = Datetime.now(),
-            sked_Start_Date__c =  Date.today(),
-            sked_End_Date__c =  Date.today().addDays(1),
-            sked__End__c = Datetime.now().addDays(1),
-            sked_Start_Time__c = Datetime.now().time(),
-            sked_End_Time__c = Datetime.now().addMinutes(66).time(),
-            sked_Collection_Operation__c = testCollectionOperation1.Id,
-            sked_Drive__c = testDrive1.Id,
-            sked_Region__c = reg.Id,
-            sked__Address__c = 'Test Address',
-            sked__Notes__c = 'Test notes',
-            sked_Is_Group_Activity__c = true
+                sked__Resource__c = resourcestaff.Id,
+                sked__Type__c = 'On Call',
+                sked_Activity_Title__c = 'On Call 1',
+                sked_Start_Date__c =  Date.today(),
+                sked_End_Date__c =  Date.today().addDays(1),
+                sked_Start_Time__c = Datetime.now().time(),
+                sked_End_Time__c = Datetime.now().addMinutes(66).time(),
+                sked_Collection_Operation__c = testCollectionOperation1.Id,
+                sked_District__c = testCollectionOperation1.sked_Territory__c,
+                sked_Drive__c = testDrive1.Id,
+                sked_Region__c = reg.Id,
+                sked__Address__c = 'Test Address',
+                sked__Notes__c = 'Test notes',
+                sked_Is_Group_Activity__c = true
             );
-            skedHubBase.BypassInsertTriggers = true;
             insert activity;
+            
             sked__Activity_Resource__c skedActivityResource = new sked__Activity_Resource__c(
                 sked__Activity__c = activity.Id,
                 sked__Resource__c = resourcestaff.Id
             );
-            skedHubBase.BypassInsertTriggers = true;
             insert skedActivityResource;
+            
             sked__Activity__c activity1 = new sked__Activity__c(
-            sked__Resource__c = resourcestaff.Id,
-            sked__Type__c = 'On Call',
-            sked_Activity_Title__c = 'On Call 1',
-            sked__Start__c = Datetime.now().addDays(1),
-            sked_Start_Date__c =  Date.today().addDays(1),
-            sked_End_Date__c =  Date.today().addDays(2),
-            sked__End__c = Datetime.now().addDays(2),
-            sked_Start_Time__c = Datetime.now().time(),
-            sked_End_Time__c = Datetime.now().addMinutes(66).time(),
-            sked_Collection_Operation__c = testCollectionOperation1.Id,
-            sked_Drive__c = testDrive2.Id,
-            sked_Region__c = reg.Id,
-            sked__Address__c = 'Test Address',
-            sked__Notes__c = 'Test notes',
-            sked_Is_Group_Activity__c = true
+                sked__Resource__c = resourcestaff.Id,
+                sked__Type__c = 'On Call',
+                sked_Activity_Title__c = 'On Call 1',
+                sked_Start_Date__c =  Date.today().addDays(1),
+                sked_End_Date__c =  Date.today().addDays(2),
+                sked_Start_Time__c = Datetime.now().time(),
+                sked_End_Time__c = Datetime.now().addMinutes(66).time(),
+                sked_Collection_Operation__c = testCollectionOperation1.Id,
+                sked_District__c = testCollectionOperation1.sked_Territory__c,
+                sked_Drive__c = testDrive2.Id,
+                sked_Region__c = reg.Id,
+                sked__Address__c = 'Test Address',
+                sked__Notes__c = 'Test notes',
+                sked_Is_Group_Activity__c = true
             );
-            skedHubBase.BypassInsertTriggers = true;
             insert activity1;
+            
             sked__Activity_Resource__c skedActivityResource1 = new sked__Activity_Resource__c(
                 sked__Activity__c = activity1.Id,
                 sked__Resource__c = resourcestaff.Id
             );
-            skedHubBase.BypassInsertTriggers = true;
             insert skedActivityResource1;
         }        
         

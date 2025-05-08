@@ -8,6 +8,7 @@
  *  11/09/2023				Balaji N					Logic for HRP-11290(Method Name:beforeUpdate,method call for uncheckCoveringRecFlagForBackEndInsert)
  *  11/23/2023				Balaji N					Logic for HRP-11281(Method call for coveringRecruiterOpptyTeamonPastOpp & createAccountTeamMemberHistoryRecords)
  *  02/20/2024              Balaji N					Logic for HRP-11234(Method call for updateAccountOnTeammeberAssignment in after delete)
+ *  08/28/2024				Balaji N					Logic for HRP-13340(Commented method call for populateDefaultAllocationFiledsOnUpdate,populateDefaultAllocationFiledsOnInsert,coveringRecruiterOpptyTeamonPastOpp,deleteOpportunity_Splits_Teams_OnAccountTeamMemberDelete)
  *************************************************************************************************************************************************
 */
 public class AccountTeamMemberTriggerHandler extends TriggerHandler{
@@ -17,11 +18,11 @@ public class AccountTeamMemberTriggerHandler extends TriggerHandler{
         //AccountTeamMemberService.createBloodDriveTeamMember((List<AccountTeamMember>)trigger.new);
         
         // Added for HRP-5076: Acceptance Criteria #5
-AccountTeamMemberService.uncheckCoveringRecFlagForBackEndInsert((List<AccountTeamMember>)trigger.new,null); //HRP-11290 null parameter
+            AccountTeamMemberService.uncheckCoveringRecFlagForBackEndInsert((List<AccountTeamMember>)trigger.new,null); //HRP-11290 null parameter
         //HRP-8897
         if(bsf_constants.isdateCheckbeforeInsertUpdate) 
         { 
-        AccountTeamMemberService.dateCheckbeforeInsertUpdate((List<AccountTeamMember>)trigger.new,null);
+            AccountTeamMemberService.dateCheckbeforeInsertUpdate((List<AccountTeamMember>)trigger.new,null);
         } 
         //HRP-8897   
     }
@@ -37,7 +38,7 @@ AccountTeamMemberService.uncheckCoveringRecFlagForBackEndInsert((List<AccountTea
         //HRP-8897
             //Added for HRP-5076: Acceptance Criteria #12
             AccountTeamMemberService.allowOnlyDateUpdatesForCoveringRecs((List<AccountTeamMember>)trigger.new,(Map<ID,AccountTeamMember>)trigger.oldMap,(Map<ID,AccountTeamMember>)trigger.newMap);
-            AccountTeamMemberService.populateDefaultAllocationFiledsOnUpdate((List<AccountTeamMember>)trigger.old,(List<AccountTeamMember>)trigger.new,(Map<ID,AccountTeamMember>)trigger.oldMap,(Map<ID,AccountTeamMember>)trigger.newMap);
+            //AccountTeamMemberService.populateDefaultAllocationFiledsOnUpdate((List<AccountTeamMember>)trigger.old,(List<AccountTeamMember>)trigger.new,(Map<ID,AccountTeamMember>)trigger.oldMap,(Map<ID,AccountTeamMember>)trigger.newMap);//HRP-13340
             //AccountTeamMemberService.updateAccountTeamMemberHistoryRecords((Map<ID,AccountTeamMember>)trigger.newMap);
         }
     }
@@ -48,8 +49,8 @@ AccountTeamMemberService.uncheckCoveringRecFlagForBackEndInsert((List<AccountTea
         // AccountTeamMemberHelper.createAccountTeamMemberHistoryRecords((List<AccountTeamMember>)trigger.new);
         AccountTeamMemberService.createAccountTeamMemberHistoryRecords((List<AccountTeamMember>)trigger.new,null);//HRP-11281
         system.debug('populateDefaultAllocationFiledsOnInsert');
-        AccountTeamMemberService.coveringRecruiterOpptyTeamonPastOpp((List<AccountTeamMember>)trigger.new,null);//HRP-11281
-        AccountTeamMemberService.populateDefaultAllocationFiledsOnInsert((List<AccountTeamMember>)trigger.new);
+        //AccountTeamMemberService.coveringRecruiterOpptyTeamonPastOpp((List<AccountTeamMember>)trigger.new,null);//HRP-11281 //HRP-13340 commented
+        //AccountTeamMemberService.populateDefaultAllocationFiledsOnInsert((List<AccountTeamMember>)trigger.new);//HRP-13340
         // HRP-5486 :CR: Account Manager will be Account/Opportunity Owner
         // HRP-5487 :CR: Adding Account Team to Blood Drive Team 
         if(super.getTriggerMethodsToBypass().indexOf('addAcctTeamMembersToBloodDriveOpptyMembers') == -1 && !BSF_Utilities.metaDataupdate(null,null,null,'Opportunity_Team_Sync_Batch').By_Pass_Batch__c)//HRP-10888 & HRP-10890
@@ -80,7 +81,7 @@ AccountTeamMemberService.uncheckCoveringRecFlagForBackEndInsert((List<AccountTea
         {
             system.debug(' AccountTeamMemberService.addAcctTeamMembersToBloodDriveOpptyMember is Bypassed');
         }
-        AccountTeamMemberService.coveringRecruiterOpptyTeamonPastOpp((List<AccountTeamMember>)trigger.new,(Map<ID,AccountTeamMember>)trigger.oldMap);//HRP-11281
+        //AccountTeamMemberService.coveringRecruiterOpptyTeamonPastOpp((List<AccountTeamMember>)trigger.new,(Map<ID,AccountTeamMember>)trigger.oldMap);//HRP-11281 //HRP-13340
         AccountTeamMemberService.updateAccountOnTeammeberAssignment((List<AccountTeamMember>)trigger.new,(Map<ID,AccountTeamMember>)trigger.oldMap);//HRP-11234 2nd parameter
     }
     
@@ -90,7 +91,7 @@ AccountTeamMemberService.uncheckCoveringRecFlagForBackEndInsert((List<AccountTea
         //  AccountTeamMemberHelper.populateEndDateOnAccountTeamMemberHistoryRecords((List<AccountTeamMember>)trigger.old,(Map<ID,AccountTeamMember>)trigger.oldMap);
         //AccountTeamMemberService.populateEndDateOnAccountTeamMemberHistoryRecords((List<AccountTeamMember>)trigger.old,(Map<ID,AccountTeamMember>)trigger.oldMap);//HRP-11281
         AccountTeamMemberService.createAccountTeamMemberHistoryRecords((List<AccountTeamMember>)trigger.old,null);//HRP-11281
-        AccountTeamMemberService.deleteOpportunity_Splits_Teams_OnAccountTeamMemberDelete((List<AccountTeamMember>)trigger.old,(Map<ID,AccountTeamMember>)trigger.oldMap);
+        //AccountTeamMemberService.deleteOpportunity_Splits_Teams_OnAccountTeamMemberDelete((List<AccountTeamMember>)trigger.old,(Map<ID,AccountTeamMember>)trigger.oldMap);//HRP-13340
         if(super.getTriggerMethodsToBypass().indexOf('addAcctTeamMembersToBloodDriveOpptyMembers') == -1 && !BSF_Utilities.metaDataupdate(null,null,null,'Opportunity_Team_Sync_Batch').By_Pass_Batch__c)//HRP-10888 & HRP-10890
         {
             AccountTeamMemberService.addAcctTeamMembersToBloodDriveOpptyMembers((List<AccountTeamMember>)trigger.old,null,true);

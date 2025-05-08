@@ -217,7 +217,7 @@ public class skedUserHandler extends skedTriggerHub implements Callable {
 
         if ((groupName.contains(skedConstants.PROFILE_QUEUE_DRIVE_CHANGE_REQUESTS) && profileSetting.sked_Drive_Change_Request__c) 
             || (groupName.contains(skedConstants.PROFILE_QUEUE_PENDING_ACTIONS) && profileSetting.sked_Pending_Action__c)
-            || (groupName.contains(skedConstants.PROFILE_QUEUE_ROLE_TIME_VARIANCES) && profileSetting.sked_Role_Time_Variance__c)
+            || (groupName.contains(skedConstants.PROFILE_QUEUE_APS_ROLE_TIME_VARIANCES) && profileSetting.sked_Role_Time_Variance__c)
             || (groupName.contains(skedConstants.PROFILE_QUEUE_CM_ROLE_TIME_VARIANCES) && profileSetting.sked_CM_Role_Time_Variance__c)
             || (groupName.contains(skedConstants.PROFILE_QUEUE_DM_ROLE_TIME_VARIANCES) && profileSetting.sked_DM_Role_Time_Variance__c)
             || (groupName.contains(skedConstants.PROFILE_QUEUE_DRIVE_SHIFT_TRADES) && profileSetting.sked_Drive_Shift_Trade_Request__c)

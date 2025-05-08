@@ -49,6 +49,12 @@
         <field>sked__Resource__c.sked__Availabilities1__r$Last_Updated_Time__c</field>
     </columns>
     <columns>
+        <field>sked__Resource__c.sked__Availabilities1__r$sked_Dispositioned_By_User__c</field>
+    </columns>
+    <columns>
+        <field>sked__Resource__c.sked__Availabilities1__r$sked_Disposition_Date__c</field>
+    </columns>
+    <columns>
         <field>sked__Resource__c.sked__Availabilities1__r$sked_Start_Date__c</field>
     </columns>
     <columns>
@@ -86,14 +92,14 @@
             <columnToColumn>false</columnToColumn>
             <isUnlocked>true</isUnlocked>
             <operator>equals</operator>
-            <value>Sick,PTO,Call Out,Floating Holiday,Bereavement,Personal</value>
+            <value>Floating Holiday,PTO</value>
         </criteriaItems>
         <criteriaItems>
             <column>sked__Resource__c.sked__Availabilities1__r$LastModifiedDate</column>
             <columnToColumn>false</columnToColumn>
             <isUnlocked>true</isUnlocked>
             <operator>greaterOrEqual</operator>
-            <value>9/23/2024 12:00 AM</value>
+            <value>6/30/2024 12:00 AM</value>
         </criteriaItems>
         <criteriaItems>
             <column>sked__Resource__c$sked_ARC_Region_Name__c</column>
@@ -114,42 +120,21 @@
             <columnToColumn>false</columnToColumn>
             <isUnlocked>true</isUnlocked>
             <operator>equals</operator>
-            <value>,Pending,Approved,Declined</value>
+            <value>,Approved,Declined,Pending</value>
         </criteriaItems>
         <criteriaItems>
             <column>sked__Resource__c.sked__Availabilities1__r$sked_Workday_Sync_Status__c</column>
             <columnToColumn>false</columnToColumn>
             <isUnlocked>true</isUnlocked>
             <operator>equals</operator>
-            <value>,Success,Failed,Manual,Not Applicable</value>
+            <value>,Failed,Manual,Not Applicable,Success</value>
         </criteriaItems>
         <criteriaItems>
             <column>sked__Resource__c.sked__Availabilities1__r$sked_Approval_Reason__c</column>
             <columnToColumn>false</columnToColumn>
             <isUnlocked>true</isUnlocked>
             <operator>equals</operator>
-            <value>,After Bid Submission Window,Bidding Period,Insufficient Sick Balance for this request. Approval Required.,Manual Workday adjustment required,Manual Workday cancellation required,Out of slot,Outside Auto Approval Window,Outside Bid Submission Window,Partial day balance request,Requested Date(s) overlap with scheduled Blood Drive,Workday Sync Failure</value>
-        </criteriaItems>
-        <criteriaItems>
-            <column>sked__Resource__c$Name</column>
-            <columnToColumn>false</columnToColumn>
-            <isUnlocked>true</isUnlocked>
-            <operator>notEqual</operator>
-            <value></value>
-        </criteriaItems>
-        <criteriaItems>
-            <column>sked__Resource__c.sked__Availabilities1__r$sked_Custom_Status__c</column>
-            <columnToColumn>false</columnToColumn>
-            <isUnlocked>true</isUnlocked>
-            <operator>equals</operator>
-            <value>,Pending,Waitlist,Approved,Declined,Expired,Cancelled,Approved From Waitlist,Processing Approval,Processing Adjustment,Processing Cancellation</value>
-        </criteriaItems>
-        <criteriaItems>
-            <column>sked__Resource__c.sked__Availabilities1__r$CreatedDate</column>
-            <columnToColumn>false</columnToColumn>
-            <isUnlocked>true</isUnlocked>
-            <operator>greaterOrEqual</operator>
-            <value>9/23/2024 12:00 AM</value>
+            <value>Manual Workday adjustment required,Manual Workday cancellation required</value>
         </criteriaItems>
         <language>en_US</language>
     </filter>
@@ -164,7 +149,7 @@
     <showDetails>true</showDetails>
     <showGrandTotal>true</showGrandTotal>
     <showSubTotals>true</showSubTotals>
-    <sortColumn>sked__Resource__c.sked__Availabilities1__r$CreatedDate</sortColumn>
+    <sortColumn>sked__Resource__c.sked__Availabilities1__r$Last_Updated_Time__c</sortColumn>
     <sortOrder>Desc</sortOrder>
     <timeFrameFilter>
         <dateColumn>sked__Resource__c$sked_Anticipated_Leave_Return_Date__c</dateColumn>

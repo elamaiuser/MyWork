@@ -1239,10 +1239,14 @@ class FixedSiteGenerator extends BaseGenerator {
       let volunteerJobQuantityRetainNeeded = false;
       if (volunteerRole === 'Donor Ambassador') {
         //HRP-10534: Retain Fixed Site Volunteer Value if Zero
-        if (originalJob && originalJob.quantity === 0) {
+        //HRP-13119: Retain Fixed Site Volunteer if they are locked
+        if (originalJob && (originalJob.quantity === 0 || originalJob.isLocked)) {
           job.redcrossVolunteerQuantity = originalJob.redcrossVolunteerQuantity;
           job.sponsorVolunteerQuantity = originalJob.sponsorVolunteerQuantity;
           job.quantity = originalJob.quantity;
+          job.isLocked = originalJob.isLocked;
+          job.volunteerAdjustmentReason = originalJob.volunteerAdjustmentReason;
+          job.isOtherVolunteerAdjustmentReasonSelected = originalJob.isOtherVolunteerAdjustmentReasonSelected;
           volunteerJobQuantityRetainNeeded = true;
         } else {
           job.redcrossVolunteerQuantity = quantity || 0;

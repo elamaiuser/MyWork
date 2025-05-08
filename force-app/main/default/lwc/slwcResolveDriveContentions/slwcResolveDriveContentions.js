@@ -365,7 +365,7 @@ export default class SlwcResolveDriveContentions extends LightningElement {
       }
 
       return this.driveGeneratorInstance.validateCurrentAssignedAssets()
-        .then(({ allAssignedEquipmentsValid, newEquipmentJobsMap, lockedEquipments, allAssignedVehiclesValid, newVehicles, canHandleDriveProjectedRegisteredDonors }) => {
+        .then(({ allAssignedEquipmentsValid, newEquipmentJobsMap, lockedEquipments, lockedVehicles, allAssignedVehiclesValid, newVehicles, canHandleDriveProjectedRegisteredDonors }) => {
           //equipments
           return Promise.resolve()
             .then(() => {
@@ -383,18 +383,20 @@ export default class SlwcResolveDriveContentions extends LightningElement {
               return {
                 allAssignedVehiclesValid,
                 newVehicles,
+                lockedVehicles,
                 canHandleDriveProjectedRegisteredDonors
               }
             })
         })
-        .then(({ allAssignedVehiclesValid, newVehicles, canHandleDriveProjectedRegisteredDonors }) => {
+        .then(({ allAssignedVehiclesValid, newVehicles, lockedVehicles, canHandleDriveProjectedRegisteredDonors }) => {
           //vehicles
           if (!canHandleDriveProjectedRegisteredDonors) {
             return this.driveGeneratorInstance.onDriveDataChanged([{
               targetName: 'totalVehicleRequestedChanged',
               targetValue: {
-                totalVehicleRequested: newVehicles.length,
-                vehicles: newVehicles
+                totalVehicleRequested: newVehicles.length + lockedVehicles.length,
+                vehicles: newVehicles,
+                lockedVehicles: lockedVehicles
               }
             }])
           }
@@ -403,8 +405,9 @@ export default class SlwcResolveDriveContentions extends LightningElement {
             return this.driveGeneratorInstance.onDriveDataChanged([{
               targetName: 'totalVehicleRequestedChanged',
               targetValue: {
-                totalVehicleRequested: newVehicles.length,
-                vehicles: newVehicles
+                totalVehicleRequested: newVehicles.length + lockedVehicles.length,
+                vehicles: newVehicles,
+                lockedVehicles: lockedVehicles
               }
             }])
           }

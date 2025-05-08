@@ -9,7 +9,7 @@
                         <valueListItems>
                             <value>Account.Review_Complete</value>
                             <visibilityRule>
-                                <booleanFilter>1 OR 2 OR 3</booleanFilter>
+                                <booleanFilter>1 OR 2 OR 3 OR 4</booleanFilter>
                                 <criteria>
                                     <leftValue>{!$User.Profile.Name}</leftValue>
                                     <operator>CONTAINS</operator>
@@ -25,6 +25,11 @@
                                     <operator>EQUAL</operator>
                                     <rightValue>System Administrator</rightValue>
                                 </criteria>
+                                <criteria>
+                                    <leftValue>{!$User.Profile.Name}</leftValue>
+                                    <operator>EQUAL</operator>
+                                    <rightValue>Global Admin</rightValue>
+                                </criteria>
                             </visibilityRule>
                         </valueListItems>
                         <valueListItems>
@@ -32,6 +37,13 @@
                         </valueListItems>
                         <valueListItems>
                             <value>Account.Create_a_Template</value>
+                            <visibilityRule>
+                                <criteria>
+                                    <leftValue>{!Record.Feeder_Account_Type__c}</leftValue>
+                                    <operator>NE</operator>
+                                    <rightValue>Feeder Only</rightValue>
+                                </criteria>
+                            </visibilityRule>
                         </valueListItems>
                         <valueListItems>
                             <value>Account.Plan_a_Mobile_Drive</value>
@@ -45,6 +57,16 @@
                         </valueListItems>
                         <valueListItems>
                             <value>CustomButton.Account.View_Drive_Detail</value>
+                            <visibilityRule>
+                                <criteria>
+                                    <leftValue>{!Record.Feeder_Account_Type__c}</leftValue>
+                                    <operator>NE</operator>
+                                    <rightValue>Feeder Only</rightValue>
+                                </criteria>
+                            </visibilityRule>
+                        </valueListItems>
+                        <valueListItems>
+                            <value>CustomButton.Account.View_Account_Overview</value>
                         </valueListItems>
                         <valueListItems>
                             <value>Account.Add_Affiliation</value>
@@ -52,7 +74,7 @@
                         <valueListItems>
                             <value>Account.Account_Based_Portfolio_Assignment</value>
                             <visibilityRule>
-                                <booleanFilter>1 OR 2 OR 3</booleanFilter>
+                                <booleanFilter>(1 OR 2 OR 3) AND 4</booleanFilter>
                                 <criteria>
                                     <leftValue>{!$User.Profile.Name}</leftValue>
                                     <operator>EQUAL</operator>
@@ -68,6 +90,11 @@
                                     <operator>EQUAL</operator>
                                     <rightValue>Global Admin</rightValue>
                                 </criteria>
+                                <criteria>
+                                    <leftValue>{!Record.Feeder_Account_Type__c}</leftValue>
+                                    <operator>NE</operator>
+                                    <rightValue>Feeder Only</rightValue>
+                                </criteria>
                             </visibilityRule>
                         </valueListItems>
                         <valueListItems>
@@ -78,9 +105,36 @@
                         </valueListItems>
                         <valueListItems>
                             <value>Account.sked_Check_for_Impacted_Drives</value>
+                            <visibilityRule>
+                                <criteria>
+                                    <leftValue>{!Record.Feeder_Account_Type__c}</leftValue>
+                                    <operator>NE</operator>
+                                    <rightValue>Feeder Only</rightValue>
+                                </criteria>
+                            </visibilityRule>
                         </valueListItems>
                         <valueListItems>
                             <value>Account.Update_Sponsor_Keyword</value>
+                        </valueListItems>
+                        <valueListItems>
+                            <value>Account.Upgrade_Account</value>
+                            <visibilityRule>
+                                <criteria>
+                                    <leftValue>{!Record.Feeder_Account_Type__c}</leftValue>
+                                    <operator>EQUAL</operator>
+                                    <rightValue>Feeder Only</rightValue>
+                                </criteria>
+                            </visibilityRule>
+                        </valueListItems>
+                        <valueListItems>
+                            <value>Account.Mass_Account_Service_Role_Add</value>
+                            <visibilityRule>
+                                <criteria>
+                                    <leftValue>{!$User.Profile.Name}</leftValue>
+                                    <operator>NE</operator>
+                                    <rightValue>Recruitment Admin</rightValue>
+                                </criteria>
+                            </visibilityRule>
                         </valueListItems>
                     </valueList>
                 </componentInstanceProperties>
@@ -182,6 +236,13 @@
                 </componentInstanceProperties>
                 <componentName>GenericRelatedList</componentName>
                 <identifier>c_GenericRelatedList</identifier>
+                <visibilityRule>
+                    <criteria>
+                        <leftValue>{!Record.Feeder_Account_Type__c}</leftValue>
+                        <operator>NE</operator>
+                        <rightValue>Feeder Only</rightValue>
+                    </criteria>
+                </visibilityRule>
             </componentInstance>
         </itemInstances>
         <itemInstances>
@@ -294,10 +355,16 @@
                 <componentName>lst:dynamicRelatedList</componentName>
                 <identifier>lst_dynamicRelatedList</identifier>
                 <visibilityRule>
+                    <booleanFilter>1 AND 2</booleanFilter>
                     <criteria>
                         <leftValue>{!$Client.formFactor}</leftValue>
                         <operator>EQUAL</operator>
                         <rightValue>Large</rightValue>
+                    </criteria>
+                    <criteria>
+                        <leftValue>{!Record.Feeder_Account_Type__c}</leftValue>
+                        <operator>NE</operator>
+                        <rightValue>Feeder Only</rightValue>
                     </criteria>
                 </visibilityRule>
             </componentInstance>
@@ -339,10 +406,16 @@
                 <componentName>GenericRelatedList</componentName>
                 <identifier>c_GenericRelatedList3</identifier>
                 <visibilityRule>
+                    <booleanFilter>1 AND 2</booleanFilter>
                     <criteria>
                         <leftValue>{!$Client.formFactor}</leftValue>
                         <operator>EQUAL</operator>
                         <rightValue>Small</rightValue>
+                    </criteria>
+                    <criteria>
+                        <leftValue>{!Record.Feeder_Account_Type__c}</leftValue>
+                        <operator>NE</operator>
+                        <rightValue>Feeder Only</rightValue>
                     </criteria>
                 </visibilityRule>
             </componentInstance>
@@ -359,7 +432,7 @@
                             <value>Is_Template__c|EQUALS|false</value>
                         </valueListItems>
                         <valueListItems>
-                            <value>Drive_Date__c|GREATER_THAN|TODAY</value>
+                            <value>Drive_Date__c|GREATER_OR_EQUAL|TODAY</value>
                         </valueListItems>
                         <valueListItems>
                             <value>OPPORTUNITY.STAGE_NAME|NOT_EQUAL|[&quot;Cancelled&quot;]</value>
@@ -375,9 +448,6 @@
                         </valueListItems>
                         <valueListItems>
                             <value>DriveStatus__c|NOT_EQUAL|Cancel</value>
-                        </valueListItems>
-                        <valueListItems>
-                            <value>DriveStatus__c|NOT_EQUAL|</value>
                         </valueListItems>
                     </valueList>
                 </componentInstanceProperties>
@@ -451,10 +521,16 @@
                 <componentName>lst:dynamicRelatedList</componentName>
                 <identifier>lst_dynamicRelatedList3</identifier>
                 <visibilityRule>
+                    <booleanFilter>1 AND 2</booleanFilter>
                     <criteria>
                         <leftValue>{!$Client.formFactor}</leftValue>
                         <operator>EQUAL</operator>
                         <rightValue>Large</rightValue>
+                    </criteria>
+                    <criteria>
+                        <leftValue>{!Record.Feeder_Account_Type__c}</leftValue>
+                        <operator>NE</operator>
+                        <rightValue>Feeder Only</rightValue>
                     </criteria>
                 </visibilityRule>
             </componentInstance>
@@ -496,10 +572,16 @@
                 <componentName>GenericRelatedList</componentName>
                 <identifier>c_GenericRelatedList5</identifier>
                 <visibilityRule>
+                    <booleanFilter>1 AND 2</booleanFilter>
                     <criteria>
                         <leftValue>{!$Client.formFactor}</leftValue>
                         <operator>EQUAL</operator>
                         <rightValue>Small</rightValue>
+                    </criteria>
+                    <criteria>
+                        <leftValue>{!Record.Feeder_Account_Type__c}</leftValue>
+                        <operator>NE</operator>
+                        <rightValue>Feeder Only</rightValue>
                     </criteria>
                 </visibilityRule>
             </componentInstance>
@@ -584,10 +666,16 @@
                 <componentName>lst:dynamicRelatedList</componentName>
                 <identifier>lst_dynamicRelatedList4</identifier>
                 <visibilityRule>
+                    <booleanFilter>1 AND 2</booleanFilter>
                     <criteria>
                         <leftValue>{!$Client.formFactor}</leftValue>
                         <operator>EQUAL</operator>
                         <rightValue>Large</rightValue>
+                    </criteria>
+                    <criteria>
+                        <leftValue>{!Record.Feeder_Account_Type__c}</leftValue>
+                        <operator>NE</operator>
+                        <rightValue>Feeder Only</rightValue>
                     </criteria>
                 </visibilityRule>
             </componentInstance>
@@ -629,10 +717,55 @@
                 <componentName>GenericRelatedList</componentName>
                 <identifier>c_GenericRelatedList7</identifier>
                 <visibilityRule>
+                    <booleanFilter>1 AND 2</booleanFilter>
                     <criteria>
                         <leftValue>{!$Client.formFactor}</leftValue>
                         <operator>EQUAL</operator>
                         <rightValue>Small</rightValue>
+                    </criteria>
+                    <criteria>
+                        <leftValue>{!Record.Feeder_Account_Type__c}</leftValue>
+                        <operator>NE</operator>
+                        <rightValue>Feeder Only</rightValue>
+                    </criteria>
+                </visibilityRule>
+            </componentInstance>
+        </itemInstances>
+        <itemInstances>
+            <componentInstance>
+                <componentInstanceProperties>
+                    <name>parentFieldApiName</name>
+                    <value>Account.Id</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>relatedListApiName</name>
+                    <value>Feeder_Account_Opportunities__r</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>relatedListComponentOverride</name>
+                    <value>ADVGRID</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>rowsToDisplay</name>
+                    <value>5</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>showActionBar</name>
+                    <value>false</value>
+                </componentInstanceProperties>
+                <componentName>force:relatedListSingleContainer</componentName>
+                <identifier>force_relatedListSingleContainer</identifier>
+                <visibilityRule>
+                    <booleanFilter>1 OR 2</booleanFilter>
+                    <criteria>
+                        <leftValue>{!Record.Feeder_Account_Type__c}</leftValue>
+                        <operator>EQUAL</operator>
+                        <rightValue>Feeder Only</rightValue>
+                    </criteria>
+                    <criteria>
+                        <leftValue>{!Record.Feeder_Account_Type__c}</leftValue>
+                        <operator>EQUAL</operator>
+                        <rightValue>Feeder Plus</rightValue>
                     </criteria>
                 </visibilityRule>
             </componentInstance>
@@ -717,10 +850,16 @@
                 <componentName>lst:dynamicRelatedList</componentName>
                 <identifier>lst_dynamicRelatedList10</identifier>
                 <visibilityRule>
+                    <booleanFilter>1 AND 2</booleanFilter>
                     <criteria>
                         <leftValue>{!$Client.formFactor}</leftValue>
                         <operator>EQUAL</operator>
                         <rightValue>Large</rightValue>
+                    </criteria>
+                    <criteria>
+                        <leftValue>{!Record.Feeder_Account_Type__c}</leftValue>
+                        <operator>NE</operator>
+                        <rightValue>Feeder Only</rightValue>
                     </criteria>
                 </visibilityRule>
             </componentInstance>
@@ -762,10 +901,16 @@
                 <componentName>GenericRelatedList</componentName>
                 <identifier>c_GenericRelatedList8</identifier>
                 <visibilityRule>
+                    <booleanFilter>1 AND 2</booleanFilter>
                     <criteria>
                         <leftValue>{!$Client.formFactor}</leftValue>
                         <operator>EQUAL</operator>
                         <rightValue>Small</rightValue>
+                    </criteria>
+                    <criteria>
+                        <leftValue>{!Record.Feeder_Account_Type__c}</leftValue>
+                        <operator>NE</operator>
+                        <rightValue>Feeder Only</rightValue>
                     </criteria>
                 </visibilityRule>
             </componentInstance>
@@ -778,11 +923,6 @@
             <componentInstance>
                 <componentInstanceProperties>
                     <name>actionNames</name>
-                    <valueList>
-                        <valueListItems>
-                            <value>New</value>
-                        </valueListItems>
-                    </valueList>
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>adminFilters</name>
@@ -1248,6 +1388,13 @@
                 </componentInstanceProperties>
                 <componentName>flexipage:tab</componentName>
                 <identifier>flexipage_tab2</identifier>
+                <visibilityRule>
+                    <criteria>
+                        <leftValue>{!Record.Feeder_Account_Type__c}</leftValue>
+                        <operator>NE</operator>
+                        <rightValue>Feeder Only</rightValue>
+                    </criteria>
+                </visibilityRule>
             </componentInstance>
         </itemInstances>
         <name>Facet-656872d1-84d0-43b3-87ad-ba5d3d871506</name>

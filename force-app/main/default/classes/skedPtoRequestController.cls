@@ -89,7 +89,7 @@ global class skedPtoRequestController extends skedBaseController {
             if (!string.isBlank(request.endDate)) {
                 String endDateString = '4000-12-31';
                 request.endDate = '4000-12-31';
-                Date endDate = skedDateTimeUtils.getDateFromIsoString(endDateString);
+                Date endDate = skedDateTimeUtils.getDateFromIsoString(request.endDate);
                 query.endTime = skedDateTimeUtils.getEndOfDate(endDate, timezoneSidId);
             }
 

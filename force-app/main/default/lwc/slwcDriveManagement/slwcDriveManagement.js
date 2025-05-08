@@ -1137,7 +1137,9 @@ export default class SlwcDriveManagement extends NavigationMixin(LightningElemen
                 .finally(this.hideLoading);
         }
         else if (detail.cmpName == 'slwcDriveShifts') {
+            console.log('here in change slwcDriveShifts');
             let driveShiftChanges = [];
+            console.log('detail.properties ',detail.properties);
             detail.properties.forEach((property) => {
                 let targetValue = property.targetValue;
                 driveShiftChanges.push(
