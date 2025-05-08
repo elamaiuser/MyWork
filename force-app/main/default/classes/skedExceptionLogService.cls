@@ -357,55 +357,54 @@ global class skedExceptionLogService extends skedDataService {
             Biomed_Collection_Op_Center__c collectionOperation = mapCO.get(drive.sked_Collection_Operation__c);
             
             List<Collection_Operation_Time_Block__c> usedCOTBs = new List<Collection_Operation_Time_Block__c>();
-            if (!collectionOperation.Collection_Operation_Time_Blocks__r.isEmpty()) {
-                List<Collection_Operation_Time_Block__c> qualifiedCOTBs = new List<Collection_Operation_Time_Block__c>();
-                for (Collection_Operation_Time_Block__c coTB : collectionOperation.Collection_Operation_Time_Blocks__r) {
-                    boolean isWeekdayMatched = coTB.Days_of_Week__c.contains(drive.sked_Day_of_Week__c);
-                    boolean isEffective = coTB.Time_Block__r.Effective_Start_Date__c <= drive.sked_Drive_Date__c && drive.sked_Drive_Date__c <= coTB.Time_Block__r.Effective_End_Date__c;
-                    boolean isShiftTimeMatched = driveShift.sked_Start_Time__c >= coTB.Time_Block__r.Start_Time__c && driveShift.sked_End_Time__c <= coTB.Time_Block__r.End_Time__c;
-                    
-                    if (isEffective && isWeekdayMatched && isShiftTimeMatched) {
-                        qualifiedCOTBs.add(coTB);
-                    }
-                    if (isEffective && isWeekdayMatched) {
-                        usedCOTBs.add(coTB);
-                    }
-                }
+            
+            List<Collection_Operation_Time_Block__c> qualifiedCOTBs = new List<Collection_Operation_Time_Block__c>();
+            for (Collection_Operation_Time_Block__c coTB : collectionOperation.Collection_Operation_Time_Blocks__r) {
+                boolean isWeekdayMatched = coTB.Days_of_Week__c.contains(drive.sked_Day_of_Week__c);
+                boolean isEffective = coTB.Time_Block__r.Effective_Start_Date__c <= drive.sked_Drive_Date__c && drive.sked_Drive_Date__c <= coTB.Time_Block__r.Effective_End_Date__c;
+                boolean isShiftTimeMatched = driveShift.sked_Start_Time__c >= coTB.Time_Block__r.Start_Time__c && driveShift.sked_End_Time__c <= coTB.Time_Block__r.End_Time__c;
                 
-                string exceptionCode;
-                if (!usedCOTBs.isEmpty()) {
-                    if (driveShift.sked_Time_Block__c == NULL) {
-                        exceptionCode = qualifiedCOTBs.size() > 1 ? skedConstants.EXCEPTION_CODE_FITS_MULTIPLE_TIME_BLOCKS : skedConstants.EXCEPTION_CODE_MISSING_TIME_BLOCK;
-                    }
-                    else {
-                        Time_Block__c assignedTimeBlock = mapAssignedTimeBlock.get(driveShift.sked_Time_Block__c);
-                        boolean isShiftTimeMatched = driveShift.sked_Start_Time__c >= assignedTimeBlock.Start_Time__c 
-                            && driveShift.sked_End_Time__c <= assignedTimeBlock.End_Time__c; 
-                        if (!isShiftTimeMatched) {
-                            exceptionCode = skedConstants.EXCEPTION_CODE_OUT_OF_TIME_BLOCK;
-                        }
-                    }
+                if (isEffective && isWeekdayMatched && isShiftTimeMatched) {
+                    qualifiedCOTBs.add(coTB);
+                }
+                if (isEffective && isWeekdayMatched) {
+                    usedCOTBs.add(coTB);
+                }
+            }
+            
+            string exceptionCode;
+            if (!usedCOTBs.isEmpty()) {
+                if (driveShift.sked_Time_Block__c == NULL) {
+                    exceptionCode = qualifiedCOTBs.size() > 1 ? skedConstants.EXCEPTION_CODE_FITS_MULTIPLE_TIME_BLOCKS : skedConstants.EXCEPTION_CODE_MISSING_TIME_BLOCK;
                 }
                 else {
-                    if (collectionOperation.sked_Minimum_Drive_Start_Time__c != NULL && collectionOperation.sked_Maximum_Drive_End_Time__c != NULL) {
-                        boolean isShiftTimeMatched = driveShift.sked_Start_Time__c >= collectionOperation.sked_Minimum_Drive_Start_Time__c 
-                            && driveShift.sked_End_Time__c <= collectionOperation.sked_Maximum_Drive_End_Time__c; 
-                        if (!isShiftTimeMatched) {
-                            exceptionCode = skedConstants.EXCEPTION_CODE_OUT_OF_OPERATIONAL_HOURS;
-                        }
+                    Time_Block__c assignedTimeBlock = mapAssignedTimeBlock.get(driveShift.sked_Time_Block__c);
+                    boolean isShiftTimeMatched = driveShift.sked_Start_Time__c >= assignedTimeBlock.Start_Time__c 
+                        && driveShift.sked_End_Time__c <= assignedTimeBlock.End_Time__c; 
+                    if (!isShiftTimeMatched) {
+                        exceptionCode = skedConstants.EXCEPTION_CODE_OUT_OF_TIME_BLOCK;
                     }
                 }
-                
-                if (!string.isBlank(exceptionCode)) {
-                    skedHC__Exception__c activeException = new skedHC__Exception__c(
-                        sked_Drive__c = driveShift.sked_Drive__c,
-                        sked_Drive_Shift__c = driveShift.Id,
-                        sked_Exception_Code__c = exceptionCode,
-                        skedHC__Status__c = skedConstants.EXCEPTION_LOG_STATUS_OPEN
-                    );
-                    string key = activeException.sked_Drive_Shift__c + ':' + activeException.sked_Exception_Code__c;
-                    mapActiveException.put(key, activeException);
+            }
+            else {
+                if (collectionOperation.sked_Minimum_Drive_Start_Time__c != NULL && collectionOperation.sked_Maximum_Drive_End_Time__c != NULL) {
+                    boolean isShiftTimeMatched = driveShift.sked_Start_Time__c >= collectionOperation.sked_Minimum_Drive_Start_Time__c 
+                        && driveShift.sked_End_Time__c <= collectionOperation.sked_Maximum_Drive_End_Time__c; 
+                    if (!isShiftTimeMatched) {
+                        exceptionCode = skedConstants.EXCEPTION_CODE_OUT_OF_OPERATIONAL_HOURS;
+                    }
                 }
+            }
+            
+            if (!string.isBlank(exceptionCode)) {
+                skedHC__Exception__c activeException = new skedHC__Exception__c(
+                    sked_Drive__c = driveShift.sked_Drive__c,
+                    sked_Drive_Shift__c = driveShift.Id,
+                    sked_Exception_Code__c = exceptionCode,
+                    skedHC__Status__c = skedConstants.EXCEPTION_LOG_STATUS_OPEN
+                );
+                string key = activeException.sked_Drive_Shift__c + ':' + activeException.sked_Exception_Code__c;
+                mapActiveException.put(key, activeException);
             }
         }
         
