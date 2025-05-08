@@ -5030,11 +5030,6 @@ opp.StageName = 'Closed';
                                 WHERE AccountId IN :accountIds
                                 AND StageName = 'Closed'
                                 AND Drive_Date__c < TODAY]) {
-    //HRP-13146 Red Cross Volunteer Validation
-    public static void handleRedcrossVolunteerRequirementValidation(List<Opportunity> newOppList, Map<Id, Opportunity> map_oldOppId_oldOpp) {
-        Boolean isAutomatedProcess = UserInfo.getName() == BSF_Constants.AUTOMATED_PROCESS;
-        String loggedInUserProfileName = '';
-        List<String> allowedProfiles = Profile_Specific_Functionality_Access__mdt.getInstance('Red_Cross_Volunteer_Setting').Allowed_Assignments__c.split(',');
 
             
             Date maxDriveDate = accountIdToMaxDriveDate.get(opp.AccountId);
@@ -5078,7 +5073,32 @@ opp.StageName = 'Closed';
         }
         return Decimal.valueOf(volunteers);
     }
-    public static void handleRedcrossVolunteerRequirementValidation(List<Opportunity> newOppList, Map<Id, Opportunity> map_oldOppId_oldOpp) {}
+
+    //HRP-13146 Red Cross Volunteer Validation
+    public static void handleRedcrossVolunteerRequirementValidation(List<Opportunity> newOppList, Map<Id, Opportunity> map_oldOppId_oldOpp) {
+        Boolean isAutomatedProcess = UserInfo.getName() == BSF_Constants.AUTOMATED_PROCESS;
+        String loggedInUserProfileName = '';
+        List<String> allowedProfiles = Profile_Specific_Functionality_Access__mdt.getInstance('Red_Cross_Volunteer_Setting').Allowed_Assignments__c.split(',');
+
+        for(Opportunity opp : newOppList) {
+            if(map_oldOppId_oldOpp != NULL) {
+                Opportunity oldOpp =  map_oldOppId_oldOpp.get(opp.Id);
+                if(!isAutomatedProcess && 
+                (
+                    (opp.Redcross_Volunteer_Required__c != oldOpp.Redcross_Volunteer_Required__c) || 
+                    (opp.Redcross_Volunteer_Quantity__c != oldOpp.Redcross_Volunteer_Quantity__c)
+                )) {
+                    loggedInUserProfileName = [SELECT Id, Name FROM Profile WHERE Id = :UserInfo.getProfileId()].Name;
+                    if(!allowedProfiles.contains(loggedInUserProfileName)) 
+                        opp.addError(Custom_Messages__mdt.getInstance('Red_Cross_Volunteer_Quantity_Validation').Value__c);
+                }        
+            }
+            if(opp.Redcross_Volunteer_Required__c && (opp.Redcross_Volunteer_Quantity__c == NULL || opp.Redcross_Volunteer_Quantity__c <= 0)) {
+                opp.Redcross_Volunteer_Quantity__c.addError(Custom_Messages__mdt.getInstance('Red_Cross_Volunteer_Qty_Validation_0').Value__c);
+            }
+        }
+    }
+
     public static void calculateVolunteerQuantity(List<Opportunity> newOppList, Map<Id, Opportunity> oldOppMap) {
         if(oldOppMap == null || !checkRecursive.skipVolunteerCalculation){
             Map<Id, Boolean> highSchoolDriveMap = new Map<Id, Boolean>();
@@ -5129,21 +5149,6 @@ opp.StageName = 'Closed';
                                                                                 highSchoolDriveMap.get(opp.AccountId), matrixRecords);
                     }
                 }
-        for(Opportunity opp : newOppList) {
-            if(map_oldOppId_oldOpp != NULL) {
-                Opportunity oldOpp =  map_oldOppId_oldOpp.get(opp.Id);
-                if(!isAutomatedProcess && 
-                (
-                    (opp.Redcross_Volunteer_Required__c != oldOpp.Redcross_Volunteer_Required__c) || 
-                    (opp.Redcross_Volunteer_Quantity__c != oldOpp.Redcross_Volunteer_Quantity__c)
-                )) {
-                    loggedInUserProfileName = [SELECT Id, Name FROM Profile WHERE Id = :UserInfo.getProfileId()].Name;
-                    if(!allowedProfiles.contains(loggedInUserProfileName)) 
-                        opp.addError(Custom_Messages__mdt.getInstance('Red_Cross_Volunteer_Quantity_Validation').Value__c);
-                }        
-            }
-            if(opp.Redcross_Volunteer_Required__c && (opp.Redcross_Volunteer_Quantity__c == NULL || opp.Redcross_Volunteer_Quantity__c <= 0)) {
-                opp.Redcross_Volunteer_Quantity__c.addError(Custom_Messages__mdt.getInstance('Red_Cross_Volunteer_Qty_Validation_0').Value__c);
             }
         }
     }
