@@ -54,6 +54,8 @@ class BaseGenerator {
     staffSetupExcludedRoles: [],
     skipAPTCalculation: true,
     aptQuantity: null,
+    redcrossVolunteerMatrix: [],
+    skipVolunteerRecalculation: true,
 
     //fixed site
     fixedSiteProcedureProjections: [],
@@ -97,7 +99,8 @@ class BaseGenerator {
     fixedSiteProcedureProjections,
     activeDriveChangeRequest,
     territoryCollectionOperations = [],
-    staffSetupExcludedRoles
+    staffSetupExcludedRoles,
+    redcrossVolunteerMatrix
   }) {
     let masterData = {...this.masterData, 
       loginUser,
@@ -115,7 +118,8 @@ class BaseGenerator {
       fixedSiteProcedureProjections,
       activeDriveChangeRequest,
       territoryCollectionOperations,
-      staffSetupExcludedRoles
+      staffSetupExcludedRoles,
+      redcrossVolunteerMatrix
     };
 
     if (this.drive.driveSite) {
@@ -193,7 +197,7 @@ class BaseGenerator {
   }
 
   backupDriveData(drive) {
-    this.masterData.backupDrive = cloneDeep(drive);
+    this.masterData.backupDrive = cloneDeep({...drive, tempRedcrossVolunteerRequired: drive.redcrossVolunteerRequired});
   }
 
   backupDriveShift(driveShift) {
@@ -225,7 +229,7 @@ class BaseGenerator {
       if (matchedSiteCO) {
         this.drive.collectionOperation = matchedSiteCO.collectionOperation;
       }
-      console.log('this.drive.collectionOperation ',this.drive.collectionOperation);
+
       this.drive.IMPACT = false;
       if (this.drive.collectionOperation.IMPACT === true) { 
         if (this.drive.collectionOperation.IMPACTStartDate || this.drive.collectionOperation.IMPACTEndDate) {
@@ -717,6 +721,12 @@ class BaseGenerator {
     isCalledFromDCRProcessingModal = false
   } = {}) {
     this.isRegenerateDriveChange = isCalledFromDCRProcessingModal && properties.filter(record => record.targetName === 'regenerateDrive').length > 0 ;
+    
+    this.masterData = {
+      ...this.masterData,
+      skipVolunteerRecalculation: true
+    };
+
     properties.forEach(property => {
       this.drive[property.targetName] = property.targetValue;
 
@@ -726,8 +736,17 @@ class BaseGenerator {
       if (property.targetName === 'aptRequired') {
         this.drive[property.targetName] = (/^(true|1)$/i).test(this.drive[property.targetName]);
       }
+      if (property.targetName === 'redcrossVolunteerRequired') {
+        this.drive[property.targetName] = (/^(true|1)$/i).test(this.drive[property.targetName]);
+      }
       if (property.targetName === 'driveShiftsMetadata') {
-        this.masterData.skipAPTCalculation = property.targetValue?.skipAptCalculation ?? false;
+        this.masterData = extend(this.masterData, {
+          skipAPTCalculation: property.targetValue?.skipAptCalculation ?? false,
+          skipVolunteerRecalculation: property.targetValue?.skipVolunteerRecalculation ?? true
+        });
+      }
+      if (property.targetName === 'projectedRegisteredDonors') {
+        this.masterData.skipVolunteerRecalculation = false;
       }
     })
 
@@ -746,10 +765,20 @@ class BaseGenerator {
     let driveShift = this.drive.driveShifts.find((e) => e.key === shiftKey);
     if (!driveShift) return;
 
+    this.masterData = {
+      ...this.masterData,
+      skipVolunteerRecalculation: true
+    };
+
     properties.forEach(property => {
       driveShift[property.targetName] = property.targetValue;
       if (property.targetName === 'APTSetup') {
         this.masterData.skipAPTCalculation = true;
+      }
+
+      const relevantTargets = ['projectedRegisteredDonors', 'redcrossVolunteerRequired'];
+      if (relevantTargets.includes(property.targetName)) {
+        this.masterData.skipVolunteerRecalculation = false;
       }
     })
 
@@ -957,7 +986,7 @@ class BaseGenerator {
     newList.splice(index, 1);
     shift.jobs = newList;
 
-    this.onJobChanged(shift, job);
+    this.onJobChanged(shift, { ...job, isDeleted: true });
 
     return this.notifyDriveChanged();
   }

@@ -36,6 +36,7 @@
  * 12/10/2024				  Priti Jana			 Logic for HRP-13190
  * 01/15/2025				  Barnojit Sharma		 Logic for HRP-13864
  * 03/12/2025                 Priti Jana             Logic for HRP-13862
+ * 05/05/2025                 Priti Jana             Logic for HRP-13146
  *******************************************************************************
 */
 public with sharing class GenerateMobileDrive {
@@ -304,8 +305,8 @@ public with sharing class GenerateMobileDrive {
                 job.quantity = staffingComplement.numberOfCharge;
                 driveShift.jobs.add(job);
             }
-            //HRP-10358 Commented as we donot need Volunteer Donors for either WB or Mobile
-            /*if (staffingComplement.numberOfVolunteerDonorAmbassadors > 0 && shiftCount == 0) { // not calculated for WB Non Integrated Fixed Site and mobile site
+            //HRP-13146 Volunteers needed for mobile drives
+            if (staffingComplement.numberOfVolunteerDonorAmbassadors > 0) { 
                 MobileDriveGeneratorDMLService.DMLJob job = new MobileDriveGeneratorDMLService.DMLJob();
                 job.driveSiteId = drive.driveSiteId;
                 job.volunteerRole = 'Donor Ambassador';
@@ -314,7 +315,7 @@ public with sharing class GenerateMobileDrive {
                 job.sponsorVolunteerQuantity = 0;
                 job.quantity = job.redcrossVolunteerQuantity + job.sponsorVolunteerQuantity;
                 driveShift.jobs.add(job);
-            }*/
+            }
 
             return driveShift.jobs; // HRP-11295
         }
@@ -1193,7 +1194,7 @@ public with sharing class GenerateMobileDrive {
             staffingComplement = calculateTeamSupervisorQuantity (matrix, driveShift, drive, staffingComplement);
             staffingComplement = calculateVpHhQuantity (matrix, driveShift, drive, staffingComplement);
             staffingComplement = calculateChargeQuantity (matrix, drive, driveShift, staffingComplement);
-            //staffingComplement = calculateVolunteerDonorAmbassdorQuantity (matrix, drive, driveShift, staffingComplement); //HRP-10358 Commented as we donot need Volunteer Donors for either WB or Mobile
+            staffingComplement = calculateVolunteerDonorAmbassdorQuantity (drive, staffingComplement); //HRP-13146 Volunteers needed for mobile drives
             return staffingComplement;
         }
 
@@ -1585,30 +1586,18 @@ public with sharing class GenerateMobileDrive {
             return matrix;
         }
 
-        //HRP-10358 Commented as we donot need Volunteer Donors for either WB or Mobile
-        /*protected virtual DriveStaffingComplementModel calculateVolunteerDonorAmbassdorQuantity(MobileDriveGeneratorDMLService.DMLStaffingDecisionMatrix matrix, MobileDriveGeneratorDMLService.DMLDrive drive, MobileDriveGeneratorDMLService.DMLDriveShift driveShift, DriveStaffingComplementModel staffingComplement) {
-            if((drive.driveSite.siteOperationType == Constants.NON_INTEGRATED_WB_OPERATION_TYPE && drive.typeOfDrive == 'Fixed Site')){ // HRP - 9901
-                if (drive.driveSite.physicalLocationType.contains(Constants.DRIVE_LOCATION_INSIDE) && driveShift.projectedRegisteredDonors != null){
-                    if (drive.accountType == 'Education' && drive.industryCode == 'High School') {
-                        if (driveShift.projectedRegisteredDonors <= 70) {
-                            staffingComplement.numberOfVolunteerDonorAmbassadors = 1;
-                        }
-                        else {
-                            staffingComplement.numberOfVolunteerDonorAmbassadors = 1 + Math.floor((driveShift.projectedRegisteredDonors - 70) / 60);
-                        }
-                    }else {
-                        staffingComplement.numberOfVolunteerDonorAmbassadors = Math.ceil((driveShift.projectedRegisteredDonors / driveShift.drawHours) / 8);
-                    }
-                }
-                else {
-                    staffingComplement.numberOfVolunteerDonorAmbassadors = 1;
-                }
-                if (driveShift.drawHours > 6.5) {
-                    staffingComplement.numberOfVolunteerDonorAmbassadors = (Decimal)Math.ceil(staffingComplement.numberOfVolunteerDonorAmbassadors * 0.5);
-                }
+        //HRP-13146 Volunteers needed for mobile drives
+        protected virtual DriveStaffingComplementModel calculateVolunteerDonorAmbassdorQuantity(
+            MobileDriveGeneratorDMLService.DMLDrive drive, 
+            DriveStaffingComplementModel staffingComplement
+        ) {
+            staffingComplement.numberOfVolunteerDonorAmbassadors = 0;
+
+            if(drive.typeOfDrive == BSF_Constants.MOBILE_DRIVE && drive.redcrossVolunteerRequired) { 
+                staffingComplement.numberOfVolunteerDonorAmbassadors = drive.redcrossVolunteerQuantity;
             }
             return staffingComplement;
-        }*/
+        }
 
         protected virtual MobileDriveGeneratorDMLService.DMLDriveShift populateDriveShiftTags(MobileDriveGeneratorDMLService.DMLDrive drive, MobileDriveGeneratorDMLService.DMLDriveShift driveShift) {
             Map<String,MobileDriveGeneratorDMLService.DMLDriveShiftTag> tagNameVsIDQuantitityMap = new Map<String,MobileDriveGeneratorDMLService.DMLDriveShiftTag>(); //HRP-11513

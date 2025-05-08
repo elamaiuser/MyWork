@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomMetadata xmlns="http://soap.sforce.com/2006/04/metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <label>Red Cross Volunteer Setting</label>
+    <protected>false</protected>
+    <values>
+        <field>Allowed_Assignments__c</field>
+        <value xsi:type="xsd:string">System Administrator,Global Admin,DRD Profile,DRD Manager</value>
+    </values>
+    <values>
+        <field>Assignment_Type__c</field>
+        <value xsi:type="xsd:string">Profile</value>
+    </values>
+    <values>
+        <field>Process_Functionality_Name__c</field>
+        <value xsi:type="xsd:string">Redcross_Volunteer_Required__c,Redcross_Volunteer_Quantity__c</value>
+    </values>
+</CustomMetadata>
