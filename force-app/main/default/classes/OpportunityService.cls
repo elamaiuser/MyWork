@@ -64,6 +64,7 @@
 * 01/30/2024                     Anil K                   HRP-11850 - Add 56 Drive validation logic for calendar build drives
 * 02/26/2025                     Krapy Tuli               HRP-14286 - logic update
 * 04/29/2025                     Satyendra V              HRP-14565 - Logic added to identify the latest closed drive.
+* 05/05/2025                     Priti Jana               Logic for HRP-13146
 ************************************************************************************************************************************************
 */
 
@@ -1342,7 +1343,7 @@ Note : It'll throw error if any sort of consequences happen when projection valu
         }
         
         if (!templateOpportunityIds.isEmpty()) {
-            Map<Id, Opportunity> templateOpportunityMap = new Map<Id, Opportunity>([SELECT Id,X2RBC_Projected_Procedures__c, Anticipated_Registered_Donors__c, Drive_Site__c,Direct_Donors_To__c,Site_TBD__c,Procedure_Projections_Template__c, Projected_Registered_Donors_Template__c, Staffing_Template__c, Volunteers_Template__c, WholeBloodProceduresProjectedTemplate__c, WholeBloodProceduresProjectedOriginal__c, WB_Projected_Procedures__c, Double_Red_Procedures_Projected_Template__c, Anticipated_Registered_Donors_Template__c, APT_Required__c, APT_Quantity__c FROM Opportunity WHERE Id IN:templateOpportunityIds]);
+            Map<Id, Opportunity> templateOpportunityMap = new Map<Id, Opportunity>([SELECT Id,X2RBC_Projected_Procedures__c, Anticipated_Registered_Donors__c, Drive_Site__c,Direct_Donors_To__c,Site_TBD__c,Procedure_Projections_Template__c, Projected_Registered_Donors_Template__c, Staffing_Template__c, Volunteers_Template__c, WholeBloodProceduresProjectedTemplate__c, WholeBloodProceduresProjectedOriginal__c, WB_Projected_Procedures__c, Double_Red_Procedures_Projected_Template__c, Anticipated_Registered_Donors_Template__c, APT_Required__c, APT_Quantity__c, Redcross_Volunteer_Required__c, Redcross_Volunteer_Quantity__c FROM Opportunity WHERE Id IN:templateOpportunityIds]);
             for (Opportunity newOpportunity : newOpportunityList) {
                 if (isInsertOrUpdateWithChangeInTemplate(oldOpportunityMap, newOpportunity)) {
                     //System.debug('isInsertOrUpdateWithChangeInTemplate ->true');
@@ -1359,6 +1360,8 @@ Note : It'll throw error if any sort of consequences happen when projection valu
                     newOpportunity.APT_Required__c = templateOpportunity.APT_Required__c; //HRP-13190
                     newOpportunity.APT_Quantity__c = templateOpportunity.APT_Quantity__c; //HRP-13190
                     newOpportunity.APT_Change_Reason__c = templateChangedText; //HRP-13190
+                    newOpportunity.Redcross_Volunteer_Required__c = templateOpportunity.Redcross_Volunteer_Required__c; //HRP-13146
+                    newOpportunity.Redcross_Volunteer_Quantity__c = templateOpportunity.Redcross_Volunteer_Quantity__c; //HRP-13146
                     
                     newOpportunity.WholeBloodProceduresProjectedTemplate__c = templateOpportunity.WholeBloodProceduresProjectedTemplate__c;
                     newOpportunity.Double_Red_Procedures_Projected_Template__c = templateOpportunity.Double_Red_Procedures_Projected_Template__c;
@@ -2918,12 +2921,15 @@ System.debug('--> \n Exavalu call to generate drives is done. ');
         try{
             //HRP-10514 : added Platelet_Projected_Procedures__c for 'DriveSync' issue.
             Map<Id, Opportunity> mapOfOpportunity = new Map<Id, Opportunity>([SELECT Id, Drive_Status__c,Drive_Date_Change_Reason__c, Initiated_By__c, StageName,Platelet_Projected_Procedures__c,Plasma_Pheresis_Projected_Procedures__c, Anticipated_Registered_Donors__c, 
-                                                                              WB_Projected_Procedures__c, X2RBC_Projected_Procedures__c, Accepts_Automation__c, Automation_Suitability__c, APT_Quantity__c, APT_Required__c, APT_Change_Reason__c FROM Opportunity WHERE Id In :lstOpps]);//HRP-12063
+                                                                              WB_Projected_Procedures__c, X2RBC_Projected_Procedures__c, Accepts_Automation__c, Automation_Suitability__c, APT_Quantity__c, APT_Required__c, APT_Change_Reason__c, Redcross_Volunteer_Required__c, Redcross_Volunteer_Quantity__c FROM Opportunity WHERE Id In :lstOpps]);//HRP-12063
             //HRP-10515-Query latest values on DOC for changed fields and update on Opportunity, when request comes from DOC update
-            List<sked_Drive__c> docList = [select sked_Drive_Date__c,sked_Status__c,sked_Start_Time__c,sked_End_Time__c,sked_Drive_Site__c,sked_Replacement_Drive__c,sked_Projected_Registered_Donors__c,sked_WB_Projected_Procedures__c,sked_2RBC_Projected_Procedures__c,sked_Platelet_Projected_Procedures__c,sked_Plasma_Projected_Procedures__c,sked_Number_of_2RBC_Assets__c,
+            List<sked_Drive__c> docList = [SELECT sked_Drive_Date__c,sked_Status__c,sked_Start_Time__c,sked_End_Time__c,sked_Drive_Site__c,sked_Replacement_Drive__c,sked_Projected_Registered_Donors__c,sked_WB_Projected_Procedures__c,sked_2RBC_Projected_Procedures__c,sked_Platelet_Projected_Procedures__c,sked_Plasma_Projected_Procedures__c,sked_Number_of_2RBC_Assets__c,
                                            sked_Number_of_Plasma_Assets__c,sked_Number_of_Platelet_Assets__c,sked_Cancellation_Reason__c,sked_Opportunity__c,
-                                           sked_APT_Required__c, sked_APT_Quantity__c from sked_Drive__c 
-                                           where sked_Opportunity__c in : lstOpps and sked_Is_Surrogate__c = false];
+                                           sked_APT_Required__c, sked_APT_Quantity__c,
+                                           sked_Redcross_Volunteer_Required__c, sked_Redcross_Volunteer_Quantity__c //HRP-13146
+                                           FROM sked_Drive__c 
+                                           WHERE sked_Opportunity__c in : lstOpps 
+                                           AND sked_Is_Surrogate__c = false];
             if(Test.isRunningTest()){
                 sked_Drive__c skedDr =  new sked_Drive__c(sked_Opportunity__c=lstOpps.get(0).id,sked_WB_Projected_Procedures__c=2,sked_Status__c='Draft',sked_Drive_Date__c=system.today().addDays(55));
                 List<sked_Drive__c> skedDrList = new List<sked_Drive__c>();
@@ -3136,6 +3142,15 @@ System.debug('--> \n Exavalu call to generate drives is done. ');
                         oppField.APT_Change_Reason = oppRec.APT_Change_Reason__c;
                     }
                     //HRP-13190 --> Ends Here
+
+                    //HRP-13146 --> Starts Here
+                    if(data.containsKey('Redcross_Volunteer_Required__c') == true) {
+                        oppField.Redcross_Volunteer_Required = oppRec.Redcross_Volunteer_Required__c;
+                    }
+                    if(data.containsKey('Redcross_Volunteer_Quantity__c') == true) {
+                        oppField.Redcross_Volunteer_Quantity = (Decimal)oppRec.Redcross_Volunteer_Quantity__c;
+                    }
+                    //HRP-13146 --> Ends Here
 
                     //HRP-10659 <<-End
                     if(data.containsKey('Drive_Date_Change_Reason__c') == true){//HRP-10312 begin
@@ -5015,6 +5030,11 @@ opp.StageName = 'Closed';
                                 WHERE AccountId IN :accountIds
                                 AND StageName = 'Closed'
                                 AND Drive_Date__c < TODAY]) {
+    //HRP-13146 Red Cross Volunteer Validation
+    public static void handleRedcrossVolunteerRequirementValidation(List<Opportunity> newOppList, Map<Id, Opportunity> map_oldOppId_oldOpp) {
+        Boolean isAutomatedProcess = UserInfo.getName() == BSF_Constants.AUTOMATED_PROCESS;
+        String loggedInUserProfileName = '';
+        List<String> allowedProfiles = Profile_Specific_Functionality_Access__mdt.getInstance('Red_Cross_Volunteer_Setting').Allowed_Assignments__c.split(',');
 
             
             Date maxDriveDate = accountIdToMaxDriveDate.get(opp.AccountId);
@@ -5109,6 +5129,21 @@ opp.StageName = 'Closed';
                                                                                 highSchoolDriveMap.get(opp.AccountId), matrixRecords);
                     }
                 }
+        for(Opportunity opp : newOppList) {
+            if(map_oldOppId_oldOpp != NULL) {
+                Opportunity oldOpp =  map_oldOppId_oldOpp.get(opp.Id);
+                if(!isAutomatedProcess && 
+                (
+                    (opp.Redcross_Volunteer_Required__c != oldOpp.Redcross_Volunteer_Required__c) || 
+                    (opp.Redcross_Volunteer_Quantity__c != oldOpp.Redcross_Volunteer_Quantity__c)
+                )) {
+                    loggedInUserProfileName = [SELECT Id, Name FROM Profile WHERE Id = :UserInfo.getProfileId()].Name;
+                    if(!allowedProfiles.contains(loggedInUserProfileName)) 
+                        opp.addError(Custom_Messages__mdt.getInstance('Red_Cross_Volunteer_Quantity_Validation').Value__c);
+                }        
+            }
+            if(opp.Redcross_Volunteer_Required__c && (opp.Redcross_Volunteer_Quantity__c == NULL || opp.Redcross_Volunteer_Quantity__c <= 0)) {
+                opp.Redcross_Volunteer_Quantity__c.addError(Custom_Messages__mdt.getInstance('Red_Cross_Volunteer_Qty_Validation_0').Value__c);
             }
         }
     }
