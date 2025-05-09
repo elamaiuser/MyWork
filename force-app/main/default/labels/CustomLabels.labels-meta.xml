@@ -761,11 +761,11 @@ Withdrawn/Excluded-&gt; Cancelled, Closed</value>
         <value>System Administrator,Recruitment Admin,Global Admin</value>
     </labels>
     <labels>
-        <fullName>Sync_Contact_To_ASR_EndReason</fullName>
+        <fullName>Taxonomy_Custom_Notification_Email</fullName>
         <language>en_US</language>
         <protected>false</protected>
-        <shortDescription>Sync Contact To ASR EndReason</shortDescription>
-        <value>Other</value>
+        <shortDescription>Taxonomy_Custom_Notification_Email</shortDescription>
+        <value>harika.bolisetti2@redcross.org;kata.manishreddy@redcross.org</value>
     </labels>
     <labels>
         <fullName>Team_Supervisor_Job_Code</fullName>
@@ -822,12 +822,5 @@ Withdrawn/Excluded-&gt; Cancelled, Closed</value>
         <protected>false</protected>
         <shortDescription>storeProfileToCreateBsfPortfolioTask</shortDescription>
         <value>System Administrator</value>
-    </labels>
-    <labels>
-        <fullName>Mobile_Account_Record_Type</fullName>
-        <language>en_US</language>
-        <protected>false</protected>
-        <shortDescription>Mobile Account Record Type</shortDescription>
-        <value>Mobile Account</value>
     </labels>
 </CustomLabels>

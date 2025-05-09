@@ -33,6 +33,13 @@
         <members>Taxonomy_Run_Config__mdt.Taxo_Record_Type_Name__c</members>
         <members>Taxonomy_Run_Config__mdt.Taxo_Run_Date_Override__c</members>
          <members>BSF_Error_Log__c.Object_Name__c</members>
+         <members>Taxonomy__c.Internal_Version_Key__c</members>
+         <members>TaxonomyRunUpdateEvent__e.ProcessingEndDate__c</members>
+        <members>TaxonomyRunUpdateEvent__e.Processing_Start_Date__c</members>
+        <members>TaxonomyRunUpdateEvent__e.RecordType__c</members>
+        <members>TaxonomyRunUpdateEvent__e.Status__c</members>
+        <members>TaxonomyRunUpdateEvent__e.TaxonomyRunId__c</members>
+        <members>TaxonomyRunUpdateEvent__e.taxVer__c</members>
 		<name>CustomField</name>
 	</types>
     <types>
@@ -91,7 +98,24 @@
         <members>Taxo_Utilities</members>
         <members>BSF_Batch_DeleteExpiredTaxoVersionBatch</members>
         <members>DeleteExpiredTaxoVersionBatchTest</members>
+        <members>PopulateVersionKey</members>
+        <members>DelayedTaxonomyBatchScheduler</members>
+        <members>BSF_Batch_TaxoRunControlBatch</members>
+        <members>BSF_Batch_TaxoRunControlBatch_Test</members>
         <name>ApexClass</name>
+    </types>
+    <types>
+        <members>PopulateVersionKey</members>
+        <members>TaxonomyRunUpdateTrigger</members>
+        <name>ApexTrigger</name>
+    </types>
+    <types>
+        <members>Taxonomy_Custom_Notification_Email</members>
+        <name>CustomLabel</name>
+    </types>
+    <types>
+        <members>Taxonomy_Custom_Notification</members>
+        <name>CustomNotificationType</name>
     </types>
 	<version>63.0</version>
 </Package>
