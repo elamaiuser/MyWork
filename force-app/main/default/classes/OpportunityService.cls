@@ -1343,7 +1343,7 @@ Note : It'll throw error if any sort of consequences happen when projection valu
         }
         
         if (!templateOpportunityIds.isEmpty()) {
-            Map<Id, Opportunity> templateOpportunityMap = new Map<Id, Opportunity>([SELECT Id,X2RBC_Projected_Procedures__c, Anticipated_Registered_Donors__c, Drive_Site__c,Direct_Donors_To__c,Site_TBD__c,Procedure_Projections_Template__c, Projected_Registered_Donors_Template__c, Staffing_Template__c, Volunteers_Template__c, WholeBloodProceduresProjectedTemplate__c, WholeBloodProceduresProjectedOriginal__c, WB_Projected_Procedures__c, Double_Red_Procedures_Projected_Template__c, Anticipated_Registered_Donors_Template__c, APT_Required__c, APT_Quantity__c, Redcross_Volunteer_Required__c, Redcross_Volunteer_Quantity__c FROM Opportunity WHERE Id IN:templateOpportunityIds]);
+            Map<Id, Opportunity> templateOpportunityMap = new Map<Id, Opportunity>([SELECT Id,X2RBC_Projected_Procedures__c, Anticipated_Registered_Donors__c, Drive_Site__c,Direct_Donors_To__c,Site_TBD__c,Procedure_Projections_Template__c, Projected_Registered_Donors_Template__c, Staffing_Template__c, Volunteers_Template__c, WholeBloodProceduresProjectedTemplate__c, WholeBloodProceduresProjectedOriginal__c, WB_Projected_Procedures__c, Double_Red_Procedures_Projected_Template__c, Anticipated_Registered_Donors_Template__c, APT_Required__c, APT_Quantity__c, Red_Cross_Volunteer_Required__c, Red_Cross_Volunteer_Quantity__c FROM Opportunity WHERE Id IN:templateOpportunityIds]);
             for (Opportunity newOpportunity : newOpportunityList) {
                 if (isInsertOrUpdateWithChangeInTemplate(oldOpportunityMap, newOpportunity)) {
                     //System.debug('isInsertOrUpdateWithChangeInTemplate ->true');
@@ -1360,8 +1360,8 @@ Note : It'll throw error if any sort of consequences happen when projection valu
                     newOpportunity.APT_Required__c = templateOpportunity.APT_Required__c; //HRP-13190
                     newOpportunity.APT_Quantity__c = templateOpportunity.APT_Quantity__c; //HRP-13190
                     newOpportunity.APT_Change_Reason__c = templateChangedText; //HRP-13190
-                    newOpportunity.Redcross_Volunteer_Required__c = templateOpportunity.Redcross_Volunteer_Required__c; //HRP-13146
-                    newOpportunity.Redcross_Volunteer_Quantity__c = templateOpportunity.Redcross_Volunteer_Quantity__c; //HRP-13146
+                    newOpportunity.Red_Cross_Volunteer_Required__c = templateOpportunity.Red_Cross_Volunteer_Required__c; //HRP-13146
+                    newOpportunity.Red_Cross_Volunteer_Quantity__c = templateOpportunity.Red_Cross_Volunteer_Quantity__c; //HRP-13146
                     
                     newOpportunity.WholeBloodProceduresProjectedTemplate__c = templateOpportunity.WholeBloodProceduresProjectedTemplate__c;
                     newOpportunity.Double_Red_Procedures_Projected_Template__c = templateOpportunity.Double_Red_Procedures_Projected_Template__c;
@@ -2921,7 +2921,7 @@ System.debug('--> \n Exavalu call to generate drives is done. ');
         try{
             //HRP-10514 : added Platelet_Projected_Procedures__c for 'DriveSync' issue.
             Map<Id, Opportunity> mapOfOpportunity = new Map<Id, Opportunity>([SELECT Id, Drive_Status__c,Drive_Date_Change_Reason__c, Initiated_By__c, StageName,Platelet_Projected_Procedures__c,Plasma_Pheresis_Projected_Procedures__c, Anticipated_Registered_Donors__c, 
-                                                                              WB_Projected_Procedures__c, X2RBC_Projected_Procedures__c, Accepts_Automation__c, Automation_Suitability__c, APT_Quantity__c, APT_Required__c, APT_Change_Reason__c, Redcross_Volunteer_Required__c, Redcross_Volunteer_Quantity__c FROM Opportunity WHERE Id In :lstOpps]);//HRP-12063
+                                                                              WB_Projected_Procedures__c, X2RBC_Projected_Procedures__c, Accepts_Automation__c, Automation_Suitability__c, APT_Quantity__c, APT_Required__c, APT_Change_Reason__c, Red_Cross_Volunteer_Required__c, Red_Cross_Volunteer_Quantity__c FROM Opportunity WHERE Id In :lstOpps]);//HRP-12063
             //HRP-10515-Query latest values on DOC for changed fields and update on Opportunity, when request comes from DOC update
             List<sked_Drive__c> docList = [SELECT sked_Drive_Date__c,sked_Status__c,sked_Start_Time__c,sked_End_Time__c,sked_Drive_Site__c,sked_Replacement_Drive__c,sked_Projected_Registered_Donors__c,sked_WB_Projected_Procedures__c,sked_2RBC_Projected_Procedures__c,sked_Platelet_Projected_Procedures__c,sked_Plasma_Projected_Procedures__c,sked_Number_of_2RBC_Assets__c,
                                            sked_Number_of_Plasma_Assets__c,sked_Number_of_Platelet_Assets__c,sked_Cancellation_Reason__c,sked_Opportunity__c,
@@ -3144,11 +3144,11 @@ System.debug('--> \n Exavalu call to generate drives is done. ');
                     //HRP-13190 --> Ends Here
 
                     //HRP-13146 --> Starts Here
-                    if(data.containsKey('Redcross_Volunteer_Required__c') == true) {
-                        oppField.Redcross_Volunteer_Required = oppRec.Redcross_Volunteer_Required__c;
+                    if(data.containsKey('Red_Cross_Volunteer_Required__c') == true) {
+                        oppField.Redcross_Volunteer_Required = oppRec.Red_Cross_Volunteer_Required__c;
                     }
-                    if(data.containsKey('Redcross_Volunteer_Quantity__c') == true) {
-                        oppField.Redcross_Volunteer_Quantity = (Decimal)oppRec.Redcross_Volunteer_Quantity__c;
+                    if(data.containsKey('Red_Cross_Volunteer_Quantity__c') == true) {
+                        oppField.Redcross_Volunteer_Quantity = (Decimal)oppRec.Red_Cross_Volunteer_Quantity__c;
                     }
                     //HRP-13146 --> Ends Here
 
@@ -5085,16 +5085,16 @@ opp.StageName = 'Closed';
                 Opportunity oldOpp =  map_oldOppId_oldOpp.get(opp.Id);
                 if(!isAutomatedProcess && 
                 (
-                    (opp.Redcross_Volunteer_Required__c != oldOpp.Redcross_Volunteer_Required__c) || 
-                    (opp.Redcross_Volunteer_Quantity__c != oldOpp.Redcross_Volunteer_Quantity__c)
+                    (opp.Red_Cross_Volunteer_Required__c != oldOpp.Red_Cross_Volunteer_Required__c) || 
+                    (opp.Red_Cross_Volunteer_Quantity__c != oldOpp.Red_Cross_Volunteer_Quantity__c)
                 )) {
                     loggedInUserProfileName = [SELECT Id, Name FROM Profile WHERE Id = :UserInfo.getProfileId()].Name;
                     if(!allowedProfiles.contains(loggedInUserProfileName)) 
                         opp.addError(Custom_Messages__mdt.getInstance('Red_Cross_Volunteer_Quantity_Validation').Value__c);
                 }        
             }
-            if(opp.Redcross_Volunteer_Required__c && (opp.Redcross_Volunteer_Quantity__c == NULL || opp.Redcross_Volunteer_Quantity__c <= 0)) {
-                opp.Redcross_Volunteer_Quantity__c.addError(Custom_Messages__mdt.getInstance('Red_Cross_Volunteer_Qty_Validation_0').Value__c);
+            if(opp.Red_Cross_Volunteer_Required__c && (opp.Red_Cross_Volunteer_Quantity__c == NULL || opp.Red_Cross_Volunteer_Quantity__c <= 0)) {
+                opp.Red_Cross_Volunteer_Quantity__c.addError(Custom_Messages__mdt.getInstance('Red_Cross_Volunteer_Qty_Validation_0').Value__c);
             }
         }
     }
@@ -5147,6 +5147,53 @@ opp.StageName = 'Closed';
                         && opp.Anticipated_Registered_Donors__c != oldOppMap.get(opp.Id).Anticipated_Registered_Donors__c))){
                             opp.Red_Cross_Volunteer_Quantity__c = getVolunteerQuantity(Integer.valueOf(opp.Anticipated_Registered_Donors__c), 
                                                                                 highSchoolDriveMap.get(opp.AccountId), matrixRecords);
+                    }
+                }
+            }
+        }
+    }
+    public static void updateVolunteerRequired(List<Opportunity> newOppList, Map<Id, Opportunity> oldOppMap) {
+        if(newOppList != null && !newOppList.isEmpty()){
+            Map<Id,Opportunity> templateMap = new Map<Id,Opportunity>();
+            Set<Id> templateIds = new Set<Id>();
+            for(Opportunity opp : newOppList){
+                if((oldOppMap == null || oldOppMap.isEmpty()) && opp.Is_Template__c && opp.AccountId != null 
+                    && opp.Anticipated_Registered_Donors__c != null && opp.Anticipated_Registered_Donors__c >= 0){
+                        opp.Red_Cross_Volunteer_Required__c = true;
+                }else if(oldOppMap != null && !oldOppMap.isEmpty() && opp.Id != null && oldOppMap.containsKey(opp.Id) && opp.Is_Template__c 
+                    && opp.AccountId != null && opp.Anticipated_Registered_Donors__c != null && opp.Anticipated_Registered_Donors__c >= 0
+                    && opp.Anticipated_Registered_Donors__c != oldOppMap.get(opp.Id).Anticipated_Registered_Donors__c
+                    && opp.Red_Cross_Volunteer_Required__c == oldOppMap.get(opp.Id).Red_Cross_Volunteer_Required__c
+                    && !opp.Red_Cross_Volunteer_Required__c){
+                        opp.Red_Cross_Volunteer_Required__c = true;
+                }else if((oldOppMap == null || oldOppMap.isEmpty()) && !opp.Is_Template__c && opp.RecordTypeId == MOBILE_OPP_RECTYPEID 
+                    && opp.AccountId != null && opp.Anticipated_Registered_Donors__c != null && opp.Parent_Template_Id__c != null){
+                        templateIds.add(opp.Parent_Template_Id__c);
+                }else if(oldOppMap != null && !oldOppMap.isEmpty() && opp.Id != null && oldOppMap.containsKey(opp.Id) && !opp.Is_Template__c && opp.AccountId != null
+                    && opp.RecordTypeId == MOBILE_OPP_RECTYPEID  && opp.Anticipated_Registered_Donors__c != null && opp.Anticipated_Registered_Donors__c >= 0 
+                    && opp.Anticipated_Registered_Donors__c != oldOppMap.get(opp.Id).Anticipated_Registered_Donors__c
+                    && opp.Red_Cross_Volunteer_Required__c == oldOppMap.get(opp.Id).Red_Cross_Volunteer_Required__c
+                    && !opp.Red_Cross_Volunteer_Required__c && opp.Parent_Template_Id__c != null && !checkRecursive.skipVolunteerCalculation){
+                        opp.Red_Cross_Volunteer_Required__c = true;
+                }else if(oldOppMap != null && !oldOppMap.isEmpty() && opp.Id != null && oldOppMap.containsKey(opp.Id) && !opp.Is_Template__c && opp.AccountId != null
+                    && opp.RecordTypeId == MOBILE_OPP_RECTYPEID && opp.Parent_Template_Id__c != oldOppMap.get(opp.Id).Parent_Template_Id__c 
+                    && opp.Parent_Template_Id__c != null && !checkRecursive.skipVolunteerCalculation){
+                        templateIds.add(opp.Parent_Template_Id__c);
+                }
+            }
+            if(!templateIds.isEmpty()){
+                templateMap = new Map<Id,Opportunity>([SELECT Id, Red_Cross_Volunteer_Required__c FROM Opportunity WHERE Id IN: templateIds]);
+            }
+            if(!templateMap.isEmpty()){
+                for(Opportunity opp : newOppList){
+                    if((oldOppMap == null || oldOppMap.isEmpty()) && !opp.Is_Template__c && opp.RecordTypeId == MOBILE_OPP_RECTYPEID 
+                        && opp.AccountId != null && opp.Anticipated_Registered_Donors__c != null && opp.Parent_Template_Id__c != null
+                        && templateMap.containsKey(opp.Parent_Template_Id__c)){
+                            opp.Red_Cross_Volunteer_Required__c = templateMap.get(opp.Parent_Template_Id__c).Red_Cross_Volunteer_Required__c;
+                    }else if(oldOppMap != null && !oldOppMap.isEmpty() && opp.Id != null && oldOppMap.containsKey(opp.Id) && !opp.Is_Template__c && opp.AccountId != null
+                        && opp.RecordTypeId == MOBILE_OPP_RECTYPEID && opp.Parent_Template_Id__c != oldOppMap.get(opp.Id).Parent_Template_Id__c 
+                        && opp.Parent_Template_Id__c != null && !checkRecursive.skipVolunteerCalculation && templateMap.containsKey(opp.Parent_Template_Id__c)){
+                            opp.Red_Cross_Volunteer_Required__c = templateMap.get(opp.Parent_Template_Id__c).Red_Cross_Volunteer_Required__c;
                     }
                 }
             }
