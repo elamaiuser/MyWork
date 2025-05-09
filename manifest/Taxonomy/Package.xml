@@ -102,6 +102,8 @@
         <members>DelayedTaxonomyBatchScheduler</members>
         <members>BSF_Batch_TaxoRunControlBatch</members>
         <members>BSF_Batch_TaxoRunControlBatch_Test</members>
+        <members>BSF_Batch_BSFPortfolio</members>
+        <members>BSFBatchPortfolio_Test</members>
         <name>ApexClass</name>
     </types>
     <types>
