@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Taxo_Record_Type_Name__c</fullName>
+    <externalId>false</externalId>
+    <fieldManageability>DeveloperControlled</fieldManageability>
+    <label>Taxo Record Type Name</label>
+    <required>false</required>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Bio Account Portfolio</fullName>
+                <default>true</default>
+                <label>Bio Account Portfolio</label>
+            </value>
+            <value>
+                <fullName>Bio Booking Support</fullName>
+                <default>false</default>
+                <label>Bio Booking Support</label>
+            </value>
+            <value>
+                <fullName>Bio Collection BSF</fullName>
+                <default>false</default>
+                <label>Bio Collection BSF</label>
+            </value>
+            <value>
+                <fullName>Bio Fixed Sites</fullName>
+                <default>false</default>
+                <label>Bio Fixed Sites</label>
+            </value>
+            <value>
+                <fullName>Bio Recruitment CD</fullName>
+                <default>false</default>
+                <label>Bio Recruitment CD</label>
+            </value>
+            <value>
+                <fullName>Bio Recruitment Supervisor</fullName>
+                <default>false</default>
+                <label>Bio Recruitment Supervisor</label>
+            </value>
+            <value>
+                <fullName>Bio Relationship Manager Portfolio</fullName>
+                <default>false</default>
+                <label>Bio Relationship Manager Portfolio</label>
+            </value>
+            <value>
+                <fullName>Bio Sickle Cell Portfolio</fullName>
+                <default>false</default>
+                <label>Bio Sickle Cell Portfolio</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>
