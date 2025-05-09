@@ -32,8 +32,8 @@ public class skedDriveHandler extends skedTriggerHub {
         'sked_Initiated_By__c' => 'Initiated_By__c',
         'sked_APT_Required__c' => 'APT_Required__c',
         'sked_APT_Quantity__c' => 'APT_Quantity__c',
-        'sked_Redcross_Volunteer_Required__c' => 'Redcross_Volunteer_Required__c',
-        'sked_Redcross_Volunteer_Quantity__c' => 'Redcross_Volunteer_Quantity__c'
+        'sked_Redcross_Volunteer_Required__c' => 'Red_Cross_Volunteer_Required__c',
+        'sked_Redcross_Volunteer_Quantity__c' => 'Red_Cross_Volunteer_Quantity__c'
     };
     
     public override void onBeforeInsert() {

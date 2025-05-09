@@ -161,12 +161,12 @@ trigger updateEventTrigger on Update_Event__e (After Insert) {
                 // HRP-13190 --> Starts here
 
                 // HRP-13146 --> Starts here
-                if(oppFields.updatedDataKeys.contains('Redcross_Volunteer_Required__c')) { 
-                    recOpp.Redcross_Volunteer_Required__c = oppFields.Redcross_Volunteer_Required;
+                if(oppFields.updatedDataKeys.contains('Red_Cross_Volunteer_Required__c')) { 
+                    recOpp.Red_Cross_Volunteer_Required__c = oppFields.Redcross_Volunteer_Required;
                     checkRecursive.skipVolunteerCalculation = true; //HRP-13146
                 }
-                if(oppFields.updatedDataKeys.contains('Redcross_Volunteer_Quantity__c')) { 
-                    recOpp.Redcross_Volunteer_Quantity__c = oppFields.Redcross_Volunteer_Quantity;
+                if(oppFields.updatedDataKeys.contains('Red_Cross_Volunteer_Quantity__c')) { 
+                    recOpp.Red_Cross_Volunteer_Quantity__c = oppFields.Redcross_Volunteer_Quantity;
                     checkRecursive.skipVolunteerCalculation = true; //HRP-13146
                 }
                 // HRP-13146 --> Starts here

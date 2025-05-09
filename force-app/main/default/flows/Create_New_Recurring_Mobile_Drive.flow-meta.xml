@@ -1127,14 +1127,14 @@
             <assignToReference>varTemplateRedcrossVolunteerRequired</assignToReference>
             <operator>Assign</operator>
             <value>
-                <elementReference>getSelectedTemplateProperties.Redcross_Volunteer_Required__c</elementReference>
+                <elementReference>getSelectedTemplateProperties.Red_Cross_Volunteer_Required__c</elementReference>
             </value>
         </assignmentItems>
         <assignmentItems>
             <assignToReference>varTemplateRedcrossVolunteerQuantity</assignToReference>
             <operator>Assign</operator>
             <value>
-                <elementReference>getSelectedTemplateProperties.Redcross_Volunteer_Quantity__c</elementReference>
+                <elementReference>getSelectedTemplateProperties.Red_Cross_Volunteer_Quantity__c</elementReference>
             </value>
         </assignmentItems>
         <connector>
@@ -2815,13 +2815,13 @@ MOD(({!Drive_Date} - {!Get_Opportunity_Date_MetaData.Days_from_Drive_Date__c}) -
             </value>
         </inputAssignments>
         <inputAssignments>
-            <field>Redcross_Volunteer_Quantity__c</field>
+            <field>Red_Cross_Volunteer_Quantity__c</field>
             <value>
                 <elementReference>varTemplateRedcrossVolunteerQuantity</elementReference>
             </value>
         </inputAssignments>
         <inputAssignments>
-            <field>Redcross_Volunteer_Required__c</field>
+            <field>Red_Cross_Volunteer_Required__c</field>
             <value>
                 <elementReference>varTemplateRedcrossVolunteerRequired</elementReference>
             </value>
