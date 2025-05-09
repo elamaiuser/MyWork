@@ -108,6 +108,8 @@
         <members>BSF_Batch_TaxonomyEndDate_Test</members>
         <members>BSF_Batch_AccountPortfolioAssignment</members>
         <members>AccountPortfolioAssignmentBatch_Test</members>
+        <members>BSF_Batch_OpportunityTeamSync</members>
+        <members>BSF_Batch_OpportunityTeamSyncTest</members>
         <name>ApexClass</name>
     </types>
     <types>
