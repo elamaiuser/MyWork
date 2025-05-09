@@ -117,6 +117,8 @@
         <members>BSF_Batch_EndCollectionZip</members>
         <members>skedActivityDistrictBatch</members>
         <members>skedActivityDistrictBatch_Test</members>
+        <members>skedDriveCOChangedBatch</members>
+        <members>skedDriveCOChangedBatch_Test</members>
         <name>ApexClass</name>
     </types>
     <types>
