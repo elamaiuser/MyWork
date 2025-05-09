@@ -1700,17 +1700,37 @@ class MobileGenerator extends BaseGenerator {
   }
 
   calculateVolunteerDonorAmbassadors() {
+
+    const extraVolunteersRecursive = (donorsOverMax, count = 0) => {
+      if (donorsOverMax < 40) return count;
+      return extraVolunteersRecursive(donorsOverMax - 40, count + 1);
+    };
+
     let noOfVolunteerDonorAmbassadors = this.drive.redcrossVolunteerRequired ? this.drive.redcrossVolunteerQuantity : 0;
 
     const isHighSchoolDrive = this.drive.accountType === ACCOUNT_TYPE.EDUCATION && this.drive.industryCode === ACCOUNT_INDUSTRY_CODE.HIGH_SCHOOL;
-    const redcrossvolunteerMatrix = this.masterData.redcrossVolunteerMatrix?.filter(item => item.isHighSchoolDrive === isHighSchoolDrive) || [];
+    const redcrossVolunteerMatrix = this.masterData.redcrossVolunteerMatrix?.filter(item => item.isHighSchoolDrive === isHighSchoolDrive) || [];
 
     if(isNullOrEmpty(this.drive.id)) noOfVolunteerDonorAmbassadors = this.drive.redcrossVolunteerQuantity; //In case of drive generation, get quantity from opp
-    else if(!this.masterData.skipVolunteerRecalculation && redcrossvolunteerMatrix) {
-      noOfVolunteerDonorAmbassadors = redcrossvolunteerMatrix.find(matrix => {
+    else if(!this.masterData.skipVolunteerRecalculation && redcrossVolunteerMatrix) {
+      const matchedMatrixRecord = redcrossVolunteerMatrix.find(matrix => {
         return matrix.minDonorValue <= this.drive.projectedRegisteredDonors
           && matrix.maxDonorValue >= this.drive.projectedRegisteredDonors
-      })?.volunteerQuantity || 0;
+      });
+
+      if(matchedMatrixRecord) {
+        noOfVolunteerDonorAmbassadors = matchedMatrixRecord.volunteerQuantity;
+      } else {
+        const maxDonorValueMatrix = redcrossVolunteerMatrix.reduce((prev, current) => {
+          return (prev.maxDonorValue > current.maxDonorValue) ? prev : current;
+        });
+
+        if(this.drive.projectedRegisteredDonors > maxDonorValueMatrix.maxDonorValue) {
+          const maxVolunteerCount = maxDonorValueMatrix.volunteerQuantity;
+          noOfVolunteerDonorAmbassadors = isHighSchoolDrive ? maxVolunteerCount : extraVolunteersRecursive(this.drive.projectedRegisteredDonors - maxDonorValueMatrix.maxDonorValue, maxVolunteerCount);
+        } 
+      }
+
 
       if(this.masterData.backupDrive?.tempRedcrossVolunteerRequired !== this.drive.redcrossVolunteerRequired) {
         const isRequired = this.drive.redcrossVolunteerRequired;
