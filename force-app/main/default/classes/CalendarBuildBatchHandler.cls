@@ -64,7 +64,7 @@
                                                            Web_Scheduling_Start_Date_Offset__c, Platelet_Projected_Procedures__c, Plasma_Pheresis_Projected_Procedures__c,
                                                            Flow_End_Time_Field__c, Flow_Start_Time_Field__c, Type, //HRP=11814
                                                            APT_Quantity__c, APT_Required__c, //HRP-13190
-                                                           Redcross_Volunteer_Quantity__c, Redcross_Volunteer_Required__c //HRP-13146
+                                                           Red_Cross_Volunteer_Quantity__c, Red_Cross_Volunteer_Required__c //HRP-13146
                                                            FROM Opportunity WHERE Id in :parentTemplateIdsSet];
         
         Map<Id, Opportunity> oppWithParentTemplateMap = new Map<Id, Opportunity>();
@@ -143,8 +143,8 @@
                     clonedOpp.type = oppWithParentTemplateMap.get(origOpp.Parent_Template_Id__c).type != NULL ?
                             oppWithParentTemplateMap.get(origOpp.Parent_Template_Id__c).type :
                     		driveSiteMap.get(oppIdVsDriveSiteIdMap.get(origOpp.Parent_Template_Id__c)).sked_Physical_Location_Type__c; //HRP-11814
-                    clonedOpp.Redcross_Volunteer_Required__c = oppWithParentTemplateMap.get(origOpp.Parent_Template_Id__c).Redcross_Volunteer_Required__c; //HRP-13146
-                    clonedOpp.Redcross_Volunteer_Quantity__c = oppWithParentTemplateMap.get(origOpp.Parent_Template_Id__c).Redcross_Volunteer_Quantity__c; //HRP-13146
+                    clonedOpp.Red_Cross_Volunteer_Required__c = oppWithParentTemplateMap.get(origOpp.Parent_Template_Id__c).Red_Cross_Volunteer_Required__c; //HRP-13146
+                    clonedOpp.Red_Cross_Volunteer_Quantity__c = oppWithParentTemplateMap.get(origOpp.Parent_Template_Id__c).Red_Cross_Volunteer_Quantity__c; //HRP-13146
                     
                 }
                 cbWrapper = runRolloverEvaluation(origOpp, oppWithGraySkiesMap);

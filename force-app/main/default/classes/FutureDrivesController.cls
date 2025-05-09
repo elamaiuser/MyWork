@@ -168,7 +168,7 @@ public with sharing class FutureDrivesController {
             String sourcequery = '';
             if(fieldstoberetrieved.length()>0){
                 //quering offset fields for calculation of webschedule dates
-                     sourcequery = ' select Id,Web_Scheduling_Start_Date_Offset__c,Web_Scheduling_Start_Time__c,Web_Scheduling_End_Date_Offset__c,Web_Scheduling_End_Time_Offset__c, APT_Quantity__c, APT_Change_Reason__c, Redcross_Volunteer_Quantity__c, ' + fieldstoberetrieved + ' from Opportunity where Id =:driverecordid' ;
+                     sourcequery = ' select Id,Web_Scheduling_Start_Date_Offset__c,Web_Scheduling_Start_Time__c,Web_Scheduling_End_Date_Offset__c,Web_Scheduling_End_Time_Offset__c, APT_Quantity__c, APT_Change_Reason__c, Red_Cross_Volunteer_Quantity__c, ' + fieldstoberetrieved + ' from Opportunity where Id =:driverecordid' ;
                 sourceopplist = Database.query( sourcequery );
             }
             else if(fieldstoberetrieved.length()==0 && (isDriveAffiliationFound == true || isDriveServiceRolesFound == true)){
@@ -181,7 +181,7 @@ public with sharing class FutureDrivesController {
             String targetquery = '';
             
             if(fieldstoberetrieved.length()>0){
-                targetquery = ' select Id,Drive_date__c,Drive_Site__c, APT_Quantity__c, APT_Change_Reason__c, Redcross_Volunteer_Quantity__c, ' + fieldstoberetrieved + ' from Opportunity where Id IN:driveidset' ;
+                targetquery = ' select Id,Drive_date__c,Drive_Site__c, APT_Quantity__c, APT_Change_Reason__c, Red_Cross_Volunteer_Quantity__c, ' + fieldstoberetrieved + ' from Opportunity where Id IN:driveidset' ;
                 updateopplist = Database.query( targetquery );
             }
             else if(fieldstoberetrieved.length()==0 && (isDriveAffiliationFound == true || isDriveServiceRolesFound == true)){
@@ -247,8 +247,8 @@ public with sharing class FutureDrivesController {
                                 //HRP-13190 -> Ends Here
 
                                 //HRP-13146 -> Starts Here
-                                if(s1 == 'Redcross_Volunteer_Required__c') {
-                                    opp.put('Redcross_Volunteer_Quantity__c', sourceopp.get(driverecordid).get('Redcross_Volunteer_Quantity__c'));
+                                if(s1 == 'Red_Cross_Volunteer_Required__c') {
+                                    opp.put('Red_Cross_Volunteer_Quantity__c', sourceopp.get(driverecordid).get('Red_Cross_Volunteer_Quantity__c'));
                                 }
                                 //HRP-13146 -> Ends Here
                                

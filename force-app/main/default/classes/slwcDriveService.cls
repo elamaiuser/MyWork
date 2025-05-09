@@ -430,8 +430,8 @@ global class slwcDriveService {
         map_oppField_driveField.put('Number_of_2RBC_Assets__c', 'sked_Number_of_2RBC_Assets__c');
         map_oppField_driveField.put('Number_of_Plasma_Assets__c', 'sked_Number_of_Plasma_Assets__c');
         map_oppField_driveField.put('Number_of_Platelet_Assets__c', 'sked_Number_of_Platelet_Assets__c');
-        map_oppField_driveField.put('Redcross_Volunteer_Required__c', 'sked_Redcross_Volunteer_Required__c');
-        map_oppField_driveField.put('Redcross_Volunteer_Quantity__c', 'sked_Redcross_Volunteer_Quantity__c');
+        map_oppField_driveField.put('Red_Cross_Volunteer_Required__c', 'sked_Redcross_Volunteer_Required__c');
+        map_oppField_driveField.put('Red_Cross_Volunteer_Quantity__c', 'sked_Redcross_Volunteer_Quantity__c');
         
         List<driveChangeRequestModel> filteredRequests = new List<driveChangeRequestModel>();
         

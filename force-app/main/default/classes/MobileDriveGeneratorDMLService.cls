@@ -383,7 +383,7 @@ public with sharing class MobileDriveGeneratorDMLService {
                 Type_of_Drive__c, WB_Projected_Procedures__c, X2RBC_Projected_Procedures__c,
                 Number_of_2RBC_Assets__c, Number_of_Plasma_Assets__c, Number_of_Platelet_Assets__c, Day_of_Week__c,Call_List_Recipient_Exist__c, Slot_Generator__c, 
                 APT_Required__c, APT_Quantity__c, //HRP-13190 
-                Redcross_Volunteer_Required__c, Redcross_Volunteer_Quantity__c //HRP-13146
+                Red_Cross_Volunteer_Required__c, Red_Cross_Volunteer_Quantity__c //HRP-13146
                 FROM Opportunity
                 WHERE Id IN :oppIds];
     }
@@ -840,8 +840,8 @@ public with sharing class MobileDriveGeneratorDMLService {
             this.slotGenerator = opp.Slot_Generator__c; //HRP-12011
             this.aptRequired = opp.APT_Required__c; //HRP-13190
             this.aptQuantity = opp.APT_Quantity__c; //HRP-13190
-            this.redcrossVolunteerRequired = opp.Redcross_Volunteer_Required__c; //HRP-13146
-            this.redcrossVolunteerQuantity = opp.Redcross_Volunteer_Quantity__c; //HRP-13146
+            this.redcrossVolunteerRequired = opp.Red_Cross_Volunteer_Required__c; //HRP-13146
+            this.redcrossVolunteerQuantity = opp.Red_Cross_Volunteer_Quantity__c; //HRP-13146
             this.totalProceduresProjected = this.wbProjectedProcedures + this.x2rbcProjectedProcedures;
             this.totalProductsProjected = this.wbProjectedProcedures + 2*this.x2rbcProjectedProcedures;
             this.driveSite = new DMLLocation(fetchSites(new Set<Id>{opp.Drive_Site__c}, schedulingBounds)[0]);

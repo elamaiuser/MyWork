@@ -12,6 +12,6 @@
     </values>
     <values>
         <field>Process_Functionality_Name__c</field>
-        <value xsi:type="xsd:string">Redcross_Volunteer_Required__c,Redcross_Volunteer_Quantity__c</value>
+        <value xsi:type="xsd:string">Red_Cross_Volunteer_Required__c,Red_Cross_Volunteer_Quantity__c</value>
     </values>
 </CustomMetadata>
