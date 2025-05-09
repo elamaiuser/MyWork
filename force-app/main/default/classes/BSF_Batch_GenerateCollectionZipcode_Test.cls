@@ -133,7 +133,57 @@ BSF_Batch_PopulateCORegion batch1 = new BSF_Batch_PopulateCORegion();
         system.assertEquals(skRegion1.sked_Biomed_Collection_Op_Center__r.Name,taxo_5.Collection_Operation_Name__c);
         system.assertEquals(skRegion1.sked_Biomed_Collection_Op_Center__r.sked_Territory__r.Name,taxo_5.Division_Name__c);
         system.assertEquals(skRegion1.sked_Biomed_Collection_Op_Center__r.sked_Territory__r.sked_Parent__r.Name,taxo_5.District_Name__c);*/
-    Test.stopTest();
+           skedTestDataFactory testDataFactory = new skedTestDataFactory('us', 14);
+      //  Map<string, sObject> mapTestData = testDataFactory.setupCommonTestData();
+ Set<Id> upsertedSiteCollectionOperationIds = new Set<Id>();
+        sked__Location__c testSite = (sked__Location__c) mapTestData.get('testLocation1');
+        Biomed_Collection_Op_Center__c testCollectionOp = (Biomed_Collection_Op_Center__c) mapTestData.get('testCollectionOperation2');
+         // sked_Collections_Zip_Code__c collZip = new sked_Collections_Zip_Code__c();
+       /* sked_Staging_Location__c testStagingLocation = new sked_Staging_Location__c(
+            sked_Geolocation__Latitude__s = 38.7450046,
+            sked_Geolocation__Longitude__s = -123.4816244,
+            sked_Timezone__c = 'America/Chicago'
+        );
+        insert testStagingLocation;
+
+        sked_Collection_Op_Staging_Location__c testCosl = new sked_Collection_Op_Staging_Location__c(
+            sked_Collection_Operation__c = testCollectionOp.Id,
+            sked_Staging_Location__c = testStagingLocation.Id,
+            sked_Start_Date__c = skedConstants.EARLIEST_START_DATE,
+            sked_End_Date__c = skedConstants.LATEST_END_DATE
+        );
+        insert testCosl;*/
+
+//        delete [SELECT Id FROM sked_Travel_Time_Index_Item__c];
+       
+        sked_Site_Collection_Operation__c testSCO = new sked_Site_Collection_Operation__c(
+            sked_Site__c = 'a1L8J000001xVj0UAE',
+            sked_Collections_Zip_Code__c= collTerr.Id,
+            sked_Collection_Operation__c = 'a0b8J000001Qg6eQAC',
+            sked_Start_Date__c = System.today().addDays(-100),
+            sked_End_Date__c = System.today().addDays(100)
+        );
+        insert testSCO;
+        upsertedSiteCollectionOperationIds.add(testSCO.Id);
+      
+        
+        
+           sked_Travel_Time_Index_Item__c item = new sked_Travel_Time_Index_Item__c (
+        	sked_From__Latitude__s = 44.7977342,
+        	sked_From__Longitude__s = -68.8065538,
+        	sked_To__Latitude__s = 44.175623,
+        	sked_To__Longitude__s = -68.416157,
+            sked_Timezone__c = 'America/New_York',
+            sked_Average_Travel_Time__c = 15,
+               sked_Last_Refresh_Date__c = null
+        );
+        insert item;
+     
+        BSF_Batch_EndCollectionZip bse = new BSF_Batch_EndCollectionZip(286,upsertedSiteCollectionOperationIds);
+          
+
+         
+        Test.stopTest();
     }
     
     @isTest
@@ -180,6 +230,63 @@ BSF_Batch_PopulateCORegion batch1 = new BSF_Batch_PopulateCORegion();
         
         
     }
+  @isTest
+    public static void testmethod3()
+    {
+        
+        BSF_Batch_GenerateCollectionZipcode batch = new BSF_Batch_GenerateCollectionZipcode(99999,null,null,true);
+        id jobid = database.executeBatch(batch,200);
+      
+        
+    }
+    
+    
+    
+    
+       @isTest
+    static void createTravelTimeIndexItems_Test() {
+        skedTestDataFactory testDataFactory = new skedTestDataFactory('us', 14);
+        Map<string, sObject> mapTestData = testDataFactory.setupCommonTestData();
+Set<Id> upsertedSiteCollectionOperationIds = new Set<Id>();
+        sked__Location__c testSite = [Select Id,Name from sked__Location__c Limit 1];
+        Biomed_Collection_Op_Center__c testCollectionOp = (Biomed_Collection_Op_Center__c) mapTestData.get('testCollectionOperation2');
+      //    sked_Collections_Zip_Code__c collZip = new sked_Collections_Zip_Code__c();
+       /* sked_Staging_Location__c testStagingLocation = new sked_Staging_Location__c(
+            sked_Geolocation__Latitude__s = 38.7450046,
+            sked_Geolocation__Longitude__s = -123.4816244,
+            sked_Timezone__c = 'America/Chicago'
+        );
+        insert testStagingLocation;
 
+        sked_Collection_Op_Staging_Location__c testCosl = new sked_Collection_Op_Staging_Location__c(
+            sked_Collection_Operation__c = testCollectionOp.Id,
+            sked_Staging_Location__c = testStagingLocation.Id,
+            sked_Start_Date__c = skedConstants.EARLIEST_START_DATE,
+            sked_End_Date__c = skedConstants.LATEST_END_DATE
+        );
+        insert testCosl;*/
+
+//        delete [SELECT Id FROM sked_Travel_Time_Index_Item__c];
+        Test.startTest();
+        sked_Site_Collection_Operation__c testSCO = new sked_Site_Collection_Operation__c(
+            sked_Site__c ='a1L8J000001xVj0UAE',
+            sked_Collection_Operation__c = testCollectionOp.Id,
+            sked_Start_Date__c = System.today().addDays(-100),
+            sked_End_Date__c = System.today().addDays(100)
+        );
+        insert testSCO;
+        upsertedSiteCollectionOperationIds.add(testSCO.Id);
+       
+        BSF_Batch_EndCollectionZip bse = new BSF_Batch_EndCollectionZip(286,upsertedSiteCollectionOperationIds);
+        Test.stopTest();
+
+     
+    }
+
+    
+    
+    
+    
+    
 
 }
