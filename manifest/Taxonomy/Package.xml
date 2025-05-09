@@ -110,6 +110,8 @@
         <members>AccountPortfolioAssignmentBatch_Test</members>
         <members>BSF_Batch_OpportunityTeamSync</members>
         <members>BSF_Batch_OpportunityTeamSyncTest</members>
+        <members>BSF_Batch_PopulateCORegion</members>
+        <members>BSF_Batch_PopulateCORegion_Test</members>
         <name>ApexClass</name>
     </types>
     <types>
