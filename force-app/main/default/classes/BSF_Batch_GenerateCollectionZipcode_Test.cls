@@ -279,8 +279,6 @@ Set<Id> upsertedSiteCollectionOperationIds = new Set<Id>();
        
         BSF_Batch_EndCollectionZip bse = new BSF_Batch_EndCollectionZip(286,upsertedSiteCollectionOperationIds);
         Test.stopTest();
-
-     
     }
 
     

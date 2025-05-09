@@ -114,6 +114,7 @@
         <members>BSF_Batch_PopulateCORegion_Test</members>
         <members>BSF_Batch_GenerateCollectionZipcode</members>
         <members>BSF_Batch_GenerateCollectionZipcode_Test</members>
+        <members>BSF_Batch_EndCollectionZip</members>
         <name>ApexClass</name>
     </types>
     <types>
