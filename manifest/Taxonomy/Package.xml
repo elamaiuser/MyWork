@@ -119,6 +119,8 @@
         <members>skedActivityDistrictBatch_Test</members>
         <members>skedDriveCOChangedBatch</members>
         <members>skedDriveCOChangedBatch_Test</members>
+        <members>JobSkedRegionCorrectionBatch</members>
+        <members>JobSkedRegionCorrectionBatchTest</members>
         <name>ApexClass</name>
     </types>
     <types>
