@@ -125,6 +125,8 @@
         <members>skedDriveDistrictBatch_Test</members>
         <members>skedResourceOverrideDistrictBatch</members>
         <members>skedResourceOverrideDistrictBatch_Test</members>
+        <members>skedDriveShiftTradeDistrictBatch</members>
+        <members>skedDriveShiftTradeDistrictBatch_Test</members>
         <name>ApexClass</name>
     </types>
     <types>
