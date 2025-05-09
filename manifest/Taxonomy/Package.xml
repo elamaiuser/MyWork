@@ -123,6 +123,8 @@
         <members>JobSkedRegionCorrectionBatchTest</members>
         <members>skedDriveDistrictBatch</members>
         <members>skedDriveDistrictBatch_Test</members>
+        <members>skedResourceOverrideDistrictBatch</members>
+        <members>skedResourceOverrideDistrictBatch_Test</members>
         <name>ApexClass</name>
     </types>
     <types>
