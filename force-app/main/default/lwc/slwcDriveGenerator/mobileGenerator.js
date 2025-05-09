@@ -1216,12 +1216,19 @@ class MobileGenerator extends BaseGenerator {
   generateDualRoles() {
     const calculateExcessStaffCapacity = (drive, mapResourceQuantity) => {
       const driveShiftsMetadata = this.drive.driveShiftsMetadata;
-
+      let tempMapResourceQuantityForStaffCapacity = cloneDeep(mapResourceQuantity);//HRP-14869 start
+      for (let [key, value] of  tempMapResourceQuantityForStaffCapacity.entries()) {
+        if(value.has('VP/HH')){
+            if(value.get('VP/HH').aptQuantity !== 0){
+              value.get('VP/HH').quantity = value.get('VP/HH').vphhQuantity;
+            }
+        }
+      }//HRP-14869 end
       let staffCapacity = 0;
       driveShiftsMetadata.driveShifts.forEach((driveShiftMetadata) => {
         const driveShiftStaffCapacity = Math.floor(this.helper.calculateStaffCapacity([
           'Driver', 'Driver Support', '2RBC', 'VP/HH', 'Charge'
-        ], drive, driveShiftMetadata, mapResourceQuantity, this.masterData));
+        ], drive, driveShiftMetadata, tempMapResourceQuantityForStaffCapacity, this.masterData));//HRP-14869
         staffCapacity += driveShiftStaffCapacity;
       });
 
