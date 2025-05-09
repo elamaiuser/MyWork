@@ -18,7 +18,6 @@
             </value>
         </inputParameters>
         <nameSegment>MarketingExceptionInvokable</nameSegment>
-        <offset>0</offset>
     </actionCalls>
     <actionCalls>
         <name>Notify_Task_Owner</name>
@@ -38,7 +37,6 @@
             </value>
         </inputParameters>
         <nameSegment>TaskInvokable</nameSegment>
-        <offset>0</offset>
     </actionCalls>
     <actionCalls>
         <name>Send_email_to_the_Task_Creator</name>
@@ -55,7 +53,6 @@
             </value>
         </inputParameters>
         <nameSegment>BSF_EmailNotification</nameSegment>
-        <offset>0</offset>
     </actionCalls>
     <actionCalls>
         <name>Send_notification_to_AM_if_Approved</name>
@@ -105,7 +102,6 @@
             </value>
         </inputParameters>
         <nameSegment>BSF_CustomNotification</nameSegment>
-        <offset>0</offset>
     </actionCalls>
     <actionCalls>
         <name>Send_notification_to_AM_if_Rejected</name>
@@ -155,7 +151,6 @@
             </value>
         </inputParameters>
         <nameSegment>BSF_CustomNotification</nameSegment>
-        <offset>0</offset>
     </actionCalls>
     <apiVersion>63.0</apiVersion>
     <decisions>
@@ -395,5 +390,5 @@ Process using multiple criteria.</description>
         <recordTriggerType>CreateAndUpdate</recordTriggerType>
         <triggerType>RecordAfterSave</triggerType>
     </start>
-    <status>Draft</status>
+    <status>Active</status>
 </Flow>
