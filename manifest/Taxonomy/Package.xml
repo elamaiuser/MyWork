@@ -106,6 +106,8 @@
         <members>BSFBatchPortfolio_Test</members>
         <members>BSF_Batch_TaxonomyEndDateHandler</members>
         <members>BSF_Batch_TaxonomyEndDate_Test</members>
+        <members>BSF_Batch_AccountPortfolioAssignment</members>
+        <members>AccountPortfolioAssignmentBatch_Test</members>
         <name>ApexClass</name>
     </types>
     <types>
