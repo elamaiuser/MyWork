@@ -115,6 +115,8 @@
         <members>BSF_Batch_GenerateCollectionZipcode</members>
         <members>BSF_Batch_GenerateCollectionZipcode_Test</members>
         <members>BSF_Batch_EndCollectionZip</members>
+        <members>skedActivityDistrictBatch</members>
+        <members>skedActivityDistrictBatch_Test</members>
         <name>ApexClass</name>
     </types>
     <types>
