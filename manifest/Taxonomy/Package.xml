@@ -32,6 +32,7 @@
         <members>Taxonomy_Run_Config__mdt.Taxo_Expiration_Offset__c</members>
         <members>Taxonomy_Run_Config__mdt.Taxo_Record_Type_Name__c</members>
         <members>Taxonomy_Run_Config__mdt.Taxo_Run_Date_Override__c</members>
+         <members>BSF_Error_Log__c.Object_Name__c</members>
 		<name>CustomField</name>
 	</types>
     <types>
@@ -84,6 +85,13 @@
     <types>
         <members>Taxonomy_Run_Config.Taxonomy Run Config</members>
         <name>ListView</name>
+    </types>
+    <types>
+        <members>BSF_Utilities</members>
+        <members>Taxo_Utilities</members>
+        <members>BSF_Batch_DeleteExpiredTaxoVersionBatch</members>
+        <members>DeleteExpiredTaxoVersionBatchTest</members>
+        <name>ApexClass</name>
     </types>
 	<version>63.0</version>
 </Package>

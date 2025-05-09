@@ -519,6 +519,42 @@ public with sharing class BSF_Utilities {
         return errorLog;
     }
 
+    
+   
+    
+     //Error log without exception
+    
+    //HRP-14295
+    public static BSF_Error_Log__c createBsfErrorLogwithoutExceptions(
+         
+        String className, 
+        String methodName, 
+        String processName,
+       
+        String objectName,
+        String error
+    ) {
+        String errorDescription = error;
+        BSF_Error_Log__c errorLog = new BSF_Error_Log__c(
+            ApexClass__c = className,
+            Method__c = methodName,
+            Type__c = 'Error',
+          Error_Description__c = errorDescription.length() > 255 ? errorDescription.subString(0, 255) : errorDescription,
+            Process_Name__c = processName,
+           
+            Object_Name__c = objectName
+
+        );
+        return errorLog;
+    }
+
+    
+    
+
+
+
+
+    
     public static Set<ID> getSuccessfullySavedRecordIds(Database.SaveResult[] saveResults) {
         Set<ID> recordIds = new Set<ID>();
         for(Database.SaveResult result : saveResults) {
@@ -561,7 +597,7 @@ public with sharing class BSF_Utilities {
                 'Web_Scheduling_End_Date_Offset__c, Web_Scheduling_End_Time_Offset__c, Web_Scheduling_Start_Date_Offset__c, Platelet_Projected_Procedures__c, '+
                 'Plasma_Pheresis_Projected_Procedures__c, Calendar_Build_Parent_Opportunity__c, Type, DriveStatus__c, Slot_Generator__c, Related_Scheduled_Drive__c, '+ //HRP-12011 
                 //'FROM Opportunity';
-                'APT_Quantity__c, APT_Required__c, Booking_Strategy__c, Redcross_Volunteer_Required__c, Redcross_Volunteer_Quantity__c FROM Opportunity'; //Added APT fields HRP-13190; Added Volunteer fields HRP-13146
+                'APT_Quantity__c, APT_Required__c, Booking_Strategy__c FROM Opportunity'; //Added APT fields HRP-13190
     }
     
     /* HRP-13190 -> Starts Here
@@ -645,9 +681,5 @@ public with sharing class BSF_Utilities {
             parts.add(text.substring(i, Math.min(len, i + partitionSize)));
         }
         return parts;
-    }
-
-    public static String getStringWithinLimit(String text, Integer charLimit) {
-        return (text != NULL && String.isNotBlank(text) && text.length() > charLimit) ? text.subString(0, charLimit) : (text == NULL ? '' : text);
     }
 }
