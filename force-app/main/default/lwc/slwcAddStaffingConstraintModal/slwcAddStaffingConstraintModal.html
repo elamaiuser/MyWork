@@ -87,7 +87,19 @@
                   autocomplete="off"
                 ></lightning-input>
               </div>
+              <div class="slds-size_1-of-2 slds-p-horizontal_small">
+                <lightning-combobox 
+                  label="Time Block" 
+                  name="timeBlockId" 
+                  options={timeBlocks} 
+                  value={model.timeBlockId} 
+                  read-only={isTimeBlockFieldReadonly}
+                  onchange={handleOnChange}>
+                </lightning-combobox>
+              </div>
+            </div>
 
+            <div class="slds-form-element__row slds-m-top_x-small slds-grid slds-grid_pull-padded-small">
               <div class={customClass.totalStaffConstraintsClass}>
                 <lightning-input
                   name="totalStaffConstraints"

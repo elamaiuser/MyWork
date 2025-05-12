@@ -21,12 +21,14 @@ export default class SlwcNewCollectionOperationMultiPicklist extends LightningEl
   @api divisionSingleSelect = false;
   @api variant;
   @api dropdownPosition = 'left';
+  @api timeBlockEnabled;
 
   @track _defaultValues = {
     divisions: [],
     arcRegions: [],
     districts: [],
-    territoryCollectionOperations: []
+    territoryCollectionOperations: [],
+    timeBlocks: []
   };
   @api
   get defaultValues() {
@@ -78,6 +80,12 @@ export default class SlwcNewCollectionOperationMultiPicklist extends LightningEl
     selectedTerritoryCollectionOperations: []
   }
   @track clonedCollectionOperationPicklistState = cloneDeep(this.collectionOperationPicklistState);
+
+  @track timeBlockState = {
+    timeBlockOptions: [],
+
+    selectedTimeBlocks: []
+  };
 
   @track showTerritoriesPopover = false;
   @track showCollectionOperationPicklist = false;
@@ -206,6 +214,8 @@ export default class SlwcNewCollectionOperationMultiPicklist extends LightningEl
         
         this.mapTerritoryCollectionOperations = this.buildMapTerritoryCollectionOperations(this.allCollectionOperationOptions, territoryCollectionOperations);
 
+        this.refreshTimeBlockData();
+
         //set default values
         this.initDefaultValues(true);
     })
@@ -285,6 +295,8 @@ export default class SlwcNewCollectionOperationMultiPicklist extends LightningEl
     this.collectionOperationPicklistState.collectionOperationTreeData = data.collectionOperationTreeData;
     this.collectionOperationPicklistState.collectionOperationOptions = data.collectionOperations;
     this.restoreSelectedCollectionOperationOptions(this.collectionOperationPicklistState); 
+
+    this.timeBlockState.selectedTimeBlocks = cloneDeep(this.defaultValues.timeBlocks);
 
     if(firstLoad) {
       const currentSelectedTerritoryCollectionOperations = this.getSelectedTerritoryCollectionOperations(this.collectionOperationPicklistState.collectionOperationTreeData);
@@ -395,6 +407,47 @@ export default class SlwcNewCollectionOperationMultiPicklist extends LightningEl
     })
   }
 
+  refreshTimeBlockData = () => {
+    this.timeBlockState.timeBlockOptions = []
+
+    let mapTimeBlockById = new Map()
+    
+    this.collectionOperationPicklistState.selectedTerritoryCollectionOperations?.forEach(territoryCo => {
+      territoryCo.collectionOperation.collectionOperationTimeBlocks?.forEach(coTb => {
+        if (this.dateRange) {
+          if (coTb.effectiveStartDate <= this.dateRange.endDate && coTb.effectiveEndDate >= this.dateRange.startDate) {
+            mapTimeBlockById.set(coTb.timeBlock.id, coTb.timeBlock)
+          }
+        }
+      })
+    })
+
+    const timeBlocks = Array.from(mapTimeBlockById.values());
+    if (timeBlocks.length) {
+      this.timeBlockState.timeBlockOptions = timeBlocks.map(timeBlock => {
+        return {
+          label: timeBlock.name,
+          value: timeBlock.id
+        }
+      })
+    }
+  }
+
+  handleTimeBlockChanged = (event) => {
+    this.timeBlockState.selectedTimeBlocks = cloneDeep(event.detail.selectedValues);
+
+    this.applyTimeBlock()
+  }
+
+  applyTimeBlock = () => {
+    const pickValuesChangeEvent = new CustomEvent('timeblockchange', {
+      detail: { 
+        selectedTimeBlocks: this.timeBlockState.selectedTimeBlocks
+      }
+    });
+    this.dispatchEvent(pickValuesChangeEvent);
+  }
+
   applyCollectionOperation = () => {
     this.collectionOperationPicklistState = cloneDeep(this.clonedCollectionOperationPicklistState);
     const selectedTerritoryCollectionOperations = this.getSelectedTerritoryCollectionOperations(this.collectionOperationPicklistState.collectionOperationTreeData);
@@ -412,6 +465,8 @@ export default class SlwcNewCollectionOperationMultiPicklist extends LightningEl
       }
     });
     this.dispatchEvent(pickValuesChangeEvent);
+
+    this.refreshTimeBlockData();
 
     this.closeCollectionOperationPicklist();
   }
