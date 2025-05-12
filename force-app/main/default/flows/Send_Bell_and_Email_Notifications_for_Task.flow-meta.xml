@@ -267,7 +267,7 @@
             <label>TRUE_Send Bell Notification to Owner</label>
         </rules>
     </decisions>
-    <description>Migrated and merged from the Send Bell Notification to AM for approval status and Send Bell Notification To Task.
+    <description>HRP-14508 Migrated and merged from the Send Bell Notification to AM for approval status and Send Bell Notification To Task.
 Process using multiple criteria.</description>
     <environments>Default</environments>
     <formulas>
