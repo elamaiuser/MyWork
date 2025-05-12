@@ -66,3 +66,5 @@ export * from './stagingLocationService';
 export * from './bsfPortfolioService';
 export * from './staffMealAndRestBreakService';
 export * from './collectionOperationOptimizerSettingService';
+export * from './availabilityPatternResourceService';
+
