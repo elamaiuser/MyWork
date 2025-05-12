@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Layout xmlns="http://soap.sforce.com/2006/04/metadata">
+    <excludeButtons>OpenSlackRecordChannel</excludeButtons>
     <excludeButtons>Submit</excludeButtons>
     <layoutSections>
         <customLabel>false</customLabel>
@@ -452,6 +453,14 @@
     <relatedLists>
         <fields>NAME</fields>
         <relatedList>sked_CollectionOperationOptimizerSetting__c.sked_Collection_Operation__c</relatedList>
+    </relatedLists>
+    <relatedLists>
+        <fields>NAME</fields>
+        <fields>Time_Block__c.NAME</fields>
+        <fields>Days_of_Week__c</fields>
+        <fields>Time_Block__c.Start_Time__c</fields>
+        <fields>Time_Block__c.End_Time__c</fields>
+        <relatedList>Collection_Operation_Time_Block__c.Collection_Operation__c</relatedList>
     </relatedLists>
     <showEmailCheckbox>false</showEmailCheckbox>
     <showHighlightsPanel>false</showHighlightsPanel>

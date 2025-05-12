@@ -3230,7 +3230,7 @@ class DriveHelper {
     }
   }
 
-  calculateRequestedStaff(mappedDriveData, mappedActivityData, collectionOperationId, driveTypes, dateIso) {
+  calculateRequestedStaff(mappedDriveData, mappedActivityData, collectionOperationId, timeBlockId, driveTypes, dateIso) {
     const KEY_SEPERATOR = "__";
 
     const matchedDrives = driveTypes.reduce(
@@ -3254,21 +3254,33 @@ class DriveHelper {
 
     if (matchedDrives.length) {
       matchedDrives.forEach((drive) => {
+        let totalStaffRequested = drive.totalStaffRequested;
+        if (timeBlockId) {
+          totalStaffRequested = 0;
+          drive.driveShifts?.forEach(driveShift => {
+            if (driveShift.timeBlockId === timeBlockId) {
+              totalStaffRequested += driveShift.staffSetup
+            }
+          })
+        }
+
         if (this.isFixedSiteDrive(drive)) {
-          totalFixedSiteStaffRequested += drive.totalStaffRequested;
+          totalFixedSiteStaffRequested += totalStaffRequested;
         } else {
-          totalMobileStaffRequested += drive.totalStaffRequested;
+          totalMobileStaffRequested += totalStaffRequested;
         }
       });
     }
 
     if(matchedActivities?.length) {
       matchedActivities.forEach((activity) => {
-        if (driveTypes.includes(DRIVE_TYPE.FIXED_SITE)) {
-          totalFixedSiteStaffNCERequested += activity.fixedSiteStaffQuantity || 0;
-        }
-        if (driveTypes.includes(DRIVE_TYPE.MOBILE)) {
-          totalMobileStaffNCERequested += activity.mobileStaffQuantity || 0;
+        if (!timeBlockId || activity.timeBlockId === timeBlockId) {
+          if (driveTypes.includes(DRIVE_TYPE.FIXED_SITE)) {
+            totalFixedSiteStaffNCERequested += activity.fixedSiteStaffQuantity || 0;
+          }
+          if (driveTypes.includes(DRIVE_TYPE.MOBILE)) {
+            totalMobileStaffNCERequested += activity.mobileStaffQuantity || 0;
+          }
         }
       });
     }

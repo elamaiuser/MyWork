@@ -51,13 +51,18 @@ class exceptionService extends dataService {
           queryBuilder.addCondition({ template: `( 
             sked_Linked_Drive__r.sked_Earliest_Drive_Date__c <= ${query.endDate} AND sked_Linked_Drive__r.sked_Latest_Drive_Date__c >= ${query.startDate}
           )` });
+        } else if (query.exceptionType == "tbs") {
+          queryBuilder.addCondition({ template: `( 
+            sked_Drive__r.sked_Drive_Date__c <= ${query.endDate} AND sked_Drive__r.sked_Drive_Date__c >= ${query.startDate}
+          )` });
         }
       }
       
       if (query.exceptionType == "drive") {
         queryBuilder.orderClause = 'ORDER BY sked_Drive__r.sked_Drive_Date__c ASC, skedHC__Job__r.Name ASC NULLS LAST'
-      }
-      else if (query.exceptionType == "resource") {
+      } else if (query.exceptionType == "tbs") {
+        queryBuilder.orderClause = 'ORDER BY sked_Drive__r.sked_Drive_Date__c ASC, sked_Drive_Shift__r.Name ASC NULLS LAST'
+      } else if (query.exceptionType == "resource") {
         queryBuilder.orderClause = 'ORDER BY CreatedDate ASC';
       } else  if (query.exceptionType == "linkedDrive") {
         queryBuilder.orderClause = 'ORDER BY sked_Linked_Drive__r.sked_Earliest_Drive_Date__c ASC, sked_Linked_Drive__r.sked_Latest_Drive_Date__c ASC, sked_Linked_Drive__r.Name ASC NULLS LAST'

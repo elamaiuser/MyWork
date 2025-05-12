@@ -259,6 +259,8 @@ public with sharing class AccountServiceRoleService {
             Database.update(updateableAccounts,false);
         }
     }
+
+    /*
     public static void markContactAsInactive(Map<Id,Account_Service_Role__c> oldMap, List<Account_Service_Role__c> newList){
         System.debug('AccountServiceRole markContactAsInactive');
         Set<Id> contactIdsToUpdate = new Set<Id>();
@@ -277,5 +279,5 @@ public with sharing class AccountServiceRoleService {
             update contactsToUpdate;
             System.debug('Updated Contact as Inactive');
         }
-    }
+    } */
 }

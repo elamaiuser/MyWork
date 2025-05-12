@@ -33,6 +33,19 @@ const RESOURCE_EXCEPTION_COLUMNS = [
     { label: 'Status', fieldName: 'status', type: 'text', hideDefaultActions: true, initialWidth: 150, wrapText: true }
 ];
 
+const TBS_EXCEPTION_COLUMNS = [
+    { label: 'Name', fieldName: 'recordUrl', type: 'url', hideDefaultActions: false, initialWidth: 100, wrapText: true, typeAttributes:{label: { fieldName: 'name' }, target: '_blank'}},
+    { label: 'Drive', fieldName: 'driveUrl', type: 'url', hideDefaultActions: false, wrapText: true, typeAttributes:{label: { fieldName: 'driveName' }, target: '_blank'}},
+    { label: 'Drive Shift', fieldName: 'driveShiftName', type: 'text', hideDefaultActions: true, initialWidth: 100, wrapText: true },
+    { label: 'Drive ID', fieldName: 'ufid', type: 'text', hideDefaultActions: true, initialWidth: 100, wrapText: true },
+    { label: 'Drive Date', fieldName: 'driveDate', type: 'date-local', initialWidth: 125, typeAttributes: { year: "numeric", month: "short", day: "2-digit" }, hideDefaultActions: true },
+    { label: 'Start Time', fieldName: 'startTimeStr', type: 'text', hideDefaultActions: true, initialWidth: 200, wrapText: true },
+    { label: 'End Time', fieldName: 'endTimeStr', type: 'text', hideDefaultActions: true, initialWidth: 200, wrapText: true },
+    { label: 'Time Block', fieldName: 'driveShiftTimeBlockName', type: 'text', hideDefaultActions: true, initialWidth: 200, wrapText: true },
+    { label: 'Exception', fieldName: 'exception', type: 'text', hideDefaultActions: true, wrapText: true, cellAttributes: {wrapText: true} },
+    { label: 'Priority', fieldName: 'priority', type: 'text', hideDefaultActions: true, initialWidth: 100, wrapText: true }
+];
+
 export default class SlwcExceptionList extends LightningElement {
     initialized = false;
     selectedExceptionLog = [];
@@ -51,6 +64,8 @@ export default class SlwcExceptionList extends LightningElement {
         }
         else if (this.exceptionType === "resource") {
             return  "resourceExceptionLog";
+        } if (this.exceptionType === "tbs") {
+            return  "tbsExceptionLog";
         }
         return null;
     }
@@ -61,6 +76,9 @@ export default class SlwcExceptionList extends LightningElement {
         }
         else if (this.exceptionType === "resource") {
             return  RESOURCE_EXCEPTION_COLUMNS;
+        }
+        else if (this.exceptionType === "tbs") {
+            return  TBS_EXCEPTION_COLUMNS;
         }
         return null;
     }
@@ -177,6 +195,16 @@ export default class SlwcExceptionList extends LightningElement {
             query.exceptionType = "resource";
             exceptionCodes.push("RESOURCE_DUPLICATE_SENIORITY_RANKING");
         }
+        else if (this.exceptionType === "tbs") {
+            query.exceptionType = "tbs";
+            const territoryKeys = this.territoryKeys;
+            if (!territoryKeys.length) {
+                return Promise.resolve([]);
+            }
+            query.territoryKeys = territoryKeys;
+            exceptionCodes = this.filters.exceptionCodes;
+            operationTypes = this.filters.operationTypes;
+        }
 
         query.exceptionCodes = exceptionCodes;
         query.priorities = this.filters.priorities;
@@ -231,6 +259,11 @@ export default class SlwcExceptionList extends LightningElement {
                     else {
                         exception.conflictedActivityUrl = '';
                     }
+
+                    if (this.exceptionType === 'tbs') {
+                        exception.startTimeStr = this.formatTime(exception.driveShiftStartTime ?? exception.driveStartTime);
+                        exception.endTimeStr = this.formatTime(exception.driveShiftEndTime ?? exception.driveEndTime);
+                    }
                 })
                 return result;
             })
@@ -238,8 +271,6 @@ export default class SlwcExceptionList extends LightningElement {
                 console.log(error);
             });
     }
-
-
 
     handleOnChange(event) {
         if (event.type === 'daterangechange') {
@@ -342,23 +373,30 @@ export default class SlwcExceptionList extends LightningElement {
     setLastQuery() {
         slwcUtils.setLastQuery(this.pageName, this.filters);
         slwcUtils.setLastQuery('schedulingConsole', pick(this.filters, ['collectionOperationValues']));
-      }
+    }
     
-      getLastQuery() {
+    getLastQuery() {
         let tabQuery = slwcUtils.getLastQuery(this.pageName);
         let schedulingConsoleQuery = slwcUtils.getLastQuery('schedulingConsole');
         let collectionOperationValues =  (schedulingConsoleQuery || {}).collectionOperationValues || {
-          divisions: [],
-          arcRegions: [],
-          districts: [],
-          territoryCollectionOperations: []
+            divisions: [],
+            arcRegions: [],
+            districts: [],
+            territoryCollectionOperations: []
         };
         if(tabQuery && tabQuery.collectionOperationValues) {
-          collectionOperationValues.territoryCollectionOperations = tabQuery.collectionOperationValues.territoryCollectionOperations || [];
+            collectionOperationValues.territoryCollectionOperations = tabQuery.collectionOperationValues.territoryCollectionOperations || [];
         }
         return {
-          ...tabQuery,
-          collectionOperationValues: collectionOperationValues
+            ...tabQuery,
+            collectionOperationValues: collectionOperationValues
         };
-      }
+    }
+
+    formatTime(time) {
+        if (!time) {
+            return '';
+        }
+        return DateTime.fromFormat(time, 'HH:mm:ss.SSS').toFormat('h:mm a');
+    }
 }

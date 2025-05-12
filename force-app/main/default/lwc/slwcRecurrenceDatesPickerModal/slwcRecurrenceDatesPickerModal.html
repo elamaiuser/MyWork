@@ -23,6 +23,11 @@
             <div if:true={isConfirmStep} class="slds-modal__content slds-p-around_medium">
                 <lightning-spinner if:true={showSpinner} class="spins" size="medium"></lightning-spinner>
 
+                <div class="slds-text-color_error slds-p-bottom_small slds-text-align_center slds-text-heading_small">
+                    <p>{appointmentAlertMessage}</p>
+                    <p>{appointmentAlertInstructionMessage}</p>
+                </div>
+
                 <div class="slds-p-horizontal_medium slds-p-vertical_small slds-scrollable_y slds-grow">
                     <div class="job-allocation-table">
                         <div class="header">
