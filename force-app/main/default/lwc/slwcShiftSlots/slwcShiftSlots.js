@@ -330,7 +330,9 @@ export default class SlwcDriveAppointmentSlots extends LightningElement {
     lockAppointment({
         slotKey,
         fixedSiteLockComment,
-        fixedSiteLockReason
+        fixedSiteLockReason,
+        recurrenceDates = [],
+        selectedDriveIds = []
     }) {
         const slot = this.findSlotByKey(slotKey);
         if(!slot) return;
@@ -343,7 +345,9 @@ export default class SlwcDriveAppointmentSlots extends LightningElement {
                     locked: true,
                     selected: false,
                     fixedSiteLockReason,
-                    fixedSiteLockComment
+                    fixedSiteLockComment,
+                    recurrenceDates,
+                    selectedDriveIds
                 }
             },
             bubbles: true,
@@ -476,20 +480,24 @@ export default class SlwcDriveAppointmentSlots extends LightningElement {
     }
 
     saveLockAppointmentModal(event) {
-        const { fixedSiteLockComment, fixedSiteLockReason } = event.detail;
+        const { fixedSiteLockComment, fixedSiteLockReason, recurrenceDates, selectedDriveIds } = event.detail;
         if(!this.lockAppointmentModalData.slotKey) {
             this.selectedSlots.forEach(slot => {
                 this.lockAppointment({
                     slotKey: slot.key,
                     fixedSiteLockComment,
-                    fixedSiteLockReason
+                    fixedSiteLockReason,
+                    recurrenceDates,
+                    selectedDriveIds
                 })
             });
         } else {
             this.lockAppointment({
                 slotKey: this.lockAppointmentModalData.slotKey,
                 fixedSiteLockComment,
-                fixedSiteLockReason
+                fixedSiteLockReason,
+                recurrenceDates,
+                selectedDriveIds
             })
         }
         this.closeLockAppointmentModal();
