@@ -8,6 +8,9 @@
 		<members>Create_Account_Service_Role_Upon_Contact_Creation</members>
 		<members>Set_Contact_UFID</members>
 		<members>Contact_Before_Insert_Update_Flow</members>
+		<members>Send_Bell_Notification_To_Task</members>
+		<members>Send_Bell_Notification_to_AM_for_approval_status</members>
+		<members>Send_Bell_and_Email_Notifications_for_Task</members>
 		<name>Flow</name>
 	</types>
 	<types>
