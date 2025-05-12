@@ -36,6 +36,7 @@ export class DriveShiftMappingConfigFactory {
       mappingConfig.addFieldConfig('sked_Staff_Setup__c', 'staffSetup', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_Start_Time__c', 'startTime', MAPPING_TYPE.time);
       mappingConfig.addFieldConfig('sked_Start__c', 'start', MAPPING_TYPE.direct);
+      mappingConfig.addFieldConfig('sked_Time_Block__c', 'timeBlockId', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_Total_Procedures_Projected__c', 'totalProceduresProjected', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_Total_Products_Projected__c', 'totalProductsProjected', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_Vehicles_Needed__c', 'vehiclesNeeded', MAPPING_TYPE.direct);

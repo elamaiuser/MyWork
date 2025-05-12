@@ -151,6 +151,9 @@ public class skedHCExceptionHandler extends skedTriggerHub {
         if (record.sked_Resource_Hours_Record__c != NULL && !string.isBlank(record.sked_Exception_Code__c)) {
             record.sked_UniqueKey__c = record.sked_Resource_Hours_Record__c + ':' + record.sked_Exception_Code__c;
         }
+        if (record.sked_Drive_Shift__c != NULL && !string.isBlank(record.sked_Exception_Code__c)) {
+            record.sked_UniqueKey__c = record.sked_Drive_Shift__c + ':' + record.sked_Exception_Code__c;
+        }
     }
     
     private void updateDriveExceptionIndicator(List<skedHC__Exception__c> newRecords) {

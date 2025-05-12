@@ -22,6 +22,7 @@
         <members>Collection_Operation_Time_Block__c.Collection_Operation__c</members> 
         <members>Collection_Operation_Time_Block__c.Time_Block__c</members> 
         <members>Collection_Operation_Time_Block__c.Days_of_Week__c</members> 
+        <members>sked_Operation_Drive_Limit__c.Time_Block__c</members> 
         <name>CustomField</name>
     </types>
     <types>  
