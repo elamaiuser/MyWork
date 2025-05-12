@@ -3,6 +3,7 @@ export * from './accountBridgeApiService';
 export * from './accountService';
 export * from './accountTagService';
 export * from './availabilityService';
+export * from './availabilityPatternResourceService';
 export * from './activityService';
 export * from './activityResourceService';
 export * from './adminConsoleService';
@@ -67,5 +68,3 @@ export * from './stagingLocationService';
 export * from './bsfPortfolioService';
 export * from './staffMealAndRestBreakService';
 export * from './collectionOperationOptimizerSettingService';
-export * from './availabilityPatternResourceService';
-
