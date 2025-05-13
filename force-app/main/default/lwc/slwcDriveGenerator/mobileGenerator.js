@@ -2644,6 +2644,7 @@ class MobileGenerator extends BaseGenerator {
           originalJob = {
             ...originalJob,
             redcrossVolunteerQuantity: redcrossVolunteerQuantity,
+            sponsorVolunteerQuantity: originalJob.sponsorVolunteerQuantity || 0,
             quantity: quantity,
             systemQuantity: quantity
           };
