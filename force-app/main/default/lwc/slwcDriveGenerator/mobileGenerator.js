@@ -1265,7 +1265,7 @@ class MobileGenerator extends BaseGenerator {
       driveShiftsMetadata.driveShifts.forEach((driveShiftMetadata) => {
         const driveShiftStaffCapacity = Math.floor(this.helper.calculateStaffCapacity([
           'Driver', 'Driver Support', '2RBC', 'VP/HH', 'Charge'
-        ], drive, driveShiftMetadata, tempMapResourceQuantityForStaffCapacity, this.masterData));
+        ], drive, driveShiftMetadata, tempMapResourceQuantityForStaffCapacity, this.masterData));//HRP-14869
         staffCapacity += driveShiftStaffCapacity;
       });
 
