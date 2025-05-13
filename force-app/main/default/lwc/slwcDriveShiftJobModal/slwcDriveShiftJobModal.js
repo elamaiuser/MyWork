@@ -473,8 +473,8 @@ export default class SlwcDriveShiftJobModal extends LightningElement {
             if(existed) {
                 this.job = {
                     ...this.job,
-                    redcrossVolunteerQuantity: this.job.redcrossVolunteerQuantity || existed.redcrossVolunteerQuantity,
-                    sponsorVolunteerQuantity: this.job.sponsorVolunteerQuantity || existed.sponsorVolunteerQuantity,
+                    redcrossVolunteerQuantity: this.job.redcrossVolunteerQuantity || 0,
+                    sponsorVolunteerQuantity: this.job.sponsorVolunteerQuantity || 0,
                     key: existed.key,
                     id: existed.id
                 }

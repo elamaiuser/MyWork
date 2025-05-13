@@ -2619,10 +2619,13 @@ class MobileGenerator extends BaseGenerator {
     }
 
     this.initResourceQuantityMap();
+    let sponsorVolunteerQuantity = 0;
+    
     if(!isEmpty(job))  {
       if (!isSpecificVolunteerJob(job, VOLUNTEER_TYPE.DONOR_AMBASSADOR)) return;
       this.mapVolunteerQuantity = new Map().set(VOLUNTEER_TYPE.DONOR_AMBASSADOR, job.isDeleted ? 0 : job.redcrossVolunteerQuantity || 0);
-    } else this.mapVolunteerQuantity = new Map().set(VOLUNTEER_TYPE.DONOR_AMBASSADOR, this.drive.redcrossVolunteerQuantity);
+      sponsorVolunteerQuantity = job.isDeleted ? 0 : (job.sponsorVolunteerQuantity || 0);
+    } else this.mapVolunteerQuantity = new Map().set(VOLUNTEER_TYPE.DONOR_AMBASSADOR, this.drive.redcrossVolunteerQuantity || 0);
 
     const redcrossVolunteerQuantity  = this.mapVolunteerQuantity.get(VOLUNTEER_TYPE.DONOR_AMBASSADOR);
     this.drive.redcrossVolunteerQuantity = redcrossVolunteerQuantity;
@@ -2636,7 +2639,7 @@ class MobileGenerator extends BaseGenerator {
 
       if(!isEmpty(originalJob)) {
         const originalJobIndex = driveShiftJobs.findIndex((item) => item.key === originalJob.key);
-        const quantity = redcrossVolunteerQuantity || 0 + originalJob.sponsorVolunteerQuantity || 0;
+        const quantity = redcrossVolunteerQuantity + sponsorVolunteerQuantity;
 
         if(quantity <= 0) {
           driveShiftJobs.splice(originalJobIndex, 1);
@@ -2644,7 +2647,7 @@ class MobileGenerator extends BaseGenerator {
           originalJob = {
             ...originalJob,
             redcrossVolunteerQuantity: redcrossVolunteerQuantity,
-            sponsorVolunteerQuantity: originalJob.sponsorVolunteerQuantity || 0,
+            sponsorVolunteerQuantity: sponsorVolunteerQuantity,
             quantity: quantity,
             systemQuantity: quantity
           };
