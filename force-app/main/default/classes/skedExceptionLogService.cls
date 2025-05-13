@@ -342,11 +342,11 @@ global class skedExceptionLogService extends skedDataService {
         
         Map<Id, Biomed_Collection_Op_Center__c> mapCO = new Map<Id, Biomed_Collection_Op_Center__c>([
             SELECT Id, sked_Minimum_Drive_Start_Time__c, sked_Maximum_Drive_End_Time__c,
-            (SELECT Id, Collection_Operation__c, Time_Block__c, Days_of_Week__c, Time_Block__r.Start_Time__c, Time_Block__r.End_Time__c,
-             Time_Block__r.Effective_Start_Date__c, Time_Block__r.Effective_End_Date__c
+            (SELECT Id, Collection_Operation__c, Time_Block__c, Effective_Start_Date__c, Effective_End_Date__c,
+             Time_Block__r.Days_of_Week__c, Time_Block__r.Start_Time__c, Time_Block__r.End_Time__c
              FROM Collection_Operation_Time_Blocks__r
-             WHERE Time_Block__r.Effective_Start_Date__c <= :maxDate
-             AND Time_Block__r.Effective_End_Date__c >= :minDate)
+             WHERE Effective_Start_Date__c <= :maxDate
+             AND Effective_End_Date__c >= :minDate)
             FROM Biomed_Collection_Op_Center__c
             WHERE Id IN :collectionOperationIds
         ]);
@@ -360,8 +360,8 @@ global class skedExceptionLogService extends skedDataService {
             
             List<Collection_Operation_Time_Block__c> qualifiedCOTBs = new List<Collection_Operation_Time_Block__c>();
             for (Collection_Operation_Time_Block__c coTB : collectionOperation.Collection_Operation_Time_Blocks__r) {
-                boolean isWeekdayMatched = coTB.Days_of_Week__c.contains(drive.sked_Day_of_Week__c);
-                boolean isEffective = coTB.Time_Block__r.Effective_Start_Date__c <= drive.sked_Drive_Date__c && drive.sked_Drive_Date__c <= coTB.Time_Block__r.Effective_End_Date__c;
+                boolean isWeekdayMatched = coTB.Time_Block__r.Days_of_Week__c.contains(drive.sked_Day_of_Week__c);
+                boolean isEffective = coTB.Effective_Start_Date__c <= drive.sked_Drive_Date__c && drive.sked_Drive_Date__c <= coTB.Effective_End_Date__c;
                 boolean isShiftTimeMatched = driveShift.sked_Start_Time__c >= coTB.Time_Block__r.Start_Time__c && driveShift.sked_End_Time__c <= coTB.Time_Block__r.End_Time__c;
                 
                 if (isEffective && isWeekdayMatched && isShiftTimeMatched) {
