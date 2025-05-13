@@ -16,6 +16,7 @@
 	<types>
 		<members>sked_Optimization_Run__c</members>
 		<name>Workflow</name>
+	</types>
 	<types>
 		<members>Contact.Do Not Contact is Selected</members>
 		<members>Contact.Do Not Contact Reasons Equals to Deceased</members>
@@ -23,6 +24,11 @@
 		<members>Contact.Update Preferred Phone Number Field</members>
 		<name>WorkflowRule</name>
 	</types>
+	<types>
+		<members>LeadService</members>
+        <!--LeadServiceTests test class is not modified, only kept for tracking pupose  -->
+		<members>LeadServiceTests</members>
+		<name>ApexClass</name>
 	</types>
     <version>63.0</version>
 </Package>
