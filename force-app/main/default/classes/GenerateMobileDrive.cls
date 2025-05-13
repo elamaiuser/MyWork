@@ -1881,7 +1881,8 @@ public with sharing class GenerateMobileDrive {
             DateTime minStart = driveShift.drawStart;          
             DateTime maxEnd = driveShift.drawEnd;  
             DateTime jobStart;
-            DateTime jobFinish;         
+            DateTime jobFinish;     
+            Decimal driveShiftDuration = 0;    
 
             for (MobileDriveGeneratorDMLService.DMLJob job : driveShift.jobs)
             {
@@ -1918,32 +1919,43 @@ public with sharing class GenerateMobileDrive {
                     job.start = skedDateTimeUtils.switchTimezone(jobStart,TimeZone.getTimeZone('GMT').getId(),drive.driveSite.timezoneSidId);                
                     job.finish = skedDateTimeUtils.switchTimezone(jobFinish,TimeZone.getTimeZone('GMT').getId(),drive.driveSite.timezoneSidId);
                     job.duration = skedDateTimeUtils.getDifferentMinutes(job.start, job.finish);
-            }
+                }
             
-            driveShift.start = skedDateTimeUtils.switchTimezone(minStart,TimeZone.getTimeZone('GMT').getId(),drive.driveSite.timezoneSidId);           
-            driveShift.finish = skedDateTimeUtils.switchTimezone(maxEnd,TimeZone.getTimeZone('GMT').getId(),drive.driveSite.timezoneSidId);
-            decimal value = skedDateTimeUtils.getDifferentMinutes(driveShift.start, driveShift.finish);
+                driveShift.start = skedDateTimeUtils.switchTimezone(minStart,TimeZone.getTimeZone('GMT').getId(),drive.driveSite.timezoneSidId);           
+                driveShift.finish = skedDateTimeUtils.switchTimezone(maxEnd,TimeZone.getTimeZone('GMT').getId(),drive.driveSite.timezoneSidId);
+                driveShiftDuration = skedDateTimeUtils.getDifferentMinutes(driveShift.start, driveShift.finish);
+                
 
-            // Populating Global Variables to use them for Equipment and Vehicle Job Timings
-            if(shiftCount == noOfDriveShift - 1 && noOfDriveShift > 1)
-            {
-                nonResourceRoleJobFinishTime = driveShift.finish;
+                // Populating Global Variables to use them for Equipment and Vehicle Job Timings
+                if(shiftCount == noOfDriveShift - 1 && noOfDriveShift > 1)
+                {
+                    nonResourceRoleJobFinishTime = driveShift.finish;
+                }
+                // for single shift
+                else if (shiftCount == 0 && noOfDriveShift == 1)
+                {
+                    nonResourceRoleJobStartTime = driveShift.start;
+                    nonResourceRoleJobFinishTime = driveShift.finish;
+                }
+                else if (shiftCount == 0 && noOfDriveShift > 1)
+                {
+                    nonResourceRoleJobStartTime = driveShift.start;
+                } 
+                
+            // HRP-11295 -- End
             }
-            // for single shift
-            else if (shiftCount == 0 && noOfDriveShift == 1)
-            {
-                nonResourceRoleJobStartTime = driveShift.start;
-                nonResourceRoleJobFinishTime = driveShift.finish;
+
+            // HRP-13146: Volunteer Jobs timings
+            for (MobileDriveGeneratorDMLService.DMLJob job : driveShift.jobs) {
+                if (string.isBlank(job.resourceRole) && String.isBlank(job.assetType)) {                    
+                    job.start =  driveShift.start;
+                    job.finish = driveShift.finish;
+                    job.duration = driveShiftDuration;
+                }
             }
-            else if (shiftCount == 0 && noOfDriveShift > 1)
-            {
-                nonResourceRoleJobStartTime = driveShift.start;
-            } 
-            
-           // HRP-11295 -- End
+
+            return driveShift;
         }
-        return driveShift;
-    }
 
         // Job Timings Calculation for Equipment and Vehicle - HRP-11295
         protected void populateJobTimingsForEquipmentAndVehicle (MobileDriveGeneratorDMLService.DMLDrive drive,List<MobileDriveGeneratorDMLService.DMLJob> jobList)

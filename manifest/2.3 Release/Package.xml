@@ -22,8 +22,10 @@
         <members>DriveResourceAllocationBatchTest</members>
         <members>FieldIdentifiers</members>
 		<members>FutureDrivesController</members>
+        <members>FutureDrivesController_Test</members>
         <members>GenerateMobileDrive</members>
         <members>GenerateMobileDriveTest</members>
+        <members>GenerateDriveTestData</members>
         <members>MobileDriveGeneratorDMLService</members>
         <members>OpportunityService</members>
         <members>OpportunityTriggerHandler</members>
@@ -53,8 +55,12 @@
         <members>skedUpdateJobTimeVarianceBatch</members>
         <members>skedUpdateJobTimeVarianceBatch_Test</members>
         <members>slwcDataService</members>
+        <members>slwcDataService_Test</members>
 		<members>slwcDriveService</members>
+        <members>slwcDriveService_Test</members>
 		<members>slwcSetting</members>
+        <members>skedOpportunityHandler</members>
+		<members>skedOpportunityTrigger_Test</members>
         <name>ApexClass</name>
     </types>
     <types>
