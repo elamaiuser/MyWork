@@ -7,7 +7,7 @@ import * as slwcUtils from 'c/slwcUtils';
 import { debugLogService, tagService, tagQueryModel } from 'c/dataService';
 import { DriveHelper, DriveFetch } from 'c/slwcDriveGenerator';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent'
-import { DRIVE_TYPE, MANUALLY_CREATED_FROM, RESOURCE_TYPE, VOLUNTEER_COUNTS_ADJUSTMENT_REASON } from 'c/slwcConstants';
+import { DRIVE_TYPE, MANUALLY_CREATED_FROM, RESOURCE_TYPE, VOLUNTEER_COUNTS_ADJUSTMENT_REASON, VOLUNTEER_TYPE } from 'c/slwcConstants';
 
 export default class SlwcDriveShiftJobModal extends LightningElement {
     helper = new DriveHelper();
@@ -24,7 +24,6 @@ export default class SlwcDriveShiftJobModal extends LightningElement {
     @track showModal = false;
     @track showSpinner = false;
     @track isVolunteerQuantityChanged = false;
-    @track isRedcrossVolunteerQuantityChangedOnMultiShiftDrive = false;
     @track isOtherVolunteerAdjustmentReasonNeeded = false;
 
     @track isPersonResource;
@@ -237,9 +236,6 @@ export default class SlwcDriveShiftJobModal extends LightningElement {
         if (name === 'redcrossVolunteerQuantity' || name === 'sponsorVolunteerQuantity') {
             jobClone.quantity = (jobClone.redcrossVolunteerQuantity || 0) + (jobClone.sponsorVolunteerQuantity || 0);
             this.isVolunteerQuantityChanged = true;
-            if(name === 'redcrossVolunteerQuantity' && this.drive?.driveShifts?.length  > 1) {
-                this.isRedcrossVolunteerQuantityChangedOnMultiShiftDrive = true;
-            }
         }
 
         if (name === 'vphhQuantity' || name === 'aptQuantity') {
@@ -477,6 +473,8 @@ export default class SlwcDriveShiftJobModal extends LightningElement {
             if(existed) {
                 this.job = {
                     ...this.job,
+                    redcrossVolunteerQuantity: this.job.redcrossVolunteerQuantity || existed.redcrossVolunteerQuantity,
+                    sponsorVolunteerQuantity: this.job.sponsorVolunteerQuantity || existed.sponsorVolunteerQuantity,
                     key: existed.key,
                     id: existed.id
                 }
@@ -488,8 +486,13 @@ export default class SlwcDriveShiftJobModal extends LightningElement {
                         variant: 'success'
                     })
                 );
-                console.log('this.driveShift ',this.driveShift);
-                if(this.isRedcrossVolunteerQuantityChangedOnMultiShiftDrive) {
+
+                const isRedCrossQtyUpdateBannerNeeded = 
+                    this.isVolunteerResource && 
+                    this.job.volunteerRole === VOLUNTEER_TYPE.DONOR_AMBASSADOR &&
+                    this.job.redcrossVolunteerQuantity !== existed?.redcrossVolunteerQuantity && 
+                    this.drive?.driveShifts?.length > 1;
+                if(isRedCrossQtyUpdateBannerNeeded) {
                     this.dispatchEvent(
                         new ShowToastEvent({
                             title: 'Alert!',
