@@ -894,6 +894,7 @@ class DriveHelper {
           fieldReadonlyMap.driveShiftsMetadata = false;
           fieldReadonlyMap.driveShiftsConfiguration = false;
           fieldReadonlyMap.driveShifts = false;
+          fieldReadonlyMap.redcrossVolunteerRequired = false;
         }
         
         if(isAPSUser || isManufacturingUser) {
@@ -921,9 +922,11 @@ class DriveHelper {
 
     if(isAPSUser || isDRDUser) {
       fieldReadonlyMap.operationNotes = false;
+      fieldReadonlyMap.redcrossVolunteerRequired = false;
     }
 
     fieldReadonlyMap.aptQuantity = isOnlyAPSUser ? false : true;
+    fieldReadonlyMap.redcrossVolunteerRequired = isAPSUser || isDRDUser || isAdminUser ? false : true;
 
     return {
       isReadonly,
