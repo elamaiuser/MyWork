@@ -424,8 +424,7 @@ export default class SlwcStaffingConstraintMassUpdate extends LightningElement {
   };
 
   handleEditRecurrenceStaffingConstraints = (event) => {
-    const { dateOfConstraint, collectionOperationId } =
-      event.currentTarget.dataset;
+    const { collectionOperationId } = event.currentTarget.dataset;
 
     this.showEditRecurrenceStaffingConstraintModal({
       dateRange: this.collectionOperationDateRange,
@@ -453,10 +452,8 @@ export default class SlwcStaffingConstraintMassUpdate extends LightningElement {
 
   handleEditStaffingConstraint = (event) => {
     const { collectionOperationId, driveType, dateOfConstraint, timeBlockId } = event.currentTarget.dataset;
-    const staffingConstraint =
-      this.mappedStaffingConstraintData?.[
-        `${collectionOperationId}${timeBlockId ? KEY_SEPERATOR + timeBlockId : ''}${KEY_SEPERATOR}${driveType}${KEY_SEPERATOR}${dateOfConstraint}`
-      ]?.[0];
+    const key = `${collectionOperationId}${timeBlockId ? KEY_SEPERATOR + timeBlockId : ''}${KEY_SEPERATOR}${driveType}${KEY_SEPERATOR}${dateOfConstraint}`
+    const staffingConstraint = this.mappedStaffingConstraintData?.[key]?.[0];
     const collectionOperation = find(this.collectionOperations, {
       id: staffingConstraint.collectionOperationId
     });
@@ -493,12 +490,9 @@ export default class SlwcStaffingConstraintMassUpdate extends LightningElement {
   }
 
   handleDeleteStaffingConstraint(event) {
-    const { collectionOperationId, driveType, dateOfConstraint } =
-      event.currentTarget.dataset;
-    const staffingConstraint =
-      this.mappedStaffingConstraintData?.[
-        `${collectionOperationId}${KEY_SEPERATOR}${driveType}${KEY_SEPERATOR}${dateOfConstraint}`
-      ]?.[0];
+    const { collectionOperationId, driveType, dateOfConstraint, timeBlockId } = event.currentTarget.dataset;
+    const key = `${collectionOperationId}${timeBlockId ? KEY_SEPERATOR + timeBlockId : ''}${KEY_SEPERATOR}${driveType}${KEY_SEPERATOR}${dateOfConstraint}`
+    const staffingConstraint = this.mappedStaffingConstraintData?.[key]?.[0];
 
     if (!staffingConstraint) {
       return;
