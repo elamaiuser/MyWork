@@ -100,7 +100,7 @@ public class skedDriveChangeRequestHandler extends skedTriggerHub {
             sked_Drive_Change_Request__c oldData = oldMap.get(newRecord.Id);
             if (newRecord.sked_Status__c != oldData.sked_Status__c && newRecord.sked_Status__c == 'Submitted') {
                 mapSubmittedDcr.put(newRecord.Id, newRecord);
-                if(newRecord.sked_Route_Approval_Request_To__c != oldData.sked_Route_Approval_Request_To__c) {
+                if(newRecord.sked_Route_Approval_Request_To__c != oldData.sked_Route_Approval_Request_To__c || (newRecord.sked_Status__c == 'Submitted' && oldData.sked_Status__c == 'Waiting for APS Approval')) {//HRP-14627
                     hasRouteApprovalRequestChanged = true;
                 }
             }
