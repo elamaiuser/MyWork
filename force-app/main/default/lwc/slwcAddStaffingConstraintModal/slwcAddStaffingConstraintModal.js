@@ -14,10 +14,10 @@ import {
   activityQueryModel,
   activityService,
   collectionOperationTimeBlockQueryModel,
-  collectionOperationTimeBlockService
+  collectionOperationTimeBlockService,
+  sObjectType
 } from "c/dataService";
 import { DRIVE_STATUS } from "c/slwcConstants";
-import { sObjectType } from "c/dataService";
 
 const KEY_SEPERATOR = "__";
 
@@ -41,7 +41,7 @@ export default class SlwcAddStaffingConstraintModal extends LightningElement {
   @track totalFixedSiteStaffRequested = 0;
   @track totalMobileStaffRequested = 0;
 
-  @track timeBlocks = [];
+  @track timeBlockOptions = [];
   @track existingStaffingConstraints = [];
   @track mappedStaffingConstraintData = null;
   @track mappedDriveData = null;
@@ -243,7 +243,7 @@ export default class SlwcAddStaffingConstraintModal extends LightningElement {
 
   async fetchTimeBlockData() {
     this.showLoading();
-    this.timeBlocks = [];
+    let timeBlockOptions = [];
 
     const { collectionOperation, dateOfConstraint } = this.model;
 
@@ -261,13 +261,21 @@ export default class SlwcAddStaffingConstraintModal extends LightningElement {
         ]);
       })
       .then(([collectionOperationTimeBlockResult]) => {
-        this.timeBlocks = collectionOperationTimeBlockResult.map(coTimeBlock => {
-          return {
+        collectionOperationTimeBlockResult.forEach(coTimeBlock => {
+          const weekdayLong = this.dateUtils.dateIso2WeeekDay(dateOfConstraint).weekdayLong;
+          if (coTimeBlock.timeBlock.daysOfWeek.includes(weekdayLong)) {
+            timeBlockOptions.push({
+              ...coTimeBlock.timeBlock,
               label: coTimeBlock.timeBlock.name,
               value: coTimeBlock.timeBlock.id
+            });
           }
         });
-        this.timeBlocks.unshift({ label: '--None--', value: "" }) 
+
+        if (timeBlockOptions.length) {
+          timeBlockOptions.unshift({ label: '--None--', value: "" });
+        }
+        this.timeBlockOptions = timeBlockOptions;
       })
       .catch((error) => {
         console.log(error);

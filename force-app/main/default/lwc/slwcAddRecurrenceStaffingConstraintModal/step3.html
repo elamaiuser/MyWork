@@ -85,6 +85,7 @@
                 <th class="slds-cell-wrap event-type__col">
                   Date Of Constraint
                 </th>
+                <th class="slds-cell-wrap event-type__col">Time Block</th>
                 <th class="slds-cell-wrap event-type__col">Drive Type</th>
                 <th class="slds-cell-wrap event-type__col">
                   Total Staff Constraints
@@ -112,6 +113,7 @@
             </thead>
             <tbody>
               <tr>
+                <td class="slds-cell-wrap event-type__col"></td>
                 <td class="slds-cell-wrap event-type__col"></td>
                 <td class="slds-cell-wrap event-type__col"></td>
                 <td class="slds-cell-wrap event-type__col">
@@ -145,6 +147,7 @@
                   ></lightning-formatted-date-time>
                 </td>
 
+                <td class="slds-cell-wrap event-type__col">{item.timeBlockName}</td>
                 <td class="slds-cell-wrap event-type__col">{item.driveType}</td>
                 <td class="slds-cell-wrap event-type__col">
                   <template
