@@ -11,10 +11,12 @@
 		<members>Send_Bell_Notification_To_Task</members>
 		<members>Send_Bell_Notification_to_AM_for_approval_status</members>
 		<members>Send_Bell_and_Email_Notifications_for_Task</members>
+		<members>Skedulo_Resource_Termination_Rule</members>
 		<name>Flow</name>
 	</types>
 	<types>
 		<members>sked_Optimization_Run__c</members>
+		<members>sked__Resource__c</members>
 		<name>Workflow</name>
 	</types>
 	<types>
