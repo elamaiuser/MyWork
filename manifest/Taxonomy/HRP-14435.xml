@@ -3,6 +3,7 @@
 	<types>
         <members>BSF_Batch_GenerateCollectionZipcode</members>
         <members>BSF_Batch_GenerateCollectionZipcode_Test</members>
+        <members>BSF_Batch_EndCollectionZip</members> <!-- Latest Added -->
         <name>ApexClass</name>
     </types>
 	<version>63.0</version>

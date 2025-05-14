@@ -136,7 +136,7 @@ BSF_Batch_PopulateCORegion batch1 = new BSF_Batch_PopulateCORegion();
            skedTestDataFactory testDataFactory = new skedTestDataFactory('us', 14);
       //  Map<string, sObject> mapTestData = testDataFactory.setupCommonTestData();
  Set<Id> upsertedSiteCollectionOperationIds = new Set<Id>();
-        sked__Location__c testSite = (sked__Location__c) mapTestData.get('testLocation1');
+        sked__Location__c testSite = [Select Id from sked__Location__c LIMIT 1];
         Biomed_Collection_Op_Center__c testCollectionOp = (Biomed_Collection_Op_Center__c) mapTestData.get('testCollectionOperation2');
          // sked_Collections_Zip_Code__c collZip = new sked_Collections_Zip_Code__c();
        /* sked_Staging_Location__c testStagingLocation = new sked_Staging_Location__c(
@@ -155,9 +155,9 @@ BSF_Batch_PopulateCORegion batch1 = new BSF_Batch_PopulateCORegion();
         insert testCosl;*/
 
 //        delete [SELECT Id FROM sked_Travel_Time_Index_Item__c];
-       
+      
         sked_Site_Collection_Operation__c testSCO = new sked_Site_Collection_Operation__c(
-            sked_Site__c = 'a1L8J000001xVj0UAE',
+            sked_Site__c = testSite.id,
             sked_Collections_Zip_Code__c= collTerr.Id,
             sked_Collection_Operation__c = 'a0b8J000001Qg6eQAC',
             sked_Start_Date__c = System.today().addDays(-100),
@@ -269,7 +269,7 @@ Set<Id> upsertedSiteCollectionOperationIds = new Set<Id>();
 //        delete [SELECT Id FROM sked_Travel_Time_Index_Item__c];
         Test.startTest();
         sked_Site_Collection_Operation__c testSCO = new sked_Site_Collection_Operation__c(
-            sked_Site__c ='a1L8J000001xVj0UAE',
+            sked_Site__c =testSite.id,
             sked_Collection_Operation__c = testCollectionOp.Id,
             sked_Start_Date__c = System.today().addDays(-100),
             sked_End_Date__c = System.today().addDays(100)
