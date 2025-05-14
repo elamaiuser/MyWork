@@ -47,11 +47,11 @@ private class skedResourceOverrideDistrictBatch_Test {
     
       static testmethod void mainTestWithException() {
         // Setup your base test data
-         skedTestDataFactory testDataFactory = new skedTestDataFactory('us', 14);
+        skedTestDataFactory testDataFactory = new skedTestDataFactory('us', 14);
         Map<string, sObject> mapTestData = testDataFactory.setupCommonTestData();
         mapTestData = testDataFactory.setupDriveData();
 
-     //   Biomed_Collection_Op_Center__c testCollectionOperation1 = (Biomed_Collection_Op_Center__c)mapTestData.get('testCollectionOperation1');
+        //  Biomed_Collection_Op_Center__c testCollectionOperation1 = (Biomed_Collection_Op_Center__c)mapTestData.get('testCollectionOperation1');
         sked__Region__c testRegion = (sked__Region__c) mapTestData.get('testRegion1');
         sked_Drive__c testDrive = (sked_Drive__c) mapTestData.get('testDrive1');
         sked__Resource__c testResource = (sked__Resource__c) mapTestData.get('testResource1');
