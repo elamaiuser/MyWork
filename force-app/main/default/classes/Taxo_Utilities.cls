@@ -72,7 +72,6 @@ public class Taxo_Utilities {
                 }
             }   
         } catch (Exception e) {
-            System.debug('Error in Taxo_Utilities.logErrors method: ' + e.getMessage());
             Taxo_Utilities.logErrorForException(e, 'Taxo_Utilities', 'logErrors', e.getMessage(), e.getMessage(), 'Taxonomy_Run__c',null,null);
         }
         }
@@ -95,8 +94,7 @@ public class Taxo_Utilities {
                                          null);
             } 
         } catch (Exception e) {
-            System.debug('Error in Taxo_Utilities.logErrors method: ' + e.getMessage());
-            Taxo_Utilities.logErrorForException(e, 'Taxo_Utilities', 'logErrors', e.getMessage(), e.getMessage(), 'Taxonomy_Run__c',null,null);
+         Taxo_Utilities.logErrorForException(e, 'Taxo_Utilities', 'logErrors', e.getMessage(), e.getMessage(), 'Taxonomy_Run__c',null,null);
         }
     }
     public static void logErrorForException(Exception ex, 
@@ -157,8 +155,7 @@ public class Taxo_Utilities {
                 // insert txr; // Insert the junction record
             }
             
-        } catch (Exception e) {
-            System.debug('Error in Taxo_Utilities.logErrorForException method: ' + e.getMessage());
+        } catch (Exception e) { 
             Taxo_Utilities.logErrorForException(e, 'Taxo_Utilities', 'logErrors', e.getMessage(), e.getMessage(), 'Taxonomy_Run__c',null,null);
             
         }
@@ -176,4 +173,5 @@ public class Taxo_Utilities {
         // Return the batch size if found; otherwise, return the default value
         return (config != null && config.Batch_Size__c !=null) ? Integer.valueOf(config.Batch_Size__c) : defaultBatchSize;
     }
+    
 }

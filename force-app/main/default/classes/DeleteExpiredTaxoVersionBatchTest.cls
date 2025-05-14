@@ -114,4 +114,28 @@ public class DeleteExpiredTaxoVersionBatchTest {
         
         
     }*/
+    
+    
+    
+    
+    
+    
+     @isTest
+    static void testScheduledBatchExecution() {
+        // Create a CRON expression: run 1 minute later
+        String cronExp = '0 0 0 1 1 ? 2050'; // arbitrary future date
+
+        Test.startTest();
+
+        // Schedule the job
+        String jobId = System.schedule('Test Taxo Version Delete Job', cronExp, new BSF_Sched_DeleteExpiredTaxoVersionBatch());
+
+        Test.stopTest();
+
+        // Assert that a job was scheduled
+        System.assertNotEquals(null, jobId, 'Scheduled job ID should not be null');
+
+   
+   
+    }
 }

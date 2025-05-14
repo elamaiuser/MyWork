@@ -91,6 +91,8 @@
         <members>Taxo_Utilities</members>
         <members>BSF_Batch_DeleteExpiredTaxoVersionBatch</members>
         <members>DeleteExpiredTaxoVersionBatchTest</members>
+        <members>TestTaxoUtilities</members>
+        <members>BSF_Sched_DeleteExpiredTaxoVersionBatch</members>
         <name>ApexClass</name>
     </types>
 	<version>63.0</version>
