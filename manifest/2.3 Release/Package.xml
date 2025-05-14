@@ -2,7 +2,9 @@
 <Package xmlns="http://soap.sforce.com/2006/04/metadata">
     <types>
         <members>AccountContactHistoryService</members>
+        <members>AccountContactHistoryService_Test</members>
         <members>AccountInvokable</members>
+        <members>AccountInvokable_Test</members>
         <members>AccountServiceRoleService</members>
         <members>AccountServiceRoleTriggerHandler</members>
         <members>AccountServiceRoleTrigger_Test</members>
@@ -12,6 +14,7 @@
         <members>BSF_Utilities</members>
 		<members>BSF_UtilitiesTest</members>
         <members>BSF_MarketingExceptionRequest</members>
+        <members>TaskTriggerTest</members>
         <members>CalendarBuildBatchHandler</members>
 		<members>CalendarBuildEvaluateDrivesBatch_Test</members>
 		<members>CheckRecursive</members>
@@ -36,20 +39,29 @@
         <members>WeeklyStaffScheduleReportControllerTest</members>
         <members>contactService_Test</members>
         <members>skedActivityResourceHandler</members>
+        <members>skedActivityResourceTrigger_Test</members>
 		<members>skedActivityService</members>
+        <members>skedActivityService_Test</members>
         <members>skedConstants</members>
         <members>skedDriveChangeRequestHandler</members>
+        <members>skedDriveChangeRequestHandler_Test</members>
         <members>skedDriveHandler</members>
+        <members>skedDriveTrigger_Test</members>
         <members>skedExceptionLogService</members>
         <members>skedFixedSiteProcedureProjectionHandler</members>
+        <members>skedFsppHandler_Test</members>
         <members>skedJobAllocationPostProcessBatch</members>
         <members>skedJobAllocationPostProcessBatch_Test</members>
         <members>skedJobHandler</members>
+        <members>skedJobHandler_Test</members>
         <members>skedLocationTagHandler</members>
+        <members>skedLocationTagTrigger_Test</members>
         <members>skedReprocessStuckTTIRequestBatch</members>
         <members>skedReprocessStuckTTIRequestBatch_Test</members>
         <members>skedResourceHandler</members>
+        <members>skedResourceHandler_Test</members>
         <members>skedRoleTimeVarianceHandler</members>
+        <members>skedRoleTimeVariance_Test</members>
         <members>skedSetting</members>
         <members>skedSetting_Test</members>
         <members>skedUpdateJobTimeVarianceBatch</members>
