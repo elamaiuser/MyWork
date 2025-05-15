@@ -1000,17 +1000,21 @@ class WbFixedSiteGenerator extends BaseGenerator {
         let resourceQuantityMap = this.mapResourceQuantity.get(driveShift.key);
         const staffingComplement = staffingComplementChanged[driveShiftIndex];
         Object.keys(staffingComplement).forEach(resourceRole => {
-          const { quantity, systemQuantity, vphhQuantity, aptQuantity } = staffingComplement[resourceRole];
+          const { quantity, systemQuantity, vphhQuantity, aptQuantity, isManuallyCreated, manuallyCreatedFrom } = staffingComplement[resourceRole]; //preserve properties for manually created jobs
           if(resourceRole === 'VP/HH') {
             resourceQuantityMap.set('VP/HH', {
               vphhQuantity: vphhQuantity,
               aptQuantity: aptQuantity,
-              systemQuantity: systemQuantity
+              systemQuantity: systemQuantity,
+              isManuallyCreated: isManuallyCreated,
+              manuallyCreatedFrom: manuallyCreatedFrom
             });
           } else {
             resourceQuantityMap.set(resourceRole, {
               quantity: quantity,
-              systemQuantity: systemQuantity
+              systemQuantity: systemQuantity,
+              isManuallyCreated: isManuallyCreated,
+              manuallyCreatedFrom: manuallyCreatedFrom
             });
           }
         })
@@ -1237,7 +1241,7 @@ class WbFixedSiteGenerator extends BaseGenerator {
           jobsUpdatedViaDualRoleChangeMap[driveShiftIndex] = [];
         }
 
-        driveShift.jobs.forEach(job => {
+        driveShift.jobs?.forEach(job => {
           if(job.resourceRole && job.isCreatedOrUpdatedViaDualRoleChange) {
             jobsUpdatedViaDualRoleChangeMap[driveShiftIndex].push(cloneDeep(job));
           }
