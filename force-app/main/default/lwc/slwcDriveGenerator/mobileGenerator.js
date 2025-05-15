@@ -1980,8 +1980,8 @@ class MobileGenerator extends BaseGenerator {
       if (!job) {
         job = cloneDeep(jobTemplate);
         job.key = generateUUID();
-      }
-      job.jobTags = cloneDeep(jobTagsMap[RESOURCE_TYPE.PERSON]);
+        job.jobTags = cloneDeep(jobTagsMap[RESOURCE_TYPE.PERSON]);
+      } else job.jobTags = [...job.jobTags];
       job.tagNames = job.jobTags.map(item => item.tag.name).join(', ');
       job.volunteerRole = volunteerRole;
       if (volunteerRole === 'Donor Ambassador') {
@@ -2614,17 +2614,15 @@ class MobileGenerator extends BaseGenerator {
 
   handleRedcrossVolunteerRequirement( job = {} ) {
     const isSpecificVolunteerJob  = (job, volunteerRole) => {
-      if(!job) return;
+      if(!job) return false;
       return job.volunteerRole === volunteerRole;
     }
 
     this.initResourceQuantityMap();
-    let sponsorVolunteerQuantity = 0;
     
     if(!isEmpty(job))  {
       if (!isSpecificVolunteerJob(job, VOLUNTEER_TYPE.DONOR_AMBASSADOR)) return;
       this.mapVolunteerQuantity = new Map().set(VOLUNTEER_TYPE.DONOR_AMBASSADOR, job.isDeleted ? 0 : job.redcrossVolunteerQuantity || 0);
-      sponsorVolunteerQuantity = job.isDeleted ? 0 : (job.sponsorVolunteerQuantity || 0);
     } else this.mapVolunteerQuantity = new Map().set(VOLUNTEER_TYPE.DONOR_AMBASSADOR, this.drive.redcrossVolunteerQuantity || 0);
 
     const redcrossVolunteerQuantity  = this.mapVolunteerQuantity.get(VOLUNTEER_TYPE.DONOR_AMBASSADOR);
@@ -2635,10 +2633,13 @@ class MobileGenerator extends BaseGenerator {
 
     this.drive.driveShifts.forEach((driveShift) => {
       let driveShiftJobs = cloneDeep(driveShift.jobs);
-      let originalJob = this.helper.findJob({ volunteerRole: VOLUNTEER_TYPE.DONOR_AMBASSADOR }, driveShiftJobs);
+      let originalJob = cloneDeep(this.helper.findJob({ volunteerRole: VOLUNTEER_TYPE.DONOR_AMBASSADOR }, driveShiftJobs));
 
       if(!isEmpty(originalJob)) {
+        if(originalJob.key === job?.key) return;
+
         const originalJobIndex = driveShiftJobs.findIndex((item) => item.key === originalJob.key);
+        let sponsorVolunteerQuantity = originalJob.sponsorVolunteerQuantity || 0;
         const quantity = redcrossVolunteerQuantity + sponsorVolunteerQuantity;
 
         if(quantity <= 0) {
