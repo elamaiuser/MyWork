@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Prevent_ARD_For_FixedSite_Int_And_NonInt</fullName>
+    <active>true</active>
+    <description>Prevents users from entering a value in the Anticipated Registered Donors (ARD) field on Opportunity records where the associated Drive Site (Drive_Site__c) is of Record Type = Fixed Site and Operation Type = Integrated or Non Integrated APH.</description>
+    <errorConditionFormula>AND(
+    NOT(ISBLANK(Anticipated_Registered_Donors__c)),
+    TEXT(Type_of_Drive__c) = &quot;Fixed Site&quot;,
+    OR(
+        Drive_Site_Operation_Type__c = &quot;Integrated&quot;,
+        Drive_Site_Operation_Type__c = &quot;Non Integrated APH&quot;
+    )
+)</errorConditionFormula>
+    <errorDisplayField>Anticipated_Registered_Donors__c</errorDisplayField>
+    <errorMessage>ARD values are not permitted for IFS &amp; Non-Int APH.</errorMessage>
+</ValidationRule>
