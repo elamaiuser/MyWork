@@ -32,5 +32,9 @@
 		<members>LeadServiceTests</members>
 		<name>ApexClass</name>
 	</types>
+	<types>
+		<members>slwcDriveGenerator</members>
+		<name>LightningComponentBundle</name>
+	</types>
     <version>63.0</version>
 </Package>

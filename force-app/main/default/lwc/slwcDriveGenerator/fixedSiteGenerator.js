@@ -918,10 +918,12 @@ class FixedSiteGenerator extends BaseGenerator {
         let resourceQuantityMap = this.mapResourceQuantity.get(driveShift.key);
         const staffingComplement = staffingComplementChanged[driveShiftIndex];
         Object.keys(staffingComplement).forEach(resourceRole => {
-          const { quantity, systemQuantity } = staffingComplement[resourceRole];
+          const { quantity, systemQuantity, isManuallyCreated, manuallyCreatedFrom } = staffingComplement[resourceRole]; //preserve properties for manually created jobs
           resourceQuantityMap.set(resourceRole, {
             quantity: quantity,
-            systemQuantity: systemQuantity
+            systemQuantity: systemQuantity,
+              isManuallyCreated: isManuallyCreated,
+              manuallyCreatedFrom: manuallyCreatedFrom
           });
         })
       })
