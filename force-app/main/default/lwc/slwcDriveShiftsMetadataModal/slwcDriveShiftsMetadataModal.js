@@ -264,6 +264,7 @@ export default class SlwcDriveShiftsMetadataModal extends LightningElement {
 
     if (targetName === 'projectedRegisteredDonors') {
       this.model.skipAptCalculation = true;
+      this.model.skipVolunteerRecalculation = false;
       driveHelper.splitScheduledDonors({
         ...this.drive,
         projectedRegisteredDonors: this.model.projectedRegisteredDonors
