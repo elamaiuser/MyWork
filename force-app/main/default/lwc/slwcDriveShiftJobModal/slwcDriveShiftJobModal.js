@@ -504,10 +504,13 @@ export default class SlwcDriveShiftJobModal extends LightningElement {
             }
         }
         
-        const isDualRoleModified = this.isDualRoleEditMode && this.driveShift.jobs?.find(_job => _job.resourceRole === this.job.resourceRole)?.dualRole !== this.job.dualRole;
+        const originalJob = this.driveShift.jobs?.find(_job => _job.resourceRole === this.job.resourceRole);
+        const isDualRoleModified = this.isDualRoleEditMode && originalJob?.dualRole !== this.job.dualRole;
+        const reducedDualRoleQuantity = this.isDualRoleEditMode ? Math.max(originalJob?.quantity - this.job.quantity, 0) : 0;
         this.job = {
             ...this.job,
-            isDualRoleModified: isDualRoleModified
+            isDualRoleModified: isDualRoleModified,
+            reducedDualRoleQuantity: reducedDualRoleQuantity
         };
 
         let eventValues = {action: this.action, shiftKey: this.driveShift.key, job: this.job};
