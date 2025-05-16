@@ -794,7 +794,7 @@ class DriveHelper {
     }
 
     if ([DRIVE_STATUS.DRAFT].includes(drive.status)) {
-      //even drive is draft, DRD can only update volunteer jobs, slots, operation notes.
+      //even drive is draft, DRD can only update volunteer jobs, slots, operation notes, redcrossVolunteerRequired.
       if(isDRDUser) {
         return {
           isReadonly: true,
@@ -813,14 +813,15 @@ class DriveHelper {
             operationNotes: false,
             linkedDrives: true,
             aptQuantity: true,
-            mobileDriveVehicesInput: true
+            mobileDriveVehicesInput: true,
+            redcrossVolunteerRequired: false
           },
           fieldChangeRestrictionMap: {
             driveSite: true
           }
         }
       } else {
-        return {
+        let fieldPermissionMap = {
           isReadonly: false,
           fieldReadonlyMap: {
             driveDate: false,
@@ -838,6 +839,7 @@ class DriveHelper {
             linkedDrives: false,
             aptQuantity: isOnlyAPSUser ? false : true,
             mobileDriveVehicesInput: false,
+            redcrossVolunteerRequired: isOnlyAPSUser || isAdminUser ? false : true,
           },
           fieldChangeRestrictionMap: {
             driveSite: true
@@ -862,7 +864,8 @@ class DriveHelper {
       volunteerJobs: isReadonly,
       operationNotes: isReadonly,
       linkedDrives: isReadonly,
-      aptQuantity: isReadonly
+      aptQuantity: isReadonly,
+      redcrossVolunteerRequired: isReadonly
     }
     let fieldChangeRestrictionMap = {
       driveSite: true
@@ -885,6 +888,7 @@ class DriveHelper {
           fieldReadonlyMap.driveShiftsMetadata = false;
           fieldReadonlyMap.driveShiftsConfiguration = false;
           fieldReadonlyMap.driveShifts = false;
+          fieldReadonlyMap.redcrossVolunteerRequired = false;
         }
         
         if(isAPSUser || isManufacturingUser) {
@@ -903,18 +907,20 @@ class DriveHelper {
         }
       }     
     }
-
+      
     if (drive.driveDate >= today) {
       if(isAPSUser) {
         fieldReadonlyMap.mobileDriveVehicesInput = false;
       }
     }
-    
+
     if(isAPSUser || isDRDUser) {
       fieldReadonlyMap.operationNotes = false;
+      fieldReadonlyMap.redcrossVolunteerRequired = false;
     }
 
     fieldReadonlyMap.aptQuantity = isOnlyAPSUser ? false : true;
+    fieldReadonlyMap.redcrossVolunteerRequired = isAPSUser || isDRDUser || isAdminUser ? false : true;
 
     return {
       isReadonly,
@@ -959,7 +965,9 @@ class DriveHelper {
         'x2rbcProjectedProcedures',
         'aptRequired',
         'aptQuantity',
-        'slotGenerator'
+        'slotGenerator',
+        'redcrossVolunteerRequired',
+        'redcrossVolunteerQuantity'
       ];
     }
 
