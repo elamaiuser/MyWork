@@ -10,13 +10,22 @@
         <members>BSF_Batch_Drive_OpRecordStatusCorrection</members>
         <members>BSF_Constants</members>
         <members>BSF_MarketingExceptionRequest</members>
+        <members>BSF_Utilities</members>
+		<members>BSF_UtilitiesTest</members>
+        <members>CalendarBuildBatchHandler</members>
+		<members>CalendarBuildEvaluateDrivesBatch_Test</members>
         <members>ContactService</members>
         <members>ContactTriggerHandler</members>
         <members>DriveGenerationUtil</members>
         <members>DriveResourceAllocationBatch</members>
         <members>DriveResourceAllocationBatchTest</members>
+        <members>FieldIdentifiers</members>
+		<members>FutureDrivesController</members>
+		<members>FutureDrivesController_Test</members>
+        <members>GenerateDriveTestData</members>
         <members>GenerateMobileDrive</members>
         <members>GenerateMobileDriveTest</members>
+        <members>MobileDriveGeneratorDMLService</members>
         <members>OpportunityService</members>
         <members>OpportunityTriggerHandler</members>
         <members>OpportunityTriggerTest</members>
@@ -24,17 +33,22 @@
         <members>TaskTriggerHandler</members>
         <members>WeeklyStaffScheduleReportController</members>
         <members>WeeklyStaffScheduleReportControllerTest</members>
+        <members>checkRecursive</members>
         <members>contactService_Test</members>
         <members>skedActivityResourceHandler</members>
 		<members>skedActivityService</members>
         <members>skedConstants</members>
         <members>skedDriveChangeRequestHandler</members>
         <members>skedDriveHandler</members>
-        <members>skedExceptionLogService</members>        
+        <members>skedDriveTrigger_Test</members>
+        <members>skedExceptionLogService</members>
+        <members>skedFixedSiteProcedureProjectionHandler</members>        
         <members>skedJobAllocationPostProcessBatch</members>
         <members>skedJobAllocationPostProcessBatch_Test</members>
         <members>skedJobHandler</members>
         <members>skedLocationTagHandler</members>
+        <members>skedOpportunityHandler</members>
+		<members>skedOpportunityTrigger_Test</members>
         <members>skedReprocessStuckTTIRequestBatch</members>
         <members>skedReprocessStuckTTIRequestBatch_Test</members>
         <members>skedResourceHandler</members>
@@ -43,8 +57,18 @@
         <members>skedSetting_Test</members>
         <members>skedUpdateJobTimeVarianceBatch</members>
         <members>skedUpdateJobTimeVarianceBatch_Test</members>
+        <members>slwcDataService</members>
+		<members>slwcDataService_Test</members>
+		<members>slwcDriveService</members>
+		<members>slwcDriveService_Test</members>
+		<members>slwcSetting</members>                
         <name>ApexClass</name>
     </types>    
+    <types>
+		<members>skedFixedSiteProcedureProjectionTrigger</members>
+        <members>updateEventTrigger</members>
+		<name>ApexTrigger</name>
+	</types>
     <types>
         <members>Account.Last_Closed_Drive__c</members>
         <members>Calendar_Build_Error_Log__c.Category__c</members>
@@ -56,7 +80,10 @@
         <members>Opportunity.Red_Cross_Volunteer_Quantity__c</members>
         <members>Opportunity.Red_Cross_Volunteer_Required__c</members>
         <members>Opportunity.StageName</members>
+        <members>sked_Drive__c.sked_Redcross_Volunteer_Required__c</members>
+		<members>sked_Drive__c.sked_Redcross_Volunteer_Quantity__c</members>
         <members>sked_Drive__c.sked_Stage_Options__c</members>        
+        <members>sked_Fixed_Site_Procedure_Projection__c.sked_Impact_Drives__c</members>
         <members>sked_Location_Account__c.sked_Location__c</members>
         <members>sked_TTIRR_Stuck_Job_Config_Setting__c.sked_Enable_Auto_Reschedule__c</members>
         <members>sked_TTIRR_Stuck_Job_Config_Setting__c.sked_Is_Active__c</members>
@@ -66,9 +93,14 @@
         <members>sked_Travel_Time_Index_Refresh_Request__c.sked_Last_Stuck_Detection_Time__c</members>
         <members>sked_Travel_Time_Index_Refresh_Request__c.sked_Stuck_Retry_Count__c</members>
         <members>sked__Job__c.sked_VAR_Last_Modified_By__c</members>
+        <members>sked__Job__c.sked_Redcross_Volunteer_Quantity__c</members>
         <members>sked__Location__c.sked_Real_ID_Required__c</members>
         <members>sked__Location__c.sked_Site_Contact_Phone__c</members>
         <members>sked__Slot__c.sked_Fixed_Site_Lock_Reason__c</members>
+        <members>Volunteer_Staffing_Matrix__mdt.High_School_Drive__c</members>
+        <members>Volunteer_Staffing_Matrix__mdt.Max_Anticipated_Registered_Donors__c</members>
+        <members>Volunteer_Staffing_Matrix__mdt.Min_Anticipated_Registered_Donors__c</members>
+        <members>Volunteer_Staffing_Matrix__mdt.Volunteer_Quantity__c</members>        
         <name>CustomField</name>
     </types>
     <types>
@@ -78,13 +110,31 @@
     </types>
     <types>
         <members>Account_Service_Role_End_Reason__mdt.Deceased</members>
+        <members>Custom_Messages.Red_Cross_Volunteer_Qty_Validation_0</members>
+		<members>Custom_Messages.Red_Cross_Volunteer_Quantity_Validation</members>
+		<members>Profile_Specific_Functionality_Access.Red_Cross_Volunteer_Setting</members>
+        <members>Volunteer_Staffing_Matrix.High_School_0_70</members>
+        <members>Volunteer_Staffing_Matrix.High_School_121_170</members>
+        <members>Volunteer_Staffing_Matrix.High_School_171_210</members>
+        <members>Volunteer_Staffing_Matrix.High_School_211_265</members>
+        <members>Volunteer_Staffing_Matrix.High_School_71_120</members>
+        <members>Volunteer_Staffing_Matrix.Non_High_School_0_17</members>
+        <members>Volunteer_Staffing_Matrix.Non_High_School_121_160</members>
+        <members>Volunteer_Staffing_Matrix.Non_High_School_18_40</members>
+        <members>Volunteer_Staffing_Matrix.Non_High_School_41_80</members>
+        <members>Volunteer_Staffing_Matrix.Non_High_School_81_120</members>
         <name>CustomMetadata</name>
     </types>
     <types>
         <members>Account_Service_Role_End_Reason__mdt</members>
         <members>sked_TTIRR_Stuck_Job_Config_Setting__c</members>
+        <members>Volunteer_Staffing_Matrix__mdt</members>
         <name>CustomObject</name>
     </types>
+    <types>
+		<members>Opportunity.FieldsApplytoDrives</members>
+		<name>FieldSet</name>
+	</types>
     <types>
         <members>Calendar_Build_Log_Manual_Run_Record_Page</members>
         <members>Calendar_Build_Log_Record_Page</members>
@@ -98,6 +148,7 @@
     <types>
         <members>Account_Before_Insert_Update_Flow</members>
         <members>Create_Account_Service_Role_Upon_Contact_Creation</members>
+        <members>Create_New_Recurring_Mobile_Drive</members>
         <members>Drive_Hold_Status_Expires</members>
         <members>Handle_Do_Not_Contact_Updates_On_Contact</members>
         <members>Handle_Site_Name_Room_Name_update</members>
@@ -132,9 +183,16 @@
         <name>Layout</name>
     </types>
     <types>
+        <members>autoMapper</members>
         <members>slwcAppointmentModal</members>
         <members>slwcAvailator</members>
+        <members>slwcConstants</members>
         <members>slwcDriveGenerator</members>
+        <members>slwcDualRoleAssignmentModal</members>
+        <members>slwcDriveShift</members>        
+        <members>slwcDriveShiftJobModal</members>
+        <members>slwcDriveShiftJobTable</members>
+        <members>slwcDriveShiftsMetadataModal</members>
         <members>slwcDriveStaffingDetails</members>
         <members>slwcExceptionList</members>
         <members>slwcLinkedDriveStaffingDetails</members>

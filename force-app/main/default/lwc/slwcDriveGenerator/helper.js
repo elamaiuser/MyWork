@@ -794,7 +794,7 @@ class DriveHelper {
     }
 
     if ([DRIVE_STATUS.DRAFT].includes(drive.status)) {
-      //even drive is draft, DRD can only update volunteer jobs, slots, operation notes.
+      //even drive is draft, DRD can only update volunteer jobs, slots, operation notes, redcrossVolunteerRequired.
       if(isDRDUser) {
         return {
           isReadonly: true,
@@ -813,14 +813,15 @@ class DriveHelper {
             operationNotes: false,
             linkedDrives: true,
             aptQuantity: true,
-            mobileDriveVehicesInput: true
+            mobileDriveVehicesInput: true,
+            redcrossVolunteerRequired: false
           },
           fieldChangeRestrictionMap: {
             driveSite: true
           }
         }
       } else {
-        return {
+        let fieldPermissionMap = {
           isReadonly: false,
           fieldReadonlyMap: {
             driveDate: false,
@@ -838,6 +839,7 @@ class DriveHelper {
             linkedDrives: false,
             aptQuantity: isOnlyAPSUser ? false : true,
             mobileDriveVehicesInput: false,
+            redcrossVolunteerRequired: isOnlyAPSUser || isAdminUser ? false : true,
           },
           fieldChangeRestrictionMap: {
             driveSite: true
@@ -862,7 +864,8 @@ class DriveHelper {
       volunteerJobs: isReadonly,
       operationNotes: isReadonly,
       linkedDrives: isReadonly,
-      aptQuantity: isReadonly
+      aptQuantity: isReadonly,
+      redcrossVolunteerRequired: isReadonly
     }
     let fieldChangeRestrictionMap = {
       driveSite: true
@@ -885,6 +888,7 @@ class DriveHelper {
           fieldReadonlyMap.driveShiftsMetadata = false;
           fieldReadonlyMap.driveShiftsConfiguration = false;
           fieldReadonlyMap.driveShifts = false;
+          fieldReadonlyMap.redcrossVolunteerRequired = false;
         }
         
         if(isAPSUser || isManufacturingUser) {
@@ -903,18 +907,20 @@ class DriveHelper {
         }
       }     
     }
-
+      
     if (drive.driveDate >= today) {
       if(isAPSUser) {
         fieldReadonlyMap.mobileDriveVehicesInput = false;
       }
     }
-    
+
     if(isAPSUser || isDRDUser) {
       fieldReadonlyMap.operationNotes = false;
+      fieldReadonlyMap.redcrossVolunteerRequired = false;
     }
 
     fieldReadonlyMap.aptQuantity = isOnlyAPSUser ? false : true;
+    fieldReadonlyMap.redcrossVolunteerRequired = isAPSUser || isDRDUser || isAdminUser ? false : true;
 
     return {
       isReadonly,
@@ -959,7 +965,9 @@ class DriveHelper {
         'x2rbcProjectedProcedures',
         'aptRequired',
         'aptQuantity',
-        'slotGenerator'
+        'slotGenerator',
+        'redcrossVolunteerRequired',
+        'redcrossVolunteerQuantity'
       ];
     }
 
@@ -3515,7 +3523,7 @@ class DriveHelper {
     return validRoles;
   }
 
-  generateDualRoleJob = (job1, job2) => {
+  generateDualRoleJob = (job1, job2, dualRoleJobQuantity) => {
     const { quantity: quantity1 } = job1;
     const { quantity: quantity2 } = job2;
     
@@ -3523,19 +3531,44 @@ class DriveHelper {
     const jobsToUpdate = [];
     const jobsToDelete = [];
 
+    const remainingQuantity1 = dualRoleJobQuantity ? quantity1 - dualRoleJobQuantity : 0;
+    const remainingQuantity2 = dualRoleJobQuantity ? quantity2 - dualRoleJobQuantity : 0;
+
     if(quantity1 === quantity2) {
       jobsToUpdate.push({
         previousJob: job1,
         newJob: {
           ...job1,
           dualRole: job2.resourceRole,
-          quantity: job1.quantity,
+          quantity: quantity1 - remainingQuantity1,
           backupJob: job1
         }
       })
-      jobsToDelete.push({
-        previousJob: job2
-      });
+      if(remainingQuantity1 > 0) {
+        jobsToCreate.push({
+          newJob: {
+            ...job1,
+            id: uniqueId('temp_job_'),
+            key: generateUUID(),
+            quantity: remainingQuantity1,
+            jobTags: []
+          }
+        })
+      }
+      if(remainingQuantity2 > 0) {
+        jobsToUpdate.push({
+          previousJob: job2,
+          newJob: {
+            ...job2,
+            quantity: remainingQuantity2,
+            backupJob: job2
+          }
+        })
+      } else {
+        jobsToDelete.push({
+          previousJob: job2
+        });
+      }
       return {
         jobsToCreate,
         jobsToUpdate,
@@ -3544,42 +3577,67 @@ class DriveHelper {
     }
 
     if(quantity1 < quantity2) {
+      const newJob1Quantity = quantity1 - remainingQuantity1;
       jobsToUpdate.push({
         previousJob: job1,
         newJob: {
           ...job1,
           dualRole: job2.resourceRole,
-          quantity: job1.quantity
+          quantity: newJob1Quantity
         }
       })
+      if(remainingQuantity1 > 0) {
+        jobsToCreate.push({
+          newJob: {
+            ...job1,
+            id: uniqueId('temp_job_'),
+            key: generateUUID(),
+            quantity: remainingQuantity1,
+            jobTags: []
+          }
+        })
+      }
       jobsToUpdate.push({
         previousJob: job2,
         newJob: {
           ...job2,
           dualRole: '',
-          quantity: job2.quantity - job1.quantity
+          quantity: quantity2 - newJob1Quantity
         }
       })
     }
 
     if(quantity1 > quantity2) {
+      const newJob1Quantity = quantity2 - remainingQuantity2;
       jobsToUpdate.push({
         previousJob: job1,
         newJob: {
           ...job1,
           dualRole: job2.resourceRole,
-          quantity: job2.quantity
+          quantity: newJob1Quantity
         }
       })
-      jobsToDelete.push({
-        previousJob: job2
-      })
+      if(remainingQuantity2 > 0) {
+        jobsToCreate.push({
+          newJob: {
+            ...job2,
+            id: uniqueId('temp_job_'),
+            key: generateUUID(),
+            quantity: remainingQuantity2,
+            jobTags: []
+          }
+        })
+      } else {
+        jobsToDelete.push({
+          previousJob: job2
+        })
+      }
       jobsToCreate.push({
         newJob: {
           ...job1,
           id: uniqueId('temp_job_'),
           key: generateUUID(),
-          quantity: job1.quantity - job2.quantity,
+          quantity: quantity1 - newJob1Quantity,
           jobTags: []
         }
       })

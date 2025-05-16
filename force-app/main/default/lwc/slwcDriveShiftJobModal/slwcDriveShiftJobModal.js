@@ -7,7 +7,7 @@ import * as slwcUtils from 'c/slwcUtils';
 import { debugLogService, tagService, tagQueryModel } from 'c/dataService';
 import { DriveHelper, DriveFetch } from 'c/slwcDriveGenerator';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent'
-import { DRIVE_TYPE, MANUALLY_CREATED_FROM, RESOURCE_TYPE, VOLUNTEER_COUNTS_ADJUSTMENT_REASON } from 'c/slwcConstants';
+import { DRIVE_TYPE, MANUALLY_CREATED_FROM, RESOURCE_TYPE, VOLUNTEER_COUNTS_ADJUSTMENT_REASON, VOLUNTEER_TYPE } from 'c/slwcConstants';
 
 export default class SlwcDriveShiftJobModal extends LightningElement {
     helper = new DriveHelper();
@@ -473,6 +473,8 @@ export default class SlwcDriveShiftJobModal extends LightningElement {
             if(existed) {
                 this.job = {
                     ...this.job,
+                    redcrossVolunteerQuantity: this.job.redcrossVolunteerQuantity || 0,
+                    sponsorVolunteerQuantity: this.job.sponsorVolunteerQuantity || 0,
                     key: existed.key,
                     id: existed.id
                 }
@@ -484,13 +486,31 @@ export default class SlwcDriveShiftJobModal extends LightningElement {
                         variant: 'success'
                     })
                 );
+
+                const isRedCrossQtyUpdateBannerNeeded = 
+                    this.isVolunteerResource && 
+                    this.job.volunteerRole === VOLUNTEER_TYPE.DONOR_AMBASSADOR &&
+                    this.job.redcrossVolunteerQuantity !== existed?.redcrossVolunteerQuantity && 
+                    this.drive?.driveShifts?.length > 1;
+                if(isRedCrossQtyUpdateBannerNeeded) {
+                    this.dispatchEvent(
+                        new ShowToastEvent({
+                            title: 'Alert!',
+                            message: `Red Cross Volunteer Quantity has been updated on ${this.driveShift.name}. Red Cross Volunteer Quantity will be updated on all shifts.`,
+                            variant: 'warning'
+                        })
+                    );
+                }
             }
         }
         
-        const isDualRoleModified = this.isDualRoleEditMode && this.driveShift.jobs?.find(_job => _job.resourceRole === this.job.resourceRole)?.dualRole !== this.job.dualRole;
+        const originalJob = this.driveShift.jobs?.find(_job => _job.resourceRole === this.job.resourceRole);
+        const isDualRoleModified = this.isDualRoleEditMode && originalJob?.dualRole !== this.job.dualRole;
+        const reducedDualRoleQuantity = this.isDualRoleEditMode ? Math.max(originalJob?.quantity - this.job.quantity, 0) : 0;
         this.job = {
             ...this.job,
-            isDualRoleModified: isDualRoleModified
+            isDualRoleModified: isDualRoleModified,
+            reducedDualRoleQuantity: reducedDualRoleQuantity
         };
 
         let eventValues = {action: this.action, shiftKey: this.driveShift.key, job: this.job};
