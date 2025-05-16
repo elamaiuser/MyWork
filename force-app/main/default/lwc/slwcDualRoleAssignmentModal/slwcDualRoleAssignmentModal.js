@@ -112,7 +112,8 @@ export default class SlwcDualRoleAssignmentModal extends LightningElement {
   resetModel = () => {
     this.model = {
       primaryRole: null,
-      secondaryRole: null
+      secondaryRole: null,
+      quantity: null
     };
   }
 
@@ -123,41 +124,49 @@ export default class SlwcDualRoleAssignmentModal extends LightningElement {
 
     if(event.currentTarget.name === 'primaryRole') {
       this.model.secondaryRole = null;
+
+      const primaryJob = this.getJobByRole(value);
+      if(primaryJob) {
+        this.model.quantity = primaryJob.quantity;
+      }
     }
   }
 
+  getJobByRole = (role) => {
+    if(!this.driveShift || !this.driveShift.jobs) return null;
+
+    return this.driveShift.jobs.find(job => {
+      return job.resourceRole === role && !job.dualRole && job.manuallyCreatedFrom !== MANUALLY_CREATED_FROM.STAFFING_MODAL;
+    })
+  }
   getJobsToMerge = () => {
     if(!this.driveShift || !this.driveShift.jobs) return {
       primaryRoleJob: null,
       secondaryRoleJob: null
     };
 
-    const primaryRoleJob = this.driveShift.jobs.find(job => {
-      return job.resourceRole === this.model.primaryRole && !job.dualRole && job.manuallyCreatedFrom !== MANUALLY_CREATED_FROM.STAFFING_MODAL;
-    })
-
-    const secondaryRoleJob = this.driveShift.jobs.find(job => {
-      return job.resourceRole === this.model.secondaryRole && !job.dualRole && job.manuallyCreatedFrom !== MANUALLY_CREATED_FROM.STAFFING_MODAL;
-    })
+    const primaryRoleJob = this.getJobByRole(this.model.primaryRole);
+    const secondaryRoleJob = this.getJobByRole(this.model.secondaryRole);
 
     return {
       primaryRoleJob,
       secondaryRoleJob
     }
   }
-  
-  mergeSecondaryRoleJobToPrimaryRoleJob = (primaryRoleJob, secondaryRoleJob) => {
+
+  mergeSecondaryRoleJobToPrimaryRoleJob = (primaryRoleJob, secondaryRoleJob, quantity) => {
     if(!primaryRoleJob) return null;
     if(!secondaryRoleJob) return primaryRoleJob;
 
-    return this.driveHelper.generateDualRoleJob(primaryRoleJob, secondaryRoleJob);
+    return this.driveHelper.generateDualRoleJob(primaryRoleJob, secondaryRoleJob, quantity);
   }
 
   validate = () =>{
     this.errorMessages = [];
 
     const allValid = [
-        ...this.template.querySelectorAll('lightning-combobox')]
+        ...this.template.querySelectorAll('lightning-combobox'),
+        ...this.template.querySelectorAll('lightning-input')]
         .reduce((validSoFar, inputCmp) => {
             inputCmp.reportValidity();
             return validSoFar && inputCmp.checkValidity();
@@ -173,6 +182,17 @@ export default class SlwcDualRoleAssignmentModal extends LightningElement {
       this.errorMessages.push({
         message: `Cannot find job ${this.model.secondaryRole}`
       }) 
+    }
+
+    if(this.model.primaryRole && this.model.secondaryRole) {
+      const maxQuantityOfDualRoleJob = Math.min(primaryRoleJob.quantity, secondaryRoleJob.quantity);
+      if(this.model.quantity !== undefined && (
+        this.model.quantity <= 0 || this.model.quantity > maxQuantityOfDualRoleJob
+      )) {
+        this.errorMessages.push({
+          message: `The quantity of dual roles must be greater than 0 and less than or equal to ${maxQuantityOfDualRoleJob}`
+        }) 
+      }
     }
 
     return allValid && !this.errorMessages.length;
@@ -194,7 +214,7 @@ export default class SlwcDualRoleAssignmentModal extends LightningElement {
     if(!this.validate()) return;
 
     const {primaryRoleJob, secondaryRoleJob} = this.getJobsToMerge();
-    const {jobsToCreate, jobsToUpdate, jobsToDelete} = this.mergeSecondaryRoleJobToPrimaryRoleJob(primaryRoleJob, secondaryRoleJob);
+    const {jobsToCreate, jobsToUpdate, jobsToDelete} = this.mergeSecondaryRoleJobToPrimaryRoleJob(primaryRoleJob, secondaryRoleJob, this.model.quantity);
     const eventValues = { 
       drive: this.drive, 
       driveShift: this.driveShift,
