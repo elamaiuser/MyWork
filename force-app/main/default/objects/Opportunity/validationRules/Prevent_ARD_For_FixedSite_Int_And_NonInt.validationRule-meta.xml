@@ -4,6 +4,8 @@
     <active>true</active>
     <description>Prevents users from entering a value in the Anticipated Registered Donors (ARD) field on Opportunity records where the associated Drive Site (Drive_Site__c) is of Record Type = Fixed Site and Operation Type = Integrated or Non Integrated APH.</description>
     <errorConditionFormula>AND(
+    NOT(ISNEW()),
+    ISCHANGED(Anticipated_Registered_Donors__c),
     NOT(ISBLANK(Anticipated_Registered_Donors__c)),
     TEXT(Type_of_Drive__c) = &quot;Fixed Site&quot;,
     OR(
