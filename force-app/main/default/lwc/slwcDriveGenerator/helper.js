@@ -845,6 +845,12 @@ class DriveHelper {
             driveSite: true
           }
         }
+
+        if (isManufacturingUser) {
+          fieldPermissionMap.fieldReadonlyMap.driveDeliveryJobs = true;
+        }
+
+        return fieldPermissionMap;
       }
     }
 
