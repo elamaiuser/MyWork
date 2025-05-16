@@ -5158,7 +5158,7 @@ opp.StageName = 'Closed';
                 }
             }
             if(!templateIds.isEmpty()){
-                templateMap = new Map<Id,Opportunity>([SELECT Id, Red_Cross_Volunteer_Required__c FROM Opportunity WHERE Id IN: templateIds]);
+                templateMap = new Map<Id,Opportunity>([SELECT Id, Red_Cross_Volunteer_Required__c, Red_Cross_Volunteer_Quantity__c, Anticipated_Registered_Donors__c FROM Opportunity WHERE Id IN: templateIds]);
             }
             if(!highSchoolDriveMap.isEmpty() || !templateMap.isEmpty()){
                 List<Volunteer_Staffing_Matrix__mdt> matrixRecords = Volunteer_Staffing_Matrix__mdt.getAll().values();

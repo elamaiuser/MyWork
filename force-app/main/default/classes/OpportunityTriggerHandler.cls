@@ -285,9 +285,11 @@ public class OpportunityTriggerHandler extends TriggerHandler{
         }
 
         if(super.getTriggerMethodsToBypass().indexOf('updateVolunteerRequired') == -1) {
+            System.debug('#### OpportunityTriggerHandler.beforeUpdate() - OpportunityService.updateVolunteerRequired() Executing...');
             OpportunityService.updateVolunteerRequired((List<Opportunity>)trigger.new, (Map<Id,Opportunity>)trigger.oldMap);
         }
         if(super.getTriggerMethodsToBypass().indexOf('calculateVolunteerQuantity') == -1) {
+            System.debug('#### OpportunityTriggerHandler.beforeUpdate() - OpportunityService.calculateVolunteerQuantity() Executing...');
             OpportunityService.calculateVolunteerQuantity((List<Opportunity>)trigger.new, (Map<Id,Opportunity>)trigger.oldMap);
         }
         //HRP-13146
