@@ -169,6 +169,9 @@ public without sharing class slwcDataService {
         if (settingKeys.contains('rtvAPSApprovalWindow')) {
             mapSetting.put('rtvAPSApprovalWindow', skedSetting.instance.Admin.rtvAPSApprovalWindow);
         }
+        if (settingKeys.contains('redcrossVolunteerMatrix')) {
+            mapSetting.put('redcrossVolunteerMatrix', new slwcSetting.redcrossVolunteerMatrixSettings().redcrossVolunteerMatrixSettings);
+        }
 
         result.returnedData = mapSetting;
         
