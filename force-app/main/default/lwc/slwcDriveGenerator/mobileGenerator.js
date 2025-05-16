@@ -987,6 +987,7 @@ class MobileGenerator extends BaseGenerator {
       record = this.drive;
     } else {
       this.drive.aptQuantity = record.APTSetup;
+      this.drive.aptRequired = record.APTSetup > 0 ? true : false; //HRP-14339
     }
     let x2rbcProjectedProcedures = record.x2rbcProjectedProcedures || 0;
     let wbProjectedProcedures = record.wbProjectedProcedures || 0;
@@ -2580,6 +2581,7 @@ class MobileGenerator extends BaseGenerator {
       this.calculateDriveProductivityPlanned();
       this.generateShiftSlots(driveShift);
       this.updateDriveTotalSlots();
+      this.calculateTotalProceduresProjected(driveShift);//HRP-14339
     }
 
     if(job.resourceRole) {
