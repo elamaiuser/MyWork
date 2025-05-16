@@ -27,7 +27,7 @@ private class skedActivityDistrictBatch_Test {
         );
         insert activity;
         
-        Database.executeBatch(new skedActivityDistrictBatch());
+        Database.executeBatch(new skedActivityDistrictBatch(286));
         
         Test.stopTest();
     }
