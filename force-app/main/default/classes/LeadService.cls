@@ -418,13 +418,14 @@ public class LeadService {
 
     
     public static void sendAutoResponseEmail(List<Lead> newLeads){
-
+        System.debug('sendAutoResponseEmail called size='+newLeads.size());
         if(newLeads.size() > 1 ){
             System.debug('Auto-reponse emails are for single lead inserts from the web only.');
             return;
         }
 
         Lead newLead = newLeads[0];
+        System.debug('sendAutoResponseEmail newLead.LeadSource='+newLead.LeadSource);
         if(String.isNotBlank(newLead.LeadSource) && newLead.LeadSource.equalsIgnoreCase('Redcrossblood.org')){
 
             EmailTemplate template;
@@ -452,8 +453,11 @@ public class LeadService {
      
             try{
                 // if(!Test.isRunningTest()) Messaging.sendEmail(new Messaging.SingleEmailMessage[] { mail });
-                if(!Test.isRunningTest() && mail!=null) 
+                System.debug('sendAutoResponseEmail call BSF_EmailNotification=');
+                if(!Test.isRunningTest() && mail!=null){
                     BSF_EmailNotification.sendEmails(new Messaging.SingleEmailMessage[] { mail },'WebLeadAutoResponse',null); //Changes for  HRP-11608 
+
+                } 
             } catch (Exception e){
                 //System.debug('ERROR SENDING WELCOME EMAIL TO LEAD: ' + e);
             }
@@ -462,101 +466,113 @@ public class LeadService {
 
     }  
     
-
-    public static void sendQueueAssignmentNotifications(List<Lead> newLeads, Map<Id,Lead> oldMap){
-        
+    public static void sendQueueAssignmentNotifications(List<Lead> newLeads, Map<Id, Lead> oldMap) {
+        System.debug('SendQA=');
         final string logTag = '[LeadService:sendQueueAssignmentNotifications]';
-        //System.debug(logTag + 'Starting - ' + newLeads.size() + ' leads to process.');
-        
+    
         Set<Id> queueIdSet = new Set<Id>();
-        //Map<Id,List<Lead>> queueLeadMap = new Map<Id,List<Lead>>();
         List<Lead> leadList = new List<Lead>();
-
-        for(Lead newLead:newLeads){
+    
+        for (Lead newLead : newLeads) {
             Lead oldLead = oldMap.get(newLead.Id);
-            if(oldLead == null) return; // just in case this is fired from an INSERT trigger
-            
-            if(newLead.OwnerID != oldLead.OwnerId){
-                String newOwnerId = newLead.ownerId;
-                //System.debug(logTag + 'Lead owner has changed from ' + oldLead.OwnerId + ' to ' + newOwnerId);
-                if(newOwnerId.startsWith('00G')){
-                    // owned by a queue
-                    queueIdSet.add(newOwnerId);
-                    /* NOT SURE WE NEED THIS MAP
-                    if(queueLeadMap.containsKey(newOwnerId)){
-                        queueLeadMap.get(newOwnerId).add(newLead); // Add the lead to the list of leads owned by this queue.
-                    } else {
-                        queueLeadMap.put(newOwnerId, new List<Lead>{newLead});
-                    }
-                    */
-                    leadList.add(newLead); 
-                }
+            if (oldLead == null) return;
+    
+            String newOwnerId = newLead.OwnerId;
+            System.debug('SendQA=' + logTag + 'Lead owner has changed from ' + oldLead.OwnerId + ' to ' + newOwnerId);
+            if (newLead.OwnerId != oldLead.OwnerId && newOwnerId.startsWith('00G')) {
+                queueIdSet.add(newLead.OwnerId);
+                leadList.add(newLead);
             }
-            
         }
-
-
-        Map<Id,Group> queueMap = new Map<Id,Group>([select Id, Name, Email, Type, DoesSendEmailToMembers from Group where Id IN :queueIdSet]);
-
-
-        System.debug(logTag + 'queueMap: ' + queueMap);
-        //System.debug(logTag + 'queueLeadMap: ' + queueLeadMap);
-
-        
+    
+        Map<Id, Group> queueMap = new Map<Id, Group>([
+            SELECT Id, Name, Email, Type, DoesSendEmailToMembers 
+            FROM Group 
+            WHERE Id IN :queueIdSet
+        ]);
+    
+        System.debug('SendQA= queueMap ::' + queueMap);
+    
         EmailTemplate template;
-        // Look up the Lead assignment template
-        try{
-            template = [select Id, Name, DeveloperName from EmailTemplate where DeveloperName = 'Spark_Lead_Assignment_Sample'  limit 1];
-           // System.debug('Found email template [' + template.Name + ' (' + template.Id + '] for lead assignment email use.');
-        } catch(Exception e){
-          //  System.debug('ERROR: unable to find email template for lead assignment. ' + e);
+        try {
+            template = [SELECT Id, Name FROM EmailTemplate WHERE DeveloperName = 'Spark_Lead_Assignment_Sample' LIMIT 1];
+        } catch (Exception e) {
             return;
-        } 
-        List<Messaging.SingleEmailMessage> msgList = new List<Messaging.SingleEmailMessage>();
-
-        List<Lead> leadsToDelete = new List<Lead>();
-
-        Map<Lead, Group> leadvsQueueMap = new Map<Lead, Group>();
-        Set<Id> leadQueueIdSet = new Set<Id>();
-        for(Lead l:leadList){
-
-            Group leadQueue = queueMap.get(l.OwnerId);
-            leadQueueIdSet.add(leadQueue.Id);
-            leadvsQueueMap.put(l,leadQueue);
-
         }
-        Map<Id,List<GroupMember>> queueIdVsQueueMembers = new Map<Id,List<GroupMember>>();
-        List<GroupMember> queueMembers = [SELECT Id, GroupId, Group.Name, UserOrGroupId FROM GroupMember WHERE GroupId In :leadQueueIdSet];
-        for (GroupMember member : queueMembers) {
-            if(!queueIdVsQueueMembers.containsKey(member.GroupId)){
-                queueIdVsQueueMembers.put(member.GroupId, new List<GroupMember>());
+    
+        // Step 1: Get all members of each queue (users or groups)
+        List<GroupMember> queueMembers = [
+            SELECT GroupId, UserOrGroupId 
+            FROM GroupMember 
+            WHERE GroupId IN :queueIdSet
+        ];
+    
+        // Step 2: Identify nested Public Groups to resolve
+        Set<Id> publicGroupIds = new Set<Id>();
+        for (GroupMember gm : queueMembers) {
+            if (String.valueOf(gm.UserOrGroupId).startsWith('00G')) {
+                publicGroupIds.add(gm.UserOrGroupId);
             }
-            queueIdVsQueueMembers.get(member.GroupId).add(member);
         }
-        for (Lead l:leadList) {
-            if(leadvsQueueMap.get(l).DoesSendEmailToMembers){
-                for (GroupMember member : queueIdVsQueueMembers.get(leadvsQueueMap.get(l).Id)) {
-                    msgList.add(createNotificationMessage(template.Id, l, new Map<String, String>{'destinationId' => member.UserOrGroupId}));
+    
+        // Step 3: Get all user members from those Public Groups
+        Map<Id, Set<Id>> publicGroupToUserIds = new Map<Id, Set<Id>>();
+        if (!publicGroupIds.isEmpty()) {
+            for (GroupMember pgm : [
+                SELECT GroupId, UserOrGroupId 
+                FROM GroupMember 
+                WHERE GroupId IN :publicGroupIds
+            ]) {
+                if (String.valueOf(pgm.UserOrGroupId).startsWith('005')) {
+                    if (!publicGroupToUserIds.containsKey(pgm.GroupId)) {
+                        publicGroupToUserIds.put(pgm.GroupId, new Set<Id>());
+                    }
+                    publicGroupToUserIds.get(pgm.GroupId).add(pgm.UserOrGroupId);
                 }
             }
-            if (leadvsQueueMap.get(l).Email!=null) {
-                msgList.add(createNotificationMessage(template.Id, l, new Map<String, String>{'destinationEmail' => leadvsQueueMap.get(l).Email}));
-            }
-        }    
-        if(!msgList.isEmpty() && !Test.isRunningTest()){
-            System.debug('There are ' + msgList.size() + ' emails to send out.');
-            BSF_EmailNotification.sendEmails(msgList,'LeadCreation',null);//Changes for  HRP-11347
-        } else {
-           System.debug('msgList is empty or we are running a test, no email will be sent.');
         }
-        // Dispose of temp leads
-        if(!leadsToDelete.isEmpty()){
-           // System.debug('Deleting ' + leadsToDelete.size()+ ' leads..');
-          delete(leadsToDelete);//dml for security
-           
+    
+        // Step 4: Resolve all Queue → User IDs
+        Map<Id, Set<Id>> resolvedQueueUserIds = new Map<Id, Set<Id>>();
+        for (GroupMember gm : queueMembers) {
+            if (!resolvedQueueUserIds.containsKey(gm.GroupId)) {
+                resolvedQueueUserIds.put(gm.GroupId, new Set<Id>());
+            }
+    
+            if (String.valueOf(gm.UserOrGroupId).startsWith('005')) {
+                resolvedQueueUserIds.get(gm.GroupId).add(gm.UserOrGroupId);
+            } else if (String.valueOf(gm.UserOrGroupId).startsWith('00G')) {
+                Set<Id> pgUsers = publicGroupToUserIds.get(gm.UserOrGroupId);
+                if (pgUsers != null) {
+                    resolvedQueueUserIds.get(gm.GroupId).addAll(pgUsers);
+                }
+            }
+        }
+    
+        // Step 5: Build and send emails
+        List<Messaging.SingleEmailMessage> msgList = new List<Messaging.SingleEmailMessage>();
+        for (Lead l : leadList) {
+            Group leadQueue = queueMap.get(l.OwnerId);
+            if (leadQueue == null || !leadQueue.DoesSendEmailToMembers) continue;
+    
+            Set<Id> userIds = resolvedQueueUserIds.get(leadQueue.Id);
+            if (userIds != null) {
+                for (Id userId : userIds) {
+                    msgList.add(createNotificationMessage(template.Id, l, new Map<String, String>{'destinationId' => userId}));
+                }
+            }
+    
+            if (leadQueue.Email != null) {
+                msgList.add(createNotificationMessage(template.Id, l, new Map<String, String>{'destinationEmail' => leadQueue.Email}));
+            }
+        }
+    
+        System.debug('SendQA= msgList :::' + msgList.isEmpty() + ' Body:' + msgList);
+        if (!msgList.isEmpty() && !Test.isRunningTest()) {
+            System.debug('There are ' + msgList.size() + ' emails to send out.');
+            BSF_EmailNotification.sendEmails(msgList, 'LeadCreation', null);
         }
     }
-
 
     private static Messaging.SingleEmailMessage createNotificationMessage(String templateId, Lead lead, Map<String,String> destinationMap){
            
@@ -860,7 +876,7 @@ public class LeadService {
             List<Lead> toAssign = [SELECT Id FROM Lead WHERE Id = :leadIds];
             Database.update(toAssign,dmo);
         } //HRP-10880 end
-		
+    
     //HRP-13603 Start 10/22/2024
     public static void handleLeadStageStatus(List<Lead> newLeads, Map<Id,Lead> oldMap)
     {

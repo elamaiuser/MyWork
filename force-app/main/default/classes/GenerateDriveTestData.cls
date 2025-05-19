@@ -2710,7 +2710,6 @@ sked_VP_HH_Capacity__c = 2.2,*/
         );
         //forthList.add(fixSiteRoleGrp3);
         
-        System.debug( 'testLocation1.Id==' + testLocation1.Id );
         Triggerhandler.bypass('OpportunitySplitTriggerHandler');
         Opportunity mobileOpportunity = new Opportunity(
             Name = 'Test',
@@ -2730,14 +2729,13 @@ sked_VP_HH_Capacity__c = 2.2,*/
             Source__c = 'Calendar Build',
             RecordTypeId = Schema.SObjectType.Opportunity.getRecordTypeInfosByDeveloperName().get('Mobile_Opp').getRecordTypeId(),
             //Parent_Template_Id__c = parentOpp.Id,
-            Online_Scheduling_Enabled__c = 'No'
+            Online_Scheduling_Enabled__c = 'No',
+            Red_Cross_Volunteer_Required__c = true,
+            Red_Cross_Volunteer_Quantity__c = 1
         );
-        
-        System.debug( 'mobileOpportunity==' + mobileOpportunity );
         forthList.add(mobileOpportunity);
         mapTestData.put('mobileOpportunity', mobileOpportunity);
-        
-        //test.startTest();
+       
         Opportunity fixedSiteOpportunity = new Opportunity(
             Name = 'Test',
             AccountId = fixedSiteAccount.Id,

@@ -100,7 +100,7 @@ public class skedDriveChangeRequestHandler extends skedTriggerHub {
             sked_Drive_Change_Request__c oldData = oldMap.get(newRecord.Id);
             if (newRecord.sked_Status__c != oldData.sked_Status__c && newRecord.sked_Status__c == 'Submitted') {
                 mapSubmittedDcr.put(newRecord.Id, newRecord);
-                if(newRecord.sked_Route_Approval_Request_To__c != oldData.sked_Route_Approval_Request_To__c) {
+                if(newRecord.sked_Route_Approval_Request_To__c != oldData.sked_Route_Approval_Request_To__c || (newRecord.sked_Status__c == 'Submitted' && oldData.sked_Status__c == 'Waiting for APS Approval')) {//HRP-14627
                     hasRouteApprovalRequestChanged = true;
                 }
             }
@@ -297,7 +297,8 @@ public class skedDriveChangeRequestHandler extends skedTriggerHub {
 						oppRec.put(oppDataField, fieldVal);
 
                         if(aptQuantityRevertNeededFor.contains(item.sked_Field_API_Name__c)) {
-                            object newFieldVal = skedUtils.getFieldValue(String.valueOf(rejectedDCR.sked_Drive__r.sked_APT_Quantity__c), 'double');
+                            Decimal aptQuantity = rejectedDCR.sked_Drive__r.sked_APT_Quantity__c != null ? rejectedDCR.sked_Drive__r.sked_APT_Quantity__c : 0;
+                            object newFieldVal = skedUtils.getFieldValue(String.valueOf(aptQuantity), 'double');
                             oppRec.put('APT_Quantity__c', newFieldVal);
                             oppRec.put('APT_Change_Reason__c', 'Drive Change Requested is rejected. ' + system.now());
                         }

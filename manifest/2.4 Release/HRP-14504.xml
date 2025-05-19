@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+    <types>
+		<members>Set_Contact_UFID</members>
+		<members>Contact_Before_Insert_Update_Flow</members>
+		<name>Flow</name>
+	</types>
+	<types>
+		<members>Contact.Do Not Contact is Selected</members>
+		<members>Contact.Do Not Contact Reasons Equals to Deceased</members>
+		<members>Contact.Mailing Address Flag Checked Populated Secondary Address</members>
+		<members>Contact.Update Preferred Phone Number Field</members>
+		<name>WorkflowRule</name>
+	</types>
+    <version>59.0</version>
+</Package>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+    <types>
+		<members>Handle_Site_Name_Room_Name_update</members>
+		<name>Flow</name>
+	</types>
+	<!-- Deactivated WorkFlow Rule fot this Ticekt -->
+	<types>
+        <members>sked__Location__c</members>
+		<name>Workflow</name>
+	</types>
+	<types>
+    	<members>sked__Location__c.SiteName is Edited</members>
+    	<name>WorkflowRule</name>
+	</types>
+	<!-- End -->
+    <version>63.0</version>
+</Package>
