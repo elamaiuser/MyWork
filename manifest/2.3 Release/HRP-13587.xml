@@ -2,17 +2,12 @@
 <Package xmlns="http://soap.sforce.com/2006/04/metadata">
     <types>
 		<members>Initiate_Marketing_Exception_Request</members>
-		<members>Send_Bell_and_Email_Notifications_for_Task</members>
 		<name>Flow</name>
 	</types>
     <types>
 		<members>BSF_MarketingExceptionRequest</members>
 		<members>TaskTriggerHandler</members>
 		<name>ApexClass</name>
-	</types>
-	<types>
-		<members>Task_Subject_Marketing_Exception</members>
-		<name>CustomLabel</name>
 	</types>
     <version>59.0</version>
 </Package>
