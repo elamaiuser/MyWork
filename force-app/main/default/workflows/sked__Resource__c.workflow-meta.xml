@@ -12,7 +12,7 @@
     </fieldUpdates>
     <rules>
         <fullName>Skedulo Resource Termination Rule</fullName>
-        <active>true</active>
+        <active>false</active>
         <criteriaItems>
             <field>sked__Resource__c.sked_Termination_Date__c</field>
             <operation>notEqual</operation>

@@ -112,7 +112,7 @@
     </fieldUpdates>
     <rules>
         <fullName>Drive Hold Status Expires</fullName>
-        <active>true</active>
+        <active>false</active>
         <criteriaItems>
             <field>sked_Drive__c.sked_Status__c</field>
             <operation>equals</operation>

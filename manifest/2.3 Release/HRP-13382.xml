@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+	<types>
+        <members>Prevent_ARD_For_FixedSite_Int_And_NonInt</members>        
+        <name>ValidationRule</name>
+    </types>
+	<types>
+		<members>Opportunity.Drive_Site_Operation_Type__c </members>
+		<name>CustomField</name>
+	</types>
+	<version>63.0</version>
+</Package>

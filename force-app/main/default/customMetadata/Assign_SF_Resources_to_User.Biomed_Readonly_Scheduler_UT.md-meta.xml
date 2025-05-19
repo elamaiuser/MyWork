@@ -31,6 +31,10 @@
         <value xsi:nil="true"/>
     </values>
     <values>
+        <field>Role_Name__c</field>
+        <value xsi:nil="true"/>
+    </values>
+    <values>
         <field>User_Type_Name__c</field>
         <value xsi:type="xsd:string">Scheduler</value>
     </values>

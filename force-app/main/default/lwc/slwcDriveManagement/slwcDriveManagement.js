@@ -726,7 +726,7 @@ export default class SlwcDriveManagement extends NavigationMixin(LightningElemen
                         if(!allAssignedVehiclesValid && canHandleDriveProjectedRegisteredDonors) {
                             let currentNoOfVehicles = this.drive.totalVehicleRequested;
                             if(!this.drive.preferSystemGeneratedVehicles) {
-                                driveGeneratorInstance.onDriveDataChanged([...event.detail.properties, {
+                                driveGeneratorInstance.onDriveDataChanged([{
                                     targetName: 'totalVehicleRequestedChanged',
                                     targetValue: {
                                         totalVehicleRequested: newVehicles.length + lockedVehicles.length,
@@ -734,6 +734,10 @@ export default class SlwcDriveManagement extends NavigationMixin(LightningElemen
                                         lockedVehicles: lockedVehicles
                                     }
                                 }])
+                                .then(() => {
+                                    return this.handleValidate();
+                                })
+
 
                                 throw 'break';
                             }
@@ -829,7 +833,7 @@ export default class SlwcDriveManagement extends NavigationMixin(LightningElemen
         return driveGeneratorInstance.validateDrive()
         .then((newDrive) => {
             this.drive = newDrive;
-            let pendingActionReasonCodes = this.drive.pendingActionReasonCode || [];
+            let pendingActionReasonCodes = this.drive.pendingActionReasonCodes || [];
             if(pendingActionReasonCodes.length > 0) {
                 this.showPendingActionDriveConfirmModal();
             } else {
@@ -967,7 +971,7 @@ export default class SlwcDriveManagement extends NavigationMixin(LightningElemen
             return driveGeneratorInstance.validateDrive()
             .then((newDrive) => {
                 this.drive = newDrive;
-                let pendingActionReasonCodes = this.drive.pendingActionReasonCode || [];
+                let pendingActionReasonCodes = this.drive.pendingActionReasonCodes || [];
                 const contentionsPreventHold = [
                     'Insufficient Resources',
                     'Lacking of vehicles',

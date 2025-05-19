@@ -31,9 +31,9 @@
             <conditionLogic>and</conditionLogic>
             <conditions>
                 <leftValueReference>$Record.Account_Status__c</leftValueReference>
-                <operator>NotEqualTo</operator>
+                <operator>IsNull</operator>
                 <rightValue>
-                    <stringValue>Active</stringValue>
+                    <booleanValue>true</booleanValue>
                 </rightValue>
             </conditions>
             <conditions>
@@ -56,6 +56,13 @@
                 <operator>EqualTo</operator>
                 <rightValue>
                     <elementReference>$Label.Mobile_Account_Record_Type</elementReference>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Account_Status__c</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
                 </rightValue>
             </conditions>
             <connector>
@@ -137,7 +144,7 @@
         </rules>
         <rules>
             <name>Use_this_as_mailing_address_automation_update</name>
-            <conditionLogic>and</conditionLogic>
+            <conditionLogic>(1 AND 2) OR (3 AND (4 OR 5 OR 6 OR 7 OR 8))</conditionLogic>
             <conditions>
                 <leftValueReference>$Record.Use_this_as_mailing_address__c</leftValueReference>
                 <operator>IsChanged</operator>
@@ -152,6 +159,48 @@
                     <booleanValue>true</booleanValue>
                 </rightValue>
             </conditions>
+            <conditions>
+                <leftValueReference>$Record.Use_this_as_mailing_address__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.BillingStreet</leftValueReference>
+                <operator>IsChanged</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.BillingCity</leftValueReference>
+                <operator>IsChanged</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.BillingState</leftValueReference>
+                <operator>IsChanged</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.BillingStateCode</leftValueReference>
+                <operator>IsChanged</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.BillingPostalCode</leftValueReference>
+                <operator>IsChanged</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
             <connector>
                 <isGoTo>true</isGoTo>
                 <targetReference>Update_Shipping_Address</targetReference>
@@ -162,8 +211,8 @@
             <name>Capitalize_National_Name_Field_x</name>
             <conditionLogic>and</conditionLogic>
             <conditions>
-                <leftValueReference>$Record.National_Name__c</leftValueReference>
-                <operator>IsChanged</operator>
+                <leftValueReference>CheckForNationalNameChange</leftValueReference>
+                <operator>EqualTo</operator>
                 <rightValue>
                     <booleanValue>true</booleanValue>
                 </rightValue>
@@ -232,8 +281,8 @@
             <name>Insert</name>
             <conditionLogic>and</conditionLogic>
             <conditions>
-                <leftValueReference>$Record__Prior</leftValueReference>
-                <operator>IsNull</operator>
+                <leftValueReference>ISNEW</leftValueReference>
+                <operator>EqualTo</operator>
                 <rightValue>
                     <booleanValue>true</booleanValue>
                 </rightValue>
@@ -249,6 +298,16 @@
         <name>CapitalizeNationalName</name>
         <dataType>String</dataType>
         <expression>UPPER({!$Record.National_Name__c})</expression>
+    </formulas>
+    <formulas>
+        <name>CheckForNationalNameChange</name>
+        <dataType>Boolean</dataType>
+        <expression>IF(FIND({!$Record.National_Name__c}, {!$Record__Prior.National_Name__c}) =0, true, false)</expression>
+    </formulas>
+    <formulas>
+        <name>ISNEW</name>
+        <dataType>Boolean</dataType>
+        <expression>ISNEW()</expression>
     </formulas>
     <interviewLabel>Account - Before Insert/Update Flow {!$Flow.CurrentDateTime}</interviewLabel>
     <label>Account - Before Insert/Update Flow</label>

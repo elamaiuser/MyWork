@@ -118,5 +118,13 @@ global class FieldIdentifiers {
     global String APT_Change_Reason;
     // HRP-13190 --> Ends Here
     
+    // HRP-13146 --> Starts Here
+    @AuraEnabled 
+    global Boolean Redcross_Volunteer_Required; 
+
+    @AuraEnabled 
+    global Decimal Redcross_Volunteer_Quantity;
+    //HRP-13146 --> Ends Here
+
     global Set<String> updatedDataKeys = new Set<string>();
 }

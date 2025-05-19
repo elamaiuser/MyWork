@@ -134,7 +134,7 @@
             <name>Capitalize_National_Name_Field</name>
             <type>FieldUpdate</type>
         </actions>
-        <active>true</active>
+        <active>false</active>
         <description>Capitalizes all letters in the Account &quot;National_Name__c&quot; field for new and modified accounts.</description>
         <formula>ISNEW() || ISCHANGED(National_Name__c)</formula>
         <triggerType>onAllChanges</triggerType>
@@ -149,7 +149,7 @@
             <name>Update_Internal_Name_field_with_Name</name>
             <type>FieldUpdate</type>
         </actions>
-        <active>true</active>
+        <active>false</active>
         <criteriaItems>
             <field>Account.Account_Status__c</field>
             <operation>notEqual</operation>
@@ -173,7 +173,7 @@
             <name>Update_Internal_Name_field_with_Name</name>
             <type>FieldUpdate</type>
         </actions>
-        <active>true</active>
+        <active>false</active>
         <criteriaItems>
             <field>Account.RecordTypeId</field>
             <operation>equals</operation>
@@ -208,7 +208,7 @@
             <name>Update_Mailing_Zip</name>
             <type>FieldUpdate</type>
         </actions>
-        <active>true</active>
+        <active>false</active>
         <criteriaItems>
             <field>Account.Use_this_as_mailing_address__c</field>
             <operation>equals</operation>
