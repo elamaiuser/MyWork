@@ -16,6 +16,7 @@ export default class SlwcAppointmentModal extends LightningElement {
     @track driveShift;
     @track startTimeOptions = {};
     @track recurrenceDatesPickerModalData = {};
+    @track errorMessages = [];
     
     @wire(CurrentPageReference) pageRef;
 
@@ -67,7 +68,6 @@ export default class SlwcAppointmentModal extends LightningElement {
     handleShowAppointmentModal(event) {
         console.log("handleShowAppointmentModal", event);
         this.appointmentFormMode = event.appointmentFormMode;
-        this.selectedSlot = event.newSlot;
         this.selectedSlot = cloneDeep(event.newSlot);
         this.selectedSlot["_startTime"] =  this.selectedSlot.startTime ? this.convertJSDateToTimeISO(new Date(this.selectedSlot.startTime)) : null;
         this.driveShift = event.driveShift;
@@ -77,6 +77,9 @@ export default class SlwcAppointmentModal extends LightningElement {
         }
         if(!this.selectedSlot.recurrenceDriveIds) {
             this.selectedSlot.recurrenceDriveIds = [];
+        }
+        if(this.appointmentFormMode === 'create') {
+            this.selectedSlot.quantity = 1;
         }
         this.setupStartTimeMinMaxTime();
     }
@@ -110,14 +113,28 @@ export default class SlwcAppointmentModal extends LightningElement {
         }
     }
 
-    showUiInputErrors() {
+    validate() {
+        this.errorMessages = [];
+        
         const allValid = [...this.template.querySelectorAll('lightning-input'), ...this.template.querySelectorAll('lightning-combobox')]
             .reduce((validSoFar, inputCmp) => {
                 inputCmp.reportValidity();
                 return validSoFar && inputCmp.checkValidity();
             }, true);
-        return allValid;
+
+        if(this.appointmentFormMode === 'create') {
+            if(!this.selectedSlot.quantity ||
+                this.selectedSlot.quantity <= 0
+            ) {
+                this.errorMessages.push({
+                    message: `The quantity must be greater than 0`
+                }) 
+            }
+        }
+        
+        return allValid && !this.errorMessages.length;
     }
+
     convertTimeISOToJSDate(dateISO, timeISO) {
         let dateTimeIso = dateISO + 'T' + timeISO;
         let date = new Date(dateTimeIso);
@@ -131,10 +148,10 @@ export default class SlwcAppointmentModal extends LightningElement {
         return new Date(date.getTime() + diff);
     }
     saveAppointmentForm() {
-        if(!this.showUiInputErrors()) return;
+        if(!this.validate()) return;
 
         const newSlot = {...this.selectedSlot, 
-            startTime: this.convertTimeISOToJSDate(this.driveShift.driveDate, this.selectedSlot._startTime).toISOString()
+            startTime: this.convertTimeISOToJSDate(this.driveShift.driveDate, this.selectedSlot._startTime).toISOString(),
         };
 
         const _event = new CustomEvent('saveappointment', {

@@ -1165,33 +1165,52 @@ class BaseGenerator {
 
       //edit
       tempSlot = extend(tempSlot, slot);    
+
+      this.mapSlotRecurrenceDates[tempSlot.key] = {
+        action: 'create',
+        originalSlot: originalSlot,
+        slot: tempSlot,
+        driveShiftIndex: driveShiftIndex,
+        recurrenceDates: tempSlot.recurrenceDates || [],
+        recurrenceDriveIds: tempSlot.recurrenceDriveIds || []
+      };
     } else {
       //create
-      tempSlot = {
+      let tempSlotTemplate = {
         ...{
-          key: generateUUID(),
           status: "Open"
         }, ...slot
       }
 
-      const slotDuration = this.helper.getSlotDurationByType(tempSlot.slotType);
-      tempSlot.name = tempSlot.slotType;
-      tempSlot.endTime = new Date(new Date(tempSlot.startTime).getTime() + slotDuration * 60000).toISOString();
+      const slotDuration = this.helper.getSlotDurationByType(tempSlotTemplate.slotType);
+      tempSlotTemplate.name = tempSlotTemplate.slotType;
+      tempSlotTemplate.endTime = new Date(new Date(tempSlotTemplate.startTime).getTime() + slotDuration * 60000).toISOString();
 
-      driveShift.slots.push(tempSlot);
+      if(tempSlotTemplate.quantity > 0) {
+        Array.from(Array(tempSlotTemplate.quantity), (item, index) => {
+          let tempSlot = {
+            ...tempSlotTemplate,
+            key: generateUUID(),
+          }
+          delete tempSlot.quantity;
+
+          driveShift.slots.push(tempSlot);
+
+          this.mapSlotRecurrenceDates[tempSlot.key] = {
+            action: 'create',
+            originalSlot: originalSlot,
+            slot: tempSlot,
+            driveShiftIndex: driveShiftIndex,
+            recurrenceDates: tempSlot.recurrenceDates || [],
+            recurrenceDriveIds: tempSlot.recurrenceDriveIds || []
+          };
+        });
+      }
     }
 
     driveShift.slots = [...driveShift.slots];
     this.updateDriveTotalSlots();
 
-    this.mapSlotRecurrenceDates[tempSlot.key] = {
-      action: tempSlot.id ? 'update' : 'create',
-      originalSlot: originalSlot,
-      slot: tempSlot,
-      driveShiftIndex: driveShiftIndex,
-      recurrenceDates: tempSlot.recurrenceDates || [],
-      recurrenceDriveIds: tempSlot.recurrenceDriveIds || []
-    };
     return this.notifyDriveChanged();
   }
 

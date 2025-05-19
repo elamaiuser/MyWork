@@ -43,6 +43,16 @@
                             message-toggle-active="Locked"
                             message-toggle-inactive="Unlocked"
                         ></lightning-input>
+
+
+                        <lightning-input 
+                            type="number" 
+                            name="quantity" 
+                            label="Quantity" 
+                            value={selectedSlot.quantity} 
+                            required
+                            onchange={handleOnChange}>
+                        </lightning-input>
                     </template>
 
                     <div class="slds-col" if:true={showApplyFutureDatesBtn}>
