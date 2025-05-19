@@ -1,11 +1,13 @@
 import { LightningElement, track, api, wire } from 'lwc';
 import { classNames, getValueFromEvent, generateUUID } from 'c/slwcUtils';
 import { CurrentPageReference } from 'lightning/navigation';
-import { cloneDeep, orderBy, find } from 'c/lodash';
-import { SLOT_TYPE, DRIVE_TYPE, OPERATION_TYPE } from 'c/slwcConstants';
+import { cloneDeep, orderBy, find, uniq } from 'c/lodash';
+import { SLOT_TYPE, OPERATION_TYPE } from 'c/slwcConstants';
 import * as slwcUtils from 'c/slwcUtils';
 import { fireEvent, registerListener, unregisterAllListeners } from 'c/pubsub';
 import { DriveHelper } from 'c/slwcDriveGenerator'
+import { ShowToastEvent } from 'lightning/platformShowToastEvent';
+
 export default class SlwcDriveAppointmentSlots extends LightningElement {
     driveHelper = new DriveHelper();
 
@@ -101,7 +103,7 @@ export default class SlwcDriveAppointmentSlots extends LightningElement {
         return this.slots.filter(slot => slot.selected);
     }
 
-    get disableLockAppointments() {
+    get disableBulkAction() {
         return !this.selectedSlots.length;
     }
 
@@ -288,6 +290,68 @@ export default class SlwcDriveAppointmentSlots extends LightningElement {
                     }
                 }
             })
+        });
+    }
+
+    validateBulkEditAppointments(selectedSlots = []) {
+        if(!selectedSlots.length) return false;
+
+        const sameTypes = uniq(selectedSlots.map(slot => slot.type)).length === 1;
+        const sameStartTime = uniq(selectedSlots.map(slot => slot.startTime)).length === 1;
+
+        return sameTypes && sameStartTime;
+    }
+
+    editAppointments() {
+        if (!this.validateBulkEditAppointments(this.selectedSlots)) {
+            this.dispatchEvent(
+                new ShowToastEvent({
+                    title: 'Error',
+                    message: 'For editing or deleting appointment slots en masse, procedure type should be same with matching start time.',
+                    variant: 'error'
+                })
+            );
+            return;
+        }
+        
+        const tempSlot = {
+            ...this.selectedSlots[0],
+            selectedSlotKeys: this.selectedSlots.map(slot => slot.key)
+        }
+        this.appointmentFormMode = 'edit';
+        this.selectedSlot = cloneDeep(tempSlot);
+
+        fireEvent(this.pageRef, 'openShiftSlotsModal',{
+            appointmentFormMode: this.appointmentFormMode, 
+            newSlot: tempSlot,
+            driveShift: this.driveShift,
+        });
+    }
+
+    deleteAppointments() {
+        if (!this.validateBulkEditAppointments(this.selectedSlots)) {
+            this.dispatchEvent(
+                new ShowToastEvent({
+                    title: 'Error',
+                    message: 'For editing or deleting appointment slots en masse, procedure type should be same with matching start time.',
+                    variant: 'error'
+                })
+            );
+            return;
+        }
+        
+        const tempSlot = {
+            ...this.selectedSlots[0],
+            selectedSlotKeys: this.selectedSlots.map(slot => slot.key)
+        }
+        this.appointmentFormMode = 'delete';
+        this.selectedSlot = cloneDeep(tempSlot);
+        
+        fireEvent(this.pageRef, 'openShiftSlotsModal',{
+            action: 'delete',
+            appointmentFormMode: this.appointmentFormMode, 
+            newSlot: tempSlot,
+            driveShift: this.driveShift,
         });
     }
 

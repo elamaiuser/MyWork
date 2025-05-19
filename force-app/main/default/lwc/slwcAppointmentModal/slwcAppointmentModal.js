@@ -24,14 +24,26 @@ export default class SlwcAppointmentModal extends LightningElement {
         if(this.appointmentFormMode === 'create') {
             return 'New Appointment';
         } else if (this.appointmentFormMode === 'edit') {
+            if(this.isEditBulkMode) {
+                return `Bulk Edit Appointments (${this.selectedSlot.selectedSlotKeys?.length})`;
+            }
             return 'Edit Appointment';
         } else if (this.appointmentFormMode === 'delete') {
+             if(this.isEditBulkMode) {
+                return `Bulk Delete Appointments (${this.selectedSlot.selectedSlotKeys?.length})`;
+            }
             return 'Delete Appointment';
         }
     }
 
     get isDeleteMode() {
         return this.appointmentFormMode === 'delete';
+    }
+
+    get isEditBulkMode() {
+        return (
+            this.appointmentFormMode === 'edit' || 
+            this.appointmentFormMode === 'delete') && this.selectedSlot.selectedSlotKeys?.length > 0;
     }
 
     get showApplyFutureDatesBtn() {
@@ -48,6 +60,11 @@ export default class SlwcAppointmentModal extends LightningElement {
         } else {
             return 'Save';
         }
+    }
+
+    get showQuantityButton() {
+        if(!this.showApplyFutureDatesBtn) return false;
+        return this.appointmentFormMode === 'create';
     }
 
     @api drive;
@@ -123,7 +140,7 @@ export default class SlwcAppointmentModal extends LightningElement {
             }, true);
 
         if(this.appointmentFormMode === 'create') {
-            if(!this.selectedSlot.quantity ||
+            if(this.selectedSlot.quantity !== undefined &&
                 this.selectedSlot.quantity <= 0
             ) {
                 this.errorMessages.push({

@@ -1167,7 +1167,7 @@ class BaseGenerator {
       tempSlot = extend(tempSlot, slot);    
 
       this.mapSlotRecurrenceDates[tempSlot.key] = {
-        action: 'create',
+        action: 'edit',
         originalSlot: originalSlot,
         slot: tempSlot,
         driveShiftIndex: driveShiftIndex,
