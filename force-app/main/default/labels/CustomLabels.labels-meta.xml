@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomLabels xmlns="http://soap.sforce.com/2006/04/metadata">
     <labels>
-        <fullName>Task_Subject_Marketing_Exception</fullName>
-        <categories>Task Subject</categories>
+        <fullName>Mobile_Account_Record_Type</fullName>
         <language>en_US</language>
         <protected>false</protected>
-        <shortDescription>Task Subject - Marketing Exception</shortDescription>
-        <value>Request for Marketing Exception</value>
+        <shortDescription>Mobile Account Record Type</shortDescription>
+        <value>Mobile Account</value>
     </labels>
 </CustomLabels>
