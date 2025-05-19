@@ -114,6 +114,7 @@
     <types>
         <members>Mobile_Account_Record_Type</members>
         <members>Sync_Contact_To_ASR_EndReason</members>
+		<members>Task_Subject_Marketing_Exception</members>
         <name>CustomLabel</name>
     </types>
     <types>
@@ -164,6 +165,7 @@
         <members>Update_Do_not_Contact</members>
         <members>Update_Drive_Status_Field_on_Opportunity_Booking_Date_2</members>
         <members>Update_Drive_Status_Field_on_Opportunity_Booking_Date_2_1</members>
+		<members>Send_Bell_and_Email_Notifications_for_Task</members>
         <name>Flow</name>
     </types>
     <types>
