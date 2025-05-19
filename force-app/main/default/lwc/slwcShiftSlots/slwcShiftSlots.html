@@ -6,7 +6,7 @@
                     <template if:false={masterData.fieldReadonlyMap.driveShiftSlots}>
                         <div if:true={isMobile} class="slds-grid">
                             <div class="slds-col slds-p-around_small">
-                                <lightning-button if:true={allowToInputLockReason} label="Lock Appointments" disabled={disableLockAppointments} variant="neutral" icon-name="utility:lock" icon-position="left" onclick={lockAppointments}></lightning-button>
+                                <lightning-button if:true={allowToInputLockReason} label="Lock Appointments" disabled={disableBulkAction} variant="neutral" icon-name="utility:lock" icon-position="left" onclick={lockAppointments}></lightning-button>
                                 <lightning-button label="Reset Appointments" variant="neutral" icon-name="utility:refresh" icon-position="left" onclick={resetAppointments}></lightning-button>
                                 <lightning-button label="Re-generate Appointments" variant="neutral" icon-name="utility:refresh" icon-position="left" onclick={regenerateAppointments}></lightning-button>
                             </div>
@@ -38,7 +38,7 @@
                                                 <li key={slot.key} class={slot.class}>
                                                     <div if:true={slot.startTime} class="slds-grid slds-grid_align-spread slot available-block">
                                                         <div class="slot-label">
-                                                            <div class="slds-text-title slds-p-right_large" if:true={slot.label}>
+                                                            <div class="slds-text-title slds-p-right_large slds-m-top_large" if:true={slot.label}>
                                                                 {slot.label}
                                                             </div>
                                                             <div class="slds-text-title time-label">
@@ -120,8 +120,10 @@
                 <div class="slds-grid">
                     <div class="slds-col slds-p-vertical_small">
                         <template if:true={isUpdateable}>
-                            <lightning-button class="slds-m-right_x-small slds-m-bottom_xx-small" label="Lock" disabled={disableLockAppointments} variant="neutral" icon-name="utility:lock" icon-position="left" onclick={lockAppointments}></lightning-button>
-                            <lightning-button class="slds-m-right_x-small slds-m-bottom_xx-small" label="Unlock" disabled={disableLockAppointments} variant="neutral" icon-name="utility:unlock" icon-position="left" onclick={unlockAppointments}></lightning-button>
+                            <lightning-button class="slds-m-right_x-small slds-m-bottom_xx-small" label="Edit" disabled={disableBulkAction} variant="neutral" icon-name="utility:edit" icon-position="left" onclick={editAppointments}></lightning-button>
+                            <lightning-button class="slds-m-right_x-small slds-m-bottom_xx-small" label="Delete" disabled={disableBulkAction} variant="neutral" icon-name="utility:delete" icon-position="left" onclick={deleteAppointments}></lightning-button>
+                            <lightning-button class="slds-m-right_x-small slds-m-bottom_xx-small" label="Lock" disabled={disableBulkAction} variant="neutral" icon-name="utility:lock" icon-position="left" onclick={lockAppointments}></lightning-button>
+                            <lightning-button class="slds-m-right_x-small slds-m-bottom_xx-small" label="Unlock" disabled={disableBulkAction} variant="neutral" icon-name="utility:unlock" icon-position="left" onclick={unlockAppointments}></lightning-button>
                         </template>
                         <lightning-button class="slds-m-bottom_xx-small" label="Reset" variant="neutral" icon-name="utility:refresh" icon-position="left" onclick={resetAppointments} disabled={disableActionButton}></lightning-button>
                         <lightning-button class="slds-m-left_x-small  slds-m-bottom_xx-small" label="Re-generate" variant="neutral" icon-name="utility:refresh" icon-position="left" onclick={regenerateAppointments} disabled={disableActionButton}></lightning-button>
