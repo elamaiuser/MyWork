@@ -1397,19 +1397,23 @@ class WbFixedSiteGenerator extends BaseGenerator {
       job.resourceRole = resourceRole;
 
       if (resourceRole === 'VP/HH') {
-        let { vphhQuantity, aptQuantity, systemQuantity } = mapResourceQuantity.get(resourceRole);
+        let { vphhQuantity, aptQuantity, systemQuantity, isManuallyCreated, manuallyCreatedFrom } = mapResourceQuantity.get(resourceRole);
         if (vphhQuantity > 0 || aptQuantity > 0) {
           job.vphhQuantity = vphhQuantity;
           job.aptQuantity = aptQuantity;
           job.quantity = vphhQuantity + (aptQuantity || 0);
           job.systemQuantity = systemQuantity || job.quantity;
+          job.isManuallyCreated = !!isManuallyCreated;
+          job.manuallyCreatedFrom = manuallyCreatedFrom;
           if(!jobs.find(job => job.resourceRole === resourceRole)) jobs.push(job);
         }
       } else {
-        let { quantity, systemQuantity } = mapResourceQuantity.get(resourceRole);
+        let { quantity, systemQuantity, isManuallyCreated, manuallyCreatedFrom } = mapResourceQuantity.get(resourceRole);
         if (quantity > 0) {
           job.quantity = quantity;
           job.systemQuantity = systemQuantity || job.quantity;
+          job.isManuallyCreated = !!isManuallyCreated;
+          job.manuallyCreatedFrom = manuallyCreatedFrom;
           if(!jobs.find(job => job.resourceRole === resourceRole)) jobs.push(job);
         }
       }

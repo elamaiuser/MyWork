@@ -34,6 +34,7 @@
 	</types>
 	<types>
 		<members>slwcDriveGenerator</members>
+		<members>slwcResolveDriveContentions</members>
 		<name>LightningComponentBundle</name>
 	</types>
     <version>63.0</version>
