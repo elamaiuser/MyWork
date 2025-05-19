@@ -1222,25 +1222,27 @@ class BaseGenerator {
     if (!shiftKey || !slot) return;
 
     const driveShiftKey = shiftKey;
-    const slotKey = slot.key;
     const driveShift = this.drive.driveShifts.find(item => item.key === driveShiftKey);
     if (!driveShift) return;
 
-    const [deletedSlot] = remove(driveShift.slots, item => item.key === slotKey);
+    const slotKeys = slot.selectedSlotKeys?.length ? slot.selectedSlotKeys : [slot.key];
+    slotKeys.forEach(slotKey => {
+      const [deletedSlot] = remove(driveShift.slots, item => item.key === slotKey);
 
-    driveShift.slots = [...driveShift.slots];
-    this.updateDriveTotalSlots();
+      driveShift.slots = [...driveShift.slots];
+      this.updateDriveTotalSlots();
 
-    if(deletedSlot?.id) {
-      this.mapSlotRecurrenceDates[slot.key] = {
-        action: 'delete',
-        slot: deletedSlot,
-        recurrenceDates: slot.recurrenceDates || [],
-        recurrenceDriveIds: slot.recurrenceDriveIds || []
-      };
-    } else {
-      delete this.mapSlotRecurrenceDates[slot.key];
-    }
+      if(deletedSlot?.id) {
+        this.mapSlotRecurrenceDates[slot.key] = {
+          action: 'delete',
+          slot: deletedSlot,
+          recurrenceDates: slot.recurrenceDates || [],
+          recurrenceDriveIds: slot.recurrenceDriveIds || []
+        };
+      } else {
+        delete this.mapSlotRecurrenceDates[slot.key];
+      }
+    })
     
     return this.notifyDriveChanged();
   }
