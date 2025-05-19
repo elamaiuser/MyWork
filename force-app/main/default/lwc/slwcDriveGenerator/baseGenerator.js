@@ -1,6 +1,6 @@
 import { serial, generateUUID, parseJSON, isNullOrEmpty, cloneDeep as cloneDeepUtil } from 'c/slwcUtils';
 import { DateTime } from 'c/luxon';
-import { cloneDeep, orderBy, extend, remove, max, compact, groupBy, uniq, pick } from 'c/lodash';
+import { cloneDeep, orderBy, extend, remove, max, compact, groupBy, uniq, omit } from 'c/lodash';
 import { DriveHelper } from './helper';
 import { DRIVE_STATUS, ASSET_TYPE, PENDING_ACTION, JOB_ALLOCATION_STATUS, DRIVE_TYPE, DRIVE_REQUEST_CHANGE_STATUS, MANUALLY_CREATED_FROM, OPERATION_TYPE, DRIVE_CONTENTION_RESOLUTION, DRIVE_CHANGE_REQUEST_TYPE, RESOURCE_ROLE_GROUP } from 'c/slwcConstants';
 import {
@@ -1156,24 +1156,28 @@ class BaseGenerator {
     const driveShift = this.drive.driveShifts[driveShiftIndex];
     if (!driveShift) return;
 
-    let tempSlot = driveShift.slots.find(item => item.key === slot.key);
-    let originalSlot = null;
-    if (tempSlot) {
-      if(tempSlot.id) {
-        originalSlot = cloneDeep(tempSlot);
-      }
+    const isEditSlot = driveShift.slots.find(item => item.key === slot.key);
+    if (isEditSlot) {
+      const slotKeys = slot.selectedSlotKeys?.length ? slot.selectedSlotKeys : [slot.key];
+      slotKeys.forEach(slotKey => {
+        let tempSlot = driveShift.slots.find(item => item.key === slotKey);
+        let originalSlot = null;
+        if(tempSlot.id) {
+          originalSlot = cloneDeep(tempSlot);
+        }
 
-      //edit
-      tempSlot = extend(tempSlot, slot);    
+        //edit
+        tempSlot = extend(tempSlot, omit(slot, ['id', 'key']));    
 
-      this.mapSlotRecurrenceDates[tempSlot.key] = {
-        action: 'edit',
-        originalSlot: originalSlot,
-        slot: tempSlot,
-        driveShiftIndex: driveShiftIndex,
-        recurrenceDates: tempSlot.recurrenceDates || [],
-        recurrenceDriveIds: tempSlot.recurrenceDriveIds || []
-      };
+        this.mapSlotRecurrenceDates[tempSlot.key] = {
+          action: tempSlot.id ? 'edit' : 'create',
+          originalSlot: originalSlot,
+          slot: tempSlot,
+          driveShiftIndex: driveShiftIndex,
+          recurrenceDates: tempSlot.recurrenceDates || [],
+          recurrenceDriveIds: tempSlot.recurrenceDriveIds || []
+        };
+      })
     } else {
       //create
       let tempSlotTemplate = {
@@ -1198,7 +1202,7 @@ class BaseGenerator {
 
           this.mapSlotRecurrenceDates[tempSlot.key] = {
             action: 'create',
-            originalSlot: originalSlot,
+            originalSlot: null,
             slot: tempSlot,
             driveShiftIndex: driveShiftIndex,
             recurrenceDates: tempSlot.recurrenceDates || [],

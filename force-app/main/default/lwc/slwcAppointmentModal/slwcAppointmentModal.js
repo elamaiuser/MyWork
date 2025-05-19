@@ -7,11 +7,18 @@ import { cloneDeep } from 'c/lodash';
 import { DateTime } from 'c/luxon';
 import { DriveHelper } from 'c/slwcDriveGenerator';
 
+const MODE = {
+    CREATE: 'create',
+    EDIT: 'edit',
+    DELETE: 'delete',
+    UNLOCK: 'unlock'
+}
+
 export default class SlwcAppointmentModal extends LightningElement {
     driveHelper = new DriveHelper();
 
     @track showModal = false;
-    @track appointmentFormMode = 'create'
+    @track appointmentFormMode = MODE.CREATE
     @track selectedSlot;
     @track driveShift;
     @track startTimeOptions = {};
@@ -21,29 +28,39 @@ export default class SlwcAppointmentModal extends LightningElement {
     @wire(CurrentPageReference) pageRef;
 
     get appointmentFormHeader() {
-        if(this.appointmentFormMode === 'create') {
+        if(this.appointmentFormMode === MODE.CREATE) {
             return 'New Appointment';
-        } else if (this.appointmentFormMode === 'edit') {
+        } else if (this.appointmentFormMode === MODE.EDIT) {
             if(this.isEditBulkMode) {
                 return `Bulk Edit Appointments (${this.selectedSlot.selectedSlotKeys?.length})`;
             }
             return 'Edit Appointment';
-        } else if (this.appointmentFormMode === 'delete') {
+        } else if (this.appointmentFormMode === MODE.DELETE) {
              if(this.isEditBulkMode) {
                 return `Bulk Delete Appointments (${this.selectedSlot.selectedSlotKeys?.length})`;
             }
             return 'Delete Appointment';
+        } else if (this.appointmentFormMode === MODE.UNLOCK) {
+             if(this.isEditBulkMode) {
+                return `Bulk Unlock Appointments (${this.selectedSlot.selectedSlotKeys?.length})`;
+            }
+            return 'Unlock Appointment';
         }
     }
 
     get isDeleteMode() {
-        return this.appointmentFormMode === 'delete';
+        return this.appointmentFormMode === MODE.DELETE;
+    }
+
+    get isUnlockMode() {
+        return this.appointmentFormMode === MODE.UNLOCK;
     }
 
     get isEditBulkMode() {
         return (
-            this.appointmentFormMode === 'edit' || 
-            this.appointmentFormMode === 'delete') && this.selectedSlot.selectedSlotKeys?.length > 0;
+            this.appointmentFormMode === MODE.EDIT || 
+            this.appointmentFormMode === MODE.DELETE || 
+            this.appointmentFormMode === MODE.UNLOCK) && this.selectedSlot.selectedSlotKeys?.length > 0;
     }
 
     get showApplyFutureDatesBtn() {
@@ -55,7 +72,7 @@ export default class SlwcAppointmentModal extends LightningElement {
     }
 
     get saveButtonLabel() {
-        if(this.appointmentFormMode === 'delete') {
+        if(this.appointmentFormMode === MODE.DELETE || this.appointmentFormMode === MODE.UNLOCK) {
             return 'Yes';
         } else {
             return 'Save';
@@ -64,7 +81,7 @@ export default class SlwcAppointmentModal extends LightningElement {
 
     get showQuantityButton() {
         if(!this.showApplyFutureDatesBtn) return false;
-        return this.appointmentFormMode === 'create';
+        return this.appointmentFormMode === MODE.CREATE;
     }
 
     @api drive;
@@ -95,7 +112,7 @@ export default class SlwcAppointmentModal extends LightningElement {
         if(!this.selectedSlot.recurrenceDriveIds) {
             this.selectedSlot.recurrenceDriveIds = [];
         }
-        if(this.appointmentFormMode === 'create') {
+        if(this.appointmentFormMode === MODE.CREATE) {
             this.selectedSlot.quantity = 1;
         }
         this.setupStartTimeMinMaxTime();
@@ -139,7 +156,7 @@ export default class SlwcAppointmentModal extends LightningElement {
                 return validSoFar && inputCmp.checkValidity();
             }, true);
 
-        if(this.appointmentFormMode === 'create') {
+        if(this.appointmentFormMode === MODE.CREATE) {
             if(this.selectedSlot.quantity !== undefined &&
                 this.selectedSlot.quantity <= 0
             ) {

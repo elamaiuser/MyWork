@@ -281,15 +281,31 @@ export default class SlwcDriveAppointmentSlots extends LightningElement {
         });
     }
 
-    unlockAppointments() {
-        this.selectedSlots.forEach(slot => {
-            this.unlockAppointment({
-                currentTarget: {
-                    dataset: {
-                        value: slot.key
+    unlockAppointments() { 
+        if(!this.allowToInputLockReason) {
+            this.selectedSlots.forEach(slot => {
+                this.unlockAppointment({
+                    currentTarget: {
+                        dataset: {
+                            value: slot.key
+                        }
                     }
-                }
+                })
             })
+            return;
+        };
+
+        const tempSlot = {
+            ...this.selectedSlots[0],
+            selectedSlotKeys: this.selectedSlots.map(slot => slot.key)
+        }
+        this.appointmentFormMode = 'unlock';
+        this.selectedSlot = cloneDeep(tempSlot);
+        
+        fireEvent(this.pageRef, 'openShiftSlotsModal',{
+            appointmentFormMode: this.appointmentFormMode, 
+            newSlot: tempSlot,
+            driveShift: this.driveShift,
         });
     }
 
@@ -348,7 +364,6 @@ export default class SlwcDriveAppointmentSlots extends LightningElement {
         this.selectedSlot = cloneDeep(tempSlot);
         
         fireEvent(this.pageRef, 'openShiftSlotsModal',{
-            action: 'delete',
             appointmentFormMode: this.appointmentFormMode, 
             newSlot: tempSlot,
             driveShift: this.driveShift,
@@ -372,23 +387,35 @@ export default class SlwcDriveAppointmentSlots extends LightningElement {
         const slotKey = event.currentTarget.dataset['value'];
         const slot = this.findSlotByKey(slotKey);
         if(!slot) return;
-        const _event = new CustomEvent('saveappointment', {
-            detail: {
-                driveShift: this.driveShift,
-                slotKey: slotKey,
-                newSlot: {
-                    key: slotKey,
-                    locked: false,
-                    selected: false,
-                    fixedSiteLockReason: '',
-                    fixedSiteLockComment: ''
-                }
-            },
-            bubbles: true,
-            composed: true
-        });
 
-        this.dispatchEvent(_event);
+        if(!this.allowToInputLockReason) {
+            const _event = new CustomEvent('saveappointment', {
+                detail: {
+                    driveShift: this.driveShift,
+                    slotKey: slotKey,
+                    newSlot: {
+                        key: slotKey,
+                        locked: false,
+                        selected: false,
+                        fixedSiteLockReason: '',
+                        fixedSiteLockComment: ''
+                    }
+                },
+                bubbles: true,
+                composed: true
+            });
+
+            this.dispatchEvent(_event);
+            return;
+        };
+
+        this.appointmentFormMode = 'unlock';
+        this.selectedSlot = cloneDeep(slot);
+        fireEvent(this.pageRef, 'openShiftSlotsModal',{
+            appointmentFormMode: this.appointmentFormMode, 
+            newSlot: slot,
+            driveShift: this.driveShift,
+        });
     }
 
     lockAppointment({
@@ -489,7 +516,6 @@ export default class SlwcDriveAppointmentSlots extends LightningElement {
         this.appointmentFormMode = 'delete';
         this.selectedSlot = cloneDeep(slot);
         fireEvent(this.pageRef, 'openShiftSlotsModal',{
-            action: 'delete',
             appointmentFormMode: this.appointmentFormMode, 
             newSlot: slot,
             driveShift: this.driveShift,
