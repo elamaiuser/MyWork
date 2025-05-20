@@ -1254,7 +1254,7 @@ export default class SlwcDriveManagement extends NavigationMixin(LightningElemen
                 fixedSiteLockReason: '',
                 fixedSiteLockComment: '',
                 key: event.detail.slotKey
-            })
+            }, event.detail.action)
         } else {
             driveGeneratorInstance.saveSlot(event.detail.driveShift.key, {
                 ...event.detail.newSlot,
