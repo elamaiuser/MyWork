@@ -418,6 +418,93 @@ global class skedExceptionLogService extends skedDataService {
         upsertTimeBlockExceptionLog(driveShifts, mapActiveException);
     }
     
+    public void captureAPExceptionLogs(List<sked__Activity_Resource__c> newRecords) {
+        Set<Id> resourceIds = new Set<Id>();
+        Map<Id, skedModels.resource> mapResource = new Map<Id, skedModels.resource>();
+        DateTime minStart;
+        DateTime maxEnd;
+        Set<Date> inputDates = new Set<Date>();
+        
+        for (sked__Activity_Resource__c newRecord : newRecords) {
+            resourceIds.add(newRecord.sked__Resource__c);
+        }
+        
+        Map<Id, sked__Resource__c> mapSkedResource = new Map<Id, sked__Resource__c>([
+            SELECT Id, sked__Primary_Region__r.sked__Timezone__c
+            FROM sked__Resource__c
+            WHERE Id IN :resourceIds
+        ]);
+        
+        for (sked__Activity_Resource__c newRecord : newRecords) {
+            sked__Resource__c skedResource = mapSkedResource.get(newRecord.sked__Resource__c);
+            
+            skedModels.resource resource = new skedModels.resource();
+            resource.id = skedResource.Id;
+            resource.timezoneSidId = skedResource.sked__Primary_Region__r.sked__Timezone__c;
+            
+            mapResource.put(resource.id, resource);
+            
+            if (minStart == NULL || minStart > newRecord.sked_Start1__c) {
+                minStart = newRecord.sked_Start1__c;
+            }
+            if (maxEnd == NULL || maxEnd < newRecord.sked_End__c) {
+                maxEnd = newRecord.sked_End__c;
+            }
+            
+            inputDates.add(newRecord.sked_Start_Date__c);
+            inputDates.add(newRecord.sked_End_Date__c);
+        }
+        
+        if (minStart != NULL && maxEnd != NULL) {
+            List<skedHC__Exception__c> exceptionLog = new List<skedHC__Exception__c>();
+            
+            DateTime startTime = skedDateTimeUtils.getStartOfDate(minStart, UserInfo.getTimeZone().getID());
+            DateTime endTime = skedDateTimeUtils.getEndOfDate(maxEnd, UserInfo.getTimeZone().getID());
+
+            skedResourceService resourceService = (skedResourceService)skedServiceFactory.instance.resolve('sked__Resource__c');
+            resourceService.populateNonWorkingEvents(mapResource.values(), inputDates, startTime, endTime);
+            
+            for (sked__Activity_Resource__c newRecord : newRecords) {
+                skedModels.resource resource = mapResource.get(newRecord.sked__Resource__c);
+                string resourceTimezoneSidId = resource.timezoneSidId != NULL ? resource.timezoneSidId : UserInfo.getTimeZone().getID();
+                
+                boolean conflictNonWorkingTime = false;
+                for (skedModels.event event : resource.availability) {
+                    DateTime resourceEventStart = skedDateTimeUtils.newDateTimeInstance(event.startDate, 0, resourceTimezoneSidId);
+                    if (resourceEventStart != NULL && event.startTimeInMinutes != NULL) {
+                        resourceEventStart = resourceEventStart.addMinutes(event.startTimeInMinutes);
+                    }
+                    
+                    DateTime resourceEventFinish = skedDateTimeUtils.newDateTimeInstance(event.endDate, 0, resourceTimezoneSidId);
+                    if (resourceEventFinish != NULL && event.endTimeInMinutes != NULL) {
+                        resourceEventFinish = resourceEventFinish.addMinutes(event.endTimeInMinutes);
+                    }
+
+                    if (resourceEventStart != NULL && resourceEventFinish != NULL) {
+                        if (resourceEventStart < newRecord.sked_End__c && resourceEventFinish > newRecord.sked_Start1__c) {
+                            conflictNonWorkingTime = TRUE;
+                            break;
+                        }
+                    }
+                }
+                if (conflictNonWorkingTime) {
+                    skedHC__Exception__c skedException = new skedHC__Exception__c (
+                        skedHC__Activity__c = newRecord.sked__Activity__c,
+                        //skedHC__Job_Allocation__c = newRecord.Id,
+                        skedHC__Resource__c = resource.id,
+                        sked_Exception_Code__c = skedConstants.ACTIVITY_OUTSIDE_OF_AP,
+                        skedHC__Status__c = skedConstants.EXCEPTION_LOG_STATUS_OPEN
+                    );
+                    exceptionLog.add(skedException);
+                }
+            }
+            
+            if (!exceptionLog.isEmpty()) {
+                insert exceptionLog;
+            }
+        }
+    }
+    
     private void upsertTimeBlockExceptionLog(List<sked_Drive_Shift__c> driveShifts, Map<string, skedHC__Exception__c> mapActiveException) {
         List<skedHC__Exception__c> exceptionLogToInsert = new List<skedHC__Exception__c>();
         List<skedHC__Exception__c> exceptionLogToUpdate = new List<skedHC__Exception__c>();

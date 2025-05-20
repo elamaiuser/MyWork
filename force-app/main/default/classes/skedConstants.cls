@@ -181,6 +181,7 @@ public class skedConstants {
     public static final string DRIVE_SHIFT_TRADE_TRADING_TYPE_DRIVE_SHIFT = 'Drive Shift';
     public static final string DRIVE_SHIFT_TRADE_TRADING_TYPE_ACTIVITY = 'Activity';
 
+    public static final string EXCEPTION_CODE_ACTIVITY_OUTSIDE_OF_AVAILABILITY_PATTERN  = 'ACTIVITY_OUTSIDE_OF_AVAILABILITY_PATTERN ';
     public static final string EXCEPTION_CODE_CDL_DOT_HOURS_VIOLATION = 'CDL_DOT_HOURS_VIOLATION';
     public static final string EXCEPTION_CODE_CERT_ADDED_42DAYS = 'CERT_ADDED_42DAYS';
     public static final string EXCEPTION_CODE_DRIVE_CHANGE_REQUEST_SUBMITTED = 'DRIVE_CHANGE_REQUEST_SUBMITTED';
