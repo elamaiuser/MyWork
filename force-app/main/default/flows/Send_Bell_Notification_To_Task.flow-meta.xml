@@ -57,9 +57,9 @@
             </value>
         </inputParameters>
         <nameSegment>TaskInvokable</nameSegment>
-        <versionSegment>1</versionSegment>
     </actionCalls>
     <apiVersion>51.0</apiVersion>
+    <areMetricsLoggedToDataCloud>false</areMetricsLoggedToDataCloud>
     <decisions>
         <processMetadataValues>
             <name>index</name>
@@ -92,14 +92,18 @@
         <processMetadataValues>
             <name>originalFormula</name>
             <value>
-                <stringValue>ISCHANGED( [Task].OwnerId )  ||
-ISNEW() </stringValue>
+                <stringValue>(ISCHANGED( [Task].OwnerId )  ||
+ISNEW() )
+&amp;&amp;
+([Task].Subject &lt;&gt;  $Label.Task_Subject_Marketing_Exception )</stringValue>
             </value>
         </processMetadataValues>
         <name>formula_myRule_1</name>
         <dataType>Boolean</dataType>
-        <expression>ISCHANGED( {!myVariable_current.OwnerId} )  ||
-ISNEW()</expression>
+        <expression>(ISCHANGED( {!myVariable_current.OwnerId} )  ||
+ISNEW() )
+&amp;&amp;
+({!myVariable_current.Subject} &lt;&gt;  {!$Label.Task_Subject_Marketing_Exception} )</expression>
     </formulas>
     <interviewLabel>Send_Bell_Notification_To_Task-2_InterviewLabel</interviewLabel>
     <label>Send Bell Notification To Task</label>
