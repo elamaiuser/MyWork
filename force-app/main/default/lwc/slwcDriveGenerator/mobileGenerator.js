@@ -2047,8 +2047,8 @@ class MobileGenerator extends BaseGenerator {
     if(existingJob) {
       newJob = {
         ...existingJob,
-        quantity: existingJob.quantity + job.quantity,
-        systemQuantity: existingJob.quantity + job.quantity,
+        quantity: job.quantity,
+        systemQuantity: job.quantity,
         isCreatedOrUpdatedViaDualRoleChange: true
       };
       const index = driveShift.jobs?.findIndex(item => item.resourceRole && !item.dualRole && item.resourceRole === job.dualRole);
