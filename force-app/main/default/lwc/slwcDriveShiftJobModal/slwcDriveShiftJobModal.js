@@ -212,9 +212,6 @@ export default class SlwcDriveShiftJobModal extends LightningElement {
                 dualRoleTimeData = this.getRoleTimeData(dualRole);
                 if(dualRoleGroup === RESOURCE_ROLE_GROUP.DRIVING_ROLES) roleTimeData = cloneDeep(dualRoleTimeData);
             }
-            if((this.driveShift.jobs?.find(_job => _job.resourceRole === this.job.resourceRole)?.quantity) < (this.driveShift.jobs?.find(_job => _job.resourceRole === newJob.dualRole)?.quantity)) {
-                newJob.quantity = this.driveShift.jobs?.find(_job => _job.resourceRole === newJob.dualRole)?.quantity; //Update the quantity if secondary role has higher qunatity
-            }
         }
         newJob.leadTime = compareAndGetValue('leadTime', roleTimeData, dualRoleTimeData);
         newJob.travelTime = compareAndGetValue('travelTime', roleTimeData, dualRoleTimeData) || 0;
