@@ -1,6 +1,6 @@
 import { serial, generateUUID, parseJSON, isNullOrEmpty, cloneDeep as cloneDeepUtil } from 'c/slwcUtils';
 import { DateTime } from 'c/luxon';
-import { cloneDeep, orderBy, extend, remove, max, compact, groupBy, uniq, omit } from 'c/lodash';
+import { cloneDeep, orderBy, extend, remove, max, compact, groupBy, uniq, omit, pick } from 'c/lodash';
 import { DriveHelper } from './helper';
 import { DRIVE_STATUS, ASSET_TYPE, PENDING_ACTION, JOB_ALLOCATION_STATUS, DRIVE_TYPE, DRIVE_REQUEST_CHANGE_STATUS, MANUALLY_CREATED_FROM, OPERATION_TYPE, DRIVE_CONTENTION_RESOLUTION, DRIVE_CHANGE_REQUEST_TYPE, RESOURCE_ROLE_GROUP } from 'c/slwcConstants';
 import {
@@ -1190,7 +1190,7 @@ class BaseGenerator {
     return this.notifyDriveChanged();
   }
   
-  saveSlot(shiftKey, slot) {
+  saveSlot(shiftKey, slot, action) {
     if (!shiftKey || !slot) return;
 
     const driveShiftKey = shiftKey;
@@ -1209,7 +1209,16 @@ class BaseGenerator {
         }
 
         //edit
-        tempSlot = extend(tempSlot, omit(slot, ['id', 'key']));    
+        let updatedSlot = slot;
+        if(action === 'unlock') {
+          updatedSlot = pick(slot, [
+            'locked',
+            'fixedSiteLockReason',
+            'fixedSiteLockComment'
+          ])
+        }
+
+        tempSlot = extend(tempSlot, omit(updatedSlot, ['id', 'key']));    
 
         this.mapSlotRecurrenceDates[tempSlot.key] = {
           action: tempSlot.id ? 'edit' : 'create',
