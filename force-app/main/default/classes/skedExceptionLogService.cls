@@ -485,7 +485,7 @@ global class skedExceptionLogService extends skedDataService {
                         skedHC__Activity__c = newRecord.sked__Activity__c,
                         //skedHC__Job_Allocation__c = newRecord.Id,
                         skedHC__Resource__c = resource.id,
-                        sked_Exception_Code__c = skedConstants.ACTIVITY_OUTSIDE_OF_AP,
+                        sked_Exception_Code__c = skedConstants.EXCEPTION_CODE_ACTIVITY_OUTSIDE_OF_AVAILABILITY_PATTERN,
                         skedHC__Status__c = skedConstants.EXCEPTION_LOG_STATUS_OPEN
                     );
                     exceptionLog.add(skedException);
