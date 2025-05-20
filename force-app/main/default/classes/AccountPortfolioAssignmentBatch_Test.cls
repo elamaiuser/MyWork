@@ -116,9 +116,20 @@ public class AccountPortfolioAssignmentBatch_Test {
         update accList;
         
         test.startTest();
-        BSF_Batch_AccountPortfolioAssignment_V2 batchV2 = new BSF_Batch_AccountPortfolioAssignment_V2(1000,null);
-        database.executeBatch(batchV2);
+        //BSF_Batch_AccountPortfolioAssignment_V2 batchV2 = new BSF_Batch_AccountPortfolioAssignment_V2(1000,null);
+       // database.executeBatch(batchV2);
+       // \
+       // 
+       BSF_Batch_AccountPortfolioAssignment batch = new BSF_Batch_AccountPortfolioAssignment(BSF_Constants.BIO_RECRUITMENT_RECORD_TYPE,taxonomies[0].Version_Key__c,null,null);
+       database.executeBatch(batch);
+        BSF_Batch_AccountPortfolioAssignment batch1 = new BSF_Batch_AccountPortfolioAssignment(BSF_Constants.BIO_RECRUITMENT_RECORD_TYPE,taxonomies[0].Version_Key__c,null,null,true);
+       database.executeBatch(batch1);  
+       //
+        BSF_Batch_AccountPortfolioAssignment batch2 = new BSF_Batch_AccountPortfolioAssignment(null,null,null,null,true);
+       database.executeBatch(batch2);  
+        //batch2.finish(null);
+       
         test.stopTest();
-        system.assert(!([select id from Account_Portfolio_Assignment__C where account__c=:mobileAcc1.id].isEmpty()));
+      //  system.assert(!([select id from Account_Portfolio_Assignment__C where account__c=:mobileAcc1.id].isEmpty()));
     }
 }

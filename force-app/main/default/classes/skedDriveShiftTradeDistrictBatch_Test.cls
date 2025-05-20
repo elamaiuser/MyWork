@@ -131,9 +131,31 @@ private class skedDriveShiftTradeDistrictBatch_Test {
         );
         insert driveShiftTrade;
         
-        Database.executeBatch(new skedDriveShiftTradeDistrictBatch());
+        Database.executeBatch(new skedDriveShiftTradeDistrictBatch(296));
         
         Test.stopTest();
     }
+    
+    
+      @isTest
+    static void testBatchExecution_Finish1() {
+        
+        RecordType rt = [SELECT Id,Name FROM RecordType WHERE SObjectType = 'Taxonomy__c' and Name =: BSF_Constants.BIO_COLLECTION_RECORD_TYPE LIMIT 1];
+        // Create corresponding taxonomy run
+        Taxonomy_Run__c taxoRun = new Taxonomy_Run__c(
+            //  External_Id__c = rt.Name + '_' + taxn.Version_Key__c,
+            Status__c = 'Completed',
+            Taxo_Record_Type__c = rt.Name,
+            Future_Version_Number__c =296,
+            Run_Date__c = System.today()
+        );
+        insert taxoRun;
+        
+        Test.startTest();
+        Database.executeBatch(new skedDriveShiftTradeDistrictBatch(296));  
+        Test.stopTest();
+        
+    }
+    
     
 }
