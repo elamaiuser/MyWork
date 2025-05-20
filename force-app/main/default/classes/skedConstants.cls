@@ -181,6 +181,7 @@ public class skedConstants {
     public static final string DRIVE_SHIFT_TRADE_TRADING_TYPE_DRIVE_SHIFT = 'Drive Shift';
     public static final string DRIVE_SHIFT_TRADE_TRADING_TYPE_ACTIVITY = 'Activity';
 
+    public static final string EXCEPTION_CODE_ACTIVITY_OUTSIDE_OF_AVAILABILITY_PATTERN  = 'ACTIVITY_OUTSIDE_OF_AVAILABILITY_PATTERN ';
     public static final string EXCEPTION_CODE_CDL_DOT_HOURS_VIOLATION = 'CDL_DOT_HOURS_VIOLATION';
     public static final string EXCEPTION_CODE_CERT_ADDED_42DAYS = 'CERT_ADDED_42DAYS';
     public static final string EXCEPTION_CODE_DRIVE_CHANGE_REQUEST_SUBMITTED = 'DRIVE_CHANGE_REQUEST_SUBMITTED';
@@ -208,6 +209,11 @@ public class skedConstants {
     public static final string EXCEPTION_CODE_MAXIMUM_WEEKLY_WORK_DAYS_VIOLATION = 'MAXIMUM_WEEKLY_WORK_DAYS_VIOLATION';
     public static final string EXCEPTION_CODE_MINIMUM_WEEKLY_WORK_DAYS_VIOLATION = 'MINIMUM_WEEKLY_WORK_DAYS_VIOLATION';
     public static final string EXCEPTION_CODE_LINKED_DRIVE_MISMATCHING_ASSETS = 'LINKED_DRIVE_MISMATCHING_ASSETS';
+    
+    public static final string EXCEPTION_CODE_MISSING_TIME_BLOCK = 'MISSING_TIME_BLOCK';
+    public static final string EXCEPTION_CODE_FITS_MULTIPLE_TIME_BLOCKS = 'FITS_MULTIPLE_TIME_BLOCKS';
+    public static final string EXCEPTION_CODE_OUT_OF_TIME_BLOCK = 'OUT_OF_TIME_BLOCK';
+    public static final string EXCEPTION_CODE_OUT_OF_OPERATIONAL_HOURS = 'OUT_OF_OPERATIONAL_HOURS';
 
     public static final Map<String, String> MAP_EXCEPTION_CODE_TO_DEFAULT_EXCEPTION_MESSAGE = new Map<String, String> {
         EXCEPTION_CODE_MAXIMUM_WEEKLY_WORK_DAYS_VIOLATION => 'Maximum weekly work days violation. Week: {{weekStartDate}}',

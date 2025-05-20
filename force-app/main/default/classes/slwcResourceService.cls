@@ -75,7 +75,7 @@ global class slwcResourceService {
                                               WHERE DAY_ONLY(sked_Start__c) <= :maxDate AND DAY_ONLY(sked_Finish__c) >= :minDate
                                               ORDER BY sked_Start__c ASC),
                                              
-                                             (SELECT Id , sked__Start__c, sked__End__c, sked__Availability_Pattern__r.sked__Pattern__c
+                                             (SELECT Id , sked__Start__c, sked__End__c, sked__Availability_Pattern__r.sked__Pattern__c,sked__Availability_Pattern__r.name
                                               FROM sked__Availability_Pattern_Resources__r
                                               WHERE DAY_ONLY(sked__Start__c) <= :maxDate
                                               AND (sked__End__c = NULL OR DAY_ONLY(sked__End__c) >= :minDate)),
