@@ -12,6 +12,11 @@
         <valueSetDefinition>
             <sorted>true</sorted>
             <value>
+                <fullName>ACTIVITY_OUTSIDE_OF_AP</fullName>
+                <default>false</default>
+                <label>ACTIVITY_OUTSIDE_OF_AP</label>
+            </value>
+            <value>
                 <fullName>CDL_DOT_HOURS_VIOLATION</fullName>
                 <default>false</default>
                 <label>CDL_DOT_HOURS_VIOLATION</label>
