@@ -58,8 +58,7 @@
         </inputParameters>
         <nameSegment>TaskInvokable</nameSegment>
     </actionCalls>
-    <apiVersion>51.0</apiVersion>
-    <areMetricsLoggedToDataCloud>false</areMetricsLoggedToDataCloud>
+    <apiVersion>51.0</apiVersion>    
     <decisions>
         <processMetadataValues>
             <name>index</name>
