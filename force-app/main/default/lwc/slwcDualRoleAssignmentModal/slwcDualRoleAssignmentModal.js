@@ -184,7 +184,7 @@ export default class SlwcDualRoleAssignmentModal extends LightningElement {
       }) 
     }
 
-    if(this.model.primaryRole && this.model.secondaryRole) {
+    if(this.model.primaryRole && this.model.secondaryRole && primaryRoleJob && secondaryRoleJob) {
       const maxQuantityOfDualRoleJob = Math.min(primaryRoleJob.quantity, secondaryRoleJob.quantity);
       if(this.model.quantity !== undefined && (
         this.model.quantity <= 0 || this.model.quantity > maxQuantityOfDualRoleJob

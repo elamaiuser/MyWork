@@ -3636,13 +3636,11 @@ class DriveHelper {
         }
       })
       if(remainingQuantity2 > 0) {
-        jobsToCreate.push({
+        jobsToUpdate.push({
+          previousJob: job2,
           newJob: {
             ...job2,
-            id: uniqueId('temp_job_'),
-            key: generateUUID(),
-            quantity: remainingQuantity2,
-            jobTags: []
+            quantity: remainingQuantity2
           }
         })
       } else {
@@ -3650,6 +3648,7 @@ class DriveHelper {
           previousJob: job2
         })
       }
+     
       jobsToCreate.push({
         newJob: {
           ...job1,
