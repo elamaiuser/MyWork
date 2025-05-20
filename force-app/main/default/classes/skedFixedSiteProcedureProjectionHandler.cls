@@ -41,7 +41,9 @@ public class skedFixedSiteProcedureProjectionHandler extends skedTriggerHub {
             }else if (!oldMap.get(newRecord.Id).sked_Impact_Drives__c 
                     && (newRecord.sked_Deferral__c != oldMap.get(newRecord.Id).sked_Deferral__c 
                     || newRecord.sked_QNS__c != oldMap.get(newRecord.Id).sked_QNS__c
-                    || newRecord.sked_Productive_Procedure_Goal__c != oldMap.get(newRecord.Id).sked_Productive_Procedure_Goal__c)) {
+                    || newRecord.sked_Productive_Procedure_Goal__c != oldMap.get(newRecord.Id).sked_Productive_Procedure_Goal__c
+                    || newRecord.sked_Effective_Start_Date__c != oldMap.get(newRecord.Id).sked_Effective_Start_Date__c
+                    || newRecord.sked_Effective_End_Date__c != oldMap.get(newRecord.Id).sked_Effective_End_Date__c)) {
                         newRecord.sked_Impact_Drives__c = checkDrives(AccountMap.get(newRecord.sked_Account__c), newRecord.sked_Effective_Start_Date__c, newRecord.sked_Effective_End_Date__c);
             }
         }
