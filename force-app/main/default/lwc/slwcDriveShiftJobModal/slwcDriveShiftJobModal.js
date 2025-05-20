@@ -1,5 +1,5 @@
 import { LightningElement, track, api, wire } from 'lwc';
-import { max } from 'c/lodash';
+import { cloneDeep, max } from 'c/lodash';
 import { CurrentPageReference } from 'lightning/navigation';
 import { registerListener, unregisterAllListeners } from 'c/pubsub';
 import { fireEvent } from 'c/pubsub';
@@ -7,7 +7,7 @@ import * as slwcUtils from 'c/slwcUtils';
 import { debugLogService, tagService, tagQueryModel } from 'c/dataService';
 import { DriveHelper, DriveFetch } from 'c/slwcDriveGenerator';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent'
-import { DRIVE_TYPE, MANUALLY_CREATED_FROM, RESOURCE_TYPE, VOLUNTEER_COUNTS_ADJUSTMENT_REASON, VOLUNTEER_TYPE } from 'c/slwcConstants';
+import { DRIVE_TYPE, MANUALLY_CREATED_FROM, RESOURCE_TYPE, RESOURCE_ROLE_GROUP, VOLUNTEER_COUNTS_ADJUSTMENT_REASON, VOLUNTEER_TYPE } from 'c/slwcConstants';
 
 export default class SlwcDriveShiftJobModal extends LightningElement {
     helper = new DriveHelper();
@@ -200,15 +200,17 @@ export default class SlwcDriveShiftJobModal extends LightningElement {
             return max([value1, value2]);
         }
 
-        const roleTimeData = this.getRoleTimeData(this.job.resourceRole);
+        let roleTimeData = this.getRoleTimeData(this.job.resourceRole);
         let newJob = {
             [name]: dualRole
         };
         let dualRoleTimeData;
         if(newJob.dualRole !== 'None') {
-            dualRoleTimeData = this.getRoleTimeData(dualRole);
-            if((this.driveShift.jobs?.find(_job => _job.resourceRole === this.job.resourceRole)?.quantity) < (this.driveShift.jobs?.find(_job => _job.resourceRole === newJob.dualRole)?.quantity)) {
-                newJob.quantity = this.driveShift.jobs?.find(_job => _job.resourceRole === newJob.dualRole)?.quantity; //Update the quantity if secondary role has higher qunatity
+            const resourceRoleGroup = this.helper.getResourceRoleGroup(this.job.resourceRole, this.masterData);
+            if(resourceRoleGroup !== RESOURCE_ROLE_GROUP.DRIVING_ROLES) {
+                const dualRoleGroup = this.helper.getResourceRoleGroup(dualRole, this.masterData);
+                dualRoleTimeData = this.getRoleTimeData(dualRole);
+                if(dualRoleGroup === RESOURCE_ROLE_GROUP.DRIVING_ROLES) roleTimeData = cloneDeep(dualRoleTimeData);
             }
         }
         newJob.leadTime = compareAndGetValue('leadTime', roleTimeData, dualRoleTimeData);
