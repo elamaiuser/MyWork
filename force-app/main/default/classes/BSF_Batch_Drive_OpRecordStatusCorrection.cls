@@ -191,7 +191,7 @@ global class BSF_Batch_Drive_OpRecordStatusCorrection implements Database.Batcha
             cbLogWrapper.errorLogIdsCreatedDuringBatchRun = BSF_Utilities.getSuccessfullySavedRecordIds(logInsertResult);
             DriveGenerationUtil.captureCbLogAndCbErrorLog(cbLogWrapper);
             }
-            Database.executeBatch(new BSF_Batch_DriveStatusCorrection(),batchSize);
+            Database.executeBatch(new BSF_Batch_DriveStatusCorrection(),50);
     }
 
     private static DriveGenerationUtil.CalendarBuildLogWrapper getOpRecordListAndCaptureWrapper(DriveGenerationUtil.CalendarBuildLogWrapper cbLogWrapper ) {
