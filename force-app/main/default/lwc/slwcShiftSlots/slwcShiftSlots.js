@@ -312,7 +312,7 @@ export default class SlwcDriveAppointmentSlots extends LightningElement {
     validateBulkEditAppointments(selectedSlots = []) {
         if(!selectedSlots.length) return false;
 
-        const sameTypes = uniq(selectedSlots.map(slot => slot.type)).length === 1;
+        const sameTypes = uniq(selectedSlots.map(slot => slot.slotType)).length === 1;
         const sameStartTime = uniq(selectedSlots.map(slot => slot.startTime)).length === 1;
 
         return sameTypes && sameStartTime;
