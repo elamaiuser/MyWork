@@ -166,6 +166,7 @@
         <members>Update_Drive_Status_Field_on_Opportunity_Booking_Date_2</members>
         <members>Update_Drive_Status_Field_on_Opportunity_Booking_Date_2_1</members>
 		<members>Send_Bell_and_Email_Notifications_for_Task</members>
+        <members>Create_New_Fixed_Site_Drive</members>
         <name>Flow</name>
     </types>
     <types>
