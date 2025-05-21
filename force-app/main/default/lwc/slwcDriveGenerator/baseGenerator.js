@@ -1221,7 +1221,7 @@ class BaseGenerator {
         tempSlot = extend(tempSlot, omit(updatedSlot, ['id', 'key']));    
 
         this.mapSlotRecurrenceDates[tempSlot.key] = {
-          action: tempSlot.id ? 'edit' : 'create',
+          action: tempSlot.id ? 'update' : 'create',
           originalSlot: originalSlot,
           slot: tempSlot,
           driveShiftIndex: driveShiftIndex,
@@ -1380,7 +1380,7 @@ class BaseGenerator {
           const { action } = this.mapSlotRecurrenceDates[slotKey];
           if(action === 'delete') return 0;
           if(action === 'create') return 1;
-          if(action === 'edit') return 2;
+          if(action === 'update') return 2;
           return 3;
         }], ['asc']).forEach(slotKey => {
           const { action, originalSlot, slot, recurrenceDates, driveShiftIndex } = this.mapSlotRecurrenceDates[slotKey];
