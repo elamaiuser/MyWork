@@ -1213,10 +1213,9 @@ class MobileGenerator extends BaseGenerator {
     }
 
     // HRP-9187: No longer need to auto generate volunteer jobs
-    //HRP-13146: Adding volunteer jobs if Red Cross Volunteer is checked
+    //HRP-13146: Adding volunteer jobs for mobile drives if Red Cross Volunteer Required is checked by users
     this.calculateVolunteerDonorAmbassadors();
     this.drive.redcrossVolunteerQuantity = this.mapVolunteerQuantity.get(VOLUNTEER_TYPE.DONOR_AMBASSADOR) || 0;
-    this.drive.redcrossVolunteerRequired = this.drive.redcrossVolunteerQuantity > 0;
 
     if(backupAndRestoreDualRoles && this.backupDualRolesMap) {
       this.restoreDualRoles(this.backupDualRolesMap);
@@ -1710,12 +1709,18 @@ class MobileGenerator extends BaseGenerator {
 
   calculateVolunteerDonorAmbassadors() {
 
+    // if checkbox in unchecked, no need to go for further calculation
+    if(!this.drive.redcrossVolunteerRequired) {
+      this.mapVolunteerQuantity.set(VOLUNTEER_TYPE.DONOR_AMBASSADOR, 0);
+      return;
+    }
+
     const extraVolunteersRecursive = (donorsOverMax, count = 0) => {
       if (donorsOverMax < 40) return count;
       return extraVolunteersRecursive(donorsOverMax - 40, count + 1);
     };
 
-    let noOfVolunteerDonorAmbassadors = this.drive.redcrossVolunteerRequired ? this.drive.redcrossVolunteerQuantity : 0;
+    let noOfVolunteerDonorAmbassadors = this.drive.redcrossVolunteerQuantity || 0;
 
     const isHighSchoolDrive = this.drive.accountType === ACCOUNT_TYPE.EDUCATION && this.drive.industryCode === ACCOUNT_INDUSTRY_CODE.HIGH_SCHOOL;
     const redcrossVolunteerMatrix = this.masterData.redcrossVolunteerMatrix?.filter(item => item.isHighSchoolDrive === isHighSchoolDrive) || [];
@@ -1748,7 +1753,7 @@ class MobileGenerator extends BaseGenerator {
       }
     }
 
-    this.mapVolunteerQuantity.set('Donor Ambassador', noOfVolunteerDonorAmbassadors);
+    this.mapVolunteerQuantity.set(VOLUNTEER_TYPE.DONOR_AMBASSADOR, noOfVolunteerDonorAmbassadors);
   }
 
   /** Generate drive shifts & jobs  */
@@ -1993,7 +1998,7 @@ class MobileGenerator extends BaseGenerator {
       } else job.jobTags = [...job.jobTags];
       job.tagNames = job.jobTags.map(item => item.tag.name).join(', ');
       job.volunteerRole = volunteerRole;
-      if (volunteerRole === 'Donor Ambassador') {
+      if (volunteerRole === VOLUNTEER_TYPE.DONOR_AMBASSADOR) {
         job.redcrossVolunteerQuantity = quantity || 0;
         job.sponsorVolunteerQuantity = job.sponsorVolunteerQuantity || 0;
         job.quantity = (job.redcrossVolunteerQuantity || 0) + (job.sponsorVolunteerQuantity || 0);
@@ -2671,8 +2676,7 @@ class MobileGenerator extends BaseGenerator {
       let volunteerJob = driveShift.jobs.find(job => job.volunteerRole === VOLUNTEER_TYPE.DONOR_AMBASSADOR);
       if(!isEmpty(volunteerJob)) this.correctJobTime(volunteerJob, driveShift);
       this.updateShiftMobileSetup(driveShift);
-    });
-    
+    });   
   }
 
   onJobChanged(driveShift, job, originalJob) {
