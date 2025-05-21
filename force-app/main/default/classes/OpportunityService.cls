@@ -1506,8 +1506,6 @@ Note : It'll throw error if any sort of consequences happen when projection valu
         String originalValueChangeError = 'Original values cannot be changed';
         for (Opportunity newOpportunity : newOpportunityList) {
             Opportunity oldOpportunity = oldOpportunityMap.get(newOpportunity.Id);
-            system.debug('check newOpp : '+newOpportunity);
-            system.debug('check oldOpp : '+oldOpportunity);
             if (newOpportunity.Anticipated_Registered_Donors_Original__c != oldOpportunity.Anticipated_Registered_Donors_Original__c || newOpportunity.Double_Red_Procedures_Projected_Original__c != oldOpportunity.Double_Red_Procedures_Projected_Original__c || newOpportunity.WholeBloodProceduresProjectedOriginal__c != oldOpportunity.WholeBloodProceduresProjectedOriginal__c) {
                 newOpportunity.addError(originalValueChangeError);
             }
@@ -1521,9 +1519,6 @@ Note : It'll throw error if any sort of consequences happen when projection valu
         Set<String> accSet = new Set<String>();
         for (Opportunity newOpportunity : newOpportunityList) {
             Opportunity oldOpportunity = oldOpportunityMap.get(newOpportunity.Id);
-            system.debug('check newOpp : '+newOpportunity);
-            system.debug('check oldOpp : '+oldOpportunity);
-            
             if(newOpportunity.Drive_Site__c != oldOpportunity.Drive_Site__c && newOpportunity.Is_Template__c){
                 
                 siteSet.add(newOpportunity.Drive_Site__c);
@@ -2147,7 +2142,6 @@ if(ds.isDeletable()){}*/
         for(Opportunity opRecord : newOppsList){     
             Opportunity oldOpportunity = oldOpportunityMap?.get(opRecord.Id);
             if(oldOpportunity == null){oldOpportunity = new opportunity();}
-            system.debug('OpportunityService.assignFlowStartAndEndTimeValues Here is newOpp : ' + opRecord + '\n  Here is oldOpp : ' + oldOpportunity);
             
             //Check if the start time has changed  
             if((oldOpportunity != null) && (opRecord.Start_Time__c != null && oldOpportunity.Start_Time__c != null) && 
@@ -4542,7 +4536,6 @@ opp.StageName = 'Closed';
                 List<String> changedFields = getChangedFields(op, oldOp);
                 if (!changedFields.isEmpty()) {
                     String fields = String.join(changedFields, ', ');
-                    System.debug('Changed Fields: ' +changedFields);
                     op.addError('You cannot change '+ fields +' when there is a pending action on the related DOC record.');
                 }
             }
@@ -4877,12 +4870,9 @@ opp.StageName = 'Closed';
   
     //HRP-12142 starts
     public static void syncDoNotRollFields(List<Opportunity> newList, Map<Id, Opportunity> oldMap){
-        System.debug('syncDoNotRollFields : method start');
         
         if(newList != null && !newList.isEmpty()){
             for(Opportunity opp : newList){
-                System.debug('syncDoNotRollFields : opp.Rollover_Consideration__c '+opp.Rollover_Consideration__c);
-                System.debug('syncDoNotRollFields : opp.Do_Not_Roll__c '+opp.Do_Not_Roll__c);
                 if((oldMap == null || oldMap.isEmpty()) || (opp.Id != null && oldMap.containsKey(opp.Id) 
                         && opp.Rollover_Consideration__c != oldMap.get(opp.Id).Rollover_Consideration__c)){
                             if(String.isNotBlank(opp.Rollover_Consideration__c) && opp.Rollover_Consideration__c.equalsIgnoreCase('Do Not Roll')){
@@ -4897,8 +4887,6 @@ opp.StageName = 'Closed';
                         opp.Rollover_Consideration__c = null;
                     }
                 }
-                System.debug('syncDoNotRollFields : opp.Rollover_Consideration__c '+opp.Rollover_Consideration__c);
-                System.debug('syncDoNotRollFields : opp.Do_Not_Roll__c '+opp.Do_Not_Roll__c);
             }
         }
     }
@@ -4989,7 +4977,6 @@ opp.StageName = 'Closed';
     //HRP-14565 start here
 
     public static void updateLatestPastClosedDrive(List<Opportunity> newList, List<Opportunity> oldList) {
-        System.debug('updateLatestPastClosedDrive newList==>'+newList+' oldList=>'+oldList);
         
         Set<Id> accountIds = new Set<Id>();
         if (newList != null) {
@@ -5075,8 +5062,9 @@ opp.StageName = 'Closed';
     public static void handleRedcrossVolunteerRequirementValidation(List<Opportunity> newOppList, Map<Id, Opportunity> map_oldOppId_oldOpp) {
         Boolean isAutomatedProcess = UserInfo.getName() == BSF_Constants.AUTOMATED_PROCESS;
         String loggedInUserProfileName = '';
-        List<String> allowedProfiles = Profile_Specific_Functionality_Access__mdt.getInstance('Red_Cross_Volunteer_Setting').Allowed_Assignments__c.split(',');
+        if(!isAutomatedProcess) loggedInUserProfileName = [SELECT Id, Name FROM Profile WHERE Id = :UserInfo.getProfileId()].Name;
 
+        List<String> allowedProfiles = Profile_Specific_Functionality_Access__mdt.getInstance('Red_Cross_Volunteer_Setting').Allowed_Assignments__c.split(',');
         for(Opportunity opp : newOppList) {
             if(map_oldOppId_oldOpp != NULL) {
                 Opportunity oldOpp =  map_oldOppId_oldOpp.get(opp.Id);
@@ -5085,7 +5073,6 @@ opp.StageName = 'Closed';
                     (opp.Red_Cross_Volunteer_Required__c != oldOpp.Red_Cross_Volunteer_Required__c) || 
                     (opp.Red_Cross_Volunteer_Quantity__c != oldOpp.Red_Cross_Volunteer_Quantity__c)
                 )) {
-                    loggedInUserProfileName = [SELECT Id, Name FROM Profile WHERE Id = :UserInfo.getProfileId()].Name;
                     if(!allowedProfiles.contains(loggedInUserProfileName)) 
                         opp.addError(Custom_Messages__mdt.getInstance('Red_Cross_Volunteer_Quantity_Validation').Value__c);
                 }        
