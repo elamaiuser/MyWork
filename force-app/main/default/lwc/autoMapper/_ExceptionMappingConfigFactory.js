@@ -37,6 +37,10 @@ export class ExceptionMappingConfigFactory {
       mappingConfig.addFieldConfig('sked_Conflicted_Drive__c', 'conflictedDrive');
       mappingConfig.addFieldConfig('sked_Conflicted_Drive__r.Name', 'conflictedDriveName');
       mappingConfig.addFieldConfig('skedHC__Activity__r.sked_Activity_Title__c', 'activityTitle');
+      mappingConfig.addFieldConfig('skedHC__Activity__r.sked__Start__c', 'activityStart');
+      mappingConfig.addFieldConfig('skedHC__Activity__r.sked__End__c', 'activityEnd');
+      mappingConfig.addFieldConfig('skedHC__Activity__r.sked__Type__c', 'activityType');
+      mappingConfig.addFieldConfig('skedHC__Activity__r.sked_Subtype__c', 'activitySubType');
 
       mappingConfig.addFieldConfig('sked_Linked_Drive__c', 'linkedDriveId');
       mappingConfig.addFieldConfig('sked_Linked_Drive__r.Name', 'linkedDriveName');
