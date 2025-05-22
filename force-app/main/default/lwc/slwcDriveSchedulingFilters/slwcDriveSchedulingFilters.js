@@ -3,6 +3,7 @@ import * as slwcUtils from 'c/slwcUtils';
 import driveSchedulingFiltersTemplate from './driveSchedulingFilters.html';
 import productGoalCalendarFiltersTemplate from './productGoalCalendarFilters.html';
 import driveExceptionLogFiltersTemplate from './driveExceptionLogFilters.html';
+import activityExceptionLogFiltersTemplate from './activityExceptionLogFilters.html';
 import tbsExceptionLogFiltersTemplate from './tbsExceptionLogFilters.html';
 import linkedDriveExceptionLogFiltersTemplate from './linkedDriveExceptionLogFilters.html';
 import resourceExceptionLogFiltersTemplate from './resourceExceptionLogFilters.html';
@@ -90,7 +91,8 @@ const MODE = {
         "MAXIMUM_WEEKLY_WORK_DAYS_VIOLATION",
         "RESOURCE_DUPLICATE_SENIORITY_RANKING",
         "CERT_ADDED_42DAYS",
-        "LINKED_DRIVE_MISMATCHING_ASSETS"
+        "LINKED_DRIVE_MISMATCHING_ASSETS",
+        "ACTIVITY_OUTSIDE_OF_AVAILABILITY_PATTERN"
       ]
     },
   },
@@ -138,7 +140,8 @@ const MODE = {
         'MISSING_TIME_BLOCK', 
         'OUT_OF_TIME_BLOCK', 
         'FITS_MULTIPLE_TIME_BLOCKS',
-        'OUT_OF_OPERATIONAL_HOURS'
+        'OUT_OF_OPERATIONAL_HOURS',
+        "ACTIVITY_OUTSIDE_OF_AVAILABILITY_PATTERN"
       ]
     },
   },
@@ -181,7 +184,8 @@ const MODE = {
         "MISSING_TIME_BLOCK",
         "OUT_OF_TIME_BLOCK",
         "FITS_MULTIPLE_TIME_BLOCKS",
-        "OUT_OF_OPERATIONAL_HOURS"
+        "OUT_OF_OPERATIONAL_HOURS",
+        "ACTIVITY_OUTSIDE_OF_AVAILABILITY_PATTERN"
       ]
     },
   },
@@ -192,6 +196,18 @@ const MODE = {
       priorities: ["High", "Medium", "Low"],
       statuses: ["Open"]
     }
+  },
+  ACTIVITY_EXCEPTION_LOG: {
+    id: 'activityExceptionLog',
+    template: activityExceptionLogFiltersTemplate,
+    defaultModel: {
+      priorities: ["High", "Medium", "Low"],
+      activityTypes: [],
+      activitySubTypes: [],
+      statuses: ["Open"],
+      searchText: "",
+      searchField: "skedHC__Activity__r.sked_Activity_Title__c"
+    },
   },
   SITE_FEEDBACK: {
     id: 'siteFeedback',
