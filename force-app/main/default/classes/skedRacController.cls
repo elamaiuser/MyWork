@@ -161,6 +161,7 @@ global virtual class skedRacController extends skedBaseController {
             query.orderAscending = request.orderDirection == 1 ? 'ASC' : 'DESC';
             query.pageNo = request.pageNo;
             query.pageSize = request.pageSize;
+            query.patternIds = request.patternIds;
             query.queryText = request.queryText;
             query.regionIds = request.regionIds;
             query.resourceTypes = request.resourceTypes;
