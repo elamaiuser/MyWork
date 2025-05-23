@@ -1214,7 +1214,10 @@ class BaseGenerator {
           updatedSlot = pick(slot, [
             'locked',
             'fixedSiteLockReason',
-            'fixedSiteLockComment'
+            'fixedSiteLockComment',
+            'selected',
+            'recurrenceDates',
+            'recurrenceDriveIds'
           ])
         }
 
@@ -1284,14 +1287,14 @@ class BaseGenerator {
       this.updateDriveTotalSlots();
 
       if(deletedSlot?.id) {
-        this.mapSlotRecurrenceDates[slot.key] = {
+        this.mapSlotRecurrenceDates[deletedSlot.key] = {
           action: 'delete',
           slot: deletedSlot,
           recurrenceDates: slot.recurrenceDates || [],
           recurrenceDriveIds: slot.recurrenceDriveIds || []
         };
       } else {
-        delete this.mapSlotRecurrenceDates[slot.key];
+        delete this.mapSlotRecurrenceDates[deletedSlot.key];
       }
     })
     
