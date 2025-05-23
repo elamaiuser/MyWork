@@ -255,14 +255,25 @@ export default class SlwcEditRecurrenceStaffingConstraintModal extends Lightning
 
     let noOfRequestedStaff = 0;
     sameDateDrives.forEach(drive => {
-      noOfRequestedStaff += drive.totalStaffRequested
+      let totalStaffRequested = drive.totalStaffRequested;
+      if (record.timeBlock) {
+        totalStaffRequested = 0;
+        drive.driveShifts?.forEach(driveShift => {
+          if (driveShift.timeBlockId === record.timeBlock.id) {
+            totalStaffRequested += driveShift.staffSetup
+          }
+        })
+      }
+      noOfRequestedStaff += totalStaffRequested
     });
 
     sameDateActivities.forEach(activity => {
-      if(record.driveType === DRIVE_TYPE.MOBILE) {
-        noOfRequestedStaff += activity.mobileStaffQuantity;
-      } else {
-        noOfRequestedStaff += activity.fixedSiteStaffQuantity;
+      if (!record.timeBlock || activity.timeBlockId === record.timeBlock.id) {
+        if(record.driveType === DRIVE_TYPE.MOBILE) {
+          noOfRequestedStaff += activity.mobileStaffQuantity;
+        } else {
+          noOfRequestedStaff += activity.fixedSiteStaffQuantity;
+        }
       }
     });
 
@@ -435,6 +446,7 @@ export default class SlwcEditRecurrenceStaffingConstraintModal extends Lightning
           this.model.STEP2.records = result.map(item => {
             return {
               ...item,
+              timeBlockName: item.timeBlock?.name,
               weekdayLong: this.dateUtils.dateIso2WeeekDay(item.dateOfConstraint).weekdayLong,
               validations: {}
             }

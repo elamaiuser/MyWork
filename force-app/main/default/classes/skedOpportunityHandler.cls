@@ -87,6 +87,8 @@ public class skedOpportunityHandler extends skedTriggerHub {
         fieldsToCheck.add('Slot_Generator__c');
         fieldsToCheck.add('APT_Required__c'); //HRP-13190
         fieldsToCheck.add('APT_Quantity__c'); //HRP-13190
+        fieldsToCheck.add('Red_Cross_Volunteer_Required__c'); //HRP-13146
+        fieldsToCheck.add('Red_Cross_Volunteer_Quantity__c'); //HRP-13146
         return fieldsToCheck;
     }
     

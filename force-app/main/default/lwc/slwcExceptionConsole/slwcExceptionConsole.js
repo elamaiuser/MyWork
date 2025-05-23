@@ -6,7 +6,8 @@ const TABS = {
     DRIVE_EXCEPTION: 'driveException',
     LINKED_DRIVE_EXCEPTION: 'linkedDriveException',
     RESOURCE_EXCEPTION: 'resourceException',
-    TBS_EXCEPTION: 'tbsException'
+    TBS_EXCEPTION: 'tbsException',
+    ACTIVITY_EXCEPTION: 'activityException'
 }
 
 export default class SlwcExceptionConsole extends LightningElement {
@@ -37,6 +38,10 @@ export default class SlwcExceptionConsole extends LightningElement {
         return this.currentTab === TABS.TBS_EXCEPTION;
     }
 
+    get showActvitiyExceptionTab() {
+        return this.currentTab === TABS.ACTIVITY_EXCEPTION;
+    }
+
     get customClass() {
         return {
             driveExceptionTab: slwcUtils.classNames('slds-tabs_default__item', {
@@ -50,6 +55,9 @@ export default class SlwcExceptionConsole extends LightningElement {
             }),
             tbsExceptionTab: slwcUtils.classNames('slds-tabs_default__item', {
                 'slds-is-active': this.showTBSExceptionTab
+            }),
+            activityExceptionTab: slwcUtils.classNames('slds-tabs_default__item', {
+                'slds-is-active': this.showActvitiyExceptionTab
             })
         }
     }

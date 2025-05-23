@@ -14,4 +14,12 @@
         <shortDescription>Sync Contact To ASR EndReason</shortDescription>
         <value>Other</value>
     </labels>
+    <labels>
+        <fullName>Task_Subject_Marketing_Exception</fullName>
+        <categories>Task Subject</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Task Subject - Marketing Exception</shortDescription>
+        <value>Request for Marketing Exception</value>
+    </labels>
 </CustomLabels>
