@@ -59,6 +59,10 @@ export default class SlwcDriveSchedulingConsole extends LightningElement {
         }
     }
 
+    get timeBlockEnabled() {
+        return this.displayMode === 'productGoalCalendar';
+    }
+
     initialized = false;
     @wire(CurrentPageReference) pageRef;
 
@@ -68,7 +72,8 @@ export default class SlwcDriveSchedulingConsole extends LightningElement {
             divisions: [],
             arcRegions: [],
             districts: [],
-            territoryCollectionOperations: []
+            territoryCollectionOperations: [],
+            timeBlocks: []
         },
         selectedMonth: DateTime.local().toISODate()
     }
@@ -135,6 +140,12 @@ export default class SlwcDriveSchedulingConsole extends LightningElement {
     
         this.handleSearch();
     }
+
+    handleTimeBlockChanged(event) {
+        this.filters.collectionOperationValues.timeBlocks = event.detail.selectedTimeBlocks;
+    
+        this.handleSearch();
+      }
 
     handleSearch(event = {
         detail: {}
