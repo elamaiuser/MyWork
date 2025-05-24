@@ -627,11 +627,6 @@
         </columns>
         <columns>
             <checkedByDefault>false</checkedByDefault>
-            <field>User_Override__c</field>
-            <table>sked__Location__c</table>
-        </columns>
-        <columns>
-            <checkedByDefault>false</checkedByDefault>
             <field>sked_Wireless_Policy__c</field>
             <table>sked__Location__c</table>
         </columns>
