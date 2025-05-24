@@ -249,11 +249,6 @@
         </columns>
         <columns>
             <checkedByDefault>false</checkedByDefault>
-            <field>User_Override__c</field>
-            <table>sked_Travel_Time_Index_Item__c.sked_Site_Collection_Operations__r</table>
-        </columns>
-        <columns>
-            <checkedByDefault>false</checkedByDefault>
             <field>sked_Site__c.Name</field>
             <table>sked_Travel_Time_Index_Item__c.sked_Site_Collection_Operations__r</table>
         </columns>
@@ -1258,6 +1253,31 @@
         <columns>
             <checkedByDefault>false</checkedByDefault>
             <field>sked_Optimization_Run__c</field>
+            <table>sked_Travel_Time_Index_Item__c.sked_Site_Collection_Operations__r.sked_Drives__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>Max_Role_Capacity_With_Draw_Hours__c</field>
+            <table>sked_Travel_Time_Index_Item__c.sked_Site_Collection_Operations__r.sked_Drives__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>sked_Dual_Roles_Auto_Generated__c</field>
+            <table>sked_Travel_Time_Index_Item__c.sked_Site_Collection_Operations__r.sked_Drives__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>sked_Prefer_System_Generated_Vehicles__c</field>
+            <table>sked_Travel_Time_Index_Item__c.sked_Site_Collection_Operations__r.sked_Drives__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>sked_Redcross_Volunteer_Required__c</field>
+            <table>sked_Travel_Time_Index_Item__c.sked_Site_Collection_Operations__r.sked_Drives__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>sked_Redcross_Volunteer_Quantity__c</field>
             <table>sked_Travel_Time_Index_Item__c.sked_Site_Collection_Operations__r.sked_Drives__r</table>
         </columns>
         <masterLabel>Drives on Calendar</masterLabel>
