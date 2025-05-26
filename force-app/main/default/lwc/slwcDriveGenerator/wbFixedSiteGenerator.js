@@ -1145,7 +1145,7 @@ class WbFixedSiteGenerator extends BaseGenerator {
       
       const drawHours = this.helper.calculateDrawHours(driveShiftMetadata, this.masterData, driveShiftMetadata.lunchBreakSettings);
 
-      let noOfVpHhStaffs = Math.ceil(totalVpHhCapacity / vpHhCapacity / drawHours);;
+      let noOfVpHhStaffs = Math.ceil(totalVpHhCapacity / vpHhCapacity / drawHours);
       let noOfAptStaffs = 0;
 
       if(this.drive.aptRequired) {
