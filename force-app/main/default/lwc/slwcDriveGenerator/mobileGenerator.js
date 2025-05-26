@@ -1695,9 +1695,12 @@ class MobileGenerator extends BaseGenerator {
     let noOfVpHhStaffs = Math.ceil(totalVpHhCapacity / vpHhCapacity / drawHours);
 
     let existingVphhJob = driveShift.jobs.find(job => 
-        job.resourceRole === 'VP/HH' && 
-        !job.dualRole && 
-        job.manuallyCreatedFrom !== MANUALLY_CREATED_FROM.STAFFING_MODAL);  
+      job.resourceRole === 'VP/HH' && 
+      !job.dualRole)
+
+    if(existingVphhJob?.manuallyCreatedFrom === MANUALLY_CREATED_FROM.STAFFING_MODAL) {
+      return;
+    }
 
     if(noOfVpHhStaffs > 0) {
       if(existingVphhJob) {
@@ -1773,7 +1776,6 @@ class MobileGenerator extends BaseGenerator {
   }
 
   calculateVolunteerDonorAmbassadors() {
-
     // if checkbox in unchecked, no need to go for further calculation
     if(!this.drive.redcrossVolunteerRequired) {
       this.mapVolunteerQuantity.set(VOLUNTEER_TYPE.DONOR_AMBASSADOR, 0);
@@ -2107,7 +2109,19 @@ class MobileGenerator extends BaseGenerator {
         manuallyCreatedFrom: job.manuallyCreatedFrom
       });
     });
+    
     driveShift.jobs = jobs.concat(cloneDeep(manuallyCreatedJobs.filter(job => job.quantity > 0)));
+
+    const anyManuallyCreatedJobsHoldCapacity = driveShift.jobs.find(job => {
+      return job.resourceRole !== 'VP/HH' && (
+        this.helper.isRoleHoldCapacity(job.resourceRole, this.masterData) ||
+        this.helper.isRoleHoldCapacity(job.dualRole, this.masterData) 
+      )
+    });
+
+    if(anyManuallyCreatedJobsHoldCapacity) {
+      this.recalculateVphhQuantity(driveShift);
+    }
   }
 
   // To create new jobs /update existing jobs after dual role modification
