@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Flow xmlns="http://soap.sforce.com/2006/04/metadata">
     <apiVersion>64.0</apiVersion>
+    <areMetricsLoggedToDataCloud>false</areMetricsLoggedToDataCloud>
+    <constants>
+        <name>const_Biomed_Recruitment</name>
+        <dataType>String</dataType>
+        <value>
+            <stringValue>Biomed_Recruitment</stringValue>
+        </value>
+    </constants>
     <constants>
         <name>const_Lead</name>
         <dataType>String</dataType>
@@ -167,7 +175,7 @@
         <defaultConnectorLabel>FALSE_Lead Status is Potential Feeder Group</defaultConnectorLabel>
         <rules>
             <name>TRUE_Lead_Status_is_Potential_Feeder_Group</name>
-            <conditionLogic>1 AND (2 OR 3)</conditionLogic>
+            <conditionLogic>1 AND (2 OR 3 OR 4)</conditionLogic>
             <conditions>
                 <leftValueReference>$Record.Status</leftValueReference>
                 <operator>EqualTo</operator>
@@ -187,6 +195,13 @@
                 <operator>EqualTo</operator>
                 <rightValue>
                     <elementReference>const_LSL</elementReference>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.RecordType.DeveloperName</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <elementReference>const_Biomed_Recruitment</elementReference>
                 </rightValue>
             </conditions>
             <connector>
@@ -738,7 +753,8 @@
     TEXT({!$Record.Status})=&quot;Potential Feeder Group&quot;,
     OR(
       {!$Record.RecordType.DeveloperName}=&quot;Lead&quot;,
-      {!$Record.RecordType.DeveloperName}=&quot;LSL&quot;
+      {!$Record.RecordType.DeveloperName}=&quot;LSL&quot;,
+      {!$Record.RecordType.DeveloperName}=&quot;Biomed_Recruitment&quot;
     )
   ),
   OR(
