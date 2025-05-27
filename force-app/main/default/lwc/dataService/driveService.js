@@ -8,7 +8,7 @@ import { resourceService, resourceQueryModel } from './resourceService';
 import auraProxy from 'c/auraProxy';
 import { keyBy, remove } from 'c/lodash';
 import { isNullOrEmpty } from 'c/slwcUtils';
-import { PROCEDURE_TYPE } from 'c/slwcConstants';
+import { DRIVE_TYPE, PROCEDURE_TYPE } from 'c/slwcConstants';
 
 import * as autoMapper from 'c/autoMapper';
 import dataStorageInstance from './dataStorage';
@@ -40,9 +40,6 @@ class driveService extends dataService {
         if (query.locationIds && query.locationIds.length) {
             queryBuilder.addCondition({ template: 'sked_Drive_Site__c IN {0}', value: query.locationIds, type: "array_string" });
         }
-        if (query.operationTypes && query.operationTypes.length) {
-            queryBuilder.addCondition({ template: 'sked_Operation_Type__c IN {0}', value: query.operationTypes, type: "array_string" });
-        }
         if (query.accountTypes && query.accountTypes.length) {
             queryBuilder.addCondition({ template: 'sked_Account__r.Type IN {0}', value: query.accountTypes, type: "array_string" });
         }
@@ -51,6 +48,14 @@ class driveService extends dataService {
         }
         if (query.eventTypes && query.eventTypes.length) {
             queryBuilder.addCondition({ template: 'sked_Type_of_Drive__c IN {0}', value: query.eventTypes, type: "array_string" });
+        }
+        if (query.operationTypes && query.operationTypes.length) {
+            if (query.eventTypes && query.eventTypes.includes(DRIVE_TYPE.MOBILE)) {
+                queryBuilder.addCondition({ template: `(sked_Type_of_Drive__c = '${DRIVE_TYPE.MOBILE}' OR sked_Operation_Type__c IN {0})`, value: query.operationTypes, type: "array_string" });
+            }
+            else {
+                queryBuilder.addCondition({ template: 'sked_Operation_Type__c IN {0}', value: query.operationTypes, type: "array_string" });
+            }
         }
         if (query.excludedIds && query.excludedIds.length) {
             queryBuilder.addCondition({ template: 'Id NOT IN {0}', value: query.excludedIds, type: "array_string" });

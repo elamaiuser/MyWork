@@ -137,12 +137,18 @@ export default class SlwcDriveSchedulingConsole extends LightningElement {
             districts: event.detail.selectedDistricts,
             territoryCollectionOperations: event.detail.selectedTerritoryCollectionOperations
         }
-    
+        
         this.handleSearch();
     }
 
     handleTimeBlockChanged(event) {
-        this.filters.collectionOperationValues.timeBlocks = event.detail.selectedTimeBlocks;
+        this.filters.collectionOperationValues = {
+            divisions: event.detail.selectedDivisions,
+            arcRegions: event.detail.selectedARCRegions,
+            districts: event.detail.selectedDistricts,
+            territoryCollectionOperations: event.detail.selectedTerritoryCollectionOperations,
+            timeBlocks: event.detail.selectedTimeBlocks
+        }
     
         this.handleSearch();
       }
