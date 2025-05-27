@@ -418,6 +418,8 @@ export default class SlwcDriveCalendar extends LightningElement {
             hasActivities: false
         };
 
+        const selectedTimeBlockIds = this.filters.collectionOperationValues.timeBlocks?.map(item => item.value);
+
         if (this.assetMapByDateAndType[day.dateIso]?.["Equipment"]) {
             let equipment = this.assetMapByDateAndType[day.dateIso]["Equipment"];
             let effectiveEquipment = (equipment || []).filter(item => {
@@ -455,47 +457,65 @@ export default class SlwcDriveCalendar extends LightningElement {
             })
         }
 
-        (this.staffingConstraintsMapByDate[day.dateIso] || []).forEach((constraint) => {
-            if(constraint.driveType === DRIVE_TYPE.FIXED_SITE) {
-                day.slot.totalFixedSiteStaffs += constraint.totalStaffConstraints;
-            } else if(constraint.driveType === DRIVE_TYPE.MOBILE) {
-                day.slot.totalMobileStaffs += constraint.totalStaffConstraints;
+        this.staffingConstraintsMapByDate?.[day.dateIso]?.forEach((constraint) => {
+            const isValid = (!selectedTimeBlockIds?.length && isNullOrEmpty(constraint.timeBlockId))
+                            || (selectedTimeBlockIds?.length && selectedTimeBlockIds.includes(constraint.timeBlockId))
+            if (isValid) {
+                if(constraint.driveType === DRIVE_TYPE.FIXED_SITE) {
+                    day.slot.totalFixedSiteStaffs += constraint.totalStaffConstraints;
+                } else if(constraint.driveType === DRIVE_TYPE.MOBILE) {
+                    day.slot.totalMobileStaffs += constraint.totalStaffConstraints;
+                }
+                day.slot.totalStaffs += constraint.totalStaffConstraints;
+                day.slot.decreaseIndicator = constraint.decreaseIndicator;
+                day.slot.staffingConstraintId = constraint.id;
             }
-            day.slot.totalStaffs += constraint.totalStaffConstraints;
-            day.slot.decreaseIndicator = constraint.decreaseIndicator;
-            day.slot.staffingConstraintId = constraint.id;
         });
 
-        (this.drivesMapByDate[day.dateIso] || []).forEach((drive) => {
+        this.drivesMapByDate?.[day.dateIso]?.forEach((drive) => {
             day.slot.noOfDriveRequested += 1;
 
-            if (!this.driveHelper.isFixedSiteDrive(drive) && drive.totalEquipmentRequested) {
+            const isFixedSiteDrive = this.driveHelper.isFixedSiteDrive(drive)
+            if (!isFixedSiteDrive && drive.totalEquipmentRequested) {
                 day.slot.noOf2RBCRequested += drive.totalEquipmentRequested || 0;
             }
-
-            if (!this.driveHelper.isFixedSiteDrive(drive) && drive.noOfAllocatedDOTVehicles) {
+            if (!isFixedSiteDrive && drive.noOfAllocatedDOTVehicles) {
                 day.slot.noOfDOTRequested += drive.noOfAllocatedDOTVehicles || 0;
             }
-
-            if (!this.driveHelper.isFixedSiteDrive(drive) && drive.noOfAllocatedCDLVehicles) {
+            if (!isFixedSiteDrive && drive.noOfAllocatedCDLVehicles) {
                 day.slot.noOfCDLRequested += drive.noOfAllocatedCDLVehicles || 0;
             }
-
             if (drive.totalStaffRequested) {
-                if(this.driveHelper.isFixedSiteDrive(drive)) {
-                    day.slot.noOfFixedSiteStaffRequested += drive.totalStaffRequested;
-                } else {
-                    day.slot.noOfMobileStaffRequested += drive.totalStaffRequested;
+                let totalStaffRequested = drive.totalStaffRequested;
+                if (selectedTimeBlockIds?.length) {
+                    totalStaffRequested = 0;
+                    drive.driveShifts?.forEach(driveShift => {
+                        if (selectedTimeBlockIds.includes(driveShift.timeBlockId)) {
+                            totalStaffRequested += driveShift.staffSetup
+                        }
+                    })
                 }
-                day.slot.noOfStaffRequested += drive.totalStaffRequested;
+
+                if(isFixedSiteDrive) {
+                    day.slot.noOfFixedSiteStaffRequested += totalStaffRequested;
+                } else {
+                    day.slot.noOfMobileStaffRequested += totalStaffRequested;
+                }
+                day.slot.noOfStaffRequested += totalStaffRequested;
             }
 
-            const vehiclesAllocated = Math.max(drive.totalVehicleRequested || 0, drive.vehiclesAllocated || 0);
-            if (vehiclesAllocated) {
-                day.slot.noOfVehicleRequested += (vehiclesAllocated - (drive.noOfAllocatedBuses || 0));
+            let isVehiclesIncluded = true;
+            if (selectedTimeBlockIds?.length) {
+                isVehiclesIncluded = !!drive.driveShifts?.find(driveShift => selectedTimeBlockIds.includes(driveShift.timeBlockId))
             }
-            if (drive.noOfAllocatedBuses) {
-                day.slot.noOfBusRequested += drive.noOfAllocatedBuses;
+            if (isVehiclesIncluded) {
+                const vehiclesAllocated = Math.max(drive.totalVehicleRequested || 0, drive.vehiclesAllocated || 0);
+                if (vehiclesAllocated) {
+                    day.slot.noOfVehicleRequested += (vehiclesAllocated - (drive.noOfAllocatedBuses || 0));
+                }
+                if (drive.noOfAllocatedBuses) {
+                    day.slot.noOfBusRequested += drive.noOfAllocatedBuses;
+                }
             }
 
             const equipmentAllocated = Math.max(drive.equipmentAllocated || 0, drive.totalEquipmentRequested || 0);
@@ -505,15 +525,27 @@ export default class SlwcDriveCalendar extends LightningElement {
             if (drive.x2rbcProjectedProcedures || drive.wbProjectedProcedures) {
                 let x2rbcProjectedProcedures = drive.x2rbcProjectedProcedures || 0;
                 let wbProjectedProcedures = drive.wbProjectedProcedures || 0;
+
+                if (selectedTimeBlockIds?.length) {
+                    x2rbcProjectedProcedures = 0;
+                    wbProjectedProcedures = 0;
+                    drive.driveShifts?.forEach(driveShift => {
+                        if (selectedTimeBlockIds.includes(driveShift.timeBlockId)) {
+                            x2rbcProjectedProcedures += driveShift.x2rbcProjectedProcedures || 0;
+                            wbProjectedProcedures += driveShift.wbProjectedProcedures || 0;
+                        }
+                    })
+                }
+
                 day.slot.noOfProductBooked += (x2rbcProjectedProcedures * 2 + wbProjectedProcedures);
             }
         });
 
-        if (this.activitiesMapByDate) {
-            (this.activitiesMapByDate[day.dateIso] || []).forEach((activity) => {
-                day.slot.hasActivities = true;
+        this.activitiesMapByDate?.[day.dateIso]?.forEach((activity) => {
+            day.slot.hasActivities = true;
 
-                if (activity.reduceFromStaffingConstraint) {
+            if (activity.reduceFromStaffingConstraint) {
+                if (!selectedTimeBlockIds?.length || selectedTimeBlockIds.includes(activity.timeBlockId)) {
                     day.slot.noOfStaffRequested += (activity.quantity || 0);
                     day.slot.noOfFixedSiteStaffRequested += (activity.fixedSiteStaffQuantity || 0);
                     day.slot.noOfMobileStaffRequested += (activity.mobileStaffQuantity || 0);
@@ -523,16 +555,16 @@ export default class SlwcDriveCalendar extends LightningElement {
                     let vehiclesAllocated = 0;
                     activity.activityResources?.forEach(activityResource => {
                         const resource = activityResource.resource;
-                        if(resource.resourceType !== RESOURCE_TYPE.ASSET) return;
+                        if (resource.resourceType !== RESOURCE_TYPE.ASSET) return;
 
-                        if(resource.assetType === ASSET_TYPE.VEHICLE) {
-                            if(resource.category === 'Bus') {
+                        if (resource.assetType === ASSET_TYPE.VEHICLE) {
+                            if (resource.category === 'Bus') {
                                 noOfAllocatedBuses++;
                             }
                             vehiclesAllocated++;
                         }
 
-                        if(resource.assetType === ASSET_TYPE.EQUIPMENT) {
+                        if (resource.assetType === ASSET_TYPE.EQUIPMENT) {
                             noOfAllocatedEquipments++;
                         }
                     });
@@ -541,10 +573,10 @@ export default class SlwcDriveCalendar extends LightningElement {
                     day.slot.noOfVehicleRequested += (vehiclesAllocated - (noOfAllocatedBuses || 0));
                     day.slot.noOfBusRequested += noOfAllocatedBuses;
                 }
-            });
-        }
+            }
+        });
 
-        (this.productGoalsByDate[day.dateIso] || []).forEach((goal) => {
+        this.productGoalsByDate?.[day.dateIso]?.forEach((goal) => {
             day.slot.noOfProductGoal += (goal.totalProducts || 0);
         });
 
@@ -709,6 +741,8 @@ export default class SlwcDriveCalendar extends LightningElement {
             return;
         }
 
+        const isTimeBlockApplied = this.filters.collectionOperationValues.timeBlocks?.length;
+
         this.showSpinner = true;
         Promise.resolve()
             .then(() => {
@@ -746,6 +780,9 @@ export default class SlwcDriveCalendar extends LightningElement {
                     return districtManagerPortfolio.id;
                 })
                 driveQuery.daysOfWeek = this.filters.daysOfWeek;
+                if (isTimeBlockApplied) {
+                    driveQuery.subQueryIndicator = sObjectType.DRIVE_SHIFT;
+                }
 
                 let activityQuery = new activityQueryModel();
                 //activityQuery.territoryKeys = territoryKeys;

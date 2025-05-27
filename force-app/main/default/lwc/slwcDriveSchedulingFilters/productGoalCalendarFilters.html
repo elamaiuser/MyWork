@@ -39,6 +39,17 @@
                         </div>
                         <div class="slds-form-element slds-form-element_stacked">
                             <c-slwc-multi-picklist
+                                name="operationTypes"
+                                label="Operation Types"
+                                selected-by-default
+                                object-api-name="sked__Location__c"
+                                field-api-name="Operation_Type__c"
+                                onpicklistchange={handleOnChange}
+                                default-values={filters.operationTypes}>
+                            </c-slwc-multi-picklist>
+                        </div>
+                        <div class="slds-form-element slds-form-element_stacked">
+                            <c-slwc-multi-picklist
                                 name="stages"
                                 label="Stage"
                                 selected-by-default={selectedAllByDefault}
