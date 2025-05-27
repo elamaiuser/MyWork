@@ -5,6 +5,9 @@
             <li class={customClass.driveExceptionTab} role="presentation" data-value={TABS.DRIVE_EXCEPTION} onclick={handleTabChange}>
                 <a class="slds-tabs_default__link" role="tab">Drive Exception</a>
             </li>
+            <li class={customClass.activityExceptionTab} role="presentation" data-value={TABS.ACTIVITY_EXCEPTION} onclick={handleTabChange}>
+                <a class="slds-tabs_default__link" role="tab">Activity Exception</a>
+            </li>
             <li class={customClass.linkedDriveExceptionTab} role="presentation" data-value={TABS.LINKED_DRIVE_EXCEPTION} onclick={handleTabChange}>
                 <a class="slds-tabs_default__link" role="tab">Linked Drive Exception</a>
             </li>
@@ -26,6 +29,9 @@
         </div>
         <div if:true={showTBSExceptionTab} class="slds-tabs_default__content" style="padding-top: 0">
             <c-slwc-exception-list exception-type="tbs"></c-slwc-exception-list>
+        </div>
+        <div if:true={showActvitiyExceptionTab} class="slds-tabs_default__content" style="padding-top: 0">
+            <c-slwc-exception-list exception-type="activity"></c-slwc-exception-list>
         </div>
     </div>
     

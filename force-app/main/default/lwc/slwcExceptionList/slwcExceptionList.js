@@ -17,12 +17,42 @@ const DRIVE_EXCEPTION_COLUMNS = [
     { label: 'Resource', fieldName: 'resourceName', type: 'text', hideDefaultActions: true, initialWidth: 200, wrapText: true },
     { label: 'Exception', fieldName: 'exception', type: 'text', hideDefaultActions: true, wrapText: true, cellAttributes: {wrapText: true} },
     { label: 'Conflicting Drive', fieldName: 'conflictedDriveUrl', type: 'url', hideDefaultActions: false, wrapText: true, typeAttributes:{label: { fieldName: 'conflictedDriveName' }, target: '_blank'}},
-    { label: 'Conflicting Activity', fieldName: 'conflictedActivityUrl', type: 'url', hideDefaultActions: false, wrapText: true, typeAttributes:{label: { fieldName: 'activityTitle' }, target: '_blank'}},
+    { label: 'Conflicting Activity', fieldName: 'conflictedActivityUrl', type: 'url', hideDefaultActions: false, wrapText: true, typeAttributes:{label: { fieldName: 'conflictedActivityTitle' }, target: '_blank'}},
     { label: 'Priority', fieldName: 'priority', type: 'text', hideDefaultActions: true, initialWidth: 100, wrapText: true }
     /*{
     { label: 'Status', fieldName: 'status', type: 'text', hideDefaultActions: true, initialWidth: 100, wrapText: true } 
          { label: 'Job', fieldName: 'jobUrl', type: 'url', hideDefaultActions: false, wrapText: true, initialWidth: 125, typeAttributes:{label: { fieldName: 'jobName' }, target: '_blank'}},
     */
+];
+
+const ACTIVITY_EXCEPTION_COLUMNS = [
+    { label: 'Name', fieldName: 'recordUrl', type: 'url', hideDefaultActions: false, initialWidth: 100, wrapText: true, typeAttributes:{label: { fieldName: 'name' }, target: '_blank'}},
+    { label: 'Activity Title', fieldName: 'activityUrl', type: 'url', hideDefaultActions: false, wrapText: true, typeAttributes:{label: { fieldName: 'activityTitle' }, target: '_blank'}},
+    {
+      label: 'Start', fieldName: 'activityStart', type: 'date', hideDefaultActions: true, typeAttributes: {
+        year: 'numeric',
+        month: 'numeric',
+        day: 'numeric',
+        hour: 'numeric',
+        minute: '2-digit',
+        timeZone: TIME_ZONE
+      }
+    },
+    {
+      label: 'End', fieldName: 'activityEnd', type: 'date', hideDefaultActions: true, typeAttributes: {
+        year: 'numeric',
+        month: 'numeric',
+        day: 'numeric',
+        hour: 'numeric',
+        minute: '2-digit',
+        timeZone: TIME_ZONE
+      }
+    },
+    { label: 'Type', fieldName: 'activityType', type: 'text', hideDefaultActions: false, wrapText: true, initialWidth: 125 },
+    { label: 'Sub Type', fieldName: 'activitySubType', type: 'text', hideDefaultActions: false, wrapText: true, initialWidth: 125 },
+    { label: 'Resource', fieldName: 'resourceName', type: 'text', hideDefaultActions: true, initialWidth: 200, wrapText: true },
+    { label: 'Exception', fieldName: 'exception', type: 'text', hideDefaultActions: true, wrapText: true, cellAttributes: {wrapText: true} },
+    { label: 'Priority', fieldName: 'priority', type: 'text', hideDefaultActions: true, initialWidth: 100, wrapText: true }
 ];
 
 const RESOURCE_EXCEPTION_COLUMNS = [
@@ -64,8 +94,10 @@ export default class SlwcExceptionList extends LightningElement {
         }
         else if (this.exceptionType === "resource") {
             return  "resourceExceptionLog";
-        } if (this.exceptionType === "tbs") {
+        } else if (this.exceptionType === "tbs") {
             return  "tbsExceptionLog";
+        } else if (this.exceptionType === "activity") {
+            return  "activityExceptionLog";
         }
         return null;
     }
@@ -79,6 +111,9 @@ export default class SlwcExceptionList extends LightningElement {
         }
         else if (this.exceptionType === "tbs") {
             return  TBS_EXCEPTION_COLUMNS;
+        }
+        else if (this.exceptionType === "activity") {
+            return  ACTIVITY_EXCEPTION_COLUMNS;
         }
         return null;
     }
@@ -179,6 +214,8 @@ export default class SlwcExceptionList extends LightningElement {
         let driveTypes = [];
         let operationTypes = [];
         let resourceDriveTypes = [];
+        let activityTypes = [];
+        let activitySubTypes = [];
         if (this.exceptionType === "drive") {
             query.exceptionType = "drive";
             const territoryKeys = this.territoryKeys;
@@ -189,6 +226,17 @@ export default class SlwcExceptionList extends LightningElement {
             exceptionCodes = this.filters.exceptionCodes;
             driveTypes = this.filters.driveTypes;
             operationTypes = this.filters.operationTypes;
+        }
+        else if (this.exceptionType === "activity") {
+            query.exceptionType = "activity";
+            const territoryKeys = this.territoryKeys;
+            if (!territoryKeys.length) {
+                return Promise.resolve([]);
+            }
+            query.territoryKeys = territoryKeys;
+            exceptionCodes.push("ACTIVITY_OUTSIDE_OF_AVAILABILITY_PATTERN");
+            activityTypes = this.filters.activityTypes;
+            activitySubTypes = this.filters.activitySubTypes;
         }
         else if (this.exceptionType === "resource") {
             resourceDriveTypes = this.filters.resourceDriveTypes;
@@ -209,6 +257,8 @@ export default class SlwcExceptionList extends LightningElement {
         query.exceptionCodes = exceptionCodes;
         query.priorities = this.filters.priorities;
         query.driveTypes = driveTypes;
+        query.activityTypes = activityTypes;
+        query.activitySubTypes = activitySubTypes;
         query.operationTypes = operationTypes;
         query.resourceDriveTypes = resourceDriveTypes;
         query.statuses = this.filters.statuses;
@@ -232,6 +282,12 @@ export default class SlwcExceptionList extends LightningElement {
             .then((result) => {
                 result.forEach((exception) => {
                     exception.recordUrl = '/' + exception.id;
+                    if (exception.activityId) {
+                        exception.activityUrl = '/' + exception.activityId;
+                    }
+                    else {
+                        exception.activityId = '';
+                    }
                     if (exception.driveId) {
                         exception.driveUrl = '/' + exception.driveId;
                     }

@@ -4,5 +4,20 @@
         <members>sked_Operation_Drive_Limit__c.Time_Block__c</members> 
         <name>CustomField</name>
     </types>
+	<types>
+		<members>OperationDriveLimitService</members>
+		<members>OperationDriveLimitServiceTest</members>
+		<members>OperationDriveLimitTriggerHandler</members>
+		<name>ApexClass</name>
+	</types>
+	<types>
+		<members>OperationDriveLimitTrigger</members>
+		<name>ApexTrigger</name>
+	</types>
+	<types>
+		<members>ODL_DateRangeOutsideTimeBlock</members>
+		<members>ODL_TimeBlockNotAssociatedWithCO</members>
+		<name>CustomLabel</name>
+	</types>
     <version>59.0</version>
 </Package>
