@@ -1,25 +1,25 @@
 public without sharing class SiteCollectionOperationTriggerHandler extends TriggerHandler{
     public override void afterInsert(){
         if(super.getTriggerMethodsToBypass().indexOf('updateOverrideFlagOnSite') == -1) { 
-        	updateOverrideFlagOnSite((List<sked_Site_Collection_Operation__c>)trigger.new, null);
+        	//updateOverrideFlagOnSite((List<sked_Site_Collection_Operation__c>)trigger.new, null);
         }
     }
     public override void beforeUpdate(){
         if(super.getTriggerMethodsToBypass().indexOf('updateOverrideFlagOnSite') == -1) {
-        	updateOverrideFlagOnSiteCO((List<sked_Site_Collection_Operation__c>)trigger.new, (Map<Id,sked_Site_Collection_Operation__c>)trigger.oldMap);
+        	//updateOverrideFlagOnSiteCO((List<sked_Site_Collection_Operation__c>)trigger.new, (Map<Id,sked_Site_Collection_Operation__c>)trigger.oldMap);
         }
     }
     public override void afterUpdate(){
         if(super.getTriggerMethodsToBypass().indexOf('updateOverrideFlagOnSite') == -1) {
-            updateOverrideFlagOnSite((List<sked_Site_Collection_Operation__c>)trigger.new, (Map<Id,sked_Site_Collection_Operation__c>)trigger.oldMap);
+            //updateOverrideFlagOnSite((List<sked_Site_Collection_Operation__c>)trigger.new, (Map<Id,sked_Site_Collection_Operation__c>)trigger.oldMap);
         }
     }
     public override void afterDelete(){
         if(super.getTriggerMethodsToBypass().indexOf('updateOverrideFlagOnSite') == -1) {
-        	updateOverrideFlagOnSite((List<sked_Site_Collection_Operation__c>)trigger.old, null);
+        	//updateOverrideFlagOnSite((List<sked_Site_Collection_Operation__c>)trigger.old, null);
         }
     }
-    public static void updateOverrideFlagOnSite(List<sked_Site_Collection_Operation__c> newList, Map<Id,sked_Site_Collection_Operation__c> oldMap){
+    /*public static void updateOverrideFlagOnSite(List<sked_Site_Collection_Operation__c> newList, Map<Id,sked_Site_Collection_Operation__c> oldMap){
         if(newList == null || newList.isEmpty() ){
             return;
         }
@@ -200,5 +200,5 @@ public without sharing class SiteCollectionOperationTriggerHandler extends Trigg
                 siteCO.User_Override__c = updateFlag;
             }
         }
-    }
+    }*/
 }

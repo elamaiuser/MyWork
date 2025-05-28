@@ -24,10 +24,6 @@
                 <field>sked_Region__c</field>
             </layoutItems>
             <layoutItems>
-                <behavior>Readonly</behavior>
-                <field>User_Override__c</field>
-            </layoutItems>
-            <layoutItems>
                 <behavior>Edit</behavior>
                 <field>sked_Travel_Distance_1__c</field>
             </layoutItems>

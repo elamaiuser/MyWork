@@ -41,10 +41,6 @@
                 <behavior>Edit</behavior>
                 <field>Has_Elevator__c</field>
             </layoutItems>
-            <layoutItems>
-                <behavior>Edit</behavior>
-                <field>User_Override__c</field>
-            </layoutItems>
         </layoutColumns>
         <layoutColumns>
             <layoutItems>

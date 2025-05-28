@@ -181,7 +181,7 @@ export default class AddTeamMemberToAccountlwcCmp extends NavigationMixin(Lightn
 
 
     teamRoleChangeHandler(event){
-        this.teamRoleName = event.detail.value;;
+        this.teamRoleName = event.detail.value;
     }
     accountChangeHandler( event ){
         this.accountaccesslevel = event.detail.value;

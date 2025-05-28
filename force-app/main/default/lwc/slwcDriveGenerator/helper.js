@@ -1849,7 +1849,7 @@ class DriveHelper {
         dualRole = data.dualRole;
       }
 
-      let role = resourceRole.split('-')[0];;
+      let role = resourceRole.split('-')[0];
       let roleCapacity = staffingDecisionMatrix[resourceRoleCapacityFieldMap[role]] || 0;
 
       if(resourceRoles.includes(role)) {
@@ -1904,7 +1904,7 @@ class DriveHelper {
         dualRole = data.dualRole;
       }
 
-      let role = resourceRole.split('-')[0];;
+      let role = resourceRole.split('-')[0];
       let roleCapacity = staffingDecisionMatrix[resourceRoleCapacityFieldMap[role]] || 0;
       if(resourceRoles.includes(role)) {
         let roleCapacitywithDrawHours = roleCapacity * drawHours;
@@ -1940,7 +1940,7 @@ class DriveHelper {
         dualRole = data.dualRole;
       }
 
-      let role = resourceRole.split('-')[0];;
+      let role = resourceRole.split('-')[0];
       let roleCapacity = staffingDecisionMatrix[resourceRoleCapacityFieldMap[role]] || 0;
       if(resourceRoles.includes(role)) {
         if(roleCapacity > maxStaffCapacity){
@@ -2771,7 +2771,7 @@ class DriveHelper {
         });
         const afterDualRoleJobs = currentDriveShift.jobs.filter(job => {
           return job.dualRole;
-        });;
+        });
 
         const dualRoleJobsRemoved = beforeDualRoleJobs.filter(beforeJob => {
           const stillExisted = !!afterDualRoleJobs.find(afterJob => {
@@ -2894,7 +2894,7 @@ class DriveHelper {
       const hasAssignedAssetNotSharedWithNewCO = currentAssignedAssets.some(assignedAsset => availableButNotSharedAssetIds.includes(assignedAsset.id));
       result.violated = !!this.isDriveInPathOfLinkedDrive(drive) 
                         && backupDrive && backupDrive.collectionOperationId !== drive.collectionOperationId && backupDriveRegionId === driveRegionId
-                        && hasAssignedAssetNotSharedWithNewCO;;
+                        && hasAssignedAssetNotSharedWithNewCO;
       result.passed = !result.violated || isContentionOverrided(drive, DRIVE_CONTENTION.ASSETS_NOT_SHARED_WITH_NEW_CO);
       return result;
     }
@@ -3452,7 +3452,7 @@ class DriveHelper {
       if(drive.projectedRegisteredDonors) {
         return +((drive.staffCapacity - drive.projectedRegisteredDonors) / drive.maxRoleCapacityWithDrawHours).toFixed(1);
       } else {
-        return +(drive.staffCapacity / drive.maxRoleCapacityWithDrawHours).toFixed(1);;
+        return +(drive.staffCapacity / drive.maxRoleCapacityWithDrawHours).toFixed(1);
       }
     } else {
       return 0;
@@ -3640,13 +3640,11 @@ class DriveHelper {
         }
       })
       if(remainingQuantity2 > 0) {
-        jobsToCreate.push({
+        jobsToUpdate.push({
+          previousJob: job2,
           newJob: {
             ...job2,
-            id: uniqueId('temp_job_'),
-            key: generateUUID(),
-            quantity: remainingQuantity2,
-            jobTags: []
+            quantity: remainingQuantity2
           }
         })
       } else {
@@ -3671,6 +3669,23 @@ class DriveHelper {
       jobsToUpdate,
       jobsToDelete
     }
+  }
+
+  isRoleHoldCapacity(resourceRole, {
+    staffingDecisionMatrix,
+  }) {
+    if(!resourceRole) return false;
+    
+    const resourceRoleCapacityFieldMap = {
+      'Driver': 'driverCapacity',
+      'Driver Support': 'driverSupportCapacity',
+      '2RBC': 'x2RbcStaffCapacity',
+      'Charge': 'chargeCapacity',
+      'VP/HH': 'vpHhCapacity'
+    }
+
+    const roleCapacity = staffingDecisionMatrix[resourceRoleCapacityFieldMap[resourceRole]] || 0;
+    return roleCapacity > 0;
   }
 }
 
