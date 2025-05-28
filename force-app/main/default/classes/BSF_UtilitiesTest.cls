@@ -415,4 +415,17 @@
         Assert.isTrue(result.length() == 255);
         Test.stopTest();
     }
+     
+     static testMethod void createBsfErrorLogwithoutExceptions_Test() {
+         Test.startTest();
+         BSF_Error_Log__c testLog = BSF_Utilities.createBsfErrorLogwithoutExceptions(
+         	'Test_Class',
+         	'testMethod',
+         	'Test Process',
+         	'Test Object',
+         	'Test Error'
+         );
+         Test.stopTest();
+         Assert.isTrue(testLog != NULL);
+     }
 }
