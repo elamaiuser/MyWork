@@ -636,7 +636,8 @@ public class BSF_TestDataSetup {
             Anticipated_Registered_Donors__c = 10,
             WB_Projected_Procedures__c = 11,
             X2RBC_Projected_Procedures__c = 12,
-            Red_Cross_Volunteer_Required__c = true
+            Red_Cross_Volunteer_Required__c = true,
+            Red_Cross_Volunteer_Quantity__c = 1
         );
         if(doInsert) {
             mobileTemplateOpp.AccountId = mobileAcc.Id;
@@ -689,7 +690,9 @@ public class BSF_TestDataSetup {
         	Anticipated_Registered_Donors__c = 25,
             Online_Scheduling_Enabled__c = 'No',
             Source__c = 'Adhoc',
-            Slot_Generator__c = 130
+            Slot_Generator__c = 130,
+            Red_Cross_Volunteer_Required__c = true,
+            Red_Cross_Volunteer_Quantity__c = 1
 		);
         if(doInsert) {
             mobileOpp.AccountId = mobileAcc.Id;
