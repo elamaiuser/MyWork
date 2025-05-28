@@ -28,24 +28,12 @@
                     <li class="slds-p-right_small slds-p-left_xx-small">
                         <div class="slds-form-element slds-form-element_stacked">
                             <c-slwc-multi-picklist
-                                name="driveTypes"
-                                label="Drive Types"
-                                selected-by-default={selectedAllByDefault}
-                                object-api-name="sked_Drive__c"
-                                field-api-name="sked_Type_of_Drive__c"
-                                onpicklistchange={handleOnChange}
-                                default-values={filters.driveTypes}>
-                            </c-slwc-multi-picklist>
-                        </div>
-                        <div class="slds-form-element slds-form-element_stacked">
-                            <c-slwc-multi-picklist
-                                name="operationTypes"
-                                label="Operation Types"
+                                name="driveOperationTypes"
+                                label="Drive Operation Types"
                                 selected-by-default
-                                object-api-name="sked__Location__c"
-                                field-api-name="Operation_Type__c"
+                                pick-list-values={driveOperationTypes}
                                 onpicklistchange={handleOnChange}
-                                default-values={filters.operationTypes}>
+                                default-values={filters.driveOperationTypes}>
                             </c-slwc-multi-picklist>
                         </div>
                         <div class="slds-form-element slds-form-element_stacked">

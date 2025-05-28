@@ -49,6 +49,9 @@ class driveService extends dataService {
         if (query.eventTypes && query.eventTypes.length) {
             queryBuilder.addCondition({ template: 'sked_Type_of_Drive__c IN {0}', value: query.eventTypes, type: "array_string" });
         }
+        if (query.driveOperationTypes && query.driveOperationTypes.length) {
+            queryBuilder.addCondition({ template: 'sked_Drive_Operation_Type__c IN {0}', value: query.driveOperationTypes, type: "array_string" });
+        }
         if (query.operationTypes && query.operationTypes.length) {
             if (query.eventTypes && query.eventTypes.includes(DRIVE_TYPE.MOBILE)) {
                 queryBuilder.addCondition({ template: `(sked_Type_of_Drive__c = '${DRIVE_TYPE.MOBILE}' OR sked_Operation_Type__c IN {0})`, value: query.operationTypes, type: "array_string" });
@@ -546,6 +549,7 @@ class driveQueryModel extends queryModelBase {
     driveChangeRequestStatuses;
     driveChangeRequestType;
     onlyWithinDayAmount;
+    driveOperationTypes;
 }
 
 export {

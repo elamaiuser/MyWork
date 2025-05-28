@@ -518,7 +518,7 @@ export default class SlwcNewCollectionOperationMultiPicklist extends LightningEl
           selectedDivisions: selectedDivisions,
           selectedARCRegions: selectedARCRegions,
           selectedDistricts: selectedDistricts,
-          selectedTerritoryCollectionOperations: selectedTerritoryCollectionOperations,
+          selectedTerritoryCollectionOperations: selectedTerritoryCollectionOperations
         }
       });
       this.dispatchEvent(pickValuesChangeEvent);

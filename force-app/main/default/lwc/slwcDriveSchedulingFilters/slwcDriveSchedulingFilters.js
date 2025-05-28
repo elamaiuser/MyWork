@@ -19,7 +19,7 @@ const MODE = {
     id: 'productGoalCalendar',
     template: productGoalCalendarFiltersTemplate,
     defaultModel: {
-      driveTypes: ['Fixed Site', 'Mobile'],
+      driveOperationTypes: ['Mobile', 'NIFS', 'Fixed Site'],
       driveStatuses: ['System Generated', 'Hold', 'Tentative', 'Confirmed', 'Complete'],
       accountTypes: ['Amusement / Recreational', 'Business', 'Civic / Community', 'Education', 'Government', 'Health', 'Media', 'Military', 'Religious'],
       accountIndustryCodes: [],
@@ -253,6 +253,11 @@ export default class SlwcDriveSchedulingFilters extends LightningElement {
   @track searchFields = [
     { label: 'Drive Name', value: 'sked_Drive__r.Name' },
     { label: 'Drive ID', value: 'sked_Drive__r.sked_UFID__c' }
+  ];
+  @track driveOperationTypes = [
+    { label: 'Mobile', value: 'Mobile' },
+    { label: 'NIFS', value: 'NIFS' },
+    { label: 'Fixed Site', value: 'Fixed Site' }
   ];
 
   get modeSettings() {

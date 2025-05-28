@@ -15,19 +15,15 @@ import {
     calendarMessageService,
     productGoalQueryModel,
     productGoalService, 
-    resourceQueryModel,
-    resourceService, 
     staffingConstraintQueryModel,
     staffingConstraintService,
     operationDriveLimitService,
     operationDriveLimitQueryModel,
-    availabilityQueryModel,
-    availabilityService,
     sObjectType,
 } from 'c/dataService';
 import productGoalCalendar from './productGoalCalendar.html';
 import productivityCalendar from './productivityCalendar.html';
-import { ASSET_TYPE, DRIVE_TYPE, OPERATION_DRIVE_LIMIT_TYPE, RESOURCE_TYPE } from 'c/slwcConstants';
+import { ASSET_TYPE, DRIVE_TYPE, OPERATION_DRIVE_LIMIT_TYPE, DRIVE_OPERATION_TYPE, RESOURCE_TYPE } from 'c/slwcConstants';
 import { DriveHelper } from 'c/slwcDriveGenerator';
 import * as slwcDateUtils from 'c/slwcDateUtils';
 import * as slwcAvailator from 'c/slwcAvailator';
@@ -69,6 +65,7 @@ export default class SlwcDriveCalendar extends LightningElement {
     @track monthSummary = null;
     @track calendarWeeks = [];
     @track driveLimits;
+    @track isTimeBlockApplied;
 
     @track confirmModalData = {};
 
@@ -110,14 +107,14 @@ export default class SlwcDriveCalendar extends LightningElement {
 
     get showFixedSiteStaffingDetails() {
         if(!this.filters) return true;
-        if(!this.filters.driveTypes || !this.filters.driveTypes.length) return true;
-        return this.filters.driveTypes.includes(DRIVE_TYPE.FIXED_SITE);
+        if(!this.filters.driveOperationTypes || !this.filters.driveOperationTypes.length) return true;
+        return this.filters.driveOperationTypes.includes(DRIVE_OPERATION_TYPE.FIXED_SITE);
     }
 
     get showMobileStaffingDetails() {
         if(!this.filters) return true;
-        if(!this.filters.driveTypes || !this.filters.driveTypes.length) return true;
-        return this.filters.driveTypes.includes(DRIVE_TYPE.MOBILE);
+        if(!this.filters.driveOperationTypes || !this.filters.driveOperationTypes.length) return true;
+        return this.filters.driveOperationTypes.includes(DRIVE_OPERATION_TYPE.MOBILE) || this.filters.driveOperationTypes.includes(DRIVE_OPERATION_TYPE.NIFS);
     }
 
     get today() {
@@ -172,7 +169,12 @@ export default class SlwcDriveCalendar extends LightningElement {
     }
 
     handleRefreshCalendar() {
+        const selectedTimeBlockIds = this.filters.collectionOperationValues.timeBlocks?.map(item => item.value);
+        this.isTimeBlockApplied = !!selectedTimeBlockIds?.length;
+
+        this.isFixedSiteDisabled = this.filters.driveOperationTypes?.includes(DRIVE_OPERATION_TYPE.FIXED_SITE);
         this.selectedMonth = this.filters.selectedMonth;
+
         if (this.displayMode == "productGoalCalendar") {
             this.rebuildProductGoalCalendar();
         }
@@ -427,12 +429,13 @@ export default class SlwcDriveCalendar extends LightningElement {
                 if(!isDateValid) return false;
 
                 const isDedicatedToFixedSite = !!item.dedicatedToSiteId;
-                const driveTypes = this.filters.driveTypes || [];
-                if(driveTypes.includes(DRIVE_TYPE.MOBILE) && driveTypes.includes(DRIVE_TYPE.FIXED_SITE)) {
+                const driveOperationTypes = this.filters.driveOperationTypes || [];
+                if((driveOperationTypes.includes(DRIVE_OPERATION_TYPE.MOBILE) || driveOperationTypes.includes(DRIVE_OPERATION_TYPE.NIFS)) 
+                    && driveOperationTypes.includes(DRIVE_OPERATION_TYPE.FIXED_SITE)) {
                     return true;
-                } else if(driveTypes.includes(DRIVE_TYPE.MOBILE)) {
+                } else if(driveOperationTypes.includes(DRIVE_OPERATION_TYPE.MOBILE) || driveOperationTypes.includes(DRIVE_OPERATION_TYPE.NIFS)) {
                     return !isDedicatedToFixedSite;
-                } else if(driveTypes.includes(DRIVE_TYPE.FIXED_SITE)) {
+                } else if(driveOperationTypes.includes(DRIVE_OPERATION_TYPE.FIXED_SITE)) {
                     return isDedicatedToFixedSite;
                 }
 
@@ -475,7 +478,7 @@ export default class SlwcDriveCalendar extends LightningElement {
         this.drivesMapByDate?.[day.dateIso]?.forEach((drive) => {
             day.slot.noOfDriveRequested += 1;
 
-            const isFixedSiteDrive = this.driveHelper.isFixedSiteDrive(drive)
+            const isFixedSiteDrive = drive.driveOperationType === DRIVE_OPERATION_TYPE.FIXED_SITE;
             if (!isFixedSiteDrive && drive.totalEquipmentRequested) {
                 day.slot.noOf2RBCRequested += drive.totalEquipmentRequested || 0;
             }
@@ -487,7 +490,7 @@ export default class SlwcDriveCalendar extends LightningElement {
             }
             if (drive.totalStaffRequested) {
                 let totalStaffRequested = drive.totalStaffRequested;
-                if (selectedTimeBlockIds?.length) {
+                if (!isFixedSiteDrive && selectedTimeBlockIds?.length) {
                     totalStaffRequested = 0;
                     drive.driveShifts?.forEach(driveShift => {
                         if (selectedTimeBlockIds.includes(driveShift.timeBlockId)) {
@@ -526,7 +529,7 @@ export default class SlwcDriveCalendar extends LightningElement {
                 let x2rbcProjectedProcedures = drive.x2rbcProjectedProcedures || 0;
                 let wbProjectedProcedures = drive.wbProjectedProcedures || 0;
 
-                if (selectedTimeBlockIds?.length) {
+                if (!isFixedSiteDrive && selectedTimeBlockIds?.length) {
                     x2rbcProjectedProcedures = 0;
                     wbProjectedProcedures = 0;
                     drive.driveShifts?.forEach(driveShift => {
@@ -741,8 +744,6 @@ export default class SlwcDriveCalendar extends LightningElement {
             return;
         }
 
-        const isTimeBlockApplied = this.filters.collectionOperationValues.timeBlocks?.length;
-
         this.showSpinner = true;
         Promise.resolve()
             .then(() => {
@@ -750,20 +751,20 @@ export default class SlwcDriveCalendar extends LightningElement {
                 staffingConstraintQuery.startDate = startDate;
                 staffingConstraintQuery.endDate = endDate;
                 staffingConstraintQuery.collectionOpIds = collectionOpIds;
-                staffingConstraintQuery.driveTypes = this.filters.driveTypes;
+                staffingConstraintQuery.driveTypes = this.filters.driveOperationTypes;
 
                 let productGoalQuery = new productGoalQueryModel();
                 productGoalQuery.startDate = startDate;
                 productGoalQuery.endDate = endDate;
                 productGoalQuery.collectionOperationIds = collectionOpIds;
-                productGoalQuery.driveTypes = this.filters.driveTypes;
+                productGoalQuery.driveTypes = this.filters.driveOperationTypes;
                 productGoalQuery.procedureTypes = this.filters.procedureTypes;
                 
                 let driveQuery = new driveQueryModel();
                 driveQuery.territoryKeys = territoryKeys;
                 driveQuery.startDate = startDate;
                 driveQuery.endDate = endDate;
-                driveQuery.eventTypes = this.filters.driveTypes;
+                driveQuery.driveOperationTypes = this.filters.driveOperationTypes;
                 driveQuery.statuses = this.filters.driveStatuses;
                 driveQuery.stages = this.filters.stages;
                 driveQuery.accountTypes = this.filters.accountTypes;
@@ -780,7 +781,7 @@ export default class SlwcDriveCalendar extends LightningElement {
                     return districtManagerPortfolio.id;
                 })
                 driveQuery.daysOfWeek = this.filters.daysOfWeek;
-                if (isTimeBlockApplied) {
+                if (this.isTimeBlockApplied) {
                     driveQuery.subQueryIndicator = sObjectType.DRIVE_SHIFT;
                 }
 
