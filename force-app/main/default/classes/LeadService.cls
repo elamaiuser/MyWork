@@ -418,14 +418,12 @@ public class LeadService {
 
     
     public static void sendAutoResponseEmail(List<Lead> newLeads){
-        System.debug('sendAutoResponseEmail called size='+newLeads.size());
         if(newLeads.size() > 1 ){
             System.debug('Auto-reponse emails are for single lead inserts from the web only.');
             return;
         }
 
         Lead newLead = newLeads[0];
-        System.debug('sendAutoResponseEmail newLead.LeadSource='+newLead.LeadSource);
         if(String.isNotBlank(newLead.LeadSource) && newLead.LeadSource.equalsIgnoreCase('Redcrossblood.org')){
 
             EmailTemplate template;
@@ -453,7 +451,6 @@ public class LeadService {
      
             try{
                 // if(!Test.isRunningTest()) Messaging.sendEmail(new Messaging.SingleEmailMessage[] { mail });
-                System.debug('sendAutoResponseEmail call BSF_EmailNotification=');
                 if(!Test.isRunningTest() && mail!=null){
                     BSF_EmailNotification.sendEmails(new Messaging.SingleEmailMessage[] { mail },'WebLeadAutoResponse',null); //Changes for  HRP-11608 
 
@@ -467,7 +464,6 @@ public class LeadService {
     }  
     
     public static void sendQueueAssignmentNotifications(List<Lead> newLeads, Map<Id, Lead> oldMap) {
-        System.debug('SendQA=');
         final string logTag = '[LeadService:sendQueueAssignmentNotifications]';
     
         Set<Id> queueIdSet = new Set<Id>();
@@ -478,21 +474,16 @@ public class LeadService {
             if (oldLead == null) return;
     
             String newOwnerId = newLead.OwnerId;
-            System.debug('SendQA=' + logTag + 'Lead owner has changed from ' + oldLead.OwnerId + ' to ' + newOwnerId);
             if (newLead.OwnerId != oldLead.OwnerId && newOwnerId.startsWith('00G')) {
                 queueIdSet.add(newLead.OwnerId);
                 leadList.add(newLead);
             }
         }
-    
         Map<Id, Group> queueMap = new Map<Id, Group>([
             SELECT Id, Name, Email, Type, DoesSendEmailToMembers 
             FROM Group 
             WHERE Id IN :queueIdSet
         ]);
-    
-        System.debug('SendQA= queueMap ::' + queueMap);
-    
         EmailTemplate template;
         try {
             template = [SELECT Id, Name FROM EmailTemplate WHERE DeveloperName = 'Spark_Lead_Assignment_Sample' LIMIT 1];
@@ -514,7 +505,6 @@ public class LeadService {
                 publicGroupIds.add(gm.UserOrGroupId);
             }
         }
-    
         // Step 3: Get all user members from those Public Groups
         Map<Id, Set<Id>> publicGroupToUserIds = new Map<Id, Set<Id>>();
         if (!publicGroupIds.isEmpty()) {
@@ -535,20 +525,16 @@ public class LeadService {
         // Step 4: Resolve all Queue → User IDs
         Map<Id, Set<Id>> resolvedQueueUserIds = new Map<Id, Set<Id>>();
         for (GroupMember gm : queueMembers) {
-            if (!resolvedQueueUserIds.containsKey(gm.GroupId)) {
-                resolvedQueueUserIds.put(gm.GroupId, new Set<Id>());
-            }
-    
-            if (String.valueOf(gm.UserOrGroupId).startsWith('005')) {
-                resolvedQueueUserIds.get(gm.GroupId).add(gm.UserOrGroupId);
-            } else if (String.valueOf(gm.UserOrGroupId).startsWith('00G')) {
+            if (String.valueOf(gm.UserOrGroupId).startsWith('00G')) {
                 Set<Id> pgUsers = publicGroupToUserIds.get(gm.UserOrGroupId);
                 if (pgUsers != null) {
+                    if (!resolvedQueueUserIds.containsKey(gm.GroupId)) {
+                        resolvedQueueUserIds.put(gm.GroupId, new Set<Id>());
+                    }
                     resolvedQueueUserIds.get(gm.GroupId).addAll(pgUsers);
                 }
             }
         }
-    
         // Step 5: Build and send emails
         List<Messaging.SingleEmailMessage> msgList = new List<Messaging.SingleEmailMessage>();
         for (Lead l : leadList) {
@@ -566,10 +552,8 @@ public class LeadService {
                 msgList.add(createNotificationMessage(template.Id, l, new Map<String, String>{'destinationEmail' => leadQueue.Email}));
             }
         }
-    
-        System.debug('SendQA= msgList :::' + msgList.isEmpty() + ' Body:' + msgList);
         if (!msgList.isEmpty() && !Test.isRunningTest()) {
-            System.debug('There are ' + msgList.size() + ' emails to send out.');
+            System.debug('14808 There are ' + msgList.size() + ' emails to send out.');
             BSF_EmailNotification.sendEmails(msgList, 'LeadCreation', null);
         }
     }
