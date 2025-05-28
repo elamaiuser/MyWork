@@ -101,6 +101,7 @@
         <members>Volunteer_Staffing_Matrix__mdt.Max_Anticipated_Registered_Donors__c</members>
         <members>Volunteer_Staffing_Matrix__mdt.Min_Anticipated_Registered_Donors__c</members>
         <members>Volunteer_Staffing_Matrix__mdt.Volunteer_Quantity__c</members>        
+        <members>Opportunity.Drive_Site_Operation_Type__c </members>
         <name>CustomField</name>
     </types>
     <types>
@@ -169,6 +170,7 @@
         <members>Update_Drive_Status_Field_on_Opportunity_Booking_Date_2</members>
         <members>Update_Drive_Status_Field_on_Opportunity_Booking_Date_2_1</members>
 		<members>Send_Bell_Notification_To_Task</members>
+        <members>Create_New_Fixed_Site_Drive</members>
         <name>Flow</name>
     </types>
     <types>
@@ -243,6 +245,7 @@
     <types>
         <members>sked__Resource__c.AllowWorkAddressEditForWHF</members>
         <members>sked__Resource__c.only_System_Admin_can_edit_Virtual_WFH</members>
+        <members>Prevent_ARD_For_FixedSite_Int_And_NonInt</members>   
         <name>ValidationRule</name>
     </types>
     <types>
