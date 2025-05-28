@@ -635,7 +635,8 @@ public class BSF_TestDataSetup {
       		End_Time__c = Time.newInstance(15, 30, 0, 0),
             Anticipated_Registered_Donors__c = 10,
             WB_Projected_Procedures__c = 11,
-            X2RBC_Projected_Procedures__c = 12
+            X2RBC_Projected_Procedures__c = 12,
+            Red_Cross_Volunteer_Required__c = true
         );
         if(doInsert) {
             mobileTemplateOpp.AccountId = mobileAcc.Id;
