@@ -942,6 +942,7 @@ public with sharing class MobileDriveGeneratorDMLService {
         public List<DMLJob> tempJobs; //HRP-13862
         public List<DriveGenerationUtil.TimeConfigurationModel> timeConfigurations; //HRP-11908
         public List<DMLSlot> slots;
+        public String timeBlockId; //HRP-14389
      
         public DMLDriveShift() {}
         
@@ -963,6 +964,7 @@ public with sharing class MobileDriveGeneratorDMLService {
                 jobList.add(new DMLJob(job));
             }
             this.jobs = jobList;
+            this.timeBlockId = driveShift.sked_Time_Block__c; //HRP-14389
         }
         
         public DMLDriveShift(DMLDriveShift source) {
@@ -988,6 +990,7 @@ public with sharing class MobileDriveGeneratorDMLService {
             this.aPTSetup = source.aPTSetup;
             this.drive = source.drive;
             this.noTravelTime = source.noTravelTime; //HRP-11419
+            this.timeBlockId = source.timeBlockId; //HRP-14389
             
             if (source.jobs != NULL && !source.jobs.isEmpty()) {
                 this.jobs = new List<DMLJob>();
@@ -1037,7 +1040,9 @@ public with sharing class MobileDriveGeneratorDMLService {
                 sked_2RBC_Projected_Procedures__c = this.x2rbcProjectedProcedures != null ? this.x2rbcProjectedProcedures.setScale(2) : 0.00,	
                 sked_Total_Procedures_Projected__c = this.totalProceduresProjected != null ? this.totalProceduresProjected.setScale(2) : 0.00,	
                 sked_Total_Products_Projected__c = this.totalProductsProjected != null ? this.totalProductsProjected.setScale(2) : 0.00,
-                sked_Max_Donor_Capacity__c = this.staffCapacity
+                sked_Max_Donor_Capacity__c = this.staffCapacity,
+                sked_Time_Block__c = this.timeBlockId //HRP-14389
+
             );
             return skedDriveShift;
         }

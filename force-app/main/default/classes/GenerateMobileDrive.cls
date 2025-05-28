@@ -1183,9 +1183,46 @@ public with sharing class GenerateMobileDrive {
                     timeConfig.add(config);
                 }
             }
-            calculateDriveShifts (data, drive, timeConfig, travelTimeModel);
-            //HRP-11908 --> Ends Here
+            calculateDriveShifts (data, drive, timeConfig, travelTimeModel);           
+             //HRP-11908 --> Ends Here
+            associateTimeBlocksToDriveShifts(drive);
         }
+
+        private void associateTimeBlocksToDriveShifts(MobileDriveGeneratorDMLService.DMLDrive drive) {
+            // Query applicable time blocks for the drive's collection operation and drive date
+            List<Collection_Operation_Time_Block__c> timeBlocks = [SELECT Id, Time_Block__r.Id, Time_Block__r.Start_Time__c, Time_Block__r.End_Time__c,Time_Block__r.Days_of_Week__c  
+             FROM Collection_Operation_Time_Block__c WHERE 
+             Collection_Operation__c = :drive.collectionOperationId 
+             AND Effective_Start_Date__c <= :drive.driveDate AND Effective_End_Date__c >= :drive.driveDate 
+            ];
+
+            if(timeBlocks.size() < 0) {
+                return;
+            }
+            String driveDayOfWeek = getDayOfWeek(drive.driveDate);
+
+            for (MobileDriveGeneratorDMLService.DMLDriveShift driveShift : drive.driveShifts) {
+                List<Collection_Operation_Time_Block__c> matchingBlocks = new List<Collection_Operation_Time_Block__c>();
+
+                for(Collection_Operation_Time_Block__c tb : timeBlocks) {
+                    if(tb.Time_Block__r.Days_of_Week__c.contains(driveDayOfWeek)) {
+                        if(driveShift.startTime >= tb.Time_Block__r.Start_Time__c 
+                                && driveShift.endTime <= tb.Time_Block__r.End_Time__c) {
+                            matchingBlocks.add(tb);
+                        }
+                    }
+                }
+
+                if(matchingBlocks.size() == 1) { //If and only one time block is found, assign it to the drive shift (multiple time blocks are not allowed and result in exception for fixed site drives)
+                    driveShift.timeBlockId = matchingBlocks[0].Time_Block__r.Id;
+                }
+            }
+        }
+        
+        private String getDayOfWeek(Date incomingDate) {
+            return DateTime.newInstance(incomingDate.year(), incomingDate.month(), incomingDate.day()).format('EEEE');
+        }
+        
 
         protected virtual DriveStaffingComplementModel calculateJobQuantity (DriveStaffingComplementModel staffingComplement, MobileDriveGeneratorDMLService.DMLDriveShift driveShift, String typeOfDrive, MobileDriveGeneratorDMLService.DMLStaffingDecisionMatrix matrix, MobileDriveGeneratorDMLService.DMLDrive drive) {
             staffingComplement = calculateDriverQuantity (typeOfDrive, staffingComplement);
@@ -2090,3 +2127,4 @@ public with sharing class GenerateMobileDrive {
     }
     
 }
+
