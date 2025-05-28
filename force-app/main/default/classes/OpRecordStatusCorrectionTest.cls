@@ -1,6 +1,7 @@
 /*
 * This Test class covering the following Classes
 * BSF_Batch_Drive_OpRecordStatusCorrection (85%)
+* BSF_Batch_DriveStatusCorrection (95%)
 * */
 /* 
  * Modification Log 
@@ -8,6 +9,8 @@
  * ***************************************************************************
  * 08/13/2024                 Ankit Kundu                HRP-13126
  * 09/17/2024                 Priti Jana                 HRP-13126 (Restructured)
+ * 05/28/2025				  Priti Jana				 Added test methods to cover
+ 														 BSF_Batch_DriveStatusCorrection Batch 
  *****************************************************************************
 */
 
@@ -117,6 +120,35 @@ public class OpRecordStatusCorrectionTest {
         Test.startTest();
         BSF_Utilities.IS_SET_TO_GENERATE_EXCEPTION = TRUE;
         BSF_Batch_Drive_OpRecordStatusCorrection cb = new BSF_Batch_Drive_OpRecordStatusCorrection(null);
+        Test.stopTest();
+    }
+    
+    static testMethod void testDriveStatusCorrectionBatchScheduledRun() {
+        Calendar_Build_Setting__mdt cbMetadata = Calendar_Build_Setting__mdt.getInstance('Calendar_Build_Drives_Config');
+        Integer numberOfDays = Integer.valueOf(cbMetadata?.No_of_Days_for_Status_Correction_Batch__c);
+        sked_Drive__c testDrive = [select id, sked_Drive_date__c FROM sked_Drive__c LIMIT 1];
+        testDrive.sked_Drive_date__c = System.today().addDays(-numberOfDays);
+        skedHubBase.BypassInsertTriggers = true;
+        skedHubBase.BypassUpdateTriggers = true;
+        update testDrive;
+        
+        Test.startTest();
+        Database.executeBatch(new BSF_Batch_DriveStatusCorrection());
+        Test.stopTest();
+    }
+    
+    static testMethod void testDriveStatusCorrectionBatchManualRun() {
+        sked_Drive__c testDrive = [select id, sked_Drive_date__c FROM sked_Drive__c LIMIT 1];
+        Test.startTest();
+        Database.executeBatch(new BSF_Batch_DriveStatusCorrection(testDrive.sked_Drive_Date__c, Date.newInstance(2023, 1, 30)));
+        Test.stopTest();
+    }
+    
+    static testMethod void testScheduleExecuteMethodForStatusCorrectionBatch() {  
+        Test.startTest();
+        BSF_Batch_DriveStatusCorrection statusCorrectionBatchInstance = new BSF_Batch_DriveStatusCorrection();
+        SchedulableContext scon;
+        statusCorrectionBatchInstance.execute(scon);       
         Test.stopTest();
     }
 }
