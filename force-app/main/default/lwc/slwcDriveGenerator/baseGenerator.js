@@ -1,6 +1,6 @@
 import { serial, generateUUID, parseJSON, isNullOrEmpty, cloneDeep as cloneDeepUtil } from 'c/slwcUtils';
 import { DateTime } from 'c/luxon';
-import { cloneDeep, orderBy, extend, remove, max, compact, groupBy, uniq, pick } from 'c/lodash';
+import { cloneDeep, orderBy, extend, remove, max, compact, groupBy, uniq, omit, pick } from 'c/lodash';
 import { DriveHelper } from './helper';
 import { DRIVE_STATUS, ASSET_TYPE, PENDING_ACTION, JOB_ALLOCATION_STATUS, DRIVE_TYPE, DRIVE_REQUEST_CHANGE_STATUS, MANUALLY_CREATED_FROM, OPERATION_TYPE, DRIVE_CONTENTION_RESOLUTION, DRIVE_CHANGE_REQUEST_TYPE, RESOURCE_ROLE_GROUP } from 'c/slwcConstants';
 import {
@@ -1189,7 +1189,7 @@ class BaseGenerator {
     return this.notifyDriveChanged();
   }
   
-  saveSlot(shiftKey, slot) {
+  saveSlot(shiftKey, slot, action) {
     if (!shiftKey || !slot) return;
 
     const driveShiftKey = shiftKey;
@@ -1197,42 +1197,77 @@ class BaseGenerator {
     const driveShift = this.drive.driveShifts[driveShiftIndex];
     if (!driveShift) return;
 
-    let tempSlot = driveShift.slots.find(item => item.key === slot.key);
-    let originalSlot = null;
-    if (tempSlot) {
-      if(tempSlot.id) {
-        originalSlot = cloneDeep(tempSlot);
-      }
+    const isEditSlot = driveShift.slots.find(item => item.key === slot.key);
+    if (isEditSlot) {
+      const slotKeys = slot.selectedSlotKeys?.length ? slot.selectedSlotKeys : [slot.key];
+      slotKeys.forEach(slotKey => {
+        let tempSlot = driveShift.slots.find(item => item.key === slotKey);
+        let originalSlot = null;
+        if(tempSlot.id) {
+          originalSlot = cloneDeep(tempSlot);
+        }
 
-      //edit
-      tempSlot = extend(tempSlot, slot);    
+        //edit
+        let updatedSlot = slot;
+        if(action === 'unlock') {
+          updatedSlot = pick(slot, [
+            'locked',
+            'fixedSiteLockReason',
+            'fixedSiteLockComment',
+            'selected',
+            'recurrenceDates',
+            'recurrenceDriveIds'
+          ])
+        }
+
+        tempSlot = extend(tempSlot, omit(updatedSlot, ['id', 'key']));    
+
+        this.mapSlotRecurrenceDates[tempSlot.key] = {
+          action: tempSlot.id ? 'update' : 'create',
+          originalSlot: originalSlot,
+          slot: tempSlot,
+          driveShiftIndex: driveShiftIndex,
+          recurrenceDates: tempSlot.recurrenceDates || [],
+          recurrenceDriveIds: tempSlot.recurrenceDriveIds || []
+        };
+      })
     } else {
       //create
-      tempSlot = {
+      let tempSlotTemplate = {
         ...{
-          key: generateUUID(),
           status: "Open"
         }, ...slot
       }
 
-      const slotDuration = this.helper.getSlotDurationByType(tempSlot.slotType);
-      tempSlot.name = tempSlot.slotType;
-      tempSlot.endTime = new Date(new Date(tempSlot.startTime).getTime() + slotDuration * 60000).toISOString();
+      const slotDuration = this.helper.getSlotDurationByType(tempSlotTemplate.slotType);
+      tempSlotTemplate.name = tempSlotTemplate.slotType;
+      tempSlotTemplate.endTime = new Date(new Date(tempSlotTemplate.startTime).getTime() + slotDuration * 60000).toISOString();
 
-      driveShift.slots.push(tempSlot);
+      if(tempSlotTemplate.quantity > 0) {
+        Array.from(Array(tempSlotTemplate.quantity), (item, index) => {
+          let tempSlot = {
+            ...tempSlotTemplate,
+            key: generateUUID(),
+          }
+          delete tempSlot.quantity;
+
+          driveShift.slots.push(tempSlot);
+
+          this.mapSlotRecurrenceDates[tempSlot.key] = {
+            action: 'create',
+            originalSlot: null,
+            slot: tempSlot,
+            driveShiftIndex: driveShiftIndex,
+            recurrenceDates: tempSlot.recurrenceDates || [],
+            recurrenceDriveIds: tempSlot.recurrenceDriveIds || []
+          };
+        });
+      }
     }
 
     driveShift.slots = [...driveShift.slots];
     this.updateDriveTotalSlots();
 
-    this.mapSlotRecurrenceDates[tempSlot.key] = {
-      action: tempSlot.id ? 'update' : 'create',
-      originalSlot: originalSlot,
-      slot: tempSlot,
-      driveShiftIndex: driveShiftIndex,
-      recurrenceDates: tempSlot.recurrenceDates || [],
-      recurrenceDriveIds: tempSlot.recurrenceDriveIds || []
-    };
     return this.notifyDriveChanged();
   }
 
@@ -1240,31 +1275,34 @@ class BaseGenerator {
     if (!shiftKey || !slot) return;
 
     const driveShiftKey = shiftKey;
-    const slotKey = slot.key;
     const driveShift = this.drive.driveShifts.find(item => item.key === driveShiftKey);
     if (!driveShift) return;
 
-    const [deletedSlot] = remove(driveShift.slots, item => item.key === slotKey);
+    const slotKeys = slot.selectedSlotKeys?.length ? slot.selectedSlotKeys : [slot.key];
+    slotKeys.forEach(slotKey => {
+      const [deletedSlot] = remove(driveShift.slots, item => item.key === slotKey);
 
-    driveShift.slots = [...driveShift.slots];
-    this.updateDriveTotalSlots();
+      driveShift.slots = [...driveShift.slots];
+      this.updateDriveTotalSlots();
 
-    if(deletedSlot?.id) {
-      this.mapSlotRecurrenceDates[slot.key] = {
-        action: 'delete',
-        slot: deletedSlot,
-        recurrenceDates: slot.recurrenceDates || [],
-        recurrenceDriveIds: slot.recurrenceDriveIds || []
-      };
-    } else {
-      delete this.mapSlotRecurrenceDates[slot.key];
-    }
+      if(deletedSlot?.id) {
+        this.mapSlotRecurrenceDates[deletedSlot.key] = {
+          action: 'delete',
+          slot: deletedSlot,
+          recurrenceDates: slot.recurrenceDates || [],
+          recurrenceDriveIds: slot.recurrenceDriveIds || []
+        };
+      } else {
+        delete this.mapSlotRecurrenceDates[deletedSlot.key];
+      }
+    })
     
     return this.notifyDriveChanged();
   }
 
   calculateRecurrenceSlots(drive) {
     const slotsEqual = (slot1, slot2) => {
+      if(slot1._appliedRecurrenceData) return false;
       if(slot1.slotType !== slot2.slotType) return false;
       const startTime1 = DateTime.fromISO(slot1.startTime, { zone: slot1.timezoneSidId}).toFormat('HH:mm');
       const startTime2 = DateTime.fromISO(slot2.startTime, { zone: slot2.timezoneSidId}).toFormat('HH:mm');
@@ -1344,7 +1382,7 @@ class BaseGenerator {
           const { action } = this.mapSlotRecurrenceDates[slotKey];
           if(action === 'delete') return 0;
           if(action === 'create') return 1;
-          if(action === 'edit') return 2;
+          if(action === 'update') return 2;
           return 3;
         }], ['asc']).forEach(slotKey => {
           const { action, originalSlot, slot, recurrenceDates, driveShiftIndex } = this.mapSlotRecurrenceDates[slotKey];
@@ -1433,8 +1471,12 @@ class BaseGenerator {
                       startTime: newStartTime,
                       endTime: new Date(new Date(newStartTime).getTime() + slotDuration * 60000).toISOString(),
                       locked: slot.locked,
+                      fixedSiteLockReason: slot.fixedSiteLockReason,
+                      fixedSiteLockComment: slot.fixedSiteLockComment,
                       label: slot.label
                     });
+
+                    slotToUpdate._appliedRecurrenceData = true;
                   }
                 })
               }
