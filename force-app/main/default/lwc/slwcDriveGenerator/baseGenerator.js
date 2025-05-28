@@ -1265,6 +1265,7 @@ class BaseGenerator {
 
   calculateRecurrenceSlots(drive) {
     const slotsEqual = (slot1, slot2) => {
+      if(slot1._appliedRecurrenceData) return false;
       if(slot1.slotType !== slot2.slotType) return false;
       const startTime1 = DateTime.fromISO(slot1.startTime, { zone: slot1.timezoneSidId}).toFormat('HH:mm');
       const startTime2 = DateTime.fromISO(slot2.startTime, { zone: slot2.timezoneSidId}).toFormat('HH:mm');
@@ -1433,8 +1434,12 @@ class BaseGenerator {
                       startTime: newStartTime,
                       endTime: new Date(new Date(newStartTime).getTime() + slotDuration * 60000).toISOString(),
                       locked: slot.locked,
+                      fixedSiteLockReason: slot.fixedSiteLockReason,
+                      fixedSiteLockComment: slot.fixedSiteLockComment,
                       label: slot.label
                     });
+
+                    slotToUpdate._appliedRecurrenceData = true;
                   }
                 })
               }
