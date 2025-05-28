@@ -321,16 +321,21 @@ public class FutureDrivesController_Test {
                 fdcitr.isselected = true;
             }
             
-            List<String> fields = new List<String>{'Call_List_Recipient_Exist__c','Drive Affiliations','Web Scheduling Settings','Drive Service Roles','Template Order'} ;
+            List<String> fields = new List<String>{'APT_Required__c', 'Red_Cross_Volunteer_Required__c', 'Call_List_Recipient_Exist__c','Drive Affiliations','Web Scheduling Settings','Drive Service Roles','Template Order'} ;
             String resp = FutureDrivesController.applyChangestoFutureDrives( JSON.serialize( fdc ) , sourceOppId, fields );
             test.stopTest();
             System.assertEquals( 'success', resp);
         }
-        
-        
+    }
+
+    static testMethod void futureDriveSubmissionMessage_Test() {
+        Test.startTest();
+        String testMsg = FutureDrivesController.futureDriveSubmissionMessage();
+        Test.stopTest();
+        Assert.isTrue(String.isNotBlank(testMsg));
     }
     
-    	//Method to get the map of recordType Name as key and recordTypeId as value 
+    //Method to get the map of recordType Name as key and recordTypeId as value 
     public static Map<String,Id> recordTypeMap(string obj){
         Map<String,Id> recTypeNameWithIdMap = new Map<String,Id>();
         if(obj!= null){
