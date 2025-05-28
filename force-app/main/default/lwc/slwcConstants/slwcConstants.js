@@ -114,6 +114,12 @@ export const DRIVE_TYPE = {
   MOBILE: 'Mobile'
 }
 
+export const DRIVE_OPERATION_TYPE = {
+  FIXED_SITE: 'Fixed Site',
+  MOBILE: 'Mobile',
+  NIFS: 'NIFS'
+}
+
 export const DRIVE_STATUS = {
   SYSTEM_GENERATED: 'System Generated',
   DRAFT: 'Draft',
