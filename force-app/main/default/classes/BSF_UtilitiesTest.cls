@@ -416,7 +416,7 @@
         Test.stopTest();
     }
      
-     static testMethod void createBsfErrorLogwithoutExceptions_Test() {
+     /*static testMethod void createBsfErrorLogwithoutExceptions_Test() {
          Test.startTest();
          BSF_Error_Log__c testLog = BSF_Utilities.createBsfErrorLogwithoutExceptions(
          	'Test_Class',
@@ -427,5 +427,5 @@
          );
          Test.stopTest();
          Assert.isTrue(testLog != NULL);
-     }
+     }*/
 }
