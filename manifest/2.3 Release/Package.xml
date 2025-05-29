@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='UTF-8'?>
+<?xml version="1.0" encoding="UTF-8"?>
 <Package xmlns="http://soap.sforce.com/2006/04/metadata">
     <types>
         <members>AccountContactHistoryService</members>
@@ -101,7 +101,7 @@
         <members>Volunteer_Staffing_Matrix__mdt.Max_Anticipated_Registered_Donors__c</members>
         <members>Volunteer_Staffing_Matrix__mdt.Min_Anticipated_Registered_Donors__c</members>
         <members>Volunteer_Staffing_Matrix__mdt.Volunteer_Quantity__c</members>        
-        <members>Opportunity.Drive_Site_Operation_Type__c </members>
+        <members>Opportunity.Drive_Site_Operation_Type__c </members>        
         <name>CustomField</name>
     </types>
     <types>
@@ -245,7 +245,7 @@
     <types>
         <members>sked__Resource__c.AllowWorkAddressEditForWHF</members>
         <members>sked__Resource__c.only_System_Admin_can_edit_Virtual_WFH</members>
-        <members>Prevent_ARD_For_FixedSite_Int_And_NonInt</members>   
+        <members>Prevent_ARD_For_FixedSite_Int_And_NonInt</members>
         <name>ValidationRule</name>
     </types>
     <types>

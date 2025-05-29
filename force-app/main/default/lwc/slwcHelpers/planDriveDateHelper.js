@@ -113,6 +113,7 @@ export default class slwcPlanDriveHelper {
   findDriveLimitByDay = ({
     collectionOperationId,
     collectionOperationIds = [],
+    timeBlockIds = [],
     driveDate
   }, driveLimits = [], type = null) => {
     if (!collectionOperationId && !collectionOperationIds.length) return null;
@@ -127,11 +128,13 @@ export default class slwcPlanDriveHelper {
         collectionOperationValid = collectionOperationIds.includes(item.collectionOperationId);
       }
 
+      let timeBlockValid = !timeBlockIds.length || timeBlockIds.includes(item.timeBlockId);
+
       if (!type) {
-        return collectionOperationValid && (!item.type || item.type === OPERATION_DRIVE_LIMIT_TYPE.DRIVE_LIMIT);
+        return collectionOperationValid && timeBlockValid && (!item.type || item.type === OPERATION_DRIVE_LIMIT_TYPE.DRIVE_LIMIT);
       }
 
-      return collectionOperationValid && item.type === type;
+      return collectionOperationValid && timeBlockValid && item.type === type;
     }).forEach(item => {
       const daysOfWeek = (item.daysOfWeek || '').split(';');
       const isDateRangeValid = (!item.effectiveStartDate || item.effectiveStartDate <= driveDate) && (!item.effectiveEndDate || driveDate <= item.effectiveEndDate);

@@ -14,6 +14,7 @@ export { CalendarMessageMappingConfigFactory } from './_CalendarMessageMappingCo
 export { CalendarMessageCollectionOperationMappingConfigFactory } from './_CalendarMessageCollectionOperationMappingConfigFactory.js';
 export { ClientAvailabilityMappingConfigFactory } from './_ClientAvailabilityMappingConfigFactory.js';
 export { CollectionOperationSdmMappingConfigFactory } from './_CollectionOperationSdmMappingConfigFactory.js';
+export { CollectionOperationTimeBlockMappingConfigFactory } from './_CollectionOperationTimeBlockMappingConfigFactory.js';
 export { CollectionOpMappingConfigFactory } from './_CollectionOpMappingConfigFactory.js';
 export { CollectionOpStagingLocationMappingConfigFactory } from './_CollectionOpStagingLocationMappingConfigFactory.js';
 export { ContactMappingConfigFactory } from './_ContactMappingConfigFactory.js';
@@ -80,6 +81,7 @@ export { StaffingDecisionMatrixMappingConfigFactory } from './_StaffingDecisionM
 export { TagMappingConfigFactory } from './_TagMappingConfigFactory.js';
 export { TerritoryCollectionOperationMappingConfigFactory } from './_TerritoryCollectionOperationMappingConfigFactory.js';
 export { TerritoryMappingConfigFactory } from './_TerritoryMappingConfigFactory.js';
+export { TimeBlockMappingConfigFactory } from './_TimeBlockMappingConfigFactory.js';
 export { TravelTimeIndexItemMappingConfigFactory } from './_TravelTimeIndexItemMappingConfigFactory.js';
 export { UserMappingConfigFactory } from './_UserMappingConfigFactory.js';
 export { BsfPortfolioMappingConfigFactory } from './_BsfPortfolioMappingConfigFactory.js';
