@@ -394,13 +394,6 @@
         </value>
     </choices>
     <constants>
-        <name>DRIVE_TYPE_FIXED_SITE</name>
-        <dataType>String</dataType>
-        <value>
-            <stringValue>Fixed Site</stringValue>
-        </value>
-    </constants>
-    <constants>
         <name>TBD</name>
         <dataType>String</dataType>
         <value>
@@ -410,8 +403,8 @@
     <decisions>
         <name>Account_Active_or_Closed</name>
         <label>Account Active or Closed?</label>
-        <locationX>1291</locationX>
-        <locationY>669</locationY>
+        <locationX>1729</locationX>
+        <locationY>599</locationY>
         <defaultConnectorLabel>Account Active-Inactive-Lapsed</defaultConnectorLabel>
         <rules>
             <name>Account_is_Active</name>
@@ -442,6 +435,78 @@
                 <targetReference>Account_is_Closed_Message</targetReference>
             </connector>
             <label>Account is Closed</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>Check_Operation_Type</name>
+        <label>Check Operation Type</label>
+        <locationX>1429</locationX>
+        <locationY>728</locationY>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Is_Int_Or_Int_APH</name>
+            <conditionLogic>1 AND (2 OR 3)</conditionLogic>
+            <conditions>
+                <leftValueReference>Anticipated_Registered_Donors</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>Get_Site_Location_Details.Operation_Type__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Integrated</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>Get_Site_Location_Details.Operation_Type__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Non Integrated APH</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>ARD</targetReference>
+            </connector>
+            <label>Is Int Or Int APH</label>
+        </rules>
+        <rules>
+            <name>Non_Int_Or_Int_APH</name>
+            <conditionLogic>((1 OR 2 ) AND 3) OR (4)</conditionLogic>
+            <conditions>
+                <leftValueReference>Get_Site_Location_Details.Operation_Type__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Integrated</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>Get_Site_Location_Details.Operation_Type__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Non Integrated APH</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>Anticipated_Registered_Donors</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>Get_Site_Location_Details.Operation_Type__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Non Integrated WB</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Is_Site_Address_Valid</targetReference>
+            </connector>
+            <label>Non Int Or Int APH</label>
         </rules>
     </decisions>
     <decisions>
@@ -585,8 +650,8 @@
     <decisions>
         <name>Is_Site_Address_Valid</name>
         <label>Is Site Address Valid</label>
-        <locationX>778</locationX>
-        <locationY>541</locationY>
+        <locationX>941</locationX>
+        <locationY>571</locationY>
         <defaultConnector>
             <targetReference>Invalid_Site_Address</targetReference>
         </defaultConnector>
@@ -674,8 +739,8 @@
     <decisions>
         <name>isSingleDriveDate</name>
         <label>isSingleDriveDate</label>
-        <locationX>263</locationX>
-        <locationY>655</locationY>
+        <locationX>278</locationX>
+        <locationY>574</locationY>
         <defaultConnector>
             <targetReference>getSiteCollectionOpRecordsRecurringSeries</targetReference>
         </defaultConnector>
@@ -744,72 +809,72 @@
     <dynamicChoiceSets>
         <name>AcceptsAutomation</name>
         <dataType>Picklist</dataType>
-        <displayField xsi:nil="true" />
-        <object xsi:nil="true" />
+        <displayField xsi:nil="true"/>
+        <object xsi:nil="true"/>
         <picklistField>Accepts_Automation2__c</picklistField>
         <picklistObject>Account</picklistObject>
     </dynamicChoiceSets>
     <dynamicChoiceSets>
         <name>Calendar_Description</name>
         <dataType>Picklist</dataType>
-        <displayField xsi:nil="true" />
-        <object xsi:nil="true" />
+        <displayField xsi:nil="true"/>
+        <object xsi:nil="true"/>
         <picklistField>Calendar_Description__c</picklistField>
         <picklistObject>Opportunity</picklistObject>
     </dynamicChoiceSets>
     <dynamicChoiceSets>
         <name>DriveOrigination</name>
         <dataType>Picklist</dataType>
-        <displayField xsi:nil="true" />
-        <object xsi:nil="true" />
+        <displayField xsi:nil="true"/>
+        <object xsi:nil="true"/>
         <picklistField>Drive_Origination__c</picklistField>
         <picklistObject>Opportunity</picklistObject>
     </dynamicChoiceSets>
     <dynamicChoiceSets>
         <name>FlowEndTime</name>
         <dataType>Picklist</dataType>
-        <displayField xsi:nil="true" />
-        <object xsi:nil="true" />
+        <displayField xsi:nil="true"/>
+        <object xsi:nil="true"/>
         <picklistField>Flow_End_Time_Field__c</picklistField>
         <picklistObject>Opportunity</picklistObject>
     </dynamicChoiceSets>
     <dynamicChoiceSets>
         <name>FlowStartTime</name>
         <dataType>Picklist</dataType>
-        <displayField xsi:nil="true" />
-        <object xsi:nil="true" />
+        <displayField xsi:nil="true"/>
+        <object xsi:nil="true"/>
         <picklistField>Flow_Start_Time_Field__c</picklistField>
         <picklistObject>Opportunity</picklistObject>
     </dynamicChoiceSets>
     <dynamicChoiceSets>
         <name>OnlineSchedulingEnabled</name>
         <dataType>Picklist</dataType>
-        <displayField xsi:nil="true" />
-        <object xsi:nil="true" />
+        <displayField xsi:nil="true"/>
+        <object xsi:nil="true"/>
         <picklistField>Online_Scheduling_Enabled__c</picklistField>
         <picklistObject>Opportunity</picklistObject>
     </dynamicChoiceSets>
     <dynamicChoiceSets>
         <name>OpenToPublic</name>
         <dataType>Picklist</dataType>
-        <displayField xsi:nil="true" />
-        <object xsi:nil="true" />
+        <displayField xsi:nil="true"/>
+        <object xsi:nil="true"/>
         <picklistField>Open_to_Public__c</picklistField>
         <picklistObject>Opportunity</picklistObject>
     </dynamicChoiceSets>
     <dynamicChoiceSets>
         <name>Opp_Source</name>
         <dataType>Picklist</dataType>
-        <displayField xsi:nil="true" />
-        <object xsi:nil="true" />
+        <displayField xsi:nil="true"/>
+        <object xsi:nil="true"/>
         <picklistField>Source__c</picklistField>
         <picklistObject>Opportunity</picklistObject>
     </dynamicChoiceSets>
     <dynamicChoiceSets>
         <name>OpportunityStage</name>
         <dataType>Picklist</dataType>
-        <displayField xsi:nil="true" />
-        <object xsi:nil="true" />
+        <displayField xsi:nil="true"/>
+        <object xsi:nil="true"/>
         <picklistField>StageName</picklistField>
         <picklistObject>Opportunity</picklistObject>
     </dynamicChoiceSets>
@@ -857,16 +922,16 @@
     <dynamicChoiceSets>
         <name>Type</name>
         <dataType>Picklist</dataType>
-        <displayField xsi:nil="true" />
-        <object xsi:nil="true" />
+        <displayField xsi:nil="true"/>
+        <object xsi:nil="true"/>
         <picklistField>Type</picklistField>
         <picklistObject>Opportunity</picklistObject>
     </dynamicChoiceSets>
     <dynamicChoiceSets>
         <name>TypeOfDrive</name>
         <dataType>Picklist</dataType>
-        <displayField xsi:nil="true" />
-        <object xsi:nil="true" />
+        <displayField xsi:nil="true"/>
+        <object xsi:nil="true"/>
         <picklistField>Type_of_Drive__c</picklistField>
         <picklistObject>Opportunity</picklistObject>
     </dynamicChoiceSets>
@@ -874,7 +939,7 @@
     <formulas>
         <name>allowedProfilesToEnterPastDriveDate</name>
         <dataType>Boolean</dataType>
-        <expression>CONTAINS({!Get_Profile_Info.Name}, &#39;APS Planner&#39;) || CONTAINS({!Get_Profile_Info.Name}, &#39;APS Management&#39;) || CONTAINS({!Get_Profile_Info.Name}, &#39;APS Scheduler&#39;)</expression>
+        <expression>CONTAINS({!Get_Profile_Info.Name}, &apos;APS Planner&apos;) || CONTAINS({!Get_Profile_Info.Name}, &apos;APS Management&apos;) || CONTAINS({!Get_Profile_Info.Name}, &apos;APS Scheduler&apos;)</expression>
     </formulas>
     <formulas>
         <description>Internal name, Site</description>
@@ -1109,6 +1174,27 @@
         <storeOutputAutomatically>true</storeOutputAutomatically>
     </recordLookups>
     <recordLookups>
+        <name>Get_Site_Location_Details</name>
+        <label>Get Site-Location Details</label>
+        <locationX>1271</locationX>
+        <locationY>511</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Check_Operation_Type</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Id</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>varSiteId</elementReference>
+            </value>
+        </filters>
+        <getFirstRecordOnly>true</getFirstRecordOnly>
+        <object>sked__Location__c</object>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+    <recordLookups>
         <name>Get_Site_Physical_LocationType</name>
         <label>Get Site Physical LocationType</label>
         <locationX>172</locationX>
@@ -1208,14 +1294,33 @@
     <screens>
         <name>Anticipated_Registered_Donors_Required</name>
         <label>Anticipated Registered Donors Required</label>
-        <locationX>516</locationX>
-        <locationY>343</locationY>
+        <locationX>447</locationX>
+        <locationY>354</locationY>
         <allowBack>true</allowBack>
         <allowFinish>false</allowFinish>
         <allowPause>false</allowPause>
         <fields>
             <name>ARDIsRequired</name>
-            <fieldText>&lt;p&gt;&lt;span style=&quot;color: rgb(247, 9, 9);&quot;&gt;The site&#39;s operation type is &quot;Non Integrated WB&quot;.  Please go back and enter a non zero value for Anticipated Registered Donors.&lt;/span&gt;&lt;/p&gt;</fieldText>
+            <fieldText>&lt;p&gt;&lt;span style=&quot;color: rgb(247, 9, 9);&quot;&gt;The site&apos;s operation type is &quot;Non Integrated WB&quot;.  Please go back and enter a non zero value for Anticipated Registered Donors.&lt;/span&gt;&lt;/p&gt;</fieldText>
+            <fieldType>DisplayText</fieldType>
+        </fields>
+        <showFooter>true</showFooter>
+        <showHeader>true</showHeader>
+    </screens>
+    <screens>
+        <name>ARD</name>
+        <label>ARD</label>
+        <locationX>1595</locationX>
+        <locationY>564</locationY>
+        <allowBack>true</allowBack>
+        <allowFinish>false</allowFinish>
+        <allowPause>false</allowPause>
+        <connector>
+            <targetReference>Create_New_Drive</targetReference>
+        </connector>
+        <fields>
+            <name>ARD_Validation</name>
+            <fieldText>&lt;p&gt;&lt;strong style=&quot;background-color: rgb(255, 255, 255); font-size: 14px; font-family: -apple-system, BlinkMacSystemFont, &amp;quot;Segoe UI&amp;quot;, Roboto, &amp;quot;Noto Sans&amp;quot;, Ubuntu, &amp;quot;Droid Sans&amp;quot;, &amp;quot;Helvetica Neue&amp;quot;, sans-serif; color: rgb(255, 10, 35);&quot;&gt;ARD values are not permitted for IFS &amp;amp; Non-Int APH.&lt;/strong&gt;&lt;/p&gt;</fieldText>
             <fieldType>DisplayText</fieldType>
         </fields>
         <showFooter>true</showFooter>
@@ -1224,13 +1329,13 @@
     <screens>
         <name>Create_New_Drive</name>
         <label>Create New Drive</label>
-        <locationX>1422</locationX>
-        <locationY>448</locationY>
+        <locationX>1419</locationX>
+        <locationY>445</locationY>
         <allowBack>true</allowBack>
         <allowFinish>true</allowFinish>
         <allowPause>false</allowPause>
         <connector>
-            <targetReference>Is_Site_Address_Valid</targetReference>
+            <targetReference>Get_Site_Location_Details</targetReference>
         </connector>
         <fields>
             <name>Account</name>
@@ -1260,7 +1365,7 @@
             <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
             <isRequired>true</isRequired>
             <validationRule>
-                <errorMessage>&lt;p&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-size: 12px; font-family: Arial, Helvetica, sans-serif; color: rgb(244, 0, 0);&quot;&gt;Drives may not be scheduled for dates prior to today&#39;s date and Drive date cannot be greater than site end date {!varSiteEndDate}&lt;/span&gt;&lt;/p&gt;</errorMessage>
+                <errorMessage>&lt;p&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-size: 12px; font-family: Arial, Helvetica, sans-serif; color: rgb(244, 0, 0);&quot;&gt;Drives may not be scheduled for dates prior to today&apos;s date and Drive date cannot be greater than site end date {!varSiteEndDate}&lt;/span&gt;&lt;/p&gt;</errorMessage>
                 <formulaExpression>({!allowedProfilesToEnterPastDriveDate} == true &amp;&amp; {!Drive_Date} &lt; TODAY()) ||{!Drive_Date} &gt;= TODAY()&amp;&amp;{!Drive_Date} &lt; {!varSiteEndDate}</formulaExpression>
             </validationRule>
             <visibilityRule>
@@ -1404,7 +1509,7 @@
             </defaultValue>
             <fieldText>Drive Keyword</fieldText>
             <fieldType>InputField</fieldType>
-            <helpText>&lt;p&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-size: 14px; font-family: -apple-system, &amp;quot;system-ui&amp;quot;, &amp;quot;Segoe UI&amp;quot;, Roboto, Oxygen, Ubuntu, &amp;quot;Fira Sans&amp;quot;, &amp;quot;Droid Sans&amp;quot;, &amp;quot;Helvetica Neue&amp;quot;, sans-serif; color: rgb(23, 43, 77);&quot;&gt;Keywords are used to search for drives on RCB.org. Maximum 50 characters, not required to be unique; not case sensitive; excludes numbers; &#39;and&#39;, &#39;or&#39;, &#39;left&#39;, &#39;right&#39; as standalone words; special characters.&lt;/span&gt;&lt;/p&gt;</helpText>
+            <helpText>&lt;p&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-size: 14px; font-family: -apple-system, &amp;quot;system-ui&amp;quot;, &amp;quot;Segoe UI&amp;quot;, Roboto, Oxygen, Ubuntu, &amp;quot;Fira Sans&amp;quot;, &amp;quot;Droid Sans&amp;quot;, &amp;quot;Helvetica Neue&amp;quot;, sans-serif; color: rgb(23, 43, 77);&quot;&gt;Keywords are used to search for drives on RCB.org. Maximum 50 characters, not required to be unique; not case sensitive; excludes numbers; &apos;and&apos;, &apos;or&apos;, &apos;left&apos;, &apos;right&apos; as standalone words; special characters.&lt;/span&gt;&lt;/p&gt;</helpText>
             <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
             <isRequired>false</isRequired>
             <validationRule>
@@ -1438,7 +1543,7 @@ REGEX( {!Drive_Keyword_Not_Required}, &quot;[a-zA-Z0-9 ]+&quot;)</formulaExpress
             </defaultValue>
             <fieldText>Drive Keyword</fieldText>
             <fieldType>InputField</fieldType>
-            <helpText>&lt;p&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-size: 14px; font-family: -apple-system, &amp;quot;system-ui&amp;quot;, &amp;quot;Segoe UI&amp;quot;, Roboto, Oxygen, Ubuntu, &amp;quot;Fira Sans&amp;quot;, &amp;quot;Droid Sans&amp;quot;, &amp;quot;Helvetica Neue&amp;quot;, sans-serif; color: rgb(23, 43, 77);&quot;&gt;Keywords are used to search for drives on RCB.org. Maximum 50 characters, not required to be unique; not case sensitive; excludes numbers; &#39;and&#39;, &#39;or&#39;, &#39;left&#39;, &#39;right&#39; as standalone words; special characters.&lt;/span&gt;&lt;/p&gt;</helpText>
+            <helpText>&lt;p&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-size: 14px; font-family: -apple-system, &amp;quot;system-ui&amp;quot;, &amp;quot;Segoe UI&amp;quot;, Roboto, Oxygen, Ubuntu, &amp;quot;Fira Sans&amp;quot;, &amp;quot;Droid Sans&amp;quot;, &amp;quot;Helvetica Neue&amp;quot;, sans-serif; color: rgb(23, 43, 77);&quot;&gt;Keywords are used to search for drives on RCB.org. Maximum 50 characters, not required to be unique; not case sensitive; excludes numbers; &apos;and&apos;, &apos;or&apos;, &apos;left&apos;, &apos;right&apos; as standalone words; special characters.&lt;/span&gt;&lt;/p&gt;</helpText>
             <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
             <isRequired>true</isRequired>
             <validationRule>
@@ -1574,24 +1679,6 @@ REGEX( {!Drive_Keyword_Required}, &quot;[a-zA-Z0-9 ]+&quot;)</formulaExpression>
                     <elementReference>outWeeklyFrequency</elementReference>
                 </value>
             </inputParameters>
-            <inputParameters>
-                <name>OutputDonorEligibilityDay</name>
-                <value>
-                    <elementReference>outputDonorEligibilityDay</elementReference>
-                </value>
-            </inputParameters>
-            <inputParameters>
-                <name>OutputDonorEligibilityType</name>
-                <value>
-                    <elementReference>OutputEligibilityNeededFor</elementReference>
-                </value>
-            </inputParameters>
-            <inputParameters>
-                <name>InputDriveType</name>
-                <value>
-                    <elementReference>DRIVE_TYPE_FIXED_SITE</elementReference>
-                </value>
-            </inputParameters>
             <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
             <isRequired>true</isRequired>
             <outputParameters>
@@ -1637,14 +1724,6 @@ REGEX( {!Drive_Keyword_Required}, &quot;[a-zA-Z0-9 ]+&quot;)</formulaExpression>
             <outputParameters>
                 <assignToReference>outWeeklyFrequency</assignToReference>
                 <name>OutputWeeklyFrequencyValue</name>
-            </outputParameters>
-            <outputParameters>
-                <assignToReference>outputDonorEligibilityDay</assignToReference>
-                <name>OutputDonorEligibilityDay</name>
-            </outputParameters>
-            <outputParameters>
-                <assignToReference>OutputEligibilityNeededFor</assignToReference>
-                <name>OutputDonorEligibilityType</name>
             </outputParameters>
         </fields>
         <showFooter>false</showFooter>
@@ -1704,8 +1783,8 @@ REGEX( {!Drive_Keyword_Required}, &quot;[a-zA-Z0-9 ]+&quot;)</formulaExpression>
     <screens>
         <name>Invalid_Site_Address</name>
         <label>Invalid Site Address</label>
-        <locationX>1011</locationX>
-        <locationY>567</locationY>
+        <locationX>1136</locationX>
+        <locationY>693</locationY>
         <allowBack>true</allowBack>
         <allowFinish>true</allowFinish>
         <allowPause>false</allowPause>
@@ -1867,20 +1946,6 @@ REGEX( {!Drive_Keyword_Required}, &quot;[a-zA-Z0-9 ]+&quot;)</formulaExpression>
         <scale>0</scale>
     </variables>
     <variables>
-        <name>outputDonorEligibilityDay</name>
-        <dataType>String</dataType>
-        <isCollection>false</isCollection>
-        <isInput>false</isInput>
-        <isOutput>false</isOutput>
-    </variables>
-    <variables>
-        <name>OutputEligibilityNeededFor</name>
-        <dataType>String</dataType>
-        <isCollection>false</isCollection>
-        <isInput>false</isInput>
-        <isOutput>false</isOutput>
-    </variables>
-    <variables>
         <name>outRecurrenceType</name>
         <dataType>String</dataType>
         <isCollection>false</isCollection>
@@ -1953,6 +2018,13 @@ REGEX( {!Drive_Keyword_Required}, &quot;[a-zA-Z0-9 ]+&quot;)</formulaExpression>
         <isInput>false</isInput>
         <isOutput>false</isOutput>
         <scale>0</scale>
+    </variables>
+    <variables>
+        <name>varARDValidationError</name>
+        <dataType>Boolean</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
     </variables>
     <variables>
         <name>varAutomationSuitability</name>

@@ -250,7 +250,7 @@ class Fetch {
 
               return autoMapper.autoMapperInstance.mapToArray('sked__Resource__c', result.returnedData.resources).filter(resource => {
                 return resource.assetType === ASSET_TYPE.VEHICLE;
-              });;
+              });
             })
         }
       });
