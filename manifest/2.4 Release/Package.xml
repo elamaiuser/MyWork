@@ -41,5 +41,10 @@
 		<members>slwcResolveDriveContentions</members>
 		<name>LightningComponentBundle</name>
 	</types>
+	<types>
+		<members>sked__Resource__c-Asset Layout</members>
+		<members>sked__Resource__c-Staff Layout</members>
+		<name>Layout</name>
+	</types>
     <version>63.0</version>
 </Package>
