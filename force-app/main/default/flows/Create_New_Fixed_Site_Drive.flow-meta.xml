@@ -474,19 +474,33 @@
         </rules>
         <rules>
             <name>Non_Int_Or_Int_APH</name>
-            <conditionLogic>and</conditionLogic>
+            <conditionLogic>((1 OR 2 ) AND 3) OR (4)</conditionLogic>
             <conditions>
                 <leftValueReference>Get_Site_Location_Details.Operation_Type__c</leftValueReference>
-                <operator>NotEqualTo</operator>
+                <operator>EqualTo</operator>
                 <rightValue>
                     <stringValue>Integrated</stringValue>
                 </rightValue>
             </conditions>
             <conditions>
                 <leftValueReference>Get_Site_Location_Details.Operation_Type__c</leftValueReference>
-                <operator>NotEqualTo</operator>
+                <operator>EqualTo</operator>
                 <rightValue>
                     <stringValue>Non Integrated APH</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>Anticipated_Registered_Donors</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>Get_Site_Location_Details.Operation_Type__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Non Integrated WB</stringValue>
                 </rightValue>
             </conditions>
             <connector>
