@@ -379,7 +379,13 @@ export default class SlwcStaffingConstraintMassUpdate extends LightningElement {
   }
 
   handleTimeBlockChanged(event) {
-    this.filters.collectionOperationValues.timeBlocks = event.detail.selectedTimeBlocks;
+    this.filters.collectionOperationValues = {
+      divisions: event.detail.selectedDivisions,
+      arcRegions: event.detail.selectedARCRegions,
+      districts: event.detail.selectedDistricts,
+      territoryCollectionOperations: event.detail.selectedTerritoryCollectionOperations,
+      timeBlocks: event.detail.selectedTimeBlocks
+    };
 
     this.handleSearch();
     this.fetchStafingConstrainData();
