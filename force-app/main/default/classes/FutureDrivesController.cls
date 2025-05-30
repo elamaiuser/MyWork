@@ -57,7 +57,7 @@ public with sharing class FutureDrivesController {
                        from Opportunity
                        where Parent_Template_Id__c =:recordid and
                        is_template__c = false and
-                       Drive_Date__c > : currentDate  ];
+                       Drive_Date__c > : currentDate and StageName !='Cancelled' ];
             if( !opplist.isEmpty() ){
                 for( Opportunity opp : opplist ){
                     fd = new FutureDriveClass();
