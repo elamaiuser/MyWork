@@ -3021,11 +3021,8 @@ class DriveHelper {
     return drive.pendingAction === PENDING_ACTION.DRIVE_SUBMISSION;
   }
   
-  isDriverJob(job) {
-    if(!job) return false;
-    const isNotCdlDriverJob = job.id && !job.id.startsWith('drivercdl');
-    const isNotDotDriverJob = job.id && !job.id.startsWith('driverdot');
-    return isNotCdlDriverJob && isNotDotDriverJob && (job.resourceRole === 'Driver' || job.dualRole === 'Driver')
+  isDriverJob(job, onlyCheckResourceRole = false) {
+    return slwcAvailator.isDriverJob(job, onlyCheckResourceRole);
   }
 
   isDriverSupport(job) {
