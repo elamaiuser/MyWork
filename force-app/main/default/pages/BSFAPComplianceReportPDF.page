@@ -1,0 +1,111 @@
+<apex:page controller="APComplianceReportController" renderAs="pdf" applyBodyTag="false" applyHtmlTag="false" showHeader="false">
+    <html>
+        <head>
+            <style>
+                @page {
+                    size: A4 landscape;
+                    @top-center {
+                        content: "Availability Pattern Compliance Report";
+                    }
+                    @bottom-right {
+                        content: "Page " counter(page) " of " counter(pages);
+                    }
+                }
+
+                body {
+                    font-family: Arial, sans-serif;
+                    font-size: 10px;
+                    margin: 20px;
+                }
+
+                table {
+                    width: 100%;
+                    border-collapse: collapse;
+                    font-size: 10px;
+                }
+
+                th, td {
+                    border: 1px solid black;
+                    padding: 4px;
+                    text-align: center;
+                }
+
+                th {
+                    background-color: #f2f2f2;
+                    font-weight: bold;
+                }
+
+                .summary-table {
+                    margin-bottom: 20px;
+                    width: 100%;
+                    font-weight: bold;
+                }
+
+                .summary-table td {
+                    border: none;
+                    text-align: left;
+                    padding: 4px 10px 4px 0;
+                }
+            </style>
+        </head>
+        <body>
+
+            <!-- Horizontal Summary Row -->
+            <table class="summary-table">
+                <tr>
+                    <td>Total Records: {!wrapper.summary['totalRecords']}</td>
+                    <td>Job Violations: {!wrapper.summary['jobViolations']}</td>
+                    <td>Activity Violations: {!wrapper.summary['activityViolations']}</td>
+                    <td>Total Violations: {!wrapper.summary['totalViolations']}</td>
+                    <td>% Violation: {!wrapper.summary['violationPercentage']}%</td>
+                </tr>
+            </table>
+
+            <!-- Main Data Table -->
+            <table>
+                <thead>
+                    <tr>
+                        <th>Resource</th>
+                        <th>Supervisor</th>
+                        <th>Drive Name</th>
+                        <th>Division</th>
+                        <th>Region</th>
+                        <th>CO</th>
+                        <th>Work Date</th>
+                        <th>Type</th>
+						<th>Role</th>
+                        <th>Drive Status</th>
+                        <th>Start Time</th>
+                        <th>End Time</th>
+                        <th>AP Time</th>
+                        <th>AP Name</th>
+                        <th>AP Violation</th>
+                        <th>Exception</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <apex:repeat value="{!wrapper.dataWrapper}" var="row">
+                        <tr>
+                            <td>{!row['name']}</td>
+                            <td>{!row['supervisor']}</td>
+                            <td>{!row['driveName']}</td>
+                            <td>{!row['division']}</td>
+                            <td>{!row['region']}</td>
+                            <td>{!row['co']}</td>
+                            <td>{!row['workDate']}</td>
+                            <td>{!row['type']}</td>
+                            <td>{!row['role']}</td>
+                            <td>{!row['status']}</td>
+                            <td>{!row['startTime']}</td>
+                            <td>{!row['endTime']}</td>
+                            <td>{!row['apTime']}</td>
+                            <td>{!row['apName']}</td>
+                            <td>{!row['violation']}</td>
+                            <td>{!row['exc']}</td>
+                        </tr>
+                    </apex:repeat>
+                </tbody>
+            </table>
+        </body>
+    </html>
+</apex:page>
