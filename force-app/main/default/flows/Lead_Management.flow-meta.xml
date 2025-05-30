@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Flow xmlns="http://soap.sforce.com/2006/04/metadata">
     <apiVersion>64.0</apiVersion>
-    <constants>
+        <constants>
         <name>const_Biomed_Recruitment</name>
         <dataType>String</dataType>
         <value>
@@ -747,45 +747,6 @@
         <connector>
             <targetReference>Lead_Status_is_Potential_Feeder_Group</targetReference>
         </connector>
-        <filterFormula>OR(
-  AND(
-    TEXT({!$Record.Status})=&quot;Potential Feeder Group&quot;,
-    OR(
-      {!$Record.RecordType.DeveloperName}=&quot;Lead&quot;,
-      {!$Record.RecordType.DeveloperName}=&quot;LSL&quot;,
-      {!$Record.RecordType.DeveloperName}=&quot;Biomed_Recruitment&quot;
-    )
-  ),
-  OR(
-    AND(
-      ISNULL({!$Record.Initial_New_Lead_Status__c}),
-      TEXT({!$Record.Status})=&quot;New&quot;
-    ),
-    AND(
-      ISNULL({!$Record.Initial_Contact_Lead_Status__c}),
-      TEXT({!$Record.Status})=&quot;Contacted&quot;
-    ),
-    AND(
-      ISNULL({!$Record.Initial_Qualified_Lead_Status__c}),
-      TEXT({!$Record.Status})=&quot;Qualified&quot;
-    ),
-    AND(
-      ISNULL({!$Record.Initial_Unqualified_Lead_Status__c}),
-      TEXT({!$Record.Status})=&quot;Unqualified&quot;
-    )
-  ),
-  OR(
-    OR(
-      AND(
-        TEXT({!$Record.Status})=&quot;New&quot;,
-        ISCHANGED({!$Record.Status})
-      ),
-      ISNULL({!$Record.Lead_Status_NEW__c})
-    ),
-    ISCHANGED({!$Record.Status}),
-    {!$Record.IsConverted}
-  )
-)</filterFormula>
         <object>Lead</object>
         <recordTriggerType>CreateAndUpdate</recordTriggerType>
         <triggerType>RecordBeforeSave</triggerType>
