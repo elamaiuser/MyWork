@@ -51,11 +51,13 @@ export default class SlwcLockAppointmentModal extends LightningElement {
     }
 
     init() {
+        const recurrenceDates = this.slots.length === 1 ? this.slots[0].recurrenceDates ?? [] : []
+        const selectedDriveIds = this.slots.length === 1 ? this.slots[0].selectedDriveIds ?? [] : []
         this.model = {
             fixedSiteLockReason: '',
             fixedSiteLockComment: '',
-            recurrenceDates: [],
-            selectedDriveIds: []
+            recurrenceDates,
+            selectedDriveIds
         }
     }
 

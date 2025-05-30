@@ -370,6 +370,7 @@ public without sharing class GenerateDriveWorksheetPdfController {
                                                     (SELECT Id 
                                                     FROM sked__Location__c 
                                                     WHERE Id IN : siteIdSet) 
+                                                    AND sked_Status__c != 'Cancel'
                                                     ORDER BY sked_Drive_Date__c ASC];
             for(sked_Drive__c fdrv : futureDriveList){
                 if(futureDriveMap.size() != 0 && futureDriveMap.containsKey(fdrv.sked_Drive_Site__c) && futureDriveMap.get(fdrv.sked_Drive_Site__c) != null){

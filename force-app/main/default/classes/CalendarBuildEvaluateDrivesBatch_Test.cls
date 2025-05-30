@@ -1,6 +1,6 @@
 /* The following test class is covering the below apex class
- * CalendarBuildEvaluateDrivesBatch (82%)
- * CalendarBuildBatchHandler (95%)
+ * CalendarBuildEvaluateDrivesBatch (93%)
+ * CalendarBuildBatchHandler (94%)
  * CreateSkedDrivesBatch(84%)
  * 
  * Modification Log 
@@ -369,7 +369,9 @@ public class CalendarBuildEvaluateDrivesBatch_Test {
         Test.startTest();
         TriggerHandler.bypass('AccountPortfolioAssignmentTriggerHandler');
         TriggerHandler.bypass('AccountTriggerHandler');
-        Opportunity mobileOpp = [select id, stageName, Drive_date__c from Opportunity where type_of_drive__c = 'Mobile' AND Is_Template__c = FALSE LIMIT 1];
+        Opportunity mobileOpp = [select id, StageName, Drive_Date__c,
+                                 Type_of_Drive__c, AccountId
+                                 from Opportunity where type_of_drive__c = 'Mobile' AND Is_Template__c = FALSE LIMIT 1];
        
         CalendarBuildBatchOnDemandController.AdhocCalendarBuildInput input = new CalendarBuildBatchOnDemandController.AdhocCalendarBuildInput();
         input.bookingStrategy = 'TEST RUN';

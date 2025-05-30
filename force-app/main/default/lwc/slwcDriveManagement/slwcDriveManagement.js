@@ -1253,8 +1253,16 @@ export default class SlwcDriveManagement extends NavigationMixin(LightningElemen
         if(event.detail.action === 'delete') {
             driveGeneratorInstance.deleteSlot(event.detail.driveShift.key, {
                 ...event.detail.newSlot,
-                key: event.detail.slotKey
+                key: event.detail.slotKey,
             })
+        } else if (event.detail.action === 'unlock') {
+            driveGeneratorInstance.saveSlot(event.detail.driveShift.key, {
+                ...event.detail.newSlot,
+                locked: false,
+                fixedSiteLockReason: '',
+                fixedSiteLockComment: '',
+                key: event.detail.slotKey
+            }, event.detail.action)
         } else {
             driveGeneratorInstance.saveSlot(event.detail.driveShift.key, {
                 ...event.detail.newSlot,

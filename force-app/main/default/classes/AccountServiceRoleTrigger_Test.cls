@@ -178,13 +178,9 @@ public class AccountServiceRoleTrigger_Test {
         optyObj.X2RBC_Projected_Procedures__c = 1;
         optyObj.Anticipated_Registered_Donors__c = 1;
         
-        oppsobjlist.add( optyObj );
-        
-        
-        insert oppsobjlist;
-        
+        oppsobjlist.add( optyObj );   
+        insert oppsobjlist;   
     }
-    
     
     @isTest 
     static void AccountServiceRoleTrigger_Test1(){
@@ -243,6 +239,8 @@ public class AccountServiceRoleTrigger_Test {
         Account_Service_Role__c = 'Blood Program Leader',
         Start_Date__c = Dt);
         insert asr2;
+        
+        update asr2; //blank update
         
             delete asr;
         Test.stopTest();

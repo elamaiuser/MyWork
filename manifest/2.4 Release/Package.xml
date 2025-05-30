@@ -12,11 +12,15 @@
 		<members>Send_Bell_Notification_to_AM_for_approval_status</members>
 		<members>Send_Bell_and_Email_Notifications_for_Task</members>
 		<members>Skedulo_Resource_Termination_Rule</members>
+		<members>Aggregate_TimeStamp</members>
+		<members>Lead_Status_Timestamp</members>
+		<members>Lead_Management</members>
 		<name>Flow</name>
 	</types>
 	<types>
 		<members>sked_Optimization_Run__c</members>
 		<members>sked__Resource__c</members>
+		<members>Lead</members>
 		<name>Workflow</name>
 	</types>
 	<types>
@@ -36,6 +40,11 @@
 		<members>slwcDriveGenerator</members>
 		<members>slwcResolveDriveContentions</members>
 		<name>LightningComponentBundle</name>
+	</types>
+	<types>
+		<members>sked__Resource__c-Asset Layout</members>
+		<members>sked__Resource__c-Staff Layout</members>
+		<name>Layout</name>
 	</types>
     <version>63.0</version>
 </Package>
