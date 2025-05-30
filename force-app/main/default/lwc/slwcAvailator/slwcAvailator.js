@@ -1367,7 +1367,10 @@ class SlwcAvailator {
     });
 
     this.drive.driveShifts.forEach(driveShift => {
-      const driverJob = driveShift.jobs.find(job => this.isDriverJob(job));
+      let driverJob = driveShift.jobs.find(job => this.isDriverJob(job, true));
+      if(!driverJob) {
+        driverJob = driveShift.jobs.find(job => this.isDriverJob(job, false));
+      }
       if(!driverJob) return;
       if(!driverJob.jobAllocations) {
         driverJob.jobAllocations = [];
