@@ -43,6 +43,10 @@
 		<name>ApexClass</name>
 	</types>
 	<types>
+		<members>Custom_Messages.Logistics_Chg_Rsn_to_Future_Drives</members>
+		<name>CustomMetadata</name>
+	</types>
+	<types>
 		<members>slwcDriveGenerator</members>
 		<members>slwcResolveDriveContentions</members>
 		<name>LightningComponentBundle</name>

@@ -321,7 +321,7 @@ public class FutureDrivesController_Test {
                 fdcitr.isselected = true;
             }
             
-            List<String> fields = new List<String>{'APT_Required__c', 'Red_Cross_Volunteer_Required__c', 'Call_List_Recipient_Exist__c','Drive Affiliations','Web Scheduling Settings','Drive Service Roles','Template Order'} ;
+            List<String> fields = new List<String>{'APT_Required__c', 'Red_Cross_Volunteer_Required__c', 'Anticipated_Registered_Donors__c', 'Call_List_Recipient_Exist__c','Drive Affiliations','Web Scheduling Settings','Drive Service Roles','Template Order'} ;
             String resp = FutureDrivesController.applyChangestoFutureDrives( JSON.serialize( fdc ) , sourceOppId, fields );
             test.stopTest();
             System.assertEquals( 'success', resp);
