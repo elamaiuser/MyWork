@@ -2383,7 +2383,10 @@ export default class SlwcDriveStaffingDetails extends LightningElement {
         } = this.getNumberOfDotAndCdlDrivers(drive, includeDeleted);
 
         driveToSave.driveShifts.forEach(driveShift => {
-            let driverJob = driveShift.jobs.find(job => this.driveHelper.isDriverJob(job));
+            let driverJob = driveShift.jobs.find(job => this.driveHelper.isDriverJob(job, true));
+            if (!driverJob) {
+                driverJob = driveShift.jobs.find(job => this.driveHelper.isDriverJob(job, false));
+            }
 
             if(driverJob) {
                 driveShift.jobs.forEach(job => {
