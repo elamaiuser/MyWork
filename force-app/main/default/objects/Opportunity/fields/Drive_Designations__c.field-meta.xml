@@ -28,6 +28,111 @@
                 <default>false</default>
                 <label>COVID 19</label>
             </value>
+            <value>
+                <fullName>Brixmor Property Group</fullName>
+                <default>false</default>
+                <label>Brixmor Property Group</label>
+            </value>
+            <value>
+                <fullName>Critical Booking Timeframe</fullName>
+                <default>false</default>
+                <label>Critical Booking Timeframe</label>
+            </value>
+            <value>
+                <fullName>DAA Prior</fullName>
+                <default>false</default>
+                <label>DAA Prior</label>
+            </value>
+            <value>
+                <fullName>Diversity - African American Potential</fullName>
+                <default>false</default>
+                <label>Diversity - African American Potential</label>
+            </value>
+            <value>
+                <fullName>Diversity - African American Prior</fullName>
+                <default>false</default>
+                <label>Diversity - African American Prior</label>
+            </value>
+            <value>
+                <fullName>Diversity - Latino Potential</fullName>
+                <default>false</default>
+                <label>Diversity - Latino Potential</label>
+            </value>
+            <value>
+                <fullName>Diversity - Latino Prior</fullName>
+                <default>false</default>
+                <label>Diversity - Latino Prior</label>
+            </value>
+            <value>
+                <fullName>Diversity - Pride/LGBTQIA+</fullName>
+                <default>false</default>
+                <label>Diversity - Pride/LGBTQIA+</label>
+            </value>
+            <value>
+                <fullName>Fixed Site Growth Boost</fullName>
+                <default>false</default>
+                <label>Fixed Site Growth Boost</label>
+            </value>
+            <value>
+                <fullName>Friends Promo</fullName>
+                <default>false</default>
+                <label>Friends Promo</label>
+            </value>
+            <value>
+                <fullName>HealthPartners</fullName>
+                <default>false</default>
+                <label>HealthPartners</label>
+            </value>
+            <value>
+                <fullName>HS Lead Referral</fullName>
+                <default>false</default>
+                <label>HS Lead Referral</label>
+            </value>
+            <value>
+                <fullName>LateAddSupport</fullName>
+                <default>false</default>
+                <label>LateAddSupport</label>
+            </value>
+            <value>
+                <fullName>NMDP (formerly BeTheMatch)</fullName>
+                <default>false</default>
+                <label>NMDP (formerly BeTheMatch)</label>
+            </value>
+            <value>
+                <fullName>Referral-Disaster</fullName>
+                <default>false</default>
+                <label>Referral-Disaster</label>
+            </value>
+            <value>
+                <fullName>Referral-Hospital Sales</fullName>
+                <default>false</default>
+                <label>Referral-Hospital Sales</label>
+            </value>
+            <value>
+                <fullName>Referral-National Partnerships</fullName>
+                <default>false</default>
+                <label>Referral-National Partnerships</label>
+            </value>
+            <value>
+                <fullName>Referral-SAF</fullName>
+                <default>false</default>
+                <label>Referral-SAF</label>
+            </value>
+            <value>
+                <fullName>Unique Constraint Test</fullName>
+                <default>false</default>
+                <label>Unique Constraint Test</label>
+            </value>
+            <value>
+                <fullName>Unique Constraint Test1</fullName>
+                <default>false</default>
+                <label>Unique Constraint Test1</label>
+            </value>
+            <value>
+                <fullName>Weather Delay/Early Close</fullName>
+                <default>false</default>
+                <label>Weather Delay/Early Close</label>
+            </value>
         </valueSetDefinition>
     </valueSet>
     <visibleLines>4</visibleLines>
