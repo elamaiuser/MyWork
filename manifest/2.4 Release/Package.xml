@@ -18,6 +18,10 @@
 		<name>Flow</name>
 	</types>
 	<types>
+		<members>Opportunity.FieldsApplytoDrives</members>
+		<name>FieldSet</name>
+	</types>
+	<types>
 		<members>sked_Optimization_Run__c</members>
 		<members>sked__Resource__c</members>
 		<members>Lead</members>
@@ -34,7 +38,13 @@
 		<members>LeadService</members>
         <!--LeadServiceTests test class is not modified, only kept for tracking pupose  -->
 		<members>LeadServiceTests</members>
+		<members>FutureDrivesController</members>
+		<members>FutureDrivesController_Test</members>
 		<name>ApexClass</name>
+	</types>
+	<types>
+		<members>Custom_Messages.Logistics_Chg_Rsn_to_Future_Drives</members>
+		<name>CustomMetadata</name>
 	</types>
 	<types>
 		<members>slwcDriveGenerator</members>
