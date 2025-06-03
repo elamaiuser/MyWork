@@ -12,6 +12,6 @@
     </values>
     <values>
         <field>Value__c</field>
-        <value xsi:type="xsd:string">Template values got changed</value>
+        <value xsi:type="xsd:string">Changed from Template record.</value>
     </values>
 </CustomMetadata>
