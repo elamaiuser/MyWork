@@ -257,7 +257,7 @@ public with sharing class FutureDrivesController {
                                 //HRP-13146 -> Ends Here
 
                                 if(map_fieldName_reasonField.containsKey(s1)) {
-                                    opp.put(map_fieldName_reasonField.get(s1), Custom_Messages__mdt.getInstance('Logistics_Chg_Rsn_to_Future_Drives').Value__c);
+                                    opp.put(map_fieldName_reasonField.get(s1), Custom_Messages__mdt.getInstance('Logistics_Chg_Rsn_to_Future_Drives').Value__c + ' ' + System.Now());
                                 }
                                
                                 //these fields need not be stamped on opportunity instead used as a label to filter the calculation of the webschedule dates using offset values
