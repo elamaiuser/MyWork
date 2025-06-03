@@ -1,3 +1,16 @@
+/**
+ * @Description : 
+ * 1. Controller class for Availability Pattern (AP) Compliance Report (HRP-14511)
+ * 2. Lists Jobs and Activities scheduled outside assigned Availability Patterns by CO, region, date, drive status, etc.
+ * 3. Supports export to Excel and Visualforce PDF generation
+ *
+ * ***************************************************************************************************
+ * Modification Log 
+ * Date          Developer Name        Comments
+ * ***************************************************************************************************
+ * 06/03/2025    Shubham Tiwari        Initial version - HRP-14511: AP Compliance Report logic
+ */
+
 public with sharing class APComplianceReportController {
     public Date startDate { get; set; }
     public Date endDate { get; set; }
@@ -53,7 +66,7 @@ public static DatableConfigWrapper searchReport(Date startDt, Date endDt, String
         new Map<String, Object>{ 'label' => 'Division', 'fieldName' => 'division', 'type' => 'text' },
         new Map<String, Object>{ 'label' => 'Region', 'fieldName' => 'region', 'type' => 'text' },
         new Map<String, Object>{ 'label' => 'CO', 'fieldName' => 'co', 'type' => 'text' },
-        new Map<String, Object>{ 'label' => 'Work Date', 'fieldName' => 'workDate', 'type' => 'text' },
+        new Map<String, Object>{ 'label' => 'Start Date', 'fieldName' => 'workDate', 'type' => 'text' },
         new Map<String, Object>{ 'label' => 'Type', 'fieldName' => 'type', 'type' => 'text' },
         new Map<String, Object>{ 'label' => 'Role', 'fieldName' => 'role', 'type' => 'text' },
         new Map<String, Object>{ 'label' => 'Drive Status', 'fieldName' => 'status', 'type' => 'text' },
