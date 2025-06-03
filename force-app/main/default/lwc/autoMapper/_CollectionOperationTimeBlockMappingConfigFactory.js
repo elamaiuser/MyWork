@@ -7,6 +7,7 @@ export class CollectionOperationTimeBlockMappingConfigFactory {
       mappingConfig.objectType = 'collectionOperationTimeBlock';
       mappingConfig.addFieldConfig('Id', 'id', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('Name', 'name', MAPPING_TYPE.direct);
+      mappingConfig.addFieldConfig('Collection_Operation__c', 'collectionOperationId', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('Effective_Start_Date__c', 'effectiveStartDate', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('Effective_End_Date__c', 'effectiveEndDate', MAPPING_TYPE.direct);
 

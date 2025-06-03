@@ -1,5 +1,9 @@
 import { get, cloneDeep, orderBy, isEqual, sum, compact, uniqBy, isObject, isDate, max, uniqueId } from 'c/lodash';
-import { LINK_DRIVE_TYPE, RESOURCE_TYPE, MANUALLY_CREATED_FROM, DRIVE_CHANGE_REQUEST_TYPE , ASSET_TYPE, PROCEDURE_TYPE, DRIVE_TYPE, OPERATION_TYPE, RESOURCE_ROLE_GROUP, PENDING_ACTION, DRIVE_STATUS, RESOURCE_ROLE, DRIVE_CHANGE_REQUEST_ITEM_TYPE, DRIVE_CONTENTION, DRIVE_CONTENTION_RESOLUTION, JOB_ALLOCATION_STATUS, DRIVE_APPROVAL_STATUS, OPERATION_DRIVE_LIMIT_TYPE, DRIVE_REQUEST_CHANGE_STATUS, SKIP_BEST_VEHICLE_CALCULATION} from 'c/slwcConstants';
+import { LINK_DRIVE_TYPE, RESOURCE_TYPE, MANUALLY_CREATED_FROM, DRIVE_CHANGE_REQUEST_TYPE,
+  ASSET_TYPE, PROCEDURE_TYPE, DRIVE_TYPE, OPERATION_TYPE, RESOURCE_ROLE_GROUP, PENDING_ACTION, DRIVE_STATUS,
+   RESOURCE_ROLE, DRIVE_CHANGE_REQUEST_ITEM_TYPE, DRIVE_CONTENTION, DRIVE_CONTENTION_RESOLUTION, 
+   JOB_ALLOCATION_STATUS, DRIVE_APPROVAL_STATUS, OPERATION_DRIVE_LIMIT_TYPE, SKIP_BEST_VEHICLE_CALCULATION, 
+   DRIVE_TIME_BLOCK_CONTENTION, DRIVE_SHIFT_TIME_BLOCK_CONTENTION, DRIVE_TIME_BLOCK_RESOLUTION} from 'c/slwcConstants';
 import { DateTime } from 'c/luxon';
 import { isNullOrEmpty, parseJSON, getTravelTimeIndexKey, generateUUID } from 'c/slwcUtils';
 import { territoryCollectionOperationQueryModel, territoryCollectionOperationService } from 'c/dataService';
@@ -3682,6 +3686,113 @@ class DriveHelper {
 
     const roleCapacity = staffingDecisionMatrix[resourceRoleCapacityFieldMap[resourceRole]] || 0;
     return roleCapacity > 0;
+  }
+
+  isDriveMatchAnyCOTimeBlocks({
+    driveDate,
+    collectionOperation
+  }, {
+    collectionOperationTimeBlocks = []
+  }) {
+    return this.findAvailableCOTimeBlocks({
+      driveDate,
+      collectionOperation
+    }, {
+      collectionOperationTimeBlocks
+    }).length > 0;
+  }
+
+  findAvailableCOTimeBlocks({
+    driveDate,
+    collectionOperation
+  }, {
+    collectionOperationTimeBlocks = []
+  }) {
+    return collectionOperationTimeBlocks.filter(COTimeBlock => {
+      const isDriveDateValid = COTimeBlock.effectiveStartDate <= driveDate && driveDate <= COTimeBlock.effectiveEndDate;
+      const isCollectionOperationValid = COTimeBlock.collectionOperation.id === collectionOperation.id;
+
+      return isDriveDateValid && isCollectionOperationValid;
+    })
+  }
+
+  findAvailableTimeBlocks({
+    driveDate,
+    collectionOperation,
+    startTime,
+    endTime
+  }, {
+    collectionOperationTimeBlocks = []
+  }) {
+    const availableCOTimeBlocks = this.findAvailableCOTimeBlocks({
+      driveDate,
+      collectionOperation
+    }, {
+      collectionOperationTimeBlocks
+    });
+    const driveDayOfWeek = DateTime.fromFormat(driveDate, 'yyyy-MM-dd').toFormat('cccc');
+    return availableCOTimeBlocks.filter(COTimeBlock => {
+      const timeBlock = COTimeBlock.timeBlock;
+      const isTimeValid = timeBlock.startTime <= startTime && endTime <= timeBlock.endTime;
+      const isDayOfWeekValid = timeBlock.daysOfWeek.includes(driveDayOfWeek);
+
+      return isTimeValid && isDayOfWeekValid;
+    });
+  }
+
+  validateDriveTimeBlocks = (drive, masterData) => {
+    if(this.isFixedSiteDrive(drive)) {
+      return {
+        passed: true,
+      }
+    }
+    
+    const isDriveMatchAnyCOTimeBlocks = this.isDriveMatchAnyCOTimeBlocks(drive, masterData);
+    if(!isDriveMatchAnyCOTimeBlocks) return {
+      passed: false,
+      contention: DRIVE_TIME_BLOCK_CONTENTION.MISSING_TIME_BLOCK,
+      driveShifts: drive.driveShifts.map(driveShift => {
+        return {
+          ...driveShift,
+          passed: false,
+          contention: DRIVE_SHIFT_TIME_BLOCK_CONTENTION.MISSING_TIME_BLOCK,
+        }
+      })
+    }
+
+    const driveShifts = drive.driveShifts.map(driveShift => {
+      const availableTimeBlocks = this.findAvailableTimeBlocks({
+        driveDate: drive.driveDate,
+        collectionOperation: drive.collectionOperation,
+        startTime: driveShift.startTime,
+        endTime: driveShift.endTime
+      }, masterData)
+        
+      let passed = true;
+      let contention;
+      if(availableTimeBlocks.length > 1) {
+        passed = false;
+        contention = DRIVE_SHIFT_TIME_BLOCK_CONTENTION.FIT_MULTIPLE_TIME_BLOCKS
+      } else if (availableTimeBlocks.length === 0) {
+        passed = false;
+        contention = DRIVE_SHIFT_TIME_BLOCK_CONTENTION.OUT_OF_TIME_BLOCK
+      }
+
+      return {
+        ...driveShift,
+        passed,
+        contention
+      }
+    })
+
+    const allPassed = driveShifts.every(driveShift => driveShift.passed);
+    const contention = allPassed ? undefined : DRIVE_TIME_BLOCK_CONTENTION.DRIVE_SHIFT_TIME_BLOCK_ISSUE;
+
+    return {
+      passed: allPassed,
+      contention,
+      driveShifts
+    }
   }
 }
 

@@ -99,7 +99,8 @@ class BaseGenerator {
     activeDriveChangeRequest,
     territoryCollectionOperations = [],
     staffSetupExcludedRoles,
-    redcrossVolunteerMatrix
+    redcrossVolunteerMatrix,
+    collectionOperationTimeBlocks = []
   }) {
     let masterData = {...this.masterData, 
       loginUser,
@@ -118,7 +119,8 @@ class BaseGenerator {
       activeDriveChangeRequest,
       territoryCollectionOperations,
       staffSetupExcludedRoles,
-      redcrossVolunteerMatrix
+      redcrossVolunteerMatrix,
+      collectionOperationTimeBlocks
     };
 
     if (this.drive.driveSite) {
