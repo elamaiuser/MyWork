@@ -2386,22 +2386,72 @@ class DriveHelper {
         return result;
       }
 
-      const operationalLimit = this.findDriveLimitByDay(drive.driveDate, driveLimits, OPERATION_DRIVE_LIMIT_TYPE.x2RBC_LIMIT);
+      let mapSameDate2RBCRequestedByTimeBlockId = new Map();
+      let mapDriveLimitByTimeBlockId = new Map();
+      const timeBlockIds = [];
+      drive.driveShifts.forEach((driveShift) => {
+        if(driveShift.timeBlockId) {
+          if(!timeBlockIds.includes(driveShift.timeBlockId)) {
+            timeBlockIds.push(driveShift.timeBlockId);
+          }
+          mapSameDate2RBCRequestedByTimeBlockId.set(driveShift.timeBlockId, 0);
+          mapDriveLimitByTimeBlockId.set(driveShift.timeBlockId, 0);
+        }
+      });
+
+      const operationalLimit = this.findDriveLimitByDay(drive.driveDate, driveLimits.filter(driveLimit => !driveLimit.timeBlockId), OPERATION_DRIVE_LIMIT_TYPE.x2RBC_LIMIT);
       let sameDateMobileDrives2RBCRequested = 0;
       sameDateDrives.forEach((sameDateDrive) => {
         if (([DRIVE_STATUS.SYSTEM_GENERATED, DRIVE_STATUS.TENTATIVE, DRIVE_STATUS.CONFIRMED, DRIVE_STATUS.HOLD].includes(sameDateDrive.status))) {
           if (!this.isFixedSiteDrive(sameDateDrive)) {
             sameDateMobileDrives2RBCRequested += sameDateDrive.totalEquipmentRequested || 0;
+
+            sameDateDrive.driveShifts?.forEach(driveShift => {
+              const timeBlockId = driveShift.timeBlockId;
+              if(timeBlockIds.includes(timeBlockId)) {
+                //TODO: need to confirm requirement
+                mapSameDate2RBCRequestedByTimeBlockId.set(timeBlockId, (mapSameDate2RBCRequestedByTimeBlockId.get(timeBlockId) || 0) + (sameDateDrive.totalEquipmentRequested || 0));
+              }
+            });
           }
         }
       });
       const noOf2RBCRequested = drive.totalEquipmentRequested || 0;
 
+      const timeBlockValidations = timeBlockIds.map(timeBlockId => {
+        const operationalLimit = this.findDriveLimitByDay(drive.driveDate, driveLimits.filter(driveLimit => driveLimit.timeBlockId === timeBlockId), OPERATION_DRIVE_LIMIT_TYPE.x2RBC_LIMIT);
+        if(isNullOrEmpty(operationalLimit)) {
+          return {
+            passed: true,
+            data: {
+              timeBlockId,
+              operationalLimit: '∞',
+              noOf2RBCRequested
+            }
+          };
+        }
+        const sameDate2RBCRequested = mapSameDate2RBCRequestedByTimeBlockId.get(timeBlockId) ?? 0;
+        const passed = noOf2RBCRequested > 0 && sameDate2RBCRequested + noOf2RBCRequested > operationalLimit;
+
+        return {
+          timeBlockId,
+          data: {
+            noOf2RBCRequested,
+            operationalLimit
+          },
+          passed
+        }
+      });
+
       result.data = {
         operationalLimit: isNullOrEmpty(operationalLimit) ? '∞' : operationalLimit,
         noOf2RBCRequested,
       }
-      result.violated = noOf2RBCRequested > 0 && !isNullOrEmpty(operationalLimit) && sameDateMobileDrives2RBCRequested + noOf2RBCRequested > operationalLimit;
+
+      const is2RBCRequestedValid = noOf2RBCRequested > 0 && !isNullOrEmpty(operationalLimit) && sameDateMobileDrives2RBCRequested + noOf2RBCRequested > operationalLimit
+      const isTimeBlock2RBCRequestedValid = timeBlockValidations.every(validation => validation.passed);
+
+      result.violated = is2RBCRequestedValid && isTimeBlock2RBCRequestedValid;
       result.passed = !result.violated || isContentionOverrided(drive, DRIVE_CONTENTION.x2RBC_LIMIT);
       return result;
     }
@@ -2671,7 +2721,21 @@ class DriveHelper {
       let sameDateNceStaffRequested = 0;
 
       let totalStaffRequested = 0;
+      let mapStaffRequestedByTimeBlockId = new Map();
+      let mapSameDateStaffRequestedByTimeBlockId = new Map();
+      let mapStaffingConstraintByTimeBlockId = new Map();
+      const timeBlockIds = [];
       drive.driveShifts.forEach((driveShift) => {
+        if(driveShift.timeBlockId) {
+          if(!timeBlockIds.includes(driveShift.timeBlockId)) {
+            timeBlockIds.push(driveShift.timeBlockId);
+          }
+          mapSameDateStaffRequestedByTimeBlockId.set(driveShift.timeBlockId, 0);
+          mapStaffingConstraintByTimeBlockId.set(driveShift.timeBlockId, 0);
+
+          mapStaffRequestedByTimeBlockId.set(driveShift.timeBlockId, driveShift.staffSetup);
+        }
+
         const jobs = this.getDriveShiftJobs(driveShift, {
           excludeManuallyCreatedFromStaffingModal: true
         })
@@ -2686,29 +2750,80 @@ class DriveHelper {
         if (([DRIVE_STATUS.SYSTEM_GENERATED, DRIVE_STATUS.TENTATIVE, DRIVE_STATUS.CONFIRMED, DRIVE_STATUS.HOLD].includes(sameDateDrive.status))) {
           if (this.isFixedSiteDrive(drive) === this.isFixedSiteDrive(sameDateDrive)) {
             sameDateDrivesStaffRequested += sameDateDrive.totalStaffRequested || 0;
+
+            sameDateDrive.driveShifts?.forEach(driveShift => {
+              const timeBlockId = driveShift.timeBlockId;
+              if(timeBlockIds.includes(timeBlockId)) {
+                mapSameDateStaffRequestedByTimeBlockId.set(timeBlockId, (mapSameDateStaffRequestedByTimeBlockId.get(timeBlockId) || 0) + (driveShift.staffSetup || 0));
+              }
+            });
           }
         }
       });
+      
       sameDateActivities.forEach((sameDateActivity) => {
+        const timeBlockId = sameDateActivity.timeBlockId;
+        let staffQuantity = 0;
         if(this.isFixedSiteDrive(drive)) {
-          sameDateNceStaffRequested += sameDateActivity.fixedSiteStaffQuantity || 0;
+          staffQuantity = sameDateActivity.fixedSiteStaffQuantity || 0;
         } else {
-          sameDateNceStaffRequested += sameDateActivity.mobileStaffQuantity || 0;
+          staffQuantity = sameDateActivity.mobileStaffQuantity || 0;
         }
+        
+        if(timeBlockIds.includes(timeBlockId)) {
+          mapSameDateStaffRequestedByTimeBlockId.set(timeBlockId, (mapSameDateStaffRequestedByTimeBlockId.get(timeBlockId) || 0) + staffQuantity);
+        }
+        sameDateNceStaffRequested += staffQuantity
       });
 
       let totalStaffConstraints = 0;
       if (staffingConstraints && staffingConstraints.length) {
-        let staffingConstraint = staffingConstraints[0];
-        totalStaffConstraints = staffingConstraint.totalStaffConstraints || 0;
+        staffingConstraints.forEach(staffingConstraint => {
+          const timeBlockId = staffingConstraint.timeBlockId;
+          if(!timeBlockId) {
+            totalStaffConstraints += staffingConstraint.totalStaffConstraints || 0;
+          } else {
+            if(timeBlockIds.includes(timeBlockId)) {
+              mapStaffingConstraintByTimeBlockId.set(timeBlockId, (mapStaffingConstraintByTimeBlockId.get(timeBlockId) || 0) + (staffingConstraint.totalStaffConstraints || 0));
+            }
+          }
+        })
       }
+
+      const isStaffRequestedValid = sameDateDrivesStaffRequested + sameDateNceStaffRequested + totalStaffRequested > totalStaffConstraints;
+      const timeBlockValidations = timeBlockIds.map(timeBlockId => {
+        const totalStaffRequested = mapStaffRequestedByTimeBlockId.get(timeBlockId) ?? 0;
+        const sameDateStaffRequested = mapSameDateStaffRequestedByTimeBlockId.get(timeBlockId) ?? 0;
+        const totalStaffConstraints = mapStaffingConstraintByTimeBlockId.get(timeBlockId);
+        if(isNullOrEmpty(totalStaffConstraints)) {
+          return {
+            timeBlockId,
+            passed: true,
+            data: null
+          };
+        }
+
+        const staffAvailable = totalStaffConstraints - sameDateStaffRequested;
+
+        return {
+          timeBlockId,
+          data: {
+            staffRequested: totalStaffRequested,
+            staffAvailable: staffAvailable
+          },
+          passed: staffAvailable >= totalStaffRequested
+        }
+      });
+      const isTimeBlockStaffRequestedValid = timeBlockValidations.every(validation => validation.passed);
 
       result.data = {
         staffRequested: totalStaffRequested,
         staffAllocated: drive.staffAllocated || 0,
-        staffAvailable: totalStaffConstraints - sameDateDrivesStaffRequested - sameDateNceStaffRequested 
+        staffAvailable: totalStaffConstraints - sameDateDrivesStaffRequested - sameDateNceStaffRequested,
+        timeBlockValidations //TODO: update logic to display
       }
-      result.violated = sameDateDrivesStaffRequested + sameDateNceStaffRequested + totalStaffRequested > totalStaffConstraints;
+
+      result.violated = isStaffRequestedValid && isTimeBlockStaffRequestedValid;
       result.passed = !result.violated || isContentionOverrided(drive, DRIVE_CONTENTION.INSUFFICIENT_RESOURCES);
       return result;
     }
@@ -3738,6 +3853,18 @@ class DriveHelper {
 
       return isTimeValid && isDayOfWeekValid;
     });
+  }
+
+  isDriveTimeBlocksContentionResolved = (drive) => {
+    const pendingActionReasonCodes = drive.pendingActionReasonCode ? drive.pendingActionReasonCode.split(';') : [];
+    if(!pendingActionReasonCodes.includes(DRIVE_TIME_BLOCK_CONTENTION.MISSING_TIME_BLOCK) && 
+      !pendingActionReasonCodes.includes(DRIVE_TIME_BLOCK_CONTENTION.DRIVE_SHIFT_TIME_BLOCK_ISSUE)) {
+      return true;
+    }
+
+    const driveContentionResolutions = drive.contentionResolution ? drive.contentionResolution.split(';') : [];
+    const timeBlockContentionResolved = driveContentionResolutions.includes(DRIVE_TIME_BLOCK_RESOLUTION.ELECT_NOT_USE_DRIVE_TIME_BLOCK);
+    return timeBlockContentionResolved; 
   }
 
   validateDriveTimeBlocks = (drive, masterData) => {

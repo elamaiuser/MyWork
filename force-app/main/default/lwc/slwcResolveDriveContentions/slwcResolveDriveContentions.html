@@ -85,6 +85,83 @@
                         <div class="slds-page-header__name">
                             <div class="slds-page-header__name-title">
                                 <h2 class="slds-card__header-title">
+                                    <span class="slds-page-header__title slds-truncate">Time Block Contentions</span>
+                                </h2>
+                            </div>
+                        </div>
+                    </div>
+                </header>
+                <div class="slds-no-flex">
+                    <div class="slds-grid">
+                        <div class="slds-col">
+                            <lightning-button-group>
+                                <template if:false={isReadonly}>
+                                    <lightning-button label="Elect not to use Time Block" onclick={handleElectNotToUseTimeBlockBtn}></lightning-button>
+                                </template>
+                                <template if:false={isReadonly}>
+                                    <lightning-button label="Validate" onclick={handleValidateTimeBlockBtn}></lightning-button>
+                                </template>
+                            </lightning-button-group>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <table class="slds-table slds-table_cell-buffer slds-table_bordered contention-table">
+                    <thead>
+                        <tr class="slds-line-height_reset">
+                            <th class="" scope="col" style="width: 30%">
+                                <div class="slds-truncate" title="Contention">Drive Contention</div>
+                            </th>
+                            <th class="" scope="col" style="width: 50%">
+                                <div class="slds-truncate" title="Drive Shifts">Drive Shift Contention</div>
+                            </th>
+                            <th class="" scope="col" style="width: 20%">
+                                <div class="slds-truncate" title="Drive Shifts">Time Block</div>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="slds-hint-parent">
+                            <th rowspan="2">
+                                <span class="slds-truncate">
+                                    {item.contention}
+                                </span>
+                            </th>
+                            <td>
+                                <p class="white-space-pre-line">
+                                    Drive Shift 1 contention
+                                </p>
+                            </td>
+                            <td>
+                                Picklist
+                            </td>
+                        </tr>
+                         <tr class="slds-hint-parent">
+                            <td>
+                                <p class="white-space-pre-line">
+                                    Drive Shift 2 contention
+                                </p>
+                            </td>
+                            <td>
+                                Picklist
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </article>
+
+        <article class="slds-card slds-card_boundary approval-history-page">
+            <div class="slds-grid slds-page-header">
+                <header class="slds-media slds-media--center slds-has-flexi-truncate">
+                    <div class="slds-media__figure slds-m-right_small slds-avatar slds-avatar_small">
+                        <lightning-icon icon-name="custom:custom2" size="small"></lightning-icon>
+                    </div>
+                    <div class="slds-media__body">
+                        <div class="slds-page-header__name">
+                            <div class="slds-page-header__name-title">
+                                <h2 class="slds-card__header-title">
                                     <span class="slds-page-header__title slds-truncate">Contentions</span>
                                 </h2>
                             </div>

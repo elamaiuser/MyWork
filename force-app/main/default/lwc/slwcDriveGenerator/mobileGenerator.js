@@ -752,6 +752,25 @@ class MobileGenerator extends BaseGenerator {
       })
       .then(([driveLimitResult, staffingConstraintResult, availableAssetsInfo]) => {
         let {
+          passed: driveTimeBlocksPassed,
+          contention 
+        } = this.helper.validateDriveTimeBlocks(this.drive, this.masterData);
+
+        if (!driveTimeBlocksPassed) {
+          this.drive.pendingActionReasonCode = contention;
+          this.drive.pendingActionReasonCodes = [contention];
+
+          this.drive.routeApprovalRequestTo = 'Request APS exception';
+
+          if (!this.helper.isAPSUser(this.masterData.loginUser) && this.drive.status === DRIVE_STATUS.DRAFT) {
+            this.drive.pendingAction = PENDING_ACTION.DRIVE_SUBMISSION;
+            this.drive.approvalStatus = DRIVE_APPROVAL_STATUS.SUBMITTED;
+          }
+
+          return;
+        }
+
+        let {
           passed,
           pendingActionReasonCodes
         } = this.helper.validateDrive(this.drive, {

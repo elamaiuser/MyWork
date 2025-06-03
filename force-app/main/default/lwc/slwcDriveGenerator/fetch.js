@@ -270,6 +270,7 @@ class Fetch {
           query.startDate = driveDate;
           query.endDate = driveDate;
           query.collectionOpId = collectionOperationId;
+          query.subQueryIndicator = sObjectType.DRIVE_SHIFT;
 
           let service = new driveService();
           return service.query(query)
