@@ -15,12 +15,11 @@ public class skedFixedSiteProcedureProjectionHandler extends skedTriggerHub {
         for (sked_Fixed_Site_Procedure_Projection__c newRecord : newRecords) {
             if(oldMap == null || oldMap.isEmpty() || !oldMap.containsKey(newRecord.Id) || oldMap.get(newRecord.Id) == null){
                 AccountMap.put(newRecord.sked_Account__c, new List<Date>());
-            }else if (!oldMap.get(newRecord.Id).sked_Impact_Drives__c 
-                    && (newRecord.sked_Deferral__c != oldMap.get(newRecord.Id).sked_Deferral__c 
+            }else if (newRecord.sked_Deferral__c != oldMap.get(newRecord.Id).sked_Deferral__c 
                     || newRecord.sked_QNS__c != oldMap.get(newRecord.Id).sked_QNS__c
                     || newRecord.sked_Productive_Procedure_Goal__c != oldMap.get(newRecord.Id).sked_Productive_Procedure_Goal__c
                     || newRecord.sked_Effective_Start_Date__c != oldMap.get(newRecord.Id).sked_Effective_Start_Date__c
-                    || newRecord.sked_Effective_End_Date__c != oldMap.get(newRecord.Id).sked_Effective_End_Date__c)){
+                    || newRecord.sked_Effective_End_Date__c != oldMap.get(newRecord.Id).sked_Effective_End_Date__c){
                         AccountMap.put(newRecord.sked_Account__c, new List<Date>());
             }
             if(newRecord.Id != null){
@@ -62,12 +61,11 @@ public class skedFixedSiteProcedureProjectionHandler extends skedTriggerHub {
         for (sked_Fixed_Site_Procedure_Projection__c newRecord : newRecords) {
             if(oldMap == null || oldMap.isEmpty() || !oldMap.containsKey(newRecord.Id) || oldMap.get(newRecord.Id) == null){
                 newRecord.sked_Impact_Drives__c = checkDrives(AccountMap.get(newRecord.sked_Account__c), newRecord.sked_Effective_Start_Date__c, newRecord.sked_Effective_End_Date__c);
-            }else if (!oldMap.get(newRecord.Id).sked_Impact_Drives__c 
-                    && (newRecord.sked_Deferral__c != oldMap.get(newRecord.Id).sked_Deferral__c 
+            }else if (newRecord.sked_Deferral__c != oldMap.get(newRecord.Id).sked_Deferral__c 
                     || newRecord.sked_QNS__c != oldMap.get(newRecord.Id).sked_QNS__c
                     || newRecord.sked_Productive_Procedure_Goal__c != oldMap.get(newRecord.Id).sked_Productive_Procedure_Goal__c
                     || newRecord.sked_Effective_Start_Date__c != oldMap.get(newRecord.Id).sked_Effective_Start_Date__c
-                    || newRecord.sked_Effective_End_Date__c != oldMap.get(newRecord.Id).sked_Effective_End_Date__c)) {
+                    || newRecord.sked_Effective_End_Date__c != oldMap.get(newRecord.Id).sked_Effective_End_Date__c) {
                         newRecord.sked_Impact_Drives__c = checkDrives(AccountMap.get(newRecord.sked_Account__c), newRecord.sked_Effective_Start_Date__c, newRecord.sked_Effective_End_Date__c);
             }
         }
