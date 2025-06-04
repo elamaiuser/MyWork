@@ -22,6 +22,7 @@
             <assignToReference>formattedDateTime1</assignToReference>
             <name>output</name>
         </outputParameters>
+        <versionSegment>1</versionSegment>
     </actionCalls>
     <actionCalls>
         <name>Update_Opportunity_using_Apex_and_Batch</name>
@@ -170,6 +171,7 @@
             </value>
         </inputParameters>
         <nameSegment>MassUpdateOpportunity</nameSegment>
+        <versionSegment>1</versionSegment>
     </actionCalls>
     <apiVersion>52.0</apiVersion>
     <assignments>
@@ -273,14 +275,6 @@
         <dataType>String</dataType>
         <value>
             <stringValue>Equipment Issues</stringValue>
-        </value>
-    </choices>
-    <choices>
-        <name>Cancellation_FS_Quarterly_Calibration</name>
-        <choiceText>FS Quarterly Calibration</choiceText>
-        <dataType>String</dataType>
-        <value>
-            <stringValue>FS Quarterly Calibration</stringValue>
         </value>
     </choices>
     <choices>
@@ -881,20 +875,20 @@
             <label>Stage  Cancelled reason by ARC</label>
         </rules>
     </decisions>
-    <description>HRP-14855 - Adding new cancellation reason option for FS Quarterly Calibration (Alpha Sort, Sync, Staff Strike Added)</description>
+    <description>New version to incorporate changes for HRP-12112, introducing a custom search panel to give users full liberty to choose required filters</description>
     <dynamicChoiceSets>
         <name>CancellationReason</name>
         <dataType>Picklist</dataType>
-        <displayField xsi:nil="true"/>
-        <object xsi:nil="true"/>
+        <displayField xsi:nil="true" />
+        <object xsi:nil="true" />
         <picklistField>sked_Cancellation_Reason__c</picklistField>
         <picklistObject>Opportunity</picklistObject>
     </dynamicChoiceSets>
     <dynamicChoiceSets>
         <name>CancellationReasonOppty</name>
         <dataType>Picklist</dataType>
-        <displayField xsi:nil="true"/>
-        <object xsi:nil="true"/>
+        <displayField xsi:nil="true" />
+        <object xsi:nil="true" />
         <picklistField>sked_Cancellation_Reason__c</picklistField>
         <picklistObject>Opportunity</picklistObject>
         <sortOrder>Asc</sortOrder>
@@ -902,32 +896,32 @@
     <dynamicChoiceSets>
         <name>choiceOfDayOfDrive</name>
         <dataType>Picklist</dataType>
-        <displayField xsi:nil="true"/>
-        <object xsi:nil="true"/>
+        <displayField xsi:nil="true" />
+        <object xsi:nil="true" />
         <picklistField>Drive_Date_Day__c</picklistField>
         <picklistObject>Opportunity</picklistObject>
     </dynamicChoiceSets>
     <dynamicChoiceSets>
         <name>choiceOfDriveStatus</name>
         <dataType>Picklist</dataType>
-        <displayField xsi:nil="true"/>
-        <object xsi:nil="true"/>
+        <displayField xsi:nil="true" />
+        <object xsi:nil="true" />
         <picklistField>sked_Status__c</picklistField>
         <picklistObject>sked_Drive__c</picklistObject>
     </dynamicChoiceSets>
     <dynamicChoiceSets>
         <name>choiceOfSiteOperationType</name>
         <dataType>Picklist</dataType>
-        <displayField xsi:nil="true"/>
-        <object xsi:nil="true"/>
+        <displayField xsi:nil="true" />
+        <object xsi:nil="true" />
         <picklistField>Operation_Type__c</picklistField>
         <picklistObject>sked__Location__c</picklistObject>
     </dynamicChoiceSets>
     <dynamicChoiceSets>
         <name>InitiatedBy</name>
         <dataType>Picklist</dataType>
-        <displayField xsi:nil="true"/>
-        <object xsi:nil="true"/>
+        <displayField xsi:nil="true" />
+        <object xsi:nil="true" />
         <picklistField>Initiated_By__c</picklistField>
         <picklistObject>Opportunity</picklistObject>
     </dynamicChoiceSets>
@@ -949,40 +943,40 @@
     <dynamicChoiceSets>
         <name>picklistCalenderDesc</name>
         <dataType>Picklist</dataType>
-        <displayField xsi:nil="true"/>
-        <object xsi:nil="true"/>
+        <displayField xsi:nil="true" />
+        <object xsi:nil="true" />
         <picklistField>Calendar_Description__c</picklistField>
         <picklistObject>Opportunity</picklistObject>
     </dynamicChoiceSets>
     <dynamicChoiceSets>
         <name>picklistOpenToPublic</name>
         <dataType>Picklist</dataType>
-        <displayField xsi:nil="true"/>
-        <object xsi:nil="true"/>
+        <displayField xsi:nil="true" />
+        <object xsi:nil="true" />
         <picklistField>Open_to_Public__c</picklistField>
         <picklistObject>Opportunity</picklistObject>
     </dynamicChoiceSets>
     <dynamicChoiceSets>
         <name>picklistOpportunityEndTime</name>
         <dataType>Picklist</dataType>
-        <displayField xsi:nil="true"/>
-        <object xsi:nil="true"/>
+        <displayField xsi:nil="true" />
+        <object xsi:nil="true" />
         <picklistField>Flow_End_Time_Field__c</picklistField>
         <picklistObject>Opportunity</picklistObject>
     </dynamicChoiceSets>
     <dynamicChoiceSets>
         <name>picklistOpportunityStartTime</name>
         <dataType>Picklist</dataType>
-        <displayField xsi:nil="true"/>
-        <object xsi:nil="true"/>
+        <displayField xsi:nil="true" />
+        <object xsi:nil="true" />
         <picklistField>Flow_Start_Time_Field__c</picklistField>
         <picklistObject>Opportunity</picklistObject>
     </dynamicChoiceSets>
     <dynamicChoiceSets>
         <name>picklistOppoStage</name>
         <dataType>Picklist</dataType>
-        <displayField xsi:nil="true"/>
-        <object xsi:nil="true"/>
+        <displayField xsi:nil="true" />
+        <object xsi:nil="true" />
         <picklistField>StageName</picklistField>
         <picklistObject>Opportunity</picklistObject>
     </dynamicChoiceSets>
@@ -1326,20 +1320,19 @@
         </fields>
         <fields>
             <name>Cancellation_Reason_opptyArch</name>
+            <choiceReferences>CancellationReason_COVID</choiceReferences>
+            <choiceReferences>Cancellation_ManmadeDisaster</choiceReferences>
+            <choiceReferences>Cancellation_WeatherNaturalDisaster</choiceReferences>
             <choiceReferences>CancellationARCManagement</choiceReferences>
             <choiceReferences>CancellationARCStaffStrike</choiceReferences>
             <choiceReferences>Cancellation_BudgetedFTEReduction</choiceReferences>
-            <choiceReferences>CancellationReason_COVID</choiceReferences>
             <choiceReferences>Cancellation_EquipmentIssues</choiceReferences>
-            <choiceReferences>Cancellation_FS_Quarterly_Calibration</choiceReferences>
-            <choiceReferences>Cancellation_Geo_Alignment</choiceReferences>
-            <choiceReferences>Cancellation_ManmadeDisaster</choiceReferences>
             <choiceReferences>Cancellation_OverbookedDay</choiceReferences>
             <choiceReferences>Cancellation_RegionConsolidation</choiceReferences>
             <choiceReferences>Cancellation_StaffCallOut</choiceReferences>
             <choiceReferences>Cancellation_StaffShortage</choiceReferences>
             <choiceReferences>Cancellation_SystemNeed</choiceReferences>
-            <choiceReferences>Cancellation_WeatherNaturalDisaster</choiceReferences>
+            <choiceReferences>Cancellation_Geo_Alignment</choiceReferences>
             <dataType>String</dataType>
             <defaultSelectedChoiceReference>CancellationARCManagement</defaultSelectedChoiceReference>
             <fieldText>Cancellation Reason</fieldText>

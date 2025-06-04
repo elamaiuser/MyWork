@@ -141,7 +141,6 @@
         <valueSettings>
             <controllingFieldValue>ARC_Initiated_Mobile</controllingFieldValue>
             <controllingFieldValue>Sponsor_Initiated_Mobile</controllingFieldValue>
-            <controllingFieldValue>ARC Initiated-Fixed</controllingFieldValue>
             <valueName>ARC Staff Strike</valueName>
         </valueSettings>
         <valueSettings>
