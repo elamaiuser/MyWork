@@ -1050,6 +1050,21 @@ public class skedTestDataFactory {
         firstList.add(testOpportunity2);
         this.mapTestData.put('testOpportunity2', testOpportunity2);
 
+        Opportunity testOpportunity3 = new Opportunity(
+            Name = 'Test',
+            AccountId = testAccount1.Id,
+            Drive_Date__c = driveStartDate.addDays(1),
+            Drive_Site__c = testLocation2.Id,
+            StageName = 'Solicitation',
+            CloseDate = driveStartDate,
+            //Parent_Template_Id__c = parentOpp.Id,
+            Online_Scheduling_Enabled__c = 'No',
+            Source__c = 'Calendar Build'
+            //Split_Reason__c = 'RSMO Donations**'
+        );
+        firstList.add(testOpportunity3);
+        this.mapTestData.put('testOpportunity3', testOpportunity3);
+
         insert firstList;
 
         sked_Drive__c testDrive1 = new sked_Drive__c(
