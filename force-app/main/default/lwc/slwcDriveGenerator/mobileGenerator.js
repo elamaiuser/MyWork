@@ -1422,7 +1422,7 @@ class MobileGenerator extends BaseGenerator {
           }, {
             resourceRole: dualRole,
             ...dualRoleQuantityAfterRegenerated
-          });
+          }, quantity);
           
           if(!jobsToCreate.length && !jobsToUpdate.length && !jobsToDelete.length) return;
 
@@ -1831,7 +1831,7 @@ class MobileGenerator extends BaseGenerator {
     this.proposeDriveShifts({
       skipCalculateResourceRoles: true,
       skipVehicleCalculation: false,
-      backupAndRestoreDualRoles: true,
+      backupAndRestoreDualRoles: false,
       skipGenerateSlots: false
     })
   }
