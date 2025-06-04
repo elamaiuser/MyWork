@@ -10,6 +10,8 @@ public class skedFixedSiteProcedureProjectionHandler extends skedTriggerHub {
     /*********************************************************** Nested classes ***********************************************************/
     private void populateData(List<sked_Fixed_Site_Procedure_Projection__c> newRecords, Map<Id, sked_Fixed_Site_Procedure_Projection__c> oldMap) {
         Map<Id, List<Date>> AccountMap = new Map<Id, List<Date>>();
+        List<sked_Fixed_Site_Procedure_Projection__c> recordsToUpdate = new List<sked_Fixed_Site_Procedure_Projection__c>();
+        List<Id> fsppIds = new List<Id>();
         for (sked_Fixed_Site_Procedure_Projection__c newRecord : newRecords) {
             if(oldMap == null || oldMap.isEmpty() || !oldMap.containsKey(newRecord.Id) || oldMap.get(newRecord.Id) == null){
                 AccountMap.put(newRecord.sked_Account__c, new List<Date>());
@@ -21,18 +23,40 @@ public class skedFixedSiteProcedureProjectionHandler extends skedTriggerHub {
                     || newRecord.sked_Effective_End_Date__c != oldMap.get(newRecord.Id).sked_Effective_End_Date__c)){
                         AccountMap.put(newRecord.sked_Account__c, new List<Date>());
             }
+            if(newRecord.Id != null){
+                fsppIds.add(newRecord.Id);
+            }
         }
         if(!AccountMap.isEmpty()){
-            List<Opportunity> oppList= [SELECT Id, 
-                                            AccountId, 
-                                            Drive_Date__c
-                                        FROM Opportunity
-                                        WHERE AccountId IN :AccountMap.keySet()
-                                        AND StageName != 'Cancelled'
-                                        AND Drive_Date__c != null
-                                        ORDER BY Drive_Date__c ASC];
-            for(Opportunity opp : oppList){
-                AccountMap.get(opp.AccountId).add(opp.Drive_Date__c);
+            List<Account> accList = [SELECT Id, 
+                                            (SELECT Id, 
+                                                    AccountId, 
+                                                    Drive_Date__c 
+                                            FROM Opportunities 
+                                            WHERE StageName != 'Cancelled' 
+                                            AND Drive_Date__c != null
+                                            ORDER BY Drive_Date__c ASC), 
+                                            (SELECT Id
+                                            FROM sked_Fixed_Site_Procedure_Projections__r 
+                                            WHERE sked_Impact_Drives__c = true) 
+                                    FROM Account 
+                                    WHERE Id IN :AccountMap.keySet()];
+            if(!accList.isEmpty()){
+                for(Account acc : accList){
+                    if(acc.Opportunities != null){
+                        for(Opportunity opp : acc.Opportunities){
+                            AccountMap.get(opp.AccountId).add(opp.Drive_Date__c);
+                        }
+                    }
+                    if(acc.sked_Fixed_Site_Procedure_Projections__r != null){
+                        for(sked_Fixed_Site_Procedure_Projection__c fspp : acc.sked_Fixed_Site_Procedure_Projections__r){
+                           if(!fsppIds.contains(fspp.id)){
+                                fspp.sked_Impact_Drives__c = false;
+                                recordsToUpdate.add(fspp);
+                           }
+                        }
+                    }
+                }
             }
         }
         for (sked_Fixed_Site_Procedure_Projection__c newRecord : newRecords) {
@@ -46,6 +70,11 @@ public class skedFixedSiteProcedureProjectionHandler extends skedTriggerHub {
                     || newRecord.sked_Effective_End_Date__c != oldMap.get(newRecord.Id).sked_Effective_End_Date__c)) {
                         newRecord.sked_Impact_Drives__c = checkDrives(AccountMap.get(newRecord.sked_Account__c), newRecord.sked_Effective_Start_Date__c, newRecord.sked_Effective_End_Date__c);
             }
+        }
+        if(!recordsToUpdate.isEmpty()){
+            Database.SaveResult[] srList = Database.update (recordsToUpdate,false);
+            List<BSF_Error_Log__c> logList = BSF_Utilities.createErrorLog(srList, 'updating Fixed Site Procedure Projection','skedFixedSiteProcedureProjectionHandler','populateData','Error','Error in updating Fixed Site Procedure Projection Records');
+            InsertBsfErrorLog.insertBsfErrors(logList);
         }
     }
     private Boolean checkDrives(List<Date> dateList, Date startDate, Date endDate){
