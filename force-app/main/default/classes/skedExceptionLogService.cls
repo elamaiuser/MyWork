@@ -292,12 +292,19 @@ global class skedExceptionLogService extends skedDataService {
     }
     
     public void captureFSWBException(Set<Id> driveIds) {
+        List<string> opportunitySources = new List<string>();
+        opportunitySources.add('Adhoc Calendar Build');
+        opportunitySources.add('Calendar Build');
+
         List<sked_Drive_Shift__c> recordsToValidate = [
             SELECT Id, sked_Drive__c, sked_Start_Time__c, sked_End_Time__c, sked_Drive_Type__c, sked_Drive_Operation_Type__c, sked_Time_Block__c
             FROM sked_Drive_Shift__c
             WHERE sked_Drive__c IN :driveIds
+            AND sked_Drive__r.sked_Opportunity__r.Source__c IN :opportunitySources
         ];
-        captureFSWBException(recordsToValidate);
+        if (!recordsToValidate.isEmpty()) {
+            captureFSWBException(recordsToValidate);
+        }
     }
     
     public void captureFSWBException(List<sked_Drive_Shift__c> driveShifts) {

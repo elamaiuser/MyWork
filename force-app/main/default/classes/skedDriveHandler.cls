@@ -52,6 +52,7 @@ public class skedDriveHandler extends skedTriggerHub {
         if (!skedSetting.instance.Admin.migrationMode) {
             rankDrives();
             syncDriveStatusToOpportunity(newRecords);
+            captureFSWBException(newRecords);
         }
     }
     
@@ -83,7 +84,6 @@ public class skedDriveHandler extends skedTriggerHub {
             notifyDriveChanges(newRecords,(Map<Id, sked_Drive__c>)this.context.oldMap);
             onStagingLocationChanged(newRecords, (Map<Id, sked_Drive__c>) this.context.oldMap);
             handleLinkedDriveUpdates(newRecords, (Map<Id, sked_Drive__c>) this.context.oldMap);
-            captureFSWBException(newRecords, (Map<Id, sked_Drive__c>) this.context.oldMap);
         }
     }
     
@@ -1221,17 +1221,13 @@ public class skedDriveHandler extends skedTriggerHub {
         }
     }
     
-    private void captureFSWBException(List<sked_Drive__c> newRecords, Map<Id, sked_Drive__c> oldMap) {
+    private void captureFSWBException(List<sked_Drive__c> newRecords) {
         Set<Id> driveIdsToValidate = new Set<Id>();
         for (sked_Drive__c newRecord : newRecords) {
             boolean isFSWB = newRecord.sked_Type_of_Drive__c == skedConstants.DRIVE_TYPE_FIXED_SITE
                 && newRecord.sked_Operation_Type__c == skedConstants.OPERATION_TYPE_WB;
             if (isFSWB) {
-                sked_Drive__c oldData = oldMap.get(newRecord.Id);
-                boolean isRescheduled = newRecord.sked_Drive_Date__c != oldData.sked_Drive_Date__c ;
-                if (isRescheduled) {
-                    driveIdsToValidate.add(newRecord.Id);
-                }
+                driveIdsToValidate.add(newRecord.Id);
             }
         }
         if (!driveIdsToValidate.isEmpty()) {
