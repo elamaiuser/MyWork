@@ -1083,7 +1083,8 @@ public class skedTestDataFactory {
             StageName = 'Solicitation',
             CloseDate = driveStartDate,
             //Parent_Template_Id__c = parentOpp.Id,
-            Online_Scheduling_Enabled__c = 'No'
+            Online_Scheduling_Enabled__c = 'No',
+            Source__c = 'Calendar Build'
             //Split_Reason__c = 'RSMO Donations**'
         );
         firstList.add(testOpportunity3);
