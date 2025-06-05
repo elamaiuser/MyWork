@@ -1361,7 +1361,6 @@ Note : It'll throw error if any sort of consequences happen when projection valu
                     newOpportunity.APT_Quantity__c = templateOpportunity.APT_Quantity__c; //HRP-13190
                     newOpportunity.APT_Change_Reason__c = templateChangedText; //HRP-13190
                     newOpportunity.Red_Cross_Volunteer_Required__c = templateOpportunity.Red_Cross_Volunteer_Required__c; //HRP-13146
-                    newOpportunity.Red_Cross_Volunteer_Quantity__c = templateOpportunity.Red_Cross_Volunteer_Quantity__c; //HRP-13146
                     
                     newOpportunity.WholeBloodProceduresProjectedTemplate__c = templateOpportunity.WholeBloodProceduresProjectedTemplate__c;
                     newOpportunity.Double_Red_Procedures_Projected_Template__c = templateOpportunity.Double_Red_Procedures_Projected_Template__c;
