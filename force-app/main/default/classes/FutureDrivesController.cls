@@ -239,6 +239,7 @@ public with sharing class FutureDrivesController {
                                     continue;
                                 }
                                 
+                                //HRP-13190 -> Starts Here
                                 if(s1 == 'APT_Required__c') {
                                     opp.put('APT_Quantity__c', sourceopp.get(driverecordid).get('APT_Quantity__c'));
                                     opp.put('APT_Change_Reason__c', 'Apply Changes to Future Drive by '+UserInfo.getName()+' on '+system.now());
