@@ -1048,6 +1048,8 @@ public class skedMappingConfigContainer {
             mappingConfig.addFieldConfig('sked__Expiry_Date__c', 'expiry', 'datetime');
             mappingConfig.addFieldConfig('sked_Expiry_Date__c', 'expiryDate', 'date');
             mappingConfig.addFieldConfig('sked__Tag__r', 'tag', 'related', skedModels.tag.class, 'sked__Tag__c');
+            mappingConfig.addFieldConfig('sked_Restriction_Start_Date__c', 'restrictionStartDate', 'date');
+            mappingConfig.addFieldConfig('sked_Restriction_End_Date__c', 'restrictionEndDate', 'date');
             mappingConfig.addFieldConfig('sked_Role_Status__c', 'roleStatus', 'direct');
             mappingConfig.addFieldConfig('sked_Start__c', 'start', 'datetime');
             mappingConfig.addFieldConfig('sked_Start_Date__c', 'startDate', 'date');
