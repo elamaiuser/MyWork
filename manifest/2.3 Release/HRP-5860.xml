@@ -28,7 +28,7 @@
 	</types>
     <types>		
 		<members>Account_Service_Role_End_Reason__mdt.Deceased</members>
-		<name>CustomMetadata</name>
+		<name>CustomField</name>
 	</types>
 	<types>
         <members>Account_Service_Role_End_Reason__mdt</members>      

@@ -86,6 +86,7 @@
     </types>
     <types>
         <members>Account.Last_Closed_Drive__c</members>
+        <members>Account_Service_Role_End_Reason__mdt.Deceased</members>
         <members>Calendar_Build_Error_Log__c.Category__c</members>
         <members>Calendar_Build_Log_Manual_Run__c.FS_Drives_wo_Resource_Requested__c</members>
         <members>Calendar_Build_Log_Manual_Run__c.Mobile_Drives_wo_Resource_Requested__c</members>
@@ -127,8 +128,7 @@
 		<members>Task_Subject_Marketing_Exception</members>
         <name>CustomLabel</name>
     </types>
-    <types>
-        <members>Account_Service_Role_End_Reason__mdt.Deceased</members>
+    <types>        
         <members>Custom_Messages.Red_Cross_Volunteer_Qty_Validation_0</members>
 		<members>Custom_Messages.Red_Cross_Volunteer_Quantity_Validation</members>
 		<members>Profile_Specific_Functionality_Access.Red_Cross_Volunteer_Setting</members>
