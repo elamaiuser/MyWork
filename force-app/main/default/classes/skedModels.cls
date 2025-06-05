@@ -497,6 +497,8 @@ global class skedModels {
         public integer expiryTime;
         public DateTime expiry;
         public string resourceId;
+        public string restrictionStartDate;
+        public string restrictionEndDate;
         public string roleStatus;
         public string startDate;
         public integer startTime;
