@@ -153,7 +153,7 @@ public without sharing class WeeklyStaffScheduleReportController {
                 siteAddress += jba.sked__Job__r.sked_Drive__r.sked_Drive_Site__r.sked_State__c;
             }
             if(String.isNotBlank(siteAddress)){
-                details += '\n' + siteAddress;
+                details += '\n' + addLineBreaks(siteAddress,20);
             }
             details += '\n' + getFormattedTime(jba.sked_Start_Time__c) + ' - ' + //Changed for HRP-13091
                         getFormattedTime(jba.sked_Set_End_Time__c)+'\n'+ //Changed for HRP-13091
@@ -207,7 +207,11 @@ public without sharing class WeeklyStaffScheduleReportController {
                     resourceDetailsMap.get(act.sked__Resource__c).put(act.sked__Activity__r.sked_Start_Date__c,allDetails);
                 }
                 timeDifference = timeDifference + resourceHoursMap.get(act.sked__Resource__c);
-                resourceHoursMap.put(act.sked__Resource__c,timeDifference);          
+                if(String.isBlank(act.sked__Activity__r.sked__Type__c)  || 
+                        !(act.sked__Activity__r.sked__Type__c.equalsIgnoreCase('On Call') 
+                        || act.sked__Activity__r.sked__Type__c.equalsIgnoreCase('After Hours Call Out Management'))){
+                            resourceHoursMap.put(act.sked__Resource__c,timeDifference);
+                }          
         }else {
                 Date currentDate = act.sked_Start_Date__c;
                 while (currentDate <= act.sked_End_Date__c && currentDate <= endDate) {
@@ -220,8 +224,12 @@ public without sharing class WeeklyStaffScheduleReportController {
                                 resourceDetailsMap.get(act.sked__Resource__c).put(currentDate,allDetails);
                             }
                             timeDifference = timeDifference + resourceHoursMap.get(act.sked__Resource__c);
-                            resourceHoursMap.put(act.sked__Resource__c,timeDifference);
-                                    }
+                            if(String.isBlank(act.sked__Activity__r.sked__Type__c)  || 
+                                    !(act.sked__Activity__r.sked__Type__c.equalsIgnoreCase('On Call') 
+                                    || act.sked__Activity__r.sked__Type__c.equalsIgnoreCase('After Hours Call Out Management'))){
+                                        resourceHoursMap.put(act.sked__Resource__c,timeDifference);
+                            }
+                    }
                     currentDate = currentDate.addDays(1);
                 }
              }
@@ -280,7 +288,7 @@ public without sharing class WeeklyStaffScheduleReportController {
         for(Id resourceId : resourceDetailsMap.keySet()){
             Map<String,String> wrapperMap = new Map<String,String>();
             wrapperMap.put('Id',resourceId);            
-            wrapperMap.put('Name',BSF_Utilities.capitalizeName(resourceMap.get(resourceId).Name, isForPDF));
+            wrapperMap.put('Name',addLineBreaks(capitalizeTexts(resourceMap.get(resourceId).Name),10));
             wrapperMap.put('total',String.valueOf(resourceHoursMap.get(resourceId)));
             for(Date dt : dateMap.keySet()){
                 if(resourceDetailsMap.get(resourceId).containsKey(dt)){
@@ -417,14 +425,41 @@ public without sharing class WeeklyStaffScheduleReportController {
 
     public static String addLineBreaks(String input, Integer maxLineLength) {
         String result = '';
-        if(String.isNotBlank(input)){
-            List<String> words = input.split(' ');
-            Integer currentLineLength = 0;
-            for (String word : words) {
-                if((currentLineLength + word.length()) > maxLineLength) {
+        List<String> words = input.split(' ');
+        Integer currentLineLength = 0;
+
+        for (String word : words) {
+            if (word.length() > maxLineLength && word.contains('-')) {
+                List<String> parts = word.split('(?<=-)');
+                for (String part : parts) {
+                    if (currentLineLength + part.length() > maxLineLength) {
+                        result = result + '\n';
+                        currentLineLength = 0;
+                    } else if (currentLineLength != 0) {
+                        result = result + ' ';
+                        currentLineLength += 1;
+                    }
+                    result = result + part;
+                    currentLineLength += part.length();
+                }
+            }else if (word.length() > maxLineLength) {
+                Integer index = 0;
+                while (index < word.length()) {
+                    Integer endIndex = Math.min(index + maxLineLength, word.length());
+                    if (currentLineLength != 0) {
+                        result = result + '\n';
+                        currentLineLength = 0;
+                    }
+                    result = result + word.substring(index, endIndex) + '\n';
+                    index = endIndex;
+                }
+                currentLineLength = 0;
+            }
+            else {
+                if (currentLineLength + word.length() > maxLineLength) {
                     result = result + '\n';
                     currentLineLength = 0;
-                }else if (currentLineLength != 0) {
+                } else if (currentLineLength != 0) {
                     result = result + ' ';
                     currentLineLength += 1;
                 }
@@ -432,6 +467,25 @@ public without sharing class WeeklyStaffScheduleReportController {
                 currentLineLength += word.length();
             }
         }
+
         return result;
+    }
+    public static String capitalizeTexts(String input){
+        String result = '';
+        Integer i = 0;
+        List<String> words = input.split('\\s+');
+        for (String word : words) {
+            if(String.isNotBlank(word)){
+                if(word.isAlpha() || (!word.isNumeric() && !word.isAlphanumeric())){
+                    word =  word.capitalize();
+                }
+                if (i > 0) {
+                    result = result + ' ';
+                }
+                result = result + word;
+                i++;
+            }
+        }
+        return result.trim();
     }
 }
