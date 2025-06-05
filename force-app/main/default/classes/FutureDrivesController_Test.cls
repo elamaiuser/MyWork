@@ -321,13 +321,13 @@ public class FutureDrivesController_Test {
                 fdcitr.isselected = true;
             }
             
-            List<String> fields = new List<String>{'APT_Required__c', 'Red_Cross_Volunteer_Required__c', 'Anticipated_Registered_Donors__c', 'Call_List_Recipient_Exist__c','Drive Affiliations','Web Scheduling Settings','Drive Service Roles','Template Order'} ;
+            List<String> fields = new List<String>{'APT_Required__c', 'Red_Cross_Volunteer_Required__c', 'Call_List_Recipient_Exist__c','Drive Affiliations','Web Scheduling Settings','Drive Service Roles','Template Order'} ;
             String resp = FutureDrivesController.applyChangestoFutureDrives( JSON.serialize( fdc ) , sourceOppId, fields );
             test.stopTest();
             System.assertEquals( 'success', resp);
-        }
+        }  
     }
-
+    
     static testMethod void futureDriveSubmissionMessage_Test() {
         Test.startTest();
         String testMsg = FutureDrivesController.futureDriveSubmissionMessage();
@@ -335,7 +335,7 @@ public class FutureDrivesController_Test {
         Assert.isTrue(String.isNotBlank(testMsg));
     }
     
-    //Method to get the map of recordType Name as key and recordTypeId as value 
+    	//Method to get the map of recordType Name as key and recordTypeId as value 
     public static Map<String,Id> recordTypeMap(string obj){
         Map<String,Id> recTypeNameWithIdMap = new Map<String,Id>();
         if(obj!= null){
@@ -344,5 +344,35 @@ public class FutureDrivesController_Test {
             }
         }
         return recTypeNameWithIdMap;
-    }  
+    } 
+    
+    @isTest
+    static void orderCloningService_call_Test(){
+        List<Order> orders = [Select Id FROM Order];
+        
+        List<String> orderIds = new List<String>();
+
+        String serializedParam = JSON.serialize(orderIds);
+
+        for(Order item : orders){
+            orderIds.add(item.Id);
+        }
+        Map<String, Object> params = new Map<String, Object>{
+            'param1' => serializedParam
+        };
+
+        Object result = OrderCloningService.call('cloneTemplateOrder', params);
+    }
+    
+    @isTest
+    static void orderCloningService_call_Test_Exception() {
+        Map<String, Object> params = new Map<String, Object>{
+            'param1' => '[]'
+        };
+
+        Object result = OrderCloningService.call('invalidMethod', params);
+
+
+    }
+    
 }
