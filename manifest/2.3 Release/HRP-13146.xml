@@ -7,8 +7,6 @@
 		<members>CalendarBuildEvaluateDrivesBatch_Test</members>
 		<members>CheckRecursive</members>
 		<members>FieldIdentifiers</members>
-		<members>FutureDrivesController</members>
-		<members>FutureDrivesController_Test</members>
 		<members>GenerateMobileDrive</members>
 		<members>GenerateMobileDriveTest</members>
 		<members>GenerateDriveTestData</members>
