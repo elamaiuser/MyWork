@@ -84,6 +84,12 @@ public class skedTestDataFactory {
             sked__Type__c = 'Drive Type'
         );
         predefinedData.add(driveTypeTagFixedSite);
+        
+        sked__Tag__c realIdTypeTag = new sked__Tag__c(
+            Name = 'REAL ID',
+            sked__Type__c = skedConstants.TAG_TYPE_CERTIFICATION
+        );
+        predefinedData.add(realIdTypeTag);
 
         sked_Resource_Role_Group__c driverRoleGroup = new sked_Resource_Role_Group__c(
             sked_Resource_Role_Group__c = 'Driving roles',
@@ -133,7 +139,7 @@ public class skedTestDataFactory {
         upsert new List<SObject>{skedAdminSetting, skedWorkdayTokenCredentials, skedNotificationManager};
 
         Map<string, List<string>> mapResourceTypeCategories =
-            skedPicklistFieldUtils.getMapDependentOptions(sked__Resource__c.sked__Resource_Type__c, sked__Resource__c.sked__Category__c);
+        skedPicklistFieldUtils.getMapDependentOptions(sked__Resource__c.sked__Resource_Type__c, sked__Resource__c.sked__Category__c);
         List<string> resourceCategories = mapResourceTypeCategories.get(skedConstants.RESOURCE_TYPE_PERSON);
         List<string> assetCategories = mapResourceTypeCategories.get(skedConstants.RESOURCE_TYPE_ASSET);
         List<string> resourceEmploymentTypes = skedUtils.getPickListValues('sked__Resource__c', 'sked__Employment_Type__c');
@@ -551,7 +557,8 @@ public class skedTestDataFactory {
             sked_Max_Travel_Time__c = 5,
             sked_Min_Working_Days_Per_Week__c = '2',
             Use_CO_Address_for_Scheduling__c = false,
-            sked_FCC_Code__c = '83140;83340'
+            sked_FCC_Code__c = '83140;83340',
+            sked_Supervisor_Email__c = UserInfo.getUserEmail()
         );
         thirdList.add(testResource1);
         this.mapTestData.put('testResource1', testResource1);

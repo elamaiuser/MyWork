@@ -18,6 +18,12 @@
  *****************************************************************************
 */
 public with sharing class FutureDrivesController {
+    public static Map<string, string> map_fieldName_reasonField = new Map<string, string>{
+        'Anticipated_Registered_Donors__c' => 'AnticipatedRegisterDonorChangeReason__c',
+        'WB_Projected_Procedures__c' => 'WholeBloodProcedureProjectedChangeReason__c',
+        'X2RBC_Projected_Procedures__c' => 'DoubleRedProceduresProjectedChangeReason__c'
+    }; //HRP-13590
+
     @AuraEnabled
     public static List<FieldSetClass> getFieldsFromFieldSets(){
         List<FieldSetClass> fdlist = new List<FieldSetClass>();
@@ -51,7 +57,7 @@ public with sharing class FutureDrivesController {
                        from Opportunity
                        where Parent_Template_Id__c =:recordid and
                        is_template__c = false and
-                       Drive_Date__c > : currentDate  ];
+                       Drive_Date__c > : currentDate and StageName !='Cancelled' ];
             if( !opplist.isEmpty() ){
                 for( Opportunity opp : opplist ){
                     fd = new FutureDriveClass();
@@ -136,7 +142,6 @@ public with sharing class FutureDrivesController {
                     fields2.add(str);
                 }
             }
-            System.debug('fields2:'+fields2);
 
 			//HRP-10083 Start
 			if(boolean.valueof(system.label.HRP_10083ByPassLabel) || test.isRunningTest())
@@ -163,12 +168,11 @@ public with sharing class FutureDrivesController {
             fieldstoberetrieved = fieldstoberetrieved.replaceAll('null,', '');
             String[] fieldsarray;
             fieldsarray = fieldstoberetrieved.split( ',');
-            system.debug('fieldsarray '+fieldsarray);
             fieldsarray.sort();// sorted so that webschedule fields comes last
             String sourcequery = '';
             if(fieldstoberetrieved.length()>0){
                 //quering offset fields for calculation of webschedule dates
-                     sourcequery = ' select Id,Web_Scheduling_Start_Date_Offset__c,Web_Scheduling_Start_Time__c,Web_Scheduling_End_Date_Offset__c,Web_Scheduling_End_Time_Offset__c, APT_Quantity__c, APT_Change_Reason__c, Red_Cross_Volunteer_Quantity__c, ' + fieldstoberetrieved + ' from Opportunity where Id =:driverecordid' ;
+                sourcequery = ' select Id,Web_Scheduling_Start_Date_Offset__c,Web_Scheduling_Start_Time__c,Web_Scheduling_End_Date_Offset__c,Web_Scheduling_End_Time_Offset__c, APT_Quantity__c, APT_Change_Reason__c, Red_Cross_Volunteer_Quantity__c, ' + fieldstoberetrieved + ' from Opportunity where Id =:driverecordid' ;
                 sourceopplist = Database.query( sourcequery );
             }
             else if(fieldstoberetrieved.length()==0 && (isDriveAffiliationFound == true || isDriveServiceRolesFound == true)){
@@ -224,7 +228,7 @@ public with sharing class FutureDrivesController {
                 }
             }
             //HRP-4878 --> End
-            System.debug('fieldsarray==> '+fieldsarray);
+
             if(fieldsarray.size() > 0) {
                 for( String s1 : fieldsarray ) {
                     for( Opportunity opp : updateopplist )
@@ -251,6 +255,10 @@ public with sharing class FutureDrivesController {
                                     opp.put('Red_Cross_Volunteer_Quantity__c', sourceopp.get(driverecordid).get('Red_Cross_Volunteer_Quantity__c'));
                                 }
                                 //HRP-13146 -> Ends Here
+
+                                if(map_fieldName_reasonField.containsKey(s1)) {
+                                    opp.put(map_fieldName_reasonField.get(s1), Custom_Messages__mdt.getInstance('Logistics_Chg_Rsn_to_Future_Drives').Value__c + ' ' + System.Now());
+                                }
                                
                                 //these fields need not be stamped on opportunity instead used as a label to filter the calculation of the webschedule dates using offset values
                                 if(!webSchedulingFields.contains(s1) || fieldSetFields.contains(s1)) {

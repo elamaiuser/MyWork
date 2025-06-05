@@ -1,12 +1,11 @@
 global class BSF_Batch_DriveStatusCorrection implements Schedulable, Database.Batchable<sObject>{
-	private Integer batchSize;
+	private Integer batchSize = 50;
     private DateTime targetDriveDate;
     private DateTime presetDate;
     private List<String> statusList = new List<String>{'Confirmed','Complete','Cancel'}; 
 	global BSF_Batch_DriveStatusCorrection(){
 		Calendar_Build_Setting__mdt cbMetadata = Calendar_Build_Setting__mdt.getInstance('Calendar_Build_Drives_Config');
         Integer numberOfDays = Integer.valueOf(cbMetadata?.No_of_Days_for_Status_Correction_Batch__c);
-        this.batchSize = Integer.valueOf(cbMetadata?.Batch_Size_for_Status_Correction_Batch__c);
         if (numberOfDays != null) {
             this.targetDriveDate = system.now().addDays(-numberOfDays);
         } else {

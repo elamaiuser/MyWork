@@ -10,26 +10,35 @@ public with sharing class BSF_MarketingExceptionRequest {
         List<Task> tasks = [SELECT Id, OwnerId FROM Task WHERE Id IN :taskIds];
 
         Map<Id, Id> taskVsQueueMap = new Map<Id, Id>();
+        Map<Id, Id> taskVsOwnerMap = new Map<Id, Id>();
 
         for (Task task : tasks) {
-            taskVsQueueMap.put(task.Id, task.OwnerId);
+            if (String.ValueOf(task.OwnerId.getSObjectType())=='Group') {
+                taskVsQueueMap.put(task.Id, task.OwnerId);
+            } else {
+                taskVsOwnerMap.put(task.Id, task.OwnerId);
+            }
         }
 
-        Map<Id, List<GroupMember>> queueVsMembersMap = new Map<Id, List<GroupMember>>();
+        Map<Id, List<Id>> queueVsMembersMap = new Map<Id, List<Id>>();
         for (GroupMember gm : [SELECT GroupId, UserOrGroupId FROM GroupMember WHERE GroupId IN :taskVsQueueMap.values()]) {
             if (!queueVsMembersMap.containsKey(gm.GroupId)) {
-                queueVsMembersMap.put(gm.GroupId, new List<GroupMember>());
+                queueVsMembersMap.put(gm.GroupId, new List<Id>());
             }
-            queueVsMembersMap.get(gm.GroupId).add(gm);
+            queueVsMembersMap.get(gm.GroupId).add(gm.UserOrGroupId);
         }
 
-        Map<Id, List<GroupMember>> taskVsQueueMemberMap = new Map<Id, List<GroupMember>>();
+        Map<Id, List<Id>> taskVsQueueMemberMap = new Map<Id, List<Id>>();
 
         for (Task task : tasks) {
             if (!taskVsQueueMemberMap.containsKey(task.Id)) {
-                taskVsQueueMemberMap.put(task.Id, new List<GroupMember>());
+                taskVsQueueMemberMap.put(task.Id, new List<Id>());
             }
-            taskVsQueueMemberMap.get(task.Id).addAll(queueVsMembersMap.get(task.OwnerId));
+            if (queueVsMembersMap.containsKey(task.OwnerId)) {
+                taskVsQueueMemberMap.get(task.Id).addAll(queueVsMembersMap.get(task.OwnerId));
+            } else if (taskVsOwnerMap.containsKey(task.Id)){
+                taskVsQueueMemberMap.get(task.Id).addAll(new List<Id>{task.OwnerId});
+            } 
         }
 
 
@@ -41,10 +50,10 @@ public with sharing class BSF_MarketingExceptionRequest {
             String emailBody = 'Hello,<br/><br/>' +
                         'A Marketing Exception has been requested. Please review and take action.<br/><br/>' +
                         'Please visit the task here: <a href="' + taskUrl + '">View Task</a>';
-            for(GroupMember queueMember : taskVsQueueMemberMap.get(taskId)) {
+            for(Id queueMemberId : taskVsQueueMemberMap.get(taskId)) {
                 Messaging.SingleEmailMessage email = new Messaging.SingleEmailMessage();
                 
-                email.setTargetObjectId(queueMember.UserOrGroupId);
+                email.setTargetObjectId(queueMemberId);
                 
                 email.setSubject('Request for Marketing Exception Approval');
                 
@@ -55,7 +64,7 @@ public with sharing class BSF_MarketingExceptionRequest {
                 email.setSaveAsActivity(false);
                 
                 emailList.add(email);
-                userIds.add(queueMember.UserOrGroupId);
+                userIds.add(queueMemberId);
             }
             
         }
@@ -83,8 +92,8 @@ public with sharing class BSF_MarketingExceptionRequest {
         for (Id notif : taskVsNotificationMap.keySet()) {
             List<String> userIds = new List<String>();
             try {
-                for (GroupMember member : taskVsQueueMemberMap.get(notif)) {
-                    userIds.add(member.UserOrGroupId);
+                for (Id memberId : taskVsQueueMemberMap.get(notif)) {
+                    userIds.add(memberId);
                 }
                 taskVsNotificationMap.get(notif).send(userIds);
             } catch (Exception e) {

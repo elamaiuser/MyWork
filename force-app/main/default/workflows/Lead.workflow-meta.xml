@@ -34,7 +34,7 @@
             <name>Update_Lead_Record_Type_Market_Manager</name>
             <type>FieldUpdate</type>
         </actions>
-        <active>true</active>
+        <active>false</active>
         <criteriaItems>
             <field>Lead.Status</field>
             <operation>equals</operation>
