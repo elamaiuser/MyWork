@@ -67,6 +67,19 @@ const isDriverJob = (job, onlyCheckResourceRole = false) => {
   )
 }
 
+const isResourceTagRestricted = (resourceTag, {
+    startDate,
+    endDate
+}) => {
+  if(!resourceTag.restrictionStartDate && !resourceTag.restrictionEndDate) return false;
+
+  if(resourceTag.restrictionEndDate) {
+    return resourceTag.restrictionStartDate <= endDate && resourceTag.restrictionEndDate >= startDate;
+  } else {
+    return resourceTag.restrictionStartDate <= startDate;
+  }
+}
+
 class dateslotModel {
   timezoneSidId = null;
   startJS = null;
@@ -1808,11 +1821,11 @@ class SlwcAvailator {
 
                 const tagStartDateValid = resourceTag.startDate <= job.driveDate;
                 //HRP-10970 - Updated tagRestricted logic to check only restrictionStartDate is defined before comparing dates
-                //const tagRestricted = resourceTag.restrictionStartDate && resourceTag.restrictionEndDate && 
-                //  resourceTag.restrictionStartDate <= job.driveDate && resourceTag.restrictionEndDate >= job.driveDate;
-                const tagRestricted = resourceTag.restrictionStartDate && 
-                      resourceTag.restrictionStartDate <= job.driveDate && 
-                      (slwcUtils.isNullOrEmpty(resourceTag.restrictionEndDate)  || resourceTag.restrictionEndDate >= job.driveDate);
+                const tagRestricted = isResourceTagRestricted(resourceTag, {
+                  startDate: job.driveDate,
+                  endDate: job.driveDate
+                })
+
                 //HRP-10970 ended
                 if (tagStartDateValid && !tagRestricted) {
                   validTagNames.push(resourceTag.tag.name);
@@ -2206,5 +2219,6 @@ export default {
   },
   isJobRequireTravelTimes,
   isJobBelongToDrivingRolesGroup,
-  isDriverJob
+  isDriverJob,
+  isResourceTagRestricted
 }
