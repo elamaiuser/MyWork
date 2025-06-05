@@ -1361,7 +1361,6 @@ Note : It'll throw error if any sort of consequences happen when projection valu
                     newOpportunity.APT_Quantity__c = templateOpportunity.APT_Quantity__c; //HRP-13190
                     newOpportunity.APT_Change_Reason__c = templateChangedText; //HRP-13190
                     newOpportunity.Red_Cross_Volunteer_Required__c = templateOpportunity.Red_Cross_Volunteer_Required__c; //HRP-13146
-                    newOpportunity.Red_Cross_Volunteer_Quantity__c = templateOpportunity.Red_Cross_Volunteer_Quantity__c; //HRP-13146
                     
                     newOpportunity.WholeBloodProceduresProjectedTemplate__c = templateOpportunity.WholeBloodProceduresProjectedTemplate__c;
                     newOpportunity.Double_Red_Procedures_Projected_Template__c = templateOpportunity.Double_Red_Procedures_Projected_Template__c;
@@ -5086,7 +5085,6 @@ opp.StageName = 'Closed';
     public static void calculateVolunteerQuantity(List<Opportunity> newOppList, Map<Id, Opportunity> oldOppMap) {
         Map<Id, Boolean> highSchoolDriveMap = new Map<Id, Boolean>();
         Map<Id,Opportunity> templateMap = new Map<Id,Opportunity>();
-        Set<Id> templateIds = new Set<Id>();
         Boolean isInsert = false;
         if(oldOppMap == null || oldOppMap.isEmpty()){
             isInsert = true;
@@ -5106,11 +5104,10 @@ opp.StageName = 'Closed';
                 }else if(!opp.Is_Template__c && opp.RecordTypeId == MOBILE_OPP_RECTYPEID && opp.AccountId != null 
                         && opp.Parent_Template_Id__c != null && opp.Red_Cross_Volunteer_Required__c){
                             if(isInsert){
-                                templateIds.add(opp.Parent_Template_Id__c);
+                                highSchoolDriveMap.put(opp.AccountId, null);
                             }else if(!isInsert && oldOppMap.containsKey(opp.Id) 
                                     && (opp.Parent_Template_Id__c != oldOppMap.get(opp.Id).Parent_Template_Id__c
                                     || opp.AccountId != oldOppMap.get(opp.Id).AccountId)){
-                                        templateIds.add(opp.Parent_Template_Id__c);
                                         highSchoolDriveMap.put(opp.AccountId, null);
                             }else if(!isInsert && !checkRecursive.skipVolunteerCalculation && oldOppMap.containsKey(opp.Id)
                                     && (opp.Anticipated_Registered_Donors__c != oldOppMap.get(opp.Id).Anticipated_Registered_Donors__c
@@ -5136,15 +5133,8 @@ opp.StageName = 'Closed';
                     }
                 }
             }
-            if(!templateIds.isEmpty()){
-                templateMap = new Map<Id,Opportunity>([SELECT Id, 
-                                                                Red_Cross_Volunteer_Required__c, 
-                                                                Red_Cross_Volunteer_Quantity__c, 
-                                                                Anticipated_Registered_Donors__c 
-                                                        FROM Opportunity 
-                                                        WHERE Id IN: templateIds]);
-            }
-            if(!highSchoolDriveMap.isEmpty() || !templateMap.isEmpty()){
+            
+            if(!highSchoolDriveMap.isEmpty()) {
                 List<Volunteer_Staffing_Matrix__mdt> matrixRecords = Volunteer_Staffing_Matrix__mdt.getAll().values();
                 for(Opportunity opp : newOppList){
                     if(opp.Is_Template__c && opp.AccountId != null && opp.Anticipated_Registered_Donors__c != null && opp.Red_Cross_Volunteer_Required__c){
@@ -5161,11 +5151,13 @@ opp.StageName = 'Closed';
                         }
                     }else if(!opp.Is_Template__c && opp.RecordTypeId == MOBILE_OPP_RECTYPEID && opp.AccountId != null 
                             && opp.Parent_Template_Id__c != null && opp.Red_Cross_Volunteer_Required__c){
-                                if(isInsert && templateMap.containsKey(opp.Parent_Template_Id__c)){
-                                    opp.Red_Cross_Volunteer_Quantity__c = templateMap.get(opp.Parent_Template_Id__c).Red_Cross_Volunteer_Quantity__c;
-                                }else if(!isInsert && oldOppMap.containsKey(opp.Id) && templateMap.containsKey(opp.Parent_Template_Id__c)
+                                if(isInsert && !checkRecursive.skipVolunteerCalculation && highSchoolDriveMap.containsKey(opp.AccountId)){
+                                    opp.Red_Cross_Volunteer_Quantity__c = getVolunteerQuantity(Integer.valueOf(opp.Anticipated_Registered_Donors__c), 
+                                                                            highSchoolDriveMap.get(opp.AccountId), matrixRecords);
+                                }else if(!isInsert && oldOppMap.containsKey(opp.Id) && highSchoolDriveMap.containsKey(opp.AccountId)
                                         && opp.Parent_Template_Id__c != oldOppMap.get(opp.Id).Parent_Template_Id__c){
-                                            opp.Red_Cross_Volunteer_Quantity__c = templateMap.get(opp.Parent_Template_Id__c).Red_Cross_Volunteer_Quantity__c;
+                                            opp.Red_Cross_Volunteer_Quantity__c = getVolunteerQuantity(Integer.valueOf(opp.Anticipated_Registered_Donors__c), 
+                                                                                    highSchoolDriveMap.get(opp.AccountId), matrixRecords);
                                 }else if(!isInsert && oldOppMap.containsKey(opp.Id) && highSchoolDriveMap.containsKey(opp.AccountId)
                                         && opp.AccountId != oldOppMap.get(opp.Id).AccountId){
                                             opp.Red_Cross_Volunteer_Quantity__c = getVolunteerQuantity(Integer.valueOf(opp.Anticipated_Registered_Donors__c), 
