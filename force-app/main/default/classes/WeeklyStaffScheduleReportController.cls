@@ -207,7 +207,11 @@ public without sharing class WeeklyStaffScheduleReportController {
                     resourceDetailsMap.get(act.sked__Resource__c).put(act.sked__Activity__r.sked_Start_Date__c,allDetails);
                 }
                 timeDifference = timeDifference + resourceHoursMap.get(act.sked__Resource__c);
-                resourceHoursMap.put(act.sked__Resource__c,timeDifference);          
+                if(String.isBlank(act.sked__Activity__r.sked__Type__c)  || 
+                        !(act.sked__Activity__r.sked__Type__c.equalsIgnoreCase('On Call') 
+                        || act.sked__Activity__r.sked__Type__c.equalsIgnoreCase('After Hours Call Out Management'))){
+                            resourceHoursMap.put(act.sked__Resource__c,timeDifference);
+                }          
         }else {
                 Date currentDate = act.sked_Start_Date__c;
                 while (currentDate <= act.sked_End_Date__c && currentDate <= endDate) {
@@ -220,8 +224,12 @@ public without sharing class WeeklyStaffScheduleReportController {
                                 resourceDetailsMap.get(act.sked__Resource__c).put(currentDate,allDetails);
                             }
                             timeDifference = timeDifference + resourceHoursMap.get(act.sked__Resource__c);
-                            resourceHoursMap.put(act.sked__Resource__c,timeDifference);
-                                    }
+                            if(String.isBlank(act.sked__Activity__r.sked__Type__c)  || 
+                                    !(act.sked__Activity__r.sked__Type__c.equalsIgnoreCase('On Call') 
+                                    || act.sked__Activity__r.sked__Type__c.equalsIgnoreCase('After Hours Call Out Management'))){
+                                        resourceHoursMap.put(act.sked__Resource__c,timeDifference);
+                            }
+                    }
                     currentDate = currentDate.addDays(1);
                 }
              }
