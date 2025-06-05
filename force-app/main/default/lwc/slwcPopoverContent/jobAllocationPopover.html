@@ -65,8 +65,9 @@
                              {resourceTag.value} {resourceTag.key}(s)
                         </p>
                         <div class="slds-text-body_small slds-grid_vertical-align-center slds-has-flexi-truncate slds-m-vertical_xx-small">
-                            <span for:each={resourceTag.details} for:item="tag" key={tag.key} class="slds-text-color_inverse-weak slds-has-flexi-truncate" >
-                                <lightning-icon class="slds-m-horizontal_x-small" icon-name="standard:quotes" size="x-small"></lightning-icon>
+                            <span for:each={resourceTag.details} for:item="tag" key={tag.key} class="slds-text-color_inverse-weak slds-has-flexi-truncate slds-truncate" >
+                                <lightning-icon if:true={tag.isRestricted} class="slds-m-left_x-small slds-m-right_xx-small slds-icon-standard-home" icon-name="standard:quotes" size="x-small"></lightning-icon>
+                                <lightning-icon if:false={tag.isRestricted} class="slds-m-left_x-small slds-m-right_xx-small" icon-name="standard:quotes" size="x-small"></lightning-icon>
                                  {tag.value}
                             </span>
                         </div>
