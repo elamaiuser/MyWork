@@ -158,18 +158,30 @@ public class PublicityReportNewPortfoliosController {
         
         if(String.isNotBlank(searchPortfolio) && !searchPortfolio.equalsIgnoreCase('None')){
             //Logic for HRP-12165
-			for(Account_Portfolio_Assignment__c accPort: [SELECT Id, Account__r.Name, Account__c FROM Account_Portfolio_Assignment__c 
-                                                             WHERE (BSF_Portfolio__r.Name=:String.escapeSingleQuotes(searchPortfolio) AND BSF_Portfolio__r.Portfolio_Type__c=:BSF_Constants.ACCOUNT_MANAGER) 
-                                                          		OR (BSF_Portfolio__r.Parent_Portfolio__r.Name=:String.escapeSingleQuotes(searchPortfolio) AND BSF_Portfolio__r.Parent_Portfolio__r.Portfolio_Type__c=:BSF_Constants.DISTRICT_MANAGER) 
-                                                          		OR (BSF_Portfolio__r.Parent_Portfolio__r.Parent_Portfolio__r.Name=:String.escapeSingleQuotes(searchPortfolio) AND BSF_Portfolio__r.Parent_Portfolio__r.Parent_Portfolio__r.Portfolio_Type__c=:BSF_Constants.DISTRICT_MANAGER)]){
+            /*
+			for(Account_Portfolio_Assignment__c accPort: [SELECT Id, Account__r.Name, Account__c 
+                FROM Account_Portfolio_Assignment__c 
+                WHERE (BSF_Portfolio__r.Name=:String.escapeSingleQuotes(searchPortfolio) AND 
+                        BSF_Portfolio__r.Portfolio_Type__c=:BSF_Constants.ACCOUNT_MANAGER) 
+                OR (BSF_Portfolio__r.Parent_Portfolio__r.Name=:String.escapeSingleQuotes(searchPortfolio) AND 
+                    BSF_Portfolio__r.Parent_Portfolio__r.Portfolio_Type__c=:BSF_Constants.DISTRICT_MANAGER) 
+                OR (BSF_Portfolio__r.Parent_Portfolio__r.Parent_Portfolio__r.Name=:String.escapeSingleQuotes(searchPortfolio) AND 
+                    BSF_Portfolio__r.Parent_Portfolio__r.Parent_Portfolio__r.Portfolio_Type__c=:BSF_Constants.DISTRICT_MANAGER)]){
+
         		accNameSet.add(accPort.Account__r.Name); 
                 accIdSet.add(accPort.Account__c);      
-            }
+            }*/
+            
+            queryConditions.add(
+                '(order.Opportunity.Account_Manager_Portfolio__r.Name = :searchPortfolio OR ' +
+                'order.Opportunity.District_Manager_Portfolio__r.Name = :searchPortfolio)'
+            );
         }
-        
+        /*
         if(accIdSet.size() > 0){
-            queryConditions.add('order.opportunity.accountId in :accIdSet');
-        }
+             queryConditions.add('order.opportunity.accountId in :accIdSet');
+        }*/
+        
         
         if(driveStartDate != null){
 			queryConditions.add('Order.Opportunity.Drive_Date__c >= :driveStartDate');            
@@ -197,14 +209,19 @@ public class PublicityReportNewPortfoliosController {
             for(OrderItem ordItem:opprodList){
                 oppIdSet.add(ordItem.order.OpportunityId);
             }
-            list<OpportunityContactRole> ocrlist = [Select Contact.Firstname,Contact.Lastname,Contact.Name,contact.Mobilephone,contact.individual.Name,contact.HomePhone,Role,Opportunityid,contact.OtherStreet,contact.OtherCity,Contact.OtherState,Contact.OtherPostalCode,contact.OtherCountry,contact.Primary_Phone_Number_New__c,contact.Email from OpportunityContactRole where OpportunityId in :oppIdSet and role= 'Publicity Materials Recipient' ];
-            list<Opportunity_Promotion__c> oppPromotionList = [select Promotion__r.Name,Promotion__c,Blood_Drive_Opportunity__c from Opportunity_Promotion__c where Blood_Drive_Opportunity__c in :oppIdSet];
-            list<Opportunity> oppList = [select id,Drive_Name__c,AccountId,Account.Name,End_Time__c,Direct_Donors_To__c,Drive_Date__c,Open_to_Public__c,Total_Projected_Procedures__c,
-											  Start_Time__c,Call_List_Recipient_Exist__c,Drive_Site_Name__c,Drive_Site__r.sked__Address__c,Drive_Site__r.sked_Address_1__c,
-											  Drive_Site__r.sked_City__c,Drive_Site__r.sked_State__c,Drive_Site__r.sked_Zip_Code__c,
-											  Drive_Keyword__c,Related_Scheduled_Drive__r.sked_Drive_External_Id__c,Related_Scheduled_Drive__r.Sked_UFID__c,Account_Manager__c,Account_Manager__r.Name,Total_Products_Projected__c,
-											  Online_Scheduling_Enabled__c,Collections_Zip_Code__r.Collection_Operation__r.sked_Start_Time_Offset__c,Collections_Zip_Code__r.Collection_Operation__r.sked_End_Time_Offset__c,
-                                         	  Publish_to_Call_Center__c, Web_Scheduling_Enabled__c from Opportunity where id in :oppIdSet];
+            list<OpportunityContactRole> ocrlist = [Select Contact.Firstname,Contact.Lastname,Contact.Name,contact.Mobilephone,
+                contact.individual.Name,contact.HomePhone,Role,Opportunityid,contact.OtherStreet,contact.OtherCity,Contact.OtherState,
+                Contact.OtherPostalCode,contact.OtherCountry,contact.Primary_Phone_Number_New__c,contact.Email 
+                from OpportunityContactRole where OpportunityId in :oppIdSet and role= 'Publicity Materials Recipient' ];
+            list<Opportunity_Promotion__c> oppPromotionList = [select Promotion__r.Name,Promotion__c,Blood_Drive_Opportunity__c 
+                from Opportunity_Promotion__c where Blood_Drive_Opportunity__c in :oppIdSet];
+            list<Opportunity> oppList = [select id,Drive_Name__c,AccountId,Account.Name,End_Time__c,Direct_Donors_To__c,Drive_Date__c,
+                Open_to_Public__c,Total_Projected_Procedures__c,
+				Start_Time__c,Call_List_Recipient_Exist__c,Drive_Site_Name__c,Drive_Site__r.sked__Address__c,Drive_Site__r.sked_Address_1__c,
+				Drive_Site__r.sked_City__c,Drive_Site__r.sked_State__c,Drive_Site__r.sked_Zip_Code__c,
+				Drive_Keyword__c,Related_Scheduled_Drive__r.sked_Drive_External_Id__c,Related_Scheduled_Drive__r.Sked_UFID__c,Account_Manager__c,Account_Manager__r.Name,Total_Products_Projected__c,
+				Online_Scheduling_Enabled__c,Collections_Zip_Code__r.Collection_Operation__r.sked_Start_Time_Offset__c,Collections_Zip_Code__r.Collection_Operation__r.sked_End_Time_Offset__c,
+                Publish_to_Call_Center__c, Web_Scheduling_Enabled__c from Opportunity where id in :oppIdSet];
             List<sked_Drive__c> drvList = [SELECT Id,
                                                  sked_Opportunity__c,
                                                  sked_UFID__c
@@ -228,7 +245,11 @@ public class PublicityReportNewPortfoliosController {
         return opprodList;
     }
     
-    public void bindWithWrapperClass(list<OrderItem> opprodList,List<Opportunity>oppList,List<OpportunityContactRole>ocrlist,List<Opportunity_Promotion__c>oppPromotionList,List<sked_Drive__c> drvList){
+    public void bindWithWrapperClass(list<OrderItem> opprodList,
+                                    List<Opportunity>oppList,
+                                    List<OpportunityContactRole>ocrlist,
+                                    List<Opportunity_Promotion__c>oppPromotionList,
+                                    List<sked_Drive__c> drvList){
        	reportDataWrapperList = new List<ReportDataWrapper>();
         
         String publishToCallCenter = ''; 
