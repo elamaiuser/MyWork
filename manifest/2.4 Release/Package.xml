@@ -40,6 +40,9 @@
 		<members>LeadServiceTests</members>
 		<members>FutureDrivesController</members>
 		<members>FutureDrivesController_Test</members>
+		<members>PublicityReportNewPortfoliosController</members>
+		<!--publicityReportNewPortfoliosTest test class is not modified, only kept for tracking pupose  -->
+		<members>publicityReportNewPortfoliosTest</members>
 		<name>ApexClass</name>
 	</types>
 	<types>
