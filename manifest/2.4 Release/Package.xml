@@ -30,6 +30,9 @@
 		<members>LeadService</members>
         <!--LeadServiceTests test class is not modified, only kept for tracking pupose  -->
 		<members>LeadServiceTests</members>
+		<members>PublicityReportNewPortfoliosController</members>
+		<!--publicityReportNewPortfoliosTest test class is not modified, only kept for tracking pupose  -->
+		<members>publicityReportNewPortfoliosTest</members>
 		<name>ApexClass</name>
 	</types>
 	<types>
