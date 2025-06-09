@@ -52,7 +52,6 @@ public class skedDriveHandler extends skedTriggerHub {
         if (!skedSetting.instance.Admin.migrationMode) {
             rankDrives();
             syncDriveFieldsToOpportunity(newRecords);
-            captureFSWBException(newRecords);
         }
     }
     
@@ -1219,21 +1218,6 @@ public class skedDriveHandler extends skedTriggerHub {
                 'updateLinkedDriveDetails',
                 linkedDrivesToUpdate
             );
-        }
-    }
-    
-    private void captureFSWBException(List<sked_Drive__c> newRecords) {
-        Set<Id> driveIdsToValidate = new Set<Id>();
-        for (sked_Drive__c newRecord : newRecords) {
-            boolean isFSWB = newRecord.sked_Type_of_Drive__c == skedConstants.DRIVE_TYPE_FIXED_SITE
-                && newRecord.sked_Operation_Type__c == skedConstants.OPERATION_TYPE_WB;
-            if (isFSWB) {
-                driveIdsToValidate.add(newRecord.Id);
-            }
-        }
-        if (!driveIdsToValidate.isEmpty()) {
-            skedExceptionLogService service = (skedExceptionLogService)skedServiceFactory.instance.resolve('skedHC__Exception__c');
-			service.captureFSWBException(driveIdsToValidate);
         }
     }
     
