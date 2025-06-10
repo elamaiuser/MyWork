@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>sked_TimeBlock_Violation_Message__c</fullName>
+    <description>Indicates error message associated with timeblock violation</description>
+    <externalId>false</externalId>
+    <label>TimeBlock Violation Message</label>
+    <length>255</length>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

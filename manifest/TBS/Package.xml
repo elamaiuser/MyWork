@@ -12,6 +12,10 @@
         <members>Collection_Operation_Time_Block__c</members> 
         <name>CustomObject</name>
     </types>
+    <types>
+        <members>autoMapper</members>
+        <name>LightningComponentBundle</name>
+    </types>
     <types>  
         <members>Time_Block__c.Name</members>  
         <members>Time_Block__c.Start_Time__c</members>  
@@ -23,6 +27,9 @@
         <members>Collection_Operation_Time_Block__c.Time_Block__c</members> 
         <members>Collection_Operation_Time_Block__c.Days_of_Week__c</members> 
         <members>sked_Operation_Drive_Limit__c.Time_Block__c</members> 
+        <members>sked_Drive_Shift__c.sked_has_TimeBlock_Violation__c</members>
+        <members>sked_Drive_Shift__c.sked_TimeBlock_Violation_Message__c</members>
+        <members>sked_Drive__c.sked_has_TimeBlock_Violation__c</members>
         <name>CustomField</name>
     </types>
     <types>  
@@ -40,6 +47,13 @@
         <members>Time_Block__c</members>
         <members>Collection_Operation_Time_Block__c</members>
         <name>CustomTab</name>
+    </types>
+     <types>
+        <members>DriveResourceAllocationBatch</members>
+        <members>GenerateMobileDrive</members>
+        <members>GenerateMobileDriveTest</members>
+        <members>MobileDriveGeneratorDMLService</members>
+        <name>ApexClass</name>
     </types>
     <version>59.0</version>
 </Package>
