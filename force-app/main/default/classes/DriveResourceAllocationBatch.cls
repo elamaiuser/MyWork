@@ -353,7 +353,7 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
             Boolean passingRuleOne = isFixedSiteDrive(drive) && jobAllocationList.isEmpty();
             Boolean passingSubRuleTwo = remainingStaff >= totalNoOfStaffRequired && jobAllocationList.isEmpty();
             Boolean passingRuleTwo = passingSubRuleTwo && (map_operationDriveLimitId_operationDriveLimit.isEmpty() || resourceModel.total2RBCLimit == NULL || xrbcJobCount == 0 || xrbcJobCount <= resourceModel.remainingNoOf2RBC);    
-            Boolean isMobileWithTimeBlockViolation = (isFixedSiteDrive(drive) == false && drive.sked_has_TimeBlock_Violation__c == true);
+            Boolean isMobileWithTimeBlockViolation = !isFixedSiteDrive(drive)  && drive.sked_has_TimeBlock_Violation__c;
             Boolean hasInsufficientResource = !passingRuleOne && !passingSubRuleTwo;
 
             if(hasInsufficientResource && isMobileWithTimeBlockViolation) {
@@ -507,7 +507,7 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
                 } else {
                     if(drive.sked_Total_Vehicle_Requested__c > 0 || drive.sked_Total_Equipment_Requested__c > 0) {
                         isFlaggingNeeded = true;
-                    }else if(drive.sked_has_TimeBlock_Violation__c == true) { 
+                    }else if(drive.sked_has_TimeBlock_Violation__c) { 
                         isFlaggingNeeded = true;
                     }else {
                         mobileDrivesWithNoResourceRequestedCount++;

@@ -1203,7 +1203,6 @@ public with sharing class GenerateMobileDrive {
 
             for (MobileDriveGeneratorDMLService.DMLDriveShift driveShift : drive.driveShifts) {
                 List<Collection_Operation_Time_Block__c> matchingBlocks = new List<Collection_Operation_Time_Block__c>();
-                List<Collection_Operation_Time_Block__c> partialMatchingBlocks = new List<Collection_Operation_Time_Block__c>();
                 List<Collection_Operation_Time_Block__c> dayMatchingBlocks = new List<Collection_Operation_Time_Block__c>();
 
                 for(Collection_Operation_Time_Block__c tb : timeBlocks) {
