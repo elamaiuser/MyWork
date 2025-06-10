@@ -1592,7 +1592,7 @@ export default class SlwcDriveStaffingDetails extends LightningElement {
                         value: item.tag && item.tag.name,
                         key: item.key + item.name,
                         id: item.tag.id,
-                        isRestricted: slwcAvailator.isResourceTagRestricted(item, {
+                        isRestricted: item.tag.type === 'Role' && slwcAvailator.isResourceTagRestricted(item, {
                             startDate: this.driveDetail1?.driveDate,
                             endDate: this.driveDetail1?.driveDate
                         })
