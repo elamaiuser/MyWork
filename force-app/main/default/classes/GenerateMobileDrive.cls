@@ -1183,9 +1183,69 @@ public with sharing class GenerateMobileDrive {
                     timeConfig.add(config);
                 }
             }
-            calculateDriveShifts (data, drive, timeConfig, travelTimeModel);
-            //HRP-11908 --> Ends Here
+            calculateDriveShifts (data, drive, timeConfig, travelTimeModel);           
+             //HRP-11908 --> Ends Here
+            associateTimeBlocksToDriveShifts(drive);
         }
+
+        private void associateTimeBlocksToDriveShifts(MobileDriveGeneratorDMLService.DMLDrive drive) {
+            // Query applicable time blocks for the drive's collection operation and drive date
+            List<Collection_Operation_Time_Block__c> timeBlocks = [SELECT Id, Time_Block__r.Id, Time_Block__r.Start_Time__c, Time_Block__r.End_Time__c,Time_Block__r.Days_of_Week__c  
+             FROM Collection_Operation_Time_Block__c WHERE 
+             Collection_Operation__c = :drive.collectionOperationId 
+             AND Effective_Start_Date__c <= :drive.driveDate AND Effective_End_Date__c >= :drive.driveDate 
+            ];
+
+            if(timeBlocks.size() < 0) {
+                return;
+            }
+            String driveDayOfWeek = getDayOfWeek(drive.driveDate);
+
+            for (MobileDriveGeneratorDMLService.DMLDriveShift driveShift : drive.driveShifts) {
+                List<Collection_Operation_Time_Block__c> matchingBlocks = new List<Collection_Operation_Time_Block__c>();
+                List<Collection_Operation_Time_Block__c> dayMatchingBlocks = new List<Collection_Operation_Time_Block__c>();
+
+                for(Collection_Operation_Time_Block__c tb : timeBlocks) {
+                    if(tb.Time_Block__r.Days_of_Week__c.contains(driveDayOfWeek)) {
+                        dayMatchingBlocks.add(tb); //HRP-14369 - Added for day only matching
+                        // Check for exact match
+                        if(driveShift.startTime >= tb.Time_Block__r.Start_Time__c 
+                                && driveShift.endTime <= tb.Time_Block__r.End_Time__c) {
+                            matchingBlocks.add(tb);
+                        }
+                    }
+                }//Iterate all time blocks
+
+                if(matchingBlocks.size() == 1) {
+                    // If and only one time block is found, assign it to the drive shift
+                    driveShift.timeBlockId = matchingBlocks[0].Time_Block__r.Id;
+                }
+                else if(dayMatchingBlocks.size() == 1) {//only one timeblock but its not covering fully 
+                    driveShift.timeBlockId =  dayMatchingBlocks[0].Time_Block__r.Id;
+                }
+                if(dayMatchingBlocks.size() >0){ 
+                    if(driveShift.timeBlockId == NULL && matchingBlocks.size() > 0) { //multiple full matches
+                        driveShift.hasTimeBlockViolation = true;
+                        driveShift.timeBlockViolationMessage = skedConstants.EXCEPTION_CODE_FITS_MULTIPLE_TIME_BLOCKS;
+                        drive.hasTimeBlockViolation = true;
+                    }else if(driveShift.timeBlockId != NULL && matchingBlocks.size() ==0) { //HRP-14369 - only one time block but not matching fully
+                         driveShift.hasTimeBlockViolation = true;
+                         driveShift.timeBlockViolationMessage = skedConstants.EXCEPTION_CODE_OUT_OF_TIME_BLOCK;
+                         drive.hasTimeBlockViolation = true;
+                    }else if(driveShift.timeBlockId == NULL ) { //HRP-14369 - multiple timeblocks
+                         driveShift.hasTimeBlockViolation = true;
+                         driveShift.timeBlockViolationMessage = skedConstants.EXCEPTION_CODE_MISSING_TIME_BLOCK;
+                         drive.hasTimeBlockViolation = true;
+
+                    }
+                }
+            }
+        }
+    
+        private String getDayOfWeek(Date incomingDate) {
+            return DateTime.newInstance(incomingDate.year(), incomingDate.month(), incomingDate.day()).format('EEEE');
+        }
+        
 
         protected virtual DriveStaffingComplementModel calculateJobQuantity (DriveStaffingComplementModel staffingComplement, MobileDriveGeneratorDMLService.DMLDriveShift driveShift, String typeOfDrive, MobileDriveGeneratorDMLService.DMLStaffingDecisionMatrix matrix, MobileDriveGeneratorDMLService.DMLDrive drive) {
             staffingComplement = calculateDriverQuantity (typeOfDrive, staffingComplement);
