@@ -1042,6 +1042,7 @@ class MobileGenerator extends BaseGenerator {
       record = this.drive;
     } else {
       this.drive.aptQuantity = record.APTSetup;
+      this.drive.aptRequired = record.APTSetup > 0 ? true : false; //HRP-14339
     }
     let x2rbcProjectedProcedures = record.x2rbcProjectedProcedures || 0;
     let wbProjectedProcedures = record.wbProjectedProcedures || 0;
@@ -1273,12 +1274,19 @@ class MobileGenerator extends BaseGenerator {
   generateDualRoles() {
     const calculateExcessStaffCapacity = (drive, mapResourceQuantity) => {
       const driveShiftsMetadata = this.drive.driveShiftsMetadata;
-
+      let tempMapResourceQuantityForStaffCapacity = cloneDeep(mapResourceQuantity);//HRP-14869 start
+      for (let [key, value] of  tempMapResourceQuantityForStaffCapacity.entries()) {
+        if(value.has('VP/HH')){
+            if(value.get('VP/HH').aptQuantity !== 0){
+              value.get('VP/HH').quantity = value.get('VP/HH').vphhQuantity;
+            }
+        }
+      }//HRP-14869 end
       let staffCapacity = 0;
       driveShiftsMetadata.driveShifts.forEach((driveShiftMetadata) => {
         const driveShiftStaffCapacity = Math.floor(this.helper.calculateStaffCapacity([
           'Driver', 'Driver Support', '2RBC', 'VP/HH', 'Charge'
-        ], drive, driveShiftMetadata, mapResourceQuantity, this.masterData));
+        ], drive, driveShiftMetadata, tempMapResourceQuantityForStaffCapacity, this.masterData));//HRP-14869
         staffCapacity += driveShiftStaffCapacity;
       });
 
@@ -1433,7 +1441,7 @@ class MobileGenerator extends BaseGenerator {
           }, {
             resourceRole: dualRole,
             ...dualRoleQuantityAfterRegenerated
-          });
+          }, quantity);
           
           if(!jobsToCreate.length && !jobsToUpdate.length && !jobsToDelete.length) return;
 
@@ -1840,7 +1848,7 @@ class MobileGenerator extends BaseGenerator {
     this.proposeDriveShifts({
       skipCalculateResourceRoles: true,
       skipVehicleCalculation: false,
-      backupAndRestoreDualRoles: true,
+      backupAndRestoreDualRoles: false,
       skipGenerateSlots: false
     })
   }
@@ -2817,6 +2825,7 @@ class MobileGenerator extends BaseGenerator {
       this.calculateDriveProductivityPlanned();
       this.generateShiftSlots(driveShift);
       this.updateDriveTotalSlots();
+      this.calculateTotalProceduresProjected(driveShift);//HRP-14339
     }
 
     if(job.resourceRole) {
