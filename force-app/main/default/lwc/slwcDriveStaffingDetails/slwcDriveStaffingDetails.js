@@ -417,7 +417,7 @@ export default class SlwcDriveStaffingDetails extends LightningElement {
                             this.updateDriveShiftTagExceptions(this.driveDetail1);
                         }
                         if (result.resources) {
-                            this.resources = this.buildResources(result.resources);
+                            this.resources = this.buildResources(result.resources, this.driveDetail1);
                             this.handleFilter();
                         }
                         
@@ -1545,7 +1545,7 @@ export default class SlwcDriveStaffingDetails extends LightningElement {
             this.showSpinnerCount = 0;
         }
     }
-    buildResource(item) {
+    buildResource(item, drive) {
         const hasLinkedDrive = this.linkedDriveResourceMap[item.id];
         const resourceAllocated = this.getListResourceAllocated(this.driveDetail1 ? this.driveDetail1.driveShifts: []);
         const resourceAllocated2 = this.getListResourceAllocated(this.driveDetail2 ? this.driveDetail2.driveShifts: []);
@@ -1592,8 +1592,8 @@ export default class SlwcDriveStaffingDetails extends LightningElement {
                         key: item.key + item.name,
                         id: item.tag.id,
                         isRestricted: item.tag.type === 'Role' && slwcAvailator.isResourceTagRestricted(item, {
-                            startDate: this.driveDetail1?.driveDate,
-                            endDate: this.driveDetail1?.driveDate
+                            startDate: drive?.driveDate,
+                            endDate: drive?.driveDate,
                         })
                     }
                 }), ['value'], ['asc'])
@@ -1670,9 +1670,9 @@ export default class SlwcDriveStaffingDetails extends LightningElement {
             isTemporaryCO
         }
     }
-    buildResources(result) {
+    buildResources(result, drive) {
         const res = result.map(item => {
-            return this.buildResource(item);
+            return this.buildResource(item, drive);
         })
 
         this.resourceTagsOption = uniqWith(this.resourceTagsOption, isEqual)
@@ -1780,7 +1780,9 @@ export default class SlwcDriveStaffingDetails extends LightningElement {
                             isDeleted: itemJa.status === JOB_ALLOCATION_STATUS.DELETED,
                             icon: this.getResourceIcon(itemJa.resource),
                             timezoneSidId: this.timezoneSidId,
-                            resource: this.buildResource(itemJa.resource),
+                            resource: this.buildResource(itemJa.resource, {
+                                ...driveDetail
+                            }),
                             resourceId: itemJa.resourceId,
                             exceptionLog: exceptionLog,
                             hasDriveShiftTrade: !!itemJa.driveShiftTradeId,
@@ -2670,7 +2672,7 @@ export default class SlwcDriveStaffingDetails extends LightningElement {
                     this.buildException();
                 }
                 if (result.resources) {
-                    this.resources = [...this.buildResources(result.resources), ...this.resources];
+                    this.resources = [...this.buildResources(result.resources, this.driveDetail2), ...this.resources];
                     this.resources = uniqBy(this.resources, item => item.id)
                     this.handleFilter();
                 }
