@@ -51,8 +51,10 @@
 	</types>
 	<types>
 		<members>slwcDriveGenerator</members>
-		<members>slwcResolveDriveContentions</members>
+		<members>slwcDriveStaffingDetails</members>
 		<members>slwcFilterResourceMultiPicklist</members>
+		<members>slwcLinkedDriveStaffingDetails</members>
+		<members>slwcResolveDriveContentions</members>
 		<members>slwcSlider</members>
 		<name>LightningComponentBundle</name>
 	</types>

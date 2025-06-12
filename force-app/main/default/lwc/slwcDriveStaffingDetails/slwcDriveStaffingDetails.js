@@ -1957,6 +1957,7 @@ export default class SlwcDriveStaffingDetails extends LightningElement {
             callOut: false,
             onCall: false,
             assignedToLinkedDrives: false,
+            weeklyHours: false,
             selectedResourcesTag: [],
             selectedResourceRoles: [],
             selectedResourceEmploymentTypes: [],
@@ -2093,7 +2094,7 @@ export default class SlwcDriveStaffingDetails extends LightningElement {
                 });
             }
 
-            if (filter.weeklyHoursRange) {
+            if (filter.weeklyHours && filter.weeklyHoursRange) {
                 this.resourcesFilterList = this.resourcesFilterList.filter(item => {
                     return item.resourceType !== TYPE_RESOURCE.RESOURCE || item.weeklyHours >= filter.weeklyHoursRange.start && item.weeklyHours <= filter.weeklyHoursRange.end;
                 });
