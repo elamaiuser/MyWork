@@ -3887,7 +3887,7 @@ class DriveHelper {
       }
     }
 
-    if(this.isDriveUseTimeBlock(drive, masterData)) {
+    if(!this.isDriveUseTimeBlock(drive, masterData)) {
       return {
         passed: true,
       }
@@ -3901,6 +3901,18 @@ class DriveHelper {
         startTime: driveShift.startTime,
         endTime: driveShift.endTime
       }, masterData)
+
+      if (driveShift.timeBlockId) {
+        const isTimeBlockAvailable = availableTimeBlocks.find(timeBlock => timeBlock.id === driveShift.timeBlockId);
+        if(!isTimeBlockAvailable) {
+          return {
+            driveShiftKey: driveShift.key,
+            driveShift: driveShift,
+            passed: false,
+            contention: DRIVE_SHIFT_TIME_BLOCK_CONTENTION.OUT_OF_TIME_BLOCK
+          }
+        }
+      }
         
       if (availableCOTimeBlocks.length >= 2 && !availableTimeBlocks.length) {
         return {
@@ -3917,15 +3929,6 @@ class DriveHelper {
           driveShift: driveShift,
           passed: false,
           contention: DRIVE_SHIFT_TIME_BLOCK_CONTENTION.FIT_MULTIPLE_TIME_BLOCKS
-        }
-      }
-
-      if (availableCOTimeBlocks.length === 1 && !availableTimeBlocks.length) {
-        return {
-          driveShiftKey: driveShift.key,
-          driveShift: driveShift,
-          passed: false,
-          contention: DRIVE_SHIFT_TIME_BLOCK_CONTENTION.OUT_OF_TIME_BLOCK
         }
       }
 
