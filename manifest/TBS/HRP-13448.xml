@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+	<types>
+		<members>sked_Drive_Shift__c.sked_Contention__c</members>
+		<members>sked_Drive_Shift__c.sked_Contention_Resolution__c</members>
+		<name>CustomField</name>
+	</types>
+	<version>54.0</version>
+</Package>

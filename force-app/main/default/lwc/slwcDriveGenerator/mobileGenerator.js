@@ -2014,6 +2014,10 @@ class MobileGenerator extends BaseGenerator {
   }
   
   populateDriveShiftTimeBlocks(driveShift) {
+    if(!this.helper.isDriveUseTimeBlock(this.drive, this.masterData)) {
+      return;
+    }
+    
     const availableTimeBlocks = this.helper.findAvailableTimeBlocks({
       driveDate: this.drive.driveDate,
       collectionOperation: this.drive.collectionOperation,

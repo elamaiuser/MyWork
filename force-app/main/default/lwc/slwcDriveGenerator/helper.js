@@ -3,7 +3,7 @@ import { LINK_DRIVE_TYPE, RESOURCE_TYPE, MANUALLY_CREATED_FROM, DRIVE_CHANGE_REQ
   ASSET_TYPE, PROCEDURE_TYPE, DRIVE_TYPE, OPERATION_TYPE, RESOURCE_ROLE_GROUP, PENDING_ACTION, DRIVE_STATUS,
    RESOURCE_ROLE, DRIVE_CHANGE_REQUEST_ITEM_TYPE, DRIVE_CONTENTION, DRIVE_CONTENTION_RESOLUTION, 
    JOB_ALLOCATION_STATUS, DRIVE_APPROVAL_STATUS, OPERATION_DRIVE_LIMIT_TYPE, SKIP_BEST_VEHICLE_CALCULATION, 
-   DRIVE_TIME_BLOCK_CONTENTION, DRIVE_SHIFT_TIME_BLOCK_CONTENTION, DRIVE_TIME_BLOCK_RESOLUTION} from 'c/slwcConstants';
+   DRIVE_SHIFT_TIME_BLOCK_CONTENTION, DRIVE_SHIFT_TIME_BLOCK_CONTENTION_RESOLUTION} from 'c/slwcConstants';
 import { DateTime } from 'c/luxon';
 import { isNullOrEmpty, parseJSON, getTravelTimeIndexKey, generateUUID } from 'c/slwcUtils';
 import { territoryCollectionOperationQueryModel, territoryCollectionOperationService } from 'c/dataService';
@@ -3800,7 +3800,7 @@ class DriveHelper {
     return roleCapacity > 0;
   }
 
-  isDriveMatchAnyCOTimeBlocks({
+  isDriveUseTimeBlock({
     driveDate,
     collectionOperation
   }, {
@@ -3821,10 +3821,13 @@ class DriveHelper {
     collectionOperationTimeBlocks = []
   }) {
     return collectionOperationTimeBlocks.filter(COTimeBlock => {
+      const timeBlock = COTimeBlock.timeBlock;
       const isDriveDateValid = COTimeBlock.effectiveStartDate <= driveDate && driveDate <= COTimeBlock.effectiveEndDate;
       const isCollectionOperationValid = COTimeBlock.collectionOperation.id === collectionOperation.id;
+      const driveDayOfWeek = DateTime.fromFormat(driveDate, 'yyyy-MM-dd').toFormat('cccc');
+      const isDayOfWeekValid = timeBlock.daysOfWeek.includes(driveDayOfWeek);
 
-      return isDriveDateValid && isCollectionOperationValid;
+      return isDriveDateValid && isCollectionOperationValid && isDayOfWeekValid;
     })
   }
 
@@ -3842,26 +3845,39 @@ class DriveHelper {
     }, {
       collectionOperationTimeBlocks
     });
-    const driveDayOfWeek = DateTime.fromFormat(driveDate, 'yyyy-MM-dd').toFormat('cccc');
+
     return availableCOTimeBlocks.filter(COTimeBlock => {
       const timeBlock = COTimeBlock.timeBlock;
       const isTimeValid = timeBlock.startTime <= startTime && endTime <= timeBlock.endTime;
-      const isDayOfWeekValid = timeBlock.daysOfWeek.includes(driveDayOfWeek);
 
       return isTimeValid && isDayOfWeekValid;
     });
   }
 
-  isDriveTimeBlocksContentionResolved = (drive) => {
-    const pendingActionReasonCodes = drive.pendingActionReasonCode ? drive.pendingActionReasonCode.split(';') : [];
-    if(!pendingActionReasonCodes.includes(DRIVE_TIME_BLOCK_CONTENTION.MISSING_TIME_BLOCK) && 
-      !pendingActionReasonCodes.includes(DRIVE_TIME_BLOCK_CONTENTION.DRIVE_SHIFT_TIME_BLOCK_ISSUE)) {
+  isDriveShiftTimeBlocksContentionResolved = (driveShift) => {
+    const driveShiftContentions = driveShift.contention ? drive.contention.split(';') : [];
+   
+    if(!driveShiftContentions.includes(DRIVE_SHIFT_TIME_BLOCK_CONTENTION.MISSING_TIME_BLOCK) && 
+      !driveShiftContentions.includes(DRIVE_SHIFT_TIME_BLOCK_CONTENTION.OUT_OF_TIME_BLOCK) && 
+      !driveShiftContentions.includes(DRIVE_SHIFT_TIME_BLOCK_CONTENTION.FIT_MULTIPLE_TIME_BLOCKS)
+    ) {
       return true;
     }
 
-    const driveContentionResolutions = drive.contentionResolution ? drive.contentionResolution.split(';') : [];
-    const timeBlockContentionResolved = driveContentionResolutions.includes(DRIVE_TIME_BLOCK_RESOLUTION.ELECT_NOT_USE_DRIVE_TIME_BLOCK);
-    return timeBlockContentionResolved; 
+    const driveShiftContentionResolutions = driveShift.contentionResolution ? driveShift.contentionResolution.split(';') : [];
+    if(driveShiftContentionResolutions.includes(DRIVE_SHIFT_TIME_BLOCK_CONTENTION_RESOLUTION.ELECT_NOT_USE_DRIVE_SHIFT_TIME_BLOCK)) {
+      return true;
+    }
+
+    return driveShift.timeBlockId; 
+  }
+
+  isDriveTimeBlockContentionsResolved = (drive) => {
+    if(!drive.driveShifts?.length) return true;
+
+    return drive.driveShifts.every(driveShift => {
+      return this.isDriveShiftTimeBlocksContentionResolved(driveShift)
+    })
   }
 
   validateDriveTimeBlocks = (drive, masterData) => {
@@ -3870,20 +3886,14 @@ class DriveHelper {
         passed: true,
       }
     }
-    
-    const isDriveMatchAnyCOTimeBlocks = this.isDriveMatchAnyCOTimeBlocks(drive, masterData);
-    if(!isDriveMatchAnyCOTimeBlocks) return {
-      passed: false,
-      contention: DRIVE_TIME_BLOCK_CONTENTION.MISSING_TIME_BLOCK,
-      driveShifts: drive.driveShifts.map(driveShift => {
-        return {
-          ...driveShift,
-          passed: false,
-          contention: DRIVE_SHIFT_TIME_BLOCK_CONTENTION.MISSING_TIME_BLOCK,
-        }
-      })
+
+    if(this.isDriveUseTimeBlock(drive, masterData)) {
+      return {
+        passed: true,
+      }
     }
 
+    const availableCOTimeBlocks = this.findAvailableCOTimeBlocks(drive, masterData);
     const driveShifts = drive.driveShifts.map(driveShift => {
       const availableTimeBlocks = this.findAvailableTimeBlocks({
         driveDate: drive.driveDate,
@@ -3892,30 +3902,45 @@ class DriveHelper {
         endTime: driveShift.endTime
       }, masterData)
         
-      let passed = true;
-      let contention;
-      if(availableTimeBlocks.length > 1) {
-        passed = false;
-        contention = DRIVE_SHIFT_TIME_BLOCK_CONTENTION.FIT_MULTIPLE_TIME_BLOCKS
-      } else if (availableTimeBlocks.length === 0) {
-        passed = false;
-        contention = DRIVE_SHIFT_TIME_BLOCK_CONTENTION.OUT_OF_TIME_BLOCK
+      if (availableCOTimeBlocks.length >= 2 && !availableTimeBlocks.length) {
+        return {
+          driveShiftKey: driveShift.key,
+          driveShift: driveShift,
+          passed: false,
+          contention: DRIVE_SHIFT_TIME_BLOCK_CONTENTION.MISSING_TIME_BLOCK
+        }
+      }
+
+      if (availableTimeBlocks.length >= 2) {
+        return {
+          driveShiftKey: driveShift.key,
+          driveShift: driveShift,
+          passed: false,
+          contention: DRIVE_SHIFT_TIME_BLOCK_CONTENTION.FIT_MULTIPLE_TIME_BLOCKS
+        }
+      }
+
+      if (availableCOTimeBlocks.length === 1 && !availableTimeBlocks.length) {
+        return {
+          driveShiftKey: driveShift.key,
+          driveShift: driveShift,
+          passed: false,
+          contention: DRIVE_SHIFT_TIME_BLOCK_CONTENTION.OUT_OF_TIME_BLOCK
+        }
       }
 
       return {
-        ...driveShift,
-        passed,
-        contention
+        driveShiftKey: driveShift.key,
+        driveShift: driveShift,
+        passed: true
       }
     })
 
-    const allPassed = driveShifts.every(driveShift => driveShift.passed);
-    const contention = allPassed ? undefined : DRIVE_TIME_BLOCK_CONTENTION.DRIVE_SHIFT_TIME_BLOCK_ISSUE;
+    const allDriveShiftsPassed = driveShifts.every(driveShift => driveShift.passed);
 
     return {
-      passed: allPassed,
-      contention,
-      driveShifts
+      passed: allDriveShiftsPassed,
+      driveShiftsValidations: driveShifts
     }
   }
 }

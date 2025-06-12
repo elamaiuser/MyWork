@@ -383,13 +383,8 @@ export const SKIP_BEST_VEHICLE_CALCULATION = {
   ANTICIPATED_REGISTERED_DONOR_GREATER_THEN: 500,
 }
 
-export const DRIVE_TIME_BLOCK_CONTENTION = {
-  MISSING_TIME_BLOCK: 'Missing Time Block',
-  DRIVE_SHIFT_TIME_BLOCK_ISSUE: 'Drive Shift Time Block Issue'
-}
-
-export const DRIVE_TIME_BLOCK_RESOLUTION = {
-  ELECT_NOT_USE_DRIVE_TIME_BLOCK: 'Elect to acknowledge the drive that is not using Time Block'
+export const DRIVE_SHIFT_TIME_BLOCK_CONTENTION_RESOLUTION = {
+  ELECT_NOT_USE_DRIVE_SHIFT_TIME_BLOCK: 'Elect to acknowledge the drive shift without Time Block'
 }
 
 export const DRIVE_SHIFT_TIME_BLOCK_CONTENTION = {
