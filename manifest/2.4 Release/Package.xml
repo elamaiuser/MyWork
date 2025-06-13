@@ -63,5 +63,9 @@
 		<members>sked__Resource__c-Staff Layout</members>
 		<name>Layout</name>
 	</types>
+	<types>
+		<members>Mobile_Opp_Record_Page</members>
+		<name>FlexiPage</name>
+	</types>
     <version>63.0</version>
 </Package>
