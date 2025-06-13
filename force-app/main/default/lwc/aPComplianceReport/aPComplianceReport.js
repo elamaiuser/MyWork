@@ -7,7 +7,10 @@ export default class ApComplianceReport extends LightningElement {
         endDate: this.getTodayDate(),
         division: '',
         region: '',
-        co: [] 
+        co: [],
+        violationOnly: false,
+        driveStatusFilter: [],
+        includeTrades: true
     };
 
     @track dataArry = [];
@@ -21,69 +24,89 @@ export default class ApComplianceReport extends LightningElement {
     @track totalViolations = 0;
     @track violationPercentage = 0;
 
+    @track driveStatusOptions = [
+        { label: 'Draft', value: 'Draft', selected: false },
+        { label: 'System Generated', value: 'System Generated', selected: false },
+        { label: 'Hold', value: 'Hold', selected: false },
+        { label: 'Tentative', value: 'Tentative', selected: false },
+        { label: 'Confirmed', value: 'Confirmed', selected: false },
+        { label: 'Complete', value: 'Complete', selected: true },
+        { label: 'Cancel', value: 'Cancel', selected: false }
+    ];
+
     getTodayDate() {
-        let today = new Date();
+        const today = new Date();
         return today.toISOString().slice(0, 10);
     }
+
     get showNothing() {
-    return false;
-}
-handleSelectedValues(event) {
-    this.wrapper.startDate = event.detail.startDate;
-    this.wrapper.endDate = event.detail.endDate;
-    this.wrapper.division = event.detail.division || '';
-    this.wrapper.region = event.detail.region || '';
-    this.wrapper.co = event.detail.collectionop || []; 
-}
+        return false;
+    }
+
+    handleSelectedValues(event) {
+        this.wrapper.startDate = event.detail.startDate;
+        this.wrapper.endDate = event.detail.endDate;
+        this.wrapper.division = event.detail.division || '';
+        this.wrapper.region = event.detail.region || '';
+        this.wrapper.co = event.detail.collectionop || [];
+    }
+
     handleResetValues() {
         this.wrapper = {
             startDate: this.getTodayDate(),
             endDate: this.getTodayDate(),
             division: '',
             region: '',
-            co: []
+            co: [],
+            violationOnly: false,
+            driveStatusFilter: [],
+            includeTrades: true
         };
         this.hasError = false;
         this.hasRecords = false;
+        this.resetDriveStatusOptions();
     }
 
-   /* handleSearch() {
-    this.loaded = true;
-    this.hasRecords = false;
-    this.hasError = false;
-    this.dataArry = [];
-    this.violationPercent = 0;
-
-    searchReport({
-        startDt: this.wrapper.startDate,
-        endDt: this.wrapper.endDate,
-        division: this.wrapper.division,
-        region: this.wrapper.region,
-        co: this.wrapper.co
-    })
-    .then(result => {
-        this.loaded = false;
-        this.columns = result.columnsInfo;
-        this.dataArry = result.dataWrapper;
-        this.hasRecords = this.dataArry.length > 0;
-        this.hasError = !this.hasRecords;
-        this.errorMessageToDisplay = this.hasError ? 'No data found.' : '';
-
-        if (this.hasRecords) {
-            const total = this.dataArry.length;
-            const violated = this.dataArry.filter(row => row.violation === 'true').length;
-            this.violationPercent = Math.round((violated / total) * 100);
+    resetDriveStatusOptions() {
+        this.driveStatusOptions.forEach(opt => opt.selected = false);
+        const combobox = this.template.querySelector('c-bsf-multi-select-combobox[name="driveStatus"]');
+        if (combobox) {
+            combobox.selectedItems = '-Select-';
+            combobox.overritecurrent();
         }
-    })
-    .catch(error => {
-        this.loaded = false;
-        this.hasError = true;
-        this.errorMessageToDisplay = error.body?.message || 'Unknown error';
-        console.error(error);
-    });
-}*/
+    }
 
- handleSearch() {
+    handleDriveStatusChange(event) {
+        let driveStatusList = [];
+        const items = Array.isArray(event.detail) ? event.detail : JSON.parse(JSON.stringify(event.detail));
+        for (let i in items) {
+            if (items[i] && items[i].value) {
+                driveStatusList.push(items[i].value);
+                this.driveStatusOptions
+                    .filter(item => item.value === items[i].value)
+                    .forEach(item => item.selected = true);
+            }
+        }
+        this.wrapper.driveStatusFilter = driveStatusList;
+        console.log("Final driveStatusFilter:", this.wrapper.driveStatusFilter);
+    }
+
+    handleDriveStatusClick() {
+        const combobox = this.template.querySelector('c-bsf-multi-select-combobox[name="driveStatus"]');
+        if (combobox) {
+            combobox.showOptions = true;
+        }
+    }
+
+    handleViolationToggleChange(event) {
+        this.wrapper.violationOnly = event.target.checked;
+    }
+
+    handleIncludeTradesChange(event) {
+        this.wrapper.includeTrades = event.target.checked;
+    }
+
+    handleSearch() {
     this.loaded = true;
     this.hasRecords = false;
     this.hasError = false;
@@ -92,12 +115,17 @@ handleSelectedValues(event) {
     this.totalViolations = 0;
     this.violationPercent = 0;
 
+    const driveStatusClone = [...this.wrapper.driveStatusFilter];
+
     searchReport({
         startDt: this.wrapper.startDate,
         endDt: this.wrapper.endDate,
         division: this.wrapper.division,
         region: this.wrapper.region,
-        coList: this.wrapper.co
+        coList: this.wrapper.co,
+        violationOnly: this.wrapper.violationOnly,
+        driveStatusFilter: driveStatusClone, // ✅ clone sent
+        includeTrades: this.wrapper.includeTrades
     })
     .then(result => {
         this.loaded = false;
@@ -135,9 +163,16 @@ handleSelectedValues(event) {
     }
 
     exportToExcel() {
-    window.open(`/apex/APComplianceExcel?startdate=${this.wrapper.startDate}&enddate=${this.wrapper.endDate}&division=${this.wrapper.division}&region=${this.wrapper.region}&co=${this.wrapper.co}`, '_blank');
-}
+        const driveStatusParam = this.wrapper.driveStatusFilter.join(',');
+        window.open(`/apex/APComplianceExcel?startdate=${this.wrapper.startDate}&enddate=${this.wrapper.endDate}&division=${this.wrapper.division}&region=${this.wrapper.region}&co=${this.wrapper.co}&violationOnly=${this.wrapper.violationOnly}&driveStatusFilter=${driveStatusParam}&includeTrades=${this.wrapper.includeTrades}`, '_blank');
 
+    }
+
+    get getPopUpRedirectUrl() {
+       const driveStatusParam = this.wrapper.driveStatusFilter.join(',');
+        return `/apex/BSFAPComplianceReportPDF?startdate=${this.wrapper.startDate}&enddate=${this.wrapper.endDate}&division=${this.wrapper.division}&region=${this.wrapper.region}&co=${this.wrapper.co}&violationOnly=${this.wrapper.violationOnly}&driveStatusFilter=${driveStatusParam}&includeTrades=${this.wrapper.includeTrades}`;
+
+    }
 
     convertToCSV(data) {
         if (!data || !data.length) return '';
@@ -148,9 +183,5 @@ handleSelectedValues(event) {
 
     get disablePdfButton() {
         return !this.hasRecords;
-    }
-
-    get getPopUpRedirectUrl() {
-        return `/apex/BSFAPComplianceReportPDF?startdate=${this.wrapper.startDate}&enddate=${this.wrapper.endDate}&division=${this.wrapper.division}&region=${this.wrapper.region}&co=${this.wrapper.co}`;
     }
 }

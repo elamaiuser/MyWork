@@ -4,6 +4,7 @@
             <style>
                 @page {
                     size: A4 landscape;
+                    margin: 20px;
                     @top-center {
                         content: "Availability Pattern Compliance Report";
                     }
@@ -15,7 +16,7 @@
                 body {
                     font-family: Arial, sans-serif;
                     font-size: 10px;
-                    margin: 20px;
+                    margin: 0;
                 }
 
                 table {
@@ -46,11 +47,15 @@
                     text-align: left;
                     padding: 4px 10px 4px 0;
                 }
+
+                .page-break {
+                    page-break-after: always;
+                }
             </style>
         </head>
         <body>
 
-            <!-- Horizontal Summary Row -->
+            <!-- Summary Section -->
             <table class="summary-table">
                 <tr>
                     <td>Total Records: {!wrapper.summary['totalRecords']}</td>
@@ -61,51 +66,57 @@
                 </tr>
             </table>
 
-            <!-- Main Data Table -->
-            <table>
-                <thead>
-                    <tr>
-                        <th>Resource</th>
-                        <th>Supervisor</th>
-                        <th>Drive Name</th>
-                        <th>Division</th>
-                        <th>Region</th>
-                        <th>CO</th>
-                        <th>Work Date</th>
-                        <th>Type</th>
-						<th>Role</th>
-                        <th>Drive Status</th>
-                        <th>Start Time</th>
-                        <th>End Time</th>
-                        <th>AP Time</th>
-                        <th>AP Name</th>
-                        <th>AP Violation</th>
-                        <th>Exception</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <apex:repeat value="{!wrapper.dataWrapper}" var="row">
+            <!-- Paginated Data -->
+            <apex:repeat value="{!paginatedData}" var="page">
+                <table>
+                    <thead>
                         <tr>
-                            <td>{!row['name']}</td>
-                            <td>{!row['supervisor']}</td>
-                            <td>{!row['driveName']}</td>
-                            <td>{!row['division']}</td>
-                            <td>{!row['region']}</td>
-                            <td>{!row['co']}</td>
-                            <td>{!row['workDate']}</td>
-                            <td>{!row['type']}</td>
-                            <td>{!row['role']}</td>
-                            <td>{!row['status']}</td>
-                            <td>{!row['startTime']}</td>
-                            <td>{!row['endTime']}</td>
-                            <td>{!row['apTime']}</td>
-                            <td>{!row['apName']}</td>
-                            <td>{!row['violation']}</td>
-                            <td>{!row['exc']}</td>
+                            <th>Resource</th>
+                            <th>Supervisor</th>
+                            <th>Drive Name</th>
+                            <th>Division</th>
+                            <th>Region</th>
+                            <th>CO</th>
+                            <th>Work Date</th>
+                            <th>Type</th>
+                            <th>Role</th>
+                            <th>Drive Status</th>
+                            <th>Start Time</th>
+                            <th>End Time</th>
+                            <th>AP Time</th>
+                            <th>AP Name</th>
+                            <th>AP Violation</th>
+                            <th>Exception</th>
+                            <th>Callout/Trade</th>
                         </tr>
-                    </apex:repeat>
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        <apex:repeat value="{!page}" var="row">
+                            <tr>
+                                <td>{!row['name']}</td>
+                                <td>{!row['supervisor']}</td>
+                                <td>{!row['driveName']}</td>
+                                <td>{!row['division']}</td>
+                                <td>{!row['region']}</td>
+                                <td>{!row['co']}</td>
+                                <td>{!row['workDate']}</td>
+                                <td>{!row['type']}</td>
+                                <td>{!row['role']}</td>
+                                <td>{!row['status']}</td>
+                                <td>{!row['startTime']}</td>
+                                <td>{!row['endTime']}</td>
+                                <td>{!row['apTime']}</td>
+                                <td>{!row['apName']}</td>
+                                <td>{!row['violation']}</td>
+                                <td>{!row['exc']}</td>
+                                <td>{!row['calloutTrade']}</td>
+                            </tr>
+                        </apex:repeat>
+                    </tbody>
+                </table>
+                <div class="page-break"></div>
+            </apex:repeat>
+
         </body>
     </html>
 </apex:page>
