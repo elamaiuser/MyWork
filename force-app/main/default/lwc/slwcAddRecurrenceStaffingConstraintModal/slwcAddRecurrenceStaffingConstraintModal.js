@@ -515,22 +515,24 @@ export default class SlwcAddRecurrenceStaffingConstraintModal extends LightningE
         }
         this.model.STEP3.records.push(newRecord);
 
-        if (coTimeBlocks.length) {
-          coTimeBlocks.forEach(coTb => {
-            if (coTb.timeBlock.daysOfWeek.includes(weekdayLong)) {
-              const newRecord = {
-                key: uniqueId(`staffing_constraint_${coTb.timeBlock.id}`),
-                ...originalModel,
-                driveType,
-                timeBlockName: coTb.timeBlock.name,
-                timeBlock: coTb.timeBlock,
-                dateOfConstraint: dateIso,
-                weekdayLong: weekdayLong,
-                validations: {}
+        if (driveType !== DRIVE_TYPE.FIXED_SITE) {
+          if (coTimeBlocks.length) {
+            coTimeBlocks.forEach(coTb => {
+              if (coTb.timeBlock.daysOfWeek.includes(weekdayLong)) {
+                const newRecord = {
+                  key: uniqueId(`staffing_constraint_${coTb.timeBlock.id}`),
+                  ...originalModel,
+                  driveType,
+                  timeBlockName: coTb.timeBlock.name,
+                  timeBlock: coTb.timeBlock,
+                  dateOfConstraint: dateIso,
+                  weekdayLong: weekdayLong,
+                  validations: {}
+                }
+                this.model.STEP3.records.push(newRecord);
               }
-              this.model.STEP3.records.push(newRecord);
-            }
-          })
+            })
+          }
         }
       })
     })
