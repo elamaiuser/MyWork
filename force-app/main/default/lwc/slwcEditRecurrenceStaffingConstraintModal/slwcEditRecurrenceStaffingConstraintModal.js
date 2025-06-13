@@ -207,6 +207,12 @@ export default class SlwcEditRecurrenceStaffingConstraintModal extends Lightning
 
   fetchStaffingConstraintData = () => {
     const dateOfConstraints = uniq(this.model.STEP2.records.map(item => item.dateOfConstraint));
+    if (!dateOfConstraints?.length) {
+      this.mappedDriveData = {};
+      this.mappedActivityData = {};
+      return Promise.resolve();
+    }
+
     const collectionOperationIds = uniq(this.model.STEP2.records.map(item => item.collectionOperation.id));
     const driveTypes = uniq(this.model.STEP2.records.map(item => item.driveType));
     const minDateIso = min(dateOfConstraints);
@@ -395,7 +401,8 @@ export default class SlwcEditRecurrenceStaffingConstraintModal extends Lightning
     let allRecords = this.model.STEP2.records;
     const { startDate, endDate, showOnlyErrorRecords, daysOfWeek, driveTypes } = this.model.STEP2.filters;
 
-    this.model.STEP2.filteredRecords = allRecords
+    this.model.STEP2.filteredRecords = !allRecords?.length ? []
+    : allRecords
       .filter(record => {
         return driveTypes?.includes(record.driveType);
       })
