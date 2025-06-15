@@ -492,10 +492,11 @@ export default class SlwcResolveDriveContentions extends LightningElement {
         fetch.retrieveSameDateActivities(this.drive),
         fetch.retrieveVehicles(this.drive),
         fetch.retrieveTerritoryCollectionOperations(this.drive),
-        fetch.retrieveCustomSettings()
+        fetch.retrieveCustomSettings(),
+        fetch.retrieveCollectionOperationTimeBlocks(this.drive),
       ]);
     })
-    .then(([driveLimits = [], staffingConstraints = [], driveSite, sameDateDrives = [], sameDateActivities = [], vehicles = [], territoryCollectionOperations = [], adminSetting]) => {
+    .then(([driveLimits = [], staffingConstraints = [], driveSite, sameDateDrives = [], sameDateActivities = [], vehicles = [], territoryCollectionOperations = [], adminSetting, collectionOperationTimeBlocks]) => {
       this.masterData = {
         driveSite,
         sameDateActivities,
@@ -505,7 +506,8 @@ export default class SlwcResolveDriveContentions extends LightningElement {
         vehicles,
         timezoneSidId: driveSite ? driveSite.timezoneSidId : null,
         territoryCollectionOperations,
-        adminSetting : adminSetting.adminSetting
+        adminSetting : adminSetting.adminSetting,
+        collectionOperationTimeBlocks
       }
     });
   }

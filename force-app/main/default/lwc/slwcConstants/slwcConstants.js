@@ -384,6 +384,7 @@ export const SKIP_BEST_VEHICLE_CALCULATION = {
 }
 
 export const DRIVE_SHIFT_TIME_BLOCK_CONTENTION_RESOLUTION = {
+  ELECT_DRIVE_SHIFT_OUT_OF_TIME_BLOCK: 'Elect to acknowledge the drive shift is out of Time Block',
   ELECT_NOT_USE_DRIVE_SHIFT_TIME_BLOCK: 'Elect to acknowledge the drive shift without Time Block'
 }
 

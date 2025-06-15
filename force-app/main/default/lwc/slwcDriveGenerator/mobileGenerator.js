@@ -399,7 +399,7 @@ class MobileGenerator extends BaseGenerator {
                       this.fetch.retrieveRoleTimeData(this.drive),
                       this.fetch.retrieveDefaultTags(this.drive),
                       this.fetch.retrieveTerritoryCollectionOperations(this.drive),
-                      this.fetch.retrieveCollectionOperationTimeBlocksData(this.drive),
+                      this.fetch.retrieveCollectionOperationTimeBlocks(this.drive),
                     ])
                   })
                   .then(([driveSite, resourceRoleGroups, lunchBreakSettings, adminSetting, staffSetupExcludedRoles, redcrossVolunteerMatrix, travelTimeIndexItemMap, vehicles, sameDateDrives, sameDateActivities, staffingDecisionMatrix, roleTimeData, driveTags, territoryCollectionOperations, collectionOperationTimeBlocks]) => {
@@ -508,7 +508,7 @@ class MobileGenerator extends BaseGenerator {
             this.fetch.retrieveRoleTimeData(this.drive),
             this.fetch.retrieveDefaultTags(this.drive),
             this.fetch.retrieveActiveDriveChangeRequest(this.drive),
-            this.fetch.retrieveCollectionOperationTimeBlocksData(this.drive)
+            this.fetch.retrieveCollectionOperationTimeBlocks(this.drive)
           ]);
         })
         .then(([driveSite, resourceRoleGroups, lunchBreakSettings, adminSetting, staffSetupExcludedRoles, redcrossVolunteerMatrix, travelTimeIndexItemMap , vehicles, sameDateDrives, sameDateActivities, staffingDecisionMatrix, roleTimeData, driveTags, activeDriveChangeRequest, collectionOperationTimeBlocks]) => {
@@ -1994,22 +1994,6 @@ class MobileGenerator extends BaseGenerator {
     driveShift.driveShiftTags = this.helper.calculateDriveShiftTags(this.masterData);
   }
   
-  populateDriveShiftTimeBlocks(driveShift) {
-    if(!this.helper.isDriveUseTimeBlock(this.drive, this.masterData)) {
-      return;
-    }
-    
-    const availableTimeBlocks = this.helper.findAvailableTimeBlocks({
-      driveDate: this.drive.driveDate,
-      collectionOperation: this.drive.collectionOperation,
-      startTime: driveShift.startTime,
-      endTime: driveShift.endTime
-    })
-    if (availableTimeBlocks.length === 1) {
-      driveShift.timeBlockId = availableTimeBlocks[0].id;
-    }
-  }
-  
   populateDriveShiftJobs(driveShift, driveShiftIndex) {
     const driveShiftMetadata = driveShift.driveShiftMetadata;
     let jobTagsMap = this.helper.calculateJobTagsMap(this.masterData);
@@ -2908,7 +2892,7 @@ class MobileGenerator extends BaseGenerator {
   }
 
   retrieveCollectionOperationTimeBlocksData() {
-    return this.fetch.retrieveCollectionOperationTimeBlocksData(this.drive)
+    return this.fetch.retrieveCollectionOperationTimeBlocks(this.drive)
     .then((collectionOperationTimeBlocks) => {
       this.masterData.collectionOperationTimeBlocks = collectionOperationTimeBlocks || []; 
     })
