@@ -21,6 +21,7 @@ import { DRIVE_STATUS, DRIVE_APPROVAL_STATUS, PENDING_ACTION, ASSET_TYPE, OPPORT
 import TIME_ZONE from '@salesforce/i18n/timeZone';
 import { slwcDriveGeneratorHelper, DriveHelper } from 'c/slwcDriveGenerator';
 import { autoMapperInstance } from 'c/autoMapper';
+import { DRIVE_SHIFT_TIME_BLOCK_CONTENTION } from 'c/slwcConstants/slwcConstants';
 
 // import { auraProxyConfig } from 'c/auraProxy';
 // auraProxyConfig.enableMock();
@@ -967,7 +968,10 @@ export default class SlwcDriveManagement extends NavigationMixin(LightningElemen
                     'Lacking of equipment',
                     'Exceeds Operational Drive Limit',
                     'Exceeds 2RBC Operational Limit',
-                    'Excess Staff Capacity'
+                    'Excess Staff Capacity',
+                    DRIVE_SHIFT_TIME_BLOCK_CONTENTION.OUT_OF_TIME_BLOCK,
+                    DRIVE_SHIFT_TIME_BLOCK_CONTENTION.FIT_MULTIPLE_TIME_BLOCKS,
+                    DRIVE_SHIFT_TIME_BLOCK_CONTENTION.MISSING_TIME_BLOCK
                 ];
                 const anyContentionsPreventHold = pendingActionReasonCodes.filter(pendingActionReasonCode => {
                     return contentionsPreventHold.includes(pendingActionReasonCode);

@@ -676,6 +676,10 @@ class BaseGenerator {
       if(currentDrive.driveDate !== backupDrive.driveDate || 
         currentDrive.collectionOperationId !== backupDrive.collectionOperationId) {
         currentContentionResolutions = [];
+
+        this.drive.driveShifts?.forEach(driveShift => {
+          driveShift.contentionResolution = ''
+        })
       }
 
       //Out of Operational Hours

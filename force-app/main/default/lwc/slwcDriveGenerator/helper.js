@@ -3048,6 +3048,22 @@ class DriveHelper {
       return contentionValidateFnMap[contention];
     });
 
+    const {
+      passed: timeBlockValidationPassed,
+      pendingActionReasonCodes: timeBlockPendingActionReasonCodes,
+      driveShiftsValidations,
+      contentions: timeBlockContentions
+    } = this.validateDriveTimeBlocks(drive, masterData);
+
+    if (!timeBlockValidationPassed) {
+      return {
+        passed: false,
+        pendingActionReasonCodes: timeBlockPendingActionReasonCodes,
+        contentions: timeBlockContentions,
+        driveShiftsValidations
+      }
+    }
+
     validateFns.forEach(validateFn => {
       const {
         contention,
@@ -3881,6 +3897,21 @@ class DriveHelper {
   }
 
   validateDriveTimeBlocks = (drive, masterData) => {
+    const isDriveShiftContentionOverrided = (driveShift, contention) => {
+      const contentionResolutions = driveShift.contentionResolution ? driveShift.contentionResolution.split(';') : [];
+      const contentionOverrided = contentionResolutions.includes(DRIVE_SHIFT_TIME_BLOCK_CONTENTION_RESOLUTION.ELECT_NOT_USE_DRIVE_SHIFT_TIME_BLOCK);
+      return !!contentionOverrided;
+    }
+
+    const collectDriveTimeBlockContentions = (driveShifts) => {
+      return driveShifts.reduce((contentions, driveShift) => {
+        if(!driveShift.passed) {
+          contentions.push(...driveShift.contention ? driveShift.contention.split(';') : [])
+        }
+        return contentions;
+      }, [])
+    }
+
     if(this.isFixedSiteDrive(drive)) {
       return {
         passed: true,
@@ -3908,7 +3939,8 @@ class DriveHelper {
           return {
             driveShiftKey: driveShift.key,
             driveShift: driveShift,
-            passed: false,
+            violated: true,
+            passed: !!driveShift.timeBlockId || isDriveShiftContentionOverrided(driveShift, DRIVE_SHIFT_TIME_BLOCK_CONTENTION.OUT_OF_TIME_BLOCK),
             contention: DRIVE_SHIFT_TIME_BLOCK_CONTENTION.OUT_OF_TIME_BLOCK
           }
         }
@@ -3918,7 +3950,8 @@ class DriveHelper {
         return {
           driveShiftKey: driveShift.key,
           driveShift: driveShift,
-          passed: false,
+          violated: true,
+          passed: !!driveShift.timeBlockId || isDriveShiftContentionOverrided(driveShift, DRIVE_SHIFT_TIME_BLOCK_CONTENTION.MISSING_TIME_BLOCK),
           contention: DRIVE_SHIFT_TIME_BLOCK_CONTENTION.MISSING_TIME_BLOCK
         }
       }
@@ -3927,7 +3960,8 @@ class DriveHelper {
         return {
           driveShiftKey: driveShift.key,
           driveShift: driveShift,
-          passed: false,
+          violated: true,
+          passed: !!driveShift.timeBlockId || isDriveShiftContentionOverrided(driveShift, DRIVE_SHIFT_TIME_BLOCK_CONTENTION.FIT_MULTIPLE_TIME_BLOCKS),
           contention: DRIVE_SHIFT_TIME_BLOCK_CONTENTION.FIT_MULTIPLE_TIME_BLOCKS
         }
       }
@@ -3935,14 +3969,33 @@ class DriveHelper {
       return {
         driveShiftKey: driveShift.key,
         driveShift: driveShift,
+        violated: false,
         passed: true
       }
     })
 
     const allDriveShiftsPassed = driveShifts.every(driveShift => driveShift.passed);
+    const driveTimeBlockContentions = collectDriveTimeBlockContentions(driveShifts);
 
+    if (!allDriveShiftsPassed) {
+      return {
+        passed: false,
+        pendingActionReasonCodes: driveTimeBlockContentions,
+        driveShiftsValidations: driveShifts,
+        contentions: driveTimeBlockContentions.map(contention => {
+          return {
+            contention: contention,
+            passed: false,
+            violated: true
+          }
+        })
+      }
+    }
+    
     return {
-      passed: allDriveShiftsPassed,
+      passed: true,
+      pendingActionReasonCodes: [],
+      contentions: [],
       driveShiftsValidations: driveShifts
     }
   }
