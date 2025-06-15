@@ -398,6 +398,34 @@ class BaseGenerator {
     }
   }
   
+  populateDriveShiftTimeBlocks(driveShift) {
+    if(!this.helper.isDriveUseTimeBlock(this.drive, this.masterData)) {
+      return;
+    }
+    
+    const availableTimeBlocks = this.helper.findAvailableTimeBlocks({
+      driveDate: this.drive.driveDate,
+      collectionOperation: this.drive.collectionOperation,
+      startTime: driveShift.startTime,
+      endTime: driveShift.endTime
+    }, this.masterData);
+    
+    if (availableTimeBlocks.length > 1) {
+      return;
+    }
+
+    if (availableTimeBlocks.length === 1) {
+      driveShift.timeBlockId = availableTimeBlocks[0].timeBlockId;
+    }
+
+    //availableTimeBlocks.length === 0
+    const availableCOTimeBlocks = this.helper.findAvailableCOTimeBlocks(this.drive, this.masterData);
+
+    if (availableCOTimeBlocks.length === 1) {
+      driveShift.timeBlockId = availableCOTimeBlocks[0].timeBlockId;
+    }
+  }
+
   populateShiftTime(driveShift) {
     if (!driveShift.driveDate || !driveShift.startTime || !driveShift.endTime) return;
 

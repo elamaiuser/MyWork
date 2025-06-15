@@ -3864,7 +3864,7 @@ class DriveHelper {
       const timeBlock = COTimeBlock.timeBlock;
       const isTimeValid = timeBlock.startTime <= startTime && endTime <= timeBlock.endTime;
 
-      return isTimeValid && isDayOfWeekValid;
+      return isTimeValid;
     });
   }
 
@@ -3897,8 +3897,13 @@ class DriveHelper {
   validateDriveTimeBlocks = (drive, masterData) => {
     const isDriveShiftContentionOverrided = (driveShift, contention) => {
       const contentionResolutions = driveShift.contentionResolution ? driveShift.contentionResolution.split(';') : [];
-      const contentionOverrided = contentionResolutions.includes(DRIVE_SHIFT_TIME_BLOCK_CONTENTION_RESOLUTION.ELECT_NOT_USE_DRIVE_SHIFT_TIME_BLOCK);
-      return !!contentionOverrided;
+      if (contention === DRIVE_SHIFT_TIME_BLOCK_CONTENTION.OUT_OF_TIME_BLOCK) {
+        if (contentionResolutions.includes(DRIVE_SHIFT_TIME_BLOCK_CONTENTION_RESOLUTION.ELECT_DRIVE_SHIFT_OUT_OF_TIME_BLOCK)) {
+          return true;
+        }
+      }
+
+      return contentionResolutions.includes(DRIVE_SHIFT_TIME_BLOCK_CONTENTION_RESOLUTION.ELECT_NOT_USE_DRIVE_SHIFT_TIME_BLOCK);
     }
 
     const collectDriveTimeBlockContentions = (driveShifts) => {
@@ -3938,7 +3943,7 @@ class DriveHelper {
             driveShiftKey: driveShift.key,
             driveShift: driveShift,
             violated: true,
-            passed: !!driveShift.timeBlockId || isDriveShiftContentionOverrided(driveShift, DRIVE_SHIFT_TIME_BLOCK_CONTENTION.OUT_OF_TIME_BLOCK),
+            passed: isDriveShiftContentionOverrided(driveShift, DRIVE_SHIFT_TIME_BLOCK_CONTENTION.OUT_OF_TIME_BLOCK),
             contention: DRIVE_SHIFT_TIME_BLOCK_CONTENTION.OUT_OF_TIME_BLOCK
           }
         }
@@ -3972,8 +3977,8 @@ class DriveHelper {
       }
     })
 
-    const allDriveShiftsPassed = driveShifts.every(driveShift => driveShift.passed);
-    const driveTimeBlockContentions = collectDriveTimeBlockContentions(driveShifts);
+    const allDriveShiftsPassed = driveShiftValidations.every(driveShift => driveShift.passed);
+    const driveTimeBlockContentions = collectDriveTimeBlockContentions(driveShiftValidations);
 
     if (!allDriveShiftsPassed) {
       return {

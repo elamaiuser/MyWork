@@ -1,27 +1,24 @@
-import { LightningElement, track, wire, api } from 'lwc';
-import { CurrentPageReference, NavigationMixin } from 'lightning/navigation';
-import { ShowToastEvent } from 'lightning/platformShowToastEvent'
+import skedGoogleMapApis from '@salesforce/resourceUrl/skedGoogleMapApis';
 import { fireEvent, registerListener, unregisterAllListeners } from 'c/pubsub';
-import { driveValidator } from 'c/slwcValidator';
 import * as slwcUtils from 'c/slwcUtils';
-import skedGoogleMapApis from '@salesforce/resourceUrl/skedGoogleMapApis'
+import { driveValidator } from 'c/slwcValidator';
+import { CurrentPageReference, NavigationMixin } from 'lightning/navigation';
 import {
-    loadStyle,
     loadScript
 } from 'lightning/platformResourceLoader';
+import { ShowToastEvent } from 'lightning/platformShowToastEvent';
+import { api, LightningElement, track, wire } from 'lwc';
 
 import driveManagementTabTemplate from './driveManagementTab.html';
 import surrogateDriveTemplate from './surrogateDrive.html';
 // import opportunityDriveShiftsTemplate from './opportunityDriveShifts.html';
 
-import { driveService, driveChangeRequestService, driveQueryModel, approvalService, slotService, debugLogService } from 'c/dataService';
-import { DateTime } from 'c/luxon';
-import { chunk, isEqual } from 'c/lodash';
-import { DRIVE_STATUS, DRIVE_APPROVAL_STATUS, PENDING_ACTION, ASSET_TYPE, OPPORTUNITY_STAGE, DRIVE_REQUEST_CHANGE_STATUS, DRIVE_CHANGE_REQUEST_TYPE } from 'c/slwcConstants';
 import TIME_ZONE from '@salesforce/i18n/timeZone';
-import { slwcDriveGeneratorHelper, DriveHelper } from 'c/slwcDriveGenerator';
-import { autoMapperInstance } from 'c/autoMapper';
-import { DRIVE_SHIFT_TIME_BLOCK_CONTENTION } from 'c/slwcConstants/slwcConstants';
+import { approvalService, debugLogService, driveQueryModel, driveService, slotService } from 'c/dataService';
+import { chunk } from 'c/lodash';
+import { DateTime } from 'c/luxon';
+import { ASSET_TYPE, DRIVE_APPROVAL_STATUS, DRIVE_CHANGE_REQUEST_TYPE, DRIVE_REQUEST_CHANGE_STATUS, DRIVE_SHIFT_TIME_BLOCK_CONTENTION, DRIVE_STATUS, OPPORTUNITY_STAGE, PENDING_ACTION } from 'c/slwcConstants';
+import { DriveHelper, slwcDriveGeneratorHelper } from 'c/slwcDriveGenerator';
 
 // import { auraProxyConfig } from 'c/auraProxy';
 // auraProxyConfig.enableMock();

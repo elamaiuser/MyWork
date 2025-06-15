@@ -13,6 +13,11 @@
         <valueSetDefinition>
             <sorted>false</sorted>
             <value>
+                <fullName>Elect to acknowledge the drive shift is out of Time Block</fullName>
+                <default>false</default>
+                <label>Elect to acknowledge the drive shift is out of Time Block</label>
+            </value>
+            <value>
                 <fullName>Elect to acknowledge the drive shift without Time Block</fullName>
                 <default>false</default>
                 <label>Elect to acknowledge the drive shift without Time Block</label>
