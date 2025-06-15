@@ -1,7 +1,7 @@
 import { LightningElement, api, track } from 'lwc';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import { sObjectType, debugLogService, driveService, driveQueryModel, operationDriveLimitService, operationDriveLimitQueryModel, staffingConstraintService, staffingConstraintQueryModel, driveChangeRequestQueryModel, driveChangeRequestService, jobService, jobQueryModel } from 'c/dataService';
-import { DRIVE_STATUS, DRIVE_CONTENTION, DRIVE_TYPE, DRIVE_CONTENTION_RESOLUTION, ASSET_TYPE, JOB_ALLOCATION_STATUS } from 'c/slwcConstants';
+import { DRIVE_STATUS, DRIVE_SHIFT_TIME_BLOCK_CONTENTION, DRIVE_SHIFT_TIME_BLOCK_CONTENTION_RESOLUTION, DRIVE_CONTENTION, DRIVE_TYPE, DRIVE_CONTENTION_RESOLUTION, ASSET_TYPE, JOB_ALLOCATION_STATUS } from 'c/slwcConstants';
 import { slwcDriveGeneratorHelper, DriveHelper, DriveFetch } from 'c/slwcDriveGenerator';
 import { DateTime } from 'c/luxon';
 import { getValueFromEvent } from 'c/slwcUtils';
@@ -66,6 +66,10 @@ export default class SlwcResolveDriveContentions extends LightningElement {
 
   get allowToOpenDriveStaffing() {
     return true;
+  }
+
+  get requireResolveTimeBlockContentions() {
+    return this.getTimeBlockContentions(this.driveContentions).length > 0;
   }
 
   get showOpenDriveSchedulingBtn() {
@@ -1015,6 +1019,18 @@ export default class SlwcResolveDriveContentions extends LightningElement {
       });
   }
 
+  getTimeBlockContentions = (driveContentions = []) => {
+    return driveContentions.filter(driveContention => {
+      if(driveContention.passed) return false;
+
+      return [
+        DRIVE_SHIFT_TIME_BLOCK_CONTENTION.OUT_OF_TIME_BLOCK,
+        DRIVE_SHIFT_TIME_BLOCK_CONTENTION.FIT_MULTIPLE_TIME_BLOCKS,
+        DRIVE_SHIFT_TIME_BLOCK_CONTENTION.MISSING_TIME_BLOCK
+      ].includes(driveContention.contention)
+    })
+  }
+
   validateDriveContentions = () => {
     return this.fetchMasterData()
       .then(() => {
@@ -1062,6 +1078,12 @@ export default class SlwcResolveDriveContentions extends LightningElement {
             availableButNotSharedAssetIds
           }
         }, contentionsToValidate, originalContentions);
+
+        const timeBlockContentions = this.getTimeBlockContentions(contentions);
+        if(timeBlockContentions.length > 0) {
+          this.driveContentions = contentions;
+          return;
+        }
 
         this.driveContentions = contentions.map(item => {
           let contention = {

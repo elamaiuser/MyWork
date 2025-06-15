@@ -3051,7 +3051,6 @@ class DriveHelper {
     const {
       passed: timeBlockValidationPassed,
       pendingActionReasonCodes: timeBlockPendingActionReasonCodes,
-      driveShiftsValidations,
       contentions: timeBlockContentions
     } = this.validateDriveTimeBlocks(drive, masterData);
 
@@ -3060,7 +3059,6 @@ class DriveHelper {
         passed: false,
         pendingActionReasonCodes: timeBlockPendingActionReasonCodes,
         contentions: timeBlockContentions,
-        driveShiftsValidations
       }
     }
 
@@ -3925,7 +3923,7 @@ class DriveHelper {
     }
 
     const availableCOTimeBlocks = this.findAvailableCOTimeBlocks(drive, masterData);
-    const driveShifts = drive.driveShifts.map(driveShift => {
+    const driveShiftValidations = drive.driveShifts.map(driveShift => {
       const availableTimeBlocks = this.findAvailableTimeBlocks({
         driveDate: drive.driveDate,
         collectionOperation: drive.collectionOperation,
@@ -3981,22 +3979,14 @@ class DriveHelper {
       return {
         passed: false,
         pendingActionReasonCodes: driveTimeBlockContentions,
-        driveShiftsValidations: driveShifts,
-        contentions: driveTimeBlockContentions.map(contention => {
-          return {
-            contention: contention,
-            passed: false,
-            violated: true
-          }
-        })
+        contentions: driveShiftValidations
       }
     }
     
     return {
       passed: true,
       pendingActionReasonCodes: [],
-      contentions: [],
-      driveShiftsValidations: driveShifts
+      contentions: []
     }
   }
 }
