@@ -434,9 +434,16 @@ export default class SlwcStaffingConstraintMassUpdate extends LightningElement {
   handleEditRecurrenceStaffingConstraints = (event) => {
     const { collectionOperationId } = event.currentTarget.dataset;
 
+    const collectionOperation = find(this.collectionOperations, {
+      id: collectionOperationId
+    });
+
+    const timeBlocks = this.filters.collectionOperationValues.timeBlocks;
+
     this.showEditRecurrenceStaffingConstraintModal({
       dateRange: this.collectionOperationDateRange,
-      collectionOperationId
+      collectionOperationId,
+      timeBlocks
     });
   };
 
