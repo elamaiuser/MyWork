@@ -428,7 +428,7 @@ export default class SlwcEditRecurrenceStaffingConstraintModal extends Lightning
           }
           return true;
         }
-        return false;
+        return !driveTypes?.length;
       })
       .filter(record => {
         return startDate <= record.dateOfConstraint && record.dateOfConstraint <= endDate;

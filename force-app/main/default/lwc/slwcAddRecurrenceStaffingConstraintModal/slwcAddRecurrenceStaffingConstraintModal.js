@@ -162,7 +162,10 @@ export default class SlwcAddRecurrenceStaffingConstraintModal extends LightningE
           endDate: null,
           showOnlyErrorRecords: false,
           daysOfWeek: [],
+          driveTypes: [],
+          timeBlocks: []
         },
+        timeBlockOptions: [],
         masterRow: {
           totalStaffConstraints: null
         },
@@ -400,6 +403,8 @@ export default class SlwcAddRecurrenceStaffingConstraintModal extends LightningE
       endDate: max(allDateConstraints),
       showOnlyErrorRecords: false,
       daysOfWeek: [...DAYS_OF_WEEK],
+      driveTypes: [DRIVE_TYPE.MOBILE, DRIVE_TYPE.FIXED_SITE],
+      timeBlocks: []
     }
 
     this.filterStep3Records();
@@ -469,9 +474,18 @@ export default class SlwcAddRecurrenceStaffingConstraintModal extends LightningE
 
   filterStep3Records = () => {
     let allRecords = this.model.STEP3.records;
-    const { startDate, endDate, showOnlyErrorRecords, daysOfWeek } = this.model.STEP3.filters;
+    const { startDate, endDate, showOnlyErrorRecords, daysOfWeek, driveTypes, timeBlocks } = this.model.STEP3.filters;
 
     this.model.STEP3.filteredRecords = allRecords
+      .filter(record => {
+        if (driveTypes?.includes(record.driveType)) {
+          if (record.driveType === DRIVE_TYPE.MOBILE) {
+            return !timeBlocks?.length || timeBlocks.includes(record.timeBlock?.id);
+          }
+          return true;
+        }
+        return !driveTypes?.length;
+      })
       .filter(record => {
         return startDate <= record.dateOfConstraint && record.dateOfConstraint <= endDate;
       })
@@ -540,9 +554,24 @@ export default class SlwcAddRecurrenceStaffingConstraintModal extends LightningE
     this.model.STEP3.masterRow.totalStaffConstraints = null;
     this.handleStep3ValidateRecords()
     .then(() => {
+      this.getStep3TimeBlockOptions();
       this.handleStep3ResetFilters();
       this.filterStep3Records();
     });
+  }
+
+  getStep3TimeBlockOptions = () => {
+    const { timeBlocks: selectedTimeBlockIds } = this.model.STEP1;
+    let options = [];
+    this.timeBlockOptions.forEach(timeBlock => {
+      if (selectedTimeBlockIds.includes(timeBlock.value)) {
+        options.push({
+          ...timeBlock,
+          selected: false
+        })
+      }
+    });
+    this.model.STEP3.timeBlockOptions = options;
   }
 
   validateStep1 = () => {
