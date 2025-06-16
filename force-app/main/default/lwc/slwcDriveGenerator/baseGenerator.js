@@ -2,7 +2,7 @@ import { serial, generateUUID, parseJSON, isNullOrEmpty, cloneDeep as cloneDeepU
 import { DateTime } from 'c/luxon';
 import { cloneDeep, orderBy, extend, remove, max, compact, groupBy, uniq, omit, pick } from 'c/lodash';
 import { DriveHelper } from './helper';
-import { DRIVE_STATUS, ASSET_TYPE, PENDING_ACTION, JOB_ALLOCATION_STATUS, DRIVE_TYPE, DRIVE_REQUEST_CHANGE_STATUS, MANUALLY_CREATED_FROM, OPERATION_TYPE, DRIVE_CONTENTION_RESOLUTION, DRIVE_CHANGE_REQUEST_TYPE, RESOURCE_ROLE_GROUP } from 'c/slwcConstants';
+import { DRIVE_STATUS, ASSET_TYPE, DRIVE_SHIFT_TIME_BLOCK_CONTENTION, JOB_ALLOCATION_STATUS, DRIVE_TYPE, DRIVE_REQUEST_CHANGE_STATUS, MANUALLY_CREATED_FROM, OPERATION_TYPE, DRIVE_CONTENTION_RESOLUTION, DRIVE_CHANGE_REQUEST_TYPE, RESOURCE_ROLE_GROUP, DRIVE_SHIFT_TIME_BLOCK_CONTENTION_RESOLUTION } from 'c/slwcConstants';
 import {
   sObjectType,
   driveQueryModel,
@@ -398,6 +398,46 @@ class BaseGenerator {
     }
   }
   
+  resolveTimeBlockContentions(driveTimeBlockContentions = []) {
+    return Promise.resolve()
+    .then(() => {
+      if(!driveTimeBlockContentions.length) return;
+
+      driveTimeBlockContentions.forEach(contention => {
+        const { driveShiftKey, timeBlockId, electNotUseTimeBlock, electOutOfTimeBlock} = contention;
+        const driveShift = this.drive.driveShifts?.find(driveShift => driveShift.key === driveShiftKey);
+
+        if(driveShift) {
+          driveShift.timeBlockId = timeBlockId;
+          let currentContentionResolutions = driveShift.contentionResolution ? driveShift.contentionResolution.split(';') : [];
+          remove(currentContentionResolutions, item => item === DRIVE_SHIFT_TIME_BLOCK_CONTENTION_RESOLUTION.ELECT_DRIVE_SHIFT_OUT_OF_TIME_BLOCK);
+          remove(currentContentionResolutions, item => item === DRIVE_SHIFT_TIME_BLOCK_CONTENTION_RESOLUTION.ELECT_NOT_USE_DRIVE_SHIFT_TIME_BLOCK);
+
+          if(electNotUseTimeBlock) {
+            currentContentionResolutions.push(DRIVE_SHIFT_TIME_BLOCK_CONTENTION_RESOLUTION.ELECT_NOT_USE_DRIVE_SHIFT_TIME_BLOCK);
+          }
+
+          if(electOutOfTimeBlock) {
+            currentContentionResolutions.push(DRIVE_SHIFT_TIME_BLOCK_CONTENTION_RESOLUTION.ELECT_DRIVE_SHIFT_OUT_OF_TIME_BLOCK);
+          }
+
+          driveShift.contentionResolution = currentContentionResolutions.join(';');
+        }
+      })
+
+      let currentDriveContentions = this.drive.pendingActionReasonCode ? this.drive.pendingActionReasonCode.split(';') : [];
+      remove(currentDriveContentions, item => [
+        DRIVE_SHIFT_TIME_BLOCK_CONTENTION.OUT_OF_TIME_BLOCK,
+        DRIVE_SHIFT_TIME_BLOCK_CONTENTION.FIT_MULTIPLE_TIME_BLOCKS,
+        DRIVE_SHIFT_TIME_BLOCK_CONTENTION.MISSING_TIME_BLOCK
+      ].includes(item));
+      this.drive.pendingActionReasonCodes = currentDriveContentions;
+      this.drive.pendingActionReasonCode = currentDriveContentions.join(';');
+
+      return this.drive;
+    })
+  }
+
   populateDriveShiftTimeBlocks(driveShift) {
     if(!this.helper.isDriveUseTimeBlock(this.drive, this.masterData)) {
       return;
