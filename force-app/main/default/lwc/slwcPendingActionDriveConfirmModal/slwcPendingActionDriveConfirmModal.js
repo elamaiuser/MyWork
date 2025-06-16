@@ -176,7 +176,16 @@ export default class SlwcPendingActionDriveConfirmModal extends LightningElement
       const resolveContentionComponent = this.template.querySelector('c-slwc-resolve-drive-contentions');
       return resolveContentionComponent.getData();
     })
-    .then(({ contentionResolution, driveContentions, equipmentJob, vehicleJob }) => {
+    .then(({ contentionResolution, driveTimeBlockContentions = [], driveContentions, equipmentJob, vehicleJob }) => {
+      if(driveTimeBlockContentions.length > 0) {
+         this.dispatchEvent(new ShowToastEvent({
+          message: 'Please resolve all time block contentions before saving.',
+          variant: 'error',
+          mode: 'dismissable',
+        }));
+        return;
+      }
+
       const anyNotPassedContention = driveContentions.find(item => {
         return !item.passed;
       })

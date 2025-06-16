@@ -112,6 +112,24 @@
         <label>Role Time Variant Changed</label>
     </customValue>
     <customValue>
+        <fullName>Missing Time Block</fullName>
+        <default>false</default>
+        <isActive>false</isActive>
+        <label>Missing Time Block</label>
+    </customValue>
+    <customValue>
+        <fullName>Out Of Time Block</fullName>
+        <default>false</default>
+        <isActive>false</isActive>
+        <label>Out Of Time Block</label>
+    </customValue>
+    <customValue>
+        <fullName>Fits Multiple Time Block</fullName>
+        <default>false</default>
+        <isActive>false</isActive>
+        <label>Fits Multiple Time Block</label>
+    </customValue>
+    <customValue>
         <fullName>Cancel In Process</fullName>
         <default>false</default>
         <isActive>false</isActive>

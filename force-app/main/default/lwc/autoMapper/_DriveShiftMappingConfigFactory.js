@@ -44,6 +44,7 @@ export class DriveShiftMappingConfigFactory {
       mappingConfig.addFieldConfig('sked_Vehicles_Needed__c', 'vehiclesNeeded', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_Volunteer_Setup__c', 'volunteerSetup', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_WB_Projected_Procedures__c', 'wbProjectedProcedures', MAPPING_TYPE.direct);
+      mappingConfig.addFieldConfig('sked_Time_Block__r', 'timeBlock', MAPPING_TYPE.related, 'Time_Block__c');
 
       mappingConfig.addFieldConfig('sked_Time_Block__r', 'timeBlock', MAPPING_TYPE.related, 'Time_Block__c');
       mappingConfig.addFieldConfigWithRelatedList('sked_Drive_Shift_Tags__r', 'driveShiftTags', 'sked_Drive_Shift_Tag__c', 'sked_Drive_Shift__c');
