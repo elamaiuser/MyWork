@@ -61,11 +61,28 @@
 	<types>
 		<members>sked__Resource__c-Asset Layout</members>
 		<members>sked__Resource__c-Staff Layout</members>
+		<members>Account-APS Planner Mobile Account Layout</members>
+		<members>Account-BioSponsor Account</members>
+		<members>Account-Biomed Read Only Mobile Account Layout</members>
+		<members>Account-DRD Mobile Account Layout</members>
+		<members>Account-Sponsor Marketing Mobile Layout</members>
 		<name>Layout</name>
 	</types>
 	<types>
 		<members>Mobile_Opp_Record_Page</members>
 		<name>FlexiPage</name>
 	</types>
+	<types>
+		<members>Account.CFY_Drives1__c</members>
+		<members>Account.CY_Drives1__c</members>
+        <members>Account.CFY_Drives__c</members>
+		<members>Account.CY_Drives__c</members>
+		<name>CustomField</name>
+	</types>
+    <types>
+        <members>Obsolete/Copy_of_Fixed_Site_Accounts_buW</members>
+        <members>APSStarForce/New_Accounts_and_Primary_Region_Report_C7o</members>
+        <name>Report</name>
+    </types>
     <version>63.0</version>
 </Package>
