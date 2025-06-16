@@ -96,7 +96,7 @@
                         <div class="slds-col">
                             <lightning-button-group>
                                 <template if:false={isReadonly}>
-                                    <lightning-button label="Validate" onclick={handleValidateTimeBlockBtn}></lightning-button>
+                                    <lightning-button label="Confirm Time Block" onclick={handleConfirmTimeBlockBtn}></lightning-button>
                                 </template>
                             </lightning-button-group>
                         </div>
@@ -110,7 +110,10 @@
                             <th class="" scope="col" style="width: 20%">
                                 <div class="slds-truncate" title="Drive Shift">Drive Shift</div>
                             </th>
-                            <th class="" scope="col" style="width: 50%">
+                            <th class="" scope="col" style="width: 20%">
+                                <div class="slds-truncate" title="Drive Shift">Drive Shift Time</div>
+                            </th>
+                            <th class="" scope="col" style="width: 30%">
                                 <div class="slds-truncate" title="Contention">Contention</div>
                             </th>
                             <th class="" scope="col" style="width: 30%">
@@ -119,10 +122,15 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <template for:each={driveContentions} for:item="item">
+                        <template for:each={driveTimeBlockContentions} for:item="item">
                             <tr key={item.driveShiftKey} class="slds-hint-parent">
                                 <td>
-                                    {item.driveShift.name}
+                                    <span class="contention-indicator" if:false={item.passed}></span>
+                                    <span class="contention-indicator passed" if:true={item.passed}></span>
+                                    {item.driveShiftName}
+                                </td>
+                                <td>
+                                    {item.driveShiftTime}
                                 </td>
                                 <td>
                                     <p class="white-space-pre-line">
@@ -133,16 +141,30 @@
                                     <c-slwc-select
                                         name="driveShiftTimeBlock"
                                         label="Time Block"
+                                        variant="label-hidden"
+                                        classes="slds-m-top_xx-small"
                                         data-value={item.driveShiftKey}
-                                        selected-value={driveShift.numberOfRounds}
-                                        options={item.timeBlockOptions}
-                                        required
-                                        onchange={handleTimeBlockChanged}></c-slwc-select>
-                                    <lightning-input 
-                                        type="checkbox" 
                                         data-contention={item.contention} 
-                                        name="electNotUseTimeBlock" label="Elect not to use Time Block"
-                                            value={action.value} checked={action.value} onchange={handleActionChanged}></lightning-input>
+                                        selected-value={item.timeBlockId}
+                                        read-only={item.timeBlockDisabled}
+                                        options={item.timeBlockOptions}
+                                        onchange={handleTimeBlockChanged}></c-slwc-select>
+                                    <template if:false={isReadonly}>
+                                        <lightning-input 
+                                            type="checkbox" 
+                                            class="slds-m-top_xx-small"
+                                            data-value={item.driveShiftKey}
+                                            data-contention={item.contention} 
+                                            name="electOutOfTimeBlock" label="Elect to acknowledge the drive shift is out of Time Block"
+                                                value={item.electOutOfTimeBlock} checked={item.electOutOfTimeBlock} onchange={handleTimeBlockActionChanged}></lightning-input>
+                                        <lightning-input 
+                                            type="checkbox" 
+                                            class="slds-m-top_xx-small"
+                                            data-value={item.driveShiftKey}
+                                            data-contention={item.contention} 
+                                            name="electNotUseTimeBlock" label="Elect to acknowledge the drive shift without Time Block"
+                                                value={item.electNotUseTimeBlock} checked={item.electNotUseTimeBlock} onchange={handleTimeBlockActionChanged}></lightning-input>
+                                    </template>
                                 </td>
                             </tr>
                         </template>
