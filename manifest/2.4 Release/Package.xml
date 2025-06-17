@@ -84,5 +84,9 @@
         <members>APSStarForce/New_Accounts_and_Primary_Region_Report_C7o</members>
         <name>Report</name>
     </types>
+	<types>
+		<members>sked_Drive__c.sked_Rejection_Reason_Code__c</members>
+		<name>CustomField</name>
+	</types>
     <version>63.0</version>
 </Package>
