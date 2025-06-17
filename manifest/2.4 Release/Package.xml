@@ -66,6 +66,7 @@
 		<members>Account-Biomed Read Only Mobile Account Layout</members>
 		<members>Account-DRD Mobile Account Layout</members>
 		<members>Account-Sponsor Marketing Mobile Layout</members>
+        <members>sked__Resource__c-sked__Resource Layout</members>
 		<name>Layout</name>
 	</types>
 	<types>
@@ -87,6 +88,15 @@
 	<types>
 		<members>sked_Drive__c.sked_Rejection_Reason_Code__c</members>
 		<name>CustomField</name>
+	</types>
+	<types>
+		<members>sked__Resource__c.Staff_MaxHours_Validation</members>
+		<members>sked__Resource__c.Staff_MinHours_Validation</members>
+		<members>sked__Resource__c.Staff_MobileType_Validation</members>
+		<members>sked__Resource__c.Staff_PrimaryPhone_Validation</members>
+		<members>sked__Resource__c.Staff_TurnaroundTime_Validation</members>
+		<members>sked__Resource__c.Validate_AddressReferencedforScheduling</members>
+		<name>ValidationRule</name>
 	</types>
     <version>63.0</version>
 </Package>

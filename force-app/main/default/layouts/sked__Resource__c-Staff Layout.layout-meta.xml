@@ -4,7 +4,6 @@
     <excludeButtons>ChangeRecordType</excludeButtons>
     <excludeButtons>Clone</excludeButtons>
     <excludeButtons>Delete</excludeButtons>
-    <excludeButtons>IsotopeSubscription</excludeButtons>
     <excludeButtons>PrintableView</excludeButtons>
     <excludeButtons>RecordShareHierarchy</excludeButtons>
     <excludeButtons>Share</excludeButtons>
@@ -147,11 +146,11 @@
                 <field>sked_Overtime_Threshold__c</field>
             </layoutItems>
             <layoutItems>
-                <behavior>Required</behavior>
+                <behavior>Edit</behavior>
                 <field>sked_Min_Hours_Per_Week__c</field>
             </layoutItems>
             <layoutItems>
-                <behavior>Required</behavior>
+                <behavior>Edit</behavior>
                 <field>sked_Max_Hours_Per_Week__c</field>
             </layoutItems>
             <layoutItems>
@@ -253,7 +252,7 @@
         <label>Contact Information</label>
         <layoutColumns>
             <layoutItems>
-                <behavior>Required</behavior>
+                <behavior>Edit</behavior>
                 <field>sked__Primary_Phone__c</field>
             </layoutItems>
             <layoutItems>
@@ -401,7 +400,7 @@
                 <emptySpace>true</emptySpace>
             </layoutItems>
             <layoutItems>
-                <behavior>Required</behavior>
+                <behavior>Edit</behavior>
                 <field>sked_Address_Referenced_for_Scheduling__c</field>
             </layoutItems>
             <layoutItems>
@@ -484,7 +483,7 @@
                 <field>sked_Secondary_Work_Area_s__c</field>
             </layoutItems>
             <layoutItems>
-                <behavior>Required</behavior>
+                <behavior>Edit</behavior>
                 <field>sked_Turnaround_Time__c</field>
             </layoutItems>
             <layoutItems>
@@ -504,7 +503,7 @@
                 <field>sked_Premium_Pay_Roles__c</field>
             </layoutItems>
             <layoutItems>
-                <behavior>Required</behavior>
+                <behavior>Edit</behavior>
                 <field>sked_Mobile_Type__c</field>
             </layoutItems>
         </layoutColumns>
