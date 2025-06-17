@@ -7,4 +7,11 @@
         <shortDescription>DRD System User Name</shortDescription>
         <value>DRD System User</value>
     </labels>
+    <labels>
+        <fullName>TravelTimeEditableProfiles</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>TravelTimeEditableProfiles</shortDescription>
+        <value>APS Admin,System Administrator,Global Admin</value>
+    </labels>
 </CustomLabels>
