@@ -3929,7 +3929,7 @@ class DriveHelper {
       }, masterData)
 
       if (driveShift.timeBlockId) {
-        const isTimeBlockAvailable = availableTimeBlocks.find(timeBlock => timeBlock.id === driveShift.timeBlockId);
+        const isTimeBlockAvailable = availableTimeBlocks.find(timeBlock => timeBlock.timeBlockId === driveShift.timeBlockId);
         if(!isTimeBlockAvailable) {
           return {
             driveShiftKey: driveShift.key,
@@ -3939,28 +3939,28 @@ class DriveHelper {
             contention: DRIVE_SHIFT_TIME_BLOCK_CONTENTION.OUT_OF_TIME_BLOCK
           }
         }
+      } else {
+        if (availableCOTimeBlocks.length >= 2 && !availableTimeBlocks.length) {
+          return {
+            driveShiftKey: driveShift.key,
+            driveShift: driveShift,
+            violated: true,
+            passed: !!driveShift.timeBlockId || isDriveShiftContentionOverrided(driveShift, DRIVE_SHIFT_TIME_BLOCK_CONTENTION.MISSING_TIME_BLOCK),
+            contention: DRIVE_SHIFT_TIME_BLOCK_CONTENTION.MISSING_TIME_BLOCK
+          }
+        }
+
+        if (availableTimeBlocks.length >= 2) {
+          return {
+            driveShiftKey: driveShift.key,
+            driveShift: driveShift,
+            violated: true,
+            passed: !!driveShift.timeBlockId || isDriveShiftContentionOverrided(driveShift, DRIVE_SHIFT_TIME_BLOCK_CONTENTION.FIT_MULTIPLE_TIME_BLOCKS),
+            contention: DRIVE_SHIFT_TIME_BLOCK_CONTENTION.FIT_MULTIPLE_TIME_BLOCKS
+          }
+        }
       }
         
-      if (availableCOTimeBlocks.length >= 2 && !availableTimeBlocks.length) {
-        return {
-          driveShiftKey: driveShift.key,
-          driveShift: driveShift,
-          violated: true,
-          passed: !!driveShift.timeBlockId || isDriveShiftContentionOverrided(driveShift, DRIVE_SHIFT_TIME_BLOCK_CONTENTION.MISSING_TIME_BLOCK),
-          contention: DRIVE_SHIFT_TIME_BLOCK_CONTENTION.MISSING_TIME_BLOCK
-        }
-      }
-
-      if (availableTimeBlocks.length >= 2) {
-        return {
-          driveShiftKey: driveShift.key,
-          driveShift: driveShift,
-          violated: true,
-          passed: !!driveShift.timeBlockId || isDriveShiftContentionOverrided(driveShift, DRIVE_SHIFT_TIME_BLOCK_CONTENTION.FIT_MULTIPLE_TIME_BLOCKS),
-          contention: DRIVE_SHIFT_TIME_BLOCK_CONTENTION.FIT_MULTIPLE_TIME_BLOCKS
-        }
-      }
-
       return {
         driveShiftKey: driveShift.key,
         driveShift: driveShift,

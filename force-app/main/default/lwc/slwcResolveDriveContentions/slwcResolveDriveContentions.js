@@ -175,7 +175,7 @@ export default class SlwcResolveDriveContentions extends LightningElement {
   }
 
   fetchDrive = (recordId, restoreContentionResolution = false, validateAssets = false) => {
-    const { backupContentionResolution, backupDriveShiftContentionResolution} = this.backupContentionResolutions();
+    const { backupContentionResolution, backupDriveShiftContentionResolution, backupDriveShiftTimeBlockId} = this.backupContentionResolutions();
     let equipmentJob = null;
     let vehicleJob = null;
     if (this.drive && this.drive.driveShifts && this.drive.driveShifts.length) {
@@ -282,7 +282,8 @@ export default class SlwcResolveDriveContentions extends LightningElement {
       if(restoreContentionResolution) {
         this.drive = this.restoreContentionResolutions(this.drive, {
           backupContentionResolution,
-          backupDriveShiftContentionResolution
+          backupDriveShiftContentionResolution,
+          backupDriveShiftTimeBlockId
         });
       }
 
@@ -307,7 +308,7 @@ export default class SlwcResolveDriveContentions extends LightningElement {
   }
 
   fetchDriveChangeRequestAndDrive = (recordId, restoreContentionResolution = false, validateAssets = false) => {
-    const { backupContentionResolution, backupDriveShiftContentionResolution} = this.backupContentionResolutions();
+    const { backupContentionResolution, backupDriveShiftContentionResolution, backupDriveShiftTimeBlockId} = this.backupContentionResolutions();
     
     let equipmentJob = null;
     let vehicleJob = null;
@@ -438,7 +439,8 @@ export default class SlwcResolveDriveContentions extends LightningElement {
       if(restoreContentionResolution) {
         this.drive = this.restoreContentionResolutions(this.drive, {
           backupContentionResolution,
-          backupDriveShiftContentionResolution
+          backupDriveShiftContentionResolution,
+          backupDriveShiftTimeBlockId
         });
       }
 
@@ -1134,16 +1136,18 @@ export default class SlwcResolveDriveContentions extends LightningElement {
       });
   }
 
-  validateTimeBlockContention = (contention) => {
+  validateTimeBlockContention = (contention, {
+    collectionOperationTimeBlocks = []
+  }) => {
     if(contention.electNotUseTimeBlock) return true;
-    const timeBlock = contention.timeBlockOptions.find(option => option.value === contention.timeBlockId);
+    const timeBlock = collectionOperationTimeBlocks.find(option => option.timeBlockId === contention.timeBlockId)?.timeBlock;
     if(!timeBlock) return false;
 
     const driveShift = contention.driveShift;
     const isOutTimeBlock = !(timeBlock.startTime <= driveShift.startTime && driveShift.endTime <= timeBlock.endTime);
-    if(isOutTimeBlock && contention.electOutOfTimeBlock) return true;
+    if(isOutTimeBlock && contention.electOutOfTimeBlock) return false;
 
-    return false;
+    return true;
   }
 
   handleTimeBlockChanged = (event) => {
@@ -1155,7 +1159,7 @@ export default class SlwcResolveDriveContentions extends LightningElement {
     if(driveContention) {
       driveContention.timeBlockId = value ?? '';
 
-      driveContention.passed = this.validateTimeBlockContention(driveContention);
+      driveContention.passed = this.validateTimeBlockContention(driveContention, this.masterData);
     }
   }
 
@@ -1174,7 +1178,7 @@ export default class SlwcResolveDriveContentions extends LightningElement {
       driveContention.timeBlockRequired = !contention.electNotUseTimeBlock;
       driveContention.timeBlockDisabled = this.isReadonly || driveContention.electNotUseTimeBlock;
 
-      driveContention.passed = this.validateTimeBlockContention(driveContention);
+      driveContention.passed = this.validateTimeBlockContention(driveContention, this.masterData);
     }
   }
 
@@ -1290,7 +1294,7 @@ export default class SlwcResolveDriveContentions extends LightningElement {
   validateDriveTimeBlockContentions = () => {
     let allPassed = true;
     this.driveTimeBlockContentions.forEach(contention => {
-      contention.passed = this.validateTimeBlockContention(contention);
+      contention.passed = this.validateTimeBlockContention(contention, this.masterData);
       if(!contention.passed) {
         allPassed = false;
       }
@@ -1339,21 +1343,25 @@ export default class SlwcResolveDriveContentions extends LightningElement {
     }
     const backupContentionResolution = (this.drive.contentionResolutions || []).join(';');
     const backupDriveShiftContentionResolution = this.drive.driveShifts?.map(driveShift => driveShift.contentionResolution) ?? [];
+    const backupDriveShiftTimeBlockId = this.drive.driveShifts?.map(driveShift => driveShift.timeBlockId) ?? [];
 
     return {
       backupContentionResolution,
-      backupDriveShiftContentionResolution
+      backupDriveShiftContentionResolution,
+      backupDriveShiftTimeBlockId
     }
   }
 
   restoreContentionResolutions = (drive, {
     backupContentionResolution,
-    backupDriveShiftContentionResolution
+    backupDriveShiftContentionResolution = [],
+    backupDriveShiftTimeBlockId = []
   }) => {
     drive.contentionResolution = backupContentionResolution;
 
     drive.driveShifts?.forEach((driveShift, driveShiftIndex) => {
       driveShift.contentionResolution = backupDriveShiftContentionResolution[driveShiftIndex] ?? '';
+      driveShift.timeBlockId = backupDriveShiftTimeBlockId[driveShiftIndex] ?? '';
     })
 
     drive.contentionResolutions = [];
@@ -1364,7 +1372,7 @@ export default class SlwcResolveDriveContentions extends LightningElement {
     return drive;
   }
   handleValidateBtn = () => {
-    const { backupContentionResolution, backupDriveShiftContentionResolution} = this.backupContentionResolutions();
+    const { backupContentionResolution, backupDriveShiftContentionResolution, backupDriveShiftTimeBlockId } = this.backupContentionResolutions();
 
     this.showLoading()
     return Promise.resolve()
@@ -1463,7 +1471,8 @@ export default class SlwcResolveDriveContentions extends LightningElement {
       this.drive = this.driveGeneratorInstance.drive;
       this.drive = this.restoreContentionResolutions(this.drive, {
         backupContentionResolution,
-        backupDriveShiftContentionResolution
+        backupDriveShiftContentionResolution,
+        backupDriveShiftTimeBlockId
       });
       return this.validateDriveContentions()
     })
@@ -1514,10 +1523,10 @@ export default class SlwcResolveDriveContentions extends LightningElement {
             jobAllocations: equipmentJob.jobAllocations
           },
           {
-            id: vehicleJob.id,
-            jobAllocations: vehicleJob.jobAllocations
+            id: vehicleJob?.id,
+            jobAllocations: vehicleJob?.jobAllocations
           }
-        ]) 
+        ].filter(item => item.id)) 
       }
     })
     .then(() => {
@@ -1550,7 +1559,7 @@ export default class SlwcResolveDriveContentions extends LightningElement {
   }
 
   saveStaffingComplementModal(event) {
-    const { backupContentionResolution, backupDriveShiftContentionResolution} = this.backupContentionResolutions();
+    const { backupContentionResolution, backupDriveShiftContentionResolution, backupDriveShiftTimeBlockId } = this.backupContentionResolutions();
     const { driveGeneratorInstance } = event.detail;
 
     this.showLoading()
@@ -1577,7 +1586,8 @@ export default class SlwcResolveDriveContentions extends LightningElement {
       this.drive = this.driveGeneratorInstance.drive;
       this.drive = this.restoreContentionResolutions(this.drive, {
         backupContentionResolution,
-        backupDriveShiftContentionResolution
+        backupDriveShiftContentionResolution,
+        backupDriveShiftTimeBlockId
       });
 
       this.handleActionChanged({
