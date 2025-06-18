@@ -1321,12 +1321,18 @@ export default class SlwcDriveManagement extends NavigationMixin(LightningElemen
     savePendingActionDriveConfirmModal(event) {
         this.hidePendingActionDriveConfirmModal();
 
-        const { submissionNotes, contentionResolution, status, equipmentAllocations, vehicleAllocations } = event.detail;
+        const { submissionNotes, contentionResolution, driveShiftContentionResolution, status, equipmentAllocations, vehicleAllocations } = event.detail;
         this.drive.submissionNotes = submissionNotes || this.drive.submissionNotes;
         if(status) {
             this.drive.status = status;
         }
         this.drive.contentionResolution = contentionResolution;
+
+        if(driveShiftContentionResolution?.length) {
+            this.drive.driveShifts.forEach((driveShift, driveShiftIndex) => {
+                driveShift.contentionResolution = driveShiftContentionResolution[driveShiftIndex] ?? '';
+            })
+        }
 
         if(this.drive.status === DRIVE_STATUS.DRAFT) {
             this.drive = driveGeneratorInstance.releaseAllAssetAllocations();
