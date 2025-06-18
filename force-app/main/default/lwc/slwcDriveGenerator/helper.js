@@ -3814,16 +3814,14 @@ class DriveHelper {
     return roleCapacity > 0;
   }
 
-  isDriveUseTimeBlock({
-    driveDate,
-    collectionOperation
-  }, {
+  isDriveUseTimeBlock(drive, {
     collectionOperationTimeBlocks = []
   }) {
-    return this.findAvailableCOTimeBlocks({
-      driveDate,
-      collectionOperation
-    }, {
+    if(this.isFixedSiteDrive(drive)) {
+      return false;
+    }
+
+    return this.findAvailableCOTimeBlocks(drive, {
       collectionOperationTimeBlocks
     }).length > 0;
   }
@@ -3911,19 +3909,13 @@ class DriveHelper {
         if(!driveShift.passed) {
           contentions.push(...driveShift.contention ? driveShift.contention.split(';') : [])
         }
-        return contentions;
+        return uniqBy(contentions, contention => contention);
       }, [])
-    }
-
-    if(this.isFixedSiteDrive(drive)) {
-      return {
-        passed: true,
-      }
     }
 
     if(!this.isDriveUseTimeBlock(drive, masterData)) {
       return {
-        passed: true,
+        passed: true
       }
     }
 
