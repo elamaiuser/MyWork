@@ -1348,10 +1348,10 @@ export default class SlwcResolveDriveContentions extends LightningElement {
             jobAllocations: equipmentJob.jobAllocations
           },
           {
-            id: vehicleJob.id,
-            jobAllocations: vehicleJob.jobAllocations
+            id: vehicleJob?.id,
+            jobAllocations: vehicleJob?.jobAllocations
           }
-        ]) 
+        ].filter(item => item.id)) 
       }
     })
     .then(() => {
