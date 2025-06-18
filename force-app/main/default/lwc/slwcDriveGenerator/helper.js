@@ -3814,16 +3814,14 @@ class DriveHelper {
     return roleCapacity > 0;
   }
 
-  isDriveUseTimeBlock({
-    driveDate,
-    collectionOperation
-  }, {
+  isDriveUseTimeBlock(drive, {
     collectionOperationTimeBlocks = []
   }) {
-    return this.findAvailableCOTimeBlocks({
-      driveDate,
-      collectionOperation
-    }, {
+    if(this.isFixedSiteDrive(drive)) {
+      return false;
+    }
+
+    return this.findAvailableCOTimeBlocks(drive, {
       collectionOperationTimeBlocks
     }).length > 0;
   }
@@ -3911,19 +3909,13 @@ class DriveHelper {
         if(!driveShift.passed) {
           contentions.push(...driveShift.contention ? driveShift.contention.split(';') : [])
         }
-        return contentions;
+        return uniqBy(contentions, contention => contention);
       }, [])
-    }
-
-    if(this.isFixedSiteDrive(drive)) {
-      return {
-        passed: true,
-      }
     }
 
     if(!this.isDriveUseTimeBlock(drive, masterData)) {
       return {
-        passed: true,
+        passed: true
       }
     }
 
@@ -3937,7 +3929,7 @@ class DriveHelper {
       }, masterData)
 
       if (driveShift.timeBlockId) {
-        const isTimeBlockAvailable = availableTimeBlocks.find(timeBlock => timeBlock.id === driveShift.timeBlockId);
+        const isTimeBlockAvailable = availableTimeBlocks.find(timeBlock => timeBlock.timeBlockId === driveShift.timeBlockId);
         if(!isTimeBlockAvailable) {
           return {
             driveShiftKey: driveShift.key,
@@ -3947,28 +3939,28 @@ class DriveHelper {
             contention: DRIVE_SHIFT_TIME_BLOCK_CONTENTION.OUT_OF_TIME_BLOCK
           }
         }
+      } else {
+        if (availableCOTimeBlocks.length >= 2 && !availableTimeBlocks.length) {
+          return {
+            driveShiftKey: driveShift.key,
+            driveShift: driveShift,
+            violated: true,
+            passed: !!driveShift.timeBlockId || isDriveShiftContentionOverrided(driveShift, DRIVE_SHIFT_TIME_BLOCK_CONTENTION.MISSING_TIME_BLOCK),
+            contention: DRIVE_SHIFT_TIME_BLOCK_CONTENTION.MISSING_TIME_BLOCK
+          }
+        }
+
+        if (availableTimeBlocks.length >= 2) {
+          return {
+            driveShiftKey: driveShift.key,
+            driveShift: driveShift,
+            violated: true,
+            passed: !!driveShift.timeBlockId || isDriveShiftContentionOverrided(driveShift, DRIVE_SHIFT_TIME_BLOCK_CONTENTION.FIT_MULTIPLE_TIME_BLOCKS),
+            contention: DRIVE_SHIFT_TIME_BLOCK_CONTENTION.FIT_MULTIPLE_TIME_BLOCKS
+          }
+        }
       }
         
-      if (availableCOTimeBlocks.length >= 2 && !availableTimeBlocks.length) {
-        return {
-          driveShiftKey: driveShift.key,
-          driveShift: driveShift,
-          violated: true,
-          passed: !!driveShift.timeBlockId || isDriveShiftContentionOverrided(driveShift, DRIVE_SHIFT_TIME_BLOCK_CONTENTION.MISSING_TIME_BLOCK),
-          contention: DRIVE_SHIFT_TIME_BLOCK_CONTENTION.MISSING_TIME_BLOCK
-        }
-      }
-
-      if (availableTimeBlocks.length >= 2) {
-        return {
-          driveShiftKey: driveShift.key,
-          driveShift: driveShift,
-          violated: true,
-          passed: !!driveShift.timeBlockId || isDriveShiftContentionOverrided(driveShift, DRIVE_SHIFT_TIME_BLOCK_CONTENTION.FIT_MULTIPLE_TIME_BLOCKS),
-          contention: DRIVE_SHIFT_TIME_BLOCK_CONTENTION.FIT_MULTIPLE_TIME_BLOCKS
-        }
-      }
-
       return {
         driveShiftKey: driveShift.key,
         driveShift: driveShift,

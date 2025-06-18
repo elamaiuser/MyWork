@@ -415,12 +415,14 @@ class BaseGenerator {
 
           if(electNotUseTimeBlock) {
             currentContentionResolutions.push(DRIVE_SHIFT_TIME_BLOCK_CONTENTION_RESOLUTION.ELECT_NOT_USE_DRIVE_SHIFT_TIME_BLOCK);
+            driveShift.timeBlockId = '';
           }
 
           if(electOutOfTimeBlock) {
             currentContentionResolutions.push(DRIVE_SHIFT_TIME_BLOCK_CONTENTION_RESOLUTION.ELECT_DRIVE_SHIFT_OUT_OF_TIME_BLOCK);
           }
-
+          
+          driveShift.contention = contention.contention;
           driveShift.contentionResolution = currentContentionResolutions.join(';');
         }
       })
@@ -443,6 +445,10 @@ class BaseGenerator {
       return;
     }
     
+    //reset timeblock
+    driveShift.timeBlockId = '';
+    driveShift.timeBlock = null;
+    
     const availableTimeBlocks = this.helper.findAvailableTimeBlocks({
       driveDate: this.drive.driveDate,
       collectionOperation: this.drive.collectionOperation,
@@ -456,6 +462,7 @@ class BaseGenerator {
 
     if (availableTimeBlocks.length === 1) {
       driveShift.timeBlockId = availableTimeBlocks[0].timeBlockId;
+      driveShift.timeBlock = availableTimeBlocks[0].timeBlock;
     }
 
     //availableTimeBlocks.length === 0
@@ -463,6 +470,7 @@ class BaseGenerator {
 
     if (availableCOTimeBlocks.length === 1) {
       driveShift.timeBlockId = availableCOTimeBlocks[0].timeBlockId;
+      driveShift.timeBlock = availableCOTimeBlocks[0].timeBlock;
     }
   }
 
