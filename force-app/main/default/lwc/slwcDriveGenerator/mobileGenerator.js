@@ -1482,7 +1482,7 @@ class MobileGenerator extends BaseGenerator {
       } else {
         if(this.drive.preferSystemGeneratedVehicles) {
           this.drive.totalVehicleRequested = totalVehicleRequested;
-          this.drive.nnumberOfVehicles = totalVehicleRequested;
+          this.drive.numberOfVehicles = totalVehicleRequested;
         } else {
           this.drive.totalVehicleRequested = this.drive.numberOfVehicles;
         }
