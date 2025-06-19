@@ -30,7 +30,12 @@ class exceptionService extends dataService {
         queryBuilder.addCondition({template: "sked_Drive__r.sked_Type_of_Drive__c IN {0}", value: query.driveTypes, type: "array_string"});
       }
       if (query.operationTypes && query.operationTypes.length) {
-        queryBuilder.addCondition({template: "sked_Drive__r.sked_Operation_Type__c IN {0}", value: query.operationTypes, type: "array_string"});
+        // HRP-15052 - If Mobile drivetype is selected, add null to operation types to include Mobile drives
+        let operationTypes = query.operationTypes;
+        if (query.driveTypes.includes('Mobile')) {
+          operationTypes.push(null);
+        }
+        queryBuilder.addCondition({template: "sked_Drive__r.sked_Operation_Type__c IN {0}", value: operationTypes, type: "array_string"});
       }
       if (query.resourceDriveTypes && query.resourceDriveTypes.length) {
         queryBuilder.addCondition({template: "skedHC__Resource__r.sked_Drive_Type__c INCLUDES {0}", value: query.resourceDriveTypes, type: "array_string"});
