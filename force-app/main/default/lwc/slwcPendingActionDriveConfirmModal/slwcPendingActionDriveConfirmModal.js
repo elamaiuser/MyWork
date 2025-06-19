@@ -207,6 +207,7 @@ export default class SlwcPendingActionDriveConfirmModal extends LightningElement
         drive,
         submissionNotes: this.model.submissionNotes,
         contentionResolution: contentionResolution,
+        driveShiftContention: drive.driveShifts.map(driveShift => driveShift.contention),
         driveShiftContentionResolution: drive.driveShifts.map(driveShift => driveShift.contentionResolution),
         equipmentAllocations,
         vehicleAllocations
