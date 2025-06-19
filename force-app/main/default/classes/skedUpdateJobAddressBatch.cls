@@ -1,4 +1,4 @@
-public class skedUpdateJobAddressBatch implements Database.Batchable<sked__Job__c> {
+global class skedUpdateJobAddressBatch implements Database.Batchable<sObject>,Database.Stateful,Schedulable {
 
         Set<Id> siteIds; 
         Set<Id> locationIdSet; 
@@ -12,8 +12,6 @@ public class skedUpdateJobAddressBatch implements Database.Batchable<sked__Job__
         
         public skedUpdateJobAddressBatch(Set<Id> inputSiteIds) {
             this.siteIds = inputSiteIds;
-            system.debug('this.siteIds :: '+this.siteIds);
-            system.debug('siteIds :: '+siteIds);
             this.query = 'SELECT Id, sked__Location__c, sked__Location__r.sked__Address__c, sked__Location__r.sked__GeoLocation__Latitude__s, sked__Location__r.sked__GeoLocation__Longitude__s, sked__Address__c, sked__GeoLocation__Latitude__s, sked__GeoLocation__Longitude__s FROM sked__Job__c WHERE sked_Address_Mismatched__c != FALSE AND sked__Location__c IN : siteIds AND sked_Drive__r.sked_Drive_Date__c >= TODAY AND sked__Job_Status__c != \'skedConstants.JOB_STATUS_CANCELLED\'';
         }
         
