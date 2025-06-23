@@ -4,12 +4,46 @@
 		<members>OpportunityTriggerTest</members>
         <members>OpportunityTriggerHandler</members>
         <members>OpportunityService</members>
+		<members>DriveWorksheet</members>
 		<name>ApexClass</name>
 	</types>
 	<types>
+		<!-- Below field is not required now for this ticket-->
 		<members>Opportunity.Is_Latest_Past_Closed_Drive__c</members>
         <members>Account.Last_Closed_Drive__c</members>
+		<!-- End-->
+		<members>Account.Number_of_Future_Drives_New__c</members>
+		<members>Account.Last_Closed_Drive_New__c</members>
+		<members>Account.Days_Since_Last_Drive__c</members>
 		<name>CustomField</name>
+	</types>
+	<types>
+    	<members>Account_With_Account_Portfolio_Assignment</members>
+		<members>Account_With_Account_Service_Role</members>
+		<members>Account_With_Opportunity_with_opportunity_split</members>
+		<members>Account_with_Portfolio_Assignment</members>
+		<members>Account_with_drive_with_opportunity</members>
+		<members>Accounts_With_Account_Affiliation</members>
+		<members>Accounts_With_Opportunity_With_Contact_Role</members>
+		<members>Accounts_with_Opportunity_with_Contact_Role_V2</members>
+		<members>Accounts_with_Opportunity_with_OpportunityTeam</members>
+		<members>Accounts_with_Site_with_Drives</members>
+		<members>Accounts_with_Team_Members</members>
+		<members>account_with_site_with_opportunity</members>
+		<members>Accounts_with_or_without_Opportunities_and_Drives</members>
+		<members>Blood_Drive_Opportunities_With_or_Without_Contacts</members>
+		<members>Accounts_with_Fixed_Site_Procedure_Projections</members>
+    	<name>ReportType</name>
+	</types>
+	<types>
+        <members>Account-BioSponsor Account</members>
+		<members>Account-Biomed Read Only Mobile Account Layout</members>
+		<members>Account-Sponsor Marketing Mobile Layout</members>
+        <name>Layout</name>
+    </types>
+	<types>
+		<members>Account_Before_Insert_Update_Flow</members>
+		<name>Flow</name>
 	</types>
 	<version>63.0</version>
 </Package>

@@ -17,6 +17,7 @@
  * 10/24/2024				 Barnojit Sharma		  Template Order products not cascading to Opportunity Order (Logic for HRP-13521)
  * 12/10/2024			     Priti Jana			      Logic for HRP-13190
  * 04/29/2025                Satyendra V              HRP-14565 - Logic added to identify the latest closed drive on Opportunity Insert/Update/Delete.
+ * 05/05/2025                Priti Jana               Logic for HRP-13146
  ************************************************************************************************************************************************
 */
 
@@ -282,6 +283,20 @@ public class OpportunityTriggerHandler extends TriggerHandler{
         if(super.getTriggerMethodsToBypass().indexOf('captureAPTRequirements') == -1) {
            OpportunityService.captureAPTRequirements((List<Opportunity>)trigger.new, (Map<Id,Opportunity>)trigger.oldMap);
         }
+
+        if(super.getTriggerMethodsToBypass().indexOf('updateVolunteerRequired') == -1) {
+            System.debug('#### OpportunityTriggerHandler.beforeUpdate() - OpportunityService.updateVolunteerRequired() Executing...');
+            OpportunityService.updateVolunteerRequired((List<Opportunity>)trigger.new, (Map<Id,Opportunity>)trigger.oldMap);
+        }
+        if(super.getTriggerMethodsToBypass().indexOf('calculateVolunteerQuantity') == -1) {
+            System.debug('#### OpportunityTriggerHandler.beforeUpdate() - OpportunityService.calculateVolunteerQuantity() Executing...');
+            OpportunityService.calculateVolunteerQuantity((List<Opportunity>)trigger.new, (Map<Id,Opportunity>)trigger.oldMap);
+        }
+        //HRP-13146
+        if(super.getTriggerMethodsToBypass().indexOf('handleRedcrossVolunteerRequirementValidation') == -1) {
+            OpportunityService.handleRedcrossVolunteerRequirementValidation((List<Opportunity>)trigger.new, (Map<Id,Opportunity>)trigger.oldMap);
+        }
+
         //HRP-6051
         if(super.getTriggerMethodsToBypass().indexOf('validateTheARD') == -1) {
             OpportunityService.validateTheARD((List<Opportunity>)trigger.new, (Map<Id,Opportunity>)trigger.oldMap);
@@ -457,7 +472,18 @@ public class OpportunityTriggerHandler extends TriggerHandler{
          if(super.getTriggerMethodsToBypass().indexOf('captureAPTRequirements') == -1) {
            OpportunityService.captureAPTRequirements((List<Opportunity>)trigger.new, NULL);
         }
-        
+
+        if(super.getTriggerMethodsToBypass().indexOf('updateVolunteerRequired') == -1) {
+            OpportunityService.updateVolunteerRequired((List<Opportunity>)trigger.new, NULL);
+        }
+        if(super.getTriggerMethodsToBypass().indexOf('calculateVolunteerQuantity') == -1) {
+            OpportunityService.calculateVolunteerQuantity((List<Opportunity>)trigger.new, NULL);
+        }
+        //HRP-13146
+        if(super.getTriggerMethodsToBypass().indexOf('handleRedcrossVolunteerRequirementValidation') == -1) {
+            OpportunityService.handleRedcrossVolunteerRequirementValidation((List<Opportunity>)trigger.new, NULL);
+        }
+
         System.debug('Exiting method beforeInsert');
         System.debug('getCpuTime()'+limits.getCpuTime());
     }
@@ -539,7 +565,7 @@ public class OpportunityTriggerHandler extends TriggerHandler{
 		//HRP-12664
 		System.debug('getCpuTime()'+limits.getCpuTime());
         if(super.getTriggerMethodsToBypass().indexOf('updateLatestPastClosedDrive') == -1) {
-            OpportunityService.updateLatestPastClosedDrive((List<Opportunity>)trigger.new, null);
+            //OpportunityService.updateLatestPastClosedDrive((List<Opportunity>)trigger.new, null);
         }
         
         System.debug('Exiting method AfterInsert');
@@ -698,6 +724,7 @@ public class OpportunityTriggerHandler extends TriggerHandler{
             	BSFTaskChecklistTriggerHandler.updateTaskChecklist((List<Opportunity>)trigger.new,(Map<Id,Opportunity>)trigger.oldMap); 
             }
             // HRP- 12142 --> Ends Here
+            /*
             if(super.getTriggerMethodsToBypass().indexOf('updateLatestPastClosedDrive') == -1) {
                 List<Opportunity> closedStageChangedList = new List<Opportunity>();
                 List<Opportunity> newOppList = (List<Opportunity>) Trigger.new;
@@ -711,7 +738,7 @@ public class OpportunityTriggerHandler extends TriggerHandler{
                 if (!closedStageChangedList.isEmpty()) {
                     OpportunityService.updateLatestPastClosedDrive(closedStageChangedList, null);
                 }
-            }
+            }*/
             
             System.debug('Exiting method AfterUpdate');
         }
@@ -736,9 +763,10 @@ public class OpportunityTriggerHandler extends TriggerHandler{
     }
     public override void afterDelete() {
         System.debug('OpportunityTriggerHandler afterDelete=======================>>>> ');
+        /*
         if(super.getTriggerMethodsToBypass().indexOf('updateLatestPastClosedDrive') == -1) {
             OpportunityService.updateLatestPastClosedDrive(null, (List<Opportunity>)trigger.old);
-        }
+        }*/
         
     }
 }

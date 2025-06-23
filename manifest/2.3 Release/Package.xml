@@ -11,6 +11,9 @@
 		<members>Opportunity-DRD Mobile Opp Layout</members>
 		<members>Opportunity-Mobile Opp Layout</members>
 		<members>Opportunity-Sponsor Marketing Mobile Opp Layout</members>
+		<members>Account-BioSponsor Account</members>
+		<members>Account-Biomed Read Only Mobile Account Layout</members>
+		<members>Account-Sponsor Marketing Mobile Layout</members>
         <name>Layout</name>
     </types>
     <types>
@@ -36,8 +39,13 @@
         <members>sked__Location__c.sked_Site_Contact_Phone__c</members>
 		<members>sked__Job__c.sked_VAR_Last_Modified_By__c</members>
         <members>sked_Fixed_Site_Procedure_Projection__c.sked_Impact_Drives__c</members>	
+		<!-- Below field is not required now for this ticket-->
 		<members>Opportunity.Is_Latest_Past_Closed_Drive__c</members>
         <members>Account.Last_Closed_Drive__c</members>
+		<!-- End-->
+		<members>Account.Number_of_Future_Drives_New__c</members>
+		<members>Account.Last_Closed_Drive_New__c</members>
+		<members>Account.Days_Since_Last_Drive__c</members>
 	   <name>CustomField</name>
     </types>
     <types>
@@ -86,6 +94,7 @@
 		<members>OpportunityTriggerTest</members>
         <members>OpportunityTriggerHandler</members>
         <members>OpportunityService</members>
+		<members>DriveWorksheet</members>
 		<name>ApexClass</name>
 	</types>
 	<types>
@@ -171,6 +180,14 @@
 		<members>opportunity_with_drives_on_cal_wit_job_wit_job_all</members>
 		<members>opportunity_with_order_with_ordering_product</members>
 		<members>opportunity_with_promotion_with_opportunity_promo</members>
+		<members>Account_With_Account_Portfolio_Assignment</members>
+		<members>Account_With_Account_Service_Role</members>
+		<members>Account_with_Portfolio_Assignment</members>
+		<members>Accounts_With_Account_Affiliation</members>
+		<members>Accounts_with_Site_with_Drives</members>
+		<members>Accounts_with_Team_Members</members>
+		<members>account_with_site_with_opportunity</members>
+		<members>Blood_Drive_Opportunities_With_or_Without_Contacts</members>
 		<name>ReportType</name>
 	</types>
 	<types>
