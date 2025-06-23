@@ -4974,7 +4974,7 @@ opp.StageName = 'Closed';
     }
     //HRP-6051 Ends Here
     //HRP-14565 start here
-
+    /*
     public static void updateLatestPastClosedDrive(List<Opportunity> newList, List<Opportunity> oldList) {
         
         Set<Id> accountIds = new Set<Id>();
@@ -5029,6 +5029,7 @@ opp.StageName = 'Closed';
             update oppsToUpdate;
         }
     }
+    */
     
     //HRP-14565 end here
     public static Decimal getVolunteerQuantity(Integer anticipatedRegisteredDonors, Boolean highSchool, List<Volunteer_Staffing_Matrix__mdt> matrixRecords) {

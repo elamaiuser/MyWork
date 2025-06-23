@@ -107,8 +107,8 @@
                 <field>CFY_Drives1__c</field>
             </layoutItems>
             <layoutItems>
-                <behavior>Readonly</behavior>
-                <field>Last_Closed_Drive__c</field>
+                <behavior>Edit</behavior>
+                <field>Last_Closed_Drive_New__c</field>
             </layoutItems>
             <layoutItems>
                 <behavior>Readonly</behavior>
@@ -139,8 +139,8 @@
                 <field>Days_Until_Next_Scheduled_Drive__c</field>
             </layoutItems>
             <layoutItems>
-                <behavior>Readonly</behavior>
-                <field>Number_of_Future_Drives__c</field>
+                <behavior>Edit</behavior>
+                <field>Number_of_Future_Drives_New__c</field>
             </layoutItems>
             <layoutItems>
                 <behavior>Edit</behavior>
@@ -309,7 +309,7 @@
                 <field>Type</field>
             </layoutItems>
         </layoutColumns>
-        <layoutColumns />
+        <layoutColumns/>
         <style>TwoColumnsLeftToRight</style>
     </layoutSections>
     <layoutSections>
@@ -317,7 +317,7 @@
         <detailHeading>false</detailHeading>
         <editHeading>false</editHeading>
         <label>Description Information</label>
-        <layoutColumns />
+        <layoutColumns/>
         <style>OneColumn</style>
     </layoutSections>
     <layoutSections>
