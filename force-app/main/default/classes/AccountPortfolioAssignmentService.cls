@@ -471,6 +471,8 @@ atm = new accountTeamMember(userid=pa.user__c,accountId=apa.account__c,Start_Dat
                     Id = portfolioAccProcessingRecord.Id,
                     Portfolio_progress_for_Accounts__c = 0,
                     Records_Processed__c = 0,
+                    Portfolio_Assignment_Updated__c = false
+                );
             }
         }
         //HRP-10569 start
