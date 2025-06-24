@@ -100,15 +100,15 @@
             </layoutItems>
             <layoutItems>
                 <behavior>Readonly</behavior>
-                <field>CY_Drives__c</field>
+                <field>CY_Drives1__c</field>
             </layoutItems>
             <layoutItems>
                 <behavior>Readonly</behavior>
-                <field>CFY_Drives__c</field>
+                <field>CFY_Drives1__c</field>
             </layoutItems>
             <layoutItems>
                 <behavior>Readonly</behavior>
-                <field>Last_Closed_Drive__c</field>
+                <field>Last_Closed_Drive_New__c</field>
             </layoutItems>
             <layoutItems>
                 <behavior>Readonly</behavior>
@@ -140,7 +140,7 @@
             </layoutItems>
             <layoutItems>
                 <behavior>Readonly</behavior>
-                <field>Number_of_Future_Drives__c</field>
+                <field>Number_of_Future_Drives_New__c</field>
             </layoutItems>
             <layoutItems>
                 <behavior>Edit</behavior>
@@ -173,6 +173,10 @@
             <layoutItems>
                 <behavior>Readonly</behavior>
                 <field>Division__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>Service_Level_Agreement__c</field>
             </layoutItems>
         </layoutColumns>
         <layoutColumns>
@@ -301,7 +305,7 @@
                 <field>Type</field>
             </layoutItems>
         </layoutColumns>
-        <layoutColumns />
+        <layoutColumns/>
         <style>TwoColumnsLeftToRight</style>
     </layoutSections>
     <layoutSections>
@@ -309,7 +313,7 @@
         <detailHeading>false</detailHeading>
         <editHeading>false</editHeading>
         <label>Description Information</label>
-        <layoutColumns />
+        <layoutColumns/>
         <style>OneColumn</style>
     </layoutSections>
     <layoutSections>

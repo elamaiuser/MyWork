@@ -241,11 +241,8 @@
                 </rightValue>
             </conditions>
             <conditions>
-                <leftValueReference>$Record.Number_of_Future_Drives__c</leftValueReference>
+                <leftValueReference>$Record.Number_of_Future_Drives_New__c</leftValueReference>
                 <operator>EqualTo</operator>
-                <rightValue>
-                    <numberValue>0.0</numberValue>
-                </rightValue>
             </conditions>
             <connector>
                 <targetReference>Update_Account_Status</targetReference>

@@ -288,6 +288,13 @@ public class OpportunityTriggerHandler extends TriggerHandler{
             OpportunityService.updateVolunteerRequired((List<Opportunity>)trigger.new, (Map<Id,Opportunity>)trigger.oldMap);
         }
         if(super.getTriggerMethodsToBypass().indexOf('calculateVolunteerQuantity') == -1) {
+
+        if(super.getTriggerMethodsToBypass().indexOf('updateVolunteerRequired') == -1) {
+            System.debug('#### OpportunityTriggerHandler.beforeUpdate() - OpportunityService.updateVolunteerRequired() Executing...');
+            OpportunityService.updateVolunteerRequired((List<Opportunity>)trigger.new, (Map<Id,Opportunity>)trigger.oldMap);
+        }
+        if(super.getTriggerMethodsToBypass().indexOf('calculateVolunteerQuantity') == -1) {
+            System.debug('#### OpportunityTriggerHandler.beforeUpdate() - OpportunityService.calculateVolunteerQuantity() Executing...');
             OpportunityService.calculateVolunteerQuantity((List<Opportunity>)trigger.new, (Map<Id,Opportunity>)trigger.oldMap);
         }
         //HRP-13146
@@ -565,7 +572,7 @@ public class OpportunityTriggerHandler extends TriggerHandler{
 		//HRP-12664
 		System.debug('getCpuTime()'+limits.getCpuTime());
         if(super.getTriggerMethodsToBypass().indexOf('updateLatestPastClosedDrive') == -1) {
-            OpportunityService.updateLatestPastClosedDrive((List<Opportunity>)trigger.new, null);
+            //OpportunityService.updateLatestPastClosedDrive((List<Opportunity>)trigger.new, null);
         }
         
         System.debug('Exiting method AfterInsert');
@@ -724,6 +731,7 @@ public class OpportunityTriggerHandler extends TriggerHandler{
             	BSFTaskChecklistTriggerHandler.updateTaskChecklist((List<Opportunity>)trigger.new,(Map<Id,Opportunity>)trigger.oldMap); 
             }
             // HRP- 12142 --> Ends Here
+            /*
             if(super.getTriggerMethodsToBypass().indexOf('updateLatestPastClosedDrive') == -1) {
                 List<Opportunity> closedStageChangedList = new List<Opportunity>();
                 List<Opportunity> newOppList = (List<Opportunity>) Trigger.new;
@@ -737,7 +745,7 @@ public class OpportunityTriggerHandler extends TriggerHandler{
                 if (!closedStageChangedList.isEmpty()) {
                     OpportunityService.updateLatestPastClosedDrive(closedStageChangedList, null);
                 }
-            }
+            }*/
             
             System.debug('Exiting method AfterUpdate');
         }
@@ -762,9 +770,10 @@ public class OpportunityTriggerHandler extends TriggerHandler{
     }
     public override void afterDelete() {
         System.debug('OpportunityTriggerHandler afterDelete=======================>>>> ');
+        /*
         if(super.getTriggerMethodsToBypass().indexOf('updateLatestPastClosedDrive') == -1) {
             OpportunityService.updateLatestPastClosedDrive(null, (List<Opportunity>)trigger.old);
-        }
+        }*/
         
     }
 }
