@@ -288,13 +288,6 @@ public class OpportunityTriggerHandler extends TriggerHandler{
             OpportunityService.updateVolunteerRequired((List<Opportunity>)trigger.new, (Map<Id,Opportunity>)trigger.oldMap);
         }
         if(super.getTriggerMethodsToBypass().indexOf('calculateVolunteerQuantity') == -1) {
-
-        if(super.getTriggerMethodsToBypass().indexOf('updateVolunteerRequired') == -1) {
-            System.debug('#### OpportunityTriggerHandler.beforeUpdate() - OpportunityService.updateVolunteerRequired() Executing...');
-            OpportunityService.updateVolunteerRequired((List<Opportunity>)trigger.new, (Map<Id,Opportunity>)trigger.oldMap);
-        }
-        if(super.getTriggerMethodsToBypass().indexOf('calculateVolunteerQuantity') == -1) {
-            System.debug('#### OpportunityTriggerHandler.beforeUpdate() - OpportunityService.calculateVolunteerQuantity() Executing...');
             OpportunityService.calculateVolunteerQuantity((List<Opportunity>)trigger.new, (Map<Id,Opportunity>)trigger.oldMap);
         }
         //HRP-13146
@@ -569,12 +562,7 @@ public class OpportunityTriggerHandler extends TriggerHandler{
         {
             System.debug('OpportunityTriggerHandler.afterInsert() - OpportunityService.syncTemplateOrdertoOpportunity() Bypassed');
         }
-		//HRP-12664
-		System.debug('getCpuTime()'+limits.getCpuTime());
-        if(super.getTriggerMethodsToBypass().indexOf('updateLatestPastClosedDrive') == -1) {
-            //OpportunityService.updateLatestPastClosedDrive((List<Opportunity>)trigger.new, null);
-        }
-        
+		//HRP-12664        
         System.debug('Exiting method AfterInsert');
     }
     
@@ -730,22 +718,7 @@ public class OpportunityTriggerHandler extends TriggerHandler{
             	System.debug('OpportunityTriggerHandler.afterUpdate() - BSFTaskChecklistTriggerHandler.updateTaskChecklist() Executing...');
             	BSFTaskChecklistTriggerHandler.updateTaskChecklist((List<Opportunity>)trigger.new,(Map<Id,Opportunity>)trigger.oldMap); 
             }
-            // HRP- 12142 --> Ends Here
-            /*
-            if(super.getTriggerMethodsToBypass().indexOf('updateLatestPastClosedDrive') == -1) {
-                List<Opportunity> closedStageChangedList = new List<Opportunity>();
-                List<Opportunity> newOppList = (List<Opportunity>) Trigger.new;
-                Map<Id, Opportunity> oldOppMap = (Map<Id, Opportunity>) Trigger.oldMap;
-                for (Opportunity newOpp : newOppList) {
-                    Opportunity oldOpp = oldOppMap.get(newOpp.Id);
-                    if (oldOpp != null && oldOpp.StageName != 'Closed' && newOpp.StageName == 'Closed') {
-                        closedStageChangedList.add(newOpp);
-                    }
-                }
-                if (!closedStageChangedList.isEmpty()) {
-                    OpportunityService.updateLatestPastClosedDrive(closedStageChangedList, null);
-                }
-            }*/
+            // HRP- 12142 --> Ends Here        
             
             System.debug('Exiting method AfterUpdate');
         }
@@ -765,15 +738,6 @@ public class OpportunityTriggerHandler extends TriggerHandler{
                 System.debug('OpportunityTriggerHandler.beforeDelete - BSF_Utilities.restrictNonAdminUsersForSobjectDeletion() Bypassed');  
             }
          // Part of HRP-10115 --> Ends Here
-            System.debug('Exiting method beforeDelete');
-       
-    }
-    public override void afterDelete() {
-        System.debug('OpportunityTriggerHandler afterDelete=======================>>>> ');
-        /*
-        if(super.getTriggerMethodsToBypass().indexOf('updateLatestPastClosedDrive') == -1) {
-            OpportunityService.updateLatestPastClosedDrive(null, (List<Opportunity>)trigger.old);
-        }*/
-        
+            System.debug('Exiting method beforeDelete');       
     }
 }
