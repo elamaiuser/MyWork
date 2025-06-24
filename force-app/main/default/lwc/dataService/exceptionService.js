@@ -35,9 +35,13 @@ class exceptionService extends dataService {
         // If Mobile is not included in driveTypes, remove null from operationTypes if it exists
         if (query.driveTypes && !query.driveTypes.includes('Mobile')) {
           operationTypes = operationTypes.filter(type => type !== null);
-        }else if (query.driveTypes && query.driveTypes.includes('Mobile') && !operationTypes.includes(null)) {         // If Mobile is included in driveTypes, ensure null is in operationTypes
+        }
+        // If Mobile is included in driveTypes, ensure null is in operationTypes
+        else if (query.driveTypes && query.driveTypes.includes('Mobile') && !operationTypes.includes(null)) {
           operationTypes = [...operationTypes, null]; // Create new array only when adding null
         }
+        console.log('operationTypes', operationTypes);
+        console.log('query.driveTypes', query.driveTypes);
         queryBuilder.addCondition({template: "sked_Drive__r.sked_Operation_Type__c IN {0}", value: operationTypes, type: "array_string"});
       }
       if (query.resourceDriveTypes && query.resourceDriveTypes.length) {
