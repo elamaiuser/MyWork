@@ -2,6 +2,8 @@
 <Package xmlns="http://soap.sforce.com/2006/04/metadata">
     <types>
 		<members>slwcDriveGenerator</members>
+		<members>slwcDriveManagement</members>
+		<members>slwcGenerateDriveModal</members>
 		<name>LightningComponentBundle</name>
 	</types>
     <version>59.0</version>
