@@ -151,9 +151,11 @@ commented part of HRP-12053*/
     public static map<string,AccountTeamMember> accTeamDateSyncOnAccPortUpdates (List<id> accountIdList,String calledFromBatch,Set<id> oppSet,map<id,list<accountTeamMember>> accIdFutureAccTeamMap,map <id,list<AccountTeamMember>> accIdAccTeamListMap)
     {
         set<string> focusedPortFolioTypeSet = new set<string>{BSF_Constants.ACCOUNT_MANAGER,bsf_constants.SICKLE_CELL_ACCOUNT_MANAGER,Bsf_constants.NATIONAL_ACCOUNT_MANAGER,bsf_constants.Booking_Support,bsf_constants.ACCOUNT_SPECIALIST};//HRP-11290
-            list <Account_Portfolio_assignment__c> accportfolioAssignOfAccList = new list<Account_Portfolio_assignment__c>();//HRP-11290 added BSF_Portfolio__r.Portfolio_type__c in:focusedPortFolioTypeSet
+        list <Account_Portfolio_assignment__c> accportfolioAssignOfAccList = new list<Account_Portfolio_assignment__c>();//HRP-11290 added BSF_Portfolio__r.Portfolio_type__c in:focusedPortFolioTypeSet
         list<AccountTeamMember> overAllteamMembersList = new list<AccountTeamMember>();
         List <AccountTeamMember> atmToDeleteList = new List <AccountTeamMember>();
+        List <AccountTeamMember> teamMemberListToInsert = new List <AccountTeamMember>();
+        List <BSF_Error_Log__c> errorLogInsertList = new List <BSF_Error_Log__c>();
         set<id> bsfIdsSet=new set<id>();
         list<account> acclist = [select id,(Select id,Start_date__c,End_Date__c,Account__c,BSF_Portfolio__c,BSF_Portfolio__r.Portfolio_code__c,BSF_Portfolio__r.Parent_Portfolio__c,
                                             BSF_Portfolio__r.Parent_Portfolio__r.Parent_Portfolio__c,BSF_Portfolio__r.Taxonomy_Type__c,BSF_Portfolio__r.portfolio_type__c from
@@ -429,12 +431,14 @@ atm = new accountTeamMember(userid=pa.user__c,accountId=apa.account__c,Start_Dat
             if(!atmToDeleteList.isEmpty())
             {
                 BSF_Constants.isTeamMemberCreatedFromBackend = true;
-                database.delete(atmToDeleteList,false);
+                Database.DeleteResult [] deleteResult = Database.delete(atmToDeleteList,false);
+                errorLogInsertList.addAll(
+                    BSF_Utilities.createErrorLog(deleteResult,'Acc Team Delete', 'AccountPortfolioAssignmentService', 'accTeamDateSyncOnAccPortUpdates', 'Error', 'sync accteam dates')
+                );
                 BSF_Constants.isTeamMemberCreatedFromBackend = false;
             }
             if(accIdAccTeamUpdateMap.values().size()>0)
             {
-                List<AccountTeamMember> teamMemberListToInsert = new List<AccountTeamMember>();
                 for(id i: accIdAccTeamUpdateMap.keyset())
                 {
                     teamMemberListToInsert.addAll(accIdAccTeamUpdateMap.get(i));
@@ -449,10 +453,26 @@ atm = new accountTeamMember(userid=pa.user__c,accountId=apa.account__c,Start_Dat
                 //HRP-8897
                 BSF_Constants.isTeamMemberCreatedFromBackend = true;
                 bsf_constants.isdateCheckbeforeInsertUpdate = false;
-                database.SaveResult [] srlist =Database.Insert(teamMemberListToInsert,false);
+                database.SaveResult [] srlist = Database.Insert(teamMemberListToInsert,false);
                 bsf_constants.isdateCheckbeforeInsertUpdate = true;//HRP-8897 bypasses date validation from AccountTeamTriggerHandler method call dateCheckbeforeInsertUpdate
-                List<BSF_Error_Log__c> logList = BSF_Utilities.createErrorLog(srlist,'Create Portfolio','AccountPortfolioAssignmentService','accTeamDateSyncOnAccPortUpdates','Error','sync accteam dates');
-                InsertBsfErrorLog.insertBsfErrors(logList);
+                errorLogInsertList.addAll(
+                    BSF_Utilities.createErrorLog(srlist,'Acc Team Insert','AccountPortfolioAssignmentService','accTeamDateSyncOnAccPortUpdates','Error','sync accteam dates')
+                );
+            }
+            InsertBsfErrorLog.insertBsfErrors(errorLogInsertList);
+            
+            //HRP-15205 -> In case of Acc Team Member Trigger doesn't get triggered due to failures
+            Portfolio_Accounts_Processing__c portfolioAccProcessingRecord = [SELECT Id, Portfolio_progress_for_Accounts__c, 
+                                                                            Records_Processed__c, Portfolio_Assignment_Updated__c 
+                                                                            FROM Portfolio_Accounts_Processing__c 
+                                                                            LIMIT 1];
+            if (portfolioAccProcessingRecord != NULL && portfolioAccProcessingRecord.Portfolio_Assignment_Updated__c) {
+                update new Portfolio_Accounts_Processing__c(
+                    Id = portfolioAccProcessingRecord.Id,
+                    Portfolio_progress_for_Accounts__c = 0,
+                    Records_Processed__c = 0,
+                    Portfolio_Assignment_Updated__c = false
+                );
             }
         }
         //HRP-10569 start

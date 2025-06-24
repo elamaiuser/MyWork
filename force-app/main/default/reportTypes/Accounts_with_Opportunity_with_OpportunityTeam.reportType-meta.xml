@@ -16,7 +16,7 @@
     <sections>
         <columns>
             <checkedByDefault>false</checkedByDefault>
-            <field>Number_of_Future_Drives__c</field>
+            <field>Number_of_Future_Drives_New__c</field>
             <table>Account</table>
         </columns>
         <columns>
@@ -461,11 +461,6 @@
         </columns>
         <columns>
             <checkedByDefault>false</checkedByDefault>
-            <field>Last_Closed_Drive__c</field>
-            <table>Account</table>
-        </columns>
-        <columns>
-            <checkedByDefault>false</checkedByDefault>
             <field>LastModifiedBy</field>
             <table>Account</table>
         </columns>
@@ -787,6 +782,11 @@
         <columns>
             <checkedByDefault>false</checkedByDefault>
             <field>Ready_for_National_Name_Review__c</field>
+            <table>Account</table>
+        </columns>        
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>Last_Closed_Drive_New__c</field>
             <table>Account</table>
         </columns>
         <masterLabel>Accounts</masterLabel>
