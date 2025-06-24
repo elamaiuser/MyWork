@@ -72,10 +72,6 @@
                 <behavior>Edit</behavior>
                 <field>Next_Scheduled_Drive_Updated__c</field>
             </layoutItems>
-            <layoutItems>
-                <behavior>Edit</behavior>
-                <field>Service_Level_Agreement__c</field>
-            </layoutItems>
         </layoutColumns>
         <layoutColumns>
             <layoutItems>
@@ -354,7 +350,7 @@
             </layoutItems>
             <layoutItems>
                 <behavior>Readonly</behavior>
-                <field>CFY_Drives1__c</field>
+                <field>CFY_Drives__c</field>
             </layoutItems>
             <layoutItems>
                 <behavior>Readonly</behavior>
