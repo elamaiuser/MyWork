@@ -12,6 +12,11 @@
     <sections>
         <columns>
             <checkedByDefault>false</checkedByDefault>
+            <field>Number_of_Future_Drives_New__c</field>
+            <table>Account</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
             <field>Id</field>
             <table>Account</table>
         </columns>
@@ -727,11 +732,6 @@
         </columns>
         <columns>
             <checkedByDefault>false</checkedByDefault>
-            <field>Last_Closed_Drive__c</field>
-            <table>Account</table>
-        </columns>
-        <columns>
-            <checkedByDefault>false</checkedByDefault>
             <field>Last_Follow_Up_Drive__c</field>
             <table>Account</table>
         </columns>
@@ -758,11 +758,6 @@
         <columns>
             <checkedByDefault>false</checkedByDefault>
             <field>Next_Scheduled_Drive__c</field>
-            <table>Account</table>
-        </columns>
-        <columns>
-            <checkedByDefault>false</checkedByDefault>
-            <field>Number_of_Future_Drives__c</field>
             <table>Account</table>
         </columns>
         <columns>
@@ -953,6 +948,21 @@
         <columns>
             <checkedByDefault>false</checkedByDefault>
             <field>HS_Relationship_Manager_Notes__c</field>
+            <table>Account</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>CFY_Drives1__c</field>
+            <table>Account</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>CY_Drives1__c</field>
+            <table>Account</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>Last_Closed_Drive_New__c</field>
             <table>Account</table>
         </columns>
         <masterLabel>Accounts</masterLabel>

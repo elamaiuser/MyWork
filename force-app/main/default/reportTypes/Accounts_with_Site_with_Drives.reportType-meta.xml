@@ -16,6 +16,11 @@
     <sections>
         <columns>
             <checkedByDefault>false</checkedByDefault>
+            <field>Number_of_Future_Drives_New__c</field>
+            <table>Account</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
             <field>Id</field>
             <table>Account</table>
         </columns>
@@ -421,11 +426,6 @@
         </columns>
         <columns>
             <checkedByDefault>false</checkedByDefault>
-            <field>Last_Closed_Drive__c</field>
-            <table>Account</table>
-        </columns>
-        <columns>
-            <checkedByDefault>false</checkedByDefault>
             <field>Next_Closed_Drive__c</field>
             <table>Account</table>
         </columns>
@@ -537,11 +537,6 @@
         <columns>
             <checkedByDefault>false</checkedByDefault>
             <field>Account_Description__c</field>
-            <table>Account</table>
-        </columns>
-        <columns>
-            <checkedByDefault>false</checkedByDefault>
-            <field>Number_of_Future_Drives__c</field>
             <table>Account</table>
         </columns>
         <columns>
@@ -799,6 +794,66 @@
             <field>Ready_for_National_Name_Review__c</field>
             <table>Account</table>
         </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>Combined_City_and_State__c</field>
+            <table>Account</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>Average_Productivity__c</field>
+            <table>Account</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>Average_Products__c</field>
+            <table>Account</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>Lead_Score__c</field>
+            <table>Account</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>Lead_Rating_Stars__c</field>
+            <table>Account</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>Service_Level_Agreement__c</field>
+            <table>Account</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>Is_Hospital_Contract_Partner__c</field>
+            <table>Account</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>HS_Relationship_Manager__c</field>
+            <table>Account</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>HS_Relationship_Manager_Notes__c</field>
+            <table>Account</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>CFY_Drives1__c</field>
+            <table>Account</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>CY_Drives1__c</field>
+            <table>Account</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>Last_Closed_Drive_New__c</field>
+            <table>Account</table>
+        </columns>
         <masterLabel>Accounts</masterLabel>
     </sections>
     <sections>
@@ -855,11 +910,6 @@
         <columns>
             <checkedByDefault>false</checkedByDefault>
             <field>sked__GeoLocation__Latitude__s</field>
-            <table>Account.sked__Locations__r</table>
-        </columns>
-        <columns>
-            <checkedByDefault>false</checkedByDefault>
-            <field>sked_Chapter__c</field>
             <table>Account.sked__Locations__r</table>
         </columns>
         <columns>
@@ -1917,22 +1967,32 @@
         </columns>
         <columns>
             <checkedByDefault>false</checkedByDefault>
-            <field>account_External_Id__c</field>
+            <field>Excess_Staff_Capacity__c</field>
             <table>Account.sked__Locations__r.sked_Drives__r</table>
         </columns>
         <columns>
             <checkedByDefault>false</checkedByDefault>
-            <field>site_External_Id__c</field>
+            <field>Average_Staff_Capacity__c</field>
             <table>Account.sked__Locations__r.sked_Drives__r</table>
         </columns>
         <columns>
             <checkedByDefault>false</checkedByDefault>
-            <field>Supervisory_Role__c</field>
+            <field>Max_Role_Capacity__c</field>
             <table>Account.sked__Locations__r.sked_Drives__r</table>
         </columns>
         <columns>
             <checkedByDefault>false</checkedByDefault>
-            <field>sked_Optimization_Run__c</field>
+            <field>Max_Role_Capacity_With_Draw_Hours__c</field>
+            <table>Account.sked__Locations__r.sked_Drives__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>sked_Prefer_System_Generated_Vehicles__c</field>
+            <table>Account.sked__Locations__r.sked_Drives__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>sked_Dual_Roles_Auto_Generated__c</field>
             <table>Account.sked__Locations__r.sked_Drives__r</table>
         </columns>
         <masterLabel>Drives on Calendar</masterLabel>
