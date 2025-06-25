@@ -1104,9 +1104,10 @@ export default class SlwcResolveDriveContentions extends LightningElement {
 
         const timeBlockContentions = this.getTimeBlockContentions(contentions);
         if(timeBlockContentions.length > 0) {
-          this.driveTimeBlockContentions = timeBlockContentions.map((contention, index) => {
+          this.driveTimeBlockContentions = timeBlockContentions.map((contention) => {
+            const driveShiftIndex = this.drive.driveShifts.findIndex(driveShift => driveShift.key === contention.driveShift.key);
             const timeBlockOptions = this.buildDriveShiftTimeBlockOptions();
-            contention.driveShiftName = `Drive Shift #${index + 1}`;
+            contention.driveShiftName = `Drive Shift #${driveShiftIndex + 1}`;
             contention.driveShiftTime = `${this.formatTime(contention.driveShift.startTime)} - ${this.formatTime(contention.driveShift.endTime)}`;
             contention.timeBlockId = timeBlockOptions.find(option => option.value === contention.driveShift.timeBlockId)?.value ?? '';
             contention.timeBlockOptions = timeBlockOptions;
