@@ -863,4 +863,11 @@
         <shortDescription>Task Subject - Marketing Exception</shortDescription>
         <value>Request for Marketing Exception</value>
     </labels>
+    <labels>
+        <fullName>Orphan_Job_Allocations_Email</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Orphan_Job_Allocations_Email</shortDescription>
+        <value>BSFSupport@redcross.org;</value>
+    </labels>
 </CustomLabels>
