@@ -29,7 +29,9 @@ export default class SlwcEditRecurrenceStaffingConstraintModal extends Lightning
 
   @api defaultDateRange;
   @api defaultCollectionOperationId;
+  @api timeBlocks;
 
+  @track timeBlockOptions = [];
   @track model = {};
   @track timezoneSidId = TIME_ZONE;
   @track showSpinner = false;
@@ -162,7 +164,8 @@ export default class SlwcEditRecurrenceStaffingConstraintModal extends Lightning
           endDate: null,
           showOnlyErrorRecords: false,
           daysOfWeek: [],
-          driveTypes: []
+          driveTypes: [],
+          timeBlocks: []
         },
         masterRow: {
           totalStaffConstraints: null
@@ -207,6 +210,12 @@ export default class SlwcEditRecurrenceStaffingConstraintModal extends Lightning
 
   fetchStaffingConstraintData = () => {
     const dateOfConstraints = uniq(this.model.STEP2.records.map(item => item.dateOfConstraint));
+    if (!dateOfConstraints?.length) {
+      this.mappedDriveData = {};
+      this.mappedActivityData = {};
+      return Promise.resolve();
+    }
+
     const collectionOperationIds = uniq(this.model.STEP2.records.map(item => item.collectionOperation.id));
     const driveTypes = uniq(this.model.STEP2.records.map(item => item.driveType));
     const minDateIso = min(dateOfConstraints);
@@ -240,6 +249,20 @@ export default class SlwcEditRecurrenceStaffingConstraintModal extends Lightning
         this.mappedDriveData = groupBy([...driveResult], (item) => `${item.collectionOperationId}-${item.typeOfDrive}-${item.driveDate}`);
         this.mappedActivityData = groupBy([...activityResult], (item) => `${item.collectionOperationId}-${item.startDate}`);
       })
+  }
+
+  getTimeBlockOptions = () => {
+    const timeBlockIds = uniq(this.model.STEP2.records.map(item => item.timeBlockId).filter(item => item));
+    let options = [];
+    this.timeBlocks.forEach(timeBlock => {
+      if (timeBlockIds.includes(timeBlock.value)) {
+        options.push({
+          ...timeBlock,
+          selected: false
+        })
+      }
+    });
+    this.timeBlockOptions = options;
   }
 
   handleStep2ValidateRecord = (record) => {
@@ -317,7 +340,8 @@ export default class SlwcEditRecurrenceStaffingConstraintModal extends Lightning
       endDate: max(allDateConstraints),
       showOnlyErrorRecords: false,
       daysOfWeek: [...DAYS_OF_WEEK],
-      driveTypes: [DRIVE_TYPE.MOBILE, DRIVE_TYPE.FIXED_SITE]
+      driveTypes: [DRIVE_TYPE.MOBILE, DRIVE_TYPE.FIXED_SITE],
+      timeBlocks: []
     }
 
     this.filterStep2Records();
@@ -393,11 +417,18 @@ export default class SlwcEditRecurrenceStaffingConstraintModal extends Lightning
 
   filterStep2Records = () => {
     let allRecords = this.model.STEP2.records;
-    const { startDate, endDate, showOnlyErrorRecords, daysOfWeek, driveTypes } = this.model.STEP2.filters;
+    const { startDate, endDate, showOnlyErrorRecords, daysOfWeek, driveTypes, timeBlocks } = this.model.STEP2.filters;
 
-    this.model.STEP2.filteredRecords = allRecords
+    this.model.STEP2.filteredRecords = !allRecords?.length ? []
+    : allRecords
       .filter(record => {
-        return driveTypes?.includes(record.driveType);
+        if (driveTypes?.includes(record.driveType)) {
+          if (record.driveType === DRIVE_TYPE.MOBILE) {
+            return !timeBlocks?.length || timeBlocks?.includes(record.timeBlockId);
+          }
+          return true;
+        }
+        return !driveTypes?.length;
       })
       .filter(record => {
         return startDate <= record.dateOfConstraint && record.dateOfConstraint <= endDate;
@@ -416,6 +447,9 @@ export default class SlwcEditRecurrenceStaffingConstraintModal extends Lightning
     if(!selectedDays.length) return;
     
     this.fetchStaffingConstraints()
+    .then(() => {
+      return this.getTimeBlockOptions();
+    })
     .then(() => {
       return this.handleStep2ValidateRecords();
     })
