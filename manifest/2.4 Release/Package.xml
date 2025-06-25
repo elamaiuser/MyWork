@@ -43,6 +43,7 @@
 		<members>PublicityReportNewPortfoliosController</members>
 		<!--publicityReportNewPortfoliosTest test class is not modified, only kept for tracking pupose  -->
 		<members>publicityReportNewPortfoliosTest</members>
+		<members>AccountService</members>
 		<name>ApexClass</name>
 	</types>
 	<types>
