@@ -1321,7 +1321,7 @@ export default class SlwcDriveManagement extends NavigationMixin(LightningElemen
     savePendingActionDriveConfirmModal(event) {
         this.hidePendingActionDriveConfirmModal();
 
-        const { submissionNotes, contentionResolution, driveShiftContentionResolution, status, equipmentAllocations, vehicleAllocations } = event.detail;
+        const { submissionNotes, contentionResolution, driveShiftContention, driveShiftContentionResolution, status, equipmentAllocations, vehicleAllocations } = event.detail;
         this.drive.submissionNotes = submissionNotes || this.drive.submissionNotes;
         if(status) {
             this.drive.status = status;
@@ -1331,6 +1331,12 @@ export default class SlwcDriveManagement extends NavigationMixin(LightningElemen
         if(driveShiftContentionResolution?.length) {
             this.drive.driveShifts.forEach((driveShift, driveShiftIndex) => {
                 driveShift.contentionResolution = driveShiftContentionResolution[driveShiftIndex] ?? '';
+            })
+        }
+
+        if(driveShiftContention?.length) {
+            this.drive.driveShifts.forEach((driveShift, driveShiftIndex) => {
+                driveShift.contention = driveShiftContention[driveShiftIndex] ?? '';
             })
         }
 
