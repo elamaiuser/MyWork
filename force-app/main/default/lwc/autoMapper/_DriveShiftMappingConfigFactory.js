@@ -50,8 +50,6 @@ export class DriveShiftMappingConfigFactory {
     mappingConfig.addFieldConfigWithRelatedList('sked_Jobs__r', 'jobs', 'sked__Job__c', 'sked_Drive_Shift__c');
     mappingConfig.addFieldConfigWithRelatedList('sked_Slots__r', 'slots', 'sked__Slot__c', 'sked_Drive_Shift__c');
 
-    mappingConfig.addFieldConfig('sked_has_TimeBlock_Violation__c', 'hasTimeBlockViolation', MAPPING_TYPE.direct);
-    mappingConfig.addFieldConfig('sked_TimeBlock_Violation_Message__c', 'timeBlockViolationMessage', MAPPING_TYPE.direct);
     mappingConfig.masterFields.push('sked_Drive__c');
 
     mappingConfig.readonlyFields.push('Name');

@@ -750,7 +750,7 @@ public with sharing class GenerateMobileDrive {
                 Decimal resourceQuantity = staffingComplement.map_role_resourceQuantity.containsKey(role) && staffingComplement.map_role_resourceQuantity.get(role) != NULL ? staffingComplement.map_role_resourceQuantity.get(role) : 0;
                 Decimal sdmRoleCapacity = donorCapacityMap.containsKey(role.split('-')[0]) && donorCapacityMap.get(role.split('-')[0]) != NULL ? donorCapacityMap.get(role.split('-')[0]) : 0;
                 if (role.split('-')[0].equalsIgnorecase(Constants.PROCEDURE_TYPE_2RBC)) {
-                    Decimal noOf2RBCAssets = driveShift.numberOf2rbcEquipments;
+                    Decimal noOf2RBCAssets = driveShift.numberOf2rbcEquipments!=null? driveShift.numberOf2rbcEquipments:0;
                     Decimal noOfResourcesHaveEnough2RBCAssets = Math.min(resourceQuantity, Math.floor(noOf2RBCAssets / 2));
                     Decimal noOfResourcesNotHaveEnough2RBCAssets = Math.max(resourceQuantity - noOfResourcesHaveEnough2RBCAssets, 0);
                     Decimal capacity1 = noOfResourcesHaveEnough2RBCAssets * 2 * driveShift.drawHours;
@@ -1225,18 +1225,26 @@ public with sharing class GenerateMobileDrive {
                 }
                 if(dayMatchingBlocks.size() >0){ 
                     if(driveShift.timeBlockId == NULL && matchingBlocks.size() > 0) { //multiple full matches
-                        driveShift.hasTimeBlockViolation = true;
+                        /*driveShift.hasTimeBlockViolation = true;
                         driveShift.timeBlockViolationMessage = skedConstants.EXCEPTION_CODE_FITS_MULTIPLE_TIME_BLOCKS;
-                        drive.hasTimeBlockViolation = true;
-                    }else if(driveShift.timeBlockId != NULL && matchingBlocks.size() ==0) { //HRP-14369 - only one time block but not matching fully
-                         driveShift.hasTimeBlockViolation = true;
-                         driveShift.timeBlockViolationMessage = skedConstants.EXCEPTION_CODE_OUT_OF_TIME_BLOCK;
-                         drive.hasTimeBlockViolation = true;
-                    }else if(driveShift.timeBlockId == NULL ) { //HRP-14369 - multiple timeblocks
-                         driveShift.hasTimeBlockViolation = true;
-                         driveShift.timeBlockViolationMessage = skedConstants.EXCEPTION_CODE_MISSING_TIME_BLOCK;
-                         drive.hasTimeBlockViolation = true;
+                        drive.hasTimeBlockViolation = true;*/
 
+                        driveShift.contention = skedConstants.EXCEPTION_CODE_FITS_MULTIPLE_TIME_BLOCKS;
+                        drive.pendingActionReasonCode =skedConstants.EXCEPTION_CODE_FITS_MULTIPLE_TIME_BLOCKS;
+                    }else if(driveShift.timeBlockId != NULL && matchingBlocks.size() ==0) { //HRP-14369 - only one time block but not matching fully
+                         /*driveShift.hasTimeBlockViolation = true;
+                         driveShift.timeBlockViolationMessage = skedConstants.EXCEPTION_CODE_OUT_OF_TIME_BLOCK;
+                         drive.hasTimeBlockViolation = true;*/
+
+                         drive.pendingActionReasonCode = skedConstants.EXCEPTION_CODE_OUT_OF_TIME_BLOCK;
+                         driveShift.contention = skedConstants.EXCEPTION_CODE_OUT_OF_TIME_BLOCK;
+                    }else if(driveShift.timeBlockId == NULL ) { //HRP-14369 - multiple timeblocks
+                        /* driveShift.hasTimeBlockViolation = true;
+                         driveShift.timeBlockViolationMessage = skedConstants.EXCEPTION_CODE_MISSING_TIME_BLOCK;
+                         drive.hasTimeBlockViolation = true;*/
+
+                         driveShift.contention = skedConstants.EXCEPTION_CODE_MISSING_TIME_BLOCK;
+                         drive.pendingActionReasonCode = skedConstants.EXCEPTION_CODE_MISSING_TIME_BLOCK;
                     }
                 }
             }
