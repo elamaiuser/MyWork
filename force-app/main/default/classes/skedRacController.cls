@@ -838,7 +838,7 @@ global virtual class skedRacController extends skedBaseController {
                     Date startDate = skedDateTimeUtils.getDateFromIsoString(request.recurringOptions.availabilityTemplate.startDate);
                     Date endDate = skedDateTimeUtils.getDateFromIsoString(request.recurringOptions.availabilityTemplate.endDate);
                     if (endDate > startDate.addYears(skedSetting.instance.RAC.maxActivityRecurringYears)) {
-                        throw new skedException('Recurring Pattern exceeds maximum duration');
+                        throw new skedException('Recurring Pattern exceeds maximum duration of ' + skedSetting.instance.RAC.maxActivityRecurringYears + ' years.\nPlease select a recurring end date that falls within ' + skedSetting.instance.RAC.maxActivityRecurringYears + ' years from today');
                     }
                 }
             }
