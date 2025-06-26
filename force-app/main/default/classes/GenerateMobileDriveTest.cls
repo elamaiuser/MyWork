@@ -315,11 +315,11 @@ public class GenerateMobileDriveTest {
                     'Drive shift with day-only match or no match should have violation');
                 if(shift.sked_Start_Time__c >= Time.newInstance(4, 0, 0, 0) && 
                    shift.sked_End_Time__c <= Time.newInstance(22, 0, 0, 0)) {
-                    System.assertEquals(skedConstants.EXCEPTION_CODE_OUT_OF_TIME_BLOCK, 
+                    System.assertEquals(skedConstants.CONTENTION_CODE_OUT_OF_TIME_BLOCK, 
                         shift.sked_Contention__c, 
                         'Drive shift should have out of time block violation message');
                 } else {
-                    System.assertEquals(skedConstants.EXCEPTION_CODE_MISSING_TIME_BLOCK, 
+                    System.assertEquals(skedConstants.CONTENTION_CODE_MISSING_TIME_BLOCK, 
                         shift.sked_Contention__c, 
                         'Drive shift should have missing time block violation message');
                 }

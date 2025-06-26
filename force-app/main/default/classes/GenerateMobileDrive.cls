@@ -1225,26 +1225,17 @@ public with sharing class GenerateMobileDrive {
                 }
                 if(dayMatchingBlocks.size() >0){ 
                     if(driveShift.timeBlockId == NULL && matchingBlocks.size() > 0) { //multiple full matches
-                        /*driveShift.hasTimeBlockViolation = true;
-                        driveShift.timeBlockViolationMessage = skedConstants.EXCEPTION_CODE_FITS_MULTIPLE_TIME_BLOCKS;
-                        drive.hasTimeBlockViolation = true;*/
-
-                        driveShift.contention = skedConstants.EXCEPTION_CODE_FITS_MULTIPLE_TIME_BLOCKS;
-                        drive.pendingActionReasonCode =skedConstants.EXCEPTION_CODE_FITS_MULTIPLE_TIME_BLOCKS;
+                        
+                        driveShift.contention = skedConstants.CONTENTION_CODE_FITS_MULTIPLE_TIME_BLOCKS;
+                        drive.pendingActionReasonCode =skedConstants.CONTENTION_CODE_FITS_MULTIPLE_TIME_BLOCKS;
                     }else if(driveShift.timeBlockId != NULL && matchingBlocks.size() ==0) { //HRP-14369 - only one time block but not matching fully
-                         /*driveShift.hasTimeBlockViolation = true;
-                         driveShift.timeBlockViolationMessage = skedConstants.EXCEPTION_CODE_OUT_OF_TIME_BLOCK;
-                         drive.hasTimeBlockViolation = true;*/
-
-                         drive.pendingActionReasonCode = skedConstants.EXCEPTION_CODE_OUT_OF_TIME_BLOCK;
-                         driveShift.contention = skedConstants.EXCEPTION_CODE_OUT_OF_TIME_BLOCK;
+                         
+                        drive.pendingActionReasonCode = skedConstants.CONTENTION_CODE_OUT_OF_TIME_BLOCK;
+                         driveShift.contention = skedConstants.CONTENTION_CODE_OUT_OF_TIME_BLOCK;
                     }else if(driveShift.timeBlockId == NULL ) { //HRP-14369 - multiple timeblocks
-                        /* driveShift.hasTimeBlockViolation = true;
-                         driveShift.timeBlockViolationMessage = skedConstants.EXCEPTION_CODE_MISSING_TIME_BLOCK;
-                         drive.hasTimeBlockViolation = true;*/
 
-                         driveShift.contention = skedConstants.EXCEPTION_CODE_MISSING_TIME_BLOCK;
-                         drive.pendingActionReasonCode = skedConstants.EXCEPTION_CODE_MISSING_TIME_BLOCK;
+                         driveShift.contention = skedConstants.CONTENTION_CODE_MISSING_TIME_BLOCK;
+                         drive.pendingActionReasonCode = skedConstants.CONTENTION_CODE_MISSING_TIME_BLOCK;
                     }
                 }
             }
