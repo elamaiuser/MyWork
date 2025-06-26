@@ -325,9 +325,7 @@ public class GenerateMobileDriveTest {
                 }
             }
         }
-        
-        // Verify drive-level violation flag
-            'Drive should have time block violation flag set if any shift has violation');*/
+
              
         Triggerhandler.clearAllBypasses();
 
