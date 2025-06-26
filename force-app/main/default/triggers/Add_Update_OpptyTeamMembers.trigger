@@ -5,6 +5,7 @@
 * ***********************************************************************************************************************************************
 * 01/03/2024                 Balaji N					 Logic for HRP-10569 (Method call AccountPortfolioAssignmentService.accTeamDateSyncOnAccPortUpdates to get the future team info)
 * 08/28/2024				 Balaji N					 Logic for HRP-13340
+* 20/06/2025                 Harika Bolisetti            Logic for HRP-15121
 ************************************************************************************************************************************************
 */
 trigger Add_Update_OpptyTeamMembers on UpdateOpptyTeamEvent__e (After Insert) {
@@ -55,6 +56,7 @@ trigger Add_Update_OpptyTeamMembers on UpdateOpptyTeamEvent__e (After Insert) {
             mapOfAcctsWithTeamMembers.put(atmRecord.AccountId,new List<AccountTeamMember>{atmRecord});     
         }
     }
+         System.debug('going');
     
     if(!mapOfAcctsWithTeamMembers.isEmpty()){
         //AccountTeamMemberService.addAcctTeamMembers_To_BloodDriveOpptyMembers(mapOfAcctsWithTeamMembers,true,Trigger.New.size());
@@ -70,13 +72,19 @@ trigger Add_Update_OpptyTeamMembers on UpdateOpptyTeamEvent__e (After Insert) {
                 mapOfAcctsWithTeamMembers.get(i).addAll(accIdFutureAccTeamMap.get(i));
             }
         }
-        //HRP-10569 End
-        Database.executeBatch(new BSF_Batch_OpportunityTeamSync(mapOfAcctsWithTeamMembers,Trigger.New.size(),startDate,endDate),Integer.Valueof(System.Label.OpportunityTeamSyncTriggerSize));//HRP-13340
+        //HRP-15121
+        if(!BSF_Utilities.metaDataupdate(null,null,null,'Opportunity_Team_Sync_Batch').By_Pass_Batch__c)
+        {
+            System.debug('HRP-Sync add_update 74:'+!BSF_Utilities.metaDataupdate(null,null,null,'Opportunity_Team_Sync_Batch').By_Pass_Batch__c);
+            //HRP-10569 End
+            Database.executeBatch(new BSF_Batch_OpportunityTeamSync(mapOfAcctsWithTeamMembers,Trigger.New.size(),startDate,endDate),Integer.Valueof(System.Label.OpportunityTeamSyncTriggerSize));//HRP-13340
+        }
+
     } 
         
     }
+
     
-   
     
     
 }

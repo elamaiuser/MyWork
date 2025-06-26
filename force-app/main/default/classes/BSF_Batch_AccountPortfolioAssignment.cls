@@ -39,20 +39,24 @@ global class BSF_Batch_AccountPortfolioAssignment implements Database.Batchable<
            
             //Capture start method entry in Error Log
             
-            /*BSF_Error_Log__c errorLog = new BSF_Error_Log__c(Process_Name__c='Assign Account to Portfolio',ApexClass__c='BSF_Batch_AccountPortfolioAssignment',Method__c='start',Type__c='Success',Error_Description__c='startDate ='+startDate+': endDate ='+endDate,Error_Description_Long__c='');
-             insert errorLog;*////HRP-14431
+           // BSF_Error_Log__c errorLog = new BSF_Error_Log__c(Process_Name__c='Assign Account to Portfolio',ApexClass__c='BSF_Batch_AccountPortfolioAssignment',Method__c='start',Type__c='Success',Error_Description__c='startDate ='+startDate+': endDate ='+endDate,Error_Description_Long__c='');
+           //  insert errorLog;*////HRP-14431
            
             if(taxoVerKey != null)
                 query = query + ' AND Version_Key__c = :taxoVerKey';
             else
                 query = query + ' AND createddate >= :startDate AND createddate <= :endDate';
-               //HRP-14431 
-            BSF_Error_Log__c errorLog = new BSF_Error_Log__c(Process_Name__c='Assign Account to Portfolio',ApexClass__c='BSF_Batch_AccountPortfolioAssignment',Method__c='start',Type__c='Success',
-                                                             Error_Description__c='Batch Process started',Error_Description_Long__c= query);
-            errorLogList.add(errorLog);
-            Database.SaveResult[] insertResult = Database.insert(errorLogList, false);
-            Taxo_Utilities.logErrors(insertResult,'Taxonomy Run','BSF_Batch_AccountPortfolioAssignment','Start','Error',
-                                     'Error occurred while inserting the error Record',BSF_Constants.BIO_RECRUITMENT_RECORD_TYPE,taxoVerKey);
+            
+            //HRP-14431 
+            //
+            //if(this.allowChaining == true){
+                BSF_Error_Log__c errorLog = new BSF_Error_Log__c(Process_Name__c='Assign Account to Portfolio',ApexClass__c='BSF_Batch_AccountPortfolioAssignment',Method__c='start',Type__c='Success',
+                                                                 Error_Description__c='Batch Process started',Error_Description_Long__c= query);
+                errorLogList.add(errorLog);
+                Database.SaveResult[] insertResult = Database.insert(errorLogList, false);
+                Taxo_Utilities.logErrors(insertResult,'Taxonomy Run','BSF_Batch_AccountPortfolioAssignment','Start','Error',
+                                         'Error occurred while inserting the error Record',BSF_Constants.BIO_RECRUITMENT_RECORD_TYPE,taxoVerKey);
+          //  }
             return Database.getQueryLocator(query);
         } catch (Exception e) {///HRP-14431
             // Log the error details in case of an exception
@@ -75,14 +79,33 @@ global class BSF_Batch_AccountPortfolioAssignment implements Database.Batchable<
     global void finish(Database.BatchableContext BC)
     {
         try {///HRP-14431
+            //Capture finish method entry in Error Log
+            //   BSF_Error_Log__c errorLog = new BSF_Error_Log__c(Process_Name__c='Assign Account to Portfolio',ApexClass__c='BSF_Batch_AccountPortfolioAssignment',Method__c='finish',Type__c='Success',Error_Description__c='startDate ='+startDate+': endDate ='+endDate,Error_Description_Long__c='');
+            //insert errorLog;
+            //
             //HRP-14431
             //Capture finish method entry in Error Log
-            List<BSF_Error_Log__c> errorLogList = new List<BSF_Error_Log__c>();
-            BSF_Error_Log__c errorLog = new BSF_Error_Log__c(Process_Name__c='Assign Account to Portfolio',ApexClass__c='BSF_Batch_AccountPortfolioAssignment',Method__c='finish',Type__c='Success',Error_Description__c='Batch Process Completed' ,Error_Description_Long__c='');
-            errorLogList.add(errorLog);//HRP-14431
-            Database.SaveResult[] insertResult = Database.insert(errorLogList, false);
-            Taxo_Utilities.logErrors(insertResult,'Taxonomy Run','BSF_Batch_AccountPortfolioAssignment','finish','Error',
-                                     'Error occurred while inserting the error Record',BSF_Constants.BIO_RECRUITMENT_RECORD_TYPE,taxoVerKey);
+           // if(this.allowChaining == true){
+            /*    List<BSF_Error_Log__c> errorLogList = new List<BSF_Error_Log__c>();
+                BSF_Error_Log__c errorLog = new BSF_Error_Log__c(Process_Name__c='Assign Account to Portfolio',ApexClass__c='BSF_Batch_AccountPortfolioAssignment',Method__c='finish',Type__c='Success',Error_Description__c='Batch Process Completed' ,Error_Description_Long__c='');
+                errorLogList.add(errorLog);//HRP-14431
+                Database.SaveResult[] insertResult = Database.insert(errorLogList, false);
+                Taxo_Utilities.logErrors(insertResult,'Taxonomy Run','BSF_Batch_AccountPortfolioAssignment','finish','Error',
+                                         'Error occurred while inserting the error Record',BSF_Constants.BIO_RECRUITMENT_RECORD_TYPE,taxoVerKey);*/
+                
+                // Publish a platform event instead of inserting BSF_Error_Log__c
+                Account_Portfolio_Error_Log_Event__e event = new Account_Portfolio_Error_Log_Event__e(
+                    Process_Name__c = 'Assign Account to Portfolio',
+                    ApexClass__c = 'BSF_Batch_AccountPortfolioAssignment',
+                    Method__c = 'finish',
+                    Type__c = 'Success',
+                    Error_Description__c = 'Batch Process Completed'
+                );
+                
+                // Use the EventBus to publish it
+                Database.SaveResult result = EventBus.publish(event);
+         //   }
+            System.debug('allowChaining'+allowChaining);
             //HRP-10890
             if(allowChaining == false){///HRP-14431
                 Datetime batchEndDate = system.now();
@@ -103,6 +126,13 @@ global class BSF_Batch_AccountPortfolioAssignment implements Database.Batchable<
             }
             //HRP-14431
             else{
+               
+                
+                Datetime batchEndDate = system.now();
+                BatchByPassSettings__mdt batchBypass = BSF_Utilities.metaDataupdate(null,batchEndDate,false,'Opportunity_Team_Sync_Batch');
+               System.debug('batchBypass'+batchBypass.By_Pass_Batch__c);
+               
+                   
                 Datetime startDateTime = Datetime.newInstance(Date.today(), Time.newInstance(0, 0, 0, 0));
                 // Get the user's time zone
                 TimeZone estTimeZone = TimeZone.getTimeZone('America/New_York');
@@ -112,9 +142,11 @@ global class BSF_Batch_AccountPortfolioAssignment implements Database.Batchable<
                 Integer batchSize = Taxo_Utilities.getBatchSize(BSF_Constants.BIO_RECRUITMENT_RECORD_TYPE, 'BSF_Batch_OpportunityTeamSync');   
                 BSF_Batch_OpportunityTeamSync batch = new BSF_Batch_OpportunityTeamSync(startDateTime, System.Now(), taxoVerKey);
                 database.executeBatch(batch, batchSize);
+               
             }
             //HRP-14431
-        }catch (Exception e) {  Taxo_Utilities.logErrorForException(e, 'BSF_Batch_AccountPortfolioAssignment', 'Finish Method', e.getMessage(), e.getMessage(), 'Taxonomy_Run__c', BSF_Constants.BIO_RECRUITMENT_RECORD_TYPE,taxoVerKey);
+        }catch (Exception e) {
+            Taxo_Utilities.logErrorForException(e, 'BSF_Batch_AccountPortfolioAssignment', 'Finish Method', e.getMessage(), e.getMessage(), 'Taxonomy_Run__c', BSF_Constants.BIO_RECRUITMENT_RECORD_TYPE,taxoVerKey);
         }
     }
 }
