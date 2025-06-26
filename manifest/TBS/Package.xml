@@ -14,6 +14,7 @@
     </types>
     <types>
         <members>autoMapper</members>
+        <members>dataService</members>
         <name>LightningComponentBundle</name>
     </types>
     <types>  
