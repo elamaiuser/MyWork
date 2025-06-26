@@ -280,9 +280,9 @@ public class GenerateMobileDriveTest {
         
         // Query created drive and drive shifts once
         List<sked_Drive__c> drives = [
-            SELECT Id, sked_Drive_Date__c, sked_Collection_Operation__c, sked_has_TimeBlock_Violation__c,
+            SELECT Id, sked_Drive_Date__c, sked_Collection_Operation__c, sked_Pending_Action_Reason_Code__c,
                    (SELECT Id, sked_Time_Block__c, sked_Start_Time__c, sked_End_Time__c, 
-                           sked_has_TimeBlock_Violation__c, sked_TimeBlock_Violation_Message__c
+                           sked_Contention__c 
                     FROM sked_Drive_Shifts__r)
             FROM sked_Drive__c 
             WHERE sked_Opportunity__c = :mobileOpportunity.Id
@@ -303,32 +303,29 @@ public class GenerateMobileDriveTest {
             // Scenario 1: Full match
             if(shift.sked_Start_Time__c >= Time.newInstance(5, 0, 0, 0) && 
                shift.sked_End_Time__c <= Time.newInstance(18, 0, 0, 0)) {
-                System.assertEquals(false, shift.sked_has_TimeBlock_Violation__c, 
+                System.assert (shift.sked_Contention__c == null , 
                     'Drive shift within exact match time block should not have violation');
-                System.assertNotEquals(null, shift.sked_Time_Block__c, 
+                System.assert( shift.sked_Time_Block__c !=null, 
                     'Drive shift should be associated with exact match time block');
             }
             
             // Scenario 2: Day-only match or no match
             else {
-                System.assertEquals(true, shift.sked_has_TimeBlock_Violation__c, 
+                System.assert(shift.sked_Contention__c != null, 
                     'Drive shift with day-only match or no match should have violation');
                 if(shift.sked_Start_Time__c >= Time.newInstance(4, 0, 0, 0) && 
                    shift.sked_End_Time__c <= Time.newInstance(22, 0, 0, 0)) {
-                    System.assertEquals(skedConstants.EXCEPTION_CODE_OUT_OF_TIME_BLOCK, 
-                        shift.sked_TimeBlock_Violation_Message__c, 
+                    System.assertEquals(skedConstants.CONTENTION_CODE_OUT_OF_TIME_BLOCK, 
+                        shift.sked_Contention__c, 
                         'Drive shift should have out of time block violation message');
                 } else {
-                    System.assertEquals(skedConstants.EXCEPTION_CODE_MISSING_TIME_BLOCK, 
-                        shift.sked_TimeBlock_Violation_Message__c, 
+                    System.assertEquals(skedConstants.CONTENTION_CODE_MISSING_TIME_BLOCK, 
+                        shift.sked_Contention__c, 
                         'Drive shift should have missing time block violation message');
                 }
             }
         }
-        
-        // Verify drive-level violation flag
-        /*System.assertEquals(true, drives[0].sked_has_TimeBlock_Violation__c, 
-            'Drive should have time block violation flag set if any shift has violation');*/
+
              
         Triggerhandler.clearAllBypasses();
 

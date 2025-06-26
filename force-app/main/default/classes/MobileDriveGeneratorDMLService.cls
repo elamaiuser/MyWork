@@ -815,7 +815,7 @@ public with sharing class MobileDriveGeneratorDMLService {
         public List<DMLDriveShift> driveShifts;
         public Boolean hasError = false;
         public Boolean impactCO = false; //HRP-9945
-        public Boolean hasTimeBlockViolation=false; //HRP-14369
+        public String pendingActionReasonCode; //HRp-14369
         
         public DMLDrive(Opportunity opp) {
             DMLSchedulingBounds schedulingBounds = reduceSchedulingBoundsFromOpportunities(new List<Opportunity>{opp});
@@ -888,7 +888,7 @@ public with sharing class MobileDriveGeneratorDMLService {
                 sked_APT_Quantity__c = this.aptQuantity, //HRP-13190
                 sked_Redcross_Volunteer_Required__c = this.redcrossVolunteerRequired, //HRP-13146
                 sked_Redcross_Volunteer_Quantity__c = this.redcrossVolunteerQuantity, //HRP-13146
-                sked_has_TimeBlock_Violation__c = this.hasTimeBlockViolation //HRP-14369
+                sked_Pending_Action_Reason_Code__c = pendingActionReasonCode//HRP-14369
             );
             return skedDrive;
         }
@@ -945,8 +945,8 @@ public with sharing class MobileDriveGeneratorDMLService {
         public List<DriveGenerationUtil.TimeConfigurationModel> timeConfigurations; //HRP-11908
         public List<DMLSlot> slots;
         public String timeBlockId; //HRP-14389
-        public Boolean hasTimeBlockViolation=false; //HRP-14369
-        public String timeBlockViolationMessage; //HRP-14369
+        public String contention; //HRP-14369
+
         
         public DMLDriveShift() {}
         
@@ -969,8 +969,7 @@ public with sharing class MobileDriveGeneratorDMLService {
             }
             this.jobs = jobList;
             this.timeBlockId = driveShift.sked_Time_Block__c; //HRP-14389
-            this.hasTimeBlockViolation = driveShift.sked_has_TimeBlock_Violation__c; //HRP-14369
-            this.timeBlockViolationMessage = driveShift.sked_TimeBlock_Violation_Message__c; //HRP-14369
+            this.contention = driveShift.sked_Contention__c;//HRP-14369
         }
         
         public DMLDriveShift(DMLDriveShift source) {
@@ -997,8 +996,7 @@ public with sharing class MobileDriveGeneratorDMLService {
             this.drive = source.drive;
             this.noTravelTime = source.noTravelTime; //HRP-11419
             this.timeBlockId = source.timeBlockId; //HRP-14389
-            this.hasTimeBlockViolation = source.hasTimeBlockViolation; //HRP-14369
-            this.timeBlockViolationMessage = source.timeBlockViolationMessage; //HRP-14369
+            this.contention = source.contention;//HRP-14369
 
             
             if (source.jobs != NULL && !source.jobs.isEmpty()) {
@@ -1051,8 +1049,7 @@ public with sharing class MobileDriveGeneratorDMLService {
                 sked_Total_Products_Projected__c = this.totalProductsProjected != null ? this.totalProductsProjected.setScale(2) : 0.00,
                 sked_Max_Donor_Capacity__c = this.staffCapacity,
                 sked_Time_Block__c = this.timeBlockId, //HRP-14389
-                sked_has_TimeBlock_Violation__c = this.hasTimeBlockViolation, //HRP-14369
-                sked_TimeBlock_Violation_Message__c = this.timeBlockViolationMessage //HRP-14369
+                sked_Contention__c = this.contention
             );
             return skedDriveShift;
         }
