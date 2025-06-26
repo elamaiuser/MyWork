@@ -35,15 +35,14 @@
 		<name>WorkflowRule</name>
 	</types>
 	<types>
-		<members>LeadService</members>
-        <!--LeadServiceTests test class is not modified, only kept for tracking pupose  -->
+		<members>LeadService</members>        
 		<members>LeadServiceTests</members>
 		<members>FutureDrivesController</members>
 		<members>FutureDrivesController_Test</members>
-		<members>PublicityReportNewPortfoliosController</members>
-		<!--publicityReportNewPortfoliosTest test class is not modified, only kept for tracking pupose  -->
+		<members>PublicityReportNewPortfoliosController</members>		
 		<members>publicityReportNewPortfoliosTest</members>
 		<members>AccountService</members>
+		<members>skedRacController</members>
 		<name>ApexClass</name>
 	</types>
 	<types>
