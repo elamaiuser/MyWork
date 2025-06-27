@@ -1482,7 +1482,7 @@ class MobileGenerator extends BaseGenerator {
       } else {
         if(this.drive.preferSystemGeneratedVehicles) {
           this.drive.totalVehicleRequested = totalVehicleRequested;
-          this.drive.nnumberOfVehicles = totalVehicleRequested;
+          this.drive.numberOfVehicles = totalVehicleRequested;//HRP-15151
         } else {
           this.drive.totalVehicleRequested = this.drive.numberOfVehicles;
         }
@@ -1702,7 +1702,7 @@ class MobileGenerator extends BaseGenerator {
 
     this.proposeDriveShifts({
       skipCalculateResourceRoles: true,
-      skipVehicleCalculation: false,
+      skipVehicleCalculation: true,//HRP-15151
       backupAndRestoreDualRoles: true,
       skipGenerateSlots: false
     })
