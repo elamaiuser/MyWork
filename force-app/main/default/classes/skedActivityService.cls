@@ -7,7 +7,10 @@ global class skedActivityService extends skedEventService {
     }
 
     protected virtual override skedDataService.saveResult preSaveRecord(List<skedModels.modelBase> models) {
-        List<skedModels.activity> activities = (List<skedModels.activity>)models;
+        Type modelListType = Type.forName('List<skedModels.' + this.objectType + '>');
+        List<skedModels.modelBase> newModels = (List<skedModels.modelBase>)modelListType.newInstance();
+
+        List<skedModels.activity> activities = (List<skedModels.activity>)newModels;
         for(skedModels.activity activity : activities) {
             if(activity.driveTypes != NULL && !activity.driveTypes.isEmpty()) {
                 activity.notes = 'Selected Drive Type(s) : '+String.join(activity.driveTypes, ', ')+ '. \n'+activity.notes;
@@ -20,7 +23,10 @@ global class skedActivityService extends skedEventService {
     }
 
     protected virtual override void postSaveRecord(List<skedModels.modelBase> models, List<sObject> records) {
-        List<skedModels.activity> activityModels = (List<skedModels.activity>) models;
+        Type modelListType = Type.forName('List<skedModels.' + this.objectType + '>');
+        List<skedModels.modelBase> newModels = (List<skedModels.modelBase>)modelListType.newInstance();
+
+        List<skedModels.activity> activityModels = (List<skedModels.activity>)newModels;
         Map<Id, sked__Activity__c> map_activityId_activityRecords = new Map<Id, sked__Activity__c>((List<sked__Activity__c>) records);   
         
         //Query existing activity Ids in case of edit and delete existing activity COs
