@@ -100,5 +100,9 @@
 		<members>sked__Resource__c.Validate_AddressReferencedforScheduling</members>
 		<name>ValidationRule</name>
 	</types>
+	<types>
+		<members>Account.Upgrade_Account</members>
+		<name>QuickAction</name>
+	</types>
     <version>63.0</version>
 </Package>
