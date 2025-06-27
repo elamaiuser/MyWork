@@ -43,6 +43,8 @@
 		<members>publicityReportNewPortfoliosTest</members>
 		<members>AccountService</members>
 		<members>skedRacController</members>
+		<members>skedActivityService</members>
+		<members>skedActivityService_Test</members>
 		<name>ApexClass</name>
 	</types>
 	<types>
