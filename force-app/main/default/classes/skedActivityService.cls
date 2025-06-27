@@ -9,6 +9,7 @@ global class skedActivityService extends skedEventService {
     protected virtual override skedDataService.saveResult preSaveRecord(List<skedModels.modelBase> models) {
         Type modelListType = Type.forName('List<skedModels.' + this.objectType + '>');
         List<skedModels.modelBase> newModels = (List<skedModels.modelBase>)modelListType.newInstance();
+        newModels.addAll(models);
 
         List<skedModels.activity> activities = (List<skedModels.activity>)newModels;
         for(skedModels.activity activity : activities) {
@@ -25,6 +26,7 @@ global class skedActivityService extends skedEventService {
     protected virtual override void postSaveRecord(List<skedModels.modelBase> models, List<sObject> records) {
         Type modelListType = Type.forName('List<skedModels.' + this.objectType + '>');
         List<skedModels.modelBase> newModels = (List<skedModels.modelBase>)modelListType.newInstance();
+        newModels.addAll(models);
 
         List<skedModels.activity> activityModels = (List<skedModels.activity>)newModels;
         Map<Id, sked__Activity__c> map_activityId_activityRecords = new Map<Id, sked__Activity__c>((List<sked__Activity__c>) records);   
