@@ -53,7 +53,7 @@
                     <div if:true={showTimeBlockSelect} class="slds-form-element slds-m-right_x-small">
                         <c-slwc-select
                             name="timeBlock"
-                            label="Select Time Block"
+                            label="Time Block"
                             selected-value={filter.selectedTimeBlockId}
                             options={timeBlockOptions}
                             read-only={showSpinner}
@@ -92,7 +92,7 @@
                 <template if:true={requireSelectTimeBlock}>
                     <div class="slds-align_absolute-center slds-p-around_small">
                         <lightning-icon icon-name="utility:warning" size="x-small" alternative-text="Warning!" title="Warning" class="slds-m-right_xx-small"></lightning-icon>
-                        <span>Please select 1 Time Block.</span>
+                        <span>Please select 1 Time Block</span>
                     </div>
                 </template>
                 <template if:false={requireSelectTimeBlock}>
