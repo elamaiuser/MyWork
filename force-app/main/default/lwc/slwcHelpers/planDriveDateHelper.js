@@ -6,6 +6,7 @@ import { DriveHelper, SlwcDrivesGenerator } from 'c/slwcDriveGenerator';
 import { isNullOrEmpty } from 'c/slwcUtils';
 
 export default class slwcPlanDriveHelper {
+  timeBlockId;
   calendarSettings;
   collectionOperations;
   opportunity;
@@ -14,7 +15,7 @@ export default class slwcPlanDriveHelper {
   drives;
   driveGeneratorInstanceMap;
   accountAvailabilityPreferences;
-
+  collectionOperationTimeBlocks;
   mapDateIsoCollectionOperation = {};
   mapCollectionOperationData = {}
 
@@ -25,7 +26,7 @@ export default class slwcPlanDriveHelper {
     return slwcDateUtils.getInstance(this.calendarSettings);
   }
 
-  constructor(calendarSettings, ) {
+  constructor(calendarSettings) {
     this.calendarSettings = calendarSettings;
   }
 
@@ -34,14 +35,17 @@ export default class slwcPlanDriveHelper {
     collectionOperations = [],
     startDate,
     endDate,
+    timeBlockId,
     driveLimits = [],
     staffingConstraints = [],
     mapEquipmentsByDate = {},
     mapVehiclesByDate = {},
-    accountAvailabilityPreferences = []
+    accountAvailabilityPreferences = [],
+    collectionOperationTimeBlocks = [],
   }) => {
     return Promise.resolve()
     .then(() => {
+      this.timeBlockId = timeBlockId;
       this.opportunity = opportunity;
       this.collectionOperations = collectionOperations;
       this.driveLimits = driveLimits;
@@ -49,7 +53,7 @@ export default class slwcPlanDriveHelper {
       this.mapEquipmentsByDate = mapEquipmentsByDate;
       this.mapVehiclesByDate = mapVehiclesByDate;
       this.accountAvailabilityPreferences = accountAvailabilityPreferences;
-
+      this.collectionOperationTimeBlocks = collectionOperationTimeBlocks;
       this.drives = this.generateDrives(this.opportunity, {
         startDate,
         endDate
@@ -370,6 +374,12 @@ export default class slwcPlanDriveHelper {
       return isNullOrEmpty(driveLimit) || driveLimit - sameDateDrives.length > 0;
   }
 
+  checkDriveUseTimeBlock = (drive) => {
+    if(!this.timeBlockId) return false;
+    if(this.driveHelper.isFixedSiteDrive(drive)) return false;
+    return true;
+  }
+
   generateDayStatusMapping = (startDate, endDate) => {
     if (!startDate || !endDate) return {};
     return this.generateDayStatusMappingFromDriveList(this.drives);
@@ -381,6 +391,20 @@ export default class slwcPlanDriveHelper {
     const dayStatusMapping = {};
 
     drives.forEach((drive) => {
+      if(this.checkDriveUseTimeBlock(drive)) {
+        const availableCOTimeBlocks = this.driveHelper.findAvailableCOTimeBlocks(drive, {
+          collectionOperationTimeBlocks: this.collectionOperationTimeBlocks
+        });
+        const matchSelectedTimeBlock = availableCOTimeBlocks.find(COTimeBlock => COTimeBlock.timeBlockId === this.timeBlockId);
+        if(!matchSelectedTimeBlock) {
+          dayStatusMapping[drive.driveDate] = {
+            dateIso: drive.driveDate,
+            isNotMatchTimeBlock: true
+          }
+          return;
+        }
+      }
+
       const driveGeneratorInstance = this.driveGeneratorInstanceMap[drive.id] || {};
       const driveMasterData = driveGeneratorInstance.masterData;
       const driveLimit = this.findDriveLimitByDay(drive, this.driveLimits);
@@ -494,6 +518,7 @@ export default class slwcPlanDriveHelper {
       dayStatusMapping[drive.driveDate] = {
         dateIso: drive.driveDate,
         isAvailable: isAvailable,
+        isNotMatchTimeBlock: false,
         isDriveLimitValid,
         is2RBCLimitValid,
         isDOTLimitValid,

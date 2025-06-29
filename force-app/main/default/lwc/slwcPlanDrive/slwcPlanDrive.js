@@ -2,19 +2,25 @@ import { LightningElement, track, wire, api } from 'lwc';
 import { subscribe, unsubscribe, onError, setDebugFlag, isEmpEnabled } from 'lightning/empApi';
 import { DateTime } from 'c/luxon';
 import { fireEvent } from 'c/pubsub';
-import { first } from 'c/lodash';
+import { first, uniqBy } from 'c/lodash';
 import { CurrentPageReference } from 'lightning/navigation';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import { refreshLightningPage } from 'c/slwcUtils';
 import * as autoMapper from 'c/autoMapper';
-import { sObjectType, dataService, opportunityService, opportunityQueryModel, accountService, accountQueryModel, locationService, locationQueryModel, resourceQueryModel, resourceService } from 'c/dataService';
-import { PLAN_DRIVE_ERROR_MESSAGE_MAP, OPPORTUNITY_STAGE, DRIVE_STATUS } from 'c/slwcConstants';
+import { sObjectType, dataService, collectionOperationTimeBlockService, collectionOperationTimeBlockQueryModel, opportunityService, opportunityQueryModel, accountService, accountQueryModel, locationService, locationQueryModel, resourceQueryModel, resourceService } from 'c/dataService';
+import { PLAN_DRIVE_ERROR_MESSAGE_MAP, DRIVE_STATUS } from 'c/slwcConstants';
 import * as slwcUtils from 'c/slwcUtils';
+import { DriveHelper } from 'c/slwcDriveGenerator';
 
 const DRIVE_ERRORS = {
   MISSING_REQUIRED_FIELDS: 'MISSING_REQUIRED_FIELDS'
 }
+
+const NO_TIME_BLOCK = 'no-timeblock';
+
 export default class SlwcPlanDrive extends LightningElement {
+  driveHelper = new DriveHelper();
+
   @api recordId;
   // @api recordId = '0062i000008JSa7AAG';
 
@@ -27,9 +33,31 @@ export default class SlwcPlanDrive extends LightningElement {
   @track masterData = {};
   @track driveMissingFields = [];
   @track filter = {
-    selectedMonth: null
+    selectedMonth: null,
+    selectedTimeBlockId: ''
   }
   @track confirmModalData = {};
+  @track timeBlockOptions = [];
+
+  get isMobileDrive() {
+    return this.driveHelper.isMobileDrive(this.opportunity);
+  }
+
+  get showTimeBlockSelect() {
+    if(!this.isMobileDrive) return false;
+    return this.timeBlockOptions.length > 0;
+  }
+
+  get requireSelectTimeBlock() {
+    if(!this.showTimeBlockSelect) return false;
+
+    return !this.filter.selectedTimeBlockId;
+  }
+
+  get selectedTimeBlockId() {
+    if(this.filter.selectedTimeBlockId === NO_TIME_BLOCK) return '';
+    return this.filter.selectedTimeBlockId;
+  }
 
   connectedCallback() {
     //init settings
@@ -175,6 +203,30 @@ export default class SlwcPlanDrive extends LightningElement {
     .finally(this.hideLoading);
   }
 
+  retrieveTimeBlocks = ({
+    collectionOperationId
+  }) => {
+    if (collectionOperationId) {
+      let service = new collectionOperationTimeBlockService();
+      let queryModel = new collectionOperationTimeBlockQueryModel();
+      queryModel.collectionOperationIds = [collectionOperationId];
+
+      return service.query(queryModel)
+        .then((result = []) => {
+           this.timeBlockOptions = [{
+            label: 'No Timeblock',
+            value: NO_TIME_BLOCK
+           }, ...uniqBy(result.map(COTimeBlock => {
+              return {
+                label: `${COTimeBlock.timeBlock.name} (${this.formatTime(COTimeBlock.timeBlock.startTime)} - ${this.formatTime(COTimeBlock.timeBlock.endTime)})`,
+                value: COTimeBlock.timeBlock.id
+              };
+           }), item => item.value)
+         ]
+        })
+    }
+  }
+
   retrieveCustomSettings() {
     let settingKeys = ["resourceRoleGroups", "lunchBreakSettings"];
     this.showLoading();
@@ -227,6 +279,9 @@ export default class SlwcPlanDrive extends LightningElement {
         ]);
       })
       .then(() => {
+        return this.retrieveTimeBlocks(this.drive)
+      })
+      .then(() => {
         this.driveMissingFields = this.checkDriveMissingFields(this.opportunity);
         if(this.driveMissingFields.length > 0) {
           throw {
@@ -250,6 +305,11 @@ export default class SlwcPlanDrive extends LightningElement {
 
   handleOnMonthChanged(event) {
     this.filter.selectedMonth = event.detail.selectedDate;
+  }
+
+  handleTimeBlockChanged = (event) => {
+    const value = slwcUtils.getValueFromEvent(event);
+    this.filter.selectedTimeBlockId = value ?? '';
   }
 
   forceRefresh() {
@@ -350,5 +410,9 @@ export default class SlwcPlanDrive extends LightningElement {
 
   hideConfirmModal() {
     this.confirmModalData = {};
+  }
+
+  formatTime(time) {
+    return DateTime.fromFormat(time, 'HH:mm:ss.SSS').toFormat('h:mm a');
   }
 }
