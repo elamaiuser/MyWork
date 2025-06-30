@@ -487,7 +487,7 @@ export default class slwcPlanDriveHelper {
 
       let requiredResources = 0;
       drive.driveShifts.forEach(driveShift => {
-        const isTimeBlockValid = timeBlockIds.length > 0 ? timeBlockIds.includes(driveShift.timeBlockId) : true;
+        const isTimeBlockValid = (timeBlockIds.length > 0 && driveShift.timeBlockId) ? timeBlockIds.includes(driveShift.timeBlockId) : true;
         if(!isTimeBlockValid) return;
 
         driveShift.jobs.forEach(job => {
