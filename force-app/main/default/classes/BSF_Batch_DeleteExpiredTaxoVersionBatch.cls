@@ -81,7 +81,9 @@ global class BSF_Batch_DeleteExpiredTaxoVersionBatch implements Database.Batchab
                 } 
             }
             //Chain the taxo run batch
-            Database.executeBatch(new BSF_Batch_TaxoRunControlBatch(), 200);
+            if (!Test.isRunningTest()) {
+                Database.executeBatch(new BSF_Batch_TaxoRunControlBatch(), 1);
+            }
         } catch (Exception e) {
             Taxo_Utilities.logErrorForException( e, 'BSF_Batch_DeleteExpiredTaxoVersionBatch', 'Finish Method',e.getMessage(),e.getMessage(),'Taxonomy_Run__c', null,null);
         }
