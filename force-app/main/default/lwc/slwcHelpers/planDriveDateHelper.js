@@ -6,7 +6,7 @@ import { DriveHelper, SlwcDrivesGenerator } from 'c/slwcDriveGenerator';
 import { isNullOrEmpty } from 'c/slwcUtils';
 
 export default class slwcPlanDriveHelper {
-  timeBlockId;
+  timeBlockIds;
   calendarSettings;
   collectionOperations;
   opportunity;
@@ -35,7 +35,7 @@ export default class slwcPlanDriveHelper {
     collectionOperations = [],
     startDate,
     endDate,
-    timeBlockId,
+    timeBlockIds = [],
     driveLimits = [],
     staffingConstraints = [],
     mapEquipmentsByDate = {},
@@ -45,7 +45,7 @@ export default class slwcPlanDriveHelper {
   }) => {
     return Promise.resolve()
     .then(() => {
-      this.timeBlockId = timeBlockId;
+      this.timeBlockIds = timeBlockIds;
       this.opportunity = opportunity;
       this.collectionOperations = collectionOperations;
       this.driveLimits = driveLimits;
@@ -117,11 +117,12 @@ export default class slwcPlanDriveHelper {
   findDriveLimitByDay = ({
     collectionOperationId,
     collectionOperationIds = [],
-    timeBlockIds = [],
+    timeBlockIds: _timeBlockIds,
     driveDate
   }, driveLimits = [], type = null) => {
     if (!collectionOperationId && !collectionOperationIds.length) return null;
 
+    const timeBlockIds = (_timeBlockIds !== undefined ? _timeBlockIds : this.timeBlockIds) ?? [];
     const dayOfWeek = DateTime.fromFormat(driveDate, 'yyyy-MM-dd').toFormat('cccc');
     let driveLimit = null;
     (driveLimits || []).filter(item => {
@@ -132,7 +133,7 @@ export default class slwcPlanDriveHelper {
         collectionOperationValid = collectionOperationIds.includes(item.collectionOperationId);
       }
 
-      let timeBlockValid = !timeBlockIds.length || timeBlockIds.includes(item.timeBlockId);
+      let timeBlockValid = timeBlockIds.length > 0 ? timeBlockIds.includes(item.timeBlockId) : !item.timeBlockId;
 
       if (!type) {
         return collectionOperationValid && timeBlockValid && (!item.type || item.type === OPERATION_DRIVE_LIMIT_TYPE.DRIVE_LIMIT);
@@ -161,12 +162,13 @@ export default class slwcPlanDriveHelper {
     return driveLimit;
   }
 
-  findStaffingConstraintByDay = (dateIso, staffingConstraints) => {
+  findStaffingConstraintByDay = (dateIso, timeBlockIds = [], staffingConstraints) => {
     if (!dateIso) return 0;
 
     let foundItem = (staffingConstraints || []).find(item => {
+      const isTimeBlockValid = timeBlockIds.length > 0 ? timeBlockIds.includes(item.timeBlockId) : !item.timeBlockId;
       const isDateRangeValid = item.dateOfConstraint === dateIso;
-      return isDateRangeValid;
+      return isTimeBlockValid && isDateRangeValid;
     })
 
     return foundItem;
@@ -203,22 +205,32 @@ export default class slwcPlanDriveHelper {
     sameDateDrives = [], 
     sameDateActivities = []
   }, staffingConstraints = []) => {
-    const staffingConstraint = this.findStaffingConstraintByDay(drive.driveDate, staffingConstraints);
+    const staffingConstraint = this.findStaffingConstraintByDay(drive.driveDate, this.timeBlockIds, staffingConstraints);
     const allResources = staffingConstraint ? staffingConstraint.totalStaffConstraints : 0;
     let driveResources = 0;
     sameDateDrives.forEach((drive) => {
       if (this.driveHelper.isFixedSiteDrive(this.opportunity) === this.driveHelper.isFixedSiteDrive(drive)) {
-        driveResources += drive.totalStaffRequested || 0;
+        let totalStaffRequested = drive.totalStaffRequested || 0;
+        if(this.checkDriveUseTimeBlock(drive)) {
+          totalStaffRequested = 0;
+          drive.driveShifts?.forEach(driveShift => {
+            if (this.timeBlockIds.includes(driveShift.timeBlockId)) {
+              totalStaffRequested += driveShift.staffSetup
+            }
+          })
+        }
+        driveResources += totalStaffRequested;
       }
     });
     
     let activityResources = 0;
     sameDateActivities.forEach((activity) => {
-      if (this.driveHelper.isFixedSiteDrive(this.opportunity)) {
-        activityResources += activity.fixedSiteStaffQuantity || 0;
-      }
-      else {
-        activityResources += activity.mobileStaffQuantity || 0;
+      if(!this.timeBlockIds?.length || this.timeBlockIds.includes(activity.timeBlockId)) {
+        if (this.driveHelper.isFixedSiteDrive(this.opportunity)) {
+          activityResources += activity.fixedSiteStaffQuantity || 0;
+        } else {
+          activityResources += activity.mobileStaffQuantity || 0;
+        }
       }
     });
     return allResources - driveResources - activityResources;
@@ -367,15 +379,16 @@ export default class slwcPlanDriveHelper {
   }
 
   checkDriveLimitValid = (drive, driveLimit, sameDateDrives) => {
-      if (this.driveHelper.isFixedSiteDrive(drive)) {
-        return true;
-      }
+    if (this.driveHelper.isFixedSiteDrive(drive)) {
+      return true;
+    }
 
-      return isNullOrEmpty(driveLimit) || driveLimit - sameDateDrives.length > 0;
+    if (isNullOrEmpty(driveLimit)) return true;
+    return driveLimit - sameDateDrives.length > 0;
   }
 
   checkDriveUseTimeBlock = (drive) => {
-    if(!this.timeBlockId) return false;
+    if(!this.timeBlockIds.length) return false;
     if(this.driveHelper.isFixedSiteDrive(drive)) return false;
     return true;
   }
@@ -388,6 +401,7 @@ export default class slwcPlanDriveHelper {
   generateDayStatusMappingFromDriveList = (drives = []) => {
     if (!drives || !drives.length) return {};
 
+    const timeBlockIds = this.timeBlockIds;
     const dayStatusMapping = {};
 
     drives.forEach((drive) => {
@@ -395,7 +409,7 @@ export default class slwcPlanDriveHelper {
         const availableCOTimeBlocks = this.driveHelper.findAvailableCOTimeBlocks(drive, {
           collectionOperationTimeBlocks: this.collectionOperationTimeBlocks
         });
-        const matchSelectedTimeBlock = availableCOTimeBlocks.find(COTimeBlock => COTimeBlock.timeBlockId === this.timeBlockId);
+        const matchSelectedTimeBlock = availableCOTimeBlocks.find(COTimeBlock => this.timeBlockIds.includes(COTimeBlock.timeBlockId));
         if(!matchSelectedTimeBlock) {
           dayStatusMapping[drive.driveDate] = {
             dateIso: drive.driveDate,
@@ -411,22 +425,43 @@ export default class slwcPlanDriveHelper {
       const operational2RBCLimit = this.findDriveLimitByDay(drive, this.driveLimits, OPERATION_DRIVE_LIMIT_TYPE.x2RBC_LIMIT);
       const operationalDOTLimit = this.findDriveLimitByDay(drive, this.driveLimits, OPERATION_DRIVE_LIMIT_TYPE.DOT_LIMIT);
       const operationalCDLLimit = this.findDriveLimitByDay(drive, this.driveLimits, OPERATION_DRIVE_LIMIT_TYPE.CDL_LIMIT);
+
       const sameDateDrives = (driveMasterData.sameDateDrives || []).filter(drive => {
         return [DRIVE_STATUS.SYSTEM_GENERATED, DRIVE_STATUS.TENTATIVE, DRIVE_STATUS.CONFIRMED, DRIVE_STATUS.HOLD].includes(drive.status);
       });
       const sameDateMobileDrives = sameDateDrives.filter(drive => {
         return !this.driveHelper.isFixedSiteDrive(drive);
       });
+      
+      const sameTimeBlockMobileDrives = [];
+      sameDateMobileDrives.forEach(drive => {
+        const existed = sameTimeBlockMobileDrives.find(item => item.key === drive.key);
+        if(existed) return;
 
-      const isDriveLimitValid = this.checkDriveLimitValid(drive, driveLimit, sameDateMobileDrives);
+        drive.driveShifts.forEach(driveShift => {
+          if(timeBlockIds.includes(driveShift.timeBlockId)) {
+            sameTimeBlockMobileDrives.push(drive);
+          }
+        })
+      })
+      
+      const isDriveLimitValid = this.checkDriveLimitValid(drive, driveLimit, (
+        timeBlockIds.length > 0 ? sameTimeBlockMobileDrives : sameDateMobileDrives
+      ));
 
-      const required2RBC = sum(sameDateMobileDrives.map((drive) => (drive.totalEquipmentRequested || 0)));
+      const required2RBC = sum((
+        timeBlockIds.length > 0 ? sameTimeBlockMobileDrives : sameDateMobileDrives
+      ).map((drive) => (drive.totalEquipmentRequested || 0)));
       const is2RBCLimitValid = isNullOrEmpty(operational2RBCLimit) || operational2RBCLimit - required2RBC > 0;
 
-      const requiredDOT = sum(sameDateMobileDrives.map((drive) => (drive.noOfAllocatedDOTVehicles || 0)));
+      const requiredDOT = sum((
+        timeBlockIds.length > 0 ? sameTimeBlockMobileDrives : sameDateMobileDrives
+      ).map((drive) => (drive.noOfAllocatedDOTVehicles || 0)));
       const isDOTLimitValid = isNullOrEmpty(operationalDOTLimit) || operationalDOTLimit - requiredDOT > 0;
 
-      const requiredCDL = sum(sameDateMobileDrives.map((drive) => (drive.noOfAllocatedCDLVehicles || 0)));
+      const requiredCDL = sum((
+        timeBlockIds.length > 0 ? sameTimeBlockMobileDrives : sameDateMobileDrives
+      ).map((drive) => (drive.noOfAllocatedCDLVehicles || 0)));
       const isCDLLimitValid = isNullOrEmpty(operationalCDLLimit) || operationalCDLLimit - requiredCDL > 0;
 
       const availableResources = this.calculateAvailableResources(drive, {
@@ -452,6 +487,9 @@ export default class slwcPlanDriveHelper {
 
       let requiredResources = 0;
       drive.driveShifts.forEach(driveShift => {
+        const isTimeBlockValid = timeBlockIds.length > 0 ? timeBlockIds.includes(driveShift.timeBlockId) : true;
+        if(!isTimeBlockValid) return;
+
         driveShift.jobs.forEach(job => {
           if (job.resourceRole) {
             requiredResources += (job.quantity || 0);

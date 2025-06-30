@@ -302,7 +302,7 @@ export default class SlwcPlanDriveBookingGrid extends LightningElement {
           collectionOperations: this.collectionOperations,
           startDate: startDate,
           endDate: endDate,
-          timeBlockId: this.selectedTimeBlockId,
+          timeBlockIds: this.selectedTimeBlockId ? [this.selectedTimeBlockId] : [],
           driveLimits: driveLimitResult,
           staffingConstraints: staffingConstraints,
           mapEquipmentsByDate,

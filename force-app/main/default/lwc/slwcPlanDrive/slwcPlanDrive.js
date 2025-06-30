@@ -39,12 +39,8 @@ export default class SlwcPlanDrive extends LightningElement {
   @track confirmModalData = {};
   @track timeBlockOptions = [];
 
-  get isMobileDrive() {
-    return this.driveHelper.isMobileDrive(this.opportunity);
-  }
-
   get showTimeBlockSelect() {
-    if(!this.isMobileDrive) return false;
+    if(!this.driveHelper.isMobileDrive(this.opportunity)) return false;
     return this.timeBlockOptions.length > 0;
   }
 
