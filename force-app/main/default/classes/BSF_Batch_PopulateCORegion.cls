@@ -221,7 +221,7 @@ global class BSF_Batch_PopulateCORegion implements Database.Batchable<sObject>,D
             Integer batchSize = Taxo_Utilities.getBatchSize(BSF_Constants.BIO_COLLECTION_RECORD_TYPE, 'BSF_Batch_PopulateCORegion');   
             BSF_Batch_TaxonomyEndDateHandler batch = new BSF_Batch_TaxonomyEndDateHandler(this.taxVer,BSF_Constants.BIO_COLLECTION_RECORD_TYPE,false,null,null,this.allowChaining);
             database.executebatch(batch,batchSize);
-                Integer x = 1/0; // This will throw a "System.MathException: Division by 0"
+             
             /*if(!test.isRunningTest())
 {
 Database.executebatch(new skedCollectionsZipCodeBatch(),200);
