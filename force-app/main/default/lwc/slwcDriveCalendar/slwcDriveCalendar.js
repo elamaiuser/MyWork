@@ -586,19 +586,23 @@ export default class SlwcDriveCalendar extends LightningElement {
         const collectionOpIds = this.collectionOperations.map(item => item.id);
         day.slot.totalDrives = this.planDriveHelper.findDriveLimitByDay({
             collectionOperationIds: collectionOpIds,
-            driveDate: day.dateIso
+            driveDate: day.dateIso,
+            timeBlockIds: selectedTimeBlockIds
         }, this.driveLimits, OPERATION_DRIVE_LIMIT_TYPE.DRIVE_LIMIT);
         day.slot.total2RBC = this.planDriveHelper.findDriveLimitByDay({
             collectionOperationIds: collectionOpIds,
-            driveDate: day.dateIso
+            driveDate: day.dateIso,
+            timeBlockIds: selectedTimeBlockIds
         }, this.driveLimits, OPERATION_DRIVE_LIMIT_TYPE.x2RBC_LIMIT);
         day.slot.totalDOT = this.planDriveHelper.findDriveLimitByDay({
             collectionOperationIds: collectionOpIds,
-            driveDate: day.dateIso
+            driveDate: day.dateIso,
+            timeBlockIds: selectedTimeBlockIds
         }, this.driveLimits, OPERATION_DRIVE_LIMIT_TYPE.DOT_LIMIT);
         day.slot.totalCDL = this.planDriveHelper.findDriveLimitByDay({
             collectionOperationIds: collectionOpIds,
-            driveDate: day.dateIso
+            driveDate: day.dateIso,
+            timeBlockIds: selectedTimeBlockIds
         }, this.driveLimits, OPERATION_DRIVE_LIMIT_TYPE.CDL_LIMIT);
         day.slot.noOfStaffRemaining = day.slot.totalStaffs - day.slot.noOfStaffRequested;
         day.slot.noOfFixedSiteStaffRemaining = day.slot.totalFixedSiteStaffs - day.slot.noOfFixedSiteStaffRequested;
