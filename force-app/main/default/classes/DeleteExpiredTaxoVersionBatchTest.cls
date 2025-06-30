@@ -45,7 +45,7 @@ public class DeleteExpiredTaxoVersionBatchTest {
     static void testBatchExecution() {
         Test.startTest();
         BSF_Batch_DeleteExpiredTaxoVersionBatch batch = new BSF_Batch_DeleteExpiredTaxoVersionBatch();
-        Database.executeBatch(batch, 200);
+        Database.executeBatch(batch, 1);
         // Execute start and execute methods
         Database.QueryLocator ql = batch.start(null);
         List<Taxonomy__c> scope = [SELECT Id, Version_Key__c, RecordType.Name, RecordTypeId, End_Date__c FROM Taxonomy__c];
@@ -68,6 +68,8 @@ public class DeleteExpiredTaxoVersionBatchTest {
         
         //Test.stopTest();
     }
+    
+    
     
     
     
@@ -114,13 +116,7 @@ public class DeleteExpiredTaxoVersionBatchTest {
         
         
     }*/
-    
-    
-    
-    
-    
-    
-     @isTest
+      @isTest
     static void testScheduledBatchExecution() {
         // Create a CRON expression: run 1 minute later
         String cronExp = '0 0 0 1 1 ? 2050'; // arbitrary future date
