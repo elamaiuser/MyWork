@@ -239,7 +239,7 @@ public with sharing class APComplianceReportController {
             string calloutTradeVal = '';
             if (includeTrades) {
                 if (act.sked_Drive_Shift_Trade__c != null) {
-                    calloutTradeVal = 'Activity - Callout';
+                    calloutTradeVal = 'Activity - Trade';
                 }
             }
             if (violationOnly && !isViolation) continue;
@@ -274,7 +274,7 @@ public with sharing class APComplianceReportController {
                 };
                     if (includeTrades) {
                         wrapper.columnsInfo.add(new Map<String, Object>{
-                            'label' => 'Callout/Trade', 'fieldName' => 'calloutTrade', 'type' => 'text'
+                            'label' => 'Trade/Callout', 'fieldName' => 'calloutTrade', 'type' => 'text'
                                 });
                     }
         

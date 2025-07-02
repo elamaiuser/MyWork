@@ -297,7 +297,7 @@ private class APComplianceReportControllerTest {
                                                         sked_Drive_Date__c = System.today(),
                                                         sked_Drive_Site__c = siteObj.Id,
                                                         sked_Opportunity__c = oppsobjlist.get(0).Id,
-                                                        sked_Type_of_Drive__c = 'Fixed Site',
+                                                        sked_Type_of_Drive__c = 'Mobile',
                                                         sked_Account__c = mobileAccList.get(0).Id,
                                                         sked_Start_Time__c = Time.newInstance(7, 0, 0, 0),
                                                         sked_End_Time__c = Time.newInstance(17, 0, 0, 0),
@@ -312,7 +312,7 @@ private class APComplianceReportControllerTest {
                                                         sked_Drive_Date__c = System.today().addDays(60),
                                                         sked_Drive_Site__c = siteObj.Id,
                                                         sked_Opportunity__c = oppsobjlist.get(1).Id,
-                                                        sked_Type_of_Drive__c = 'Fixed Site',
+                                                        sked_Type_of_Drive__c = 'Mobile',
                                                         sked_Account__c = mobileAccList.get(0).Id,
                                                         sked_Start_Time__c = Time.newInstance(7, 0, 0, 0),
                                                         sked_End_Time__c = Time.newInstance(17, 0, 0, 0),
@@ -500,6 +500,7 @@ private class APComplianceReportControllerTest {
                 sked__Job__c = skedjob.id,
                 sked__Resource__c = resourcestaff.id,
                 sked__Status__c = fgtyfyt.split(',')[0],
+                sked_Start_Date__c = Date.today(),
                 sked_Start_Time__c = Time.newInstance(5, 0, 0, 0),
                 sked_Set_End_Time__c = Time.newInstance(12, 0, 0, 0),
                 sked_Additional_Roles__c = '2RBC Sign-off'
@@ -514,6 +515,7 @@ private class APComplianceReportControllerTest {
                 sked__Job__c = skedjob1.id,
                 sked__Resource__c = resourcestaff.id,
                 sked__Status__c = effwffwf.split(',')[0],
+                sked_Start_Date__c = Date.today(),
                 sked_Start_Time__c = Time.newInstance(5, 0, 0, 0),
                 sked_Set_End_Time__c = Time.newInstance(12, 0, 0, 0)
             );
@@ -526,6 +528,20 @@ private class APComplianceReportControllerTest {
             triggerHandler.bypass('JobAllocationTriggerHandler');
             skedHubBase.BypassInsertTriggers = true;
             skedHubBase.BypassUpdateTriggers = true;
+            List<sked__Job_Allocation__c> allocCheck = [
+    SELECT Id, sked_Start_Date__c, sked__Resource__c, sked__Job__r.Name,
+           sked__Job__r.sked_Drive__r.sked_Status__c
+    FROM sked__Job_Allocation__c
+    WHERE sked__Resource__c = :resourcestaff.Id
+];
+
+System.debug('>>> allocCheck size: ' + allocCheck.size());
+for (sked__Job_Allocation__c alloc : allocCheck) {
+    System.debug('>>> Allocation Job: ' + alloc.sked__Job__r.Name);
+    System.debug('>>> Drive Status: ' + alloc.sked__Job__r.sked_Drive__r.sked_Status__c);
+    System.debug('>>> Allocation Date: ' + alloc.sked_Start_Date__c);
+}
+
          Time startTime = Time.newInstance(9, 0, 0, 0);
         Time endTime = Time.newInstance(12, 0, 0, 0);
         sked__Availability_Pattern__c testWeeklyPattern1 = (sked__Availability_Pattern__c)mapTestData.get('testWeeklyPattern1');
@@ -565,7 +581,10 @@ private class APComplianceReportControllerTest {
             
             sked__Activity_Resource__c skedActivityResource = new sked__Activity_Resource__c(
                 sked__Activity__c = activity.Id,
-                sked__Resource__c = resourcestaff.Id
+                sked__Resource__c = resourcestaff.Id,
+                sked_Start_Time__c = Datetime.now().time(),
+                sked_End_Time__c = Datetime.now().addMinutes(66).time(),
+                sked_Start_Date__c = Date.today()
             );
             insert skedActivityResource;
             
@@ -591,9 +610,21 @@ private class APComplianceReportControllerTest {
             
             sked__Activity_Resource__c skedActivityResource1 = new sked__Activity_Resource__c(
                 sked__Activity__c = activity1.Id,
-                sked__Resource__c = resourcestaff.Id
+                sked__Resource__c = resourcestaff.Id,
+                sked_Start_Time__c = Datetime.now().time(),
+                sked_End_Time__c = Datetime.now().addMinutes(66).time(),
+                sked_Start_Date__c = Date.today()
             );
             insert skedActivityResource1;
+            
+            List<sked__Activity_Resource__c> acts = [
+    SELECT Id, sked__Resource__c, sked_Start_Date__c, sked_Drive_Shift_Trade__c 
+    FROM sked__Activity_Resource__c 
+];
+for (sked__Activity_Resource__c ar : acts) {
+    System.debug('>>> AR: Resource=' + ar.sked__Resource__c + ', Date=' + ar.sked_Start_Date__c + ', Trade=' + ar.sked_Drive_Shift_Trade__c);
+}
+
         }        
         
     }
@@ -631,15 +662,22 @@ private class APComplianceReportControllerTest {
         Date startDate = Date.today();
         Date endDate = Date.today().addDays(5);
         List<String> coList = new List<String>{testCO.Id};
+        List<String> driveStatusList = new List<String>{ skedConstants.DRIVE_STATUS_DRAFT };
 
         Test.startTest();
-        APComplianceReportController.DatableConfigWrapper wrapper = APComplianceReportController.searchReport(
-            startDate,
-            endDate,
-            division.Id,
-            region.Id,
-            coList
-        );
+        
+
+APComplianceReportController.DatableConfigWrapper wrapper = APComplianceReportController.searchReport(
+    startDate,
+    endDate,
+    division.Id,
+    region.Id,
+    coList,
+    driveStatusList,
+    false, // violationOnly
+    false   // includeTrades
+);
+
         Test.stopTest();
     }
 
@@ -662,5 +700,27 @@ private class APComplianceReportControllerTest {
         APComplianceReportController controller = new APComplianceReportController();
         Test.stopTest();
     }
+    @isTest
+    static void testGetPaginatedData() {
+        PageReference pageRef = Page.APComplianceExcel;
+        Test.setCurrentPage(pageRef);
+        ApexPages.currentPage().getParameters().put('startdate', String.valueOf(Date.today()));
+        ApexPages.currentPage().getParameters().put('enddate', String.valueOf(Date.today().addDays(5)));
+        
+        sked_Territory__c division = [SELECT Id FROM sked_Territory__c WHERE RecordType.Name = 'Division' LIMIT 1];
+        sked_Territory__c region = [SELECT Id FROM sked_Territory__c WHERE RecordType.Name = 'ARC Region' LIMIT 1];
+        Biomed_Collection_Op_Center__c co = [SELECT Id FROM Biomed_Collection_Op_Center__c LIMIT 1];
+        
+        ApexPages.currentPage().getParameters().put('division', division.Id);
+        ApexPages.currentPage().getParameters().put('region', region.Id);
+        ApexPages.currentPage().getParameters().put('co', co.Id);
+        
+        Test.startTest();
+        APComplianceReportController controller = new APComplianceReportController();
+        List<List<Map<String, String>>> pages = controller.getPaginatedData();
+        System.debug('>>> Paginated Pages Count: ' + pages.size());
+        Test.stopTest();
+    }
+
 
 }
