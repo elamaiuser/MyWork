@@ -381,4 +381,86 @@ private class skedResourceHandler_Test {
         Test.stopTest();
     }
     
+    /**
+     * Test method to verify that Anticipated Leave Return Date is cleared when Employment Status changes from Leave to Active
+     */
+    static testmethod void testClearAnticipatedLeaveReturnDate() {
+        skedTestDataFactory testDataFactory = new skedTestDataFactory('us', system.today().addMonths(1), 14);
+        Map<string, sObject> mapTestData = testDataFactory.setupRacTestData();
+        sked__Resource__c testResource = [
+            SELECT Id, sked_Employment_Status__c, sked_Anticipated_Leave_Return_Date__c
+            FROM sked__Resource__c 
+            WHERE sked__Resource_Type__c = :skedConstants.RESOURCE_TYPE_PERSON
+            LIMIT 1
+        ];
+
+        Test.startTest();
+        
+        // Set resource to Leave status with Anticipated Leave Return Date
+        testResource.sked_Employment_Status__c = skedConstants.RESOURCE_EMPLOYMENT_STATUS_LEAVE;
+        testResource.sked_Anticipated_Leave_Return_Date__c = System.today().addDays(30);
+        update testResource;
+        
+        // Verify the resource is on leave with return date
+        testResource = [
+            SELECT Id, sked_Employment_Status__c, sked_Anticipated_Leave_Return_Date__c
+            FROM sked__Resource__c 
+            WHERE Id = :testResource.Id
+        ];
+        System.assertEquals(skedConstants.RESOURCE_EMPLOYMENT_STATUS_LEAVE, testResource.sked_Employment_Status__c, 'Resource should be on leave');
+        System.assertNotEquals(null, testResource.sked_Anticipated_Leave_Return_Date__c, 'Anticipated Leave Return Date should be populated');
+        
+        // Change Employment Status from Leave to Active
+        testResource.sked_Employment_Status__c = skedConstants.RESOURCE_EMPLOYMENT_STATUS_ACTIVE;
+        update testResource;
+        
+        // Verify the Anticipated Leave Return Date is cleared
+        testResource = [
+            SELECT Id, sked_Employment_Status__c, sked_Anticipated_Leave_Return_Date__c
+            FROM sked__Resource__c 
+            WHERE Id = :testResource.Id
+        ];
+        System.assertEquals(skedConstants.RESOURCE_EMPLOYMENT_STATUS_ACTIVE, testResource.sked_Employment_Status__c, 'Resource should be active');
+        System.assertEquals(null, testResource.sked_Anticipated_Leave_Return_Date__c, 'Anticipated Leave Return Date should be cleared');
+        
+        Test.stopTest();
+    }
+    
+    /**
+     * Test method to verify that Anticipated Leave Return Date is NOT cleared when Employment Status changes from Active to Leave
+     */
+    static testmethod void testDoNotClearAnticipatedLeaveReturnDateOnLeave() {
+        skedTestDataFactory testDataFactory = new skedTestDataFactory('us', system.today().addMonths(1), 14);
+        Map<string, sObject> mapTestData = testDataFactory.setupRacTestData();
+        sked__Resource__c testResource = [
+            SELECT Id, sked_Employment_Status__c, sked_Anticipated_Leave_Return_Date__c
+            FROM sked__Resource__c 
+            WHERE sked__Resource_Type__c = :skedConstants.RESOURCE_TYPE_PERSON
+            LIMIT 1
+        ];
+
+        Test.startTest();
+        
+        // Set resource to Active status
+        testResource.sked_Employment_Status__c = skedConstants.RESOURCE_EMPLOYMENT_STATUS_ACTIVE;
+        testResource.sked_Anticipated_Leave_Return_Date__c = null;
+        update testResource;
+        
+        // Change Employment Status from Active to Leave with return date
+        testResource.sked_Employment_Status__c = skedConstants.RESOURCE_EMPLOYMENT_STATUS_LEAVE;
+        testResource.sked_Anticipated_Leave_Return_Date__c = System.today().addDays(30);
+        update testResource;
+        
+        // Verify the Anticipated Leave Return Date is preserved
+        testResource = [
+            SELECT Id, sked_Employment_Status__c, sked_Anticipated_Leave_Return_Date__c
+            FROM sked__Resource__c 
+            WHERE Id = :testResource.Id
+        ];
+        System.assertEquals(skedConstants.RESOURCE_EMPLOYMENT_STATUS_LEAVE, testResource.sked_Employment_Status__c, 'Resource should be on leave');
+        System.assertNotEquals(null, testResource.sked_Anticipated_Leave_Return_Date__c, 'Anticipated Leave Return Date should be preserved');
+        
+        Test.stopTest();
+    }
+    
 }
