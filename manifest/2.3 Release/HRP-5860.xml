@@ -7,6 +7,7 @@
 		<members>contactService_Test</members>
 		<members>AccountServiceRoleTrigger_Test</members>
         <members>AccountContactHistoryService</members>
+		<members>AccountContactHistoryService_Test</members>
 		<name>ApexClass</name>
 	</types>
     <types>
