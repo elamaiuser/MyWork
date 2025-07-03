@@ -268,7 +268,12 @@
                 <field>Send_Mailers__c</field>
             </layoutItems>
             <layoutItems>
-                <emptySpace>true</emptySpace>
+                <behavior>Edit</behavior>
+                <field>Special_Circumstances__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>Special_Circumstances_Notes__c</field>
             </layoutItems>
         </layoutColumns>
         <layoutColumns>

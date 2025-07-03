@@ -483,7 +483,7 @@ public class OpportunityTriggerHandler extends TriggerHandler{
         if(super.getTriggerMethodsToBypass().indexOf('handleRedcrossVolunteerRequirementValidation') == -1) {
             OpportunityService.handleRedcrossVolunteerRequirementValidation((List<Opportunity>)trigger.new, NULL);
         }
-
+       
         System.debug('Exiting method beforeInsert');
         System.debug('getCpuTime()'+limits.getCpuTime());
     }
