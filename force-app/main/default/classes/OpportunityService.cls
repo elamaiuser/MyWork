@@ -5154,4 +5154,39 @@ opp.StageName = 'Closed';
             }
         }
     }
+
+    //HRP-701 --> Starts Here
+    public static void populateSpecialCircumstancesBadgeData(List<Opportunity> newOppList) {
+        Map<Id, List<Opportunity>> map_accountId_mobileOppList = new Map<Id, List<Opportunity>>();
+
+        for(Opportunity opp : newOppList) {
+            if(opp.Is_Template__c || opp.RecordTypeId == FIXED_SITE_OPP_RECTYPEID) continue;
+
+            if(!map_accountId_mobileOppList.containsKey(opp.AccountId)) {
+                map_accountId_mobileOppList.put(opp.AccountId, new List<Opportunity>());
+            }
+            map_accountId_mobileOppList.get(opp.AccountId).add(opp);
+        }
+
+        List<Account> accountsWithNoCompletedDrives = [
+            SELECT Id
+            FROM Account
+            WHERE Id IN :map_accountId_mobileOppList.keySet() 
+            AND Id NOT IN 
+                (
+                    SELECT sked_Account__c
+                    FROM sked_Drive__c
+                    WHERE sked_Status__c = :BSF_Constants.DOC_STATUS_COMPLETE
+                )
+        ];
+
+        if(accountsWithNoCompletedDrives != NULL && !accountsWithNoCompletedDrives.isEmpty()) {
+            for(Account account : accountsWithNoCompletedDrives) {
+                for(Opportunity newOpp : map_accountId_mobileOppList.get(account.Id)) {
+                    newOpp.Special_Circumstances__c = BSF_Constants.SSBS_BADGE_FIRST_TIME_DRIVE;
+                }
+            }
+        }
+    }
+    //HRP-701 --> Ends Here
 }
