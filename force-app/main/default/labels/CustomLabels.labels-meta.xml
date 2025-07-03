@@ -14,4 +14,19 @@
         <shortDescription>TravelTimeEditableProfiles</shortDescription>
         <value>APS Admin,System Administrator,Global Admin</value>
     </labels>
+    <labels>
+        <fullName>Orphan_Job_Allocations_Email</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Orphan_Job_Allocations_Email</shortDescription>
+        <value>BSFSupport@redcross.org;</value>
+    </labels>
+    <labels>
+        <fullName>OpportunitySplitService</fullName>
+        <categories>Using in Apex class:OpportunitySplitService</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>OpportunitySplitService</shortDescription>
+        <value>System Administrator;DRD Profile;AP&amp;S Management;APS Admin;APS Planner;APS Scheduler;Recruitment Admin;APS Management;DRD Manager</value>
+    </labels>
 </CustomLabels>
