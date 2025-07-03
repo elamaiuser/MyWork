@@ -146,9 +146,6 @@
         <members>OpportunityTriggerHandler</members>
         <members>OpportunityService</members>
 		<members>DriveWorksheet</members>
-        <members>skedResourceHandler_Test</members>
-        <members>skedResourceHandler</members>
-        <members>skedTestDataFactory</members>
 		<name>ApexClass</name>
     </types>
     <types>
