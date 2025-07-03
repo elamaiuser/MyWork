@@ -87,8 +87,7 @@
         <members>Account.Days_Since_Last_Drive__c</members>
         <members>Account.Last_Closed_Drive_New__c</members>
         <members>Account.Last_Closed_Drive__c</members>
-        <members>Account.Number_of_Future_Drives_New__c</members>
-        <members>Account_Service_Role_End_Reason__mdt.Deceased</members>
+        <members>Account.Number_of_Future_Drives_New__c</members>        
         <members>Calendar_Build_Error_Log__c.Category__c</members>
         <members>Calendar_Build_Log_Manual_Run__c.FS_Drives_wo_Resource_Requested__c</members>
         <members>Calendar_Build_Log_Manual_Run__c.Mobile_Drives_wo_Resource_Requested__c</members>
@@ -131,6 +130,7 @@
         <name>CustomLabel</name>
     </types>
     <types>
+        <members>Account_Service_Role_End_Reason.Deceased</members>
         <members>Custom_Messages.Red_Cross_Volunteer_Qty_Validation_0</members>
         <members>Custom_Messages.Red_Cross_Volunteer_Quantity_Validation</members>
         <members>Profile_Specific_Functionality_Access.Red_Cross_Volunteer_Setting</members>
@@ -264,8 +264,7 @@
         <members>Accounts_with_Opportunity_with_OpportunityTeam</members>
         <members>Accounts_with_Site_with_Drives</members>
         <members>Accounts_with_Team_Members</members>
-        <members>Accounts_with_or_without_Opportunities_and_Drives</members>
-        <members>Blood_Drive_Opportunities_With_or_Without_Contacts</members>
+        <members>Accounts_with_or_without_Opportunities_and_Drives</members>        
         <members>Opportunities_with_Calendar_Build_Opportunities</members>
         <members>Opportunities_with_Drives_on_Calendar_and_Drive_Sh</members>
         <members>Opportunity_with_Drives_on_Calender</members>
@@ -286,7 +285,7 @@
         <name>StandardValueSet</name>
     </types>
     <types>
-        <members>Prevent_ARD_For_FixedSite_Int_And_NonInt</members>
+        <members>Opportunity.Prevent_ARD_For_FixedSite_Int_And_NonInt</members>
         <members>sked__Resource__c.AllowWorkAddressEditForWHF</members>
         <members>sked__Resource__c.only_System_Admin_can_edit_Virtual_WFH</members>
         <name>ValidationRule</name>
@@ -300,13 +299,9 @@
         <name>Workflow</name>
     </types>
     <types>
-        <members>Account.Capitalize National Name Field</members>
-        <members>Account.Default Account Status Active</members>
-        <members>Account.Default Status Active</members>
-        <members>Account.Default Status Active %26 Internal Name for FS</members>
-        <members>Account.Default Status Prospect</members>
-        <members>Account.Default Status Prospect %26 Internal Name for Mobile Account</members>
-        <members>Account.Default_Account_Status_Active</members>
+        <members>Account.Capitalize National Name Field</members>        
+        <members>Account.Default Status Active %26 Internal Name for FS</members>        
+        <members>Account.Default Status Prospect %26 Internal Name for Mobile Account</members>        
         <members>Account.Use this as mailing address automation</members>
         <members>Contact.Do Not Contact Reasons Equals to Deceased</members>
         <members>Contact.Do Not Contact is Selected</members>
