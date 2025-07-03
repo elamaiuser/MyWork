@@ -45,6 +45,9 @@
 		<members>skedRacController</members>
 		<members>skedActivityService</members>
 		<members>skedActivityService_Test</members>
+		<members>skedResourceHandler_Test</members>
+        <members>skedResourceHandler</members>
+        <members>skedTestDataFactory</members>
 		<name>ApexClass</name>
 	</types>
 	<types>

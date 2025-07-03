@@ -41,6 +41,7 @@ public class skedResourceHandler extends skedTriggerHub {
             revertAccidientallyChangedGeolocation(this.context.newRecords, (Map<Id, sked__Resource__c>)this.context.oldMap);
         }
         populateData(this.context.newRecords, (Map<Id, sked__Resource__c>)this.context.oldMap);
+        clearAnticipatedLeaveReturnDate(this.context.newRecords, (Map<Id, sked__Resource__c>)this.context.oldMap);//HRP-12869
         populateSupervisor(this.context.newRecords, (Map<Id, sked__Resource__c>)this.context.oldMap);
         populateTaxonomyData(this.context.newRecords, (Map<Id, sked__Resource__c>)this.context.oldMap);
         populateResourceActivation(this.context.newRecords, (Map<Id, sked__Resource__c>)this.context.oldMap);
@@ -1378,6 +1379,28 @@ public class skedResourceHandler extends skedTriggerHub {
             satelliteAddressFieldApiNames.add('sked_Satellite_State__c');
             satelliteAddressFieldApiNames.add('sked_Satellite_Zip_Code__c');
             skedTriggerUtils.revertAccidientallyChangedGeolocation(newRecord, oldData, satelliteAddressFieldApiNames, 'sked_Satellite_Address_Geolocation__Latitude__s', 'sked_Satellite_Address_Geolocation__Longitude__s');
+        }
+    }
+
+    /**
+     * Clears the Anticipated Leave Return Date, when Employment Status changes from Leave to Active
+     * HRP-12869
+     */
+    private void clearAnticipatedLeaveReturnDate(List<sked__Resource__c> newRecords, Map<Id, sked__Resource__c> oldMap) {
+        for (sked__Resource__c newRecord : newRecords) {
+            sked__Resource__c oldData = oldMap.get(newRecord.Id);
+            
+            // Check whether Employment Status changed from Leave to Active and resource is a person
+            if (oldData != null && 
+                newRecord.sked__Resource_Type__c == skedConstants.RESOURCE_TYPE_PERSON &&
+                oldData.sked_Employment_Status__c == skedConstants.RESOURCE_EMPLOYMENT_STATUS_LEAVE &&
+                newRecord.sked_Employment_Status__c == skedConstants.RESOURCE_EMPLOYMENT_STATUS_ACTIVE) {
+                
+                // Clear the Anticipated Leave Return Date if it has a value
+                if (newRecord.sked_Anticipated_Leave_Return_Date__c != null) {
+                    newRecord.sked_Anticipated_Leave_Return_Date__c = null;
+                }
+            }
         }
     }
 
