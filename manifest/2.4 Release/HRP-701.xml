@@ -16,6 +16,10 @@
 		<name>CustomField</name>
 	</types>
 	<types>
+		<members>Mobile_Opp_Record_Page</members>
+		<name>FlexiPage</name>
+	</types>
+	<types>
 		<members>Opportunity-APS Planner Mobile Opp Layout</members>
 		<members>Opportunity-APS Scheduler Mobile Opp Layout</members>
 		<members>Opportunity-DRD Mobile Opp Layout</members>
@@ -26,7 +30,7 @@
 	</types>
 	<types>
 		<members>autoMapper</members>
-		<members>showSpecialCircumstancesBadgeOnOpportunity</members>
+		<members>showSpecialCircumstanceBadgesOnOpportunity</members>
 		<name>LightningComponentBundle</name>
 	</types>
 	<types>
