@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Package xmlns="http://soap.sforce.com/2006/04/metadata">
     <types>
+		<members>BSF_Batch_UpdateSpecialCircumstanceOnOpp</members>
+		<members>BSF_Batch_UpdateSpecialCircumstance_Test</members>
 		<members>BSF_Constants</members>
 		<members>BSF_Utilities</members>
+		<members>BSF_UtilitiesTest</members>
 		<members>DriveTriggerService</members>
 		<members>DriveTriggerHandler</members>
         <members>DriveServiceTest</members>
