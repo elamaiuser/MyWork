@@ -14,7 +14,8 @@ public class BSF_Batch_UpdateSpecialCircumstanceOnOpp implements Database.Batcha
         this.accIdsToProcess = new Set<Id>(accountIds);
         String firstTimeDriveFlag = String.join(new List<String>{BSF_Constants.SSBS_BADGE_FIRST_TIME_DRIVE}, '\',\'');
         String query = 'SELECT Id, AccountId, Special_Circumstances__c FROM Opportunity WHERE AccountId IN :accIdsToProcess AND ';
-        query += 'Special_Circumstances__c ' + (this.operation == 'Addition' ? 'EXCLUDES' : 'INCLUDES') + ' (\'' + firstTimeDriveFlag + '\')';
+        query += 'Special_Circumstances__c ' + (this.operation == 'Addition' ? 'EXCLUDES' : 'INCLUDES') + ' (\'' + firstTimeDriveFlag + '\') ';
+        query += 'AND Is_Template__c = FALSE AND Type_of_Drive__c = \'Mobile\' ';
         this.oppListToBeUpdated = (List<Opportunity>)(Database.query(query));
     }
 
