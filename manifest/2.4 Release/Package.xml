@@ -42,6 +42,17 @@
 		<members>PublicityReportNewPortfoliosController</members>		
 		<members>publicityReportNewPortfoliosTest</members>
 		<members>AccountService</members>
+		<members>BSF_Batch_UpdateSpecialCircumstanceOnOpp</members>
+		<members>BSF_Batch_UpdateSpecialCircumstance_Test</members>
+		<members>BSF_Constants</members>
+		<members>BSF_Utilities</members>
+		<members>BSF_UtilitiesTest</members>
+		<members>DriveTriggerService</members>
+		<members>DriveTriggerHandler</members>
+        <members>DriveServiceTest</members>
+		<members>OpportunityService</members>
+		<members>OpportunityTriggerHandler</members>
+        <members>OpportunityTriggerTest</members>
 		<members>skedRacController</members>
 		<members>skedActivityService</members>
 		<members>skedActivityService_Test</members>
@@ -55,6 +66,8 @@
 		<name>CustomMetadata</name>
 	</types>
 	<types>
+		<members>autoMapper</members>
+		<members>showSpecialCircumstanceBadgesOnOpportunity</members>
 		<members>slwcDriveGenerator</members>
 		<members>slwcDriveStaffingDetails</members>
 		<members>slwcFilterResourceMultiPicklist</members>
@@ -72,6 +85,12 @@
 		<members>Account-Biomed Read Only Mobile Account Layout</members>
 		<members>Account-DRD Mobile Account Layout</members>
 		<members>Account-Sponsor Marketing Mobile Layout</members>
+		<members>Opportunity-APS Planner Mobile Opp Layout</members>
+		<members>Opportunity-APS Scheduler Mobile Opp Layout</members>
+		<members>Opportunity-DRD Mobile Opp Layout</members>
+		<members>Opportunity-Mobile Opp Layout</members>
+		<members>Opportunity-Opportunity Layout</members>
+		<members>Opportunity-Sponsor Marketing Mobile Opp Layout</members>
         <members>sked__Resource__c-sked__Resource Layout</members>
 		<name>Layout</name>
 	</types>
@@ -84,6 +103,9 @@
 		<members>Account.CY_Drives1__c</members>
         <members>Account.CFY_Drives__c</members>
 		<members>Account.CY_Drives__c</members>
+		<members>Opportunity.Special_Circumstances_Notes__c</members>
+		<members>Opportunity.Special_Circumstances__c</members>
+		<members>sked_Drive__c.sked_Rejection_Reason_Code__c</members>
 		<name>CustomField</name>
 	</types>
     <types>
@@ -92,8 +114,8 @@
         <name>Report</name>
     </types>
 	<types>
-		<members>sked_Drive__c.sked_Rejection_Reason_Code__c</members>
-		<name>CustomField</name>
+		<members>Special_Circumstances_Badge_Logo</members>
+		<name>StaticResource</name>
 	</types>
 	<types>
 		<members>sked__Resource__c.Staff_MaxHours_Validation</members>

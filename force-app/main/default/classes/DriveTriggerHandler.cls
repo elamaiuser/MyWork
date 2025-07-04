@@ -102,6 +102,11 @@ public class DriveTriggerHandler extends TriggerHandler{
             DriveTriggerService.updateDrdRepOnOpRecordUponOwnerChange((List<sked_Drive__c>) Trigger.new, (Map<Id, sked_Drive__c>) Trigger.oldMap);
         }
         //HRP-9815 --> Ends Here
+
+        //HRP-701
+        if(super.getTriggerMethodsToBypass().indexOf('removeFirstTimeFlagUponDriveCompletion') == -1) {
+            DriveTriggerService.removeFirstTimeFlagUponDriveCompletion((List<sked_Drive__c>) Trigger.new, (Map<Id, sked_Drive__c>) Trigger.oldMap);
+        }
         
     }
     public override void beforeDelete()

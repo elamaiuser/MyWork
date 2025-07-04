@@ -495,17 +495,11 @@ public class OpportunityTriggerHandler extends TriggerHandler{
             OpportunityService.handleRedcrossVolunteerRequirementValidation((List<Opportunity>)trigger.new, NULL);
         }
 
-        if(super.getTriggerMethodsToBypass().indexOf('updateVolunteerRequired') == -1) {
-            OpportunityService.updateVolunteerRequired((List<Opportunity>)trigger.new, NULL);
+        //HRP-701
+        if(super.getTriggerMethodsToBypass().indexOf('populateSpecialCircumstancesBadgeData') == -1) {
+            OpportunityService.populateSpecialCircumstancesBadgeData((List<Opportunity>)trigger.new);
         }
-        if(super.getTriggerMethodsToBypass().indexOf('calculateVolunteerQuantity') == -1) {
-            OpportunityService.calculateVolunteerQuantity((List<Opportunity>)trigger.new, NULL);
-        }
-        //HRP-13146
-        if(super.getTriggerMethodsToBypass().indexOf('handleRedcrossVolunteerRequirementValidation') == -1) {
-            OpportunityService.handleRedcrossVolunteerRequirementValidation((List<Opportunity>)trigger.new, NULL);
-        }
-
+       
         System.debug('Exiting method beforeInsert');
         System.debug('getCpuTime()'+limits.getCpuTime());
     }

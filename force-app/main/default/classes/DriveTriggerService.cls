@@ -627,4 +627,67 @@ public without sharing class DriveTriggerService {
         }
     }
     //HRP-9815 --> Ends Here
+
+    //HRP-701 -> Starts Here
+    public static void removeFirstTimeFlagUponDriveCompletion(List<sked_Drive__c> newDriveList, Map<Id, sked_Drive__c> map_oldDriveId_oldDrive) {
+        Map<Id, sked_Drive__c> map_accountId_earliestCompletedDrive = new Map<Id, sked_Drive__c>();
+        List<Opportunity> firstTimeDrivesExcludingEarliestCompletedDrive = new List<Opportunity>();
+
+        for(sked_Drive__c newDrive : newDriveList) {
+            sked_Drive__c oldDrive = map_oldDriveId_oldDrive.get(newDrive.Id);
+            if(oldDrive != NULL && 
+               newDrive.sked_Type_of_Drive__c == BSF_Constants.MOBILE_DRIVE &&
+               newDrive.sked_Status__c != oldDrive.sked_Status__c && 
+               newDrive.sked_Status__c == BSF_Constants.DOC_STATUS_COMPLETE
+            ) {
+                if (!map_accountId_earliestCompletedDrive.containsKey(newDrive.sked_Account__c)) {
+                    map_accountId_earliestCompletedDrive.put(newDrive.sked_Account__c, newDrive);
+                } else {
+                    sked_Drive__c existingDrive = map_accountId_earliestCompletedDrive.get(newDrive.sked_Account__c);
+                    if (existingDrive.sked_Drive_Date__c > newDrive.sked_Drive_Date__c) {
+                        map_accountId_earliestCompletedDrive.put(newDrive.sked_Account__c, newDrive);
+                    }
+                }  
+            }
+        }
+
+        Map<Id, Opportunity> map_oppId_firstTimeDrives = new Map<Id, Opportunity>(
+            [SELECT Id, AccountId, Special_Circumstances__c
+            FROM Opportunity
+            WHERE AccountId IN :map_accountId_earliestCompletedDrive.keySet()
+            AND Special_Circumstances__c INCLUDES (:BSF_Constants.SSBS_BADGE_FIRST_TIME_DRIVE)]
+        );
+
+        for(Opportunity opp : map_oppId_firstTimeDrives.values()) {
+            if(!map_accountId_earliestCompletedDrive.containsKey(opp.AccountId)) continue;
+
+            if(opp.Id == map_accountId_earliestCompletedDrive.get(opp.AccountId).sked_Opportunity__c) {
+                map_oppId_firstTimeDrives.remove(opp.Id);
+            }
+        }
+
+        if(map_oppId_firstTimeDrives != NULL && !map_oppId_firstTimeDrives.isEmpty() && map_oppId_firstTimeDrives.size() > 100) {
+            Database.executeBatch(new BSF_Batch_UpdateSpecialCircumstanceOnOpp('Removal', map_oppId_firstTimeDrives.values()), 100);
+        } else {
+            skedTriggerUtils.CHANGES_INITIATED_FROM_SERVICE = true;
+            TriggerHandler.bypass('OpportunityTriggerHandler');
+            skedHubBase.BypassUpdateTriggers = true;
+
+            Database.SaveResult[] updateResults = Database.Update(BSF_Utilities.getOpportunitiesWithFirstTimeFlagRemoved(map_oppId_firstTimeDrives.values()), false);
+            List<BSF_Error_Log__c> errorlogEntries = BSF_Utilities.createErrorLogWithObjectId(
+                updateResults,
+                'Removal of First Time Flag from Opportunities',
+                'DriveTriggerService',
+                'removeFirstTimeFlagUponDriveCompletion',
+                'Error',
+                'First Time Drive Flag Removal'
+            );
+            insert errorlogEntries;
+
+            TriggerHandler.clearBypass('OpportunityTriggerHandler');
+            skedHubBase.BypassUpdateTriggers = false;
+        }
+
+    }
+    //HRP-701 -> Ends Here
 }
