@@ -1075,6 +1075,19 @@
     <flexiPageRegions>
         <itemInstances>
             <componentInstance>
+                <componentName>showSpecialCircumstanceBadgesOnOpportunity</componentName>
+                <identifier>c_showSpecialCircumstanceBadgesOnOpportunity</identifier>
+                <visibilityRule>
+                    <criteria>
+                        <leftValue>{!Record.Is_Template__c}</leftValue>
+                        <operator>EQUAL</operator>
+                        <rightValue>false</rightValue>
+                    </criteria>
+                </visibilityRule>
+            </componentInstance>
+        </itemInstances>
+        <itemInstances>
+            <componentInstance>
                 <componentInstanceProperties>
                     <name>tabs</name>
                     <value>Facet-d0c770de-8273-441c-9108-1d9453f58c6b</value>
