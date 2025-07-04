@@ -623,7 +623,7 @@ class BaseGenerator {
     const equipmentJob = this.drive.driveShifts[0].jobs.find(job => job.assetType === ASSET_TYPE.EQUIPMENT);
 
     compact([vehicleJob, equipmentJob]).forEach(job => {
-     let newJobAllocations = [...job.jobAllocations];
+     let newJobAllocations = job.jobAllocations && job.jobAllocations.length ? [...job.jobAllocations] : [];
      let jobAllocationKeysToRemove = [];
      newJobAllocations.forEach(jobAllocation => {
       if(jobAllocation.id) {
