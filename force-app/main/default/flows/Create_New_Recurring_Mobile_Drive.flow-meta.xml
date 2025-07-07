@@ -146,6 +146,7 @@
         </outputParameters>
     </actionCalls>
     <apiVersion>62.0</apiVersion>
+    <areMetricsLoggedToDataCloud>false</areMetricsLoggedToDataCloud>
     <assignments>
         <name>AddToCollection</name>
         <label>AddToCollection</label>
@@ -685,6 +686,20 @@
             <operator>Assign</operator>
             <value>
                 <elementReference>getSelectedTemplateProperties.APT_Quantity__c</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>varTemplateRedcrossVolunteerRequired</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>getSelectedTemplateProperties.Red_Cross_Volunteer_Required__c</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>varTemplateRedcrossVolunteerQuantity</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>getSelectedTemplateProperties.Red_Cross_Volunteer_Quantity__c</elementReference>
             </value>
         </assignmentItems>
         <connector>
@@ -2362,6 +2377,18 @@ MOD(({!Drive_Date} - {!Get_Opportunity_Date_MetaData.Days_from_Drive_Date__c}) -
             <field>RecordTypeId</field>
             <value>
                 <elementReference>Get_Blood_Drive_Opp_Record_Type.Id</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Red_Cross_Volunteer_Quantity__c</field>
+            <value>
+                <elementReference>varTemplateRedcrossVolunteerQuantity</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Red_Cross_Volunteer_Required__c</field>
+            <value>
+                <elementReference>varTemplateRedcrossVolunteerRequired</elementReference>
             </value>
         </inputAssignments>
         <inputAssignments>
@@ -4279,6 +4306,25 @@ REGEX( {!Drive_Keyword}, &quot;[a-zA-Z0-9 ]+&quot;)</formulaExpression>
     </variables>
     <variables>
         <name>varTemplateAptRequired</name>
+        <dataType>Boolean</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+        <value>
+            <booleanValue>false</booleanValue>
+        </value>
+    </variables>
+    <variables>
+        <name>varTemplateRedcrossVolunteerQuantity</name>
+        <dataType>Number</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+        <scale>0</scale>
+    </variables>
+    <variables>
+        <description>HRP-13146</description>
+        <name>varTemplateRedcrossVolunteerRequired</name>
         <dataType>Boolean</dataType>
         <isCollection>false</isCollection>
         <isInput>false</isInput>

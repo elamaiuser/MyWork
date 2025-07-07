@@ -41,10 +41,24 @@ public class skedRoleTimeVarianceHandler extends skedTriggerHub {
         }
         
         List<skedHC__Exception__c> exceptionLog = new List<skedHC__Exception__c>();
-        List<sked_Drive__c> impactedDrives = [SELECT Id
+        List<sked_Drive__c> impactedDrives = new List<sked_Drive__c>();
+        //Pick only drives with drive dates that fall under rtv impact date ranges
+        for(sked_Role_Time_Variance__c newRecord : newRecords){
+            List<Integer> daysOfWeek =  getDaysInWeek(newRecord.sked_Days_Of_Week__c);
+            List<sked_Drive__c> impactedDrivesListForThisVariance = [SELECT Id  FROM sked_Drive__c
+                                                  WHERE sked_Drive_Site__c = :newRecord.sked_Location__c
+                                                  AND sked_Drive_Date__c >= TODAY
+                                                  AND sked_Drive_Date__c >= :newRecord.sked_Effective_Start_Date__c
+                                                  AND sked_Drive_Date__c <= :newRecord.sked_Effective_End_Date__c
+                                                  AND DAY_IN_WEEK(sked_Drive_Date__c) in :daysOfWeek];
+            impactedDrives.addAll(impactedDrivesListForThisVariance);                                 
+
+        }
+        /*List<sked_Drive__c> impactedDrives = [SELECT Id
                                               FROM sked_Drive__c
                                               WHERE sked_Drive_Site__c IN :locationIds
-                                              AND sked_Drive_Date__c >= TODAY];
+                                              AND sked_Drive_Date__c >= TODAY
+                                              ];*/
         for (sked_Drive__c impactedDrive : impactedDrives) {
             skedHC__Exception__c newException = new skedHC__Exception__c(
                 sked_Drive__c = impactedDrive.Id,
@@ -56,6 +70,36 @@ public class skedRoleTimeVarianceHandler extends skedTriggerHub {
             insert exceptionLog;
         }
     }
+    //This method takes Strings seperated by; which can have values of Sunday thru Saturday and returns corresponding number. eg: 1 for Sunday
+    //Since this is mandatory field (sked_Days_Of_Week__c) on RTV object, atleast one value will be present
+    private static List<Integer> getDaysInWeek(String daysOfweek){
+         // Map to convert day names to corresponding integer values
+         Map<String, Integer> dayMap = new Map<String, Integer>{
+            'Sunday' => 1,
+            'Monday' => 2,
+            'Tuesday' => 3,
+            'Wednesday' => 4,
+            'Thursday' => 5,
+            'Friday' => 6,
+            'Saturday' => 7
+        };
+
+        // List to store resulting integers
+        List<Integer> daysOfWeekNumbers = new List<Integer>();
+
+        // Split the string by ';' and iterate through each value
+        for (String day : daysOfweek.split(';')) {
+            day = day.trim();  // Trim whitespace
+            if (dayMap.containsKey(day)) {
+                daysOfWeekNumbers.add(dayMap.get(day));
+            }
+        }
+
+        return daysOfWeekNumbers;
+    }
+    
+        
+        
 
     private void validateVarianceType(List<sked_Role_Time_Variance__c> newRecords) {
         for (sked_Role_Time_Variance__c newRecord : newRecords) {

@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>63.0</apiVersion>
+    <areMetricsLoggedToDataCloud>false</areMetricsLoggedToDataCloud>
+    <decisions>
+        <name>Drive_Status_is_Cancelled</name>
+        <label>Drive Status is Cancelled</label>
+        <locationX>182</locationX>
+        <locationY>623</locationY>
+        <defaultConnectorLabel>FALSE_Drive Status is Cancelled</defaultConnectorLabel>
+        <rules>
+            <name>TRUE_Drive_Status_is_Cancelled</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Drive_Status__c</leftValueReference>
+                <operator>IsChanged</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Drive_Status__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Cancel</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Populate_Rollover_Consideration</targetReference>
+            </connector>
+            <label>TRUE_Drive Status is Cancelled</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>myRule_1</name>
+        <label>Opp Stage Closed</label>
+        <locationX>182</locationX>
+        <locationY>323</locationY>
+        <defaultConnector>
+            <targetReference>Drive_Status_is_Cancelled</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>FALSE_Opp Stage Closed</defaultConnectorLabel>
+        <rules>
+            <name>TRUE_myRule_1</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.StageName</leftValueReference>
+                <operator>IsChanged</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.StageName</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Closed</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>myRule_1_A1</targetReference>
+            </connector>
+            <label>TRUE_Opp Stage Closed</label>
+        </rules>
+    </decisions>
+    <description>Migrated from the Update Drive Status Field on Opportunity &amp; Booking Date 2 process using multiple criteria.
+For the close date calculation, we are using a MOD function to get the difference between the drive date and 01/07/1900 which is a Sunday.  0 = Sunday, 1 = Monday, etc.  To find the day of the week from a Date value, use a known Sunday, for example, January 7, 1900, and subtract it from the date, for example, TODAY(), to get the difference in days. The MOD() function finds the remainder of this result when divided by 7 to give the numerical value of the day of the week between 0 (Sunday) and 6 (Saturday).</description>
+    <environments>Default</environments>
+    <formulas>
+        <name>driveStatusUpdatedToCancel</name>
+        <dataType>Boolean</dataType>
+        <expression>AND(ISCHANGED({!$Record.Drive_Status__c} ),
+Text({!$Record.Drive_Status__c} ) = &quot;Cancel&quot;
+)</expression>
+    </formulas>
+    <formulas>
+        <name>updatedMobileDriveDateBeyond6Months</name>
+        <dataType>Boolean</dataType>
+        <expression>AND(ISCHANGED({!$Record.Drive_Date__c}),
+{!$Record.RecordType.DeveloperName} = &quot;Mobile_Opp&quot;,
+({!$Record.Drive_Date__c}  - TODAY()) &gt;= 180
+)</expression>
+    </formulas>
+    <interviewLabel>Update Drive Status Field on Opportunity &amp; Booking Date 2 {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>Update Drive Status Field on Opportunity &amp; Booking Date 2</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <recordUpdates>
+        <name>myRule_1_A1</name>
+        <label>Populate Booking Date Field</label>
+        <locationX>50</locationX>
+        <locationY>431</locationY>
+        <connector>
+            <targetReference>Drive_Status_is_Cancelled</targetReference>
+        </connector>
+        <inputAssignments>
+            <field>Booking_Date__c</field>
+            <value>
+                <elementReference>$Flow.CurrentDate</elementReference>
+            </value>
+        </inputAssignments>
+        <inputReference>$Record</inputReference>
+    </recordUpdates>
+    <recordUpdates>
+        <name>Populate_Rollover_Consideration</name>
+        <label>Populate Rollover Consideration</label>
+        <locationX>50</locationX>
+        <locationY>731</locationY>
+        <inputAssignments>
+            <field>Rollover_Consideration__c</field>
+            <value>
+                <stringValue>Do Not Roll</stringValue>
+            </value>
+        </inputAssignments>
+        <inputReference>$Record</inputReference>
+    </recordUpdates>
+    <start>
+        <locationX>56</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>myRule_1</targetReference>
+        </connector>
+        <object>Opportunity</object>
+        <recordTriggerType>Update</recordTriggerType>
+        <triggerType>RecordAfterSave</triggerType>
+    </start>
+    <status>Active</status>
+</Flow>

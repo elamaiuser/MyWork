@@ -84,6 +84,8 @@ export class DriveMappingConfigFactory {
       mappingConfig.addFieldConfig('sked_Promotions__c', 'promotions', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_Rank__c', 'rank', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_Recruited_By__c', 'recruitedBy', MAPPING_TYPE.direct);
+      mappingConfig.addFieldConfig('sked_Redcross_Volunteer_Required__c', 'redcrossVolunteerRequired', MAPPING_TYPE.direct);
+      mappingConfig.addFieldConfig('sked_Redcross_Volunteer_Quantity__c', 'redcrossVolunteerQuantity', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_Rejection_Reason_Code__c', 'rejectionReasonCode', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_Replacement_Drive__c', 'replacementDriveId', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_Route_Approval_Request_To__c', 'routeApprovalRequestTo', MAPPING_TYPE.direct);

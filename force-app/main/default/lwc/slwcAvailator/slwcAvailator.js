@@ -54,6 +54,19 @@ const isJobRequireTravelTimes = (isTemporaryCO, job, drive, {
   return rule1 || rule2;
 }
 
+const isDriverJob = (job, onlyCheckResourceRole = false) => {
+  if(!job) return false;
+  const isNotCdlDriverJob = job.id && !job.id.startsWith('drivercdl');
+  const isNotDotDriverJob = job.id && !job.id.startsWith('driverdot');
+  if(onlyCheckResourceRole) {
+    return isNotCdlDriverJob && isNotDotDriverJob && job.resourceRole === 'Driver' && !job.dualRole;
+  }
+
+  return isNotCdlDriverJob && isNotDotDriverJob && (
+    job.resourceRole === 'Driver' || job.dualRole === 'Driver'
+  )
+}
+
 class dateslotModel {
   timezoneSidId = null;
   startJS = null;
@@ -569,6 +582,8 @@ class SlwcAvailator {
 
         return this.doTransformJobs([{
           ...job,
+          actualStart: job.start,
+          actualFinish: job.finish,
           driveDate: this.drive.driveDate,
           start: startLuxon.toUTC().toISO(),
           finish: endLuxon.toUTC().toISO()
@@ -1333,11 +1348,8 @@ class SlwcAvailator {
     }
   }
 
-  isDriverJob(job) {
-    if(!job) return false;
-    const isNotCdlDriverJob = job.id && !job.id.startsWith('drivercdl');
-    const isNotDotDriverJob = job.id && !job.id.startsWith('driverdot');
-    return isNotCdlDriverJob && isNotDotDriverJob && (job.resourceRole === 'Driver' || job.dualRole === 'Driver')
+  isDriverJob(job, onlyCheckResourceRole = false) {
+    return isDriverJob(job, onlyCheckResourceRole);
   }
 
   setupDriverJobs() {
@@ -1355,7 +1367,10 @@ class SlwcAvailator {
     });
 
     this.drive.driveShifts.forEach(driveShift => {
-      const driverJob = driveShift.jobs.find(job => this.isDriverJob(job));
+      let driverJob = driveShift.jobs.find(job => this.isDriverJob(job, true));
+      if(!driverJob) {
+        driverJob = driveShift.jobs.find(job => this.isDriverJob(job, false));
+      }
       if(!driverJob) return;
       if(!driverJob.jobAllocations) {
         driverJob.jobAllocations = [];
@@ -1848,8 +1863,31 @@ class SlwcAvailator {
                 return this.dateUtils.compareDateJS(event.startJS, job.startJS) > 0;
               });
 
+              /* In case of assets, if job start and drive date matches, 
+                1. either job actually starts on the drive date
+                2. or it starts the day before and it has been transformed to the drive date (fetchAssetData)
+              In any case, we need to transform the events as well for a consistent comparison */
+              
+              if(!job.actualStart) job.actualStart = job.start;
+              if(!job.actualFinish) job.actualFinish = job.finish;
+
+              const isEventTransformationNeeded = this.dateUtils.compareDateJS(job.start, job.actualStart) !== 0;
+
               for (let i = 0; i < dateSlotEvents.length; i++) {
                 let event = dateSlotEvents[i];
+                if(exceptionLog.find(item => item?.availabilityId === event.id || item?.conflictedJobAllocationId === event.id || item?.activityId === event.id)) continue;
+                
+                if(isEventTransformationNeeded) {
+                  let diff = this.dateUtils.diffDays(event.startJS, event.finishJS);
+                  if(diff === 0) diff = this.dateUtils.diffDays(job.startJS, job.finishJS);
+                  
+                  event = {
+                    ...event, 
+                    startJS: this.dateUtils.addDay(event.startJS, diff), 
+                    finishJS: this.dateUtils.addDay(event.finishJS, diff)
+                  };
+                }
+                
                 if (event.objectType === OBJECT_TYPE.JOB_ALLOCATION) {
                   if (!ignoreExistingAllocations) {
                     if (inputJobIds.indexOf(event.jobId) > -1 || event.status === EVENT_STATUS.DECLINED) {
@@ -2154,4 +2192,5 @@ export default {
   },
   isJobRequireTravelTimes,
   isJobBelongToDrivingRolesGroup,
+  isDriverJob
 }

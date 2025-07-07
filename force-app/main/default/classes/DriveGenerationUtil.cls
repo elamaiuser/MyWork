@@ -97,10 +97,10 @@ public class DriveGenerationUtil {
                       'Corrected_Drive_Count__c, Op_Record_Count__c, Submitted_Op_Record_Count__c, Not_Submitted_Op_Record_Count__c ';
         } else if(cbLogWrapper.batchInfo.equalsIgnoreCase('Sys Gen Run - FS')) {
             query += 'FS_Sys_Gen_Batch_Run_Status__c, FS_Sys_Gen_Batch_Run_Date__c, '+
-                      'FS_Drives_with_Resource_Allocation__c, FS_Drives_wo_Resource_Allocation__c, FS_Drives_Failed_Processing__c ';
+                      'FS_Drives_with_Resource_Allocation__c, FS_Drives_wo_Resource_Allocation__c, FS_Drives_Failed_Processing__c, FS_Drives_wo_Resource_Requested__c ';
         } else {
             query += 'Mobile_Sys_Gen_Batch_Run_Status__c, Mobile_Sys_Gen_Batch_Run_Date__c, '+
-                      'Mobile_Drives_with_Resource_Allocation__c, Mobile_Drives_wo_Resource_Allocation__c, Mobile_Drives_Failed_Processing__c ';
+                      'Mobile_Drives_with_Resource_Allocation__c, Mobile_Drives_wo_Resource_Allocation__c, Mobile_Drives_Failed_Processing__c, Mobile_Drives_wo_Resource_Requested__c ';
         }
         query += cbLogWrapper.runType.equalsIgnoreCase(BSF_Constants.RUN_TYPE_MANUAL) ? ', Source__c FROM Calendar_Build_Log_Manual_Run__c ' : 'FROM Calendar_Build_Log__c ';
         query += 'WHERE External_Id__c = :externalId LIMIT 1';
@@ -192,12 +192,14 @@ public class DriveGenerationUtil {
                     event.put('Not_Submitted_Op_Record_Count__c', cbLogWrapper.notSubmittedOpRecordCount);
                 } else if(!String.isBlank(cbLogWrapper.batchInfo) && cbLogWrapper.batchInfo.equalsIgnoreCase(BSF_Constants.BATCH_SYS_GEN_FS)) {
                     event.put('FS_Drives_with_Resource_Allocation__c', cbLogWrapper.fsSysGenDrivesWithAllocResourceCount);
-                    event.put('FS_Drives_wo_Resource_Allocation__c', cbLogWrapper.fsSysGenDrivesWOAllocResourceCount);
-                    event.put('FS_Drives_Failed_Processing__c', cbLogWrapper.fsSysGenFailureCount);             
+                    event.put('FS_Drives_wo_Resource_Allocation__c', (Decimal) (!cbLogWrapper.drivesWOResourceAllocThoughRequested.isEmpty() ? cbLogWrapper.drivesWOResourceAllocThoughRequested.size() : 0));
+                    event.put('FS_Drives_Failed_Processing__c', cbLogWrapper.fsSysGenFailureCount); 
+                    event.put('FS_Drives_wo_Resource_Requested__c', cbLogWrapper.fsSysGenDrivesWOResourceRequestedCount);        
                 } else if(!String.isBlank(cbLogWrapper.batchInfo) && cbLogWrapper.batchInfo.equalsIgnoreCase(BSF_Constants.BATCH_SYS_GEN_MOBILE)) {
                     event.put('Mobile_Drives_with_Resource_Allocation__c', cbLogWrapper.mobileSysGenDrivesWithAllocResourceCount);
-                    event.put('Mobile_Drives_wo_Resource_Allocation__c', cbLogWrapper.mobileSysGenDrivesWOAllocResourceCount);
+                    event.put('Mobile_Drives_wo_Resource_Allocation__c', (Decimal) (!cbLogWrapper.drivesWOResourceAllocThoughRequested.isEmpty() ? cbLogWrapper.drivesWOResourceAllocThoughRequested.size() : 0));
                     event.put('Mobile_Drives_Failed_Processing__c', cbLogWrapper.mobileSysGenFailureCount);
+                    event.put('Mobile_Drives_wo_Resource_Requested__c', cbLogWrapper.mobileSysGenDrivesWOResourceRequestedCount);  
                 }
             }
             
@@ -234,6 +236,18 @@ public class DriveGenerationUtil {
                 }
                 cbErrorLogListToInsert.add(cbErrorLog);
             }
+
+            if(cbLogWrapper.drivesWOResourceAllocThoughRequested != NULL && !cbLogWrapper.drivesWOResourceAllocThoughRequested.isEmpty()) {
+                for(Calendar_Build_Error_Log__c error : cbLogWrapper.drivesWOResourceAllocThoughRequested) {
+                    error.Name = cbLogWrapper.batchInfo + ' Error Log_'+(cbLogWrapper.driveDateToEval != NULL ? cbLogWrapper.driveDateToEval.format() : System.today().format());
+                    if(cbLogWrapper.runType.equalsIgnoreCase(BSF_Constants.RUN_TYPE_MANUAL)) {
+                        error.Calendar_Build_Log_Manual_Run__c = (Id) event.get('Id');
+                    } else {
+                        error.Calendar_Build_Log__c = (Id) event.get('Id');
+                    }
+                    cbErrorLogListToInsert.add(error);
+                }
+            }
             insert cbErrorLogListToInsert;
 
         } catch(Exception ex) {
@@ -269,6 +283,7 @@ public class DriveGenerationUtil {
         public List<sObject> sObjectList {get; set;}
         public Exception batchException {get; set;}
         public Set<Id> errorLogIdsCreatedDuringBatchRun {get; set;}
+        public List<Calendar_Build_Error_Log__c> drivesWOResourceAllocThoughRequested {get; set;}
 
         /* Calendar Build Stats */
         public List<Opportunity> eligibleOpportunityForCbList {get; set;}
@@ -291,6 +306,7 @@ public class DriveGenerationUtil {
 		public Decimal fsSysGenCount {get; set;}
         public Decimal fsSysGenFailureCount {get; set;}
         public Decimal fsSysGenDrivesWithAllocResourceCount {get; set;}
+        public Decimal fsSysGenDrivesWOResourceRequestedCount {get; set;}
         public Decimal fsSysGenDrivesWOAllocResourceCount {get; set;}
 
         /* System Gen - Mobile Stats */
@@ -298,6 +314,7 @@ public class DriveGenerationUtil {
         public Decimal mobileSysGenCount {get; set;}
         public Decimal mobileSysGenFailureCount {get; set;}
 		public Decimal mobileSysGenDrivesWithAllocResourceCount {get; set;}
+        public Decimal mobileSysGenDrivesWOResourceRequestedCount {get; set;}
         public Decimal mobileSysGenDrivesWOAllocResourceCount {get; set;}  
         
         /* Drive Status Correction Stats */

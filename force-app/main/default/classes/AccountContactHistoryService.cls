@@ -16,6 +16,8 @@ public class AccountContactHistoryService { //do not add with sharing
             accountContactHistory.Start_Date__c = accountServiceRole.start_date__c;
             accountContactHistory.account__c = accountServiceRole.account__c;
             accountContactHistory.End_Date__C = accountServiceRole.End_Date__C;
+            accountContactHistory.Lost_Reason__c = accountServiceRole.Lost_Reason__c;
+            accountContactHistory.End_Reason__c = accountServiceRole.Account_Service_End_Reason__c;
             accountContactHistoryList.add(accountContactHistory);
             
         }

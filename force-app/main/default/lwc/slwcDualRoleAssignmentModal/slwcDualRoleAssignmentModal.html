@@ -43,6 +43,19 @@
                                 </lightning-combobox>
                             </div>
                         </div>
+
+                        <div class="slds-form-element__row slds-m-top_x-small slds-grid slds-grid_pull-padded-small">
+                            <div class="slds-size_1-of-1 slds-p-horizontal_small">
+                                <lightning-input 
+                                    type="number" 
+                                    name="quantity" 
+                                    label="Quantity" 
+                                    value={model.quantity} 
+                                    required
+                                    onchange={handleOnChange}>
+                                </lightning-input>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

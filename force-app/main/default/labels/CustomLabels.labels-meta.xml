@@ -1,32 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomLabels xmlns="http://soap.sforce.com/2006/04/metadata">
     <labels>
-        <fullName>DRD_System_User_Name</fullName>
+        <fullName>Mobile_Account_Record_Type</fullName>
         <language>en_US</language>
         <protected>false</protected>
-        <shortDescription>DRD System User Name</shortDescription>
-        <value>DRD System User</value>
+        <shortDescription>Mobile Account Record Type</shortDescription>
+        <value>Mobile Account</value>
     </labels>
     <labels>
-        <fullName>TravelTimeEditableProfiles</fullName>
+        <fullName>Sync_Contact_To_ASR_EndReason</fullName>
         <language>en_US</language>
         <protected>false</protected>
-        <shortDescription>TravelTimeEditableProfiles</shortDescription>
-        <value>APS Admin,System Administrator,Global Admin</value>
+        <shortDescription>Sync Contact To ASR EndReason</shortDescription>
+        <value>Other</value>
     </labels>
     <labels>
-        <fullName>Orphan_Job_Allocations_Email</fullName>
+        <fullName>Task_Subject_Marketing_Exception</fullName>
+        <categories>Task Subject</categories>
         <language>en_US</language>
         <protected>false</protected>
-        <shortDescription>Orphan_Job_Allocations_Email</shortDescription>
-        <value>BSFSupport@redcross.org;</value>
-    </labels>
-    <labels>
-        <fullName>OpportunitySplitService</fullName>
-        <categories>Using in Apex class:OpportunitySplitService</categories>
-        <language>en_US</language>
-        <protected>false</protected>
-        <shortDescription>OpportunitySplitService</shortDescription>
-        <value>System Administrator;DRD Profile;AP&amp;S Management;APS Admin;APS Planner;APS Scheduler;Recruitment Admin;APS Management;DRD Manager</value>
+        <shortDescription>Task Subject - Marketing Exception</shortDescription>
+        <value>Request for Marketing Exception</value>
     </labels>
 </CustomLabels>
