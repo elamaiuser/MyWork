@@ -649,6 +649,7 @@ public without sharing class DriveTriggerService {
             FROM Opportunity
             WHERE AccountId IN :map_accountId_earliestCompletedDrive.keySet()
             AND Type_of_Drive__c = :BSF_Constants.MOBILE_DRIVE
+            AND DriveStatus__c <> :BSF_Constants.DOC_STATUS_COMPLETE
             AND Special_Circumstances__c INCLUDES (:BSF_Constants.SSBS_BADGE_FIRST_TIME_DRIVE)]
         );
 
