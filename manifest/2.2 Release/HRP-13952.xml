@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+	<types>
+		<members>slwcConstants</members>
+		<members>slwcDriveManagement</members>
+		<members>slwcDriveShift</members>
+		<members>slwcDriveShiftBulkEditVolunteerJobsModal</members>
+		<members>slwcDriveShiftJobTable</members>
+		<members>slwcShiftJobs</members>
+		<members>slwcStaffingComplementModal</members>
+		<name>LightningComponentBundle</name>
+	</types>
+	<version>63.0</version>
+</Package>

@@ -1,0 +1,47 @@
+.grid-container {
+  display: grid;
+  grid-template-columns: auto auto auto;
+  padding: 5px;
+}
+
+.grid-item-header {
+  background-color: #dddbda;
+  border: 1px solid #c9c7c5;
+  padding: 5px;
+  text-align: center;
+}
+
+.grid-item-footer {
+  padding: 5px;
+  text-align: center;
+}
+
+.grid-item {
+  background-color: white;
+  border: 1px solid #c9c7c5;
+  padding: 5px;
+  text-align: center;
+}
+
+.container-custom-modal {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  -webkit-transform: translate3d(0, 0, 0);
+          transform: translate3d(0, 0, 0);
+  left: 0;
+  right: 0;
+}
+
+.header-custom-modal {
+  position: absolute;
+  top: 0;
+  height: 55px;
+  left: 0;
+  right: 0;
+}
+
+.content-custom-modal {
+  position: relative;
+  top: 55px;
+}
