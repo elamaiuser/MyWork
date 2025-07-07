@@ -17,7 +17,6 @@
         <nameSegment>AccountInvokable</nameSegment>
     </actionCalls>
     <apiVersion>63.0</apiVersion>
-    <areMetricsLoggedToDataCloud>false</areMetricsLoggedToDataCloud>
     <description>Migrated from the Send Bell Notification To District Manager process using Check Account Assigned Status criteria.
 Send a bell notification to District Manager of the Account when Account Assigned Status becomes Unassigned</description>
     <environments>Default</environments>

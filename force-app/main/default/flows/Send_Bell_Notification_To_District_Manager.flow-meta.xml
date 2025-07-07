@@ -59,7 +59,6 @@
         <nameSegment>AccountInvokable</nameSegment>
     </actionCalls>
     <apiVersion>51.0</apiVersion>
-    <areMetricsLoggedToDataCloud>false</areMetricsLoggedToDataCloud>
     <decisions>
         <name>isChangedDecision2_myRule_1_Is_Account_Managed_c</name>
         <label>isChangedDecision2_myRule_1_Is_Account_Managed_c</label>
