@@ -146,7 +146,6 @@
         </outputParameters>
     </actionCalls>
     <apiVersion>62.0</apiVersion>
-    <areMetricsLoggedToDataCloud>false</areMetricsLoggedToDataCloud>
     <assignments>
         <name>AddToCollection</name>
         <label>AddToCollection</label>

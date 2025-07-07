@@ -20,7 +20,6 @@
         <nameSegment>NewFixedSiteDrive</nameSegment>
     </actionCalls>
     <apiVersion>62.0</apiVersion>
-    <areMetricsLoggedToDataCloud>false</areMetricsLoggedToDataCloud>
     <assignments>
         <name>Add_Fixed_Site_Opportunity_to_Collection</name>
         <label>Add Fixed Site Opportunity to Collection</label>
