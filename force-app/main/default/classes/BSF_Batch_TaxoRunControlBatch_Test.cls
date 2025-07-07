@@ -146,6 +146,36 @@ public class BSF_Batch_TaxoRunControlBatch_Test {
     
     
     
+     @isTest
+    static void testBatchExecution_QueryLimitExceed() {
+       // Get a valid RecordType for Taxonomy__c
+        RecordType rt = [SELECT Id, Name FROM RecordType WHERE SObjectType = 'Taxonomy__c' LIMIT 1];
+        Set<String> recordTypes = new Set<String>();
+        List<Taxonomy__c> taxoList = new List<Taxonomy__c>();
+        for (Integer i = 0; i < 10; i++) {
+            Taxonomy__c tax = new Taxonomy__c();
+            tax.RecordTypeId = rt.Id;
+            tax.Version_Key__c = Decimal.valueOf(i);
+            tax.End_Date__c = Date.newInstance(4000, 12, 31);
+            taxoList.add(tax);
+        }
+        insert taxoList;
+        
+        
+        BSF_Batch_TaxoRunControlBatch obj = new BSF_Batch_TaxoRunControlBatch();
+       obj.sendNotificationIfQueryLimitNearThreshold(recordTypes);
+       // BSF_Batch_TaxoRunControlBatch.sendNotificationIfQueryLimitNearThreshold(true);
+        Test.startTest();
+        BSF_Batch_TaxoRunControlBatch batch = new BSF_Batch_TaxoRunControlBatch();
+        batch.finish(null); // This should fail if taxoRun is expected and dereferenced
+        Test.stopTest();
+        
+    }
+    
+    
+    
+    
+    
     
     @isTest
     static void testExecuteMethodWithExceptions() {
@@ -194,11 +224,6 @@ public class BSF_Batch_TaxoRunControlBatch_Test {
         // System.assert(!jobs.isEmpty(), 'AsyncApexJob should exist and be covered in test');
     }
     
-    
-    
-    
-    
-    
     @isTest
     static void testFinishMethodExceptionCoverage() {
         // Setup: Create a Taxonomy_Run__c record
@@ -233,25 +258,25 @@ public class BSF_Batch_TaxoRunControlBatch_Test {
         Test.stopTest();
     }  
     
-  /*  @isTest
-    static void testStartMethodWithValidData() {
-        Test.startTest();
-        
-        BSF_Batch_TaxoRunControlBatch batch = new BSF_Batch_TaxoRunControlBatch();
-        Database.QueryLocator locator = batch.start(null);
-        
-        // Check that a valid query locator is returned
-        System.assertNotEquals(null, locator);
-        
-        Test.stopTest();
-    }*/
+    /*  @isTest
+static void testStartMethodWithValidData() {
+Test.startTest();
+
+BSF_Batch_TaxoRunControlBatch batch = new BSF_Batch_TaxoRunControlBatch();
+Database.QueryLocator locator = batch.start(null);
+
+// Check that a valid query locator is returned
+System.assertNotEquals(null, locator);
+
+Test.stopTest();
+}*/
     
     @isTest
     static void testCronTriggerHandlingBlock() {
         Test.startTest();
         
         // 1. Schedule a dummy job
-        String cronExp = '0 0 0 15 5 ? 2025'; // Schedule for a future time
+        String cronExp = '0 0 0 15 5 ? 2050'; // Schedule for a future time
         String jobId = System.schedule('Dummy Job', cronExp, new BSFBatchPopulateTerriInCollOppSchedule(200));
         
         // 2. Insert a matching custom metadata record
