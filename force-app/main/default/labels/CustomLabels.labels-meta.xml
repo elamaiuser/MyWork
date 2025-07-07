@@ -22,4 +22,11 @@
         <shortDescription>Task Subject - Marketing Exception</shortDescription>
         <value>Request for Marketing Exception</value>
     </labels>
+    <labels>
+        <fullName>Taxonomy_Custom_Notification_Email</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Taxonomy_Custom_Notification_Email</shortDescription>
+        <value>harika.bolisetti2@redcross.org;kata.manishreddy@redcross.org;rajesh.rapolu@redcross.org</value>
+    </labels>
 </CustomLabels>
