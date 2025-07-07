@@ -135,6 +135,7 @@
 		<members>Taxonomy_Run_Config__mdt</members>
         <members>Taxonomy_Run_Error_Log__c</members>
         <members>Taxonomy_Run__c</members>
+        <members>TaxonomyRunUpdateEvent__e</members>
         <name>CustomObject</name>
     </types>
     <types>
