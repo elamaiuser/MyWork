@@ -69,6 +69,7 @@
         <members>skedRoleTimeVariance_Test</members>
         <members>skedSetting</members>
         <members>skedSetting_Test</members>
+        <members>skedTestDataFactory</members>
         <members>skedUpdateJobTimeVarianceBatch</members>
         <members>skedUpdateJobTimeVarianceBatch_Test</members>
         <members>slwcDataService</members>
