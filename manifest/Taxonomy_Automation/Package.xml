@@ -103,6 +103,7 @@
     <types>
         <members>BSF_Utilities</members>
         <members>Taxo_Utilities</members>
+        <members>TaxonomyRunUpdateTriggerTest</members>
         <members>BSF_Batch_DeleteExpiredTaxoVersionBatch</members>
         <members>DeleteExpiredTaxoVersionBatchTest</members>
         <members>DelayedTaxonomyBatchScheduler</members>
