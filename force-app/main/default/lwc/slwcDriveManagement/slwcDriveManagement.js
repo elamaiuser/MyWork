@@ -850,6 +850,11 @@ export default class SlwcDriveManagement extends NavigationMixin(LightningElemen
 
         const isAPSUser = this.driveHelper.isAPSUser(this.masterData.loginUser);
         const needToApproveApprovalIfAny = saveAndApproveApprovalIfAny && isAPSUser;
+
+        if (this.drive.status === DRIVE_STATUS.DRAFT) {
+            this.drive = driveGeneratorInstance.releaseAllAssetAllocations();
+        }
+        
         let drivesToSave = [];
         let model = { ...this.drive };
         drivesToSave.push(model);
