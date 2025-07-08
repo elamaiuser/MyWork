@@ -1,12 +1,17 @@
-import { debugLogService } from 'c/dataService';
+import { debugLogService, jobQueryModel, jobService } from 'c/dataService';
 import { fireEvent, registerListener, unregisterAllListeners } from 'c/pubsub';
-import { DRIVE_TYPE } from 'c/slwcConstants';
+import { DRIVE_TYPE, DRIVE_STATUS, OPERATION_TYPE } from 'c/slwcConstants';
 import { DriveHelper } from 'c/slwcDriveGenerator';
 import * as slwcUtils from 'c/slwcUtils';
 import { CurrentPageReference } from 'lightning/navigation';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import { api, LightningElement, track, wire } from 'lwc';
-import { cloneDeep } from 'c/lodash';
+import { cloneDeep, groupBy } from 'c/lodash';
+
+const STEP = {
+    STEP_1: 'step1',
+    STEP_2: 'step2'
+}
 
 export default class SlwcDriveShiftBulkEditVolunteerJobsModal extends LightningElement {
     helper = new DriveHelper();
@@ -21,10 +26,12 @@ export default class SlwcDriveShiftBulkEditVolunteerJobsModal extends LightningE
  
     @track showModal = false;
     @track showSpinner = false;
+    @track step = STEP.STEP_1;
     @track filters = {};
     @track model = {};
     @track errorMessages = [];
     @track recurrenceDatesPickerModalData = {};
+    @track daysWithJobs = [];
 
     @wire(CurrentPageReference) pageRef;
     masterData = {};
@@ -32,9 +39,36 @@ export default class SlwcDriveShiftBulkEditVolunteerJobsModal extends LightningE
     get modalHeader() {
         return 'Bulk Edit Volunteer Jobs'
     }
+    
+    get modalSize() {
+        if(this.step === STEP.STEP_2) return 'medium';
+        return 'base'
+    }
+
+    get modalSaveBtnLabel() {
+        if(this.step === STEP.STEP_1) return 'Next';
+        return 'Save'
+    }
+
+    get modalCancelBtnLabel() {
+        if(this.step === STEP.STEP_2) return 'Back';
+        return 'Cancel'
+    }
+
+    get showStep1() {
+        return this.step === STEP.STEP_1;
+    }
+
+    get showStep2() {
+        return this.step === STEP.STEP_2;
+    }
 
     get isFixedSiteDrive() {
         return this.drive && this.drive.typeOfDrive === DRIVE_TYPE.FIXED_SITE;
+    }
+
+    get modalOverflowInitial() {
+        return this.step === STEP.STEP_1;
     }
     
     connectedCallback() {
@@ -80,11 +114,20 @@ export default class SlwcDriveShiftBulkEditVolunteerJobsModal extends LightningE
         this.model[name] = slwcUtils.getValueFromEvent(event);
     }
 
+    handleCloseModal() {
+        if(this.step === STEP.STEP_2) {
+            return this.handleBack();
+        }
+
+        this.closeModal();
+    }
+
     handleShowModal(detail) {
         this.showLoading();
         Promise.resolve()
         .then(() => {
             this.showModal = true;
+            this.step = STEP.STEP_1;
             this.action = detail.action;
             this.resourceType = detail.resourceType;
             this.type = detail.type;
@@ -104,7 +147,7 @@ export default class SlwcDriveShiftBulkEditVolunteerJobsModal extends LightningE
         .finally(this.hideLoading);
     }
 
-    validate() {
+    validateStep1() {
         this.errorMessages = [];
 
         const allValid = [
@@ -120,12 +163,98 @@ export default class SlwcDriveShiftBulkEditVolunteerJobsModal extends LightningE
                 message: 'Quantity must be greater than 0.'
             })
         }
+
+        if (!this.model.recurrenceDates?.length) {
+            this.errorMessages.push({
+                message: 'Please select at least 1 recurrence day.'
+            })
+        }
+
         return allValid && !this.errorMessages.length;
     }
 
-    handleSave() {
-        if(!this.validate()) return;
+    handleSaveStep1() {
+        if(!this.validateStep1()) return;
+        this.step = STEP.STEP_2;
+        this.initStep2();
+    }
 
+    populateDaysWithJobs(jobs = []) {
+        const mapJobsByDate = groupBy(jobs, 'driveDate');
+        const result = [];
+        this.model.recurrenceDates.forEach(dateIso => {
+            result.push({
+                dateIso: dateIso,
+                jobs: (mapJobsByDate[dateIso] || []).map(job => {
+                    const errorMessages = [];
+                    const notMatchVolunteerRole = job.volunteerRole !== this.filters.volunteerRole;
+                    const notMatchVolunteerRoleQuantity = job.quantity !== this.filters.quantity;
+
+                    if(notMatchVolunteerRole) {
+                        errorMessages.push("Volunteer type does not match")
+                    }
+
+                    if(notMatchVolunteerRoleQuantity) {
+                        errorMessages.push("Quantity does not match")
+                    }
+
+                    return {
+                        ...job,
+                        errorMessages
+                    }
+                })
+            })
+        })
+
+        this.model.daysWithJobs = result;
+    }
+    
+    initStep2() {
+        this.showLoading();
+        Promise.resolve()
+        .then(() => {
+            let jobQuery = new jobQueryModel();
+            jobQuery.selectedDates = this.model.recurrenceDates;
+            jobQuery.driveTypes = [DRIVE_TYPE.FIXED_SITE];
+            jobQuery.driveOperationTypes = [OPERATION_TYPE.INTEGRATED, OPERATION_TYPE.NON_INTEGRATED_APH, OPERATION_TYPE.NON_INTEGRATED_WB];
+            jobQuery.collectionOperationIds = [this.drive.collectionOperationId];
+            jobQuery.driveLocationIds = [this.drive.driveSiteId];
+            jobQuery.driveStatuses = [
+                DRIVE_STATUS.SYSTEM_GENERATED,
+                DRIVE_STATUS.TENTATIVE,
+                DRIVE_STATUS.CONFIRMED,
+                DRIVE_STATUS.HOLD
+            ];
+            jobQuery.driveExcludedIds = [this.drive.id];
+            jobQuery.isVounteerRole = true;
+
+            const jobSvc = new jobService();
+    
+            return jobSvc.query(jobQuery);
+        })
+        .then((result) => {     
+            result.forEach((job) => {
+                job.driveRecordUrl = '/' + job.driveId;
+                job.recordUrl = '/' + job.id;
+            });
+            return this.populateDaysWithJobs(result);
+        })
+        .then(() => {
+            this.step = STEP.STEP_2  
+        })
+        .catch(error => this.exceptionHandler(error))
+        .finally(this.hideLoading);
+    }
+
+    handleBack() {
+       this.step = STEP.STEP_1;
+    }
+
+    handleSaveModal() {
+        if(this.step === STEP.STEP_1) {
+            return this.handleSaveStep1();
+        }
+        
         if(this.isVolunteerResource) {
             // const existed = this.driveShift.jobs?.find(job => job.volunteerRole === this.job.volunteerRole);
             // if(existed) {

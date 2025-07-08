@@ -8,6 +8,7 @@
 		<members>slwcDriveShiftJobTable</members>
 		<members>slwcShiftJobs</members>
 		<members>slwcStaffingComplementModal</members>
+		<members>slwcRecurrenceDatesPickerModal</members>
 		<name>LightningComponentBundle</name>
 	</types>
 	<version>63.0</version>
