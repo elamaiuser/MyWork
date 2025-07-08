@@ -4980,6 +4980,7 @@ opp.StageName = 'Closed';
         Integer baseVolunteers = 0;
         if(anticipatedRegisteredDonors != null && highSchool != null && matrixRecords != null && !matrixRecords.isEmpty()){
             for (Volunteer_Staffing_Matrix__mdt record : matrixRecords) {
+                if(record.Drive_Type__c != null && record.Drive_Type__c.equalsIgnoreCase(BSF_Constants.FIXED_SITE_DRIVE)) continue; //HRP-15041
                 if(record.High_School_Drive__c == highSchool){
                     if (anticipatedRegisteredDonors >= record.Min_Anticipated_Registered_Donors__c &&
                         anticipatedRegisteredDonors <= record.Max_Anticipated_Registered_Donors__c) {
