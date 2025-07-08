@@ -25,6 +25,7 @@
         <members>JobSkedRegionCorrectionBatch</members>
         <members>JobSkedRegionCorrectionBatchTest</members>        
         <members>Taxo_Utilities</members>
+        <members>TaxonomyRunUpdateTriggerTest</members>
 		<members>TestTaxoUtilities</members>
         <members>skedActivityDistrictBatch</members>
         <members>skedActivityDistrictBatch_Test</members>
