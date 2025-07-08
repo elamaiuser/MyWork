@@ -10,9 +10,10 @@ public class skedOpsRecordApiManager {
         Map<string, object> mapBody = new Map<string, object>();
         string jsonBody = Json.serialize(request);
         string endpoint = skedSetting.instance.Admin.opsRecordApiUrl;
+        boolean isCertificationBasedAuthentication = skedSetting.instance.Admin.opRecordIntegrationWithCertificate;
 
         actionBase action = new actionBase();
-        return (skedOpsRecordApiData.opsRecordResult) action.execute(skedOpsRecordApiData.opsRecordResult.class, endpoint, 'POST', getDefaultHeader(), jsonBody, true);
+        return (skedOpsRecordApiData.opsRecordResult) action.execute(skedOpsRecordApiData.opsRecordResult.class, endpoint, 'POST', getDefaultHeader(isCertificationBasedAuthentication), jsonBody, true);
     }
 
     public string getAccessToken() {
@@ -44,13 +45,15 @@ public class skedOpsRecordApiManager {
     }
     
     /******************************************* Private methods *******************************************/
-    private Map<string, string> getDefaultHeader() {
+    private Map<string, string> getDefaultHeader(Boolean isCertificationBasedAuthentication) {
         Map<string, string> mapHeader = new Map<string, string>();
         mapHeader.put('Content-Type', 'application/json');
         
-        string token = getAccessToken();
-        system.debug('AccessToken:' + token);
-        mapHeader.put('Authorization', 'Bearer ' + token);
+        if(!isCertificationBasedAuthentication) {
+            string token = getAccessToken();
+            system.debug('AccessToken:' + token);
+            mapHeader.put('Authorization', 'Bearer ' + token);
+        }
         
        return mapHeader;
     }
@@ -62,6 +65,9 @@ public class skedOpsRecordApiManager {
             try {
                 Http h = new Http();
                 HttpRequest req = prepareHttpRequest(endPoint, httpMethod, mapHeader, body, !skipReservedKeyReplacement);
+                if(skedSetting.instance.Admin.opRecordIntegrationWithCertificate) {
+                	req.setClientCertificateName(skedSetting.instance.Admin.opRecordCertificateName);
+                }
                 
                 system.debug('#req.getBody()# ' + req.getBody());
                 

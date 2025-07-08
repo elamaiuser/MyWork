@@ -155,13 +155,11 @@ BSF_Batch_PopulateCORegion batch1 = new BSF_Batch_PopulateCORegion();
         insert testCosl;*/
 
 //        delete [SELECT Id FROM sked_Travel_Time_Index_Item__c];
-		
-        
       
         sked_Site_Collection_Operation__c testSCO = new sked_Site_Collection_Operation__c(
             sked_Site__c = testSite.id,
             sked_Collections_Zip_Code__c= collTerr.Id,
-            sked_Collection_Operation__c = co.Id,
+            sked_Collection_Operation__c = 'a0b8J000001Qg6eQAC',
             sked_Start_Date__c = System.today().addDays(-100),
             sked_End_Date__c = System.today().addDays(100)
         );
@@ -284,6 +282,11 @@ Set<Id> upsertedSiteCollectionOperationIds = new Set<Id>();
 
      
     }
-  
+
+    
+    
+    
+    
+    
 
 }
