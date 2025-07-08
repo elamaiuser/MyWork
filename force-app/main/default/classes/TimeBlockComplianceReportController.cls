@@ -265,7 +265,7 @@ return wrapper;
         String contentionResolution
     ) {
         Map<String, String> row = new Map<String, String>();
-        row.put('driveName', shift.sked_Drive__r.Name);
+        row.put('driveName', shift.sked_Drive__r.Id);
         row.put('status', shift.sked_Drive__r.sked_Status__c);
         row.put('driveDate', String.valueOf(shift.sked_Drive__r.sked_Drive_Date__c));
         row.put('shiftStartTime', formatTime(shift.sked_Start_Time__c));
