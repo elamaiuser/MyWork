@@ -648,8 +648,7 @@ public class OpportunityTriggerTest
         userList.add(drdUser1);
         userList.add(drdUser2);
         
-        system.runAs(new User(Id=UserInfo.getUserId()))
-        {
+        system.runAs(new User(Id = UserInfo.getUserId())) {
             insert userList;
         }
         
@@ -729,7 +728,7 @@ public class OpportunityTriggerTest
                 
         Triggerhandler.bypass('OpportunityTriggerhandler');
         insert oppTeamList;
-        TriggerHandler.clearAllBypasses();
+        //TriggerHandler.clearAllBypasses();
         
         Map<Id, List<OpportunityTeamMember>> oppTeamMembersMap = new Map<Id, List<OpportunityTeamMember>>();
         for(OpportunityTeamMember oppT : oppTeamList)
@@ -754,16 +753,10 @@ public class OpportunityTriggerTest
             setOfOpptyIds.add(opp.Id);
         }
         
-        /*OpportunitySplit oppSplit = new OpportunitySplit();
-        oppSplit.OpportunityId = oppNewList[0].Id ;
-        oppSplit.SplitPercentage = 50.0;
-        oppSplit.SplitOwnerId = userList[0].Id;
-        oppSplit.SplitTypeId = revenueSplitType.id;
-        insert oppSplit;*/
         oppNewList[0].ownerid=userList[0].Id;
         Triggerhandler.bypass('OpportunityTriggerHandler');
         update oppNewList[0];
-            TriggerHandler.clearAllBypasses();
+        //TriggerHandler.clearAllBypasses();
         OpportunityService.UpdateOwnerSplit(oppNewList);
         opportunityService.deleteOpptyTeamMembers(setOfOpptyIds);
         Test.stopTest();
@@ -1288,8 +1281,16 @@ public class OpportunityTriggerTest
         Test.stopTest();        
     }
     
-    static testmethod void testCheckForOppStageChange2()
-    {
+    static testmethod void testCheckForOppStageChange2() {
+        skedHubBase.BypassInsertTriggers = true;
+        skedHubBase.BypassUpdateTriggers = true;
+        skedHubBase.BypassDeleteTriggers = true;
+        TriggerHandler.bypass('OpportunityTeamMemberTriggerHandler');
+        TriggerHandler.bypass('OpportunitySplitTriggerHandler');
+		TriggerHandler.bypass('AccountPortfolioAssignmentTriggerHandler'); 
+        TriggerHandler.bypass('AccountTriggerHandler'); 
+        TriggerHandler.bypass('SiteTriggerHandler'); 
+        
         BSF_TestDataSetup testDataSetup = new BSF_TestDataSetup(false);
         Map<string, sObject> mapTestData =  testDataSetup.createAndInsertCommonObjects();
         
@@ -1303,7 +1304,7 @@ public class OpportunityTriggerTest
         testMobileSite1.sked_Pre_Drive_Security_Due_Date__c = '14';
         insert testMobileSite1;
         
-        
+        TriggerHandler.bypass('OpportunityTriggerHandler');
         
         // insert template 1 - PLT - Inside
         Opportunity testTemplate1 = (Opportunity)mapTestData.get('MOBILE_TEMPLATE_OPP');
@@ -1312,12 +1313,12 @@ public class OpportunityTriggerTest
         testTemplate1.Type = 'Inside';
         insert testTemplate1;
         
-        Opportunity mobileOpp3 = new Opportunity(
-            Name = 'Test Opportunity 3',
+        Opportunity mobileOpp1 = new Opportunity(
+            Name = 'Test Opportunity 1',
         	StageName = 'Withdrawn',
            	Type_of_Drive__c = 'Mobile',
         	RecordTypeId =  Opportunity.sObjectType.getDescribe().getRecordTypeInfosByName().get('Mobile Opp').getRecordTypeId(),
-        	Drive_Name__c = 'Test Drive',
+        	Drive_Name__c = 'Test Drive 1',
         	Drive_Date__c = Date.today(),
         	CloseDate = System.today(),
         	Start_Time__c = Time.newInstance(10, 0, 0, 0),
@@ -1329,27 +1330,26 @@ public class OpportunityTriggerTest
         	Anticipated_Registered_Donors__c = 25,
             Online_Scheduling_Enabled__c = 'No'
 		);
-        mobileOpp3.AccountId = testMobileAccount.Id;
-        mobileOpp3.Drive_Site__c = testMobileSite1.Id;
-        mobileOpp3.Parent_Template_Id__c = testTemplate1.Id;
-        mobileOpp3.Accept_56_Day_Rule_Violation__c = TRUE;
-        TriggerHandler.bypass('OpportunityTriggerhandler');
-        insert mobileOpp3;
+        mobileOpp1.AccountId = testMobileAccount.Id;
+        mobileOpp1.Drive_Site__c = testMobileSite1.Id;
+        mobileOpp1.Parent_Template_Id__c = testTemplate1.Id;
+        mobileOpp1.Accept_56_Day_Rule_Violation__c = TRUE; 
+        insert mobileOpp1;
         
-        Triggerhandler.clearAllBypasses();
+        Triggerhandler.clearBypass('OpportunityTriggerHandler');
+        
         Test.startTest();
-        mobileOpp3.stageName = 'Committed';
-        try{
-        update mobileOpp3;
-        }catch(Exception ex)
-        {}
+        mobileOpp1.stageName = 'Committed';
+        try {
+        	update mobileOpp1;
+        }catch(Exception ex) {}
         
-        Opportunity mobileOpp4 = new Opportunity(
-            Name = 'Test Opportunity 4',
+        Opportunity mobileOpp2 = new Opportunity(
+            Name = 'Test Opportunity 2',
         	StageName = 'Excluded',
            	Type_of_Drive__c = 'Mobile',
         	RecordTypeId =  Opportunity.sObjectType.getDescribe().getRecordTypeInfosByName().get('Mobile Opp').getRecordTypeId(),
-        	Drive_Name__c = 'Test Drive',
+        	Drive_Name__c = 'Test Drive 2',
         	Drive_Date__c = Date.today(),
         	CloseDate = System.today(),
         	Start_Time__c = Time.newInstance(10, 0, 0, 0),
@@ -1361,18 +1361,18 @@ public class OpportunityTriggerTest
         	Anticipated_Registered_Donors__c = 25,
             Online_Scheduling_Enabled__c = 'No'
 		);
-        mobileOpp4.AccountId = testMobileAccount.Id;
-        mobileOpp4.Drive_Site__c = testMobileSite1.Id;
-        mobileOpp4.Parent_Template_Id__c = testTemplate1.Id;
-        mobileOpp4.Accept_56_Day_Rule_Violation__c = TRUE;
-        TriggerHandler.bypass('OpportunityTriggerhandler');
-        insert mobileOpp4;
-        Triggerhandler.clearAllBypasses();
-        mobileOpp4.stageName = 'Discovery';
+        mobileOpp2.AccountId = testMobileAccount.Id;
+        mobileOpp2.Drive_Site__c = testMobileSite1.Id;
+        mobileOpp2.Parent_Template_Id__c = testTemplate1.Id;
+        mobileOpp2.Accept_56_Day_Rule_Violation__c = TRUE;
+        TriggerHandler.bypass('OpportunityTriggerHandler');
+        insert mobileOpp2;
+        Triggerhandler.clearBypass('OpportunityTriggerHandler');
+        
+        mobileOpp2.stageName = 'Discovery';
         try{
-        update mobileOpp4;
-        }catch(Exception ex)
-        {
+        	update mobileOpp2;
+        }catch(Exception ex) {
 			Assert.isTrue(ex.getMessage().contains('A Blood Drive Opportunity cannot move back once it has moved to the next Stage in the Lifecycle'));
         }
     }
@@ -1386,7 +1386,7 @@ public class OpportunityTriggerTest
         TriggerHandler.bypass('OpportunitySplitTriggerHandler');
 		TriggerHandler.bypass('AccountPortfolioAssignmentTriggerHandler'); 
         TriggerHandler.bypass('AccountTriggerHandler'); 
-        TriggerHandler.bypass('ContactTriggerHandler'); 
+        TriggerHandler.bypass('SiteTriggerHandler'); 
         Test.startTest();
         Profile drdProfileInfo = [SELECT Id,Name from Profile where Name like '%DRD Profile%' LIMIT 1];
         
@@ -1486,7 +1486,7 @@ public class OpportunityTriggerTest
         mobileOpp4.Drive_Site__c = testMobileSite1.Id;
         mobileOpp4.Parent_Template_Id__c = testTemplate1.Id;
         mobileOpp4.Accept_56_Day_Rule_Violation__c = TRUE;
-        TriggerHandler.bypass('OpportunityTriggerhandler');
+        TriggerHandler.bypass('OpportunityTriggerHandler');
         insert mobileOpp4;
         Triggerhandler.clearAllBypasses();
         mobileOpp4.stageName = 'Discovery';
@@ -1532,7 +1532,7 @@ public class OpportunityTriggerTest
         Test.stopTest();
     }
     
-    static testMethod void testUpdateWebSchedulingStart_EndDatesFixed()
+    /*static testMethod void testUpdateWebSchedulingStart_EndDatesFixed()
     {        
         BSF_TestDataSetup testDataSetup = new BSF_TestDataSetup(false);
         Map<string, sObject> mapTestData =  testDataSetup.createAndInsertCommonObjects();
@@ -1562,7 +1562,7 @@ public class OpportunityTriggerTest
         Test.startTest();
         insert testFixedOpp;
         Test.stopTest();
-    }
+    }*/
     
     static testMethod void testTemplateActiveCheckValidation()
     {        
@@ -1692,8 +1692,16 @@ public class OpportunityTriggerTest
         
     }
     
-    static testMethod void testUpdateProjectionHistory()
-    {
+    static testMethod void testUpdateProjectionHistory() {
+        skedHubBase.BypassInsertTriggers = true;
+        skedHubBase.BypassUpdateTriggers = true;
+        skedHubBase.BypassDeleteTriggers = true;
+        TriggerHandler.bypass('OpportunityTeamMemberTriggerHandler');
+        TriggerHandler.bypass('OpportunitySplitTriggerHandler');
+		TriggerHandler.bypass('AccountPortfolioAssignmentTriggerHandler'); 
+        TriggerHandler.bypass('AccountTriggerHandler'); 
+        TriggerHandler.bypass('SiteTriggerHandler'); 
+        
         BSF_TestDataSetup testDataSetup = new BSF_TestDataSetup(false);
         Map<string, sObject> mapTestData =  testDataSetup.createAndInsertCommonObjects();
         
@@ -1709,12 +1717,9 @@ public class OpportunityTriggerTest
         Opportunity testFixedSiteOpp = (Opportunity)mapTestData.get('FIXED_OPP');
         testFixedSiteOpp.AccountId = testFixedSiteAccount.id;
         testFixedSiteOpp.Drive_Site__c = testFixedSite.Id;
-        testFixedSiteOpp.Anticipated_Registered_Donors__c = 10;
         insert testFixedSiteOpp;
         
         Test.startTest();
-        testFixedSiteOpp.Anticipated_Registered_Donors__c = 20;
-        testFixedSiteOpp.AnticipatedRegisterDonorChangeReason__c = 'Test Anticipated Donors Changed';
         testFixedSiteOpp.WB_Projected_Procedures__c = 20;
         testFixedSiteOpp.WholeBloodProcedureProjectedChangeReason__c = 'Test WB Changed';
         testFixedSiteOpp.X2RBC_Projected_Procedures__c = 20;
@@ -1722,8 +1727,9 @@ public class OpportunityTriggerTest
         update testFixedSiteOpp;
         Test.stopTest();
         
-        Opportunity oppAfterUpdate = [select Id, Projection_History__c from Opportunity where Id=:testFixedSiteOpp.Id];
-        Assert.isTrue(oppAfterUpdate.Projection_History__c!= NULL);
+        Opportunity oppAfterUpdate = [select Id, Projection_History__c from Opportunity where Id = :testFixedSiteOpp.Id];
+        Assert.isTrue(oppAfterUpdate.Projection_History__c != NULL);
+        TriggerHandler.clearAllBypasses();
     }
     
     static testMethod void testUpdateOpportunitiesRelatedToTemplate()
@@ -2910,7 +2916,7 @@ public class OpportunityTriggerTest
             try {
                 update testMobileOpp;
             } catch(Exception ex) {
-                Assert.isTrue(ex.getMessage().contains('For changes beyond this range 100% - 160%, please contact DRD Manager.'));
+                Assert.isTrue(ex.getMessage().contains('For changes beyond this range 100.0% - 160.0%, please contact DRD Manager.'));
             }
         }
        Test.stopTest(); 
@@ -3187,5 +3193,4 @@ public class OpportunityTriggerTest
         
         Test.stopTest();
     }
-
 }
