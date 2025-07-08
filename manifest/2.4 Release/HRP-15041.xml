@@ -34,6 +34,7 @@
 		<name>Layout</name>
 	</types>
     <types>
+		<members>autoMapper</members>
 		<members>slwcDriveGenerator</members>
 		<name>LightningComponentBundle</name>
 	</types>
