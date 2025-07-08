@@ -5,6 +5,7 @@
         <members>DelayedTaxonomyBatchScheduler</members>
         <members>BSF_Batch_TaxoRunControlBatch</members>
         <members>BSF_Batch_TaxoRunControlBatch_Test</members>
+        <members>TaxonomyRunUpdateTriggerTest</members>
         <name>ApexClass</name>
     </types>
     <types>
