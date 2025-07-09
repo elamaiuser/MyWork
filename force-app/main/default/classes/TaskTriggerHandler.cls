@@ -172,7 +172,7 @@ public with sharing class TaskTriggerHandler extends TriggerHandler {
         List<BSF_MarketingExceptionRequest.Request> tasksOwnerUpdated = new List<BSF_MarketingExceptionRequest.Request>();
         for (Task newRecord : taskList) {
             Task oldData = taskMap.get(newRecord.Id);
-            if (newRecord.Status!='Completed' && newRecord.Status!='Cancelled' && newRecord.OwnerId != oldData.OwnerId) {
+            if (newRecord.Subject.equalsIgnoreCase(Label.Task_Subject_Marketing_Exception) && newRecord.Status!='Completed' && newRecord.Status!='Cancelled' && newRecord.OwnerId != oldData.OwnerId) {
                 BSF_MarketingExceptionRequest.Request task = new BSF_MarketingExceptionRequest.Request();
                 task.taskId = newRecord.Id;
                 tasksOwnerUpdated.add(task);
