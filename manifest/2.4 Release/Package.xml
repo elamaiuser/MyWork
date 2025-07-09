@@ -74,6 +74,7 @@
 		<members>slwcLinkedDriveStaffingDetails</members>
 		<members>slwcResolveDriveContentions</members>
 		<members>slwcSlider</members>
+		<members>slwcDriveManagement</members>
 		<name>LightningComponentBundle</name>
 	</types>
 	<types>
