@@ -460,13 +460,12 @@ atm = new accountTeamMember(userid=pa.user__c,accountId=apa.account__c,Start_Dat
             InsertBsfErrorLog.insertBsfErrors(errorLogInsertList);
             
             //HRP-15205 -> In case of Acc Team Member Trigger doesn't get triggered due to failures
-            Portfolio_Accounts_Processing__c portfolioAccProcessingRecord = [SELECT Id, Portfolio_progress_for_Accounts__c, 
-                                                                            Records_Processed__c, Portfolio_Assignment_Updated__c 
-                                                                            FROM Portfolio_Accounts_Processing__c 
-                                                                            LIMIT 1];
-            if (portfolioAccProcessingRecord != NULL && portfolioAccProcessingRecord.Portfolio_Assignment_Updated__c) {
+            List<Portfolio_Accounts_Processing__c> portfolioAccProcessingRecord = [SELECT Id, Portfolio_progress_for_Accounts__c, 
+                                                                                   Records_Processed__c, Portfolio_Assignment_Updated__c 
+                                                                                   FROM Portfolio_Accounts_Processing__c];
+            if (portfolioAccProcessingRecord != NULL && !portfolioAccProcessingRecord.isEmpty() && portfolioAccProcessingRecord[0].Portfolio_Assignment_Updated__c) {
                 update new Portfolio_Accounts_Processing__c(
-                    Id = portfolioAccProcessingRecord.Id,
+                    Id = portfolioAccProcessingRecord[0].Id,
                     Portfolio_progress_for_Accounts__c = 0,
                     Records_Processed__c = 0,
                     Portfolio_Assignment_Updated__c = false
