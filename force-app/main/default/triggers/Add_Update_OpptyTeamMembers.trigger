@@ -5,7 +5,6 @@
 * ***********************************************************************************************************************************************
 * 01/03/2024                 Balaji N					 Logic for HRP-10569 (Method call AccountPortfolioAssignmentService.accTeamDateSyncOnAccPortUpdates to get the future team info)
 * 08/28/2024				 Balaji N					 Logic for HRP-13340
-* 20/06/2025                 Harika Bolisetti            Logic for HRP-15121
 ************************************************************************************************************************************************
 */
 trigger Add_Update_OpptyTeamMembers on UpdateOpptyTeamEvent__e (After Insert) {
