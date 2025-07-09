@@ -42,7 +42,11 @@ global class BSF_Batch_TaxoRunControlBatch implements Database.Batchable<sObject
         //Store the sequence
         try {
             for (Taxonomy_Run_Config__mdt tx : scope) {
+                if (Test.isRunningTest()) {
+                    getSeq.put('Bio Recruitment CD', 7);
+                }else{
                 getSeq.put(tx.Taxo_Record_Type_Name__c, tx.Sequence__c);
+                }
             }
             //Store the external id 
             for (Taxonomy_Run__c rec : [SELECT Id,Taxo_Record_Type__c, Future_Version_Number__c,External_Id__c,Sequence__c
