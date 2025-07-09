@@ -12,6 +12,6 @@
     </values>
     <values>
         <field>Value__c</field>
-        <value xsi:type="xsd:string">You can not apply the First Time flag as account has previously completed drive(s).</value>
+        <value xsi:type="xsd:string">You can not apply the First Time flag if account has previously completed drive(s).</value>
     </values>
 </CustomMetadata>
