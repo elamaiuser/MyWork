@@ -5,9 +5,11 @@
         <members>AccountContactHistoryService_Test</members>
         <members>AccountInvokable</members>
         <members>AccountInvokable_Test</members>
+        <members>AccountPortfolioAssignmentService</members>
         <members>AccountServiceRoleService</members>
         <members>AccountServiceRoleTriggerHandler</members>
         <members>AccountServiceRoleTrigger_Test</members>
+        <members>AccountTeamMemberService_Test</members>
         <members>BSF_Batch_DriveStatusCorrection</members>
         <members>BSF_Batch_Drive_OpRecordStatusCorrection</members>
         <members>BSF_Constants</members>
@@ -33,6 +35,7 @@
         <members>OpportunityTriggerHandler</members>
         <members>OpportunityTriggerTest</members>
         <members>OrderCloningService</members>
+        <members>OpRecordStatusCorrectionTest</members>
         <members>SiteCollectionOperationTriggerHandler</members>
         <members>SiteCollectionOperationTriggerTest</members>
         <members>TaskTriggerHandler</members>
@@ -76,11 +79,11 @@
         <members>slwcDataService_Test</members>
         <members>slwcDriveService</members>
         <members>slwcDriveService_Test</members>
-        <members>slwcSetting</members>
-        <members>AccountTeamMemberService_Test</members>
+        <members>slwcSetting</members>        
         <name>ApexClass</name>
     </types>
     <types>
+        <members>Add_Update_OpptyTeamMembers</members>
         <members>skedFixedSiteProcedureProjectionTrigger</members>
         <members>updateEventTrigger</members>
         <name>ApexTrigger</name>
