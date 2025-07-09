@@ -396,7 +396,7 @@
         <div class="slds-p-bottom_medium">
             <h3 class="slds-section-title--divider">Staff Complement</h3>
             <div class="slds-grid slds-wrap slds-p-top_small">
-                <c-slwc-shift-jobs is-readonly={masterData.fieldReadonlyMap.driveShifts} drive={drive} shift={shift} jobs={personJobs} resource-type="Person"
+                <c-slwc-shift-jobs is-readonly={masterData.fieldReadonlyMap.driveShifts} drive={drive} master-data={masterData} shift={shift} jobs={personJobs} resource-type="Person"
                                           is-creatable is-deletable is-editable style="width:100%">
                 </c-slwc-shift-jobs>
             </div>
@@ -443,7 +443,7 @@
                     </div>
                 </template>
                 
-                <c-slwc-shift-jobs is-readonly={masterData.fieldReadonlyMap.volunteerJobs} drive={drive} shift={shift} jobs={volunteerJobs} resource-type="Volunteer"
+                <c-slwc-shift-jobs is-readonly={masterData.fieldReadonlyMap.volunteerJobs} drive={drive} master-data={masterData} shift={shift} jobs={volunteerJobs} resource-type="Volunteer"
                                           is-creatable is-deletable is-editable style="width:100%">
                 </c-slwc-shift-jobs>
             </div>
@@ -451,7 +451,7 @@
         <div class="slds-p-bottom_medium" if:true={vehicleEnabled}>
             <h3 class="slds-section-title--divider">Vehicle Complement</h3>
             <div class="slds-grid slds-wrap slds-p-top_small">
-                <c-slwc-shift-jobs is-readonly={masterData.fieldReadonlyMap.driveShifts} drive={drive} shift={shift} jobs={vehicleJobs} resource-type="Vehicle"
+                <c-slwc-shift-jobs is-readonly={masterData.fieldReadonlyMap.driveShifts} drive={drive} master-data={masterData} shift={shift} jobs={vehicleJobs} resource-type="Vehicle"
                                         is-editable={equipmentComplementEditable} style="width:100%">
                 </c-slwc-shift-jobs>
             </div>
@@ -459,7 +459,7 @@
         <div class="slds-p-bottom_medium" if:true={equipmentEnabled}>
             <h3 class="slds-section-title--divider">Equipment Complement</h3>
             <div class="slds-grid slds-wrap slds-p-top_small">
-                <c-slwc-shift-jobs  drive={drive}  is-readonly={masterData.fieldReadonlyMap.driveShifts} shift={shift} jobs={equipmentJobs} resource-type="Equipment" style="width:100%">
+                <c-slwc-shift-jobs  drive={drive}  master-data={masterData} is-readonly={masterData.fieldReadonlyMap.driveShifts} shift={shift} jobs={equipmentJobs} resource-type="Equipment" style="width:100%">
                 </c-slwc-shift-jobs>
             </div>
         </div>

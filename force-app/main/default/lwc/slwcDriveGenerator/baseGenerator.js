@@ -8,7 +8,9 @@ import {
   driveQueryModel,
   driveService,
   slotQueryModel,
-  slotService
+  slotService,
+  jobService,
+  jobQueryModel,
 } from "c/dataService";
 import * as slwcDateUtils from 'c/slwcDateUtils';
 import TIME_ZONE from '@salesforce/i18n/timeZone';
@@ -1018,6 +1020,24 @@ class BaseGenerator {
     return this.notifyDriveChanged();
   }
 
+  saveBulkEditVolunteerJob(shiftKey, job) {
+    if (!shiftKey || !job) return;
+
+    let shift = this.drive.driveShifts.find((e) => e.key == shiftKey);
+    let newList = this.helper.getDriveShiftJobs(shift);
+    const index = newList.findIndex((item) => item.key === job.key);
+    if (index == -1) {
+      return;
+    }
+
+    newList[index] = {
+      ...newList[index],
+      ...job
+    };
+    shift.jobs = newList;
+    return this.notifyDriveChanged();
+  }
+
   deleteJob(shiftKey, job) {
     if (!shiftKey || !job) return;
     let shift = this.drive.driveShifts.find((e) => e.key == shiftKey);
@@ -1298,6 +1318,76 @@ class BaseGenerator {
     })
     
     return this.notifyDriveChanged();
+  }
+
+  calculateRecurrenceVolunteerJobs(drive) {
+    const recurrenceDates = [];
+    const recurrenceJobIds = [];
+    const mapRecurrenceJobIdsByJobId = {};
+    drive.driveShifts?.forEach(driveShift => {
+      driveShift.jobs?.forEach(job => {
+        job.bulkEditVolunteerJobsSelectedDays?.length && recurrenceDates.push(...job.bulkEditVolunteerJobsSelectedDays);
+        if(job.bulkEditVolunteerJobsSelectedJobIds?.length) {
+          mapRecurrenceJobIdsByJobId[job.id] = {
+            job: job,
+            recurrenceJobIds: job.bulkEditVolunteerJobsSelectedJobIds
+          }
+          recurrenceJobIds.push(...job.bulkEditVolunteerJobsSelectedJobIds);
+        }
+      })
+    })
+
+    const today = DateTime.fromObject({
+      zone: this.masterData.timezoneSidId
+    }).toISODate();
+
+    const validRecurrenceDates = uniq(recurrenceDates).filter(dateIso => dateIso >= today);
+    if(!validRecurrenceDates.length) {
+      return Promise.resolve([]);
+    }
+
+    return Promise.resolve()
+      .then(() => {
+        let jobQuery = new jobQueryModel();
+        jobQuery.recordIds = recurrenceJobIds;
+        jobQuery.selectedDates = validRecurrenceDates;
+        jobQuery.driveTypes = [DRIVE_TYPE.FIXED_SITE];
+        jobQuery.driveOperationTypes = [OPERATION_TYPE.INTEGRATED, OPERATION_TYPE.NON_INTEGRATED_APH, OPERATION_TYPE.NON_INTEGRATED_WB];
+        jobQuery.collectionOperationIds = [this.drive.collectionOperationId];
+        jobQuery.driveLocationIds = [this.drive.driveSiteId];
+        jobQuery.driveStatuses = [
+            DRIVE_STATUS.SYSTEM_GENERATED,
+            DRIVE_STATUS.TENTATIVE,
+            DRIVE_STATUS.CONFIRMED,
+            DRIVE_STATUS.HOLD
+        ];
+        jobQuery.driveExcludedIds = [this.drive.id];
+        jobQuery.isVounteerRole = true;
+
+        const jobSvc = new jobService();
+
+        return jobSvc.query(jobQuery);
+      })
+      .then((jobs = []) => {
+        let mapJobsToSave = {};
+        Object.keys(mapRecurrenceJobIdsByJobId).forEach(jobId => {
+          const {job: sourceJob, recurrenceJobIds } = mapRecurrenceJobIdsByJobId[jobId];
+          const relatedJobs = jobs.filter(job => recurrenceJobIds.includes(job.id));
+
+          relatedJobs.forEach(job => {
+            mapJobsToSave[job.id] = {
+              id: job.id,
+              isLocked: !!sourceJob.isLocked
+            }
+          })
+        })
+  
+        return Object.values(mapJobsToSave);
+      })
+      .catch((error) => {
+        console.log('>>> calculateRecurrenceVolunteerJobs', error);
+        return [];
+      })
   }
 
   calculateRecurrenceSlots(drive) {
