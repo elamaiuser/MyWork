@@ -5204,9 +5204,14 @@ opp.StageName = 'Closed';
 
             Opportunity oldOpp = oldOppMap.get(opp.Id);
             List<String> newSpecialCircumstances = opp.Special_Circumstances__c.split(';');
-            if(opp.Special_Circumstances__c != oldOpp.Special_Circumstances__c && newSpecialCircumstances.contains(BSF_Constants.SSBS_BADGE_FIRST_TIME_DRIVE)) {
+            List<String> oldSpecialCircumstances = oldOpp.Special_Circumstances__c != null ? oldOpp.Special_Circumstances__c.split(';') : new List<String>();
+
+            if(opp.Special_Circumstances__c != oldOpp.Special_Circumstances__c && 
+                newSpecialCircumstances.contains(BSF_Constants.SSBS_BADGE_FIRST_TIME_DRIVE) &&
+                !oldSpecialCircumstances.contains(BSF_Constants.SSBS_BADGE_FIRST_TIME_DRIVE)) 
+            {
                 if(!map_accountId_mobileOppList.containsKey(opp.AccountId)) {
-                map_accountId_mobileOppList.put(opp.AccountId, new List<Opportunity>());
+                    map_accountId_mobileOppList.put(opp.AccountId, new List<Opportunity>());
                 }
                 map_accountId_mobileOppList.get(opp.AccountId).add(opp);
             }
