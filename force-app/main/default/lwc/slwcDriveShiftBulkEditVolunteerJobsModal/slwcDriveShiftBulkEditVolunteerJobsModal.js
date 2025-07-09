@@ -140,8 +140,8 @@ export default class SlwcDriveShiftBulkEditVolunteerJobsModal extends LightningE
             this.filters.quantity = this.job.quantity;
 
             this.model.isLocked = !!this.job.isLocked;
-            this.model.recurrenceDates = cloneDeep(this.job.recurrenceDates) ?? [];
-            this.model.recurrenceDriveIds = cloneDeep(this.job.recurrenceDriveIds) ?? [];
+            this.model.recurrenceDates = cloneDeep(this.job.bulkEditVolunteerJobsSelectedDays) ?? [];
+            this.model.recurrenceDriveIds = cloneDeep(this.job.bulkEditVolunteerJobsSelectedJobIds) ?? [];
         })
         .catch(error => this.exceptionHandler(error))
         .finally(this.hideLoading);
@@ -254,59 +254,23 @@ export default class SlwcDriveShiftBulkEditVolunteerJobsModal extends LightningE
         if(this.step === STEP.STEP_1) {
             return this.handleSaveStep1();
         }
-        
-        if(this.isVolunteerResource) {
-            // const existed = this.driveShift.jobs?.find(job => job.volunteerRole === this.job.volunteerRole);
-            // if(existed) {
-            //     this.job = {
-            //         ...this.job,
-            //         redcrossVolunteerQuantity: this.job.redcrossVolunteerQuantity || 0,
-            //         sponsorVolunteerQuantity: this.job.sponsorVolunteerQuantity || 0,
-            //         key: existed.key,
-            //         id: existed.id
-            //     }
-
-            //     this.dispatchEvent(
-            //         new ShowToastEvent({
-            //             title: 'Success',
-            //             message: `Volunteer complement ${this.isVolunteerQuantityChanged ? 'quantity ': ''} has been updated!`,
-            //             variant: 'success'
-            //         })
-            //     );
-
-            //     const isRedCrossQtyUpdateBannerNeeded = 
-            //         this.isVolunteerResource && 
-            //         this.job.volunteerRole === VOLUNTEER_TYPE.DONOR_AMBASSADOR &&
-            //         this.job.redcrossVolunteerQuantity !== existed?.redcrossVolunteerQuantity && 
-            //         this.drive?.driveShifts?.length > 1;
-            //     if(isRedCrossQtyUpdateBannerNeeded) {
-            //         this.dispatchEvent(
-            //             new ShowToastEvent({
-            //                 title: 'Alert!',
-            //                 message: `Red Cross Volunteer Quantity has been updated on ${this.driveShift.name}. Red Cross Volunteer Quantity will be updated on all shifts.`,
-            //                 variant: 'warning'
-            //             })
-            //         );
-            //     }
-            // }
-        }
-        
-        // const originalJob = this.driveShift.jobs?.find(_job => _job.resourceRole === this.job.resourceRole);
-        // const isDualRoleModified = this.isDualRoleEditMode && originalJob?.dualRole !== this.job.dualRole;
-        // const reducedDualRoleQuantity = this.isDualRoleEditMode ? Math.max(originalJob?.quantity - this.job.quantity, 0) : 0;
-        // this.job = {
-        //     ...this.job,
-        //     isDualRoleModified: isDualRoleModified,
-        //     reducedDualRoleQuantity: reducedDualRoleQuantity
-        // };
-
-        // let eventValues = {action: this.action, shiftKey: this.driveShift.key, job: this.job};
-        // if(this.type != "allocationModal"){
-        //     fireEvent(this.pageRef, 'saveJob', eventValues);
-        // } else {
-        //     eventValues = {...eventValues, shiftId: this.driveShift.id }
-        //     fireEvent(this.pageRef, 'saveJobModal', eventValues);
-        // }
+                
+        let eventValues = {
+            action: this.action, 
+            shiftKey: this.driveShift.key, 
+            job: {
+                ...this.job,
+                isLocked: !!this.model.isLocked,
+                bulkEditVolunteerJobsSelectedDays: this.model.daysWithJobs.filter(day => {
+                    return day.jobs.length && !!day.jobs.find(job => !job.errorMessages.length)
+                }).map(day => day.dateIso),
+                bulkEditVolunteerJobsSelectedJobIds: this.model.daysWithJobs.reduce((jobIds, day) => {
+                    jobIds.push(...day.jobs.filter(job => !job.errorMessages.length).map(job => job.id))
+                    return jobIds;
+                }, [])
+            }
+        };
+        fireEvent(this.pageRef, 'saveBulkEditVolunteerJobModal', eventValues);
         this.closeModal();
     }   
 
