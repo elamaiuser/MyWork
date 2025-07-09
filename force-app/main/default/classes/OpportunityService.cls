@@ -5188,5 +5188,44 @@ opp.StageName = 'Closed';
             } 
         }
     }
+
+    public static void validateManualFirstTimeFlagSelection(List<Opportunity> newOppList, Map<Id, Opportunity> oldOppMap) {
+        Map<Id, List<Opportunity>> map_accountId_mobileOppList = new Map<Id, List<Opportunity>>();
+
+        for(Opportunity opp : newOppList) {
+            if(opp.Is_Template__c || opp.RecordTypeId == FIXED_SITE_OPP_RECTYPEID) continue;
+            if(opp.Special_Circumstances__c == null) continue;
+            if(oldOppMap == NULL || !oldOppMap.containsKey(opp.Id)) continue;
+
+            Opportunity oldOpp = oldOppMap.get(opp.Id);
+            List<String> newSpecialCircumstances = opp.Special_Circumstances__c.split(';');
+            if(opp.Special_Circumstances__c != oldOpp.Special_Circumstances__c && newSpecialCircumstances.contains(BSF_Constants.SSBS_BADGE_FIRST_TIME_DRIVE)) {
+                if(!map_accountId_mobileOppList.containsKey(opp.AccountId)) {
+                map_accountId_mobileOppList.put(opp.AccountId, new List<Opportunity>());
+                }
+                map_accountId_mobileOppList.get(opp.AccountId).add(opp);
+            }
+        }
+
+        Map<Id, Account> map_accId_accountWithNoCompletedDrives = new Map<Id, Account>([
+            SELECT Id
+            FROM Account
+            WHERE Id IN :map_accountId_mobileOppList.keySet() 
+            AND Id NOT IN 
+                (
+                    SELECT sked_Account__c
+                    FROM sked_Drive__c
+                    WHERE sked_Status__c = :BSF_Constants.DOC_STATUS_COMPLETE
+                )
+        ]);
+
+        for(Id accountId : map_accountId_mobileOppList.keySet()) {
+            if(!map_accId_accountWithNoCompletedDrives.containsKey(accountId)) {
+                for(Opportunity newOpp : map_accountId_mobileOppList.get(accountId)) {
+                    newOpp.Special_Circumstances__c.addError(Custom_Messages__mdt.getInstance('SSB_First_Time_Badge_Modification_Msg').Value__c);
+                } 
+            }
+        }
+    } 
     //HRP-701 --> Ends Here
 }
