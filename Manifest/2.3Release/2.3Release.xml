@@ -5,6 +5,7 @@
         <members>AccountContactHistoryService_Test</members>
         <members>AccountInvokable</members>
         <members>AccountInvokable_Test</members>
+        <members>AccountPortfolioAssignmentHelperTest</members>
         <members>AccountPortfolioAssignmentService</members>
         <members>AccountServiceRoleService</members>
         <members>AccountServiceRoleTriggerHandler</members>
