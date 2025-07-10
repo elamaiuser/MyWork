@@ -5,7 +5,7 @@
 		<members>BSF_Utilities</members>
 		<members>DriveTriggerService</members>
 		<members>DriveTriggerHandler</members>
-        <members>DriveServiceTest</members>
+        <members>DriveTriggerServiceTest</members>
 		<members>OpportunityService</members>
 		<members>OpportunityTriggerHandler</members>
         <members>OpportunityTriggerTest</members>

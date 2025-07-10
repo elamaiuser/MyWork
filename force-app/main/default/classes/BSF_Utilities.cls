@@ -655,6 +655,8 @@ public with sharing class BSF_Utilities {
     //HRP-701 Utility Methods
     public static List<Opportunity> getOpportunitiesWithFirstTimeFlagRemoved(List<Opportunity> opportunities) {
         for(Opportunity opp : opportunities) {
+            if(opp.Special_Circumstances__c == null) continue;
+
             List<String> updatedSpecialCircumstances = new List<String>(); 
             for(String value : opp.Special_Circumstances__c.split(';')) {
                 if(value != BSF_Constants.SSBS_BADGE_FIRST_TIME_DRIVE) {
