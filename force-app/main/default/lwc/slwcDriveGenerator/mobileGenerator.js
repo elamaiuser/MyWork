@@ -1794,7 +1794,9 @@ class MobileGenerator extends BaseGenerator {
     let noOfVolunteerDonorAmbassadors = this.drive.redcrossVolunteerQuantity || 0;
 
     const isHighSchoolDrive = this.drive.accountType === ACCOUNT_TYPE.EDUCATION && this.drive.industryCode === ACCOUNT_INDUSTRY_CODE.HIGH_SCHOOL;
-    const redcrossVolunteerMatrix = this.masterData.redcrossVolunteerMatrix?.filter(item => item.isHighSchoolDrive === isHighSchoolDrive) || [];
+    const redcrossVolunteerMatrix = (this.masterData.redcrossVolunteerMatrix || []).filter(item => {
+      return item.driveType === this.drive.typeOfDrive && item.isHighSchoolDrive === isHighSchoolDrive
+    });
 
     if(isNullOrEmpty(this.drive.id)) noOfVolunteerDonorAmbassadors = this.drive.redcrossVolunteerQuantity; //In case of drive generation, get quantity from opp
     else if(!this.masterData.skipVolunteerRecalculation && redcrossVolunteerMatrix) {
