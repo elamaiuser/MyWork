@@ -15,6 +15,7 @@
 		<members>Aggregate_TimeStamp</members>
 		<members>Lead_Status_Timestamp</members>
 		<members>Lead_Management</members>
+		<members>DeactivateOppSplitAccess</members>
 		<name>Flow</name>
 	</types>
 	<types>
