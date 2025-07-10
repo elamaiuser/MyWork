@@ -85,7 +85,8 @@ export const JOB_STATUS = {
 
 export const RESOURCE_TYPE = {
   PERSON: 'Person',
-  ASSET: 'Asset'
+  ASSET: 'Asset',
+  VOLUNTEER: 'Volunteer'
 }
 
 export const RESOURCE_ROLE_GROUP = {

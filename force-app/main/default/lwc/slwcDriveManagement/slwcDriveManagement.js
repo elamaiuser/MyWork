@@ -14,7 +14,7 @@ import driveManagementTabTemplate from './driveManagementTab.html';
 import surrogateDriveTemplate from './surrogateDrive.html';
 // import opportunityDriveShiftsTemplate from './opportunityDriveShifts.html';
 
-import { dataService, driveService, driveChangeRequestService, driveQueryModel, approvalService, slotService, debugLogService } from 'c/dataService';
+import { dataService, driveService, jobService, driveQueryModel, approvalService, slotService, debugLogService } from 'c/dataService';
 import { DateTime } from 'c/luxon';
 import { chunk, isEqual } from 'c/lodash';
 import { DRIVE_STATUS, DRIVE_APPROVAL_STATUS, PENDING_ACTION, ASSET_TYPE, OPPORTUNITY_STAGE, DRIVE_REQUEST_CHANGE_STATUS, DRIVE_CHANGE_REQUEST_TYPE } from 'c/slwcConstants';
@@ -318,6 +318,7 @@ export default class SlwcDriveManagement extends NavigationMixin(LightningElemen
         registerListener('saveJob', this.handleSaveJob, this);
         registerListener('deleteJob', this.handleDeleteJob, this);
 
+        registerListener('saveBulkEditVolunteerJobModal', this.handleSaveBulkEditVolunteerJobModal, this);
         registerListener('saveDualRoleAssignmentModal', this.handleSaveDualRoleAssignmentModal, this);
 
         registerListener('saveDriveShiftTag', this.handleSaveDriveShiftTag, this);
@@ -950,6 +951,21 @@ export default class SlwcDriveManagement extends NavigationMixin(LightningElemen
                         return slwcUtils.serial(promises);
                     })
             })
+             .then(() => {
+                if (!this.isFixedSiteDrive && !this.isWbFixedSiteDrive) return;
+                return driveGeneratorInstance.calculateRecurrenceVolunteerJobs(model)
+                    .then((jobsToSave = []) => {
+                        if (!jobsToSave.length) return;
+
+                        const jobSvc = new jobService();
+                        const promises = chunk(jobsToSave, 50).map(chunkJobs => {
+                            return () => {
+                                return jobSvc.saveList(chunkJobs);
+                            }
+                        });
+                        return slwcUtils.serial(promises);
+                    })
+            })
             .then(() => {
                 let message = `Drive ${this.drive.name} was ${this.drive.id ? 'saved' : 'created'}.`;
 
@@ -1304,6 +1320,10 @@ export default class SlwcDriveManagement extends NavigationMixin(LightningElemen
 
     handleSaveJob(detail) {
         driveGeneratorInstance.saveJob(detail.shiftKey, detail.job);
+    }
+
+    handleSaveBulkEditVolunteerJobModal(detail) {
+        driveGeneratorInstance.saveBulkEditVolunteerJob(detail.shiftKey, detail.job);
     }
 
     /** Confirm Modal **/
