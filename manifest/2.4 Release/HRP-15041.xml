@@ -6,6 +6,7 @@
 		<members>OpportunityService</members>
 		<members>OpportunityTriggerTest</members>
 		<members>slwcSetting</members>
+		<members>slwcDataService_Test</members>
 		<name>ApexClass</name>
 	</types>
     <types>
