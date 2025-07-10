@@ -305,7 +305,6 @@ public with sharing class GenerateMobileDrive {
                 job.quantity = staffingComplement.numberOfCharge;
                 driveShift.jobs.add(job);
             }
-            //HRP-13146 Volunteers needed for mobile drives
             if (staffingComplement.numberOfVolunteerDonorAmbassadors > 0) { 
                 MobileDriveGeneratorDMLService.DMLJob job = new MobileDriveGeneratorDMLService.DMLJob();
                 job.driveSiteId = drive.driveSiteId;
@@ -1194,7 +1193,7 @@ public with sharing class GenerateMobileDrive {
             staffingComplement = calculateTeamSupervisorQuantity (matrix, driveShift, drive, staffingComplement);
             staffingComplement = calculateVpHhQuantity (matrix, driveShift, drive, staffingComplement);
             staffingComplement = calculateChargeQuantity (matrix, drive, driveShift, staffingComplement);
-            staffingComplement = calculateVolunteerDonorAmbassdorQuantity (drive, staffingComplement); //HRP-13146 Volunteers needed for mobile drives
+            staffingComplement = calculateVolunteerDonorAmbassadorQuantity (drive, staffingComplement);
             return staffingComplement;
         }
 
@@ -1587,7 +1586,7 @@ public with sharing class GenerateMobileDrive {
         }
 
         //HRP-13146 Volunteers needed for mobile drives
-        protected virtual DriveStaffingComplementModel calculateVolunteerDonorAmbassdorQuantity(
+        protected virtual DriveStaffingComplementModel calculateVolunteerDonorAmbassadorQuantity(
             MobileDriveGeneratorDMLService.DMLDrive drive, 
             DriveStaffingComplementModel staffingComplement
         ) {
@@ -1595,6 +1594,30 @@ public with sharing class GenerateMobileDrive {
 
             if(drive.typeOfDrive == BSF_Constants.MOBILE_DRIVE && drive.redcrossVolunteerRequired) { 
                 staffingComplement.numberOfVolunteerDonorAmbassadors = drive.redcrossVolunteerQuantity;
+            } 
+            //HRP-15041 Volunteers needed for Non Integrated WB FS drives
+            else if( 
+                drive.typeOfDrive.equalsIgnoreCase(BSF_Constants.FIXED_SITE_DRIVE) && 
+                drive.driveSite.siteOperationType.equalsIgnoreCase(Constants.NON_INTEGRATED_WB_OPERATION_TYPE)
+            ) {
+                slwcSetting.redcrossVolunteerMatrixSettings skedVolunteerStaffingSetting = new slwcSetting.redcrossVolunteerMatrixSettings();
+                List<slwcSetting.redcrossVolunteerMatrixSetting> volunteerStaffingMatrixRecords = skedVolunteerStaffingSetting.redcrossVolunteerMatrixSettings;
+                if(volunteerStaffingMatrixRecords != NULL && !volunteerStaffingMatrixRecords.isEmpty()) {
+                    for(slwcSetting.redcrossVolunteerMatrixSetting volunteerStaffingMatrixRecord : volunteerStaffingMatrixRecords) {
+                        if(
+                            volunteerStaffingMatrixRecord.driveType == drive.typeOfDrive &&
+                            volunteerStaffingMatrixRecord.operationType == drive.driveSite.siteOperationType &&
+                            volunteerStaffingMatrixRecord.minDonorValue <= drive.projectedRegisteredDonors &&
+                            (
+                                volunteerStaffingMatrixRecord.maxDonorValue >= drive.projectedRegisteredDonors ||
+                                volunteerStaffingMatrixRecord.maxDonorValue == null
+                            )
+                        ) {
+                            staffingComplement.numberOfVolunteerDonorAmbassadors = volunteerStaffingMatrixRecord.volunteerQuantity;
+                            break;
+                        }
+                    }
+                }
             }
             return staffingComplement;
         }

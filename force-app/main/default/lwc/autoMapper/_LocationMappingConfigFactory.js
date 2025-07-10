@@ -10,6 +10,7 @@ export class LocationMappingConfigFactory {
 
       mappingConfig.addFieldConfig('Id', 'id', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('Name', 'name', MAPPING_TYPE.direct);
+      mappingConfig.addFieldConfig('Operation_Type__c', 'operationType', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked__Address__c', 'address', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_Address_1__c', 'address1', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_Address_2__c', 'address2', MAPPING_TYPE.direct);
