@@ -4,6 +4,7 @@
 		<members>GenerateMobileDrive</members>
 		<members>GenerateMobileDriveTest</members>
 		<members>OpportunityService</members>
+		<members>OpportunityTriggerTest</members>
 		<members>slwcSetting</members>
 		<name>ApexClass</name>
 	</types>
