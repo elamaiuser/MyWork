@@ -212,7 +212,7 @@ global class skedResourceService extends skedDataService {
             if (!matchingTagResourceIds.isEmpty()) {
                 resourceOverrideQueryBuilder.addCondition('sked__Resource__c IN {0}', matchingTagResourceIds);
             }
-            if (!availabilityAndActivityResourceIds.isEmpty()) {
+            if (availabilityAndActivityResourceIds != NULL && !availabilityAndActivityResourceIds.isEmpty()) {
                 resourceOverrideQueryBuilder.addCondition('sked__Resource__c IN {0}', availabilityAndActivityResourceIds);
             }
 
@@ -251,7 +251,7 @@ global class skedResourceService extends skedDataService {
             jobAllocationQueryBuilder.addField('sked__Resource__c resourceId');
             jobAllocationQueryBuilder.addField('COUNT(Id) numAllocations');
 
-            jobAllocationQueryBuilder.addCondition('sked_Set_Start_Date__c = {0}', additionalFilterOnDate);
+            jobAllocationQueryBuilder.addCondition('sked_Start_Date__c = {0}', additionalFilterOnDate);
             jobAllocationQueryBuilder.addCondition('sked__Status__c != {0}', skedConstants.JOB_ALLOCATION_STATUS_DELETED);
 
             if (query.predefinedRecordIds != null && !query.predefinedRecordIds.isEmpty()) {
@@ -295,7 +295,9 @@ global class skedResourceService extends skedDataService {
                 }
             }
 
-            queryBuilder.addCondition('Id NOT IN {0}', resourceIdsHaveAssignment);
+            if (resourceIdsHaveAssignment != NULL && !resourceIdsHaveAssignment.isEmpty()) {
+                queryBuilder.addCondition('Id NOT IN {0}', resourceIdsHaveAssignment);
+            }
         }
 
         queryBuilder.addCondition('((sked__Resource_Type__c = \'Person\' AND sked_Employment_Status__c != \'Inactive\') OR (sked__Resource_Type__c = \'Asset\' AND sked__Is_Active__c = TRUE))');
