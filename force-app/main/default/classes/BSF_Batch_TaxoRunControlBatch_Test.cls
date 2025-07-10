@@ -26,18 +26,18 @@ public class BSF_Batch_TaxoRunControlBatch_Test {
    @isTest
     static void testBatchExecution_WithMultipleActiveVersions() {
         // Setup two active taxonomy versions
-        RecordType rt = [SELECT Id, Name FROM RecordType WHERE SObjectType = 'Taxonomy__c' LIMIT 1];
-        
+         RecordType rt = [SELECT Id, Name FROM RecordType WHERE SObjectType = 'Taxonomy__c' and Name =: BSF_Constants.BIO_RECRUITMENT_RECORD_TYPE LIMIT 1];
+       
         insert new List<Taxonomy__c>{
             new Taxonomy__c(
                 RecordTypeId = rt.Id,
-                Internal_Version_Key__c = 'v1',
+                Version_Key__c = 111,
                 Start_Date__c = Date.today(),
                 End_Date__c = Date.newInstance(4000, 12, 31)
             ),
                 new Taxonomy__c(
                     RecordTypeId = rt.Id,
-                    Internal_Version_Key__c = 'v2',
+                    Version_Key__c = 112,
                     Start_Date__c = Date.today(),
                     End_Date__c = Date.newInstance(4000, 12, 31)
                 )
@@ -51,17 +51,17 @@ public class BSF_Batch_TaxoRunControlBatch_Test {
         List<Taxonomy_Run__c> runs = [SELECT Id, Future_Version_Number__c FROM Taxonomy_Run__c];
         System.assert(!runs.isEmpty(), 'Expected Taxonomy_Run__c records to be created for active versions');
     }
-   @isTest
+   /*@isTest
     static void testBatchExecution_bioRecruitment() {
-        RecordType rt = [SELECT Id, Name FROM RecordType WHERE SObjectType = 'Taxonomy__c' and Name =: BSF_Constants.BIO_RECRUITMENT_RECORD_TYPE LIMIT 1];
-        
+      RecordType rt = [SELECT Id,Name FROM RecordType WHERE SObjectType = 'Taxonomy__c' and Name = 'Bio Recruitment CD' LIMIT 1];
+     Date endDate = Date.newInstance(4000, 12, 31);
         // Create taxonomy record
         Taxonomy__c taxn = new Taxonomy__c(
             RecordTypeId = rt.Id,
-            Internal_Version_Key__c = 'v12',
+            //Internal_Version_Key__c = 'v12',
             Version_Key__c = 12.0,
             Start_Date__c = Date.today(),
-            End_Date__c = Date.newInstance(4000, 12, 31)
+            End_Date__c = endDate
         );
         insert taxn;
         
@@ -75,12 +75,13 @@ public class BSF_Batch_TaxoRunControlBatch_Test {
         
         Test.startTest();
         BSF_Batch_TaxoRunControlBatch batch = new BSF_Batch_TaxoRunControlBatch();
-        Database.executeBatch(batch, 200);
+      
+        Database.executeBatch(batch, 1);
         Test.stopTest();
         
         List<Taxonomy_Run__c> runs = [SELECT Id, Status__c FROM Taxonomy_Run__c];
         System.assert(!runs.isEmpty(), 'Expected Taxonomy_Run__c records to exist after batch');
-    }
+    }*/
     @isTest
     static void testBatchExecution_Finish() {
         
@@ -251,14 +252,61 @@ public class BSF_Batch_TaxoRunControlBatch_Test {
         Taxonomy_Run_Config__mdt config = Taxonomy_Run_Config__mdt.getInstance('Sample_Config');
         
         List<Taxonomy_Run_Config__mdt> scope = new List<Taxonomy_Run_Config__mdt>{ config };
-            
+             RecordType rt = [SELECT Id, Name FROM RecordType WHERE SObjectType = 'Taxonomy__c' and Name = 'Bio Relationship Manager Portfolio' LIMIT 1];
+         Date endDate = Date.newInstance(4000, 12, 31);
+        // Create taxonomy record
+        Taxonomy__c taxn = new Taxonomy__c(
+            RecordTypeId = rt.Id,
+            //Internal_Version_Key__c = 'v12',
+            Version_Key__c = 12.0,
+            Start_Date__c = Date.today(),
+            End_Date__c = endDate
+        );
+        insert taxn;
+        
             Test.startTest();
         BSF_Batch_TaxoRunControlBatch batch = new BSF_Batch_TaxoRunControlBatch();
         batch.execute(null, scope); // Now your execute() method is hit properly
         Test.stopTest();
     }  
     
-    /*  @isTest
+    
+    
+      @isTest
+    static void testExecuteWithMetadataScope1() {
+        // Simulate a scope list using the real metadata record
+        Taxonomy_Run_Config__mdt config = Taxonomy_Run_Config__mdt.getInstance('Sample_Config');
+        
+        List<Taxonomy_Run_Config__mdt> scope = new List<Taxonomy_Run_Config__mdt>{ config };
+             RecordType rt = [SELECT Id, Name FROM RecordType WHERE SObjectType = 'Taxonomy__c' and Name = 'Bio Relationship Manager Portfolio' LIMIT 1];
+         Date endDate = Date.newInstance(4000, 12, 31);
+        // Create taxonomy record
+        Taxonomy__c taxn = new Taxonomy__c(
+            RecordTypeId = rt.Id,
+            //Internal_Version_Key__c = 'v12',
+            Version_Key__c = 12.0,
+            Start_Date__c = Date.today(),
+            End_Date__c = endDate
+        );
+        insert taxn;
+        
+        // Create taxonomy record
+        Taxonomy__c taxn1 = new Taxonomy__c(
+            RecordTypeId = rt.Id,
+            //Internal_Version_Key__c = 'v12',
+            Version_Key__c = 13.0,
+            Start_Date__c = Date.today(),
+            End_Date__c = endDate
+        );
+        insert taxn1;
+        
+            Test.startTest();
+        BSF_Batch_TaxoRunControlBatch batch = new BSF_Batch_TaxoRunControlBatch();
+        batch.execute(null, scope); // Now your execute() method is hit properly
+        Test.stopTest();
+    }  
+    
+      @isTest
 static void testStartMethodWithValidData() {
 Test.startTest();
 
@@ -269,7 +317,7 @@ Database.QueryLocator locator = batch.start(null);
 System.assertNotEquals(null, locator);
 
 Test.stopTest();
-}*/
+}
     
     @isTest
     static void testCronTriggerHandlingBlock() {
