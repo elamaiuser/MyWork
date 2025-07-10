@@ -10,6 +10,9 @@
  * 07/23/2024				  Priti Jana			 Corrected the test class, 
  													 increased code coverage
  * 09/26/2024				  Priti Jana			 Increased code coverage for JobTriggerHandler (HRP-13522)
+ * 07/10/2025				  Priti Jana			 Added new test method to cover 
+  													 Non Integrated WB FS Drive generation logic 
+
 -------------------------
 Current Code Coverage :  
 -------------------------
@@ -139,13 +142,14 @@ public class GenerateMobileDriveTest {
         
     }
     
-    /*@istest
-    public static void conditionForErrorMessageMobileTest(){        
-        Map<string, sObject> mapTestData = GenerateDriveTestData.testSetupForErrorMsgMobileDrive();
-        Opportunity mobileOpportunity = (Opportunity)mapTestData.get('mobileOpportunity');
+    @istest
+    public static void conditionForNonIntWbFsDriveTest() {        
+        Map<string, sObject> mapTestData = GenerateDriveTestData.testSetupForNonIntWbFsDrives();
+        Opportunity nonIntWbFsOpportunity = (Opportunity)mapTestData.get('nonItegratedWBFixedSiteOpportunity');
+        
         MobileDriveGeneratorDMLService.driveGeneratorConfig config = new MobileDriveGeneratorDMLService.driveGeneratorConfig();
         config.oppIds = new Set<Id>();
-        config.oppIds.add(mobileOpportunity.Id);
+        config.oppIds.add(nonIntWbFsOpportunity.Id);
         
         Test.startTest();
         
@@ -159,11 +163,8 @@ public class GenerateMobileDriveTest {
         Triggerhandler.clearAllBypasses();
         AccountTeamMemberHelper.skipAccountTrigger = false;
         
-        Test.stopTest();
-        
-        Assert.isTrue(config!=null); // NEW Assert Class
-        
-    }*/
+        Test.stopTest();  
+    }
     
     @istest
     public static void conditionForDriveGeneratorServiceTestForFixed() {
