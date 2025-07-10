@@ -93,6 +93,9 @@ global virtual class skedRacController extends skedBaseController {
             query.availabilityTypes = request.availabilityTypes;
             query.excludedAvailabilityTypes = new List<String>{skedConstants.AVAILABILITY_TYPE_ON_CALL};
             query.customAvailabilityStatuses = new List<String>{skedConstants.AVAILABILITY_STATUS_APPROVED};
+            query.hasNoAssignment = request.hasNoAssignment;
+            query.hasTemporaryRelocation = request.hasTemporaryRelocation;
+            query.additionalFilterOnDate = request.additionalFilterOnDate;
             
             skedResourceService service = (skedResourceService)skedServiceFactory.instance.resolve('sked__Resource__c');
             skedDataService.paginationQueryModel paginationResult = service.doPaginationQuery(query);
@@ -2319,6 +2322,9 @@ global virtual class skedRacController extends skedBaseController {
         public Set<Date> inputDates;
         public List<String> availabilityTypes;
         public List<String> activityTypes;
+        public boolean hasNoAssignment;
+        public boolean hasTemporaryRelocation;
+        public string additionalFilterOnDate;
     }
 
     global class getAvailabilityDetailsRequest extends skedRemoteRequestModel {
