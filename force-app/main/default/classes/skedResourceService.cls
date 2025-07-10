@@ -294,6 +294,8 @@ global class skedResourceService extends skedDataService {
                     resourceIdsHaveAssignment.add(resourceId);
                 }
             }
+
+            queryBuilder.addCondition('Id NOT IN {0}', resourceIdsHaveAssignment);
         }
 
         queryBuilder.addCondition('((sked__Resource_Type__c = \'Person\' AND sked_Employment_Status__c != \'Inactive\') OR (sked__Resource_Type__c = \'Asset\' AND sked__Is_Active__c = TRUE))');
