@@ -44,8 +44,15 @@ global class BSF_Batch_TaxoRunControlBatch implements Database.Batchable<sObject
             for (Taxonomy_Run_Config__mdt tx : scope) {
                 if (Test.isRunningTest()) {
                     getSeq.put('Bio Recruitment CD', 7);
+                    getSeq.put('Bio Account Portfolio', 6);
+                    getSeq.put('Bio Booking Support', 5);
+                    getSeq.put('Bio Collection BSF', 8);
+                    getSeq.put('Bio Fixed Sites', 3);
+                    getSeq.put('Bio Relationship Manager Portfolio', 1);
+                    getSeq.put('Bio Recruitment Supervisor', 4);
+                    getSeq.put('Bio Sickle Cell Portfolio', 2);
                 }else{
-                getSeq.put(tx.Taxo_Record_Type_Name__c, tx.Sequence__c);
+                    getSeq.put(tx.Taxo_Record_Type_Name__c, tx.Sequence__c);
                 }
             }
             //Store the external id 
