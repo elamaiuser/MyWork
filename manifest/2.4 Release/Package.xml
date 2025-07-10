@@ -39,6 +39,7 @@
 		<members>LeadServiceTests</members>
 		<members>FutureDrivesController</members>
 		<members>FutureDrivesController_Test</members>
+		<members>GenerateDriveTestData</members>
 		<members>GenerateMobileDrive</members>
 		<members>GenerateMobileDriveTest</members>
 		<members>PublicityReportNewPortfoliosController</members>		
