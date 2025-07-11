@@ -107,7 +107,39 @@
     <picklistValues>
         <picklist>Drive_Designations__c</picklist>
         <values>
+            <fullName>Brixmor Property Group</fullName>
+            <default>false</default>
+        </values>
+        <values>
             <fullName>COVID 19</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Critical Booking Timeframe</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>DAA Prior</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Diversity - African American Potential</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Diversity - African American Prior</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Diversity - Latino Potential</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Diversity - Latino Prior</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Diversity - Pride%2FLGBTQIA%2B</fullName>
             <default>false</default>
         </values>
         <values>
@@ -115,7 +147,59 @@
             <default>false</default>
         </values>
         <values>
+            <fullName>Fixed Site Growth Boost</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Friends Promo</fullName>
+            <default>false</default>
+        </values>
+        <values>
             <fullName>Gray Skies</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>HS Lead Referral</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>HealthPartners</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>LateAddSupport</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>NMDP %28formerly BeTheMatch%29</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Referral-Disaster</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Referral-Hospital Sales</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Referral-National Partnerships</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Referral-SAF</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Unique Constraint Test</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Unique Constraint Test1</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Weather Delay%2FEarly Close</fullName>
             <default>false</default>
         </values>
     </picklistValues>
@@ -1137,6 +1221,10 @@
         <picklist>Source__c</picklist>
         <values>
             <fullName>Adhoc</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Adhoc Calendar Build</fullName>
             <default>false</default>
         </values>
         <values>
