@@ -243,7 +243,7 @@ global class slwcApprovalService implements Callable {
             WHERE sked_Site__c = :record.sked_Site__c
             AND sked_Start_Date__c <= :effectiveEndDate
             AND sked_End_Date__c >= :effectiveStartDate
-            ORDER BY sked_Start_Date__c DESC
+            ORDER BY sked_Start_Date__c DESC LIMIT 1
         ];
         String approvalProcessName = workItem.ProcessInstance.ProcessDefinition.DeveloperName;
         if (request.action == 'Approve') {
