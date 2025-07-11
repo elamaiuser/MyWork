@@ -4,5 +4,9 @@
 		<members>Account.Upgrade_Account</members>
 		<name>QuickAction</name>
 	</types>
+	<types>
+		<members>Mobile_Account_Record_Page</members>
+		<name>FlexiPage</name>
+	</types>
     <version>59.0</version>
 </Package>
