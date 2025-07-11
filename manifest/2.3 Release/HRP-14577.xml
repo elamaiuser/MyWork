@@ -6,6 +6,7 @@
 	</types>
     <types>
 		<members>skedJobHandler</members>
+		<members>skedJobHandler_Test</members>
 		<name>ApexClass</name>
 	</types>
     <version>59.0</version>

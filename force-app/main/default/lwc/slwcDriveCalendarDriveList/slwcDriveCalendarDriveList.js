@@ -108,6 +108,8 @@ export default class SlwcDriveCalendarDriveList extends LightningElement {
             }
         }});
         
+        results.push({label: 'Collection Operation', fieldName: 'collectionOperationName', type: 'text', hideDefaultActions: true, wrapText: true } );
+        results.push({label: 'City', fieldName: 'city', type: 'text', hideDefaultActions: true, wrapText: true } );
         if (this.selectedStatus === DRIVE_STATUS.DRAFT) {
             results.push({label: 'Rank', fieldName: 'rank', type: 'number', cellAttributes: { alignment: 'left' }, hideDefaultActions: true, wrapText: true } );
         }
@@ -250,6 +252,8 @@ export default class SlwcDriveCalendarDriveList extends LightningElement {
                         } : null;
 
                         drive.type = drive.opportunity.type;
+                        drive.collectionOperationName = drive.collectionOperation.name;
+                        drive.city = drive.driveSite.city;
                         drive.startTimeStr = this.formatTime(drive.startTime);
                         drive.endTimeStr = this.formatTime(drive.endTime);
 

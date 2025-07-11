@@ -105,7 +105,7 @@ public class skedTestDataFactory {
 
         sked_Resource_Role_Group__c staffRoleGroup = new sked_Resource_Role_Group__c(
             sked_Resource_Role_Group__c = 'Staff roles',
-            sked_Resource_Roles__c = '2RBC; 2RBC Sign-off; Apheresis; Float; HH; Limited HH; Limited Ship; OJI; Plasma; Post Collections; Special Collections; Trainee; Translator; TRN HH; TRN VP; VOL Limited HH; VP; VP/HH; Work Restriction'
+            sked_Resource_Roles__c = '2RBC; 2RBC Sign-off; Apheresis; Float; HH; OJI; Plasma; Post Collections; Special Collections; Trainee; Translator; VOL Limited HH; VP; VP/HH; Work Restriction'
         );
         predefinedData.add(staffRoleGroup);
 
@@ -967,18 +967,6 @@ public class skedTestDataFactory {
             new sked_Staff_Setup_Excluded_Role__c(
                 Name = 'Work Restriction',
                 sked_Resource_Role__c = 'Work Restriction',
-                sked_Excluded_For_Staff_Allocated__c = false,
-                sked_Excluded_For_Assigned_Staff_Count__c = true
-            ),
-            new sked_Staff_Setup_Excluded_Role__c(
-                Name = 'TRN HH',
-                sked_Resource_Role__c = 'TRN HH',
-                sked_Excluded_For_Staff_Allocated__c = false,
-                sked_Excluded_For_Assigned_Staff_Count__c = true
-            ),
-            new sked_Staff_Setup_Excluded_Role__c(
-                Name = 'TRN VP',
-                sked_Resource_Role__c = 'TRN VP',
                 sked_Excluded_For_Staff_Allocated__c = false,
                 sked_Excluded_For_Assigned_Staff_Count__c = true
             ),

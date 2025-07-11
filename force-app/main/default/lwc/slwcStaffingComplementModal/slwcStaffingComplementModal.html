@@ -21,7 +21,7 @@
                                     <lightning-button label="Dual Role Assignment" data-key={item.key} onclick={showDualRoleAssignmentModal}></lightning-button>
                                 </lightning-button-group>
                                 <div class="slds-scrollable_x slds-p-bottom_x-small">
-                                    <c-slwc-drive-shift-job-table drive={drive} resource-type="Person" shift={item.driveShift} jobs={item.personJobs}>
+                                    <c-slwc-drive-shift-job-table drive={drive} master-data={masterData} resource-type="Person" shift={item.driveShift} jobs={item.personJobs}>
                                     </c-slwc-drive-shift-job-table>
                                 </div>
                             </lightning-card>

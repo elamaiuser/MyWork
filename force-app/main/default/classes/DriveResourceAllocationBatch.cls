@@ -412,19 +412,15 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
 			queryString += ' AND Id IN: driveIdSet';            
         }
         if(driveSource != NULL && !String.isBlank(driveSource)) {
-             system.debug('driveSource '+driveSource);
 			queryString += ' AND sked_Opportunity__r.Source__c = :driveSource';            
         }
         if(typeOfDrive != NULL && !String.isBlank(typeOfDrive) && typeOfDrive.equalsIgnoreCase(BSF_Constants.MOBILE_DRIVE)) {
-            system.debug('typeOfDrive '+typeOfDrive);
             queryString += ' AND sked_Status__c = \'Draft\'';
         }
         if(driveDateToEval != NULL) {
-            system.debug('driveDateToEval '+driveDateToEval);
             queryString += ' AND sked_Drive_Date__c =: driveDateToEval';
         }
         if(targetCreatedDate != NULL) {
-            system.debug('targetCreatedDate '+targetCreatedDate);
             queryString += ' AND CreatedDate >= :targetCreatedDateFrom AND CreatedDate <= :targetCreatedDateTo' ;
         }
         queryString += ' AND sked_Type_of_Drive__c =: typeOfDrive ORDER BY sked_Drive_Date__c DESC, sked_Rank__c';
@@ -528,6 +524,11 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
                     Database.executeBatch(new DriveResourceAllocationBatch(runType, driveSource, BSF_Constants.MOBILE_DRIVE, NULL, NULL), 1);
                 }
             }
+
+            //Custom exception to cover catch blocks 
+            if(Test.isRunningTest() && BSF_Utilities.IS_SET_TO_GENERATE_EXCEPTION) {
+                throw new CustomDriveResourceAllocationBatchException('This is custom exception during test class run');
+            } 
         } catch(Exception ex) {
             cbLogWrapper = new DriveGenerationUtil.CalendarBuildLogWrapper(
                 this.driveDateToEval, 
@@ -1122,7 +1123,7 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
     //HRP-11634 --> Starts Here
 
     @testVisible private static Decimal getShiftPrimaryStaffCount(GenerateMobileDrive.DriveStaffingComplementModel staffingComplement) {
-        return staffingComplement.numberOfDrivers + staffingComplement.numberOfDriverSupports + staffingComplement.numberOfCharge + staffingComplement.numberOf2rbc + staffingComplement.numberOfVphh;
+        return staffingComplement.numberOfDrivers ?? 0 + staffingComplement.numberOfDriverSupports ?? 0 + staffingComplement.numberOfCharge ?? 0 + staffingComplement.numberOf2rbc ?? 0 + staffingComplement.numberOfVphh ?? 0;
     }
 
     @testVisible private static MobileDriveGeneratorDMLService.DMLDrive reCalculateDriveAverageStaffCapacity(
@@ -1389,4 +1390,6 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
             this.is2RBCLimitPresent = FALSE;
         }
     }
+
+    private class CustomDriveResourceAllocationBatchException extends Exception {}
 }

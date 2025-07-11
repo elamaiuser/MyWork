@@ -8,6 +8,7 @@
     <types>
 		<members>BSF_MarketingExceptionRequest</members>
 		<members>TaskTriggerHandler</members>
+		<members>TaskTriggerTest</members>
 		<name>ApexClass</name>
 	</types>
 	<types>

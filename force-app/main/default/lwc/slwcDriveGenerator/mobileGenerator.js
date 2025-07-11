@@ -1528,7 +1528,7 @@ class MobileGenerator extends BaseGenerator {
       } else {
         if(this.drive.preferSystemGeneratedVehicles) {
           this.drive.totalVehicleRequested = totalVehicleRequested;
-          this.drive.nnumberOfVehicles = totalVehicleRequested;
+          this.drive.numberOfVehicles = totalVehicleRequested;//HRP-15151
         } else {
           this.drive.totalVehicleRequested = this.drive.numberOfVehicles;
         }
@@ -1794,7 +1794,9 @@ class MobileGenerator extends BaseGenerator {
     let noOfVolunteerDonorAmbassadors = this.drive.redcrossVolunteerQuantity || 0;
 
     const isHighSchoolDrive = this.drive.accountType === ACCOUNT_TYPE.EDUCATION && this.drive.industryCode === ACCOUNT_INDUSTRY_CODE.HIGH_SCHOOL;
-    const redcrossVolunteerMatrix = this.masterData.redcrossVolunteerMatrix?.filter(item => item.isHighSchoolDrive === isHighSchoolDrive) || [];
+    const redcrossVolunteerMatrix = (this.masterData.redcrossVolunteerMatrix || []).filter(item => {
+      return item.driveType === this.drive.typeOfDrive && item.isHighSchoolDrive === isHighSchoolDrive
+    });
 
     if(isNullOrEmpty(this.drive.id)) noOfVolunteerDonorAmbassadors = this.drive.redcrossVolunteerQuantity; //In case of drive generation, get quantity from opp
     else if(!this.masterData.skipVolunteerRecalculation && redcrossVolunteerMatrix) {
@@ -1834,7 +1836,7 @@ class MobileGenerator extends BaseGenerator {
 
     this.proposeDriveShifts({
       skipCalculateResourceRoles: true,
-      skipVehicleCalculation: false,
+      skipVehicleCalculation: true,//HRP-15151
       backupAndRestoreDualRoles: false,
       skipGenerateSlots: false
     })
@@ -2117,7 +2119,7 @@ class MobileGenerator extends BaseGenerator {
     driveShift.jobs = jobs.concat(cloneDeep(manuallyCreatedJobs.filter(job => job.quantity > 0)));
 
     const anyManuallyCreatedJobsHoldCapacity = driveShift.jobs.find(job => {
-      return job.resourceRole !== 'VP/HH' && (
+      return job.resourceRole !== 'VP/HH' && this.helper.isManuallyCreatedJob(job, this.drive) && (
         this.helper.isRoleHoldCapacity(job.resourceRole, this.masterData) ||
         this.helper.isRoleHoldCapacity(job.dualRole, this.masterData) 
       )
