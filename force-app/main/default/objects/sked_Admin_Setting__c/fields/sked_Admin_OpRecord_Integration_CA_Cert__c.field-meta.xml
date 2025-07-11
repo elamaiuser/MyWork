@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>sked_Admin_OpRecord_Integration_CA_Cert__c</fullName>
+    <defaultValue>false</defaultValue>
+    <description>This field will be used for integration of Azure and BSF for OP Rec API using CA Cert</description>
+    <externalId>false</externalId>
+    <label>Admin Op Record Integration with CA Cert</label>
+    <trackTrending>false</trackTrending>
+    <type>Checkbox</type>
+</CustomField>
