@@ -115,6 +115,7 @@
 		<name>Layout</name>
 	</types>
 	<types>
+		<members>Mobile_Account_Record_Page</members>
 		<members>Mobile_Opp_Record_Page</members>
 		<name>FlexiPage</name>
 	</types>
