@@ -3,5 +3,6 @@
     <fullName>Drive_Logistics_Other_Required</fullName>
     <active>true</active>
     <errorConditionFormula>AND(INCLUDES(Additional_Drive_Logistics__c, &#39;other&#39;),Drive_Logistics_Other__c  = &#39;&#39; )</errorConditionFormula>
+    <errorDisplayField>Number_of_2RBC_Assets__c</errorDisplayField>
     <errorMessage>Drive logistics other is required, if Other is selected for Additional Drive Logistics.</errorMessage>
 </ValidationRule>
