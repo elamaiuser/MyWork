@@ -1689,9 +1689,6 @@ class SlwcAvailator {
               }
 
               if(!isTemporaryCO) {
-                if(!ignoreDedicatedSiteRule && resource.dedicatedToSiteId && resource.dedicatedToSiteId !== this.drive.driveSiteId) {
-                  return;
-                }
                 const { geoLocationLatitude, geoLocationLongitude } = this.getResourceStagingLocation(resource, job.driveDate);
                 jobStartLatitude = geoLocationLatitude;
                 jobStartLongitude = geoLocationLongitude;
