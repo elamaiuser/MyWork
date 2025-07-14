@@ -16,6 +16,7 @@
         <members>Time_Block__c.Name</members>  
         <members>Time_Block__c.Start_Time__c</members>  
         <members>Time_Block__c.End_Time__c</members>  
+        <members>Time_Block__c.Days_of_Week__c</members>  
         <members>Collection_Operation_Time_Block__c.Name</members> 
         <members>Collection_Operation_Time_Block__c.Effective_Start_Date__c</members>  
         <members>Collection_Operation_Time_Block__c.Effective_End_Date__c</members>  
