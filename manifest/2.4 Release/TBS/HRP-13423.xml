@@ -8,6 +8,7 @@
 		<members>Time_Block__c.Days_of_Week__c</members>
 		<members>Time_Block__c.End_Time__c</members>
 		<members>Time_Block__c.Start_Time__c</members>
+        <members>sked_Drive_Shift__c.sked_Time_Block__c</members>
 		<name>CustomField</name>
 	</types>
 	<types>
