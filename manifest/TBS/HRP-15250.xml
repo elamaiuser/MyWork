@@ -5,6 +5,7 @@
         <members>GenerateMobileDrive</members>
         <members>GenerateMobileDriveTest</members>
         <members>MobileDriveGeneratorDMLService</members>
+        <members>skedConstants</members>
         <name>ApexClass</name>
     </types>
     <types>
