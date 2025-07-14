@@ -232,6 +232,7 @@
                               data-date-of-constraint={cellData.dateIso}
                               data-collection-operation-id={row.collectionOperationId}
                               data-drive-type={row.driveType}
+                              data-time-block-id={row.timeBlockId}
                               onclick={handleCreateStaffingConstraint}
                             ></lightning-menu-item>
                             <lightning-menu-divider></lightning-menu-divider>
@@ -263,6 +264,7 @@
   <c-slwc-edit-recurrence-staffing-constraint-modal
     default-collection-operation-id={editRecurrenceStaffingConstraintModalData.collectionOperationId}
     default-date-range={editRecurrenceStaffingConstraintModalData.dateRange}
+    time-blocks={editRecurrenceStaffingConstraintModalData.timeBlocks}
     if:true={editRecurrenceStaffingConstraintModalData.isOpen}
     is-open={editRecurrenceStaffingConstraintModalData.isOpen}
     onclose={closeEditRecurrenceStaffingConstraintModal}

@@ -83,8 +83,8 @@ export default class SlwcNewCollectionOperationMultiPicklist extends LightningEl
 
   @track timeBlockState = {
     timeBlockOptions: [],
-
-    selectedTimeBlocks: []
+    selectedTimeBlocks: [],
+    disabled: false
   };
 
   @track showTerritoriesPopover = false;
@@ -214,10 +214,12 @@ export default class SlwcNewCollectionOperationMultiPicklist extends LightningEl
         
         this.mapTerritoryCollectionOperations = this.buildMapTerritoryCollectionOperations(this.allCollectionOperationOptions, territoryCollectionOperations);
 
-        this.refreshTimeBlockData();
-
         //set default values
         this.initDefaultValues(true);
+
+        if (this.timeBlockEnabled) {
+          this.refreshTimeBlockData();
+        }
     })
     .catch((e) => {
       console.log(e);
@@ -408,14 +410,37 @@ export default class SlwcNewCollectionOperationMultiPicklist extends LightningEl
   }
 
   refreshTimeBlockData = () => {
-    this.timeBlockState.timeBlockOptions = []
+    function findCommonTimeBlockIds(coList) {
+      if (!coList || coList.length === 0) {
+        return [];
+      }
+    
+      const firstCoTimeBlocks = new Set(coList[0].collectionOperationTimeBlocks?.map(coTb => coTb.timeBlock.id));
+      let commonTimeBlocks = new Set(firstCoTimeBlocks);
+    
+      for (let i = 1; i < coList.length; i++) {
+        const currentCoTimeBlocks = new Set(coList[i].collectionOperationTimeBlocks?.map(coTb => coTb.timeBlock.id));
+        const intersection = new Set();
+        for (const timeBlockId of commonTimeBlocks) {
+          if (currentCoTimeBlocks.has(timeBlockId)) {
+            intersection.add(timeBlockId);
+          }
+        }
+        commonTimeBlocks = intersection;
+      }
+    
+      return Array.from(commonTimeBlocks);
+    }    
+
+    const collectionOperations = this.collectionOperationPicklistState.selectedTerritoryCollectionOperations?.map(territoryCo => territoryCo.collectionOperation);
+    const sharedTimeBlockIds = findCommonTimeBlockIds(collectionOperations);
 
     let mapTimeBlockById = new Map()
     
     this.collectionOperationPicklistState.selectedTerritoryCollectionOperations?.forEach(territoryCo => {
       territoryCo.collectionOperation.collectionOperationTimeBlocks?.forEach(coTb => {
         if (this.dateRange) {
-          if (coTb.effectiveStartDate <= this.dateRange.endDate && coTb.effectiveEndDate >= this.dateRange.startDate) {
+          if (sharedTimeBlockIds.includes(coTb.timeBlock.id) && coTb.effectiveStartDate <= this.dateRange.endDate && coTb.effectiveEndDate >= this.dateRange.startDate) {
             mapTimeBlockById.set(coTb.timeBlock.id, coTb.timeBlock)
           }
         }
@@ -423,27 +448,58 @@ export default class SlwcNewCollectionOperationMultiPicklist extends LightningEl
     })
 
     const timeBlocks = Array.from(mapTimeBlockById.values());
-    if (timeBlocks.length) {
-      this.timeBlockState.timeBlockOptions = timeBlocks.map(timeBlock => {
-        return {
-          label: timeBlock.name,
-          value: timeBlock.id
-        }
-      })
-    }
+    const availableTimeBlockIds = timeBlocks?.map(tb => tb.id);
+    let selectedTimeBlockIds = [];
+    this.timeBlockState.selectedTimeBlocks?.forEach(selectedTb => {
+      if (availableTimeBlockIds.includes(selectedTb.value)) {
+        selectedTimeBlockIds.push(selectedTb.value);
+      }
+    });
+
+    let timeBlockOptions = [];
+    let selectedTimeBlocks = [];
+    timeBlocks.forEach(timeBlock => {
+      let option = {
+        label: timeBlock.name,
+        value: timeBlock.id,
+        selected: selectedTimeBlockIds.includes(timeBlock.id)
+      }
+      timeBlockOptions.push(option)
+      if (option.selected) {
+        selectedTimeBlocks.push(option)
+      }
+    });
+
+    this.timeBlockState.timeBlockOptions = timeBlockOptions;
+    this.timeBlockState.selectedTimeBlocks = selectedTimeBlocks;
+    this.timeBlockState.disabled = timeBlockOptions.length === 0;
+
+    this.applyTimeBlock();
   }
 
   handleTimeBlockChanged = (event) => {
     this.timeBlockState.selectedTimeBlocks = cloneDeep(event.detail.selectedValues);
 
-    this.applyTimeBlock()
+    this.applyTimeBlock();
   }
 
   applyTimeBlock = () => {
+    const selectedTerritoryCollectionOperations = this.getSelectedTerritoryCollectionOperations(this.collectionOperationPicklistState.collectionOperationTreeData);
+    const selectedDivisions = this.territoryPopverState.selectedDivisions;
+    const selectedARCRegions = this.territoryPopverState.selectedARCRegions;
+    const selectedDistricts = this.territoryPopverState.selectedDistricts;
+    this.collectionOperationPicklistState.selectedTerritoryCollectionOperations = cloneDeep(selectedTerritoryCollectionOperations);
+
+    const eventDetail = {
+      selectedDivisions: selectedDivisions,
+      selectedARCRegions: selectedARCRegions,
+      selectedDistricts: selectedDistricts,
+      selectedTerritoryCollectionOperations: selectedTerritoryCollectionOperations,
+      selectedTimeBlocks: this.timeBlockState.selectedTimeBlocks
+    };
+
     const pickValuesChangeEvent = new CustomEvent('timeblockchange', {
-      detail: { 
-        selectedTimeBlocks: this.timeBlockState.selectedTimeBlocks
-      }
+      detail: eventDetail
     });
     this.dispatchEvent(pickValuesChangeEvent);
   }
@@ -456,17 +512,20 @@ export default class SlwcNewCollectionOperationMultiPicklist extends LightningEl
     const selectedDistricts = this.territoryPopverState.selectedDistricts;
     this.collectionOperationPicklistState.selectedTerritoryCollectionOperations = cloneDeep(selectedTerritoryCollectionOperations);
 
-    const pickValuesChangeEvent = new CustomEvent('change', {
-      detail: { 
-        selectedDivisions: selectedDivisions,
-        selectedARCRegions: selectedARCRegions,
-        selectedDistricts: selectedDistricts,
-        selectedTerritoryCollectionOperations: selectedTerritoryCollectionOperations,
-      }
-    });
-    this.dispatchEvent(pickValuesChangeEvent);
-
-    this.refreshTimeBlockData();
+    if (!this.timeBlockEnabled) {
+      const pickValuesChangeEvent = new CustomEvent('change', {
+        detail: { 
+          selectedDivisions: selectedDivisions,
+          selectedARCRegions: selectedARCRegions,
+          selectedDistricts: selectedDistricts,
+          selectedTerritoryCollectionOperations: selectedTerritoryCollectionOperations
+        }
+      });
+      this.dispatchEvent(pickValuesChangeEvent);
+    }
+    else {
+      this.refreshTimeBlockData();
+    }
 
     this.closeCollectionOperationPicklist();
   }

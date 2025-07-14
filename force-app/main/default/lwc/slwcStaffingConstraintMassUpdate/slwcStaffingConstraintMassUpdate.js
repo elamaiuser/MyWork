@@ -147,18 +147,20 @@ export default class SlwcStaffingConstraintMassUpdate extends LightningElement {
         }
         result.push(coItem);
 
-        collectionOperation.collectionOperationTimeBlocks?.forEach(coTb => {
-          if (selectedTimeBlockIds.includes(coTb.timeBlock.id)) {
-            let coTbItem = {
-              key: `${collectionOperation.name}_${coTb.timeBlock.name}_${driveType}`,
-              collectionOperationId: collectionOperation.id,
-              timeBlockId: coTb.timeBlock.id,
-              name: `${collectionOperation.name} - ${coTb.timeBlock.name}`,
-              driveType: driveType
+        if (driveType !== DRIVE_TYPE.FIXED_SITE) {
+          collectionOperation.collectionOperationTimeBlocks?.forEach(coTb => {
+            if (selectedTimeBlockIds.includes(coTb.timeBlock.id)) {
+              let coTbItem = {
+                key: `${collectionOperation.name}_${coTb.timeBlock.name}_${driveType}`,
+                collectionOperationId: collectionOperation.id,
+                timeBlockId: coTb.timeBlock.id,
+                name: `${collectionOperation.name} - ${coTb.timeBlock.name}`,
+                driveType: driveType
+              }
+              result.push(coTbItem);
             }
-            result.push(coTbItem);
-          }
-        })
+          })
+        }
       })
     });
 
@@ -379,7 +381,13 @@ export default class SlwcStaffingConstraintMassUpdate extends LightningElement {
   }
 
   handleTimeBlockChanged(event) {
-    this.filters.collectionOperationValues.timeBlocks = event.detail.selectedTimeBlocks;
+    this.filters.collectionOperationValues = {
+      divisions: event.detail.selectedDivisions,
+      arcRegions: event.detail.selectedARCRegions,
+      districts: event.detail.selectedDistricts,
+      territoryCollectionOperations: event.detail.selectedTerritoryCollectionOperations,
+      timeBlocks: event.detail.selectedTimeBlocks
+    };
 
     this.handleSearch();
     this.fetchStafingConstrainData();
@@ -425,15 +433,17 @@ export default class SlwcStaffingConstraintMassUpdate extends LightningElement {
 
   handleEditRecurrenceStaffingConstraints = (event) => {
     const { collectionOperationId } = event.currentTarget.dataset;
+    const timeBlocks = this.filters.collectionOperationValues.timeBlocks;
 
     this.showEditRecurrenceStaffingConstraintModal({
       dateRange: this.collectionOperationDateRange,
-      collectionOperationId
+      collectionOperationId,
+      timeBlocks
     });
   };
 
   handleCreateStaffingConstraint = (event) => {
-    const { dateOfConstraint, collectionOperationId, driveType } =
+    const { dateOfConstraint, collectionOperationId, driveType, timeBlockId } =
       event.currentTarget.dataset;
     const collectionOperation = find(this.collectionOperations, {
       id: collectionOperationId
@@ -443,7 +453,8 @@ export default class SlwcStaffingConstraintMassUpdate extends LightningElement {
       staffingConstraint: {
         ...(dateOfConstraint && { dateOfConstraint }),
         ...(driveType && { driveTypes: [driveType] }),
-        ...(collectionOperation && { collectionOperation })
+        ...(collectionOperation && { collectionOperation }),
+        ...(timeBlockId && { timeBlockId })
       },
       isCreateIndividually:
         dateOfConstraint && collectionOperationId && driveType

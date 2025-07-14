@@ -61,14 +61,14 @@
 		<members>slwcDataService_Test</members>
 		<members>slwcDriveService</members>
 		<members>slwcDriveService_Test</members>
-		<members>slwcSetting</members>
+		<members>slwcSetting</members>                
         <name>ApexClass</name>
     </types>    
     <types>
 		<members>skedFixedSiteProcedureProjectionTrigger</members>
         <members>updateEventTrigger</members>
 		<name>ApexTrigger</name>
-	</types>    
+	</types>
     <types>
         <members>Account.Last_Closed_Drive__c</members>
         <members>Calendar_Build_Error_Log__c.Category__c</members>
@@ -83,7 +83,7 @@
         <members>sked_Drive__c.sked_Redcross_Volunteer_Required__c</members>
 		<members>sked_Drive__c.sked_Redcross_Volunteer_Quantity__c</members>
         <members>sked_Drive__c.sked_Stage_Options__c</members>        
-        <members>sked_Fixed_Site_Procedure_Projection__c.sked_Impact_Drives__c</members>        
+        <members>sked_Fixed_Site_Procedure_Projection__c.sked_Impact_Drives__c</members>
         <members>sked_Location_Account__c.sked_Location__c</members>
         <members>sked_TTIRR_Stuck_Job_Config_Setting__c.sked_Enable_Auto_Reschedule__c</members>
         <members>sked_TTIRR_Stuck_Job_Config_Setting__c.sked_Is_Active__c</members>
@@ -100,7 +100,8 @@
         <members>Volunteer_Staffing_Matrix__mdt.High_School_Drive__c</members>
         <members>Volunteer_Staffing_Matrix__mdt.Max_Anticipated_Registered_Donors__c</members>
         <members>Volunteer_Staffing_Matrix__mdt.Min_Anticipated_Registered_Donors__c</members>
-        <members>Volunteer_Staffing_Matrix__mdt.Volunteer_Quantity__c</members>
+        <members>Volunteer_Staffing_Matrix__mdt.Volunteer_Quantity__c</members>        
+        <members>Opportunity.Drive_Site_Operation_Type__c </members>        
         <name>CustomField</name>
     </types>
     <types>
@@ -169,6 +170,7 @@
         <members>Update_Drive_Status_Field_on_Opportunity_Booking_Date_2</members>
         <members>Update_Drive_Status_Field_on_Opportunity_Booking_Date_2_1</members>
 		<members>Send_Bell_Notification_To_Task</members>
+        <members>Create_New_Fixed_Site_Drive</members>
         <name>Flow</name>
     </types>
     <types>
@@ -243,6 +245,7 @@
     <types>
         <members>sked__Resource__c.AllowWorkAddressEditForWHF</members>
         <members>sked__Resource__c.only_System_Admin_can_edit_Virtual_WFH</members>
+        <members>Prevent_ARD_For_FixedSite_Int_And_NonInt</members>
         <name>ValidationRule</name>
     </types>
     <types>

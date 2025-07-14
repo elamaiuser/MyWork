@@ -25,6 +25,15 @@
 
                             <c-slwc-multi-picklist
                                 class="slds-m-right_small"
+                                name="timeBlocks"
+                                label="Time Blocks"
+                                pick-list-values={timeBlockOptions}
+                                onpicklistchange={handleStep2FiltersOnChange}
+                                >
+                            </c-slwc-multi-picklist>
+
+                            <c-slwc-multi-picklist
+                                class="slds-m-right_small"
                                 name="driveTypes"
                                 label="Drive Types"
                                 selected-by-default

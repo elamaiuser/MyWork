@@ -431,7 +431,7 @@ class FixedSiteGenerator extends BaseGenerator {
               this.fetch.retrieveRoleTimeData(this.drive),
               this.fetch.retrieveDefaultTags(this.drive),
               this.fetch.retrieveFixedSiteProcedureProjections(this.drive),
-              this.fetch.retrieveActiveDriveChangeRequest(this.drive),
+              this.fetch.retrieveActiveDriveChangeRequest(this.drive)
             ]);
           })
           .then(([driveSite, travelTimeIndexItemMap, sameDateDrives, sameDateActivities, staffingDecisionMatrix, roleTimeData, driveTags, fixedSiteProcedureProjections, activeDriveChangeRequest]) => {
@@ -449,7 +449,7 @@ class FixedSiteGenerator extends BaseGenerator {
               driveTags,
               fixedSiteProcedureProjections,
               activeDriveChangeRequest,
-              staffSetupExcludedRoles
+              staffSetupExcludedRoles,
             })
           
             this.populateCollectionOperationData();

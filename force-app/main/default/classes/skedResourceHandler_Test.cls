@@ -70,6 +70,12 @@ private class skedResourceHandler_Test {
         );
         predefinedData.add(driveTypeTagFixedSite);
         
+        sked__Tag__c realIdTypeTag = new sked__Tag__c(
+            Name = 'REAL ID',
+            sked__Type__c = skedConstants.TAG_TYPE_CERTIFICATION
+        );
+        predefinedData.add(realIdTypeTag);
+        
         Biomed_Collection_Op_Center__c testCollectionOperation1 = new Biomed_Collection_Op_Center__c(
             Name = 'Collection Operation 1',
             sked_Lunch_Break_Duration_Fixed_Site__c = '30',
@@ -112,7 +118,9 @@ private class skedResourceHandler_Test {
             sked__GeoLocation__Latitude__s = 37.7575256,
             sked__GeoLocation__Longitude__s = -122.4730585,
             sked__Email__c = 'test@com.test1',
-            sked__Primary_Phone__c = '1234567890',
+            sked_Primary_Phone_Type__c = 'Mobile Phone',
+            sked__Mobile_Phone__c = '1234567890',
+            sked_Work_Phone__c = '1233445560',
             sked__Is_Active__c = TRUE,
             sked_FCC_Code__c = '83340;83347;',
             sked_Premium_Pay_Roles__c = '2RBC',
@@ -121,7 +129,9 @@ private class skedResourceHandler_Test {
             sked_First_Name__c = 'Test',
             sked_Last_Name__c = 'Resource',
             sked_ULID__c = 'ULID1',
-            sked_Timezone__c = testDataFactory.summary.timezoneSidId
+            sked_Timezone__c = testDataFactory.summary.timezoneSidId,
+            sked_REAL_ID_Compliant_indicator__c = true,
+            sked_Supervisor_Email__c = UserInfo.getUserEmail()
         );
         testResources.add(testResource);
         
@@ -141,12 +151,17 @@ private class skedResourceHandler_Test {
         
         insert testResources;
         
+        Set<Id> affectedRegions = skedResourceHandler.getAffectedArcRegions(testResources);
+        
+        TriggerHandler.bypass('ResourceTriggerHandler');
         testResource.sked_FCC_Code__c = '83140';
         testResource.sked_Mobile_Type__c = 'Outside';
+        testResource.sked_Primary_Phone_Type__c = 'Work Phone';
         update testResource;
         
         testEquipment.sked_Site_Type__c = 'Mobile';
         update testEquipment;
+        TriggerHandler.clearBypass('ResourceTriggerHandler');
         
         Test.stopTest();
     }
@@ -346,6 +361,24 @@ private class skedResourceHandler_Test {
         skedHubBase.setBypassAllTriggers(true);
         update resource;
         skedHubBase.setBypassAllTriggers(false);
+    }
+    
+    static testmethod void testUpdateRealIdTags() {
+        skedTestDataFactory testDataFactory = new skedTestDataFactory('us', system.today().addMonths(1), 14);
+        Map<string, sObject> mapTestData = testDataFactory.setupRacTestData();
+        sked__Resource__c testResource = [
+            SELECT Id, sked_Timezone__c 
+            FROM sked__Resource__c 
+            WHERE sked__Resource_Type__c = :skedConstants.RESOURCE_TYPE_PERSON
+            LIMIT 1
+        ];
+
+        Test.startTest();
+        
+        testResource.sked_REAL_ID_Compliant_indicator__c = true;
+        update testResource;
+        
+        Test.stopTest();
     }
     
 }

@@ -17,7 +17,7 @@ import {
   collectionOperationTimeBlockService,
   sObjectType
 } from "c/dataService";
-import { DRIVE_STATUS } from "c/slwcConstants";
+import { DRIVE_TYPE, DRIVE_STATUS } from 'c/slwcConstants';
 
 const KEY_SEPERATOR = "__";
 
@@ -338,8 +338,10 @@ export default class SlwcAddStaffingConstraintModal extends LightningElement {
         );
         this.mappedDriveData = groupBy(
           [...driveResult],
-          (item) =>
-            `${item.collectionOperationId}${KEY_SEPERATOR}${item.typeOfDrive}${KEY_SEPERATOR}${item.driveDate}`
+          (item) => {
+            let typeOfDrive = this.driveHelper.isFixedSiteDrive(item) ? DRIVE_TYPE.FIXED_SITE : DRIVE_TYPE.MOBILE;
+            return `${item.collectionOperationId}${KEY_SEPERATOR}${typeOfDrive}${KEY_SEPERATOR}${item.driveDate}`
+          }
         );
         this.mappedActivityData = groupBy(
           [...activityResult], 
@@ -426,14 +428,20 @@ export default class SlwcAddStaffingConstraintModal extends LightningElement {
       totalStaffConstraints
     } = this.model;
 
-    const modelsToSave = driveTypes.map((item) => ({
-      ...(id && { id }),
-      collectionOperationId: collectionOperation?.id,
-      timeBlockId: timeBlockId,
-      dateOfConstraint,
-      totalStaffConstraints,
-      driveType: item
-    }));
+    const modelsToSave = [];
+    driveTypes.forEach(driveType => {
+      if (!timeBlockId || driveType !== DRIVE_TYPE.FIXED_SITE) {
+        const model = {
+          ...(id && { id }),
+          collectionOperationId: collectionOperation?.id,
+          timeBlockId,
+          dateOfConstraint,
+          totalStaffConstraints,
+          driveType
+        }
+        modelsToSave.push(model);
+      }
+    })
 
     const service = new staffingConstraintService();
 

@@ -33,6 +33,18 @@
                             value={model.fixedSiteLockComment}>
                         </lightning-textarea>
                     </div>
+                    
+                    <div class="slds-col slds-m-top_small" if:true={showApplyFutureDatesBtn}>
+                        <div class="slds-form-element">
+                            <div class="slds-form-element__label">
+                                <strong>Selected Recurrence Dates:</strong>
+                                <span class="slds-m-left_xx-small">{model.recurrenceDates.length}</span>
+                                <span class="slds-text-link slds-text-link_reset slds-m-left_x-small" onclick={openRecurrenceDatesPickerModalData}>
+                                    Select Dates
+                                </span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -44,4 +56,12 @@
         </section>
         <div class="slds-backdrop slds-backdrop_open" style="z-index:9998"></div>
     </template>
+
+    <c-slwc-recurrence-dates-picker-modal
+        drive={drive}
+        selected-days={recurrenceDatesPickerModalData.selectedDays}
+        is-open={recurrenceDatesPickerModalData.isOpen}
+        onclose={closeRecurrenceDatesPickerModalData}
+        onsave={saveRecurrenceDatesPickerModalData}>
+    </c-slwc-recurrence-dates-picker-modal>
 </template>

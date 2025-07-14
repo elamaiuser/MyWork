@@ -26,7 +26,6 @@ public class skedDriveShiftHandler extends skedTriggerHub {
     public override void onAfterUpdate() {
         if (!skedSetting.instance.Admin.migrationMode) {
             updateDriveShiftOrders(this.context.newRecords, (Map<Id, sked_Drive_Shift__c>)this.context.oldMap);
-            captureFSWBException(this.context.newRecords, (Map<Id, sked_Drive_Shift__c>)this.context.oldMap);
         }
     }
     
@@ -38,35 +37,6 @@ public class skedDriveShiftHandler extends skedTriggerHub {
     }
     
     /************************************************** Privated Methods ***************************************************/
-    private void captureFSWBException(List<sked_Drive_Shift__c> newRecords) {
-        List<sked_Drive_Shift__c> recordsToValidate = new List<sked_Drive_Shift__c>();
-        for (sked_Drive_Shift__c newRecord : newRecords) {
-            if (newRecord.sked_Drive_Type__c == skedConstants.DRIVE_TYPE_FIXED_SITE && newRecord.sked_Drive_Operation_Type__c == skedConstants.OPERATION_TYPE_WB) {
-                recordsToValidate.add(newRecord);
-            }
-        }
-        if (!recordsToValidate.isEmpty()) {
-            skedExceptionLogService service = (skedExceptionLogService)skedServiceFactory.instance.resolve('skedHC__Exception__c');
-			service.captureFSWBException(recordsToValidate);
-        }
-    }
-    
-    private void captureFSWBException(List<sked_Drive_Shift__c> newRecords, Map<Id, sked_Drive_Shift__c> oldMap) {
-        List<sked_Drive_Shift__c> timeChangedRecords = new List<sked_Drive_Shift__c>();
-        for (sked_Drive_Shift__c newRecord : newRecords) {
-            if (newRecord.sked_Drive_Type__c == skedConstants.DRIVE_TYPE_FIXED_SITE && newRecord.sked_Drive_Operation_Type__c == skedConstants.OPERATION_TYPE_WB) {
-                sked_Drive_Shift__c oldData = oldMap.get(newRecord.Id);
-                if (newRecord.sked_Start_Time__c != oldData.sked_Start_Time__c || newRecord.sked_End_Time__c != oldData.sked_End_Time__c
-                    || newRecord.sked_Time_Block__c != oldData.sked_Time_Block__c) {
-                        timeChangedRecords.add(newRecord);
-                    }
-            }
-        }
-        if (!timeChangedRecords.isEmpty()) {
-            captureFSWBException(timeChangedRecords);
-        }
-    }
-    
     private void deleteJobs(Map<Id, sked_Drive_Shift__c> oldMap) {
         delete [SELECT Id FROM sked__Job__c WHERE sked_Drive_Shift__c IN :oldMap.keySet()];
     }
@@ -168,6 +138,19 @@ public class skedDriveShiftHandler extends skedTriggerHub {
                     }  
                 }   
             }
+        }
+    }
+    
+    private void captureFSWBException(List<sked_Drive_Shift__c> newRecords) {
+        Set<Id> driveIdsToValidate = new Set<Id>();
+        for (sked_Drive_Shift__c newRecord : newRecords) {
+            if (newRecord.sked_Drive_Type__c == skedConstants.DRIVE_TYPE_FIXED_SITE && newRecord.sked_Drive_Operation_Type__c == skedConstants.OPERATION_TYPE_WB) {
+                driveIdsToValidate.add(newRecord.sked_Drive__c);
+            }
+        }
+        if (!driveIdsToValidate.isEmpty()) {
+            skedExceptionLogService service = (skedExceptionLogService)skedServiceFactory.instance.resolve('skedHC__Exception__c');
+			service.captureFSWBException(driveIdsToValidate);
         }
     }
     
