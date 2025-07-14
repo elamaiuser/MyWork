@@ -51,14 +51,18 @@
 		<members>Volunteer_Staffing_Matrix.Non_High_School_81_120</members>
 		<name>CustomMetadata</name>
 	</types>
-    <types>
-		<members>Opportunity.FieldsApplytoDrives</members>
-		<name>FieldSet</name>
-	</types>
-    <types>
-		<members>Mobile_Account_Record_Page</members>
-		<members>Mobile_Opp_Record_Page</members>
-		<name>FlexiPage</name>
+	<types>
+		<members>autoMapper</members>
+		<members>showSpecialCircumstanceBadgesOnOpportunity</members>
+		<members>slwcDriveGenerator</members>
+		<members>slwcDriveStaffingDetails</members>
+		<members>slwcFilterResourceMultiPicklist</members>
+		<members>slwcLinkedDriveStaffingDetails</members>
+		<members>slwcResolveDriveContentions</members>
+		<members>slwcSlider</members>
+		<members>slwcDriveManagement</members>
+		<members>slwcDriveCalendarDriveList</members>
+		<name>LightningComponentBundle</name>
 	</types>
 	<types>
 		<members>Opportunity-APS Planner Mobile Opp Layout</members>
