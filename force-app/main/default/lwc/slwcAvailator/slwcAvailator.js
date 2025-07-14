@@ -54,6 +54,19 @@ const isJobRequireTravelTimes = (isTemporaryCO, job, drive, {
   return rule1 || rule2;
 }
 
+const isDriverJob = (job, onlyCheckResourceRole = false) => {
+  if(!job) return false;
+  const isNotCdlDriverJob = job.id && !job.id.startsWith('drivercdl');
+  const isNotDotDriverJob = job.id && !job.id.startsWith('driverdot');
+  if(onlyCheckResourceRole) {
+    return isNotCdlDriverJob && isNotDotDriverJob && job.resourceRole === 'Driver' && !job.dualRole;
+  }
+
+  return isNotCdlDriverJob && isNotDotDriverJob && (
+    job.resourceRole === 'Driver' || job.dualRole === 'Driver'
+  )
+}
+
 class dateslotModel {
   timezoneSidId = null;
   startJS = null;
@@ -1335,11 +1348,8 @@ class SlwcAvailator {
     }
   }
 
-  isDriverJob(job) {
-    if(!job) return false;
-    const isNotCdlDriverJob = job.id && !job.id.startsWith('drivercdl');
-    const isNotDotDriverJob = job.id && !job.id.startsWith('driverdot');
-    return isNotCdlDriverJob && isNotDotDriverJob && (job.resourceRole === 'Driver' || job.dualRole === 'Driver')
+  isDriverJob(job, onlyCheckResourceRole = false) {
+    return isDriverJob(job, onlyCheckResourceRole);
   }
 
   setupDriverJobs() {
@@ -1357,7 +1367,10 @@ class SlwcAvailator {
     });
 
     this.drive.driveShifts.forEach(driveShift => {
-      const driverJob = driveShift.jobs.find(job => this.isDriverJob(job));
+      let driverJob = driveShift.jobs.find(job => this.isDriverJob(job, true));
+      if(!driverJob) {
+        driverJob = driveShift.jobs.find(job => this.isDriverJob(job, false));
+      }
       if(!driverJob) return;
       if(!driverJob.jobAllocations) {
         driverJob.jobAllocations = [];
@@ -2179,4 +2192,5 @@ export default {
   },
   isJobRequireTravelTimes,
   isJobBelongToDrivingRolesGroup,
+  isDriverJob
 }

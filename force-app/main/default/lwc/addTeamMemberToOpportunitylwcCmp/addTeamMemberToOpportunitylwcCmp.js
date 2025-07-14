@@ -94,7 +94,7 @@ export default class AddTeamMemberToOpportunitylwcCmp extends LightningElement {
 
 
     teamRoleChangeHandler(event){
-        this.teamRoleName = event.detail.value;;
+        this.teamRoleName = event.detail.value;
     }
     // accountChangeHandler( event ){
     //     this.accountaccesslevel = event.detail.value;

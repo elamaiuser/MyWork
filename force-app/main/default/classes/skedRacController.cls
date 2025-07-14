@@ -14,7 +14,7 @@ global virtual class skedRacController extends skedBaseController {
             if (mapConfigData.containsKey('availabilityTypes')) {
                 List<string> availabilityTypes = (List<String>) mapConfigData.get('availabilityTypes');
                 availabilityTypes.remove(availabilityTypes.indexOf(skedConstants.AVAILABILITY_TYPE_ON_CALL));
-                if (!loginUser.sked__SkeduloUserType__c.contains(skedConstants.USER_TYPE_ADMIN) && !loginUser.sked__SkeduloUserType__c.contains(skedConstants.USER_TYPE_SCHEDULER)) {
+                if (loginUser.sked__SkeduloUserType__c != null && !loginUser.sked__SkeduloUserType__c.contains(skedConstants.USER_TYPE_ADMIN) && !loginUser.sked__SkeduloUserType__c.contains(skedConstants.USER_TYPE_SCHEDULER)) {     //HRP-14943
                     List<string> results = new List<string>();
                     for (string availabilityType : availabilityTypes) {
                         if (availabilityType != skedConstants.AVAILABILITY_TYPE_AVAILABILITY_TEMPLATE_OVERRIDE) {
@@ -161,6 +161,7 @@ global virtual class skedRacController extends skedBaseController {
             query.orderAscending = request.orderDirection == 1 ? 'ASC' : 'DESC';
             query.pageNo = request.pageNo;
             query.pageSize = request.pageSize;
+            query.patternIds = request.patternIds;
             query.queryText = request.queryText;
             query.regionIds = request.regionIds;
             query.resourceTypes = request.resourceTypes;

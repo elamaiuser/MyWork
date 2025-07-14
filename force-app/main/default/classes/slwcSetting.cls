@@ -249,4 +249,27 @@ public class slwcSetting {
         @AuraEnabled public string driveType {get;set;}
         @AuraEnabled public boolean enabled {get;set;}
     }
+
+    public class redcrossVolunteerMatrixSettings {
+        @AuraEnabled public List<redcrossVolunteerMatrixSetting> redcrossVolunteerMatrixSettings {get;set;}
+
+        public redcrossVolunteerMatrixSettings() {
+            this.redcrossVolunteerMatrixSettings = new List<redcrossVolunteerMatrixSetting>();
+            for (Volunteer_Staffing_Matrix__mdt setting : Volunteer_Staffing_Matrix__mdt.getAll().values()) {
+                redcrossVolunteerMatrixSetting model = new redcrossVolunteerMatrixSetting();
+                model.isHighSchoolDrive = setting.High_School_Drive__c;
+                model.minDonorValue = setting.Min_Anticipated_Registered_Donors__c;
+                model.maxDonorValue = setting.Max_Anticipated_Registered_Donors__c;
+                model.volunteerQuantity = setting.Volunteer_Quantity__c;
+                this.redcrossVolunteerMatrixSettings.add(model);
+            }
+        }
+    }
+
+    public class redcrossVolunteerMatrixSetting {
+        @AuraEnabled public boolean isHighSchoolDrive {get;set;}
+        @AuraEnabled public decimal minDonorValue {get;set;}
+        @AuraEnabled public decimal maxDonorValue {get;set;}
+        @AuraEnabled public decimal volunteerQuantity {get;set;}
+    }
 }

@@ -1412,7 +1412,7 @@
     <flexiPageRegions>
         <itemInstances>
             <componentInstance>
-                <componentInstanceProperties>                    
+                <componentInstanceProperties>
                     <name>tabs</name>
                     <value>Facet-656872d1-84d0-43b3-87ad-ba5d3d871506</value>
                 </componentInstanceProperties>
@@ -1568,7 +1568,7 @@
         </itemInstances>
         <itemInstances>
             <componentInstance>
-                <componentInstanceProperties>                    
+                <componentInstanceProperties>
                     <name>tabs</name>
                     <value>Facet-5d4d59d5-c904-416b-98ca-1bd88991218a</value>
                 </componentInstanceProperties>

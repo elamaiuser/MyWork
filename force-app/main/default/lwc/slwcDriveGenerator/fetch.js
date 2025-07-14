@@ -9,12 +9,14 @@ import {
   driveChangeRequestService, driveChangeRequestQueryModel,
   operationDriveLimitQueryModel, operationDriveLimitService,
   collectionOperationStagingLocationService, collectionOperationStagingLocationQueryModel,
+  collectionOperationTimeBlockQueryModel, collectionOperationTimeBlockService,
   roleTimeDetailService, sObjectType, territoryCollectionOperationService, territoryCollectionOperationQueryModel, operationRecordQueryModel, travelTimeIndexItemService, travelTimeIndexItemQueryModel
 } from 'c/dataService';
 import * as autoMapper from 'c/autoMapper';
 import { DRIVE_TYPE, ASSET_TYPE, PENDING_ACTION, DRIVE_REQUEST_CHANGE_STATUS, DRIVE_CHANGE_REQUEST_TYPE } from 'c/slwcConstants';
 import { keyBy, groupBy, uniq } from 'c/lodash';
 import { getTravelTimeIndexKey } from 'c/slwcUtils';
+
 class Fetch {
   driveType = DRIVE_TYPE.MOBILE;
 
@@ -26,7 +28,7 @@ class Fetch {
 
   get settingKeys() {
     if(this.driveType === DRIVE_TYPE.MOBILE) {
-      return ['adminSetting', 'resourceRoleGroups', 'lunchBreakSettings', 'staffSetupExcludedRoles'];
+      return ['adminSetting', 'resourceRoleGroups', 'lunchBreakSettings', 'staffSetupExcludedRoles', 'redcrossVolunteerMatrix'];
     } else {
       return ['adminSetting', 'resourceRoleGroups', 'lunchBreakSettings', 'staffSetupExcludedRoles'];
     }
@@ -54,7 +56,8 @@ class Fetch {
               adminSetting: result.returnedData.adminSetting,
               resourceRoleGroups: result.returnedData.resourceRoleGroups,
               lunchBreakSettings: autoMapper.autoMapperInstance.mapToArray('sked_Lunch_Break_Setting__c', result.returnedData.lunchBreakSettings),
-              staffSetupExcludedRoles: autoMapper.autoMapperInstance.mapToArray('sked_Staff_Setup_Excluded_Role__c', result.returnedData.staffSetupExcludedRoles)
+              staffSetupExcludedRoles: autoMapper.autoMapperInstance.mapToArray('sked_Staff_Setup_Excluded_Role__c', result.returnedData.staffSetupExcludedRoles),
+              redcrossVolunteerMatrix: result.returnedData.redcrossVolunteerMatrix
             }
           })
       });
@@ -249,7 +252,7 @@ class Fetch {
 
               return autoMapper.autoMapperInstance.mapToArray('sked__Resource__c', result.returnedData.resources).filter(resource => {
                 return resource.assetType === ASSET_TYPE.VEHICLE;
-              });;
+              });
             })
         }
       });
@@ -267,6 +270,7 @@ class Fetch {
           query.startDate = driveDate;
           query.endDate = driveDate;
           query.collectionOpId = collectionOperationId;
+          query.subQueryIndicator = sObjectType.DRIVE_SHIFT;
 
           let service = new driveService();
           return service.query(query)
@@ -356,6 +360,27 @@ class Fetch {
       })
   }
   
+  retrieveCollectionOperationTimeBlocks({
+    driveDate,
+    collectionOperationId
+  }) {
+    return Promise.resolve()
+      .then(() => {
+        if (driveDate && collectionOperationId) {
+          let service = new collectionOperationTimeBlockService();
+          let queryModel = new collectionOperationTimeBlockQueryModel();
+          queryModel.collectionOperationIds = [collectionOperationId];
+          queryModel.effectiveStartDate = driveDate;
+          queryModel.effectiveEndDate = driveDate;
+
+          return service.query(queryModel)
+            .then((result) => {
+              return result
+            })
+        }
+      });
+  }
+
   getDriveDetails(driveId) {
     let service = new driveService();
     return service.getDriveById(driveId)
