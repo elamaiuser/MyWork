@@ -15,5 +15,5 @@
     ) 
   )</errorConditionFormula>
     <errorDisplayField>Name</errorDisplayField>
-    <errorMessage>Time Block names must be unique</errorMessage>
+    <errorMessage>Time Block Name already in use</errorMessage>
 </ValidationRule>
