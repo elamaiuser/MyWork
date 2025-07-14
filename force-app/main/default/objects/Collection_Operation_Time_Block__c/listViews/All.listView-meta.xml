@@ -4,7 +4,8 @@
     <columns>NAME</columns>
     <columns>Collection_Operation__c</columns>
     <columns>Time_Block__c</columns>
-    <columns>Days_of_Week__c</columns>
+    <columns>Effective_Start_Date__c</columns>
+    <columns>Effective_End_Date__c</columns>
     <filterScope>Everything</filterScope>
     <label>All</label>
 </ListView>
