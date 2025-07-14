@@ -1,0 +1,7 @@
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+	<types>
+		<members>Time_Block__c.Time_Block_Names_Must_Be_Unique</members>
+		<name>ValidationRule</name>
+	</types>
+	<version>64.0</version>
+</Package>
