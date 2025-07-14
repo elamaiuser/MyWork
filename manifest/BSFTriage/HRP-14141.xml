@@ -4,5 +4,10 @@
 		<members>sked_Notification_Setting.sked_RTV_Feedback_Approved</members>
 		<name>CustomMetadata</name>
 	</types>
+	<types>
+		<members>skedNotificationBatchBase</members>
+		<members>skedNotificationGenerationBatch_Test</members>
+		<name>ApexClass</name>
+	</types>
 	<version>64.0</version>
 </Package>
