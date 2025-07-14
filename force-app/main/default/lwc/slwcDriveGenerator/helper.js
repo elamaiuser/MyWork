@@ -794,7 +794,7 @@ class DriveHelper {
     }
 
     if ([DRIVE_STATUS.DRAFT].includes(drive.status)) {
-      //even drive is draft, DRD can only update volunteer jobs, slots, operation notes.
+      //even drive is draft, DRD can only update volunteer jobs, slots, operation notes, redcrossVolunteerRequired.
       if(isDRDUser) {
         return {
           isReadonly: true,
@@ -813,7 +813,8 @@ class DriveHelper {
             operationNotes: false,
             linkedDrives: true,
             aptQuantity: true,
-            mobileDriveVehicesInput: true
+            mobileDriveVehicesInput: true,
+            redcrossVolunteerRequired: false
           },
           fieldChangeRestrictionMap: {
             driveSite: true
@@ -838,6 +839,7 @@ class DriveHelper {
             linkedDrives: false,
             aptQuantity: isOnlyAPSUser ? false : true,
             mobileDriveVehicesInput: false,
+            redcrossVolunteerRequired: isOnlyAPSUser || isAdminUser ? false : true,
           },
           fieldChangeRestrictionMap: {
             driveSite: true
@@ -868,7 +870,8 @@ class DriveHelper {
       volunteerJobs: isReadonly,
       operationNotes: isReadonly,
       linkedDrives: isReadonly,
-      aptQuantity: isReadonly
+      aptQuantity: isReadonly,
+      redcrossVolunteerRequired: isReadonly
     }
     let fieldChangeRestrictionMap = {
       driveSite: true
@@ -891,6 +894,7 @@ class DriveHelper {
           fieldReadonlyMap.driveShiftsMetadata = false;
           fieldReadonlyMap.driveShiftsConfiguration = false;
           fieldReadonlyMap.driveShifts = false;
+          fieldReadonlyMap.redcrossVolunteerRequired = false;
         }
         
         if(isAPSUser || isManufacturingUser) {
@@ -918,9 +922,11 @@ class DriveHelper {
 
     if(isAPSUser || isDRDUser) {
       fieldReadonlyMap.operationNotes = false;
+      fieldReadonlyMap.redcrossVolunteerRequired = false;
     }
 
     fieldReadonlyMap.aptQuantity = isOnlyAPSUser ? false : true;
+    fieldReadonlyMap.redcrossVolunteerRequired = isAPSUser || isDRDUser || isAdminUser ? false : true;
 
     return {
       isReadonly,
@@ -965,12 +971,14 @@ class DriveHelper {
         'x2rbcProjectedProcedures',
         'aptRequired',
         'aptQuantity',
-        'slotGenerator'
+        'slotGenerator',
+        'redcrossVolunteerRequired',
+        'redcrossVolunteerQuantity'
       ];
     }
 
     let fieldsToCheckChanges = [];
-    driveChangeRequest.driveChangeRequestItems.find(dcrItem => {
+    driveChangeRequest.driveChangeRequestItems?.find(dcrItem => {
       if(dcrItem.type !== DRIVE_CHANGE_REQUEST_ITEM_TYPE.CHANGE) return;
 
       const mapping = autoMapper.mappingConfigContainerInstance.getMappingConfig(dcrItem.objectApiName);
@@ -1841,7 +1849,7 @@ class DriveHelper {
         dualRole = data.dualRole;
       }
 
-      let role = resourceRole.split('-')[0];;
+      let role = resourceRole.split('-')[0];
       let roleCapacity = staffingDecisionMatrix[resourceRoleCapacityFieldMap[role]] || 0;
 
       if(resourceRoles.includes(role)) {
@@ -1896,7 +1904,7 @@ class DriveHelper {
         dualRole = data.dualRole;
       }
 
-      let role = resourceRole.split('-')[0];;
+      let role = resourceRole.split('-')[0];
       let roleCapacity = staffingDecisionMatrix[resourceRoleCapacityFieldMap[role]] || 0;
       if(resourceRoles.includes(role)) {
         let roleCapacitywithDrawHours = roleCapacity * drawHours;
@@ -1932,7 +1940,7 @@ class DriveHelper {
         dualRole = data.dualRole;
       }
 
-      let role = resourceRole.split('-')[0];;
+      let role = resourceRole.split('-')[0];
       let roleCapacity = staffingDecisionMatrix[resourceRoleCapacityFieldMap[role]] || 0;
       if(resourceRoles.includes(role)) {
         if(roleCapacity > maxStaffCapacity){
@@ -2247,8 +2255,8 @@ class DriveHelper {
       let driveShift = drive.driveShifts[i];
       let backupDriveShift = backupDrive.driveShifts[i];
       
-      let validJobs = driveShift.jobs.filter(job => !job.volunteerRole);
-      let validBackupJobs = backupDriveShift.jobs.filter(job => !job.volunteerRole);
+      let validJobs = (driveShift.jobs || []).filter(job => !job.volunteerRole);
+      let validBackupJobs = (backupDriveShift.jobs || []).filter(job => !job.volunteerRole);
 
       if (validJobs.length !== validBackupJobs.length) return true;
       for (let j = 0; j < validJobs.length; j++) {
@@ -2763,7 +2771,7 @@ class DriveHelper {
         });
         const afterDualRoleJobs = currentDriveShift.jobs.filter(job => {
           return job.dualRole;
-        });;
+        });
 
         const dualRoleJobsRemoved = beforeDualRoleJobs.filter(beforeJob => {
           const stillExisted = !!afterDualRoleJobs.find(afterJob => {
@@ -2886,7 +2894,7 @@ class DriveHelper {
       const hasAssignedAssetNotSharedWithNewCO = currentAssignedAssets.some(assignedAsset => availableButNotSharedAssetIds.includes(assignedAsset.id));
       result.violated = !!this.isDriveInPathOfLinkedDrive(drive) 
                         && backupDrive && backupDrive.collectionOperationId !== drive.collectionOperationId && backupDriveRegionId === driveRegionId
-                        && hasAssignedAssetNotSharedWithNewCO;;
+                        && hasAssignedAssetNotSharedWithNewCO;
       result.passed = !result.violated || isContentionOverrided(drive, DRIVE_CONTENTION.ASSETS_NOT_SHARED_WITH_NEW_CO);
       return result;
     }
@@ -3013,11 +3021,8 @@ class DriveHelper {
     return drive.pendingAction === PENDING_ACTION.DRIVE_SUBMISSION;
   }
   
-  isDriverJob(job) {
-    if(!job) return false;
-    const isNotCdlDriverJob = job.id && !job.id.startsWith('drivercdl');
-    const isNotDotDriverJob = job.id && !job.id.startsWith('driverdot');
-    return isNotCdlDriverJob && isNotDotDriverJob && (job.resourceRole === 'Driver' || job.dualRole === 'Driver')
+  isDriverJob(job, onlyCheckResourceRole = false) {
+    return slwcAvailator.isDriverJob(job, onlyCheckResourceRole);
   }
 
   isDriverSupport(job) {
@@ -3068,11 +3073,7 @@ class DriveHelper {
     } else if (job.assetType) {
       return true;
     } else if (job.volunteerRole) { 
-      if(this.isMobileDrive(drive)) {
-        return false;
-      } else {
-        return ['Donor Ambassador'].includes(job.volunteerRole);
-      }
+      return ['Donor Ambassador'].includes(job.volunteerRole);
     }
 
     return false;
@@ -3448,7 +3449,7 @@ class DriveHelper {
       if(drive.projectedRegisteredDonors) {
         return +((drive.staffCapacity - drive.projectedRegisteredDonors) / drive.maxRoleCapacityWithDrawHours).toFixed(1);
       } else {
-        return +(drive.staffCapacity / drive.maxRoleCapacityWithDrawHours).toFixed(1);;
+        return +(drive.staffCapacity / drive.maxRoleCapacityWithDrawHours).toFixed(1);
       }
     } else {
       return 0;
@@ -3636,13 +3637,11 @@ class DriveHelper {
         }
       })
       if(remainingQuantity2 > 0) {
-        jobsToCreate.push({
+        jobsToUpdate.push({
+          previousJob: job2,
           newJob: {
             ...job2,
-            id: uniqueId('temp_job_'),
-            key: generateUUID(),
-            quantity: remainingQuantity2,
-            jobTags: []
+            quantity: remainingQuantity2
           }
         })
       } else {
@@ -3667,6 +3666,33 @@ class DriveHelper {
       jobsToUpdate,
       jobsToDelete
     }
+  }
+
+  isRoleHoldCapacity(resourceRole, {
+    staffingDecisionMatrix,
+  }) {
+    if(!resourceRole) return false;
+    
+    const resourceRoleCapacityFieldMap = {
+      'Driver': 'driverCapacity',
+      'Driver Support': 'driverSupportCapacity',
+      '2RBC': 'x2RbcStaffCapacity',
+      'Charge': 'chargeCapacity',
+      'VP/HH': 'vpHhCapacity'
+    }
+
+    const roleCapacity = staffingDecisionMatrix[resourceRoleCapacityFieldMap[resourceRole]] || 0;
+    return roleCapacity > 0;
+  }
+
+  isResourceTagRestricted(resourceTag, {
+    startDate,
+    endDate
+  }) {
+    return slwcAvailator.isResourceTagRestricted(resourceTag, {
+      startDate,
+      endDate
+    })
   }
 }
 

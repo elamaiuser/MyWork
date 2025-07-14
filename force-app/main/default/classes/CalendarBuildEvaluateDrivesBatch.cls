@@ -183,7 +183,9 @@
             List<Opportunity> lstOpps = CalendarBuildBatchHandler.cloneDrives(eligibleOppList);
             lstCBOpps.add(lstOpps[0].Calendar_Build_Parent_Opportunity__c);
             if(lstOpps != NULL && lstOpps.size() > 0 ) {
+                checkRecursive.skipVolunteerCalculation = true; //HRP-13146
                 Database.SaveResult[] clonedOppInsertResultList = Database.insert(lstOpps, false);
+                checkRecursive.skipVolunteerCalculation = false; //HRP-13146
                 for(Database.SaveResult sr : clonedOppInsertResultList) {
                     Integer i = 0;
                     if(!sr.isSuccess()) {

@@ -561,7 +561,7 @@ public with sharing class BSF_Utilities {
                 'Web_Scheduling_End_Date_Offset__c, Web_Scheduling_End_Time_Offset__c, Web_Scheduling_Start_Date_Offset__c, Platelet_Projected_Procedures__c, '+
                 'Plasma_Pheresis_Projected_Procedures__c, Calendar_Build_Parent_Opportunity__c, Type, DriveStatus__c, Slot_Generator__c, Related_Scheduled_Drive__c, '+ //HRP-12011 
                 //'FROM Opportunity';
-                'APT_Quantity__c, APT_Required__c, Booking_Strategy__c FROM Opportunity'; //Added APT fields HRP-13190
+                'APT_Quantity__c, APT_Required__c, Booking_Strategy__c, Red_Cross_Volunteer_Required__c, Red_Cross_Volunteer_Quantity__c FROM Opportunity'; //Added APT fields HRP-13190; Added Volunteer fields HRP-13146
     }
     
     /* HRP-13190 -> Starts Here
@@ -649,5 +649,34 @@ public with sharing class BSF_Utilities {
 
     public static String getStringWithinLimit(String text, Integer charLimit) {
         return (text != NULL && String.isNotBlank(text) && text.length() > charLimit) ? text.subString(0, charLimit) : (text == NULL ? '' : text);
+    }
+
+    //HRP-701 Utility Methods
+    public static List<Opportunity> getOpportunitiesWithFirstTimeFlagRemoved(List<Opportunity> opportunities) {
+        for(Opportunity opp : opportunities) {
+            if(opp.Special_Circumstances__c == null) continue;
+
+            List<String> updatedSpecialCircumstances = new List<String>(); 
+            for(String value : opp.Special_Circumstances__c.split(';')) {
+                if(value != BSF_Constants.SSBS_BADGE_FIRST_TIME_DRIVE) {
+                    updatedSpecialCircumstances.add(value);
+                }
+            }
+            opp.Special_Circumstances__c = String.join(updatedSpecialCircumstances, ';');
+        }
+        return opportunities;
+    }
+
+    public static List<Opportunity> getOpportunitiesWithFirstTimeFlagAdded(List<Opportunity> opportunities) {
+        for(Opportunity opp : opportunities) {
+            List<String> updatedSpecialCircumstances = 
+                opp.Special_Circumstances__c == null 
+                ? new List<String>() 
+                : new List<String>(opp.Special_Circumstances__c.split(';'));
+            updatedSpecialCircumstances.add(BSF_Constants.SSBS_BADGE_FIRST_TIME_DRIVE);
+            
+            opp.Special_Circumstances__c = String.join(updatedSpecialCircumstances, ';');
+        }
+        return opportunities;
     }
 }

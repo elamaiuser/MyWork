@@ -7,6 +7,7 @@
 		<members>contactService_Test</members>
 		<members>AccountServiceRoleTrigger_Test</members>
         <members>AccountContactHistoryService</members>
+		<members>AccountContactHistoryService_Test</members>
 		<name>ApexClass</name>
 	</types>
     <types>
@@ -28,7 +29,7 @@
 	</types>
     <types>		
 		<members>Account_Service_Role_End_Reason__mdt.Deceased</members>
-		<name>CustomMetadata</name>
+		<name>CustomField</name>
 	</types>
 	<types>
         <members>Account_Service_Role_End_Reason__mdt</members>      

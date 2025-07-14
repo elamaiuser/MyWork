@@ -17,8 +17,8 @@ global class BSF_Batch_UpdateAccountStatusInactive implements Database.Batchable
         
     }
     global Database.QueryLocator start(Database.BatchableContext BC) { 
-        String acctStatus=BSF_Constants.acctStatus;
-        String query = 'SELECT Id, Account_Status__c FROM Account';
+        Id mobileAccRecTypeId = Schema.SObjectType.Account.getRecordTypeInfosByName().get(BSF_Constants.MOBILE_ACCOUNT_RECORD_TYPE).getRecordTypeId();
+        String query = 'SELECT Id, Account_Status__c FROM Account WHERE RecordTypeId =:mobileAccRecTypeId';
         return Database.getQueryLocator(query);
     }
     

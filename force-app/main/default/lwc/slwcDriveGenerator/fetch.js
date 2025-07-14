@@ -26,7 +26,7 @@ class Fetch {
 
   get settingKeys() {
     if(this.driveType === DRIVE_TYPE.MOBILE) {
-      return ['adminSetting', 'resourceRoleGroups', 'lunchBreakSettings', 'staffSetupExcludedRoles'];
+      return ['adminSetting', 'resourceRoleGroups', 'lunchBreakSettings', 'staffSetupExcludedRoles', 'redcrossVolunteerMatrix'];
     } else {
       return ['adminSetting', 'resourceRoleGroups', 'lunchBreakSettings', 'staffSetupExcludedRoles'];
     }
@@ -50,11 +50,13 @@ class Fetch {
         let service = new dataService();
         return service.getCustomSettings({ settingKeys: this.settingKeys })
           .then((result) => {
+            console.log('result ',result.returnedData);
             return {
               adminSetting: result.returnedData.adminSetting,
               resourceRoleGroups: result.returnedData.resourceRoleGroups,
               lunchBreakSettings: autoMapper.autoMapperInstance.mapToArray('sked_Lunch_Break_Setting__c', result.returnedData.lunchBreakSettings),
-              staffSetupExcludedRoles: autoMapper.autoMapperInstance.mapToArray('sked_Staff_Setup_Excluded_Role__c', result.returnedData.staffSetupExcludedRoles)
+              staffSetupExcludedRoles: autoMapper.autoMapperInstance.mapToArray('sked_Staff_Setup_Excluded_Role__c', result.returnedData.staffSetupExcludedRoles),
+              redcrossVolunteerMatrix: result.returnedData.redcrossVolunteerMatrix
             }
           })
       });
@@ -249,7 +251,7 @@ class Fetch {
 
               return autoMapper.autoMapperInstance.mapToArray('sked__Resource__c', result.returnedData.resources).filter(resource => {
                 return resource.assetType === ASSET_TYPE.VEHICLE;
-              });;
+              });
             })
         }
       });

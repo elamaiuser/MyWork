@@ -6,7 +6,7 @@ public with sharing class DriveWorksheet {
           lst =  [SELECT id,name,sked_Drive_Site__r.name,sked_Start_Time__c, sked_End_Time__c, sked_Drive_Date__c, 
                    sked_Vehicle_Types__c,sked_Purple_Top_Drive__c,
                    sked_Account__c, sked_Account__r.name ,sked_Linked_Drive_Id__c,sked_Day_of_Week__c ,
-                   sked_Account__r.Phone,  sked_Account__r.TYpe,sked_Account__r.Last_Closed_Drive__c, 
+                   sked_Account__r.Phone,  sked_Account__r.TYpe,sked_Account__r.Last_Closed_Drive_New__c, 
                    sked_Account__r.Account_Manager_Phone__c,sked_Account__r.Account_Manager__r.Name,
                    sked_Drive_Site__r.sked_Wireless_Policy__c,sked_Drive_Site__r.sked_Max_Auto_Machines__c, sked_Drive_Site__r.sked_Directions_From_CollectionOperation__c,
                    sked_Opportunity__r.Open_to_Public__c, sked_Opportunity__r.Drive_Status__c,

@@ -1137,7 +1137,8 @@ export default class SlwcResolveDriveContentions extends LightningElement {
         return this.driveGeneratorInstance.onDriveDataChanged([{
           targetName: 'staffingComplementChanged',
           targetValue: this.drive.driveShifts.map(driveShift => {
-            return driveShift.jobs.reduce((staffingComplement, job) => {
+            return this.driveHelper.getDriveShiftJobs(driveShift, 
+              { excludeManuallyCreatedFromStaffingModal: true })?.reduce((staffingComplement, job) => {
               if(job.resourceRole) {
                 return {
                   ...staffingComplement,
@@ -1153,7 +1154,8 @@ export default class SlwcResolveDriveContentions extends LightningElement {
         return this.driveGeneratorInstance.onDriveDataChanged([{
           targetName: 'staffingComplementChanged',
           targetValue: this.driveGeneratorInstance?.masterData?.backupDrive?.driveShifts?.map(driveShift => {
-            return driveShift.jobs.reduce((staffingComplement, job) => {
+            return this.driveHelper.getDriveShiftJobs(driveShift, 
+              { excludeManuallyCreatedFromStaffingModal: true })?.reduce((staffingComplement, job) => {
               if(job.resourceRole) {
                 return {
                   ...staffingComplement,
@@ -1257,7 +1259,8 @@ export default class SlwcResolveDriveContentions extends LightningElement {
         return this.driveGeneratorInstance.onDriveDataChanged([{
           targetName: 'staffingComplementChanged',
           targetValue: this.drive.driveShifts.map(driveShift => {
-            return driveShift.jobs.reduce((staffingComplement, job) => {
+            return this.driveHelper.getDriveShiftJobs(driveShift, 
+              { excludeManuallyCreatedFromStaffingModal: true })?.reduce((staffingComplement, job) => {
               if(job.resourceRole) {
                 return {
                   ...staffingComplement,
@@ -1273,7 +1276,8 @@ export default class SlwcResolveDriveContentions extends LightningElement {
         return this.driveGeneratorInstance.onDriveDataChanged([{
           targetName: 'staffingComplementChanged',
           targetValue: this.driveGeneratorInstance?.masterData?.backupDrive?.driveShifts?.map(driveShift => {
-            return driveShift.jobs.reduce((staffingComplement, job) => {
+            return this.driveHelper.getDriveShiftJobs(driveShift, 
+              { excludeManuallyCreatedFromStaffingModal: true })?.reduce((staffingComplement, job) => {
               if(job.resourceRole) {
                 return {
                   ...staffingComplement,
@@ -1344,10 +1348,10 @@ export default class SlwcResolveDriveContentions extends LightningElement {
             jobAllocations: equipmentJob.jobAllocations
           },
           {
-            id: vehicleJob.id,
-            jobAllocations: vehicleJob.jobAllocations
+            id: vehicleJob?.id,
+            jobAllocations: vehicleJob?.jobAllocations
           }
-        ]) 
+        ].filter(item => item.id)) 
       }
     })
     .then(() => {

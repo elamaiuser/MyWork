@@ -54,6 +54,32 @@ const isJobRequireTravelTimes = (isTemporaryCO, job, drive, {
   return rule1 || rule2;
 }
 
+const isDriverJob = (job, onlyCheckResourceRole = false) => {
+  if(!job) return false;
+  const isNotCdlDriverJob = job.id && !job.id.startsWith('drivercdl');
+  const isNotDotDriverJob = job.id && !job.id.startsWith('driverdot');
+  if(onlyCheckResourceRole) {
+    return isNotCdlDriverJob && isNotDotDriverJob && job.resourceRole === 'Driver' && !job.dualRole;
+  }
+
+  return isNotCdlDriverJob && isNotDotDriverJob && (
+    job.resourceRole === 'Driver' || job.dualRole === 'Driver'
+  )
+}
+
+const isResourceTagRestricted = (resourceTag, {
+    startDate,
+    endDate
+}) => {
+  if(!resourceTag.restrictionStartDate && !resourceTag.restrictionEndDate) return false;
+
+  if(resourceTag.restrictionEndDate) {
+    return resourceTag.restrictionStartDate <= endDate && resourceTag.restrictionEndDate >= startDate;
+  } else {
+    return resourceTag.restrictionStartDate <= startDate;
+  }
+}
+
 class dateslotModel {
   timezoneSidId = null;
   startJS = null;
@@ -1346,11 +1372,8 @@ class SlwcAvailator {
     }
   }
 
-  isDriverJob(job) {
-    if(!job) return false;
-    const isNotCdlDriverJob = job.id && !job.id.startsWith('drivercdl');
-    const isNotDotDriverJob = job.id && !job.id.startsWith('driverdot');
-    return isNotCdlDriverJob && isNotDotDriverJob && (job.resourceRole === 'Driver' || job.dualRole === 'Driver')
+  isDriverJob(job, onlyCheckResourceRole = false) {
+    return isDriverJob(job, onlyCheckResourceRole);
   }
 
   setupDriverJobs() {
@@ -1368,7 +1391,10 @@ class SlwcAvailator {
     });
 
     this.drive.driveShifts.forEach(driveShift => {
-      const driverJob = driveShift.jobs.find(job => this.isDriverJob(job));
+      let driverJob = driveShift.jobs.find(job => this.isDriverJob(job, true));
+      if(!driverJob) {
+        driverJob = driveShift.jobs.find(job => this.isDriverJob(job, false));
+      }
       if(!driverJob) return;
       if(!driverJob.jobAllocations) {
         driverJob.jobAllocations = [];
@@ -1795,11 +1821,11 @@ class SlwcAvailator {
 
                 const tagStartDateValid = resourceTag.startDate <= job.driveDate;
                 //HRP-10970 - Updated tagRestricted logic to check only restrictionStartDate is defined before comparing dates
-                //const tagRestricted = resourceTag.restrictionStartDate && resourceTag.restrictionEndDate && 
-                //  resourceTag.restrictionStartDate <= job.driveDate && resourceTag.restrictionEndDate >= job.driveDate;
-                const tagRestricted = resourceTag.restrictionStartDate && 
-                      resourceTag.restrictionStartDate <= job.driveDate && 
-                      (slwcUtils.isNullOrEmpty(resourceTag.restrictionEndDate)  || resourceTag.restrictionEndDate >= job.driveDate);
+                const tagRestricted = isResourceTagRestricted(resourceTag, {
+                  startDate: job.driveDate,
+                  endDate: job.driveDate
+                })
+
                 //HRP-10970 ended
                 if (tagStartDateValid && !tagRestricted) {
                   validTagNames.push(resourceTag.tag.name);
@@ -2193,4 +2219,6 @@ export default {
   },
   isJobRequireTravelTimes,
   isJobBelongToDrivingRolesGroup,
+  isDriverJob,
+  isResourceTagRestricted
 }

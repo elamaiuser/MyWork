@@ -85,7 +85,8 @@ export const JOB_STATUS = {
 
 export const RESOURCE_TYPE = {
   PERSON: 'Person',
-  ASSET: 'Asset'
+  ASSET: 'Asset',
+  VOLUNTEER: 'Volunteer'
 }
 
 export const RESOURCE_ROLE_GROUP = {
@@ -103,6 +104,10 @@ export const RESOURCE_ROLE = {
 export const ASSET_TYPE = {
   VEHICLE: 'Vehicle',
   EQUIPMENT: 'Equipment'
+}
+
+export const VOLUNTEER_TYPE = {
+  DONOR_AMBASSADOR: 'Donor Ambassador'
 }
 
 export const DRIVE_TYPE = {
@@ -365,7 +370,8 @@ export const ACCOUNT_TYPE = {
 
 export const ACCOUNT_INDUSTRY_CODE = {
   MIDDLE_SCHOOL: 'Middle School',
-  ELEMENTARY_SCHOOL: 'Elementary School'
+  ELEMENTARY_SCHOOL: 'Elementary School',
+  HIGH_SCHOOL: 'High School'
 }
 
 export const SKIP_BEST_VEHICLE_CALCULATION = {

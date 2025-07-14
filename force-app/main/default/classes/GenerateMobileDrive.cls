@@ -36,6 +36,7 @@
  * 12/10/2024				  Priti Jana			 Logic for HRP-13190
  * 01/15/2025				  Barnojit Sharma		 Logic for HRP-13864
  * 03/12/2025                 Priti Jana             Logic for HRP-13862
+ * 05/05/2025                 Priti Jana             Logic for HRP-13146
  *******************************************************************************
 */
 public with sharing class GenerateMobileDrive {
@@ -304,8 +305,7 @@ public with sharing class GenerateMobileDrive {
                 job.quantity = staffingComplement.numberOfCharge;
                 driveShift.jobs.add(job);
             }
-            //HRP-10358 Commented as we donot need Volunteer Donors for either WB or Mobile
-            /*if (staffingComplement.numberOfVolunteerDonorAmbassadors > 0 && shiftCount == 0) { // not calculated for WB Non Integrated Fixed Site and mobile site
+            if (staffingComplement.numberOfVolunteerDonorAmbassadors > 0) { 
                 MobileDriveGeneratorDMLService.DMLJob job = new MobileDriveGeneratorDMLService.DMLJob();
                 job.driveSiteId = drive.driveSiteId;
                 job.volunteerRole = 'Donor Ambassador';
@@ -314,7 +314,7 @@ public with sharing class GenerateMobileDrive {
                 job.sponsorVolunteerQuantity = 0;
                 job.quantity = job.redcrossVolunteerQuantity + job.sponsorVolunteerQuantity;
                 driveShift.jobs.add(job);
-            }*/
+            }
 
             return driveShift.jobs; // HRP-11295
         }
@@ -1193,7 +1193,7 @@ public with sharing class GenerateMobileDrive {
             staffingComplement = calculateTeamSupervisorQuantity (matrix, driveShift, drive, staffingComplement);
             staffingComplement = calculateVpHhQuantity (matrix, driveShift, drive, staffingComplement);
             staffingComplement = calculateChargeQuantity (matrix, drive, driveShift, staffingComplement);
-            //staffingComplement = calculateVolunteerDonorAmbassdorQuantity (matrix, drive, driveShift, staffingComplement); //HRP-10358 Commented as we donot need Volunteer Donors for either WB or Mobile
+            staffingComplement = calculateVolunteerDonorAmbassadorQuantity (drive, staffingComplement);
             return staffingComplement;
         }
 
@@ -1585,30 +1585,42 @@ public with sharing class GenerateMobileDrive {
             return matrix;
         }
 
-        //HRP-10358 Commented as we donot need Volunteer Donors for either WB or Mobile
-        /*protected virtual DriveStaffingComplementModel calculateVolunteerDonorAmbassdorQuantity(MobileDriveGeneratorDMLService.DMLStaffingDecisionMatrix matrix, MobileDriveGeneratorDMLService.DMLDrive drive, MobileDriveGeneratorDMLService.DMLDriveShift driveShift, DriveStaffingComplementModel staffingComplement) {
-            if((drive.driveSite.siteOperationType == Constants.NON_INTEGRATED_WB_OPERATION_TYPE && drive.typeOfDrive == 'Fixed Site')){ // HRP - 9901
-                if (drive.driveSite.physicalLocationType.contains(Constants.DRIVE_LOCATION_INSIDE) && driveShift.projectedRegisteredDonors != null){
-                    if (drive.accountType == 'Education' && drive.industryCode == 'High School') {
-                        if (driveShift.projectedRegisteredDonors <= 70) {
-                            staffingComplement.numberOfVolunteerDonorAmbassadors = 1;
+        //HRP-13146 Volunteers needed for mobile drives
+        protected virtual DriveStaffingComplementModel calculateVolunteerDonorAmbassadorQuantity(
+            MobileDriveGeneratorDMLService.DMLDrive drive, 
+            DriveStaffingComplementModel staffingComplement
+        ) {
+            staffingComplement.numberOfVolunteerDonorAmbassadors = 0;
+
+            if(drive.typeOfDrive == BSF_Constants.MOBILE_DRIVE && drive.redcrossVolunteerRequired) { 
+                staffingComplement.numberOfVolunteerDonorAmbassadors = drive.redcrossVolunteerQuantity;
+            } 
+            //HRP-15041 Volunteers needed for Non Integrated WB FS drives
+            else if( 
+                drive.typeOfDrive.equalsIgnoreCase(BSF_Constants.FIXED_SITE_DRIVE) && 
+                drive.driveSite.siteOperationType.equalsIgnoreCase(Constants.NON_INTEGRATED_WB_OPERATION_TYPE)
+            ) {
+                slwcSetting.redcrossVolunteerMatrixSettings skedVolunteerStaffingSetting = new slwcSetting.redcrossVolunteerMatrixSettings();
+                List<slwcSetting.redcrossVolunteerMatrixSetting> volunteerStaffingMatrixRecords = skedVolunteerStaffingSetting.redcrossVolunteerMatrixSettings;
+                if(volunteerStaffingMatrixRecords != NULL && !volunteerStaffingMatrixRecords.isEmpty()) {
+                    for(slwcSetting.redcrossVolunteerMatrixSetting volunteerStaffingMatrixRecord : volunteerStaffingMatrixRecords) {
+                        if(
+                            volunteerStaffingMatrixRecord.driveType == drive.typeOfDrive &&
+                            volunteerStaffingMatrixRecord.operationType == drive.driveSite.siteOperationType &&
+                            volunteerStaffingMatrixRecord.minDonorValue <= drive.projectedRegisteredDonors &&
+                            (
+                                volunteerStaffingMatrixRecord.maxDonorValue >= drive.projectedRegisteredDonors ||
+                                volunteerStaffingMatrixRecord.maxDonorValue == null
+                            )
+                        ) {
+                            staffingComplement.numberOfVolunteerDonorAmbassadors = volunteerStaffingMatrixRecord.volunteerQuantity;
+                            break;
                         }
-                        else {
-                            staffingComplement.numberOfVolunteerDonorAmbassadors = 1 + Math.floor((driveShift.projectedRegisteredDonors - 70) / 60);
-                        }
-                    }else {
-                        staffingComplement.numberOfVolunteerDonorAmbassadors = Math.ceil((driveShift.projectedRegisteredDonors / driveShift.drawHours) / 8);
                     }
-                }
-                else {
-                    staffingComplement.numberOfVolunteerDonorAmbassadors = 1;
-                }
-                if (driveShift.drawHours > 6.5) {
-                    staffingComplement.numberOfVolunteerDonorAmbassadors = (Decimal)Math.ceil(staffingComplement.numberOfVolunteerDonorAmbassadors * 0.5);
                 }
             }
             return staffingComplement;
-        }*/
+        }
 
         protected virtual MobileDriveGeneratorDMLService.DMLDriveShift populateDriveShiftTags(MobileDriveGeneratorDMLService.DMLDrive drive, MobileDriveGeneratorDMLService.DMLDriveShift driveShift) {
             Map<String,MobileDriveGeneratorDMLService.DMLDriveShiftTag> tagNameVsIDQuantitityMap = new Map<String,MobileDriveGeneratorDMLService.DMLDriveShiftTag>(); //HRP-11513
@@ -1892,7 +1904,8 @@ public with sharing class GenerateMobileDrive {
             DateTime minStart = driveShift.drawStart;          
             DateTime maxEnd = driveShift.drawEnd;  
             DateTime jobStart;
-            DateTime jobFinish;         
+            DateTime jobFinish;     
+            Decimal driveShiftDuration = 0;    
 
             for (MobileDriveGeneratorDMLService.DMLJob job : driveShift.jobs)
             {
@@ -1929,32 +1942,43 @@ public with sharing class GenerateMobileDrive {
                     job.start = skedDateTimeUtils.switchTimezone(jobStart,TimeZone.getTimeZone('GMT').getId(),drive.driveSite.timezoneSidId);                
                     job.finish = skedDateTimeUtils.switchTimezone(jobFinish,TimeZone.getTimeZone('GMT').getId(),drive.driveSite.timezoneSidId);
                     job.duration = skedDateTimeUtils.getDifferentMinutes(job.start, job.finish);
-            }
+                }
             
-            driveShift.start = skedDateTimeUtils.switchTimezone(minStart,TimeZone.getTimeZone('GMT').getId(),drive.driveSite.timezoneSidId);           
-            driveShift.finish = skedDateTimeUtils.switchTimezone(maxEnd,TimeZone.getTimeZone('GMT').getId(),drive.driveSite.timezoneSidId);
-            decimal value = skedDateTimeUtils.getDifferentMinutes(driveShift.start, driveShift.finish);
+                driveShift.start = skedDateTimeUtils.switchTimezone(minStart,TimeZone.getTimeZone('GMT').getId(),drive.driveSite.timezoneSidId);           
+                driveShift.finish = skedDateTimeUtils.switchTimezone(maxEnd,TimeZone.getTimeZone('GMT').getId(),drive.driveSite.timezoneSidId);
+                driveShiftDuration = skedDateTimeUtils.getDifferentMinutes(driveShift.start, driveShift.finish);
+                
 
-            // Populating Global Variables to use them for Equipment and Vehicle Job Timings
-            if(shiftCount == noOfDriveShift - 1 && noOfDriveShift > 1)
-            {
-                nonResourceRoleJobFinishTime = driveShift.finish;
+                // Populating Global Variables to use them for Equipment and Vehicle Job Timings
+                if(shiftCount == noOfDriveShift - 1 && noOfDriveShift > 1)
+                {
+                    nonResourceRoleJobFinishTime = driveShift.finish;
+                }
+                // for single shift
+                else if (shiftCount == 0 && noOfDriveShift == 1)
+                {
+                    nonResourceRoleJobStartTime = driveShift.start;
+                    nonResourceRoleJobFinishTime = driveShift.finish;
+                }
+                else if (shiftCount == 0 && noOfDriveShift > 1)
+                {
+                    nonResourceRoleJobStartTime = driveShift.start;
+                } 
+                
+            // HRP-11295 -- End
             }
-            // for single shift
-            else if (shiftCount == 0 && noOfDriveShift == 1)
-            {
-                nonResourceRoleJobStartTime = driveShift.start;
-                nonResourceRoleJobFinishTime = driveShift.finish;
+
+            // HRP-13146: Volunteer Jobs timings
+            for (MobileDriveGeneratorDMLService.DMLJob job : driveShift.jobs) {
+                if (string.isBlank(job.resourceRole) && String.isBlank(job.assetType)) {                    
+                    job.start =  driveShift.start;
+                    job.finish = driveShift.finish;
+                    job.duration = driveShiftDuration;
+                }
             }
-            else if (shiftCount == 0 && noOfDriveShift > 1)
-            {
-                nonResourceRoleJobStartTime = driveShift.start;
-            } 
-            
-           // HRP-11295 -- End
+
+            return driveShift;
         }
-        return driveShift;
-    }
 
         // Job Timings Calculation for Equipment and Vehicle - HRP-11295
         protected void populateJobTimingsForEquipmentAndVehicle (MobileDriveGeneratorDMLService.DMLDrive drive,List<MobileDriveGeneratorDMLService.DMLJob> jobList)

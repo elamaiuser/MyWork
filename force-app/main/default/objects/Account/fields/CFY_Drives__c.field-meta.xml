@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>CFY_Drives__c</fullName>
-    <externalId>false</externalId>
-    <label>Current Fiscal Year Drives</label>
+    <label>Current Fiscal Year Drives(Do Not Use)</label>
     <summaryFilterItems>
         <field>Opportunity.Drive_Date__c</field>
         <operation>greaterOrEqual</operation>

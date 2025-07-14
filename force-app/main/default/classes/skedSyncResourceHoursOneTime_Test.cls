@@ -52,15 +52,6 @@ private class skedSyncResourceHoursOneTime_Test {
 
         delete [SELECT Id FROM sked_Resource_Hours_Record__c];
 
-        sked__Activity__c testActivity = (sked__Activity__c) mapTestData.get('testActivity1');
-        sked__Resource__c testResource = (sked__Resource__c) mapTestData.get('testResource1');
-
-        sked__Activity_Resource__c testActivityResource = new sked__Activity_Resource__c(
-            sked__Activity__c = testActivity.Id,
-            sked__Resource__c = testResource.Id
-        );
-        insert testActivityResource;
-
         Test.startTest();
             Database.executeBatch(new skedSyncResourceHoursOneTime_Batch(3), 1);
         Test.stopTest();

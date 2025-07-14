@@ -14,7 +14,7 @@ global virtual class skedRacController extends skedBaseController {
             if (mapConfigData.containsKey('availabilityTypes')) {
                 List<string> availabilityTypes = (List<String>) mapConfigData.get('availabilityTypes');
                 availabilityTypes.remove(availabilityTypes.indexOf(skedConstants.AVAILABILITY_TYPE_ON_CALL));
-                if (!loginUser.sked__SkeduloUserType__c.contains(skedConstants.USER_TYPE_ADMIN) && !loginUser.sked__SkeduloUserType__c.contains(skedConstants.USER_TYPE_SCHEDULER)) {
+                if (loginUser.sked__SkeduloUserType__c != null && !loginUser.sked__SkeduloUserType__c.contains(skedConstants.USER_TYPE_ADMIN) && !loginUser.sked__SkeduloUserType__c.contains(skedConstants.USER_TYPE_SCHEDULER)) {     //HRP-14943
                     List<string> results = new List<string>();
                     for (string availabilityType : availabilityTypes) {
                         if (availabilityType != skedConstants.AVAILABILITY_TYPE_AVAILABILITY_TEMPLATE_OVERRIDE) {
@@ -93,6 +93,9 @@ global virtual class skedRacController extends skedBaseController {
             query.availabilityTypes = request.availabilityTypes;
             query.excludedAvailabilityTypes = new List<String>{skedConstants.AVAILABILITY_TYPE_ON_CALL};
             query.customAvailabilityStatuses = new List<String>{skedConstants.AVAILABILITY_STATUS_APPROVED};
+            query.hasNoAssignment = request.hasNoAssignment;
+            query.hasTemporaryRelocation = request.hasTemporaryRelocation;
+            query.additionalFilterOnDate = request.additionalFilterOnDate;
             
             skedResourceService service = (skedResourceService)skedServiceFactory.instance.resolve('sked__Resource__c');
             skedDataService.paginationQueryModel paginationResult = service.doPaginationQuery(query);
@@ -838,7 +841,7 @@ global virtual class skedRacController extends skedBaseController {
                     Date startDate = skedDateTimeUtils.getDateFromIsoString(request.recurringOptions.availabilityTemplate.startDate);
                     Date endDate = skedDateTimeUtils.getDateFromIsoString(request.recurringOptions.availabilityTemplate.endDate);
                     if (endDate > startDate.addYears(skedSetting.instance.RAC.maxActivityRecurringYears)) {
-                        throw new skedException('Recurring Pattern exceeds maximum duration');
+                        throw new skedException('Recurring Pattern exceeds maximum duration of ' + skedSetting.instance.RAC.maxActivityRecurringYears + ' years.\nPlease select a recurring end date that falls within ' + skedSetting.instance.RAC.maxActivityRecurringYears + ' years from today');
                     }
                 }
             }
@@ -2319,6 +2322,9 @@ global virtual class skedRacController extends skedBaseController {
         public Set<Date> inputDates;
         public List<String> availabilityTypes;
         public List<String> activityTypes;
+        public boolean hasNoAssignment;
+        public boolean hasTemporaryRelocation;
+        public string additionalFilterOnDate;
     }
 
     global class getAvailabilityDetailsRequest extends skedRemoteRequestModel {

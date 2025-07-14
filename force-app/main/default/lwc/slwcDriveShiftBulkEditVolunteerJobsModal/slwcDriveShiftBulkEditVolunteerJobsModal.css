@@ -1,0 +1,145 @@
+.grid-container {
+  display: grid;
+  grid-template-columns: auto auto auto;
+  padding: 5px;
+}
+
+.grid-item-header {
+  background-color: #dddbda;
+  border: 1px solid #c9c7c5;
+  padding: 5px;
+  text-align: center;
+}
+
+.grid-item-footer {
+  padding: 5px;
+  text-align: center;
+}
+
+.grid-item {
+  background-color: white;
+  border: 1px solid #c9c7c5;
+  padding: 5px;
+  text-align: center;
+}
+
+.container-custom-modal {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  -webkit-transform: translate3d(0, 0, 0);
+          transform: translate3d(0, 0, 0);
+  left: 0;
+  right: 0;
+}
+
+.header-custom-modal {
+  position: absolute;
+  top: 0;
+  height: 55px;
+  left: 0;
+  right: 0;
+}
+
+.content-custom-modal {
+  position: relative;
+  top: 55px;
+}
+
+.slds-modal__content.full-height__modal-content {
+  height: 100%;
+}
+
+.job-allocation-table {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -webkit-flex-direction: column;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  height: 100%;
+}
+
+.job-allocation-table .row {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+}
+
+.job-allocation-table .row.sub-header {
+  background: #f4f6f9;
+  padding: .5rem;
+  border-bottom: 1px solid #d8dde6;
+  position: -webkit-sticky;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.job-allocation-table .row [class^="col"] {
+  padding: .5rem;
+  border-bottom: 1px solid #d8dde6;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-flex-wrap: wrap;
+      -ms-flex-wrap: wrap;
+          flex-wrap: wrap;
+}
+
+.job-allocation-table .row .col-drive-name {
+  width: 40%;
+}
+
+.job-allocation-table .row .col-drive-status {
+  width: 10%;
+}
+
+.job-allocation-table .row .col-role-name {
+  width: 20%;
+}
+
+.job-allocation-table .row .col-drive-issue {
+  width: 30%;
+}
+
+.job-allocation-table .header {
+  -webkit-box-flex: 0;
+  -webkit-flex: 0;
+      -ms-flex: 0;
+          flex: 0;
+}
+
+.job-allocation-table .header .row [class^="col"] {
+  font-size: .75rem;
+  line-height: 1.25;
+  color: #54698d;
+  text-transform: uppercase;
+  letter-spacing: .0625rem;
+}
+
+.job-allocation-table .body {
+  -webkit-box-flex: 1;
+  -webkit-flex: 1 auto;
+      -ms-flex: 1 auto;
+          flex: 1 auto;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.job-allocation-table .header,
+.job-allocation-table .body {
+  margin-left: -1rem;
+  margin-right: -1rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}

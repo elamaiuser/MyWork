@@ -99,8 +99,8 @@ private class WeeklyStaffScheduleReportControllerTest {
         Test.startTest();
         try{
             PageReference pr = Page.BSFWeeklyStaffScheduleReportPDF;
-            pr.getParameters().put('startdate','2024-06-13');
-            pr.getParameters().put('enddate','2024-12-13');
+            pr.getParameters().put('startdate',String.valueOf(Date.Today()));
+            pr.getParameters().put('enddate',String.valueOf(Date.Today().addMonths(6)));
             pr.getParameters().put('collopids',collOpIds);
             pr.getParameters().put('drivetypes','mobile,fixed');
             pr.getParameters().put('dispatch','Both');

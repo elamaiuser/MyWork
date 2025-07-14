@@ -370,6 +370,7 @@ public without sharing class GenerateDriveWorksheetPdfController {
                                                     (SELECT Id 
                                                     FROM sked__Location__c 
                                                     WHERE Id IN : siteIdSet) 
+                                                    AND sked_Status__c != 'Cancel'
                                                     ORDER BY sked_Drive_Date__c ASC];
             for(sked_Drive__c fdrv : futureDriveList){
                 if(futureDriveMap.size() != 0 && futureDriveMap.containsKey(fdrv.sked_Drive_Site__c) && futureDriveMap.get(fdrv.sked_Drive_Site__c) != null){
@@ -446,7 +447,7 @@ public without sharing class GenerateDriveWorksheetPdfController {
                                                                                 sked_Security_Escort_Name__c,
                                                                                 sked_Opportunity__r.Account_Manager__c,// added for HRP-11777
                                                                                 sked_Opportunity__r.Account_Manager__r.Name,// added for HRP-11777
-                                                                                sked_Opportunity__r.Account_Manager__r.Phone// added for HRP-11777
+                                                                                sked_Opportunity__r.Account_Manager__r.WorkPhone__c// added for HRP-11777
                                                                         FROM sked_Drive__c 
                                                                         WHERE Id IN: driveIdSet]);
             for(sked_Drive_Shift__c shift : shiftData){
@@ -470,8 +471,8 @@ public without sharing class GenerateDriveWorksheetPdfController {
 					}
 
                     if(drive.sked_Opportunity__c != null && drive.sked_Opportunity__r.Account_Manager__c != null && 
-					   drive.sked_Opportunity__r.Account_Manager__r.Phone != null){
-					   rw.oppInfo.phone = drive.sked_Opportunity__r.Account_Manager__r.Phone;   
+					   drive.sked_Opportunity__r.Account_Manager__r.WorkPhone__c != null){
+					   rw.oppInfo.phone = drive.sked_Opportunity__r.Account_Manager__r.WorkPhone__c;   
 					}else{
 					   rw.oppInfo.phone  = '';  
 					}
