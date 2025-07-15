@@ -91,6 +91,7 @@
 		<members>slwcDriveGenerator</members>
 		<members>slwcDriveStaffingDetails</members>
 		<members>slwcFilterResourceMultiPicklist</members>
+		<members>slwcLinkedDrivesAvailator</members>
 		<members>slwcLinkedDriveStaffingDetails</members>
 		<members>slwcResolveDriveContentions</members>
 		<members>slwcSlider</members>
