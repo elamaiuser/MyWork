@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <Package xmlns="http://soap.sforce.com/2006/04/metadata">
 	<types>
-		<members>APComplianceReportController</members>
-        <members>APComplianceReportControllerTest</members>
+		<members>TimeBlockComplianceReportController</members>
+        <members>TimeBlockComplianceReportControllerTest</members>
 		<name>ApexClass</name>
 	</types>
 	<types>
-		<members>APComplianceExcel</members>
-		<members>BSFAPComplianceReportPDF</members>
+		<members>TimeBlockComplianceExcel</members>
+		<members>TimeBlockCompliancePdf</members>
 		<name>ApexPage</name>
 	</types>
 	<types>
-		<members>aPComplianceReport</members>
+		<members>TimeBlockComplianceReport</members>
 		<name>LightningComponentBundle</name>
 	</types>
 	<types>
-		<members>Availability_Pattern_Compliance_Report</members>
+		<members>Time_block_CR</members>
 		<name>FlexiPage</name>
 	</types>
 	<version>64.0</version>
