@@ -14,5 +14,9 @@
 		<members>TimeBlockComplianceReport</members>
 		<name>LightningComponentBundle</name>
 	</types>
+	<types>
+		<members>Time_block_CR</members>
+		<name>FlexiPage</name>
+	</types>
 	<version>64.0</version>
 </Package>

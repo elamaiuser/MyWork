@@ -14,5 +14,9 @@
 		<members>aPComplianceReport</members>
 		<name>LightningComponentBundle</name>
 	</types>
+	<types>
+		<members>Availability_Pattern_Compliance_Report</members>
+		<name>FlexiPage</name>
+	</types>
 	<version>64.0</version>
 </Package>
