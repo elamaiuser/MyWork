@@ -23,7 +23,6 @@ export class AvailabilityPatternResourceMappingConfigFactory {
       mappingConfig.addFieldConfig('sked_MigrationID__c', 'migrationId', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked__Availability_Pattern__r.Name', 'patternName', MAPPING_TYPE.direct);
 
-
       mappingConfig.readonlyFields.push('Name');
 
       mappingConfig.masterFields.push('sked__Availability_Pattern__c');
