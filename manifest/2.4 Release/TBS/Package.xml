@@ -4,6 +4,8 @@
 		<members>OperationDriveLimitService</members>
 		<members>OperationDriveLimitServiceTest</members>
 		<members>OperationDriveLimitTriggerHandler</members>
+		<members>slwcAllocationService</members>		
+		<members>slwcResourceService</members>
 		<name>ApexClass</name>
 	</types>
 	<types>
@@ -44,6 +46,12 @@
 		<members>Time_Block__c-Time Block Layout</members>
 		<members>sked_Operation_Drive_Limit__c-Operation Drive Limit Layout</members>
 		<name>Layout</name>
+	</types>
+	<types>
+		<members>autoMapper</members>
+		<members>dataService</members>
+		<members>slwcOnCallCallOutManagement</members>
+		<name>LightningComponentBundle</name>
 	</types>
 	<types>
 		<members>Collection_Operation_Time_Block__c.All</members>
