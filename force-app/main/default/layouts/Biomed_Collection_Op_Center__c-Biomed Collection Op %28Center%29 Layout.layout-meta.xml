@@ -457,9 +457,11 @@
     <relatedLists>
         <fields>NAME</fields>
         <fields>Time_Block__c.NAME</fields>
-        <fields>Days_of_Week__c</fields>
+        <fields>Time_Block__c.Days_of_Week__c</fields>
         <fields>Time_Block__c.Start_Time__c</fields>
         <fields>Time_Block__c.End_Time__c</fields>
+        <fields>Effective_Start_Date__c</fields>
+        <fields>Effective_End_Date__c</fields>
         <relatedList>Collection_Operation_Time_Block__c.Collection_Operation__c</relatedList>
     </relatedLists>
     <showEmailCheckbox>false</showEmailCheckbox>

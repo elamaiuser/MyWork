@@ -20,11 +20,7 @@
             </layoutItems>
             <layoutItems>
                 <behavior>Edit</behavior>
-                <field>Effective_Start_Date__c</field>
-            </layoutItems>
-            <layoutItems>
-                <behavior>Edit</behavior>
-                <field>Effective_End_Date__c</field>
+                <field>Days_of_Week__c</field>
             </layoutItems>
         </layoutColumns>
         <layoutColumns>
@@ -69,6 +65,22 @@
     <relatedLists>
         <fields>NAME</fields>
         <relatedList>Collection_Operation_Time_Block__c.Time_Block__c</relatedList>
+    </relatedLists>
+    <relatedLists>
+        <fields>NAME</fields>
+        <relatedList>sked_Drive_Shift__c.sked_Time_Block__c</relatedList>
+    </relatedLists>
+    <relatedLists>
+        <fields>NAME</fields>
+        <relatedList>sked_Operation_Drive_Limit__c.Time_Block__c</relatedList>
+    </relatedLists>
+    <relatedLists>
+        <fields>NAME</fields>
+        <relatedList>sked_Staffing_Constraint__c.sked_Time_Block__c</relatedList>
+    </relatedLists>
+    <relatedLists>
+        <fields>NAME</fields>
+        <relatedList>sked__Activity__c.sked_Time_Block__c</relatedList>
     </relatedLists>
     <showEmailCheckbox>false</showEmailCheckbox>
     <showHighlightsPanel>false</showHighlightsPanel>
