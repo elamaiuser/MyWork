@@ -17,5 +17,10 @@
 		<members>sked_Operation_Drive_Limit__c-Operation Drive Limit Layout</members>
 		<name>Layout</name>
 	</types>
+	<types>
+		<members>ODL_DateRangeOutsideTimeBlock</members>
+		<members>ODL_TimeBlockNotAssociatedWithCO</members>
+		<name>CustomLabel</name>
+	</types>
 	<version>64.0</version>
 </Package>
