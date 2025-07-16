@@ -405,7 +405,9 @@ export default class SlwcDriveStaffingDetails extends LightningElement {
                     ])
                     .then(() => {
                         this.availator1.setupDriverJobs();
-                        return this.availator1.buildScheduledAllocations()
+                        return this.availator1.buildScheduledAllocations({
+                            ignoreDedicatedSiteRule: true
+                        });
                     })
                     .then((result) => {
                         if (result.possibleAllocations) {
@@ -730,7 +732,9 @@ export default class SlwcDriveStaffingDetails extends LightningElement {
 
             if(indexDriveShift <= this.driveDetail1.driveShifts.length){
                 this.availator1.updateData(job, indexDriveShift);
-                return this.availator1.buildScheduledAllocations()
+                return this.availator1.buildScheduledAllocations({
+                    ignoreDedicatedSiteRule: true
+                })
                 .then((result) => {
                     if (result.possibleAllocations) {
                         this.listPossibleAllocations = this.buildPossibleAllocations(result.possibleAllocations);
@@ -749,7 +753,9 @@ export default class SlwcDriveStaffingDetails extends LightningElement {
                 })
             } else {
                 this.availator2.updateData(job, indexDriveShift - this.driveDetail1.driveShifts.length);
-                return this.availator2.buildScheduledAllocations()
+                return this.availator2.buildScheduledAllocations({
+                    ignoreDedicatedSiteRule: true
+                })
                 .then((result) => {
                     if (result.possibleAllocations) {
                         this.listPossibleAllocations = this.buildPossibleAllocations(result.possibleAllocations);
@@ -2661,7 +2667,9 @@ export default class SlwcDriveStaffingDetails extends LightningElement {
         this.availator2.fetchData()
             .then(() => {
                 this.availator2.setupDriverJobs();
-                return this.availator2.buildScheduledAllocations();
+                return this.availator2.buildScheduledAllocations({
+                    ignoreDedicatedSiteRule: true
+                });
             })
             .then((result) => {
                 if (result.possibleAllocations) {
@@ -2791,7 +2799,9 @@ export default class SlwcDriveStaffingDetails extends LightningElement {
             if(indexDriveShift <= this.driveDetail1.driveShifts.length){
                 this.availator1.updateData(job, indexDriveShift);
 
-                return this.availator1.buildScheduledAllocations()
+                return this.availator1.buildScheduledAllocations({
+                    ignoreDedicatedSiteRule: true
+                })
                 .then((result) => {
                     if (result.possibleAllocations) {
                         this.listPossibleAllocations = this.buildPossibleAllocations(result.possibleAllocations);
@@ -2810,7 +2820,9 @@ export default class SlwcDriveStaffingDetails extends LightningElement {
                 })
             } else {
                 this.availator2.updateData(job, indexDriveShift - this.driveDetail1.driveShifts.length);
-                return this.availator2.buildScheduledAllocations()
+                return this.availator2.buildScheduledAllocations({
+                    ignoreDedicatedSiteRule: true
+                })
                 .then((result) => {
                     if (result.possibleAllocations) {
                         this.listPossibleAllocations = this.buildPossibleAllocations(result.possibleAllocations);

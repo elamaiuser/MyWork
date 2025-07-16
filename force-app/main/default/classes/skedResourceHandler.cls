@@ -82,6 +82,12 @@ public class skedResourceHandler extends skedTriggerHub {
             if (newRecord.sked__Resource_Type__c == skedConstants.RESOURCE_TYPE_ASSET && !skedUserProfileObjectAccessUtils.hasPermission('Asset CRUD', this.context)) {
                 newRecord.addError(skedConstants.RESOURCE_ASSET_CRUD_REQUIRES_SYSADMIN);
             }
+
+            if (String.isBlank(newRecord.sked_Asset_Type__c) || newRecord.sked_Asset_Type__c == skedConstants.ASSET_TYPE_VEHICLE) {
+                if(newRecord.sked_Dedicated_to_Site__c != null || String.isNotBlank(newRecord.sked_Dedicated_to_Site__c)) {
+                    newRecord.sked_Dedicated_to_Site__c.addError(Custom_Messages__mdt.getInstance('Asset_Validation_for_Dedicated_to_Site').Value__c);
+                }
+            }
         }
     }
     

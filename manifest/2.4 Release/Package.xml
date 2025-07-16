@@ -70,6 +70,7 @@
 	</types>
 	<types>
 		<members>Custom_Messages.Logistics_Chg_Rsn_to_Future_Drives</members>
+		<members>Custom_Messages.Asset_Validation_for_Dedicated_to_Site</members>
 		<members>Volunteer_Staffing_Matrix.All_Non_Int_FS_0_17</members>
 		<members>Volunteer_Staffing_Matrix.All_Non_Int_FS_18_69</members>
 		<members>Volunteer_Staffing_Matrix.All_Non_Int_FS_70_Above</members>
@@ -91,6 +92,7 @@
 		<members>slwcDriveGenerator</members>
 		<members>slwcDriveStaffingDetails</members>
 		<members>slwcFilterResourceMultiPicklist</members>
+		<members>slwcLinkedDrivesAvailator</members>
 		<members>slwcLinkedDriveStaffingDetails</members>
 		<members>slwcResolveDriveContentions</members>
 		<members>slwcSlider</members>
@@ -132,6 +134,7 @@
 		<members>Volunteer_Staffing_Matrix__mdt.Drive_Type__c</members>
         <members>Volunteer_Staffing_Matrix__mdt.Operation_Type__c</members>
         <members>Volunteer_Staffing_Matrix__mdt.Max_Anticipated_Registered_Donors__c</members>
+		<members>sked__Resource__c.sked_Dedicated_to_Site__c</members>
 		<name>CustomField</name>
 	</types>
     <types>
