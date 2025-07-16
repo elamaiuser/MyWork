@@ -65,6 +65,7 @@
         <members>skedTestDataFactory</members>
 		<members>slwcSetting</members>
 		<members>slwcDataService_Test</members>
+		<members>skedDriveHandler</members>
 		<name>ApexClass</name>
 	</types>
 	<types>
