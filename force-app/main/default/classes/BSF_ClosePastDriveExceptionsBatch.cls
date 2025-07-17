@@ -13,10 +13,12 @@ global class BSF_ClosePastDriveExceptionsBatch implements Database.Batchable<SOb
     }
     // Query all Sked exceptions for past drives that are not yet closed
     global Database.QueryLocator start(Database.BatchableContext bc) {
+        
         String query = 'SELECT Id, skedHC__Status__c, sked_Drive__r.sked_Drive_Date__c ' +
                        'FROM skedHC__Exception__c ' +
                        'WHERE sked_Drive__r.sked_Drive_Date__c < TODAY ' +
-                       'AND skedHC__Status__c != \''+skedConstants.EXCEPTION_LOG_STATUS_CLOSED+'\'  ';
+                       'AND skedHC__Status__c != \''+skedConstants.EXCEPTION_LOG_STATUS_CLOSED+'\'  '; 
+
         System.debug('HRP-12117 query :'+query);
         return Database.getQueryLocator(query);
     }
@@ -45,9 +47,27 @@ global class BSF_ClosePastDriveExceptionsBatch implements Database.Batchable<SOb
 
             for (Integer i = 0; i < results.size(); i++) {
                 if (!results[i].isSuccess()) {
+                    skedHC__Exception__c failedRecord = toUpdate[i];
+                    String driveDateStr = '';
+                    try {
+                        driveDateStr = String.valueOf(failedRecord.sked_Drive__r.sked_Drive_Date__c);
+                    } catch (Exception ex) {
+                        driveDateStr = 'Unavailable';
+                    }
+
                     debugLogs.add(new sked__Debug_Log__c(
-                        sked__Message__c = 'BSF_ClosePastDriveExceptionsBatch Error Log: '+ results[i].getErrors()[0].getMessage(),
-                        sked__Type__c = 'Error Log'
+                        sked__Type__c = 'Error Log',
+                        sked__Message__c = 'BSF_ClosePastDriveExceptionsBatch failed to update skedHC__Exception__c Status record. Id: '+ failedRecord.Id,
+                        sked__Summary__c =
+                        'Exception Record Details:' +
+                        '\nId: ' + failedRecord.Id +
+                        '\nStatus Attempted: ' + failedRecord.skedHC__Status__c +
+                        '\nDrive Date: ' + driveDateStr +
+                        '\nError: ' + results[i].getErrors()[0].getMessage() +
+                        '\nTimestamp: ' + String.valueOf(System.now()) +
+                        '\nBatch Executed By: ' + UserInfo.getName() + ' (' + UserInfo.getUserEmail() + ')',
+                        sked__User__c = UserInfo.getUserId()
+                        
                     ));
                 }
             }
