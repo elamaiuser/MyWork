@@ -201,12 +201,18 @@ global class skedAvailabilityPatternService extends skedDataService {
         boolean patternNameRuleValid = true;
         boolean patternDataRuleValid = true;
         
+        skedAvailabilityPatternData modelPatternData = (skedAvailabilityPatternData)JSON.deserialize(model.pattern, skedAvailabilityPatternData.class);
+        string modelPatternStr = JSON.serialize(modelPatternData.days);
+        
         for (sked__Availability_Pattern__c existingPattern : existingPatterns) {
             if (patternNameRuleValid) {
                 patternNameRuleValid = existingPattern.Name != model.name;
             }
             if (patternDataRuleValid) {
-                patternDataRuleValid = existingPattern.sked__Pattern__c != model.pattern;
+                skedAvailabilityPatternData existingPatternData = (skedAvailabilityPatternData)JSON.deserialize(existingPattern.sked__Pattern__c, skedAvailabilityPatternData.class);
+                string existingPatternStr = JSON.serialize(existingPatternData.days);
+                
+                patternDataRuleValid = existingPatternStr != modelPatternStr;
             }
             if (!patternNameRuleValid && !patternDataRuleValid) {
                 break;
