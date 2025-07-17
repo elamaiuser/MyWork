@@ -66,6 +66,8 @@
 		<members>slwcSetting</members>
 		<members>slwcDataService_Test</members>
 		<members>skedDriveHandler</members>
+		<members>BSF_ClosePastDriveExceptionsBatch</members>
+		<members>BSF_ClosePastDriveExceptionsBatch_Test</members>
 		<name>ApexClass</name>
 	</types>
 	<types>
