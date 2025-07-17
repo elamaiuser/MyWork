@@ -8,13 +8,15 @@
 		<members>OperationDriveLimitService</members>
 		<members>OperationDriveLimitServiceTest</members>
 		<members>OperationDriveLimitTriggerHandler</members>
-		<members>skedConstants</members>
-		<members>slwcAllocationService</members>
+		<members>skedActivityResourceHandler</members>
+		<members>skedConstants</members>		
 		<members>skedDriveShiftHandler</members>
 		<members>skedExceptionLogService</members>
-		<members>skedHCExceptionHandler</members>				
-		<members>slwcResourceService</members>
+		<members>skedHCExceptionHandler</members>
+		<members>skedRacController</members>		
 		<members>skedTestDataFactory</members>
+		<members>slwcAllocationService</members>
+		<members>slwcResourceService</members>
 		<name>ApexClass</name>
 	</types>
 	<types>
