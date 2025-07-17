@@ -994,6 +994,18 @@ public class skedTestDataFactory {
                 sked_Excluded_For_Assigned_Staff_Count__c = true
             ),
             new sked_Staff_Setup_Excluded_Role__c(
+                Name = 'TRN HH',
+                sked_Resource_Role__c = 'TRN HH',
+                sked_Excluded_For_Staff_Allocated__c = false,
+                sked_Excluded_For_Assigned_Staff_Count__c = true
+            ),
+            new sked_Staff_Setup_Excluded_Role__c(
+                Name = 'TRN VP',
+                sked_Resource_Role__c = 'TRN VP',
+                sked_Excluded_For_Staff_Allocated__c = false,
+                sked_Excluded_For_Assigned_Staff_Count__c = true
+            ),
+            new sked_Staff_Setup_Excluded_Role__c(
                 Name = 'Regulated - Medical Screeners',
                 sked_Resource_Role__c = 'Regulated - Medical Screeners',
                 sked_Excluded_For_Staff_Allocated__c = true,
