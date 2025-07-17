@@ -749,7 +749,7 @@ public with sharing class GenerateMobileDrive {
                 Decimal resourceQuantity = staffingComplement.map_role_resourceQuantity.containsKey(role) && staffingComplement.map_role_resourceQuantity.get(role) != NULL ? staffingComplement.map_role_resourceQuantity.get(role) : 0;
                 Decimal sdmRoleCapacity = donorCapacityMap.containsKey(role.split('-')[0]) && donorCapacityMap.get(role.split('-')[0]) != NULL ? donorCapacityMap.get(role.split('-')[0]) : 0;
                 if (role.split('-')[0].equalsIgnorecase(Constants.PROCEDURE_TYPE_2RBC)) {
-                    Decimal noOf2RBCAssets = driveShift.numberOf2rbcEquipments;
+                    Decimal noOf2RBCAssets = driveShift.numberOf2rbcEquipments!=null? driveShift.numberOf2rbcEquipments:0;
                     Decimal noOfResourcesHaveEnough2RBCAssets = Math.min(resourceQuantity, Math.floor(noOf2RBCAssets / 2));
                     Decimal noOfResourcesNotHaveEnough2RBCAssets = Math.max(resourceQuantity - noOfResourcesHaveEnough2RBCAssets, 0);
                     Decimal capacity1 = noOfResourcesHaveEnough2RBCAssets * 2 * driveShift.drawHours;
@@ -1182,9 +1182,68 @@ public with sharing class GenerateMobileDrive {
                     timeConfig.add(config);
                 }
             }
-            calculateDriveShifts (data, drive, timeConfig, travelTimeModel);
-            //HRP-11908 --> Ends Here
+            calculateDriveShifts (data, drive, timeConfig, travelTimeModel);           
+             //HRP-11908 --> Ends Here
+            associateTimeBlocksToDriveShifts(drive);
         }
+
+        private void associateTimeBlocksToDriveShifts(MobileDriveGeneratorDMLService.DMLDrive drive) {
+            // Query applicable time blocks for the drive's collection operation and drive date
+            List<Collection_Operation_Time_Block__c> timeBlocks = [SELECT Id, Time_Block__r.Id, Time_Block__r.Start_Time__c, Time_Block__r.End_Time__c,Time_Block__r.Days_of_Week__c  
+             FROM Collection_Operation_Time_Block__c WHERE 
+             Collection_Operation__c = :drive.collectionOperationId 
+             AND Effective_Start_Date__c <= :drive.driveDate AND Effective_End_Date__c >= :drive.driveDate 
+            ];
+
+            if(timeBlocks.size() < 0) {
+                return;
+            }
+            String driveDayOfWeek = getDayOfWeek(drive.driveDate);
+
+            for (MobileDriveGeneratorDMLService.DMLDriveShift driveShift : drive.driveShifts) {
+                List<Collection_Operation_Time_Block__c> matchingBlocks = new List<Collection_Operation_Time_Block__c>();
+                List<Collection_Operation_Time_Block__c> dayMatchingBlocks = new List<Collection_Operation_Time_Block__c>();
+
+                for(Collection_Operation_Time_Block__c tb : timeBlocks) {
+                    if(tb.Time_Block__r.Days_of_Week__c.contains(driveDayOfWeek)) {
+                        dayMatchingBlocks.add(tb); //HRP-14369 - Added for day only matching
+                        // Check for exact match
+                        if(driveShift.startTime >= tb.Time_Block__r.Start_Time__c 
+                                && driveShift.endTime <= tb.Time_Block__r.End_Time__c) {
+                            matchingBlocks.add(tb);
+                        }
+                    }
+                }//Iterate all time blocks
+
+                if(matchingBlocks.size() == 1) {
+                    // If and only one time block is found, assign it to the drive shift
+                    driveShift.timeBlockId = matchingBlocks[0].Time_Block__r.Id;
+                }
+                else if(dayMatchingBlocks.size() == 1) {//only one timeblock but its not covering fully 
+                    driveShift.timeBlockId =  dayMatchingBlocks[0].Time_Block__r.Id;
+                }
+                if(dayMatchingBlocks.size() >0){ 
+                    if(driveShift.timeBlockId == NULL && matchingBlocks.size() > 0) { //multiple full matches
+                        
+                        driveShift.contention = skedConstants.CONTENTION_CODE_FITS_MULTIPLE_TIME_BLOCKS;
+                        drive.pendingActionReasonCode =skedConstants.CONTENTION_CODE_FITS_MULTIPLE_TIME_BLOCKS;
+                    }else if(driveShift.timeBlockId != NULL && matchingBlocks.size() ==0) { //HRP-14369 - only one time block but not matching fully
+                         
+                        drive.pendingActionReasonCode = skedConstants.CONTENTION_CODE_OUT_OF_TIME_BLOCK;
+                         driveShift.contention = skedConstants.CONTENTION_CODE_OUT_OF_TIME_BLOCK;
+                    }else if(driveShift.timeBlockId == NULL ) { //HRP-14369 - multiple timeblocks
+
+                         driveShift.contention = skedConstants.CONTENTION_CODE_MISSING_TIME_BLOCK;
+                         drive.pendingActionReasonCode = skedConstants.CONTENTION_CODE_MISSING_TIME_BLOCK;
+                    }
+                }
+            }
+        }
+    
+        private String getDayOfWeek(Date incomingDate) {
+            return DateTime.newInstance(incomingDate.year(), incomingDate.month(), incomingDate.day()).format('EEEE');
+        }
+        
 
         protected virtual DriveStaffingComplementModel calculateJobQuantity (DriveStaffingComplementModel staffingComplement, MobileDriveGeneratorDMLService.DMLDriveShift driveShift, String typeOfDrive, MobileDriveGeneratorDMLService.DMLStaffingDecisionMatrix matrix, MobileDriveGeneratorDMLService.DMLDrive drive) {
             staffingComplement = calculateDriverQuantity (typeOfDrive, staffingComplement);

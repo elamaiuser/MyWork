@@ -133,7 +133,7 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
                     this.driveDateToEval = Date.newInstance(dT.year(), dT.month(), dT.day());
                     cbLogWrapper.driveDateToEval = this.driveDateToEval;
                 }
-            }        
+            } 
         } 
         catch(Exception ex) {
             if(source != NULL && !String.isBlank(source) && source.equalsIgnoreCase(BSF_Constants.OPP_SOURCE_CALENDAR_BUILD)) { //No need for Adhoc CB drives HRP-11368
@@ -353,10 +353,18 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
             Boolean passingRuleOne = isFixedSiteDrive(drive) && jobAllocationList.isEmpty();
             Boolean passingSubRuleTwo = remainingStaff >= totalNoOfStaffRequired && jobAllocationList.isEmpty();
             Boolean passingRuleTwo = passingSubRuleTwo && (map_operationDriveLimitId_operationDriveLimit.isEmpty() || resourceModel.total2RBCLimit == NULL || xrbcJobCount == 0 || xrbcJobCount <= resourceModel.remainingNoOf2RBC);    
-            
-            if(!passingRuleOne && !passingSubRuleTwo) {
+            Boolean isMobileWithTimeBlockViolation = !isFixedSiteDrive(drive)  && drive.sked_Pending_Action_Reason_Code__c!=null && drive.sked_Pending_Action_Reason_Code__c.contains('Time Block') ;
+            Boolean hasInsufficientResource = !passingRuleOne && !passingSubRuleTwo;
+
+            if(hasInsufficientResource && isMobileWithTimeBlockViolation) {
+                map_driveId_noAllocationReason.put(drive.Id, 
+                    'Insufficient Resource\n\nStaff Required: '+totalNoOfStaffRequired+'\nStaff Available: '+remainingStaff + 
+                    '\n\nTime Block Violation');
+            } else if(hasInsufficientResource) {
                 map_driveId_noAllocationReason.put(drive.Id, 
                     'Insufficient Resource\n\nStaff Required: '+totalNoOfStaffRequired+'\nStaff Available: '+remainingStaff);
+            } else if(isMobileWithTimeBlockViolation) {
+                map_driveId_noAllocationReason.put(drive.Id, 'Time Block Violation');
             } else if(passingRuleOne || passingRuleTwo) {
                 evaluateResourceEligibilityAndAllocateResources(resList, drive, resourceModel);
             }
@@ -402,7 +410,7 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
         String queryString = 'SELECT Id, sked_Staff_Capacity__c, Excess_Staff_Capacity__c, Average_Staff_Capacity__c, Name,sked_Status__c, sked_Drive_Shift_Count__c, sked_Day_of_Week__c, sked_2RBC_Projected_Procedures__c, sked_Operation_Type__c,' +
                             ' sked_Total_Products_Projected__c, sked_Maximum_Lunch_Break_Duration__c ,sked_Drive_Site__c,sked_Collection_Operation__c, sked_Total_Equipment_Requested__c, sked_Total_Vehicle_Requested__c,'+
                             ' sked_End_Time__c, sked_Account__c,sked_Collection_Operation__r.sked_Lunch_Break_Before_Draw_Hours__c,sked_Timezone__c,sked_Start_Time__c, sked_Projected_Registered_Donors__c,sked_Drive_Date__c,'+
-                            ' sked_Opportunity__c, sked_Opportunity__r.Source__c, sked_Type_of_Drive__c ,sked_Drive_Site__r.sked_Physical_Location_Type__c, (SELECT Id,sked_Equipment_Subtype__c,'+
+                            ' sked_Opportunity__c, sked_Opportunity__r.Source__c, sked_Type_of_Drive__c ,sked_Drive_Site__r.sked_Physical_Location_Type__c,sked_Pending_Action_Reason_Code__c, (SELECT Id,sked_Equipment_Subtype__c,'+
                             ' sked__Type__c,sked_Travel_Time2__c,sked_Travel_Time__c,sked_Lead_Time__c,sked_Wrap_up_Time__c,sked_Setup_Time__c,sked_Breakdown_Time__c,'+
                             ' sked_Drive_Shift__c,sked__Quantity__c,sked_Resource_Role__c,sked_Asset_Type__c,sked_APT_Quantity__c, sked_Volunteer_Role__c, sked_Start_Time__c, sked_Finish_Time__c, sked__Start__c, sked__Finish__c FROM sked_Jobs__r) FROM sked_Drive__c'+
                             ' WHERE sked_Status__c != \'Cancel\'';
@@ -425,7 +433,6 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
         }
         queryString += ' AND sked_Type_of_Drive__c =: typeOfDrive ORDER BY sked_Drive_Date__c DESC, sked_Rank__c';
         //HRP-12706 --> Ends Here
-
         return queryString; //HRP-11793
     }
 
@@ -493,8 +500,13 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
                     if(drive.sked_Total_Equipment_Requested__c > 0) isFlaggingNeeded = true;
                     else fsDrivesWithNoResourceRequestedCount++;
                 } else {
-                    if(drive.sked_Total_Vehicle_Requested__c > 0 || drive.sked_Total_Equipment_Requested__c > 0) isFlaggingNeeded = true;
-                    else mobileDrivesWithNoResourceRequestedCount++;
+                    if(drive.sked_Total_Vehicle_Requested__c > 0 || drive.sked_Total_Equipment_Requested__c > 0) {
+                        isFlaggingNeeded = true;
+                    }else if(drive.sked_Pending_Action_Reason_Code__c!=null && drive.sked_Pending_Action_Reason_Code__c.contains('Time Block')) { 
+                        isFlaggingNeeded = true;
+                    }else {
+                        mobileDrivesWithNoResourceRequestedCount++;
+                    }
                 }
 
                 if(isFlaggingNeeded) {
@@ -528,7 +540,7 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
             //Custom exception to cover catch blocks 
             if(Test.isRunningTest() && BSF_Utilities.IS_SET_TO_GENERATE_EXCEPTION) {
                 throw new CustomDriveResourceAllocationBatchException('This is custom exception during test class run');
-            } 
+            }
         } catch(Exception ex) {
             cbLogWrapper = new DriveGenerationUtil.CalendarBuildLogWrapper(
                 this.driveDateToEval, 

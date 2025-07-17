@@ -208,6 +208,10 @@ public class skedConstants {
     public static final string EXCEPTION_CODE_MAXIMUM_WEEKLY_WORK_DAYS_VIOLATION = 'MAXIMUM_WEEKLY_WORK_DAYS_VIOLATION';
     public static final string EXCEPTION_CODE_MINIMUM_WEEKLY_WORK_DAYS_VIOLATION = 'MINIMUM_WEEKLY_WORK_DAYS_VIOLATION';
     public static final string EXCEPTION_CODE_LINKED_DRIVE_MISMATCHING_ASSETS = 'LINKED_DRIVE_MISMATCHING_ASSETS';
+    
+    public static final string CONTENTION_CODE_MISSING_TIME_BLOCK = 'Missing Time Block';
+    public static final string CONTENTION_CODE_FITS_MULTIPLE_TIME_BLOCKS = 'Fits Multiple Time Block';
+    public static final string CONTENTION_CODE_OUT_OF_TIME_BLOCK = 'Out Of Time Block';
 
     public static final Map<String, String> MAP_EXCEPTION_CODE_TO_DEFAULT_EXCEPTION_MESSAGE = new Map<String, String> {
         EXCEPTION_CODE_MAXIMUM_WEEKLY_WORK_DAYS_VIOLATION => 'Maximum weekly work days violation. Week: {{weekStartDate}}',
