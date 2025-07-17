@@ -363,7 +363,7 @@ global class slwcAllocationService {
                                               AND sked_Start_Date__c <= :request.maxDate AND sked_Finish_Date__c >= :request.minDate
                                               ORDER BY sked_Start__c ASC),
                                              
-                                             (SELECT Id , sked__Start__c, sked__End__c, sked_Start_Date__c, sked_End_Date__c, sked__Availability_Pattern__r.sked__Pattern__c
+                                             (SELECT Id , sked__Start__c, sked__End__c, sked_Start_Date__c, sked_End_Date__c, sked__Availability_Pattern__r.sked__Pattern__c,sked__Availability_Pattern__r.Name,sked_Start_Time__c,sked_End_Time__c
                                               FROM sked__Availability_Pattern_Resources__r
                                               WHERE sked_Start_Date__c <= :request.maxDate
                                               AND (sked_End_Date__c = NULL OR sked_End_Date__c >= :request.minDate)),
@@ -479,7 +479,7 @@ global class slwcAllocationService {
                                               WHERE sked_Start_Date__c <= :request.maxDate AND sked_Finish_Date__c >= :request.minDate
                                               ORDER BY sked_Start__c ASC),
                                              
-                                             (SELECT Id , sked__Start__c, sked__End__c, sked_Start_Date__c, sked_End_Date__c, sked__Availability_Pattern__r.sked__Pattern__c
+                                             (SELECT Id , sked__Start__c, sked__End__c, sked_Start_Date__c, sked_End_Date__c, sked__Availability_Pattern__r.sked__Pattern__c,sked__Availability_Pattern__r.Name,sked_Start_Time__c,sked_End_Time__c
                                               FROM sked__Availability_Pattern_Resources__r
                                               WHERE sked_Start_Date__c <= :request.maxDate
                                               AND (sked_End_Date__c = NULL OR sked_End_Date__c >= :request.minDate)),
@@ -559,7 +559,7 @@ global class slwcAllocationService {
                                               WHERE sked_Start_Date__c <= :request.maxDate AND sked_Finish_Date__c >= :request.minDate
                                               ORDER BY sked_Start__c ASC),
                                              
-                                             (SELECT Id , sked__Start__c, sked__End__c, sked_Start_Date__c, sked_End_Date__c, sked__Availability_Pattern__r.sked__Pattern__c
+                                             (SELECT Id , sked__Start__c, sked__End__c, sked_Start_Date__c, sked_End_Date__c, sked__Availability_Pattern__r.sked__Pattern__c,sked__Availability_Pattern__r.Name,sked_Start_Time__c,sked_End_Time__c
                                               FROM sked__Availability_Pattern_Resources__r
                                               WHERE sked_Start_Date__c <= :request.maxDate
                                               AND (sked_End_Date__c = NULL OR sked_End_Date__c >= :request.minDate)),
