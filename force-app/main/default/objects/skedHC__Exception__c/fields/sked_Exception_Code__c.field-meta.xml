@@ -37,6 +37,11 @@
                 <label>EXPIRED_REQUIRED_TAG</label>
             </value>
             <value>
+                <fullName>FITS_MULTIPLE_TIME_BLOCKS</fullName>
+                <default>false</default>
+                <label>FITS_MULTIPLE_TIME_BLOCKS</label>
+            </value>
+            <value>
                 <fullName>MAXIMUM_TRAVEL_TIME_VIOLATION</fullName>
                 <default>false</default>
                 <label>MAXIMUM_TRAVEL_TIME_VIOLATION</label>
@@ -65,6 +70,21 @@
                 <fullName>MISSING_REQUIRED_TAG</fullName>
                 <default>false</default>
                 <label>MISSING_REQUIRED_TAG</label>
+            </value>
+            <value>
+                <fullName>MISSING_TIME_BLOCK</fullName>
+                <default>false</default>
+                <label>MISSING_TIME_BLOCK</label>
+            </value>
+            <value>
+                <fullName>OUT_OF_OPERATIONAL_HOURS</fullName>
+                <default>false</default>
+                <label>OUT_OF_OPERATIONAL_HOURS</label>
+            </value>
+            <value>
+                <fullName>OUT_OF_TIME_BLOCK</fullName>
+                <default>false</default>
+                <label>OUT_OF_TIME_BLOCK</label>
             </value>
             <value>
                 <fullName>RESOURCE_ACCOUNT_DECLINED</fullName>

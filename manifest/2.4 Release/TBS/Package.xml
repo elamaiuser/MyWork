@@ -9,8 +9,12 @@
 		<members>OperationDriveLimitServiceTest</members>
 		<members>OperationDriveLimitTriggerHandler</members>
 		<members>skedConstants</members>
-		<members>slwcAllocationService</members>		
+		<members>slwcAllocationService</members>
+		<members>skedDriveShiftHandler</members>
+		<members>skedExceptionLogService</members>
+		<members>skedHCExceptionHandler</members>				
 		<members>slwcResourceService</members>
+		<members>skedTestDataFactory</members>
 		<name>ApexClass</name>
 	</types>
 	<types>
@@ -25,9 +29,12 @@
 		<members>Time_Block__c.Days_of_Week__c</members>
 		<members>Time_Block__c.End_Time__c</members>
 		<members>Time_Block__c.Start_Time__c</members>
+		<members>skedHC__Exception__c.sked_Exception_Code__c</members>
 		<members>sked_Drive_Shift__c.sked_Contention__c</members>
-		<members>sked_Drive_Shift__c.sked_Time_Block__c</members>
-		<members>sked_Operation_Drive_Limit__c.Time_Block__c</members>
+		<members>sked_Drive_Shift__c.sked_Time_Block__c</members>		
+		<members>sked_Drive_Shift__c.sked_Drive_Operation_Type__c</members>
+		<members>sked_Drive_Shift__c.sked_Drive_Type__c</members>
+		<members>sked_Operation_Drive_Limit__c.Time_Block__c</members>		
 		<name>CustomField</name>
 	</types>
 	<types>
@@ -60,6 +67,9 @@
 	<types>
 		<members>autoMapper</members>
 		<members>dataService</members>
+		<members>slwcDriveSchedulingFilters</members>
+		<members>slwcExceptionConsole</members>
+		<members>slwcExceptionList</members>
 		<members>slwcOnCallCallOutManagement</members>
 		<name>LightningComponentBundle</name>
 	</types>
