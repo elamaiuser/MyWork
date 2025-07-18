@@ -14,6 +14,7 @@ export * from './clientAvailabilityService';
 export * from './collectionOperationSdmService';
 export * from './collectionOperationService';
 export * from './collectionOperationStagingLocationService';
+export * from './collectionOperationTimeBlockService';
 export * from './commonService';
 export * from './dcrFieldService';
 export * from './dcrPeriodService';
