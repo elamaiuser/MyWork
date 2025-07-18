@@ -8,6 +8,8 @@
 		<members>OperationDriveLimitService</members>
 		<members>OperationDriveLimitServiceTest</members>
 		<members>OperationDriveLimitTriggerHandler</members>
+		<members>TimeBlockComplianceReportController</members>
+		<members>TimeBlockComplianceReportControllerTest</members>
 		<members>skedActivityResourceHandler</members>
 		<members>skedConstants</members>		
 		<members>skedDriveShiftHandler</members>
@@ -18,6 +20,11 @@
 		<members>slwcAllocationService</members>
 		<members>slwcResourceService</members>
 		<name>ApexClass</name>
+	</types>
+	<types>
+		<members>TimeBlockComplianceExcel</members>
+		<members>TimeBlockCompliancePDF</members>
+		<name>ApexPage</name>
 	</types>
 	<types>
 		<members>OperationDriveLimitTrigger</members>
@@ -55,6 +62,10 @@
 		<name>CustomTab</name>
 	</types>
 	<types>
+		<members>Time_block_CR</members>
+		<name>FlexiPage</name>
+	</types>
+	<types>
 		<members>sked_Drive_Contention</members>
 		<name>GlobalValueSet</name>
 	</types>
@@ -73,6 +84,7 @@
 		<members>slwcExceptionConsole</members>
 		<members>slwcExceptionList</members>
 		<members>slwcOnCallCallOutManagement</members>
+		<members>timeBlockComplianceReport</members>
 		<name>LightningComponentBundle</name>
 	</types>
 	<types>
