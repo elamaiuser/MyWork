@@ -11,6 +11,10 @@
 		<name>ApexPage</name>
 	</types>
 	<types>
+		<members>sked_Drive_Shift__c.sked_Contention_Resolution__c</members>
+		<name>CustomField</name>
+	</types>
+	<types>
 		<members>Time_block_CR</members>
 		<name>FlexiPage</name>
 	</types>
