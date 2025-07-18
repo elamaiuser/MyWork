@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <Package xmlns="http://soap.sforce.com/2006/04/metadata">
 	<types>
+		<members>APComplianceReportController</members>
+		<members>APComplianceReportControllerTest</members>
 		<members>DriveResourceAllocationBatch</members>
 		<members>GenerateMobileDrive</members>
 		<members>GenerateMobileDriveTest</members>
@@ -22,6 +24,8 @@
 		<name>ApexClass</name>
 	</types>
 	<types>
+		<members>APComplianceExcel</members>
+		<members>BSFAPComplianceReportPDF</members>
 		<members>TimeBlockComplianceExcel</members>
 		<members>TimeBlockCompliancePDF</members>
 		<name>ApexPage</name>
@@ -63,6 +67,7 @@
 		<name>CustomTab</name>
 	</types>
 	<types>
+		<members>Availability_Pattern_Compliance_Report</members>
 		<members>Time_block_CR</members>
 		<name>FlexiPage</name>
 	</types>
@@ -79,6 +84,7 @@
 		<name>Layout</name>
 	</types>
 	<types>
+		<members>aPComplianceReport</members>
 		<members>autoMapper</members>
 		<members>dataService</members>
 		<members>slwcDriveSchedulingFilters</members>
