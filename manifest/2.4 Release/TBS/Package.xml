@@ -39,6 +39,7 @@
 		<members>Time_Block__c.End_Time__c</members>
 		<members>Time_Block__c.Start_Time__c</members>
 		<members>skedHC__Exception__c.sked_Exception_Code__c</members>
+		<members>sked_Drive_Shift__c.sked_Contention_Resolution__c</members>
 		<members>sked_Drive_Shift__c.sked_Contention__c</members>
 		<members>sked_Drive_Shift__c.sked_Time_Block__c</members>		
 		<members>sked_Drive_Shift__c.sked_Drive_Operation_Type__c</members>
