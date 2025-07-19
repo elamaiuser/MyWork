@@ -13,10 +13,13 @@
 		<members>TimeBlockComplianceReportController</members>
 		<members>TimeBlockComplianceReportControllerTest</members>
 		<members>skedActivityResourceHandler</members>
+		<members>skedCollectionOpTimeBlockService</members>
 		<members>skedConstants</members>		
 		<members>skedDriveShiftHandler</members>
 		<members>skedExceptionLogService</members>
 		<members>skedHCExceptionHandler</members>
+		<members>skedMappingConfigContainer</members>
+		<members>skedModels</members>
 		<members>skedRacController</members>		
 		<members>skedTestDataFactory</members>
 		<members>slwcAllocationService</members>
@@ -48,7 +51,9 @@
 		<members>sked_Drive_Shift__c.sked_Time_Block__c</members>		
 		<members>sked_Drive_Shift__c.sked_Drive_Operation_Type__c</members>
 		<members>sked_Drive_Shift__c.sked_Drive_Type__c</members>
-		<members>sked_Operation_Drive_Limit__c.Time_Block__c</members>		
+		<members>sked_Operation_Drive_Limit__c.Time_Block__c</members>
+		<members>sked_Staffing_Constraint__c.sked_Time_Block__c</members>
+		<members>sked__Activity__c.sked_Time_Block__c</members>
 		<name>CustomField</name>
 	</types>
 	<types>
@@ -87,10 +92,16 @@
 		<members>aPComplianceReport</members>
 		<members>autoMapper</members>
 		<members>dataService</members>
+		<members>slwcAddRecurrenceStaffingConstraintModal</members>
+		<members>slwcAddStaffingConstraintModal</members>
+		<members>slwcDriveGenerator</members>		
 		<members>slwcDriveSchedulingFilters</members>
+		<members>slwcEditRecurrenceStaffingConstraintModal</members>
 		<members>slwcExceptionConsole</members>
 		<members>slwcExceptionList</members>
+		<members>slwcNewCollectionOperationMultiPicklist</members>
 		<members>slwcOnCallCallOutManagement</members>
+		<members>slwcStaffingConstraintMassUpdate</members>
 		<members>timeBlockComplianceReport</members>
 		<name>LightningComponentBundle</name>
 	</types>

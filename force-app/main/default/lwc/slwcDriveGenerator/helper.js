@@ -97,7 +97,7 @@ class DriveHelper {
         drive.driveOwner = opp.accountManager;
       } else if (prop === 'aptRequired') {
         drive.aptRequired = opp.aptRequired;
-      } else if (prop === 'aptQuantity') {
+       } else if (prop === 'aptQuantity') {
         drive.aptQuantity = opp.aptQuantity;
       } else if (prop === 'anticipatedRegisteredDonorsTemplate') {
         drive.historicalRegisteredDonors = opp.anticipatedRegisteredDonorsTemplate;
@@ -754,11 +754,11 @@ class DriveHelper {
     const isDriveSubmittedForCancelApproval = this.isDriveSubmittedForCancelApproval(drive);
     
     const readonlyRule1 = isDriveSubmittedForCancelApproval
-                        || drive.status === DRIVE_STATUS.HOLD 
-                        || (!isAdminUser && !isAPSUser && (
-                            (isDriveSubmittedForDriveChangeRequest) ||
-                            isDriveSubmittedForSubmissionApproval
-                          ));
+                            || drive.status === DRIVE_STATUS.HOLD 
+                            || (!isAdminUser && !isAPSUser && (
+                                (isDriveSubmittedForDriveChangeRequest) ||
+                                isDriveSubmittedForSubmissionApproval
+                              ));
     
     const matchedSiteCO = this.getMatchedSiteCOForDrive(drive);
     const { travelTimeBreakdownsCoToSite, travelTimeBreakdownsSiteToCo} = this.getTravelTimeBreakdownData({
@@ -1794,7 +1794,7 @@ class DriveHelper {
   calculateStaffSetup(resourceRoles = [], driveShift) {
     const mapResourceQuantity = this.getDriveShiftResourceQuantity(driveShift);
     mapResourceQuantity.forEach((value, key) => {
-      if (value.dualRole) {
+       if (value.dualRole) {
         let variable1, variable2;
         if (key.includes('-')) {
           [variable1, variable2] = key.split('-');
@@ -2696,7 +2696,7 @@ class DriveHelper {
       if (staffingConstraints && staffingConstraints.length) {
         let staffingConstraint = staffingConstraints[0];
         totalStaffConstraints = staffingConstraint.totalStaffConstraints || 0;
-      }
+            }
 
       result.data = {
         staffRequested: totalStaffRequested,
@@ -3029,7 +3029,7 @@ class DriveHelper {
     if(!job) return false;
     return job.resourceRole === 'Driver Support';
   }
-
+  
   /*
     HRP-10428
     Any drive up to 3 hours would default to 1 round,
@@ -3073,8 +3073,8 @@ class DriveHelper {
     } else if (job.assetType) {
       return true;
     } else if (job.volunteerRole) { 
-      return ['Donor Ambassador'].includes(job.volunteerRole);
-    }
+        return ['Donor Ambassador'].includes(job.volunteerRole);
+      }
 
     return false;
   }
@@ -3236,7 +3236,7 @@ class DriveHelper {
     }
   }
 
-  calculateRequestedStaff(mappedDriveData, mappedActivityData, collectionOperationId, driveTypes, dateIso) {
+  calculateRequestedStaff(mappedDriveData, mappedActivityData, collectionOperationId, timeBlockId, driveTypes, dateIso) {
     const KEY_SEPERATOR = "__";
 
     const matchedDrives = driveTypes.reduce(
@@ -3260,21 +3260,33 @@ class DriveHelper {
 
     if (matchedDrives.length) {
       matchedDrives.forEach((drive) => {
+        let totalStaffRequested = drive.totalStaffRequested;
+        if (timeBlockId) {
+          totalStaffRequested = 0;
+          drive.driveShifts?.forEach(driveShift => {
+            if (driveShift.timeBlockId === timeBlockId) {
+              totalStaffRequested += driveShift.staffSetup
+            }
+          })
+        }
+
         if (this.isFixedSiteDrive(drive)) {
-          totalFixedSiteStaffRequested += drive.totalStaffRequested;
+          totalFixedSiteStaffRequested += totalStaffRequested;
         } else {
-          totalMobileStaffRequested += drive.totalStaffRequested;
+          totalMobileStaffRequested += totalStaffRequested;
         }
       });
     }
 
     if(matchedActivities?.length) {
       matchedActivities.forEach((activity) => {
-        if (driveTypes.includes(DRIVE_TYPE.FIXED_SITE)) {
-          totalFixedSiteStaffNCERequested += activity.fixedSiteStaffQuantity || 0;
-        }
-        if (driveTypes.includes(DRIVE_TYPE.MOBILE)) {
-          totalMobileStaffNCERequested += activity.mobileStaffQuantity || 0;
+        if (!timeBlockId || activity.timeBlockId === timeBlockId) {
+          if (driveTypes.includes(DRIVE_TYPE.FIXED_SITE)) {
+            totalFixedSiteStaffNCERequested += activity.fixedSiteStaffQuantity || 0;
+          }
+          if (driveTypes.includes(DRIVE_TYPE.MOBILE)) {
+            totalMobileStaffNCERequested += activity.mobileStaffQuantity || 0;
+          }
         }
       });
     }
