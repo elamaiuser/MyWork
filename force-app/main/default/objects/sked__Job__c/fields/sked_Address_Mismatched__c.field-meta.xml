@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>sked_Address_Mismatched__c</fullName>
-    <externalId>false</externalId>
     <formula>sked__Address__c !=  sked__Location__r.sked__Address__c  || 
 sked__GeoLocation__Latitude__s != sked__Location__r.sked__GeoLocation__Latitude__s  || 
 sked__GeoLocation__Longitude__s != sked__Location__r.sked__GeoLocation__Longitude__s</formula>

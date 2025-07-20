@@ -441,7 +441,7 @@ global class skedJobAllocationPostProcessBatch implements Database.Batchable<sOb
             SELECT Id, Name, sked__Start__c, sked__Finish__c, sked__GeoLocation__c, sked__Type__c, sked__Duration__c,
             sked_Drive__c, sked_Drive__r.sked_Account__c, sked_Drive__r.sked_Drive_Site__c, sked_Drive_Shift__c,
             sked_Start_Date__c, sked_Finish_Date__c, sked_Drive__r.sked_Drive_Date__c, sked_Drive__r.sked_Collection_Operation__c,
-            sked_Drive__r.sked_Linked_Drives__c, sked_Asset_Type__c,sked_Drive__r.Name,
+            sked_Drive__r.sked_Linked_Drives__c, sked_Asset_Type__c,sked_Drive__r.Name,//HRP-12840
             (SELECT Id, sked__Tag__c, sked__Tag__r.Name
             FROM sked__JobTags__r)
             FROM sked__Job__c
@@ -812,20 +812,22 @@ global class skedJobAllocationPostProcessBatch implements Database.Batchable<sOb
         List<skedHC__Exception__c> exceptionLog = new List<skedHC__Exception__c>();
             
         List<skedExceptionLogService.resourceUnavailabilityModel> unavailabilityList = new List<skedExceptionLogService.resourceUnavailabilityModel>();
+        unavailabilityList.addAll(getUnavailabilityExceptionModelForConflictedActivities(master.jobAllocations));
+        unavailabilityList.addAll(getUnavailabilityExceptionModelForConflictedUnavailabilities(master.jobAllocations));
+   
         for (sked__Job_Allocation__c skedAllocation : master.jobAllocations) {
-            sked__Job__c skedJob = master.mapJob.get(skedAllocation.sked__Job__c);
-
             skedExceptionLogService.resourceUnavailabilityModel unavailability = new skedExceptionLogService.resourceUnavailabilityModel();
             unavailability.resourceId = skedAllocation.sked__Resource__c;
             unavailability.startTime = skedAllocation.sked__Start__c;
             unavailability.endTime = skedAllocation.sked__Set_End__c;
             unavailability.exceptionCode = skedConstants.EXCEPTION_CODE_RESOURCE_TIME_CONFLICT;
-            unavailability.exceptionText = 'Conflict with ' +  skedAllocation.sked__Job__r.sked_Drive__r.name; 
+            unavailability.exceptionText = 'Conflict with ' +  skedAllocation.sked__Job__r.sked_Drive__r.name; //HRP-12840
             unavailability.relatedEventFieldApi = 'skedHC__Job_Allocation__c';
             unavailability.recordId = skedAllocation.Id;
             unavailability.jobId = skedAllocation.sked__Job__c;
             unavailability.jobAllocationId = skedAllocation.Id;
             unavailability.driveId = skedAllocation.sked__Job__r.sked_Drive__c;
+            unavailability.driveName = skedAllocation.sked__Job__r.sked_Drive__r.Name;
             unavailabilityList.add(unavailability);
         }
         if (!unavailabilityList.isEmpty()) {
@@ -964,7 +966,7 @@ global class skedJobAllocationPostProcessBatch implements Database.Batchable<sOb
         return exceptionLog;
     }
 
-public static List<skedHC__Exception__c> captureLinkedDriveMismatchedAssetExceptionLog(skedExceptionMasterModel master) {
+    public static List<skedHC__Exception__c> captureLinkedDriveMismatchedAssetExceptionLog(skedExceptionMasterModel master) {
         Set<Id> linkedDriveIds = new Set<Id>();
         for (sked__Job_Allocation__c ja : master.jobAllocations) {
             sked__Job__c skedJob = master.mapJob.get(ja.sked__Job__c);
@@ -1061,6 +1063,177 @@ public static List<skedHC__Exception__c> captureLinkedDriveMismatchedAssetExcept
         }
 
         return exceptionLogs;
+    }
+
+    /**************************************** Private Get Methods *************************************/
+    private skedExceptionLogService.resourceUnavailabilityModel getResourceUnavailabilityModel(
+        String resourceId,
+        String relatedEventFieldApi,
+        String recordId,
+        String exceptionText,
+        DateTime startTime,
+        DateTime endTime
+    ) {
+        skedExceptionLogService.resourceUnavailabilityModel unavailability = new skedExceptionLogService.resourceUnavailabilityModel();
+        unavailability.resourceId = resourceId;
+        unavailability.startTime = startTime;
+        unavailability.endTime = endTime;
+        unavailability.exceptionCode = skedConstants.EXCEPTION_CODE_RESOURCE_TIME_CONFLICT;
+        unavailability.exceptionText = exceptionText;
+        unavailability.relatedEventFieldApi = relatedEventFieldApi;
+        unavailability.recordId = recordId;
+        return unavailability;
+    }
+
+    private List<sked__Activity_Resource__c> getConflictedActivities(List<sked__Job_Allocation__c> jobAllocations) {
+        Set<Id> resourceIds = new Set<Id>();
+        DateTime minDt, maxDt;
+        Boolean hasTermination = false;
+
+        for (sked__Job_Allocation__c skedAllocation : jobAllocations) {
+            resourceIds.add(skedAllocation.sked__Resource__c);
+            if (minDt == NULL || skedAllocation.sked__Start__c < minDt) {
+                minDt = skedAllocation.sked__Start__c;
+            }
+            if (skedAllocation.sked__Set_End__c != NULL) {
+                if (maxDt == NULL || skedAllocation.sked__Set_End__c > maxDt) {
+                    maxDt = skedAllocation.sked__Set_End__c;
+                }
+            }
+            else {
+                hasTermination = true;
+            }
+        }
+        if (hasTermination) {
+            maxDt = NULL;
+        }
+
+        skedQueryBuilder activityResourceBuilder = new skedQueryBuilder();
+        activityResourceBuilder.setFromClause('sked__Activity_Resource__c');
+        activityResourceBuilder.addField('Id');
+        activityResourceBuilder.addField('Name');
+        activityResourceBuilder.addField('sked__Activity__c');
+        activityResourceBuilder.addField('sked__Resource__c');
+        activityResourceBuilder.addField('sked_Start1__c');
+        activityResourceBuilder.addField('sked_End__c');
+        activityResourceBuilder.addField('sked__Activity__r.sked_Activity_Title__c');
+        
+        activityResourceBuilder.addCondition('sked__Resource__c IN {0}', resourceIds);
+        if (minDt != NULL && maxDt != NULL) {
+            activityResourceBuilder.addCondition('sked_Start1__c < {0}', maxDt);
+            activityResourceBuilder.addCondition('sked_End__c > {0}', minDt);
+        }
+        else if (minDt != NULL) {
+            activityResourceBuilder.addCondition('sked_Start1__c >= {0}', minDt);			
+        }
+
+        string queryString = activityResourceBuilder.toString();
+        return (List<sked__Activity_Resource__c>)Database.query(queryString);
+    }
+
+    private List<sked__Availability__c> getConflictedUnavailabilities(List<sked__Job_Allocation__c> jobAllocations) {
+        Set<Id> resourceIds = new Set<Id>();
+        DateTime minDt, maxDt;
+        Boolean hasTermination = false;
+
+        List<string> activeStatuses = new List<string> {
+            skedConstants.AVAILABILITY_STATUS_APPROVED,
+            skedConstants.AVAILABILITY_STATUS_PENDING,
+            skedConstants.AVAILABILITY_STATUS_WAITLIST
+        };
+
+        List<String> excludedCalloutTypes = new List<String> {
+            skedConstants.AVAILABILITY_CALLOUT_TYPE_EARLY_DEPARTURE,
+            skedConstants.AVAILABILITY_CALLOUT_TYPE_LATE_ARRIVAL
+        };
+
+        for (sked__Job_Allocation__c skedAllocation : jobAllocations) {
+            resourceIds.add(skedAllocation.sked__Resource__c);
+            if (minDt == NULL || skedAllocation.sked__Start__c < minDt) {
+                minDt = skedAllocation.sked__Start__c;
+            }
+            if (skedAllocation.sked__Set_End__c != NULL) {
+                if (maxDt == NULL || skedAllocation.sked__Set_End__c > maxDt) {
+                    maxDt = skedAllocation.sked__Set_End__c;
+                }
+            }
+            else {
+                hasTermination = true;
+            }
+        }
+        if (hasTermination) {
+            maxDt = NULL;
+        }
+
+        skedQueryBuilder availabilityBuilder = new skedQueryBuilder();
+        availabilityBuilder.setFromClause('sked__Availability__c');
+        availabilityBuilder.addField('Id');
+        availabilityBuilder.addField('Name');
+        availabilityBuilder.addField('sked__Is_Available__c');
+        availabilityBuilder.addField('sked__Type__c');
+        availabilityBuilder.addField('sked__Resource__c');
+        availabilityBuilder.addField('sked__Start__c');
+        availabilityBuilder.addField('sked__Finish__c');
+        availabilityBuilder.addField('sked__Status__c');
+        availabilityBuilder.addField('sked_Call_Out_Type__c');
+        
+        availabilityBuilder.addCondition('sked__Resource__c IN {0}', resourceIds);
+        availabilityBuilder.addCondition('sked__Status__c IN {0}', activeStatuses);
+        availabilityBuilder.addCondition('sked_Call_Out_Type__c NOT IN {0}', excludedCalloutTypes);
+        availabilityBuilder.addCondition('sked__Is_Available__c = {0}', false);
+
+        if (minDt != NULL && maxDt != NULL) {
+            availabilityBuilder.addCondition('sked__Start__c < {0}', maxDt);
+            availabilityBuilder.addCondition('sked__Finish__c > {0}', minDt);
+        }
+        else if (minDt != NULL) {
+            availabilityBuilder.addCondition('sked__Start__c >= {0}', minDt);			
+        }
+
+        string queryString = availabilityBuilder.toString();
+        return (List<sked__Availability__c>)Database.query(queryString);
+    }
+
+    private List<skedExceptionLogService.resourceUnavailabilityModel> getUnavailabilityExceptionModelForConflictedActivities(
+        List<sked__Job_Allocation__c> jobAllocations
+    ) {
+        List<skedExceptionLogService.resourceUnavailabilityModel> unavailabilityList = new List<skedExceptionLogService.resourceUnavailabilityModel>();
+
+        List<sked__Activity_Resource__c> conflictedActivities = getConflictedActivities(jobAllocations);
+        if(conflictedActivities != NULL && !conflictedActivities.isEmpty()) {
+            for(sked__Activity_Resource__c conflictActivity : conflictedActivities) {
+                unavailabilityList.add(getResourceUnavailabilityModel(
+                    conflictActivity.sked__Resource__c,
+                    'skedHC__Activity__c',
+                    conflictActivity.sked__Activity__c,
+                    'Conflict with ' + conflictActivity.sked__Activity__r.sked_Activity_Title__c,
+                    conflictActivity.sked_Start1__c,
+                    conflictActivity.sked_End__c
+                ));
+            }
+        }
+        return unavailabilityList;
+    }
+
+    private List<skedExceptionLogService.resourceUnavailabilityModel> getUnavailabilityExceptionModelForConflictedUnavailabilities(
+        List<sked__Job_Allocation__c> jobAllocations
+    ) {
+        List<skedExceptionLogService.resourceUnavailabilityModel> unavailabilityList = new List<skedExceptionLogService.resourceUnavailabilityModel>();
+
+        List<sked__Availability__c> conflictedUnavailabilities = getConflictedUnavailabilities(jobAllocations);
+        if(conflictedUnavailabilities != NULL && !conflictedUnavailabilities.isEmpty()) {
+            for(sked__Availability__c conflictedUnavailability : conflictedUnavailabilities) {
+                unavailabilityList.add(getResourceUnavailabilityModel(
+                    conflictedUnavailability.sked__Resource__c,
+                    'skedHC__Availability__c',
+                    conflictedUnavailability.Id,
+                    conflictedUnavailability.sked__Type__c,
+                    conflictedUnavailability.sked__Start__c,
+                    conflictedUnavailability.sked__Finish__c
+                ));
+            }
+        }
+        return unavailabilityList;
     }
 
     /**************************************** NESTED CLASS ********************************************/

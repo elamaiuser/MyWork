@@ -43,7 +43,7 @@ global class skedUpdateJobTimeVarianceBatch implements Database.Batchable<sObjec
                         Id, sked_Setup_Time__c, sked_Lead_Time__c, sked_Travel_Time__c, sked_Site_Logistics_To__c,
                         sked_Wrap_Up_Time__c, sked_Breakdown_Time__c, sked_Travel_Time2__c, sked_Site_Logistics_Back__c,
                         sked__Start__c, sked_Start_Time__c, sked__Finish__c, sked_Finish_Time__c, sked_Start_Date__c, sked_Finish_Date__c,
-                        sked_Resource_Role__c, sked_Asset_Type__c, sked_Drive_Shift__c
+                        sked_Resource_Role__c, sked_Dual_Role__c, sked_Asset_Type__c, sked_Drive_Shift__c
                     FROM sked_Jobs__r
                 ),
                 (
@@ -83,9 +83,12 @@ global class skedUpdateJobTimeVarianceBatch implements Database.Batchable<sObjec
                             for (sked__Job__c job : jobs) {
                                 if (job.sked_Asset_Type__c != null) {
                                     assetJobIds.add(job.Id);
-                                } else if (affectedResourceRoles.contains(job.sked_Resource_Role__c)
+                                } else if (affectedResourceRoles.contains(job.sked_Resource_Role__c) || affectedResourceRoles.contains(job.sked_Dual_Role__c)
                                     && job.sked_Start_Date__c >= rtvAdjustment.startDate && job.sked_Finish_Date__c <= rtvAdjustment.endDate
                                 ) {
+                                    if(hasDrivingRoleAsPrimaryOrSecondaryRole(job.sked_Resource_Role__c, job.sked_Dual_Role__c) 
+                                        && !rtvAdjustment.resourceRoleGroup.split(',').contains(skedConstants.RESOURCE_ROLE_GROUP_DRIVING_ROLES)) continue;
+                                        
                                     List<String> affectedFields = getAffectedFields(rtvAdjustment.varianceApplyTo);
                                     Integer numAffectedStartFields = getNumAffectedFields(rtvAdjustment.varianceApplyTo, false);
                                     Integer numAffectedFinishFields = getNumAffectedFields(rtvAdjustment.varianceApplyTo, true);
@@ -159,7 +162,11 @@ global class skedUpdateJobTimeVarianceBatch implements Database.Batchable<sObjec
         }
     }
 
-    global void finish(Database.BatchableContext BC) {
+    global void finish(Database.BatchableContext BC) {}
+
+    private Boolean hasDrivingRoleAsPrimaryOrSecondaryRole(String primaryRole, String secondaryRole) {
+        return this.resourceRoleByGroup.get(skedConstants.RESOURCE_ROLE_GROUP_DRIVING_ROLES).contains(primaryRole) 
+          || this.resourceRoleByGroup.get(skedConstants.RESOURCE_ROLE_GROUP_DRIVING_ROLES).contains(secondaryRole);
     }
 
     private Map<Id, List<skedRoleTimeVarianceAdjustment>> getMapSiteIdToRtvAdjustments(List<skedRoleTimeVarianceAdjustment> rtvAdjustments) {

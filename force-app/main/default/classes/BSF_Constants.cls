@@ -302,6 +302,11 @@ public class BSF_Constants {
         'Fixed Site' => 'Sys Gen Run - FS',
         'Mobile' => 'Sys Gen Run - Mobile'   
     };
+
+    public static Map<String, String> MAP_DRIVETYPE_ERRORCATEGORY = new Map<String, String>{
+        'Fixed Site' => 'Sys Gen Run - FS Business Error',
+        'Mobile' => 'Sys Gen Run - Mobile Business Error'   
+    };
     
     // Batch Status
     public static final String BATCH_STATUS_COMPLETED = 'Completed';

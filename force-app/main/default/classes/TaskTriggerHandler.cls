@@ -63,6 +63,10 @@ public with sharing class TaskTriggerHandler extends TriggerHandler {
         if(super.getTriggerMethodsToBypass().indexOf('updateRelatedAccountAndOpportunity') == -1) { 
             TaskService.updateRelatedAccountAndOpportunity((List<Task>)Trigger.new,(Map<Id,Task>)Trigger.oldMap);
         }
+
+        if(super.getTriggerMethodsToBypass().indexOf('resendMarketingExceptionNotification') == -1) { 
+            resendMarketingExceptionNotification((List<Task>)Trigger.new,(Map<Id,Task>)Trigger.oldMap);
+        }
     }
     //HRP-12459 --> start
     public void populateDriveDateOnTask(List<Task> taskList,Map<Id,Task> taskMap){
@@ -162,5 +166,21 @@ public with sharing class TaskTriggerHandler extends TriggerHandler {
 
             Database.SaveResult[] logInsertResult = Database.insert(errorLogToInsert, FALSE);
         }
+    }
+
+    public void resendMarketingExceptionNotification(List<Task> taskList, Map<Id,Task> taskMap){
+        List<BSF_MarketingExceptionRequest.Request> tasksOwnerUpdated = new List<BSF_MarketingExceptionRequest.Request>();
+        for (Task newRecord : taskList) {
+            Task oldData = taskMap.get(newRecord.Id);
+            if (newRecord.Subject.equalsIgnoreCase(Label.Task_Subject_Marketing_Exception) && newRecord.Status!='Completed' && newRecord.Status!='Cancelled' && newRecord.OwnerId != oldData.OwnerId) {
+                BSF_MarketingExceptionRequest.Request task = new BSF_MarketingExceptionRequest.Request();
+                task.taskId = newRecord.Id;
+                tasksOwnerUpdated.add(task);
+            }
+        }
+        if (!tasksOwnerUpdated.isEmpty()) {
+            BSF_MarketingExceptionRequest.marketingExceptionRequest(tasksOwnerUpdated);
+        }
+        
     }
 }

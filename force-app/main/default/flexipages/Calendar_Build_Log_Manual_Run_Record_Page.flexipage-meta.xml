@@ -12,12 +12,6 @@
                         <valueListItems>
                             <value>Delete</value>
                         </valueListItems>
-                        <valueListItems>
-                            <value>Clone</value>
-                        </valueListItems>
-                        <valueListItems>
-                            <value>ChangeOwnerOne</value>
-                        </valueListItems>
                     </valueList>
                 </componentInstanceProperties>
                 <componentInstanceProperties>
@@ -477,6 +471,16 @@
                     <name>uiBehavior</name>
                     <value>none</value>
                 </fieldInstanceProperties>
+                <fieldItem>Record.FS_Drives_wo_Resource_Requested__c</fieldItem>
+                <identifier>RecordFS_Drives_wo_Resource_Requested_cField</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
                 <fieldItem>Record.FS_Drives_with_Resource_Allocation__c</fieldItem>
                 <identifier>RecordFS_Drives_with_Resource_Allocation_cField</identifier>
             </fieldInstance>
@@ -523,6 +527,16 @@
                 </fieldInstanceProperties>
                 <fieldItem>Record.Mobile_Sys_Gen_Batch_Run_Date__c</fieldItem>
                 <identifier>RecordMobile_Sys_Gen_Batch_Run_Date_cField</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.Mobile_Drives_wo_Resource_Requested__c</fieldItem>
+                <identifier>RecordMobile_Drives_wo_Resource_Requested_cField</identifier>
             </fieldInstance>
         </itemInstances>
         <itemInstances>
@@ -794,10 +808,22 @@
                             <value>NAME</value>
                         </valueListItems>
                         <valueListItems>
+                            <value>Category__c</value>
+                        </valueListItems>
+                        <valueListItems>
                             <value>BSF_Error_Log__c</value>
                         </valueListItems>
                         <valueListItems>
                             <value>Error_Information__c</value>
+                        </valueListItems>
+                        <valueListItems>
+                            <value>Opportunity__c</value>
+                        </valueListItems>
+                        <valueListItems>
+                            <value>Drive__c</value>
+                        </valueListItems>
+                        <valueListItems>
+                            <value>Operation_Record__c</value>
                         </valueListItems>
                     </valueList>
                 </componentInstanceProperties>

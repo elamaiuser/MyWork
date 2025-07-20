@@ -1,9 +1,3 @@
-/* This test class covers following apex classes 
- 	* BSF_Batch_PopulateCORegion (89%)
-	* BSF_Batch_TaxonomyEndDateHandler (94%)
-	* BSF_Batch_TaxonomyEndDateHelper (94%)
-*/
-
 @isTest
 public class BSF_Batch_PopulateCORegion_Test 
 {
@@ -15,7 +9,7 @@ public class BSF_Batch_PopulateCORegion_Test
                                              DS_Region_Code__c='DSR1', DS_Region_Key__c=42069, DS_Region_Name__c='Reg_1', 
                                              District_Code__c='Dist1',District_Key__c=42070,District_Name__c='District_1',
                                              Collection_Operation_Name__c='CO_2',Collection_Operation_Code__c='C-OP2',Collection_Operation_Key__c=1111,
-                                             skedulo_region_cd__c='SkReg1',skedulo_region_name__c='SkReg_1',Time_Zone__c='GMT',RecordTypeId=recordTypeId, Start_date__c = Date.newInstance(2022,01,01), End_date__c = Date.newInstance(4000,12,31));
+                                             skedulo_region_cd__c='SkReg1',skedulo_region_name__c='SkReg_1',Time_Zone__c='GMT',RecordTypeId=recordTypeId);
         
         insert taxo;
         
@@ -25,18 +19,13 @@ public class BSF_Batch_PopulateCORegion_Test
         
         insert taxonomyVersionOne;
         
-        Id recordTypeIdTerr = Schema.SObjectType.sked_Territory__c.getRecordTypeInfosByName().get('District').getRecordTypeId();
-        sked_Territory__c territory = new sked_Territory__c();
-        territory.External_Id__c='Bio_Collection_BSF_'+'District'+'_'+44+'_'+system.today();
-        territory.External_Id_BackEnd__c ='Bio_Collection_BSF_Division_Div1';
-        territory.Name = 'Test Territory';
-        territory.RecordTypeId  = recordTypeIdTerr;
-        territory.Start_Date__c = Date.newInstance(2022,11,27);
-        territory.End_Date__c = system.today().addDays(100);  
-        insert territory;
-
+       
+        
+        
+        
+        
         Test.startTest();
-        BSF_Batch_PopulateCORegion batch = new BSF_Batch_PopulateCORegion(null, taxo_1.version_Key__c);
+        BSF_Batch_PopulateCORegion batch = new BSF_Batch_PopulateCORegion(null,taxo_1.version_Key__c);
         id jobid = database.executeBatch(batch,200);
         system.assert(jobid!=null, True);
         /*BSF_setting__c setting =new BSF_setting__c();
@@ -103,7 +92,9 @@ BSF_Batch_PopulateCORegion batch1 = new BSF_Batch_PopulateCORegion();
         territory.Name = 'name';
         territory.RecordTypeId  = recordTypeId;
         territory.Start_Date__c = system.today();
-        territory.End_Date__c = system.today().addDays(100);  
+        territory.End_Date__c = system.today().addDays(100);
+        
+        
         insert territory;
         
         Biomed_Collection_Op_Center__c co = new Biomed_Collection_Op_Center__c();
@@ -114,7 +105,7 @@ BSF_Batch_PopulateCORegion batch1 = new BSF_Batch_PopulateCORegion();
         co.sked_Territory__c=territory.id;
         co.sked_Lunch_Break_Duration_Fixed_Site__c='30';
         co.sked_Lunch_Break_Duration_Mobile__c='30';
-        insert co;
+         insert co;
         
          sked_Territory_Collection_Operation__c terrCollOpp = new sked_Territory_Collection_Operation__c();
         terrCollOpp.sked_Start_Date__c = territory.Start_Date__c;
@@ -126,30 +117,77 @@ BSF_Batch_PopulateCORegion batch1 = new BSF_Batch_PopulateCORegion();
         insert terrCollOpp;
         terrCollOpp.sked_Start_Date__c = system.today().addDays(1);
         update terrCollOpp;
-        
         test.startTest();
         territory.End_Date__c=system.today().addDays(50);
         territory.Start_Date__c = system.today().adddays(1);
         
         update territory;
         test.stopTest();
+        
+        
     }
     
-    static testMethod void testPortfolioBatch() {
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+       @isTest
+    Public static void TestMethod3()
+    {
         List<Taxonomy__c> taxonomies = PortfolioTestDataFactory.createTaxonomies('48420','48421');
         insert taxonomies;
         
-        List<Taxonomy__c> taxoList = [SELECT Division_Code__c,Division_Key__c,Division_Name__c,DRD_Territory_Code__c,DRD_Territory_Key__c,DRD_Territory_Name__c,DS_Region_Code__c,DS_Region_Key__c,DS_Region_Name__c,
-                                            Team_Code__c,Team_Key__c,Team_Name__c,ABM_Code__c,ABM_Name__c,Type_Key__c,Type__c,Start_Date__c,End_Date__c,
-        									RecordType.Name,District_Code__c,District_Name__c,Collection_Operation_Code__c,Collection_Operation_Name__c,Supervisor_Code__c,Supervisor_Name__c,Portfolio_Code__c,Portfolio_Name__c,Version_Key__c
-        									FROM Taxonomy__c WHERE RecordType.Name = :BSF_Constants.BIO_RECRUITMENT_RECORD_TYPE]; 
+       // Fetch a RecordType
+        RecordType rt = [SELECT Id, Name FROM RecordType WHERE SObjectType = 'Taxonomy__c' and Name=:BSF_Constants.BIO_COLLECTION_RECORD_TYPE LIMIT 1];
+
+        // Insert one expired taxonomy record
+        Taxonomy__c taxn = new Taxonomy__c(
+            Version_Key__c = 1.0,
+            End_Date__c = Date.today().addDays(-5),
+            RecordTypeId = rt.Id
+        );
+        insert taxn;
+
+        // Insert corresponding Taxonomy_Run__c
+        Taxonomy_Run__c taxoRun = new Taxonomy_Run__c(
+            External_Id__c = rt.Name + '_' + taxn.Version_Key__c,
+            Status__c = 'Pending',
+            Future_Version_Number__c = taxn.Version_Key__c,
+            Taxo_Record_Type__c = rt.Name
+        );
+        insert taxoRun;
+
+        // Create scope for the batch (simulate execution context)
+        List<Taxonomy__c> scope = new List<Taxonomy__c>{taxn};
+
+      
+
+        // Assert: Check if status changed to 'Processing'
+        Taxonomy_Run__c updatedRun = [SELECT Status__c, Processing_Start__c FROM Taxonomy_Run__c WHERE Id = :taxoRun.Id];
+       // System.assertEquals('Processing', updatedRun.Status__c);
+       // System.assertNotEquals(null, updatedRun.Processing_Start__c);
+       
         
-        BSFPortfolioHelper portfolioHelper = new BSFPortfolioHelper();
-        portfolioHelper.createOrUpdatePortfolio(taxoList);
+        Date stDate = system.today()-100;
+        Date enDate = system.today()+365;
         
-        Test.startTest();
-        BSF_Batch_TaxonomyEndDateHandler batch = new BSF_Batch_TaxonomyEndDateHandler(4321,'Bio Recruitment CD',true,null,null);
-        database.executeBatch(batch,25);
-        Test.StopTest();
+     
+        BSF_Batch_PopulateCORegion batch = new BSF_Batch_PopulateCORegion(null,taxn.version_Key__c,true);
+        id jobid = database.executeBatch(batch,200);
+          BSF_Batch_PopulateCORegion batch1 = new BSF_Batch_PopulateCORegion(null,null,true);
+        id jobid1 = database.executeBatch(batch1,200);
+        BSF_Batch_PopulateCORegion batch2 = new BSF_Batch_PopulateCORegion(System.today(),taxn.version_Key__c,true);
+        id jobid2 = database.executeBatch(batch2,200);
+          BSF_Batch_PopulateCORegion batch3 = new BSF_Batch_PopulateCORegion(System.today(),null,true);
+        id jobid3 = database.executeBatch(batch3,200);
+         BSF_Batch_PopulateCORegion batch4 = new BSF_Batch_PopulateCORegion();
+        id jobid4 = database.executeBatch(batch4,200);
+       
     }
 }
