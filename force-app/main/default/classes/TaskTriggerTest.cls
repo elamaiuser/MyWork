@@ -1,8 +1,9 @@
 /*
  * This Test class covering following classes and trigger 
  * TaskService (100%),
- * TaskTriggerHandler(89%),
+ * TaskTriggerHandler(94%),
  * TaskTrigger (100%)
+ * BSF_MarketingExceptionRequest (98%)
  */
 @isTest
 public class TaskTriggerTest {
@@ -595,6 +596,110 @@ public class TaskTriggerTest {
         }catch(Exception ex) {
             Assert.isTrue(ex.getMessage().contains('Please ensure each item is checked before marking task as complete.'));
         }
+        
+        Test.stopTest();
+    }
+    
+    static testMethod void exception_Test() {
+        Test.startTest();
+        try{
+            TaskTriggerHandler handlerInstance = new TaskTriggerHandler();
+            handlerInstance.populateAccountNameOnTask(null, null);
+        }catch(Exception ex) {}
+        Test.stopTest();
+    }
+    
+    static testMethod void resendMarketingExceptionNotification_Test() {
+        TriggerHandler.Bypass('AccountTriggerHandler');
+        TriggerHandler.Bypass('OpportunityTriggerHandler');
+        TriggerHandler.Bypass('SiteTriggerHandler');
+        TriggerHandler.Bypass('UserTriggerHandler');
+        
+        BSF_TestDataSetup testDataSetup = new BSF_TestDataSetup(false);
+        Map<string, sObject> mapTestData =  testDataSetup.createAndInsertCommonObjects(); 
+        
+        //insert DRD Users
+        List<User> testDrdUsers = new List<User>();
+        testDrdUsers.add((User)mapTestData.get('DRD_USER'));
+        testDrdUsers.add((User)mapTestData.get('DRD_MANAGER_USER'));
+        
+        //insert queues
+        List<Group> testGroups = new List<Group>();
+        Group testGroup;
+        testGroup = new Group(
+            name = 'testCO' + ': ' + skedConstants.PROFILE_QUEUE_DRIVE_CHANGE_REQUESTS,
+            type = skedConstants.GROUP_TYPE_QUEUE
+        );
+        testGroups.add(testGroup);
+        
+        testGroup = new Group(
+            name = 'testCO' + ': ' + skedConstants.PROFILE_QUEUE_DM_DRIVE_CHANGE_REQUESTS,
+            type = skedConstants.GROUP_TYPE_QUEUE
+        );
+        testGroups.add(testGroup);
+        
+        system.runAs(new User(Id = UserInfo.getUserId())) {
+            insert testDrdUsers;
+            insert testGroups;
+            List<sObject> sObjectsToCreate = new List<sObject>();
+            Integer i = 0;
+            for(Group newQueue : testGroups) {
+                sObjectsToCreate.add(new QueueSobject(
+                    QueueId = newQueue.Id,
+                    SobjectType = 'Task'
+                ));
+                sObjectsToCreate.add(new GroupMember(
+                    GroupId = newQueue.Id,
+                    UserOrGroupId = testDrdUsers[i].Id
+                ));
+                i++;
+            }
+            insert sObjectsToCreate; 
+        }
+            
+        //insert mobile account
+        Account testMobileAccount = (Account)mapTestData.get('MOBILE_ACCOUNT');
+        testMobileAccount.Internal_Name__c = 'Test Account';
+        insert testMobileAccount;
+        
+        // insert mobile site
+        sked__Location__c testMobileSite = (sked__Location__c)mapTestData.get('MOBILE_SITE');
+    	insert testMobileSite;
+        
+        // insert template
+        Opportunity testTemplate = (Opportunity)mapTestData.get('MOBILE_TEMPLATE_OPP');
+        testTemplate.AccountId = testMobileAccount.Id;
+        testTemplate.Drive_Site__c = testMobileSite.Id;
+        insert testTemplate;
+        
+        //insert mobile opportunity
+		opportunity testMobileOpp = new opportunity();
+		testMobileOpp.RecordTypeId = Opportunity.sObjectType.getDescribe().getRecordTypeInfosByName().get('Mobile Opp').getRecordTypeId();        
+        testMobileOpp.AccountId = testMobileAccount.Id;
+        testMobileOpp.name ='testOpp1';
+        testMobileOpp.StageName = 'Closed';
+        testMobileOpp.Parent_Template_Id__c = testTemplate.id;
+        testMobileOpp.CloseDate = system.today().addDays(1); 
+        testMobileOpp.Drive_Date__c = system.today();
+        testMobileOpp.Accept_56_Day_Rule_Violation__c = true;
+        testMobileOpp.Account_Manager__c = UserInfo.getUserId();
+        testMobileOpp.Start_Time__c = System.now().Time();
+		testMobileOpp.End_Time__c = System.now().Time()+10;
+		testMobileOpp.Anticipated_Registered_Donors__c = 10;	
+        insert testMobileOpp;
+        
+        Test.startTest();
+        Task marketingExceptionTask = new Task(
+        	Subject = Task_Reassignment_Matrix__mdt.getInstance('Marketing_Exception').Task_Subject__c,
+            OwnerId = testGroups[0].Id,
+            Priority = 'Normal',
+            Status = 'Not Started',
+            WhatId = testMobileOpp.Id
+        );
+        insert marketingExceptionTask;
+        
+        marketingExceptionTask.OwnerId = testGroups[1].Id;
+        update marketingExceptionTask;
         
         Test.stopTest();
     }

@@ -7,30 +7,60 @@ import { cloneDeep } from 'c/lodash';
 import { DateTime } from 'c/luxon';
 import { DriveHelper } from 'c/slwcDriveGenerator';
 
+const MODE = {
+    CREATE: 'create',
+    EDIT: 'edit',
+    DELETE: 'delete',
+    UNLOCK: 'unlock'
+}
+
 export default class SlwcAppointmentModal extends LightningElement {
     driveHelper = new DriveHelper();
 
     @track showModal = false;
-    @track appointmentFormMode = 'create'
+    @track appointmentFormMode = MODE.CREATE
     @track selectedSlot;
     @track driveShift;
     @track startTimeOptions = {};
     @track recurrenceDatesPickerModalData = {};
+    @track errorMessages = [];
     
     @wire(CurrentPageReference) pageRef;
 
     get appointmentFormHeader() {
-        if(this.appointmentFormMode === 'create') {
+        if(this.appointmentFormMode === MODE.CREATE) {
             return 'New Appointment';
-        } else if (this.appointmentFormMode === 'edit') {
+        } else if (this.appointmentFormMode === MODE.EDIT) {
+            if(this.isEditBulkMode) {
+                return `Bulk Edit Appointments (${this.selectedSlot.selectedSlotKeys?.length})`;
+            }
             return 'Edit Appointment';
-        } else if (this.appointmentFormMode === 'delete') {
+        } else if (this.appointmentFormMode === MODE.DELETE) {
+             if(this.isEditBulkMode) {
+                return `Bulk Delete Appointments (${this.selectedSlot.selectedSlotKeys?.length})`;
+            }
             return 'Delete Appointment';
+        } else if (this.appointmentFormMode === MODE.UNLOCK) {
+             if(this.isEditBulkMode) {
+                return `Bulk Unlock Appointments (${this.selectedSlot.selectedSlotKeys?.length})`;
+            }
+            return 'Unlock Appointment';
         }
     }
 
     get isDeleteMode() {
-        return this.appointmentFormMode === 'delete';
+        return this.appointmentFormMode === MODE.DELETE;
+    }
+
+    get isUnlockMode() {
+        return this.appointmentFormMode === MODE.UNLOCK;
+    }
+
+    get isEditBulkMode() {
+        return (
+            this.appointmentFormMode === MODE.EDIT || 
+            this.appointmentFormMode === MODE.DELETE || 
+            this.appointmentFormMode === MODE.UNLOCK) && this.selectedSlot.selectedSlotKeys?.length > 0;
     }
 
     get showApplyFutureDatesBtn() {
@@ -42,11 +72,16 @@ export default class SlwcAppointmentModal extends LightningElement {
     }
 
     get saveButtonLabel() {
-        if(this.appointmentFormMode === 'delete') {
+        if(this.appointmentFormMode === MODE.DELETE || this.appointmentFormMode === MODE.UNLOCK) {
             return 'Yes';
         } else {
             return 'Save';
         }
+    }
+
+    get showQuantityButton() {
+        if(!this.showApplyFutureDatesBtn) return false;
+        return this.appointmentFormMode === MODE.CREATE;
     }
 
     @api drive;
@@ -67,13 +102,18 @@ export default class SlwcAppointmentModal extends LightningElement {
     handleShowAppointmentModal(event) {
         console.log("handleShowAppointmentModal", event);
         this.appointmentFormMode = event.appointmentFormMode;
-        this.selectedSlot = event.newSlot;
         this.selectedSlot = cloneDeep(event.newSlot);
         this.selectedSlot["_startTime"] =  this.selectedSlot.startTime ? this.convertJSDateToTimeISO(new Date(this.selectedSlot.startTime)) : null;
         this.driveShift = event.driveShift;
         this.showModal = true;
         if(!this.selectedSlot.recurrenceDates) {
             this.selectedSlot.recurrenceDates = [];
+        }
+        if(!this.selectedSlot.recurrenceDriveIds) {
+            this.selectedSlot.recurrenceDriveIds = [];
+        }
+        if(this.appointmentFormMode === MODE.CREATE) {
+            this.selectedSlot.quantity = 1;
         }
         this.setupStartTimeMinMaxTime();
     }
@@ -107,14 +147,28 @@ export default class SlwcAppointmentModal extends LightningElement {
         }
     }
 
-    showUiInputErrors() {
+    validate() {
+        this.errorMessages = [];
+        
         const allValid = [...this.template.querySelectorAll('lightning-input'), ...this.template.querySelectorAll('lightning-combobox')]
             .reduce((validSoFar, inputCmp) => {
                 inputCmp.reportValidity();
                 return validSoFar && inputCmp.checkValidity();
             }, true);
-        return allValid;
+
+        if(this.appointmentFormMode === MODE.CREATE) {
+            if(this.selectedSlot.quantity !== undefined &&
+                this.selectedSlot.quantity <= 0
+            ) {
+                this.errorMessages.push({
+                    message: `The quantity must be greater than 0`
+                }) 
+            }
+        }
+        
+        return allValid && !this.errorMessages.length;
     }
+
     convertTimeISOToJSDate(dateISO, timeISO) {
         let dateTimeIso = dateISO + 'T' + timeISO;
         let date = new Date(dateTimeIso);
@@ -128,10 +182,10 @@ export default class SlwcAppointmentModal extends LightningElement {
         return new Date(date.getTime() + diff);
     }
     saveAppointmentForm() {
-        if(!this.showUiInputErrors()) return;
+        if(!this.validate()) return;
 
         const newSlot = {...this.selectedSlot, 
-            startTime: this.convertTimeISOToJSDate(this.driveShift.driveDate, this.selectedSlot._startTime).toISOString()
+            startTime: this.convertTimeISOToJSDate(this.driveShift.driveDate, this.selectedSlot._startTime).toISOString(),
         };
 
         const _event = new CustomEvent('saveappointment', {
@@ -153,13 +207,15 @@ export default class SlwcAppointmentModal extends LightningElement {
     openRecurrenceDatesPickerModalData() {
         this.recurrenceDatesPickerModalData = {
             isOpen: true,
-            selectedDays: this.selectedSlot.recurrenceDates
+            selectedDays: this.selectedSlot.recurrenceDates,
+            selectedDriveIds: this.selectedSlot.recurrenceDriveIds
         }
     }
 
     saveRecurrenceDatesPickerModalData(event) {
-        const { selectedDays } = event.detail; 
+        const { selectedDays, selectedDriveIds } = event.detail; 
         this.selectedSlot.recurrenceDates = selectedDays;
+        this.selectedSlot.recurrenceDriveIds = selectedDriveIds
     }
 
     closeRecurrenceDatesPickerModalData() {

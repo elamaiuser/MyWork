@@ -80,10 +80,6 @@
                 <behavior>Edit</behavior>
                 <field>Chapter__c</field>
             </layoutItems>
-            <layoutItems>
-                <behavior>Edit</behavior>
-                <field>Next_Scheduled_Drive_Updated__c</field>
-            </layoutItems>
         </layoutColumns>
         <layoutColumns>
             <layoutItems>
@@ -141,6 +137,10 @@
             <layoutItems>
                 <behavior>Edit</behavior>
                 <field>Business_Planning_Completed_Date__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>Next_Scheduled_Drive_Updated__c</field>
             </layoutItems>
             <layoutItems>
                 <behavior>Edit</behavior>
@@ -441,10 +441,11 @@
         <sortOrder>Asc</sortOrder>
     </relatedLists>
     <relatedLists>
-        <fields>sked_Location__c</fields>
+        <fields>NAME</fields>
         <relatedList>sked_Location_Account__c.sked_Account__c</relatedList>
     </relatedLists>
     <relatedLists>
+        <excludeButtons>New</excludeButtons>
         <fields>Contact__c</fields>
         <fields>Account_Service_Role__c</fields>
         <fields>Start_Date__c</fields>
@@ -553,6 +554,7 @@
         <relatedList>AccountBridgeAPI__x.guid__c</relatedList>
     </relatedLists>
     <relatedLists>
+        <excludeButtons>New</excludeButtons>
         <fields>Marketing_Program__c</fields>
         <fields>IsActive__c</fields>
         <fields>Date_Assigned__c</fields>

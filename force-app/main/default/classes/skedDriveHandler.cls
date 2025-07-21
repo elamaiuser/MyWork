@@ -31,7 +31,9 @@ public class skedDriveHandler extends skedTriggerHub {
         'sked_Cancellation_Reason__c' => 'sked_Cancellation_Reason__c',
         'sked_Initiated_By__c' => 'Initiated_By__c',
         'sked_APT_Required__c' => 'APT_Required__c',
-        'sked_APT_Quantity__c' => 'APT_Quantity__c'
+        'sked_APT_Quantity__c' => 'APT_Quantity__c',
+        'sked_Redcross_Volunteer_Required__c' => 'Red_Cross_Volunteer_Required__c',
+        'sked_Redcross_Volunteer_Quantity__c' => 'Red_Cross_Volunteer_Quantity__c'
     };
     
     public override void onBeforeInsert() {
@@ -1089,7 +1091,7 @@ public class skedDriveHandler extends skedTriggerHub {
                 AND sked__Status__c != :skedConstants.JOB_ALLOCATION_STATUS_DELETED
             ]);
             if (!mapJobAllocation.isEmpty()) {
-                if (!System.isBatch() || !Test.isRunningTest()) {
+                if (!System.isBatch() && !Test.isRunningTest()) {
                     skedJobAllocationPostProcessBatch.batchSetting batchSetting = new skedJobAllocationPostProcessBatch.batchSetting();
                     Database.executeBatch(new skedJobAllocationPostProcessBatch(batchSetting, mapJobAllocation.keyset()), 200);
                 }

@@ -21,14 +21,16 @@
             ($Profile.Name != &apos;APS Management&apos;),
             ($Profile.Name != &apos;APS Planner&apos;),
             ($Profile.Name != &apos;APS Scheduler&apos;),
-            ($Profile.Name != &apos;Global Admin&apos;)
+            ($Profile.Name != &apos;Global Admin&apos;),
+            ($Profile.Name != &apos;Informatica Integration Users&apos;)
         ),
         AND(
             (sked_Virtual_WFH__c != true),
             ($Profile.Name != &apos;System Administrator&apos;),
-            ($Profile.Name != &apos;Global Admin&apos;)
+            ($Profile.Name != &apos;Global Admin&apos;),
+            ($Profile.Name != &apos;Informatica Integration Users&apos;)
         )
     )
 )</errorConditionFormula>
-    <errorMessage>Only APS Users, Global Admin and System Admin can edit Work Address when WFH/Virtual Field is set.</errorMessage>
+    <errorMessage>Only APS Users, Informatica Integration Users, Global Admin and System Admin can edit Work Address when WFH/Virtual Field is set.</errorMessage>
 </ValidationRule>

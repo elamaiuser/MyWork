@@ -15,6 +15,7 @@ public class skedJobHandler extends skedTriggerHub {
         }
         autoCorrectDuration(this.context.newRecords);
         populateScheduler(this.context.newRecords);
+        updateVARLastModifiedBy(this.context.newRecords,null);
     }
     
     public override void onAfterInsert() {
@@ -28,6 +29,7 @@ public class skedJobHandler extends skedTriggerHub {
             doDateTimeConversion(this.context.newRecords, (Map<Id, sked__Job__c>)this.context.oldMap);
         }
         autoCorrectDuration(this.context.newRecords, (Map<Id, sked__Job__c>)this.context.oldMap);
+        updateVARLastModifiedBy(this.context.newRecords,(Map<Id, sked__Job__c>)this.context.oldMap);
     }
     
     public override void onAfterUpdate() {
@@ -620,6 +622,18 @@ public class skedJobHandler extends skedTriggerHub {
                     'sked_Job_Info_Changed_SFPush'
                 }
             ).generateNotifications(impactedJobs, oldImpactedJobMap);
+        }
+    }
+    private void updateVARLastModifiedBy(List<sked__Job__c> newRecords, Map<Id, sked__Job__c> oldMap) {
+        for (sked__Job__c newRecord : newRecords) {
+            if((newRecord.Id == null || oldMap == null || !oldMap.containsKey(newRecord.Id)) 
+                        && String.isNotBlank(newRecord.sked_Volunteer_Adjustment_Reason__c)) {
+                            newRecord.sked_VAR_Last_Modified_By__c = UserInfo.getUserId();
+            }else if(newRecord.Id != null && oldMap != null && oldMap.containsKey(newRecord.Id) 
+                    && oldMap.get(newRecord.Id).sked_Volunteer_Adjustment_Reason__c 
+                    != newRecord.sked_Volunteer_Adjustment_Reason__c) {
+                        newRecord.sked_VAR_Last_Modified_By__c = UserInfo.getUserId();
             }
         }
     }
+}
