@@ -3,7 +3,7 @@ private class slwcApprovalService_Test {
     
     @isTest
     static void getApprovalHistoryList_Test() {
-        skedTestDataFactory testDataFactory = new skedTestDataFactory('us', system.today().addMonths(6), 14);
+                skedTestDataFactory testDataFactory = new skedTestDataFactory('us', system.today().addMonths(6), 14);
         Map<string, sObject> mapTestData = testDataFactory.setupCommonTestData();
         mapTestData = testDataFactory.setupDriveData();
 
@@ -12,7 +12,7 @@ private class slwcApprovalService_Test {
         sked__Location__c testLocation1 = (sked__Location__c) mapTestData.get('testLocation1');
 
         Test.startTest();
-
+        
         System.runAs(new User(Id = UserInfo.getUserId())){
             skedBiomedCollectionOpHandler.createQueues(new Set<String>{opCenter.Name});
         }
@@ -27,6 +27,17 @@ private class slwcApprovalService_Test {
         testDcr.sked_Status__c = 'Pending';
 
         insert testDcr;
+        
+        sked_Drive_Change_Request_Item__c testDriveChangeRequestItem = new sked_Drive_Change_Request_Item__c(
+            sked_Drive_Change_Request__c = testDcr.Id,
+            sked_Old_Value__c = testLocation1.Id,
+            sked_New_Value__c = testLocation1.Id,
+            sked_Change_Reason__c = 'Test',
+            sked_Object_API_Name__c = 'Opportunity',
+            sked_Field_API_Name__c = 'Drive_Site__c',
+            sked_Type__c = 'Change'
+        );
+        insert testDriveChangeRequestItem;
 
         sked_Drive_Change_Request_Item__c testDriveChangeRequestItem = new sked_Drive_Change_Request_Item__c(
             sked_Drive_Change_Request__c = testDcr.Id,
@@ -48,7 +59,7 @@ private class slwcApprovalService_Test {
         model.recordId = testDcr.Id;
         model.comments = 'Testing';
 
-        slwcAuraResult approvalHistory = slwcApprovalService.getApprovalHistoryList(testDcr.Id);
+		slwcAuraResult approvalHistory = slwcApprovalService.getApprovalHistoryList(testDcr.Id);
     }
 
     @isTest
