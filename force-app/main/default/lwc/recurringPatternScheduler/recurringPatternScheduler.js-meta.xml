@@ -11,27 +11,28 @@
   <targetConfigs>
          <targetConfig targets="lightning__FlowScreen">
 
-            <property name="InputStartDateOffset" label="How many Days in Future should Start Date be (-1 for no restriction)" type="Integer"/>
-            <property name="InputEndtDateOffset" label="How many Days in Future can End Date be (-1 for no restriction)" type="Integer"/>
+            <property name="InputStartDateOffset" label="How many Days in Future should Start Date be (-1 for no restriction)" type="Integer" />
+            <property name="InputEndtDateOffset" label="How many Days in Future can End Date be (-1 for no restriction)" type="Integer" />
             <property name="InputEnableFlowButtons" label="Show Flow Buttons in Component" type="Boolean" />
-            <property name="InputDriveType" label="Drive Type" type="String"/>
 
-             <property name="OutputStartDateValue" label="Start Date" type="String"/>
-             <property name="OutputEndDateValue" label="End Date" type="String"/>
-             <property name="OutputRecurTypeValue" label="Recurrence Type" type="String"/>
-             <property name="OutputDonorEligibilityNeededFor" label="Donor Eligibility (Depricated)" type="String[]"/>
-             <property name="OutputDonorEligibilityType" label="Donor Eligibility calculation needed for which type?" type="String"/>
-             <property name="OutputDonorEligibilityDay" label="Donor Eligibility Day" type="String"/>
+             <property label="Drive Type" type="String" name="InputDriveType"></property>
+             <property label="Start Date" type="String" name="OutputStartDateValue"></property>
+             <property label="End Date" type="String" name="OutputEndDateValue"></property>
 
-             <property name="OutputMonthlyFrequencyValue" label="Monthly Frequency" type="Integer"/>
-             <property name="OutputMonthDayOccuranceValue" label="Day or Week of Month" type="String"/>
-             <property name="OutputMonthDayValue" label="Day of Month" type="String"/>
+             <property label="Recurrence Type" type="String" name="OutputRecurTypeValue"></property>
+             <property label="Donor Eligibility (Depricated)" type="String[]" name="OutputDonorEligibilityNeededFor"></property>
+             <property label="Donor Eligibility calculation needed for which type?" type="String" name="OutputDonorEligibilityType"></property>
 
-             <property name="OutputWeeklyFrequencyValue" label="Weekly Frequency" type="Integer"/>
-             <property name="OutputWeeklyFreqDay" label="Days of Week" type="String"/>
+             <property label="Donor Eligibility Day" type="String" name="OutputDonorEligibilityDay"></property>
+             <property label="Monthly Frequency" type="Integer" name="OutputMonthlyFrequencyValue"></property>
 
-             <property name="OutputStartDate" label="Start Date (Date Type)" type="Date" role="outputOnly"/>
-             <property name="OutputDates" label="Output Dates as Stringified Array" type="String"/>
+             <property label="Day or Week of Month" type="String" role="outputOnly" name="OutputMonthDayOccuranceValue"></property>
+             <property label="Day of Month" type="String" name="OutputMonthDayValue"></property>
+             <property label="Weekly Frequency" type="Integer" name="OutputWeeklyFrequencyValue"></property>
+             <property label="Days of Week" type="String" name="OutputWeeklyFreqDay"></property>
+
+             <property name="OutputStartDate" label="Start Date (Date Type)" type="Date" role="outputOnly" />
+             <property name="OutputDates" label="Output Dates as Stringified Array" type="String" />
              <property name="OutputDateList" label="Output Date String List" type="String[]" />
              <property name="OutputDateValues" label="Output Date List" type="Date[]" />
          </targetConfig>

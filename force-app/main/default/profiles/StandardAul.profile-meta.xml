@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Profile xmlns="http://soap.sforce.com/2006/04/metadata">
     <custom>false</custom>
     <userLicense>Salesforce Platform</userLicense>
@@ -44,11 +44,6 @@
     </applicationVisibilities>
     <applicationVisibilities>
         <application>standard__Content</application>
-        <default>false</default>
-        <visible>false</visible>
-    </applicationVisibilities>
-    <applicationVisibilities>
-        <application>standard__LightningInstrumentation</application>
         <default>false</default>
         <visible>false</visible>
     </applicationVisibilities>
@@ -5818,9 +5813,6 @@
     </layoutAssignments>
     <layoutAssignments>
         <layout>sked_Trade_API_Data__c-Trade API Data Layout</layout>
-    </layoutAssignments>
-    <layoutAssignments>
-        <layout>sked_Travel_Time_Breakdown_Refresh_Item__c-Travel Time Breakdown Refresh Queue Item Layout</layout>
     </layoutAssignments>
     <layoutAssignments>
         <layout>sked_Travel_Time_Breakdown_Refresh_Queue__c-Travel Time Breakdown Refresh Queue Layout</layout>

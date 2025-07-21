@@ -77,6 +77,10 @@
                 <behavior>Readonly</behavior>
                 <field>Market__c</field>
             </layoutItems>
+            <layoutItems>
+                <behavior>Readonly</behavior>
+                <field>HS_Relationship_Manager__c</field>
+            </layoutItems>
         </layoutColumns>
         <style>TwoColumnsTopToBottom</style>
     </layoutSections>

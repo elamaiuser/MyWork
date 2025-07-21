@@ -10,7 +10,7 @@
         <controllingField>sked_Type__c</controllingField>
         <restricted>true</restricted>
         <valueSetDefinition>
-            <sorted>false</sorted>
+            <sorted>true</sorted>
             <value>
                 <fullName>BSF</fullName>
                 <default>false</default>

@@ -8,117 +8,155 @@
     <sections>
         <columns>
             <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Site Collection Operation ID</displayNameOverride>
             <field>Id</field>
             <table>sked_Site_Collection_Operation__c</table>
         </columns>
         <columns>
             <checkedByDefault>true</checkedByDefault>
+            <displayNameOverride>Site Collection Operation Name</displayNameOverride>
             <field>Name</field>
             <table>sked_Site_Collection_Operation__c</table>
         </columns>
         <columns>
             <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Created Date</displayNameOverride>
             <field>CreatedDate</field>
             <table>sked_Site_Collection_Operation__c</table>
         </columns>
         <columns>
             <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Created By</displayNameOverride>
             <field>CreatedBy</field>
             <table>sked_Site_Collection_Operation__c</table>
         </columns>
         <columns>
             <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Last Modified Date</displayNameOverride>
             <field>LastModifiedDate</field>
             <table>sked_Site_Collection_Operation__c</table>
         </columns>
         <columns>
             <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Last Modified By</displayNameOverride>
             <field>LastModifiedBy</field>
             <table>sked_Site_Collection_Operation__c</table>
         </columns>
         <columns>
             <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Site</displayNameOverride>
             <field>sked_Site__c</field>
             <table>sked_Site_Collection_Operation__c</table>
         </columns>
         <columns>
             <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Collection Operation</displayNameOverride>
             <field>sked_Collection_Operation__c</field>
             <table>sked_Site_Collection_Operation__c</table>
         </columns>
         <columns>
             <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Collections Zip Code</displayNameOverride>
             <field>sked_Collections_Zip_Code__c</field>
             <table>sked_Site_Collection_Operation__c</table>
         </columns>
         <columns>
             <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>End Date</displayNameOverride>
             <field>sked_End_Date__c</field>
             <table>sked_Site_Collection_Operation__c</table>
         </columns>
         <columns>
             <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Region</displayNameOverride>
             <field>sked_Region__c</field>
             <table>sked_Site_Collection_Operation__c</table>
         </columns>
         <columns>
             <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Start Date</displayNameOverride>
             <field>sked_Start_Date__c</field>
             <table>sked_Site_Collection_Operation__c</table>
         </columns>
         <columns>
             <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Travel Distance 1</displayNameOverride>
             <field>sked_Travel_Distance_1__c</field>
             <table>sked_Site_Collection_Operation__c</table>
         </columns>
         <columns>
             <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Travel Distance 2</displayNameOverride>
             <field>sked_Travel_Distance_2__c</field>
             <table>sked_Site_Collection_Operation__c</table>
         </columns>
         <columns>
             <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Travel Time Breakdown JSON 2</displayNameOverride>
             <field>sked_Travel_Time_Breakdown_JSON_2__c</field>
             <table>sked_Site_Collection_Operation__c</table>
         </columns>
         <columns>
             <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Travel Time Breakdown JSON</displayNameOverride>
             <field>sked_Travel_Time_Breakdown_JSON__c</field>
             <table>sked_Site_Collection_Operation__c</table>
         </columns>
         <columns>
             <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Key</displayNameOverride>
             <field>sked_Key__c</field>
             <table>sked_Site_Collection_Operation__c</table>
         </columns>
         <columns>
             <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Key</displayNameOverride>
             <field>sked_Unique_Key__c</field>
             <table>sked_Site_Collection_Operation__c</table>
         </columns>
         <columns>
             <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>UniqueKey</displayNameOverride>
             <field>sked_UniqueKey__c</field>
             <table>sked_Site_Collection_Operation__c</table>
         </columns>
         <columns>
             <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>External ID</displayNameOverride>
             <field>sked_External_ID__c</field>
             <table>sked_Site_Collection_Operation__c</table>
         </columns>
         <columns>
             <checkedByDefault>false</checkedByDefault>
+            <field>User_Override__c</field>
+            <table>sked_Site_Collection_Operation__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Is Travel Time Invalid</displayNameOverride>
             <field>Is_Travel_Time_Invalid__c</field>
             <table>sked_Site_Collection_Operation__c</table>
         </columns>
         <columns>
             <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Post Migration Processed</displayNameOverride>
             <field>sked_Post_Migration_Processed__c</field>
             <table>sked_Site_Collection_Operation__c</table>
         </columns>
         <columns>
             <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Is Duplicate</displayNameOverride>
             <field>sked_Is_Duplicate__c</field>
+            <table>sked_Site_Collection_Operation__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>sked_Travel_Time_Index_CO2Site__c</field>
+            <table>sked_Site_Collection_Operation__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>sked_Travel_Time_Index_Site2CO__c</field>
             <table>sked_Site_Collection_Operation__c</table>
         </columns>
         <masterLabel>Site Collection Operations</masterLabel>

@@ -1,6 +1,106 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomLabels xmlns="http://soap.sforce.com/2006/04/metadata">
     <labels>
+        <fullName>BSF_SUPPORT_EMAIL_ID</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>BSF_SUPPORT_EMAIL_ID</shortDescription>
+        <value>subhajit.bose@exavalu.com,barnojit.sharma@exavalu.com,fitsum.worku@redcross.org,neyti.blome@redcross.org,testingarcbsfcust@gmail.com,soumojit.sur@redcross.org</value>
+    </labels>
+    <labels>
+        <fullName>TravelTimeEditableProfiles</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>TravelTimeEditableProfiles</shortDescription>
+        <value>APS Admin,System Administrator,Global Admin</value>
+    </labels>
+    <labels>
+        <fullName>BSF_Mass_Account_Service_Role_Warning_Message</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>BSF Mass Account Service Role Warning Message</shortDescription>
+        <value>An active Blood Program Leader Role is already associated to this account. When you click Proceed, the Blood Program Leader Role will be removed form your selections.</value>
+    </labels>
+    <labels>
+        <fullName>BSF_Mass_Drive_Service_Role_After_Hours_Contact_Warning_Message</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>BSF Mass Drive Service Role After Hours Contact Warning Message</shortDescription>
+        <value>The After Hours Contact must have an after hours phone number selected on their contact record.</value>
+    </labels>
+    <labels>
+        <fullName>BSF_Mass_Drive_Service_Role_Call_List_Recipient_Warning_Message</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>BSF Mass Drive Service Role Call List Recipient Warning Message</shortDescription>
+        <value>No call list will be generated due to request within 4.5 weeks</value>
+    </labels>
+    <labels>
+        <fullName>BSF_Mass_Drive_Service_Role_Primary_Contact_Warning_Message</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>BSF Mass Drive Service Role Primary Contact Warning Message</shortDescription>
+        <value>A Primary Contact Role already exist for this drive.</value>
+    </labels>
+    <labels>
+        <fullName>BSF_Mass_Drive_Service_Role_Warning_Message</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>BSF Mass Drive Service Role Warning Message</shortDescription>
+        <value>The selected Roles related to the above warning will not be created if you proceed.</value>
+    </labels>
+    <labels>
+        <fullName>ColorCodeJson</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>ColorCodeJson</shortDescription>
+        <value>{&quot;Blue&quot;:&quot;#0077d8&quot;,&quot;Amber&quot;:&quot;#efb009&quot;,&quot;Green&quot;:&quot;#369a4c&quot;,&quot;Red&quot;:&quot;#c12f24&quot;}</value>
+    </labels>
+    <labels>
+        <fullName>NO_SBPM_ABM</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>NO_SBPM/ABM</shortDescription>
+        <value>No SBPM</value>
+    </labels>
+    <labels>
+        <fullName>OpportunityTeamSyncTriggerSize</fullName>
+        <categories>Apex constant</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>OpportunityTeam Sync Batch Size Trigger</shortDescription>
+        <value>100</value>
+    </labels>
+    <labels>
+        <fullName>Potential_Feeder_Group_Lead_Status</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Potential Feeder Group Lead Status</shortDescription>
+        <value>Potential Feeder Group,Future Outreach,Feeder Group - Qualified,Feeder Group - Unqualified</value>
+    </labels>
+    <labels>
+        <fullName>Recurring_Mobile_Limit</fullName>
+        <categories>BSF Limits</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Recurring Drive Limit</shortDescription>
+        <value>400</value>
+    </labels>
+    <labels>
+        <fullName>ToHandleConstructorOfUpdateDrivesVehicleAllocationSchedulable</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>ToHandleConstructorOfUpdateDrivesVehicleAllocationSchedulable</shortDescription>
+        <value>2</value>
+    </labels>
+    <labels>
+        <fullName>Orphan_Job_Allocations_Email</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Orphan_Job_Allocations_Email</shortDescription>
+        <value>BSFSupport@redcross.org;</value>
+    </labels>
+    <labels>
         <fullName>Mobile_Account_Record_Type</fullName>
         <language>en_US</language>
         <protected>false</protected>
