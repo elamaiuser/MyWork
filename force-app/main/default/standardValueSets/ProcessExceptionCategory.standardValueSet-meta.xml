@@ -31,4 +31,19 @@
         <default>false</default>
         <label>Place Order</label>
     </standardValue>
+    <standardValue>
+        <fullName>Order To Asset</fullName>
+        <default>false</default>
+        <label>Order To Asset</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Order Item Summary To Asset</fullName>
+        <default>false</default>
+        <label>Order Item Summary To Asset</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Order To Billing Schedule</fullName>
+        <default>false</default>
+        <label>Order To Billing Schedule</label>
+    </standardValue>
 </StandardValueSet>

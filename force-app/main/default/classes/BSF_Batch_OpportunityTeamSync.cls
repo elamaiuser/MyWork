@@ -110,6 +110,7 @@ maxEndDate = actTeamMember.End_Date__c;
             
             OpportunitySplitRecursive.isOppotysplitBackEndUpdated = true; 
             if(listOfOpptyTeamMembersTodelete.size() > 0){
+                System.debug('-------------BatchOpportunityTeamSync-------line 86------listOfOpptyTeamMembersTodelete: '+listOfOpptyTeamMembersTodelete);
                 Database.DeleteResult[] drList = Database.delete(listOfOpptyTeamMembersTodelete,false);
                 for(Database.DeleteResult dr : drList) {
                     if (!dr.isSuccess()) {
@@ -123,6 +124,7 @@ maxEndDate = actTeamMember.End_Date__c;
             }
             
             if(optyTeamMemberNotExistListToInsert.size() > 0){
+                System.debug('-------------BatchOpportunityTeamSync-------line 100------optyTeamMemberNotExistListToInsert: '+optyTeamMemberNotExistListToInsert);
                 Database.SaveResult[] srList = Database.insert(optyTeamMemberNotExistListToInsert, false);
                 for (Database.SaveResult sr : srList) {
                     if (!sr.isSuccess()) {

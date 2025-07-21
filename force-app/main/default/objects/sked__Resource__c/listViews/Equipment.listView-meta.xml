@@ -20,9 +20,9 @@
         <value>1</value>
     </filters>
     <filters>
-        <field>sked_ARC_Region_Name__c</field>
-        <operation>contains</operation>
-        <value>greater penn</value>
+        <field>sked_Biomed_Collection_Op_Center_Name__c</field>
+        <operation>equals</operation>
+        <value>Baltimore MD</value>
     </filters>
     <filters>
         <field>RECORDTYPE</field>

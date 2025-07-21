@@ -814,7 +814,7 @@
             <checkedByDefault>false</checkedByDefault>
             <field>HS_Relationship_Manager_Notes__c</field>
             <table>Account</table>
-        </columns>        
+        </columns>
         <columns>
             <checkedByDefault>false</checkedByDefault>
             <field>Chapter__c</field>

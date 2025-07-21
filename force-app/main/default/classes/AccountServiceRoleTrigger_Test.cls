@@ -272,4 +272,5 @@ public class AccountServiceRoleTrigger_Test {
     	assert.areequal(false, updatedOpportunity.Call_List_Recipient_Exist__c, 'Call List Recipient flag should be set to true');
     }
 	//Logic for test class for HRP-11103 ***ends here***
+
 }

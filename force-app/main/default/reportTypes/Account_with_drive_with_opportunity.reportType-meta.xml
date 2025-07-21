@@ -798,7 +798,7 @@
             <checkedByDefault>false</checkedByDefault>
             <field>Business_Planning_Completed_Date__c</field>
             <table>Account</table>
-        </columns>        
+        </columns>
         <columns>
             <checkedByDefault>false</checkedByDefault>
             <field>Last_Closed_Drive_New__c</field>

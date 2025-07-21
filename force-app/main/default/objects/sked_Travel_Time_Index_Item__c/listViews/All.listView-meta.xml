@@ -12,12 +12,6 @@
     <columns>CREATEDBY_USER</columns>
     <columns>CREATED_DATE</columns>
     <columns>sked_Last_Refresh_Date__c</columns>
-    <columns>LAST_UPDATE</columns>
     <filterScope>Everything</filterScope>
-    <filters>
-        <field>sked_Key__c</field>
-        <operation>contains</operation>
-        <value>34.337076 -84.911994</value>
-    </filters>
     <label>All</label>
 </ListView>

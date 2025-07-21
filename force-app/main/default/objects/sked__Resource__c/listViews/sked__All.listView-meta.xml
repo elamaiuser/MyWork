@@ -11,5 +11,10 @@
     <columns>sked__Is_Active__c</columns>
     <columns>sked_Line_of_Service__c</columns>
     <filterScope>Everything</filterScope>
+    <filters>
+        <field>sked_District_Name__c</field>
+        <operation>notEqual</operation>
+        <value>Roch</value>
+    </filters>
     <label>All</label>
 </ListView>

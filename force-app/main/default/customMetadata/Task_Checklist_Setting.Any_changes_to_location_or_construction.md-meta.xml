@@ -12,7 +12,7 @@
     </values>
     <values>
         <field>Hyperlink__c</field>
-        <value xsi:nil="true"/>
+        <value xsi:nil="true" />
     </values>
     <values>
         <field>Input_API_Name__c</field>
@@ -32,11 +32,11 @@
     </values>
     <values>
         <field>Parent__c</field>
-        <value xsi:nil="true"/>
+        <value xsi:nil="true" />
     </values>
     <values>
         <field>Picklist_Input_1__c</field>
-        <value xsi:nil="true"/>
+        <value xsi:nil="true" />
     </values>
     <values>
         <field>Section_Header__c</field>
@@ -48,11 +48,11 @@
     </values>
     <values>
         <field>Subtype__c</field>
-        <value xsi:nil="true"/>
+        <value xsi:nil="true" />
     </values>
     <values>
         <field>UI_Text__c</field>
-        <value xsi:type="xsd:string">Are there any changes to the blood drive location or construction that could delay our staff&apos;s arrival or ability to set up on time?</value>
+        <value xsi:type="xsd:string">Are there any changes to the blood drive location or construction that could delay our staff&#39;s arrival or ability to set up on time?</value>
     </values>
     <values>
         <field>Unique_Name__c</field>

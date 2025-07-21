@@ -195,7 +195,7 @@ global class skedModels {
         public List<string> driveTypes;
         public List<string> districtIds;
         public List<activityCollectionOperation> activityCollectionOperations;
-        public List<activityResource> activityResources;  
+        public List<activityResource> activityResources; 
     }
 
     global virtual class activityCollectionOperation extends event {

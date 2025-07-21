@@ -67,7 +67,7 @@
                     <name>cacheAge</name>
                     <value>1440</value>
                 </componentInstanceProperties>
-                <componentInstanceProperties>                    
+                <componentInstanceProperties>
                     <name>label</name>
                     <value>Missing Key Fields - DRMS Audit</value>
                 </componentInstanceProperties>
@@ -125,7 +125,7 @@
                     <name>cacheAge</name>
                     <value>1440</value>
                 </componentInstanceProperties>
-                <componentInstanceProperties>                    
+                <componentInstanceProperties>
                     <name>label</name>
                 </componentInstanceProperties>
                 <componentInstanceProperties>
@@ -308,7 +308,7 @@
         </itemInstances>
         <itemInstances>
             <componentInstance>
-                <componentInstanceProperties>                    
+                <componentInstanceProperties>
                     <name>tabs</name>
                     <value>Facet-3f6b0d50-3b6c-49e4-b13c-be113a63bf62</value>
                 </componentInstanceProperties>

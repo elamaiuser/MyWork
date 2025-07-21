@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<EmailTemplate xmlns="http://soap.sforce.com/2006/04/metadata">
+    <available>true</available>
+    <description>Email to BPLs about staff shortages and how to continue to help.</description>
+    <encodingKey>ISO-8859-1</encodingKey>
+    <letterhead>ARC_Logo_Test</letterhead>
+    <name>Evergreen_General_Staff Shortages</name>
+    <style>formalLetter</style>
+    <subject>Your Continued Impact</subject>
+    <textOnly>Dear &lt;&lt;Insert BPL Name&gt;&gt;,
+
+Thank you for your partnership as we continue to experience staff shortages.
+
+Though your blood drive has been affected, please know your role as a Blood Program Leader remains invaluable, as you continue to make an impact on the lives of so many patients and their loved ones.
+
+We are actively working to hire more staff and are doing everything we can to keep blood drives as planned. Balancing blood drives with patient need is a daily effort that requires assessing available resources to make the best choices to protect patient care, our volunteer partners and staff.
+
+There are still ways you can help!
+
+- Reschedule your blood drive: I’d love to discuss a new date for your blood drive.
+
+- Donate blood, if eligible: To make an appointment or to learn more, download the American Red Cross Blood Donor App, visit RedCrossBlood.org, call 1-800-RED CROSS (1-800-733-2767) or enable the Blood Donor Skill on any Alexa Echo device.
+
+- Support local blood drives: We also have locations where we are still able to run with our limited resources and would appreciate your support in sharing drive opportunities with your network.
+
+Drive(s) Near You:
+
+Drive Name:
+
+Location:
+
+Date:
+
+Time:
+
+Thank you so much for your continued support of the Red Cross as we work to deliver our mission.
+
+Please feel free to call me with any questions.
+
+Sincerely,
+
+&lt;&lt;Insert AM Signature&gt;&gt;</textOnly>
+    <type>html</type>
+    <uiType>Aloha</uiType>
+</EmailTemplate>

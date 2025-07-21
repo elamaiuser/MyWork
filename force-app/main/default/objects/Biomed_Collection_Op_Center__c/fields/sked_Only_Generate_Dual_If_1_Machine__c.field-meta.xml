@@ -3,6 +3,7 @@
     <fullName>sked_Only_Generate_Dual_If_1_Machine__c</fullName>
     <defaultValue>false</defaultValue>
     <description>HRP-13862</description>
+    <externalId>false</externalId>
     <label>Only Generate Dual If 1 Machine</label>
     <trackHistory>false</trackHistory>
     <trackTrending>false</trackTrending>

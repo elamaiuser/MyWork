@@ -10,10 +10,6 @@
             <default>false</default>
         </values>
         <values>
-            <fullName>Alameda CA</fullName>
-            <default>false</default>
-        </values>
-        <values>
             <fullName>Albany NY</fullName>
             <default>false</default>
         </values>
@@ -115,6 +111,10 @@
         </values>
         <values>
             <fullName>Chicago IL</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Cincinnati OH</fullName>
             <default>false</default>
         </values>
         <values>

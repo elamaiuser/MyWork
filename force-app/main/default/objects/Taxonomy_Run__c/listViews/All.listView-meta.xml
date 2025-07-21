@@ -9,6 +9,7 @@
     <columns>Status__c</columns>
     <columns>Processing_Start__c</columns>
     <columns>Processing_End__c</columns>
+    <columns>Deleted_On__c</columns>
     <filterScope>Everything</filterScope>
     <label>All</label>
 </ListView>

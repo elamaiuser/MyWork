@@ -165,7 +165,7 @@ global class skedActivityService extends skedEventService {
         }
         if (startDate != NULL && endDate != NULL) {
             queryBuilder.addCondition('sked_Start_Date__c >= {0}', startDate);
-            queryBuilder.addCondition('sked_Start_Date__c <= {0}', endDate);
+            queryBuilder.addCondition('sked_End_Date__c <= {0}', endDate);
         }
         else {
             if (startDate != NULL) {

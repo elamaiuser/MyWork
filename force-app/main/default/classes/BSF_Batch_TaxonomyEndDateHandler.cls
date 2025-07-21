@@ -148,6 +148,7 @@ system.debug('oldTaxVersionKey'+oldTaxVersionKey);
 }*/
                 if(tx.Version_Key__c  == this.oldTaxVersionKey)
                 {
+                 
                     oldVersionTaxRecords.add(tx);
                     //system.debug('tx'+tx);
                     
@@ -156,6 +157,7 @@ system.debug('oldTaxVersionKey'+oldTaxVersionKey);
             //system.debug('oldVersionTaxRecords'+oldVersionTaxRecords);
             //system.debug('newVersionTaxList'+newVersionTaxList);
             BSF_Batch_TaxonomyEndDateHelper.endDateTaxonomy(newVersionTaxList,oldVersionTaxRecords);
+          
         } catch (Exception e) { //HRP-14298
             System.debug('Error in execute method: ' + e.getMessage());
             Taxo_Utilities.logErrorForException(e, 'BSF_Batch_TaxonomyEndDateHandler', 'Execute', e.getMessage(), e.getMessage(), 'Taxonomy_Run__c',recordType,taxVer);
@@ -258,8 +260,7 @@ system.debug('oldTaxVersionKey'+oldTaxVersionKey);
                // }
             } 
             //HRP-14298(//If Bio Recruitment CD is not in the list of Taxononmy run records, then Run the Oppportunity team sync)
-           if(this.allowChaining == true){
-             
+            if(this.allowChaining == true){
                 List<Taxonomy_Run__c> txrnRecords = [
                     SELECT Id, Taxo_Record_Type__c,Status__c,Future_Version_Number__c, Sequence__c
                     FROM Taxonomy_Run__c 
@@ -281,7 +282,7 @@ system.debug('oldTaxVersionKey'+oldTaxVersionKey);
                         System.debug('EST Datetime: ' + estDateTime);
                         Integer batchSize = Taxo_Utilities.getBatchSize(BSF_Constants.BIO_RECRUITMENT_RECORD_TYPE, 'BSF_Batch_OpportunityTeamSync');   
                         BSF_Batch_OpportunityTeamSync batch = new BSF_Batch_OpportunityTeamSync(startDateTime, System.Now(),null);
-                       database.executeBatch(batch, batchSize);
+                        database.executeBatch(batch, batchSize);
                     }
                 }
             }

@@ -12,7 +12,7 @@
     </values>
     <values>
         <field>Creation_Date_Offset__c</field>
-        <value xsi:nil="true"/>
+        <value xsi:nil="true" />
     </values>
     <values>
         <field>Description__c</field>
@@ -21,6 +21,10 @@
     <values>
         <field>Due_Date_Offset__c</field>
         <value xsi:type="xsd:double">14.0</value>
+    </values>
+    <values>
+        <field>Task_Creation_Threshold_In_Days__c</field>
+        <value xsi:nil="true" />
     </values>
     <values>
         <field>Task_Subject__c</field>

@@ -8,11 +8,11 @@
     </values>
     <values>
         <field>Field_Mapping_Object__c</field>
-        <value xsi:nil="true" />
+        <value xsi:nil="true"/>
     </values>
     <values>
         <field>Help_Text__c</field>
-        <value xsi:nil="true" />
+        <value xsi:nil="true"/>
     </values>
     <values>
         <field>Hyperlink__c</field>
@@ -38,15 +38,15 @@ https://americanredcross.sharepoint.com/teams/TheField/Donor%20Recruitment/Forms
     </values>
     <values>
         <field>Parent__c</field>
-        <value xsi:nil="true" />
+        <value xsi:nil="true"/>
     </values>
     <values>
         <field>Picklist_Input_1__c</field>
-        <value xsi:nil="true" />
+        <value xsi:nil="true"/>
     </values>
     <values>
         <field>Section_Header__c</field>
-        <value xsi:nil="true" />
+        <value xsi:nil="true"/>
     </values>
     <values>
         <field>Subject__c</field>
@@ -54,7 +54,7 @@ https://americanredcross.sharepoint.com/teams/TheField/Donor%20Recruitment/Forms
     </values>
     <values>
         <field>Subtype__c</field>
-        <value xsi:nil="true" />
+        <value xsi:nil="true"/>
     </values>
     <values>
         <field>UI_Text__c</field>

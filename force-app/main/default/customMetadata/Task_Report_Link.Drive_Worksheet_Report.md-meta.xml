@@ -20,6 +20,6 @@
     </values>
     <values>
         <field>Task_Type__c</field>
-        <value xsi:nil="true"/>
+        <value xsi:nil="true" />
     </values>
 </CustomMetadata>

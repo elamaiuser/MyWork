@@ -133,7 +133,7 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
                     this.driveDateToEval = Date.newInstance(dT.year(), dT.month(), dT.day());
                     cbLogWrapper.driveDateToEval = this.driveDateToEval;
                 }
-            }        
+            }      
         } 
         catch(Exception ex) {
             if(source != NULL && !String.isBlank(source) && source.equalsIgnoreCase(BSF_Constants.OPP_SOURCE_CALENDAR_BUILD)) { //No need for Adhoc CB drives HRP-11368

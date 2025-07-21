@@ -40,7 +40,7 @@
         </inputParameters>
         <nameSegment>UFIDGenerator</nameSegment>
     </actionCalls>
-    <apiVersion>63.0</apiVersion>    
+    <apiVersion>63.0</apiVersion>
     <description>HRP-14498</description>
     <environments>Default</environments>
     <formulas>

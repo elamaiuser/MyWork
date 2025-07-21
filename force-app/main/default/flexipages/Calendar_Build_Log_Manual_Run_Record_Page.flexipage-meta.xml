@@ -659,7 +659,7 @@
                     <name>horizontalAlignment</name>
                     <value>false</value>
                 </componentInstanceProperties>
-                <componentInstanceProperties>                    
+                <componentInstanceProperties>
                     <name>label</name>
                     <value>@@@SFDCInformationSFDC@@@</value>
                 </componentInstanceProperties>
@@ -677,7 +677,7 @@
                     <name>horizontalAlignment</name>
                     <value>false</value>
                 </componentInstanceProperties>
-                <componentInstanceProperties>                    
+                <componentInstanceProperties>
                     <name>label</name>
                     <value>Drive Status Correction Stats</value>
                 </componentInstanceProperties>
@@ -702,7 +702,7 @@
                     <name>horizontalAlignment</name>
                     <value>false</value>
                 </componentInstanceProperties>
-                <componentInstanceProperties>                    
+                <componentInstanceProperties>
                     <name>label</name>
                     <value>Calendar Build Batch Stats</value>
                 </componentInstanceProperties>
@@ -720,7 +720,7 @@
                     <name>horizontalAlignment</name>
                     <value>false</value>
                 </componentInstanceProperties>
-                <componentInstanceProperties>                    
+                <componentInstanceProperties>
                     <name>label</name>
                     <value>Drive Generation Stats</value>
                 </componentInstanceProperties>
@@ -738,7 +738,7 @@
                     <name>horizontalAlignment</name>
                     <value>false</value>
                 </componentInstanceProperties>
-                <componentInstanceProperties>                    
+                <componentInstanceProperties>
                     <name>label</name>
                     <value>Sys Gen Run Stats</value>
                 </componentInstanceProperties>
@@ -756,7 +756,7 @@
                     <name>horizontalAlignment</name>
                     <value>false</value>
                 </componentInstanceProperties>
-                <componentInstanceProperties>                    
+                <componentInstanceProperties>
                     <name>label</name>
                     <value>@@@SFDCSystem_InformationSFDC@@@</value>
                 </componentInstanceProperties>

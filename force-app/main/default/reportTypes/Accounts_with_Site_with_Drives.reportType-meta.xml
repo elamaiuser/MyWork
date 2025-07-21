@@ -838,7 +838,7 @@
             <checkedByDefault>false</checkedByDefault>
             <field>HS_Relationship_Manager_Notes__c</field>
             <table>Account</table>
-        </columns>        
+        </columns>
         <columns>
             <checkedByDefault>false</checkedByDefault>
             <field>Last_Closed_Drive_New__c</field>
