@@ -95,7 +95,9 @@
 		<members>slwcAddRecurrenceStaffingConstraintModal</members>
 		<members>slwcAddStaffingConstraintModal</members>
 		<members>slwcConstants</members>
-		<members>slwcDriveGenerator</members>		
+		<members>slwcDriveCalendar</members>
+		<members>slwcDriveGenerator</members>
+		<members>slwcDriveSchedulingConsole</members>
 		<members>slwcDriveSchedulingFilters</members>
 		<members>slwcEditRecurrenceStaffingConstraintModal</members>
 		<members>slwcExceptionConsole</members>
