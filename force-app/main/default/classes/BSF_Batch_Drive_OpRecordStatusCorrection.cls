@@ -9,8 +9,6 @@
 * Date					     Developer Name			     Comments
 ***************************************************************************
 * 08/13/2024				  Ankit Kundu		     Created for HRP-13126
-* 09/18/2024				  Priti Jana			 New Custom exception and 
-													 logic to cover catch block during test class run
 ***************************************************************************/
 
 global class BSF_Batch_Drive_OpRecordStatusCorrection implements Database.Batchable<sked_Operation_Record__c>, Database.Stateful, Schedulable {
@@ -77,18 +75,18 @@ global class BSF_Batch_Drive_OpRecordStatusCorrection implements Database.Batcha
                     ''
                 )
             };
-            Database.SaveResult[] logInsertResult = Database.insert(errorLogToInsert, FALSE);          
+            Database.SaveResult[] logInsertResult = Database.insert(errorLogToInsert, FALSE);
             cbLogWrapper = new DriveGenerationUtil.CalendarBuildLogWrapper(
                 manualRunDate, 
                 BSF_Constants.BATCH_DRIVE_STATUS_CORRECTION, 
                 this.runType
             );
-            
+        
             cbLogWrapper.batchException = ex;
             cbLogWrapper.opRecordListToBeProcessed = new List<sked_Operation_Record__c>();
             cbLogWrapper.errorLogIdsCreatedDuringBatchRun = BSF_Utilities.getSuccessfullySavedRecordIds(logInsertResult);
             DriveGenerationUtil.captureCbLogAndCbErrorLog(cbLogWrapper);
-        }       
+        }     
     }
  
     global Iterable<sked_Operation_Record__c> start(Database.BatchableContext bc) {
@@ -172,7 +170,7 @@ global class BSF_Batch_Drive_OpRecordStatusCorrection implements Database.Batcha
                 BSF_Utilities.createBsfErrorLogForExceptions(
                     ex,
                     'BSF_Batch_Drive_OpRecordStatusCorrection',
-                    'Finish Method Call',
+                    'Constructor Call',
                     BSF_Constants.BATCH_DRIVE_STATUS_CORRECTION,
                     BSF_Constants.BATCH_DRIVE_STATUS_CORRECTION,
                     'sked_Operation_Record__c',
@@ -190,6 +188,7 @@ global class BSF_Batch_Drive_OpRecordStatusCorrection implements Database.Batcha
             cbLogWrapper.errorLogIdsCreatedDuringBatchRun = BSF_Utilities.getSuccessfullySavedRecordIds(logInsertResult);
             DriveGenerationUtil.captureCbLogAndCbErrorLog(cbLogWrapper);
         }
+        Database.executeBatch(new BSF_Batch_DriveStatusCorrection(),50);
     }
 
     private static DriveGenerationUtil.CalendarBuildLogWrapper getOpRecordListAndCaptureWrapper(DriveGenerationUtil.CalendarBuildLogWrapper cbLogWrapper ) {
@@ -205,6 +204,6 @@ global class BSF_Batch_Drive_OpRecordStatusCorrection implements Database.Batcha
                                                                                     ]);
         return cbLogWrapper;
     }
-    
+
     private class customStatusCorrectionException extends Exception {}
 }

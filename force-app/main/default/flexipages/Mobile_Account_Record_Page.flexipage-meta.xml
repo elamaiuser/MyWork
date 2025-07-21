@@ -963,6 +963,9 @@
                         <valueListItems>
                             <value>End_Date__c</value>
                         </valueListItems>
+                        <valueListItems>
+                            <value>Account_Service_End_Reason__c</value>
+                        </valueListItems>
                     </valueList>
                 </componentInstanceProperties>
                 <componentInstanceProperties>
@@ -1028,6 +1031,12 @@
                         </valueListItems>
                         <valueListItems>
                             <value>End_Date__c</value>
+                        </valueListItems>
+                        <valueListItems>
+                            <value>Lost_Reason__c</value>
+                        </valueListItems>
+                        <valueListItems>
+                            <value>End_Reason__c</value>
                         </valueListItems>
                     </valueList>
                 </componentInstanceProperties>

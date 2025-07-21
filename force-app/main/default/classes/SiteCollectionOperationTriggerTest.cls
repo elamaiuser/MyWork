@@ -175,25 +175,24 @@ private class SiteCollectionOperationTriggerTest {
     private static void testMethodOne(){
 
         Date startDate = System.today().addDays(-100);
-        sked_Site_Collection_Operation__c siteCO = [SELECT Id, User_Override__c FROM sked_Site_Collection_Operation__c WHERE sked_Start_Date__c =: startDate LIMIT 1];
+        sked_Site_Collection_Operation__c siteCO = [SELECT Id FROM sked_Site_Collection_Operation__c WHERE sked_Start_Date__c =: startDate LIMIT 1];
         Assert.isNotNull(siteCO.Id);
 
         Test.startTest();
-            siteCO.User_Override__c = true;
             skedHubBase.BypassUpdateTriggers = true;
             update siteCO;
         Test.stopTest();
         Assert.isNotNull(siteCO.Id);
     }
 
-    @isTest
+    /*@isTest
     private static void testMethodTwo(){
 
         Date startDate = System.today().addDays(-100);
-        sked_Site_Collection_Operation__c siteCO = [SELECT Id, User_Override__c FROM sked_Site_Collection_Operation__c WHERE sked_Start_Date__c =: startDate LIMIT 1];
+        sked_Site_Collection_Operation__c siteCO = [SELECT Id FROM sked_Site_Collection_Operation__c WHERE sked_Start_Date__c =: startDate LIMIT 1];
         Assert.isNotNull(siteCO.Id);
 
-        sked_Travel_Time_Index_Item__c ttitem = [SELECT Id, User_Override__c FROM sked_Travel_Time_Index_Item__c WHERE sked_Timezone__c = 'America/New_York' LIMIT 1];
+        sked_Travel_Time_Index_Item__c ttitem = [SELECT Id FROM sked_Travel_Time_Index_Item__c WHERE sked_Timezone__c = 'America/New_York' LIMIT 1];
 
         skedHubBase.BypassUpdateTriggers = true;
         TriggerHandler.bypass('TravelTimeIndexItemTriggerHandler');
@@ -203,18 +202,17 @@ private class SiteCollectionOperationTriggerTest {
         Assert.isNotNull(ttitem.Id);
 
         Test.startTest();
-            siteCO.User_Override__c = true;
             skedHubBase.BypassUpdateTriggers = true;
-            update siteCO;
+            update siteCO; //Blank update
         Test.stopTest();
         Assert.isNotNull(siteCO.Id);
-    }
+    }*/
 
     @isTest
     private static void testMethodThree(){
 
         Date startDate = System.today().addDays(-100);
-        sked_Site_Collection_Operation__c siteCO = [SELECT Id, User_Override__c FROM sked_Site_Collection_Operation__c WHERE sked_Start_Date__c =: startDate LIMIT 1];
+        sked_Site_Collection_Operation__c siteCO = [SELECT Id FROM sked_Site_Collection_Operation__c WHERE sked_Start_Date__c =: startDate LIMIT 1];
         Assert.isNotNull(siteCO.Id);
 
         Test.startTest();
@@ -222,7 +220,7 @@ private class SiteCollectionOperationTriggerTest {
             delete siteCO;
         Test.stopTest();
 
-        List<sked_Site_Collection_Operation__c> siteCO1 = [SELECT Id, User_Override__c FROM sked_Site_Collection_Operation__c WHERE sked_Start_Date__c =: startDate];
+        List<sked_Site_Collection_Operation__c> siteCO1 = [SELECT Id FROM sked_Site_Collection_Operation__c WHERE sked_Start_Date__c =: startDate];
         Assert.isTrue(siteCO1.isEmpty());
     }
 

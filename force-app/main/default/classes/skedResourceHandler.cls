@@ -27,7 +27,8 @@ public class skedResourceHandler extends skedTriggerHub {
         addMobileTypeTags(this.context.newRecords);
         addEquipmentDriveTypeTags(this.context.newRecords);
         addPersonDriveTypeTags(this.context.newRecords);
-        assignDefaultPatterns(this.context.newRecords); 
+        addRealIdTypeTags(this.context.newRecords);
+        assignDefaultPatterns(this.context.newRecords);
         
         if (!skedSetting.instance.Admin.migrationMode) {
             populateGeoLocation(this.context.newRecords);
@@ -53,6 +54,7 @@ public class skedResourceHandler extends skedTriggerHub {
         updateMobileTypeTags(this.context.newRecords, (Map<Id, sked__Resource__c>)this.context.oldMap);
         updateEquipmentDriveTypeTags(this.context.newRecords, (Map<Id, sked__Resource__c>)this.context.oldMap);
         updatePersonDriveTypeTags(this.context.newRecords, (Map<Id, sked__Resource__c>)this.context.oldMap);
+        updateRealIdTypeTags(this.context.newRecords, (Map<Id, sked__Resource__c>)this.context.oldMap);
         
         if (!skedSetting.instance.Admin.migrationMode) {
             captureFieldChangeExceptionLog(this.context.newRecords, (Map<Id, sked__Resource__c>)this.context.oldMap);
@@ -70,8 +72,8 @@ public class skedResourceHandler extends skedTriggerHub {
     /*********************************************************** Privated Methods ***********************************************************/
     private void validate(List<sked__Resource__c> newRecords) {
         for (sked__Resource__c newRecord : newRecords) {
-            if (newRecord.sked__Geolocation__Longitude__s != NULL) {
-                if (newRecord.sked__Geolocation__Longitude__s < -180 || newRecord.sked__Geolocation__Longitude__s >= -30) {
+            if (newRecord.sked__Geolocation__Longitude__s != NULL || newRecord.sked__GeoLocation__Latitude__s != NULL) {
+                if (newRecord.sked__Geolocation__Longitude__s < -180 || newRecord.sked__Geolocation__Longitude__s >= -30  || newRecord.sked__GeoLocation__Latitude__s > 71 || newRecord.sked__GeoLocation__Latitude__s < 25) {
                     newRecord.addError('Geolocation must be in North America ');
                 }
             }
@@ -158,6 +160,38 @@ public class skedResourceHandler extends skedTriggerHub {
                     );
                     newResourceTags.add(newResourceTag);
                 }
+            }
+            insert newResourceTags;
+        }
+    }
+
+    private void addRealIdTypeTags(List<sked__Resource__c> newRecords) {
+        List<sked__Resource__c> recordsToPopulate = new List<sked__Resource__c>();
+        for (sked__Resource__c newRecord : newRecords) {
+            if (newRecord.sked_REAL_ID_Compliant_indicator__c) {
+                recordsToPopulate.add(newRecord);
+            }
+        }
+        if (!recordsToPopulate.isEmpty()) {
+            Date startDate = system.today();
+            
+            List<sked__Tag__c> skedTags = [SELECT Id, Name
+                                           FROM sked__Tag__c
+                                           WHERE sked__Type__c = :skedConstants.TAG_TYPE_CERTIFICATION];
+            Map<string, sked__Tag__c> mapTag = new Map<string, sked__Tag__c>();
+            for (sked__Tag__c skedTag : skedTags) {
+                mapTag.put(skedTag.Name, skedTag);
+            }
+            List<sked__Resource_Tag__c> newResourceTags = new List<sked__Resource_Tag__c>();
+            for (sked__Resource__c newRecord : recordsToPopulate) {                
+                sked__Tag__c skedTag = mapTag.get('REAL ID');
+                sked__Resource_Tag__c newResourceTag = new sked__Resource_Tag__c(
+                    sked__Resource__c = newRecord.Id,
+                    sked__Tag__c = skedTag.Id,
+                    sked_Start_Date__c = startDate,
+                    sked_Role_Status__c = 'Active'
+                );
+                newResourceTags.add(newResourceTag);                
             }
             insert newResourceTags;
         }
@@ -780,15 +814,12 @@ public class skedResourceHandler extends skedTriggerHub {
             }
         }
         
-        List<Taxonomy__c> taxonomyRecords = [
-            SELECT Id, Collection_Operation_Name__c,Collection_Operation_Code__c, Zip_Code__c, Time_Zone__c 
+        List<Taxonomy__c> taxonomyRecords = [SELECT Id, Collection_Operation_Name__c,Collection_Operation_Code__c, Zip_Code__c, Time_Zone__c 
             FROM Taxonomy__c
             WHERE Zip_Code__c IN :zipcodes
             AND Start_Date__c <= TODAY
             AND End_Date__c >= TODAY
-            AND Time_Zone__c != NULL
-            AND Collection_Operation_Code__c != null
-        ];
+                                             AND Time_Zone__c != NULL];
         Set<String> collectionOpCodes = new Set<String>();
         Map<string, Taxonomy__c> taxonomyByZipcode = new Map<string, Taxonomy__c>();
         for (Taxonomy__c taxonomy : taxonomyRecords) {
@@ -796,11 +827,9 @@ public class skedResourceHandler extends skedTriggerHub {
             taxonomyByZipcode.put(taxonomy.Zip_Code__c, taxonomy);
         }
         
-        List<sked__Region__c> skedRegions = [
-            SELECT Id, sked_Biomed_Collection_Op_Center__r.Name,sked_Biomed_Collection_Op_Center__r.External_Id__c, sked__Timezone__c
+        List<sked__Region__c> skedRegions = [SELECT Id, sked_Biomed_Collection_Op_Center__r.Name,sked_Biomed_Collection_Op_Center__r.External_Id__c, sked__Timezone__c
             FROM sked__Region__c
-            WHERE sked_Biomed_Collection_Op_Center__r.External_Id__c IN :collectionOpCodes
-        ];
+                                             WHERE sked_Biomed_Collection_Op_Center__r.External_Id__c IN :collectionOpCodes];
         Map<string, sked__Region__c> mapRegion = new Map<string, sked__Region__c>();
         for (sked__Region__c region : skedRegions) {
             string key = region.sked_Biomed_Collection_Op_Center__r.External_Id__c + ':' + region.sked__Timezone__c;
@@ -1212,15 +1241,70 @@ public class skedResourceHandler extends skedTriggerHub {
         }
     }
 
+    private void updateRealIdTypeTags(List<sked__Resource__c> newRecords, Map<Id, sked__Resource__c> oldMap) {
+        Set<Id> recordIdsToUpdate = new Set<Id>();
+        for (sked__Resource__c newRecord : newRecords) {
+            sked__Resource__c oldData = oldMap.get(newRecord.Id);
+            if (newRecord.sked_REAL_ID_Compliant_indicator__c != oldData.sked_REAL_ID_Compliant_indicator__c) {
+                recordIdsToUpdate.add(newRecord.Id);
+            }
+        }
+        if (!recordIdsToUpdate.isEmpty()) {
+            Date startDate = system.today();
+            
+            List<sked__Resource__c> skedResources = [SELECT Id, sked_REAL_ID_Compliant_indicator__c,
+                                                     (SELECT Id, sked__Tag__r.Name
+                                                      FROM sked__ResourceTags__r
+                                                      WHERE sked__Tag__r.sked__Type__c = :skedConstants.TAG_TYPE_CERTIFICATION
+                                                      AND sked__Tag__r.Name = 'REAL ID')
+                                                     FROM sked__Resource__c
+                                                     WHERE Id IN :recordIdsToUpdate];
+            List<sked__Resource_Tag__c> recordsToDelete = new List<sked__Resource_Tag__c>();
+            List<sked__Resource_Tag__c> recordsToInsert = new List<sked__Resource_Tag__c>();
+            
+            List<sked__Tag__c> skedTags = [SELECT Id, Name
+                                           FROM sked__Tag__c
+                                           WHERE sked__Type__c = :skedConstants.TAG_TYPE_CERTIFICATION];
+            Map<string, sked__Tag__c> mapTag = new Map<string, sked__Tag__c>();
+            for (sked__Tag__c skedTag : skedTags) {
+                mapTag.put(skedTag.Name, skedTag);
+            }
+            
+            for (sked__Resource__c skedResource : skedResources) {
+                if (!skedResource.sked_REAL_ID_Compliant_indicator__c) {
+                    if (skedResource.sked__ResourceTags__r != NULL) {
+                        recordsToDelete.addAll(skedResource.sked__ResourceTags__r);
+                    }
+                }
+                else {
+                    sked__Tag__c skedTag = mapTag.get('REAL ID');
+                    sked__Resource_Tag__c newResourceTag = new sked__Resource_Tag__c(
+                        sked__Resource__c = skedResource.Id,
+                        sked__Tag__c = skedTag.Id,
+                        sked_Start_Date__c = startDate,
+                        sked_Role_Status__c = 'Active'
+                    );
+                    recordsToInsert.add(newResourceTag);                       
+                }
+            }
+            if (!recordsToDelete.isEmpty()) {
+                delete recordsToDelete;
+            }
+            if (!recordsToInsert.isEmpty()) {
+                insert recordsToInsert;
+            }
+        }
+    }
+
     private void updateResourceSeniorityRankings(List<sked__Resource__c> newRecords, Map<Id, sked__Resource__c> oldMap) {
         List<sked__Resource__c> resourcesToUpdate = new List<sked__Resource__c>();
         for (sked__Resource__c newRecord : newRecords) {
-            if (oldMap == null && newRecord.sked__Resource_Type__c == skedConstants.RESOURCE_TYPE_PERSON) {
-                newRecord.IsChangedEmploymentStatus__c = true;
-            } else if(oldMap != null && newRecord.sked__Resource_Type__c == skedConstants.RESOURCE_TYPE_PERSON) {
+            if (oldMap==null && newRecord.sked__Resource_Type__c==skedConstants.RESOURCE_TYPE_PERSON) {
+                newRecord.IsChangedEmploymentStatus__c=true;
+            } else if(oldMap!=null && newRecord.sked__Resource_Type__c==skedConstants.RESOURCE_TYPE_PERSON) {
                 sked__Resource__c oldRecord = oldMap.get(newRecord.Id);
                 if (newRecord.sked_Employment_Status__c != oldRecord.sked_Employment_Status__c) {
-                    newRecord.IsChangedEmploymentStatus__c = true;
+                        newRecord.IsChangedEmploymentStatus__c=true;
                 }
         	}
         }

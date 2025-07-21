@@ -15,6 +15,7 @@
 * 10/18/2024				 Balaji N				 HRP-13489 Methods isWbFixedSiteOpportunity
 * 12/10/2024				 Priti Jana				 Logic for HRP-13190
 * 02/26/2025                 Krapy Tuli              HRP-14286 - logic update
+ *03/05/2025                 Harika  Bolisetti       Logic for  HRP-12481//Taxo Process 
  *********************************************************************************************************************************************************************
 */
 
@@ -562,7 +563,7 @@ public with sharing class BSF_Utilities {
                 'Web_Scheduling_End_Date_Offset__c, Web_Scheduling_End_Time_Offset__c, Web_Scheduling_Start_Date_Offset__c, Platelet_Projected_Procedures__c, '+
                 'Plasma_Pheresis_Projected_Procedures__c, Calendar_Build_Parent_Opportunity__c, Type, DriveStatus__c, Slot_Generator__c, Related_Scheduled_Drive__c, '+ //HRP-12011 
                 //'FROM Opportunity';
-                'APT_Quantity__c, APT_Required__c, Booking_Strategy__c FROM Opportunity'; //Added APT fields HRP-13190
+                'APT_Quantity__c, APT_Required__c, Booking_Strategy__c, Red_Cross_Volunteer_Required__c, Red_Cross_Volunteer_Quantity__c FROM Opportunity'; //Added APT fields HRP-13190; Added Volunteer fields HRP-13146
     }
     
     /* HRP-13190 -> Starts Here
@@ -650,4 +651,21 @@ public with sharing class BSF_Utilities {
     public static String getStringWithinLimit(String text, Integer charLimit) {
         return (text != NULL && String.isNotBlank(text) && text.length() > charLimit) ? text.subString(0, charLimit) : (text == NULL ? '' : text);
     }
+
+
+     //Error log without exception
+     //HRP-12481
+    public static BSF_Error_Log__c createBsfErrorLogwithoutExceptions(String className,String methodName,String processName,String objectName,String error) {
+        String errorDescription = error;
+        BSF_Error_Log__c errorLog = new BSF_Error_Log__c(
+            ApexClass__c = className,
+            Method__c = methodName,
+            Type__c = 'Error',
+            Error_Description__c = errorDescription.length() > 255 ? errorDescription.subString(0, 255) : errorDescription,
+            Process_Name__c = processName,
+            Object_Name__c = objectName
+        );
+        return errorLog;
+    }
+    
 }
