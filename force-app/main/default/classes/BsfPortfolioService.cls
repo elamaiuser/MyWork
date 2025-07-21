@@ -156,18 +156,8 @@ public with sharing class BsfPortfolioService {
                 }
                 else if(pa.Start_Date__c > newBsfPortfolio.End_Date__c)
                 {
-                    Bsf_portfolio__c newBsfPortfolio = newMap.get(pa.Bsf_portfolio__c);
-                    if(pa.End_Date__c >= system.today() && pa.End_Date__c > newBsfPortfolio.End_Date__c && pa.Start_Date__c < newBsfPortfolio.End_Date__c)
-                    {
-                        pa.End_Date__c = newBsfPortfolio.End_Date__c;
-                        updatePortfoliAssignList.add(pa);
-                    }
-                    else if(pa.Start_Date__c > newBsfPortfolio.End_Date__c)
-                    {
-                        deletePortfoliAssignList.add(pa);
-                    }
+                    deletePortfoliAssignList.add(pa);
                 }
-                
             }
             
         }
@@ -224,7 +214,6 @@ public with sharing class BsfPortfolioService {
             {
                 deleteAccPortfoliAssignList.add(ap);
             }
-            
         }
         
     }
@@ -459,5 +448,5 @@ system.debug('updateAccPortfoliAssignListfinal-1'+ap);
         {InsertBsfErrorLog.insertBsfErrors(logList);}
         //HRP-13270
     }
-    
+
 }
