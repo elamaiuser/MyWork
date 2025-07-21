@@ -13,6 +13,8 @@
 		<members>TimeBlockComplianceReportController</members>
 		<members>TimeBlockComplianceReportControllerTest</members>
 		<members>skedActivityResourceHandler</members>
+		<members>skedAvailabilityPatternHandler</members>
+		<members>skedAvailabilityPatternService</members>
 		<members>skedCollectionOpTimeBlockService</members>
 		<members>skedConstants</members>		
 		<members>skedDriveShiftHandler</members>
@@ -35,6 +37,7 @@
 	</types>
 	<types>
 		<members>OperationDriveLimitTrigger</members>
+		<members>skedAvailabilityPatternTrigger</members>
 		<name>ApexTrigger</name>
 	</types>
 	<types>
