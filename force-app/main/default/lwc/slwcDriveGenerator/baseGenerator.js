@@ -424,6 +424,7 @@ class BaseGenerator {
             currentContentionResolutions.push(DRIVE_SHIFT_TIME_BLOCK_CONTENTION_RESOLUTION.ELECT_DRIVE_SHIFT_OUT_OF_TIME_BLOCK);
           }
 
+          driveShift.contention = contention.contention;
           driveShift.contentionResolution = currentContentionResolutions.join(';');
         }
       })
@@ -445,6 +446,10 @@ class BaseGenerator {
     if(!this.helper.isDriveUseTimeBlock(this.drive, this.masterData)) {
       return;
     }
+
+    //reset timeblock
+    driveShift.timeBlockId = '';
+    driveShift.timeBlock = null;
     
     const availableTimeBlocks = this.helper.findAvailableTimeBlocks({
       driveDate: this.drive.driveDate,

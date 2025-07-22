@@ -176,7 +176,7 @@ export default class SlwcPendingActionDriveConfirmModal extends LightningElement
       const resolveContentionComponent = this.template.querySelector('c-slwc-resolve-drive-contentions');
       return resolveContentionComponent.getData();
     })
-    .then(({ contentionResolution, driveTimeBlockContentions = [], driveContentions, equipmentJob, vehicleJob }) => {
+    .then(({ drive, contentionResolution, driveTimeBlockContentions = [], driveContentions, equipmentJob, vehicleJob }) => {
       if(driveTimeBlockContentions.length > 0) {
          this.dispatchEvent(new ShowToastEvent({
           message: 'Please resolve all time block contentions before saving.',
@@ -205,8 +205,10 @@ export default class SlwcPendingActionDriveConfirmModal extends LightningElement
       let equipmentAllocations = equipmentJob ? equipmentJob.jobAllocations : null;
       let vehicleAllocations = vehicleJob ? vehicleJob.jobAllocations : null;
       const closeEventDetail = {
+        drive,
         submissionNotes: this.model.submissionNotes,
         contentionResolution: contentionResolution,
+        driveShiftContentionResolution: drive.driveShifts.map(driveShift => driveShift.contentionResolution),
         equipmentAllocations,
         vehicleAllocations
       };
