@@ -1353,6 +1353,7 @@ export default class SlwcResolveDriveContentions extends LightningElement {
 
   restoreContentionResolutions = (drive, {
     backupContentionResolution = [],
+    backupDriveShiftContention = [],
     backupDriveShiftContentionResolution = [],
     backupDriveShiftTimeBlockId = []
   }) => {
