@@ -16,7 +16,7 @@ const DEFAULT_CALENDAR_SETTINGS = {
 
 const DRIVE_ACTION_GROUPS_ORDER = [
   ['retrieveDriveSiteAndPopulateCollectionOperation', 'populateSiteCollectionOperation', 'populateDriveCollectionOperation', 'populateCollectionOperationData'],
-  ['retrieveSameDateDrives', 'retrieveSameDateActivities', 'retrieveCollectionOperationSDM', 'retrieveRoleTimeData', 'retrieveDefaultTags'],
+  ['retrieveSameDateDrives', 'retrieveSameDateActivities', 'retrieveCollectionOperationSDM', 'retrieveRoleTimeData', 'retrieveDefaultTags', 'retrieveCollectionOperationTimeBlocksData'],
   ['calculateNumberOf2rbcAssets', 'calculate2rbcProjectedProcedures', 'splitScheduledDonors', 'split2rbcProjectedProcedures', 'calculateTotalProceduresProjected', 'calculateDriveShiftsMetadata',
     'applyStaffingComplementAndProposeDriveShifts', 'proposeDriveShifts', 'proposeDriveShiftSlots', 'updateDriveTotalSlots', 'calculateDriveProductivityPlanned',
     'handleEquipmentRequestedChanged', 'handleDriveShiftsMetadataChanged', 'correctJobAllocationTimes']
@@ -26,7 +26,7 @@ const DRIVE_FIELD_CHANGE_MAPPING = {
   'driveDate': {
     groups: [
       { actions: ['retrieveDriveSiteAndPopulateCollectionOperation'] },
-      { actions: ['retrieveSameDateDrives', 'retrieveSameDateActivities', 'retrieveCollectionOperationSDM', 'retrieveRoleTimeData'] },
+      { actions: ['retrieveSameDateDrives', 'retrieveSameDateActivities', 'retrieveCollectionOperationSDM', 'retrieveRoleTimeData', 'retrieveCollectionOperationTimeBlocksData'] },
       { actions: ['calculateDriveShiftsMetadata', 'proposeDriveShifts', 'calculateDriveProductivityPlanned'] },
       { actions: [] }
     ]
@@ -66,7 +66,7 @@ const DRIVE_FIELD_CHANGE_MAPPING = {
   'driveSiteId': {
     groups: [
       { actions: ['retrieveDriveSiteAndPopulateCollectionOperation'] },
-      { actions: ['retrieveSameDateDrives', 'retrieveSameDateActivities', 'retrieveCollectionOperationSDM', 'retrieveRoleTimeData', 'retrieveDefaultTags'] },
+      { actions: ['retrieveSameDateDrives', 'retrieveSameDateActivities', 'retrieveCollectionOperationSDM', 'retrieveRoleTimeData', 'retrieveDefaultTags', 'retrieveCollectionOperationTimeBlocksData'] },
       { actions: ['calculateDriveShiftsMetadata', 'proposeDriveShifts', 'calculateDriveProductivityPlanned'] },
       { actions: ['correctJobAllocationTimes'] }
     ]
@@ -74,7 +74,7 @@ const DRIVE_FIELD_CHANGE_MAPPING = {
   'siteCollectionOperationId': {
     groups: [
       { actions: ['populateSiteCollectionOperation'] },
-      { actions: ['retrieveSameDateDrives', 'retrieveSameDateActivities', 'retrieveCollectionOperationSDM', 'retrieveRoleTimeData', 'retrieveDefaultTags'] },
+      { actions: ['retrieveSameDateDrives', 'retrieveSameDateActivities', 'retrieveCollectionOperationSDM', 'retrieveRoleTimeData', 'retrieveDefaultTags', 'retrieveCollectionOperationTimeBlocksData'] },
       { actions: ['calculateDriveShiftsMetadata', 'proposeDriveShifts', 'calculateDriveProductivityPlanned'] },
       { actions: ['correctJobAllocationTimes'] }
     ]
@@ -82,7 +82,7 @@ const DRIVE_FIELD_CHANGE_MAPPING = {
   'collectionOperationId': {
     groups: [
       { actions: ['populateSiteCollectionOperation'] },
-      { actions: ['retrieveSameDateDrives', 'retrieveSameDateActivities', 'retrieveCollectionOperationSDM', 'retrieveRoleTimeData', 'retrieveDefaultTags'] },
+      { actions: ['retrieveSameDateDrives', 'retrieveSameDateActivities', 'retrieveCollectionOperationSDM', 'retrieveRoleTimeData', 'retrieveDefaultTags', 'retrieveCollectionOperationTimeBlocksData'] },
       { actions: ['calculateDriveShiftsMetadata', 'proposeDriveShifts', 'calculateDriveProductivityPlanned'] },
       { actions: ['correctJobAllocationTimes'] }
     ]
@@ -333,10 +333,11 @@ class WbFixedSiteGenerator extends BaseGenerator {
                       this.fetch.retrieveCollectionOperationSDM(this.drive),
                       this.fetch.retrieveRoleTimeData(this.drive),
                       this.fetch.retrieveDefaultTags(this.drive),
-                      this.fetch.retrieveTerritoryCollectionOperations(this.drive)
+                      this.fetch.retrieveTerritoryCollectionOperations(this.drive),
+                      this.fetch.retrieveCollectionOperationTimeBlocks(this.drive)
                     ])
                   })
-                  .then(([driveSite, resourceRoleGroups, lunchBreakSettings, adminSetting, staffSetupExcludedRoles, redcrossVolunteerMatrix, travelTimeIndexItemMap, sameDateDrives, sameDateActivities, staffingDecisionMatrix, roleTimeData, driveTags, territoryCollectionOperations]) => {
+                  .then(([driveSite, resourceRoleGroups, lunchBreakSettings, adminSetting, staffSetupExcludedRoles, redcrossVolunteerMatrix, travelTimeIndexItemMap, sameDateDrives, sameDateActivities, staffingDecisionMatrix, roleTimeData, driveTags, territoryCollectionOperations, collectionOperationTimeBlocks]) => {
                     this.initMasterData({
                       loginUser,
                       driveSite,
@@ -351,7 +352,8 @@ class WbFixedSiteGenerator extends BaseGenerator {
                       driveTags,
                       territoryCollectionOperations,
                       staffSetupExcludedRoles,
-                      redcrossVolunteerMatrix
+                      redcrossVolunteerMatrix,
+                      collectionOperationTimeBlocks
                     })
 
                     this.populateCollectionOperationData();
@@ -437,10 +439,11 @@ class WbFixedSiteGenerator extends BaseGenerator {
             this.fetch.retrieveCollectionOperationSDM(this.drive),
             this.fetch.retrieveRoleTimeData(this.drive),
             this.fetch.retrieveDefaultTags(this.drive),
-            this.fetch.retrieveActiveDriveChangeRequest(this.drive)
+            this.fetch.retrieveActiveDriveChangeRequest(this.drive),
+            this.fetch.retrieveCollectionOperationTimeBlocks(this.drive)
           ]);
         })
-        .then(([driveSite, resourceRoleGroups, lunchBreakSettings, adminSetting, staffSetupExcludedRoles, redcrossVolunteerMatrix, travelTimeIndexItemMap, sameDateDrives, sameDateActivities, staffingDecisionMatrix, roleTimeData, driveTags, activeDriveChangeRequest]) => {
+        .then(([driveSite, resourceRoleGroups, lunchBreakSettings, adminSetting, staffSetupExcludedRoles, redcrossVolunteerMatrix, travelTimeIndexItemMap, sameDateDrives, sameDateActivities, staffingDecisionMatrix, roleTimeData, driveTags, activeDriveChangeRequest, collectionOperationTimeBlocks]) => {
           this.initMasterData({
             loginUser,
             driveSite,
@@ -455,7 +458,8 @@ class WbFixedSiteGenerator extends BaseGenerator {
             driveTags,
             activeDriveChangeRequest,
             staffSetupExcludedRoles,
-            redcrossVolunteerMatrix
+            redcrossVolunteerMatrix,
+            collectionOperationTimeBlocks
           })
           
           this.populateCollectionOperationData();
@@ -2128,6 +2132,13 @@ class WbFixedSiteGenerator extends BaseGenerator {
     })
   }
 
+  retrieveCollectionOperationTimeBlocksData() {
+    return this.fetch.retrieveCollectionOperationTimeBlocks(this.drive)
+    .then((collectionOperationTimeBlocks) => {
+      this.masterData.collectionOperationTimeBlocks = collectionOperationTimeBlocks || []; 
+    })
+  }
+  
   retrieveDefaultTags() {
     return this.fetch.retrieveDefaultTags(this.drive)
     .then((driveTags) => {
