@@ -18,16 +18,14 @@
                         onchange={handleCollectionOperationChanged}>
                     </c-slwc-new-collection-operation-multi-picklist>
                 </div>
-
+                
                 <div class="slds-p-right_small">
-                    <c-slwc-week-date-picker
-                        includes-additional-days={includesAdditionalDays}
-                        first-day={collectionOperationFirstDay}
+                    <c-slwc-date-range-picker
                         unique-key="driveOptimizer"
-                        onweekdatechange={handleOnChange}
+                        ondaterangechange={handleOnChange}
                         default-start-date={filters.startDate}
                         default-end-date={filters.endDate}>
-                    </c-slwc-week-date-picker>
+                    </c-slwc-date-range-picker>
                 </div>
             </div>
 
@@ -40,6 +38,13 @@
                     <div class="slds-align_absolute-center slds-p-around_large" style="height: 60vh;">
                         <lightning-icon icon-name="utility:warning" size="x-small" alternative-text="Warning!" title="Warning"></lightning-icon>
                         <span class="slds-m-left--small">No Drives found.</span>
+                    </div>
+                </template>
+
+                <template if:true={mapMarkerLimitExceeded}>
+                    <div class="slds-align_absolute-center slds-p-around_large" style="height: 60vh;">
+                        <lightning-icon icon-name="utility:warning" size="x-small" alternative-text="Warning!" title="Warning"></lightning-icon>
+                        <span class="slds-m-left--small">You can see up to 100 pins on the map view. To see missing pins, adjust your filters to reduce the number of drives populating.</span>
                     </div>
                 </template>
 

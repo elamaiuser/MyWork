@@ -30,7 +30,7 @@ export default class SlwcDriveListMap extends LightningElement {
     endDate: null
   }
 
-  @track includesAdditionalDays = 1;
+  @track includesAdditionalDays = 0;
   
   get pageName() {
     return 'schedulingConsole:driveListMap';
@@ -83,7 +83,11 @@ export default class SlwcDriveListMap extends LightningElement {
   }
 
   get hasRecords() {
-    return this.driveList && this.driveList.length;
+    return this.driveList && this.driveList.length > 0 && this.mapMarkers.length <= 100;
+  }
+
+  get mapMarkerLimitExceeded() {
+    return this.mapMarkers.length > 100;
   }
 
   @wire(CurrentPageReference) pageRef;
@@ -106,7 +110,7 @@ export default class SlwcDriveListMap extends LightningElement {
         const firstDay = this.dateUtils.getFirstDayValue(this.collectionOperationFirstDay);
         this.filters.startDate = this.dateUtils.startOfWeek(DateTime.local(), firstDay).toISODate();
         this.filters.endDate = DateTime.fromISO(this.filters.startDate).plus({
-          day: 6
+          day: 1
         }).toISODate()
       }
     }
@@ -261,7 +265,7 @@ export default class SlwcDriveListMap extends LightningElement {
   handleSearch(event = {
     detail: {}
   }) {
-    this.validateFilters();
+
     const { filters } = event.detail;
     this.filters = {
         ...this.filters,
@@ -282,7 +286,7 @@ export default class SlwcDriveListMap extends LightningElement {
   }
 
   handleOnChange(event) {
-    if (event.type === 'weekdatechange') {
+    if (event.type === 'daterangechange') {
       this.filters = {
         ...this.filters, 
         startDate: event.detail.startDate,
