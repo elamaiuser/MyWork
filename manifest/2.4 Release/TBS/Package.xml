@@ -88,7 +88,9 @@
 		<members>Biomed_Collection_Op_Center__c-Collection Operation Layout ReadOnly</members>
 		<members>Collection_Operation_Time_Block__c-Collection Operation Time Block Layout</members>
 		<members>Time_Block__c-Time Block Layout</members>
+		<members>sked_Drive_Shift__c-Drive Shift Layout</members>
 		<members>sked_Operation_Drive_Limit__c-Operation Drive Limit Layout</members>
+		<members>sked_Staffing_Constraint__c-Staffing Constraint Layout</members>		
 		<name>Layout</name>
 	</types>
 	<types>
