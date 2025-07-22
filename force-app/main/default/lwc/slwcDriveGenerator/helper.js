@@ -3838,13 +3838,14 @@ class DriveHelper {
     })
   }
 
-  isDriveUseTimeBlock({
-    driveDate,
-    collectionOperation
-  }, {
+  isDriveUseTimeBlock(drive, {
     collectionOperationTimeBlocks = []
   }) {
-    return this.findAvailableCOTimeBlocks({
+    if(this.isFixedSiteDrive(drive)) {
+      return false;
+    }
+
+    return this.findAvailableCOTimeBlocks(drive, {
       driveDate,
       collectionOperation
     }, {
@@ -3935,19 +3936,13 @@ class DriveHelper {
         if(!driveShift.passed) {
           contentions.push(...driveShift.contention ? driveShift.contention.split(';') : [])
         }
-        return contentions;
+        return uniqBy(contentions, contention => contention);
       }, [])
-    }
-
-    if(this.isFixedSiteDrive(drive)) {
-      return {
-        passed: true,
-      }
     }
 
     if(!this.isDriveUseTimeBlock(drive, masterData)) {
       return {
-        passed: true,
+        passed: true
       }
     }
 

@@ -418,6 +418,7 @@ class BaseGenerator {
 
           if(electNotUseTimeBlock) {
             currentContentionResolutions.push(DRIVE_SHIFT_TIME_BLOCK_CONTENTION_RESOLUTION.ELECT_NOT_USE_DRIVE_SHIFT_TIME_BLOCK);
+            driveShift.timeBlockId = '';
           }
 
           if(electOutOfTimeBlock) {
@@ -471,6 +472,7 @@ class BaseGenerator {
 
     if (availableCOTimeBlocks.length === 1) {
       driveShift.timeBlockId = availableCOTimeBlocks[0].timeBlockId;
+      driveShift.timeBlock = availableCOTimeBlocks[0].timeBlock;
     }
   }
 

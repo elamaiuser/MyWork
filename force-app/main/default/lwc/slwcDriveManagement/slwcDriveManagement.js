@@ -1356,21 +1356,33 @@ export default class SlwcDriveManagement extends NavigationMixin(LightningElemen
     savePendingActionDriveConfirmModal(event) {
         this.hidePendingActionDriveConfirmModal();
 
-        const { submissionNotes, contentionResolution, driveShiftContentionResolution, status, equipmentAllocations, vehicleAllocations } = event.detail;
+        const { submissionNotes, contentionResolution, driveShiftContention, driveShiftTimeBlockId, driveShiftContentionResolution, status, equipmentAllocations, vehicleAllocations } = event.detail;
         this.drive.submissionNotes = submissionNotes || this.drive.submissionNotes;
         if (status) {
             this.drive.status = status;
         }
         this.drive.contentionResolution = [...contentionResolution];
 
-        if (this.drive.status === DRIVE_STATUS.DRAFT) {
-            this.drive = driveGeneratorInstance.releaseAllAssetAllocations();
-        }
-
         if(driveShiftContentionResolution?.length) {
             this.drive.driveShifts.forEach((driveShift, driveShiftIndex) => {
                 driveShift.contentionResolution = driveShiftContentionResolution[driveShiftIndex] ?? '';
             })
+        }
+
+        if(driveShiftContention?.length) {
+            this.drive.driveShifts.forEach((driveShift, driveShiftIndex) => {
+                driveShift.contention = driveShiftContention[driveShiftIndex] ?? '';
+            })
+        }
+
+        if(driveShiftTimeBlockId?.length) {
+            this.drive.driveShifts.forEach((driveShift, driveShiftIndex) => {
+                driveShift.timeBlockId = driveShiftTimeBlockId[driveShiftIndex] ?? '';
+            })
+        }
+
+        if (this.drive.status === DRIVE_STATUS.DRAFT) {
+            this.drive = driveGeneratorInstance.releaseAllAssetAllocations();
         }
 
         if (this.drive.status !== DRIVE_STATUS.DRAFT) {
