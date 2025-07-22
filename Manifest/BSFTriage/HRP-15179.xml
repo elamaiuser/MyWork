@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+	<types>
+		<members>skedOperationRecordHandler</members>
+		<name>ApexClass</name>
+	</types>
+	<types>
+		<members>Operation_Record_Record_Page</members>
+		<name>FlexiPage</name>
+	</types>
+	<version>64.0</version>
+</Package>
