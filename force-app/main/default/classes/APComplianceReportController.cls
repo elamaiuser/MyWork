@@ -266,7 +266,7 @@ public with sharing class APComplianceReportController {
     private static Map<String, String> buildRow(sked__Resource__c res, Date workDate, String type, String status, Boolean violation, Time startTime, Time endTime, List<TimeRange> apRanges, String apName,String driveName,string JName,string Role,String calloutTradeVal) {
         Map<String, String> row = new Map<String, String>();
         row.put('name', res?.Name);
-        row.put('supervisor', res?.sked_Supervisor__r?.Name);
+        row.put('supervisor', res?.sked_Supervisor__r != null ? res.sked_Supervisor__r.Name : '');
         row.put('division', res?.sked__Primary_Region__r?.sked_Territory__r?.sked_Parent__r?.sked_Parent__r?.Name);
         row.put('region', res?.sked__Primary_Region__r?.sked_Territory__r?.sked_Parent__r?.Name);
         row.put('co', res?.sked__Primary_Region__r?.sked_Biomed_Collection_Op_Center__r?.Name);
