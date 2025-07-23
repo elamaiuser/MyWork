@@ -430,14 +430,14 @@ class BaseGenerator {
         }
       })
 
-      let currentDriveContentions = this.drive.pendingActionReasonCode ? this.drive.pendingActionReasonCode.split(';') : [];
+      let currentDriveContentions = cloneDeep(this.drive.pendingActionReasonCode)
       remove(currentDriveContentions, item => [
         DRIVE_SHIFT_TIME_BLOCK_CONTENTION.OUT_OF_TIME_BLOCK,
         DRIVE_SHIFT_TIME_BLOCK_CONTENTION.FIT_MULTIPLE_TIME_BLOCKS,
         DRIVE_SHIFT_TIME_BLOCK_CONTENTION.MISSING_TIME_BLOCK
       ].includes(item));
       this.drive.pendingActionReasonCodes = currentDriveContentions;
-      this.drive.pendingActionReasonCode = currentDriveContentions.join(';');
+      this.drive.pendingActionReasonCode = currentDriveContentions;
 
       return this.drive;
     })
