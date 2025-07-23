@@ -3845,11 +3845,7 @@ class DriveHelper {
       return false;
     }
 
-    const {driveDate, collectionOperation} = drive;
     return this.findAvailableCOTimeBlocks(drive, {
-      driveDate,
-      collectionOperation
-    }, {
       collectionOperationTimeBlocks
     }).length > 0;
   }
