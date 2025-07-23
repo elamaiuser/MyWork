@@ -5057,9 +5057,12 @@ opp.StageName = 'Closed';
                                     || opp.Red_Cross_Volunteer_Required__c != oldOppMap.get(opp.Id).Red_Cross_Volunteer_Required__c)){
                                         highSchoolDriveMap.put(opp.AccountId, null);
                             }
-                }else if(!opp.Red_Cross_Volunteer_Required__c && (opp.Is_Template__c 
-                        || (!opp.Is_Template__c && opp.RecordTypeId == MOBILE_OPP_RECTYPEID))){
-                            opp.Red_Cross_Volunteer_Quantity__c = 0;
+                }else if(
+                    !opp.Red_Cross_Volunteer_Required__c && 
+                     opp.Red_Cross_Volunteer_Quantity__c > 0 &&
+                    (opp.Is_Template__c || (!opp.Is_Template__c && opp.RecordTypeId == MOBILE_OPP_RECTYPEID))
+                ) {
+                    opp.Red_Cross_Volunteer_Quantity__c = 0;
                 }
             }
             if(!highSchoolDriveMap.isEmpty()){
