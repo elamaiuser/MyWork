@@ -13,21 +13,21 @@
     <columns>
         <field>GroupMember-QueuePublicGroupMembership$GroupMember-User.Profile</field>
     </columns>
-    <description>Report to audit Queue Members in Lead Queues</description>
+    <description>Report to facilitate auditing of members in Lead Queues</description>
     <filter>
-        <criteriaItems>
-            <column>GroupMember-QueuePublicGroupMembership$Group</column>
-            <columnToColumn>false</columnToColumn>
-            <isUnlocked>true</isUnlocked>
-            <operator>contains</operator>
-            <value>Lead</value>
-        </criteriaItems>
         <criteriaItems>
             <column>GroupMember-QueuePublicGroupMembership$Group.Type</column>
             <columnToColumn>false</columnToColumn>
             <isUnlocked>true</isUnlocked>
             <operator>equals</operator>
             <value>Q</value>
+        </criteriaItems>
+        <criteriaItems>
+            <column>GroupMember-QueuePublicGroupMembership$Group</column>
+            <columnToColumn>false</columnToColumn>
+            <isUnlocked>true</isUnlocked>
+            <operator>contains</operator>
+            <value>Lead</value>
         </criteriaItems>
         <language>en_US</language>
     </filter>
@@ -42,11 +42,11 @@
         <name>co</name>
         <value>1</value>
     </params>
-    <reportType>Public_Group_Report__c</reportType>
+    <reportType>Group_Member_with_Group_and_User__c</reportType>
     <scope>organization</scope>
     <showDetails>true</showDetails>
     <showGrandTotal>true</showGrandTotal>
-    <showSubTotals>true</showSubTotals>
+    <showSubTotals>false</showSubTotals>
     <timeFrameFilter>
         <dateColumn>GroupMember-QueuePublicGroupMembership$Group.CreatedDate</dateColumn>
         <interval>INTERVAL_CUSTOM</interval>

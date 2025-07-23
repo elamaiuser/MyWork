@@ -3,14 +3,9 @@
     <baseObject>GroupMember</baseObject>
     <category>other</category>
     <deployed>true</deployed>
-    <description>Manage public group membership</description>
-    <label>Public_Group_Report</label>
+    <description>Group Member with Group and User</description>
+    <label>Group Member with Group and User</label>
     <sections>
-        <columns>
-            <checkedByDefault>false</checkedByDefault>
-            <field>Id</field>
-            <table>GroupMember-QueuePublicGroupMembership</table>
-        </columns>
         <columns>
             <checkedByDefault>false</checkedByDefault>
             <field>Group</field>
@@ -18,7 +13,7 @@
         </columns>
         <columns>
             <checkedByDefault>false</checkedByDefault>
-            <field>GroupMember-User</field>
+            <field>Id</field>
             <table>GroupMember-QueuePublicGroupMembership</table>
         </columns>
         <columns>
@@ -26,17 +21,42 @@
             <field>GroupMember-Group</field>
             <table>GroupMember-QueuePublicGroupMembership</table>
         </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>GroupMember-User</field>
+            <table>GroupMember-QueuePublicGroupMembership</table>
+        </columns>
         <masterLabel>Group Member</masterLabel>
     </sections>
     <sections>
         <columns>
             <checkedByDefault>false</checkedByDefault>
-            <field>Group.DeveloperName</field>
+            <field>Group.CreatedBy</field>
             <table>GroupMember-QueuePublicGroupMembership</table>
         </columns>
         <columns>
             <checkedByDefault>false</checkedByDefault>
-            <field>Group.Email</field>
+            <field>Group.CreatedDate</field>
+            <table>GroupMember-QueuePublicGroupMembership</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>Group.Description</field>
+            <table>GroupMember-QueuePublicGroupMembership</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>Group.Id</field>
+            <table>GroupMember-QueuePublicGroupMembership</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>Group.LastModifiedDate</field>
+            <table>GroupMember-QueuePublicGroupMembership</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>Group.LastModifiedBy</field>
             <table>GroupMember-QueuePublicGroupMembership</table>
         </columns>
         <columns>
@@ -47,36 +67,6 @@
         <columns>
             <checkedByDefault>false</checkedByDefault>
             <field>Group.Type</field>
-            <table>GroupMember-QueuePublicGroupMembership</table>
-        </columns>
-        <columns>
-            <checkedByDefault>false</checkedByDefault>
-            <field>Group.DoesSendEmailToMembers</field>
-            <table>GroupMember-QueuePublicGroupMembership</table>
-        </columns>
-        <columns>
-            <checkedByDefault>false</checkedByDefault>
-            <field>Group.Description</field>
-            <table>GroupMember-QueuePublicGroupMembership</table>
-        </columns>
-        <columns>
-            <checkedByDefault>false</checkedByDefault>
-            <field>Group.CreatedDate</field>
-            <table>GroupMember-QueuePublicGroupMembership</table>
-        </columns>
-        <columns>
-            <checkedByDefault>false</checkedByDefault>
-            <field>Group.CreatedBy</field>
-            <table>GroupMember-QueuePublicGroupMembership</table>
-        </columns>
-        <columns>
-            <checkedByDefault>false</checkedByDefault>
-            <field>Group.LastModifiedBy</field>
-            <table>GroupMember-QueuePublicGroupMembership</table>
-        </columns>
-        <columns>
-            <checkedByDefault>false</checkedByDefault>
-            <field>Group.LastModifiedDate</field>
             <table>GroupMember-QueuePublicGroupMembership</table>
         </columns>
         <masterLabel>Group Info</masterLabel>
@@ -99,17 +89,12 @@
         </columns>
         <columns>
             <checkedByDefault>false</checkedByDefault>
+            <field>GroupMember-User.Name</field>
+            <table>GroupMember-QueuePublicGroupMembership</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
             <field>GroupMember-User.FirstName</field>
-            <table>GroupMember-QueuePublicGroupMembership</table>
-        </columns>
-        <columns>
-            <checkedByDefault>false</checkedByDefault>
-            <field>GroupMember-User.Profile</field>
-            <table>GroupMember-QueuePublicGroupMembership</table>
-        </columns>
-        <columns>
-            <checkedByDefault>false</checkedByDefault>
-            <field>GroupMember-User.LastModifiedBy</field>
             <table>GroupMember-QueuePublicGroupMembership</table>
         </columns>
         <columns>
@@ -119,17 +104,7 @@
         </columns>
         <columns>
             <checkedByDefault>false</checkedByDefault>
-            <field>GroupMember-User.Name</field>
-            <table>GroupMember-QueuePublicGroupMembership</table>
-        </columns>
-        <columns>
-            <checkedByDefault>false</checkedByDefault>
-            <field>GroupMember-User.UserRole</field>
-            <table>GroupMember-QueuePublicGroupMembership</table>
-        </columns>
-        <columns>
-            <checkedByDefault>false</checkedByDefault>
-            <field>GroupMember-User.sked__skeduloUserType__c</field>
+            <field>GroupMember-User.MiddleName</field>
             <table>GroupMember-QueuePublicGroupMembership</table>
         </columns>
         <columns>
@@ -144,27 +119,22 @@
         </columns>
         <columns>
             <checkedByDefault>false</checkedByDefault>
-            <field>GroupMember-User.Profile.UserLicense</field>
+            <field>GroupMember-User.sked__skeduloUserType__c</field>
             <table>GroupMember-QueuePublicGroupMembership</table>
         </columns>
         <columns>
             <checkedByDefault>false</checkedByDefault>
-            <field>GroupMember-User.MiddleName</field>
+            <field>GroupMember-User.UserRole</field>
             <table>GroupMember-QueuePublicGroupMembership</table>
         </columns>
         <columns>
             <checkedByDefault>false</checkedByDefault>
-            <field>GroupMember-User.TimeZoneSidKey</field>
+            <field>GroupMember-User.Profile</field>
             <table>GroupMember-QueuePublicGroupMembership</table>
         </columns>
         <columns>
             <checkedByDefault>false</checkedByDefault>
-            <field>GroupMember-User.UserType</field>
-            <table>GroupMember-QueuePublicGroupMembership</table>
-        </columns>
-        <columns>
-            <checkedByDefault>false</checkedByDefault>
-            <field>GroupMember-User.Profile.UserType</field>
+            <field>GroupMember-User.Profile.Id</field>
             <table>GroupMember-QueuePublicGroupMembership</table>
         </columns>
         <columns>
@@ -174,7 +144,17 @@
         </columns>
         <columns>
             <checkedByDefault>false</checkedByDefault>
-            <field>GroupMember-User.Profile.Id</field>
+            <field>GroupMember-User.Profile.UsageType</field>
+            <table>GroupMember-QueuePublicGroupMembership</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>GroupMember-User.Profile.UserLicense</field>
+            <table>GroupMember-QueuePublicGroupMembership</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>GroupMember-User.Profile.UserType</field>
             <table>GroupMember-QueuePublicGroupMembership</table>
         </columns>
         <masterLabel>User Info</masterLabel>
