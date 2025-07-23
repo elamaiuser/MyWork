@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Report xmlns="http://soap.sforce.com/2006/04/metadata">
+    <columns>
+        <field>GroupMember-QueuePublicGroupMembership$GroupMember-User</field>
+    </columns>
+    <columns>
+        <field>GroupMember-QueuePublicGroupMembership$GroupMember-User.Email</field>
+    </columns>
+    <columns>
+        <aggregateTypes>Sum</aggregateTypes>
+        <field>GroupMember-QueuePublicGroupMembership$GroupMember-User.IsActive</field>
+    </columns>
+    <columns>
+        <field>GroupMember-QueuePublicGroupMembership$GroupMember-User.Profile</field>
+    </columns>
+    <description>Report to audit Queue Members in Lead Queues</description>
+    <filter>
+        <criteriaItems>
+            <column>GroupMember-QueuePublicGroupMembership$Group</column>
+            <columnToColumn>false</columnToColumn>
+            <isUnlocked>true</isUnlocked>
+            <operator>contains</operator>
+            <value>Lead</value>
+        </criteriaItems>
+        <criteriaItems>
+            <column>GroupMember-QueuePublicGroupMembership$Group.Type</column>
+            <columnToColumn>false</columnToColumn>
+            <isUnlocked>true</isUnlocked>
+            <operator>equals</operator>
+            <value>Q</value>
+        </criteriaItems>
+        <language>en_US</language>
+    </filter>
+    <format>Summary</format>
+    <groupingsDown>
+        <dateGranularity>Day</dateGranularity>
+        <field>GroupMember-QueuePublicGroupMembership$Group</field>
+        <sortOrder>Asc</sortOrder>
+    </groupingsDown>
+    <name>Lead Queue Member Audit</name>
+    <params>
+        <name>co</name>
+        <value>1</value>
+    </params>
+    <reportType>Public_Group_Report__c</reportType>
+    <scope>organization</scope>
+    <showDetails>true</showDetails>
+    <showGrandTotal>true</showGrandTotal>
+    <showSubTotals>true</showSubTotals>
+    <timeFrameFilter>
+        <dateColumn>GroupMember-QueuePublicGroupMembership$Group.CreatedDate</dateColumn>
+        <interval>INTERVAL_CUSTOM</interval>
+    </timeFrameFilter>
+</Report>
