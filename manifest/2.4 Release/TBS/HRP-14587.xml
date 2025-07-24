@@ -23,5 +23,9 @@
 		<members>slwcStaffingConstraintMassUpdate</members>
 		<name>LightningComponentBundle</name>
 	</types>
+	<types>
+		<members>sked_HLT_Dist</members>
+		<name>StaticResource</name>
+	</types>
 	<version>64.0</version>
 </Package>
