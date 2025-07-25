@@ -30,6 +30,7 @@ export const ACCOUNT_AVAILABILITY_PREFERENCE = {
 }
 
 export const PLAN_DRIVE_SLOT_BACKGROUND_COLOR_SETTING = {
+  NOT_MATCH_TIME_BLOCK: '#ffe2e2',
   [ACCOUNT_AVAILABILITY_PREFERENCE.NEUTRAL]: 'transparent',
   [ACCOUNT_AVAILABILITY_PREFERENCE.PREFERRED]: '#59b66e1a',
   [ACCOUNT_AVAILABILITY_PREFERENCE.NOT_PREFERRED]: '#ffff0057'
@@ -113,6 +114,12 @@ export const VOLUNTEER_TYPE = {
 export const DRIVE_TYPE = {
   FIXED_SITE: 'Fixed Site',
   MOBILE: 'Mobile'
+}
+
+export const DRIVE_OPERATION_TYPE = {
+  FIXED_SITE: 'Fixed Site',
+  MOBILE: 'Mobile',
+  NIFS: 'NIFS'
 }
 
 export const DRIVE_STATUS = {
@@ -376,4 +383,15 @@ export const ACCOUNT_INDUSTRY_CODE = {
 
 export const SKIP_BEST_VEHICLE_CALCULATION = {
   ANTICIPATED_REGISTERED_DONOR_GREATER_THEN: 500,
+}
+
+export const DRIVE_SHIFT_TIME_BLOCK_CONTENTION_RESOLUTION = {
+  ELECT_DRIVE_SHIFT_OUT_OF_TIME_BLOCK: 'Elect to acknowledge the drive shift is out of Time Block',
+  ELECT_NOT_USE_DRIVE_SHIFT_TIME_BLOCK: 'Elect to acknowledge the drive shift without Time Block'
+}
+
+export const DRIVE_SHIFT_TIME_BLOCK_CONTENTION = {
+  MISSING_TIME_BLOCK: 'Missing Time Block',
+  OUT_OF_TIME_BLOCK: 'Out Of Time Block',
+  FIT_MULTIPLE_TIME_BLOCKS: 'Fits Multiple Time Block',
 }

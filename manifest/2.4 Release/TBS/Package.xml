@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <Package xmlns="http://soap.sforce.com/2006/04/metadata">
 	<types>
+		<members>APComplianceReportController</members>
+		<members>APComplianceReportControllerTest</members>
 		<members>DriveResourceAllocationBatch</members>
 		<members>GenerateMobileDrive</members>
 		<members>GenerateMobileDriveTest</members>
@@ -8,11 +10,18 @@
 		<members>OperationDriveLimitService</members>
 		<members>OperationDriveLimitServiceTest</members>
 		<members>OperationDriveLimitTriggerHandler</members>
+		<members>TimeBlockComplianceReportController</members>
+		<members>TimeBlockComplianceReportControllerTest</members>
 		<members>skedActivityResourceHandler</members>
+		<members>skedAvailabilityPatternHandler</members>
+		<members>skedAvailabilityPatternService</members>
+		<members>skedCollectionOpTimeBlockService</members>
 		<members>skedConstants</members>		
 		<members>skedDriveShiftHandler</members>
 		<members>skedExceptionLogService</members>
 		<members>skedHCExceptionHandler</members>
+		<members>skedMappingConfigContainer</members>
+		<members>skedModels</members>
 		<members>skedRacController</members>		
 		<members>skedTestDataFactory</members>
 		<members>slwcAllocationService</members>
@@ -20,7 +29,15 @@
 		<name>ApexClass</name>
 	</types>
 	<types>
+		<members>APComplianceExcel</members>
+		<members>BSFAPComplianceReportPDF</members>
+		<members>TimeBlockComplianceExcel</members>
+		<members>TimeBlockCompliancePDF</members>
+		<name>ApexPage</name>
+	</types>
+	<types>
 		<members>OperationDriveLimitTrigger</members>
+		<members>skedAvailabilityPatternTrigger</members>
 		<name>ApexTrigger</name>
 	</types>
 	<types>
@@ -32,11 +49,14 @@
 		<members>Time_Block__c.End_Time__c</members>
 		<members>Time_Block__c.Start_Time__c</members>
 		<members>skedHC__Exception__c.sked_Exception_Code__c</members>
+		<members>sked_Drive_Shift__c.sked_Contention_Resolution__c</members>
 		<members>sked_Drive_Shift__c.sked_Contention__c</members>
 		<members>sked_Drive_Shift__c.sked_Time_Block__c</members>		
 		<members>sked_Drive_Shift__c.sked_Drive_Operation_Type__c</members>
 		<members>sked_Drive_Shift__c.sked_Drive_Type__c</members>
-		<members>sked_Operation_Drive_Limit__c.Time_Block__c</members>		
+		<members>sked_Operation_Drive_Limit__c.Time_Block__c</members>
+		<members>sked_Staffing_Constraint__c.sked_Time_Block__c</members>
+		<members>sked__Activity__c.sked_Time_Block__c</members>
 		<name>CustomField</name>
 	</types>
 	<types>
@@ -55,6 +75,11 @@
 		<name>CustomTab</name>
 	</types>
 	<types>
+		<members>Availability_Pattern_Compliance_Report</members>
+		<members>Time_block_CR</members>
+		<name>FlexiPage</name>
+	</types>
+	<types>
 		<members>sked_Drive_Contention</members>
 		<name>GlobalValueSet</name>
 	</types>
@@ -63,22 +88,43 @@
 		<members>Biomed_Collection_Op_Center__c-Collection Operation Layout ReadOnly</members>
 		<members>Collection_Operation_Time_Block__c-Collection Operation Time Block Layout</members>
 		<members>Time_Block__c-Time Block Layout</members>
+		<members>sked_Drive_Shift__c-Drive Shift Layout</members>
 		<members>sked_Operation_Drive_Limit__c-Operation Drive Limit Layout</members>
+		<members>sked_Staffing_Constraint__c-Staffing Constraint Layout</members>		
 		<name>Layout</name>
 	</types>
 	<types>
+		<members>aPComplianceReport</members>
 		<members>autoMapper</members>
 		<members>dataService</members>
+		<members>slwcAddRecurrenceStaffingConstraintModal</members>
+		<members>slwcAddStaffingConstraintModal</members>
+		<members>slwcConstants</members>
+		<members>slwcDriveCalendar</members>
+		<members>slwcDriveGenerator</members>
+		<members>slwcDriveSchedulingConsole</members>
 		<members>slwcDriveSchedulingFilters</members>
+		<members>slwcEditRecurrenceStaffingConstraintModal</members>
 		<members>slwcExceptionConsole</members>
 		<members>slwcExceptionList</members>
+		<members>slwcHelpers</members>
+		<members>slwcNewCollectionOperationMultiPicklist</members>
 		<members>slwcOnCallCallOutManagement</members>
+		<members>slwcPlanDrive</members>
+		<members>slwcPlanDriveBookingGrid</members>
+		<members>slwcPlanDriveCalendar</members>
+		<members>slwcStaffingConstraintMassUpdate</members>
+		<members>timeBlockComplianceReport</members>
 		<name>LightningComponentBundle</name>
 	</types>
 	<types>
 		<members>Collection_Operation_Time_Block__c.All</members>
 		<members>Time_Block__c.All</members>
 		<name>ListView</name>
+	</types>
+	<types>
+		<members>sked_HLT_Dist</members>
+		<name>StaticResource</name>
 	</types>
 	<types>
 		<members>Collection_Operation_Time_Block__c.End_Date_Should_Be_After_Start_Date</members>

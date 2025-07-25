@@ -44,6 +44,17 @@
                                     >
                                 </c-slwc-lookup>
                             </div>
+                            <div class="slds-size_1-of-2 slds-p-horizontal_small">
+                                <c-slwc-multi-picklist
+                                    name="timeBlocks"
+                                    label="Time Blocks"
+                                    selected-by-default
+                                    pick-list-values={timeBlockOptions}
+                                    default-values={model.STEP1.timeBlocks}
+                                    onpicklistchange={handleStep1ModelOnChange}
+                                    >
+                                </c-slwc-multi-picklist>
+                            </div>
                         </div>
                         <div class="slds-form-element__row slds-m-top_x-small slds-grid slds-grid_pull-padded-small">
                             <div class="slds-size_1-of-2 slds-p-horizontal_small">
