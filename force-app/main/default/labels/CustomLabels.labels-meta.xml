@@ -29,4 +29,11 @@
         <shortDescription>Taxonomy_Custom_Notification_Email</shortDescription>
         <value>harika.bolisetti2@redcross.org;kata.manishreddy@redcross.org;rajesh.rapolu@redcross.org</value>
     </labels>
+   <labels>
+        <fullName>DriveDispatchedCheckBoxEnableProfile</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>DriveDispatchedCheckBoxEnableProfile</shortDescription>
+        <value>APS Admin,System Administrator,APS Management,APS Planner,APS Scheduler,APS Scheduler1,Global Admin</value>
+    </labels>    
 </CustomLabels>
