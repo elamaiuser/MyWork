@@ -141,7 +141,7 @@ public without sharing class WeeklyStaffScheduleReportController {
                 allRoles = String.join(roleListNoDupes,', ');
             }
             Decimal timeDifference = getTimeDifference(jba.sked_Start_Time__c,jba.sked_Set_End_Time__c);//Changed for HRP-13091
-            String details = addLineBreaks(jba.sked__Job__r.sked_Drive__r.sked_Account__r.Name,20);
+            String details = addLineBreaks(jba.sked__Job__r.sked_Drive__r.sked_Account__r.Name,Integer.valueOf(label.WEEKLY_STAFF_SCHEDULE_REPORT_DESCRIPTION_LENGTH));
             String siteAddress = '';
             if(String.isNotBlank(jba.sked__Job__r.sked_Drive__r.sked_Drive_Site__r.sked_City__c)){
                 siteAddress = jba.sked__Job__r.sked_Drive__r.sked_Drive_Site__r.sked_City__c;
@@ -153,7 +153,7 @@ public without sharing class WeeklyStaffScheduleReportController {
                 siteAddress += jba.sked__Job__r.sked_Drive__r.sked_Drive_Site__r.sked_State__c;
             }
             if(String.isNotBlank(siteAddress)){
-                details += '\n' + addLineBreaks(siteAddress,20);
+                details += '\n' + addLineBreaks(siteAddress,Integer.valueOf(label.WEEKLY_STAFF_SCHEDULE_REPORT_DESCRIPTION_LENGTH));
             }
             details += '\n' + getFormattedTime(jba.sked_Start_Time__c) + ' - ' + //Changed for HRP-13091
                         getFormattedTime(jba.sked_Set_End_Time__c)+'\n'+ //Changed for HRP-13091
@@ -288,7 +288,7 @@ public without sharing class WeeklyStaffScheduleReportController {
         for(Id resourceId : resourceDetailsMap.keySet()){
             Map<String,String> wrapperMap = new Map<String,String>();
             wrapperMap.put('Id',resourceId);            
-            wrapperMap.put('Name',addLineBreaks(capitalizeTexts(resourceMap.get(resourceId).Name),10));
+            wrapperMap.put('Name',addLineBreaks(capitalizeTexts(resourceMap.get(resourceId).Name),Integer.valueOf(label.WEEKLY_STAFF_SCHEDULE_REPORT_NAME_LENGTH)));
             wrapperMap.put('total',String.valueOf(resourceHoursMap.get(resourceId)));
             for(Date dt : dateMap.keySet()){
                 if(resourceDetailsMap.get(resourceId).containsKey(dt)){
