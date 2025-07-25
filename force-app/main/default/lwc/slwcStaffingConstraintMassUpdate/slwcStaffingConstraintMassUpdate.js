@@ -15,6 +15,7 @@ import {
 } from "c/dataService";
 import TIME_ZONE from "@salesforce/i18n/timeZone";
 import { DRIVE_STATUS, DRIVE_TYPE } from "c/slwcConstants";
+import { sObjectType } from "c/dataService";
 
 const KEY_SEPERATOR = "__";
 
@@ -26,7 +27,8 @@ export default class SlwcStaffingConstraintMassUpdate extends LightningElement {
       divisions: [],
       arcRegions: [],
       districts: [],
-      territoryCollectionOperations: []
+      territoryCollectionOperations: [],
+      timeBlocks: []
     },
     driveTypes: [DRIVE_TYPE.FIXED_SITE, DRIVE_TYPE.MOBILE],
     startDate: null,
@@ -131,19 +133,38 @@ export default class SlwcStaffingConstraintMassUpdate extends LightningElement {
       return [];
     }
 
-    return this.collectionOperations.reduce((accumulate, currentItem) => {
-      const result = [
-        ...accumulate,
-        ...this.filters.driveTypes.map((item) => ({
-          key: `${currentItem.name}_${item}`,
-          collectionOperationId: currentItem.id,
-          name: currentItem.name,
-          driveType: item
-        }))
-      ];
+    let result = [];
 
-      return result;
-    }, []);
+    this.collectionOperations.forEach(collectionOperation => {
+      const selectedTimeBlockIds = this.filters.collectionOperationValues.timeBlocks?.map(item => item.value);
+
+      this.filters.driveTypes.forEach(driveType => {
+        let coItem = {
+          key: `${collectionOperation.name}_${driveType}`,
+          collectionOperationId: collectionOperation.id,
+          name: collectionOperation.name,
+          driveType: driveType
+        }
+        result.push(coItem);
+
+        if (driveType !== DRIVE_TYPE.FIXED_SITE) {
+          collectionOperation.collectionOperationTimeBlocks?.forEach(coTb => {
+            if (selectedTimeBlockIds.includes(coTb.timeBlock.id)) {
+              let coTbItem = {
+                key: `${collectionOperation.name}_${coTb.timeBlock.name}_${driveType}`,
+                collectionOperationId: collectionOperation.id,
+                timeBlockId: coTb.timeBlock.id,
+                name: `${collectionOperation.name} - ${coTb.timeBlock.name}`,
+                driveType: driveType
+              }
+              result.push(coTbItem);
+            }
+          })
+        }
+      })
+    });
+
+    return result;
   }
 
   buildGridData() {
@@ -154,7 +175,7 @@ export default class SlwcStaffingConstraintMassUpdate extends LightningElement {
     }
 
     this.gridData = gridRowHeader.reduce((accumulate, currentRow) => {
-      const { collectionOperationId, driveType } = currentRow;
+      const { collectionOperationId, driveType, timeBlockId } = currentRow;
 
       return [
         ...accumulate,
@@ -162,14 +183,15 @@ export default class SlwcStaffingConstraintMassUpdate extends LightningElement {
           ...currentRow,
           rowData: this.daysBetweenDateRange.map(({ dateIso }, itemIndex) => {
             const existingStaffingConstraint =
-              this.mappedStaffingConstraintData?.[
-                `${collectionOperationId}${KEY_SEPERATOR}${driveType}${KEY_SEPERATOR}${dateIso}`
+              this.mappedStaffingConstraintData?.[ 
+                `${collectionOperationId}${timeBlockId ? KEY_SEPERATOR + timeBlockId : ''}${KEY_SEPERATOR}${driveType}${KEY_SEPERATOR}${dateIso}`
               ]?.[0];
 
             const requestedStaff = this.driveHelper.calculateRequestedStaff(
               this.mappedDriveData,
               this.mappedActivityData,
               collectionOperationId,
+              timeBlockId,
               [driveType],
               dateIso
             ).totalStaffRequested;
@@ -253,6 +275,8 @@ export default class SlwcStaffingConstraintMassUpdate extends LightningElement {
 
     this.showSpinner = true;
 
+    const isTimeBlockApplied = this.filters.collectionOperationValues.timeBlocks?.length;
+
     Promise.resolve()
       .then(() => {
         const staffingConstraintQuery = new staffingConstraintQueryModel();
@@ -271,6 +295,9 @@ export default class SlwcStaffingConstraintMassUpdate extends LightningElement {
           DRIVE_STATUS.CONFIRMED,
           DRIVE_STATUS.HOLD
         ];
+        if (isTimeBlockApplied) {
+          driveQuery.subQueryIndicator = sObjectType.DRIVE_SHIFT;
+        }
 
         const activityQuery = new activityQueryModel();
         activityQuery.startDate = this.filters.startDate;
@@ -293,7 +320,7 @@ export default class SlwcStaffingConstraintMassUpdate extends LightningElement {
         this.mappedStaffingConstraintData = groupBy(
           [...staffingConstraintResult],
           (item) =>
-            `${item.collectionOperationId}${KEY_SEPERATOR}${item.driveType}${KEY_SEPERATOR}${item.dateOfConstraint}`
+            `${item.collectionOperationId}${ item.timeBlockId ? KEY_SEPERATOR + item.timeBlockId : '' }${KEY_SEPERATOR}${item.driveType}${KEY_SEPERATOR}${item.dateOfConstraint}`
         );
         this.mappedDriveData = groupBy(
           [...driveResult],
@@ -353,6 +380,19 @@ export default class SlwcStaffingConstraintMassUpdate extends LightningElement {
     this.fetchStafingConstrainData();
   }
 
+  handleTimeBlockChanged(event) {
+    this.filters.collectionOperationValues = {
+      divisions: event.detail.selectedDivisions,
+      arcRegions: event.detail.selectedARCRegions,
+      districts: event.detail.selectedDistricts,
+      territoryCollectionOperations: event.detail.selectedTerritoryCollectionOperations,
+      timeBlocks: event.detail.selectedTimeBlocks
+    };
+
+    this.handleSearch();
+    this.fetchStafingConstrainData();
+  }
+
   handleDriveTypesChanged(event) {
     this.filters = {
       ...this.filters,
@@ -392,17 +432,18 @@ export default class SlwcStaffingConstraintMassUpdate extends LightningElement {
   };
 
   handleEditRecurrenceStaffingConstraints = (event) => {
-    const { dateOfConstraint, collectionOperationId } =
-      event.currentTarget.dataset;
+    const { collectionOperationId } = event.currentTarget.dataset;
+    const timeBlocks = this.filters.collectionOperationValues.timeBlocks;
 
     this.showEditRecurrenceStaffingConstraintModal({
       dateRange: this.collectionOperationDateRange,
-      collectionOperationId
+      collectionOperationId,
+      timeBlocks
     });
   };
 
   handleCreateStaffingConstraint = (event) => {
-    const { dateOfConstraint, collectionOperationId, driveType } =
+    const { dateOfConstraint, collectionOperationId, driveType, timeBlockId } =
       event.currentTarget.dataset;
     const collectionOperation = find(this.collectionOperations, {
       id: collectionOperationId
@@ -412,7 +453,8 @@ export default class SlwcStaffingConstraintMassUpdate extends LightningElement {
       staffingConstraint: {
         ...(dateOfConstraint && { dateOfConstraint }),
         ...(driveType && { driveTypes: [driveType] }),
-        ...(collectionOperation && { collectionOperation })
+        ...(collectionOperation && { collectionOperation }),
+        ...(timeBlockId && { timeBlockId })
       },
       isCreateIndividually:
         dateOfConstraint && collectionOperationId && driveType
@@ -420,12 +462,9 @@ export default class SlwcStaffingConstraintMassUpdate extends LightningElement {
   };
 
   handleEditStaffingConstraint = (event) => {
-    const { collectionOperationId, driveType, dateOfConstraint } =
-      event.currentTarget.dataset;
-    const staffingConstraint =
-      this.mappedStaffingConstraintData?.[
-        `${collectionOperationId}${KEY_SEPERATOR}${driveType}${KEY_SEPERATOR}${dateOfConstraint}`
-      ]?.[0];
+    const { collectionOperationId, driveType, dateOfConstraint, timeBlockId } = event.currentTarget.dataset;
+    const key = `${collectionOperationId}${timeBlockId ? KEY_SEPERATOR + timeBlockId : ''}${KEY_SEPERATOR}${driveType}${KEY_SEPERATOR}${dateOfConstraint}`
+    const staffingConstraint = this.mappedStaffingConstraintData?.[key]?.[0];
     const collectionOperation = find(this.collectionOperations, {
       id: staffingConstraint.collectionOperationId
     });
@@ -462,12 +501,9 @@ export default class SlwcStaffingConstraintMassUpdate extends LightningElement {
   }
 
   handleDeleteStaffingConstraint(event) {
-    const { collectionOperationId, driveType, dateOfConstraint } =
-      event.currentTarget.dataset;
-    const staffingConstraint =
-      this.mappedStaffingConstraintData?.[
-        `${collectionOperationId}${KEY_SEPERATOR}${driveType}${KEY_SEPERATOR}${dateOfConstraint}`
-      ]?.[0];
+    const { collectionOperationId, driveType, dateOfConstraint, timeBlockId } = event.currentTarget.dataset;
+    const key = `${collectionOperationId}${timeBlockId ? KEY_SEPERATOR + timeBlockId : ''}${KEY_SEPERATOR}${driveType}${KEY_SEPERATOR}${dateOfConstraint}`
+    const staffingConstraint = this.mappedStaffingConstraintData?.[key]?.[0];
 
     if (!staffingConstraint) {
       return;

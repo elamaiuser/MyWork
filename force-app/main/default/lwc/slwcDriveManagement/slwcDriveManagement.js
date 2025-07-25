@@ -1,26 +1,24 @@
-import { LightningElement, track, wire, api } from 'lwc';
-import { CurrentPageReference, NavigationMixin } from 'lightning/navigation';
-import { ShowToastEvent } from 'lightning/platformShowToastEvent'
+import skedGoogleMapApis from '@salesforce/resourceUrl/skedGoogleMapApis';
 import { fireEvent, registerListener, unregisterAllListeners } from 'c/pubsub';
-import { driveValidator } from 'c/slwcValidator';
 import * as slwcUtils from 'c/slwcUtils';
-import skedGoogleMapApis from '@salesforce/resourceUrl/skedGoogleMapApis'
+import { driveValidator } from 'c/slwcValidator';
+import { CurrentPageReference, NavigationMixin } from 'lightning/navigation';
 import {
-    loadStyle,
     loadScript
 } from 'lightning/platformResourceLoader';
+import { ShowToastEvent } from 'lightning/platformShowToastEvent';
+import { api, LightningElement, track, wire } from 'lwc';
 
 import driveManagementTabTemplate from './driveManagementTab.html';
 import surrogateDriveTemplate from './surrogateDrive.html';
 // import opportunityDriveShiftsTemplate from './opportunityDriveShifts.html';
 
-import { dataService, driveService, jobService, driveQueryModel, approvalService, slotService, debugLogService } from 'c/dataService';
-import { DateTime } from 'c/luxon';
-import { chunk, isEqual } from 'c/lodash';
-import { DRIVE_STATUS, DRIVE_APPROVAL_STATUS, PENDING_ACTION, ASSET_TYPE, OPPORTUNITY_STAGE, DRIVE_REQUEST_CHANGE_STATUS, DRIVE_CHANGE_REQUEST_TYPE } from 'c/slwcConstants';
 import TIME_ZONE from '@salesforce/i18n/timeZone';
-import { slwcDriveGeneratorHelper, DriveHelper } from 'c/slwcDriveGenerator';
-import { autoMapperInstance } from 'c/autoMapper';
+import { approvalService, dataService, debugLogService, driveQueryModel, driveService, jobService, slotService } from 'c/dataService';
+import { chunk } from 'c/lodash';
+import { DateTime } from 'c/luxon';
+import { ASSET_TYPE, DRIVE_APPROVAL_STATUS, DRIVE_CHANGE_REQUEST_TYPE, DRIVE_REQUEST_CHANGE_STATUS, DRIVE_SHIFT_TIME_BLOCK_CONTENTION, DRIVE_STATUS, OPPORTUNITY_STAGE, PENDING_ACTION } from 'c/slwcConstants';
+import { DriveHelper, slwcDriveGeneratorHelper } from 'c/slwcDriveGenerator';
 
 // import { auraProxyConfig } from 'c/auraProxy';
 // auraProxyConfig.enableMock();
@@ -999,7 +997,10 @@ export default class SlwcDriveManagement extends NavigationMixin(LightningElemen
                             'Lacking of equipment',
                             'Exceeds Operational Drive Limit',
                             'Exceeds 2RBC Operational Limit',
-                            'Excess Staff Capacity'
+                            'Excess Staff Capacity',
+                            DRIVE_SHIFT_TIME_BLOCK_CONTENTION.OUT_OF_TIME_BLOCK,
+                            DRIVE_SHIFT_TIME_BLOCK_CONTENTION.FIT_MULTIPLE_TIME_BLOCKS,
+                            DRIVE_SHIFT_TIME_BLOCK_CONTENTION.MISSING_TIME_BLOCK
                         ];
                         const anyContentionsPreventHold = pendingActionReasonCodes.filter(pendingActionReasonCode => {
                             return contentionsPreventHold.includes(pendingActionReasonCode);
@@ -1355,12 +1356,30 @@ export default class SlwcDriveManagement extends NavigationMixin(LightningElemen
     savePendingActionDriveConfirmModal(event) {
         this.hidePendingActionDriveConfirmModal();
 
-        const { submissionNotes, contentionResolution, status, equipmentAllocations, vehicleAllocations } = event.detail;
+        const { submissionNotes, contentionResolution, driveShiftContention, driveShiftTimeBlockId, driveShiftContentionResolution, status, equipmentAllocations, vehicleAllocations } = event.detail;
         this.drive.submissionNotes = submissionNotes || this.drive.submissionNotes;
         if (status) {
             this.drive.status = status;
         }
         this.drive.contentionResolution = [...contentionResolution];
+
+        if(driveShiftContentionResolution?.length) {
+            this.drive.driveShifts.forEach((driveShift, driveShiftIndex) => {
+                driveShift.contentionResolution = driveShiftContentionResolution[driveShiftIndex] ?? '';
+            })
+        }
+
+        if(driveShiftContention?.length) {
+            this.drive.driveShifts.forEach((driveShift, driveShiftIndex) => {
+                driveShift.contention = driveShiftContention[driveShiftIndex] ?? '';
+            })
+        }
+
+        if(driveShiftTimeBlockId?.length) {
+            this.drive.driveShifts.forEach((driveShift, driveShiftIndex) => {
+                driveShift.timeBlockId = driveShiftTimeBlockId[driveShiftIndex] ?? '';
+            })
+        }
 
         if (this.drive.status === DRIVE_STATUS.DRAFT) {
             this.drive = driveGeneratorInstance.releaseAllAssetAllocations();
