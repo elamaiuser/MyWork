@@ -301,10 +301,6 @@
             </layoutItems>
             <layoutItems>
                 <behavior>Edit</behavior>
-                <field>sked_On_Site_Food_Conditions__c</field>
-            </layoutItems>
-            <layoutItems>
-                <behavior>Edit</behavior>
                 <field>sked_Canteen_Requirements__c</field>
             </layoutItems>
             <layoutItems>

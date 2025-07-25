@@ -68,7 +68,6 @@ import Unloading_Conditions from '@salesforce/schema/sked__Location__c.sked_Unlo
 import Staff_Personal_Parking_Directions from '@salesforce/schema/sked__Location__c.sked_Staff_Personal_Parking_Directions__c';
 import Unloading_Directions_Details from '@salesforce/schema/sked__Location__c.sked_Unloading_Directions_Details__c';
 import Fixed_Site_Appointment_Pattern from '@salesforce/schema/sked__Location__c.sked_Fixed_Site_Appointment_Pattern__c';
-import On_Site_Food_Conditions from '@salesforce/schema/sked__Location__c.sked_On_Site_Food_Conditions__c';
 //import Primary_Contact from '@salesforce/schema/sked__Location__c.sked_Primary_Contact__c';
 import Operation_Type from '@salesforce/schema/sked__Location__c.Operation_Type__c';
 import EAP_Map_Available from '@salesforce/schema/sked__Location__c.EAP_Map_Available__c';
@@ -99,7 +98,7 @@ export default class NewSite extends LightningElement {
         Pay_for_Parking, Outside_stairs, Pay_for_Parking_Details, Pre_Drive_Security_Due_Date, Restroom_Location, Safety_Emergency_Action_Plan, Security_Directions, Security_Information_Needed, Site_Close, Site_Contact_Email,
         Site_Contact_Phone, Site_Open, Site_Room_Phone, Sponsor_Security_Form_Required,
         Staff_List, Unloading_Conditions, Staff_Personal_Parking_Directions,
-        Fixed_Site_Appointment_Pattern, On_Site_Food_Conditions, Operation_Type, EAP_Map_Available, AED_Available];
+        Fixed_Site_Appointment_Pattern, Operation_Type, EAP_Map_Available, AED_Available];
 
     connectedCallback() {
 
