@@ -31,6 +31,30 @@ export default class SlwcDriveListMap extends LightningElement {
   }
 
   @track includesAdditionalDays = 0;
+
+  colorPalette = [
+    '#2CA02C', // green
+    '#17BECF', // cyan
+    '#BD9E39', // mustard
+    '#9467BD', // purple
+    '#CEDB9C', // light green
+    '#393B79', // dark blue
+    '#8C6D31', // gold brown
+    '#7B4173', // violet
+    '#9C9EDE', // light lavender
+    '#1F77B4', // blue
+    '#637939', // dark olive
+    '#7F7F7F', // gray
+    '#BCBD22', // olive
+    '#5254A3', // blue-gray
+    '#8C564B', // brown
+    '#E7CB94', // pale gold 
+    '#9E3F3F', // dark red
+    '#AEDA74', // dark yellow
+    '#C4B08C', // tan
+    '#FF7F0E', // orange
+    '#F781BF', // pink
+    ];
   
   get pageName() {
     return 'schedulingConsole:driveListMap';
@@ -86,9 +110,14 @@ export default class SlwcDriveListMap extends LightningElement {
     return this.driveList && this.driveList.length > 0 && this.mapMarkers.length <= 100;
   }
 
-  get mapMarkerLimitExceeded() {
+  get showMarkerLimitExceeded() {
     return this.mapMarkers.length > 100;
   }
+
+  get showNoDrive() {
+    return !this.driveList || this.driveList.length === 0;
+  }
+
 
   @wire(CurrentPageReference) pageRef;
 
@@ -164,7 +193,54 @@ export default class SlwcDriveListMap extends LightningElement {
       }).toISODate();
     }
 
+    const linkDriveColorMap = new Map();
+    let colorIndex = 0;
     let driveQuery = new driveQueryModel();
+    let queryModel = new driveQueryModel();
+    queryModel.territoryKeys = territoryKeys;
+    queryModel.startDate = startDate;
+    queryModel.endDate = endDate;
+    queryModel.eventTypes = this.filters.driveTypes;
+    queryModel.statuses = this.filters.driveStatuses;
+    queryModel.stages = this.filters.stages;
+    queryModel.accountTypes = this.filters.accountTypes;
+    queryModel.accountIndustryCodes = this.filters.accountIndustryCodes;
+    queryModel.showOnlyLinkedEvents = true;
+    queryModel.accountManagerPortfolioIds = (this.filters.accountManagerPortfolios || []).map(accountManagerPortfolio => {
+      return accountManagerPortfolio.id;
+    });
+    queryModel.districtManagerPortfolioIds = (this.filters.districtManagerPortfolios || []).map(districtManagerPortfolio => {
+        return districtManagerPortfolio.id;
+    })
+    queryModel.markets = (this.filters.markets || []).map(market => {
+      return market.id;
+    });
+    const driveSvc = new driveService();
+    driveSvc.query(queryModel)
+                .then((result) => {
+                    let drives = [];
+                    if (result && result.length) {
+                      result.forEach((drive) => {
+                        drive.recordPageUrl = '/' + drive.id;
+                        drives.push(drive);
+                        if (drive.linkedDriveId && !linkDriveColorMap.has(drive.linkedDriveId)) {
+                          linkDriveColorMap.set(drive.linkedDriveId, this.colorPalette[colorIndex % this.colorPalette.length]);
+                          colorIndex++;
+                        }
+                      });
+                      if (!linkDriveColorMap || linkDriveColorMap.size === 0) {
+                          driveQuery.isNotLinkedDrive = true;
+                          driveQuery.linkedDriveIds = [...linkDriveColorMap.keys()];
+                          console.log('driveQuery.linkedDriveIds ',driveQuery.linkedDriveIds);
+                      }
+                    }
+                  })
+                  .catch((error) => {
+                    console.log(error);
+                  });
+
+    console.log('linkDriveColorMap ',linkDriveColorMap);
+
     driveQuery.territoryKeys = territoryKeys;
     driveQuery.startDate = startDate;
     driveQuery.endDate = endDate;
@@ -198,7 +274,7 @@ export default class SlwcDriveListMap extends LightningElement {
         }
         this.selectedDriveSiteId = null;
         this.driveList = drives;
-        this.buildMarkers(this.driveList);
+        this.buildMarkers(this.driveList,linkDriveColorMap);
       })
       .catch((error) => {
         console.log(error);
@@ -208,7 +284,7 @@ export default class SlwcDriveListMap extends LightningElement {
       });
   }
   
-  buildMarkers(driveList) {
+  buildMarkers(driveList,linkDriveColorMap) {
     this.mapMarkers = [];
     this.driveSiteMap = {};
 
@@ -216,7 +292,7 @@ export default class SlwcDriveListMap extends LightningElement {
 
     let driveSitesMap = groupBy(driveList, 'driveSiteId');
     this.driveSiteMap = driveSitesMap;
-
+    console.log('test 6 ');
     this.mapMarkers = Object.keys(driveSitesMap).map(driveSiteId => {
       let drives = driveSitesMap[driveSiteId];
       let driveSite = drives[0].driveSite;
@@ -228,6 +304,16 @@ export default class SlwcDriveListMap extends LightningElement {
         value: driveSiteId,
         icon: 'custom:custom26',
         title: `${driveSite.name}`,
+        mapIcon : {
+                path: 'M20 0C9 0 0 9 0 20c0 12 20 40 20 40s20-28 20-40C40 9 31 0 20 0z M27.5 14a7.5 7.5 0 1 1 -15 0a7.5 7.5 0 1 1 15 0z',
+                fillColor: this.getFillColor(drives,linkDriveColorMap),
+                fillOpacity: 1,
+                strokeColor: '#000000',
+                strokeOpacity: 0.35,
+                strokeWeight: 1,
+                scale: 0.6,
+                anchor: { x: 20, y: 60 }
+            },
         description: `
           <strong>Address: </strong><br/>
           ${driveSite.address}<br/>
@@ -239,6 +325,24 @@ export default class SlwcDriveListMap extends LightningElement {
         `
       }
     })
+  }
+
+  getFillColor(drives, linkDriveColorMap) {
+    let FILL_COLOR = '#DB4437';
+    
+    if (!linkDriveColorMap || linkDriveColorMap.size === 0) {
+        return FILL_COLOR;
+    }
+
+    drives.forEach((drive) => {
+      const linkedDriveId = drive?.linkedDriveId;
+      if (linkedDriveId && linkDriveColorMap.has(linkedDriveId)) {
+          console.log('linkedDriveId ',linkedDriveId);
+          FILL_COLOR = linkDriveColorMap.get(linkedDriveId);
+      }
+    });
+    console.log('FILL_COLOR ',FILL_COLOR);
+    return FILL_COLOR;
   }
 
   handleCollectionOperationChanged(event) {
