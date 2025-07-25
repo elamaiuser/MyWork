@@ -43,6 +43,7 @@
                     <th>Zip</th>
                     <th>Type</th>
                     <th>Violation</th>
+                    <th>Reason</th>
                 </tr>
             </thead>
             <tbody>
@@ -70,6 +71,7 @@
                         <td>{!row['siteZip']}</td>
                         <td>{!row['type']}</td>
                         <td>{!row['violation']}</td>
+                        <td>{!row['contentionResolution']}</td>
                     </tr>
                 </apex:repeat>
             </tbody>
