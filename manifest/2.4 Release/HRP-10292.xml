@@ -2,6 +2,7 @@
 <Package xmlns="http://soap.sforce.com/2006/04/metadata">
     <types>
 		<members>slwcDriveListMap</members>
+        <members>dataService</members>
 		<name>LightningComponentBundle</name>
 	</types>
     <version>59.0</version>
